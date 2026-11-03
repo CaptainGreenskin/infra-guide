@@ -23,6 +23,7 @@ assert.equal(new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].m
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
 assert.equal((interview.match(/<dt>说明边界<\/dt>/g)||[]).length,12);
+for(const id of ['cloud-overview','model-serving','agent-runtime']){const page=fs.readFileSync(path.join(dist,'article',id,'index.html'),'utf8');assert(page.includes('class="guided-intro"'));assert(page.includes('class="guided-contract"'));assert(page.includes('合上页面，试着讲清楚'));assert(page.includes('第一次遇到这些词'));assert(page.includes('展开推理，检查遗漏'))}
 const ctx={};vm.createContext(ctx);for(const f of ['attention-files.js','attention-interactive.js'])vm.runInContext(fs.readFileSync(path.join(dist,f),'utf8'),ctx);
 for(let i=0;i<4;i++){
  const values=vm.runInContext(`({actual:attentionExample(${i},true,false),expected:attentionValidation.report.attention.output[${i}]})`,ctx);
