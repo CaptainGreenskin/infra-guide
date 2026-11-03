@@ -1,14 +1,22 @@
-# CloudInfra Guide
+# InfraGuide
 
-中文 Cloud Infra + AI Infra 工程知识站。Agent Infra × Kairo 保持独立系列规划。
+一个网站，三条一级路线：Cloud Infra、AI Infra、Agent Infra。
+Agent课程以通用机制为基础，Kairo作为独立实践载体；具体实现仍待目标环境验收。
 
-## 本版范围
+## 内容与验证
 
-8 个模块、20 篇内容，其中云上训练为 10 章深入教程，其余为基础导读。
-专题包含 5 张原创 SVG、可复制代码、DDP 实验包、两机四卡运行手册、恢复对照与性能测量方法。
-GPU/NCCL、混合精度、多物理节点和 Kubernetes 尚未实测。实际 CPU 结果见 dist/labs/ddp/validation.json。
+42章：Cloud 18、AI 15（训练10＋平台推理5）、Agent 6、综合实战3。
+14张原创SVG，完整代码与实验包，迁移练习、官方来源、交互SLO和KV容量计算器。
+每章沿问题、机制、具体例子、边界和验证展开。保留原文章URL。
 
-## 本地运行
+实际证据：
+- dist/labs/ddp/validation.json：CPU/Gloo训练、完整状态恢复对照、错误配置拒绝及同机双启动代理模拟。
+- dist/labs/systems/validation.json：本地HTTP、版本提交、合成指标与契约、独立数据库间的Agent崩溃恢复。
+
+未验证：真实GPU/NCCL、GPU混合精度、多物理节点、Kubernetes、真实模型推理、Kairo、多worker/fencing与断电耐久性。
+本地实验不替代这些环境的验收；页面与下载包明确说明范围。
+
+## 本地预览
 
 无需安装前端依赖或构建：
 
@@ -16,58 +24,36 @@ GPU/NCCL、混合精度、多物理节点和 Kubernetes 尚未实测。实际 CP
 python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 ```
 
-访问 http://127.0.0.1:4173/ 。路由使用 hash，无需服务器重写规则。
+hash路由无需重写。阅读进度、主题与勾选只保存在当前浏览器。
 
-## 文件
+## 内容组织
 
-- dist/content.js：基础模块、导读和官方来源。
-- dist/training-content.js：训练第 1—6 章与渲染辅助函数。
-- dist/training-advanced.js：第 7—10 章，替换原训练入门条目并保留旧 URL。
-- dist/training-exercises.js：迁移练习、参考答案和真实工作负载补充。
-- dist/site-pages.js：主题、实验室、问题索引与内容建设路线。
-- dist/app.js：路由、搜索、本地进度、交互示例和代码复制。
-- dist/style.css、dist/course.css：桌面与手机阅读、浅色和深色主题。
-- dist/labs/ddp/：完整训练代码、启动器、比较器和中文手册。
-- scripts/build-training-assets.py：生成原创图、浏览器代码文本和实验 ZIP。
-- scripts/verify-lab.py：执行 CPU/Gloo 验收，写入实际验证记录。
-- scripts/check-content.cjs：检查文章标识、章节顺序和来源引用。
+index.html按依赖加载：原始模块与训练内容 → 系统实验文本 → curriculum公共定义 → Cloud/AI/Agent/实战章节 → finalize → 页面与交互。
+curriculum-finalize.js保留训练章节，并用完整课程替换早期导读。
+新增内容通过chapter()声明，含id、编号、前置知识、学习出口、正文、练习、来源和关联章节。
+HTML只供可信本地作者编写，不接收用户注入。
 
-修改实验代码后先重跑相关验证，再运行资源生成器，避免正文和下载包不一致。
-不要将虚拟环境、检查点、运行日志或私有项目代码放进 dist。
-
-## 发布标准
-
-深入教程包含问题、前置知识、机制与取舍、图解、实验或明确标注的示例、失败场景、自我检验与官方来源。
-完整实验提供固定版本、命令、预期输出和验收条件。已执行、待验证与规划内容分别标示。
-规划不计入完成数量，基础导读不自动标为已验证教程。
-
-文章字段为 id、module、number、title、desc、level、tags、intro、sections、check、refs。
-训练专题另有 group、objectives、prereq、minutes。HTML 仅供可信本地作者使用，不直接接收用户输入。
-统计来自内容数组。新增章节后执行完整性检查。
-
-## 验证
+## 验证与资源生成
 
 ```sh
-node --check dist/app.js
-node --check dist/training-content.js
-node --check dist/training-advanced.js
-node --check dist/site-pages.js
 node scripts/check-content.cjs
-bash -n dist/labs/ddp/launch_2nodes.sh
+python3 scripts/build-system-labs.py
 ```
 
-在装有 PyTorch 2.5.1 的隔离 Python 环境中：
+修改系统实验程序后：
 
 ```sh
-python scripts/verify-lab.py
-python scripts/build-training-assets.py
+python3 scripts/build-system-labs.py --verify
 ```
 
-CPU 验收覆盖两进程训练、连续训练与恢复完整状态相等、无效累积参数和不兼容恢复被拒绝；还覆盖两端启动脚本的同机四进程模拟。
-本机合成任务的时间不是 GPU 或 LLM 基准。恢复仅支持固定 world size、固定配置、epoch 边界。
+它运行真实本地实验、记录环境和源码SHA256，再生成浏览器源码文本与ZIP。普通打包拒绝证据摘要不匹配。
+修改DDP实验后，在隔离的PyTorch 2.5.1环境运行scripts/verify-lab.py，再运行scripts/build-training-assets.py。
+图生成器为build-training-assets.py、build-system-diagrams.py和build-agent-diagrams.py。
+不将虚拟环境、检查点、私有项目代码或凭据放入dist。
 
-## 行为与来源
+## 发布与维护
 
-阅读进度、自我评估与主题只保存在当前浏览器。Google Fonts 不可用时回退本地字体。
-结构参考 https://caomaolufei.github.io/AIInfraGuide/ 的章节树、正文与页内目录；文章、图和实验代码原创。
-当前私有站点标识位于 .openai/hosting.json；更新复用同一站点，不改变访问范围。
+沿用.openai/hosting.json中的现有Site，当前public访问范围保持不变。
+发布前检查章节/链接/来源/资源/代码摘要、计算边界及浏览器交互。
+版本与事实变化时重查官方资料，并重跑受影响实验。
+结构参考AIInfraGuide；文章、图与实验代码独立编写。

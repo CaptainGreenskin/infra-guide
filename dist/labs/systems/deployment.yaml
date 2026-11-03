@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infra-demo
+  namespace: infra-guide-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infra-demo
+  template:
+    metadata:
+      labels:
+        app: infra-demo
+    spec:
+      containers:
+        - name: web
+          image: python:3.12-slim
+          command: ["python", "/app/probe_server.py"]
+          env:
+            - name: APP_VERSION
+              value: v1
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /live
+              port: 8080
+            periodSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            periodSeconds: 2
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: code
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: code
+          configMap:
+            name: infra-lab-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: infra-demo
+  namespace: infra-guide-lab
+spec:
+  selector:
+    app: infra-demo
+  ports:
+    - port: 80
+      targetPort: 8080
+

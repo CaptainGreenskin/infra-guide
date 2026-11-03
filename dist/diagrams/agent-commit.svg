@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+<title id="title">独立持久化域之间的提交窗口与幂等恢复</title>
+<desc id="desc">runner.db 先提交稳定操作键和参数指纹。tool.db 在一个事务内提交业务效果与回执。如果工具已经提交而 runner 尚未记录完成时发生崩溃，恢复后使用同一键和同一参数指纹重试。工具端返回已保存的结果，参数不一致则拒绝，业务效果不会重复。runner 验证业务结果后提交完成状态。此实验仅涵盖单机单活执行器，不覆盖多 worker 协调。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce"/></marker></defs>
+<style>
+text{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#203553}
+.title{font-size:23px;font-weight:700}
+.label{font-size:17px;font-weight:600}
+.body{font-size:15px}
+.small{font-size:14px;fill:#61748e}
+.eyebrow{font-size:11px;fill:#315dce;letter-spacing:2px}
+.accent{font-size:15px;fill:#315dce;font-weight:600}
+</style>
+<rect width="960" height="720" rx="14" fill="#f6f8fc"/>
+<text x="30" y="30" class="eyebrow" text-anchor="start">INFRAGUIDE / DURABLE EXECUTION</text>
+<text x="30" y="67" class="title" text-anchor="start">提交窗口：有执行记录，还需要工具端幂等</text>
+<text x="30" y="95" class="small" text-anchor="start">runner.db 与 tool.db 是两个独立持久化域；两者之间没有原子事务。</text>
+<rect x="28" y="118" width="432" height="515" rx="10" fill="#f0f4fa" stroke="#d7e1ef"/>
+<rect x="500" y="118" width="432" height="515" rx="10" fill="#f0f4fa" stroke="#d7e1ef"/>
+<text x="244" y="149" class="label" text-anchor="middle">runner.db · 执行器状态</text>
+<text x="716" y="149" class="label" text-anchor="middle">tool.db · 模拟业务服务</text>
+<text x="244" y="175" class="small" text-anchor="middle">持久化意图、尝试与完成结果</text>
+<text x="716" y="175" class="small" text-anchor="middle">业务效果与幂等回执共同提交</text>
+<rect x="60" y="200" width="368" height="76" rx="10" fill="#ffffff" stroke="#d7e1ef"/>
+<text x="244.0" y="230" class="label" text-anchor="middle">① 提交执行意图</text>
+<text x="244.0" y="255" class="small" text-anchor="middle">稳定 key + 参数指纹 + 未完成状态</text>
+<rect x="532" y="200" width="368" height="76" rx="10" fill="#edf2fe" stroke="#7e9ee5"/>
+<text x="716.0" y="230" class="label" text-anchor="middle">② 工具效果 + 回执：同一事务</text>
+<text x="716.0" y="255" class="small" text-anchor="middle">业务变更与该 key 的结果一起提交</text>
+<path d="M434 238 L526 238" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="480" y="226" class="small" text-anchor="middle">调用</text>
+<path d="M716 276 L716 307" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="315" width="840" height="64" rx="10" fill="#e5edfc" stroke="#7e9ee5"/>
+<text x="480" y="341" class="label" text-anchor="middle">崩溃窗口：工具已提交，runner 尚未记录完成</text>
+<text x="480" y="365" class="small" text-anchor="middle">此时结果未知，不代表业务效果尚未发生。</text>
+<path d="M244 379 L244 405" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<rect x="60" y="411" width="368" height="76" rx="10" fill="#ffffff" stroke="#d7e1ef"/>
+<text x="244.0" y="441" class="label" text-anchor="middle">③ 恢复：读取未完成意图</text>
+<text x="244.0" y="466" class="small" text-anchor="middle">重试复用同一 key 与同一参数指纹</text>
+<rect x="532" y="411" width="368" height="76" rx="10" fill="#edf2fe" stroke="#7e9ee5"/>
+<text x="716.0" y="441" class="label" text-anchor="middle">工具端按 key 去重</text>
+<text x="716.0" y="466" class="small" text-anchor="middle">同指纹返回原回执；不同指纹拒绝</text>
+<path d="M434 449 L526 449" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<text x="480" y="437" class="small" text-anchor="middle">重试</text>
+<path d="M716 487 L716 578 L434 578" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="716" y="520" class="accent" text-anchor="middle">返回同一结果</text>
+<text x="716" y="543" class="small" text-anchor="middle">业务效果不再重复发生</text>
+<rect x="60" y="540" width="368" height="76" rx="10" fill="#ffffff" stroke="#d7e1ef"/>
+<text x="244.0" y="570" class="label" text-anchor="middle">④ runner 提交完成状态</text>
+<text x="244.0" y="595" class="small" text-anchor="middle">业务验证通过后保存结果</text>
+<text x="30" y="665" class="body" text-anchor="start">幂等由工具侧落实；仅有 runner ledger 无法保证外部效果不重复。</text>
+<text x="30" y="694" class="small" text-anchor="start">实验范围：单机、单活 runner；不覆盖多 worker 协调与真实远程服务。</text>
+</svg>

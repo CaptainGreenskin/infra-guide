@@ -1,17 +1,25 @@
-const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const files=['content','lab-files','training-content','training-advanced','training-exercises'];
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
+const html=fs.readFileSync('dist/index.html','utf8');
+const scripts=[...html.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]);
 const context={};vm.createContext(context);
-for(const file of files)vm.runInContext(fs.readFileSync('dist/'+file+'.js','utf8'),context);
-const result=vm.runInContext(`({
-  articles:articles.map(a=>({id:a.id,module:a.module,refs:a.refs,sections:a.sections.length,number:a.number})),
-  sourceKeys:Object.keys(sources),
-  modules:modules.map(m=>m.id),
-  training:trainingChapters.map(a=>a.number)
-})`,context);
-assert.equal(result.articles.length,20);
-assert.equal(new Set(result.articles.map(a=>a.id)).size,20);
-assert.equal(result.training.length,10);
-for(const a of result.articles){assert(result.modules.includes(a.module));for(const ref of a.refs)assert(result.sourceKeys.includes(ref),a.id+': '+ref)}
-for(let i=0;i<10;i++)assert.equal(result.training[i],'6.'+(i+1));
-console.log('Content integrity: 20 unique articles, 10 ordered training chapters, all reference keys resolved.');
-
+for(const file of scripts){const code=fs.readFileSync('dist/'+file,'utf8');new vm.Script(code,{filename:file});if(file!=='app.js')vm.runInContext(code,context,{filename:file})}
+const data=vm.runInContext('({articles,sources,modules,trackDefinitions,systemLabFiles,systemLabValidation,labFiles,labValidation,problemItems})',context);
+assert.equal(data.articles.length,42);assert.equal(new Set(data.articles.map(a=>a.id)).size,42);
+assert.equal(new Set(data.articles.map(a=>a.number)).size,42);
+const ids=new Set(data.articles.map(a=>a.id));
+for(const a of data.articles){
+ assert(data.modules.some(m=>m.id===a.module),a.id+': module');
+ assert(a.prereq&&a.objectives.length>=3&&a.check.length>=3&&a.sections.length>=5&&a.exercise.length===2,a.id+': complete chapter');
+ for(const ref of a.refs){assert(data.sources[ref],a.id+': source '+ref);assert(new URL(data.sources[ref][1]).protocol==='https:')}
+ for(const id of a.related||[])assert(ids.has(id),a.id+': related '+id);
+ const body=a.sections.flat().join('');
+ for(const m of body.matchAll(/href="#\/article\/([^"?]+)[^"]*"/g))assert(ids.has(m[1]),a.id+': link '+m[1]);
+ for(const m of body.matchAll(/(?:src|href)="((?:diagrams|labs)\/[^"#?]+)"/g))assert(fs.existsSync('dist/'+m[1]),a.id+': asset '+m[1]);
+}
+for(const [track,t] of Object.entries(data.trackDefinitions)){assert(ids.has(t.start));assert.equal(data.articles.filter(a=>t.modules.includes(a.module)).length,{cloud:18,ai:15,agent:6}[track])}
+for(const [,,id] of data.problemItems)assert(ids.has(id));
+for(const [name,source] of Object.entries(data.systemLabFiles))assert.equal(source,fs.readFileSync('dist/labs/systems/'+name,'utf8'),name+': embedded source');
+for(const [name,sha] of Object.entries(data.systemLabValidation.source_sha256))assert.equal(sha,crypto.createHash('sha256').update(fs.readFileSync('dist/labs/systems/'+name)).digest('hex'),name+': evidence hash');
+const slo=vm.runInContext('sloCalculation(1000,989,99)',context);assert(Math.abs(slo.burn-1.1)<1e-10);assert(Math.abs(slo.remaining+1)<1e-10);assert(vm.runInContext('sloCalculation(0,0,99).empty',context));assert(vm.runInContext('sloCalculation(1,2,99).error',context));assert(vm.runInContext('sloCalculation(1,1,100).error',context));
+const kv=vm.runInContext('kvCalculation(32,8,128,2,4096,16)',context);assert.equal(kv.totalGiB,8);assert.equal(kv.perRequestGiB,.5);assert(vm.runInContext('kvCalculation(32,8,128,2,0,16).error',context));assert(vm.runInContext('kvCalculation(1e6,1e6,1e6,1e6,1e6,1e6).error',context));
+console.log('PASS: 42 complete chapters; 18 Cloud / 15 AI / 6 Agent / 3 shared; links, references, assets, embedded source, evidence hashes and calculator boundaries.');
