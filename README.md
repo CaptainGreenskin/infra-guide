@@ -1,38 +1,73 @@
 # CloudInfra Guide
 
-中文云计算、云原生、SRE 与云上 AI 训练知识站原型。
+中文 Cloud Infra + AI Infra 工程知识站。Agent Infra × Kairo 保持独立系列规划。
 
-## 运行
+## 本版范围
 
-无需构建或安装依赖。在本目录执行：
+8 个模块、20 篇内容，其中云上训练为 10 章深入教程，其余为基础导读。
+专题包含 5 张原创 SVG、可复制代码、DDP 实验包、两机四卡运行手册、恢复对照与性能测量方法。
+GPU/NCCL、混合精度、多物理节点和 Kubernetes 尚未实测。实际 CPU 结果见 dist/labs/ddp/validation.json。
+
+## 本地运行
+
+无需安装前端依赖或构建：
 
 ```sh
 python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 ```
 
-然后访问 http://127.0.0.1:4173/ 。支持部署到提供静态文件托管的服务。路由使用 URL hash，不需要服务器重写规则。
+访问 http://127.0.0.1:4173/ 。路由使用 hash，无需服务器重写规则。
 
 ## 文件
 
-- `dist/index.html`：页面入口与全局导航。
-- `dist/style.css`：响应式布局、浅色和深色主题。
-- `dist/content.js`：8 个模块、12 篇文章和官方参考资料。
-- `dist/app.js`：首页、模块、文章、路线、搜索、进度与交互示例。
+- dist/content.js：基础模块、导读和官方来源。
+- dist/training-content.js：训练第 1—6 章与渲染辅助函数。
+- dist/training-advanced.js：第 7—10 章，替换原训练入门条目并保留旧 URL。
+- dist/training-exercises.js：迁移练习、参考答案和真实工作负载补充。
+- dist/site-pages.js：主题、实验室、问题索引与内容建设路线。
+- dist/app.js：路由、搜索、本地进度、交互示例和代码复制。
+- dist/style.css、dist/course.css：桌面与手机阅读、浅色和深色主题。
+- dist/labs/ddp/：完整训练代码、启动器、比较器和中文手册。
+- scripts/build-training-assets.py：生成原创图、浏览器代码文本和实验 ZIP。
+- scripts/verify-lab.py：执行 CPU/Gloo 验收，写入实际验证记录。
+- scripts/check-content.cjs：检查文章标识、章节顺序和来源引用。
 
-新增文章时，在 content.js 的 articles 中填写唯一 id、已有 module ID、number、title、desc、level、tags、intro、sections、check 与 refs。sections 的 HTML 仅用于受信任的本地作者内容，不应直接接收用户提交的 HTML。refs 对应 sources 中的键。
+修改实验代码后先重跑相关验证，再运行资源生成器，避免正文和下载包不一致。
+不要将虚拟环境、检查点、运行日志或私有项目代码放进 dist。
 
-当前首页与侧栏的 8 / 12 为首版编辑文案；扩充模块或文章时同步更新，或改为读取数组长度。
+## 发布标准
 
-## 当前范围
+深入教程包含问题、前置知识、机制与取舍、图解、实验或明确标注的示例、失败场景、自我检验与官方来源。
+完整实验提供固定版本、命令、预期输出和验收条件。已执行、待验证与规划内容分别标示。
+规划不计入完成数量，基础导读不自动标为已验证教程。
 
-包含云基础、计算、VPC 与存储、Kubernetes 与交付、SLO 与排障、GPU 集群与并行训练、AI 平台工程和恢复设计实验。内容是入门讲解与设计型练习，并非完整生产部署教程。扩展效率的默认数值为练习输入，不是硬件基准。
-
-阅读进度、自检与主题只保存于当前浏览器 localStorage。没有后端账号或跨设备同步。字体从 Google Fonts 加载，无法访问时使用本地中文字体回退。
-
-## 参考与原创内容
-
-结构借鉴 https://caomaolufei.github.io/AIInfraGuide/ 的专题导航、章节树、正文与页内目录；未复制其文章、图片或品牌。本站文章为原创教学内容，各篇附官方资料链接。创建日期：2026-11-03。
+文章字段为 id、module、number、title、desc、level、tags、intro、sections、check、refs。
+训练专题另有 group、objectives、prereq、minutes。HTML 仅供可信本地作者使用，不直接接收用户输入。
+统计来自内容数组。新增章节后执行完整性检查。
 
 ## 验证
 
-已完成 JavaScript 语法与内容引用检查，验证章节导航、搜索、阅读进度持久化、主题切换、GPU 拓扑切换、扩展效率计算与无效输入提示，并检查桌面和手机布局。
+```sh
+node --check dist/app.js
+node --check dist/training-content.js
+node --check dist/training-advanced.js
+node --check dist/site-pages.js
+node scripts/check-content.cjs
+bash -n dist/labs/ddp/launch_2nodes.sh
+```
+
+在装有 PyTorch 2.5.1 的隔离 Python 环境中：
+
+```sh
+python scripts/verify-lab.py
+python scripts/build-training-assets.py
+```
+
+CPU 验收覆盖两进程训练、连续训练与恢复完整状态相等、无效累积参数和不兼容恢复被拒绝；还覆盖两端启动脚本的同机四进程模拟。
+本机合成任务的时间不是 GPU 或 LLM 基准。恢复仅支持固定 world size、固定配置、epoch 边界。
+
+## 行为与来源
+
+阅读进度、自我评估与主题只保存在当前浏览器。Google Fonts 不可用时回退本地字体。
+结构参考 https://caomaolufei.github.io/AIInfraGuide/ 的章节树、正文与页内目录；文章、图和实验代码原创。
+当前私有站点标识位于 .openai/hosting.json；更新复用同一站点，不改变访问范围。
