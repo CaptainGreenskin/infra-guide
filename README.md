@@ -7,13 +7,14 @@ Agent课程以通用机制为基础，Kairo作为独立实践载体；具体实�
 ## 内容与验证
 
 42章：Cloud 18、AI 15（训练10＋平台推理5）、Agent 6、综合实战3。
-17张原创SVG，完整代码与实验包，迁移练习、官方来源、交互SLO/KV容量计算器与因果注意力演示。
+18张原创SVG，完整代码与实验包，迁移练习、官方来源、交互SLO/KV容量计算器与因果注意力演示。
 每章沿问题、机制、具体例子、边界和验证展开。62个独立HTML页面，包含完整初始正文、canonical、分享元数据、结构化数据与sitemap。
 原hash文章URL自动转到独立页面，并保留section参数。
 
 实际证据：
 - dist/labs/ddp/validation.json：CPU/Gloo训练、完整状态恢复对照、错误配置拒绝及同机双启动代理模拟。
 - dist/labs/systems/validation.json：本地HTTP、版本提交、合成指标与契约、独立数据库间的Agent崩溃恢复。
+- dist/labs/ddp-step/validation.json：真实两进程CPU/Gloo单步实验，同量/非等量、关闭同步和全局分母修正；对照手算与单进程全局batch。
 - dist/labs/attention/validation.json：固定Q/K/V的因果注意力、前缀KV复用等价性、非等量有效样本归一化与有限差分对照；Python标准库数值实验。
 
 未验证：真实GPU/NCCL、GPU混合精度、多物理节点、Kubernetes、真实模型推理、Kairo、多worker/fencing与断电耐久性。
@@ -36,7 +37,7 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 src/page-shell.html维护页面外壳和脚本顺序；dist/index.html及各路由index.html是生成物，不直接编辑。
 脚本按依赖加载：原始模块与训练内容 → 实验文本 → curriculum公共定义 → Cloud/AI/Agent/实战章节 → finalize → 训练补充 → 页面与交互。
 curriculum-finalize.js保留训练章节，并用完整课程替换早期导读。
-training-deepening.js补充token到训练的桥梁、有效token归一化和KV复用边界。study-guides.js维护入门地图和面试复习。guided-lessons.js深化请求、生成和Agent任务三个样章，提供必要术语和面试追问。
+training-deepening.js补充token到训练的桥梁、有效token归一化和KV复用边界。study-guides.js维护入门地图和面试复习。guided-lessons.js深化请求、生成和Agent任务三个样章；guided-foundations.js深化资源、DDP与恢复。六章均有必要术语和面试追问。
 新增内容通过chapter()声明，含id、编号、前置知识、学习出口、正文、练习、来源和关联章节。
 HTML只供可信本地作者编写，不接收用户注入。
 
@@ -46,6 +47,8 @@ HTML只供可信本地作者编写，不接收用户注入。
 python3 scripts/build-system-labs.py
 python3 scripts/build-attention-assets.py
 python3 scripts/build-guided-diagrams.py
+python3 scripts/build-resource-diagram.py
+python3 scripts/build-ddp-step-assets.py
 node scripts/render-pages.cjs
 node scripts/check-content.cjs
 node scripts/check-public-pages.cjs
@@ -73,7 +76,9 @@ python3 scripts/build-system-labs.py --verify
 
 ## 渐进样章与后续迭代
 
-当前深入样章为1.1请求路径、7.3模型生成、9.1 Agent任务。它们采用同一个具体场景贯穿章节，必要术语就近解释，最后给出可展开的面试追问。
+当前深入样章为1.1请求路径、1.2资源与隔离、6.2 DDP与并行策略、7.3模型生成、9.1 Agent任务、9.2 Agent恢复。它们采用同一个具体场景贯穿章节，必要术语就近解释，最后给出可展开的面试追问。
 维护时先检查：为什么需要这个机制、输入/状态/输出如何变化、例子能否手算、反例推翻了哪个假设、哪些结论尚未在目标环境验证。
 类比须注明边界；图、表和代码使用一致的场景与数字。增加内容应弥补解释断层，不以字数或章节数作为质量目标。
-后续优先把资源与隔离、DDP通信、Agent恢复按同一方式逐章深化。其余章节已有机制、练习和来源，但不能据此声称都已完成本轮的渐进样章改写。
+后续候选为网络排查、显存预算、Agent权限，按实际理解卡点调整优先级。其余章节已有机制、练习和来源，但不能据此声称都已完成渐进样章改写。
+持续优化的阶段目标、读者验证与发布门槛见docs/IMPROVEMENT_PLAN.txt。
+DDP单步程序修改后，用安装PyTorch 2.5.1的Python运行scripts/build-ddp-step-assets.py --verify；普通打包会校验源码摘要。

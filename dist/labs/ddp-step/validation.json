@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-03T20:48:31+08:00",
+  "source_sha256": "95bf968ab58b08f40587dd93aaf459e9be65e455f586f9bca8da6190c6558783",
+  "report": {
+    "status": "passed",
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "platform": "Darwin arm64",
+    "backend": "gloo",
+    "dtype": "float64",
+    "world_size": 2,
+    "learning_rate": 0.1,
+    "initial_weight": 1.0,
+    "rank_results": [
+      [
+        {
+          "case": "equal_ddp",
+          "rank": 0,
+          "targets": [
+            0.0,
+            2.0
+          ],
+          "local_mean_loss": 0.5,
+          "gradient_after_backward": -1.0,
+          "weight_after_step": 1.1
+        },
+        {
+          "case": "equal_independent",
+          "rank": 0,
+          "targets": [
+            0.0,
+            2.0
+          ],
+          "local_mean_loss": 0.5,
+          "gradient_after_backward": 0.0,
+          "weight_after_step": 1.0
+        },
+        {
+          "case": "unequal_naive",
+          "rank": 0,
+          "targets": [
+            0.0
+          ],
+          "local_mean_loss": 0.5,
+          "gradient_after_backward": -0.5,
+          "weight_after_step": 1.05
+        },
+        {
+          "case": "unequal_corrected",
+          "rank": 0,
+          "targets": [
+            0.0
+          ],
+          "local_mean_loss": 0.5,
+          "gradient_after_backward": -1.25,
+          "weight_after_step": 1.125
+        }
+      ],
+      [
+        {
+          "case": "equal_ddp",
+          "rank": 1,
+          "targets": [
+            2.0,
+            4.0
+          ],
+          "local_mean_loss": 2.5,
+          "gradient_after_backward": -1.0,
+          "weight_after_step": 1.1
+        },
+        {
+          "case": "equal_independent",
+          "rank": 1,
+          "targets": [
+            2.0,
+            4.0
+          ],
+          "local_mean_loss": 2.5,
+          "gradient_after_backward": -2.0,
+          "weight_after_step": 1.2
+        },
+        {
+          "case": "unequal_naive",
+          "rank": 1,
+          "targets": [
+            3.0,
+            3.0,
+            3.0
+          ],
+          "local_mean_loss": 2.0,
+          "gradient_after_backward": -0.5,
+          "weight_after_step": 1.05
+        },
+        {
+          "case": "unequal_corrected",
+          "rank": 1,
+          "targets": [
+            3.0,
+            3.0,
+            3.0
+          ],
+          "local_mean_loss": 2.0,
+          "gradient_after_backward": -1.25,
+          "weight_after_step": 1.125
+        }
+      ]
+    ],
+    "serial_reference": {
+      "equal": {
+        "gradient": -1.0,
+        "weight_after_step": 1.1
+      },
+      "unequal": {
+        "gradient": -1.25,
+        "weight_after_step": 1.125
+      }
+    },
+    "scope": "Two real local CPU processes; one scalar parameter; one SGD update per case.",
+    "not_verified": [
+      "CUDA/NCCL",
+      "multiple physical nodes",
+      "performance scaling",
+      "large model convergence",
+      "gradient accumulation",
+      "uneven iteration counts"
+    ]
+  }
+}
