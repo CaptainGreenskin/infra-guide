@@ -1,0 +1,1 @@
+const diagramHeights={"agent-commit":720,"agent-execution":630,"artifact-commit":580,"causal-attention-map":548,"checkpoint-flow":450,"cloud-request":600,"cloud-training":490,"ddp-step":450,"inference-lifecycle":610,"k8s-reconcile":655,"memory-budget":415,"platform-lifecycle":590,"ranks":455,"resource-control":610,"slo-budget":630,"token-training-step":560};
