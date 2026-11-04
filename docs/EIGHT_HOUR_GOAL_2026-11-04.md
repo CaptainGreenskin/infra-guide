@@ -19,18 +19,18 @@
 |Cloud|k8s-storage|绑定、拓扑、访问模式、性能、完整备份与两Job复用PVC|第22轮实质重写|
 |Cloud|k8s-networking|DNS、Service转发、连接状态、回程和策略|第23轮实质重写|
 |Cloud|k8s-autoscaling|指标口径、控制延迟、稳定窗口与下游预算|第24轮实质重写|
-|Cloud|config-secrets|配置传播、重读、轮换兼容与撤销|待深入|
+|Cloud|config-secrets|配置传播、重读、轮换兼容与撤销|第25轮实质重写|
 |Cloud|serverless-execution|触发器确认、批次部分失败、重投与成本|待深入|
 |Cloud|resilience|故障域、恢复点、旧写者与消费者验收|待深入|
 |AI|model-serving|独立量化知识点、误差/字节/算子、行业方法及实测|第22轮实质补强|
-|AI|gpu-memory|训练状态、瞬时峰值、重计算/分片与微调账本|待实质补强；第22轮仅补关联段落|
+|AI|gpu-memory|训练状态、瞬时峰值、重计算/分片与微调账本|第25轮实质补强；第22轮关联段落不另计|
 |AI|data-pipeline|采样器、worker分流、尾批次、有效进展与恢复|第23轮实质重写|
 |AI|training-communication|集合通信的数值、调用次序、等待与故障边界|第24轮实质重写|
 |AI|gpu-scheduling|配额准入、碎片、拓扑、协同启动与队列|待深入|
 |AI|ai-lifecycle|完整产物、语义兼容、评估门禁与发布回退|待深入|
 |Agent|agent-memory|预算、结构化摘要、权威状态、版本与撤回|第22轮实质重写|
 |Agent|agent-runtime|任务与工具契约、类型、错误、循环与停止条件|第23轮实质重写；第22轮关联段落不另计|
-|Agent|agent-evaluation|任务集、评分器、负例、统计口径与结果有效性|待深入|
+|Agent|agent-evaluation|任务集、评分器、负例、统计口径与结果有效性|第25轮实质补强|
 |Agent|agent-observability|因果轨迹、尝试归因、等待与每成功任务成本|第24轮实质重写|
 |Agent|agent-sandbox|边界、资源、进程生命周期与本地验证限制|待深入|
 |Agent|agent-retrieval|真实检索过程、中文处理、融合、证据与版本|待深入|
@@ -46,3 +46,5 @@
 第23轮再实质重写3篇，累计6/18，每方向2篇。新增6张原创SVG、4个实际程序：真实TLS/HTTP、两rank/四worker数据加载、固定向量packing对照、十组HTTP工具循环。Cloud和AI均已超过两套新增实验；Agent有上下文状态和工具执行两套独立实验。固定输入实验不冒充真实模型、集群或Kairo验证。16项本地检查及Python3.9/3.12新检查通过；桌面和手机目录、放大图解、源码展开与整页溢出已实际检查。下一轮优先弹性控制、训练通信与Agent观测。
 
 第24轮累计9/18，每方向3篇。新增真实Prometheus规则、两rank集合操作及真实OpenTelemetry/HTTP实验，配6张原创图。17项检查、两个Python版本的新检查、桌面/手机目录与图解滚动通过。后续P1：搜索应优先实际正文直接命中，再考虑领域知识泛匹配；已有traceparent查询的UI证据。下一轮继续配置轮换、GPU显存与Agent评估。
+
+第25轮累计12/18，每方向4篇。配置一章系统重写；GPU显存保留原有AMP、五笔状态、峰值/FSDP推导，加入真实dtype、延迟优化器状态和重计算对象计数；Agent评估保留SQLite oracle与全部负例，加入类别与评分器校准、Wilson区间和同题成对比较。五个新程序分别验证真实文件/子进程、真实HTTP、CPU保留状态、CPU重计算及明确声明的合成统计输入。新增四张机制SVG与两张Matplotlib定量图，并修正全站图像宽高预留比例。18项本地检查、新检查的Python3.9/3.12复跑、手机正文与图解滚动通过；托管版本及公开下载继续按匹配源提交验收。其余未逐章复读项目仍标初筛，不把12篇补强等同于66篇审读完成。

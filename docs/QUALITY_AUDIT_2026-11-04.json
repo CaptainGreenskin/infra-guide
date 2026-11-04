@@ -115,10 +115,12 @@
       "id": "gpu-memory",
       "module": "training",
       "title": "GPU 显存与混合精度：建立可检查的预算",
-      "sections": 7,
-      "approx_visible_prose_characters": 4601,
-      "figures": 2,
-      "review": "linked_supplement_v22"
+      "sections": 11,
+      "approx_visible_prose_characters": 8312,
+      "figures": 4,
+      "review": "substantial_v25",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved AMP, five-buffer, FSDP and CUDA derivations; added actual dtype/lazy-state/alias accounting and deduplicated saved-storage recomputation, with numerical comparison."
     },
     {
       "id": "ddp-code",
@@ -295,10 +297,12 @@
       "id": "agent-evaluation",
       "module": "agent",
       "title": "Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本",
-      "sections": 8,
-      "approx_visible_prose_characters": 3745,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 12,
+      "approx_visible_prose_characters": 6576,
+      "figures": 2,
+      "review": "substantial_v25",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved independent SQLite oracle and negative probes; added class/grader calibration, task/trial/attempt units, Wilson assumptions and paired exact comparison using explicitly synthetic outcomes."
     },
     {
       "id": "kairo-practice",
@@ -476,9 +480,11 @@
       "module": "native",
       "title": "配置与密钥：传播、重读与版本生效",
       "sections": 7,
-      "approx_visible_prose_characters": 2872,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "approx_visible_prose_characters": 4369,
+      "figures": 2,
+      "review": "substantial_v25",
+      "reviewed_at": "2026-11-05",
+      "findings": "Reworked source/projection/active/authentication layers, coherent candidate publication, global budget, monotonic generation and protocol-specific rotation; actual POSIX/process and HTTP tests."
     },
     {
       "id": "k8s-autoscaling",

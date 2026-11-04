@@ -8,7 +8,12 @@ for (const lab of ['network-timing', 'permissions', 'interview-database', 'textb
  practiceEvidence[lab] = JSON.parse(fs.readFileSync(recordPath, 'utf8'));
 }
 fs.writeFileSync(path.join(dist, 'practice-evidence.js'), 'const practiceEvidence = '+JSON.stringify(practiceEvidence)+';\n');
-const diagramHeights={};for(const file of fs.readdirSync(path.join(dist,'diagrams')).filter(x=>x.endsWith('.svg'))){const v=fs.readFileSync(path.join(dist,'diagrams',file),'utf8').match(/viewBox="0 0 (\d+) (\d+)"/);if(v)diagramHeights[file.slice(0,-4)]=Number(v[2]);}fs.writeFileSync(path.join(dist,'diagram-sizes.js'),'const diagramHeights='+JSON.stringify(diagramHeights)+';\n');
+const diagramHeights={},diagramWidths={};
+for(const file of fs.readdirSync(path.join(dist,'diagrams')).filter(x=>x.endsWith('.svg'))){
+ const v=fs.readFileSync(path.join(dist,'diagrams',file),'utf8').match(/viewBox="0 0 (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)"/);
+ if(v){const name=file.slice(0,-4);diagramWidths[name]=Number(v[1]);diagramHeights[name]=Number(v[2]);}
+}
+fs.writeFileSync(path.join(dist,'diagram-sizes.js'),'const diagramHeights='+JSON.stringify(diagramHeights)+';\nconst diagramWidths='+JSON.stringify(diagramWidths)+';\n');
 const shell=fs.readFileSync(path.join(root,'src/page-shell.html'),'utf8');
 const scripts=[...shell.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]);
 // Returning readers must receive the matching scripts and styles for this HTML.
