@@ -1,0 +1,55 @@
+// Original self-checks. Employer sources below describe expectations, not these prompts.
+const codingReference = `def peak_jobs(intervals):
+    events = []
+    for start, end in intervals:
+        if end <= start:
+            raise ValueError("expected start < end")
+        events.extend([(start, 1), (end, -1)])
+    active = peak = 0
+    for _, delta in sorted(events):
+        active += delta
+        peak = max(peak, active)
+    return peak`;
+
+function mockInterviewPractice() {
+ return `<details class="interview-extra"><summary>做一轮模拟面试 · 编码、设计、项目各一题</summary>
+ <p>下面是本站原创练习。先在纸上或编辑器里作答，再展开核对。建议用时由本站设定。</p>
+ <h3>01　现场编码 · 20 分钟</h3>
+ <p>已完成作业以整数时间区间 [start, end) 记录，保证 start &lt; end，输入无序。返回同时运行作业数的峰值。例子 [(1,4), (2,4), (4,7)] 应得到 2。先说明在第 4 秒该如何计数。</p>
+ <details><summary>核对实现、复杂度和边界</summary>
+ ${trainingCode('Python 参考解 · 同一时刻先结束再开始', 'PYTHON', codingReference)}
+ <p>每个区间产生两个事件。元组排序让同一时刻的 −1 排在 +1 前面，结束于 4 的作业不会与开始于 4 的作业重叠。处理 n 个区间需要 O(n log n) 时间和 O(n) 额外空间。自测空输入 → 0，[(1,2),(2,3)] → 1，两个相同区间 → 2，再检查乱序和非法区间。</p></details>
+ <h3>02　系统设计 · 25 分钟</h3>
+ <p>四台各有 8 卡的机器，当前空闲卡数为 [8,4,4,0]。一个训练作业需要两台机器各提供 8 卡，四台机器都在同一网络域。画出提交、排队、整组准入、运行和恢复的路径。产品还要求小作业能及时开始。</p>
+ <details><summary>核对约束与追问</summary><p>空闲卡共 16 张，满足形状的机器却只有一台。先说明准入条件、资源预留与释放，再比较等待、回填或有约束的抢占。解释如何避免大作业长期饥饿。恢复要处理失败节点、checkpoint 和重复提交。验收至少比较排队时延、有效吞吐、恢复耗时与成本。追问：小作业实际运行时间超过估计，预留的第二台机器如何兑现？</p>
+ <a href="/article/gpu-scheduling/">对照 GPU 准入章节 →</a></details>
+ <h3>03　项目复盘 · 10 分钟</h3>
+ <p>选一件你亲手处理过的故障，写明用户影响、你负责的决定、被证据排除的一种解释，以及恢复后验证效果的指标。追问你为什么放弃另一个方案，哪个环节由同事负责。</p>
+ <details><summary>核对回答是否经得起追问</summary><p>标出你的行动和团队的行动，给出前后指标的口径与观察窗口。没有精确数据时说明当时保留下来的证据。最后再说一次，如果今天重做，会提前加哪条监测或演练。</p><a href="/article/incident/">对照故障时间线 →</a></details>
+ </details>`;
+}
+
+function interviewCoverage() {
+ const source = (url, label) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+ const chapter = (id, label) => `<a href="${articleURL(id)}">${label} →</a>`;
+ const capabilities = [
+  ['云 / SRE', '专项可练', chapter('network-diagnosis','分层排障')+'、'+chapter('incident','故障复盘')+'、'+chapter('slo','错误预算'), '再练一次故障现场排查、自动化修复脚本和容灾演练，补数据库性能诊断。'],
+  ['训练平台', '机制可练，规模待验', chapter('distributed-training','DDP 单步')+'、'+chapter('gpu-memory','显存预算')+'、'+chapter('multinode-lab','多机手册'), '用真实集群证明拓扑放置、抢占、恢复后的训练进度，留存各 rank 的吞吐和内存曲线。'],
+  ['推理 / 性能', '部分覆盖', chapter('model-serving','KV 缓存')+'、'+chapter('inference-performance','推理指标'), '还需练 PD 分离调度、框架源码、GPU profiling 和跨版本性能回归。'],
+  ['Agent 平台', '运行时可练', chapter('agent-recovery','工具恢复')+'、'+chapter('agent-security','权限实验')+'、'+chapter('agent-evaluation','任务评估'), '再做一次多租户沙箱的创建、诊断与回收，比较冷启动与热会话，验证跨任务隔离。'],
+  ['算法、编程与测试', '有一道模拟题', '下方「现场编码」有参考实现与边界用例。', '需系统练习哈希、树、图与复杂度，在限时条件下独立编码、测试并解释。'],
+  ['系统设计、数据库', '部分覆盖', chapter('production-readiness','设计评审')+'、'+chapter('distributed-systems','失败与重试'), '需补索引与事务隔离、分区复制和一致性取舍，再从需求澄清走到容量估算与故障设计。'],
+  ['个人项目与行为面', '有复盘提纲', chapter('incident','证据时间线')+'，下方有一题项目追问。', '准备自己的决策、分工、失败与量化结果，练习解释替代方案和实际代价。']
+ ];
+ return `<details class="interview-extra"><summary>面试覆盖对照 · 按岗位看本站能练什么</summary>
+ <p>截至 2026 年 11 月 4 日，本站可用于 Cloud/SRE、AI 平台和 Agent 运行时的专项复习。下表按现有章节、可答的练习和已跑的实验逐项判断。公开样本没有给出完整题库或各题频率，无法据此计算“大厂面试覆盖率”。</p>
+ ${trainingTable(['准备方向','本站深度','从哪里开始','还要独立完成什么'],capabilities)}
+ <h3>官方面试说明</h3>
+ <p>Amazon 的 SDE II 指南分别说明编码、系统设计和过往经历。Microsoft 的技术面试指南要求展示问题拆解、可运行的实现和测试，技术范围因岗位而异。两者适合用来检查通用准备环节。${source('https://amazon.jobs/content/en/how-we-hire/sde-ii-interview-prep','Amazon SDE II')} · ${source('https://careers.microsoft.com/v2/global/en/hiring-tips/technical-interviewing.html','Microsoft 技术面试')}</p>
+ <h3>官方岗位说明</h3>
+ <p>岗位职责提供能力样本。下面的题目和章节映射由本站编写。初学者可先学机制，有经验的候选人还需提供实际负责过的系统、规模和结果。</p>
+ <ul><li>腾讯 IaaS 计算产品 SRE 涵盖可观测、变更治理和容灾，要求开发及常见数据库性能排查能力。${source('https://careers.tencent.com/jobdesc.html?postId=2113177003082559488','腾讯 IaaS SRE')}</li>
+ <li>百度 AI Infra 平台强调工件追踪、拓扑感知调度及抢占恢复。腾讯推理框架岗位关注预填充与解码分离调度、异构芯片与推理成本。${source('https://talent.baidu.com/jobs/detail/SOCIAL/2216e7ae-f75d-4e7c-b14d-669a4171a1ff','百度 AI Infra 平台')} · ${source('https://careers.tencent.com/jobdesc.html?postId=2108854783036272640','腾讯推理框架')}</li>
+ <li>百度云原生 Agent Infra 涉及多租户隔离、沙箱编排与治理。AWS Agentic AI 把冷启动、资源利用、会话身份与跨账号访问列入工程职责。${source('https://talent.baidu.com/jobs/detail/SOCIAL/4b326f6b-2c39-461c-ae64-69b4201c680e','百度 Agent Infra')} · ${source('https://www.amazon.jobs/en/jobs/10584176/software-development-engineer-aws-agentic-ai','AWS Agentic AI')}</li></ul>
+ </details>`;
+}

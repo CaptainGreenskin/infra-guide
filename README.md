@@ -37,7 +37,7 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 src/page-shell.html维护页面外壳和脚本顺序；dist/index.html及各路由index.html是生成物，不直接编辑。
 脚本按依赖加载：原始模块与训练内容 → 实验文本 → curriculum公共定义 → Cloud/AI/Agent/实战章节 → finalize → 训练补充 → 页面与交互。
 curriculum-finalize.js保留训练章节，并用完整课程替换早期导读。
-training-deepening.js补充token到训练的桥梁、有效token归一化和KV复用边界。study-guides.js维护入门地图和面试复习。guided-lessons.js深化请求、生成和Agent任务三个样章；guided-foundations.js深化资源、DDP与恢复。六章均有必要术语和面试追问。
+training-deepening.js补充token到训练的桥梁、有效token归一化和KV复用边界。study-guides.js维护入门地图和面试复习。guided-lessons.js深化请求、生成和Agent任务三个样章；guided-foundations.js深化资源、DDP与恢复。guided-diagnostics.js 深化网络排查、显存预算和 Agent 权限。九章均有必要术语和面试追问。
 新增内容通过chapter()声明，含id、编号、前置知识、学习出口、正文、练习、来源和关联章节。
 HTML只供可信本地作者编写，不接收用户注入。
 
@@ -79,6 +79,8 @@ python3 scripts/build-system-labs.py --verify
 当前深入样章为1.1请求路径、1.2资源与隔离、6.2 DDP与并行策略、7.3模型生成、9.1 Agent任务、9.2 Agent恢复。它们采用同一个具体场景贯穿章节，必要术语就近解释，最后给出可展开的面试追问。
 维护时先检查：为什么需要这个机制、输入/状态/输出如何变化、例子能否手算、反例推翻了哪个假设、哪些结论尚未在目标环境验证。
 类比须注明边界；图、表和代码使用一致的场景与数字。增加内容应弥补解释断层，不以字数或章节数作为质量目标。
-后续候选为网络排查、显存预算、Agent权限，按实际理解卡点调整优先级。其余章节已有机制、练习和来源，但不能据此声称都已完成渐进样章改写。
+网络排查、显存预算和 Agent 权限已完成本轮深化。面试准备后续优先补编码、数据库诊断及完整设计练习，再按读者的实际卡点调整。其余章节已有机制、练习和来源，但不能据此声称都已完成渐进样章改写。
 持续优化的阶段目标、读者验证与发布门槛见docs/IMPROVEMENT_PLAN.txt。
 DDP单步程序修改后，用安装PyTorch 2.5.1的Python运行scripts/build-ddp-step-assets.py --verify；普通打包会校验源码摘要。
+
+2026-11-04：新增网络排查、显存预算、Agent 权限导读。用 `python3 dist/labs/network-timing/timing_lab.py` 和 `python3 dist/labs/permissions/policy_lab.py` 复跑本地实验。提交新的 validation.json 后运行 `node scripts/render-pages.cjs`，页面用同一份记录生成。

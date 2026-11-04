@@ -23,7 +23,7 @@ assert.equal(new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].m
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
 assert.equal((interview.match(/<dt>说明边界<\/dt>/g)||[]).length,12);
-for(const id of ['cloud-overview','model-serving','agent-runtime','linux-resource','distributed-training','agent-recovery']){const page=fs.readFileSync(path.join(dist,'article',id,'index.html'),'utf8');assert(page.includes('class="guided-intro"'));assert(page.includes('class="guided-contract"'));assert(page.includes('合上页面，试着讲清楚'));assert(page.includes('第一次遇到这些词'));assert(page.includes('展开推理，检查遗漏'))}
+for(const id of ['cloud-overview','model-serving','agent-runtime','linux-resource','distributed-training','agent-recovery','network-diagnosis','gpu-memory','agent-security']){const page=fs.readFileSync(path.join(dist,'article',id,'index.html'),'utf8');assert(page.includes('class="guided-intro"'));assert(page.includes('class="guided-contract"'));assert(page.includes('合上页面，试着讲清楚'));assert(page.includes('第一次遇到这些词'));assert(page.includes('展开推理，检查遗漏'))}
 const ctx={};vm.createContext(ctx);for(const f of ['attention-files.js','attention-interactive.js'])vm.runInContext(fs.readFileSync(path.join(dist,f),'utf8'),ctx);
 for(let i=0;i<4;i++){
  const values=vm.runInContext(`({actual:attentionExample(${i},true,false),expected:attentionValidation.report.attention.output[${i}]})`,ctx);
@@ -42,4 +42,31 @@ assert.equal(ddpRecord.report.world_size,2);
 assert.equal(ddpRecord.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/ddp-step/ddp_step.py'))).digest('hex'));
 assert.equal(ddpRecord.report.rank_results.length,2);
 for(const rows of ddpRecord.report.rank_results){assert.equal(rows.length,4);assert(Math.abs(rows[0].weight_after_step-1.1)<1e-12);assert(Math.abs(rows[3].weight_after_step-1.125)<1e-12)}
-console.log('PASS: six guided chapters and source-matched two-process DDP evidence.');
+console.log('PASS: nine guided chapters and source-matched two-process DDP evidence.');
+
+for (const [directory, script] of [['network-timing', 'timing_lab.py'], ['permissions', 'policy_lab.py']]) {
+ const folder = path.join(dist, 'labs', directory);
+ const report = JSON.parse(fs.readFileSync(path.join(folder, 'validation.json'), 'utf8'));
+ assert.equal(report.status, 'passed');
+ assert.equal(report.source_sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(folder, script))).digest('hex'));
+}
+for (const [id, section] of [['network-diagnosis', 7], ['agent-security', 8]]) {
+ const page = fs.readFileSync(path.join(dist, 'article', id, 'index.html'), 'utf8');
+ assert(page.includes('id="section-'+section+'"><h2><span class="section-index">0'+section+'</span>本地实验'), id+': lab entry target');
+}
+console.log('PASS: timing, authorization evidence and lab deep links.');
+for (const [route, total, mustContain, mustOmit] of [
+ ['/module/training', 15, 'model-serving', 'linux-resource'],
+ ['/article/network-diagnosis', 18, 'linux-resource', 'gpu-memory'],
+ ['/article/agent-security', 6, 'agent-runtime', 'gpu-cluster'],
+ ['/module/practice', 3, 'production-readiness', 'agent-runtime']
+]) {
+ const sidebar = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8')
+   .match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];
+ assert(sidebar.includes(total+' 章') && sidebar.includes('本主题阅读进度'));
+ assert(sidebar.includes('/article/'+mustContain+'/') && !sidebar.includes('/article/'+mustOmit+'/'));
+ assert.equal((sidebar.match(/href="\/article\//g) || []).length, total);
+ assert.equal((sidebar.match(/aria-current="page"/g) || []).length, 1);
+}
+assert(interview.includes('面试覆盖对照') && interview.includes('现场编码') && interview.includes('careers.microsoft.com'));
+console.log('PASS: topic-specific sidebar, current page highlight, interview scope and mock prompts.');

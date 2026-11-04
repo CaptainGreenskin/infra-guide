@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "injected_delay_ms": 150.0,
+  "samples": [
+    {
+      "path": "/late-headers",
+      "http_status": 200,
+      "bytes": 5,
+      "connect_to_first_byte_ms": 155.857,
+      "first_byte_to_end_ms": 0.144
+    },
+    {
+      "path": "/late-body",
+      "http_status": 200,
+      "bytes": 5,
+      "connect_to_first_byte_ms": 0.61,
+      "first_byte_to_end_ms": 155.607
+    }
+  ],
+  "source_sha256": "746143b3dd5914a8f821f5cfb6dfb1c719aba21379ab860ce08c5442f6b88c57",
+  "scope": "loopback, plain HTTP/1.1, fresh connection per request, no DNS/TLS diagnosis"
+}
