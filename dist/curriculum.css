@@ -19,3 +19,24 @@
 .sample-paths{margin:26px 0 34px}.sample-paths h2{font-size:19px;margin:0 0 12px}.sample-paths>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.sample-paths article{border-top:2px solid var(--blue);padding:12px 0}.sample-paths small{display:block;color:var(--muted);margin-bottom:7px}.sample-paths a,.practice-links a{color:var(--blue);font-size:13px}.sample-paths a{display:block;padding:5px 0}.practice-links{display:flex;gap:8px 24px;flex-wrap:wrap}.sample-paths a:hover,.practice-links a:hover{text-decoration:underline}@media(max-width:720px){.sample-paths>div{grid-template-columns:1fr;gap:0}.sample-paths article{border-top:1px solid var(--line)}}
 
 .interview-extra{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:16px 20px;margin:16px 0}.interview-extra summary{cursor:pointer;font-weight:600;color:var(--blue);font-size:14px}.interview-extra p,.interview-extra li{font-size:14px;line-height:1.85}.interview-extra h3{font-size:16px;margin:24px 0 6px}.interview-extra details{border-left:2px solid var(--line);padding:4px 0 4px 14px}.interview-extra a{color:var(--blue)}.interview-extra .table-wrap a{display:inline-block}.interview-extra .table-wrap td{min-width:100px;vertical-align:top}.interview-extra .table-wrap th{white-space:normal}
+
+.priority-map,.interview-entry{border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:8px;padding:20px 24px;background:var(--surface);margin:16px 0 26px}
+.priority-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.priority-intro small,.interview-entry small{color:var(--muted);font-size:11px}
+.priority-map h2,.interview-entry h2{margin:5px 0 10px;font-size:22px}
+.priority-map ol{list-style:none;margin:12px 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.priority-map li{border-top:1px solid var(--line);padding:12px 0}.priority-map li>*{display:block}
+.priority-map li b{color:var(--blue);font-size:12px}.priority-map li strong{font-size:16px;margin:7px 0}.priority-map li span,.interview-entry p{color:var(--muted);font-size:14px;line-height:1.8}
+.path-links,.unit-links,.workshop-nav{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.path-links a:not(.btn),.unit-links a,.priority-intro>a,.review-rounds a,.workshop-body a,.design-workshop a,.company-sample a{color:var(--blue)}
+.path-links,.unit-links,.priority-intro>a{font-size:13px}.unit-links{margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.workshop-nav{border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:22px;font-size:13px}.workshop-nav a{padding:4px 0;color:var(--muted)}.workshop-nav [aria-current]{color:var(--blue);border-bottom:2px solid var(--blue)}
+.session-list,.review-rounds{padding-left:0;list-style:none}.session-list li{display:flex;gap:17px;border-top:1px solid var(--line);padding:16px 0}.session-list li>small{color:var(--blue);font:15px monospace;padding-top:6px}
+.session-list h3,.role-sequence h3{margin:0 0 5px}.session-list p,.role-sequence p,.review-rounds li,.workshop-body p,.company-sample p{font-size:14px;line-height:1.85;margin:8px 0}.pass-gate b{color:var(--blue)}
+.role-sequence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.role-sequence section{border-top:2px solid var(--line);padding:12px 0}
+.plan-content,.workshop-body,.company-sample,.design-workshop{max-width:880px}.workshop-body details,.company-sample details{border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:14px 0;background:var(--surface)}
+.workshop-body summary,.company-sample summary{cursor:pointer;color:var(--blue);font-weight:600;font-size:14px}.workshop-return{margin:26px 0}.outline-tree .chapter-priority{display:inline-block;font-size:10px;margin-right:6px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px}
+@media(max-width:720px){.priority-map ol,.role-sequence{grid-template-columns:1fr;gap:0}.priority-map,.interview-entry{padding:16px}.priority-map li{padding:8px 0}.priority-map li b,.priority-map li strong{display:inline;margin-right:8px}.priority-map li span{margin-top:2px}}
+.role-row{margin:20px 0;padding:16px 0;border-top:1px solid var(--line)}.role-row>span{font-size:12px;color:var(--blue)}.role-row h3{margin:6px 0}.company-sample td{min-width:110px}.company-sample td small{font-size:10px}
+
+.plan-jumps{display:flex;gap:12px 22px;flex-wrap:wrap;margin:16px 0}.plan-jumps a{color:var(--blue);font-size:14px}.plan-content h2[id]{scroll-margin-top:95px}

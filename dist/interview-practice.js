@@ -37,8 +37,8 @@ function interviewCoverage() {
   ['训练平台', '机制可练，规模待验', chapter('distributed-training','DDP 单步')+'、'+chapter('gpu-memory','显存预算')+'、'+chapter('multinode-lab','多机手册'), '用真实集群证明拓扑放置、抢占、恢复后的训练进度，留存各 rank 的吞吐和内存曲线。'],
   ['推理 / 性能', '部分覆盖', chapter('model-serving','KV 缓存')+'、'+chapter('inference-performance','推理指标'), '还需练 PD 分离调度、框架源码、GPU profiling 和跨版本性能回归。'],
   ['Agent 平台', '运行时可练', chapter('agent-recovery','工具恢复')+'、'+chapter('agent-security','权限实验')+'、'+chapter('agent-evaluation','任务评估'), '再做一次多租户沙箱的创建、诊断与回收，比较冷启动与热会话，验证跨任务隔离。'],
-  ['算法、编程与测试', '有一道模拟题', '下方「现场编码」有参考实现与边界用例。', '需系统练习哈希、树、图与复杂度，在限时条件下独立编码、测试并解释。'],
-  ['系统设计、数据库', '部分覆盖', chapter('production-readiness','设计评审')+'、'+chapter('distributed-systems','失败与重试'), '需补索引与事务隔离、分区复制和一致性取舍，再从需求澄清走到容量估算与故障设计。'],
+  ['算法、编程与测试', '有排序与图两题', '<a href="/interview/coding/">依赖排序与本地判题 →</a>，下方另有作业峰值题。', '需系统练习哈希、树、图与复杂度，在限时条件下独立编码、测试并解释。'],
+  ['系统设计、数据库', '部分覆盖', '<a href="/interview/database/">查询计划与事务快照 →</a> · <a href="/interview/design/">整组容量设计 →</a>', '继续补目标引擎的锁等待、分区复制和一致性取舍，并在真实负载中验证设计。'],
   ['个人项目与行为面', '有复盘提纲', chapter('incident','证据时间线')+'，下方有一题项目追问。', '准备自己的决策、分工、失败与量化结果，练习解释替代方案和实际代价。']
  ];
  return `<details class="interview-extra"><summary>面试覆盖对照 · 按岗位看本站能练什么</summary>

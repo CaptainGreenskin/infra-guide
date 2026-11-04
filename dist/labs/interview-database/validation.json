@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "sqlite": "3.51.0",
+  "rows": 16000,
+  "tenant_rows": 500,
+  "matched_rows": 333,
+  "plans": [
+    {
+      "stage": "no_secondary_index",
+      "plan": [
+        "SCAN jobs",
+        "USE TEMP B-TREE FOR ORDER BY"
+      ],
+      "result_ids": [
+        15943,
+        15911,
+        15847,
+        15815,
+        15751
+      ]
+    },
+    {
+      "stage": "tenant_only",
+      "plan": [
+        "SEARCH jobs USING INDEX jobs_tenant (tenant_id=?)",
+        "USE TEMP B-TREE FOR ORDER BY"
+      ],
+      "result_ids": [
+        15943,
+        15911,
+        15847,
+        15815,
+        15751
+      ]
+    },
+    {
+      "stage": "query_index",
+      "plan": [
+        "SEARCH jobs USING COVERING INDEX jobs_list (tenant_id=? AND state=?)"
+      ],
+      "result_ids": [
+        15943,
+        15911,
+        15847,
+        15815,
+        15751
+      ]
+    }
+  ],
+  "snapshot_reads": [
+    "queued",
+    "queued",
+    "running"
+  ],
+  "journal_mode": "wal",
+  "source_sha256": "c2b97a5885615cc72091b919198f297b5862ba46f3e2c6912251c281cf892643"
+}

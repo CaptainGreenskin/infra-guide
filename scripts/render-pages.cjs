@@ -3,7 +3,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
 const practiceEvidence = {};
-for (const lab of ['network-timing', 'permissions']) {
+for (const lab of ['network-timing', 'permissions', 'interview-database']) {
  const recordPath = path.join(dist, 'labs', lab, 'validation.json');
  practiceEvidence[lab] = JSON.parse(fs.readFileSync(recordPath, 'utf8'));
 }
@@ -25,17 +25,17 @@ const document={title:'',documentElement:{classList:{toggle:noop}},addEventListe
 const context={document,window:{addEventListener:noop,scrollTo:noop},location:{pathname:'/',search:'',hash:'',replace:noop},history:{},localStorage:{getItem:()=>null},URLSearchParams,requestAnimationFrame:noop,IntersectionObserver:class{observe(){}disconnect(){}}};
 vm.createContext(context);
 for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
-const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin})',context);
-const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
+const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits})',context);
+const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
 const revisedRoutes = new Set(['/outline/', '/interview/', '/labs/', '/track/cloud/', '/track/ai/', '/track/agent/', '/article/network-diagnosis/', '/article/gpu-memory/', '/article/agent-security/']);
-const lastModified = route => revisedRoutes.has(route) ? '2026-11-04' : '2026-11-03';
+const lastModified = route => (revisedRoutes.has(route) || route.startsWith('/interview/')) ? '2026-11-04' : '2026-11-03';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 for(const entry of routes){
  sink.innerHTML='';grid.innerHTML='';context.location.pathname=entry.route;
  vm.runInContext(entry.call,context);
  let body=sink.innerHTML.replace('<div class="module-grid" id="module-grid"></div>','<div class="module-grid" id="module-grid">'+grid.innerHTML+'</div>');
  const url=data.publicSiteOrigin+entry.route;
- const description=entry.article?.desc||({ '/':'给初学者与面试准备者的Cloud、AI和Agent基础设施指南：12个核心主题、面试回答框架、42章深入讲解与可运行实验。','/start/':'选择初学者大纲、面试复习或系统学习，再用SLO、KV缓存或Agent恢复实验验证理解。','/outline/':'用30分钟建立Cloud、AI和Agent Infra的知识地图，浏览12个核心主题和可展开的42章完整学习大纲。','/interview/':'用12个核心问题复习Cloud、AI和Agent Infra：结论、机制、例子、边界与追问，附深入章节和本地自评记录。' }[entry.route])||'InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。';
+ const description=entry.article?.desc||entry.description||({ '/':'给初学者与面试准备者的Cloud、AI和Agent基础设施指南：12个核心主题、面试回答框架、42章深入讲解与可运行实验。','/start/':'选择初学者大纲、面试复习或系统学习，再用SLO、KV缓存或Agent恢复实验验证理解。','/outline/':'用30分钟建立Cloud、AI和Agent Infra的知识地图，浏览12个核心主题和可展开的42章完整学习大纲。','/interview/':'用12个核心问题复习Cloud、AI和Agent Infra：结论、机制、例子、边界与追问，附深入章节和本地自评记录。' }[entry.route])||'InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。';
  const title=document.title;
  const schema=entry.article?{'@context':'https://schema.org','@type':'TechArticle',headline:entry.article.title,description,inLanguage:'zh-CN',url,mainEntityOfPage:url,dateModified:lastModified(entry.route),author:{'@type':'Organization',name:'InfraGuide'},isAccessibleForFree:true}:{'@context':'https://schema.org','@type':'WebPage',name:title,description,url,inLanguage:'zh-CN'};
  let html=versionedShell.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(title)+'</title>').replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(description)+'">').replace(/<!-- APP_START -->[\s\S]*?<!-- APP_END -->/,'<!-- APP_START --><div id="app">'+body+'</div><!-- APP_END -->');
