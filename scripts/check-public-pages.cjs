@@ -19,7 +19,9 @@ for(const url of urls){
 }
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
-assert.equal(new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size,66);
+const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
+assert.equal(outlineChapterCount,66);
+assert(outline.includes("下方完整大纲把"+outlineChapterCount+"章组织成可逐步展开的路径。"),"outline introduction must agree with its actual chapter links");
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
 assert.equal((interview.match(/<dt>说明边界<\/dt>/g)||[]).length,12);

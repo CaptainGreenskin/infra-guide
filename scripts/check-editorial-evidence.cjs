@@ -59,6 +59,8 @@ const fresh=JSON.parse(read('docs/QUALITY_AUDIT_2026-11-04.json'));
 const signature=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const currentPoints=JSON.parse(JSON.stringify(vm.runInContext(`cloudKnowledgeDomains.flatMap(d=>d.points.map(p=>({module:d.module,id:p[0],title:p[1],lead:p[2],body:cloudKnowledgeExplanations[p[0]]||'',boundary:p[3],articles:p[4]}))).concat(infraKnowledgeDomains.flatMap(d=>d.points.map(p=>({module:d.module,...p}))))`,ctx)));
 const reviewed=fresh.chapters.filter(x=>/^(substantial_v\d+|fresh_review_v\d+)$/.test(x.review));
+const substantial=fresh.chapters.filter(x=>/^substantial_v\d+$/.test(x.review));
+assert.equal(fresh.eight_hour_progress.substantial_chapters,substantial.length,'substantial chapter summary must match distinct reviewed chapter entries');
 for(const row of reviewed){const a=data.articles.find(a=>a.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:a.title,sections:a.sections}),row.id+': changed after recorded review');}
 const reviewedPoints=(fresh.knowledge_reviews||[]).filter(x=>/^fresh_review_v\d+$/.test(x.review));
 for(const row of reviewedPoints){const p=currentPoints.find(p=>p.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:p.title,lead:p.lead,body:p.body,boundary:p.boundary||'',articles:p.articles}),row.id+': changed after recorded review');}

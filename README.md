@@ -15,6 +15,8 @@
 
 当前66章：Cloud 28、AI 25、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
 
+本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
+
 ## 配套独立项目
 
 从 [自动微分与训练](https://captaingreenskin.github.io/infra-guide/article/autograd-training/) 或 [Transformer 模块](https://captaingreenskin.github.io/infra-guide/article/transformer-block/) 读到梯度更新和因果注意力时，可以转到 [One GPU LM](https://github.com/CaptainGreenskin/one-gpu-lm)，跟着实验从随机权重训练一个中文小模型。训练代码与原始结果由该仓库维护。[首次 RTX PRO 6000 实测](https://github.com/CaptainGreenskin/one-gpu-lm/tree/main/experiments/002-first-train/results/pro6000-first) 记录了 100 步训练的吞吐、显存和验证损失。
