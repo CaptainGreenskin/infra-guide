@@ -198,10 +198,12 @@
       "id": "gpu-scheduling",
       "module": "platform",
       "title": "GPU队列与调度：从配额准入到拓扑可行性",
-      "sections": 7,
-      "approx_visible_prose_characters": 2945,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 10,
+      "approx_visible_prose_characters": 5043,
+      "figures": 2,
+      "review": "substantial_v26",
+      "reviewed_at": "2026-11-05",
+      "findings": "Reworked admission/placement/readiness distinction, quota arithmetic, finite shape/greedy counterexamples, actual two-process atomic group reservation/rollback and backfill/preemption costs."
     },
     {
       "id": "model-serving",
@@ -344,10 +346,12 @@
       "id": "agent-sandbox",
       "module": "agent",
       "title": "Agent 沙箱：隔离、资源与生命周期",
-      "sections": 9,
-      "approx_visible_prose_characters": 3726,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 12,
+      "approx_visible_prose_characters": 8036,
+      "figures": 3,
+      "review": "substantial_v26",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved original source and capacity model; added actual inheritance/path counterexamples, POSIX CPU/FD/file/wall limits, cgroup scope and Linux/Pod control fields without claiming container isolation."
     },
     {
       "id": "cloud-overview",
@@ -499,10 +503,12 @@
       "id": "serverless-execution",
       "module": "serverless",
       "title": "Serverless 与事件驱动：执行、重试、幂等与成本",
-      "sections": 9,
-      "approx_visible_prose_characters": 3152,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 13,
+      "approx_visible_prose_characters": 6231,
+      "figures": 2,
+      "review": "substantial_v26",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved existing batch/crash experiment; reordered knowledge before cases and added three delivery identities, visibility versus effect fencing, renewal and four partial/FIFO response paths."
     },
     {
       "id": "delivery",

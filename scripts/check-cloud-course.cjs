@@ -22,6 +22,8 @@ const page=fs.readFileSync('dist/interview/experiences/index.html','utf8');
 assert.equal((page.match(/class="experience-question"/g)||[]).length,29);
 assert.equal((page.match(/class="experience-source"/g)||[]).length,15);
 for(const id of ['container-runtime','k8s-workloads','k8s-networking','k8s-storage','k8s-autoscaling','serverless-execution']){
- const a=articles.find(a=>a.id===id);assert(a.sections.length>=7&&a.refs.length>=3);assert(a.textbook&&a.updated==='2026.11.04');
+ const a=articles.find(a=>a.id===id);assert(a.sections.length>=7&&a.refs.length>=3);assert(a.textbook);
+ const iso=String(a.updated).replaceAll('.','-'),date=new Date(iso+'T00:00:00Z');
+ assert(/^\d{4}\.\d{2}\.\d{2}$/.test(a.updated)&&!Number.isNaN(date.valueOf())&&date.toISOString().slice(0,10)===iso&&a.updated>='2026.11.04',id+': invalid or regressed update date');
 }
 console.log('PASS: P0 prerequisites + 9 Cloud fields / 28 chapters, 15 role samples / 14 sources / 29 review groups, 7 source-matched local checks and 7 offline-validated Kubernetes objects.');

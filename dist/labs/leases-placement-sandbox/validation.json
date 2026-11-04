@@ -1,0 +1,409 @@
+{
+  "verified_at_utc": "2026-11-04T16:51:48.453193+00:00",
+  "python": "3.9.6",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "visibility_receipts.py": {
+      "sha256": "96e6b8bff046f6ee27cfda8032670d9a91e66bdb2dd101c243d40d68e04d211a",
+      "exit_code": 0,
+      "result": {
+        "clock": "controlled_integer_seconds_not_elapsed_cloud_time",
+        "controlled_timeline": [
+          {
+            "at": 0,
+            "event": "receive_first"
+          },
+          {
+            "at": 31,
+            "event": "receive_second"
+          },
+          {
+            "at": 32,
+            "event": "old_executor_applies_and_stale_ack_is_rejected"
+          },
+          {
+            "at": 33,
+            "event": "new_executor_reuses_and_acknowledges"
+          }
+        ],
+        "first_receive": {
+          "message_id": "msg-A",
+          "event_id": "report-27",
+          "total": 37,
+          "epoch": 1,
+          "receipt_handle": "msg-A:1",
+          "visible_at": 30
+        },
+        "second_receive": {
+          "message_id": "msg-A",
+          "event_id": "report-27",
+          "total": 37,
+          "epoch": 2,
+          "receipt_handle": "msg-A:2",
+          "visible_at": 61
+        },
+        "old_worker_can_commit_after_visibility_expiry": {
+          "duplicate": false,
+          "total": 37
+        },
+        "new_worker_reuses_business_receipt": {
+          "duplicate": true,
+          "total": 37
+        },
+        "stale_ack_accepted": false,
+        "current_ack_accepted": true,
+        "republished_transport_same_business": {
+          "duplicate": true,
+          "total": 37
+        },
+        "same_id_changed_intent_rejected": true,
+        "effects": [
+          [
+            "report-27",
+            37
+          ]
+        ],
+        "renewal": {
+          "extended_at": 20,
+          "new_visible_at": 50,
+          "hidden_at_31": true,
+          "next_receive_at": 51,
+          "new_epoch": 2,
+          "stale_extend_rejected": true
+        },
+        "scope": "actual_SQLite_transactions_bounded_queue_reference_not_SQS_or_Lambda",
+        "limits": [
+          "visibility is not execution cancellation or effect fencing",
+          "strict stale ACK rejection is this reference contract, not SQS wire behavior",
+          "business effect and inbox share one local DB transaction; no remote API atomicity claim"
+        ]
+      }
+    },
+    "batch_response_reference.py": {
+      "sha256": "24d92e41aa6c6508b622f0d635f7a93324abaa9a72ac3195d175a3e9e1efa70b",
+      "exit_code": 0,
+      "result": {
+        "fixture": "declared_A_success_B_failure_C_success_or_unprocessed",
+        "cases": {
+          "standard_partial": {
+            "partial_enabled": true,
+            "fifo_stop_after_failure": false,
+            "handler_raises_after_processing": false,
+            "processed": [
+              "msg-A",
+              "msg-B",
+              "msg-C"
+            ],
+            "effects": [
+              "msg-A",
+              "msg-C"
+            ],
+            "normal_response_if_returned": {
+              "batchItemFailures": [
+                {
+                  "itemIdentifier": "msg-B"
+                }
+              ]
+            },
+            "transport_retries": [
+              "msg-B"
+            ],
+            "acknowledged": [
+              "msg-A",
+              "msg-C"
+            ],
+            "acknowledged_without_effect": []
+          },
+          "partial_not_enabled": {
+            "partial_enabled": false,
+            "fifo_stop_after_failure": false,
+            "handler_raises_after_processing": false,
+            "processed": [
+              "msg-A",
+              "msg-B",
+              "msg-C"
+            ],
+            "effects": [
+              "msg-A",
+              "msg-C"
+            ],
+            "normal_response_if_returned": {
+              "batchItemFailures": [
+                {
+                  "itemIdentifier": "msg-B"
+                }
+              ]
+            },
+            "transport_retries": [],
+            "acknowledged": [
+              "msg-A",
+              "msg-B",
+              "msg-C"
+            ],
+            "acknowledged_without_effect": [
+              "msg-B"
+            ]
+          },
+          "handler_raises": {
+            "partial_enabled": true,
+            "fifo_stop_after_failure": false,
+            "handler_raises_after_processing": true,
+            "processed": [
+              "msg-A",
+              "msg-B",
+              "msg-C"
+            ],
+            "effects": [
+              "msg-A",
+              "msg-C"
+            ],
+            "normal_response_if_returned": {
+              "batchItemFailures": [
+                {
+                  "itemIdentifier": "msg-B"
+                }
+              ]
+            },
+            "transport_retries": [
+              "msg-A",
+              "msg-B",
+              "msg-C"
+            ],
+            "acknowledged": [],
+            "acknowledged_without_effect": []
+          },
+          "fifo_stop": {
+            "partial_enabled": true,
+            "fifo_stop_after_failure": true,
+            "handler_raises_after_processing": false,
+            "processed": [
+              "msg-A",
+              "msg-B"
+            ],
+            "effects": [
+              "msg-A"
+            ],
+            "normal_response_if_returned": {
+              "batchItemFailures": [
+                {
+                  "itemIdentifier": "msg-B"
+                },
+                {
+                  "itemIdentifier": "msg-C"
+                }
+              ]
+            },
+            "transport_retries": [
+              "msg-B",
+              "msg-C"
+            ],
+            "acknowledged": [
+              "msg-A"
+            ],
+            "acknowledged_without_effect": []
+          }
+        },
+        "scope": "bounded_policy_reference_not_Lambda_or_SQS_execution",
+        "note": "Only the enabled mapping interprets the normal partial response; an exception fails the whole batch."
+      }
+    },
+    "placement_reservations.py": {
+      "sha256": "15705db9598cff41f4fdfacefcdc45c987367cd40b325c7e5c5cbdaaef7fee47",
+      "exit_code": 0,
+      "result": {
+        "resource_kind": "declared_integer_gpu_slots_not_devices",
+        "finite_search": {
+          "free_gpu_slots": [
+            8,
+            4,
+            4,
+            0
+          ],
+          "workers_8_8": null,
+          "workers_8_4_4": [
+            "n1",
+            "n2",
+            "n3"
+          ],
+          "quota_borrow_8": {
+            "used_after": 28,
+            "borrow_required": 12,
+            "borrowing_limit": 8,
+            "lending_available": 12,
+            "quota_allowed": false
+          },
+          "quota_borrow_12": {
+            "used_after": 28,
+            "borrow_required": 12,
+            "borrowing_limit": 12,
+            "lending_available": 12,
+            "quota_allowed": true
+          },
+          "greedy_4_then_8": null,
+          "search_4_then_8": [
+            "n2",
+            "n1"
+          ],
+          "rack_required": null,
+          "rack_unconstrained": [
+            "n1",
+            "n2"
+          ],
+          "wrong_flavor": null,
+          "cpu_short": null,
+          "memory_short": null
+        },
+        "group_reservation": {
+          "injected_after_first_node": "injected_rollback",
+          "rollback_state": {
+            "nodes": [
+              {
+                "name": "node-1",
+                "free": 8,
+                "version": 0
+              },
+              {
+                "name": "node-2",
+                "free": 8,
+                "version": 0
+              }
+            ],
+            "quota_used": 0,
+            "allocations": []
+          },
+          "contenders": [
+            {
+              "job": "job-X",
+              "result": "stale_snapshot"
+            },
+            {
+              "job": "job-Y",
+              "result": "admitted"
+            }
+          ],
+          "committed_state": {
+            "nodes": [
+              {
+                "name": "node-1",
+                "free": 0,
+                "version": 1
+              },
+              {
+                "name": "node-2",
+                "free": 0,
+                "version": 1
+              }
+            ],
+            "quota_used": 16,
+            "allocations": [
+              {
+                "job": "job-Y",
+                "node": "node-1",
+                "gpu_slots": 8
+              },
+              {
+                "job": "job-Y",
+                "node": "node-2",
+                "gpu_slots": 8
+              }
+            ]
+          }
+        },
+        "scope": "finite_reference_search_and_real_two_process_SQLite_transactions_not_Kueue_or_Kubernetes",
+        "limits": [
+          "search models only declared scalar resources, flavor and optional rack constraint",
+          "one DB transaction is not a multi-object Kubernetes API transaction",
+          "reservation does not prove device health, pod readiness or first training update"
+        ]
+      }
+    },
+    "subprocess_limits.py": {
+      "sha256": "2b786abceffd25af384b411e10ba693eae5149a9b5838bea14ba7ebfe03d0dbe",
+      "exit_code": 0,
+      "result": {
+        "os": "darwin",
+        "cases": {
+          "file_size": {
+            "exit_code": 0,
+            "elapsed_wall_seconds": 0.131728542,
+            "child_cpu_seconds": 0.09734999999999999,
+            "force_after_TERM_required": false,
+            "output": {
+              "first_write_bytes": 4096,
+              "next_write_EFBIG": true,
+              "file_size": 4096
+            }
+          },
+          "descriptors": {
+            "exit_code": 0,
+            "elapsed_wall_seconds": 0.12735975000000002,
+            "child_cpu_seconds": 0.09545399999999998,
+            "force_after_TERM_required": false,
+            "output": {
+              "limit": 64,
+              "opened_extra": 60,
+              "next_open_EMFILE": true
+            }
+          },
+          "cpu": {
+            "exit_code": -24,
+            "elapsed_wall_seconds": 1.0341558750000002,
+            "child_cpu_seconds": 1.002095,
+            "force_after_TERM_required": false,
+            "ready_before_limit": true,
+            "termination_signal": "SIGXCPU"
+          },
+          "wall": {
+            "exit_code": -9,
+            "elapsed_wall_seconds": 0.5944211669999999,
+            "child_cpu_seconds": 0.0906760000000002,
+            "force_after_TERM_required": true,
+            "ready_before_limit": true,
+            "termination_signal": "SIGKILL",
+            "wall_budget_from_ready_seconds": 0.25,
+            "term_grace_seconds": 0.2
+          }
+        },
+        "scope": "actual_POSIX_limits_in_owned_children_not_container_or_kernel_isolation",
+        "limits": [
+          "RLIMIT_CPU is process CPU time, not wall time or cgroup bandwidth",
+          "RLIMIT_FSIZE bounds one file, not total temporary-disk usage",
+          "RLIMIT_NOFILE bounds descriptors, not process count",
+          "children use the same UID and may still access that UID's files/network",
+          "only owned child process groups are signaled; host limits are unchanged"
+        ]
+      }
+    },
+    "descriptors_and_paths.py": {
+      "sha256": "c8abf69a03d7ed5cd9b1ccba9fc124025efe57190f7e70635c5ae3b75c83832a",
+      "exit_code": 0,
+      "result": {
+        "launch": {
+          "explicit_unsafe_inheritance": {
+            "fixture_environment_present": true,
+            "inherited_descriptor_readable": true,
+            "same_uid_fixture_still_readable_by_path": true
+          },
+          "minimal_launch": {
+            "fixture_environment_present": false,
+            "inherited_descriptor_readable": false,
+            "same_uid_fixture_still_readable_by_path": true
+          }
+        },
+        "single_leaf_path": {
+          "prefix_check_passed": true,
+          "after_check_symlink_read": "fixture-B",
+          "no_follow_rejected_symlink": true,
+          "normal_leaf_read": "fixture-A"
+        },
+        "scope": "actual_POSIX_children_and_fixture_files_not_a_security_sandbox",
+        "limits": [
+          "Python defaults already make new FDs non-inheritable and Popen close_fds=True; unsafe case explicitly changes them",
+          "no-follow example accepts only one fixed leaf under a trusted already-open directory",
+          "does not secure arbitrary multi-component paths, hard links, untrusted mounts or directory permissions",
+          "same-UID child still reads fixture by path; no filesystem or network isolation claim"
+        ]
+      }
+    }
+  }
+}
