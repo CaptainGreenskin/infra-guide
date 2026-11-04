@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">同一份订单代码，谁负责哪一层？</title>
+  <desc id="desc">典型责任矩阵：IaaS 为自行管理的虚拟机，PaaS 与 FaaS 使用服务商托管运行时。每格写出谁负责哪项动作，底层平台运维与租户业务责任分别保留。</desc>
+  <rect x="0" y="0" width="960" height="700" rx="12" fill="#f6f8fc" />
+  <text x="32" y="36" fill="#2758a6" font-size="16" font-weight="650" text-anchor="start">CLOUD INFRA  /  01  责任矩阵</text>
+  <text x="32" y="84" fill="#1d324c" font-size="30" font-weight="650" text-anchor="start">同一份订单代码，谁负责哪一层？</text>
+  <text x="32" y="118" fill="#51677c" font-size="17" font-weight="400" text-anchor="start">按列比较从机房到业务策略的工作。每格说明谁要采取行动。</text>
+  <text x="39" y="187" fill="#1d324c" font-size="18" font-weight="650" text-anchor="start">要完成的工作</text>
+  <rect x="245" y="148" width="220" height="63" rx="8" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="355.0" y="174" fill="#2758a6" font-size="20" font-weight="650" text-anchor="middle">IaaS</text>
+  <text x="355.0" y="198" fill="#51677c" font-size="16" font-weight="400" text-anchor="middle">自行管理的云主机</text>
+  <rect x="473" y="148" width="220" height="63" rx="8" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="583.0" y="174" fill="#2758a6" font-size="20" font-weight="650" text-anchor="middle">PaaS</text>
+  <text x="583.0" y="198" fill="#51677c" font-size="16" font-weight="400" text-anchor="middle">托管应用运行时</text>
+  <rect x="701" y="148" width="220" height="63" rx="8" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="811.0" y="174" fill="#2758a6" font-size="20" font-weight="650" text-anchor="middle">FaaS</text>
+  <text x="811.0" y="198" fill="#51677c" font-size="16" font-weight="400" text-anchor="middle">托管函数运行时</text>
+  <text x="39" y="250" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">机房、物理机与宿主层</text>
+  <rect x="245" y="218" width="220" height="44" rx="6" fill="#e2f3ef" />
+  <text x="355.0" y="246" fill="#116d68" font-size="17" font-weight="650" text-anchor="middle">平台维护</text>
+  <rect x="473" y="218" width="220" height="44" rx="6" fill="#e2f3ef" />
+  <text x="583.0" y="246" fill="#116d68" font-size="17" font-weight="650" text-anchor="middle">平台维护</text>
+  <rect x="701" y="218" width="220" height="44" rx="6" fill="#e2f3ef" />
+  <text x="811.0" y="246" fill="#116d68" font-size="17" font-weight="650" text-anchor="middle">平台维护</text>
+  <line x1="32" y1="266" x2="923" y2="266" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="39" y="302" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">客户机或执行环境 OS</text>
+  <rect x="245" y="270" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="355.0" y="298" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队更新客体 OS</text>
+  <rect x="473" y="270" width="220" height="44" rx="6" fill="#e2f3ef" />
+  <text x="583.0" y="298" fill="#116d68" font-size="17" font-weight="650" text-anchor="middle">平台维护底层 OS</text>
+  <rect x="701" y="270" width="220" height="44" rx="6" fill="#e2f3ef" />
+  <text x="811.0" y="298" fill="#116d68" font-size="17" font-weight="650" text-anchor="middle">平台维护底层 OS</text>
+  <line x1="32" y1="318" x2="923" y2="318" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="39" y="354" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">语言运行时</text>
+  <rect x="245" y="322" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="355.0" y="350" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队安装、更新</text>
+  <rect x="473" y="322" width="220" height="44" rx="6" fill="#fceddf" />
+  <text x="583.0" y="350" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="middle">平台维护，团队选版</text>
+  <rect x="701" y="322" width="220" height="44" rx="6" fill="#fceddf" />
+  <text x="811.0" y="350" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="middle">平台维护，团队选版</text>
+  <line x1="32" y1="370" x2="923" y2="370" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="39" y="406" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">业务代码、自带依赖</text>
+  <rect x="245" y="374" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="355.0" y="402" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队构建、修补</text>
+  <rect x="473" y="374" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="583.0" y="402" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队构建、修补</text>
+  <rect x="701" y="374" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="811.0" y="402" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队构建、修补</text>
+  <line x1="32" y1="422" x2="923" y2="422" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="39" y="458" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">数据与业务访问范围</text>
+  <rect x="245" y="426" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="355.0" y="454" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队定义授权</text>
+  <rect x="473" y="426" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="583.0" y="454" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队定义授权</text>
+  <rect x="701" y="426" width="220" height="44" rx="6" fill="#e5edfd" />
+  <text x="811.0" y="454" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">团队定义授权</text>
+  <line x1="32" y1="474" x2="923" y2="474" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="39" y="510" fill="#1d324c" font-size="17" font-weight="650" text-anchor="start">容量与服务目标</text>
+  <rect x="245" y="478" width="220" height="44" rx="6" fill="#fceddf" />
+  <text x="355.0" y="506" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="middle">选实例，平台供容量</text>
+  <rect x="473" y="478" width="220" height="44" rx="6" fill="#fceddf" />
+  <text x="583.0" y="506" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="middle">设策略，平台调实例</text>
+  <rect x="701" y="478" width="220" height="44" rx="6" fill="#fceddf" />
+  <text x="811.0" y="506" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="middle">定并发，平台调执行</text>
+  <line x1="32" y1="526" x2="923" y2="526" stroke="#c7d4e1" stroke-width="1.5" />
+  <rect x="33" y="550" width="21" height="15" rx="3" fill="#e2f3ef" stroke="#116d68" stroke-width="1.5" />
+  <text x="65" y="564" fill="#51677c" font-size="16" font-weight="400" text-anchor="start">平台负责</text>
+  <rect x="230" y="550" width="21" height="15" rx="3" fill="#e5edfd" stroke="#2758a6" stroke-width="1.5" />
+  <text x="262" y="564" fill="#51677c" font-size="16" font-weight="400" text-anchor="start">业务团队负责</text>
+  <rect x="463" y="550" width="21" height="15" rx="3" fill="#fceddf" stroke="#9d4d18" stroke-width="1.5" />
+  <text x="495" y="564" fill="#51677c" font-size="16" font-weight="400" text-anchor="start">双方各有动作</text>
+  <line x1="32" y1="589" x2="928" y2="589" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="32" y="618" fill="#1d324c" font-size="17" font-weight="400" text-anchor="start">边界：本图假设受支持的托管运行时；自带镜像、手动更新模式会重新划分补丁责任。</text>
+  <text x="32" y="651" fill="#51677c" font-size="17" font-weight="400" text-anchor="start">即使平台能启动实例，团队仍要验证订单是否按时完成、错误数据能否恢复。</text>
+</svg>

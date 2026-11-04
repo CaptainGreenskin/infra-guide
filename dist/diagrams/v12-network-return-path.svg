@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="745" viewBox="0 0 960 745" role="img" aria-labelledby="title desc"><title id="title">回包怎样找回发起连接的私网实例</title><desc id="desc">AWS 公网 NAT 网关的教学路径。实例源地址变为 NAT 网关私有地址，再由互联网网关映射为 EIP；回包按反向关系抵达实例。</desc>
+<defs>
+ <marker id="blue-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#225da8" /></marker>
+ <marker id="teal-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#12716c" /></marker>
+ <marker id="orange-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#ae5022" /></marker>
+ </defs>
+ <style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#17344c;font-size:18px}.title{font-size:29px;font-weight:700}.tag{font-size:16px;font-weight:650;letter-spacing:.7px}.small{font-size:16px}.strong{font-weight:650}.mono{font-family:"SFMono-Regular",Consolas,"PingFang SC",monospace;font-size:16px}</style>
+<rect width="960" height="745" rx="12" fill="#f7f9fb" />
+<text x="32" y="37" class="tag" text-anchor="start" style="fill:#12716c;font-size:16px;font-weight:650">NETWORK 01  /  返回路径</text>
+<text x="32" y="82" class="title" text-anchor="start" style="font-size:29px;font-weight:700">跟踪一个连接的两次地址改写</text>
+<text x="32" y="116" class="small" text-anchor="start" style="font-size:16px;font-weight:400">假设 IPv4、TCP 与 AWS 公网 NAT 网关；文档地址和转换端口仅用于举例。</text>
+<rect x="28" y="143" width="904" height="106" rx="8" fill="#edf3fa" stroke="#bacde0" />
+<text x="44" y="170" class="tag" text-anchor="start" style="fill:#225da8;font-size:16px;font-weight:650">控制面  /  先配置路径；用户请求不会依次调用这些 API</text>
+<text x="44" y="203" class="strong" text-anchor="start" style="font-size:18px;font-weight:700">私网子网路由</text>
+<text x="44" y="230" class="small" text-anchor="start" style="font-size:16px;font-weight:400">0.0.0.0/0 → NAT 网关</text>
+<text x="350" y="203" class="strong" text-anchor="start" style="font-size:18px;font-weight:700">NAT 所在公网子网路由</text>
+<text x="350" y="230" class="small" text-anchor="start" style="font-size:16px;font-weight:400">0.0.0.0/0 → IGW</text>
+<text x="647" y="203" class="strong" text-anchor="start" style="font-size:18px;font-weight:700">公网映射</text>
+<text x="647" y="230" class="small" text-anchor="start" style="font-size:16px;font-weight:400">网关关联 EIP；IGW 已附加到 VPC</text>
+<line x1="328" y1="189" x2="328" y2="235" stroke="#c4d3df" stroke-width="1.5" />
+<line x1="626" y1="189" x2="626" y2="235" stroke="#c4d3df" stroke-width="1.5" />
+<text x="32" y="286" class="tag" text-anchor="start" style="fill:#12716c;font-size:16px;font-weight:650">数据面  /  同一条 TCP 流</text>
+<text x="83" y="323" class="strong" text-anchor="middle" style="font-size:18px;font-weight:700">私网实例</text>
+<circle cx="83" cy="344" r="5" fill="#225da8" stroke="none" />
+<line x1="83" y1="351" x2="83" y2="516" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="4 5" />
+<text x="350" y="323" class="strong" text-anchor="middle" style="font-size:18px;font-weight:700">公网 NAT 网关</text>
+<circle cx="350" cy="344" r="5" fill="#225da8" stroke="none" />
+<line x1="350" y1="351" x2="350" y2="516" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="4 5" />
+<text x="609" y="323" class="strong" text-anchor="middle" style="font-size:18px;font-weight:700">互联网网关 IGW</text>
+<circle cx="609" cy="344" r="5" fill="#225da8" stroke="none" />
+<line x1="609" y1="351" x2="609" y2="516" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="4 5" />
+<text x="863" y="323" class="strong" text-anchor="middle" style="font-size:18px;font-weight:700">外部 API</text>
+<circle cx="863" cy="344" r="5" fill="#225da8" stroke="none" />
+<line x1="863" y1="351" x2="863" y2="516" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="4 5" />
+<text x="32" y="368" class="small" text-anchor="start" style="fill:#225da8;font-size:16px;font-weight:400">去程 / 目标始终为 198.51.100.9:443</text>
+<line x1="88" y1="408" x2="344" y2="408" stroke="#225da8" stroke-width="3.2" />
+<polygon points="344.0,408.0 333.0,413.0 333.0,403.0" fill="#225da8" /><text x="216.5" y="396" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">源 10.20.4.7:51000</text>
+<line x1="355" y1="408" x2="603" y2="408" stroke="#225da8" stroke-width="3.2" />
+<polygon points="603.0,408.0 592.0,413.0 592.0,403.0" fill="#225da8" /><text x="479.5" y="396" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">源 10.20.1.5:62001</text>
+<line x1="614" y1="408" x2="857" y2="408" stroke="#225da8" stroke-width="3.2" />
+<polygon points="857.0,408.0 846.0,413.0 846.0,403.0" fill="#225da8" /><text x="736.0" y="396" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">源 203.0.113.27:62001</text>
+<text x="32" y="456" class="small" text-anchor="start" style="fill:#12716c;font-size:16px;font-weight:400">回程 / 源始终为 198.51.100.9:443</text>
+<line x1="345" y1="503" x2="89" y2="503" stroke="#12716c" stroke-width="3.2" />
+<polygon points="89.0,503.0 100.0,498.0 100.0,508.0" fill="#12716c" /><text x="216.5" y="490" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">目的 10.20.4.7:51000</text>
+<line x1="604" y1="503" x2="356" y2="503" stroke="#12716c" stroke-width="3.2" />
+<polygon points="356.0,503.0 367.0,498.0 367.0,508.0" fill="#12716c" /><text x="479.5" y="490" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">目的 10.20.1.5:62001</text>
+<line x1="858" y1="503" x2="615" y2="503" stroke="#12716c" stroke-width="3.2" />
+<polygon points="615.0,503.0 626.0,498.0 626.0,508.0" fill="#12716c" /><text x="736.0" y="490" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">目的 203.0.113.27:62001</text>
+<rect x="28" y="535" width="904" height="147" rx="8" fill="#ffffff" stroke="#c4d3df" />
+<text x="46" y="566" class="tag" text-anchor="start" style="fill:#ae5022;font-size:16px;font-weight:650">改写记录  /  回包按相反顺序还原目的地址</text>
+<text x="46" y="603" class="strong" text-anchor="start" style="font-size:18px;font-weight:700">① NAT 网关</text>
+<text x="208" y="603" class="mono" text-anchor="start" style="font-size:16px;font-weight:400">10.20.4.7:51000  →  10.20.1.5:62001</text>
+<text x="655" y="603" class="small" text-anchor="start" style="font-size:16px;font-weight:400">为这条连接选定示例源端口</text>
+<line x1="46" y1="620" x2="911" y2="620" stroke="#c4d3df" stroke-width="1.5" />
+<text x="46" y="652" class="strong" text-anchor="start" style="font-size:18px;font-weight:700">② 互联网网关</text>
+<text x="208" y="652" class="mono" text-anchor="start" style="font-size:16px;font-weight:400">10.20.1.5:62001  →  203.0.113.27:62001</text>
+<text x="655" y="652" class="small" text-anchor="start" style="font-size:16px;font-weight:400">本例第二步只变 IP</text>
+<text x="32" y="718" class="small" text-anchor="start" style="font-size:16px;font-weight:400">NAT 允许已发起连接的响应返回。例子不为私网实例创建接收外部新连接的公网监听。</text>
+</svg>

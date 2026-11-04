@@ -88,7 +88,7 @@ const cloudKnowledgeDomains = [
  ]}
 ];
 const cloudKnowledgeDomain = id=>cloudKnowledgeDomains.find(domain=>domain.module===id);
-function knowledgePointHTML(point,index,compact=false){const [id,title,body,boundary]=point;return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p><p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p></section>';}
+function knowledgePointHTML(point,index,compact=false){const [id,title,body,boundary]=point;return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+(typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'')+'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p></section>';}
 function cloudPrerequisiteHTML(){return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>'<section class="knowledge-point"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p><p class="path-links">'+ids.map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>').join('')+'</div>';}
 function cloudKnowledgeBody(m){
  if(m.id==='foundation')return cloudPrerequisiteHTML();
@@ -97,12 +97,13 @@ function cloudKnowledgeBody(m){
 }
 function cloudKnowledgeReferences(m){const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';return '<section class="knowledge-references"><h2>原始资料</h2><div>'+domain.refs.map(key=>'<a href="'+sources[key][1]+'" target="_blank" rel="noopener">'+sources[key][0]+' ↗</a>').join('')+'</div></section>';}
 function cloudModuleTOC(m){const domain=cloudKnowledgeDomain(m.id);return domain?domain.points.map((point,index)=>'<a href="/module/'+m.id+'/#knowledge-'+point[0]+'">'+(index+1)+'. '+point[1]+'</a>').join(''):'<a href="/module/foundation/">前置基础</a>';}
-function cloudMobileContents(m){return '<details class="mobile-contents"><summary>领域目录与本页知识点</summary><div class="mobile-field-links">'+cloudKnowledgeDomains.map(domain=>{const field=moduleFor(domain.module);return '<a href="/module/'+field.id+'/">'+field.n+' '+field.name+'</a>';}).join('')+'<a href="/module/foundation/">P0 前置基础知识</a></div>'+cloudModuleTOC(m)+'</details>';}
+function cloudMobileContents(m){return '<details class="mobile-contents"><summary><span class="mobile-field-label">领域目录与</span>本页知识点</summary><div class="mobile-field-links">'+cloudKnowledgeDomains.map(domain=>{const field=moduleFor(domain.module);return '<a href="/module/'+field.id+'/">'+field.n+' '+field.name+'</a>';}).join('')+'<a href="/module/foundation/">P0 前置基础知识</a></div>'+cloudModuleTOC(m)+'</details>';}
 function cloudKnowledgePage(m){
  document.title=m.name+' · Cloud Infra · InfraGuide';
  const list=articles.filter(a=>a.module===m.id),domain=cloudKnowledgeDomain(m.id);
  const body=cloudKnowledgeBody(m);
  $('#app').innerHTML='<main class="doc-layout knowledge-layout" id="main" tabindex="-1">'+sidebar(m.id)+'<article class="article knowledge-article">'+breadcrumbs(m)+'<div class="eyebrow">'+(m.id==='foundation'?'PREREQUISITES · 前置基础':m.n+' / CLOUD INFRA')+'</div><h1>'+m.name+'</h1>'+cloudMobileContents(m)+body+cloudKnowledgeReferences(m)+(typeof resourceRecommendations==='function'?resourceRecommendations(m.id):'')+'<section class="knowledge-examples" id="examples"><h2>机制详解与具体案例</h2>'+list.map(chapterLink).join('')+'</section><div class="knowledge-exit"><a href="/interview/cloud/">对照岗位要求与学习深度 →</a><a href="/resources/#cloud">文档、课程与视频 →</a></div></article><aside class="toc"><div class="toc-title">本领域知识点</div>'+cloudModuleTOC(m)+'<a href="/module/'+m.id+'/#examples">机制详解与案例</a><div class="toc-note">前置基础与九个实际领域分别组织。</div></aside></main>'+footer();
+ initCloudMechanics();
 }
 function cloudArticleKnowledge(a){const domain=cloudKnowledgeDomain(a.module);if(!domain)return '';const points=domain.points.filter(point=>point[4].includes(a.id)).slice(0,3);if(!points.length)return '';return '<section class="chapter-knowledge" id="core-knowledge"><h2>核心知识</h2>'+points.map(point=>'<h3>'+point[1]+'</h3><p>'+point[2]+'</p>').join('')+'<a class="inline-link" href="/module/'+a.module+'/">查看本领域的完整系统知识 →</a></section><div class="knowledge-divider">机制、推导与案例</div>';}
 const cloudKnowledgeTitles={

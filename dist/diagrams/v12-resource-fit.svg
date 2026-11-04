@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="717" viewBox="0 0 960 717" role="img" aria-labelledby="title desc">
+<title id="title">节点级 CPU、内存与硬性亲和的放置判定</title>
+<desc id="desc">待调度 Pod 请求三核和六 GiB，要求 zone=a。A 节点可分配八核十六 GiB，已承诺四核十二 GiB。B 节点可分配八核十六 GiB，已承诺六核八 GiB，且属于 zone=b。两个节点合计有余量，但没有同时满足三项要求的单节点。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2357a3"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="717" rx="15" fill="#f5f8fa" stroke="none" />
+<text x="36" y="42" font-size="16" fill="#2357a3" font-weight="600" text-anchor="start">KUBERNETES  /  调度过滤</text>
+<text x="36" y="85" font-size="30" fill="#192d47" font-weight="700" text-anchor="start">总量够，单个 Pod 仍可能放不下</text>
+<text x="36" y="118" font-size="18" fill="#4f637a" font-weight="400" text-anchor="start">接纳一个新 Pod，需要同一节点同时满足资源请求与硬性放置约束。</text>
+<rect x="36" y="146" width="888" height="67" rx="12" fill="#e8f0fc" stroke="none" />
+<text x="54" y="175" font-size="21" fill="#2357a3" font-weight="700" text-anchor="start">待调度 Pod</text>
+<text x="227" y="175" font-size="19" fill="#192d47" font-weight="650" text-anchor="start">CPU 请求 3 核　内存请求 6 GiB</text>
+<text x="54" y="199" font-size="16" fill="#4f637a" font-weight="400" text-anchor="start">硬性节点亲和：只允许 zone=a。图中 remaining = allocatable − 已承诺 requests。</text>
+<rect x="36" y="236" width="424" height="258" rx="12" fill="#ffffff" stroke="#c9d6e1" />
+<text x="54" y="270" font-size="22" fill="#192d47" font-weight="700" text-anchor="start">节点 A</text>
+<text x="440" y="270" font-size="18" fill="#2357a3" font-weight="650" text-anchor="end">zone=a</text>
+<text x="54" y="307" font-size="17" fill="#192d47" font-weight="600" text-anchor="start">CPU 可分配 8 核</text>
+<text x="439" y="307" font-size="16" fill="#4f637a" font-weight="400" text-anchor="end">已承诺 4，剩余 4</text>
+<rect x="54" y="319" width="386" height="25" rx="0" fill="#e2f4ef" stroke="none" />
+<rect x="54" y="319" width="193" height="25" rx="0" fill="#2357a3" stroke="none" />
+<text x="343.5" y="338" font-size="16" fill="#08766e" font-weight="700" text-anchor="middle">4</text>
+<text x="54" y="383" font-size="17" fill="#192d47" font-weight="600" text-anchor="start">内存 可分配 16 GiB</text>
+<text x="439" y="383" font-size="16" fill="#4f637a" font-weight="400" text-anchor="end">已承诺 12，剩余 4</text>
+<rect x="54" y="395" width="386" height="25" rx="0" fill="#e2f4ef" stroke="none" />
+<rect x="54" y="395" width="289.5" height="25" rx="0" fill="#2357a3" stroke="none" />
+<text x="391.75" y="414" font-size="16" fill="#08766e" font-weight="700" text-anchor="middle">4</text>
+<text x="54" y="463" font-size="16" fill="#a34f16" font-weight="650" text-anchor="start">CPU 满足　内存 不足　亲和 满足</text>
+<rect x="500" y="236" width="424" height="258" rx="12" fill="#ffffff" stroke="#c9d6e1" />
+<text x="518" y="270" font-size="22" fill="#192d47" font-weight="700" text-anchor="start">节点 B</text>
+<text x="904" y="270" font-size="18" fill="#2357a3" font-weight="650" text-anchor="end">zone=b</text>
+<text x="518" y="307" font-size="17" fill="#192d47" font-weight="600" text-anchor="start">CPU 可分配 8 核</text>
+<text x="903" y="307" font-size="16" fill="#4f637a" font-weight="400" text-anchor="end">已承诺 6，剩余 2</text>
+<rect x="518" y="319" width="386" height="25" rx="0" fill="#e2f4ef" stroke="none" />
+<rect x="518" y="319" width="289.5" height="25" rx="0" fill="#2357a3" stroke="none" />
+<text x="855.75" y="338" font-size="16" fill="#08766e" font-weight="700" text-anchor="middle">2</text>
+<text x="518" y="383" font-size="17" fill="#192d47" font-weight="600" text-anchor="start">内存 可分配 16 GiB</text>
+<text x="903" y="383" font-size="16" fill="#4f637a" font-weight="400" text-anchor="end">已承诺 8，剩余 8</text>
+<rect x="518" y="395" width="386" height="25" rx="0" fill="#e2f4ef" stroke="none" />
+<rect x="518" y="395" width="193" height="25" rx="0" fill="#2357a3" stroke="none" />
+<text x="807.5" y="414" font-size="16" fill="#08766e" font-weight="700" text-anchor="middle">8</text>
+<text x="518" y="463" font-size="16" fill="#a34f16" font-weight="650" text-anchor="start">CPU 不足　内存 满足　亲和 不符</text>
+<text x="36" y="530" font-size="17" fill="#2357a3" font-weight="650" text-anchor="start">已承诺</text>
+<rect x="113" y="516" width="43" height="17" rx="0" fill="#2357a3" stroke="none" />
+<text x="181" y="530" font-size="17" fill="#08766e" font-weight="650" text-anchor="start">剩余可承诺</text>
+<rect x="295" y="516" width="43" height="17" rx="0" fill="#e2f4ef" stroke="#08766e" />
+<text x="36" y="575" font-size="18" fill="#192d47" font-weight="650" text-anchor="start">把两节点相加：剩 6 核、12 GiB。A 缺内存，B 缺 CPU 且不满足 zone=a。</text>
+<rect x="36" y="602" width="888" height="88" rx="12" fill="#fff0df" stroke="none" />
+<text x="54" y="634" font-size="20" fill="#a34f16" font-weight="700" text-anchor="start">单变量对照</text>
+<text x="206" y="634" font-size="17" fill="#192d47" font-weight="400" text-anchor="start">只在 B 释放 1 核：B 剩 3 核、8 GiB，但硬性亲和仍拒绝它。</text>
+<text x="54" y="666" font-size="16" fill="#4f637a" font-weight="400" text-anchor="start">假设单容器、无额外 Pod 开销及其他限制；观察的是已分配请求，不是瞬时利用率。</text>
+</svg>

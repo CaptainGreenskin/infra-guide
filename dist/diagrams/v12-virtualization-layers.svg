@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 685" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">两个实例，可以共享什么？</title>
+  <desc id="desc">左侧的两个虚拟机有各自的客户机内核，对虚拟硬件编程。右侧两个普通 Linux 容器是宿主内核上的隔离进程，各有用户空间和可配置的 namespace/cgroup。两边是不同部署示意，可组合为虚拟机中运行容器。</desc>
+  <rect x="0" y="0" width="960" height="685" rx="12" fill="#f6f8fc" />
+  <text x="32" y="36" fill="#2758a6" font-size="16" font-weight="650" text-anchor="start">CLOUD INFRA  /  02  隔离层次</text>
+  <text x="32" y="84" fill="#1d324c" font-size="30" font-weight="650" text-anchor="start">两个实例，可以共享什么？</text>
+  <text x="32" y="118" fill="#51677c" font-size="17" font-weight="400" text-anchor="start">对比两种常见 Linux 部署。蓝色是各实例自己的对象，青色带表示共享层。</text>
+  <text x="36" y="166" fill="#1d324c" font-size="21" font-weight="650" text-anchor="start">两台虚拟机</text>
+  <text x="505" y="166" fill="#1d324c" font-size="21" font-weight="650" text-anchor="start">两个普通 Linux 容器</text>
+  <line x1="478" y1="181" x2="478" y2="527" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="4 5" />
+  <rect x="34" y="188" width="202" height="177" rx="10" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="48" y="216" fill="#2758a6" font-size="17" font-weight="650" text-anchor="start">VM  A</text>
+  <rect x="43" y="231" width="184" height="47" rx="5" fill="#e5edfd" />
+  <text x="135" y="260" fill="#1d324c" font-size="17" font-weight="650" text-anchor="middle">业务 A 和依赖</text>
+  <rect x="43" y="290" width="184" height="57" rx="5" fill="#d5e2fc" />
+  <text x="135" y="326" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">独立客户机内核</text>
+  <rect x="255" y="188" width="202" height="177" rx="10" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="269" y="216" fill="#2758a6" font-size="17" font-weight="650" text-anchor="start">VM  B</text>
+  <rect x="264" y="231" width="184" height="47" rx="5" fill="#e5edfd" />
+  <text x="356" y="260" fill="#1d324c" font-size="17" font-weight="650" text-anchor="middle">业务 B 和依赖</text>
+  <rect x="264" y="290" width="184" height="57" rx="5" fill="#d5e2fc" />
+  <text x="356" y="326" fill="#2758a6" font-size="17" font-weight="650" text-anchor="middle">独立客户机内核</text>
+  <rect x="503" y="188" width="202" height="177" rx="10" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="517" y="216" fill="#2758a6" font-size="17" font-weight="650" text-anchor="start">容器  A</text>
+  <rect x="512" y="231" width="184" height="47" rx="5" fill="#e5edfd" />
+  <text x="604" y="260" fill="#1d324c" font-size="17" font-weight="650" text-anchor="middle">业务 A 和依赖</text>
+  <rect x="512" y="290" width="184" height="57" rx="5" fill="#e5edfd" />
+  <text x="604" y="314" fill="#2758a6" font-size="16" font-weight="650" text-anchor="middle">隔离进程视图</text>
+  <text x="604" y="337" fill="#2758a6" font-size="16" font-weight="400" text-anchor="middle">按配置约束资源</text>
+  <rect x="724" y="188" width="202" height="177" rx="10" fill="#ffffff" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="738" y="216" fill="#2758a6" font-size="17" font-weight="650" text-anchor="start">容器  B</text>
+  <rect x="733" y="231" width="184" height="47" rx="5" fill="#e5edfd" />
+  <text x="825" y="260" fill="#1d324c" font-size="17" font-weight="650" text-anchor="middle">业务 B 和依赖</text>
+  <rect x="733" y="290" width="184" height="57" rx="5" fill="#e5edfd" />
+  <text x="825" y="314" fill="#2758a6" font-size="16" font-weight="650" text-anchor="middle">隔离进程视图</text>
+  <text x="825" y="337" fill="#2758a6" font-size="16" font-weight="400" text-anchor="middle">按配置约束资源</text>
+  <rect x="34" y="385" width="423" height="62" rx="7" fill="#e2f3ef" stroke="#116d68" stroke-width="1.5" />
+  <text x="245" y="413" fill="#116d68" font-size="19" font-weight="650" text-anchor="middle">共享的虚拟化层</text>
+  <text x="245" y="435" fill="#116d68" font-size="16" font-weight="400" text-anchor="middle">为每台 VM 暴露虚拟硬件</text>
+  <rect x="503" y="385" width="423" height="62" rx="7" fill="#e2f3ef" stroke="#116d68" stroke-width="1.5" />
+  <text x="714" y="413" fill="#116d68" font-size="19" font-weight="650" text-anchor="middle">共享的宿主 Linux 内核</text>
+  <text x="714" y="435" fill="#116d68" font-size="16" font-weight="400" text-anchor="middle">提供 namespace 与 cgroup 等机制</text>
+  <rect x="34" y="466" width="423" height="45" rx="6" fill="#e6ebf0" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="245" y="495" fill="#51677c" font-size="16" font-weight="650" text-anchor="middle">宿主机的物理 CPU、内存和设备</text>
+  <rect x="503" y="466" width="423" height="45" rx="6" fill="#e6ebf0" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="714" y="495" fill="#51677c" font-size="16" font-weight="650" text-anchor="middle">宿主机的物理 CPU、内存和设备</text>
+  <line x1="32" y1="543" x2="928" y2="543" stroke="#c7d4e1" stroke-width="1.5" />
+  <text x="33" y="572" fill="#9d4d18" font-size="17" font-weight="650" text-anchor="start">如何读图</text>
+  <text x="33" y="599" fill="#1d324c" font-size="17" font-weight="400" text-anchor="start">VM 可以有独立的客户机内核，但仍依赖共享的物理硬件与虚拟化层。</text>
+  <text x="33" y="626" fill="#1d324c" font-size="17" font-weight="400" text-anchor="start">容器内的工具、库和进程可以不同；普通容器不会因此得到一份新的 Linux 内核。</text>
+  <text x="33" y="653" fill="#51677c" font-size="16" font-weight="400" text-anchor="start">图中省略运行时管理组件。容器也能运行在 VM 里；具体隔离与共享取决于配置。</text>
+</svg>

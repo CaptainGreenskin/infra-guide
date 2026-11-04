@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="875" viewBox="0 0 960 875" role="img" aria-labelledby="title desc"><title id="title">TCP 序号按字节累计，ACK 表示下一期待字节</title><desc id="desc">客户端 ISN 为 1000，服务端 ISN 为 9000。丢失从 1101 开始的 100 字节，接收方暂存其后的 50 字节。重传补齐后累计确认 1251。</desc>
+<defs>
+ <marker id="blue-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#225da8" /></marker>
+ <marker id="teal-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#12716c" /></marker>
+ <marker id="orange-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 Z" fill="#ae5022" /></marker>
+ </defs>
+ <style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#17344c;font-size:18px}.title{font-size:29px;font-weight:700}.tag{font-size:16px;font-weight:650;letter-spacing:.7px}.small{font-size:16px}.strong{font-weight:650}.mono{font-family:"SFMono-Regular",Consolas,"PingFang SC",monospace;font-size:16px}</style>
+<rect width="960" height="875" rx="12" fill="#f7f9fb" />
+<text x="32" y="37" class="tag" text-anchor="start" style="fill:#12716c;font-size:16px;font-weight:650">NETWORK 02  /  TCP 序号</text>
+<text x="32" y="82" class="title" text-anchor="start" style="font-size:29px;font-weight:700">一次丢段，为什么累计 ACK 停在 1101？</text>
+<text x="32" y="116" class="small" text-anchor="start" style="font-size:16px;font-weight:400">向下为事件顺序，斜线表示传递；箭头之间的纵向距离不表示真实时长。</text>
+<text x="133" y="165" class="strong" text-anchor="middle" style="fill:#225da8;font-size:18px;font-weight:700">客户端 C</text>
+<text x="826" y="165" class="strong" text-anchor="middle" style="fill:#12716c;font-size:18px;font-weight:700">服务端 S</text>
+<text x="133" y="190" class="mono" text-anchor="middle" style="font-size:16px;font-weight:400">ISN = 1000</text>
+<text x="826" y="190" class="mono" text-anchor="middle" style="font-size:16px;font-weight:400">ISN = 9000</text>
+<line x1="133" y1="198" x2="133" y2="710" stroke="#c4d3df" stroke-width="2" />
+<line x1="826" y1="198" x2="826" y2="710" stroke="#c4d3df" stroke-width="2" />
+<line x1="133" y1="221" x2="826" y2="237" stroke="#225da8" stroke-width="2.4" />
+<polygon points="826.0,237.0 814.8875212811934,241.74476729925416 815.1183400005248,231.74743151821698" fill="#225da8" /><circle cx="826" cy="237" r="3" fill="#225da8" stroke="none" />
+<text x="467" y="216" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">SYN   SEQ=1000</text>
+<line x1="826" y1="267" x2="133" y2="283" stroke="#12716c" stroke-width="2.4" />
+<polygon points="133.0,283.0 143.88165999947523,277.747431518217 144.11247871880653,287.74476729925414" fill="#12716c" /><circle cx="133" cy="283" r="3" fill="#12716c" stroke="none" />
+<text x="467" y="262" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">SYN + ACK   SEQ=9000, ACK=1001</text>
+<line x1="133" y1="313" x2="826" y2="329" stroke="#225da8" stroke-width="2.4" />
+<polygon points="826.0,329.0 814.8875212811934,333.74476729925414 815.1183400005248,323.747431518217" fill="#225da8" /><circle cx="826" cy="329" r="3" fill="#225da8" stroke="none" />
+<text x="467" y="308" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">ACK   SEQ=1001, ACK=9001</text>
+<line x1="42" y1="350" x2="916" y2="350" stroke="#c4d3df" stroke-width="1" stroke-dasharray="4 6" />
+<line x1="133" y1="380" x2="826" y2="396" stroke="#225da8" stroke-width="2.4" />
+<polygon points="826.0,396.0 814.8875212811934,400.74476729925414 815.1183400005248,390.747431518217" fill="#225da8" /><circle cx="826" cy="396" r="3" fill="#225da8" stroke="none" />
+<text x="467" y="375" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">SEQ=1001  ·  100 B  [1001,1101)</text>
+<line x1="826" y1="426" x2="133" y2="442" stroke="#12716c" stroke-width="2.4" />
+<polygon points="133.0,442.0 143.88165999947523,436.747431518217 144.11247871880653,446.74476729925414" fill="#12716c" /><circle cx="133" cy="442" r="3" fill="#12716c" stroke="none" />
+<text x="467" y="421" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">ACK=1101  ·  期待下一字节 1101</text>
+<line x1="133" y1="472" x2="651" y2="486" stroke="#ae5022" stroke-width="2.4" stroke-dasharray="7 4" />
+<line x1="646" y1="481" x2="656" y2="491" stroke="#ae5022" stroke-width="3" />
+<line x1="656" y1="481" x2="646" y2="491" stroke="#ae5022" stroke-width="3" />
+<text x="467" y="467" class="mono" text-anchor="middle" style="fill:#ae5022;font-size:16px;font-weight:400">SEQ=1101  ·  100 B  [1101,1201)   丢失</text>
+<line x1="133" y1="518" x2="826" y2="534" stroke="#225da8" stroke-width="2.4" />
+<polygon points="826.0,534.0 814.8875212811934,538.7447672992541 815.1183400005248,528.7474315182169" fill="#225da8" /><circle cx="826" cy="534" r="3" fill="#225da8" stroke="none" />
+<text x="467" y="513" class="mono" text-anchor="middle" style="fill:#225da8;font-size:16px;font-weight:400">SEQ=1201  ·  50 B   [1201,1251)   暂存</text>
+<line x1="826" y1="564" x2="133" y2="580" stroke="#12716c" stroke-width="2.4" />
+<polygon points="133.0,580.0 143.88165999947523,574.7474315182169 144.11247871880653,584.7447672992541" fill="#12716c" /><circle cx="133" cy="580" r="3" fill="#12716c" stroke="none" />
+<text x="467" y="559" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">ACK=1101  ·  缺口尚未补齐</text>
+<line x1="133" y1="610" x2="826" y2="626" stroke="#ae5022" stroke-width="2.4" />
+<polygon points="826.0,626.0 814.8875212811934,630.7447672992541 815.1183400005248,620.7474315182169" fill="#ae5022" /><circle cx="826" cy="626" r="3" fill="#ae5022" stroke="none" />
+<text x="467" y="605" class="mono" text-anchor="middle" style="fill:#ae5022;font-size:16px;font-weight:400">SEQ=1101  ·  100 B  [1101,1201)   超时重传</text>
+<line x1="826" y1="656" x2="133" y2="672" stroke="#12716c" stroke-width="2.4" />
+<polygon points="133.0,672.0 143.88165999947523,666.7474315182169 144.11247871880653,676.7447672992541" fill="#12716c" /><circle cx="133" cy="672" r="3" fill="#12716c" stroke="none" />
+<text x="467" y="651" class="mono" text-anchor="middle" style="fill:#12716c;font-size:16px;font-weight:400">ACK=1251  ·  至 1250 的连续字节已收到</text>
+<rect x="28" y="728" width="904" height="116" rx="8" fill="#ffffff" stroke="#c4d3df" />
+<text x="46" y="758" class="tag" text-anchor="start" style="fill:#ae5022;font-size:16px;font-weight:650">计数规则</text>
+<text x="46" y="790" class="small" text-anchor="start" style="font-size:16px;font-weight:400">SYN 占一个序号，纯 ACK 不占序号；重传仍使用原字节位置，本例乱序数据已暂存。</text>
+<text x="46" y="820" class="small" text-anchor="start" style="font-size:16px;font-weight:400">TCP 确认发生在接收端传输层；应用读取、订单提交和业务回执需要各自的证据。</text>
+</svg>
