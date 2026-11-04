@@ -7,7 +7,7 @@ Object.assign(sources,{
  v18Deadlocks:['MySQL 8.4 · InnoDB死锁处理','https://dev.mysql.com/doc/refman/8.4/en/innodb-deadlocks-handling.html']
 });
 const prefetchLifetimeLesson=knowledgeSubhead('把预取放进同一张显存时间线')+
- para('另设一组只计算缓冲寿命的题：单rank常驻4GiB，已经包含本地分片；A组计算另需1GiB完整缓冲，B组另需0.5GiB。两个缓冲与常驻区不共用存储，暂不计激活和其他开销。它不是前面16GiB峰值账本，也不表示某个FSDP版本必然这样分配。')+
+ para('另设一组只计算缓冲寿命的题：单rank常驻4GiB，已经包含本地分片；A组计算另需1GiB完整缓冲，B组另需0.5GiB。两个缓冲与常驻区不共用存储，暂不计激活和其他开销。它与前面的16GB持久状态示例是两套题设，也不表示某个FSDP版本必然这样分配。')+
  figure('v18-fsdp-buffer-lifetime','常驻状态相同，缓冲重叠改变峰值。题设容量5.25GiB：顺序执行最高5GiB，提前预取最高5.5GiB。')+
  table(['动作','先释放再申请','A未释放便预取B'],[['初始','4GiB','4GiB'],['收齐A','4+1=5GiB','4+1=5GiB'],['准备B','先释放A，再申请B：4.5GiB','A与B同时存活：4+1+0.5=5.5GiB'],['完成','释放B回到4GiB','依次释放A、B，回到4GiB']])+
  para('5.25GiB预算下，第一种安排通过，第二种超出0.25GiB。增加预取可能遮住通信，也可能先造成OOM；要同时看按rank的分配时间线与步耗时。FSDP的收齐粒度、释放、重分片和预取策略共同决定真实峰值，静态分片表只解释常驻项。')+

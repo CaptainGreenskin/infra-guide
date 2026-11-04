@@ -199,7 +199,7 @@
     ['mfTransformer','mfGlu','mfNorm','mfRms','mfRope','mfLlama'],['attention-mechanics','autograd-training','gpu-memory']);
   chapter('model-foundations','0.4','autograd-training',
     '从一个目标词到一次更新：交叉熵、反向传播与梯度累积',
-    '把前面三章的 decoder 放进一个完整的 CPU 程序，用解析梯度与两条独立训练路径核对更新语义。',
+    '把前面讲过的 Decoder 放进一个完整的 CPU 程序，用解析梯度与两条独立训练路径核对更新语义。',
     '已读 0.1—0.3，能解释因果 mask、残差、输出共享与 664 个参数的来源。',
     ['损失：从 logits 算概率、交叉熵和梯度','更新：沿计算图说明 backward、累积与 step','验收：比较整批与不等有效长度的微批'],
     [

@@ -27,12 +27,11 @@ infraKnowledgeDomains.push({module:'platform',track:'ai',refs:['v16GQA','v16Cach
  {id:'sv-metrics',title:'首词元延迟、输出间隔、吞吐与达标吞吐',articles:['inference-performance','model-serving'],lead:'首词元延迟（TTFT）衡量多久看见第一个输出，平均后续词元间隔（TPOT）衡量接着输出的速度。先固定观察点和时钟，再计算单请求指标；总体吞吐用同一窗口内的计数除以窗口长度。流式chunk、模型token与一次用户任务分别统计。',body:
  figure('v16-ai-serving-timeline','合成客户端轨迹：A在0ms发送、40/50/60ms收到3个token；B在20ms发送、80/100ms收到2个token。窗口100ms，输出50token/s，只有A满足题设延迟门槛。')+
  knowledgeFormula('输出N≥2个token时','TTFT = tfirst − tsend；TPOT = (tlast − tfirst)/(N−1)','单token没有后续间隔，TPOT记为空；失败和无输出另记。跨主机绝对时间不能未经同步直接相减。')+
- para('A的TTFT为40ms、TPOT为10ms，B分别为60ms和20ms。100ms窗口完成2请求、输出5token，所以完成吞吐20请求/s、输出吞吐50token/s。门槛TTFT≤50ms且TPOT≤15ms时，延迟达标吞吐是10请求/s。若A的内容质量未通过，则应用质量合格吞吐为0；不能把延迟达标自动称为业务成功。',
+ para('A的TTFT为40ms、TPOT为10ms，B分别为60ms和20ms。按题设包含右端输出的100ms窗口，完成2请求、输出5token，所以完成吞吐20请求/s、输出吞吐50token/s。门槛TTFT≤50ms且TPOT≤15ms时，延迟达标吞吐是10请求/s。若A的内容质量未通过，质量与时延同时达标的请求吞吐为0；B即便质量合格，也未过时延门槛。不能把延迟达标自动称为业务成功。',
  '平均TPOT会隐藏某次长停顿，另保留inter-token latency分布。若一个流事件包含多个token，事件时间不能自动还原各token的真实生成间隔。服务端首token生成、客户端首可见内容和协议首字节是不同端点，分别记录。',
  '压测需固定到达过程、长度分布、预热与稳态窗、失败和超时的计法。开环按计划发请求，闭环等前一请求完成后再发；后者在服务变慢时会自动降低压力。报告实际发送、拒绝、取消、完成与合格数量，同时检查压测器自身是否跟得上计划。')},
  {id:'sv-optimizations',title:'量化、投机解码与前后处理开销',articles:['model-serving','inference-performance','ai-lifecycle'],lead:'优化分别改变表示、执行依赖或IO组织。权重量化、KV量化、前缀复用与投机解码需要各自的正确性和收益实验。',body:
  para('权重量化将部分权重从高精度改为低位表示，实际存储还含scale、zero point、分组和未量化张量。4bit权重理想主数据为0.5字节/参数，不能用它直接推断总显存减半或吞吐翻倍。kernel是否原生支持、反量化代价、batch与带宽决定速度；KV量化另影响长上下文误差和元数据。',
- '投机解码由草稿模型提出多个候选，再由目标模型验证。使用正确的接受与修正规则时可保持目标采样分布；简单“目标觉得差不多就接受”没有这一保证。收益由草稿成本、验证并行度、接受长度与调度开销共同决定，低接受率或高负载下可能更慢。',
  '比较时同时固定采样策略、评估集、任务成功规则与长度条件，记录数值/质量差异、TTFT、间隔和总成本。tokenizer、模板渲染、输出校验与客户端解析也会进入端到端时间；只优化GPU路径之后，它们可能成为主要部分。')},
  {id:'sv-release',title:'评估、灰度与模型版本恢复',articles:['ai-lifecycle','training-platform'],lead:'发布门禁将完整产物与评估集版本绑定，灰度按实际服务版本分组观察，恢复验证旧版本确实重新处理新请求。',body:
  para('离线评估至少拆成任务正确性、数值/格式、长度分布、安全与必要工具契约。保留失败样例和评估器版本。若新版本只在简单短请求上更快，但长上下文质量明显下降，一个总体平均数会掩盖退化；按关键请求类型给出门槛，并记录样本量。',
@@ -45,5 +44,3 @@ infraKnowledgeDomains.push({module:'platform',track:'ai',refs:['v16GQA','v16Cach
 infraDomain('platform').points.find(p=>p.id==='sv-batching').body+=
  table(['计算轮次','连续批处理的两个位置','这一轮后完成'],[['第1轮','A、B','B'],['第2轮','A、C','无'],['第3轮','A、C','A、C']])+
  para('这个排程小例子假设A还需3轮、B需1轮、C需2轮，每轮等长，每次最多服务两个请求。连续批处理3轮完成；若固定[A,B]等A结束后再处理C，需要3+2=5轮。它说明空位怎样被利用，不是实际引擎的加速比；真实每轮耗时会随成员和上下文变化。');
-infraDomain('platform').points.find(p=>p.id==='sv-optimizations').body+=
- knowledgeFormula('10亿参数、4bit权重、每128参数一个FP16尺度值','主数据500,000,000字节 + 尺度值15,625,000字节','理想主数据按每参数0.5字节算；尺度值还要(10亿/128)×2字节。再有零点、对齐或未量化层时继续加，不能只报500MB。');

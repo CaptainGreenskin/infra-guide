@@ -1,0 +1,247 @@
+{
+  "verified_at_utc": "2026-11-04T18:19:45.682583+00:00",
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "device": "cpu",
+    "backend": "gloo"
+  },
+  "source_sha256": {
+    "train_ddp.py": "5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66",
+    "compare_checkpoints.py": "4d5837c390a3d29c709c4f7fba6f66d559e36bc9733491d447b3fa795dbfff17",
+    "verify_run.py": "ab2ddd7072bfc27140f6060aed5ce690912aba170c6c1b24a5f141fb35dbadc0"
+  },
+  "configuration": {
+    "world_size": 2,
+    "samples": 1024,
+    "hidden": 32,
+    "batch_size_per_rank": 32,
+    "accum": 2,
+    "seed": 23,
+    "precision": "fp32",
+    "target_epochs": 4
+  },
+  "runs": {
+    "full": {
+      "exit_code": 0,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 2,
+          "backend": "gloo",
+          "effective_batch": 128,
+          "start_epoch": 0,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 1,
+          "loss": 2.3205251693725586,
+          "samples": 1024,
+          "seconds": 0.04778112506028265,
+          "samples_per_second": 21431.056692534534,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 1,
+          "seconds": 0.004193290951661766
+        },
+        {
+          "event": "epoch",
+          "epoch": 2,
+          "loss": 2.272819399833679,
+          "samples": 1024,
+          "seconds": 0.006404708023183048,
+          "samples_per_second": 159882.3859406922,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 2,
+          "seconds": 0.0038401249330490828
+        },
+        {
+          "event": "epoch",
+          "epoch": 3,
+          "loss": 2.219925284385681,
+          "samples": 1024,
+          "seconds": 0.006371875060722232,
+          "samples_per_second": 160706.2270119171,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 3,
+          "seconds": 0.001526624895632267
+        },
+        {
+          "event": "epoch",
+          "epoch": 4,
+          "loss": 2.17936909198761,
+          "samples": 1024,
+          "seconds": 0.005817625089548528,
+          "samples_per_second": 176016.8426527923,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 4,
+          "seconds": 0.001268291031010449
+        }
+      ],
+      "message": "",
+      "applied_calls_this_run": 32
+    },
+    "split": {
+      "exit_code": 0,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 2,
+          "backend": "gloo",
+          "effective_batch": 128,
+          "start_epoch": 0,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 1,
+          "loss": 2.3205251693725586,
+          "samples": 1024,
+          "seconds": 0.0199070000089705,
+          "samples_per_second": 51439.19222075475,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "split/checkpoint.pt",
+          "next_epoch": 1,
+          "seconds": 0.0020050409948453307
+        },
+        {
+          "event": "epoch",
+          "epoch": 2,
+          "loss": 2.272819399833679,
+          "samples": 1024,
+          "seconds": 0.005594082991592586,
+          "samples_per_second": 183050.55565657173,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "split/checkpoint.pt",
+          "next_epoch": 2,
+          "seconds": 0.001193750067614019
+        }
+      ],
+      "message": "",
+      "applied_calls_this_run": 16
+    },
+    "resumed": {
+      "exit_code": 0,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 2,
+          "backend": "gloo",
+          "effective_batch": 128,
+          "start_epoch": 2,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 3,
+          "loss": 2.219925284385681,
+          "samples": 1024,
+          "seconds": 0.020699208020232618,
+          "samples_per_second": 49470.49176949584,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "resumed/checkpoint.pt",
+          "next_epoch": 3,
+          "seconds": 0.00190633290912956
+        },
+        {
+          "event": "epoch",
+          "epoch": 4,
+          "loss": 2.17936909198761,
+          "samples": 1024,
+          "seconds": 0.0059517089975997806,
+          "samples_per_second": 172051.42261037312,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
+          "optimizer_steps": 8
+        },
+        {
+          "event": "checkpoint",
+          "path": "resumed/checkpoint.pt",
+          "next_epoch": 4,
+          "seconds": 0.0012341249966993928
+        }
+      ],
+      "message": "",
+      "applied_calls_this_run": 16
+    }
+  },
+  "negative_probes": {
+    "nondivisible_window": {
+      "exit_code": 1,
+      "matched_error": "Per-rank batch count must be positive and divisible by --accum",
+      "checkpoint_created": false
+    },
+    "changed_configuration": {
+      "exit_code": 1,
+      "matched_error": "Resume requires the same world size, device, precision and training settings",
+      "checkpoint_created": false
+    },
+    "changed_optimizer_state": {
+      "exit_code": 1,
+      "matched_error": "state.optimizer.state",
+      "model_weights_unchanged": true,
+      "changed_field": "first exp_avg element + 0.25"
+    }
+  },
+  "full_state_comparison": {
+    "exit_code": 0,
+    "records": [],
+    "message": "PASS: model, optimizer, scaler, RNG, epoch and configuration are exactly equal."
+  },
+  "final_state": {
+    "next_epoch": 4,
+    "rng_rank_count": 2,
+    "compared_fields": [
+      "model",
+      "next_epoch",
+      "optimizer",
+      "rng_by_rank",
+      "scaler",
+      "signature"
+    ]
+  },
+  "status": "passed"
+}

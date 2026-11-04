@@ -26,9 +26,9 @@ infraKnowledgeDomains.push({module:'model-foundations',track:'ai',refs:['v16Atte
  para('因果位置t只允许s≤t，padding键另行屏蔽。对两项分数[0,ln3]，权重是[1/4,3/4]；值为[2,6]时输出5。若第二项被遮罩，输出变为2，不能先对全部项归一化再把第二项的输出置零。所有键都被屏蔽的行要按实现处理，避免0/0或NaN传播。',
  '多头注意力（MHA）让每个查询头拥有对应的键和值；分组查询注意力（GQA）让若干查询头共用一组键和值。后文用Q表示查询、K表示键、V表示值。4个Q头、2个KV头的相邻分组映射是[0,0,1,1]，不是[0,1,0,1]。Q头保留各自查询，权重也各自计算；共享的是K/V表示，不能把四个Q先平均。新的标准库实验直接对照这两种映射。',
  '全量注意力的分数张量约为B×h×S²；长度翻倍使这一项变为四倍，QKV投影却只随S线性增加。因果语义允许专门算法跳过禁止区域，但不同kernel的实际FLOP和内存流量要从实现及剖析确认。')},
- {id:'mf-decoder',title:'Decoder Block、FFN、残差与位置',articles:['transformer-block','position-encoding'],lead:'以常见的“先归一化、再计算”结构（Pre-Norm）为例，一个解码器块可以写成x←x+Attention(Norm(x))，再x←x+FFN(Norm(x))。残差保持同形状相加，归一化、位置编码和激活函数各有独立参数与语义。',body:
+ {id:'mf-decoder',title:'Decoder Block、FFN、残差与位置',articles:['transformer-block','position-encoding'],lead:'以常见的“先归一化、再计算”结构（Pre-Norm）为例，一个解码器块可以写成x←x+Attention(Norm(x))，再x←x+FFN(Norm(x))。残差保持同形状相加；归一化、位置编码和激活函数各有自己的计算语义，是否含可学习参数取决于具体方案。',body:
  para('前馈网络（FFN）的普通两层结构将d映射到dff，再映回d，忽略bias有2ddff参数；门控FFN常有两个上投影与一个下投影，共3ddff。比如d=4096、dff=11008，门控部分约1.353亿参数。扩展维度、激活中间量与融合方式都会影响峰值，而不仅是Attention。',
- '旋转位置编码（RoPE）在每个二维子空间按位置旋转Q和K，使点积包含相对位置差。缓存中的旧K已经按原位置旋转；增量解码的新Q与新K必须使用正确的绝对位置或等价偏移。每次都把新Q位置重置为0，会与全量路径产生不同结果。新实验保留这个错误反例。',
+ '旋转位置编码（RoPE）在每个二维子空间按位置旋转Q和K，使点积包含相对位置差。在缓存已旋转K的实现中，旧K保留原位置的旋转；增量解码的新Q与新K使用正确的绝对位置或等价偏移。若保存的是未旋转K，读取时也须按对应位置处理。每次都把新Q位置重置为0，会与全量路径产生不同结果。新实验保留这个错误反例。',
  'Norm的统计轴也必须明确：LayerNorm常在一个token的隐藏维上计算均值与方差；RMSNorm采用均方根尺度且结构不同。它们不会让批内其他样本互相看到。读模型配置时同时核对norm位置、epsilon、门控函数、权重共享与tokenizer，不能把同样层数当成同样计算图。')+
  code('简化Pre-Norm结构 · 只展示依赖','PYTHON','x = x + attention(norm1(x), position_ids, causal_mask)\nx = x + down(silu(gate(norm2(x))) * up(norm2(x)))')},
  {id:'mf-autograd',title:'反向传播、共享参数与有效 token 分母',articles:['autograd-training','tokenization-embedding'],lead:'反向传播沿计算图把上游梯度乘以局部导数；同一参数在多个位置使用时，所有路径贡献相加。平均损失的分母决定优化的是哪个目标。',body:

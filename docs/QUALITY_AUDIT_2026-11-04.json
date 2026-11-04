@@ -1,6 +1,6 @@
 {
   "date": "2026-11-04",
-  "method": "Automatic inventory excludes code and collapsed details; character count is only a screening signal, not a quality score or a claim all chapters were manually reread.",
+  "method": "Current inventory excludes source code and collapsed details from approximate visible-prose counts; counts screen density only. Active-window manual review separately reads full prose, collapsed explanations/answers and exercises, checks arithmetic, sequence and evidence boundaries, and binds reviewed title/sections or knowledge bodies to SHA256. Selected executable sources/provenance checked; not a full security audit of all code.",
   "knowledge_points": 95,
   "chapters": [
     {
@@ -8,136 +8,188 @@
       "module": "model-foundations",
       "title": "Transformer 全貌：从张量到计算图",
       "sections": 9,
-      "approx_visible_prose_characters": 4680,
+      "approx_visible_prose_characters": 4944,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；手算矩乘、[B,T,D]/[B,H,T,d]、32/128密集与24/72因果计数、共享参数和训练/生成边界一致。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "632eb5d0810e6100933d4a598fbdf9feb42705a14dd6f794f4f6dab2cccde2bc"
     },
     {
       "id": "tokenization-embedding",
       "module": "model-foundations",
       "title": "Token、词表与 Embedding：标签如何对齐",
       "sections": 9,
-      "approx_visible_prose_characters": 4661,
+      "approx_visible_prose_characters": 4944,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及输出区；BOS/EOS/PAD的章节独立规则、六个有效目标、16/32共享参数、250MiB算术与padding_idx输出路径反例正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "d4886e84aca194e471abd305331032d4348af9a5a9e22fc951a49fe2329fcc0d"
     },
     {
       "id": "attention-mechanics",
       "module": "model-foundations",
       "title": "Attention 深入推导：QKV、掩码与多头",
       "sections": 9,
-      "approx_visible_prose_characters": 4989,
+      "approx_visible_prose_characters": 5335,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；核对1/4与3/4、[3.5,2]、未来扰动+27、GQA256/512字节与768/1024参数；缓存非方阵mask边界明确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "5332c5f4e931b6a2c55fd3ed0224d3b5a11dde04b838774305e69d140d4352dc"
     },
     {
       "id": "transformer-block",
       "module": "model-foundations",
       "title": "Decoder Block：前馈、残差与归一化",
       "sections": 9,
-      "approx_visible_prose_characters": 4963,
+      "approx_visible_prose_characters": 5231,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；LayerNorm/RMSNorm、SwiGLU手算、664/728/1224参数、pre/post-norm与重复旋转反例一致。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "6d71687db352a1c407d57023b671c5c9266e89a27cb493e981bae3cc1c3127f7"
     },
     {
       "id": "position-encoding",
       "module": "model-foundations",
       "title": "位置编码与 RoPE：相对位置怎样进入点积",
       "sections": 9,
-      "approx_visible_prose_characters": 4497,
+      "approx_visible_prose_characters": 4788,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及输出区；核对旋转点积-4/4/-0.5、配对-15/-20、cache逻辑与物理位置、128KiB/token及4/8GiB；长度可计算与质量分开。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "1d94067108cc2b6844de8b3121fcd9cb992d4eb49ef1db8243f172d3a4772089"
     },
     {
       "id": "autograd-training",
       "module": "model-foundations",
       "title": "交叉熵与自动求导：完成一次真实更新",
       "sections": 10,
-      "approx_visible_prose_characters": 5033,
+      "approx_visible_prose_characters": 5311,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及输出区；交叉熵ln(3/2)、梯度±1/3、1/3有效分母反例、664参数与零目标共同跳过，模型实测范围CPU且不冒充GPU。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "20a3a3b13ed5cce15179e86e3d2ad31186c78a3f53a0a44a385bee2a65c39881"
     },
     {
       "id": "gpu-execution",
       "module": "model-foundations",
       "title": "GPU 执行与存储：线程如何处理张量",
       "sections": 9,
-      "approx_visible_prose_characters": 3957,
+      "approx_visible_prose_characters": 3985,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；2500元素10块/60保护、5001元素20块/119保护、20000/40000字节、寄存器/occupancy假设与异步计时边界正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "94dba6b9a985ba0ff493206bd13dd0bf40f23ac0e95a9ca17cd94a80b0f5195d"
     },
     {
       "id": "roofline-model",
       "module": "model-foundations",
       "title": "Roofline：从计算量与字节判断瓶颈",
       "sections": 9,
-      "approx_visible_prose_characters": 3473,
+      "approx_visible_prose_characters": 3518,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；2MKN/理想字节数、M=1和256、150FLOP/B拐点、缓存流量层级、Amdahl和权重量化8,404,992字节独立复算正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "eb9516ed8db28ff38fc73404f3dcfc4cead40efaff5c1897073fd5d812694a41"
     },
     {
       "id": "flash-attention-io",
       "module": "model-foundations",
       "title": "FlashAttention：分块如何保持全局 Softmax",
       "sections": 9,
-      "approx_visible_prose_characters": 3660,
+      "approx_visible_prose_characters": 3955,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文；1GiB分数与96MiBQKV、7.5对错误5.0、在线m/l/u重缩放、全屏蔽块空状态与44有限数值实验边界明确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "5788bbaf7c6b6609a894b627e9894ce6d8892b92bd8eb392bde36f2d8f96a7fb"
     },
     {
       "id": "tensor-parallel-math",
       "module": "model-foundations",
       "title": "张量与流水线并行：切分后的计算与通信",
       "sections": 9,
-      "approx_visible_prose_characters": 3716,
+      "approx_visible_prose_characters": 3823,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文和数值代码块；[11,4]/偏置[12,5]、rank组/64有效batch、ring384KiB/33.932微秒及PP前向80%正确。需在数值小例前明确由前文尺寸再次缩小，避免读者沿用形状。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "bab026dd3cccb44cd2a4aeff926c224e327cc72aca27aa24ab83114c7e89a321"
     },
     {
       "id": "gpu-cluster",
       "module": "training",
       "title": "云上训练全景：从任务提交到首个更新",
       "sections": 8,
-      "approx_visible_prose_characters": 2716,
+      "approx_visible_prose_characters": 2876,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及先修/目标/练习；1024样本→512/rank→16微批→8窗口，128有效batch，双rank输入失败时间线，0.1小模型与分类器不混淆。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "bbc15d48535031731d4f0a9de9a6430614f5b0f510d04182c713999cd86b0f19"
     },
     {
       "id": "distributed-training",
       "module": "training",
       "title": "并行策略：DDP、FSDP、TP 与 PP 的取舍",
       "sections": 8,
-      "approx_visible_prose_characters": 3698,
+      "approx_visible_prose_characters": 3881,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文、展开旧标量对照及元信息；W/N、7/0/3窗口、裁剪[3,1]与[.5,.5]、动量/AMP顺序与可运行CPU记录一致。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "8672453155b650a789d5644fe7bc59aeb1177394dde536a7eab130816ffdfde0"
     },
     {
       "id": "gpu-memory",
       "module": "training",
       "title": "GPU 显存与混合精度：建立可检查的预算",
       "sections": 11,
-      "approx_visible_prose_characters": 7403,
+      "approx_visible_prose_characters": 8077,
       "figures": 4,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
       "findings": "Preserved AMP, five-buffer, FSDP and CUDA derivations; added actual dtype/lazy-state/alias accounting and deduplicated saved-storage recomputation, with numerical comparison.",
-      "reviewed_content_sha256": "feb24df52b82fafc66623c58591ee2393733116fb1afe10c13c0f3b3c2861868"
+      "reviewed_content_sha256": "bd95c412cd4da8399abbb786f03569767be1a6c95e0076cd0b475c79548a80be"
     },
     {
       "id": "ddp-code",
       "module": "training",
       "title": "写对一份 DDP 训练程序",
       "sections": 8,
-      "approx_visible_prose_characters": 2840,
+      "approx_visible_prose_characters": 3067,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息，另读完整train_ddp.py；no_sync覆盖前向/反向、post-hook计数、两层drop_last、配置签名、逐rank RNG和轮边界恢复符合源码。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "345ebca67be19e3c4b41bd117383acbd7fb32506fee30745ef2effd00179e19f"
     },
     {
       "id": "training-communication",
       "module": "training",
       "title": "NCCL 与集合通信：定位等待发生在哪里",
       "sections": 8,
-      "approx_visible_prose_characters": 4987,
+      "approx_visible_prose_characters": 5330,
       "figures": 2,
       "review": "substantial_v24",
       "reviewed_content_sha256": "58659641368a64f9c313a3a15fa92c338072df814e6b9adf1672896002582934"
@@ -147,7 +199,7 @@
       "module": "training",
       "title": "数据管道：让 GPU 持续获得有效输入",
       "sections": 7,
-      "approx_visible_prose_characters": 5562,
+      "approx_visible_prose_characters": 6076,
       "figures": 2,
       "review": "substantial_v23",
       "reviewed_content_sha256": "f2ba001b6880448b979b4c3a14eaa7383d6ec64f3b09fff5945b08cfefd91b9a"
@@ -157,52 +209,72 @@
       "module": "training",
       "title": "两机四卡 DDP：从环境检查到训练验收",
       "sections": 6,
-      "approx_visible_prose_characters": 1669,
+      "approx_visible_prose_characters": 1807,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；四rank 8192/64/2得到512batch和16次调用，网络会合/实际小通信/更新分层，明确未执行真实GPU。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "8f113a9c0090efb9d74615ad823834816367e17604f61e7d38b9154aaaa701a3"
     },
     {
       "id": "checkpoint-recovery",
       "module": "training",
       "title": "检查点与恢复：证明训练能从中断继续",
       "sections": 8,
-      "approx_visible_prose_characters": 4451,
+      "approx_visible_prose_characters": 4688,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；32更新恢复点、五更新2560样本+未更新微批256，逻辑同代/指针/掉电边界、90/1290保存占比正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "477e253a723a526b26dd99278b09f11385ed9971e061d40c7b7ba2d42633f480"
     },
     {
       "id": "training-performance",
       "module": "training",
       "title": "性能与成本：建立公平的扩展实验",
       "sections": 7,
-      "approx_visible_prose_characters": 3144,
+      "approx_visible_prose_characters": 3289,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；80s/32s、2.5倍/62.5%/1.6卡秒比、64→60ms关键路径、强弱扩展及质量成本边界正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "e7b151c3972408f22bed5d57f62ce8a76e20d45707143e2582ef9ebbee849b4b"
     },
     {
       "id": "kubernetes-training",
       "module": "training",
       "title": "走向 Kubernetes：把训练程序变成可管理的作业",
       "sections": 7,
-      "approx_visible_prose_characters": 2851,
+      "approx_visible_prose_characters": 2985,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；parallelism不等于共同world，配额/形状/放置分开，模板与集群待验范围、取消和旧attempt提交规则清楚。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "05d55a8e5347268038448b72c656bc5bd2a0740b8199d9f809ecb69b0ea23da5"
     },
     {
       "id": "training-platform",
       "module": "platform",
       "title": "AI平台在管理什么：从提交契约到可信训练产物",
       "sections": 7,
-      "approx_visible_prose_characters": 3157,
+      "approx_visible_prose_characters": 3234,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；三次同键两兼容一冲突、23分钟12+5+3+3、0.4卡时及任务/产物/发布状态分离正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "4f4a4e52bbde6ab1087257d4f707ebea1055dc4b8a761a2d9145b6b5d9bd7c29"
     },
     {
       "id": "gpu-scheduling",
       "module": "platform",
       "title": "GPU队列与调度：从配额准入到拓扑可行性",
       "sections": 10,
-      "approx_visible_prose_characters": 4703,
+      "approx_visible_prose_characters": 4930,
       "figures": 2,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
@@ -214,7 +286,7 @@
       "module": "platform",
       "title": "模型推理为什么不同：Prefill、Decode与KV Cache",
       "sections": 11,
-      "approx_visible_prose_characters": 9181,
+      "approx_visible_prose_characters": 9832,
       "figures": 5,
       "review": "substantial_v22",
       "reviewed_content_sha256": "1a53148dfa446a2c395d15a0af04de73e8291aab195644ad53fd7061decfcada"
@@ -224,16 +296,20 @@
       "module": "platform",
       "title": "推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径",
       "sections": 8,
-      "approx_visible_prose_characters": 4011,
+      "approx_visible_prose_characters": 4359,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；400ms/20ms、分块模型和双预算、512MiB交接21.47ms、p95聚合及质量/时延联合吞吐分母正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "62fe7824d028cc1ffce3d7e6c74720c2bfc41ac5de321e7133828dc94b948804"
     },
     {
       "id": "ai-lifecycle",
       "module": "platform",
       "title": "模型怎样进入生产：完整产物、评估、发布与回退",
       "sections": 8,
-      "approx_visible_prose_characters": 3368,
+      "approx_visible_prose_characters": 3535,
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
@@ -243,36 +319,48 @@
     {
       "id": "training-lab",
       "module": "practice",
-      "title": "综合实战：为一次可恢复训练建立完整证据链",
-      "sections": 10,
-      "approx_visible_prose_characters": 2679,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "title": "综合实战：两进程训练、完整恢复与三个失败对照",
+      "sections": 7,
+      "approx_visible_prose_characters": 3826,
+      "figures": 1,
+      "review": "substantial_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已复核重写后的七节完整正文、三份源码、随机源/恢复顺序/轮末汇集RNG与单文件提交，以及实际两进程正反对照。不同语义、输入与恢复基准不能互相替代；保持CPU与目标硬件边界。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "f4e32e1429af6d451c24a3674a88973bd4e896e3a43466ab09936823dd184d67"
     },
     {
       "id": "cloud-service-lab",
       "module": "practice",
       "title": "综合实战：一个服务的探针、版本发布与指标验证",
       "sections": 5,
-      "approx_visible_prose_characters": 999,
+      "approx_visible_prose_characters": 1016,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；本地真实HTTP与构造指标分开，989/1000、TPOT空值、readiness/port-forward/EndpointSlice和命名空间清理边界正确。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "5296e378afef7d6afc5efde524b0f4a13cb0a380dfd3459bb5bfdfc10f5ecc9d"
     },
     {
       "id": "production-readiness",
       "module": "practice",
       "title": "综合设计评审：让Cloud、AI与Agent形成一条可验收链路",
       "sections": 8,
-      "approx_visible_prose_characters": 2707,
+      "approx_visible_prose_characters": 2715,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；2/s×30s=60在途、40槽仅4/3每秒、总成本100/80=1.25、20题75/90%和五失败窗口口径一致。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "e59bddf962de7c6178d02be369e649d8b06d87b29818186ac14bbe14e3ac37ca"
     },
     {
       "id": "agent-runtime",
       "module": "agent",
       "title": "Agent Infra在解决什么：从模型提议到任务完成",
       "sections": 8,
-      "approx_visible_prose_characters": 5364,
+      "approx_visible_prose_characters": 5607,
       "figures": 2,
       "review": "substantial_v23",
       "reviewed_content_sha256": "d88bd4c048429053ebb5dacdcb1ec06b05f238e026a57537090476cda6624166"
@@ -282,25 +370,33 @@
       "module": "agent",
       "title": "工具已经执行，任务却没完成：持久化、幂等与崩溃恢复",
       "sections": 5,
-      "approx_visible_prose_characters": 3204,
+      "approx_visible_prose_characters": 3273,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；两库I/E/R提交间隙、真实退出23与2次尝试1效果、取消四分支和补偿权限一致。协议取消按已链接版本，未冒充远端原子取消。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "bf3411c85d011a6b6647b838eba06004fa185b90c09efd496c4b1f3122dfdfd4"
     },
     {
       "id": "agent-security",
       "module": "agent",
       "title": "Agent的权限边界：谁授权，在哪里拦截，怎样限制效果",
       "sections": 9,
-      "approx_visible_prose_characters": 3555,
+      "approx_visible_prose_characters": 3732,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；可信主体/租户/动作/对象/批准五检查、HMAC声明与回执分离、撤权后查询、两套实验的内存/事务边界清楚。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "d305d0ed9a7a3f59697cdcaa7f994a1f437de22abfb6a7dd7d9dbe13123e5bdf"
     },
     {
       "id": "agent-memory",
       "module": "agent",
       "title": "上下文、运行状态与长期记忆：三种信息不要混存",
       "sections": 7,
-      "approx_visible_prose_characters": 4414,
+      "approx_visible_prose_characters": 4530,
       "figures": 2,
       "review": "substantial_v22",
       "reviewed_content_sha256": "3cb157cfe78ac6663ec3bde62c69fba94c4f4b441dfca3e3e57a49186484841e"
@@ -310,7 +406,7 @@
       "module": "agent",
       "title": "Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本",
       "sections": 12,
-      "approx_visible_prose_characters": 6244,
+      "approx_visible_prose_characters": 6462,
       "figures": 2,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
@@ -322,25 +418,33 @@
       "module": "agent",
       "title": "把Agent Infra落实到Kairo：从机制映射到证据验收",
       "sections": 7,
-      "approx_visible_prose_characters": 2573,
+      "approx_visible_prose_characters": 2606,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文及元信息；固定计划与真实模型分别验证，所有目标Kairo接口仍待接入。末尾练习不应把所有通用Python实验统称单worker，改为各自声明的本地机制。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "b66c7c70ca432cd7d00e22b233ca089f94058e8248f0e25448dba6bb0af197c9"
     },
     {
       "id": "durable-workflows",
       "module": "agent",
       "title": "持久工作流：事件重放、接管与提交",
       "sections": 10,
-      "approx_visible_prose_characters": 4603,
+      "approx_visible_prose_characters": 4809,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整正文、旧版练习展开及元信息；事件800+20、重放非确定外部调用、控制/接收方安装空窗、三效果7+11+13=31和20秒重试预算一致。保留。",
+      "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "88c617ebdcc0aa0f796d48c6061042f833683f63f17f473eb8c4c39e9ffaf93d"
     },
     {
       "id": "agent-retrieval",
       "module": "agent",
       "title": "检索与上下文：让答案有可验证的证据",
       "sections": 14,
-      "approx_visible_prose_characters": 6178,
+      "approx_visible_prose_characters": 6492,
       "figures": 3,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
@@ -352,7 +456,7 @@
       "module": "agent",
       "title": "Agent 观测：任务、重试与成本归因",
       "sections": 8,
-      "approx_visible_prose_characters": 5325,
+      "approx_visible_prose_characters": 5711,
       "figures": 2,
       "review": "substantial_v24",
       "reviewed_content_sha256": "d7eff95a800b2c9fc0e4a125404418876a0fe8b4209d3c9c1229883e80358456"
@@ -362,7 +466,7 @@
       "module": "agent",
       "title": "Agent 沙箱：隔离、资源与生命周期",
       "sections": 12,
-      "approx_visible_prose_characters": 7569,
+      "approx_visible_prose_characters": 7893,
       "figures": 3,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
@@ -374,7 +478,7 @@
       "module": "compute",
       "title": "云计算架构：服务模型、资源与责任边界",
       "sections": 5,
-      "approx_visible_prose_characters": 2393,
+      "approx_visible_prose_characters": 2472,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -387,7 +491,7 @@
       "module": "compute",
       "title": "计算资源：虚拟化、规格与容量预算",
       "sections": 12,
-      "approx_visible_prose_characters": 5494,
+      "approx_visible_prose_characters": 5753,
       "figures": 3,
       "review": "substantial_v28",
       "reviewed_at": "2026-11-05",
@@ -400,7 +504,7 @@
       "module": "network",
       "title": "云网络：DNS、路由、访问控制与返回路径",
       "sections": 7,
-      "approx_visible_prose_characters": 3166,
+      "approx_visible_prose_characters": 3324,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -413,7 +517,7 @@
       "module": "network",
       "title": "网络诊断：连接、首字节与传输时序",
       "sections": 12,
-      "approx_visible_prose_characters": 6762,
+      "approx_visible_prose_characters": 7224,
       "figures": 2,
       "review": "substantial_v28",
       "reviewed_at": "2026-11-05",
@@ -426,7 +530,7 @@
       "module": "cloud-data",
       "title": "云存储：块、文件、对象与访问性能",
       "sections": 7,
-      "approx_visible_prose_characters": 3028,
+      "approx_visible_prose_characters": 3131,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -439,7 +543,7 @@
       "module": "cloud-data",
       "title": "数据库访问：索引、事务与锁等待",
       "sections": 9,
-      "approx_visible_prose_characters": 3776,
+      "approx_visible_prose_characters": 3904,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -452,7 +556,7 @@
       "module": "cloud-data",
       "title": "缓存一致性与击穿：旧值为何重新出现",
       "sections": 9,
-      "approx_visible_prose_characters": 4038,
+      "approx_visible_prose_characters": 4192,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -465,7 +569,7 @@
       "module": "cloud-data",
       "title": "存储发布与恢复：版本、提交点与校验",
       "sections": 8,
-      "approx_visible_prose_characters": 4724,
+      "approx_visible_prose_characters": 4946,
       "figures": 2,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -478,7 +582,7 @@
       "module": "native",
       "title": "容器运行原理：镜像、进程、隔离与资源",
       "sections": 7,
-      "approx_visible_prose_characters": 2151,
+      "approx_visible_prose_characters": 2256,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -491,7 +595,7 @@
       "module": "native",
       "title": "Kubernetes 控制面：对象、调谐与生命周期",
       "sections": 7,
-      "approx_visible_prose_characters": 3901,
+      "approx_visible_prose_characters": 4137,
       "figures": 3,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -504,7 +608,7 @@
       "module": "native",
       "title": "Kubernetes 工作负载：从声明到可用与滚动更新",
       "sections": 8,
-      "approx_visible_prose_characters": 3617,
+      "approx_visible_prose_characters": 3815,
       "figures": 2,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -517,7 +621,7 @@
       "module": "native",
       "title": "Kubernetes 调度：资源、亲和与拓扑约束",
       "sections": 7,
-      "approx_visible_prose_characters": 2995,
+      "approx_visible_prose_characters": 3103,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -530,7 +634,7 @@
       "module": "native",
       "title": "Kubernetes 网络：从 DNS、Service 到容器回包",
       "sections": 7,
-      "approx_visible_prose_characters": 4560,
+      "approx_visible_prose_characters": 4902,
       "figures": 2,
       "review": "substantial_v23",
       "reviewed_content_sha256": "1c2c50ec2a3cce6d852cc40d658403284d27ba8a1349e4b851e4d51114cf1981"
@@ -540,7 +644,7 @@
       "module": "native",
       "title": "Kubernetes 存储：PVC、拓扑、挂载与数据恢复",
       "sections": 8,
-      "approx_visible_prose_characters": 5375,
+      "approx_visible_prose_characters": 5734,
       "figures": 2,
       "review": "substantial_v22",
       "reviewed_content_sha256": "753e6fd0fcf818214fc309c442197634f79737e38cb5cea67c1d58ed5be81de3"
@@ -550,7 +654,7 @@
       "module": "native",
       "title": "配置与密钥：传播、重读与版本生效",
       "sections": 7,
-      "approx_visible_prose_characters": 4058,
+      "approx_visible_prose_characters": 4261,
       "figures": 2,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
@@ -562,7 +666,7 @@
       "module": "native",
       "title": "Kubernetes 弹性：HPA、节点容量与排队预算",
       "sections": 8,
-      "approx_visible_prose_characters": 5533,
+      "approx_visible_prose_characters": 6003,
       "figures": 2,
       "review": "substantial_v24",
       "reviewed_content_sha256": "7e4af51d480431aa2564db48bd2580cd7a81e51b2a51fe9422a096538cb9659f"
@@ -572,7 +676,7 @@
       "module": "serverless",
       "title": "Serverless 与事件驱动：执行、重试、幂等与成本",
       "sections": 13,
-      "approx_visible_prose_characters": 5717,
+      "approx_visible_prose_characters": 6075,
       "figures": 2,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
@@ -584,7 +688,7 @@
       "module": "cloud-delivery",
       "title": "平台交付：制品、配置、数据迁移与回退",
       "sections": 8,
-      "approx_visible_prose_characters": 4074,
+      "approx_visible_prose_characters": 4192,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -597,7 +701,7 @@
       "module": "cloud-security",
       "title": "身份与最小权限：谁能让系统做什么",
       "sections": 9,
-      "approx_visible_prose_characters": 3859,
+      "approx_visible_prose_characters": 3998,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -610,7 +714,7 @@
       "module": "cloud-capacity",
       "title": "容量与弹性：故障域、扩容时序与排队",
       "sections": 8,
-      "approx_visible_prose_characters": 3224,
+      "approx_visible_prose_characters": 3295,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -623,7 +727,7 @@
       "module": "sre",
       "title": "可靠性目标：SLI、SLO 与错误预算",
       "sections": 8,
-      "approx_visible_prose_characters": 3285,
+      "approx_visible_prose_characters": 3326,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -636,7 +740,7 @@
       "module": "sre",
       "title": "可观测性：用指标定位范围，用日志和追踪解释路径",
       "sections": 9,
-      "approx_visible_prose_characters": 4164,
+      "approx_visible_prose_characters": 4442,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -649,7 +753,7 @@
       "module": "sre",
       "title": "故障诊断：影响、时间线、假设与验证",
       "sections": 8,
-      "approx_visible_prose_characters": 2894,
+      "approx_visible_prose_characters": 3142,
       "figures": 2,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -662,7 +766,7 @@
       "module": "sre",
       "title": "恢复工程：故障域、RPO、RTO 与演练",
       "sections": 10,
-      "approx_visible_prose_characters": 5763,
+      "approx_visible_prose_characters": 6004,
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
@@ -674,7 +778,7 @@
       "module": "foundation",
       "title": "进程、线程与资源：为什么机器空闲，程序仍然很慢",
       "sections": 6,
-      "approx_visible_prose_characters": 2007,
+      "approx_visible_prose_characters": 2027,
       "figures": 2,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -687,7 +791,7 @@
       "module": "foundation",
       "title": "虚拟内存与 OOM：导出任务为什么被终止",
       "sections": 9,
-      "approx_visible_prose_characters": 3879,
+      "approx_visible_prose_characters": 4065,
       "figures": 1,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -700,7 +804,7 @@
       "module": "foundation",
       "title": "并发与线程池：锁、排队和容量",
       "sections": 9,
-      "approx_visible_prose_characters": 3736,
+      "approx_visible_prose_characters": 3844,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -713,7 +817,7 @@
       "module": "foundation",
       "title": "超时、重试与幂等：系统最难处理的是“结果未知”",
       "sections": 8,
-      "approx_visible_prose_characters": 2715,
+      "approx_visible_prose_characters": 2721,
       "figures": 0,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
@@ -722,8 +826,8 @@
       "reviewed_content_sha256": "8ae8c5ce17eb57fd9a0b88e8ab0e616dfbc50018d4d2bfda18e090731f3b36d1"
     }
   ],
-  "last_inventory_iteration": 28,
-  "eight_hour_manual_status": "40/66 distinct chapters reviewed in the active window, including all28 Cloud/prerequisite chapters; 20 substantial revisions (Cloud8/AI6/Agent6). All62 Cloud knowledge points read; remaining26 chapters and33 AI/Agent points explicitly pending.",
+  "last_inventory_iteration": 29,
+  "eight_hour_manual_status": "66/66 chapters and95/95 knowledge points freshly reviewed in the active window. 21 distinct substantial revisions: Cloud8/AI6/Agent6/shared1. Small definition/unit/metric clarifications are not counted as substantial rewrites. GPU, cluster, CSI and Kairo remain target-environment checks.",
   "knowledge_reviews": [
     {
       "id": "service-model",
@@ -1287,206 +1391,305 @@
       "id": "mf-tensors",
       "module": "model-foundations",
       "title": "Token、张量形状与预测目标",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
+      "reviewed_content_sha256": "e97803f3e0debdae2f9c21785d4e2a5d7295763dc950e56a98a288d695f533e8"
     },
     {
       "id": "mf-attention",
       "module": "model-foundations",
       "title": "Attention、因果掩码与 GQA 的具体计算",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
+      "reviewed_content_sha256": "cc112f9649d50e04bc304e9033be2bc825768821e476b3c1df33680761e8f0e1"
     },
     {
       "id": "mf-decoder",
       "module": "model-foundations",
       "title": "Decoder Block、FFN、残差与位置",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。将归一化/位置/激活是否含可学习参数写成依方案决定，缓存旧K限定为已旋转K实现。",
+      "reviewed_content_sha256": "89f50228c186c29213df921f30c0c970697554c90ab7bfa4a16f623661035dd4"
     },
     {
       "id": "mf-autograd",
       "module": "model-foundations",
       "title": "反向传播、共享参数与有效 token 分母",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
+      "reviewed_content_sha256": "55038f09dd1fd40f6e32789182634b372b5ed9fdb78241d3a354d7115b14db76"
     },
     {
       "id": "mf-gpu",
       "module": "model-foundations",
       "title": "GPU 执行层级、访存与资源约束",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
+      "reviewed_content_sha256": "74884d62c4611cf39404991d2bb9f03e5c64c75e632f44eadc8a8f366249127b"
     },
     {
       "id": "mf-roofline",
       "module": "model-foundations",
       "title": "Roofline、在线 Softmax 与算子优化",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
+      "reviewed_content_sha256": "98e75c46a926df28fe87207b080eda0a394fa924585125083a758bc3a80d5eb2"
     },
     {
       "id": "tr-step",
       "module": "training",
       "title": "一次训练更新：数据、计算、通信、提交",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "662f69823530ea6082f2a76c20c67fe1e96e600fd18ca0361029a5c46232b421"
     },
     {
       "id": "tr-memory",
       "module": "training",
       "title": "训练显存：状态账本、峰值与混合精度",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "665990fa5d3b8f13f0a025e6247cb391da5fb71c438f34ac80e258fb0f403cf4"
     },
     {
       "id": "tr-ddp",
       "module": "training",
       "title": "DDP：副本一致与全局目标是两件检查",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "469172be785d975ac9fe24e56000a916d4482027cdc88911d9f2d08b9fa92743"
     },
     {
       "id": "tr-sharding",
       "module": "training",
       "title": "FSDP 与 ZeRO：分片的是哪些状态",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。修正16GB持久状态被误写为16GiB峰值的交叉引用。",
+      "reviewed_content_sha256": "2b3773d9330a44195e037e420f12314d87b0e6db0c6424a10d991c725a95b663"
     },
     {
       "id": "tr-parallel",
       "module": "training",
       "title": "张量并行、流水线并行与混合专家",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "7f359e12d847b22c9d0a22efca145be18cd6dcccc38478ac5d8c9b6d83bfb554"
     },
     {
       "id": "tr-collectives",
       "module": "training",
       "title": "集合通信：数据量、顺序与重叠",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "c207e3fedc5fc0846aca8484029a6eeb0302772377d1909e051e3045c3c847f6"
     },
     {
       "id": "tr-input",
       "module": "training",
       "title": "数据流水线：供给、packing 与跨 rank 一致性",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "6841f4d7ee581070ad48f9cafe6f29ba71a65157182a276c6f7af400c251da14"
     },
     {
       "id": "tr-recovery",
       "module": "training",
       "title": "检查点、重启与训练作业的验收",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "0a89d070fbe342494f2639892eccceed3c6f47eabdf2852e93073ec3ff7c0302"
     },
     {
       "id": "sv-contract",
       "module": "platform",
       "title": "训练平台：作业契约与可加载产物",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "2e1b38b2427afc74063110f15d391f03d9e7f6673670719e352e58a4067b5d44"
     },
     {
       "id": "sv-admission",
       "module": "platform",
       "title": "GPU 调度：配额、形状、拓扑与协同准入",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "192379201533d58e7926f73b2e4d715327916c6e549fb529a8b617d7115eabef"
     },
     {
       "id": "sv-prefill",
       "module": "platform",
       "title": "Prefill、Decode 与自回归依赖",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "a4a54150bccfd082cdbc3560b3d4e9d2373badd0abc7521b099d84f768786111"
     },
     {
       "id": "sv-kv",
       "module": "platform",
       "title": "KV Cache：GQA 字节账、分块与增长",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "cc8b223c92fdeed03cef4e64c008b103de8a7a30e00af7267f47bda25a9fb94c"
     },
     {
       "id": "sv-batching",
       "module": "platform",
       "title": "连续批处理、分块预填充与准入",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "b594a10d7d4377117c71ab975814de1a723fc89a29ec5cc19e67ab3ae07edc50"
     },
     {
       "id": "sv-metrics",
       "module": "platform",
       "title": "首词元延迟、输出间隔、吞吐与达标吞吐",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。改清质量与时延同时达标的联合分母，显式100ms窗口包含右端输出。",
+      "reviewed_content_sha256": "aec26999076befd0c4d84f4f89a39b26c3c66be8c22cc352486575e73c2106ca"
     },
     {
       "id": "sv-quantization",
       "module": "platform",
       "title": "量化：数值误差、存储与实际执行",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "a0702d2d9b8726665f2006a515396ba601e571af129254d0d6337ab6d769fa82"
     },
     {
       "id": "sv-optimizations",
       "module": "platform",
       "title": "投机解码与端到端开销",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。删除与投机解码主题无关的重复INT4载荷段；量化点已有更完整账本。",
+      "reviewed_content_sha256": "e00a488d42f8aa3ae9c327dad77be8c610042d394a8424542fb0e386e0a159a6"
     },
     {
       "id": "sv-release",
       "module": "platform",
       "title": "评估、灰度与模型版本恢复",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "38c63d462323556a6568c57c3905425149fe01f180f9a9ea3e1f935b507cf479"
     },
     {
       "id": "ag-runtime",
       "module": "agent",
       "title": "运行时：任务、运行、步骤与效果身份",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "b776a8c010cce28de3c80c13c17149804466d047760c3f291f510a138b97b6c3"
     },
     {
       "id": "ag-tools",
       "module": "agent",
       "title": "工具契约：类型、前置条件与结果语义",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "80adf177707284d86bd91fb0caec0cdf6cc8f3b3e4cbc417c25083e416286301"
     },
     {
       "id": "ag-recovery",
       "module": "agent",
       "title": "持久执行：恢复、取消与效果回执",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "1742173a01da533f438cbad22beb9b57549897f5e07501a326460ba34e600200"
     },
     {
       "id": "ag-fencing",
       "module": "agent",
       "title": "多 worker：租约、代际与接收方 fencing",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "f1f8b9b65330cf24da24ad2cf18a764adb0480ef76c591d830e6f2160e398242"
     },
     {
       "id": "ag-authorization",
       "module": "agent",
       "title": "权限委托、审批与外部文本边界",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "c02a129b30b742cdc63d896247ad8d5d4075a2cd14cbd36b3e5dc9ac2a54b5ff"
     },
     {
       "id": "ag-context",
       "module": "agent",
       "title": "上下文、运行状态与长期记忆的存储职责",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "cf9b00b238d75668ad02fc28afb623519c45a96275d2f37a79d0b4ead05c00e0"
     },
     {
       "id": "ag-retrieval",
       "module": "agent",
       "title": "RAG：索引、过滤、排序与事实归因",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "1aabf2e29a8fd5db80f1cf96f43b5cc0912d85dd2323107279e44991c795666e"
     },
     {
       "id": "ag-observability",
       "module": "agent",
       "title": "任务轨迹、预算与每成功任务成本",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "bba77dd58bed3d572ebce16ad77819be2824bfc95bedc94e1f1a86d78a36832e"
     },
     {
       "id": "ag-evaluation",
       "module": "agent",
       "title": "任务评估：真实效果、正确拒绝与故障注入",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "b3d153da48fe5962b8d681d68b9d52f517c12e23fd7fbd0854d41a042d8b4073"
     },
     {
       "id": "ag-sandbox",
       "module": "agent",
       "title": "执行沙箱：资源、网络、文件与生命周期",
-      "review": "pending_fresh_review"
+      "review": "fresh_review_v29",
+      "reviewed_at": "2026-11-05",
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
+      "reviewed_content_sha256": "98b518df7eac520442989b4905a33565724dcfc40e17c21a608d8f298d97e0bb"
     }
   ],
   "eight_hour_progress": {
-    "reviewed_chapters": 40,
+    "reviewed_chapters": 66,
     "total_chapters": 66,
-    "substantial_chapters": 20,
-    "reviewed_knowledge_points": 62,
+    "substantial_chapters": 21,
+    "reviewed_knowledge_points": 95,
     "total_knowledge_points": 95
   }
 }
