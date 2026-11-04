@@ -19,7 +19,7 @@ report={'python':platform.python_version(),'sqlite':sqlite3.sqlite_version,'prog
 for name in ['wal_backup.py','volume_writer.py','int4_groups.py','context_state.py','int8_runtime.py']:
     executable=args.torch_python if name=='int8_runtime.py' else sys.executable
     source=(LAB/name).read_bytes()
-    run=subprocess.run([executable,str(LAB/name)],capture_output=True,text=True,timeout=60)
+    run=subprocess.run([executable,'-B',str(LAB/name)],capture_output=True,text=True,timeout=60)
     if run.returncode:
         raise RuntimeError(name+' failed: '+run.stderr)
     result=json.loads(run.stdout)

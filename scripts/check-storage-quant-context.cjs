@@ -2,6 +2,7 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require(
 const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const d=vm.runInContext('({storageQuantContextFiles,storageQuantContextValidation})',c);
+const python=process.env.INFRA_LAB_PYTHON||'python3';
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
 const actual={};
 for(const[id,name]of [['k8s-storage','wal_backup.py'],['k8s-storage','volume_writer.py'],['model-serving','int4_groups.py'],['model-serving','int8_runtime.py'],['agent-memory','context_state.py']]){
@@ -12,7 +13,7 @@ for(const[id,name]of [['k8s-storage','wal_backup.py'],['k8s-storage','volume_wri
  assert.equal(record.exit_code,0);assert(record.python);
  const html=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
  assert([...html.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(m=>decode(m[1])===source.trim()),'static inline source mismatch: '+name);
- if(name!=='int8_runtime.py')actual[name]=JSON.parse(execFileSync('python3',['dist/labs/storage-quant-context/'+name],{encoding:'utf8',timeout:20000}));
+ if(name!=='int8_runtime.py')actual[name]=JSON.parse(execFileSync(python,['-B','dist/labs/storage-quant-context/'+name],{encoding:'utf8',timeout:20000}));
 }
 const wal=actual['wal_backup.py'];
 for(const key of ['main_file_only','backup_from_snapshot','backup_from_fresh_connection','retained_after_bad_write','isolated_restore','consumer_continued']){
@@ -60,7 +61,20 @@ assert(quant.schemes.group_2.tensor_bytes>quant.fp16_weight_bytes);
 assert.equal(quant.activation_probe.clipped_values,1);
 assert(quant.activation_probe.static_max_error>quant.activation_probe.dynamic_max_error);
 assert(quant.activation_probe.group_rescale_matches_dequantized_dot);
-assert.deepEqual(quant,d.storageQuantContextValidation.programs['int4_groups.py'].result);
+// Python 3.12 improved float sum(): equivalent results may differ at the final bit.
+// Keep shape, categories and integer fields exact; compare noninteger scalars to 1e-11.
+function numericRecord(actual,expected,location='record'){
+ if(typeof actual==='number'&&typeof expected==='number'){
+  assert(Number.isFinite(actual)&&Number.isFinite(expected),location);
+  if(Number.isInteger(actual)&&Number.isInteger(expected))assert.equal(actual,expected,location);
+  else assert(Math.abs(actual-expected)<1e-11,location);
+ }else if(actual!==null&&expected!==null&&typeof actual==='object'&&typeof expected==='object'){
+  assert.equal(Array.isArray(actual),Array.isArray(expected),location);
+  assert.deepEqual(Object.keys(actual).sort(),Object.keys(expected).sort(),location);
+  for(const key of Object.keys(actual))numericRecord(actual[key],expected[key],location+'.'+key);
+ }else assert.strictEqual(actual,expected,location);
+}
+numericRecord(quant,d.storageQuantContextValidation.programs['int4_groups.py'].result);
 
 // The actual INT8 record is checked, not rerun or installed by CI.
 const runtime=d.storageQuantContextValidation.programs['int8_runtime.py'].result;
@@ -99,7 +113,7 @@ for(const number of [1,2]){
 }
 assert.equal(d.storageQuantContextValidation.cluster_manifests.status,'generated_not_cluster_executed');
 
-execFileSync('python3',['-c',`from pathlib import Path
+execFileSync(python,['-B','-c',`from pathlib import Path
 import zipfile
 with zipfile.ZipFile('dist/labs/storage-quant-context.zip') as z:
  assert z.testzip() is None
