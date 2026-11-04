@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "canonical_script_count": 126,
+  "canonical_script_count": 127,
   "public_script_count": 9,
   "bundles": [
     {
@@ -326,8 +326,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "00fdd32e2aa21682d7e63ccc06cecdecbad4eb685b67b8b6fc402866fcc1bc7c",
-      "bytes": 332154,
+      "sha256": "1ffabbe0f2d48692607e3328e38617695e15c998cf00a790cd5a8fec3933ac0f",
+      "bytes": 334115,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -401,8 +401,8 @@
         },
         {
           "file": "learning-resources.js",
-          "sha256": "767a18244a3b159fd7478b6031ecd6f4d2eb815eedb40f941c31b9a1c2b730ed",
-          "bytes": 18841
+          "sha256": "814d7cc6cb7b0de040aea34af80167056916fe95bb7d86525ff96cad160be06e",
+          "bytes": 20802
         },
         {
           "file": "cloud-coverage.js",
@@ -540,8 +540,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "f490b9e5d0e00886e3324121df3140bb4404f5eb3c796f465199cbb800bc66b0",
-      "bytes": 403582,
+      "sha256": "f941050ed64843206546840f32e4274c1fc3c4ad52e02b90ec45cd9dcfa08fbe",
+      "bytes": 408265,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -652,6 +652,11 @@
           "file": "storage-parallel-acceptance-lessons.js",
           "sha256": "4543f0b4ddb30dd88173b3c3649c9bf1d2c66c68a3bb65ca553db5ef5c452d25",
           "bytes": 17551
+        },
+        {
+          "file": "chinese-reading-resources.js",
+          "sha256": "86f0a571a1e662a0cccbc9dfdde42f65d207acadcf730910dc663f8596eaea59",
+          "bytes": 4647
         },
         {
           "file": "lab-catalog.js",

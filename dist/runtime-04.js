@@ -817,12 +817,34 @@ const resourceVideoLinks={
  'hf-agents':'https://huggingface.co/learn/agents-course/en/communication/live1',
  'hf-mcp':'https://huggingface.co/learn/mcp-course/en/unit3/build-mcp-server'
 };
-function resourceRow(r,small=false){return '<article class="resource-row" id="resource-'+r.id+'"><div class="resource-meta"><span>'+r.language+' · '+r.format+'</span><span>'+r.provider+'</span></div><h3><a href="'+r.url+'" target="_blank" rel="noopener noreferrer">'+r.title+' ↗</a></h3><p><b>先看什么</b>'+r.first+'</p>'+(small?'':'<p class="resource-access">'+r.access+'</p>')+'<details><summary>先修、学完检查'+(small?'与访问条件':'')+'</summary><p><b>先修</b>'+r.prereq+'</p><p><b>学完检查</b>'+r.gate+'</p>'+(small?'<p>'+r.access+'</p>':'')+'<div class="path-links">'+r.chapters.slice(0,4).map(id=>readLink(id,articleById(id).title)).join('')+'</div></details>'+(resourceVideoLinks[r.id]?'<a class="resource-video" href="'+resourceVideoLinks[r.id]+'" target="_blank" rel="noopener noreferrer">'+(r.id==='hf-agents'?'课程导览回放':r.id==='hf-mcp'?'实作录屏入口':'录像 / 视频章节入口')+' ↗</a>':'')+'</article>';}
-function resourceRecommendations(module,id=null){const list=learningResources.filter(r=>id?r.chapters.includes(id):r.chapters.some(chapter=>articleById(chapter)?.module===module)).slice(0,id?2:3);if(!list.length)return '';return '<section class="resource-recommendations"><h2>延伸资料与视频</h2>'+list.map(r=>resourceRow(r,true)).join('')+'<a class="inline-link" href="/resources/#'+(moduleFor(module)?.track==='shared'?(list[0]?.track||'cloud'):(moduleFor(module)?.track||'cloud'))+'">查看这一方向的完整推荐 →</a></section>';}
-function resourcesPage(){const starters={cloud:['cncf-aliyun','k8s-basics','sre-workbook'],ai:['cs336','pytorch-ddp','cuda-model'],agent:['ntu-genai','berkeley-agents','hf-agents']};simplePage('资料与视频','ORIGINAL SOURCES · LEARNING RESOURCES','按领域选原始材料，按章节开始学。每条都标注语言、形式、访问条件与学完检查。',
- '<nav class="resource-jumps" aria-label="资料方向">'+['cloud','ai','agent'].map(id=>'<a href="/resources/#'+id+'">'+trackDefinitions[id].label+' ↓</a>').join('')+'</nav><p class="evidence-note">核对于 2026-11-04。已核对提供者、正文目录和标注的视频入口；没有完整试看所有课程。讲授语言、录像与演示录屏分别标明。学习顺序和检查任务是本站建议，视频播放还受托管平台与访问环境影响。</p>'+
- ['cloud','ai','agent'].map(track=>'<section class="resource-track" id="'+track+'"><h2>'+trackDefinitions[track].label+'</h2><div class="resource-start"><b>第一次来，先选这三项</b><div>'+starters[track].map(id=>{const r=learningResources.find(r=>r.id===id);return '<a href="/resources/#resource-'+id+'">'+r.title+' ↓</a>';}).join('')+'</div></div>'+learningResources.filter(r=>r.track===track).map(r=>resourceRow(r)).join('')+'</section>').join('')+
- '<p class="evidence-note">课程公开、课程账号、云资源费用与学校作业提交权限各有独立条件。历史课程用于理解机制；复现时再核对当前 API、依赖和硬件。Kairo 的能力仍按本站实践章节与实际版本验收。</p>');}
+function resourceIsChinese(r){return /^中文/.test(r.language);}
+function resourceReadingOrder(list){return [...list].sort((a,b)=>Number(resourceIsChinese(b))-Number(resourceIsChinese(a)));}
+function resourceFilterHref(language,media,anchor='resource-filter'){
+ const p=new URLSearchParams();if(language==='zh')p.set('language','zh');if(media==='video')p.set('media','video');
+ return '/resources/'+(p.toString()?'?'+p.toString().replace(/&/g,'&amp;'):'')+'#'+anchor;
+}
+function resourceRow(r,small=false){
+ const videoLabel=r.id==='hf-agents'?'英文课程导览回放':r.id==='hf-mcp'?'实作录屏入口':r.id==='d2l-zh'?'中文课程与录像目录':'录像 / 视频章节入口';
+ return '<article class="resource-row" id="resource-'+r.id+'"><div class="resource-meta"><span>'+r.language+' · '+r.format+'</span><span>'+r.provider+'</span></div><h3><a href="'+r.url+'" target="_blank" rel="noopener noreferrer">'+r.title+' ↗</a></h3><p><b>先看什么</b>'+r.first+'</p>'+(small?'':'<p class="resource-access">'+r.access+'</p>')+'<details><summary>先修、学完检查'+(small?'与访问条件':'')+'</summary><p><b>先修</b>'+r.prereq+'</p><p><b>学完检查</b>'+r.gate+'</p>'+(small?'<p>'+r.access+'</p>':'')+'<div class="path-links">'+r.chapters.slice(0,4).map(id=>readLink(id,articleById(id).title)).join('')+'</div></details><div class="resource-extra-links">'+(resourceVideoLinks[r.id]?'<a class="resource-video" href="'+resourceVideoLinks[r.id]+'" target="_blank" rel="noopener noreferrer">'+videoLabel+' ↗</a>':'')+(r.originalUrl?'<a href="'+r.originalUrl+'" target="_blank" rel="noopener noreferrer">英文原文 ↗</a>':'')+'</div><p class="resource-checked">入口核对 '+r.checked+'</p></article>';
+}
+function resourceRecommendations(module,id=null){
+ const list=resourceReadingOrder(learningResources.filter(r=>id?r.chapters.includes(id):r.chapters.some(chapter=>articleById(chapter)?.module===module))).slice(0,id?2:3);
+ if(!list.length)return '';
+ return '<section class="resource-recommendations"><h2>延伸资料与视频</h2>'+list.map(r=>resourceRow(r,true)).join('')+'<a class="inline-link" href="/resources/#'+(moduleFor(module)?.track==='shared'?(list[0]?.track||'cloud'):(moduleFor(module)?.track||'cloud'))+'">查看这一方向的完整推荐 →</a></section>';
+}
+function resourcesPage(){
+ const params=new URLSearchParams(location.search||''),language=params.get('language')==='zh'?'zh':'all',media=params.get('media')==='video'?'video':'all';
+ const list=resourceReadingOrder(learningResources.filter(r=>(language!=='zh'||resourceIsChinese(r))&&(media!=='video'||r.video)));
+ const starters={cloud:['k8s-basics','cncf-aliyun','aws-reliability'],ai:['d2l-zh','one-gpu-lm','cs336'],agent:['ntu-genai','hf-agents','effective-agents']};
+ const choice=(value,label,kind)=>'<a href="'+resourceFilterHref(kind==='language'?value:language,kind==='media'?value:media)+'"'+(value===(kind==='language'?language:media)?' aria-current="true"':'')+'>'+label+'</a>';
+ const filters='<section class="resource-filters" id="resource-filter" aria-label="筛选资料"><div><span>正文语言</span>'+choice('all','全部','language')+choice('zh','中文 / 译文','language')+'</div><div><span>形式</span>'+choice('all','全部','media')+choice('video','含视频入口','media')+'</div><p role="status">显示 '+list.length+' / '+learningResources.length+' 项。视频语言看条目标注，中文正文可能配英文导览。</p></section>';
+ const nav='<nav class="resource-jumps" aria-label="资料方向">'+['cloud','ai','agent'].map(id=>'<a href="'+resourceFilterHref(language,media,id)+'">'+trackDefinitions[id].label+' ↓</a>').join('')+'</nav>';
+ const tracks=['cloud','ai','agent'].map(track=>{
+  const items=list.filter(r=>r.track===track),initial=starters[track].map(id=>items.find(r=>r.id===id)).filter(Boolean);
+  return '<section class="resource-track" id="'+track+'"><h2>'+trackDefinitions[track].label+'</h2>'+(initial.length?'<div class="resource-start"><b>入门先看</b><div>'+initial.map(r=>'<a href="'+resourceFilterHref(language,media,'resource-'+r.id)+'">'+r.title+' ↓</a>').join('')+'</div></div>':'')+(items.length?items.map(r=>resourceRow(r)).join(''):'<p>当前筛选下暂无匹配条目。可切换正文语言或形式，或先按本站中文章节学习。</p>')+'</section>';
+ }).join('');
+ simplePage('资料与视频','READ · WATCH · VERIFY','先从中文材料入门，再按主题查原始文档与论文。每项写明先看什么、先修与学完检查。',filters+nav+'<p class="evidence-note">按条目标注入口核对日；旧课程保留归档年份。已核对正文目录和列出的录像入口，没有完整试看所有视频。学习顺序与检查任务是本站建议，播放条件取决于托管平台与访问环境。</p>'+tracks+'<p class="evidence-note">阅读、课程账号、云资源与正式作业提交各有条件。历史课程先用于理解机制，运行时核对目标 API、依赖与硬件；Kairo 能力仍按指定版本验收。</p>');
+}
 
 
 ;

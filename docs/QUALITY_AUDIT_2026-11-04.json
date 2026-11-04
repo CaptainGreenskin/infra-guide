@@ -534,9 +534,9 @@
       "figures": 2,
       "review": "substantial_v32",
       "reviewed_at": "2026-11-05",
-      "findings": "保留对象/文件/块、请求粒度、输入速率与冷热缓存体系；复核接口责任图、55/5.5秒串行模型、64B与64KiB的独立题设。新增真实HTTP整分片/Range等价和412/偏移/416三反例；正文、下载与图按实际响应体计数核对，ETag规则区分夹具与S3。",
+      "findings": "保留对象/文件/块、请求粒度、输入速率与冷热缓存体系；复核接口责任图、55/5.5秒串行模型、64B与64KiB的独立题设。新增真实HTTP整分片/Range等价和412/偏移/416三反例；正文、下载与图按实际响应体计数核对，ETag规则区分夹具与S3。 第33轮补阿里云/腾讯云/AWS三类产品与接口映射，核对两份厂商原文，仅识别名称与类别，不传播性能排名或多写者保证。",
       "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "47aef9d87202fbae044ab3917bca96a2d9f7ebfea0b0a4bbee6efd3c83455c94"
+      "reviewed_content_sha256": "817f735cc6c7cdb0c737cb39fbc7571893ec69d68d4bb8cfdb1f850d07d09a61"
     },
     {
       "id": "database-index-locks",
@@ -970,8 +970,8 @@
       "title": "块、文件与对象存储",
       "review": "fresh_review_v32",
       "reviewed_at": "2026-11-05",
-      "reviewed_content_sha256": "c745010bc168b4dfa9f66c64606c1f563b7b682b680d827feec4660a33a55ee5",
-      "findings": "保留完整接口责任与S3单对象/跨对象边界，新增责任示意图；图、表和正文层次一致，不加入案例代码。"
+      "reviewed_content_sha256": "7907c3eeabcc0e30a6f80d65980e629cafb8d4b8a989fb9f518ec9820a8be026",
+      "findings": "保留完整接口责任与S3单对象/跨对象边界，新增责任示意图；图、表和正文层次一致，不加入案例代码。 第33轮核对国内云产品名的接口分类，未以供应商名称替代共享与版本契约。"
     },
     {
       "id": "storage-performance",
