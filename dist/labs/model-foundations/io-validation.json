@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "stable_softmax_cases": 44,
+  "online_example": {
+    "reference": [
+      7.5
+    ],
+    "tiled": [
+      7.5
+    ],
+    "wrong_tile_average": 5.0,
+    "history": [
+      {
+        "m": 0.0,
+        "denominator": 2.0,
+        "numerator": [
+          0.0
+        ]
+      },
+      {
+        "m": 1.0986122886681098,
+        "denominator": 2.6666666666666665,
+        "numerator": [
+          20.0
+        ]
+      }
+    ]
+  },
+  "tensor_parallel": {
+    "partial_outputs": [
+      [
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          10,
+          2
+        ]
+      ]
+    ],
+    "reduced": [
+      [
+        11,
+        4
+      ]
+    ],
+    "reference": [
+      [
+        11,
+        4
+      ]
+    ]
+  },
+  "source_sha256": "c3d439f1d8bd760f3deee5989a921a79cd25385cd52d556cdf93ec0db6dea8b5",
+  "scope": "scalar CPU numerics, no GPU performance or distributed communication"
+}

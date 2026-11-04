@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path'),assert=require('assert'),vm=require(
 const dist=path.resolve(__dirname,'../dist');
 const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
-assert.equal(urls.length,67);assert.equal(new Set(urls.map(u=>u.href)).size,67);
+assert.equal(urls.length,86);assert.equal(new Set(urls.map(u=>u.href)).size,86);
 for(const url of urls){
  const file=path.join(dist,url.pathname,'index.html'),html=fs.readFileSync(file,'utf8');
  assert(html.includes('<link rel="canonical" href="'+url.href+'">'),url.pathname+': canonical');
@@ -19,7 +19,7 @@ for(const url of urls){
 }
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
-assert.equal(new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size,42);
+assert.equal(new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size,60);
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
 assert.equal((interview.match(/<dt>说明边界<\/dt>/g)||[]).length,12);
@@ -34,7 +34,7 @@ assert(vm.runInContext('attentionExample(0,false,true).output[0]!==attentionExam
 const record=JSON.parse(fs.readFileSync(path.join(dist,'labs/attention/validation.json'),'utf8'));
 assert.equal(record.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/attention/attention_lab.py'))).digest('hex'));
 assert.equal(record.report.status,'passed');
-console.log('PASS: 67 full-text HTML pages, canonical/social metadata, crawlable internal links, sitemap and attention calculations/evidence.');
+console.log('PASS: 86 full-text HTML pages, canonical/social metadata, crawlable internal links, sitemap and attention calculations/evidence.');
 
 const ddpRecord=JSON.parse(fs.readFileSync(path.join(dist,'labs/ddp-step/validation.json'),'utf8'));
 assert.equal(ddpRecord.report.status,'passed');
@@ -56,9 +56,9 @@ for (const [id, section] of [['network-diagnosis', 7], ['agent-security', 8]]) {
 }
 console.log('PASS: timing, authorization evidence and lab deep links.');
 for (const [route, total, mustContain, mustOmit] of [
- ['/module/training', 15, 'model-serving', 'linux-resource'],
- ['/article/network-diagnosis', 18, 'linux-resource', 'gpu-memory'],
- ['/article/agent-security', 6, 'agent-runtime', 'gpu-cluster'],
+ ['/module/training', 25, 'model-serving', 'linux-resource'],
+ ['/article/network-diagnosis', 22, 'linux-resource', 'gpu-memory'],
+ ['/article/agent-security', 10, 'agent-runtime', 'gpu-cluster'],
  ['/module/practice', 3, 'production-readiness', 'agent-runtime']
 ]) {
  const sidebar = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8')
@@ -77,7 +77,7 @@ for (const id of ['plan','companies','coding','database','design']) {
  assert(pageText(id).includes('aria-current="page"'), 'active workshop '+id);
 }
 assert(outline.includes('先打底，再选方向'));
-assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,42);
+assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,60);
 assert(pageText('plan').includes('三轮考前复习'));
 const sample=pageText('companies');
 for (const phrase of ['腾讯','阿里','字节','8 份公开岗位说明','12 组能力','8 组已有','4 组有']) assert(sample.includes(phrase),phrase);
@@ -87,4 +87,4 @@ assert.deepEqual(db.snapshot_reads,['queued','queued','running']);
 assert.equal(db.plans.length,3);
 for (const item of db.plans) assert.deepEqual(item.result_ids,db.plans[0].result_ids);
 assert(pageText('database').includes('SQLite '+db.sqlite));
-console.log('PASS: 5 interview destinations, 42 priority labels, role evidence and SQL results.');
+console.log('PASS: 5 interview destinations, 60 priority labels, role evidence and SQL results.');

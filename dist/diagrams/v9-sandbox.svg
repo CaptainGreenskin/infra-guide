@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+<title id="title">沙箱任务的权限边界和回收路径</title><desc id="desc">可信控制平面向不可信脚本授予受限能力，受保护服务验证资源级权限。生命周期结束后核验实例、凭据、配额和真实效果。</desc>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="#315dce"/></marker></defs>
+<style>text{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#243650}.small{font-size:15px}.label{font-size:17px;font-weight:650}.title{font-size:25px;font-weight:700}.eye{font-size:11px;letter-spacing:2px;fill:#315dce}.muted{font-size:14px;fill:#586c88}</style>
+<rect width="960" height="480" rx="14" fill="#f6f8fc"/><text x="28" y="30" class="eye" text-anchor="start">AGENT INFRA     /     EXECUTION BOUNDARY</text>
+<text x="28" y="68" class="title" text-anchor="start">给日报脚本一个有限、可回收的世界</text>
+<text x="28" y="97" class="muted" text-anchor="start">从可信委托发放能力，由数据服务独立核验当前授权。</text>
+<rect x="28" y="128" width="272" height="169" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="46" y="156" class="muted" text-anchor="start">可信主体</text>
+<text x="46" y="185" class="label" text-anchor="start">控制平面</text>
+<text x="46" y="217" class="small" text-anchor="start">验证林、租户 A 和任务 R27</text>
+<text x="46" y="244" class="small" text-anchor="start">分配输入、实例代际和预算</text>
+<text x="46" y="271" class="small" text-anchor="start">持有上游凭据并记录生命周期</text>
+<path d="M305 202 L338 202" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="344" y="128" width="272" height="169" rx="12" fill="#eaf0fe" stroke="#7796da"/>
+<text x="362" y="156" class="muted" text-anchor="start">不可信脚本</text>
+<text x="362" y="185" class="label" text-anchor="start">执行区</text>
+<text x="362" y="217" class="small" text-anchor="start">只读任务输入，写临时产物</text>
+<text x="362" y="244" class="small" text-anchor="start">限制 CPU、内存、时间和出口</text>
+<text x="362" y="271" class="small" text-anchor="start">运行实例绑定任务与代际</text>
+<path d="M621 202 L654 202" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="660" y="128" width="272" height="169" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="678" y="156" class="muted" text-anchor="start">效果边界</text>
+<text x="678" y="185" class="label" text-anchor="start">受保护的服务</text>
+<text x="678" y="217" class="small" text-anchor="start">验证身份、资源与动作范围</text>
+<text x="678" y="244" class="small" text-anchor="start">只接受授权目标及有效代际</text>
+<text x="678" y="271" class="small" text-anchor="start">记录实际版本与回执</text>
+<rect x="28" y="323" width="904" height="124" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="48" y="352" class="label" text-anchor="start">从停止请求走到回收确认</text>
+<text x="48" y="382" class="small" text-anchor="start">停止新授权 → 终止受管工作负载 → 卸挂载与撤凭据 → 核对配额和实例代际</text>
+<text x="48" y="414" class="muted" text-anchor="start">产物核验与业务对账独立进行。进程退出后，再查询是否仍有来宾资源或远端效果。</text>
+</svg>

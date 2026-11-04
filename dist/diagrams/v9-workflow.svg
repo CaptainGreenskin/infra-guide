@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+<title id="title">日报工作流的状态与持久化域</title><desc id="desc">四个工作流状态依次为受理、发布意图、待核对和完成。任务库重放历史，发布服务检查代际和幂等回执。</desc>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="#315dce"/></marker></defs>
+<style>text{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#243650}.small{font-size:15px}.label{font-size:17px;font-weight:650}.title{font-size:25px;font-weight:700}.eye{font-size:11px;letter-spacing:2px;fill:#315dce}.muted{font-size:14px;fill:#586c88}</style>
+<rect width="960" height="480" rx="14" fill="#f6f8fc"/><text x="28" y="30" class="eye" text-anchor="start">AGENT INFRA     /     DURABLE WORKFLOW</text>
+<text x="28" y="68" class="title" text-anchor="start">日报 R27 如何确认一次发布</text>
+<text x="28" y="97" class="muted" text-anchor="start">同一任务内按事件序号推进，业务效果由发布服务确认。</text>
+<rect x="28" y="126" width="202" height="81" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="129" y="158" class="label" text-anchor="middle">① 已受理</text>
+<text x="129" y="183" class="muted" text-anchor="middle">任务 R27 已建档</text>
+<path d="M233 166 L257 166" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="262" y="126" width="202" height="81" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="363" y="158" class="label" text-anchor="middle">② 记录发布意图</text>
+<text x="363" y="183" class="muted" text-anchor="middle">固定动作键 pub-27</text>
+<path d="M467 166 L491 166" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="496" y="126" width="202" height="81" rx="12" fill="#eaf0fe" stroke="#7796da"/>
+<text x="597" y="158" class="label" text-anchor="middle">③ 待核对结果</text>
+<text x="597" y="183" class="muted" text-anchor="middle">超时后效果尚未确认</text>
+<path d="M701 166 L725 166" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="730" y="126" width="202" height="81" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="831" y="158" class="label" text-anchor="middle">④ 完成发布</text>
+<text x="831" y="183" class="muted" text-anchor="middle">核验目标版本 p7</text>
+<text x="28" y="242" class="label" text-anchor="start">独立持久化域</text>
+<rect x="28" y="258" width="428" height="108" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="48" y="286" class="label" text-anchor="start">任务库 / 工作流</text>
+<text x="48" y="314" class="small" text-anchor="start">重放事件，重建决策与剩余步骤。</text>
+<text x="48" y="340" class="small" text-anchor="start">发布回执缺失时保留待核对状态。</text>
+<rect x="504" y="258" width="428" height="108" rx="12" fill="#eaf0fe" stroke="#7796da"/>
+<text x="524" y="286" class="label" text-anchor="start">发布服务 / 效果拥有者</text>
+<text x="524" y="314" class="small" text-anchor="start">以同一事务提交业务效果与幂等回执。</text>
+<text x="524" y="340" class="small" text-anchor="start">当前代际 42 已安装，拒绝代际 41 的旧写。</text>
+<path d="M460 312 L499 312" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="28" y="390" width="904" height="67" rx="12" fill="#ffffff" stroke="#cfdbee"/>
+<text x="48" y="417" class="label" text-anchor="start">交接与重试是两项检查</text>
+<text x="48" y="443" class="muted" text-anchor="start">接收方判断持有者是否仍有效，操作键和参数摘要则识别同一逻辑动作。</text>
+</svg>

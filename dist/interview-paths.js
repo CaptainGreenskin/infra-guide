@@ -35,7 +35,7 @@ function studyOrder() {
  ];
  const roles = [
   ['Cloud / SRE', readLink('linux-resource','① 资源')+readLink('network-diagnosis','② 分层排查')+readLink('slo','③ SLO')+readLink('incident','④ 故障复盘'),'重点是解释哪个信号能排除哪个原因。能定位后再深入跨可用区容灾。'],
-  ['AI Infra',readLink('gpu-cluster','① 一步训练')+readLink('distributed-training','② DDP')+readLink('gpu-memory','③ 显存')+readLink('model-serving','④ 推理'),'先手算一次更新与状态预算，再按职位选训练通信或推理时延。'],
+  ['AI Infra',readLink('transformer-model','① 模型与GPU基础')+readLink('gpu-cluster','② 一步训练')+readLink('distributed-training','③ DDP')+readLink('gpu-memory','④ 显存')+readLink('model-serving','⑤ 推理'),'先手算一次更新与状态预算，再按职位选训练通信或推理时延。'],
   ['Agent Infra',readLink('agent-runtime','① 执行')+readLink('agent-recovery','② 恢复')+readLink('agent-security','③ 权限')+readLink('agent-evaluation','④ 评估'),'先说清谁授权、谁产生效果、谁持有回执，再进入 Kairo 的目标环境验收。']
  ];
  return `<section class="plan-content"><nav class="plan-jumps" aria-label="选择学习节奏"><a href="/interview/plan/#first-pass">初次学习 · 从第 1 步开始 ↓</a><a href="/interview/plan/#quick-review">面试在即 · 跳到三轮复习 ↓</a></nav><h2 id="first-pass">初学路径 · 六次学习</h2><p>建议每次留 30–45 分钟，动手题可以单独占一次。遇到已经掌握的内容，先做过关题，通过就跳过阅读。</p>
@@ -59,8 +59,8 @@ function workshopPage(id) {
   '<p class="path-links workshop-return"><a href="/interview/plan/">查看学习顺序 →</a><a href="/interview/">返回面试总览 →</a></p>');
 }
 
-const foundationChapters = new Set(['cloud-overview','linux-resource','distributed-systems','vpc-network','network-diagnosis']);
-const focusChapters = new Set(['kubernetes-basics','delivery','slo','observability','incident','gpu-cluster','distributed-training','gpu-memory','training-communication','checkpoint-recovery','model-serving','inference-performance','gpu-scheduling','agent-runtime','agent-recovery','agent-security','agent-evaluation']);
+const foundationChapters = new Set(['cloud-overview','linux-resource','distributed-systems','vpc-network','network-diagnosis','transformer-model','tokenization-embedding','attention-mechanics','autograd-training']);
+const focusChapters = new Set(['virtual-memory-oom','concurrency-pools','database-index-locks','cache-consistency','position-encoding','transformer-block','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','durable-workflows','agent-retrieval','agent-observability','agent-sandbox','kubernetes-basics','delivery','slo','observability','incident','gpu-cluster','distributed-training','gpu-memory','training-communication','checkpoint-recovery','model-serving','inference-performance','gpu-scheduling','agent-runtime','agent-recovery','agent-security','agent-evaluation']);
 function chapterPriority(id) {
  const level = foundationChapters.has(id) ? '基础必修' : focusChapters.has(id) ? '岗位重点' : '按需深入';
  return '<small class="chapter-priority">'+level+'</small> ';

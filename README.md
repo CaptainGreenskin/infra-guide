@@ -6,9 +6,9 @@ Agent课程以通用机制为基础，Kairo作为独立实践载体；具体实�
 
 ## 内容与验证
 
-42章：Cloud 18、AI 15（训练10＋平台推理5）、Agent 6、综合实战3。
-18张原创SVG，完整代码与实验包，迁移练习、官方来源、交互SLO/KV容量计算器与因果注意力演示。
-每章沿问题、机制、具体例子、边界和验证展开。67个独立HTML页面，包含完整初始正文、canonical、分享元数据、结构化数据与sitemap。
+60章：Cloud 22、AI 25（模型/GPU基础10＋训练10＋平台推理5）、Agent 10、综合实战3。
+27张原创SVG，完整代码与实验包，迁移练习、官方来源、交互SLO/KV容量计算器与因果注意力演示。
+每章沿问题、机制、具体例子、边界和验证展开。86个独立HTML页面，包含完整初始正文、canonical、分享元数据、结构化数据与sitemap。
 原hash文章URL自动转到独立页面，并保留section参数。
 
 实际证据：
@@ -86,3 +86,5 @@ DDP单步程序修改后，用安装PyTorch 2.5.1的Python运行scripts/build-dd
 2026-11-04：新增网络排查、显存预算、Agent 权限导读。用 `python3 dist/labs/network-timing/timing_lab.py` 和 `python3 dist/labs/permissions/policy_lab.py` 复跑本地实验。提交新的 validation.json 后运行 `node scripts/render-pages.cjs`，页面用同一份记录生成。
 
 面试工作台提供复习路线、腾讯/阿里/字节的岗位对照，以及编码、数据库、系统设计三个工作坊。用 Python 运行 dist/labs/interview-coding/dependencies.py 和 dist/labs/interview-database/query_lab.py 复做现场题。
+
+教材扩写包含18篇新课与29篇既有正文改写。模型/GPU基础覆盖十篇连续课，Cloud 深入内存/并发/SQL/缓存，Agent 深入事件重放/检索/轨迹/隔离。验证本轮代码先运行 node scripts/extract-textbook-code.cjs，再用 scripts/verify-textbook-labs.py --torch-python 指定已安装 PyTorch 2.5.1 的 Python。

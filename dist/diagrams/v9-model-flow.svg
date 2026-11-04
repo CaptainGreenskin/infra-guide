@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 504" role="img" aria-labelledby="title desc"><title id="title">一层 decoder 的形状账本</title><desc id="desc">两行 token 经查表、因果注意力和逐位置前馈得到八项词表打分。输出层再次读取输入词表参数。</desc><style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#172f43}.lead{font-size:28px;font-weight:700}.body{font-size:16px}.mono{font-family:ui-monospace,monospace;font-size:15px}.tag{font-size:13px;letter-spacing:1px;fill:#3d6174}.small{font-size:14px;fill:#486274}</style><rect width="960" height="504" rx="16" fill="#f6f8f6"/>
+<text x="34" y="37" text-anchor="start" class="tag">INFRAGUIDE  /  MODEL FOUNDATIONS  /  01</text>
+<text x="34" y="80" text-anchor="start" class="lead">沿一条样本，找出每次改变的轴</text>
+<text x="34" y="112" text-anchor="start" class="mono">B = 2 条样本    T = 4 个位置    D = 8 维    H = 2 个头    F = 12    V = 8</text>
+<rect x="34" y="146" width="208" height="124" rx="9" fill="#ffffff" stroke="#c3d4d7"/>
+<text x="46" y="172" text-anchor="start" class="tag">01 / 输入</text>
+<text x="46" y="201" text-anchor="start" class="body">整数 ID</text>
+<text x="46" y="232" text-anchor="start" class="mono">[B,T] = [2,4]</text>
+<text x="46" y="255" text-anchor="start" class="small">编号选行，位置不相加</text>
+<text x="245" y="208" text-anchor="start" class="body">→</text>
+<rect x="262" y="146" width="208" height="124" rx="9" fill="#ffffff" stroke="#c3d4d7"/>
+<text x="274" y="172" text-anchor="start" class="tag">02 / 表示</text>
+<text x="274" y="201" text-anchor="start" class="body">token 与位置</text>
+<text x="274" y="232" text-anchor="start" class="mono">[B,T,D] = [2,4,8]</text>
+<text x="274" y="255" text-anchor="start" class="small">一行 token 变成向量</text>
+<text x="473" y="208" text-anchor="start" class="body">→</text>
+<rect x="490" y="146" width="208" height="124" rx="9" fill="#ffffff" stroke="#c3d4d7"/>
+<text x="502" y="172" text-anchor="start" class="tag">03 / 一层块</text>
+<text x="502" y="201" text-anchor="start" class="body">注意力 + 前馈</text>
+<text x="502" y="232" text-anchor="start" class="mono">[B,T,D] = [2,4,8]</text>
+<text x="502" y="255" text-anchor="start" class="small">两次残差都回到 D 维</text>
+<text x="701" y="208" text-anchor="start" class="body">→</text>
+<rect x="718" y="146" width="208" height="124" rx="9" fill="#ffffff" stroke="#c3d4d7"/>
+<text x="730" y="172" text-anchor="start" class="tag">04 / 输出</text>
+<text x="730" y="201" text-anchor="start" class="body">词表 logits</text>
+<text x="730" y="232" text-anchor="start" class="mono">[B,T,V] = [2,4,8]</text>
+<text x="730" y="255" text-anchor="start" class="small">每个位置有 V 个分数</text>
+<rect x="34" y="300" width="428" height="112" rx="9" fill="#e9f2f0" stroke="#bfd6cf"/>
+<text x="50" y="326" text-anchor="start" class="tag">子路径 A  /  跨位置读取</text>
+<text x="50" y="356" text-anchor="start" class="mono">Q、K、V  [B,H,T,d] = [2,2,4,4]</text>
+<text x="50" y="387" text-anchor="start" class="small">第 i 个 query 只读取同一条序列中 j ≤ i 的 KV。</text>
+<rect x="484" y="300" width="442" height="112" rx="9" fill="#f1eef8" stroke="#cec7df"/>
+<text x="500" y="326" text-anchor="start" class="tag">子路径 B  /  逐位置变换</text>
+<text x="500" y="356" text-anchor="start" class="mono">两路 [B,T,F] → 逐项相乘 → [B,T,D]</text>
+<text x="500" y="387" text-anchor="start" class="small">各位置共享投影参数；FFN 不在时间轴上求和。</text>
+<text x="34" y="451" text-anchor="start" class="tag">同形状，不同含义</text>
+<text x="34" y="478" text-anchor="start" class="body">D 与 V 在本例恰好都是 8。共享词表减少独立权重，仍需计算全部目标位置的 logits。</text>
+</svg>

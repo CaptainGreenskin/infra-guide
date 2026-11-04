@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc"><title id="title">三行因果注意力</title><desc id="desc">展示已缩放打分、被遮挡的未来、概率与两个输出分量。</desc><style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#172f43}.lead{font-size:28px;font-weight:700}.body{font-size:16px}.mono{font-family:ui-monospace,monospace;font-size:15px}.tag{font-size:13px;letter-spacing:1px;fill:#3d6174}.small{font-size:14px;fill:#486274}</style><rect width="960" height="500" rx="16" fill="#f6f8f6"/>
+<text x="34" y="37" text-anchor="start" class="tag">INFRAGUIDE  /  MODEL FOUNDATIONS  /  02</text>
+<text x="34" y="80" text-anchor="start" class="lead">每一行，只在合法前缀内归一化</text>
+<text x="34" y="112" text-anchor="start" class="small">列 j 是被读取的位置。灰色单元格不进入 softmax 分母。</text>
+<text x="34" y="155" text-anchor="start" class="body">已缩放分数</text>
+<text x="350" y="155" text-anchor="start" class="body">读取概率</text>
+<text x="669" y="155" text-anchor="start" class="body">输出 o = A·V</text>
+<text x="96" y="187" text-anchor="middle" class="tag">j=0</text>
+<text x="166" y="187" text-anchor="middle" class="tag">j=1</text>
+<text x="236" y="187" text-anchor="middle" class="tag">j=2</text>
+<text x="34" y="229" text-anchor="start" class="tag">i=0</text>
+<rect x="65" y="200" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="97.5" y="229" text-anchor="middle" class="mono">0</text>
+<rect x="135" y="200" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="167.5" y="229" text-anchor="middle" class="mono">×</text>
+<rect x="205" y="200" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="237.5" y="229" text-anchor="middle" class="mono">×</text>
+<text x="34" y="282" text-anchor="start" class="tag">i=1</text>
+<rect x="65" y="253" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="97.5" y="282" text-anchor="middle" class="mono">0</text>
+<rect x="135" y="253" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="167.5" y="282" text-anchor="middle" class="mono">ln 3</text>
+<rect x="205" y="253" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="237.5" y="282" text-anchor="middle" class="mono">×</text>
+<text x="34" y="335" text-anchor="start" class="tag">i=2</text>
+<rect x="65" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="97.5" y="335" text-anchor="middle" class="mono">0</text>
+<rect x="135" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="167.5" y="335" text-anchor="middle" class="mono">0</text>
+<rect x="205" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="237.5" y="335" text-anchor="middle" class="mono">ln 2</text>
+<text x="412" y="187" text-anchor="middle" class="tag">j=0</text>
+<text x="482" y="187" text-anchor="middle" class="tag">j=1</text>
+<text x="552" y="187" text-anchor="middle" class="tag">j=2</text>
+<text x="350" y="229" text-anchor="start" class="tag">i=0</text>
+<rect x="381" y="200" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="413.5" y="229" text-anchor="middle" class="mono">1</text>
+<rect x="451" y="200" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="483.5" y="229" text-anchor="middle" class="mono">×</text>
+<rect x="521" y="200" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="553.5" y="229" text-anchor="middle" class="mono">×</text>
+<text x="350" y="282" text-anchor="start" class="tag">i=1</text>
+<rect x="381" y="253" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="413.5" y="282" text-anchor="middle" class="mono">1/4</text>
+<rect x="451" y="253" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="483.5" y="282" text-anchor="middle" class="mono">3/4</text>
+<rect x="521" y="253" width="65" height="45" rx="9" fill="#e6eced" stroke="#d0dcde"/>
+<text x="553.5" y="282" text-anchor="middle" class="mono">×</text>
+<text x="350" y="335" text-anchor="start" class="tag">i=2</text>
+<rect x="381" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="413.5" y="335" text-anchor="middle" class="mono">1/4</text>
+<rect x="451" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="483.5" y="335" text-anchor="middle" class="mono">1/4</text>
+<rect x="521" y="306" width="65" height="45" rx="9" fill="#e0f0eb" stroke="#d0dcde"/>
+<text x="553.5" y="335" text-anchor="middle" class="mono">1/2</text>
+<rect x="669" y="200" width="210" height="45" rx="9" fill="#f0ecf6" stroke="#cec8db"/>
+<text x="774" y="229" text-anchor="middle" class="mono">[2, 0]</text>
+<rect x="669" y="253" width="210" height="45" rx="9" fill="#f0ecf6" stroke="#cec8db"/>
+<text x="774" y="282" text-anchor="middle" class="mono">[0.5, 3]</text>
+<rect x="669" y="306" width="210" height="45" rx="9" fill="#f0ecf6" stroke="#cec8db"/>
+<text x="774" y="335" text-anchor="middle" class="mono">[3.5, 2]</text>
+<rect x="34" y="379" width="891" height="87" rx="9" fill="#fff" stroke="#cad6d8"/>
+<text x="49" y="411" text-anchor="start" class="tag">对照第 1 行</text>
+<text x="49" y="443" text-anchor="start" class="body">权重 [1/4, 3/4, 0]：取 1/4 × [2,0] + 3/4 × [0,4] = [0.5,3]。</text>
+</svg>
