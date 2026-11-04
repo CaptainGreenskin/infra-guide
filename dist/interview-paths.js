@@ -19,7 +19,7 @@ function priorityMap() {
 }
 
 function interviewEntry() {
- return `<section class="interview-entry"><div><small>面试准备 / 先决定怎么学</small><h2>复习从哪一步开始？</h2><p>基础还不牢，先走六次学习。已经有项目经验，先限时诊断，再补失分项。</p></div>
+ return `<section class="interview-entry"><div><small>面试准备 / 先决定怎么学</small><h2>复习从哪一步开始？</h2><p>基础还不牢，先走六个步骤。已经有项目经验，先限时诊断，再补失分项。</p></div>
  <div class="path-links"><a class="btn" href="/interview/plan/">打开复习路线 →</a><a href="/interview/companies/">腾讯 · 阿里 · 字节岗位重点 →</a></div>
  <div class="unit-links">${unitLink('experiences','公开面试题与重点')}${unitLink('cloud','Cloud 岗位深度')}${unitLink('coding','01 现场编码')}${unitLink('database','02 数据库诊断')}${unitLink('design','03 系统设计')}</div></section>`;
 }
@@ -38,7 +38,7 @@ function studyOrder() {
   ['AI Infra',readLink('transformer-model','① 模型与GPU基础')+readLink('gpu-cluster','② 一步训练')+readLink('distributed-training','③ DDP')+readLink('gpu-memory','④ 显存')+readLink('model-serving','⑤ 推理'),'先手算一次更新与状态预算，再按职位选训练通信或推理时延。'],
   ['Agent Infra',readLink('agent-runtime','① 执行')+readLink('agent-recovery','② 恢复')+readLink('agent-security','③ 权限')+readLink('agent-evaluation','④ 评估'),'先说清谁授权、谁产生效果、谁持有回执，再进入 Kairo 的目标环境验收。']
  ];
- return `<section class="plan-content"><nav class="plan-jumps" aria-label="选择学习节奏"><a href="/interview/plan/#first-pass">初次学习 · 从第 1 步开始 ↓</a><a href="/interview/plan/#quick-review">面试在即 · 跳到三轮复习 ↓</a></nav><h2 id="first-pass">初学路径 · 六次学习</h2><p>建议每次留 30–45 分钟，动手题可以单独占一次。遇到已经掌握的内容，先做过关题，通过就跳过阅读。</p>
+ return `<section class="plan-content"><nav class="plan-jumps" aria-label="选择学习节奏"><a href="/interview/plan/#first-pass">初次学习 · 从第 1 步开始 ↓</a><a href="/interview/plan/#quick-review">面试在即 · 跳到三轮复习 ↓</a></nav><h2 id="first-pass">学习与复习的六个步骤</h2><p>这六步是反复执行的准备流程，不是六次读完全部课程。初学者按章节补足先修；已有基础者每次用30–45分钟处理一个薄弱点，动手题另留时间。通过过关题的内容可以跳过。</p>
  <ol class="session-list">${sessions.map(([n,title,why,links,gate])=>`<li><small>${n}</small><div><h3>${title}</h3><p>${why}</p><div class="path-links">${links}</div><p class="pass-gate"><b>过关</b> ${gate}</p></div></li>`).join('')}</ol>
  <h2>第 4 步 · 只选一个方向</h2><div class="role-sequence">${roles.map(([name,links,gate])=>`<section><h3>${name}</h3><div class="path-links">${links}</div><p>${gate}</p></section>`).join('')}</div>
  <h2 id="quick-review">有基础的读者 · 三轮考前复习</h2>

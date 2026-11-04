@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="794" viewBox="0 0 960 794" role="img" aria-labelledby="title desc" font-family="PingFang SC, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+<title id="title">两条请求共用前缀时，逻辑块怎样映射到物理页？</title><desc id="desc">块长四个位置，每位置128 KiB。A为1,2,3,4,5,6，B为1,2,3,4,7,8；两条的前四位置共享一个物理满页，A尾块和B尾块各占一页。无共享需四页2048 KiB，共享需三页1536 KiB。A结束时共享页引用从二降到一。</desc>
+<rect x="1" y="1" width="958" height="792" rx="17" fill="#fbfdfe" stroke="#c0d2d9"/>
+<defs><marker id="arrowshared" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#197d80"/></marker><marker id="arrowa" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#216a9b"/></marker><marker id="arrowb" viewBox="0 0 8 8" markerWidth="6" markerHeight="6" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#974a0e"/></marker></defs>
+<text x="34" y="47" font-size="30" fill="#183546" font-weight="700" text-anchor="start">两个请求的逻辑块，怎样共用同一张物理页？</text>
+<text x="35" y="78" font-size="19" fill="#45616e" font-weight="400" text-anchor="start">独立教学配置 · 两请求均已完成前向，首个完整块已登记，可在同一域复用。</text>
+<rect x="32" y="96" width="896" height="76" rx="10" fill="#e9f3f4" stroke="none"/>
+<text x="50" y="125" font-size="22" fill="#183546" font-weight="700" text-anchor="start">每页 4 个位置 × 每位置 128 KiB = 512 KiB</text>
+<text x="50" y="154" font-size="18" fill="#45616e" font-weight="400" text-anchor="start">假设模型权重、位置规则、适配器相同，并且允许两请求共享前缀。</text>
+<text x="37" y="207" font-size="22" fill="#183546" font-weight="700" text-anchor="start">请求的逻辑块表</text>
+<text x="600" y="207" font-size="22" fill="#183546" font-weight="700" text-anchor="start">共享后的物理页池</text>
+<rect x="36" y="225" width="316" height="120" rx="8" fill="#f1f5fa" stroke="#bfd0df"/>
+<text x="52" y="255" font-size="20" fill="#183546" font-weight="700" text-anchor="start">请求 A · 六个输入位置</text>
+<text x="53" y="289" font-size="18" fill="#197d80" font-weight="650" text-anchor="start">逻辑 0</text>
+<text x="140" y="289" font-size="19" fill="#183546" font-weight="400" text-anchor="start">[1, 2, 3, 4]</text>
+<text x="53" y="326" font-size="18" fill="#216a9b" font-weight="650" text-anchor="start">逻辑 1</text>
+<text x="140" y="326" font-size="19" fill="#183546" font-weight="400" text-anchor="start">[5, 6]</text>
+<rect x="36" y="370" width="316" height="120" rx="8" fill="#faf5ed" stroke="#e1d0ba"/>
+<text x="52" y="400" font-size="20" fill="#183546" font-weight="700" text-anchor="start">请求 B · 六个输入位置</text>
+<text x="53" y="434" font-size="18" fill="#197d80" font-weight="650" text-anchor="start">逻辑 0</text>
+<text x="140" y="434" font-size="19" fill="#183546" font-weight="400" text-anchor="start">[1, 2, 3, 4]</text>
+<text x="53" y="471" font-size="18" fill="#974a0e" font-weight="650" text-anchor="start">逻辑 1</text>
+<text x="140" y="471" font-size="19" fill="#183546" font-weight="400" text-anchor="start">[7, 8]</text>
+<path d="M352 282 H445 V255 H582" fill="none" stroke="#fbfdfe" stroke-width="7"/><path d="M352 282 H445 V255 H582" fill="none" stroke="#197d80" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrowshared)"/>
+<path d="M352 428 H492 V277 H582" fill="none" stroke="#fbfdfe" stroke-width="7"/><path d="M352 428 H492 V277 H582" fill="none" stroke="#197d80" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrowshared)"/>
+<path d="M352 319 H412 V375 H582" fill="none" stroke="#fbfdfe" stroke-width="7"/><path d="M352 319 H412 V375 H582" fill="none" stroke="#216a9b" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrowa)"/>
+<path d="M352 465 H451 V475 H582" fill="none" stroke="#fbfdfe" stroke-width="7"/><path d="M352 465 H451 V475 H582" fill="none" stroke="#974a0e" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrowb)"/>
+<rect x="599" y="230" width="326" height="80" rx="8" fill="#ffffff" stroke="#beccd3"/>
+<text x="611" y="258" font-size="18" fill="#197d80" font-weight="700" text-anchor="start">P0 · 共享 · 引用数 2</text>
+<rect x="610" y="266" width="68" height="34" rx="3" fill="#cae6e3" stroke="none"/>
+<text x="644" y="290" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">1</text>
+<rect x="685" y="266" width="68" height="34" rx="3" fill="#cae6e3" stroke="none"/>
+<text x="719" y="290" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">2</text>
+<rect x="760" y="266" width="68" height="34" rx="3" fill="#cae6e3" stroke="none"/>
+<text x="794" y="290" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">3</text>
+<rect x="835" y="266" width="68" height="34" rx="3" fill="#cae6e3" stroke="none"/>
+<text x="869" y="290" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">4</text>
+<rect x="599" y="336" width="326" height="80" rx="8" fill="#ffffff" stroke="#beccd3"/>
+<text x="611" y="364" font-size="18" fill="#216a9b" font-weight="700" text-anchor="start">P1 · 仅 A 使用</text>
+<rect x="610" y="372" width="68" height="34" rx="3" fill="#dce8f5" stroke="none"/>
+<text x="644" y="396" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">5</text>
+<rect x="685" y="372" width="68" height="34" rx="3" fill="#dce8f5" stroke="none"/>
+<text x="719" y="396" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">6</text>
+<rect x="760" y="372" width="68" height="34" rx="3" fill="#f0f3f4" stroke="#cad6d8"/>
+<text x="794" y="396" font-size="19" fill="#45616e" font-weight="400" text-anchor="middle">空</text>
+<rect x="835" y="372" width="68" height="34" rx="3" fill="#f0f3f4" stroke="#cad6d8"/>
+<text x="869" y="396" font-size="19" fill="#45616e" font-weight="400" text-anchor="middle">空</text>
+<rect x="599" y="442" width="326" height="80" rx="8" fill="#ffffff" stroke="#beccd3"/>
+<text x="611" y="470" font-size="18" fill="#974a0e" font-weight="700" text-anchor="start">P2 · 仅 B 使用</text>
+<rect x="610" y="478" width="68" height="34" rx="3" fill="#f5e3c8" stroke="none"/>
+<text x="644" y="502" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">7</text>
+<rect x="685" y="478" width="68" height="34" rx="3" fill="#f5e3c8" stroke="none"/>
+<text x="719" y="502" font-size="19" fill="#183546" font-weight="600" text-anchor="middle">8</text>
+<rect x="760" y="478" width="68" height="34" rx="3" fill="#f0f3f4" stroke="#cad6d8"/>
+<text x="794" y="502" font-size="19" fill="#45616e" font-weight="400" text-anchor="middle">空</text>
+<rect x="835" y="478" width="68" height="34" rx="3" fill="#f0f3f4" stroke="#cad6d8"/>
+<text x="869" y="502" font-size="19" fill="#45616e" font-weight="400" text-anchor="middle">空</text>
+<line x1="32" y1="539" x2="928" y2="539" stroke="#bdd0d6" stroke-width="1"/>
+<text x="36" y="570" font-size="22" fill="#183546" font-weight="700" text-anchor="start">从两个块表算物理容量</text>
+<text x="37" y="602" font-size="18" fill="#45616e" font-weight="650" text-anchor="start">各自分配</text>
+<text x="150" y="602" font-size="20" fill="#183546" font-weight="400" text-anchor="start">4 页 × 512 KiB = 2048 KiB</text>
+<text x="495" y="602" font-size="18" fill="#197d80" font-weight="650" text-anchor="start">共享首块</text>
+<text x="610" y="602" font-size="20" fill="#183546" font-weight="700" text-anchor="start">3 页 × 512 KiB = 1536 KiB</text>
+<text x="37" y="635" font-size="18" fill="#45616e" font-weight="400" text-anchor="start">两请求合计 12 个逻辑位置；去重后有 8 个有效 KV 位置，两个私有尾页合计空 4 格。</text>
+<rect x="32" y="655" width="896" height="93" rx="9" fill="#edf4f7" stroke="none"/>
+<text x="48" y="686" font-size="21" fill="#183546" font-weight="700" text-anchor="start">A 结束：P0 引用数 2 → 1，B 仍在使用，不能覆盖。</text>
+<text x="48" y="720" font-size="18" fill="#45616e" font-weight="400" text-anchor="start">引用数降到 0 表示页可回收；哈希登记可以保留，直到该页实际被驱逐或覆盖。</text>
+<text x="36" y="775" font-size="18" fill="#45616e" font-weight="400" text-anchor="start">这里比较同时存活的物理 KV 页，不计页表、预留空间和其他显存；没有测量实际引擎。</text>
+</svg>

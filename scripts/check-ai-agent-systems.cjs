@@ -46,6 +46,20 @@ assert.equal(f.handoff_gap_probe.old_writer_before_install,'committed');assert.e
 const e=r['agent_evaluation.py'].result;assert.deepEqual(Object.values(e.strategies).map(x=>x.cases_passed),[4,0,2,3]);
 assert.equal(e.leak_then_deny_probe.outcomes['cross-tenant'],'denied');assert.equal(e.leak_then_deny_probe.cases_passed,3);
 assert(e.leak_then_deny_probe.read_receipts.some(row=>row[2]==='B'));assert.equal(e.extra_public_field_probe.public_response_contract_valid,false);assert.equal(e.extra_public_field_probe.cases_passed,0);
+for(const [status,probe]of Object.entries(e.wrong_report_status_probes)){
+ assert.equal(probe.outcomes.report,status);assert.equal(probe.public_response_contract_valid,true);
+ assert.equal(probe.positive_task_pass,false);assert.equal(probe.cases_passed,3);
+ assert.equal(probe.actual_effects,1);assert.equal(probe.unique_qualified_business_tasks,0);
+}
+assert.equal(e.forbidden_read_then_correct_probe.outcomes.report,'success');
+assert.equal(e.forbidden_read_then_correct_probe.positive_access_valid,false);
+assert.equal(e.forbidden_read_then_correct_probe.cases_passed,3);
+assert.equal(e.forbidden_read_then_correct_probe.actual_effects,1);
+assert.equal(e.forbidden_read_then_correct_probe.unique_qualified_business_tasks,0);
+assert.equal(e.cached_content_leak_probe.cases_passed,3);assert.equal(e.cached_content_leak_probe.positive_access_valid,true);
+assert.equal(e.cached_content_leak_probe.unique_qualified_business_tasks,0);
+assert.equal(e.unexpected_report_probe.environment_contract_valid,false);assert.equal(e.unexpected_report_probe.cases_passed,0);
+assert.equal(e.unexpected_report_probe.actual_effects,2);
 const roadmap=html('roadmap');
 for(const [key,count]of [['ai',5],['agent',4]]){
  const part=roadmap.split('id="route-'+key+'"')[1].split('<section class="route-block"')[0];
@@ -53,5 +67,7 @@ for(const [key,count]of [['ai',5],['agent',4]]){
 }
 for(const id of ['distributed-training','model-serving','durable-workflows','agent-evaluation'])assert(html('article/'+id).includes('labs/ai-agent-systems/'));
 assert(/不能作为服务端\s*TTFT/.test(html('article/inference-performance')));
+const decodedAgentCode=[...html('article/agent-evaluation').matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').trim());
+assert(decodedAgentCode.includes(fs.readFileSync('dist/labs/ai-agent-systems/agent_evaluation.py','utf8').trim()),'static Agent code differs from executed source');
 assert(html('labs').includes('AI / AGENT · 原理实战'));
 console.log('PASS: 32 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');

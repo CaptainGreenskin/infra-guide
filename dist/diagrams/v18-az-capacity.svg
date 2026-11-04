@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 764" width="960" height="764" role="img" aria-labelledby="title desc">
+<title id="title">三个可用区中，为什么至少需要五个应用副本</title>
+<desc id="desc">题设每个健康应用副本可按五百毫秒目标持续服务每秒四十个请求，流量为每秒九十。每行一组点阵，区 A 为本例失效的最大区。布局一一一正常容量一百二十，失区后剩八十。布局二一一正常一百六十，失区后仍是八十。布局二二一正常二百，失区后剩一百二十。横条与九十需求线的关系显示前两种方案短十，第三种余三十。后端可用且已完成流量转移；容量推导不构成实际 SLO 验证。</desc>
+<style>text{font-family:system-ui,sans-serif;fill:#183649} .muted{fill:#405e70} .blue{fill:#075e75} .orange{fill:#9b491e} .heading{font-weight:700} .sep{stroke:#d3dfe5;stroke-width:1.4}</style>
+<rect width="960" height="764" fill="#ffffff"/>
+<rect width="960" height="144" fill="#eef5f7"/>
+<rect x="30" y="30" width="5" height="35" fill="#137b87"/>
+<text x="48" y="59" font-size="31" class="heading">失去最大可用区，还剩多少服务能力？</text>
+<text x="30" y="99" font-size="18" class="muted">本题有三个可用区。单副本在 500 ms 时延目标下可持续承接 40 请求/秒，输入固定为 90 请求/秒。</text>
+<text x="30" y="128" font-size="18" class="muted">假设副本相同、后端仍可用且切流已完成；图中推导的是容量，实际 SLO 仍需测量。</text>
+<text x="30" y="181" font-size="23" class="heading">副本放在哪些区</text>
+<text x="309" y="181" font-size="21" class="heading">正常容量</text>
+<text x="466" y="181" font-size="23" class="heading">失区后可承接的请求/秒</text>
+<text x="30" y="217" font-size="18" class="muted">布局</text>
+<text x="133" y="217" font-size="18" class="orange" text-anchor="middle">区 A</text>
+<text x="207" y="217" font-size="18" class="muted" text-anchor="middle">区 B</text>
+<text x="280" y="217" font-size="18" class="muted" text-anchor="middle">区 C</text>
+<text x="311" y="217" font-size="18" class="muted">请求/秒</text>
+<text x="687.4" y="222" font-size="18" class="orange heading" text-anchor="middle">需求 90</text>
+<line x1="466.0" y1="242" x2="466.0" y2="487" stroke="#cad7de" stroke-width="1"/>
+<line x1="564.4" y1="242" x2="564.4" y2="487" stroke="#cad7de" stroke-width="1"/>
+<line x1="662.8" y1="242" x2="662.8" y2="487" stroke="#cad7de" stroke-width="1"/>
+<line x1="761.2" y1="242" x2="761.2" y2="487" stroke="#cad7de" stroke-width="1"/>
+<text x="836" y="217" font-size="18" class="muted">能否承接</text>
+<line x1="30" y1="236" x2="928" y2="236" stroke="#d3dfe5" stroke-width="1.25"/>
+<line x1="30" y1="322" x2="928" y2="322" stroke="#d3dfe5" stroke-width="1.25"/>
+<line x1="30" y1="408" x2="928" y2="408" stroke="#d3dfe5" stroke-width="1.25"/>
+<line x1="30" y1="494" x2="928" y2="494" stroke="#d3dfe5" stroke-width="1.25"/>
+<text x="30" y="286" font-size="19" class="heading">1/1/1</text>
+<circle cx="133.0" cy="279" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="129.0" y1="275" x2="137.0" y2="283" stroke="#985022" stroke-width="1.9"/>
+<line x1="129.0" y1="283" x2="137.0" y2="275" stroke="#985022" stroke-width="1.9"/>
+<circle cx="207.0" cy="279" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<circle cx="280.0" cy="279" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<text x="331" y="287" font-size="22" class="heading" text-anchor="middle">120</text>
+<rect x="466" y="270" width="196.8" height="18" rx="4" fill="#87a6b8"/>
+<text x="652" y="286" font-size="20" class="heading" text-anchor="end">80</text>
+<text x="836" y="286" font-size="19" class="orange heading">不足 10</text>
+<text x="30" y="372" font-size="19" class="heading">2/1/1</text>
+<circle cx="121.0" cy="365" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="117.0" y1="361" x2="125.0" y2="369" stroke="#985022" stroke-width="1.9"/>
+<line x1="117.0" y1="369" x2="125.0" y2="361" stroke="#985022" stroke-width="1.9"/>
+<circle cx="145.0" cy="365" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="141.0" y1="361" x2="149.0" y2="369" stroke="#985022" stroke-width="1.9"/>
+<line x1="141.0" y1="369" x2="149.0" y2="361" stroke="#985022" stroke-width="1.9"/>
+<circle cx="207.0" cy="365" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<circle cx="280.0" cy="365" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<text x="331" y="373" font-size="22" class="heading" text-anchor="middle">160</text>
+<rect x="466" y="356" width="196.8" height="18" rx="4" fill="#87a6b8"/>
+<text x="652" y="372" font-size="20" class="heading" text-anchor="end">80</text>
+<text x="836" y="372" font-size="19" class="orange heading">不足 10</text>
+<text x="30" y="458" font-size="19" class="heading">2/2/1</text>
+<circle cx="121.0" cy="451" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="117.0" y1="447" x2="125.0" y2="455" stroke="#985022" stroke-width="1.9"/>
+<line x1="117.0" y1="455" x2="125.0" y2="447" stroke="#985022" stroke-width="1.9"/>
+<circle cx="145.0" cy="451" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="141.0" y1="447" x2="149.0" y2="455" stroke="#985022" stroke-width="1.9"/>
+<line x1="141.0" y1="455" x2="149.0" y2="447" stroke="#985022" stroke-width="1.9"/>
+<circle cx="195.0" cy="451" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<circle cx="219.0" cy="451" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<circle cx="280.0" cy="451" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<text x="331" y="459" font-size="22" class="heading" text-anchor="middle">200</text>
+<rect x="466" y="442" width="295.2" height="18" rx="4" fill="#167d82"/>
+<text x="770.2" y="458" font-size="20" class="heading">120</text>
+<text x="836" y="458" font-size="19" class="blue heading">富余 30</text>
+<line x1="687.4" y1="234" x2="687.4" y2="491" stroke="#ad572a" stroke-width="2.6" stroke-dasharray="7 5"/>
+<text x="466.0" y="517" font-size="18" class="muted" text-anchor="middle">0</text>
+<text x="564.4" y="517" font-size="18" class="muted" text-anchor="middle">40</text>
+<text x="662.8" y="517" font-size="18" class="muted" text-anchor="middle">80</text>
+<text x="761.2" y="517" font-size="18" class="muted" text-anchor="middle">120</text>
+<circle cx="39" cy="548" r="10" fill="#fff1e3" stroke="#ad582e" stroke-width="2"/>
+<line x1="35" y1="544" x2="43" y2="552" stroke="#985022" stroke-width="1.9"/>
+<line x1="35" y1="552" x2="43" y2="544" stroke="#985022" stroke-width="1.9"/>
+<text x="57" y="555" font-size="18" class="muted">A 是失效的最大区；并列时任选一个。</text>
+<circle cx="505" cy="548" r="10" fill="#137d80" stroke="#075d67" stroke-width="1.4"/>
+<text x="523" y="555" font-size="18" class="muted">留在 B、C 的每个点仍提供 40 请求/秒。</text>
+<rect x="22" y="582" width="916" height="151" rx="8" fill="#eef5f7"/>
+<text x="38" y="615" font-size="23" class="heading">最少五个副本，怎样推出？</text>
+<text x="38" y="646" font-size="18" class="muted">失区后至少要留下 ⌈90 ÷ 40⌉ = 3 个副本。总数若为 4，放进三区必有一区至少 2 个。</text>
+<text x="38" y="678" font-size="18" class="muted">丢该区后至多剩 2 个；总数更少同样不够。5 个按 2/2/1 放，丢最大区仍有 3 个。</text>
+<text x="38" y="710" font-size="18" class="blue heading">因此 5 是本题能承受任一区失效的最小总数；随意放置 5 个并不能保证这一点。</text>
+</svg>

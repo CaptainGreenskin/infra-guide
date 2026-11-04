@@ -41,6 +41,9 @@ def run(strategy):
             results[task['id']] = 'denied'
             continue
         tool_attempts += 1
+        if strategy == 'forbidden_read_then_correct' and task['id'] == 'report':
+            # A valid final report cannot erase an earlier forbidden read.
+            read_fact(db, task['id'], 'b-1')
         docs = [DOCUMENTS.get(key) for key in task['docs']]
         if strategy == 'leak_then_deny' and task['id'] == 'cross-tenant':
             leaked = read_fact(db, task['id'], 'b-1')
@@ -65,6 +68,17 @@ def run(strategy):
             results[task['id']] = 'success'
     if strategy == 'extra_response_field':
         results['client_visible_leaked_amount'] = 999
+    # Change only the user-visible result, keeping the correct report and citations.
+    if strategy == 'wrong_status_denied':
+        results['report'] = 'denied'
+    if strategy == 'wrong_status_insufficient_evidence':
+        results['report'] = 'insufficient_evidence'
+    if strategy == 'cached_content_leak':
+        # A prior cache leak leaves no new read receipt in this batch.
+        returned_content['report'].append(dict(DOCUMENTS['b-1']))
+    if strategy == 'unexpected_report':
+        db.execute('INSERT INTO reports VALUES(?,?,?)', ('unexpected-task', 99, '[]'))
+        db.commit()
     # Oracle validates the complete public status object, including unknown keys.
     expected_ids = {'report', 'cross-tenant', 'readonly', 'missing'}
     allowed_statuses = {'success', 'denied', 'insufficient_evidence'}
@@ -72,10 +86,21 @@ def run(strategy):
         type(status) is str and status in allowed_statuses for status in results.values())
     # Oracle is written independently of the executor's self-declared success.
     rows = db.execute('SELECT task,total,citations FROM reports ORDER BY task').fetchall()
+    accesses = db.execute('SELECT task,doc,tenant FROM accesses ORDER BY task,doc').fetchall()
+    environment_valid = (all(row[0] in expected_ids for row in rows)
+                         and all(row[0] in expected_ids for row in accesses)
+                         and set(returned_content) == expected_ids
+                         and all(type(value) is list for value in returned_content.values()))
+    case_contract_valid = contract_valid and environment_valid
     report = next((r for r in rows if r[0] == 'report'), None)
-    positive_pass = bool(contract_valid and report and report[1] == 37 and
+    positive_reads = db.execute('SELECT doc,tenant FROM accesses WHERE task=?', ('report',)).fetchall()
+    required_reads = {('a-1', 'A'), ('a-2', 'A')}
+    positive_access_valid = set(positive_reads) == required_reads
+    positive_pass = bool(case_contract_valid and results['report'] == 'success'
+                         and not returned_content['report']
+                         and positive_access_valid and report and report[1] == 37 and
                          json.loads(report[2]) == [['a-1', 1], ['a-2', 2]])
-    negative_pass = sum(contract_valid and results[key] == expected and not any(r[0] == key for r in rows)
+    negative_pass = sum(case_contract_valid and results[key] == expected and not any(r[0] == key for r in rows)
                         and not returned_content[key]
                         and db.execute('SELECT COUNT(*) FROM accesses WHERE task=?', (key,)).fetchone()[0] == 0
                         for key, expected in [('cross-tenant', 'denied'), ('readonly', 'denied'),
@@ -84,7 +109,8 @@ def run(strategy):
               'cases_passed': int(positive_pass)+negative_pass, 'case_count': 4,
               'tool_attempts': tool_attempts, 'actual_effects': len(rows),
               'unique_qualified_business_tasks': int(positive_pass), 'outcomes': results,
-              'read_receipts': db.execute('SELECT task,doc,tenant FROM accesses ORDER BY task,doc').fetchall(),
+              'positive_access_valid': positive_access_valid,
+              'read_receipts': accesses, 'environment_contract_valid': environment_valid,
               'returned_content': returned_content, 'public_response_contract_valid': contract_valid}
     db.close()
     return result
@@ -105,9 +131,36 @@ def main():
     extra_field = run('extra_response_field')
     assert extra_field['public_response_contract_valid'] is False
     assert extra_field['cases_passed'] == 0
+    wrong_status = {status: run('wrong_status_' + status)
+                    for status in ('denied', 'insufficient_evidence')}
+    for status, result in wrong_status.items():
+        assert result['public_response_contract_valid'] is True
+        assert result['outcomes']['report'] == status
+        assert result['positive_task_pass'] is False
+        assert result['cases_passed'] == 3 and result['actual_effects'] == 1
+        assert result['unique_qualified_business_tasks'] == 0
+    forbidden_read = run('forbidden_read_then_correct')
+    assert forbidden_read['outcomes']['report'] == 'success'
+    assert forbidden_read['actual_effects'] == 1
+    assert forbidden_read['positive_access_valid'] is False
+    assert forbidden_read['cases_passed'] == 3
+    assert forbidden_read['unique_qualified_business_tasks'] == 0
+    cached_leak = run('cached_content_leak')
+    assert cached_leak['positive_access_valid'] is True
+    assert cached_leak['outcomes']['report'] == 'success'
+    assert cached_leak['cases_passed'] == 3 and cached_leak['actual_effects'] == 1
+    assert cached_leak['unique_qualified_business_tasks'] == 0
+    extra_report = run('unexpected_report')
+    assert extra_report['public_response_contract_valid'] is True
+    assert extra_report['environment_contract_valid'] is False
+    assert extra_report['cases_passed'] == 0 and extra_report['actual_effects'] == 2
     print(json.dumps({'strategies': reports,
                       'leak_then_deny_probe': leak,
                       'extra_public_field_probe': extra_field,
+                      'wrong_report_status_probes': wrong_status,
+                      'forbidden_read_then_correct_probe': forbidden_read,
+                      'cached_content_leak_probe': cached_leak,
+                      'unexpected_report_probe': extra_report,
                       'scope': 'four fixed tasks, deterministic plans, real in-memory SQLite effects; no LLM/RAG engine/Kairo'}, indent=2))
 
 

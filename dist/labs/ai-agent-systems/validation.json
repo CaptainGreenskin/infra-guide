@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "verified_at_utc": "2026-11-04T06:31:14.182837+00:00",
+  "verified_at_utc": "2026-11-04T08:24:42.432662+00:00",
   "standard_library_python": "3.9.6",
   "platform": "macOS-26.2-arm64-arm-64bit",
   "programs": {
@@ -66,7 +66,7 @@
         "scope": "fixed world size, scalar MSE; not LLM/GPU performance"
       },
       "python": "3.12.13",
-      "optional_numpy_warning": true
+      "optional_numpy_warning": false
     },
     "gqa_serving.py": {
       "status": "passed",
@@ -108,14 +108,14 @@
         "takeover_epoch": 2,
         "A": {
           "worker": "A",
-          "pid": 47585,
+          "pid": 83625,
           "result": {
             "status": "stale_epoch"
           }
         },
         "B": {
           "worker": "B",
-          "pid": 47589,
+          "pid": 83626,
           "result": {
             "status": "committed",
             "result": {
@@ -126,7 +126,7 @@
         "crash_exit_code": 23,
         "C_recovered_receipt": {
           "worker": "C",
-          "pid": 47591,
+          "pid": 83628,
           "result": {
             "status": "duplicate",
             "result": {
@@ -183,6 +183,7 @@
               "readonly": "denied",
               "missing": "insufficient_evidence"
             },
+            "positive_access_valid": true,
             "read_receipts": [
               [
                 "report",
@@ -195,6 +196,7 @@
                 "A"
               ]
             ],
+            "environment_contract_valid": true,
             "returned_content": {
               "report": [],
               "cross-tenant": [],
@@ -217,7 +219,9 @@
               "readonly": "success",
               "missing": "success"
             },
+            "positive_access_valid": false,
             "read_receipts": [],
+            "environment_contract_valid": true,
             "returned_content": {
               "report": [],
               "cross-tenant": [],
@@ -240,7 +244,9 @@
               "readonly": "denied",
               "missing": "denied"
             },
+            "positive_access_valid": false,
             "read_receipts": [],
+            "environment_contract_valid": true,
             "returned_content": {
               "report": [],
               "cross-tenant": [],
@@ -263,6 +269,7 @@
               "readonly": "denied",
               "missing": "insufficient_evidence"
             },
+            "positive_access_valid": true,
             "read_receipts": [
               [
                 "report",
@@ -275,6 +282,7 @@
                 "A"
               ]
             ],
+            "environment_contract_valid": true,
             "returned_content": {
               "report": [],
               "cross-tenant": [],
@@ -298,6 +306,7 @@
             "readonly": "denied",
             "missing": "insufficient_evidence"
           },
+          "positive_access_valid": true,
           "read_receipts": [
             [
               "cross-tenant",
@@ -315,6 +324,7 @@
               "A"
             ]
           ],
+          "environment_contract_valid": true,
           "returned_content": {
             "report": [],
             "cross-tenant": [
@@ -344,6 +354,7 @@
             "missing": "insufficient_evidence",
             "client_visible_leaked_amount": 999
           },
+          "positive_access_valid": true,
           "read_receipts": [
             [
               "report",
@@ -356,6 +367,7 @@
               "A"
             ]
           ],
+          "environment_contract_valid": true,
           "returned_content": {
             "report": [],
             "cross-tenant": [],
@@ -364,13 +376,206 @@
           },
           "public_response_contract_valid": false
         },
+        "wrong_report_status_probes": {
+          "denied": {
+            "positive_task_pass": false,
+            "negative_cases_passed": 3,
+            "cases_passed": 3,
+            "case_count": 4,
+            "tool_attempts": 4,
+            "actual_effects": 1,
+            "unique_qualified_business_tasks": 0,
+            "outcomes": {
+              "report": "denied",
+              "cross-tenant": "denied",
+              "readonly": "denied",
+              "missing": "insufficient_evidence"
+            },
+            "positive_access_valid": true,
+            "read_receipts": [
+              [
+                "report",
+                "a-1",
+                "A"
+              ],
+              [
+                "report",
+                "a-2",
+                "A"
+              ]
+            ],
+            "environment_contract_valid": true,
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          },
+          "insufficient_evidence": {
+            "positive_task_pass": false,
+            "negative_cases_passed": 3,
+            "cases_passed": 3,
+            "case_count": 4,
+            "tool_attempts": 4,
+            "actual_effects": 1,
+            "unique_qualified_business_tasks": 0,
+            "outcomes": {
+              "report": "insufficient_evidence",
+              "cross-tenant": "denied",
+              "readonly": "denied",
+              "missing": "insufficient_evidence"
+            },
+            "positive_access_valid": true,
+            "read_receipts": [
+              [
+                "report",
+                "a-1",
+                "A"
+              ],
+              [
+                "report",
+                "a-2",
+                "A"
+              ]
+            ],
+            "environment_contract_valid": true,
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          }
+        },
+        "forbidden_read_then_correct_probe": {
+          "positive_task_pass": false,
+          "negative_cases_passed": 3,
+          "cases_passed": 3,
+          "case_count": 4,
+          "tool_attempts": 4,
+          "actual_effects": 1,
+          "unique_qualified_business_tasks": 0,
+          "outcomes": {
+            "report": "success",
+            "cross-tenant": "denied",
+            "readonly": "denied",
+            "missing": "insufficient_evidence"
+          },
+          "positive_access_valid": false,
+          "read_receipts": [
+            [
+              "report",
+              "a-1",
+              "A"
+            ],
+            [
+              "report",
+              "a-2",
+              "A"
+            ],
+            [
+              "report",
+              "b-1",
+              "B"
+            ]
+          ],
+          "environment_contract_valid": true,
+          "returned_content": {
+            "report": [],
+            "cross-tenant": [],
+            "readonly": [],
+            "missing": []
+          },
+          "public_response_contract_valid": true
+        },
+        "cached_content_leak_probe": {
+          "positive_task_pass": false,
+          "negative_cases_passed": 3,
+          "cases_passed": 3,
+          "case_count": 4,
+          "tool_attempts": 4,
+          "actual_effects": 1,
+          "unique_qualified_business_tasks": 0,
+          "outcomes": {
+            "report": "success",
+            "cross-tenant": "denied",
+            "readonly": "denied",
+            "missing": "insufficient_evidence"
+          },
+          "positive_access_valid": true,
+          "read_receipts": [
+            [
+              "report",
+              "a-1",
+              "A"
+            ],
+            [
+              "report",
+              "a-2",
+              "A"
+            ]
+          ],
+          "environment_contract_valid": true,
+          "returned_content": {
+            "report": [
+              {
+                "tenant": "B",
+                "version": 1,
+                "amount": 999
+              }
+            ],
+            "cross-tenant": [],
+            "readonly": [],
+            "missing": []
+          },
+          "public_response_contract_valid": true
+        },
+        "unexpected_report_probe": {
+          "positive_task_pass": false,
+          "negative_cases_passed": 0,
+          "cases_passed": 0,
+          "case_count": 4,
+          "tool_attempts": 4,
+          "actual_effects": 2,
+          "unique_qualified_business_tasks": 0,
+          "outcomes": {
+            "report": "success",
+            "cross-tenant": "denied",
+            "readonly": "denied",
+            "missing": "insufficient_evidence"
+          },
+          "positive_access_valid": true,
+          "read_receipts": [
+            [
+              "report",
+              "a-1",
+              "A"
+            ],
+            [
+              "report",
+              "a-2",
+              "A"
+            ]
+          ],
+          "environment_contract_valid": false,
+          "returned_content": {
+            "report": [],
+            "cross-tenant": [],
+            "readonly": [],
+            "missing": []
+          },
+          "public_response_contract_valid": true
+        },
         "scope": "four fixed tasks, deterministic plans, real in-memory SQLite effects; no LLM/RAG engine/Kairo"
       }
     }
   },
   "source_sha256": {
-    "README.md": "4076bfbe8a3427eb52e88532f3cc2e7f3e4a42201e52720326530df803d96d5e",
-    "agent_evaluation.py": "73b508bd7b85c7ef5e13f362091983c8e9c505e011cd1625fde71a3459f80ca0",
+    "README.md": "f1c0b3154a92186a304092878e3d49f6b93efd888b268a396d482654e89e3a2f",
+    "agent_evaluation.py": "a4e39077889ea05b658f4dc95f3b926816d274208eaf0d19f52afe3e21cab312",
     "gqa_serving.py": "5820a4c4a789588bc0a53efe916ac5cfc3885e8672f449a9c80d3e77f8c113bb",
     "kairo-adapter-contract.md": "b1a4bdc6f9dd505ff733f5efd58b8101a4abc6685e9376918d74587e652605f7",
     "token_ddp.py": "afd29aa9e382ab48ec149b78173c108ea45f2357fc545caa2ced951c701ec84f",

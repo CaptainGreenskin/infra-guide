@@ -78,3 +78,6 @@
 
 /* Keep the first screen focused on the lesson; the full field map remains one link away. */
 .article-context-link{margin:18px 0 26px;padding:10px 0;border-top:1px solid var(--line);font-size:13px;color:var(--blue);line-height:1.8}
+
+/* Source comparison remains secondary to the course and is grouped by learning purpose. */
+.research-group{margin:18px 0;border-top:1px solid var(--line);padding-top:16px}.research-group>summary{font-size:17px;font-weight:600;cursor:pointer;color:var(--text);line-height:1.7}.research-group .resource-row{margin-top:18px}.research-group .resource-row p{line-height:1.9}.resource-row .path-links{flex-wrap:wrap;gap:12px}.quality-section{scroll-margin-top:100px}
