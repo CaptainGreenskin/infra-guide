@@ -1,0 +1,108 @@
+{
+  "scope": "Fresh full prose/arithmetic/order/evidence reading, not an all-source security audit.",
+  "chapter_notes": {
+    "linux-resource": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "CPU bandwidth units, thread aggregation, namespace/cgroup distinctions, parent limits and cumulative counter windows checked; Linux commands are read-only and correctly labelled target-only. No blocking error found."
+    },
+    "virtual-memory-oom": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Page/address/RSS/PSS/cgroup distinctions, COW, memory.high/max and 137 limitation read; 4KiB/64MiB/1024-page arithmetic and concurrency headroom checked. Budget code is explicit arithmetic, not actual OOM. No blocking error found."
+    },
+    "concurrency-pools": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Race, critical section, two-connection capacity, bounded queues/cancellation, lock order and GIL qualification checked. Source forces deterministic read barrier and protects full mutation. Numeric exercises consistent."
+    },
+    "distributed-systems": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Outcome unknown, deadline propagation, retry tree and idempotent atomic boundary checked; retry/backoff example units consistent and no production exactly-once claim. Scope focuses failure semantics; consensus lives in field knowledge, needs explicit connection."
+    },
+    "cloud-overview": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Request path, data/control plane and IaaS responsibility read; local HTTP readiness scope correct. Suitable starting map; prerequisite cross-links can clarify reading order."
+    },
+    "cloud-compute": {
+      "review": "fresh_read_v28_pending_record",
+      "priority": "P1",
+      "findings": "CPU seconds, mix sensitivity, Little law, connection bound and open/closed load exercise consistent. Title promises virtualization but no real hypervisor/vCPU/memory/device mechanism section; add systematic virtualization contract before sizing cases, with official sources and target-only commands."
+    },
+    "vpc-network": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read request identity, DNS TTL/long connection, longest-prefix routes, AWS stateful SG/stateless ACL return port and NAT direction. Cases and stated assumptions are consistent."
+    },
+    "network-diagnosis": {
+      "review": "fresh_read_v28_pending_record",
+      "priority": "P1",
+      "findings": "Read full phase timing, curl exit-vs-HTTP status, framing/half-close scope and arithmetic. Missing systematic handshake/close states, flow-vs-congestion window and RTT-window budget, which are important prerequisites for network interviews; add these before timed cases."
+    },
+    "training-storage": {
+      "review": "fresh_read_v28_pending_record",
+      "priority": "P2",
+      "findings": "Read object/file/block semantics, complete manifests, small-object cost, 625MiB/5.5s/64MiB-per-second and 256MiB prefetch arithmetic. Need define rank as process group index on first Cloud-path occurrence, rather than assume AI prerequisite."
+    },
+    "database-index-locks": {
+      "review": "fresh_read_v28_pending_record",
+      "priority": "P2",
+      "findings": "Read indexed key ordering, page/candidate/result distinctions, stable pagination, SQLite snapshot/write contention and InnoDB differences. Arithmetic/source scope consistent. Deeper engine-specific MVCC/isolation and redo/undo/binlog remain a follow-up, not silently treated as complete MySQL interview coverage. Subsequent field review confirmed RC/RR, undo/redo/binlog and group commit already explained in database-service; add a direct chapter link instead of claiming those topics are absent."
+    },
+    "cache-consistency": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read source/outbox/cache order, version floor and its retention, minimum-version reads, singleflight scope and ownership-vs-fencing distinction. Correctly separates duplicate receipt state from floor recovery and declared 100x demand from achieved DB load."
+    },
+    "storage-recovery": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read entire chapter including consistent training cut, atomic visibility vs power-loss durability, conditional publication, WAL backup records, recovery history and target-only MySQL PITR guide. RPO/RTO 20min examples consistent; consumer operations and real-vs-model boundaries explicit."
+    },
+    "container-runtime": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read image/index/platform digests, copy-up/secret layers, namespace/cgroup/Pod sharing, CRI/OCI and signal/termination scope. No claim of executed cluster or physical isolation."
+    },
+    "kubernetes-basics": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read full object chain, binding/start/Ready/available distinction, probe actions, EndpointSlice exceptions and asynchronous termination. 3x2 shape and 30s grace arithmetic consistent; target-only checks clear."
+    },
+    "k8s-workloads": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read full workload selection, 25% rounding for three replicas, termination resource overage, probe thresholds, PDB vs rolling update and force-delete limits. Existing YAML remains explicitly illustrative/target-only."
+    },
+    "scheduling-resources": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read quota vs placement object existence, final effective requests, node shape and preemption semantics. Namespace and two-node examples consistent; PDB preemption qualification correct."
+    },
+    "delivery": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read full compatibility migration including old writers after backfill, source-version triggers, immutable config and queue format rollback. Canary arithmetic and Terraform/GitOps actual-vs-model scopes clear."
+    },
+    "iam-security": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read full identity chain, AssumeRole vs PassRole, explicit deny exceptions, confused deputy and issue/renew/revoke timing. Positive/negative local HTTP effects scope correctly distinct from IAM validation."
+    },
+    "elasticity": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read complete queue/capacity/failure-domain/scaling examples and fluid experiment. Found wording could imply assumed 40 req/s was measured; clarify as declared teaching capacity, not site measurement."
+    },
+    "slo": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read full event maturity, traffic-weighted proportions, budget/burn and no-traffic cases, plus real promtool scope. Arithmetic consistent; use unmet objective rather than contract wording for an SLO breach."
+    },
+    "observability": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read RED/USE, histogram aggregation and cardinality, parent/parallel spans, sampling probability and actual local telemetry scope. Keep user result denominators distinct from attempts."
+    },
+    "incident": {
+      "review": "fresh_read_v28_pending_record",
+      "findings": "Read all 1000-request fixed-input model, competing hypotheses, request201 arithmetic and completion snapshots. Scope declared; normalize outbox Chinese term with other chapters."
+    }
+  },
+  "knowledge_domains": {
+    "compute": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations.",
+    "network": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement.",
+    "cloud-data": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated.",
+    "native": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked.",
+    "serverless": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked.",
+    "cloud-delivery": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof.",
+    "cloud-security": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous.",
+    "cloud-capacity": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost.",
+    "sre": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+  }
+}

@@ -8,7 +8,7 @@
       "module": "model-foundations",
       "title": "Transformer 全貌：从张量到计算图",
       "sections": 9,
-      "approx_visible_prose_characters": 4944,
+      "approx_visible_prose_characters": 4680,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -17,7 +17,7 @@
       "module": "model-foundations",
       "title": "Token、词表与 Embedding：标签如何对齐",
       "sections": 9,
-      "approx_visible_prose_characters": 4944,
+      "approx_visible_prose_characters": 4661,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -26,7 +26,7 @@
       "module": "model-foundations",
       "title": "Attention 深入推导：QKV、掩码与多头",
       "sections": 9,
-      "approx_visible_prose_characters": 5335,
+      "approx_visible_prose_characters": 4989,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -35,7 +35,7 @@
       "module": "model-foundations",
       "title": "Decoder Block：前馈、残差与归一化",
       "sections": 9,
-      "approx_visible_prose_characters": 5231,
+      "approx_visible_prose_characters": 4963,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -44,7 +44,7 @@
       "module": "model-foundations",
       "title": "位置编码与 RoPE：相对位置怎样进入点积",
       "sections": 9,
-      "approx_visible_prose_characters": 4788,
+      "approx_visible_prose_characters": 4497,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -53,7 +53,7 @@
       "module": "model-foundations",
       "title": "交叉熵与自动求导：完成一次真实更新",
       "sections": 10,
-      "approx_visible_prose_characters": 5311,
+      "approx_visible_prose_characters": 5033,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -62,7 +62,7 @@
       "module": "model-foundations",
       "title": "GPU 执行与存储：线程如何处理张量",
       "sections": 9,
-      "approx_visible_prose_characters": 3985,
+      "approx_visible_prose_characters": 3957,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -71,7 +71,7 @@
       "module": "model-foundations",
       "title": "Roofline：从计算量与字节判断瓶颈",
       "sections": 9,
-      "approx_visible_prose_characters": 3518,
+      "approx_visible_prose_characters": 3473,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -80,7 +80,7 @@
       "module": "model-foundations",
       "title": "FlashAttention：分块如何保持全局 Softmax",
       "sections": 9,
-      "approx_visible_prose_characters": 3955,
+      "approx_visible_prose_characters": 3660,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -89,7 +89,7 @@
       "module": "model-foundations",
       "title": "张量与流水线并行：切分后的计算与通信",
       "sections": 9,
-      "approx_visible_prose_characters": 3739,
+      "approx_visible_prose_characters": 3716,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -98,7 +98,7 @@
       "module": "training",
       "title": "云上训练全景：从任务提交到首个更新",
       "sections": 8,
-      "approx_visible_prose_characters": 2876,
+      "approx_visible_prose_characters": 2716,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -107,7 +107,7 @@
       "module": "training",
       "title": "并行策略：DDP、FSDP、TP 与 PP 的取舍",
       "sections": 8,
-      "approx_visible_prose_characters": 3881,
+      "approx_visible_prose_characters": 3698,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -116,18 +116,19 @@
       "module": "training",
       "title": "GPU 显存与混合精度：建立可检查的预算",
       "sections": 11,
-      "approx_visible_prose_characters": 8312,
+      "approx_visible_prose_characters": 7403,
       "figures": 4,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved AMP, five-buffer, FSDP and CUDA derivations; added actual dtype/lazy-state/alias accounting and deduplicated saved-storage recomputation, with numerical comparison."
+      "findings": "Preserved AMP, five-buffer, FSDP and CUDA derivations; added actual dtype/lazy-state/alias accounting and deduplicated saved-storage recomputation, with numerical comparison.",
+      "reviewed_content_sha256": "feb24df52b82fafc66623c58591ee2393733116fb1afe10c13c0f3b3c2861868"
     },
     {
       "id": "ddp-code",
       "module": "training",
       "title": "写对一份 DDP 训练程序",
       "sections": 8,
-      "approx_visible_prose_characters": 3067,
+      "approx_visible_prose_characters": 2840,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -136,25 +137,27 @@
       "module": "training",
       "title": "NCCL 与集合通信：定位等待发生在哪里",
       "sections": 8,
-      "approx_visible_prose_characters": 5330,
+      "approx_visible_prose_characters": 4987,
       "figures": 2,
-      "review": "substantial_v24"
+      "review": "substantial_v24",
+      "reviewed_content_sha256": "58659641368a64f9c313a3a15fa92c338072df814e6b9adf1672896002582934"
     },
     {
       "id": "data-pipeline",
       "module": "training",
       "title": "数据管道：让 GPU 持续获得有效输入",
       "sections": 7,
-      "approx_visible_prose_characters": 6076,
+      "approx_visible_prose_characters": 5562,
       "figures": 2,
-      "review": "substantial_v23"
+      "review": "substantial_v23",
+      "reviewed_content_sha256": "f2ba001b6880448b979b4c3a14eaa7383d6ec64f3b09fff5945b08cfefd91b9a"
     },
     {
       "id": "multinode-lab",
       "module": "training",
       "title": "两机四卡 DDP：从环境检查到训练验收",
       "sections": 6,
-      "approx_visible_prose_characters": 1807,
+      "approx_visible_prose_characters": 1669,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -163,7 +166,7 @@
       "module": "training",
       "title": "检查点与恢复：证明训练能从中断继续",
       "sections": 8,
-      "approx_visible_prose_characters": 4688,
+      "approx_visible_prose_characters": 4451,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -172,7 +175,7 @@
       "module": "training",
       "title": "性能与成本：建立公平的扩展实验",
       "sections": 7,
-      "approx_visible_prose_characters": 3289,
+      "approx_visible_prose_characters": 3144,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -181,7 +184,7 @@
       "module": "training",
       "title": "走向 Kubernetes：把训练程序变成可管理的作业",
       "sections": 7,
-      "approx_visible_prose_characters": 2985,
+      "approx_visible_prose_characters": 2851,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -190,7 +193,7 @@
       "module": "platform",
       "title": "AI平台在管理什么：从提交契约到可信训练产物",
       "sections": 7,
-      "approx_visible_prose_characters": 3234,
+      "approx_visible_prose_characters": 3157,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -199,27 +202,29 @@
       "module": "platform",
       "title": "GPU队列与调度：从配额准入到拓扑可行性",
       "sections": 10,
-      "approx_visible_prose_characters": 5043,
+      "approx_visible_prose_characters": 4703,
       "figures": 2,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
-      "findings": "Reworked admission/placement/readiness distinction, quota arithmetic, finite shape/greedy counterexamples, actual two-process atomic group reservation/rollback and backfill/preemption costs."
+      "findings": "Reworked admission/placement/readiness distinction, quota arithmetic, finite shape/greedy counterexamples, actual two-process atomic group reservation/rollback and backfill/preemption costs.",
+      "reviewed_content_sha256": "ee863f3b2453597ea220808f52acb6e63a98b0cba7e7ec8c4f6b85c792aa1cc6"
     },
     {
       "id": "model-serving",
       "module": "platform",
       "title": "模型推理为什么不同：Prefill、Decode与KV Cache",
       "sections": 11,
-      "approx_visible_prose_characters": 9832,
+      "approx_visible_prose_characters": 9181,
       "figures": 5,
-      "review": "substantial_v22"
+      "review": "substantial_v22",
+      "reviewed_content_sha256": "1a53148dfa446a2c395d15a0af04de73e8291aab195644ad53fd7061decfcada"
     },
     {
       "id": "inference-performance",
       "module": "platform",
       "title": "推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径",
       "sections": 8,
-      "approx_visible_prose_characters": 4359,
+      "approx_visible_prose_characters": 4011,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -232,14 +237,15 @@
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Rewrote complete inference bundle, five gates, real CPU Safetensors/token vocabulary counterexample, conditional publication and rollback; separated task-slice/canary fixed arithmetic from actual model fixture."
+      "findings": "Rewrote complete inference bundle, five gates, real CPU Safetensors/token vocabulary counterexample, conditional publication and rollback; separated task-slice/canary fixed arithmetic from actual model fixture.",
+      "reviewed_content_sha256": "d7d99f1d0456c6a4971a17415baa842395ca2864eb2dd2d6c12bdb978aad2b40"
     },
     {
       "id": "training-lab",
       "module": "practice",
       "title": "综合实战：为一次可恢复训练建立完整证据链",
       "sections": 10,
-      "approx_visible_prose_characters": 2693,
+      "approx_visible_prose_characters": 2679,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -248,7 +254,7 @@
       "module": "practice",
       "title": "综合实战：一个服务的探针、版本发布与指标验证",
       "sections": 5,
-      "approx_visible_prose_characters": 1016,
+      "approx_visible_prose_characters": 999,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -257,7 +263,7 @@
       "module": "practice",
       "title": "综合设计评审：让Cloud、AI与Agent形成一条可验收链路",
       "sections": 8,
-      "approx_visible_prose_characters": 2715,
+      "approx_visible_prose_characters": 2707,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -266,16 +272,17 @@
       "module": "agent",
       "title": "Agent Infra在解决什么：从模型提议到任务完成",
       "sections": 8,
-      "approx_visible_prose_characters": 5607,
+      "approx_visible_prose_characters": 5364,
       "figures": 2,
-      "review": "substantial_v23"
+      "review": "substantial_v23",
+      "reviewed_content_sha256": "d88bd4c048429053ebb5dacdcb1ec06b05f238e026a57537090476cda6624166"
     },
     {
       "id": "agent-recovery",
       "module": "agent",
       "title": "工具已经执行，任务却没完成：持久化、幂等与崩溃恢复",
       "sections": 5,
-      "approx_visible_prose_characters": 3273,
+      "approx_visible_prose_characters": 3204,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -284,7 +291,7 @@
       "module": "agent",
       "title": "Agent的权限边界：谁授权，在哪里拦截，怎样限制效果",
       "sections": 9,
-      "approx_visible_prose_characters": 3732,
+      "approx_visible_prose_characters": 3555,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -293,27 +300,29 @@
       "module": "agent",
       "title": "上下文、运行状态与长期记忆：三种信息不要混存",
       "sections": 7,
-      "approx_visible_prose_characters": 4530,
+      "approx_visible_prose_characters": 4414,
       "figures": 2,
-      "review": "substantial_v22"
+      "review": "substantial_v22",
+      "reviewed_content_sha256": "3cb157cfe78ac6663ec3bde62c69fba94c4f4b441dfca3e3e57a49186484841e"
     },
     {
       "id": "agent-evaluation",
       "module": "agent",
       "title": "Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本",
       "sections": 12,
-      "approx_visible_prose_characters": 6576,
+      "approx_visible_prose_characters": 6244,
       "figures": 2,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved independent SQLite oracle and negative probes; added class/grader calibration, task/trial/attempt units, Wilson assumptions and paired exact comparison using explicitly synthetic outcomes."
+      "findings": "Preserved independent SQLite oracle and negative probes; added class/grader calibration, task/trial/attempt units, Wilson assumptions and paired exact comparison using explicitly synthetic outcomes.",
+      "reviewed_content_sha256": "e4ebf69f8cd121fe506d1d185a34d2bec25e69514cbbd60adfe3e50cb08a6e66"
     },
     {
       "id": "kairo-practice",
       "module": "agent",
       "title": "把Agent Infra落实到Kairo：从机制映射到证据验收",
       "sections": 7,
-      "approx_visible_prose_characters": 2606,
+      "approx_visible_prose_characters": 2573,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -322,7 +331,7 @@
       "module": "agent",
       "title": "持久工作流：事件重放、接管与提交",
       "sections": 10,
-      "approx_visible_prose_characters": 4809,
+      "approx_visible_prose_characters": 4603,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -335,238 +344,318 @@
       "figures": 3,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved delivery/ACL oracle and exact source; added actual Chinese FTS5/BM25, declared-ranker RRF, independent graded nDCG and actual stale-index/reindex; knowledge before practice."
+      "findings": "Preserved delivery/ACL oracle and exact source; added actual Chinese FTS5/BM25, declared-ranker RRF, independent graded nDCG and actual stale-index/reindex; knowledge before practice.",
+      "reviewed_content_sha256": "fad91c5f6ec0966eb9ec52d1c89496f6f29fe8605d82cfa5b1e90a0e80a42a95"
     },
     {
       "id": "agent-observability",
       "module": "agent",
       "title": "Agent 观测：任务、重试与成本归因",
       "sections": 8,
-      "approx_visible_prose_characters": 5711,
+      "approx_visible_prose_characters": 5325,
       "figures": 2,
-      "review": "substantial_v24"
+      "review": "substantial_v24",
+      "reviewed_content_sha256": "d7eff95a800b2c9fc0e4a125404418876a0fe8b4209d3c9c1229883e80358456"
     },
     {
       "id": "agent-sandbox",
       "module": "agent",
       "title": "Agent 沙箱：隔离、资源与生命周期",
       "sections": 12,
-      "approx_visible_prose_characters": 8036,
+      "approx_visible_prose_characters": 7569,
       "figures": 3,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved original source and capacity model; added actual inheritance/path counterexamples, POSIX CPU/FD/file/wall limits, cgroup scope and Linux/Pod control fields without claiming container isolation."
+      "findings": "Preserved original source and capacity model; added actual inheritance/path counterexamples, POSIX CPU/FD/file/wall limits, cgroup scope and Linux/Pod control fields without claiming container isolation.",
+      "reviewed_content_sha256": "012468beb78954778188dbe1f1844195c4c22f702a0f2a9a84d4ea780dbb6b7a"
     },
     {
       "id": "cloud-overview",
       "module": "compute",
       "title": "云计算架构：服务模型、资源与责任边界",
       "sections": 5,
-      "approx_visible_prose_characters": 2472,
+      "approx_visible_prose_characters": 2393,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Request path, data/control plane and IaaS responsibility read; local HTTP readiness scope correct. Suitable starting map; prerequisite cross-links can clarify reading order.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "a75e82a539a5feff21c3a6538b9ba2789b211be149926fd6ff547e5652004655"
     },
     {
       "id": "cloud-compute",
       "module": "compute",
       "title": "计算资源：虚拟化、规格与容量预算",
-      "sections": 7,
-      "approx_visible_prose_characters": 2976,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 12,
+      "approx_visible_prose_characters": 5494,
+      "figures": 3,
+      "review": "substantial_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "CPU seconds, mix sensitivity, Little law, connection bound and open/closed load exercise consistent. Title promises virtualization but no real hypervisor/vCPU/memory/device mechanism section; add systematic virtualization contract before sizing cases, with official sources and target-only commands.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "40f2941b96ed7f7a13954a5b3af50f1e639c2411ef5b9745c63e35e77da757ec"
     },
     {
       "id": "vpc-network",
       "module": "network",
       "title": "云网络：DNS、路由、访问控制与返回路径",
       "sections": 7,
-      "approx_visible_prose_characters": 3324,
+      "approx_visible_prose_characters": 3166,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read request identity, DNS TTL/long connection, longest-prefix routes, AWS stateful SG/stateless ACL return port and NAT direction. Cases and stated assumptions are consistent.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "f20e4bf08b43a3fedb4ea893949808a97f244ebb6f4350896e8beec70ac4a560"
     },
     {
       "id": "network-diagnosis",
       "module": "network",
       "title": "网络诊断：连接、首字节与传输时序",
-      "sections": 8,
-      "approx_visible_prose_characters": 4715,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 12,
+      "approx_visible_prose_characters": 6762,
+      "figures": 2,
+      "review": "substantial_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full phase timing, curl exit-vs-HTTP status, framing/half-close scope and arithmetic. Missing systematic handshake/close states, flow-vs-congestion window and RTT-window budget, which are important prerequisites for network interviews; add these before timed cases. Lab catalog now uses a stable semantic anchor, rechecked after section insertion.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "eac9196f8305f59dd6bb102b5e0989b09680a2e4e0bdfa86aefc52e757e27a4c"
     },
     {
       "id": "training-storage",
       "module": "cloud-data",
       "title": "云存储：块、文件、对象与访问性能",
       "sections": 7,
-      "approx_visible_prose_characters": 3061,
+      "approx_visible_prose_characters": 3028,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read object/file/block semantics, complete manifests, small-object cost, 625MiB/5.5s/64MiB-per-second and 256MiB prefetch arithmetic. Need define rank as process group index on first Cloud-path occurrence, rather than assume AI prerequisite.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "59da008097094c0b4e4c62c3c03376778b3f96cd3d704fb41dedd103ed7d3dcd"
     },
     {
       "id": "database-index-locks",
       "module": "cloud-data",
       "title": "数据库访问：索引、事务与锁等待",
       "sections": 9,
-      "approx_visible_prose_characters": 3867,
+      "approx_visible_prose_characters": 3776,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read indexed key ordering, page/candidate/result distinctions, stable pagination, SQLite snapshot/write contention and InnoDB differences. Arithmetic/source scope consistent. Deeper engine-specific MVCC/isolation and redo/undo/binlog remain a follow-up, not silently treated as complete MySQL interview coverage. Subsequent field review confirmed RC/RR, undo/redo/binlog and group commit already explained in database-service; add a direct chapter link instead of claiming those topics are absent.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "2747f27ac9991f7f0c8573c2bc13be6f8ecc632ea359245afa78e7e8c7331aa3"
     },
     {
       "id": "cache-consistency",
       "module": "cloud-data",
       "title": "缓存一致性与击穿：旧值为何重新出现",
       "sections": 9,
-      "approx_visible_prose_characters": 4192,
+      "approx_visible_prose_characters": 4038,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read source/outbox/cache order, version floor and its retention, minimum-version reads, singleflight scope and ownership-vs-fencing distinction. Correctly separates duplicate receipt state from floor recovery and declared 100x demand from achieved DB load.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "d601220858bf00bb041b145615a28abbb4fe54bd64b0e68f88da0e19d30ea5a8"
     },
     {
       "id": "storage-recovery",
       "module": "cloud-data",
       "title": "存储发布与恢复：版本、提交点与校验",
       "sections": 8,
-      "approx_visible_prose_characters": 4946,
+      "approx_visible_prose_characters": 4724,
       "figures": 2,
-      "review": "linked_supplement_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read entire chapter including consistent training cut, atomic visibility vs power-loss durability, conditional publication, WAL backup records, recovery history and target-only MySQL PITR guide. RPO/RTO 20min examples consistent; consumer operations and real-vs-model boundaries explicit.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "b4b7bf1ec6b7b50cf70989c359c0010a9dc44a23c6126fa5dba94a3f84a8e003"
     },
     {
       "id": "container-runtime",
       "module": "native",
       "title": "容器运行原理：镜像、进程、隔离与资源",
       "sections": 7,
-      "approx_visible_prose_characters": 2256,
+      "approx_visible_prose_characters": 2151,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read image/index/platform digests, copy-up/secret layers, namespace/cgroup/Pod sharing, CRI/OCI and signal/termination scope. No claim of executed cluster or physical isolation.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "2182a168735f4e30b49f20aaa0752ea347b24acb042b07b8b40435a52c4f89db"
     },
     {
       "id": "kubernetes-basics",
       "module": "native",
       "title": "Kubernetes 控制面：对象、调谐与生命周期",
       "sections": 7,
-      "approx_visible_prose_characters": 4137,
+      "approx_visible_prose_characters": 3901,
       "figures": 3,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full object chain, binding/start/Ready/available distinction, probe actions, EndpointSlice exceptions and asynchronous termination. 3x2 shape and 30s grace arithmetic consistent; target-only checks clear.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "d44eebc9abc936a98f303b88af8776a6021db2535faafc8242c7c1489c785dd4"
     },
     {
       "id": "k8s-workloads",
       "module": "native",
       "title": "Kubernetes 工作负载：从声明到可用与滚动更新",
       "sections": 8,
-      "approx_visible_prose_characters": 3815,
+      "approx_visible_prose_characters": 3617,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full workload selection, 25% rounding for three replicas, termination resource overage, probe thresholds, PDB vs rolling update and force-delete limits. Existing YAML remains explicitly illustrative/target-only.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "e43ffbcb60eafc6a5bbd2f3c88598000090ba48099344df7f95d2bd04157da16"
     },
     {
       "id": "scheduling-resources",
       "module": "native",
       "title": "Kubernetes 调度：资源、亲和与拓扑约束",
       "sections": 7,
-      "approx_visible_prose_characters": 3103,
+      "approx_visible_prose_characters": 2995,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read quota vs placement object existence, final effective requests, node shape and preemption semantics. Namespace and two-node examples consistent; PDB preemption qualification correct.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "bdc09f44c71407451f24a95573b1de57527bb64915184dc8ea88c29eacbc498e"
     },
     {
       "id": "k8s-networking",
       "module": "native",
       "title": "Kubernetes 网络：从 DNS、Service 到容器回包",
       "sections": 7,
-      "approx_visible_prose_characters": 4902,
+      "approx_visible_prose_characters": 4560,
       "figures": 2,
-      "review": "substantial_v23"
+      "review": "substantial_v23",
+      "reviewed_content_sha256": "1c2c50ec2a3cce6d852cc40d658403284d27ba8a1349e4b851e4d51114cf1981"
     },
     {
       "id": "k8s-storage",
       "module": "native",
       "title": "Kubernetes 存储：PVC、拓扑、挂载与数据恢复",
       "sections": 8,
-      "approx_visible_prose_characters": 5734,
+      "approx_visible_prose_characters": 5375,
       "figures": 2,
-      "review": "substantial_v22"
+      "review": "substantial_v22",
+      "reviewed_content_sha256": "753e6fd0fcf818214fc309c442197634f79737e38cb5cea67c1d58ed5be81de3"
     },
     {
       "id": "config-secrets",
       "module": "native",
       "title": "配置与密钥：传播、重读与版本生效",
       "sections": 7,
-      "approx_visible_prose_characters": 4369,
+      "approx_visible_prose_characters": 4058,
       "figures": 2,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
-      "findings": "Reworked source/projection/active/authentication layers, coherent candidate publication, global budget, monotonic generation and protocol-specific rotation; actual POSIX/process and HTTP tests."
+      "findings": "Reworked source/projection/active/authentication layers, coherent candidate publication, global budget, monotonic generation and protocol-specific rotation; actual POSIX/process and HTTP tests.",
+      "reviewed_content_sha256": "407539d45854031bf0b3a6082fcfd11509c58d0c17fe8882ce5d8739c902311f"
     },
     {
       "id": "k8s-autoscaling",
       "module": "native",
       "title": "Kubernetes 弹性：HPA、节点容量与排队预算",
       "sections": 8,
-      "approx_visible_prose_characters": 6003,
+      "approx_visible_prose_characters": 5533,
       "figures": 2,
-      "review": "substantial_v24"
+      "review": "substantial_v24",
+      "reviewed_content_sha256": "7e4af51d480431aa2564db48bd2580cd7a81e51b2a51fe9422a096538cb9659f"
     },
     {
       "id": "serverless-execution",
       "module": "serverless",
       "title": "Serverless 与事件驱动：执行、重试、幂等与成本",
       "sections": 13,
-      "approx_visible_prose_characters": 6231,
+      "approx_visible_prose_characters": 5717,
       "figures": 2,
       "review": "substantial_v26",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved existing batch/crash experiment; reordered knowledge before cases and added three delivery identities, visibility versus effect fencing, renewal and four partial/FIFO response paths."
+      "findings": "Preserved existing batch/crash experiment; reordered knowledge before cases and added three delivery identities, visibility versus effect fencing, renewal and four partial/FIFO response paths.",
+      "reviewed_content_sha256": "48632a087b9b69892a2f435f08faa89d122bfb945c534caacf8e4aca9efdcf61"
     },
     {
       "id": "delivery",
       "module": "cloud-delivery",
       "title": "平台交付：制品、配置、数据迁移与回退",
       "sections": 8,
-      "approx_visible_prose_characters": 4192,
+      "approx_visible_prose_characters": 4074,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full compatibility migration including old writers after backfill, source-version triggers, immutable config and queue format rollback. Canary arithmetic and Terraform/GitOps actual-vs-model scopes clear.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "e8ac24c50c34c4ed7dd87c3c71dca8dc471345b6b080ea79d786ddb613c84c92"
     },
     {
       "id": "iam-security",
       "module": "cloud-security",
       "title": "身份与最小权限：谁能让系统做什么",
       "sections": 9,
-      "approx_visible_prose_characters": 3998,
+      "approx_visible_prose_characters": 3859,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full identity chain, AssumeRole vs PassRole, explicit deny exceptions, confused deputy and issue/renew/revoke timing. Positive/negative local HTTP effects scope correctly distinct from IAM validation.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "f4f9054ef488016f9e074def06fb6a94eb0cd94acd2cc4efb4e408150cdaf6ae"
     },
     {
       "id": "elasticity",
       "module": "cloud-capacity",
       "title": "容量与弹性：故障域、扩容时序与排队",
       "sections": 8,
-      "approx_visible_prose_characters": 3287,
+      "approx_visible_prose_characters": 3224,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read complete queue/capacity/failure-domain/scaling examples and fluid experiment. Found wording could imply assumed 40 req/s was measured; clarify as declared teaching capacity, not site measurement.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "685a709ac74f6722c05aa28b2df867ec1580ee2b53ba9dfb3016249eff056aa9"
     },
     {
       "id": "slo",
       "module": "sre",
       "title": "可靠性目标：SLI、SLO 与错误预算",
       "sections": 8,
-      "approx_visible_prose_characters": 3322,
+      "approx_visible_prose_characters": 3285,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read full event maturity, traffic-weighted proportions, budget/burn and no-traffic cases, plus real promtool scope. Arithmetic consistent; use unmet objective rather than contract wording for an SLO breach.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "5778167683a0389d065fafda72b365512f7ae40c376322761092b933c9021c44"
     },
     {
       "id": "observability",
       "module": "sre",
       "title": "可观测性：用指标定位范围，用日志和追踪解释路径",
       "sections": 9,
-      "approx_visible_prose_characters": 4442,
+      "approx_visible_prose_characters": 4164,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read RED/USE, histogram aggregation and cardinality, parent/parallel spans, sampling probability and actual local telemetry scope. Keep user result denominators distinct from attempts.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "1328a226d33b60c3ea1bf679adc26df10a0a41acbc9e3527fd0829a742b4b6a0"
     },
     {
       "id": "incident",
       "module": "sre",
       "title": "故障诊断：影响、时间线、假设与验证",
       "sections": 8,
-      "approx_visible_prose_characters": 3133,
+      "approx_visible_prose_characters": 2894,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Read all 1000-request fixed-input model, competing hypotheses, request201 arithmetic and completion snapshots. Scope declared; normalize outbox Chinese term with other chapters.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "3654ba52ac95f285434659294f6f6b6ee0c7b25445b1c0eea407c889ffd9d27f"
     },
     {
       "id": "resilience",
@@ -577,45 +666,827 @@
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved fault-domain/RPO/RTO derivations; added actual SQLite backup/log/object complete-prefix and HTTP restored-outbox/generation receipts, separating row presence, readable reports and recovery age."
+      "findings": "Preserved fault-domain/RPO/RTO derivations; added actual SQLite backup/log/object complete-prefix and HTTP restored-outbox/generation receipts, separating row presence, readable reports and recovery age.",
+      "reviewed_content_sha256": "018be4acac5507b739396c5317b9933d2bda01b4c55ebb7f96f48c6c26315220"
     },
     {
       "id": "linux-resource",
       "module": "foundation",
       "title": "进程、线程与资源：为什么机器空闲，程序仍然很慢",
       "sections": 6,
-      "approx_visible_prose_characters": 2027,
+      "approx_visible_prose_characters": 2007,
       "figures": 2,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "CPU bandwidth units, thread aggregation, namespace/cgroup distinctions, parent limits and cumulative counter windows checked; Linux commands are read-only and correctly labelled target-only. No blocking error found.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "5016fa8c30a7defceb059a5ed943ab726a4778cdf614fd62c1214cd451f91b92"
     },
     {
       "id": "virtual-memory-oom",
       "module": "foundation",
       "title": "虚拟内存与 OOM：导出任务为什么被终止",
       "sections": 9,
-      "approx_visible_prose_characters": 4065,
+      "approx_visible_prose_characters": 3879,
       "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Page/address/RSS/PSS/cgroup distinctions, COW, memory.high/max and 137 limitation read; 4KiB/64MiB/1024-page arithmetic and concurrency headroom checked. Budget code is explicit arithmetic, not actual OOM. No blocking error found.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "c41b633a7d343aa6ca0978b0ecf3c068aaa75e7cb9c853ec5d26c662d2720207"
     },
     {
       "id": "concurrency-pools",
       "module": "foundation",
       "title": "并发与线程池：锁、排队和容量",
       "sections": 9,
-      "approx_visible_prose_characters": 3844,
+      "approx_visible_prose_characters": 3736,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Race, critical section, two-connection capacity, bounded queues/cancellation, lock order and GIL qualification checked. Source forces deterministic read barrier and protects full mutation. Numeric exercises consistent.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "3bdf27fc7e30ba70e5cfdc24330f22899d8548f8cc68cfe568481235125ad7f5"
     },
     {
       "id": "distributed-systems",
       "module": "foundation",
       "title": "超时、重试与幂等：系统最难处理的是“结果未知”",
       "sections": 8,
-      "approx_visible_prose_characters": 2709,
+      "approx_visible_prose_characters": 2715,
       "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "findings": "Outcome unknown, deadline propagation, retry tree and idempotent atomic boundary checked; retry/backoff example units consistent and no production exactly-once claim. Scope focuses failure semantics; consensus lives in field knowledge, needs explicit connection.",
+      "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
+      "reviewed_content_sha256": "8ae8c5ce17eb57fd9a0b88e8ab0e616dfbc50018d4d2bfda18e090731f3b36d1"
     }
   ],
-  "last_inventory_iteration": 27,
-  "eight_hour_manual_status": "18 substantial chapter revisions (6 per track) reviewed during the window; remaining 48 chapters and all 95 knowledge points still require a fresh item-level audit. Automatic counts do not establish quality."
+  "last_inventory_iteration": 28,
+  "eight_hour_manual_status": "40/66 distinct chapters reviewed in the active window, including all28 Cloud/prerequisite chapters; 20 substantial revisions (Cloud8/AI6/Agent6). All62 Cloud knowledge points read; remaining26 chapters and33 AI/Agent points explicitly pending.",
+  "knowledge_reviews": [
+    {
+      "id": "service-model",
+      "module": "compute",
+      "title": "云计算服务模型",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "3907acb6492c3024f1f1975a6df45e5edc298b9f9c25cde3efa3a47d8cd6db7f",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "control-data-plane",
+      "module": "compute",
+      "title": "控制面与数据面",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "ff2c046179e4293ce70e2930a3b7ba4bae31bb3504fee7082e4fe7a8dbd55e43",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "fault-domain",
+      "module": "compute",
+      "title": "Region、AZ 与故障域",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "dfba1c92d308ccf9c5bc56f76e66625bb6df2bc4de34312434a573558b21ebac",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "vm-runtime",
+      "module": "compute",
+      "title": "虚拟机、Hypervisor 与容器",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "edc45ccce5ae1e831dce3fa785297d4d7072fe5d696508f8a3f6acc22d543516",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "cpu-memory-placement",
+      "module": "compute",
+      "title": "vCPU、内存与 NUMA",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "6cbebc56ccc13dc8baea9fa61ec13f22e3fc11f36d17f4d3144f524d545389be",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "instance-lifecycle",
+      "module": "compute",
+      "title": "实例生命周期与镜像",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "5ffe602bda93e9112021b1868cae90efe4cca32156ae1f5aae6e0ddead6778d8",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "resource-contract",
+      "module": "compute",
+      "title": "配额、预留与资源承诺",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "3fb533a25b96bc36d6df0c4503830f85eedc243e402f58af2cc4d06fc86225b4",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+    },
+    {
+      "id": "vpc-subnet",
+      "module": "network",
+      "title": "VPC、子网与地址规划",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "dd4d54e236f248cfb5b6e26968ed08f5743c0889bc12ca7eaee52184a82d616a",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "route-overlay",
+      "module": "network",
+      "title": "路由、互联与 Overlay",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "86c3a9c49c9004b07448f5196903343cbd48d945c1255f18a483f5045128236d",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "dns-discovery",
+      "module": "network",
+      "title": "DNS 与服务发现",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "85c64cc293a8e0eeb10b29217986bf529948bfd81556c2b5563accea820e7352",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "nat-conntrack",
+      "module": "network",
+      "title": "NAT、端口与连接跟踪",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "798b90dc1366f28dd3ebe5673327ef816be45460453b67eb85dd22978f1cc77c",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "lb-tls",
+      "module": "network",
+      "title": "负载均衡、TLS 与入口",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f7018f578a23233d7c66ba35a2489e4b4bd8ae04f2b90eac5ba95528b3dea312",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "transport-timeout",
+      "module": "network",
+      "title": "TCP、HTTP 与超时边界",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "e2385de9e73eff734db29c3fe56a20a5376e78fe061c7cbf7c8e0c3c3ecf07f8",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "io-model",
+      "module": "network",
+      "title": "I/O 多路复用与事件循环",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "9e9b62069fa752054b79e7a4f611cf3a415ddff4184cc887501ec9bfb20775a0",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "network-boundary",
+      "module": "network",
+      "title": "安全组、ACL 与网络策略",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "af0bbee4c2326268f927723bef4d01adc255b97b92e48411c4390980ac07a86c",
+      "findings": "Address/routing/return path, DNS/cache, NAT, proxy/TLS, policy and I/O boundaries checked. TCP sequence/window/closing foundation expanded; local backpressure is not cwnd measurement."
+    },
+    {
+      "id": "storage-model",
+      "module": "cloud-data",
+      "title": "块、文件与对象存储",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "ea18f20cff04f6a06ff430430deccc3240edccdc8fe4716873e0e2cae7a5fc4d",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "storage-performance",
+      "module": "cloud-data",
+      "title": "IOPS、吞吐与尾延迟",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "e07ab68e8784a1ad141facca789d6dc5f2e3b141bc6893fc185f8f302eb46ec8",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "durability-consistency",
+      "module": "cloud-data",
+      "title": "持久性、可用性与一致性",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "9506dcb589674cd9d90ac1f8af9dbda02c59462c431afb358627444591141614",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "database-service",
+      "module": "cloud-data",
+      "title": "托管数据库与事务边界",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "fe8ddb16eedd37e5ffd0f3139c8c9d1500b7b2f312e4938195d5645be922ee5f",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "replication-failover",
+      "module": "cloud-data",
+      "title": "复制、主身份与故障切换",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "0423b14b0163535bd8b0f8b5ee2ffc2482121eecc4e15b52fbbbc801bd311d86",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "cache-layer",
+      "module": "cloud-data",
+      "title": "缓存分层与一致性",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "2fa7a47ae7f6512641b5d345aaf8f91005258b81810b69fde9b185f719378004",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "messaging",
+      "module": "cloud-data",
+      "title": "消息队列与流处理",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "ab7ce5d4af00b3312a31994f97698acfd15b8bee97d2ab7d072b96db4b8d0e1b",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "backup-restore",
+      "module": "cloud-data",
+      "title": "快照、备份与恢复目标",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "025a31682affcfba309b98470683e0491155ab2a439107550eeb83723730ec18",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+    },
+    {
+      "id": "container-isolation",
+      "module": "native",
+      "title": "镜像、容器与运行时",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "e3d763ec6f876fae501193c4925ed59f0afa9c9aceb129917bd3f90417c00ad7",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "reconciliation",
+      "module": "native",
+      "title": "API 对象与控制循环",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "30772ee94d5ef22541902e963de7cf48bfdbbdd15b8f289cb054073c3ec49ce3",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "workload-type",
+      "module": "native",
+      "title": "Pod 与工作负载类型",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f1ef2673129e601955cdc4a586c8970c268f009c73aae934fc943937fc5e19bc",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "placement",
+      "module": "native",
+      "title": "调度、资源与拓扑",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "e2633088e727d4ad438f5b5048106668130eb640473b4f64a14b0a8df9d8c579",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "service-network",
+      "module": "native",
+      "title": "CNI、Service 与 EndpointSlice",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "52eca181611556bb7d14e2e6f3446b8cfee3d9ee2a5614ad2f566b8a969b9937",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "persistent-volume",
+      "module": "native",
+      "title": "PVC、PV、StorageClass 与 CSI",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "b8efb644ce498dbf2ef666962cc0bc4f26fa21c8a606e330c10c4008c98fed97",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "health-rollout",
+      "module": "native",
+      "title": "探针、发布与排空",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "bbc90f57015d0093fab1a3b20d05e4c006fd70211b597d610bd03de19fa7514a",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "configuration",
+      "module": "native",
+      "title": "配置、Secret 与工作负载身份",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "5ade7adfcacbccab5ae2eb9c12e62dbbd36b758fd8ee13a1994307fae8a2b8b3",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "autoscaling",
+      "module": "native",
+      "title": "HPA、VPA 与节点扩容",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "ce8f11aa582c80102e9786cc9f12db91661976b938910a933c8f556c4fe4940b",
+      "findings": "Nine points read fully: process/image/runtime, reconciliation and versions, workload lifecycle, node constraints, networking/policies, volumes, probes/termination, configuration and autoscaling; examples/target-only cluster claims checked."
+    },
+    {
+      "id": "execution-environment",
+      "module": "serverless",
+      "title": "FaaS 与执行环境",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "668284d42e45a179ec617e4b1c273e1a2262e3b8a14d01373eec4031846072bf",
+      "findings": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked."
+    },
+    {
+      "id": "trigger-delivery",
+      "module": "serverless",
+      "title": "触发器与投递语义",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "fe12d74678388e9017b1457be6e06f5679c6fe72f9c3b38063b14c32a65a9a7e",
+      "findings": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked."
+    },
+    {
+      "id": "event-idempotency",
+      "module": "serverless",
+      "title": "事件身份与幂等提交",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "441b8978ac47afe9c11589a5e7e2e29c5c9901a721aefc31453fdb1dbb30fd3f",
+      "findings": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked."
+    },
+    {
+      "id": "concurrency-instances",
+      "module": "serverless",
+      "title": "调用并发、实例与伸缩",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "948d36215c0c5e29f516256410cdebeafb6268b85f37c36f5a42c6b4df2613e6",
+      "findings": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked."
+    },
+    {
+      "id": "serverless-cost",
+      "module": "serverless",
+      "title": "函数成本与选型边界",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "7df12430271c8d085443ff2110178dbf01a1d55d63ed2ba052d8374394b8593b",
+      "findings": "Five points read fully: execution/reset/reuse, trigger responsibility, three identities, visibility/partial/FIFO responses, atomic business receipts, concurrency and billed units. Product-specific and local-model boundaries checked."
+    },
+    {
+      "id": "artifact-contract",
+      "module": "cloud-delivery",
+      "title": "不可变产物与完整版本",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "9ecd85da50cc221dbb2a9fb781b70436ceafbbec10b21fa1d69cb0c2d3f2a782",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "ci-cd",
+      "module": "cloud-delivery",
+      "title": "持续集成与交付流水线",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "8937e01adbccb2c2f03cc8d4d9ac02c7e858ed3ae475797ade3df438385fad48",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "iac",
+      "module": "cloud-delivery",
+      "title": "IaC、状态与漂移",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "7558f7ae9af64fd06c50acf96bdc5a23bca8864c316566944b6989d2f5ad90cb",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "controller-api",
+      "module": "cloud-delivery",
+      "title": "平台 API、控制器与 Operator",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "6a2516dd58f434b9eea9c63c767adb1c5e60df3e7ff4acb1132a8f0957380af8",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "gitops",
+      "module": "cloud-delivery",
+      "title": "GitOps：源版本、调谐、自愈与清理",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "dd91f1c2995f533cf7e5a85a3137c14492e4121b095ba6fac13e2495395ab65e",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "release-strategy",
+      "module": "cloud-delivery",
+      "title": "滚动、蓝绿、灰度与特性开关",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "531bfec1fda7ae586ec247b18322705e5e1abe789add721f7fad0fbf9907a423",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "rollback-compatibility",
+      "module": "cloud-delivery",
+      "title": "兼容迁移、回退与供应链",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "9997eb8e1b3a82acb3c204e00eb7806738f1d9d15680773c9818e80c2a01a64d",
+      "findings": "Seven points read fully: artifact provenance, CI/CD, Terraform three states and saved plans, controller/finalizer, Argo/Flux scope, release/compatibility and source trust. No deployment status used as business proof."
+    },
+    {
+      "id": "authentication-authorization",
+      "module": "cloud-security",
+      "title": "认证、授权与策略判定",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f53d52acad4aee667dc91a1fe6fa0d139386371fb1fefecd31f980ec246a1a4a",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "workload-identity",
+      "module": "cloud-security",
+      "title": "工作负载身份与短期凭证",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "042774336aa9755ead0704285b5a842bfec50812686dde2744fb8572eb54db2e",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "secret-lifecycle",
+      "module": "cloud-security",
+      "title": "密钥、加密与轮换",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "763b86ab30cb5300a513f1ef0b5f73db4a2f560f4385a47c6a6b4f3b80da987c",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "tenant-isolation",
+      "module": "cloud-security",
+      "title": "多租户与资源隔离",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "7297b80ba692f748e7c2a94f241d492cc077a3a202c43bcb0472ea64c65b4f97",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "execution-security",
+      "module": "cloud-security",
+      "title": "容器权限、准入与沙箱",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "1536c85d91d841adf1f04fdef10b18125dbfa855657da3e651f09d37b1f6b251",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "audit-accountability",
+      "module": "cloud-security",
+      "title": "审计、最小权限与可追责",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "2063a3791faa9dae86430c5ad62352bd138377682f9b4b558427ca072bf455c9",
+      "findings": "Six points read fully: subject/action/resource/context, policy differences, projected identity, rotation/revocation, tenant execution layers and positive/negative effects. Rotation formula wording made unambiguous."
+    },
+    {
+      "id": "capacity-units",
+      "module": "cloud-capacity",
+      "title": "工作量、服务时间与容量单位",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "8cd682a3bcc528545050ded9453a03e42a657bd3a2bfec2dae6ae647dde17e95",
+      "findings": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost."
+    },
+    {
+      "id": "queue-backpressure",
+      "module": "cloud-capacity",
+      "title": "排队、背压与准入",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "46ef381b72233b554af13ca8ef987aa1a4700078f6cdd02cca66960f92f8edd5",
+      "findings": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost."
+    },
+    {
+      "id": "scaling-delay",
+      "module": "cloud-capacity",
+      "title": "伸缩时序与预留容量",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "e569a9bc7c3246d7d05d94246aab7eef8a5091732b2e4e02af6a7272c1fc6a7c",
+      "findings": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost."
+    },
+    {
+      "id": "performance-budget",
+      "module": "cloud-capacity",
+      "title": "性能预算与瓶颈归因",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "2ea36221627197bed96ae6735a4392b187f510682d9a4ca7504dde59128923c8",
+      "findings": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost."
+    },
+    {
+      "id": "cost-efficiency",
+      "module": "cloud-capacity",
+      "title": "资源计费、TCO 与单位产出成本",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "0e3f174914f5588ec6b23c0f59f9319c91e6b0f1ffee5692bb6c7ea68c0fa2c3",
+      "findings": "Five points read fully: CPU vs wall and work units, Little law assumptions, queue conservation/M/M/1, scaling critical path, load-generation/percentile/cardinality and unique-output cost."
+    },
+    {
+      "id": "sli-slo",
+      "module": "sre",
+      "title": "SLI、SLO、SLA 与错误预算",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "6c70dfa08b14b3eb3999812852ae32873f152d8f85d7e0f873e608d86582c43d",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "observability-signals",
+      "module": "sre",
+      "title": "指标、日志、追踪与剖析",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "a8423ba95801f5a3ddcf073434c041826a59a7a1094ad64c10b00cde44f99295",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "alert-burn",
+      "module": "sre",
+      "title": "告警、预算消耗与行动",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f08475ff27c11ab0f5651244aac94740b98d38c92a3b973b20a83ab76698a4ae",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "diagnosis-method",
+      "module": "sre",
+      "title": "故障隔离与证据推理",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f954dfe081adf56503a0ec6f29baf793ffd88ae5a79395c44a17b1f8f16f8de9",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "incident-change",
+      "module": "sre",
+      "title": "事故响应、变更治理与复盘",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "2887c05d863387475e6eff8fe974eea75c31a08bcaa261d924e188dd376b10a0",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "resilience-patterns",
+      "module": "sre",
+      "title": "高可用、熔断、限流与容灾",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "8e27f5b01a00bf0d12e050f37c39cda7500733584a7fc6ed848a29864a5d02ed",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "recovery-evidence",
+      "module": "sre",
+      "title": "RPO/RTO、演练与恢复证据",
+      "review": "fresh_review_v28",
+      "reviewed_at": "2026-11-05",
+      "reviewed_content_sha256": "f9ba51a647d4dbaf1241ee3311f31fde97509a3dae7ccf54447c07d5c03048d2",
+      "findings": "Seven points read fully: event maturity/weighted SLI, telemetry and causality, multiwindow burn, competing hypotheses, incident/restoration evidence and recovery point dependencies. Scenarios and actual runs remain distinct."
+    },
+    {
+      "id": "mf-tensors",
+      "module": "model-foundations",
+      "title": "Token、张量形状与预测目标",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "mf-attention",
+      "module": "model-foundations",
+      "title": "Attention、因果掩码与 GQA 的具体计算",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "mf-decoder",
+      "module": "model-foundations",
+      "title": "Decoder Block、FFN、残差与位置",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "mf-autograd",
+      "module": "model-foundations",
+      "title": "反向传播、共享参数与有效 token 分母",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "mf-gpu",
+      "module": "model-foundations",
+      "title": "GPU 执行层级、访存与资源约束",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "mf-roofline",
+      "module": "model-foundations",
+      "title": "Roofline、在线 Softmax 与算子优化",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-step",
+      "module": "training",
+      "title": "一次训练更新：数据、计算、通信、提交",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-memory",
+      "module": "training",
+      "title": "训练显存：状态账本、峰值与混合精度",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-ddp",
+      "module": "training",
+      "title": "DDP：副本一致与全局目标是两件检查",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-sharding",
+      "module": "training",
+      "title": "FSDP 与 ZeRO：分片的是哪些状态",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-parallel",
+      "module": "training",
+      "title": "张量并行、流水线并行与混合专家",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-collectives",
+      "module": "training",
+      "title": "集合通信：数据量、顺序与重叠",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-input",
+      "module": "training",
+      "title": "数据流水线：供给、packing 与跨 rank 一致性",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "tr-recovery",
+      "module": "training",
+      "title": "检查点、重启与训练作业的验收",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-contract",
+      "module": "platform",
+      "title": "训练平台：作业契约与可加载产物",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-admission",
+      "module": "platform",
+      "title": "GPU 调度：配额、形状、拓扑与协同准入",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-prefill",
+      "module": "platform",
+      "title": "Prefill、Decode 与自回归依赖",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-kv",
+      "module": "platform",
+      "title": "KV Cache：GQA 字节账、分块与增长",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-batching",
+      "module": "platform",
+      "title": "连续批处理、分块预填充与准入",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-metrics",
+      "module": "platform",
+      "title": "首词元延迟、输出间隔、吞吐与达标吞吐",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-quantization",
+      "module": "platform",
+      "title": "量化：数值误差、存储与实际执行",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-optimizations",
+      "module": "platform",
+      "title": "投机解码与端到端开销",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "sv-release",
+      "module": "platform",
+      "title": "评估、灰度与模型版本恢复",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-runtime",
+      "module": "agent",
+      "title": "运行时：任务、运行、步骤与效果身份",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-tools",
+      "module": "agent",
+      "title": "工具契约：类型、前置条件与结果语义",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-recovery",
+      "module": "agent",
+      "title": "持久执行：恢复、取消与效果回执",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-fencing",
+      "module": "agent",
+      "title": "多 worker：租约、代际与接收方 fencing",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-authorization",
+      "module": "agent",
+      "title": "权限委托、审批与外部文本边界",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-context",
+      "module": "agent",
+      "title": "上下文、运行状态与长期记忆的存储职责",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-retrieval",
+      "module": "agent",
+      "title": "RAG：索引、过滤、排序与事实归因",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-observability",
+      "module": "agent",
+      "title": "任务轨迹、预算与每成功任务成本",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-evaluation",
+      "module": "agent",
+      "title": "任务评估：真实效果、正确拒绝与故障注入",
+      "review": "pending_fresh_review"
+    },
+    {
+      "id": "ag-sandbox",
+      "module": "agent",
+      "title": "执行沙箱：资源、网络、文件与生命周期",
+      "review": "pending_fresh_review"
+    }
+  ],
+  "eight_hour_progress": {
+    "reviewed_chapters": 40,
+    "total_chapters": 66,
+    "substantial_chapters": 20,
+    "reviewed_knowledge_points": 62,
+    "total_knowledge_points": 95
+  }
 }

@@ -9,7 +9,9 @@ for(const[id,name,anchor]of pairs){
  assert.equal(d.mechanismLabFiles[name],source);
  assert.equal(record.sha256,crypto.createHash('sha256').update(source).digest('hex'));
  const article=d.articles.find(a=>a.id===id),html=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
- assert(article.sections[0][1].includes('id="'+anchor+'"'));
+ const mechanismIndex=article.sections.findIndex(section=>section[1].includes('id="'+anchor+'"'));
+ const experimentIndex=article.sections.findIndex(section=>[...section[1].matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(match=>decode(match[1])===source.trim()));
+ assert(mechanismIndex>=0&&experimentIndex>mechanismIndex,id+': explain the mechanism before the executable experiment');
  assert(html.indexOf('id="'+anchor+'"')<html.indexOf('本次实际执行结果'));
  assert(html.includes('data-reader-contents')&&html.includes('data-reader-large')&&html.includes('data-reader-focus'));
  assert([...html.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(match=>decode(match[1])===source.trim()),'static source mismatch: '+name);

@@ -50,9 +50,10 @@ for (const [directory, script] of [['network-timing', 'timing_lab.py'], ['permis
  assert.equal(report.status, 'passed');
  assert.equal(report.source_sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(folder, script))).digest('hex'));
 }
-for (const [id, section] of [['network-diagnosis', 7], ['agent-security', 8]]) {
+for (const [id, anchor, script] of [['network-diagnosis', 'network-timing-lab', 'network-timing/timing_lab.py'], ['agent-security', 'agent-permission-lab', 'permissions/policy_lab.py']]) {
  const page = fs.readFileSync(path.join(dist, 'article', id, 'index.html'), 'utf8');
- assert(page.includes('id="section-'+section+'"><h2><span class="section-index">0'+section+'</span>本地实验'), id+': lab entry target');
+ assert(page.includes('id="'+anchor+'"') && page.includes('labs/'+script), id+': stable lab entry target');
+ assert(fs.readFileSync(path.join(dist,'labs','index.html'),'utf8').includes('/article/'+id+'/#'+anchor),id+': lab catalog deep link');
 }
 console.log('PASS: timing, authorization evidence and lab deep links.');
 for (const [route, total, mustContain, mustOmit] of [

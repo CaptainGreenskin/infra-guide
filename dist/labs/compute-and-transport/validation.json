@@ -1,0 +1,76 @@
+{
+  "verified_at_utc": "2026-11-04T17:38:45.641560+00:00",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "cpu_and_wall.py": {
+      "sha256": "49c6645f47156bf1f78f15f96241dc8e72e63919475483b9604aba568f8e6c6a",
+      "exit_code": 0,
+      "result": {
+        "python": "3.9.6",
+        "system": "Darwin",
+        "logical_cpu_count_hint": 14,
+        "cases": {
+          "one_cpu_phase": {
+            "elapsed_seconds": 0.100034333,
+            "process_cpu_seconds": 0.100016,
+            "detail": {
+              "thread_cpu_seconds": 0.100005834,
+              "checksum": 3490371073
+            }
+          },
+          "one_wait_phase": {
+            "elapsed_seconds": 0.13008166699999998,
+            "process_cpu_seconds": 8.400000000000074e-05,
+            "detail": false
+          },
+          "two_cpu_threads": {
+            "elapsed_seconds": 0.200274958,
+            "process_cpu_seconds": 0.20049599999999998,
+            "detail": [
+              {
+                "thread_cpu_seconds": 0.100003333,
+                "checksum": 157103905
+              },
+              {
+                "thread_cpu_seconds": 0.100007583,
+                "checksum": 2092691489
+              }
+            ]
+          }
+        },
+        "scope": "actual_local_CPU_and_wait_measurements_not_VM_quota_or_throughput_benchmark",
+        "limits": [
+          "CPU targets are workload stopping conditions, not a simulated cgroup budget",
+          "two threads share this process; GIL/build/native-code/platform affect parallel execution",
+          "logical CPU count does not measure guaranteed capacity or identify physical core ownership",
+          "actual timings vary; compare accounting categories, not speedup ratios"
+        ]
+      }
+    },
+    "socket_backpressure.py": {
+      "sha256": "3f2ce932450829086c6223b7341c6b2f81bfa3a6d44543167708bea73c08833a",
+      "exit_code": 0,
+      "result": {
+        "python": "3.9.6",
+        "system": "Darwin",
+        "payload_bytes": 786432,
+        "send_buffer_setting": 16384,
+        "receive_buffer_setting": 326640,
+        "blocked_before_application_read": true,
+        "accepted_before_application_read": 16384,
+        "successful_send_calls": 48,
+        "short_writes_observed": 0,
+        "received_bytes": 786432,
+        "sha256": "539d0bfeb36296bab26e2aabccb9dc150ab92b9cc8249dbca7de3609ea95c00e",
+        "read_reply_after_write_shutdown": true,
+        "scope": "actual_loopback_nonblocking_send_and_application_drain_not_packet_or_cwnd_measurement",
+        "limits": [
+          "send accepted bytes into a local socket path, not proof that receiver application read them",
+          "paused application may still have bytes received/acknowledged by its kernel",
+          "buffer settings and partial-write boundaries depend on the OS; cap does not force a block on every stack",
+          "receiver JSON is this fixture's explicit application receipt, not TCP ACK"
+        ]
+      }
+    }
+  }
+}

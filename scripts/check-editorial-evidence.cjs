@@ -55,4 +55,13 @@ for(const [id,file]of [['ddp-code','ddp/train_ddp.py'],['incident','incident-mod
  const a=data.articles.find(x=>x.id===id),all=a.sections.map(x=>x[1]).join('');
  assert([...all.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(m=>decode(m[1]).trim()===read('dist/labs/'+file).trim()),id+': complete source differs');
 }
-console.log('PASS: full 63-chapter audit, 20 repairs, independent 1000-request queue arithmetic, actual optimizer-call counter probe and exact inline/source/evidence provenance.');
+const fresh=JSON.parse(read('docs/QUALITY_AUDIT_2026-11-04.json'));
+const signature=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const currentPoints=JSON.parse(JSON.stringify(vm.runInContext(`cloudKnowledgeDomains.flatMap(d=>d.points.map(p=>({module:d.module,id:p[0],title:p[1],lead:p[2],body:cloudKnowledgeExplanations[p[0]]||'',boundary:p[3],articles:p[4]}))).concat(infraKnowledgeDomains.flatMap(d=>d.points.map(p=>({module:d.module,...p}))))`,ctx)));
+const reviewed=fresh.chapters.filter(x=>/^(substantial_v\d+|fresh_review_v\d+)$/.test(x.review));
+for(const row of reviewed){const a=data.articles.find(a=>a.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:a.title,sections:a.sections}),row.id+': changed after recorded review');}
+const reviewedPoints=(fresh.knowledge_reviews||[]).filter(x=>/^fresh_review_v\d+$/.test(x.review));
+for(const row of reviewedPoints){const p=currentPoints.find(p=>p.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:p.title,lead:p.lead,body:p.body,boundary:p.boundary||'',articles:p.articles}),row.id+': changed after recorded review');}
+assert.equal(fresh.eight_hour_progress.reviewed_chapters,reviewed.length);assert.equal(fresh.eight_hour_progress.reviewed_knowledge_points,reviewedPoints.length);
+assert.equal(fresh.chapters.length,data.articles.length);assert.equal(fresh.knowledge_reviews.length,currentPoints.length);
+console.log('PASS: prior63-chapter audit/20 repairs, independent1000-request arithmetic and optimizer-call provenance; active-window content signatures match '+reviewed.length+'/'+data.articles.length+' reviewed chapters and '+reviewedPoints.length+'/'+currentPoints.length+' reviewed knowledge points. Pending items are not counted as complete.');
