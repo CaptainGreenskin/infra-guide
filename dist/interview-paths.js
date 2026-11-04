@@ -15,13 +15,13 @@ function priorityMap() {
  <ol><li><b>01 · 共同必修</b><strong>请求、资源与数据</strong><span>画一次请求，区分计算、等待与读写。</span></li>
  <li><b>02 · 岗位重点</b><strong>三条主线选一条</strong><span>云看编排与可靠性，AI 看训练与推理，Agent 看执行与权限。</span></li>
  <li><b>03 · 进阶验收</b><strong>从解释到交付</strong><span>写出实现，复算容量，注入一次故障。</span></li></ol>
- <p class="path-links"><a href="/interview/companies/">对照腾讯、阿里、字节的岗位重点 →</a><a href="/interview/experiences/">公开面试题：看实际问了什么 →</a></p></section>`;
+ <p class="path-links"><a href="/interview/companies/">对照腾讯、阿里、字节的岗位重点 →</a><a href="/interview/experiences/">公开面试题：看实际问了什么 →</a><a href="/interview/cloud/">Cloud 各领域与岗位深度 →</a></p></section>`;
 }
 
 function interviewEntry() {
  return `<section class="interview-entry"><div><small>面试准备 / 先决定怎么学</small><h2>复习从哪一步开始？</h2><p>基础还不牢，先走六次学习。已经有项目经验，先限时诊断，再补失分项。</p></div>
  <div class="path-links"><a class="btn" href="/interview/plan/">打开复习路线 →</a><a href="/interview/companies/">腾讯 · 阿里 · 字节岗位重点 →</a></div>
- <div class="unit-links">${unitLink('experiences','公开面试题与重点')}${unitLink('coding','01 现场编码')}${unitLink('database','02 数据库诊断')}${unitLink('design','03 系统设计')}</div></section>`;
+ <div class="unit-links">${unitLink('experiences','公开面试题与重点')}${unitLink('cloud','Cloud 岗位深度')}${unitLink('coding','01 现场编码')}${unitLink('database','02 数据库诊断')}${unitLink('design','03 系统设计')}</div></section>`;
 }
 
 function studyOrder() {
@@ -49,11 +49,11 @@ function studyOrder() {
 
 function workshopPage(id) {
  const renderers = {plan:studyOrder, companies:companyStudyGuide, coding:codingInterviewWorkshop,
-                    database:databaseInterviewWorkshop, design:designInterviewWorkshop, experiences:interviewExperienceGuide};
+                    database:databaseInterviewWorkshop, design:designInterviewWorkshop, experiences:interviewExperienceGuide, cloud:cloudCoverageGuide};
  const [title, description] = interviewUnits[id];
  simplePage(title, 'INTERVIEW PRACTICE · 面试工作台', description,
   '<nav class="workshop-nav" aria-label="面试工作台"><a href="/interview/">面试总览</a>'+
-  Object.entries({plan:'顺序',companies:'岗位',experiences:'面经',coding:'编码',database:'数据库',design:'设计'}).map(([key,label])=>
+  Object.entries({plan:'顺序',companies:'岗位',experiences:'面经',cloud:'Cloud 深度',coding:'编码',database:'数据库',design:'设计'}).map(([key,label])=>
     '<a href="'+unitURL(key)+'"'+(key===id?' aria-current="page"':'')+'>'+label+'</a>').join('')+
   '</nav>'+renderers[id]()+
   '<p class="path-links workshop-return"><a href="/interview/plan/">查看学习顺序 →</a><a href="/interview/">返回面试总览 →</a></p>');

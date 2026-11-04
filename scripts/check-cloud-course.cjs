@@ -4,7 +4,7 @@ const ctx={};vm.createContext(ctx);
 for(const [,file] of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),ctx);
 const {articles,publicInterviewSamples,cloudModulePlan}=vm.runInContext('({articles,publicInterviewSamples,cloudModulePlan})',ctx);
 const ids=new Set(articles.map(a=>a.id));
-assert.equal(cloudModulePlan.length,8);
+assert.equal(cloudModulePlan.length,10);
 assert.equal(cloudModulePlan.flatMap(row=>row[7]).length,28);
 for(const [module,n,,,,,,chapters] of cloudModulePlan)chapters.forEach((id,index)=>{const a=articles.find(a=>a.id===id);assert.equal(a.module,module);assert.equal(a.number,n+'.'+(index+1));});
 assert.equal(publicInterviewSamples.length,15);
@@ -24,4 +24,4 @@ assert.equal((page.match(/class="experience-source"/g)||[]).length,15);
 for(const id of ['container-runtime','k8s-workloads','k8s-networking','k8s-storage','k8s-autoscaling','serverless-execution']){
  const a=articles.find(a=>a.id===id);assert(a.sections.length>=7&&a.refs.length>=3);assert(a.textbook&&a.updated==='2026.11.04');
 }
-console.log('PASS: 8 Cloud modules / 28 chapters, 15 role samples / 14 sources / 29 review groups, 7 source-matched local checks and 7 offline-validated Kubernetes objects.');
+console.log('PASS: P0 prerequisites + 9 Cloud fields / 28 chapters, 15 role samples / 14 sources / 29 review groups, 7 source-matched local checks and 7 offline-validated Kubernetes objects.');

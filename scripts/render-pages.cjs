@@ -26,12 +26,14 @@ const context={document,window:{addEventListener:noop,scrollTo:noop},location:{p
 vm.createContext(context);
 for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
 const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits})',context);
-const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
+const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/resources/',call:'resourcesPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
 const revisedRoutes = new Set(['/outline/', '/interview/', '/labs/', '/track/cloud/', '/track/ai/', '/track/agent/', '/article/network-diagnosis/', '/article/gpu-memory/', '/article/agent-security/']);
 for (const article of data.articles) {
  if (article.updated === '2026.11.04') revisedRoutes.add('/article/'+article.id+'/');
 }
 revisedRoutes.add('/module/model-foundations/');
+revisedRoutes.add('/resources/');
+for(const module of data.modules.filter(m=>m.track==='cloud')) revisedRoutes.add('/module/'+module.id+'/');
 const lastModified = route => (revisedRoutes.has(route) || route.startsWith('/interview/')) ? '2026-11-04' : '2026-11-03';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 for(const entry of routes){

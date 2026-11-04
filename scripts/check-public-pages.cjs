@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path'),assert=require('assert'),vm=require(
 const dist=path.resolve(__dirname,'../dist');
 const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
-assert.equal(urls.length,96);assert.equal(new Set(urls.map(u=>u.href)).size,96);
+assert.equal(urls.length,100);assert.equal(new Set(urls.map(u=>u.href)).size,100);
 for(const url of urls){
  const file=path.join(dist,url.pathname,'index.html'),html=fs.readFileSync(file,'utf8');
  assert(html.includes('<link rel="canonical" href="'+url.href+'">'),url.pathname+': canonical');
@@ -34,7 +34,7 @@ assert(vm.runInContext('attentionExample(0,false,true).output[0]!==attentionExam
 const record=JSON.parse(fs.readFileSync(path.join(dist,'labs/attention/validation.json'),'utf8'));
 assert.equal(record.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/attention/attention_lab.py'))).digest('hex'));
 assert.equal(record.report.status,'passed');
-console.log('PASS: 96 full-text HTML pages, canonical/social metadata, crawlable internal links, sitemap and attention calculations/evidence.');
+console.log('PASS: 100 full-text HTML pages, canonical/social metadata, crawlable internal links, sitemap and attention calculations/evidence.');
 
 const ddpRecord=JSON.parse(fs.readFileSync(path.join(dist,'labs/ddp-step/validation.json'),'utf8'));
 assert.equal(ddpRecord.report.status,'passed');
@@ -72,7 +72,7 @@ assert(interview.includes('面试覆盖对照') && interview.includes('现场编
 console.log('PASS: topic-specific sidebar, current page highlight, interview scope and mock prompts.');
 
 const pageText = id => fs.readFileSync(path.join(dist,'interview',id,'index.html'),'utf8');
-for (const id of ['plan','companies','coding','database','design','experiences']) {
+for (const id of ['plan','companies','coding','database','design','experiences','cloud']) {
  assert(interview.includes('/interview/'+id+'/'), 'interview entry '+id);
  assert(pageText(id).includes('aria-current="page"'), 'active workshop '+id);
 }
@@ -87,4 +87,4 @@ assert.deepEqual(db.snapshot_reads,['queued','queued','running']);
 assert.equal(db.plans.length,3);
 for (const item of db.plans) assert.deepEqual(item.result_ids,db.plans[0].result_ids);
 assert(pageText('database').includes('SQLite '+db.sqlite));
-console.log('PASS: 6 interview destinations, 66 priority labels, role evidence and SQL results.');
+console.log('PASS: 7 interview destinations, 66 priority labels, role evidence and SQL results.');
