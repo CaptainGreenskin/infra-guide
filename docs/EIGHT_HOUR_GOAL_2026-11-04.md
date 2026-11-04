@@ -17,19 +17,19 @@
 |方向|章节|本轮与后续重点|进展|
 |---|---|---|---|
 |Cloud|k8s-storage|绑定、拓扑、访问模式、性能、完整备份与两Job复用PVC|第22轮实质重写|
-|Cloud|k8s-networking|DNS、Service转发、连接状态、回程和策略|待深入|
+|Cloud|k8s-networking|DNS、Service转发、连接状态、回程和策略|第23轮实质重写|
 |Cloud|k8s-autoscaling|指标口径、控制延迟、稳定窗口与下游预算|待深入|
 |Cloud|config-secrets|配置传播、重读、轮换兼容与撤销|待深入|
 |Cloud|serverless-execution|触发器确认、批次部分失败、重投与成本|待深入|
 |Cloud|resilience|故障域、恢复点、旧写者与消费者验收|待深入|
 |AI|model-serving|独立量化知识点、误差/字节/算子、行业方法及实测|第22轮实质补强|
 |AI|gpu-memory|训练状态、瞬时峰值、重计算/分片与微调账本|待实质补强；第22轮仅补关联段落|
-|AI|data-pipeline|采样器、worker分流、尾批次、有效进展与恢复|待深入|
+|AI|data-pipeline|采样器、worker分流、尾批次、有效进展与恢复|第23轮实质重写|
 |AI|training-communication|集合通信的数值、调用次序、等待与故障边界|待深入|
 |AI|gpu-scheduling|配额准入、碎片、拓扑、协同启动与队列|待深入|
 |AI|ai-lifecycle|完整产物、语义兼容、评估门禁与发布回退|待深入|
 |Agent|agent-memory|预算、结构化摘要、权威状态、版本与撤回|第22轮实质重写|
-|Agent|agent-runtime|任务与工具契约、类型、错误、循环与停止条件|待实质补强；第22轮仅补关联段落|
+|Agent|agent-runtime|任务与工具契约、类型、错误、循环与停止条件|第23轮实质重写；第22轮关联段落不另计|
 |Agent|agent-evaluation|任务集、评分器、负例、统计口径与结果有效性|待深入|
 |Agent|agent-observability|因果轨迹、尝试归因、等待与每成功任务成本|待深入|
 |Agent|agent-sandbox|边界、资源、进程生命周期与本地验证限制|待深入|
@@ -42,3 +42,5 @@
 第22轮完成3篇核心实质修订、3篇关联补充，6张原创SVG和5个程序。Cloud有WAL备份与相同源码的持久计数写入测试；AI有INT4字节/数值参考与真实CPU INT8转换、执行、保存回读；Agent有旧摘要、版本条件和记忆撤回测试。另提供4份生成的Kubernetes JSON清单，未作为集群已运行证据。
 
 发布版本与源码以托管端版本和GitHub Actions匹配提交为准。后续轮次更新此清单，累计按实质修订统计，不把同一章的小修反复计数。
+
+第23轮再实质重写3篇，累计6/18，每方向2篇。新增6张原创SVG、4个实际程序：真实TLS/HTTP、两rank/四worker数据加载、固定向量packing对照、十组HTTP工具循环。Cloud和AI均已超过两套新增实验；Agent有上下文状态和工具执行两套独立实验。固定输入实验不冒充真实模型、集群或Kairo验证。16项本地检查及Python3.9/3.12新检查通过；桌面和手机目录、放大图解、源码展开与整页溢出已实际检查。下一轮优先弹性控制、训练通信与Agent观测。

@@ -1,0 +1,1388 @@
+{
+  "python": "3.9.6",
+  "sqlite": "3.51.0",
+  "programs": {
+    "tls_identity.py": {
+      "sha256": "ad2a20159061db2291ae26ce89cee5759ff519b6640aa16ec94665059078c9ef",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "python_ssl": "LibreSSL 2.8.3",
+        "openssl_cli": "LibreSSL 3.3.6",
+        "tcp_connected": true,
+        "good": {
+          "http_status": 200,
+          "body": {
+            "report": "R17",
+            "version": 3,
+            "total": 37
+          },
+          "certificate_dns_names": [
+            "reports.internal.test"
+          ],
+          "tls_version": "TLSv1.2"
+        },
+        "failures": {
+          "wrong_certificate_name": "certificate_verification_failed",
+          "untrusted_ca": "certificate_verification_failed"
+        },
+        "valid_tls_wrong_http_host": {
+          "http_status": 421,
+          "body": {
+            "error": "unknown_virtual_host"
+          },
+          "certificate_dns_names": [
+            "reports.internal.test"
+          ],
+          "tls_version": "TLSv1.2"
+        },
+        "http_requests": [
+          {
+            "host": "reports.internal.test",
+            "path": "/report"
+          },
+          {
+            "host": "other.internal.test",
+            "path": "/report"
+          }
+        ],
+        "sni_names": [
+          "reports.internal.test",
+          "wrong.internal.test",
+          "reports.internal.test",
+          "reports.internal.test"
+        ],
+        "verification_disabled": false,
+        "system_trust_changed": false,
+        "scope": "loopback_tls_http_no_kubernetes_or_external_dns"
+      }
+    },
+    "sampler_coverage.py": {
+      "sha256": "1aae4c20355b1c946abe2f2efb2edade7bd6a735696f1cf4c3c3f00d9be33285",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "torch": "2.5.1",
+        "device": "cpu",
+        "backend": "gloo",
+        "world_size": 2,
+        "dataset_size": 11,
+        "workers_per_rank": 2,
+        "map_batch_size": 4,
+        "stream_batch_size": 2,
+        "map_summary": {
+          "sampler_0_loader_0": {
+            "deliveries": 12,
+            "unique": 11,
+            "repeated_ids": [
+              0
+            ],
+            "missing_ids": [],
+            "batch_counts": [
+              2,
+              2
+            ]
+          },
+          "sampler_0_loader_1": {
+            "deliveries": 8,
+            "unique": 8,
+            "repeated_ids": [],
+            "missing_ids": [
+              8,
+              9,
+              10
+            ],
+            "batch_counts": [
+              1,
+              1
+            ]
+          },
+          "sampler_1_loader_0": {
+            "deliveries": 10,
+            "unique": 10,
+            "repeated_ids": [],
+            "missing_ids": [
+              10
+            ],
+            "batch_counts": [
+              2,
+              2
+            ]
+          },
+          "sampler_1_loader_1": {
+            "deliveries": 8,
+            "unique": 8,
+            "repeated_ids": [],
+            "missing_ids": [
+              8,
+              9,
+              10
+            ],
+            "batch_counts": [
+              1,
+              1
+            ]
+          },
+          "no_sampler": {
+            "deliveries": 22,
+            "unique": 11,
+            "repeated_ids": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "missing_ids": [],
+            "batch_counts": [
+              3,
+              3
+            ]
+          }
+        },
+        "iterable_summary": {
+          "unsharded_workers": {
+            "deliveries": 22,
+            "unique": 11,
+            "repeated_ids": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "missing_ids": [],
+            "batch_counts": [
+              6,
+              6
+            ]
+          },
+          "sharded_keep": {
+            "deliveries": 11,
+            "unique": 11,
+            "repeated_ids": [],
+            "missing_ids": [],
+            "batch_counts": [
+              4,
+              3
+            ]
+          },
+          "sharded_drop": {
+            "deliveries": 8,
+            "unique": 8,
+            "repeated_ids": [],
+            "missing_ids": [
+              8,
+              9,
+              10
+            ],
+            "batch_counts": [
+              2,
+              2
+            ]
+          }
+        },
+        "ranks": [
+          {
+            "rank": 0,
+            "map": {
+              "sampler_0_loader_0": {
+                "sampler_indices": [
+                  0,
+                  2,
+                  4,
+                  6,
+                  8,
+                  10
+                ],
+                "batches": [
+                  [
+                    0,
+                    2,
+                    4,
+                    6
+                  ],
+                  [
+                    8,
+                    10
+                  ]
+                ]
+              },
+              "sampler_0_loader_1": {
+                "sampler_indices": [
+                  0,
+                  2,
+                  4,
+                  6,
+                  8,
+                  10
+                ],
+                "batches": [
+                  [
+                    0,
+                    2,
+                    4,
+                    6
+                  ]
+                ]
+              },
+              "sampler_1_loader_0": {
+                "sampler_indices": [
+                  0,
+                  2,
+                  4,
+                  6,
+                  8
+                ],
+                "batches": [
+                  [
+                    0,
+                    2,
+                    4,
+                    6
+                  ],
+                  [
+                    8
+                  ]
+                ]
+              },
+              "sampler_1_loader_1": {
+                "sampler_indices": [
+                  0,
+                  2,
+                  4,
+                  6,
+                  8
+                ],
+                "batches": [
+                  [
+                    0,
+                    2,
+                    4,
+                    6
+                  ]
+                ]
+              },
+              "no_sampler": {
+                "sampler_indices": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "batches": [
+                  [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  [
+                    8,
+                    9,
+                    10
+                  ]
+                ]
+              }
+            },
+            "shuffle": {
+              "epoch_0": [
+                5,
+                4,
+                0,
+                3,
+                7,
+                2
+              ],
+              "without_set_epoch": [
+                5,
+                4,
+                0,
+                3,
+                7,
+                2
+              ],
+              "epoch_1": [
+                0,
+                8,
+                1,
+                7,
+                5,
+                3
+              ]
+            },
+            "iterable": {
+              "unsharded_workers": {
+                "batches": [
+                  {
+                    "ids": [
+                      0,
+                      2
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      0,
+                      2
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      4,
+                      6
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      4,
+                      6
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      8,
+                      10
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      8,
+                      10
+                    ],
+                    "worker": 1
+                  }
+                ]
+              },
+              "sharded_keep": {
+                "batches": [
+                  {
+                    "ids": [
+                      0,
+                      4
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      1,
+                      5
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      8
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      9
+                    ],
+                    "worker": 1
+                  }
+                ]
+              },
+              "sharded_drop": {
+                "batches": [
+                  {
+                    "ids": [
+                      0,
+                      4
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      1,
+                      5
+                    ],
+                    "worker": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "rank": 1,
+            "map": {
+              "sampler_0_loader_0": {
+                "sampler_indices": [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9,
+                  0
+                ],
+                "batches": [
+                  [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  [
+                    9,
+                    0
+                  ]
+                ]
+              },
+              "sampler_0_loader_1": {
+                "sampler_indices": [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9,
+                  0
+                ],
+                "batches": [
+                  [
+                    1,
+                    3,
+                    5,
+                    7
+                  ]
+                ]
+              },
+              "sampler_1_loader_0": {
+                "sampler_indices": [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9
+                ],
+                "batches": [
+                  [
+                    1,
+                    3,
+                    5,
+                    7
+                  ],
+                  [
+                    9
+                  ]
+                ]
+              },
+              "sampler_1_loader_1": {
+                "sampler_indices": [
+                  1,
+                  3,
+                  5,
+                  7,
+                  9
+                ],
+                "batches": [
+                  [
+                    1,
+                    3,
+                    5,
+                    7
+                  ]
+                ]
+              },
+              "no_sampler": {
+                "sampler_indices": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "batches": [
+                  [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  [
+                    8,
+                    9,
+                    10
+                  ]
+                ]
+              }
+            },
+            "shuffle": {
+              "epoch_0": [
+                6,
+                9,
+                1,
+                8,
+                10,
+                5
+              ],
+              "without_set_epoch": [
+                6,
+                9,
+                1,
+                8,
+                10,
+                5
+              ],
+              "epoch_1": [
+                4,
+                2,
+                10,
+                9,
+                6,
+                0
+              ]
+            },
+            "iterable": {
+              "unsharded_workers": {
+                "batches": [
+                  {
+                    "ids": [
+                      1,
+                      3
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      1,
+                      3
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      5,
+                      7
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      5,
+                      7
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      9
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      9
+                    ],
+                    "worker": 1
+                  }
+                ]
+              },
+              "sharded_keep": {
+                "batches": [
+                  {
+                    "ids": [
+                      2,
+                      6
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      3,
+                      7
+                    ],
+                    "worker": 1
+                  },
+                  {
+                    "ids": [
+                      10
+                    ],
+                    "worker": 0
+                  }
+                ]
+              },
+              "sharded_drop": {
+                "batches": [
+                  {
+                    "ids": [
+                      2,
+                      6
+                    ],
+                    "worker": 0
+                  },
+                  {
+                    "ids": [
+                      3,
+                      7
+                    ],
+                    "worker": 1
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "training_step_executed": false,
+        "scope": "actual_sampler_and_worker_processes_not_gpu_throughput"
+      }
+    },
+    "packing_boundaries.py": {
+      "sha256": "87a0b0088a26ff9faff0f57db8da7a7bec92847f5a9d0470d134302fa18a966f",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "documents": [
+          [
+            11,
+            12,
+            2
+          ],
+          [
+            21,
+            2
+          ]
+        ],
+        "packed_tokens": [
+          11,
+          12,
+          2,
+          21,
+          2
+        ],
+        "document_ids": [
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "positions": [
+          0,
+          1,
+          2,
+          0,
+          1
+        ],
+        "allowed_attention": [
+          [
+            true,
+            false,
+            false,
+            false,
+            false
+          ],
+          [
+            true,
+            true,
+            false,
+            false,
+            false
+          ],
+          [
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          [
+            false,
+            false,
+            false,
+            true,
+            false
+          ],
+          [
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
+        ],
+        "shifted_labels": [
+          12,
+          2,
+          -100,
+          2
+        ],
+        "valid_targets": 3,
+        "plain_concatenation_targets": 4,
+        "independent_outputs": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.8526513742503854,
+            0.19646483433281936
+          ],
+          [
+            0.6718096029385039,
+            0.4375871960819948
+          ],
+          [
+            -1.0,
+            0.0
+          ],
+          [
+            -0.1869591767786673,
+            0.6097806174159995
+          ]
+        ],
+        "packed_outputs": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.8526513742503854,
+            0.19646483433281936
+          ],
+          [
+            0.6718096029385039,
+            0.4375871960819948
+          ],
+          [
+            -1.0,
+            0.0
+          ],
+          [
+            -0.1869591767786673,
+            0.6097806174159995
+          ]
+        ],
+        "correct_max_error": 0.0,
+        "cross_document_max_error": 0.7922771005120761,
+        "global_positions_max_error": 0.6783391985064989,
+        "scope": "stdlib_fixed_attention_math_no_language_model_or_gpu"
+      }
+    },
+    "tool_runtime.py": {
+      "sha256": "986f19b8cedd6be04a11b35bd051f9d602bfdaaef72484f985b244f8514e5752",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "proposal_source": "deterministic_script_no_llm",
+        "transport": "actual_loopback_http_jsonrpc",
+        "catalog": [
+          {
+            "name": "read_values",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "resource"
+              ],
+              "additionalProperties": false
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "required": [
+                "resource",
+                "version",
+                "values"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "name": "write_report",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "op": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "source_version": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "expected_version": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "resource",
+                "op",
+                "total",
+                "source_version",
+                "expected_version"
+              ],
+              "additionalProperties": false
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "op": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "duplicate": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "resource",
+                "version",
+                "total",
+                "op",
+                "duplicate"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "cases": {
+          "normal": {
+            "state": "SUCCEEDED",
+            "proposals": 3,
+            "tool_attempts": 2,
+            "rpc_requests": 3,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 37,
+                "op": "R17:publish",
+                "duplicate": false
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 37,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "event": "artifact_checked",
+                "valid": true
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "duplicate_same_operation": {
+            "state": "SUCCEEDED",
+            "proposals": 4,
+            "tool_attempts": 3,
+            "rpc_requests": 4,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 37,
+                "op": "R17:publish",
+                "duplicate": false
+              },
+              {
+                "duplicate": true,
+                "op": "R17:publish",
+                "resource": "report-A",
+                "total": 37,
+                "version": 1
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 37,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "attempt": 3,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": true
+              },
+              {
+                "proposal": 4,
+                "event": "artifact_checked",
+                "valid": true
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "invalid_bool_then_repair": {
+            "state": "SUCCEEDED",
+            "proposals": 4,
+            "tool_attempts": 2,
+            "rpc_requests": 3,
+            "validation_errors": 1,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 37,
+                "op": "R17:publish",
+                "duplicate": false
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 37,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "event": "rejected_before_dispatch"
+              },
+              {
+                "proposal": 3,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 4,
+                "event": "artifact_checked",
+                "valid": true
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "foreign_resource": {
+            "state": "DENIED",
+            "proposals": 1,
+            "tool_attempts": 1,
+            "rpc_requests": 2,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [],
+            "effects": 0,
+            "artifact": null,
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "tool_error",
+                "code": "denied"
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "broken_output": {
+            "state": "FAILED_RESULT_SCHEMA",
+            "proposals": 1,
+            "tool_attempts": 1,
+            "rpc_requests": 2,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [],
+            "effects": 0,
+            "artifact": null,
+            "trace": [],
+            "foreign_value_leaked": false
+          },
+          "finish_without_work": {
+            "state": "INCOMPLETE",
+            "proposals": 1,
+            "tool_attempts": 0,
+            "rpc_requests": 1,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [],
+            "effects": 0,
+            "artifact": null,
+            "trace": [
+              {
+                "proposal": 1,
+                "event": "artifact_checked",
+                "valid": false
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "repeating_reads": {
+            "state": "BUDGET_EXCEEDED",
+            "proposals": 4,
+            "tool_attempts": 3,
+            "rpc_requests": 4,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              }
+            ],
+            "effects": 0,
+            "artifact": null,
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "attempt": 3,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "transient_read": {
+            "state": "SUCCEEDED",
+            "proposals": 3,
+            "tool_attempts": 3,
+            "rpc_requests": 4,
+            "validation_errors": 0,
+            "transport_errors": 1,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 37,
+                "op": "R17:publish",
+                "duplicate": false
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 37,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "http_error",
+                "status": 503
+              },
+              {
+                "proposal": 1,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 3,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "event": "artifact_checked",
+                "valid": true
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "valid_schema_wrong_total": {
+            "state": "INCOMPLETE",
+            "proposals": 3,
+            "tool_attempts": 2,
+            "rpc_requests": 3,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 38,
+                "op": "R17:publish",
+                "duplicate": false
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 38,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "event": "artifact_checked",
+                "valid": false
+              }
+            ],
+            "foreign_value_leaked": false
+          },
+          "same_operation_changed_arguments": {
+            "state": "TOOL_ERROR",
+            "proposals": 3,
+            "tool_attempts": 3,
+            "rpc_requests": 4,
+            "validation_errors": 0,
+            "transport_errors": 0,
+            "observations": [
+              {
+                "resource": "orders-A",
+                "version": 3,
+                "values": [
+                  10,
+                  27
+                ]
+              },
+              {
+                "resource": "report-A",
+                "version": 1,
+                "total": 37,
+                "op": "R17:publish",
+                "duplicate": false
+              }
+            ],
+            "effects": 1,
+            "artifact": {
+              "resource": "report-A",
+              "version": 1,
+              "total": 37,
+              "source_version": 3
+            },
+            "trace": [
+              {
+                "proposal": 1,
+                "attempt": 1,
+                "event": "accepted",
+                "tool": "read_values",
+                "duplicate": false
+              },
+              {
+                "proposal": 2,
+                "attempt": 2,
+                "event": "accepted",
+                "tool": "write_report",
+                "duplicate": false
+              },
+              {
+                "proposal": 3,
+                "attempt": 3,
+                "event": "tool_error",
+                "code": "operation_conflict"
+              }
+            ],
+            "foreign_value_leaked": false
+          }
+        },
+        "max_proposals": 4,
+        "max_tool_attempts": 3,
+        "scope": "tool_contract_and_control_loop_not_full_mcp_auth_or_kairo"
+      }
+    }
+  }
+}

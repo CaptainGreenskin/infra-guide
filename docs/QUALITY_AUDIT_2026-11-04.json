@@ -8,7 +8,7 @@
       "module": "model-foundations",
       "title": "Transformer 全貌：从张量到计算图",
       "sections": 9,
-      "approx_visible_prose_characters": 4991,
+      "approx_visible_prose_characters": 4944,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -17,7 +17,7 @@
       "module": "model-foundations",
       "title": "Token、词表与 Embedding：标签如何对齐",
       "sections": 9,
-      "approx_visible_prose_characters": 4971,
+      "approx_visible_prose_characters": 4944,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -26,7 +26,7 @@
       "module": "model-foundations",
       "title": "Attention 深入推导：QKV、掩码与多头",
       "sections": 9,
-      "approx_visible_prose_characters": 5389,
+      "approx_visible_prose_characters": 5335,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -35,7 +35,7 @@
       "module": "model-foundations",
       "title": "Decoder Block：前馈、残差与归一化",
       "sections": 9,
-      "approx_visible_prose_characters": 5274,
+      "approx_visible_prose_characters": 5231,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -44,7 +44,7 @@
       "module": "model-foundations",
       "title": "位置编码与 RoPE：相对位置怎样进入点积",
       "sections": 9,
-      "approx_visible_prose_characters": 4813,
+      "approx_visible_prose_characters": 4788,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -53,7 +53,7 @@
       "module": "model-foundations",
       "title": "交叉熵与自动求导：完成一次真实更新",
       "sections": 10,
-      "approx_visible_prose_characters": 5366,
+      "approx_visible_prose_characters": 5311,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -62,7 +62,7 @@
       "module": "model-foundations",
       "title": "GPU 执行与存储：线程如何处理张量",
       "sections": 9,
-      "approx_visible_prose_characters": 4029,
+      "approx_visible_prose_characters": 3985,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -71,7 +71,7 @@
       "module": "model-foundations",
       "title": "Roofline：从计算量与字节判断瓶颈",
       "sections": 9,
-      "approx_visible_prose_characters": 3578,
+      "approx_visible_prose_characters": 3518,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -80,7 +80,7 @@
       "module": "model-foundations",
       "title": "FlashAttention：分块如何保持全局 Softmax",
       "sections": 9,
-      "approx_visible_prose_characters": 4013,
+      "approx_visible_prose_characters": 3955,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -89,7 +89,7 @@
       "module": "model-foundations",
       "title": "张量与流水线并行：切分后的计算与通信",
       "sections": 9,
-      "approx_visible_prose_characters": 3786,
+      "approx_visible_prose_characters": 3739,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -98,7 +98,7 @@
       "module": "training",
       "title": "云上训练全景：从任务提交到首个更新",
       "sections": 8,
-      "approx_visible_prose_characters": 2941,
+      "approx_visible_prose_characters": 2876,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -107,7 +107,7 @@
       "module": "training",
       "title": "并行策略：DDP、FSDP、TP 与 PP 的取舍",
       "sections": 8,
-      "approx_visible_prose_characters": 4008,
+      "approx_visible_prose_characters": 3881,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -116,7 +116,7 @@
       "module": "training",
       "title": "GPU 显存与混合精度：建立可检查的预算",
       "sections": 7,
-      "approx_visible_prose_characters": 4734,
+      "approx_visible_prose_characters": 4601,
       "figures": 2,
       "review": "linked_supplement_v22"
     },
@@ -125,7 +125,7 @@
       "module": "training",
       "title": "写对一份 DDP 训练程序",
       "sections": 8,
-      "approx_visible_prose_characters": 3131,
+      "approx_visible_prose_characters": 3067,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -134,7 +134,7 @@
       "module": "training",
       "title": "NCCL 与集合通信：定位等待发生在哪里",
       "sections": 7,
-      "approx_visible_prose_characters": 4032,
+      "approx_visible_prose_characters": 3966,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -143,16 +143,16 @@
       "module": "training",
       "title": "数据管道：让 GPU 持续获得有效输入",
       "sections": 7,
-      "approx_visible_prose_characters": 3872,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "approx_visible_prose_characters": 6076,
+      "figures": 2,
+      "review": "substantial_v23"
     },
     {
       "id": "multinode-lab",
       "module": "training",
       "title": "两机四卡 DDP：从环境检查到训练验收",
       "sections": 6,
-      "approx_visible_prose_characters": 1879,
+      "approx_visible_prose_characters": 1807,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -161,7 +161,7 @@
       "module": "training",
       "title": "检查点与恢复：证明训练能从中断继续",
       "sections": 8,
-      "approx_visible_prose_characters": 4769,
+      "approx_visible_prose_characters": 4688,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -170,7 +170,7 @@
       "module": "training",
       "title": "性能与成本：建立公平的扩展实验",
       "sections": 7,
-      "approx_visible_prose_characters": 3333,
+      "approx_visible_prose_characters": 3289,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -179,7 +179,7 @@
       "module": "training",
       "title": "走向 Kubernetes：把训练程序变成可管理的作业",
       "sections": 7,
-      "approx_visible_prose_characters": 3026,
+      "approx_visible_prose_characters": 2985,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -188,7 +188,7 @@
       "module": "platform",
       "title": "AI平台在管理什么：从提交契约到可信训练产物",
       "sections": 7,
-      "approx_visible_prose_characters": 3257,
+      "approx_visible_prose_characters": 3234,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -197,7 +197,7 @@
       "module": "platform",
       "title": "GPU队列与调度：从配额准入到拓扑可行性",
       "sections": 7,
-      "approx_visible_prose_characters": 2983,
+      "approx_visible_prose_characters": 2945,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -206,16 +206,16 @@
       "module": "platform",
       "title": "模型推理为什么不同：Prefill、Decode与KV Cache",
       "sections": 11,
-      "approx_visible_prose_characters": 10135,
+      "approx_visible_prose_characters": 9832,
       "figures": 5,
-      "review": "substantive_rewrite_v22"
+      "review": "substantial_v22"
     },
     {
       "id": "inference-performance",
       "module": "platform",
       "title": "推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径",
       "sections": 8,
-      "approx_visible_prose_characters": 4453,
+      "approx_visible_prose_characters": 4359,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -224,7 +224,7 @@
       "module": "platform",
       "title": "模型怎样进入生产：完整产物、评估、发布与回退",
       "sections": 7,
-      "approx_visible_prose_characters": 3181,
+      "approx_visible_prose_characters": 3148,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -233,7 +233,7 @@
       "module": "practice",
       "title": "综合实战：为一次可恢复训练建立完整证据链",
       "sections": 10,
-      "approx_visible_prose_characters": 2733,
+      "approx_visible_prose_characters": 2693,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -242,7 +242,7 @@
       "module": "practice",
       "title": "综合实战：一个服务的探针、版本发布与指标验证",
       "sections": 5,
-      "approx_visible_prose_characters": 1043,
+      "approx_visible_prose_characters": 1016,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -251,7 +251,7 @@
       "module": "practice",
       "title": "综合设计评审：让Cloud、AI与Agent形成一条可验收链路",
       "sections": 8,
-      "approx_visible_prose_characters": 2755,
+      "approx_visible_prose_characters": 2715,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -259,17 +259,17 @@
       "id": "agent-runtime",
       "module": "agent",
       "title": "Agent Infra在解决什么：从模型提议到任务完成",
-      "sections": 6,
-      "approx_visible_prose_characters": 2814,
-      "figures": 1,
-      "review": "linked_supplement_v22"
+      "sections": 8,
+      "approx_visible_prose_characters": 5607,
+      "figures": 2,
+      "review": "substantial_v23"
     },
     {
       "id": "agent-recovery",
       "module": "agent",
       "title": "工具已经执行，任务却没完成：持久化、幂等与崩溃恢复",
       "sections": 5,
-      "approx_visible_prose_characters": 3378,
+      "approx_visible_prose_characters": 3273,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -278,7 +278,7 @@
       "module": "agent",
       "title": "Agent的权限边界：谁授权，在哪里拦截，怎样限制效果",
       "sections": 9,
-      "approx_visible_prose_characters": 3853,
+      "approx_visible_prose_characters": 3732,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -287,16 +287,16 @@
       "module": "agent",
       "title": "上下文、运行状态与长期记忆：三种信息不要混存",
       "sections": 7,
-      "approx_visible_prose_characters": 4648,
+      "approx_visible_prose_characters": 4530,
       "figures": 2,
-      "review": "substantive_rewrite_v22"
+      "review": "substantial_v22"
     },
     {
       "id": "agent-evaluation",
       "module": "agent",
       "title": "Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本",
       "sections": 8,
-      "approx_visible_prose_characters": 3799,
+      "approx_visible_prose_characters": 3745,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -305,7 +305,7 @@
       "module": "agent",
       "title": "把Agent Infra落实到Kairo：从机制映射到证据验收",
       "sections": 7,
-      "approx_visible_prose_characters": 2630,
+      "approx_visible_prose_characters": 2606,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -314,7 +314,7 @@
       "module": "agent",
       "title": "持久工作流：事件重放、接管与提交",
       "sections": 10,
-      "approx_visible_prose_characters": 4881,
+      "approx_visible_prose_characters": 4809,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -323,7 +323,7 @@
       "module": "agent",
       "title": "检索与上下文：让答案有可验证的证据",
       "sections": 9,
-      "approx_visible_prose_characters": 3655,
+      "approx_visible_prose_characters": 3576,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -332,7 +332,7 @@
       "module": "agent",
       "title": "Agent 观测：任务、重试与成本归因",
       "sections": 9,
-      "approx_visible_prose_characters": 3457,
+      "approx_visible_prose_characters": 3435,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -341,7 +341,7 @@
       "module": "agent",
       "title": "Agent 沙箱：隔离、资源与生命周期",
       "sections": 9,
-      "approx_visible_prose_characters": 3751,
+      "approx_visible_prose_characters": 3726,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -350,7 +350,7 @@
       "module": "compute",
       "title": "云计算架构：服务模型、资源与责任边界",
       "sections": 5,
-      "approx_visible_prose_characters": 2540,
+      "approx_visible_prose_characters": 2472,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -359,7 +359,7 @@
       "module": "compute",
       "title": "计算资源：虚拟化、规格与容量预算",
       "sections": 7,
-      "approx_visible_prose_characters": 2995,
+      "approx_visible_prose_characters": 2976,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -368,7 +368,7 @@
       "module": "network",
       "title": "云网络：DNS、路由、访问控制与返回路径",
       "sections": 7,
-      "approx_visible_prose_characters": 3352,
+      "approx_visible_prose_characters": 3324,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -377,7 +377,7 @@
       "module": "network",
       "title": "网络诊断：连接、首字节与传输时序",
       "sections": 8,
-      "approx_visible_prose_characters": 4853,
+      "approx_visible_prose_characters": 4715,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -386,7 +386,7 @@
       "module": "cloud-data",
       "title": "云存储：块、文件、对象与访问性能",
       "sections": 7,
-      "approx_visible_prose_characters": 3083,
+      "approx_visible_prose_characters": 3061,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -395,7 +395,7 @@
       "module": "cloud-data",
       "title": "数据库访问：索引、事务与锁等待",
       "sections": 9,
-      "approx_visible_prose_characters": 3898,
+      "approx_visible_prose_characters": 3867,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -404,7 +404,7 @@
       "module": "cloud-data",
       "title": "缓存一致性与击穿：旧值为何重新出现",
       "sections": 9,
-      "approx_visible_prose_characters": 4267,
+      "approx_visible_prose_characters": 4192,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -413,7 +413,7 @@
       "module": "cloud-data",
       "title": "存储发布与恢复：版本、提交点与校验",
       "sections": 8,
-      "approx_visible_prose_characters": 5035,
+      "approx_visible_prose_characters": 4946,
       "figures": 2,
       "review": "linked_supplement_v22"
     },
@@ -422,7 +422,7 @@
       "module": "native",
       "title": "容器运行原理：镜像、进程、隔离与资源",
       "sections": 7,
-      "approx_visible_prose_characters": 2295,
+      "approx_visible_prose_characters": 2256,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -431,7 +431,7 @@
       "module": "native",
       "title": "Kubernetes 控制面：对象、调谐与生命周期",
       "sections": 7,
-      "approx_visible_prose_characters": 4187,
+      "approx_visible_prose_characters": 4137,
       "figures": 3,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -440,7 +440,7 @@
       "module": "native",
       "title": "Kubernetes 工作负载：从声明到可用与滚动更新",
       "sections": 8,
-      "approx_visible_prose_characters": 3887,
+      "approx_visible_prose_characters": 3815,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -449,7 +449,7 @@
       "module": "native",
       "title": "Kubernetes 调度：资源、亲和与拓扑约束",
       "sections": 7,
-      "approx_visible_prose_characters": 3119,
+      "approx_visible_prose_characters": 3103,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -457,26 +457,26 @@
       "id": "k8s-networking",
       "module": "native",
       "title": "Kubernetes 网络：从 DNS、Service 到容器回包",
-      "sections": 8,
-      "approx_visible_prose_characters": 2547,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 7,
+      "approx_visible_prose_characters": 4902,
+      "figures": 2,
+      "review": "substantial_v23"
     },
     {
       "id": "k8s-storage",
       "module": "native",
       "title": "Kubernetes 存储：PVC、拓扑、挂载与数据恢复",
       "sections": 8,
-      "approx_visible_prose_characters": 5873,
+      "approx_visible_prose_characters": 5734,
       "figures": 2,
-      "review": "substantive_rewrite_v22"
+      "review": "substantial_v22"
     },
     {
       "id": "config-secrets",
       "module": "native",
       "title": "配置与密钥：传播、重读与版本生效",
       "sections": 7,
-      "approx_visible_prose_characters": 2887,
+      "approx_visible_prose_characters": 2872,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -485,7 +485,7 @@
       "module": "native",
       "title": "Kubernetes 弹性：HPA、节点容量与排队预算",
       "sections": 8,
-      "approx_visible_prose_characters": 2501,
+      "approx_visible_prose_characters": 2458,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -494,7 +494,7 @@
       "module": "serverless",
       "title": "Serverless 与事件驱动：执行、重试、幂等与成本",
       "sections": 9,
-      "approx_visible_prose_characters": 3216,
+      "approx_visible_prose_characters": 3152,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -503,7 +503,7 @@
       "module": "cloud-delivery",
       "title": "平台交付：制品、配置、数据迁移与回退",
       "sections": 8,
-      "approx_visible_prose_characters": 4258,
+      "approx_visible_prose_characters": 4192,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -512,7 +512,7 @@
       "module": "cloud-security",
       "title": "身份与最小权限：谁能让系统做什么",
       "sections": 9,
-      "approx_visible_prose_characters": 4045,
+      "approx_visible_prose_characters": 3998,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -521,7 +521,7 @@
       "module": "cloud-capacity",
       "title": "容量与弹性：故障域、扩容时序与排队",
       "sections": 8,
-      "approx_visible_prose_characters": 3327,
+      "approx_visible_prose_characters": 3287,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -530,7 +530,7 @@
       "module": "sre",
       "title": "可靠性目标：SLI、SLO 与错误预算",
       "sections": 8,
-      "approx_visible_prose_characters": 3360,
+      "approx_visible_prose_characters": 3322,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -539,7 +539,7 @@
       "module": "sre",
       "title": "可观测性：用指标定位范围，用日志和追踪解释路径",
       "sections": 9,
-      "approx_visible_prose_characters": 4492,
+      "approx_visible_prose_characters": 4442,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -548,7 +548,7 @@
       "module": "sre",
       "title": "故障诊断：影响、时间线、假设与验证",
       "sections": 8,
-      "approx_visible_prose_characters": 3236,
+      "approx_visible_prose_characters": 3133,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -557,7 +557,7 @@
       "module": "sre",
       "title": "恢复工程：故障域、RPO、RTO 与演练",
       "sections": 7,
-      "approx_visible_prose_characters": 2827,
+      "approx_visible_prose_characters": 2811,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -566,7 +566,7 @@
       "module": "foundation",
       "title": "进程、线程与资源：为什么机器空闲，程序仍然很慢",
       "sections": 6,
-      "approx_visible_prose_characters": 2064,
+      "approx_visible_prose_characters": 2027,
       "figures": 2,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -575,7 +575,7 @@
       "module": "foundation",
       "title": "虚拟内存与 OOM：导出任务为什么被终止",
       "sections": 9,
-      "approx_visible_prose_characters": 4099,
+      "approx_visible_prose_characters": 4065,
       "figures": 1,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -584,7 +584,7 @@
       "module": "foundation",
       "title": "并发与线程池：锁、排队和容量",
       "sections": 9,
-      "approx_visible_prose_characters": 3883,
+      "approx_visible_prose_characters": 3844,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     },
@@ -593,9 +593,11 @@
       "module": "foundation",
       "title": "超时、重试与幂等：系统最难处理的是“结果未知”",
       "sections": 8,
-      "approx_visible_prose_characters": 2740,
+      "approx_visible_prose_characters": 2709,
       "figures": 0,
       "review": "initial_screen_not_reassessed_v22"
     }
-  ]
+  ],
+  "last_inventory_iteration": 23,
+  "eight_hour_manual_status": "6 core chapters substantially reviewed and repaired; other rows remain screening or earlier-review evidence, not a claim all 66 were manually reread in this window."
 }
