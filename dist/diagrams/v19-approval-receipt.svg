@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 650" role="img" aria-labelledby="title desc">
+<title id="title">同一动作的三份记录：批准、声明与工具回执</title><desc id="desc">租户A、操作K1与参数摘要关联记录；每一份记录有自己的证明范围。</desc>
+<rect width="1120" height="650" fill="#f8fafd"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" fill="#1c283d" font-weight="700">同一动作的三份记录：批准、声明与工具回执</text>
+<text x="40" y="80" font-size="15" fill="#617086" font-weight="400">租户A、操作K1与参数摘要关联记录；每一份记录有自己的证明范围。</text>
+<rect x="40" y="130" width="320" height="263" rx="8" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="60" y="169" font-size="20" fill="#315dce" font-weight="600">01  批准R18</text>
+<text x="60" y="211" font-size="16" fill="#1c283d" font-weight="400">主体：user-A，租户：A</text>
+<text x="60" y="245" font-size="16" fill="#1c283d" font-weight="400">对象：draft，预期版本7</text>
+<text x="60" y="279" font-size="16" fill="#1c283d" font-weight="400">意图：金额37、工具v1、K1</text>
+<text x="60" y="313" font-size="16" fill="#1c283d" font-weight="400">只允许这个具体动作</text>
+<text x="60" y="347" font-size="16" fill="#1c283d" font-weight="400">把37改成99，批准不匹配</text>
+<rect x="400" y="130" width="320" height="263" rx="8" fill="#fff6e9" stroke="#dbe3ee"/>
+<text x="420" y="169" font-size="20" fill="#9c5b16" font-weight="600">02  执行器声明</text>
+<text x="420" y="211" font-size="16" fill="#1c283d" font-weight="400">声明：A / K1 / success</text>
+<text x="420" y="245" font-size="16" fill="#1c283d" font-weight="400">本地完整性校验通过</text>
+<text x="420" y="279" font-size="16" fill="#1c283d" font-weight="400">可以知道声明未被篡改</text>
+<text x="420" y="313" font-size="16" fill="#1c283d" font-weight="400">不能据此证明工具已写入</text>
+<text x="420" y="347" font-size="16" fill="#1c283d" font-weight="400">回执查询超时：结果未知</text>
+<rect x="760" y="130" width="320" height="263" rx="8" fill="#edf7f3" stroke="#dbe3ee"/>
+<text x="780" y="169" font-size="20" fill="#287b69" font-weight="600">03  工具端回执</text>
+<text x="780" y="211" font-size="16" fill="#1c283d" font-weight="400">接收方按A＋K1查询</text>
+<text x="780" y="245" font-size="16" fill="#1c283d" font-weight="400">参数摘要与原意图匹配</text>
+<text x="780" y="279" font-size="16" fill="#1c283d" font-weight="400">实际版本8、金额37</text>
+<text x="780" y="313" font-size="16" fill="#1c283d" font-weight="400">同键同参返回原回执</text>
+<text x="780" y="347" font-size="16" fill="#1c283d" font-weight="400">查询仍检查当前读取权限</text>
+<rect x="40" y="441" width="1040" height="157" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="60" y="480" font-size="21" fill="#1c283d" font-weight="600">故障实战：工具事务已提交，子进程在返回回执之前退出。</text>
+<text x="60" y="518" font-size="18" fill="#287b69" font-weight="400">恢复沿用K1 → 有权限地查询 → 找到原回执 → 不创建第二份效果。</text>
+<text x="60" y="557" font-size="17" fill="#617086" font-weight="400">跨租户或撤权后查询仍拒绝。原批准不能替代当前身份与对象授权。</text>
+</g></svg>

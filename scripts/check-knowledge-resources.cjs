@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c={};vm.createContext(c);for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c);
-const d=vm.runInContext('({articles,cloudKnowledgeDomains,cloudPrerequisites,learningResources,cloudRoleSources,githubStudyProjects,interviewFollowUps})',c);
+const d=vm.runInContext('({articles,cloudKnowledgeDomains,cloudPrerequisites,learningResources,cloudRoleSources,interviewFollowUps})',c);
 assert.equal(d.cloudKnowledgeDomains.length,9);assert.equal(d.cloudPrerequisites.length,5);
 assert.equal(d.cloudKnowledgeDomains.flatMap(domain=>domain.points).length,62);
 const ids=new Set(d.articles.map(a=>a.id));
@@ -17,15 +17,8 @@ for(const [route,first]of [['track/cloud','云计算服务模型'],['module/netw
 }
 for(const [route,title]of [['track/ai','Transformer 全貌'],['track/agent','从模型提议到任务完成'],['module/training','云上训练全景']])assert(html(route).includes(title),route);
 const resources=html('resources');assert.equal((resources.match(/class="resource-row"/g)||[]).length,d.learningResources.length);
-const audit=JSON.parse(fs.readFileSync('docs/GITHUB_RESEARCH_2026-11-04.json','utf8'));
-assert.equal(d.githubStudyProjects.length,15);assert.equal(new Set(d.githubStudyProjects.map(p=>p.repo)).size,15);
-assert.deepEqual(d.githubStudyProjects.map(p=>p.repo).sort(),audit.projects.map(p=>p.repo).sort());
-for(const p of d.githubStudyProjects){
- assert(/^[0-9a-f]{40}$/.test(p.commit));assert(p.samples.length>=2&&p.strength&&p.adoption&&p.boundary);
- assert(p.samples.every(s=>s.url.startsWith('https://github.com/'+p.repo+'/blob/'+p.commit+'/')));
- assert(resources.includes(p.repo));
-}
-assert.equal((resources.match(/class="resource-row research-project"/g)||[]).length,15);
+assert(!resources.includes('github-projects')&&!resources.includes('research-project'));
+assert(!fs.existsSync('dist/github-research-data.js'));
 assert.equal(d.interviewFollowUps.length,6);
 assert.equal((html('interview/experiences').match(/class="experience-question research-followup"/g)||[]).length,6);
 assert(html('interview/cloud').includes('IaaS、网络、存储与站点架构专项'));

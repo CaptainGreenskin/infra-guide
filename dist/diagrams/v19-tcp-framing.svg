@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 670" role="img" aria-labelledby="title desc">
+<title id="title">TCP交付连续字节，应用自己切消息</title><desc id="desc">长度头记录字节数；一次读取可以跨帧，也可以只拿到半条消息。</desc>
+<rect width="1120" height="670" fill="#f8fafd"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" fill="#1c283d" font-weight="700">TCP交付连续字节，应用自己切消息</text>
+<text x="40" y="80" font-size="15" fill="#617086" font-weight="400">长度头记录字节数；一次读取可以跨帧，也可以只拿到半条消息。</text>
+<rect x="40" y="125" width="512" height="62" rx="8" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="60" y="163" font-size="19" fill="#315dce" font-weight="600">帧1：长度12 ＋ 云上训练（12字节）</text>
+<rect x="568" y="125" width="512" height="62" rx="8" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="588" y="163" font-size="19" fill="#315dce" font-weight="600">帧2：长度12 ＋ 恢复完成（12字节）</text>
+<text x="40" y="228" font-size="16" fill="#617086" font-weight="400">一种合法切分：7＋7＋7＋7＋4＝32字节；不表示TCP承诺这种分段。</text>
+<rect x="40" y="251" width="222.5" height="56" rx="8" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="54" y="286" font-size="16" fill="#9c5b16" font-weight="400">读取1：7字节</text>
+<rect x="267.5" y="251" width="222.5" height="56" rx="8" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="281.5" y="286" font-size="16" fill="#9c5b16" font-weight="400">读取2：7字节</text>
+<rect x="495.0" y="251" width="222.5" height="56" rx="8" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="509.0" y="286" font-size="16" fill="#9c5b16" font-weight="400">读取3：7字节</text>
+<rect x="722.5" y="251" width="222.5" height="56" rx="8" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="736.5" y="286" font-size="16" fill="#9c5b16" font-weight="400">读取4：7字节</text>
+<rect x="950.0" y="251" width="125.0" height="56" rx="8" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="964.0" y="286" font-size="16" fill="#9c5b16" font-weight="400">读取5：4字节</text>
+<text x="40" y="352" font-size="17" fill="#1c283d" font-weight="600">解析器每次都保留未完成部分：</text>
+<rect x="40" y="374" width="310" height="95" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="60" y="411" font-size="19" fill="#315dce" font-weight="600">① 等长度头</text>
+<text x="60" y="443" font-size="16" fill="#617086" font-weight="400">不足4字节就继续积累</text>
+<rect x="405" y="374" width="310" height="95" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="425" y="411" font-size="19" fill="#315dce" font-weight="600">② 等正文</text>
+<text x="425" y="443" font-size="16" fill="#617086" font-weight="400">长度已知，先验证上限</text>
+<rect x="770" y="374" width="310" height="95" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="790" y="411" font-size="19" fill="#315dce" font-weight="600">③ 取出一帧</text>
+<text x="790" y="443" font-size="16" fill="#617086" font-weight="400">剩余字节继续循环</text>
+<path d="M357 421L396 421" fill="none" stroke="#71819b" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M722 421L761 421" fill="none" stroke="#71819b" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="40" y="520" font-size="18" fill="#1c283d" font-weight="600">客户端</text>
+<text x="890" y="520" font-size="18" fill="#1c283d" font-weight="600">服务端</text>
+<path d="M155 515L860 515" fill="none" stroke="#71819b" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="295" y="504" font-size="17" fill="#315dce" font-weight="400">发送两帧，再shutdown(SHUT_WR)</text>
+<path d="M860 578L155 578" fill="none" stroke="#71819b" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="255" y="565" font-size="17" fill="#287b69" font-weight="400">读到EOF后，仍可沿反方向回送结果</text>
+<text x="40" y="631" font-size="16" fill="#617086" font-weight="400">传输确认、消息完整、业务提交分别判断。这个实验没有验证业务落库。</text>
+</g></svg>

@@ -1,0 +1,94 @@
+{
+  "python": "3.9.6",
+  "programs": {
+    "tcp_framing.py": {
+      "sha256": "d7f4fb161bd356bf36edc8c67a2b3aa864a047a34f613963c02e68e9fae40871",
+      "result": {
+        "transport": "AF_INET / 127.0.0.1 / TCP",
+        "sendall_calls": 2,
+        "wire_bytes": 32,
+        "payload_bytes": [
+          12,
+          12
+        ],
+        "payload_characters": [
+          4,
+          4
+        ],
+        "parser_probes": {
+          "segmentation_patterns_passed": 3,
+          "oversized": "frame_too_large",
+          "truncated_header": "truncated_frame",
+          "truncated_body": "truncated_frame"
+        },
+        "server": {
+          "messages": [
+            "云上训练",
+            "恢复完成"
+          ],
+          "recv_chunk_bytes": [
+            7,
+            7,
+            2,
+            7,
+            7,
+            2
+          ],
+          "server_saw_eof_before_reply": true
+        },
+        "reply_after_half_close": [
+          "已接收2条"
+        ],
+        "scope": "loopback TCP and parser; no epoll, loss injection or business commit"
+      },
+      "exit_code": 0
+    },
+    "checkpoint_commit.py": {
+      "sha256": "47f10a651d5f71f848286199e5770539a44e440eb79b8da62fb15118431739d6",
+      "result": {
+        "continuous_steps": 6,
+        "split_steps": [
+          3,
+          3
+        ],
+        "partial_folder_loaded_step": 0,
+        "complete_state_exact_match": true,
+        "final_step": 6,
+        "next_sample_cursor": 6,
+        "weight": 4.534544343579537,
+        "velocity": -8.194894216575811,
+        "weights_only_weight": 2.1308112089916493,
+        "weights_only_match": false,
+        "mixed_generation": "mixed_generation",
+        "corruption": "file_integrity",
+        "pointer_after_failed_publish": "step-3",
+        "scope": "scalar Python SGD, local files; no PyTorch, ranks, GPU or power-loss test"
+      },
+      "exit_code": 0
+    },
+    "approval_receipt.py": {
+      "sha256": "8424d7daa89ecc8db72c33d4e769d87a2d108edcedb63c2f3a4c9fe00f23d4dd",
+      "result": {
+        "changed_parameter": "approval_mismatch",
+        "signed_claim_valid_before_effect": true,
+        "tampered_claim_rejected": true,
+        "unavailable_receipt": "unknown",
+        "commit_then_exit_code": 23,
+        "authorized_receipt": {
+          "status": "found",
+          "version": 8,
+          "amount": 37
+        },
+        "same_intent_retry": "duplicate",
+        "same_key_changed_intent": "conflict",
+        "cross_tenant_receipt": "denied",
+        "revoked_receipt": "denied",
+        "effects": 1,
+        "final_version": 8,
+        "final_amount": 37,
+        "scope": "trusted fixture, local HMAC, SQLite and process exit; no remote OAuth/MCP/Kairo"
+      },
+      "exit_code": 0
+    }
+  }
+}
