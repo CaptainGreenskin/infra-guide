@@ -1,0 +1,526 @@
+{
+  "python": "3.9.6",
+  "sqlite": "3.51.0",
+  "programs": {
+    "wal_backup.py": {
+      "sha256": "c192cc47fce2ab514f0430ad1412fc8a5aaa2cfa54427be35ec97116c4474b1b",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "sqlite": "3.51.0",
+        "main_file_only": {
+          "balance": 100,
+          "version": 1,
+          "ledger_sum": 100,
+          "last_ledger_version": 1,
+          "integrity": "ok"
+        },
+        "reader_snapshot_before_writer": {
+          "balance": 120,
+          "version": 2,
+          "ledger_sum": 120,
+          "last_ledger_version": 2,
+          "integrity": "ok"
+        },
+        "same_reader_after_writer": {
+          "balance": 120,
+          "version": 2,
+          "ledger_sum": 120,
+          "last_ledger_version": 2,
+          "integrity": "ok"
+        },
+        "backup_from_snapshot": {
+          "balance": 120,
+          "version": 2,
+          "ledger_sum": 120,
+          "last_ledger_version": 2,
+          "integrity": "ok"
+        },
+        "backup_from_fresh_connection": {
+          "balance": 130,
+          "version": 3,
+          "ledger_sum": 130,
+          "last_ledger_version": 3,
+          "integrity": "ok"
+        },
+        "retained_after_bad_write": {
+          "balance": 999,
+          "version": 4,
+          "ledger_sum": 999,
+          "last_ledger_version": 4,
+          "integrity": "ok"
+        },
+        "isolated_restore": {
+          "balance": 130,
+          "version": 3,
+          "ledger_sum": 130,
+          "last_ledger_version": 3,
+          "integrity": "ok"
+        },
+        "consumer_continued": {
+          "balance": 131,
+          "version": 4,
+          "ledger_sum": 131,
+          "last_ledger_version": 4,
+          "integrity": "ok"
+        },
+        "checks": {
+          "wal_contains_committed_change": true,
+          "old_but_consistent_backup_rejected_for_minimum_3": true,
+          "fresh_backup_passes_minimum_3": true
+        }
+      }
+    },
+    "volume_writer.py": {
+      "sha256": "a18f10c3cec6912174400bd09991ff37fe88e29dc84c89472d28c0ad5fe8bc9f",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "sequence": [
+          {
+            "op": "write-1",
+            "before": 0,
+            "after": 1,
+            "duplicate": false,
+            "current_counter": 1
+          },
+          {
+            "op": "write-2",
+            "before": 1,
+            "after": 2,
+            "duplicate": false,
+            "current_counter": 2
+          },
+          {
+            "op": "write-1",
+            "before": 0,
+            "after": 1,
+            "duplicate": true,
+            "current_counter": 2
+          }
+        ],
+        "final_counter": 2,
+        "cluster_executed": false
+      }
+    },
+    "int4_groups.py": {
+      "sha256": "08ff83f7d97cf67b0bd35e58516d259c3f8484a7d0d4ea42192b80bea3c5a203",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "shape": [
+          4,
+          8
+        ],
+        "fp16_weight_bytes": 64,
+        "reference_outputs": [
+          [
+            11.387500000000003,
+            -1.68,
+            0.915,
+            -2.85
+          ],
+          [
+            1.1920000000000002,
+            -0.488,
+            0.41400000000000003,
+            -0.7300000000000002
+          ]
+        ],
+        "schemes": {
+          "per_tensor": {
+            "group_size": 32,
+            "scales": [
+              1.7142857313156128
+            ],
+            "integers": [
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "payload_hex": "07000000000000000000000000000000",
+            "integer_bytes": 16,
+            "scale_bytes": 4,
+            "header_bytes": 12,
+            "file_bytes": 32,
+            "tensor_bytes": 20,
+            "weight_mae": 0.2709375037252903,
+            "max_output_error": 2.45,
+            "outputs": [
+              [
+                12.10000011920929,
+                -0.2,
+                0.3,
+                -0.4
+              ],
+              [
+                1.3000000119209292,
+                -0.2,
+                0.3,
+                -0.4
+              ]
+            ]
+          },
+          "per_channel": {
+            "group_size": 8,
+            "scales": [
+              1.7142857313156128,
+              0.09142857044935226,
+              0.034285712987184525,
+              0.11428571492433548
+            ],
+            "integers": [
+              7,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              -2,
+              3,
+              -4,
+              4,
+              -5,
+              6,
+              -7,
+              1,
+              2,
+              -3,
+              4,
+              -4,
+              5,
+              -6,
+              7,
+              -2,
+              1,
+              3,
+              -3,
+              4,
+              -5,
+              6,
+              -7
+            ],
+            "payload_hex": "07000000e1c3b496214d5c7a1ed3b496",
+            "integer_bytes": 16,
+            "scale_bytes": 16,
+            "header_bytes": 12,
+            "file_bytes": 44,
+            "tensor_bytes": 32,
+            "weight_mae": 0.04968750447966157,
+            "max_output_error": 0.7125001192092864,
+            "outputs": [
+              [
+                12.10000011920929,
+                -1.594285699352622,
+                0.8914285490289331,
+                -2.800000013411045
+              ],
+              [
+                1.3000000119209292,
+                -0.5108571395277977,
+                0.4234285667538643,
+                -0.7085714302957059
+              ]
+            ]
+          },
+          "group_4": {
+            "group_size": 4,
+            "scales": [
+              1.7142857313156128,
+              0.04285714402794838,
+              0.04571428522467613,
+              0.09142857044935226,
+              0.017142856493592262,
+              0.034285712987184525,
+              0.05714285746216774,
+              0.11428571492433548
+            ],
+            "integers": [
+              7,
+              0,
+              0,
+              0,
+              6,
+              -7,
+              1,
+              -3,
+              2,
+              -4,
+              5,
+              -7,
+              4,
+              -5,
+              6,
+              -7,
+              2,
+              4,
+              -5,
+              7,
+              -4,
+              5,
+              -6,
+              7,
+              -3,
+              2,
+              5,
+              -7,
+              4,
+              -5,
+              6,
+              -7
+            ],
+            "payload_hex": "070096d1c295b496427b5c7a2d95b496",
+            "integer_bytes": 16,
+            "scale_bytes": 32,
+            "header_bytes": 12,
+            "file_bytes": 60,
+            "tensor_bytes": 48,
+            "weight_mae": 0.022901791618205602,
+            "max_output_error": 0.1875001048669187,
+            "outputs": [
+              [
+                11.575000104866922,
+                -1.605714270658791,
+                0.8957142631523312,
+                -2.785714299045503
+              ],
+              [
+                1.1757142942398788,
+                -0.50628571100533,
+                0.42171428110450504,
+                -0.7428571447730066
+              ]
+            ]
+          },
+          "group_2": {
+            "group_size": 2,
+            "scales": [
+              1.7142857313156128,
+              0.025714285671710968,
+              0.04285714402794838,
+              0.017142856493592262,
+              0.022857142612338066,
+              0.04571428522467613,
+              0.06857142597436905,
+              0.09142857044935226,
+              0.008571428246796131,
+              0.017142856493592262,
+              0.025714285671710968,
+              0.034285712987184525,
+              0.02857142873108387,
+              0.05714285746216774,
+              0.08571428805589676,
+              0.11428571492433548
+            ],
+            "integers": [
+              7,
+              0,
+              -7,
+              4,
+              6,
+              -7,
+              4,
+              -7,
+              4,
+              -7,
+              5,
+              -7,
+              6,
+              -7,
+              6,
+              -7,
+              4,
+              7,
+              -5,
+              7,
+              -6,
+              7,
+              -6,
+              7,
+              -7,
+              3,
+              5,
+              -7,
+              6,
+              -7,
+              6,
+              -7
+            ],
+            "payload_hex": "0749969494959696747b7a7a39959696",
+            "integer_bytes": 16,
+            "scale_bytes": 64,
+            "header_bytes": 12,
+            "file_bytes": 92,
+            "tensor_bytes": 80,
+            "weight_mae": 0.008705363908084107,
+            "max_output_error": 0.10607154536991992,
+            "outputs": [
+              [
+                11.493571545369923,
+                -1.6685713974758982,
+                0.9192856985144318,
+                -2.8357143146917223
+              ],
+              [
+                1.1877142980694773,
+                -0.49257142320275304,
+                0.4165714252740145,
+                -0.7400000041350723
+              ]
+            ]
+          }
+        },
+        "activation_probe": {
+          "calibration_max": 0.5,
+          "held_out_max": 3.0,
+          "clipped_values": 1,
+          "static_max_error": 2.000224983055643,
+          "dynamic_max_error": 0.06928009073154673,
+          "group_rescale_matches_dequantized_dot": true,
+          "single_scale_wrong_output": [
+            -7.634533260187765,
+            -20.973903468462424,
+            21.721822485022656,
+            -23.92755928884341
+          ]
+        },
+        "edge_checks": {
+          "signed_odd_roundtrip": true,
+          "all_zero_group": true
+        },
+        "execution": "stdlib_cpu_reference_no_quantized_kernel"
+      }
+    },
+    "context_state.py": {
+      "sha256": "81a34d73619816732fe1061485b36372644a52f83fd41449c2561e4e6da9023d",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "correct_recovery": {
+          "authority_state": "SUCCEEDED",
+          "authority_version": 2,
+          "original_op": "R17:publish",
+          "receipt": 13,
+          "effects": 1,
+          "stale_update_rows": 0,
+          "needs_chat_history": false
+        },
+        "negative_summary_recovery": {
+          "effects": 2,
+          "created_new_op": true
+        },
+        "memory_selection": {
+          "accepted": [
+            {
+              "memory_id": "current",
+              "source_version": 2,
+              "value": 10
+            }
+          ],
+          "stale_for_current_fact": [
+            "old"
+          ]
+        },
+        "after_retraction": {
+          "accepted": [],
+          "stale_for_current_fact": []
+        },
+        "summary_slot_checks": {
+          "qualified_summary": true,
+          "changed_certainty_rejected": true
+        },
+        "execution": "local_sqlite_fixed_facts_no_llm_or_kairo"
+      }
+    },
+    "int8_runtime.py": {
+      "sha256": "314980efc8f5a3eecfa2dd747029880e8530efa66db7d8ede69b276e311caeeb",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "torch": "2.5.1",
+        "device": "cpu",
+        "quantized_engine": "qnnpack",
+        "module_type": "torch.ao.nn.quantized.dynamic.modules.linear.Linear",
+        "weight_dtype": "torch.qint8",
+        "scheme": "torch.per_tensor_affine",
+        "weight_integer_payload_bytes": 32,
+        "fp32_weight_payload_bytes": 128,
+        "reference_outputs": [
+          [
+            11.387499809265137,
+            -1.6800000667572021,
+            0.9150000214576721,
+            -2.8500001430511475
+          ],
+          [
+            1.1920000314712524,
+            -0.48799997568130493,
+            0.4140000343322754,
+            -0.7300000190734863
+          ]
+        ],
+        "quantized_outputs": [
+          [
+            11.29963207244873,
+            -1.6099194288253784,
+            0.8875894546508789,
+            -2.7016382217407227
+          ],
+          [
+            1.2825607061386108,
+            -0.480507493019104,
+            0.44025376439094543,
+            -0.7100346088409424
+          ]
+        ],
+        "fixed_input_max_abs_error": 0.1483619213104248,
+        "declared_fixed_input_error_limit": 0.2,
+        "torchscript_roundtrip_max_abs_error": 0.0,
+        "whole_torchscript_artifact_bytes": 7364,
+        "execution": "actual_cpu_dynamic_int8_not_int4_no_latency_benchmark"
+      }
+    }
+  },
+  "cluster_manifests": {
+    "status": "generated_not_cluster_executed",
+    "writer_sha256": "a18f10c3cec6912174400bd09991ff37fe88e29dc84c89472d28c0ad5fe8bc9f",
+    "files": [
+      "storage-namespace.json",
+      "storage-claim.json",
+      "storage-job-1.json",
+      "storage-job-2.json"
+    ]
+  }
+}

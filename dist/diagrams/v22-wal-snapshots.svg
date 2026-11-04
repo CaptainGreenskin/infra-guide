@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 670" role="img" aria-labelledby="title desc">
+<title id="title">完整性正确，与恢复点合格，是两项检查</title><desc id="desc">主文件只含v1，旧读事务和它的backup含v2，新连接backup含v3。三个文件都能打开，但最低要求v3时只有第三份合格。</desc>
+<rect width="1120" height="670" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">完整性正确，与恢复点合格，是两项检查</text>
+<text x="40" y="80" font-size="16" fill="#617086">真实SQLite实验；余额与账本同事务提交。下面比较三份不同的读取切面。</text>
+<g stroke="#dbe3ee" stroke-dasharray="5 5"><path d="M330 119V407M660 119V407M990 119V407"/></g>
+<g font-size="18" font-weight="600" fill="#1c283d"><text x="286" y="127">v1：100</text><text x="616" y="127">v2：120</text><text x="946" y="127">v3：130</text></g>
+<g font-size="18" fill="#1c283d"><text x="40" y="195">写连接的提交</text><text x="40" y="291">旧读事务</text><text x="40" y="386">新连接</text></g>
+<path d="M260 188H1060" stroke="#71819b" stroke-width="2"/>
+<circle cx="330" cy="188" r="8" fill="#315dce"/><circle cx="660" cy="188" r="8" fill="#315dce"/><circle cx="990" cy="188" r="8" fill="#315dce"/>
+<text x="268" y="224" font-size="16" fill="#617086">先checkpoint进主文件</text><text x="600" y="224" font-size="16" fill="#617086">后续提交留在WAL</text>
+<rect x="620" y="257" width="440" height="58" rx="7" fill="#fff1d8" stroke="#e6cea2"/>
+<text x="640" y="291" font-size="17" fill="#8c6115">从v2建立快照 → v3提交后仍读v2</text>
+<rect x="932" y="351" width="128" height="58" rx="7" fill="#e8f5f1" stroke="#beddd4"/>
+<text x="953" y="386" font-size="17" fill="#176e5a">读取v3</text>
+<g><rect x="40" y="454" width="330" height="160" rx="8" fill="#fff" stroke="#dbe3ee"/><rect x="395" y="454" width="330" height="160" rx="8" fill="#fff" stroke="#dbe3ee"/><rect x="750" y="454" width="330" height="160" rx="8" fill="#fff" stroke="#dbe3ee"/></g>
+<g font-size="19" font-weight="600"><text x="60" y="490" fill="#9f4148">只复制主文件：v1</text><text x="415" y="490" fill="#8c6115">旧读连接backup：v2</text><text x="770" y="490" fill="#176e5a">新连接backup：v3</text></g>
+<g font-size="17" fill="#617086"><text x="60" y="530">能打开，integrity_check=ok</text><text x="415" y="530">内部一致，仍旧于目标</text><text x="770" y="530">内部一致，达到本题目标</text><text x="60" y="565">没有包含WAL里的后续提交</text><text x="415" y="565">“没损坏”不等于“足够新”</text><text x="770" y="565">隔离恢复后继续写到131</text></g>
+<text x="60" y="597" font-size="16" fill="#9f4148">不是安全热拷贝方法</text><text x="415" y="597" font-size="16" fill="#8c6115">最低版本3：拒绝</text><text x="770" y="597" font-size="16" fill="#176e5a">最低版本3：通过</text>
+</g></svg>

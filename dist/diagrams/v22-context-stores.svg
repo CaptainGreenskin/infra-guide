@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 680" role="img" aria-labelledby="title desc">
+<title id="title">模型可见的信息，不等于执行系统的权威状态</title><desc id="desc">任务账本决定已经发生什么，来源库保存可核实的事实和记忆，本轮上下文仅装配需要的视图。摘要不能直接改变提交结果或权限。</desc>
+<rect width="1120" height="680" fill="#f8fafd"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">模型可见的信息，不等于执行系统的权威状态</text>
+<text x="40" y="80" font-size="16" fill="#617086">同一条“报告已保存”，在不同载体里有不同的证明能力。按责任划分，再按本轮问题装配。</text>
+<rect x="40" y="124" width="490" height="173" rx="9" fill="#edf2fe" stroke="#cdd9f4"/>
+<text x="62" y="161" font-size="21" font-weight="600" fill="#315dce">执行账本＋工具回执</text>
+<text x="62" y="202" font-size="18" fill="#1c283d">任务 / 步骤 / 原操作ID / 提交版本</text>
+<text x="62" y="239" font-size="17" fill="#617086">恢复器直接读取；不从聊天摘要猜是否执行</text>
+<text x="62" y="275" font-size="16" fill="#617086">状态迁移由受信执行层判定</text>
+<rect x="590" y="124" width="490" height="173" rx="9" fill="#e8f5f1" stroke="#beddd4"/>
+<text x="612" y="161" font-size="21" font-weight="600" fill="#176e5a">原始资料＋带出处的长期记忆</text>
+<text x="612" y="202" font-size="18" fill="#1c283d">来源 / 版本 / 主体范围 / 有效期</text>
+<text x="612" y="239" font-size="17" fill="#617086">检索后重查适用条件；旧事实可用于历史问题</text>
+<text x="612" y="275" font-size="16" fill="#617086">当前值以当前权威来源为准</text>
+<path d="M285 298V350L430 383M835 298V350L690 383" fill="none" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<text x="360" y="348" font-size="17" fill="#617086">筛选、重查、按需生成受限视图</text>
+<rect x="232" y="389" width="656" height="155" rx="9" fill="#fff1d8" stroke="#e6cea2"/>
+<text x="254" y="429" font-size="21" font-weight="600" fill="#8c6115">本轮上下文：有预算、可压缩的派生输入</text>
+<text x="254" y="470" font-size="18" fill="#1c283d">用户问题＋可信约束＋已确认结果＋必要证据</text>
+<text x="254" y="509" font-size="17" fill="#617086">摘要保留否定、条件、单位、时间与引用；未知仍写未知</text>
+<text x="40" y="605" font-size="19" fill="#9f4148">聊天清空，账本仍能恢复；记忆写着“已批准”，执行层仍需独立核对授权。</text>
+<text x="40" y="642" font-size="16" fill="#617086">上下文负责让模型理解当前问题；它没有自动获得改写任务状态、历史回执或权限的权力。</text>
+</g></svg>

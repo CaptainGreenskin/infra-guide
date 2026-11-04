@@ -1,0 +1,19 @@
+{
+  "apiVersion": "v1",
+  "kind": "PersistentVolumeClaim",
+  "metadata": {
+    "name": "app-data",
+    "namespace": "infra-guide-storage"
+  },
+  "spec": {
+    "storageClassName": "your-csi-class",
+    "accessModes": [
+      "ReadWriteOnce"
+    ],
+    "resources": {
+      "requests": {
+        "storage": "1Gi"
+      }
+    }
+  }
+}

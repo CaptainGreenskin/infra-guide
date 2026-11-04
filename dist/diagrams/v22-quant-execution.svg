@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 660" role="img" aria-labelledby="title desc">
+<title id="title">低比特存储，与执行哪一种乘法，是两份契约</title><desc id="desc">仅权重量化可先反量化再浮点计算。权重和激活都量化时，整数乘加与缩放需正确衔接。整数CPU参考程序不代表GPU量化kernel。</desc>
+<rect width="1120" height="660" fill="#f8fafd"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">低比特存储，与执行哪一种乘法，是两份契约</text>
+<text x="40" y="80" font-size="16" fill="#617086">下面是两类概念路径；具体引擎可融合转换与乘法，不能从文件名推断硬件执行方式。</text>
+<text x="40" y="136" font-size="20" font-weight="600" fill="#315dce">仅权重量化：例如W4A16</text>
+<g fill="#edf2fe" stroke="#cdd9f4"><rect x="40" y="163" width="240" height="108" rx="8"/><rect x="328" y="163" width="240" height="108" rx="8"/><rect x="616" y="163" width="240" height="108" rx="8"/></g>
+<g font-size="18" fill="#1c283d"><text x="60" y="202">4bit权重＋scale</text><text x="348" y="202">按比例尺恢复数值</text><text x="636" y="202">与16bit激活计算</text></g>
+<g font-size="16" fill="#617086"><text x="60" y="240">减少权重载荷</text><text x="348" y="240">可能融合在算子内</text><text x="636" y="240">累加类型按后端契约</text></g>
+<path d="M280 216H326M568 216H614M856 216H1035" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<text x="913" y="196" font-size="18" fill="#1c283d">输出</text>
+<text x="40" y="332" font-size="20" font-weight="600" fill="#176e5a">权重与激活都量化：例如W8A8</text>
+<g fill="#e8f5f1" stroke="#beddd4"><rect x="40" y="359" width="240" height="108" rx="8"/><rect x="328" y="359" width="240" height="108" rx="8"/><rect x="616" y="359" width="240" height="108" rx="8"/></g>
+<g font-size="18" fill="#1c283d"><text x="60" y="398">qx、qw及各自scale</text><text x="348" y="398">整数乘加 / 部分和</text><text x="636" y="398">缩放、偏置与后处理</text></g>
+<g font-size="16" fill="#617086"><text x="60" y="436">激活范围需要校准或动态测量</text><text x="348" y="436">注意累加类型与溢出</text><text x="636" y="436">每组scale分别作用于部分和</text></g>
+<path d="M280 412H326M568 412H614M856 412H1035" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<text x="913" y="392" font-size="18" fill="#1c283d">输出</text>
+<rect x="40" y="516" width="1040" height="89" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="62" y="551" font-size="18" fill="#617086">验收顺序：格式与算子支持 → 数值和任务质量 → 显存峰值 → 同负载延迟与吞吐</text>
+<text x="62" y="584" font-size="17" fill="#9f4148">载荷变小不等于端到端加速；反量化、元数据、补齐、工作区和回退算子都要计入。</text>
+</g></svg>

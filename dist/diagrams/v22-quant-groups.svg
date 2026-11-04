@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+<title id="title">分组减少离群值影响，也增加比例尺的数量</title><desc id="desc">4乘8权重，按每行4个一组有8份scale。32个4bit值占16字节，8个float32 scale占32字节，总载荷48字节，另有12字节文件头。</desc>
+<rect width="1120" height="690" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">分组减少离群值影响，也增加比例尺的数量</text>
+<text x="40" y="80" font-size="16" fill="#617086">本例W形状为4×8；每行对应一个输出通道，列对应8个输入特征。每4个权重共享一个scale。</text>
+<g font-size="17" fill="#617086"><text x="40" y="157">输出0</text><text x="40" y="227">输出1</text><text x="40" y="297">输出2</text><text x="40" y="367">输出3</text></g>
+<g stroke="#cdd9f4" fill="#edf2fe"><rect x="150" y="116" width="424" height="56" rx="7"/><rect x="150" y="186" width="424" height="56" rx="7"/><rect x="150" y="256" width="424" height="56" rx="7"/><rect x="150" y="326" width="424" height="56" rx="7"/></g>
+<g stroke="#beddd4" fill="#e8f5f1"><rect x="592" y="116" width="424" height="56" rx="7"/><rect x="592" y="186" width="424" height="56" rx="7"/><rect x="592" y="256" width="424" height="56" rx="7"/><rect x="592" y="326" width="424" height="56" rx="7"/></g>
+<rect x="154" y="120" width="93" height="48" rx="5" fill="#f9e8e6"/>
+<g font-size="20" fill="#1c283d"><text x="177" y="152" fill="#9f4148">12</text><text x="272" y="152">0.12</text><text x="377" y="152">−0.18</text><text x="490" y="152">0.09</text><text x="610" y="152">0.24</text><text x="715" y="152">−0.30</text><text x="825" y="152">0.06</text><text x="929" y="152">−0.12</text>
+<text x="168" y="222">0.08</text><text x="272" y="222">−0.16</text><text x="381" y="222">0.24</text><text x="487" y="222">−0.32</text><text x="610" y="222">0.40</text><text x="715" y="222">−0.48</text><text x="825" y="222">0.56</text><text x="929" y="222">−0.64</text>
+<text x="168" y="292">0.03</text><text x="272" y="292">0.06</text><text x="377" y="292">−0.09</text><text x="490" y="292">0.12</text><text x="610" y="292">−0.15</text><text x="720" y="292">0.18</text><text x="821" y="292">−0.21</text><text x="934" y="292">0.24</text>
+<text x="164" y="362">−0.20</text><text x="272" y="362">0.10</text><text x="381" y="362">0.30</text><text x="487" y="362">−0.40</text><text x="610" y="362">0.50</text><text x="715" y="362">−0.60</text><text x="825" y="362">0.70</text><text x="929" y="362">−0.80</text></g>
+<text x="150" y="421" font-size="18" fill="#315dce">有离群值的组用自己的比例尺，不拖大其余7组的间隔。</text>
+<rect x="40" y="461" width="1040" height="166" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="62" y="497" font-size="20" font-weight="600" fill="#1c283d">真实打包的字节账</text>
+<text x="62" y="537" font-size="19" fill="#315dce">整数：32×4bit = 16B　＋　scale：8×4B = 32B　＝　48B</text>
+<text x="62" y="575" font-size="17" fill="#617086">加12B示例文件头，文件共60B；FP16纯权重载荷为32×2B=64B。</text>
+<text x="62" y="608" font-size="17" fill="#9f4148">每2个一组时，scale变16份，张量载荷80B，反而大于FP16的64B。</text>
+</g></svg>

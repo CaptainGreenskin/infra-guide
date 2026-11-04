@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" role="img" aria-labelledby="title desc">
+<title id="title">PVC绑定之后，还要走通节点与应用的路径</title><desc id="desc">API对象负责声明和关联，节点负责实际连接与挂载，存储系统保存卷数据。Bound只到绑定边界。</desc>
+<rect width="1120" height="740" fill="#f8fafd"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">PVC绑定之后，还要走通节点与应用的路径</text>
+<text x="40" y="80" font-size="16" fill="#617086">同一卷有三类名字：应用路径、Kubernetes对象名、存储后端卷ID。它们不是同一个地址。</text>
+<rect x="40" y="120" width="300" height="300" rx="9" fill="#edf2fe" stroke="#cdd9f4"/>
+<text x="60" y="155" font-size="21" font-weight="600" fill="#315dce">API / 控制面</text>
+<text x="60" y="200" font-size="18" fill="#1c283d">Pod：使用claimName=app-data</text>
+<path d="M182 216V244" stroke="#71819b" marker-end="url(#a)"/>
+<text x="60" y="278" font-size="18" fill="#1c283d">PVC：命名空间内的需求</text>
+<path d="M182 294V322" stroke="#71819b" marker-end="url(#a)"/>
+<text x="60" y="355" font-size="18" fill="#1c283d">PV：集群内的卷对象</text>
+<text x="60" y="390" font-size="16" fill="#315dce">Bound：PVC ↔ PV关系成立</text>
+<rect x="390" y="120" width="340" height="300" rx="9" fill="#fff" stroke="#dbe3ee"/>
+<text x="410" y="155" font-size="21" font-weight="600" fill="#1c283d">选中的节点</text>
+<text x="410" y="200" font-size="18" fill="#1c283d">应用进程</text>
+<text x="410" y="235" font-size="17" fill="#617086">open('/data/progress.sqlite')</text>
+<path d="M552 252V278" stroke="#71819b" marker-end="url(#a)"/>
+<text x="410" y="309" font-size="18" fill="#1c283d">挂载路径、文件系统、权限</text>
+<text x="410" y="344" font-size="17" fill="#617086">kubelet / CSI节点组件</text>
+<text x="410" y="389" font-size="16" fill="#617086">具体驱动可能需要设备连接</text>
+<rect x="780" y="120" width="300" height="300" rx="9" fill="#e8f5f1" stroke="#beddd4"/>
+<text x="800" y="155" font-size="21" font-weight="600" fill="#176e5a">存储后端</text>
+<text x="800" y="210" font-size="18" fill="#1c283d">volumeHandle：真实卷身份</text>
+<text x="800" y="253" font-size="17" fill="#617086">可用区域、容量与访问能力</text>
+<text x="800" y="296" font-size="17" fill="#617086">文件数据、数据库页与日志</text>
+<text x="800" y="352" font-size="17" fill="#176e5a">快照 / 备份有独立恢复点</text>
+<path d="M341 352H389M731 310H779" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<rect x="40" y="464" width="1040" height="216" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="62" y="500" font-size="20" font-weight="600" fill="#1c283d">故障停在哪一层，就找对应的下一份证据</text>
+<text x="62" y="539" font-size="18" fill="#617086">Pending：等待消费者 / 匹配与制备 / 拓扑条件</text>
+<text x="62" y="579" font-size="18" fill="#617086">Bound但未运行：调度位置 / 驱动连接 / 挂载 / 容器初始化</text>
+<text x="62" y="619" font-size="18" fill="#617086">进程已运行仍报错：实际路径 / 用户权限 / 文件内容 / 数据库恢复</text>
+<text x="62" y="656" font-size="16" fill="#9f4148">对象存在、路径可写、数据可恢复，是三项检查；一个通过不能替代其余两项。</text>
+</g></svg>

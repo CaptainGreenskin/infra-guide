@@ -1,0 +1,56 @@
+{
+  "apiVersion": "batch/v1",
+  "kind": "Job",
+  "metadata": {
+    "name": "storage-writer-1",
+    "namespace": "infra-guide-storage"
+  },
+  "spec": {
+    "backoffLimit": 1,
+    "template": {
+      "spec": {
+        "restartPolicy": "Never",
+        "containers": [
+          {
+            "name": "writer",
+            "image": "python:3.12-slim",
+            "command": [
+              "python",
+              "-c",
+              "\"\"\"One mounted-path writer used unchanged in local checks and Kubernetes Jobs.\n\nRun without flags for a temporary local test, or --db PATH --op STABLE_ID.\nThis verifies only this SQLite effect protocol; cluster storage needs its own run.\n\"\"\"\nimport argparse\nfrom contextlib import closing\nimport json\nfrom pathlib import Path\nimport sqlite3\nimport tempfile\n\n\ndef write_once(path, op):\n    with closing(sqlite3.connect(str(path), isolation_level=None, timeout=10)) as db:\n        db.execute(\"BEGIN IMMEDIATE\")\n        db.execute(\"CREATE TABLE IF NOT EXISTS counter(id INTEGER PRIMARY KEY, value INTEGER)\")\n        db.execute(\"CREATE TABLE IF NOT EXISTS receipt(op TEXT PRIMARY KEY, before INTEGER, after INTEGER)\")\n        db.execute(\"INSERT OR IGNORE INTO counter VALUES(1,0)\")\n        receipt = db.execute(\"SELECT before,after FROM receipt WHERE op=?\", (op,)).fetchone()\n        duplicate = receipt is not None\n        if receipt is None:\n            before = db.execute(\"SELECT value FROM counter WHERE id=1\").fetchone()[0]\n            receipt = (before, before + 1)\n            db.execute(\"UPDATE counter SET value=? WHERE id=1\", (receipt[1],))\n            db.execute(\"INSERT INTO receipt VALUES(?,?,?)\", (op, *receipt))\n        current = db.execute(\"SELECT value FROM counter WHERE id=1\").fetchone()[0]\n        db.commit()\n        return {\"op\":op,\"before\":receipt[0],\"after\":receipt[1],\n                \"duplicate\":duplicate,\"current_counter\":current}\n\n\ndef local_test():\n    with tempfile.TemporaryDirectory(prefix=\"volume-writer-\") as folder:\n        path=Path(folder,'counter.sqlite')\n        results=[write_once(path,op) for op in ('write-1','write-2','write-1')]\n        assert [r['after'] for r in results] == [1,2,1]\n        assert [r['duplicate'] for r in results] == [False,False,True]\n        assert [r['current_counter'] for r in results] == [1,2,2]\n        return {'sequence':results,'final_counter':2,'cluster_executed':False}\n\n\nif __name__=='__main__':\n    parser=argparse.ArgumentParser()\n    parser.add_argument('--db',type=Path)\n    parser.add_argument('--op')\n    args=parser.parse_args()\n    if bool(args.db) != bool(args.op):\n        parser.error('--db and --op must be supplied together')\n    result=write_once(args.db,args.op) if args.db else local_test()\n    print(json.dumps(result,ensure_ascii=False,indent=2))\n"
+            ],
+            "args": [
+              "--db",
+              "/data/counter.sqlite",
+              "--op",
+              "write-1"
+            ],
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "64Mi"
+              },
+              "limits": {
+                "memory": "128Mi"
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "data",
+                "mountPath": "/data"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "data",
+            "persistentVolumeClaim": {
+              "claimName": "app-data"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ const c={};vm.createContext(c);
 for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const d=vm.runInContext('({articles,infraKnowledgeDomains,infraStudyGates,aiAgentLabFiles,aiAgentValidation,sources,chapterReadingEdits})',c);
 assert.equal(d.infraKnowledgeDomains.length,4);
-assert.equal(d.infraKnowledgeDomains.flatMap(x=>x.points).length,32);
+assert.equal(d.infraKnowledgeDomains.flatMap(x=>x.points).length,33);
 assert.equal(d.articles.length,66);
 assert.equal(d.chapterReadingEdits.length,35);assert.equal(new Set(d.chapterReadingEdits.map(x=>x.id)).size,35);
 assert.deepEqual(JSON.parse(fs.readFileSync('docs/CHAPTER_REVIEW_2026-11-04.json')).chapters,JSON.parse(JSON.stringify(d.chapterReadingEdits)));
@@ -70,4 +70,4 @@ assert(/不能作为服务端\s*TTFT/.test(html('article/inference-performance')
 const decodedAgentCode=[...html('article/agent-evaluation').matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').trim());
 assert(decodedAgentCode.includes(fs.readFileSync('dist/labs/ai-agent-systems/agent_evaluation.py','utf8').trim()),'static Agent code differs from executed source');
 assert(html('labs').includes('AI / AGENT · 原理实战'));
-console.log('PASS: 32 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');
+console.log('PASS: 33 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');
