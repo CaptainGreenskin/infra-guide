@@ -227,10 +227,12 @@
       "id": "ai-lifecycle",
       "module": "platform",
       "title": "模型怎样进入生产：完整产物、评估、发布与回退",
-      "sections": 7,
-      "approx_visible_prose_characters": 3148,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 8,
+      "approx_visible_prose_characters": 3368,
+      "figures": 2,
+      "review": "substantial_v27",
+      "reviewed_at": "2026-11-05",
+      "findings": "Rewrote complete inference bundle, five gates, real CPU Safetensors/token vocabulary counterexample, conditional publication and rollback; separated task-slice/canary fixed arithmetic from actual model fixture."
     },
     {
       "id": "training-lab",
@@ -328,10 +330,12 @@
       "id": "agent-retrieval",
       "module": "agent",
       "title": "检索与上下文：让答案有可验证的证据",
-      "sections": 9,
-      "approx_visible_prose_characters": 3576,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 14,
+      "approx_visible_prose_characters": 6178,
+      "figures": 3,
+      "review": "substantial_v27",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved delivery/ACL oracle and exact source; added actual Chinese FTS5/BM25, declared-ranker RRF, independent graded nDCG and actual stale-index/reindex; knowledge before practice."
     },
     {
       "id": "agent-observability",
@@ -568,10 +572,12 @@
       "id": "resilience",
       "module": "sre",
       "title": "恢复工程：故障域、RPO、RTO 与演练",
-      "sections": 7,
-      "approx_visible_prose_characters": 2811,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 10,
+      "approx_visible_prose_characters": 5763,
+      "figures": 2,
+      "review": "substantial_v27",
+      "reviewed_at": "2026-11-05",
+      "findings": "Preserved fault-domain/RPO/RTO derivations; added actual SQLite backup/log/object complete-prefix and HTTP restored-outbox/generation receipts, separating row presence, readable reports and recovery age."
     },
     {
       "id": "linux-resource",
@@ -610,6 +616,6 @@
       "review": "initial_screen_not_reassessed_v22"
     }
   ],
-  "last_inventory_iteration": 24,
-  "eight_hour_manual_status": "9 core chapters substantially reviewed and repaired; other rows remain screening or earlier-review evidence, not a claim all 66 were manually reread in this window."
+  "last_inventory_iteration": 27,
+  "eight_hour_manual_status": "18 substantial chapter revisions (6 per track) reviewed during the window; remaining 48 chapters and all 95 knowledge points still require a fresh item-level audit. Automatic counts do not establish quality."
 }

@@ -1,0 +1,445 @@
+{
+  "verified_at_utc": "2026-11-04T17:19:13.655872+00:00",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "consistent_recovery_cut.py": {
+      "sha256": "a26b4b043242e5f1b873799ca25658e09b915b4ff97e7bb87b6420de28c7b1b8",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "sqlite": "3.51.0",
+        "failure_minute": 720,
+        "baseline_minute": 690,
+        "commits": [
+          {
+            "seq": 101,
+            "minute": 702,
+            "report": "R2",
+            "object": "object-v2"
+          },
+          {
+            "seq": 102,
+            "minute": 714,
+            "report": "R3",
+            "object": "object-v3"
+          },
+          {
+            "seq": 103,
+            "minute": 717,
+            "report": "R4",
+            "object": "object-v4"
+          }
+        ],
+        "naive_latest_database": {
+          "seq": 103,
+          "minute": 717,
+          "gap_minutes_at_noon": 3,
+          "database_point_within_15_minutes": true,
+          "business_RPO_pass": false,
+          "physical_integrity": "ok",
+          "business_problems": [
+            {
+              "report": "R3",
+              "object": "object-v3",
+              "reason": "missing_object_version"
+            }
+          ],
+          "A_report_rows": [
+            "R1",
+            "R2",
+            "R3",
+            "R4"
+          ],
+          "A_readable_reports": [
+            "R1",
+            "R2",
+            "R4"
+          ],
+          "A_cannot_query_B_report": true,
+          "stopped": null
+        },
+        "last_complete_business_prefix": {
+          "seq": 101,
+          "minute": 702,
+          "gap_minutes_at_noon": 18,
+          "database_point_within_15_minutes": false,
+          "business_RPO_pass": false,
+          "physical_integrity": "ok",
+          "business_problems": [],
+          "A_report_rows": [
+            "R1",
+            "R2"
+          ],
+          "A_readable_reports": [
+            "R1",
+            "R2"
+          ],
+          "A_cannot_query_B_report": true,
+          "stopped": {
+            "at_seq": 102,
+            "reason": "business_state_incomplete",
+            "details": [
+              {
+                "report": "R3",
+                "object": "object-v3",
+                "reason": "missing_object_version"
+              }
+            ]
+          }
+        },
+        "all_materials_present": {
+          "seq": 103,
+          "minute": 717,
+          "gap_minutes_at_noon": 3,
+          "database_point_within_15_minutes": true,
+          "business_RPO_pass": true,
+          "physical_integrity": "ok",
+          "business_problems": [],
+          "A_report_rows": [
+            "R1",
+            "R2",
+            "R3",
+            "R4"
+          ],
+          "A_readable_reports": [
+            "R1",
+            "R2",
+            "R3",
+            "R4"
+          ],
+          "A_cannot_query_B_report": true,
+          "stopped": null
+        },
+        "missing_log_segment": {
+          "seq": 101,
+          "minute": 702,
+          "gap_minutes_at_noon": 18,
+          "database_point_within_15_minutes": false,
+          "business_RPO_pass": false,
+          "physical_integrity": "ok",
+          "business_problems": [],
+          "A_report_rows": [
+            "R1",
+            "R2"
+          ],
+          "A_readable_reports": [
+            "R1",
+            "R2"
+          ],
+          "A_cannot_query_B_report": true,
+          "stopped": {
+            "expected_seq": 102,
+            "received_seq": 103,
+            "reason": "journal_gap"
+          }
+        },
+        "corrupt_object": {
+          "seq": 100,
+          "minute": 690,
+          "gap_minutes_at_noon": 30,
+          "database_point_within_15_minutes": false,
+          "business_RPO_pass": false,
+          "physical_integrity": "ok",
+          "business_problems": [],
+          "A_report_rows": [
+            "R1"
+          ],
+          "A_readable_reports": [
+            "R1"
+          ],
+          "A_cannot_query_B_report": true,
+          "stopped": {
+            "at_seq": 101,
+            "reason": "business_state_incomplete",
+            "details": [
+              {
+                "report": "R2",
+                "object": "object-v2",
+                "reason": "object_hash_mismatch"
+              }
+            ]
+          }
+        },
+        "scope": "actual_SQLite_backup_and_fixture_object_validation_with_application_log_not_PostgreSQL_WAL_or_cloud_DR",
+        "limits": [
+          "minute values are declared teaching times, not measured restore durations",
+          "application journal is constructed in the fixture; no power-loss durability claim",
+          "recovery-point age is not a count of lost reports; row presence alone does not prove readable content",
+          "tenant predicate tests this consumer query, not a deployed IAM system"
+        ]
+      }
+    },
+    "recovered_effects.py": {
+      "sha256": "d2be09e3e505998aedaf08ea908db40e79deb4b2e19c1d79a4a6df500358f296",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "first_http_after_effect_commit": 503,
+        "confirmed_before_restore": {
+          "duplicate": true,
+          "event_id": "notify-R27",
+          "total": 37
+        },
+        "restored_outbox_before": "PENDING",
+        "receiver_generation_after_promotion": 2,
+        "old_owner_request": {
+          "status": 409,
+          "error": "stale_owner_generation"
+        },
+        "recovered_replay": {
+          "status": 200,
+          "duplicate": true,
+          "event_id": "notify-R27",
+          "total": 37
+        },
+        "same_id_changed_intent": {
+          "status": 409,
+          "error": "intent_conflict"
+        },
+        "restored_outbox_after": "DONE",
+        "positive_effects": [
+          [
+            "notify-R27",
+            37
+          ]
+        ],
+        "new_key_negative_effect_count": 2,
+        "scope": "actual_local_HTTP_and_SQLite_restore_receipts_generation_not_cloud_failover_or_production_auth",
+        "limits": [
+          "owner generation and effect mutation are checked in the receiver's one DB transaction",
+          "authority DB is not restored with the application; promotion is a trusted fixture action",
+          "an epoch number is not a credential; real authentication and authorized promotion are outside this fixture",
+          "restoring application state does not undo the receiver's existing external effect"
+        ]
+      }
+    },
+    "artifact_bundle.py": {
+      "sha256": "3a767c1a646627144107a6489ab9b1990f440102058059b95c3be832dd9912a7",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "torch": "2.5.1",
+        "safetensors": "0.8.0",
+        "device": "cpu",
+        "bundle_members": [
+          "model.json",
+          "tokenizer.json",
+          "weights.safetensors"
+        ],
+        "tensor_shapes": {
+          "embedding.weight": [
+            3,
+            1
+          ],
+          "readout.weight": [
+            1,
+            1
+          ],
+          "readout.bias": [
+            1
+          ]
+        },
+        "gates": {
+          "r17": {
+            "outputs": {
+              "A": 1.0,
+              "B": 2.0,
+              "?": 0.0
+            },
+            "passed": true
+          },
+          "r18": {
+            "outputs": {
+              "A": 2.0,
+              "B": 1.0,
+              "?": 0.0
+            },
+            "passed": false
+          },
+          "r19": {
+            "outputs": {
+              "A": 1.0,
+              "B": 2.0,
+              "?": 0.0
+            },
+            "passed": true
+          }
+        },
+        "r18_integrity_and_shapes_passed": true,
+        "r18_activation": "semantic_gate_rejected",
+        "initial_pointer": {
+          "version": "r17",
+          "generation": 1,
+          "manifest_sha256": "bcf1a13e1e344889829bfb2a61d6e934fa47bcdf90779a6bba17c4a1d448260c"
+        },
+        "after_switch": {
+          "version": "r19",
+          "generation": 2,
+          "manifest_sha256": "d94a999771ffda285fac95ea394bccf4d1a0080f2757485080f44d7fc5e8df90"
+        },
+        "stale_publisher": "stale_pointer",
+        "mixed_bundle_gate": {
+          "outputs": {
+            "A": 2.0,
+            "B": 1.0,
+            "?": 0.0
+          },
+          "passed": false
+        },
+        "in_flight_pinned_version": "r17",
+        "in_flight_A": 1.0,
+        "missing_rollback_member_rejected": true,
+        "tamper_rejected_before_tensor_load": true,
+        "after_rollback": {
+          "version": "r17",
+          "generation": 3,
+          "manifest_sha256": "bcf1a13e1e344889829bfb2a61d6e934fa47bcdf90779a6bba17c4a1d448260c"
+        },
+        "scope": "actual_CPU_Safetensors_and_SQLite_pointer_fixture_not_LLM_quality_GPU_or_online_canary",
+        "limits": [
+          "digests prove byte identity, not publisher trust or model usefulness",
+          "small fixture reads verified bytes into RAM; large models need appropriate immutable staging/loading",
+          "route CAS is local reference; no distributed load balancer or in-flight drain test",
+          "semantic labels A=1 B=2 are a fixed contract, not a real model benchmark"
+        ]
+      }
+    },
+    "chinese_fts_rrf.py": {
+      "sha256": "ab5959e663a2796605c0df4cff8c076486b48a142d3580d048c0bede779b1be8",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "sqlite": "3.51.0",
+        "documents": 8,
+        "raw_query": "恢复",
+        "unicode61_raw_hits": [],
+        "raw_has_standalone_query_term": false,
+        "query": "数据库恢复",
+        "query_terms": [
+          "数据",
+          "据库",
+          "库恢",
+          "恢复"
+        ],
+        "query_expression": "\"数据\" OR \"据库\" OR \"库恢\" OR \"恢复\"",
+        "actual_lexical_results": [
+          {
+            "id": "a-backup",
+            "bm25": -0.430586248746857,
+            "document_version": 1,
+            "index_version": 1
+          },
+          {
+            "id": "a-plan",
+            "bm25": -1.0116029222174473e-06,
+            "document_version": 1,
+            "index_version": 1
+          },
+          {
+            "id": "a-archive",
+            "bm25": -9.812421842434347e-07,
+            "document_version": 1,
+            "index_version": 1
+          },
+          {
+            "id": "a-dr",
+            "bm25": -9.812421842434347e-07,
+            "document_version": 1,
+            "index_version": 1
+          }
+        ],
+        "declared_second_ranker": [
+          "a-archive",
+          "a-backup",
+          "a-plan"
+        ],
+        "rank_constant": 60,
+        "rrf_results": [
+          {
+            "id": "a-backup",
+            "score": 0.03252247488101533,
+            "exact": "123/3782",
+            "ranks": {
+              "lexical": 1,
+              "declared_second": 2
+            }
+          },
+          {
+            "id": "a-archive",
+            "score": 0.032266458495966696,
+            "exact": "124/3843",
+            "ranks": {
+              "lexical": 3,
+              "declared_second": 1
+            }
+          },
+          {
+            "id": "a-plan",
+            "score": 0.03200204813108039,
+            "exact": "125/3906",
+            "ranks": {
+              "lexical": 2,
+              "declared_second": 3
+            }
+          },
+          {
+            "id": "a-dr",
+            "score": 0.015625,
+            "exact": "1/64",
+            "ranks": {
+              "lexical": 4
+            }
+          }
+        ],
+        "grades": {
+          "a-backup": 3,
+          "a-dr": 2,
+          "a-plan": 1,
+          "a-archive": 2
+        },
+        "lexical_metrics": {
+          "precision_at_3": 1.0,
+          "recall_at_3": 0.75,
+          "reciprocal_rank_at_3": 1.0,
+          "dcg_at_3": 9.130929753571458,
+          "ideal_dcg_at_3": 10.392789260714373,
+          "ndcg_at_3": 0.8785831719004588,
+          "label_source": "declared_teaching_grades_not_model_judgments"
+        },
+        "rrf_metrics": {
+          "precision_at_3": 1.0,
+          "recall_at_3": 0.75,
+          "reciprocal_rank_at_3": 1.0,
+          "dcg_at_3": 9.392789260714373,
+          "ideal_dcg_at_3": 10.392789260714373,
+          "ndcg_at_3": 0.9037794402528602,
+          "label_source": "declared_teaching_grades_not_model_judgments"
+        },
+        "duplicate_ranker_input_rejected": true,
+        "stale_index_without_check": {
+          "id": "a-backup",
+          "bm25": -0.430586248746857,
+          "document_version": 2,
+          "index_version": 1
+        },
+        "stale_index_excluded_with_check": true,
+        "after_reindex": {
+          "id": "a-backup",
+          "bm25": -2.0147708232879844,
+          "document_version": 2,
+          "index_version": 2
+        },
+        "scope": "actual_SQLite_FTS5_BM25_plus_declared_second_order_RRF_not_embedding_LLM_or_vector_database",
+        "limits": [
+          "character bigrams are a teaching tokenizer, not a general Chinese linguistic analyzer",
+          "tenant/current filters precede LIMIT in SQL semantics; corpus-level BM25 statistics remain shared",
+          "real access revocation and body-delivery tests remain in the separate retrieval_pipeline experiment",
+          "graded relevance is a fixed example, not a real retrieval benchmark"
+        ]
+      }
+    }
+  },
+  "fixtures": {
+    "requirements-model.txt": "18795d35f6e55f0a211f3c84d36068377dc86ee8b636904d76129acc458d1f7f"
+  }
+}
