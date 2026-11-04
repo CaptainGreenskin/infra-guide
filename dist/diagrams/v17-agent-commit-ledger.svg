@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="744" viewBox="0 0 960 744" role="img" aria-labelledby="title desc">
+<title id="title">两个独立数据库中的工具提交与恢复</title><desc id="desc">初次调用时执行器记 K1 正在运行、尝试一次。工具提交计数一和回执 R，执行器在写成功前以退出码二十三停止。恢复沿原键重试，工具复用 R，不再增加效果，执行器最终成功并记录两次尝试。K1 对应示例代码的 op-001。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="744" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">AGENT INFRA  /  工具提交与恢复</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">两次尝试，为什么效果只增加了一次？</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">同一逻辑动作记为 K1（程序值 op-001）。两个 SQLite 数据库分别提交，没有共同事务。</text>
+<rect x="204" y="151" width="344" height="69" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="221" y="180" fill="#2759a5" font-size="22" font-weight="700" text-anchor="start">执行器账页</text>
+<text x="221" y="205" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">runner.sqlite：状态、尝试、结果</text>
+<rect x="566" y="151" width="358" height="69" rx="12" fill="#e1f2ec" stroke="none"/>
+<text x="584" y="180" fill="#08776d" font-size="22" font-weight="700" text-anchor="start">工具账页</text>
+<text x="584" y="205" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">tool.sqlite：效果计数器、回执</text>
+<text x="36" y="273" fill="#20324a" font-size="20" font-weight="700" text-anchor="start">① 初次调用</text>
+<text x="36" y="304" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">先记执行意图</text>
+<rect x="204" y="234" width="344" height="92" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<rect x="566" y="234" width="358" height="92" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="221" y="269" fill="#20324a" font-size="20" font-weight="700" text-anchor="start">K1　RUNNING</text>
+<text x="221" y="302" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">尝试次数 = 1</text>
+<text x="584" y="269" fill="#08776d" font-size="20" font-weight="700" text-anchor="start">效果数 = 0</text>
+<text x="584" y="302" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">尚无 K1 的回执</text>
+<text x="36" y="378" fill="#9e4a16" font-size="20" font-weight="700" text-anchor="start">② 工具已提交</text>
+<text x="36" y="409" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">退出码 23</text>
+<rect x="204" y="339" width="344" height="92" rx="12" fill="#ffefdd" stroke="#c7d4df"/>
+<rect x="566" y="339" width="358" height="92" rx="12" fill="#ffefdd" stroke="#c7d4df"/>
+<text x="221" y="374" fill="#20324a" font-size="20" font-weight="700" text-anchor="start">K1　RUNNING</text>
+<text x="221" y="407" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">尝试次数 = 1；尚未记成功</text>
+<text x="584" y="374" fill="#9e4a16" font-size="20" font-weight="700" text-anchor="start">效果数 = 1</text>
+<text x="584" y="407" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">同一事务保存 K1 的回执 R</text>
+<text x="36" y="483" fill="#20324a" font-size="20" font-weight="700" text-anchor="start">③ 新进程恢复</text>
+<text x="36" y="514" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">沿用 K1 和原参数</text>
+<rect x="204" y="444" width="344" height="92" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<rect x="566" y="444" width="358" height="92" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="221" y="479" fill="#20324a" font-size="20" font-weight="700" text-anchor="start">K1　SUCCEEDED</text>
+<text x="221" y="512" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">尝试次数 = 2；保存结果 R</text>
+<text x="584" y="479" fill="#08776d" font-size="20" font-weight="700" text-anchor="start">效果数仍为 1</text>
+<text x="584" y="512" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">命中 K1，返回原回执 R</text>
+<rect x="36" y="566" width="888" height="105" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="54" y="600" fill="#2759a5" font-size="21" font-weight="700" text-anchor="start">读回回执</text>
+<text x="183" y="600" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">R 是已保存的结果 {"effect_count": 1}。尝试从 1 到 2，实际效果从 1 到 1。</text>
+<text x="54" y="641" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">若 K1 绑定的参数发生变化，工具应拒绝冲突。此处的效果只是本地演示计数，不是报告金额。</text>
+<text x="36" y="714" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">本例定位单工作者的提交间隙。多个工作者同时写入时，另需在接收方校验代际（见 9.7）。</text>
+</svg>

@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1132" width="960" height="1132" role="img" aria-labelledby="title desc">
+<title id="title">从三个期望副本到可用副本：Kubernetes 调谐顺序</title>
+<desc id="desc">新建 Deployment，期望副本数为 3。只展开 Pod A 的时序，省略 Pod B、C 的后续步骤。图中展示 kubectl、API Server、Deployment 控制器、ReplicaSet 控制器、调度器与 kubelet 的生命线。虚线箭头是异步读取或观察 API 对象，实线是提交到 API 的写入。API Server 持久化对象到 etcd。示意追踪 Pod A 从被绑定、运行到 Ready，再到满足 minReadySeconds 后被计入可用副本。</desc>
+<style>text{font-family:system-ui,sans-serif;fill:#193245;font-size:18px}.title{font-size:31px;font-weight:700}.sub{fill:#435f71}.lane{font-weight:650}.bold{font-weight:700}.smallcap{font-size:18px;fill:#075a73;font-weight:650}.axis{stroke:#b7c6cf;stroke-width:1.3;stroke-dasharray:3 6}.write{stroke:#075a73;stroke-width:3;fill:none}.read{stroke:#647788;stroke-width:2;stroke-dasharray:6 4;fill:none}.divide{stroke:#d4dfe5;stroke-width:1}</style>
+<rect width="960" height="1132" fill="#fff"/>
+<rect width="960" height="153" fill="#eef5f7"/>
+<text x="28" y="47" font-size="31" class="title">声明三个副本，谁负责下一步？</text>
+<text x="28" y="83" font-size="18" class="sub">新建 Deployment，replicas=3，minReadySeconds=10。下图只展开 Pod A 的时序。</text>
+<text x="28" y="115" font-size="18" class="sub">时间向下，读写异步。每行标出状态变化，不代表组件同步调用或固定耗时。</text>
+<text x="366" y="187" font-size="18" class="lane" text-anchor="middle">kubectl</text>
+<text x="366" y="212" font-size="18" class="sub" text-anchor="middle">客户端</text>
+<text x="469" y="187" font-size="18" class="lane" text-anchor="middle">API</text>
+<text x="469" y="212" font-size="18" class="sub" text-anchor="middle">Server</text>
+<text x="577" y="187" font-size="18" class="lane" text-anchor="middle">Deployment</text>
+<text x="577" y="212" font-size="18" class="sub" text-anchor="middle">控制器</text>
+<text x="689" y="187" font-size="18" class="lane" text-anchor="middle">ReplicaSet</text>
+<text x="689" y="212" font-size="18" class="sub" text-anchor="middle">控制器</text>
+<text x="794" y="187" font-size="18" class="lane" text-anchor="middle">scheduler</text>
+<text x="794" y="212" font-size="18" class="sub" text-anchor="middle">调度器</text>
+<text x="895" y="187" font-size="18" class="lane" text-anchor="middle">kubelet</text>
+<text x="895" y="212" font-size="18" class="sub" text-anchor="middle">节点代理</text>
+<text x="28" y="187" font-size="18" class="lane">对象与证据</text>
+<text x="28" y="212" font-size="18" class="sub">从声明到用户可用</text>
+<line class="axis" x1="366" y1="228" x2="366" y2="807"/>
+<line class="axis" x1="469" y1="228" x2="469" y2="807"/>
+<line class="axis" x1="577" y1="228" x2="577" y2="807"/>
+<line class="axis" x1="689" y1="228" x2="689" y2="807"/>
+<line class="axis" x1="794" y1="228" x2="794" y2="807"/>
+<line class="axis" x1="895" y1="228" x2="895" y2="807"/>
+<line class="divide" x1="26" x2="930" y1="231" y2="231"/>
+<text x="28" y="257" font-size="18" class="bold">01  保存期望</text>
+<text x="28" y="284" font-size="18" class="sub">API 接受并保存 Deployment。</text>
+<text x="28" y="307" font-size="18" class="sub">此时还没有 Pod。</text>
+<line class="write" x1="366" y1="273" x2="469" y2="273"/><path d="M 469 273 L 459 268 L 459 278 Z" fill="#075a73"/>
+<circle cx="366" cy="273" r="3.2" fill="#075a73"/>
+<line class="divide" x1="26" x2="930" y1="323" y2="323"/>
+<text x="28" y="349" font-size="18" class="bold">02  建立副本集合</text>
+<text x="28" y="376" font-size="18" class="sub">观察 Deployment；</text>
+<text x="28" y="399" font-size="18" class="sub">建立 ReplicaSet，期望为 3。</text>
+<line class="read" x1="469" y1="348" x2="577" y2="348"/><path d="M 568 343 L 577 348 L 568 353" fill="none" stroke="#647788" stroke-width="2"/>
+<circle cx="469" cy="348" r="3.2" fill="#647788"/>
+<line class="write" x1="577" y1="380" x2="469" y2="380"/><path d="M 469 380 L 479 375 L 479 385 Z" fill="#075a73"/>
+<circle cx="577" cy="380" r="3.2" fill="#075a73"/>
+<line class="divide" x1="26" x2="930" y1="418" y2="418"/>
+<text x="28" y="444" font-size="18" class="bold">03  补足三个 Pod</text>
+<text x="28" y="471" font-size="18" class="sub">观察 ReplicaSet 与现有 Pod；</text>
+<text x="28" y="494" font-size="18" class="sub">创建 Pod A、B、C。</text>
+<line class="read" x1="469" y1="445" x2="689" y2="445"/><path d="M 680 440 L 689 445 L 680 450" fill="none" stroke="#647788" stroke-width="2"/>
+<circle cx="469" cy="445" r="3.2" fill="#647788"/>
+<line class="write" x1="689" y1="476" x2="469" y2="476"/><path d="M 469 476 L 479 471 L 479 481 Z" fill="#075a73"/>
+<circle cx="689" cy="476" r="3.2" fill="#075a73"/>
+<line class="divide" x1="26" x2="930" y1="513" y2="513"/>
+<text x="28" y="539" font-size="18" class="bold">04  为 A 选择节点</text>
+<text x="28" y="566" font-size="18" class="sub">观察未绑定的 Pod A；</text>
+<text x="28" y="589" font-size="18" class="sub">提交 Binding，A 获得 nodeName。</text>
+<line class="read" x1="469" y1="540" x2="794" y2="540"/><path d="M 785 535 L 794 540 L 785 545" fill="none" stroke="#647788" stroke-width="2"/>
+<circle cx="469" cy="540" r="3.2" fill="#647788"/>
+<line class="write" x1="794" y1="570" x2="469" y2="570"/><path d="M 469 570 L 479 565 L 479 575 Z" fill="#075a73"/>
+<circle cx="794" cy="570" r="3.2" fill="#075a73"/>
+<line class="divide" x1="26" x2="930" y1="609" y2="609"/>
+<text x="28" y="635" font-size="18" class="bold">05  节点准备并报告</text>
+<text x="28" y="662" font-size="18" class="sub">观察分配到本节点的 A；</text>
+<text x="28" y="685" font-size="18" class="sub">准备卷、镜像和容器，报告状态。</text>
+<line class="read" x1="469" y1="636" x2="895" y2="636"/><path d="M 886 631 L 895 636 L 886 641" fill="none" stroke="#647788" stroke-width="2"/>
+<circle cx="469" cy="636" r="3.2" fill="#647788"/>
+<line class="write" x1="895" y1="666" x2="469" y2="666"/><path d="M 469 666 L 479 661 L 479 671 Z" fill="#075a73"/>
+<circle cx="895" cy="666" r="3.2" fill="#075a73"/>
+<line class="divide" x1="26" x2="930" y1="705" y2="705"/>
+<text x="28" y="731" font-size="18" class="bold">06  从 Ready 到 Available</text>
+<text x="28" y="758" font-size="18" class="sub">A 的就绪条件满足，报告 Ready。</text>
+<text x="28" y="781" font-size="18" class="sub">控制器异步汇总副本状态。</text>
+<line class="write" x1="895" y1="733" x2="469" y2="733"/><path d="M 469 733 L 479 728 L 479 738 Z" fill="#075a73"/>
+<circle cx="895" cy="733" r="3.2" fill="#075a73"/>
+<line class="read" x1="469" y1="760" x2="689" y2="760"/><path d="M 680 755 L 689 760 L 680 765" fill="none" stroke="#647788" stroke-width="2"/>
+<circle cx="469" cy="760" r="3.2" fill="#647788"/>
+<line class="write" x1="689" y1="786" x2="469" y2="786"/><path d="M 469 786 L 479 781 L 479 791 Z" fill="#075a73"/>
+<circle cx="689" cy="786" r="3.2" fill="#075a73"/>
+<rect x="20" y="820" width="920" height="107" rx="9" fill="#eef5f7"/>
+<text x="34" y="850" font-size="18" class="smallcap">读图约定</text>
+<line class="write" x1="148" x2="202" y1="844" y2="844"/><path d="M202 844 L192 839 L192 849 Z" fill="#075a73"/>
+<text x="216" y="850" font-size="18" class="">提交 API 写入</text>
+<line class="read" x1="432" x2="486" y1="844" y2="844"/><path d="M477 839 L486 844 L477 849" fill="none" stroke="#647788" stroke-width="2"/>
+<text x="500" y="850" font-size="18" class="">通过 list/watch 等观察 API 对象</text>
+<text x="34" y="882" font-size="18" class="sub">API Server 将对象持久化到 etcd。控制器、调度器和 kubelet 通过 API 读取或改写状态。</text>
+<text x="34" y="909" font-size="18" class="sub">ReplicaSet 控制器更新其 status，Deployment 控制器再汇总各 ReplicaSet 并更新 Deployment。</text>
+<rect x="20" y="948" width="920" height="104" rx="9" fill="#fff4e8"/>
+<text x="34" y="978" font-size="18" class="bold">怎样计数</text>
+<text x="34" y="1008" font-size="18" class="">假设 A 在 t=40s 就绪并持续 Ready，最早 t=50s 才满足可用条件；状态上报还可能更晚。</text>
+<text x="34" y="1036" font-size="18" class="">B、C 若尚未就绪，可用副本至多 1。副本计数和 Deployment 的 Available 条件需区分。</text>
+<text x="28" y="1084" font-size="18" class="sub">镜像拉取失败可在同一 Pod UID 上退避重试；只有实际替换 Pod，才出现新的 UID。</text>
+<text x="28" y="1112" font-size="18" class="sub">省略 B、C 后续步骤，以及各组件独立的观察和重试。三个 Pod 的启动顺序与具体时间不固定。</text>
+</svg>

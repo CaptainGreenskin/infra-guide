@@ -105,7 +105,15 @@ def train(a):
                                   nn.Linear(a.hidden, 10)).to(device)
         model = DDP(raw_model, device_ids=[local_rank] if a.device == 'cuda' else None,
                     broadcast_buffers=False)
-        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+        # Fix the non-fused path: its post hook observes a completed step call.
+        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, fused=False)
+        applied_calls = 0
+
+        def count_step(_optimizer, _args, _kwargs):
+            nonlocal applied_calls
+            applied_calls += 1
+
+        optimizer.register_step_post_hook(count_step)
         scaler = torch.amp.GradScaler('cuda', enabled=a.precision == 'fp16')
         torch.manual_seed(a.seed + rank)  # Independent dropout streams, restored on resume.
         signature = {k: getattr(a, k) for k in ('device', 'precision', 'batch_size', 'accum',
@@ -119,6 +127,9 @@ def train(a):
                 raise ValueError('Resume requires the same world size, device, precision and training settings')
             model.module.load_state_dict(state['model'])
             optimizer.load_state_dict(state['optimizer'])
+            # Older lab checkpoints may store fused=None in the parameter groups.
+            for group in optimizer.param_groups:
+                group['fused'] = False
             scaler.load_state_dict(state['scaler'])
             start = state['next_epoch']
             torch.set_rng_state(state['rng_by_rank'][rank]['cpu'])
@@ -137,6 +148,8 @@ def train(a):
             optimizer.zero_grad(set_to_none=True)
             loss_sum = torch.zeros((), device=device)
             seen = 0
+            attempted_windows = 0
+            applied_at_start = applied_calls
             dist.barrier()
             if a.device == 'cuda':
                 torch.cuda.synchronize(device)
@@ -155,6 +168,7 @@ def train(a):
                 loss_sum += loss.detach() * labels.numel()
                 seen += labels.numel()
                 if update:
+                    attempted_windows += 1
                     scaler.step(optimizer)
                     scaler.update()
                     optimizer.zero_grad(set_to_none=True)
@@ -164,10 +178,19 @@ def train(a):
             totals = torch.stack((loss_sum.double(), torch.tensor(float(seen), device=device, dtype=torch.float64)))
             dist.all_reduce(duration, op=dist.ReduceOp.MAX)
             dist.all_reduce(totals, op=dist.ReduceOp.SUM)
+            applied_this_epoch = applied_calls - applied_at_start
+            counts = torch.tensor([attempted_windows, applied_this_epoch], device=device)
+            minimum, maximum = counts.clone(), counts.clone()
+            dist.all_reduce(minimum, op=dist.ReduceOp.MIN)
+            dist.all_reduce(maximum, op=dist.ReduceOp.MAX)
+            if not torch.equal(minimum, maximum):
+                raise RuntimeError('Ranks disagree on attempted windows or applied optimizer calls')
             report(rank, event='epoch', epoch=epoch + 1, loss=(totals[0] / totals[1]).item(),
                    samples=int(totals[1].item()), seconds=duration.item(),
                    samples_per_second=(totals[1] / duration).item(),
-                   optimizer_steps=len(loader) // a.accum)
+                   attempted_update_windows=attempted_windows,
+                   applied_optimizer_steps=applied_this_epoch,
+                   optimizer_steps=applied_this_epoch)
             save_checkpoint(Path(a.save_dir) / 'checkpoint.pt', model, optimizer, scaler,
                             loader_rng, epoch, signature, device, rank, world)
     finally:

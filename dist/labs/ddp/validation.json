@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "environment": "Darwin arm64, Python 3.12.13, PyTorch 2.5.1, CPU/Gloo",
   "cpu_ddp": "passed",
   "resume": "passed",
@@ -20,7 +20,7 @@
     "Kubernetes"
   ],
   "measurement_scope": "Tiny synthetic MLP functional test. Timings are local observations, not a GPU or LLM benchmark.",
-  "train_sha256": "ef7095cb1a006d94abab8398ca0e947670ee6ef238eb8bbb4ffc7f3f4396d085",
+  "train_sha256": "5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66",
   "runs": [
     {
       "name": "two_process_four_epochs",
@@ -56,60 +56,68 @@
           "epoch": 1,
           "loss": 2.3205251693725586,
           "samples": 1024,
-          "seconds": 0.03934358403785154,
-          "samples_per_second": 26027.11534909564,
+          "seconds": 0.07875350001268089,
+          "samples_per_second": 13002.596707893814,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/full/checkpoint.pt",
           "next_epoch": 1,
-          "seconds": 0.0030963749741204083
+          "seconds": 0.005803084000945091
         },
         {
           "event": "epoch",
           "epoch": 2,
           "loss": 2.272819399833679,
           "samples": 1024,
-          "seconds": 0.011675333022139966,
-          "samples_per_second": 87706.27767603596,
+          "seconds": 0.007556000025942922,
+          "samples_per_second": 135521.43944999707,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/full/checkpoint.pt",
           "next_epoch": 2,
-          "seconds": 0.0024675409658811986
+          "seconds": 0.0018049589125439525
         },
         {
           "event": "epoch",
           "epoch": 3,
           "loss": 2.219925284385681,
           "samples": 1024,
-          "seconds": 0.011080458003561944,
-          "samples_per_second": 92414.95249301275,
+          "seconds": 0.0067856250097975135,
+          "samples_per_second": 150907.2485616998,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/full/checkpoint.pt",
           "next_epoch": 3,
-          "seconds": 0.002292417048010975
+          "seconds": 0.0016980419168248773
         },
         {
           "event": "epoch",
           "epoch": 4,
           "loss": 2.17936909198761,
           "samples": 1024,
-          "seconds": 0.01088920800248161,
-          "samples_per_second": 94038.0604141857,
+          "seconds": 0.006815499975346029,
+          "samples_per_second": 150245.7638770677,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/full/checkpoint.pt",
           "next_epoch": 4,
-          "seconds": 0.0022705000010319054
+          "seconds": 0.0016136670019477606
         }
       ]
     },
@@ -147,30 +155,34 @@
           "epoch": 1,
           "loss": 2.3205251693725586,
           "samples": 1024,
-          "seconds": 0.032968749990686774,
-          "samples_per_second": 31059.715648584377,
+          "seconds": 0.02041204203851521,
+          "samples_per_second": 50166.465367248806,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/split/checkpoint.pt",
           "next_epoch": 1,
-          "seconds": 0.00311541702831164
+          "seconds": 0.002506708027794957
         },
         {
           "event": "epoch",
           "epoch": 2,
           "loss": 2.272819399833679,
           "samples": 1024,
-          "seconds": 0.012838875001762062,
-          "samples_per_second": 79757.76692735632,
+          "seconds": 0.005913499975576997,
+          "samples_per_second": 173163.1020933733,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/split/checkpoint.pt",
           "next_epoch": 2,
-          "seconds": 0.0026279580197297037
+          "seconds": 0.0016217910451814532
         }
       ]
     },
@@ -209,30 +221,34 @@
           "epoch": 3,
           "loss": 2.219925284385681,
           "samples": 1024,
-          "seconds": 0.028955249988939613,
-          "samples_per_second": 35364.91656577476,
+          "seconds": 0.019851208082400262,
+          "samples_per_second": 51583.7623458222,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/split/checkpoint.pt",
           "next_epoch": 3,
-          "seconds": 0.003532457980327308
+          "seconds": 0.0020598750561475754
         },
         {
           "event": "epoch",
           "epoch": 4,
           "loss": 2.17936909198761,
           "samples": 1024,
-          "seconds": 0.01250658300705254,
-          "samples_per_second": 81876.88031355647,
+          "seconds": 0.006461167009547353,
+          "samples_per_second": 158485.30126011057,
+          "attempted_update_windows": 8,
+          "applied_optimizer_steps": 8,
           "optimizer_steps": 8
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/split/checkpoint.pt",
           "next_epoch": 4,
-          "seconds": 0.00226491701323539
+          "seconds": 0.001563791069202125
         }
       ]
     },
@@ -255,15 +271,17 @@
           "epoch": 1,
           "loss": 2.326637625694275,
           "samples": 1024,
-          "seconds": 0.05928708298597485,
-          "samples_per_second": 17271.89040894862,
+          "seconds": 0.02475491596851498,
+          "samples_per_second": 41365.521147492254,
+          "attempted_update_windows": 4,
+          "applied_optimizer_steps": 4,
           "optimizer_steps": 4
         },
         {
           "event": "checkpoint",
           "path": "<temporary>/two-agents/checkpoint.pt",
           "next_epoch": 1,
-          "seconds": 0.005259333993308246
+          "seconds": 0.0029786659870296717
         }
       ]
     },

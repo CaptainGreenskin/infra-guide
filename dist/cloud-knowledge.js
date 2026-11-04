@@ -105,7 +105,7 @@ function cloudKnowledgePage(m){
  $('#app').innerHTML='<main class="doc-layout knowledge-layout" id="main" tabindex="-1">'+sidebar(m.id)+'<article class="article knowledge-article">'+breadcrumbs(m)+'<div class="eyebrow">'+(m.id==='foundation'?'PREREQUISITES · 前置基础':m.n+' / CLOUD INFRA')+'</div><h1>'+m.name+'</h1>'+cloudMobileContents(m)+body+cloudKnowledgeReferences(m)+(typeof resourceRecommendations==='function'?resourceRecommendations(m.id):'')+'<section class="knowledge-examples" id="examples"><h2>机制详解与具体案例</h2>'+cloudFieldLabs(m.id)+list.map(chapterLink).join('')+'</section><div class="knowledge-exit"><a href="/interview/cloud/">对照岗位要求与学习深度 →</a><a href="/resources/#cloud">文档、课程与视频 →</a></div></article><aside class="toc"><div class="toc-title">本领域知识点</div>'+cloudModuleTOC(m)+'<a href="/module/'+m.id+'/#examples">机制详解与案例</a><div class="toc-note">前置基础与九个实际领域分别组织。</div></aside></main>'+footer();
  initCloudMechanics();
 }
-function cloudArticleKnowledge(a){const domain=cloudKnowledgeDomain(a.module);if(!domain)return '';const points=domain.points.filter(point=>point[4].includes(a.id)).slice(0,3);if(!points.length)return '';return '<section class="chapter-knowledge" id="core-knowledge"><h2>核心知识</h2>'+points.map(point=>'<h3>'+point[1]+'</h3><p>'+point[2]+'</p>').join('')+'<a class="inline-link" href="/module/'+a.module+'/">查看本领域的完整系统知识 →</a></section><div class="knowledge-divider">机制、推导与案例</div>';}
+function cloudArticleKnowledge(a){const domain=cloudKnowledgeDomain(a.module);if(!domain)return '';return '<p class="article-context-link" id="core-knowledge"><a href="/module/'+a.module+'/">本领域系统知识：'+moduleFor(a.module).name+' →</a></p>';}
 const cloudKnowledgeTitles={
  'cloud-overview':'云计算架构：服务模型、资源与责任边界',
  'cloud-compute':'计算资源：虚拟化、规格与容量预算',

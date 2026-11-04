@@ -75,3 +75,6 @@
 
 .github-link{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--muted);font-size:13px;font-weight:600;min-height:32px}.github-link:hover{color:var(--blue)}
 @media(max-width:650px){.header-actions{gap:8px}.github-link{font-size:12px}.header-inner{padding-left:16px;padding-right:16px}}
+
+/* Keep the first screen focused on the lesson; the full field map remains one link away. */
+.article-context-link{margin:18px 0 26px;padding:10px 0;border-top:1px solid var(--line);font-size:13px;color:var(--blue);line-height:1.8}

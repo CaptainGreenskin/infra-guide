@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="666" viewBox="0 0 960 666" role="img" aria-labelledby="title desc">
+  <title id="title">从十二个提示词元开始，输出与 KV 缓存怎样逐步变化</title>
+  <desc id="desc">普通自回归推理在预填充十二个输入后选择 A，缓存十二个位置。下一次输入 A，选择 B，缓存十三个位置。再输入 B，选择 C，缓存十四个位置，其中还没有 C。每位置所有层逻辑 KV 共一百二十八 KiB。三步合计分别为一千五百三十六、一千六百六十四、一千七百九十二 KiB。</desc>
+  <defs>
+    <linearGradient id="paper" x2="0.8" y2="1"><stop stop-color="#fcfeff"/><stop offset="1" stop-color="#f0f8f9"/></linearGradient>
+    <pattern id="slots" width="6" height="21" patternUnits="userSpaceOnUse"><rect width="5" height="21" rx="1" fill="#237d87"/></pattern>
+    <marker id="tie" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L6 4 L1 7" fill="none" stroke="#436a7b" stroke-width="1.6"/></marker>
+    <style>
+      text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#183444;font-size:20px}
+      .head{font-size:31px;font-weight:700}.small{font-size:18px}.label{font-size:18px;font-weight:650;fill:#3c5b6c}.bold{font-weight:650}.accent{fill:#a24617;font-weight:700}.kv{fill:#126973;font-weight:650}
+    </style>
+  </defs>
+  <rect x="1" y="1" width="958" height="664" rx="20" fill="url(#paper)" stroke="#b8ced5"/>
+  <text x="36" y="50" class="head">生成了一个词元，缓存就一定多一格吗？</text>
+  <text x="37" y="85">普通自回归模型 · 单个请求 · 采样后的词元在下次输入时才写入缓存</text>
+  <rect x="32" y="108" width="896" height="84" rx="10" fill="#e0f1f2"/>
+  <text x="49" y="139" class="bold">32 层　｜　32 个查询头　｜　8 个 KV 头　｜　头维 128　｜　每个元素 2 字节</text>
+  <text x="49" y="170" class="small">每位置逻辑容量 = 2 份（K、V）× 32 层 × 8 个 KV 头 × 128 维 × 2 字节 = 128 KiB</text>
+  <path d="M45 244 H915" stroke="#a8c2cc" stroke-width="1.5"/>
+  <text x="49" y="230" class="label">执行阶段</text><text x="224" y="230" class="label">本次输入</text><text x="374" y="230" class="label">选出的输出</text><text x="535" y="230" class="label">结束时的缓存内容</text><text x="796" y="230" class="label">逻辑容量</text>
+  <rect x="37" y="249" width="886" height="73" rx="7" fill="#edf5f8"/>
+  <rect x="37" y="334" width="886" height="73" rx="7" fill="#f7fafb"/>
+  <rect x="37" y="419" width="886" height="73" rx="7" fill="#edf5f8"/>
+  <text x="49" y="292" class="bold">① 预填充</text><text x="224" y="292">12 个提示词元</text><text x="404" y="292" class="accent">A</text>
+  <rect x="535" y="270" width="72" height="20" fill="url(#slots)"/><text x="535" y="312" class="small">提示 · 12 个位置</text><text x="796" y="292" class="kv">1536 KiB</text>
+  <text x="49" y="377" class="bold">② 解码第 1 步</text><text x="250" y="377" class="accent">A</text><text x="404" y="377" class="accent">B</text>
+  <rect x="535" y="355" width="72" height="20" fill="url(#slots)"/><rect x="610" y="355" width="13" height="20" rx="2" fill="#b45124"/><text x="535" y="397" class="small">提示＋A · 13 个位置</text><text x="796" y="377" class="kv">1664 KiB</text>
+  <text x="49" y="462" class="bold">③ 解码第 2 步</text><text x="250" y="462" class="accent">B</text><text x="404" y="462" class="accent">C</text>
+  <rect x="535" y="440" width="72" height="20" fill="url(#slots)"/><rect x="610" y="440" width="13" height="20" rx="2" fill="#b45124"/><rect x="626" y="440" width="13" height="20" rx="2" fill="#b45124"/><text x="535" y="482" class="small">提示＋A＋B · 14 个位置</text><text x="796" y="462" class="kv">1792 KiB</text>
+  <g fill="none" stroke="#436a7b" stroke-width="1.8" marker-end="url(#tie)">
+    <path d="M412 299 V322 Q412 328 406 328 H263 Q256 328 256 336 V351"/>
+    <path d="M412 384 V407 Q412 413 406 413 H263 Q256 413 256 421 V436"/>
+  </g>
+  <rect x="37" y="517" width="886" height="65" rx="9" fill="#fff1df" stroke="#e4c6a7"/>
+  <text x="53" y="544" class="bold">C 已被选出，却还没有自己的 K、V。</text>
+  <text x="53" y="570" class="small">此刻停止，缓存停在 14 个位置。若再把 C 送入模型，才会追加第 15 个位置。</text>
+  <text x="38" y="614" class="small">各行数字统计全部层已处理输入的逻辑 KV，不含预留块、元数据、共享前缀或临时空间。</text>
+  <text x="38" y="643" class="small">这是逐词元教学算例；颜色标识提示和已送回模型的输出词元。</text>
+</svg>

@@ -1,0 +1,51 @@
+{
+  "torch_version": "2.5.1",
+  "python_version": "3.12.13",
+  "device": "cpu",
+  "parameter_dtype": "torch.float32",
+  "optimizer": "AdamW(lr=0.125, weight_decay=0, fused=False)",
+  "scaler": "torch.amp.GradScaler('cpu', init_scale=8.0, growth_interval=20)",
+  "script": "optimizer_step_probe.py",
+  "script_sha256": "789c8074256f10ae80e9ab30851c59b615954b79a1bd726f3eb50ad1f32d6edf",
+  "attempted_windows": 2,
+  "applied_optimizer_calls": 1,
+  "windows": [
+    {
+      "window": "finite",
+      "before": {
+        "parameter": 1.0,
+        "adam_step": 0,
+        "post_steps": 0,
+        "scale": 8.0
+      },
+      "scaled_gradient": 16.0,
+      "scaler_step_return": null,
+      "after": {
+        "parameter": 0.875,
+        "adam_step": 1,
+        "post_steps": 1,
+        "scale": 8.0
+      }
+    },
+    {
+      "window": "infinite",
+      "before": {
+        "parameter": 0.875,
+        "adam_step": 1,
+        "post_steps": 1,
+        "scale": 8.0
+      },
+      "scaled_gradient": "+inf",
+      "scaler_step_return": null,
+      "after": {
+        "parameter": 0.875,
+        "adam_step": 1,
+        "post_steps": 1,
+        "scale": 4.0
+      }
+    }
+  ],
+  "assertions": "PASS",
+  "scope": "单进程CPU；直接构造FP32有限/inf梯度。未运行CUDA FP16、NCCL或DDP，未使用autocast。",
+  "interpretation": "该默认AdamW路径每次完成底层optimizer.step才触发post hook。该计数不证明所有参数数值都变、全局训练有效或模型质量提高。"
+}

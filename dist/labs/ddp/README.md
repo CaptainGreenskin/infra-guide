@@ -40,7 +40,18 @@ torchrun --standalone --nproc-per-node=2 train_ddp.py \
 ```
 
 预期：一条 rank 0 的 start 记录，world_size=2、effective_batch=128；每个 epoch 后出现 epoch 和 checkpoint 记录。
-epoch.samples=1024，optimizer_steps=8。loss 的具体数值以实际运行记录为准。
+epoch.samples=1024，attempted_update_windows=8、applied_optimizer_steps=8。
+前者是走到累积窗口末的次数，后者是本轮实际完成 AdamW.step 调用的次数；optimizer_steps 保留为后者的兼容别名。
+程序固定 fused=False，用优化器 post hook 计数，并检查各 rank 的两项计数一致。
+计数不能证明每个参数都变化或任务质量提高，loss 的具体数值以实际运行记录为准。
+
+FP16 的 GradScaler 可因非有限梯度跳过 step。独立探针 `python optimizer_step_probe.py`
+在单进程 CPU 上直接构造一次有限梯度和一次 inf 梯度，预期尝试2次、实际调用1次；
+它不执行 CUDA FP16、autocast 或 DDP，不把 CPU 结果当成 GPU 验证。
+两次 scaler.step 都可能返回 None，不能用返回值区分跳步。
+
+两项日志均是每轮计数。恢复后从本轮重新计数，不用 epoch 数倒推历史实际更新数；
+因此无需改变旧检查点格式。若业务需要跨恢复累计值，应另外保存有版本的累计记录。
 
 ## 2. 单卡与单机两卡
 

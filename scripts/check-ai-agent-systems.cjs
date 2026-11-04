@@ -52,6 +52,6 @@ for(const [key,count]of [['ai',5],['agent',4]]){
  assert.equal((part.match(/class="stage-gate"/g)||[]).length,count);
 }
 for(const id of ['distributed-training','model-serving','durable-workflows','agent-evaluation'])assert(html('article/'+id).includes('labs/ai-agent-systems/'));
-assert(html('article/inference-performance').includes('不能作为服务端TTFT'));
+assert(/不能作为服务端\s*TTFT/.test(html('article/inference-performance')));
 assert(html('labs').includes('AI / AGENT · 原理实战'));
 console.log('PASS: 32 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');

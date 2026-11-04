@@ -1,0 +1,58 @@
+// Verify the repaired evidence boundaries, independent queue arithmetic and source provenance.
+const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert'),crypto=require('crypto');
+const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex');
+const ctx={};vm.createContext(ctx);
+for(const [,file]of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(read('dist/'+file),ctx,{filename:file});
+const data=vm.runInContext('({articles,modules,depthReviewEdits})',ctx);
+const audit=JSON.parse(read('docs/EDITORIAL_AUDIT_2026-11-04.json'));
+assert.equal(audit.chapters.length,63);
+assert.deepEqual(audit.chapters.map(x=>x.id).sort(),data.articles.filter(x=>['cloud','ai','agent'].includes(data.modules.find(m=>m.id===x.module).track)).map(x=>x.id).sort());
+assert.equal(audit.chapters.filter(x=>x.decision==='keep').length,43);
+assert.equal(audit.chapters.filter(x=>x.decision==='local').length,16);
+assert.equal(audit.chapters.filter(x=>x.decision==='deep').length,4);
+assert(audit.chapters.every(x=>['accepted','rechecked'].includes(x.status)&&x.observation&&x.recheck));
+assert.deepEqual(data.depthReviewEdits.map(x=>x.id).sort(),audit.chapters.filter(x=>x.decision!=='keep').map(x=>x.id).sort());
+
+const report=JSON.parse(read('dist/labs/incident-model/report.json'));
+assert.equal(report.source_sha256,hash('dist/labs/incident-model/incident_model.py'));
+assert.deepEqual(report.input,{requests:1000,arrival_interval_ms:10,connections:4,fixed_post_release_work_ms:10,percentile:'nearest-rank: ceil(0.95 * 1000)'});
+const runs=report.runs;
+for(let i=0;i<1000;i++){
+ // Four staggered connections serve each group of four in 50ms, while arrivals span 40ms.
+ // Each successive group waits 10ms longer. This formula is independent of the heap implementation.
+ const expectedWait=Math.floor(i/4)*10;
+ for(const key of ['holding_external_wait','competing_slow_sql']){
+  const r=runs[key].requests[i];assert.equal(r.pool_wait_ms,expectedWait);
+  assert.equal(r.latency_ms,60+expectedWait);assert.equal(r.arrival_ms,i*10);
+ }
+ assert.equal(runs.fixed.requests[i].latency_ms,60);
+ assert.equal(runs.fixed.requests[i].pool_wait_ms,0);
+}
+assert.equal(runs.holding_external_wait.requests[949].latency_ms,2430);
+assert.equal(runs.holding_external_wait.requests[200].latency_ms,560);
+assert.equal(runs.holding_external_wait.request_201.sql_ms,20);
+assert.equal(runs.competing_slow_sql.request_201.sql_ms,50);
+assert.deepEqual(runs.holding_external_wait.at_10000_ms,{completed:796,queued:199,holding:4,after_release:1});
+for(const run of Object.values(runs))assert.equal(Object.values(run.at_10000_ms).reduce((a,b)=>a+b,0),1000);
+
+const probe=JSON.parse(read('dist/labs/ddp/optimizer-step-validation.json'));
+assert.equal(probe.script_sha256,hash('dist/labs/ddp/optimizer_step_probe.py'));
+assert.equal(probe.attempted_windows,2);assert.equal(probe.applied_optimizer_calls,1);
+assert.equal(probe.windows[1].before.adam_step,probe.windows[1].after.adam_step);
+assert.equal(probe.windows[1].before.parameter,probe.windows[1].after.parameter);
+assert.equal(probe.windows[0].scaler_step_return,null);assert.equal(probe.windows[1].scaler_step_return,null);
+assert.equal(probe.windows[1].after.scale,4);
+const ddp=JSON.parse(read('dist/labs/ddp/validation.json'));
+assert.equal(ddp.train_sha256,hash('dist/labs/ddp/train_ddp.py'));
+for(const run of ddp.runs)for(const record of run.records||[])if(record.event==='epoch'){
+ assert.equal(record.attempted_update_windows,record.applied_optimizer_steps);
+ assert.equal(record.optimizer_steps,record.applied_optimizer_steps);
+}
+const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+for(const [id,file]of [['ddp-code','ddp/train_ddp.py'],['incident','incident-model/incident_model.py']]){
+ const a=data.articles.find(x=>x.id===id),all=a.sections.map(x=>x[1]).join('');
+ assert([...all.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(m=>decode(m[1]).trim()===read('dist/labs/'+file).trim()),id+': complete source differs');
+}
+console.log('PASS: full 63-chapter audit, 20 repairs, independent 1000-request queue arithmetic, actual optimizer-call counter probe and exact inline/source/evidence provenance.');

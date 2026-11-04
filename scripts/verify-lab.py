@@ -46,7 +46,9 @@ with tempfile.TemporaryDirectory(prefix='cloudinfra-ddp-') as temp_root:
                                                '--resume='+str(split/'checkpoint.pt')])
     epochs = [r for r in full_records if r['event'] == 'epoch']
     assert len(epochs) == 4
-    assert all(r['samples'] == 1024 and r['optimizer_steps'] == 8 and math.isfinite(r['loss']) for r in epochs)
+    assert all(r['samples'] == 1024 and r['attempted_update_windows'] == 8
+               and r['applied_optimizer_steps'] == r['optimizer_steps'] == 8
+               and math.isfinite(r['loss']) for r in epochs)
     assert epochs[-1]['loss'] < epochs[0]['loss']
     assert next(r for r in full_records if r['event']=='start')['effective_batch'] == 128
     assert next(r for r in resumed if r['event']=='start')['start_epoch'] == 2
@@ -74,7 +76,8 @@ with tempfile.TemporaryDirectory(prefix='cloudinfra-ddp-') as temp_root:
                          if line.startswith('{')]
         assert next(r for r in agent_records if r['event']=='start')['world_size'] == 4
         epoch4 = next(r for r in agent_records if r['event']=='epoch')
-        assert epoch4['samples'] == 1024 and epoch4['optimizer_steps'] == 4
+        assert epoch4['samples'] == 1024 and epoch4['attempted_update_windows'] == 4
+        assert epoch4['applied_optimizer_steps'] == epoch4['optimizer_steps'] == 4
         for record in agent_records:
             if 'path' in record:
                 record['path'] = record['path'].replace(temp_root, '<temporary>')
