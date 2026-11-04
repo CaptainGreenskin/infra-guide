@@ -30,7 +30,7 @@ function companyStudyGuide() {
   ['沙箱隔离与性能','txSandbox',false,readLink('agent-security','定位执行边界'),'需要真实沙箱的冷启动、资源回收与并发隔离对照。']
  ];
  const practiced = groups.filter(group => group[2]).length;
- return `<section class="company-sample"><h2>先找与你要投的岗位相近的一行</h2>
+ return `<section class="company-sample"><h2>先找与你要投的岗位相近的一行</h2><p class="path-links"><a href="/interview/experiences/">看候选人公开面经与题目转述 →</a></p>
  <p>本次选取腾讯、阿里、字节的 ${Object.keys(employerSources).length} 份公开岗位说明，按三条 Infra 主线归纳为 ${groups.length} 组能力。其中 ${practiced} 组已有独立作答任务和可检查的过关条件，其余 ${groups.length-practiced} 组有学习材料，仍需目标环境验证。统计单位是下表的能力组；实际考题、出现频率和面试通过率不在这个统计中。核对日期为 2026 年 11 月 4 日。</p>
  <section class="role-row"><span>01 / 腾讯</span><h3>先分清 SRE、推理框架和沙箱方向</h3><p>SRE 先练 Linux、SQL 和故障恢复；推理框架先读模型时序与并行，再做性能归因；沙箱岗位要从控制面指标定位数据面的资源问题。</p>
  <div class="path-links">${unitLink('database','SRE 首题')}${readLink('model-serving','推理首章')}${readLink('agent-security','沙箱权限边界')}</div><p class="evidence-note">${roleSource('txSre')} · ${roleSource('txInference')} · ${roleSource('txSandbox')}</p></section>

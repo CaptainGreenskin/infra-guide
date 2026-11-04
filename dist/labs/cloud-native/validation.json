@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "python": "3.9.6",
+  "sqlite": "3.51.0",
+  "scope": "Local HTTP/SIGTERM, SQLite transactions, real subprocess exit, arithmetic examples. No cloud queue, power-loss durability, Docker or Kubernetes run.",
+  "checks": [
+    {
+      "case": "local_http_endpoints_and_sigterm",
+      "status": "passed"
+    },
+    {
+      "case": "commit_then_exit_before_response",
+      "exit_code": 23
+    },
+    {
+      "case": "redelivery_after_crash",
+      "reports": 1,
+      "inbox": 1
+    },
+    {
+      "case": "same_id_different_intent",
+      "result": "rejected"
+    },
+    {
+      "case": "new_id_new_business_action",
+      "result": "saved"
+    },
+    {
+      "case": "arithmetic_against_hand_calculation",
+      "values": {
+        "hpa_base_200m": 6,
+        "hpa_base_400m": 3,
+        "simplified_downscale_window_max": 6,
+        "backlog_after_75s": 4500,
+        "drain_seconds_at_240_per_s": 75.0,
+        "mean_concurrency_150_per_s_200ms": 30.0,
+        "execution_GB_seconds": 10000.0,
+        "provisioned_GB_seconds": 21600.0
+      }
+    },
+    {
+      "case": "invalid_request_denominator",
+      "result": "rejected"
+    }
+  ],
+  "source_sha256": {
+    "app.py": "fef1698fa21a9e76fa3f5a457dadb6ef91f33b8d6e791d09cca11fc7f7d799e3",
+    "capacity.py": "03156f59b7a8de9a9aababe47e42fec6ea0712a747d349de82d188fc26c457a0",
+    "event_worker.py": "bc27e6d18d30f8c2abd20cd97fa8a48cc3ec25fe9b4473dce52f4ab352d8514c",
+    "network-policy-example.yaml": "bf364b1d3724a57be4e29bcf296c71ae450269911a052be88707ff3dbb41db05",
+    "reports.yaml": "944d0dbf79adcd95773d5a7cc7e162656dfe52d356b62a5e2b31438bc8abe945",
+    "sample-event.json": "c043a26c63a3e148b39af920330555f0fa6c769b8a18af4500f9d904bafb780c",
+    "schema-check.json": "c4adbfac7ab03096075e0623845621d23258d93d3cda3e1ddab46d300c8d7b96",
+    "storage-example.yaml": "91b3b06b794bd34e20c7fc6d52657183068e54dc850c82f479738de23c9cb4e6",
+    "verify.py": "e6ecbe5160a833d18eb04666811c98e5b5f3b42475c1cad0049344cdeb241b38"
+  }
+}

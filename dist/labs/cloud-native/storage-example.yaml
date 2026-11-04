@@ -1,0 +1,10 @@
+# Replace 'standard' with an existing, suitable StorageClass in your test cluster.
+# This claim is not mounted by reports.yaml. Use a separate consumer to test binding.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: reports-data, namespace: infra-lab}
+spec:
+  storageClassName: standard
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 10Gi}

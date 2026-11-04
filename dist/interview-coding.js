@@ -1,4 +1,4 @@
-function codingInterviewWorkshop() {
+function dependencyCodingWorkshop() {
   return `<details open class="interview-extra"><summary>现场编码进阶 · 作业依赖图与可运行顺序</summary>
   <p>面试总览中的作业高峰题按起止时间排序。这一题面对尚未运行的作业，只知道谁必须先完成。本站原创练习，建议先用 20 分钟独立编码，再展开自查。</p>
   <h3>题面与接口</h3>
@@ -26,4 +26,8 @@ function codingInterviewWorkshop() {
   ])}
   <p>每项 0–2 分，共 8 分。对失分项写下最小反例，修正后再不看答案复述一次。</p></details>
   </details>`;
+}
+
+function codingInterviewWorkshop() {
+ return '<section id="max-stack" class="quality-section"><h2>数据结构热身：常数时间取最大值的栈</h2><p>题型来自公开腾讯云后端面经，下面接口与测试由本站编写。实现 push、pop、maximum；本站约定只接受整数，空栈操作抛 IndexError。先用十分钟独立写，再展开思路。</p><details><summary>检查不变量、复杂度和重复最大值</summary><p>每一层保存当前值与截至这一层的最大值。push 同时保存二者；pop 移除一层；maximum 查看栈顶保存的最大值。重复最大值分别占层，因此弹出一次不会错误地把另一个最大值移除。</p><p>三种操作均为 O(1)，其中动态数组 push 按均摊分析；额外空间 O(n)。若面试要求严格最坏 O(1)，可讨论链式节点与内存分配模型，不能把数组扩容的最坏代价忽略。</p><p><a href="/labs/interview-coding/max_stack.py" download>下载完整实现与边界自测 ↓</a>。运行 <code>python3 max_stack.py</code>。脚本检查重复最大值、负数、空栈及非法输入。</p></details><p class="path-links"><a href="/interview/experiences/#sample-t3">查看原始岗位与面经出处 →</a></p></section>'+dependencyCodingWorkshop();
 }

@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "schema_version": "Kubernetes v1.34.0",
+  "schema_url": "https://raw.githubusercontent.com/kubernetes/kubernetes/v1.34.0/api/openapi-spec/swagger.json",
+  "schema_sha256": "d3b0cdc2fda15c753206d25ab459dc7c12df64e2fd652b6809687471ea751c37",
+  "schema_adapter": "int-or-string format accepts integer or string, as Kubernetes does",
+  "scope": "OpenAPI structural validation and sample cross-object relationships only. No cluster, admission, image pull, metrics, CNI or CSI execution.",
+  "objects": [
+    {
+      "file": "network-policy-example.yaml",
+      "kind": "NetworkPolicy",
+      "name": "reports-ingress"
+    },
+    {
+      "file": "reports.yaml",
+      "kind": "Namespace",
+      "name": "infra-lab"
+    },
+    {
+      "file": "reports.yaml",
+      "kind": "Deployment",
+      "name": "reports"
+    },
+    {
+      "file": "reports.yaml",
+      "kind": "Service",
+      "name": "reports"
+    },
+    {
+      "file": "reports.yaml",
+      "kind": "HorizontalPodAutoscaler",
+      "name": "reports"
+    },
+    {
+      "file": "reports.yaml",
+      "kind": "PodDisruptionBudget",
+      "name": "reports"
+    },
+    {
+      "file": "storage-example.yaml",
+      "kind": "PersistentVolumeClaim",
+      "name": "reports-data"
+    }
+  ]
+}
