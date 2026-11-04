@@ -38,7 +38,7 @@ const recoveryPractice=infraReadableHTML(
 
 {
  const a=articles.find(a=>a.id==='resilience'),old=a.sections.slice();
- a.sections=[['恢复合同：材料、业务、权威与消费者',recoveryContract],old[0],old[1],old[2],['共同恢复点：连续提交与对象版本',recoveryCut],['恢复关键路径：阶段预算与数据规模',old[3][1]+recoveryCriticalPath],['写入接管与效果：旧写者、回执和重新消费',old[4][1]+recoveryEffects],old[5],['实战：完整前缀与恢复后的外部效果',recoveryPractice],old[6]];
+ a.sections=[['恢复条件：材料、业务、权威与消费者',recoveryContract],old[0],old[1],old[2],['共同恢复点：连续提交与对象版本',recoveryCut],['恢复关键路径：阶段预算与数据规模',old[3][1]+recoveryCriticalPath],['写入接管与效果：旧写者、回执和重新消费',old[4][1]+recoveryEffects],old[5],['实战：完整前缀与恢复后的外部效果',recoveryPractice],old[6]];
  a.refs=nitRefs([...a.refs,'v27PITR']);a.minutes=65;a.updated='2026.11.05';
  a.objectives=['定义故障假设、业务恢复点与用户恢复终点','按跨存储依赖、关键路径和旧写者推导恢复条件','运行备份/对象与HTTP回执实验，并设计目标环境演练'];
 }

@@ -313,8 +313,8 @@
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Rewrote complete inference bundle, five gates, real CPU Safetensors/token vocabulary counterexample, conditional publication and rollback; separated task-slice/canary fixed arithmetic from actual model fixture.",
-      "reviewed_content_sha256": "d7d99f1d0456c6a4971a17415baa842395ca2864eb2dd2d6c12bdb978aad2b40"
+      "findings": "Rewrote complete inference bundle, five gates, real CPU Safetensors/token vocabulary counterexample, conditional publication and rollback; separated task-slice/canary fixed arithmetic from actual model fixture. 第40轮收尾复读中文措辞，将机械的“合同”改为该处具体的资源保证、输出约定、验收或恢复条件；对照修改前后，数值序列与全部代码块一致，不另计实质篇数。",
+      "reviewed_content_sha256": "0797d211e8393056c2534b83ea85bb1077a9b341270ce7b09348bff8bf4e5a6b"
     },
     {
       "id": "training-lab",
@@ -411,8 +411,8 @@
       "figures": 2,
       "review": "substantial_v25",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved independent SQLite oracle and negative probes; added class/grader calibration, task/trial/attempt units, Wilson assumptions and paired exact comparison using explicitly synthetic outcomes.",
-      "reviewed_content_sha256": "e4ebf69f8cd121fe506d1d185a34d2bec25e69514cbbd60adfe3e50cb08a6e66"
+      "findings": "Preserved independent SQLite oracle and negative probes; added class/grader calibration, task/trial/attempt units, Wilson assumptions and paired exact comparison using explicitly synthetic outcomes. 第40轮收尾复读中文措辞，将机械的“合同”改为该处具体的资源保证、输出约定、验收或恢复条件；对照修改前后，数值序列与全部代码块一致，不另计实质篇数。",
+      "reviewed_content_sha256": "df490cfb7d0e7572f07b988322d5c84a6b0172742854950f9ee4990750dd9f87"
     },
     {
       "id": "kairo-practice",
@@ -449,8 +449,8 @@
       "figures": 3,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved delivery/ACL oracle and exact source; added actual Chinese FTS5/BM25, declared-ranker RRF, independent graded nDCG and actual stale-index/reindex; knowledge before practice.",
-      "reviewed_content_sha256": "fad91c5f6ec0966eb9ec52d1c89496f6f29fe8605d82cfa5b1e90a0e80a42a95"
+      "findings": "Preserved delivery/ACL oracle and exact source; added actual Chinese FTS5/BM25, declared-ranker RRF, independent graded nDCG and actual stale-index/reindex; knowledge before practice. 第40轮收尾复读中文措辞，将机械的“合同”改为该处具体的资源保证、输出约定、验收或恢复条件；对照修改前后，数值序列与全部代码块一致，不另计实质篇数。",
+      "reviewed_content_sha256": "acb03cef66dc60b90a2b110dffb1cc0c96553ecca37c81e22a5b49d8ec3dc6e2"
     },
     {
       "id": "agent-observability",
@@ -496,9 +496,9 @@
       "figures": 3,
       "review": "substantial_v28",
       "reviewed_at": "2026-11-05",
-      "findings": "CPU seconds, mix sensitivity, Little law, connection bound and open/closed load exercise consistent. Title promises virtualization but no real hypervisor/vCPU/memory/device mechanism section; add systematic virtualization contract before sizing cases, with official sources and target-only commands.",
+      "findings": "CPU seconds, mix sensitivity, Little law, connection bound and open/closed load exercise consistent. Title promises virtualization but no real hypervisor/vCPU/memory/device mechanism section; add systematic virtualization contract before sizing cases, with official sources and target-only commands. 第40轮收尾复读中文措辞，将机械的“合同”改为该处具体的资源保证、输出约定、验收或恢复条件；对照修改前后，数值序列与全部代码块一致，不另计实质篇数。",
       "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "40f2941b96ed7f7a13954a5b3af50f1e639c2411ef5b9745c63e35e77da757ec"
+      "reviewed_content_sha256": "c773e249191b85e712d17c53daa914c1d5ecba4be0f52708a12a9cb1fbb61558"
     },
     {
       "id": "vpc-network",
@@ -771,8 +771,8 @@
       "figures": 2,
       "review": "substantial_v27",
       "reviewed_at": "2026-11-05",
-      "findings": "Preserved fault-domain/RPO/RTO derivations; added actual SQLite backup/log/object complete-prefix and HTTP restored-outbox/generation receipts, separating row presence, readable reports and recovery age.",
-      "reviewed_content_sha256": "018be4acac5507b739396c5317b9933d2bda01b4c55ebb7f96f48c6c26315220"
+      "findings": "Preserved fault-domain/RPO/RTO derivations; added actual SQLite backup/log/object complete-prefix and HTTP restored-outbox/generation receipts, separating row presence, readable reports and recovery age. 第40轮收尾复读中文措辞，将机械的“合同”改为该处具体的资源保证、输出约定、验收或恢复条件；对照修改前后，数值序列与全部代码块一致，不另计实质篇数。",
+      "reviewed_content_sha256": "02ae9bbe8214a7ce099e25ccb61fdbfb7deff56e86d2325d54f95bd907e6dbf9"
     },
     {
       "id": "linux-resource",
@@ -863,8 +863,8 @@
       "title": "虚拟机、Hypervisor 与容器",
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
-      "reviewed_content_sha256": "edc45ccce5ae1e831dce3fa785297d4d7072fe5d696508f8a3f6acc22d543516",
-      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+      "reviewed_content_sha256": "a16d241d3d39acc2d62d0138ea2bccccbc4013954ae7d00d1a76bd8c1e96905a",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations. 第40轮复读与正文共用的资源/输出措辞，改为具体约定；数值和代码未变。"
     },
     {
       "id": "cpu-memory-placement",
@@ -872,8 +872,8 @@
       "title": "vCPU、内存与 NUMA",
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
-      "reviewed_content_sha256": "6cbebc56ccc13dc8baea9fa61ec13f22e3fc11f36d17f4d3144f524d545389be",
-      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations."
+      "reviewed_content_sha256": "0709697244699fe14a85dbc0321ca28581e8852665b5d335d7b90ade4e652b3d",
+      "findings": "Service responsibility, lifecycle and quota/placement distinctions checked. VM/vCPU/memory/device and credit bridge expanded with official sources; declared models separated from local CPU observations. 第40轮复读与正文共用的资源/输出措辞，改为具体约定；数值和代码未变。"
     },
     {
       "id": "instance-lifecycle",
@@ -1520,8 +1520,8 @@
       "title": "训练平台：作业契约与可加载产物",
       "review": "fresh_review_v29",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
-      "reviewed_content_sha256": "2e1b38b2427afc74063110f15d391f03d9e7f6673670719e352e58a4067b5d44"
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。 第40轮复读与正文共用的资源/输出措辞，改为具体约定；数值和代码未变。",
+      "reviewed_content_sha256": "0648059c8d69256bf9fcfe7edad4799539dc314f2a63868ff9a2e681fe1b3e89"
     },
     {
       "id": "sv-admission",

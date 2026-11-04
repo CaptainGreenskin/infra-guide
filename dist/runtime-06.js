@@ -338,7 +338,7 @@ const evalStatsPractice=infraReadableHTML(
  const a=articles.find(a=>a.id==='agent-evaluation'),old=a.sections.slice();
  a.sections=[old[0],old[1],old[2],['指标与评分器：类别、错放行和分母',evalMetrics],['样本与区间：全对、独立性和抽样来源',evalIntervals],old[3],old[4],old[5],['版本比较：同题配对、预算和评分尺子',evalPaired],old[6],old[7],['统计实战与变化题：完整标签和独立计算',evalStatsPractice]];
  a.refs=nitRefs([...a.refs,'v25Wilson','v25McNemar']);a.minutes=65;a.updated='2026.11.05';
- a.objectives=['定义任务、试次、尝试和可判定的完成合同','验证评分器并解释类别、计数、区间和同题差异','运行环境oracle与统计夹具，区分执行证据和真实模型能力'];
+ a.objectives=['定义任务、试次、尝试和可检验的任务完成条件','验证评分器并解释类别、计数、区间和同题差异','运行环境oracle与统计夹具，区分执行证据和真实模型能力'];
 }
 {
  const d=infraDomain('agent'),p=d.points.find(p=>p.id==='ag-evaluation');
@@ -632,9 +632,9 @@ function rarLab(name,full=true){
   scope='实际HTTP/SQLite，不是真实故障切换或认证系统。代际号不是凭据；提升是可信夹具动作，代际与写入在接收方同一事务核对。';
  }else if(name==='artifact_bundle.py'){
   lead='PyTorch 2.5.1、Safetensors 0.8.0实际保存并加载CPU张量，绑定模型配置、词表和清单，再用SQLite条件切换版本指针。';
-  rows=[['r17固定合同','A→1、B→2、未知→0，门禁通过'],['r18只换词表ID','文件与shape合法；A→2、B→1，语义门禁拒绝'],['r19同时换词表与对应权重行','仍A→1、B→2，门禁通过'],['混装r19权重+r17词表','输出再次错误，需固定完整束'],['生产指针','r17/1 → r19/2 → r17/3；迟到旧发布者拒绝'],['残缺回退/篡改','缺成员不切换，摘要不符在张量读取前拒绝']];
+  rows=[['r17固定输出约定','A→1、B→2、未知→0，门禁通过'],['r18只换词表ID','文件与shape合法；A→2、B→1，语义门禁拒绝'],['r19同时换词表与对应权重行','仍A→1、B→2，门禁通过'],['混装r19权重+r17词表','输出再次错误，需固定完整束'],['生产指针','r17/1 → r19/2 → r17/3；迟到旧发布者拒绝'],['残缺回退/篡改','缺成员不切换，摘要不符在张量读取前拒绝']];
   install='python -m pip install -r requirements-model.txt\n';
-  scope='实际CPU小模型与本地指针。A/B是固定语义合同，不是LLM质量；未运行GPU、分布式路由或线上灰度。';
+  scope='实际CPU小模型与本地指针。A/B是固定输出约定，不是LLM质量；未运行GPU、分布式路由或线上灰度。';
  }else{
   const r=rarResult(name);
   lead='实际建立8条中文材料的SQLite FTS5索引，先看分词，再用BM25、声明的第二路排名、精确RRF及分级标签核对结果。';
@@ -689,7 +689,7 @@ const recoveryPractice=infraReadableHTML(
 
 {
  const a=articles.find(a=>a.id==='resilience'),old=a.sections.slice();
- a.sections=[['恢复合同：材料、业务、权威与消费者',recoveryContract],old[0],old[1],old[2],['共同恢复点：连续提交与对象版本',recoveryCut],['恢复关键路径：阶段预算与数据规模',old[3][1]+recoveryCriticalPath],['写入接管与效果：旧写者、回执和重新消费',old[4][1]+recoveryEffects],old[5],['实战：完整前缀与恢复后的外部效果',recoveryPractice],old[6]];
+ a.sections=[['恢复条件：材料、业务、权威与消费者',recoveryContract],old[0],old[1],old[2],['共同恢复点：连续提交与对象版本',recoveryCut],['恢复关键路径：阶段预算与数据规模',old[3][1]+recoveryCriticalPath],['写入接管与效果：旧写者、回执和重新消费',old[4][1]+recoveryEffects],old[5],['实战：完整前缀与恢复后的外部效果',recoveryPractice],old[6]];
  a.refs=nitRefs([...a.refs,'v27PITR']);a.minutes=65;a.updated='2026.11.05';
  a.objectives=['定义故障假设、业务恢复点与用户恢复终点','按跨存储依赖、关键路径和旧写者推导恢复条件','运行备份/对象与HTTP回执实验，并设计目标环境演练'];
 }
@@ -724,8 +724,8 @@ const artifactEvidence=infraReadableHTML(
 
 const artifactSemantics=infraReadableHTML(
  knowledgeSubhead('形状相同，词表与权重行仍可能配错')+
- para('下面r17/r18/r19只属于配套小模型。固定语义合同是A输出1、B输出2、未知输入0。r17词表A=0、B=1，embedding三行[1,2,0]；r18只把词表A/B交换，张量形状、文件摘要和加载都通过，输出却变A=2、B=1。语义门禁必须拒绝它。')+
- figure('v27-bundle-semantics','实际PyTorch/Safetensors小模型。r19把词表与对应权重行一起更新，重新满足合同；固定A/B标签不是LLM效果评估。')+
+ para('下面r17/r18/r19只属于配套小模型。固定输出约定是A输出1、B输出2、未知输入0。r17词表A=0、B=1，embedding三行[1,2,0]；r18只把词表A/B交换，张量形状、文件摘要和加载都通过，输出却变A=2、B=1。语义门禁必须拒绝它。')+
+ figure('v27-bundle-semantics','实际PyTorch/Safetensors小模型。r19把词表与对应权重行一起更新，重新满足输出约定；固定A/B标签不是LLM效果评估。')+
  para('r19将词表交换，并把权重三行变[2,1,0]，再次得到A=1、B=2。r17、r19各自都正确，但将r19权重和r17词表混装仍错误。这就是请求要固定完整束的原因：不是每个成员分别合法就可以任意组合。语言模型的词表、特殊token、聊天模板、位置配置与工具格式也需要相应的语义回归。',
  '结构最小请求可先抓出加载错误；语义回归核对输入变成哪些ID、特殊边界与输出结构；开放任务质量再用版本化数据和评分器。eval()切换部分算子的评估模式，不会把参数变成不可修改对象；生产发布必须禁止在途请求依赖的对象被偷偷原地改写。'));
 
@@ -822,7 +822,7 @@ const retrievalFreshness=infraReadableHTML(
 
 const retrievalActualPractice=infraReadableHTML(
  knowledgeSubhead('实际FTS5实战：分词、BM25、RRF与索引版本')+rarLab('chinese_fts_rrf.py')+
- knowledgeCheck('nDCG提高而Precision、Recall、RR没变，是否矛盾？','不矛盾。前三相关项数量与首个命中相同，但分级相关性的顺序变了；本例[3,1,2]变[3,2,1]。任务是否完成仍看必要证据及答案合同。')+
+ knowledgeCheck('nDCG提高而Precision、Recall、RR没变，是否矛盾？','不矛盾。前三相关项数量与首个命中相同，但分级相关性的顺序变了；本例[3,1,2]变[3,2,1]。任务是否完成仍看必要证据及答案验收条件。')+
  para('先检查raw_vocabulary是否有“恢复”，再看二元词元、SQL过滤和BM25排序；手算a-backup的1/61+1/62，最后对照重建前后的版本。保留数据与指标定义，换分词器、切分或索引时才能做可解释比较。'));
 
 {
@@ -882,7 +882,7 @@ const vmObjects=infraReadableHTML(
  '<div class="mechanism-core" id="virtualization-resource-contract">'+knowledgeSubhead('先分清交付的是机器、客户机，还是一组进程')+
  table(['计算形态','内核与可控制对象','容量与恢复仍需检查'],[
  ['裸金属','直接运行自己的主机系统，按产品提供物理设备','并不自动解决应用并发、数据恢复与跨机故障'],
- ['虚拟机VM','有自己的客户机内核，看到虚拟CPU、内存与设备','宿主调度、设备路径、数据盘与镜像/初始化合同'],
+ ['虚拟机VM','有自己的客户机内核，看到虚拟CPU、内存与设备','宿主调度、设备路径、数据盘、镜像与启动初始化流程'],
  ['普通Linux容器','共享所在主机的内核，以namespace/cgroup等组织进程','组与父级资源限制、共享内核、卷及进程生命周期']])+
  para('Hypervisor（虚拟机监控器）在客户机与宿主资源之间提供执行和隔离机制。以Linux/KVM为例，虚拟机管理程序创建VM、内存区域与vCPU，KVM和硬件辅助机制参与执行；不是把客户机每条普通指令都逐条交给用户态解释。需要处理的退出、设备与内存操作仍会产生相应成本。',
  'VM和容器可以叠放：云主机中运行容器时，容器共享的是这台VM的客户机内核。镜像里的发行版文件与用户态库，不是另一份正在运行的Linux内核。选择形态要核对内核/设备兼容、租户信任、启动频率、运维责任和实际负载，不能按“名字更轻就一定更快”排序。')+
@@ -891,11 +891,11 @@ const vmObjects=infraReadableHTML(
 const vmCpu=infraReadableHTML(
  knowledgeSubhead('vCPU数量、独占核心与持续算力不是一回事')+
  para('vCPU是客户机可见的处理单元；物理核心、硬件线程和软件工作线程是不同对象。支持SMT的物理核可提供多个硬件线程，它们共享部分执行资源。EC2的CPU选项按核心数×每核线程数得到vCPU数，具体架构和规格不同，不能把“8 vCPU”统一读成“独占8颗物理核”。',
- '超分指对共享资源作出超过某一物理供给量的虚拟分配，可利用不同负载不同时繁忙的特点；它不凭空增加执行能力。实际独占、共享、调度和供给保证以产品合同为准，不能看见VM就断言它必然超分，也不能看见专用宿主就跳过应用层限制。')+
+ '超分指对共享资源作出超过某一物理供给量的虚拟分配，可利用不同负载不同时繁忙的特点；它不凭空增加执行能力。实际独占、共享、调度和供给保证以产品规格说明和服务约定为准，不能看见VM就断言它必然超分，也不能看见专用宿主就跳过应用层限制。')+
  table(['限制位置','问题','应对照的证据'],[
  ['客户机内部','线程是否可运行，是否在等锁或I/O','进程/线程CPU时间、运行队列与等待'],
  ['容器及父cgroup','可运行但时间预算是否耗尽','cpu.max、cpu.stat增量及祖先限制'],
- ['虚拟化与资源合同','vCPU得到哪些调度与持续能力承诺','云规格/模式、可见的宿主等待线索及对照负载'],
+ ['虚拟化与资源保证','vCPU得到哪些调度与持续能力承诺','云规格/模式、可见的宿主等待线索及对照负载'],
  ['物理与程序','SMT、频率、缓存和内存带宽怎样影响每CPU秒产出','同一工作量的完成数、CPU成本与尾延迟']])+
  para('CPU时间便于记账，却不是跨架构不变的工作单位。两个环境都消耗1 CPU秒，不保证完成相同数量指令或业务请求。下文用CPU秒推导候选规格，最终仍要在目标CPU、线程布局和真实请求混合上验证。'));
 
@@ -918,7 +918,7 @@ const cpuAccountingPractice=infraReadableHTML(
  knowledgeSubhead('本机实测：等了多久，与消耗多少CPU分开看')+
  figure('v28-cpu-wall','真实CPython3.9.6/macOS单次计时。等待消耗墙钟而几乎不消耗本进程CPU；两线程合计CPU时间仍要独立记账。')+
  computeTransportLab('cpu_and_wall.py')+
- para('先预测只等待阶段两根柱子的相对大小，再运行程序。本次两个CPU线程没有展示两倍的墙钟速度，不能据此归因云超分；它们在同一Python进程，解释器GIL等条件就足以影响并行。要验证真实VM或cgroup限额，另按目标机器记录其资源合同、限制与同一负载。'));
+ para('先预测只等待阶段两根柱子的相对大小，再运行程序。本次两个CPU线程没有展示两倍的墙钟速度，不能据此归因云超分；它们在同一Python进程，解释器GIL等条件就足以影响并行。要验证真实VM或cgroup限额，另按目标机器记录其资源保证、限制与同一负载。'));
 
 const tcpConnection=infraReadableHTML(
  '<div class="mechanism-core" id="tcp-connection-contract">'+knowledgeSubhead('连接先同步双向序号，字节确认不等于业务确认')+
@@ -959,9 +959,9 @@ const tcpBackpressurePractice=infraReadableHTML(
 {
  const a=articles.find(a=>a.id==='cloud-compute'),old=a.sections.slice();
  old[1]=[old[1][0],old[1][1].replace('一个 CPU 秒表示一个核心连续执行一秒所贡献的处理时间。','一个CPU秒是在一颗逻辑CPU上执行一秒所记的处理时间；同一进程的多线程CPU时间可以相加。')];
- a.sections=[['计算形态：裸金属、虚拟机与容器',vmObjects],['vCPU合同：核心、线程、超分与持续能力',vmCpu],['内存与设备：地址转换、NUMA和I/O路径',vmMemoryIO],['突发性能：CPU积分与持续负载',vmCredits],...old.slice(0,-1),['实测：CPU时间、等待与线程',cpuAccountingPractice],old[old.length-1]];
+ a.sections=[['计算形态：裸金属、虚拟机与容器',vmObjects],['vCPU资源保证：核心、线程、超分与持续能力',vmCpu],['内存与设备：地址转换、NUMA和I/O路径',vmMemoryIO],['突发性能：CPU积分与持续负载',vmCredits],...old.slice(0,-1),['实测：CPU时间、等待与线程',cpuAccountingPractice],old[old.length-1]];
  a.refs=nitRefs([...a.refs,'v28KVM','v28MMU','v28Virtio','v28CPUOptions','v28Credits']);a.updated='2026.11.05';a.minutes=70;
- a.objectives=['区分vCPU、物理核、容器配额与突发积分','解释客户机地址和设备路径，建立有效资源合同','实测CPU/墙钟记账，再按请求混合与下游推导候选规格'];
+ a.objectives=['区分vCPU、物理核、容器配额与突发积分','解释客户机地址和设备路径，核对资源供给保证','实测CPU/墙钟记账，再按请求混合与下游推导候选规格'];
 }
 {
  const a=articles.find(a=>a.id==='network-diagnosis'),old=a.sections.slice();

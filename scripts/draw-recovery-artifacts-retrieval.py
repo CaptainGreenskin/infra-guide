@@ -66,7 +66,7 @@ for i,(name,vocab,weights,values,fill,color) in enumerate(rows):
     y=169+i*128
     items += [box(36,y,1048,102,fill),t(57,y+43,name,28,B,True),t(190,y+39,"词表ID",18,M),t(190,y+77,vocab,22),
               t(473,y+39,"权重三行",18,M),t(473,y+77,weights,24),t(749,y+39,"实际CPU输出",18,M),t(749,y+77,values,25,color,True)]
-items += [box(36,590,1048,67,"#edf2ff"),t(58,634,"r18文件摘要和形状都正确，固定语义合同仍失败；r19配套更新后通过。",22,B,True),
+items += [box(36,590,1048,67,"#edf2ff"),t(58,634,"r18摘要与形状均正确，输出仍不符合约定；r19配套更新后通过。",22,B,True),
           t(38,704,"实际Safetensors/CPU小模型；固定A=1、B=2，不是LLM效果基准。混装r19权重+r17词表也失败。",18,M)]
 save("v27-bundle-semantics","同样的张量形状，不同的词表含义","输入先变成ID，ID再选择权重行；保存与加载成功只证明其中一层。",items)
 

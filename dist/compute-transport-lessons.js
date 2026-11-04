@@ -32,7 +32,7 @@ const vmObjects=infraReadableHTML(
  '<div class="mechanism-core" id="virtualization-resource-contract">'+knowledgeSubhead('先分清交付的是机器、客户机，还是一组进程')+
  table(['计算形态','内核与可控制对象','容量与恢复仍需检查'],[
  ['裸金属','直接运行自己的主机系统，按产品提供物理设备','并不自动解决应用并发、数据恢复与跨机故障'],
- ['虚拟机VM','有自己的客户机内核，看到虚拟CPU、内存与设备','宿主调度、设备路径、数据盘与镜像/初始化合同'],
+ ['虚拟机VM','有自己的客户机内核，看到虚拟CPU、内存与设备','宿主调度、设备路径、数据盘、镜像与启动初始化流程'],
  ['普通Linux容器','共享所在主机的内核，以namespace/cgroup等组织进程','组与父级资源限制、共享内核、卷及进程生命周期']])+
  para('Hypervisor（虚拟机监控器）在客户机与宿主资源之间提供执行和隔离机制。以Linux/KVM为例，虚拟机管理程序创建VM、内存区域与vCPU，KVM和硬件辅助机制参与执行；不是把客户机每条普通指令都逐条交给用户态解释。需要处理的退出、设备与内存操作仍会产生相应成本。',
  'VM和容器可以叠放：云主机中运行容器时，容器共享的是这台VM的客户机内核。镜像里的发行版文件与用户态库，不是另一份正在运行的Linux内核。选择形态要核对内核/设备兼容、租户信任、启动频率、运维责任和实际负载，不能按“名字更轻就一定更快”排序。')+
@@ -41,11 +41,11 @@ const vmObjects=infraReadableHTML(
 const vmCpu=infraReadableHTML(
  knowledgeSubhead('vCPU数量、独占核心与持续算力不是一回事')+
  para('vCPU是客户机可见的处理单元；物理核心、硬件线程和软件工作线程是不同对象。支持SMT的物理核可提供多个硬件线程，它们共享部分执行资源。EC2的CPU选项按核心数×每核线程数得到vCPU数，具体架构和规格不同，不能把“8 vCPU”统一读成“独占8颗物理核”。',
- '超分指对共享资源作出超过某一物理供给量的虚拟分配，可利用不同负载不同时繁忙的特点；它不凭空增加执行能力。实际独占、共享、调度和供给保证以产品合同为准，不能看见VM就断言它必然超分，也不能看见专用宿主就跳过应用层限制。')+
+ '超分指对共享资源作出超过某一物理供给量的虚拟分配，可利用不同负载不同时繁忙的特点；它不凭空增加执行能力。实际独占、共享、调度和供给保证以产品规格说明和服务约定为准，不能看见VM就断言它必然超分，也不能看见专用宿主就跳过应用层限制。')+
  table(['限制位置','问题','应对照的证据'],[
  ['客户机内部','线程是否可运行，是否在等锁或I/O','进程/线程CPU时间、运行队列与等待'],
  ['容器及父cgroup','可运行但时间预算是否耗尽','cpu.max、cpu.stat增量及祖先限制'],
- ['虚拟化与资源合同','vCPU得到哪些调度与持续能力承诺','云规格/模式、可见的宿主等待线索及对照负载'],
+ ['虚拟化与资源保证','vCPU得到哪些调度与持续能力承诺','云规格/模式、可见的宿主等待线索及对照负载'],
  ['物理与程序','SMT、频率、缓存和内存带宽怎样影响每CPU秒产出','同一工作量的完成数、CPU成本与尾延迟']])+
  para('CPU时间便于记账，却不是跨架构不变的工作单位。两个环境都消耗1 CPU秒，不保证完成相同数量指令或业务请求。下文用CPU秒推导候选规格，最终仍要在目标CPU、线程布局和真实请求混合上验证。'));
 
@@ -68,7 +68,7 @@ const cpuAccountingPractice=infraReadableHTML(
  knowledgeSubhead('本机实测：等了多久，与消耗多少CPU分开看')+
  figure('v28-cpu-wall','真实CPython3.9.6/macOS单次计时。等待消耗墙钟而几乎不消耗本进程CPU；两线程合计CPU时间仍要独立记账。')+
  computeTransportLab('cpu_and_wall.py')+
- para('先预测只等待阶段两根柱子的相对大小，再运行程序。本次两个CPU线程没有展示两倍的墙钟速度，不能据此归因云超分；它们在同一Python进程，解释器GIL等条件就足以影响并行。要验证真实VM或cgroup限额，另按目标机器记录其资源合同、限制与同一负载。'));
+ para('先预测只等待阶段两根柱子的相对大小，再运行程序。本次两个CPU线程没有展示两倍的墙钟速度，不能据此归因云超分；它们在同一Python进程，解释器GIL等条件就足以影响并行。要验证真实VM或cgroup限额，另按目标机器记录其资源保证、限制与同一负载。'));
 
 const tcpConnection=infraReadableHTML(
  '<div class="mechanism-core" id="tcp-connection-contract">'+knowledgeSubhead('连接先同步双向序号，字节确认不等于业务确认')+
@@ -109,9 +109,9 @@ const tcpBackpressurePractice=infraReadableHTML(
 {
  const a=articles.find(a=>a.id==='cloud-compute'),old=a.sections.slice();
  old[1]=[old[1][0],old[1][1].replace('一个 CPU 秒表示一个核心连续执行一秒所贡献的处理时间。','一个CPU秒是在一颗逻辑CPU上执行一秒所记的处理时间；同一进程的多线程CPU时间可以相加。')];
- a.sections=[['计算形态：裸金属、虚拟机与容器',vmObjects],['vCPU合同：核心、线程、超分与持续能力',vmCpu],['内存与设备：地址转换、NUMA和I/O路径',vmMemoryIO],['突发性能：CPU积分与持续负载',vmCredits],...old.slice(0,-1),['实测：CPU时间、等待与线程',cpuAccountingPractice],old[old.length-1]];
+ a.sections=[['计算形态：裸金属、虚拟机与容器',vmObjects],['vCPU资源保证：核心、线程、超分与持续能力',vmCpu],['内存与设备：地址转换、NUMA和I/O路径',vmMemoryIO],['突发性能：CPU积分与持续负载',vmCredits],...old.slice(0,-1),['实测：CPU时间、等待与线程',cpuAccountingPractice],old[old.length-1]];
  a.refs=nitRefs([...a.refs,'v28KVM','v28MMU','v28Virtio','v28CPUOptions','v28Credits']);a.updated='2026.11.05';a.minutes=70;
- a.objectives=['区分vCPU、物理核、容器配额与突发积分','解释客户机地址和设备路径，建立有效资源合同','实测CPU/墙钟记账，再按请求混合与下游推导候选规格'];
+ a.objectives=['区分vCPU、物理核、容器配额与突发积分','解释客户机地址和设备路径，核对资源供给保证','实测CPU/墙钟记账，再按请求混合与下游推导候选规格'];
 }
 {
  const a=articles.find(a=>a.id==='network-diagnosis'),old=a.sections.slice();

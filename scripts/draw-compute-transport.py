@@ -44,7 +44,7 @@ for y,label,left,middle,right in rows:
         items += [t(415,y+48,"virtio队列 / 模拟",23),t(415,y+82,"或设备直通",23)]
     else:
         items += [t(415,y+65,middle,22)]
-items += [t(38,632,"规格是接口和资源合同，不等于应用始终独占相同数量物理核。",23,B,True),
+items += [t(38,632,"规格约定接口与资源保证，不等于应用始终独占相同数量物理核。",23,B,True),
           t(38,678,"容器可以运行在VM内：共享的是这台VM的客户机内核。此图为机制说明，不是本机VM测试。",18,M)]
 save("v28-vm-three-maps","虚拟机分别虚拟化CPU、内存和设备", "以Linux/KVM为机制示意；具体云产品、架构与设备实现仍按目标环境核对。",items,715)
 
@@ -76,7 +76,7 @@ ax.set(xlim=(-1,35),ylim=(-3,60),xlabel="持续满用2个vCPU的时间 / 分钟"
 ax.set_title("声明的积分账本：48 ÷ (2 − 0.4) = 30分钟",loc="left",fontsize=17,pad=16)
 ax.text(.02,.94,"题设2 vCPU、20%基线：赚0.4积分/分；满载花2积分/分；净扣1.6",transform=ax.transAxes,fontsize=11)
 ax.grid(axis="y",alpha=.18)
-fig.text(.04,.005,"机制算例，不是某实例实测；Standard/Unlimited耗尽后的处理及收费另按产品合同核对。",fontsize=10.5)
+fig.text(.04,.005,"机制算例，不是某实例实测；Standard/Unlimited耗尽后的处理及收费按产品规则核对。",fontsize=10.5)
 fig.tight_layout(rect=(0,.04,1,1));fig.savefig(OUT/"v28-credit-balance.svg",bbox_inches="tight",metadata={"Date":None});plt.close(fig)
 
 cases=E["programs"]["cpu_and_wall.py"]["result"]["cases"]

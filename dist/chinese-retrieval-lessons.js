@@ -38,7 +38,7 @@ const retrievalFreshness=infraReadableHTML(
 
 const retrievalActualPractice=infraReadableHTML(
  knowledgeSubhead('实际FTS5实战：分词、BM25、RRF与索引版本')+rarLab('chinese_fts_rrf.py')+
- knowledgeCheck('nDCG提高而Precision、Recall、RR没变，是否矛盾？','不矛盾。前三相关项数量与首个命中相同，但分级相关性的顺序变了；本例[3,1,2]变[3,2,1]。任务是否完成仍看必要证据及答案合同。')+
+ knowledgeCheck('nDCG提高而Precision、Recall、RR没变，是否矛盾？','不矛盾。前三相关项数量与首个命中相同，但分级相关性的顺序变了；本例[3,1,2]变[3,2,1]。任务是否完成仍看必要证据及答案验收条件。')+
  para('先检查raw_vocabulary是否有“恢复”，再看二元词元、SQL过滤和BM25排序；手算a-backup的1/61+1/62，最后对照重建前后的版本。保留数据与指标定义，换分词器、切分或索引时才能做可解释比较。'));
 
 {

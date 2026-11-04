@@ -36,7 +36,7 @@ const evalStatsPractice=infraReadableHTML(
  const a=articles.find(a=>a.id==='agent-evaluation'),old=a.sections.slice();
  a.sections=[old[0],old[1],old[2],['指标与评分器：类别、错放行和分母',evalMetrics],['样本与区间：全对、独立性和抽样来源',evalIntervals],old[3],old[4],old[5],['版本比较：同题配对、预算和评分尺子',evalPaired],old[6],old[7],['统计实战与变化题：完整标签和独立计算',evalStatsPractice]];
  a.refs=nitRefs([...a.refs,'v25Wilson','v25McNemar']);a.minutes=65;a.updated='2026.11.05';
- a.objectives=['定义任务、试次、尝试和可判定的完成合同','验证评分器并解释类别、计数、区间和同题差异','运行环境oracle与统计夹具，区分执行证据和真实模型能力'];
+ a.objectives=['定义任务、试次、尝试和可检验的任务完成条件','验证评分器并解释类别、计数、区间和同题差异','运行环境oracle与统计夹具，区分执行证据和真实模型能力'];
 }
 {
  const d=infraDomain('agent'),p=d.points.find(p=>p.id==='ag-evaluation');
