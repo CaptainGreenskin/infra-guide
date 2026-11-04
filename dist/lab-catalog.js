@@ -23,7 +23,8 @@ const labArchiveCatalog={
  'cloud-training-ddp':{folder:'ddp',title:'DDP 与两节点手册'},
  'storage-parallel-acceptance':{folder:'storage-parallel-acceptance',title:'范围读取、两进程 TP 与记录验收'},
  'supervision-gradients':{folder:'supervision-gradients',title:'标签、共享词表与目标权重'},
- 'sql-paths-snapshots':{folder:'sql-paths-snapshots',title:'索引路径与快照重试'}
+ 'sql-paths-snapshots':{folder:'sql-paths-snapshots',title:'索引路径与快照重试'},
+ 'streamed-tool-calls':{folder:'streamed-tool-calls',title:'流式参数、事件边界与工具准入'}
 };
 const labTrackCatalog={
  cloud:{name:'Cloud Infra',lead:'先分清资源与请求，再验证数据、事件、交付和恢复。先修实验按需补；正文中的系统知识点在案例之前。'},
@@ -72,6 +73,7 @@ const labLearningCatalog=[
  {id:'agent-permission',track:'agent',stage:1,title:'先验证拒绝是否真的阻止了业务效果',chapter:'agent-security',anchor:'agent-permission-lab',folder:'permissions',files:['policy_lab.py'],env:'Python 3 · 标准库',kind:'本地策略夹具',observe:'用两个虚拟租户、只读任务和获批写入，对照八组决定与实际业务结果。',scope:'固定授权协议，不调用模型、真实身份服务或 Kairo。'},
  {id:'agent-effects',track:'agent',stage:1,title:'两次尝试，为什么只有一次工具效果',chapter:'agent-recovery',pack:'infra-systems',files:['agent_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'工具提交后让执行者退出，恢复沿同一操作 ID 查询回执，得到 attempts=2、effects=1。',scope:'单 worker 的原始恢复实验；多 worker 接管见后续任务。'},
  {id:'agent-runtime',track:'agent',stage:1,title:'模型提议、工具成功与任务完成分开验',chapter:'agent-runtime',pack:'network-input-tools',files:['tool_runtime.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实本机 HTTP',observe:'十组固定提议覆盖类型错误、权限、预算、503、假完成和错误总数；以独立产物验收收尾。',scope:'提议是脚本；不是完整 MCP 会话、真实 LLM 或 Kairo 接入。'},
+ {id:'agent-streams',track:'agent',stage:1,title:'流式参数先收齐，再判断工具能否执行',chapter:'agent-runtime',anchor:'streaming-tool-lab',pack:'streamed-tool-calls',files:['streamed_tool_calls.py'],env:'Python 3.9+ · 标准库 / 本机 HTTP',kind:'真实分块传输 + 声明的事件流',observe:'十三组对照分开 UTF-8、事件、参数完结与准入；未收齐不调用，已完成后流错误仍保留那次本地调用。',scope:'本地只读回调与进程内观察，不是模型 API、完整 EventSource、持久回执或 Kairo。'},
  {id:'agent-approval',track:'agent',stage:2,title:'批准过一次，不代表任意新参数都获批',chapter:'agent-security',pack:'learning-mechanisms',files:['approval_receipt.py'],env:'Python 3.9+ · 标准库',kind:'本机回执协议',observe:'绑定操作与参数，工具提交后退出再查询；错误参数和无匹配批准应拒绝。',scope:'受控批准夹具，不接入人工审批服务。'},
  {id:'agent-fencing',track:'agent',stage:2,title:'新执行者接管后，迟到的旧执行者还能写吗',chapter:'agent-recovery',pack:'ai-agent-systems',files:['worker_fencing.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实多进程状态竞争',observe:'暂停旧执行者、推进代际并接管，让接收方在效果提交处拒绝旧代际。',scope:'固定本机协议；代际不是认证凭据，不冒充目标 Kairo 调度器。'},
  {id:'agent-cancel',track:'agent',stage:2,title:'取消请求、停止执行与已经提交分别记录',chapter:'durable-workflows',pack:'update-and-cancel',files:['cancel_receipts.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'真实进程与回执',observe:'在提交前后设置取消窗口，查询独立接收方，解释停止进程为何不能撤销已提交的效果。',scope:'固定状态协议，不证明任意远端工具支持回滚。'},

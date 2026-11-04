@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="800" viewBox="0 0 1120 800" role="img" aria-labelledby="title desc">
+<title id="title">实际七字节读取如何切开中文UTF-8</title><desc id="desc">正常流的第28至30次读取，字节偏移189至209；前两块独立解码失败，增量输出依次为中、国区日、报。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="800" fill="white"/>
+<text x="32" y="46" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">读了 7 字节，不保证刚好读完一个汉字</text>
+<text x="32" y="85" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">“中”是 E4 B8 AD，“国”是 E5 9B BD；按实际响应体字节排列，偏移从 0 起算。</text>
+<text x="32" y="182" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">读取 28</text>
+<text x="32" y="223" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">偏移 189–195</text>
+<rect x="240" y="144" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="276" y="186" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">5C</text>
+<rect x="322" y="144" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="358" y="186" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">22</text>
+<rect x="404" y="144" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="440" y="186" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">E4</text>
+<rect x="486" y="144" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="522" y="186" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">B8</text>
+<rect x="568" y="144" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="604" y="186" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">AD</text>
+<rect x="650" y="144" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="686" y="186" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">E5</text>
+<rect x="732" y="144" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="768" y="186" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">9B</text>
+<text x="850" y="173" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">单块独立 decode</text>
+<text x="850" y="209" font-size="28" fill="#a84444" font-weight="600" text-anchor="start">失败</text>
+<text x="240" y="258" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">增量输出：中；待补字节：E5 9B</text>
+<text x="32" y="363" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">读取 29</text>
+<text x="32" y="404" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">偏移 196–202</text>
+<rect x="240" y="325" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="276" y="367" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">BD</text>
+<rect x="322" y="325" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="358" y="367" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">E5</text>
+<rect x="404" y="325" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="440" y="367" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">8C</text>
+<rect x="486" y="325" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="522" y="367" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">BA</text>
+<rect x="568" y="325" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="604" y="367" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">E6</text>
+<rect x="650" y="325" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="686" y="367" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">97</text>
+<rect x="732" y="325" width="72" height="62" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="768" y="367" font-size="28" fill="#287b69" font-weight="600" text-anchor="middle">A5</text>
+<text x="850" y="354" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">单块独立 decode</text>
+<text x="850" y="390" font-size="28" fill="#a84444" font-weight="600" text-anchor="start">失败</text>
+<text x="240" y="439" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">增量输出：国区日；待补字节：无</text>
+<text x="32" y="544" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">读取 30</text>
+<text x="32" y="585" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">偏移 203–209</text>
+<rect x="240" y="506" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="276" y="548" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">E6</text>
+<rect x="322" y="506" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="358" y="548" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">8A</text>
+<rect x="404" y="506" width="72" height="62" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="440" y="548" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">A5</text>
+<rect x="486" y="506" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="522" y="548" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">5C</text>
+<rect x="568" y="506" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="604" y="548" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">22</text>
+<rect x="650" y="506" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="686" y="548" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">2C</text>
+<rect x="732" y="506" width="72" height="62" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="768" y="548" font-size="28" fill="#6b768b" font-weight="600" text-anchor="middle">5C</text>
+<text x="850" y="535" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">单块独立 decode</text>
+<text x="850" y="571" font-size="28" fill="#287b69" font-weight="600" text-anchor="start">可行</text>
+<text x="240" y="620" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">增量输出：报；待补字节：无</text>
+<text x="32" y="734" font-size="23" fill="#1c283d" font-weight="600" text-anchor="start">正常流 287 B、41 次读取；独立逐块解码实际失败 2 次，增量方式保留字符状态。</text>
+<text x="32" y="778" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">可解码只解决字符边界；完整 SSE 事件、完整工具参数与调用授权仍须分别判断。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_fixed_stream_read_boundaries&quot;, &quot;fixture_sha256&quot;: &quot;83229da13aa482d53f7c05a57c62bf0df30319bf3d184b9d5d0fe617281f11d3&quot;, &quot;read_size&quot;: 7, &quot;rows&quot;: [{&quot;read&quot;: 28, &quot;offset&quot;: 189, &quot;bytes&quot;: [92, 34, 228, 184, 173, 229, 155], &quot;independent_decode&quot;: false, &quot;chinese_output&quot;: &quot;中&quot;, &quot;pending_bytes&quot;: [229, 155]}, {&quot;read&quot;: 29, &quot;offset&quot;: 196, &quot;bytes&quot;: [189, 229, 140, 186, 230, 151, 165], &quot;independent_decode&quot;: false, &quot;chinese_output&quot;: &quot;国区日&quot;, &quot;pending_bytes&quot;: []}, {&quot;read&quot;: 30, &quot;offset&quot;: 203, &quot;bytes&quot;: [230, 138, 165, 92, 34, 44, 92], &quot;independent_decode&quot;: true, &quot;chinese_output&quot;: &quot;报&quot;, &quot;pending_bytes&quot;: []}], &quot;naive_decode_errors&quot;: 2}</metadata>
+</svg>

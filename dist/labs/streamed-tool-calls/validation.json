@@ -1,0 +1,638 @@
+{
+  "status": "passed",
+  "executed_at_utc": "2026-11-04T21:15:44.176922+00:00",
+  "source_sha256": "031263197b486005eee0d673bba0fbdc0a604aba2e6787098c6df49504ce9ce0",
+  "runs": [
+    {
+      "status": "passed",
+      "python": "3.9.6",
+      "fixture_sha256": {
+        "normal": "83229da13aa482d53f7c05a57c62bf0df30319bf3d184b9d5d0fe617281f11d3",
+        "interleaved": "4b4d014c128a3bf93a2fcdf0c0fc81683c01c420b4f0dd44e0eb60155a0095cc",
+        "truncated_arguments": "6e4fc870670f434e4d555718b080346d365f31909b26bb7f603ee42ea4751150",
+        "transport_truncated": "6e4fc870670f434e4d555718b080346d365f31909b26bb7f603ee42ea4751150",
+        "unfinished_done_event": "e130c61d6cca4275097eeff266cb8598dcd2703a1992439a07b655b412940879",
+        "parseable_then_garbage": "635263f2fc558691a4bb3bbb51c9c81f4d6fe8372ec0c0eb927af69e69d52c50",
+        "duplicate_key": "970db816702b0f76453c2cfab7913722310f1e6c1bee72413e009afc1c31e189",
+        "boolean_limit": "a9cabdf929295a6bca0883cce314ec65f394c31c51462e5335bd0dc3fb6ea502",
+        "denied_tenant": "67f5f6e72bd34d66ba7d9b8c6076b994138b9a3e5930d05d38b2763655262b51",
+        "unknown_name": "aa595c47c2cd929820d7869dfc7b02e73c5a5d9954a192fad547531afc360bbe",
+        "arguments_limit": "912073f55119bdd5ad602b6e8ce3dd8f70a9996cadbb8e78e872a6235818a1b0",
+        "invalid_utf8_before_done": "ee1a334a3bd27dc204c4c54253e4b84bca677637b119b1b3615eef493c70ac40",
+        "late_stream_error": "efb4f49727906297dde593ae32c471bde4f48e1fa406c4136c616723ca948712"
+      },
+      "results": {
+        "normal": {
+          "bytes_read": 287,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "c1",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        },
+        "interleaved": {
+          "bytes_read": 705,
+          "read_size": 7,
+          "reads": 101,
+          "naive_chunk_decode_errors": 4,
+          "events": 8,
+          "parseable_prefixes": 2,
+          "states": {
+            "a": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            },
+            "b": {
+              "name": "report.read",
+              "status": "denied",
+              "complete": true,
+              "reason": "tenant_scope"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "a",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        },
+        "truncated_arguments": {
+          "bytes_read": 174,
+          "read_size": 7,
+          "reads": 25,
+          "naive_chunk_decode_errors": 0,
+          "events": 2,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_at_eof"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "transport_truncated": {
+          "bytes_read": 168,
+          "read_size": 7,
+          "reads": 24,
+          "naive_chunk_decode_errors": 0,
+          "events": 1,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_after_stream_error"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": "http_incomplete",
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "unfinished_done_event": {
+          "bytes_read": 285,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 2,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_at_eof"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "parseable_then_garbage": {
+          "bytes_read": 357,
+          "read_size": 7,
+          "reads": 51,
+          "naive_chunk_decode_errors": 2,
+          "events": 4,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "invalid_arguments_json"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "duplicate_key": {
+          "bytes_read": 304,
+          "read_size": 7,
+          "reads": 44,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "duplicate_json_key"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "boolean_limit": {
+          "bytes_read": 290,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "name_or_schema"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "denied_tenant": {
+          "bytes_read": 287,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "denied",
+              "complete": true,
+              "reason": "tenant_scope"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "unknown_name": {
+          "bytes_read": 289,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.delete",
+              "status": "rejected",
+              "complete": true,
+              "reason": "name_or_schema"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "arguments_limit": {
+          "bytes_read": 887,
+          "read_size": 7,
+          "reads": 127,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "reason": "arguments_too_large",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "invalid_utf8_before_done": {
+          "bytes_read": 87,
+          "read_size": 7,
+          "reads": 13,
+          "naive_chunk_decode_errors": 1,
+          "events": 1,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_after_stream_error"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": "invalid_utf8",
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "late_stream_error": {
+          "bytes_read": 288,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 3,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": "invalid_utf8",
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "c1",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        }
+      },
+      "scope": "Actual loopback chunked HTTP, fixed declared event envelopes, local read callback and in-process observations only; not a model API, full EventSource client, durable task, remote tool or Kairo."
+    },
+    {
+      "status": "passed",
+      "python": "3.12.13",
+      "fixture_sha256": {
+        "normal": "83229da13aa482d53f7c05a57c62bf0df30319bf3d184b9d5d0fe617281f11d3",
+        "interleaved": "4b4d014c128a3bf93a2fcdf0c0fc81683c01c420b4f0dd44e0eb60155a0095cc",
+        "truncated_arguments": "6e4fc870670f434e4d555718b080346d365f31909b26bb7f603ee42ea4751150",
+        "transport_truncated": "6e4fc870670f434e4d555718b080346d365f31909b26bb7f603ee42ea4751150",
+        "unfinished_done_event": "e130c61d6cca4275097eeff266cb8598dcd2703a1992439a07b655b412940879",
+        "parseable_then_garbage": "635263f2fc558691a4bb3bbb51c9c81f4d6fe8372ec0c0eb927af69e69d52c50",
+        "duplicate_key": "970db816702b0f76453c2cfab7913722310f1e6c1bee72413e009afc1c31e189",
+        "boolean_limit": "a9cabdf929295a6bca0883cce314ec65f394c31c51462e5335bd0dc3fb6ea502",
+        "denied_tenant": "67f5f6e72bd34d66ba7d9b8c6076b994138b9a3e5930d05d38b2763655262b51",
+        "unknown_name": "aa595c47c2cd929820d7869dfc7b02e73c5a5d9954a192fad547531afc360bbe",
+        "arguments_limit": "912073f55119bdd5ad602b6e8ce3dd8f70a9996cadbb8e78e872a6235818a1b0",
+        "invalid_utf8_before_done": "ee1a334a3bd27dc204c4c54253e4b84bca677637b119b1b3615eef493c70ac40",
+        "late_stream_error": "efb4f49727906297dde593ae32c471bde4f48e1fa406c4136c616723ca948712"
+      },
+      "results": {
+        "normal": {
+          "bytes_read": 287,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "c1",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        },
+        "interleaved": {
+          "bytes_read": 705,
+          "read_size": 7,
+          "reads": 101,
+          "naive_chunk_decode_errors": 4,
+          "events": 8,
+          "parseable_prefixes": 2,
+          "states": {
+            "a": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            },
+            "b": {
+              "name": "report.read",
+              "status": "denied",
+              "complete": true,
+              "reason": "tenant_scope"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "a",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        },
+        "truncated_arguments": {
+          "bytes_read": 174,
+          "read_size": 7,
+          "reads": 25,
+          "naive_chunk_decode_errors": 0,
+          "events": 2,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_at_eof"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "transport_truncated": {
+          "bytes_read": 168,
+          "read_size": 7,
+          "reads": 24,
+          "naive_chunk_decode_errors": 0,
+          "events": 1,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_after_stream_error"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": "http_incomplete",
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "unfinished_done_event": {
+          "bytes_read": 285,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 2,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_at_eof"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "parseable_then_garbage": {
+          "bytes_read": 357,
+          "read_size": 7,
+          "reads": 51,
+          "naive_chunk_decode_errors": 2,
+          "events": 4,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "invalid_arguments_json"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "duplicate_key": {
+          "bytes_read": 304,
+          "read_size": 7,
+          "reads": 44,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "duplicate_json_key"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "boolean_limit": {
+          "bytes_read": 290,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "complete": true,
+              "reason": "name_or_schema"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "denied_tenant": {
+          "bytes_read": 287,
+          "read_size": 7,
+          "reads": 41,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "denied",
+              "complete": true,
+              "reason": "tenant_scope"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "unknown_name": {
+          "bytes_read": 289,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.delete",
+              "status": "rejected",
+              "complete": true,
+              "reason": "name_or_schema"
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "arguments_limit": {
+          "bytes_read": 887,
+          "read_size": 7,
+          "reads": 127,
+          "naive_chunk_decode_errors": 2,
+          "events": 3,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "rejected",
+              "reason": "arguments_too_large",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": null,
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "invalid_utf8_before_done": {
+          "bytes_read": 87,
+          "read_size": 7,
+          "reads": 13,
+          "naive_chunk_decode_errors": 1,
+          "events": 1,
+          "parseable_prefixes": 0,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "incomplete_after_stream_error"
+            }
+          },
+          "pending": [
+            "c1"
+          ],
+          "stream_error": "invalid_utf8",
+          "local_tool_calls": 0,
+          "observations": []
+        },
+        "late_stream_error": {
+          "bytes_read": 288,
+          "read_size": 7,
+          "reads": 42,
+          "naive_chunk_decode_errors": 3,
+          "events": 3,
+          "parseable_prefixes": 1,
+          "states": {
+            "c1": {
+              "name": "report.read",
+              "status": "executed",
+              "complete": true
+            }
+          },
+          "pending": [],
+          "stream_error": "invalid_utf8",
+          "local_tool_calls": 1,
+          "observations": [
+            {
+              "call_id": "c1",
+              "tool": "report.read",
+              "tenant": "A",
+              "values": [
+                10,
+                27
+              ]
+            }
+          ]
+        }
+      },
+      "scope": "Actual loopback chunked HTTP, fixed declared event envelopes, local read callback and in-process observations only; not a model API, full EventSource client, durable task, remote tool or Kairo."
+    }
+  ],
+  "scope": "Real loopback chunked HTTP with13 declared event fixtures, local read callback and in-process observations. No model, remote tool, persistent workflow, reconnect or Kairo integration."
+}

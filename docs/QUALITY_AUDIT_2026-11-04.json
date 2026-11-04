@@ -359,11 +359,12 @@
       "id": "agent-runtime",
       "module": "agent",
       "title": "Agent Infra在解决什么：从模型提议到任务完成",
-      "sections": 8,
+      "sections": 9,
       "approx_visible_prose_characters": 5607,
-      "figures": 2,
+      "figures": 4,
       "review": "substantial_v23",
-      "reviewed_content_sha256": "d88bd4c048429053ebb5dacdcb1ec06b05f238e026a57537090476cda6624166"
+      "reviewed_content_sha256": "2c4c2f0633d098381012521f00654ff449d6183806fceaad17f984df6f4a838c",
+      "findings": "undefined 第37轮复读流式完成边界、UTF-8实际字节网格与13组HTTP对照，明确本地只读回调和进程内观察；未完成、HTTP/解码错误、准入拒绝和调用后错误分别保留，未冒充模型/远端工具/持久回执。"
     },
     {
       "id": "agent-recovery",
@@ -1609,8 +1610,8 @@
       "title": "工具契约：类型、前置条件与结果语义",
       "review": "fresh_review_v29",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
-      "reviewed_content_sha256": "80adf177707284d86bd91fb0caec0cdf6cc8f3b3e4cbc417c25083e416286301"
+      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。 第37轮补分段参数的字符/事件/调用界线及身份区分，知识先于十三组案例。",
+      "reviewed_content_sha256": "bd6cba280de33a42de2385e9c4d4d599650d81c5cc8048efa96b2981a0e7b8ee"
     },
     {
       "id": "ag-recovery",

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="890" viewBox="0 0 1120 890" role="img" aria-labelledby="title desc">
+<title id="title">流式工具执行的五层边界</title><desc id="desc">正常固定流287字节，客户端41次读取，3个完整事件，最终1次本地只读回调。字节、字符、事件、参数和调用准入分别判定。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="890" fill="white"/>
+<text x="32" y="46" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">流里出现了工具参数，什么时候才能执行</text>
+<text x="32" y="85" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">本实验声明 start / delta / done 事件；真实协议要映射自己的完结信号。</text>
+<text x="32" y="168" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">传输层</text>
+<rect x="230" y="124" width="858" height="95" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="254" y="162" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">HTTP 响应体 287 B，客户端读取 41 次</text>
+<text x="254" y="199" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">发送块最多 11 B；每次读取最多 7 B，不等于字符边界</text>
+<line x1="658" y1="226" x2="658" y2="249" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="32" y="301" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">事件层</text>
+<rect x="230" y="257" width="858" height="95" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="254" y="295" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">先增量解码 UTF-8，再按空行完成事件</text>
+<text x="254" y="332" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">正常流得到 3 个完整事件；data 多行先拼合</text>
+<line x1="658" y1="359" x2="658" y2="382" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="32" y="434" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">调用层</text>
+<rect x="230" y="390" width="858" height="95" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="254" y="428" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">按 call_id 收集 delta，等对应 done</text>
+<text x="254" y="465" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">前缀能解析成 JSON，仍不能提前执行</text>
+<line x1="658" y1="492" x2="658" y2="515" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="32" y="567" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">准入层</text>
+<rect x="230" y="523" width="858" height="95" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="254" y="561" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">解析全部参数，检查结构、名称与授权</text>
+<text x="254" y="598" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">limit 必须为整数；租户 B 不在本次委托内</text>
+<line x1="658" y1="625" x2="658" y2="648" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="32" y="700" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">执行层</text>
+<rect x="230" y="656" width="858" height="95" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="254" y="694" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">本地只读回调 1 次，保留当前进程观察</text>
+<text x="254" y="731" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">观察记录不等于持久回执，也不单独证明任务完成</text>
+<text x="32" y="828" font-size="24" fill="#1c283d" font-weight="600" text-anchor="start">尚未准入的调用保持未执行；已经执行的调用保留事实，流错误另记。</text>
+<text x="32" y="869" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">顺序与计数来自实际本机 HTTP 固定流；没有调用真实模型或远端工具。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_local_http_with_declared_tool_envelopes&quot;, &quot;body_bytes&quot;: 287, &quot;reads&quot;: 41, &quot;read_size&quot;: 7, &quot;events&quot;: 3, &quot;local_tool_calls&quot;: 1, &quot;durable_receipt&quot;: false}</metadata>
+</svg>
