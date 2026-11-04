@@ -124,14 +124,14 @@
       "id": "tensor-parallel-math",
       "module": "model-foundations",
       "title": "张量与流水线并行：切分后的计算与通信",
-      "sections": 9,
-      "approx_visible_prose_characters": 3823,
-      "figures": 0,
-      "review": "fresh_review_v29",
+      "sections": 10,
+      "approx_visible_prose_characters": 5236,
+      "figures": 2,
+      "review": "substantial_v32",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整正文和数值代码块；[11,4]/偏置[12,5]、rank组/64有效batch、ring384KiB/33.932微秒及PP前向80%正确。需在数值小例前明确由前文尺寸再次缩小，避免读者沿用形状。",
+      "findings": "重排定义与FFN开篇，补完整反向链式法则。两进程CPU/Gloo实际复算Y=[12,5]、dX=[39,42]、局部参数梯度和SGD；独立完整基线及手算矩阵一致。核对偏置重复、ReLU次序、SUM与平均区别、8rank坐标、有效batch64和等时前向槽模型。显式dY不冒充生产分布式autograd层。",
       "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "bab026dd3cccb44cd2a4aeff926c224e327cc72aca27aa24ab83114c7e89a321"
+      "reviewed_content_sha256": "da36698fd27f87a101d74b57d22011e6c4ba8cfbd1db20621e764311782aadd8"
     },
     {
       "id": "gpu-cluster",
@@ -416,15 +416,15 @@
     {
       "id": "kairo-practice",
       "module": "agent",
-      "title": "把Agent Infra落实到Kairo：从机制映射到证据验收",
-      "sections": 7,
-      "approx_visible_prose_characters": 2606,
-      "figures": 0,
-      "review": "fresh_review_v29",
+      "title": "Kairo 接入验收：任务、权限与结果证据",
+      "sections": 9,
+      "approx_visible_prose_characters": 3973,
+      "figures": 1,
+      "review": "substantial_v32",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整正文及元信息；固定计划与真实模型分别验证，所有目标Kairo接口仍待接入。末尾练习不应把所有通用Python实验统称单worker，改为各自声明的本地机制。",
+      "findings": "保持目标Kairo待验，补五项证据职责、独立测试者契约和可执行记录校验；核对事件5/7/11、total23、引用、只读效果、原任务与B快照。10个拒绝用例和CLI独立变体通过，改来源标签仍未核实provenance。时序为声明输入，未虚构模型/工具/Kairo实机。",
       "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "b66c7c70ca432cd7d00e22b233ca089f94058e8248f0e25448dba6bb0af197c9"
+      "reviewed_content_sha256": "78881f5db7cdcdcd590d27e4927c2ae2d524d428824dd34a7f8291aa6d2bf3f7"
     },
     {
       "id": "durable-workflows",
@@ -529,14 +529,14 @@
       "id": "training-storage",
       "module": "cloud-data",
       "title": "云存储：块、文件、对象与访问性能",
-      "sections": 7,
-      "approx_visible_prose_characters": 3131,
-      "figures": 0,
-      "review": "fresh_review_v28",
+      "sections": 8,
+      "approx_visible_prose_characters": 4151,
+      "figures": 2,
+      "review": "substantial_v32",
       "reviewed_at": "2026-11-05",
-      "findings": "Read object/file/block semantics, complete manifests, small-object cost, 625MiB/5.5s/64MiB-per-second and 256MiB prefetch arithmetic. Need define rank as process group index on first Cloud-path occurrence, rather than assume AI prerequisite.",
+      "findings": "保留对象/文件/块、请求粒度、输入速率与冷热缓存体系；复核接口责任图、55/5.5秒串行模型、64B与64KiB的独立题设。新增真实HTTP整分片/Range等价和412/偏移/416三反例；正文、下载与图按实际响应体计数核对，ETag规则区分夹具与S3。",
       "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "59da008097094c0b4e4c62c3c03376778b3f96cd3d704fb41dedd103ed7d3dcd"
+      "reviewed_content_sha256": "47aef9d87202fbae044ab3917bca96a2d9f7ebfea0b0a4bbee6efd3c83455c94"
     },
     {
       "id": "database-index-locks",
@@ -968,10 +968,10 @@
       "id": "storage-model",
       "module": "cloud-data",
       "title": "块、文件与对象存储",
-      "review": "fresh_review_v28",
+      "review": "fresh_review_v32",
       "reviewed_at": "2026-11-05",
-      "reviewed_content_sha256": "ea18f20cff04f6a06ff430430deccc3240edccdc8fe4716873e0e2cae7a5fc4d",
-      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+      "reviewed_content_sha256": "c745010bc168b4dfa9f66c64606c1f563b7b682b680d827feec4660a33a55ee5",
+      "findings": "保留完整接口责任与S3单对象/跨对象边界，新增责任示意图；图、表和正文层次一致，不加入案例代码。"
     },
     {
       "id": "storage-performance",
@@ -1481,10 +1481,10 @@
       "id": "tr-parallel",
       "module": "training",
       "title": "张量并行、流水线并行与混合专家",
-      "review": "fresh_review_v29",
+      "review": "fresh_review_v32",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整定义、解释、折叠反例；与对应章节和现有实际记录交叉核对。保留原有语义与范围。",
-      "reviewed_content_sha256": "7f359e12d847b22c9d0a22efca145be18cd6dcccc38478ac5d8c9b6d83bfb554"
+      "findings": "保留TP/PP/MoE解释；新增两阶段四微批前向格图，与原四阶段八微批明确分开，8/10与8/11分别核对，不当作完整训练测量。",
+      "reviewed_content_sha256": "0b788a031ae2399339cb720802fa57a9e860cf49e33217ce0d78084d76022543"
     },
     {
       "id": "tr-collectives",
@@ -1688,7 +1688,7 @@
   "eight_hour_progress": {
     "reviewed_chapters": 66,
     "total_chapters": 66,
-    "substantial_chapters": 21,
+    "substantial_chapters": 24,
     "reviewed_knowledge_points": 95,
     "total_knowledge_points": 95
   }

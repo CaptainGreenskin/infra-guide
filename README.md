@@ -32,7 +32,7 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 
 ## 做一次实验
 
-下载的完整程序、环境、运行结果和源码摘要都在`dist/labs`。下列程序彼此独立，可按章节选择。完整的 [实验目录](https://captaingreenskin.github.io/infra-guide/labs/) 按三个方向整理了 47 项学习任务，注明先修、环境、观察目标与本机/目标环境证据；同一个 ZIP 可能含多个独立程序：
+下载的完整程序、环境、运行结果和源码摘要都在`dist/labs`。下列程序彼此独立，可按章节选择。[实验目录](https://captaingreenskin.github.io/infra-guide/labs/) 按三个方向整理学习任务，注明先修、环境、观察目标与本机/目标环境证据；同一个 ZIP 可能含多个独立程序：
 
 ```sh
 # Python标准库

@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 124,
+  "canonical_script_count": 126,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "a4bd64681f7d83e6c9de67a7c64542b4b2df433c875e349d390b8c6bd00b5344",
-      "bytes": 363465,
+      "sha256": "690e3d799e3d8127e7afc10ca3287fd64756816700a21aaaa4b20529dcedad15",
+      "bytes": 363769,
       "sources": [
         {
           "file": "site-routing.js",
@@ -25,8 +25,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "e05887a11d133a6a8d1b3ccde46140fe1839c5eb269cfcc1775e4e20570349b7",
-          "bytes": 6746
+          "sha256": "7a206a75c2913e3f2796ac05507e712f904da47b0fe9d1012f4be32a8df5d9f1",
+          "bytes": 7050
         },
         {
           "file": "training-content.js",
@@ -540,8 +540,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "0e8560ce4735b96d5235837da716ab632e17368836a84d936c41295428742fda",
-      "bytes": 348415,
+      "sha256": "f490b9e5d0e00886e3324121df3140bb4404f5eb3c796f465199cbb800bc66b0",
+      "bytes": 403582,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -644,9 +644,19 @@
           "bytes": 12161
         },
         {
+          "file": "storage-parallel-acceptance-files.js",
+          "sha256": "5ddbb86e8739cbbcce640ee6ec75afad105e6e69d6f37485bdb03e23929db232",
+          "bytes": 35817
+        },
+        {
+          "file": "storage-parallel-acceptance-lessons.js",
+          "sha256": "4543f0b4ddb30dd88173b3c3649c9bf1d2c66c68a3bb65ca553db5ef5c452d25",
+          "bytes": 17551
+        },
+        {
           "file": "lab-catalog.js",
-          "sha256": "139724b18dadd3d4f0c73aa9f44459820171fb85bfb8904c4787eda2dfaada25",
-          "bytes": 29122
+          "sha256": "11d9530f3915bd5851bbf5a9b2ff54758920829121e2b15fdcd87281e8c89d7d",
+          "bytes": 30831
         }
       ]
     }
@@ -654,8 +664,8 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "7b2dfff13dfea4bd57675d3c0de406fcfd7aed298e5d5505b05e0d53251aa2e4",
-      "bytes": 9622
+      "sha256": "ceea72cb2eea28f5761124450f8e4fee6ff774c73acafb2d4f9aece5024b1671",
+      "bytes": 10968
     },
     {
       "file": "site-search.js",

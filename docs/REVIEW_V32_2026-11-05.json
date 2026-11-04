@@ -1,0 +1,622 @@
+{
+  "reviewed_at": "2026-11-05",
+  "chapter_findings": {
+    "training-storage": "保留对象/文件/块、请求粒度、输入速率与冷热缓存体系；复核接口责任图、55/5.5秒串行模型、64B与64KiB的独立题设。新增真实HTTP整分片/Range等价和412/偏移/416三反例；正文、下载与图按实际响应体计数核对，ETag规则区分夹具与S3。",
+    "tensor-parallel-math": "重排定义与FFN开篇，补完整反向链式法则。两进程CPU/Gloo实际复算Y=[12,5]、dX=[39,42]、局部参数梯度和SGD；独立完整基线及手算矩阵一致。核对偏置重复、ReLU次序、SUM与平均区别、8rank坐标、有效batch64和等时前向槽模型。显式dY不冒充生产分布式autograd层。",
+    "kairo-practice": "保持目标Kairo待验，补五项证据职责、独立测试者契约和可执行记录校验；核对事件5/7/11、total23、引用、只读效果、原任务与B快照。10个拒绝用例和CLI独立变体通过，改来源标签仍未核实provenance。时序为声明输入，未虚构模型/工具/Kairo实机。"
+  },
+  "points": [
+    "storage-model",
+    "tr-parallel"
+  ],
+  "substantial_total": 24,
+  "actual_new_programs": 3,
+  "diagram_files": 5,
+  "local_record": {
+    "verified_at_utc": "2026-11-04T19:26:39.096202+00:00",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "programs": {
+      "shard_range.py": {
+        "status": "passed",
+        "python": "3.9.6",
+        "source_sha256": "08ea9d99c0ec03a636852cc088093ef95a737fdb5f34e89bbc29fc3dbbbe6fe6",
+        "input": {
+          "samples": 20,
+          "sample_bytes": 64,
+          "samples_per_shard": 4,
+          "selected_ids": [
+            0,
+            1,
+            6,
+            7,
+            17
+          ]
+        },
+        "full_shards_with_request_cache": {
+          "requests": 3,
+          "body_bytes": 768,
+          "useful_sample_bytes": 320
+        },
+        "indexed_ranges": {
+          "requests": 5,
+          "body_bytes": 320,
+          "useful_sample_bytes": 320
+        },
+        "server_positive_requests": [
+          {
+            "key": "shard-0",
+            "range": null
+          },
+          {
+            "key": "shard-1",
+            "range": null
+          },
+          {
+            "key": "shard-4",
+            "range": null
+          },
+          {
+            "key": "shard-0",
+            "range": "bytes=0-63"
+          },
+          {
+            "key": "shard-0",
+            "range": "bytes=64-127"
+          },
+          {
+            "key": "shard-1",
+            "range": "bytes=128-191"
+          },
+          {
+            "key": "shard-1",
+            "range": "bytes=192-255"
+          },
+          {
+            "key": "shard-4",
+            "range": "bytes=64-127"
+          }
+        ],
+        "negative_probes": {
+          "object_changed": 412,
+          "wrong_offset": "sample_digest_mismatch",
+          "out_of_bounds": 416
+        },
+        "declared_serial_cost_model": {
+          "samples": 10000,
+          "sample_kib": 64,
+          "total_mib": 625,
+          "bandwidth_mib_s": 125,
+          "request_ms": 5,
+          "separate_s": 55,
+          "shards_s": 5.5
+        },
+        "scope": "Actual bounded loopback HTTP and byte checks; cost seconds are declared serial arithmetic, not measured latency. No S3, cloud storage, compression or GPU executed."
+      },
+      "tp_forward_backward.py": {
+        "status": "passed",
+        "python": "3.12.13",
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "world_size": 2,
+        "device": "cpu",
+        "dtype": "float64",
+        "source_sha256": "0ce43f27d23f98e387c8fa50aaea08833d8372efb96664de07de03a4e67dbc60",
+        "reference": {
+          "y": [
+            [
+              12,
+              5
+            ]
+          ],
+          "loss": 58.5,
+          "dx": [
+            [
+              39,
+              42
+            ]
+          ],
+          "dw": [
+            [
+              9,
+              6,
+              15,
+              18
+            ],
+            [
+              18,
+              12,
+              30,
+              36
+            ]
+          ],
+          "du": [
+            [
+              9,
+              6
+            ],
+            [
+              18,
+              12
+            ],
+            [
+              18,
+              12
+            ],
+            [
+              36,
+              24
+            ]
+          ],
+          "db": [
+            9,
+            6
+          ],
+          "w_after": [
+            [
+              0.91,
+              -0.06,
+              1.85,
+              -0.18
+            ],
+            [
+              -0.18,
+              0.88,
+              -0.3,
+              1.6400000000000001
+            ]
+          ],
+          "u_after": [
+            [
+              0.91,
+              -0.06
+            ],
+            [
+              -0.18,
+              0.88
+            ],
+            [
+              0.8200000000000001,
+              0.88
+            ],
+            [
+              1.6400000000000001,
+              -0.24
+            ]
+          ],
+          "bias_after": [
+            0.91,
+            0.94
+          ]
+        },
+        "ranks": [
+          {
+            "rank": 0,
+            "w_shape": [
+              2,
+              2
+            ],
+            "u_shape": [
+              2,
+              2
+            ],
+            "hidden": [
+              [
+                1,
+                2
+              ]
+            ],
+            "partial_output": [
+              [
+                1,
+                2
+              ]
+            ],
+            "y": [
+              [
+                12,
+                5
+              ]
+            ],
+            "dy": [
+              [
+                9,
+                6
+              ]
+            ],
+            "dx_partial": [
+              [
+                9,
+                6
+              ]
+            ],
+            "dx": [
+              [
+                39,
+                42
+              ]
+            ],
+            "dw": [
+              [
+                9,
+                6
+              ],
+              [
+                18,
+                12
+              ]
+            ],
+            "du": [
+              [
+                9,
+                6
+              ],
+              [
+                18,
+                12
+              ]
+            ],
+            "db": [
+              9,
+              6
+            ],
+            "w_after": [
+              [
+                0.91,
+                -0.06
+              ],
+              [
+                -0.18,
+                0.88
+              ]
+            ],
+            "u_after": [
+              [
+                0.91,
+                -0.06
+              ],
+              [
+                -0.18,
+                0.88
+              ]
+            ],
+            "bias_after": [
+              0.91,
+              0.94
+            ],
+            "wrong_bias_y": [
+              [
+                13,
+                6
+              ]
+            ]
+          },
+          {
+            "rank": 1,
+            "w_shape": [
+              2,
+              2
+            ],
+            "u_shape": [
+              2,
+              2
+            ],
+            "hidden": [
+              [
+                2,
+                4
+              ]
+            ],
+            "partial_output": [
+              [
+                10,
+                2
+              ]
+            ],
+            "y": [
+              [
+                12,
+                5
+              ]
+            ],
+            "dy": [
+              [
+                9,
+                6
+              ]
+            ],
+            "dx_partial": [
+              [
+                30,
+                36
+              ]
+            ],
+            "dx": [
+              [
+                39,
+                42
+              ]
+            ],
+            "dw": [
+              [
+                15,
+                18
+              ],
+              [
+                30,
+                36
+              ]
+            ],
+            "du": [
+              [
+                18,
+                12
+              ],
+              [
+                36,
+                24
+              ]
+            ],
+            "db": [
+              9,
+              6
+            ],
+            "w_after": [
+              [
+                1.85,
+                -0.18
+              ],
+              [
+                -0.3,
+                1.6400000000000001
+              ]
+            ],
+            "u_after": [
+              [
+                0.8200000000000001,
+                0.88
+              ],
+              [
+                1.6400000000000001,
+                -0.24
+              ]
+            ],
+            "bias_after": [
+              0.91,
+              0.94
+            ],
+            "wrong_bias_y": [
+              [
+                13,
+                6
+              ]
+            ]
+          }
+        ],
+        "wrong_nonlinearity": {
+          "partials": [
+            1,
+            -2
+          ],
+          "sum_then_relu": 0,
+          "relu_then_sum": 1
+        },
+        "scope": "Actual two-rank forward SUM, input-gradient SUM and wrong-bias SUM. Local autograd with explicit dY; no automatic distributed-autograd layer, GPU/NCCL, multi-host, model quality or performance claim."
+      },
+      "acceptance_record.py": {
+        "status": "passed",
+        "python": "3.9.6",
+        "source_sha256": "81848b9d090dd4df8148ab0f81cf80e563f5e235102a182c0e1a38a1334ad01b",
+        "positive": {
+          "record_consistent": true,
+          "source": "teaching_fixture",
+          "provenance_verified": false,
+          "request_transports": 2,
+          "logical_tasks": 1,
+          "total": 23
+        },
+        "negative_probes": [
+          {
+            "case": "all_denied_but_plausible_answer",
+            "expected_error": "missing_allowed_read",
+            "actual_errors": [
+              "missing_allowed_read",
+              "unsupported_citations"
+            ]
+          },
+          {
+            "case": "unchanged_B_because_nothing_ran",
+            "expected_error": "not_completed_original_task",
+            "actual_errors": [
+              "not_completed_original_task"
+            ]
+          },
+          {
+            "case": "same_B_content_new_version",
+            "expected_error": "forbidden_snapshot_changed",
+            "actual_errors": [
+              "forbidden_snapshot_changed"
+            ]
+          },
+          {
+            "case": "wrong_sum_with_valid_citations",
+            "expected_error": "wrong_business_total",
+            "actual_errors": [
+              "wrong_business_total"
+            ]
+          },
+          {
+            "case": "citation_from_other_tenant",
+            "expected_error": "unsupported_citations",
+            "actual_errors": [
+              "unsupported_citations"
+            ]
+          },
+          {
+            "case": "retry_created_another_task",
+            "expected_error": "logical_task_count",
+            "actual_errors": [
+              "logical_task_count"
+            ]
+          },
+          {
+            "case": "same_request_changed_arguments",
+            "expected_error": "request_identity_or_arguments",
+            "actual_errors": [
+              "request_identity_or_arguments"
+            ]
+          },
+          {
+            "case": "target_version_still_pending",
+            "expected_error": "unbound_target_version",
+            "actual_errors": [
+              "unbound_target_version"
+            ]
+          },
+          {
+            "case": "denied_call_returns_private_payload",
+            "expected_error": "denied_payload_leak",
+            "actual_errors": [
+              "denied_payload_leak"
+            ]
+          },
+          {
+            "case": "readonly_task_writes_A",
+            "expected_error": "readonly_task_wrote",
+            "actual_errors": [
+              "readonly_task_wrote"
+            ]
+          }
+        ],
+        "scope": "Checks declared fixture records against a separate tester-owned contract. No Kairo/model/tool backend called; consistency does not attest record provenance or real target behavior."
+      }
+    },
+    "fixtures": {
+      "readonly-contract.example.json": "d4c4a7693b3c897f4395d051f98c8d0a18d2caa6ff6bd9cd24451aba1150c84f",
+      "readonly-evidence.example.json": "49ad6d7a3ef87b4659c51e38428b23728a0bfc6c03e2417eb403590c531a4e2b"
+    },
+    "not_executed": [
+      "S3 or cloud storage",
+      "GPU/NCCL or multiple physical hosts",
+      "real Kairo/model/tool backend",
+      "record provenance attestation",
+      "production performance"
+    ]
+  },
+  "browser_fit": {
+    "desktop": {
+      "image": [
+        555.2265625,
+        466
+      ],
+      "stage": [
+        1084,
+        466
+      ]
+    },
+    "desktop_zoom": {
+      "image": [
+        960,
+        805.7109375
+      ],
+      "scrollTop": 320
+    },
+    "mobile_fit": {
+      "image": [
+        331.9921875,
+        278.640625
+      ],
+      "stage": [
+        332,
+        279
+      ]
+    },
+    "mobile_zoom": {
+      "image": [
+        960,
+        805.7109375
+      ],
+      "stage": [
+        332,
+        488
+      ],
+      "scrollLeft": 51.5,
+      "scrollTop": 90
+    }
+  },
+  "browser_final": {
+    "phone_fit": {
+      "image": [
+        332,
+        278.640625
+      ],
+      "scroll": [
+        332,
+        279
+      ],
+      "stage": [
+        332,
+        279
+      ]
+    },
+    "phone_zoom": {
+      "image": [
+        960,
+        805.7109375
+      ],
+      "scroll": [
+        139,
+        191.5
+      ],
+      "stage": [
+        332,
+        488
+      ]
+    },
+    "desktop_fit": {
+      "image": [
+        555.2265625,
+        465.9921875
+      ],
+      "scroll": [
+        1084,
+        466
+      ],
+      "stage": [
+        1084,
+        466
+      ]
+    }
+  },
+  "legacy_svg_fit": {
+    "source": [
+      960,
+      610
+    ],
+    "browser_intrinsic": [
+      236,
+      150
+    ],
+    "image": [
+      733.375,
+      465.9921875
+    ],
+    "stage": [
+      1084,
+      466
+    ]
+  },
+  "compatibility_replays": [
+    {
+      "program": "storage",
+      "python": "3.12.13",
+      "status": "passed",
+      "source_sha256": "08ea9d99c0ec03a636852cc088093ef95a737fdb5f34e89bbc29fc3dbbbe6fe6"
+    },
+    {
+      "program": "acceptance",
+      "python": "3.12.13",
+      "status": "passed",
+      "source_sha256": "81848b9d090dd4df8148ab0f81cf80e563f5e235102a182c0e1a38a1334ad01b"
+    }
+  ]
+}

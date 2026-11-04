@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="690" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+<title id="title">重复提交与断线重连的两条验收时序</title><desc id="desc">题设时序，不是Kairo运行记录；断线不取消是本题约定，真实版本必须声明契约。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="690" fill="white"/>
+<text x="32" y="46" font-size="31" fill="#1c283d" font-weight="650" text-anchor="start">两次传输不等于两项任务；断线也不等于已取消</text>
+<text x="32" y="86" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">题设时序，并非 Kairo 运行记录；本题明确约定“断线不取消”。</text>
+<rect x="32" y="118" width="516" height="501" rx="9" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<rect x="572" y="118" width="516" height="501" rx="9" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<text x="55" y="158" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">A：重复提交，仍沿同一请求找任务</text>
+<text x="595" y="158" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">B：重连后查询原任务</text>
+<text x="104" y="205" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">客户端</text>
+<line x1="104" y1="219" x2="104" y2="571" stroke="#e4e9f0" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="462" y="205" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">运行时</text>
+<line x1="462" y1="219" x2="462" y2="571" stroke="#e4e9f0" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="640" y="205" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">客户端</text>
+<line x1="640" y1="219" x2="640" y2="571" stroke="#e4e9f0" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="818" y="205" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">运行时</text>
+<line x1="818" y1="219" x2="818" y2="571" stroke="#e4e9f0" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="1015" y="205" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">工具</text>
+<line x1="1015" y1="219" x2="1015" y2="571" stroke="#e4e9f0" stroke-width="2" stroke-dasharray="5 5"/>
+<line x1="110" y1="262" x2="452" y2="262" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="123" y="249" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">0秒：R1 + 参数摘要</text>
+<rect x="351" y="278" width="172" height="41" rx="9" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="437" y="306" font-size="22" fill="#315dce" font-weight="400" text-anchor="middle">持久化 T1</text>
+<line x1="452" y1="359" x2="255" y2="359" stroke="#6b768b" stroke-width="2.5" stroke-dasharray="7 6"/>
+<path d="M247 351 L263 367 M247 367 L263 351" stroke="#a84444" stroke-width="3"/>
+<text x="287" y="345" font-size="22" fill="#a84444" font-weight="400" text-anchor="start">受理响应丢失</text>
+<line x1="110" y1="421" x2="452" y2="421" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="123" y="407" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">1秒：同 R1、同摘要</text>
+<line x1="452" y1="497" x2="114" y2="497" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="144" y="482" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">2秒：返回同一 T1</text>
+<text x="59" y="590" font-size="23" fill="#287b69" font-weight="600" text-anchor="start">两次请求传输，一项逻辑任务</text>
+<line x1="825" y1="262" x2="1004" y2="262" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="837" y="248" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">3秒：读 A</text>
+<text x="599" y="326" font-size="22" fill="#a84444" font-weight="400" text-anchor="start">4秒：客户端断线</text>
+<line x1="1005" y1="382" x2="830" y2="382" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="841" y="368" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">6秒：工具回执</text>
+<line x1="647" y1="462" x2="807" y2="462" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="650" y="447" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">8秒：查询 T1</text>
+<line x1="807" y1="532" x2="648" y2="532" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="661" y="518" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">原状态与结果</text>
+<text x="595" y="590" font-size="23" fill="#287b69" font-weight="600" text-anchor="start">交付原任务，不新建第二项</text>
+<text x="32" y="657" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">另核对：允许的读确实成功，B 的版本/摘要不变，引用来自已读材料。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_acceptance_scenarios&quot;, &quot;kairo_executed&quot;: false, &quot;disconnect_cancels&quot;: false}</metadata>
+</svg>

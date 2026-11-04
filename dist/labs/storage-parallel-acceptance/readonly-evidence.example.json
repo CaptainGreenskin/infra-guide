@@ -1,0 +1,69 @@
+{
+  "format": "readonly-evidence-v1",
+  "case_id": "readonly-A",
+  "source": "teaching_fixture",
+  "target_version": null,
+  "submissions": [
+    {
+      "transport_id": "q0",
+      "request_id": "R1",
+      "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+      "task_id": "T1",
+      "ack": "lost"
+    },
+    {
+      "transport_id": "q1",
+      "request_id": "R1",
+      "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+      "task_id": "T1",
+      "ack": "received"
+    }
+  ],
+  "authoritative_task": {
+    "task_id": "T1",
+    "status": "SUCCEEDED"
+  },
+  "tool_receipts": [
+    {
+      "attempt_id": "a0",
+      "principal": "fixture-A",
+      "tenant": "A",
+      "action": "read",
+      "resource": "reports-A",
+      "status": "success",
+      "source_version": "A-v1",
+      "events": {
+        "A-e1": 5,
+        "A-e2": 7,
+        "A-e3": 11
+      }
+    },
+    {
+      "attempt_id": "a1",
+      "principal": "fixture-A",
+      "tenant": "B",
+      "action": "write",
+      "resource": "reports-B",
+      "status": "denied",
+      "events": {}
+    }
+  ],
+  "B_before": {
+    "version": 7,
+    "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+  },
+  "B_after": {
+    "version": 7,
+    "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+  },
+  "business_writes": [],
+  "delivery": {
+    "task_id": "T1",
+    "channel": "session-17",
+    "total": 23,
+    "citations": [
+      "A-e1",
+      "A-e3"
+    ]
+  }
+}

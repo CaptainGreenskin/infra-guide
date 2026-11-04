@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="410" viewBox="0 0 1120 410" role="img" aria-labelledby="title desc">
+<title id="title">等时两阶段四微批的前向流水线</title><desc id="desc">五个时间槽、十个阶段槽，其中八个工作，两个填充或排空。不是完整训练调度。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="410" fill="white"/>
+<text x="32" y="45" font-size="31" fill="#1c283d" font-weight="650" text-anchor="start">前向流水线：4 个微批，为什么要 5 个时间槽</text>
+<text x="32" y="84" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">只画等时前向，不含反向、通信、阶段不均或实际 GPU 测量。</text>
+<text x="286" y="128" font-size="23" fill="#6b768b" font-weight="400" text-anchor="middle">槽 0</text>
+<text x="450" y="128" font-size="23" fill="#6b768b" font-weight="400" text-anchor="middle">槽 1</text>
+<text x="614" y="128" font-size="23" fill="#6b768b" font-weight="400" text-anchor="middle">槽 2</text>
+<text x="778" y="128" font-size="23" fill="#6b768b" font-weight="400" text-anchor="middle">槽 3</text>
+<text x="942" y="128" font-size="23" fill="#6b768b" font-weight="400" text-anchor="middle">槽 4</text>
+<text x="32" y="182" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">阶段 0</text>
+<rect x="210" y="145" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="286" y="184" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 0</text>
+<rect x="374" y="145" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="450" y="184" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 1</text>
+<rect x="538" y="145" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="614" y="184" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 2</text>
+<rect x="702" y="145" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="778" y="184" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 3</text>
+<rect x="866" y="145" width="152" height="59" rx="9" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="942" y="184" font-size="24" fill="#6b768b" font-weight="400" text-anchor="middle">空</text>
+<text x="32" y="260" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">阶段 1</text>
+<rect x="210" y="223" width="152" height="59" rx="9" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="286" y="262" font-size="24" fill="#6b768b" font-weight="400" text-anchor="middle">空</text>
+<rect x="374" y="223" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="450" y="262" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 0</text>
+<rect x="538" y="223" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="614" y="262" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 1</text>
+<rect x="702" y="223" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="778" y="262" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 2</text>
+<rect x="866" y="223" width="152" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="942" y="262" font-size="24" fill="#315dce" font-weight="400" text-anchor="middle">微批 3</text>
+<text x="32" y="340" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">8 个工作阶段槽 ÷ 10 个总阶段槽 = 80% = m / (m+p−1)</text>
+<text x="32" y="382" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">增加微批可摊薄填充/排空；不能据此直接承诺训练利用率。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_equal_time_forward_model&quot;, &quot;p&quot;: 2, &quot;m&quot;: 4, &quot;slots&quot;: 5, &quot;occupied&quot;: 8, &quot;capacity&quot;: 10}</metadata>
+</svg>

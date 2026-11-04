@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="940" viewBox="0 0 1120 940" role="img" aria-labelledby="title desc">
+<title id="title">两进程张量并行：前向部分和与反向输入梯度</title><desc id="desc">对应长度2输入的小算例。输出先求和再加一次偏置；输入梯度也要合并两份贡献。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="940" fill="white"/>
+<text x="32" y="44" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一条输入，两份特征：前向和反向都要算全</text>
+<text x="32" y="83" font-size="23" fill="#6b768b" font-weight="400" text-anchor="start">形状：X [1,2]、W [2,4]、U [4,2]；输入数值见蓝框。</text>
+<rect x="363" y="112" width="394" height="57" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="560" y="150" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">共同输入 X = [1,2]</text>
+<line x1="460" y1="175" x2="285" y2="211" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="660" y1="175" x2="835" y2="211" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="222" width="506" height="203" rx="9" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<text x="56" y="263" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">rank 0：W 的两列、U 的两行</text>
+<text x="56" y="307" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">W0 [2,2] → ReLU → H0 = [1,2]</text>
+<text x="56" y="350" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">H0 × U0 [2,2]</text>
+<text x="56" y="394" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">局部输出 Z0 = [1,2]</text>
+<rect x="582" y="222" width="506" height="203" rx="9" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<text x="606" y="263" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">rank 1：W 的两列、U 的两行</text>
+<text x="606" y="307" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">W1 [2,2] → ReLU → H1 = [2,4]</text>
+<text x="606" y="350" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">H1 × U1 [2,2]</text>
+<text x="606" y="394" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">局部输出 Z1 = [10,2]</text>
+<line x1="285" y1="432" x2="445" y2="467" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="835" y1="432" x2="675" y2="467" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="362" y="477" width="396" height="60" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="560" y="517" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">SUM：Z0 + Z1 = [11,4]</text>
+<line x1="560" y1="543" x2="560" y2="572" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="362" y="582" width="396" height="59" rx="9" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="560" y="621" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">只加一次 b → Y = [12,5]</text>
+<text x="785" y="602" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">若各加一次再求和</text>
+<text x="785" y="633" font-size="24" fill="#a84444" font-weight="600" text-anchor="start">错误得到 [13,6]</text>
+<text x="32" y="690" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">目标 [3,−1]；平方误差的一半 → dY = [9,6]，传给两条局部路径。</text>
+<rect x="32" y="720" width="506" height="69" rx="9" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="56" y="764" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">rank 0 的输入梯度贡献 = [9,6]</text>
+<rect x="582" y="720" width="506" height="69" rx="9" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="606" y="764" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">rank 1 的输入梯度贡献 = [30,36]</text>
+<line x1="285" y1="796" x2="445" y2="830" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="835" y1="796" x2="675" y2="830" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="362" y="840" width="396" height="59" rx="9" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="560" y="879" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">SUM → dX = [39,42]</text>
+<text x="32" y="927" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">本例显式传递 dY；普通集合操作位于自动求导图之外。</text>
+<metadata>{&quot;kind&quot;: &quot;observed_cpu_gloo_and_hand_math&quot;, &quot;world_size&quot;: 2, &quot;y&quot;: [12, 5], &quot;dx&quot;: [39, 42], &quot;wrong_bias&quot;: [13, 6]}</metadata>
+</svg>
