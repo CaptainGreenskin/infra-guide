@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..');
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?undefined:process.argv[i+1];};
 const base=arg('--base-path')||'/infra-guide/';
-const origin=(arg('--origin')||'https://captaingreenskin.github.io').replace(/\/$/,'');
+const origin=new URL(arg('--origin')||'https://captaingreenskin.github.io').origin;
 if(!/^\/[A-Za-z0-9_-]+\/$/.test(base)&&base!=='/')throw Error('Use a root or single repository base path.');
 if(new URL(origin).protocol!=='https:')throw Error('Pages origin must use HTTPS.');
 const output=path.join(root,'.pages',base==='/'?'root':base.slice(1,-1));

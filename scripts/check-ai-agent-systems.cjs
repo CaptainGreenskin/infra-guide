@@ -69,5 +69,7 @@ for(const id of ['distributed-training','model-serving','durable-workflows','age
 assert(/不能作为服务端\s*TTFT/.test(html('article/inference-performance')));
 const decodedAgentCode=[...html('article/agent-evaluation').matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').trim());
 assert(decodedAgentCode.includes(fs.readFileSync('dist/labs/ai-agent-systems/agent_evaluation.py','utf8').trim()),'static Agent code differs from executed source');
-assert(html('labs').includes('AI / AGENT · 原理实战'));
+const labCatalogHTML=html('labs');
+for(const name of ['gqa_serving.py','token_ddp.py','worker_fencing.py','agent_evaluation.py'])assert(labCatalogHTML.includes('href="labs/ai-agent-systems/'+name+'"'),name+': lab source entry missing');
+assert(labCatalogHTML.includes('labs/ai-agent-systems.zip')&&labCatalogHTML.includes('labs/ai-agent-systems/validation.json'),'lab archive or evidence entry missing');
 console.log('PASS: 33 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');

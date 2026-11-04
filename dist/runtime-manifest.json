@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "canonical_script_count": 123,
+  "canonical_script_count": 124,
   "public_script_count": 9,
   "bundles": [
     {
@@ -326,8 +326,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "c03e2e7952166bf4ef9ffb5dafe137fd302bcc73a588e287fd32027ccaca59d7",
-      "bytes": 344252,
+      "sha256": "00fdd32e2aa21682d7e63ccc06cecdecbad4eb685b67b8b6fc402866fcc1bc7c",
+      "bytes": 332154,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -356,8 +356,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "2bf7eae72c82f768a5cdc22e59326ea452985b88c6bb014bf7d2d41d9f1e8610",
-          "bytes": 29280
+          "sha256": "c278cc502826cffa0b188af4029058d85df065a6a8efe5e3e956009db186a692",
+          "bytes": 17182
         },
         {
           "file": "interview-practice.js",
@@ -540,8 +540,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "53b9f8912cdf327c1e83df2d9c839c43bade92028cb67abb9392f5d67bb040a7",
-      "bytes": 319271,
+      "sha256": "0e8560ce4735b96d5235837da716ab632e17368836a84d936c41295428742fda",
+      "bytes": 348415,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -642,6 +642,11 @@
           "file": "training-capstone-lessons.js",
           "sha256": "dee703197911385c67ff84d5bc8c3a5bfa20ed34186ddcc63d1ba6afd457f4db",
           "bytes": 12161
+        },
+        {
+          "file": "lab-catalog.js",
+          "sha256": "139724b18dadd3d4f0c73aa9f44459820171fb85bfb8904c4787eda2dfaada25",
+          "bytes": 29122
         }
       ]
     }

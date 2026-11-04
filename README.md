@@ -32,7 +32,7 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 
 ## 做一次实验
 
-下载的完整程序、环境、运行结果和源码摘要都在`dist/labs`。下列程序彼此独立，可按章节选择：
+下载的完整程序、环境、运行结果和源码摘要都在`dist/labs`。下列程序彼此独立，可按章节选择。完整的 [实验目录](https://captaingreenskin.github.io/infra-guide/labs/) 按三个方向整理了 47 项学习任务，注明先修、环境、观察目标与本机/目标环境证据；同一个 ZIP 可能含多个独立程序：
 
 ```sh
 # Python标准库
@@ -59,30 +59,22 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | 路径 | 用途 |
 | --- | --- |
 | `src/page-shell.html` | 页面外壳与脚本依赖顺序 |
-| `dist/*.js` | 课程数据、知识正文、渲染与交互源码 |
+| `dist/*.js`（除 `runtime-*.js`） | 课程数据、知识正文、渲染与交互规范源码 |
 | `dist/diagrams/` | SVG图 |
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
 | `dist/**/index.html` | 生成的100个独立页面；由内容脚本重新生成 |
 
-修改正文后：
+修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 
 ```sh
-node scripts/render-pages.cjs
-node scripts/check-content.cjs
-node scripts/check-public-pages.cjs
-node scripts/check-textbooks.cjs
-node scripts/check-cloud-course.cjs
-node scripts/check-knowledge-resources.cjs
-node scripts/check-mechanism-models.cjs
-node scripts/check-cloud-deepening.cjs
-node scripts/check-cloud-operations.cjs
-node scripts/check-ai-agent-systems.cjs
-node scripts/check-learning-mechanisms.cjs
-node scripts/check-serving-consistency.cjs
-node scripts/check-editorial-evidence.cjs
+node scripts/check-all.cjs --pages
 ```
+
+此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
+
+浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后 100 条路由。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 
