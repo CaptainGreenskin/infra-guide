@@ -1,5 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
-const html=fs.readFileSync('dist/index.html','utf8');
+// Source checks inspect canonical scripts; generated public bundles are checked separately.
+const html=fs.readFileSync('src/page-shell.html','utf8');
 const scripts=[...html.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1].split('?')[0]);
 const context={};vm.createContext(context);
 for(const file of scripts){const code=fs.readFileSync('dist/'+file,'utf8');new vm.Script(code,{filename:file});if(file!=='app.js')vm.runInContext(code,context,{filename:file})}

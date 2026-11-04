@@ -16,8 +16,9 @@ for(const file of fs.readdirSync(path.join(dist,'diagrams')).filter(x=>x.endsWit
 fs.writeFileSync(path.join(dist,'diagram-sizes.js'),'const diagramHeights='+JSON.stringify(diagramHeights)+';\nconst diagramWidths='+JSON.stringify(diagramWidths)+';\n');
 const shell=fs.readFileSync(path.join(root,'src/page-shell.html'),'utf8');
 const scripts=[...shell.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]);
+const runtimeShell=require('./build-runtime.cjs').buildRuntime(shell,dist).shell;
 // Returning readers must receive the matching scripts and styles for this HTML.
-const versionedShell = shell.replace(/(src|href)="([A-Za-z0-9_-]+\.(?:js|css))"/g, (_, attribute, filename) => {
+const versionedShell = runtimeShell.replace(/(src|href)="([A-Za-z0-9_-]+\.(?:js|css))"/g, (_, attribute, filename) => {
  const bytes = fs.readFileSync(path.join(dist, filename));
  const digest = require('crypto').createHash('sha256').update(bytes).digest('hex').slice(0, 12);
  return attribute+'="'+filename+'?v='+digest+'"';
@@ -33,14 +34,20 @@ for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'
 const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits})',context);
 fs.writeFileSync(path.join(root,'docs/CHAPTER_REVIEW_2026-11-04.json'),JSON.stringify({date:'2026-11-04',status:'reviewed_and_revised',chapters:vm.runInContext('chapterReadingEdits',context)},null,2)+'\n');
 const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/resources/',call:'resourcesPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
-const revisedRoutes = new Set(['/outline/', '/interview/', '/labs/', '/track/cloud/', '/track/ai/', '/track/agent/', '/article/network-diagnosis/', '/article/gpu-memory/', '/article/agent-security/']);
-for (const article of data.articles) {
- if (article.updated === '2026.11.04') revisedRoutes.add('/article/'+article.id+'/');
-}
-revisedRoutes.add('/module/model-foundations/');
-revisedRoutes.add('/resources/');
-for(const module of data.modules.filter(m=>['cloud','ai','agent'].includes(m.track))) revisedRoutes.add('/module/'+module.id+'/');
-const lastModified = route => (revisedRoutes.has(route) || route.startsWith('/interview/')) ? '2026-11-04' : '2026-11-03';
+const chapterDates=new Map(data.articles.map(a=>{
+ const raw=(a.updated||'2026.11.03').replaceAll('.','-');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)||!Number.isFinite(Date.parse(raw))||new Date(raw).toISOString().slice(0,10)!==raw)throw Error(a.id+': invalid revision date');
+ return [a.id,raw];
+}));
+const newestDate=ids=>ids.map(id=>chapterDates.get(id)).filter(Boolean).sort().at(-1)||'2026-11-03';
+const siteDate=newestDate(data.articles.map(a=>a.id));
+const lastModified=route=>{
+ const parts=route.split('/').filter(Boolean);
+ if(parts[0]==='article')return chapterDates.get(parts[1])||siteDate;
+ if(parts[0]==='module')return newestDate(data.articles.filter(a=>a.module===parts[1]).map(a=>a.id));
+ if(parts[0]==='track')return newestDate(data.articles.filter(a=>data.trackDefinitions[parts[1]]?.modules.includes(a.module)).map(a=>a.id));
+ return siteDate;
+};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 for(const entry of routes){
  sink.innerHTML='';grid.innerHTML='';context.location.pathname=entry.route;

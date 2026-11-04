@@ -1,0 +1,666 @@
+{
+  "format": 1,
+  "canonical_script_count": 123,
+  "public_script_count": 9,
+  "bundles": [
+    {
+      "file": "runtime-01.js",
+      "sha256": "a4bd64681f7d83e6c9de67a7c64542b4b2df433c875e349d390b8c6bd00b5344",
+      "bytes": 363465,
+      "sources": [
+        {
+          "file": "site-routing.js",
+          "sha256": "ea630e0a42a8488ea5eccbfd2f553a0ee50510282c25d15474661728c9001eae",
+          "bytes": 645
+        },
+        {
+          "file": "content.js",
+          "sha256": "4502d79ec5329403d3b6ea509192d1d22b389e7b79b76c8e79334e06711f270b",
+          "bytes": 26602
+        },
+        {
+          "file": "lab-files.js",
+          "sha256": "79c2884b05dba8d73909caf9372c4844cfd56153ea19c4f909f9a6f5514b44d3",
+          "bytes": 47498
+        },
+        {
+          "file": "diagram-sizes.js",
+          "sha256": "e05887a11d133a6a8d1b3ccde46140fe1839c5eb269cfcc1775e4e20570349b7",
+          "bytes": 6746
+        },
+        {
+          "file": "training-content.js",
+          "sha256": "81336d9789a450ba055cc847a46db7620a832efd484a1eee17d6e3d0daad4ead",
+          "bytes": 23432
+        },
+        {
+          "file": "training-advanced.js",
+          "sha256": "d882e069507f9d00e48580b0c57500b0963970a36c57e0e630eab379092ac36a",
+          "bytes": 17156
+        },
+        {
+          "file": "training-exercises.js",
+          "sha256": "da6fa0ff6e5c693f4427dda550bb13698af6c364a8b55fd79fe2e7bbffb3aaad",
+          "bytes": 5226
+        },
+        {
+          "file": "system-lab-files.js",
+          "sha256": "2c3d2f4c22f73d7b5fd0d6c6866cc36a6a50253e2bc36f8542466f1124f1eece",
+          "bytes": 31920
+        },
+        {
+          "file": "ddp-step-files.js",
+          "sha256": "7f4e137d2819cea9f135753f62ebc14957102d7b32a04fe9057cbeecc459daaa",
+          "bytes": 12934
+        },
+        {
+          "file": "attention-files.js",
+          "sha256": "4308d4328524535ca5ff7257e2413d571448c0c3499f683538118cb4f38b42fd",
+          "bytes": 13600
+        },
+        {
+          "file": "curriculum.js",
+          "sha256": "1ba8001cb8eceb74f49b9c2ccf1ba7c6ab445682bb26a4e6608818eca2075424",
+          "bytes": 7930
+        },
+        {
+          "file": "cloud-basics.js",
+          "sha256": "6b9804ffdb806fe9043a3b6e3bef386586168d9c3c863787e6351415c292e84d",
+          "bytes": 21481
+        },
+        {
+          "file": "cloud-systems.js",
+          "sha256": "f7486eab21aba35440c5b95c05d4bf389fa443a09472b577c56a464442f90dd1",
+          "bytes": 39915
+        },
+        {
+          "file": "ai-platform.js",
+          "sha256": "258a5a8e52db0b7c1db904f83b28b0e32be136d1edadb3ff1f3d888cfd2c3ea7",
+          "bytes": 17484
+        },
+        {
+          "file": "agent-content.js",
+          "sha256": "b6fbd9bf565fb229d98e3e8bdab15134678b5d54feed4e17ddf4db42a4174fec",
+          "bytes": 21480
+        },
+        {
+          "file": "practice-content.js",
+          "sha256": "1f96018d519b7524b0e9f55300ff720c66395106abc318568b45458b84017746",
+          "bytes": 11200
+        },
+        {
+          "file": "curriculum-finalize.js",
+          "sha256": "f848907318e80529c347b0a2617751a539e46bd414f0d9025f7e9b80b0459aa0",
+          "bytes": 626
+        },
+        {
+          "file": "training-deepening.js",
+          "sha256": "f6341fe102a3f27419d4ef486bb6d7f881cfdb79c33fc0306114eae84363408e",
+          "bytes": 12712
+        },
+        {
+          "file": "guided-lessons.js",
+          "sha256": "ec621c65b3ae10524a0d35e1ccb6eea4a745b3021375f69c5f5be48a69b5b18a",
+          "bytes": 26181
+        },
+        {
+          "file": "guided-foundations.js",
+          "sha256": "2a7aaf085929bb1e830c248affb1ffc242326bf429f01a46fe12a18dc35c0942",
+          "bytes": 18124
+        }
+      ]
+    },
+    {
+      "file": "runtime-02.js",
+      "sha256": "75a15e0bc6c4fa49a54e5095ccae553acf1a48bd3e65f5bdfa2b7b7083d346cb",
+      "bytes": 616899,
+      "sources": [
+        {
+          "file": "practice-evidence.js",
+          "sha256": "fb88258e826372c81581b08ee17cf3f63cf265d7c6c2f50af31322dd3e723b71",
+          "bytes": 6756
+        },
+        {
+          "file": "guided-diagnostics.js",
+          "sha256": "5cec2284652a0d670799eb38e59650284b5815ca6a2e4eb5f00069c99995b1b6",
+          "bytes": 36179
+        },
+        {
+          "file": "textbook-setup.js",
+          "sha256": "c3e39497bf66845afb7fcd2cf9bd8d4c3e2c9af5cccd6f93038202a64719053b",
+          "bytes": 756
+        },
+        {
+          "file": "model-lessons.js",
+          "sha256": "59957f7e5fc496445dbd105e1a008ec8b20cd7b01c9210acc033df8913693c35",
+          "bytes": 65606
+        },
+        {
+          "file": "tokenization-lesson.js",
+          "sha256": "822b0b5a41724efb509412c15b3dea9a2bdea209aa9a5e948da18a251e18d2c2",
+          "bytes": 17827
+        },
+        {
+          "file": "position-lesson.js",
+          "sha256": "c602fbb03df8c6c0ea0696accc2e0d12f5bb89c3c1ea3f58ecac1263b9d7b42b",
+          "bytes": 16781
+        },
+        {
+          "file": "hardware-lessons.js",
+          "sha256": "c29cb1196c6b534df12175fe5dec2d30e099a62f186dc4c97fc756cdf5c278cc",
+          "bytes": 39301
+        },
+        {
+          "file": "agent-textbook.js",
+          "sha256": "20c079998e840b3680f556a6a0a6530a3e6f6fe13db74f28487ee7cc213507f6",
+          "bytes": 51834
+        },
+        {
+          "file": "cloud-textbook.js",
+          "sha256": "94965c0b3fa02d62fd6dc592d20109751b9752ae777b88b0bf5f38260c768e8e",
+          "bytes": 55049
+        },
+        {
+          "file": "cloud-depth.js",
+          "sha256": "25cde25218b5e309aca486e0409dc29a0ca09b1c8365d4f665a580bc47bf354e",
+          "bytes": 22732
+        },
+        {
+          "file": "agent-depth.js",
+          "sha256": "136ddb56139c4d99a7765fedd4442c6e25bea71c5e699c0d2c812acd4405dc49",
+          "bytes": 20768
+        },
+        {
+          "file": "ai-depth.js",
+          "sha256": "c0aebd81c4241598242f03e0e2cac7a59535d56aa6113df48c61b0f2205f8c83",
+          "bytes": 18187
+        },
+        {
+          "file": "cloud-core-depth.js",
+          "sha256": "57f5ca919bd22e69ca79bb289dc13f28686a405a20b4e9e4eca5bd0bb407b56f",
+          "bytes": 56176
+        },
+        {
+          "file": "operations-depth.js",
+          "sha256": "096765c7e772f5c1c43aca923dbeaf377a8ef0730b29a7ebe0b659db702f3865",
+          "bytes": 55703
+        },
+        {
+          "file": "ai-core-depth.js",
+          "sha256": "08fea20ecf97bf0144793f5828d70a8316671baf09b979b58b50a4ff971c9b1f",
+          "bytes": 42666
+        },
+        {
+          "file": "general-depth.js",
+          "sha256": "f0f5dfae03cd6417663bfabe98df3a31e2c0753fc3ba6cce6eb33d58997ae7d0",
+          "bytes": 37114
+        },
+        {
+          "file": "textbook-supplements.js",
+          "sha256": "847f686142a48fb3ae02e7ed113c9990bfc01fd6069be24739955148dc665c30",
+          "bytes": 7954
+        },
+        {
+          "file": "textbook-finish.js",
+          "sha256": "741a41c368ca0e87a6152f03855f2b5cf990cb3dfa10f570adb35e8db31edfe9",
+          "bytes": 8438
+        },
+        {
+          "file": "cloud-native-lessons.js",
+          "sha256": "b375818d4023972994aa4fc66f6914bf44a3d40171a0e0429fbe9e81959b5099",
+          "bytes": 50124
+        },
+        {
+          "file": "cloud-course-map.js",
+          "sha256": "ee3df5eb35835c69864b54ea9a6eda86274de30359029f2557a89abaff780cb6",
+          "bytes": 6357
+        }
+      ]
+    },
+    {
+      "file": "runtime-03.js",
+      "sha256": "3ebb771b5f7a5e3543a1971cc82c618f99f83f47599c9c4f3651acdd94ca4598",
+      "bytes": 264888,
+      "sources": [
+        {
+          "file": "cloud-knowledge.js",
+          "sha256": "452268e5ccb47b11571af39462f4e52bf8fc5fb276e0b68707c2f423dbbbac02",
+          "bytes": 31930
+        },
+        {
+          "file": "cloud-mechanics-interactive.js",
+          "sha256": "32e420226312b561b84e51de1d850f8f0ed2617205e4b311975bb6191495bae3",
+          "bytes": 6029
+        },
+        {
+          "file": "cloud-mechanics.js",
+          "sha256": "c15583d3860915de0f1174885272465ca2f8718822ac7534f12f7ff8139108fe",
+          "bytes": 11763
+        },
+        {
+          "file": "cloud-network-mechanics.js",
+          "sha256": "f9ffb0af37db83bd116f560847feeee14e03bb71837bdbb9de978f81d5653dc9",
+          "bytes": 11433
+        },
+        {
+          "file": "cloud-k8s-mechanics.js",
+          "sha256": "824a92107b896eb85367c5b364b11d42a7eb91f07299f313da5e1d8da3e99ad1",
+          "bytes": 12740
+        },
+        {
+          "file": "cloud-crosscut-mechanics.js",
+          "sha256": "7de008619f61ffc4445d80930965980f933f45bac324d342a3262b1057926456",
+          "bytes": 10132
+        },
+        {
+          "file": "cloud-deep-lab-files.js",
+          "sha256": "06c570464f18d9dd6888b68dfbb839447956e02b798e8b7e6b37ae3bf34432f4",
+          "bytes": 27879
+        },
+        {
+          "file": "cloud-data-mechanics.js",
+          "sha256": "1e8a7e38d67793a1c0f2314403ad39a28b2ce8a72d2029fdff0e78a66c007c1c",
+          "bytes": 16408
+        },
+        {
+          "file": "cloud-serverless-mechanics.js",
+          "sha256": "fc1890bac712a14c7d67f0c6ee807ddc3a7ddb072a59bc4c777fd66dd3c3cbaf",
+          "bytes": 13432
+        },
+        {
+          "file": "cloud-delivery-mechanics.js",
+          "sha256": "6d5660688be225767e0a80d41805875ea89f6f90d29ab42614c06675b9b2d224",
+          "bytes": 15587
+        },
+        {
+          "file": "cloud-field-cases.js",
+          "sha256": "23a5ddc9e846308269cda077a6767fc4a57d02e9320108a6d8a21bf47156d78f",
+          "bytes": 9446
+        },
+        {
+          "file": "cloud-ops-lab-files.js",
+          "sha256": "cf13fa04cc3158166f28837a7b6aed38e85213ec2f3f47939c87398276276cc3",
+          "bytes": 34953
+        },
+        {
+          "file": "cloud-security-mechanics.js",
+          "sha256": "3bb3edcddf72f2170a9e09b0fadcd3d31ee89b362fa30d50582cfe160a941fae",
+          "bytes": 13685
+        },
+        {
+          "file": "cloud-capacity-mechanics.js",
+          "sha256": "4d31e681462a00c6bdb4c9813d381321129be0d21f097a0dfcf032253ba0a609",
+          "bytes": 10746
+        },
+        {
+          "file": "cloud-sre-mechanics.js",
+          "sha256": "0ea26a1b099e11b70eff8ad090eebd205e766b7de8d54fd7e9cea8e0ebbf40e2",
+          "bytes": 13923
+        },
+        {
+          "file": "cloud-operations-cases.js",
+          "sha256": "7b11cd52812f764c91fa1243f0fc2e6cea02493c34d6f623635ca00a5359980a",
+          "bytes": 9104
+        },
+        {
+          "file": "attention-interactive.js",
+          "sha256": "e0bf0ad453a7ee355edca6f50c6564289f899f3aaf0cc551fad60069dfb96bf9",
+          "bytes": 2295
+        },
+        {
+          "file": "reader-experience.js",
+          "sha256": "3a1853d8e8102dba63573300a4befa2bc74a105a7e80ba82bdabf83ce2162722",
+          "bytes": 5623
+        },
+        {
+          "file": "system-interactive.js",
+          "sha256": "d29843f97ff13657a742328f090aa8bc98803f75021af0c4f0ae2c70b01cd8c5",
+          "bytes": 3827
+        },
+        {
+          "file": "infra-knowledge.js",
+          "sha256": "aa153eac01ea1f1a1bb620b7beb5b76aec9762c70fbe383f911cbf1f4c9dd394",
+          "bytes": 3252
+        }
+      ]
+    },
+    {
+      "file": "runtime-04.js",
+      "sha256": "c03e2e7952166bf4ef9ffb5dafe137fd302bcc73a588e287fd32027ccaca59d7",
+      "bytes": 344252,
+      "sources": [
+        {
+          "file": "ai-system-knowledge.js",
+          "sha256": "326d3ee0651887e9ae979ee019e692dd0abd4c3e45253f0f69c1595e37474cd8",
+          "bytes": 25779
+        },
+        {
+          "file": "ai-serving-knowledge.js",
+          "sha256": "c6a0472c9fcb49a7d87bc20c5e8d7c6f2d16cb77d3691349981dd24457cdf6c7",
+          "bytes": 13317
+        },
+        {
+          "file": "agent-system-knowledge.js",
+          "sha256": "1760af491656e0abf3a34f010170db5da6fabba76917f7c77dc3f1c4e586e550",
+          "bytes": 19179
+        },
+        {
+          "file": "ai-agent-lab-files.js",
+          "sha256": "5356d3ccf13d1771076cf9416b418e9045fc95c683b0ad6b09b788a08c0fdbcc",
+          "bytes": 46260
+        },
+        {
+          "file": "ai-agent-cases.js",
+          "sha256": "16c83449761179443935803cdcb4eb9336ab0079dd8b92ac1855b95818a026db",
+          "bytes": 12209
+        },
+        {
+          "file": "site-pages.js",
+          "sha256": "2bf7eae72c82f768a5cdc22e59326ea452985b88c6bb014bf7d2d41d9f1e8610",
+          "bytes": 29280
+        },
+        {
+          "file": "interview-practice.js",
+          "sha256": "b8b8b3b1e4a82f9398f3a7178138c64354b01776ed646df914beb7a18c5bc603",
+          "bytes": 7417
+        },
+        {
+          "file": "interview-coding.js",
+          "sha256": "e160cbcb76cc0a37e066cf1ee745fafb2a8f47934dd2a971247f3e3b7e214f26",
+          "bytes": 5131
+        },
+        {
+          "file": "interview-database.js",
+          "sha256": "782e05239986c1b1c41035d5598b29ba957057da02b183cdce497104d9c101fa",
+          "bytes": 3560
+        },
+        {
+          "file": "interview-design.js",
+          "sha256": "d0f03bed2e28fa445b3b5fa57e54437f2d5c4d572999d3994fdfdd205f9556fa",
+          "bytes": 7772
+        },
+        {
+          "file": "interview-companies.js",
+          "sha256": "667f4968c3db434d2fdc697eab7bc2dea9b1727fa4ac2a56e9a98e06463e5b13",
+          "bytes": 7299
+        },
+        {
+          "file": "interview-paths.js",
+          "sha256": "986a79039c6e0aaf93d782c1ea18a2b5105128fe41ca35ade372adda9a6d91cf",
+          "bytes": 9326
+        },
+        {
+          "file": "study-guides.js",
+          "sha256": "c1f97e08aef0d1eff20f67beecf426052782f16f3af3005f02aa6bce05d5937b",
+          "bytes": 19390
+        },
+        {
+          "file": "interview-experiences.js",
+          "sha256": "f06ebd012da7462d933245b0fe32fee0c6e1c46753ebd5864a1e5cb1382e3c9e",
+          "bytes": 20057
+        },
+        {
+          "file": "learning-resources.js",
+          "sha256": "767a18244a3b159fd7478b6031ecd6f4d2eb815eedb40f941c31b9a1c2b730ed",
+          "bytes": 18841
+        },
+        {
+          "file": "cloud-coverage.js",
+          "sha256": "5f7ad2fbc7614f86a9b53f8e3738a6fbf1b10c1249c6b1099b5d3937a33cab9a",
+          "bytes": 8434
+        },
+        {
+          "file": "reading-revisions.js",
+          "sha256": "cce0419c9899babefa3e1c9f4564cc910b8d27b01ce213902f3a141ff7a43825",
+          "bytes": 17245
+        },
+        {
+          "file": "editorial-lab-files.js",
+          "sha256": "4d39249bc9f981fcfd5041b0a5633eb179841fb80c26a91b2833d2302ea176e0",
+          "bytes": 5192
+        },
+        {
+          "file": "chapter-depth-review.js",
+          "sha256": "8af51cb21cf849ec1341ad8e74286fd6603fdb06565e82be096932a2ededa1bb",
+          "bytes": 51099
+        },
+        {
+          "file": "research-driven-lessons.js",
+          "sha256": "f4b2efc408169e0552f1ee8d62e58bf534d47bc1535756fc4e61fce3bda5e69c",
+          "bytes": 16824
+        }
+      ]
+    },
+    {
+      "file": "runtime-05.js",
+      "sha256": "505d989359ae9a7b815f3053fdecc1d70ca58cc1f90b69773a224f0e6bed9402",
+      "bytes": 415992,
+      "sources": [
+        {
+          "file": "learning-mechanism-files.js",
+          "sha256": "866c5d70572e66b313f4b6c3847d48738bb340b648b0343d9cdf1a78cc2cd369",
+          "bytes": 22342
+        },
+        {
+          "file": "mechanism-lessons.js",
+          "sha256": "6949875679e3af2e68d61c6be68639b159c11f5b420b2bf3721287c2850d5c64",
+          "bytes": 16460
+        },
+        {
+          "file": "serving-consistency-files.js",
+          "sha256": "6bea7c501ecddefc7a0442aeddd1222b8bda451c2b0696c67d82f0fedba8ccd7",
+          "bytes": 34128
+        },
+        {
+          "file": "serving-consistency-lessons.js",
+          "sha256": "c6138772ef74588de444d0a31758549f9b4efe5cb45d9dd1089dce8a5a4f0491",
+          "bytes": 23517
+        },
+        {
+          "file": "update-cancel-files.js",
+          "sha256": "d23f83e4aa3c7c9be8adc0cea9c9446ef83d86e2284bc5936a9b50063314b26c",
+          "bytes": 25988
+        },
+        {
+          "file": "update-cancel-lessons.js",
+          "sha256": "165fac9a81333fcfaa8862b6505ac92749d7f6d73af708a576e0c9cbcfa35b96",
+          "bytes": 23125
+        },
+        {
+          "file": "storage-quant-context-files.js",
+          "sha256": "f53e80d080a93bffc46d4572b3f14d2f18a4739c7ddc8ae18fad9e2e8ee4ff51",
+          "bytes": 31778
+        },
+        {
+          "file": "storage-quant-context-lessons.js",
+          "sha256": "65430ef633ffd96ea6774a4a70cf4d21ef81bf6447e73b085b0bb3d7f785140a",
+          "bytes": 6761
+        },
+        {
+          "file": "volume-backup-lessons.js",
+          "sha256": "cf0f5711125fae7989b1a28267643d2d9d3cd70e883212d93f5654a58645b386",
+          "bytes": 17426
+        },
+        {
+          "file": "quantization-lessons.js",
+          "sha256": "7cdf296b15629b37aa05e56265cab950bb4478773f1c147f0863dbbeb0d8de32",
+          "bytes": 18269
+        },
+        {
+          "file": "context-memory-lessons.js",
+          "sha256": "d0bd49579c6462f80989c9c0ac893fdd52a966656fdef83d1107b8c6a9b70bb6",
+          "bytes": 15934
+        },
+        {
+          "file": "network-input-tools-files.js",
+          "sha256": "cab12e13163fdeb19316f7927a7bfda47a5904c467a5219e12412b86871f025b",
+          "bytes": 44435
+        },
+        {
+          "file": "network-input-tools-lessons.js",
+          "sha256": "2944fc7a4f514e1f45b52599ac6aa7d01a02db5a90252090361c0ee1c05056c2",
+          "bytes": 5259
+        },
+        {
+          "file": "service-network-lessons.js",
+          "sha256": "892a6b4382cde4af0336536da759fdd07ae4f10cd2b1e822d2a121d1314a4038",
+          "bytes": 14713
+        },
+        {
+          "file": "input-pipeline-lessons.js",
+          "sha256": "8a149e1bc313894782d2afcc759a0546784098d06adb44e2f59791de3501ecaa",
+          "bytes": 15194
+        },
+        {
+          "file": "tool-runtime-lessons.js",
+          "sha256": "d7bff2f45c29160d44cc3da333109e83b707453b9c02f98eb177545ac71f1c41",
+          "bytes": 16242
+        },
+        {
+          "file": "scaling-collective-trace-files.js",
+          "sha256": "5072ce78df8b872430aa28ddffe6919c0842428fd15cac3a24dbddedfac9aadd",
+          "bytes": 46855
+        },
+        {
+          "file": "scaling-collective-trace-lessons.js",
+          "sha256": "9717d30e09580a09f3b680c48ab762688fa02d4b03a0e69b6268ad9a6b79e7de",
+          "bytes": 5722
+        },
+        {
+          "file": "autoscaling-control-lessons.js",
+          "sha256": "52e0c4eac6f64e36759fdb8059a285f8b2da377753e40312ffe3bd3b12de6b09",
+          "bytes": 16190
+        },
+        {
+          "file": "collective-contract-lessons.js",
+          "sha256": "04270ff540e75c70f66765613c3ee15bdb50768477ee03b43588619cb7832a67",
+          "bytes": 14877
+        }
+      ]
+    },
+    {
+      "file": "runtime-06.js",
+      "sha256": "53b9f8912cdf327c1e83df2d9c839c43bade92028cb67abb9392f5d67bb040a7",
+      "bytes": 319271,
+      "sources": [
+        {
+          "file": "agent-observation-lessons.js",
+          "sha256": "7d743580cc40908f4dab17372a9497934c38c58ca7b55375688fdb450e52eda1",
+          "bytes": 16983
+        },
+        {
+          "file": "config-memory-evaluation-files.js",
+          "sha256": "168ff7e3db4c74ca854458f2f6169fe22cc04389c63b402e9439baf2d5c86df5",
+          "bytes": 44491
+        },
+        {
+          "file": "config-memory-evaluation-lessons.js",
+          "sha256": "9aa689bfb35443486d0e609124cc4f8ee49816a6c800d55128c3c5d116db8434",
+          "bytes": 5437
+        },
+        {
+          "file": "configuration-snapshot-lessons.js",
+          "sha256": "19f2782186cfa76d86278213f57a03ce18b9b8f9e1f1131302f64ee61f00341d",
+          "bytes": 13085
+        },
+        {
+          "file": "training-state-lessons.js",
+          "sha256": "f8b127d848365ba65219c6bcef3efcb496aed190d9775245222d98b4db104262",
+          "bytes": 8808
+        },
+        {
+          "file": "evaluation-statistics-lessons.js",
+          "sha256": "e470ecd5c4f9c90d12b9572c7c7803c1679c60437268082fce6d7b9a2d6ed0f0",
+          "bytes": 8338
+        },
+        {
+          "file": "leases-placement-sandbox-files.js",
+          "sha256": "4079cf1f27dafbe53b2ead07ab31804ee9985fef618886336a6d1f9c533fcd6a",
+          "bytes": 37673
+        },
+        {
+          "file": "leases-placement-sandbox-lessons.js",
+          "sha256": "91ac397229874b55c957dbdacc405316acc2189176d049dc749870398b60f3fc",
+          "bytes": 5942
+        },
+        {
+          "file": "serverless-delivery-lessons.js",
+          "sha256": "9f69e4ae3adae583511a8f85a33f9aeaed9de31dd0af135062ecbfa465385ad2",
+          "bytes": 7746
+        },
+        {
+          "file": "gpu-placement-lessons.js",
+          "sha256": "733c1ce239362c2a6de6b62bbaa6def1fb6b66c0ca28722cb8be9c390f43996c",
+          "bytes": 11962
+        },
+        {
+          "file": "sandbox-boundary-lessons.js",
+          "sha256": "da41af86cb7501a61551acd50587fde060b3ac6eb8f2ba238a88a53407208a56",
+          "bytes": 11572
+        },
+        {
+          "file": "recovery-artifacts-retrieval-files.js",
+          "sha256": "965446eddc226734ffadd8d7275dc6005d153db9cbd204cb9bb803d8c448934c",
+          "bytes": 43004
+        },
+        {
+          "file": "recovery-artifacts-retrieval-lessons.js",
+          "sha256": "458f1f503dc60d4562993a5a3182d24954b9f13da7bc578a6429c4da4812ec93",
+          "bytes": 4875
+        },
+        {
+          "file": "business-recovery-lessons.js",
+          "sha256": "4ea74f252d52aefd3c668e30528396ddf09d3999a06895365e716101227e0871",
+          "bytes": 8326
+        },
+        {
+          "file": "model-artifact-lessons.js",
+          "sha256": "ee1df3db033b827b253bcbfed08226b2d5d9defdd946d076699673e7d8d4d125",
+          "bytes": 10996
+        },
+        {
+          "file": "chinese-retrieval-lessons.js",
+          "sha256": "622150ccbb107a549cc3b5b4830c89c58448cdf35a353372f134dc4af6aa5a57",
+          "bytes": 8305
+        },
+        {
+          "file": "compute-transport-files.js",
+          "sha256": "6470db9d6b551126d831781457a7efbdaa72b847d6e50ce6a73975adfb4aae34",
+          "bytes": 10827
+        },
+        {
+          "file": "compute-transport-lessons.js",
+          "sha256": "34a7a3ba7ebc2881345754582d3e84d82a49b3817a884dfc317fece4421d23c2",
+          "bytes": 22752
+        },
+        {
+          "file": "training-capstone-files.js",
+          "sha256": "ece3bebe942fa8a371a938ea120d25d5e6cf26869b16dc52df05da55f0c7949c",
+          "bytes": 25156
+        },
+        {
+          "file": "training-capstone-lessons.js",
+          "sha256": "dee703197911385c67ff84d5bc8c3a5bfa20ed34186ddcc63d1ba6afd457f4db",
+          "bytes": 12161
+        }
+      ]
+    }
+  ],
+  "standalone": [
+    {
+      "file": "reading-comfort.js",
+      "sha256": "7b2dfff13dfea4bd57675d3c0de406fcfd7aed298e5d5505b05e0d53251aa2e4",
+      "bytes": 9622
+    },
+    {
+      "file": "site-search.js",
+      "sha256": "659928e9e9006232a17d7dbb3230cb06d32a845a2323d2ed958157a906a34dca",
+      "bytes": 5972
+    },
+    {
+      "file": "app.js",
+      "sha256": "2ed6ea90f0971dc82c183daa5ed1f8bdb020dd2cfed68c6498cc8719fb5f4c57",
+      "bytes": 18200
+    }
+  ]
+}
