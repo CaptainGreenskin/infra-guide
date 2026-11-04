@@ -1,13 +1,18 @@
 {
   "format": 1,
-  "canonical_script_count": 131,
+  "canonical_script_count": 132,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "54fee888bcd5e5050d4cd291c3fdd1ad8dcfb0dc373eb192beadaa14ce8a4fa9",
-      "bytes": 364122,
+      "sha256": "f8f3092387b1bdb6b4ba461cf76168a2129c361a568dfaa93951be4660d5ec21",
+      "bytes": 365534,
       "sources": [
+        {
+          "file": "site-recovery.js",
+          "sha256": "db4d1268f55e3bc80a73f51fe0f77decfc0b6f4289a160847dc84f14c2c5aaff",
+          "bytes": 1388
+        },
         {
           "file": "site-routing.js",
           "sha256": "ea630e0a42a8488ea5eccbfd2f553a0ee50510282c25d15474661728c9001eae",
@@ -699,8 +704,8 @@
     },
     {
       "file": "app.js",
-      "sha256": "2ed6ea90f0971dc82c183daa5ed1f8bdb020dd2cfed68c6498cc8719fb5f4c57",
-      "bytes": 18200
+      "sha256": "be51c5012b84af66fd1200bc2e8fd69db4d1c1c537187c9c6245134ef4297a2c",
+      "bytes": 18316
     }
   ]
 }
