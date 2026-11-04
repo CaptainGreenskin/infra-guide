@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 129,
+  "canonical_script_count": 131,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "299b30a737f7a61226cad3bfde500939e444fd0798e5cb6694964997752ed513",
-      "bytes": 363956,
+      "sha256": "54fee888bcd5e5050d4cd291c3fdd1ad8dcfb0dc373eb192beadaa14ce8a4fa9",
+      "bytes": 364122,
       "sources": [
         {
           "file": "site-routing.js",
@@ -25,8 +25,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "f2800ab5e24c5c96f7d6d1a05227c8cfbaa81f92da566341e3db9164b9ca280c",
-          "bytes": 7237
+          "sha256": "8aa5f4b025630825e8d5322cbec2e487ea72b36cf0a2d3a22db4268d07065f30",
+          "bytes": 7403
         },
         {
           "file": "training-content.js",
@@ -540,8 +540,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "8cde8213c33c623427324a7c088211de790c3f9275671e6414717a9c7953a539",
-      "bytes": 425870,
+      "sha256": "0f300ff7898e8b01a159c1cd939e53dc9ab403a55e36019c38fcb41ccec4f645",
+      "bytes": 443573,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -669,9 +669,19 @@
           "bytes": 5755
         },
         {
+          "file": "sql-paths-snapshots-files.js",
+          "sha256": "741ca2f59f29dc7e8e297a5db510d6cb39de2fc3b8e0e1982691036adf7277ce",
+          "bytes": 8512
+        },
+        {
+          "file": "sql-paths-snapshots-lessons.js",
+          "sha256": "56499c9761abb69c0d688fe793b06599089ea5ca0ddd76c5395f848ceb848767",
+          "bytes": 7982
+        },
+        {
           "file": "lab-catalog.js",
-          "sha256": "4a7e1de875a114d2099fcdff8ac6aa3e2efa4bfcd53d7f56634178aec6abe86a",
-          "bytes": 31489
+          "sha256": "c2aae78a19937253c8b4e8f8bd6a4b2d541f7da74250b2024dbf9b99d7ccbec2",
+          "bytes": 32624
         }
       ]
     }

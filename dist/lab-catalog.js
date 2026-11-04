@@ -22,7 +22,8 @@ const labArchiveCatalog={
  'training-capstone':{folder:'training-capstone',title:'两进程完整恢复'},
  'cloud-training-ddp':{folder:'ddp',title:'DDP 与两节点手册'},
  'storage-parallel-acceptance':{folder:'storage-parallel-acceptance',title:'范围读取、两进程 TP 与记录验收'},
- 'supervision-gradients':{folder:'supervision-gradients',title:'标签、共享词表与目标权重'}
+ 'supervision-gradients':{folder:'supervision-gradients',title:'标签、共享词表与目标权重'},
+ 'sql-paths-snapshots':{folder:'sql-paths-snapshots',title:'索引路径与快照重试'}
 };
 const labTrackCatalog={
  cloud:{name:'Cloud Infra',lead:'先分清资源与请求，再验证数据、事件、交付和恢复。先修实验按需补；正文中的系统知识点在案例之前。'},
@@ -41,6 +42,8 @@ const labLearningCatalog=[
  {id:'cloud-event',track:'cloud',stage:2,title:'提交后进程退出，重投是否多写一笔',chapter:'serverless-execution',pack:'cloud-native',files:['verify.py','event_worker.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'在业务与去重记录（inbox）同事务提交后退出，再重投相同业务事件，核对尝试数与效果数。',scope:'本机进程和数据库；没有调用真实云函数或队列。'},
  {id:'cloud-visibility',track:'cloud',stage:2,title:'消息可见性、旧回执与部分批响应',chapter:'serverless-execution',pack:'leases-placement-sandbox',files:['visibility_receipts.py','batch_response_reference.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'队列参考与策略模型',observe:'旧执行者在超时后仍可能写入；再比较正常部分响应、吞异常、整批失败与先进先出（FIFO）首错停止。',scope:'队列时钟和四种结果为声明输入；不是 SQS/Lambda 兼容实现。'},
  {id:'cloud-config',track:'cloud',stage:2,title:'完整配置快照与分阶段凭据轮换',chapter:'config-secrets',pack:'config-memory-evaluation',files:['config_snapshots.py','credential_rotation.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'文件、进程与 HTTP',observe:'复现混合字段和旧文件描述符；先双版本可用，再切客户端、撤旧凭据与旧会话。',scope:'本机配置与认证夹具；未模拟 kubelet 或真实身份平台传播。'},
+ {id:'cloud-sql-paths',track:'cloud',stage:2,title:'相同五条结果，分别验证定位、排序与覆盖',chapter:'database-index-locks',anchor:'sql-plan-lab',pack:'sql-paths-snapshots',files:['query_paths.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实 SQL 与原始查询计划',observe:'比较四种索引与表达式排序；分开输入分布、返回行和 N=1 进度回调，不把它们当成同一个成本。',scope:'240 行固定夹具，不测磁盘 I/O、时延或 MySQL 性能。'},
+ {id:'cloud-sql-snapshot',track:'cloud',stage:2,title:'旧快照写失败后，重试 SQL 还是重做判断',chapter:'database-index-locks',anchor:'sql-snapshot-lab',pack:'sql-paths-snapshots',files:['snapshot_retry.py'],env:'Python 3.9+ · 标准库 / SQLite WAL',kind:'两个独立连接的实际交错事务',observe:'读到100、补货提交110后让旧快照写入失败；回滚后重新核对得105，照搬旧值虽可提交却只剩95。',scope:'一进程本地 WAL，不把单写者或517推广为 InnoDB 锁协议。'},
  {id:'cloud-cache',track:'cloud',stage:2,title:'缓存失效事件丢了或乱序，怎样补上',chapter:'cache-consistency',pack:'serving-consistency',files:['cache_outbox.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机事务与重投',observe:'源端提交后退出，恢复待发事件（outbox）；重复和乱序事件不能使新版本退回旧值。',scope:'固定缓存协议，不代表所有缓存与数据库间天然原子。'},
  {id:'cloud-hpa',track:'cloud',stage:2,title:'HPA 分母、指标缺失与扩容延迟',chapter:'k8s-autoscaling',pack:'scaling-collectives-traces',files:['scaling_reference.py','prometheus_cpu.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'计算模型 + 真实规则引擎',observe:'先手算不同资源请求量（request）的加权利用率，再核对缺指标和积压；真实 promtool 区分零值与无序列。',scope:'特定版本计算参考，不运行 metrics-server、HPA 或节点扩容。'},
  {id:'cloud-identity',track:'cloud',stage:2,title:'认证通过后，还要按资源归属授权',chapter:'iam-security',pack:'cloud-operations',files:['authorization_http_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机 HTTP',observe:'核对 14 组允许、跨租户、过期、伪造和撤销用例，直接检查业务写入与审计。',scope:'受限 HMAC 能力凭据夹具，不是 JWT/OIDC 或生产认证库。'},

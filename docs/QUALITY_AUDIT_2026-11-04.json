@@ -544,12 +544,12 @@
       "title": "数据库访问：索引、事务与锁等待",
       "sections": 9,
       "approx_visible_prose_characters": 3904,
-      "figures": 0,
+      "figures": 3,
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
-      "findings": "Read indexed key ordering, page/candidate/result distinctions, stable pagination, SQLite snapshot/write contention and InnoDB differences. Arithmetic/source scope consistent. Deeper engine-specific MVCC/isolation and redo/undo/binlog remain a follow-up, not silently treated as complete MySQL interview coverage. Subsequent field review confirmed RC/RR, undo/redo/binlog and group commit already explained in database-service; add a direct chapter link instead of claiming those topics are absent.",
+      "findings": "Read indexed key ordering, page/candidate/result distinctions, stable pagination, SQLite snapshot/write contention and InnoDB differences. Arithmetic/source scope consistent. Deeper engine-specific MVCC/isolation and redo/undo/binlog remain a follow-up, not silently treated as complete MySQL interview coverage. Subsequent field review confirmed RC/RR, undo/redo/binlog and group commit already explained in database-service; add a direct chapter link instead of claiming those topics are absent. 第35轮复读定位/排序/覆盖三个问题，四索引与表达式排序实际计划、两版本N=1回调及WAL旧快照105/95反例；原基础程序保留并折叠，未把回调当行数/IO/时间或推广InnoDB。",
       "review_scope": "Full chapter prose including exercises/answers, arithmetic, prerequisite flow and evidence boundaries; selected source snippets and existing executable provenance checks, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "2747f27ac9991f7f0c8573c2bc13be6f8ecc632ea359245afa78e7e8c7331aa3"
+      "reviewed_content_sha256": "f23d078b071adb7c88c00d476f07d19f527a88618e4d03d14ee046227591ebea"
     },
     {
       "id": "cache-consistency",
@@ -997,8 +997,8 @@
       "title": "托管数据库与事务边界",
       "review": "fresh_review_v28",
       "reviewed_at": "2026-11-05",
-      "reviewed_content_sha256": "fe8ddb16eedd37e5ffd0f3139c8c9d1500b7b2f312e4938195d5645be922ee5f",
-      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated."
+      "reviewed_content_sha256": "3db934a00277f7fcffd3d7272331b7302a69a5a435ed49dae884fb58e1169b08",
+      "findings": "Storage interfaces, units, WAL/durability, InnoDB versions/locks/logs, replication progress, cache floor and recovery chain reviewed. Redo timing vs binlog commit-group ambiguity repaired; recovery goal vs measured duration separated. 第35轮补访问计划和业务恢复各自验收对象的机制链接。"
     },
     {
       "id": "replication-failover",

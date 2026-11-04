@@ -1,0 +1,651 @@
+{
+  "status": "passed",
+  "executed_at_utc": "2026-11-04T20:42:31.720837+00:00",
+  "programs": {
+    "query_paths.py": {
+      "status": "passed",
+      "source_sha256": "82e1ba6be757dbdbdf30dde5abc3ef54e75d48d3dbae057e6f034202f41e161a",
+      "runs": [
+        {
+          "status": "passed",
+          "python": "3.9.6",
+          "sqlite": "3.51.0",
+          "query": "SELECT id, amount FROM orders\nWHERE tenant=? AND status=? AND created>=?\nORDER BY created DESC, id DESC LIMIT 5",
+          "parameters": [
+            1,
+            "paid",
+            1100
+          ],
+          "distribution_counts": {
+            "all_rows": 240,
+            "tenant_rows": 80,
+            "tenant_status_rows": 20,
+            "all_predicates_rows": 12,
+            "returned_rows": 5
+          },
+          "cases": {
+            "no_index": {
+              "index_ddl": null,
+              "plan": [
+                [
+                  4,
+                  0,
+                  216,
+                  "SCAN orders"
+                ],
+                [
+                  23,
+                  0,
+                  0,
+                  "USE TEMP B-TREE FOR ORDER BY"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 1059
+            },
+            "tenant_only": {
+              "index_ddl": "CREATE INDEX feed_tenant ON orders(tenant)",
+              "plan": [
+                [
+                  5,
+                  0,
+                  61,
+                  "SEARCH orders USING INDEX feed_tenant (tenant=?)"
+                ],
+                [
+                  27,
+                  0,
+                  0,
+                  "USE TEMP B-TREE FOR ORDER BY"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 582
+            },
+            "composite": {
+              "index_ddl": "CREATE INDEX feed_order ON orders(tenant,status,created DESC,id DESC)",
+              "plan": [
+                [
+                  5,
+                  0,
+                  50,
+                  "SEARCH orders USING INDEX feed_order (tenant=? AND status=? AND created>?)"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 52
+            },
+            "covering": {
+              "index_ddl": "CREATE INDEX feed_cover ON orders(tenant,status,created DESC,id DESC,amount)",
+              "plan": [
+                [
+                  4,
+                  0,
+                  47,
+                  "SEARCH orders USING COVERING INDEX feed_cover (tenant=? AND status=? AND created>?)"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 46
+            }
+          },
+          "expression_sort": {
+            "query": "SELECT id, amount FROM orders\nWHERE tenant=? AND status=? AND created>=?\nORDER BY abs(created) DESC, id DESC LIMIT 5",
+            "plan": [
+              [
+                4,
+                0,
+                47,
+                "SEARCH orders USING COVERING INDEX feed_cover (tenant=? AND status=? AND created>?)"
+              ],
+              [
+                27,
+                0,
+                0,
+                "USE TEMP B-TREE FOR ORDER BY"
+              ]
+            ],
+            "result": [
+              [
+                236,
+                1652
+              ],
+              [
+                224,
+                1568
+              ],
+              [
+                212,
+                1484
+              ],
+              [
+                200,
+                1400
+              ],
+              [
+                188,
+                1316
+              ]
+            ],
+            "progress_callbacks_n1": 153
+          },
+          "metric_scope": "Progress callbacks at N=1 after warming the statement; not exact VM instructions, visited rows, physical IO or elapsed time. EXPLAIN text is diagnostic and may change by SQLite version."
+        },
+        {
+          "status": "passed",
+          "python": "3.12.13",
+          "sqlite": "3.53.3",
+          "query": "SELECT id, amount FROM orders\nWHERE tenant=? AND status=? AND created>=?\nORDER BY created DESC, id DESC LIMIT 5",
+          "parameters": [
+            1,
+            "paid",
+            1100
+          ],
+          "distribution_counts": {
+            "all_rows": 240,
+            "tenant_rows": 80,
+            "tenant_status_rows": 20,
+            "all_predicates_rows": 12,
+            "returned_rows": 5
+          },
+          "cases": {
+            "no_index": {
+              "index_ddl": null,
+              "plan": [
+                [
+                  4,
+                  0,
+                  216,
+                  "SCAN orders"
+                ],
+                [
+                  23,
+                  0,
+                  0,
+                  "USE TEMP B-TREE FOR ORDER BY"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 1057
+            },
+            "tenant_only": {
+              "index_ddl": "CREATE INDEX feed_tenant ON orders(tenant)",
+              "plan": [
+                [
+                  5,
+                  0,
+                  61,
+                  "SEARCH orders USING INDEX feed_tenant (tenant=?)"
+                ],
+                [
+                  27,
+                  0,
+                  0,
+                  "USE TEMP B-TREE FOR ORDER BY"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 580
+            },
+            "composite": {
+              "index_ddl": "CREATE INDEX feed_order ON orders(tenant,status,created DESC,id DESC)",
+              "plan": [
+                [
+                  5,
+                  0,
+                  50,
+                  "SEARCH orders USING INDEX feed_order (tenant=? AND status=? AND created>?)"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 51
+            },
+            "covering": {
+              "index_ddl": "CREATE INDEX feed_cover ON orders(tenant,status,created DESC,id DESC,amount)",
+              "plan": [
+                [
+                  4,
+                  0,
+                  47,
+                  "SEARCH orders USING COVERING INDEX feed_cover (tenant=? AND status=? AND created>?)"
+                ]
+              ],
+              "result": [
+                [
+                  236,
+                  1652
+                ],
+                [
+                  224,
+                  1568
+                ],
+                [
+                  212,
+                  1484
+                ],
+                [
+                  200,
+                  1400
+                ],
+                [
+                  188,
+                  1316
+                ]
+              ],
+              "progress_callbacks_n1": 45
+            }
+          },
+          "expression_sort": {
+            "query": "SELECT id, amount FROM orders\nWHERE tenant=? AND status=? AND created>=?\nORDER BY abs(created) DESC, id DESC LIMIT 5",
+            "plan": [
+              [
+                4,
+                0,
+                47,
+                "SEARCH orders USING COVERING INDEX feed_cover (tenant=? AND status=? AND created>?)"
+              ],
+              [
+                27,
+                0,
+                0,
+                "USE TEMP B-TREE FOR ORDER BY"
+              ]
+            ],
+            "result": [
+              [
+                236,
+                1652
+              ],
+              [
+                224,
+                1568
+              ],
+              [
+                212,
+                1484
+              ],
+              [
+                200,
+                1400
+              ],
+              [
+                188,
+                1316
+              ]
+            ],
+            "progress_callbacks_n1": 151
+          },
+          "metric_scope": "Progress callbacks at N=1 after warming the statement; not exact VM instructions, visited rows, physical IO or elapsed time. EXPLAIN text is diagnostic and may change by SQLite version."
+        }
+      ]
+    },
+    "snapshot_retry.py": {
+      "status": "passed",
+      "source_sha256": "7c3049259d2d8f5030b85dc89d150f0ecfae4da71aa80037b8d7e26895a061b4",
+      "runs": [
+        {
+          "status": "passed",
+          "python": "3.9.6",
+          "sqlite": "3.51.0",
+          "revalidate": {
+            "events": [
+              {
+                "step": 1,
+                "connection": "R",
+                "event": "read_snapshot",
+                "units": 100
+              },
+              {
+                "step": 2,
+                "connection": "W",
+                "event": "restock_committed",
+                "units": 110
+              },
+              {
+                "step": 3,
+                "connection": "R",
+                "event": "same_snapshot",
+                "units": 100
+              },
+              {
+                "step": 4,
+                "connection": "R",
+                "event": "write_upgrade_rejected",
+                "message": "database is locked",
+                "sqlite_errorcode": null,
+                "sqlite_errorname": null
+              },
+              {
+                "step": 5,
+                "connection": "R",
+                "event": "rollback_old_snapshot"
+              },
+              {
+                "step": 6,
+                "connection": "R",
+                "event": "revalidate_and_remove",
+                "fresh_units": 110,
+                "removed": 5
+              },
+              {
+                "step": 7,
+                "connection": "W",
+                "event": "observe_final_commit",
+                "units": 105
+              }
+            ],
+            "final_units": 105,
+            "business_expected_units": 105,
+            "conserves_business_changes": true
+          },
+          "reuse_stale_absolute_value": {
+            "events": [
+              {
+                "step": 1,
+                "connection": "R",
+                "event": "read_snapshot",
+                "units": 100
+              },
+              {
+                "step": 2,
+                "connection": "W",
+                "event": "restock_committed",
+                "units": 110
+              },
+              {
+                "step": 3,
+                "connection": "R",
+                "event": "same_snapshot",
+                "units": 100
+              },
+              {
+                "step": 4,
+                "connection": "R",
+                "event": "write_upgrade_rejected",
+                "message": "database is locked",
+                "sqlite_errorcode": null,
+                "sqlite_errorname": null
+              },
+              {
+                "step": 5,
+                "connection": "R",
+                "event": "rollback_old_snapshot"
+              },
+              {
+                "step": 6,
+                "connection": "R",
+                "event": "reuse_old_absolute_value",
+                "units": 95
+              },
+              {
+                "step": 7,
+                "connection": "W",
+                "event": "observe_final_commit",
+                "units": 95
+              }
+            ],
+            "final_units": 95,
+            "business_expected_units": 105,
+            "conserves_business_changes": false
+          },
+          "scope": "Actual local WAL transactions on two separate connections interleaved in one process; no threads, external service, InnoDB or cloud database tested."
+        },
+        {
+          "status": "passed",
+          "python": "3.12.13",
+          "sqlite": "3.53.3",
+          "revalidate": {
+            "events": [
+              {
+                "step": 1,
+                "connection": "R",
+                "event": "read_snapshot",
+                "units": 100
+              },
+              {
+                "step": 2,
+                "connection": "W",
+                "event": "restock_committed",
+                "units": 110
+              },
+              {
+                "step": 3,
+                "connection": "R",
+                "event": "same_snapshot",
+                "units": 100
+              },
+              {
+                "step": 4,
+                "connection": "R",
+                "event": "write_upgrade_rejected",
+                "message": "database is locked",
+                "sqlite_errorcode": 517,
+                "sqlite_errorname": "SQLITE_BUSY_SNAPSHOT"
+              },
+              {
+                "step": 5,
+                "connection": "R",
+                "event": "rollback_old_snapshot"
+              },
+              {
+                "step": 6,
+                "connection": "R",
+                "event": "revalidate_and_remove",
+                "fresh_units": 110,
+                "removed": 5
+              },
+              {
+                "step": 7,
+                "connection": "W",
+                "event": "observe_final_commit",
+                "units": 105
+              }
+            ],
+            "final_units": 105,
+            "business_expected_units": 105,
+            "conserves_business_changes": true
+          },
+          "reuse_stale_absolute_value": {
+            "events": [
+              {
+                "step": 1,
+                "connection": "R",
+                "event": "read_snapshot",
+                "units": 100
+              },
+              {
+                "step": 2,
+                "connection": "W",
+                "event": "restock_committed",
+                "units": 110
+              },
+              {
+                "step": 3,
+                "connection": "R",
+                "event": "same_snapshot",
+                "units": 100
+              },
+              {
+                "step": 4,
+                "connection": "R",
+                "event": "write_upgrade_rejected",
+                "message": "database is locked",
+                "sqlite_errorcode": 517,
+                "sqlite_errorname": "SQLITE_BUSY_SNAPSHOT"
+              },
+              {
+                "step": 5,
+                "connection": "R",
+                "event": "rollback_old_snapshot"
+              },
+              {
+                "step": 6,
+                "connection": "R",
+                "event": "reuse_old_absolute_value",
+                "units": 95
+              },
+              {
+                "step": 7,
+                "connection": "W",
+                "event": "observe_final_commit",
+                "units": 95
+              }
+            ],
+            "final_units": 95,
+            "business_expected_units": 105,
+            "conserves_business_changes": false
+          },
+          "scope": "Actual local WAL transactions on two separate connections interleaved in one process; no threads, external service, InnoDB or cloud database tested."
+        }
+      ]
+    }
+  },
+  "scope": "Actual local SQLite only: separate in-memory query fixtures and two interleaved WAL connections. No timing, physical IO, MySQL, cloud database or concurrent thread claim."
+}

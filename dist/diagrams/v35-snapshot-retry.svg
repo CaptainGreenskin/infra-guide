@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="940" viewBox="0 0 1120 940" role="img" aria-labelledby="title desc">
+<title id="title">旧快照失败后，重新核对还是照搬旧值</title><desc id="desc">实际SQLite/WAL两独立连接的交错顺序。R看100，W补10提交110，R仍看100且旧快照写入失败。回滚后重新核对得到105；照搬旧计算提交95。步骤不是测得时间。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="940" fill="white"/>
+<text x="32" y="46" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">数据库可以提交，业务结果仍可能写错</text>
+<text x="32" y="85" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">实际两个 WAL 连接，一进程交错执行；下方按调用顺序排列，不是时间测量。</text>
+<text x="280" y="136" font-size="28" fill="#315dce" font-weight="650" text-anchor="middle">读者 R</text>
+<text x="840" y="136" font-size="28" fill="#287b69" font-weight="650" text-anchor="middle">补货者 W</text>
+<rect x="32" y="168" width="496" height="65" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="280" y="210" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">1 · BEGIN，读到库存 100</text>
+<rect x="592" y="260" width="496" height="65" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="840" y="302" font-size="25" fill="#287b69" font-weight="600" text-anchor="middle">2 · 补 10，COMMIT 后库存 110</text>
+<rect x="32" y="352" width="496" height="65" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="280" y="394" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">3 · 同一快照再读，仍是 100</text>
+<rect x="32" y="444" width="496" height="65" rx="8" fill="#fff4f0" stroke="#e4e9f0" stroke-width="2"/>
+<text x="280" y="486" font-size="25" fill="#a84444" font-weight="600" text-anchor="middle">4 · 旧快照升级写入失败</text>
+<rect x="32" y="550" width="496" height="65" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="280" y="592" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">5 · ROLLBACK，结束旧快照</text>
+<line x1="540" y1="205" x2="578" y2="282" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="578" y1="315" x2="540" y2="374" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="280" y1="423" x2="280" y2="434" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="32" y="532" font-size="22" fill="#a84444" font-weight="400" text-anchor="start">本次 Python 3.12 返回 SQLITE_BUSY_SNAPSHOT（517）</text>
+<line x1="280" y1="618" x2="280" y2="657" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="510" y1="618" x2="840" y2="657" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="670" width="496" height="166" rx="8" fill="#edf7f3" stroke="#e4e9f0" stroke-width="2"/>
+<text x="56" y="711" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">6 · R 新事务重新核对</text>
+<text x="56" y="759" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">当前 110，检查条件再扣 5</text>
+<text x="56" y="809" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">7 · 提交后库存 105</text>
+<rect x="592" y="670" width="496" height="166" rx="8" fill="#fff4f0" stroke="#e4e9f0" stroke-width="2"/>
+<text x="616" y="711" font-size="26" fill="#a84444" font-weight="600" text-anchor="start">6 · R 新事务照搬旧计算</text>
+<text x="616" y="759" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">把旧 100−5=95 无条件写回</text>
+<text x="616" y="809" font-size="27" fill="#a84444" font-weight="600" text-anchor="start">7 · 提交后库存 95</text>
+<text x="32" y="884" font-size="24" fill="#1c283d" font-weight="600" text-anchor="start">业务账本应是 100+10−5=105。回滚释放旧快照，不会替应用刷新旧决策。</text>
+<text x="32" y="925" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">两分支各用全新数据库；不是 InnoDB 锁、网络重试或多线程性能验证。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_local_wal_interleaving&quot;, &quot;sqlite&quot;: &quot;3.53.3&quot;, &quot;revalidate&quot;: 105, &quot;stale_absolute&quot;: 95, &quot;errorcode&quot;: 517}</metadata>
+</svg>
