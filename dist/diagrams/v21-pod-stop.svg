@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 740" role="img" aria-labelledby="title desc">
+<title id="title">一个删除请求，三条不同进度线</title><desc id="desc">控制面接收删除、入口停止新连接、节点完成进程退出不能视为同一时刻。图中时间为教学题设，不是平台时限。</desc>
+<rect width="1120" height="740" fill="#f8fafd"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">一个删除请求，三条不同进度线</text>
+<text x="40" y="80" font-size="16" fill="#617086">本题：kubelet开始处理时记为0秒；宽限30秒，preStop耗时5秒，应用排空20秒。</text>
+<g stroke="#dbe3ee" stroke-dasharray="5 5"><path d="M258 132V490M394 132V490M938 132V490M1074 132V490"/></g>
+<g font-size="16" fill="#617086"><text x="247" y="121">0秒</text><text x="380" y="121">5秒</text><text x="920" y="121">25秒</text><text x="1050" y="121">30秒</text></g>
+<g font-size="18" font-weight="600" fill="#1c283d"><text x="40" y="176">API / 控制面</text><text x="40" y="292">流量入口</text><text x="40" y="422">节点 / 应用</text></g>
+<rect x="258" y="145" width="816" height="60" rx="7" fill="#edf2fe" stroke="#cdd9f4"/>
+<text x="278" y="171" font-size="17" fill="#315dce">已记录deletionTimestamp与宽限期</text>
+<text x="278" y="193" font-size="15" fill="#617086">这份记录不代表节点进程已停止</text>
+<path d="M258 259H1074" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<rect x="300" y="268" width="505" height="73" rx="7" fill="#e8f5f1" stroke="#beddd4"/>
+<text x="318" y="296" font-size="17" fill="#176e5a">EndpointSlice：terminating=true，ready=false</text>
+<text x="318" y="322" font-size="15" fill="#617086">数据面异步观察；已有连接仍可能继续排空</text>
+<text x="824" y="293" font-size="15" fill="#617086">不是“已断开全部连接”</text>
+<rect x="258" y="377" width="136" height="74" rx="7" fill="#fff1d8" stroke="#e6cea2"/>
+<text x="279" y="408" font-size="17" fill="#8c6115">preStop</text><text x="279" y="435" font-size="16" fill="#8c6115">用掉5秒</text>
+<rect x="394" y="377" width="544" height="74" rx="7" fill="#edf2fe" stroke="#cdd9f4"/>
+<text x="415" y="408" font-size="17" fill="#315dce">TERM → 停止接新工作 → 完成在途请求 → 退出</text>
+<text x="415" y="435" font-size="16" fill="#617086">本题20秒；观察到退出才确认本地生命周期完成</text>
+<path d="M938 414H1074" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<text x="947" y="477" font-size="15" fill="#9f4148">尚未退出才进入强制终止</text>
+<rect x="40" y="530" width="1040" height="154" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="62" y="565" font-size="20" font-weight="600" fill="#1c283d">怎么验收：逐条找证据，不能只看对象列表</text>
+<text x="62" y="600" font-size="17" fill="#617086">① 入口：端点条件、真实新请求、旧连接　② 节点：信号、容器退出与在途工作</text>
+<text x="62" y="633" font-size="17" fill="#617086">③ 业务：已提交操作的回执与数据；退出不回滚提交，换Pod也不恢复数据库</text>
+<text x="62" y="665" font-size="16" fill="#9f4148">强删API对象不等待节点终止确认；节点失联时，旧进程可能仍在运行。</text>
+</g></svg>

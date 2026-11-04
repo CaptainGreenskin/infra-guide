@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+<title id="title">五个微批次，三次窗口，两次实际更新</title><desc id="desc">两个CPU进程的有效样本数量分别为3、1、0、0、0和1、2、0、0、3。全局空窗不改变参数和动量；尾窗只按实际三个样本归一化。</desc>
+<rect width="1120" height="690" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">五个微批次，三次窗口，两次实际更新</text>
+<text x="40" y="80" font-size="16" fill="#617086">真实CPU/Gloo实验：有效回归样本；名义累积2，不把样本数量冒充语言模型词元。</text>
+<rect x="238" y="112" width="324" height="307" rx="9" fill="#edf2fe" stroke="#cdd9f4"/>
+<rect x="576" y="112" width="324" height="307" rx="9" fill="#f1f3f6" stroke="#dbe3ee"/>
+<rect x="914" y="112" width="166" height="307" rx="9" fill="#e8f5f1" stroke="#beddd4"/>
+<g font-size="18" font-weight="600" fill="#1c283d"><text x="264" y="147">窗口1：两批</text><text x="602" y="147">窗口2：两批</text><text x="930" y="147">尾窗：一批</text></g>
+<g font-size="16" fill="#617086"><text x="292" y="183">m0</text><text x="453" y="183">m1</text><text x="630" y="183">m2</text><text x="791" y="183">m3</text><text x="975" y="183">m4</text></g>
+<g font-size="18" fill="#1c283d"><text x="40" y="228">rank 0有效数</text><text x="40" y="289">rank 1有效数</text></g>
+<g font-size="27" text-anchor="middle" font-weight="700" fill="#315dce"><text x="307" y="231">3</text><text x="468" y="231">1</text><text x="645" y="231">0</text><text x="806" y="231">0</text><text x="997" y="231">0</text><text x="307" y="292">1</text><text x="468" y="292">2</text><text x="645" y="292">0</text><text x="806" y="292">0</text><text x="997" y="292">3</text></g>
+<path d="M254 316H546M592 316H884M930 316H1064" stroke="#c4cfe0"/>
+<g font-size="18" font-weight="600"><text x="40" y="353" fill="#1c283d">全局分母N</text><text x="390" y="353" fill="#315dce">7</text><text x="728" y="353" fill="#617086">0</text><text x="987" y="353" fill="#176e5a">3</text></g>
+<g font-size="16"><text x="257" y="392" fill="#315dce">先本地累积，末次反向同步</text><text x="603" y="392" fill="#617086">各rank一致跳过，不step</text><text x="931" y="392" fill="#176e5a">本地空仍参与</text></g>
+<text x="40" y="460" font-size="18" font-weight="600" fill="#1c283d">同步结束之后</text>
+<g font-size="17" fill="#1c283d"><text x="256" y="460">全局均值梯度 → 整体裁剪 → SGD动量与参数 → 实际更新计数</text></g>
+<rect x="40" y="493" width="501" height="145" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<rect x="559" y="493" width="521" height="145" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="61" y="528" font-size="19" font-weight="600" fill="#315dce">第一次有效更新</text><text x="580" y="528" font-size="19" font-weight="600" fill="#176e5a">第二次有效更新（尾窗）</text>
+<text x="61" y="562" font-size="17" fill="#617086">裁剪前范数3.88319，阈值1</text><text x="580" y="562" font-size="17" fill="#617086">裁剪前范数0.72056，不需要缩小</text>
+<text x="61" y="594" font-size="17" fill="#617086">中间空窗保留这份参数和动量</text><text x="580" y="594" font-size="17" fill="#617086">错把名义批数当分母，梯度会减半</text>
+<text x="61" y="622" font-size="16" fill="#617086">与单进程逐项比较，不能只看rank相等</text><text x="580" y="622" font-size="16" fill="#617086">反传已按N归一化，不再机械除以2</text>
+</g></svg>

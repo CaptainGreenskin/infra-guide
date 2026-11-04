@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 670" role="img" aria-labelledby="title desc">
+<title id="title">取消能否阻止效果，取决于权威提交的先后</title><desc id="desc">同一本地SQLite内，取消先提交可阻止后续效果；效果先提交则取消返回已完成，终止进程也不会回滚。跨远端系统不能直接沿用这个原子边界。</desc>
+<rect width="1120" height="670" fill="#f8fafd"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#71819b" stroke-width="1.4"/></marker></defs>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="46" font-size="25" font-weight="700" fill="#1c283d">取消能否阻止效果，取决于权威提交的先后</text>
+<text x="40" y="80" font-size="16" fill="#617086">本地实验用同一个SQLite事务边界判定；蓝色线是效果与回执提交，不是客户端返回。</text>
+<g font-size="19" font-weight="600" fill="#1c283d"><text x="40" y="143">取消先到</text><text x="40" y="310">效果先到</text></g>
+<path d="M220 174H1070M220 341H1070" stroke="#71819b" stroke-width="2" marker-end="url(#a)"/>
+<circle cx="300" cy="174" r="7" fill="#b57922"/><text x="238" y="139" font-size="17" fill="#8c6115">写入取消请求</text>
+<path d="M555 118V224" stroke="#315dce" stroke-width="4"/>
+<text x="573" y="147" font-size="17" fill="#315dce">提交事务检查到取消</text><text x="573" y="197" font-size="17" fill="#176e5a">CANCELLED，效果0</text>
+<text x="238" y="222" font-size="16" fill="#617086">worker此时仍活着</text><text x="800" y="244" font-size="16" fill="#617086">收到终止确认，再结束等待</text>
+<path d="M430 285V392" stroke="#315dce" stroke-width="4"/>
+<text x="236" y="306" font-size="17" fill="#315dce">效果＋回执原子提交</text><text x="238" y="388" font-size="17" fill="#176e5a">SUCCEEDED，效果1</text>
+<circle cx="705" cy="341" r="7" fill="#b57922"/><text x="644" y="307" font-size="17" fill="#8c6115">再请求取消</text><text x="610" y="388" font-size="17" fill="#9f4148">too_late_committed</text>
+<circle cx="1005" cy="341" r="7" fill="#617086"/><text x="904" y="307" font-size="17" fill="#617086">终止worker</text><text x="897" y="388" font-size="17" fill="#9f4148">效果仍为1</text>
+<rect x="40" y="441" width="1040" height="174" rx="8" fill="#fff" stroke="#dbe3ee"/>
+<text x="62" y="477" font-size="20" font-weight="600" fill="#1c283d">跨远端工具，还多一条无法由本地事务封住的边界</text>
+<text x="62" y="512" font-size="17" fill="#617086">请求已发出 → 远端可能已提交 → 回执未收到；本地取消或退出都不能倒推“没发生”</text>
+<text x="62" y="547" font-size="17" fill="#617086">保留稳定操作ID，按授权查询回执；无法确认则保留结果未知，交给对账或明确补偿</text>
+<text x="62" y="582" font-size="17" fill="#617086">取消表达停止意图；补偿是另一项业务动作，需要自己的身份、权限与失败处理。</text>
+</g></svg>

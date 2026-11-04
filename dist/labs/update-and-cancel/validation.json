@@ -1,0 +1,665 @@
+{
+  "python": "3.9.6",
+  "sqlite": "3.51.0",
+  "programs": {
+    "update_windows.py": {
+      "sha256": "ffaf8738efb9b1e2e2b4ed1bd34ddfbdd68190e10ac1f75408854cf915d1d8b3",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "device": "cpu",
+        "dtype": "float64",
+        "world_size": 2,
+        "nominal_accumulation": 2,
+        "attempted_windows": 3,
+        "actual_updates": 2,
+        "empty_windows": 1,
+        "single_process": [
+          {
+            "microbatches": 2,
+            "global_count": 7,
+            "gradient_before_clip": [
+              -2.7428571428571424,
+              -1.8857142857142852,
+              -1.9999999999999996
+            ],
+            "norm_before_clip": 3.8831924589787437,
+            "gradient_after_clip": [
+              -0.7063405858688527,
+              -0.48560915278483624,
+              -0.5150400105293718
+            ],
+            "parameters": [
+              0.2706340585868853,
+              -0.2514390847215164,
+              0.15150400105293718
+            ],
+            "momentum": [
+              -0.7063405858688527,
+              -0.48560915278483624,
+              -0.5150400105293718
+            ],
+            "actual_updates": 1
+          },
+          {
+            "microbatches": 2,
+            "global_count": 0,
+            "parameters": [
+              0.2706340585868853,
+              -0.2514390847215164,
+              0.15150400105293718
+            ],
+            "momentum": [
+              -0.7063405858688527,
+              -0.48560915278483624,
+              -0.5150400105293718
+            ],
+            "actual_updates": 1
+          },
+          {
+            "microbatches": 1,
+            "global_count": 3,
+            "gradient_before_clip": [
+              -0.5381086436279143,
+              -0.08615740583351542,
+              -0.4713986994069671
+            ],
+            "norm_before_clip": 0.720555858160639,
+            "gradient_after_clip": [
+              -0.5381086436279143,
+              -0.08615740583351542,
+              -0.4713986994069671
+            ],
+            "parameters": [
+              0.3880155756778735,
+              -0.19911852038752956,
+              0.24499747194127736
+            ],
+            "momentum": [
+              -1.1738151709098819,
+              -0.5232056433398681,
+              -0.9349347088834017
+            ],
+            "actual_updates": 2
+          }
+        ],
+        "ranks": [
+          {
+            "global_mean": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -2.742857142857143,
+                  -1.8857142857142855,
+                  -1.9999999999999998
+                ],
+                "norm_before_clip": 3.883192458978744,
+                "gradient_after_clip": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.5381086436279143,
+                  -0.08615740583351542,
+                  -0.4713986994069671
+                ],
+                "norm_before_clip": 0.720555858160639,
+                "gradient_after_clip": [
+                  -0.5381086436279143,
+                  -0.08615740583351542,
+                  -0.4713986994069671
+                ],
+                "parameters": [
+                  0.3880155756778735,
+                  -0.19911852038752959,
+                  0.24499747194127736
+                ],
+                "momentum": [
+                  -1.1738151709098819,
+                  -0.523205643339868,
+                  -0.9349347088834016
+                ],
+                "actual_updates": 2
+              }
+            ],
+            "micro_means": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -3.0083333333333333,
+                  -1.7999999999999998,
+                  -2.091666666666667
+                ],
+                "norm_before_clip": 4.082295786550613,
+                "gradient_after_clip": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "parameters": [
+                  0.27369217601337753,
+                  -0.25590717446290984,
+                  0.15123749634171127
+                ],
+                "momentum": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.27369217601337753,
+                  -0.25590717446290984,
+                  0.15123749634171127
+                ],
+                "momentum": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.2686826099175774,
+                  -0.04521572674300654,
+                  -0.2369058359579769
+                ],
+                "norm_before_clip": 0.3610528796838036,
+                "gradient_after_clip": [
+                  -0.2686826099175774,
+                  -0.04521572674300654,
+                  -0.2369058359579769
+                ],
+                "parameters": [
+                  0.3668833954171751,
+                  -0.21170205880522805,
+                  0.2210418266450491
+                ],
+                "momentum": [
+                  -0.9319121940379753,
+                  -0.442051156576818,
+                  -0.6980433030333782
+                ],
+                "actual_updates": 2
+              }
+            ],
+            "fixed_nominal_count": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -2.742857142857143,
+                  -1.8857142857142855,
+                  -1.9999999999999998
+                ],
+                "norm_before_clip": 3.883192458978744,
+                "gradient_after_clip": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.26905432181395716,
+                  -0.04307870291675771,
+                  -0.23569934970348355
+                ],
+                "norm_before_clip": 0.3602779290803195,
+                "gradient_after_clip": [
+                  -0.26905432181395716,
+                  -0.04307870291675771,
+                  -0.23569934970348355
+                ],
+                "parameters": [
+                  0.36111014349647774,
+                  -0.20342639067920534,
+                  0.22142753697092898
+                ],
+                "momentum": [
+                  -0.9047608490959247,
+                  -0.48012694042311027,
+                  -0.6992353591799181
+                ],
+                "actual_updates": 2
+              }
+            ]
+          },
+          {
+            "global_mean": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -2.742857142857143,
+                  -1.8857142857142855,
+                  -1.9999999999999998
+                ],
+                "norm_before_clip": 3.883192458978744,
+                "gradient_after_clip": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.5381086436279143,
+                  -0.08615740583351542,
+                  -0.4713986994069671
+                ],
+                "norm_before_clip": 0.720555858160639,
+                "gradient_after_clip": [
+                  -0.5381086436279143,
+                  -0.08615740583351542,
+                  -0.4713986994069671
+                ],
+                "parameters": [
+                  0.3880155756778735,
+                  -0.19911852038752959,
+                  0.24499747194127736
+                ],
+                "momentum": [
+                  -1.1738151709098819,
+                  -0.523205643339868,
+                  -0.9349347088834016
+                ],
+                "actual_updates": 2
+              }
+            ],
+            "micro_means": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -3.0083333333333333,
+                  -1.7999999999999998,
+                  -2.091666666666667
+                ],
+                "norm_before_clip": 4.082295786550613,
+                "gradient_after_clip": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "parameters": [
+                  0.27369217601337753,
+                  -0.25590717446290984,
+                  0.15123749634171127
+                ],
+                "momentum": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.27369217601337753,
+                  -0.25590717446290984,
+                  0.15123749634171127
+                ],
+                "momentum": [
+                  -0.7369217601337754,
+                  -0.4409282553709016,
+                  -0.5123749634171126
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.2686826099175774,
+                  -0.04521572674300654,
+                  -0.2369058359579769
+                ],
+                "norm_before_clip": 0.3610528796838036,
+                "gradient_after_clip": [
+                  -0.2686826099175774,
+                  -0.04521572674300654,
+                  -0.2369058359579769
+                ],
+                "parameters": [
+                  0.3668833954171751,
+                  -0.21170205880522805,
+                  0.2210418266450491
+                ],
+                "momentum": [
+                  -0.9319121940379753,
+                  -0.442051156576818,
+                  -0.6980433030333782
+                ],
+                "actual_updates": 2
+              }
+            ],
+            "fixed_nominal_count": [
+              {
+                "microbatches": 2,
+                "global_count": 7,
+                "backward_sync": [
+                  false,
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -2.742857142857143,
+                  -1.8857142857142855,
+                  -1.9999999999999998
+                ],
+                "norm_before_clip": 3.883192458978744,
+                "gradient_after_clip": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 2,
+                "global_count": 0,
+                "backward_sync": [],
+                "skipped": true,
+                "parameters": [
+                  0.2706340585868853,
+                  -0.2514390847215164,
+                  0.15150400105293718
+                ],
+                "momentum": [
+                  -0.7063405858688527,
+                  -0.4856091527848362,
+                  -0.5150400105293717
+                ],
+                "actual_updates": 1
+              },
+              {
+                "microbatches": 1,
+                "global_count": 3,
+                "backward_sync": [
+                  true
+                ],
+                "skipped": false,
+                "gradient_before_clip": [
+                  -0.26905432181395716,
+                  -0.04307870291675771,
+                  -0.23569934970348355
+                ],
+                "norm_before_clip": 0.3602779290803195,
+                "gradient_after_clip": [
+                  -0.26905432181395716,
+                  -0.04307870291675771,
+                  -0.23569934970348355
+                ],
+                "parameters": [
+                  0.36111014349647774,
+                  -0.20342639067920534,
+                  0.22142753697092898
+                ],
+                "momentum": [
+                  -0.9047608490959247,
+                  -0.48012694042311027,
+                  -0.6992353591799181
+                ],
+                "actual_updates": 2
+              }
+            ]
+          }
+        ],
+        "clipping_counterexample": {
+          "clip_after_mean": [
+            0.9486829980506086,
+            0.3162276660168695
+          ],
+          "mean_after_local_clip": [
+            0.49999991666668053,
+            0.499999750000125
+          ]
+        },
+        "checks": {
+          "each_update_matches_global_batch": true,
+          "empty_window_preserves_momentum": true,
+          "unequal_micro_means_rejected": true,
+          "fixed_tail_denominator_rejected": true
+        }
+      }
+    },
+    "cancel_receipts.py": {
+      "sha256": "426223f10575f372311eb7881aad41cd69a588e44d6079c148e2eb9657b00db6",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "authority": "one_local_sqlite",
+        "start_method": "spawn",
+        "cases": {
+          "pending": {
+            "worker_started": false,
+            "final": {
+              "state": "CANCELLED",
+              "effects": 0
+            }
+          },
+          "cooperative": {
+            "before_cancel": {
+              "state": "RUNNING",
+              "effects": 0
+            },
+            "cancel_reply": "requested",
+            "after_request": {
+              "state": "CANCEL_REQUESTED",
+              "effects": 0
+            },
+            "child_alive_after_request": true,
+            "exit": "normal",
+            "child_joined": true,
+            "final": {
+              "state": "CANCELLED",
+              "effects": 0
+            }
+          },
+          "noncooperative": {
+            "before_cancel": {
+              "state": "RUNNING",
+              "effects": 0
+            },
+            "cancel_reply": "requested",
+            "after_request": {
+              "state": "CANCEL_REQUESTED",
+              "effects": 0
+            },
+            "child_alive_after_request": true,
+            "exit": "terminated",
+            "child_joined": true,
+            "final": {
+              "state": "CANCELLED",
+              "effects": 0
+            }
+          },
+          "committed": {
+            "before_cancel": {
+              "state": "SUCCEEDED",
+              "effects": 1
+            },
+            "cancel_reply": "too_late_committed",
+            "after_request": {
+              "state": "SUCCEEDED",
+              "effects": 1
+            },
+            "child_alive_after_request": true,
+            "exit": "terminated",
+            "child_joined": true,
+            "final": {
+              "state": "SUCCEEDED",
+              "effects": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}
