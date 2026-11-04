@@ -1,0 +1,108 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-11-04T04:45:18.300543+00:00",
+  "python": "3.9.6",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "recovery_lab.py": {
+      "status": "passed",
+      "sqlite": "3.51.0",
+      "source_after_bad_104": 0,
+      "requested_target": 103,
+      "restored": {
+        "last_seq": 103,
+        "balance": 125
+      },
+      "gap_102_rejected_before_restore": true,
+      "duplicate_103_no_effect": true,
+      "same_sequence_different_intent_rejected": true,
+      "consumer_continued_to": 104,
+      "consumer_balance": 130,
+      "scope": "Real SQLite backup/transactions; synthetic application journal, not MySQL binlog/PostgreSQL WAL or power-loss durability."
+    },
+    "event_batch_lab.py": {
+      "status": "passed",
+      "crash_after_commit_exit_code": 23,
+      "second_batch_response": {
+        "batchItemFailures": [
+          {
+            "itemIdentifier": "msg-B"
+          }
+        ]
+      },
+      "attempts_after_B_recovery": {
+        "A": 2,
+        "B": 2,
+        "C": 1
+      },
+      "effects_after_B_recovery": 3,
+      "new_message_id_same_action_no_effect": true,
+      "same_id_different_intent_rejected": true,
+      "concurrent_X": {
+        "attempts": 2,
+        "effects": 1
+      },
+      "scope": "Real local processes and SQLite atomic transactions. Batch response shape models Lambda/SQS with ReportBatchItemFailures; no real visibility timer, queue or cloud concurrency test."
+    },
+    "terraform_lab.py": {
+      "status": "passed",
+      "terraform": "1.13.0",
+      "provider": "terraform.io/builtin/terraform",
+      "initial_actions": [
+        "create"
+      ],
+      "saved_v1_plan_applied_v1_despite_v2_config": true,
+      "v2_actions": [
+        "update"
+      ],
+      "v2_state": {
+        "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "replicas": 2
+      },
+      "unchanged_plan_exit_code": 0,
+      "stale_saved_plan_rejected": true,
+      "scope": "Real Terraform CLI and local state, built-in terraform_data only; no cloud provider, remote API drift, remote lock or GitOps controller execution."
+    },
+    "gitops_model.py": {
+      "status": "passed",
+      "self_heal_off_replicas": 5,
+      "self_heal_on_replicas": 2,
+      "after_spec_apply": {
+        "synced_model": true,
+        "healthy_model": false,
+        "actions": [
+          "apply:reports"
+        ]
+      },
+      "after_readiness": {
+        "synced_model": true,
+        "healthy_model": true,
+        "actions": []
+      },
+      "business_assertion_passed": false,
+      "prune_off_retains_resource": true,
+      "prune_on_deletes_tracked_only": true,
+      "scope": "Deterministic teaching model, not an Argo CD controller or a Kubernetes cluster. Status names are model outputs, not complete Argo health rules."
+    }
+  },
+  "source_sha256": {
+    "README.md": "a77b8b149afb2c19972b97345c5a110cc54687f5d4dde4dd9d6672593e5a1d27",
+    "argocd-application.yaml": "30b295bc0daef14964c1c13dc76406e3c83e596b1d37df7665ecd3f055a0e072",
+    "event_batch_lab.py": "4aafc30d700e0d9f82baa84a798d4a48d2521d2d6a4f05c2285731329467e4d8",
+    "gitops_model.py": "81743b0a3feefa5a1744cc9f45fbac7c8478a4f4fcf98d08ebe266f78516987a",
+    "main.tf": "7492b03f3ef2baa1a0334837d67846a07e61ec1dfd0ecd2fcd7abd9b3f065a72",
+    "mysql-pitr.md": "0546b305696bbebe416d7246097658f1f4692e4732320417c1b31f96f2469574",
+    "recovery_lab.py": "c9693212334d80fba2eb951619cc6b97a5b6f88a3623f1d98956707cd16b0211",
+    "terraform_lab.py": "69044b7a14081a1691206d8b07596c50202ab95416c2221b39ca4cff4699dd85"
+  },
+  "not_executed": [
+    "MySQL/PostgreSQL engine recovery",
+    "AWS Lambda/SQS or other cloud functions",
+    "Terraform cloud providers or remote backend locking",
+    "Argo CD/Flux/Kubernetes cluster"
+  ],
+  "configuration_review_only": [
+    "mysql-pitr.md",
+    "argocd-application.yaml"
+  ]
+}

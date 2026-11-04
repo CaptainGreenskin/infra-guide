@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 755" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">在误操作 T104 之前，能否重放到 125 元？</title>
+  <desc id="desc">教学基线已恢复到 T100，余额 100。连续日志段依次包含 T101 加十、T102 加二十、T103 减五和 T104 误清零。完整链可停在 T103 后得到 125。缺少 T102 的必需日志段时不能跳到 T103 宣称恢复成功。</desc>
+  <defs>
+    <marker id="arr-blue" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#2758a4" stroke-width="1.2" />
+    </marker>
+    <marker id="arr-teal" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#106a65" stroke-width="1.2" />
+    </marker>
+    <marker id="arr-orange" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#944919" stroke-width="1.2" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="755" fill="#f5f8fc" />
+  <text x="30" y="36" font-size="18" fill="#2758a4" font-weight="650" text-anchor="start">CLOUD INFRA   /   03   恢复目标</text>
+  <text x="30" y="83" font-size="30" fill="#1c324a" font-weight="650" text-anchor="start">在误操作 T104 之前，能否重放到 125 元？</text>
+  <text x="30" y="119" font-size="19" fill="#4c6279" font-weight="400" text-anchor="start">教学日志片段 L1–L4 只表示顺序，不是实际 binlog 文件、WAL 段名或 LSN。</text>
+  <text x="172" y="170" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">T100</text>
+  <text x="172" y="195" font-size="18" fill="#4c6279" font-weight="400" text-anchor="middle">10:00</text>
+  <text x="360" y="170" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">T101</text>
+  <text x="360" y="195" font-size="18" fill="#4c6279" font-weight="400" text-anchor="middle">10:01</text>
+  <text x="548" y="170" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">T102</text>
+  <text x="548" y="195" font-size="18" fill="#4c6279" font-weight="400" text-anchor="middle">10:02</text>
+  <text x="736" y="170" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">T103</text>
+  <text x="736" y="195" font-size="18" fill="#4c6279" font-weight="400" text-anchor="middle">10:03</text>
+  <text x="924" y="170" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">T104</text>
+  <text x="924" y="195" font-size="18" fill="#4c6279" font-weight="400" text-anchor="middle">10:04</text>
+  <line x1="165" y1="219" x2="928" y2="219" stroke="#2758a4" stroke-width="2" />
+  <circle cx="172" cy="219" r="6" fill="#2758a4" />
+  <circle cx="360" cy="219" r="6" fill="#2758a4" />
+  <circle cx="548" cy="219" r="6" fill="#2758a4" />
+  <circle cx="736" cy="219" r="6" fill="#2758a4" />
+  <circle cx="924" cy="219" r="6" fill="#2758a4" />
+  <text x="30" y="272" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">恢复材料</text>
+  <text x="172" y="272" font-size="18" fill="#106a65" font-weight="650" text-anchor="middle">基线</text>
+  <text x="360" y="272" font-size="18" fill="#106a65" font-weight="650" text-anchor="middle">L1</text>
+  <text x="548" y="272" font-size="18" fill="#106a65" font-weight="650" text-anchor="middle">L2</text>
+  <text x="736" y="272" font-size="18" fill="#106a65" font-weight="650" text-anchor="middle">L3</text>
+  <text x="924" y="272" font-size="18" fill="#106a65" font-weight="650" text-anchor="middle">L4</text>
+  <text x="30" y="315" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">业务变化</text>
+  <text x="172" y="315" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">起点</text>
+  <text x="360" y="315" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">加 10</text>
+  <text x="548" y="315" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">加 20</text>
+  <text x="736" y="315" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">减 5</text>
+  <text x="924" y="315" font-size="18" fill="#944919" font-weight="400" text-anchor="middle">误清零</text>
+  <text x="30" y="357" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">重放余额</text>
+  <text x="172" y="357" font-size="22" fill="#4c6279" font-weight="650" text-anchor="middle">100</text>
+  <text x="360" y="357" font-size="22" fill="#4c6279" font-weight="650" text-anchor="middle">110</text>
+  <text x="548" y="357" font-size="22" fill="#4c6279" font-weight="650" text-anchor="middle">130</text>
+  <text x="736" y="357" font-size="22" fill="#106a65" font-weight="650" text-anchor="middle">125</text>
+  <text x="924" y="357" font-size="22" fill="#4c6279" font-weight="650" text-anchor="middle">0</text>
+  <line x1="821" y1="208" x2="821" y2="375" stroke="#944919" stroke-width="2" stroke-dasharray="6 5" />
+  <text x="815" y="405" font-size="18" fill="#944919" font-weight="650" text-anchor="end">在此停：已包含 T103，排除 T104</text>
+  <line x1="30" y1="430" x2="931" y2="430" stroke="#c4d3df" stroke-width="1.6" />
+  <text x="30" y="467" font-size="22" fill="#944919" font-weight="650" text-anchor="start">反例：基线仍在，必需的 L2 丢失</text>
+  <text x="172" y="510" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">基线</text>
+  <line x1="205" y1="504" x2="327" y2="504" stroke="#106a65" stroke-width="2" />
+  <text x="360" y="510" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">L1</text>
+  <line x1="392" y1="504" x2="516" y2="504" stroke="#944919" stroke-width="2" stroke-dasharray="5 5" />
+  <text x="548" y="510" font-size="18" fill="#944919" font-weight="650" text-anchor="middle">缺 L2</text>
+  <line x1="580" y1="504" x2="704" y2="504" stroke="#944919" stroke-width="2" stroke-dasharray="5 5" />
+  <text x="736" y="510" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">L3</text>
+  <line x1="769" y1="504" x2="891" y2="504" stroke="#106a65" stroke-width="2" />
+  <text x="924" y="510" font-size="18" fill="#1c324a" font-weight="400" text-anchor="middle">L4</text>
+  <text x="31" y="563" font-size="18" fill="#1c324a" font-weight="400" text-anchor="start">有 L1 和 L3 并不足够。目标依赖 L2，没有另一份副本或可用的新基线，就不能证明到达目标。</text>
+  <line x1="30" y1="590" x2="931" y2="590" stroke="#c4d3df" stroke-width="1.6" />
+  <text x="31" y="624" font-size="18" fill="#1c324a" font-weight="400" text-anchor="start">MySQL：一致备份坐标 + 后续 binlog；验证事务边界及目标数据。</text>
+  <text x="31" y="655" font-size="18" fill="#1c324a" font-weight="400" text-anchor="start">PostgreSQL：可用 base backup + 从备份所需起点开始的连续 WAL；确认 timeline 和目标包含性。</text>
+  <text x="31" y="692" font-size="18" fill="#1c324a" font-weight="400" text-anchor="start">恢复进程能启动不等于业务已恢复。核对余额 125、订单状态及后续写入条件。</text>
+  <text x="31" y="726" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">以上为同一组教学事务的恢复演习，不是数据库实测记录。</text>
+</svg>

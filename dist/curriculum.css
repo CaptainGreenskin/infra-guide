@@ -66,3 +66,5 @@
 @media(max-width:650px){.knowledge-point h3{font-size:17px}.knowledge-formula{padding:15px}.knowledge-formula>div{font-size:15px}.model-inputs{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.model-values{gap:8px}.model-values strong{font-size:18px}.latency-waterfall>li{grid-template-columns:78px 1fr 50px;gap:6px;font-size:10px}.mechanism-widget>h4{font-size:17px}.quota-lanes>div{grid-template-columns:56px 1fr;gap:8px}}
 
 @media(min-width:651px){.mobile-field-links,.mobile-field-label{display:none}}
+
+.field-cases{border-top:2px solid var(--blue);padding-top:22px;margin:25px 0 44px}.field-cases>h3{font-size:20px;margin:32px 0 14px;line-height:1.6}.field-cases>p{line-height:1.95;font-size:15px}.field-cases .full-code{margin:22px 0}.field-cases .table-wrap{margin:24px 0}.field-cases .knowledge-check{margin:28px 0}.field-cases .practice-links{display:flex;gap:12px 22px;flex-wrap:wrap;font-size:13px}.field-cases pre{max-height:650px;overflow:auto}.mobile-field-links{border-bottom:1px solid var(--line);margin-bottom:10px;padding-bottom:10px}

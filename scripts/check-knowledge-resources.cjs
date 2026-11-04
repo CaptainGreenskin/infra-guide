@@ -2,7 +2,7 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c={};vm.createContext(c);for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c);
 const d=vm.runInContext('({articles,cloudKnowledgeDomains,cloudPrerequisites,learningResources,cloudRoleSources})',c);
 assert.equal(d.cloudKnowledgeDomains.length,9);assert.equal(d.cloudPrerequisites.length,5);
-assert.equal(d.cloudKnowledgeDomains.flatMap(domain=>domain.points).length,61);
+assert.equal(d.cloudKnowledgeDomains.flatMap(domain=>domain.points).length,62);
 const ids=new Set(d.articles.map(a=>a.id));
 for(const domain of d.cloudKnowledgeDomains){assert(domain.points.length>=5);for(const point of domain.points){assert(point[2].length>45&&point[3].length>25);for(const id of point[4])assert(ids.has(id));}}
 assert.equal(new Set(d.learningResources.map(r=>r.id)).size,d.learningResources.length);
@@ -18,4 +18,4 @@ for(const [route,first]of [['track/cloud','云计算服务模型'],['module/netw
 for(const [route,title]of [['track/ai','Transformer 全貌'],['track/agent','从模型提议到任务完成'],['module/training','云上训练全景']])assert(html(route).includes(title),route);
 const resources=html('resources');assert.equal((resources.match(/class="resource-row"/g)||[]).length,d.learningResources.length);
 assert(html('interview/cloud').includes('IaaS、网络、存储与站点架构专项'));
-console.log('PASS: 9 actual fields / 61 knowledge points, separate prerequisites, direct reading without overview rows, '+d.learningResources.length+' source-mapped resources and 3 official role samples.');
+console.log('PASS: 9 actual fields / 62 knowledge points, separate prerequisites, direct reading without overview rows, '+d.learningResources.length+' source-mapped resources and 3 official role samples.');

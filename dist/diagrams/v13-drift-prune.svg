@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="765" viewBox="0 0 960 765" role="img" aria-labelledby="title desc">
+<title id="title">Argo CD 字段自愈和对象清理分支</title><desc id="desc">同一 Git 版本保持副本数二，现场手改成五；开启自动同步和自愈后可纠正到二。另一个 Git 修订移除受管 ConfigMap，自动清理关闭会保留它，开启后在满足条件时发起删除。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="765" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">Argo CD  /  两类漂移</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">改一个字段，和删一个对象，是两条路径</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">假设是同一个 Application 的受管资源；已开自动同步、拥有权限，示例字段参与差异比较。</text>
+<text x="36" y="163" fill="#2759a5" font-size="23" font-weight="700" text-anchor="start">A｜现场字段被手改：看 selfHeal</text>
+<rect x="36" y="184" width="268" height="87" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="52" y="217" fill="#2759a5" font-size="20" font-weight="700" text-anchor="start">Git 目标</text>
+<text x="52" y="250" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">reports.replicas = 2</text>
+<rect x="346" y="184" width="268" height="87" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="362" y="217" fill="#9e4a16" font-size="20" font-weight="700" text-anchor="start">手改后的现场</text>
+<text x="362" y="250" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">reports.replicas = 5</text>
+<rect x="656" y="184" width="268" height="87" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="672" y="217" fill="#2759a5" font-size="20" font-weight="700" text-anchor="start">自愈后的现场</text>
+<text x="672" y="250" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">reports.replicas = 2</text>
+<path d="M306 228 H339" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M616 228 H649" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<text x="36" y="307" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">selfHeal=true，控制器可重新同步同一修订，将受管字段从 5 改回 2。</text>
+<text x="36" y="338" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">selfHeal=false 时，仅这次现场修改默认不会触发自动同步；后续其他同步仍可能覆盖它。</text>
+<path d="M36 371 H924" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="36" y="416" fill="#08776d" font-size="23" font-weight="700" text-anchor="start">B｜新的 Git 目标不再包含某对象：看 prune</text>
+<rect x="36" y="436" width="888" height="78" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="54" y="469" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">新修订移除受管 ConfigMap，Deployment 仍保留；渲染产物中确已没有该 ConfigMap。</text>
+<text x="54" y="498" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">删除源文件与删除目标对象之间，还隔着渲染、同步策略、保护选项和集群权限。</text>
+<path d="M480 514 V541 H249 V553" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M480 541 H711 V553" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="36" y="559" width="426" height="125" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="54" y="595" fill="#9e4a16" font-size="21" font-weight="700" text-anchor="start">prune = false</text>
+<text x="54" y="630" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">自动同步不会仅因声明消失就删它。</text>
+<text x="54" y="659" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">对象可能保留，应检查差异与归属。</text>
+<rect x="498" y="559" width="426" height="125" rx="12" fill="#e1f2ec" stroke="none"/>
+<text x="516" y="595" fill="#08776d" font-size="21" font-weight="700" text-anchor="start">prune = true</text>
+<text x="516" y="630" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">无额外保护时，控制器可发起删除。</text>
+<text x="516" y="659" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">删除完成还取决于权限与 finalizer。</text>
+<text x="36" y="729" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">图中 Git 目标非空。全空应用保护或资源级排除、确认等策略，需要单独核对。</text>
+</svg>

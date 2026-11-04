@@ -1,0 +1,25 @@
+# Configuration example: replace repoURL/path/destination and provide matching manifests.
+# Requires an existing Argo CD installation, repository access and project permissions.
+# This file was reviewed as configuration; no cluster sync was executed for this release.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: reports-lab
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://example.com/your-team/infra.git
+    targetRevision: main
+    path: deploy/reports
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infra-lab
+  syncPolicy:
+    automated:
+      enabled: true
+      selfHeal: true
+      prune: false
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true

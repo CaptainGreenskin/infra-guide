@@ -6,7 +6,7 @@ const cloudModulePlan = [
  ['cloud-data','C3','云存储与数据服务','CLOUD DATA SYSTEMS','按持久化语义选存储，用索引、事务和缓存时序解释数据可见性，再证明恢复。',['对象 / 块 / 文件','SQL','缓存','恢复'],['比较访问与提交语义','解释索引、锁和缓存竞态','核对恢复点与消费者结果'],['training-storage','database-index-locks','cache-consistency','storage-recovery']],
  ['native','C4','容器与 Kubernetes 编排','CONTAINERS AND KUBERNETES','沿容器、控制面、工作负载、调度、网络、卷、配置和伸缩完整展开。',['容器 / CRI','控制器 / 调度','CNI / CSI','HPA'],['追踪声明到进程与可用端点','定位网络、卷与探针故障','复算伸缩建议与容量空窗'],['container-runtime','kubernetes-basics','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling']],
  ['serverless','C5','Serverless 与事件驱动','SERVERLESS AND EVENTS','从执行环境走到投递、幂等、失败留存、并发和成本；与长期运行容器比较取舍。',['FaaS','事件 / 队列','幂等','成本'],['区分受理、执行与业务提交','按触发器解释重试与失败去向','计算平均并发和账单用量'],['serverless-execution']],
- ['cloud-delivery','C6','平台工程与交付','DELIVERY AND IDENTITY','把产物、配置、数据契约、工作负载身份和回退条件作为同一次交付。',['CI / CD','IAM','最小权限','回退'],['交付可复现版本','在执行边界检查授权','说明回退覆盖与遗漏的状态'],['delivery']],
+ ['cloud-delivery','C6','平台工程、IaC 与 GitOps','PLATFORM ENGINEERING AND DELIVERY','从不可变制品和流水线，到 IaC 状态、GitOps 调谐与兼容回退。',['CI / CD','IaC / GitOps','漂移','兼容迁移'],['交付可追溯版本','解释计划、漂移与持续调谐','验证发布与数据兼容边界'],['delivery']],
  ['cloud-security','C7','身份、安全与多租户','CLOUD SECURITY','从身份、授权、网络、执行与审计形成分层边界。',['IAM / RBAC','工作负载身份','隔离','审计'],['区分认证与授权','定义资源和租户边界','验证最小权限的执行效果'],['iam-security']],
  ['cloud-capacity','C8','容量、弹性与成本','CAPACITY AND COST','用工作量、排队、扩容时序与计费用量推导资源和预算。',['容量','弹性','排队','成本'],['区分平均、峰值和尾延迟','计算扩容空窗与净排空量','按资源用量与有效产出核算成本'],['elasticity']],
  ['sre','C9','SRE、可观测与故障恢复','RELIABILITY ENGINEERING','用 SLO 表达用户目标，以指标、日志和追踪排除假设，再用演练检验恢复。',['SLO','可观测','事故','容灾'],['计算错误预算与消耗率','按证据形成故障时间线','验证恢复目标和剩余容量'],['slo','observability','incident','resilience']]

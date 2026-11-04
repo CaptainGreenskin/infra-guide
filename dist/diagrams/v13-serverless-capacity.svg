@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="730" viewBox="0 0 960 730" role="img" aria-labelledby="title desc"><title id="title">调用率、执行并发与下游容量</title><desc id="desc">每秒到达二百次，每次平均占用零点二秒，需要四十个并发槽。若每次执行全程独占一个数据库连接而只给三十个连接，则理想完成上界每秒一百五十次。</desc>
+<rect width="960" height="730" fill="#f6f8f9" rx="14"/>
+<text x="32" y="39" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#126d69">SERVERLESS 03  /  容量</text>
+<text x="32" y="85" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:31px;font-weight:700;fill:#183650">函数能接住请求，下游能完成多少？</text>
+<text x="32" y="120" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">合成固定容量模型：SQS 每条消息对应一次调用；每次全程独占 1 个连接，平均 0.20 s。</text>
+<text x="34" y="164" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#24639a">调用需求  200 次/s × 0.20 s = 40 个执行槽</text>
+<text x="34" y="200" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#183650">需求并发</text>
+<rect x="170" y="179" width="640" height="28" rx="3" fill="#2b6d9e" stroke="none"/>
+<text x="832" y="202" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:22px;font-weight:700;fill:#24639a">40</text>
+<text x="34" y="247" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#183650">连接预算</text>
+<rect x="170" y="226" width="480" height="28" rx="3" fill="#218478" stroke="none"/>
+<text x="672" y="249" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:22px;font-weight:700;fill:#126d69">30</text>
+<text x="34" y="294" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#a94d24">理想上界  30 ÷ 0.20 s = 150 次/s；持续输入比完成多 50 次/s。</text>
+<rect x="28" y="324" width="904" height="280" rx="8" fill="#ffffff" stroke="#bdcfdc"/>
+<text x="48" y="359" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#183650">初始等待队列为 0，30 个槽已稳定工作</text>
+<line x1="122" y1="547.0" x2="807" y2="547.0" stroke="#bdcfdc" stroke-width="1.2" stroke-dasharray="4 5"/>
+<text x="110" y="553.0" text-anchor="end" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">0</text>
+<line x1="122" y1="498.6666666666667" x2="807" y2="498.6666666666667" stroke="#bdcfdc" stroke-width="1.2" stroke-dasharray="4 5"/>
+<text x="110" y="504.6666666666667" text-anchor="end" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">500</text>
+<line x1="122" y1="450.3333333333333" x2="807" y2="450.3333333333333" stroke="#bdcfdc" stroke-width="1.2" stroke-dasharray="4 5"/>
+<text x="110" y="456.3333333333333" text-anchor="end" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">1000</text>
+<line x1="122" y1="402.0" x2="807" y2="402.0" stroke="#bdcfdc" stroke-width="1.2" stroke-dasharray="4 5"/>
+<text x="110" y="408.0" text-anchor="end" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">1500</text>
+<line x1="122.0" y1="547" x2="122.0" y2="552" stroke="#183650" stroke-width="1"/>
+<text x="122.0" y="575" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">0</text>
+<line x1="350.33333333333337" y1="547" x2="350.33333333333337" y2="552" stroke="#183650" stroke-width="1"/>
+<text x="350.33333333333337" y="575" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">10</text>
+<line x1="578.6666666666667" y1="547" x2="578.6666666666667" y2="552" stroke="#183650" stroke-width="1"/>
+<text x="578.6666666666667" y="575" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">20</text>
+<line x1="807.0" y1="547" x2="807.0" y2="552" stroke="#183650" stroke-width="1"/>
+<text x="807.0" y="575" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">30</text>
+<line x1="122" y1="402" x2="122" y2="547" stroke="#183650" stroke-width="1.4"/>
+<line x1="122" y1="547" x2="807" y2="547" stroke="#183650" stroke-width="1.4"/>
+<path d="M 122 547 L 807 402 L 807 547 Z" fill="#e9f2f0"/>
+<line x1="122" y1="547" x2="807" y2="402" stroke="#126d69" stroke-width="3.5"/>
+<circle cx="122.0" cy="547.0" r="4.5" fill="#126d69"/>
+<circle cx="350.33333333333337" cy="498.6666666666667" r="4.5" fill="#126d69"/>
+<circle cx="578.6666666666667" cy="450.3333333333333" r="4.5" fill="#126d69"/>
+<circle cx="807.0" cy="402.0" r="4.5" fill="#126d69"/>
+<text x="823" y="408" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#126d69">1500 条</text>
+<text x="150" y="390" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#126d69">等待数 / 条</text>
+<text x="853" y="575" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">时间 / s</text>
+<text x="34" y="644" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">每 10 秒约净增 500 条。图只计等待消息；不含执行中记录、重试、扩容延迟或其他限制。</text>
+<text x="34" y="682" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">若连接只在部分阶段占用，应用连接池可共享，或每次处理多条消息，需重新建模。</text>
+</svg>

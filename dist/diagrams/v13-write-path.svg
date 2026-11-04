@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 755" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">T103 得到成功响应之前，谁记录了什么？</title>
+  <desc id="desc">教学场景 T103 扣减 5 元。InnoDB redo 用于本地恢复，binlog 事件传向副本 Q。已启用 AFTER_SYNC，Q 的中继日志持久后确认，源端随后提交并回复。脏数据页可以稍后写回。</desc>
+  <defs>
+    <marker id="arr-blue" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#2758a4" stroke-width="1.2" />
+    </marker>
+    <marker id="arr-teal" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#106a65" stroke-width="1.2" />
+    </marker>
+    <marker id="arr-orange" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" viewBox="0 0 6 6">
+      <path d="M0 0 L6 3 L0 6" fill="none" stroke="#944919" stroke-width="1.2" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="755" fill="#f5f8fc" />
+  <text x="30" y="36" font-size="18" fill="#2758a4" font-weight="650" text-anchor="start">CLOUD INFRA   /   01   提交证据</text>
+  <text x="30" y="83" font-size="30" fill="#1c324a" font-weight="650" text-anchor="start">T103 得到成功响应之前，谁记录了什么？</text>
+  <text x="30" y="119" font-size="19" fill="#4c6279" font-weight="400" text-anchor="start">MySQL 8.4 / InnoDB，可用半同步，AFTER_SYNC，需一个 ACK；只画成功路径。</text>
+  <text x="226" y="169" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">改动开始</text>
+  <text x="416" y="169" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">源端有日志</text>
+  <text x="625" y="169" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">Q 持久确认</text>
+  <text x="838" y="169" font-size="18" fill="#2758a4" font-weight="650" text-anchor="middle">提交与回复</text>
+  <line x1="173" y1="187" x2="931" y2="187" stroke="#c4d3df" stroke-width="1.6" />
+  <text x="30" y="231" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">缓冲池</text>
+  <text x="30" y="257" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">数据页</text>
+  <line x1="177" y1="231" x2="931" y2="231" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="5 6" />
+  <text x="30" y="327" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">本地 redo</text>
+  <text x="30" y="353" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">引擎崩溃恢复</text>
+  <line x1="177" y1="327" x2="931" y2="327" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="5 6" />
+  <text x="30" y="423" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">源端 binlog</text>
+  <text x="30" y="449" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">事务事件</text>
+  <line x1="177" y1="423" x2="931" y2="423" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="5 6" />
+  <text x="30" y="519" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">副本 Q</text>
+  <text x="30" y="545" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">relay log</text>
+  <line x1="177" y1="519" x2="931" y2="519" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="5 6" />
+  <text x="30" y="615" font-size="19" fill="#1c324a" font-weight="650" text-anchor="start">客户端</text>
+  <text x="30" y="641" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">提交调用</text>
+  <line x1="177" y1="615" x2="931" y2="615" stroke="#c4d3df" stroke-width="1.4" stroke-dasharray="5 6" />
+  <circle cx="226" cy="231" r="7" fill="#2758a4" />
+  <text x="218" y="217" font-size="18" fill="#2758a4" font-weight="400" text-anchor="start">125 元的修改先进入脏页</text>
+  <text x="653" y="217" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">数据页可在稍后刷盘</text>
+  <circle cx="414" cy="327" r="7" fill="#106a65" />
+  <text x="249" y="309" font-size="18" fill="#106a65" font-weight="400" text-anchor="start">相关 redo 先于相应脏页落盘</text>
+  <text x="491" y="355" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">引擎恢复与 binlog 提交协同；此行不展开内部阶段。</text>
+  <circle cx="416" cy="423" r="7" fill="#2758a4" />
+  <text x="264" y="408" font-size="18" fill="#2758a4" font-weight="400" text-anchor="start">binlog 写入并同步</text>
+  <path d="M 416 423 L 416 519 L 608 519" stroke="#2758a4" fill="none" stroke-width="2" marker-end="url(#arr-blue)" />
+  <text x="440" y="494" font-size="18" fill="#2758a4" font-weight="400" text-anchor="start">传送 T103 事件</text>
+  <circle cx="625" cy="519" r="7" fill="#106a65" />
+  <text x="647" y="548" font-size="18" fill="#106a65" font-weight="400" text-anchor="start">中继日志已同步到盘</text>
+  <path d="M 625 519 L 625 423 L 838 423" stroke="#106a65" fill="none" stroke-width="2" marker-end="url(#arr-teal)" />
+  <text x="644" y="405" font-size="18" fill="#106a65" font-weight="400" text-anchor="start">ACK 后源端提交</text>
+  <circle cx="838" cy="423" r="7" fill="#106a65" />
+  <path d="M 838 423 L 838 615" stroke="#106a65" fill="none" stroke-width="2" marker-end="url(#arr-teal)" />
+  <circle cx="838" cy="615" r="7" fill="#106a65" />
+  <text x="633" y="598" font-size="18" fill="#106a65" font-weight="400" text-anchor="start">收到 T103 成功响应</text>
+  <line x1="30" y1="652" x2="931" y2="652" stroke="#c4d3df" stroke-width="1.6" />
+  <text x="30" y="684" font-size="18" fill="#1c324a" font-weight="400" text-anchor="start">读图：Q 收到了可重放的事件；仍需查看 apply 进度，才能判断查询是否已经读到 125 元。</text>
+  <text x="30" y="718" font-size="18" fill="#4c6279" font-weight="400" text-anchor="start">时间从左向右，距离不表示耗时。教学时序不等于逐次 fsync 的实现轨迹。</text>
+</svg>

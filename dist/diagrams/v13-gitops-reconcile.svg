@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="778" viewBox="0 0 960 778" role="img" aria-labelledby="title desc">
+<title id="title">GitOps 从镜像摘要到业务验收</title><desc id="desc">CI 生产镜像摘要，审阅后的 Git 声明固定该摘要，控制器拉取比较并按策略施加。现场反馈进入下一轮调谐。Synced 衡量声明比较，Healthy 衡量资源健康，业务需独立探测。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="778" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">GitOps  /  交付与观测</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">一次镜像发布，到哪一步才算成功？</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">示例：报表服务升级到 v2。控制器读取 Git 中批准的声明，再与集群现场比较。</text>
+<rect x="36" y="153" width="268" height="139" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="52" y="188" fill="#2759a5" font-size="20" font-weight="700" text-anchor="start">01　CI 产出制品</text>
+<text x="52" y="231" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">测试、构建、推送镜像</text>
+<text x="52" y="261" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">记录 sha256:… 摘要</text>
+<rect x="346" y="153" width="268" height="139" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="362" y="188" fill="#2759a5" font-size="20" font-weight="700" text-anchor="start">02　Git 保存期望</text>
+<text x="362" y="231" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">PR 审阅后合入 c42</text>
+<text x="362" y="261" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">清单引用同一镜像摘要</text>
+<rect x="656" y="153" width="268" height="139" rx="12" fill="#e1f2ec" stroke="none"/>
+<text x="672" y="188" fill="#08776d" font-size="20" font-weight="700" text-anchor="start">03　控制器调谐</text>
+<text x="672" y="231" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">拉取并渲染 c42</text>
+<text x="672" y="261" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">比较现场，按策略同步</text>
+<path d="M308 223 H339" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M618 223 H649" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M790 294 V323" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="36" y="328" width="888" height="70" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="54" y="360" fill="#08776d" font-size="21" font-weight="700" text-anchor="start">现场反馈</text>
+<text x="190" y="360" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">API 对象、控制器 status、Pod 和端点随时间更新。</text>
+<text x="190" y="385" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">新的观察进入下一轮比较，Git 合入不等于副本已经可用。</text>
+<text x="36" y="448" fill="#20324a" font-size="23" font-weight="700" text-anchor="start">分三层读结果</text>
+<rect x="36" y="474" width="888" height="68" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<rect x="36" y="474" width="162" height="68" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="117" y="515" fill="#2759a5" font-size="20" font-weight="700" text-anchor="middle">Synced</text>
+<text x="217" y="503" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">纳入比较的受管清单与目标一致。</text>
+<text x="217" y="528" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">镜像更新已写入，Pod 仍可能启动失败。</text>
+<rect x="36" y="552" width="888" height="68" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<rect x="36" y="552" width="162" height="68" rx="12" fill="#e1f2ec" stroke="none"/>
+<text x="117" y="593" fill="#08776d" font-size="20" font-weight="700" text-anchor="middle">Healthy</text>
+<text x="217" y="581" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">资源通过对应类型或自定义健康判定。</text>
+<text x="217" y="606" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">服务仍可能返回错误版本的日报。</text>
+<rect x="36" y="630" width="888" height="68" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<rect x="36" y="630" width="162" height="68" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="117" y="671" fill="#9e4a16" font-size="20" font-weight="700" text-anchor="middle">用户验收</text>
+<text x="217" y="659" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">在允许的身份下发起真实业务探测。</text>
+<text x="217" y="684" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">核对版本、内容与延迟，另看失败样本。</text>
+<text x="36" y="744" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">Argo CD 术语示例。Sync 操作是否成功、当前 Sync 状态和应用健康是不同的观察。</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="700" viewBox="0 0 960 700" role="img" aria-labelledby="title desc"><title id="title">冷启动、热复用与持久状态边界</title><desc id="desc">同一请求 B 可以复用环境 E1，或在新的 E2 初始化。局部变量与 /tmp 只作临时缓存，已提交的业务结果由持久系统确认。</desc>
+<rect width="960" height="700" fill="#f6f8f9" rx="14"/>
+<text x="32" y="39" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#126d69">SERVERLESS 01  /  执行环境</text>
+<text x="32" y="85" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:31px;font-weight:700;fill:#183650">请求 B 到达，能否接着用同一个环境？</text>
+<text x="32" y="120" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">普通按需 Lambda 函数的两种可能路径。横向表示先后，不表示固定时长或回收期限。</text>
+<rect x="28" y="150" width="904" height="167" rx="8" fill="#ffffff" stroke="#bdcfdc"/>
+<text x="46" y="181" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#126d69">路径一  ·  E1 保留并被再次选中</text>
+<text x="46" y="236" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#183650">环境 E1</text>
+<rect x="160" y="207" width="145" height="43" rx="4" fill="#deeaf6" stroke="none"/>
+<text x="232.5" y="235" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">INIT</text>
+<rect x="309" y="207" width="163" height="43" rx="4" fill="#dceeea" stroke="none"/>
+<text x="390.5" y="235" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">调用 A</text>
+<rect x="476" y="207" width="174" height="43" rx="4" fill="#e7eaee" stroke="none"/>
+<text x="563.0" y="235" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">冻结 / 空闲</text>
+<rect x="654" y="207" width="245" height="43" rx="4" fill="#dceeea" stroke="none"/>
+<text x="776.5" y="235" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">解冻，调用 B</text>
+<text x="46" y="285" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">INIT 装载运行时与函数初始化代码。此次 B 复用已初始化的 E1。</text>
+<rect x="28" y="338" width="904" height="204" rx="8" fill="#ffffff" stroke="#bdcfdc"/>
+<text x="46" y="368" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#a94d24">路径二  ·  E1 不再可用，B 分配到新的 E2</text>
+<text x="46" y="416" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#183650">环境 E1</text>
+<rect x="160" y="389" width="145" height="43" rx="4" fill="#deeaf6" stroke="none"/>
+<text x="232.5" y="417" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">INIT</text>
+<rect x="309" y="389" width="163" height="43" rx="4" fill="#dceeea" stroke="none"/>
+<text x="390.5" y="417" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">调用 A</text>
+<rect x="476" y="389" width="174" height="43" rx="4" fill="#e7eaee" stroke="none"/>
+<text x="563.0" y="417" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">结束 / 被替换</text>
+<line x1="660" y1="403" x2="896" y2="403" stroke="#bdcfdc" stroke-width="1.3" stroke-dasharray="5 7"/>
+<text x="46" y="478" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#183650">环境 E2</text>
+<line x1="160" y1="466" x2="646" y2="466" stroke="#bdcfdc" stroke-width="1.3" stroke-dasharray="5 7"/>
+<rect x="654" y="451" width="115" height="43" rx="4" fill="#deeaf6" stroke="none"/>
+<text x="711.5" y="479" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">INIT</text>
+<rect x="773" y="451" width="126" height="43" rx="4" fill="#dceeea" stroke="none"/>
+<text x="836.0" y="479" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#183650">调用 B</text>
+<text x="46" y="523" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">A 的进程内变量与临时文件对新 E2 无保证；B 必须能从空环境运行。</text>
+<rect x="28" y="564" width="904" height="103" rx="8" fill="#e9f2ef" stroke="none"/>
+<text x="46" y="597" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#126d69">持久边界</text>
+<text x="164" y="597" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">业务操作 ID、效果与回执应由持久系统按约定提交。</text>
+<text x="46" y="633" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#183650">内存、/tmp 和连接可用于加速；冻结或复用不是业务事务提交，也不是永久存储。</text>
+</svg>
