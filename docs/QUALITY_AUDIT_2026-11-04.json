@@ -133,10 +133,10 @@
       "id": "training-communication",
       "module": "training",
       "title": "NCCL 与集合通信：定位等待发生在哪里",
-      "sections": 7,
-      "approx_visible_prose_characters": 3966,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 8,
+      "approx_visible_prose_characters": 5330,
+      "figures": 2,
+      "review": "substantial_v24"
     },
     {
       "id": "data-pipeline",
@@ -331,10 +331,10 @@
       "id": "agent-observability",
       "module": "agent",
       "title": "Agent 观测：任务、重试与成本归因",
-      "sections": 9,
-      "approx_visible_prose_characters": 3435,
-      "figures": 0,
-      "review": "initial_screen_not_reassessed_v22"
+      "sections": 8,
+      "approx_visible_prose_characters": 5711,
+      "figures": 2,
+      "review": "substantial_v24"
     },
     {
       "id": "agent-sandbox",
@@ -485,9 +485,9 @@
       "module": "native",
       "title": "Kubernetes 弹性：HPA、节点容量与排队预算",
       "sections": 8,
-      "approx_visible_prose_characters": 2458,
-      "figures": 1,
-      "review": "initial_screen_not_reassessed_v22"
+      "approx_visible_prose_characters": 6003,
+      "figures": 2,
+      "review": "substantial_v24"
     },
     {
       "id": "serverless-execution",
@@ -598,6 +598,6 @@
       "review": "initial_screen_not_reassessed_v22"
     }
   ],
-  "last_inventory_iteration": 23,
-  "eight_hour_manual_status": "6 core chapters substantially reviewed and repaired; other rows remain screening or earlier-review evidence, not a claim all 66 were manually reread in this window."
+  "last_inventory_iteration": 24,
+  "eight_hour_manual_status": "9 core chapters substantially reviewed and repaired; other rows remain screening or earlier-review evidence, not a claim all 66 were manually reread in this window."
 }

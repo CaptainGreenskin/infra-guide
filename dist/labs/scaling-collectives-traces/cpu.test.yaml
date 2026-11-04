@@ -1,0 +1,79 @@
+rule_files:
+  - cpu.rules.yaml
+evaluation_interval: 1m
+# Permit only last-bit floating-point differences, keeping values and labels checked.
+fuzzy_compare: true
+tests:
+  - name: different-requests
+    interval: 1m
+    input_series:
+      - series: 'lab_cpu_usage_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0.09 0.09'
+      - series: 'lab_cpu_usage_cores{namespace="apps",deployment="reports",pod="b"}'
+        values: '0.09 0.09'
+      - series: 'lab_cpu_request_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0.1 0.1'
+      - series: 'lab_cpu_request_cores{namespace="apps",deployment="reports",pod="b"}'
+        values: '0.9 0.9'
+    promql_expr_test:
+      - expr: lab:cpu_utilization:ratio
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_utilization:ratio{namespace="apps",deployment="reports"}'
+            value: 0.18
+      - expr: lab:mean_pod_utilization:ratio
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:mean_pod_utilization:ratio{namespace="apps",deployment="reports"}'
+            value: 0.5
+      - expr: lab:cpu_metrics_complete
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_metrics_complete{namespace="apps",deployment="reports"}'
+            value: 1
+  - name: missing-is-not-zero
+    interval: 1m
+    input_series:
+      - series: 'lab_cpu_usage_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0.09 0.09'
+      - series: 'lab_cpu_request_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0.1 0.1'
+      - series: 'lab_cpu_request_cores{namespace="apps",deployment="reports",pod="b"}'
+        values: '0.9 0.9'
+    promql_expr_test:
+      - expr: lab:cpu_utilization:ratio
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_utilization:ratio{namespace="apps",deployment="reports"}'
+            value: 0.09
+      - expr: lab:cpu_metrics_complete
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_metrics_complete{namespace="apps",deployment="reports"}'
+            value: 0
+  - name: measured-zero-is-complete
+    interval: 1m
+    input_series:
+      - series: 'lab_cpu_usage_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0 0'
+      - series: 'lab_cpu_request_cores{namespace="apps",deployment="reports",pod="a"}'
+        values: '0.1 0.1'
+    promql_expr_test:
+      - expr: lab:cpu_utilization:ratio
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_utilization:ratio{namespace="apps",deployment="reports"}'
+            value: 0
+      - expr: lab:cpu_metrics_complete
+        eval_time: 1m
+        exp_samples:
+          - labels: 'lab:cpu_metrics_complete{namespace="apps",deployment="reports"}'
+            value: 1
+  - name: absent-telemetry
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: lab:cpu_metrics_complete
+        eval_time: 1m
+        exp_samples: []
+

@@ -60,7 +60,7 @@ const inputRecovery=infraReadableHTML(
  '恢复先定义检查点在训练哪个安全边界形成。本站最小DDP程序明确采用epoch边界恢复；不能把它描述成可从任意worker预取位置无缝继续。若要中途恢复，必须将已提交的优化器进展与输入消费位置、梯度累积状态、随机状态关联起来，并处理已读未用及重新分流。world_size变化后，各rank局部索引也可能不再适用。',
  '判断慢rank时，先查看它何时取得下一批、何时到达集合通信，再比较等待。假定各rank独立、每步都有1%概率输入停顿，8个rank至少一个停顿的概率是1−0.99⁸，约7.73%；现实的共享存储与网络故障经常相关，不能照搬独立假设。NCCL等待可以是其他rank输入迟到的结果；换通信参数前，先用样本与批次时间线核对。')+
  linkTo('checkpoint-recovery','继续学习完整检查点与一致恢复')+
- linkTo('distributed-training','把输入口径接到多机训练验收'));
+ linkTo('multinode-lab','把输入口径接到多机训练验收'));
 
 const inputPractice=infraReadableHTML(
  knowledgeSubhead('实战一：真实rank与worker，逐个ID核对')+nitLab('sampler_coverage.py')+

@@ -1,0 +1,757 @@
+{
+  "python": "3.9.6",
+  "programs": {
+    "scaling_reference.py": {
+      "sha256": "e7ab7f871ed8d858e2fb91baae6acf055dbe5b1371b696c39208ab2df58eb747",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "basis": "Kubernetes v1.34.1 resource-utilization calculation examined",
+        "model_limits": [
+          "all listed Pods treated as ready except missing metric",
+          "no real metrics API, controller loop, policy history or cluster",
+          "queue uses fixed fluid rates and one-second steps, not request latency"
+        ],
+        "recommendations": {
+          "four_ready": {
+            "observed_percent": 90,
+            "adjusted_percent": 90,
+            "missing_pods": 0,
+            "pre_policy_replicas": 6,
+            "reason": "ratio_recommendation"
+          },
+          "requests_doubled": {
+            "observed_percent": 45,
+            "adjusted_percent": 45,
+            "missing_pods": 0,
+            "pre_policy_replicas": 3,
+            "reason": "ratio_recommendation"
+          },
+          "heterogeneous_requests": {
+            "observed_percent": 18,
+            "adjusted_percent": 18,
+            "missing_pods": 0,
+            "pre_policy_replicas": 1,
+            "reason": "ratio_recommendation"
+          },
+          "missing_scale_up": {
+            "observed_percent": 90,
+            "adjusted_percent": 67,
+            "missing_pods": 1,
+            "pre_policy_replicas": 5,
+            "reason": "ratio_recommendation"
+          },
+          "missing_within_tolerance": {
+            "observed_percent": 85,
+            "adjusted_percent": 63,
+            "missing_pods": 1,
+            "pre_policy_replicas": 4,
+            "reason": "within_tolerance"
+          },
+          "missing_scale_down": {
+            "observed_percent": 30,
+            "adjusted_percent": 47,
+            "missing_pods": 1,
+            "pre_policy_replicas": 4,
+            "reason": "ratio_recommendation"
+          },
+          "missing_reverses_direction": {
+            "observed_percent": 10,
+            "adjusted_percent": 77,
+            "missing_pods": 3,
+            "pre_policy_replicas": 4,
+            "reason": "direction_reversed"
+          }
+        },
+        "wrong_mean_pod_percent": 50.0,
+        "missing_request_rejected": true,
+        "scale_down_window": [
+          {
+            "now": 60,
+            "highest_in_last_300s": 6
+          },
+          {
+            "now": 301,
+            "highest_in_last_300s": 4
+          },
+          {
+            "now": 481,
+            "highest_in_last_300s": 3
+          }
+        ],
+        "queues": {
+          "only_match_arrival": {
+            "peak_queue": 4500,
+            "final_queue": 4500,
+            "completed": 22500,
+            "rejected": 0,
+            "drained_at_second": null,
+            "samples": [
+              {
+                "end_second": 1,
+                "capacity_per_second": 120,
+                "queue": 60,
+                "completed_total": 120,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 20,
+                "capacity_per_second": 120,
+                "queue": 1200,
+                "completed_total": 2400,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 35,
+                "capacity_per_second": 120,
+                "queue": 2100,
+                "completed_total": 4200,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 75,
+                "capacity_per_second": 120,
+                "queue": 4500,
+                "completed_total": 9000,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 76,
+                "capacity_per_second": 180,
+                "queue": 4500,
+                "completed_total": 9180,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 84,
+                "capacity_per_second": 180,
+                "queue": 4500,
+                "completed_total": 10620,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 100,
+                "capacity_per_second": 180,
+                "queue": 4500,
+                "completed_total": 13500,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 150,
+                "capacity_per_second": 180,
+                "queue": 4500,
+                "completed_total": 22500,
+                "rejected_total": 0
+              }
+            ]
+          },
+          "extra_capacity": {
+            "peak_queue": 4500,
+            "final_queue": 0,
+            "completed": 27000,
+            "rejected": 0,
+            "drained_at_second": 150,
+            "samples": [
+              {
+                "end_second": 1,
+                "capacity_per_second": 120,
+                "queue": 60,
+                "completed_total": 120,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 20,
+                "capacity_per_second": 120,
+                "queue": 1200,
+                "completed_total": 2400,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 35,
+                "capacity_per_second": 120,
+                "queue": 2100,
+                "completed_total": 4200,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 75,
+                "capacity_per_second": 120,
+                "queue": 4500,
+                "completed_total": 9000,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 76,
+                "capacity_per_second": 240,
+                "queue": 4440,
+                "completed_total": 9240,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 84,
+                "capacity_per_second": 240,
+                "queue": 3960,
+                "completed_total": 11160,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 100,
+                "capacity_per_second": 240,
+                "queue": 3000,
+                "completed_total": 15000,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 150,
+                "capacity_per_second": 240,
+                "queue": 0,
+                "completed_total": 27000,
+                "rejected_total": 0
+              }
+            ]
+          },
+          "bounded_queue": {
+            "peak_queue": 500,
+            "final_queue": 0,
+            "completed": 23000,
+            "rejected": 4000,
+            "drained_at_second": 84,
+            "samples": [
+              {
+                "end_second": 1,
+                "capacity_per_second": 120,
+                "queue": 60,
+                "completed_total": 120,
+                "rejected_total": 0
+              },
+              {
+                "end_second": 20,
+                "capacity_per_second": 120,
+                "queue": 500,
+                "completed_total": 2400,
+                "rejected_total": 700
+              },
+              {
+                "end_second": 35,
+                "capacity_per_second": 120,
+                "queue": 500,
+                "completed_total": 4200,
+                "rejected_total": 1600
+              },
+              {
+                "end_second": 75,
+                "capacity_per_second": 120,
+                "queue": 500,
+                "completed_total": 9000,
+                "rejected_total": 4000
+              },
+              {
+                "end_second": 76,
+                "capacity_per_second": 240,
+                "queue": 440,
+                "completed_total": 9240,
+                "rejected_total": 4000
+              },
+              {
+                "end_second": 84,
+                "capacity_per_second": 240,
+                "queue": 0,
+                "completed_total": 11120,
+                "rejected_total": 4000
+              },
+              {
+                "end_second": 100,
+                "capacity_per_second": 240,
+                "queue": 0,
+                "completed_total": 14000,
+                "rejected_total": 4000
+              },
+              {
+                "end_second": 150,
+                "capacity_per_second": 240,
+                "queue": 0,
+                "completed_total": 23000,
+                "rejected_total": 4000
+              }
+            ]
+          }
+        },
+        "connection_budget": {
+          "database_limit": 200,
+          "other_clients": 80,
+          "connections_per_pod": 40,
+          "max_pods": 3,
+          "four_pods_max_each": 30
+        }
+      }
+    },
+    "prometheus_cpu.py": {
+      "sha256": "ca2a6e4d3164ad94abc1dda5e812b14f6ddac1d154207c8de447741239c07b18",
+      "python": "3.9.6",
+      "exit_code": 0,
+      "result": {
+        "version": "promtool, version 3.5.0 (branch: HEAD, revision: 8be3a9560fbdd18a94dedec4b747c35178177202)",
+        "commands": [
+          {
+            "command": "promtool check rules cpu.rules.yaml",
+            "exit_code": 0
+          },
+          {
+            "command": "promtool test rules cpu.test.yaml",
+            "exit_code": 0
+          }
+        ],
+        "fixture_groups": 4,
+        "checks": {
+          "different_requests": {
+            "weighted_ratio": 0.18,
+            "wrong_pod_mean": 0.5
+          },
+          "missing_metric": {
+            "naive_ratio": 0.09,
+            "complete": 0
+          },
+          "observed_zero": {
+            "ratio": 0,
+            "complete": 1
+          },
+          "absent": "no_result_not_zero"
+        },
+        "scope": "actual_promtool_on_synthetic_gauges_not_metrics_server_or_hpa"
+      }
+    },
+    "collective_contracts.py": {
+      "sha256": "d2eb27c28c765fdd8b030384398677f4a4801bf6283fbe0ce2904a2ced05c87e",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "device": "cpu",
+        "world_size": 2,
+        "modes": {
+          "correct": [
+            {
+              "rank": 0,
+              "mode": "correct",
+              "all_reduce_sum": [
+                11.0,
+                22.0,
+                33.0,
+                44.0
+              ],
+              "explicit_rank_mean": [
+                5.5,
+                11.0,
+                16.5,
+                22.0
+              ],
+              "reduce_scatter_tensor": {
+                "supported_here": true,
+                "output": [
+                  11.0,
+                  22.0
+                ]
+              },
+              "all_gather_shards": [
+                11.0,
+                22.0,
+                33.0,
+                44.0
+              ],
+              "ragged": {
+                "lengths": [
+                  3,
+                  1
+                ],
+                "gathered_padding": [
+                  [
+                    2.0,
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    20.0,
+                    0.0,
+                    0.0
+                  ]
+                ],
+                "real_values": [
+                  2.0,
+                  4.0,
+                  6.0,
+                  20.0
+                ],
+                "sum": 32.0,
+                "count": 4,
+                "global_mean": 8.0,
+                "wrong_mean_of_means": 12.0,
+                "wrong_include_padding_mean": 5.333333333333333
+              },
+              "delayed_arrival": {
+                "injected_pre_call_sleep_ms": 0,
+                "local_call_and_wait_ms": 81.821459,
+                "result": 3,
+                "async_result_used_after_wait": true
+              }
+            },
+            {
+              "rank": 1,
+              "mode": "correct",
+              "all_reduce_sum": [
+                11.0,
+                22.0,
+                33.0,
+                44.0
+              ],
+              "explicit_rank_mean": [
+                5.5,
+                11.0,
+                16.5,
+                22.0
+              ],
+              "reduce_scatter_tensor": {
+                "supported_here": true,
+                "output": [
+                  33.0,
+                  44.0
+                ]
+              },
+              "all_gather_shards": [
+                11.0,
+                22.0,
+                33.0,
+                44.0
+              ],
+              "ragged": {
+                "lengths": [
+                  3,
+                  1
+                ],
+                "gathered_padding": [
+                  [
+                    2.0,
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    20.0,
+                    0.0,
+                    0.0
+                  ]
+                ],
+                "real_values": [
+                  2.0,
+                  4.0,
+                  6.0,
+                  20.0
+                ],
+                "sum": 32.0,
+                "count": 4,
+                "global_mean": 8.0,
+                "wrong_mean_of_means": 12.0,
+                "wrong_include_padding_mean": 5.333333333333333
+              },
+              "delayed_arrival": {
+                "injected_pre_call_sleep_ms": 80,
+                "local_call_and_wait_ms": 0.452125,
+                "result": 3,
+                "async_result_used_after_wait": true
+              }
+            }
+          ],
+          "shape_mismatch": [
+            {
+              "rank": 0,
+              "mode": "shape_mismatch",
+              "rejected": true,
+              "fingerprint_diagnostic": true,
+              "category": "shape",
+              "operators": [
+                "ALLREDUCE"
+              ],
+              "shapes": [
+                "[2]",
+                "[3]"
+              ],
+              "message_excerpt": "Detected mismatch between collectives on ranks. Rank 0 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))), but Rank 1 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[3], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))).Collectives differ in the following aspects:   Tensor Tensor shapes: 2vs 3"
+            },
+            {
+              "rank": 1,
+              "mode": "shape_mismatch",
+              "rejected": true,
+              "fingerprint_diagnostic": true,
+              "category": "shape",
+              "operators": [
+                "ALLREDUCE"
+              ],
+              "shapes": [
+                "[2]",
+                "[3]"
+              ],
+              "message_excerpt": "Detected mismatch between collectives on ranks. Rank 1 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[3], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))), but Rank 0 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))).Collectives differ in the following aspects:   Tensor Tensor shapes: 3vs 2"
+            }
+          ],
+          "order_mismatch": [
+            {
+              "rank": 0,
+              "mode": "order_mismatch",
+              "rejected": true,
+              "fingerprint_diagnostic": true,
+              "category": "operation",
+              "operators": [
+                "ALLREDUCE",
+                "BROADCAST"
+              ],
+              "shapes": [
+                "[2]"
+              ],
+              "message_excerpt": "Detected mismatch between collectives on ranks. Rank 0 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))), but Rank 1 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=BROADCAST, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))).Collectives differ in the following aspects:   Op type: ALLREDUCEvs BROADCAST"
+            },
+            {
+              "rank": 1,
+              "mode": "order_mismatch",
+              "rejected": true,
+              "fingerprint_diagnostic": true,
+              "category": "operation",
+              "operators": [
+                "ALLREDUCE",
+                "BROADCAST"
+              ],
+              "shapes": [
+                "[2]"
+              ],
+              "message_excerpt": "Detected mismatch between collectives on ranks. Rank 1 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=BROADCAST, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))), but Rank 0 is running collective: CollectiveFingerPrint(SequenceNumber=0, OpType=ALLREDUCE, TensorShape=[2], TensorDtypes=Float, TensorDeviceTypes=TensorOptions(dtype=float (default), device=cpu, layout=Strided (default), requires_grad=false (default), pinned_memory=false (default), memory_format=(nullopt))).Collectives differ in the following aspects:   Op type: BROADCASTvs ALLREDUCE"
+            }
+          ]
+        },
+        "scope": "actual_local_collectives_not_nccl_rdma_multihost_or_throughput",
+        "timing_note": "Measured local call+wait durations vary; rank1 sleep is injected before its call."
+      }
+    },
+    "otel_attempts.py": {
+      "sha256": "3427879ce24c68290a25eaecf0f1db3a790d398b3dce3c1a4ab901b7ae5e5826",
+      "python": "3.12.13",
+      "exit_code": 0,
+      "result": {
+        "sdk": "1.44.0",
+        "api": "1.44.0",
+        "spans": [
+          {
+            "name": "agent.task",
+            "kind": "INTERNAL",
+            "service": "infra-guide-runner",
+            "trace_id": "5a6609c996e79b09fdcd46ab2d6de912",
+            "span_id": "18006b7c4cbbad05",
+            "parent_id": null,
+            "parent_remote": false,
+            "status": "OK",
+            "start_unix_ns": "1793806816071694000",
+            "end_unix_ns": "1793806816074207000",
+            "duration_ms": 2.513,
+            "attributes": {
+              "app.task_id": "R27",
+              "app.outcome": "verified_success"
+            },
+            "events": [
+              "artifact_checked"
+            ]
+          },
+          {
+            "name": "tool.attempt",
+            "kind": "CLIENT",
+            "service": "infra-guide-runner",
+            "trace_id": "5a6609c996e79b09fdcd46ab2d6de912",
+            "span_id": "6ad6ec64884a7112",
+            "parent_id": "18006b7c4cbbad05",
+            "parent_remote": false,
+            "status": "ERROR",
+            "start_unix_ns": "1793806816071724000",
+            "end_unix_ns": "1793806816073488000",
+            "duration_ms": 1.764,
+            "attributes": {
+              "app.task_id": "R27",
+              "app.op_id": "R27:publish",
+              "app.attempt": 1,
+              "http.response.status_code": 503
+            },
+            "events": [
+              "result_unknown"
+            ]
+          },
+          {
+            "name": "tool.execute",
+            "kind": "SERVER",
+            "service": "infra-guide-tool",
+            "trace_id": "5a6609c996e79b09fdcd46ab2d6de912",
+            "span_id": "631b5bd1e6ea5ade",
+            "parent_id": "6ad6ec64884a7112",
+            "parent_remote": true,
+            "status": "ERROR",
+            "start_unix_ns": "1793806816072535000",
+            "end_unix_ns": "1793806816073217000",
+            "duration_ms": 0.682,
+            "attributes": {
+              "app.op_id": "R27:publish",
+              "app.duplicate": false,
+              "http.response.status_code": 503
+            },
+            "events": [
+              "effect_committed"
+            ]
+          },
+          {
+            "name": "tool.attempt",
+            "kind": "CLIENT",
+            "service": "infra-guide-runner",
+            "trace_id": "5a6609c996e79b09fdcd46ab2d6de912",
+            "span_id": "e89e0e2bb47c779a",
+            "parent_id": "18006b7c4cbbad05",
+            "parent_remote": false,
+            "status": "UNSET",
+            "start_unix_ns": "1793806816073506000",
+            "end_unix_ns": "1793806816074164000",
+            "duration_ms": 0.658,
+            "attributes": {
+              "app.task_id": "R27",
+              "app.op_id": "R27:publish",
+              "app.attempt": 2,
+              "http.response.status_code": 200
+            },
+            "events": []
+          },
+          {
+            "name": "tool.execute",
+            "kind": "SERVER",
+            "service": "infra-guide-tool",
+            "trace_id": "5a6609c996e79b09fdcd46ab2d6de912",
+            "span_id": "76146b6f8dcd5b7e",
+            "parent_id": "e89e0e2bb47c779a",
+            "parent_remote": true,
+            "status": "UNSET",
+            "start_unix_ns": "1793806816073931000",
+            "end_unix_ns": "1793806816074010000",
+            "duration_ms": 0.079,
+            "attributes": {
+              "app.op_id": "R27:publish",
+              "app.duplicate": true,
+              "http.response.status_code": 200
+            },
+            "events": [
+              "receipt_reused"
+            ]
+          }
+        ],
+        "received_traceparent": [
+          "00-5a6609c996e79b09fdcd46ab2d6de912-6ad6ec64884a7112-03",
+          "00-5a6609c996e79b09fdcd46ab2d6de912-e89e0e2bb47c779a-03"
+        ],
+        "metrics": [
+          {
+            "name": "lab.tool.effects",
+            "unit": "{effect}",
+            "points": [
+              {
+                "attributes": {
+                  "tool": "report.write"
+                },
+                "value": 1
+              }
+            ]
+          },
+          {
+            "name": "lab.tool.duration",
+            "unit": "ms",
+            "points": [
+              {
+                "attributes": {
+                  "tool": "report.write"
+                },
+                "count": 2,
+                "sum_ms": 2.286458
+              }
+            ]
+          },
+          {
+            "name": "lab.tool.attempts",
+            "unit": "{attempt}",
+            "points": [
+              {
+                "attributes": {
+                  "tool": "report.write",
+                  "outcome": "http_error"
+                },
+                "value": 1
+              },
+              {
+                "attributes": {
+                  "tool": "report.write",
+                  "outcome": "ok"
+                },
+                "value": 1
+              }
+            ]
+          },
+          {
+            "name": "lab.teaching.cost",
+            "unit": "{unit}",
+            "points": [
+              {
+                "attributes": {
+                  "category": "tool_attempt"
+                },
+                "value": 4
+              },
+              {
+                "attributes": {
+                  "category": "verification"
+                },
+                "value": 1
+              }
+            ]
+          },
+          {
+            "name": "lab.task.successes",
+            "unit": "{task}",
+            "points": [
+              {
+                "attributes": {
+                  "task_type": "report"
+                },
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "http_attempts": 2,
+        "effects": 1,
+        "unique_verified_tasks": 1,
+        "cost_ledger": [
+          {
+            "attempt": 1,
+            "teaching_cost_units": 2,
+            "outcome": "http_error"
+          },
+          {
+            "attempt": 2,
+            "teaching_cost_units": 2,
+            "outcome": "ok"
+          },
+          {
+            "stage": "verification",
+            "teaching_cost_units": 1
+          }
+        ],
+        "all_attempt_cost_per_success": 5,
+        "success_http_attempt_only_cost": 2,
+        "pricing": "fixed_teaching_units_not_real_model_or_cloud_billing",
+        "scope": "actual_sdk_and_http_no_collector_backend_llm_kairo_or_real_auth"
+      }
+    }
+  },
+  "fixtures": {
+    "cpu.rules.yaml": "e7caa9801de939ab31e515e71d20af536766e048f269cbeece4594f4279dd853",
+    "cpu.test.yaml": "5ce29e6707055a7fa2db0d3b899ea4250dd9ecda0d804360d5b8d28b14bb7350",
+    "requirements-otel.txt": "e14a59e34ac8bcc8e6ac3a7e90bc3093cbeced8ef51c581547c9c61d06f6c452"
+  }
+}

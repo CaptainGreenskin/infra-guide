@@ -1,0 +1,11 @@
+groups:
+  - name: lab-cpu-arithmetic
+    interval: 1m
+    rules:
+      - record: lab:cpu_utilization:ratio
+        expr: sum by (namespace, deployment) (lab_cpu_usage_cores) / sum by (namespace, deployment) (lab_cpu_request_cores)
+      - record: lab:mean_pod_utilization:ratio
+        expr: avg by (namespace, deployment) (lab_cpu_usage_cores / on (namespace, deployment, pod) lab_cpu_request_cores)
+      - record: lab:cpu_metrics_complete
+        expr: count by (namespace, deployment) (lab_cpu_usage_cores) == bool count by (namespace, deployment) (lab_cpu_request_cores)
+
