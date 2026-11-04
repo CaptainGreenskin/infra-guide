@@ -24,7 +24,7 @@ const rules=record.programs['promtool_lab.py'];assert(rules.version.includes('3.
 const sequence=d.cloudLearningStages.flatMap(stage=>stage[1]);assert.equal(new Set(sequence).size,sequence.length);
 for(const id of d.cloudModulePlan.flatMap(row=>row[7]))assert(sequence.includes(id),id+': course omitted');
 assert.equal(d.cloudStageFields.length,6);assert.equal(new Set(d.cloudStageFields.flat()).size,10);assert.equal(d.cloudStageGates.length,6);
-const roadmap=fs.readFileSync('dist/roadmap/index.html','utf8');assert.equal((roadmap.match(/class="stage-gate"/g)||[]).length,6);
+const roadmap=fs.readFileSync('dist/roadmap/index.html','utf8');assert.equal((roadmap.split('id="route-cloud"')[1].split('id="route-ai"')[0].match(/class="stage-gate"/g)||[]).length,6);
 const decoder=d.articles.find(a=>a.id==='transformer-block'),position=d.articles.find(a=>a.id==='position-encoding');
 const first=roadmap.indexOf(decoder.number+' '+decoder.title),second=roadmap.indexOf(position.number+' '+position.title);assert(first>=0&&second>first);
 const labs=fs.readFileSync('dist/labs/index.html','utf8');assert(labs.includes('labs/cloud-operations.zip'));

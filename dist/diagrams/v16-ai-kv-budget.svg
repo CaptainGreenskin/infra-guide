@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="728" viewBox="0 0 960 728" role="img" aria-labelledby="title desc"><title id="title">相同模型宽度和长度下，GQA 和 MHA 的 KV 字节账本</title><desc id="desc">32 层、32 个查询头、头宽 128，K 与 V 均为两字节。8 个 KV 头需要每 token 128 KiB，8192 个 token 每序列 1 GiB。32 个 KV 头时每序列 4 GiB。</desc>
+<rect width="960" height="728" rx="13" fill="#f7f9fa"/>
+<text x="32" y="40" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">AI INFRA 02  /  KV 容量</text>
+<text x="32" y="85" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:30px;font-weight:700;fill:#18364e">同样 32 个查询头，KV 缓存可以相差四倍</text>
+<text x="32" y="121" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">固定 32 层、32 个 Q 头、head_dim=128、K/V 各 2 bytes；无共享、无分片、保留全部历史。</text>
+<rect x="29" y="149" width="902" height="84" rx="7" fill="#ffffff" stroke="#c1d0dc"/>
+<text x="46" y="180" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#13716b">每个 token 的逻辑 KV 对象</text>
+<text x="46" y="213" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">GQA：2 × 32 × 8 × 128 × 2 = 131,072 bytes = 128 KiB；8192 token = 1 GiB。</text>
+<text x="32" y="274" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#18364e">每条序列保留 8192 个位置</text>
+<text x="32" y="327" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:22px;font-weight:700;fill:#18364e">GQA</text>
+<text x="32" y="355" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#13716b">8 个 KV 头</text>
+<rect x="227.0" y="308" width="73.5" height="47" rx="0" fill="#285f9c" stroke="none"/>
+<text x="263.75" y="338" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#ffffff">K</text>
+<rect x="300.5" y="308" width="73.5" height="47" rx="0" fill="#13716b" stroke="none"/>
+<text x="337.25" y="338" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#ffffff">V</text>
+<text x="386" y="337" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#18364e">1 GiB</text>
+<text x="227" y="380" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">K 与 V 各 0.5 GiB</text>
+<text x="32" y="411" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:22px;font-weight:700;fill:#18364e">MHA</text>
+<text x="32" y="439" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#13716b">32 个 KV 头</text>
+<rect x="227.0" y="392" width="294.0" height="47" rx="0" fill="#285f9c" stroke="none"/>
+<text x="374.0" y="422" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#ffffff">K</text>
+<rect x="521.0" y="392" width="294.0" height="47" rx="0" fill="#13716b" stroke="none"/>
+<text x="668.0" y="422" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#ffffff">V</text>
+<text x="827" y="421" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#18364e">4 GiB</text>
+<text x="227" y="464" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">K 与 V 各 2 GiB</text>
+<line x1="32" y1="492" x2="927" y2="492" stroke="#c1d0dc" stroke-width="1"/>
+<text x="32" y="525" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#13716b">若可用预算是专供 KV 的 8 GiB</text>
+<text x="33" y="576" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#18364e">8 条 × 1 GiB</text>
+<rect x="226.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="312.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="398.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="484.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="570.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="656.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="742.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<rect x="828.0" y="549" width="83.0" height="33" rx="3" fill="#deedf3" stroke="#c1d0dc"/>
+<text x="33" y="627" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#18364e">2 条 × 4 GiB</text>
+<rect x="226.0" y="600" width="341.0" height="33" rx="3" fill="#cde7df" stroke="#c1d0dc"/>
+<rect x="570.0" y="600" width="341.0" height="33" rx="3" fill="#cde7df" stroke="#c1d0dc"/>
+<text x="32" y="688" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">这些是理想逻辑上限。块内空位、元数据、增长预留与每卡分布会改变实际可接纳数量。</text>
+</svg>

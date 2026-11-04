@@ -72,3 +72,6 @@
 .stage-field-links,.stage-gate{font-size:13px;line-height:1.9;margin:12px 0!important}.stage-field-links a{display:inline!important;margin-right:14px}.stage-field-links b,.stage-gate b{color:var(--blue);font-size:12px}.stage-gate{color:var(--muted);border-left:2px solid var(--line);padding-left:12px}
 
 .route-block .roadmap-step>div>a{display:block;margin-top:8px;font-size:13px;line-height:1.8}
+
+.github-link{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--muted);font-size:13px;font-weight:600;min-height:32px}.github-link:hover{color:var(--blue)}
+@media(max-width:650px){.header-actions{gap:8px}.github-link{font-size:12px}.header-inner{padding-left:16px;padding-right:16px}}

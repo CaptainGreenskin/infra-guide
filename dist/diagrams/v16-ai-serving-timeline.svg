@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="782" viewBox="0 0 960 782" role="img" aria-labelledby="title desc"><title id="title">两条请求的吞吐和达标率不是同一件事</title><desc id="desc">客户端合成时间线。A 在 0、40、50、60 毫秒发送及收到三个输出，B 在 20、80、100 毫秒发送及收到两个输出。窗口内吞吐 50 token/s，只有 A 达到延迟门槛，合格速率 10 请求/s。</desc>
+<rect width="960" height="782" rx="13" fill="#f7f9fa"/>
+<text x="32" y="40" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">AI INFRA 03  /  流式推理</text>
+<text x="32" y="85" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:30px;font-weight:700;fill:#18364e">五个输出 token，几条请求同时达标？</text>
+<text x="32" y="121" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">合成客户端观测，非 GPU 测量。窗口 (0,100] ms；每个实心点表示收到一个输出 token。</text>
+<text x="165.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">0</text>
+<line x1="165.0" y1="187" x2="165.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="307.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">20</text>
+<line x1="307.0" y1="187" x2="307.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="449.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">40</text>
+<line x1="449.0" y1="187" x2="449.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="520.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">50</text>
+<line x1="520.0" y1="187" x2="520.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="591.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">60</text>
+<line x1="591.0" y1="187" x2="591.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="733.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">80</text>
+<line x1="733.0" y1="187" x2="733.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="875.0" y="175" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">100</text>
+<line x1="875.0" y1="187" x2="875.0" y2="359" stroke="#c1d0dc" stroke-width="1.15" stroke-dasharray="4 6"/>
+<text x="32" y="176" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">时间 / ms</text>
+<text x="33" y="240" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#18364e">请求 A</text>
+<line x1="165.0" y1="233" x2="449.0" y2="233" stroke="#a54e22" stroke-width="3"/>
+<polygon points="165.0,225 158.0,239 172.0,239" fill="#a54e22"/>
+<text x="307.0" y="218" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#a54e22">首 token 前 40 ms</text>
+<line x1="449.0" y1="233" x2="591.0" y2="233" stroke="#13716b" stroke-width="3.4"/>
+<circle cx="449.0" cy="233" r="6" fill="#13716b"/>
+<circle cx="520.0" cy="233" r="6" fill="#13716b"/>
+<circle cx="591.0" cy="233" r="6" fill="#13716b"/>
+<text x="33" y="327" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:20px;font-weight:700;fill:#18364e">请求 B</text>
+<line x1="307.0" y1="320" x2="733.0" y2="320" stroke="#a54e22" stroke-width="3"/>
+<polygon points="307.0,312 300.0,326 314.0,326" fill="#a54e22"/>
+<text x="520.0" y="305" text-anchor="middle" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#a54e22">首 token 前 60 ms</text>
+<line x1="733.0" y1="320" x2="875.0" y2="320" stroke="#13716b" stroke-width="3.4"/>
+<circle cx="733.0" cy="320" r="6" fill="#13716b"/>
+<circle cx="875.0" cy="320" r="6" fill="#13716b"/>
+<text x="32" y="395" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#a54e22">▲ 发出请求</text>
+<text x="195" y="395" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">● 收到 token</text>
+<rect x="29" y="424" width="902" height="155" rx="8" fill="#ffffff" stroke="#c1d0dc"/>
+<text x="47" y="453" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">请求</text>
+<text x="155" y="453" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">TTFT</text>
+<text x="426" y="453" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">TPOT（首 token 后）</text>
+<text x="787" y="453" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">延迟门槛</text>
+<text x="47" y="501" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">A</text>
+<text x="155" y="501" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">40 − 0 = 40 ms</text>
+<text x="426" y="501" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">(60 − 40) / (3 − 1) = 10 ms</text>
+<text x="787" y="501" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">通过</text>
+<text x="47" y="549" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">B</text>
+<text x="155" y="549" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">80 − 20 = 60 ms</text>
+<text x="426" y="549" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">(100 − 80) / (2 − 1) = 20 ms</text>
+<text x="787" y="549" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#a54e22">未通过</text>
+<rect x="29" y="605" width="902" height="127" rx="8" fill="#eaf3f0" stroke="#c1d0dc"/>
+<text x="45" y="638" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#13716b">门槛：成功且 TTFT ≤ 50 ms、TPOT ≤ 15 ms；题设两份答案质量都合格。</text>
+<text x="45" y="674" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:400;fill:#18364e">输出吞吐 5 / 0.10 = 50 token/s；完成速率 2 / 0.10 = 20 请求/s。</text>
+<text x="45" y="708" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">仅 A 达标：1 / 0.10 = 10 合格请求/s。若 A 质量失败，另加质量门禁后的速率为 0。</text>
+<text x="32" y="763" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#18364e">这里的质量筛选由应用评估定义；vLLM 的 --goodput 对应配置的延迟 SLO。</text>
+</svg>

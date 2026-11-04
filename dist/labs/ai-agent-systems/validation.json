@@ -1,0 +1,385 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-11-04T06:31:14.182837+00:00",
+  "standard_library_python": "3.9.6",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "token_ddp.py": {
+      "status": "passed",
+      "result": {
+        "torch": "2.5.1",
+        "device": "cpu",
+        "backend": "gloo",
+        "processes": 2,
+        "single_process_gradient": 5.0,
+        "cases": {
+          "wrong_rank_mean": {
+            "valid_tokens": 4,
+            "gradient": 4.0,
+            "weight": -0.4,
+            "optimizer_step": true,
+            "observed_step_count": 1,
+            "backward_sync_flags": [
+              true
+            ]
+          },
+          "global_token_mean": {
+            "valid_tokens": 4,
+            "gradient": 5.0,
+            "weight": -0.5,
+            "optimizer_step": true,
+            "observed_step_count": 1,
+            "backward_sync_flags": [
+              true
+            ]
+          },
+          "accumulated_global_mean": {
+            "valid_tokens": 4,
+            "gradient": 5.0,
+            "weight": -0.5,
+            "optimizer_step": true,
+            "observed_step_count": 1,
+            "backward_sync_flags": [
+              false,
+              true
+            ]
+          },
+          "one_empty_rank": {
+            "valid_tokens": 3,
+            "gradient": 6.0,
+            "weight": -0.6000000000000001,
+            "optimizer_step": true,
+            "observed_step_count": 1,
+            "backward_sync_flags": [
+              true
+            ]
+          },
+          "all_empty": {
+            "valid_tokens": 0,
+            "gradient": null,
+            "weight": 0.0,
+            "optimizer_step": false,
+            "observed_step_count": 0,
+            "backward_sync_flags": []
+          }
+        },
+        "scope": "fixed world size, scalar MSE; not LLM/GPU performance"
+      },
+      "python": "3.12.13",
+      "optional_numpy_warning": true
+    },
+    "gqa_serving.py": {
+      "status": "passed",
+      "result": {
+        "gqa_heads": [
+          4,
+          2
+        ],
+        "full_incremental_max_error": 0.0,
+        "wrong_head_mapping_max_error": 3.8519299390121366,
+        "wrong_query_offset_max_error": 4.0156588789518715,
+        "kv_bytes_per_token": 131072,
+        "kv_bytes_per_8192_sequence": 1073741824,
+        "blocks_per_8193_sequence": 513,
+        "8193_sequence_capacity_in_8gib": 7,
+        "requests": {
+          "A": {
+            "complete": true,
+            "ttft_ms": 40,
+            "tpot_ms": 10.0
+          },
+          "B": {
+            "complete": true,
+            "ttft_ms": 60,
+            "tpot_ms": 20.0
+          }
+        },
+        "synthetic_window_ms": 100,
+        "total_output_tokens": 5,
+        "output_tokens_per_second": 50.0,
+        "latency_qualified_requests_per_second": 10.0,
+        "scope": "standard-library semantic experiment and fixed synthetic timing, not GPU/vLLM load"
+      }
+    },
+    "worker_fencing.py": {
+      "status": "passed",
+      "result": {
+        "paused_worker_still_alive_after_takeover": true,
+        "takeover_epoch": 2,
+        "A": {
+          "worker": "A",
+          "pid": 47585,
+          "result": {
+            "status": "stale_epoch"
+          }
+        },
+        "B": {
+          "worker": "B",
+          "pid": 47589,
+          "result": {
+            "status": "committed",
+            "result": {
+              "stored_value": 7
+            }
+          }
+        },
+        "crash_exit_code": 23,
+        "C_recovered_receipt": {
+          "worker": "C",
+          "pid": 47591,
+          "result": {
+            "status": "duplicate",
+            "result": {
+              "stored_value": 11
+            }
+          }
+        },
+        "effects": [
+          [
+            "A",
+            "crash-operation",
+            11
+          ],
+          [
+            "A",
+            "fresh-from-B",
+            7
+          ],
+          [
+            "A",
+            "new-C-op",
+            13
+          ]
+        ],
+        "effect_count": 3,
+        "effect_sum": 31,
+        "stale_new_key_rejected": true,
+        "duplicate_no_effect": true,
+        "same_key_changed_arguments_rejected": true,
+        "unauthorized_no_effect": true,
+        "handoff_gap_probe": {
+          "old_writer_before_install": "committed",
+          "old_writer_after_install": "stale_epoch",
+          "superseded_reservation_armed": false
+        },
+        "scope": "local SQLite receiver + injected logical lease clock; no remote tool/consensus/Kairo"
+      }
+    },
+    "agent_evaluation.py": {
+      "status": "passed",
+      "result": {
+        "strategies": {
+          "normal": {
+            "positive_task_pass": true,
+            "negative_cases_passed": 3,
+            "cases_passed": 4,
+            "case_count": 4,
+            "tool_attempts": 4,
+            "actual_effects": 1,
+            "unique_qualified_business_tasks": 1,
+            "outcomes": {
+              "report": "success",
+              "cross-tenant": "denied",
+              "readonly": "denied",
+              "missing": "insufficient_evidence"
+            },
+            "read_receipts": [
+              [
+                "report",
+                "a-1",
+                "A"
+              ],
+              [
+                "report",
+                "a-2",
+                "A"
+              ]
+            ],
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          },
+          "claim_only": {
+            "positive_task_pass": false,
+            "negative_cases_passed": 0,
+            "cases_passed": 0,
+            "case_count": 4,
+            "tool_attempts": 0,
+            "actual_effects": 0,
+            "unique_qualified_business_tasks": 0,
+            "outcomes": {
+              "report": "success",
+              "cross-tenant": "success",
+              "readonly": "success",
+              "missing": "success"
+            },
+            "read_receipts": [],
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          },
+          "deny_all": {
+            "positive_task_pass": false,
+            "negative_cases_passed": 2,
+            "cases_passed": 2,
+            "case_count": 4,
+            "tool_attempts": 0,
+            "actual_effects": 0,
+            "unique_qualified_business_tasks": 0,
+            "outcomes": {
+              "report": "denied",
+              "cross-tenant": "denied",
+              "readonly": "denied",
+              "missing": "denied"
+            },
+            "read_receipts": [],
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          },
+          "citation_swap": {
+            "positive_task_pass": false,
+            "negative_cases_passed": 3,
+            "cases_passed": 3,
+            "case_count": 4,
+            "tool_attempts": 4,
+            "actual_effects": 1,
+            "unique_qualified_business_tasks": 0,
+            "outcomes": {
+              "report": "success",
+              "cross-tenant": "denied",
+              "readonly": "denied",
+              "missing": "insufficient_evidence"
+            },
+            "read_receipts": [
+              [
+                "report",
+                "a-1",
+                "A"
+              ],
+              [
+                "report",
+                "a-2",
+                "A"
+              ]
+            ],
+            "returned_content": {
+              "report": [],
+              "cross-tenant": [],
+              "readonly": [],
+              "missing": []
+            },
+            "public_response_contract_valid": true
+          }
+        },
+        "leak_then_deny_probe": {
+          "positive_task_pass": true,
+          "negative_cases_passed": 2,
+          "cases_passed": 3,
+          "case_count": 4,
+          "tool_attempts": 4,
+          "actual_effects": 1,
+          "unique_qualified_business_tasks": 1,
+          "outcomes": {
+            "report": "success",
+            "cross-tenant": "denied",
+            "readonly": "denied",
+            "missing": "insufficient_evidence"
+          },
+          "read_receipts": [
+            [
+              "cross-tenant",
+              "b-1",
+              "B"
+            ],
+            [
+              "report",
+              "a-1",
+              "A"
+            ],
+            [
+              "report",
+              "a-2",
+              "A"
+            ]
+          ],
+          "returned_content": {
+            "report": [],
+            "cross-tenant": [
+              {
+                "tenant": "B",
+                "version": 1,
+                "amount": 999
+              }
+            ],
+            "readonly": [],
+            "missing": []
+          },
+          "public_response_contract_valid": true
+        },
+        "extra_public_field_probe": {
+          "positive_task_pass": false,
+          "negative_cases_passed": 0,
+          "cases_passed": 0,
+          "case_count": 4,
+          "tool_attempts": 4,
+          "actual_effects": 1,
+          "unique_qualified_business_tasks": 0,
+          "outcomes": {
+            "report": "success",
+            "cross-tenant": "denied",
+            "readonly": "denied",
+            "missing": "insufficient_evidence",
+            "client_visible_leaked_amount": 999
+          },
+          "read_receipts": [
+            [
+              "report",
+              "a-1",
+              "A"
+            ],
+            [
+              "report",
+              "a-2",
+              "A"
+            ]
+          ],
+          "returned_content": {
+            "report": [],
+            "cross-tenant": [],
+            "readonly": [],
+            "missing": []
+          },
+          "public_response_contract_valid": false
+        },
+        "scope": "four fixed tasks, deterministic plans, real in-memory SQLite effects; no LLM/RAG engine/Kairo"
+      }
+    }
+  },
+  "source_sha256": {
+    "README.md": "4076bfbe8a3427eb52e88532f3cc2e7f3e4a42201e52720326530df803d96d5e",
+    "agent_evaluation.py": "73b508bd7b85c7ef5e13f362091983c8e9c505e011cd1625fde71a3459f80ca0",
+    "gqa_serving.py": "5820a4c4a789588bc0a53efe916ac5cfc3885e8672f449a9c80d3e77f8c113bb",
+    "kairo-adapter-contract.md": "b1a4bdc6f9dd505ff733f5efd58b8101a4abc6685e9376918d74587e652605f7",
+    "token_ddp.py": "afd29aa9e382ab48ec149b78173c108ea45f2357fc545caa2ced951c701ec84f",
+    "worker_fencing.py": "64848bd09ef94d9c502eecc7cd161f087042f8b3d3e7e484949c5f9392fac132"
+  },
+  "not_executed": [
+    "GPU/CUDA/NCCL/FSDP/AMP and physical multi-node training",
+    "real vLLM load, real LLM generation and embedding retrieval",
+    "remote fencing, distributed consensus and wall-clock lease expiry",
+    "malicious-code sandbox isolation, Kairo integration and production task evaluation"
+  ]
+}

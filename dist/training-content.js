@@ -65,7 +65,7 @@ for epoch in range(start_epoch, target_epochs):
     sampler.set_epoch(epoch)
     for x, y in loader:
         ...`)+'<p>set_epoch 让每轮使用不同且可重复的打乱顺序。两处 drop_last=True 使各 rank 更新次数一致，代价是不能整除时会丢弃尾部数据。</p><p>若改用采样器的补齐策略，可能重复样本；验证集指标尤其要避免把重复样本计入。还需确保 batch 数与累积次数匹配。</p>'],
-['损失和时间的汇总口径','<p>先累计每批 loss × 样本数，再跨 rank 求和，除以全局样本数得到加权均值。逐批均值再平均只在批大小一致时等价。</p><p>计时前对齐进程，CUDA 路径同步设备；耗时取各 rank 最大值，吞吐以全局实际样本数相除。它包含该 epoch 的输入与计算，不包含随后的检查点保存。单独记录保存开销才能估算端到端成本。</p>'],
+['损失和时间的汇总口径','<p>这里汇总的是分类示例的日志：先累计每批平均损失×样本数，再跨进程求和，除以全局样本数。它与反向传播使用哪个分母是两件事。完整示例按相同大小的批次用loss/accum累积；换成长度不同的文本时，要用整个更新窗口的有效目标数归一。6.2节的双进程实验展示了局部均值算出4、正确全局梯度为5的区别。</p><p>计时前对齐进程，CUDA 路径同步设备；耗时取各 rank 最大值，吞吐以全局实际样本数相除。它包含该 epoch 的输入与计算，不包含随后的检查点保存。单独记录保存开销才能估算端到端成本。</p>'],
 ['完整程序',labDownload+'<p>程序包含合成数据、带 Dropout 的 MLP、梯度累积、可选 AMP、JSON 指标与 epoch 边界恢复。CPU/Gloo 和 GPU/NCCL 共用训练循环。</p><details class="full-code"><summary>展开完整 train_ddp.py</summary>'+trainingCode('train_ddp.py','PYTHON',labFiles['train_ddp.py'])+'</details>'],
 ['执行本机验证',trainingCode('CPU 两进程启动','BASH',`torchrun --standalone --nproc-per-node=2 train_ddp.py \
   --device=cpu --epochs=4 --samples=1024 --hidden=32 \

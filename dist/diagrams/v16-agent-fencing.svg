@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="790" viewBox="0 0 960 790" role="img" aria-labelledby="title desc">
+<title id="title">旧工作者迟到时接收方如何使用代际拒绝过期写入</title><desc id="desc">A 的 epoch 一租约在 t5 到期，但 A 可继续运行。B 在 t6 获 epoch 二并先安装到同一受保护目标，t7 提交业务操作，t8 A 的 epoch 一写入被拒。外部不校验代际的工具不受此保证。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="790" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">AGENT INFRA  /  租约与栅栏</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">租约到期后，旧工作者仍可能发出写请求</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">同一资源的代际单调递增。这里假设接棒时先在效果接收方原子安装新代际，然后允许 B 写入。</text>
+<text x="36" y="169" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">时序示意｜列间距不表示实际时长</text>
+<text x="207" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t0</text>
+<path d="M207 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="403" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t4</text>
+<path d="M403 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="510" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t5</text>
+<path d="M510 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="620" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t6</text>
+<path d="M620 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="738" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t7</text>
+<path d="M738 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="854" y="214" fill="#50647a" font-size="19" font-weight="400" text-anchor="middle">t8</text>
+<path d="M854 225 V481" fill="none" stroke="#c7d4df" stroke-width="2" stroke-dasharray="6 5" />
+<text x="36" y="261" fill="#2759a5" font-size="21" font-weight="700" text-anchor="start">工作者 A</text>
+<rect x="207" y="234" width="303" height="51" rx="4" fill="#2759a5" stroke="none"/>
+<text x="358" y="267" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">持有 epoch 1；t4 暂停</text>
+<rect x="510" y="234" width="344" height="51" rx="4" fill="#ffefdd" stroke="none"/>
+<text x="682" y="267" fill="#9e4a16" font-size="18" font-weight="700" text-anchor="middle">租约过期，A 仍能恢复、发请求</text>
+<text x="36" y="348" fill="#08776d" font-size="21" font-weight="700" text-anchor="start">工作者 B</text>
+<rect x="620" y="320" width="234" height="51" rx="4" fill="#08776d" stroke="none"/>
+<text x="737" y="353" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">获 epoch 2，接棒发布</text>
+<text x="36" y="438" fill="#20324a" font-size="21" font-weight="700" text-anchor="start">效果接收方</text>
+<path d="M207 453 H905" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="565" y="413" width="110" height="40" rx="6" fill="#e8f0fc" stroke="none"/>
+<text x="620" y="439" fill="#2759a5" font-size="18" font-weight="700" text-anchor="middle">安装 e2</text>
+<rect x="683" y="413" width="110" height="40" rx="6" fill="#e1f2ec" stroke="none"/>
+<text x="738" y="439" fill="#08776d" font-size="18" font-weight="700" text-anchor="middle">B 提交</text>
+<rect x="800" y="413" width="108" height="40" rx="6" fill="#ffefdd" stroke="none"/>
+<text x="854" y="439" fill="#9e4a16" font-size="18" font-weight="700" text-anchor="middle">拒绝 A</text>
+<text x="36" y="505" fill="#20324a" font-size="19" font-weight="700" text-anchor="start">t8：A 携 e1 迟到。目标已是 e2，比较与写入在同一受保护边界内，旧写被拒。</text>
+<rect x="36" y="535" width="888" height="100" rx="12" fill="#e1f2ec" stroke="none"/>
+<text x="54" y="570" fill="#08776d" font-size="21" font-weight="700" text-anchor="start">另一个条件：同一动作如何避免重复？</text>
+<text x="54" y="607" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">B 以稳定操作键 pub-27 重试时，工具还须按同一意图返回原回执；epoch 不负责去重。</text>
+<rect x="36" y="654" width="888" height="107" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="54" y="688" fill="#9e4a16" font-size="21" font-weight="700" text-anchor="start">保证边界</text>
+<text x="184" y="688" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">若外部邮件服务不验证代际，本地拒绝 A 的状态写入仍挡不住发信。</text>
+<text x="54" y="729" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">不能安全重试时，查询受权回执或进入对账。只记录“曾见最大令牌”还受传播先后限制。</text>
+</svg>

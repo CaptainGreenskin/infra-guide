@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="774" viewBox="0 0 960 774" role="img" aria-labelledby="title desc">
+<title id="title">Agent 运行时中的可信决策、工具效果与环境验收</title><desc id="desc">可信委托进入执行器，模型仅提出工具请求；执行器校验和记录意图，业务工具在效果边界检查并返回回执。任务账本保存进度，独立验收读取真实产物和禁止效果。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="774" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">AGENT INFRA  /  运行时架构</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">一份报告从模型提议到业务完成，要过哪些边界？</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">R27 获准把已审批草稿发布到租户 A 的指定位置。模型只能提出下一步，委托由运行时持有。</text>
+<rect x="36" y="145" width="888" height="64" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="54" y="184" fill="#2759a5" font-size="22" font-weight="700" text-anchor="start">可信输入</text>
+<text x="192" y="184" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">调用主体、租户、规范资源、允许动作、审批及截止时间</text>
+<path d="M480 209 V233" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="36" y="241" width="268" height="170" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="51" y="275" fill="#2759a5" font-size="22" font-weight="700" text-anchor="start">① 模型与上下文</text>
+<text x="51" y="319" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">文档、记忆和工具返回</text>
+<text x="51" y="351" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">产生工具名与参数提议</text>
+<text x="51" y="383" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">来源文字不添加授权</text>
+<rect x="346" y="241" width="268" height="170" rx="12" fill="#e8f0fc" stroke="#c7d4df"/>
+<text x="361" y="275" fill="#2759a5" font-size="22" font-weight="700" text-anchor="start">② 执行器</text>
+<text x="361" y="319" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">规范化参数、核对委托</text>
+<text x="361" y="351" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">检查当前策略及预算</text>
+<text x="361" y="383" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">先记录意图，再调工具</text>
+<rect x="656" y="241" width="268" height="170" rx="12" fill="#e1f2ec" stroke="#c7d4df"/>
+<text x="671" y="275" fill="#08776d" font-size="22" font-weight="700" text-anchor="start">③ 业务工具</text>
+<text x="671" y="319" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">在效果边界再次校验</text>
+<text x="671" y="351" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">按操作键和摘要处理</text>
+<text x="671" y="383" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">提交效果并返回回执</text>
+<path d="M308 325 H339" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M618 325 H649" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M480 411 V452 H260 V473" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<path d="M790 411 V452 H705 V473" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<rect x="36" y="478" width="425" height="140" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="54" y="513" fill="#2759a5" font-size="21" font-weight="700" text-anchor="start">任务账本｜确认进度</text>
+<text x="54" y="550" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">run / step / attempt 分别记录。</text>
+<text x="54" y="584" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">保存操作键、参数摘要与可信回执。</text>
+<rect x="499" y="478" width="425" height="140" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="517" y="513" fill="#08776d" font-size="21" font-weight="700" text-anchor="start">独立验收｜验证环境</text>
+<text x="517" y="550" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">读取 A 的实际对象版本和内容。</text>
+<text x="517" y="584" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">同时检查是否产生禁止的跨租户效果。</text>
+<rect x="36" y="655" width="888" height="90" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="54" y="689" fill="#9e4a16" font-size="21" font-weight="700" text-anchor="start">完成判据</text>
+<text x="185" y="689" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">可核对的业务产物满足约定，权限与截止条件也通过。</text>
+<text x="54" y="720" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">没有可查回执且外部结果未知时，保留待核对状态；日志与模型的“已完成”都不能补写事实。</text>
+</svg>

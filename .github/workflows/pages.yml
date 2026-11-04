@@ -1,0 +1,58 @@
+name: Check and publish GitHub Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Render and check content
+        run: |
+          node scripts/render-pages.cjs
+          node scripts/check-content.cjs
+          node scripts/check-public-pages.cjs
+          node scripts/check-textbooks.cjs
+          node scripts/check-cloud-course.cjs
+          node scripts/check-knowledge-resources.cjs
+          node scripts/check-mechanism-models.cjs
+          node scripts/check-cloud-deepening.cjs
+          node scripts/check-cloud-operations.cjs
+          node scripts/check-ai-agent-systems.cjs
+      - name: Build project-site paths
+        run: node scripts/build-github-pages.cjs --base-path "/${{ github.event.repository.name }}/" --origin "https://${{ github.repository_owner }}.github.io"
+      - name: Check project-site links
+        run: node scripts/check-github-pages.cjs
+      - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          path: .pages/${{ github.event.repository.name }}
+          retention-days: 1
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v4

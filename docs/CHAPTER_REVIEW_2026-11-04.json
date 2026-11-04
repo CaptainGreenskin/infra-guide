@@ -1,0 +1,181 @@
+{
+  "date": "2026-11-04",
+  "status": "reviewed_and_revised",
+  "chapters": [
+    {
+      "id": "transformer-model",
+      "section": "先确定模型被要求交付什么",
+      "change": "统一下一词元配对，去掉左右移的歧义"
+    },
+    {
+      "id": "tokenization-embedding",
+      "section": "先约定词表，再说模型看到了什么",
+      "change": "特殊符号就地中文释义，并说明本章另设词表"
+    },
+    {
+      "id": "attention-mechanics",
+      "section": "因果、padding 和缓存偏移是三种坐标问题",
+      "change": "用一行实际掩码解释缓存坐标偏移"
+    },
+    {
+      "id": "transformer-block",
+      "section": "把模型状态逐项相加",
+      "change": "把参数断言准确指向0.6"
+    },
+    {
+      "id": "position-encoding",
+      "section": "把位置打乱，再问模型能发现什么",
+      "change": "先讲交换两行的动作，再读置换矩阵"
+    },
+    {
+      "id": "autograd-training",
+      "section": "先把监督位置写出来，再谈 loss",
+      "change": "直接列出沿用的原始数据和实际监督标签"
+    },
+    {
+      "id": "gpu-execution",
+      "section": "用分块换复用，也要支付片上资源",
+      "change": "补足占用比例的除法与术语含义"
+    },
+    {
+      "id": "roofline-model",
+      "section": "两条上限怎样合成一条屋顶",
+      "change": "把计算和带宽两个下界的代入式并排给出"
+    },
+    {
+      "id": "flash-attention-io",
+      "section": "稳定Softmax为什么要不断更新最大值",
+      "change": "先认清三个累计状态，减少公式同时引入的符号"
+    },
+    {
+      "id": "tensor-parallel-math",
+      "section": "先决定切的是参数哪一个维度",
+      "change": "先解释ReLU的逐元素性质"
+    },
+    {
+      "id": "gpu-cluster",
+      "section": "跟着形状走过一层，再走到loss",
+      "change": "明确换用了独立词表配置并提供跳读"
+    },
+    {
+      "id": "distributed-training",
+      "section": "让归一化对齐一个完整更新",
+      "change": "把不同实验的初值和目的分清"
+    },
+    {
+      "id": "gpu-memory",
+      "section": "在有效 batch 边界更新",
+      "change": "将混合精度更新动作按执行顺序摆在代码前"
+    },
+    {
+      "id": "ddp-code",
+      "section": "损失和时间的汇总口径",
+      "change": "区分日志加权与反向传播的目标分母"
+    },
+    {
+      "id": "training-communication",
+      "section": "每个进程发多少，再估理想耗时",
+      "change": "统一每进程发送量和带宽单位"
+    },
+    {
+      "id": "data-pipeline",
+      "section": "worker 和预取不是越大越好",
+      "change": "区分训练进程与数据加载子进程，压缩重复"
+    },
+    {
+      "id": "multinode-lab",
+      "section": "核对成功的证据",
+      "change": "把每轮16次更新的中间除法补齐"
+    },
+    {
+      "id": "checkpoint-recovery",
+      "section": "定义恢复边界",
+      "change": "先标明四进程手算和双进程实测的区别"
+    },
+    {
+      "id": "training-performance",
+      "section": "用时间线检验假设",
+      "change": "先提出具体关键路径问题，再看性能记录代码"
+    },
+    {
+      "id": "kubernetes-training",
+      "section": "parallelism=2 不等于两节点 DDP",
+      "change": "用两种进程组排布代替重复结论"
+    },
+    {
+      "id": "training-platform",
+      "section": "从一份训练脚本到一次可追踪运行",
+      "change": "从一次回执丢失引出三种身份"
+    },
+    {
+      "id": "gpu-scheduling",
+      "section": "把“我可以运行”拆成三个问题",
+      "change": "从已有空闲分布直接进入准入、放置与协同"
+    },
+    {
+      "id": "model-serving",
+      "section": "GQA增量缓存、字节预算与指标实验",
+      "change": "给出同一KV池的块数取整全过程"
+    },
+    {
+      "id": "inference-performance",
+      "section": "用51个输出token算一次完整轨迹",
+      "change": "在代入前解释TTFT和TPOT"
+    },
+    {
+      "id": "ai-lifecycle",
+      "section": "灰度发布要比较相同类型的请求",
+      "change": "明确灰度算例与离线门禁失败是独立假设"
+    },
+    {
+      "id": "agent-runtime",
+      "section": "给报告任务建一份账：目标、动作与尝试分开记录",
+      "change": "拆开任务、运行、步骤、动作与尝试"
+    },
+    {
+      "id": "agent-recovery",
+      "section": "运行一次真实的退出与恢复",
+      "change": "先展示退出与恢复两个状态，再读完整输出"
+    },
+    {
+      "id": "agent-security",
+      "section": "先预测三个结果，再运行权限实验",
+      "change": "把实验前的闭卷复习改成可验证的预测"
+    },
+    {
+      "id": "agent-memory",
+      "section": "工具返回可以带来事实，也可以带来诱导",
+      "change": "把本章重点收回错误记忆的形成和传播"
+    },
+    {
+      "id": "agent-evaluation",
+      "section": "先预测读后伪装拒绝会得到什么结果",
+      "change": "用同一个四任务案例承接实战，去掉另换30题"
+    },
+    {
+      "id": "kairo-practice",
+      "section": "从一次试验形成他人可复查的记录",
+      "change": "用一行待填记录代替重复字段清单"
+    },
+    {
+      "id": "durable-workflows",
+      "section": "两个worker：旧代际拒绝与提交后恢复",
+      "change": "将三种不同故障观察并排比较"
+    },
+    {
+      "id": "agent-retrieval",
+      "section": "用数字分开检索效果与答案质量",
+      "change": "把重排前后的覆盖和排名放进同一表"
+    },
+    {
+      "id": "agent-observability",
+      "section": "回到这100个任务：重试的钱花在哪里",
+      "change": "延续100任务的成本账，移除另换6/4题的评分"
+    },
+    {
+      "id": "agent-sandbox",
+      "section": "在本地验证容量与代际条件",
+      "change": "保留关键清理条件，完整源码只在后面的下载节展开"
+    }
+  ]
+}
