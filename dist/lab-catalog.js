@@ -21,7 +21,8 @@ const labArchiveCatalog={
  'ai-agent-systems':{folder:'ai-agent-systems',title:'GQA、全局梯度与任务效果'},
  'training-capstone':{folder:'training-capstone',title:'两进程完整恢复'},
  'cloud-training-ddp':{folder:'ddp',title:'DDP 与两节点手册'},
- 'storage-parallel-acceptance':{folder:'storage-parallel-acceptance',title:'范围读取、两进程 TP 与记录验收'}
+ 'storage-parallel-acceptance':{folder:'storage-parallel-acceptance',title:'范围读取、两进程 TP 与记录验收'},
+ 'supervision-gradients':{folder:'supervision-gradients',title:'标签、共享词表与目标权重'}
 };
 const labTrackCatalog={
  cloud:{name:'Cloud Infra',lead:'先分清资源与请求，再验证数据、事件、交付和恢复。先修实验按需补；正文中的系统知识点在案例之前。'},
@@ -48,6 +49,7 @@ const labLearningCatalog=[
  {id:'cloud-recovery',track:'cloud',stage:3,title:'数据库恢复后，附件与外部通知也要对得上',chapter:'resilience',pack:'recovery-artifacts-retrieval',files:['consistent_recovery_cut.py','recovered_effects.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'实际备份与 HTTP',observe:'缺一个附件时回退到完整提交前缀；应用备份恢复后沿原业务 ID 查询外部回执。',scope:'时间点为题设，日志是应用协议；不是数据库物理 WAL 或跨区容灾。'},
  {id:'cloud-incident',track:'cloud',stage:3,title:'SQL 慢与持连接等待，为什么曲线一样',chapter:'incident',pack:'incident-model',files:['incident_model.py'],env:'Python 3.9+ · 标准库',kind:'确定性排队模型',observe:'保持到达序列、连接数不变，分别移动 SQL 和外部等待，比较相同延迟背后的不同原因。',scope:'整数事件模型，不执行真实 SQL 等待或压力测试。'},
  {id:'cloud-service',track:'cloud',stage:3,title:'把请求、探针与交付版本连起来',chapter:'cloud-service-lab',pack:'infra-systems',files:['infra_lab.py','probe_server.py'],pendingFiles:['probe_server.py'],env:'Python 3.9+ · 标准库',kind:'本机服务与目标手册',observe:'核对实际本机请求、完整文件版本和摘要，再进入探针、端点和回退的集群步骤。',scope:'infra_lab 本机部分已执行；probe_server 配合集群探针、EndpointSlice 与版本回退仍待目标环境验证。'},
+ {id:'ai-supervision',track:'ai',stage:1,title:'标签对齐、共享梯度与不等长微批',chapter:'tokenization-embedding',pack:'supervision-gradients',files:['supervision_gradients.py'],env:'PyTorch 2.5.1 CPU；参考模式只需 Python 3.9+',kind:'实际自动求导与独立链式法则',observe:'分开查表和输出路径，验证 PAD 行仍可更新；逐项核对 16 个导数，再比较有效目标与微批的平均权重。',scope:'局部 H=E[id]/2，无注意力；六项交叉熵与另四项平方损失分别记账，不测 GPU。'},
  {id:'ai-attention',track:'ai',stage:1,title:'手算 Attention，再比较整段与逐词元计算',chapter:'attention-mechanics',pack:'attention-mechanics',files:['attention_lab.py'],env:'Python 3.9+ · 标准库',kind:'数值语义实验',observe:'改未来位置与可见位置，核对因果遮罩、键值缓存（KV Cache）等价和有效目标分母。',scope:'固定向量与独立手算，不调用模型或 GPU。'},
  {id:'ai-foundations',track:'ai',stage:1,title:'从词表、位置与 664 参数 Decoder 走一遍更新',chapter:'autograd-training',pack:'textbook-examples',folder:'model-foundations',files:['tokenization.py','rope.py','tiny_decoder.py','io_attention.py'],env:'Python 3.9+；Decoder 需 PyTorch 2.5.1',kind:'标准库数值 + CPU 自动求导',observe:'分别核对标签、相对位置、整批/微批更新及在线 softmax；每个程序有自己的输入。',scope:'小模型和数值参考，不是 FlashAttention 内核或大模型训练基准。'},
  {id:'ai-packing',track:'ai',stage:1,title:'拼接文档时，EOS 不能代替注意力边界',chapter:'data-pipeline',pack:'network-input-tools',files:['packing_boundaries.py'],env:'Python 3.9+ · 标准库',kind:'固定向量对照',observe:'正确文档内遮罩与位置和逐文档相同；仅插 EOS 或延续位置会改变本例输出。',scope:'位置向量为教学输入，不实现 RoPE 或 GPU packing。'},

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="790" viewBox="0 0 1120 790" role="img" aria-labelledby="title desc">
+<title id="title">标签从完整序列的后一格取得</title><desc id="desc">两条玩具序列共六项有效目标；EOS是有效目标，填充目标改为忽略。输入键标记与监督位置不是一回事。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="790" fill="white"/>
+<text x="32" y="46" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一位置：输入当前符号，监督下一个符号</text>
+<text x="32" y="85" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">输入 s[:-1]；目标 s[1:]。本图沿用本章人工词表，不是通用分词规则。</text>
+<text x="32" y="130" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">“云端云端算” → [1,5,5,6,2]</text>
+<text x="32" y="201" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">模型输入</text>
+<text x="32" y="301" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">预测目标</text>
+<text x="343" y="160" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 0</text>
+<rect x="254" y="175" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="343" y="212" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">1 · BOS</text>
+<line x1="343" y1="239" x2="343" y2="263" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="254" y="275" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="343" y="312" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">5 · 云端</text>
+<text x="547" y="160" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 1</text>
+<rect x="458" y="175" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="547" y="212" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">5 · 云端</text>
+<line x1="547" y1="239" x2="547" y2="263" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="458" y="275" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="547" y="312" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">5 · 云端</text>
+<text x="751" y="160" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 2</text>
+<rect x="662" y="175" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="751" y="212" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">5 · 云端</text>
+<line x1="751" y1="239" x2="751" y2="263" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="662" y="275" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="751" y="312" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">6 · 算</text>
+<text x="955" y="160" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 3</text>
+<rect x="866" y="175" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="955" y="212" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">6 · 算</text>
+<line x1="955" y1="239" x2="955" y2="263" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="866" y="275" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="955" y="312" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">2 · EOS</text>
+<text x="254" y="372" font-size="23" fill="#287b69" font-weight="400" text-anchor="start">有效目标：4 项</text>
+<text x="32" y="423" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">“云”补齐后 → [1,3,2,0,0]</text>
+<text x="32" y="494" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">模型输入</text>
+<text x="32" y="594" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">预测目标</text>
+<text x="343" y="453" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 0</text>
+<rect x="254" y="468" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="343" y="505" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">1 · BOS</text>
+<line x1="343" y1="532" x2="343" y2="556" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="254" y="568" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="343" y="605" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">3 · 云</text>
+<text x="547" y="453" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 1</text>
+<rect x="458" y="468" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="547" y="505" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">3 · 云</text>
+<line x1="547" y1="532" x2="547" y2="556" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="458" y="568" width="178" height="58" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="547" y="605" font-size="25" fill="#287b69" font-weight="400" text-anchor="middle">2 · EOS</text>
+<text x="751" y="453" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 2</text>
+<rect x="662" y="468" width="178" height="58" rx="8" fill="#edf2fe" stroke="#e4e9f0" stroke-width="2"/>
+<text x="751" y="505" font-size="25" fill="#315dce" font-weight="400" text-anchor="middle">2 · EOS</text>
+<line x1="751" y1="532" x2="751" y2="556" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="662" y="568" width="178" height="58" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="751" y="605" font-size="25" fill="#6b768b" font-weight="400" text-anchor="middle">忽略</text>
+<text x="955" y="453" font-size="20" fill="#6b768b" font-weight="400" text-anchor="middle">位置 3</text>
+<rect x="866" y="468" width="178" height="58" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="955" y="505" font-size="25" fill="#6b768b" font-weight="400" text-anchor="middle">0 · PAD</text>
+<line x1="955" y1="532" x2="955" y2="556" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="866" y="568" width="178" height="58" rx="8" fill="#f2f5fa" stroke="#e4e9f0" stroke-width="2"/>
+<text x="955" y="605" font-size="25" fill="#6b768b" font-weight="400" text-anchor="middle">忽略</text>
+<text x="254" y="665" font-size="23" fill="#287b69" font-weight="400" text-anchor="start">有效目标：2 项；输入键标记仍是 [真,真,真,假]</text>
+<text x="32" y="722" font-size="25" fill="#1c283d" font-weight="600" text-anchor="start">损失分母是 4+2=6，不是矩形的 2×4=8；两个真实 EOS 都要学习。</text>
+<text x="32" y="765" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">第二行位置 2 可作为输入键，却没有真实的下一格标签：两种掩码不能互相替代。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_toy_vocabulary&quot;, &quot;inputs&quot;: [[1, 5, 5, 6], [1, 3, 2, 0]], &quot;targets&quot;: [[5, 5, 6, 2], [3, 2, -100, -100]], &quot;valid_targets&quot;: 6, &quot;rectangle_positions&quot;: 8}</metadata>
+</svg>

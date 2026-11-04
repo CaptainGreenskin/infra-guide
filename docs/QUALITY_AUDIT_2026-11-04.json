@@ -22,12 +22,12 @@
       "title": "Token、词表与 Embedding：标签如何对齐",
       "sections": 9,
       "approx_visible_prose_characters": 4944,
-      "figures": 0,
+      "figures": 2,
       "review": "fresh_review_v29",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整正文及输出区；BOS/EOS/PAD的章节独立规则、六个有效目标、16/32共享参数、250MiB算术与padding_idx输出路径反例正确。保留。",
+      "findings": "已读完整正文及输出区；BOS/EOS/PAD的章节独立规则、六个有效目标、16/32共享参数、250MiB算术与padding_idx输出路径反例正确。保留。 第34轮复读新增图解与CPU共享梯度/独立标量对照，六项交叉熵与四项平方损失分开；16项手算、差分、实际自动求导一致，保留原主线。",
       "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "d4886e84aca194e471abd305331032d4348af9a5a9e22fc951a49fe2329fcc0d"
+      "reviewed_content_sha256": "99f6efb9d0dbdd4ecf6fb5734a49c46071bb75f2875e908cd0ef22bad2f2c598"
     },
     {
       "id": "attention-mechanics",
@@ -74,12 +74,12 @@
       "title": "交叉熵与自动求导：完成一次真实更新",
       "sections": 10,
       "approx_visible_prose_characters": 5311,
-      "figures": 0,
+      "figures": 1,
       "review": "fresh_review_v29",
       "reviewed_at": "2026-11-05",
-      "findings": "已读完整正文及输出区；交叉熵ln(3/2)、梯度±1/3、1/3有效分母反例、664参数与零目标共同跳过，模型实测范围CPU且不冒充GPU。保留。",
+      "findings": "已读完整正文及输出区；交叉熵ln(3/2)、梯度±1/3、1/3有效分母反例、664参数与零目标共同跳过，模型实测范围CPU且不冒充GPU。保留。 第34轮复读新增图解与CPU共享梯度/独立标量对照，六项交叉熵与四项平方损失分开；16项手算、差分、实际自动求导一致，保留原主线。",
       "review_scope": "Full chapter prose, collapsed explanations and answers, metadata, prerequisite order and exercises; arithmetic and evidence scope checked. Selected source and existing executable provenance reviewed, not a security audit of every downloaded code line.",
-      "reviewed_content_sha256": "20a3a3b13ed5cce15179e86e3d2ad31186c78a3f53a0a44a385bee2a65c39881"
+      "reviewed_content_sha256": "8ca8389ce9edefb23c75d204192a466c46cf61c04b5d630bcc22643cdea2b241"
     },
     {
       "id": "gpu-execution",
@@ -1420,8 +1420,8 @@
       "title": "反向传播、共享参数与有效 token 分母",
       "review": "fresh_review_v29",
       "reviewed_at": "2026-11-05",
-      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。",
-      "reviewed_content_sha256": "55038f09dd1fd40f6e32789182634b372b5ed9fdb78241d3a354d7115b14db76"
+      "findings": "已读定义、完整解释及反例；与对应十章交叉核对。保留现有公式及范围。 第34轮补两条机制阅读链接，明确六项/四项属于不同输入，不将padding_idx当整参数冻结。",
+      "reviewed_content_sha256": "1905189e8219611de7b515ccf76571518272ccfd855ac1796d1cb5dbd5cd49a9"
     },
     {
       "id": "mf-gpu",

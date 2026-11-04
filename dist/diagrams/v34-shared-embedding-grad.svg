@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="770" viewBox="0 0 1120 770" role="img" aria-labelledby="title desc">
+<title id="title">共享词表的两条梯度路径</title><desc id="desc">实际CPU梯度账本：padding查表路径对第0行无贡献，输出投影仍有贡献；普通SGD后第0行变化。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9" fill="#6b768b"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="770" fill="white"/>
+<text x="32" y="46" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一张词表用了两次，梯度也要收两路</text>
+<text x="32" y="85" font-size="22" fill="#6b768b" font-weight="400" text-anchor="start">本例 H=E[id]/2，六项有效目标等权；没有注意力或位置编码。</text>
+<rect x="350" y="116" width="420" height="68" rx="8" fill="#edf2fe" stroke="#315dce" stroke-width="2"/>
+<text x="560" y="160" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">同一个参数 E：[8,2]</text>
+<line x1="440" y1="190" x2="284" y2="230" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="680" y1="190" x2="836" y2="230" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="32" y="242" width="496" height="151" rx="8" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<text x="56" y="282" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">输入查表路径</text>
+<text x="56" y="326" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">H=Embedding(ids)/2</text>
+<text x="56" y="369" font-size="22" fill="#287b69" font-weight="400" text-anchor="start">第 0 行梯度 = [0,0]</text>
+<rect x="592" y="242" width="496" height="151" rx="8" fill="white" stroke="#e4e9f0" stroke-width="2"/>
+<text x="616" y="282" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">输出打分路径</text>
+<text x="616" y="326" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">logits=H×Eᵀ</text>
+<text x="616" y="369" font-size="22" fill="#287b69" font-weight="400" text-anchor="start">第 0 行梯度 ≈ [0.029895,0.027481]</text>
+<line x1="280" y1="402" x2="420" y2="453" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<line x1="840" y1="402" x2="700" y2="453" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="244" y="465" width="632" height="91" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="560" y="500" font-size="25" fill="#287b69" font-weight="600" text-anchor="middle">对同一参数逐元素相加</text>
+<text x="560" y="538" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">dE[0] ≈ [0.029895,0.027481]</text>
+<line x1="560" y1="564" x2="560" y2="595" stroke="#6b768b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="244" y="607" width="632" height="63" rx="8" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="560" y="647" font-size="24" fill="#287b69" font-weight="600" text-anchor="middle">SGD，lr=0.1 → E[0] ≈ [−0.002990,−0.002748]</text>
+<text x="32" y="714" font-size="24" fill="#1c283d" font-weight="600" text-anchor="start">padding_idx 只约束查表反向；没有冻结共享参数的输出用途。</text>
+<text x="32" y="753" font-size="21" fill="#6b768b" font-weight="400" text-anchor="start">程序另用上游全 1 的 PAD 查表验证零梯度，并逐项比较手算、自动求导和中心差分。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_cpu_autograd_and_sgd&quot;, &quot;padding_row&quot;: 0, &quot;gradient&quot;: [0.029895262974054326, 0.0274808020785247], &quot;after_sgd&quot;: [-0.002989526297405433, -0.00274808020785247], &quot;learning_rate&quot;: 0.1, &quot;torch&quot;: &quot;2.5.1&quot;}</metadata>
+</svg>
