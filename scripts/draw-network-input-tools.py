@@ -35,7 +35,7 @@ items = []
 for x, label, lines in [
     (36, "客户端", ["URL：reports.team.test", "DNS → 10.96.0.20", "TCP → 10.96.0.20:443"]),
     (405, "Service 数据面", ["端口443 → targetPort 8443", "选择当次可用后端", "目的地址可变为Pod IP"]),
-    (774, "工作负载", ["10.42.2.8:8443", "服务端证书验证身份", "HTTP Host选择应用路由"]),
+    (774, "工作负载", ["10.42.2.8:8443", "客户端校验证书与名字", "HTTP Host选择应用路由"]),
 ]:
     items += [box(x, 128, 310, 178), txt(x+20, 164, label, 23, BLUE, 700)]
     items += [txt(x+20, 205+i*33, line, 18) for i, line in enumerate(lines)]
@@ -55,10 +55,10 @@ items = [box(36, 124, 500, 235), box(564, 124, 520, 235)]
 items += [txt(58, 161, "同一个from条目：选择条件相交", 23, BLUE, 700),
           txt(58, 202, "namespaceSelector: team=analytics", 19),
           txt(58, 238, "podSelector: role=reader", 19),
-          txt(58, 287, "选中analytics命名空间里的reader Pod", 20, GREEN, 700),
+          txt(58, 287, "选中匹配命名空间中的reader Pod", 20, GREEN, 700),
           txt(58, 325, "两个选择器必须同时满足：AND", 20)]
 items += [txt(586, 161, "两个from条目：允许来源合并", 23, BLUE, 700),
-          txt(586, 202, "条目1：team=analytics中的全部Pod", 19),
+          txt(586, 202, "条目1：匹配命名空间中的全部Pod", 19),
           txt(586, 238, "条目2：策略所在命名空间的reader Pod", 19),
           txt(586, 287, "满足任意一项即可，范围可能扩大", 20, RED, 700),
           txt(586, 325, "不同条目满足其一：OR", 20)]
