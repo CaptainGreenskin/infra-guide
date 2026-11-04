@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 710" role="img" aria-labelledby="title desc">
+<title id="title">分块预填充：A少停顿，B却可能更晚出首词元</title><desc id="desc">第二组固定负载：A=P4/G6、到达0；B=P32/G2、到达0.5ms；KV池48槽。</desc>
+<rect width="1120" height="710" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="44" font-size="25" fill="#1c283d" font-weight="700">分块预填充：A少停顿，B却可能更晚出首词元</text>
+<text x="40" y="79" font-size="15" fill="#617086" font-weight="400">第二组固定负载：A=P4/G6、到达0；B=P32/G2、到达0.5ms；KV池48槽。</text>
+<text x="40" y="112" font-size="15" fill="#617086" font-weight="400">P＝预填充；D＝解码。每轮最多40个输入位置，耗时按题设相加。</text>
+<path d="M220.0 138L220.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="212.0" y="137" font-size="13" fill="#617086" font-weight="400">0</text>
+<path d="M395.0 138L395.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="387.0" y="137" font-size="13" fill="#617086" font-weight="400">2</text>
+<path d="M570.0 138L570.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="562.0" y="137" font-size="13" fill="#617086" font-weight="400">4</text>
+<path d="M745.0 138L745.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="737.0" y="137" font-size="13" fill="#617086" font-weight="400">6</text>
+<path d="M920.0 138L920.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="912.0" y="137" font-size="13" fill="#617086" font-weight="400">8</text>
+<path d="M1060.0 138L1060.0 575" fill="none" stroke="#dbe3ee" stroke-width="1.5"/>
+<text x="1052.0" y="137" font-size="13" fill="#617086" font-weight="400">9.6</text>
+<text x="40" y="202" font-size="20" fill="#1c283d" font-weight="600">整段上限32</text>
+<rect x="220.0" y="174" width="33.0" height="48" rx="7" fill="#e9efff" stroke="#dbe3ee"/>
+<rect x="255.0" y="174" width="85.5" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="262.0" y="203" font-size="13" fill="#287b69" font-weight="600">D A</text>
+<rect x="342.5" y="174" width="365.5" height="48" rx="7" fill="#fff0db" stroke="#dbe3ee"/>
+<text x="349.5" y="203" font-size="13" fill="#9c5b16" font-weight="600">D A + P B32</text>
+<rect x="710.0" y="174" width="173.0" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="717.0" y="203" font-size="13" fill="#287b69" font-weight="600">D A+B</text>
+<rect x="885.0" y="174" width="85.5" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="892.0" y="203" font-size="13" fill="#287b69" font-weight="600">D A</text>
+<rect x="972.5" y="174" width="85.5" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="979.5" y="203" font-size="13" fill="#287b69" font-weight="600">D A</text>
+<circle cx="255.0" cy="249" r="4" fill="#315dce"/>
+<text x="245.0" y="273" font-size="13" fill="#617086" font-weight="400">0.4</text>
+<circle cx="342.5" cy="249" r="4" fill="#315dce"/>
+<text x="332.5" y="273" font-size="13" fill="#617086" font-weight="400">1.4</text>
+<circle cx="710.0" cy="249" r="4" fill="#315dce"/>
+<text x="700.0" y="273" font-size="13" fill="#617086" font-weight="400">5.6</text>
+<circle cx="885.0" cy="249" r="4" fill="#315dce"/>
+<text x="875.0" y="273" font-size="13" fill="#617086" font-weight="400">7.6</text>
+<circle cx="972.5" cy="249" r="4" fill="#315dce"/>
+<text x="962.5" y="273" font-size="13" fill="#617086" font-weight="400">8.6</text>
+<circle cx="1060.0" cy="249" r="4" fill="#315dce"/>
+<text x="1050.0" y="273" font-size="13" fill="#617086" font-weight="400">9.6</text>
+<text x="135" y="254" font-size="15" fill="#315dce" font-weight="400">A输出</text>
+<path d="M342.5 295L710.0 295" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<path d="M342.5 289L342.5 301" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<path d="M710.0 289L710.0 301" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<text x="342.5" y="320" font-size="16" fill="#9c5b16" font-weight="600">最大输出间隔 4.2ms</text>
+<text x="40" y="355" font-size="16" fill="#617086" font-weight="400">B首输出等待：5.1ms（从到达0.5ms起算）</text>
+<text x="40" y="422" font-size="20" fill="#1c283d" font-weight="600">分块上限8</text>
+<rect x="220.0" y="394" width="33.0" height="48" rx="7" fill="#e9efff" stroke="#dbe3ee"/>
+<rect x="255.0" y="394" width="85.5" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="262.0" y="423" font-size="13" fill="#287b69" font-weight="600">D A</text>
+<rect x="342.5" y="394" width="155.5" height="48" rx="7" fill="#fff0db" stroke="#dbe3ee"/>
+<text x="349.5" y="423" font-size="13" fill="#9c5b16" font-weight="600">D A + P B8</text>
+<rect x="500.0" y="394" width="155.5" height="48" rx="7" fill="#fff0db" stroke="#dbe3ee"/>
+<text x="507.0" y="423" font-size="13" fill="#9c5b16" font-weight="600">D A + P B8</text>
+<rect x="657.5" y="394" width="155.5" height="48" rx="7" fill="#fff0db" stroke="#dbe3ee"/>
+<text x="664.5" y="423" font-size="13" fill="#9c5b16" font-weight="600">D A + P B8</text>
+<rect x="815.0" y="394" width="155.5" height="48" rx="7" fill="#fff0db" stroke="#dbe3ee"/>
+<text x="822.0" y="423" font-size="13" fill="#9c5b16" font-weight="600">D A + P B8</text>
+<rect x="972.5" y="394" width="85.5" height="48" rx="7" fill="#e5f3ec" stroke="#dbe3ee"/>
+<text x="979.5" y="423" font-size="13" fill="#287b69" font-weight="600">D B</text>
+<circle cx="255.0" cy="469" r="4" fill="#315dce"/>
+<text x="245.0" y="493" font-size="13" fill="#617086" font-weight="400">0.4</text>
+<circle cx="342.5" cy="469" r="4" fill="#315dce"/>
+<text x="332.5" y="493" font-size="13" fill="#617086" font-weight="400">1.4</text>
+<circle cx="500.0" cy="469" r="4" fill="#315dce"/>
+<text x="490.0" y="493" font-size="13" fill="#617086" font-weight="400">3.2</text>
+<circle cx="657.5" cy="469" r="4" fill="#315dce"/>
+<text x="647.5" y="493" font-size="13" fill="#617086" font-weight="400">5</text>
+<circle cx="815.0" cy="469" r="4" fill="#315dce"/>
+<text x="805.0" y="493" font-size="13" fill="#617086" font-weight="400">6.8</text>
+<circle cx="972.5" cy="469" r="4" fill="#315dce"/>
+<text x="962.5" y="493" font-size="13" fill="#617086" font-weight="400">8.6</text>
+<text x="135" y="474" font-size="15" fill="#315dce" font-weight="400">A输出</text>
+<path d="M342.5 515L500.0 515" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<path d="M342.5 509L342.5 521" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<path d="M500.0 509L500.0 521" fill="none" stroke="#9c5b16" stroke-width="1.5"/>
+<text x="342.5" y="540" font-size="16" fill="#9c5b16" font-weight="600">最大输出间隔 1.8ms</text>
+<text x="40" y="575" font-size="16" fill="#617086" font-weight="400">B首输出等待：8.1ms（从到达0.5ms起算）</text>
+<rect x="40" y="598" width="1040" height="86" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="60" y="631" font-size="19" fill="#1c283d" font-weight="600">相同工作量：36×0.1ms ＋ 6×1ms ＝ 9.6ms，两种策略都在9.6ms结束。</text>
+<text x="60" y="663" font-size="16" fill="#617086" font-weight="400">这是固定成本模型。真实kernel效率、重叠与调度开销会改变总时长，不能当GPU加速比。</text>
+</g></svg>

@@ -1,0 +1,920 @@
+{
+  "python": "3.9.6",
+  "sqlite": "3.51.0",
+  "programs": {
+    "cache_outbox.py": {
+      "sha256": "afb6c654ed0c3f588d55fd64c4026ffe0cdaa72ec0e440e685d7482b6bce5e7f",
+      "result": {
+        "writer_commit_then_exit": 23,
+        "event_gap": {
+          "cache": [
+            7,
+            "pending"
+          ],
+          "source": [
+            8,
+            "shipped"
+          ]
+        },
+        "minimum_version_8_read": [
+          8,
+          "shipped"
+        ],
+        "rollback_created_event": false,
+        "delivery_order": [
+          9,
+          8,
+          9
+        ],
+        "late_fill": "stale_fill_rejected",
+        "duplicate_delivery": "duplicate",
+        "event_identity_conflict": "event_identity_conflict",
+        "eviction_kept_floor": true,
+        "final_floor": 9,
+        "final_cache": [
+          9,
+          "delivered"
+        ],
+        "pending_outbox": 0,
+        "lost_floor_negative": [
+          7,
+          "pending"
+        ],
+        "replay_after_floor_loss": "duplicate",
+        "scope": "two local SQLite stores, controlled delivery; not Redis/MySQL or linearizable cache"
+      },
+      "exit_code": 0
+    },
+    "serving_scheduler.py": {
+      "sha256": "7bfccd78e3881b35897fdd8d64a88f36bb1881ebbda2badb3a580819e2c5c75b",
+      "result": {
+        "cases": {
+          "new_short_prompt": {
+            "whole": {
+              "chunk": 32,
+              "kv_capacity": 44,
+              "work_budget": 40,
+              "peak_reserved": 44,
+              "finish_us": 9400,
+              "requests": {
+                "A": {
+                  "admitted_us": 0,
+                  "waiting_us": 0,
+                  "ttft_us": 3200,
+                  "max_gap_us": 2000,
+                  "last_us": 7600,
+                  "output_times_us": [
+                    3200,
+                    4600,
+                    6600,
+                    7600
+                  ],
+                  "reserved_slots": 36
+                },
+                "B": {
+                  "admitted_us": 3200,
+                  "waiting_us": 1200,
+                  "ttft_us": 2600,
+                  "max_gap_us": 2000,
+                  "last_us": 6600,
+                  "output_times_us": [
+                    4600,
+                    6600
+                  ],
+                  "reserved_slots": 8
+                },
+                "C": {
+                  "admitted_us": 7600,
+                  "waiting_us": 5600,
+                  "ttft_us": 6400,
+                  "max_gap_us": 1000,
+                  "last_us": 9400,
+                  "output_times_us": [
+                    8400,
+                    9400
+                  ],
+                  "reserved_slots": 12
+                }
+              },
+              "trace": [
+                {
+                  "start_us": 0,
+                  "end_us": 3200,
+                  "admitted": [
+                    "A"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "A": 32
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 36,
+                  "completed": []
+                },
+                {
+                  "start_us": 3200,
+                  "end_us": 4600,
+                  "admitted": [
+                    "B"
+                  ],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 4
+                  },
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 44,
+                  "completed": []
+                },
+                {
+                  "start_us": 4600,
+                  "end_us": 6600,
+                  "admitted": [],
+                  "decode": [
+                    "A",
+                    "B"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 44,
+                  "completed": [
+                    "B"
+                  ]
+                },
+                {
+                  "start_us": 6600,
+                  "end_us": 7600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 36,
+                  "completed": [
+                    "A"
+                  ]
+                },
+                {
+                  "start_us": 7600,
+                  "end_us": 8400,
+                  "admitted": [
+                    "C"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "C": 8
+                  },
+                  "emitted": [
+                    "C"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 8400,
+                  "end_us": 9400,
+                  "admitted": [],
+                  "decode": [
+                    "C"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "C"
+                  ],
+                  "reserved_before": 12,
+                  "completed": [
+                    "C"
+                  ]
+                }
+              ]
+            },
+            "chunked": {
+              "chunk": 8,
+              "kv_capacity": 44,
+              "work_budget": 40,
+              "peak_reserved": 44,
+              "finish_us": 9400,
+              "requests": {
+                "A": {
+                  "admitted_us": 0,
+                  "waiting_us": 0,
+                  "ttft_us": 3600,
+                  "max_gap_us": 2000,
+                  "last_us": 7600,
+                  "output_times_us": [
+                    3600,
+                    5600,
+                    6600,
+                    7600
+                  ],
+                  "reserved_slots": 36
+                },
+                "B": {
+                  "admitted_us": 2400,
+                  "waiting_us": 400,
+                  "ttft_us": 1600,
+                  "max_gap_us": 2000,
+                  "last_us": 5600,
+                  "output_times_us": [
+                    3600,
+                    5600
+                  ],
+                  "reserved_slots": 8
+                },
+                "C": {
+                  "admitted_us": 7600,
+                  "waiting_us": 5600,
+                  "ttft_us": 6400,
+                  "max_gap_us": 1000,
+                  "last_us": 9400,
+                  "output_times_us": [
+                    8400,
+                    9400
+                  ],
+                  "reserved_slots": 12
+                }
+              },
+              "trace": [
+                {
+                  "start_us": 0,
+                  "end_us": 800,
+                  "admitted": [
+                    "A"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "A": 8
+                  },
+                  "emitted": [],
+                  "reserved_before": 36,
+                  "completed": []
+                },
+                {
+                  "start_us": 800,
+                  "end_us": 1600,
+                  "admitted": [],
+                  "decode": [],
+                  "prefill": {
+                    "A": 8
+                  },
+                  "emitted": [],
+                  "reserved_before": 36,
+                  "completed": []
+                },
+                {
+                  "start_us": 1600,
+                  "end_us": 2400,
+                  "admitted": [],
+                  "decode": [],
+                  "prefill": {
+                    "A": 8
+                  },
+                  "emitted": [],
+                  "reserved_before": 36,
+                  "completed": []
+                },
+                {
+                  "start_us": 2400,
+                  "end_us": 3600,
+                  "admitted": [
+                    "B"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "B": 4,
+                    "A": 8
+                  },
+                  "emitted": [
+                    "B",
+                    "A"
+                  ],
+                  "reserved_before": 44,
+                  "completed": []
+                },
+                {
+                  "start_us": 3600,
+                  "end_us": 5600,
+                  "admitted": [],
+                  "decode": [
+                    "A",
+                    "B"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 44,
+                  "completed": [
+                    "B"
+                  ]
+                },
+                {
+                  "start_us": 5600,
+                  "end_us": 6600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 36,
+                  "completed": []
+                },
+                {
+                  "start_us": 6600,
+                  "end_us": 7600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 36,
+                  "completed": [
+                    "A"
+                  ]
+                },
+                {
+                  "start_us": 7600,
+                  "end_us": 8400,
+                  "admitted": [
+                    "C"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "C": 8
+                  },
+                  "emitted": [
+                    "C"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 8400,
+                  "end_us": 9400,
+                  "admitted": [],
+                  "decode": [
+                    "C"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "C"
+                  ],
+                  "reserved_before": 12,
+                  "completed": [
+                    "C"
+                  ]
+                }
+              ]
+            }
+          },
+          "long_prompt_while_streaming": {
+            "whole": {
+              "chunk": 32,
+              "kv_capacity": 48,
+              "work_budget": 40,
+              "peak_reserved": 48,
+              "finish_us": 9600,
+              "requests": {
+                "A": {
+                  "admitted_us": 0,
+                  "waiting_us": 0,
+                  "ttft_us": 400,
+                  "max_gap_us": 4200,
+                  "last_us": 9600,
+                  "output_times_us": [
+                    400,
+                    1400,
+                    5600,
+                    7600,
+                    8600,
+                    9600
+                  ],
+                  "reserved_slots": 12
+                },
+                "B": {
+                  "admitted_us": 1400,
+                  "waiting_us": 900,
+                  "ttft_us": 5100,
+                  "max_gap_us": 2000,
+                  "last_us": 7600,
+                  "output_times_us": [
+                    5600,
+                    7600
+                  ],
+                  "reserved_slots": 36
+                }
+              },
+              "trace": [
+                {
+                  "start_us": 0,
+                  "end_us": 400,
+                  "admitted": [
+                    "A"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "A": 4
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 400,
+                  "end_us": 1400,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 1400,
+                  "end_us": 5600,
+                  "admitted": [
+                    "B"
+                  ],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 32
+                  },
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 48,
+                  "completed": []
+                },
+                {
+                  "start_us": 5600,
+                  "end_us": 7600,
+                  "admitted": [],
+                  "decode": [
+                    "A",
+                    "B"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 48,
+                  "completed": [
+                    "B"
+                  ]
+                },
+                {
+                  "start_us": 7600,
+                  "end_us": 8600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 8600,
+                  "end_us": 9600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": [
+                    "A"
+                  ]
+                }
+              ]
+            },
+            "chunked": {
+              "chunk": 8,
+              "kv_capacity": 48,
+              "work_budget": 40,
+              "peak_reserved": 48,
+              "finish_us": 9600,
+              "requests": {
+                "A": {
+                  "admitted_us": 0,
+                  "waiting_us": 0,
+                  "ttft_us": 400,
+                  "max_gap_us": 1800,
+                  "last_us": 8600,
+                  "output_times_us": [
+                    400,
+                    1400,
+                    3200,
+                    5000,
+                    6800,
+                    8600
+                  ],
+                  "reserved_slots": 12
+                },
+                "B": {
+                  "admitted_us": 1400,
+                  "waiting_us": 900,
+                  "ttft_us": 8100,
+                  "max_gap_us": 1000,
+                  "last_us": 9600,
+                  "output_times_us": [
+                    8600,
+                    9600
+                  ],
+                  "reserved_slots": 36
+                }
+              },
+              "trace": [
+                {
+                  "start_us": 0,
+                  "end_us": 400,
+                  "admitted": [
+                    "A"
+                  ],
+                  "decode": [],
+                  "prefill": {
+                    "A": 4
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 400,
+                  "end_us": 1400,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 12,
+                  "completed": []
+                },
+                {
+                  "start_us": 1400,
+                  "end_us": 3200,
+                  "admitted": [
+                    "B"
+                  ],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 8
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 48,
+                  "completed": []
+                },
+                {
+                  "start_us": 3200,
+                  "end_us": 5000,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 8
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 48,
+                  "completed": []
+                },
+                {
+                  "start_us": 5000,
+                  "end_us": 6800,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 8
+                  },
+                  "emitted": [
+                    "A"
+                  ],
+                  "reserved_before": 48,
+                  "completed": []
+                },
+                {
+                  "start_us": 6800,
+                  "end_us": 8600,
+                  "admitted": [],
+                  "decode": [
+                    "A"
+                  ],
+                  "prefill": {
+                    "B": 8
+                  },
+                  "emitted": [
+                    "A",
+                    "B"
+                  ],
+                  "reserved_before": 48,
+                  "completed": [
+                    "A"
+                  ]
+                },
+                {
+                  "start_us": 8600,
+                  "end_us": 9600,
+                  "admitted": [],
+                  "decode": [
+                    "B"
+                  ],
+                  "prefill": {},
+                  "emitted": [
+                    "B"
+                  ],
+                  "reserved_before": 36,
+                  "completed": [
+                    "B"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "one_output": {
+          "ttft_us": 400,
+          "decode_steps": 0,
+          "max_gap_us": null
+        },
+        "oversized_request": "request_exceeds_kv_budget",
+        "scope": "invented additive costs and full-length reservations; no actual model, GPU or vLLM"
+      },
+      "exit_code": 0
+    },
+    "retrieval_pipeline.py": {
+      "sha256": "56a3cb7b0e6881d75b132f4f3cc9978353e2a5e5eb1f00f2a210eac332189eb4",
+      "result": {
+        "gold": [
+          [
+            "a-1",
+            1
+          ],
+          [
+            "a-2",
+            2
+          ]
+        ],
+        "cases": {
+          "post_filter": {
+            "ranked": [],
+            "context": [],
+            "budget_units": 16,
+            "used_units": 0,
+            "answer": {
+              "status": "insufficient_evidence"
+            },
+            "rank_metrics": {
+              "precision_at_2": "0",
+              "recall_at_2": "0",
+              "reciprocal_rank": "0"
+            },
+            "context_metrics": {
+              "precision_at_2": "0",
+              "recall_at_2": "0",
+              "reciprocal_rank": "0"
+            },
+            "forbidden_task_deliveries": 0,
+            "obsolete_task_deliveries": 0,
+            "body_delivery_count": 0,
+            "qualified_completion": false
+          },
+          "pre_filter": {
+            "ranked": [
+              [
+                "a-note",
+                1
+              ],
+              [
+                "a-1",
+                1
+              ]
+            ],
+            "context": [
+              [
+                "a-note",
+                1
+              ],
+              [
+                "a-1",
+                1
+              ]
+            ],
+            "budget_units": 16,
+            "used_units": 16,
+            "answer": {
+              "status": "insufficient_evidence"
+            },
+            "rank_metrics": {
+              "precision_at_2": "1/2",
+              "recall_at_2": "1/2",
+              "reciprocal_rank": "1/2"
+            },
+            "context_metrics": {
+              "precision_at_2": "1/2",
+              "recall_at_2": "1/2",
+              "reciprocal_rank": "1/2"
+            },
+            "forbidden_task_deliveries": 0,
+            "obsolete_task_deliveries": 0,
+            "body_delivery_count": 2,
+            "qualified_completion": false
+          },
+          "rule_rerank_16": {
+            "ranked": [
+              [
+                "a-1",
+                1
+              ],
+              [
+                "a-2",
+                2
+              ]
+            ],
+            "context": [
+              [
+                "a-1",
+                1
+              ],
+              [
+                "a-2",
+                2
+              ]
+            ],
+            "budget_units": 16,
+            "used_units": 16,
+            "answer": {
+              "status": "success",
+              "total": 37,
+              "citations": [
+                [
+                  "a-1",
+                  1
+                ],
+                [
+                  "a-2",
+                  2
+                ]
+              ]
+            },
+            "rank_metrics": {
+              "precision_at_2": "1",
+              "recall_at_2": "1",
+              "reciprocal_rank": "1"
+            },
+            "context_metrics": {
+              "precision_at_2": "1",
+              "recall_at_2": "1",
+              "reciprocal_rank": "1"
+            },
+            "forbidden_task_deliveries": 0,
+            "obsolete_task_deliveries": 0,
+            "body_delivery_count": 2,
+            "qualified_completion": true
+          },
+          "rule_rerank_12": {
+            "ranked": [
+              [
+                "a-1",
+                1
+              ],
+              [
+                "a-2",
+                2
+              ]
+            ],
+            "context": [
+              [
+                "a-1",
+                1
+              ]
+            ],
+            "budget_units": 12,
+            "used_units": 8,
+            "answer": {
+              "status": "insufficient_evidence"
+            },
+            "rank_metrics": {
+              "precision_at_2": "1",
+              "recall_at_2": "1",
+              "reciprocal_rank": "1"
+            },
+            "context_metrics": {
+              "precision_at_2": "1/2",
+              "recall_at_2": "1/2",
+              "reciprocal_rank": "1"
+            },
+            "forbidden_task_deliveries": 0,
+            "obsolete_task_deliveries": 0,
+            "body_delivery_count": 1,
+            "qualified_completion": false
+          },
+          "unsafe_post_filter": {
+            "ranked": [],
+            "context": [],
+            "budget_units": 16,
+            "used_units": 0,
+            "answer": {
+              "status": "insufficient_evidence"
+            },
+            "rank_metrics": {
+              "precision_at_2": "0",
+              "recall_at_2": "0",
+              "reciprocal_rank": "0"
+            },
+            "context_metrics": {
+              "precision_at_2": "0",
+              "recall_at_2": "0",
+              "reciprocal_rank": "0"
+            },
+            "forbidden_task_deliveries": 1,
+            "obsolete_task_deliveries": 1,
+            "body_delivery_count": 2,
+            "qualified_completion": false
+          },
+          "revoked_before_fetch": {
+            "ranked": [
+              [
+                "a-1",
+                1
+              ],
+              [
+                "a-2",
+                2
+              ]
+            ],
+            "context": [],
+            "budget_units": 16,
+            "used_units": 0,
+            "answer": {
+              "status": "denied"
+            },
+            "rank_metrics": {
+              "precision_at_2": "1",
+              "recall_at_2": "1",
+              "reciprocal_rank": "1"
+            },
+            "context_metrics": {
+              "precision_at_2": "0",
+              "recall_at_2": "0",
+              "reciprocal_rank": "0"
+            },
+            "forbidden_task_deliveries": 0,
+            "obsolete_task_deliveries": 0,
+            "body_delivery_count": 0,
+            "qualified_completion": false
+          }
+        },
+        "scope": "fixed metadata scores, rule reranking, artificial units, SQLite bodies; no embedding/LLM/remote authorization"
+      },
+      "exit_code": 0
+    }
+  }
+}

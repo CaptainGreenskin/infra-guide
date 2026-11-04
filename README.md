@@ -38,6 +38,9 @@ python3 dist/labs/ai-agent-systems/agent_evaluation.py
 python3 dist/labs/learning-mechanisms/tcp_framing.py
 python3 dist/labs/learning-mechanisms/checkpoint_commit.py
 python3 dist/labs/learning-mechanisms/approval_receipt.py
+python3 dist/labs/serving-consistency/cache_outbox.py
+python3 dist/labs/serving-consistency/serving_scheduler.py
+python3 dist/labs/serving-consistency/retrieval_pipeline.py
 
 # 已安装PyTorch的环境；本次验证基线是2.5.1 CPU
 python dist/labs/ai-agent-systems/token_ddp.py
@@ -73,6 +76,7 @@ node scripts/check-cloud-deepening.cjs
 node scripts/check-cloud-operations.cjs
 node scripts/check-ai-agent-systems.cjs
 node scripts/check-learning-mechanisms.cjs
+node scripts/check-serving-consistency.cjs
 node scripts/check-editorial-evidence.cjs
 ```
 
@@ -84,6 +88,8 @@ node scripts/render-pages.cjs
 ```
 
 三个独立机制实验更新后，运行 `python3 scripts/verify-learning-mechanisms.py` 重建网站源码、执行记录和ZIP。阅读页提供目录、标准/大字和专注模式，图解可在原页放大与滑动。
+
+缓存/outbox、推理迭代调度与检索链路更新后，运行 `python3 scripts/verify-serving-consistency.py`，同步完整代码、实际输出和下载包。三个程序分别说明本地SQLite、固定成本模型与受控检索夹具的范围。
 
 其他实验有各自的验证脚本。变更源码后应更新实际结果和摘要，不能沿用旧的通过记录。
 

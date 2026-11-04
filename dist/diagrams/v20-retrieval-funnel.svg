@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 660" role="img" aria-labelledby="title desc">
+<title id="title">检索命中了，最终上下文也可能缺一半证据</title><desc id="desc">固定分数与人为预算单位；本题需要a-1/v1的10和a-2/v2的27，才能交付合计37。</desc>
+<rect width="1120" height="660" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="44" font-size="25" fill="#1c283d" font-weight="700">检索命中了，最终上下文也可能缺一半证据</text>
+<text x="40" y="79" font-size="15" fill="#617086" font-weight="400">固定分数与人为预算单位；本题需要a-1/v1的10和a-2/v2的27，才能交付合计37。</text>
+<rect x="40" y="122" width="245" height="310" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="56" y="159" font-size="19" fill="#315dce" font-weight="600">1  全局候选</text>
+<rect x="305" y="122" width="245" height="310" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="321" y="159" font-size="19" fill="#315dce" font-weight="600">2  权限与版本</text>
+<rect x="570" y="122" width="245" height="310" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="586" y="159" font-size="19" fill="#315dce" font-weight="600">3  任务重排</text>
+<rect x="835" y="122" width="245" height="310" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="851" y="159" font-size="19" fill="#315dce" font-weight="600">4  正文预算</text>
+<text x="56" y="202" font-size="16" fill="#9c5b16" font-weight="400">B/b-secret · .99</text>
+<text x="56" y="242" font-size="16" fill="#9c5b16" font-weight="400">a-2/v1旧 · .98</text>
+<text x="56" y="282" font-size="16" fill="#617086" font-weight="400">a-note · .95</text>
+<text x="56" y="322" font-size="16" fill="#287b69" font-weight="400">a-1/v1 · .90</text>
+<text x="56" y="362" font-size="16" fill="#287b69" font-weight="400">a-2/v2 · .85</text>
+<text x="321" y="202" font-size="16" fill="#617086" font-weight="400">只留下A的当前版</text>
+<text x="321" y="249" font-size="16" fill="#1c283d" font-weight="400">a-note</text>
+<text x="321" y="296" font-size="16" fill="#1c283d" font-weight="400">a-1/v1</text>
+<text x="321" y="343" font-size="16" fill="#1c283d" font-weight="400">a-2/v2</text>
+<text x="586" y="202" font-size="16" fill="#617086" font-weight="400">按任务字段重排</text>
+<text x="586" y="249" font-size="16" fill="#287b69" font-weight="400">前二：a-1/v1</text>
+<text x="586" y="296" font-size="16" fill="#287b69" font-weight="400">前二：a-2/v2</text>
+<text x="586" y="343" font-size="16" fill="#617086" font-weight="400">手册退出前二</text>
+<text x="851" y="202" font-size="16" fill="#617086" font-weight="400">每段占8单位</text>
+<text x="851" y="246" font-size="16" fill="#9c5b16" font-weight="600">预算12：只放a-1</text>
+<text x="851" y="278" font-size="15" fill="#9c5b16" font-weight="400">缺a-2，不能补猜27</text>
+<text x="851" y="334" font-size="16" fill="#287b69" font-weight="600">预算16：两份都放</text>
+<text x="851" y="367" font-size="15" fill="#287b69" font-weight="400">合计37＋两份来源</text>
+<rect x="40" y="471" width="1040" height="145" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="60" y="510" font-size="23" fill="#315dce" font-weight="600">排序Recall＝1  →  预算12的上下文Recall＝1/2；RR仍可为1。</text>
+<text x="60" y="548" font-size="17" fill="#1c283d" font-weight="400">首个相关项排第一，不代表必要证据齐全。缺证据时报告不足，不把10冒充总额。</text>
+<text x="60" y="583" font-size="16" fill="#617086" font-weight="400">正文获取前重新核对授权；已经交给任务的越权正文，不能用最终拒绝文案抵消。</text>
+</g></svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+<title id="title">缓存失效之后，版本水位还必须活着</title><desc id="desc">同一订单A/O-104；源端与缓存分别提交，传播窗口内仍可能读到旧值。</desc>
+<rect width="1120" height="690" fill="#f8fafd"/>
+<g font-family="Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="44" font-size="25" fill="#1c283d" font-weight="700">缓存失效之后，版本水位还必须活着</text>
+<text x="40" y="79" font-size="15" fill="#617086" font-weight="400">同一订单A/O-104；源端与缓存分别提交，传播窗口内仍可能读到旧值。</text>
+<rect x="40" y="116" width="258" height="48" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="54" y="146" font-size="17" fill="#315dce" font-weight="600">动作顺序</text>
+<rect x="300" y="116" width="108" height="48" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="314" y="146" font-size="17" fill="#315dce" font-weight="600">源库</text>
+<rect x="410" y="116" width="128" height="48" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="424" y="146" font-size="17" fill="#315dce" font-weight="600">缓存值</text>
+<rect x="540" y="116" width="118" height="48" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="554" y="146" font-size="17" fill="#315dce" font-weight="600">水位</text>
+<rect x="660" y="116" width="418" height="48" rx="7" fill="#edf2fe" stroke="#dbe3ee"/>
+<text x="674" y="146" font-size="17" fill="#315dce" font-weight="600">能判断什么</text>
+<rect x="40" y="166" width="1040" height="49" rx="7" fill="#f1f5fc" stroke="#dbe3ee"/>
+<text x="54" y="197" font-size="15" fill="#1c283d" font-weight="400">初始，R取走旧快照</text>
+<text x="314" y="197" font-size="15" fill="#1c283d" font-weight="400">v7</text>
+<text x="424" y="197" font-size="15" fill="#1c283d" font-weight="400">v7</text>
+<text x="554" y="197" font-size="15" fill="#1c283d" font-weight="400">无</text>
+<text x="674" y="197" font-size="15" fill="#1c283d" font-weight="400">慢读者尚未回填</text>
+<rect x="40" y="217" width="1040" height="49" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="54" y="248" font-size="15" fill="#1c283d" font-weight="400">业务提交8后进程退出</text>
+<text x="314" y="248" font-size="15" fill="#1c283d" font-weight="400">v8</text>
+<text x="424" y="248" font-size="15" fill="#1c283d" font-weight="400">v7</text>
+<text x="554" y="248" font-size="15" fill="#1c283d" font-weight="400">无</text>
+<text x="674" y="248" font-size="15" fill="#1c283d" font-weight="400">outbox已记录8，通知尚未到达</text>
+<rect x="40" y="268" width="1040" height="49" rx="7" fill="#f1f5fc" stroke="#dbe3ee"/>
+<text x="54" y="299" font-size="15" fill="#1c283d" font-weight="400">再提交9，先送失效9</text>
+<text x="314" y="299" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="424" y="299" font-size="15" fill="#1c283d" font-weight="400">空</text>
+<text x="554" y="299" font-size="15" fill="#287b69" font-weight="400">9</text>
+<text x="674" y="299" font-size="15" fill="#1c283d" font-weight="400">安装最低版本9</text>
+<rect x="40" y="319" width="1040" height="49" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="54" y="350" font-size="15" fill="#1c283d" font-weight="400">R晚回填7</text>
+<text x="314" y="350" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="424" y="350" font-size="15" fill="#1c283d" font-weight="400">空</text>
+<text x="554" y="350" font-size="15" fill="#287b69" font-weight="400">9</text>
+<text x="674" y="350" font-size="15" fill="#1c283d" font-weight="400">7＜9，被拒绝</text>
+<rect x="40" y="370" width="1040" height="49" rx="7" fill="#f1f5fc" stroke="#dbe3ee"/>
+<text x="54" y="401" font-size="15" fill="#1c283d" font-weight="400">回填9 → 旧失效8</text>
+<text x="314" y="401" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="424" y="401" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="554" y="401" font-size="15" fill="#287b69" font-weight="400">仍为9</text>
+<text x="674" y="401" font-size="15" fill="#1c283d" font-weight="400">旧失效不删除新条目</text>
+<rect x="40" y="421" width="1040" height="49" rx="7" fill="#fff" stroke="#dbe3ee"/>
+<text x="54" y="452" font-size="15" fill="#1c283d" font-weight="400">重复事件9</text>
+<text x="314" y="452" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="424" y="452" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="554" y="452" font-size="15" fill="#287b69" font-weight="400">仍为9</text>
+<text x="674" y="452" font-size="15" fill="#1c283d" font-weight="400">返回duplicate，不重做</text>
+<rect x="40" y="472" width="1040" height="49" rx="7" fill="#f1f5fc" stroke="#dbe3ee"/>
+<text x="54" y="503" font-size="15" fill="#1c283d" font-weight="400">只驱逐缓存值</text>
+<text x="314" y="503" font-size="15" fill="#1c283d" font-weight="400">v9</text>
+<text x="424" y="503" font-size="15" fill="#1c283d" font-weight="400">空</text>
+<text x="554" y="503" font-size="15" fill="#287b69" font-weight="400">仍为9</text>
+<text x="674" y="503" font-size="15" fill="#1c283d" font-weight="400">再次回填7，仍拒绝</text>
+<rect x="40" y="552" width="1040" height="96" rx="7" fill="#fff6e9" stroke="#ead4b7"/>
+<text x="60" y="587" font-size="20" fill="#9c5b16" font-weight="600">独立负例：缓存值与水位一起丢失</text>
+<text x="60" y="619" font-size="17" fill="#1c283d" font-weight="400">仍在途的v7又被接受。恢复时必须先重建可信下限，或证明旧读者已不能回填。</text>
+</g></svg>
