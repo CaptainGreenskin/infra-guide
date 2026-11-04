@@ -13,6 +13,8 @@ assert.equal(query('KV Cache')[0].id,'knowledge:sv-kv');
 assert.deepEqual(query('ＴＣＰ'),query('tcp'));assert.deepEqual(query('  KV   Cache  '),query('kv cache'));
 assert.deepEqual(query('完全不存在的条目xyz'),[]);assert.deepEqual(query('<>'),[]);
 assert.equal(query('').length,6);
+c.q='流式';const streamed=JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(q).find(r=>r.id==="article:agent-runtime")',c)));
+assert.equal(streamed.anchor,'section-9');assert.equal(streamed.tier,4);assert(streamed.excerpt.startsWith('流式实战：十三组完成边界与准入对照。'));assert(!streamed.excerpt.includes('下载流式工具参数实验'));
 
 // Independent corpus distinguishes title/prose/code priority and abbreviation boundaries.
 const fixture={modules:[{id:'test'}],cloudKnowledgeDomains:[],cloudKnowledgeExplanations:{},infraKnowledgeDomains:[],articles:[
@@ -20,11 +22,14 @@ const fixture={modules:[{id:'test'}],cloudKnowledgeDomains:[],cloudKnowledgeExpl
  {id:'code',module:'test',number:'2',title:'源码',desc:'标准库',tags:[],sections:[['示例','<pre><code>traceparent = "fixture"</code></pre>']]},
  {id:'prose',module:'test',number:'3',title:'原理',desc:'传播',tags:[],sections:[['字段','<p>traceparent carries the upstream context.</p>']]},
  {id:'title',module:'test',number:'4',title:'traceparent',desc:'字段',tags:[],sections:[['说明','<p>TP means tensor parallel here.</p>']]},
- {id:'split',module:'test',number:'5',title:'两个词',desc:'cpu activity',tags:[],sections:[['范围','<p>The max count is ten.</p>']]}
+ {id:'split',module:'test',number:'5',title:'两个词',desc:'cpu activity',tags:[],sections:[['范围','<p>The max count is ten.</p>']]},
+ {id:'heading',module:'test',number:'6',title:'边界说明',desc:'协议',tags:[],sections:[['完结事件','<p>先收齐参数，再检查是否允许执行。</p><p>'+('背景说明'.repeat(60))+'</p><p>下载完结事件示例</p><pre><code>结束记录</code></pre>']]}
 ]};vm.createContext(fixture);vm.runInContext(fs.readFileSync('dist/site-search.js','utf8'),fixture);
 const ask=value=>{fixture.q=value;return JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(q).map(e=>e.id)',fixture)));};
 assert.deepEqual(ask('traceparent'),['article:title','article:prose','article:code']);
 assert.deepEqual(ask('TP'),['article:title']);assert.deepEqual(ask('cpu.max'),[]);
+fixture.q='完结事件';const heading=JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(q)[0]',fixture)));
+assert.equal(heading.anchor,'section-1');assert.equal(heading.tier,4);assert(heading.excerpt.startsWith('完结事件。先收齐参数，再检查是否允许执行。'));assert(!heading.excerpt.includes('下载完结事件示例'));
 const highlighted=vm.runInContext('siteSearchHighlight(\'<img src="x"> & text\',["img"])',fixture);
 assert(!highlighted.includes('<img'));assert(highlighted.includes('&lt;<mark>img</mark>'));assert(highlighted.includes('&amp;'));
 console.log('PASS:161 actual entries/95 point anchors, direct body and identifier matches, multiword and full-width queries, independent title/prose/code ranking, TP/HTTP boundary and escaped snippets.');

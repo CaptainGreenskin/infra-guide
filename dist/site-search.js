@@ -35,7 +35,9 @@ function rankSiteSearch(value){
   else {const candidates=e.segments.filter(s=>all(s.norm));candidates.sort((a,b)=>Number(all(b.proseNorm))-Number(all(a.proseNorm))||coverage(b.headingNorm)-coverage(a.headingNorm)||Number(searchContains(b.norm,query))-Number(searchContains(a.norm,query)));if((segment=candidates[0])){tier=all(segment.proseNorm)?5:6;label=tier===5?'正文匹配':'源码匹配';}}
   let anchor=e.type==='article'?segment?.anchor:e.anchor;
   if(e.type==='article'&&tier>=5&&coverage(e.titleNorm)>0&&segment&&!coverage(segment.headingNorm)){anchor=undefined;label='标题与正文匹配';}
-  results.push({...e,anchor,tier,titleCoverage:coverage(e.titleNorm),descCoverage:coverage(e.descNorm),phraseMatch:Number(searchContains(segment?.norm||e.allNorm,query)),matchLabel:label,excerpt:siteSearchExcerpt(segment?.text||e.desc,terms),terms});
+  // A heading hit should explain its opening, rather than jump to a later download label.
+  const excerptText=segment&&tier===4?segment.heading+'。'+segment.text:segment?.text||e.desc;
+  results.push({...e,anchor,tier,titleCoverage:coverage(e.titleNorm),descCoverage:coverage(e.descNorm),phraseMatch:Number(searchContains(segment?.norm||e.allNorm,query)),matchLabel:label,excerpt:siteSearchExcerpt(excerptText,terms),terms});
  }
  return results.sort((a,b)=>a.tier-b.tier||b.titleCoverage-a.titleCoverage||b.descCoverage-a.descCoverage||b.phraseMatch-a.phraseMatch||a.order-b.order);
 }
