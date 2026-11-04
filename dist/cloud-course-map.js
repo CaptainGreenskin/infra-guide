@@ -32,10 +32,10 @@ for(const a of articles){
 }
 articles.sort((a,b)=>a.number.localeCompare(b.number,undefined,{numeric:true}));
 const cloudLearningStages=[
- ['先读总览，按需补系统前置',['cloud-overview','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems']],
- ['云资源、网络和数据',['cloud-compute','elasticity','vpc-network','network-diagnosis','training-storage','database-index-locks','cache-consistency','storage-recovery']],
- ['容器到 Kubernetes 运行路径',['container-runtime','kubernetes-basics','k8s-workloads','scheduling-resources']],
- ['服务网络、持久化与弹性',['k8s-networking','k8s-storage','config-secrets','k8s-autoscaling']],
- ['事件平台、交付与身份',['serverless-execution','delivery','iam-security']],
+ ['按需补前置：系统与失败语义',['linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems']],
+ ['云资源、网络与数据主干',['cloud-overview','cloud-compute','vpc-network','network-diagnosis','training-storage','database-index-locks','cache-consistency','storage-recovery']],
+ ['从容器到 Kubernetes 运行路径',['container-runtime','kubernetes-basics','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling']],
+ ['事件平台与可追溯交付',['serverless-execution','delivery']],
+ ['身份隔离、容量与成本',['iam-security','elasticity']],
  ['可靠性与完整验收',['slo','observability','incident','resilience','cloud-service-lab']]
 ];

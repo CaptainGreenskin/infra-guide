@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="768" viewBox="0 0 960 768" role="img" aria-labelledby="title desc">
+<title id="title">服务恢复时间与数据恢复点的两条时间线</title><desc id="desc">故障 t0，第二分钟发现，第四分钟做决定，第十分钟基础恢复，第十四分钟业务验证，第十五分钟切流。旧主必须在新主开放写入前完成隔离。最后确认可恢复的数据点为 t0 前一分钟，恢复点缺口一分钟。</desc>
+<defs><marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9Z" fill="#2759a5"/></marker></defs>
+<style>text{font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}</style>
+<rect x="0" y="0" width="960" height="768" rx="16" fill="#f6f9fb" stroke="none"/>
+<text x="36" y="40" fill="#2759a5" font-size="18" font-weight="700" text-anchor="start">SRE  /  恢复演练</text>
+<text x="36" y="84" fill="#20324a" font-size="30" font-weight="700" text-anchor="start">两把尺子：多久恢复服务，数据恢复到哪里？</text>
+<text x="36" y="117" fill="#50647a" font-size="19" font-weight="400" text-anchor="start">以用户服务中断为 t0；以正确读写流量切回并验证为恢复终点。此图是设计演练。</text>
+<text x="36" y="172" fill="#2759a5" font-size="23" font-weight="700" text-anchor="start">服务恢复线</text>
+<text x="249" y="172" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">单位：分钟。从 t0 起累计，区间按实际分钟数等比例绘制。</text>
+<rect x="79" y="215" width="108" height="52" rx="3" fill="#2759a5" stroke="none"/>
+<text x="134" y="248" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">发现</text>
+<rect x="189" y="215" width="108" height="52" rx="3" fill="#08776d" stroke="none"/>
+<text x="244" y="248" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">决策</text>
+<rect x="299" y="215" width="328" height="52" rx="3" fill="#2759a5" stroke="none"/>
+<text x="464" y="248" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">基础恢复</text>
+<rect x="629" y="215" width="218" height="52" rx="3" fill="#08776d" stroke="none"/>
+<text x="739" y="248" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">业务验证</text>
+<rect x="849" y="215" width="53" height="52" rx="3" fill="#9e4a16" stroke="none"/>
+<text x="876.5" y="248" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">切流</text>
+<path d="M79 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="79" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t0</text>
+<path d="M189 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="189" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t2</text>
+<path d="M299 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="299" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t4</text>
+<path d="M629 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="629" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t10</text>
+<path d="M849 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="849" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t14</text>
+<path d="M904 190 V209" fill="none" stroke="#c7d4df" stroke-width="2" />
+<text x="904" y="197" fill="#50647a" font-size="18" font-weight="400" text-anchor="middle">t15</text>
+<text x="36" y="304" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">t2 发现，t4 决定恢复，t10 基础设施就绪，t14 业务验收通过，t15 切流完成。</text>
+<rect x="36" y="328" width="888" height="91" rx="12" fill="#e8f0fc" stroke="none"/>
+<text x="54" y="359" fill="#2759a5" font-size="21" font-weight="700" text-anchor="start">切换写入权的先后关系</text>
+<text x="54" y="391" fill="#20324a" font-size="18" font-weight="400" text-anchor="start">在恢复期间确认旧主已隔离，之后方可开放新主写入；“联系不上”不能充当隔离确认。</text>
+<text x="36" y="471" fill="#08776d" font-size="23" font-weight="700" text-anchor="start">数据恢复线</text>
+<text x="249" y="471" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">独立放大故障前一分钟，不与上方时间轴共用比例。</text>
+<rect x="36" y="494" width="888" height="139" rx="12" fill="#ffffff" stroke="#c7d4df"/>
+<text x="63" y="532" fill="#08776d" font-size="22" font-weight="700" text-anchor="start">t−1</text>
+<text x="63" y="566" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">最近确认可恢复的数据点</text>
+<text x="823" y="532" fill="#9e4a16" font-size="22" font-weight="700" text-anchor="start">t0</text>
+<text x="782" y="566" fill="#20324a" font-size="19" font-weight="400" text-anchor="start">服务中断</text>
+<path d="M279 547 H752" fill="none" stroke="#2759a5" stroke-width="2" marker-end="url(#arrow)" />
+<text x="515" y="531" fill="#08776d" font-size="20" font-weight="700" text-anchor="middle">恢复点缺口 1 分钟</text>
+<text x="64" y="609" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">按业务一致的提交点核对；该时间差本身不能推出具体丢失多少条记录。</text>
+<rect x="36" y="656" width="888" height="82" rx="12" fill="#ffefdd" stroke="none"/>
+<text x="54" y="687" fill="#9e4a16" font-size="21" font-weight="700" text-anchor="start">本次测得：恢复耗时 15 分钟；数据恢复点缺口 1 分钟。</text>
+<text x="54" y="716" fill="#50647a" font-size="18" font-weight="400" text-anchor="start">分别与事先约定的 RTO、RPO 上限比较；只测“实例启动”不能验收用户恢复。</text>
+</svg>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 740" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">用户获准提交任务，工作者能读哪些订单？</title>
+  <desc id="desc">人凭证由人身份系统签发，平台验证身份后检查是否允许向租户 A 提交任务 17；平台固化任务范围，并指派固定的工作负载身份。kubelet 经 TokenRequest 向工作者提供面向订单 API 的短期令牌。订单 API 分别验证凭证与任务资源权限。</desc>
+  <defs>
+    <marker id="arrow-b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#295aaa" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-t" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#126a65" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-w" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#96501f" stroke-width="1.3" fill="none" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="740" fill="#f5f8fc" />
+  <text x="31" y="35" font-size="18" fill="#295aaa" font-weight="650" text-anchor="start">CLOUD INFRA   /   01   两层授权</text>
+  <text x="31" y="81" font-size="30" fill="#1b314a" font-weight="650" text-anchor="start">用户获准提交任务，工作者能读哪些订单？</text>
+  <text x="31" y="118" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">同一次任务有两个调用主体。签名和受众确认“谁在调用”，业务策略再决定“能做什么”。</text>
+  <text x="54" y="172" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">调用主体</text>
+  <text x="269" y="172" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">签发与凭证</text>
+  <text x="494" y="172" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">验证身份</text>
+  <text x="729" y="172" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">授权与效果</text>
+  <line x1="31" y1="188" x2="929" y2="188" stroke="#295aaa" stroke-width="2" />
+  <line x1="63" y1="218" x2="911" y2="218" stroke="#c7d4e1" stroke-width="1.6" />
+  <circle cx="66" cy="218" r="6" fill="#295aaa" />
+  <circle cx="281" cy="218" r="6" fill="#295aaa" />
+  <circle cx="506" cy="218" r="6" fill="#295aaa" />
+  <circle cx="741" cy="218" r="6" fill="#295aaa" />
+  <path d="M 80 218 L 266 218" fill="none" stroke="#295aaa" stroke-width="2" marker-end="url(#arrow-b)" />
+  <path d="M 295 218 L 491 218" fill="none" stroke="#295aaa" stroke-width="2" marker-end="url(#arrow-b)" />
+  <path d="M 520 218 L 726 218" fill="none" stroke="#295aaa" stroke-width="2" marker-end="url(#arrow-b)" />
+  <line x1="63" y1="415" x2="911" y2="415" stroke="#c7d4e1" stroke-width="1.6" />
+  <circle cx="66" cy="415" r="6" fill="#126a65" />
+  <circle cx="281" cy="415" r="6" fill="#126a65" />
+  <circle cx="506" cy="415" r="6" fill="#126a65" />
+  <circle cx="741" cy="415" r="6" fill="#126a65" />
+  <path d="M 80 415 L 266 415" fill="none" stroke="#126a65" stroke-width="2" marker-end="url(#arrow-t)" />
+  <path d="M 295 415 L 491 415" fill="none" stroke="#126a65" stroke-width="2" marker-end="url(#arrow-t)" />
+  <path d="M 520 415 L 726 415" fill="none" stroke="#126a65" stroke-width="2" marker-end="url(#arrow-t)" />
+  <text x="54" y="253" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">人：Alice</text>
+  <text x="54" y="283" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">请求创建任务</text>
+  <text x="54" y="307" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">租户 A / 任务 17</text>
+  <text x="269" y="253" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">人的身份系统</text>
+  <text x="269" y="283" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">完成身份认证</text>
+  <text x="269" y="307" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">签发平台可用的凭证</text>
+  <text x="494" y="253" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">任务平台</text>
+  <text x="494" y="283" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">验签，核对签发者</text>
+  <text x="494" y="307" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">检查期限、平台受众</text>
+  <text x="729" y="253" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">平台检查提交权限</text>
+  <text x="729" y="283" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">校验 Alice 是否能</text>
+  <text x="729" y="307" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">在 A 中提交此任务</text>
+  <rect x="31" y="329" width="898" height="50" fill="#fbebdc" />
+  <text x="48" y="360" font-size="18" fill="#96501f" font-weight="650" text-anchor="start">委托边界：平台固定租户、任务和运行身份；工作者不沿用 Alice 的凭证。</text>
+  <text x="54" y="452" font-size="19" fill="#126a65" font-weight="650" text-anchor="start">工作者：导出进程</text>
+  <text x="54" y="482" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">平台指派 A 的</text>
+  <text x="54" y="506" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">导出 ServiceAccount</text>
+  <text x="269" y="452" font-size="19" fill="#126a65" font-weight="650" text-anchor="start">集群签发端</text>
+  <text x="269" y="482" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">经 TokenRequest 申请</text>
+  <text x="269" y="506" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">节点挂载短期 token</text>
+  <text x="494" y="452" font-size="19" fill="#126a65" font-weight="650" text-anchor="start">订单 API</text>
+  <text x="494" y="482" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">验证签名与签发者</text>
+  <text x="494" y="506" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">期限、订单 API 受众</text>
+  <text x="729" y="452" font-size="19" fill="#126a65" font-weight="650" text-anchor="start">业务资源策略</text>
+  <text x="729" y="482" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">核对任务 17 的权限</text>
+  <text x="729" y="506" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">只准读 A 的订单</text>
+  <line x1="31" y1="551" x2="929" y2="551" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="32" y="589" font-size="21" fill="#1b314a" font-weight="650" text-anchor="start">同一有效 token，结果可以不同</text>
+  <text x="33" y="627" font-size="18" fill="#126a65" font-weight="400" text-anchor="start">读 A 的指定订单：凭证有效，任务范围匹配，可以放行。</text>
+  <text x="33" y="658" font-size="18" fill="#96501f" font-weight="400" text-anchor="start">读 B 的订单：凭证仍可能有效，资源范围不匹配，业务层应在读取前拒绝。</text>
+  <text x="33" y="701" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">示意受众为订单 API；Pod 的默认 API 凭证不会因此自动成为订单服务凭证。</text>
+</svg>

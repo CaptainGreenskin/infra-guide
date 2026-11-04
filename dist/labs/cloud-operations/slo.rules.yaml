@@ -1,0 +1,29 @@
+# Teaching rule: request-based 99.9% SLO over 30 days.
+# "bad" is already classified by the chosen business result/latency contract.
+# Missing telemetry and no traffic need separate operational interpretation.
+groups:
+  - name: reports-slo
+    interval: 1m
+    rules:
+      - record: job:slo_bad_ratio5m
+        expr: |
+          (
+            sum by (job) (rate(http_requests_total{outcome="bad"}[5m]))
+            or on (job) (0 * sum by (job) (rate(http_requests_total[5m])))
+          ) / sum by (job) (rate(http_requests_total[5m]))
+      - record: job:slo_bad_ratio1h
+        expr: |
+          (
+            sum by (job) (rate(http_requests_total{outcome="bad"}[1h]))
+            or on (job) (0 * sum by (job) (rate(http_requests_total[1h])))
+          ) / sum by (job) (rate(http_requests_total[1h]))
+      - alert: ReportsFastBurn
+        expr: |
+          (job:slo_bad_ratio1h{job="reports"} > 14.4 * 0.001)
+          and on (job) (job:slo_bad_ratio5m{job="reports"} > 14.4 * 0.001)
+          and on (job) (sum by (job) (rate(http_requests_total{job="reports"}[5m])) > 0)
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: reports error budget is burning fast

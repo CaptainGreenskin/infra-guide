@@ -1,0 +1,143 @@
+rule_files:
+  - slo.rules.yaml
+evaluation_interval: 1m
+# Ignore only last-bit float differences; assertions and labels remain strict.
+fuzzy_compare: true
+tests:
+  - name: request_weighted_ratio
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="reports",instance="A",outcome="good"}'
+        values: '0+20x65'
+      - series: 'http_requests_total{job="reports",instance="A",outcome="bad"}'
+        values: '0+0x65'
+      - series: 'http_requests_total{job="reports",instance="B",outcome="good"}'
+        values: '0+162x65'
+      - series: 'http_requests_total{job="reports",instance="B",outcome="bad"}'
+        values: '0+18x65'
+    promql_expr_test:
+      - expr: job:slo_bad_ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: 'job:slo_bad_ratio5m{job="reports"}'
+            value: 0.09
+      - expr: sum(increase(http_requests_total[5m]))
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 1000
+      - expr: 1 - job:slo_bad_ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{job="reports"}'
+            value: 0.91
+  - name: continuous_hot_window_fires
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="reports",outcome="good"}'
+        values: '0+98x65'
+      - series: 'http_requests_total{job="reports",outcome="bad"}'
+        values: '0+2x65'
+    alert_rule_test:
+      - eval_time: 60m
+        alertname: ReportsFastBurn
+        exp_alerts:
+          - exp_labels:
+              job: reports
+              severity: page
+            exp_annotations:
+              summary: reports error budget is burning fast
+  - name: short_window_recovery_stops_fast_alert
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="reports",outcome="good"}'
+        values: '0+98x60 5980+100x4'
+      - series: 'http_requests_total{job="reports",outcome="bad"}'
+        values: '0+2x60 120+0x4'
+    promql_expr_test:
+      - expr: count(job:slo_bad_ratio1h > 14.4 * 0.001)
+        eval_time: 65m
+        exp_samples:
+          - labels: '{}'
+            value: 1
+      - expr: job:slo_bad_ratio5m
+        eval_time: 65m
+        exp_samples:
+          - labels: 'job:slo_bad_ratio5m{job="reports"}'
+            value: 0
+    alert_rule_test:
+      - eval_time: 65m
+        alertname: ReportsFastBurn
+        exp_alerts: []
+  - name: compatible_classic_buckets_merge_before_quantile
+    interval: 1m
+    input_series:
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="A",le="0.1"}'
+        values: '0+20x10'
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="A",le="1"}'
+        values: '0+20x10'
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="A",le="+Inf"}'
+        values: '0+20x10'
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="B",le="0.1"}'
+        values: '0+0x10'
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="B",le="1"}'
+        values: '0+180x10'
+      - series: 'http_request_duration_seconds_bucket{job="reports",instance="B",le="+Inf"}'
+        values: '0+180x10'
+    promql_expr_test:
+      - expr: histogram_quantile(0.99, sum by (job, le) (rate(http_request_duration_seconds_bucket[5m])))
+        eval_time: 5m
+        exp_samples:
+          - labels: '{job="reports"}'
+            value: 0.99
+      - expr: avg(histogram_quantile(0.99, sum by (instance, le) (rate(http_request_duration_seconds_bucket[5m]))))
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 0.545
+  - name: traffic_without_error_series_is_zero_bad
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="reports",outcome="good"}'
+        values: '0+100x65'
+    promql_expr_test:
+      - expr: job:slo_bad_ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: 'job:slo_bad_ratio5m{job="reports"}'
+            value: 0
+  - name: zero_traffic_is_not_a_success_ratio
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="reports",outcome="good"}'
+        values: '0+0x65'
+    promql_expr_test:
+      - expr: sum by (job) (rate(http_requests_total[5m]))
+        eval_time: 5m
+        exp_samples:
+          - labels: '{job="reports"}'
+            value: 0
+      # A NaN ratio does not equal itself; avoid presenting it as 100% success.
+      - expr: job:slo_bad_ratio5m == job:slo_bad_ratio5m
+        eval_time: 5m
+        exp_samples: []
+    alert_rule_test:
+      - eval_time: 65m
+        alertname: ReportsFastBurn
+        exp_alerts: []
+  - name: absent_series_is_separate_from_zero_counter
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: job:slo_bad_ratio5m
+        eval_time: 5m
+        exp_samples: []
+      - expr: absent_over_time(http_requests_total{job="reports"}[5m])
+        eval_time: 5m
+        exp_samples:
+          - labels: '{job="reports"}'
+            value: 1
+    alert_rule_test:
+      - eval_time: 65m
+        alertname: ReportsFastBurn
+        exp_alerts: []

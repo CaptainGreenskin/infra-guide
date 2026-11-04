@@ -1,0 +1,217 @@
+{
+  "status": "passed",
+  "verified_at_utc": "2026-11-04T05:25:24.947946+00:00",
+  "python": "3.9.6",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "programs": {
+    "authorization_http_lab.py": {
+      "status": "passed",
+      "cases": [
+        {
+          "case": "read_own",
+          "http_status": 200
+        },
+        {
+          "case": "read_other_tenant",
+          "http_status": 403
+        },
+        {
+          "case": "path_claim_does_not_change_row_owner",
+          "http_status": 403
+        },
+        {
+          "case": "read_scope_cannot_write",
+          "http_status": 403
+        },
+        {
+          "case": "signed_scope_cannot_expand_server_policy",
+          "http_status": 403
+        },
+        {
+          "case": "expired",
+          "http_status": 401
+        },
+        {
+          "case": "zero_expiry",
+          "http_status": 401
+        },
+        {
+          "case": "wrong_audience",
+          "http_status": 401
+        },
+        {
+          "case": "forged_signature",
+          "http_status": 401
+        },
+        {
+          "case": "policy_revoked",
+          "http_status": 403
+        },
+        {
+          "case": "new_policy_epoch",
+          "http_status": 200
+        },
+        {
+          "case": "new_key_accepted",
+          "http_status": 200
+        },
+        {
+          "case": "old_verification_key_removed",
+          "http_status": 401
+        },
+        {
+          "case": "authorised_write",
+          "http_status": 200
+        }
+      ],
+      "writes_A": 1,
+      "writes_B": 0,
+      "audit_events": 14,
+      "credentials_logged": false,
+      "scope": "Real loopback HTTP, HMAC and SQLite effects. Fixed local policy and keys; not JWT/OIDC, cloud IAM, Kubernetes RBAC or production key rotation."
+    },
+    "capacity_lab.py": {
+      "status": "passed",
+      "unbounded": {
+        "snapshots": [
+          {
+            "seconds": 10,
+            "backlog": 200.0,
+            "arrivals": 1000,
+            "completed": 800,
+            "rejected": 0
+          },
+          {
+            "seconds": 20,
+            "backlog": 0.0,
+            "arrivals": 2000,
+            "completed": 2000,
+            "rejected": 0
+          },
+          {
+            "seconds": 30,
+            "backlog": 0.0,
+            "arrivals": 3000,
+            "completed": 3000,
+            "rejected": 0
+          }
+        ],
+        "peak_backlog": 200.0,
+        "backlog_area_request_seconds": 2000.0
+      },
+      "bounded_160": {
+        "snapshots": [
+          {
+            "seconds": 10,
+            "backlog": 160.0,
+            "arrivals": 1000,
+            "completed": 800,
+            "rejected": 40
+          },
+          {
+            "seconds": 20,
+            "backlog": 0.0,
+            "arrivals": 2000,
+            "completed": 1960,
+            "rejected": 40
+          },
+          {
+            "seconds": 30,
+            "backlog": 0.0,
+            "arrivals": 3000,
+            "completed": 2960,
+            "rejected": 40
+          }
+        ],
+        "peak_backlog": 160.0,
+        "backlog_area_request_seconds": 1600.0
+      },
+      "stable_admitted_100_per_second": {
+        "waiting": 12,
+        "executing": 20,
+        "total_inflight": 32,
+        "cpu_core_equivalent": 1
+      },
+      "cost": {
+        "before_per_unique_success": 0.13,
+        "after_same_1000_successes": 0.117,
+        "reduction_percent": 10,
+        "after_only_900_successes": 0.13
+      },
+      "scope": "Exact Fraction arithmetic in a piecewise fluid model. Not real CPU, HPA, a cloud bill or a benchmark. Finite buffer is work backlog in this model, not an OS connection queue."
+    },
+    "telemetry_lab.py": {
+      "status": "passed",
+      "requests": 3,
+      "bad_requests": 1,
+      "backend_spans": 2,
+      "parent_child_links_verified": true,
+      "invalid_header_starts_new_trace": true,
+      "metric_labels": [
+        "route",
+        "outcome"
+      ],
+      "classic_bucket_counts": {
+        "0.1": 2,
+        "0.5": 3,
+        "1.0": 3,
+        "+Inf": 3
+      },
+      "measured_api_ms": [
+        6.126,
+        299.793,
+        0.021
+      ],
+      "measured_slow_backend": {
+        "waiting_ms": 180.213,
+        "processing_ms": 65.025
+      },
+      "scope": "Actual loopback HTTP and monotonic timing; injected sleeps are wall time, not CPU. Minimal version-00 propagation example, not an OTel SDK/interoperability test. No exported production telemetry or representative load."
+    },
+    "promtool_lab.py": {
+      "status": "passed",
+      "version": "promtool, version 3.5.0 (branch: HEAD, revision: 8be3a9560fbdd18a94dedec4b747c35178177202)",
+      "commands": [
+        {
+          "command": "promtool check rules slo.rules.yaml",
+          "exit_code": 0
+        },
+        {
+          "command": "promtool test rules slo.test.yaml",
+          "exit_code": 0
+        }
+      ],
+      "fixture_groups": 7,
+      "checks": [
+        "weighted request ratio .91",
+        "hot 1h/5m alert",
+        "short-window recovery",
+        "merged classic p99 .99 versus wrong mean .545",
+        "no error series with positive traffic",
+        "zero traffic not 100%",
+        "absent telemetry separate"
+      ],
+      "scope": "Real Prometheus promtool parser and rule engine on synthetic input series. No Prometheus scraping server, Alertmanager delivery, production SLO or oncall response test."
+    }
+  },
+  "source_sha256": {
+    "README.md": "0f70b6bfd5cd474bcd3d9c7f8c3c9828b2f6baf4743c3a82e40662c06d38f7fa",
+    "authorization_http_lab.py": "8bd6b24a5366a3224d954128c4d14131fdb5726789ae8e0d32d666fe43490e2d",
+    "capacity_lab.py": "fb5aef14dcf41dd8526b6e6fc5bab259bafcf07379f77f6fa2954b0ee1ae357f",
+    "promtool_lab.py": "d9dd1a22046e8ef575a85e2621dc7152c93c4939cd099a4b89df814d020416bc",
+    "rbac-readonly.yaml": "8cbfceef557b086c8cd4586a2948a508bc626666af6799d7b9deb68f1caabe2c",
+    "slo.rules.yaml": "3a10455323e375389a05cb6e0046290533794b96cbd0303767302496dbec8269",
+    "slo.test.yaml": "6806854a81fe4dfbbea0ad7efa997d93d6037b27880f86fe36dd1fd501288c42",
+    "telemetry_lab.py": "c955615d2917b3573c13644eaff6bc0107140662a8ffcc0d5f037d911d8f4e1d"
+  },
+  "not_executed": [
+    "Production OIDC/JWT/cloud IAM",
+    "Kubernetes admission/RBAC/network isolation",
+    "Cloud autoscaling or production load/cost",
+    "Prometheus scraping/Alertmanager notification",
+    "Real cross-region recovery or oncall response"
+  ],
+  "configuration_review_only": [
+    "rbac-readonly.yaml"
+  ]
+}

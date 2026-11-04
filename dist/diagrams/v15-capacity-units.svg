@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc"><title id="title">容量账本中的尝试、墙钟与 CPU 时间</title><desc id="desc">合成稳态窗口。每秒首发一百次、重试十次，接纳一百次，拒绝十次，完成一百次；用墙钟时间计算等待数和并发，用 CPU 时间计算核需求。</desc>
+<rect width="960" height="720" rx="14" fill="#f6f8fa"/>
+<text x="32" y="38" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#146e69">CAPACITY 01  /  计数口径</text>
+<text x="32" y="83" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:30px;font-weight:700;fill:#19364d">每秒 100 次，指请求、尝试还是完成？</text>
+<text x="32" y="120" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">教学设定：同一稳定窗口、同一服务边界；接纳后无丢弃或取消，速率均为长期平均。</text>
+<rect x="32" y="158" width="191" height="119" rx="8" fill="#ffffff" stroke="#bdcedb"/>
+<text x="46" y="187" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#285e9c">到达尝试</text>
+<text x="46" y="228" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:26px;font-weight:700;fill:#19364d">110 次/s</text>
+<text x="46" y="258" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">首次 100 + 重试 10</text>
+<line x1="227" x2="261" y1="216" y2="216" stroke="#bdcedb" stroke-width="2"/>
+<polygon fill="#bdcedb" points="261,216 251.0,220.0 251.0,212.0"/>
+<rect x="267" y="158" width="191" height="119" rx="8" fill="#ffffff" stroke="#bdcedb"/>
+<text x="281" y="187" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#146e69">获准进入</text>
+<text x="281" y="228" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:26px;font-weight:700;fill:#19364d">100 次/s</text>
+<text x="281" y="258" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">另有 10 次/s 被拒</text>
+<line x1="462" x2="496" y1="216" y2="216" stroke="#bdcedb" stroke-width="2"/>
+<polygon fill="#bdcedb" points="496,216 486.0,220.0 486.0,212.0"/>
+<rect x="502" y="158" width="191" height="119" rx="8" fill="#ffffff" stroke="#bdcedb"/>
+<text x="516" y="187" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#a84d21">占用执行槽</text>
+<text x="516" y="228" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:26px;font-weight:700;fill:#19364d">平均 20 个</text>
+<text x="516" y="258" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">含等待 I/O 的时间</text>
+<line x1="697" x2="731" y1="216" y2="216" stroke="#bdcedb" stroke-width="2"/>
+<polygon fill="#bdcedb" points="731,216 721.0,220.0 721.0,212.0"/>
+<rect x="737" y="158" width="191" height="119" rx="8" fill="#ffffff" stroke="#bdcedb"/>
+<text x="751" y="187" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:700;fill:#285e9c">完成尝试</text>
+<text x="751" y="228" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:26px;font-weight:700;fill:#19364d">100 次/s</text>
+<text x="751" y="258" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">成功 90 + 失败 10</text>
+<text x="32" y="317" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">“重试”已经计入到达；最后一列的成功尝试，仍需业务 ID 去重才能得到唯一成功。</text>
+<rect x="28" y="351" width="904" height="278" rx="8" fill="#ffffff" stroke="#bdcedb"/>
+<text x="47" y="387" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:21px;font-weight:700;fill:#146e69">换一种时间，答案的单位也会改变</text>
+<text x="47" y="426" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#285e9c">只看等待队列</text>
+<text x="235" y="426" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">100 次/s × 0.12 s 墙钟/次</text>
+<text x="646" y="426" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#285e9c">平均 12 个等待</text>
+<line x1="48" x2="906" y1="444" y2="444" stroke="#bdcedb" stroke-width="1"/>
+<text x="47" y="488" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#a84d21">只看执行阶段</text>
+<text x="235" y="488" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">100 次/s × 0.20 s 墙钟/次</text>
+<text x="646" y="488" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#a84d21">平均 20 个执行中</text>
+<line x1="48" x2="906" y1="506" y2="506" stroke="#bdcedb" stroke-width="1"/>
+<text x="47" y="550" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#146e69">只看 CPU 消耗</text>
+<text x="235" y="550" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">100 次/s × 0.010 CPU·s/次</text>
+<text x="646" y="550" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:19px;font-weight:700;fill:#146e69">平均需要 1 个 CPU 核</text>
+<line x1="48" x2="906" y1="568" y2="568" stroke="#bdcedb" stroke-width="1"/>
+<text x="47" y="601" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">全系统：平均停留 0.32 s，平均在途 32 个；数字只覆盖已接纳的尝试。</text>
+<text x="32" y="676" text-anchor="start" style="font-family:PingFang SC,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:18px;font-weight:400;fill:#19364d">执行的 0.20 s 包含 I/O 等待。它不是每次占用 CPU 0.20 s，也不是一次 p99 延迟。</text>
+</svg>

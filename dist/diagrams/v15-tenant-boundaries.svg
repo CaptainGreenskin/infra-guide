@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 796" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">Namespace 相邻，各层分别守住什么？</title>
+  <desc id="desc">同一集群的两个租户分别在 namespace A 和 B 中。依次检查身份授权、业务数据、网络、资源、执行和审计。每一行列出机制以及一次可观察的拒绝或边界验证，namespace 本身不自动提供硬隔离。</desc>
+  <defs>
+    <marker id="arrow-b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#295aaa" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-t" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#126a65" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-w" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#96501f" stroke-width="1.3" fill="none" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="796" fill="#f5f8fc" />
+  <text x="31" y="35" font-size="18" fill="#295aaa" font-weight="650" text-anchor="start">CLOUD INFRA   /   02   多租户剖面</text>
+  <text x="31" y="81" font-size="30" fill="#1b314a" font-weight="650" text-anchor="start">Namespace 相邻，各层分别守住什么？</text>
+  <text x="31" y="118" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">把 A、B 放在不同 namespace 后，仍要逐层说明实际执行策略的对象。</text>
+  <text x="31" y="165" font-size="19" fill="#295aaa" font-weight="650" text-anchor="start">同一个集群</text>
+  <rect x="188" y="135" width="323" height="51" fill="#e5edfc" />
+  <rect x="521" y="135" width="406" height="51" fill="#e2f2ee" />
+  <text x="349" y="168" font-size="20" fill="#295aaa" font-weight="650" text-anchor="middle">namespace A</text>
+  <text x="724" y="168" font-size="20" fill="#126a65" font-weight="650" text-anchor="middle">namespace B</text>
+  <text x="31" y="221" font-size="18" fill="#4d647c" font-weight="650" text-anchor="start">观察层</text>
+  <text x="184" y="221" font-size="18" fill="#4d647c" font-weight="650" text-anchor="start">主要控制点</text>
+  <text x="557" y="221" font-size="18" fill="#4d647c" font-weight="650" text-anchor="start">要取得的验证证据</text>
+  <line x1="31" y1="239" x2="927" y2="239" stroke="#295aaa" stroke-width="2" />
+  <rect x="31" y="251" width="896" height="53" fill="#ffffff" />
+  <text x="41" y="278" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">01  身份</text>
+  <text x="184" y="278" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">RBAC 绑定、工作负载身份</text>
+  <text x="557" y="278" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">A 的身份读取 B 的 API 对象被拒。</text>
+  <line x1="31" y1="310" x2="927" y2="310" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="41" y="344" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">02  数据</text>
+  <text x="184" y="344" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">业务授权、租户前缀、卷权限</text>
+  <text x="557" y="344" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">相同订单号不能越过租户读取或写入。</text>
+  <line x1="31" y1="376" x2="927" y2="376" stroke="#c7d4e1" stroke-width="1.6" />
+  <rect x="31" y="383" width="896" height="53" fill="#ffffff" />
+  <text x="41" y="410" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">03  网络</text>
+  <text x="184" y="410" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">执行 NetworkPolicy 的网络插件</text>
+  <text x="557" y="410" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">非许可路径不通；获准服务仍能工作。</text>
+  <line x1="31" y1="442" x2="927" y2="442" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="41" y="476" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">04  资源</text>
+  <text x="184" y="476" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">配额与请求/限制，节点分配策略</text>
+  <text x="557" y="476" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">A 达配额后新资源受控；检查 B 的容量。</text>
+  <line x1="31" y1="508" x2="927" y2="508" stroke="#c7d4e1" stroke-width="1.6" />
+  <rect x="31" y="515" width="896" height="53" fill="#ffffff" />
+  <text x="41" y="542" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">05  执行</text>
+  <text x="184" y="542" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">Pod Security 准入、节点或沙箱</text>
+  <text x="557" y="542" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">违规 Pod 被准入拒绝；核实共享内核边界。</text>
+  <line x1="31" y1="574" x2="927" y2="574" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="41" y="608" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">06  审计</text>
+  <text x="184" y="608" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">API 审计策略和业务访问记录</text>
+  <text x="557" y="608" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">能追到主体、资源和结果，不记录凭证值。</text>
+  <line x1="31" y1="640" x2="927" y2="640" stroke="#c7d4e1" stroke-width="1.6" />
+  <line x1="520" y1="241" x2="520" y2="641" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="5 5" />
+  <text x="32" y="695" font-size="21" fill="#96501f" font-weight="650" text-anchor="start">信任模型决定是否够用</text>
+  <text x="32" y="729" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">互不信任的工作负载可能还需专用节点、虚拟化沙箱或独立集群，再验证共享服务和凭据。</text>
+  <text x="32" y="763" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">正例和反例要配套：允许 A 完成自己的工作，同时阻止 A 读取或耗尽 B 的资源。</text>
+</svg>

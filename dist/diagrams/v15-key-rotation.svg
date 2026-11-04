@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 794" role="img" aria-labelledby="title desc" font-family="system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">签发切到 K2 后，何时撤下 K1 公钥？</title>
+  <desc id="desc">教学时间线：10:00 预发布 K2 验签公钥，10:10 验证分发完成后停止 K1 签发并改用 K2。旧令牌有效期上限为 60 分钟，最晚到 11:10；额外验证容差上界 5 分钟，至少等到 11:15 再按协议撤下 K1。签发、验签和令牌失效是三种不同的事件。</desc>
+  <defs>
+    <marker id="arrow-b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#295aaa" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-t" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#126a65" stroke-width="1.3" fill="none" />
+    </marker>
+    <marker id="arrow-w" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto" viewBox="0 0 7 7">
+      <path d="M0 0 L6 3 L0 6" stroke="#96501f" stroke-width="1.3" fill="none" />
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="794" fill="#f5f8fc" />
+  <text x="31" y="35" font-size="18" fill="#295aaa" font-weight="650" text-anchor="start">CLOUD INFRA   /   03   签名密钥轮换</text>
+  <text x="31" y="81" font-size="30" fill="#1b314a" font-weight="650" text-anchor="start">签发切到 K2 后，何时撤下 K1 公钥？</text>
+  <text x="31" y="118" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">例：旧 token 的有效期上限为 60 分钟，验签方额外时钟容差最多 5 分钟。</text>
+  <text x="202" y="174" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">10:00</text>
+  <text x="398" y="174" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">10:10</text>
+  <text x="628" y="174" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">11:10</text>
+  <text x="827" y="174" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">11:15</text>
+  <line x1="202" y1="192" x2="202" y2="548" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="4 5" />
+  <line x1="398" y1="192" x2="398" y2="548" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="4 5" />
+  <line x1="628" y1="192" x2="628" y2="548" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="4 5" />
+  <line x1="827" y1="192" x2="827" y2="548" stroke="#c7d4e1" stroke-width="1.5" stroke-dasharray="4 5" />
+  <line x1="202" y1="189" x2="919" y2="189" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="31" y="230" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">① 签发端</text>
+  <rect x="202" y="207" width="196" height="41" fill="#e5edfc" />
+  <text x="300" y="234" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">K1 签发</text>
+  <rect x="398" y="207" width="520" height="41" fill="#e2f2ee" />
+  <text x="658" y="234" font-size="18" fill="#126a65" font-weight="650" text-anchor="middle">K2 签发；K1 停止签发</text>
+  <text x="31" y="304" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">② 验签端</text>
+  <rect x="202" y="279" width="625" height="41" fill="#e5edfc" />
+  <text x="514" y="306" font-size="18" fill="#295aaa" font-weight="650" text-anchor="middle">继续接受 K1 公钥</text>
+  <rect x="202" y="326" width="716" height="41" fill="#e2f2ee" />
+  <text x="562" y="353" font-size="18" fill="#126a65" font-weight="650" text-anchor="middle">也信任 K2 公钥，覆盖签发切换点</text>
+  <text x="202" y="400" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">切签前验证所有目标验签方已经获得 K2；只等待固定时长不是证据。</text>
+  <text x="31" y="469" font-size="19" fill="#1b314a" font-weight="650" text-anchor="start">③ 旧 token</text>
+  <rect x="398" y="444" width="230" height="44" fill="#fbebdc" />
+  <text x="513" y="473" font-size="18" fill="#96501f" font-weight="650" text-anchor="middle">剩余有效期上界</text>
+  <rect x="628" y="444" width="199" height="44" fill="#f7dfc9" />
+  <text x="727" y="473" font-size="18" fill="#96501f" font-weight="650" text-anchor="middle">容差上界 5 分钟</text>
+  <circle cx="827" cy="509" r="6" fill="#96501f" />
+  <text x="822" y="539" font-size="18" fill="#96501f" font-weight="650" text-anchor="end">满足条件后才撤 K1</text>
+  <line x1="31" y1="573" x2="929" y2="573" stroke="#c7d4e1" stroke-width="1.6" />
+  <text x="32" y="613" font-size="21" fill="#1b314a" font-weight="650" text-anchor="start">11:15 的前提</text>
+  <text x="32" y="648" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">最晚 10:10 停止用 K1 签发，最后一批旧 token 最晚 11:10 到期，容差上界再加 5 分钟。</text>
+  <text x="32" y="683" font-size="18" fill="#1b314a" font-weight="400" text-anchor="start">还要核对实际 TTL、所有验证者及其缓存、绑定对象的在线检查和应急撤销策略。</text>
+  <text x="32" y="719" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">删除一个存放密钥的 Secret，并不会自动撤销每个外部系统已接受的 bearer token。</text>
+  <text x="32" y="755" font-size="18" fill="#4d647c" font-weight="400" text-anchor="start">教学时点，间距非比例；这里轮换的是签名密钥，和 kubelet 刷新投射 token 是两件事。</text>
+</svg>

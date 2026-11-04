@@ -1,0 +1,38 @@
+# Reviewed teaching configuration, not a cluster-executed test.
+# Use an isolated test cluster and an identity authorised to create these objects.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra-security-lab
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: report-reader
+  namespace: infra-security-lab
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-one-config
+  namespace: infra-security-lab
+rules:
+  - apiGroups: ['']
+    resources: ['configmaps']
+    resourceNames: ['reports-v1']
+    verbs: ['get']
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: report-reader-config
+  namespace: infra-security-lab
+subjects:
+  - kind: ServiceAccount
+    name: report-reader
+    namespace: infra-security-lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: read-one-config

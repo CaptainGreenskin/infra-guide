@@ -14,9 +14,9 @@ const cloudCoverageRows=[
  ['C4','容器与 Kubernetes','八篇展开运行时、控制面、工作负载、调度、CNI、CSI、配置和 HPA。','清单经离线 schema 核对；未在真实集群/CNI/CSI 下验证，Operator 编码还需补。',['container-runtime','k8s-workloads','k8s-networking','k8s-storage']],
  ['C5','Serverless 与事件','展开执行环境、三种触发契约、部分批次响应、并发/下游与成本；真实进程退出和并发事务验证效果去重。','云函数、SQS 可见性/重驱、冷启动和真实伸缩尚未在供应商环境实测。',['serverless-execution']],
  ['C6','平台 API、IaC 与 GitOps','展开三方状态、保存计划、调谐、自愈/清理与兼容发布；真实 Terraform 1.13.0 内建 provider 实验和独立 GitOps 教学模型。','云 provider/remote backend、Argo/Flux 集群执行与 client-go/Operator 实现仍需专项；模型不是控制器实测。',['delivery','kubernetes-basics']],
- ['C7','身份、安全与多租户','讲 IAM、RBAC、凭证、Secret 与隔离，连接工具授权本地实验。','集群准入、真实云 IAM、沙箱对抗与多租户网络需要目标环境验证。',['iam-security','agent-security','agent-sandbox']],
- ['C8','容量、性能与成本','有资源账本、HPA 分母、排队/伸缩时序和用量公式。','缺生产负载压测、完整账单归因与跨 AZ 故障后的容量实测。',['elasticity','k8s-autoscaling','cloud-compute']],
- ['C9','SRE 与恢复','有 SLI/SLO、观测、故障推理、变更和 RPO/RTO；本地验证部分数学与状态。','真实 oncall、跨区演练和大型横向项目经验仍需个人交付证据。',['slo','observability','incident','resilience']]
+ ['C7','身份、安全与多租户','展开认证/委托/授权、RBAC与IAM差异、token/密钥时序和分层隔离；真实HTTP的14组用例分别核对返回码与SQLite写入。','本地HMAC协议不是OIDC/JWT平台；真实云IAM、准入/RBAC和对抗隔离仍需目标环境验证。',['iam-security','agent-security','agent-sandbox']],
+ ['C8','容量、性能与成本','展开同边界单位、积压守恒、准入、扩容关键路径、压测模型与单位成本；Fraction模型验证有限缓冲和排空。','模型不是压测；生产负载、完整账单归因与跨AZ故障后容量仍需实际交付证据。',['elasticity','k8s-autoscaling','cloud-compute']],
+ ['C9','SRE 与恢复','展开请求加权SLI、多窗燃烧率、分布聚合、trace/日志、诊断与恢复；真实两段HTTP和promtool七组序列附源码证据。','未运行生产抓取、Alertmanager通知、真实oncall或跨区演练；规则求值不等于处置流程已验证。',['slo','observability','incident','resilience']]
 ];
 function cloudCoverageGuide(){
  const path=(ids)=>ids.map(id=>'<a href="/module/'+id+'/">'+moduleFor(id).n+' '+moduleFor(id).name+' →</a>').join('');
