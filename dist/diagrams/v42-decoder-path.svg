@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="790" viewBox="0 0 1120 790" role="img" aria-labelledby="title desc">
+<title id="title">解码器块的两次残差相加</title><desc id="desc">采用前置归一化的示意：H1=X+Attention(Norm1(X))，H2=H1+FFN(Norm2(H1))。第二条残差与前馈均使用H1。</desc>
+<defs><marker id="flow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#315dce"/></marker><marker id="dependency" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#65728a"/></marker><marker id="update" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#287b69"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="790" fill="#fff"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">沿两次相加，读懂一个解码器块</text>
+<text x="32" y="87" font-size="22" fill="#65728a" font-weight="400" text-anchor="start">本图采用前置归一化；两处归一化的参数彼此独立。</text>
+<rect x="30" y="158" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="150.0" y="196" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">输入 X</text>
+<text x="150.0" y="231" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">每个位置一组特征</text>
+<rect x="330" y="158" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="450.0" y="196" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">归一化 1</text>
+<text x="450.0" y="231" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">调整当前特征尺度</text>
+<rect x="650" y="158" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="770.0" y="196" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">注意力</text>
+<text x="770.0" y="231" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">汇总可见位置的信息</text>
+<polyline points="270,217 330,217" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<polyline points="570,217 650,217" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<circle cx="1010" cy="217" r="31" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="1010" y="227" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">+</text>
+<polyline points="890,217 977,217" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<polyline points="150,158 150,121 1010,121 1010,183" fill="none" stroke="#287b69" stroke-width="2.5" marker-end="url(#update)"/>
+<text x="1053" y="226" font-size="24" fill="#287b69" font-weight="600" text-anchor="start">H1</text>
+<polyline points="1010,250 1010,343 150,343 150,398" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<text x="548" y="329" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">H1 = X + 注意力分支</text>
+<rect x="30" y="398" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="150.0" y="436" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">中间表示 H1</text>
+<text x="150.0" y="471" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">不是重新使用旧输入X</text>
+<rect x="330" y="398" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="450.0" y="436" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">归一化 2</text>
+<text x="450.0" y="471" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">接收H1，另有参数</text>
+<rect x="650" y="398" width="240" height="118" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="770.0" y="436" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">前馈网络</text>
+<text x="770.0" y="471" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">对各位置作非线性变换</text>
+<polyline points="270,457 330,457" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<polyline points="570,457 650,457" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<circle cx="1010" cy="457" r="31" fill="#edf7f3" stroke="#287b69" stroke-width="2"/>
+<text x="1010" y="467" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">+</text>
+<polyline points="890,457 977,457" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<polyline points="150,516 150,580 1010,580 1010,491" fill="none" stroke="#287b69" stroke-width="2.5" marker-end="url(#update)"/>
+<text x="1053" y="466" font-size="24" fill="#287b69" font-weight="600" text-anchor="start">H2</text>
+<text x="560" y="620" font-size="24" fill="#287b69" font-weight="600" text-anchor="middle">H2 = H1 + 前馈分支；两条绿色旁路保留相应输入</text>
+<text x="32" y="696" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">形状相同只是相加的必要条件；接错来源，程序仍可能运行却计算了别的函数。</text>
+<text x="32" y="748" font-size="22" fill="#65728a" font-weight="400" text-anchor="start">归一化、注意力与门控前馈的具体公式和代码，按下面的正文继续展开。</text>
+<metadata>{&quot;kind&quot;: &quot;conceptual_relationships&quot;, &quot;relationships&quot;: [&quot;X→Norm1→Attention&quot;, &quot;H1=X+Attention(Norm1(X))&quot;, &quot;H1→Norm2→FFN&quot;, &quot;H2=H1+FFN(Norm2(H1))&quot;], &quot;measured&quot;: false, &quot;author&quot;: &quot;InfraGuide&quot;}</metadata>
+</svg>

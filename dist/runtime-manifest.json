@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 134,
+  "canonical_script_count": 136,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "613a458ecd2701adf7413ae4d38847c209394d32ff965490576b030a6b7cee7f",
-      "bytes": 365634,
+      "sha256": "646f63b6268df9369d248f2f273c4972f80febbd79e295bf42ea0e3b860b7b8a",
+      "bytes": 365828,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "ff92ca623fda4c3e0f6414bf0da210f24d64d2ebef58df88d5a00d4de4a4de4b",
-          "bytes": 7503
+          "sha256": "82c9f35eccbdfeaa07dd593ecadf9c605a8db7c21edf56cf941f6228ed7d55d3",
+          "bytes": 7697
         },
         {
           "file": "training-content.js",
@@ -224,13 +224,13 @@
     },
     {
       "file": "runtime-03.js",
-      "sha256": "3ebb771b5f7a5e3543a1971cc82c618f99f83f47599c9c4f3651acdd94ca4598",
-      "bytes": 264888,
+      "sha256": "614af77e6ed77a959686e59cdf685d5d98d3c84f7c319812d534ebb591a2d351",
+      "bytes": 265292,
       "sources": [
         {
           "file": "cloud-knowledge.js",
-          "sha256": "452268e5ccb47b11571af39462f4e52bf8fc5fb276e0b68707c2f423dbbbac02",
-          "bytes": 31930
+          "sha256": "081b065b4213ed63771cb1d93530ad670b0e7578fa90a7d5f083fcd3c8a0720d",
+          "bytes": 32208
         },
         {
           "file": "cloud-mechanics-interactive.js",
@@ -324,15 +324,15 @@
         },
         {
           "file": "infra-knowledge.js",
-          "sha256": "aa153eac01ea1f1a1bb620b7beb5b76aec9762c70fbe383f911cbf1f4c9dd394",
-          "bytes": 3252
+          "sha256": "e175516cbbe8278a47fecf434563f23a6d3cd862784cbac6a5255c63ada879a1",
+          "bytes": 3378
         }
       ]
     },
     {
       "file": "runtime-04.js",
-      "sha256": "3934bc5330d6fbcf55e283c50cd4a777dfb6bbc02c94de76df0a48a5b175b5eb",
-      "bytes": 334131,
+      "sha256": "ed111a9b4bcd84581ef722e019dc59c9918540b28bb18e7fe06e7589f490c53b",
+      "bytes": 334238,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -361,8 +361,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "c278cc502826cffa0b188af4029058d85df065a6a8efe5e3e956009db186a692",
-          "bytes": 17182
+          "sha256": "0d96e9fd78072a2784ea0132def52b17f73a4b89fb9a12dd4a35b296a6a02278",
+          "bytes": 17289
         },
         {
           "file": "interview-practice.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "630c75c5e0410113993583a65279958431d55f6fa8c9cf9f9edcea185d2cb0f5",
-      "bytes": 466028,
+      "sha256": "2d13f75269f3718a811a02830bc5aad46635f6628cf4b87fd8d95d14d1205480",
+      "bytes": 552001,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -694,6 +694,16 @@
           "bytes": 8331
         },
         {
+          "file": "concept-paths-data.js",
+          "sha256": "abd332e8e465999428ff4119c34ea004c41a0b7b273a22c97e67796705456180",
+          "bytes": 69080
+        },
+        {
+          "file": "concept-paths.js",
+          "sha256": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
+          "bytes": 16840
+        },
+        {
           "file": "lab-catalog.js",
           "sha256": "955535d78bdbe209f78f3e13cd571ad5a7ff7d9c2057e8192c917f500c316ca4",
           "bytes": 33297
@@ -704,18 +714,18 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "ceea72cb2eea28f5761124450f8e4fee6ff774c73acafb2d4f9aece5024b1671",
-      "bytes": 10968
+      "sha256": "16406b964812a9ea5782cd1ca69d7a3b3233253d1e11c3c6e1fd865e8b131945",
+      "bytes": 10986
     },
     {
       "file": "site-search.js",
-      "sha256": "997f3eb500efb00fcb5e168ffe53003aeb1596cfb221e257e5d0e777fca6967a",
-      "bytes": 6149
+      "sha256": "d634ee795d81b5db3446955290c3c3abe9a047c005e7965189bf942b13ee7692",
+      "bytes": 6436
     },
     {
       "file": "app.js",
-      "sha256": "be51c5012b84af66fd1200bc2e8fd69db4d1c1c537187c9c6245134ef4297a2c",
-      "bytes": 18316
+      "sha256": "1cdf752e65cf303e978897cf0fdc72e9721ec739595e889157f28d8834b2002e",
+      "bytes": 18484
     }
   ]
 }

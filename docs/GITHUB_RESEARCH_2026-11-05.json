@@ -1,0 +1,44 @@
+{
+  "checked_on": "2026-11-05",
+  "source": "Read-only GitHub REST repository metadata, using gh api; representative files read from original repositories at fixed commits in the preceding research ledger.",
+  "limitation": "Stars are popularity observations only. No third-party execution or copied course content.",
+  "repository_metadata": [
+    {
+      "default_branch": "main",
+      "full_name": "Snailclimb/JavaGuide",
+      "pushed_at": "2026-10-25T11:47:10Z",
+      "stargazers_count": 159425,
+      "url": "https://github.com/Snailclimb/JavaGuide"
+    },
+    {
+      "default_branch": "master",
+      "full_name": "CyC2018/CS-Notes",
+      "pushed_at": "2026-11-04T14:41:07Z",
+      "stargazers_count": 186442,
+      "url": "https://github.com/CyC2018/CS-Notes"
+    },
+    {
+      "default_branch": "master",
+      "full_name": "donnemartin/system-design-primer",
+      "pushed_at": "2026-09-15T01:10:09Z",
+      "stargazers_count": 376815,
+      "url": "https://github.com/donnemartin/system-design-primer"
+    },
+    {
+      "default_branch": "master",
+      "full_name": "bregman-arie/devops-exercises",
+      "pushed_at": "2025-12-27T14:22:30Z",
+      "stargazers_count": 86501,
+      "url": "https://github.com/bregman-arie/devops-exercises"
+    },
+    {
+      "default_branch": "main",
+      "full_name": "microsoft/ai-agents-for-beginners",
+      "pushed_at": "2026-11-02T18:50:16Z",
+      "stargazers_count": 78929,
+      "url": "https://github.com/microsoft/ai-agents-for-beginners"
+    }
+  ],
+  "fixed_sample_ledger": "GITHUB_RESEARCH_2026-11-04.json",
+  "interpretation": "GITHUB_RESEARCH_2026-11-05.md"
+}

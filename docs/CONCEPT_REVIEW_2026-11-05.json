@@ -1,0 +1,1341 @@
+{
+  "date": "2026-11-05",
+  "scope": "Post-window editorial iteration; does not change the completed eight-hour audit or counts.",
+  "method": "Read every authored introduction for object definitions and dependency order; inspect ambiguous-term contexts and protect source/code markup. UI and automated checks are recorded separately. This is not evidence that human readers have mastered the material.",
+  "chapters": [
+    {
+      "id": "linux-resource",
+      "stages": [
+        "程序、进程和线程是怎样接上的",
+        "得到CPU之前，也可能在等别的东西",
+        "用两笔时间解释“慢”"
+      ],
+      "introduced_terms": [
+        "CPU",
+        "进程",
+        "线程",
+        "I/O"
+      ],
+      "sha256": "74c2b6598336f0c9fb5e86436ec0e0feb955522e853eb2aca4e26846cbd6423a"
+    },
+    {
+      "id": "virtual-memory-oom",
+      "stages": [
+        "先分清程序看到的地址和机器里的内存",
+        "申请空间、实际使用和资源限制不是同一个数",
+        "再判断是谁因为什么终止了程序"
+      ],
+      "introduced_terms": [
+        "进程",
+        "内存",
+        "虚拟内存",
+        "OOM"
+      ],
+      "sha256": "76669cddee608bd15124c737766b8ff060a85fd0ebe2c95d20c1bda81e2fc596"
+    },
+    {
+      "id": "concurrency-pools",
+      "stages": [
+        "先有任务，再有处理任务的执行者",
+        "共享数据和有限执行者产生两种等待",
+        "沿任务路径判断哪里需要保护、哪里需要限制"
+      ],
+      "introduced_terms": [
+        "任务",
+        "线程",
+        "并发",
+        "锁",
+        "线程池",
+        "队列"
+      ],
+      "sha256": "ddb21a3db061269043644f99853da8e56f788b9c839f791c16f86502f841fe95"
+    },
+    {
+      "id": "distributed-systems",
+      "stages": [
+        "一项业务会跨过多台机器",
+        "等待结束，不等于业务一定没做",
+        "重复调用要围绕同一个逻辑动作"
+      ],
+      "introduced_terms": [
+        "请求",
+        "超时",
+        "重试",
+        "幂等",
+        "事务"
+      ],
+      "sha256": "78dcc062127b82506b50191d59e72af4caa20ed7cc735e5b4e1dd947681af268"
+    },
+    {
+      "id": "cloud-overview",
+      "stages": [
+        "从用户的一次访问认识服务",
+        "服务依赖的资源各有分工",
+        "云平台接管的是其中哪些工作"
+      ],
+      "introduced_terms": [
+        "服务",
+        "请求",
+        "CPU",
+        "内存",
+        "存储",
+        "云计算"
+      ],
+      "sha256": "27accc6976df8e20102ef33c86c5eeab71039f5fe77ced7de1b85c096035ea51"
+    },
+    {
+      "id": "cloud-compute",
+      "stages": [
+        "先认识要运行的程序和承载它的机器",
+        "虚拟化改变资源以什么形式交给程序",
+        "再从工作量计算候选规格"
+      ],
+      "introduced_terms": [
+        "CPU",
+        "进程",
+        "内存",
+        "虚拟机",
+        "容器",
+        "容量"
+      ],
+      "sha256": "acbf9f0c47f4768dc250273b4181a03ca630f70bd4cb0c8e3c43e920693ffc01"
+    },
+    {
+      "id": "vpc-network",
+      "stages": [
+        "一次访问要找到机器和程序",
+        "找到地址以后，还要有路和访问资格",
+        "沿去程和回程理解每个对象"
+      ],
+      "introduced_terms": [
+        "网络",
+        "IP",
+        "端口",
+        "DNS",
+        "路由",
+        "VPC"
+      ],
+      "sha256": "8b4b832bda06cf843dcad38dc91b43032cd440c9c96e46d8714cf549eab55094"
+    },
+    {
+      "id": "network-diagnosis",
+      "stages": [
+        "先把一次请求放到一条连接上",
+        "一次等待包含不同阶段",
+        "先解释协议，再选择下一次观察"
+      ],
+      "introduced_terms": [
+        "请求",
+        "连接",
+        "TCP",
+        "HTTP",
+        "延迟"
+      ],
+      "sha256": "d435fc821593f45ce90598a677ebf8396b604ae2441f80d46edb43fc13098761"
+    },
+    {
+      "id": "training-storage",
+      "stages": [
+        "程序要保存的是字节，要使用的是有组织的数据",
+        "访问方式决定应该比较哪一种成本",
+        "从实际访问走到选型和验证"
+      ],
+      "introduced_terms": [
+        "存储",
+        "文件",
+        "对象存储",
+        "吞吐",
+        "IOPS"
+      ],
+      "sha256": "db8950af1fa57fe8c3b02f5ba4606a553d3658ba487a4f43c235d05725ec381e"
+    },
+    {
+      "id": "database-index-locks",
+      "stages": [
+        "先认识表、记录和一次查询",
+        "找记录、保护修改和保存结果各有机制",
+        "沿执行计划和数据可见性继续推理"
+      ],
+      "introduced_terms": [
+        "数据库",
+        "表",
+        "SQL",
+        "索引",
+        "事务",
+        "锁"
+      ],
+      "sha256": "eab41598f8480f0825afb1265e3444a98defe91bc62ccf423b812e4e6c5289fd"
+    },
+    {
+      "id": "cache-consistency",
+      "stages": [
+        "先找到原始数据和用于加速的副本",
+        "版本表达新旧，过期时间表达保留多久",
+        "按读者需要选择一致性承诺"
+      ],
+      "introduced_terms": [
+        "缓存",
+        "数据库",
+        "版本",
+        "TTL"
+      ],
+      "sha256": "c36f6343b8ee0d3b6b45080027f0dbaa74ff47922805ccfc47e398eeafa2184d"
+    },
+    {
+      "id": "storage-recovery",
+      "stages": [
+        "文件存在和一份结果可交付并不相同",
+        "找回过去，需要知道保存了哪个状态",
+        "把发布点和恢复点一起核对"
+      ],
+      "introduced_terms": [
+        "版本",
+        "提交",
+        "快照",
+        "备份",
+        "恢复"
+      ],
+      "sha256": "f04f25e22121c705c11e420d3f7e6795215bf50d0a537e1b3817d7a2f2c115f9"
+    },
+    {
+      "id": "container-runtime",
+      "stages": [
+        "先有运行中的进程和管理机器的系统",
+        "容器把内容、视图和资源限制组合起来",
+        "沿启动、运行和退出解释差异"
+      ],
+      "introduced_terms": [
+        "进程",
+        "容器",
+        "镜像",
+        "内核",
+        "namespace",
+        "cgroup"
+      ],
+      "sha256": "315d889bd1d3d9001d7b0b890eb2db81459b0dae855769c47fdab4215e3b552a"
+    },
+    {
+      "id": "kubernetes-basics",
+      "stages": [
+        "先认识集群里被管理的对象",
+        "声明描述目标，控制器推动实际变化",
+        "从对象身份追踪生命周期"
+      ],
+      "introduced_terms": [
+        "Kubernetes",
+        "集群",
+        "节点",
+        "Pod",
+        "控制器",
+        "调谐"
+      ],
+      "sha256": "d469f487fe3d2fe7dd0c0c4de33ac38df0521d01a8344a87b5a2549bfc866806"
+    },
+    {
+      "id": "k8s-workloads",
+      "stages": [
+        "Pod是运行单位，工作负载描述怎样管理它",
+        "副本存在，不等于能够接用户请求",
+        "再沿创建、更新和排空观察行为"
+      ],
+      "introduced_terms": [
+        "Pod",
+        "控制器",
+        "Deployment",
+        "Job",
+        "就绪"
+      ],
+      "sha256": "69bedf3865fd71a7d40cbacd9f470beadca4c20c35df80705c83cb94929d6d67"
+    },
+    {
+      "id": "scheduling-resources",
+      "stages": [
+        "先分清要放置的工作和提供资源的位置",
+        "申请、上限与总额度分别约束什么",
+        "再把资源与位置条件逐项相交"
+      ],
+      "introduced_terms": [
+        "Pod",
+        "节点",
+        "调度",
+        "request",
+        "limit",
+        "配额"
+      ],
+      "sha256": "625b433ce175cebabcc9f48cb22463b0212657a1ba3a78367bea3bdb1eebe812"
+    },
+    {
+      "id": "k8s-networking",
+      "stages": [
+        "先认识会变化的实例和稳定的访问入口",
+        "名字、入口和后端通过地址与端口连接",
+        "按每一段路径解释失败"
+      ],
+      "introduced_terms": [
+        "Pod",
+        "Service",
+        "DNS",
+        "端口",
+        "NetworkPolicy"
+      ],
+      "sha256": "017b4a5b49992793c2302161567ef5b34a398bca275645c9decc62f444cc4e6d"
+    },
+    {
+      "id": "k8s-storage",
+      "stages": [
+        "先问数据要比哪一个进程活得更久",
+        "需求声明和实际存储资源通过绑定连接",
+        "再逐层判断位置、共享和恢复"
+      ],
+      "introduced_terms": [
+        "容器",
+        "卷",
+        "Pod",
+        "PV",
+        "PVC"
+      ],
+      "sha256": "84173264fada2a39ab663700d8adb3e0f82780919c3db129266bd1827cddd043"
+    },
+    {
+      "id": "config-secrets",
+      "stages": [
+        "程序文件相同，运行参数仍可能不同",
+        "保存了新值，运行中的进程未必已经采用",
+        "沿传播、重读和撤销解释版本生效"
+      ],
+      "introduced_terms": [
+        "配置",
+        "密钥",
+        "ConfigMap",
+        "Secret",
+        "凭据"
+      ],
+      "sha256": "4cd757240479bfe256a9c40840248f3831470fbdff68f5108bff14aaeff6059d"
+    },
+    {
+      "id": "k8s-autoscaling",
+      "stages": [
+        "先认识扩容到底增加了什么",
+        "控制器根据指标推算目标",
+        "再把计算结果放回控制时间线"
+      ],
+      "introduced_terms": [
+        "副本",
+        "HPA",
+        "指标",
+        "request",
+        "节点"
+      ],
+      "sha256": "88836aa4a0bde52eff9b99cf88392d594e63a61906282746479acd28a6f3b3df"
+    },
+    {
+      "id": "serverless-execution",
+      "stages": [
+        "一次函数调用怎样开始",
+        "托管环境和业务效果分属不同职责",
+        "从一次调用走到一批事件的完成"
+      ],
+      "introduced_terms": [
+        "函数",
+        "事件",
+        "触发器",
+        "Serverless",
+        "幂等"
+      ],
+      "sha256": "61d44e2e0371274ea6be640fe9cb7f633cdec1b7705815760e8900372266710a"
+    },
+    {
+      "id": "delivery",
+      "stages": [
+        "先把将要运行的内容固定下来",
+        "应用变化还会影响资源和数据",
+        "再讨论渐进替换和兼容恢复"
+      ],
+      "introduced_terms": [
+        "制品",
+        "镜像",
+        "配置",
+        "发布",
+        "回退",
+        "IaC",
+        "GitOps"
+      ],
+      "sha256": "3001c8b62ab44284ad23e394f5f2072b95d9ab6c0dc81937c3b3db7682d05580"
+    },
+    {
+      "id": "iam-security",
+      "stages": [
+        "先识别是谁在发起动作",
+        "委托要落到具体目标和范围",
+        "沿身份链验证最小权限"
+      ],
+      "introduced_terms": [
+        "身份",
+        "认证",
+        "授权",
+        "凭据",
+        "资源",
+        "租户"
+      ],
+      "sha256": "924b4767cf0e15062e35a36e3352bff49380efca3cadb2bb24c0d26cc7491550"
+    },
+    {
+      "id": "elasticity",
+      "stages": [
+        "工作到达和工作完成要分别计数",
+        "新增容量需要经过一段过程",
+        "把用户等待与资源账放在同一条时间线上"
+      ],
+      "introduced_terms": [
+        "容量",
+        "吞吐",
+        "队列",
+        "弹性",
+        "故障域"
+      ],
+      "sha256": "9e98018642a0726fae3d95c1fc7e66cb0698e45bed44620b03d91984e38b4e0e"
+    },
+    {
+      "id": "slo",
+      "stages": [
+        "先定义什么样的结果对用户算好",
+        "目标、约定和允许损失逐层相连",
+        "再由消耗速度决定行动"
+      ],
+      "introduced_terms": [
+        "SLI",
+        "SLO",
+        "SLA",
+        "错误预算"
+      ],
+      "sha256": "27ca2987ba52d36a0029b7708548baf7b758d46207a9ad71fda9d703844ba0a2"
+    },
+    {
+      "id": "observability",
+      "stages": [
+        "先把一次请求和它的结果说清楚",
+        "聚合会保留信息，也会丢失信息",
+        "先找范围，再解释路径"
+      ],
+      "introduced_terms": [
+        "指标",
+        "日志",
+        "追踪",
+        "剖析",
+        "p99"
+      ],
+      "sha256": "b8ae2088ceead2a4565568655816cf0cdb908942ebdd04ca5d62a642df957ba2"
+    },
+    {
+      "id": "incident",
+      "stages": [
+        "故障首先是一项用户结果偏离目标",
+        "线索还不是原因",
+        "沿影响、止损、验证和复盘推进"
+      ],
+      "introduced_terms": [
+        "故障",
+        "指标",
+        "假设",
+        "时间线",
+        "恢复"
+      ],
+      "sha256": "0cc56be86855e8eddc90a64510b5ec6770f0966178bf4154d057667198abeb06"
+    },
+    {
+      "id": "resilience",
+      "stages": [
+        "先说清可能失去什么、必须找回什么",
+        "数据恢复到哪里，与多久恢复是两条时间轴",
+        "再把材料、接管和用户验收接起来"
+      ],
+      "introduced_terms": [
+        "故障域",
+        "备份",
+        "恢复",
+        "RPO",
+        "RTO"
+      ],
+      "sha256": "57833edb71bf8e4b10642f983a6c163f596bd202e74800dc9b264485cda94608"
+    },
+    {
+      "id": "transformer-model",
+      "stages": [
+        "模型先是一套带可调整数字的计算",
+        "文本怎样走进数值计算",
+        "再沿Transformer中的数据路径拆结构"
+      ],
+      "introduced_terms": [
+        "模型",
+        "参数",
+        "训练",
+        "推理",
+        "token",
+        "张量",
+        "Transformer"
+      ],
+      "sha256": "1ec5d581306e503842f4e81743c193dbdf41809f1e75b1028165cce6f065de92"
+    },
+    {
+      "id": "tokenization-embedding",
+      "stages": [
+        "文本片段先得到编号",
+        "编号通过查表变成一组数字",
+        "输入、候选和正确目标分别放在什么位置"
+      ],
+      "introduced_terms": [
+        "token",
+        "词表",
+        "Embedding",
+        "向量",
+        "logit"
+      ],
+      "sha256": "e1e2dff08ddbfc827a48b85489ded5017a5bb1bfef39d637a3396c0b2f39e4e3"
+    },
+    {
+      "id": "attention-mechanics",
+      "stages": [
+        "每个位置先有一组表示自己的数字",
+        "查询、匹配依据和取回内容有不同职责",
+        "先规定能看见谁，再讨论怎样并行"
+      ],
+      "introduced_terms": [
+        "向量",
+        "Attention",
+        "Query",
+        "Key",
+        "Value",
+        "Softmax",
+        "掩码"
+      ],
+      "sha256": "62f88bc62b1a859d6519c0b550f3b25eaa9ffae146d524620f34f42346c8104a"
+    },
+    {
+      "id": "transformer-block",
+      "stages": [
+        "一个位置的表示怎样继续变化",
+        "分支结果怎样回到原来的表示",
+        "沿两次相加看清真正的依赖"
+      ],
+      "introduced_terms": [
+        "向量",
+        "Attention",
+        "FFN",
+        "残差",
+        "归一化",
+        "Decoder Block"
+      ],
+      "sha256": "06efd6f6caa42cb9c973b42fffa13ea2c9803a818db893125899b5d9a3950686"
+    },
+    {
+      "id": "position-encoding",
+      "stages": [
+        "内容相同，还需要区分出现的位置",
+        "位置可以进入表示，也可以进入匹配",
+        "再把数学位置连接到增量生成"
+      ],
+      "introduced_terms": [
+        "token",
+        "向量",
+        "位置编码",
+        "RoPE",
+        "缓存"
+      ],
+      "sha256": "f4a7a90614c6cd93e06053c5ec0fa356f3df17a350e6ba901b996a755876f16a"
+    },
+    {
+      "id": "autograd-training",
+      "stages": [
+        "预测要与明确的正确目标比较",
+        "从差异追到哪些参数需要怎样调整",
+        "用一次完整更新检验依赖与分母"
+      ],
+      "introduced_terms": [
+        "参数",
+        "损失",
+        "梯度",
+        "反向传播",
+        "优化器"
+      ],
+      "sha256": "4b6a6a2c9803bcdb8be424c0cf3963a6d1dfbcf154887d650080c2a1932af1f9"
+    },
+    {
+      "id": "gpu-execution",
+      "stages": [
+        "先有要完成的数值工作",
+        "程序怎样把工作交给GPU",
+        "从计算位置继续追到数据位置"
+      ],
+      "introduced_terms": [
+        "GPU",
+        "张量",
+        "算子",
+        "kernel",
+        "线程块",
+        "warp"
+      ],
+      "sha256": "c098f04571783174192cc182efbc5c76ed3cb16dd6c45055bf00f66fdafc8048"
+    },
+    {
+      "id": "roofline-model",
+      "stages": [
+        "一次运算做多少计算、搬多少数据",
+        "处理速度受计算与搬运共同限制",
+        "用上界形成假设，再到实际执行中验证"
+      ],
+      "introduced_terms": [
+        "算子",
+        "吞吐",
+        "带宽",
+        "算术强度",
+        "Roofline"
+      ],
+      "sha256": "47958c3d50d4dd45fc6a501ab32af243171abe55d59e818b07d6c9a684146829"
+    },
+    {
+      "id": "flash-attention-io",
+      "stages": [
+        "先认识注意力中的大中间结果",
+        "计算相同结果，也可以改变保存和读取次序",
+        "再推导怎样分块却保持全局归一化"
+      ],
+      "introduced_terms": [
+        "Attention",
+        "Softmax",
+        "显存",
+        "分块",
+        "FlashAttention"
+      ],
+      "sha256": "662016bae66a829b8caac1c444fc049580b3d5fe9f64e254bfaad654eb2281b8"
+    },
+    {
+      "id": "tensor-parallel-math",
+      "stages": [
+        "先分清要切开的数字和执行者",
+        "切层内计算和切模型层是两种办法",
+        "从完整计算推导切分后的通信"
+      ],
+      "introduced_terms": [
+        "张量",
+        "参数",
+        "进程",
+        "rank",
+        "TP",
+        "PP"
+      ],
+      "sha256": "c246cfe256860d20a72b42d5c89fb86c204e60023c84ac2c7e1aff3f9166e23b"
+    },
+    {
+      "id": "gpu-cluster",
+      "stages": [
+        "先认识一次训练在做什么",
+        "脚本交给平台以后成为一次作业",
+        "沿同一批数据追到第一次有效更新"
+      ],
+      "introduced_terms": [
+        "模型",
+        "参数",
+        "训练",
+        "GPU",
+        "作业",
+        "step"
+      ],
+      "sha256": "ac698158282cd534c39dda49a1a3bec6be226c58b1cb56fc257784a4d8e97d1b"
+    },
+    {
+      "id": "distributed-training",
+      "stages": [
+        "多进程训练要先说明各自拿到什么",
+        "不同并行方式连接不同的计算依赖",
+        "先确定容量或时间问题，再选组合"
+      ],
+      "introduced_terms": [
+        "模型",
+        "进程",
+        "rank",
+        "DDP",
+        "FSDP",
+        "TP",
+        "PP"
+      ],
+      "sha256": "24861791f8be6cd8d791cfd3e3431e6e045c5227591c88f600b0771267f92e2b"
+    },
+    {
+      "id": "gpu-memory",
+      "stages": [
+        "先认识计算设备和模型参数",
+        "训练状态分别保存什么",
+        "大小、寿命和共享共同决定峰值"
+      ],
+      "introduced_terms": [
+        "GPU",
+        "显存",
+        "参数",
+        "梯度",
+        "优化器",
+        "激活",
+        "dtype"
+      ],
+      "sha256": "8b354181d872d6329b547f41fc861584db2dbf76976a921303d70756d7bd8bb5"
+    },
+    {
+      "id": "ddp-code",
+      "stages": [
+        "先把一份输入分给多个训练进程",
+        "同步的是梯度，更新仍由各进程执行",
+        "按初始化、输入、计算和保存读代码"
+      ],
+      "introduced_terms": [
+        "进程",
+        "rank",
+        "DDP",
+        "梯度",
+        "优化器",
+        "批次"
+      ],
+      "sha256": "d9d8f0d34a61b942a7321793a74a758b9a31a6175abe618ad6c9fb1ffd7e56dc"
+    },
+    {
+      "id": "training-communication",
+      "stages": [
+        "先给参与交换数据的执行者编组",
+        "集合通信由一组进程共同完成操作",
+        "从结果布局继续追到调用顺序与等待"
+      ],
+      "introduced_terms": [
+        "进程",
+        "rank",
+        "进程组",
+        "集合通信",
+        "NCCL",
+        "Gloo"
+      ],
+      "sha256": "39b07796857aed0d76e076a5da4918ab173bbb52e347de7dc78b0da64d5f534a"
+    },
+    {
+      "id": "data-pipeline",
+      "stages": [
+        "训练输入先是一组有身份的样本",
+        "训练进程和读取工作者不要混在一起",
+        "再把覆盖、供给速度与恢复连起来"
+      ],
+      "introduced_terms": [
+        "数据集",
+        "样本",
+        "批次",
+        "Dataset",
+        "Sampler",
+        "worker",
+        "rank"
+      ],
+      "sha256": "f76b08f8d22bb2348e7a71cf703d4c5175cdbe7a8c31e84447629071fd422dd3"
+    },
+    {
+      "id": "multinode-lab",
+      "stages": [
+        "机器、显卡和训练进程是不同数量",
+        "多个进程先找到彼此，再交换训练数值",
+        "按最小依赖逐关验收"
+      ],
+      "introduced_terms": [
+        "节点",
+        "GPU",
+        "进程",
+        "rank",
+        "DDP",
+        "会合"
+      ],
+      "sha256": "16364c6fd6bbfb7a3aa6fe25a003282b9ade9e71dafb822436d5c5f5792ad683"
+    },
+    {
+      "id": "checkpoint-recovery",
+      "stages": [
+        "训练要继续，必须知道停在什么状态",
+        "检查点把相关状态固定在同一个进展位置",
+        "先定义相同，再比较两条训练路径"
+      ],
+      "introduced_terms": [
+        "检查点",
+        "参数",
+        "优化器",
+        "随机状态",
+        "恢复"
+      ],
+      "sha256": "d415d16063e3b409e0fe34552ed41d14752c97762f72ed5920644a1933b58d2f"
+    },
+    {
+      "id": "training-performance",
+      "stages": [
+        "先确定要更快完成哪一项工作",
+        "多加设备之后，工作和目标也要可比",
+        "再用分段时间检验瓶颈"
+      ],
+      "introduced_terms": [
+        "吞吐",
+        "延迟",
+        "批次",
+        "扩展效率",
+        "有效训练"
+      ],
+      "sha256": "02ee3f298cbc377468b5a1ad5543f26b01c65ba35a13834d9b778a501d05b9d3"
+    },
+    {
+      "id": "kubernetes-training",
+      "stages": [
+        "平台对象和训练进程不在同一层",
+        "多个副本不会自动组成一个训练组",
+        "再把启动、失败与恢复纳入作业管理"
+      ],
+      "introduced_terms": [
+        "Kubernetes",
+        "Pod",
+        "Job",
+        "进程",
+        "DDP"
+      ],
+      "sha256": "f55a51a07a8199440ddf111f6a2a95cfbf36882c17e47b702271b99ce08c17db"
+    },
+    {
+      "id": "training-platform",
+      "stages": [
+        "一次提交应有明确的输入和完成条件",
+        "平台把委托连接到实际运行和结果",
+        "再按生命周期设计管理能力"
+      ],
+      "introduced_terms": [
+        "作业",
+        "模型",
+        "训练",
+        "调度",
+        "产物"
+      ],
+      "sha256": "6e568ff7ea264e5c5fd1e32aa616caa86ecbf0b8f3819ca40703f76617cad33b"
+    },
+    {
+      "id": "gpu-scheduling",
+      "stages": [
+        "先认识要使用资源的工作",
+        "总量之外，还要看资源怎样连接与分布",
+        "再区分份额、形状、放置和启动"
+      ],
+      "introduced_terms": [
+        "GPU",
+        "作业",
+        "配额",
+        "调度",
+        "拓扑",
+        "准入"
+      ],
+      "sha256": "9771bcc6f5445e51e8a8caa4030295cc941bad28799a802e1d867c2c533f8762"
+    },
+    {
+      "id": "model-serving",
+      "stages": [
+        "回答由一次次预测逐步形成",
+        "先处理已有输入，再继续生成",
+        "再把生成过程接到资源和用户等待"
+      ],
+      "introduced_terms": [
+        "模型",
+        "推理",
+        "token",
+        "Prefill",
+        "Decode",
+        "KV Cache"
+      ],
+      "sha256": "e4e46406b6eaecf27ae174a31390cb9f674ab97014d446d26a9482d84a38d8e8"
+    },
+    {
+      "id": "inference-performance",
+      "stages": [
+        "用户的一次请求包含多个可观察时刻",
+        "不同指标衡量不同的等待",
+        "先统一时钟和边界，再比较方案"
+      ],
+      "introduced_terms": [
+        "推理",
+        "请求",
+        "TTFT",
+        "TPOT",
+        "吞吐"
+      ],
+      "sha256": "7d9b70d9b1a19794ee4f9b28523dde444f12debad4ad84afc88db89e16348576"
+    },
+    {
+      "id": "ai-lifecycle",
+      "stages": [
+        "一个模型不只有参数文件",
+        "继续训练和对外推理需要不同交付对象",
+        "再按层次核对完整、语义和服务能力"
+      ],
+      "introduced_terms": [
+        "模型",
+        "参数",
+        "词表",
+        "检查点",
+        "推理",
+        "发布"
+      ],
+      "sha256": "e79269f6ecbc8b844c028a92bb41eb76ff326226022b7bd76174a058c255d00e"
+    },
+    {
+      "id": "agent-runtime",
+      "stages": [
+        "先把用户要求写成一项任务",
+        "提议、执行和结果之间需要运行时",
+        "再沿一个受控循环认识Agent"
+      ],
+      "introduced_terms": [
+        "任务",
+        "模型",
+        "工具",
+        "运行时",
+        "状态",
+        "Agent"
+      ],
+      "sha256": "2680554188238015923beac7ce9e83e54f2d80e543cd722cabded414eac5e9c6"
+    },
+    {
+      "id": "agent-recovery",
+      "stages": [
+        "先分清用户目标和产生效果的动作",
+        "调用方没收到响应，效果仍可能存在",
+        "再从提交间隙走到多执行者接管"
+      ],
+      "introduced_terms": [
+        "任务",
+        "工具",
+        "操作身份",
+        "回执",
+        "幂等",
+        "恢复"
+      ],
+      "sha256": "200ab6791e023f9e7df60734f8427c160834769f6071c5eb63dad6b9b5ad36f6"
+    },
+    {
+      "id": "agent-security",
+      "stages": [
+        "模型建议做的事，需要由工具真正执行",
+        "身份、权限和批准是不同判断",
+        "沿执行边界验证允许与拒绝"
+      ],
+      "introduced_terms": [
+        "模型",
+        "工具",
+        "任务",
+        "认证",
+        "授权",
+        "审批"
+      ],
+      "sha256": "16498aab4b593fe3602ae1c3d3d047530026df03214f31ecfd427126d8ac0a58"
+    },
+    {
+      "id": "agent-memory",
+      "stages": [
+        "同一条信息可以承担三种不同职责",
+        "压缩文字，不应该改写已经确认的事实",
+        "再讨论预算、更新和撤回"
+      ],
+      "introduced_terms": [
+        "上下文",
+        "运行状态",
+        "长期记忆",
+        "摘要",
+        "版本"
+      ],
+      "sha256": "1cec4298f1389b19bbbd16bb7f5cb7b9ffa694f54b7122ddbac5098e7b051f33"
+    },
+    {
+      "id": "agent-evaluation",
+      "stages": [
+        "先说明用户目标怎样算完成",
+        "系统执行和评分判断都可能出错",
+        "先建立判据，再计算比例与比较版本"
+      ],
+      "introduced_terms": [
+        "任务",
+        "产物",
+        "评分器",
+        "试次",
+        "尝试"
+      ],
+      "sha256": "e4164d3acf7193bc3b083258659a5c01e6deea2a39b06b37f44f1b8eb0cb0669"
+    },
+    {
+      "id": "kairo-practice",
+      "stages": [
+        "先规定准备让系统完成什么",
+        "概念需要对应到真实接口和状态",
+        "再区分契约相容和目标实际完成"
+      ],
+      "introduced_terms": [
+        "Kairo",
+        "任务",
+        "运行时",
+        "工具",
+        "接口",
+        "验收"
+      ],
+      "sha256": "a503413fde7a35ac824d85cb35d0d705646ab1c1bdb2c7faf4236caffa973383"
+    },
+    {
+      "id": "durable-workflows",
+      "stages": [
+        "先把长期任务拆成有先后依赖的步骤",
+        "从历史重建决定，不等于重复产生效果",
+        "再分别检查重启、接管和版本升级"
+      ],
+      "introduced_terms": [
+        "工作流",
+        "活动",
+        "历史",
+        "重放",
+        "状态",
+        "幂等"
+      ],
+      "sha256": "97f8b74b5982ba9531f4315afa57fe8bc5a533b764c7d0df2d4f9763289ea7ff"
+    },
+    {
+      "id": "agent-retrieval",
+      "stages": [
+        "先找到问题需要的资料",
+        "找到资料，还要交给模型并支持具体主张",
+        "按召回、选择、交付和引用逐层判断"
+      ],
+      "introduced_terms": [
+        "模型",
+        "检索",
+        "索引",
+        "上下文",
+        "RAG"
+      ],
+      "sha256": "3bcb7b75356c93045c8d31abe070cbf20df34c55a83848dcb50c400823d7ce90"
+    },
+    {
+      "id": "agent-observability",
+      "stages": [
+        "一项任务可以包含多次执行尝试",
+        "执行路径与实际效果需要不同记录",
+        "再把重试、等待和成本归回任务"
+      ],
+      "introduced_terms": [
+        "任务",
+        "尝试",
+        "指标",
+        "日志",
+        "追踪",
+        "回执"
+      ],
+      "sha256": "6e3e47ada3b563a6dde3d56309489a1491ea81c2e3a7d1898feccc95120a18ce"
+    },
+    {
+      "id": "agent-sandbox",
+      "stages": [
+        "代码执行需要一个受到管理的环境",
+        "能访问什么，与能消耗多少分别控制",
+        "再沿完整启动路径验证边界"
+      ],
+      "introduced_terms": [
+        "进程",
+        "沙箱",
+        "权限",
+        "资源预算",
+        "生命周期"
+      ],
+      "sha256": "de81deae7ab88237a9b353d127f0e4a0e6aa8578500614d50cb173a231637063"
+    },
+    {
+      "id": "training-lab",
+      "stages": [
+        "训练进展来自一次次参数更新",
+        "检查点把继续训练所需的状态提交下来",
+        "先预测进度，再运行连续与重启对照"
+      ],
+      "introduced_terms": [
+        "训练",
+        "参数",
+        "检查点",
+        "恢复",
+        "DDP"
+      ],
+      "sha256": "7b09b99bb3b443c1f7ea21c3f90ab9d158012c1b153f02256ad382715525d981"
+    },
+    {
+      "id": "cloud-service-lab",
+      "stages": [
+        "先有实际处理请求的服务进程",
+        "健康探测与用户结果各自提供证据",
+        "再从本机运行走向集群验收"
+      ],
+      "introduced_terms": [
+        "服务",
+        "进程",
+        "探针",
+        "版本",
+        "发布",
+        "指标"
+      ],
+      "sha256": "c06f17c3149a60473f504764ea94fb1f6ca3a5b765dd8e96bdbfd0ecf7516c84"
+    },
+    {
+      "id": "production-readiness",
+      "stages": [
+        "先写清一条用户请求要得到什么",
+        "接口连接组件，状态连接执行前后",
+        "最后按场景逐项验收整条路径"
+      ],
+      "introduced_terms": [
+        "服务",
+        "模型",
+        "任务",
+        "接口",
+        "状态",
+        "验收"
+      ],
+      "sha256": "97483c79bd8ce6059928a31a8c7a530f73aecfcdb1502d18e5cd02a5d63887a2"
+    }
+  ],
+  "modules": [
+    {
+      "id": "foundation",
+      "stages": [
+        "程序运行起来，才有进程",
+        "计算、保存和传输是不同的工作",
+        "沿这几种对象补基础"
+      ],
+      "introduced_terms": [
+        "CPU",
+        "进程",
+        "线程",
+        "I/O"
+      ],
+      "sha256": "5ae1fea4d1ff5f8449cb4b7e85772924632f35170ab464c2279f9756f15eadaf"
+    },
+    {
+      "id": "compute",
+      "stages": [
+        "先有程序和用户请求",
+        "服务依赖四类基本资源",
+        "云平台把资源变成可申请的能力"
+      ],
+      "introduced_terms": [
+        "CPU",
+        "进程",
+        "服务",
+        "内存",
+        "云计算"
+      ],
+      "sha256": "8a1419bd6335aa40ab5448a8ea93ea3b55e676c5f669bfb2883f5fb704bb0413"
+    },
+    {
+      "id": "network",
+      "stages": [
+        "两台机器怎样找到彼此",
+        "地址、路径与访问资格逐层衔接",
+        "再解释云网络中的具体对象"
+      ],
+      "introduced_terms": [
+        "网络",
+        "IP",
+        "端口",
+        "请求"
+      ],
+      "sha256": "290f8eca90f69ea57fa87549bb33e45945d6e4b84e4a9e46a8c5660364345c2d"
+    },
+    {
+      "id": "cloud-data",
+      "stages": [
+        "数据放在哪里，怎样取回来",
+        "读得快和保存正确是两件事",
+        "先分职责，再比较具体机制"
+      ],
+      "introduced_terms": [
+        "存储",
+        "数据库",
+        "缓存",
+        "事务"
+      ],
+      "sha256": "bc533949bb7f77f27c535767ae748ef37bad8eff3856d60ba3ade376d2151548"
+    },
+    {
+      "id": "native",
+      "stages": [
+        "程序需要一份可重建的运行环境",
+        "一台机器变成多台机器，才需要编排",
+        "声明目标，再持续维护实际状态"
+      ],
+      "introduced_terms": [
+        "容器",
+        "Kubernetes",
+        "Pod",
+        "节点",
+        "集群",
+        "控制器"
+      ],
+      "sha256": "a126707cc263996bf731a8bdf65f894ac06c39483eee4be57af706a31afc555b"
+    },
+    {
+      "id": "serverless",
+      "stages": [
+        "把一项处理写成有输入输出的函数",
+        "平台接管机器，业务仍有状态",
+        "从调用继续走到完成条件"
+      ],
+      "introduced_terms": [
+        "函数",
+        "事件",
+        "Serverless",
+        "幂等"
+      ],
+      "sha256": "27597f2d3b673c2fca31d6df1c5d268e4c02b90e003794aded8b3630dff809f6"
+    },
+    {
+      "id": "cloud-delivery",
+      "stages": [
+        "上线交付的不只是一份源码",
+        "应用版本还要配合资源和数据",
+        "让声明、实际状态与验证相连"
+      ],
+      "introduced_terms": [
+        "制品",
+        "配置",
+        "发布",
+        "IaC",
+        "GitOps"
+      ],
+      "sha256": "222b2ddeed85e4d3e78b718bcf1b027f56d1d7c3368409e9d0d07f393cd8f82b"
+    },
+    {
+      "id": "cloud-security",
+      "stages": [
+        "先识别请求来自谁",
+        "再判断这次动作是否允许",
+        "沿完整执行路径落实边界"
+      ],
+      "introduced_terms": [
+        "身份",
+        "认证",
+        "授权",
+        "租户",
+        "凭据"
+      ],
+      "sha256": "9ccca752b26dd9f8738075ca0e9c4fb1de0130b25f5162bfaca8fe22cbd9adb4"
+    },
+    {
+      "id": "cloud-capacity",
+      "stages": [
+        "先规定工作与计量单位",
+        "完成赶不上到达，就会积压",
+        "再比较弹性、保护与成本"
+      ],
+      "introduced_terms": [
+        "容量",
+        "吞吐",
+        "延迟",
+        "队列",
+        "弹性"
+      ],
+      "sha256": "51bd2f78428f5938841842d7387cf1577ff728c9c14ed904caa7019d2fe832bf"
+    },
+    {
+      "id": "sre",
+      "stages": [
+        "先说清用户怎样才算得到服务",
+        "目标和观测承担不同职责",
+        "由目标走向告警、排障和恢复"
+      ],
+      "introduced_terms": [
+        "SRE",
+        "可靠性",
+        "指标",
+        "日志",
+        "追踪",
+        "SLO"
+      ],
+      "sha256": "c28e8eff9a16d0f67f6e1bf396e5f4e35b18ecaab7457d89b0141e7b082a2392"
+    },
+    {
+      "id": "model-foundations",
+      "stages": [
+        "模型先是一套把输入变成输出的计算",
+        "文本要先变成可以计算的数字",
+        "从预测走向训练，再看硬件怎样执行"
+      ],
+      "introduced_terms": [
+        "模型",
+        "参数",
+        "训练",
+        "推理",
+        "token",
+        "向量",
+        "张量",
+        "GPU",
+        "损失",
+        "梯度",
+        "优化器"
+      ],
+      "sha256": "5cd8cdd9e4fc2607b467c9f33e92b8b77262d16d8d80e20d8bcf8d7837378280"
+    },
+    {
+      "id": "training",
+      "stages": [
+        "先有模型、数据和要预测的目标",
+        "误差怎样影响参数",
+        "一台机器放不下或算得慢，再引入并行"
+      ],
+      "introduced_terms": [
+        "模型",
+        "参数",
+        "训练",
+        "损失",
+        "梯度",
+        "优化器",
+        "进程"
+      ],
+      "sha256": "f352e8f7b5fea4533ad80815de42232a6da51a7a9c5e506606c4acea98565e6f"
+    },
+    {
+      "id": "platform",
+      "stages": [
+        "区分制作模型和使用模型",
+        "平台管理一组有明确身份的运行",
+        "在线回答还有新的等待和状态"
+      ],
+      "introduced_terms": [
+        "模型",
+        "训练",
+        "推理",
+        "作业",
+        "调度",
+        "缓存"
+      ],
+      "sha256": "a8246f3f8a12382812f5a991445f25051c7844bf1dc3c60a604cac84760342a1"
+    },
+    {
+      "id": "agent",
+      "stages": [
+        "用户要的是一个可判断的结果",
+        "提议需要由程序变成实际动作",
+        "用一个循环把四者连接起来"
+      ],
+      "introduced_terms": [
+        "任务",
+        "模型",
+        "工具",
+        "运行时",
+        "状态",
+        "Agent"
+      ],
+      "sha256": "4c31620700e9433803689f43229ba3665cf3cb33fb4a8a8d90e0063e64c7dcd4"
+    }
+  ],
+  "source_sha256": {
+    "dist/concept-paths-data.js": "abd332e8e465999428ff4119c34ea004c41a0b7b273a22c97e67796705456180",
+    "dist/concept-paths.js": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
+    "scripts/draw-concept-paths.py": "d1058fb65b93454e5335c844aec7109bc143cf47ec53cf08fb1382f118915b7c",
+    "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",
+    "dist/diagrams/v42-ai-concepts.svg": "4bc9967562b9386d4984ad09b6ae2c44e1e1f76dd24d63e436922c9bed46c199",
+    "dist/diagrams/v42-agent-concepts.svg": "7d29d3c3d189c16c93b097d522c1d8887dcce9a821f876fabda67068de52b331",
+    "dist/diagrams/v42-decoder-path.svg": "ca7a2a94737aec696928c10510187d1919bf77454b0c2cd62d44be5c8ac3773d"
+  }
+}

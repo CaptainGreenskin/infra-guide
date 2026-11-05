@@ -1,7 +1,7 @@
 # InfraGuide
 
 给中文初学者和面试准备者的基础设施学习站：**Cloud Infra、AI Infra、Agent Infra**。
-先讲系统知识，再用图、手算、代码和故障实验把机制走通。
+先定义概念和关系，再讲系统机制，用图、手算、代码和故障实验把它走通。
 
 [在线阅读](https://captaingreenskin.github.io/infra-guide/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [复习路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
 
@@ -16,6 +16,8 @@
 当前66章：Cloud 28、AI 25、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
+
+后续内容按 [中文初学者编写规则](docs/CONCEPT_FIRST_AUTHORING.md) 维护：入口和每章先讲对象与依赖，再进入机制和案例。本轮[高关注项目复核](docs/GITHUB_RESEARCH_2026-11-05.md)与[概念修订记录](docs/CONCEPT_REVIEW_2026-11-05.json)单独保留。
 
 ## 配套独立项目
 

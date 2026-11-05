@@ -7,7 +7,12 @@ function searchContains(text,term){return searchFind(text,term)>=0;}
 function buildSiteSearchIndex(){
  const entries=[];
  const add=(entry,segments)=>{entry.titleText=searchPlainText(entry.title);entry.titleNorm=normalizeSearchText(entry.titleText);entry.desc=searchPlainText(entry.desc);entry.descNorm=normalizeSearchText(entry.desc+' '+(entry.tags||[]).join(' '));entry.segments=segments.map(s=>({...s,proseNorm:normalizeSearchText(searchPlainText(s.text.replace(/<pre\b[^>]*>[\s\S]*?<\/pre>/g,''))),text:searchPlainText(s.text),heading:searchPlainText(s.heading)})).map(s=>({...s,norm:normalizeSearchText(s.heading+' '+s.text),headingNorm:normalizeSearchText(s.heading)}));entry.allNorm=[entry.titleNorm,entry.descNorm,...entry.segments.map(s=>s.norm)].join(' ');entry.order=entries.length;entries.push(entry);};
- for(const a of modules.flatMap(m=>articles.filter(a=>a.module===m.id)))add({id:'article:'+a.id,type:'article',title:a.title,desc:a.desc,tags:a.tags,module:a.module,number:a.number,path:'/article/'+a.id+'/'},a.sections.map(([heading,text],i)=>({heading,text,anchor:'section-'+(i+1)})));
+ for(const a of modules.flatMap(m=>articles.filter(a=>a.module===m.id))){
+  const segments=a.sections.map(([heading,text],i)=>({heading,text,anchor:'section-'+(i+1)}));
+  const primer=typeof chapterConceptPaths!=='undefined'?chapterConceptPaths[a.id]:null;
+  if(primer)segments.unshift({heading:'概念起点与关系',text:primer.steps.map(([title,body])=>'<p>'+title+'。'+body+'</p>').join(''),anchor:'concept-path'});
+  add({id:'article:'+a.id,type:'article',title:a.title,desc:a.desc,tags:a.tags,module:a.module,number:a.number,path:'/article/'+a.id+'/'},segments);
+ }
  for(const d of cloudKnowledgeDomains)for(const p of d.points)add({id:'knowledge:'+p[0],type:'knowledge',title:p[1],desc:p[2],module:d.module,path:'/module/'+d.module+'/',anchor:'knowledge-'+p[0]},[{heading:p[1],text:cloudKnowledgeExplanations[p[0]]||''}]);
  for(const d of infraKnowledgeDomains)for(const p of d.points)add({id:'knowledge:'+p.id,type:'knowledge',title:p.title,desc:p.lead,module:d.module,path:'/module/'+d.module+'/',anchor:'knowledge-'+p.id},[{heading:p.title,text:p.body}]);
  return entries;

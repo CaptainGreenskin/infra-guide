@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="800" viewBox="0 0 1120 800" role="img" aria-labelledby="title desc">
+<title id="title">任务、模型、运行时和工具</title><desc id="desc">模型提出建议，运行时核对与安排，工具执行实际动作；状态记录事实，验收判断任务是否完成。</desc>
+<defs><marker id="flow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#315dce"/></marker><marker id="dependency" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#65728a"/></marker><marker id="update" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#287b69"/></marker></defs>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="800" fill="#fff"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">先分清谁提议、谁执行、谁确认结果</text>
+<text x="32" y="87" font-size="22" fill="#65728a" font-weight="400" text-anchor="start">箭头表示控制与信息传递；工具执行动作后，还要核对任务完成条件。</text>
+<rect x="30" y="147" width="255" height="130" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="157.5" y="185" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">任务</text>
+<text x="157.5" y="220" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">目标、允许范围</text>
+<text x="157.5" y="249" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">完成条件</text>
+<rect x="425" y="147" width="260" height="130" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="555.0" y="185" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">模型</text>
+<text x="555.0" y="220" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">根据输入提出下一步</text>
+<text x="555.0" y="249" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">输出仍只是提议</text>
+<rect x="825" y="147" width="265" height="130" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="957.5" y="185" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">运行时</text>
+<text x="957.5" y="220" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">核对参数与权限</text>
+<text x="957.5" y="249" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">安排调用、保存结果</text>
+<polyline points="285,212 425,212" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<polyline points="685,212 825,212" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<rect x="825" y="386" width="265" height="125" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="957.5" y="424" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">工具</text>
+<text x="957.5" y="459" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">真正读取资料或执行动作</text>
+<rect x="425" y="386" width="260" height="125" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="555.0" y="424" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">状态与结果</text>
+<text x="555.0" y="459" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">哪些已确认、哪些未知</text>
+<rect x="30" y="386" width="255" height="125" rx="8" fill="#f2f5fb" stroke="#d6dfef" stroke-width="2"/>
+<text x="157.5" y="424" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">任务验收</text>
+<text x="157.5" y="459" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">检查必要与禁止效果</text>
+<polyline points="958,277 958,386" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<text x="976" y="339" font-size="21" fill="#315dce" font-weight="400" text-anchor="start">调用</text>
+<polyline points="825,451 685,451" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<text x="755" y="432" font-size="21" fill="#315dce" font-weight="400" text-anchor="middle">观察</text>
+<polyline points="425,451 285,451" fill="none" stroke="#315dce" stroke-width="2.5" marker-end="url(#flow)"/>
+<text x="355" y="432" font-size="21" fill="#315dce" font-weight="400" text-anchor="middle">核对</text>
+<polyline points="555,386 555,277" fill="none" stroke="#65728a" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#dependency)"/>
+<text x="575" y="334" font-size="21" fill="#65728a" font-weight="400" text-anchor="start">提供后续输入</text>
+<polyline points="157,511 157,591 555,591 555,511" fill="none" stroke="#287b69" stroke-width="2.5" marker-end="url(#update)"/>
+<text x="352" y="579" font-size="22" fill="#287b69" font-weight="600" text-anchor="middle">未完成且仍获准：继续推进</text>
+<rect x="30" y="657" width="1060" height="100" rx="8" fill="#edf7f3" stroke="#a5cabb" stroke-width="2"/>
+<text x="560.0" y="695" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">完成与停止都应有明确依据</text>
+<text x="560.0" y="730" font-size="21" fill="#65728a" font-weight="400" text-anchor="middle">工具成功、模型声称完成和用户目标完成，需要分别判断。</text>
+<metadata>{&quot;kind&quot;: &quot;conceptual_relationships&quot;, &quot;relationships&quot;: [&quot;task→model_proposal→runtime_validation→tool_execution&quot;, &quot;tool_result→state→acceptance&quot;, &quot;state→next_model_input&quot;, &quot;acceptance→continue_or_stop&quot;], &quot;measured&quot;: false, &quot;author&quot;: &quot;InfraGuide&quot;}</metadata>
+</svg>

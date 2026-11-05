@@ -38,7 +38,7 @@ function initReadingComfort(){
  buttons.large.addEventListener('click',()=>change('large'),{signal});
  buttons.focus.addEventListener('click',()=>change('focus'),{signal});
 
- const sections=[...article.querySelectorAll('.article-section[id],.knowledge-point[id],.knowledge-examples[id]')].filter(el=>el.querySelector('h2'));
+ const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id]')].filter(el=>el.querySelector('h2'));
  const directory=document.createElement('dialog');
  directory.className='reader-dialog reader-directory';
  directory.setAttribute('aria-labelledby','reader-directory-title');

@@ -91,12 +91,13 @@ const cloudKnowledgeDomain = id=>cloudKnowledgeDomains.find(domain=>domain.modul
 function knowledgePointHTML(point,index,compact=false){const [id,title,body,boundary]=point;return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+(typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'')+'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p></section>';}
 function cloudPrerequisiteHTML(){return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>'<section class="knowledge-point" id="knowledge-prerequisite-'+(index+1)+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p><p class="path-links">'+ids.map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>').join('')+'</div>';}
 function cloudKnowledgeBody(m){
- if(m.id==='foundation')return cloudPrerequisiteHTML();
+ if(m.id==='foundation')return moduleConceptIntro(m)+explainFirstConceptTerms(cloudPrerequisiteHTML(),conceptSeen(moduleConceptPaths[m.id]));
  const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';
- return '<div class="knowledge-body">'+domain.points.map((point,index)=>knowledgePointHTML(point,index)).join('')+'</div>';
+ return moduleConceptIntro(m)+'<div class="knowledge-body">'+explainFirstConceptTerms(domain.points.map((point,index)=>knowledgePointHTML(point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>';
 }
 function cloudKnowledgeReferences(m){const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';return '<section class="knowledge-references"><h2>原始资料</h2><div>'+domain.refs.map(key=>'<a href="'+sources[key][1]+'" target="_blank" rel="noopener">'+sources[key][0]+' ↗</a>').join('')+'</div></section>';}
-function cloudModuleTOC(m){if(m.id==='foundation')return cloudPrerequisites.map(([title],i)=>'<a href="/module/foundation/#knowledge-prerequisite-'+(i+1)+'">'+(i+1)+'. '+title+'</a>').join('');const domain=cloudKnowledgeDomain(m.id);return domain?domain.points.map((point,index)=>'<a href="/module/'+m.id+'/#knowledge-'+point[0]+'">'+(index+1)+'. '+point[1]+'</a>').join(''):'<a href="/module/foundation/">前置基础</a>';}
+function cloudModuleTOC(m){return conceptTOCLink('/module/'+m.id+'/')+cloudOriginalModuleTOC(m);}
+function cloudOriginalModuleTOC(m){if(m.id==='foundation')return cloudPrerequisites.map(([title],i)=>'<a href="/module/foundation/#knowledge-prerequisite-'+(i+1)+'">'+(i+1)+'. '+title+'</a>').join('');const domain=cloudKnowledgeDomain(m.id);return domain?domain.points.map((point,index)=>'<a href="/module/'+m.id+'/#knowledge-'+point[0]+'">'+(index+1)+'. '+point[1]+'</a>').join(''):'<a href="/module/foundation/">前置基础</a>';}
 function cloudMobileContents(m){return '<details class="mobile-contents"><summary><span class="mobile-field-label">领域目录与</span>本页知识点</summary><div class="mobile-field-links">'+cloudKnowledgeDomains.map(domain=>{const field=moduleFor(domain.module);return '<a href="/module/'+field.id+'/">'+field.n+' '+field.name+'</a>';}).join('')+'<a href="/module/foundation/">P0 前置基础知识</a></div>'+cloudModuleTOC(m)+'<a href="/module/'+m.id+'/#examples">机制详解与案例</a></details>';}
 function cloudKnowledgePage(m){
  document.title=m.name+' · Cloud Infra · InfraGuide';
