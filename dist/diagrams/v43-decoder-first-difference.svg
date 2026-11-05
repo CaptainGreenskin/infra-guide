@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="745" viewBox="0 0 1120 745" role="img" aria-labelledby="title desc">
+<title id="title">用首个不同的中间量定位解码器接线错误</title><desc id="desc">四种保持输出形状的错误分别最先在n1、n2、gate_product、h2发生差异。归一化时间轴还会泄漏未来。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="745" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">输出形状都合法，哪一步最先算错</text>
+<text x="32" y="89" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">●标记首个不同的中间量；先回到这一格检查输入与运算。</text>
+<text x="442" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">N₁</text>
+<text x="538" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">注意力</text>
+<text x="634" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">H₁</text>
+<text x="730" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">N₂</text>
+<text x="826" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">门控乘积</text>
+<text x="922" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">H₂</text>
+<text x="1018" y="156" font-size="22" fill="#315dce" font-weight="550" text-anchor="middle">输出</text>
+<text x="32" y="235" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">归一化沿时间轴</text>
+<rect x="402" y="193" width="80" height="60" rx="5" fill="#fff0eb" stroke="#dbe2ed"/>
+<text x="442" y="233" font-size="27" fill="#ad5147" font-weight="600" text-anchor="middle">●</text>
+<rect x="498" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="538" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="594" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="634" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="690" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="730" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="786" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="826" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="882" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="922" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="978" y="193" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="1018" y="233" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<text x="32" y="323" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">第二分支错误接回X</text>
+<rect x="402" y="281" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="442" y="321" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="498" y="281" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="538" y="321" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="594" y="281" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="634" y="321" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="690" y="281" width="80" height="60" rx="5" fill="#fff0eb" stroke="#dbe2ed"/>
+<text x="730" y="321" font-size="27" fill="#ad5147" font-weight="600" text-anchor="middle">●</text>
+<rect x="786" y="281" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="826" y="321" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="882" y="281" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="922" y="321" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="978" y="281" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="1018" y="321" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<text x="32" y="411" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">激活放到另一条投影</text>
+<rect x="402" y="369" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="442" y="409" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="498" y="369" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="538" y="409" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="594" y="369" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="634" y="409" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="690" y="369" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="730" y="409" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="786" y="369" width="80" height="60" rx="5" fill="#fff0eb" stroke="#dbe2ed"/>
+<text x="826" y="409" font-size="27" fill="#ad5147" font-weight="600" text-anchor="middle">●</text>
+<rect x="882" y="369" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="922" y="409" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<rect x="978" y="369" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="1018" y="409" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<text x="32" y="499" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">省略第二次残差</text>
+<rect x="402" y="457" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="442" y="497" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="498" y="457" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="538" y="497" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="594" y="457" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="634" y="497" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="690" y="457" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="730" y="497" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="786" y="457" width="80" height="60" rx="5" fill="#edf5ef" stroke="#dbe2ed"/>
+<text x="826" y="497" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">=</text>
+<rect x="882" y="457" width="80" height="60" rx="5" fill="#fff0eb" stroke="#dbe2ed"/>
+<text x="922" y="497" font-size="27" fill="#ad5147" font-weight="600" text-anchor="middle">●</text>
+<rect x="978" y="457" width="80" height="60" rx="5" fill="#f3f4f7" stroke="#dbe2ed"/>
+<text x="1018" y="497" font-size="27" fill="#66738a" font-weight="600" text-anchor="middle">·</text>
+<text x="32" y="611" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">只改未来的第4个输入，前3个输出：</text>
+<text x="32" y="656" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">正确特征轴归一化：误差0；错误时间轴：最大差约0.423</text>
+<text x="32" y="718" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">实际664参数CPU模型、固定种子与输入；这些数值不是普遍误差阈值。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_cpu_decoder&quot;, &quot;faults&quot;: {&quot;stale_input&quot;: {&quot;first_difference&quot;: &quot;n2&quot;, &quot;logit_max_difference&quot;: 0.21898156825589954}, &quot;swap_gate&quot;: {&quot;first_difference&quot;: &quot;gate_product&quot;, &quot;logit_max_difference&quot;: 0.2819475730770602}, &quot;skip_residual&quot;: {&quot;first_difference&quot;: &quot;h2&quot;, &quot;logit_max_difference&quot;: 10.859427079795601}, &quot;normalize_time&quot;: {&quot;first_difference&quot;: &quot;n1&quot;, &quot;logit_max_difference&quot;: 0.6042534306666147}}, &quot;future_error&quot;: 0.0, &quot;wrong_axis_future_error&quot;: 0.4227990715997827}</metadata>
+</svg>

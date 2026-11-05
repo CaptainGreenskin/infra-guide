@@ -1,0 +1,221 @@
+{
+  "schema": 1,
+  "base_audit": "QUALITY_AUDIT_2026-11-04.json",
+  "base_source_commit": "a52b675ff6a1d5af4231c01496de3765244639af",
+  "historical_eight_hour_counts_unchanged": true,
+  "revisions": [
+    {
+      "id": "vpc-network",
+      "replaced_sections": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "extended_sections": [
+        7
+      ],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "f20e4bf08b43a3fedb4ea893949808a97f244ebb6f4350896e8beec70ac4a560",
+      "reviewed_content_sha256": "1ff57a8bd11e8dd4e42a0ea755d9c95baafe8fb42b527bf93b970df276b845c9",
+      "section_count": 7,
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ],
+      "observation": "Rewrote 5 numbered sections around name/address/port, layered protocols, resolver/cache/connection, bit prefixes, route/return rules, tuple direction and NAT mapping; retained diagnosis and added runnable address-rule trace.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "分开域名、IP、端口与名称解析、TCP、TLS、HTTP四个阶段",
+        "手算CIDR、最长前缀选择与独立的回程路径",
+        "用五元组解释访问规则和NAT映射的方向",
+        "运行路由选择程序，并说明本地规则计算与真实转发的区别"
+      ],
+      "reading_minutes": 25
+    },
+    {
+      "id": "kubernetes-basics",
+      "replaced_sections": [
+        1,
+        2,
+        4
+      ],
+      "extended_sections": [
+        7
+      ],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "d44eebc9abc936a98f303b88af8776a6021db2535faafc8242c7c1489c785dd4",
+      "reviewed_content_sha256": "7488d20e2a2e60689cdedeb5052dd665fa87920b4d19f2e0111bece8cd58744e",
+      "section_count": 7,
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ],
+      "observation": "Rewrote object/spec/status, five component responsibilities, identity/version/generation, re-observation under retry and endpoint semantics; retained probes/termination and added local convergence trace plus target read-only observation.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "按对象关系解释Deployment到Pod的控制过程",
+        "区分UID、resourceVersion、generation与observedGeneration",
+        "分别核对调度、启动、就绪和可用条件",
+        "用重复调谐、旧版本冲突与同名新UID解释重试边界"
+      ],
+      "reading_minutes": 30
+    },
+    {
+      "id": "attention-mechanics",
+      "replaced_sections": [
+        1,
+        4,
+        5
+      ],
+      "extended_sections": [
+        2,
+        9
+      ],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "5332c5f4e931b6a2c55fd3ed0224d3b5a11dde04b838774305e69d140d4352dc",
+      "reviewed_content_sha256": "7cae1839c2b8d9ee25612674cedcb7c90243cce435631974785daaf62c374c64",
+      "section_count": 9,
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ],
+      "observation": "Rewrote query/key/value and per-query normalization, padding/query/loss masks, absolute cache positions and head layout. Added actual CPU trace and a separate asymmetric direction counterexample.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "按一行query计算分数、合法集合、Softmax与加权输出",
+        "分别解释因果掩码、无效key与训练标签掩码",
+        "用绝对位置构造缓存增量查询的可见性",
+        "用位置标记和实际数值核对分头、拼头及Q/K方向"
+      ],
+      "reading_minutes": 35
+    },
+    {
+      "id": "transformer-block",
+      "replaced_sections": [
+        2,
+        3,
+        8
+      ],
+      "extended_sections": [
+        5
+      ],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "6d71687db352a1c407d57023b671c5c9266e89a27cb493e981bae3cc1c3127f7",
+      "reviewed_content_sha256": "48b71393c7de0a376b294ddaa1dfb7bb4c581749ae14d9f8dd229042217b8fd9",
+      "section_count": 9,
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ],
+      "observation": "Rewrote residual propagation, normalization statistics and axes, implementation trace and diagnosis. Added actual CPU forward, intermediate values, norm/SwiGLU hand oracles and four shape-compatible faults.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "沿两次残差说明每个分支实际接收谁的输出",
+        "手算LayerNorm和RMSNorm，说明统计轴与正ε的作用",
+        "连接FFN、SwiGLU的公式、参数数与中间形状",
+        "用第一个不同的中间张量定位四种形状相容错误"
+      ],
+      "reading_minutes": 35
+    },
+    {
+      "id": "agent-memory",
+      "replaced_sections": [
+        1,
+        2,
+        3
+      ],
+      "extended_sections": [
+        5,
+        7
+      ],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "3cb157cfe78ac6663ec3bde62c69fba94c4f4b441dfca3e3e57a49186484841e",
+      "reviewed_content_sha256": "96dcbfb625fbcee2b4f527471bc4d2b2344bee5ca5f849346c304bf2a779c5ba",
+      "section_count": 7,
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ],
+      "observation": "Rewrote model/input/storage hierarchy, complete-request budget, ordered material selection and semantic compression. Existing SQLite state/version/revocation program remains exact; budget values are explicitly declared examples.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "分清模型参数、上下文、运行状态与长期记忆",
+        "按完整请求口径分配固定项、材料和输出预留",
+        "压缩时保留版本、范围、单位、否定与不确定性",
+        "运行旧摘要、新状态和撤回材料的对照，核对实际效果"
+      ],
+      "reading_minutes": 35
+    },
+    {
+      "id": "durable-workflows",
+      "replaced_sections": [
+        1,
+        2,
+        3
+      ],
+      "extended_sections": [],
+      "review": "substantial_v43",
+      "reviewed_at": "2026-11-05",
+      "previous_content_sha256": "88c617ebdcc0aa0f796d48c6061042f833683f63f17f473eb8c4c39e9ffaf93d",
+      "reviewed_content_sha256": "2e069897d345efa38ba307a9d21cc81be3691304fbfee0e88c06d60290639df9",
+      "section_count": 10,
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ],
+      "observation": "Rewrote workflow/activity/command/event vocabulary and ordered history reconstruction. Added actual persisted-result vs unrecorded-result process exits, command mismatch checks, then retained the remote-effect/fencing/cancellation progression.",
+      "scope": "Full selected chapter teaching progression, arithmetic, figure/source links, code provenance and stated experiment limits. No claim of human learning outcomes or target GPU/Kubernetes/Kairo execution.",
+      "objectives": [
+        "从命令、活动与有序历史解释当前状态怎样恢复",
+        "区分活动返回与结果已记录两个提交位置",
+        "用实际退出与重放核对活动次数和命令相容性",
+        "再用两本账和活着的旧进程验证外部效果、幂等与接管"
+      ],
+      "reading_minutes": 40
+    }
+  ]
+}

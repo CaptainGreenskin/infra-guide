@@ -61,9 +61,13 @@ const currentPoints=JSON.parse(JSON.stringify(vm.runInContext(`cloudKnowledgeDom
 const reviewed=fresh.chapters.filter(x=>/^(substantial_v\d+|fresh_review_v\d+)$/.test(x.review));
 const substantial=fresh.chapters.filter(x=>/^substantial_v\d+$/.test(x.review));
 assert.equal(fresh.eight_hour_progress.substantial_chapters,substantial.length,'substantial chapter summary must match distinct reviewed chapter entries');
-for(const row of reviewed){const a=data.articles.find(a=>a.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:a.title,sections:a.sections}),row.id+': changed after recorded review');}
+// Preserve the completed window's record; later body revisions form an explicit hash chain.
+const later=JSON.parse(read('docs/POST_WINDOW_BODY_REVIEWS.json'));
+assert.equal(later.base_audit,'QUALITY_AUDIT_2026-11-04.json');assert(later.historical_eight_hour_counts_unchanged);
+for(const revision of later.revisions){assert(reviewed.some(row=>row.id===revision.id),revision.id+': unknown post-window chapter');assert(revision.observation&&revision.scope&&revision.reviewed_at,'missing post-window review');}
+for(const row of reviewed){const a=data.articles.find(a=>a.id===row.id);let expected=row.reviewed_content_sha256;for(const revision of later.revisions.filter(r=>r.id===row.id)){assert.equal(revision.previous_content_sha256,expected,row.id+': broken review continuity');expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:a.title,sections:a.sections}),row.id+': changed after latest recorded review');}
 const reviewedPoints=(fresh.knowledge_reviews||[]).filter(x=>/^fresh_review_v\d+$/.test(x.review));
 for(const row of reviewedPoints){const p=currentPoints.find(p=>p.id===row.id);assert.equal(row.reviewed_content_sha256,signature({title:p.title,lead:p.lead,body:p.body,boundary:p.boundary||'',articles:p.articles}),row.id+': changed after recorded review');}
 assert.equal(fresh.eight_hour_progress.reviewed_chapters,reviewed.length);assert.equal(fresh.eight_hour_progress.reviewed_knowledge_points,reviewedPoints.length);
 assert.equal(fresh.chapters.length,data.articles.length);assert.equal(fresh.knowledge_reviews.length,currentPoints.length);
-console.log('PASS: prior63-chapter audit/20 repairs, independent1000-request arithmetic and optimizer-call provenance; active-window content signatures match '+reviewed.length+'/'+data.articles.length+' reviewed chapters and '+reviewedPoints.length+'/'+currentPoints.length+' reviewed knowledge points. Pending items are not counted as complete.');
+console.log('PASS: historical63-chapter audit/20 repairs, independent1000-request arithmetic and optimizer-call provenance; preserved window66/95 review counts with '+later.revisions.length+' explicit post-window body revisions. Current chapter and knowledge signatures match their latest review; pending work is not counted as complete.');

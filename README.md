@@ -19,6 +19,8 @@
 
 后续内容按 [中文初学者编写规则](docs/CONCEPT_FIRST_AUTHORING.md) 维护：入口和每章先讲对象与依赖，再进入机制和案例。本轮[高关注项目复核](docs/GITHUB_RESEARCH_2026-11-05.md)与[概念修订记录](docs/CONCEPT_REVIEW_2026-11-05.json)单独保留。
 
+正文继续按这条顺序修订：[六章机制与实战迭代](docs/BODY_ITERATION_2026-11-05.md)覆盖云网络、Kubernetes控制面、注意力、解码器、上下文与持久工作流，附六张图和五个可运行程序。
+
 ## 配套独立项目
 
 从 [自动微分与训练](https://captaingreenskin.github.io/infra-guide/article/autograd-training/) 或 [Transformer 模块](https://captaingreenskin.github.io/infra-guide/article/transformer-block/) 读到梯度更新和因果注意力时，可以转到 [One GPU LM](https://github.com/CaptainGreenskin/one-gpu-lm)，跟着实验从随机权重训练一个中文小模型。训练代码与原始结果由该仓库维护。[首次 RTX PRO 6000 实测](https://github.com/CaptainGreenskin/one-gpu-lm/tree/main/experiments/002-first-train/results/pro6000-first) 记录了 100 步训练的吞吐、显存和验证损失。

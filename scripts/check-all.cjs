@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),args=process.argv.slice(2);
 if(args.some(arg=>arg!=='--pages')||new Set(args).size!==args.length){console.error('Usage: node scripts/check-all.cjs [--pages]');process.exit(2);}
 const checks=[
  'check-content.cjs','check-runtime.cjs','check-startup-recovery.cjs','check-site-search.cjs','check-lab-catalog.cjs','check-reader-resources.cjs',
- 'check-public-pages.cjs','check-concept-paths.cjs','check-textbooks.cjs','check-cloud-course.cjs',
+ 'check-public-pages.cjs','check-concept-paths.cjs','check-body-walkthroughs.cjs','check-textbooks.cjs','check-cloud-course.cjs',
  'check-knowledge-resources.cjs','check-mechanism-models.cjs','check-cloud-deepening.cjs',
  'check-cloud-operations.cjs','check-ai-agent-systems.cjs','check-learning-mechanisms.cjs',
  'check-serving-consistency.cjs','check-update-and-cancel.cjs','check-storage-quant-context.cjs',

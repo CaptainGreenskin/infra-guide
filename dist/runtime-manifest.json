@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 136,
+  "canonical_script_count": 138,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "646f63b6268df9369d248f2f273c4972f80febbd79e295bf42ea0e3b860b7b8a",
-      "bytes": 365828,
+      "sha256": "1490a06c855a12db4fb1d34fdcce3fb58dcfec94b48f8fca06792f6734e60bf9",
+      "bytes": 366180,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "82c9f35eccbdfeaa07dd593ecadf9c605a8db7c21edf56cf941f6228ed7d55d3",
-          "bytes": 7697
+          "sha256": "dcfbe45d6b815c76115e1741e5df26a855145446b4983ac391d51ddd4551d339",
+          "bytes": 8049
         },
         {
           "file": "training-content.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "2d13f75269f3718a811a02830bc5aad46635f6628cf4b87fd8d95d14d1205480",
-      "bytes": 552001,
+      "sha256": "381fecec6a5c80438673ee3a560b2809b936c5f76f537428a4c5b3add0185199",
+      "bytes": 641250,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -694,6 +694,16 @@
           "bytes": 8331
         },
         {
+          "file": "mechanism-walkthroughs-data.js",
+          "sha256": "b45e3fe5535d0abc95bd8f11ff853ac1d537037c16a5d83514ee223d72beb4e9",
+          "bytes": 36650
+        },
+        {
+          "file": "body-walkthroughs.js",
+          "sha256": "31cad568f6a047a5691b92706e89dfb5c2a07dfb4e3b1f6b165cf9b7b76ddf5b",
+          "bytes": 49789
+        },
+        {
           "file": "concept-paths-data.js",
           "sha256": "abd332e8e465999428ff4119c34ea004c41a0b7b273a22c97e67796705456180",
           "bytes": 69080
@@ -705,8 +715,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "955535d78bdbe209f78f3e13cd571ad5a7ff7d9c2057e8192c917f500c316ca4",
-          "bytes": 33297
+          "sha256": "03d83c43074a644e7475944c89cc606ae09d19958e1fd178fbe60a7e4a17222d",
+          "bytes": 36041
         }
       ]
     }

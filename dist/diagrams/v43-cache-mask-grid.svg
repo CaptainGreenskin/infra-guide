@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="750" viewBox="0 0 1120 750" role="img" aria-labelledby="title desc">
+<title id="title">增量注意力的查询位置与掩码</title><desc id="desc">当前查询在绝对位置2，合法键为0、1、2；正确输出3.5和2。错误使用单查询左上对齐因果掩码时，只能读键0，输出2和0。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="750" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">一条新query不一定是绝对位置0</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">同一Q、K、V；只改变可见性。✓允许读取，×不进入Softmax分母。</text>
+<text x="520" y="153" font-size="24" fill="#315dce" font-weight="600" text-anchor="middle">K₀ / V₀</text>
+<text x="680" y="153" font-size="24" fill="#315dce" font-weight="600" text-anchor="middle">K₁ / V₁</text>
+<text x="840" y="153" font-size="24" fill="#315dce" font-weight="600" text-anchor="middle">K₂ / V₂</text>
+<text x="32" y="231" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">完整计算的第2行</text>
+<rect x="450" y="189" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="520" y="238" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<rect x="610" y="189" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="680" y="238" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<rect x="770" y="189" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="840" y="238" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<text x="970" y="235" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">[3.5, 2]</text>
+<text x="32" y="357" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">正确缓存查询，绝对位置2</text>
+<rect x="450" y="315" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="520" y="364" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<rect x="610" y="315" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="680" y="364" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<rect x="770" y="315" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="840" y="364" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<text x="970" y="361" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">[3.5, 2]</text>
+<text x="32" y="483" font-size="23" fill="#ad5147" font-weight="550" text-anchor="start">错误：单行套左上因果mask</text>
+<rect x="450" y="441" width="140" height="76" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="520" y="490" font-size="32" fill="#287b69" font-weight="600" text-anchor="middle">✓</text>
+<rect x="610" y="441" width="140" height="76" rx="5" fill="#f1f2f5" stroke="#dbe2ed"/>
+<text x="680" y="490" font-size="32" fill="#66738a" font-weight="600" text-anchor="middle">×</text>
+<rect x="770" y="441" width="140" height="76" rx="5" fill="#f1f2f5" stroke="#dbe2ed"/>
+<text x="840" y="490" font-size="32" fill="#66738a" font-weight="600" text-anchor="middle">×</text>
+<text x="970" y="487" font-size="26" fill="#ad5147" font-weight="600" text-anchor="middle">[2, 0]</text>
+<rect x="32" y="585" width="1056" height="112" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="54" y="626" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">正确的第2行权重 = [1/4, 1/4, 1/2]</text>
+<text x="54" y="667" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">输出 = 1/4×[2,0] + 1/4×[0,4] + 1/2×[6,2] = [3.5,2]</text>
+<text x="32" y="734" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">PyTorch 2.5.1 / CPU / float64实际对照；不是GPU速度测量。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_cpu_attention&quot;, &quot;cached&quot;: [3.5, 2.0], &quot;wrong&quot;: [2.0, 0.0], &quot;max_error&quot;: 0.0}</metadata>
+</svg>

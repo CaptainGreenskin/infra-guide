@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="730" viewBox="0 0 1120 730" role="img" aria-labelledby="title desc">
+<title id="title">上下文预算的两次分配</title><desc id="desc">题设窗口8192词元，固定项及输出预留3492，余4700。历史摘要1400、指标1100、待确认600、摘录700占3800，仍余900。题设计数不代表真实分词器结果。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="730" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">先扣固定项，再选择本轮真正需要的材料</text>
+<text x="32" y="90" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">统一使用题设词元数；真实请求要用目标模型的计数接口或分词器重算。</text>
+<text x="32" y="146" font-size="25" fill="#1c283d" font-weight="600" text-anchor="start">第一笔：整个8192窗口</text>
+<rect x="32" y="174" width="450.140625" height="78" rx="5" fill="#dfe8fc" stroke="#dbe2ed"/>
+<rect x="482.140625" y="174" width="605.859375" height="78" rx="5" fill="#e4f3ec" stroke="#dbe2ed"/>
+<text x="257.0703125" y="222" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">固定项+预留 3492</text>
+<text x="785.0703125" y="222" font-size="25" fill="#287b69" font-weight="600" text-anchor="middle">材料空间 4700</text>
+<text x="32" y="294" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">3492 = 系统1200 + 工具620 + 任务672 + 输出900 + 格式100</text>
+<text x="32" y="366" font-size="25" fill="#1c283d" font-weight="600" text-anchor="start">第二笔：4700材料空间怎样分</text>
+<rect x="32" y="396" width="314.5531914893617" height="105" rx="5" fill="#dfe8fc" stroke="#dbe2ed"/>
+<text x="189.27659574468086" y="439" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">摘要</text>
+<text x="189.27659574468086" y="478" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">1400</text>
+<rect x="346.5531914893617" y="396" width="247.14893617021278" height="105" rx="5" fill="#e4f3ec" stroke="#dbe2ed"/>
+<text x="470.1276595744681" y="439" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">指标</text>
+<text x="470.1276595744681" y="478" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">1100</text>
+<rect x="593.7021276595744" y="396" width="134.80851063829786" height="105" rx="5" fill="#f9ecd8" stroke="#dbe2ed"/>
+<text x="661.1063829787233" y="439" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">待确认</text>
+<text x="661.1063829787233" y="478" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">600</text>
+<rect x="728.5106382978723" y="396" width="157.27659574468086" height="105" rx="5" fill="#ece8f5" stroke="#dbe2ed"/>
+<text x="807.1489361702128" y="439" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">摘录</text>
+<text x="807.1489361702128" y="478" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">700</text>
+<rect x="885.7872340425532" y="396" width="202.2127659574468" height="105" rx="5" fill="#f2f4f8" stroke="#dbe2ed"/>
+<text x="986.8936170212767" y="439" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">留空</text>
+<text x="986.8936170212767" y="478" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">900</text>
+<text x="32" y="555" font-size="25" fill="#287b69" font-weight="600" text-anchor="start">占用3800，余900；不必为了填满窗口加入无关历史。</text>
+<text x="32" y="617" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">选择材料后还要检查：来源版本、适用范围、调用与结果配对、必要限定。</text>
+<text x="32" y="684" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">同一内容在完整请求中的计数才是最终依据；分段计数之和只是候选预算。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_teaching_budget&quot;, &quot;window&quot;: 8192, &quot;fixed&quot;: 3492, &quot;available&quot;: 4700, &quot;selected&quot;: 3800, &quot;unused&quot;: 900, &quot;real_tokenizer_measurement&quot;: false}</metadata>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="750" viewBox="0 0 1120 750" role="img" aria-labelledby="title desc">
+<title id="title">声明、观察和就绪是不同状态</title><desc id="desc">状态模型从期望3副本、实际0，经过重复调谐到3个未就绪实例，再到3个就绪实例。UID防止旧请求误作用于同名新对象。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="750" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一个期望，经过几轮控制才成为可用实例</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">generation标明期望的代次；observedGeneration标明状态对应哪一代。</text>
+<text x="48" y="146" font-size="23" fill="#315dce" font-weight="600" text-anchor="start">观察时刻</text>
+<text x="383" y="146" font-size="23" fill="#315dce" font-weight="600" text-anchor="start">期望代次</text>
+<text x="575" y="146" font-size="23" fill="#315dce" font-weight="600" text-anchor="start">已观察代次</text>
+<text x="790" y="146" font-size="23" fill="#315dce" font-weight="600" text-anchor="start">实例数</text>
+<text x="965" y="146" font-size="23" fill="#315dce" font-weight="600" text-anchor="start">就绪数</text>
+<rect x="32" y="177" width="1056" height="62" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="48" y="217" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">API已接受3副本</text>
+<text x="383" y="217" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">2</text>
+<text x="575" y="217" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">0</text>
+<text x="790" y="217" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">0</text>
+<text x="965" y="217" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">0</text>
+<rect x="32" y="249" width="1056" height="62" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="48" y="289" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">重复调谐8轮后</text>
+<text x="383" y="289" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">2</text>
+<text x="575" y="289" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">2</text>
+<text x="790" y="289" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">3</text>
+<text x="965" y="289" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">0</text>
+<rect x="32" y="321" width="1056" height="62" rx="5" fill="#edf7f3" stroke="#dbe2ed"/>
+<text x="48" y="361" font-size="24" fill="#287b69" font-weight="400" text-anchor="start">实例满足就绪条件后</text>
+<text x="383" y="361" font-size="24" fill="#287b69" font-weight="400" text-anchor="start">2</text>
+<text x="575" y="361" font-size="24" fill="#287b69" font-weight="400" text-anchor="start">2</text>
+<text x="790" y="361" font-size="24" fill="#287b69" font-weight="400" text-anchor="start">3</text>
+<text x="965" y="361" font-size="24" fill="#287b69" font-weight="400" text-anchor="start">3</text>
+<rect x="32" y="393" width="1056" height="62" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="48" y="433" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">改成1副本并收敛后</text>
+<text x="383" y="433" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">3</text>
+<text x="575" y="433" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">3</text>
+<text x="790" y="433" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">1</text>
+<text x="965" y="433" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">1</text>
+<text x="32" y="510" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">对象名可以复用，UID区分是不是原来的那一个。</text>
+<rect x="32" y="542" width="490" height="95" rx="5" fill="#f2f5fa" stroke="#dbe2ed"/>
+<rect x="558" y="542" width="530" height="95" rx="5" fill="#fff2ed" stroke="#dbe2ed"/>
+<text x="52" y="580" font-size="24" fill="#315dce" font-weight="550" text-anchor="start">旧 p0：UID pod-1 → 删除</text>
+<text x="52" y="615" font-size="24" fill="#315dce" font-weight="550" text-anchor="start">新 p0：UID pod-4</text>
+<text x="580" y="580" font-size="23" fill="#ad5147" font-weight="550" text-anchor="start">带旧UID的迟到删除：uid-mismatch</text>
+<text x="580" y="615" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">保留同名新实例，不按名字误删。</text>
+<text x="32" y="694" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">resourceVersion只按相等检查；状态更新也可改变它，不能拿来当业务代次。</text>
+<text x="32" y="733" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">数据来自本地状态模型；真实集群继续用API对象、事件与流量验证。</text>
+<metadata>{&quot;kind&quot;: &quot;reconciliation_model&quot;, &quot;result&quot;: {&quot;accepted&quot;: {&quot;uid&quot;: &quot;owner-A&quot;, &quot;generation&quot;: 2, &quot;spec&quot;: {&quot;replicas&quot;: 3}, &quot;status&quot;: {&quot;observedGeneration&quot;: 0, &quot;replicas&quot;: 0, &quot;readyReplicas&quot;: 0}, &quot;resourceVersion&quot;: &quot;opaque-2&quot;}, &quot;converged&quot;: {&quot;uid&quot;: &quot;owner-A&quot;, &quot;generation&quot;: 2, &quot;spec&quot;: {&quot;replicas&quot;: 3}, &quot;status&quot;: {&quot;observedGeneration&quot;: 2, &quot;replicas&quot;: 3, &quot;readyReplicas&quot;: 0}, &quot;resourceVersion&quot;: &quot;opaque-5&quot;}, &quot;replacement&quot;: {&quot;old_uid&quot;: &quot;pod-1&quot;, &quot;new_uid&quot;: &quot;pod-4&quot;, &quot;stale_delete&quot;: &quot;uid-mismatch&quot;}, &quot;ready&quot;: {&quot;uid&quot;: &quot;owner-A&quot;, &quot;generation&quot;: 2, &quot;spec&quot;: {&quot;replicas&quot;: 3}, &quot;status&quot;: {&quot;observedGeneration&quot;: 2, &quot;replicas&quot;: 3, &quot;readyReplicas&quot;: 3}, &quot;resourceVersion&quot;: &quot;opaque-6&quot;}, &quot;scaled_down&quot;: {&quot;uid&quot;: &quot;owner-A&quot;, &quot;generation&quot;: 3, &quot;spec&quot;: {&quot;replicas&quot;: 1}, &quot;status&quot;: {&quot;observedGeneration&quot;: 3, &quot;replicas&quot;: 1, &quot;readyReplicas&quot;: 1}, &quot;resourceVersion&quot;: &quot;opaque-9&quot;}, &quot;stale_update&quot;: &quot;conflict&quot;, &quot;noop_keeps_version&quot;: true}}</metadata>
+</svg>

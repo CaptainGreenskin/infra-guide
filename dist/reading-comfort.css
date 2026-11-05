@@ -24,7 +24,7 @@
 .side-links a{font-size:12px;line-height:1.8;padding:9px 10px}
 .toc a{font-size:12px;line-height:1.75;padding:8px 0 8px 9px;border-left:2px solid transparent}
 .toc a[aria-current="location"]{border-left-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
-.doc-layout :is(.article-section,.knowledge-point,.knowledge-examples,.concept-path)[id]{scroll-margin-top:calc(var(--reader-header) + 88px)}
+.doc-layout :is(.article-section,.knowledge-point,.knowledge-examples,.concept-path,.walkthrough-run)[id]{scroll-margin-top:calc(var(--reader-header) + 88px)}
 .mechanism-core[id]{scroll-margin-top:calc(var(--reader-header) + 88px)}
 .reading-toolbar{position:sticky;top:var(--reader-header);z-index:12;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:7px 0;margin:20px 0 28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);min-height:56px}
 .reading-toolbar button{border:1px solid transparent;background:transparent;border-radius:5px;padding:7px 12px;min-height:40px;font-size:13px;line-height:1.6;color:var(--muted)}

@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'mechanism-walkthroughs':{folder:'mechanism-walkthroughs',title:'路由、控制循环、张量与历史跟读'},
  'compute-and-transport':{folder:'compute-and-transport',title:'CPU 记账与 TCP 背压'},
  'textbook-examples':{folder:'textbooks',title:'基础原理代码'},
  'learning-mechanisms':{folder:'learning-mechanisms',title:'消息边界、状态提交与工具回执'},
@@ -87,6 +88,14 @@ const labLearningCatalog=[
  {id:'agent-sandbox',track:'agent',stage:3,title:'CPU、墙钟、文件描述符与路径分别限',chapter:'agent-sandbox',pack:'leases-placement-sandbox',files:['subprocess_limits.py','descriptors_and_paths.py'],env:'POSIX · Python 3.9+ · 标准库',kind:'实际受信子进程',observe:'观察文件、FD、CPU 与墙钟限制，再用继承和路径替换反例检验启动边界。',scope:'只管理自己的受信进程；没有创建安全容器或隔离同 UID 文件系统。'},
  {id:'agent-kairo',track:'agent',stage:3,title:'把本地不变量变成 Kairo 接入验收',chapter:'kairo-practice',files:[],env:'真实 Kairo 版本、接口与独立测试环境',kind:'目标环境手册',observe:'逐项映射任务身份、工具回执、状态、接管、撤权与独立结果验收，保留目标版本记录。',scope:'目前是映射和验收设计，未声明 Kairo 已接入或真实多 worker 验收通过。'}
 ];
+labLearningCatalog.push(
+ {id:'cloud-route-walk',track:'cloud',stage:1,title:'从地址位算到最长前缀，再查回程',chapter:'vpc-network',pack:'mechanism-walkthroughs',files:['route_walk.py'],anchor:'v43-route-practice',env:'Python 3.9+ · 标准库',kind:'路由选择模型',observe:'打印/0、/24、/32的匹配，改变表格顺序与回程条目，分别解释结果。',scope:'只执行声明的地址集合与选择规则；未配置VPC或测量实际转发。'},
+ {id:'cloud-reconcile-walk',track:'cloud',stage:1,title:'重复调谐、代次与同名新UID',chapter:'kubernetes-basics',pack:'mechanism-walkthroughs',files:['reconcile_walk.py'],anchor:'v43-reconcile-practice',env:'Python 3.9+ · 标准库',kind:'控制状态模型',observe:'对照期望3副本、观察代次、实际实例与就绪数，再用旧UID尝试删除同名新实例。',scope:'本地教学模型；目标集群继续按只读命令和原探针手册验收。'},
+ {id:'ai-attention-walk',track:'ai',stage:1,title:'把三行注意力手算与真实SDPA对齐',chapter:'attention-mechanics',pack:'mechanism-walkthroughs',files:['attention_trace.py'],anchor:'v43-attention-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU张量',observe:'逐项核对分数、权重、输出，再改变缓存位置、无效key、Q/K方向与分头坐标。',scope:'float64 CPU数值对照；不报告GPU内核或性能收益。'},
+ {id:'ai-decoder-walk',track:'ai',stage:1,title:'四种形状正确的接线错误，最早错在哪里',chapter:'transformer-block',pack:'mechanism-walkthroughs',files:['decoder_trace.py','tiny_decoder.py'],anchor:'v43-decoder-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU模型与梯度',observe:'追踪664参数模型的每层数值，核对归一化轴、第二分支输入、门控、残差与未来扰动。',scope:'固定输入和种子的前向及标量梯度；不是大型模型质量或GPU性能测试。'},
+ {id:'agent-history-walk',track:'agent',stage:2,title:'结果记录前后退出，恢复会重新读取吗',chapter:'durable-workflows',pack:'mechanism-walkthroughs',files:['workflow_history.py'],anchor:'v43-history-practice',env:'Python 3.9+ · 标准库 / SQLite',kind:'实际进程与持久历史',observe:'在读取后、结果提交后分别退出，改源值23为999，再比较恢复结果与活动调用次数。',scope:'本地解释器，活动只读资料和生成文本；不是Temporal SDK或Kairo运行结果。'}
+);
+labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
 function labCatalogRunPath(unit){

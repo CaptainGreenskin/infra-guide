@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="790" viewBox="0 0 1120 790" role="img" aria-labelledby="title desc">
+<title id="title">活动结果的提交边界决定恢复是否重新读取</title><desc id="desc">结果23已记录后退出，恢复复用23，只执行草稿；读取发生但结果未提交就退出，恢复再次读取新值999。两个独立SQLite库记录历史与调用次数。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="790" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">进程都退出了，恢复为什么会得到不同的数</text>
+<text x="32" y="90" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">活动先读取本地资料；历史记录结果后，重放才能复用它。</text>
+<text x="300" y="151" font-size="27" fill="#315dce" font-weight="600" text-anchor="middle">已记结果：退出码23</text>
+<text x="830" y="151" font-size="27" fill="#ad5147" font-weight="600" text-anchor="middle">未记结果：退出码24</text>
+<rect x="32" y="185" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="50" y="224" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">1</text>
+<text x="90" y="224" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">登记 read-1</text>
+<rect x="572" y="185" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="590" y="224" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">1</text>
+<text x="630" y="224" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">登记 read-1</text>
+<rect x="32" y="260" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="50" y="299" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">2</text>
+<text x="90" y="299" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">实际读取 total=23</text>
+<rect x="572" y="260" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="590" y="299" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">2</text>
+<text x="630" y="299" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">实际读取 total=23</text>
+<rect x="32" y="335" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="50" y="374" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">3</text>
+<text x="90" y="374" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">历史保存结果23</text>
+<rect x="572" y="335" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="590" y="374" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">3</text>
+<text x="630" y="374" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">未保存结果，进程退出</text>
+<rect x="32" y="410" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="50" y="449" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">4</text>
+<text x="90" y="449" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">进程退出；源文件改为999</text>
+<rect x="572" y="410" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="590" y="449" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">4</text>
+<text x="630" y="449" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">源文件改为999</text>
+<rect x="32" y="485" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="50" y="524" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">5</text>
+<text x="90" y="524" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">恢复读历史：复用23</text>
+<rect x="572" y="485" width="516" height="60" rx="5" fill="#f3f5fa" stroke="#dbe2ed"/>
+<text x="590" y="524" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">5</text>
+<text x="630" y="524" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">恢复：再次读取，得到999</text>
+<rect x="32" y="560" width="516" height="60" rx="5" fill="#edf7f3" stroke="#dbe2ed"/>
+<text x="50" y="599" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">6</text>
+<text x="90" y="599" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">只执行草稿：总数23</text>
+<rect x="572" y="560" width="516" height="60" rx="5" fill="#fff2ed" stroke="#dbe2ed"/>
+<text x="590" y="599" font-size="22" fill="#315dce" font-weight="600" text-anchor="start">6</text>
+<text x="630" y="599" font-size="24" fill="#1c283d" font-weight="400" text-anchor="start">执行草稿：总数999</text>
+<text x="32" y="699" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">读取调用数：1次</text>
+<text x="572" y="699" font-size="26" fill="#ad5147" font-weight="600" text-anchor="start">读取调用数：2次</text>
+<text x="32" y="757" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">本机SQLite与真实子进程结果；活动只读资料、生成文本，不执行远端写入。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_local_process_and_sqlite&quot;, &quot;recorded_calls&quot;: [&quot;read_metrics&quot;, &quot;render_draft&quot;], &quot;unrecorded_calls&quot;: [&quot;read_metrics&quot;, &quot;read_metrics&quot;, &quot;render_draft&quot;], &quot;exit_codes&quot;: [23, 24]}</metadata>
+</svg>
