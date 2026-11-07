@@ -23,5 +23,5 @@
 <text x="792" y="320" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">本例数学和为2</text>
 <text x="930" y="414" font-size="48" fill="#287b69" font-weight="650" text-anchor="middle">2</text>
 <text x="32" y="500" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">树形有利于并行，不保证比每一种顺序都更准确；误差容限与累加精度须明示。</text>
-<metadata>{&quot;kind&quot;: &quot;actual_reduction&quot;, &quot;result&quot;: {&quot;input&quot;: [1e+16, 1.0, -1e+16, 1.0], &quot;left_fold&quot;: 1.0, &quot;tree&quot;: 0.0, &quot;high_accuracy_reference&quot;: 2.0, &quot;odd_five_sum&quot;: 15.0, &quot;empty_sum&quot;: 0.0}, &quot;source_sha256&quot;: &quot;1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46&quot;}</metadata>
+<metadata>{&quot;kind&quot;: &quot;actual_reduction&quot;, &quot;result&quot;: {&quot;input&quot;: [1e+16, 1.0, -1e+16, 1.0], &quot;left_fold&quot;: 1.0, &quot;python_builtin_sum&quot;: 1.0, &quot;tree&quot;: 0.0, &quot;high_accuracy_reference&quot;: 2.0, &quot;odd_five_sum&quot;: 15.0, &quot;empty_sum&quot;: 0.0}, &quot;source_sha256&quot;: &quot;1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46&quot;}</metadata>
 </svg>

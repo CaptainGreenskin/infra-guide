@@ -33,8 +33,8 @@
       "review": "new_teaching_unit",
       "reviewed_at": "2026-11-07",
       "review_scope": "逐节审读布局、数值、路由与测量边界；图/完整源码/实际CPU结果分别绑定。",
-      "observation": "实际C11编译和独立数值参考，浮点1/0/2、非整块GEMM、真实PyTorch CPU轨迹；不冒充CUDA/Nsight。",
-      "reviewed_content_sha256": "a0823e520fe4df62dc4c799cb1b5857870e4f41dfe0755c2075da2e3574b3555"
+      "observation": "实际C11编译和独立数值参考，浮点1/0/2、非整块GEMM、真实PyTorch CPU轨迹；不冒充CUDA/Nsight。 Linux CI发现新版sum算法差异后，改为显式左折叠；Python3.9与3.12均实际重跑通过。",
+      "reviewed_content_sha256": "fcaa71d6eac82596a8c0e0f9843e9c6665a5fdb6845bf235afd8d9c5d3a69248"
     },
     {
       "id": "moe-routing",

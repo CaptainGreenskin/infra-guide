@@ -3,10 +3,10 @@
   "verified_at": "2026-11-07",
   "source_sha256": {
     "cpu_ops.c": "1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46",
-    "operator_lab.py": "bf22e2c107bf51e1febcafdd4ba94dae0855f1100a65e8d33d2d564f4db1facb",
+    "operator_lab.py": "ea7443bc10f2494c054ee3d3feecf71f63abf40c1e97588d06a7ac747e2f0ef8",
     "cpu_profile.py": "e7dadaf38fe0ad0badb8dcc65ee14f76a3a8060ca65d4cadb0fcaed75035fa34",
     "moe_routing.py": "5adb4871a0ffd635110c84ecf0504d430e634d0bbb4fa1263f681843f4994477",
-    "README.md": "7103b4ba0ca12ba84a4aea83d9f1e57950c9b9fad39598763dd7b20c1f52d416"
+    "README.md": "ce1e13a6b82222286e3c743ed0adf7867ff09f6a2567ed074b7aef2215256e63"
   },
   "programs": {
     "operator_lab.py": {
@@ -23,7 +23,7 @@
       ],
       "source_sha256": {
         "cpu_ops.c": "1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46",
-        "operator_lab.py": "bf22e2c107bf51e1febcafdd4ba94dae0855f1100a65e8d33d2d564f4db1facb"
+        "operator_lab.py": "ea7443bc10f2494c054ee3d3feecf71f63abf40c1e97588d06a7ac747e2f0ef8"
       },
       "softmax": {
         "input": [
@@ -71,6 +71,7 @@
           1.0
         ],
         "left_fold": 1.0,
+        "python_builtin_sum": 1.0,
         "tree": 0.0,
         "high_accuracy_reference": 2.0,
         "odd_five_sum": 15.0,
@@ -140,27 +141,27 @@
         "implementations": {
           "ijk": {
             "samples_us_per_call": [
-              407.8333333333333,
-              376.8056666666667,
-              391.8333333333333,
-              573.8333333333334,
-              630.0556666666666,
-              527.139,
-              518.8056666666666
+              416.7916666666667,
+              488.4583333333333,
+              380.389,
+              501.6526666666667,
+              430.6666666666667,
+              384.361,
+              433.8473333333333
             ],
-            "median_us": 518.8056666666666
+            "median_us": 430.6666666666667
           },
           "tiled": {
             "samples_us_per_call": [
-              234.736,
-              298.0693333333333,
-              294.722,
-              293.486,
-              263.8193333333333,
-              164.91666666666666,
-              229.986
+              183.68066666666667,
+              200.05533333333335,
+              176.58333333333334,
+              161.27766666666665,
+              189.16666666666666,
+              182.278,
+              175.81933333333333
             ],
-            "median_us": 263.8193333333333
+            "median_us": 182.278
           }
         }
       },
@@ -529,7 +530,7 @@
       "trace_metadata_normalized": [
         "traceName: filename only"
       ],
-      "trace_sha256": "710d9e8655c95f8d1aaa80789ba3797876a24ec6cbb1c22d3db74c910bbe4583",
+      "trace_sha256": "51a5454970a472a75b55a608fff2f1e1a5b7f064545a7e586b2f615dab3513b2",
       "shapes": {
         "x": [
           32,
@@ -585,8 +586,8 @@
           "name": "lesson_linear",
           "calls": 5,
           "input_shapes": [],
-          "self_cpu_us": 268.41799999999967,
-          "inclusive_cpu_us": 382.0
+          "self_cpu_us": 261.25099999999975,
+          "inclusive_cpu_us": 365.626
         },
         {
           "name": "aten::matmul",
@@ -601,8 +602,8 @@
               32
             ]
           ],
-          "self_cpu_us": 2.2900000000006457,
-          "inclusive_cpu_us": 113.58200000000033
+          "self_cpu_us": 1.8730000000007294,
+          "inclusive_cpu_us": 104.37500000000023
         },
         {
           "name": "aten::mm",
@@ -617,8 +618,8 @@
               32
             ]
           ],
-          "self_cpu_us": 110.79299999999921,
-          "inclusive_cpu_us": 111.29199999999969
+          "self_cpu_us": 102.2089999999996,
+          "inclusive_cpu_us": 102.5019999999995
         },
         {
           "name": "aten::resolve_conj",
@@ -629,8 +630,8 @@
               32
             ]
           ],
-          "self_cpu_us": 0.33300000000031105,
-          "inclusive_cpu_us": 0.33300000000031105
+          "self_cpu_us": 0.16699999999991633,
+          "inclusive_cpu_us": 0.16699999999991633
         },
         {
           "name": "aten::resolve_conj",
@@ -641,8 +642,8 @@
               32
             ]
           ],
-          "self_cpu_us": 0.08300000000008367,
-          "inclusive_cpu_us": 0.08300000000008367
+          "self_cpu_us": 0.041999999999916326,
+          "inclusive_cpu_us": 0.041999999999916326
         },
         {
           "name": "aten::resolve_conj",
@@ -653,15 +654,15 @@
               64
             ]
           ],
-          "self_cpu_us": 0.08300000000008367,
-          "inclusive_cpu_us": 0.08300000000008367
+          "self_cpu_us": 0.08400000000006003,
+          "inclusive_cpu_us": 0.08400000000006003
         },
         {
           "name": "lesson_softmax",
           "calls": 5,
           "input_shapes": [],
-          "self_cpu_us": 177.16600000000017,
-          "inclusive_cpu_us": 316.33299999999986
+          "self_cpu_us": 180.79099999999994,
+          "inclusive_cpu_us": 325.62400000000025
         },
         {
           "name": "aten::softmax",
@@ -674,8 +675,8 @@
             [],
             []
           ],
-          "self_cpu_us": 119.49900000000002,
-          "inclusive_cpu_us": 139.1669999999997
+          "self_cpu_us": 124.16700000000014,
+          "inclusive_cpu_us": 144.8330000000003
         },
         {
           "name": "aten::_softmax",
@@ -688,15 +689,15 @@
             [],
             []
           ],
-          "self_cpu_us": 19.667999999999665,
-          "inclusive_cpu_us": 19.667999999999665
+          "self_cpu_us": 20.666000000000167,
+          "inclusive_cpu_us": 20.666000000000167
         },
         {
           "name": "lesson_reduce",
           "calls": 5,
           "input_shapes": [],
-          "self_cpu_us": 82.54100000000017,
-          "inclusive_cpu_us": 416.9179999999999
+          "self_cpu_us": 87.58300000000031,
+          "inclusive_cpu_us": 431.2080000000001
         },
         {
           "name": "aten::sum",
@@ -710,8 +711,8 @@
             [],
             []
           ],
-          "self_cpu_us": 330.7929999999999,
-          "inclusive_cpu_us": 334.3769999999997
+          "self_cpu_us": 340.125,
+          "inclusive_cpu_us": 343.6249999999998
         },
         {
           "name": "aten::as_strided",
@@ -724,8 +725,8 @@
             [],
             []
           ],
-          "self_cpu_us": 1.2919999999999163,
-          "inclusive_cpu_us": 1.2919999999999163
+          "self_cpu_us": 1.6240000000000236,
+          "inclusive_cpu_us": 1.6240000000000236
         },
         {
           "name": "aten::fill_",
@@ -737,8 +738,8 @@
             ],
             []
           ],
-          "self_cpu_us": 2.2919999999999163,
-          "inclusive_cpu_us": 2.2919999999999163
+          "self_cpu_us": 1.875999999999749,
+          "inclusive_cpu_us": 1.875999999999749
         },
         {
           "name": "aten::ones",
@@ -750,8 +751,8 @@
             [],
             []
           ],
-          "self_cpu_us": 3.624000000000251,
-          "inclusive_cpu_us": 7.208000000000084
+          "self_cpu_us": 3.2910000000001673,
+          "inclusive_cpu_us": 6.791000000000167
         },
         {
           "name": "aten::empty",
@@ -764,8 +765,8 @@
             [],
             []
           ],
-          "self_cpu_us": 4.083000000000084,
-          "inclusive_cpu_us": 4.083000000000084
+          "self_cpu_us": 3.874000000000251,
+          "inclusive_cpu_us": 3.874000000000251
         },
         {
           "name": "aten::fill_",
@@ -776,8 +777,8 @@
             ],
             []
           ],
-          "self_cpu_us": 1.5830000000000837,
-          "inclusive_cpu_us": 1.5830000000000837
+          "self_cpu_us": 1.3339999999998327,
+          "inclusive_cpu_us": 1.3339999999998327
         },
         {
           "name": "aten::allclose",
@@ -793,8 +794,8 @@
             [],
             []
           ],
-          "self_cpu_us": 12.333000000000084,
-          "inclusive_cpu_us": 520.125
+          "self_cpu_us": 173.25099999999975,
+          "inclusive_cpu_us": 643.4169999999999
         },
         {
           "name": "aten::isclose",
@@ -810,8 +811,8 @@
             [],
             []
           ],
-          "self_cpu_us": 98.66600000000017,
-          "inclusive_cpu_us": 499.2919999999999
+          "self_cpu_us": 106.99700000000075,
+          "inclusive_cpu_us": 461.54100000000017
         },
         {
           "name": "aten::eq",
@@ -824,8 +825,8 @@
               32
             ]
           ],
-          "self_cpu_us": 5.751999999999498,
-          "inclusive_cpu_us": 5.751999999999498
+          "self_cpu_us": 5.500999999999749,
+          "inclusive_cpu_us": 5.500999999999749
         },
         {
           "name": "aten::mul",
@@ -836,8 +837,8 @@
             ],
             []
           ],
-          "self_cpu_us": 9.833000000000084,
-          "inclusive_cpu_us": 170.49900000000025
+          "self_cpu_us": 9.208999999999833,
+          "inclusive_cpu_us": 116.08499999999958
         },
         {
           "name": "aten::to",
@@ -849,8 +850,8 @@
             [],
             []
           ],
-          "self_cpu_us": 3.999000000000251,
-          "inclusive_cpu_us": 177.20899999999983
+          "self_cpu_us": 4.041999999999916,
+          "inclusive_cpu_us": 117.66799999999967
         },
         {
           "name": "aten::_to_copy",
@@ -864,8 +865,8 @@
             [],
             []
           ],
-          "self_cpu_us": 158.7959999999989,
-          "inclusive_cpu_us": 173.20999999999958
+          "self_cpu_us": 102.1269999999995,
+          "inclusive_cpu_us": 113.62599999999975
         },
         {
           "name": "aten::empty_strided",
@@ -878,8 +879,8 @@
             [],
             []
           ],
-          "self_cpu_us": 8.582000000000335,
-          "inclusive_cpu_us": 8.582000000000335
+          "self_cpu_us": 6.208000000000084,
+          "inclusive_cpu_us": 6.208000000000084
         },
         {
           "name": "aten::copy_",
@@ -889,8 +890,8 @@
             [],
             []
           ],
-          "self_cpu_us": 5.832000000000335,
-          "inclusive_cpu_us": 5.832000000000335
+          "self_cpu_us": 5.291000000000167,
+          "inclusive_cpu_us": 5.291000000000167
         },
         {
           "name": "aten::abs",
@@ -900,8 +901,8 @@
               32
             ]
           ],
-          "self_cpu_us": 80.83599999999933,
-          "inclusive_cpu_us": 89.70899999999983
+          "self_cpu_us": 91.04399999999941,
+          "inclusive_cpu_us": 98.87599999999975
         },
         {
           "name": "aten::abs",
@@ -914,8 +915,8 @@
               0
             ]
           ],
-          "self_cpu_us": 6.791000000000167,
-          "inclusive_cpu_us": 6.791000000000167
+          "self_cpu_us": 6.124000000000251,
+          "inclusive_cpu_us": 6.124000000000251
         },
         {
           "name": "aten::add",
@@ -927,8 +928,8 @@
             [],
             []
           ],
-          "self_cpu_us": 92.16799999999967,
-          "inclusive_cpu_us": 98.45999999999958
+          "self_cpu_us": 100.41600000000017,
+          "inclusive_cpu_us": 106.29100000000017
         },
         {
           "name": "aten::sub",
@@ -942,8 +943,8 @@
             ],
             []
           ],
-          "self_cpu_us": 4.791999999999916,
-          "inclusive_cpu_us": 4.791999999999916
+          "self_cpu_us": 2.5410000000001673,
+          "inclusive_cpu_us": 2.5410000000001673
         },
         {
           "name": "aten::isfinite",
@@ -953,8 +954,8 @@
               32
             ]
           ],
-          "self_cpu_us": 5.333999999999833,
-          "inclusive_cpu_us": 29.74900000000025
+          "self_cpu_us": 5.164000000000669,
+          "inclusive_cpu_us": 23.416999999999916
         },
         {
           "name": "aten::ne",
@@ -965,8 +966,8 @@
             ],
             []
           ],
-          "self_cpu_us": 6.081000000000586,
-          "inclusive_cpu_us": 16.332000000000335
+          "self_cpu_us": 5.583999999999833,
+          "inclusive_cpu_us": 10.500999999999749
         },
         {
           "name": "aten::mul",
@@ -979,8 +980,8 @@
               32
             ]
           ],
-          "self_cpu_us": 2.0820000000003347,
-          "inclusive_cpu_us": 2.0820000000003347
+          "self_cpu_us": 2.0,
+          "inclusive_cpu_us": 2.0
         },
         {
           "name": "aten::le",
@@ -993,8 +994,8 @@
               32
             ]
           ],
-          "self_cpu_us": 2.1679999999996653,
-          "inclusive_cpu_us": 2.1679999999996653
+          "self_cpu_us": 2.0839999999998327,
+          "inclusive_cpu_us": 2.0839999999998327
         },
         {
           "name": "aten::__iand__",
@@ -1007,8 +1008,8 @@
               32
             ]
           ],
-          "self_cpu_us": 1.1660000000001673,
-          "inclusive_cpu_us": 3.0
+          "self_cpu_us": 1.125,
+          "inclusive_cpu_us": 2.750999999999749
         },
         {
           "name": "aten::bitwise_and_",
@@ -1021,8 +1022,8 @@
               32
             ]
           ],
-          "self_cpu_us": 1.8339999999998327,
-          "inclusive_cpu_us": 1.8339999999998327
+          "self_cpu_us": 1.625999999999749,
+          "inclusive_cpu_us": 1.625999999999749
         },
         {
           "name": "aten::__ior__",
@@ -1035,8 +1036,8 @@
               32
             ]
           ],
-          "self_cpu_us": 0.9570000000003347,
-          "inclusive_cpu_us": 2.498000000000502
+          "self_cpu_us": 1.125,
+          "inclusive_cpu_us": 2.75
         },
         {
           "name": "aten::bitwise_or_",
@@ -1049,8 +1050,8 @@
               32
             ]
           ],
-          "self_cpu_us": 1.5410000000001673,
-          "inclusive_cpu_us": 1.5410000000001673
+          "self_cpu_us": 1.625,
+          "inclusive_cpu_us": 1.625
         },
         {
           "name": "aten::all",
@@ -1060,8 +1061,8 @@
               32
             ]
           ],
-          "self_cpu_us": 5.667999999999665,
-          "inclusive_cpu_us": 6.833999999999833
+          "self_cpu_us": 5.917999999999665,
+          "inclusive_cpu_us": 6.916999999999916
         },
         {
           "name": "aten::as_strided",
@@ -1072,8 +1073,8 @@
             [],
             []
           ],
-          "self_cpu_us": 0.7910000000001673,
-          "inclusive_cpu_us": 0.7910000000001673
+          "self_cpu_us": 0.75,
+          "inclusive_cpu_us": 0.75
         },
         {
           "name": "aten::fill_",
@@ -1084,8 +1085,8 @@
             ],
             []
           ],
-          "self_cpu_us": 0.375,
-          "inclusive_cpu_us": 0.375
+          "self_cpu_us": 0.24900000000025102,
+          "inclusive_cpu_us": 0.24900000000025102
         },
         {
           "name": "aten::item",
@@ -1093,8 +1094,8 @@
           "input_shapes": [
             []
           ],
-          "self_cpu_us": 1.4580000000000837,
-          "inclusive_cpu_us": 1.6660000000001673
+          "self_cpu_us": 1.4599999999995816,
+          "inclusive_cpu_us": 1.7080000000000837
         },
         {
           "name": "aten::_local_scalar_dense",
@@ -1102,12 +1103,12 @@
           "input_shapes": [
             []
           ],
-          "self_cpu_us": 0.20800000000008367,
-          "inclusive_cpu_us": 0.20800000000008367
+          "self_cpu_us": 0.24800000000050204,
+          "inclusive_cpu_us": 0.24800000000050204
         },
         {
           "name": "[memory]",
-          "calls": 21,
+          "calls": 23,
           "input_shapes": [],
           "self_cpu_us": 0.0,
           "inclusive_cpu_us": 0.0
@@ -1117,77 +1118,77 @@
         {
           "name": "lesson_linear",
           "start_us": 0.0,
-          "duration_us": 349.875
+          "duration_us": 333.959
         },
         {
           "name": "lesson_softmax",
-          "start_us": 355.75,
-          "duration_us": 275.458
+          "start_us": 338.79248046875,
+          "duration_us": 284.375
         },
         {
           "name": "lesson_reduce",
-          "start_us": 634.4580078125,
-          "duration_us": 331.625
+          "start_us": 626.125,
+          "duration_us": 340.792
         },
         {
           "name": "lesson_linear",
-          "start_us": 1410.8330078125,
-          "duration_us": 10.125
+          "start_us": 1540.375,
+          "duration_us": 9.709
         },
         {
           "name": "lesson_softmax",
-          "start_us": 1423.666015625,
-          "duration_us": 11.334
+          "start_us": 1552.79248046875,
+          "duration_us": 11.458
         },
         {
           "name": "lesson_reduce",
-          "start_us": 1437.0830078125,
-          "duration_us": 10.625
+          "start_us": 1566.25,
+          "duration_us": 10.375
         },
         {
           "name": "lesson_linear",
-          "start_us": 1476.166015625,
-          "duration_us": 7.792
+          "start_us": 1604.25,
+          "duration_us": 7.625
         },
         {
           "name": "lesson_softmax",
-          "start_us": 1485.875,
-          "duration_us": 10.208
+          "start_us": 1613.83447265625,
+          "duration_us": 10.458
         },
         {
           "name": "lesson_reduce",
-          "start_us": 1497.9580078125,
+          "start_us": 1626.125,
           "duration_us": 9.042
         },
         {
           "name": "lesson_linear",
-          "start_us": 1536.5,
-          "duration_us": 7.333
+          "start_us": 1661.45947265625,
+          "duration_us": 7.25
         },
         {
           "name": "lesson_softmax",
-          "start_us": 1545.791015625,
-          "duration_us": 9.875
+          "start_us": 1670.54248046875,
+          "duration_us": 9.583
         },
         {
           "name": "lesson_reduce",
-          "start_us": 1557.666015625,
-          "duration_us": 8.834
+          "start_us": 1682.04248046875,
+          "duration_us": 8.583
         },
         {
           "name": "lesson_linear",
-          "start_us": 1592.875,
-          "duration_us": 6.875
+          "start_us": 1719.16748046875,
+          "duration_us": 7.083
         },
         {
           "name": "lesson_softmax",
-          "start_us": 1601.625,
-          "duration_us": 9.458
+          "start_us": 1728.08447265625,
+          "duration_us": 9.75
         },
         {
           "name": "lesson_reduce",
-          "start_us": 1613.166015625,
-          "duration_us": 56.792
+          "start_us": 1739.83447265625,
+          "duration_us": 62.416
         }
       ],
       "scope": "Actual CPU PyTorch profiler with instrumentation overhead and shape/memory collection; not CUDA/kernel latency/production benchmark."

@@ -4,6 +4,7 @@ Object.assign(sources,{
  opNcu:['NVIDIA · Nsight Compute指标与测量开销','https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html'],
  opProfiler:['PyTorch · Profiler使用说明','https://docs.pytorch.org/tutorials/recipes/recipes/profiler_recipe.html'],
  opTorchTiming:['PyTorch · CUDA异步执行与计时','https://docs.pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution'],
+ opSum:['Python 3.12 · sum浮点算法变化','https://docs.python.org/3.12/library/functions.html#sum'],
  opFsum:['Python 3.12 · 浮点与高精度求和','https://docs.python.org/3.12/library/math.html#math.fsum'],
  opCtypes:['Python 3.12 · ctypes调用约定','https://docs.python.org/3.12/library/ctypes.html']
 });
@@ -26,7 +27,7 @@ const operatorSections=[
  ['归约怎样把并行度与误差连在一起',
  para('归约是把一组输入合成一个结果，例如求和与最大值。顺序累加沿一条依赖链进行；树形归约先合并相邻元素，再合并部分结果。实数加法满足结合律，浮点加法每次都要舍入，换合并顺序可能改变结果。')+
  figure('v46-reduction-order','同一份float64输入，左折叠为1、这棵两两相加的树为0，高精度参考为2。实际C与Python对照；没有声称树形一定更准确。')+
- para('对[10¹⁶,1,−10¹⁶,1]，从左向右先把小数1舍掉，最后得到1；两两合并时，两边的小数都丢失，得到0。math.fsum在本例给出2。由此不能推出“并行求和总是错误”，也不能推出“树形总比顺序准确”。需要根据数据范围、累加精度和任务要求定义误差。',
+ para('对[10¹⁶,1,−10¹⁶,1]，从左向右先把小数1舍掉，最后得到1；两两合并时，两边的小数都丢失，得到0。math.fsum在本例给出2。程序用显式循环规定左折叠；Python 3.12起内置sum改进了浮点算法，不能仅凭函数名把它当成这个固定顺序。由此不能推出“并行求和总是错误”，也不能推出“树形总比顺序准确”。需要根据数据范围、累加精度和任务要求定义误差。',
  '常用逐项条件是|实际−参考|≤atol+rtol×|参考|，分别给绝对和相对误差留预算。接近0的值尤其依赖绝对容限。程序还验证5个元素之和15，以及空输入的和0；非2的幂长度必须保留尾项，不能只在4、8、16这些整齐输入上通过。GPU实现还要验证线程同步、越界与部分活跃线程。')],
  ['矩阵乘法：同一份数学，怎样改变访问顺序',
  para('矩阵乘法的一个输出C[i,j]，是A第i行与B第j列的点积。本实验首个小形状是[2,3]乘[3,4]。例如C[0,0]=(−1.25)×(−1.5)+0.5×1+(−0.5)×0=2.375。这个手算值与两个C实现、独立Python参考共同核对。')+
@@ -60,4 +61,4 @@ const operatorSections=[
  '<p>'+linkTo('flash-attention-io','用这套方法理解注意力为什么减少中间搬运')+linkTo('moe-routing','继续看路由怎样改变专家计算与数据分发')+'</p>']
 ];
 articles.push({id:'operator-profiling',number:'A1.11',module:'model-foundations',title:'动手算子与性能分析：从数值正确到执行证据',level:'原理 + C代码 + CPU实测',minutes:45,edition:'算子入门',baseline:'Python 3.9+与C11编译器；Profiler记录使用PyTorch 2.5.1 CPU',
- tags:['softmax','归约','GEMM','Profiler'],desc:'从布局与数值契约开始，手写三类C算子，比较累加顺序、尾块和访问路径，再读真实CPU轨迹。GPU专项另按目标硬件验收。',intro:'写得快之前，先证明算的是同一件事。沿一份输入把数学、内存、实现、测量与证据接起来。',prereq:'先读向量矩阵、GPU执行与Roofline；不会写CUDA也能先完成本章CPU实验。',objectives:['写出轴、类型、布局与边界契约','用独立数值参考验证softmax、归约与矩阵乘法','区分工作量、实际时序与硬件性能结论'],sections:operatorSections,check:['减去最大值保留了什么，仍没有处理哪些输入？','浮点求和为什么可能得到1、0和2？','改变布局后，原来的C函数为什么可能不再适用？','Profiler总时间为什么不能逐层相加？'],exercise:['同样96³的GEMM，一份记录含编译与分配，另一份只记录预热后的函数调用。第二份更快，能否证明分块优化有效？','不能。先对齐形状、类型、数据与正确性，再统一测量边界、预热与采样，保存平台和编译参数。两份都测相同工作后，仍需看样本离散程度。CPU对照也不能推出GPU或BLAS的性能结论。'],related:['gpu-execution','roofline-model','flash-attention-io','moe-routing'],refs:['opCuda','opNcu','opProfiler','opTorchTiming','opFsum','opCtypes'],textbook:true,updated:'2026.11.07'});
+ tags:['softmax','归约','GEMM','Profiler'],desc:'从布局与数值契约开始，手写三类C算子，比较累加顺序、尾块和访问路径，再读真实CPU轨迹。GPU专项另按目标硬件验收。',intro:'写得快之前，先证明算的是同一件事。沿一份输入把数学、内存、实现、测量与证据接起来。',prereq:'先读向量矩阵、GPU执行与Roofline；不会写CUDA也能先完成本章CPU实验。',objectives:['写出轴、类型、布局与边界契约','用独立数值参考验证softmax、归约与矩阵乘法','区分工作量、实际时序与硬件性能结论'],sections:operatorSections,check:['减去最大值保留了什么，仍没有处理哪些输入？','浮点求和为什么可能得到1、0和2？','改变布局后，原来的C函数为什么可能不再适用？','Profiler总时间为什么不能逐层相加？'],exercise:['同样96³的GEMM，一份记录含编译与分配，另一份只记录预热后的函数调用。第二份更快，能否证明分块优化有效？','不能。先对齐形状、类型、数据与正确性，再统一测量边界、预热与采样，保存平台和编译参数。两份都测相同工作后，仍需看样本离散程度。CPU对照也不能推出GPU或BLAS的性能结论。'],related:['gpu-execution','roofline-model','flash-attention-io','moe-routing'],refs:['opCuda','opNcu','opProfiler','opTorchTiming','opFsum','opSum','opCtypes'],textbook:true,updated:'2026.11.07'});

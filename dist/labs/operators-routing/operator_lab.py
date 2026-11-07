@@ -29,6 +29,13 @@ def softmax_reference(row):
     return [x / total for x in terms]
 
 
+def left_fold(values):
+    total = 0.0
+    for value in values:
+        total = total + value
+    return total
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', type=Path)
@@ -70,7 +77,7 @@ def main():
         cancellation = [1e16, 1.0, -1e16, 1.0]
         tree = lib.sum_tree(buffer(cancellation), 4, buffer([0.0]*4))
         odd = lib.sum_tree(buffer([1.0, 2.0, 3.0, 4.0, 5.0]), 5, buffer([0.0]*5))
-        assert tree == 0.0 and sum(cancellation) == 1.0 and math.fsum(cancellation) == 2.0
+        assert tree == 0.0 and left_fold(cancellation) == 1.0 and math.fsum(cancellation) == 2.0
         assert odd == 15.0
         assert lib.sum_tree(buffer([]), 0, buffer([])) == 0.0
         shape_checks = []
@@ -104,7 +111,7 @@ def main():
               'source_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [source, Path(__file__)]},
               'softmax': {'input': rows, 'output': [list(y[i*3:i*3+3]) for i in range(3)],
                           'naive_exp_overflow': naive_overflow, 'nonfinite_rejected_without_output_change': True},
-              'reduce': {'input': cancellation, 'left_fold': sum(cancellation), 'tree': tree,
+              'reduce': {'input': cancellation, 'left_fold': left_fold(cancellation), 'python_builtin_sum': sum(cancellation), 'tree': tree,
                          'high_accuracy_reference': math.fsum(cancellation), 'odd_five_sum': odd, 'empty_sum': 0.0},
               'gemm_shapes': shape_checks, 'timing': {'shape': [m,k,n], 'dtype': 'float64', 'tile': 16,
                         'warmup_calls': 3, 'calls_per_sample': 3, 'samples': 7, 'implementations': durations},
