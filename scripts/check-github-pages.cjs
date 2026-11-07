@@ -4,7 +4,7 @@ function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){c
  assert(html.includes('https://github.com/CaptainGreenskin/infra-guide')||item.name==='404.html');
  for(const [,raw]of html.matchAll(/(?:href|src)="([^"]+)"/g)){if(/^(?:https?:|data:|mailto:|tel:)/.test(raw))continue;const url=new URL(raw.replaceAll('&amp;','&'),'https://captaingreenskin.github.io'+base);assert(url.pathname.startsWith(base),raw);let target=path.join(root,decodeURIComponent(url.pathname.slice(base.length)));if(url.pathname.endsWith('/'))target=path.join(target,'index.html');assert(fs.existsSync(target),raw+' -> '+target);if(url.hash&&target.endsWith('.html')){const id=decodeURIComponent(url.hash.slice(1));const dest=fs.readFileSync(target,'utf8');assert(dest.includes('id="'+id+'"'),raw+': missing fragment');}links++;}
 }}
-walk(root);assert.equal(pages,101);
+walk(root);assert.equal(pages,102);
 for(const basePath of ['/','/infra-guide/']){
  const c={document:{querySelector:()=>({getAttribute:()=>basePath})},location:{pathname:basePath+'article/model-serving/'}};vm.createContext(c);vm.runInContext(fs.readFileSync('dist/site-routing.js','utf8'),c);vm.runInContext(fs.readFileSync('dist/reader-experience.js','utf8'),c);
  assert.equal(vm.runInContext("publicRoute('#/module/training?section=2')",c),basePath+'module/training/?section=2');

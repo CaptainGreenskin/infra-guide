@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="从整数与比例尺的手算开始，经过分组、打包与字节账本，再到校准、常见方法与真实CPU INT8执行。">
+<meta name="theme-color" content="#315dce"><title>模型量化：从比例尺到打包、校准与执行 · InfraGuide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=1490a06c855a"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=42b378a9adc8"></script><script defer src="runtime-04.js?v=3a75bcdb16ce"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=c5fd8bf9dd3f"></script><script defer src="reading-comfort.js?v=16406b964812"></script><script defer src="site-search.js?v=d634ee795d81"></script><script defer src="app.js?v=3586a0edf667"></script>
+
+
+<link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/quantization-serving/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="模型量化：从比例尺到打包、校准与执行 · InfraGuide"><meta property="og:description" content="从整数与比例尺的手算开始，经过分组、打包与字节账本，再到校准、常见方法与真实CPU INT8执行。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/quantization-serving/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"模型量化：从比例尺到打包、校准与执行","description":"从整数与比例尺的手算开始，经过分组、打包与字节账本，再到校准、常见方法与真实CPU INT8执行。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/quantization-serving/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/quantization-serving/","dateModified":"2026-11-07","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<body>
+<a class="skip" href="/article/quantization-serving/#main">跳到主要内容</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="/" aria-label="InfraGuide 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 24h17a6 6 0 0 0 0-12A9 9 0 0 0 8 10a7 7 0 0 0 0 14Z"/></svg><span>Infra<span class="brand-light"> Guide</span></span></a>
+<nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
+<div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
+</div></header>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>AI Infra · 领域与章节</span><span>26 章</span></div><details ><summary><a href="/module/model-foundations/" ><span>A1</span>模型计算与 GPU 原理</a></summary><div class="side-links"><a href="/article/transformer-model/" >A1.1 Transformer 全貌：从张量到计算图</a><a href="/article/tokenization-embedding/" >A1.2 Token、词表与 Embedding：标签如何对齐</a><a href="/article/attention-mechanics/" >A1.3 Attention 深入推导：QKV、掩码与多头</a><a href="/article/transformer-block/" >A1.4 Decoder Block：前馈、残差与归一化</a><a href="/article/position-encoding/" >A1.5 位置编码与 RoPE：相对位置怎样进入点积</a><a href="/article/autograd-training/" >A1.6 交叉熵与自动求导：完成一次真实更新</a><a href="/article/gpu-execution/" >A1.7 GPU 执行与存储：线程如何处理张量</a><a href="/article/roofline-model/" >A1.8 Roofline：从计算量与字节判断瓶颈</a><a href="/article/flash-attention-io/" >A1.9 FlashAttention：分块如何保持全局 Softmax</a><a href="/article/tensor-parallel-math/" >A1.10 张量与流水线并行：切分后的计算与通信</a></div></details><details ><summary><a href="/module/training/" ><span>A2</span>云上 AI 训练</a></summary><div class="side-links"><div class="side-group">一、建立系统与资源模型</div><a href="/article/gpu-cluster/" >A2.1 云上训练全景：从任务提交到首个更新</a><a href="/article/distributed-training/" >A2.2 并行策略：DDP、FSDP、TP 与 PP 的取舍</a><a href="/article/gpu-memory/" >A2.3 GPU 显存与混合精度：建立可检查的预算</a><div class="side-group">二、理解训练执行机制</div><a href="/article/ddp-code/" >A2.4 写对一份 DDP 训练程序</a><a href="/article/training-communication/" >A2.5 NCCL 与集合通信：定位等待发生在哪里</a><a href="/article/data-pipeline/" >A2.6 数据管道：让 GPU 持续获得有效输入</a><div class="side-group">三、完成云上训练实验</div><a href="/article/multinode-lab/" >A2.7 两机四卡 DDP：从环境检查到训练验收</a><a href="/article/checkpoint-recovery/" >A2.8 检查点与恢复：证明训练能从中断继续</a><a href="/article/training-performance/" >A2.9 性能与成本：建立公平的扩展实验</a></div></details><details open><summary><a href="/module/platform/" ><span>A3</span>AI 作业平台与推理服务</a></summary><div class="side-links"><a href="/article/training-platform/" >A3.1 AI平台在管理什么：从提交契约到可信训练产物</a><a href="/article/gpu-scheduling/" >A3.2 GPU队列与调度：从配额准入到拓扑可行性</a><a href="/article/kubernetes-training/" >A3.3 走向 Kubernetes：把训练程序变成可管理的作业</a><a href="/article/model-serving/" >A3.4 模型推理为什么不同：Prefill、Decode与KV Cache</a><a href="/article/quantization-serving/" class="current" aria-current="page">A3.5 模型量化：从比例尺到打包、校准与执行</a><a href="/article/inference-performance/" >A3.6 推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径</a><a href="/article/ai-lifecycle/" >A3.7 模型怎样进入生产：完整产物、评估、发布与回退</a></div></details>
+  <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 26</b></div>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/platform/">AI 作业平台与推理服务</a><span>／</span><span>A3.5</span></div><div class="article-meta"><span class="category">AI 作业平台与推理服务</span><span>原理 + 实验</span><span>·</span><span>训练专题 · 2026.11.07</span></div><h1>A3.5 模型量化：从比例尺到打包、校准与执行</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先把“换成整数”写成明确的对应规则</h3><p>权重是模型中可学习的数字。量化为这些数字规定一套整数表示：比例尺说明每个整数格代表多大，零点说明浮点0对应哪个整数。只有整数而没有这些约定，无法恢复原来的数。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>粒度、打包和校准分别改变不同的账</h3><p>分组决定多少权重共用一把比例尺；打包决定多个低比特整数实际占用多少字节；校准用样本选择覆盖的数值范围。它们分别影响误差、文件大小和任务表现，不能混成一个“压缩比”。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再分开验收格式、算子与任务质量</h3><p>本章从两个数的手算开始，推导分组与字节账，比较校准与常见方法，最后运行INT4格式参考与真实CPU INT8执行。数值算对、程序跑通和任务仍正确，是三层独立的证据。</p></section></section><p class="description">从整数与比例尺的手算开始，经过分组、打包与字节账本，再到校准、常见方法与真实CPU INT8执行。</p><div class="tag-row"><span class="tag">量化</span><span class="tag">INT4</span><span class="tag">校准</span><span class="tag">算子路径</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约22分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>数值：写出量化与恢复公式，区分裁剪与舍入</li><li>存储：把分组比例尺与元数据算进字节账</li><li>执行：分开验证格式、算子路径与任务质量</li></ul><p><b>前置知识</b>完成 A3.4 的 Prefill、Decode 与 KV 容量推导；能按张量形状计算字节数。</p><p class="evidence-note">约 22 分钟 · 训练代码基线 PyTorch 2.5.1 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/platform/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/quantization-serving/#concept-path">概念起点与关系</a><a href="/article/quantization-serving/#section-1">1. 量化基础：整数、比例尺与零点</a><a href="/article/quantization-serving/#section-2">2. 分组：谁共享同一把比例尺</a><a href="/article/quantization-serving/#section-3">3. 量化的字节与执行账本</a><a href="/article/quantization-serving/#section-4">4. 校准与质量：先解释误差，再比较性能</a><a href="/article/quantization-serving/#section-5">5. 量化实战：INT4打包与CPU INT8执行</a></details><p class="intro">量化把权重从浮点改成整数表示。先从两个数的手算开始，弄清比例尺、零点、分组与打包各自改变什么，再分别核对文件变小、执行变快和任务质量这三件不同的事。</p><p class="article-context-link"><a href="/module/platform/">本领域系统知识：AI 作业平台与推理服务 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>量化基础：整数、比例尺与零点</h2><div class="mechanism-core" id="quantization-number-map"><h3>量化先做一件事：用有限整数表示一段数值</h3><p>设浮点权重 w=1.2。若规定每个整数格代表 0.02，且浮点 0 对应整数 50，那么 1.2 就对应整数 110。比例尺 scale 记为 s，零点 zero point 记为 z；反量化时，把整数减去零点，再乘回比例尺。整数本身不包含这些约定，读错 s 或 z，恢复出的数就会不同。</p><div class="knowledge-formula"><small>一种仿射量化定义</small><div>q = clamp(round(w / s) + z, qmin, qmax)；ŵ = (q − z) × s</div><p>s 必须为正，qmin/qmax 规定整数范围；round 的规则和饱和处理也属于格式契约。ŵ是近似恢复值，不保证等于原 w。</p></div><p>沿用 s=0.02、z=50，若整数范围是[0,255]，1.2 映射为 110，恢复为 1.2；4.6 先映射为 280，再被截到 255，恢复只能得到 4.1。这是范围外的裁剪误差。范围以内，无法恰好落在格点的数也要舍入。扩大范围可以减少裁剪，却会让格点更稀，细小差异更容易丢失。</p><p>对称量化把零点固定为 0，便于表达正负权重。本例 <span class="first-concept-term" data-concept-term="INT4">INT4<span class="concept-term-meaning">（4位整数表示）</span></span> 选择[-7,7]，用 max(abs(w))/7 确定比例尺；4bit 编码本可表示[-8,7]，但本例不使用−8。不要把这份教学约定当作所有 INT4 格式。全零组另设 s=1、q=0，避免除零。代码采用舍入到最近偶数，并先把 s 保存成 float32，再用同一数值量化与回读。</p><div class="code-block"><div class="code-toolbar"><span>核心片段 · f32 与输入定义见章末程序 <small>PYTHON</small></span><button data-copy-code aria-label="复制 核心片段 · f32与输入定义见章末程序">复制代码</button></div><pre tabindex="0"><code>maximum = max(abs(w) for w in group)
+scale = f32(maximum / 7) if maximum else 1.0
+q = [max(-7, min(7, round(w / scale))) for w in group]
+restored = [integer * scale for integer in q]</code></pre></div><p>量化不是把浮点数组直接 astype 成整数。直接转换既没有定义比例尺，也可能截掉小数或发生溢出；只改文件扩展名更不会让运行时理解低比特布局。先能从几个数手算 q 和恢复值，再看大模型方案，就容易分清它究竟改了哪一层。</p></div></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>分组：谁共享同一把比例尺</h2><h3>整张量、每通道、分组：谁共享同一把比例尺</h3><p>线性层写作 y=xWᵀ+b。本例 W 有 4 行、8 列：8 个输入特征产生 4 个输出，每一行是一组输出通道的权重。若 32 个权重共用一把比例尺，某个很大的值会把所有小值的格点一起拉开。按输出通道或更小的组分别选择比例尺，可以缩小这种影响范围，但要保存更多元数据。</p><figure class="training-figure"><a href="diagrams/v22-quant-groups.svg" target="_blank" rel="noopener" aria-label="放大：红色12是离群值。每4个权重一组时，只有它所在的组使用大间隔；其他组可以保留更细的数值。"><img src="diagrams/v22-quant-groups.svg" width="1120" height="690" alt="红色12是离群值。每4个权重一组时，只有它所在的组使用大间隔；其他组可以保留更细的数值。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>红色 12 是离群值。每 4 个权重一组时，只有它所在的组使用大间隔；其他组可以保留更细的数值。<a href="diagrams/v22-quant-groups.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>粒度</th><th>本例组数</th><th>它控制的范围</th></tr></thead><tbody><tr><td>per-tensor：整张量一组</td><td>1</td><td>32 个权重共用 s</td></tr><tr><td>per-channel：每输出通道一组</td><td>4</td><td>每行 8 个权重共用 s</td></tr><tr><td>group size=4</td><td>8</td><td>沿每行输入维，每 4 个共用 s</td></tr><tr><td>group size=2</td><td>16</td><td>组更细，比例尺更多</td></tr></tbody></table></div><p>“按通道”必须说清轴。把[输出,输入]布局的比例尺按另一条轴广播，数值会整体算错；矩阵转置、张量并行分片、重新打包后也要同步解释轴与组。真实引擎还可能要求固定分组大小、补齐和打包次序。格式名、权重尺寸、比例尺布局和对应算子要一起匹配。</p><p>组更细不保证每个任务指标都单调变好。本例离群值分布使较小组的线性输出误差下降，但真实模型有多层传播、非线性和任务差异。对于有特别大激活或敏感通道的模型，可使用适合的校准、混合精度或保留少量高精度模块；应通过固定任务集判断收益，而不是只比较权重文件大小。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>量化的字节与执行账本</h2><h3>真把两个 4bit 值装进一个字节，再把元数据算进去</h3><p>Python 列表里的整数不会因为数值小就只占 4bit。要得到 INT4 载荷，需要实际打包。例：−7 用 4bit 补码表示为 1001，3 表示为 0011；若低 4 位保存前一项，两项合成 00111001，即 0x39。解包后，最高位为 1 的半字节要按有符号规则减 16，不能把 1001 当成正 9。奇数个权重的末半字节如何补齐，也要有固定约定。</p><div class="code-block"><div class="code-toolbar"><span>本例低位在前 · 两个有符号 4bit 值打包 <small>PYTHON</small></span><button data-copy-code aria-label="复制 本例低位在前 · 两个有符号4bit值打包">复制代码</button></div><pre tabindex="0"><code>packed = (q0 &amp; 0xF) | ((q1 &amp; 0xF) &lt;&lt; 4)
+a = packed &amp; 0xF
+b = (packed &gt;&gt; 4) &amp; 0xF
+q0 = a - 16 if a &gt;= 8 else a
+q1 = b - 16 if b &gt;= 8 else b</code></pre></div><div class="table-wrap"><table><thead><tr><th>32 权重的存储方案</th><th>整数载荷</th><th>float32 比例尺</th><th>张量载荷合计</th></tr></thead><tbody><tr><td><span class="first-concept-term" data-concept-term="FP16">FP16<span class="concept-term-meaning">（16位浮点数格式）</span></span> 纯权重</td><td>64B</td><td>无该项</td><td>64B</td></tr><tr><td>INT4 整<span class="first-concept-term" data-concept-term="张量">张量<span class="concept-term-meaning">（按一个或多个轴组织的数字）</span></span></td><td>16B</td><td>1×4B</td><td>20B</td></tr><tr><td>INT4 每通道</td><td>16B</td><td>4×4B</td><td>32B</td></tr><tr><td>INT4 每 4 个一组</td><td>16B</td><td>8×4B</td><td>48B</td></tr><tr><td>INT4 每 2 个一组</td><td>16B</td><td>16×4B</td><td>80B</td></tr></tbody></table></div><p>下载程序还为形状和分组写入 12B 自定义文件头，因此 group size=4 的实际文件是 60B。实际模型另有未量化模块、零点、索引、对齐与容器格式；不能拿“4bit 是 16bit 的四分之一”预测整个模型文件。小张量或过细分组，元数据可以比整数载荷更大。</p><p>再看一个量级题：假设 70 亿个权重全部从 FP16 改为 INT4，每 128 个权重保存一个 4B 比例尺，不保存零点，且恰好整除。不含其他项时，FP16 为 14GB；INT4 载荷 3.5GB，比例尺 0.21875GB，共 3.71875GB。GB 按 10 亿字节计。这只是这份格式的权重账，不包含 KV <span class="first-concept-term" data-concept-term="缓存">缓存<span class="concept-term-meaning">（保存可复用内容的一份中间结果，减少重复读取或计算）</span></span>、激活、工作区或反量化临时对象，不能直接当作显存峰值。</p><h3>W4A16 与 W8A8，描述的是不同对象的精度</h3><p>W 指权重，A 指参与相应算子的激活。W4A16 通常表示 4bit 权重、16bit 激活，但不单凭名称规定每个中间量、累加器或所有模块的类型。仅权重量化可以减少权重搬运；执行时可能先反量化到浮点，也可能在融合算子内边解包边参与计算。是否有匹配的高效算子，是独立于“文件已压缩”的问题。</p><figure class="training-figure"><a href="diagrams/v22-quant-execution.svg" target="_blank" rel="noopener" aria-label="放大：存储格式与算子路径一起决定成本。下面的CPU INT8程序实际替换了算子；INT4程序则专门核对字节与数学，不把两份结果混作一次验证。"><img src="diagrams/v22-quant-execution.svg" width="1120" height="660" alt="存储格式与算子路径一起决定成本。下面的CPU INT8程序实际替换了算子；INT4程序则专门核对字节与数学，不把两份结果混作一次验证。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>存储格式与算子路径一起决定成本。下面的 CPU INT8 程序实际替换了算子；INT4 程序则专门核对字节与数学，不把两份结果混作一次验证。<a href="diagrams/v22-quant-execution.svg" download>下载 SVG ↗</a></figcaption></figure><p>若权重和激活都对称量化，且单组比例尺分别为 sw、sx，则点积近似为 sx×sw×Σ(qx×qw)。整数乘加常用更宽类型累积，随后恢复比例并加偏置。范围和长度还要满足累加器的溢出约束；非零零点时，乘法里的零点修正项也不能漏。</p><div class="knowledge-formula"><small>权重沿输入维分为多组，且激活共用 sx</small><div>y ≈ b + sx × Σg[ sw,g × Σi∈g(qx,i × qw,i) ]</div><p>不同组的部分和先分别乘各自比例尺，再相加。把所有整数直接求和，最后统一乘第一组 scale，会算成另一道题。</p></div><p>显存也要看生命周期。如果先把整层 INT4 权重完整展开为 FP16，而压缩权重还保留，两份可能同时驻留；再加工作区、激活和 KV，峰值不一定等于压缩产物大小。融合反量化、分块加载、权重驻留和分片策略，会改变这些对象何时同时存在。报告时分别写清磁盘产物、常驻权重和运行峰值。</p><p>性能比较保持相同模型目标、输入输出长度、并发与质量要求。权重带宽受限的场景可能获益；小<span class="first-concept-term" data-concept-term="矩阵">矩阵<span class="concept-term-meaning">（按行与列组织的数字）</span></span>、格式转换、算子回退或其他瓶颈也可能抵消收益。本地程序没有计时，不能从它的字节缩小比例推出真实服务加速比例。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>校准与质量：先解释误差，再比较性能</h2><h3>校准决定覆盖哪些数值，评估决定还能不能完成任务</h3><p>训练后量化（PTQ）在已有权重上选择量化参数与变换；量化感知训练（QAT）让训练过程感知相应量化误差。二者描述获得量化模型的路径，不直接规定服务端最终用哪个算子。校准样本用于观察分布或选择范围，与最后保留的任务评估集应分开；不能在评估集上反复调到满意，再把它当作独立检验。</p><p>静态激活量化预先固定范围；动态方法在推理时按相应粒度观察输入，再计算比例尺。静态范围太窄会裁剪，太宽会降低分辨率；动态方案也有测量和缩放开销。下载实验把校准范围设为±0.5，保留输入却有一个 3.0。静态方案裁剪 1 项，在同一已反量化权重上的最大输出误差约 2.000225；覆盖当前范围的动态方案约 0.06928。这是受控范围失配，不是“动态永远更好”的结论。</p><div class="table-wrap"><table><thead><tr><th>验收层</th><th>具体检查</th><th>不能替代什么</th></tr></thead><tbody><tr><td>格式</td><td>维度、轴、组、比例尺、打包、加载后类型</td><td>不证明任务质量</td></tr><tr><td>数值</td><td>层输出误差、异常值、有限性、关键边界</td><td>不证明答案和工具选择仍正确</td></tr><tr><td>任务</td><td>中文、长文本、代码、数字、拒答与结构化输出的固定样本</td><td>不由少量线性输入直接外推</td></tr><tr><td>服务</td><td>同口径延迟、吞吐、显存峰值、错误与回退比例</td><td>不只测最理想的短输入</td></tr></tbody></table></div><p>小数值误差也可能改变选择。例如两个候选分数 0.501 和 0.500，变成 0.498 和 0.503 后，绝对变化都很小，第一名却交换了。语言模型的一次选择还会影响后续生成。应单独统计格式错误、数字错误和任务通过率，并保留原高精度版本作为回退路径。固定版本的模型、分词器、量化配置、校准清单与评估清单，才能复查到底改变了什么。</p><details class="knowledge-check"><summary>检验理解：量化后平均误差变小，就可以宣布服务更好吗？</summary><p>还要检查误差落在哪些任务和边界，固定同一质量门槛再比较性能。输出尺寸正确、两组点积接近，只支持本例数值验证，不能替代真实中文任务评估。</p></details><h3>行业常见方法，分别在解决哪一种误差</h3><p>了解表示、分组和校准后，再看 GPTQ、AWQ、SmoothQuant，就能把名称放回具体步骤。它们不是一个通用文件后缀，也不自动带来相同精度和性能。选择方法后，还要确认导出布局与目标引擎真正兼容。</p><div class="table-wrap"><table><thead><tr><th>方法</th><th>主要改变什么</th><th>阅读时抓住的关键</th></tr></thead><tbody><tr><td>GPTQ</td><td>利用近似二阶信息，处理训练后权重量化的重建误差</td><td>量化部分权重时怎样补偿误差；校准输入代表什么</td></tr><tr><td>AWQ</td><td>根据激活分布识别敏感权重通道，以等价缩放降低低比特权重误差</td><td>不是只按权重最大值判断重要性；缩放后如何保持原浮点计算等价</td></tr><tr><td>SmoothQuant</td><td>把部分激活离群值的量化困难转移给权重，服务于 W8A8 等路径</td><td>变换前后的浮点函数等价，量化后仍需重新评估</td></tr><tr><td>QLoRA</td><td>冻结低比特基座，通过低秩适配器进行微调</td><td>训练的是适配参数；基座表示、激活与优化器状态分账</td></tr></tbody></table></div><div class="knowledge-formula"><small>用可逆对角矩阵 D 重分配数值范围</small><div>xWᵀ = (xD⁻¹)(WD)ᵀ</div><p>D 沿输入特征缩放。数学等价只说明变换前浮点函数不变；之后离散量化会再次引入误差。这里用于理解缩放思路，不是完整复现某篇算法。</p></div><p>手算 x=[2,4]、W=[3,−1]，输出 2。取 D=diag(2,0.5)，则 xD⁻¹=[1,8]、WD=[6,−0.5]，新点积仍为 6−4=2。一次变换让某些激活变小，却可能让另一侧权重变大；因此缩放系数要根据任务和量化范围选择，不能把所有通道无条件放大。</p><p>GPTQ 与 AWQ 都不能缩成“普通四舍五入的另一种名字”；SmoothQuant 也不是只裁掉离群值。论文里的精度和速度来自其模型、数据、硬件与实现，迁移时要保留自己的校准与评估记录。本节程序只验证前面的 INT4 参考格式和 <span class="first-concept-term" data-concept-term="CPU">CPU<span class="concept-term-meaning">（中央处理器，执行程序指令）</span></span> <span class="first-concept-term" data-concept-term="INT8">INT8<span class="concept-term-meaning">（8位整数表示）</span></span> 路径，没有执行这四种完整方法。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>量化实战：INT4打包与CPU INT8执行</h2><h3>先跑 INT4 格式参考，再跑真实 CPU INT8 算子</h3><p>32 个固定权重，其中一个离群值为 12。实际打包 4bit 整数、存储 float32 比例尺、写入文件并回读，再比较两组输入的线性层输出。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 int4_groups.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>实际检查</th><th>本次结果</th></tr></thead><tbody><tr><td>整张量一组</td><td>20B 载荷；最大输出误差 2.45</td></tr><tr><td>每输出通道一组</td><td>32B 载荷；最大输出误差 0.7125</td></tr><tr><td>每 4 个权重一组</td><td>48B 载荷；最大输出误差 0.1875</td></tr><tr><td>每 2 个权重一组</td><td>80B 载荷；最大输出误差 0.106072</td></tr><tr><td>FP16 对照</td><td>纯权重载荷 64B；上述载荷未含 12B 示例文件头</td></tr><tr><td>静态激活范围失配</td><td>校准最大 0.5，保留输入最大 3，裁剪 1 项</td></tr><tr><td>零值和奇数长度</td><td>全零组、负数与奇数个 4bit 值回读均通过</td></tr></tbody></table></div><details class="full-code"><summary>展开完整 int4_groups.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>int4_groups.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 int4_groups.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Original INT4 packing and numerical oracle, standard library only.
+
+This is a CPU reference implementation, not a GPU kernel or engine benchmark.
+Weights use symmetric [-7,7], zero-point 0, float32 scales, round-to-even.
+&quot;&quot;&quot;
+import json
+import math
+from pathlib import Path
+import struct
+import tempfile
+
+
+W = [[12, .12, -.18, .09, .24, -.30, .06, -.12],
+     [.08, -.16, .24, -.32, .40, -.48, .56, -.64],
+     [.03, .06, -.09, .12, -.15, .18, -.21, .24],
+     [-.20, .10, .30, -.40, .50, -.60, .70, -.80]]
+INPUTS = [[1, -1, .5, .25, -.5, .75, -1, 1],
+          [.1, .2, .3, .4, .5, .6, .7, .8]]
+BIAS = [.1, -.2, .3, -.4]
+HEADER = struct.Struct(&quot;&lt;4sHHHH&quot;)
+
+
+def f32(value):
+    return struct.unpack(&quot;&lt;f&quot;, struct.pack(&quot;&lt;f&quot;, value))[0]
+
+
+def pack(values):
+    assert all(type(q) is int and -7 &lt;= q &lt;= 7 for q in values)
+    payload = bytearray((len(values) + 1) // 2)
+    for i, q in enumerate(values):
+        payload[i // 2] |= (q &amp; 15) &lt;&lt; (4 * (i % 2))
+    return bytes(payload)
+
+
+def unpack(payload, count):
+    if len(payload) != (count + 1) // 2:
+        raise ValueError(&quot;payload_length&quot;)
+    values = []
+    for i in range(count):
+        nibble = (payload[i // 2] &gt;&gt; (4 * (i % 2))) &amp; 15
+        q = nibble - 16 if nibble &gt;= 8 else nibble
+        if q == -8:
+            raise ValueError(&quot;unused_symmetric_code&quot;)
+        values.append(q)
+    return values
+
+
+def group_ranges(size, group_size):
+    return [(i, min(i + group_size, size)) for i in range(0, size, group_size)]
+
+
+def quantize(flat, group_size):
+    q, scales = [], []
+    for begin, end in group_ranges(len(flat), group_size):
+        values = flat[begin:end]
+        maximum = max(abs(x) for x in values)
+        scale = f32(maximum / 7) if maximum else 1.0
+        scales.append(scale)
+        q.extend(max(-7, min(7, round(x / scale))) for x in values)
+    return q, scales
+
+
+def dequantize(q, scales, group_size):
+    return [value * scales[i // group_size] for i, value in enumerate(q)]
+
+
+def forward(flat, x):
+    return [sum(flat[j * 8 + i] * x[i] for i in range(8)) + BIAS[j] for j in range(4)]
+
+
+def integer_group_forward(qw, scales, group_size, qx, sx):
+    # A different weight scale requires a separate partial sum before rescaling.
+    output = []
+    for row in range(4):
+        value = BIAS[row]
+        for begin in range(0, 8, group_size):
+            end = min(begin + group_size, 8)
+            accumulator = sum(qx[i] * qw[row * 8 + i] for i in range(begin, end))
+            value += accumulator * sx * scales[(row * 8 + begin) // group_size]
+        output.append(value)
+    return output
+
+
+def activation(x, maximum):
+    scale = maximum / 127
+    q = [max(-127, min(127, round(v / scale))) for v in x]
+    return q, scale, sum(abs(v) &gt; maximum for v in x)
+
+
+def run():
+    flat = [v for row in W for v in row]
+    reference = [forward(flat, x) for x in INPUTS]
+    # Independently expanded decimal dot products (including BIAS).
+    assert all(abs(a-b) &lt; 1e-12 for a,b in zip(reference[0], [11.3875, -1.68, .915, -2.85]))
+    schemes = {}
+    with tempfile.TemporaryDirectory(prefix=&quot;int4-groups-&quot;) as folder:
+        for label, group_size in ((&quot;per_tensor&quot;, 32), (&quot;per_channel&quot;, 8),
+                                  (&quot;group_4&quot;, 4), (&quot;group_2&quot;, 2)):
+            q, scales = quantize(flat, group_size)
+            payload = pack(q)
+            header = HEADER.pack(b&quot;IGQ1&quot;, 4, 8, group_size, len(scales))
+            encoded = header + struct.pack(&quot;&lt;&quot; + &quot;f&quot; * len(scales), *scales) + payload
+            path = Path(folder, label + &quot;.igq&quot;)
+            path.write_bytes(encoded)
+            data = path.read_bytes()
+            magic, rows, cols, group, count = HEADER.unpack(data[:HEADER.size])
+            assert (magic, rows, cols, group, count) == (b&quot;IGQ1&quot;, 4, 8, group_size, len(scales))
+            split = HEADER.size + 4 * count
+            loaded_scales = list(struct.unpack(&quot;&lt;&quot; + &quot;f&quot; * count, data[HEADER.size:split]))
+            loaded_q = unpack(data[split:], rows * cols)
+            assert loaded_scales == scales and loaded_q == q
+            decoded = dequantize(loaded_q, loaded_scales, group)
+            outputs = [forward(decoded, x) for x in INPUTS]
+            error = max(abs(y - target) for a,b in zip(outputs, reference) for y,target in zip(a,b))
+            schemes[label] = {&quot;group_size&quot;: group_size, &quot;scales&quot;: scales, &quot;integers&quot;: q,
+                              &quot;payload_hex&quot;: payload.hex(), &quot;integer_bytes&quot;: len(payload),
+                              &quot;scale_bytes&quot;: 4 * count, &quot;header_bytes&quot;: HEADER.size,
+                              &quot;file_bytes&quot;: len(data), &quot;tensor_bytes&quot;: len(payload) + 4 * count,
+                              &quot;weight_mae&quot;: sum(abs(a-b) for a,b in zip(flat, decoded))/len(flat),
+                              &quot;max_output_error&quot;: error, &quot;outputs&quot;: outputs}
+    assert schemes[&quot;group_4&quot;][&quot;max_output_error&quot;] &lt; schemes[&quot;per_tensor&quot;][&quot;max_output_error&quot;]
+    assert schemes[&quot;group_2&quot;][&quot;tensor_bytes&quot;] &gt; len(flat) * 2
+    assert unpack(pack([-7, -1, 0, 7, 3]), 5) == [-7, -1, 0, 7, 3]
+    zero_q, zero_scales = quantize([0.0] * 3, 2)
+    assert dequantize(zero_q, zero_scales, 2) == [0.0] * 3
+
+    qw, sw = quantize(flat, 4)
+    held_out = [.1, -.2, .3, -.4, .5, -.1, .2, 3.0]
+    static_q, static_s, clipped = activation(held_out, .5)
+    dynamic_q, dynamic_s, _ = activation(held_out, max(abs(x) for x in held_out))
+    deq_w = dequantize(qw, sw, 4)
+    target = forward(deq_w, held_out)  # Isolate activation error from weight error.
+    static_out = integer_group_forward(qw, sw, 4, static_q, static_s)
+    dynamic_out = integer_group_forward(qw, sw, 4, dynamic_q, dynamic_s)
+    dq_x = [q * dynamic_s for q in dynamic_q]
+    assert max(abs(a-b) for a,b in zip(dynamic_out, forward(deq_w, dq_x))) &lt; 1e-12
+    wrong = [sum(dynamic_q[i] * qw[row * 8+i] for i in range(8)) * dynamic_s * sw[0] + BIAS[row]
+             for row in range(4)]
+    static_error = max(abs(a-b) for a,b in zip(static_out, target))
+    dynamic_error = max(abs(a-b) for a,b in zip(dynamic_out, target))
+    assert clipped == 1 and static_error &gt; dynamic_error
+    assert max(abs(a-b) for a,b in zip(wrong, dynamic_out)) &gt; 1
+    return {&quot;shape&quot;: [4,8], &quot;fp16_weight_bytes&quot;: 64, &quot;reference_outputs&quot;: reference,
+            &quot;schemes&quot;: schemes,
+            &quot;activation_probe&quot;: {&quot;calibration_max&quot;: .5, &quot;held_out_max&quot;: 3.0,
+                                 &quot;clipped_values&quot;: clipped, &quot;static_max_error&quot;: static_error,
+                                 &quot;dynamic_max_error&quot;: dynamic_error,
+                                 &quot;group_rescale_matches_dequantized_dot&quot;: True,
+                                 &quot;single_scale_wrong_output&quot;: wrong},
+            &quot;edge_checks&quot;: {&quot;signed_odd_roundtrip&quot;: True, &quot;all_zero_group&quot;: True},
+            &quot;execution&quot;: &quot;stdlib_cpu_reference_no_quantized_kernel&quot;}
+
+
+if __name__ == &quot;__main__&quot;:
+    print(json.dumps(run(), ensure_ascii=False, indent=2))</code></pre></div></details><p class="practice-links"><a href="labs/storage-quant-context.zip" download>下载存储、量化与上下文实验 ↓</a><a href="labs/storage-quant-context/int4_groups.py" download>下载本例源码 ↓</a><a href="labs/storage-quant-context/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>标准库 CPU 数值参考；文件格式自定义，未执行 INT4 推理引擎、<span class="first-concept-term" data-concept-term="GPU">GPU<span class="concept-term-meaning">（适合并行处理大量数值计算的处理器）</span></span> 算子或模型任务评估。</small></p><h3>把“转换成功”验证到真正执行与产物回读</h3><p>第二份程序用 PyTorch 创建 Linear(8,4)，实际替换为动态 INT8 模块，执行两组输入，再保存并加载自己生成的 TorchScript。本次 CPU 后端为 qnnpack，最大绝对误差约 0.148362，低于本题预先设置的 0.2；保存与加载后的量化输出差为 0。0.2 是这两组固定线性输入的教学阈值，不是语言模型质量标准。</p><p>若遇到 NoQEngine，先打印 torch.backends.quantized.supported_engines 与当前 engine，确认安装包确实编译了可用 CPU 后端。本机初始 engine 为 none，但支持 qnnpack；程序在已有支持列表中选择后端后才转换。换成另一平台要使用其实际支持项；不要把这个错误解释成“没有 GPU”，也不要假设把已量化 CPU 模块搬到 <span class="first-concept-term" data-concept-term="CUDA">CUDA<span class="concept-term-meaning">（用于NVIDIA GPU编程的一组平台与编程接口）</span></span> 就能使用同一种算子。</p><p>另一份独立实验：把同一权重创建的 float32 Linear 实际转换成 CPU 动态 INT8 模块，执行后导出自己的 TorchScript 并重新加载。它不加载前一例的 INT4 文件。</p><div class="code-block"><div class="code-toolbar"><span>PyTorch 2.5.1 环境 · 安装见包内说明 <small>SHELL</small></span><button data-copy-code aria-label="复制 PyTorch 2.5.1环境 · 安装见包内说明">复制代码</button></div><pre tabindex="0"><code>python int8_runtime.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>实际检查</th><th>本次结果</th></tr></thead><tbody><tr><td>运行环境</td><td>PyTorch 2.5.1 / CPU / qnnpack</td></tr><tr><td>实际转换</td><td>动态量化 Linear；权重 torch.qint8</td></tr><tr><td>两组输入最大绝对误差</td><td>0.148362，本例预设上限 0.2</td></tr><tr><td>保存再加载</td><td>与保存前量化输出最大差 0</td></tr><tr><td>权重元素载荷</td><td>float32 128B → int8 32B，其他状态另计</td></tr><tr><td>整份 TorchScript 文件</td><td>7364B，不能按元素比例猜文件大小</td></tr></tbody></table></div><details class="full-code"><summary>展开完整 int8_runtime.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>int8_runtime.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 int8_runtime.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Actual PyTorch 2.5.1 CPU dynamic INT8 Linear, separate from the INT4 format.
+
+Creates/loads only its own TorchScript file. No downloaded model or GPU is used.
+&quot;&quot;&quot;
+import json
+from pathlib import Path
+import tempfile
+
+import torch
+from int4_groups import W, INPUTS, BIAS
+
+
+def run():
+    torch.set_num_threads(1)
+    supported = torch.backends.quantized.supported_engines
+    if torch.backends.quantized.engine == &#39;none&#39;:
+        engine = next((name for name in (&#39;qnnpack&#39;,&#39;x86&#39;,&#39;fbgemm&#39;) if name in supported), None)
+        if engine is None:
+            raise RuntimeError(&#39;This PyTorch build has no usable quantized CPU backend&#39;)
+        torch.backends.quantized.engine = engine
+    model = torch.nn.Sequential(torch.nn.Linear(8, 4)).eval()
+    with torch.no_grad():
+        model[0].weight.copy_(torch.tensor(W, dtype=torch.float32))
+        model[0].bias.copy_(torch.tensor(BIAS, dtype=torch.float32))
+    inputs = torch.tensor(INPUTS, dtype=torch.float32)
+    quantized = torch.ao.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
+    with torch.inference_mode():
+        reference = model(inputs)
+        output = quantized(inputs)
+    weight = quantized[0].weight()
+    assert weight.dtype == torch.qint8
+    assert not isinstance(quantized[0], torch.nn.Linear)
+    max_error = float((output - reference).abs().max())
+    # A declared numerical tolerance for THESE fixed linear inputs, not model quality.
+    assert torch.isfinite(output).all() and max_error &lt; 0.2
+    with tempfile.TemporaryDirectory(prefix=&quot;int8-runtime-&quot;) as folder:
+        path = Path(folder, &quot;own-linear.pt&quot;)
+        traced = torch.jit.trace(quantized, inputs)
+        torch.jit.save(traced, str(path))
+        restored = torch.jit.load(str(path)).eval()
+        with torch.inference_mode():
+            loaded_output = restored(inputs)
+        roundtrip_error = float((loaded_output - output).abs().max())
+        assert roundtrip_error == 0
+        artifact_bytes = path.stat().st_size
+    return {&quot;torch&quot;:torch.__version__, &quot;device&quot;:&quot;cpu&quot;,
+            &quot;quantized_engine&quot;:torch.backends.quantized.engine,
+            &quot;module_type&quot;:type(quantized[0]).__module__+&#39;.&#39;+type(quantized[0]).__name__,
+            &quot;weight_dtype&quot;:str(weight.dtype), &quot;scheme&quot;:str(weight.qscheme()),
+            &quot;weight_integer_payload_bytes&quot;:weight.int_repr().numel(),
+            &quot;fp32_weight_payload_bytes&quot;:model[0].weight.numel() * model[0].weight.element_size(),
+            &quot;reference_outputs&quot;:reference.tolist(), &quot;quantized_outputs&quot;:output.tolist(),
+            &quot;fixed_input_max_abs_error&quot;:max_error,
+            &quot;declared_fixed_input_error_limit&quot;:0.2,
+            &quot;torchscript_roundtrip_max_abs_error&quot;:roundtrip_error,
+            &quot;whole_torchscript_artifact_bytes&quot;:artifact_bytes,
+            &quot;execution&quot;:&quot;actual_cpu_dynamic_int8_not_int4_no_latency_benchmark&quot;}
+
+
+if __name__ == &quot;__main__&quot;:
+    print(json.dumps(run(), ensure_ascii=False, indent=2))</code></pre></div></details><p class="practice-links"><a href="labs/storage-quant-context.zip" download>下载存储、量化与上下文实验 ↓</a><a href="labs/storage-quant-context/int8_runtime.py" download>下载本例源码 ↓</a><a href="labs/storage-quant-context/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 CPU INT8 执行与自建产物回读；没有测延迟，不代表 INT4、GPU 加速或真实任务质量已通过。</small></p><p>练习：保持权重不变，把 group size 从 4 改为 2，先计算比例尺数量与载荷，再预测误差变化，最后运行核对。再把激活的保留输入改成校准范围内和范围外各一组，解释哪一项是裁剪误差。最后写一份部署检查：目标设备、支持格式、量化对象、任务质量门槛、服务负载与回退条件；缺少哪项就保留哪项为待验证。</p></section><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>为什么INT4权重文件不一定是FP16文件的四分之一？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>整数载荷约缩小为四分之一，但分组比例尺、零点、对齐与容器元数据随组数增加；小张量或过细分组时，元数据可能超过整数载荷本身，要按实际格式逐项计算。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="quantization-serving:0" >数值：区分裁剪误差与舍入误差</label><label><input type="checkbox" data-check="quantization-serving:1" >存储：把比例尺与元数据算进字节账</label><label><input type="checkbox" data-check="quantization-serving:2" >执行：分开核对格式、算子与任务质量</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="quantization-serving">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/quantization-serving/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://onnx.ai/onnx/operators/onnx__QuantizeLinear.html" target="_blank" rel="noopener noreferrer">ONNX · 量化公式、轴与分组 ↗</a><a href="https://onnx.ai/onnx/operators/onnx__DequantizeLinear.html" target="_blank" rel="noopener noreferrer">ONNX · 反量化与比例尺 ↗</a><a href="https://pytorch.org/docs/2.5/quantization.html" target="_blank" rel="noopener noreferrer">PyTorch 2.5 · 量化、后端与转换 ↗</a><a href="https://arxiv.org/abs/2210.17323" target="_blank" rel="noopener noreferrer">GPTQ · 训练后权重量化原论文 ↗</a><a href="https://arxiv.org/abs/2306.00978" target="_blank" rel="noopener noreferrer">AWQ · 激活感知权重量化原论文 ↗</a><a href="https://arxiv.org/abs/2211.10438" target="_blank" rel="noopener noreferrer">SmoothQuant · 权重与激活的等价缩放 ↗</a><a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener noreferrer">QLoRA · 冻结量化基座与低秩适配 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/model-serving/"><span>A3.4</span>模型推理为什么不同：Prefill、Decode与KV Cache<b>↗</b></a><a href="/article/inference-performance/"><span>A3.6</span>推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径<b>↗</b></a><a href="/article/gpu-memory/"><span>A2.3</span>GPU 显存与混合精度：建立可检查的预算<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="quantization-serving">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><a href="/article/model-serving/"><small>← 上一篇</small>模型推理为什么不同：Prefill、Decode与KV Cache</a><a href="/article/inference-performance/"><small>下一篇 →</small>推理性能怎样测：统一TTFT、TPOT、吞吐与质量口径</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/quantization-serving/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/quantization-serving/#section-1">1. 量化基础：整数、比例尺与零点</a><a data-toc="section-2" href="/article/quantization-serving/#section-2">2. 分组：谁共享同一把比例尺</a><a data-toc="section-3" href="/article/quantization-serving/#section-3">3. 量化的字节与执行账本</a><a data-toc="section-4" href="/article/quantization-serving/#section-4">4. 校准与质量：先解释误差，再比较性能</a><a data-toc="section-5" href="/article/quantization-serving/#section-5">5. 量化实战：INT4打包与CPU INT8执行</a><a data-toc="self-check" href="/article/quantization-serving/#self-check">自我检验</a><a data-toc="references" href="/article/quantization-serving/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

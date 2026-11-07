@@ -3,7 +3,7 @@ const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const query=value=>{c.query=value;return JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(query).map(r=>({id:r.id,path:r.path,anchor:r.anchor,tier:r.tier,label:r.matchLabel}))',c)));};
 const index=JSON.parse(JSON.stringify(vm.runInContext('buildSiteSearchIndex().map(e=>({id:e.id,type:e.type,path:e.path,anchor:e.anchor}))',c)));
-assert.equal(index.length,161);assert.equal(new Set(index.map(e=>e.id)).size,161);assert.equal(index.filter(e=>e.type==='knowledge').length,95);
+assert.equal(index.length,162);assert.equal(new Set(index.map(e=>e.id)).size,162);assert.equal(index.filter(e=>e.type==='knowledge').length,95);
 for(const entry of index){const file=path.join('dist',entry.path,'index.html');assert(fs.existsSync(file),entry.id+': destination');if(entry.anchor)assert(fs.readFileSync(file,'utf8').includes('id="'+entry.anchor+'"'),entry.id+': point anchor');}
 assert.equal(query('traceparent')[0].id,'article:agent-observability');assert.equal(query('traceparent')[0].anchor,'section-2');
 assert(query('traceparent').every(r=>!['article:gpu-cluster','article:agent-runtime'].includes(r.id)));
@@ -32,4 +32,4 @@ fixture.q='完结事件';const heading=JSON.parse(JSON.stringify(vm.runInContext
 assert.equal(heading.anchor,'section-1');assert.equal(heading.tier,4);assert(heading.excerpt.startsWith('完结事件。先收齐参数，再检查是否允许执行。'));assert(!heading.excerpt.includes('下载完结事件示例'));
 const highlighted=vm.runInContext('siteSearchHighlight(\'<img src="x"> & text\',["img"])',fixture);
 assert(!highlighted.includes('<img'));assert(highlighted.includes('&lt;<mark>img</mark>'));assert(highlighted.includes('&amp;'));
-console.log('PASS:161 actual entries/95 point anchors, direct body and identifier matches, multiword and full-width queries, independent title/prose/code ranking, TP/HTTP boundary and escaped snippets.');
+console.log('PASS:162 actual entries/95 point anchors, direct body and identifier matches, multiword and full-width queries, independent title/prose/code ranking, TP/HTTP boundary and escaped snippets.');

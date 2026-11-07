@@ -4,7 +4,7 @@ for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<scr
 const d=vm.runInContext('({articles,infraKnowledgeDomains,infraStudyGates,aiAgentLabFiles,aiAgentValidation,sources,chapterReadingEdits})',c);
 assert.equal(d.infraKnowledgeDomains.length,4);
 assert.equal(d.infraKnowledgeDomains.flatMap(x=>x.points).length,33);
-assert.equal(d.articles.length,66);
+assert.equal(d.articles.length,67);
 assert.equal(d.chapterReadingEdits.length,35);assert.equal(new Set(d.chapterReadingEdits.map(x=>x.id)).size,35);
 assert.deepEqual(JSON.parse(fs.readFileSync('docs/CHAPTER_REVIEW_2026-11-04.json')).chapters,JSON.parse(JSON.stringify(d.chapterReadingEdits)));
 const articleIDs=new Set(d.articles.map(a=>a.id));

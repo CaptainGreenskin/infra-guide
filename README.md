@@ -10,16 +10,18 @@
 | 方向 | 内容 |
 | --- | --- |
 | Cloud Infra | 系统基础、虚拟化、网络、存储与数据库、Kubernetes、Serverless、IaC/GitOps、安全、容量与SRE |
-| AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型推理与发布 |
+| AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前66章：Cloud 28、AI 25、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+当前67章：Cloud 28、AI 26、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
 
 后续内容按 [中文初学者编写规则](docs/CONCEPT_FIRST_AUTHORING.md) 维护：入口和每章先讲对象与依赖，再进入机制和案例。本轮[高关注项目复核](docs/GITHUB_RESEARCH_2026-11-05.md)与[概念修订记录](docs/CONCEPT_REVIEW_2026-11-05.json)单独保留。
 
 正文继续按这条顺序修订：[六章机制与实战迭代](docs/BODY_ITERATION_2026-11-05.md)覆盖云网络、Kubernetes控制面、注意力、解码器、上下文与持久工作流，附六张图和五个可运行程序。
+
+目录与学习路线按 **P0/C1–C9、A1–A3、G1–G10、S1–S3** 组织；量化已独立成章。首页负责选择方向，大纲提供地图与完整章节，旧 `/start/` 自动回到首页。修改编号和归属时维护 `dist/course-map.js`；旧链接迁移与审阅边界见 [结构迭代记录](docs/STRUCTURE_ITERATION_2026-11-07.md)。
 
 ## 配套独立项目
 
@@ -70,7 +72,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的100个独立页面；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的101个页面（100个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 
@@ -80,7 +82,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后 100 条路由。
+浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后 101 条路由。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

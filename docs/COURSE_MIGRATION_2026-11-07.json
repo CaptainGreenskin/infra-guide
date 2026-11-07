@@ -1,0 +1,1334 @@
+{
+  "date": "2026-11-07",
+  "baseline_commit": "7a869184cd0edbaedef53a8554c5509f83a4df2c",
+  "scope": "承接用户已写的领域编号和量化拆章，完成路线、链接、入口和阅读页迁移。",
+  "historical_audits": {
+    "docs/QUALITY_AUDIT_2026-11-04.json": "d82977e8ed064d319e92692cbe6f7282b39f6a407fa95240b5899756e69f9ab1",
+    "docs/EDITORIAL_AUDIT_2026-11-04.json": "985b11223400d7a7708fbf88ca113f8f268acc78dd7e9b6573393791e769bb28"
+  },
+  "legacy_articles": [
+    {
+      "id": "agent-evaluation",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "evaluation-metric-contract",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "section-12",
+        "self-check",
+        "references",
+        "resource-hf-agents",
+        "resource-berkeley-agents"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "stale-context-recovery",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-hf-agents",
+        "resource-ntu-genai"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "agent-observation-signals",
+        "section-2",
+        "section-3",
+        "agent-trace-effect-boundary",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-temporal-python",
+        "resource-agent-evals"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "cancel-request-and-effect",
+        "self-check",
+        "references",
+        "resource-temporal-python"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "retrieval-lexical-foundation",
+        "section-4",
+        "section-5",
+        "retrieval-evidence-pipeline",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "section-12",
+        "section-13",
+        "section-14",
+        "self-check",
+        "references",
+        "resource-context-engineering"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "tool-task-contract",
+        "section-2",
+        "section-3",
+        "tool-finite-loop",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "streaming-tool-lab",
+        "self-check",
+        "references",
+        "resource-hf-agents",
+        "resource-ntu-genai"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "sandbox-authority-boundary",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "section-12",
+        "self-check",
+        "references",
+        "resource-gvisor-security"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "approval-records",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "agent-permission-lab",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-hf-mcp",
+        "resource-effective-agents"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "model-bundle-contract",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-ntu-genai",
+        "resource-fsdl-llmops"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "v43-attention-practice",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-flash-paper"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-one-gpu-lm"
+      ]
+    },
+    {
+      "id": "cache-consistency",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-cambridge-ds"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "checkpoint-consistent-state",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-pytorch-ddp"
+      ]
+    },
+    {
+      "id": "cloud-compute",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "virtualization-resource-contract",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "section-12",
+        "self-check",
+        "references",
+        "resource-aws-reliability",
+        "resource-terraform-state"
+      ]
+    },
+    {
+      "id": "cloud-overview",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "self-check",
+        "references",
+        "resource-k8s-basics"
+      ]
+    },
+    {
+      "id": "concurrency-pools",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-mit-os"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "config-effective-versions",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-cncf-aliyun",
+        "resource-linux-cgroup"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "input-dataset-sampler-loader",
+        "section-2",
+        "section-3",
+        "input-worker-batch-count",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "database-index-locks",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "sql-plan-lab",
+        "sql-snapshot-lab",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-cmu-db"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-pytorch-ddp"
+      ]
+    },
+    {
+      "id": "delivery",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-aws-reliability",
+        "resource-sre-workbook"
+      ]
+    },
+    {
+      "id": "distributed-systems",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-cambridge-ds"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "optimizer-update-window",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "scaling-demo",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-cs336"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "v43-history-practice",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "self-check",
+        "references",
+        "resource-temporal-python",
+        "resource-context-engineering"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-aws-reliability",
+        "resource-sre-workbook"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-dlsys",
+        "resource-flash-paper"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-one-gpu-lm"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "memory-state-objects",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "self-check",
+        "references",
+        "resource-cuda-model",
+        "resource-paged-paper"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "gpu-placement-stages",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "self-check",
+        "references",
+        "resource-aliyun-dlc-contract"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-cncf-aliyun"
+      ]
+    },
+    {
+      "id": "incident",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-sre-workbook"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "serving-two-budgets",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-fsdl-llmops",
+        "resource-paged-paper"
+      ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "scaling-control-chain",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "scaling-delay-queue",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "service-name-address-identity",
+        "section-2",
+        "section-3",
+        "service-flow-return",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-k8s-basics",
+        "resource-cs144"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "volume-binding-path",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "backup-consistency-point",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "k8s-workloads",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "pod-probe-thresholds",
+        "section-5",
+        "section-6",
+        "section-7",
+        "pod-stop-evidence",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-k8s-basics",
+        "resource-cncf-aliyun"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-hf-mcp",
+        "resource-effective-agents"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "pod-stop-evidence",
+        "section-6",
+        "section-7",
+        "v43-reconcile-practice",
+        "self-check",
+        "references",
+        "resource-k8s-basics",
+        "resource-cncf-aliyun"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-aliyun-dlc-contract"
+      ]
+    },
+    {
+      "id": "linux-resource",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "self-check",
+        "references",
+        "resource-mit-os",
+        "resource-linux-cgroup"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "kv-demo",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "quantization-number-map",
+        "section-9",
+        "section-10",
+        "section-11",
+        "self-check",
+        "references",
+        "resource-cs336",
+        "resource-paged-paper"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "self-check",
+        "references",
+        "resource-aliyun-dlc-contract",
+        "resource-pytorch-ddp"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "tcp-connection-contract",
+        "section-2",
+        "section-3",
+        "section-4",
+        "tcp-message-boundary",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "network-timing-lab",
+        "section-11",
+        "section-12",
+        "self-check",
+        "references",
+        "resource-cs144"
+      ]
+    },
+    {
+      "id": "observability",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-sre-workbook"
+      ]
+    },
+    {
+      "id": "position-encoding",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "resilience",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "recovery-business-contract",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "self-check",
+        "references",
+        "resource-aws-reliability",
+        "resource-cambridge-ds"
+      ]
+    },
+    {
+      "id": "roofline-model",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-cs336",
+        "resource-dlsys"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-cncf-aliyun",
+        "resource-linux-cgroup"
+      ]
+    },
+    {
+      "id": "serverless-execution",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "serverless-delivery-identities",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "section-11",
+        "section-12",
+        "section-13",
+        "self-check",
+        "references",
+        "resource-lambda-environment"
+      ]
+    },
+    {
+      "id": "slo",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "slo-demo",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-sre-workbook"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "backup-consistency-point",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-cmu-db"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "section-10",
+        "self-check",
+        "references",
+        "resource-nccl-ops"
+      ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-d2l-zh"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "collective-members-layout",
+        "section-2",
+        "section-3",
+        "collective-signature-order",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-pytorch-ddp",
+        "resource-nccl-ops"
+      ]
+    },
+    {
+      "id": "training-lab",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "scaling-demo",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "self-check",
+        "references",
+        "resource-aliyun-dlc-contract",
+        "resource-fsdl-llmops"
+      ]
+    },
+    {
+      "id": "training-storage",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "self-check",
+        "references",
+        "resource-aliyun-dlc-contract"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "v43-decoder-practice",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-one-gpu-lm"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-d2l-zh",
+        "resource-ntu-genai"
+      ]
+    },
+    {
+      "id": "virtual-memory-oom",
+      "anchors": [
+        "concept-path",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "section-8",
+        "section-9",
+        "self-check",
+        "references",
+        "resource-mit-os",
+        "resource-linux-cgroup"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "anchors": [
+        "concept-path",
+        "core-knowledge",
+        "section-1",
+        "section-2",
+        "section-3",
+        "section-4",
+        "section-5",
+        "section-6",
+        "section-7",
+        "v43-route-practice",
+        "self-check",
+        "references",
+        "resource-cs144"
+      ]
+    }
+  ],
+  "moved_quantization": {
+    "from": "model-serving",
+    "to": "quantization-serving",
+    "anchor_targets": {
+      "section-8": "section-1",
+      "quantization-number-map": "quantization-number-map",
+      "section-9": "section-3",
+      "section-10": "section-4",
+      "section-11": "section-5"
+    },
+    "code_sha256": [
+      "bb63b61ea8087641b4e444123ba5f3ac6132b631eec45fe964e697e80a0f28d2",
+      "b1b93176028ba1a2071ca89929eeff474dca59af2d2cfba857e02dd0d44c2524",
+      "55a399984c1ab36b061462f70148c29a1d0cdd334402232489aa23ec6e0d7dcf",
+      "cf86fea66b3d01397df05504f5c58a4774fca5f82e7faf93fed8484f41116679",
+      "6933146e2f3056f76543d683b131f477bdcfd98ca87487522067faec56997255",
+      "d8588fa0aad59602e9ecaf26581283f54fcf7dbf36b7729aa0bb21b14b82902d"
+    ],
+    "diagrams": [
+      "diagrams/v22-quant-groups.svg",
+      "diagrams/v22-quant-execution.svg"
+    ]
+  },
+  "new_chapter_reviews": [
+    {
+      "id": "quantization-serving",
+      "module": "platform",
+      "title": "模型量化：从比例尺到打包、校准与执行",
+      "review": "reorganized_existing_content",
+      "reviewed_at": "2026-11-07",
+      "reviewed_content_sha256": "0608fb36d8c5461eb2673bda68832ad24a262694a201bd2fe874698b13e2ff32",
+      "headings": [
+        "量化基础：整数、比例尺与零点",
+        "分组：谁共享同一把比例尺",
+        "量化的字节与执行账本",
+        "校准与质量：先解释误差，再比较性能",
+        "量化实战：INT4打包与CPU INT8执行"
+      ],
+      "observation": "核对整数映射、分组、字节、校准和执行的连续顺序；原代码和配图迁入新章，概念起点、先修及学习出口单独复读。既有CPU执行证据保持原范围。本轮不计为新增实质内容或GPU实测。",
+      "review_scope": "既有量化正文的完整迁移、章节概念与先修、代码/图/链接的一致性；未增加模型质量或GPU性能实测。"
+    }
+  ],
+  "new_editorial_entries": [
+    {
+      "id": "quantization-serving",
+      "track": "ai",
+      "decision": "split_existing",
+      "status": "rechecked",
+      "observation": "从model-serving原量化小节拆出一个独立学习单元，保留旧链接对应关系。",
+      "recheck": "复核完整正文、旧代码和图的迁移、实验入口、搜索、学习路线和先修；学习效果待真实读者验证。"
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "sv-quantization",
+      "previous_content_sha256": "a0702d2d9b8726665f2006a515396ba601e571af129254d0d6337ab6d769fa82",
+      "reviewed_content_sha256": "70996ddce5024469c3752a6568efb32a8465a0490bcc2c67fb46c399323a9efd",
+      "reviewed_at": "2026-11-07",
+      "scope": "only_related_chapter_changed",
+      "observation": "量化知识点正文不变，关联章节由model-serving改为quantization-serving；原历史审阅摘要不覆盖写。"
+    }
+  ],
+  "reader_trials": {
+    "status": "not_started",
+    "participants": 0
+  },
+  "verification_scope": "本轮结构迁移沿用既有本地实验；不新增真实GPU、Kubernetes、Kairo或读者学习效果的结论。"
+}

@@ -100,28 +100,45 @@ const quantPractice=infraReadableHTML(
   para('例如一轮草稿4ms、验证10ms、其他1ms，平均交付3个词元，简化成本为5ms/词元；若单目标基线同口径为8ms/词元，理想比值为1.6。接受变差、M降到1时，同一轮反而是15ms/词元。数字是明确题设，不能用来宣称本站或某个GPU实际加速。')+
   point.body.replace(/<p>权重量化[\s\S]*?<\/p>/,''));
  domain.points.splice(index,0,{id:'sv-quantization',title:'量化：数值误差、存储与实际执行',
-  articles:['model-serving','gpu-memory'],
+  articles:['quantization-serving','gpu-memory'],
   lead:'从整数和比例尺开始，区分分组、打包、校准与算子路径；把任务质量、产物大小和运行峰值分别验收。',
   body:quantMapping+quantGranularity+quantStorage+quantExecution+quantCalibration+quantMethods});
 }
 {
+ // 量化独立为 A3.5；旧小节提供逐项指路，course-map.js 同步处理自动跳转。
+ articles.push({id:'quantization-serving',number:'A3.5',module:'platform',level:'原理 + 实验',minutes:22,
+  title:'模型量化：从比例尺到打包、校准与执行',
+  tags:['量化','INT4','校准','算子路径'],
+  desc:'从整数与比例尺的手算开始，经过分组、打包与字节账本，再到校准、常见方法与真实CPU INT8执行。',
+  objectives:['数值：写出量化与恢复公式，区分裁剪与舍入','存储：把分组比例尺与元数据算进字节账','执行：分开验证格式、算子路径与任务质量'],
+  prereq:'完成 A3.4 的 Prefill、Decode 与 KV 容量推导；能按张量形状计算字节数。',
+  intro:'量化把权重从浮点改成整数表示。先从两个数的手算开始，弄清比例尺、零点、分组与打包各自改变什么，再分别核对文件变小、执行变快和任务质量这三件不同的事。',
+  sections:[['量化基础：整数、比例尺与零点',quantMapping],['分组：谁共享同一把比例尺',quantGranularity],
+   ['量化的字节与执行账本',quantStorage+quantExecution],
+   ['校准与质量：先解释误差，再比较性能',quantCalibration+quantMethods],
+   ['量化实战：INT4打包与CPU INT8执行',quantPractice]],
+  check:['数值：区分裁剪误差与舍入误差','存储：把比例尺与元数据算进字节账','执行：分开核对格式、算子与任务质量'],
+  exercise:['为什么INT4权重文件不一定是FP16文件的四分之一？','整数载荷约缩小为四分之一，但分组比例尺、零点、对齐与容器元数据随组数增加；小张量或过细分组时，元数据可能超过整数载荷本身，要按实际格式逐项计算。'],
+  related:['model-serving','inference-performance','gpu-memory'],
+  refs:['v22Quant','v22Dequant','v22TorchQuant','v22GPTQ','v22AWQ','v22Smooth','v22QLoRA'],
+  updated:'2026.11.07'});
  const a=articles.find(a=>a.id==='model-serving');
- a.sections.push(['量化基础：整数、比例尺与分组',quantMapping+quantGranularity],
-  ['量化的字节与执行账本',quantStorage+quantExecution],
-  ['校准与质量：先解释误差，再比较性能',quantCalibration+quantMethods],
-  ['量化实战：INT4打包与CPU INT8执行',quantPractice]);
- a.sections[4][1]+='<p><a href="/article/model-serving/#quantization-number-map">继续阅读本章后半的量化推导与完整实验 →</a></p>';
- a.refs=[...new Set([...a.refs,'v22Quant','v22Dequant','v22TorchQuant','v22GPTQ','v22AWQ','v22Smooth','v22QLoRA'])];a.minutes=50;a.updated='2026.11.04';
+ a.sections.push(['量化专题已独立成章',
+  '<p>本章原来的量化推导与完整实验——整数与比例尺、分组与打包、字节与执行账本、校准与质量、INT4打包与CPU INT8执行——已按学习单元拆分为独立一章，便于单独阅读与练习。</p>'+
+  '<p><a href="/article/quantization-serving/">继续阅读：模型量化：从比例尺到打包、校准与执行 →</a></p>'+
+  '<ul class="chapter-migration-links"><li id="quantization-number-map"><a href="/article/quantization-serving/#quantization-number-map">整数、比例尺与零点 →</a></li><li id="section-9"><a href="/article/quantization-serving/#section-3">字节与执行账本 →</a></li><li id="section-10"><a href="/article/quantization-serving/#section-4">校准与质量 →</a></li><li id="section-11"><a href="/article/quantization-serving/#section-5">INT4 与 CPU INT8 实战 →</a></li></ul>']);
+ a.sections[4][1]+='<p><a href="/article/quantization-serving/">量化的数值、字节与执行账本见独立专章 →</a></p>';
+ a.minutes=38;a.updated='2026.11.07';
 }
 {
  const a=articles.find(a=>a.id==='gpu-memory');
  a.sections[5][1]+=knowledgeSubhead('量化先改变哪一笔，要看对象和展开路径')+
  para('训练里的混合精度、仅权重的推理量化、激活量化和KV量化不是同一份账。4bit权重还要计比例尺与其他元数据；执行时若保留压缩权重又完整展开成高精度，可能同时占两份内存。不能把“INT4权重是FP16的四分之一”套到包含优化器、激活、KV和工作区的总峰值。')+
- linkTo('model-serving','用32个权重核对分组开销，再看实际算子')+
+ linkTo('quantization-serving','用32个权重核对分组开销，再看实际算子')+
  para('QLoRA这类微调把冻结的低比特基座与可训练适配参数分开。基座仍参与前向和反向依赖，训练还需保存相应激活与工作区；适配器有自己的参数、梯度和优化器状态。它不能被解释为“全部预训练参数、所有状态都用4bit更新”。先列可训练对象，再计算每一笔状态。');
  a.refs=[...new Set([...a.refs,'v22Quant','v22TorchQuant','v22QLoRA'])];a.updated='2026.11.04';
 }
 infraDomain('platform').refs=[...new Set([...infraDomain('platform').refs,'v22Quant','v22Dequant','v22TorchQuant','v22GPTQ','v22AWQ','v22Smooth','v22QLoRA','v22Speculative','v22SpecSampling'])];
 const platformCasesBeforeSQC=infraFieldCases.platform;
 infraFieldCases.platform=()=>'<h3>量化：字节参考与真实CPU算子分别验证</h3>'+sqcLab('int4_groups.py',false)+sqcLab('int8_runtime.py',false)+
- linkTo('model-serving','阅读量化全链、反例与完整程序')+platformCasesBeforeSQC();
+ linkTo('quantization-serving','阅读量化全链、反例与完整程序')+platformCasesBeforeSQC();

@@ -1956,7 +1956,11 @@ Object.assign(chapterConceptPaths,{
  'production-readiness':{terms:['服务','模型','任务','接口','状态','验收'],steps:[
  ['先写清一条用户请求要得到什么','服务接收请求，模型提供计算结果，Agent任务组织模型与工具完成目标。三者需要的资源、数据和权限相互连接，但各自都有应当独立判断的完成条件。'],
  ['接口连接组件，状态连接执行前后','接口规定组件怎样交换输入输出；状态记录当前进展和已经确认的事实。组合系统需要说明谁拥有事实、谁能修改、失败后从哪里恢复，而不只是画出组件名字。'],
- ['最后按场景逐项验收整条路径','验收是按约定条件核对实际结果。本章先限定目标与边界，再把Cloud、AI和Agent能力接在一起，计算容量并安排失败对照。每条结论都应对应具体输入、观察和用户结果。']]}
+ ['最后按场景逐项验收整条路径','验收是按约定条件核对实际结果。本章先限定目标与边界，再把Cloud、AI和Agent能力接在一起，计算容量并安排失败对照。每条结论都应对应具体输入、观察和用户结果。']]},
+ 'quantization-serving':{terms:['量化','权重','比例尺','分组','校准'],steps:[
+ ['先把“换成整数”写成明确的对应规则','权重是模型中可学习的数字。量化为这些数字规定一套整数表示：比例尺说明每个整数格代表多大，零点说明浮点0对应哪个整数。只有整数而没有这些约定，无法恢复原来的数。'],
+ ['粒度、打包和校准分别改变不同的账','分组决定多少权重共用一把比例尺；打包决定多个低比特整数实际占用多少字节；校准用样本选择覆盖的数值范围。它们分别影响误差、文件大小和任务表现，不能混成一个“压缩比”。'],
+ ['再分开验收格式、算子与任务质量','本章从两个数的手算开始，推导分组与字节账，比较校准与常见方法，最后运行INT4格式参考与真实CPU INT8执行。数值算对、程序跑通和任务仍正确，是三层独立的证据。']]}
 });
 
 
@@ -2148,6 +2152,109 @@ function conceptTOCLink(path){return '<a data-toc="concept-path" href="'+path+'#
 
 
 ;
+// course-map.js
+/* 领域定义表：三条主线编号与章节阅读顺序的单一事实源。
+   Cloud 的 P0/C1–C9 由 cloud-course-map.js 先行重排；本表补齐 AI（A1–A3）、Agent（G）与综合实战（S），
+   并统一全部模块的显示顺序。文章 id、URL 与锚点不变，只更新显示编号、模块归属与数组顺序。
+   模块职责、标签与学习出口仍由各自内容文件维护；此处只裁决“属于哪个领域、第几章、按什么顺序读”。
+   阅读顺序依据 roadmap 阶段：kubernetes-training 划入 A3 平台域（排在队列调度之后），
+   Agent 按“任务与执行边界 → 恢复与上下文 → 工作流与检索 → 观测与验收”排列。 */
+const courseDomainPlan=[
+ ['foundation','P0',['linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems']],
+ ['compute','C1',['cloud-overview','cloud-compute']],
+ ['network','C2',['vpc-network','network-diagnosis']],
+ ['cloud-data','C3',['training-storage','database-index-locks','cache-consistency','storage-recovery']],
+ ['native','C4',['container-runtime','kubernetes-basics','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling']],
+ ['serverless','C5',['serverless-execution']],
+ ['cloud-delivery','C6',['delivery']],
+ ['cloud-security','C7',['iam-security']],
+ ['cloud-capacity','C8',['elasticity']],
+ ['sre','C9',['slo','observability','incident','resilience']],
+ ['model-foundations','A1',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']],
+ ['training','A2',['gpu-cluster','distributed-training','gpu-memory','ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance']],
+ ['platform','A3',['training-platform','gpu-scheduling','kubernetes-training','model-serving','quantization-serving','inference-performance','ai-lifecycle']],
+ ['agent','G',['agent-runtime','agent-security','agent-sandbox','agent-recovery','agent-memory','agent-evaluation','durable-workflows','agent-retrieval','agent-observability','kairo-practice']],
+ ['practice','S',['training-lab','cloud-service-lab','production-readiness']]
+];
+const courseChapterById=id=>{const a=articles.find(x=>x.id===id);if(!a)throw Error('course-map: unknown chapter '+id);return a};
+const courseOldNumberToId=new Map(articles.map(a=>[a.number,a.id]));
+const courseModuleOrder=new Map(courseDomainPlan.map(([id],index)=>[id,index]));
+for(const[moduleId,n,ids]of courseDomainPlan){
+ const m=modules.find(x=>x.id===moduleId);
+ if(!m)throw Error('course-map: unknown module '+moduleId);
+ m.n=n;
+ ids.forEach((articleId,index)=>{
+  const a=courseChapterById(articleId);
+  a.module=moduleId;
+  a.number=/\d$/.test(n)?n+'.'+(index+1):n+(index+1);
+  if(moduleId!=='training'&&a.group!==undefined)delete a.group; // 分组标签只属于 A2 训练模块
+ });
+}
+trackDefinitions.ai.modules=['model-foundations','training','platform'];
+trackDefinitions.agent.modules=['agent'];
+modules.sort((a,b)=>(courseModuleOrder.get(a.id)??99)-(courseModuleOrder.get(b.id)??99));
+articles.sort((a,b)=>(courseModuleOrder.get(a.module)-courseModuleOrder.get(b.module))||a.number.localeCompare(b.number,undefined,{numeric:true}));
+const courseChapterCount=track=>articles.filter(a=>modules.find(m=>m.id===a.module)?.track===track).length;
+Object.assign(modules.find(m=>m.id==='training'),{
+ desc:'九章讲清一步训练、并行与显存、数据与通信、恢复和性能；作业提交与集群管理接到 A3。'
+});
+Object.assign(modules.find(m=>m.id==='platform'),{
+ name:'AI 作业平台与推理服务',
+ desc:'从训练作业、GPU 调度和 Kubernetes，走到推理、量化、性能评估与模型发布。'
+});
+// 阅读路线和目录共用稳定的章节 ID；跨领域的先修与综合实验明确列出。
+const courseReadingStages={
+ cloud:cloudLearningStages,
+ ai:[
+  ['模型与计算原理',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training']],
+  ['GPU 执行、IO 与层内并行',['gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']],
+  ['训练系统与资源模型',['gpu-cluster','distributed-training','gpu-memory']],
+  ['执行、恢复与作业平台',['ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance','training-platform','gpu-scheduling','kubernetes-training']],
+  ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','training-lab']]
+ ],
+ agent:[
+  ['任务与执行边界',['distributed-systems','agent-runtime','agent-security','agent-sandbox']],
+  ['恢复、上下文与评估',['agent-recovery','agent-memory','agent-evaluation']],
+  ['持久工作流与知识检索',['durable-workflows','agent-retrieval']],
+  ['轨迹、隔离与综合验收',['agent-observability','kairo-practice','production-readiness']]
+ ]
+};
+// 旧的量化链接落到对应新小节；不把所有深链接挤到同一句迁移说明。
+const quantizationLegacyAnchors={
+ 'section-8':'section-1','quantization-number-map':'quantization-number-map',
+ 'section-9':'section-3','section-10':'section-4','section-11':'section-5'
+};
+function courseRedirectFor(path,search='',hash=''){
+ if(path==='/start/'||path==='/start')return '/'+search+hash;
+ if(path!=='/article/model-serving/'&&path!=='/article/model-serving')return null;
+ const query=new URLSearchParams(search);
+ let anchor=hash.slice(1);
+ try{anchor=decodeURIComponent(anchor)}catch{return null}
+ if(!anchor&&query.has('section'))anchor='section-'+query.get('section');
+ const target=quantizationLegacyAnchors[anchor];
+ if(!target)return null;
+ query.delete('section');
+ return '/article/quantization-serving/'+(query.toString()?'?'+query.toString():'')+'#'+target;
+}
+// 旧编号引用映射到新编号。为避免把正文中的普通数值（如算例结果 7.5）误当作章节号，
+// 只有两种确定语境参与替换：先修字段（整体由章节引用构成）与 <a> 链接的文字。
+// 代码块、实验源码与其余正文逐字不动；正文中的章节引用一律通过链接表达。
+const courseOldToNew=new Map([...courseOldNumberToId].map(([oldNumber,id])=>[oldNumber,courseChapterById(id).number]));
+const courseRenumberText=text=>String(text).replace(/\b(0|[6-9])\.\d{1,2}\b/g,number=>courseOldToNew.get(number)||number);
+const courseRenumberLinks=html=>String(html).replace(/(<a\b[^>]*>)([^<]*)(<\/a>)/g,(whole,open,label,close)=>{
+ const target=open.match(/\bhref=["']#?\/article\/([a-z0-9-]+)(?:\/|[?#]|["'])/);
+ if(!target)return whole;
+ const destination=articles.find(a=>a.id===target[1]);
+ if(!destination)return whole;
+ return open+label.replace(/\b(0|[6-9])\.\d{1,2}\b/g,number=>courseOldNumberToId.get(number)===destination.id?destination.number:number)+close;
+});
+for(const a of articles){
+ a.prereq=courseRenumberText(a.prereq);
+ for(const section of a.sections)section[1]=courseRenumberLinks(section[1]);
+}
+
+
+;
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
@@ -2215,7 +2322,7 @@ const labLearningCatalog=[
  {id:'ai-collectives',track:'ai',stage:2,title:'集合通信的数值、形状与调用顺序',chapter:'training-communication',pack:'scaling-collectives-traces',files:['collective_contracts.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'核对规约、变长收集、重排与归一化，再运行形状和操作不一致的独立失败对照。',scope:'通信确实发生在本机 CPU；不证明 NCCL、RDMA 或物理网络性能。'},
  {id:'ai-tp-gradients',track:'ai',stage:2,title:'张量并行：前向部分和与反向输入梯度',chapter:'tensor-parallel-math',pack:'storage-parallel-acceptance',files:['tp_forward_backward.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两成员 TP 组',observe:'求和后加一次偏置得到[12,5]；两份输入梯度合为[39,42]，局部参数梯度和更新对照完整基线。',scope:'局部自动求导加显式dY与归约，不是生产TP层；未运行GPU或真实多机。'},
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
- {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'model-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
+ {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
  {id:'ai-placement',track:'ai',stage:2,title:'总空闲够，为什么整组 GPU 仍放不下',chapter:'gpu-scheduling',pack:'leases-placement-sandbox',files:['placement_reservations.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'有限放置模型 + 两进程竞争',observe:'先算形状与机架约束，再注入半途失败和并发争抢，核对整组回滚与唯一准入。',scope:'GPU 槽位为题设；没有运行 Kueue 或实际 GPU 作业。'},
  {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'model-serving',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},

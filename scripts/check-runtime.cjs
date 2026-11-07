@@ -20,7 +20,7 @@ function capture(files,base){
 }
 for(const base of ['/','/infra-guide/'])assert.deepEqual(capture(plan.publicFiles,base),capture(canonical,base),base+': combined classic scripts change initialization or rendered content');
 const pages=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
-assert.equal(pages.length,100);
+assert.equal(pages.length,101);
 for(const file of pages){
  const html=read(file),scripts=[...html.matchAll(/<script defer src="([^"?]+)\?v=([\da-f]+)"/g)];
  assert.deepEqual(scripts.map(m=>m[1]),plan.publicFiles,file+': public load order');
@@ -28,4 +28,4 @@ for(const file of pages){
  assert(html.includes('id="app"')&&html.includes('<main'),file+': initial full HTML missing');
 }
 const compressed=files=>files.reduce((total,file)=>total+zlib.gzipSync(read(file)).length,0);
-console.log('PASS: '+canonical.length+' canonical scripts → '+plan.publicFiles.length+' public requests; initialization and100 route outputs match byte-for-byte at root and/infra-guide, all static pages retain full HTML and matching asset hashes. Gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; not a network timing claim.');
+console.log('PASS: '+canonical.length+' canonical scripts → '+plan.publicFiles.length+' public requests; initialization and101 route outputs match byte-for-byte at root and/infra-guide, all static pages retain full HTML and matching asset hashes. Gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; not a network timing claim.');

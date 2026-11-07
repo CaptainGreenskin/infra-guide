@@ -5,7 +5,7 @@ const d=vm.runInContext('({storageQuantContextFiles,storageQuantContextValidatio
 const python=process.env.INFRA_LAB_PYTHON||'python3';
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
 const actual={};
-for(const[id,name]of [['k8s-storage','wal_backup.py'],['k8s-storage','volume_writer.py'],['model-serving','int4_groups.py'],['model-serving','int8_runtime.py'],['agent-memory','context_state.py']]){
+for(const[id,name]of [['k8s-storage','wal_backup.py'],['k8s-storage','volume_writer.py'],['quantization-serving','int4_groups.py'],['quantization-serving','int8_runtime.py'],['agent-memory','context_state.py']]){
  const source=fs.readFileSync('dist/labs/storage-quant-context/'+name,'utf8');
  const record=d.storageQuantContextValidation.programs[name];
  assert.equal(d.storageQuantContextFiles[name],source);

@@ -1093,6 +1093,22 @@
         "验收"
       ],
       "sha256": "97483c79bd8ce6059928a31a8c7a530f73aecfcdb1502d18e5cd02a5d63887a2"
+    },
+    {
+      "id": "quantization-serving",
+      "stages": [
+        "先把“换成整数”写成明确的对应规则",
+        "粒度、打包和校准分别改变不同的账",
+        "再分开验收格式、算子与任务质量"
+      ],
+      "introduced_terms": [
+        "量化",
+        "权重",
+        "比例尺",
+        "分组",
+        "校准"
+      ],
+      "sha256": "f17f0164b493e3bc5a42988a17ffa10da31749d94ec1a5692888d80c839b10fe"
     }
   ],
   "modules": [
@@ -1330,7 +1346,7 @@
     }
   ],
   "source_sha256": {
-    "dist/concept-paths-data.js": "abd332e8e465999428ff4119c34ea004c41a0b7b273a22c97e67796705456180",
+    "dist/concept-paths-data.js": "e2da117b6392b0ea073be7ea8b34ba5a252a0b520d5725543450e39c8bad0d03",
     "dist/concept-paths.js": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
     "scripts/draw-concept-paths.py": "d1058fb65b93454e5335c844aec7109bc143cf47ec53cf08fb1382f118915b7c",
     "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",
