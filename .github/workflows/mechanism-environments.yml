@@ -18,6 +18,7 @@ jobs:
         run: |
           mkdir -p environment-results
           python3 dist/labs/transport-recovery/epoll_ready.py > environment-results/epoll.json
+          python3 -c "import json; r=json.load(open('environment-results/epoll.json')); assert r['status']=='passed' and r['system']=='Linux'"
           cat environment-results/epoll.json
       - name: Recover an isolated MySQL database
         run: python3 dist/labs/transport-recovery/mysql_restore.py --report environment-results/mysql.json

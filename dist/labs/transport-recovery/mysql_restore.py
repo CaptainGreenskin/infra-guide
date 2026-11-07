@@ -32,8 +32,8 @@ class Lab:
         result = subprocess.run(['docker', *args], input=data, capture_output=True,
                                 timeout=timeout, env=env)
         if check and result.returncode:
-            detail = result.stderr.decode(errors='replace').replace(self.password, '[redacted]')
-            raise RuntimeError('Docker command failed: ' + detail[:1800])
+            detail = (result.stderr or result.stdout).decode(errors='replace').replace(self.password, '[redacted]')
+            raise RuntimeError('Docker ' + args[0] + ' exited ' + str(result.returncode) + ': ' + detail[-1800:])
         return result
 
     def start(self, role, server_id, binary_log):
