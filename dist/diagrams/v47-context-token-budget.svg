@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 610" width="1120" height="610" role="img" aria-labelledby="title desc">
+<title id="title">完整提示词元账与证据不足</title><desc id="desc">cl100k_base实际输入237，正文单数36，输出预留96。声明512窗口内合计333；收紧259后输入163只能保一份，拒绝交付。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="610" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">正文36词元，不能当成完整输入237词元</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">固定tiktoken 0.12.0 / cl100k_base；纯字符串模板，非模型聊天封装。</text>
+<text x="32" y="151" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">正常：两份证据齐备，发送1次</text>
+<rect x="32" y="180" width="474" height="64" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="269.0" y="222" font-size="26" fill="#315dce" font-weight="550" text-anchor="middle">输入237</text>
+<rect x="506" y="180" width="192" height="64" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="602.0" y="222" font-size="26" fill="#287b69" font-weight="550" text-anchor="middle">预留96</text>
+<rect x="698" y="180" width="358" height="64" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="877.0" y="222" font-size="26" fill="#66738a" font-weight="550" text-anchor="middle">余量179</text>
+<text x="32" y="291" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">237 + 96 = 333 ≤ 512；输入上限416</text>
+<text x="32" y="357" font-size="26" fill="#ad5147" font-weight="600" text-anchor="start">收紧：只留a-2/v2，基础费用未进入，发送0次</text>
+<rect x="32" y="385" width="326" height="64" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="195.0" y="427" font-size="26" fill="#ad5147" font-weight="550" text-anchor="middle">输入163</text>
+<rect x="358" y="385" width="192" height="64" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="454.0" y="427" font-size="26" fill="#287b69" font-weight="550" text-anchor="middle">预留96</text>
+<text x="32" y="505" font-size="24" fill="#ad5147" font-weight="400" text-anchor="start">163 + 96 = 259，但证据不完整；“没有超限”不是任务可回答的充分条件。</text>
+<text x="32" y="561" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">窗口是本实验声明；只数正文漏掉模板、来源和分隔符，分段计数也可能非加性。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_bpe_prompt_counts&quot;, &quot;encoding&quot;: &quot;cl100k_base&quot;, &quot;normal&quot;: {&quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;candidate_versions&quot;: [2, 1], &quot;selected_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;selected_versions&quot;: [2, 1], &quot;context_limit&quot;: 512, &quot;output_reserve&quot;: 96, &quot;input_limit&quot;: 416, &quot;prompt_tokens&quot;: 237, &quot;body_only_tokens&quot;: 36, &quot;source_snapshots&quot;: [{&quot;id&quot;: &quot;a-2&quot;, &quot;version&quot;: 2, &quot;sha&quot;: &quot;aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919&quot;, &quot;body&quot;: &quot;调整费用为27。与同月基础费用相加。&quot;}, {&quot;id&quot;: &quot;a-1&quot;, &quot;version&quot;: 1, &quot;sha&quot;: &quot;9c44d6ecff4cc282da9b27d5daa9dcabf3dec9e6584ec4d2067be74a9365678d&quot;, &quot;body&quot;: &quot;基础费用为10。适用本月，金额单位元。&quot;}], &quot;prompt_sha256&quot;: &quot;847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3&quot;, &quot;requests_delivered&quot;: 1, &quot;status&quot;: &quot;delivered&quot;}, &quot;tight&quot;: {&quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;candidate_versions&quot;: [2, 1], &quot;selected_ids&quot;: [&quot;a-2&quot;], &quot;selected_versions&quot;: [2], &quot;context_limit&quot;: 259, &quot;output_reserve&quot;: 96, &quot;input_limit&quot;: 163, &quot;prompt_tokens&quot;: 163, &quot;body_only_tokens&quot;: 18, &quot;source_snapshots&quot;: [{&quot;id&quot;: &quot;a-2&quot;, &quot;version&quot;: 2, &quot;sha&quot;: &quot;aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919&quot;, &quot;body&quot;: &quot;调整费用为27。与同月基础费用相加。&quot;}], &quot;prompt_sha256&quot;: &quot;2d854091eb5c89eaffb7a1143e6519f2858071c31202c6f82f945c5763939696&quot;, &quot;requests_delivered&quot;: 0, &quot;status&quot;: &quot;insufficient_evidence&quot;}, &quot;output_generated&quot;: false}</metadata>
+</svg>

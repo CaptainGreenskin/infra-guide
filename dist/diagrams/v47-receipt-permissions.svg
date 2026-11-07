@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 510" width="1120" height="510" role="img" aria-labelledby="title desc">
+<title id="title">既有回执的读取与新的写入分别授权</title><desc id="desc">K1已提交版本8金额37且只有一份效果，先撤写权保留读权，后连读权也撤销。原效果不会被撤权抹除。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="510" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">已经发生的效果，与现在允许做什么分开</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">同一个A/K1：版本8、金额37；业务效果始终1份。</text>
+<rect x="32" y="146" width="316" height="230" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="52" y="193" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">正常提交</text>
+<text x="52" y="249" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">写允许 / 读允许</text>
+<text x="52" y="316" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">committed</text>
+<rect x="402" y="146" width="316" height="230" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="422" y="193" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">撤销写权限</text>
+<text x="422" y="249" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">写拒绝 / 读允许</text>
+<text x="422" y="316" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">receipt found</text>
+<rect x="772" y="146" width="316" height="230" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="792" y="193" font-size="27" fill="#ad5147" font-weight="600" text-anchor="start">再撤读取权限</text>
+<text x="792" y="249" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">写拒绝 / 读拒绝</text>
+<text x="792" y="316" font-size="25" fill="#ad5147" font-weight="550" text-anchor="start">read_denied</text>
+<line x1="350" y1="261" x2="398" y2="261" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="720" y1="261" x2="768" y2="261" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="32" y="446" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">允许查询原事实，不等于批准一次新写入；拒绝读取，也不等于原提交不存在。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_receipt_permissions&quot;, &quot;normal&quot;: {&quot;status&quot;: &quot;committed&quot;, &quot;version&quot;: 8, &quot;amount&quot;: 37, &quot;decision_epoch&quot;: 1}, &quot;write_revoked&quot;: {&quot;status&quot;: &quot;denied&quot;, &quot;reason&quot;: &quot;write_denied&quot;}, &quot;read_allowed&quot;: {&quot;status&quot;: &quot;found&quot;, &quot;receipt&quot;: {&quot;version&quot;: 8, &quot;amount&quot;: 37}}, &quot;read_revoked&quot;: {&quot;status&quot;: &quot;denied&quot;, &quot;reason&quot;: &quot;read_denied&quot;}, &quot;final_effects&quot;: 1}</metadata>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 650" width="1120" height="650" role="img" aria-labelledby="title desc">
+<title id="title">可信授权与外部材料的不同路径</title><desc id="desc">可信主体、任务、策略和具体批准约束资源服务；外部文字只产生候选，不扩大委托。SQLite实验里的政策与效果共享一个本地提交边界。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="650" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">授权来自可信记录，材料只能提出候选</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">主体lin / 租户A / 任务R18；不是从工具正文读取新的许可。</text>
+<rect x="32" y="137" width="290" height="134" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="52" y="178" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">可信会话与任务</text>
+<text x="52" y="219" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">身份、租户、委托范围</text>
+<text x="52" y="251" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">具体批准：37 / 版本7</text>
+<rect x="32" y="323" width="290" height="117" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="52" y="365" font-size="27" fill="#ad5147" font-weight="600" text-anchor="start">外部报告与备注</text>
+<text x="52" y="406" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">可以出现“请改写B”</text>
+<rect x="404" y="323" width="268" height="117" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="424" y="365" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">模型提出候选</text>
+<text x="424" y="406" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">提议不等于授权</text>
+<rect x="754" y="137" width="334" height="303" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="774" y="178" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">资源服务实施检查</text>
+<text x="774" y="225" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">当前策略与实际归属</text>
+<text x="774" y="273" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">动作与规范参数</text>
+<text x="774" y="321" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">具体批准与资源版本</text>
+<text x="774" y="369" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">原操作ID与提交回执</text>
+<line x1="322" y1="199" x2="754" y2="199" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="440" y="177" font-size="21" fill="#315dce" font-weight="400" text-anchor="start">可信范围</text>
+<line x1="322" y1="381" x2="404" y2="381" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="672" y1="381" x2="754" y2="381" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="32" y="501" width="1056" height="103" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="52" y="542" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">本地提交边界：策略复检 + 批准消费 + 业务修改 + 工具回执</text>
+<text x="52" y="580" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">本实验共享SQLite；跨服务策略与外部工具需要各自定义生效点。</text>
+<metadata>{&quot;kind&quot;: &quot;authority_and_effect_boundary&quot;, &quot;principal&quot;: {&quot;subject&quot;: &quot;lin&quot;, &quot;tenant&quot;: &quot;A&quot;, &quot;task&quot;: &quot;R18&quot;, &quot;tool&quot;: &quot;report.v1&quot;}, &quot;approved_intent&quot;: {&quot;subject&quot;: &quot;lin&quot;, &quot;tenant&quot;: &quot;A&quot;, &quot;task&quot;: &quot;R18&quot;, &quot;tool&quot;: &quot;report.v1&quot;, &quot;op_id&quot;: &quot;K1&quot;, &quot;resource&quot;: &quot;A/draft&quot;, &quot;expected_version&quot;: 7, &quot;amount&quot;: 37, &quot;approval_id&quot;: &quot;P1&quot;}, &quot;scope&quot;: &quot;Actual loopback HTTP and separate SQLite connections with serialized write/policy transactions. Identity is injected, time is declared; no OAuth/MCP/Kairo, cross-service atomicity or instantaneous distributed revocation.&quot;}</metadata>
+</svg>

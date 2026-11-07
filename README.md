@@ -15,6 +15,8 @@
 
 当前71章：Cloud 30、AI 28、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
 
+Agent沿现有两章深化：授权提交边界与完整检索上下文。17种HTTP观察、FTS5与真实BPE分别核对当前权限、原回执、237/36词元预算和实际交付；29个完整实验包、66项学习任务。[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。
+
 AI新增「动手算子与性能分析」「MoE路由与专家执行」：C11实际编译、PyTorch 2.5.1 CPU原始轨迹、两执行进程路由与容量反例；均提供完整包和源码绑定记录。CUDA/Nsight与GPU EP尚待目标硬件验证。
 
 新一轮 [六个教学单元目标](docs/CONTINUOUS_GOAL_2026-11-07.md) 按批次发布。Cloud 新增 TCP/epoll 与 MySQL 恢复两章，真实 Linux epoll 和 MySQL 8.4.13 的 [CI 运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001) 与完整实验包绑定；缺段恢复出现“余额125、回执少一笔”的反例。

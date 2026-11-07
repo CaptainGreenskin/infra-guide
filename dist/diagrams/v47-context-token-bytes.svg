@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" width="1120" height="560" role="img" aria-labelledby="title desc">
+<title id="title">词元边界与UTF8字符边界可以不同</title><desc id="desc">中国🙂恢复的真实cl100k_base编码。第二词元f09f只含表情的一部分，截前2词元默认解码为中国替换字符，退到严格有效边界为中国。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="560" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">一个词元，不一定是一整个汉字或表情</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">实际输入：中国🙂恢复；先看编号，再看它承载的字节。</text>
+<rect x="32" y="148" width="160" height="166" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="112" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元1</text>
+<text x="112" y="235" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">59795</text>
+<text x="112" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">e4b8ade59bbd</text>
+<rect x="209" y="148" width="160" height="166" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="289" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元2</text>
+<text x="289" y="235" font-size="28" fill="#ad5147" font-weight="600" text-anchor="middle">9468</text>
+<text x="289" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">f09f</text>
+<rect x="386" y="148" width="160" height="166" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="466" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元3</text>
+<text x="466" y="235" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">19044</text>
+<text x="466" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">9982</text>
+<rect x="563" y="148" width="160" height="166" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="643" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元4</text>
+<text x="643" y="235" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">21555</text>
+<text x="643" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">e681</text>
+<rect x="740" y="148" width="160" height="166" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="820" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元5</text>
+<text x="820" y="235" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">95</text>
+<text x="820" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">a2</text>
+<rect x="917" y="148" width="160" height="166" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="997" y="186" font-size="23" fill="#66738a" font-weight="400" text-anchor="middle">词元6</text>
+<text x="997" y="235" font-size="28" fill="#315dce" font-weight="600" text-anchor="middle">59464</text>
+<text x="997" y="282" font-size="17" fill="#1c283d" font-weight="400" text-anchor="middle">e5a48d</text>
+<rect x="32" y="359" width="500" height="97" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="52" y="399" font-size="29" fill="#ad5147" font-weight="600" text-anchor="start">截前2个：中国�</text>
+<text x="52" y="435" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">表情尚有字节未收齐。</text>
+<rect x="588" y="359" width="500" height="97" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="608" y="399" font-size="29" fill="#287b69" font-weight="600" text-anchor="start">退回1个：中国</text>
+<text x="608" y="435" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">严格解码通过，仍要核对语义。</text>
+<text x="32" y="517" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">保住字符不等于保住事实；证据优先按完整语义段选择，而非盲截词元。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_unicode_token_boundaries&quot;, &quot;encoding&quot;: &quot;cl100k_base&quot;, &quot;result&quot;: {&quot;text&quot;: &quot;中国🙂恢复&quot;, &quot;ids&quot;: [59795, 9468, 19044, 21555, 95, 59464], &quot;token_bytes_hex&quot;: [&quot;e4b8ade59bbd&quot;, &quot;f09f&quot;, &quot;9982&quot;, &quot;e681&quot;, &quot;a2&quot;, &quot;e5a48d&quot;], &quot;invalid_prefix_tokens&quot;: 2, &quot;lossy_default&quot;: &quot;中国�&quot;, &quot;safe_prefix&quot;: &quot;中国&quot;, &quot;safe_prefix_tokens&quot;: 1}, &quot;source_sha256&quot;: &quot;59459e50940fe387bf5d687d036998365eab520b2de30caef7870ddd56e9e11c&quot;}</metadata>
+</svg>

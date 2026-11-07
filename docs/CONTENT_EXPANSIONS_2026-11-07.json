@@ -112,6 +112,72 @@
       "observation": "概念和关系先解释，再到同一输入的手算、图、代码及CPU实测；GPU专项继续待验。",
       "previous_content_sha256": "0b788a031ae2399339cb720802fa57a9e860cf49e33217ce0d78084d76022543",
       "reviewed_content_sha256": "9f9382ae8820488b9ef14234e9947131cbebeb5f311c0e86eb7b67d07e249b3d"
+    },
+    {
+      "id": "ag-authorization",
+      "previous_content_sha256": "c02a129b30b742cdc63d896247ad8d5d4075a2cd14cbd36b3e5dc9ac2a54b5ff",
+      "reviewed_content_sha256": "7d665d1102a0a72b77403095f68c7df167bf83898cd360db2f8c3ab56b3ecaa7",
+      "reviewed_at": "2026-11-07",
+      "scope": "在系统知识中连接实际提交或完整上下文交付的机制与实验。",
+      "observation": "当前策略与既有事实分开；完整237/36预算、来源/ACL变化与接收端记录分别验证，未用收集器冒充LLM/Kairo。"
+    },
+    {
+      "id": "ag-context",
+      "previous_content_sha256": "cf9b00b238d75668ad02fc28afb623519c45a96275d2f37a79d0b4ead05c00e0",
+      "reviewed_content_sha256": "531b6cd72f4626c120136faacbb0b2ecbf664ca9e1395ee1f6d2151af6718c41",
+      "reviewed_at": "2026-11-07",
+      "scope": "在系统知识中连接实际提交或完整上下文交付的机制与实验。",
+      "observation": "当前策略与既有事实分开；完整237/36预算、来源/ACL变化与接收端记录分别验证，未用收集器冒充LLM/Kairo。"
+    },
+    {
+      "id": "ag-retrieval",
+      "previous_content_sha256": "1aabf2e29a8fd5db80f1cf96f43b5cc0912d85dd2323107279e44991c795666e",
+      "reviewed_content_sha256": "d851d9ec447ada5e71223c3b4dafbd94503a8725903804376fc61055142890e1",
+      "reviewed_at": "2026-11-07",
+      "scope": "在系统知识中连接实际提交或完整上下文交付的机制与实验。",
+      "observation": "当前策略与既有事实分开；完整237/36预算、来源/ACL变化与接收端记录分别验证，未用收集器冒充LLM/Kairo。"
+    },
+    {
+      "id": "ag-context",
+      "previous_content_sha256": "531b6cd72f4626c120136faacbb0b2ecbf664ca9e1395ee1f6d2151af6718c41",
+      "reviewed_content_sha256": "a3129e2abc50ce2d5434fe965ead811901cc4e6b7b696df3ef29a92fa64e5ddb",
+      "reviewed_at": "2026-11-07",
+      "scope": "入门系统知识用职责说明分词器，具体方法缩写留到已定义的正文。",
+      "observation": "完整提示237、正文36与输出预留的证据保持不变；读者先理解转换为词元编号，再读方法细节。"
+    }
+  ],
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "previous_content_sha256": "fcaa71d6eac82596a8c0e0f9843e9c6665a5fdb6845bf235afd8d9c5d3a69248",
+      "reviewed_content_sha256": "af8830f97e3f6f463fea33189911564150cc0043f995b49c016f3dbcdaca1a32",
+      "reviewed_at": "2026-11-07",
+      "scope": "去掉GPU并行段落中会触发CPU线程通用释义的表述。",
+      "observation": "保留数值、源码和实验；并行参与者与尾部有效位置直接说明，不将GPU参与者解释成CPU进程线程。"
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "id": "tool-authorization",
+      "chapter": "agent-security",
+      "track": "agent",
+      "reviewed_at": "2026-11-07",
+      "scope": "深化身份/委托、参数契约、具体批准、撤权/提交和独立回执权限；原9个章节锚点和实验保留。",
+      "program": "authorization_commit.py",
+      "record": "dist/labs/agent-boundaries/validation.json",
+      "observation": "17种HTTP观察与实际SQLite状态；正确撤权效果0、旧快照负例效果1，正常K1始终1份。",
+      "reviewed_content_sha256": "37248c505ef312631209f9152bc82dca08d540e9cb86681b14b4ab309f810b64"
+    },
+    {
+      "id": "retrieval-context",
+      "chapter": "agent-retrieval",
+      "track": "agent",
+      "reviewed_at": "2026-11-07",
+      "scope": "连续修订检索链的概念、片段/版本、候选、真实预算、授权/新鲜度与引用；保留14个旧节锚点与三份原实验。",
+      "program": "context_budget.py",
+      "record": "dist/labs/agent-boundaries/validation.json",
+      "observation": "实际FTS5、BPE和回环提示交付：237完整输入，36正文；预算/ACL/版本负例停止；非LLM质量或Kairo证据。",
+      "reviewed_content_sha256": "d5f190c8fa247c3da85ada3692a49d3770f29b6e59d534fa7d6b03c703739828"
     }
   ]
 }

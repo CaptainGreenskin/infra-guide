@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 570" width="1120" height="570" role="img" aria-labelledby="title desc">
+<title id="title">检查之后撤权，提交时谁作决定</title><desc id="desc">真实HTTP与独立SQLite连接中，prepare epoch1之后policy_change epoch2，正确拒绝效果0，信旧快照负例效果1。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="570" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">检查过一次，仍可能在过期的许可下写入</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">共同顺序：准备允许(1) → 撤权提交(2) → 本次工具写入。</text>
+<text x="60" y="152" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">准备检查</text>
+<text x="360" y="152" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">撤权提交</text>
+<text x="660" y="152" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">写入边界</text>
+<text x="959" y="152" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">效果数</text>
+<text x="32" y="228" font-size="23" fill="#287b69" font-weight="600" text-anchor="start">正确实现</text>
+<line x1="55" y1="284" x2="951" y2="284" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="246" width="238" height="62" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="179" y="286" font-size="23" fill="#287b69" font-weight="550" text-anchor="middle">允许 / epoch1</text>
+<rect x="360" y="246" width="238" height="62" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="479" y="286" font-size="23" fill="#287b69" font-weight="550" text-anchor="middle">策略 / epoch2</text>
+<rect x="660" y="246" width="238" height="62" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="779" y="286" font-size="23" fill="#287b69" font-weight="550" text-anchor="middle">重查→拒绝</text>
+<text x="1000" y="288" font-size="42" fill="#287b69" font-weight="650" text-anchor="middle">0</text>
+<text x="32" y="358" font-size="23" fill="#ad5147" font-weight="600" text-anchor="start">旧快照负例</text>
+<line x1="55" y1="414" x2="951" y2="414" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="60" y="376" width="238" height="62" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="179" y="416" font-size="23" fill="#ad5147" font-weight="550" text-anchor="middle">允许 / epoch1</text>
+<rect x="360" y="376" width="238" height="62" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="479" y="416" font-size="23" fill="#ad5147" font-weight="550" text-anchor="middle">策略 / epoch2</text>
+<rect x="660" y="376" width="238" height="62" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="779" y="416" font-size="23" fill="#ad5147" font-weight="550" text-anchor="middle">信epoch1→提交</text>
+<text x="1000" y="418" font-size="42" fill="#ad5147" font-weight="650" text-anchor="middle">1</text>
+<text x="32" y="516" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">本例撤权先提交；业务已先提交的另一顺序，不能靠撤权抹去历史效果。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_authorization_interleaving&quot;, &quot;correct&quot;: {&quot;version&quot;: 7, &quot;amount&quot;: 0, &quot;effects&quot;: 0, &quot;policy_epoch&quot;: 2, &quot;audit&quot;: [[&quot;prepare&quot;, 1], [&quot;policy_change&quot;, 2], [&quot;denied&quot;, 2]]}, &quot;negative&quot;: {&quot;version&quot;: 8, &quot;amount&quot;: 37, &quot;effects&quot;: 1, &quot;policy_epoch&quot;: 2, &quot;audit&quot;: [[&quot;prepare&quot;, 1], [&quot;policy_change&quot;, 2], [&quot;effect&quot;, 1]]}, &quot;source_sha256&quot;: &quot;7da354692d5018411efc566fe38beeca4598d95b11ae77cc4cd3cae3bdd7a26c&quot;}</metadata>
+</svg>

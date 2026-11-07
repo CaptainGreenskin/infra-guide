@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 640" width="1120" height="640" role="img" aria-labelledby="title desc">
+<title id="title">从检索索引到实际提示交付</title><desc id="desc">搜索索引只给候选，正文按当前版本和权限读取，完整提示计数并验证证据，发送前重查，再由真实HTTP收集器记录。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="640" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">检索找到，不代表最终输入已经拿到</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">a-1/v1=10；a-2/v2=27。身份、版本与预算沿路径保留。</text>
+<rect x="32" y="139" width="312" height="128" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="52" y="184" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">01 资料与索引</text>
+<text x="52" y="230" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">按范围查候选</text>
+<rect x="404" y="139" width="312" height="128" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="424" y="184" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">02 权威正文</text>
+<text x="424" y="230" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">取同版、获准内容</text>
+<rect x="776" y="139" width="312" height="128" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="796" y="184" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">03 完整输入</text>
+<text x="796" y="230" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">模板+来源+正文</text>
+<rect x="776" y="338" width="312" height="128" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="796" y="383" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">04 预算与证据</text>
+<text x="796" y="429" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">完整237；缺项则停</text>
+<rect x="404" y="338" width="312" height="128" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="424" y="383" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">05 发送前复检</text>
+<text x="424" y="429" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">读取资格与来源版本</text>
+<rect x="32" y="338" width="312" height="128" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="52" y="383" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">06 提示接收端</text>
+<text x="52" y="429" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">实际仅正常请求1份</text>
+<line x1="344" y1="203" x2="400" y2="203" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="716" y1="203" x2="772" y2="203" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="932" y1="267" x2="932" y2="334" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="776" y1="402" x2="720" y2="402" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="404" y1="402" x2="348" y2="402" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="32" y="520" width="1056" height="75" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="52" y="564" font-size="25" fill="#ad5147" font-weight="550" text-anchor="start">取回后撤权 / 版本推进：在指定检查点停止，接收端新增请求0。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_context_stages&quot;, &quot;cases&quot;: {&quot;normal&quot;: {&quot;status&quot;: &quot;delivered&quot;, &quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;selected_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;prompt_tokens&quot;: 237, &quot;requests_delivered&quot;: 1}, &quot;tight_budget&quot;: {&quot;status&quot;: &quot;insufficient_evidence&quot;, &quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;selected_ids&quot;: [&quot;a-2&quot;], &quot;prompt_tokens&quot;: 163, &quot;requests_delivered&quot;: 0}, &quot;revoked_after_fetch&quot;: {&quot;status&quot;: &quot;authorization_changed&quot;, &quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;selected_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;prompt_tokens&quot;: 237, &quot;requests_delivered&quot;: 0}, &quot;updated_after_fetch&quot;: {&quot;status&quot;: &quot;source_version_changed&quot;, &quot;candidate_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;selected_ids&quot;: [&quot;a-2&quot;, &quot;a-1&quot;], &quot;prompt_tokens&quot;: 237, &quot;requests_delivered&quot;: 0}, &quot;index_rebuild&quot;: {&quot;status&quot;: &quot;fresh_evidence&quot;, &quot;candidate_ids&quot;: null, &quot;selected_ids&quot;: null, &quot;prompt_tokens&quot;: null, &quot;requests_delivered&quot;: null}}, &quot;receiver&quot;: {&quot;request_count&quot;: 1, &quot;source_versions&quot;: [[&quot;a-2&quot;, 2], [&quot;a-1&quot;, 1]], &quot;prompt_sha256&quot;: &quot;847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3&quot;, &quot;prompt_tokens&quot;: 237}, &quot;scope&quot;: &quot;Actual FTS5, pinned BPE and loopback prompt collector. Fixed plain-string prompt and declared 512-token budget, not a real chat model format/window, LLM answer, embedding quality or distributed instantaneous revocation. Recheck is a designated pre-send checkpoint; no atomicity with external HTTP.&quot;}</metadata>
+</svg>

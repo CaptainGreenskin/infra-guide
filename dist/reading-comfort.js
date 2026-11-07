@@ -49,7 +49,11 @@ function initReadingComfort(){
   link.href=location.pathname+location.search+'#'+section.id;
   link.textContent=section.querySelector('h2').textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
   link.dataset.readerTarget=section.id;
-  link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));section.scrollIntoView({behavior:'instant',block:'start'});section.setAttribute('tabindex','-1');section.focus({preventScroll:true});updateCurrent();},{signal});
+  link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));
+   // A directory target may live inside the optional practice/further-reading block.
+   // pushState does not fire hashchange, so reveal it before attempting to scroll.
+   for(let parent=section.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+   section.scrollIntoView({behavior:'instant',block:'start'});section.setAttribute('tabindex','-1');section.focus({preventScroll:true});updateCurrent();},{signal});
   directoryNav.appendChild(link);
  }
  // Prerequisite pages without numbered sections still have the top-level map.

@@ -1,0 +1,559 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-07",
+  "source_sha256": {
+    "authorization_commit.py": "7da354692d5018411efc566fe38beeca4598d95b11ae77cc4cd3cae3bdd7a26c",
+    "context_budget.py": "59459e50940fe387bf5d687d036998365eab520b2de30caef7870ddd56e9e11c",
+    "requirements.txt": "ac785205f5d97970c4a7f8aef135c62cfda01985ba2000973008c823ccc01d2f",
+    "README.md": "36c839aad899072bb8319270ad89e5fb76e92b771fe297f76ac1132add9ae5b7"
+  },
+  "programs": {
+    "authorization_commit.py": {
+      "status": "passed",
+      "system": "Darwin",
+      "python": "3.9.6",
+      "sqlite": "3.51.0",
+      "source_sha256": "7da354692d5018411efc566fe38beeca4598d95b11ae77cc4cd3cae3bdd7a26c",
+      "principal_fixture": {
+        "subject": "lin",
+        "tenant": "A",
+        "task": "R18",
+        "tool": "report.v1"
+      },
+      "approved_intent": {
+        "subject": "lin",
+        "tenant": "A",
+        "task": "R18",
+        "tool": "report.v1",
+        "op_id": "K1",
+        "resource": "A/draft",
+        "expected_version": 7,
+        "amount": 37,
+        "approval_id": "P1"
+      },
+      "approved_fingerprint": "b00e9ace11656f7592ecb5b37b2dfe11ecd8a1466bfb9d047f3c12001cce8b19",
+      "results": {
+        "normal": {
+          "status": "committed",
+          "version": 8,
+          "amount": 37,
+          "decision_epoch": 1
+        },
+        "same_operation": {
+          "status": "duplicate",
+          "version": 8,
+          "amount": 37
+        },
+        "same_operation_changed": {
+          "status": "denied",
+          "reason": "operation_conflict"
+        },
+        "revoked_at_commit": {
+          "status": "denied",
+          "reason": "write_denied"
+        },
+        "snapshot_negative": {
+          "status": "committed",
+          "version": 8,
+          "amount": 37,
+          "decision_epoch": 1
+        },
+        "write_revoked_receipt_readable": {
+          "status": "found",
+          "receipt": {
+            "version": 8,
+            "amount": 37
+          }
+        },
+        "write_after_revoke": {
+          "status": "denied",
+          "reason": "write_denied"
+        },
+        "receipt_read_revoked": {
+          "status": "denied",
+          "reason": "read_denied"
+        },
+        "changed_amount": {
+          "status": "denied",
+          "reason": "approval_mismatch"
+        },
+        "cross_tenant": {
+          "status": "denied",
+          "reason": "resource_denied"
+        },
+        "stale_version": {
+          "status": "denied",
+          "reason": "version_conflict"
+        },
+        "expired": {
+          "status": "denied",
+          "reason": "approval_inactive"
+        },
+        "bad_integer": {
+          "status": "denied",
+          "reason": "invalid_integer"
+        },
+        "bad_float": {
+          "status": "denied",
+          "reason": "invalid_integer"
+        },
+        "empty_object": {
+          "status": "denied",
+          "reason": "unexpected_fields"
+        },
+        "extra_field": {
+          "status": "denied",
+          "reason": "unexpected_fields"
+        },
+        "duplicate_json": {
+          "status": "denied",
+          "reason": "duplicate_json_field"
+        }
+      },
+      "states": {
+        "normal": {
+          "version": 8,
+          "amount": 37,
+          "effects": 1,
+          "policy_epoch": 3,
+          "audit": [
+            [
+              "effect",
+              1
+            ],
+            [
+              "denied",
+              1
+            ],
+            [
+              "policy_change",
+              2
+            ],
+            [
+              "denied",
+              2
+            ],
+            [
+              "policy_change",
+              3
+            ],
+            [
+              "denied",
+              3
+            ]
+          ]
+        },
+        "revoked_at_commit": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 2,
+          "audit": [
+            [
+              "prepare",
+              1
+            ],
+            [
+              "policy_change",
+              2
+            ],
+            [
+              "denied",
+              2
+            ]
+          ]
+        },
+        "snapshot_negative": {
+          "version": 8,
+          "amount": 37,
+          "effects": 1,
+          "policy_epoch": 2,
+          "audit": [
+            [
+              "prepare",
+              1
+            ],
+            [
+              "policy_change",
+              2
+            ],
+            [
+              "effect",
+              1
+            ]
+          ]
+        },
+        "changed_amount": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "cross_tenant": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "stale_version": {
+          "version": 8,
+          "amount": 99,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "expired": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "bad_integer": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "bad_float": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "empty_object": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "extra_field": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        },
+        "duplicate_json": {
+          "version": 7,
+          "amount": 0,
+          "effects": 0,
+          "policy_epoch": 1,
+          "audit": [
+            [
+              "denied",
+              1
+            ]
+          ]
+        }
+      },
+      "scope": "Actual loopback HTTP and separate SQLite connections with serialized write/policy transactions. Identity is injected, time is declared; no OAuth/MCP/Kairo, cross-service atomicity or instantaneous distributed revocation."
+    },
+    "context_budget.py": {
+      "status": "passed",
+      "system": "Darwin",
+      "python": "3.12.13",
+      "sqlite": "3.53.3",
+      "tiktoken": "0.12.0",
+      "encoding": "cl100k_base",
+      "source_sha256": "59459e50940fe387bf5d687d036998365eab520b2de30caef7870ddd56e9e11c",
+      "cases": {
+        "normal": {
+          "candidate_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "candidate_versions": [
+            2,
+            1
+          ],
+          "selected_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "selected_versions": [
+            2,
+            1
+          ],
+          "context_limit": 512,
+          "output_reserve": 96,
+          "input_limit": 416,
+          "prompt_tokens": 237,
+          "body_only_tokens": 36,
+          "source_snapshots": [
+            {
+              "id": "a-2",
+              "version": 2,
+              "sha": "aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919",
+              "body": "调整费用为27。与同月基础费用相加。"
+            },
+            {
+              "id": "a-1",
+              "version": 1,
+              "sha": "9c44d6ecff4cc282da9b27d5daa9dcabf3dec9e6584ec4d2067be74a9365678d",
+              "body": "基础费用为10。适用本月，金额单位元。"
+            }
+          ],
+          "prompt_sha256": "847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3",
+          "requests_delivered": 1,
+          "status": "delivered"
+        },
+        "tight_budget": {
+          "candidate_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "candidate_versions": [
+            2,
+            1
+          ],
+          "selected_ids": [
+            "a-2"
+          ],
+          "selected_versions": [
+            2
+          ],
+          "context_limit": 259,
+          "output_reserve": 96,
+          "input_limit": 163,
+          "prompt_tokens": 163,
+          "body_only_tokens": 18,
+          "source_snapshots": [
+            {
+              "id": "a-2",
+              "version": 2,
+              "sha": "aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919",
+              "body": "调整费用为27。与同月基础费用相加。"
+            }
+          ],
+          "prompt_sha256": "2d854091eb5c89eaffb7a1143e6519f2858071c31202c6f82f945c5763939696",
+          "requests_delivered": 0,
+          "status": "insufficient_evidence"
+        },
+        "revoked_after_fetch": {
+          "candidate_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "candidate_versions": [
+            2,
+            1
+          ],
+          "selected_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "selected_versions": [
+            2,
+            1
+          ],
+          "context_limit": 512,
+          "output_reserve": 96,
+          "input_limit": 416,
+          "prompt_tokens": 237,
+          "body_only_tokens": 36,
+          "source_snapshots": [
+            {
+              "id": "a-2",
+              "version": 2,
+              "sha": "aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919",
+              "body": "调整费用为27。与同月基础费用相加。"
+            },
+            {
+              "id": "a-1",
+              "version": 1,
+              "sha": "9c44d6ecff4cc282da9b27d5daa9dcabf3dec9e6584ec4d2067be74a9365678d",
+              "body": "基础费用为10。适用本月，金额单位元。"
+            }
+          ],
+          "prompt_sha256": "847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3",
+          "requests_delivered": 0,
+          "status": "authorization_changed"
+        },
+        "updated_after_fetch": {
+          "candidate_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "candidate_versions": [
+            2,
+            1
+          ],
+          "selected_ids": [
+            "a-2",
+            "a-1"
+          ],
+          "selected_versions": [
+            2,
+            1
+          ],
+          "context_limit": 512,
+          "output_reserve": 96,
+          "input_limit": 416,
+          "prompt_tokens": 237,
+          "body_only_tokens": 36,
+          "source_snapshots": [
+            {
+              "id": "a-2",
+              "version": 2,
+              "sha": "aec4486f0a7aa141a192e7cbe10e7fbddb75bbc8b9defad93e97fc6ebd1f3919",
+              "body": "调整费用为27。与同月基础费用相加。"
+            },
+            {
+              "id": "a-1",
+              "version": 1,
+              "sha": "9c44d6ecff4cc282da9b27d5daa9dcabf3dec9e6584ec4d2067be74a9365678d",
+              "body": "基础费用为10。适用本月，金额单位元。"
+            }
+          ],
+          "prompt_sha256": "847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3",
+          "requests_delivered": 0,
+          "status": "source_version_changed"
+        },
+        "index_rebuild": {
+          "before_ids": [
+            "a-1"
+          ],
+          "after_versions": [
+            [
+              "a-2",
+              3
+            ],
+            [
+              "a-1",
+              1
+            ]
+          ],
+          "reference_total_after_update": 40,
+          "status": "fresh_evidence"
+        }
+      },
+      "counting_negative": {
+        "limit": 36,
+        "body_only_would_pass": true,
+        "whole_prompt_exceeds_limit": true,
+        "whole_prompt_tokens": 237
+      },
+      "blocked_fetches": [
+        "b-1/1",
+        "a-2/1"
+      ],
+      "unicode": {
+        "text": "中国🙂恢复",
+        "ids": [
+          59795,
+          9468,
+          19044,
+          21555,
+          95,
+          59464
+        ],
+        "token_bytes_hex": [
+          "e4b8ade59bbd",
+          "f09f",
+          "9982",
+          "e681",
+          "a2",
+          "e5a48d"
+        ],
+        "invalid_prefix_tokens": 2,
+        "lossy_default": "中国�",
+        "safe_prefix": "中国",
+        "safe_prefix_tokens": 1
+      },
+      "special_text": {
+        "text": "费用备注：<|endoftext|>不是任务结束指令。",
+        "ordinary_tokens": [
+          81368,
+          11883,
+          98390,
+          91837,
+          91,
+          8862,
+          728,
+          428,
+          91,
+          29,
+          16937,
+          21043,
+          89902,
+          81665,
+          64467,
+          6271,
+          97,
+          1811
+        ],
+        "special_token_emitted": false
+      },
+      "receiver": {
+        "request_count": 1,
+        "source_versions": [
+          [
+            "a-2",
+            2
+          ],
+          [
+            "a-1",
+            1
+          ]
+        ],
+        "prompt_sha256": "847fb3c8f23976f87c4a01083201d6887229144ff68a2f5b17d29f6e0176dbe3",
+        "prompt_tokens": 237
+      },
+      "independent_task_reference": {
+        "required_ids": [
+          "a-1",
+          "a-2"
+        ],
+        "normal_total": 37
+      },
+      "scope": "Actual FTS5, pinned BPE and loopback prompt collector. Fixed plain-string prompt and declared 512-token budget, not a real chat model format/window, LLM answer, embedding quality or distributed instantaneous revocation. Recheck is a designated pre-send checkpoint; no atomicity with external HTTP."
+    }
+  },
+  "scope": "Actual loopback HTTP/SQLite and pinned Chinese BPE. Identity and budgets are fixtures; no LLM quality, Kairo integration, external atomicity or global instantaneous revocation claim."
+}
