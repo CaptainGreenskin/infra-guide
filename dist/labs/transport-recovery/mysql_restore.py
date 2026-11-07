@@ -23,6 +23,8 @@ class Lab:
         self.image, self.folder = image, folder
         self.prefix = 'infra-pitr-' + uuid.uuid4().hex[:12]
         self.containers, self.volumes = [], []
+        self.data_volumes = {}
+        self.tools_image = 'infra-pitr-tools:' + self.prefix
         self.password = secrets.token_urlsafe(28)
         self.config = folder / 'client.cnf'
         self.config.write_text('[client]\nuser=root\npassword=' + self.password + '\nprotocol=socket\n')
@@ -40,6 +42,7 @@ class Lab:
         name, volume = self.prefix + '-' + role, self.prefix + '-' + role + '-data'
         self.docker('volume', 'create', '--label', 'infraguide=isolated-lesson', volume)
         self.volumes.append(volume)
+        self.data_volumes[name] = volume
         env = dict(os.environ, MYSQL_ROOT_PASSWORD=self.password)
         args = ['run', '-d', '--name', name, '--network', 'none', '--memory', '1g',
                 '--pids-limit', '256', '--env', 'MYSQL_ROOT_PASSWORD',
@@ -99,7 +102,9 @@ class Lab:
         return self.state(target)
 
     def binlog(self, source, files, start, stop=None):
-        args = ['exec', source, 'mysqlbinlog', '--start-position=' + str(start)]
+        args = ['run', '--rm', '--network', 'none', '--mount',
+                'type=volume,source=' + self.data_volumes[source] + ',target=/var/lib/mysql,readonly',
+                self.tools_image, '--start-position=' + str(start)]
         if stop is not None:
             args.append('--stop-position=' + str(stop))
         args.extend('/var/lib/mysql/' + f for f in files)
@@ -110,10 +115,16 @@ class Lab:
             self.docker('rm', '-f', name, check=False)
         for volume in reversed(self.volumes):
             self.docker('volume', 'rm', volume, check=False)
+        self.docker('image', 'rm', self.tools_image, check=False)
 
     def run(self):
         self.docker('pull', self.image, timeout=300)
         digest = json.loads(self.docker('image', 'inspect', self.image, '--format', '{{json .RepoDigests}}').stdout)
+        tool_file = Path(__file__).with_name('Dockerfile.tools')
+        self.docker('build', '--quiet', '--tag', self.tools_image, '--build-arg',
+                    'MYSQL_BASE=' + self.image, '--file', str(tool_file), str(tool_file.parent), timeout=360)
+        binlog_version = self.docker('run', '--rm', '--network', 'none', self.tools_image, '--version').stdout.decode().strip()
+        assert re.search(r'Ver\s+8\.4\.', binlog_version), 'Use the MySQL 8.4 client toolchain'
         source = self.start('source', 101, True)
         version = self.sql(source, 'SELECT VERSION();').stdout.decode().strip()
         assert version.startswith('8.4.'), 'This lesson is explicitly scoped to MySQL 8.4'
@@ -175,6 +186,8 @@ class Lab:
         after_crash = self.state(source)
         assert after_crash == committed, 'Crash recovery keeps the committed bad transaction too'
         return {'status': 'passed', 'image': self.image, 'image_digests': digest, 'mysql_version': version,
+                'mysqlbinlog_version': binlog_version,
+                'tools_dockerfile_sha256': hashlib.sha256(tool_file.read_bytes()).hexdigest(),
                 'snapshot_next_event': start, 'exclude_bad_transaction_from': stop, 'required_files': chain,
                 'baseline_only': baseline_only, 'full_replay': whole_history,
                 'missing_first_log': missing_log, 'point_in_time_recovery': recovered,
