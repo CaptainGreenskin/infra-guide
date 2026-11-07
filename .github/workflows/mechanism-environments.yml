@@ -1,0 +1,29 @@
+name: Verify Linux epoll and MySQL recovery lessons
+on:
+  push:
+    branches: [main, 'content/cloud-*']
+    paths:
+      - dist/labs/transport-recovery/**
+      - .github/workflows/mechanism-environments.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  environments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Observe native Linux epoll
+        run: |
+          mkdir -p environment-results
+          python3 dist/labs/transport-recovery/epoll_ready.py > environment-results/epoll.json
+          cat environment-results/epoll.json
+      - name: Recover an isolated MySQL database
+        run: python3 dist/labs/transport-recovery/mysql_restore.py --report environment-results/mysql.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: transport-recovery-results
+          path: environment-results/
+          retention-days: 14
