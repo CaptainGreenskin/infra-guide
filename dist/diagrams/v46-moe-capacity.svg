@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 650" width="1120" height="650" role="img" aria-labelledby="title desc">
+<title id="title">MoE容量不是平均负载</title><desc id="desc">8条分配、3个专家、容量3。正常2/3/3无丢弃，偏斜4/4/0保留3/3/0，最后token分支输出0。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="650" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">平均8/3条，不能抹平4/4/0的偏斜</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">本章容量C=ceil(T×k/E)=3；按token顺序准入，丢弃后不重新归一化。</text>
+<text x="32" y="148" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">正常分配</text>
+<text x="32" y="219" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E0</text>
+<rect x="90" y="190" width="120" height="42" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="222" y="219" font-size="24" fill="#315dce" font-weight="600" text-anchor="start">2</text>
+<text x="32" y="304" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E1</text>
+<rect x="90" y="275" width="180" height="42" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="282" y="304" font-size="24" fill="#315dce" font-weight="600" text-anchor="start">3</text>
+<text x="32" y="389" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E2</text>
+<rect x="90" y="360" width="180" height="42" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="282" y="389" font-size="24" fill="#315dce" font-weight="600" text-anchor="start">3</text>
+<text x="398" y="148" font-size="27" fill="#ad5147" font-weight="600" text-anchor="start">偏斜分配</text>
+<text x="398" y="219" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E0</text>
+<rect x="456" y="190" width="240" height="42" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="708" y="219" font-size="24" fill="#ad5147" font-weight="600" text-anchor="start">4</text>
+<text x="398" y="304" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E1</text>
+<rect x="456" y="275" width="240" height="42" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="708" y="304" font-size="24" fill="#ad5147" font-weight="600" text-anchor="start">4</text>
+<text x="398" y="389" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E2</text>
+<rect x="456" y="360" width="2" height="42" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="468" y="389" font-size="24" fill="#ad5147" font-weight="600" text-anchor="start">0</text>
+<text x="764" y="148" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">容量准入后</text>
+<text x="764" y="219" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E0</text>
+<rect x="822" y="190" width="180" height="42" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="1014" y="219" font-size="24" fill="#287b69" font-weight="600" text-anchor="start">3</text>
+<text x="764" y="304" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E1</text>
+<rect x="822" y="275" width="180" height="42" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="1014" y="304" font-size="24" fill="#287b69" font-weight="600" text-anchor="start">3</text>
+<text x="764" y="389" font-size="24" fill="#66738a" font-weight="400" text-anchor="start">E2</text>
+<rect x="822" y="360" width="2" height="42" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="834" y="389" font-size="24" fill="#287b69" font-weight="600" text-anchor="start">0</text>
+<rect x="32" y="482" width="1056" height="118" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="52" y="522" font-size="27" fill="#ad5147" font-weight="600" text-anchor="start">保留6条，丢弃2条；最后token的两个贡献都被拒绝。</text>
+<text x="52" y="560" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">该token的MoE分支输出为0；是否还有残差，须看完整模型。</text>
+<text x="52" y="589" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">空闲E2拥有不同参数，不能不改路由语义就顶替E0/E1。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_policy_actual_execution&quot;, &quot;normal_loads&quot;: [2, 3, 3], &quot;case&quot;: {&quot;capacity_per_expert&quot;: 3, &quot;raw_expert_loads&quot;: [4, 4, 0], &quot;kept&quot;: [{&quot;token&quot;: 0, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 0, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 1}, {&quot;token&quot;: 1, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 1, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 1}, {&quot;token&quot;: 2, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 2, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 1}], &quot;dropped&quot;: [{&quot;token&quot;: 3, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 3, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 1}], &quot;kept_weight_mass&quot;: [1.0, 1.0, 1.0, 0.0], &quot;output&quot;: [[1.25, 2.0], [2.5, 1.0], [1.25, -1.0], [0.0, 0.0]]}, &quot;source_sha256&quot;: &quot;5adb4871a0ffd635110c84ecf0504d430e634d0bbb4fa1263f681843f4994477&quot;}</metadata>
+</svg>

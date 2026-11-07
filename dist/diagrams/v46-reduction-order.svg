@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" width="1120" height="560" role="img" aria-labelledby="title desc">
+<title id="title">浮点求和改变顺序就可能改变结果</title><desc id="desc">相同输入一万万亿、1、负一万万亿、1，左折叠1，两两树形0，高精度参考2。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="560" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一份输入，三种结果</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">[10¹⁶, 1, −10¹⁶, 1]；float64每次加法都会舍入。</text>
+<rect x="32" y="128" width="316" height="322" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="52" y="169" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">从左向右</text>
+<text x="52" y="222" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">10¹⁶ + 1 → 10¹⁶</text>
+<text x="52" y="271" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">再加 −10¹⁶ → 0</text>
+<text x="52" y="320" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">再加 1 → 1</text>
+<text x="190" y="414" font-size="48" fill="#315dce" font-weight="650" text-anchor="middle">1</text>
+<rect x="402" y="128" width="316" height="322" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="422" y="169" font-size="27" fill="#ad5147" font-weight="600" text-anchor="start">本例两两树形</text>
+<text x="422" y="222" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">10¹⁶ + 1 → 10¹⁶</text>
+<text x="422" y="271" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">−10¹⁶ + 1 → −10¹⁶</text>
+<text x="422" y="320" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">两项相加 → 0</text>
+<text x="560" y="414" font-size="48" fill="#ad5147" font-weight="650" text-anchor="middle">0</text>
+<rect x="772" y="128" width="316" height="322" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="792" y="169" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">高精度参考</text>
+<text x="792" y="222" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">math.fsum</text>
+<text x="792" y="271" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">保留多个部分和</text>
+<text x="792" y="320" font-size="22" fill="#1c283d" font-weight="400" text-anchor="start">本例数学和为2</text>
+<text x="930" y="414" font-size="48" fill="#287b69" font-weight="650" text-anchor="middle">2</text>
+<text x="32" y="500" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">树形有利于并行，不保证比每一种顺序都更准确；误差容限与累加精度须明示。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_reduction&quot;, &quot;result&quot;: {&quot;input&quot;: [1e+16, 1.0, -1e+16, 1.0], &quot;left_fold&quot;: 1.0, &quot;tree&quot;: 0.0, &quot;high_accuracy_reference&quot;: 2.0, &quot;odd_five_sum&quot;: 15.0, &quot;empty_sum&quot;: 0.0}, &quot;source_sha256&quot;: &quot;1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46&quot;}</metadata>
+</svg>

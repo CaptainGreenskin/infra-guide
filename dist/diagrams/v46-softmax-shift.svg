@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 530" width="1120" height="530" role="img" aria-labelledby="title desc">
+<title id="title">softmax先减最大值，再取指数</title><desc id="desc">实际C程序输入1000、1001、1002，平移后计算稳定输出；NaN和无穷不在本例契约内。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="530" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">共同偏移很大，真正需要的是相对差</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">float64；每行归一化，输入必须有限。</text>
+<text x="32" y="162" font-size="23" fill="#315dce" font-weight="550" text-anchor="start">输入x</text>
+<rect x="330" y="125" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="437" y="163" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">1000</text>
+<rect x="575" y="125" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="682" y="163" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">1001</text>
+<rect x="820" y="125" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="927" y="163" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">1002</text>
+<text x="32" y="240" font-size="23" fill="#315dce" font-weight="550" text-anchor="start">减去最大值1002</text>
+<rect x="330" y="203" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="437" y="241" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">−2</text>
+<rect x="575" y="203" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="682" y="241" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">−1</text>
+<rect x="820" y="203" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="927" y="241" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">0</text>
+<text x="32" y="318" font-size="23" fill="#315dce" font-weight="550" text-anchor="start">指数</text>
+<rect x="330" y="281" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="437" y="319" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">0.135335</text>
+<rect x="575" y="281" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="682" y="319" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">0.367879</text>
+<rect x="820" y="281" width="215" height="58" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="927" y="319" font-size="27" fill="#1c283d" font-weight="550" text-anchor="middle">1</text>
+<text x="32" y="396" font-size="23" fill="#315dce" font-weight="550" text-anchor="start">除以指数和</text>
+<rect x="330" y="359" width="215" height="58" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="437" y="397" font-size="27" fill="#287b69" font-weight="550" text-anchor="middle">0.090031</text>
+<rect x="575" y="359" width="215" height="58" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="682" y="397" font-size="27" fill="#287b69" font-weight="550" text-anchor="middle">0.244728</text>
+<rect x="820" y="359" width="215" height="58" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="927" y="397" font-size="27" fill="#287b69" font-weight="550" text-anchor="middle">0.665241</text>
+<text x="32" y="480" font-size="23" fill="#ad5147" font-weight="400" text-anchor="start">对照：直接exp(1000)溢出；平移后比例不变，逐项参考与行和同时检查。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_softmax&quot;, &quot;result&quot;: {&quot;input&quot;: [[1000.0, 1001.0, 1002.0], [-1002.0, -1001.0, -1000.0], [0.0, 0.0, 0.0]], &quot;output&quot;: [[0.09003057317038046, 0.24472847105479764, 0.6652409557748218], [0.09003057317038046, 0.24472847105479764, 0.6652409557748218], [0.3333333333333333, 0.3333333333333333, 0.3333333333333333]], &quot;naive_exp_overflow&quot;: true, &quot;nonfinite_rejected_without_output_change&quot;: true}, &quot;source_sha256&quot;: &quot;1ebbc139c78b6133272cf0934e28c59cefbf77715a36a44ef4917fbb7af2bc46&quot;}</metadata>
+</svg>

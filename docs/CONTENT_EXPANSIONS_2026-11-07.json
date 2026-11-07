@@ -24,6 +24,28 @@
       "review_scope": "逐节核对概念依赖、手算、图、完整源码与真实运行记录；Cloud教学单元。",
       "observation": "MySQL 8.4.13真实容器恢复；ROW缺段余额125但缺T101，账本差10；崩溃保留已提交7，与PITR125分开。",
       "reviewed_content_sha256": "1b2bc1bf889e4594a0ca153c748c1ab6956e50e8ad80c697e4c4e2412041d080"
+    },
+    {
+      "id": "operator-profiling",
+      "track": "ai",
+      "module": "model-foundations",
+      "title": "动手算子与性能分析：从数值正确到执行证据",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-07",
+      "review_scope": "逐节审读布局、数值、路由与测量边界；图/完整源码/实际CPU结果分别绑定。",
+      "observation": "实际C11编译和独立数值参考，浮点1/0/2、非整块GEMM、真实PyTorch CPU轨迹；不冒充CUDA/Nsight。",
+      "reviewed_content_sha256": "a0823e520fe4df62dc4c799cb1b5857870e4f41dfe0755c2075da2e3574b3555"
+    },
+    {
+      "id": "moe-routing",
+      "track": "ai",
+      "module": "platform",
+      "title": "MoE路由与专家执行：从Top-k到分发、容量与合并",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-07",
+      "review_scope": "逐节审读布局、数值、路由与测量边界；图/完整源码/实际CPU结果分别绑定。",
+      "observation": "固定Top-2规则、四行手算和两个真实执行子进程；错误合并、容量3丢弃与逻辑通信160B均有明确判据；非GPU EP。",
+      "reviewed_content_sha256": "116862819ab1b2095fa470e543b517f18b601170c3f27b7780cbacdebe6e6c6c"
     }
   ],
   "knowledge_revisions": [
@@ -58,6 +80,38 @@
       "observation": "网络通知与数据库恢复现有知识点可继续进入逐节机制和真实目标环境实验。",
       "previous_content_sha256": "025a31682affcfba309b98470683e0491155ab2a439107550eeb83723730ec18",
       "reviewed_content_sha256": "124af741c4fb1c9d8872fdaba396ec560b23cc8afc11ea0c62daccdd0b87ff4a"
+    },
+    {
+      "id": "mf-gpu",
+      "reviewed_at": "2026-11-07",
+      "scope": "补充算子或MoE逐章实战入口；原知识点正文不变。",
+      "observation": "概念和关系先解释，再到同一输入的手算、图、代码及CPU实测；GPU专项继续待验。",
+      "previous_content_sha256": "74884d62c4611cf39404991d2bb9f03e5c64c75e632f44eadc8a8f366249127b",
+      "reviewed_content_sha256": "f101901d25136c1a11afe658f57636006d174c1bcc2ebe2956b2e6aed7505061"
+    },
+    {
+      "id": "mf-roofline",
+      "reviewed_at": "2026-11-07",
+      "scope": "补充算子或MoE逐章实战入口；原知识点正文不变。",
+      "observation": "概念和关系先解释，再到同一输入的手算、图、代码及CPU实测；GPU专项继续待验。",
+      "previous_content_sha256": "98e75c46a926df28fe87207b080eda0a394fa924585125083a758bc3a80d5eb2",
+      "reviewed_content_sha256": "bbe904b8375e684883925f62b08b32d48d5ae4690f0881b66e17ee330864a5c2"
+    },
+    {
+      "id": "mf-decoder",
+      "reviewed_at": "2026-11-07",
+      "scope": "补充普通前馈到MoE的概念关系和新正文链接。",
+      "observation": "概念和关系先解释，再到同一输入的手算、图、代码及CPU实测；GPU专项继续待验。",
+      "previous_content_sha256": "89f50228c186c29213df921f30c0c970697554c90ab7bfa4a16f623661035dd4",
+      "reviewed_content_sha256": "373fb71a94948d730bfadf92f7f9d96583da083462b7de490c2c4801e1a52a12"
+    },
+    {
+      "id": "tr-parallel",
+      "reviewed_at": "2026-11-07",
+      "scope": "补充算子或MoE逐章实战入口；原知识点正文不变。",
+      "observation": "概念和关系先解释，再到同一输入的手算、图、代码及CPU实测；GPU专项继续待验。",
+      "previous_content_sha256": "0b788a031ae2399339cb720802fa57a9e860cf49e33217ce0d78084d76022543",
+      "reviewed_content_sha256": "9f9382ae8820488b9ef14234e9947131cbebeb5f311c0e86eb7b67d07e249b3d"
     }
   ]
 }

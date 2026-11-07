@@ -1143,6 +1143,43 @@
       ],
       "sha256": "a9efca255098f8d4e8d16f59978fae399759b395fd81618ea91de2ee9f48d242",
       "reviewed_at": "2026-11-07"
+    },
+    {
+      "id": "operator-profiling",
+      "stages": [
+        "先规定对什么数据做什么计算",
+        "同一个数学对象，可以有不同布局与合并顺序",
+        "正确以后，再分开工作量与执行观察"
+      ],
+      "introduced_terms": [
+        "算子",
+        "内核",
+        "形状",
+        "数据类型",
+        "布局",
+        "归约"
+      ],
+      "sha256": "208d2d1b55a08710c882a42f8773c7206ef0599a96b6a794c0c2fdc62d9ed3cb",
+      "reviewed_at": "2026-11-07"
+    },
+    {
+      "id": "moe-routing",
+      "stages": [
+        "先有多组可选择的计算参数",
+        "打散计算后，还要找回每一份原位置",
+        "增加容量与设备以后，继续核对同一条数据路径"
+      ],
+      "introduced_terms": [
+        "专家",
+        "路由器",
+        "门控",
+        "归一化",
+        "分发",
+        "合并",
+        "容量"
+      ],
+      "sha256": "e3e910a23fee0c71be34cd4b6fef41b6013806458d5fc926d1e8d1ce8001406b",
+      "reviewed_at": "2026-11-07"
     }
   ],
   "modules": [
@@ -1380,7 +1417,7 @@
     }
   ],
   "source_sha256": {
-    "dist/concept-paths-data.js": "c7e210eab4a963647ad44aa243b334ed471b66bdb854b72f4df172c9031b3b3e",
+    "dist/concept-paths-data.js": "d01a51ddb8923e1380dd7c2f587516762bb99dca5e9558d186dd7a6e13f35119",
     "dist/concept-paths.js": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
     "scripts/draw-concept-paths.py": "d1058fb65b93454e5335c844aec7109bc143cf47ec53cf08fb1382f118915b7c",
     "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",

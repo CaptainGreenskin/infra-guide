@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 650" width="1120" height="650" role="img" aria-labelledby="title desc">
+<title id="title">MoE分发与按原token合并</title><desc id="desc">四个二维输入，每个选择两个固定线性专家。两执行进程逆序回包后仍得到手算四行。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="650" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">按专家打散以后，仍要找回原token</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">4个输入 → 8条分配 → 按(token,slot)合并；不是按返回先后拼接。</text>
+<text x="32" y="146" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">原token / 输入</text>
+<text x="380" y="146" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">入选专家与权重</text>
+<text x="820" y="146" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">合并输出</text>
+<rect x="32" y="174" width="1056" height="64" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="48" y="215" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">t0  [1.0, 2.0]</text>
+<text x="380" y="215" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">E0 × 0.75 + E1 × 0.25</text>
+<text x="820" y="215" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">[1.25, 2.0]</text>
+<rect x="32" y="256" width="1056" height="64" rx="5" fill="#ffffff" stroke="#dce3ed"/>
+<text x="48" y="297" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">t1  [2.0, 1.0]</text>
+<text x="380" y="297" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">E0 × 0.75 + E2 × 0.25</text>
+<text x="820" y="297" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">[2.25, 0.5]</text>
+<rect x="32" y="338" width="1056" height="64" rx="5" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="48" y="379" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">t2  [1.0, -1.0]</text>
+<text x="380" y="379" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">E1 × 0.75 + E2 × 0.25</text>
+<text x="820" y="379" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">[1.5, -1.25]</text>
+<rect x="32" y="420" width="1056" height="64" rx="5" fill="#ffffff" stroke="#dce3ed"/>
+<text x="48" y="461" font-size="25" fill="#1c283d" font-weight="400" text-anchor="start">t3  [-1.0, 1.0]</text>
+<text x="380" y="461" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">E2 × 0.75 + E1 × 0.25</text>
+<text x="820" y="461" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">[-0.5, 1.75]</text>
+<rect x="32" y="525" width="1056" height="82" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="52" y="559" font-size="23" fill="#287b69" font-weight="550" text-anchor="start">E0/E2由执行进程0计算；E1由执行进程1计算。回包顺序可变，身份不变。</text>
+<text x="52" y="591" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">逻辑跨rank分配5条：5 × 2维 × 8B × 往返2次 = 160B有效载荷（算式）。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_process_reference&quot;, &quot;tokens&quot;: [[1.0, 2.0], [2.0, 1.0], [1.0, -1.0], [-1.0, 1.0]], &quot;assignments&quot;: [{&quot;token&quot;: 0, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 0, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 1}, {&quot;token&quot;: 1, &quot;slot&quot;: 0, &quot;expert&quot;: 0, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 1, &quot;slot&quot;: 1, &quot;expert&quot;: 2, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 2, &quot;slot&quot;: 0, &quot;expert&quot;: 1, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 1}, {&quot;token&quot;: 2, &quot;slot&quot;: 1, &quot;expert&quot;: 2, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 0, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 3, &quot;slot&quot;: 0, &quot;expert&quot;: 2, &quot;weight&quot;: 0.75, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 0}, {&quot;token&quot;: 3, &quot;slot&quot;: 1, &quot;expert&quot;: 1, &quot;weight&quot;: 0.25, &quot;origin_rank&quot;: 1, &quot;owner_rank&quot;: 1}], &quot;output&quot;: [[1.25, 2.0], [2.25, 0.5], [1.5, -1.25], [-0.5, 1.75]], &quot;transfer&quot;: {&quot;hidden_size&quot;: 2, &quot;bytes_per_element&quot;: 8, &quot;dispatch_plus_return&quot;: 160}, &quot;source_sha256&quot;: &quot;5adb4871a0ffd635110c84ecf0504d430e634d0bbb4fa1263f681843f4994477&quot;}</metadata>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 520" width="1120" height="520" role="img" aria-labelledby="title desc">
+<title id="title">本次实际CPU执行轨迹的首轮命名区间</title><desc id="desc">PyTorch2.5.1 CPU，预热后5次执行，首轮linear、softmax和reduce三段。数据采集有开销，不代表GPU。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="520" fill="white"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">先读执行关系，随后才谈性能瓶颈</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">真实CPU命名区间；第1轮相对起点，采集形状/内存且有正确性检查。</text>
+<line x1="290.0" y1="147" x2="290.0" y2="380" stroke="#dce3ed" stroke-width="2"/>
+<text x="290.0" y="419" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">0</text>
+<line x1="482.5" y1="147" x2="482.5" y2="380" stroke="#dce3ed" stroke-width="2"/>
+<text x="482.5" y="419" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">242</text>
+<line x1="675.0" y1="147" x2="675.0" y2="380" stroke="#dce3ed" stroke-width="2"/>
+<text x="675.0" y="419" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">483</text>
+<line x1="867.5" y1="147" x2="867.5" y2="380" stroke="#dce3ed" stroke-width="2"/>
+<text x="867.5" y="419" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">725</text>
+<line x1="1060.0" y1="147" x2="1060.0" y2="380" stroke="#dce3ed" stroke-width="2"/>
+<text x="1060.0" y="419" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">966</text>
+<text x="32" y="199" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">linear</text>
+<rect x="290.0" y="167" width="278.8619071253623" height="48" rx="5" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="429.4309535626811" y="199" font-size="21" fill="#315dce" font-weight="550" text-anchor="middle">349.9 μs</text>
+<text x="32" y="279" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">softmax</text>
+<rect x="573.5444757694822" y="247" width="219.54910528885475" height="48" rx="5" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="683.3190284139096" y="279" font-size="21" fill="#287b69" font-weight="550" text-anchor="middle">275.5 μs</text>
+<text x="32" y="359" font-size="26" fill="#ad5147" font-weight="600" text-anchor="start">reduce</text>
+<rect x="795.6839444074362" y="327" width="264.3160555925638" height="48" rx="5" fill="#fff0e9" stroke="#dce3ed"/>
+<text x="927.8419722037181" y="359" font-size="21" fill="#ad5147" font-weight="550" text-anchor="middle">331.6 μs</text>
+<text x="1082" y="458" font-size="21" fill="#66738a" font-weight="400" text-anchor="end">微秒</text>
+<text x="32" y="487" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">区间包含记录器影响；不能把这张CPU图写成CUDA内核时延或设备利用率。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_cpu_ranges&quot;, &quot;rows&quot;: [{&quot;name&quot;: &quot;lesson_linear&quot;, &quot;start_us&quot;: 0.0, &quot;duration_us&quot;: 349.875}, {&quot;name&quot;: &quot;lesson_softmax&quot;, &quot;start_us&quot;: 355.75, &quot;duration_us&quot;: 275.458}, {&quot;name&quot;: &quot;lesson_reduce&quot;, &quot;start_us&quot;: 634.4580078125, &quot;duration_us&quot;: 331.625}], &quot;trace_sha256&quot;: &quot;710d9e8655c95f8d1aaa80789ba3797876a24ec6cbb1c22d3db74c910bbe4583&quot;, &quot;device&quot;: &quot;cpu&quot;, &quot;torch&quot;: &quot;2.5.1&quot;, &quot;profiled_calls&quot;: 5}</metadata>
+</svg>

@@ -6,9 +6,9 @@
    Agent 按“任务与执行边界 → 恢复与上下文 → 工作流与检索 → 观测与验收”排列。 */
 const courseDomainPlan=[
  ...cloudModulePlan.map(row=>[row[0],row[1],[...row[7]]]),
- ['model-foundations','A1',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']],
+ ['model-foundations','A1',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','operator-profiling']],
  ['training','A2',['gpu-cluster','distributed-training','gpu-memory','ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance']],
- ['platform','A3',['training-platform','gpu-scheduling','kubernetes-training','model-serving','quantization-serving','inference-performance','ai-lifecycle']],
+ ['platform','A3',['training-platform','gpu-scheduling','kubernetes-training','model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing']],
  ['agent','G',['agent-runtime','agent-security','agent-sandbox','agent-recovery','agent-memory','agent-evaluation','durable-workflows','agent-retrieval','agent-observability','kairo-practice']],
  ['practice','S',['training-lab','cloud-service-lab','production-readiness']]
 ];
@@ -43,10 +43,10 @@ const courseReadingStages={
  cloud:cloudLearningStages,
  ai:[
   ['模型与计算原理',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training']],
-  ['GPU 执行、IO 与层内并行',['gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']],
+  ['GPU 执行、IO 与层内并行',['gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','operator-profiling']],
   ['训练系统与资源模型',['gpu-cluster','distributed-training','gpu-memory']],
   ['执行、恢复与作业平台',['ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance','training-platform','gpu-scheduling','kubernetes-training']],
-  ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','training-lab']]
+  ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing','training-lab']]
  ],
  agent:[
   ['任务与执行边界',['distributed-systems','agent-runtime','agent-security','agent-sandbox']],

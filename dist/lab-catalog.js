@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'operators-routing':{folder:'operators-routing',title:'C算子、CPU轨迹与MoE路由'},
  'transport-recovery':{folder:'transport-recovery',title:'Linux epoll 与 MySQL 按点恢复'},
  'mechanism-walkthroughs':{folder:'mechanism-walkthroughs',title:'路由、控制循环、张量与历史跟读'},
  'compute-and-transport':{folder:'compute-and-transport',title:'CPU 记账与 TCP 背压'},
@@ -69,6 +70,9 @@ const labLearningCatalog=[
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
  {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
  {id:'ai-placement',track:'ai',stage:2,title:'总空闲够，为什么整组 GPU 仍放不下',chapter:'gpu-scheduling',pack:'leases-placement-sandbox',files:['placement_reservations.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'有限放置模型 + 两进程竞争',observe:'先算形状与机架约束，再注入半途失败和并发争抢，核对整组回滚与唯一准入。',scope:'GPU 槽位为题设；没有运行 Kueue 或实际 GPU 作业。'},
+ {id:'ai-operator-cpu',track:'ai',stage:2,title:'同一数学契约，核对布局、舍入与尾块',chapter:'operator-profiling',anchor:'operator-cpu-run',pack:'operators-routing',files:['cpu_ops.c','operator_lab.py'],env:'Python 3.9+ · 本地C11编译器',kind:'真实CPU编译与调用',observe:'验证稳定softmax、1/0/2求和反例、非整块GEMM，再记录有限计时样本。',scope:'float64连续数组；没有CUDA、GPU带宽或BLAS性能结论。'},
+ {id:'ai-operator-profile',track:'ai',stage:2,title:'用CPU实际轨迹分清外层区间与内部算子',chapter:'operator-profiling',anchor:'operator-profile-run',pack:'operators-routing',files:['cpu_profile.py'],env:'Python 3.9+ · PyTorch；记录版本2.5.1 CPU',kind:'真实CPU Profiler',observe:'预热后5次线性、softmax与求和，核对15条命名区间和算子事件。',scope:'采集形状/内存有开销，不把包含子事件的时间重复相加，不作为GPU计时。'},
+ {id:'ai-moe-routing',track:'ai',stage:2,title:'八条分配乱序返回，仍按原身份合并',chapter:'moe-routing',anchor:'moe-routing-run',pack:'operators-routing',files:['moe_routing.py'],env:'Python 3.9+ · 标准库',kind:'实际两执行进程与声明路由策略',observe:'四个输入按Top-2分发，比较正确/错误合并以及容量3下的保留6、丢2。',scope:'固定线性专家；逻辑rank与通信160B为声明算式，没有GPU/NCCL或模型训练。'},
  {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'model-serving',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},
  {id:'ai-artifacts',track:'ai',stage:3,title:'文件和形状都正确，词表仍可能装错',chapter:'ai-lifecycle',pack:'recovery-artifacts-retrieval',files:['artifact_bundle.py'],env:'Python 3.12 + PyTorch 2.5.1 + Safetensors 0.8.0',kind:'CPU 产物保存与加载',observe:'交换词表 ID 后让语义门禁拒绝；固定完整版本束，再验证条件发布与回退代际。',scope:'三条固定语义与本地生产指针，不是 LLM 质量或线上灰度测试。'},

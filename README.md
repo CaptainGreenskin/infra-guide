@@ -13,7 +13,9 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前69章：Cloud 30、AI 26、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+当前71章：Cloud 30、AI 28、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+
+AI新增「动手算子与性能分析」「MoE路由与专家执行」：C11实际编译、PyTorch 2.5.1 CPU原始轨迹、两执行进程路由与容量反例；均提供完整包和源码绑定记录。CUDA/Nsight与GPU EP尚待目标硬件验证。
 
 新一轮 [六个教学单元目标](docs/CONTINUOUS_GOAL_2026-11-07.md) 按批次发布。Cloud 新增 TCP/epoll 与 MySQL 恢复两章，真实 Linux epoll 和 MySQL 8.4.13 的 [CI 运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001) 与完整实验包绑定；缺段恢复出现“余额125、回执少一笔”的反例。
 
@@ -74,7 +76,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的103个页面（102个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的105个页面（104个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 
