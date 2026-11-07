@@ -161,9 +161,14 @@ class Lab:
         whole_history = self.restore(target, baseline, whole_stream)
         missing_log = self.restore(target, baseline, missing_stream)
         recovered = self.restore(target, baseline, correct_stream)
-        assert [s['balance'] for s in [baseline_only, whole_history, missing_log, recovered]] == [100, 7, 115, 125]
+        # ROW events carry row images, not the original "balance + delta" SQL.
+        # Later account after-images can hide a missing earlier receipt.
+        observed = [baseline_only, whole_history, missing_log, recovered]
+        assert [s['balance'] for s in observed] == [100, 7, 125, 125], json.dumps(observed)
         assert recovered == before_bad
         assert [op for op, _ in missing_log['operations']] == ['T102', 'T103']
+        reconciliation_gap = missing_log['balance'] - (100 + sum(delta for _, delta in missing_log['operations']))
+        assert reconciliation_gap == 10
         self.commit(target, 'TNEW', 3)
         writable_after_restore = self.state(target)
         assert writable_after_restore['balance'] == 128
@@ -191,6 +196,7 @@ class Lab:
                 'snapshot_next_event': start, 'exclude_bad_transaction_from': stop, 'required_files': chain,
                 'baseline_only': baseline_only, 'full_replay': whole_history,
                 'missing_first_log': missing_log, 'point_in_time_recovery': recovered,
+                'missing_history_reconciliation_gap': reconciliation_gap,
                 'post_restore_write': writable_after_restore,
                 'process_crash': {'uncommitted_value': 999, 'held_client_exit_code': hold.returncode,
                                   'committed_state_before': committed, 'state_after_restart': after_crash},
