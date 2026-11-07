@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 139,
+  "canonical_script_count": 143,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "1490a06c855a12db4fb1d34fdcce3fb58dcfec94b48f8fca06792f6734e60bf9",
-      "bytes": 366180,
+      "sha256": "538ad4d2b15db2a13ce4ea4477f1c454d40f2ee18b6b542b86415cd6c5a51deb",
+      "bytes": 366522,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "dcfbe45d6b815c76115e1741e5df26a855145446b4983ac391d51ddd4551d339",
-          "bytes": 8049
+          "sha256": "b38751a23f991cdb95133357db285959c3588e5705294fec664ed58e9eb66b59",
+          "bytes": 8391
         },
         {
           "file": "training-content.js",
@@ -331,8 +331,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "3a75bcdb16ce0719e7580f983138347af38c3aa2ab59a45d265676da230d3482",
-      "bytes": 332936,
+      "sha256": "1846cfd1d15aadf1a8696c11b7870ffb25af6f0a0beff4d1a0b030948e702b08",
+      "bytes": 332958,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -411,8 +411,8 @@
         },
         {
           "file": "cloud-coverage.js",
-          "sha256": "5f7ad2fbc7614f86a9b53f8e3738a6fbf1b10c1249c6b1099b5d3937a33cab9a",
-          "bytes": 8434
+          "sha256": "70feff1ead7ecbd52fbd57729a91f00c1ac3e8d5177dfb424e142eff54967b11",
+          "bytes": 8456
         },
         {
           "file": "reading-revisions.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "c5fd8bf9dd3f83b7da390f31841c50601bd547172655e71d6417629dddfa1e29",
-      "bytes": 649437,
+      "sha256": "96a0d2f1678f9c39d58bdbd55a96266c7228f2d5b0653ac75ec2e9a07a309681",
+      "bytes": 727145,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -704,9 +704,29 @@
           "bytes": 49789
         },
         {
+          "file": "transport-recovery-data.js",
+          "sha256": "dcfb47ebb51e246bf46e408deb9b97e0e1e05c610c31c1a536d7e04140d883ad",
+          "bytes": 39019
+        },
+        {
+          "file": "transport-lessons.js",
+          "sha256": "21a4138ddb11f680dc194d8c64af651d57bc6a1d8f1706677925da20e45a2df6",
+          "bytes": 18268
+        },
+        {
+          "file": "mysql-recovery-lessons.js",
+          "sha256": "0fb278cc5bdf962825f84bdd88b0f885a2c10e76e46769ec30dd35680b13be0c",
+          "bytes": 16880
+        },
+        {
+          "file": "transport-course-links.js",
+          "sha256": "f78531b78463366d6c3534ed8921ce6dc30aceb11c2f6d8b556b1023ff2dedbb",
+          "bytes": 979
+        },
+        {
           "file": "concept-paths-data.js",
-          "sha256": "e2da117b6392b0ea073be7ea8b34ba5a252a0b520d5725543450e39c8bad0d03",
-          "bytes": 70048
+          "sha256": "c7e210eab4a963647ad44aa243b334ed471b66bdb854b72f4df172c9031b3b3e",
+          "bytes": 72063
         },
         {
           "file": "concept-paths.js",
@@ -715,13 +735,13 @@
         },
         {
           "file": "course-map.js",
-          "sha256": "9608fc3bd76fbeed92ff62e14e1bada3d92ca2f0cfcbf3fe953f7dd1ddd5ef1a",
-          "bytes": 7191
+          "sha256": "c6b67badd0170c35d7b6e5740edff23e0672265eb48f124722553e1ae64c5684",
+          "bytes": 6534
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "ca58a75002dcf909155175d20460abe6e802685a6c202d002bdb25a365aa9b64",
-          "bytes": 36048
+          "sha256": "9d669c74fee0416de1c09583ba603c312a82deafc1c13a60bf140d6c46fa44ef",
+          "bytes": 37124
         }
       ]
     }

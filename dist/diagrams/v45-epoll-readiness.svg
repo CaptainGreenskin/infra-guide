@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 815" width="1120" height="815" role="img" aria-labelledby="title desc">
+<title id="title">原生epoll的LT、ET与应用就绪队列</title><desc id="desc">写入abcdef后先读ab，还剩cdef。无新写入时LT再次通知，ET不重复通知。应用队列用一次内核通知完成ab、cd、ef、EAGAIN四轮。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="815" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">内核没有新通知，缓冲里仍可能有数据</text>
+<text x="32" y="92" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">Linux实际管道：写入abcdef → 第一次通知 → 只读走ab。</text>
+<rect x="32" y="126" width="514" height="274" rx="5" fill="#f4f7fc" stroke="#dbe2ed"/>
+<text x="56" y="172" font-size="27" fill="#315dce" font-weight="600" text-anchor="start">水平触发 LT</text>
+<rect x="56" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="98" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">c</text>
+<rect x="156" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="198" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">d</text>
+<rect x="256" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="298" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">e</text>
+<rect x="356" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="398" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">f</text>
+<text x="56" y="311" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">管道还剩4字节；没有新的写入。</text>
+<text x="56" y="362" font-size="26" fill="#315dce" font-weight="600" text-anchor="start">再次poll → 可读通知</text>
+<rect x="574" y="126" width="514" height="274" rx="5" fill="#f4f7fc" stroke="#dbe2ed"/>
+<text x="598" y="172" font-size="27" fill="#287b69" font-weight="600" text-anchor="start">边沿触发 ET</text>
+<rect x="598" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="640" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">c</text>
+<rect x="698" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="740" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">d</text>
+<rect x="798" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="840" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">e</text>
+<rect x="898" y="200" width="84" height="64" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="940" y="243" font-size="29" fill="#315dce" font-weight="600" text-anchor="middle">f</text>
+<text x="598" y="311" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">管道还剩4字节；没有新的写入。</text>
+<text x="598" y="362" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">再次poll → 没有新事件</text>
+<text x="32" y="456" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">ET下保留应用处理责任：每轮最多读2B</text>
+<rect x="32" y="486" width="228" height="81" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="146" y="538" font-size="29" fill="#287b69" font-weight="600" text-anchor="middle">ab</text>
+<line x1="266" y1="526" x2="302" y2="526" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="308" y="486" width="228" height="81" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="422" y="538" font-size="29" fill="#287b69" font-weight="600" text-anchor="middle">cd</text>
+<line x1="542" y1="526" x2="578" y2="526" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="584" y="486" width="228" height="81" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="698" y="538" font-size="29" fill="#287b69" font-weight="600" text-anchor="middle">ef</text>
+<line x1="818" y1="526" x2="854" y2="526" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="860" y="486" width="228" height="81" rx="5" fill="#f2f4f8" stroke="#dbe2ed"/>
+<text x="974" y="538" font-size="29" fill="#66738a" font-weight="600" text-anchor="middle">EAGAIN</text>
+<text x="32" y="615" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">内核通知1次；应用尝试4轮；到EAGAIN才暂时交回等待。</text>
+<rect x="32" y="650" width="1056" height="105" rx="5" fill="#fff5ed" stroke="#dbe2ed"/>
+<text x="54" y="693" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">另一个实测：没有待发数据，却持续关注可写。</text>
+<text x="54" y="732" font-size="24" fill="#ad5147" font-weight="400" text-anchor="start">三次poll都返回可写；撤销写关注后，新通知为0。</text>
+<text x="32" y="795" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">这是通知与读写行为的证据，不是CPU占用或吞吐基准。</text>
+<metadata>{&quot;kind&quot;: &quot;native_event_observations&quot;, &quot;execution&quot;: {&quot;source_sha256&quot;: &quot;1915464583af9a3a852466c5bfa9a9b6bff9c4a6757560daa669758ed0e6b7ad&quot;, &quot;python&quot;: &quot;3.14.4&quot;, &quot;system&quot;: &quot;Linux&quot;, &quot;scope&quot;: &quot;Actual local pipe/socket epoll calls; no TCP packet trace, load test or cloud network.&quot;, &quot;status&quot;: &quot;passed&quot;, &quot;cases&quot;: {&quot;lt&quot;: {&quot;mode&quot;: &quot;LT&quot;, &quot;first_notification&quot;: true, &quot;first_read&quot;: &quot;ab&quot;, &quot;notification_without_new_write&quot;: true, &quot;unread_then_drained&quot;: &quot;cdef&quot;, &quot;eagain_after_drain&quot;: true, &quot;new_write_notifies&quot;: &quot;gh&quot;, &quot;eof_after_writer_close&quot;: true}, &quot;et&quot;: {&quot;mode&quot;: &quot;ET&quot;, &quot;first_notification&quot;: true, &quot;first_read&quot;: &quot;ab&quot;, &quot;notification_without_new_write&quot;: false, &quot;unread_then_drained&quot;: &quot;cdef&quot;, &quot;eagain_after_drain&quot;: true, &quot;new_write_notifies&quot;: &quot;gh&quot;, &quot;eof_after_writer_close&quot;: true}, &quot;application_queue&quot;: {&quot;kernel_notifications&quot;: 1, &quot;application_turns&quot;: [&quot;ab&quot;, &quot;cd&quot;, &quot;ef&quot;, &quot;EAGAIN&quot;], &quot;payload&quot;: &quot;abcdef&quot;, &quot;per_turn_read_budget&quot;: 2}, &quot;writable_interest&quot;: {&quot;no_output_queued&quot;: true, &quot;write_notifications_in_three_polls&quot;: 3, &quot;notifications_after_removing_write_interest&quot;: 0}}}, &quot;ci&quot;: {&quot;run_id&quot;: 42378802001, &quot;url&quot;: &quot;https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001&quot;, &quot;source_commit&quot;: &quot;4be3bc83910d8756235457f145866c9ee622953e&quot;, &quot;conclusion&quot;: &quot;success&quot;, &quot;workflow_path&quot;: &quot;.github/workflows/mechanism-environments.yml&quot;}}</metadata>
+</svg>

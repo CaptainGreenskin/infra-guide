@@ -1,0 +1,298 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-07",
+  "source_sha256": {
+    "epoll_ready.py": "1915464583af9a3a852466c5bfa9a9b6bff9c4a6757560daa669758ed0e6b7ad",
+    "mysql_restore.py": "6364166d09c6994ccaecdbbfa0aa53f6f0d65ced101cc19ce7d3fa8129876180",
+    "tcp_framing.py": "d7f4fb161bd356bf36edc8c67a2b3aa864a047a34f613963c02e68e9fae40871",
+    "socket_backpressure.py": "3f2ce932450829086c6223b7341c6b2f81bfa3a6d44543167708bea73c08833a",
+    "Dockerfile.tools": "1f174d1d807167a0989f9c21d0dc49ede2354e3a9f50eed8ec97ce27e344874f",
+    "README.md": "70a299aaf764a2841b205216da3aa344cec8e60d2c2f7f0a8f073a90e6705b25"
+  },
+  "ci": {
+    "run_id": 42378802001,
+    "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001",
+    "source_commit": "4be3bc83910d8756235457f145866c9ee622953e",
+    "conclusion": "success",
+    "workflow_path": ".github/workflows/mechanism-environments.yml"
+  },
+  "local": {
+    "system": "Darwin",
+    "python": "3.9.6",
+    "results": {
+      "tcp_framing.py": {
+        "transport": "AF_INET / 127.0.0.1 / TCP",
+        "sendall_calls": 2,
+        "wire_bytes": 32,
+        "payload_bytes": [
+          12,
+          12
+        ],
+        "payload_characters": [
+          4,
+          4
+        ],
+        "parser_probes": {
+          "segmentation_patterns_passed": 3,
+          "oversized": "frame_too_large",
+          "truncated_header": "truncated_frame",
+          "truncated_body": "truncated_frame"
+        },
+        "server": {
+          "messages": [
+            "云上训练",
+            "恢复完成"
+          ],
+          "recv_chunk_bytes": [
+            7,
+            7,
+            2,
+            7,
+            7,
+            2
+          ],
+          "server_saw_eof_before_reply": true
+        },
+        "reply_after_half_close": [
+          "已接收2条"
+        ],
+        "scope": "loopback TCP and parser; no epoll, loss injection or business commit"
+      },
+      "socket_backpressure.py": {
+        "python": "3.9.6",
+        "system": "Darwin",
+        "payload_bytes": 786432,
+        "send_buffer_setting": 16384,
+        "receive_buffer_setting": 326640,
+        "blocked_before_application_read": true,
+        "accepted_before_application_read": 16384,
+        "successful_send_calls": 48,
+        "short_writes_observed": 0,
+        "received_bytes": 786432,
+        "sha256": "539d0bfeb36296bab26e2aabccb9dc150ab92b9cc8249dbca7de3609ea95c00e",
+        "read_reply_after_write_shutdown": true,
+        "scope": "actual_loopback_nonblocking_send_and_application_drain_not_packet_or_cwnd_measurement",
+        "limits": [
+          "send accepted bytes into a local socket path, not proof that receiver application read them",
+          "paused application may still have bytes received/acknowledged by its kernel",
+          "buffer settings and partial-write boundaries depend on the OS; cap does not force a block on every stack",
+          "receiver JSON is this fixture's explicit application receipt, not TCP ACK"
+        ]
+      }
+    }
+  },
+  "native": {
+    "epoll": {
+      "source_sha256": "1915464583af9a3a852466c5bfa9a9b6bff9c4a6757560daa669758ed0e6b7ad",
+      "python": "3.14.4",
+      "system": "Linux",
+      "scope": "Actual local pipe/socket epoll calls; no TCP packet trace, load test or cloud network.",
+      "status": "passed",
+      "cases": {
+        "lt": {
+          "mode": "LT",
+          "first_notification": true,
+          "first_read": "ab",
+          "notification_without_new_write": true,
+          "unread_then_drained": "cdef",
+          "eagain_after_drain": true,
+          "new_write_notifies": "gh",
+          "eof_after_writer_close": true
+        },
+        "et": {
+          "mode": "ET",
+          "first_notification": true,
+          "first_read": "ab",
+          "notification_without_new_write": false,
+          "unread_then_drained": "cdef",
+          "eagain_after_drain": true,
+          "new_write_notifies": "gh",
+          "eof_after_writer_close": true
+        },
+        "application_queue": {
+          "kernel_notifications": 1,
+          "application_turns": [
+            "ab",
+            "cd",
+            "ef",
+            "EAGAIN"
+          ],
+          "payload": "abcdef",
+          "per_turn_read_budget": 2
+        },
+        "writable_interest": {
+          "no_output_queued": true,
+          "write_notifications_in_three_polls": 3,
+          "notifications_after_removing_write_interest": 0
+        }
+      }
+    },
+    "mysql": {
+      "status": "passed",
+      "image": "mysql:8.4",
+      "image_digests": [
+        "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902"
+      ],
+      "mysql_version": "8.4.13",
+      "mysqlbinlog_version": "mysqlbinlog  Ver 8.4.13 for Linux on x86_64 (MySQL Community Server - GPL)",
+      "tools_dockerfile_sha256": "1f174d1d807167a0989f9c21d0dc49ede2354e3a9f50eed8ec97ce27e344874f",
+      "snapshot_next_event": {
+        "file": "mysql-bin.000003",
+        "position": 1117
+      },
+      "exclude_bad_transaction_from": {
+        "file": "mysql-bin.000004",
+        "position": 986
+      },
+      "required_files": [
+        "mysql-bin.000003",
+        "mysql-bin.000004"
+      ],
+      "baseline_only": {
+        "balance": 100,
+        "operations": []
+      },
+      "full_replay": {
+        "balance": 7,
+        "operations": [
+          [
+            "T101",
+            10
+          ],
+          [
+            "T102",
+            20
+          ],
+          [
+            "T103",
+            -5
+          ],
+          [
+            "T104",
+            -125
+          ],
+          [
+            "T105",
+            7
+          ]
+        ]
+      },
+      "missing_first_log": {
+        "balance": 125,
+        "operations": [
+          [
+            "T102",
+            20
+          ],
+          [
+            "T103",
+            -5
+          ]
+        ]
+      },
+      "point_in_time_recovery": {
+        "balance": 125,
+        "operations": [
+          [
+            "T101",
+            10
+          ],
+          [
+            "T102",
+            20
+          ],
+          [
+            "T103",
+            -5
+          ]
+        ]
+      },
+      "missing_history_reconciliation_gap": 10,
+      "post_restore_write": {
+        "balance": 128,
+        "operations": [
+          [
+            "T101",
+            10
+          ],
+          [
+            "T102",
+            20
+          ],
+          [
+            "T103",
+            -5
+          ],
+          [
+            "TNEW",
+            3
+          ]
+        ]
+      },
+      "process_crash": {
+        "uncommitted_value": 999,
+        "held_client_exit_code": 137,
+        "committed_state_before": {
+          "balance": 7,
+          "operations": [
+            [
+              "T101",
+              10
+            ],
+            [
+              "T102",
+              20
+            ],
+            [
+              "T103",
+              -5
+            ],
+            [
+              "T104",
+              -125
+            ],
+            [
+              "T105",
+              7
+            ]
+          ]
+        },
+        "state_after_restart": {
+          "balance": 7,
+          "operations": [
+            [
+              "T101",
+              10
+            ],
+            [
+              "T102",
+              20
+            ],
+            [
+              "T103",
+              -5
+            ],
+            [
+              "T104",
+              -125
+            ],
+            [
+              "T105",
+              7
+            ]
+          ]
+        }
+      },
+      "stream_sha256": {
+        "baseline": "28f35b77736dfcead592d408feeaae5e6734e89cf0205f1973914c9a5377a39e",
+        "correct": "c29e0ec67d5a5f40f3212a7de03dbe5d3aa9e64e325db6978305465a943111ee",
+        "full": "3343342d7bf002562b93eb80707fe9e5e205a0e1cea5fb18a798014f6a421f34"
+      },
+      "scope": "Real isolated MySQL/InnoDB, logical dump, two binlogs, replay and mysqld SIGKILL. No host power-loss, replication, managed database, production load or external application test.",
+      "source_sha256": "6364166d09c6994ccaecdbbfa0aa53f6f0d65ced101cc19ce7d3fa8129876180",
+      "python": "3.14.4",
+      "system": "Linux"
+    }
+  },
+  "scope": "Actual local TCP and verified Linux CI epoll/MySQL. No packet-level TCP trace, host power failure, replication, cloud database, throughput or production recovery claim."
+}

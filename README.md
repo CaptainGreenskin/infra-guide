@@ -13,7 +13,9 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前67章：Cloud 28、AI 26、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+当前69章：Cloud 30、AI 26、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+
+新一轮 [六个教学单元目标](docs/CONTINUOUS_GOAL_2026-11-07.md) 按批次发布。Cloud 新增 TCP/epoll 与 MySQL 恢复两章，真实 Linux epoll 和 MySQL 8.4.13 的 [CI 运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001) 与完整实验包绑定；缺段恢复出现“余额125、回执少一笔”的反例。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
 
@@ -72,7 +74,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的101个页面（100个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的103个页面（102个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 
@@ -82,7 +84,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后 101 条路由。
+浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

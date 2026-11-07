@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 745" width="1120" height="745" role="img" aria-labelledby="title desc">
+<title id="title">相同余额125，不同的业务恢复结果</title><desc id="desc">缺少首个日志和完整恢复都可得到余额125；前者回执缺T101，账本差额为10，不能通过验收。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="745" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">金额正确，仍可能少了一段业务历史</text>
+<text x="52" y="120" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">恢复路径</text>
+<text x="390" y="120" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">余额</text>
+<text x="535" y="120" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">业务回执</text>
+<text x="893" y="120" font-size="25" fill="#315dce" font-weight="600" text-anchor="start">判断</text>
+<rect x="32" y="148" width="1056" height="72" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="52" y="194" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">只装回基线</text>
+<text x="390" y="195" font-size="31" fill="#1c283d" font-weight="600" text-anchor="start">100</text>
+<text x="535" y="194" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">无</text>
+<text x="893" y="194" font-size="23" fill="#66738a" font-weight="550" text-anchor="start">仍在目标之前</text>
+<rect x="32" y="232" width="1056" height="72" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="52" y="278" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">完整重放</text>
+<text x="390" y="279" font-size="31" fill="#1c283d" font-weight="600" text-anchor="start">7</text>
+<text x="535" y="278" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">T101—T105</text>
+<text x="893" y="278" font-size="23" fill="#66738a" font-weight="550" text-anchor="start">错误也回来</text>
+<rect x="32" y="316" width="1056" height="72" rx="5" fill="#fff1e9" stroke="#dbe2ed"/>
+<text x="52" y="362" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">漏掉第一个文件</text>
+<text x="390" y="363" font-size="31" fill="#ad5147" font-weight="600" text-anchor="start">125</text>
+<text x="535" y="362" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">T102、T103</text>
+<text x="893" y="362" font-size="23" fill="#ad5147" font-weight="550" text-anchor="start">差额10，拒绝</text>
+<rect x="32" y="400" width="1056" height="72" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="52" y="446" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">连续重放到目标</text>
+<text x="390" y="447" font-size="31" fill="#287b69" font-weight="600" text-anchor="start">125</text>
+<text x="535" y="446" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">T101、T102、T103</text>
+<text x="893" y="446" font-size="23" fill="#287b69" font-weight="550" text-anchor="start">目标一致</text>
+<rect x="32" y="484" width="1056" height="72" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="52" y="530" font-size="23" fill="#1c283d" font-weight="550" text-anchor="start">正确目标再写+3</text>
+<text x="390" y="531" font-size="31" fill="#287b69" font-weight="600" text-anchor="start">128</text>
+<text x="535" y="530" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">原3笔 + TNEW</text>
+<text x="893" y="530" font-size="23" fill="#287b69" font-weight="550" text-anchor="start">新写入已验</text>
+<rect x="32" y="595" width="1056" height="85" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="560" y="648" font-size="26" fill="#315dce" font-weight="600" text-anchor="middle">125 − (100 + 20 − 5) = 10；缺失的T101不会由余额相等补回来。</text>
+<text x="32" y="721" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">数据来自隔离MySQL实际重放；通过余额、业务ID与账本关系分别验收。</text>
+<metadata>{&quot;kind&quot;: &quot;independent_business_oracles&quot;, &quot;cases&quot;: {&quot;baseline_only&quot;: {&quot;balance&quot;: 100, &quot;operations&quot;: []}, &quot;full_replay&quot;: {&quot;balance&quot;: 7, &quot;operations&quot;: [[&quot;T101&quot;, 10], [&quot;T102&quot;, 20], [&quot;T103&quot;, -5], [&quot;T104&quot;, -125], [&quot;T105&quot;, 7]]}, &quot;missing_first_log&quot;: {&quot;balance&quot;: 125, &quot;operations&quot;: [[&quot;T102&quot;, 20], [&quot;T103&quot;, -5]]}, &quot;point_in_time_recovery&quot;: {&quot;balance&quot;: 125, &quot;operations&quot;: [[&quot;T101&quot;, 10], [&quot;T102&quot;, 20], [&quot;T103&quot;, -5]]}, &quot;post_restore_write&quot;: {&quot;balance&quot;: 128, &quot;operations&quot;: [[&quot;T101&quot;, 10], [&quot;T102&quot;, 20], [&quot;T103&quot;, -5], [&quot;TNEW&quot;, 3]]}}, &quot;reconciliation_gap&quot;: 10, &quot;ci&quot;: {&quot;run_id&quot;: 42378802001, &quot;url&quot;: &quot;https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001&quot;, &quot;source_commit&quot;: &quot;4be3bc83910d8756235457f145866c9ee622953e&quot;, &quot;conclusion&quot;: &quot;success&quot;, &quot;workflow_path&quot;: &quot;.github/workflows/mechanism-environments.yml&quot;}}</metadata>
+</svg>

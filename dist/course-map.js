@@ -5,16 +5,7 @@
    阅读顺序依据 roadmap 阶段：kubernetes-training 划入 A3 平台域（排在队列调度之后），
    Agent 按“任务与执行边界 → 恢复与上下文 → 工作流与检索 → 观测与验收”排列。 */
 const courseDomainPlan=[
- ['foundation','P0',['linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems']],
- ['compute','C1',['cloud-overview','cloud-compute']],
- ['network','C2',['vpc-network','network-diagnosis']],
- ['cloud-data','C3',['training-storage','database-index-locks','cache-consistency','storage-recovery']],
- ['native','C4',['container-runtime','kubernetes-basics','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling']],
- ['serverless','C5',['serverless-execution']],
- ['cloud-delivery','C6',['delivery']],
- ['cloud-security','C7',['iam-security']],
- ['cloud-capacity','C8',['elasticity']],
- ['sre','C9',['slo','observability','incident','resilience']],
+ ...cloudModulePlan.map(row=>[row[0],row[1],[...row[7]]]),
  ['model-foundations','A1',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']],
  ['training','A2',['gpu-cluster','distributed-training','gpu-memory','ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance']],
  ['platform','A3',['training-platform','gpu-scheduling','kubernetes-training','model-serving','quantization-serving','inference-performance','ai-lifecycle']],

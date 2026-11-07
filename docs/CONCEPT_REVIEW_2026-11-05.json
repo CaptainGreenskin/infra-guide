@@ -1109,6 +1109,40 @@
         "校准"
       ],
       "sha256": "f17f0164b493e3bc5a42988a17ffa10da31749d94ec1a5692888d80c839b10fe"
+    },
+    {
+      "id": "tcp-event-loop",
+      "stages": [
+        "先把程序的入口与双方的连接分开",
+        "TCP交付字节，应用自己恢复消息",
+        "就绪通知只安排一次尝试"
+      ],
+      "introduced_terms": [
+        "套接字",
+        "连接",
+        "字节流",
+        "消息",
+        "就绪"
+      ],
+      "sha256": "e05b91f13781e3475659bedfe265ed4ce871511cf8a388d8f81566f855b48b81",
+      "reviewed_at": "2026-11-07"
+    },
+    {
+      "id": "mysql-recovery",
+      "stages": [
+        "先规定一笔业务的提交边界",
+        "再按用途拆开日志",
+        "最后明确要恢复哪段历史"
+      ],
+      "introduced_terms": [
+        "事务",
+        "数据页",
+        "日志",
+        "恢复点",
+        "回执"
+      ],
+      "sha256": "a9efca255098f8d4e8d16f59978fae399759b395fd81618ea91de2ee9f48d242",
+      "reviewed_at": "2026-11-07"
     }
   ],
   "modules": [
@@ -1346,7 +1380,7 @@
     }
   ],
   "source_sha256": {
-    "dist/concept-paths-data.js": "e2da117b6392b0ea073be7ea8b34ba5a252a0b520d5725543450e39c8bad0d03",
+    "dist/concept-paths-data.js": "c7e210eab4a963647ad44aa243b334ed471b66bdb854b72f4df172c9031b3b3e",
     "dist/concept-paths.js": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
     "scripts/draw-concept-paths.py": "d1058fb65b93454e5335c844aec7109bc143cf47ec53cf08fb1382f118915b7c",
     "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",

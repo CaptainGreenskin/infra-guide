@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 755" width="1120" height="755" role="img" aria-labelledby="title desc">
+<title id="title">一致基线与两个binlog文件的恢复边界</title><desc id="desc">从基线100开始，文件一含T101，文件二含T102、T103、T104、T105。目标停止在清零T104前，需完整连续材料。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="755" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">先选正确历史，再确定日志起点与停止位置</text>
+<text x="32" y="91" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">五笔均已提交；本次PITR选择清零之前，后续业务另外对账。</text>
+<rect x="32" y="177" width="181" height="233" rx="5" fill="#edf2ff" stroke="#dbe2ed"/>
+<text x="122" y="236" font-size="25" fill="#315dce" font-weight="600" text-anchor="middle">一致基线</text>
+<text x="122" y="303" font-size="43" fill="#315dce" font-weight="600" text-anchor="middle">100</text>
+<text x="122" y="366" font-size="19" fill="#66738a" font-weight="400" text-anchor="middle">坐标随备份保存</text>
+<text x="247" y="153" font-size="24" fill="#315dce" font-weight="600" text-anchor="start">文件一</text>
+<text x="415" y="153" font-size="24" fill="#315dce" font-weight="600" text-anchor="start">文件二</text>
+<rect x="247" y="177" width="153" height="233" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="323" y="230" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">T101</text>
+<text x="323" y="289" font-size="26" fill="#1c283d" font-weight="400" text-anchor="middle">+10</text>
+<text x="323" y="363" font-size="34" fill="#1c283d" font-weight="600" text-anchor="middle">110</text>
+<rect x="415" y="177" width="153" height="233" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="491" y="230" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">T102</text>
+<text x="491" y="289" font-size="26" fill="#1c283d" font-weight="400" text-anchor="middle">+20</text>
+<text x="491" y="363" font-size="34" fill="#1c283d" font-weight="600" text-anchor="middle">130</text>
+<rect x="583" y="177" width="153" height="233" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="659" y="230" font-size="26" fill="#287b69" font-weight="600" text-anchor="middle">T103</text>
+<text x="659" y="289" font-size="26" fill="#1c283d" font-weight="400" text-anchor="middle">−5</text>
+<text x="659" y="363" font-size="34" fill="#1c283d" font-weight="600" text-anchor="middle">125</text>
+<rect x="751" y="177" width="153" height="233" rx="5" fill="#fff0ea" stroke="#dbe2ed"/>
+<text x="827" y="230" font-size="26" fill="#ad5147" font-weight="600" text-anchor="middle">T104</text>
+<text x="827" y="289" font-size="26" fill="#1c283d" font-weight="400" text-anchor="middle">清零</text>
+<text x="827" y="363" font-size="34" fill="#1c283d" font-weight="600" text-anchor="middle">0</text>
+<rect x="919" y="177" width="153" height="233" rx="5" fill="#fff0ea" stroke="#dbe2ed"/>
+<text x="995" y="230" font-size="26" fill="#ad5147" font-weight="600" text-anchor="middle">T105</text>
+<text x="995" y="289" font-size="26" fill="#1c283d" font-weight="400" text-anchor="middle">+7</text>
+<text x="995" y="363" font-size="34" fill="#1c283d" font-weight="600" text-anchor="middle">7</text>
+<line x1="743" y1="117" x2="743" y2="443" stroke="#ad5147" stroke-width="2" stroke-dasharray="7 6"/>
+<text x="743" y="482" font-size="24" fill="#ad5147" font-weight="600" text-anchor="middle">停止：T104开始前</text>
+<text x="32" y="539" font-size="24" fill="#315dce" font-weight="550" text-anchor="start">实际基线起点：mysql-bin.000003 : 1117</text>
+<text x="32" y="581" font-size="24" fill="#ad5147" font-weight="550" text-anchor="start">实际停止坐标：mysql-bin.000004 : 986</text>
+<rect x="32" y="615" width="1056" height="81" rx="5" fill="#f3f5f9" stroke="#dbe2ed"/>
+<text x="52" y="650" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">同一次mysqlbinlog：起点作用于首文件，停止位置作用于末文件。</text>
+<text x="52" y="680" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">坐标属于本次运行；读者重跑应使用自己基线与事务的实际位置。</text>
+<text x="32" y="735" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">T101等是业务操作ID，不是GTID；本例关闭GTID以单独讲清文件位置。</text>
+<metadata>{&quot;kind&quot;: &quot;actual_log_boundary&quot;, &quot;source_sha256&quot;: &quot;6364166d09c6994ccaecdbbfa0aa53f6f0d65ced101cc19ce7d3fa8129876180&quot;, &quot;start&quot;: {&quot;file&quot;: &quot;mysql-bin.000003&quot;, &quot;position&quot;: 1117}, &quot;stop&quot;: {&quot;file&quot;: &quot;mysql-bin.000004&quot;, &quot;position&quot;: 986}, &quot;required_files&quot;: [&quot;mysql-bin.000003&quot;, &quot;mysql-bin.000004&quot;], &quot;events&quot;: [[&quot;T101&quot;, &quot;+10&quot;, 110], [&quot;T102&quot;, &quot;+20&quot;, 130], [&quot;T103&quot;, &quot;−5&quot;, 125], [&quot;T104&quot;, &quot;清零&quot;, 0], [&quot;T105&quot;, &quot;+7&quot;, 7]]}</metadata>
+</svg>

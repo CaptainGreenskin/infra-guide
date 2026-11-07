@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-07",
+  "base_migration": "COURSE_MIGRATION_2026-11-07.json",
+  "historical_eight_hour_counts_unchanged": true,
+  "new_chapter_reviews": [
+    {
+      "id": "tcp-event-loop",
+      "track": "cloud",
+      "module": "network",
+      "title": "TCP与I/O：从连接、字节流到epoll事件循环",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-07",
+      "review_scope": "逐节核对概念依赖、手算、图、完整源码与真实运行记录；Cloud教学单元。",
+      "observation": "实际Linux epoll与回环TCP分开取证；LT/ET反例和应用队列可独立复算，序号图明确为声明算例。",
+      "reviewed_content_sha256": "5d42d21fc910f64a1bc6c2ead6e87b8d9d74491137e27057995b4027ddb6f6bb"
+    },
+    {
+      "id": "mysql-recovery",
+      "track": "cloud",
+      "module": "cloud-data",
+      "title": "MySQL日志与恢复：从提交、崩溃到按点重放",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-07",
+      "review_scope": "逐节核对概念依赖、手算、图、完整源码与真实运行记录；Cloud教学单元。",
+      "observation": "MySQL 8.4.13真实容器恢复；ROW缺段余额125但缺T101，账本差10；崩溃保留已提交7，与PITR125分开。",
+      "reviewed_content_sha256": "1b2bc1bf889e4594a0ca153c748c1ab6956e50e8ad80c697e4c4e2412041d080"
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "transport-timeout",
+      "reviewed_at": "2026-11-07",
+      "scope": "只补入新正文入口；知识点正文不变。",
+      "observation": "网络通知与数据库恢复现有知识点可继续进入逐节机制和真实目标环境实验。",
+      "previous_content_sha256": "e2385de9e73eff734db29c3fe56a20a5376e78fe061c7cbf7c8e0c3c3ecf07f8",
+      "reviewed_content_sha256": "96648380460b0379fe36b6013bb488e0926997274a4ba1ba0e01368679d96192"
+    },
+    {
+      "id": "io-model",
+      "reviewed_at": "2026-11-07",
+      "scope": "只补入新正文入口；知识点正文不变。",
+      "observation": "网络通知与数据库恢复现有知识点可继续进入逐节机制和真实目标环境实验。",
+      "previous_content_sha256": "9e9b62069fa752054b79e7a4f611cf3a415ddff4184cc887501ec9bfb20775a0",
+      "reviewed_content_sha256": "368eda165884b8e0b8d3384f6c113f44efc888e48f410d50a5733588db36f0c6"
+    },
+    {
+      "id": "database-service",
+      "reviewed_at": "2026-11-07",
+      "scope": "只补入新正文入口；知识点正文不变。",
+      "observation": "网络通知与数据库恢复现有知识点可继续进入逐节机制和真实目标环境实验。",
+      "previous_content_sha256": "3db934a00277f7fcffd3d7272331b7302a69a5a435ed49dae884fb58e1169b08",
+      "reviewed_content_sha256": "7388b546ca46d026ff7ab532d22c92414240d6a96f5a0d4525491e067ac3261b"
+    },
+    {
+      "id": "backup-restore",
+      "reviewed_at": "2026-11-07",
+      "scope": "只补入新正文入口；知识点正文不变。",
+      "observation": "网络通知与数据库恢复现有知识点可继续进入逐节机制和真实目标环境实验。",
+      "previous_content_sha256": "025a31682affcfba309b98470683e0491155ab2a439107550eeb83723730ec18",
+      "reviewed_content_sha256": "124af741c4fb1c9d8872fdaba396ec560b23cc8afc11ea0c62daccdd0b87ff4a"
+    }
+  ]
+}

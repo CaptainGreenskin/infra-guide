@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="分清三类日志与提交顺序，再用同一份账户历史比较进程崩溃、基线、完整重放和缺段反例，验收余额与业务回执。">
+<meta name="theme-color" content="#315dce"><title>MySQL日志与恢复：从提交、崩溃到按点重放 · InfraGuide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=538ad4d2b15d"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=42b378a9adc8"></script><script defer src="runtime-04.js?v=1846cfd1d15a"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=96a0d2f1678f"></script><script defer src="reading-comfort.js?v=16406b964812"></script><script defer src="site-search.js?v=d634ee795d81"></script><script defer src="app.js?v=3586a0edf667"></script>
+
+
+<link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-recovery/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="MySQL日志与恢复：从提交、崩溃到按点重放 · InfraGuide"><meta property="og:description" content="分清三类日志与提交顺序，再用同一份账户历史比较进程崩溃、基线、完整重放和缺段反例，验收余额与业务回执。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-recovery/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MySQL日志与恢复：从提交、崩溃到按点重放","description":"分清三类日志与提交顺序，再用同一份账户历史比较进程崩溃、基线、完整重放和缺段反例，验收余额与业务回执。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-recovery/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-recovery/","dateModified":"2026-11-07","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<body>
+<a class="skip" href="/article/mysql-recovery/#main">跳到主要内容</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="/" aria-label="InfraGuide 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 24h17a6 6 0 0 0 0-12A9 9 0 0 0 8 10a7 7 0 0 0 0 14Z"/></svg><span>Infra<span class="brand-light"> Guide</span></span></a>
+<nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
+<div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
+</div></header>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>Cloud Infra · 领域与章节</span><span>30 章</span></div><details ><summary><a href="/module/foundation/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" >P0.1 进程、线程与资源：为什么机器空闲，程序仍然很慢</a><a href="/article/virtual-memory-oom/" >P0.2 虚拟内存与 OOM：导出任务为什么被终止</a><a href="/article/concurrency-pools/" >P0.3 并发与线程池：锁、排队和容量</a><a href="/article/distributed-systems/" >P0.4 超时、重试与幂等：系统最难处理的是“结果未知”</a></div></details><details ><summary><a href="/module/compute/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" >C1.1 云计算架构：服务模型、资源与责任边界</a><a href="/article/cloud-compute/" >C1.2 计算资源：虚拟化、规格与容量预算</a></div></details><details ><summary><a href="/module/network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" >C2.1 云网络：DNS、路由、访问控制与返回路径</a><a href="/article/network-diagnosis/" >C2.2 网络诊断：连接、首字节与传输时序</a><a href="/article/tcp-event-loop/" >C2.3 TCP与I/O：从连接、字节流到epoll事件循环</a></div></details><details open><summary><a href="/module/cloud-data/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" >C3.1 云存储：块、文件、对象与访问性能</a><a href="/article/database-index-locks/" >C3.2 数据库访问：索引、事务与锁等待</a><a href="/article/cache-consistency/" >C3.3 缓存一致性与击穿：旧值为何重新出现</a><a href="/article/storage-recovery/" >C3.4 存储发布与恢复：版本、提交点与校验</a><a href="/article/mysql-recovery/" class="current" aria-current="page">C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a></div></details><details ><summary><a href="/module/native/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" >C4.1 容器运行原理：镜像、进程、隔离与资源</a><a href="/article/kubernetes-basics/" >C4.2 Kubernetes 控制面：对象、调谐与生命周期</a><a href="/article/k8s-workloads/" >C4.3 Kubernetes 工作负载：从声明到可用与滚动更新</a><a href="/article/scheduling-resources/" >C4.4 Kubernetes 调度：资源、亲和与拓扑约束</a><a href="/article/k8s-networking/" >C4.5 Kubernetes 网络：从 DNS、Service 到容器回包</a><a href="/article/k8s-storage/" >C4.6 Kubernetes 存储：PVC、拓扑、挂载与数据恢复</a><a href="/article/config-secrets/" >C4.7 配置与密钥：传播、重读与版本生效</a><a href="/article/k8s-autoscaling/" >C4.8 Kubernetes 弹性：HPA、节点容量与排队预算</a></div></details><details ><summary><a href="/module/serverless/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" >C5.1 Serverless 与事件驱动：执行、重试、幂等与成本</a></div></details><details ><summary><a href="/module/cloud-delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" >C6.1 平台交付：制品、配置、数据迁移与回退</a></div></details><details ><summary><a href="/module/cloud-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" >C7.1 身份与最小权限：谁能让系统做什么</a></div></details><details ><summary><a href="/module/cloud-capacity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" >C8.1 容量与弹性：故障域、扩容时序与排队</a></div></details><details ><summary><a href="/module/sre/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" >C9.1 可靠性目标：SLI、SLO 与错误预算</a><a href="/article/observability/" >C9.2 可观测性：用指标定位范围，用日志和追踪解释路径</a><a href="/article/incident/" >C9.3 故障诊断：影响、时间线、假设与验证</a><a href="/article/resilience/" >C9.4 恢复工程：故障域、RPO、RTO 与演练</a></div></details>
+  <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 30</b></div>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/cloud-data/">云存储与数据服务</a><span>／</span><span>C3.5</span></div><div class="article-meta"><span class="category">云存储与数据服务</span><span>原理 + 实验</span><span>·</span><span>数据库恢复 · 2026.11.07</span></div><h1>C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先规定一笔业务的提交边界</h3><p>事务将一组修改组织成一起提交或回滚的单位；本章让账户余额与一条业务回执共同提交。数据页是引擎组织数据的一种基本存储单位。修改在内存、日志与最终数据页之间经历不同阶段。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>再按用途拆开日志</h3><p>日志记录变化或恢复所需信息。撤销日志帮助回滚及读取旧版本，重做日志帮助引擎从崩溃中恢复，二进制日志记录服务器层面的事件历史。本章沿一次提交解释它们怎样配合，避免把三者当成同一个备份。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>最后明确要恢复哪段历史</h3><p>恢复点是本次希望重建的历史边界。先取一致的基线，再重放连续日志到完整事务边界，最后用独立回执核对业务。本章特意比较两份余额都正确、回执却不同的结果，解释为何单看查询值还不足够。</p></section></section><p class="description">分清三类日志与提交顺序，再用同一份账户历史比较进程崩溃、基线、完整重放和缺段反例，验收余额与业务回执。</p><div class="tag-row"><span class="tag">InnoDB</span><span class="tag">redo / binlog</span><span class="tag">PITR</span><span class="tag">业务验收</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约40分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>沿提交路径解释undo、redo与binlog的职责</li><li>从一致基线、连续日志与事务边界定义恢复范围</li><li>用业务ID集合和账本关系识别余额正确却不完整的恢复</li></ul><p><b>前置知识</b>了解事务提交与回滚、主键和基本SQL；先读数据库访问与通用存储恢复，尚不了解redo/binlog也可以从本章第一节开始。</p><p class="evidence-note">约 40 分钟 · MySQL 8.4；匹配客户端工具；Python 3.9+与本地Docker · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/cloud-data/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/mysql-recovery/#concept-path">概念起点与关系</a><a href="/article/mysql-recovery/#section-1">1. 先分清事务、数据页与三类日志</a><a href="/article/mysql-recovery/#section-2">2. 提交为什么可以早于全部数据页写回</a><a href="/article/mysql-recovery/#section-3">3. 崩溃恢复与历史恢复，目标有什么区别</a><a href="/article/mysql-recovery/#section-4">4. 行格式binlog为什么会改变你的手算</a><a href="/article/mysql-recovery/#section-5">5. 一致性基线必须带上它对应的恢复坐标</a><a href="/article/mysql-recovery/#section-6">6. 连续日志与停止位置怎样共同确定恢复范围</a><a href="/article/mysql-recovery/#section-7">7. 从数据库启动，走到业务可以继续写入</a><a href="/article/mysql-recovery/#section-8">8. 运行真实MySQL的四份恢复与一次崩溃对照</a><a href="/article/mysql-recovery/#section-9">9. 面试追问：用恢复目标约束你的方案</a></details><p class="intro">数据库能启动、余额看起来正确、业务历史完整，是需要分别检查的结果。本章先讲清对象与恢复目标，再用真实MySQL把它们逐项区分。</p><p class="article-context-link" id="core-knowledge"><a href="/module/cloud-data/">本领域系统知识：云存储与数据服务 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>先分清事务、数据页与三类日志</h2><p>事务把一组相关修改组织成提交或回滚的整体。本例每次调整账户余额，都在同一事务中插入一条业务回执；只有两项一起成功，才把这次操作算成完成。InnoDB是MySQL常用的事务存储引擎，负责其中的数据组织、版本、锁与恢复。</p><p>数据以页为单位组织，常用页会进入内存缓冲池。内存中已被修改、尚未完整写回持久存储的页叫脏页。如果每次小额转账都要求同步写出涉及的所有数据页，提交就会被大量数据页<span class="first-concept-term" data-concept-term="I/O">I/O<span class="concept-term-meaning">（输入与输出，例如读文件和收发网络数据）</span></span>拖住。因此引擎把提交、日志与数据页写回分工，恢复时再利用已经保存的记录。</p><div class="table-wrap"><table><thead><tr><th>对象</th><th>主要保存什么</th><th>对应问题</th></tr></thead><tbody><tr><td><span class="first-concept-term" data-concept-term="undo">undo<span class="concept-term-meaning">（撤销信息，用于回滚及引擎支持的历史版本读取）</span></span>与行版本</td><td>回滚或构造相应历史版本所需的信息</td><td>事务没完成怎么办，旧快照怎样读取</td></tr><tr><td><span class="first-concept-term" data-concept-term="redo">redo<span class="concept-term-meaning">（重做信息，用于按引擎协议重建相应数据变化）</span></span>日志</td><td>InnoDB恢复相关页修改所需的记录</td><td>数据页没写完，进程退出后怎样恢复</td></tr><tr><td><span class="first-concept-term" data-concept-term="binlog">binlog<span class="concept-term-meaning">（MySQL的二进制日志，用于其支持的复制与恢复流程）</span></span>二进制日志</td><td>服务器层的事务事件；DML可采用语句或行等格式</td><td>怎样复制变化，或从备份向前恢复</td></tr><tr><td>业务回执</td><td>操作ID、意图与业务结果等应用事实</td><td>这笔业务是否执行，是否缺少或重复一笔</td></tr></tbody></table></div><p>这几种记录处在不同层。业务ID如T101由本例应用定义；InnoDB日志序号描述引擎日志进展；binlog文件与位置描述事件流坐标。它们可以在一次排查中互相关联，却没有天然的一一换算关系。拿到一份binlog，也不等于拿到了可以替代任意数据文件的完整数据库。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>提交为什么可以早于全部数据页写回</h2><p>写前日志要求：与脏页修改有关、恢复所必需的日志，先满足对应持久化顺序，再允许相关数据页持久写出。提交路径可以先保障日志，再让数据页陆续写回。崩溃后引擎依据日志恢复一致状态，处理尚未完成的事务。</p><p>开启binlog时，还要协调引擎事务与服务器日志，避免恢复时两边对同一事务产生不相容判断。可以先用“引擎准备→记录并持久化相应binlog→完成引擎提交”理解职责和顺序，再查具体版本的组提交和恢复实现。图中的阶段不是固定的三次磁盘同步；组提交可以合并多笔事务的部分物理工作。</p><figure class="training-figure"><a href="diagrams/v45-mysql-log-roles.svg" target="_blank" rel="noopener" aria-label="放大：页、redo、binlog与业务回执的职责。图表达顺序与恢复材料，不按方框数计算fsync次数，也不把binlog行事件画成原SQL语句。"><img src="diagrams/v45-mysql-log-roles.svg" width="1120" height="775" alt="页、redo、binlog与业务回执的职责。图表达顺序与恢复材料，不按方框数计算fsync次数，也不把binlog行事件画成原SQL语句。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>页、redo、binlog与业务回执的职责。图表达顺序与恢复材料，不按方框数计算fsync次数，也不把binlog行事件画成原SQL语句。<a href="diagrams/v45-mysql-log-roles.svg" download>下载 SVG ↗</a></figcaption></figure><p>文件write返回，可能只是把内容交给操作系统<span class="first-concept-term" data-concept-term="缓存">缓存<span class="concept-term-meaning">（保存可复用内容的一份中间结果，减少重复读取或计算）</span></span>；fsync一类同步操作进一步请求文件系统兑现持久化。底层设备与存储也要满足相应保证。MySQL常说的“双1”是innodb_flush_log_at_trx_commit=1与sync_binlog=1，分别约束对应提交路径上的redo与binlog同步。</p><p>本实验按这组设置运行。它帮助限定本地日志保证，却不直接承诺远端副本已经应用、机房故障不丢数据或误删可自动撤销。更改同步策略时，需要把允许丢失的确认范围、实际存储语义与故障条件一起说明；后台大约每秒处理一次，也不等于任意故障最多只丢一秒。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>崩溃恢复与历史恢复，目标有什么区别</h2><p>崩溃恢复解决的是：沿当前数据文件与日志，让引擎从非正常退出回到一致状态。历史恢复解决的是：选一份可信备份，向前应用必要的变化，停在指定业务历史。后者常称按时间点恢复（PITR），目标可以通过核对后的事务边界或事件位置表达。</p><p>本例起始余额100，依次提交+10、+20、−5，得到125；然后误操作把余额清零，又提交+7，当前余额变成7。清零虽然错误，却已经合法提交。把数据库进程强制终止再启动，崩溃恢复应保留这些已提交事实，而不会替人判断哪笔业务不应该发生。</p><div class="table-wrap"><table><thead><tr><th>恢复动作</th><th>本例应期待什么</th><th>验收出口</th></tr></thead><tbody><tr><td>进程退出后正常恢复</td><td>已提交的当前余额7仍存在，未提交的999不出现</td><td>引擎恢复后的可见状态与事务记录</td></tr><tr><td>只装回余额100的备份</td><td>回到备份当时，缺少后续已提交业务</td><td>基线能否成功加载</td></tr><tr><td>备份加连续日志，停在清零前</td><td>恢复余额125及T101—T103回执</td><td>目标历史与业务完整性</td></tr><tr><td>复制当前错误状态</td><td>也可能复制清零及之后的变化</td><td>复制可用性不替代历史选择</td></tr></tbody></table></div><p>本程序另外保持一笔余额999的未提交事务，再强制终止mysqld，重启后核对余额与已提交回执。观察范围是数据库进程崩溃及重启；没有模拟宿主机断电，也没有运行主从复制或托管数据库切换。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>行格式binlog为什么会改变你的手算</h2><p>先区分两种输入。语句格式可以记录相应<span class="first-concept-term" data-concept-term="SQL">SQL<span class="concept-term-meaning">（向关系数据库表达查询与更新的一种语言）</span></span>；行格式记录数据行的变化，通过行事件提供定位与更新所需的映像。映像表示事件中的列值，具体包含哪些列还取决于日志配置。读binlog时看到UPDATE字样，不代表恢复时重新执行了原来的“余额加20”语句。</p><p>本实验采用ROW格式，账户表以id为主键。在源库完成+10后，余额是110；随后+20的结果是130。对应行事件可以把目标账户写成记录中的新余额130。若恢复时漏了前面的+10历史，后续账户行映像仍可能把余额带到130，再带到125。与此同时，独立回执表中却没有T101。</p><div class="knowledge-formula"><small>用应用账本检查缺失历史</small><div>差额 = 账户余额 − (基线余额 + 已恢复回执的增量之和)</div><p>本例缺日志后的余额可以仍是125，但回执仅有+20和−5：125 − (100 + 20 − 5) = 10。这个差额用于本题的独立验收，不是通用数据库完整性算法。</p></div><p>这说明验收不能只选一个容易被后续更新覆盖的字段。还要检查业务ID集合、数量、明细和跨表关系。换成不同主键、列映像、写入形式或缺失位置，重放可能报错，也可能产生别的结果；本例只证明“余额正确”不是历史完整的充分证据。</p><p>mysqlbinlog默认生成可重新执行的事件流；用--verbose和--base64-output=DECODE-ROWS可以帮助人工阅读行事件。人工展示出来的注释式行解释，不应直接当作恢复用SQL。恢复时保留工具生成的可执行事件流，并使用匹配的版本和权限。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>一致性基线必须带上它对应的恢复坐标</h2><p>基线需要同时回答两件事：里面的数据属于哪个一致状态，后续从哪条事件继续。不能导出完成后才随手记录一个当前位置，再假定两者天然衔接；中间发生的事务可能被重复或遗漏。</p><p>本例全部表为InnoDB，没有并发DDL，用mysqldump的单事务选项取得一致性逻辑基线，同时通过--source-data=2保存源binlog文件与位置。数字2表示把复制坐标写为注释。GTID是另一种事务标识与进度方式；为单独讲清文件位置，本例关闭GTID，不把两套操作随意混用。</p><div class="code-block"><div class="code-toolbar"><span>命令结构 · source为提前配置好的隔离源login-path <small>BASH</small></span><button data-copy-code aria-label="复制 命令结构 · source为提前配置好的隔离源login-path">复制代码</button></div><pre tabindex="0"><code>mysqldump --login-path=source --single-transaction --source-data=2 \
+  --set-gtid-purged=OFF --databases lab &gt; baseline.sql</code></pre></div><p>单事务快照的一致性范围主要针对事务表；导出期间的相关DDL与非事务表需要额外方案。这里的逻辑导出也不是直接复制InnoDB数据目录的物理备份。生产恢复应选择与数据量、版本、日志保留及<span class="first-concept-term" data-concept-term="RTO">RTO<span class="concept-term-meaning">（恢复时间目标，约束恢复到约定服务状态所需时间）</span></span>相容的工具，并实际验证其恢复起点。</p><p>本例的文件和位置由程序解析实际导出内容得到，每次初始化后的数字可能不同。实验报告记录snapshot_next_event，后续重放直接使用这份坐标，不在教程里编造一个看似精确、却无法与读者数据库对应的固定位置。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>连续日志与停止位置怎样共同确定恢复范围</h2><p>本例在T101提交后主动轮换一次binlog，因此目标历史横跨两个文件。恢复范围从基线坐标开始，经过第一个文件中的T101，再经过第二个文件中的T102、T103，在T104清零开始前停止。开始位置与停止位置都来自该次真实运行。</p><figure class="training-figure"><a href="diagrams/v45-mysql-pitr-boundary.svg" target="_blank" rel="noopener" aria-label="放大：基线、两个必需文件与清零事务前的边界。T104和后面的T105都在本次目标之外；之后的合法业务需要另外对账。"><img src="diagrams/v45-mysql-pitr-boundary.svg" width="1120" height="755" alt="基线、两个必需文件与清零事务前的边界。T104和后面的T105都在本次目标之外；之后的合法业务需要另外对账。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>基线、两个必需文件与清零事务前的边界。T104和后面的T105都在本次目标之外；之后的合法业务需要另外对账。<a href="diagrams/v45-mysql-pitr-boundary.svg" download>下载 SVG ↗</a></figcaption></figure><div class="code-block"><div class="code-toolbar"><span>文件数组包含从起点到终点的完整有序链 <small>BASH</small></span><button data-copy-code aria-label="复制 文件数组包含从起点到终点的完整有序链">复制代码</button></div><pre tabindex="0"><code>set -euo pipefail
+: &quot;${BASE_POS:?从基线取得真实起点}&quot;
+: &quot;${STOP_POS:?核对清零事务开始位置}&quot;
+# FILES逐项填写本次已核对的全部日志文件，不跳过中间文件。
+mysqlbinlog --start-position=&quot;$BASE_POS&quot; --stop-position=&quot;$STOP_POS&quot; \
+  &quot;${FILES[@]}&quot; | mysql --login-path=restore --binary-mode</code></pre></div><p>在这条多文件命令中，开始位置作用于首个文件，停止位置作用于最后文件。坐标要对应完整事务的边界。时间选项可以协助寻找事件，最终还需核对位置、时区与目标包含性，不能按任意一行SQL或一次墙钟读数直接截断。</p><p>即使工具没有报告缺段，业务也可能已经不完整。本例故意只给第二个文件重放，余额仍可能得到125，回执却少了一笔。完整文件清单、身份与校验负责证明材料链，独立业务检查负责验证恢复结果，两者应同时具备。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>从数据库启动，走到业务可以继续写入</h2><p>“SELECT 1成功”只证明一个很小的查询可以执行。恢复验收还要核对表结构与关键行、业务ID集合、聚合与跨表约束，以及代表性后续读写。清零前的目标应当既有余额125，又有T101、T102、T103三条回执；T104与T105均不在这一历史切点中。</p><figure class="training-figure"><a href="diagrams/v45-mysql-recovery-checks.svg" target="_blank" rel="noopener" aria-label="放大：余额同为125的两份恢复，回执完整性不同。通过金额、业务ID与差额三项核对，拒绝只看余额的假成功。"><img src="diagrams/v45-mysql-recovery-checks.svg" width="1120" height="745" alt="余额同为125的两份恢复，回执完整性不同。通过金额、业务ID与差额三项核对，拒绝只看余额的假成功。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>余额同为125的两份恢复，回执完整性不同。通过金额、业务ID与差额三项核对，拒绝只看余额的假成功。<a href="diagrams/v45-mysql-recovery-checks.svg" download>下载 SVG ↗</a></figcaption></figure><p>正确恢复后，本例再提交一笔新的+3业务，余额变为128，产生新的回执。这验证该隔离目标能在所测试路径上继续写入。正式接入应用还需核对身份权限、连接与路由、缓存、消费者和外部依赖；本实验没有替这些未接入组件给出通过结论。</p><p>恢复到清零前也意味着T105这笔之后的已确认业务暂时不在目标里。应保留原始回执与上下游证据，按业务语义决定补偿或重做。直接跳过坏事务、继续套用所有后续操作，会忽略这些操作当时依赖的状态。</p></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>运行真实MySQL的四份恢复与一次崩溃对照</h2><p>实验只创建带随机前缀的两套容器和数据卷，不暴露端口，也不连接已有数据库。结束时仅清理自己创建的资源。首次运行需要下载官方镜像并构建客户端工具镜像；源码、Dockerfile与说明应从完整包一起解压。</p><p>精简服务器镜像可能包含mysqld和mysqldump，却没有mysqlbinlog。本包把完整客户端放在独立工具镜像中，通过官方仓库和包签名安装，运行时只读挂载实验日志卷。先检查工具及版本，再初始化数据，可以把“服务能启动”和“恢复工具齐全”分开验收。</p><h3 id="mysql-pitr-run" class="walkthrough-run">运行 mysql_restore.py</h3><div class="code-block"><div class="code-toolbar"><span>解压完整实验包后运行 <small>BASH</small></span><button data-copy-code aria-label="复制 解压完整实验包后运行">复制代码</button></div><pre tabindex="0"><code>python3 mysql_restore.py --report mysql-local.json</code></pre></div><p><a href="/labs/transport-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/transport-recovery/mysql_restore.py" download>单独下载源码 ↓</a> · <a href="/labs/transport-recovery/validation.json">查看环境、结果与源码摘要 →</a></p><details class="full-code"><summary>展开完整源码 · mysql_restore.py</summary><div class="code-block"><div class="code-toolbar"><span>mysql_restore.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 mysql_restore.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Isolated MySQL 8.4 crash/PITR lesson using Docker and synthetic balances only.
+
+Creates uniquely named containers and volumes, exposes no ports, removes only
+its own resources, and never connects to an existing MySQL server.
+&quot;&quot;&quot;
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import re
+import secrets
+import selectors
+import subprocess
+import tempfile
+import time
+import uuid
+
+
+class Lab:
+    def __init__(self, image, folder):
+        self.image, self.folder = image, folder
+        self.prefix = &#39;infra-pitr-&#39; + uuid.uuid4().hex[:12]
+        self.containers, self.volumes = [], []
+        self.data_volumes = {}
+        self.tools_image = &#39;infra-pitr-tools:&#39; + self.prefix
+        self.password = secrets.token_urlsafe(28)
+        self.config = folder / &#39;client.cnf&#39;
+        self.config.write_text(&#39;[client]\nuser=root\npassword=&#39; + self.password + &#39;\nprotocol=socket\n&#39;)
+        self.config.chmod(0o600)
+
+    def docker(self, *args, data=None, check=True, timeout=90, env=None):
+        result = subprocess.run([&#39;docker&#39;, *args], input=data, capture_output=True,
+                                timeout=timeout, env=env)
+        if check and result.returncode:
+            detail = (result.stderr or result.stdout).decode(errors=&#39;replace&#39;).replace(self.password, &#39;[redacted]&#39;)
+            raise RuntimeError(&#39;Docker &#39; + args[0] + &#39; exited &#39; + str(result.returncode) + &#39;: &#39; + detail[-1800:])
+        return result
+
+    def start(self, role, server_id, binary_log):
+        name, volume = self.prefix + &#39;-&#39; + role, self.prefix + &#39;-&#39; + role + &#39;-data&#39;
+        self.docker(&#39;volume&#39;, &#39;create&#39;, &#39;--label&#39;, &#39;infraguide=isolated-lesson&#39;, volume)
+        self.volumes.append(volume)
+        self.data_volumes[name] = volume
+        env = dict(os.environ, MYSQL_ROOT_PASSWORD=self.password)
+        args = [&#39;run&#39;, &#39;-d&#39;, &#39;--name&#39;, name, &#39;--network&#39;, &#39;none&#39;, &#39;--memory&#39;, &#39;1g&#39;,
+                &#39;--pids-limit&#39;, &#39;256&#39;, &#39;--env&#39;, &#39;MYSQL_ROOT_PASSWORD&#39;,
+                &#39;--mount&#39;, &#39;type=volume,source=&#39; + volume + &#39;,target=/var/lib/mysql&#39;,
+                &#39;--mount&#39;, &#39;type=bind,source=&#39; + str(self.config) + &#39;,target=/run/infra-client.cnf,readonly&#39;,
+                self.image, &#39;--server-id=&#39; + str(server_id), &#39;--skip-networking&#39;,
+                &#39;--innodb-buffer-pool-size=67108864&#39;, &#39;--innodb-redo-log-capacity=67108864&#39;,
+                &#39;--innodb-flush-log-at-trx-commit=1&#39;, &#39;--sync-binlog=1&#39;, &#39;--gtid-mode=OFF&#39;,
+                &#39;--binlog-format=ROW&#39;, &#39;--binlog-expire-logs-seconds=0&#39;,
+                &#39;--log-bin=mysql-bin&#39; if binary_log else &#39;--skip-log-bin&#39;]
+        self.containers.append(name)
+        self.docker(*args, env=env)
+        self.wait(name)
+        return name
+
+    def mysql_args(self, name):
+        return [&#39;docker&#39;, &#39;exec&#39;, &#39;-i&#39;, name, &#39;mysql&#39;, &#39;--defaults-extra-file=/run/infra-client.cnf&#39;,
+                &#39;--batch&#39;, &#39;--raw&#39;, &#39;--skip-column-names&#39;, &#39;--binary-mode&#39;, &#39;--unbuffered&#39;]
+
+    def sql(self, name, sql, check=True):
+        data = sql.encode() if isinstance(sql, str) else sql
+        result = subprocess.run(self.mysql_args(name), input=data, capture_output=True, timeout=45)
+        if check and result.returncode:
+            raise RuntimeError(result.stderr.decode(errors=&#39;replace&#39;).replace(self.password, &#39;[redacted]&#39;)[:1800])
+        return result
+
+    def wait(self, name):
+        deadline = time.monotonic() + 180
+        while time.monotonic() &lt; deadline:
+            attempt = self.sql(name, &#39;SELECT 1;&#39;, check=False)
+            if attempt.returncode == 0 and attempt.stdout.strip() == b&#39;1&#39;:
+                return
+            time.sleep(1)
+        raise RuntimeError(&#39;MySQL readiness timeout for the isolated lesson container&#39;)
+
+    def position(self, name):
+        row = self.sql(name, &#39;SHOW BINARY LOG STATUS;&#39;).stdout.decode().splitlines()[0].split(&#39;\t&#39;)
+        return {&#39;file&#39;: row[0], &#39;position&#39;: int(row[1])}
+
+    def commit(self, name, op, delta=None, reset=False):
+        mutation = &#39;UPDATE lab.account SET balance=0 WHERE id=1;&#39; if reset else (
+            &#39;UPDATE lab.account SET balance=balance+(&#39; + str(delta) + &#39;) WHERE id=1;&#39;)
+        amount = -125 if reset else delta
+        self.sql(name, &quot;START TRANSACTION;&quot; + mutation +
+                 &quot;INSERT INTO lab.receipt VALUES (&#39;&quot; + op + &quot;&#39;,&quot; + str(amount) + &quot;);COMMIT;&quot;)
+
+    def state(self, name):
+        balance = int(self.sql(name, &#39;SELECT balance FROM lab.account WHERE id=1;&#39;).stdout.strip())
+        rows = self.sql(name, &#39;SELECT op_id,delta FROM lab.receipt ORDER BY op_id;&#39;).stdout.decode().splitlines()
+        return {&#39;balance&#39;: balance, &#39;operations&#39;: [[a, int(b)] for a, b in (r.split(&#39;\t&#39;) for r in rows)]}
+
+    def restore(self, target, baseline, stream=b&#39;&#39;):
+        self.sql(target, &#39;DROP DATABASE IF EXISTS lab;&#39;)
+        self.sql(target, baseline)
+        if stream:
+            self.sql(target, stream)
+        return self.state(target)
+
+    def binlog(self, source, files, start, stop=None):
+        args = [&#39;run&#39;, &#39;--rm&#39;, &#39;--network&#39;, &#39;none&#39;, &#39;--mount&#39;,
+                &#39;type=volume,source=&#39; + self.data_volumes[source] + &#39;,target=/var/lib/mysql,readonly&#39;,
+                self.tools_image, &#39;--start-position=&#39; + str(start)]
+        if stop is not None:
+            args.append(&#39;--stop-position=&#39; + str(stop))
+        args.extend(&#39;/var/lib/mysql/&#39; + f for f in files)
+        return self.docker(*args).stdout
+
+    def cleanup(self):
+        for name in reversed(self.containers):
+            self.docker(&#39;rm&#39;, &#39;-f&#39;, name, check=False)
+        for volume in reversed(self.volumes):
+            self.docker(&#39;volume&#39;, &#39;rm&#39;, volume, check=False)
+        self.docker(&#39;image&#39;, &#39;rm&#39;, self.tools_image, check=False)
+
+    def run(self):
+        self.docker(&#39;pull&#39;, self.image, timeout=300)
+        digest = json.loads(self.docker(&#39;image&#39;, &#39;inspect&#39;, self.image, &#39;--format&#39;, &#39;{{json .RepoDigests}}&#39;).stdout)
+        tool_file = Path(__file__).with_name(&#39;Dockerfile.tools&#39;)
+        self.docker(&#39;build&#39;, &#39;--quiet&#39;, &#39;--tag&#39;, self.tools_image, &#39;--build-arg&#39;,
+                    &#39;MYSQL_BASE=&#39; + self.image, &#39;--file&#39;, str(tool_file), str(tool_file.parent), timeout=360)
+        binlog_version = self.docker(&#39;run&#39;, &#39;--rm&#39;, &#39;--network&#39;, &#39;none&#39;, self.tools_image, &#39;--version&#39;).stdout.decode().strip()
+        assert re.search(r&#39;Ver\s+8\.4\.&#39;, binlog_version), &#39;Use the MySQL 8.4 client toolchain&#39;
+        source = self.start(&#39;source&#39;, 101, True)
+        version = self.sql(source, &#39;SELECT VERSION();&#39;).stdout.decode().strip()
+        assert version.startswith(&#39;8.4.&#39;), &#39;This lesson is explicitly scoped to MySQL 8.4&#39;
+        self.sql(source, &#39;CREATE DATABASE lab;CREATE TABLE lab.account(id INT PRIMARY KEY,balance BIGINT NOT NULL) ENGINE=InnoDB;&#39;
+                 &#39;CREATE TABLE lab.receipt(op_id VARCHAR(32) PRIMARY KEY,delta BIGINT NOT NULL) ENGINE=InnoDB;&#39;
+                 &#39;INSERT INTO lab.account VALUES(1,100);&#39;)
+        baseline = self.docker(&#39;exec&#39;, source, &#39;mysqldump&#39;, &#39;--defaults-extra-file=/run/infra-client.cnf&#39;,
+                              &#39;--single-transaction&#39;, &#39;--source-data=2&#39;, &#39;--set-gtid-purged=OFF&#39;,
+                              &#39;--databases&#39;, &#39;lab&#39;).stdout
+        match = re.search(rb&quot;SOURCE_LOG_FILE=&#39;([^&#39;]+)&#39;, SOURCE_LOG_POS=(\d+)&quot;, baseline)
+        assert match, &#39;The consistent snapshot must include its actual source coordinates&#39;
+        start = {&#39;file&#39;: match[1].decode(), &#39;position&#39;: int(match[2])}
+        self.commit(source, &#39;T101&#39;, 10)
+        self.sql(source, &#39;FLUSH BINARY LOGS;&#39;)
+        self.commit(source, &#39;T102&#39;, 20)
+        self.commit(source, &#39;T103&#39;, -5)
+        stop = self.position(source)
+        before_bad = self.state(source)
+        assert before_bad[&#39;balance&#39;] == 125
+        self.commit(source, &#39;T104&#39;, reset=True)
+        self.commit(source, &#39;T105&#39;, 7)
+        committed = self.state(source)
+        assert committed[&#39;balance&#39;] == 7
+        self.sql(source, &#39;FLUSH BINARY LOGS;&#39;)
+        files = self.sql(source, &#39;SHOW BINARY LOGS;&#39;).stdout.decode().splitlines()
+        files = [row.split(&#39;\t&#39;)[0] for row in files]
+        chain = files[files.index(start[&#39;file&#39;]):files.index(stop[&#39;file&#39;]) + 1]
+        assert len(chain) == 2
+        correct_stream = self.binlog(source, chain, start[&#39;position&#39;], stop[&#39;position&#39;])
+        whole_stream = self.binlog(source, chain, start[&#39;position&#39;])
+        missing_stream = self.binlog(source, chain[1:], 4, stop[&#39;position&#39;])
+        target = self.start(&#39;restore&#39;, 102, False)
+        baseline_only = self.restore(target, baseline)
+        whole_history = self.restore(target, baseline, whole_stream)
+        missing_log = self.restore(target, baseline, missing_stream)
+        recovered = self.restore(target, baseline, correct_stream)
+        # ROW events carry row images, not the original &quot;balance + delta&quot; SQL.
+        # Later account after-images can hide a missing earlier receipt.
+        observed = [baseline_only, whole_history, missing_log, recovered]
+        assert [s[&#39;balance&#39;] for s in observed] == [100, 7, 125, 125], json.dumps(observed)
+        assert recovered == before_bad
+        assert [op for op, _ in missing_log[&#39;operations&#39;]] == [&#39;T102&#39;, &#39;T103&#39;]
+        reconciliation_gap = missing_log[&#39;balance&#39;] - (100 + sum(delta for _, delta in missing_log[&#39;operations&#39;]))
+        assert reconciliation_gap == 10
+        self.commit(target, &#39;TNEW&#39;, 3)
+        writable_after_restore = self.state(target)
+        assert writable_after_restore[&#39;balance&#39;] == 128
+
+        # Hold one uncommitted update while a second session still sees committed balance 7.
+        hold = subprocess.Popen(self.mysql_args(source), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        hold.stdin.write(b&quot;START TRANSACTION;UPDATE lab.account SET balance=999 WHERE id=1;SELECT &#39;HOLDING&#39;;DO SLEEP(60);COMMIT;&quot;)
+        hold.stdin.close()
+        with selectors.DefaultSelector() as selector:
+            selector.register(hold.stdout, selectors.EVENT_READ)
+            assert selector.select(12), &#39;The holding transaction never acknowledged its update&#39;
+            assert hold.stdout.readline().strip() == b&#39;HOLDING&#39;
+        assert self.state(source) == committed
+        self.docker(&#39;kill&#39;, &#39;--signal&#39;, &#39;KILL&#39;, source)
+        hold.wait(timeout=20)
+        assert hold.returncode != 0
+        self.docker(&#39;start&#39;, source)
+        self.wait(source)
+        after_crash = self.state(source)
+        assert after_crash == committed, &#39;Crash recovery keeps the committed bad transaction too&#39;
+        return {&#39;status&#39;: &#39;passed&#39;, &#39;image&#39;: self.image, &#39;image_digests&#39;: digest, &#39;mysql_version&#39;: version,
+                &#39;mysqlbinlog_version&#39;: binlog_version,
+                &#39;tools_dockerfile_sha256&#39;: hashlib.sha256(tool_file.read_bytes()).hexdigest(),
+                &#39;snapshot_next_event&#39;: start, &#39;exclude_bad_transaction_from&#39;: stop, &#39;required_files&#39;: chain,
+                &#39;baseline_only&#39;: baseline_only, &#39;full_replay&#39;: whole_history,
+                &#39;missing_first_log&#39;: missing_log, &#39;point_in_time_recovery&#39;: recovered,
+                &#39;missing_history_reconciliation_gap&#39;: reconciliation_gap,
+                &#39;post_restore_write&#39;: writable_after_restore,
+                &#39;process_crash&#39;: {&#39;uncommitted_value&#39;: 999, &#39;held_client_exit_code&#39;: hold.returncode,
+                                  &#39;committed_state_before&#39;: committed, &#39;state_after_restart&#39;: after_crash},
+                &#39;stream_sha256&#39;: {label: hashlib.sha256(data).hexdigest() for label, data in
+                                  [(&#39;baseline&#39;, baseline), (&#39;correct&#39;, correct_stream), (&#39;full&#39;, whole_stream)]},
+                &#39;scope&#39;: &#39;Real isolated MySQL/InnoDB, logical dump, two binlogs, replay and mysqld SIGKILL. &#39;
+                         &#39;No host power-loss, replication, managed database, production load or external application test.&#39;}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(&#39;--image&#39;, default=&#39;mysql:8.4&#39;)
+    parser.add_argument(&#39;--report&#39;, type=Path)
+    args = parser.parse_args()
+    # Require an explicit local Unix Docker endpoint; never use a remote user context.
+    context = subprocess.run([&#39;docker&#39;, &#39;context&#39;, &#39;inspect&#39;], capture_output=True, check=True)
+    endpoint = json.loads(context.stdout)[0][&#39;Endpoints&#39;][&#39;docker&#39;][&#39;Host&#39;]
+    if not endpoint.startswith(&#39;unix://&#39;) or (os.environ.get(&#39;DOCKER_HOST&#39;) and not os.environ[&#39;DOCKER_HOST&#39;].startswith(&#39;unix://&#39;)):
+        raise RuntimeError(&#39;Use a local Unix Docker engine for this isolated lesson&#39;)
+    with tempfile.TemporaryDirectory(prefix=&#39;infra-mysql-&#39;) as directory:
+        lab = Lab(args.image, Path(directory))
+        try:
+            result = lab.run()
+        finally:
+            lab.cleanup()
+    result.update(source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                  python=platform.python_version(), system=platform.system())
+    serialized = json.dumps(result, ensure_ascii=False, indent=2) + &#39;\n&#39;
+    if args.report:
+        args.report.write_text(serialized)
+    print(serialized, end=&#39;&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre></div></details><details class="full-code"><summary>展开完整源码 · Dockerfile.tools</summary><div class="code-block"><div class="code-toolbar"><span>Dockerfile.tools <small>DOCKERFILE</small></span><button data-copy-code aria-label="复制 Dockerfile.tools">复制代码</button></div><pre tabindex="0"><code># Server-minimal images omit mysqlbinlog. Keep the full client in a separate image.
+ARG MYSQL_BASE=mysql:8.4
+FROM ${MYSQL_BASE} AS vendor_key
+FROM oraclelinux:9-slim
+COPY --from=vendor_key /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql
+RUN printf &#39;%s\n&#39; \
+    &#39;[mysql84-client]&#39; \
+    &#39;name=MySQL 8.4 Community client tools&#39; \
+    &#39;baseurl=https://repo.mysql.com/yum/mysql-8.4-community/el/9/$basearch/&#39; \
+    &#39;enabled=1&#39; \
+    &#39;gpgcheck=1&#39; \
+    &#39;gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql&#39; \
+    &#39;module_hotfixes=true&#39; &gt; /etc/yum.repos.d/mysql84-client.repo \
+    &amp;&amp; microdnf install -y mysql-community-client \
+    &amp;&amp; microdnf clean all \
+    &amp;&amp; mysqlbinlog --version
+ENTRYPOINT [&quot;mysqlbinlog&quot;]</code></pre></div></details><div class="table-wrap"><table><thead><tr><th>对照</th><th>应看余额</th><th>还要看什么</th></tr></thead><tbody><tr><td>只恢复基线</td><td>100</td><td>回执为空</td></tr><tr><td>重放全部历史</td><td>7</td><td>错误清零及后续+7也回来</td></tr><tr><td>漏掉第一个必需文件</td><td>125</td><td>仅有T102、T103；账本差额10</td></tr><tr><td>完整重放到清零前</td><td>125</td><td>T101—T103完整；账本差额0</td></tr><tr><td>正确恢复后新写+3</td><td>128</td><td>多出TNEW且原回执保留</td></tr></tbody></table></div><p>再看process_crash：余额999只存在于未提交事务中，另一个连接仍读到已提交的7；进程被强制结束并重启后，余额仍为7，已提交回执保留。把这个结果与PITR的125对照，就能说明两种恢复到底在恢复什么。</p><p>报告同时记录实际MySQL版本、官方镜像摘要、mysqlbinlog版本、工具镜像配方摘要、文件坐标与<span class="first-concept-term" data-concept-term="CI">CI<span class="concept-term-meaning">（持续集成，持续检查并整合代码变更）</span></span>运行链接。本轮MySQL来自<span class="first-concept-term" data-concept-term="Linux">Linux<span class="concept-term-meaning">（一类操作系统，负责管理程序运行及机器资源）</span></span> CI的实际容器执行；本机macOS未启动Docker引擎，不冒充本地运行。</p></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>面试追问：用恢复目标约束你的方案</h2><div class="table-wrap"><table><thead><tr><th>追问</th><th>回答时至少交代</th></tr></thead><tbody><tr><td>redo与binlog为什么都需要</td><td>引擎页恢复与服务器事件流的不同职责，提交时如何协调</td></tr><tr><td>误删后重启为何不恢复旧值</td><td>错误事务已经提交；崩溃恢复保留它，PITR另选历史</td></tr><tr><td>余额对了，为何仍拒绝恢复</td><td>行映像可能覆盖掉金额差异，业务回执集合仍缺失</td></tr><tr><td>怎样确定停止位置</td><td>先找坏事务，再核对完整边界、首尾坐标与连续文件</td></tr><tr><td>怎样承诺<span class="first-concept-term" data-concept-term="RPO">RPO<span class="concept-term-meaning">（恢复点目标，约束允许的数据丢失窗口）</span></span>/RTO</td><td>定义确认历史与恢复切点；实测取回、重放、启动、验收和切流关键路径</td></tr><tr><td>主从复制能代替备份吗</td><td>复制也会传播错误；历史保留、独立材料与恢复演练另有职责</td></tr></tbody></table></div><p>设计题应先给出“恢复到哪里、允许丢什么、恢复后谁来验证”，再选择备份、日志、隔离目标与切流方式。若没有实际复制或云上演练，应明确这些部分还需什么证据，而不是把一次容器内恢复推广成跨可用区零损恢复。</p><p><a class="inline-link" href="/article/storage-recovery/">回到对象、附件与恢复清单的完整边界 →</a><a class="inline-link" href="/article/database-index-locks/">继续核对事务可见性、索引与锁 →</a></p></section><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>基线100；恢复后的账户125，回执只有T102的+20与T103的−5。MySQL没有报错，是否可以宣布恢复完成？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>按本题账本，100+20−5=115，与账户125相差10，且预期业务ID集合中缺T101。行格式事件可能把后续余额映像写回125，因此金额单项相等不足以证明完整。应拒绝放行，核对连续材料与恢复起点，重建完整目标历史后再验收。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="mysql-recovery:0" >为什么误清零已提交后，崩溃恢复仍应保留它？</label><label><input type="checkbox" data-check="mysql-recovery:1" >行格式事件为什么不等于重新运行原来的加法SQL？</label><label><input type="checkbox" data-check="mysql-recovery:2" >两份余额同为125的恢复，怎样检查历史完整性？</label><label><input type="checkbox" data-check="mysql-recovery:3" >恢复到T104之前后，T105的已确认业务怎样处理？</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="mysql-recovery">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-recovery/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-redo-log.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · Redo日志 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-recovery.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · InnoDB崩溃恢复 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/mysqldump.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · 一致性逻辑备份与源坐标 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/point-in-time-recovery-positions.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · 按事件位置恢复 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/mysqlbinlog.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · mysqlbinlog工具 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-rbr-usage.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · 行格式日志与读取 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-features-row-searches.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 · 应用行事件时的定位规则 ↗</a><a href="https://github.com/docker-library/mysql/blob/master/8.4/Dockerfile.oracle" target="_blank" rel="noopener noreferrer">Docker Official Image · MySQL打包方式 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/storage-recovery/"><span>C3.4</span>存储发布与恢复：版本、提交点与校验<b>↗</b></a><a href="/article/database-index-locks/"><span>C3.2</span>数据库访问：索引、事务与锁等待<b>↗</b></a><a href="/article/resilience/"><span>C9.4</span>恢复工程：故障域、RPO、RTO 与演练<b>↗</b></a><a href="/article/tcp-event-loop/"><span>C2.3</span>TCP与I/O：从连接、字节流到epoll事件循环<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="mysql-recovery">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><a href="/article/storage-recovery/"><small>← 上一篇</small>存储发布与恢复：版本、提交点与校验</a><a href="/article/container-runtime/"><small>下一篇 →</small>容器运行原理：镜像、进程、隔离与资源</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/mysql-recovery/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/mysql-recovery/#section-1">1. 先分清事务、数据页与三类日志</a><a data-toc="section-2" href="/article/mysql-recovery/#section-2">2. 提交为什么可以早于全部数据页写回</a><a data-toc="section-3" href="/article/mysql-recovery/#section-3">3. 崩溃恢复与历史恢复，目标有什么区别</a><a data-toc="section-4" href="/article/mysql-recovery/#section-4">4. 行格式binlog为什么会改变你的手算</a><a data-toc="section-5" href="/article/mysql-recovery/#section-5">5. 一致性基线必须带上它对应的恢复坐标</a><a data-toc="section-6" href="/article/mysql-recovery/#section-6">6. 连续日志与停止位置怎样共同确定恢复范围</a><a data-toc="section-7" href="/article/mysql-recovery/#section-7">7. 从数据库启动，走到业务可以继续写入</a><a data-toc="section-8" href="/article/mysql-recovery/#section-8">8. 运行真实MySQL的四份恢复与一次崩溃对照</a><a data-toc="section-9" href="/article/mysql-recovery/#section-9">9. 面试追问：用恢复目标约束你的方案</a><a data-toc="self-check" href="/article/mysql-recovery/#self-check">自我检验</a><a data-toc="references" href="/article/mysql-recovery/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

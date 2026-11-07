@@ -1,10 +1,11 @@
+const inventory=require('./content-inventory.cjs');
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
 const c={};vm.createContext(c);
 for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const d=vm.runInContext('({articles,infraKnowledgeDomains,infraStudyGates,aiAgentLabFiles,aiAgentValidation,sources,chapterReadingEdits})',c);
 assert.equal(d.infraKnowledgeDomains.length,4);
 assert.equal(d.infraKnowledgeDomains.flatMap(x=>x.points).length,33);
-assert.equal(d.articles.length,67);
+assert.equal(d.articles.length,inventory.chapters);
 assert.equal(d.chapterReadingEdits.length,35);assert.equal(new Set(d.chapterReadingEdits.map(x=>x.id)).size,35);
 assert.deepEqual(JSON.parse(fs.readFileSync('docs/CHAPTER_REVIEW_2026-11-04.json')).chapters,JSON.parse(JSON.stringify(d.chapterReadingEdits)));
 const articleIDs=new Set(d.articles.map(a=>a.id));

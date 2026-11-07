@@ -1,8 +1,9 @@
+const inventory=require('./content-inventory.cjs');
 const fs=require('fs'),path=require('path'),assert=require('assert'),vm=require('vm'),crypto=require('crypto');
 const dist=path.resolve(__dirname,'../dist');
 const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
-assert.equal(urls.length,100);assert.equal(new Set(urls.map(u=>u.href)).size,100);
+assert.equal(urls.length,inventory.canonical);assert.equal(new Set(urls.map(u=>u.href)).size,inventory.canonical);
 for(const url of urls){
  const file=path.join(dist,url.pathname,'index.html'),html=fs.readFileSync(file,'utf8');
  assert(html.includes('<link rel="canonical" href="'+url.href+'">'),url.pathname+': canonical');
@@ -20,7 +21,7 @@ for(const url of urls){
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
 const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
-assert.equal(outlineChapterCount,67);
+assert.equal(outlineChapterCount,inventory.chapters);
 assert(outline.includes("再沿先修顺序展开 "+outlineChapterCount+" 章。"),"outline introduction must agree with its actual chapter links");
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
@@ -36,7 +37,7 @@ assert(vm.runInContext('attentionExample(0,false,true).output[0]!==attentionExam
 const record=JSON.parse(fs.readFileSync(path.join(dist,'labs/attention/validation.json'),'utf8'));
 assert.equal(record.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/attention/attention_lab.py'))).digest('hex'));
 assert.equal(record.report.status,'passed');
-console.log('PASS: 100 canonical full-text routes plus a retained start alias, social metadata, crawlable links, sitemap and attention calculations/evidence.');
+console.log('PASS: '+inventory.canonical+' canonical full-text routes plus a retained start alias, social metadata, crawlable links, sitemap and attention calculations/evidence.');
 
 const ddpRecord=JSON.parse(fs.readFileSync(path.join(dist,'labs/ddp-step/validation.json'),'utf8'));
 assert.equal(ddpRecord.report.status,'passed');
@@ -59,9 +60,9 @@ for (const [id, anchor, script] of [['network-diagnosis', 'network-timing-lab', 
 }
 console.log('PASS: timing, authorization evidence and lab deep links.');
 for (const [route, total, mustContain, mustOmit] of [
- ['/module/training', 26, 'model-serving', 'linux-resource'],
- ['/article/network-diagnosis', 28, 'linux-resource', 'gpu-memory'],
- ['/article/agent-security', 10, 'agent-runtime', 'gpu-cluster'],
+ ['/module/training', inventory.tracks.ai, 'model-serving', 'linux-resource'],
+ ['/article/network-diagnosis', inventory.tracks.cloud, 'linux-resource', 'gpu-memory'],
+ ['/article/agent-security', inventory.tracks.agent, 'agent-runtime', 'gpu-cluster'],
  ['/module/practice', 3, 'production-readiness', 'agent-runtime']
 ]) {
  const sidebar = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8')
@@ -80,7 +81,7 @@ for (const id of ['plan','companies','coding','database','design','experiences',
  assert(pageText(id).includes('aria-current="page"'), 'active workshop '+id);
 }
 assert(outline.includes('先打底，再选方向'));
-assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,67);
+assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,inventory.chapters);
 assert(pageText('plan').includes('三轮考前复习'));
 const sample=pageText('companies');
 for (const phrase of ['腾讯','阿里','字节','8 份公开岗位说明','12 组能力','8 组已有','4 组有']) assert(sample.includes(phrase),phrase);
@@ -90,4 +91,4 @@ assert.deepEqual(db.snapshot_reads,['queued','queued','running']);
 assert.equal(db.plans.length,3);
 for (const item of db.plans) assert.deepEqual(item.result_ids,db.plans[0].result_ids);
 assert(pageText('database').includes('SQLite '+db.sqlite));
-console.log('PASS: 7 interview destinations, 67 priority labels, role evidence and SQL results.');
+console.log('PASS: 7 interview destinations, '+inventory.chapters+' priority labels, role evidence and SQL results.');

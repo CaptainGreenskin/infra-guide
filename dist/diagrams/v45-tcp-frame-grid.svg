@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 735" width="1120" height="735" role="img" aria-labelledby="title desc">
+<title id="title">两条中文消息的长度头与字节网格</title><desc id="desc">每条4个汉字占12个UTF-8字节，再加4字节大端长度头。两帧各16字节，TCP不提供消息边界。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="735" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">“4个汉字”与“12个字节”是不同的长度</text>
+<text x="32" y="92" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">每帧：4B长度头 + 12B正文 = 16B；两帧共32B。</text>
+<text x="32" y="148" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">云上训练</text>
+<text x="62" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">0</text>
+<rect x="32" y="195" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="62" y="232" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="128" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">1</text>
+<rect x="98" y="195" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="128" y="232" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="194" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">2</text>
+<rect x="164" y="195" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="194" y="232" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="260" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">3</text>
+<rect x="230" y="195" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="260" y="232" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">0c</text>
+<text x="326" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">4</text>
+<rect x="296" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="326" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e4</text>
+<text x="392" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">5</text>
+<rect x="362" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="392" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">ba</text>
+<text x="458" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">6</text>
+<rect x="428" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="458" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">91</text>
+<text x="524" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">7</text>
+<rect x="494" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="524" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e4</text>
+<text x="590" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">8</text>
+<rect x="560" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="590" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">b8</text>
+<text x="656" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">9</text>
+<rect x="626" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="656" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">8a</text>
+<text x="722" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">10</text>
+<rect x="692" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="722" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e8</text>
+<text x="788" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">11</text>
+<rect x="758" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="788" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">ae</text>
+<text x="854" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">12</text>
+<rect x="824" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="854" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">ad</text>
+<text x="920" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">13</text>
+<rect x="890" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="920" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e7</text>
+<text x="986" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">14</text>
+<rect x="956" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="986" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">bb</text>
+<text x="1052" y="182" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">15</text>
+<rect x="1022" y="195" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="1052" y="232" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">83</text>
+<text x="32" y="290" font-size="22" fill="#315dce" font-weight="400" text-anchor="start">00 00 00 0c → 正文12字节</text>
+<text x="470" y="290" font-size="22" fill="#287b69" font-weight="400" text-anchor="start">UTF-8正文；收齐后再解码</text>
+<text x="32" y="322" font-size="26" fill="#1c283d" font-weight="600" text-anchor="start">恢复完成</text>
+<text x="62" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">16</text>
+<rect x="32" y="369" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="62" y="406" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="128" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">17</text>
+<rect x="98" y="369" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="128" y="406" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="194" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">18</text>
+<rect x="164" y="369" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="194" y="406" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">00</text>
+<text x="260" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">19</text>
+<rect x="230" y="369" width="60" height="58" rx="5" fill="#e8efff" stroke="#dbe2ed"/>
+<text x="260" y="406" font-size="24" fill="#315dce" font-weight="550" text-anchor="middle">0c</text>
+<text x="326" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">20</text>
+<rect x="296" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="326" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e6</text>
+<text x="392" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">21</text>
+<rect x="362" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="392" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">81</text>
+<text x="458" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">22</text>
+<rect x="428" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="458" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">a2</text>
+<text x="524" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">23</text>
+<rect x="494" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="524" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e5</text>
+<text x="590" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">24</text>
+<rect x="560" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="590" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">a4</text>
+<text x="656" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">25</text>
+<rect x="626" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="656" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">8d</text>
+<text x="722" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">26</text>
+<rect x="692" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="722" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e5</text>
+<text x="788" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">27</text>
+<rect x="758" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="788" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">ae</text>
+<text x="854" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">28</text>
+<rect x="824" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="854" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">8c</text>
+<text x="920" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">29</text>
+<rect x="890" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="920" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">e6</text>
+<text x="986" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">30</text>
+<rect x="956" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="986" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">88</text>
+<text x="1052" y="356" font-size="18" fill="#66738a" font-weight="400" text-anchor="middle">31</text>
+<rect x="1022" y="369" width="60" height="58" rx="5" fill="#eaf5ef" stroke="#dbe2ed"/>
+<text x="1052" y="406" font-size="24" fill="#287b69" font-weight="550" text-anchor="middle">90</text>
+<text x="32" y="464" font-size="22" fill="#315dce" font-weight="400" text-anchor="start">00 00 00 0c → 正文12字节</text>
+<text x="470" y="464" font-size="22" fill="#287b69" font-weight="400" text-anchor="start">UTF-8正文；收齐后再解码</text>
+<rect x="32" y="516" width="1056" height="158" rx="5" fill="#f5f7fb" stroke="#dbe2ed"/>
+<text x="54" y="558" font-size="25" fill="#1c283d" font-weight="600" text-anchor="start">同一输入的三种解析对照</text>
+<text x="54" y="600" font-size="25" fill="#315dce" font-weight="550" text-anchor="start">整段32B / 每次1B / 先2B再5B再25B</text>
+<text x="54" y="644" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">只要字节相同，完整消息都应为：“云上训练”“恢复完成”。</text>
+<text x="32" y="713" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">网格是协议字节；真实recv块长是另一项运行观察。</text>
+<metadata>{&quot;kind&quot;: &quot;byte_grid&quot;, &quot;payloads&quot;: [&quot;云上训练&quot;, &quot;恢复完成&quot;], &quot;header_bytes&quot;: 4, &quot;wire_bytes&quot;: 32, &quot;source_sha256&quot;: &quot;d7f4fb161bd356bf36edc8c67a2b3aa864a047a34f613963c02e68e9fae40871&quot;}</metadata>
+</svg>

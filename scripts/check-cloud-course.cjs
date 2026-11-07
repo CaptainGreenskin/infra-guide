@@ -1,3 +1,4 @@
+const inventory=require('./content-inventory.cjs');
 // Relationships and source provenance added in this iteration.
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
 const ctx={};vm.createContext(ctx);
@@ -5,7 +6,7 @@ for(const [,file] of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<sc
 const {articles,publicInterviewSamples,cloudModulePlan}=vm.runInContext('({articles,publicInterviewSamples,cloudModulePlan})',ctx);
 const ids=new Set(articles.map(a=>a.id));
 assert.equal(cloudModulePlan.length,10);
-assert.equal(cloudModulePlan.flatMap(row=>row[7]).length,28);
+assert.equal(cloudModulePlan.flatMap(row=>row[7]).length,inventory.tracks.cloud);
 for(const [module,n,,,,,,chapters] of cloudModulePlan)chapters.forEach((id,index)=>{const a=articles.find(a=>a.id===id);assert.equal(a.module,module);assert.equal(a.number,n+'.'+(index+1));});
 assert.equal(publicInterviewSamples.length,15);
 assert.equal(new Set(publicInterviewSamples.map(s=>s.url)).size,14);
@@ -26,4 +27,4 @@ for(const id of ['container-runtime','k8s-workloads','k8s-networking','k8s-stora
  const iso=String(a.updated).replaceAll('.','-'),date=new Date(iso+'T00:00:00Z');
  assert(/^\d{4}\.\d{2}\.\d{2}$/.test(a.updated)&&!Number.isNaN(date.valueOf())&&date.toISOString().slice(0,10)===iso&&a.updated>='2026.11.04',id+': invalid or regressed update date');
 }
-console.log('PASS: P0 prerequisites + 9 Cloud fields / 28 chapters, 15 role samples / 14 sources / 29 review groups, 7 source-matched local checks and 7 offline-validated Kubernetes objects.');
+console.log('PASS: P0 prerequisites + 9 Cloud fields / '+inventory.tracks.cloud+' chapters, 15 role samples / 14 sources / 29 review groups, 7 source-matched local checks and 7 offline-validated Kubernetes objects.');

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 780" width="1120" height="780" role="img" aria-labelledby="title desc">
+<title id="title">从初始序号到32字节请求与半关闭</title><desc id="desc">教学序号：客户端初始1000、服务端7000；SYN各消耗一个位置。两帧共32字节，客户端结束写方向后仍接收17字节应用回执。不是实际抓包。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}</style>
+<rect width="1120" height="780" fill="white"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#315dce" stroke-width="1.5"/></marker></defs>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">先数流中的位置，再看应用读写</text>
+<text x="32" y="90" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">固定教学序号；箭头表示逻辑顺序，省略可合并的ACK与其他报文。</text>
+<text x="155" y="142" font-size="27" fill="#315dce" font-weight="600" text-anchor="middle">客户端</text>
+<text x="965" y="142" font-size="27" fill="#287b69" font-weight="600" text-anchor="middle">服务端</text>
+<line x1="155" y1="162" x2="155" y2="674" stroke="#dbe2ed" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="965" y1="162" x2="965" y2="674" stroke="#dbe2ed" stroke-width="2" stroke-dasharray="7 6"/>
+<line x1="168" y1="205" x2="952" y2="205" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="188" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">SYN：seq=1000</text>
+<line x1="952" y1="285" x2="168" y2="285" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="268" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">SYN + ACK：seq=7000，ack=1001</text>
+<line x1="168" y1="365" x2="952" y2="365" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="348" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">ACK：seq=1001，ack=7001</text>
+<line x1="168" y1="445" x2="952" y2="445" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="428" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">两帧32B：字节区间 [1001,1033)</text>
+<line x1="168" y1="525" x2="952" y2="525" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="508" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">结束写方向：FIN使用位置1033</text>
+<line x1="952" y1="605" x2="168" y2="605" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="560" y="588" font-size="24" fill="#1c283d" font-weight="500" text-anchor="middle">应用回执17B：字节区间 [7001,7018)</text>
+<rect x="32" y="690" width="1056" height="63" rx="5" fill="#edf7f3" stroke="#dbe2ed"/>
+<text x="52" y="730" font-size="25" fill="#287b69" font-weight="550" text-anchor="start">服务端先读到EOF，随后发回执；客户端已结束写入，仍能读取。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_sequence_arithmetic&quot;, &quot;client_isn&quot;: 1000, &quot;server_isn&quot;: 7000, &quot;request_bytes&quot;: 32, &quot;reply_bytes&quot;: 17, &quot;packet_trace&quot;: false}</metadata>
+</svg>
