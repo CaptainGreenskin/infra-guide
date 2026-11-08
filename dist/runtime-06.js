@@ -3794,6 +3794,23 @@ for(const a of articles){
  for(const section of a.sections)section[1]=courseRenumberLinks(section[1]);
 }
 
+// Publication metadata follows recorded body changes, never the build date.
+const courseEditorialDates={
+  "linux-resource": "2026.11.05",
+  "concurrency-pools": "2026.11.05",
+  "k8s-autoscaling": "2026.11.05",
+  "observability": "2026.11.05",
+  "position-encoding": "2026.11.05",
+  "flash-attention-io": "2026.11.05",
+  "gpu-cluster": "2026.11.05",
+  "distributed-training": "2026.11.08",
+  "ddp-code": "2026.11.05",
+  "training-platform": "2026.11.05",
+  "inference-performance": "2026.11.05"
+};
+for(const[id,date]of Object.entries(courseEditorialDates)){const a=courseChapterById(id);if((a.updated||"2026.11.03")<date)a.updated=date;}
+courseChapterById("distributed-training").minutes=Math.max(courseChapterById("distributed-training").minutes,32);
+
 
 ;
 // learning-connections.js

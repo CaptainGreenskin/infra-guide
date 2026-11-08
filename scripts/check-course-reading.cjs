@@ -25,6 +25,16 @@ for(const a of data.articles){
  for(const[,id]of oldBody.matchAll(/\bid="([^"]+)"/g))assert(body.includes('id="'+id+'"'),a.id+': original inner anchor '+id);
 }
 assert.deepEqual(changed.sort(),[...courseReview.changed_bodies].sort());
+const records=require('./content-review-records.cjs'),migration=JSON.parse(fs.readFileSync('docs/COURSE_MIGRATION_2026-11-07.json'));
+const dated=[...JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.json')).revisions,...records.body_revisions].filter(r=>r.previous_content_sha256&&r.previous_content_sha256!==r.reviewed_content_sha256).concat(records.new_chapter_reviews,migration.new_chapter_reviews,records.revised_teaching_units.map(r=>({...r,id:r.chapter})));
+for(const row of dated){
+ const a=data.articles.find(a=>a.id===row.id),date=row.reviewed_at.slice(0,10).replaceAll('-','.');
+ assert((a.updated||'2026.11.03')>=date,row.id+': publication date predates its recorded body change');
+ const html=fs.readFileSync('dist/article/'+row.id+'/index.html','utf8'),sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
+ assert(html.includes(a.updated),row.id+': visible revision date missing');
+ assert(sitemap.includes('/article/'+row.id+'/</loc><lastmod>'+a.updated.replaceAll('.','-')+'</lastmod>'),row.id+': sitemap date differs from reader-visible revision');
+}
+assert(data.articles.find(a=>a.id==='distributed-training').minutes>=32,'expanded sharding chapter must retain the reviewed reading estimate');
 for(const[track,t]of Object.entries(data.tracks)){
  const html=fs.readFileSync('dist/track/'+track+'/index.html','utf8');
  const a=data.articles.find(a=>a.id===t.start);

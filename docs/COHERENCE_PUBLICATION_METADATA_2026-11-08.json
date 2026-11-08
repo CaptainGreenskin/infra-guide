@@ -1,0 +1,98 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "8e5a9a2f13a9904a131e2444f0ecd11a2077956b",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_WHOLE_SITE_2026-11-08.json": "bea36d3647ea589ec65ef3becbd0453d3283fc90825c434b7150fe31a6f40012",
+    "docs/CONTENT_READING_2026-11-08.json": "40847d62a8443b12387fec8a55525c86aefe177ea77e2d161f40ebb8dc472a34"
+  },
+  "source_revisions": {
+    "dist/course-map.js": {
+      "previous_sha256": "638f47ae5c03aaa48dbd84cdd096967e010dff307b7e5a968923fb17fe47cc7b",
+      "reviewed_sha256": "56656f66c83a640b1a0031132448e7db45e2064c858a672d2b1eb3eaa75cf5e6",
+      "scope": "Reader-visible and sitemap dates follow existing body-change records; later source declarations cannot restore stale dates or shorten the reviewed reading estimate."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "773de7bf948e260e9366828ccf3615242b239a80a8a900f25beebd5fa34984cc",
+      "reviewed_sha256": "6ed653f8ac52b51d9f56551e000cfd0b2930f397dd368550e127b0d4c8715495",
+      "scope": "Reader-visible and sitemap dates follow existing body-change records; later source declarations cannot restore stale dates or shorten the reviewed reading estimate."
+    }
+  },
+  "review_scope": {
+    "chapters": 75,
+    "changed_bodies": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "distributed-training"
+    ],
+    "unchanged_bodies": 71,
+    "original_full_code_blocks": "all original blocks preserved byte-for-byte in original order",
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "hardware_execution_claims_added": 0,
+    "body_baseline_commit": "e37ba4220fc58b5b03ba309523445734446ed298",
+    "added_code_blocks": {
+      "distributed-training": 2
+    },
+    "manual_sharding": "two real CPU/Gloo workers; three global gradient/parameter/momentum updates; independent scalar oracle; wrong local-mean probe fails",
+    "static_role_destinations": 7,
+    "preserved_published_track_fragments": 53
+  },
+  "metadata_revisions": {
+    "linux-resource": {
+      "before": "2026.11.03",
+      "after": "2026.11.05"
+    },
+    "concurrency-pools": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "k8s-autoscaling": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "observability": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "position-encoding": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "flash-attention-io": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "gpu-cluster": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "distributed-training": {
+      "before": "2026.11.04",
+      "after": "2026.11.08"
+    },
+    "ddp-code": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "training-platform": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    },
+    "inference-performance": {
+      "before": "2026.11.04",
+      "after": "2026.11.05"
+    }
+  },
+  "reading_estimate": {
+    "chapter": "distributed-training",
+    "before": 25,
+    "after": 32,
+    "environment_preparation_included": false
+  },
+  "body_changes_since_previous_stage": 0
+}
