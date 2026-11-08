@@ -331,9 +331,10 @@ function homePage(){
 function trackPage(kind){if(kind==='cloud')cloudKnowledgePage(moduleFor('compute'));else infraKnowledgePage(moduleFor(kind==='ai'?'model-foundations':'agent'));}
 
 function sidebarView(moduleId, current) {
- const track = moduleFor(moduleId).track;
- const topicModules = modules.filter(module => module.track === track);
- const topicArticles = articles.filter(article => trackForModule(article.module) === track);
+ const track = current?chapterReadingContext(articleById(current)).track:moduleFor(moduleId).track;
+ const routeIds=courseReadingStages[track]?.flatMap(s=>s[1]);
+ const topicArticles = articles.filter(article => routeIds?routeIds.includes(article.id):trackForModule(article.module) === track);
+ const topicModules = modules.filter(module => topicArticles.some(a=>a.module===module.id));
  const read = topicArticles.filter(article => progress[article.id]).length;
  const label = trackDefinitions[track]?.label || '综合实战';
  const sections = topicModules.map(module => {
@@ -345,10 +346,11 @@ function sidebarView(moduleId, current) {
    const selected = article.id === current ? 'class="current" aria-current="page"' : '';
    return `${group}<a href="${articleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
   }).join('');
-  return `<details ${active?'open':''}><summary><a href="/module/${module.id}/" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
+  const summaryHref=module.id==='practice'?articleURL(chapters[0].id):'/module/'+module.id+'/';
+  return `<details ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
  }).join('');
  return `<aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
-  <div class="side-heading"><span>${label} · 领域与章节</span><span>${topicArticles.length} 章</span></div>${sections}
+  <div class="side-heading"><span>${label} · 目录</span><span>${topicArticles.filter(a=>a.module!=='practice').length} 章${topicArticles.some(a=>a.module==='practice')?' + 1 实战':''}</span></div>${sections}
   <div class="side-progress"><div><span>本主题阅读进度</span><b>${read} / ${topicArticles.length}</b></div>
    <div class="progress-bar"><span style="width:${read/topicArticles.length*100}%"></span></div><span>仅保存在当前浏览器</span></div></aside>`;
 }

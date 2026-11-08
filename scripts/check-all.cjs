@@ -11,7 +11,7 @@ const checks=[
  'check-network-input-tools.cjs','check-scaling-collective-traces.cjs',
  'check-config-memory-evaluation.cjs','check-leases-placement-sandbox.cjs',
  'check-recovery-artifacts-retrieval.cjs','check-compute-transport.cjs',
- 'check-training-capstone.cjs','check-storage-parallel-acceptance.cjs','check-supervision-gradients.cjs','check-sql-paths-snapshots.cjs','check-streamed-tool-calls.cjs','check-agent-boundaries.cjs','check-operators-routing.cjs','check-transport-recovery.cjs','check-runtime-speculative-crashes.cjs','check-delivery-systems.cjs','check-learning-connections.cjs','check-editorial-evidence.cjs'
+ 'check-training-capstone.cjs','check-storage-parallel-acceptance.cjs','check-supervision-gradients.cjs','check-sql-paths-snapshots.cjs','check-streamed-tool-calls.cjs','check-agent-boundaries.cjs','check-operators-routing.cjs','check-transport-recovery.cjs','check-runtime-speculative-crashes.cjs','check-delivery-systems.cjs','check-learning-connections.cjs','check-field-concepts.cjs','check-editorial-evidence.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
 run('render-pages.cjs');for(const file of checks)run(file);

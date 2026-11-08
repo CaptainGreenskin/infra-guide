@@ -13,9 +13,11 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前75章：Cloud 33、AI 29、Agent 10、综合实战3；33个完整实验包、73项学习任务。领域入口先讲系统知识，文章再展开机制。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供三张系统关系图、阶段衔接和跨章推演；每章说明先修概念与后续用途，可返回路线定位。Agent可以从任务与工具开始，不以完成Cloud或GPU训练课程为前提。
+当前75章：Cloud 33、AI 29、Agent 10、综合实战3；33个完整实验包、73项学习任务。领域入口先讲系统知识，文章再展开机制。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)连接三条系统主线、14组领域关系及详细章节。领域图谱可聚焦概念、解释关系、打开相应知识点与机制章；搜索也支持概念名称。章末上下篇采用同一学习路线，综合实战留在所属方向。Agent可以从任务与工具开始，不以完成Cloud或GPU训练课程为前提。
 
-本轮新增C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐。[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD：分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[本轮内容与连贯性审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
+本轮[概念关系与易读性修订](docs/ITERATION_2026-11-08_READABILITY.md)把95个领域知识点和5组前置基础连接起来，修正6章的跨章引用、解释衔接与错误分层。目录按领域组织，连续阅读按先修顺序推进，旧URL及小节锚点保留。
+
+C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐配有[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)：实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD，分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[机制章审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
 
 已有实验包括Linux TCP/epoll、MySQL日志恢复、Docker资源与Kubernetes调度、CPU/Gloo训练恢复、手写算子与MoE进程分发、精确推测采样、Agent授权与崩溃窗口、中文检索及实际分词预算。CUDA/Nsight、GPU/NCCL、物理多节点、云CNI/CSI、生产负载和Kairo接入分别保留待验范围，不由CPU或kind结果推断。
 
@@ -81,6 +83,8 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/**/index.html` | 生成的109个页面（108个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
+
+源码保留检查会对照已发布的Git基线；CI获取完整历史，浅克隆需要先补齐历史。
 
 ```sh
 node scripts/check-all.cjs --pages

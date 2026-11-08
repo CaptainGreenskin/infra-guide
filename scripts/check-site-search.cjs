@@ -11,6 +11,7 @@ assert(query('traceparent').every(r=>!['article:gpu-cluster','article:agent-runt
 assert.equal(query('SQL 索引')[0].id,'article:database-index-locks');
 assert.equal(query('cpu.max')[0].id,'article:linux-resource');assert.equal(query('cpu.max')[0].anchor,'section-3');
 assert.equal(query('KV Cache')[0].id,'knowledge:sv-kv');
+const placement=query('节点放置')[0];assert.equal(placement.id,'knowledge:placement');assert.equal(placement.path,'/module/native/?concept=placement');assert.equal(placement.anchor,'concept-relations');
 assert.deepEqual(query('ＴＣＰ'),query('tcp'));assert.deepEqual(query('  KV   Cache  '),query('kv cache'));
 assert.deepEqual(query('完全不存在的条目xyz'),[]);assert.deepEqual(query('<>'),[]);
 assert.equal(query('').length,6);

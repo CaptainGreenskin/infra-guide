@@ -1494,7 +1494,7 @@
   ],
   "source_sha256": {
     "dist/concept-paths-data.js": "2301c7c39f6498302f3df73ad4a093da1afd9cca0dd3b419ef5a2b6f57286e3f",
-    "dist/concept-paths.js": "5395fab0e1c1e0abd38fba4f2f63db6b626607d9550481722e70c25e8fa39ac5",
+    "dist/concept-paths.js": "4ee456832805a41635eba881f0a30b6fcaae801539ffa7c4729d6cafa7753ad9",
     "scripts/draw-concept-paths.py": "d1058fb65b93454e5335c844aec7109bc143cf47ec53cf08fb1382f118915b7c",
     "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",
     "dist/diagrams/v42-ai-concepts.svg": "4bc9967562b9386d4984ad09b6ae2c44e1e1f76dd24d63e436922c9bed46c199",
@@ -1503,5 +1503,10 @@
     "dist/continuous-course-links.js": "98d18439712dff5e19c8de88aac807f4090b47a46ee04c4a49a7d698994c4ae7",
     "dist/speculative-decoding-lessons.js": "3e2a71b624f45a4f0cb7694013b7e4c42be6b92692c2d78aa09792f24e429fc2",
     "dist/delivery-course-links.js": "1734498cdb7f3add4f258c5f577e8fdde67602fd604e9632894fb2b917941072"
+  },
+  "contextual_term_revision": {
+    "date": "2026-11-08",
+    "term": "归一化",
+    "decision": "Do not inject a generic definition across probability, feature, target-count, length and text-normalization contexts. Keep authored local explanations."
   }
 }

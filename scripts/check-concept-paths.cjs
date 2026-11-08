@@ -40,6 +40,7 @@ for(const tag of ['pre','code','a','button','summary','figure','h2','label']){
 assert.equal(run('<p>归一化后的结果。</p>'),'<p>归一化后的结果。</p>','do not split Chinese compound');
 const ambiguous=run('<p>trace里的节点，CPU代际，整数索引和追踪上下文。</p>');
 for(const term of ['节点','代际','索引','上下文'])assert(!ambiguous.includes('data-concept-term="'+term+'"'),'ambiguous meaning must be explained by context: '+term);
+assert(!run('<p>归一化。</p>').includes('data-concept-term'),'probability, feature, length and text normalization require context-specific definitions');
 // Whole existing code, link and figure blocks survive the real prose pass byte-for-byte.
 const protectedBlocks=html=>html.match(/<(pre|code|a|figure)\b[^>]*>[\s\S]*?<\/\1>/g)||[];
 for(const a of data.articles){c.a=a;const seen=vm.runInContext('conceptSeen(chapterConceptPaths[a.id])',c);c.seen=seen;

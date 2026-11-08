@@ -59,17 +59,20 @@ for (const [id, anchor, script] of [['network-diagnosis', 'network-timing-lab', 
  assert(fs.readFileSync(path.join(dist,'labs','index.html'),'utf8').includes('/article/'+id+'/#'+anchor),id+': lab catalog deep link');
 }
 console.log('PASS: timing, authorization evidence and lab deep links.');
-for (const [route, total, mustContain, mustOmit] of [
- ['/module/training', inventory.tracks.ai, 'model-serving', 'linux-resource'],
- ['/article/network-diagnosis', inventory.tracks.cloud, 'linux-resource', 'gpu-memory'],
- ['/article/agent-security', inventory.tracks.agent, 'agent-runtime', 'gpu-cluster'],
- ['/module/practice', 3, 'production-readiness', 'agent-runtime']
+for (const [route, total, mustContain, mustOmit, capstone] of [
+ ['/module/training', inventory.tracks.ai, 'model-serving', 'linux-resource','training-lab'],
+ ['/article/network-diagnosis', inventory.tracks.cloud, 'linux-resource', 'gpu-memory','cloud-service-lab'],
+ ['/article/agent-security', inventory.tracks.agent, 'agent-runtime', 'gpu-cluster','production-readiness'],
+ ['/module/practice', inventory.tracks.ai, 'training-lab', 'agent-runtime','training-lab']
 ]) {
  const sidebar = fs.readFileSync(path.join(dist, route, 'index.html'), 'utf8')
    .match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];
  assert(sidebar.includes(total+' 章') && sidebar.includes('本主题阅读进度'));
  assert(sidebar.includes('/article/'+mustContain+'/') && !sidebar.includes('/article/'+mustOmit+'/'));
- assert.equal((sidebar.match(/href="\/article\//g) || []).length, total);
+ const chapterLinks=[...sidebar.matchAll(/<a href="\/article\/([^/]+)\/"[^>]*>/g)].map(m=>m[1]);
+ assert.equal(new Set(chapterLinks).size,total+1);
+ assert(sidebar.includes(' + 1 实战')&&chapterLinks.includes(capstone));
+ for(const other of ['training-lab','cloud-service-lab','production-readiness'])if(other!==capstone)assert(!chapterLinks.includes(other));
  assert.equal((sidebar.match(/aria-current="page"/g) || []).length, 1);
 }
 assert(interview.includes('面试覆盖对照') && interview.includes('现场编码') && interview.includes('careers.microsoft.com'));

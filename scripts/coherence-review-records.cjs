@@ -1,0 +1,14 @@
+/* Preserve the published relationship audit; later source reviews form an explicit chain. */
+const fs=require('fs'),cp=require('child_process'),crypto=require('crypto'),assert=require('assert');
+const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
+const baseFile='docs/COHERENCE_REVIEW_2026-11-08.json',baseBytes=fs.readFileSync(baseFile),base=JSON.parse(baseBytes);
+const update=JSON.parse(fs.readFileSync('docs/COHERENCE_READABILITY_2026-11-08.json'));
+assert.equal(update.preserved_previous_records[baseFile],sha(baseBytes),'published relationship audit must remain unchanged');
+const source_sha256={...base.source_sha256};
+for(const[file,review]of Object.entries(update.source_revisions)){
+ let previous=source_sha256[file];
+ if(previous===undefined){try{previous=sha(cp.execFileSync('git',['show',update.base_source_commit+':'+file],{stdio:['ignore','pipe','ignore']}));}catch{previous=null;}}
+ assert.equal(review.previous_sha256,previous,file+': source-review continuity');
+ assert(review.scope&&review.reviewed_sha256);source_sha256[file]=review.reviewed_sha256;
+}
+module.exports={record:{...base,source_sha256},update};

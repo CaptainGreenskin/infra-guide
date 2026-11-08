@@ -42,7 +42,7 @@ function initReadingComfort(){
  buttons.large.addEventListener('click',()=>change('large'),{signal});
  buttons.focus.addEventListener('click',()=>change('focus'),{signal});
 
- const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id]')].filter(el=>el.querySelector('h2'));
+ const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id]')].filter(el=>el.querySelector('h2'));
  const directory=document.createElement('dialog');
  directory.className='reader-dialog reader-directory';
  directory.setAttribute('aria-labelledby','reader-directory-title');
@@ -56,7 +56,7 @@ function initReadingComfort(){
   link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));
    // A directory target may live inside the optional practice/further-reading block.
    // pushState does not fire hashchange, so reveal it before attempting to scroll.
-   for(let parent=section.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+   for(let parent=section;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
    section.scrollIntoView({behavior:'instant',block:'start'});section.setAttribute('tabindex','-1');section.focus({preventScroll:true});updateCurrent();},{signal});
   directoryNav.appendChild(link);
  }
