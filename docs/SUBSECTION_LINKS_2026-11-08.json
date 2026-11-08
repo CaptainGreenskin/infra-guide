@@ -160,6 +160,10 @@
         "subsection-4-4ww5rs",
         "subsection-4-15h5yam",
         "subsection-7-aclmrr"
+      ],
+      "visible_targets": [
+        "subsection-4-4ww5rs",
+        "subsection-4-15h5yam"
       ]
     },
     {
@@ -456,7 +460,8 @@
         "subsection-1-zredmh",
         "subsection-1-1mlk4h4",
         "torch-checkpoint-path"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "training-performance",
@@ -737,7 +742,9 @@
     },
     {
       "id": "mcp-protocol",
-      "targets": []
+      "targets": [
+        "mcp-model-tool-observation"
+      ]
     }
   ]
 }

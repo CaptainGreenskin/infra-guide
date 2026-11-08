@@ -374,11 +374,12 @@ function editorialPage(){simplePage('内容与证据标准','EXPLAIN THE SYSTEM 
 
 function chapterPracticeHTML(a){
  const exercise=a.exercise?'<section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>'+a.exercise[0]+'</p><details class="full-code"><summary>展开参考答案与推理</summary><p>'+a.exercise[1]+'</p></details></section>':'';
- return `<details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary>${exercise}<section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist">${a.check.map((c,i)=>`<label><input type="checkbox" data-check="${a.id}:${i}" ${checks[`${a.id}:${i}`]?'checked':''}>${c}</label>`).join('')}<small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section>${readerActionsHTML(a)}</details>`;
+ return `<details class="chapter-practice" id="chapter-practice"><summary>练习、复习与阅读反馈</summary>${optionalConceptReviews.has(a.id)?chapterConceptIntro(a):''}${guidedReview(a)}${exercise}<section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist">${a.check.map((c,i)=>`<label><input type="checkbox" data-check="${a.id}:${i}" ${checks[`${a.id}:${i}`]?'checked':''}>${c}</label>`).join('')}<small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section>${readerActionsHTML(a)}</details>`;
 }
-function chapterFurtherReadingHTML(a){
- const content=resourceRecommendations(a.module,a.id)+relatedReading(a);
- return content?'<details class="chapter-further"><summary>延伸资料与相关章节</summary>'+content+'</details>':'';
+function chapterReferencesHTML(a){
+ const refs=a.refs.filter((r,i,all)=>all.findIndex(other=>sources[other][1]===sources[r][1])===i).map(r=>`<a href="${sources[r][1]}" target="_blank" rel="noopener noreferrer">${sources[r][0]} ↗</a>`).join('');
+ const content='<section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2>'+refs+'</section>'+resourceRecommendations(a.module,a.id)+relatedReading(a);
+ return '<details class="chapter-further"><summary>参考资料与延伸阅读</summary>'+content+'</details>';
 }
 
 

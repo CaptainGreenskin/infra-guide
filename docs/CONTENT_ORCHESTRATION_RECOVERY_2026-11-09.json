@@ -1,0 +1,30 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "a8ee05b0851be965b44bf37497108ef91445467f",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_DATA_COMPUTE_CONTINUITY_2026-11-09.json": "f9a1f2643811ef3944779a3cb93598c857d5fcec54a345e737e9c7ef78c39194"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c986046480961e5d6febc1ac9219dce03d605619aca0adf73308d240781d9456",
+      "reviewed_content_sha256": "dfe3b899c23d7754b756b9900681730aa58e20cf03c27a0359c79f99d9646de3",
+      "scope": "Positive mapping from model proposal through MCP to a model observation",
+      "observation": "A targeted read_batch mapping follows the real ClientSession.call_tool request/response and structured content; model-side integration is an explicit mapping contract, not an executed LLM claim.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": []
+}

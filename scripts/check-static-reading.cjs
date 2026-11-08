@@ -15,7 +15,7 @@ function fixture({base='/',id='training-communication',route='article/'+id+'/',g
  const target={tagName:'DIV',parentElement:container,querySelector:()=>null,scrollIntoView(){calls.targetScroll++;}};
  const nodes=Object.fromEntries(['#search-dialog','#search-open','#search-close','#search-input','#search-status','#search-results','#theme','#mobile-menu','#main','.top-nav','.skip'].map(k=>[k,node()]));
  const document={title:'静态标题',documentElement:{classList:classes(),setAttribute(){}},addEventListener(){},
-  getElementById:name=>['section-2','network-timing-lab','saved-target'].includes(name)?target:null,
+  getElementById:name=>['section-2','network-timing-lab','saved-target','concept-path','self-check','references'].includes(name)?target:null,
   querySelectorAll:selector=>selector==='input[data-check]'?[userCheck,storedCheck]:[],
   querySelector:selector=>selector==='base'?{getAttribute:()=>base}:selector==='#app'?app:selector==='.doc-layout .article'?{}:selector==='.sidebar'?side:selector==='.article-nav'?nav:selector==='[data-read="'+id+'"]'?read:nodes[selector]||null};
  const c={document,window:{addEventListener(){},scrollTo(){calls.windowScroll++;}},location:{pathname:base+route,search:query||(goal?'?goal='+goal:''),hash,replace(){}},history:{},localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)},URLSearchParams,requestAnimationFrame:fn=>frames.push(fn),IntersectionObserver:class{observe(){}disconnect(){}}};
@@ -47,6 +47,11 @@ for(const base of ['/','/infra-guide/']){
  const fragment=fixture({base,hash:'#saved-target'});fragment.frames.forEach(f=>f());assert.equal(fragment.container.open,true);assert.equal(fragment.calls.targetScroll,1);assert.equal(fragment.calls.windowScroll,0);
  const section=fixture({base,query:'?section=2'});section.frames.forEach(f=>f());assert.equal(section.calls.targetScroll,1);
  const legacy=fixture({base,id:'network-diagnosis',query:'?section=7'});legacy.frames.forEach(f=>f());assert.equal(legacy.calls.targetScroll,1);assert.equal(legacy.container.open,true);
+ for(const target of ['concept-path','self-check','references']){
+  const f=fixture({base,query:'?section='+target,version:'previous-release'}),outer={tagName:'DETAILS',open:false,parentElement:null};
+  f.container.parentElement=outer;assert.equal(f.calls.body,1);f.frames.forEach(frame=>frame());
+  assert.equal(f.container.open,true,target+': fallback opens the immediate review/source fold');assert.equal(outer.open,true,target+': fallback opens every enclosing fold');assert.equal(f.calls.targetScroll,1);
+ }
  for(const changed of [{markerId:'nonexistent'},{markerId:'agent-runtime'},{markerRoute:'/article/other/'},{version:'previous-release'}]){
   const f=fixture({base,...changed});assert.equal(f.calls.body,1,'missing or wrong static identity takes the ordinary renderer');assert.equal(f.attrs.has('data-hydrated-static'),false);
  }

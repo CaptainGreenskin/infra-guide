@@ -15,10 +15,12 @@
 
 当前78章：Cloud 35、AI 29、Agent 11、综合实战3；46个完整实验包、86项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
-本轮[统一目录层次](docs/ITERATION_2026-11-09_DIRECTORY_HIERARCHY.md)，全站大纲与章节侧栏共用概念名称和主题分组。目录先显示知识范围，点击直接进入完整正文。
+本轮[编排、恢复与继续执行](docs/ITERATION_2026-11-09_ORCHESTRATION_RECOVERY.md)重排五章39节，串起容器、副本、调度，以及训练更新、恢复与成本；另补 Agent 工具的正向接线。52章由正文逐层定义概念，复习与资料分别归入章末可展开区域。
 
 <details>
 <summary>历次内容修订与执行记录</summary>
+
+本轮[统一目录层次](docs/ITERATION_2026-11-09_DIRECTORY_HIERARCHY.md)，全站大纲与章节侧栏共用概念名称和主题分组。目录先显示知识范围，点击直接进入完整正文。
 
 这轮[存储、数据与GPU计算](docs/ITERATION_2026-11-09_DATA_COMPUTE_CONTINUITY.md)重写七章63节，另修13章的跨章指引、训练对象对应和Agent夹具边界。47章由正文逐层介绍概念；图、代码与实际记录沿同一组对象核对，完整程序按需展开。
 

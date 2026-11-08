@@ -3287,6 +3287,134 @@
         "可以载入权重，还需要通过哪些对照",
         "用变体诊断一个外表正常的错误"
       ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "d96bd7c06a4a6cbd70af414ca892cf7e33785b519856744ce06fe8b1c0bc49a8",
+      "reviewed_content_sha256": "392cd8a6286f345c03aac12e35d3f0091635f272b6510e0f1ae595b827eb8343",
+      "scope": "Fixture scope across the runtime and recovery chapters",
+      "observation": "A targeted chapter reference distinguishes runtime37/HTTP material from independent logical-add recovery fixtures, retaining the established minimal execution cycle.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c5c363444c0f0f122d016a873f9668c7d0f5554cfd34cc12c9ca069113c88410",
+      "reviewed_content_sha256": "1a14dfa3cfead39a14c5f4e25cf64c850835cd2315e7426b64fe8c54328e9d88",
+      "scope": "Locally defined read-only delegation and task identity",
+      "observation": "A targeted opening defines the analyst/R17 read-only fixture before relying on its actor, identity or tenant scope; it does not imply the preceding chapters created the same task.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "82893e8966cc547e72ea59d40e5b97a23524bf6094031ecd2f0bb218b896da51",
+      "reviewed_content_sha256": "8c89f07378bc1cc40cfcf9558449fd09f9651b949b13c606189648ceaf8fbd26",
+      "scope": "Continuous training, committed updates and recoverable state",
+      "observation": "Eight full sections first explain input/epoch/microbatch/update/save/resume, then separately identify four-rank arithmetic, scalar optimization and actual two-rank DCP CPU evidence.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b95fc6b198af5e17c3d19e9fe26f34f85e6b9a371f078bba1b4cf99098d15340",
+      "reviewed_content_sha256": "2f0e6c02800f4d5a22ebf9414b8f08c21aaf09edb65bc23c26c85aa649dd6143",
+      "scope": "Container execution from image and host to a running process",
+      "observation": "Eight full sections connect immutable image/config, writable storage, namespace/cgroup, runtime/CRI, process identity, stop signals and native container evidence.",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "k8s-workloads",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e43ffbcb60eafc6a5bbd2f3c88598000090ba48099344df7f95d2bd04157da16",
+      "reviewed_content_sha256": "1454b404c7a82343f223d78cd8502f14690e0ba2ddc3965e0e9ddd9645c0cac3",
+      "scope": "Workload controllers, replicas and availability as one normal process",
+      "observation": "Eight full sections define Deployment/ReplicaSet/Pod relationships before replacement, revision and rolling-update budgets; readiness, available replicas and termination follow one lifecycle.",
+      "headings": [
+        "apply 成功，只完成了哪一步",
+        "先选工作负载，再写副本数",
+        "三副本滚动更新，先算允许范围",
+        "三种探针：动作、连续阈值与故障放大",
+        "四种失败，四个取证入口",
+        "PDB、滚动更新和节点故障分别约束什么",
+        "排空与退出：逐条核对完成证据",
+        "一份清单，三次单变量练习"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "d4aa124d4ade3175334bed5ce855b8dbfc90d71adcb5f875dc7ea5a739980f85",
+      "reviewed_content_sha256": "c97f4c9d8b61cda999a909647e86ed874b64e6511c179b58e02cb9a5f0f0733a",
+      "scope": "Admission, resource accounting and concrete node placement",
+      "observation": "Eight full sections connect accepted objects to request accounting, node filtering, scoring, binding and kubelet execution, then quota/constraints and the existing kind records.",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e7b151c3972408f22bed5d57f62ce8a76e20d45707143e2582ef9ebbee849b4b",
+      "reviewed_content_sha256": "ec9b8a273a193557b9cce86040b351ef7302124ecc7b7ee0e4ef632c750134bb",
+      "scope": "Comparable work, update counts, useful throughput and total cost",
+      "observation": "Seven full sections connect performance objects, strong/weak scaling, parallel layouts and input/communication to useful progress and recovery cost; original numerical/code/figure evidence retained.",
+      "headings": [
+        "先决定实验问题",
+        "记录测量范围",
+        "用时间线检验假设",
+        "从现象选择下一次实验",
+        "把成本放回训练目标",
+        "从一次快照形成可复现实验",
+        "交一份可核对的答案"
+      ]
     }
   ]
 }

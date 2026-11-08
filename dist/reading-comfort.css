@@ -163,3 +163,10 @@
 @media(max-width:650px){.outline-directory-group>.directory-group-items{padding-left:12px}.outline-directory-group>h4{font-size:14px}}
 
 .outline-tree a.outline-chapter{font-size:15px}
+
+/* Sequential tool execution remains readable without squeezing prose into mobile columns. */
+.tool-observation-steps{list-style:none;padding:0;margin:22px 0;counter-reset:tool-step}
+.tool-observation-steps>li{counter-increment:tool-step;position:relative;padding:17px 0 18px 38px;border-top:1px solid var(--line)}
+.tool-observation-steps>li:before{content:counter(tool-step,decimal-leading-zero);position:absolute;left:0;top:18px;color:var(--blue);font:13px/1.95 ui-monospace,monospace}
+.tool-observation-steps>li>strong{display:block;line-height:1.8}.tool-observation-steps>li>p{margin:9px 0!important}.tool-step-label{color:var(--muted);font-size:14px}
+@media(max-width:600px){.tool-observation-steps>li{padding-left:31px}.tool-observation-steps>li:before{font-size:12px}}
