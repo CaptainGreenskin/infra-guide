@@ -97,6 +97,7 @@ const conceptSectionTitles={
  ...progressiveAiSectionTitles,
  ...progressiveAgentSectionTitles,
  'training-lab':['完整训练状态与恢复边界','更新语义与恢复对照','两进程训练与新进程恢复实战','状态比较与运行日志','配置与优化器反例','恢复差异的定位方法','GPU、多机与集群验收'],
+ 'durable-workflows':['任务目标与步骤依赖','历史、检查点与事实复用','确定性重放与活动结果','工具提交与框架恢复','执行接管与代际安装','旧写隔离与业务去重','接管窗口与提交恢复','计划、审批与持久等待','工作流恢复与框架实战','工作流升级与历史保留'],
  'cloud-service-lab':['服务实例、探针与控制链','探针条件与容器重启','Service 请求与后端条件','模板修订、发布与回退','原生实验、源码与验收'],
  'cloud-overview':['云计算的基本对象','一次云上请求','运行职责、数据面与控制面','HTTP 状态与健康检查','Cloud、AI 与 Agent 的关系'],
  'transformer-model':['Transformer 整体结构','张量与形状','矩阵乘法与线性层','Decoder 的核心模块','模型形状与参数账本','计算量与存储规模','训练与自回归生成','序列长度与注意力复杂度','标签对齐与因果验证'],
@@ -104,7 +105,7 @@ const conceptSectionTitles={
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}

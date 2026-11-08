@@ -2486,6 +2486,103 @@
         "可以载入权重，还需要通过哪些对照",
         "用变体诊断一个外表正常的错误"
       ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "5902fb681cda0a314642a7bbb51ce87b63cf448932c6c68bf92e9cb7ded80e2a",
+      "reviewed_content_sha256": "b04ede2e9565369e6ccdf4bc93f677dc627081989ecd43f609cce2defb5197f3",
+      "scope": "From one prediction target to a complete gradient update",
+      "observation": "The664-parameter source follows shifted labels, four valid targets, cross-entropy derivatives, shared paths, microbatch denominators and actualSGD. Independent scalar/two-class examples have explicit inputs and scope.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "570993bd0c47936a7dd238bd8f66fc19c140ccaf43c63b20521a171f2b332cf0",
+      "reviewed_content_sha256": "8fb6206f1c882eec17b31755d4fcd0a4180d89721947ebecdf3c1e7b4736d226",
+      "scope": "Durable task from dependencies and saved facts to framework and ownership",
+      "observation": "The full body distinguishes history replay from checkpoints, integrates actualLangGraph at external commit, and explains leases/fencing and dynamicplanning in order. Source-correct invalid-plan, versionmetadata, armedreturn and earlysignal conditions are explicit.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "f4d5b8ea74753b50d5a6b9816c782f02b03e601455b2017ef9a116bfdd9cb4f1",
+      "reviewed_content_sha256": "4ddf4635c3727d680943c48a26c27401805167d9a597b705de689bd18ecbe81e",
+      "scope": "State objects, precision and simultaneous lifetimes",
+      "observation": "The body connects logical payload and storage identity to lazy optimizer state, mixed precision, saved activations, whole-window peaks and sharding/prefetch. Actual58-parameter and checkpoint measurements are separated from stated capacity models.",
+      "headings": [
+        "统计对象：逻辑元素、共享存储与设备口径",
+        "一份参数，为什么有五笔显存开销",
+        "实际状态：dtype、AdamW与首次更新",
+        "保持有效 batch 时，累积改变了哪笔开销",
+        "FP16 与 BF16 的区别",
+        "在有效 batch 边界更新",
+        "沿一步训练找峰值，再测每张卡",
+        "激活重计算：保存对象、重算与数值核对",
+        "根据失败阶段选择重计算或分片",
+        "用算术核对账本",
+        "实战与变化题：真实CPU张量和重计算"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "753e6fd0fcf818214fc309c442197634f79737e38cb5cea67c1d58ed5be81de3",
+      "reviewed_content_sha256": "45988028af0ea3169171c852a73f4a56a73b71fd915810b3685e7bf69a6b8e40",
+      "scope": "Application path through API objects, driver, placement and real contents",
+      "observation": "The full body introduces volume lifetimes then PVC/PV/StorageClass/CSI, topology, access and transactions before performance and restoration. Existing local programs and unexecuted targetCSI manifests remain distinct.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "b4b7bf1ec6b7b50cf70989c359c0010a9dc44a23c6126fa5dba94a3f84a8e003",
+      "reviewed_content_sha256": "9ddb530e0ff4eed5c18f288dff5e98d5c52c62ca54a4833bfbc6d61c4aadb45a",
+      "scope": "Storage members, consistent cuts and publishing through consumer recovery",
+      "observation": "The full body connects members, manifest, current pointer, conditional commit and verified consumer behavior. SQLite/App-log examples are separated from later actualMySQL evidence and early pending handbooks.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
     }
   ]
 }
