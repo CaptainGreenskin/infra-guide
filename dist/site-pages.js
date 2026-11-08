@@ -42,15 +42,15 @@ function sidebarView(moduleId, current) {
  const sections = topicModules.map(module => {
   const active = module.id === moduleId;
   const chapters = topicArticles.filter(article => article.module === module.id);
-  const links = chapters.map((article, index) => {
-   const startsGroup = article.group !== undefined && (!index || chapters[index-1].group !== article.group);
-   const groupTitle=conceptDirectoryGroups[article.id]||(startsGroup?trainingGroups[article.group]:'');
-   const group = groupTitle ? '<div class="side-group">'+trainingEscape(groupTitle)+'</div>' : '';
-   const selected = article.id === current ? 'class="current" aria-current="page"' : '';
-   return `${group}<a href="${readingArticleURL(article.id)}" title="${trainingEscape(article.title)}" ${selected}>${article.number} ${trainingEscape(chapterDirectoryTitle(article))}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
+  const links = courseDirectoryEntries(chapters).map(group => {
+   const entries=group.entries.map(({article,label,fullTitle})=>{
+    const selected = article.id === current ? 'class="current" aria-current="page"' : '';
+    return `<a href="${readingArticleURL(article.id)}" title="${trainingEscape(fullTitle)}" ${selected}>${article.number} ${trainingEscape(label)}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
+   }).join('');
+   return group.title?'<section class="directory-group side-directory-group" data-directory-group="'+group.id+'" aria-label="'+trainingEscape(group.title)+'"><h3 class="side-group">'+trainingEscape(group.title)+'</h3><div class="directory-group-items">'+entries+'</div></section>':entries;
   }).join('');
   const summaryHref=readingArticleURL(chapters[0].id);
-  return `<details ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
+  return `<details data-directory-module="${module.id}" ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
  }).join('');
  return `<aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>${label} · 目录</span><span>${topicArticles.filter(a=>a.module!=='practice').length} 章${topicArticles.some(a=>a.module==='practice')?' + 1 实战':''}</span></div>${sections}

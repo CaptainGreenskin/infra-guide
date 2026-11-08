@@ -33,13 +33,19 @@ const interviewQuestions=[
  {id:'evaluation',track:'agent',q:'上下文、运行状态与长期知识有什么区别？怎样评估Agent？',lead:'上下文帮助当前决策，运行状态保存执行事实，长期知识用于检索；最终用任务结果验收。',mechanism:'状态需要稳定标识、版本和回执。评估同时看真实环境、过程错误、权限拒绝、尝试预算与成本。',example:'摘要写着“报告已保存”，恢复仍应核对权威回执和实际文件。提高允许重试次数后，成功率也可能变化。',boundary:'单看最终回答或总成功率不能定位失败；比较版本需要控制任务集、初始环境和预算。',follow:'新版成功率更高但重试次数翻倍，你会补充哪些比较？',article:'agent-evaluation'}
 ];
 function studyIntroHTML(){return `<div class="study-entry-grid"><a href="/outline/"><small>第一次接触 / 30分钟</small><h2>快速建立知识全貌 →</h2><p>先分清三个领域，再按12个核心主题定位每项技术。</p></a><a href="/interview/"><small>准备面试 / 按主题复习</small><h2>沿大纲练习表达 →</h2><p>12个核心问题，包含结论、机制、例子、边界与追问。</p></a><a href="/roadmap/"><small>继续深入 / 系统学习</small><h2>进入完整章节路线 →</h2><p>根据已有基础选起点，用正文和实验补上薄弱环节。</p></a></div>`}
+function outlineDirectoryHTML(chapters){
+ return courseDirectoryEntries(chapters).map(group=>{
+  const entries=group.entries.map(({article,label,fullTitle})=>`<a class="outline-chapter" href="${articleURL(article.id)}" title="${trainingEscape(fullTitle)}">${chapterPriority(article.id)}${article.number} ${trainingEscape(label)} →</a>`).join('');
+  return group.title?'<section class="directory-group outline-directory-group" data-directory-group="'+group.id+'" aria-label="'+trainingEscape(group.title)+'"><h4>'+trainingEscape(group.title)+'</h4><div class="directory-group-items">'+entries+'</div></section>':entries;
+ }).join('');
+}
 function outlinePage(){
  simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开',`先看三个领域怎样连接，再沿先修顺序展开 ${articles.length} 章。每章标出学习重点，具体练习在正文中完成。`,
  `<section class="outline-intro"><h2>先有全貌，再选一条主线</h2><p>Infra 是 Infrastructure（基础设施）的简称。Cloud 让应用可靠运行；AI Infra 支撑模型训练与推理；Agent Infra 组织模型、工具与执行状态。计算、网络、数据和权限是它们共同的底座。</p><div class="path-links"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">查看学习顺序与过关任务 →</a></div></section>
  <div class="outline-map">${studyMap.map(t=>`<section><h2>${t.title}</h2><p>${t.plain}</p><p class="outline-example">${t.example}</p></section>`).join('')}</div>
  <section class="quality-section"><h2>完整学习大纲</h2><p>先打底，再选方向：P0 用于按需补齐系统基础；Cloud 按 C1–C9 学习，AI 先建立 A1 基础，再按训练或推理分支学习；Agent 沿任务、权限、恢复和结果验收展开。已有基础可从对应章节开始，综合实战在最后连接各层能力。</p>
- ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${learningGoalSelectorHTML(k)}${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc} <a href="${articleURL(articles.find(a=>a.module===m.id).id)}">从本领域第一章开始 →</a></p>${articles.filter(a=>a.module===m.id).map(a=>`<a href="${articleURL(a.id)}">${chapterPriority(a.id)}${a.number} ${a.title} →</a>`).join('')}</details>`).join('')}</div>`).join('')}
- <div class="outline-tree"><h3>综合实战</h3>${articles.filter(a=>a.module==='practice').map(a=>`<a href="${articleURL(a.id)}">${chapterPriority(a.id)}${a.number} ${a.title} →</a>`).join('')}</div></section>
+ ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${learningGoalSelectorHTML(k)}${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details data-directory-module="${m.id}"><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc}</p>${outlineDirectoryHTML(articles.filter(a=>a.module===m.id))}</details>`).join('')}</div>`).join('')}
+ <div class="outline-tree" data-directory-module="practice"><h3>综合实战</h3>${outlineDirectoryHTML(articles.filter(a=>a.module==='practice'))}</div></section>
  <p class="path-links"><a href="/interview/plan/">准备面试：按复习顺序找薄弱项 →</a><a href="/#sample-readings">第一次来：选一个样章 →</a></p>`);
 }
 

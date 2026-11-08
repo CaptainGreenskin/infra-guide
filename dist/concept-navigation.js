@@ -90,6 +90,19 @@ const conceptDirectoryGroups={
  'durable-workflows':'工作流、检索与观测',
  'kairo-practice':'Kairo 接入'
 };
+const trainingDirectoryGroupTitles=['训练状态与资源','分布式执行与数据供给','多机训练、恢复与性能'];
+// Both course directories use the same subject names and group boundaries.
+function courseDirectoryEntries(chapters){
+ const groups=[];let current;
+ for(const article of chapters){
+  const title=conceptDirectoryGroups[article.id]||(article.module==='training'?trainingDirectoryGroupTitles[article.group]:'')||'';
+  if(!current||current.module!==article.module||(title&&title!==current.title)){
+   current={id:article.id,module:article.module,title,entries:[]};groups.push(current);
+  }
+  current.entries.push({article,label:chapterDirectoryTitle(article),fullTitle:article.title});
+ }
+ return groups;
+}
 // A section has one visible topic in the body and in both contents controls.
 // Original authored titles still identify the source lesson; section URLs are stable.
 const conceptSectionTitles={

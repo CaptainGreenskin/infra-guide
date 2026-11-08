@@ -1,0 +1,67 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "5ddc3e68f5c3e65c9341ddf0c25cf3d1de4a9726",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_DATA_COMPUTE_CONTINUITY_2026-11-09.json": "4aec2f89d70ac6a4680989e7863ceef92e8354046abeed115343cf74fd4cb891",
+    "docs/CONTENT_DATA_COMPUTE_CONTINUITY_2026-11-09.json": "f9a1f2643811ef3944779a3cb93598c857d5fcec54a345e737e9c7ef78c39194"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "17eeb382f6dbf468180882becf80edbdcbb2240c0b624600d5e9bbff7471ef5b",
+      "reviewed_sha256": "edd963ddcc108f93e8f13d1965f0dad49bdd0c62307a71991a64866d6168f10f",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "2a820dfb218cf2fad03c527115d9c3e44a2d6d45fd2cb462b8003d289ad0eb77",
+      "reviewed_sha256": "b26b71962698c0a73d7cf4f2f9714586a3a0300f74a2502fa185da4bf826f159",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "da03485c6a3fa709f5d1e89e794ed4836193a6c64c3ca5c5d7011acd2dcae4a1",
+      "reviewed_sha256": "6943b5d2c3dd8528e44c30c4331779cae21fc286e075af092805aa2ca3fd9a8d",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "dist/study-guides.js": {
+      "previous_sha256": "bdefbf29e18f0dbc9cbc39512f52a0dd245cfd048d5f679bd2576c3e986c3e64",
+      "reviewed_sha256": "661a763cff36c74460dc16caa20f05908b52802ca297277a79b6d127f2b91e36",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "b3fdd2e2f8314a7c5d9f9f601295c999c0568644bfe136c2a9102e67d0af38e7",
+      "reviewed_sha256": "b469c928a755cff3d5778e7aba2ec511764a7a873a73e373c0553b06ece7d98a",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "287ca19a40146deba423234d8ae8260219ea6c1c50ac203f61dacfd4ea4c504b",
+      "reviewed_sha256": "7d451af4e90645dc1329bb495d3dcee57afee0e49f57bbac4ed12c94ca34e14c",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "docs/ITERATION_2026-11-09_DIRECTORY_HIERARCHY.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fa6c1711f2913743c514d32071adede897b21773149f683fd0743f0ce320e7e1",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    },
+    "docs/WHOLE_SITE_IMPLEMENTATION_2026-11-08.md": {
+      "previous_sha256": "3910a4ec3b5aa38d719835604da69c97a9b871bf7817e59df83e7931cf6df440",
+      "reviewed_sha256": "b46862b2bf113e5ee754560d0525d7b1e43f43f9f002730261aee1f74f685f99",
+      "scope": "One shared concept directory for full outline and chapter sidebar; subject-only A2 group labels; native details, full-title hints, direct links, numbered order, roles, body content and publication metadata retained."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "5ddc3e68f5c3e65c9341ddf0c25cf3d1de4a9726",
+    "new_chapters": [],
+    "changed_bodies": [],
+    "unchanged_bodies": 78,
+    "added_code_blocks": {},
+    "preserved_published_numbers": 78,
+    "directory_topic_groups": 12,
+    "role_routes": 7,
+    "reader_mastery_claims_added": 0,
+    "removed_duplicate_first_chapter_shortcuts": 14,
+    "outline_chapter_font_px": 15,
+    "outline_group_heading_font_px": 14
+  }
+}
