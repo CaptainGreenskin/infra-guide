@@ -88,6 +88,16 @@ def verify(observation):
     assert restored['before_new_write']['revision'] > q['all_members_recovered'][0]['revision']
     assert restored['old_watch']['canceled']
     assert restored['old_watch']['compact_revision'] > q['all_members_recovered'][0]['revision']
+    assert restored['relist']['revision'] >= restored['before_new_write']['revision']
+    assert restored['relist']['rows'][LIMIT]['value'] == '37'
+    assert not restored['restarted_watch']['canceled']
+    assert restored['restarted_watch']['events'] == [
+        {'key': LIMIT, 'value': '47',
+         'mod_revision': restored['after_new_write']['rows'][LIMIT]['mod_revision']}]
+    assert restored['restarted_watch']['events'][0]['mod_revision'] > restored['relist']['revision']
+    assert restored['rebuilt_cache'] == {
+        key: row['value'] for key, row in restored['full_range_after']['rows'].items()}
+    assert restored['rebuilt_cache'][LIMIT] == '47'
     assert restored['after_new_write']['rows'][LIMIT]['value'] == '47'
     assert restored['after_new_write']['revision'] > restored['before_new_write']['revision']
 
@@ -248,9 +258,14 @@ class Lab:
     def run(self):
         if platform.system() != 'Linux' or not shutil.which('docker'):
             raise RuntimeError('Use an isolated Linux host with Python3 and a local Docker daemon')
-        endpoint = os.environ.get('DOCKER_HOST') or self.docker(
+        explicit_host = os.environ.get('DOCKER_HOST', '')
+        if explicit_host and not explicit_host.startswith('unix://'):
+            raise RuntimeError('This lesson refuses non-local DOCKER_HOST overrides')
+        # DOCKER_CONTEXT can override DOCKER_HOST. Check both independently;
+        # context inspection reads client configuration and never starts work.
+        context_endpoint = self.docker(
             'context', 'inspect', '--format', '{{.Endpoints.docker.Host}}').stdout.strip()
-        if not endpoint.startswith('unix://'):
+        if not context_endpoint.startswith('unix://'):
             raise RuntimeError('This lesson refuses non-local Docker daemon endpoints')
         assert self.docker('info', '--format', '{{.OSType}}').stdout.strip() == 'linux'
         self.docker('pull', IMAGE, timeout=240)
@@ -352,7 +367,17 @@ class Lab:
         restored_before = self.read(restored_name)
         invalidated = self.watch(restored_name, restored_network,
                                  all_recovered[0]['revision']+1, expect_cancel=True)
-        self.json(restored_name, 'put', LIMIT, '47')
+        relisted = normalized_range(self.json(restored_name, 'get', PREFIX, '--prefix'))
+        cache = {key: row['value'] for key, row in relisted['rows'].items()}
+        restarted_watch = self.watch(
+            restored_name, restored_network, relisted['revision']+1,
+            trigger=lambda: self.json(restored_name, 'put', LIMIT, '47'))
+        # The controlled resumed stream contains one PUT. Apply the actual
+        # delivered event to the newly listed cache, then compare a separate
+        # full prefix read rather than treating watch cancellation as recovery.
+        for event in restarted_watch['events']:
+            cache[event['key']] = event['value']
+        full_range_after = normalized_range(self.json(restored_name, 'get', PREFIX, '--prefix'))
         restored_after = self.read(restored_name)
 
         # Copy only this owned lesson snapshot into a local temporary file to
@@ -388,6 +413,8 @@ class Lab:
                             'after_second_member': recovered_two, 'all_members_recovered': all_recovered},
             'restore': {'bump_revision': 1000, 'mark_compacted': True,
                         'before_new_write': restored_before, 'old_watch': invalidated,
+                        'relist': relisted, 'restarted_watch': restarted_watch,
+                        'rebuilt_cache': cache, 'full_range_after': full_range_after,
                         'after_new_write': restored_after},
             'image_repo_digests': image_digests}
         verify(observation)

@@ -17,6 +17,8 @@ import subprocess
 import tempfile
 import time
 import uuid
+import xml.etree.ElementTree as ET
+from urllib.parse import urlsplit
 
 
 IMAGE = 'mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902'
@@ -25,6 +27,33 @@ ROOT_PASSWORD = 'isolated-guide-root'
 WRITER_PASSWORD = 'isolated-guide-writer'
 REPL_PASSWORD = 'isolated-guide-replica'
 DB = 'replica_lab'
+
+
+def validate_local_endpoint(value):
+    """Pure guard: refuse TCP/SSH and nonlocal/malformed unix URLs without echoing them."""
+    parsed=urlsplit(value)
+    if (parsed.scheme!='unix' or parsed.netloc or not parsed.path.startswith('/')
+            or parsed.query or parsed.fragment):
+        raise ValueError('This isolated lesson requires a local unix Docker endpoint')
+
+
+def verify_local_docker():
+    # DOCKER_HOST may override the selected context. Check it before any daemon call.
+    override=os.environ.get('DOCKER_HOST')
+    if override:
+        validate_local_endpoint(override)
+    # These two commands inspect local CLI metadata; they do not contact a daemon.
+    context=subprocess.run(['docker','context','show'],capture_output=True,text=True,timeout=10)
+    if context.returncode:
+        raise RuntimeError('Cannot identify the selected local Docker context')
+    name=context.stdout.strip()
+    if not name:
+        raise RuntimeError('Docker context name is empty')
+    details=subprocess.run(['docker','context','inspect',name,'--format','{{.Endpoints.docker.Host}}'],
+                           capture_output=True,text=True,timeout=10)
+    if details.returncode:
+        raise RuntimeError('Cannot inspect the selected local Docker endpoint')
+    validate_local_endpoint(details.stdout.strip())
 
 
 def quoted(value):
@@ -113,7 +142,8 @@ class Lab:
         return output
 
     def setup(self):
-        self.docker('info','--format','{{.OSType}}')
+        verify_local_docker()
+        assert self.docker('info','--format','{{.OSType}}').stdout.strip()=='linux', 'Linux containers are required'
         self.docker('pull',self.image,timeout=180)
         network_name = self.prefix+'-network'
         self.network = self.docker('network','create','--internal','--label','infraguide=mysql-replication',network_name).stdout.strip()
@@ -168,11 +198,19 @@ class Lab:
         return value
 
     def replication_status(self,name):
-        lines = self.sql(name,'SHOW REPLICA STATUS',headings=True).stdout.strip('\n').splitlines()
-        assert len(lines) == 2, 'Expected one replication channel'
-        header,row = (line.split('\t') for line in lines)
-        assert len(header) == len(row)
-        status = dict(zip(header,row))
+        # A GTID set can contain embedded newlines. Physical TSV lines are not rows.
+        args=['docker','exec','-i','-e','MYSQL_PWD='+ROOT_PASSWORD,name,'mysql',
+              '-uroot','--xml','--connect-timeout=3']
+        result=subprocess.run(args,input='SHOW REPLICA STATUS;\n',capture_output=True,text=True,timeout=15)
+        if result.returncode:
+            raise RuntimeError('MySQL replication status failed: '+result.stderr[-1600:])
+        try:
+            rows=ET.fromstring(result.stdout).findall('row')
+            assert len(rows)==1, 'Expected one replication channel'
+            status={field.attrib['name']:('NULL' if field.attrib.get('{http://www.w3.org/2001/XMLSchema-instance}nil')=='true' else (field.text or ''))
+                    for field in rows[0].findall('field')}
+        except (ET.ParseError,AssertionError,KeyError) as error:
+            raise RuntimeError(str(error)+'; actual XML status: '+result.stdout[:1800]) from error
         fields = ['Replica_IO_Running','Replica_SQL_Running','Retrieved_Gtid_Set','Executed_Gtid_Set',
                   'Seconds_Behind_Source','Last_IO_Errno','Last_SQL_Errno','Auto_Position']
         return {field:status[field] for field in fields}
@@ -225,7 +263,8 @@ def run(lab):
               'repo_digests':json.loads(lab.docker('image','inspect',lab.image).stdout)[0].get('RepoDigests',[]),
               'source_version':lab.scalar(source,'SELECT VERSION()'),'replica_version':lab.scalar(replica,'SELECT VERSION()'),
               'source_uuid':lab.scalar(source,'SELECT @@server_uuid'),'replica_uuid':lab.scalar(replica,'SELECT @@server_uuid'),
-              'python':platform.python_version(),'docker_server':lab.docker('version','--format','{{.Server.Version}}').stdout.strip()}
+              'python':platform.python_version(),'docker_server':lab.docker('version','--format','{{.Server.Version}}').stdout.strip(),
+              'local_unix_endpoint_verified':True}
 
     # A real RR connection starts before the writer, but first reads after +10.
     rr=lab.session(source)
