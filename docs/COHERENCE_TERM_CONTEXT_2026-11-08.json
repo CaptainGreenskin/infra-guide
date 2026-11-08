@@ -1,0 +1,52 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "06df95cea7ab8fdfad03ef3332c2ca7b8f285468",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_STATE_PROTOCOL_2026-11-08.json": "e1ca52b33687c56374fad8b6451bbcaa580f7d0f0e9bc921ac631f0f9ff164ef"
+  },
+  "source_revisions": {
+    "dist/concept-paths.js": {
+      "previous_sha256": "23fd4fff19b2b079fbab7b43a28bbb08e1cbb7a7c3e91c858d657651b507eed2",
+      "reviewed_sha256": "f8f9f5f6d3378dccc798c00dd79758946c2fabb012f735348cd050548cd571ff",
+      "scope": "Context-specific automatic term meanings: bare token is locally authored, never universally a model token; logical cluster does not require multiple physical hosts."
+    },
+    "scripts/check-concept-paths.cjs": {
+      "previous_sha256": "7390acf5c07ac0a1a971ec2cbdffa07ea3128a5c3f12a70f150ef2731c3d8bd4",
+      "reviewed_sha256": "7f28703fedf3df3a49dfaa33c123ea380bd2cccf28fd72b193368780398e6206",
+      "scope": "Context-specific automatic term meanings: bare token is locally authored, never universally a model token; logical cluster does not require multiple physical hosts."
+    }
+  },
+  "observations": [
+    {
+      "page": "/article/mcp-protocol/#section-6",
+      "before": "Progress-token prose received the unrelated model-token first-use gloss.",
+      "after": "Bare token is excluded from universal annotation; authored progressToken association explanation and all protocol examples preserved."
+    },
+    {
+      "page": "/article/control-plane-consensus/#section-7",
+      "before": "Single-member recovery received a cluster gloss asserting multiple machines.",
+      "after": "Cluster definition describes cooperating service instances and permits one or multiple physical hosts; physical failure-domain limits remain explicit."
+    }
+  ],
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "06df95cea7ab8fdfad03ef3332c2ca7b8f285468",
+    "new_chapters": [],
+    "changed_bodies": [],
+    "unchanged_bodies": 78,
+    "added_code_blocks": {},
+    "original_full_code_blocks": "all78 authored bodies and complete code blocks unchanged; only contextual annotation changed",
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 281,
+    "new_lab_packs": 0,
+    "new_lab_tasks": 0,
+    "new_figures": 0,
+    "reader_mastery_claims_added": 0
+  }
+}

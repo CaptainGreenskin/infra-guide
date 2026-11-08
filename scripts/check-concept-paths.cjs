@@ -41,6 +41,15 @@ assert.equal(run('<p>归一化后的结果。</p>'),'<p>归一化后的结果。
 const ambiguous=run('<p>trace里的节点，CPU代际，整数索引和追踪上下文。</p>');
 for(const term of ['节点','代际','索引','上下文'])assert(!ambiguous.includes('data-concept-term="'+term+'"'),'ambiguous meaning must be explained by context: '+term);
 assert(!run('<p>归一化。</p>').includes('data-concept-term'),'probability, feature, length and text normalization require context-specific definitions');
+// The same word must not force a model definition into protocol/security prose.
+for(const text of ['携带该token，当前进度和说明。','访问token已过期。','词元token是模型处理文本的离散单位。']){
+ assert(!run('<p>'+text+'</p>').includes('data-concept-term="token"'),'ambiguous token needs an authored local definition: '+text);
+}
+const mcpProgress=data.articles.find(a=>a.id==='mcp-protocol').sections[5][1];
+assert(mcpProgress.includes('progressToken')&&mcpProgress.includes('进度关联'));
+assert(!run(mcpProgress).includes('模型处理文本的离散单位'),'actual MCP progress text must not acquire a model-token meaning');
+const cluster=run('<p>恢复为独立新单成员集群。</p>');
+assert(cluster.includes('可部署在一台或多台机器上')&&!cluster.includes('由多台机器及其管理组件共同组成'),'logical cluster membership must not imply multiple physical machines');
 // Whole existing code, link and figure blocks survive the real prose pass byte-for-byte.
 const protectedBlocks=html=>html.match(/<(pre|code|a|figure)\b[^>]*>[\s\S]*?<\/\1>/g)||[];
 for(const a of data.articles){c.a=a;const seen=vm.runInContext('conceptSeen(chapterConceptPaths[a.id])',c);c.seen=seen;

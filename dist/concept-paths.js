@@ -5,7 +5,7 @@ const conceptGlossary=[
  ['进程','一份正在运行的程序实例'],['线程','进程中的一条执行路径'],
  ['虚拟机','提供虚拟CPU、内存和设备，可运行客户机操作系统的计算环境'],
  ['容器','将应用进程、所需文件及相应隔离与资源约束组织起来的运行实例'],
- ['集群','由多台机器及其管理组件共同组成的系统'],
+ ['集群','按协议协同工作的一组服务实例及其管理组件，可部署在一台或多台机器上'],
  ['配额','某个使用范围可申请或占用相应资源的总量上限'],
  ['准入','允许创建或运行之前的相应条件检查'],
  ['调谐','反复比较期望状态与实际状态并推动差异收敛的过程'],
@@ -161,9 +161,10 @@ function explainFirstConceptTerms(html,seen=new Set()){
   if(stack.length)return part;
   return part.replace(conceptTermPattern,(term,at)=>{
    const before=part.slice(0,at),after=part.slice(at+term.length);
-   // “内核” can mean the OS kernel or a GPU compute kernel. A global gloss
-   // cannot disambiguate it; the author must explain the actual object locally.
-   if(term==='内核')return term;
+   // Bare “内核” and “token” are ambiguous across these tracks: OS/GPU
+   // kernels, model tokens, credentials and progress identifiers differ.
+   // Require the author to explain the actual object in its local context.
+   if(term==='内核'||term==='token')return term;
    if(/[A-Za-z0-9_]/.test(term[0])&&/[A-Za-z0-9_.-]$/.test(before)||/[A-Za-z0-9_]/.test(term.at(-1))&&/^[A-Za-z0-9_.-]/.test(after)||seen.has(term))return term;
    if(/["']$/.test(before)&&/^["']\s*:/.test(after))return term;
    if(/[\u3400-\u9fff]/.test(term)&&/^[\u3400-\u9fff]/.test(after)&&! /^(?:是|指|表示|称为|负责|用于|定义为|用来|把|会|可以|能够)/.test(after))return term;
