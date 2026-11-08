@@ -1,0 +1,39 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "739eadaa4b2e7e56b2ca309a10dd1c151d9ddb8b",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_IMPLEMENTATION_BRIDGES_2026-11-08.json": "6494052d5a10b5996dec885b6101555252be6af00d160157a842422e15de0fbb",
+    "docs/COHERENCE_PUBLICATION_METADATA_2026-11-08.json": "fdbd2abf26ad77e4ccbed848d88ee70f11832e9ff9a3fbe00238a82e9947605d"
+  },
+  "source_revisions": {
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "869716965b667360781245b724b41c2e3d76c983d128d71f2ae78c911eed0801",
+      "reviewed_sha256": "f7d90070581a7d1c468e043c7887f0e2ec16f3f2568a28ff1808c70a19313b8f",
+      "scope": "Only three real-valued score leaf paths permit finite absolute error <=1e-12 across libm platforms. Exact structure, counters, tokens, handles, source bytes, record/SVG binding and independent numerical oracles remain enforced. Rejection fixtures cover drift, non-finite values and structural/integer changes."
+    }
+  },
+  "review_scope": {
+    "chapters": 75,
+    "body_baseline_commit": "739eadaa4b2e7e56b2ca309a10dd1c151d9ddb8b",
+    "changed_bodies": [],
+    "unchanged_bodies": 75,
+    "added_code_blocks": {},
+    "original_full_code_blocks": "all blocks unchanged",
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 273,
+    "hardware_execution_claims_added": 0,
+    "body_changes_since_previous_stage": 0
+  },
+  "portability": {
+    "failed_run": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42468738399",
+    "observed": "Linux libm produced 0.20677923789449237 versus recorded macOS 0.20677923789449304, with comparable final-bit differences in attention scores.",
+    "published_execution_records_modified": false,
+    "published_diagrams_modified": false,
+    "lab_source_modified": false
+  }
+}

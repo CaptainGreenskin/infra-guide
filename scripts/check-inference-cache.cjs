@@ -4,11 +4,58 @@ const {execFileSync,spawnSync}=require('child_process');
 const root=path.resolve(__dirname,'..');process.chdir(root);
 const lab='dist/labs/inference-cache/';
 const digest=x=>crypto.createHash('sha256').update(x).digest('hex');
+// libm can change the final bits of exp-derived CPU scores across platforms.
+// Only these exact numerical leaves may vary; counters, tokens and shape cannot.
+function approximateOutputPath(parts){
+ return parts.length===6&&parts[0]==='pressure'&&parts[1]==='trace'&&/^(0|[1-9]\d*)$/.test(parts[2])&&parts[3]==='requests'&&parts[5]==='output'
+  ||parts.length===5&&parts[0]==='cow_exhaustion'&&parts[1]==='unchanged_snapshot'&&parts[2]==='requests'&&parts[4]==='output'
+  ||parts.length===2&&parts[0]==='identities'&&parts[1]==='wrong_block_tokens_only_output_error';
+}
+function sameExecutedResult(value,expected,parts=[]){
+ const label=parts.join('.')||'<root>';
+ if(typeof value==='number')assert(Number.isFinite(value),'non-finite actual at '+label);
+ if(typeof expected==='number')assert(Number.isFinite(expected),'non-finite record at '+label);
+ if(approximateOutputPath(parts)){
+  assert(typeof value==='number'&&typeof expected==='number','numeric output required at '+label);
+  assert(Math.abs(value-expected)<=1e-12,'numerical drift at '+label);
+ }else if(expected!==null&&typeof expected==='object'){
+  assert(value!==null&&typeof value==='object','object required at '+label);
+  assert.equal(Array.isArray(value),Array.isArray(expected),'container type at '+label);
+  if(Array.isArray(expected))assert.equal(value.length,expected.length,'array length at '+label);
+  assert.deepStrictEqual(Object.keys(value).sort(),Object.keys(expected).sort(),'exact fields at '+label);
+  for(const key of Object.keys(expected))sameExecutedResult(value[key],expected[key],parts.concat(key));
+ }else assert.deepStrictEqual(value,expected,'exact value at '+label);
+}
+// Exercise all allowed leaves and independently reject changes outside the whitelist.
+const resultFixture={pressure:{trace:[{requests:{A:{output:.41989627258244244,tokens:[1,2],blocks:[[0,1]]}},computed_positions:2}]},cow_exhaustion:{unchanged_snapshot:{requests:{C:{output:.1}}}},identities:{wrong_block_tokens_only_output_error:.20677923789449304},metadata:{output:.4},scope:'cpu'};
+const copyFixture=()=>JSON.parse(JSON.stringify(resultFixture));
+const lastBits=copyFixture();
+lastBits.pressure.trace[0].requests.A.output+=Number.EPSILON;
+lastBits.cow_exhaustion.unchanged_snapshot.requests.C.output+=Number.EPSILON;
+lastBits.identities.wrong_block_tokens_only_output_error=.20677923789449237;
+sameExecutedResult(lastBits,resultFixture);
+for(const mutate of [
+ x=>{x.pressure.trace[0].requests.A.output+=1e-8;},
+ x=>{x.cow_exhaustion.unchanged_snapshot.requests.C.output+=1e-8;},
+ x=>{x.identities.wrong_block_tokens_only_output_error+=1e-8;},
+ x=>{x.pressure.trace[0].requests.A.output=NaN;},
+ x=>{x.identities.wrong_block_tokens_only_output_error=Infinity;},
+ x=>{delete x.cow_exhaustion.unchanged_snapshot.requests.C.output;},
+ x=>{x.pressure.trace[0].computed_positions+=1e-12;},
+ x=>{x.pressure.trace[0].requests.A.tokens[0]+=1e-12;},
+ x=>{x.pressure.trace[0].requests.A.blocks[0][0]+=1e-12;},
+ x=>{x.metadata.output+=Number.EPSILON;},
+ x=>{x.pressure.trace.push(x.pressure.trace[0]);},
+ x=>{x.scope='changed';},
+ x=>{x.extra=true;}
+]){const changed=copyFixture();mutate(changed);assert.throws(()=>sameExecutedResult(changed,resultFixture),assert.AssertionError);}
+const invalidRecord=copyFixture();invalidRecord.pressure.trace[0].requests.A.output=NaN;
+assert.throws(()=>sameExecutedResult(resultFixture,invalidRecord),assert.AssertionError);
 const record=JSON.parse(fs.readFileSync(lab+'validation.json'));
 assert.equal(record.status,'passed');
 for(const[name,hash]of Object.entries(record.source_sha256))assert.equal(digest(fs.readFileSync(lab+name)),hash,'source record: '+name);
 const actual=JSON.parse(execFileSync('python3',['-B',lab+'paged_cache.py'],{encoding:'utf8',timeout:20000}));
-assert.deepStrictEqual(actual,record.result,'executed program must match published JSON');
+sameExecutedResult(actual,record.result);
 const broken=spawnSync('python3',['-B',lab+'paged_cache.py','--unsafe-shared-write'],{encoding:'utf8',timeout:20000});
 assert.equal(broken.status,1);assert(broken.stderr.includes('cached_cell_differs_from_full_prefix'));
 
@@ -97,9 +144,10 @@ for(const name of ['blocks','lifecycle','fairness']){
  assert(svg.includes('<title')&&svg.includes('<desc'));
  diagrams[name]=JSON.parse(decode(svg.match(/<metadata>([\s\S]*?)<\/metadata>/)[1]));
 }
-assert.deepStrictEqual(diagrams.blocks.before,p.trace[0]);assert.deepStrictEqual(diagrams.blocks.after,p.trace[1]);
-assert.deepStrictEqual(diagrams.lifecycle.events,p.trace);
-assert.deepStrictEqual(diagrams.fairness.schedulers,actual.schedulers);
+// Published artifacts remain exactly bound to their immutable published record.
+assert.deepStrictEqual(diagrams.blocks.before,record.result.pressure.trace[0]);assert.deepStrictEqual(diagrams.blocks.after,record.result.pressure.trace[1]);
+assert.deepStrictEqual(diagrams.lifecycle.events,record.result.pressure.trace);
+assert.deepStrictEqual(diagrams.fairness.schedulers,record.result.schedulers);
 
 const context={};vm.createContext(context);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g)){
@@ -134,4 +182,4 @@ with zipfile.ZipFile(lab.with_suffix('.zip')) as z:
  assert sorted(z.namelist())==sorted('inference-cache/'+n for n in expected)
  for name in expected: assert z.read('inference-cache/'+name)==(lab/name).read_bytes(),name
 `],{encoding:'utf8'});
-console.log('PASS: real cache numbers and ownership, failed COW rollback, stale generations, full-prefix identity, 17 independently recomputed sequences, actual fairness/work conservation, source-bound 3 SVGs, 2 new pre blocks with all old blocks/IDs retained, exact ZIP.');
+console.log('PASS: path-limited finite-score tolerance and strict rejection fixtures, real cache numbers and ownership, failed COW rollback, stale generations, full-prefix identity, 17 independently recomputed sequences, actual fairness/work conservation, source-bound 3 SVGs, 2 new pre blocks with all old blocks/IDs retained, exact ZIP.');
