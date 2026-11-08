@@ -19,12 +19,18 @@ def run(*parts, check=True, timeout=240):
 
 def wait_broker(name):
     deadline = time.monotonic() + 90
+    last_error = ''
     while time.monotonic() < deadline:
-        r = run('docker', 'exec', name, 'rabbitmq-diagnostics', '-q', 'check_port_connectivity', check=False)
+        r = run('docker', 'exec', '--user', 'rabbitmq', name, 'rabbitmq-diagnostics', '-q', 'check_port_connectivity', check=False, timeout=20)
         if r.returncode == 0:
             return
+        last_error = (r.stdout + r.stderr)[-1500:]
+        state = json.loads(run('docker', 'inspect', '--format', '{{json .State}}', name).stdout)
+        if not state['Running']:
+            break
         time.sleep(1)
-    raise TimeoutError('owned RabbitMQ did not become ready')
+    logs = run('docker', 'logs', '--tail', '40', name, check=False)
+    raise TimeoutError('owned RabbitMQ not ready: ' + last_error + '\n' + logs.stdout + logs.stderr)
 
 
 def main():
@@ -46,7 +52,8 @@ def main():
         run('docker', 'run', '-d', '--name', broker, '--network', network, '--network-alias', 'broker',
             '--cpus', '1', '--memory', '512m', '--pids-limit', '128',
             '-e', 'RABBITMQ_DEFAULT_USER=guide', '-e', 'RABBITMQ_DEFAULT_PASS=public-disposable-lab',
-            '-e', 'RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=+S 2:2', '-v', volume + ':/var/lib/rabbitmq', broker_image)
+            '-e', 'RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=+S 2:2',
+            '-e', 'RABBITMQ_CTL_ERL_ARGS=+S 1:1 +SDcpu 1 +SDio 1', '-v', volume + ':/var/lib/rabbitmq', broker_image)
         wait_broker(broker)
         run('docker', 'run', '-d', '--name', client, '--network', network, '--memory', '160m', '--pids-limit', '64',
             '-e', 'GUIDE_BROKER=broker', image)
