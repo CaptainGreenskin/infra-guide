@@ -1,0 +1,417 @@
+{
+  "date": "2026-11-08",
+  "status": "passed",
+  "ci": {
+    "run_id": 42432475291,
+    "source_commit": "c79d2fa8f9bd172bcde615d87acdffd900c3511d",
+    "conclusion": "success",
+    "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42432475291"
+  },
+  "source_sha256": {
+    "container_limits.py": "8101fbfddb92d55fe5096ebf02de15fe067d60da54be2092900002a59fff0c3e",
+    "container_probe.py": "7a47c7cbef730bb1bc31605e8976fdf18e86e058800ae4cad4bef65a05a571a2",
+    "schedule_lab.py": "6ab9e0fa3dfbe5bed6ef8f797931ec055f996c7aa2eb24d6b42d80da812d6dcb"
+  },
+  "execution": {
+    "container": {
+      "schema": 1,
+      "scope": "real Linux Docker, cgroup v2; not a sandbox escape test",
+      "host": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "docker_server": "29.4.2",
+      "image": "python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7",
+      "cases": [
+        {
+          "checksum": 15164,
+          "cpu_max": "50000 100000",
+          "cpu_stat_delta": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "nr_bursts": 0,
+            "nr_periods": 25,
+            "nr_throttled": 25,
+            "system_usec": 515,
+            "throttled_usec": 1249294,
+            "usage_usec": 1247581,
+            "user_usec": 1247067
+          },
+          "memory_max": 100663296,
+          "mode": "cpu",
+          "namespaces": {
+            "mnt": "mnt:[4026532262]",
+            "net": "net:[4026532267]",
+            "pid": "pid:[4026532265]"
+          },
+          "pid": 1,
+          "pids_max": 16,
+          "wall_seconds": 2.500285391000002
+        },
+        {
+          "cpu_max": "50000 100000",
+          "created_threads": 15,
+          "memory_max": 100663296,
+          "mode": "pids",
+          "namespaces": {
+            "mnt": "mnt:[4026532262]",
+            "net": "net:[4026532268]",
+            "pid": "pid:[4026532266]"
+          },
+          "pid": 1,
+          "pids_current": 16,
+          "pids_max": 16,
+          "pids_max_events_delta": 1,
+          "refusal": "can't start new thread"
+        },
+        {
+          "mode": "oom",
+          "exit_code": 137,
+          "oom_killed": true
+        }
+      ],
+      "concurrent_namespaces": [
+        {
+          "pid": "pid:[4026532266]",
+          "mnt": "mnt:[4026532262]",
+          "net": "net:[4026532268]"
+        },
+        {
+          "pid": "pid:[4026532326]",
+          "mnt": "mnt:[4026532323]",
+          "net": "net:[4026532328]"
+        }
+      ],
+      "source_sha256": {
+        "container_limits.py": "8101fbfddb92d55fe5096ebf02de15fe067d60da54be2092900002a59fff0c3e",
+        "container_probe.py": "7a47c7cbef730bb1bc31605e8976fdf18e86e058800ae4cad4bef65a05a571a2"
+      }
+    },
+    "scheduler": {
+      "schema": 1,
+      "scope": "actual kind API/scheduler on one Linux host; logical nodes, not physical multi-node capacity",
+      "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+      "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+      "kubernetes": {
+        "major": "1",
+        "minor": "35",
+        "emulationMajor": "1",
+        "emulationMinor": "35",
+        "minCompatibilityMajor": "1",
+        "minCompatibilityMinor": "34",
+        "gitVersion": "v1.35.8",
+        "gitCommit": "1c2e10a409eb1b03f2f28f401ce935312e20d9fb",
+        "gitTreeState": "clean",
+        "buildDate": "2026-08-20T15:16:16Z",
+        "goVersion": "go1.26.5",
+        "compiler": "gc",
+        "platform": "linux/amd64"
+      },
+      "allocatable": {
+        "infra-schedule-85c063dc8d-worker": {
+          "cpu": "4",
+          "ephemeral-storage": "151361008Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "16365628Ki",
+          "pods": "110"
+        },
+        "infra-schedule-85c063dc8d-worker2": {
+          "cpu": "4",
+          "ephemeral-storage": "151361008Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "16365628Ki",
+          "pods": "110"
+        }
+      },
+      "workers": [
+        "infra-schedule-85c063dc8d-worker",
+        "infra-schedule-85c063dc8d-worker2"
+      ],
+      "observations": {
+        "quota_first": {
+          "uid": "679a6495-9ab0-4159-a473-3a31cfee54a3",
+          "phase": "Running",
+          "node": "infra-schedule-85c063dc8d-worker",
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:24Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:23Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:24Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:24Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:23Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ]
+        },
+        "quota_rejection": {
+          "object_exists": false,
+          "error": "Error from server (Forbidden): error when creating \"STDIN\": pods \"second\" is forbidden: exceeded quota: cpu-budget, requested: requests.cpu=100m, used: requests.cpu=250m, limited: requests.cpu=300m",
+          "quota": {
+            "hard": {
+              "requests.cpu": "300m"
+            },
+            "used": {
+              "requests.cpu": "250m"
+            }
+          }
+        },
+        "oversized": {
+          "uid": "1b317f71-453d-41f6-9328-af8da97cf88d",
+          "phase": "Pending",
+          "node": null,
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:25Z",
+              "message": "0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 Insufficient cpu. no new claims to deallocate, preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling.",
+              "observedGeneration": 1,
+              "reason": "Unschedulable",
+              "status": "False",
+              "type": "PodScheduled"
+            }
+          ],
+          "request_millicpu": 5000
+        },
+        "fits": {
+          "uid": "71d4b83b-45af-4b0e-99f6-24f8d40abc42",
+          "phase": "Running",
+          "node": "infra-schedule-85c063dc8d-worker2",
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:27Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:26Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:27Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:27Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:26Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ]
+        },
+        "spread_first": {
+          "uid": "b0a0c7e1-e2d7-495d-8d21-e66166b8c2dc",
+          "phase": "Running",
+          "node": "infra-schedule-85c063dc8d-worker",
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:30Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:28Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:30Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:30Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:28Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ]
+        },
+        "spread_blocked": {
+          "uid": "1785121e-de8d-42c6-90ea-1e3bc46d8b16",
+          "phase": "Pending",
+          "node": null,
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:30Z",
+              "message": "0/3 nodes are available: 1 node(s) didn't match pod anti-affinity rules, 2 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/3 nodes are available: 1 No preemption victims found for incoming pod, 2 Preemption is not helpful for scheduling.",
+              "observedGeneration": 1,
+              "reason": "Unschedulable",
+              "status": "False",
+              "type": "PodScheduled"
+            }
+          ]
+        },
+        "spread_tolerated": {
+          "uid": "1785121e-de8d-42c6-90ea-1e3bc46d8b16",
+          "phase": "Running",
+          "node": "infra-schedule-85c063dc8d-worker2",
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:32Z",
+              "observedGeneration": 2,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:31Z",
+              "observedGeneration": 2,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:32Z",
+              "observedGeneration": 2,
+              "status": "True",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:32Z",
+              "observedGeneration": 2,
+              "status": "True",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:31Z",
+              "observedGeneration": 2,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ]
+        },
+        "spread_full": {
+          "uid": "4eeaa60b-9fb1-4448-bc25-e7bdde456dcf",
+          "phase": "Pending",
+          "node": null,
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-08T01:03:33Z",
+              "message": "0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 node(s) didn't match pod anti-affinity rules. no new claims to deallocate, preemption: 0/3 nodes are available: 1 Preemption is not helpful for scheduling, 2 No preemption victims found for incoming pod.",
+              "observedGeneration": 1,
+              "reason": "Unschedulable",
+              "status": "False",
+              "type": "PodScheduled"
+            }
+          ]
+        }
+      },
+      "events": [
+        {
+          "reason": "Scheduled",
+          "message": "Successfully assigned spread-lab/spread-0 to infra-schedule-85c063dc8d-worker",
+          "object": "spread-0"
+        },
+        {
+          "reason": "Pulled",
+          "message": "Container image \"registry.k8s.io/pause:3.10\" already present on machine and can be accessed by the pod",
+          "object": "spread-0"
+        },
+        {
+          "reason": "Created",
+          "message": "Container created",
+          "object": "spread-0"
+        },
+        {
+          "reason": "Started",
+          "message": "Container started",
+          "object": "spread-0"
+        },
+        {
+          "reason": "FailedScheduling",
+          "message": "0/3 nodes are available: 1 node(s) didn't match pod anti-affinity rules, 2 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/3 nodes are available: 1 No preemption victims found for incoming pod, 2 Preemption is not helpful for scheduling.",
+          "object": "spread-1"
+        },
+        {
+          "reason": "Scheduled",
+          "message": "Successfully assigned spread-lab/spread-1 to infra-schedule-85c063dc8d-worker2",
+          "object": "spread-1"
+        },
+        {
+          "reason": "Pulled",
+          "message": "Container image \"registry.k8s.io/pause:3.10\" already present on machine and can be accessed by the pod",
+          "object": "spread-1"
+        },
+        {
+          "reason": "Created",
+          "message": "Container created",
+          "object": "spread-1"
+        },
+        {
+          "reason": "Started",
+          "message": "Container started",
+          "object": "spread-1"
+        },
+        {
+          "reason": "FailedScheduling",
+          "message": "0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 node(s) didn't match pod anti-affinity rules. no new claims to deallocate, preemption: 0/3 nodes are available: 1 Preemption is not helpful for scheduling, 2 No preemption victims found for incoming pod.",
+          "object": "spread-2"
+        }
+      ],
+      "source_sha256": "6ab9e0fa3dfbe5bed6ef8f797931ec055f996c7aa2eb24d6b42d80da812d6dcb"
+    }
+  },
+  "scope": "Actual Linux Docker and kind mechanisms on one host; not physical multi-node/cloud CNI/CSI/performance."
+}

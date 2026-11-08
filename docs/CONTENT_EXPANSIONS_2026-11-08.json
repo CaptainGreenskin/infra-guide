@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-08",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXPANSIONS_2026-11-07.json": "7a7e81e4dba2f6596860eb0c5ee8ed2e9d72fb58b28cd413630c28ef4b6bbb5d"
+  },
+  "new_chapter_reviews": [
+    {
+      "id": "speculative-decoding",
+      "track": "ai",
+      "module": "platform",
+      "title": "推测解码：从接受概率到批量验证与缓存回退",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "逐项审读概率、条件前缀、位置和缓存；实际CPU结果与精确分布分开验收。",
+      "observation": "三词元精确质量与27条前缀相关序列；实际K/V回退正确，错误保留缓存导致长度与下一步分数改变；无GPU速度结论。",
+      "reviewed_content_sha256": "bba14489624b2a30084b58470e66ae20d5c62c0574af6e46a230bf1b7c4dffcd"
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "container-isolation",
+      "reviewed_at": "2026-11-08",
+      "scope": "补齐对应真实机制与执行入口，正文不替代目标环境证据。",
+      "observation": "容器计数、kind约束、精确采样/CPU缓存或存活旧请求时序均与本轮独立记录对齐。",
+      "previous_content_sha256": "e3d763ec6f876fae501193c4925ed59f0afa9c9aceb129917bd3f90417c00ad7",
+      "reviewed_content_sha256": "f2c8023a96ff349b45f0604db22f29272a456e8fea0bffd45c1b7268ae99bbb6"
+    },
+    {
+      "id": "placement",
+      "reviewed_at": "2026-11-08",
+      "scope": "补齐对应真实机制与执行入口，正文不替代目标环境证据。",
+      "observation": "容器计数、kind约束、精确采样/CPU缓存或存活旧请求时序均与本轮独立记录对齐。",
+      "previous_content_sha256": "e2633088e727d4ad438f5b5048106668130eb640473b4f64a14b0a8df9d8c579",
+      "reviewed_content_sha256": "865ac00e95bbc35a6e79e792e9dc468c8651250266bd98beb5716565dac5fe3d"
+    },
+    {
+      "id": "sv-optimizations",
+      "reviewed_at": "2026-11-08",
+      "scope": "补齐对应真实机制与执行入口，正文不替代目标环境证据。",
+      "observation": "容器计数、kind约束、精确采样/CPU缓存或存活旧请求时序均与本轮独立记录对齐。",
+      "previous_content_sha256": "e00a488d42f8aa3ae9c327dad77be8c610042d394a8424542fb0e386e0a159a6",
+      "reviewed_content_sha256": "2163fc70b77112a71bfcc42b202f11ef03b5c22508efda8623f2361535d09372"
+    },
+    {
+      "id": "ag-recovery",
+      "reviewed_at": "2026-11-08",
+      "scope": "补齐对应真实机制与执行入口，正文不替代目标环境证据。",
+      "observation": "容器计数、kind约束、精确采样/CPU缓存或存活旧请求时序均与本轮独立记录对齐。",
+      "previous_content_sha256": "1742173a01da533f438cbad22beb9b57549897f5e07501a326460ba34e600200",
+      "reviewed_content_sha256": "4a27a1db062ca13e1f45683e07f8edd83879102919e389102e4574fd6f90377c"
+    }
+  ],
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "container-runtime",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节重写知识对象、机制、同输入图、完整程序与验收，保留旧链接和锚点。",
+      "observation": "实际Docker同时存活视图、cpu.stat差值、OOM与pids；修正退出后namespace编号复用的错误比较。",
+      "record": "dist/labs/runtime-scheduling/validation.json",
+      "reviewed_content_sha256": "b95fc6b198af5e17c3d19e9fe26f34f85e6b9a371f078bba1b4cf99098d15340"
+    },
+    {
+      "chapter": "scheduling-resources",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节重写知识对象、机制、同输入图、完整程序与验收，保留旧链接和锚点。",
+      "observation": "实际kind准入拒绝无对象、单Pod资源形状、容忍与反亲和；同机逻辑节点不作物理容量结论。",
+      "record": "dist/labs/runtime-scheduling/validation.json",
+      "reviewed_content_sha256": "d4aa124d4ade3175334bed5ce855b8dbfc90d71adcb5f875dc7ea5a739980f85"
+    },
+    {
+      "chapter": "agent-recovery",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节重写知识对象、机制、同输入图、完整程序与验收，保留旧链接和锚点。",
+      "observation": "真实SIGKILL六窗口，工具独立存活，GET暂空后旧请求仍提交；换身份74与篡改观察均被业务oracle拒绝。",
+      "record": "dist/labs/agent-crash-windows/validation.json",
+      "reviewed_content_sha256": "e1f215ea23d7a1208a4a74b1da495d1a1e489db0e48eca471d1143c64342f496"
+    }
+  ]
+}

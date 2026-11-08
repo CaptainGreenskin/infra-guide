@@ -900,7 +900,7 @@
       "stages": [
         "先分清用户目标和产生效果的动作",
         "调用方没收到响应，效果仍可能存在",
-        "再从提交间隙走到多执行者接管"
+        "先完成单执行者恢复，再进入接管"
       ],
       "introduced_terms": [
         "任务",
@@ -910,7 +910,7 @@
         "幂等",
         "恢复"
       ],
-      "sha256": "200ab6791e023f9e7df60734f8427c160834769f6071c5eb63dad6b9b5ad36f6"
+      "sha256": "69d8a7e24675b75068a4d6d4ca6dfecdb671ffb2f72eb2832c814856adf4e45e"
     },
     {
       "id": "agent-security",
@@ -1184,6 +1184,24 @@
       ],
       "sha256": "e3e910a23fee0c71be34cd4b6fef41b6013806458d5fc926d1e8d1ce8001406b",
       "reviewed_at": "2026-11-07"
+    },
+    {
+      "id": "speculative-decoding",
+      "stages": [
+        "先有按前缀预测下一个编号的模型",
+        "提议不直接交付，要先校正概率",
+        "并行核对以后，只提交连续接受的部分"
+      ],
+      "introduced_terms": [
+        "词元",
+        "前缀",
+        "目标模型",
+        "草稿模型",
+        "接受",
+        "残差",
+        "缓存"
+      ],
+      "sha256": "e0ba8149f8430c0c4ab8de9b3fdb74d34e7b67a529473a2b7ae6edd7c227868e"
     }
   ],
   "modules": [
@@ -1427,6 +1445,8 @@
     "dist/diagrams/v42-cloud-concepts.svg": "79bb547051a112134f8c55e1359f6801ae2b728ddc1db10ce572491cb87e44f0",
     "dist/diagrams/v42-ai-concepts.svg": "4bc9967562b9386d4984ad09b6ae2c44e1e1f76dd24d63e436922c9bed46c199",
     "dist/diagrams/v42-agent-concepts.svg": "7d29d3c3d189c16c93b097d522c1d8887dcce9a821f876fabda67068de52b331",
-    "dist/diagrams/v42-decoder-path.svg": "ca7a2a94737aec696928c10510187d1919bf77454b0c2cd62d44be5c8ac3773d"
+    "dist/diagrams/v42-decoder-path.svg": "ca7a2a94737aec696928c10510187d1919bf77454b0c2cd62d44be5c8ac3773d",
+    "dist/continuous-course-links.js": "98d18439712dff5e19c8de88aac807f4090b47a46ee04c4a49a7d698994c4ae7",
+    "dist/speculative-decoding-lessons.js": "3e2a71b624f45a4f0cb7694013b7e4c42be6b92692c2d78aa09792f24e429fc2"
   }
 }

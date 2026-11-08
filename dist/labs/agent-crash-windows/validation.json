@@ -1,0 +1,446 @@
+{
+  "date": "2026-11-08",
+  "status": "passed",
+  "source_sha256": {
+    "crash_windows.py": "0729d6d070a7050e85f38962b186ed5396a08547b4855760376bce913dc7a2e3"
+  },
+  "execution": {
+    "schema": 1,
+    "status": "passed",
+    "params": {
+      "account": "demo",
+      "amount": 37
+    },
+    "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+    "python": "3.12.13",
+    "sqlite": "3.53.3",
+    "cases": [
+      {
+        "window": "intent",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 0,
+          "effects": 0,
+          "receipts": []
+        },
+        "receipt_absent_while_old_request_lives": null,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 0,
+          "effects": 0,
+          "receipts": []
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "submitted_original_operation",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": null,
+        "receiver_audit": [
+          "receipt_absent",
+          "effect_commit"
+        ]
+      },
+      {
+        "window": "before_commit",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 0,
+          "effects": 0,
+          "receipts": []
+        },
+        "receipt_absent_while_old_request_lives": true,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "queried_receipt",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": null,
+        "receiver_audit": [
+          "receipt_absent",
+          "effect_commit",
+          "receipt_found"
+        ]
+      },
+      {
+        "window": "after_commit",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "receipt_absent_while_old_request_lives": null,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "queried_receipt",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": null,
+        "receiver_audit": [
+          "effect_commit",
+          "receipt_found"
+        ]
+      },
+      {
+        "window": "response",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "receipt_absent_while_old_request_lives": null,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "INTENT",
+          "observation": null,
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "queried_receipt",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": null,
+        "receiver_audit": [
+          "effect_commit",
+          "receipt_found"
+        ]
+      },
+      {
+        "window": "observation",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "OBSERVED",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "receipt_absent_while_old_request_lives": null,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "OBSERVED",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "durable_observation",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": true,
+        "receiver_audit": [
+          "effect_commit"
+        ]
+      },
+      {
+        "window": "done",
+        "negative_new_identity": false,
+        "kill_exit_code": -9,
+        "at_crash": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "receipt_absent_while_old_request_lives": null,
+        "after_old_request": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "recovered": {
+          "operation": "logical-add-1",
+          "runner_phase": "DONE",
+          "observation": {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          "amount": 37,
+          "effects": 1,
+          "receipts": [
+            {
+              "op": "logical-add-1",
+              "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+              "amount": 37
+            }
+          ]
+        },
+        "resume_path": "already_done",
+        "independent_oracle_accepted": true,
+        "done_retry_http_calls": 0,
+        "corrupt_local_observation_rejected": null,
+        "receiver_audit": [
+          "effect_commit"
+        ]
+      }
+    ],
+    "negative": {
+      "window": "after_commit",
+      "negative_new_identity": true,
+      "kill_exit_code": -9,
+      "at_crash": {
+        "operation": "logical-add-1",
+        "runner_phase": "INTENT",
+        "observation": null,
+        "amount": 37,
+        "effects": 1,
+        "receipts": [
+          {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          }
+        ]
+      },
+      "receipt_absent_while_old_request_lives": null,
+      "after_old_request": {
+        "operation": "logical-add-1",
+        "runner_phase": "INTENT",
+        "observation": null,
+        "amount": 37,
+        "effects": 1,
+        "receipts": [
+          {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          }
+        ]
+      },
+      "recovered": {
+        "operation": "new-b249478f5f8c4c54a429451ad6fd430b",
+        "runner_phase": "DONE",
+        "observation": {
+          "op": "new-b249478f5f8c4c54a429451ad6fd430b",
+          "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+          "amount": 37
+        },
+        "amount": 74,
+        "effects": 2,
+        "receipts": [
+          {
+            "op": "logical-add-1",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          },
+          {
+            "op": "new-b249478f5f8c4c54a429451ad6fd430b",
+            "fingerprint": "721fbc6456854d2c367d89555979de5b33232a1d5e3289478bd23ecea484c7b7",
+            "amount": 37
+          }
+        ]
+      },
+      "resume_path": "submitted_original_operation",
+      "independent_oracle_accepted": false,
+      "done_retry_http_calls": 0,
+      "corrupt_local_observation_rejected": null,
+      "receiver_audit": [
+        "effect_commit",
+        "receipt_absent",
+        "effect_commit"
+      ]
+    },
+    "source_sha256": "0729d6d070a7050e85f38962b186ed5396a08547b4855760376bce913dc7a2e3",
+    "scope": "real POSIX process kill and surviving local HTTP receiver, separate SQLite domains; not power-loss durability, network partition, concurrent runners, or Kairo integration"
+  },
+  "scope": "real POSIX process kill and surviving local HTTP receiver, separate SQLite domains; not power-loss durability, network partition, concurrent runners, or Kairo integration"
+}

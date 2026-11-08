@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'runtime-scheduling':{folder:'runtime-scheduling',title:'真实容器限制与kind调度'},
+ 'speculative-decoding':{folder:'speculative-decoding',title:'精确采样与CPU缓存验证'},
+ 'agent-crash-windows':{folder:'agent-crash-windows',title:'六个真实进程崩溃窗口'},
  'agent-boundaries':{folder:'agent-boundaries',title:'授权提交与完整上下文预算'},
  'operators-routing':{folder:'operators-routing',title:'C算子、CPU轨迹与MoE路由'},
  'transport-recovery':{folder:'transport-recovery',title:'Linux epoll 与 MySQL 按点恢复'},
@@ -104,6 +107,12 @@ labLearningCatalog.push(
  {id:'ai-attention-walk',track:'ai',stage:1,title:'把三行注意力手算与真实SDPA对齐',chapter:'attention-mechanics',pack:'mechanism-walkthroughs',files:['attention_trace.py'],anchor:'v43-attention-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU张量',observe:'逐项核对分数、权重、输出，再改变缓存位置、无效key、Q/K方向与分头坐标。',scope:'float64 CPU数值对照；不报告GPU内核或性能收益。'},
  {id:'ai-decoder-walk',track:'ai',stage:1,title:'四种形状正确的接线错误，最早错在哪里',chapter:'transformer-block',pack:'mechanism-walkthroughs',files:['decoder_trace.py','tiny_decoder.py'],anchor:'v43-decoder-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU模型与梯度',observe:'追踪664参数模型的每层数值，核对归一化轴、第二分支输入、门控、残差与未来扰动。',scope:'固定输入和种子的前向及标量梯度；不是大型模型质量或GPU性能测试。'},
  {id:'agent-history-walk',track:'agent',stage:2,title:'结果记录前后退出，恢复会重新读取吗',chapter:'durable-workflows',pack:'mechanism-walkthroughs',files:['workflow_history.py'],anchor:'v43-history-practice',env:'Python 3.9+ · 标准库 / SQLite',kind:'实际进程与持久历史',observe:'在读取后、结果提交后分别退出，改源值23为999，再比较恢复结果与活动调用次数。',scope:'本地解释器，活动只读资料和生成文本；不是Temporal SDK或Kairo运行结果。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-container-native',track:'cloud',stage:1,title:'分开观察视图、CPU、内存和线程名额',chapter:'container-runtime',anchor:'container-native-run',pack:'runtime-scheduling',files:['container_limits.py','container_probe.py'],env:'Linux Docker · cgroup v2 · Python 3.9+',kind:'真实Linux容器',observe:'比较同时存活的namespace、cpu.stat差值、OOM原因与pids事件；不用单一退出码猜原因。',scope:'公共Linux CI实际执行；只创建自有受限容器，不验证隔离逃逸或生产性能。'},
+ {id:'cloud-scheduler-native',track:'cloud',stage:2,title:'从配额拒绝走到资源形状与约束冲突',chapter:'scheduling-resources',anchor:'scheduler-native-run',pack:'runtime-scheduling',files:['schedule_lab.py'],env:'Linux Docker · kind 0.33.0 · kubectl · Python',kind:'真实kind调度',observe:'按对象不存在、Unschedulable、节点绑定与Ready分别核对；容忍不豁免反亲和。',scope:'实际API与scheduler；多个节点容器共享单机，不证明物理多机或云CNI/CSI。'},
+ {id:'ai-speculative-sampling',track:'ai',stage:1,title:'精确补回采样概率，再核对实际K/V',chapter:'speculative-decoding',anchor:'spec-exact-run',pack:'speculative-decoding',files:['exact_sampling.py','cache_verify.py'],env:'Python 3.9+；缓存需Python 3.10–3.12/PyTorch 2.5.1 CPU',kind:'精确概率与CPU张量',observe:'枚举27条完整序列；再运行cache_verify.py比较接受、拒绝及不裁缓存的真实数值。',scope:'未训练模型与受控草稿，只验证分布与缓存；不是GPU速度或真实草稿质量。'},
+ {id:'agent-crash-windows',track:'agent',stage:2,title:'六个SIGKILL窗口：旧请求还会提交吗',chapter:'agent-recovery',anchor:'agent-crash-windows-run',pack:'agent-crash-windows',files:['crash_windows.py'],env:'POSIX · Python 3.9+ · 标准库 / SQLite',kind:'真实子进程与HTTP',observe:'工具保持存活，按同一身份恢复；换身份产生74与篡改观察都被独立验收拒绝。',scope:'只验证进程崩溃与固定本地工具协议；断电、多运行器接管和Kairo接口仍待目标环境。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

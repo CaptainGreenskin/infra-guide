@@ -1643,6 +1643,134 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "agent-recovery",
+      "previous_content_sha256": "bf3411c85d011a6b6647b838eba06004fa185b90c09efd496c4b1f3122dfdfd4",
+      "reviewed_content_sha256": "15c491b4c0a11964c373705ef12f109658f25a05896bf4fc1c91ea996b421fcf",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节深化C4运行时、调度与G4恢复；知识先行、原锚点保留、真实外部执行和独立判据。",
+      "observation": "Linux Docker与kind实际验证视图/限制、准入/放置；六个SIGKILL窗口区分本地进度与接收方事实，负例独立验收；不宣称物理多机、断电或Kairo已验。",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "previous_content_sha256": "2182a168735f4e30b49f20aaa0752ea347b24acb042b07b8b40435a52c4f89db",
+      "reviewed_content_sha256": "084199fc37f893a8d166be213c28310bf7dffe6675a35c31e7e9f845e2d12850",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节深化C4运行时、调度与G4恢复；知识先行、原锚点保留、真实外部执行和独立判据。",
+      "observation": "Linux Docker与kind实际验证视图/限制、准入/放置；六个SIGKILL窗口区分本地进度与接收方事实，负例独立验收；不宣称物理多机、断电或Kairo已验。",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "previous_content_sha256": "bdc09f44c71407451f24a95573b1de57527bb64915184dc8ea88c29eacbc498e",
+      "reviewed_content_sha256": "fda9932b7f16f5f67f3592873a9e322ddf1ea9b7ca802999ce55b935ba04e089",
+      "reviewed_at": "2026-11-08",
+      "scope": "逐节深化C4运行时、调度与G4恢复；知识先行、原锚点保留、真实外部执行和独立判据。",
+      "observation": "Linux Docker与kind实际验证视图/限制、准入/放置；六个SIGKILL窗口区分本地进度与接收方事实，负例独立验收；不宣称物理多机、断电或Kairo已验。",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "previous_content_sha256": "15c491b4c0a11964c373705ef12f109658f25a05896bf4fc1c91ea996b421fcf",
+      "reviewed_content_sha256": "e1f215ea23d7a1208a4a74b1da495d1a1e489db0e48eca471d1143c64342f496",
+      "reviewed_at": "2026-11-08",
+      "scope": "正文复读修订首次术语：init/sidecar、Pod overhead、PDB、SIGKILL与实验屏障。",
+      "observation": "在首次参与推理时补中文含义；保留运行范围与原完整代码，概念不只停在章首。",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "previous_content_sha256": "084199fc37f893a8d166be213c28310bf7dffe6675a35c31e7e9f845e2d12850",
+      "reviewed_content_sha256": "cee3e1508775316138724931af88b2963333a40c8e5586aec608ae55898ef70e",
+      "reviewed_at": "2026-11-08",
+      "scope": "正文复读修订首次术语：init/sidecar、Pod overhead、PDB、SIGKILL与实验屏障。",
+      "observation": "在首次参与推理时补中文含义；保留运行范围与原完整代码，概念不只停在章首。",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "previous_content_sha256": "fda9932b7f16f5f67f3592873a9e322ddf1ea9b7ca802999ce55b935ba04e089",
+      "reviewed_content_sha256": "d4aa124d4ade3175334bed5ce855b8dbfc90d71adcb5f875dc7ea5a739980f85",
+      "reviewed_at": "2026-11-08",
+      "scope": "正文复读修订首次术语：init/sidecar、Pod overhead、PDB、SIGKILL与实验屏障。",
+      "observation": "在首次参与推理时补中文含义；保留运行范围与原完整代码，概念不只停在章首。",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "previous_content_sha256": "cee3e1508775316138724931af88b2963333a40c8e5586aec608ae55898ef70e",
+      "reviewed_content_sha256": "b95fc6b198af5e17c3d19e9fe26f34f85e6b9a371f078bba1b4cf99098d15340",
+      "reviewed_at": "2026-11-08",
+      "scope": "阅读验收前明确容器停止术语。",
+      "observation": "preStop先解释为终止前生命周期钩子，readiness先解释为就绪探针，再推导共享终止预算。",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
     }
   ]
 }

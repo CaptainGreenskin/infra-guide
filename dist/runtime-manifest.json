@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 150,
+  "canonical_script_count": 155,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "0d96d06b58b2e75017c593b0745710abb4eba0686a9208a0a1516e8fdad92929",
-      "bytes": 367154,
+      "sha256": "bec8b696dc4428dd864d103743fa41e27b9740b1300b5cf7d9b66e872d05e668",
+      "bytes": 367922,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "0437537e976fbb4007794fabeacf14684d38a87ab241fb249a9aba942013177a",
-          "bytes": 9023
+          "sha256": "891e2f777b3503b2fcda6b1145193d56429ffd7ec1f58bb72b4bc89853ca5761",
+          "bytes": 9791
         },
         {
           "file": "training-content.js",
@@ -331,8 +331,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "1846cfd1d15aadf1a8696c11b7870ffb25af6f0a0beff4d1a0b030948e702b08",
-      "bytes": 332958,
+      "sha256": "e642695b04823ac6ff3321c57d1b3d2d4725ed77e04ce8ffcc30c947c674d67b",
+      "bytes": 333102,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -366,8 +366,8 @@
         },
         {
           "file": "interview-practice.js",
-          "sha256": "b8b8b3b1e4a82f9398f3a7178138c64354b01776ed646df914beb7a18c5bc603",
-          "bytes": 7417
+          "sha256": "8eae379b63e57b6bc2ed041cafc92bf235f6a86fc0d15e9b97faf49f6fa337ce",
+          "bytes": 7561
         },
         {
           "file": "interview-coding.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "36f416232b92f098fd7264b0ccb534762b4624315256dd02064126493c790d8c",
-      "bytes": 867062,
+      "sha256": "9dfedd0106629adb9499b5b461f4aa4bfb754c34c02305faed650165c77f4f22",
+      "bytes": 990868,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -759,9 +759,34 @@
           "bytes": 16020
         },
         {
+          "file": "continuous-depth-data.js",
+          "sha256": "540264caa0e076d72afbf35cded668f9a96d80ac6e38505231c397d52a607ff9",
+          "bytes": 66650
+        },
+        {
+          "file": "speculative-decoding-lessons.js",
+          "sha256": "3e2a71b624f45a4f0cb7694013b7e4c42be6b92692c2d78aa09792f24e429fc2",
+          "bytes": 15165
+        },
+        {
+          "file": "runtime-scheduling-lessons.js",
+          "sha256": "35297ca4175dae108999a6aac06e8897adb1bbadd76900b7d471ff9cff001951",
+          "bytes": 22868
+        },
+        {
+          "file": "agent-crash-lessons.js",
+          "sha256": "7021b4d08a645fb6e70b2f76ad41cd48378e1455638e45b7afe542f4f7f3dc49",
+          "bytes": 13096
+        },
+        {
           "file": "concept-paths-data.js",
           "sha256": "2301c7c39f6498302f3df73ad4a093da1afd9cca0dd3b419ef5a2b6f57286e3f",
           "bytes": 74664
+        },
+        {
+          "file": "continuous-course-links.js",
+          "sha256": "98d18439712dff5e19c8de88aac807f4090b47a46ee04c4a49a7d698994c4ae7",
+          "bytes": 3349
         },
         {
           "file": "concept-paths.js",
@@ -770,13 +795,13 @@
         },
         {
           "file": "course-map.js",
-          "sha256": "f68d41680822f9e51889f3681d13c07489477de6f4e65ed4e848188a9f1de3f6",
-          "bytes": 6604
+          "sha256": "746e8970a9a0db3ea8ce4caf4ebd5558b7207ece521c06a58693d74df4577545",
+          "bytes": 6650
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "d2ed0ac556f7f2c0301494ec70492914ec797d628122633593c5c5304c4e1efb",
-          "bytes": 39870
+          "sha256": "81ca150f01a2fda694ffe0cfdb4ca4a62b382404c62d537105a3e52581dc2208",
+          "bytes": 42330
         }
       ]
     }

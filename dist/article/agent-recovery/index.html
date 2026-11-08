@@ -5,10 +5,10 @@
 <meta name="description" content="最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。">
 <meta name="theme-color" content="#315dce"><title>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=0d96d06b58b2"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=42b378a9adc8"></script><script defer src="runtime-04.js?v=1846cfd1d15a"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=36f416232b92"></script><script defer src="reading-comfort.js?v=dc2f6df57abc"></script><script defer src="site-search.js?v=d634ee795d81"></script><script defer src="app.js?v=3586a0edf667"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=bec8b696dc44"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=42b378a9adc8"></script><script defer src="runtime-04.js?v=e642695b0482"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=9dfedd010662"></script><script defer src="reading-comfort.js?v=dc2f6df57abc"></script><script defer src="site-search.js?v=d634ee795d81"></script><script defer src="app.js?v=3586a0edf667"></script>
 
 
-<link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 · InfraGuide"><meta property="og:description" content="最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"工具已经执行，任务却没完成：持久化、幂等与崩溃恢复","description":"最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/","dateModified":"2026-11-04","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 · InfraGuide"><meta property="og:description" content="最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"工具已经执行，任务却没完成：持久化、幂等与崩溃恢复","description":"最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
 <body>
 <a class="skip" href="/article/agent-recovery/#main">跳到主要内容</a>
 <header class="header"><div class="header-inner">
@@ -19,155 +19,15 @@
 <noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>Agent Infra · 领域与章节</span><span>10 章</span></div><details open><summary><a href="/module/agent/" ><span>G</span>Agent 运行时与 Kairo 实践</a></summary><div class="side-links"><a href="/article/agent-runtime/" >G1 Agent Infra在解决什么：从模型提议到任务完成</a><a href="/article/agent-security/" >G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a><a href="/article/agent-sandbox/" >G3 Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-recovery/" class="current" aria-current="page">G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a><a href="/article/agent-memory/" >G5 上下文、运行状态与长期记忆：三种信息不要混存</a><a href="/article/agent-evaluation/" >G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a href="/article/durable-workflows/" >G7 持久工作流：事件重放、接管与提交</a><a href="/article/agent-retrieval/" >G8 检索与上下文：让答案有可验证的证据</a><a href="/article/agent-observability/" >G9 Agent 观测：任务、重试与成本归因</a><a href="/article/kairo-practice/" >G10 Kairo 接入验收：任务、权限与结果证据</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 10</b></div>
-   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G4</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>机制 + 实验</span><span>·</span><span>系统课程 · 2026.11.04</span></div><h1>G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先分清用户目标和产生效果的动作</h3><p>任务是一项待完成的用户委托；工具执行其中的读取或写入。操作身份标识同一个逻辑动作，执行尝试则是为了完成它发起的一次具体调用。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>调用方没收到响应，效果仍可能存在</h3><p>回执是接收方对实际处理结果的记录。幂等协议让同一逻辑动作重复到达时仍符合约定效果；恢复利用保存的身份和事实继续推进，不能只依靠聊天文字猜测。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再从提交间隙走到多执行者接管</h3><p>本章先用单执行者解释提交后失联，再增加仍活着的旧执行者。先分别解决重复动作和过期写入，才能说明接管保证从哪里生效。</p></section></section><p class="description">最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。</p><div class="tag-row"><span class="tag">窗口</span><span class="tag">协议</span><span class="tag">证据</span></div><details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary><div class="guided-intro"><span>先建立直觉</span><p>恢复首先要确认已经发生了什么。稳定操作ID把重试关联到原动作，接收方的去重与回执协议决定重复尝试是否会重复生效。</p><strong>贯穿案例：工具已提交一次示例效果，runner还没记下成功就退出；恢复后沿用op-001继续确认。</strong><details><summary>第一次遇到这些词？展开4个必要术语</summary><dl><dt>提交间隙</dt><dd>工具效果已提交，但runner完成记录尚未提交的时间窗口。</dd><dt>幂等键 / operation ID</dt><dd>标识一次逻辑动作。同一动作重试沿用原键，合法的新动作应有新键。</dd><dt>参数指纹</dt><dd>对动作参数的规范表示计算摘要，帮助发现同键不同意图。</dd><dt>未知状态</dt><dd>当前证据不能区分未生效与已生效；它不等于确定失败。</dd></dl></details></div></details><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约19分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>窗口：理解效果与记录的间隙</li><li>协议：稳定幂等键与参数指纹</li><li>证据：分别核对尝试数和效果数</li></ul><p><b>前置知识</b>完成P0.4、G1；了解数据库事务。</p><p class="evidence-note">约 19 分钟 · Python 3.9+ · 标准库实验 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/agent-recovery/#concept-path">概念起点与关系</a><a href="/article/agent-recovery/#section-1">1. 为什么一个数据库事务包不住整个世界</a><a href="/article/agent-recovery/#section-2">2. 接收方决定重复尝试是否重复生效</a><a href="/article/agent-recovery/#section-3">3. 运行一次真实的退出与恢复</a><a href="/article/agent-recovery/#section-4">4. 读代码时盯住三个位置</a><a href="/article/agent-recovery/#section-5">5. 取消、停止与提交：用回执决定状态</a></details><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>为什么一个数据库事务包不住整个世界</h2><p>继续上一章的报告任务，但在实验中把真实写报告简化为工具数据库里的一次计数增加。runner负责记录任务状态，工具负责产生效果，两者各有一个数据库。这个简化让我们能准确观察“调用几次”和“效果发生几次”，而不接触外部业务。</p><p>最危险的顺序是：runner记录开始，工具提交效果与回执，然后runner在写成功记录前退出。工具看到的事实是“已完成”，runner恢复后看到的事实是“还在运行”。这不是谁的日志说谎，而是两份记录停留在不同时间。</p><p>如果直接把RUNNING改成FAILED再执行一个新动作，可能把已经发生的效果再做一遍。如果仅凭计划或模型文字写SUCCEEDED，又可能接受没有完成的效果。恢复需要先承认结果未知，再按协议确认。</p><div class="table-wrap"><table><thead><tr><th>崩溃位置</th><th>工具侧可能看到什么</th><th>恢复需要做什么</th></tr></thead><tbody><tr><td>调用到达工具之前</td><td>没有该操作回执</td><td>在原动作身份下继续，仍受预算限制</td></tr><tr><td>工具事务尚未提交</td><td>本地事务可能回滚</td><td>确认接收方事务与重试语义</td></tr><tr><td>工具已提交，runner未记完成</td><td>效果和回执已存在</td><td>沿原ID查询或幂等重试</td></tr><tr><td>runner已提交成功</td><td>完成记录与回执都存在</td><td>返回已确认结果，避免重新发起动作</td></tr></tbody></table></div></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>接收方决定重复尝试是否重复生效</h2><figure class="training-figure"><a href="diagrams/agent-commit.svg" target="_blank" rel="noopener" aria-label="放大：两个独立持久化域：工具端把效果和回执原子提交，runner随后记录完成。"><img src="diagrams/agent-commit.svg" width="960" height="720" alt="两个独立持久化域：工具端把效果和回执原子提交，runner随后记录完成。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两个独立持久化域：工具端把效果和回执原子提交，runner随后记录完成。<a href="diagrams/agent-commit.svg" download>下载 SVG ↗</a></figcaption></figure><p>本实验为逻辑动作固定operation ID，并保存参数摘要。工具在同一个事务内查询回执、执行示例效果并写回执；同键同参数返回原结果，同键不同参数拒绝。runner恢复时沿用原键，因此调用次数增加而效果次数不增加。</p><p>如果远端工具不提供这样的语义，runner不能靠本地去重凭空保证外部效果只有一次。应使用可查询回执、对账、补偿或明确的人工处理状态，并准确描述保证范围。</p><p>这里真正提供保证的是接收方的一次原子提交：效果与回执要么一起成立，要么一起不成立。先记回执再做一个无法参与同一事务的远端动作，仍可能出现“回执存在但效果未发生”；先做远端动作再记回执，则仍可能重复。跨服务或文件系统时，必须重新说明事务边界，不能把SQLite示例当作任意外部工具的保证。</p><p>参数指纹帮助发现同一个ID被用于不同意图。它需要稳定的参数表示，且不能代替身份与授权。多租户工具还应按调用主体或租户限定键空间，明确回执保留时间；旧键过期后的迟到重试，需要另行约定，不能默认永久去重。</p><p class="source-at">继续核对：<a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/" target="_blank" rel="noopener">AWS Builders Library · 安全重试与幂等API ↗</a></p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>运行一次真实的退出与恢复</h2><div class="table-wrap"><table><thead><tr><th>时刻</th><th>运行器状态</th><th>尝试数</th><th>工具效果数</th></tr></thead><tbody><tr><td>提交后进程退出</td><td>运行中</td><td>1</td><td>1</td></tr><tr><td>恢复后取回回执</td><td>已完成</td><td>2</td><td>仍为1</td></tr></tbody></table></div><p>先看效果已经存在、任务状态还没完成的这一行，再执行下面命令。恢复时沿用原操作键，才能取回原回执。</p><p>先预测结果，再运行：子进程退出后，工具效果应该是1，但runner仍是RUNNING；恢复沿用op-001发起第二次尝试，接收方返回已有回执，效果仍为1。若你预测的是“全部回滚”或“自动成功”，就需要回到两个独立持久化域的边界。</p><div class="code-block"><div class="code-toolbar"><span>解压系统实验包后运行 <small>BASH</small></span><button data-copy-code aria-label="复制 解压系统实验包后运行">复制代码</button></div><pre tabindex="0"><code>python3 agent_lab.py --output runs/agent-report.json</code></pre></div><div class="code-block"><div class="code-toolbar"><span>关键预期：完整记录见validation.json <small>JSON</small></span><button data-copy-code aria-label="复制 关键预期：完整记录见validation.json">复制代码</button></div><pre tabindex="0"><code>{
-  &quot;crash_exit_code&quot;: 23,
-  &quot;after_crash&quot;: {
-    &quot;runner_state&quot;: &quot;RUNNING&quot;,
-    &quot;tool_effects&quot;: 1
-  },
-  &quot;after_recovery&quot;: {
-    &quot;runner_state&quot;: &quot;SUCCEEDED&quot;,
-    &quot;attempts&quot;: 2,
-    &quot;tool_effects&quot;: 1
-  }
-}</code></pre></div><p>程序启动子<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>，在工具事务提交后调用os._exit(23)，随后启动新的子进程恢复。它使用独立的runner.sqlite和tool.sqlite，避免用同一个事务掩盖真正的提交间隙。数据库位于临时目录，报告保留结果。</p><div class="download-box"><div><strong>配套系统实验包</strong><span>Python 标准库 · Cloud / AI 指标 / <span class="first-concept-term" data-concept-term="Agent">Agent<span class="concept-term-meaning">（在任务范围内组织模型与工具反复推进工作的智能体系统）</span></span> 恢复 · 附实测记录</span></div><a href="labs/infra-systems.zip" download>下载实验包 ↓</a></div><p>读报告时，把after_crash和after_recovery放在一起比较。attempts从1变成2，记录的是重新尝试确认动作；tool_effects保持1，证明本实验工具没有再次提交效果。只看最后的SUCCEEDED，会漏掉恢复过程是否产生重复。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>读代码时盯住三个位置</h2><p>不要只沿正常调用顺序读函数。可以先提出三个改动反例，再判断会破坏哪项条件。</p><div class="table-wrap"><table><thead><tr><th>改动</th><th>可能出现的结果</th><th>破坏的条件</th></tr></thead><tbody><tr><td>重试时换成新operation ID</td><td>工具按新动作再次生效</td><td>原动作身份没有延续</td></tr><tr><td>只在runner本地记录去重</td><td>提交间隙仍可能导致远端重做</td><td>效果拥有者未参与协议</td></tr><tr><td>同键参数变化仍返回旧成功</td><td>新意图被误判为旧结果</td><td>未检查语义冲突</td></tr></tbody></table></div><p>第一，策略检查发生在执行效果之前；第二，工具端效果与回执处于同一<span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>；第三，runner在调用工具前提交attempt记录，调用返回后才提交完成状态。理解这三个位置，比记住函数名称更重要。</p><p>实验还验证已完成动作重复读取、同ID不同参数拒绝和未允许工具拒绝。它只运行单<span class="first-concept-term" data-concept-term="worker">worker<span class="concept-term-meaning">（承担相应工作的执行者，具体可以是进程或其他运行单元）</span></span>，没有租约竞争、<span class="first-concept-term" data-concept-term="fencing">fencing<span class="concept-term-meaning">（由受保护接收方拒绝过期执行者写入的隔离机制）</span></span>、真实网络分区或断电耐久性测试。</p><details class="full-code"><summary>展开完整 agent_lab.py</summary><div class="code-block"><div class="code-toolbar"><span>agent_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 agent_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Durable tool execution teaching lab. Two independent SQLite databases.
-No LLM, external service, Kairo code, or real-world side effect is invoked.
-&quot;&quot;&quot;
-import argparse
-import hashlib
-import json
-import os
-from pathlib import Path
-import platform
-import sqlite3
-import subprocess
-import sys
-import tempfile
-
-
-def signature(payload):
-    return hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(&#39;,&#39;,&#39;:&#39;)).encode()).hexdigest()
-
-
-def connect(path):
-    return sqlite3.connect(str(path),timeout=5)
-
-
-def setup(root):
-    root.mkdir(parents=True,exist_ok=True)
-    with connect(root/&#39;runner.sqlite&#39;) as db:
-        db.execute(&#39;CREATE TABLE IF NOT EXISTS operations (id TEXT PRIMARY KEY, payload_hash TEXT NOT NULL, state TEXT NOT NULL, attempts INTEGER NOT NULL, result TEXT)&#39;)
-    with connect(root/&#39;tool.sqlite&#39;) as db:
-        db.execute(&#39;CREATE TABLE IF NOT EXISTS receipts (id TEXT PRIMARY KEY, payload_hash TEXT NOT NULL, result TEXT NOT NULL)&#39;)
-        db.execute(&#39;CREATE TABLE IF NOT EXISTS effects (id INTEGER PRIMARY KEY CHECK(id=1), count INTEGER NOT NULL)&#39;)
-        db.execute(&#39;INSERT OR IGNORE INTO effects VALUES (1,0)&#39;)
-
-
-def enforce_policy(payload):
-    if payload.get(&#39;tool&#39;) != &#39;record_demo_action&#39;:
-        raise ValueError(&#39;tool denied by allowlist&#39;)
-    if payload.get(&#39;tenant&#39;) != &#39;demo&#39; or payload.get(&#39;amount&#39;) != 1:
-        raise ValueError(&#39;arguments denied by policy&#39;)
-
-
-def tool_service(root, op_id, payload):
-    &quot;&quot;&quot;The *receiving tool* owns atomic deduplication and the demo effect.&quot;&quot;&quot;
-    wanted = signature(payload)
-    with connect(root/&#39;tool.sqlite&#39;) as db:
-        db.execute(&#39;BEGIN IMMEDIATE&#39;)
-        old = db.execute(&#39;SELECT payload_hash,result FROM receipts WHERE id=?&#39;,(op_id,)).fetchone()
-        if old:
-            if old[0] != wanted:
-                raise ValueError(&#39;idempotency key payload conflict at tool&#39;)
-            return old[1]
-        db.execute(&#39;UPDATE effects SET count=count+1 WHERE id=1&#39;)
-        count = db.execute(&#39;SELECT count FROM effects WHERE id=1&#39;).fetchone()[0]
-        result = json.dumps({&#39;effect_count&#39;:count})
-        db.execute(&#39;INSERT INTO receipts VALUES (?,?,?)&#39;,(op_id,wanted,result))
-        return result
-
-
-def execute(root, op_id, payload, crash_after_effect=False):
-    enforce_policy(payload)  # Authority is outside a model&#39;s proposed arguments.
-    wanted = signature(payload)
-    with connect(root/&#39;runner.sqlite&#39;) as db:
-        db.execute(&#39;BEGIN IMMEDIATE&#39;)
-        old = db.execute(&#39;SELECT payload_hash,state,attempts,result FROM operations WHERE id=?&#39;,(op_id,)).fetchone()
-        if old and old[0] != wanted:
-            raise ValueError(&#39;operation payload conflict&#39;)
-        if old and old[1] == &#39;SUCCEEDED&#39;:
-            return old[3]
-        if old and old[2] &gt;= 2:
-            raise ValueError(&#39;demo retry budget exhausted&#39;)
-        if not old:
-            db.execute(&#39;INSERT INTO operations VALUES (?,?,?,0,NULL)&#39;,(op_id,wanted,&#39;PLANNED&#39;))
-        db.execute(&#39;UPDATE operations SET state=?,attempts=attempts+1 WHERE id=?&#39;,(&#39;RUNNING&#39;,op_id))
-    result = tool_service(root,op_id,payload)
-    if crash_after_effect:
-        # A real process exit after the tool transaction committed but before runner completion.
-        os._exit(23)
-    with connect(root/&#39;runner.sqlite&#39;) as db:
-        db.execute(&#39;UPDATE operations SET state=?,result=? WHERE id=?&#39;,(&#39;SUCCEEDED&#39;,result,op_id))
-    return result
-
-
-def experiment():
-    with tempfile.TemporaryDirectory(prefix=&#39;infra-agent-&#39;) as temporary:
-        root = Path(temporary)
-        setup(root)
-        command = [sys.executable, str(Path(__file__).resolve()), &#39;--worker&#39;, str(root)]
-        crash = subprocess.run(command+[&#39;--crash-after-effect&#39;],capture_output=True,text=True,timeout=15)
-        assert crash.returncode == 23, crash.stderr
-        with connect(root/&#39;runner.sqlite&#39;) as db:
-            after_crash = db.execute(&#39;SELECT state,attempts FROM operations&#39;).fetchone()
-        with connect(root/&#39;tool.sqlite&#39;) as db:
-            effects_before = db.execute(&#39;SELECT count FROM effects&#39;).fetchone()[0]
-        assert after_crash == (&#39;RUNNING&#39;,1) and effects_before == 1
-        recovered = subprocess.run(command,capture_output=True,text=True,timeout=15)
-        assert recovered.returncode == 0, recovered.stderr
-        payload = {&#39;tool&#39;:&#39;record_demo_action&#39;,&#39;tenant&#39;:&#39;demo&#39;,&#39;amount&#39;:1}
-        duplicate_result = execute(root,&#39;op-001&#39;,payload)
-        with connect(root/&#39;runner.sqlite&#39;) as db:
-            state, attempts = db.execute(&#39;SELECT state,attempts FROM operations&#39;).fetchone()
-        with connect(root/&#39;tool.sqlite&#39;) as db:
-            effects = db.execute(&#39;SELECT count FROM effects&#39;).fetchone()[0]
-        assert state == &#39;SUCCEEDED&#39; and attempts == 2 and effects == 1
-        changed = dict(payload, extra=&#39;different-request&#39;)
-        try:
-            execute(root,&#39;op-001&#39;,changed)
-        except ValueError as e:
-            assert &#39;conflict&#39; in str(e)
-        else:
-            raise AssertionError(&#39;Changed payload accepted&#39;)
-        try:
-            execute(root,&#39;op-002&#39;,dict(payload,tool=&#39;unapproved_tool&#39;))
-        except ValueError as e:
-            assert &#39;denied&#39; in str(e)
-        else:
-            raise AssertionError(&#39;Unapproved tool accepted&#39;)
-        return {&#39;status&#39;:&#39;passed&#39;,&#39;environment&#39;:platform.system()+&#39; &#39;+platform.machine()+&#39; Python &#39;+platform.python_version(),
-                &#39;sqlite_version&#39;:sqlite3.sqlite_version,&#39;crash_exit_code&#39;:23,
-                &#39;after_crash&#39;:{&#39;runner_state&#39;:after_crash[0],&#39;tool_effects&#39;:effects_before},
-                &#39;after_recovery&#39;:{&#39;runner_state&#39;:state,&#39;attempts&#39;:attempts,&#39;tool_effects&#39;:effects},
-                &#39;duplicate_result&#39;:json.loads(duplicate_result),&#39;changed_payload_rejected&#39;:True,&#39;unapproved_tool_rejected&#39;:True,
-                &#39;scope&#39;:&#39;Single worker, local subprocess crash, separate SQLite databases, receiver-enforced deduplication.&#39;,
-                &#39;not_verified&#39;:[&#39;Kairo implementation&#39;,&#39;multiple concurrent workers&#39;,&#39;lease fencing&#39;,&#39;remote tool idempotency&#39;,&#39;power loss&#39;,&#39;LLM quality&#39;]}
-
-
-if __name__ == &#39;__main__&#39;:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(&#39;--worker&#39;)
-    parser.add_argument(&#39;--crash-after-effect&#39;,action=&#39;store_true&#39;)
-    parser.add_argument(&#39;--output&#39;,default=&#39;runs/agent-report.json&#39;)
-    args = parser.parse_args()
-    if args.worker:
-        execute(Path(args.worker),&#39;op-001&#39;,{&#39;tool&#39;:&#39;record_demo_action&#39;,&#39;tenant&#39;:&#39;demo&#39;,&#39;amount&#39;:1},args.crash_after_effect)
-    else:
-        result = experiment()
-        out = Path(args.output)
-        out.parent.mkdir(parents=True,exist_ok=True)
-        out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+&#39;\n&#39;)
-        print(json.dumps(result,ensure_ascii=False,indent=2))</code></pre></div></details></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>取消、停止与提交：用回执决定状态</h2><div class="mechanism-core" id="cancel-request-and-effect"><h3>取消请求、执行停止、效果提交，分别记账</h3><p>用户点击取消，表达“不再继续这项任务”。取消请求被持久记录，不代表工作进程已经收到，更不代表远端效果不存在。至少分别保存取消意图、执行者状态和操作回执。任务可以显示“正在取消”；不要刚写下一个标记，就把已经在途的发布、扣款或云任务显示为从未发生。</p><div class="table-wrap"><table><thead><tr><th>时点</th><th>处理方式</th><th>完成依据</th></tr></thead><tbody><tr><td>尚未派发</td><td>条件修改待执行状态，阻止后续派发</td><td>派发与取消共享受保护的状态转换</td></tr><tr><td>执行中，尚未提交</td><td>请求停止；执行者在约定检查点确认</td><td>停止确认、资源回收与效果查询</td></tr><tr><td>效果已经提交</td><td>保留成功回执，说明取消到达过晚</td><td>同一操作身份的权威提交结果</td></tr><tr><td>请求已发出，回执未知</td><td>停止新增写动作，按授权对账</td><td>远端回执、可核验结果或人工确认</td></tr></tbody></table></div><figure class="training-figure"><a href="diagrams/v21-cancel-commit.svg" target="_blank" rel="noopener" aria-label="放大：同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。"><img src="diagrams/v21-cancel-commit.svg" width="1120" height="670" alt="同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。<a href="diagrams/v21-cancel-commit.svg" download>下载 SVG ↗</a></figcaption></figure><p>在本地事务能够覆盖的范围里，可以让提交者加锁后先检查取消状态，再决定写效果与回执；取消先提交则阻止后续效果，效果先提交则返回已完成。这解决的是这份权威状态内的竞争，不是让本地任务表自动控制另一个工具的数据库。</p><p>协作取消要求执行者轮询、接收取消信号或在等待点响应；<span class="first-concept-term" data-concept-term="CPU">CPU<span class="concept-term-meaning">（中央处理器，执行程序指令）</span></span> 计算、阻塞调用和外部任务不一定立即返回。超时只说明等待预算耗尽；进程还活着、执行者已退出、外部任务已结束仍需各自证据。强制终止直接子进程后要回收它，不能据此宣称它创建的全部远端资源也已停止。</p></div><h3>协议通知不是业务回滚，补偿也不是改个状态</h3><p><span class="first-concept-term" data-concept-term="MCP">MCP<span class="concept-term-meaning">（模型上下文协议，规定客户端与服务端交换相应工具和上下文能力的方式）</span></span> 普通请求可发送 notifications/cancelled 通知，关联此前发出的同方向在途请求；接收方可能因已完成或无法取消而忽略。不要取消 initialize；任务化请求使用 tasks/cancel 及其任务状态协议。传输层的取消与工具业务提交是不同层；本地取消通知已发出，不是远端零效果证明。</p><p>持久工作流还需明确：请求取消后是等待执行者确认，还是继续走另一条分支。以 Temporal 普通 Activity 为例，取消的传达与心跳、SDK 行为有关；执行代码也可能捕获取消后继续。设计等待策略时必须同时考虑资源清理和仍在途的效果，不能把工作流分支结束等同于所有 Activity 已停止。</p><p>取消后不要为了“查成功没”自动重新发起写操作。用稳定 op_id 查询已有回执；查询也需要相应权限。查不到不能直接推出没提交，尤其当回执服务暂时不可用时。补偿则是新的业务动作，例如撤销已发布对象；它需要新的操作身份、明确授权、幂等与失败处理，原任务取消并不自动授予任意补偿权限。</p><div class="code-block"><div class="code-toolbar"><span>恢复分支示意 · lookup 失败时仍保留未知，不重新写 <small>PYTHON</small></span><button data-copy-code aria-label="复制 恢复分支示意 · lookup失败时仍保留未知，不重新写">复制代码</button></div><pre tabindex="0"><code>record_cancel_intent(task_id)
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G4</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>机制 + 实验</span><span>·</span><span>系统课程 · 2026.11.08</span></div><h1>G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先分清用户目标和产生效果的动作</h3><p>任务是一项待完成的用户委托；工具执行其中的读取或写入。操作身份标识同一个逻辑动作，执行尝试则是为了完成它发起的一次具体调用。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>调用方没收到响应，效果仍可能存在</h3><p>回执是接收方对实际处理结果的记录。幂等协议让同一逻辑动作重复到达时仍符合约定效果；恢复利用保存的身份和事实继续推进，不能只依靠聊天文字猜测。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>先完成单执行者恢复，再进入接管</h3><p>本章逐个移动崩溃位置，把未知结果、工具回执与本地完成连起来。恢复证明了同一动作能继续，不代表旧执行者已停止；多执行者的租约与代际拒绝属于下一层机制，在后续工作流章节继续展开。</p></section></section><p class="description">最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。</p><div class="tag-row"><span class="tag">窗口</span><span class="tag">协议</span><span class="tag">证据</span></div><details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary><div class="guided-intro"><span>先建立直觉</span><p>恢复首先要确认已经发生了什么。稳定操作ID把重试关联到原动作，接收方的去重与回执协议决定重复尝试是否会重复生效。</p><strong>贯穿案例：操作logical-add-1为demo增加37，运行器在六个窗口被杀死；恢复后仍只允许一个效果。</strong><details><summary>第一次遇到这些词？展开4个必要术语</summary><dl><dt>提交间隙</dt><dd>工具效果已提交，但runner完成记录尚未提交的时间窗口。</dd><dt>幂等键 / operation ID</dt><dd>标识一次逻辑动作。同一动作重试沿用原键，合法的新动作应有新键。</dd><dt>参数指纹</dt><dd>对动作参数的规范表示计算摘要，帮助发现同键不同意图。</dd><dt>未知状态</dt><dd>当前证据不能区分未生效与已生效；它不等于确定失败。</dd></dl></details></div></details><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约45分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>窗口：理解效果与记录的间隙</li><li>协议：稳定幂等键与参数指纹</li><li>证据：分别核对尝试数和效果数</li></ul><p><b>前置知识</b>完成P0.4、G1；了解数据库事务。</p><p class="evidence-note">约 45 分钟 · Python 3.9+ · 标准库实验 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/agent-recovery/#concept-path">概念起点与关系</a><a href="/article/agent-recovery/#section-1">1. 先画清任务、执行记录与工具端事实</a><a href="/article/agent-recovery/#section-2">2. 先保存操作身份，再允许外部写入</a><a href="/article/agent-recovery/#section-3">3. 接收方怎样让多次尝试只留下一个效果</a><a href="/article/agent-recovery/#section-4">4. 从未知到完成，状态要跟着证据推进</a><a href="/article/agent-recovery/#section-5">5. 取消和恢复都要尊重已经提交的效果</a><a href="/article/agent-recovery/#section-6">6. 为什么查不到回执，旧请求仍可能生效</a><a href="/article/agent-recovery/#section-7">7. 六个崩溃窗口，实际分别恢复了什么</a><a href="/article/agent-recovery/#section-8">8. 两个失败对照：身份改了，或只信本地完成</a><a href="/article/agent-recovery/#section-9">9. 运行完整实验，再回看最小提交间隙</a></details><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>先画清任务、执行记录与工具端事实</h2><p>任务是用户想完成的目标，步骤是其中一个逻辑动作，尝试是执行这个动作的一次具体调用。运行器是安排步骤、调用工具并保存进度的程序；工具服务才真正读取或修改目标资源。本章用一项固定动作贯穿：给demo账户增加37，最终只应增加一次，并留下能核对的回执。</p><p>运行器把进度放进runner.sqlite，工具把账户与回执放进tool.sqlite。两者是独立持久化域：一个域内的事务能让相关修改一起提交或回滚，却不会自动控制另一个服务的<span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>。持久化是把状态提交到能够在所声明故障后重新读取的存储，不是把“做过了”写进聊天摘要。</p><p>因此至少有三种事实：运行器曾计划什么，工具实际提交什么，运行器最终确认了什么。它们可以短时不一致。<span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span>连接消失、进程退出或本地仍显示执行中，都不能直接替代工具端的提交事实。模型也无法从缺少响应的文字中猜出正确答案。</p><figure class="training-figure"><a href="diagrams/v48-agent-two-domains.svg" target="_blank" rel="noopener" aria-label="放大：运行器与工具各自提交。工具进程在运行器被杀死后仍存活，响应丢失不会撤回已提交效果；恢复必须重新连接两个域的事实。"><img src="diagrams/v48-agent-two-domains.svg" width="960" height="490" alt="运行器与工具各自提交。工具进程在运行器被杀死后仍存活，响应丢失不会撤回已提交效果；恢复必须重新连接两个域的事实。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>运行器与工具各自提交。工具进程在运行器被杀死后仍存活，响应丢失不会撤回已提交效果；恢复必须重新连接两个域的事实。<a href="diagrams/v48-agent-two-domains.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>记录</th><th>保存位置</th><th>作用</th></tr></thead><tbody><tr><td>持久意图</td><td>运行器数据库</td><td>原动作身份、参数与目标</td></tr><tr><td>效果及回执</td><td>工具数据库同一事务</td><td>实际提交的资源变化及结果</td></tr><tr><td>本地观察</td><td>运行器数据库</td><td>已经核对并接收的工具结果</td></tr><tr><td>任务完成</td><td>运行器数据库</td><td>步骤满足目标后的进度，不代替外部验收</td></tr></tbody></table></div></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>先保存操作身份，再允许外部写入</h2><p>操作身份是同一个逻辑副作用的稳定编号，本例为logical-add-1。参数指纹是对规范化参数计算的摘要，帮助接收方发现“同一编号却换了内容”。尝试可以增加，操作身份必须保持不变；只有用户要求的一项新业务动作才应有新身份。</p><p>本例先把操作身份、参数指纹与INTENT状态提交到本地数据库，再发请求。INTENT表示动作已准备，不能仅凭它区分“尚未发出”“正在工具端执行”和“已提交但响应丢失”。调用进入不确定窗口后，应按未知结果恢复核对，而不是一律标记失败后重新生成动作。</p><p>若先发送写入、后保存身份，运行器可能在效果成功后退出，却没有任何稳定线索认回旧动作。即使工具支持幂等，也无法知道下次新编号与旧编号属于同一笔意图。数据库事务应保持短小：提交意图后再做网络请求，不能靠长期持有本地锁期待把远端纳入事务。</p><div class="code-block"><div class="code-toolbar"><span>关键顺序；完整协议与崩溃点见下方源码 <small>TEXT</small></span><button data-copy-code aria-label="复制 关键顺序；完整协议与崩溃点见下方源码">复制代码</button></div><pre tabindex="0"><code>本地事务：保存 operation + fingerprint + INTENT → 提交
+网络：向工具提交同一个 operation
+本地事务：保存经核对的回执 + OBSERVED → 提交
+本地事务：满足步骤条件后写 DONE → 提交</code></pre></div><p>参数规范化必须明确字段、类型和语义。本章固定account=demo、amount=37，并用排序后的JSON计算指纹。实际<span class="first-concept-term" data-concept-term="API">API<span class="concept-term-meaning">（供程序调用的接口）</span></span>还要规定整数范围、缺省值、币种、资源版本和身份授权；哈希相同只能关联内容，不能证明调用者有权执行。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>接收方怎样让多次尝试只留下一个效果</h2><p>幂等协议规定重复请求如何处理。本章工具以operation为唯一键，在同一事务中检查回执、增加账户、写回执。已有同键同指纹时返回原回执；同键不同指纹必须拒绝，不能把新意图悄悄当作旧结果。效果与回执要共同提交，否则仍可能出现“已经改账却没有去重记录”或“有回执却没有效果”。</p><div class="code-block"><div class="code-toolbar"><span>接收方事务的核心；请求验证与错误路径见完整程序 <small><span class="first-concept-term" data-concept-term="SQL">SQL<span class="concept-term-meaning">（向关系数据库表达查询与更新的一种语言）</span></span></small></span><button data-copy-code aria-label="复制 接收方事务的核心；请求验证与错误路径见完整程序">复制代码</button></div><pre tabindex="0"><code>BEGIN IMMEDIATE;
+SELECT fingerprint, amount FROM receipt WHERE op = ?;
+-- 不存在时才执行，以下两条属于同一个事务
+UPDATE counter SET value = value + 37;
+INSERT INTO receipt(op, fingerprint, amount) VALUES (?, ?, 37);
+COMMIT;</code></pre></div><p>唯一约束与事务共同处理并发重复，而不是先在进程内字典里查一次。重复请求可以来自超时重试、旧请求迟到或执行者恢复；本章用一个SQLite写事务串行化工具端修改，保证范围限定为这份本地接收协议。任意远端服务若不支持稳定身份与原子回执，运行器不能凭自己的去重表保证外部效果只发生一次。</p><p>回执也有生命周期。若接收方删除旧回执，而延迟的重试仍可能到达，旧动作可能再次生效；保留期限应覆盖业务允许的重试与迟到范围，并定义过期身份如何处理。工具自身权限变化、查询权限与写权限分别判断，不能为了查旧回执自动获得新写入授权。</p><a class="inline-link" href="/article/agent-security/">核对工具提交前授权与回执读取权限 →</a></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>从未知到完成，状态要跟着证据推进</h2><p>本例只有INTENT、OBSERVED和DONE三个持久状态。它没有把每一个网络瞬间都写成状态：INTENT覆盖多个尚未确认窗口，恢复时查工具回执来区分；OBSERVED表示本地已提交回执；DONE表示运行器已推进任务完成。少量状态也能正确，但每个状态能证明什么必须明确。</p><figure class="training-figure"><a href="diagrams/v48-agent-crash-window-matrix.svg" target="_blank" rel="noopener" aria-label="放大：六个真实SIGKILL位置覆盖发送前、工具提交前/后、响应后、本地观察后和完成后。表中效果数来自独立工具数据库，不由运行器状态猜测。"><img src="diagrams/v48-agent-crash-window-matrix.svg" width="960" height="578" alt="六个真实SIGKILL位置覆盖发送前、工具提交前/后、响应后、本地观察后和完成后。表中效果数来自独立工具数据库，不由运行器状态猜测。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>六个真实SIGKILL位置覆盖发送前、工具提交前/后、响应后、本地观察后和完成后。表中效果数来自独立工具数据库，不由运行器状态猜测。<a href="diagrams/v48-agent-crash-window-matrix.svg" download>下载 SVG ↗</a></figcaption></figure><p>INTENT恢复先按原操作身份查回执：查到并核对内容后保存观察；查不到时，只能依据接收方同键幂等语义安全重试，或者保持未知并继续对账。OBSERVED恢复可从已持久化、经过核对的回执推进；DONE重复恢复不需要重新调用工具。</p><p>“本地已观察”也不是永远可信的魔法字段。应检查回执身份、参数、来源和业务约束；任务最终验收还要与工具端事实或独立产物对照。本实验另外把本地回执的37篡改成99，独立验收立即拒绝，说明不能只看DONE或程序是否退出0。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>取消和恢复都要尊重已经提交的效果</h2><p>取消表示用户或策略不希望任务继续推进，不能让已经发生的外部事实自动消失。先定义取消前可以停止哪些未提交工作，再定义提交后怎样查询、停止后续动作或发起补偿。补偿是一项新的业务动作，可能有自己的权限、失败和重试，不能把它称作数据库回滚。</p><div class="mechanism-core" id="cancel-request-and-effect"><h3>取消请求、执行停止、效果提交，分别记账</h3><p>用户点击取消，表达“不再继续这项任务”。取消请求被持久记录，不代表工作进程已经收到，更不代表远端效果不存在。至少分别保存取消意图、执行者状态和操作回执。任务可以显示“正在取消”；不要刚写下一个标记，就把已经在途的发布、扣款或云任务显示为从未发生。</p><div class="table-wrap"><table><thead><tr><th>时点</th><th>处理方式</th><th>完成依据</th></tr></thead><tbody><tr><td>尚未派发</td><td>条件修改待执行状态，阻止后续派发</td><td>派发与取消共享受保护的状态转换</td></tr><tr><td>执行中，尚未提交</td><td>请求停止；执行者在约定检查点确认</td><td>停止确认、资源回收与效果查询</td></tr><tr><td>效果已经提交</td><td>保留成功回执，说明取消到达过晚</td><td>同一操作身份的权威提交结果</td></tr><tr><td>请求已发出，回执未知</td><td>停止新增写动作，按授权对账</td><td>远端回执、可核验结果或人工确认</td></tr></tbody></table></div><figure class="training-figure"><a href="diagrams/v21-cancel-commit.svg" target="_blank" rel="noopener" aria-label="放大：同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。"><img src="diagrams/v21-cancel-commit.svg" width="1120" height="670" alt="同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。<a href="diagrams/v21-cancel-commit.svg" download>下载 SVG ↗</a></figcaption></figure><p>在本地事务能够覆盖的范围里，可以让提交者加锁后先检查取消状态，再决定写效果与回执；取消先提交则阻止后续效果，效果先提交则返回已完成。这解决的是这份权威状态内的竞争，不是让本地任务表自动控制另一个工具的数据库。</p><p>协作取消要求执行者轮询、接收取消信号或在等待点响应；<span class="first-concept-term" data-concept-term="CPU">CPU<span class="concept-term-meaning">（中央处理器，执行程序指令）</span></span> 计算、阻塞调用和外部任务不一定立即返回。超时只说明等待预算耗尽；进程还活着、执行者已退出、外部任务已结束仍需各自证据。强制终止直接子进程后要回收它，不能据此宣称它创建的全部远端资源也已停止。</p></div><h3>协议通知不是业务回滚，补偿也不是改个状态</h3><p><span class="first-concept-term" data-concept-term="MCP">MCP<span class="concept-term-meaning">（模型上下文协议，规定客户端与服务端交换相应工具和上下文能力的方式）</span></span> 普通请求可发送 notifications/cancelled 通知，关联此前发出的同方向在途请求；接收方可能因已完成或无法取消而忽略。不要取消 initialize；任务化请求使用 tasks/cancel 及其任务状态协议。传输层的取消与工具业务提交是不同层；本地取消通知已发出，不是远端零效果证明。</p><p>持久工作流还需明确：请求取消后是等待执行者确认，还是继续走另一条分支。以 Temporal 普通 Activity 为例，取消的传达与心跳、SDK 行为有关；执行代码也可能捕获取消后继续。设计等待策略时必须同时考虑资源清理和仍在途的效果，不能把工作流分支结束等同于所有 Activity 已停止。</p><p>取消后不要为了“查成功没”自动重新发起写操作。用稳定 op_id 查询已有回执；查询也需要相应权限。查不到不能直接推出没提交，尤其当回执服务暂时不可用时。补偿则是新的业务动作，例如撤销已发布对象；它需要新的操作身份、明确授权、幂等与失败处理，原任务取消并不自动授予任意补偿权限。</p><div class="code-block"><div class="code-toolbar"><span>恢复分支示意 · lookup 失败时仍保留未知，不重新写 <small>PYTHON</small></span><button data-copy-code aria-label="复制 恢复分支示意 · lookup失败时仍保留未知，不重新写">复制代码</button></div><pre tabindex="0"><code>record_cancel_intent(task_id)
 request_executor_stop(task_id)
 receipt = authorized_lookup(original_op_id)  # 超时/不可用须单独处理
 if receipt.committed:
@@ -175,7 +35,7 @@ if receipt.committed:
 elif receipt.definitely_absent and executor_stopped:
     mark_cancelled_without_effect()
 else:
-    keep_result_unknown_for_reconciliation()</code></pre></div><details class="knowledge-check"><summary>检验理解：任务已显示取消，怎么避免它又被恢复器重试写入？</summary><p>恢复器先检查持久取消意图，停止发起新的业务写动作；原操作回执继续对账。取消检查与本地派发/提交需要条件更新或事务保护，远端已在途动作则需要对方的查询、取消或隔离协议。</p></details><p>本例用真实子进程、Event 屏障和一个本地 SQLite 权威库。明确控制提交先后，再检查进程、状态和回执，避免用等待几秒猜测竞争结果。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 cancel_receipts.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>本次实际检查</th><th>结果</th></tr></thead><tbody><tr><td>派发前取消</td><td>CANCELLED；未启动 worker；效果 0</td></tr><tr><td>提交前协作</td><td>请求后仍活着；确认取消并正常退出；效果 0</td></tr><tr><td>提交前不协作</td><td>请求后仍活着；终止并 join、对账后标记取消；效果 0</td></tr><tr><td>提交后再取消</td><td>too_late_committed；终止进程后效果仍 1</td></tr></tbody></table></div><details class="full-code"><summary>展开完整 cancel_receipts.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>cancel_receipts.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 cancel_receipts.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real child processes, cancellation requests and authoritative SQLite receipts.
+    keep_result_unknown_for_reconciliation()</code></pre></div><details class="knowledge-check"><summary>检验理解：任务已显示取消，怎么避免它又被恢复器重试写入？</summary><p>恢复器先检查持久取消意图，停止发起新的业务写动作；原操作回执继续对账。取消检查与本地派发/提交需要条件更新或事务保护，远端已在途动作则需要对方的查询、取消或隔离协议。</p></details><p>本例用真实子<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>、Event 屏障和一个本地 SQLite 权威库。明确控制提交先后，再检查进程、状态和回执，避免用等待几秒猜测竞争结果。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 cancel_receipts.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>本次实际检查</th><th>结果</th></tr></thead><tbody><tr><td>派发前取消</td><td>CANCELLED；未启动 <span class="first-concept-term" data-concept-term="worker">worker<span class="concept-term-meaning">（承担相应工作的执行者，具体可以是进程或其他运行单元）</span></span>；效果 0</td></tr><tr><td>提交前协作</td><td>请求后仍活着；确认取消并正常退出；效果 0</td></tr><tr><td>提交前不协作</td><td>请求后仍活着；终止并 join、对账后标记取消；效果 0</td></tr><tr><td>提交后再取消</td><td>too_late_committed；终止进程后效果仍 1</td></tr></tbody></table></div><details class="full-code"><summary>展开完整 cancel_receipts.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>cancel_receipts.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 cancel_receipts.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real child processes, cancellation requests and authoritative SQLite receipts.
 
 The parent uses barriers, never timing sleeps. One local database is the commit
 authority; this does not make arbitrary remote tools transactionally cancellable.
@@ -329,7 +189,393 @@ def run():
 
 
 if __name__ == &quot;__main__&quot;:
-    print(json.dumps(run(), ensure_ascii=False, indent=2))</code></pre></div></details><p class="practice-links"><a href="labs/update-and-cancel.zip" download>下载更新与取消实验 ↓</a><a href="labs/update-and-cancel/cancel_receipts.py" download>下载本例源码 ↓</a><a href="labs/update-and-cancel/validation.json" target="_blank" rel="noopener">本次输出与源码 SHA256 ↗</a></p><p class="evidence-note">一个本地 SQLite 事务边界；没有验证远端工具原子取消、进程树清理、MCP/Temporal 或 Kairo 集成。</p></section><section class="article-section guided-review"><h2>合上页面，试着讲清楚</h2><p>分别画出runner和工具持有的记录，把崩溃放在不同位置；对每个位置说明恢复要向谁查证、能否安全重试。</p><div class="guided-question"><strong>面试追问</strong><p>只给runner增加一个“调用完成”字段，能消除所有重复效果吗？这个字段应该在调用前还是调用后写？</p><details><summary>展开推理，检查遗漏</summary><p>调用前记完成可能出现“记录成功但工具未执行”；调用后记完成仍有“工具成功但记录未写”的间隙。两个独立持久化域不能靠调整一条本地写入顺序自动变成原子事务，需要接收方幂等协议、可查询回执或其他明确的协调方案。</p></details></div><a class="inline-link" href="/interview/">继续按主题复习 →</a></section><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>崩溃恢复后attempts=2、tool_effects=1，是否证明系统实现了任意工具的exactly-once？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。它证明本实验在工具端原子去重、同键重试和单worker条件下，指定崩溃窗口只产生一次示例效果。其他工具、并发、网络与持久性条件需要独立验证。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="agent-recovery:0" >窗口：理解效果与记录的间隙</label><label><input type="checkbox" data-check="agent-recovery:1" >协议：稳定幂等键与参数指纹</label><label><input type="checkbox" data-check="agent-recovery:2" >证据：分别核对尝试数和效果数</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="agent-recovery">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite · Transactions ↗</a><a href="https://docs.temporal.io/activity-definition" target="_blank" rel="noopener noreferrer">Temporal · Activity definition ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP · Cancellation 2025-11-25 ↗</a><a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/" target="_blank" rel="noopener noreferrer">AWS Builders Library · 安全重试与幂等API ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP 2025-11-25 · 请求取消 ↗</a><a href="https://docs.temporal.io/activity-execution#cancellation" target="_blank" rel="noopener noreferrer">Temporal · Activity取消与等待 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-temporal-python"><div class="resource-meta"><span>英文 · 自学课程</span><span>Temporal University</span></div><h3><a href="https://learn.temporal.io/courses/temporal_101/python/" target="_blank" rel="noopener noreferrer">Temporal 101 with Python ↗</a></h3><p><b>先看什么</b>Workflow / Activity → 执行历史 → 失败恢复。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>写过调用外部 API 的 Python 后端。</p><p><b>学完检查</b>解释历史重放与外部效果去重各由哪一层保证。</p><p>说明页公开，进入完整课程需免费 LMS 账号；未核实登录后各节媒体。</p><div class="path-links"><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a><a href="/article/agent-recovery/">工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 →</a><a href="/article/agent-observability/">Agent 观测：任务、重试与成本归因 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/distributed-systems/"><span>P0.4</span>超时、重试与幂等：系统最难处理的是“结果未知”<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/kairo-practice/"><span>G10</span>Kairo 接入验收：任务、权限与结果证据<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="agent-recovery">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><a href="/article/agent-sandbox/"><small>← 上一篇</small>Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-memory/"><small>下一篇 →</small>上下文、运行状态与长期记忆：三种信息不要混存</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/agent-recovery/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/agent-recovery/#section-1">1. 为什么一个数据库事务包不住整个世界</a><a data-toc="section-2" href="/article/agent-recovery/#section-2">2. 接收方决定重复尝试是否重复生效</a><a data-toc="section-3" href="/article/agent-recovery/#section-3">3. 运行一次真实的退出与恢复</a><a data-toc="section-4" href="/article/agent-recovery/#section-4">4. 读代码时盯住三个位置</a><a data-toc="section-5" href="/article/agent-recovery/#section-5">5. 取消、停止与提交：用回执决定状态</a><a data-toc="self-check" href="/article/agent-recovery/#self-check">自我检验</a><a data-toc="references" href="/article/agent-recovery/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+    print(json.dumps(run(), ensure_ascii=False, indent=2))</code></pre></div></details><p class="practice-links"><a href="labs/update-and-cancel.zip" download>下载更新与取消实验 ↓</a><a href="labs/update-and-cancel/cancel_receipts.py" download>下载本例源码 ↓</a><a href="labs/update-and-cancel/validation.json" target="_blank" rel="noopener">本次输出与源码 SHA256 ↗</a></p><p class="evidence-note">一个本地 SQLite 事务边界；没有验证远端工具原子取消、进程树清理、MCP/Temporal 或 Kairo 集成。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>为什么查不到回执，旧请求仍可能生效</h2><p>考虑最容易误判的一段时序：运行器已发出请求，工具线程已经接到，但被实验屏障暂停在提交之前。屏障是测试中把执行停在确定位置、等待放行的控制点。此时父进程用强制终止信号SIGKILL结束运行器，再查询工具，回执确实不存在；接着释放工具<span class="first-concept-term" data-concept-term="线程">线程<span class="concept-term-meaning">（进程中的一条执行路径）</span></span>，原请求继续完成，账户增加37并写回执。客户端进程已经消失，没有让接收方自动停止。</p><figure class="training-figure"><a href="diagrams/v48-agent-absent-race.svg" target="_blank" rel="noopener" aria-label="放大：真实HTTP时序：GET暂时为空发生在旧POST提交之前。横向位置只表达屏障规定的先后，不表示网络耗时比例。"><img src="diagrams/v48-agent-absent-race.svg" width="960" height="542" alt="真实HTTP时序：GET暂时为空发生在旧POST提交之前。横向位置只表达屏障规定的先后，不表示网络耗时比例。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实HTTP时序：GET暂时为空发生在旧POST提交之前。横向位置只表达屏障规定的先后，不表示网络耗时比例。<a href="diagrams/v48-agent-absent-race.svg" download>下载 SVG ↗</a></figcaption></figure><p>这次“未找到”回答的是查询时刻的记录，不是未来不可能提交的保证。因此恢复不能依据一次空查询就换新操作身份重做。沿用原身份可让正在执行的旧请求和恢复请求在接收方汇合；若接收方还提供取消确认、版本条件或明确的最终查询状态，也应按其协议核对。</p><p>如果工具既不支持稳定身份，也不能提供权威查询，遇到这类未知结果就没有通用安全重试答案。可以停在待对账、向业务方查证，或使用事先设计的协调协议。把未知强行归入失败，只是把风险藏进下一次调用。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>六个崩溃窗口，实际分别恢复了什么</h2><p>程序把运行器放在真实独立子进程中，工具HTTP服务留在父进程，二者使用分开的SQLite文件。父进程通过明确屏障确认位置后杀死自己创建的运行器，再启动全新子进程恢复；不靠“睡几十毫秒大概撞上窗口”。临时文件由实验独立创建，退出后清理。</p><div class="table-wrap"><table><thead><tr><th>SIGKILL位置</th><th>杀死时本地状态/工具效果</th><th>恢复路径</th><th>最终</th></tr></thead><tbody><tr><td>意图已保存，尚未发出</td><td>INTENT / 0</td><td>查询后按原身份提交</td><td>DONE / 1次 / 37</td></tr><tr><td>工具已接到，尚未提交</td><td>INTENT / 0</td><td>旧请求随后提交，查询认回</td><td>DONE / 1次 / 37</td></tr><tr><td>工具已提交，尚未响应</td><td>INTENT / 1</td><td>查询原回执</td><td>DONE / 1次 / 37</td></tr><tr><td>收到响应，观察尚未提交</td><td>INTENT / 1</td><td>查询原回执</td><td>DONE / 1次 / 37</td></tr><tr><td>观察已提交，完成尚未提交</td><td>OBSERVED / 1</td><td>使用持久观察推进</td><td>DONE / 1次 / 37</td></tr><tr><td>完成已提交</td><td>DONE / 1</td><td>直接返回，无工具请求</td><td>DONE / 1次 / 37</td></tr></tbody></table></div><p>六次退出码都是−9，表示<span class="first-concept-term" data-concept-term="POSIX">POSIX<span class="concept-term-meaning">（一组操作系统接口规范，不表示所有存储接口都支持相同文件语义）</span></span>下子进程被SIGKILL终止；它不是工具业务的返回码。每种恢复之后再重复恢复一次，HTTP请求数都没有增加。验收分别读取运行器状态、工具账户与回执，要求效果一次、总额37、回执与本地观察相符，并保留所有中间状态。</p><p>本次验证的是进程崩溃，工具服务与机器仍在运行。SQLite的synchronous=FULL配置不等于已经做了断电、磁盘缓存故障或跨主机测试；这些需要不同故障注入与存储证据。程序也没有验证多运行器竞争接管。下一层的租约为执行资格规定有效期，接收方还需拒绝过期执行者；这些在后续工作流章展开。</p><a class="inline-link" href="/article/durable-workflows/">继续学习租约、接管与过期执行者 →</a></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>两个失败对照：身份改了，或只信本地完成</h2><p>第一个负例在工具提交37、运行器尚未收到响应时崩溃。恢复代码故意生成新操作身份，于是工具合理地把它当成另一笔业务，又增加37。结果为74、两份回执；新运行器仍然可以写DONE并正常退出，但独立目标要求只做一次，所以验收拒绝。错误在调用协议，不在接收方没有识别两个不同编号。</p><p>第二个负例不重复写工具，而是在正确恢复以后，把本地观察改成amount=99。运行器完成标志仍在，工具事实仍是37；独立校验比较回执内容，识别本地记录与外部事实不符。它说明只统计“任务完成率”可能漏掉语义错误，恢复也要核对目标资源和真实产物。</p><div class="table-wrap"><table><thead><tr><th>方案</th><th>本地能显示完成吗</th><th>工具事实</th><th>独立验收</th></tr></thead><tbody><tr><td>稳定身份恢复</td><td>能</td><td>1次，37</td><td>通过</td></tr><tr><td>恢复生成新身份</td><td>能</td><td>2次，74</td><td>拒绝</td></tr><tr><td>篡改本地观察</td><td>仍可保留DONE</td><td>1次，37；观察写99</td><td>拒绝</td></tr></tbody></table></div><p>这两个负例在实验中被有意触发并被判错，整体实验因此通过；不能把“负例脚本运行成功”写成“负例业务正确”。记录中单独保留independent_oracle_accepted=false，便于复核实际失败原因。</p></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>运行完整实验，再回看最小提交间隙</h2><p>Python 3.9+标准库即可运行，实际执行使用Python 3.12.13与SQLite。服务仅监听本机回环随机端口，运行器只向这个本地地址请求，实验只杀死自己创建的子进程。工具是固定教学协议，不是Kairo适配器；Kairo接入还需对接真实工具身份、查询、授权与任务验收接口。</p><h3 id="agent-crash-windows-run" class="walkthrough-run">运行 crash_windows.py</h3><div class="code-block"><div class="code-toolbar"><span>解压实验包，在文件所在目录执行 <small>BASH</small></span><button data-copy-code aria-label="复制 解压实验包，在文件所在目录执行">复制代码</button></div><pre tabindex="0"><code>mkdir -p runs
+python3 -B crash_windows.py &gt; runs/crash-record.json</code></pre></div><p><a href="/labs/agent-crash-windows.zip" download>下载完整实验包 ↓</a> · <a href="/labs/agent-crash-windows/crash_windows.py" download>下载源码 ↓</a> · <a href="/labs/agent-crash-windows/validation.json">查看执行记录与源码摘要 →</a></p><details class="full-code"><summary>展开完整源码 · crash_windows.py</summary><div class="code-block"><div class="code-toolbar"><span>crash_windows.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 crash_windows.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;POSIX SIGKILL recovery windows with a surviving HTTP receiver and separate SQLite files.&quot;&quot;&quot;
+import argparse
+import hashlib
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
+import os
+from pathlib import Path
+import signal
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import threading
+import urllib.request
+import uuid
+
+PARAMS = {&#39;account&#39;: &#39;demo&#39;, &#39;amount&#39;: 37}
+FINGERPRINT = hashlib.sha256(json.dumps(PARAMS, sort_keys=True, separators=(&#39;,&#39;, &#39;:&#39;)).encode()).hexdigest()
+
+
+def db(path):
+    conn = sqlite3.connect(path, timeout=10)
+    conn.execute(&#39;PRAGMA synchronous=FULL&#39;)
+    return conn
+
+
+def request(base, path, body=None):
+    data = None if body is None else json.dumps(body).encode()
+    req = urllib.request.Request(base + path, data=data, headers={&#39;Content-Type&#39;: &#39;application/json&#39;})
+    with urllib.request.urlopen(req, timeout=15) as response:
+        return json.load(response)
+
+
+def barrier(name, selected):
+    if name == selected:
+        print(json.dumps({&#39;barrier&#39;: name}), flush=True)
+        sys.stdin.readline()  # parent kills this process; no graceful cleanup is assumed
+
+
+def worker(root, base, selected, recovery=False, new_key=False):
+    path = root / &#39;runner.sqlite&#39;
+    with db(path) as con:
+        con.execute(&#39;CREATE TABLE IF NOT EXISTS task(id INTEGER PRIMARY KEY, op TEXT, fingerprint TEXT, phase TEXT, observation TEXT)&#39;)
+        con.execute(&#39;INSERT OR IGNORE INTO task VALUES(1,?,?,?,NULL)&#39;, (&#39;logical-add-1&#39;, FINGERPRINT, &#39;INTENT&#39;))
+        if new_key:
+            # Explicit negative: a retry has been given a fresh business identity.
+            con.execute(&#39;UPDATE task SET op=?, phase=?, observation=NULL WHERE id=1&#39;, (&#39;new-&#39; + uuid.uuid4().hex, &#39;INTENT&#39;))
+    barrier(&#39;intent&#39;, selected)
+    with db(path) as con:
+        op, fingerprint, phase, observation = con.execute(&#39;SELECT op,fingerprint,phase,observation FROM task WHERE id=1&#39;).fetchone()
+    assert fingerprint == FINGERPRINT
+    if phase == &#39;DONE&#39;:
+        print(json.dumps({&#39;phase&#39;: phase, &#39;path&#39;: &#39;already_done&#39;}), flush=True)
+        return
+    if phase == &#39;OBSERVED&#39;:
+        receipt = json.loads(observation)
+        path_taken = &#39;durable_observation&#39;
+    else:
+        receipt = request(base, &#39;/receipt/&#39; + op)[&#39;receipt&#39;] if recovery else None
+        path_taken = &#39;queried_receipt&#39; if receipt else &#39;submitted_original_operation&#39;
+        if receipt is None:
+            receipt = request(base, &#39;/effect&#39;, {&#39;op&#39;: op, &#39;fingerprint&#39;: fingerprint, &#39;params&#39;: PARAMS})[&#39;receipt&#39;]
+        barrier(&#39;response&#39;, selected)
+        with db(path) as con:
+            con.execute(&#39;UPDATE task SET phase=?, observation=? WHERE id=1&#39;, (&#39;OBSERVED&#39;, json.dumps(receipt)))
+    barrier(&#39;observation&#39;, selected)
+    assert receipt[&#39;op&#39;] == op and receipt[&#39;fingerprint&#39;] == fingerprint and receipt[&#39;amount&#39;] == 37
+    with db(path) as con:
+        con.execute(&#39;UPDATE task SET phase=? WHERE id=1&#39;, (&#39;DONE&#39;,))
+    barrier(&#39;done&#39;, selected)
+    print(json.dumps({&#39;phase&#39;: &#39;DONE&#39;, &#39;path&#39;: path_taken}), flush=True)
+
+
+class Receiver(ThreadingHTTPServer):
+    daemon_threads = True
+
+    def __init__(self, path, pause):
+        self.path, self.pause = path, pause
+        self.arrived = threading.Event()
+        self.committed = threading.Event()
+        self.release = threading.Event()
+        self.audit = []
+        with db(path) as con:
+            con.execute(&#39;CREATE TABLE counter(value INTEGER NOT NULL)&#39;)
+            con.execute(&#39;INSERT INTO counter VALUES(0)&#39;)
+            con.execute(&#39;CREATE TABLE receipt(op TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, amount INTEGER NOT NULL)&#39;)
+        super().__init__((&#39;127.0.0.1&#39;, 0), Handler)
+
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+    def reply(self, body):
+        data = json.dumps(body).encode()
+        try:
+            self.send_response(200)
+            self.send_header(&#39;Content-Type&#39;, &#39;application/json&#39;)
+            self.send_header(&#39;Content-Length&#39;, str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # killed caller does not roll back receiver commit
+
+    def do_GET(self):
+        op = self.path.removeprefix(&#39;/receipt/&#39;)
+        with db(self.server.path) as con:
+            row = con.execute(&#39;SELECT op,fingerprint,amount FROM receipt WHERE op=?&#39;, (op,)).fetchone()
+        self.server.audit.append(&#39;receipt_found&#39; if row else &#39;receipt_absent&#39;)
+        self.reply({&#39;receipt&#39;: None if row is None else dict(zip((&#39;op&#39;, &#39;fingerprint&#39;, &#39;amount&#39;), row))})
+
+    def do_POST(self):
+        body = json.loads(self.rfile.read(int(self.headers[&#39;Content-Length&#39;])))
+        assert self.path == &#39;/effect&#39; and body[&#39;params&#39;] == PARAMS and body[&#39;fingerprint&#39;] == FINGERPRINT
+        self.server.arrived.set()
+        if self.server.pause == &#39;before_commit&#39;:
+            assert self.server.release.wait(15)
+        with db(self.server.path) as con:
+            con.execute(&#39;BEGIN IMMEDIATE&#39;)
+            row = con.execute(&#39;SELECT op,fingerprint,amount FROM receipt WHERE op=?&#39;, (body[&#39;op&#39;],)).fetchone()
+            if row:
+                assert row[1] == body[&#39;fingerprint&#39;]
+                self.server.audit.append(&#39;duplicate&#39;)
+            else:
+                con.execute(&#39;UPDATE counter SET value=value+?&#39;, (37,))
+                row = (body[&#39;op&#39;], body[&#39;fingerprint&#39;], 37)
+                con.execute(&#39;INSERT INTO receipt VALUES(?,?,?)&#39;, row)
+                self.server.audit.append(&#39;effect_commit&#39;)
+        self.server.committed.set()
+        if self.server.pause == &#39;after_commit&#39;:
+            assert self.server.release.wait(15)
+        self.reply({&#39;receipt&#39;: dict(zip((&#39;op&#39;, &#39;fingerprint&#39;, &#39;amount&#39;), row))})
+
+
+def facts(root):
+    with db(root / &#39;runner.sqlite&#39;) as con:
+        row = con.execute(&#39;SELECT op,phase,observation FROM task WHERE id=1&#39;).fetchone()
+    with db(root / &#39;tool.sqlite&#39;) as con:
+        amount = con.execute(&#39;SELECT value FROM counter&#39;).fetchone()[0]
+        receipts = con.execute(&#39;SELECT op,fingerprint,amount FROM receipt ORDER BY op&#39;).fetchall()
+    return {&#39;operation&#39;: row[0], &#39;runner_phase&#39;: row[1], &#39;observation&#39;: None if row[2] is None else json.loads(row[2]),
+            &#39;amount&#39;: amount, &#39;effects&#39;: len(receipts),
+            &#39;receipts&#39;: [dict(zip((&#39;op&#39;, &#39;fingerprint&#39;, &#39;amount&#39;), r)) for r in receipts]}
+
+
+def oracle(state):
+    # Independent receiver truth and business target; a DONE flag alone is insufficient.
+    return (state[&#39;runner_phase&#39;] == &#39;DONE&#39; and state[&#39;effects&#39;] == 1 and state[&#39;amount&#39;] == 37
+            and state[&#39;observation&#39;] == state[&#39;receipts&#39;][0]
+            and state[&#39;receipts&#39;][0][&#39;op&#39;] == &#39;logical-add-1&#39;)
+
+
+def run_case(name, negative=False):
+    pause = name if name in (&#39;before_commit&#39;, &#39;after_commit&#39;) else &#39;&#39;
+    selected = &#39;&#39; if pause else name
+    with tempfile.TemporaryDirectory(prefix=&#39;infra-crash-&#39;) as tmp:
+        root = Path(tmp)
+        server = Receiver(root / &#39;tool.sqlite&#39;, pause)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        base = &#39;http://127.0.0.1:&#39; + str(server.server_address[1])
+        cmd = [sys.executable, &#39;-B&#39;, str(Path(__file__).resolve()), &#39;--worker&#39;, str(root), &#39;--base&#39;, base]
+        proc = subprocess.Popen(cmd + [&#39;--barrier&#39;, selected], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            if pause:
+                event = server.arrived if pause == &#39;before_commit&#39; else server.committed
+                assert event.wait(10), name
+            else:
+                assert json.loads(proc.stdout.readline()) == {&#39;barrier&#39;: selected}
+            proc.kill()
+            proc.wait(timeout=5)
+            assert proc.returncode == -signal.SIGKILL
+            at_crash = facts(root)
+            absent_while_old_request_lives = None
+            if pause == &#39;before_commit&#39;:
+                absent_while_old_request_lives = request(base, &#39;/receipt/logical-add-1&#39;)[&#39;receipt&#39;] is None
+                assert absent_while_old_request_lives
+            server.release.set()
+            if pause:
+                assert server.committed.wait(10)
+            after_old_request = facts(root)
+            resumed = subprocess.run(cmd + [&#39;--recover&#39;] + ([&#39;--new-key&#39;] if negative else []), text=True, capture_output=True, timeout=15)
+            assert resumed.returncode == 0, resumed.stderr
+            recovered = facts(root)
+            accepted = oracle(recovered)
+            assert accepted != negative
+            audit_before_done_retry = len(server.audit)
+            again = subprocess.run(cmd + [&#39;--recover&#39;], text=True, capture_output=True, timeout=15)
+            assert again.returncode == 0, again.stderr
+            assert len(server.audit) == audit_before_done_retry, &#39;DONE retry must make no receiver calls&#39;
+            corrupted_rejected = None
+            if name == &#39;observation&#39; and not negative:
+                with db(root / &#39;runner.sqlite&#39;) as con:
+                    observation = recovered[&#39;observation&#39;].copy()
+                    observation[&#39;amount&#39;] = 99
+                    con.execute(&#39;UPDATE task SET observation=? WHERE id=1&#39;, (json.dumps(observation),))
+                corrupted_rejected = not oracle(facts(root))
+                assert corrupted_rejected
+            return {&#39;window&#39;: name, &#39;negative_new_identity&#39;: negative, &#39;kill_exit_code&#39;: proc.returncode,
+                    &#39;at_crash&#39;: at_crash, &#39;receipt_absent_while_old_request_lives&#39;: absent_while_old_request_lives,
+                    &#39;after_old_request&#39;: after_old_request, &#39;recovered&#39;: recovered,
+                    &#39;resume_path&#39;: json.loads(resumed.stdout)[&#39;path&#39;], &#39;independent_oracle_accepted&#39;: accepted,
+                    &#39;done_retry_http_calls&#39;: len(server.audit) - audit_before_done_retry,
+                    &#39;corrupt_local_observation_rejected&#39;: corrupted_rejected, &#39;receiver_audit&#39;: server.audit}
+        finally:
+            if proc.poll() is None:
+                proc.kill()
+                proc.wait(timeout=5)
+            server.release.set()
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(&#39;--worker&#39;, type=Path)
+    ap.add_argument(&#39;--base&#39;)
+    ap.add_argument(&#39;--barrier&#39;, default=&#39;&#39;)
+    ap.add_argument(&#39;--recover&#39;, action=&#39;store_true&#39;)
+    ap.add_argument(&#39;--new-key&#39;, action=&#39;store_true&#39;)
+    args = ap.parse_args()
+    if args.worker:
+        worker(args.worker, args.base, args.barrier, args.recover, args.new_key)
+        return
+    assert os.name == &#39;posix&#39;, &#39;This experiment uses POSIX SIGKILL&#39;
+    cases = [run_case(name) for name in (&#39;intent&#39;, &#39;before_commit&#39;, &#39;after_commit&#39;, &#39;response&#39;, &#39;observation&#39;, &#39;done&#39;)]
+    negative = run_case(&#39;after_commit&#39;, negative=True)
+    print(json.dumps({&#39;schema&#39;: 1, &#39;status&#39;: &#39;passed&#39;, &#39;params&#39;: PARAMS, &#39;fingerprint&#39;: FINGERPRINT,
+                      &#39;python&#39;: sys.version.split()[0], &#39;sqlite&#39;: sqlite3.sqlite_version,
+                      &#39;cases&#39;: cases, &#39;negative&#39;: negative,
+                      &#39;source_sha256&#39;: hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                      &#39;scope&#39;: &#39;real POSIX process kill and surviving local HTTP receiver, separate SQLite domains; &#39;
+                               &#39;not power-loss durability, network partition, concurrent runners, or Kairo integration&#39;}, indent=2))
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre></div></details><details class="full-code"><summary>对照原有最小实验 · 两个数据库的提交间隙</summary><div class="table-wrap"><table><thead><tr><th>时刻</th><th>运行器状态</th><th>尝试数</th><th>工具效果数</th></tr></thead><tbody><tr><td>提交后进程退出</td><td>运行中</td><td>1</td><td>1</td></tr><tr><td>恢复后取回回执</td><td>已完成</td><td>2</td><td>仍为1</td></tr></tbody></table></div><p>先看效果已经存在、任务状态还没完成的这一行，再执行下面命令。恢复时沿用原操作键，才能取回原回执。</p><p>先预测结果，再运行：子进程退出后，工具效果应该是1，但runner仍是RUNNING；恢复沿用op-001发起第二次尝试，接收方返回已有回执，效果仍为1。若你预测的是“全部回滚”或“自动成功”，就需要回到两个独立持久化域的边界。</p><div class="code-block"><div class="code-toolbar"><span>解压系统实验包后运行 <small>BASH</small></span><button data-copy-code aria-label="复制 解压系统实验包后运行">复制代码</button></div><pre tabindex="0"><code>python3 agent_lab.py --output runs/agent-report.json</code></pre></div><div class="code-block"><div class="code-toolbar"><span>关键预期：完整记录见validation.json <small>JSON</small></span><button data-copy-code aria-label="复制 关键预期：完整记录见validation.json">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;crash_exit_code&quot;: 23,
+  &quot;after_crash&quot;: {
+    &quot;runner_state&quot;: &quot;RUNNING&quot;,
+    &quot;tool_effects&quot;: 1
+  },
+  &quot;after_recovery&quot;: {
+    &quot;runner_state&quot;: &quot;SUCCEEDED&quot;,
+    &quot;attempts&quot;: 2,
+    &quot;tool_effects&quot;: 1
+  }
+}</code></pre></div><p>程序启动子进程，在工具事务提交后调用os._exit(23)，随后启动新的子进程恢复。它使用独立的runner.sqlite和tool.sqlite，避免用同一个事务掩盖真正的提交间隙。数据库位于临时目录，报告保留结果。</p><div class="download-box"><div><strong>配套系统实验包</strong><span>Python 标准库 · Cloud / AI 指标 / <span class="first-concept-term" data-concept-term="Agent">Agent<span class="concept-term-meaning">（在任务范围内组织模型与工具反复推进工作的智能体系统）</span></span> 恢复 · 附实测记录</span></div><a href="labs/infra-systems.zip" download>下载实验包 ↓</a></div><p>读报告时，把after_crash和after_recovery放在一起比较。attempts从1变成2，记录的是重新尝试确认动作；tool_effects保持1，证明本实验工具没有再次提交效果。只看最后的SUCCEEDED，会漏掉恢复过程是否产生重复。</p><p>不要只沿正常调用顺序读函数。可以先提出三个改动反例，再判断会破坏哪项条件。</p><div class="table-wrap"><table><thead><tr><th>改动</th><th>可能出现的结果</th><th>破坏的条件</th></tr></thead><tbody><tr><td>重试时换成新operation ID</td><td>工具按新动作再次生效</td><td>原动作身份没有延续</td></tr><tr><td>只在runner本地记录去重</td><td>提交间隙仍可能导致远端重做</td><td>效果拥有者未参与协议</td></tr><tr><td>同键参数变化仍返回旧成功</td><td>新意图被误判为旧结果</td><td>未检查语义冲突</td></tr></tbody></table></div><p>第一，策略检查发生在执行效果之前；第二，工具端效果与回执处于同一事务；第三，runner在调用工具前提交attempt记录，调用返回后才提交完成状态。理解这三个位置，比记住函数名称更重要。</p><p>实验还验证已完成动作重复读取、同ID不同参数拒绝和未允许工具拒绝。它只运行单worker，没有租约竞争、<span class="first-concept-term" data-concept-term="fencing">fencing<span class="concept-term-meaning">（由受保护接收方拒绝过期执行者写入的隔离机制）</span></span>、真实网络分区或断电耐久性测试。</p><details class="full-code"><summary>展开完整 agent_lab.py</summary><div class="code-block"><div class="code-toolbar"><span>agent_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 agent_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Durable tool execution teaching lab. Two independent SQLite databases.
+No LLM, external service, Kairo code, or real-world side effect is invoked.
+&quot;&quot;&quot;
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import sqlite3
+import subprocess
+import sys
+import tempfile
+
+
+def signature(payload):
+    return hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(&#39;,&#39;,&#39;:&#39;)).encode()).hexdigest()
+
+
+def connect(path):
+    return sqlite3.connect(str(path),timeout=5)
+
+
+def setup(root):
+    root.mkdir(parents=True,exist_ok=True)
+    with connect(root/&#39;runner.sqlite&#39;) as db:
+        db.execute(&#39;CREATE TABLE IF NOT EXISTS operations (id TEXT PRIMARY KEY, payload_hash TEXT NOT NULL, state TEXT NOT NULL, attempts INTEGER NOT NULL, result TEXT)&#39;)
+    with connect(root/&#39;tool.sqlite&#39;) as db:
+        db.execute(&#39;CREATE TABLE IF NOT EXISTS receipts (id TEXT PRIMARY KEY, payload_hash TEXT NOT NULL, result TEXT NOT NULL)&#39;)
+        db.execute(&#39;CREATE TABLE IF NOT EXISTS effects (id INTEGER PRIMARY KEY CHECK(id=1), count INTEGER NOT NULL)&#39;)
+        db.execute(&#39;INSERT OR IGNORE INTO effects VALUES (1,0)&#39;)
+
+
+def enforce_policy(payload):
+    if payload.get(&#39;tool&#39;) != &#39;record_demo_action&#39;:
+        raise ValueError(&#39;tool denied by allowlist&#39;)
+    if payload.get(&#39;tenant&#39;) != &#39;demo&#39; or payload.get(&#39;amount&#39;) != 1:
+        raise ValueError(&#39;arguments denied by policy&#39;)
+
+
+def tool_service(root, op_id, payload):
+    &quot;&quot;&quot;The *receiving tool* owns atomic deduplication and the demo effect.&quot;&quot;&quot;
+    wanted = signature(payload)
+    with connect(root/&#39;tool.sqlite&#39;) as db:
+        db.execute(&#39;BEGIN IMMEDIATE&#39;)
+        old = db.execute(&#39;SELECT payload_hash,result FROM receipts WHERE id=?&#39;,(op_id,)).fetchone()
+        if old:
+            if old[0] != wanted:
+                raise ValueError(&#39;idempotency key payload conflict at tool&#39;)
+            return old[1]
+        db.execute(&#39;UPDATE effects SET count=count+1 WHERE id=1&#39;)
+        count = db.execute(&#39;SELECT count FROM effects WHERE id=1&#39;).fetchone()[0]
+        result = json.dumps({&#39;effect_count&#39;:count})
+        db.execute(&#39;INSERT INTO receipts VALUES (?,?,?)&#39;,(op_id,wanted,result))
+        return result
+
+
+def execute(root, op_id, payload, crash_after_effect=False):
+    enforce_policy(payload)  # Authority is outside a model&#39;s proposed arguments.
+    wanted = signature(payload)
+    with connect(root/&#39;runner.sqlite&#39;) as db:
+        db.execute(&#39;BEGIN IMMEDIATE&#39;)
+        old = db.execute(&#39;SELECT payload_hash,state,attempts,result FROM operations WHERE id=?&#39;,(op_id,)).fetchone()
+        if old and old[0] != wanted:
+            raise ValueError(&#39;operation payload conflict&#39;)
+        if old and old[1] == &#39;SUCCEEDED&#39;:
+            return old[3]
+        if old and old[2] &gt;= 2:
+            raise ValueError(&#39;demo retry budget exhausted&#39;)
+        if not old:
+            db.execute(&#39;INSERT INTO operations VALUES (?,?,?,0,NULL)&#39;,(op_id,wanted,&#39;PLANNED&#39;))
+        db.execute(&#39;UPDATE operations SET state=?,attempts=attempts+1 WHERE id=?&#39;,(&#39;RUNNING&#39;,op_id))
+    result = tool_service(root,op_id,payload)
+    if crash_after_effect:
+        # A real process exit after the tool transaction committed but before runner completion.
+        os._exit(23)
+    with connect(root/&#39;runner.sqlite&#39;) as db:
+        db.execute(&#39;UPDATE operations SET state=?,result=? WHERE id=?&#39;,(&#39;SUCCEEDED&#39;,result,op_id))
+    return result
+
+
+def experiment():
+    with tempfile.TemporaryDirectory(prefix=&#39;infra-agent-&#39;) as temporary:
+        root = Path(temporary)
+        setup(root)
+        command = [sys.executable, str(Path(__file__).resolve()), &#39;--worker&#39;, str(root)]
+        crash = subprocess.run(command+[&#39;--crash-after-effect&#39;],capture_output=True,text=True,timeout=15)
+        assert crash.returncode == 23, crash.stderr
+        with connect(root/&#39;runner.sqlite&#39;) as db:
+            after_crash = db.execute(&#39;SELECT state,attempts FROM operations&#39;).fetchone()
+        with connect(root/&#39;tool.sqlite&#39;) as db:
+            effects_before = db.execute(&#39;SELECT count FROM effects&#39;).fetchone()[0]
+        assert after_crash == (&#39;RUNNING&#39;,1) and effects_before == 1
+        recovered = subprocess.run(command,capture_output=True,text=True,timeout=15)
+        assert recovered.returncode == 0, recovered.stderr
+        payload = {&#39;tool&#39;:&#39;record_demo_action&#39;,&#39;tenant&#39;:&#39;demo&#39;,&#39;amount&#39;:1}
+        duplicate_result = execute(root,&#39;op-001&#39;,payload)
+        with connect(root/&#39;runner.sqlite&#39;) as db:
+            state, attempts = db.execute(&#39;SELECT state,attempts FROM operations&#39;).fetchone()
+        with connect(root/&#39;tool.sqlite&#39;) as db:
+            effects = db.execute(&#39;SELECT count FROM effects&#39;).fetchone()[0]
+        assert state == &#39;SUCCEEDED&#39; and attempts == 2 and effects == 1
+        changed = dict(payload, extra=&#39;different-request&#39;)
+        try:
+            execute(root,&#39;op-001&#39;,changed)
+        except ValueError as e:
+            assert &#39;conflict&#39; in str(e)
+        else:
+            raise AssertionError(&#39;Changed payload accepted&#39;)
+        try:
+            execute(root,&#39;op-002&#39;,dict(payload,tool=&#39;unapproved_tool&#39;))
+        except ValueError as e:
+            assert &#39;denied&#39; in str(e)
+        else:
+            raise AssertionError(&#39;Unapproved tool accepted&#39;)
+        return {&#39;status&#39;:&#39;passed&#39;,&#39;environment&#39;:platform.system()+&#39; &#39;+platform.machine()+&#39; Python &#39;+platform.python_version(),
+                &#39;sqlite_version&#39;:sqlite3.sqlite_version,&#39;crash_exit_code&#39;:23,
+                &#39;after_crash&#39;:{&#39;runner_state&#39;:after_crash[0],&#39;tool_effects&#39;:effects_before},
+                &#39;after_recovery&#39;:{&#39;runner_state&#39;:state,&#39;attempts&#39;:attempts,&#39;tool_effects&#39;:effects},
+                &#39;duplicate_result&#39;:json.loads(duplicate_result),&#39;changed_payload_rejected&#39;:True,&#39;unapproved_tool_rejected&#39;:True,
+                &#39;scope&#39;:&#39;Single worker, local subprocess crash, separate SQLite databases, receiver-enforced deduplication.&#39;,
+                &#39;not_verified&#39;:[&#39;Kairo implementation&#39;,&#39;multiple concurrent workers&#39;,&#39;lease fencing&#39;,&#39;remote tool idempotency&#39;,&#39;power loss&#39;,&#39;LLM quality&#39;]}
+
+
+if __name__ == &#39;__main__&#39;:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&#39;--worker&#39;)
+    parser.add_argument(&#39;--crash-after-effect&#39;,action=&#39;store_true&#39;)
+    parser.add_argument(&#39;--output&#39;,default=&#39;runs/agent-report.json&#39;)
+    args = parser.parse_args()
+    if args.worker:
+        execute(Path(args.worker),&#39;op-001&#39;,{&#39;tool&#39;:&#39;record_demo_action&#39;,&#39;tenant&#39;:&#39;demo&#39;,&#39;amount&#39;:1},args.crash_after_effect)
+    else:
+        result = experiment()
+        out = Path(args.output)
+        out.parent.mkdir(parents=True,exist_ok=True)
+        out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+&#39;\n&#39;)
+        print(json.dumps(result,ensure_ascii=False,indent=2))</code></pre></div></details></details><p>练习时先画两条提交线，再把崩溃移动到每一个位置：当前证据在哪里、旧请求是否可能还活着、能否按原身份重试、何时需要停止等待对账。能逐项回答，才说明理解了恢复协议；只记“加重试、加检查点”无法解释这些窗口。</p></section><section class="article-section guided-review"><h2>合上页面，试着讲清楚</h2><p>分别画出runner和工具持有的记录，把崩溃放在不同位置；对每个位置说明恢复要向谁查证、能否安全重试。</p><div class="guided-question"><strong>面试追问</strong><p>只给runner增加一个“调用完成”字段，能消除所有重复效果吗？这个字段应该在调用前还是调用后写？</p><details><summary>展开推理，检查遗漏</summary><p>调用前记完成可能出现“记录成功但工具未执行”；调用后记完成仍有“工具成功但记录未写”的间隙。两个独立持久化域不能靠调整一条本地写入顺序自动变成原子事务，需要接收方幂等协议、可查询回执或其他明确的协调方案。</p></details></div><a class="inline-link" href="/interview/">继续按主题复习 →</a></section><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>崩溃恢复后attempts=2、tool_effects=1，是否证明系统实现了任意工具的exactly-once？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。它证明本实验在工具端原子去重、同键重试和单worker条件下，指定崩溃窗口只产生一次示例效果。其他工具、并发、网络与持久性条件需要独立验证。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="agent-recovery:0" >窗口：理解效果与记录的间隙</label><label><input type="checkbox" data-check="agent-recovery:1" >协议：稳定幂等键与参数指纹</label><label><input type="checkbox" data-check="agent-recovery:2" >证据：分别核对尝试数和效果数</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="agent-recovery">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-recovery/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite · Transactions ↗</a><a href="https://docs.temporal.io/activity-definition" target="_blank" rel="noopener noreferrer">Temporal · Activity definition ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP · Cancellation 2025-11-25 ↗</a><a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/" target="_blank" rel="noopener noreferrer">AWS Builders Library · 安全重试与幂等API ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP 2025-11-25 · 请求取消 ↗</a><a href="https://docs.temporal.io/activity-execution#cancellation" target="_blank" rel="noopener noreferrer">Temporal · Activity取消与等待 ↗</a><a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/" target="_blank" rel="noopener noreferrer">AWS Builders Library · 带调用身份的安全重试 ↗</a><a href="https://www.sqlite.org/atomiccommit.html" target="_blank" rel="noopener noreferrer">SQLite · 原子提交及耐久性假设 ↗</a><a href="https://docs.python.org/3.12/library/subprocess.html#subprocess.Popen.kill" target="_blank" rel="noopener noreferrer">Python · 子进程kill与终止限制 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-temporal-python"><div class="resource-meta"><span>英文 · 自学课程</span><span>Temporal University</span></div><h3><a href="https://learn.temporal.io/courses/temporal_101/python/" target="_blank" rel="noopener noreferrer">Temporal 101 with Python ↗</a></h3><p><b>先看什么</b>Workflow / Activity → 执行历史 → 失败恢复。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>写过调用外部 API 的 Python 后端。</p><p><b>学完检查</b>解释历史重放与外部效果去重各由哪一层保证。</p><p>说明页公开，进入完整课程需免费 LMS 账号；未核实登录后各节媒体。</p><div class="path-links"><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a><a href="/article/agent-recovery/">工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 →</a><a href="/article/agent-observability/">Agent 观测：任务、重试与成本归因 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/distributed-systems/"><span>P0.4</span>超时、重试与幂等：系统最难处理的是“结果未知”<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/kairo-practice/"><span>G10</span>Kairo 接入验收：任务、权限与结果证据<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="agent-recovery">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><a href="/article/agent-sandbox/"><small>← 上一篇</small>Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-memory/"><small>下一篇 →</small>上下文、运行状态与长期记忆：三种信息不要混存</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/agent-recovery/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/agent-recovery/#section-1">1. 先画清任务、执行记录与工具端事实</a><a data-toc="section-2" href="/article/agent-recovery/#section-2">2. 先保存操作身份，再允许外部写入</a><a data-toc="section-3" href="/article/agent-recovery/#section-3">3. 接收方怎样让多次尝试只留下一个效果</a><a data-toc="section-4" href="/article/agent-recovery/#section-4">4. 从未知到完成，状态要跟着证据推进</a><a data-toc="section-5" href="/article/agent-recovery/#section-5">5. 取消和恢复都要尊重已经提交的效果</a><a data-toc="section-6" href="/article/agent-recovery/#section-6">6. 为什么查不到回执，旧请求仍可能生效</a><a data-toc="section-7" href="/article/agent-recovery/#section-7">7. 六个崩溃窗口，实际分别恢复了什么</a><a data-toc="section-8" href="/article/agent-recovery/#section-8">8. 两个失败对照：身份改了，或只信本地完成</a><a data-toc="section-9" href="/article/agent-recovery/#section-9">9. 运行完整实验，再回看最小提交间隙</a><a data-toc="self-check" href="/article/agent-recovery/#self-check">自我检验</a><a data-toc="references" href="/article/agent-recovery/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
 <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

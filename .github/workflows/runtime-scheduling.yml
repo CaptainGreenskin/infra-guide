@@ -2,9 +2,9 @@ name: Native container and scheduler mechanisms
 on:
   workflow_dispatch:
   push:
-    branches: ['content/runtime-*']
+    branches: [main, 'content/runtime-*']
     paths:
-      - 'dist/labs/runtime-scheduling/**'
+      - 'dist/labs/runtime-scheduling/*.py'
       - '.github/workflows/runtime-scheduling.yml'
 permissions:
   contents: read

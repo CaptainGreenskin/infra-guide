@@ -13,13 +13,15 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前71章：Cloud 30、AI 28、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+当前72章：Cloud 30、AI 29、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
 
-Agent沿现有两章深化：授权提交边界与完整检索上下文。17种HTTP观察、FTS5与真实BPE分别核对当前权限、原回执、237/36词元预算和实际交付；29个完整实验包、66项学习任务。[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。
+Agent沿现有两章深化：授权提交边界与完整检索上下文。17种HTTP观察、FTS5与真实BPE分别核对当前权限、原回执、237/36词元预算和实际交付；上一阶段29个完整实验包、66项学习任务。[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。
 
 AI新增「动手算子与性能分析」「MoE路由与专家执行」：C11实际编译、PyTorch 2.5.1 CPU原始轨迹、两执行进程路由与容量反例；均提供完整包和源码绑定记录。CUDA/Nsight与GPU EP尚待目标硬件验证。
 
 新一轮 [六个教学单元目标](docs/CONTINUOUS_GOAL_2026-11-07.md) 按批次发布。Cloud 新增 TCP/epoll 与 MySQL 恢复两章，真实 Linux epoll 和 MySQL 8.4.13 的 [CI 运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001) 与完整实验包绑定；缺段恢复出现“余额125、回执少一笔”的反例。
+
+本轮[四个深化单元](docs/CONTINUOUS_GOAL_2026-11-08.md)：C4.1容器资源、C4.4调度、A3.9推测解码、G4崩溃恢复。附12张新图、3个完整实验包；当前共32包、70项学习任务。[Linux Docker/kind实测](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42432475291)区分配额与放置，精确采样/CPU缓存与六次真实进程崩溃分别验证。物理多节点、GPU加速、断电与Kairo仍未据此验收。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
 
@@ -78,7 +80,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的105个页面（104个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的106个页面（105个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 
@@ -88,7 +90,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-01.js` 至 `runtime-06.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
+浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

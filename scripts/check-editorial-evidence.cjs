@@ -8,7 +8,7 @@ for(const [,file]of read('src/page-shell.html').matchAll(/<script defer src="([^
 const data=vm.runInContext('({articles,modules,depthReviewEdits})',ctx);
 const audit=JSON.parse(read('docs/EDITORIAL_AUDIT_2026-11-04.json'));
 const migration=JSON.parse(read('docs/COURSE_MIGRATION_2026-11-07.json'));
-const expansion=JSON.parse(read('docs/CONTENT_EXPANSIONS_2026-11-07.json'));
+const expansion=require('./content-review-records.cjs');
 assert(expansion.historical_eight_hour_counts_unchanged);
 const pointRevisions=[...migration.knowledge_revisions,...expansion.knowledge_revisions];
 for(const[file,expected]of Object.entries(migration.historical_audits))assert.equal(hash(file),expected,file+': completed historical audit must stay unchanged');

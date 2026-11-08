@@ -409,14 +409,14 @@ function interviewCoverage() {
  const capabilities = [
   ['云 / SRE', '专项可练', chapter('network-diagnosis','分层排障')+'、'+chapter('incident','故障复盘')+'、'+chapter('slo','错误预算'), '再练一次故障现场排查、自动化修复脚本和容灾演练，补数据库性能诊断。'],
   ['训练平台', '机制可练，规模待验', chapter('distributed-training','DDP 单步')+'、'+chapter('gpu-memory','显存预算')+'、'+chapter('multinode-lab','多机手册'), '用真实集群证明拓扑放置、抢占、恢复后的训练进度，留存各 rank 的吞吐和内存曲线。'],
-  ['推理 / 性能', '部分覆盖', chapter('model-serving','KV 缓存')+'、'+chapter('inference-performance','推理指标'), '还需练 PD 分离调度、框架源码、GPU profiling 和跨版本性能回归。'],
+  ['推理 / 性能', '机制与CPU可练', chapter('model-serving','KV 缓存')+'、'+chapter('speculative-decoding','精确采样与缓存回退')+'、'+chapter('inference-performance','推理指标'), '先分开分布正确、调用次数与实测速度；还需练输入处理/逐词解码分离调度、框架源码、GPU性能分析和跨版本回归。'],
   ['Agent 平台', '运行时可练', chapter('agent-recovery','工具恢复')+'、'+chapter('agent-security','权限实验')+'、'+chapter('agent-evaluation','任务评估'), '再做一次多租户沙箱的创建、诊断与回收，比较冷启动与热会话，验证跨任务隔离。'],
   ['算法、编程与测试', '有排序与图两题', '<a href="/interview/coding/">依赖排序与本地判题 →</a>，下方另有作业峰值题。', '需系统练习哈希、树、图与复杂度，在限时条件下独立编码、测试并解释。'],
   ['系统设计、数据库', '部分覆盖', '<a href="/interview/database/">查询计划与事务快照 →</a> · <a href="/interview/design/">整组容量设计 →</a>', '继续补目标引擎的锁等待、分区复制和一致性取舍，并在真实负载中验证设计。'],
   ['个人项目与行为面', '有复盘提纲', chapter('incident','证据时间线')+'，下方有一题项目追问。', '准备自己的决策、分工、失败与量化结果，练习解释替代方案和实际代价。']
  ];
  return `<details class="interview-extra"><summary>面试覆盖对照 · 按岗位看本站能练什么</summary>
- <p>截至 2026 年 11 月 4 日，本站可用于 Cloud/SRE、AI 平台和 Agent 运行时的专项复习。下表按现有章节、可答的练习和已跑的实验逐项判断。公开样本没有给出完整题库或各题频率，无法据此计算“大厂面试覆盖率”。</p>
+ <p>截至 2026 年 11 月 8 日，本站可用于 Cloud/SRE、AI 平台和 Agent 运行时的专项复习。下表按现有章节、可答的练习和已跑的实验逐项判断。公开样本没有给出完整题库或各题频率，无法据此计算“大厂面试覆盖率”。</p>
  ${trainingTable(['准备方向','本站深度','从哪里开始','还要独立完成什么'],capabilities)}
  <h3>官方面试说明</h3>
  <p>Amazon 的 SDE II 指南分别说明编码、系统设计和过往经历。Microsoft 的技术面试指南要求展示问题拆解、可运行的实现和测试，技术范围因岗位而异。两者适合用来检查通用准备环节。${source('https://amazon.jobs/content/en/how-we-hire/sde-ii-interview-prep','Amazon SDE II')} · ${source('https://careers.microsoft.com/v2/global/en/hiring-tips/technical-interviewing.html','Microsoft 技术面试')}</p>
