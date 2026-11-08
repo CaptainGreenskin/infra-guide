@@ -25,7 +25,7 @@ for(const a of data.articles){
  }
 }
 const first=data.standalone;
-assert.equal(first.length,73,'seventy-three reviewed standalone bodies');
+assert.equal(first.length,78,'all seventy-eight reviewed standalone bodies');
 for(const id of first){
  const a=data.articles.find(x=>x.id===id);assert.equal(data.sections[id].length,a.sections.length);
  const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');

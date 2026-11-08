@@ -22,7 +22,8 @@ const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
 const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
 assert.equal(outlineChapterCount,inventory.chapters);
-assert(outline.includes("再沿先修顺序展开 "+outlineChapterCount+" 章。"),"outline introduction must agree with its actual chapter links");
+assert(outline.includes('Infra（基础设施）')&&outline.includes('计算、网络、数据和权限是共同底座。'),'define the three directions before their directory');
+assert(!outline.includes('class="outline-intro"')&&!outline.includes('class="outline-map"'),'one introduction before the actual course directory');
 const interview=fs.readFileSync(path.join(dist,'interview/index.html'),'utf8');
 assert.equal((interview.match(/class="interview-card"/g)||[]).length,12);
 assert.equal((interview.match(/<dt>说明边界<\/dt>/g)||[]).length,12);
@@ -83,7 +84,7 @@ for (const id of ['plan','companies','coding','database','design','experiences',
  assert(interview.includes('/interview/'+id+'/'), 'interview entry '+id);
  assert(pageText(id).includes('aria-current="page"'), 'active workshop '+id);
 }
-assert(outline.includes('先打底，再选方向'));
+for(const track of ['cloud','ai','agent'])assert(outline.includes('href="/outline/#outline-'+track+'"'),'direct direction jump '+track);
 assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,inventory.chapters);
 assert(pageText('plan').includes('三轮考前复习'));
 const sample=pageText('companies');

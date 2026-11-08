@@ -738,10 +738,9 @@ function outlineDirectoryHTML(chapters){
  }).join('');
 }
 function outlinePage(){
- simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开',`先看三个领域怎样连接，再沿先修顺序展开 ${articles.length} 章。每章标出学习重点，具体练习在正文中完成。`,
- `<section class="outline-intro"><h2>先有全貌，再选一条主线</h2><p>Infra 是 Infrastructure（基础设施）的简称。Cloud 让应用可靠运行；AI Infra 支撑模型训练与推理；Agent Infra 组织模型、工具与执行状态。计算、网络、数据和权限是它们共同的底座。</p><div class="path-links"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">查看学习顺序与过关任务 →</a></div></section>
- <div class="outline-map">${studyMap.map(t=>`<section><h2>${t.title}</h2><p>${t.plain}</p><p class="outline-example">${t.example}</p></section>`).join('')}</div>
- <section class="quality-section"><h2>完整学习大纲</h2><p>先打底，再选方向：P0 用于按需补齐系统基础；Cloud 按 C1–C9 学习，AI 先建立 A1 基础，再按训练或推理分支学习；Agent 沿任务、权限、恢复和结果验收展开。已有基础可从对应章节开始，综合实战在最后连接各层能力。</p>
+ simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开','Infra（基础设施）提供运行所需的资源与执行系统：Cloud 支撑应用，AI Infra 支撑模型训练与推理，Agent Infra 组织模型、工具与任务状态。计算、网络、数据和权限是共同底座。',
+ `<nav class="path-links" aria-label="选择学习方向"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">学习顺序与过关任务 →</a></nav>
+ <section class="quality-section"><h2>完整学习大纲</h2><p>P0 按需补齐系统基础；Cloud 沿 C1–C9 学习；AI 先读 A1，再选训练或推理；Agent 从任务、工具执行读到恢复与验收。展开领域即可选择章节，综合实战放在最后。</p>
  ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${learningGoalSelectorHTML(k)}${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details data-directory-module="${m.id}"><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc}</p>${outlineDirectoryHTML(articles.filter(a=>a.module===m.id))}</details>`).join('')}</div>`).join('')}
  <div class="outline-tree" data-directory-module="practice"><h3>综合实战</h3>${outlineDirectoryHTML(articles.filter(a=>a.module==='practice'))}</div></section>
  <p class="path-links"><a href="/interview/plan/">准备面试：按复习顺序找薄弱项 →</a><a href="/#sample-readings">第一次来：选一个样章 →</a></p>`);

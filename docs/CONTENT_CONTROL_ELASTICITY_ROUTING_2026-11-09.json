@@ -1,0 +1,86 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "2c64584e0c35c4a140fe8ac47cb53b8acd88cf74",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_TRANSPORT_DATABASE_TRAINING_SRE_2026-11-09.json": "f0595a86c26e5931a999e5d767ff40141be778b577f734f7d34caa073de508d1"
+  },
+  "body_revisions": [
+    {
+      "id": "control-plane-consensus",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e18b883fa5d21a716680c5181b580f992606bd05b0aa75773af60919d45ab61f",
+      "reviewed_content_sha256": "c3f3def8da952380b849f63c29a9470eeb7b6da5c565ca19913fe640819c2666",
+      "scope": "A shared record through majority commitment, versions and observed state",
+      "observation": "Eight complete sections first define the controller shared state and normal37-to42 write/read flow, separating Raft log index from MVCC revision; list/watch, lease expiry, partition and snapshot/relist recovery then follow their own native records.",
+      "headings": [
+        "先定位：控制面究竟要共同保存什么",
+        "三成员怎样把一次修改变成共同承诺",
+        "用revision解释读、事务与并发条件",
+        "先列举，再从同一版本继续观察",
+        "租约管理期限，不替你停止外部执行",
+        "网络分区与成员停机，分开验证",
+        "从快照恢复：数据基线、集群身份与缓存要一起处理",
+        "完整实战：从命令与状态读到独立验收"
+      ]
+    },
+    {
+      "id": "gitops-reconciliation",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "a930339def3f53d83795ed8b3bd2f381468bb78169bf4e75f99a581b39acc567",
+      "reviewed_content_sha256": "b79d22ea87878da1bd6d457e365349264d2f4a8444b25581593a2ced857f3844",
+      "scope": "Versioned desired state to rendered objects, running Pods and actual responses",
+      "observation": "Nine full sections connect Git, rendering, API installation, Kubernetes controllers, process environment and HTTP before synchronization/health conditions, self-heal, managed-object pruning, fixed commits and rollback. Configuration review and native Argo fixtures stay separate.",
+      "headings": [
+        "先画出Git、控制器、集群和业务四层关系",
+        "Synced、Healthy与业务正确，分别证明什么",
+        "自动同步、自愈和清理，是三个不同开关",
+        "清理依据受管关系，不是删除所有多余对象",
+        "环境变量为什么不会随ConfigMap自动改值",
+        "三个固定提交，把控制面绿灯与用户结果对上",
+        "回退要改变期望，再验证旧版本还能工作",
+        "从源到响应，按最后成功阶段排障",
+        "在独立kind集群重放，再读完整源码"
+      ]
+    },
+    {
+      "id": "moe-routing",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "116862819ab1b2095fa470e543b517f18b601170c3f27b7780cbacdebe6e6c6c",
+      "reviewed_content_sha256": "9d3929af5556a181f3c5c6e003d2bfa5e54bf2f1ad7b48b115e6454c7c2ec7eb",
+      "scope": "One position through router scores, expert dispatch and identity-preserving combination",
+      "observation": "Nine full sections define dense FFN, experts and router before top-k normalization, selected computation, token/expert identities, capacity and load. Theoretical12 total/8 active parameters and process-level full EXPERTS constants are explicitly separated.",
+      "headings": [
+        "从普通前馈层认识专家与路由器",
+        "总参数、激活参数与实际驻留是三笔账",
+        "Top-k选谁，门控权重怎样算",
+        "按专家分组计算，再按原token身份合并",
+        "容量限制：先数分配，再决定溢出怎么办",
+        "负载均衡：分别看分数、分配和真正执行",
+        "专家并行新增了哪些数据路径",
+        "运行两进程路由与容量反例",
+        "面试表达：从一层算到一组设备"
+      ]
+    },
+    {
+      "id": "speculative-decoding",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "bba14489624b2a30084b58470e66ae20d5c62c0574af6e46a230bf1b7c4dffcd",
+      "reviewed_content_sha256": "1ac219c34e7493b2500cb0824b26de902108c34b9372303d284e439644368e1a",
+      "scope": "Preserve a declared target distribution through proposals, acceptance and correction",
+      "observation": "Nine complete sections first define same-history target/draft distributions and uniform-random acceptance, then derive residual correction, multiple proposals, cache rollback and cost conditions. Exact rational sampling, fixed cache ledger and real CPU custom TinyAttention.past tests keep their own scope and inputs.",
+      "headings": [
+        "先分清谁提议，谁决定最终分布",
+        "先只提议一个词元：算清留下多少概率",
+        "拒绝以后，从哪里补回缺少的部分",
+        "多个候选怎样用一次目标调用核对",
+        "缓存回退，要删掉哪些位置",
+        "实际CPU模型怎样验证并行位置没有算错",
+        "接受率为什么不能直接换算成加速比",
+        "放进服务系统，还要处理哪些边界",
+        "把结果和能证明的范围对齐"
+      ]
+    }
+  ],
+  "knowledge_revisions": []
+}

@@ -560,14 +560,16 @@
       "id": "moe-routing",
       "targets": [
         "moe-routing-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "speculative-decoding",
       "targets": [
         "spec-exact-run",
         "spec-cache-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "agent-runtime",

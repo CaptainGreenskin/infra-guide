@@ -1,0 +1,214 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "2c64584e0c35c4a140fe8ac47cb53b8acd88cf74",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSPORT_DATABASE_TRAINING_SRE_2026-11-09.json": "b8d9bd263230032cda5905ff6f4992d3ff0498e14125db505addeb87f03cec07",
+    "docs/COHERENCE_NETWORK_CONFIG_MODEL_DELIVERY_2026-11-09.json": "a85e00472831602b866d57374e949b4523cbfbdc60bf8f233eb866c7a3139fbf",
+    "docs/COHERENCE_ORCHESTRATION_RECOVERY_2026-11-09.json": "2008f0bde2fdb85e9253492ec177871a79f90dbc05facd2083a0551584d52d84",
+    "docs/COHERENCE_DIRECTORY_HIERARCHY_2026-11-09.json": "01ffb705cacb5b167472fb25e66c2eb80529ae049a3292991e208325ff7222f2",
+    "docs/CONTENT_TRANSPORT_DATABASE_TRAINING_SRE_2026-11-09.json": "f0595a86c26e5931a999e5d767ff40141be778b577f734f7d34caa073de508d1",
+    "docs/COURSE_MIGRATION_2026-11-07.json": "507bbdd7b37eb199da555c5b7aa1c642c59800ea96bda394cb0cedccbdeb5d81",
+    "docs/QUALITY_AUDIT_2026-11-04.json": "d82977e8ed064d319e92692cbe6f7282b39f6a407fa95240b5899756e69f9ab1"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "092defe7d8990e57920ec04cda1ee1011002f62b599084800ecd6a11fa7bc0cd",
+      "reviewed_sha256": "b727392820cb5f27cbbc6a8c2381c8b7af0bcd0714afc9b9b40907b14bfe724e",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "3bfcaba9f06a2e8e888868bd7830897aa7defdc928d4a02e02d8eb045e48e4ed",
+      "reviewed_sha256": "796dfc7753a0b0427e1f21ec8b8062d33d2ad1f404e608c07d36b67734741997",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-consensus-gitops-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "31fcadd6b99500faa79fdc90aa84b45d8a9f01030d77eefcf4405e921346e4d4",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "201dcaada25e86a834b62de752e744bb6a7f006c70b8c1602373cc5e896caee1",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-moe-speculative-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d1389d27d685c3c398ef60b4c3e1f4618da137beff4fc9c6ddeffd29d6607254",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "9c0449def1976a4b01f3c7cc8ffbac9ea254d11e74c00aa2a6569d7c403bc1ff",
+      "reviewed_sha256": "eade7ab33d4b6fe4ee9038b4af60df967da487380f7af7800bd2fad2c783806e",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "17a85889ed77f23b8d2b887612263948e50a7d3b000f41e6145aafc427417d20",
+      "reviewed_sha256": "1ef493f05142e750d7a56c8d2015a2ac8dec40365ee1ea74881da133eb712a04",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/study-guides.js": {
+      "previous_sha256": "661a763cff36c74460dc16caa20f05908b52802ca297277a79b6d127f2b91e36",
+      "reviewed_sha256": "03700de6ffc04f8a3b79c5e7dbc2f771588eb138042f32526227b0aeac5ad00e",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/CONTENT_CONTROL_ELASTICITY_ROUTING_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5b7662b192b10f0f7b7d9b0ae9caf5f1fbb6825a7b78d5ea9cef68b1391dd8fa",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "cb8814fac4d2781dabcea3f18c9cb4e0d87043050a8b3fc9a3b18d4011857b36",
+      "reviewed_sha256": "1387424c2992930a98b9ca1aebef26099582aea41a5fa8a81047d4500a5cbd2d",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/ITERATION_2026-11-09_CONTROL_ELASTICITY_ROUTING.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8f1637ac442ee5b119f16dc59dd2b1e0ebb6849a9622fb5284ed35f96f68e6a9",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "12e8f57c68b601fdf52c89616f17684ad43d106f61f0d793ff8d0abe837f37a5",
+      "reviewed_sha256": "8762d9104a53e2e8538eea6e85bd08724fb6dd7fc7e6022c72500a208132db4b",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "bb385836ca19a856ab076832d9885d7bbb5cd2a2dc7bb3d9cce96e759e15af44",
+      "reviewed_sha256": "fbb62c871bc354ef73b13ab546eb24c5a6506d9b7ba0da5c1a43adc4594e2f8d",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/WHOLE_SITE_IMPLEMENTATION_2026-11-08.md": {
+      "previous_sha256": "ff01a8b0c5eb6929d04ec782fc67d1eefef4a91555d657e79bb5aaf588425372",
+      "reviewed_sha256": "e5bf02c1f8be434fe4f3d5b978b62a4c9d297ea9b67289c7f134b3d0f6ecb9e9",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "9bc8a2813dc1a6a861e526a66f0527fb6bd0bc64b7274f18f27ea7b075bd513d",
+      "reviewed_sha256": "19ccad8191d6cb7c337be9b024543b506fbfa92e44c1d6755318640c95b26e92",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "0bcd067f320cc5004fb54fb8f49516c1e37e0780f3f9f9759a263d24f8066a86",
+      "reviewed_sha256": "5e444f62f5956933c7ad046bba27145fc16e2ad8abc08636736c6fea0d3bb32a",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "65d414ccf57ce6772afa45a5de0e237ebb7783869cfcf0f25697ea38a0c57b55",
+      "reviewed_sha256": "d9e1248a17a0814e0f5885942374801545f97be5cfb36abdf78797e5547a0e46",
+      "scope": "Five complete Cloud/AI bodies; normal control/reconciliation/capacity/routing/sampling flows, explicit concept dependencies and independently scoped actual programs; original code/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "2c64584e0c35c4a140fe8ac47cb53b8acd88cf74",
+    "new_chapters": [],
+    "full_body_chapters": [
+      "control-plane-consensus",
+      "gitops-reconciliation",
+      "elasticity",
+      "moe-routing",
+      "speculative-decoding"
+    ],
+    "continuity_only_chapters": [],
+    "changed_bodies": [
+      "control-plane-consensus",
+      "elasticity",
+      "gitops-reconciliation",
+      "moe-routing",
+      "speculative-decoding"
+    ],
+    "unchanged_bodies": 73,
+    "added_code_blocks": {},
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "role_routes": 7,
+    "visible_subsections": 188,
+    "section_topic_views": 670,
+    "standalone_bodies_with_closing_review": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "cloud-compute",
+      "kubernetes-basics",
+      "tokenization-embedding",
+      "attention-mechanics",
+      "agent-security",
+      "agent-memory",
+      "transformer-block",
+      "position-encoding",
+      "agent-sandbox",
+      "agent-recovery",
+      "cloud-service-lab",
+      "storage-recovery",
+      "k8s-storage",
+      "autograd-training",
+      "gpu-memory",
+      "durable-workflows",
+      "vpc-network",
+      "network-diagnosis",
+      "training-communication",
+      "data-pipeline",
+      "agent-observability",
+      "serverless-execution",
+      "message-delivery",
+      "model-serving",
+      "inference-performance",
+      "agent-evaluation",
+      "agent-retrieval",
+      "linux-resource",
+      "virtual-memory-oom",
+      "concurrency-pools",
+      "distributed-systems",
+      "training-platform",
+      "gpu-scheduling",
+      "kubernetes-training",
+      "mcp-protocol",
+      "kairo-practice",
+      "operator-profiling",
+      "training-storage",
+      "database-index-locks",
+      "cache-consistency",
+      "gpu-execution",
+      "roofline-model",
+      "flash-attention-io",
+      "tensor-parallel-math",
+      "container-runtime",
+      "k8s-workloads",
+      "scheduling-resources",
+      "checkpoint-recovery",
+      "training-performance",
+      "k8s-networking",
+      "config-secrets",
+      "k8s-autoscaling",
+      "quantization-serving",
+      "ai-lifecycle",
+      "delivery",
+      "resilience",
+      "multinode-lab",
+      "terraform-state",
+      "iam-security",
+      "gpu-cluster",
+      "distributed-training",
+      "production-readiness",
+      "tcp-event-loop",
+      "mysql-recovery",
+      "mysql-replication",
+      "ddp-code",
+      "training-lab",
+      "slo",
+      "observability",
+      "incident",
+      "control-plane-consensus",
+      "gitops-reconciliation",
+      "elasticity",
+      "moe-routing",
+      "speculative-decoding"
+    ],
+    "reader_mastery_claims_added": 0,
+    "experiment_packs": 48,
+    "learning_tasks": 88,
+    "new_experiment_packs": [],
+    "new_task_ids": []
+  }
+}

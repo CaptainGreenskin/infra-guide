@@ -3766,6 +3766,24 @@
         "出现差异时，从第一个不同字段定位",
         "本机通过后，怎样进入两机四卡"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "87c73e8853cb3962581c1664c5e076c449aa2fc5e6c78e4fda09bf5faa95df1a",
+      "reviewed_content_sha256": "06eb15f58d21dada9b064f89190bc1ee162a6d691bc60650173bd19cb593702a",
+      "scope": "Accepted work, service capacity and the delayed control response",
+      "observation": "Eight complete sections connect arrivals, completed work, in-flight/queue boundaries, measured utilization and delayed capacity, then failure-domain reserves, bounded admission and draining. The480-second fluid example, fault-domain arithmetic and actual standard-library model remain separate.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
     }
   ]
 }
