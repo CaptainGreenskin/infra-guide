@@ -25,7 +25,7 @@ for(const a of data.articles){
  }
 }
 const first=data.standalone;
-assert.equal(first.length,24,'twenty-four reviewed standalone bodies');
+assert.equal(first.length,30,'thirty reviewed standalone bodies');
 for(const id of first){
  const a=data.articles.find(x=>x.id===id);assert.equal(data.sections[id].length,a.sections.length);
  const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
@@ -80,7 +80,7 @@ for(const[id,graph]of Object.entries(data.maps)){
  edgeCount+=badges.length;
 }
 assert.equal(edgeCount,87);
-console.log('PASS: 78 complete concept-based chapter outlines and matching search headings, twenty-four standalone bodies with closing optional reviews, preserved anchors/full titles, and87 visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');
+console.log('PASS: 78 complete concept-based chapter outlines and matching search headings, thirty standalone bodies with closing optional reviews, preserved anchors/full titles, and87 visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');
 
 // Author-defined full names and code identifiers must not receive unrelated word senses.
 c.example='<p>旋转位置编码（<dfn>Rotary Position Embedding</dfn>，RoPE）；前向跟读函数<code>trace</code>返回中间量。</p>';

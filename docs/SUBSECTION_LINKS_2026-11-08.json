@@ -217,13 +217,18 @@
         "subsection-7-1qditfg",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q"
+      ],
+      "visible_targets": [
+        "subsection-11-1bpbx18",
+        "subsection-11-13uy27q"
       ]
     },
     {
       "id": "message-delivery",
       "targets": [
         "message-native-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "delivery",
@@ -604,7 +609,8 @@
         "subsection-5-cnfnmm",
         "subsection-9-dpvytn",
         "subsection-12-bgbi93"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "durable-workflows",
@@ -657,7 +663,8 @@
         "subsection-8-1fb7qa2",
         "subsection-12-1p2vzym",
         "context-budget-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "agent-observability",

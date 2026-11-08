@@ -1,0 +1,29 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "04e923ead774d71f265918d61a06e07fd6b4d842",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXPANSIONS_2026-11-08_DELIVERY.json": "be87e7b5a409f75c761ff5fa3d7e059441fd1ed3918d1ba5e95c678a64358fec"
+  },
+  "body_revisions": [
+    {
+      "id": "message-delivery",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "7f538765d48762ce55080054cdf90aa360658001662854e4eddecbc154974d03",
+      "reviewed_content_sha256": "52ee599c29b31479436e92c931f7f70ed705d75d5ae0e2fd5939967a85694829",
+      "scope": "Publish, route, consume and confirm before replay and flow control",
+      "observation": "Nine full sections separate broker confirmation, consumer ACK and finalbusiness effect, then actualRabbitMQ cases, channels, prefetch, deadletters and backlogs. Error-channel ACK does not confirm the original delivery.",
+      "headings": [
+        "先有业务动作，再有承载它的运输消息",
+        "生产者确认与消费者ACK，不是同一张回执",
+        "从待投递到待确认，状态怎样移动",
+        "业务提交后退出，重投为什么不能再记一次",
+        "先ACK再做业务，为什么队列空了仍可能丢工作",
+        "预取窗口限制在途消息，不自动增加处理能力",
+        "持久队列、持久消息和确认，各补哪一个条件",
+        "把这套对象带回Serverless事件源",
+        "运行完整代理实验，核对独立结果"
+      ]
+    }
+  ]
+}

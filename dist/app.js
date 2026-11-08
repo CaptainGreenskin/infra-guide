@@ -30,12 +30,63 @@ function articlePage(a,anchor){const navigation=chapterNavigation(a);const conce
 function roadmap(){roadmapPage()}
 let currentPath='';
 function route(){const hash=documentPathname()+(location.search||''),[path,query]=hash.split('?'),parts=path.split('/').filter(Boolean),anchor=legacySectionTarget(parts[0]==='article'?parts[1]:'',new URLSearchParams(query||'').get('section'));if(path===currentPath&&parts[0]==='article'&&anchor){document.getElementById(/^\d+$/.test(anchor)?`section-${anchor}`:anchor)?.scrollIntoView({behavior:'instant'});return}currentPath=path;observer?.disconnect();$('#search-dialog').close();$('.top-nav').classList.remove('mobile-open');$('#mobile-menu').setAttribute('aria-expanded','false');document.querySelectorAll('.top-nav a').forEach(a=>a.classList.remove('active'));window.scrollTo({top:0,left:0,behavior:'instant'});if(!parts.length)home();else if(parts[0]==='module'&&moduleFor(parts[1])){modulePage(moduleFor(parts[1]));document.querySelector(`.top-nav a[href="#/module/${parts[1]}"]`)?.classList.add('active')}else if(parts[0]==='article'&&articles.find(a=>a.id===parts[1])){const a=articles.find(a=>a.id===parts[1]);articlePage(a,anchor);document.querySelector(`.top-nav a[href="#/module/${a.module}"]`)?.classList.add('active')}else if(parts[0]==='start')startPage();else if(parts[0]==='outline')outlinePage();else if(parts[0]==='interview'&&parts.length===2&&Object.hasOwn(interviewUnits,parts[1]))workshopPage(parts[1]);else if(parts[0]==='interview'&&parts.length===1)interviewPage();else if(parts[0]==='resources')resourcesPage();else if(parts[0]==='roadmap')roadmap();else if(parts[0]==='about')editorialPage();else if(parts[0]==='track'&&['cloud','ai','agent'].includes(parts[1]))trackPage(parts[1]);else if(parts[0]==='labs')labsPage();else if(parts[0]==='problems')problemsPage();else{$('#app').innerHTML=`<main id="main" class="not-found" tabindex="-1"><h1>没有找到这个章节</h1><p>你可以返回知识库，或搜索相关内容。</p><a class="btn" href="#/">返回知识库</a></main>`;document.title='章节未找到 · InfraGuide'}let navHref=parts[0]==='track'?'#/track/'+parts[1]:parts[0]==='article'?'#/track/'+chapterReadingContext(articles.find(a=>a.id===parts[1])).track:parts[0]==='module'?'#/track/'+(parts[1]==='practice'?chapterReadingContext(practiceArticleForContext()).track:trackForModule(parts[1])):'#/'+parts[0];if(navHref==='#/track/shared')navHref='#/labs';normalizeInternalLinks();document.querySelector('.top-nav a[href="'+publicRoute(navHref)+'"]')?.classList.add('active');initReadingComfort();initFieldConceptMaps();$('#main')?.focus({preventScroll:true});restoreDocumentFragment()}
+// Attach the existing controls to the published article instead of rebuilding its prose.
+// Keep native fragment position, open details and any text entered before startup.
+function hydrateStaticArticle(){
+ const shell=$('#app'),path=documentPathname();
+ if(shell?.getAttribute?.('data-static-path')!==path)return false;
+ if(typeof staticReadingVersion==='undefined'||shell.getAttribute('data-static-version')!==staticReadingVersion)return false;
+ const parts=path.split('/').filter(Boolean),id=shell.getAttribute('data-static-article');
+ const expected=parts[0]==='article'?parts[1]:parts[0]==='track'?trackDefinitions[parts[1]]?.start:parts[0]==='module'&&parts[1]==='practice'?practiceArticleForContext()?.id:null;
+ const article=articles.find(a=>a.id===id);
+ if(!article||expected!==id||!$('.doc-layout .article'))return false;
+ currentPath=path;
+ // Only the small personal navigation changes with local progress and a chosen role.
+ const side=$('.sidebar');
+ if(Object.keys(progress).some(key=>progress[key])&&side){
+  const expanded=[...(side.querySelectorAll?.('details')||[])].map(detail=>detail.open);
+  side.outerHTML=sidebar(article.module,article.id);
+  [...($('.sidebar')?.querySelectorAll?.('details')||[])].forEach((detail,index)=>{if(index<expanded.length)detail.open=expanded[index];});
+ }
+ const roleNav=learningGoalChapterNav(article),currentNav=$('.goal-reading-nav')||$('.article-nav');
+ if(roleNav&&currentNav)currentNav.outerHTML=roleNav;
+ const read=document.querySelector('[data-read="'+id+'"]');
+ if(read){read.classList.toggle('done',!!progress[id]);read.textContent=progress[id]?'✓ 已读 · 点击取消':'标记为已读';}
+ let changedChecks=false;
+ for(const input of document.querySelectorAll('input[data-check]')){
+  const key=input.dataset.check;
+  if(input.checked!==input.defaultChecked){checks[key]=input.checked;changedChecks=true;}
+  else input.checked=!!checks[key];
+ }
+ if(changedChecks)writeStore('cloudinfra-checks',checks);
+ document.querySelectorAll('.top-nav a').forEach(a=>a.classList.remove('active'));
+ document.querySelector('.top-nav a[href="'+publicRoute('#/track/'+chapterReadingContext(article).track)+'"]')?.classList.add('active');
+ normalizeInternalLinks();initInteractive();initReadingComfort();initFieldConceptMaps();
+ shell.setAttribute('data-hydrated-static','true');
+ const queryTarget=legacySectionTarget(id,new URLSearchParams(location.search||'').get('section'));
+ const engaged=document.activeElement?.matches?.('input,textarea,select,button,summary,a[href]');
+ const reveal=(target,forceScroll)=>{
+  let opened=false;
+  for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS'&&!node.open){node.open=true;opened=true;}
+  const child=target?.querySelector?.(':scope > details.article-case');if(child&&!child.open){child.open=true;opened=true;}
+  if(!engaged&&(opened||forceScroll))target?.scrollIntoView({behavior:'instant'});
+ };
+ // The browser has already positioned ordinary static fragments. Only a newly
+ // revealed target or the legacy query syntax needs an extra startup scroll.
+ if(location.hash&&!location.hash.startsWith('#/'))requestAnimationFrame(()=>{
+  let targetId;try{targetId=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  reveal(document.getElementById(targetId),false);
+ });
+ else if(queryTarget)requestAnimationFrame(()=>reveal(document.getElementById(/^\d+$/.test(queryTarget)?'section-'+queryTarget:queryTarget),true));
+
+ return true;
+}
 function initInteractive(){initReaderActions();initAttentionDemo();initSystemInteractive();if($('#topology-demo')){let mode=0;const render=()=>{const info=[['单卡训练','一张 GPU 承载训练：先关注显存容量、算子效率与数据输入。'],['单机多卡','多张 GPU 在同一节点协作：新增梯度同步、数据分片与机内互联问题。'],['多机多卡','跨节点通信成为关键路径之一：同时验证网络、拓扑、任务协调与整体恢复。']];const node=(n,c)=>`<div class="gpu-node"><small>NODE ${n}</small><div class="gpu-chips">${Array.from({length:c},(_,i)=>`<span>GPU ${i}</span>`).join('')}</div></div>`;$('#topology-demo').innerHTML=`<div class="interactive"><div class="segmented" aria-label="训练拓扑">${info.map((x,i)=>`<button data-topology="${i}" class="${i===mode?'active':''}" aria-pressed="${i===mode}">${x[0]}</button>`).join('')}</div><div class="topology-nodes">${node('A',mode?2:1)}${mode===2?'<div class="network-bridge">⇄<br>节点间网络</div>'+node('B',2):''}</div><p class="demo-caption" aria-live="polite">${info[mode][1]}</p></div>`;$('#topology-demo').querySelectorAll('button').forEach(b=>b.onclick=()=>{mode=Number(b.dataset.topology);render()})};render()}
 if($('#scaling-demo')){$('#scaling-demo').innerHTML=`<div class="interactive"><p class="demo-caption">计算示例：初始数值仅演示公式，不是实测基准。可填入同口径的真实结果。</p><div class="calc-fields"><label>单卡吞吐（样本/秒）<input id="base-throughput" type="number" min="0.01" step="any" value="100"></label><label>多卡吞吐（样本/秒）<input id="multi-throughput" type="number" min="0.01" step="any" value="620"></label><label>GPU 数量<input id="gpu-count" type="number" min="1" max="100000" step="1" value="8"></label></div><div id="calc-result" aria-live="polite"></div></div>`;const calc=()=>{const a=Number($('#base-throughput').value),b=Number($('#multi-throughput').value),n=Number($('#gpu-count').value);$('#calc-result').innerHTML=(!Number.isFinite(a)||!Number.isFinite(b)||a<=0||b<=0||!Number.isInteger(n)||n<1||n>100000)?'<p class="calc-error">请输入正数吞吐和有效的整数 GPU 数量。</p>':`<div class="calc-output"><div><strong>${(b/a).toFixed(2)}×</strong><small>吞吐加速比</small></div><div><strong>${(b/a/n*100).toFixed(1)}%</strong><small>扩展效率</small></div></div>${b/a/n>1?'<p class="demo-caption">效率超过 100%，请检查比较口径；缓存和工作负载变化也可能带来超线性结果。</p>':''}`};document.querySelectorAll('.calc-fields input').forEach(i=>i.addEventListener('input',calc));calc()}}
 function search(q=''){
  const ranked=rankSiteSearch(q);searchItems=ranked.slice(0,24);searchIndex=-1;
  $('#search-input').removeAttribute('aria-activedescendant');
- $('#search-status').textContent=q.trim()?(ranked.length?'找到 '+ranked.length+' 项'+(ranked.length>24?'，先显示前24项；可补充关键词缩小范围。':''):'没有找到匹配内容。'):'可搜'+articles.length+'章、'+buildSiteSearchIndex().filter(item=>item.type==='knowledge').length+'个知识点；先选一项，或输入技术名。';
+ $('#search-status').textContent=q.trim()?(ranked.length?'找到 '+ranked.length+' 项'+(ranked.length>24?'，先显示前24项；可补充关键词缩小范围。':''):'没有找到匹配内容。'):'可搜'+articles.length+'章、'+siteSearchCache.filter(item=>item.type==='knowledge').length+'个知识点；先选一项，或输入技术名。';
  $('#search-results').innerHTML=searchItems.length?searchItems.map((r,i)=>`<a class="search-result" id="site-search-${i}" role="option" aria-selected="false" tabindex="-1" href="${learningContextHref(hostedPath(r.path)+(r.anchor?'#'+r.anchor:''))}"><small>${r.type==='knowledge'?'系统知识点':'章节 '+r.number} · ${escapeHTML(moduleFor(r.module).name)}<span>${r.matchLabel}</span></small><strong>${siteSearchHighlight(r.titleText,r.terms)}</strong><p>${siteSearchHighlight(r.excerpt,r.terms)}</p></a>`).join(''):`<p class="search-empty">试试「GPU」「幂等」或「恢复」。多个关键词之间加空格。</p>`;
 }
 function openSearch(){$('#search-dialog').showModal();$('#search-input').setAttribute('aria-expanded','true');$('#search-input').value='';search();$('#search-input').focus()}
@@ -60,4 +111,4 @@ document.addEventListener('change',e=>{if(e.target.matches('[data-check]')){chec
 $('.skip').onclick=e=>{e.preventDefault();$('#main')?.focus();$('#main')?.scrollIntoView()};
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy-code]');if(!b)return;const code=b.closest('.code-block').querySelector('code').textContent;try{await navigator.clipboard.writeText(code);b.textContent='已复制';toast('代码已复制');setTimeout(()=>b.textContent='复制代码',1800)}catch{toast('无法访问剪贴板，请选中代码复制')}});
 function followCourseRedirect(){const destination=courseRedirectFor(documentPathname(),location.search||'',location.hash||'');if(!destination)return false;location.replace(hostedPath(destination));return true}
-window.addEventListener('hashchange',()=>{if(followCourseRedirect())return;if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else restoreDocumentFragment()});if(followCourseRedirect()){}else if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else{route();document.documentElement.setAttribute?.('data-site-ready','true');window.dispatchEvent?.(new Event('infra-ready'));}
+window.addEventListener('hashchange',()=>{if(followCourseRedirect())return;if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else restoreDocumentFragment()});if(followCourseRedirect()){}else if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else{if(!hydrateStaticArticle())route();document.documentElement.setAttribute?.('data-site-ready','true');window.dispatchEvent?.(new Event('infra-ready'));}

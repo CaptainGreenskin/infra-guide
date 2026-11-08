@@ -61,7 +61,8 @@ with zipfile.ZipFile('dist/labs/agent-boundaries.zip') as z:
   if p.is_file():assert z.read(p.name)==p.read_bytes(),p.name
 `],{encoding:'utf8'});
 const retrievalPage=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
-assert(/<div class="mechanism-core" id="retrieval-evidence-pipeline">/.test(retrievalPage),'restored legacy anchor must retain sticky-header scroll margin');
+assert(/<(?:div class="mechanism-core"|span class="legacy-subsection-anchor") id="retrieval-evidence-pipeline"/.test(retrievalPage),'restored legacy anchor uses a supported sticky-header target');
+assert(/\.legacy-subsection-anchor\{[^}]*scroll-margin-top:calc\(var\(--reader-header\) \+ \d+px\)/.test(fs.readFileSync('dist/reading-comfort.css','utf8')),'retained zero-height targets keep their header offset');
 for(const[id,anchor]of [['agent-security','authorization-commit-run'],['agent-retrieval','context-budget-run']]){
  const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');assert(page.includes('id="'+anchor+'"'));c.id=id;const review=vm.runInContext('optionalConceptReviews.has(id)',c);assert.equal(page.indexOf('id="concept-path"')<page.indexOf('class="article-section"'),!review,id+': reviewed standalone body and remaining prerequisite preview use their documented positions');
 }

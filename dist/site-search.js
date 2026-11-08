@@ -48,9 +48,9 @@ function rankSiteSearch(value){
   if(e.type==='article'&&tier>=5&&coverage(e.titleNorm)>0&&segment&&!coverage(segment.headingNorm)){anchor=undefined;label='标题与正文匹配';}
   // A heading hit should explain its opening, rather than jump to a later download label.
   const excerptText=segment&&(tier===4||label==='概念匹配')?segment.heading+'。'+segment.text:segment?.text||e.desc;
-  results.push({...e,path:e.path+(segment?.query?'?'+segment.query:''),anchor,tier,titleCoverage:coverage(e.titleNorm),descCoverage:coverage(e.descNorm),phraseMatch:Number(searchContains(segment?.norm||e.allNorm,query)),matchLabel:label,excerpt:siteSearchExcerpt(excerptText,terms),terms});
+  results.push({...e,titlePhraseStart:Number(e.titleNorm.startsWith(query)),path:e.path+(segment?.query?'?'+segment.query:''),anchor,tier,titleCoverage:coverage(e.titleNorm),descCoverage:coverage(e.descNorm),phraseMatch:Number(searchContains(segment?.norm||e.allNorm,query)),matchLabel:label,excerpt:siteSearchExcerpt(excerptText,terms),terms});
  }
- return results.sort((a,b)=>a.tier-b.tier||b.titleCoverage-a.titleCoverage||b.descCoverage-a.descCoverage||b.phraseMatch-a.phraseMatch||a.order-b.order);
+ return results.sort((a,b)=>a.tier-b.tier||b.titlePhraseStart-a.titlePhraseStart||b.titleCoverage-a.titleCoverage||b.descCoverage-a.descCoverage||b.phraseMatch-a.phraseMatch||a.order-b.order);
 }
 function siteSearchHighlight(value,terms){
  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

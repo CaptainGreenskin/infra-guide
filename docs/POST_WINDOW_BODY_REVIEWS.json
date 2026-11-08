@@ -2693,6 +2693,112 @@
         "把“服务端处理完成”与“用户收到结果”拆开",
         "验收：画出路和门，再画回来的路"
       ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "df490cfb7d0e7572f07b988322d5c84a6b0172742854950f9ee4990750dd9f87",
+      "reviewed_content_sha256": "12d4350fad5491cd5aeecd7343275854c7815e332b13c46d6fcfc3ed998041dc",
+      "scope": "Single-task trials, independent acceptance and explicitlyseparate datafixtures",
+      "observation": "Twelve full sections define task/trial/actualcall attempts and normaloracle evaluation before category denominators, calibration, intervals and pairedcomparison. Fourcase processing-branch counters differ from actualtoolcalls;4/5 refusalexpectations alone do not establish an unauthorizedeffect.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "d5f190c8fa247c3da85ada3692a49d3770f29b6e59d534fa7d6b03c703739828",
+      "reviewed_content_sha256": "8efdb89e28b746471e16b1303cd7bf764db515f343895d36582b5fb75dc2c5b6",
+      "scope": "Source to versioned evidence and the actualreceived modelcontext",
+      "observation": "Fifteen full sections link source/document/chunk/query/index/ranking/evidence/context before rankingmetrics, FTS5, version/ACL delivery and actualBPE budget. Independent teaching fixtures retain explicitinputs and actualnative records.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "71326ecb9a8811413078db20846cd9ede12204f81d03ebfd3447fbabd7ddbcd3",
+      "reviewed_content_sha256": "3f685b7da24f8d3f22f9a3f0eda437e76d80028c0fd2b2fd2289adcc9b91254f",
+      "scope": "Request timeline and output identity before latency and load aggregates",
+      "observation": "Eight full sections use start/end events, client/server boundaries and actualoutput counts before TTFT/TPOT/throughput/percentiles, queueing, controlledcomparison and originalscheduler programs.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "65b5a926dae1ef1a72d6dbda0853ca45c41498729e53e2ad8c9e34b6655b53df",
+      "reviewed_content_sha256": "eaf2bba13c79599ea406251100667f6bce8f9b711aed440f031238a29b677117",
+      "scope": "Generation inputs and cached state to admission and actualattention",
+      "observation": "Eight full sections connect request/generation, Prefill/Decode, cacheownership/COW/lifetimes, scheduling and admission to source-bound CPU programs and SDPA. The rounded1.776e-15 result is approximate, not a strict upperbound.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "48632a087b9b69892a2f435f08faa89d122bfb945c534caacf8e4aca9efdcf61",
+      "reviewed_content_sha256": "c1cbf1bba3b317efc7160f9a84ad0668d29904c3562d925b54c7c3ed58a211ca",
+      "scope": "Function, event and effect through execution, concurrency and partial batches",
+      "observation": "Thirteen full sections introduce request/event/message/delivery/handler/effect, normal invocation modes and lifetimes, then receiver identity, batch semantics, time/cost and actual local programs. Cloud contracts, reference policy and original integer-clock/process fixtures stay distinct.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
     }
   ]
 }

@@ -291,6 +291,17 @@ const fieldConceptReadings={
 };
 const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation'],'mysql-replication':['cloud-data','replication-failover']};
 
+// Reviewed primary focus; the remaining associated concepts remain available.
+const chapterFieldPrimaryConcepts={
+ 'network-diagnosis':['network','transport-timeout'],
+ 'k8s-workloads':['native','workload-type'],
+ 'roofline-model':['model-foundations','mf-roofline'],
+ 'inference-performance':['platform','sv-metrics'],
+ 'ai-lifecycle':['platform','sv-release'],
+ 'agent-security':['agent','ag-authorization'],
+ 'agent-evaluation':['agent','ag-evaluation']
+};
+
 function fieldPointRecords(moduleId){
  if(moduleId==='foundation')return cloudPrerequisites.map(([title,lead,chapters],i)=>({id:'prerequisite-'+(i+1),title,lead,articles:chapters}));
  const cloud=cloudKnowledgeDomains.find(d=>d.module===moduleId);
@@ -316,6 +327,12 @@ function chapterFieldConcepts(a){
  if(chapterConceptSupplements[a.id])return [chapterConceptSupplements[a.id]];
  const found=[];
  for(const moduleId of [a.module,...Object.keys(fieldConceptMaps).filter(id=>id!==a.module)])for(const p of fieldPointRecords(moduleId))if((p.articles||[]).includes(a.id)&&fieldConceptMaps[moduleId].nodes.some(n=>n[0]===p.id))found.push([moduleId,p.id]);
+ const primary=chapterFieldPrimaryConcepts[a.id];
+ if(primary){
+  const index=found.findIndex(([moduleId,id])=>moduleId===primary[0]&&id===primary[1]);
+  if(index<0)throw Error('Primary chapter concept is not an existing association: '+a.id);
+  found.unshift(...found.splice(index,1));
+ }
  return found.slice(0,3);
 }
 function chapterFieldMapLink(a){const [moduleId,id]=chapterFieldConcepts(a)[0]||[];return moduleId?'<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">在领域图谱中看本章相关概念 →</a>':'';}
