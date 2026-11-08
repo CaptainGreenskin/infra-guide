@@ -57,12 +57,20 @@ def main():
                     assert row['refusal'] and row['pids_current'] <= 16
                     assert 0 < row['created_threads'] < 32 and row['pids_max_events_delta'] > 0
             rows.append(row)
-        # cpu and pids are different containers; their namespace identities differ.
+        # Compare concurrent lifetimes: namespace inode numbers can be reused after exit.
+        live_namespaces = []
+        for _ in range(2):
+            name = 'infra-limits-' + uuid.uuid4().hex[:12]
+            owned.append(name)
+            run('docker', 'run', '-d', '--name', name, '--network', 'none', '--memory', '96m',
+                '--pids-limit', '16', digest, 'python', '-c', 'import time; time.sleep(300)')
+            script = 'import json,os; print(json.dumps({n:os.readlink("/proc/1/ns/"+n) for n in ("pid","mnt","net")}))'
+            live_namespaces.append(json.loads(run('docker', 'exec', name, 'python', '-c', script).stdout))
         for ns in ('pid', 'mnt', 'net'):
-            assert rows[0]['namespaces'][ns] != rows[1]['namespaces'][ns]
+            assert live_namespaces[0][ns] != live_namespaces[1][ns]
         report = {'schema': 1, 'scope': 'real Linux Docker, cgroup v2; not a sandbox escape test',
                   'host': platform.platform(), 'docker_server': info['ServerVersion'],
-                  'image': digest, 'cases': rows,
+                  'image': digest, 'cases': rows, 'concurrent_namespaces': live_namespaces,
                   'source_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                     for p in (Path(__file__), source)}}
         args.output.parent.mkdir(parents=True, exist_ok=True)
