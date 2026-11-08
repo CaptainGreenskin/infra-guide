@@ -1,0 +1,1012 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "checked": "2026-11-08",
+  "environment": {
+    "python": "3.9.6",
+    "implementation": "CPython",
+    "os": "Darwin",
+    "sqlite": "3.51.0"
+  },
+  "command": "python3 -B proxy_lab.py",
+  "source_sha256": {
+    "proxy_lab.py": "1131614fc24f29faf5b006ca5fa2916d42c72aeadb3faa927035c372e6d109fd",
+    "README.md": "d110dc0aa78b0bafa97b24c4f627719b82d49a60218dd622e6fada36ee5c5a58"
+  },
+  "execution": {
+    "positive": {
+      "wrong_host": {
+        "status": 421,
+        "body": {
+          "error": "unknown_virtual_host"
+        },
+        "attempts": 0,
+        "front_connection": "P-c1",
+        "backend_connection": null
+      },
+      "reuse": [
+        {
+          "status": 200,
+          "body": {
+            "backend": "A",
+            "order": "O-104",
+            "status": "paid",
+            "total": 37
+          },
+          "attempts": 1,
+          "front_connection": "P-c1",
+          "backend_connection": "A-c1"
+        },
+        {
+          "status": 200,
+          "body": {
+            "backend": "A",
+            "order": "O-104",
+            "status": "paid",
+            "total": 37
+          },
+          "attempts": 1,
+          "front_connection": "P-c1",
+          "backend_connection": "A-c1"
+        },
+        {
+          "status": 200,
+          "body": {
+            "backend": "A",
+            "order": "O-104",
+            "status": "paid",
+            "total": 37
+          },
+          "attempts": 1,
+          "front_connection": "P-c2",
+          "backend_connection": "A-c1"
+        }
+      ],
+      "drain_start": {
+        "active": 1,
+        "new_assignments_allowed": false
+      },
+      "during_drain": {
+        "status": 200,
+        "body": {
+          "backend": "A",
+          "order": "O-104",
+          "status": "paid",
+          "total": 37
+        },
+        "attempts": 1,
+        "front_connection": "P-c1",
+        "backend_connection": "A-c1"
+      },
+      "held_completed": {
+        "status": 200,
+        "body": {
+          "backend": "B",
+          "order": "O-104",
+          "status": "paid",
+          "total": 37
+        },
+        "attempts": 1,
+        "front_connection": "P-c3",
+        "backend_connection": "B-c1"
+      },
+      "get_retry": {
+        "status": 200,
+        "body": {
+          "backend": "A",
+          "order": "O-104",
+          "status": "paid",
+          "total": 37
+        },
+        "attempts": 2,
+        "front_connection": "P-c1",
+        "backend_connection": "A-c1"
+      },
+      "retry_exhausted": {
+        "status": 503,
+        "body": {
+          "backend": "A",
+          "error": "busy"
+        },
+        "attempts": 2,
+        "front_connection": "P-c1",
+        "backend_connection": "A-c1"
+      },
+      "shared_budget_timeout": {
+        "status": 504,
+        "body": {
+          "error": "upstream_budget_exhausted"
+        },
+        "attempts": 1,
+        "front_connection": "P-c1",
+        "backend_connection": null
+      },
+      "write_unknown": {
+        "status": 502,
+        "body": {
+          "error": "upstream_response_lost",
+          "write_result_unknown": true
+        },
+        "attempts": 1,
+        "front_connection": "P-c1",
+        "backend_connection": null
+      },
+      "effects": [
+        {
+          "rid": "write-unknown",
+          "backend": "A",
+          "total": 37
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "kind": "accepted",
+          "server": "P",
+          "connection": "P-c1",
+          "local": [
+            "127.0.0.1",
+            50869
+          ],
+          "peer": [
+            "127.0.0.1",
+            50870
+          ]
+        },
+        {
+          "seq": 2,
+          "kind": "front_request",
+          "rid": "wrong-host",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "connection": "P-c1",
+          "host": "other.lab.test"
+        },
+        {
+          "seq": 3,
+          "kind": "client_received",
+          "rid": "wrong-host",
+          "status": 421,
+          "attempts": 0
+        },
+        {
+          "seq": 4,
+          "kind": "front_request",
+          "rid": "reuse-1",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 5,
+          "kind": "accepted",
+          "server": "A",
+          "connection": "A-c1",
+          "local": [
+            "127.0.0.1",
+            50867
+          ],
+          "peer": [
+            "127.0.0.1",
+            50871
+          ]
+        },
+        {
+          "seq": 6,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "reuse-1",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 7,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "reuse-1",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 8,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "reuse-1",
+          "connection": "A-c1",
+          "status": 200
+        },
+        {
+          "seq": 9,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "reuse-1",
+          "attempt": 1,
+          "status": 200
+        },
+        {
+          "seq": 10,
+          "kind": "client_received",
+          "rid": "reuse-1",
+          "status": 200,
+          "attempts": 1
+        },
+        {
+          "seq": 11,
+          "kind": "front_request",
+          "rid": "reuse-2",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 12,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "reuse-2",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 13,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "reuse-2",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 14,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "reuse-2",
+          "connection": "A-c1",
+          "status": 200
+        },
+        {
+          "seq": 15,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "reuse-2",
+          "attempt": 1,
+          "status": 200
+        },
+        {
+          "seq": 16,
+          "kind": "client_received",
+          "rid": "reuse-2",
+          "status": 200,
+          "attempts": 1
+        },
+        {
+          "seq": 17,
+          "kind": "accepted",
+          "server": "P",
+          "connection": "P-c2",
+          "local": [
+            "127.0.0.1",
+            50869
+          ],
+          "peer": [
+            "127.0.0.1",
+            50872
+          ]
+        },
+        {
+          "seq": 18,
+          "kind": "front_request",
+          "rid": "reuse-other-front",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "connection": "P-c2",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 19,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "reuse-other-front",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 20,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "reuse-other-front",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 21,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "reuse-other-front",
+          "connection": "A-c1",
+          "status": 200
+        },
+        {
+          "seq": 22,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "reuse-other-front",
+          "attempt": 1,
+          "status": 200
+        },
+        {
+          "seq": 23,
+          "kind": "client_received",
+          "rid": "reuse-other-front",
+          "status": 200,
+          "attempts": 1
+        },
+        {
+          "seq": 24,
+          "kind": "accepted",
+          "server": "P",
+          "connection": "P-c3",
+          "local": [
+            "127.0.0.1",
+            50869
+          ],
+          "peer": [
+            "127.0.0.1",
+            50873
+          ]
+        },
+        {
+          "seq": 25,
+          "kind": "front_request",
+          "rid": "drain-held",
+          "method": "GET",
+          "path": "/hold",
+          "connection": "P-c3",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 26,
+          "kind": "upstream_attempt",
+          "backend": "B",
+          "rid": "drain-held",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50874
+          ],
+          "peer": [
+            "127.0.0.1",
+            50868
+          ]
+        },
+        {
+          "seq": 27,
+          "kind": "accepted",
+          "server": "B",
+          "connection": "B-c1",
+          "local": [
+            "127.0.0.1",
+            50868
+          ],
+          "peer": [
+            "127.0.0.1",
+            50874
+          ]
+        },
+        {
+          "seq": 28,
+          "kind": "backend_request",
+          "backend": "B",
+          "connection": "B-c1",
+          "rid": "drain-held",
+          "method": "GET",
+          "path": "/hold",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 29,
+          "kind": "drain_started",
+          "backend": "B",
+          "active": 1,
+          "new_assignments_allowed": false
+        },
+        {
+          "seq": 30,
+          "kind": "front_request",
+          "rid": "drain-new",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 31,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "drain-new",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 32,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "drain-new",
+          "method": "GET",
+          "path": "/orders/O-104",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 33,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "drain-new",
+          "connection": "A-c1",
+          "status": 200
+        },
+        {
+          "seq": 34,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "drain-new",
+          "attempt": 1,
+          "status": 200
+        },
+        {
+          "seq": 35,
+          "kind": "client_received",
+          "rid": "drain-new",
+          "status": 200,
+          "attempts": 1
+        },
+        {
+          "seq": 36,
+          "kind": "backend_finished",
+          "backend": "B",
+          "rid": "drain-held",
+          "connection": "B-c1",
+          "status": 200
+        },
+        {
+          "seq": 37,
+          "kind": "upstream_response",
+          "backend": "B",
+          "rid": "drain-held",
+          "attempt": 1,
+          "status": 200
+        },
+        {
+          "seq": 38,
+          "kind": "drain_finished",
+          "backend": "B"
+        },
+        {
+          "seq": 39,
+          "kind": "client_received",
+          "rid": "drain-held",
+          "status": 200,
+          "attempts": 1
+        },
+        {
+          "seq": 40,
+          "kind": "front_request",
+          "rid": "transient",
+          "method": "GET",
+          "path": "/transient",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 41,
+          "kind": "accepted",
+          "server": "B",
+          "connection": "B-c2",
+          "local": [
+            "127.0.0.1",
+            50868
+          ],
+          "peer": [
+            "127.0.0.1",
+            50875
+          ]
+        },
+        {
+          "seq": 42,
+          "kind": "upstream_attempt",
+          "backend": "B",
+          "rid": "transient",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50875
+          ],
+          "peer": [
+            "127.0.0.1",
+            50868
+          ]
+        },
+        {
+          "seq": 43,
+          "kind": "backend_request",
+          "backend": "B",
+          "connection": "B-c2",
+          "rid": "transient",
+          "method": "GET",
+          "path": "/transient",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 44,
+          "kind": "backend_finished",
+          "backend": "B",
+          "rid": "transient",
+          "connection": "B-c2",
+          "status": 503
+        },
+        {
+          "seq": 45,
+          "kind": "upstream_response",
+          "backend": "B",
+          "rid": "transient",
+          "attempt": 1,
+          "status": 503
+        },
+        {
+          "seq": 46,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "transient",
+          "attempt": 2,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 47,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "transient",
+          "method": "GET",
+          "path": "/transient",
+          "attempt": 2,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 48,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "transient",
+          "connection": "A-c1",
+          "status": 200
+        },
+        {
+          "seq": 49,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "transient",
+          "attempt": 2,
+          "status": 200
+        },
+        {
+          "seq": 50,
+          "kind": "client_received",
+          "rid": "transient",
+          "status": 200,
+          "attempts": 2
+        },
+        {
+          "seq": 51,
+          "kind": "front_request",
+          "rid": "always-busy",
+          "method": "GET",
+          "path": "/always-busy",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 52,
+          "kind": "upstream_attempt",
+          "backend": "B",
+          "rid": "always-busy",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50875
+          ],
+          "peer": [
+            "127.0.0.1",
+            50868
+          ]
+        },
+        {
+          "seq": 53,
+          "kind": "backend_request",
+          "backend": "B",
+          "connection": "B-c2",
+          "rid": "always-busy",
+          "method": "GET",
+          "path": "/always-busy",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 54,
+          "kind": "backend_finished",
+          "backend": "B",
+          "rid": "always-busy",
+          "connection": "B-c2",
+          "status": 503
+        },
+        {
+          "seq": 55,
+          "kind": "upstream_response",
+          "backend": "B",
+          "rid": "always-busy",
+          "attempt": 1,
+          "status": 503
+        },
+        {
+          "seq": 56,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "always-busy",
+          "attempt": 2,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 57,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "always-busy",
+          "method": "GET",
+          "path": "/always-busy",
+          "attempt": 2,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 58,
+          "kind": "backend_finished",
+          "backend": "A",
+          "rid": "always-busy",
+          "connection": "A-c1",
+          "status": 503
+        },
+        {
+          "seq": 59,
+          "kind": "upstream_response",
+          "backend": "A",
+          "rid": "always-busy",
+          "attempt": 2,
+          "status": 503
+        },
+        {
+          "seq": 60,
+          "kind": "client_received",
+          "rid": "always-busy",
+          "status": 503,
+          "attempts": 2
+        },
+        {
+          "seq": 61,
+          "kind": "front_request",
+          "rid": "slow-first",
+          "method": "GET",
+          "path": "/slow-first",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 62,
+          "kind": "upstream_attempt",
+          "backend": "B",
+          "rid": "slow-first",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50875
+          ],
+          "peer": [
+            "127.0.0.1",
+            50868
+          ]
+        },
+        {
+          "seq": 63,
+          "kind": "backend_request",
+          "backend": "B",
+          "connection": "B-c2",
+          "rid": "slow-first",
+          "method": "GET",
+          "path": "/slow-first",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 64,
+          "kind": "client_received",
+          "rid": "slow-first",
+          "status": 504,
+          "attempts": 1
+        },
+        {
+          "seq": 65,
+          "kind": "backend_finished",
+          "backend": "B",
+          "rid": "slow-first",
+          "connection": "B-c2",
+          "status": 200
+        },
+        {
+          "seq": 66,
+          "kind": "front_request",
+          "rid": "write-unknown",
+          "method": "POST",
+          "path": "/publish",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 67,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "write-unknown",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50871
+          ],
+          "peer": [
+            "127.0.0.1",
+            50867
+          ]
+        },
+        {
+          "seq": 68,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "write-unknown",
+          "method": "POST",
+          "path": "/publish",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 69,
+          "kind": "effect_committed",
+          "backend": "A",
+          "rid": "write-unknown",
+          "total": 37
+        },
+        {
+          "seq": 70,
+          "kind": "client_received",
+          "rid": "write-unknown",
+          "status": 502,
+          "attempts": 1
+        }
+      ]
+    },
+    "unsafe_write_retry": {
+      "response": {
+        "status": 502,
+        "body": {
+          "error": "upstream_response_lost",
+          "write_result_unknown": true
+        },
+        "attempts": 2,
+        "front_connection": "P-c1",
+        "backend_connection": null
+      },
+      "effects": [
+        {
+          "rid": "write-unsafe",
+          "backend": "A",
+          "total": 37
+        },
+        {
+          "rid": "write-unsafe",
+          "backend": "B",
+          "total": 37
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "kind": "accepted",
+          "server": "P",
+          "connection": "P-c1",
+          "local": [
+            "127.0.0.1",
+            50879
+          ],
+          "peer": [
+            "127.0.0.1",
+            50880
+          ]
+        },
+        {
+          "seq": 2,
+          "kind": "front_request",
+          "rid": "write-unsafe",
+          "method": "POST",
+          "path": "/publish",
+          "connection": "P-c1",
+          "host": "orders.lab.test"
+        },
+        {
+          "seq": 3,
+          "kind": "upstream_attempt",
+          "backend": "A",
+          "rid": "write-unsafe",
+          "attempt": 1,
+          "local": [
+            "127.0.0.1",
+            50881
+          ],
+          "peer": [
+            "127.0.0.1",
+            50877
+          ]
+        },
+        {
+          "seq": 4,
+          "kind": "accepted",
+          "server": "A",
+          "connection": "A-c1",
+          "local": [
+            "127.0.0.1",
+            50877
+          ],
+          "peer": [
+            "127.0.0.1",
+            50881
+          ]
+        },
+        {
+          "seq": 5,
+          "kind": "backend_request",
+          "backend": "A",
+          "connection": "A-c1",
+          "rid": "write-unsafe",
+          "method": "POST",
+          "path": "/publish",
+          "attempt": 1,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 6,
+          "kind": "effect_committed",
+          "backend": "A",
+          "rid": "write-unsafe",
+          "total": 37
+        },
+        {
+          "seq": 7,
+          "kind": "upstream_attempt",
+          "backend": "B",
+          "rid": "write-unsafe",
+          "attempt": 2,
+          "local": [
+            "127.0.0.1",
+            50882
+          ],
+          "peer": [
+            "127.0.0.1",
+            50878
+          ]
+        },
+        {
+          "seq": 8,
+          "kind": "accepted",
+          "server": "B",
+          "connection": "B-c1",
+          "local": [
+            "127.0.0.1",
+            50878
+          ],
+          "peer": [
+            "127.0.0.1",
+            50882
+          ]
+        },
+        {
+          "seq": 9,
+          "kind": "backend_request",
+          "backend": "B",
+          "connection": "B-c1",
+          "rid": "write-unsafe",
+          "method": "POST",
+          "path": "/publish",
+          "attempt": 2,
+          "host": "orders.internal.test"
+        },
+        {
+          "seq": 10,
+          "kind": "effect_committed",
+          "backend": "B",
+          "rid": "write-unsafe",
+          "total": 37
+        },
+        {
+          "seq": 11,
+          "kind": "client_received",
+          "rid": "write-unsafe",
+          "status": 502,
+          "attempts": 2
+        }
+      ]
+    },
+    "scope": "real_loopback_http1_proxy_two_backends_and_sqlite_no_tls_or_cloud"
+  },
+  "boundaries": [
+    "real loopback TCP + HTTP/1.1 + SQLite commit",
+    "fixed small Content-Length fixture, one sequential upstream connection per backend",
+    "upstream deadline begins after ingress/body validation",
+    "no TLS, DNS, Kubernetes, NGINX execution, cloud or performance claim"
+  ],
+  "sources": [
+    "https://docs.python.org/3.9/library/http.client.html",
+    "https://docs.python.org/3.9/library/http.server.html",
+    "https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream",
+    "https://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive",
+    "https://nginx.org/en/docs/stream/ngx_stream_proxy_module.html",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination"
+  ],
+  "api_crosscheck": "Context7 /python/cpython/v3.9.22: HTTPConnection/HTTPResponse complete read before reuse and HTTP/1.1 Content-Length"
+}

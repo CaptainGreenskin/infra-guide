@@ -3,6 +3,8 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
 require('./embed-manual-sharding.cjs');
+require('./embed-cloud-proxy-bridge.cjs')();
+require('./embed-inference-cache-bridge.cjs');
 const practiceEvidence = {};
 for (const lab of ['network-timing', 'permissions', 'interview-database', 'textbooks']) {
  const recordPath = path.join(dist, 'labs', lab, 'validation.json');

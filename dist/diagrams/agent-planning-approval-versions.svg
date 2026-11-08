@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 480" role="img" aria-labelledby="title desc">
+<title id="title">批准旧37，不等于批准新42</title><desc id="desc">输入从orders-A/v3更新至v4，计划1变2。旧批准保留但不适用当前草稿；重复消息确认与当前授权分开。</desc>
+<metadata>{&quot;old_approval&quot;: {&quot;actor&quot;: &quot;operator-A&quot;, &quot;decision&quot;: &quot;approve&quot;, &quot;draft_digest&quot;: &quot;d9df330af9796a590fddae8164bda8926fded97c9f6c89c388504200c3007360&quot;, &quot;id&quot;: &quot;approve-v1&quot;, &quot;input_digest&quot;: &quot;3fa2143c0c72f49c45dd7d555096f9e9eba0db1b8f2f17275bb7a8c25bf3d1be&quot;, &quot;revision&quot;: 1, &quot;target&quot;: &quot;report-A&quot;, &quot;task&quot;: &quot;report-task-A&quot;}, &quot;new_approval&quot;: {&quot;actor&quot;: &quot;operator-A&quot;, &quot;decision&quot;: &quot;approve&quot;, &quot;draft_digest&quot;: &quot;452d278c96f298e9eb9d9a27c2e5e80f3bfdca1cdaec97c2f5f391a5bfed6b3e&quot;, &quot;id&quot;: &quot;approve-v2&quot;, &quot;input_digest&quot;: &quot;c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790&quot;, &quot;revision&quot;: 2, &quot;target&quot;: &quot;report-A&quot;, &quot;task&quot;: &quot;report-task-A&quot;}, &quot;old_duplicate&quot;: {&quot;accepted&quot;: true, &quot;reason&quot;: &quot;duplicate_signal&quot;, &quot;applies_current&quot;: false}, &quot;oracle&quot;: {&quot;expected_total&quot;: 42, &quot;actual_total&quot;: 42, &quot;report_count&quot;: 1, &quot;accepted&quot;: true}}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#526987" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#23354d;font-size:18px}.title{font-size:25px;font-weight:700}.small{font-size:16px}.label{font-size:17px;font-weight:650}.blue{fill:#315dce}.muted{fill:#5c6d82}.line{stroke:#526987;stroke-width:2;fill:none;marker-end:url(#arrow)}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.4}.good{fill:#ecf7f2;stroke:#80bca6}.wait{fill:#fff6e5;stroke:#d9b45d}.bad{fill:#fff0f0;stroke:#dba5a5}</style>
+<rect width="1024" height="480" fill="#f8fafd" rx="16"/>
+<text x="32" y="43" class="title">消息已收到，和当前内容已获批准，是两件事</text>
+<rect x="32" y="75" width="457" height="238" rx="12" class="box"/>
+<text x="54" y="108" class="label">先前的计划1 / 草稿37</text><text x="54" y="143">来源：orders-A/v3，无补录引用</text>
+<text x="54" y="177" class="small">输入摘要：3fa2143c0c72f49c…</text><text x="54" y="207" class="small">草稿摘要：d9df330af9796a59…</text>
+<text x="54" y="248">approve-v1 已真实入库</text><text x="54" y="284" class="small muted">更新之后仍保留历史，不替换成新批准</text>
+<rect x="535" y="75" width="457" height="238" rx="12" class="good"/>
+<text x="557" y="108" class="label">当前的计划2 / 草稿42</text><text x="557" y="143">来源：orders-A/v4 + late-A/v1</text>
+<text x="557" y="177" class="small">输入摘要：c46f360d92015d3e…</text><text x="557" y="207" class="small">草稿摘要：452d278c96f298e9…</text>
+<text x="557" y="248">只有匹配新内容的批准可以提交</text><text x="557" y="284" class="small muted">最终实际报告42；独立来源验收通过</text>
+<path d="M495 175H522" class="line"/>
+<rect x="32" y="343" width="960" height="100" rx="10" class="wait"/>
+<text x="54" y="375" class="label">旧消息重发：reason = duplicate_signal，applies_current = false</text>
+<text x="54" y="406">“见过这条输入”只确认去重；当前批准还要重新核对版本和摘要。</text>
+<text x="32" y="468" class="small muted">摘要来自本次实际产物记录；actor 为本地可信入口夹具，未实现生产身份认证。</text></svg>

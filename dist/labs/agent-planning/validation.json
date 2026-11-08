@@ -1,0 +1,1762 @@
+{
+  "schema": "agent-planning-v1",
+  "verified_on": "2026-11-08",
+  "status": "passed",
+  "command": "python3 -B planning_lab.py",
+  "environment": {
+    "python": "3.9.6",
+    "sqlite": "3.51.0"
+  },
+  "source_sha256": {
+    "planning_lab.py": "fbd382bf19b535fe5b5d5da56f4f7382f50a91b2ef1fd65f8fec4f9766f276b4",
+    "README.md": "81dce8ca288a0534f6f9bbeb65f41c4716dbd8e53c9542ab24b535055f34d749"
+  },
+  "program": {
+    "status": "passed",
+    "sqlite": "3.51.0",
+    "cases": {
+      "adaptive": {
+        "first_phase": "NEEDS_REPLAN",
+        "waiting": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+              "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "6b8fb3edc5a994f1d065b04def733b8ed70c7510248bf271127525e4c7bc676a",
+            "mode": "adaptive",
+            "no_progress": 0,
+            "phase": "WAITING_APPROVAL",
+            "proposal_budget": 2,
+            "revision": 2,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ]
+            },
+            {
+              "revision": 2,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+              "value": 42
+            }
+          ],
+          "signals": [],
+          "reports": [],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "adaptive",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "replan_required",
+              "body": {
+                "reason": "manifest includes another batch"
+              }
+            },
+            {
+              "kind": "proposal",
+              "body": {
+                "reason_text": "try again 2",
+                "steps": [
+                  "read_base",
+                  "read_extra",
+                  "sum",
+                  "publish"
+                ],
+                "valid": true
+              }
+            },
+            {
+              "kind": "plan_accepted",
+              "body": {
+                "revision": 2
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "revision": 2
+              }
+            }
+          ]
+        },
+        "done": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+              "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "6b8fb3edc5a994f1d065b04def733b8ed70c7510248bf271127525e4c7bc676a",
+            "mode": "adaptive",
+            "no_progress": 0,
+            "phase": "DONE",
+            "proposal_budget": 2,
+            "revision": 2,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ]
+            },
+            {
+              "revision": 2,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+              "value": 42
+            }
+          ],
+          "signals": [
+            {
+              "id": "approve-current",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "id": "approve-current",
+                "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "revision": 2,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": true
+            }
+          ],
+          "reports": [
+            {
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "report": "report-A",
+              "total": 42
+            }
+          ],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "adaptive",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "replan_required",
+              "body": {
+                "reason": "manifest includes another batch"
+              }
+            },
+            {
+              "kind": "proposal",
+              "body": {
+                "reason_text": "try again 2",
+                "steps": [
+                  "read_base",
+                  "read_extra",
+                  "sum",
+                  "publish"
+                ],
+                "valid": true
+              }
+            },
+            {
+              "kind": "plan_accepted",
+              "body": {
+                "revision": 2
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "approve-current",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "report_committed",
+              "body": {
+                "approval": "approve-current",
+                "revision": 2,
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "expected_total": 42,
+          "actual_total": 42,
+          "report_count": 1,
+          "accepted": true
+        },
+        "duplicate_resume_unchanged": true
+      },
+      "fixed": {
+        "first_phase": "WAITING_APPROVAL",
+        "waiting": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+              "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": null,
+            "mode": "fixed",
+            "no_progress": 0,
+            "phase": "WAITING_APPROVAL",
+            "proposal_budget": 0,
+            "revision": 1,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+              "value": 42
+            }
+          ],
+          "signals": [],
+          "reports": [],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "fixed",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "revision": 1
+              }
+            }
+          ]
+        },
+        "done": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+              "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": null,
+            "mode": "fixed",
+            "no_progress": 0,
+            "phase": "DONE",
+            "proposal_budget": 0,
+            "revision": 1,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+              "value": 42
+            }
+          ],
+          "signals": [
+            {
+              "id": "approve-current",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "id": "approve-current",
+                "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "revision": 1,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": true
+            }
+          ],
+          "reports": [
+            {
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "report": "report-A",
+              "total": 42
+            }
+          ],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "fixed",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "approve-current",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "report_committed",
+              "body": {
+                "approval": "approve-current",
+                "revision": 1,
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "expected_total": 42,
+          "actual_total": 42,
+          "report_count": 1,
+          "accepted": true
+        },
+        "duplicate_resume_unchanged": true
+      },
+      "changed_input": {
+        "old_draft_total": 37,
+        "new_draft_total": 42,
+        "old_duplicate": {
+          "accepted": true,
+          "reason": "duplicate_signal",
+          "applies_current": false
+        },
+        "done": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 4
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 4
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "452d278c96f298e9eb9d9a27c2e5e80f3bfdca1cdaec97c2f5f391a5bfed6b3e",
+              "input_digest": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "0c9b83617d8f37380dce6a5a155d087142b84f6544701e8dd9c00411d3e805a8",
+            "mode": "adaptive",
+            "no_progress": 0,
+            "phase": "DONE",
+            "proposal_budget": 2,
+            "revision": 2,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ]
+            },
+            {
+              "revision": 2,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": null,
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "sum",
+              "key": "3fa2143c0c72f49c45dd7d555096f9e9eba0db1b8f2f17275bb7a8c25bf3d1be",
+              "value": 37
+            },
+            {
+              "name": "read_base",
+              "key": "4",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 4
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790",
+              "value": 42
+            }
+          ],
+          "signals": [
+            {
+              "id": "approve-v1",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "d9df330af9796a590fddae8164bda8926fded97c9f6c89c388504200c3007360",
+                "id": "approve-v1",
+                "input_digest": "3fa2143c0c72f49c45dd7d555096f9e9eba0db1b8f2f17275bb7a8c25bf3d1be",
+                "revision": 1,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": false
+            },
+            {
+              "id": "approve-v2",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "452d278c96f298e9eb9d9a27c2e5e80f3bfdca1cdaec97c2f5f391a5bfed6b3e",
+                "id": "approve-v2",
+                "input_digest": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790",
+                "revision": 2,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": true
+            }
+          ],
+          "reports": [
+            {
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 4
+                },
+                {
+                  "resource": "late-A",
+                  "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "report": "report-A",
+              "total": 42
+            }
+          ],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "adaptive",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3fa2143c0c72f49c45dd7d555096f9e9eba0db1b8f2f17275bb7a8c25bf3d1be",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "d9df330af9796a590fddae8164bda8926fded97c9f6c89c388504200c3007360",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "approve-v1",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "4",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "input_changed",
+              "body": {
+                "from": 3,
+                "to": 4
+              }
+            },
+            {
+              "kind": "proposal",
+              "body": {
+                "reason_text": "try again 2",
+                "steps": [
+                  "read_base",
+                  "read_extra",
+                  "sum",
+                  "publish"
+                ],
+                "valid": true
+              }
+            },
+            {
+              "kind": "plan_accepted",
+              "body": {
+                "revision": 2
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "452d278c96f298e9eb9d9a27c2e5e80f3bfdca1cdaec97c2f5f391a5bfed6b3e",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "approve-v2",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "report_committed",
+              "body": {
+                "approval": "approve-v2",
+                "revision": 2,
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "expected_total": 42,
+          "actual_total": 42,
+          "report_count": 1,
+          "accepted": true
+        }
+      },
+      "early_signal": {
+        "done": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 42
+              },
+              "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+              "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": null,
+            "mode": "fixed",
+            "no_progress": 0,
+            "phase": "DONE",
+            "proposal_budget": 0,
+            "revision": 1,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            },
+            {
+              "name": "sum",
+              "key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+              "value": 42
+            }
+          ],
+          "signals": [
+            {
+              "id": "early",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "id": "early",
+                "input_digest": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "revision": 1,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": true
+            }
+          ],
+          "reports": [
+            {
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "report": "report-A",
+              "total": 42
+            }
+          ],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "fixed",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "early",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "report_committed",
+              "body": {
+                "approval": "early",
+                "revision": 1,
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "expected_total": 42,
+          "actual_total": 42,
+          "report_count": 1,
+          "accepted": true
+        }
+      },
+      "no_progress": {
+        "state": {
+          "base": {
+            "extra": {
+              "resource": "late-A",
+              "version": 1
+            },
+            "resource": "orders-A",
+            "values": [
+              10,
+              27
+            ],
+            "version": 3
+          },
+          "draft": null,
+          "goal": "sum all batches in the observed order manifest",
+          "last_proposal": "200cda59de9f75075904e1e67167e2cc8ae0778cd2479f7dc89fa052ec64278e",
+          "mode": "adaptive",
+          "no_progress": 2,
+          "phase": "STOPPED_NO_PROGRESS",
+          "proposal_budget": 1,
+          "revision": 1,
+          "target": "report-A",
+          "task": "report-task-A"
+        },
+        "plans": [
+          {
+            "revision": 1,
+            "steps": [
+              "read_base",
+              "sum",
+              "publish"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "name": "read_base",
+            "key": "3",
+            "value": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            }
+          }
+        ],
+        "signals": [],
+        "reports": [],
+        "events": [
+          {
+            "kind": "started",
+            "body": {
+              "mode": "adaptive",
+              "revision": 1
+            }
+          },
+          {
+            "kind": "fact_recorded",
+            "body": {
+              "input_key": "3",
+              "name": "read_base"
+            }
+          },
+          {
+            "kind": "replan_required",
+            "body": {
+              "reason": "manifest includes another batch"
+            }
+          },
+          {
+            "kind": "proposal",
+            "body": {
+              "reason_text": "try again 2",
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ],
+              "valid": false
+            }
+          },
+          {
+            "kind": "proposal",
+            "body": {
+              "reason_text": "try again 1",
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ],
+              "valid": false
+            }
+          },
+          {
+            "kind": "stopped",
+            "body": {
+              "reason": "no_progress"
+            }
+          }
+        ]
+      },
+      "budget": {
+        "state": {
+          "base": {
+            "extra": {
+              "resource": "late-A",
+              "version": 1
+            },
+            "resource": "orders-A",
+            "values": [
+              10,
+              27
+            ],
+            "version": 3
+          },
+          "draft": null,
+          "goal": "sum all batches in the observed order manifest",
+          "last_proposal": "200cda59de9f75075904e1e67167e2cc8ae0778cd2479f7dc89fa052ec64278e",
+          "mode": "adaptive",
+          "no_progress": 1,
+          "phase": "STOPPED_BUDGET",
+          "proposal_budget": 0,
+          "revision": 1,
+          "target": "report-A",
+          "task": "report-task-A"
+        },
+        "plans": [
+          {
+            "revision": 1,
+            "steps": [
+              "read_base",
+              "sum",
+              "publish"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "name": "read_base",
+            "key": "3",
+            "value": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            }
+          }
+        ],
+        "signals": [],
+        "reports": [],
+        "events": [
+          {
+            "kind": "started",
+            "body": {
+              "mode": "adaptive",
+              "revision": 1
+            }
+          },
+          {
+            "kind": "fact_recorded",
+            "body": {
+              "input_key": "3",
+              "name": "read_base"
+            }
+          },
+          {
+            "kind": "replan_required",
+            "body": {
+              "reason": "manifest includes another batch"
+            }
+          },
+          {
+            "kind": "proposal",
+            "body": {
+              "reason_text": "try again 0",
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ],
+              "valid": false
+            }
+          },
+          {
+            "kind": "stopped",
+            "body": {
+              "reason": "proposal_budget"
+            }
+          }
+        ]
+      },
+      "invalid_plan": {
+        "outcome": {
+          "accepted": false,
+          "reason": "invalid_dependencies",
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": null,
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "44205365393184c6476eae8327f23f1319c3e384b754f0b0620d47216d95dd7c",
+            "mode": "adaptive",
+            "no_progress": 1,
+            "phase": "NEEDS_REPLAN",
+            "proposal_budget": 2,
+            "revision": 1,
+            "target": "report-A",
+            "task": "report-task-A"
+          }
+        },
+        "snapshot": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 3
+            },
+            "draft": null,
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "44205365393184c6476eae8327f23f1319c3e384b754f0b0620d47216d95dd7c",
+            "mode": "adaptive",
+            "no_progress": 1,
+            "phase": "NEEDS_REPLAN",
+            "proposal_budget": 2,
+            "revision": 1,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            }
+          ],
+          "signals": [],
+          "reports": [],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "adaptive",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "replan_required",
+              "body": {
+                "reason": "manifest includes another batch"
+              }
+            },
+            {
+              "kind": "proposal",
+              "body": {
+                "reason_text": "try again 2",
+                "steps": [
+                  "read_base",
+                  "publish",
+                  "read_extra",
+                  "sum"
+                ],
+                "valid": false
+              }
+            }
+          ]
+        }
+      },
+      "wrong_cache_key": {
+        "done": {
+          "state": {
+            "base": {
+              "extra": {
+                "resource": "late-A",
+                "version": 1
+              },
+              "resource": "orders-A",
+              "values": [
+                10,
+                27
+              ],
+              "version": 4
+            },
+            "draft": {
+              "body": {
+                "manifest": [
+                  {
+                    "resource": "orders-A",
+                    "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 4
+                  },
+                  {
+                    "resource": "late-A",
+                    "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "report": "report-A",
+                "total": 37
+              },
+              "draft_digest": "e099aa4439adde12abeeea5e64d134acd5ad187e3e44dd747ce0625e793b0e7b",
+              "input_digest": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790"
+            },
+            "goal": "sum all batches in the observed order manifest",
+            "last_proposal": "0c9b83617d8f37380dce6a5a155d087142b84f6544701e8dd9c00411d3e805a8",
+            "mode": "adaptive",
+            "no_progress": 0,
+            "phase": "DONE",
+            "proposal_budget": 2,
+            "revision": 2,
+            "target": "report-A",
+            "task": "report-task-A"
+          },
+          "plans": [
+            {
+              "revision": 1,
+              "steps": [
+                "read_base",
+                "sum",
+                "publish"
+              ]
+            },
+            {
+              "revision": 2,
+              "steps": [
+                "read_base",
+                "read_extra",
+                "sum",
+                "publish"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "name": "read_base",
+              "key": "3",
+              "value": {
+                "extra": null,
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 3
+              }
+            },
+            {
+              "name": "sum",
+              "key": "sum",
+              "value": 37
+            },
+            {
+              "name": "read_base",
+              "key": "4",
+              "value": {
+                "extra": {
+                  "resource": "late-A",
+                  "version": 1
+                },
+                "resource": "orders-A",
+                "values": [
+                  10,
+                  27
+                ],
+                "version": 4
+              }
+            },
+            {
+              "name": "read_extra",
+              "key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+              "value": {
+                "resource": "late-A",
+                "values": [
+                  5
+                ],
+                "version": 1
+              }
+            }
+          ],
+          "signals": [
+            {
+              "id": "approve-wrong-draft",
+              "body": {
+                "actor": "operator-A",
+                "decision": "approve",
+                "draft_digest": "e099aa4439adde12abeeea5e64d134acd5ad187e3e44dd747ce0625e793b0e7b",
+                "id": "approve-wrong-draft",
+                "input_digest": "c46f360d92015d3e321a9eca6412cfdc722b8b8c178ab5fffc9e3db377331790",
+                "revision": 2,
+                "target": "report-A",
+                "task": "report-task-A"
+              },
+              "consumed": true
+            }
+          ],
+          "reports": [
+            {
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 4
+                },
+                {
+                  "resource": "late-A",
+                  "sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "report": "report-A",
+              "total": 37
+            }
+          ],
+          "events": [
+            {
+              "kind": "started",
+              "body": {
+                "mode": "adaptive",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "3",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "sum",
+                "name": "sum"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "d9df330af9796a590fddae8164bda8926fded97c9f6c89c388504200c3007360",
+                "revision": 1
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "4",
+                "name": "read_base"
+              }
+            },
+            {
+              "kind": "input_changed",
+              "body": {
+                "from": 3,
+                "to": 4
+              }
+            },
+            {
+              "kind": "proposal",
+              "body": {
+                "reason_text": "try again 2",
+                "steps": [
+                  "read_base",
+                  "read_extra",
+                  "sum",
+                  "publish"
+                ],
+                "valid": true
+              }
+            },
+            {
+              "kind": "plan_accepted",
+              "body": {
+                "revision": 2
+              }
+            },
+            {
+              "kind": "fact_recorded",
+              "body": {
+                "input_key": "9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f",
+                "name": "read_extra"
+              }
+            },
+            {
+              "kind": "waiting",
+              "body": {
+                "draft_digest": "e099aa4439adde12abeeea5e64d134acd5ad187e3e44dd747ce0625e793b0e7b",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "approval_received",
+              "body": {
+                "id": "approve-wrong-draft",
+                "revision": 2
+              }
+            },
+            {
+              "kind": "report_committed",
+              "body": {
+                "approval": "approve-wrong-draft",
+                "revision": 2,
+                "total": 37
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "expected_total": 42,
+          "actual_total": 37,
+          "report_count": 1,
+          "accepted": false
+        }
+      },
+      "corrupt_artifact": {
+        "expected_total": 42,
+        "actual_total": 42,
+        "report_count": 1,
+        "accepted": false
+      }
+    },
+    "scope": "fresh real subprocesses and SQLite; scripted proposals; one transactional domain; no LLM, authentication service or framework SDK"
+  }
+}

@@ -1,4 +1,5 @@
 /* A quiet Chinese technical book: larger prose, bounded line length, explicit controls. */
+.chapter-toc-children{margin:0 0 8px 9px;border-left:1px solid var(--line)}.toc .chapter-toc-children a{padding:6px 0 6px 12px;font-size:12px;font-weight:400}.toc .chapter-toc-children .chapter-toc-level-4{padding-left:23px}.article-section [id]{scroll-margin-top:150px}.article-section h3:target,.article-section h4:target{background:var(--blue-soft);outline:5px solid var(--blue-soft);border-radius:2px}.reader-directory-links .reader-subheading-3{padding-left:24px;font-size:15px}.reader-directory-links .reader-subheading-4{padding-left:38px;font-size:14px}.mobile-contents .chapter-toc-children{padding-left:10px}
 .home-reading-order{padding:24px 28px;border-left:2px solid var(--line);align-self:center}
 .home-reading-order h2{font-size:17px;margin:0 0 18px;letter-spacing:0}
 .home-reading-order ol{list-style:none;margin:0;padding:0;counter-reset:reading-step}

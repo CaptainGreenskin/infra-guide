@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 950" role="img" aria-labelledby="title desc">
+<title id="title">逻辑前缀相同，可以指向同一物理块</title>
+<desc id="desc">固定CPU实验的对象、状态和迭代结果。不是设备内存或GPU性能测量。</desc>
+<metadata>{&quot;block_size&quot;: 4, &quot;before&quot;: {&quot;event&quot;: &quot;A与B共享完整前缀&quot;, &quot;requests&quot;: {&quot;A&quot;: {&quot;tokens&quot;: [1, 2, 3, 4, 5, 6], &quot;output&quot;: 0.41989627258244244, &quot;blocks&quot;: [[0, 1], [1, 1]]}, &quot;B&quot;: {&quot;tokens&quot;: [1, 2, 3, 4, 7, 8], &quot;output&quot;: 0.5058968747954591, &quot;blocks&quot;: [[0, 1], [2, 1]]}}, &quot;physical&quot;: [{&quot;slot&quot;: 0, &quot;generation&quot;: 1, &quot;refs&quot;: 2, &quot;positions&quot;: 4, &quot;cached&quot;: true}, {&quot;slot&quot;: 1, &quot;generation&quot;: 1, &quot;refs&quot;: 1, &quot;positions&quot;: 2, &quot;cached&quot;: false}, {&quot;slot&quot;: 2, &quot;generation&quot;: 1, &quot;refs&quot;: 1, &quot;positions&quot;: 2, &quot;cached&quot;: false}, {&quot;slot&quot;: 3, &quot;generation&quot;: 0, &quot;refs&quot;: 0, &quot;positions&quot;: 0, &quot;cached&quot;: false}], &quot;computed_positions&quot;: 8, &quot;reused_positions&quot;: 4, &quot;copies&quot;: 0, &quot;evicted_cached_blocks&quot;: 0}, &quot;after&quot;: {&quot;event&quot;: &quot;C追加前先复制共享尾块&quot;, &quot;requests&quot;: {&quot;A&quot;: {&quot;tokens&quot;: [1, 2, 3, 4, 5, 6], &quot;output&quot;: 0.41989627258244244, &quot;blocks&quot;: [[0, 1], [1, 1]]}, &quot;B&quot;: {&quot;tokens&quot;: [1, 2, 3, 4, 7, 8], &quot;output&quot;: 0.5058968747954591, &quot;blocks&quot;: [[0, 1], [2, 1]]}, &quot;C&quot;: {&quot;tokens&quot;: [1, 2, 3, 4, 5, 6, 9], &quot;output&quot;: 0.5180996830646696, &quot;blocks&quot;: [[0, 1], [3, 1]]}}, &quot;physical&quot;: [{&quot;slot&quot;: 0, &quot;generation&quot;: 1, &quot;refs&quot;: 3, &quot;positions&quot;: 4, &quot;cached&quot;: true}, {&quot;slot&quot;: 1, &quot;generation&quot;: 1, &quot;refs&quot;: 1, &quot;positions&quot;: 2, &quot;cached&quot;: false}, {&quot;slot&quot;: 2, &quot;generation&quot;: 1, &quot;refs&quot;: 1, &quot;positions&quot;: 2, &quot;cached&quot;: false}, {&quot;slot&quot;: 3, &quot;generation&quot;: 1, &quot;refs&quot;: 1, &quot;positions&quot;: 3, &quot;cached&quot;: false}], &quot;computed_positions&quot;: 9, &quot;reused_positions&quot;: 4, &quot;copies&quot;: 1, &quot;evicted_cached_blocks&quot;: 0}}</metadata>
+<rect width="1120" height="950" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="40" y="46" fill="#20314e" font-size="27" font-weight="650">逻辑前缀相同，可以指向同一物理块</text>
+<text x="40" y="82" text-anchor="start" fill="#536783" font-size="19" font-weight="400">块长4位置、物理池4块；方框内是输入词元，空格是尚未使用的槽位。</text>
+<text x="40" y="130" text-anchor="start" fill="#234d9f" font-size="23" font-weight="600">① A、B处理完各自6个输入</text>
+<text x="55" y="184" text-anchor="start" fill="#20314e" font-size="22" font-weight="600">A [1,2,3,4 | 5,6]</text>
+<text x="85" y="215" text-anchor="start" fill="#536783" font-size="19" font-weight="400">逻辑块表 → [P0, P1]</text>
+<text x="55" y="268" text-anchor="start" fill="#20314e" font-size="22" font-weight="600">B [1,2,3,4 | 7,8]</text>
+<text x="85" y="299" text-anchor="start" fill="#536783" font-size="19" font-weight="400">逻辑块表 → [P0, P2]</text>
+<rect x="610" y="156" width="455" height="55" rx="7" fill="#e4edff" stroke="#c2cce0"/>
+<text x="624" y="191" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P0</text>
+<text x="703" y="191" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">1</text>
+<text x="759" y="191" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">2</text>
+<text x="815" y="191" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">3</text>
+<text x="871" y="191" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">4</text>
+<text x="954" y="191" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 2</text>
+<rect x="610" y="224" width="455" height="55" rx="7" fill="#e5f3e9" stroke="#c2cce0"/>
+<text x="624" y="259" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P1</text>
+<text x="703" y="259" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">5</text>
+<text x="759" y="259" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">6</text>
+<text x="815" y="259" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="871" y="259" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="259" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 1</text>
+<rect x="610" y="292" width="455" height="55" rx="7" fill="#eee9f8" stroke="#c2cce0"/>
+<text x="624" y="327" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P2</text>
+<text x="703" y="327" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">7</text>
+<text x="759" y="327" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">8</text>
+<text x="815" y="327" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="871" y="327" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="327" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 1</text>
+<rect x="610" y="360" width="455" height="55" rx="7" fill="#eef1f5" stroke="#c2cce0"/>
+<text x="624" y="395" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P3</text>
+<text x="703" y="395" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="759" y="395" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="815" y="395" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="871" y="395" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="395" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 0</text>
+<text x="40" y="530" text-anchor="start" fill="#234d9f" font-size="23" font-weight="600">② C从A分叉，追加9前复制尾块</text>
+<text x="55" y="584" text-anchor="start" fill="#20314e" font-size="22" font-weight="600">A [1,2,3,4 | 5,6]</text>
+<text x="85" y="615" text-anchor="start" fill="#536783" font-size="19" font-weight="400">逻辑块表 → [P0, P1]</text>
+<text x="55" y="668" text-anchor="start" fill="#20314e" font-size="22" font-weight="600">B [1,2,3,4 | 7,8]</text>
+<text x="85" y="699" text-anchor="start" fill="#536783" font-size="19" font-weight="400">逻辑块表 → [P0, P2]</text>
+<text x="55" y="752" text-anchor="start" fill="#20314e" font-size="22" font-weight="600">C [1,2,3,4 | 5,6,9]</text>
+<text x="85" y="783" text-anchor="start" fill="#536783" font-size="19" font-weight="400">逻辑块表 → [P0, P3]</text>
+<rect x="610" y="556" width="455" height="55" rx="7" fill="#e4edff" stroke="#c2cce0"/>
+<text x="624" y="591" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P0</text>
+<text x="703" y="591" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">1</text>
+<text x="759" y="591" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">2</text>
+<text x="815" y="591" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">3</text>
+<text x="871" y="591" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">4</text>
+<text x="954" y="591" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 3</text>
+<rect x="610" y="624" width="455" height="55" rx="7" fill="#e5f3e9" stroke="#c2cce0"/>
+<text x="624" y="659" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P1</text>
+<text x="703" y="659" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">5</text>
+<text x="759" y="659" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">6</text>
+<text x="815" y="659" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="871" y="659" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="659" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 1</text>
+<rect x="610" y="692" width="455" height="55" rx="7" fill="#eee9f8" stroke="#c2cce0"/>
+<text x="624" y="727" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P2</text>
+<text x="703" y="727" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">7</text>
+<text x="759" y="727" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">8</text>
+<text x="815" y="727" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="871" y="727" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="727" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 1</text>
+<rect x="610" y="760" width="455" height="55" rx="7" fill="#fff0d5" stroke="#c2cce0"/>
+<text x="624" y="795" text-anchor="start" fill="#234d9f" font-size="22" font-weight="600">P3</text>
+<text x="703" y="795" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">5</text>
+<text x="759" y="795" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">6</text>
+<text x="815" y="795" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">9</text>
+<text x="871" y="795" text-anchor="middle" fill="#20314e" font-size="22" font-weight="400">·</text>
+<text x="954" y="795" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">引用 1</text>
+<text x="40" y="879" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">完整前缀缓存只登记满块；fork共享未满尾块，是需要写时复制的另一条路径。</text>
+<text x="40" y="918" text-anchor="start" fill="#536783" font-size="18" font-weight="400">第二幅：19个逻辑位置，11份已计算位置值，4块共16槽；本图不换算Python对象内存。</text>
+</g></svg>

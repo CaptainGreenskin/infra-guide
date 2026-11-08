@@ -5,10 +5,10 @@
 <meta name="description" content="“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。">
 <meta name="theme-color" content="#315dce"><title>云网络：DNS、路由、访问控制与返回路径 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=a13d62f87b82"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=cf4251309b9e"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=0cc94bcd496f"></script><script defer src="reading-comfort.js?v=f0d8afeee5c0"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=e59eb47bddf5"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=91d76baa3a46"><script defer src="runtime-01.js?v=3dd3d89a86a4"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=0ee1e2414992"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=46dd8e987c06"></script><script defer src="reading-comfort.js?v=957da22bcd26"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=7e5cc054c4aa"></script>
 
 
-<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="云网络：DNS、路由、访问控制与返回路径 · InfraGuide"><meta property="og:description" content="“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"云网络：DNS、路由、访问控制与返回路径","description":"“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/","dateModified":"2026-11-05","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="云网络：DNS、路由、访问控制与返回路径 · InfraGuide"><meta property="og:description" content="“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"云网络：DNS、路由、访问控制与返回路径","description":"“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
 <body>
 <a class="skip" href="/article/vpc-network/#main">跳到主要内容</a>
 <header class="header"><div class="header-inner">
@@ -19,45 +19,542 @@
 <noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>Cloud Infra · 目录</span><span>33 章 + 1 实战</span></div><details ><summary><a href="/article/linux-resource/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" >P0.1 进程、线程与资源：为什么机器空闲，程序仍然很慢</a><a href="/article/virtual-memory-oom/" >P0.2 虚拟内存与 OOM：导出任务为什么被终止</a><a href="/article/concurrency-pools/" >P0.3 并发与线程池：锁、排队和容量</a><a href="/article/distributed-systems/" >P0.4 超时、重试与幂等：系统最难处理的是“结果未知”</a></div></details><details ><summary><a href="/article/cloud-overview/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" >C1.1 云计算架构：服务模型、资源与责任边界</a><a href="/article/cloud-compute/" >C1.2 计算资源：虚拟化、规格与容量预算</a></div></details><details open><summary><a href="/article/vpc-network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" class="current" aria-current="page">C2.1 云网络：DNS、路由、访问控制与返回路径</a><a href="/article/network-diagnosis/" >C2.2 网络诊断：连接、首字节与传输时序</a><a href="/article/tcp-event-loop/" >C2.3 TCP与I/O：从连接、字节流到epoll事件循环</a></div></details><details ><summary><a href="/article/training-storage/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" >C3.1 云存储：块、文件、对象与访问性能</a><a href="/article/database-index-locks/" >C3.2 数据库访问：索引、事务与锁等待</a><a href="/article/cache-consistency/" >C3.3 缓存一致性与击穿：旧值为何重新出现</a><a href="/article/storage-recovery/" >C3.4 存储发布与恢复：版本、提交点与校验</a><a href="/article/mysql-recovery/" >C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a></div></details><details ><summary><a href="/article/container-runtime/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" >C4.1 容器运行原理：镜像、进程、隔离与资源</a><a href="/article/kubernetes-basics/" >C4.2 Kubernetes 控制面：对象、调谐与生命周期</a><a href="/article/k8s-workloads/" >C4.3 Kubernetes 工作负载：从声明到可用与滚动更新</a><a href="/article/scheduling-resources/" >C4.4 Kubernetes 调度：资源、亲和与拓扑约束</a><a href="/article/k8s-networking/" >C4.5 Kubernetes 网络：从 DNS、Service 到容器回包</a><a href="/article/k8s-storage/" >C4.6 Kubernetes 存储：PVC、拓扑、挂载与数据恢复</a><a href="/article/config-secrets/" >C4.7 配置与密钥：传播、重读与版本生效</a><a href="/article/k8s-autoscaling/" >C4.8 Kubernetes 弹性：HPA、节点容量与排队预算</a></div></details><details ><summary><a href="/article/serverless-execution/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" >C5.1 Serverless 与事件驱动：执行、重试、幂等与成本</a><a href="/article/message-delivery/" >C5.2 消息投递与确认：从入队、处理到业务完成</a></div></details><details ><summary><a href="/article/delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" >C6.1 平台交付：制品、配置、数据迁移与回退</a><a href="/article/terraform-state/" >C6.2 Terraform状态与漂移：配置、锁、刷新和资源归属</a><a href="/article/gitops-reconciliation/" >C6.3 GitOps调谐：从Git期望到对象、进程与业务结果</a></div></details><details ><summary><a href="/article/iam-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" >C7.1 身份与最小权限：谁能让系统做什么</a></div></details><details ><summary><a href="/article/elasticity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" >C8.1 容量与弹性：故障域、扩容时序与排队</a></div></details><details ><summary><a href="/article/slo/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" >C9.1 可靠性目标：SLI、SLO 与错误预算</a><a href="/article/observability/" >C9.2 可观测性：用指标定位范围，用日志和追踪解释路径</a><a href="/article/incident/" >C9.3 故障诊断：影响、时间线、假设与验证</a><a href="/article/resilience/" >C9.4 恢复工程：故障域、RPO、RTO 与演练</a></div></details><details ><summary><a href="/article/cloud-service-lab/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/cloud-service-lab/" >S2 综合实战：一个服务的探针、版本发布与指标验证</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 34</b></div>
-   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/network/">云网络与流量</a><span>／</span><span>C2.1</span></div><div class="article-meta"><span class="category">云网络与流量</span><span>机制 + 设计</span><span>·</span><span>原理详解 · 2026.11.05</span></div><h1>C2.1 云网络：DNS、路由、访问控制与返回路径</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>一次访问要找到机器和程序</h3><p>网络传递数据；IP地址表示通信位置，端口帮助数据抵达某个程序。域名是便于人记忆的名字，域名系统DNS负责把名字查成相应的记录。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>找到地址以后，还要有路和访问资格</h3><p>路由决定数据下一步往哪里发送，访问规则决定是否放行。云中的虚拟私有网络VPC为一组资源提供逻辑网络范围，子网再组织其中的地址和放置范围。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>沿去程和回程理解每个对象</h3><p>本章先把名字、地址和连接端点分开，再画路由、转换、代理和返回路径。每一步说明改变了哪一层，而不是只凭一个地址判断服务可用。</p></section></section><p class="description">“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。</p><div class="tag-row"><span class="tag">解析</span><span class="tag">转发</span><span class="tag">诊断</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约25分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>分开域名、IP、端口与名称解析、TCP、TLS、HTTP四个阶段</li><li>手算CIDR、最长前缀选择与独立的回程路径</li><li>用五元组解释访问规则和NAT映射的方向</li><li>运行路由选择程序，并说明本地规则计算与真实转发的区别</li></ul><p><b>前置知识</b>完成C1.1；知道IP地址与端口的用途。</p><ul class="prerequisite-links"><li><a href="/article/cloud-overview/">C1.1 云计算架构：服务模型、资源与责任边界</a>：请求必须经过地址、入口和返回路径才能触达服务。</li></ul><p class="evidence-note">约 25 分钟 · 原理、案例与设计验收 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/network/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/vpc-network/#concept-path">概念起点与关系</a><a href="/article/vpc-network/#section-1">1. 把一个地址拆成名字、端口和真正的连接对端</a><a href="/article/vpc-network/#section-2">2. DNS 改了，哪批客户端会先看见</a><a href="/article/vpc-network/#section-3">3. 路由表选择下一跳，不负责给业务授权</a><a href="/article/vpc-network/#section-4">4. 安全组、ACL 与响应的临时端口</a><a href="/article/vpc-network/#section-5">5. NAT 让连接如何出去，又如何回来</a><a href="/article/vpc-network/#section-6">6. 把“服务端处理完成”与“用户收到结果”拆开</a><a href="/article/vpc-network/#section-7">7. 验收：画出路和门，再画回来的路</a></details><p class="article-context-link" id="core-knowledge"><a href="/module/network/">本领域系统知识：云网络与流量 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>把一个地址拆成名字、端口和真正的连接对端</h2><h3>名字、地址、端口分别解决什么问题</h3>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/network/">云网络与流量</a><span>／</span><span>C2.1</span></div><div class="article-meta"><span class="category">云网络与流量</span><span>机制 + 设计</span><span>·</span><span>原理详解 · 2026.11.08</span></div><h1>C2.1 云网络：DNS、路由、访问控制与返回路径</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>一次访问要找到机器和程序</h3><p>网络传递数据；IP地址表示通信位置，端口帮助数据抵达某个程序。域名是便于人记忆的名字，域名系统DNS负责把名字查成相应的记录。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>找到地址以后，还要有路和访问资格</h3><p>路由决定数据下一步往哪里发送，访问规则决定是否放行。云中的虚拟私有网络VPC为一组资源提供逻辑网络范围，子网再组织其中的地址和放置范围。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>沿去程和回程理解每个对象</h3><p>本章先把名字、地址和连接端点分开，再画路由、转换、代理和返回路径。每一步说明改变了哪一层，而不是只凭一个地址判断服务可用。</p></section></section><p class="description">“访问不了”包含许多不同失败。沿着请求的前进与返回路径，把连通问题拆成可以逐层验证的假设。</p><div class="tag-row"><span class="tag">解析</span><span class="tag">转发</span><span class="tag">诊断</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约45分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>分开域名、IP、端口与名称解析、TCP、TLS、HTTP四个阶段</li><li>手算CIDR、最长前缀选择与独立的回程路径</li><li>用五元组解释访问规则和NAT映射的方向</li><li>运行路由选择程序，并说明本地规则计算与真实转发的区别</li></ul><p><b>前置知识</b>完成C1.1；知道IP地址与端口的用途。</p><ul class="prerequisite-links"><li><a href="/article/cloud-overview/">C1.1 云计算架构：服务模型、资源与责任边界</a>：请求必须经过地址、入口和返回路径才能触达服务。</li></ul><p class="evidence-note">约 45 分钟 · 原理、案例与设计验收 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/network/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/vpc-network/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/vpc-network/#section-1">1. 把一个地址拆成名字、端口和真正的连接对端</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-1mbleem" href="/article/vpc-network/#subsection-1-1mbleem">名字、地址、端口分别解决什么问题</a><a class="chapter-toc-level-3" data-toc="subsection-1-r9coc9" href="/article/vpc-network/#subsection-1-r9coc9">一次新建的HTTPS连接，按什么顺序推进</a><a class="chapter-toc-level-3" data-toc="subsection-1-1u49a9r" href="/article/vpc-network/#subsection-1-1u49a9r">代理会把一条业务路径拆成多条连接</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/vpc-network/#section-2">2. DNS 改了，哪批客户端会先看见</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-1ra10dq" href="/article/vpc-network/#subsection-2-1ra10dq">一次DNS查询怎样得到答案</a><a class="chapter-toc-level-3" data-toc="subsection-2-o5xitb" href="/article/vpc-network/#subsection-2-o5xitb">保留域名，才是在比较同一份服务身份</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/vpc-network/#section-3">3. 路由表选择下一跳，不负责给业务授权</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-11xx3nz" href="/article/vpc-network/#subsection-3-11xx3nz">CIDR先描述地址集合，路由再选择下一跳</a><a class="chapter-toc-level-3" data-toc="subsection-3-148u85l" href="/article/vpc-network/#subsection-3-148u85l">最长前缀匹配，实际比较的是哪些行</a><a class="chapter-toc-level-3" data-toc="subsection-3-sivj74" href="/article/vpc-network/#subsection-3-sivj74">去程和回程，各查自己的路由表</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/vpc-network/#section-4">4. 安全组、ACL 与响应的临时端口</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-esyras" href="/article/vpc-network/#subsection-4-esyras">先写出五元组，再判断规则作用于哪个方向</a><a class="chapter-toc-level-3" data-toc="subsection-4-19347no" href="/article/vpc-network/#subsection-4-19347no">有状态规则和无状态规则怎样影响回包</a><a class="chapter-toc-level-3" data-toc="subsection-4-1j8zqu6" href="/article/vpc-network/#subsection-4-1j8zqu6">协议错误已经提供了路径线索</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/vpc-network/#section-5">5. NAT 让连接如何出去，又如何回来</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-5-1quqkxj" href="/article/vpc-network/#subsection-5-1quqkxj">NAT转换的是通信地址，不是业务身份</a><a class="chapter-toc-level-3" data-toc="subsection-5-1iyumle" href="/article/vpc-network/#subsection-5-1iyumle">主动出站与对外发布是两种能力</a></div></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/vpc-network/#section-6">6. 把“服务端处理完成”与“用户收到结果”拆开</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-6-p8ekpv" href="/article/vpc-network/#subsection-6-p8ekpv">先区分四层转发和七层代理</a><a class="chapter-toc-level-3" data-toc="subsection-6-hfdnxr" href="/article/vpc-network/#subsection-6-hfdnxr">地址、HTTP 主机名和 TLS 身份各负责什么</a><a class="chapter-toc-level-3" data-toc="subsection-6-pe1x30" href="/article/vpc-network/#subsection-6-pe1x30">先选合格后端，再借用连接</a><a class="chapter-toc-level-3" data-toc="subsection-6-1ovzwml" href="/article/vpc-network/#subsection-6-1ovzwml">排空：先停止分配，再等已经接收的请求结束</a><a class="chapter-toc-level-3" data-toc="subsection-6-zn6f9f" href="/article/vpc-network/#subsection-6-zn6f9f">重试：先判断能否重放，再同时限制次数和总时间</a><a class="chapter-toc-level-3" data-toc="subsection-6-1tnymhz" href="/article/vpc-network/#subsection-6-1tnymhz">最后回到用户：提交、代理收到、用户收到是三个时刻</a></div></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/vpc-network/#section-7">7. 验收：画出路和门，再画回来的路</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="cloud-proxy-run" href="/article/vpc-network/#cloud-proxy-run">先运行：两个后端、连接复用、排空与受限重试</a><a class="chapter-toc-level-3" data-toc="subsection-7-g5284x" href="/article/vpc-network/#subsection-7-g5284x">沿实现读一遍：资格、连接、响应和业务效果</a><a class="chapter-toc-level-3" data-toc="subsection-7-a6sxak" href="/article/vpc-network/#subsection-7-a6sxak">再单独核对路由、访问控制与返回路径</a><a class="chapter-toc-level-3" data-toc="v43-route-practice" href="/article/vpc-network/#v43-route-practice">运行并检查中间结果</a></div></div></details><p class="article-context-link" id="core-knowledge"><a href="/module/network/">本领域系统知识：云网络与流量 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>把一个地址拆成名字、端口和真正的连接对端</h2><h3 id="subsection-1-1mbleem">名字、地址、端口分别解决什么问题</h3>
  <p>程序之间通过网络交换数据。IP地址标识网络中的通信位置；端口让机器把传输交给相应程序；域名是便于人记忆的名字。域名系统DNS负责把名称查成相应记录。一次解析可能得到多个地址，客户端还要从中选择实际连接目标。</p>
  <p>把这些对象分开看：<code>api.example.test</code>是名称，<code>10.20.4.7</code>是某个网络位置，<code>443</code>是监听端口。IP并不自动说明应用叫什么，域名也不是装着业务数据的传输管道。相同机器可以运行多个端口上的服务；相同域名也可以随解析与入口配置指向不同机器。</p>
- <h3>一次新建的HTTPS连接，按什么顺序推进</h3>
+ <h3 id="subsection-1-r9coc9">一次新建的HTTPS连接，按什么顺序推进</h3>
  <div class="table-wrap"><table><thead><tr><th>阶段</th><th>输入与输出</th><th>下一阶段使用什么</th></tr></thead><tbody><tr><td>名称解析</td><td>域名 → 一个或多个地址记录</td><td>所选目的IP</td></tr><tr><td><span class="first-concept-term" data-concept-term="TCP">TCP<span class="concept-term-meaning">（提供可靠、有序字节流的传输协议）</span></span>连接</td><td>本地IP/临时端口 → 目的IP/监听端口</td><td>一条可靠有序的字节流</td></tr><tr><td><span class="first-concept-term" data-concept-term="TLS">TLS<span class="concept-term-meaning">（为通信提供加密、完整性及相应身份校验的协议）</span></span>握手</td><td>在连接上协商加密及校验服务身份</td><td>受保护的应用通信</td></tr><tr><td><span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span>请求</td><td>方法、路径、头和正文 → 响应</td><td>应用解释状态与业务内容</td></tr></tbody></table></div>
  <p>TCP、TLS和HTTP不是三个互不相干的产品名。这里以TCP承载TLS，再由TLS保护HTTP数据；DNS则通常在连接之前完成名称查询。连接复用时，后续请求可以沿已有连接发送，未必重新走完前面所有阶段。HTTP/3采用不同传输组合，排查时先确认实际协议。</p>
- <h3>代理会把一条业务路径拆成多条连接</h3>
+ <h3 id="subsection-1-1u49a9r">代理会把一条业务路径拆成多条连接</h3>
  <p>负载均衡器或网关可以接收客户端连接，再建立到后端的另一条连接。因此“客户端已连上入口”和“入口已连上后端”是两个事实。若入口终止TLS，客户端校验的是入口身份，后端连接又有自己的协议和校验配置。</p>
- <p>例如公网用户超时、内网机器可访问、后端日志又显示成功，不必立刻选一个“真正原因”。先固定客户端位置、域名、实际目标IP、端口、时间和请求标识，再确认这些观察属于同一条业务路径。名字、连接对端和最终处理者可以不同。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>DNS 改了，哪批客户端会先看见</h2><h3>一次DNS查询怎样得到答案</h3>
+ <p>例如公网用户超时、内网机器可访问、后端日志又显示成功，不必立刻选一个“真正原因”。先固定客户端位置、域名、实际目标IP、端口、时间和请求标识，再确认这些观察属于同一条业务路径。名字、连接对端和最终处理者可以不同。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>DNS 改了，哪批客户端会先看见</h2><h3 id="subsection-2-1ra10dq">一次DNS查询怎样得到答案</h3>
  <p>应用通常把查询交给本机或配置的解析服务；递归解析器代客户端寻找答案，并缓存可缓存的记录。权威服务器负责相应域名区域的数据。客户端看到的是某次查询的结果，而不是对所有解析器当前状态的一次全局读取。</p>
  <p>记录的TTL表示允许缓存的时间长度。假设某解析器在09:59:50得到旧地址，TTL为60秒；10:00:00权威记录变更。忽略预取、强制刷新等因素，这份旧缓存仍可用到10:00:50。另一解析器在10:00:10才首次查询，则可能已经得到新地址。两个答案不同，可以只是查询与缓存时刻不同。</p>
  <div class="table-wrap"><table><thead><tr><th>需要区分的对象</th><th>改变后意味着什么</th><th>仍须继续观察</th></tr></thead><tbody><tr><td>权威记录</td><td>之后的查询可获取新内容</td><td>已有解析缓存是否过期</td></tr><tr><td>解析缓存</td><td>下一次解析可能选择新IP</td><td>应用是否真的重新解析</td></tr><tr><td>既有连接</td><td>仍指向建立时的通信对端</td><td>连接何时关闭或重建</td></tr><tr><td>入口与后端配置</td><td>入口怎样选择实际处理者</td><td>实际请求由哪个实例完成</td></tr></tbody></table></div>
  <p>这解释了DNS切换为什么不是瞬时切流。即使新的解析结果正确，应用还可能继续使用旧长连接；即使旧连接关闭，也要确认新连接真的用了预期解析结果。检查时把“解析返回什么”和“连接实际去了哪里”同时记录。</p>
- <h3>保留域名，才是在比较同一份服务身份</h3>
- <p>把<code>https://域名/</code>直接改成<code>https://IP/</code>，可能同时改变TLS的服务名称、证书校验对象以及HTTP主机信息。一个支持多个站点的入口会因此选择不同配置。比较两个入口时，应在获准的测试环境保留原域名和证书校验，只改变待验证的地址映射，再核对请求来源与响应内容。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>路由表选择下一跳，不负责给业务授权</h2><h3>CIDR先描述地址集合，路由再选择下一跳</h3>
+ <h3 id="subsection-2-o5xitb">保留域名，才是在比较同一份服务身份</h3>
+ <p>把<code>https://域名/</code>直接改成<code>https://IP/</code>，可能同时改变TLS的服务名称、证书校验对象以及HTTP主机信息。一个支持多个站点的入口会因此选择不同配置。比较两个入口时，应在获准的测试环境保留原域名和证书校验，只改变待验证的地址映射，再核对请求来源与响应内容。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>路由表选择下一跳，不负责给业务授权</h2><h3 id="subsection-3-11xx3nz">CIDR先描述地址集合，路由再选择下一跳</h3>
  <p>IPv4地址有32位，常写成四段十进制数，每段对应8位。<span class="first-concept-term" data-concept-term="CIDR">CIDR<span class="concept-term-meaning">（用地址和前缀长度表达网络地址范围的方法）</span></span>用“地址/前缀长度”表达一个网络范围。<code>10.30.8.0/24</code>固定前24位，剩下8位可变化，共有2⁸=256个地址；这是地址数量，具体云子网能分配给实例的数量还要扣除产品保留项。</p>
  <p>目标<code>10.30.8.42</code>与上述范围的前三段相同，所以属于它；<code>10.30.9.42</code>第三段不同，就不属于它。<code>/32</code>固定全部位，只表示一个IPv4地址；<code>/0</code>不固定任何位，可匹配任意IPv4地址。</p>
  <p>路由表把一个目的地址范围对应到下一跳，也就是要把数据继续交给的位置或设备。本题的peer表示连接两个私有网络的对等互联目标；inspection只是另一个转发目标的名称。接下来先比较匹配范围，再讲出口转换和访问控制。</p>
  <figure class="training-figure"><a href="diagrams/v43-cidr-selection.svg" target="_blank" rel="noopener" aria-label="放大：先按目标地址检查每个前缀，再选最具体的匹配。规则与地址范围示意，不表示已经配置真实VPC。"><img src="diagrams/v43-cidr-selection.svg" width="1120" height="720" alt="先按目标地址检查每个前缀，再选最具体的匹配。规则与地址范围示意，不表示已经配置真实VPC。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>先按目标地址检查每个前缀，再选最具体的匹配。规则与地址范围示意，不表示已经配置真实VPC。<a href="diagrams/v43-cidr-selection.svg" download>下载 SVG ↗</a></figcaption></figure>
- <h3>最长前缀匹配，实际比较的是哪些行</h3>
+ <h3 id="subsection-3-148u85l">最长前缀匹配，实际比较的是哪些行</h3>
  <div class="table-wrap"><table><thead><tr><th>目标网段</th><th>下一跳</th><th>10.30.8.42是否匹配</th></tr></thead><tbody><tr><td>10.20.0.0/16</td><td>本地VPC</td><td>否</td></tr><tr><td>10.30.8.0/24</td><td>对等互联peer</td><td>是，固定24位</td></tr><tr><td>0.0.0.0/0</td><td><span class="first-concept-term" data-concept-term="NAT">NAT<span class="concept-term-meaning">（改写网络地址或端口的转换机制）</span></span>出口</td><td>是，固定0位</td></tr></tbody></table></div>
  <p>在这个表中，<code>/24</code>比<code>/0</code>更具体，因此选peer，与表格显示顺序无关。若再加入<code>10.30.8.42/32</code>，该目标会改选主机路由；同网段的<code>10.30.8.43</code>仍按原规则判断。相同前缀存在多种路由来源时，还要按云产品的优先级处理，本文程序对此明确拒绝猜测。</p>
- <h3>去程和回程，各查自己的路由表</h3>
+ <h3 id="subsection-3-sivj74">去程和回程，各查自己的路由表</h3>
  <p>路由表属于相应网络范围，并由子网等对象关联。A侧选中了peer，只说明A把这次目标交给哪个下一跳；B返回数据时，仍要按B侧的表查找A的来源地址。如果B没有<code>10.20.0.0/16</code>的返回路径，就可能去程能到、响应回不来。</p>
  <p>路由也不承担应用授权。找到下一跳后，还要通过沿途访问规则，目标程序还必须监听相应地址与端口。应用只监听回环地址时，本机访问成功，不代表经实例地址访问也能抵达这个监听者。</p>
- <p><a href="https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html" target="_blank" rel="noopener noreferrer">Amazon VPC：最长前缀及同前缀优先级 ↗</a></p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>安全组、ACL 与响应的临时端口</h2><h3>先写出五元组，再判断规则作用于哪个方向</h3>
+ <p><a href="https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html" target="_blank" rel="noopener noreferrer">Amazon VPC：最长前缀及同前缀优先级 ↗</a></p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>安全组、ACL 与响应的临时端口</h2><h3 id="subsection-4-esyras">先写出五元组，再判断规则作用于哪个方向</h3>
  <p>一次传输可用来源IP、来源端口、目的IP、目的端口和协议描述，合称五元组。客户端从<code>10.20.4.7:51000</code>访问<code>10.30.8.42:443/TCP</code>时，51000是此次选择的本地临时端口，443是服务监听端口。响应方向交换两端，目的端口变成51000。</p>
  <div class="table-wrap"><table><thead><tr><th>方向</th><th>来源</th><th>目的</th><th>此方向的目的端口</th></tr></thead><tbody><tr><td>请求</td><td>10.20.4.7:51000</td><td>10.30.8.42:443</td><td>443</td></tr><tr><td>响应</td><td>10.30.8.42:443</td><td>10.20.4.7:51000</td><td>51000</td></tr></tbody></table></div>
- <h3>有状态规则和无状态规则怎样影响回包</h3>
+ <h3 id="subsection-4-19347no">有状态规则和无状态规则怎样影响回包</h3>
  <p>以AWS语义为例，安全组会跟踪连接状态，允许的连接的响应按相应状态规则处理；网络<span class="first-concept-term" data-concept-term="ACL">ACL<span class="concept-term-meaning">（访问控制列表，按规则判断哪些访问允许或拒绝）</span></span>在子网边界分别检查方向和端口，不因去程通过就自动批准回程。若无状态出站规则只允许目的443，发回客户端51000的响应可能被挡住。</p>
  <p>临时端口范围由操作系统和配置决定，题设51000只是一个具体值。做规则检查时，应取得实际五元组，再分别核对来源、目的、协议、方向、规则顺序及关联对象。主机防火墙、代理策略和应用鉴权还可能各自拒绝访问，它们的生效位置不同。</p>
- <h3>协议错误已经提供了路径线索</h3>
- <p>HTTP 403说明某一响应方已经形成HTTP结果，与TCP建连超时的下一步不同。但入口也可以代答403，不能只凭状态码认定业务进程收到请求。检查入口是否选中后端、记录了哪个上游状态，再用相同请求标识关联后端事件，逐步缩小范围。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>NAT 让连接如何出去，又如何回来</h2><h3>NAT转换的是通信地址，不是业务身份</h3>
+ <h3 id="subsection-4-1j8zqu6">协议错误已经提供了路径线索</h3>
+ <p>HTTP 403说明某一响应方已经形成HTTP结果，与TCP建连超时的下一步不同。但入口也可以代答403，不能只凭状态码认定业务进程收到请求。检查入口是否选中后端、记录了哪个上游状态，再用相同请求标识关联后端事件，逐步缩小范围。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>NAT 让连接如何出去，又如何回来</h2><h3 id="subsection-5-1quqkxj">NAT转换的是通信地址，不是业务身份</h3>
  <p>网络地址转换NAT在转发时改写地址或端口，并保存让响应返回原连接所需的映射。设私网进程从<code>10.20.4.7:51000</code>访问<code>198.51.100.9:443</code>；经某个出口后，对端看到的来源可能是出口的公网地址及另一个端口。</p>
  <div class="table-wrap"><table><thead><tr><th>观察位置</th><th>来源端点</th><th>目的端点</th></tr></thead><tbody><tr><td>转换前</td><td>10.20.4.7:51000</td><td>198.51.100.9:443</td></tr><tr><td>转换后，教学映射</td><td>203.0.113.5:62000</td><td>198.51.100.9:443</td></tr><tr><td>返回到出口</td><td>198.51.100.9:443</td><td>203.0.113.5:62000</td></tr><tr><td>映射回原连接</td><td>198.51.100.9:443</td><td>10.20.4.7:51000</td></tr></tbody></table></div>
  <p>表中的公网地址来自文档示例网段，62000是本题假设，不是某个云网关的固定分配方式。关键关系是：回包找到已有映射，出口再把它关联回私网发起者。源端口不一定保持原值。</p>
- <h3>主动出站与对外发布是两种能力</h3>
+ <h3 id="subsection-5-1iyumle">主动出站与对外发布是两种能力</h3>
  <p>私网实例能主动下载文件，证明它有一条相应的出站和响应路径。它并未因此拥有任意外部客户端都能连接的监听入口。对外发布服务通常需要入口地址、监听、后端选择、健康检查、路由与访问规则各自成立。</p>
- <p>同一个出口会服务许多连接。大量短连接或集中访问相同对端时，要观察连接跟踪、端口供给及失败分布，再比较连接复用与分散目标的效果。DNS只有一个名字，也可能解析到多个地址；应按实际对端分组，才能发现某一条路径单独失败。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>把“服务端处理完成”与“用户收到结果”拆开</h2><p>入口通常同时处在两条连接上。用户到入口的一条 TLS 连接可以保持，而入口到后端的另一条连接可能已超时或被对端关闭。服务端记录“执行完成”通常指业务代码形成了结果；它不保证代理收到了全部响应字节，更不保证客户端在自己的截止时间前读到了它们。区分这些边界，才能避免看到一条成功日志就关闭故障。</p><p>设客户端给一次请求 500 毫秒截止时间，第 50 毫秒完成连接，第 100 毫秒入口才向后端转发。后端在 460 毫秒形成结果，但入口还要发送剩余的响应。若客户端在 500 毫秒取消，后端成功与客户端超时可以同时成立。此例只给出一条共同时间轴用于教学，生产中不同主机的绝对时间需要校时，优先比较可关联的本地持续时间。</p><p>对照实验应保持域名、目标 IP、协议与请求负载可比，再改变一个观察点。检查客户端解析与连接、入口是否收到、是否转发、后端是否处理及回包是否被写出。若证据指向传输层才继续定位丢包、重传与策略；若已明确入口因无可用后端代答 503，下一跳是健康检查或端点，而不是再从 DNS 开始碰运气。</p><a class="inline-link" href="/article/network-diagnosis/">用 curl 的累计时刻继续分段 →</a></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>验收：画出路和门，再画回来的路</h2><p>题目共十分。某服务内部访问成功、外部超时。客户端已经解析到公网入口，私网实例能主动访问外部 <span class="first-concept-term" data-concept-term="API">API<span class="concept-term-meaning">（供程序调用的接口）</span></span>。提供一条包含客户端临时端口、入口 443、后端端口的路径，指出哪个阶段由 DNS、路由、访问控制和工作进程分别负责。再解释仅配置出站 NAT 为什么不能让外部用户主动进入。</p><p>评分时，分开名称解析和实际业务路径占两分，指出子网路由及回程各需验证占两分，能解释有状态安全组与无状态 ACL 的方向和端口占两分，分开私网出站 NAT 与公网服务入口占两分。最后两分要求给出可落地的下一项证据，例如入口在相同时间收到哪个五元组、是否建立上游连接，而不是笼统建议“检查网络”。</p><p>深入追问：入口访问日志记录了 503 且没有后端地址，应优先问谁？先按该入口的字段语义确认是否选中后端和是否由入口代答，再对照端点健康、策略及容量。若日志显示上游明确回了 503，调查方向则应随证据改变。这样描述动作，才能让另一个工程师沿你的路径独立复现判断。</p><h3 class="walkthrough-run" id="v43-route-practice">运行并检查中间结果</h3><p>先预测/24与/0谁胜出，再加/32，最后删除回程路由。程序实际执行地址集合与选择规则，输出每次匹配；它不创建VPC或验证真实转发设备。</p><div class="code-block"><div class="code-toolbar"><span>解压后，在实验目录运行 <small>SHELL</small></span><button data-copy-code aria-label="复制 解压后，在实验目录运行">复制代码</button></div><pre tabindex="0"><code>python3 route_walk.py</code></pre></div><details class="full-code"><summary>完整 route_walk.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>route_walk.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 route_walk.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;CIDR and longest-prefix teaching model. Does not configure a real VPC.&quot;&quot;&quot;
+ <p>同一个出口会服务许多连接。大量短连接或集中访问相同对端时，要观察连接跟踪、端口供给及失败分布，再比较连接复用与分散目标的效果。DNS只有一个名字，也可能解析到多个地址；应按实际对端分组，才能发现某一条路径单独失败。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>把“服务端处理完成”与“用户收到结果”拆开</h2>
+<p>前面五节已经把名字、地址、路由、访问控制和 NAT 分开。现在把入口代理展开：它收到一个请求后，还要选择后端、建立或借用连接、等待结果，再把响应发给用户。请求穿过代理，并不意味着从头到尾只有一条连接。</p>
+
+<h3 id="subsection-6-p8ekpv">先区分四层转发和七层代理</h3>
+<p>这里的“层”是协议分工：第四层是 TCP 等传输协议，第七层是 HTTP 等应用协议。四层设备可以按源/目的地址、端口和连接状态选择去向；七层 HTTP 代理还可以读懂请求中的主机名、路径和方法，例如把 <code>/orders</code> 发往订单服务。若 HTTP 内容被 TLS 加密，代理必须先解密，才能依据这些内容作决定。</p>
+<div class="table-wrap"><table><thead><tr><th>模式</th><th>按什么选择去向</th><th>连接与加密边界</th></tr></thead><tbody><tr><td>四层地址转换或直接返回</td><td>地址、端口、连接状态等</td><td>可能只转发报文；不能一概画成两个应用层套接字</td></tr><tr><td>四层完整 TCP 代理</td><td>通常在连接建立时选择后端</td><td>接收前端 TCP，再另建后端 TCP；可透明传递 TLS 字节</td></tr><tr><td>七层 HTTP 代理</td><td>可按每个请求的 Host、路径、方法选择</td><td>前后两段连接独立；解析 HTTPS 需要终止入口 TLS</td></tr></tbody></table></div>
+<p>本节后面实际运行的是第三种：客户端 → P → A/B，P 是代理，A/B 是两个订单后端。<strong>前端连接</strong>是客户端与 P 之间的 TCP 连接；<strong>上游连接</strong>是 P 与后端之间的 TCP 连接。“上游”只是代理对被调用服务的称呼。每一段都有自己的两端地址、临时端口、超时和关闭时刻。</p>
+<figure class="training-figure"><a href="diagrams/cloud-proxy-two-legs.svg" target="_blank" rel="noopener" aria-label="放大：两个前端连接先后借用同一个 A 后端连接；P 另有通向 B 的连接池"><img src="diagrams/cloud-proxy-two-legs.svg" width="1120" height="700" loading="lazy" alt="两个前端连接先后借用同一个 A 后端连接；P 另有通向 B 的连接池"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一组实验对象：P-c1/P-c2 是不同前端连接，三次顺序查询共用 A-c1。连线表示实际 TCP 连接，箭头上的请求不是新的连接。</figcaption></figure>
+
+<h3 id="subsection-6-hfdnxr">地址、HTTP 主机名和 TLS 身份各负责什么</h3>
+<p>连接到某个 IP:端口，只决定把字节交给哪个监听者。HTTP 的 <code>Host</code> 字段再告诉监听者：这次请求访问哪个站点。实验前端接受 <code>orders.lab.test</code>，P 转发时明确改写成后端接受的 <code>orders.internal.test</code>；两者都是请求字段，不需要修改本机 DNS。错把前端名称原封不动传入只接受内部名称的后端，TCP 即使连通，应用仍可能拒绝。</p>
+<p>若加上 TLS，还要多问“对端是谁”。<strong>证书</strong>把公钥与服务器身份联系起来；客户端用自己信任的<strong>证书颁发机构（CA）</strong>验证签发链，再核对证书中的名称是否匹配它要访问的服务。<strong>SNI</strong>是 TLS 握手时发送的服务名称，帮助服务器选证书；<strong>Host</strong>是握手完成后 HTTP 请求中的站点名称。这两个字段所在阶段不同，选到了证书也不等于完成了证书验证。</p>
+<div class="table-wrap"><table><thead><tr><th>部署方式</th><th>谁验证谁</th><th>真正需要独立检查的边界</th></tr></thead><tbody><tr><td>TCP 透传 TLS</td><td>客户端验证最终后端证书</td><td>TCP 可以分两段转发，TLS 仍是一条端到端会话；P 不读取加密的 HTTP 路径</td></tr><tr><td>P 终止入口 TLS，向后端发 HTTP</td><td>客户端验证 P 的证书</td><td>后端段没有 TLS 加密；入口证书有效不会给后端段自动增加保护</td></tr><tr><td>P 终止入口 TLS，再以 TLS 连接后端</td><td>客户端验证 P；P 另行验证后端的信任链和服务名</td><td>两条 TLS 会话、两次信任判断；还要正确设置后端 SNI 和 HTTP Host</td></tr></tbody></table></div>
+<p>客户端认证、授权策略与上述服务器身份验证又是不同的事。验证了服务器名称，仍要由服务判断调用者能否读这笔订单。已有的<a href="/article/k8s-networking/?section=7">TLS、证书名称和 HTTP Host 实验</a>用真实握手区分这三件事；本节新增实验专门观察 HTTP 代理的连接、排空与重试。</p>
+
+<h3 id="subsection-6-pe1x30">先选合格后端，再借用连接</h3>
+<p>代理通常先得到一组<strong>可接收新工作的后端</strong>，再按轮询、权重或其他规则选择其中一个。就绪检查回答“现在是否允许分配新工作”，不保证下一次调用必然成功。选到 A 以后，P 可以新建连接，也可以从<strong>连接池</strong>中借用已经连到 A 的空闲连接。</p>
+<p>复用节省了反复建连的开销，但连接数和请求数因此不再一一对应。实验先在 P-c1 上查询两次，再换成 P-c2 查询一次；A 实际接受连接的日志仍只有 A-c1。这说明的是三个<strong>先后完成</strong>的 HTTP/1.1 请求共用连接。实验用锁把一次请求和完整响应读取包在一起；同一连接还在读取前一个响应时，后一个请求先等待。它没有实现 HTTP/2 的多个请求流并行传输。</p>
+<p>这里有两个容易混淆的上限：允许同时处理多少工作，与保留多少空闲连接。前者控制在途并发，后者控制可复用的连接缓存。生产代理的参数需要逐项读定义，例如 NGINX 的 <code>upstream keepalive</code> 数值约束每个工作进程保留的空闲上游连接，并非整个服务能打开的全部连接。空闲连接很多、当前请求很少，与当前请求很多、池槽位不够，是两种不同现象。</p>
+
+<h3 id="subsection-6-1ovzwml">排空：先停止分配，再等已经接收的请求结束</h3>
+<p><strong>排空</strong>是让实例退出新工作分配，同时尽量完成已经分配的工作。把 B 标记为排空后，P 即使手里还保留着连到 B 的空闲连接，也不应继续把新请求送给 B。后端资格决定“能否派活”，连接池只解决“怎样连接”，顺序不能反过来。</p>
+<p>用一个请求就能检验时序：先让 B 接到查询但暂不返回；再把 B 从新请求候选中移除，此时 B 的在途请求数仍为 1；随后发来的查询必须走 A；最后放行 B 原来的查询，等它完成后关闭 B 的池连接。实验用事件通知控制这四步，图上是先后关系，不是猜测的生产耗时。</p>
+<figure class="training-figure"><a href="diagrams/cloud-proxy-drain.svg" target="_blank" rel="noopener" aria-label="放大：B 原有请求继续执行，排空以后新查询改走 A，B 在途归零后关闭连接"><img src="diagrams/cloud-proxy-drain.svg" width="1120" height="700" loading="lazy" alt="B 原有请求继续执行，排空以后新查询改走 A，B 在途归零后关闭连接"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>选后端、借连接、完成响应、释放在途计数是四个动作；停止派活与立即断开连接不是同一个动作。</figcaption></figure>
+<p>生产发布还需要给排空设置最长等待时间，并与应用退出顺序配合。等到期限仍未完成，就要决定继续等待、拒绝还是强制关闭。强行关闭连接只结束了本次通信；后端已经提交的写入可能仍然存在。<span class="first-concept-term" data-concept-term="Kubernetes">Kubernetes<span class="concept-term-meaning">（统一管理多台机器上容器化应用的系统）</span></span> 中先后端资格变化、再停止进程的传播过程，接着在<a href="/article/k8s-networking/">服务网络</a>与<a href="/article/k8s-workloads/">工作负载生命周期</a>中核对。</p>
+
+<h3 id="subsection-6-zn6f9f">重试：先判断能否重放，再同时限制次数和总时间</h3>
+<p><strong>重试</strong>是再次发送同一个业务操作，不是给所有错误换个后端。先问操作能否安全重放：本实验查询订单的 GET 没有写入副作用，B 返回 503（暂时无法提供服务）后允许尝试 A；POST 发布会产生业务记录，后端提交后若响应丢失，代理只能知道“结果未知”，不能由 502 就推断“没有执行”。HTTP 方法本身也不能替代业务契约，实际把写操作藏在 GET 里仍有重复执行风险。</p>
+<p>然后给<strong>同一个请求</strong>设置尝试次数上限和共同的截止时间。每换一次后端，都应从原截止时间扣除已经花掉的部分。下面的预算按串行阶段、同一计时起点估算：</p>
+<div class="table-wrap"><table><thead><tr><th>步骤</th><th>固定题设</th><th>算出的约束</th></tr></thead><tbody><tr><td>从用户预算切出上游窗口</td><td>用户愿意等 800 ms；入口建连 80 ms，已排队 120 ms</td><td>最多剩 600 ms 给上游处理与尝试间等待</td></tr><tr><td>安排两次尝试</td><td>每次最多 250 ms，中间等待 100 ms</td><td>2 × 250 + 100 = 600 ms，已经没有额外余量</td></tr><tr><td>另一个情形：只设共同截止时间，未设单次上限</td><td>第一次已用 430 ms，又等待 100 ms</td><td>原 600 ms 窗口只剩 70 ms；不能再给第二次完整 250 ms</td></tr><tr><td>协调多层重试</td><td>客户端、网关、服务分别独立尝试 3、2、2 次</td><td>最坏可放大成 3 × 2 × 2 = 12 次后端调用</td></tr></tbody></table></div>
+<p>这张预算表要求先定义时间从哪里开始。后面的程序在入口校验和读取小请求体后，才启动上游窗口；普通请求共用 2 秒，受控慢请求共用 0.25 秒。它既限制池等待，也限制上游响应等待。底层 socket 超时主要约束某次 <span class="first-concept-term" data-concept-term="I/O">I/O<span class="concept-term-meaning">（输入与输出，例如读文件和收发网络数据）</span></span> 等待，所以程序还在共同截止时间关闭本次上游 socket，防止对端靠持续零星发字节拖过总期限。入口读请求体和把响应送到客户端的时间没有计入这个窗口。</p>
+<p>重发还需要保留可重放的请求体，并确认没有把前一次响应发送给客户端。本实验先缓冲最多 4096 字节的受控请求体，等上游完整响应和重试决策结束后才发下行响应；流式上传、流式下载需要另一套策略。若客户端已经读到一部分正文，代理再把另一个后端的完整正文接上去，会破坏同一份响应的含义。</p>
+<p>尝试次数也不能替代时间约束：最多两次，仍可能第一次就用光全部时间；时间有余量，也不能突破次数上限。收到 503 后是否重试、收到部分响应后能否换后端、POST 是否允许重放，都要有明确策略。NGINX 的 <code>proxy_next_upstream</code>、次数和时间参数体现了这些不同控制项；不要把它的“允许传给下一个后端的时间窗口”直接当成本实验覆盖整个响应的共同截止时间。</p>
+
+<h3 id="subsection-6-1tnymhz">最后回到用户：提交、代理收到、用户收到是三个时刻</h3>
+<p>假设客户端在 500 ms 放弃，入口 50 ms 建连，100 ms 开始向后端转发，后端 460 ms 完成处理。后端完成后，结果还要经过上游连接、代理处理和前端连接。460 ms 完成并不保证用户在 500 ms 前读到完整响应；取消等待也不自动撤销后端写入。</p>
+<p>因此排障要把一笔请求的前端连接、每次上游尝试、实际业务提交与用户结果对起来。第七节先把它们落实为连接日志和 SQLite 记录，再回到路由与访问控制练习；下一章<a href="/article/network-diagnosis/">网络排障</a>继续用这些边界缩小问题范围。</p>
+</section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>验收：画出路和门，再画回来的路</h2>
+<h3 id="cloud-proxy-run">先运行：两个后端、连接复用、排空与受限重试</h3>
+<p>这次不只在字典里计算路由。程序在 <code>127.0.0.1</code> 的临时端口启动三个真实 HTTP/1.1 监听者 P、A、B，客户端通过 P 查询订单 O-104，金额固定为 37。P 有独立的后端选择器和连接池；A/B 另外记录接受到的 TCP 连接与请求；写入效果由临时 SQLite 数据库记录。三份事实可以互相核对。</p>
+<p>先预测三个结果再运行：换一条前端连接后，上游是否必须重连？B 进入排空时在途为 1，新查询应走哪里？写入提交后断开响应，客户端看到失败是否就能再发一次？</p>
+<p>需要 Python 3.9+ 标准库，无第三方安装。下载并解压 <a href="labs/cloud-proxy.zip" download>完整实验包</a>，进入 <code>cloud-proxy/</code> 后执行：</p>
+<div class="code-block"><div class="code-toolbar"><span>在解压后的 cloud-proxy 目录运行 <small>sh</small></span><button data-copy-code aria-label="复制 在解压后的 cloud-proxy 目录运行">复制代码</button></div><pre tabindex="0"><code>python3 -B proxy_lab.py &gt; proxy-run.json
+python3 -m json.tool proxy-run.json</code></pre></div>
+<p>JSON 的 <code>positive</code> 是受限策略，<code>unsafe_write_retry</code> 是在全新临时环境里故意放开 POST 重试的负例。每次运行的端口会变；P-c1、A-c1 等编号按各监听者接受连接的先后生成。读下面的状态和关系，不照抄临时端口。</p>
+<div class="table-wrap"><table><thead><tr><th>情形</th><th>客户端结果 / 上游尝试数</th><th>从另一侧核对</th></tr></thead><tbody><tr><td>错误前端 Host</td><td>421 / 0</td><td>后端实际请求日志没有 wrong-host</td></tr><tr><td>同一前端查询两次，再换前端查询</td><td>三个 200 / 每次 1</td><td>P-c1、P-c2 两条前端连接，后端三次都是 A-c1</td></tr><tr><td>B 正在处理时开始排空</td><td>新查询 A 返回 200；旧查询 B 最后返回 200</td><td>drain_started 时 active=1；新查询先完成，旧查询放行后在途才归零</td></tr><tr><td>B 暂时繁忙</td><td>200 / 2</td><td>transient 的请求日志依次是 B:503、A:200</td></tr><tr><td>A、B 都繁忙</td><td>503 / 2</td><td>always-busy 只有 B、A 两次，没有第三次尝试</td></tr><tr><td>B 持有慢查询直到预算耗尽</td><td>504 / 1</td><td>slow-first 仅抵达 B；没有用新预算再向 A 发起尝试</td></tr><tr><td>POST 提交后丢失响应，禁止重放</td><td>502 / 1，结果未知</td><td>SQLite 实际仍有一次 total=37 的效果</td></tr><tr><td>负例：同一 POST 无条件换后端重放</td><td>502 / 2</td><td>SQLite 有 A、B 各一次效果，合计 74，失败响应没有阻止重复写入</td></tr></tbody></table></div>
+<p>排空的顺序由 B 的通知事件与驱动程序放行事件控制；日志中的 <code>seq</code> 只表达观测顺序。对照 <code>drain-held</code>、<code>drain-new</code> 两个请求，确认新查询抵达 A 时，B 的旧查询仍在等待。查询输出里的连接编号，再对照 <code>accepted</code> 与 <code>upstream_attempt</code> 中真实套接字两端地址，可以验证两段 TCP 和连接复用，不必只相信代理返回的标签。</p>
+<p>判断完成顺序时，<code>client_received</code> 是驱动完整读到下行响应，<code>upstream_response</code> 是 P 完整读到上游响应。新查询的前一类事件先出现，旧查询的后一类事件随后才出现，接着才有 B 的 <code>drain_finished</code>。后端写出响应后追加的日志可能被线程调度延迟，用接收方的实际读取事件，更能对齐本题要验证的边界。</p>
+<p>慢查询还有一个细节：P 的预算耗尽后已经给客户端返回 504，驱动才放行 B 的处理。B 随后可以完成自己的逻辑，但响应已经无法交还本次调用者。限时等待控制的是通信资源与调用者等待；业务是否完成，要继续查业务证据。写入负例就是把这一点变成了可数的 37 和 74。</p>
+
+<h3 id="subsection-7-g5284x">沿实现读一遍：资格、连接、响应和业务效果</h3>
+<div class="table-wrap"><table><thead><tr><th>按顺序找源码</th><th>实现承担的责任</th><th>可以独立检查的事实</th></tr></thead><tbody><tr><td>Control.reserve / drain_b / release</td><td>先排除未就绪、排空、已试过的后端；记录已分配工作</td><td>排空前已分配给 B 的工作保留；新请求选 A</td></tr><tr><td>Pool.exchange</td><td>拿池锁、借连接、发送请求、读完有长度边界的完整响应，再释放池锁</td><td>reuse 三次的上游地址对应同一个 A 接受连接</td></tr><tr><td><span class="first-concept-term" data-concept-term="deadline">deadline<span class="concept-term-meaning">（整个操作应完成的截止时间，不是每次重试重新获得的完整时长）</span></span> 与 interrupt_at_deadline</td><td>锁等待、建连、响应都扣同一上游窗口；期限到关闭本次连接</td><td>slow-first 只有一次尝试，耗尽后不再派给 A</td></tr><tr><td>Proxy.process 的 retryable 与 tries</td><td>只读契约和错误条件决定是否重放；最多两次，逐次换后端</td><td>业务标识 rid 不变；请求日志保留每次 attempt</td></tr><tr><td>Backend.process 的 SQLite INSERT / commit / shutdown</td><td>先提交真实业务效果，再真实关闭套接字丢失响应</td><td>默认策略一次 37；无条件写重试两次共 74</td></tr></tbody></table></div>
+<p>源码里每个后端只有一个可借用连接，因此同一后端的并发请求需要等锁。<code>active</code> 计的是已经分配、尚未释放的工作，包含等连接的部分；不是后端 <span class="first-concept-term" data-concept-term="CPU">CPU<span class="concept-term-meaning">（中央处理器，执行程序指令）</span></span> 正在执行的线程数。若要扩展为多个池槽位，应分别记录分配量、池等待量与后端实际在途量，再决定谁负责<span class="first-concept-term" data-concept-term="限流">限流<span class="concept-term-meaning">（限制单位时间或相应窗口内允许进入的工作量）</span></span>。</p>
+<p>本实验只接受受控的小型、带 Content-Length 的 HTTP 消息，不实现流式转发、HTTP/2、多进程共享池或生产代理性能。它没有新增 TLS、DNS、云负载均衡和 Kubernetes 实测。证书与主机名去前述 TLS 实验核对；生产代理配置可继续阅读本章官方资料中的 NGINX 指令定义。</p>
+<p><a href="labs/cloud-proxy/README.md">运行说明与读源码顺序</a> · <a href="labs/cloud-proxy/proxy_lab.py">完整源码文件</a> · <a href="labs/cloud-proxy/validation.json">实际运行记录与源码摘要</a></p>
+<details><summary>展开完整 proxy_lab.py（与下载文件对应）</summary>
+<div class="code-block"><div class="code-toolbar"><span>proxy_lab.py <small>Python</small></span><button data-copy-code aria-label="复制 proxy_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real local HTTP/1.1 proxy, two backends and independent SQLite effects.
+
+Python 3.9+ standard library. All listeners bind 127.0.0.1 on temporary ports.
+No TLS, DNS changes, Kubernetes or production proxy performance is exercised.
+The driver controls backend eligibility and uses events rather than guessed
+sleep durations to observe draining. Not a general-purpose reverse proxy.
+&quot;&quot;&quot;
+import contextlib
+import http.client
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
+from pathlib import Path
+import socket
+import sqlite3
+import tempfile
+import threading
+import time
+
+
+PUBLIC_HOST = &#39;orders.lab.test&#39;
+BACKEND_HOST = &#39;orders.internal.test&#39;
+
+
+class Journal:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.events = []
+
+    def add(self, kind, **values):
+        with self.lock:
+            event = dict(seq=len(self.events)+1, kind=kind, **values)
+            self.events.append(event)
+            return event
+
+
+class Server(ThreadingHTTPServer):
+    daemon_threads = False
+    block_on_close = True
+
+    def __init__(self, handler, label, journal):
+        self.label, self.journal = label, journal
+        self.sequence, self.sequence_lock = 0, threading.Lock()
+        super().__init__((&#39;127.0.0.1&#39;, 0), handler)
+
+    def connection_id(self):
+        with self.sequence_lock:
+            self.sequence += 1
+            return &#39;%s-c%d&#39; % (self.label, self.sequence)
+
+
+class Handler(BaseHTTPRequestHandler):
+    protocol_version = &#39;HTTP/1.1&#39;
+
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(3)
+        self.connection_id = self.server.connection_id()
+        self.server.journal.add(&#39;accepted&#39;, server=self.server.label,
+                                connection=self.connection_id,
+                                local=list(self.connection.getsockname()),
+                                peer=list(self.connection.getpeername()))
+
+    def log_message(self, *args):
+        pass
+
+    def reply(self, status, body, headers=None):
+        data = json.dumps(body, sort_keys=True).encode(&#39;utf-8&#39;)
+        self.send_response(status)
+        self.send_header(&#39;Content-Type&#39;, &#39;application/json&#39;)
+        self.send_header(&#39;Content-Length&#39;, str(len(data)))
+        for key, value in (headers or {}).items():
+            self.send_header(key, str(value))
+        self.end_headers()
+        try:
+            self.wfile.write(data)
+            self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            self.close_connection = True
+
+    def read_small_body(self):
+        if self.headers.get(&#39;Transfer-Encoding&#39;):
+            raise ValueError(&#39;this fixture only supports Content-Length&#39;)
+        length = int(self.headers.get(&#39;Content-Length&#39;, &#39;0&#39;))
+        if not 0 &lt;= length &lt;= 4096:
+            raise ValueError(&#39;body too large&#39;)
+        return self.rfile.read(length)
+
+
+def backend_handler(fixture, name):
+    class Backend(Handler):
+        def do_GET(self):
+            self.process(b&#39;&#39;)
+
+        def do_POST(self):
+            self.process(self.read_small_body())
+
+        def process(self, payload):
+            rid = self.headers.get(&#39;X-Request-ID&#39;, &#39;&#39;)
+            attempt = int(self.headers.get(&#39;X-Upstream-Attempt&#39;, &#39;0&#39;))
+            fixture.journal.add(&#39;backend_request&#39;, backend=name,
+                                connection=self.connection_id, rid=rid,
+                                method=self.command, path=self.path, attempt=attempt,
+                                host=self.headers.get(&#39;Host&#39;))
+            if self.headers.get(&#39;Host&#39;) != BACKEND_HOST:
+                self.reply(421, {&#39;error&#39;: &#39;backend_virtual_host&#39;})
+                return
+            if self.path == &#39;/hold&#39; and name == &#39;B&#39;:
+                fixture.hold_started.set()
+                if not fixture.release_hold.wait(3):
+                    raise AssertionError(&#39;test driver did not release held request&#39;)
+            if self.path == &#39;/slow-first&#39; and name == &#39;B&#39;:
+                fixture.slow_started.set()
+                if not fixture.release_slow.wait(3):
+                    raise AssertionError(&#39;test driver did not release slow request&#39;)
+            if self.command == &#39;POST&#39; and self.path == &#39;/publish&#39;:
+                value = json.loads(payload)[&#39;total&#39;]
+                if type(value) is not int:
+                    self.reply(400, {&#39;error&#39;: &#39;total_must_be_integer&#39;})
+                    return
+                with contextlib.closing(sqlite3.connect(fixture.database)) as db:
+                    with db:
+                        db.execute(&#39;INSERT INTO effects(rid, backend, total) VALUES(?,?,?)&#39;,
+                                   (rid, name, value))
+                fixture.journal.add(&#39;effect_committed&#39;, backend=name, rid=rid, total=value)
+                # Actual committed write, followed by an actual lost response.
+                self.close_connection = True
+                self.connection.shutdown(socket.SHUT_RDWR)
+                self.connection.close()
+                return
+            busy = self.path == &#39;/always-busy&#39; or (name == &#39;B&#39; and self.path == &#39;/transient&#39;)
+            status = 503 if busy else 200
+            body = ({&#39;error&#39;: &#39;busy&#39;, &#39;backend&#39;: name} if busy else
+                    {&#39;order&#39;: &#39;O-104&#39;, &#39;total&#39;: 37, &#39;status&#39;: &#39;paid&#39;, &#39;backend&#39;: name})
+            self.reply(status, body, {&#39;X-Backend-Connection&#39;: self.connection_id})
+            fixture.journal.add(&#39;backend_finished&#39;, backend=name, rid=rid,
+                                connection=self.connection_id, status=status)
+    return Backend
+
+
+class Pool:
+    &quot;&quot;&quot;One sequential HTTP/1.1 connection per backend, protected through read().&quot;&quot;&quot;
+    def __init__(self, addresses, journal):
+        self.addresses, self.journal = addresses, journal
+        self.connections = dict.fromkeys(addresses)
+        self.locks = {name: threading.Lock() for name in addresses}
+
+    def close(self, name):
+        with self.locks[name]:
+            if self.connections[name]:
+                self.connections[name].close()
+                self.connections[name] = None
+
+    def exchange(self, name, method, path, payload, rid, attempt, deadline):
+        remaining = deadline-time.monotonic()
+        if remaining &lt;= 0 or not self.locks[name].acquire(timeout=remaining):
+            raise TimeoutError(&#39;pool wait exhausted the same upstream budget&#39;)
+        timer, timer_lock, active = None, threading.Lock(), [True]
+        expired = threading.Event()
+        try:
+            remaining = deadline-time.monotonic()
+            if remaining &lt;= 0:
+                raise TimeoutError(&#39;upstream budget exhausted&#39;)
+            connection = self.connections[name]
+            if connection is None:
+                connection = http.client.HTTPConnection(*self.addresses[name], timeout=remaining)
+                self.connections[name] = connection
+            if connection.sock is None:
+                connection.timeout = remaining
+                connection.connect()
+            target = connection.sock
+            def interrupt_at_deadline():
+                with timer_lock:
+                    if active[0]:
+                        expired.set()
+                        try:
+                            target.shutdown(socket.SHUT_RDWR)
+                        except OSError:
+                            pass
+            # Socket timeout alone is an idle-I/O timeout: a peer could keep
+            # sending bytes. This watchdog also bounds headers/body as a whole.
+            timer = threading.Timer(max(0.001, deadline-time.monotonic()), interrupt_at_deadline)
+            timer.daemon = True
+            timer.start()
+            connection.sock.settimeout(max(0.001, deadline-time.monotonic()))
+            self.journal.add(&#39;upstream_attempt&#39;, backend=name, rid=rid, attempt=attempt,
+                             local=list(connection.sock.getsockname()),
+                             peer=list(connection.sock.getpeername()))
+            connection.request(method, path, body=payload, headers={
+                &#39;Host&#39;: BACKEND_HOST, &#39;Content-Length&#39;: str(len(payload)),
+                &#39;X-Request-ID&#39;: rid, &#39;X-Upstream-Attempt&#39;: str(attempt)})
+            # The remaining budget is recalculated for the response, not reset.
+            connection.sock.settimeout(max(0.001, deadline-time.monotonic()))
+            response = connection.getresponse()
+            length = int(response.getheader(&#39;Content-Length&#39;, &#39;-1&#39;))
+            if response.getheader(&#39;Transfer-Encoding&#39;) or not 0 &lt;= length &lt;= 4096:
+                raise http.client.HTTPException(&#39;fixture requires a bounded Content-Length response&#39;)
+            body = response.read()  # Must be consumed before this connection is reused.
+            if time.monotonic() &gt; deadline:
+                raise TimeoutError(&#39;upstream response exceeded the shared budget&#39;)
+            self.journal.add(&#39;upstream_response&#39;, backend=name, rid=rid,
+                             attempt=attempt, status=response.status)
+            return response.status, json.loads(body), response.getheader(&#39;X-Backend-Connection&#39;)
+        except (OSError, http.client.HTTPException) as error:
+            if self.connections[name]:
+                self.connections[name].close()
+                self.connections[name] = None
+            if expired.is_set() or time.monotonic() &gt;= deadline:
+                raise TimeoutError(&#39;shared upstream deadline reached&#39;) from error
+            raise
+        finally:
+            with timer_lock:
+                active[0] = False
+            if timer:
+                timer.cancel()
+            self.locks[name].release()
+
+
+class Control:
+    def __init__(self, pool, journal, both_ready=False):
+        self.pool, self.journal = pool, journal
+        self.lock, self.cursor = threading.Lock(), 0
+        self.ready = {&#39;A&#39;: True, &#39;B&#39;: both_ready}
+        self.draining = {&#39;A&#39;: False, &#39;B&#39;: False}
+        self.active = {&#39;A&#39;: 0, &#39;B&#39;: 0}
+
+    def reserve(self, tried):
+        with self.lock:
+            for offset in range(2):
+                index = (self.cursor+offset) % 2
+                name = (&#39;A&#39;, &#39;B&#39;)[index]
+                if name not in tried and self.ready[name] and not self.draining[name]:
+                    self.cursor = (index+1) % 2
+                    self.active[name] += 1
+                    return name
+            return None
+
+    def release(self, name):
+        with self.lock:
+            self.active[name] -= 1
+            close = self.draining[name] and self.active[name] == 0
+        if close:
+            self.pool.close(name)
+            self.journal.add(&#39;drain_finished&#39;, backend=name)
+
+    def enable_b(self):
+        with self.lock:
+            self.ready[&#39;B&#39;], self.draining[&#39;B&#39;] = True, False
+
+    def drain_b(self):
+        with self.lock:
+            self.draining[&#39;B&#39;] = True
+            snapshot = dict(active=self.active[&#39;B&#39;], new_assignments_allowed=False)
+        self.journal.add(&#39;drain_started&#39;, backend=&#39;B&#39;, **snapshot)
+        if snapshot[&#39;active&#39;] == 0:
+            self.pool.close(&#39;B&#39;)
+        return snapshot
+
+
+def proxy_handler(fixture, unsafe_write_retry):
+    class Proxy(Handler):
+        def do_GET(self):
+            self.process()
+
+        def do_POST(self):
+            self.process()
+
+        def process(self):
+            rid = self.headers.get(&#39;X-Request-ID&#39;, &#39;&#39;)
+            try:
+                payload = self.read_small_body()
+            except ValueError:
+                self.close_connection = True
+                self.reply(400, {&#39;error&#39;: &#39;unsupported_fixture_request&#39;})
+                return
+            fixture.journal.add(&#39;front_request&#39;, rid=rid, method=self.command, path=self.path,
+                                connection=self.connection_id, host=self.headers.get(&#39;Host&#39;))
+            headers = {&#39;X-Proxy-Connection&#39;: self.connection_id, &#39;X-Proxy-Attempts&#39;: 0}
+            if self.headers.get(&#39;Host&#39;) != PUBLIC_HOST:
+                self.reply(421, {&#39;error&#39;: &#39;unknown_virtual_host&#39;}, headers)
+                return
+            # Budget begins after ingress/body validation; it is not client TTFT.
+            budget = 0.25 if self.path == &#39;/slow-first&#39; else 2.0
+            deadline = time.monotonic()+budget
+            retryable = self.command == &#39;GET&#39; or unsafe_write_retry
+            tries, tried, result = 0, set(), None
+            while tries &lt; 2 and time.monotonic() &lt; deadline:
+                name = fixture.control.reserve(tried)
+                if name is None:
+                    break
+                tries += 1
+                tried.add(name)
+                headers[&#39;X-Proxy-Attempts&#39;] = tries
+                headers.pop(&#39;X-Backend-Connection&#39;, None)
+                try:
+                    status, body, upstream_id = fixture.pool.exchange(
+                        name, self.command, self.path, payload, rid, tries, deadline)
+                    result = (status, body)
+                    if upstream_id:
+                        headers[&#39;X-Backend-Connection&#39;] = upstream_id
+                    if status != 503 or not retryable:
+                        break
+                except (TimeoutError, socket.timeout):
+                    result = (504, {&#39;error&#39;: &#39;upstream_budget_exhausted&#39;})
+                    break  # The same request has no fresh budget for another attempt.
+                except (OSError, http.client.HTTPException):
+                    result = (502, {&#39;error&#39;: &#39;upstream_response_lost&#39;,
+                                    &#39;write_result_unknown&#39;: self.command == &#39;POST&#39;})
+                    if not retryable:
+                        break
+                finally:
+                    fixture.control.release(name)
+            if result is None:
+                result = (503, {&#39;error&#39;: &#39;no_eligible_backend&#39;})
+            self.reply(*result, headers=headers)
+    return Proxy
+
+
+class Fixture:
+    def __init__(self, unsafe_write_retry=False):
+        self.unsafe_write_retry = unsafe_write_retry
+        self.journal = Journal()
+        self.hold_started, self.release_hold = threading.Event(), threading.Event()
+        self.slow_started, self.release_slow = threading.Event(), threading.Event()
+        self.servers, self.threads = [], []
+
+    def start(self, handler, name):
+        server = Server(handler, name, self.journal)
+        thread = threading.Thread(target=server.serve_forever, kwargs={&#39;poll_interval&#39;: 0.01})
+        thread.start()
+        self.servers.append(server)
+        self.threads.append(thread)
+        return server.server_address
+
+    def __enter__(self):
+        self.folder = tempfile.TemporaryDirectory(prefix=&#39;infra-proxy-&#39;)
+        self.database = str(Path(self.folder.name)/&#39;effects.sqlite&#39;)
+        with contextlib.closing(sqlite3.connect(self.database)) as db:
+            db.execute(&#39;CREATE TABLE effects(rid TEXT, backend TEXT, total INTEGER)&#39;)
+            db.commit()
+        addresses = {name: self.start(backend_handler(self, name), name) for name in [&#39;A&#39;, &#39;B&#39;]}
+        self.pool = Pool(addresses, self.journal)
+        self.control = Control(self.pool, self.journal, both_ready=self.unsafe_write_retry)
+        self.front = self.start(proxy_handler(self, self.unsafe_write_retry), &#39;P&#39;)
+        return self
+
+    def effects(self):
+        with contextlib.closing(sqlite3.connect(self.database)) as db:
+            return [dict(rid=rid, backend=backend, total=total)
+                    for rid, backend, total in db.execute(&#39;SELECT rid,backend,total FROM effects ORDER BY rowid&#39;)]
+
+    def __exit__(self, *args):
+        self.release_hold.set()
+        self.release_slow.set()
+        for name in [&#39;A&#39;, &#39;B&#39;]:
+            self.pool.close(name)
+        for server in reversed(self.servers):
+            server.shutdown()
+            server.server_close()
+        for thread in self.threads:
+            thread.join(3)
+            assert not thread.is_alive()
+        self.folder.cleanup()
+
+
+def call(fixture, connection, rid, path=&#39;/orders/O-104&#39;, method=&#39;GET&#39;, host=PUBLIC_HOST):
+    payload = b&#39;{&quot;total&quot;:37}&#39; if method == &#39;POST&#39; else b&#39;&#39;
+    connection.request(method, path, body=payload, headers={
+        &#39;Host&#39;: host, &#39;X-Request-ID&#39;: rid, &#39;Content-Length&#39;: str(len(payload))})
+    response = connection.getresponse()
+    result = dict(status=response.status, body=json.loads(response.read()),
+                  attempts=int(response.getheader(&#39;X-Proxy-Attempts&#39;)),
+                  front_connection=response.getheader(&#39;X-Proxy-Connection&#39;),
+                  backend_connection=response.getheader(&#39;X-Backend-Connection&#39;))
+    fixture.journal.add(&#39;client_received&#39;, rid=rid, status=result[&#39;status&#39;],
+                        attempts=result[&#39;attempts&#39;])
+    return result
+
+
+def run():
+    with Fixture() as f:
+        client = http.client.HTTPConnection(*f.front, timeout=3)
+        wrong_host = call(f, client, &#39;wrong-host&#39;, host=&#39;other.lab.test&#39;)
+        reuse = [call(f, client, &#39;reuse-1&#39;), call(f, client, &#39;reuse-2&#39;)]
+        with contextlib.closing(http.client.HTTPConnection(*f.front, timeout=3)) as other:
+            reuse.append(call(f, other, &#39;reuse-other-front&#39;))
+        assert wrong_host[&#39;status&#39;] == 421 and wrong_host[&#39;attempts&#39;] == 0
+        assert len({r[&#39;backend_connection&#39;] for r in reuse}) == 1
+        assert reuse[0][&#39;front_connection&#39;] == reuse[1][&#39;front_connection&#39;]
+        assert reuse[2][&#39;front_connection&#39;] != reuse[0][&#39;front_connection&#39;]
+        f.control.enable_b()
+        held = {}
+        def hold():
+            with contextlib.closing(http.client.HTTPConnection(*f.front, timeout=3)) as c:
+                held.update(call(f, c, &#39;drain-held&#39;, path=&#39;/hold&#39;))
+        thread = threading.Thread(target=hold)
+        thread.start()
+        assert f.hold_started.wait(3)
+        drain = f.control.drain_b()
+        during_drain = call(f, client, &#39;drain-new&#39;)
+        assert drain == {&#39;active&#39;: 1, &#39;new_assignments_allowed&#39;: False}
+        assert during_drain[&#39;body&#39;][&#39;backend&#39;] == &#39;A&#39; and thread.is_alive()
+        f.release_hold.set()
+        thread.join(3)
+        assert not thread.is_alive() and held[&#39;status&#39;] == 200
+        assert f.control.active[&#39;B&#39;] == 0
+        f.control.enable_b()
+        retried = call(f, client, &#39;transient&#39;, path=&#39;/transient&#39;)
+        exhausted = call(f, client, &#39;always-busy&#39;, path=&#39;/always-busy&#39;)
+        assert retried[&#39;status&#39;] == 200 and retried[&#39;attempts&#39;] == 2
+        assert exhausted[&#39;status&#39;] == 503 and exhausted[&#39;attempts&#39;] == 2
+        timed_out = call(f, client, &#39;slow-first&#39;, path=&#39;/slow-first&#39;)
+        assert f.slow_started.is_set()
+        assert timed_out[&#39;status&#39;] == 504 and timed_out[&#39;attempts&#39;] == 1
+        f.release_slow.set()
+        unknown = call(f, client, &#39;write-unknown&#39;, path=&#39;/publish&#39;, method=&#39;POST&#39;)
+        assert unknown[&#39;status&#39;] == 502 and unknown[&#39;attempts&#39;] == 1
+        assert unknown[&#39;body&#39;][&#39;write_result_unknown&#39;]
+        effects = f.effects()
+        assert effects == [{&#39;rid&#39;: &#39;write-unknown&#39;, &#39;backend&#39;: &#39;A&#39;, &#39;total&#39;: 37}]
+        client.close()
+        positive = dict(wrong_host=wrong_host, reuse=reuse, drain_start=drain,
+                        during_drain=during_drain, held_completed=held,
+                        get_retry=retried, retry_exhausted=exhausted,
+                        shared_budget_timeout=timed_out, write_unknown=unknown,
+                        effects=effects, events=f.journal.events)
+    with Fixture(unsafe_write_retry=True) as f:
+        with contextlib.closing(http.client.HTTPConnection(*f.front, timeout=3)) as client:
+            duplicated = call(f, client, &#39;write-unsafe&#39;, path=&#39;/publish&#39;, method=&#39;POST&#39;)
+        effects = f.effects()
+        assert duplicated[&#39;status&#39;] == 502 and duplicated[&#39;attempts&#39;] == 2
+        assert len(effects) == 2 and sum(row[&#39;total&#39;] for row in effects) == 74
+        negative = dict(response=duplicated, effects=effects, events=f.journal.events)
+    return dict(positive=positive, unsafe_write_retry=negative,
+                scope=&#39;real_loopback_http1_proxy_two_backends_and_sqlite_no_tls_or_cloud&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    print(json.dumps(run(), ensure_ascii=False, indent=2))</code></pre></div>
+</details>
+<p>迁移到真实服务前，再回答两个问题：B 有一条可复用连接，但已经停止接收新工作，应由选择器还是连接池阻止新请求？若确实要重试写入，服务需要怎样保存“同一业务操作的唯一标识与已提交结果”，才能让后端的真实效果仍只有一次？后一项继续读<a href="/article/distributed-systems/">超时、重试与幂等</a>，不能仅给请求加一个日志编号就视为去重完成。</p>
+<h3 id="subsection-7-a6sxak">再单独核对路由、访问控制与返回路径</h3>
+<p>题目共十分。某服务内部访问成功、外部超时。客户端已经解析到公网入口，私网实例能主动访问外部 <span class="first-concept-term" data-concept-term="API">API<span class="concept-term-meaning">（供程序调用的接口）</span></span>。提供一条包含客户端临时端口、入口 443、后端端口的路径，指出哪个阶段由 DNS、路由、访问控制和工作进程分别负责。再解释仅配置出站 NAT 为什么不能让外部用户主动进入。</p><p>评分时，分开名称解析和实际业务路径占两分，指出子网路由及回程各需验证占两分，能解释有状态安全组与无状态 ACL 的方向和端口占两分，分开私网出站 NAT 与公网服务入口占两分。最后两分要求给出可落地的下一项证据，例如入口在相同时间收到哪个五元组、是否建立上游连接，而不是笼统建议“检查网络”。</p><p>深入追问：入口访问日志记录了 503 且没有后端地址，应优先问谁？先按该入口的字段语义确认是否选中后端和是否由入口代答，再对照端点健康、策略及容量。若日志显示上游明确回了 503，调查方向则应随证据改变。这样描述动作，才能让另一个工程师沿你的路径独立复现判断。</p><h3 class="walkthrough-run" id="v43-route-practice">运行并检查中间结果</h3><p>先预测/24与/0谁胜出，再加/32，最后删除回程路由。程序实际执行地址集合与选择规则，输出每次匹配；它不创建VPC或验证真实转发设备。</p><div class="code-block"><div class="code-toolbar"><span>解压后，在实验目录运行 <small>SHELL</small></span><button data-copy-code aria-label="复制 解压后，在实验目录运行">复制代码</button></div><pre tabindex="0"><code>python3 route_walk.py</code></pre></div><details class="full-code"><summary>完整 route_walk.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>route_walk.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 route_walk.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;CIDR and longest-prefix teaching model. Does not configure a real VPC.&quot;&quot;&quot;
 import ipaddress
 import json
 
@@ -114,7 +611,7 @@ def main():
 
 
 if __name__ == &#39;__main__&#39;:
-    main()</code></pre></div></details><p><a href="labs/mechanism-walkthroughs.zip" download>下载机制跟读实验包 ↓</a> · <a href="labs/mechanism-walkthroughs/route_walk.py" download>下载 route_walk.py ↓</a> · <a href="labs/mechanism-walkthroughs/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/cloud-overview/">C1.1 云计算架构：服务模型、资源与责任边界</a>：请求必须经过地址、入口和返回路径才能触达服务。</p><p><b>后续用途：</b><a href="/article/network-diagnosis/">C2.2 网络诊断：连接、首字节与传输时序</a>：先有往返路径，时间戳才能定位连接和传输卡在哪里。</p><a class="chapter-map-link" href="/module/network/?concept=vpc-subnet#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-vpc-network">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>应用能访问公网，是否意味着另一台机器能主动连接该应用？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。出站路径与入站路径可能经过不同地址转换和访问控制。需要检查监听地址、入口映射、路由、策略及返回路径。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="vpc-network:0" >解析：名字如何变成地址</label><label><input type="checkbox" data-check="vpc-network:1" >转发：路由与权限分别负责什么</label><label><input type="checkbox" data-check="vpc-network:2" >诊断：定位最后一个成功的阶段</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="vpc-network">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html" target="_blank" rel="noopener noreferrer">AWS · VPC 路由表 ↗</a><a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html" target="_blank" rel="noopener noreferrer">AWS · 安全组 ↗</a><a href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/" target="_blank" rel="noopener noreferrer">AWS Builders Library · 超时、重试与抖动 ↗</a><a href="https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html" target="_blank" rel="noopener noreferrer">Amazon VPC · 最长前缀与同前缀优先级 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-cs144"><div class="resource-meta"><span>英文 · 讲义 / 实验 / 视频选段</span><span>Stanford</span></div><h3><a href="https://cs144.github.io/" target="_blank" rel="noopener noreferrer">CS144 计算机网络 ↗</a></h3><p><b>先看什么</b>可靠传输、TCP receiver/sender，再看拥塞控制视频选段。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>基本编程、IP 与字节流。</p><p><b>学完检查</b>区分重传等待、应用处理和首字节延迟，给出能区分它们的证据。</p><p>公开讲义、实验和部分专题视频；不是全学期完整录像。</p><div class="path-links"><a href="/article/vpc-network/">云网络：DNS、路由、访问控制与返回路径 →</a><a href="/article/network-diagnosis/">网络诊断：连接、首字节与传输时序 →</a><a href="/article/k8s-networking/">Kubernetes 网络：从 DNS、Service 到容器回包 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#cloud">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/network-diagnosis/"><span>C2.2</span>网络诊断：连接、首字节与传输时序<b>↗</b></a><a href="/article/training-communication/"><span>A2.5</span>NCCL 与集合通信：定位等待发生在哪里<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="vpc-network">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Cloud Infra</p><a data-reading-direction="previous" href="/article/cloud-compute/"><small>← 上一篇</small>C1.2 计算资源：虚拟化、规格与容量预算</a><a data-reading-direction="next" href="/article/network-diagnosis/"><small>下一篇 →</small>C2.2 网络诊断：连接、首字节与传输时序</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/vpc-network/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/vpc-network/#section-1">1. 把一个地址拆成名字、端口和真正的连接对端</a><a data-toc="section-2" href="/article/vpc-network/#section-2">2. DNS 改了，哪批客户端会先看见</a><a data-toc="section-3" href="/article/vpc-network/#section-3">3. 路由表选择下一跳，不负责给业务授权</a><a data-toc="section-4" href="/article/vpc-network/#section-4">4. 安全组、ACL 与响应的临时端口</a><a data-toc="section-5" href="/article/vpc-network/#section-5">5. NAT 让连接如何出去，又如何回来</a><a data-toc="section-6" href="/article/vpc-network/#section-6">6. 把“服务端处理完成”与“用户收到结果”拆开</a><a data-toc="section-7" href="/article/vpc-network/#section-7">7. 验收：画出路和门，再画回来的路</a><a data-toc="self-check" href="/article/vpc-network/#self-check">自我检验</a><a data-toc="references" href="/article/vpc-network/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+    main()</code></pre></div></details><p><a href="labs/mechanism-walkthroughs.zip" download>下载机制跟读实验包 ↓</a> · <a href="labs/mechanism-walkthroughs/route_walk.py" download>下载 route_walk.py ↓</a> · <a href="labs/mechanism-walkthroughs/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/cloud-overview/">C1.1 云计算架构：服务模型、资源与责任边界</a>：请求必须经过地址、入口和返回路径才能触达服务。</p><p><b>后续用途：</b><a href="/article/network-diagnosis/">C2.2 网络诊断：连接、首字节与传输时序</a>：先有往返路径，时间戳才能定位连接和传输卡在哪里。</p><a class="chapter-map-link" href="/module/network/?concept=vpc-subnet#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-vpc-network">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>应用能访问公网，是否意味着另一台机器能主动连接该应用？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。出站路径与入站路径可能经过不同地址转换和访问控制。需要检查监听地址、入口映射、路由、策略及返回路径。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="vpc-network:0" >解析：名字如何变成地址</label><label><input type="checkbox" data-check="vpc-network:1" >转发：路由与权限分别负责什么</label><label><input type="checkbox" data-check="vpc-network:2" >诊断：定位最后一个成功的阶段</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="vpc-network">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/vpc-network/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html" target="_blank" rel="noopener noreferrer">AWS · VPC 路由表 ↗</a><a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html" target="_blank" rel="noopener noreferrer">AWS · 安全组 ↗</a><a href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/" target="_blank" rel="noopener noreferrer">AWS Builders Library · 超时、重试与抖动 ↗</a><a href="https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html" target="_blank" rel="noopener noreferrer">Amazon VPC · 最长前缀与同前缀优先级 ↗</a><a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream" target="_blank" rel="noopener noreferrer">NGINX · HTTP 转发、重试次数与时间边界 ↗</a><a href="https://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive" target="_blank" rel="noopener noreferrer">NGINX · 上游连接组与空闲连接缓存 ↗</a><a href="https://nginx.org/en/docs/stream/ngx_stream_proxy_module.html" target="_blank" rel="noopener noreferrer">NGINX · TCP/UDP 流代理 ↗</a><a href="https://docs.python.org/3.9/library/http.client.html" target="_blank" rel="noopener noreferrer">Python 3.9 · HTTPConnection 与完整响应读取 ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination" target="_blank" rel="noopener noreferrer">Kubernetes · Pod 终止、端点资格与连接排空 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-cs144"><div class="resource-meta"><span>英文 · 讲义 / 实验 / 视频选段</span><span>Stanford</span></div><h3><a href="https://cs144.github.io/" target="_blank" rel="noopener noreferrer">CS144 计算机网络 ↗</a></h3><p><b>先看什么</b>可靠传输、TCP receiver/sender，再看拥塞控制视频选段。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>基本编程、IP 与字节流。</p><p><b>学完检查</b>区分重传等待、应用处理和首字节延迟，给出能区分它们的证据。</p><p>公开讲义、实验和部分专题视频；不是全学期完整录像。</p><div class="path-links"><a href="/article/vpc-network/">云网络：DNS、路由、访问控制与返回路径 →</a><a href="/article/network-diagnosis/">网络诊断：连接、首字节与传输时序 →</a><a href="/article/k8s-networking/">Kubernetes 网络：从 DNS、Service 到容器回包 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#cloud">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/network-diagnosis/"><span>C2.2</span>网络诊断：连接、首字节与传输时序<b>↗</b></a><a href="/article/training-communication/"><span>A2.5</span>NCCL 与集合通信：定位等待发生在哪里<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="vpc-network">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Cloud Infra</p><a data-reading-direction="previous" href="/article/cloud-compute/"><small>← 上一篇</small>C1.2 计算资源：虚拟化、规格与容量预算</a><a data-reading-direction="next" href="/article/network-diagnosis/"><small>下一篇 →</small>C2.2 网络诊断：连接、首字节与传输时序</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/vpc-network/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/vpc-network/#section-1">1. 把一个地址拆成名字、端口和真正的连接对端</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-1mbleem" href="/article/vpc-network/#subsection-1-1mbleem">名字、地址、端口分别解决什么问题</a><a class="chapter-toc-level-3" data-toc="subsection-1-r9coc9" href="/article/vpc-network/#subsection-1-r9coc9">一次新建的HTTPS连接，按什么顺序推进</a><a class="chapter-toc-level-3" data-toc="subsection-1-1u49a9r" href="/article/vpc-network/#subsection-1-1u49a9r">代理会把一条业务路径拆成多条连接</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/vpc-network/#section-2">2. DNS 改了，哪批客户端会先看见</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-1ra10dq" href="/article/vpc-network/#subsection-2-1ra10dq">一次DNS查询怎样得到答案</a><a class="chapter-toc-level-3" data-toc="subsection-2-o5xitb" href="/article/vpc-network/#subsection-2-o5xitb">保留域名，才是在比较同一份服务身份</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/vpc-network/#section-3">3. 路由表选择下一跳，不负责给业务授权</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-11xx3nz" href="/article/vpc-network/#subsection-3-11xx3nz">CIDR先描述地址集合，路由再选择下一跳</a><a class="chapter-toc-level-3" data-toc="subsection-3-148u85l" href="/article/vpc-network/#subsection-3-148u85l">最长前缀匹配，实际比较的是哪些行</a><a class="chapter-toc-level-3" data-toc="subsection-3-sivj74" href="/article/vpc-network/#subsection-3-sivj74">去程和回程，各查自己的路由表</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/vpc-network/#section-4">4. 安全组、ACL 与响应的临时端口</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-esyras" href="/article/vpc-network/#subsection-4-esyras">先写出五元组，再判断规则作用于哪个方向</a><a class="chapter-toc-level-3" data-toc="subsection-4-19347no" href="/article/vpc-network/#subsection-4-19347no">有状态规则和无状态规则怎样影响回包</a><a class="chapter-toc-level-3" data-toc="subsection-4-1j8zqu6" href="/article/vpc-network/#subsection-4-1j8zqu6">协议错误已经提供了路径线索</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/vpc-network/#section-5">5. NAT 让连接如何出去，又如何回来</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-5-1quqkxj" href="/article/vpc-network/#subsection-5-1quqkxj">NAT转换的是通信地址，不是业务身份</a><a class="chapter-toc-level-3" data-toc="subsection-5-1iyumle" href="/article/vpc-network/#subsection-5-1iyumle">主动出站与对外发布是两种能力</a></div></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/vpc-network/#section-6">6. 把“服务端处理完成”与“用户收到结果”拆开</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-6-p8ekpv" href="/article/vpc-network/#subsection-6-p8ekpv">先区分四层转发和七层代理</a><a class="chapter-toc-level-3" data-toc="subsection-6-hfdnxr" href="/article/vpc-network/#subsection-6-hfdnxr">地址、HTTP 主机名和 TLS 身份各负责什么</a><a class="chapter-toc-level-3" data-toc="subsection-6-pe1x30" href="/article/vpc-network/#subsection-6-pe1x30">先选合格后端，再借用连接</a><a class="chapter-toc-level-3" data-toc="subsection-6-1ovzwml" href="/article/vpc-network/#subsection-6-1ovzwml">排空：先停止分配，再等已经接收的请求结束</a><a class="chapter-toc-level-3" data-toc="subsection-6-zn6f9f" href="/article/vpc-network/#subsection-6-zn6f9f">重试：先判断能否重放，再同时限制次数和总时间</a><a class="chapter-toc-level-3" data-toc="subsection-6-1tnymhz" href="/article/vpc-network/#subsection-6-1tnymhz">最后回到用户：提交、代理收到、用户收到是三个时刻</a></div></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/vpc-network/#section-7">7. 验收：画出路和门，再画回来的路</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="cloud-proxy-run" href="/article/vpc-network/#cloud-proxy-run">先运行：两个后端、连接复用、排空与受限重试</a><a class="chapter-toc-level-3" data-toc="subsection-7-g5284x" href="/article/vpc-network/#subsection-7-g5284x">沿实现读一遍：资格、连接、响应和业务效果</a><a class="chapter-toc-level-3" data-toc="subsection-7-a6sxak" href="/article/vpc-network/#subsection-7-a6sxak">再单独核对路由、访问控制与返回路径</a><a class="chapter-toc-level-3" data-toc="v43-route-practice" href="/article/vpc-network/#v43-route-practice">运行并检查中间结果</a></div></div><a data-toc="self-check" href="/article/vpc-network/#self-check">自我检验</a><a data-toc="references" href="/article/vpc-network/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
 <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

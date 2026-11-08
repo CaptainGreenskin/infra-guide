@@ -1,0 +1,632 @@
+{
+  "reviewed_on": "2026-11-08",
+  "scope": "Visible authored h3/h4; optional details, code and figure headings excluded. Preserve these published IDs when revising their headings.",
+  "chapters": [
+    {
+      "id": "linux-resource",
+      "targets": []
+    },
+    {
+      "id": "virtual-memory-oom",
+      "targets": []
+    },
+    {
+      "id": "concurrency-pools",
+      "targets": []
+    },
+    {
+      "id": "distributed-systems",
+      "targets": []
+    },
+    {
+      "id": "cloud-overview",
+      "targets": []
+    },
+    {
+      "id": "cloud-compute",
+      "targets": [
+        "subsection-1-5c7zcq",
+        "subsection-2-zwfnk1",
+        "subsection-3-15h236x",
+        "subsection-4-1cchfaj",
+        "subsection-11-ebzonr"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "targets": [
+        "subsection-1-1mbleem",
+        "subsection-1-r9coc9",
+        "subsection-1-1u49a9r",
+        "subsection-2-1ra10dq",
+        "subsection-2-o5xitb",
+        "subsection-3-11xx3nz",
+        "subsection-3-148u85l",
+        "subsection-3-sivj74",
+        "subsection-4-esyras",
+        "subsection-4-19347no",
+        "subsection-4-1j8zqu6",
+        "subsection-5-1quqkxj",
+        "subsection-5-1iyumle",
+        "subsection-6-p8ekpv",
+        "subsection-6-hfdnxr",
+        "subsection-6-pe1x30",
+        "subsection-6-1ovzwml",
+        "subsection-6-zn6f9f",
+        "subsection-6-1tnymhz",
+        "cloud-proxy-run",
+        "subsection-7-g5284x",
+        "subsection-7-a6sxak",
+        "v43-route-practice"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "targets": [
+        "subsection-1-peucok",
+        "subsection-2-1mjk258",
+        "subsection-3-1mjn4i8",
+        "subsection-4-15zyt9a",
+        "subsection-4-1xtsiga",
+        "subsection-12-1kp22io"
+      ]
+    },
+    {
+      "id": "tcp-event-loop",
+      "targets": [
+        "tcp-framing-run",
+        "tcp-backpressure-run",
+        "native-epoll-run"
+      ]
+    },
+    {
+      "id": "training-storage",
+      "targets": [
+        "subsection-3-1x8od09"
+      ]
+    },
+    {
+      "id": "database-index-locks",
+      "targets": [
+        "subsection-4-1ks0063",
+        "subsection-5-121tvoc",
+        "sql-plan-lab",
+        "sql-snapshot-lab"
+      ]
+    },
+    {
+      "id": "cache-consistency",
+      "targets": [
+        "subsection-3-n6f1z3",
+        "subsection-4-1tpwch1",
+        "subsection-4-1gsa4y3",
+        "subsection-7-1rj2qy"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "targets": [
+        "subsection-5-1aqdkow",
+        "subsection-5-98f1by",
+        "subsection-8-1oqqcgn"
+      ]
+    },
+    {
+      "id": "mysql-recovery",
+      "targets": [
+        "mysql-pitr-run"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "targets": [
+        "container-native-run"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "targets": [
+        "subsection-1-1pjwlk",
+        "subsection-1-x1lrv6",
+        "subsection-2-lznes3",
+        "subsection-2-p1xcgh",
+        "subsection-2-1asu4xb",
+        "subsection-3-4ww5rs",
+        "subsection-4-vn5ish",
+        "subsection-4-1sq7dwq",
+        "subsection-5-aclmrr",
+        "v43-reconcile-practice"
+      ]
+    },
+    {
+      "id": "k8s-workloads",
+      "targets": [
+        "subsection-4-4ww5rs",
+        "subsection-4-15h5yam",
+        "subsection-7-aclmrr"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "targets": [
+        "scheduler-native-run"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "targets": [
+        "subsection-1-rccynd",
+        "subsection-2-8a7h3t",
+        "subsection-3-4aahv",
+        "subsection-4-1jc1u8z",
+        "subsection-5-dj0iar",
+        "subsection-6-1m57fcl",
+        "subsection-7-1njkucl"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "targets": [
+        "subsection-1-trt373",
+        "subsection-2-1ac2xpk",
+        "subsection-3-meie0t",
+        "subsection-4-zqe3e",
+        "subsection-5-11rv5av",
+        "subsection-6-98f1by",
+        "subsection-7-1lng3cb",
+        "subsection-7-1ip16iv",
+        "subsection-8-7y42a4"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "targets": [
+        "subsection-1-7kw63x",
+        "subsection-2-cufyfb",
+        "subsection-3-1f8tsyf",
+        "subsection-4-yc8oql",
+        "subsection-5-42cx9r",
+        "subsection-6-dpipfj",
+        "subsection-7-wkh4cz",
+        "subsection-7-5pl5op"
+      ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "targets": [
+        "subsection-1-3leldk",
+        "subsection-2-5hh76l",
+        "subsection-3-okwq7o",
+        "subsection-4-1iqesp6",
+        "subsection-5-1ye4m7x",
+        "subsection-6-nhfr0o",
+        "subsection-7-1cxb905",
+        "subsection-8-1qdvyvu",
+        "subsection-8-cjjpw2"
+      ]
+    },
+    {
+      "id": "serverless-execution",
+      "targets": [
+        "subsection-4-15nbns6",
+        "subsection-5-fv3seh",
+        "subsection-7-1qditfg",
+        "subsection-11-1bpbx18",
+        "subsection-11-13uy27q"
+      ]
+    },
+    {
+      "id": "message-delivery",
+      "targets": [
+        "message-native-run"
+      ]
+    },
+    {
+      "id": "delivery",
+      "targets": [
+        "subsection-8-1mpi7nq",
+        "subsection-8-lctfpe"
+      ]
+    },
+    {
+      "id": "terraform-state",
+      "targets": [
+        "terraform-state-run"
+      ]
+    },
+    {
+      "id": "gitops-reconciliation",
+      "targets": [
+        "gitops-native-run"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "targets": []
+    },
+    {
+      "id": "elasticity",
+      "targets": []
+    },
+    {
+      "id": "slo",
+      "targets": [
+        "subsection-8-fgmzv3"
+      ]
+    },
+    {
+      "id": "observability",
+      "targets": []
+    },
+    {
+      "id": "incident",
+      "targets": []
+    },
+    {
+      "id": "resilience",
+      "targets": [
+        "subsection-1-1ww2dsc",
+        "subsection-5-1dwp2yh",
+        "subsection-6-vxh3b7",
+        "subsection-7-1bgmbh8",
+        "subsection-9-xbrzl7",
+        "subsection-9-qtm6c2"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "targets": []
+    },
+    {
+      "id": "tokenization-embedding",
+      "targets": [
+        "subsection-7-rumyzr",
+        "subsection-9-nwftkb"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "targets": [
+        "subsection-1-1ptyn5t",
+        "subsection-1-bc8625",
+        "subsection-2-sawdtb",
+        "subsection-4-jajsfp",
+        "subsection-4-h4v7m8",
+        "subsection-4-eh89y2",
+        "subsection-5-4meaf4",
+        "subsection-5-12z3xau",
+        "v43-attention-practice"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "targets": [
+        "subsection-2-1n65z1o",
+        "subsection-2-1n30oew",
+        "subsection-2-1d5rzm2",
+        "subsection-3-1k24ii2",
+        "subsection-3-18nd8mm",
+        "subsection-5-14ftdh6",
+        "subsection-8-1e710zy",
+        "v43-decoder-practice"
+      ]
+    },
+    {
+      "id": "position-encoding",
+      "targets": []
+    },
+    {
+      "id": "autograd-training",
+      "targets": [
+        "subsection-5-o0j3lt"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "targets": []
+    },
+    {
+      "id": "roofline-model",
+      "targets": []
+    },
+    {
+      "id": "flash-attention-io",
+      "targets": []
+    },
+    {
+      "id": "tensor-parallel-math",
+      "targets": [
+        "subsection-4-z6hy9g"
+      ]
+    },
+    {
+      "id": "operator-profiling",
+      "targets": [
+        "operator-cpu-run",
+        "operator-profile-run"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "targets": []
+    },
+    {
+      "id": "distributed-training",
+      "targets": [
+        "subsection-3-ea74bh",
+        "subsection-3-rfjab",
+        "subsection-3-1sne7s7",
+        "subsection-4-tiieih",
+        "subsection-4-1sqlkzh",
+        "subsection-4-6ow1nm",
+        "subsection-4-1r9crh6"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "targets": [
+        "subsection-1-40kyla",
+        "subsection-3-1xxxqsz",
+        "subsection-8-1hcmeye",
+        "subsection-9-1sk5pf9",
+        "subsection-9-r44dc9",
+        "subsection-11-em7gfe",
+        "subsection-11-11crht8"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "targets": [
+        "subsection-3-r2s4n5"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "targets": [
+        "subsection-1-yhnylp",
+        "subsection-2-1xgbpee",
+        "subsection-3-12u9vvw",
+        "subsection-4-9tsq35",
+        "subsection-5-1l82yca",
+        "subsection-6-pn22ky",
+        "subsection-7-1apl07f",
+        "subsection-8-g1wiy8"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "targets": [
+        "subsection-1-2kpzoy",
+        "subsection-2-3mzhb3",
+        "subsection-3-lkc1ar",
+        "subsection-4-1xdh65w",
+        "subsection-5-pn7hyb",
+        "subsection-6-101j0v8",
+        "subsection-7-1jzf8j8",
+        "subsection-7-1v4jgvi"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "targets": []
+    },
+    {
+      "id": "checkpoint-recovery",
+      "targets": [
+        "subsection-1-zredmh",
+        "subsection-1-1mlk4h4"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "targets": []
+    },
+    {
+      "id": "training-platform",
+      "targets": []
+    },
+    {
+      "id": "gpu-scheduling",
+      "targets": [
+        "subsection-1-1eob7ee",
+        "subsection-2-1iahum4",
+        "subsection-3-1c3rqfk",
+        "subsection-4-m76720",
+        "subsection-6-hkgbar",
+        "subsection-7-rj185v",
+        "subsection-10-a5hs8s"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "targets": []
+    },
+    {
+      "id": "model-serving",
+      "targets": [
+        "subsection-5-qvstci"
+      ]
+    },
+    {
+      "id": "quantization-serving",
+      "targets": [
+        "subsection-1-e82fyf",
+        "subsection-2-hfszdc",
+        "subsection-3-uz1007",
+        "subsection-3-j83oe9",
+        "subsection-4-its870",
+        "subsection-4-1vuiqtr",
+        "subsection-5-1drpdp8",
+        "subsection-5-1sbp3h2"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "targets": [
+        "subsection-3-zgqy1s",
+        "subsection-3-svno8c",
+        "subsection-3-1nk63tb",
+        "subsection-3-icqxg5",
+        "subsection-3-10ydz4e",
+        "subsection-3-cwmlui",
+        "subsection-3-nrn0x9",
+        "subsection-6-lachm",
+        "subsection-6-i6f5lp",
+        "subsection-6-10lmpd4",
+        "subsection-6-10t5wk9",
+        "subsection-6-38l2a0",
+        "subsection-6-1i98zxe",
+        "subsection-6-1ajl0y9"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "targets": [
+        "subsection-1-1vzo0i0",
+        "subsection-2-1k3gdnf",
+        "subsection-3-opr7s5",
+        "subsection-4-4s93fv",
+        "subsection-5-wrf9vk",
+        "subsection-6-15mcx71",
+        "subsection-7-1bdkyq8",
+        "subsection-8-1an19m4"
+      ]
+    },
+    {
+      "id": "moe-routing",
+      "targets": [
+        "moe-routing-run"
+      ]
+    },
+    {
+      "id": "speculative-decoding",
+      "targets": [
+        "spec-exact-run",
+        "spec-cache-run"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "targets": [
+        "subsection-1-1s1j8lt",
+        "subsection-2-3p2nje",
+        "subsection-2-1mih105",
+        "subsection-3-1qvremn",
+        "subsection-4-rwzyh3",
+        "subsection-4-1ihl9e0",
+        "subsection-5-hnexcm",
+        "subsection-6-largk9",
+        "subsection-7-5o3rlj",
+        "subsection-8-1x3f4ky",
+        "streaming-tool-lab"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "targets": [
+        "subsection-1-1igz5hm",
+        "authorization-commit-run"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "targets": [
+        "subsection-3-1v63ba3",
+        "subsection-4-cz65tx",
+        "subsection-5-1d8xng1",
+        "subsection-7-3sckdo",
+        "subsection-8-1um1h4",
+        "subsection-10-nb0s8",
+        "subsection-10-hi6ix7"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "targets": [
+        "subsection-5-kha210",
+        "subsection-5-3vclab",
+        "agent-crash-windows-run"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "targets": [
+        "subsection-2-1u8gjho",
+        "subsection-2-1hk9rfn",
+        "subsection-2-1q2st0k",
+        "subsection-3-1uq9t9d",
+        "subsection-3-c0vptt",
+        "subsection-4-17hu0bc",
+        "subsection-5-15nbv4g",
+        "subsection-6-4asmho",
+        "subsection-7-1iwapob",
+        "subsection-7-9i1in"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "targets": [
+        "subsection-4-ymmfe2",
+        "subsection-5-cnfnmm",
+        "subsection-9-dpvytn",
+        "subsection-12-bgbi93"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "targets": [
+        "subsection-1-3htvho",
+        "subsection-1-z363qn",
+        "subsection-2-1pgk1ak",
+        "subsection-2-u7tby",
+        "subsection-2-1cfmvg2",
+        "subsection-3-ueacvx",
+        "subsection-3-1amsab8",
+        "v43-history-practice",
+        "subsection-8-mctg3k",
+        "subsection-8-19qsp4l",
+        "subsection-8-1hxbx9c",
+        "subsection-8-1ugi1r3",
+        "agent-planning-run",
+        "subsection-9-62i94t"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "targets": [
+        "subsection-3-b9e7yg",
+        "subsection-4-d55j16",
+        "subsection-8-1fb7qa2",
+        "subsection-12-1p2vzym",
+        "context-budget-run"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "targets": [
+        "subsection-4-1yz19uz",
+        "subsection-6-1q7kv9j",
+        "subsection-7-uqlgd8",
+        "subsection-8-323gx5"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "targets": []
+    },
+    {
+      "id": "training-lab",
+      "targets": [
+        "subsection-1-1b599gx"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "targets": []
+    },
+    {
+      "id": "production-readiness",
+      "targets": []
+    }
+  ]
+}

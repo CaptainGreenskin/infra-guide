@@ -5,10 +5,10 @@
 <meta name="description" content="用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。">
 <meta name="theme-color" content="#315dce"><title>持久工作流：事件重放、接管与提交 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=a13d62f87b82"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=cf4251309b9e"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=0cc94bcd496f"></script><script defer src="reading-comfort.js?v=f0d8afeee5c0"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=e59eb47bddf5"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=91d76baa3a46"><script defer src="runtime-01.js?v=3dd3d89a86a4"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=0ee1e2414992"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=46dd8e987c06"></script><script defer src="reading-comfort.js?v=957da22bcd26"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=7e5cc054c4aa"></script>
 
 
-<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="持久工作流：事件重放、接管与提交 · InfraGuide"><meta property="og:description" content="用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"持久工作流：事件重放、接管与提交","description":"用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/","dateModified":"2026-11-05","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="持久工作流：事件重放、接管与提交 · InfraGuide"><meta property="og:description" content="用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"持久工作流：事件重放、接管与提交","description":"用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
 <body>
 <a class="skip" href="/article/durable-workflows/#main">跳到主要内容</a>
 <header class="header"><div class="header-inner">
@@ -19,21 +19,16 @@
 <noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>Agent Infra · 目录</span><span>10 章 + 1 实战</span></div><details open><summary><a href="/article/agent-runtime/" ><span>G</span>Agent 运行时与 Kairo 实践</a></summary><div class="side-links"><a href="/article/agent-runtime/" >G1 Agent Infra在解决什么：从模型提议到任务完成</a><a href="/article/agent-security/" >G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a><a href="/article/agent-sandbox/" >G3 Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-recovery/" >G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a><a href="/article/agent-memory/" >G5 上下文、运行状态与长期记忆：三种信息不要混存</a><a href="/article/agent-evaluation/" >G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a href="/article/durable-workflows/" class="current" aria-current="page">G7 持久工作流：事件重放、接管与提交</a><a href="/article/agent-retrieval/" >G8 检索与上下文：让答案有可验证的证据</a><a href="/article/agent-observability/" >G9 Agent 观测：任务、重试与成本归因</a><a href="/article/kairo-practice/" >G10 Kairo 接入验收：任务、权限与结果证据</a></div></details><details ><summary><a href="/article/production-readiness/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/production-readiness/" >S3 综合设计评审：让Cloud、AI与Agent形成一条可验收链路</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 11</b></div>
-   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G7</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>连续讲解 · 推导与练习</span><span>·</span><span>原理详解 · 2026.11.05</span></div><h1>G7 持久工作流：事件重放、接管与提交</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先把长期任务拆成有先后依赖的步骤</h3><p>工作流描述一项任务中步骤怎样推进、等待和结束；活动承担某次外部计算或动作。状态表示执行到了哪里，历史保存已经发生且被确认的事件。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>从历史重建决定，不等于重复产生效果</h3><p>重放使用已有历史重新建立执行状态，并复用已记录结果。重新调用外部工具是另一件事，仍需要幂等身份或结果查询，避免同一动作再次产生效果。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再分别检查重启、接管和版本升级</h3><p>本章先建立任务、历史与活动的关系，再解释确定性、提交间隙和过期执行者。不同故障改变不同的事实，不能用一个“恢复成功”概括全部保证。</p></section></section><p class="description">用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。</p><div class="tag-row"><span class="tag">状态</span><span class="tag">恢复</span><span class="tag">并发</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约40分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>从命令、活动与有序历史解释当前状态怎样恢复</li><li>区分活动返回与结果已记录两个提交位置</li><li>用实际退出与重放核对活动次数和命令相容性</li><li>再用两本账和活着的旧进程验证外部效果、幂等与接管</li></ul><p><b>前置知识</b>完成 G1、G4，能解释一次工具调用中的提交窗口。</p><ul class="prerequisite-links"><li><a href="/article/agent-recovery/">G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a>：单动作恢复进一步连接持久历史、重放和多执行者接管。</li></ul><p class="evidence-note">约 40 分钟 · 手算与机制实验；真机性能按各章标注 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/durable-workflows/#concept-path">概念起点与关系</a><a href="/article/durable-workflows/#section-1">1. 把一份日报拆成可以恢复的承诺</a><a href="/article/durable-workflows/#section-2">2. 历史写下事实，状态由事实推得</a><a href="/article/durable-workflows/#section-3">3. 重放为什么不该再次询问模型</a><a href="/article/durable-workflows/#section-4">4. 单执行者的提交间隙，先读两本账</a><a href="/article/durable-workflows/#section-5">5. 接管先经过控制库，再经过效果接收方</a><a href="/article/durable-workflows/#section-6">6. 把旧写隔离和业务去重放在同一事务里</a><a href="/article/durable-workflows/#section-7">7. 三次观察，分别证明哪一个边界</a><a href="/article/durable-workflows/#section-8">8. 等待、取消与超时怎样决定下一步</a><a href="/article/durable-workflows/#section-9">9. 先预测，再执行已有的多进程程序</a><a href="/article/durable-workflows/#section-10">10. 旧任务、升级和保留期一起验收</a></details><p class="intro">持久工作流解决重启后从哪里继续；稳定操作键解决同一动作重试；接收方代际检查解决旧进程仍在写。沿一份审批任务和已有实验，把这三种保证按发生顺序分开。</p><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>把一份日报拆成可以恢复的承诺</h2><h3>工作流描述推进顺序，活动承担外部计算</h3>
- <p>一个长期任务可以拆成有先后依赖的步骤。工作流规定先做什么、拿到什么结果后做下一步、何时等待或结束；活动承担具体计算或访问，例如读取资料、调用模型、生成文件。两者分开后，恢复程序才知道是在重建决定，还是需要真的再访问一次外部世界。</p>
- <div class="table-wrap"><table><thead><tr><th>对象</th><th>作用</th><th>本节例子</th></tr></thead><tbody><tr><td>一次运行</td><td>某个用户目标的具体执行身份</td><td>给A生成一份日报草稿</td></tr><tr><td>工作流定义</td><td>决定活动及等待顺序的代码</td><td>读取指标 → 生成草稿 → 完成</td></tr><tr><td>活动</td><td>执行一次外部读取或计算</td><td>read_metrics、render_draft</td></tr><tr><td>命令</td><td>希望系统安排的动作</td><td>安排read-1读取指标</td></tr><tr><td>事件</td><td>已经被持久记录的事实</td><td>read-1已安排，或结果23已记录</td></tr></tbody></table></div>
- <p>命令和事件有时间方向：代码提出“请安排读取”，历史随后记录安排或完成。调用已经发出、活动已经返回、结果已经写入历史，仍是不同阶段。重放能复用的，是已经记录的结果。</p>
- <h3>先用无远端写入的小任务理解恢复</h3>
- <p>本章先读取本地指标<code>total=23</code>，再生成“A日报：总数23”。活动不调用真实模型，也不发布报告。我们先把历史、结果与恢复走通；后文再把场景换成会产生外部效果的发布，继续处理幂等、接管与取消。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>历史写下事实，状态由事实推得</h2><h3>状态可以由有序历史重建</h3>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G7</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>连续讲解 · 推导与练习</span><span>·</span><span>原理详解 · 2026.11.08</span></div><h1>G7 持久工作流：事件重放、接管与提交</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先把长期任务拆成有先后依赖的步骤</h3><p>工作流描述一项任务中步骤怎样推进、等待和结束；活动承担某次外部计算或动作。状态表示执行到了哪里，历史保存已经发生且被确认的事件。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>从历史重建决定，不等于重复产生效果</h3><p>重放使用已有历史重新建立执行状态，并复用已记录结果。重新调用外部工具是另一件事，仍需要幂等身份或结果查询，避免同一动作再次产生效果。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再分别检查重启、接管和版本升级</h3><p>本章先建立任务、历史与活动的关系，再解释确定性、提交间隙和过期执行者。不同故障改变不同的事实，不能用一个“恢复成功”概括全部保证。</p></section></section><p class="description">用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。</p><div class="tag-row"><span class="tag">状态</span><span class="tag">恢复</span><span class="tag">并发</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约55分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>从命令、活动与有序历史解释当前状态怎样恢复</li><li>区分活动返回与结果已记录两个提交位置</li><li>用实际退出与重放核对活动次数和命令相容性</li><li>再用两本账和活着的旧进程验证外部效果、幂等与接管</li></ul><p><b>前置知识</b>完成 G1、G4，能解释一次工具调用中的提交窗口。</p><ul class="prerequisite-links"><li><a href="/article/agent-recovery/">G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a>：单动作恢复进一步连接持久历史、重放和多执行者接管。</li></ul><p class="evidence-note">约 55 分钟 · 手算与机制实验；真机性能按各章标注 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/durable-workflows/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/durable-workflows/#section-1">1. 把一份日报拆成可以恢复的承诺</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-3htvho" href="/article/durable-workflows/#subsection-1-3htvho">固定工作流先覆盖已知分支，动态计划处理新的安排</a><a class="chapter-toc-level-3" data-toc="subsection-1-z363qn" href="/article/durable-workflows/#subsection-1-z363qn">执行请求和完成事实，要用两种记录表达</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/durable-workflows/#section-2">2. 历史写下事实，状态由事实推得</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-1pgk1ak" href="/article/durable-workflows/#subsection-2-1pgk1ak">状态可以由有序历史重建</a><a class="chapter-toc-level-3" data-toc="subsection-2-u7tby" href="/article/durable-workflows/#subsection-2-u7tby">重放重新走决定，已完成结果不重新取样</a><a class="chapter-toc-level-3" data-toc="subsection-2-1cfmvg2" href="/article/durable-workflows/#subsection-2-1cfmvg2">计划版本管未来，输入身份决定事实能否复用</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/durable-workflows/#section-3">3. 重放为什么不该再次询问模型</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-ueacvx" href="/article/durable-workflows/#subsection-3-ueacvx">同一任务，要生成与历史相容的命令序列</a><a class="chapter-toc-level-3" data-toc="subsection-3-1amsab8" href="/article/durable-workflows/#subsection-3-1amsab8">两种退出位置，为什么会恢复出不同结果</a><a class="chapter-toc-level-3" data-toc="v43-history-practice" href="/article/durable-workflows/#v43-history-practice">运行并检查中间结果</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/durable-workflows/#section-4">4. 单执行者的提交间隙，先读两本账</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/durable-workflows/#section-5">5. 接管先经过控制库，再经过效果接收方</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/durable-workflows/#section-6">6. 把旧写隔离和业务去重放在同一事务里</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/durable-workflows/#section-7">7. 三次观察，分别证明哪一个边界</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/durable-workflows/#section-8">8. 等待、取消与超时怎样决定下一步</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-8-mctg3k" href="/article/durable-workflows/#subsection-8-mctg3k">先按已有事实推进，再决定是否需要重规划</a><a class="chapter-toc-level-3" data-toc="subsection-8-19qsp4l" href="/article/durable-workflows/#subsection-8-19qsp4l">批准的是这份内容，不能只批准一个任务名</a><a class="chapter-toc-level-3" data-toc="subsection-8-1hxbx9c" href="/article/durable-workflows/#subsection-8-1hxbx9c">次数、截止时间与取消，继续约束整个任务</a><a class="chapter-toc-level-3" data-toc="subsection-8-1ugi1r3" href="/article/durable-workflows/#subsection-8-1ugi1r3">取消分支结束，也要追踪执行者与原操作</a></div></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/durable-workflows/#section-9">9. 先预测，再执行已有的多进程程序</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="agent-planning-run" href="/article/durable-workflows/#agent-planning-run">把42这份报告，从来源一直追到实际产物</a><a class="chapter-toc-level-3" data-toc="subsection-9-62i94t" href="/article/durable-workflows/#subsection-9-62i94t">最值得核对的反例：状态完成，报告却仍是37</a></div></div><div class="chapter-toc-section"><a data-toc="section-10" href="/article/durable-workflows/#section-10">10. 旧任务、升级和保留期一起验收</a></div></details><p class="intro">持久工作流解决重启后从哪里继续；稳定操作键解决同一动作重试；接收方代际检查解决旧进程仍在写。沿一份审批任务和已有实验，把这三种保证按发生顺序分开。</p><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>把一份日报拆成可以恢复的承诺</h2><p>上一章把单次工具调用放进完整任务。本章继续追问：一项任务会改计划、等人批准，还可能在运行进程退出后继续，怎样知道已经做了什么、下一步还准不准做？先固定目标和完成条件，再讨论计划、执行与恢复。</p><div class="table-wrap"><table><thead><tr><th>基本对象</th><th>负责什么</th><th>放到同一份订单日报里</th></tr></thead><tbody><tr><td>目标与完成条件</td><td>目标说明要得到什么；完成条件让结果能被核对</td><td>为report-A生成报告；覆盖当前清单引用的全部批次，金额相符、来源可追溯，批准后提交一份</td></tr><tr><td>步骤与依赖</td><td>步骤是一项可记录的工作；依赖规定先后条件</td><td>读基础清单；若有补录再读取；两份数据到齐才能汇总，草稿获批后才能发布</td></tr><tr><td>计划</td><td>对未来执行顺序的安排，可以修订</td><td>原计划没有补录读取，发现补录引用后换成包含该步骤的计划2</td></tr><tr><td>事实</td><td>已经确认的输入、结果或外部信号</td><td>基础订单是[10,27]；补录为[5]；某个具体草稿获批</td></tr><tr><td>工作流与执行状态</td><td>工作流定义允许的推进规则；状态记录这一次走到了哪里</td><td>当前等待批准，草稿42已保存；这不等于报告已经发布</td></tr></tbody></table></div><p>把任务拆开时，先写数据依赖：基础清单返回一份补录引用，必须顺着引用读到补录值，才能计算全量。不能让“发布成功”充当完整完成条件；如果只读取基础订单就发布37，技术动作完成了，业务任务仍然错了。</p><h3 id="subsection-1-3htvho">固定工作流先覆盖已知分支，动态计划处理新的安排</h3><p>固定工作流把步骤与条件预先写进程序，例如“有补录引用就读取补录，再汇总”。动态计划允许运行中提出新的步骤安排，但每份提议仍要经过执行系统校验；计划器不能靠写一句“已完成”越过缺失的输入、审批或提交。两者可以结合：外层工作流固定等待、预算与提交规则，里面的计划决定下一段怎样取得证据。</p><p>现在固定一组数字：基础批次orders-A/v3包含[10,27]，清单还引用补录批次late-A/v1，读取后才知道其中有[5]。正确结果为37+5=42。初始计划只写“读基础→汇总→发布”，观察到引用后必须补步骤；读过的基础事实不因改计划而消失。</p><figure class="training-figure"><a href="diagrams/agent-planning-plan-facts.svg" target="_blank" rel="noopener" aria-label="放大：目标、计划与事实三层。计划2补入真实读取，保留输入未变的基础事实；固定工作流预先写好分支，同样能得到42。"><img src="diagrams/agent-planning-plan-facts.svg" width="1024" height="510" alt="目标、计划与事实三层。计划2补入真实读取，保留输入未变的基础事实；固定工作流预先写好分支，同样能得到42。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>目标、计划与事实三层。计划2补入真实读取，保留输入未变的基础事实；固定工作流预先写好分支，同样能得到42。<a href="diagrams/agent-planning-plan-facts.svg" download>下载 SVG ↗</a></figcaption></figure><p>本例有清楚的已知分支，固定工作流已经足够。第9节同时运行固定与动态两种程序路径，让你比较它们共同完成的工作和动态路径多出来的一次提议，而不是把“会重规划”直接当成更好。</p><p>如果引入多个<span class="first-concept-term" data-concept-term="Agent">Agent<span class="concept-term-meaning">（在任务范围内组织模型与工具反复推进工作的智能体系统）</span></span>，即多个能独立提出行动并调用工具的执行单元，应先说明哪部分工作真的独立。基础清单的补录引用尚未读到，补录读取就不能凭空并行；拆成多名执行者还要增加任务分派、结果汇合、版本对齐和取消传播。先让一份计划可核对，再考虑并行是否抵得过协调成本。</p><h3 id="subsection-1-z363qn">执行请求和完成事实，要用两种记录表达</h3><p>执行请求描述准备做什么；完成事件描述已经观察到什么。请求可能尚未成功，不能直接当作完成事实。下面第2—7节先用更小的日报23与来源变成999的例子拆开历史重放、提交间隙与执行者接管，再回到42的计划案例。两组数字研究不同边界，不混用。</p><div class="table-wrap"><table><thead><tr><th>执行请求 command</th><th>已确认事件 event</th><th>状态怎样推进</th></tr></thead><tbody><tr><td>安排read_metrics</td><td>activity_completed，结果为23</td><td>保存结果后才进入构建日报</td></tr><tr><td>请求发布某个日报版本</td><td>接收方已提交的回执</td><td>回执确认后才记录发布完成</td></tr><tr><td>等待某一版草稿批准</td><td>匹配该版本的批准信号已持久入库</td><td>检查有效条件后才允许提交</td></tr></tbody></table></div><p class="source-at">继续核对：<a href="https://docs.temporal.io/workflow-execution" target="_blank" rel="noopener">Temporal · Workflow execution ↗</a></p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>历史写下事实，状态由事实推得</h2><h3 id="subsection-2-1pgk1ak">状态可以由有序历史重建</h3>
  <p>状态是当前推进到哪里；历史是已经确认发生的事件序列。以本地练习的短事件名为例，Started记录运行开始，Scheduled记录活动安排，Completed保存活动结果，Finished记录工作流结束。真实框架还会有更多事件及自己的类型，不能把这四种简写当成完整协议。</p>
  <div class="table-wrap"><table><thead><tr><th>顺序</th><th>历史事件</th><th>可以据此恢复什么</th></tr></thead><tbody><tr><td>1</td><td>started：定义版本1</td><td>这是一份什么运行</td></tr><tr><td>2</td><td>scheduled：read-1 / read_metrics</td><td>已存在这份活动委托</td></tr><tr><td>3</td><td>completed：read-1，结果23</td><td>后续可直接复用23</td></tr><tr><td>4</td><td>scheduled：draft-1 / render_draft</td><td>按已记录结果生成草稿</td></tr><tr><td>5</td><td>completed：draft-1，草稿文本</td><td>可复用这份活动结果</td></tr><tr><td>6</td><td>finished：草稿已生成</td><td>运行达到本例完成条件</td></tr></tbody></table></div>
  <p>假设进程停在第3条之后。恢复者从历史知道读取已经有结果，不必再查看现在的文件；接着安排尚未完成的草稿活动。如果只保存“正在处理”四个字，就无法区分读取未开始、正在读取还是结果已经确认。</p>
- <h3>重放重新走决定，已完成结果不重新取样</h3>
+ <h3 id="subsection-2-u7tby">重放重新走决定，已完成结果不重新取样</h3>
  <p>恢复代码从同一份历史依次请求相应活动：遇到已完成活动就取回记录结果，遇到未完成活动则按其运行规则推进。因此重放可以重新执行工作流的决定代码，却不必重新执行每个活动。模型输出若由活动得到，也需要作为结果或可靠引用保存；重放时重新询问实时模型，可能得到另一条行动路径。</p>
- <p>历史和普通诊断日志也有不同要求。诊断日志可以采样和过期，恢复历史必须保留完成相应运行所需的事件、顺序与结果引用。只有一行“成功”的文字，没有活动身份、结果与提交位置，还不足以重建下一步。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>重放为什么不该再次询问模型</h2><h3>同一任务，要生成与历史相容的命令序列</h3>
+ <p>历史和普通诊断日志也有不同要求。诊断日志可以采样和过期，恢复历史必须保留完成相应运行所需的事件、顺序与结果引用。只有一行“成功”的文字，没有活动身份、结果与提交位置，还不足以重建下一步。</p><h3 id="subsection-2-1cfmvg2">计划版本管未来，输入身份决定事实能否复用</h3><p>历史记录已经发生的事；计划版本说明接下来打算怎样做。它们相互关联，却不能互相覆盖。把计划1改成计划2时，保留“读到orders-A/v3的[10,27]”这份事实；新计划若仍使用相同输入，就能复用它。补录加入以后，汇总的输入集合改变，旧37便不能因为步骤还叫sum而自动复用。</p><div class="table-wrap"><table><thead><tr><th>记录</th><th>这一项任务存什么</th><th>计划2接着执行时怎样用</th></tr></thead><tbody><tr><td>plans：计划版本</td><td>版本1和版本2分别保存步骤顺序</td><td>执行器只按当前已接纳版本推进；旧版本留作追溯</td></tr><tr><td>facts：确认结果</td><td>步骤名、输入身份、返回值</td><td>基础批次相同则复用；汇总以完整来源清单摘要作输入身份</td></tr><tr><td>runtime：当前状态</td><td>当前计划版本、剩余预算、草稿与等待状态</td><td>恢复先找这份状态，再去读取对应事实</td></tr><tr><td>signals：外部输入</td><td>信号标识、批准对象、版本、是否消费</td><td>去重确认与是否适用当前草稿分开</td></tr><tr><td>reports：实际产物</td><td>报告总数与各来源的版本、内容摘要</td><td>从产物重新对照权威输入，不能只读DONE</td></tr></tbody></table></div><p>这里有两种不同的版本。计划版本revision属于任务的步骤安排；源版本属于某一份数据，例如orders-A/v3与late-A/v1分别是基础和补录的版本。它们不需要一起递增：计划2仍可使用基础数据v3；基础数据变成v4，则要重新判断已有事实是否适用。</p><p>输入摘要是对一份明确序列化内容计算的SHA-256值，用于识别这里绑定的内容；不是“步骤成功”的证明，也不是身份认证。第9节把基础和补录的资源名、版本、数值摘要组成清单，再连同任务与报告目标计算汇总输入摘要。只有步骤名与这份输入身份都相符，已保存的结果才适用。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>重放为什么不该再次询问模型</h2><h3 id="subsection-3-ueacvx">同一任务，要生成与历史相容的命令序列</h3>
  <p>确定性在这里首先约束“从相同记录恢复时，决定能否对应已有历史”。若旧历史先安排read-1，新代码却先安排另一个类型或另一身份，恢复器不能把旧结果随意当成新活动的结果。部署工作流代码之前，需要拿旧历史检查相容性。</p>
  <p>实时钟表、随机数和模型调用可能改变分支。把需要的外部值作为活动结果保存，或使用框架提供的重放安全机制。代码升级也应采用适合该框架的版本管理或补丁办法。Temporal提供自己的确定性、重放和版本语义，不能用本地短解释器替代其SDK检查。</p>
- <h3>两种退出位置，为什么会恢复出不同结果</h3>
+ <h3 id="subsection-3-1amsab8">两种退出位置，为什么会恢复出不同结果</h3>
  <figure class="training-figure"><a href="diagrams/v43-workflow-result-boundary.svg" target="_blank" rel="noopener" aria-label="放大：真实本机子进程在两种提交位置退出。结果已记录时复用23；结果未记录时活动重做并读到999。"><img src="diagrams/v43-workflow-result-boundary.svg" width="1120" height="790" alt="真实本机子进程在两种提交位置退出。结果已记录时复用23；结果未记录时活动重做并读到999。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实本机子进程在两种提交位置退出。结果已记录时复用23；结果未记录时活动重做并读到999。<a href="diagrams/v43-workflow-result-boundary.svg" download>下载 SVG ↗</a></figcaption></figure>
  <p>第一组先把读取结果23写入历史，再让进程以23退出。我们把源文件改成999，恢复后仍复用23，只执行草稿活动。完整历史形成后再重放，新增活动调用0次、新增事件0条。</p>
  <p>第二组在读取已经返回、结果尚未写入历史时以24退出。此时只有Scheduled，没有Completed。源文件改成999后恢复，读取活动会再执行，草稿使用999。两组都能恢复进度，活动执行次数却不同。这就是为什么“工作流持久化”不能直接推出任意活动只会执行一次。</p>
@@ -190,7 +185,414 @@ if __name__ == &#39;__main__&#39;:
     else:
         main()</code></pre></div></details><p><a href="labs/mechanism-walkthroughs.zip" download>下载机制跟读实验包 ↓</a> · <a href="labs/mechanism-walkthroughs/workflow_history.py" download>下载 workflow_history.py ↓</a> · <a href="labs/mechanism-walkthroughs/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p>
  <p>本地解释器只核对活动身份、类型与顺序；它不是Temporal兼容性检查器。活动只有本地只读与文本生成，没有真实LLM或远端写入。接下来处理外部发布时，还要检查接收方去重与回执，不能沿用“只读活动重做也无害”的前提。</p>
- <p><a href="https://docs.temporal.io/workflow-definition" target="_blank" rel="noopener noreferrer">Temporal：工作流确定性与代码变化 ↗</a></p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>单执行者的提交间隙，先读两本账</h2><figure class="training-figure"><a href="diagrams/v17-agent-commit-ledger.svg" target="_blank" rel="noopener" aria-label="放大：9.2的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用op-001，尝试从1变2，效果仍为1。"><img src="diagrams/v17-agent-commit-ledger.svg" width="960" height="744" alt="9.2的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用op-001，尝试从1变2，效果仍为1。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>9.2 的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用 op-001，尝试从 1 变 2，效果仍为 1。<a href="diagrams/v17-agent-commit-ledger.svg" download>下载 SVG ↗</a></figcaption></figure><p>R27 的发布意图需要稳定键 pub-27，绑定租户、目标和草稿摘要。任务库先登记意图，接收方在自己的原子提交中写入效果与回执，运行器随后确认完成。若中间退出，任务库和接收方会暂时呈现不同状态：前者仍在运行，后者已经有产物。恢复者必须先找回原操作身份。</p><p>图中沿用 9.2 的 agent_lab.py 实测：固定动作键 op-001，只在独立 SQLite 工具库里把计数加一；它没有真的发布日报。工具提交后子进程以 23 退出，runner 是 RUNNING、尝试 1、工具效果 1；恢复沿用原键，得到原回执，runner 成为 SUCCEEDED、尝试 2、效果仍 1。</p><p>若改用新键，接收方有理由把它当作新动作。若远端没有稳定键、可查询回执或明确补偿协议，任务历史只能记录结果待核对，不能替任意外部接口实现恰好一次。这里先解决单执行者；接下来增加一个仍活着的旧<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>，故障条件发生了变化。</p><a class="inline-link" href="/article/agent-recovery/">运行两本账的提交后退出实验 →</a></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>接管先经过控制库，再经过效果接收方</h2><p>设旧工作者 A 持有代际 1。代际是同一受保护资源上只增不减的所有权编号。A 暂停后，租约到期允许 B 向控制库申请代际 2；但 A 没有因此被杀死，它可能带着旧请求继续运行。控制库推进与接收方看到新代际是两次提交，不能用一句“已接管”盖住中间区间。</p><div class="table-wrap"><table><thead><tr><th>阶段</th><th>控制库</th><th>效果接收方</th><th>旧 A 的全新操作键</th></tr></thead><tbody><tr><td>A 运行</td><td>当前 1</td><td>已安装 1</td><td>仍按代际 1 判断</td></tr><tr><td>B 获保留但未安装</td><td>当前 2</td><td>仍安装 1</td><td>可能通过：安装空窗</td></tr><tr><td>B 完成安装</td><td>当前 2</td><td>已安装 2</td><td>代际 1 被拒</td></tr><tr><td>后来 C 取得并安装 3</td><td>当前 3</td><td>已安装 3</td><td>A 和 B 均不能新写</td></tr></tbody></table></div><p>本实验要求接收方先安装与权威保留一致的代际，再把这份保留标记为 armed，表示它已完成接收方的生效步骤。较新的 3 已取代 2 时，迟到的 B 不能把自己误报为 armed。安装与确认若无法达成协议，应保持未生效并核对，而不是只因租约记录更新就放行写入。</p><p>也有系统只记录见过的最大令牌、拒绝更小值。它同样要说明保证从何时开始：接收方还没见过 2 时，并不能仅凭协调端过期就识别 1 已失效。实际跨服务设计还需可信身份、令牌来源和权限控制；一个客户端自行填大的整数不是所有权。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>把旧写隔离和业务去重放在同一事务里</h2><p>接收方收到动作，先在受保护边界内核对可信主体、目标权限和当前代际，再检查操作键及参数摘要。新动作才提交效果与回执；同键同参数返回已有回执，同键换参数必须冲突。检查完成到写入之间不能再敞开一段未保护窗口，否则旧写者可能在检查之后、接管之后才真正落盘。</p><p>代际回答“这份所有权现在还能写吗”，操作键回答“这次逻辑动作发生过吗”。只做去重，A 可以换一个全新键制造旧写；只做代际，当前 B 的超时重试仍可能产生两份效果。因此验收要专门让旧 A 使用从未出现过的键，排除只是碰巧命中旧回执。</p><p>本地程序把当前代际检查、效果与回执提交放进 SQLite <span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>；控制库与接收方库分开。它把 A 暂停而不退出，等 B 完成接棒再恢复 A，观察旧键之外的全新动作仍被拒。这个观察证明本地受保护边界生效，不证明某个真实邮件、支付或 Kairo 接口也会检查代际。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>三次观察，分别证明哪一个边界</h2><div class="table-wrap"><table><thead><tr><th>独立观察</th><th>实际结果</th><th>回答的问题</th></tr></thead><tbody><tr><td>空窗负例：控制 2，接收方仍 1</td><td>旧 A 新动作 committed；安装 2 后 stale_epoch</td><td>控制库更新不会自动改变接收方</td></tr><tr><td>正式接棒：A 仍活着，接收方已安装 2</td><td>A 新键 stale_epoch；B 新动作提交值 7</td><td>旧写拒绝且新持有者能推进</td></tr><tr><td>另一进程提交值 11 后退出 23；C 安装 3 后用原键查询</td><td>duplicate，取回值 11；没有再加效果</td><td>提交后退出的恢复去重</td></tr><tr><td>测试主进程使用 C 的代际 3 提交新动作值 13</td><td>第三个效果，合计 11+7+13=31</td><td>新代际仍可执行获准的新工作</td></tr></tbody></table></div><p>第一行使用独立的负例数据库，不把它的效果计入正式实验的 3 个效果。正式实验的暂停 A 与提交后退出的进程也不是同一个故障时刻：暂停者仍可能继续发请求，退出者已经不再运行。C 对已存在回执的查询，不是让旧代际继续创建新效果。</p><p>程序还断言同键换参数被拒、未授权调用没有效果、较旧保留不能在更新代际后误报 armed。验收同时读函数结果、回执与效果账，不因返回一句“拒绝”就推断外部状态没变。代际拒绝若发生在效果之后，错误已经存在。</p></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>等待、取消与超时怎样决定下一步</h2><p>等待人工批准可以持续数小时。等待态应保存需要的条件、截止时间和对应草稿版本，不长期占着一个线程或数据库锁。把“批准 d4”的信号做成可去重的持久化输入。若信号先到、执行器稍后才进入等待，恢复程序也能在历史中找到它，而不是永远等第二个批准。过期策略使用记录的计时语义，不用进程重启时的当前时间重算整段等待。</p><p>设总预算 60 秒，首轮调用用了 24 秒，核对回执花 8 秒，退避等待 5 秒。剩余 23 秒还要留 3 秒写最终记录，因此第二次调用最多只能占 20 秒。若每层都继承“60 秒”而不扣已用时间，用户早已超时，后端却还在产生效果。次数限制与总截止时间应共同约束重试，还要留出查证和清理的时间。</p><p>取消与发布也会竞态。若发布已提交，再收到取消，只能记录取消到达的时间和实际效果。若需要撤回，应按授权发起清晰的撤回动作并记录其结果，不能删除原发布事件假装未发生。若取消先于首次发布，在提交新意图前重新检查取消和权限。能否阻止已经在途的请求取决于接收方协议，界面可把“已请求停止”与“已确认停止”分开表达。</p><h3>取消分支结束，也要追踪执行者与原操作</h3><p>在途动作可能已提交。先持久记录取消意图，停止新增写动作，再通过原op_id查询回执；执行者停止与业务效果不存在需要分别证明。是否等待取消确认，是明确的工作流策略，不能从一个界面状态猜测。</p><a class="inline-link" href="/article/agent-recovery/">阅读取消状态、提交竞争与真实子进程实验 →</a></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>先预测，再执行已有的多进程程序</h2><div class="code-block"><div class="code-toolbar"><span>Python 3.9+标准库；固定逻辑时钟与本地 SQLite <small>SH</small></span><button data-copy-code aria-label="复制 Python 3.9+标准库；固定逻辑时钟与本地SQLite">复制代码</button></div><pre tabindex="0"><code>python3 worker_fencing.py</code></pre></div><p>先预测三个结果：B 只改控制库时 A 的新键能否通过？B 安装后 A 仍活着能否通过？另一个进程提交后退出，C 沿原键重试会增加几个效果？运行后分别核对空窗负例、A/B 进程结果与 C 的 duplicate 回执，不把它们压成一个“恢复成功”。</p><details class="full-code"><summary>展开完整程序：两个持久化域、真实进程暂停、代际安装与回执恢复</summary><div class="code-block"><div class="code-toolbar"><span>worker_fencing.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 worker_fencing.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real local processes, SQLite receiver fencing and a separate crash/retry case.
+ <p><a href="https://docs.temporal.io/workflow-definition" target="_blank" rel="noopener noreferrer">Temporal：工作流确定性与代码变化 ↗</a></p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>单执行者的提交间隙，先读两本账</h2><figure class="training-figure"><a href="diagrams/v17-agent-commit-ledger.svg" target="_blank" rel="noopener" aria-label="放大：9.2的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用op-001，尝试从1变2，效果仍为1。"><img src="diagrams/v17-agent-commit-ledger.svg" width="960" height="744" alt="9.2的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用op-001，尝试从1变2，效果仍为1。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>9.2 的真实本地实验：工具已提交效果，运行器尚未确认。恢复沿用 op-001，尝试从 1 变 2，效果仍为 1。<a href="diagrams/v17-agent-commit-ledger.svg" download>下载 SVG ↗</a></figcaption></figure><p>R27 的发布意图需要稳定键 pub-27，绑定租户、目标和草稿摘要。任务库先登记意图，接收方在自己的原子提交中写入效果与回执，运行器随后确认完成。若中间退出，任务库和接收方会暂时呈现不同状态：前者仍在运行，后者已经有产物。恢复者必须先找回原操作身份。</p><p>图中沿用 9.2 的 agent_lab.py 实测：固定动作键 op-001，只在独立 SQLite 工具库里把计数加一；它没有真的发布日报。工具提交后子进程以 23 退出，runner 是 RUNNING、尝试 1、工具效果 1；恢复沿用原键，得到原回执，runner 成为 SUCCEEDED、尝试 2、效果仍 1。</p><p>若改用新键，接收方有理由把它当作新动作。若远端没有稳定键、可查询回执或明确补偿协议，任务历史只能记录结果待核对，不能替任意外部接口实现恰好一次。这里先解决单执行者；接下来增加一个仍活着的旧<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>，故障条件发生了变化。</p><a class="inline-link" href="/article/agent-recovery/">运行两本账的提交后退出实验 →</a></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>接管先经过控制库，再经过效果接收方</h2><p>设旧工作者 A 持有代际 1。代际是同一受保护资源上只增不减的所有权编号。A 暂停后，租约到期允许 B 向控制库申请代际 2；但 A 没有因此被杀死，它可能带着旧请求继续运行。控制库推进与接收方看到新代际是两次提交，不能用一句“已接管”盖住中间区间。</p><div class="table-wrap"><table><thead><tr><th>阶段</th><th>控制库</th><th>效果接收方</th><th>旧 A 的全新操作键</th></tr></thead><tbody><tr><td>A 运行</td><td>当前 1</td><td>已安装 1</td><td>仍按代际 1 判断</td></tr><tr><td>B 获保留但未安装</td><td>当前 2</td><td>仍安装 1</td><td>可能通过：安装空窗</td></tr><tr><td>B 完成安装</td><td>当前 2</td><td>已安装 2</td><td>代际 1 被拒</td></tr><tr><td>后来 C 取得并安装 3</td><td>当前 3</td><td>已安装 3</td><td>A 和 B 均不能新写</td></tr></tbody></table></div><p>本实验要求接收方先安装与权威保留一致的代际，再把这份保留标记为 armed，表示它已完成接收方的生效步骤。较新的 3 已取代 2 时，迟到的 B 不能把自己误报为 armed。安装与确认若无法达成协议，应保持未生效并核对，而不是只因租约记录更新就放行写入。</p><p>也有系统只记录见过的最大令牌、拒绝更小值。它同样要说明保证从何时开始：接收方还没见过 2 时，并不能仅凭协调端过期就识别 1 已失效。实际跨服务设计还需可信身份、令牌来源和权限控制；一个客户端自行填大的整数不是所有权。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>把旧写隔离和业务去重放在同一事务里</h2><p>接收方收到动作，先在受保护边界内核对可信主体、目标权限和当前代际，再检查操作键及参数摘要。新动作才提交效果与回执；同键同参数返回已有回执，同键换参数必须冲突。检查完成到写入之间不能再敞开一段未保护窗口，否则旧写者可能在检查之后、接管之后才真正落盘。</p><p>代际回答“这份所有权现在还能写吗”，操作键回答“这次逻辑动作发生过吗”。只做去重，A 可以换一个全新键制造旧写；只做代际，当前 B 的超时重试仍可能产生两份效果。因此验收要专门让旧 A 使用从未出现过的键，排除只是碰巧命中旧回执。</p><p>本地程序把当前代际检查、效果与回执提交放进 SQLite <span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>；控制库与接收方库分开。它把 A 暂停而不退出，等 B 完成接棒再恢复 A，观察旧键之外的全新动作仍被拒。这个观察证明本地受保护边界生效，不证明某个真实邮件、支付或 Kairo 接口也会检查代际。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>三次观察，分别证明哪一个边界</h2><div class="table-wrap"><table><thead><tr><th>独立观察</th><th>实际结果</th><th>回答的问题</th></tr></thead><tbody><tr><td>空窗负例：控制 2，接收方仍 1</td><td>旧 A 新动作 committed；安装 2 后 stale_epoch</td><td>控制库更新不会自动改变接收方</td></tr><tr><td>正式接棒：A 仍活着，接收方已安装 2</td><td>A 新键 stale_epoch；B 新动作提交值 7</td><td>旧写拒绝且新持有者能推进</td></tr><tr><td>另一进程提交值 11 后退出 23；C 安装 3 后用原键查询</td><td>duplicate，取回值 11；没有再加效果</td><td>提交后退出的恢复去重</td></tr><tr><td>测试主进程使用 C 的代际 3 提交新动作值 13</td><td>第三个效果，合计 11+7+13=31</td><td>新代际仍可执行获准的新工作</td></tr></tbody></table></div><p>第一行使用独立的负例数据库，不把它的效果计入正式实验的 3 个效果。正式实验的暂停 A 与提交后退出的进程也不是同一个故障时刻：暂停者仍可能继续发请求，退出者已经不再运行。C 对已存在回执的查询，不是让旧代际继续创建新效果。</p><p>程序还断言同键换参数被拒、未授权调用没有效果、较旧保留不能在更新代际后误报 armed。验收同时读函数结果、回执与效果账，不因返回一句“拒绝”就推断外部状态没变。代际拒绝若发生在效果之后，错误已经存在。</p></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>等待、取消与超时怎样决定下一步</h2><h3 id="subsection-8-mctg3k">先按已有事实推进，再决定是否需要重规划</h3><p>重规划是修改未来步骤，不是每次恢复都重新问一次“接下来做什么”。先检查终止状态，再读取当前输入版本和已确认事实。本实验在两种情况下进入NEEDS_REPLAN，即“需要重新核对并安排步骤”：一是观察到补录引用而原计划没有read_extra，汇总确实缺输入，必须补步骤；二是已经读取的来源升版，此时使旧草稿失效，保守地要求重新接纳一份计划。第二种情况下，即使原四步仍可覆盖，也会产生新的计划版本。这是本实验选定的策略，不表示数据每变一次都必须重新生成计划。</p><p>候选步骤必须满足依赖：基础清单先读，补录值到齐，再汇总，最后经过批准发布。本地实验用明确的四步顺序校验这个教学任务；把publish挪到read_extra之前会被拒绝，当前计划版本保持1。更大的系统应把依赖表示为图，再检查输入是否齐全、权限是否允许以及循环是否有界。</p><p>一次被接纳的新计划成为版本2，并单独持久化；执行器继续读取适用事实。若只是把“再试一次”改成“换个角度再试一次”，观察没有增加、步骤语义也相同，这不是进展。实验把观察和步骤一起计算签名，不把理由措辞算进签名，连续两次同样的无效提议后进入STOPPED_NO_PROGRESS，明确请求人工调整。</p><div class="table-wrap"><table><thead><tr><th>限制或状态</th><th>到底限制什么</th><th>本例可核对的行为</th></tr></thead><tbody><tr><td>提议预算</td><td>本次任务最多发起多少次计划生成尝试，不是网络重试次数</td><td>初始3，生成一次有效提议后剩2；预算1用尽，再来一次进入STOPPED_BUDGET</td></tr><tr><td>无进展计数</td><td>同一观察下，语义相同而仍无效的提议连续出现多少次</td><td>理由文本变化仍计为相同；第二次停止，不继续绕圈</td></tr><tr><td>执行中 RUNNING</td><td>允许根据已接纳计划推进</td><td>先复用适用结果，再生成新事实</td></tr><tr><td>等待 WAITING_APPROVAL</td><td>缺一个明确的外部输入，继续运行也不会产生它</td><td>保存草稿及等待条件后退出进程；新输入到来再恢复</td></tr><tr><td>完成 DONE</td><td>目标产物已在本例事务中提交</td><td>再次恢复不追加事实、事件或第二份报告</td></tr></tbody></table></div><figure class="training-figure"><a href="diagrams/agent-planning-wait-states.svg" target="_blank" rel="noopener" aria-label="放大：区分需要新计划、等待外部输入、预算停止和已完成。等待批准时退出进程，恢复读取数据库，不靠旧调用栈继续。"><img src="diagrams/agent-planning-wait-states.svg" width="1024" height="545" alt="区分需要新计划、等待外部输入、预算停止和已完成。等待批准时退出进程，恢复读取数据库，不靠旧调用栈继续。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>区分需要新计划、等待外部输入、预算停止和已完成。等待批准时退出进程，恢复读取数据库，不靠旧调用栈继续。<a href="diagrams/agent-planning-wait-states.svg" download>下载 SVG ↗</a></figcaption></figure><h3 id="subsection-8-19qsp4l">批准的是这份内容，不能只批准一个任务名</h3><p>先把批准对象说清。草稿是尚未发布的报告正文，含报告目标、总数和来源清单；草稿摘要draft_digest对这份正文计算SHA-256。输入摘要input_digest标识用于本次汇总的来源身份，草稿摘要标识准备发布的具体内容。输入相同但写出了不同总数，两个草稿摘要就不同；来源升版但数值不变，输入身份仍会改变。</p><p>持久等待先保存草稿与所需条件，再允许进程退出。这里的批准输入绑定任务、报告目标、计划版本、输入摘要和草稿摘要；消费批准前重新核对这些字段。信号先于等待状态到达时，也先存入signals，后续推进能取出来，不必让人再点一次。生产入口还应认证操作者并检查审批权限，不能相信调用者自己填的名字。</p><p>看一个容易忽略的变化：最初清单没有补录，计划1得到37草稿，批准已经入库但尚未发布；接着来源升到v4并引用补录5。恢复后必须使旧草稿失效，接纳计划2，得到新42草稿。旧批准仍是历史事实，重复投递时仍可答复“收过了”，但它不适用于当前草稿。若把去重成功等同于当前授权，新内容就会借旧批准通过。</p><figure class="training-figure"><a href="diagrams/agent-planning-approval-versions.svg" target="_blank" rel="noopener" aria-label="放大：真实输入更新场景：计划1/草稿37的批准仍留在历史；当前计划2/草稿42必须获新的匹配批准。摘要前缀来自这次实际运行。"><img src="diagrams/agent-planning-approval-versions.svg" width="1024" height="480" alt="真实输入更新场景：计划1/草稿37的批准仍留在历史；当前计划2/草稿42必须获新的匹配批准。摘要前缀来自这次实际运行。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实输入更新场景：计划1/草稿37的批准仍留在历史；当前计划2/草稿42必须获新的匹配批准。摘要前缀来自这次实际运行。<a href="diagrams/agent-planning-approval-versions.svg" download>下载 SVG ↗</a></figcaption></figure><p>采用工作流框架时还要读清恢复粒度。例如LangGraph的interrupt恢复会从包含该中断的节点开头重新运行，中断之前的代码可能再执行。保存状态并不意味着从Python原来那一行继续；前面已有业务效果时，仍要遵守本章第4—7节的查证和去重协议。下面使用自写SQLite状态机解释数据关系，不冒充框架SDK验收。</p><p class="source-at">继续核对：<a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener">LangGraph：持久中断与节点恢复规则 ↗</a></p><h3 id="subsection-8-1hxbx9c">次数、截止时间与取消，继续约束整个任务</h3><p>设总预算 60 秒，首轮调用用了 24 秒，核对回执花 8 秒，退避等待 5 秒。剩余 23 秒还要留 3 秒写最终记录，因此第二次调用最多只能占 20 秒。若每层都继承“60 秒”而不扣已用时间，用户早已超时，后端却还在产生效果。次数限制与总截止时间应共同约束重试，还要留出查证和清理的时间。</p><p>取消与发布也会竞态。若发布已提交，再收到取消，只能记录取消到达的时间和实际效果。若需要撤回，应按授权发起清晰的撤回动作并记录其结果，不能删除原发布事件假装未发生。若取消先于首次发布，在提交新意图前重新检查取消和权限。能否阻止已经在途的请求取决于接收方协议，界面可把“已请求停止”与“已确认停止”分开表达。</p><h3 id="subsection-8-1ugi1r3">取消分支结束，也要追踪执行者与原操作</h3><p>在途动作可能已提交。先持久记录取消意图，停止新增写动作，再通过原op_id查询回执；执行者停止与业务效果不存在需要分别证明。是否等待取消确认，是明确的工作流策略，不能从一个界面状态猜测。</p><a class="inline-link" href="/article/agent-recovery/">阅读取消状态、提交竞争与真实子进程实验 →</a></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>先预测，再执行已有的多进程程序</h2><h3 id="agent-planning-run">把42这份报告，从来源一直追到实际产物</h3><p>现在把前面三层对象落到一个可运行文件。planning_lab.py只用Python标准库，每一次推进、提议和批准都由全新子进程执行，状态保存在实际SQLite文件中。提议来源是固定夹具，不调用模型；我们验证计划与事实的关系、等待恢复和验收条件，不评价模型规划能力。</p><div class="table-wrap"><table><thead><tr><th>先找程序哪一部分</th><th>它把哪条知识落实成数据</th><th>应读到的事实</th></tr></thead><tbody><tr><td>initialize、sources、batches</td><td>基础清单只给补录引用；值需要另一次实际SELECT读取</td><td>orders-A/v3为[10,27]；late-A/v1为[5]</td></tr><tr><td>read_base、propose、plans</td><td>先有新观察，再校验依赖，再持久化计划版本</td><td>动态路径进入NEEDS_REPLAN，版本1变2；固定路径预置分支</td></tr><tr><td>fact、manifest、input_digest</td><td>步骤名加输入身份决定复用；清单记载版本和内容摘要</td><td>正确路径的基础读取、补录读取、汇总各一份确认结果</td></tr><tr><td>advance、signals、approval_matches</td><td>等待不占旧进程；批准必须匹配当前草稿</td><td>无批准时没有报告；批准后新进程提交一个42报告</td></tr><tr><td>independent_oracle</td><td>直接读来源表和实际报告，不相信runtime.draft或DONE</td><td>值、报告目标、来源版本与每份摘要均匹配才通过</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>下载并完整解压 agent-planning.zip 后，在目录中运行 <small>SHELL</small></span><button data-copy-code aria-label="复制 下载并完整解压 agent-planning.zip 后，在目录中运行">复制代码</button></div><pre tabindex="0"><code>python3 -B planning_lab.py &gt; record.json
+# 可保留每个场景的实际数据库；runs 必须尚不存在
+python3 -B planning_lab.py --output-dir runs &gt; retained-record.json
+python3 -B planning_lab.py inspect --db runs/adaptive.sqlite</code></pre></div><p>先预测：固定与动态两条路径都会得到42；动态路径先发现缺步骤，再花一次提议接纳计划2。程序在等待状态退出，批准后由新进程继续；这证明任务状态不依赖旧进程内存。事实数量统计的是确认结果记录，不是<span class="first-concept-term" data-concept-term="SQL">SQL<span class="concept-term-meaning">（向关系数据库表达查询与更新的一种语言）</span></span>次数或调用总次数，恢复仍会读取版本等元数据。</p><div class="table-wrap"><table><thead><tr><th>实际场景</th><th>计划/结果</th><th>独立验收或停止理由</th></tr></thead><tbody><tr><td>adaptive：动态补步骤</td><td>计划2；基础、补录、汇总各1份事实；预算3→2；实际报告42</td><td>按权威来源和完整清单复核，通过</td></tr><tr><td>fixed：预置补录分支</td><td>计划1；同一42报告；提议预算保持0</td><td>本例固定工作流已足够，不为动态能力虚报收益</td></tr><tr><td>changed_input：已批准37后输入更新</td><td>计划2重新汇总42；旧信号重复回执applies_current=false</td><td>新42批准到来前不提交；最后一个42报告</td></tr><tr><td>early_signal：先收批准再进入等待</td><td>批准事件在等待事件之前；新进程读取已存信号</td><td>只需原信号，实际报告42</td></tr><tr><td>no_progress / budget</td><td>分别因相同无效提议重复、提议预算用尽停止</td><td>实际报告均为0份</td></tr><tr><td>invalid_plan：先发布后补录</td><td>校验拒绝；计划仍为版本1</td><td>没有报告</td></tr></tbody></table></div><h3 id="subsection-9-62i94t">最值得核对的反例：状态完成，报告却仍是37</h3><p>wrong_cache_key真的让程序走错一次：先对无补录清单汇总37；输入更新并加入5以后，计划已经改成2，也确实读取了补录，但故意只按步骤名sum查<span class="first-concept-term" data-concept-term="缓存">缓存<span class="concept-term-meaning">（保存可复用内容的一份中间结果，减少重复读取或计算）</span></span>，拿回旧37。新的草稿、批准和DONE都能形成，实际报告仍是37。独立验收从来源重算42，明确拒绝。这说明计划正确、流程完成和结果正确是三件相连但不能互代的事。</p><p>再看corrupt_artifact：把正确报告复制到独立数据库，只改补录的来源摘要，总数仍为42。验收同样拒绝，因为42不能证明用了正确来源。两个负例分别检查计算结果与来源追溯，避免只对自己写的状态标签做断言。</p><div class="table-wrap"><table><thead><tr><th>对照</th><th>正确的输入身份缓存</th><th>错误的步骤名缓存</th></tr></thead><tbody><tr><td>来源更新后的基础事实</td><td>v3、v4各保留1份</td><td>同样保留两份</td></tr><tr><td>汇总事实</td><td>按两个不同输入摘要保存两份，37和42</td><td>键一直是sum，只留下旧37</td></tr><tr><td>补录读取</td><td>有，得到5</td><td>也有，不能靠“调用过补录”证明加进了结果</td></tr><tr><td>最终产物与独立验收</td><td>报告42，通过</td><td>报告37，失败；即使当前状态是DONE</td></tr></tbody></table></div><p>正确路径完成后再恢复一次，程序对比完整事件、事实、信号和报告快照，要求一字不增。本任务以提交时观察到的来源版本为完成边界；提交后又来新批次，应创建新的报告任务，不能把已经完成的历史当成永远同步的视图。</p><p>本例来源、状态、批准与报告共享一个SQLite事务域，报告写入、信号消费和DONE一起提交；它没有验证任意远端接口的提交恢复。这里使用正常进程退出后重启，崩溃写入窗口与多执行者隔离继续用下面原有实验核对。</p><p class="source-at">继续核对：<a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener">SQLite · Transactions ↗</a></p><p><a class="inline-link" href="labs/agent-planning.zip" download>下载完整实验包 →</a> · <a href="labs/agent-planning/README.md">分步运行说明</a> · <a href="labs/agent-planning/planning_lab.py">独立源码</a> · <a href="labs/agent-planning/validation.json">实际记录与源码摘要</a></p><details class="full-code"><summary>完整 planning_lab.py · 与下载源码逐字一致</summary><div class="code-block"><div class="code-toolbar"><span>planning_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 planning_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Persistent planning, re-planning and approval; Python 3.9+ standard library.
+
+Every command runs in a new process. A scripted proposal source replaces an LLM.
+All sources, task state and report rows share one local SQLite transactional
+domain: this does not implement an external-effect recovery or framework SDK.
+&quot;&quot;&quot;
+import argparse
+from contextlib import nullcontext
+import hashlib
+import json
+import sqlite3
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(&quot;,&quot;, &quot;:&quot;), ensure_ascii=False)
+
+
+def digest(value):
+    return hashlib.sha256(canonical(value).encode()).hexdigest()
+
+
+def connect(path):
+    connection = sqlite3.connect(path, timeout=10)
+    connection.execute(&quot;PRAGMA foreign_keys=ON&quot;)
+    return connection
+
+
+def event(db, kind, body):
+    db.execute(&quot;INSERT INTO events(kind,body) VALUES (?,?)&quot;, (kind, canonical(body)))
+
+
+def load(db):
+    return json.loads(db.execute(&quot;SELECT body FROM runtime WHERE id=1&quot;).fetchone()[0])
+
+
+def save(db, state):
+    db.execute(&quot;UPDATE runtime SET body=? WHERE id=1&quot;, (canonical(state),))
+
+
+def plan(db, revision):
+    return json.loads(db.execute(&quot;SELECT body FROM plans WHERE revision=?&quot;, (revision,)).fetchone()[0])
+
+
+def source(db, version):
+    return json.loads(db.execute(&quot;SELECT body FROM sources WHERE version=?&quot;, (version,)).fetchone()[0])
+
+
+def fact(db, name, key, operation):
+    old = db.execute(&quot;SELECT body FROM facts WHERE name=? AND input_key=?&quot;, (name, key)).fetchone()
+    if old:
+        return json.loads(old[0])
+    result = operation()
+    db.execute(&quot;INSERT INTO facts(name,input_key,body) VALUES (?,?,?)&quot;, (name, key, canonical(result)))
+    event(db, &quot;fact_recorded&quot;, {&quot;name&quot;: name, &quot;input_key&quot;: key})
+    return result
+
+
+def initialize(path, mode, has_extra, budget):
+    with connect(path) as db:
+        db.executescript(&quot;&quot;&quot;
+        CREATE TABLE sources(version INTEGER PRIMARY KEY, body TEXT NOT NULL);
+        CREATE TABLE batches(resource TEXT NOT NULL,version INTEGER NOT NULL,body TEXT NOT NULL,
+                             PRIMARY KEY(resource,version));
+        CREATE TABLE source_head(id INTEGER PRIMARY KEY, version INTEGER NOT NULL);
+        CREATE TABLE plans(revision INTEGER PRIMARY KEY, body TEXT NOT NULL);
+        CREATE TABLE runtime(id INTEGER PRIMARY KEY, body TEXT NOT NULL);
+        CREATE TABLE facts(name TEXT NOT NULL,input_key TEXT NOT NULL,body TEXT NOT NULL,
+                           PRIMARY KEY(name,input_key));
+        CREATE TABLE signals(id TEXT PRIMARY KEY,body TEXT NOT NULL,consumed INTEGER NOT NULL DEFAULT 0);
+        CREATE TABLE reports(id TEXT PRIMARY KEY,body TEXT NOT NULL);
+        CREATE TABLE events(seq INTEGER PRIMARY KEY,kind TEXT NOT NULL,body TEXT NOT NULL);
+        &quot;&quot;&quot;)
+        base = {&quot;resource&quot;: &quot;orders-A&quot;, &quot;version&quot;: 3, &quot;values&quot;: [10, 27],
+                &quot;extra&quot;: {&quot;resource&quot;: &quot;late-A&quot;, &quot;version&quot;: 1} if has_extra else None}
+        db.execute(&quot;INSERT INTO sources VALUES (?,?)&quot;, (3, canonical(base)))
+        db.execute(&quot;INSERT INTO batches VALUES (&#39;late-A&#39;,1,?)&quot;, (canonical({&quot;resource&quot;: &quot;late-A&quot;, &quot;version&quot;: 1, &quot;values&quot;: [5]}),))
+        db.execute(&quot;INSERT INTO source_head VALUES (1,3)&quot;)
+        steps = [&quot;read_base&quot;, &quot;read_extra&quot;, &quot;sum&quot;, &quot;publish&quot;] if mode == &quot;fixed&quot; else [&quot;read_base&quot;, &quot;sum&quot;, &quot;publish&quot;]
+        db.execute(&quot;INSERT INTO plans VALUES (1,?)&quot;, (canonical(steps),))
+        state = {&quot;task&quot;: &quot;report-task-A&quot;, &quot;target&quot;: &quot;report-A&quot;, &quot;goal&quot;: &quot;sum all batches in the observed order manifest&quot;,
+                 &quot;phase&quot;: &quot;RUNNING&quot;, &quot;revision&quot;: 1, &quot;mode&quot;: mode, &quot;proposal_budget&quot;: budget,
+                 &quot;no_progress&quot;: 0, &quot;last_proposal&quot;: None, &quot;base&quot;: None, &quot;draft&quot;: None}
+        db.execute(&quot;INSERT INTO runtime VALUES (1,?)&quot;, (canonical(state),))
+        event(db, &quot;started&quot;, {&quot;revision&quot;: 1, &quot;mode&quot;: mode})
+
+
+def read_base(db, state):
+    version = db.execute(&quot;SELECT version FROM source_head WHERE id=1&quot;).fetchone()[0]
+    current = fact(db, &quot;read_base&quot;, str(version), lambda: source(db, version))
+    if state[&quot;base&quot;] and state[&quot;base&quot;][&quot;version&quot;] != version:
+        state[&quot;draft&quot;] = None
+        state[&quot;phase&quot;] = &quot;NEEDS_REPLAN&quot;
+        event(db, &quot;input_changed&quot;, {&quot;from&quot;: state[&quot;base&quot;][&quot;version&quot;], &quot;to&quot;: version})
+    state[&quot;base&quot;] = current
+
+
+def advance(db, stop_after_draft=False, bad_cache_key=False):
+    state = load(db)
+    if state[&quot;phase&quot;] == &quot;DONE&quot; or state[&quot;phase&quot;].startswith(&quot;STOPPED_&quot;):
+        return state
+    read_base(db, state)
+    steps = plan(db, state[&quot;revision&quot;])
+    if state[&quot;base&quot;][&quot;extra&quot;] and &quot;read_extra&quot; not in steps:
+        if state[&quot;phase&quot;] != &quot;NEEDS_REPLAN&quot;:
+            event(db, &quot;replan_required&quot;, {&quot;reason&quot;: &quot;manifest includes another batch&quot;})
+        state[&quot;phase&quot;] = &quot;NEEDS_REPLAN&quot;
+    if state[&quot;phase&quot;] == &quot;NEEDS_REPLAN&quot;:
+        save(db, state)
+        return state
+    base = state[&quot;base&quot;]
+    batches = [{&quot;resource&quot;: base[&quot;resource&quot;], &quot;version&quot;: base[&quot;version&quot;], &quot;values&quot;: base[&quot;values&quot;]}]
+    if base[&quot;extra&quot;]:
+        extra = base[&quot;extra&quot;]
+        def fetch_extra():
+            row = db.execute(&quot;SELECT body FROM batches WHERE resource=? AND version=?&quot;,
+                             (extra[&quot;resource&quot;], extra[&quot;version&quot;])).fetchone()
+            return json.loads(row[0])
+        batches.append(fact(db, &quot;read_extra&quot;, digest(extra), fetch_extra))
+    manifest = [{&quot;resource&quot;: b[&quot;resource&quot;], &quot;version&quot;: b[&quot;version&quot;], &quot;sha256&quot;: digest(b[&quot;values&quot;])} for b in batches]
+    input_digest = digest({&quot;task&quot;: state[&quot;task&quot;], &quot;target&quot;: state[&quot;target&quot;], &quot;manifest&quot;: manifest})
+    total = fact(db, &quot;sum&quot;, &quot;sum&quot; if bad_cache_key else input_digest,
+                 lambda: sum(sum(b[&quot;values&quot;]) for b in batches))
+    draft = {&quot;report&quot;: state[&quot;target&quot;], &quot;total&quot;: total, &quot;manifest&quot;: manifest}
+    state[&quot;draft&quot;] = {&quot;body&quot;: draft, &quot;input_digest&quot;: input_digest, &quot;draft_digest&quot;: digest(draft)}
+    if stop_after_draft:
+        state[&quot;phase&quot;] = &quot;DRAFT_READY&quot;
+        save(db, state)
+        return state
+    if state[&quot;phase&quot;] != &quot;WAITING_APPROVAL&quot;:
+        event(db, &quot;waiting&quot;, {&quot;revision&quot;: state[&quot;revision&quot;], &quot;draft_digest&quot;: digest(draft)})
+    state[&quot;phase&quot;] = &quot;WAITING_APPROVAL&quot;
+    accepted = None
+    for signal_id, body in db.execute(&quot;SELECT id,body FROM signals WHERE consumed=0 ORDER BY rowid&quot;):
+        message = json.loads(body)
+        if approval_matches(state, message):
+            accepted = signal_id
+            break
+    if accepted:
+        # Source validation, report, consumed input and DONE share this one DB
+        # transaction. It is deliberately not an arbitrary remote API.
+        db.execute(&quot;INSERT INTO reports(id,body) VALUES (?,?)&quot;, (state[&quot;target&quot;], canonical(draft)))
+        db.execute(&quot;UPDATE signals SET consumed=1 WHERE id=?&quot;, (accepted,))
+        state[&quot;phase&quot;] = &quot;DONE&quot;
+        event(db, &quot;report_committed&quot;, {&quot;approval&quot;: accepted, &quot;revision&quot;: state[&quot;revision&quot;], &quot;total&quot;: total})
+    save(db, state)
+    return state
+
+
+def propose(db, behavior):
+    state = load(db)
+    if state[&quot;phase&quot;] != &quot;NEEDS_REPLAN&quot;:
+        return {&quot;accepted&quot;: False, &quot;reason&quot;: &quot;not_replanning&quot;, &quot;state&quot;: state}
+    if state[&quot;proposal_budget&quot;] == 0:
+        state[&quot;phase&quot;] = &quot;STOPPED_BUDGET&quot;
+        event(db, &quot;stopped&quot;, {&quot;reason&quot;: &quot;proposal_budget&quot;})
+        save(db, state)
+        return {&quot;accepted&quot;: False, &quot;reason&quot;: &quot;proposal_budget&quot;, &quot;state&quot;: state}
+    state[&quot;proposal_budget&quot;] -= 1
+    candidate = [&quot;read_base&quot;, &quot;read_extra&quot;, &quot;sum&quot;, &quot;publish&quot;] if behavior == &quot;good&quot; else plan(db, state[&quot;revision&quot;])
+    if behavior == &quot;bad_order&quot;:
+        candidate = [&quot;read_base&quot;, &quot;publish&quot;, &quot;read_extra&quot;, &quot;sum&quot;]
+    signature = digest({&quot;observation&quot;: state[&quot;base&quot;], &quot;steps&quot;: candidate})
+    same = state[&quot;last_proposal&quot;] == signature
+    state[&quot;last_proposal&quot;] = signature
+    state[&quot;no_progress&quot;] = state[&quot;no_progress&quot;] + 1 if same else 1
+    required = [&quot;read_base&quot;, &quot;read_extra&quot;, &quot;sum&quot;, &quot;publish&quot;]
+    valid = candidate == required
+    # Wording/reasons are not part of the semantic signature. This proposal
+    # source is a fixed fixture, not a model or a framework planner.
+    event(db, &quot;proposal&quot;, {&quot;steps&quot;: candidate, &quot;valid&quot;: valid,
+                           &quot;reason_text&quot;: &quot;try again &quot; + str(state[&quot;proposal_budget&quot;])})
+    if valid:
+        state[&quot;revision&quot;] += 1
+        db.execute(&quot;INSERT INTO plans VALUES (?,?)&quot;, (state[&quot;revision&quot;], canonical(candidate)))
+        state[&quot;phase&quot;] = &quot;RUNNING&quot;
+        state[&quot;draft&quot;] = None
+        state[&quot;no_progress&quot;] = 0
+        event(db, &quot;plan_accepted&quot;, {&quot;revision&quot;: state[&quot;revision&quot;]})
+    elif state[&quot;no_progress&quot;] &gt;= 2:
+        state[&quot;phase&quot;] = &quot;STOPPED_NO_PROGRESS&quot;
+        event(db, &quot;stopped&quot;, {&quot;reason&quot;: &quot;no_progress&quot;})
+    save(db, state)
+    return {&quot;accepted&quot;: valid, &quot;reason&quot;: &quot;accepted&quot; if valid else &quot;invalid_dependencies&quot;, &quot;state&quot;: state}
+
+
+def approval_matches(state, message):
+    draft = state.get(&quot;draft&quot;)
+    return bool(draft and message.get(&quot;task&quot;) == state[&quot;task&quot;] and message.get(&quot;target&quot;) == state[&quot;target&quot;]
+                and message.get(&quot;actor&quot;) == &quot;operator-A&quot; and message.get(&quot;decision&quot;) == &quot;approve&quot;
+                and type(message.get(&quot;revision&quot;)) is int and message[&quot;revision&quot;] == state[&quot;revision&quot;]
+                and message.get(&quot;input_digest&quot;) == draft[&quot;input_digest&quot;]
+                and message.get(&quot;draft_digest&quot;) == draft[&quot;draft_digest&quot;])
+
+
+def approve(db, message):
+    state = load(db)
+    existing = db.execute(&quot;SELECT body FROM signals WHERE id=?&quot;, (message[&quot;id&quot;],)).fetchone()
+    if existing:
+        if existing[0] != canonical(message):
+            return {&quot;accepted&quot;: False, &quot;reason&quot;: &quot;signal_id_conflict&quot;}
+        return {&quot;accepted&quot;: True, &quot;reason&quot;: &quot;duplicate_signal&quot;, &quot;applies_current&quot;: approval_matches(state, message)}
+    if state[&quot;phase&quot;] not in [&quot;DRAFT_READY&quot;, &quot;WAITING_APPROVAL&quot;] or not approval_matches(state, message):
+        return {&quot;accepted&quot;: False, &quot;reason&quot;: &quot;stale_or_unbound_approval&quot;}
+    db.execute(&quot;INSERT INTO signals(id,body) VALUES (?,?)&quot;, (message[&quot;id&quot;], canonical(message)))
+    event(db, &quot;approval_received&quot;, {&quot;id&quot;: message[&quot;id&quot;], &quot;revision&quot;: message[&quot;revision&quot;]})
+    return {&quot;accepted&quot;: True, &quot;reason&quot;: &quot;recorded&quot;}
+
+
+def update_source(db):
+    changed = {&quot;resource&quot;: &quot;orders-A&quot;, &quot;version&quot;: 4, &quot;values&quot;: [10, 27],
+               &quot;extra&quot;: {&quot;resource&quot;: &quot;late-A&quot;, &quot;version&quot;: 1}}
+    db.execute(&quot;INSERT INTO sources VALUES (4,?)&quot;, (canonical(changed),))
+    db.execute(&quot;UPDATE source_head SET version=4 WHERE id=1&quot;)
+    return {&quot;source_version&quot;: 4}
+
+
+def inspect(path):
+    with connect(path) as db:
+        state = load(db)
+        return {&quot;state&quot;: state, &quot;plans&quot;: [{&quot;revision&quot;: r, &quot;steps&quot;: json.loads(b)} for r, b in db.execute(&quot;SELECT * FROM plans ORDER BY revision&quot;)],
+                &quot;facts&quot;: [{&quot;name&quot;: n, &quot;key&quot;: k, &quot;value&quot;: json.loads(b)} for n, k, b in db.execute(&quot;SELECT * FROM facts ORDER BY rowid&quot;)],
+                &quot;signals&quot;: [{&quot;id&quot;: i, &quot;body&quot;: json.loads(b), &quot;consumed&quot;: bool(c)} for i, b, c in db.execute(&quot;SELECT * FROM signals ORDER BY rowid&quot;)],
+                &quot;reports&quot;: [json.loads(b) for (b,) in db.execute(&quot;SELECT body FROM reports&quot;)],
+                &quot;events&quot;: [{&quot;kind&quot;: k, &quot;body&quot;: json.loads(b)} for k, b in db.execute(&quot;SELECT kind,body FROM events ORDER BY seq&quot;)]}
+
+
+def independent_oracle(path):
+    # Read authoritative input and actual report directly, never state.draft.
+    with connect(path) as db:
+        version = db.execute(&quot;SELECT version FROM source_head&quot;).fetchone()[0]
+        base = source(db, version)
+        batches = [{&quot;resource&quot;: base[&quot;resource&quot;], &quot;version&quot;: base[&quot;version&quot;], &quot;values&quot;: base[&quot;values&quot;]}]
+        if base[&quot;extra&quot;]:
+            ref = base[&quot;extra&quot;]
+            batches.append(json.loads(db.execute(&quot;SELECT body FROM batches WHERE resource=? AND version=?&quot;,
+                                                 (ref[&quot;resource&quot;], ref[&quot;version&quot;])).fetchone()[0]))
+        values = [value for batch in batches for value in batch[&quot;values&quot;]]
+        manifest = [{&quot;resource&quot;: batch[&quot;resource&quot;], &quot;version&quot;: batch[&quot;version&quot;], &quot;sha256&quot;: digest(batch[&quot;values&quot;])} for batch in batches]
+        reports = [json.loads(r[0]) for r in db.execute(&quot;SELECT body FROM reports&quot;)]
+        expected = sum(values)
+        return {&quot;expected_total&quot;: expected, &quot;actual_total&quot;: reports[0][&quot;total&quot;] if reports else None,
+                &quot;report_count&quot;: len(reports), &quot;accepted&quot;: len(reports) == 1 and reports[0][&quot;total&quot;] == expected
+                and reports[0][&quot;report&quot;] == &quot;report-A&quot; and reports[0][&quot;manifest&quot;] == manifest}
+
+
+def invoke(path, command, **options):
+    args = [sys.executable, &quot;-B&quot;, str(Path(__file__).resolve()), command, &quot;--db&quot;, str(path)]
+    for key, value in options.items():
+        args += [&quot;--&quot; + key.replace(&quot;_&quot;, &quot;-&quot;), canonical(value) if isinstance(value, dict) else str(value)]
+    completed = subprocess.run(args, capture_output=True, text=True, check=True, timeout=15)
+    return json.loads(completed.stdout)
+
+
+def message(snapshot, signal_id):
+    state = snapshot[&quot;state&quot;]
+    return {&quot;id&quot;: signal_id, &quot;task&quot;: state[&quot;task&quot;], &quot;target&quot;: state[&quot;target&quot;], &quot;actor&quot;: &quot;operator-A&quot;,
+            &quot;decision&quot;: &quot;approve&quot;, &quot;revision&quot;: state[&quot;revision&quot;],
+            &quot;input_digest&quot;: state[&quot;draft&quot;][&quot;input_digest&quot;], &quot;draft_digest&quot;: state[&quot;draft&quot;][&quot;draft_digest&quot;]}
+
+
+def run_scenarios(output_dir=None):
+    result = {}
+    if output_dir:
+        Path(output_dir).mkdir(parents=True, exist_ok=False)
+    manager = nullcontext(output_dir) if output_dir else tempfile.TemporaryDirectory(prefix=&quot;infra-planning-&quot;)
+    with manager as directory:
+        root = Path(directory)
+        for mode in [&quot;adaptive&quot;, &quot;fixed&quot;]:
+            path = root/(mode + &quot;.sqlite&quot;)
+            initialize(path, mode, True, 3 if mode == &quot;adaptive&quot; else 0)
+            first = invoke(path, &quot;advance&quot;)
+            if mode == &quot;adaptive&quot;:
+                assert first[&quot;phase&quot;] == &quot;NEEDS_REPLAN&quot;
+                assert invoke(path, &quot;propose&quot;, behavior=&quot;good&quot;)[&quot;accepted&quot;]
+                invoke(path, &quot;advance&quot;)
+            waiting = inspect(path)
+            assert waiting[&quot;state&quot;][&quot;phase&quot;] == &quot;WAITING_APPROVAL&quot; and not waiting[&quot;reports&quot;]
+            valid = message(waiting, &quot;approve-current&quot;)
+            rejected = dict(valid, id=&quot;old-plan&quot;, revision=0)
+            assert not invoke(path, &quot;approve&quot;, message=rejected)[&quot;accepted&quot;]
+            assert invoke(path, &quot;approve&quot;, message=valid)[&quot;accepted&quot;]
+            assert invoke(path, &quot;approve&quot;, message=valid)[&quot;reason&quot;] == &quot;duplicate_signal&quot;
+            invoke(path, &quot;advance&quot;)
+            done = inspect(path)
+            invoke(path, &quot;advance&quot;)
+            assert done == inspect(path), &quot;DONE resume created another fact/event/effect&quot;
+            assert independent_oracle(path)[&quot;accepted&quot;]
+            result[mode] = {&quot;first_phase&quot;: first[&quot;phase&quot;], &quot;waiting&quot;: waiting, &quot;done&quot;: done,
+                            &quot;oracle&quot;: independent_oracle(path), &quot;duplicate_resume_unchanged&quot;: True}
+        # A genuine earlier approval becomes obsolete when a new batch arrives.
+        path = root/&quot;changed-input.sqlite&quot;
+        initialize(path, &quot;adaptive&quot;, False, 3)
+        invoke(path, &quot;advance&quot;)
+        before = inspect(path)
+        old_message = message(before, &quot;approve-v1&quot;)
+        assert invoke(path, &quot;approve&quot;, message=old_message)[&quot;accepted&quot;]
+        invoke(path, &quot;update_source&quot;)
+        assert invoke(path, &quot;advance&quot;)[&quot;phase&quot;] == &quot;NEEDS_REPLAN&quot;
+        invoke(path, &quot;propose&quot;, behavior=&quot;good&quot;)
+        invoke(path, &quot;advance&quot;)
+        changed = inspect(path)
+        assert not invoke(path, &quot;approve&quot;, message=dict(old_message, id=&quot;late-copy&quot;))[&quot;accepted&quot;]
+        duplicate = invoke(path, &quot;approve&quot;, message=old_message)
+        assert duplicate[&quot;reason&quot;] == &quot;duplicate_signal&quot; and not duplicate[&quot;applies_current&quot;]
+        assert not inspect(path)[&quot;reports&quot;]
+        invoke(path, &quot;approve&quot;, message=message(changed, &quot;approve-v2&quot;))
+        invoke(path, &quot;advance&quot;)
+        result[&quot;changed_input&quot;] = {&quot;old_draft_total&quot;: before[&quot;state&quot;][&quot;draft&quot;][&quot;body&quot;][&quot;total&quot;],
+                                   &quot;new_draft_total&quot;: changed[&quot;state&quot;][&quot;draft&quot;][&quot;body&quot;][&quot;total&quot;],
+                                   &quot;old_duplicate&quot;: duplicate, &quot;done&quot;: inspect(path), &quot;oracle&quot;: independent_oracle(path)}
+        # External input is durable even if it arrives before the waiting state.
+        path = root/&quot;early-signal.sqlite&quot;
+        initialize(path, &quot;fixed&quot;, True, 0)
+        assert invoke(path, &quot;advance&quot;, stop_after_draft=1)[&quot;phase&quot;] == &quot;DRAFT_READY&quot;
+        invoke(path, &quot;approve&quot;, message=message(inspect(path), &quot;early&quot;))
+        invoke(path, &quot;advance&quot;)
+        result[&quot;early_signal&quot;] = {&quot;done&quot;: inspect(path), &quot;oracle&quot;: independent_oracle(path)}
+        for case, budget, attempts in [(&quot;no_progress&quot;, 3, 2), (&quot;budget&quot;, 1, 2)]:
+            path = root/(case + &quot;.sqlite&quot;)
+            initialize(path, &quot;adaptive&quot;, True, budget)
+            invoke(path, &quot;advance&quot;)
+            for _ in range(attempts):
+                invoke(path, &quot;propose&quot;, behavior=&quot;repeat&quot;)
+            snapshot = inspect(path)
+            assert snapshot[&quot;state&quot;][&quot;phase&quot;] == (&quot;STOPPED_NO_PROGRESS&quot; if case == &quot;no_progress&quot; else &quot;STOPPED_BUDGET&quot;)
+            assert not snapshot[&quot;reports&quot;]
+            result[case] = snapshot
+        path = root/&quot;invalid-plan.sqlite&quot;
+        initialize(path, &quot;adaptive&quot;, True, 3)
+        invoke(path, &quot;advance&quot;)
+        bad = invoke(path, &quot;propose&quot;, behavior=&quot;bad_order&quot;)
+        assert not bad[&quot;accepted&quot;] and bad[&quot;state&quot;][&quot;revision&quot;] == 1
+        result[&quot;invalid_plan&quot;] = {&quot;outcome&quot;: bad, &quot;snapshot&quot;: inspect(path)}
+        # Deliberately key the aggregate by step name alone. A valid new plan
+        # then reuses 37 from the older input and writes a wrong actual report.
+        path = root/&quot;wrong-cache.sqlite&quot;
+        initialize(path, &quot;adaptive&quot;, False, 3)
+        invoke(path, &quot;advance&quot;, bad_cache_key=1)
+        invoke(path, &quot;update_source&quot;)
+        invoke(path, &quot;advance&quot;, bad_cache_key=1)
+        invoke(path, &quot;propose&quot;, behavior=&quot;good&quot;)
+        invoke(path, &quot;advance&quot;, bad_cache_key=1)
+        invoke(path, &quot;approve&quot;, message=message(inspect(path), &quot;approve-wrong-draft&quot;))
+        invoke(path, &quot;advance&quot;, bad_cache_key=1)
+        wrong = inspect(path)
+        result[&quot;wrong_cache_key&quot;] = {&quot;done&quot;: wrong, &quot;oracle&quot;: independent_oracle(path)}
+        assert wrong[&quot;state&quot;][&quot;phase&quot;] == &quot;DONE&quot; and not independent_oracle(path)[&quot;accepted&quot;]
+        assert independent_oracle(path)[&quot;actual_total&quot;] == 37
+        # An independent check must also reject a changed source manifest.
+        original = root/&quot;adaptive.sqlite&quot;
+        path = root/&quot;corrupt-artifact.sqlite&quot;
+        with connect(original) as old, connect(path) as copied:
+            old.backup(copied)
+        with connect(path) as db:
+            report = json.loads(db.execute(&quot;SELECT body FROM reports&quot;).fetchone()[0])
+            report[&quot;manifest&quot;][1][&quot;sha256&quot;] = &quot;0&quot;*64
+            db.execute(&quot;UPDATE reports SET body=?&quot;, (canonical(report),))
+        result[&quot;corrupt_artifact&quot;] = independent_oracle(path)
+        assert not result[&quot;corrupt_artifact&quot;][&quot;accepted&quot;]
+    return {&quot;status&quot;: &quot;passed&quot;, &quot;sqlite&quot;: sqlite3.sqlite_version, &quot;cases&quot;: result,
+            &quot;scope&quot;: &quot;fresh real subprocesses and SQLite; scripted proposals; one transactional domain; no LLM, authentication service or framework SDK&quot;}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;command&quot;, nargs=&quot;?&quot;, default=&quot;run&quot;, choices=[&quot;run&quot;, &quot;init&quot;, &quot;inspect&quot;, &quot;approval_message&quot;, &quot;advance&quot;, &quot;propose&quot;, &quot;approve&quot;, &quot;update_source&quot;])
+    parser.add_argument(&quot;--db&quot;)
+    parser.add_argument(&quot;--behavior&quot;, default=&quot;good&quot;, choices=[&quot;good&quot;, &quot;repeat&quot;, &quot;bad_order&quot;])
+    parser.add_argument(&quot;--message&quot;, type=json.loads)
+    parser.add_argument(&quot;--stop-after-draft&quot;, type=int, default=0)
+    parser.add_argument(&quot;--bad-cache-key&quot;, type=int, default=0)
+    parser.add_argument(&quot;--mode&quot;, default=&quot;adaptive&quot;, choices=[&quot;adaptive&quot;, &quot;fixed&quot;])
+    parser.add_argument(&quot;--has-extra&quot;, type=int, default=1)
+    parser.add_argument(&quot;--budget&quot;, type=int, default=3)
+    parser.add_argument(&quot;--signal-id&quot;, default=&quot;approval-1&quot;)
+    parser.add_argument(&quot;--output-dir&quot;)
+    args = parser.parse_args()
+    if args.command == &quot;run&quot;:
+        output = run_scenarios(args.output_dir)
+    elif args.command == &quot;init&quot;:
+        initialize(args.db, args.mode, bool(args.has_extra), args.budget)
+        output = inspect(args.db)
+    elif args.command in [&quot;inspect&quot;, &quot;approval_message&quot;]:
+        snapshot = inspect(args.db)
+        output = snapshot if args.command == &quot;inspect&quot; else message(snapshot, args.signal_id)
+    else:
+        with connect(args.db) as db:
+            db.execute(&quot;BEGIN IMMEDIATE&quot;)
+            if args.command == &quot;advance&quot;:
+                output = advance(db, bool(args.stop_after_draft), bool(args.bad_cache_key))
+            elif args.command == &quot;propose&quot;:
+                output = propose(db, args.behavior)
+            elif args.command == &quot;approve&quot;:
+                output = approve(db, args.message)
+            else:
+                output = update_source(db)
+    print(json.dumps(output, ensure_ascii=False, indent=2))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div></details><details class="full-code"><summary>继续对照：原有多执行者接管程序与完整代码</summary><div class="code-block"><div class="code-toolbar"><span>Python 3.9+标准库；固定逻辑时钟与本地 SQLite <small>SH</small></span><button data-copy-code aria-label="复制 Python 3.9+标准库；固定逻辑时钟与本地SQLite">复制代码</button></div><pre tabindex="0"><code>python3 worker_fencing.py</code></pre></div><p>先预测三个结果：B 只改控制库时 A 的新键能否通过？B 安装后 A 仍活着能否通过？另一个进程提交后退出，C 沿原键重试会增加几个效果？运行后分别核对空窗负例、A/B 进程结果与 C 的 duplicate 回执，不把它们压成一个“恢复成功”。</p><details class="full-code"><summary>展开完整程序：两个持久化域、真实进程暂停、代际安装与回执恢复</summary><div class="code-block"><div class="code-toolbar"><span>worker_fencing.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 worker_fencing.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real local processes, SQLite receiver fencing and a separate crash/retry case.
 
 Logical lease time is injected for deterministic ordering. Fencing is enforced
 inside the effect receiver&#39;s transaction, not by a lease check in the worker.
@@ -365,7 +767,7 @@ def main():
 
 
 if __name__ == &#39;__main__&#39;:
-    main()</code></pre></div></details><p class="practice-links"><a href="labs/ai-agent-systems.zip" download>下载四程序、契约与验证记录 ↓</a><a href="labs/ai-agent-systems/worker_fencing.py" download>下载本例源码 ↓</a><a href="labs/ai-agent-systems/validation.json" target="_blank" rel="noopener">本次执行结果与源码摘要 ↗</a></p><p>这是本地 SQLite、固定可信身份夹具和注入逻辑时钟的机制实验，没有远端共识、真实授权服务或 Kairo 运行时。逻辑时钟让租约到期条件可重复，真实系统仍需处理时钟、网络与协调器失败。若外部接口不校验代际，运行时不能凭本地记录承诺旧写一定被挡住。</p></section><section class="article-section" id="section-10"><h2><span class="section-index">10</span>旧任务、升级和保留期一起验收</h2><p>做发布演练前先准备一组可重建的初始状态。记录任务标识、历史格式版本、工作流代码版本、目标资源旧版本和业务判分规则。把崩溃放到登记意图之前、接收方提交之后、任务库完成之后。每次从同一初始状态开始，否则第二次试验可能继承第一次留下的回执，误以为恢复更可靠。清理历史时也要说明任务还可能迟到多久。</p><p>两类记录尤其容易被混淆：调试日志可以采样并过期，任务事实则必须满足恢复的保存要求。屏幕上看到“发布成功”一行文本，无法代替接收方的对象版本和确认信息。反过来，恢复历史里存入完整报告正文会扩大隐私暴露面。可把正文放在受控对象存储，在历史里保存不可混淆的版本、摘要和受权限保护的引用，并验证引用在恢复期内仍可解读。</p><p>面试追问：如果接收方忘了旧回执，而任务历史仍允许三个月后重试，系统会怎样？画出两条保留期时间线。若幂等回执保留七天，三十天后的重试可能被当成新动作；不能只延长协调器的保留期。要么延长接收方回执，要么在过期边界停止自动写入并转入人工核对。用一个过期键的反例验证设计，比只承诺“我们会做幂等”更有说服力。</p><a class="inline-link" href="/article/agent-retrieval/">下一章：怎样为日报检索可核对的证据 →</a><p>把一次验收分成可重做的三层：先用旧历史恢复同一决定，再用单执行者提交间隙核对同一操作键，最后用活着的旧 <span class="first-concept-term" data-concept-term="worker">worker<span class="concept-term-meaning">（承担相应工作的执行者，具体可以是进程或其他运行单元）</span></span> 验证代际隔离。每层保留初始状态、故障动作和独立结果。这样修复某一层后可以重测对应边界，不会把一个成功截图当成所有保证。</p><details class="full-code"><summary>选读：独立的旧版字典练习（41/42 不是上面的进程实验）</summary><p>这份短练习只演示判断顺序，保留原源码与旧验证记录便于复核；没有持久化或并发。主线的 1→2→3 与真实进程结果以上节 worker_fencing.py 为准。</p><p>下面的小程序只模拟一个资源，假设接棒由权威服务先把当前代际从 41 安装为 42。乙发布，旧甲迟到，乙又尝试同一个动作。逐次写下预期结果，然后执行。例子把事务内的原子判断压缩成一次函数调用，方便观察条件。字典没有数据库的持久性，也没有并发提交协议，不能拿运行结果证明真实服务已经具备隔离保证。</p><div class="code-block"><div class="code-toolbar"><span>模拟接收方 · Python 3 标准库环境 <small>PYTHON</small></span><button data-copy-code aria-label="复制 模拟接收方 · Python 3 标准库环境">复制代码</button></div><pre tabindex="0"><code>generation = 42
+    main()</code></pre></div></details><p class="practice-links"><a href="labs/ai-agent-systems.zip" download>下载四程序、契约与验证记录 ↓</a><a href="labs/ai-agent-systems/worker_fencing.py" download>下载本例源码 ↓</a><a href="labs/ai-agent-systems/validation.json" target="_blank" rel="noopener">本次执行结果与源码摘要 ↗</a></p><p>这是本地 SQLite、固定可信身份夹具和注入逻辑时钟的机制实验，没有远端共识、真实授权服务或 Kairo 运行时。逻辑时钟让租约到期条件可重复，真实系统仍需处理时钟、网络与协调器失败。若外部接口不校验代际，运行时不能凭本地记录承诺旧写一定被挡住。</p></details></section><section class="article-section" id="section-10"><h2><span class="section-index">10</span>旧任务、升级和保留期一起验收</h2><p>做发布演练前先准备一组可重建的初始状态。记录任务标识、历史格式版本、工作流代码版本、目标资源旧版本和业务判分规则。把崩溃放到登记意图之前、接收方提交之后、任务库完成之后。每次从同一初始状态开始，否则第二次试验可能继承第一次留下的回执，误以为恢复更可靠。清理历史时也要说明任务还可能迟到多久。</p><p>两类记录尤其容易被混淆：调试日志可以采样并过期，任务事实则必须满足恢复的保存要求。屏幕上看到“发布成功”一行文本，无法代替接收方的对象版本和确认信息。反过来，恢复历史里存入完整报告正文会扩大隐私暴露面。可把正文放在受控对象存储，在历史里保存不可混淆的版本、摘要和受权限保护的引用，并验证引用在恢复期内仍可解读。</p><p>面试追问：如果接收方忘了旧回执，而任务历史仍允许三个月后重试，系统会怎样？画出两条保留期时间线。若幂等回执保留七天，三十天后的重试可能被当成新动作；不能只延长协调器的保留期。要么延长接收方回执，要么在过期边界停止自动写入并转入人工核对。用一个过期键的反例验证设计，比只承诺“我们会做幂等”更有说服力。</p><a class="inline-link" href="/article/agent-retrieval/">下一章：怎样为日报检索可核对的证据 →</a><p>把一次验收分成可重做的三层：先用旧历史恢复同一决定，再用单执行者提交间隙核对同一操作键，最后用活着的旧 <span class="first-concept-term" data-concept-term="worker">worker<span class="concept-term-meaning">（承担相应工作的执行者，具体可以是进程或其他运行单元）</span></span> 验证代际隔离。每层保留初始状态、故障动作和独立结果。这样修复某一层后可以重测对应边界，不会把一个成功截图当成所有保证。</p><details class="full-code"><summary>选读：独立的旧版字典练习（41/42 不是上面的进程实验）</summary><p>这份短练习只演示判断顺序，保留原源码与旧验证记录便于复核；没有持久化或并发。主线的 1→2→3 与真实进程结果以上节 worker_fencing.py 为准。</p><p>下面的小程序只模拟一个资源，假设接棒由权威服务先把当前代际从 41 安装为 42。乙发布，旧甲迟到，乙又尝试同一个动作。逐次写下预期结果，然后执行。例子把事务内的原子判断压缩成一次函数调用，方便观察条件。字典没有数据库的持久性，也没有并发提交协议，不能拿运行结果证明真实服务已经具备隔离保证。</p><div class="code-block"><div class="code-toolbar"><span>模拟接收方 · Python 3 标准库环境 <small>PYTHON</small></span><button data-copy-code aria-label="复制 模拟接收方 · Python 3 标准库环境">复制代码</button></div><pre tabindex="0"><code>generation = 42
 receipts = {}
 effects = []
 
@@ -383,7 +785,7 @@ assert publish(41, &quot;pub-28&quot;, &quot;old&quot;) == &quot;stale&quot;
 assert publish(42, &quot;pub-27&quot;, &quot;d4&quot;) == &quot;replayed&quot;
 assert publish(42, &quot;pub-27&quot;, &quot;d5&quot;) == &quot;conflict&quot;
 assert effects == [&quot;d4&quot;]
-print(effects)</code></pre></div><p>将过期检查移到写效果之后，旧甲虽然收到拒绝，目标已经受影响。将参数冲突检查去掉，乙复用了旧标识却拿到另一份草稿的成功回执。验收既要看函数返回，也要看效果列表、目标版本和回执绑定的参数。换成真实数据库时，约束检查、效果提交和回执写入要在同一受保护边界内完成，跨服务操作需另外设计协议。</p><p>先预测结果，再运行同一份代码核对。下面保留本次执行的输出，便于比较；环境与源码摘要在验证记录中。</p><p class="practice-links"><a href="labs/agent-foundations/durable-workflows.py" download>下载 durable-workflows.py ↓</a><a href="labs/textbooks/validation.json" target="_blank" rel="noopener">验证记录 ↗</a></p><details class="full-code"><summary>展开本次运行输出</summary><div class="code-block"><div class="code-toolbar"><span>实际输出 <small>TEXT</small></span><button data-copy-code aria-label="复制 实际输出">复制代码</button></div><pre tabindex="0"><code>[&#39;d4&#39;]</code></pre></div></details></details><p>闭卷回答：控制库当前 2、接收方仍 1，为什么不能宣布 A 已被隔离？接收方已安装 2 后，A 换新键为什么仍应拒绝？C 沿原键取到值 11 又证明了什么？三问分别对应安装空窗、旧写隔离、提交后去重。</p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/agent-recovery/">G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a>：单动作恢复进一步连接持久历史、重放和多执行者接管。</p><p><b>后续用途：</b><a href="/article/kairo-practice/">G10 Kairo 接入验收：任务、权限与结果证据</a>：适配器要兑现恢复和效果身份，而不是只返回一个成功字段。</p><a class="chapter-map-link" href="/module/agent/?concept=ag-recovery#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=agent#route-chapter-agent-durable-workflows">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>B已获代际2但未安装，旧A的新键一定被拒吗？安装后B提交值7；另一个进程提交值11后退出，C安装3并按原键核对，主进程再用代际3新写13，正式效果数与和是多少？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>安装前不保证拒绝；本地空窗负例允许旧A写，安装后才拒绝。正式实验三次效果为7、11、13，共3个、和31；C查询值11不增加效果。独立空窗负例不计入该合计。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="durable-workflows:0" >状态：由历史重建任务进度</label><label><input type="checkbox" data-check="durable-workflows:1" >恢复：区分重放、重试与对账</label><label><input type="checkbox" data-check="durable-workflows:2" >并发：推导持有者变更后的提交条件</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="durable-workflows">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.temporal.io/workflow-execution" target="_blank" rel="noopener noreferrer">Temporal · Workflow execution ↗</a><a href="https://docs.temporal.io/activity-definition" target="_blank" rel="noopener noreferrer">Temporal · Activity definition ↗</a><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite · Transactions ↗</a><a href="https://research.google/pubs/the-chubby-lock-service-for-loosely-coupled-distributed-systems/" target="_blank" rel="noopener noreferrer">Google Research · The Chubby lock service ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP 2025-11-25 · 请求取消 ↗</a><a href="https://docs.temporal.io/activity-execution#cancellation" target="_blank" rel="noopener noreferrer">Temporal · Activity取消与等待 ↗</a><a href="https://docs.temporal.io/workflow-definition" target="_blank" rel="noopener noreferrer">Temporal · 工作流确定性与代码变化 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-temporal-python"><div class="resource-meta"><span>英文 · 自学课程</span><span>Temporal University</span></div><h3><a href="https://learn.temporal.io/courses/temporal_101/python/" target="_blank" rel="noopener noreferrer">Temporal 101 with Python ↗</a></h3><p><b>先看什么</b>Workflow / Activity → 执行历史 → 失败恢复。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>写过调用外部 API 的 Python 后端。</p><p><b>学完检查</b>解释历史重放与外部效果去重各由哪一层保证。</p><p>说明页公开，进入完整课程需免费 LMS 账号；未核实登录后各节媒体。</p><div class="path-links"><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a><a href="/article/agent-recovery/">工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 →</a><a href="/article/agent-observability/">Agent 观测：任务、重试与成本归因 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><article class="resource-row" id="resource-context-engineering"><div class="resource-meta"><span>英文 · 工程文章</span><span>Anthropic</span></div><h3><a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener noreferrer">Effective context engineering ↗</a></h3><p><b>先看什么</b>长任务的压缩、结构化笔记与子任务策略。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>上下文预算，理解上下文与权威状态不同。</p><p><b>学完检查</b>压缩一份结果后，仍保留否定、版本与待确认状态。</p><p>公开免注册。</p><div class="path-links"><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/agent-retrieval/">检索与上下文：让答案有可验证的证据 →</a><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/agent-recovery/"><span>G4</span>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/agent-retrieval/"><span>G8</span>检索与上下文：让答案有可验证的证据<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="durable-workflows">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Agent Infra</p><a data-reading-direction="previous" href="/article/agent-evaluation/"><small>← 上一篇</small>G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a data-reading-direction="next" href="/article/agent-retrieval/"><small>下一篇 →</small>G8 检索与上下文：让答案有可验证的证据</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/durable-workflows/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/durable-workflows/#section-1">1. 把一份日报拆成可以恢复的承诺</a><a data-toc="section-2" href="/article/durable-workflows/#section-2">2. 历史写下事实，状态由事实推得</a><a data-toc="section-3" href="/article/durable-workflows/#section-3">3. 重放为什么不该再次询问模型</a><a data-toc="section-4" href="/article/durable-workflows/#section-4">4. 单执行者的提交间隙，先读两本账</a><a data-toc="section-5" href="/article/durable-workflows/#section-5">5. 接管先经过控制库，再经过效果接收方</a><a data-toc="section-6" href="/article/durable-workflows/#section-6">6. 把旧写隔离和业务去重放在同一事务里</a><a data-toc="section-7" href="/article/durable-workflows/#section-7">7. 三次观察，分别证明哪一个边界</a><a data-toc="section-8" href="/article/durable-workflows/#section-8">8. 等待、取消与超时怎样决定下一步</a><a data-toc="section-9" href="/article/durable-workflows/#section-9">9. 先预测，再执行已有的多进程程序</a><a data-toc="section-10" href="/article/durable-workflows/#section-10">10. 旧任务、升级和保留期一起验收</a><a data-toc="self-check" href="/article/durable-workflows/#self-check">自我检验</a><a data-toc="references" href="/article/durable-workflows/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+print(effects)</code></pre></div><p>将过期检查移到写效果之后，旧甲虽然收到拒绝，目标已经受影响。将参数冲突检查去掉，乙复用了旧标识却拿到另一份草稿的成功回执。验收既要看函数返回，也要看效果列表、目标版本和回执绑定的参数。换成真实数据库时，约束检查、效果提交和回执写入要在同一受保护边界内完成，跨服务操作需另外设计协议。</p><p>先预测结果，再运行同一份代码核对。下面保留本次执行的输出，便于比较；环境与源码摘要在验证记录中。</p><p class="practice-links"><a href="labs/agent-foundations/durable-workflows.py" download>下载 durable-workflows.py ↓</a><a href="labs/textbooks/validation.json" target="_blank" rel="noopener">验证记录 ↗</a></p><details class="full-code"><summary>展开本次运行输出</summary><div class="code-block"><div class="code-toolbar"><span>实际输出 <small>TEXT</small></span><button data-copy-code aria-label="复制 实际输出">复制代码</button></div><pre tabindex="0"><code>[&#39;d4&#39;]</code></pre></div></details></details><p>闭卷回答：控制库当前 2、接收方仍 1，为什么不能宣布 A 已被隔离？接收方已安装 2 后，A 换新键为什么仍应拒绝？C 沿原键取到值 11 又证明了什么？三问分别对应安装空窗、旧写隔离、提交后去重。</p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/agent-recovery/">G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a>：单动作恢复进一步连接持久历史、重放和多执行者接管。</p><p><b>后续用途：</b><a href="/article/kairo-practice/">G10 Kairo 接入验收：任务、权限与结果证据</a>：适配器要兑现恢复和效果身份，而不是只返回一个成功字段。</p><a class="chapter-map-link" href="/module/agent/?concept=ag-recovery#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=agent#route-chapter-agent-durable-workflows">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>B已获代际2但未安装，旧A的新键一定被拒吗？安装后B提交值7；另一个进程提交值11后退出，C安装3并按原键核对，主进程再用代际3新写13，正式效果数与和是多少？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>安装前不保证拒绝；本地空窗负例允许旧A写，安装后才拒绝。正式实验三次效果为7、11、13，共3个、和31；C查询值11不增加效果。独立空窗负例不计入该合计。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="durable-workflows:0" >状态：由历史重建任务进度</label><label><input type="checkbox" data-check="durable-workflows:1" >恢复：区分重放、重试与对账</label><label><input type="checkbox" data-check="durable-workflows:2" >并发：推导持有者变更后的提交条件</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="durable-workflows">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/durable-workflows/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.temporal.io/workflow-execution" target="_blank" rel="noopener noreferrer">Temporal · Workflow execution ↗</a><a href="https://docs.temporal.io/activity-definition" target="_blank" rel="noopener noreferrer">Temporal · Activity definition ↗</a><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite · Transactions ↗</a><a href="https://research.google/pubs/the-chubby-lock-service-for-loosely-coupled-distributed-systems/" target="_blank" rel="noopener noreferrer">Google Research · The Chubby lock service ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener noreferrer">MCP 2025-11-25 · 请求取消 ↗</a><a href="https://docs.temporal.io/activity-execution#cancellation" target="_blank" rel="noopener noreferrer">Temporal · Activity取消与等待 ↗</a><a href="https://docs.temporal.io/workflow-definition" target="_blank" rel="noopener noreferrer">Temporal · 工作流确定性与代码变化 ↗</a><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer">LangGraph：持久中断与节点恢复规则 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-temporal-python"><div class="resource-meta"><span>英文 · 自学课程</span><span>Temporal University</span></div><h3><a href="https://learn.temporal.io/courses/temporal_101/python/" target="_blank" rel="noopener noreferrer">Temporal 101 with Python ↗</a></h3><p><b>先看什么</b>Workflow / Activity → 执行历史 → 失败恢复。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>写过调用外部 API 的 Python 后端。</p><p><b>学完检查</b>解释历史重放与外部效果去重各由哪一层保证。</p><p>说明页公开，进入完整课程需免费 LMS 账号；未核实登录后各节媒体。</p><div class="path-links"><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a><a href="/article/agent-recovery/">工具已经执行，任务却没完成：持久化、幂等与崩溃恢复 →</a><a href="/article/agent-observability/">Agent 观测：任务、重试与成本归因 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><article class="resource-row" id="resource-context-engineering"><div class="resource-meta"><span>英文 · 工程文章</span><span>Anthropic</span></div><h3><a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener noreferrer">Effective context engineering ↗</a></h3><p><b>先看什么</b>长任务的压缩、结构化笔记与子任务策略。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>上下文预算，理解上下文与权威状态不同。</p><p><b>学完检查</b>压缩一份结果后，仍保留否定、版本与待确认状态。</p><p>公开免注册。</p><div class="path-links"><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/agent-retrieval/">检索与上下文：让答案有可验证的证据 →</a><a href="/article/durable-workflows/">持久工作流：事件重放、接管与提交 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/agent-recovery/"><span>G4</span>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/agent-retrieval/"><span>G8</span>检索与上下文：让答案有可验证的证据<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="durable-workflows">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Agent Infra</p><a data-reading-direction="previous" href="/article/agent-evaluation/"><small>← 上一篇</small>G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a data-reading-direction="next" href="/article/agent-retrieval/"><small>下一篇 →</small>G8 检索与上下文：让答案有可验证的证据</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/durable-workflows/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/durable-workflows/#section-1">1. 把一份日报拆成可以恢复的承诺</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-3htvho" href="/article/durable-workflows/#subsection-1-3htvho">固定工作流先覆盖已知分支，动态计划处理新的安排</a><a class="chapter-toc-level-3" data-toc="subsection-1-z363qn" href="/article/durable-workflows/#subsection-1-z363qn">执行请求和完成事实，要用两种记录表达</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/durable-workflows/#section-2">2. 历史写下事实，状态由事实推得</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-1pgk1ak" href="/article/durable-workflows/#subsection-2-1pgk1ak">状态可以由有序历史重建</a><a class="chapter-toc-level-3" data-toc="subsection-2-u7tby" href="/article/durable-workflows/#subsection-2-u7tby">重放重新走决定，已完成结果不重新取样</a><a class="chapter-toc-level-3" data-toc="subsection-2-1cfmvg2" href="/article/durable-workflows/#subsection-2-1cfmvg2">计划版本管未来，输入身份决定事实能否复用</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/durable-workflows/#section-3">3. 重放为什么不该再次询问模型</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-ueacvx" href="/article/durable-workflows/#subsection-3-ueacvx">同一任务，要生成与历史相容的命令序列</a><a class="chapter-toc-level-3" data-toc="subsection-3-1amsab8" href="/article/durable-workflows/#subsection-3-1amsab8">两种退出位置，为什么会恢复出不同结果</a><a class="chapter-toc-level-3" data-toc="v43-history-practice" href="/article/durable-workflows/#v43-history-practice">运行并检查中间结果</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/durable-workflows/#section-4">4. 单执行者的提交间隙，先读两本账</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/durable-workflows/#section-5">5. 接管先经过控制库，再经过效果接收方</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/durable-workflows/#section-6">6. 把旧写隔离和业务去重放在同一事务里</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/durable-workflows/#section-7">7. 三次观察，分别证明哪一个边界</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/durable-workflows/#section-8">8. 等待、取消与超时怎样决定下一步</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-8-mctg3k" href="/article/durable-workflows/#subsection-8-mctg3k">先按已有事实推进，再决定是否需要重规划</a><a class="chapter-toc-level-3" data-toc="subsection-8-19qsp4l" href="/article/durable-workflows/#subsection-8-19qsp4l">批准的是这份内容，不能只批准一个任务名</a><a class="chapter-toc-level-3" data-toc="subsection-8-1hxbx9c" href="/article/durable-workflows/#subsection-8-1hxbx9c">次数、截止时间与取消，继续约束整个任务</a><a class="chapter-toc-level-3" data-toc="subsection-8-1ugi1r3" href="/article/durable-workflows/#subsection-8-1ugi1r3">取消分支结束，也要追踪执行者与原操作</a></div></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/durable-workflows/#section-9">9. 先预测，再执行已有的多进程程序</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="agent-planning-run" href="/article/durable-workflows/#agent-planning-run">把42这份报告，从来源一直追到实际产物</a><a class="chapter-toc-level-3" data-toc="subsection-9-62i94t" href="/article/durable-workflows/#subsection-9-62i94t">最值得核对的反例：状态完成，报告却仍是37</a></div></div><div class="chapter-toc-section"><a data-toc="section-10" href="/article/durable-workflows/#section-10">10. 旧任务、升级和保留期一起验收</a></div><a data-toc="self-check" href="/article/durable-workflows/#self-check">自我检验</a><a data-toc="references" href="/article/durable-workflows/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
 <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

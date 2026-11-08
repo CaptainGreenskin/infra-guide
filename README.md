@@ -13,11 +13,13 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前75章：Cloud 33、AI 29、Agent 10、综合实战3；34个完整实验包、74项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前75章：Cloud 33、AI 29、Agent 10、综合实战3；37个完整实验包、77项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+
+本轮[把机制接到真实实现](docs/ITERATION_2026-11-08_IMPLEMENTATION_BRIDGES.md)：云网络沿两段连接、排空和重试走到HTTP代理；推理沿物理块、引用和写时复制走到真实CPU注意力；工作流沿计划、事实、等待和审批走到新进程恢复。三个实验均有独立结果检查、失败对照、图解和完整源码。长章节的桌面、手机目录支持正文小节定位，保留旧锚点和岗位路线。
 
 训练并行章另有[双进程手工分片实验](https://captaingreenskin.github.io/infra-guide/article/distributed-training/#manual-sharding-run)：三个更新逐项对照独立完整批次的梯度、参数和SGD动量，并保留错误分母的失败对照。它实际运行CPU/Gloo，不把手工算法写成FSDP或GPU显存实测。
 
-本轮[深化容量、Roofline与Agent观测](docs/ITERATION_2026-11-08_SYSTEM_BUDGETS.md)，先把对象、单位和因果讲清，再跟读原有程序；补四张图并重放本地实战，保留各环境验证边界。
+上一轮[深化容量、Roofline与Agent观测](docs/ITERATION_2026-11-08_SYSTEM_BUDGETS.md)，先把对象、单位和因果讲清，再跟读原有程序；补四张图并重放本地实战，保留各环境验证边界。
 
 前一轮[精修三章正文](docs/ITERATION_2026-11-08_CAUSAL_WALKTHROUGHS.md)：沿同一组输入讲清SLO事件与预算、GPU执行和计时、Agent状态与记忆，再跟读已有完整实验。新增四种图解、两段标准库算例；保留已发布代码与真实环境边界。
 
@@ -86,7 +88,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的109个页面（108个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的116个页面（115个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 

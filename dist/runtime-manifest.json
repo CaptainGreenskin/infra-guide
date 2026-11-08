@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 168,
+  "canonical_script_count": 172,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "a13d62f87b8216f6f01bd9bf0a7c3cdbf7cc7d9fa85482326a2b8be88cbba0ba",
-      "bytes": 383599,
+      "sha256": "3dd3d89a86a4ae09c8d8d10c08113207a5f6c081f88edfae163412ce2a8f8754",
+      "bytes": 384101,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "97705e71ea9c383cbd2ec519472a5839bfd2989e81a598b28fcebfce6fe0ec9a",
-          "bytes": 11643
+          "sha256": "bce5bc7cb639bfd2c5497e84a961ced6ea6fd762698c8df57def41aa08fc92d1",
+          "bytes": 12145
         },
         {
           "file": "manual-sharding-data.js",
@@ -336,8 +336,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "cf4251309b9e20abc2ced1b6774c457428dbae3ddc787b3b398f7d6e50f8df41",
-      "bytes": 335125,
+      "sha256": "0ee1e24149927256d5050213f6e9c34f06131204523cea2cde224f8ec85e59ba",
+      "bytes": 335042,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -366,8 +366,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "795d780e1d101b54ad37ba55178b4f84d60e759966f9096eb2ecfda15382fb98",
-          "bytes": 18448
+          "sha256": "f2c2c990e523033f50421db7296998efe3542c71a1f9abc8a35d0a2f466162e3",
+          "bytes": 18365
         },
         {
           "file": "interview-practice.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "0cc94bcd496fc3243f89920ffc403a82b1a5a20b7f4a6d7825cb8228ec468ecf",
-      "bytes": 1240021,
+      "sha256": "46dd8e987c064715dc8d3a01c747d7dc3b91f99770d7e12b81080e35e9e19b4b",
+      "bytes": 1355447,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -819,6 +819,21 @@
           "bytes": 27114
         },
         {
+          "file": "cloud-proxy-bridge.js",
+          "sha256": "40fd37b412dc799a205b16adc440aa4bae5186e01978ffc26ac0787600344099",
+          "bytes": 39509
+        },
+        {
+          "file": "inference-cache-bridge.js",
+          "sha256": "3be85d2c66c20392f6a77b57361cdbe3245413bab8508df4910dcaabdfd90fb0",
+          "bytes": 30905
+        },
+        {
+          "file": "agent-planning-bridge.js",
+          "sha256": "60d1224a647b5506ced0fda1638b4e18647781605a95a5ef7653e4f889ab5def",
+          "bytes": 39991
+        },
+        {
           "file": "concept-paths-data.js",
           "sha256": "2301c7c39f6498302f3df73ad4a093da1afd9cca0dd3b419ef5a2b6f57286e3f",
           "bytes": 74664
@@ -865,8 +880,13 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "3d094e22a746b302b59eaba077afc61e15297d6a4cebdd9d8dfd939d7ccb83b4",
-          "bytes": 44798
+          "sha256": "fbd4178c9d83b51031100318a02b5c84db8f65318c0b6497359c1184c02d97fe",
+          "bytes": 46998
+        },
+        {
+          "file": "chapter-navigation.js",
+          "sha256": "9f1da2f49f5f11a53cec239b2409750e22b1f487053b911bd89cdfd4ebdefa20",
+          "bytes": 2698
         }
       ]
     }
@@ -874,8 +894,8 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "f0d8afeee5c01261ff407d74bde5f14dfa16229c96b472a6fea6f7c4fc70dd8c",
-      "bytes": 12403
+      "sha256": "957da22bcd26c07b0029190e73d396e77afdf0c1501adaa992eccdae145bb7c9",
+      "bytes": 12839
     },
     {
       "file": "site-search.js",
@@ -884,8 +904,8 @@
     },
     {
       "file": "app.js",
-      "sha256": "e59eb47bddf5e09fc7c2df59bd37296f3c47721affabb3e946a194f2bfdba41b",
-      "bytes": 18060
+      "sha256": "7e5cc054c4aa9a55b776582c7f6558d23ac37097dda11291326b3f91952da8ba",
+      "bytes": 18017
     }
   ]
 }

@@ -1,0 +1,1135 @@
+{
+  "checked_on": "2026-11-08",
+  "status": "passed",
+  "environment": {
+    "python": "3.9.6",
+    "implementation": "standard-library CPU scalar attention"
+  },
+  "source_sha256": {
+    "README.md": "9bca1310fd07c1429f1fd1be187f7e94b30a3d001493d0622f0e8e17b2e59238",
+    "contracts.json": "c1cd95766bf10848c73d669b5ed2e2580395877c5012585072a8ba2179c0ac48",
+    "paged_cache.py": "a54d10cb8b1260e1a412d45b23e053d94dce3b1aeef17326b725241923a2bed3"
+  },
+  "result": {
+    "pressure": {
+      "block_size": 4,
+      "pool_blocks": 4,
+      "trace": [
+        {
+          "event": "A与B共享完整前缀",
+          "requests": {
+            "A": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "output": 0.41989627258244244,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            "B": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "output": 0.5058968747954591,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ]
+            }
+          },
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 1,
+              "refs": 2,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 1,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 2,
+              "generation": 1,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 3,
+              "generation": 0,
+              "refs": 0,
+              "positions": 0,
+              "cached": false
+            }
+          ],
+          "computed_positions": 8,
+          "reused_positions": 4,
+          "copies": 0,
+          "evicted_cached_blocks": 0
+        },
+        {
+          "event": "C追加前先复制共享尾块",
+          "requests": {
+            "A": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "output": 0.41989627258244244,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            "B": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "output": 0.5058968747954591,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ]
+            },
+            "C": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "output": 0.5180996830646696,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  3,
+                  1
+                ]
+              ]
+            }
+          },
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 1,
+              "refs": 3,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 1,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 2,
+              "generation": 1,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 3,
+              "generation": 1,
+              "refs": 1,
+              "positions": 3,
+              "cached": false
+            }
+          ],
+          "computed_positions": 9,
+          "reused_positions": 4,
+          "copies": 1,
+          "evicted_cached_blocks": 0
+        },
+        {
+          "event": "B释放后物理槽重用，旧句柄失效",
+          "requests": {
+            "A": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "output": 0.41989627258244244,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            "C": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "output": 0.5180996830646696,
+              "blocks": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  3,
+                  1
+                ]
+              ]
+            },
+            "D": {
+              "tokens": [
+                9,
+                9,
+                9,
+                9
+              ],
+              "output": 1.5426187128470252,
+              "blocks": [
+                [
+                  2,
+                  2
+                ]
+              ]
+            }
+          },
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 1,
+              "refs": 2,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 1,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 2,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 3,
+              "generation": 1,
+              "refs": 1,
+              "positions": 3,
+              "cached": false
+            }
+          ],
+          "computed_positions": 13,
+          "reused_positions": 4,
+          "copies": 1,
+          "evicted_cached_blocks": 0
+        },
+        {
+          "event": "缓存引用归零后才可逐出",
+          "requests": {
+            "D": {
+              "tokens": [
+                9,
+                9,
+                9,
+                9,
+                9,
+                9,
+                9,
+                9
+              ],
+              "output": 1.5219595798949466,
+              "blocks": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  1,
+                  2
+                ]
+              ]
+            },
+            "E": {
+              "tokens": [
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8
+              ],
+              "output": 1.3493732702116275,
+              "blocks": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  0,
+                  2
+                ]
+              ]
+            }
+          },
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 2,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 3,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            }
+          ],
+          "computed_positions": 25,
+          "reused_positions": 4,
+          "copies": 1,
+          "evicted_cached_blocks": 1
+        },
+        {
+          "event": "恢复A需要重算已逐出的前缀",
+          "requests": {
+            "E": {
+              "tokens": [
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8,
+                8
+              ],
+              "output": 1.3493732702116275,
+              "blocks": [
+                [
+                  3,
+                  2
+                ],
+                [
+                  0,
+                  2
+                ]
+              ]
+            },
+            "A-restored": {
+              "tokens": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "output": 0.41989627258244244,
+              "blocks": [
+                [
+                  2,
+                  3
+                ],
+                [
+                  1,
+                  3
+                ]
+              ]
+            }
+          },
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 3,
+              "refs": 1,
+              "positions": 2,
+              "cached": false
+            },
+            {
+              "slot": 2,
+              "generation": 3,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 3,
+              "generation": 2,
+              "refs": 1,
+              "positions": 4,
+              "cached": true
+            }
+          ],
+          "computed_positions": 31,
+          "reused_positions": 4,
+          "copies": 1,
+          "evicted_cached_blocks": 3
+        },
+        {
+          "event": "全部完成后没有活动引用",
+          "requests": {},
+          "physical": [
+            {
+              "slot": 0,
+              "generation": 2,
+              "refs": 0,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 1,
+              "generation": 3,
+              "refs": 0,
+              "positions": 0,
+              "cached": false
+            },
+            {
+              "slot": 2,
+              "generation": 3,
+              "refs": 0,
+              "positions": 4,
+              "cached": true
+            },
+            {
+              "slot": 3,
+              "generation": 2,
+              "refs": 0,
+              "positions": 4,
+              "cached": true
+            }
+          ],
+          "computed_positions": 31,
+          "reused_positions": 4,
+          "copies": 1,
+          "evicted_cached_blocks": 3
+        }
+      ],
+      "rejected": "all_blocks_referenced",
+      "stale_handle": "stale_generation",
+      "restored_computed_positions": 6,
+      "final_active_references": 0
+    },
+    "identities": {
+      "wrong_block_tokens_only_output_error": 0.20677923789449304,
+      "adapter_changed_reused_positions": 0,
+      "adapter_changed_computed_positions": 5
+    },
+    "cow_exhaustion": {
+      "error": "all_blocks_referenced",
+      "unchanged_snapshot": {
+        "event": "before",
+        "requests": {
+          "A": {
+            "tokens": [
+              1,
+              2
+            ],
+            "output": 0.21779579419280887,
+            "blocks": [
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "C": {
+            "tokens": [
+              1,
+              2
+            ],
+            "output": 0.21779579419280887,
+            "blocks": [
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        },
+        "physical": [
+          {
+            "slot": 0,
+            "generation": 1,
+            "refs": 2,
+            "positions": 2,
+            "cached": false
+          }
+        ],
+        "computed_positions": 2,
+        "reused_positions": 0,
+        "copies": 0,
+        "evicted_cached_blocks": 0
+      },
+      "final_active_references": 0
+    },
+    "schedulers": [
+      {
+        "policy": "prefill-first",
+        "work_positions": 20,
+        "iterations": 12,
+        "A_output_iterations": [
+          0,
+          9,
+          10,
+          11
+        ],
+        "A_max_output_gap": 9,
+        "B81_first_output_wait": 0,
+        "requests": {
+          "B10": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              1
+            ]
+          },
+          "B11": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              1
+            ]
+          },
+          "B20": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              2
+            ]
+          },
+          "B21": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              2
+            ]
+          },
+          "B30": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              3
+            ]
+          },
+          "B31": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              3
+            ]
+          },
+          "B40": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              4
+            ]
+          },
+          "B41": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              4
+            ]
+          },
+          "B50": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              5
+            ]
+          },
+          "B51": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              5
+            ]
+          },
+          "B60": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              6
+            ]
+          },
+          "B61": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              6
+            ]
+          },
+          "B70": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              7
+            ]
+          },
+          "B71": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              7
+            ]
+          },
+          "B80": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              8
+            ]
+          },
+          "B81": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              8
+            ]
+          },
+          "A": {
+            "outputs": [
+              4,
+              10,
+              3,
+              10
+            ],
+            "events": [
+              0,
+              9,
+              10,
+              11
+            ]
+          }
+        },
+        "completed_requests": 17,
+        "trace": [
+          {
+            "iteration": 0,
+            "processed": [
+              "A"
+            ],
+            "emitted": [
+              "A"
+            ]
+          },
+          {
+            "iteration": 1,
+            "processed": [
+              "B10",
+              "B11"
+            ],
+            "emitted": [
+              "B10",
+              "B11"
+            ]
+          },
+          {
+            "iteration": 2,
+            "processed": [
+              "B20",
+              "B21"
+            ],
+            "emitted": [
+              "B20",
+              "B21"
+            ]
+          },
+          {
+            "iteration": 3,
+            "processed": [
+              "B30",
+              "B31"
+            ],
+            "emitted": [
+              "B30",
+              "B31"
+            ]
+          },
+          {
+            "iteration": 4,
+            "processed": [
+              "B40",
+              "B41"
+            ],
+            "emitted": [
+              "B40",
+              "B41"
+            ]
+          },
+          {
+            "iteration": 5,
+            "processed": [
+              "B50",
+              "B51"
+            ],
+            "emitted": [
+              "B50",
+              "B51"
+            ]
+          },
+          {
+            "iteration": 6,
+            "processed": [
+              "B60",
+              "B61"
+            ],
+            "emitted": [
+              "B60",
+              "B61"
+            ]
+          },
+          {
+            "iteration": 7,
+            "processed": [
+              "B70",
+              "B71"
+            ],
+            "emitted": [
+              "B70",
+              "B71"
+            ]
+          },
+          {
+            "iteration": 8,
+            "processed": [
+              "B80",
+              "B81"
+            ],
+            "emitted": [
+              "B80",
+              "B81"
+            ]
+          },
+          {
+            "iteration": 9,
+            "processed": [
+              "A"
+            ],
+            "emitted": [
+              "A"
+            ]
+          },
+          {
+            "iteration": 10,
+            "processed": [
+              "A"
+            ],
+            "emitted": [
+              "A"
+            ]
+          },
+          {
+            "iteration": 11,
+            "processed": [
+              "A"
+            ],
+            "emitted": [
+              "A"
+            ]
+          }
+        ]
+      },
+      {
+        "policy": "round-robin",
+        "work_positions": 20,
+        "iterations": 11,
+        "A_output_iterations": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "A_max_output_gap": 2,
+        "B81_first_output_wait": 2,
+        "requests": {
+          "B10": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              1
+            ]
+          },
+          "B11": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              2
+            ]
+          },
+          "B20": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              3
+            ]
+          },
+          "B21": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              3
+            ]
+          },
+          "A": {
+            "outputs": [
+              4,
+              10,
+              3,
+              10
+            ],
+            "events": [
+              0,
+              1,
+              2,
+              4
+            ]
+          },
+          "B30": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              4
+            ]
+          },
+          "B31": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              5
+            ]
+          },
+          "B40": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              5
+            ]
+          },
+          "B41": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              6
+            ]
+          },
+          "B50": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              6
+            ]
+          },
+          "B51": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              7
+            ]
+          },
+          "B60": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              7
+            ]
+          },
+          "B61": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              8
+            ]
+          },
+          "B70": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              8
+            ]
+          },
+          "B71": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              9
+            ]
+          },
+          "B80": {
+            "outputs": [
+              7
+            ],
+            "events": [
+              9
+            ]
+          },
+          "B81": {
+            "outputs": [
+              10
+            ],
+            "events": [
+              10
+            ]
+          }
+        },
+        "completed_requests": 17,
+        "trace": [
+          {
+            "iteration": 0,
+            "processed": [
+              "A"
+            ],
+            "emitted": [
+              "A"
+            ]
+          },
+          {
+            "iteration": 1,
+            "processed": [
+              "A",
+              "B10"
+            ],
+            "emitted": [
+              "A",
+              "B10"
+            ]
+          },
+          {
+            "iteration": 2,
+            "processed": [
+              "B11",
+              "A"
+            ],
+            "emitted": [
+              "B11",
+              "A"
+            ]
+          },
+          {
+            "iteration": 3,
+            "processed": [
+              "B20",
+              "B21"
+            ],
+            "emitted": [
+              "B20",
+              "B21"
+            ]
+          },
+          {
+            "iteration": 4,
+            "processed": [
+              "A",
+              "B30"
+            ],
+            "emitted": [
+              "A",
+              "B30"
+            ]
+          },
+          {
+            "iteration": 5,
+            "processed": [
+              "B31",
+              "B40"
+            ],
+            "emitted": [
+              "B31",
+              "B40"
+            ]
+          },
+          {
+            "iteration": 6,
+            "processed": [
+              "B41",
+              "B50"
+            ],
+            "emitted": [
+              "B41",
+              "B50"
+            ]
+          },
+          {
+            "iteration": 7,
+            "processed": [
+              "B51",
+              "B60"
+            ],
+            "emitted": [
+              "B51",
+              "B60"
+            ]
+          },
+          {
+            "iteration": 8,
+            "processed": [
+              "B61",
+              "B70"
+            ],
+            "emitted": [
+              "B61",
+              "B70"
+            ]
+          },
+          {
+            "iteration": 9,
+            "processed": [
+              "B71",
+              "B80"
+            ],
+            "emitted": [
+              "B71",
+              "B80"
+            ]
+          },
+          {
+            "iteration": 10,
+            "processed": [
+              "B81"
+            ],
+            "emitted": [
+              "B81"
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "actual scalar CPU attention and block allocation; iterations are not GPU time"
+  },
+  "negative_probe": {
+    "flag": "--unsafe-shared-write",
+    "exit_code": 1,
+    "oracle": "cached_cell_differs_from_full_prefix"
+  },
+  "scope": "Actual CPU cache allocation and numerical execution, not GPU throughput or a production vLLM implementation."
+}

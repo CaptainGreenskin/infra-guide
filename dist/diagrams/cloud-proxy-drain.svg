@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="700" viewBox="0 0 1120 700" role="img" aria-labelledby="title desc">
+<title id="title">排空看先后顺序，不只看一个健康状态</title><desc id="desc">B 已接收旧请求。停止向 B 分配后，新请求发给 A 并先完成，旧请求随后放行并完成，B 在途归零后关闭连接。</desc>
+<metadata>{&quot;drain_active&quot;: 1, &quot;drained_connection&quot;: &quot;B-c1&quot;, &quot;held&quot;: &quot;drain-held&quot;, &quot;held_backend&quot;: &quot;B&quot;, &quot;new&quot;: &quot;drain-new&quot;, &quot;new_backend&quot;: &quot;A&quot;}</metadata>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#315bc9"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#1e2b43}.title{font-size:30px;font-weight:700}.head{font-size:24px;font-weight:650}.copy{font-size:21px}.small{font-size:19px;fill:#526580}.mono{font-family:ui-monospace,SFMono-Regular,monospace;font-size:21px}.line{stroke:#315bc9;stroke-width:3;fill:none;marker-end:url(#arrow)}.box{fill:#fff;stroke:#ced9ec;stroke-width:2}</style>
+<rect width="1120" height="700" rx="18" fill="#f6f9fe"/>
+
+<text class="title" x="42" y="54">排空看先后顺序，不只看一个健康状态</text>
+<text class="small" x="42" y="89">与运行事件一一对应；纵向仅表示先后，不表示固定毫秒数。</text>
+<text class="head" x="223" y="143">P：分配与连接池</text>
+<text class="head" x="609" y="143">A</text>
+<text class="head" x="914" y="143">B</text>
+<path d="M340 168 V580 M625 168 V580 M930 168 V580" stroke="#c3cfe0" stroke-width="2" stroke-dasharray="5 6"/>
+<rect x="891" y="185" width="78" height="352" rx="12" fill="#fff0d5" stroke="#d69a36" stroke-width="2"/>
+<text class="small" x="44" y="212">① 旧请求</text>
+<path class="line" d="M350 205 H878"/>
+<text class="mono" x="476" y="193">drain-held → B-c1</text>
+<text class="small" x="978" y="237">已接收</text>
+<rect x="187" y="256" width="326" height="77" rx="10" fill="#eaf0ff" stroke="#b4c5e8"/>
+<text class="copy" x="207" y="285">② B 停止接收新工作</text>
+<text class="mono" x="207" y="315">active=1，旧请求继续</text>
+<path class="line" d="M350 376 H614"/>
+<text class="mono" x="356" y="363">③ drain-new → A-c1</text>
+<path class="line" d="M614 409 H350"/>
+<text class="copy" x="420" y="442">A 先返回 200</text>
+<text class="small" x="978" y="405">仍等待</text>
+<path class="line" d="M881 498 H350"/>
+<text class="copy" x="449" y="485">④ 放行 B，旧请求返回 200</text>
+<rect x="187" y="540" width="615" height="55" rx="10" fill="#e8f5ed" stroke="#a3c8b0"/>
+<text class="copy" x="209" y="576">⑤ B 在途归零 → 关闭 B-c1 → 排空完成</text>
+<rect x="42" y="617" width="1036" height="48" rx="10" fill="#fff" stroke="#d7e1ef"/>
+<text class="small" x="65" y="648">即使池里还有 B 的连接，新工作仍需先检查 B 是否合格；资格与连接是两个对象。</text>
+</svg>

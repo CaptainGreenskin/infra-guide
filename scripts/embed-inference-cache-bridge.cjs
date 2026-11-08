@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(__dirname,'..');
+const source=fs.readFileSync(path.join(root,'dist/labs/inference-cache/paged_cache.py'),'utf8');
+const file=path.join(root,'dist/inference-cache-bridge.js');
+let text=fs.readFileSync(file,'utf8');
+const start='// INFERENCE_CACHE_SOURCE_START',end='// INFERENCE_CACHE_SOURCE_END';
+if(!text.includes(start)||!text.includes(end))throw Error('Missing source markers');
+text=text.slice(0,text.indexOf(start))+start+'\nconst inferenceCacheSource = '+JSON.stringify(source)+';\n'+text.slice(text.indexOf(end));
+fs.writeFileSync(file,text);
+console.log('Embedded complete physical cache source.');

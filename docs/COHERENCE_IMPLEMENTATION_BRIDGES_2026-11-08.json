@@ -1,0 +1,280 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "b06a0633d54a0ecfad39e6e3d55850a0caa0d36e",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_WHOLE_SITE_2026-11-08.json": "bea36d3647ea589ec65ef3becbd0453d3283fc90825c434b7150fe31a6f40012",
+    "docs/COHERENCE_PUBLICATION_METADATA_2026-11-08.json": "fdbd2abf26ad77e4ccbed848d88ee70f11832e9ff9a3fbe00238a82e9947605d",
+    "docs/CONTENT_READING_2026-11-08.json": "40847d62a8443b12387fec8a55525c86aefe177ea77e2d161f40ebb8dc472a34"
+  },
+  "source_revisions": {
+    "dist/agent-planning-bridge.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "60d1224a647b5506ced0fda1638b4e18647781605a95a5ef7653e4f889ab5def",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/app.js": {
+      "previous_sha256": "e59eb47bddf5e09fc7c2df59bd37296f3c47721affabb3e946a194f2bfdba41b",
+      "reviewed_sha256": "7e5cc054c4aa9a55b776582c7f6558d23ac37097dda11291326b3f91952da8ba",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/chapter-navigation.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9f1da2f49f5f11a53cec239b2409750e22b1f487053b911bd89cdfd4ebdefa20",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/cloud-proxy-bridge.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "40fd37b412dc799a205b16adc440aa4bae5186e01978ffc26ac0787600344099",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/agent-planning-approval-versions.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e0e20c163b9d069bf486f52706b0529d8143916aae9ea570e641fec4152f4a35",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/agent-planning-plan-facts.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c6be37fda479112bd35b08ff2bfd17bd94d994d63f5c074d686e63b4ae0460f8",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/agent-planning-wait-states.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1bf8f284b071b5d6257de5656d93e4eec53d35ed0ed0a1646144cf522ee4392a",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/cloud-proxy-drain.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9394ce07d3f1a508f5c23cc23cb1fa98b26993c1f15a3e81c37fb9eabc7004cd",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/cloud-proxy-two-legs.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1cf1e737aeb08eca69f2faa190c78f99bbc72b759c5be02d7f7f0553386abb0f",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/inference-cache-blocks.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a9031791ccf934a70fe54e3521f75ed9e72db253b893cf07f794582ee723dd38",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/inference-cache-fairness.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "65f83390813514480df450386b0807f3afcea526f6a730f0e7fa278d662a2696",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/diagrams/inference-cache-lifecycle.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ab1d326ec0116b7bd24eac8b40a4ddbd0abeb37e7958b7736d0c1182239e0bb6",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/inference-cache-bridge.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3be85d2c66c20392f6a77b57361cdbe3245413bab8508df4910dcaabdfd90fb0",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "3d094e22a746b302b59eaba077afc61e15297d6a4cebdd9d8dfd939d7ccb83b4",
+      "reviewed_sha256": "fbd4178c9d83b51031100318a02b5c84db8f65318c0b6497359c1184c02d97fe",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/agent-planning.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "743bdeec9774e469d43e6e23d16457b17e0adb2b6f236dcf27b0878ad5576a9a",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/agent-planning/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "81dce8ca288a0534f6f9bbeb65f41c4716dbd8e53c9542ab24b535055f34d749",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/agent-planning/planning_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fbd382bf19b535fe5b5d5da56f4f7382f50a91b2ef1fd65f8fec4f9766f276b4",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/agent-planning/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "58ecfaee8117b94d583a16bb90a5d5fd0591e84aa17d1fbf09ce0226731847e7",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/cloud-proxy.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "38b1b5c5b6dd2cb879ae1592227d9c67efdb52fe789b02d56c0cac11d7c15f81",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/cloud-proxy/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d110dc0aa78b0bafa97b24c4f627719b82d49a60218dd622e6fada36ee5c5a58",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/cloud-proxy/proxy_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1131614fc24f29faf5b006ca5fa2916d42c72aeadb3faa927035c372e6d109fd",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/cloud-proxy/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "baf6b26a2ecfd64dde47893a2b945d104e39968dab3dfb97286196e4d6484091",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/inference-cache.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "79c4c65547c01f29fab63cbb0f46360d08272369aa53ab1fc64af13e2a3be9fd",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/inference-cache/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9bca1310fd07c1429f1fd1be187f7e94b30a3d001493d0622f0e8e17b2e59238",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/inference-cache/contracts.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c1cd95766bf10848c73d669b5ed2e2580395877c5012585072a8ba2179c0ac48",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/inference-cache/paged_cache.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a54d10cb8b1260e1a412d45b23e053d94dce3b1aeef17326b725241923a2bed3",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/labs/inference-cache/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1da0a63fb4812c0945a2856fb501c23f90761e168f2357d07c0b3246f342c272",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "04c2c911ebff53d27ae0a0b650ad72c4880c4190578efd9a2816ecc616830efa",
+      "reviewed_sha256": "91d76baa3a46cb9c4c0adad6573f81f4acf29080e76a0852dba9cd103629fdca",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "f0d8afeee5c01261ff407d74bde5f14dfa16229c96b472a6fea6f7c4fc70dd8c",
+      "reviewed_sha256": "957da22bcd26c07b0029190e73d396e77afdf0c1501adaa992eccdae145bb7c9",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "795d780e1d101b54ad37ba55178b4f84d60e759966f9096eb2ecfda15382fb98",
+      "reviewed_sha256": "f2c2c990e523033f50421db7296998efe3542c71a1f9abc8a35d0a2f466162e3",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "docs/ITERATION_2026-11-08_IMPLEMENTATION_BRIDGES.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5ed092933ea0d2f5a926eff617dc48f6f007c196e32521f3b32be635e1037c2c",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "d27a0978961ed7cf7b954499eb0d63aa99f278a14d7f33811359008eb0a5d039",
+      "reviewed_sha256": "30c2639af397552c6937bff42b30465f73ff64c8233316bf46246750fa72a52d",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f3556c3649e0a0247b59800bef186ea4f8ceb1fdedd32cfb23e440ce53c42ff4",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/build-agent-planning.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a89871accbf6c128b468695c64949a78ead88e7c37d538424d893b12d5d0a6cf",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/build-cloud-proxy.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9325c32a2b3c329ad34e31d90b18bf962f83f7bdb5a7c203f92669236987fd26",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/check-agent-planning.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e50b1a7e8a733b72a541bee43b7f16fbf8153bea33db57839b08546649063cec",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "cfa9bf2ffa448b39a3910dad19faadbe34aea790177833471653973656caaf44",
+      "reviewed_sha256": "f8034855593194a00780276a34e04d744bc85872f1f6bc20da1ab1e56f347103",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/check-chapter-navigation.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a417841ec882322f8436e94b38323f8ad1c4489a123eca198cc8b4e6e93ae8c5",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/check-cloud-proxy.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "25b366e609124bc4561fe51a85893a28f02070fc58ef9e6eda698b006625dbf4",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "869716965b667360781245b724b41c2e3d76c983d128d71f2ae78c911eed0801",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/cloud-proxy-bridge.template.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b82a95a1765cb12097dcb54424fd09ae25c3568c14967b94501b63c474dfd24d",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/draw-cloud-proxy.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ecc95c4c3dea8fd7df90d369eaed8fb37ed2808eccb3210e0e39d2921d55f738",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/draw-inference-cache.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a3faae6aed5d1c913b3d7f1be016fe355a3ca66634989d2451cf0cc03665b83f",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/embed-cloud-proxy-bridge.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e6f5afcd80c585a0e22d1ff2bf6cd16fcc93bbf9d8f159f64ee4f9c35d2f21e1",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/embed-inference-cache-bridge.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "415fab5086f6412a8e2c5d4f6f9f1fac279db17993c7f128c0c464903ac72b2b",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/record-inference-cache.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8a601ff3c4b76baa11bbf8ef82a14d5280e953e3cf600b215cfaebd958e49c99",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "77ceb441c546979b42deb132eef2377828f98b509c5d97d374b8b6364673bc39",
+      "reviewed_sha256": "2e9fc20445fbfbbb119f68eb8ac90fb9c09c2495379ba05920dbbc3efd0f3fdd",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "5a3a1f86ddf8191af27fa04b37bc04c00833f27664b86b11f66ca265de7298c3",
+      "reviewed_sha256": "a67b694555b849f94081afcfd004bdd985aafac230930cc292d68b14572d2d9f",
+      "scope": "Three reviewed implementation bridges and source-bound labs; shared subsection navigation preserves authored bodies, full code, existing anchors and role context."
+    }
+  },
+  "review_scope": {
+    "chapters": 75,
+    "body_baseline_commit": "b06a0633d54a0ecfad39e6e3d55850a0caa0d36e",
+    "changed_bodies": [
+      "vpc-network",
+      "inference-performance",
+      "durable-workflows"
+    ],
+    "unchanged_bodies": 72,
+    "added_code_blocks": {
+      "vpc-network": 2,
+      "inference-performance": 2,
+      "durable-workflows": 2
+    },
+    "original_full_code_blocks": "all original blocks preserved byte-for-byte in original order",
+    "preserved_body_review_prefix": 102,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 273,
+    "new_lab_packs": 3,
+    "new_lab_tasks": 3,
+    "new_figures": 8,
+    "hardware_execution_claims_added": 0,
+    "reader_mastery_claims_added": 0
+  }
+}

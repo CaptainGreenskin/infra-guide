@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" role="img" aria-labelledby="title desc">
+<title id="title">同一份工作，调度先后改变谁在等待</title>
+<desc id="desc">固定CPU实验的对象、状态和迭代结果。不是设备内存或GPU性能测量。</desc>
+<metadata>{&quot;schedulers&quot;: [{&quot;policy&quot;: &quot;prefill-first&quot;, &quot;work_positions&quot;: 20, &quot;iterations&quot;: 12, &quot;A_output_iterations&quot;: [0, 9, 10, 11], &quot;A_max_output_gap&quot;: 9, &quot;B81_first_output_wait&quot;: 0, &quot;requests&quot;: {&quot;B10&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [1]}, &quot;B11&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [1]}, &quot;B20&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [2]}, &quot;B21&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [2]}, &quot;B30&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [3]}, &quot;B31&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [3]}, &quot;B40&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [4]}, &quot;B41&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [4]}, &quot;B50&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [5]}, &quot;B51&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [5]}, &quot;B60&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [6]}, &quot;B61&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [6]}, &quot;B70&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [7]}, &quot;B71&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [7]}, &quot;B80&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [8]}, &quot;B81&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [8]}, &quot;A&quot;: {&quot;outputs&quot;: [4, 10, 3, 10], &quot;events&quot;: [0, 9, 10, 11]}}, &quot;completed_requests&quot;: 17, &quot;trace&quot;: [{&quot;iteration&quot;: 0, &quot;processed&quot;: [&quot;A&quot;], &quot;emitted&quot;: [&quot;A&quot;]}, {&quot;iteration&quot;: 1, &quot;processed&quot;: [&quot;B10&quot;, &quot;B11&quot;], &quot;emitted&quot;: [&quot;B10&quot;, &quot;B11&quot;]}, {&quot;iteration&quot;: 2, &quot;processed&quot;: [&quot;B20&quot;, &quot;B21&quot;], &quot;emitted&quot;: [&quot;B20&quot;, &quot;B21&quot;]}, {&quot;iteration&quot;: 3, &quot;processed&quot;: [&quot;B30&quot;, &quot;B31&quot;], &quot;emitted&quot;: [&quot;B30&quot;, &quot;B31&quot;]}, {&quot;iteration&quot;: 4, &quot;processed&quot;: [&quot;B40&quot;, &quot;B41&quot;], &quot;emitted&quot;: [&quot;B40&quot;, &quot;B41&quot;]}, {&quot;iteration&quot;: 5, &quot;processed&quot;: [&quot;B50&quot;, &quot;B51&quot;], &quot;emitted&quot;: [&quot;B50&quot;, &quot;B51&quot;]}, {&quot;iteration&quot;: 6, &quot;processed&quot;: [&quot;B60&quot;, &quot;B61&quot;], &quot;emitted&quot;: [&quot;B60&quot;, &quot;B61&quot;]}, {&quot;iteration&quot;: 7, &quot;processed&quot;: [&quot;B70&quot;, &quot;B71&quot;], &quot;emitted&quot;: [&quot;B70&quot;, &quot;B71&quot;]}, {&quot;iteration&quot;: 8, &quot;processed&quot;: [&quot;B80&quot;, &quot;B81&quot;], &quot;emitted&quot;: [&quot;B80&quot;, &quot;B81&quot;]}, {&quot;iteration&quot;: 9, &quot;processed&quot;: [&quot;A&quot;], &quot;emitted&quot;: [&quot;A&quot;]}, {&quot;iteration&quot;: 10, &quot;processed&quot;: [&quot;A&quot;], &quot;emitted&quot;: [&quot;A&quot;]}, {&quot;iteration&quot;: 11, &quot;processed&quot;: [&quot;A&quot;], &quot;emitted&quot;: [&quot;A&quot;]}]}, {&quot;policy&quot;: &quot;round-robin&quot;, &quot;work_positions&quot;: 20, &quot;iterations&quot;: 11, &quot;A_output_iterations&quot;: [0, 1, 2, 4], &quot;A_max_output_gap&quot;: 2, &quot;B81_first_output_wait&quot;: 2, &quot;requests&quot;: {&quot;B10&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [1]}, &quot;B11&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [2]}, &quot;B20&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [3]}, &quot;B21&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [3]}, &quot;A&quot;: {&quot;outputs&quot;: [4, 10, 3, 10], &quot;events&quot;: [0, 1, 2, 4]}, &quot;B30&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [4]}, &quot;B31&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [5]}, &quot;B40&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [5]}, &quot;B41&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [6]}, &quot;B50&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [6]}, &quot;B51&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [7]}, &quot;B60&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [7]}, &quot;B61&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [8]}, &quot;B70&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [8]}, &quot;B71&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [9]}, &quot;B80&quot;: {&quot;outputs&quot;: [7], &quot;events&quot;: [9]}, &quot;B81&quot;: {&quot;outputs&quot;: [10], &quot;events&quot;: [10]}}, &quot;completed_requests&quot;: 17, &quot;trace&quot;: [{&quot;iteration&quot;: 0, &quot;processed&quot;: [&quot;A&quot;], &quot;emitted&quot;: [&quot;A&quot;]}, {&quot;iteration&quot;: 1, &quot;processed&quot;: [&quot;A&quot;, &quot;B10&quot;], &quot;emitted&quot;: [&quot;A&quot;, &quot;B10&quot;]}, {&quot;iteration&quot;: 2, &quot;processed&quot;: [&quot;B11&quot;, &quot;A&quot;], &quot;emitted&quot;: [&quot;B11&quot;, &quot;A&quot;]}, {&quot;iteration&quot;: 3, &quot;processed&quot;: [&quot;B20&quot;, &quot;B21&quot;], &quot;emitted&quot;: [&quot;B20&quot;, &quot;B21&quot;]}, {&quot;iteration&quot;: 4, &quot;processed&quot;: [&quot;A&quot;, &quot;B30&quot;], &quot;emitted&quot;: [&quot;A&quot;, &quot;B30&quot;]}, {&quot;iteration&quot;: 5, &quot;processed&quot;: [&quot;B31&quot;, &quot;B40&quot;], &quot;emitted&quot;: [&quot;B31&quot;, &quot;B40&quot;]}, {&quot;iteration&quot;: 6, &quot;processed&quot;: [&quot;B41&quot;, &quot;B50&quot;], &quot;emitted&quot;: [&quot;B41&quot;, &quot;B50&quot;]}, {&quot;iteration&quot;: 7, &quot;processed&quot;: [&quot;B51&quot;, &quot;B60&quot;], &quot;emitted&quot;: [&quot;B51&quot;, &quot;B60&quot;]}, {&quot;iteration&quot;: 8, &quot;processed&quot;: [&quot;B61&quot;, &quot;B70&quot;], &quot;emitted&quot;: [&quot;B61&quot;, &quot;B70&quot;]}, {&quot;iteration&quot;: 9, &quot;processed&quot;: [&quot;B71&quot;, &quot;B80&quot;], &quot;emitted&quot;: [&quot;B71&quot;, &quot;B80&quot;]}, {&quot;iteration&quot;: 10, &quot;processed&quot;: [&quot;B81&quot;], &quot;emitted&quot;: [&quot;B81&quot;]}]}]}</metadata>
+<rect width="1120" height="760" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="40" y="46" fill="#20314e" font-size="27" font-weight="650">同一份工作，调度先后改变谁在等待</text>
+<text x="40" y="83" text-anchor="start" fill="#536783" font-size="18" font-weight="400">每轮最多2个输入位置，每请求每轮最多1位置；A要4个输出，迭代1–8每轮新增2个短请求。</text>
+<text x="292" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">0</text>
+<text x="358" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">1</text>
+<text x="424" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">2</text>
+<text x="490" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">3</text>
+<text x="556" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">4</text>
+<text x="622" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">5</text>
+<text x="688" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">6</text>
+<text x="754" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">7</text>
+<text x="820" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">8</text>
+<text x="886" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">9</text>
+<text x="952" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">10</text>
+<text x="1018" y="147" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">11</text>
+<text x="40" y="147" text-anchor="start" fill="#536783" font-size="18" font-weight="400">迭代编号（从0开始）</text>
+<text x="40" y="235" text-anchor="start" fill="#234d9f" font-size="23" font-weight="600">新提示优先</text>
+<text x="40" y="274" text-anchor="start" fill="#20314e" font-size="19" font-weight="400">A的输出</text>
+<path d="M292 235H1018" stroke="#c5d1e3" stroke-width="2"/>
+<circle cx="292" cy="235" r="10" fill="#315dce"/>
+<circle cx="886" cy="235" r="10" fill="#315dce"/>
+<circle cx="952" cy="235" r="10" fill="#315dce"/>
+<circle cx="1018" cy="235" r="10" fill="#315dce"/>
+<path d="M820 291H820" stroke="#b07a25" stroke-width="5"/>
+<path d="M814 285L826 285L820 297Z" fill="#b07a25"/>
+<path d="M814 285L826 285L820 297Z" fill="#b07a25"/>
+<text x="280" y="329" text-anchor="start" fill="#8a5a16" font-size="18" font-weight="400">B₈₁：迭代8到达，等待 0 轮得到首输出</text>
+<text x="40" y="395" text-anchor="start" fill="#234d9f" font-size="23" font-weight="600">轮转执行</text>
+<text x="40" y="434" text-anchor="start" fill="#20314e" font-size="19" font-weight="400">A的输出</text>
+<path d="M292 395H1018" stroke="#c5d1e3" stroke-width="2"/>
+<circle cx="292" cy="395" r="10" fill="#315dce"/>
+<circle cx="358" cy="395" r="10" fill="#315dce"/>
+<circle cx="424" cy="395" r="10" fill="#315dce"/>
+<circle cx="556" cy="395" r="10" fill="#315dce"/>
+<path d="M820 451H952" stroke="#b07a25" stroke-width="5"/>
+<path d="M814 445L826 445L820 457Z" fill="#b07a25"/>
+<path d="M946 445L958 445L952 457Z" fill="#b07a25"/>
+<text x="280" y="489" text-anchor="start" fill="#8a5a16" font-size="18" font-weight="400">B₈₁：迭代8到达，等待 2 轮得到首输出</text>
+<rect x="40" y="536" width="250" height="98" rx="8" fill="#eaf0fb"/>
+<text x="165" y="570" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">A最大输出间隔</text>
+<text x="165" y="612" text-anchor="middle" fill="#234d9f" font-size="27" font-weight="650">9 → 2</text>
+<rect x="310" y="536" width="250" height="98" rx="8" fill="#eaf0fb"/>
+<text x="435" y="570" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">B₈₁首输出等待</text>
+<text x="435" y="612" text-anchor="middle" fill="#234d9f" font-size="27" font-weight="650">0 → 2</text>
+<rect x="580" y="536" width="250" height="98" rx="8" fill="#eaf0fb"/>
+<text x="705" y="570" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">实际处理输入位置</text>
+<text x="705" y="612" text-anchor="middle" fill="#234d9f" font-size="27" font-weight="650">20 → 20</text>
+<rect x="850" y="536" width="250" height="98" rx="8" fill="#eaf0fb"/>
+<text x="975" y="570" text-anchor="middle" fill="#536783" font-size="18" font-weight="400">全部完成所用迭代</text>
+<text x="975" y="612" text-anchor="middle" fill="#234d9f" font-size="27" font-weight="650">12 → 11</text>
+<text x="40" y="684" text-anchor="start" fill="#20314e" font-size="20" font-weight="400">轮转让A更少停顿，但部分短请求多等；本例也减少尾部只有A时的空槽。</text>
+<text x="40" y="721" text-anchor="start" fill="#536783" font-size="19" font-weight="400">每轮都实际计算CPU注意力；迭代不是毫秒，不能从此图推断GPU性能。</text>
+</g></svg>

@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'cloud-proxy':{folder:'cloud-proxy',title:'HTTP代理、连接复用与受限重试'},
+ 'inference-cache':{folder:'inference-cache',title:'物理缓存块、共享与调度'},
+ 'agent-planning':{folder:'agent-planning',title:'计划、事实与持久等待'},
  'manual-sharding':{folder:'manual-sharding',title:'双进程手工状态分片'},
  'delivery-systems':{folder:'delivery-systems',title:'消息确认、Terraform状态与真实GitOps'},
  'runtime-scheduling':{folder:'runtime-scheduling',title:'真实容器限制与kind调度'},
@@ -122,6 +125,9 @@ labLearningCatalog.push(
  {id:'cloud-gitops-native',track:'cloud',stage:2,title:'同步健康为何仍返回旧版',chapter:'gitops-reconciliation',anchor:'gitops-native-run',pack:'delivery-systems',files:['gitops_reconcile.py','gitops-revisions.json','gitops-app/configmap.json','gitops-app/deployment.json','gitops-app/service.json'],env:'Linux Docker · kind 0.33 · kubectl · Python',kind:'真实Argo CD与HTTP',observe:'依次跟踪三个固定Git修订，核对自愈、清理、Pod UID和真实Service响应。',scope:'Argo CD Core 3.6.1、单机kind；业务v2断言独立于Synced/Healthy。'}
 );
 labLearningCatalog.push({id:'ai-manual-sharding',track:'ai',stage:2,title:'分片参数怎样回到一次正确的更新',chapter:'distributed-training',anchor:'manual-sharding-run',pack:'manual-sharding',files:['shard_linear.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实双进程与自动求导',observe:'各进程分别处理1与2条样本，逐次核对三轮梯度、拼回参数和SGD动量；错误局部均值应被拒绝。',scope:'手工all-gather与完整梯度all-reduce后切片；非FSDP API，不测GPU峰值、原生reduce-scatter或跨规模恢复。'});
+labLearningCatalog.push({"id":"cloud-proxy","track":"cloud","stage":2,"title":"沿真实代理核对连接、排空和写入结果","chapter":"vpc-network","anchor":"cloud-proxy-run","pack":"cloud-proxy","files":["proxy_lab.py","README.md"],"env":"Python 3.9+ · 标准库 / 本机HTTP / SQLite","kind":"真实HTTP代理与业务写入","observe":"三个查询复用上游连接；B排空后旧请求完成、新请求走A；重试受共同截止时间与次数约束，错误重试写入得到74而非37。","scope":"受控小型Content-Length消息；上游窗口从入口校验后计时，无TLS、NGINX执行、云负载均衡或性能实测。"},
+{"id":"ai-physical-cache","track":"ai","stage":2,"title":"缓存真的存了什么，复用以后还算得对吗","chapter":"inference-performance","anchor":"inference-cache-run","pack":"inference-cache","files":["paged_cache.py","README.md","contracts.json"],"env":"Python 3.9+ · 标准库 / CPU","kind":"真实块池与标量注意力","observe":"逐格对照独立完整前缀计算，核对共享、写时复制、满池拒绝、槽代次与重算；同一17请求比较计算机会与等待取舍。","scope":"两层标量因果注意力、实际列表存储与离散迭代；非完整Transformer、vLLM运行、GPU内核或时延实测。"},
+{"id":"agent-planning","track":"agent","stage":2,"title":"计划改变后，哪些事实和批准仍然有效","chapter":"durable-workflows","anchor":"agent-planning-run","pack":"agent-planning","files":["planning_lab.py","README.md"],"env":"Python 3.9+ · 标准库 / SQLite / 子进程","kind":"真实新进程与持久状态","observe":"基础37加补录5得到42；恢复时复用有效事实，旧批准不能授权新草稿；错误汇总缓存可令流程DONE，但独立产物验收应拒绝。","scope":"固定提议来源和本地SQLite事务；不运行LLM、Temporal/LangGraph SDK、远端效果协议或Kairo适配器。"});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

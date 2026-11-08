@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 545" role="img" aria-labelledby="title desc">
+<title id="title">等待是可恢复的状态，不是悬挂进程</title><desc id="desc">正常状态、需要重规划、草稿、等待、完成与两个停止分支；先持久化信号，后进入等待也能继续。</desc>
+<metadata>{&quot;normal_total&quot;: 42, &quot;early_signal_events&quot;: [{&quot;kind&quot;: &quot;started&quot;, &quot;body&quot;: {&quot;mode&quot;: &quot;fixed&quot;, &quot;revision&quot;: 1}}, {&quot;kind&quot;: &quot;fact_recorded&quot;, &quot;body&quot;: {&quot;input_key&quot;: &quot;3&quot;, &quot;name&quot;: &quot;read_base&quot;}}, {&quot;kind&quot;: &quot;fact_recorded&quot;, &quot;body&quot;: {&quot;input_key&quot;: &quot;9c786bf8df9539f3ba7542ed74e850825f15f6f1104b3b08529ca2c0b3ea3d5f&quot;, &quot;name&quot;: &quot;read_extra&quot;}}, {&quot;kind&quot;: &quot;fact_recorded&quot;, &quot;body&quot;: {&quot;input_key&quot;: &quot;219ea4ea79d6d56a7bf379441033891657bc466803f03a20b6b81d1cb5f2e51b&quot;, &quot;name&quot;: &quot;sum&quot;}}, {&quot;kind&quot;: &quot;approval_received&quot;, &quot;body&quot;: {&quot;id&quot;: &quot;early&quot;, &quot;revision&quot;: 1}}, {&quot;kind&quot;: &quot;waiting&quot;, &quot;body&quot;: {&quot;draft_digest&quot;: &quot;b4494fba0cb18f963e1a66c8c4284c11feb607e0050ad6b6a90dd297f7029a42&quot;, &quot;revision&quot;: 1}}, {&quot;kind&quot;: &quot;report_committed&quot;, &quot;body&quot;: {&quot;approval&quot;: &quot;early&quot;, &quot;revision&quot;: 1, &quot;total&quot;: 42}}], &quot;stops&quot;: {&quot;no_progress&quot;: &quot;STOPPED_NO_PROGRESS&quot;, &quot;budget&quot;: &quot;STOPPED_BUDGET&quot;}}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#526987" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#23354d;font-size:18px}.title{font-size:25px;font-weight:700}.small{font-size:16px}.label{font-size:17px;font-weight:650}.blue{fill:#315dce}.muted{fill:#5c6d82}.line{stroke:#526987;stroke-width:2;fill:none;marker-end:url(#arrow)}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.4}.good{fill:#ecf7f2;stroke:#80bca6}.wait{fill:#fff6e5;stroke:#d9b45d}.bad{fill:#fff0f0;stroke:#dba5a5}</style>
+<rect width="1024" height="545" fill="#f8fafd" rx="16"/>
+<text x="32" y="43" class="title">一项任务，几种含义不同的状态</text>
+<g transform="translate(0,30)">
+<rect x="32" y="76" width="224" height="80" rx="10" class="box"/><text x="52" y="107" class="label">RUNNING · 执行中</text><text x="52" y="134" class="small">先取可复用事实，再推进</text>
+<path d="M263 115H325" class="line"/><text x="269" y="94" class="small">新观察</text>
+<rect x="340" y="76" width="275" height="80" rx="10" class="wait"/><text x="359" y="107" class="label">NEEDS_REPLAN</text><text x="359" y="134" class="small">先校验依赖，再接纳新计划</text>
+<path d="M475 69V57H145V69" class="line"/><text x="244" y="53" class="small">新计划已持久保存</text>
+<path d="M623 115H688" class="line"/><text x="631" y="94" class="small">不再进展</text>
+<rect x="705" y="76" width="287" height="80" rx="10" class="bad"/><text x="725" y="107" class="label">STOPPED · 明确停止</text><text x="725" y="134" class="small">重复无进展 / 提议预算耗尽</text>
+<path d="M143 162V226" class="line"/><text x="159" y="197" class="small">已汇总42</text>
+<rect x="32" y="240" width="270" height="80" rx="10" class="box"/><text x="51" y="271" class="label">DRAFT_READY · 草稿就绪</text><text x="51" y="298" class="small">草稿和摘要已经提交</text>
+<path d="M309 280H365" class="line"/>
+<rect x="382" y="240" width="290" height="80" rx="10" class="wait"/><text x="402" y="271" class="label">WAITING_APPROVAL</text><text x="402" y="298" class="small">条件写入数据库，进程可退出</text>
+<path d="M680 280H735" class="line"/>
+<text x="686" y="226" class="small">匹配批准</text>
+<rect x="750" y="240" width="242" height="80" rx="10" class="good"/><text x="770" y="271" class="label">DONE · 产物已提交</text><text x="770" y="298" class="small">再次恢复不新增事实或报告</text>
+<rect x="178" y="375" width="650" height="92" rx="10" class="box"/><text x="200" y="404" class="label">批准信号先存入 signals</text><text x="200" y="431">绑定任务、目标、计划版本、输入摘要和草稿摘要</text><text x="200" y="455" class="small muted">早于等待到达也能取出；审批变旧时不能推动新草稿</text>
+<path d="M528 370V327" class="line"/><text x="32" y="498" class="small muted">图中的新进程恢复已实跑；未模拟崩溃写入、远端提交或框架SDK。</text></g></svg>

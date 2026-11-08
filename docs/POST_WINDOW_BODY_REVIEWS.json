@@ -2059,6 +2059,61 @@
         "用相同口径评价扩展",
         "真实两进程：从单步梯度走到状态更新"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "previous_content_sha256": "1ff57a8bd11e8dd4e42a0ea755d9c95baafe8fb42b527bf93b970df276b845c9",
+      "reviewed_content_sha256": "899b100398d460e68ab30f41053db201f84dfaea50eed53dc1a32ca6d7d174cc",
+      "reviewed_at": "2026-11-08",
+      "scope": "Two-leg HTTP proxy, TLS identities, eligibility/pooling, draining, bounded retries and user completion",
+      "observation": "Rewrote section6 as one mechanism chain and connected section7 to real loopback HTTP/SQLite effects. Independent fresh-run checks verify connection reuse, old/new work during drain, max attempts/shared upstream deadline and the unsafe duplicate write. All original code and links retained. No TLS proxy, NGINX, cloud or production performance execution claim.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "previous_content_sha256": "62fe7824d028cc1ffce3d7e6c74720c2bfc41ac5de321e7133828dc94b948804",
+      "reviewed_content_sha256": "71326ecb9a8811413078db20846cd9ede12204f81d03ebfd3447fbabd7ddbcd3",
+      "reviewed_at": "2026-11-08",
+      "scope": "Physical KV ownership, ancestry identity, copy-on-write, eviction/recompute and scheduling opportunity",
+      "observation": "Expanded section3 with logical/physical block relationships, refcounts and ownership, then section6 with a real CPU pool storing two-layer scalar attention values. Independent full-prefix numerical oracle, failed COW rollback, stale-handle and wrong-ancestry probes, and the same seventeen-request workload verify both correctness and waiting tradeoffs. Retains the earlier fixed-cost model as a separately scoped comparison. No full Transformer, GPU engine or latency claim.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "previous_content_sha256": "2e069897d345efa38ba307a9d21cc81be3691304fbfee0e88c06d60290639df9",
+      "reviewed_content_sha256": "4b0aefc094383622b165f44b053f65d15a398a92fbeaee355d60608b7f99d7d2",
+      "reviewed_at": "2026-11-08",
+      "scope": "Goals and dependencies, plans versus facts, re-planning, durable waiting, approval identity and independent artifacts",
+      "observation": "Reworked sections1/2/8/9 into a continuous knowledge and implementation chain. Nine actual fresh-process SQLite scenarios cover 37+5=42, valid fact reuse, versioned proposal/stop budgets, early and stale approval, and a DONE/37 wrong-cache negative rejected by direct source/artifact inspection. Kept original history/fencing code. Fixed proposals and one SQLite transactional domain; no LLM, framework SDK, remote effect or Kairo execution claim.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }
