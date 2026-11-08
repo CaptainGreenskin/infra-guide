@@ -1,0 +1,38 @@
+name: Observe quorum and database replication mechanisms
+on:
+  workflow_dispatch:
+  push:
+    branches: ['content/coordinated-state-*']
+    paths:
+      - 'dist/labs/etcd-consensus/**'
+      - 'dist/labs/mysql-replication/**'
+      - '.github/workflows/state-mechanisms.yml'
+permissions:
+  contents: read
+jobs:
+  quorum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Observe actual three-member quorum, partition and snapshot restore
+        run: python3 -B dist/labs/etcd-consensus/etcd_lab.py --output native-results/etcd.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: state-etcd-results
+          path: native-results/
+          retention-days: 1
+  replication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Observe actual InnoDB read views, replication gap and planned switch
+        run: python3 -B dist/labs/mysql-replication/replication_lab.py --output native-results/mysql.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: state-mysql-results
+          path: native-results/
+          retention-days: 1
