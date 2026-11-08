@@ -86,7 +86,11 @@
     {
       "id": "training-storage",
       "targets": [
-        "subsection-3-1x8od09"
+        "subsection-3-1x8od09",
+        "subsection-3-1x8od09-2"
+      ],
+      "visible_targets": [
+        "subsection-3-1x8od09-2"
       ]
     },
     {
@@ -94,6 +98,10 @@
       "targets": [
         "subsection-4-1ks0063",
         "subsection-5-121tvoc",
+        "sql-plan-lab",
+        "sql-snapshot-lab"
+      ],
+      "visible_targets": [
         "sql-plan-lab",
         "sql-snapshot-lab"
       ]
@@ -105,6 +113,10 @@
         "subsection-4-1tpwch1",
         "subsection-4-1gsa4y3",
         "subsection-7-1rj2qy"
+      ],
+      "visible_targets": [
+        "subsection-4-1tpwch1",
+        "subsection-4-1gsa4y3"
       ]
     },
     {
@@ -358,7 +370,8 @@
       "id": "tensor-parallel-math",
       "targets": [
         "subsection-4-z6hy9g"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "operator-profiling",
@@ -468,7 +481,9 @@
     },
     {
       "id": "kubernetes-training",
-      "targets": []
+      "targets": [
+        "training-object-chain"
+      ]
     },
     {
       "id": "model-serving",

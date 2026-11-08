@@ -25,7 +25,7 @@ for(const a of data.articles){
  }
 }
 const first=data.standalone;
-assert.equal(first.length,40,'forty reviewed standalone bodies');
+assert.equal(first.length,47,'forty-seven reviewed standalone bodies');
 for(const id of first){
  const a=data.articles.find(x=>x.id===id);assert.equal(data.sections[id].length,a.sections.length);
  const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
@@ -91,6 +91,6 @@ assert(literal.includes('<dfn>Rotary Position Embedding</dfn>'));
 c.example='<p>矩阵乘积<var>PV</var>。</p>';assert(!vm.runInContext('explainFirstConceptTerms(example)',c).includes('持久卷'));
 
 for(const id of first){c.reviewedId=id;c.example='<p>Pod是容器运行的单位。<var>PV</var>表示矩阵乘积。</p>';assert.equal(vm.runInContext('chapterConceptProse(articleById(reviewedId),example,new Set())',c),c.example,id+': authored definitions remain natural prose');}
-c.example='<p>GPU计算。</p>';assert(vm.runInContext('chapterConceptProse(articleById("gpu-execution"),example,new Set())',c).includes('data-concept-term="GPU"'),'unreviewed bodies keep first-use support');
+c.example='<p>GPU计算。</p>';assert(vm.runInContext('chapterConceptProse(articleById("gpu-cluster"),example,new Set())',c).includes('data-concept-term="GPU"'),'unreviewed bodies keep first-use support');
 
 for(const a of data.articles){const page=fs.readFileSync("dist/article/"+a.id+"/index.html","utf8"),refs=page.match(/<section[^>]*id="references"[^>]*>([\s\S]*?)<\/section>/)?.[1];assert(refs,a.id+": source list");const urls=[...refs.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(urls).size,urls.length,a.id+": each reference URL appears once");}

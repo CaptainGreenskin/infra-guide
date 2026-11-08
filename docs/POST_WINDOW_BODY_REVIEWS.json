@@ -2944,6 +2944,349 @@
         "验收：哪项改动真正降低了风险",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "fcfa3dcc8f388f33bbc89e085e432591eb4bfeb59e4bdac466c5f5ff5ceebacd",
+      "reviewed_content_sha256": "fcc63f294697e1b1a3217bd03d675893a1622497678bc96566bda4484abf9840",
+      "scope": "Independent recovery fixture operation identity",
+      "observation": "R17:publish/13 and one effect are explicitly a separate SQLite fixture from runtime37, avoiding an apparent same-operation/different-parameter continuation. Actual program and receipt evidence unchanged.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "16d8b56dff0833bad9c7202478023e987f8a1413dc9ccf98fc363d965d34604b",
+      "reviewed_content_sha256": "7e7bea0eed4e01db91cf34fca169a78617d696c9e15b5b36312e20a7cb76f8ec",
+      "scope": "Independent trace fixture task identity",
+      "observation": "The R27 publish37 fixture is scoped separately from sandbox drawingR27 and retrieval diagnosisR27, with no cross-database task or receipt identity implied.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "8efdb89e28b746471e16b1303cd7bf764db515f343895d36582b5fb75dc2c5b6",
+      "reviewed_content_sha256": "56f1548f905bbf4b46b96a6528bb5752fd4aaa90aa9510e50ffcb75ea20e5be9",
+      "scope": "Input delivery versus effect receipt and final acceptance",
+      "observation": "Final section explicitly distinguishes prompt collector delivery, tool effects and finalbusiness/citation acceptance, and connects to evaluation/recovery without claiming the collector called an LLM.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "210a21dd4e2ae30f2fda583d0ea95e104b141392ab239f082d8db00d7298ec9c",
+      "reviewed_content_sha256": "c5c363444c0f0f122d016a873f9668c7d0f5554cfd34cc12c9ca069113c88410",
+      "scope": "Execution-environment link respects the selected role route",
+      "observation": "Sandbox and recovery are named destinations; the Agentapplication route can continue into recovery without being incorrectly told sandbox is its nextchapter.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b04ede2e9565369e6ccdf4bc93f677dc627081989ecd43f609cce2defb5197f3",
+      "reviewed_content_sha256": "8a3eb91fa00c0319788baab8bb427227c8bc7164dda1f83c2d7b690dbef7fbb3",
+      "scope": "Training-record continuation label",
+      "observation": "The carried-record table now names subsequent training experiments rather than the nextGPU execution chapter. All original calculations and code remain.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "cache-consistency",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "d601220858bf00bb041b145615a28abbb4fe54bd64b0e68f88da0e19d30ea5a8",
+      "reviewed_content_sha256": "bfca06d89121f80debbbcab8974684121b31d29f8a5a1dcb42cfa52c3867d25c",
+      "scope": "Complete cache-body sequence from query path to propagation and floors",
+      "observation": "Nine full sections define source/cache/version, application-driven cache-aside, expiry and fills before race windows, receiver-side fences and outbox. floor9 accepting10 then accepting9 after eviction is explicitly not cross-eviction monotonic reads.",
+      "headings": [
+        "先回答“谁有资格说订单已经发货”",
+        "读穿旁路缓存的三个步骤",
+        "一次旧读怎样穿过成功的失效",
+        "用版本水位挡回旧值，它需要哪些前提",
+        "热点击穿与集中到期，先算回源预算",
+        "领先请求失败后，谁负责唤醒等待者",
+        "从事件回放走到真实事务",
+        "验收：为不同读者分别签一份承诺",
+        "四事件短回放的源码与结果"
+      ]
+    },
+    {
+      "id": "concurrency-pools",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "02f2bcda0aac59743847765ee2cdb8f57c39da96b2b88a5b7a719c8795427678",
+      "reviewed_content_sha256": "b7c83a0a0b51a14e1d9f8fa770edf82f3dadcac26090c6091ce7deffad2b18ef",
+      "scope": "Explicit destination for the database continuation",
+      "observation": "One section now names and links SQL index/transaction material instead of incorrectly claiming it is the next chapter across all curricula. Original code and the rest of the reviewed body remain.",
+      "headings": [
+        "八份订单同时到达，忙的是谁",
+        "读、改、写三个动作构成一次竞态",
+        "什么该在锁内，什么应该移到锁外",
+        "从数据库占用时间算出线程池之外的瓶颈",
+        "排队、取消和背压如何形成一套协议",
+        "一次不会随机碰运气的竞态实验",
+        "让指标对应到位置，再做一次受控调整",
+        "验收：从三张队列里找出该改的那一张",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "database-index-locks",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "f23d078b071adb7c88c00d476f07d19f527a88618e4d03d14ee046227591ebea",
+      "reviewed_content_sha256": "54ec5844f166c5ab9f2b16e75517c2dd6903516b00b1009bf064a13010bc056b",
+      "scope": "Complete query/index/transaction-body sequence",
+      "observation": "Nine full sections define tables, predicates, indexes, ordering and plans before snapshots, transaction locks and retry. Actual SQLite query paths, source versions and105/95 business results remain distinct from MySQL-specific contracts.",
+      "headings": [
+        "入口说数据库用了 700 毫秒，先确定它测了什么",
+        "索引先按键排列，再指向数据所在的位置",
+        "用两种数据分布推导候选工作量",
+        "索引也有价格，要让写和读一起验收",
+        "事务把多步写入变成一个可判定的结果",
+        "索引命中了，为什么写请求还是要等",
+        "用两个连接区分访问路径和写者竞争",
+        "验收：两起同名告警需要不同的修复",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "0434290931e99d722811aa8d75437e14518b4d9a0abedbd23c3edda6bc8a8653",
+      "reviewed_content_sha256": "ce80e8d6b39bfedf10d0d2f63815cdaff05d3ab927c435a4533c57a747ddeab2",
+      "scope": "Complete attention-IO-body sequence from mathematical objects to online state",
+      "observation": "Nine full sections define query/key/value, positions, scores and softmax before tiled online max/denominator/weighted accumulation, causal masks and actual CPU reference. Two-pass IO/traffic models remain declared and real GPU performance pending.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "3d2e42a50b94dc01207d842ef35a7e7c9935a5fceb4a6df51706987ff4d2e4de",
+      "reviewed_content_sha256": "61bcf82975eefd798f53c7ad4e735d530b71bfe230b9e6858d5014d98ab51cd8",
+      "scope": "Complete GPU-body sequence from host/device work to execution evidence",
+      "observation": "Nine full sections explain operator/kernel, logical threads/blocks/warps, memory hierarchy, data reuse and host/device coordination before budget and timing. HBM is not assumed for every GPU; original declared data and compilation evidence do not imply actual GPU execution.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "5ed0717446508cbfc5bee67ea8e2c83b5af47ac7b4d6e596ad910300d3c9ed44",
+      "reviewed_content_sha256": "fe98752f2cdcf528ab708022afeb729c5317c2e0e71e54125a75502d63034bc2",
+      "scope": "Quota and PodSet bridge to the same declared run",
+      "observation": "First section relates R1/A1 to one homogeneous PodSet count2 timesGPU2, distinguishes Workload admission from Job creation and scheduling, and links the correspondence. Original two-process and kind evidence remains separate.",
+      "headings": [
+        "状态与职责：额度、获准、放置、就绪与进展",
+        "配额与借用：名义份额、flavor和公平",
+        "资源形状：单节点、拓扑与可行解",
+        "并发预留：快照、整组与失败回滚",
+        "多租户隔离需要多层配合",
+        "启动与恢复：就绪期限、失效与回收",
+        "队列策略：回填、预留与抢占代价",
+        "用用户等待时间衡量调度效果",
+        "交一份可核对的答案",
+        "实战与变化题：穷举参考及真实两进程争抢"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "320ae69cee14e533ed968ea2f22aaf45efa73b9401f9cd32d7fa936b28122375",
+      "reviewed_content_sha256": "53b1686d39b938566f8a39d44299a31a260efc0738dd8e72cde76eb3abd55508",
+      "scope": "Concrete object identity correspondence and target observation",
+      "observation": "Indexed Job section maps declared R1/A1, WorkloadW1, JobJ1UID, PodUID/completion index and static ranks0–3. One original relationship diagram, table and read-only target commands clarify owner references and platform-specific new-attempt/new-Job policy; no Kueue/GPU execution added.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "eaf2bba13c79599ea406251100667f6bce8f9b711aed440f031238a29b677117",
+      "reviewed_content_sha256": "1121b5ccc047a86cc8b585abb3427fe4d7605bd8c45ca426592c22b29b721756",
+      "scope": "Explicit performance chapter rather than a skipped next chapter",
+      "observation": "Two sections name inference-performance and its denominators; the actual intervening quantization chapter is acknowledged. All existing model/cache programs and evidence remain.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "roofline-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "901eabd7d5528810fb58352965037ae61b21c9e50053cb6c02b145ed18e9f90a",
+      "reviewed_content_sha256": "bae7e4b33acf62d4480cac2da8bb0de6d7f995789742e4737a185396a1b81a56",
+      "scope": "Complete Roofline-body sequence with a named byte boundary",
+      "observation": "Nine full sections align operation counts, data type, memory boundary, bytes and intensity before conditional bounds, batch reuse and source-bound models. All original arithmetic/code/figures remain, with independently replayed budgets.",
+      "headings": [
+        "先问一次执行做了多少工作",
+        "先写数据账本，再算算术强度",
+        "两条上限怎样合成一条屋顶",
+        "批次改变的是权重复用，不只是显存占用",
+        "从瓶颈判断到可证伪的优化方案",
+        "局部快一倍，整体能快多少",
+        "为什么同一算子会有两种算术强度",
+        "把预算与计时写成一份可复查记录",
+        "练习：为一项优化写出收益边界"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "da36698fd27f87a101d74b57d22011e6c4ba8cfbd1db20621e764311782aadd8",
+      "reviewed_content_sha256": "aa31d9be1f3d67eb4a9b86456bc00b38bd3a64751b6b2832c9b38316abf69f0d",
+      "scope": "Complete tensor-parallel-body sequence from full matrices to partial outputs and gradients",
+      "observation": "Ten full sections connect shape, linear transforms, shards, process groups and rank to correct forward sums, bias placement and gradient dependencies; actual two-process CPU/Gloo results and wrong-bias example replayed. Later global-loss reference is labelled forward extension.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "0b20c6f2847d03e25e339483795d1ead6f2229e42bf6a2fbab21d00a20b541d0",
+      "reviewed_content_sha256": "b5220af86eb40b1f7b3c4ce4d09c491a97e603730867af9df7cb914e71e2e7f4",
+      "scope": "One persistent teaching run across the platform trio",
+      "observation": "First section names the shared declared runR1/attemptA1/two-worker/four-process example and links the concrete object correspondence in Kubernetes training. No cloudrun creation is claimed.",
+      "headings": [
+        "从一份训练脚本到一次可追踪运行",
+        "生命周期需要多个可解释的等待状态",
+        "先定义最小契约，再谈自动化",
+        "完成状态必须连接到产物",
+        "失败后的系统动作要可预测",
+        "交接给调度和发布时，协议要留下什么",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "training-storage",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "817f735cc6c7cdb0c737cb39fbc7571893ec69d68d4bb8cfdb1f850d07d09a61",
+      "reviewed_content_sha256": "33be5b37a52b4afe626728adc0c605a7eb969f409956336156327ff9d04d2920",
+      "scope": "Complete storage-body sequence from access units to actual range reads",
+      "observation": "Eight full sections define block/file/object access, address/key/path, metadata, consistency and IO units before requests, versioned range windows and the original source-bound reading model. Local strict416 rules are distinguished from RFC9110 truncation of an oversized last-byte position.",
+      "headings": [
+        "先跟着一批训练数据走一遍",
+        "对象接口让应用显式决定分片和版本",
+        "文件和块分别把什么责任交给了谁",
+        "用固定请求成本解释小对象的数量级",
+        "从设备消费速率倒推数据管道",
+        "冷/热缓存、版本与范围要一起验收",
+        "实战：三份整分片与五次范围读取",
+        "验收：选一种接口，说明不选另外两种的理由"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9472e7705c9bcbab0af1670522ea47ac5a2f49567a14375aeacb0496dc25d83e",
+      "reviewed_content_sha256": "f3372f96b23e07ca1d8c7d57d8ff162e2a083ded7aef4234859a43ad679f5167",
+      "scope": "Explicit location/gradient reading destinations for different curricula",
+      "observation": "Two sections replace universal next-chapter claims with named position-encoding/autograd links and explain full-course versus training-route progression without changing required dependencies.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
     }
   ]
 }

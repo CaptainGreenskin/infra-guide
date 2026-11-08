@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 850" width="1120" height="850" role="img" aria-labelledby="title desc">
+<title id="title">同一次训练的作业、队列、Pod与进程组</title>
+<desc id="desc">声明R1/A1创建Indexed Job J1。Workload W1通过ownerReferences关联Job，Job管理两个Pod。静态会合将两个本地进程组连为四rank。W1不直接拥有Pod。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#315dce"/></marker></defs>
+<rect width="1120" height="850" fill="white"/>
+<text x="32" y="47" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">一份训练，三类身份</text>
+<text x="32" y="89" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">平台记录工作与执行轮次；Kubernetes记录对象；rank标识本次通信组内的进程。</text>
+<rect x="32" y="120" width="1056" height="92" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="56" y="157" font-size="29" fill="#315dce" font-weight="600" text-anchor="start">run R1  →  attempt A1</text>
+<text x="56" y="193" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">相同代码、数据与配置；本轮选择新建 Job，并登记其 UID。</text>
+<path d="M852 212 L852 259" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="871" y="242" font-size="21" fill="#315dce" font-weight="400" text-anchor="start">创建与关联</text>
+<rect x="32" y="280" width="460" height="121" rx="6" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="55" y="317" font-size="28" fill="#287b69" font-weight="600" text-anchor="start">Workload W1</text>
+<text x="55" y="354" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">PodSet：2 份相同 Pod 模板</text>
+<text x="55" y="386" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">每份申请两卡 → 额度 4 卡</text>
+<rect x="665" y="280" width="423" height="121" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="688" y="317" font-size="28" fill="#315dce" font-weight="600" text-anchor="start">Indexed Job J1</text>
+<text x="688" y="354" font-size="23" fill="#1c283d" font-weight="400" text-anchor="start">parallelism = completions = 2</text>
+<text x="688" y="386" font-size="22" fill="#66738a" font-weight="400" text-anchor="start">Job UID：本次对象的唯一身份</text>
+<path d="M492 333 L653 333" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="7 5"/>
+<text x="578" y="304" font-size="20" fill="#315dce" font-weight="400" text-anchor="middle">拥有者引用</text>
+<text x="578" y="366" font-size="19" fill="#315dce" font-weight="400" text-anchor="middle">指向 Job UID</text>
+<path d="M875 401 L875 430 L707 430 L707 472" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M875 430 L968 430 L968 472" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="720" y="458" font-size="21" fill="#315dce" font-weight="400" text-anchor="start">Job 管理 Pod</text>
+<rect x="578" y="485" width="247" height="120" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="596" y="521" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">Pod P0 · 节点 A</text>
+<text x="596" y="554" font-size="20" fill="#1c283d" font-weight="400" text-anchor="start">索引 0 · 独立 UID</text>
+<text x="596" y="586" font-size="20" fill="#66738a" font-weight="400" text-anchor="start">申请两卡，启动两个进程</text>
+<path d="M701 605 L701 639" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="578" y="651" width="247" height="91" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="701" y="685" font-size="23" fill="#315dce" font-weight="550" text-anchor="middle">global rank 0 / 1</text>
+<text x="701" y="723" font-size="21" fill="#1c283d" font-weight="400" text-anchor="middle">local rank 各为 0 / 1</text>
+<rect x="841" y="485" width="247" height="120" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="859" y="521" font-size="24" fill="#1c283d" font-weight="550" text-anchor="start">Pod P1 · 节点 B</text>
+<text x="859" y="554" font-size="20" fill="#1c283d" font-weight="400" text-anchor="start">索引 1 · 独立 UID</text>
+<text x="859" y="586" font-size="20" fill="#66738a" font-weight="400" text-anchor="start">申请两卡，启动两个进程</text>
+<path d="M964 605 L964 639" fill="none" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="841" y="651" width="247" height="91" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="964" y="685" font-size="23" fill="#315dce" font-weight="550" text-anchor="middle">global rank 2 / 3</text>
+<text x="964" y="723" font-size="21" fill="#1c283d" font-weight="400" text-anchor="middle">local rank 各为 0 / 1</text>
+<rect x="32" y="485" width="480" height="258" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="55" y="524" font-size="26" fill="#287b69" font-weight="600" text-anchor="start">关联时查什么</text>
+<text x="55" y="568" font-size="21" fill="#1c283d" font-weight="400" text-anchor="start">W1.ownerReferences → J1 UID</text>
+<text x="55" y="604" font-size="21" fill="#1c283d" font-weight="400" text-anchor="start">Pod.ownerReferences → J1 UID</text>
+<text x="55" y="640" font-size="21" fill="#1c283d" font-weight="400" text-anchor="start">平台登记：R1 / A1 / Job UID</text>
+<text x="55" y="676" font-size="21" fill="#1c283d" font-weight="400" text-anchor="start">训练日志：attempt / Pod UID / rank</text>
+<text x="55" y="712" font-size="21" fill="#1c283d" font-weight="400" text-anchor="start">Workload 获准后，仍需放置与会合</text>
+<text x="32" y="797" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">本例静态 node_rank = 完成索引；共同 WORLD_SIZE = 4。整组 A2 使用新对象。</text>
+<text x="32" y="833" font-size="21" fill="#66738a" font-weight="400" text-anchor="start">这是教学映射与平台策略；未声明 Kueue/GPU 已在此场景实跑。</text>
+<metadata>{&quot;kind&quot;: &quot;declared_training_object_correspondence&quot;, &quot;run&quot;: &quot;R1&quot;, &quot;attempt&quot;: &quot;A1&quot;, &quot;job&quot;: &quot;J1&quot;, &quot;workload&quot;: &quot;W1&quot;, &quot;podsets&quot;: [{&quot;count&quot;: 2, &quot;gpu_per_pod&quot;: 2}], &quot;rank_groups&quot;: [[0, 1], [2, 3]], &quot;world_size&quot;: 4, &quot;owner_reference_edges&quot;: [[&quot;W1&quot;, &quot;J1&quot;], [&quot;P0&quot;, &quot;J1&quot;], [&quot;P1&quot;, &quot;J1&quot;]], &quot;native_execution&quot;: false, &quot;gpu_execution&quot;: false}</metadata>
+</svg>

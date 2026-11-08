@@ -293,6 +293,13 @@ const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisit
 
 // Reviewed primary focus; the remaining associated concepts remain available.
 const chapterFieldPrimaryConcepts={
+ 'cloud-compute':['compute','cpu-memory-placement'],
+ 'storage-recovery':['cloud-data','backup-restore'],
+ 'mysql-recovery':['cloud-data','backup-restore'],
+ 'tensor-parallel-math':['training','tr-parallel'],
+ 'moe-routing':['training','tr-parallel'],
+ 'kairo-practice':['agent','ag-evaluation'],
+ 'kubernetes-training':['platform','sv-contract'],
  'network-diagnosis':['network','transport-timeout'],
  'k8s-workloads':['native','workload-type'],
  'roofline-model':['model-foundations','mf-roofline'],

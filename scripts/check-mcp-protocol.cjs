@@ -109,7 +109,7 @@ if(!vm.runInContext('articles.some(a=>a.id==="mcp-protocol")',context))vm.runInC
 const data=JSON.parse(vm.runInContext('JSON.stringify({files:mcpProtocolFiles,evidence:mcpProtocolEvidence,article:articles.find(a=>a.id==="mcp-protocol")})',context));
 for(const[file,embedded]of Object.entries(data.files))assert.equal(embedded,fs.readFileSync(folder+file,'utf8'),file+': exact authored source embed');
 assert.deepStrictEqual(data.evidence.source_sha256,record.source_sha256);
-assert.equal(data.article.module,'agent');assert.equal(data.article.sections.length,9);assert.equal(data.article.updated,'2026.11.08');
+assert.equal(data.article.module,'agent');assert.equal(data.article.sections.length,9);assert(/^\d{4}\.\d{2}\.\d{2}$/.test(data.article.updated)&&data.article.updated>='2026.11.08','protocol lesson retains a valid date at or after its native-source review; later body dates are checked by the editorial ledger');
 const body=data.article.sections.map(s=>s[1]).join('');assert(body.includes('id="mcp-protocol-run"'));
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&amp;/g,'&');
 const blocks=[...body.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(x=>decode(x[1]));

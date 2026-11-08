@@ -45,7 +45,7 @@ const html=fs.readFileSync('dist/article/database-index-locks/index.html','utf8'
 for(const name of ['query_paths.py','snapshot_retry.py'])assert(blocks.includes(files[name].trim()),name+': static source mismatch');
 for(const id of ['sql-plan-lab','sql-snapshot-lab'])assert(html.includes('id="'+id+'"'));
 assert(html.includes('labs/sql-paths-snapshots.zip'));
-const article=vm.runInContext('articles.find(a=>a.id==="database-index-locks")',c);assert(article.sections[3][1].includes('定位、排序与覆盖'));assert(article.sections[6][1].includes('query_paths.py'));
+const article=vm.runInContext('articles.find(a=>a.id==="database-index-locks")',c);assert(['定位缩小候选范围','排序','覆盖','EXPLAIN QUERY PLAN'].every(term=>article.sections[3][1].includes(term)),'query plan explains localization, ordering and coverage separately');assert(article.sections[6][1].includes('query_paths.py'));
 const metadata=name=>{const source=fs.readFileSync('dist/diagrams/'+name+'.svg','utf8'),m=[...source.matchAll(/<metadata[^>]*>([\s\S]*?)<\/metadata>/g)].find(m=>!m[1].includes('<rdf:'));assert(m);return JSON.parse(decode(m[1]));};
 assert.deepEqual(metadata('v35-covering-index').result,expected);
 const chart=metadata('v35-query-callbacks');assert.equal(chart.n,1);assert.equal(chart.timing_measured,false);

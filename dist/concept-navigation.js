@@ -101,13 +101,15 @@ const conceptSectionTitles={
  'cloud-service-lab':['服务实例、探针与控制链','探针条件与容器重启','Service 请求与后端条件','模板修订、发布与回退','原生实验、源码与验收'],
  'cloud-overview':['云计算的基本对象','一次云上请求','运行职责、数据面与控制面','HTTP 状态与健康检查','Cloud、AI 与 Agent 的关系'],
  'transformer-model':['Transformer 整体结构','张量与形状','矩阵乘法与线性层','Decoder 的核心模块','模型形状与参数账本','计算量与存储规模','训练与自回归生成','序列长度与注意力复杂度','标签对齐与因果验证'],
+ 'training-storage':['存储接口与读写路径',...progressiveCloudSectionTitles['training-storage'].slice(1)],
+ 'model-serving':['模型服务的对象与生成路径',...progressiveAiSectionTitles['model-serving'].slice(1)],
  'operator-profiling':['算子、类型与内存布局','稳定 Softmax 与数值参考','GPU 线程映射与树形归约','GEMM 访问、分块与同步','FLOP、字节与算术强度','预热、异步计时与测量边界','CPU 轨迹与 GPU 采集边界','CPU/CUDA 实现与数值验收','算子正确性与性能判据'],
  'training-platform':['作业、worker、rank 与执行轮次','准入、启动与训练生命周期','任务契约与控制器协调','训练终态与不可变产物','失败分类、重试与取消','控制、执行与发布的交接','提交、等待与终态仲裁练习'],
  'agent-runtime':['Agent 的组成与职责','工具调用契约','执行循环与预算','错误分类与重试','任务状态与操作身份','任务完成与产物验证','Kairo 接入关系','HTTP 工具实战','流式工具调用']
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}
