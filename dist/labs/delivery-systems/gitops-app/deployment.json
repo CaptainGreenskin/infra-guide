@@ -1,0 +1,82 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "guide-web"
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "guide-web"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "guide-web"
+        },
+        "annotations": {
+          "guide/revision": "v1"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "web",
+            "image": "python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7",
+            "command": [
+              "python",
+              "-u",
+              "-c",
+              "import json,os,socket\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nclass H(BaseHTTPRequestHandler):\n def do_GET(self):\n  b=json.dumps({\"version\":os.environ[\"BUSINESS_VERSION\"],\"pod\":socket.gethostname()}).encode(); self.send_response(200); self.send_header(\"Content-Length\",str(len(b))); self.end_headers(); self.wfile.write(b)\n def log_message(self,*args): pass\nHTTPServer((\"0.0.0.0\",8080),H).serve_forever()"
+            ],
+            "env": [
+              {
+                "name": "BUSINESS_VERSION",
+                "valueFrom": {
+                  "configMapKeyRef": {
+                    "name": "guide-version",
+                    "key": "version"
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "containerPort": 8080
+              }
+            ],
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/version",
+                "port": 8080
+              }
+            },
+            "resources": {
+              "requests": {
+                "cpu": "25m",
+                "memory": "32Mi"
+              },
+              "limits": {
+                "cpu": "200m",
+                "memory": "128Mi"
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "readOnlyRootFilesystem": true,
+              "runAsNonRoot": true,
+              "runAsUser": 10001,
+              "capabilities": {
+                "drop": [
+                  "ALL"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
