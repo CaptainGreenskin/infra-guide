@@ -62,6 +62,8 @@ function workshopPage(id) {
 const foundationChapters = new Set(['cloud-overview','linux-resource','distributed-systems','vpc-network','network-diagnosis','transformer-model','tokenization-embedding','attention-mechanics','autograd-training']);
 const focusChapters = new Set(['virtual-memory-oom','concurrency-pools','database-index-locks','cache-consistency','position-encoding','transformer-block','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','durable-workflows','agent-retrieval','agent-observability','agent-sandbox','kubernetes-basics','delivery','slo','observability','incident','gpu-cluster','distributed-training','gpu-memory','training-communication','checkpoint-recovery','model-serving','inference-performance','gpu-scheduling','agent-runtime','agent-recovery','agent-security','agent-evaluation']);
 function chapterPriority(id) {
- const level = foundationChapters.has(id) ? '基础必修' : focusChapters.has(id) ? '岗位重点' : '按需深入';
+ const profile=typeof selectedLearningProfile==='function'?selectedLearningProfile():null;
+ const cloudCore=['cloud-compute','iam-security','elasticity'];
+ const level = profile?learningProfilePriority(id,profile):foundationChapters.has(id)?'基础必修':focusChapters.has(id)||cloudCore.includes(id)?'岗位重点':'专题深入';
  return '<small class="chapter-priority">'+level+'</small> ';
 }

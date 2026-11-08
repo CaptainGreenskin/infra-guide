@@ -10,9 +10,9 @@ for(const r of d.learningResources){assert(new URL(r.url).protocol==='https:');a
 for(const track of ['cloud','ai','agent'])assert(d.learningResources.filter(r=>r.track===track&&r.video).length>=3);
 assert.equal(d.cloudRoleSources.length,3);
 const html=route=>fs.readFileSync('dist/'+route+'/index.html','utf8');
-for(const [route,first]of [['track/cloud','云计算服务模型'],['module/network','VPC、子网与地址规划'],['module/native','镜像、容器与运行时']]){
+for(const [route,first]of [['module/compute','云计算服务模型'],['module/network','VPC、子网与地址规划'],['module/native','镜像、容器与运行时']]){
  const page=html(route);assert(page.includes('class="knowledge-point"'));assert(page.indexOf(first)<page.indexOf('id="examples"'));
- const sidebar=page.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];assert(!sidebar.includes('模块概览')&&!sidebar.includes('系统知识</a>'));assert(sidebar.includes('<summary><a href="/module/'));
+ const sidebar=page.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];assert(!sidebar.includes('模块概览')&&!sidebar.includes('系统知识</a>'));assert(sidebar.includes('<summary><a href="/article/'));
  assert(!page.includes('从第一章开始')&&!page.includes('先看全貌，再走平台主干'));
 }
 for(const [route,title]of [['track/ai','Transformer 全貌'],['track/agent','从模型提议到任务完成'],['module/training','云上训练全景']])assert(html(route).includes(title),route);

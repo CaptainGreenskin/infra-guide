@@ -2,6 +2,9 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),cp=require('child_process'),crypto=require('crypto');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
 const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,edits:capacityRooflineObservationEdits,forecast:capacityForecastCode})',c)));
+// V52's whole-corpus statement belongs to its exact publication. Current
+// whole-corpus changes are reviewed separately by check-course-reading.cjs.
+d.articles=require('./content-at-commit.cjs')('814dfe982040fe1ea79b7b2a4ebb9645c5e11d48');
 const commit='89db380eb03f932c423eb2f22976e87a2aec18f2',before=require('./content-at-commit.cjs')(commit);
 const ids=[...new Set(d.edits.map(x=>x.id))];assert.deepEqual(ids,['elasticity','roofline-model','agent-observability']);
 for(const track of ['cloud','ai','agent'])assert.equal(ids.filter(id=>d.modules.find(m=>m.id===d.articles.find(a=>a.id===id).module).track===track).length,1);
@@ -32,5 +35,7 @@ const evidence=review.observation_replay;assert.equal(evidence.source_sha256,sha
 if(process.env.INFRA_OBSERVATION_PYTHON){const r=JSON.parse(cp.execFileSync(process.env.INFRA_OBSERVATION_PYTHON,['-B','dist/labs/scaling-collectives-traces/otel_attempts.py'],{encoding:'utf8',timeout:20000}));const root=r.spans.find(s=>s.name==='agent.task'),clients=r.spans.filter(s=>s.kind==='CLIENT'),servers=r.spans.filter(s=>s.kind==='SERVER');assert.equal(r.spans.length,5);assert.equal(root.status,'OK');for(let i=0;i<2;i++){assert.equal(clients[i].parent_id,root.span_id);assert.equal(servers[i].parent_id,clients[i].span_id);assert(servers[i].parent_remote);assert.deepEqual(r.received_traceparent[i].split('-').slice(1,3),[clients[i].trace_id,clients[i].span_id]);}assert.deepEqual([r.http_attempts,r.effects,r.unique_verified_tasks,r.all_attempt_cost_per_success],[2,1,1,5]);}
 const diagramData={};for(const name of ['v52-capacity-backlog','v52-roofline-byte-ledger','v52-agent-five-spans','v52-agent-critical-path']){const svg=fs.readFileSync('dist/diagrams/'+name+'.svg','utf8');assert(svg.includes('<title')&&svg.includes('<desc')&&svg.includes('<metadata>'));assert(d.articles.some(a=>body(a).includes('diagrams/'+name+'.svg')));diagramData[name]=JSON.parse(svg.match(/<metadata>([\s\S]*?)<\/metadata>/)[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&'));}
 assert.deepEqual(diagramData['v52-capacity-backlog'].points,points);assert.deepEqual(diagramData['v52-agent-critical-path'].intervals,intervals);assert.equal(diagramData['v52-roofline-byte-ledger'].cases[1].total,37748736);assert.deepEqual(diagramData['v52-agent-five-spans'].edges,[['s0','c1'],['c1','s1'],['s0','c2'],['c2','s2']]);
-for(const[file,revision]of Object.entries(review.source_revisions))assert.equal(revision.reviewed_sha256,sha(fs.readFileSync(file)),file+': unreviewed source change');
+// Preserve V52's exact published source claim; later source revisions are
+// independently checked by the merged current-source review in learning connections.
+for(const[file,revision]of Object.entries(review.source_revisions))assert.equal(revision.reviewed_sha256,sha(cp.execFileSync('git',['show','814dfe982040fe1ea79b7b2a4ebb9645c5e11d48:'+file],{maxBuffer:16*1024*1024})),file+': published V52 source differs from review');
 console.log('PASS: three whole-body scope checks against V51, all72 other bodies and complete original code blocks preserved; fresh capacity/Roofline replays, independent 480s conservation and timeline oracles, source-bound five-span replay, four original diagrams. No real autoscaler, GPU, Collector or Kairo execution inferred.');

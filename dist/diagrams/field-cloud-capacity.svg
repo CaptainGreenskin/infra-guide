@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 638" role="img" aria-labelledby="title desc">
+<title id="title">容量、弹性与成本：核心概念关系</title>
+<desc id="desc">箭头连接真实概念，数字对应正文关系说明。方向表示作用或依赖，不表示全部串行执行。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7590bd"/></marker></defs>
+<rect width="1120" height="638" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">容量、弹性与成本</text>
+<text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">方框：概念　箭头：作用或依赖</text>
+<path data-edge="capacity-units queue-backpressure" d="M411.0 356 C411.0 392.0 560.0 392.0 560.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="485.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="485.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">1</text></g>
+<path data-edge="scaling-delay queue-backpressure" d="M709.0 356 C709.0 392.0 560.0 392.0 560.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="634.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="634.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">2</text></g>
+<path data-edge="performance-budget capacity-units" d="M411.0 200 C411.0 236.0 411.0 236.0 411.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="411.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="411.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">3</text></g>
+<path data-edge="cost-efficiency scaling-delay" d="M709.0 200 C709.0 236.0 709.0 236.0 709.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="709.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="709.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">4</text></g>
+<g data-concept="capacity-units"><rect x="279.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="297.0" y="296" fill="#6a7f9e" font-size="15">概念 01</text>
+<text x="411.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">工作量口径</text></g>
+<g data-concept="queue-backpressure"><rect x="428.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="452" fill="#6a7f9e" font-size="15">概念 02</text>
+<text x="560.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">积压与准入</text></g>
+<g data-concept="scaling-delay"><rect x="577.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="595.0" y="296" fill="#6a7f9e" font-size="15">概念 03</text>
+<text x="709.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">扩容空窗</text></g>
+<g data-concept="performance-budget"><rect x="279.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="297.0" y="140" fill="#6a7f9e" font-size="15">概念 04</text>
+<text x="411.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">端到端瓶颈</text></g>
+<g data-concept="cost-efficiency"><rect x="577.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="595.0" y="140" fill="#6a7f9e" font-size="15">概念 05</text>
+<text x="709.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">有效产出成本</text></g>
+<text x="560" y="610" text-anchor="middle" fill="#536783" font-size="17">圆圈数字对应正文箭头说明 · 点图放大</text>
+</g></svg>

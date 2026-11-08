@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'manual-sharding':{folder:'manual-sharding',title:'双进程手工状态分片'},
  'delivery-systems':{folder:'delivery-systems',title:'消息确认、Terraform状态与真实GitOps'},
  'runtime-scheduling':{folder:'runtime-scheduling',title:'真实容器限制与kind调度'},
  'speculative-decoding':{folder:'speculative-decoding',title:'精确采样与CPU缓存验证'},
@@ -120,6 +121,7 @@ labLearningCatalog.push(
  {id:'cloud-terraform-state-native',track:'cloud',stage:2,title:'状态锁、刷新与工作空间会保护哪一层',chapter:'terraform-state',anchor:'terraform-state-run',pack:'delivery-systems',files:['terraform_state.py'],env:'Terraform 1.13.0 · local 2.5.3 · Python 3.9+',kind:'真实CLI与文件',observe:'让第二进程取锁失败；分别观察配置、state和实物，再用两份状态争夺同一路径。',scope:'实际local backend和local_file，只操作自有临时目录；非云provider/remote backend。'},
  {id:'cloud-gitops-native',track:'cloud',stage:2,title:'同步健康为何仍返回旧版',chapter:'gitops-reconciliation',anchor:'gitops-native-run',pack:'delivery-systems',files:['gitops_reconcile.py','gitops-revisions.json','gitops-app/configmap.json','gitops-app/deployment.json','gitops-app/service.json'],env:'Linux Docker · kind 0.33 · kubectl · Python',kind:'真实Argo CD与HTTP',observe:'依次跟踪三个固定Git修订，核对自愈、清理、Pod UID和真实Service响应。',scope:'Argo CD Core 3.6.1、单机kind；业务v2断言独立于Synced/Healthy。'}
 );
+labLearningCatalog.push({id:'ai-manual-sharding',track:'ai',stage:2,title:'分片参数怎样回到一次正确的更新',chapter:'distributed-training',anchor:'manual-sharding-run',pack:'manual-sharding',files:['shard_linear.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实双进程与自动求导',observe:'各进程分别处理1与2条样本，逐次核对三轮梯度、拼回参数和SGD动量；错误局部均值应被拒绝。',scope:'手工all-gather与完整梯度all-reduce后切片；非FSDP API，不测GPU峰值、原生reduce-scatter或跨规模恢复。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

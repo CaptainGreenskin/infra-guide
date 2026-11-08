@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 794" role="img" aria-labelledby="title desc">
+<title id="title">AI 作业平台与推理服务：核心概念关系</title>
+<desc id="desc">箭头连接真实概念，数字对应正文关系说明。方向表示作用或依赖，不表示全部串行执行。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7590bd"/></marker></defs>
+<rect width="1120" height="794" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">AI 作业平台与推理服务</text>
+<text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">方框：概念　箭头：作用或依赖</text>
+<path data-edge="sv-contract sv-admission" d="M411.0 356 C411.0 392.0 262.0 392.0 262.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="336.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="336.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">1</text></g>
+<path data-edge="sv-contract sv-prefill" d="M411.0 356 C411.0 392.0 560.0 392.0 560.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="485.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="485.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">2</text></g>
+<path data-edge="sv-prefill sv-kv" d="M560.0 512 C560.0 548.0 560.0 548.0 560.0 580" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="560.0" cy="548.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="553.0" text-anchor="middle" fill="#36527e" font-size="16">3</text></g>
+<path data-edge="sv-batching sv-kv" d="M560.0 200 V218 H26 V566 H560.0 V580" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="26" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="26" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">4</text></g>
+<path data-edge="sv-batching sv-metrics" d="M560.0 200 C560.0 236.0 709.0 236.0 709.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="634.5" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="634.5" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">5</text></g>
+<path data-edge="sv-quantization sv-metrics" d="M858.0 200 C858.0 236.0 709.0 236.0 709.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="783.5" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="783.5" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">6</text></g>
+<path data-edge="sv-optimizations sv-prefill" d="M726.0 470.0 L696.0 470.0" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="709.0" cy="470.0" r="13" fill="#fff" stroke="#7590bd"/><text x="709.0" y="475.0" text-anchor="middle" fill="#36527e" font-size="16">7</text></g>
+<path data-edge="sv-release sv-contract" d="M262.0 200 C262.0 236.0 411.0 236.0 411.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="336.5" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="336.5" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">8</text></g>
+<g data-concept="sv-contract"><rect x="279.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="297.0" y="296" fill="#6a7f9e" font-size="15">概念 01</text>
+<text x="411.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">作业与完整产物</text></g>
+<g data-concept="sv-admission"><rect x="130.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="148.0" y="452" fill="#6a7f9e" font-size="15">概念 02</text>
+<text x="262.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">资源准入</text></g>
+<g data-concept="sv-prefill"><rect x="428.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="452" fill="#6a7f9e" font-size="15">概念 03</text>
+<text x="560.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">输入与生成</text></g>
+<g data-concept="sv-kv"><rect x="428.0" y="584" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="608" fill="#6a7f9e" font-size="15">概念 04</text>
+<text x="560.0" y="642" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">历史键值状态</text></g>
+<g data-concept="sv-batching"><rect x="428.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="140" fill="#6a7f9e" font-size="15">概念 05</text>
+<text x="560.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">请求调度</text></g>
+<g data-concept="sv-metrics"><rect x="577.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="595.0" y="296" fill="#6a7f9e" font-size="15">概念 06</text>
+<text x="709.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">用户计时口径</text></g>
+<g data-concept="sv-quantization"><rect x="726.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="744.0" y="140" fill="#6a7f9e" font-size="15">概念 07</text>
+<text x="858.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">数值与字节</text></g>
+<g data-concept="sv-optimizations"><rect x="726.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="744.0" y="452" fill="#6a7f9e" font-size="15">概念 08</text>
+<text x="858.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">候选与验证</text></g>
+<g data-concept="sv-release"><rect x="130.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="148.0" y="140" fill="#6a7f9e" font-size="15">概念 09</text>
+<text x="262.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">版本与验收</text></g>
+<text x="560" y="766" text-anchor="middle" fill="#536783" font-size="17">圆圈数字对应正文箭头说明 · 点图放大</text>
+</g></svg>

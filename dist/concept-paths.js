@@ -29,6 +29,7 @@ const conceptGlossary=[
  ['FaaS','函数即服务，按调用或事件运行提交的函数'],
  ['vCPU','虚拟机可见的CPU执行单元，不直接等于独占物理核心'],
  ['Hypervisor','虚拟机监控器，管理虚拟CPU、内存和设备等对象'],
+ ['操作系统内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
  ['内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
  ['namespace','Linux中划分一组进程所见系统对象的机制'],
  ['cgroup','Linux中对进程组做资源记账与约束的机制'],
@@ -160,6 +161,9 @@ function explainFirstConceptTerms(html,seen=new Set()){
   if(stack.length)return part;
   return part.replace(conceptTermPattern,(term,at)=>{
    const before=part.slice(0,at),after=part.slice(at+term.length);
+   // “内核” can mean the OS kernel or a GPU compute kernel. A global gloss
+   // cannot disambiguate it; the author must explain the actual object locally.
+   if(term==='内核')return term;
    if(/[A-Za-z0-9_]/.test(term[0])&&/[A-Za-z0-9_.-]$/.test(before)||/[A-Za-z0-9_]/.test(term.at(-1))&&/^[A-Za-z0-9_.-]/.test(after)||seen.has(term))return term;
    if(/["']$/.test(before)&&/^["']\s*:/.test(after))return term;
    if(/[\u3400-\u9fff]/.test(term)&&/^[\u3400-\u9fff]/.test(after)&&! /^(?:是|指|表示|称为|负责|用于|定义为|用来|把|会|可以|能够)/.test(after))return term;

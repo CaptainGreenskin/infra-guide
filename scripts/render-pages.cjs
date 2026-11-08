@@ -2,6 +2,7 @@
    The small DOM sink only captures renderer output; it is not browser automation. */
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
+require('./embed-manual-sharding.cjs');
 const practiceEvidence = {};
 for (const lab of ['network-timing', 'permissions', 'interview-database', 'textbooks']) {
  const recordPath = path.join(dist, 'labs', lab, 'validation.json');
@@ -31,9 +32,9 @@ const document={title:'',documentElement:{classList:{toggle:noop}},addEventListe
 const context={document,window:{addEventListener:noop,scrollTo:noop},location:{pathname:'/',search:'',hash:'',replace:noop},history:{},localStorage:{getItem:()=>null},URLSearchParams,requestAnimationFrame:noop,IntersectionObserver:class{observe(){}disconnect(){}}};
 vm.createContext(context);
 for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
-const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits})',context);
+const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits,learningProfiles})',context);
 fs.writeFileSync(path.join(root,'docs/CHAPTER_REVIEW_2026-11-04.json'),JSON.stringify({date:'2026-11-04',status:'reviewed_and_revised',chapters:vm.runInContext('chapterReadingEdits',context)},null,2)+'\n');
-const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()',alias:'/'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},{route:'/labs/',call:'labsPage()'},{route:'/resources/',call:'resourcesPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
+const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()',alias:'/'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},...Object.entries(data.learningProfiles).map(([id,profile])=>({route:'/roadmap/'+id+'/',call:'roadmapPage()',description:profile.aim})),{route:'/labs/',call:'labsPage()'},{route:'/resources/',call:'resourcesPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
 const chapterDates=new Map(data.articles.map(a=>{
  const raw=(a.updated||'2026.11.03').replaceAll('.','-');
  if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)||!Number.isFinite(Date.parse(raw))||new Date(raw).toISOString().slice(0,10)!==raw)throw Error(a.id+': invalid revision date');

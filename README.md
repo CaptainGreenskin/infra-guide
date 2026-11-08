@@ -13,7 +13,9 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前75章：Cloud 33、AI 29、Agent 10、综合实战3；33个完整实验包、73项学习任务。领域入口先讲系统知识，文章再展开机制。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)连接三条系统主线、14组领域关系及详细章节。领域图谱可聚焦概念、解释关系、打开相应知识点与机制章；搜索也支持概念名称。章末上下篇采用同一学习路线，综合实战留在所属方向。Agent可以从任务与工具开始，不以完成Cloud或GPU训练课程为前提。
+当前75章：Cloud 33、AI 29、Agent 10、综合实战3；34个完整实验包、74项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+
+训练并行章另有[双进程手工分片实验](https://captaingreenskin.github.io/infra-guide/article/distributed-training/#manual-sharding-run)：三个更新逐项对照独立完整批次的梯度、参数和SGD动量，并保留错误分母的失败对照。它实际运行CPU/Gloo，不把手工算法写成FSDP或GPU显存实测。
 
 本轮[深化容量、Roofline与Agent观测](docs/ITERATION_2026-11-08_SYSTEM_BUDGETS.md)，先把对象、单位和因果讲清，再跟读原有程序；补四张图并重放本地实战，保留各环境验证边界。
 

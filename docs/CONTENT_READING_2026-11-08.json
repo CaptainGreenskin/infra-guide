@@ -1,0 +1,31 @@
+{
+  "reviewed_at": "2026-11-08",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXPANSIONS_2026-11-07.json": "7a7e81e4dba2f6596860eb0c5ee8ed2e9d72fb58b28cd413630c28ef4b6bbb5d",
+    "docs/CONTENT_EXPANSIONS_2026-11-08.json": "700c8ad53ec91538e45bbb81ca95cfd532e89cf954c907bec3c3331454eb49e4",
+    "docs/CONTENT_EXPANSIONS_2026-11-08_DELIVERY.json": "be87e7b5a409f75c761ff5fa3d7e059441fd1ed3918d1ba5e95c678a64358fec"
+  },
+  "new_chapter_reviews": [],
+  "body_revisions": [],
+  "revised_teaching_units": [],
+  "knowledge_revisions": [
+    {
+      "id": "ag-runtime",
+      "previous_content_sha256": "b776a8c010cce28de3c80c13c17149804466d047760c3f291f510a138b97b6c3",
+      "reviewed_content_sha256": "7f704b883bc62852ac35c03012ea6bac493f22c8feb5a77a24a738fe8ae9d622",
+      "reviewed_at": "2026-11-08",
+      "scope": "The shared Agent runtime explanation introduces the normal report task before contracts.",
+      "observation": "The same authored runtimeTask is reused by G1 and ag-runtime; checked both views, all source blocks, stable task IDs and unchanged task/attempt budgets."
+    }
+  ],
+  "route_views": [
+    "cloud-platform",
+    "cloud-sre",
+    "ai-training",
+    "ai-inference",
+    "ai-operators",
+    "agent-app",
+    "agent-platform"
+  ]
+}

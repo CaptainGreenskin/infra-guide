@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 166,
+  "canonical_script_count": 168,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "3f400c39ef23bd21fa4096c0e2760223dfb461982f9da3521a4e7c78ef4ce4c8",
-      "bytes": 369079,
+      "sha256": "a13d62f87b8216f6f01bd9bf0a7c3cdbf7cc7d9fa85482326a2b8be88cbba0ba",
+      "bytes": 383599,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,13 +30,18 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "2ffbba667b7cb2cbdb5aade1ccff32161f17bc283b6c1eaf9d8b2fef7a6bbbc5",
-          "bytes": 10948
+          "sha256": "97705e71ea9c383cbd2ec519472a5839bfd2989e81a598b28fcebfce6fe0ec9a",
+          "bytes": 11643
+        },
+        {
+          "file": "manual-sharding-data.js",
+          "sha256": "8ab72a9267efbe10d272d4890c3f9717233a881538fdd67b27cecd227fc8bc94",
+          "bytes": 7475
         },
         {
           "file": "training-content.js",
-          "sha256": "81336d9789a450ba055cc847a46db7620a832efd484a1eee17d6e3d0daad4ead",
-          "bytes": 23432
+          "sha256": "8e264cb1ce7862b4a9ae22209360da7507f2d1798ff37e157e17d1a6e717a6ee",
+          "bytes": 29038
         },
         {
           "file": "training-advanced.js",
@@ -105,8 +110,8 @@
         },
         {
           "file": "guided-lessons.js",
-          "sha256": "ec621c65b3ae10524a0d35e1ccb6eea4a745b3021375f69c5f5be48a69b5b18a",
-          "bytes": 26181
+          "sha256": "a5357631ba4c09a425cf837be9e04b599e5062148a57350a8766ef9b61699a0b",
+          "bytes": 26894
         },
         {
           "file": "guided-foundations.js",
@@ -117,8 +122,8 @@
     },
     {
       "file": "runtime-02.js",
-      "sha256": "0e16e8e335bde16fdc38aa067481cc5fa726aa63ae702a72dfdf47f15d4c3500",
-      "bytes": 616905,
+      "sha256": "09bc06b7a83136dda0983a03c6201c09d1aae94d2daea63bb20f6a8b61c73bf1",
+      "bytes": 617756,
       "sources": [
         {
           "file": "practice-evidence.js",
@@ -132,13 +137,13 @@
         },
         {
           "file": "textbook-setup.js",
-          "sha256": "c3e39497bf66845afb7fcd2cf9bd8d4c3e2c9af5cccd6f93038202a64719053b",
-          "bytes": 756
+          "sha256": "fca57c9ee1744fd12a5b3b06753b7299e7e5e4f76593b03c41754bcfa6aef8f7",
+          "bytes": 741
         },
         {
           "file": "model-lessons.js",
-          "sha256": "59957f7e5fc496445dbd105e1a008ec8b20cd7b01c9210acc033df8913693c35",
-          "bytes": 65606
+          "sha256": "c483f12ae48e9483d82702c1c577bc3af2e75c7a351ae964bc49323ffbd4a817",
+          "bytes": 66472
         },
         {
           "file": "tokenization-lesson.js",
@@ -224,13 +229,13 @@
     },
     {
       "file": "runtime-03.js",
-      "sha256": "b33253df07fb4a6144b103a15498c7cd1aa079958de43a4383f43ff93f18df03",
-      "bytes": 263275,
+      "sha256": "c7cafad0f586828500683953184bd14160c6410f61495cc877731c34a110ba6a",
+      "bytes": 264001,
       "sources": [
         {
           "file": "cloud-knowledge.js",
-          "sha256": "bb803cb8d02924ad5ae23d38be02841d6d8a96a133bf4fff0951e0a06ab4f2a0",
-          "bytes": 32334
+          "sha256": "2818dae80b6e270c64c976fb3a2f367979eee9cb0226d9ae443ce24686698571",
+          "bytes": 32750
         },
         {
           "file": "cloud-mechanics-interactive.js",
@@ -324,15 +329,15 @@
         },
         {
           "file": "infra-knowledge.js",
-          "sha256": "9dd77891ab6c911d25c97d608f88fd76c5e2c2aab7fb2f0aec6a60b9f7918e16",
-          "bytes": 3482
+          "sha256": "9a1e7a7285c109182fd860553fc0dbaa964bb1c76e2595ccfde245b3402a5929",
+          "bytes": 3792
         }
       ]
     },
     {
       "file": "runtime-04.js",
-      "sha256": "212aa25cdbbfcba56f0f7b654facb80c2de7a47b270a66c4503e836adc4f093f",
-      "bytes": 333905,
+      "sha256": "cf4251309b9e20abc2ced1b6774c457428dbae3ddc787b3b398f7d6e50f8df41",
+      "bytes": 335125,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -361,8 +366,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "58154bdd024a6d7281e6b0c599e576f81fddc6deea04839777a0699fa7246f2c",
-          "bytes": 18069
+          "sha256": "795d780e1d101b54ad37ba55178b4f84d60e759966f9096eb2ecfda15382fb98",
+          "bytes": 18448
         },
         {
           "file": "interview-practice.js",
@@ -391,13 +396,13 @@
         },
         {
           "file": "interview-paths.js",
-          "sha256": "986a79039c6e0aaf93d782c1ea18a2b5105128fe41ca35ade372adda9a6d91cf",
-          "bytes": 9326
+          "sha256": "e9de75577befc282450aad554da42375eeb25e21264cad19152357e305c3647e",
+          "bytes": 9541
         },
         {
           "file": "study-guides.js",
-          "sha256": "d71df6b4bcbe74d56fff1dc1b7a1405fb784ea12c4d2109d872280ea219316ea",
-          "bytes": 18127
+          "sha256": "bdefbf29e18f0dbc9cbc39512f52a0dd245cfd048d5f679bd2576c3e986c3e64",
+          "bytes": 18267
         },
         {
           "file": "interview-experiences.js",
@@ -411,8 +416,8 @@
         },
         {
           "file": "cloud-coverage.js",
-          "sha256": "70feff1ead7ecbd52fbd57729a91f00c1ac3e8d5177dfb424e142eff54967b11",
-          "bytes": 8456
+          "sha256": "86cfe83a2936966e0c5a130ebfb051715b72b5943343e9b94b9e214a83db1b93",
+          "bytes": 8942
         },
         {
           "file": "reading-revisions.js",
@@ -438,8 +443,8 @@
     },
     {
       "file": "runtime-05.js",
-      "sha256": "6831fe7965bc7e7c2dd6d5e1bd78865dbd9b9a9cbc8ea0d0e5992a677c3ff6c3",
-      "bytes": 418492,
+      "sha256": "1b733e1c696ee7feb161a13400dcb9d7e048db658e5307d74555e7c4002cae97",
+      "bytes": 419196,
       "sources": [
         {
           "file": "learning-mechanism-files.js",
@@ -518,8 +523,8 @@
         },
         {
           "file": "tool-runtime-lessons.js",
-          "sha256": "d7bff2f45c29160d44cc3da333109e83b707453b9c02f98eb177545ac71f1c41",
-          "bytes": 16242
+          "sha256": "58f6f5a4d8bd03c4d72d47392e5a62d169eb1a71ebab89f30cac4a8e9fa51d7d",
+          "bytes": 16946
         },
         {
           "file": "scaling-collective-trace-files.js",
@@ -545,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "cf6d42cbbd646c138606aa92b529a92bcb81a023ffede60ce142c9f74ea5378e",
-      "bytes": 1228897,
+      "sha256": "f7eb8056a670ab20f3468831300ed65f5932a079e7633995765494f0280fc67d",
+      "bytes": 1239267,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -830,23 +835,28 @@
         },
         {
           "file": "concept-paths.js",
-          "sha256": "4ee456832805a41635eba881f0a30b6fcaae801539ffa7c4729d6cafa7753ad9",
-          "bytes": 16758
+          "sha256": "23fd4fff19b2b079fbab7b43a28bbb08e1cbb7a7c3e91c858d657651b507eed2",
+          "bytes": 17059
         },
         {
           "file": "course-map.js",
-          "sha256": "93136b33b9141cc9851203603d55d790bb24676b72b132e9e7f71e6c31d7d37c",
-          "bytes": 6628
+          "sha256": "638f47ae5c03aaa48dbd84cdd096967e010dff307b7e5a968923fb17fe47cc7b",
+          "bytes": 8779
         },
         {
           "file": "learning-connections.js",
-          "sha256": "17e4ebc5dd141297a9de612dd23256be4a678f5949cc5c1033b9f51527169989",
-          "bytes": 25722
+          "sha256": "6b60f78b75ecf9670c6069b6dfd39dd7591c335d22f756a6bd3c87088d835188",
+          "bytes": 25734
+        },
+        {
+          "file": "learning-goals.js",
+          "sha256": "d0826815b534713d08a12b37645e10ceb48ec93f29aa57381c849828197f64ac",
+          "bytes": 6576
         },
         {
           "file": "field-concept-maps.js",
-          "sha256": "b0111d9d10e2dc8c3b1bc7d56115e5e140a50645ca1010d3ed9aec400344a370",
-          "bytes": 41560
+          "sha256": "eab8d586f1456208b7a9225fde4e35b65baf56ecbb016ff954e2b0ae03183bb5",
+          "bytes": 42173
         },
         {
           "file": "reading-flow.js",
@@ -855,8 +865,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "7b360af5a6a5d9211648c6d1dcbd48461e20d30637b05b28bca8b20c50d5043f",
-          "bytes": 44106
+          "sha256": "3d094e22a746b302b59eaba077afc61e15297d6a4cebdd9d8dfd939d7ccb83b4",
+          "bytes": 44798
         }
       ]
     }
@@ -874,8 +884,8 @@
     },
     {
       "file": "app.js",
-      "sha256": "092b50635eb4eaa4f5d909b142ce9b281fb3af3c3623214118f02fd4a006df78",
-      "bytes": 18005
+      "sha256": "e59eb47bddf5e09fc7c2df59bd37296f3c47721affabb3e946a194f2bfdba41b",
+      "bytes": 18060
     }
   ]
 }

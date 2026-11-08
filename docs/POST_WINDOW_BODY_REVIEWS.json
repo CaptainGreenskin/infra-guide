@@ -1988,6 +1988,77 @@
         "验收：为一次突发和一次区故障算两笔账",
         "配套实战：积压守恒、有限缓冲与单位成本"
       ]
+    },
+    {
+      "id": "cloud-overview",
+      "previous_content_sha256": "d78312e8dc9b1927bfeb1d02e6aff22d0125732e970244e89ad5df53cae7c195",
+      "reviewed_content_sha256": "57560529eb407bd545a53e830a5795cc0c2d618bd9e44b68e0531d13f87db25b",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 whole-course reading: normal path before contracts and failure analysis",
+      "observation": "Expanded the normal O-104 request path. DNS, connection, TLS, application replicas, readiness and the two authorization subjects are introduced before diagnosis; the original request figure, section links and full local source are preserved.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "previous_content_sha256": "06aa98426932631c8223346bb66413b1ac5e84f8820d1554934972d6d1a402e1",
+      "reviewed_content_sha256": "e2fe80601197159dedd476c46fdc0e5d543f16b83b04f508ea1175ffcf1c5127",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 whole-course reading: normal path before contracts and failure analysis",
+      "observation": "Replaced evidence-first opening with text-to-ID-to-vector-to-scores, then separated training from generation. Defined the causal visibility constraint using the same two integer sequences and added the existing basic model relationship diagram early.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "previous_content_sha256": "66b3edc540f028ff1a117583b9ffa5acb4f266cadab09166d81038a59a98e6c6",
+      "reviewed_content_sha256": "12328c42af6713d68ff8ad3f5948b51d35f03a90d6d2852acd8d6d26eab1bdc9",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 whole-course reading: normal path before contracts and failure analysis",
+      "observation": "Introduced a report task, model/tool/runtime/verifier responsibilities and the ordinary read/sum/save/verify path before contract tables. Retained the exact source data, budgets, all HTTP/streaming examples and original code blocks.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "previous_content_sha256": "8672453155b650a789d5644fe7bc59aeb1177394dde536a7eab130816ffdfde0",
+      "reviewed_content_sha256": "b5c1c1cd73079659b442764163b07aff857652f553c9088f1d296444fc0070ec",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 complete sharding lifecycle and two-worker implementation bridge",
+      "observation": "Expanded the previously two-paragraph section into state ownership, explicit FP32 Adam budgets, gather/release/regather/reduction lifetimes, group granularity and prefetch. Added a real two-process CPU/Gloo teaching implementation and a failed local-denominator probe; independent scalar JS gradients and SGD match both shards. Preserved all original code and section links. No FSDP API, GPU-memory or reduce-scatter performance claim.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
     }
   ]
 }

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 820" role="img" aria-labelledby="title desc">
+<title id="title">两层分片训练：长期持有与临时使用</title>
+<desc id="desc">沿前向第一层、前向第二层、反向第二层、反向第一层与更新，比较临时完整权重和本地参数、梯度、动量的逻辑元素数。</desc>
+<metadata>{&quot;full_parameter_elements&quot;: 42, &quot;ranks&quot;: 2, &quot;owned_parameters&quot;: 21, &quot;full_weight_during_phase&quot;: [24, 18, 18, 24, 0], &quot;owned_gradient_after_phase&quot;: [0, 0, 9, 21, 21], &quot;first_step_momentum_after_phase&quot;: [0, 0, 0, 0, 21], &quot;measured_gpu_memory&quot;: false}</metadata>
+<rect width="1120" height="820" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="42" y="47" font-size="27" font-weight="650" fill="#20314e">参数分片后，为什么还需要临时完整权重？</text>
+<text x="42" y="82" font-size="19" fill="#536783">W₁ 为 4×6，W₂ 为 6×3；2 个进程分别负责 21 个参数。</text>
+<text x="340" y="151" text-anchor="middle" font-size="22" font-weight="600" fill="#234d9f">前向 W₁</text>
+<path d="M406 143h27l-7 -5m7 5l-7 5" stroke="#7590bd" fill="none" stroke-width="2"/>
+<text x="505" y="151" text-anchor="middle" font-size="22" font-weight="600" fill="#234d9f">前向 W₂</text>
+<path d="M571 143h27l-7 -5m7 5l-7 5" stroke="#7590bd" fill="none" stroke-width="2"/>
+<text x="670" y="151" text-anchor="middle" font-size="22" font-weight="600" fill="#234d9f">反向 W₂</text>
+<path d="M736 143h27l-7 -5m7 5l-7 5" stroke="#7590bd" fill="none" stroke-width="2"/>
+<text x="835" y="151" text-anchor="middle" font-size="22" font-weight="600" fill="#234d9f">反向 W₁</text>
+<path d="M901 143h27l-7 -5m7 5l-7 5" stroke="#7590bd" fill="none" stroke-width="2"/>
+<text x="1000" y="151" text-anchor="middle" font-size="22" font-weight="600" fill="#234d9f">本地更新</text>
+<rect x="30" y="184" width="1060" height="102" rx="8" fill="#fff3db"/>
+<text x="145" y="219" text-anchor="middle" font-size="19" font-weight="400" fill="#8a5a16">计算期间</text>
+<text x="145" y="252" text-anchor="middle" font-size="20" font-weight="600" fill="#8a5a16">取齐的完整权重</text>
+<text x="340" y="243" text-anchor="middle" font-size="28" font-weight="650" fill="#8a5a16">24</text>
+<text x="505" y="243" text-anchor="middle" font-size="28" font-weight="650" fill="#8a5a16">18</text>
+<text x="670" y="243" text-anchor="middle" font-size="28" font-weight="650" fill="#8a5a16">18</text>
+<text x="835" y="243" text-anchor="middle" font-size="28" font-weight="650" fill="#8a5a16">24</text>
+<text x="1000" y="243" text-anchor="middle" font-size="28" font-weight="650" fill="#8a5a16">0</text>
+<rect x="30" y="300" width="1060" height="102" rx="8" fill="#e9f0ff"/>
+<text x="145" y="335" text-anchor="middle" font-size="19" font-weight="400" fill="#234d9f">本进程长期负责</text>
+<text x="145" y="368" text-anchor="middle" font-size="20" font-weight="600" fill="#234d9f">参数片</text>
+<text x="340" y="359" text-anchor="middle" font-size="28" font-weight="650" fill="#234d9f">21</text>
+<text x="505" y="359" text-anchor="middle" font-size="28" font-weight="650" fill="#234d9f">21</text>
+<text x="670" y="359" text-anchor="middle" font-size="28" font-weight="650" fill="#234d9f">21</text>
+<text x="835" y="359" text-anchor="middle" font-size="28" font-weight="650" fill="#234d9f">21</text>
+<text x="1000" y="359" text-anchor="middle" font-size="28" font-weight="650" fill="#234d9f">21</text>
+<rect x="30" y="416" width="1060" height="102" rx="8" fill="#edf6f0"/>
+<text x="145" y="451" text-anchor="middle" font-size="19" font-weight="400" fill="#25654b">此阶段结束后</text>
+<text x="145" y="484" text-anchor="middle" font-size="20" font-weight="600" fill="#25654b">已有的本地梯度</text>
+<text x="340" y="475" text-anchor="middle" font-size="28" font-weight="650" fill="#25654b">0</text>
+<text x="505" y="475" text-anchor="middle" font-size="28" font-weight="650" fill="#25654b">0</text>
+<text x="670" y="475" text-anchor="middle" font-size="28" font-weight="650" fill="#25654b">9</text>
+<text x="835" y="475" text-anchor="middle" font-size="28" font-weight="650" fill="#25654b">21</text>
+<text x="1000" y="475" text-anchor="middle" font-size="28" font-weight="650" fill="#25654b">21</text>
+<rect x="30" y="532" width="1060" height="102" rx="8" fill="#f0edfa"/>
+<text x="145" y="567" text-anchor="middle" font-size="19" font-weight="400" fill="#64408d">首次更新结束后</text>
+<text x="145" y="600" text-anchor="middle" font-size="20" font-weight="600" fill="#64408d">SGD 动量</text>
+<text x="340" y="591" text-anchor="middle" font-size="28" font-weight="650" fill="#64408d">0</text>
+<text x="505" y="591" text-anchor="middle" font-size="28" font-weight="650" fill="#64408d">0</text>
+<text x="670" y="591" text-anchor="middle" font-size="28" font-weight="650" fill="#64408d">0</text>
+<text x="835" y="591" text-anchor="middle" font-size="28" font-weight="650" fill="#64408d">0</text>
+<text x="1000" y="591" text-anchor="middle" font-size="28" font-weight="650" fill="#64408d">21</text>
+<text x="42" y="679" font-size="20" fill="#20314e">读图：先问“长期负责多少”，再问“这一刻还额外拿了什么”。</text>
+<text x="42" y="716" font-size="18" fill="#536783">完整权重用于当前层计算，随后释放；反向所需激活与通信缓冲另记。</text>
+<text x="42" y="750" font-size="18" fill="#536783">图为逻辑元素数。实验另保留完整参考模型，不把总内存解释为分片显存。</text>
+<text x="42" y="784" font-size="18" fill="#536783">SGD 只有一份动量；正文的 Adam 预算另含两份动量，二者不混算。</text>
+</g></svg>

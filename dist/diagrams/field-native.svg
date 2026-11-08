@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 950" role="img" aria-labelledby="title desc">
+<title id="title">容器与 Kubernetes 编排：核心概念关系</title>
+<desc id="desc">箭头连接真实概念，数字对应正文关系说明。方向表示作用或依赖，不表示全部串行执行。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7590bd"/></marker></defs>
+<rect width="1120" height="950" rx="12" fill="#f8fafc"/>
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+<text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">容器与 Kubernetes 编排</text>
+<text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">方框：概念　箭头：作用或依赖</text>
+<path data-edge="reconciliation workload-type" d="M262.0 200 C262.0 236.0 262.0 236.0 262.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="262.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="262.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">1</text></g>
+<path data-edge="workload-type placement" d="M394.0 314.0 L424.0 314.0" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="411.0" cy="314.0" r="13" fill="#fff" stroke="#7590bd"/><text x="411.0" y="319.0" text-anchor="middle" fill="#36527e" font-size="16">2</text></g>
+<path data-edge="placement container-isolation" d="M560.0 356 C560.0 392.0 560.0 392.0 560.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="560.0" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">3</text></g>
+<path data-edge="persistent-volume placement" d="M560.0 200 C560.0 236.0 560.0 236.0 560.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="560.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">4</text></g>
+<path data-edge="configuration container-isolation" d="M858.0 356 C858.0 392.0 560.0 392.0 560.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="709.0" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="709.0" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">5</text></g>
+<path data-edge="container-isolation health-rollout" d="M560.0 512 C560.0 548.0 560.0 548.0 560.0 580" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="560.0" cy="548.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="553.0" text-anchor="middle" fill="#36527e" font-size="16">6</text></g>
+<path data-edge="health-rollout service-network" d="M560.0 668 C560.0 704.0 560.0 704.0 560.0 736" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="560.0" cy="704.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="709.0" text-anchor="middle" fill="#36527e" font-size="16">7</text></g>
+<path data-edge="autoscaling placement" d="M858.0 200 C858.0 236.0 560.0 236.0 560.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
+<g><circle cx="709.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="709.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">8</text></g>
+<g data-concept="container-isolation"><rect x="428.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="452" fill="#6a7f9e" font-size="15">概念 01</text>
+<text x="560.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">实际进程</text></g>
+<g data-concept="reconciliation"><rect x="130.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="148.0" y="140" fill="#6a7f9e" font-size="15">概念 02</text>
+<text x="262.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">声明与控制循环</text></g>
+<g data-concept="workload-type"><rect x="130.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="148.0" y="296" fill="#6a7f9e" font-size="15">概念 03</text>
+<text x="262.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">工作负载</text></g>
+<g data-concept="placement"><rect x="428.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="296" fill="#6a7f9e" font-size="15">概念 04</text>
+<text x="560.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">节点放置</text></g>
+<g data-concept="service-network"><rect x="428.0" y="740" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="764" fill="#6a7f9e" font-size="15">概念 05</text>
+<text x="560.0" y="798" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">服务入口</text></g>
+<g data-concept="persistent-volume"><rect x="428.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="140" fill="#6a7f9e" font-size="15">概念 06</text>
+<text x="560.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">持久卷</text></g>
+<g data-concept="health-rollout"><rect x="428.0" y="584" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="446.0" y="608" fill="#6a7f9e" font-size="15">概念 07</text>
+<text x="560.0" y="642" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">就绪与替换</text></g>
+<g data-concept="configuration"><rect x="726.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="744.0" y="296" fill="#6a7f9e" font-size="15">概念 08</text>
+<text x="858.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">配置生效</text></g>
+<g data-concept="autoscaling"><rect x="726.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="744.0" y="140" fill="#6a7f9e" font-size="15">概念 09</text>
+<text x="858.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">伸缩反馈</text></g>
+<text x="560" y="922" text-anchor="middle" fill="#536783" font-size="17">圆圈数字对应正文箭头说明 · 点图放大</text>
+</g></svg>

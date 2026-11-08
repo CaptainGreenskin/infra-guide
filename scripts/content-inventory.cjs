@@ -7,5 +7,7 @@ const ids=[...base.chapters,...migration.new_chapter_reviews,...additions].map(a
 assert.equal(new Set(ids).size,ids.length,'reviewed chapter ids must be unique');
 const tracks={cloud:28,ai:26,agent:10,shared:3};
 for(const row of additions){assert(Object.hasOwn(tracks,row.track));tracks[row.track]++;}
-const canonical=100+additions.length;
+const routeViews=read('CONTENT_READING_2026-11-08.json').route_views;
+assert(Array.isArray(routeViews)&&new Set(routeViews).size===routeViews.length);
+const canonical=100+additions.length+routeViews.length;
 module.exports={ids,chapters:ids.length,tracks,points:base.knowledge_reviews.length,search:ids.length+base.knowledge_reviews.length,canonical,html:canonical+1,pages:canonical+2,additions};

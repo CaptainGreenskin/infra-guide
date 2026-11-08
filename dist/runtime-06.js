@@ -3473,6 +3473,7 @@ const conceptGlossary=[
  ['FaaS','函数即服务，按调用或事件运行提交的函数'],
  ['vCPU','虚拟机可见的CPU执行单元，不直接等于独占物理核心'],
  ['Hypervisor','虚拟机监控器，管理虚拟CPU、内存和设备等对象'],
+ ['操作系统内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
  ['内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
  ['namespace','Linux中划分一组进程所见系统对象的机制'],
  ['cgroup','Linux中对进程组做资源记账与约束的机制'],
@@ -3604,6 +3605,9 @@ function explainFirstConceptTerms(html,seen=new Set()){
   if(stack.length)return part;
   return part.replace(conceptTermPattern,(term,at)=>{
    const before=part.slice(0,at),after=part.slice(at+term.length);
+   // “内核” can mean the OS kernel or a GPU compute kernel. A global gloss
+   // cannot disambiguate it; the author must explain the actual object locally.
+   if(term==='内核')return term;
    if(/[A-Za-z0-9_]/.test(term[0])&&/[A-Za-z0-9_.-]$/.test(before)||/[A-Za-z0-9_]/.test(term.at(-1))&&/^[A-Za-z0-9_.-]/.test(after)||seen.has(term))return term;
    if(/["']$/.test(before)&&/^["']\s*:/.test(after))return term;
    if(/[\u3400-\u9fff]/.test(term)&&/^[\u3400-\u9fff]/.test(after)&&! /^(?:是|指|表示|称为|负责|用于|定义为|用来|把|会|可以|能够)/.test(after))return term;
@@ -3690,8 +3694,79 @@ const quantizationLegacyAnchors={
  'section-8':'section-1','quantization-number-map':'quantization-number-map',
  'section-9':'section-3','section-10':'section-4','section-11':'section-5'
 };
+// Fixed published track fragments, including inner diagrams and executable examples.
+const legacyTrackKnowledgeAnchors={
+  "cloud": [
+    "concept-path",
+    "knowledge-service-model",
+    "knowledge-control-data-plane",
+    "knowledge-fault-domain",
+    "knowledge-vm-runtime",
+    "virtualization-resource-contract",
+    "knowledge-cpu-memory-placement",
+    "knowledge-instance-lifecycle",
+    "knowledge-resource-contract",
+    "concept-relations",
+    "resource-aws-reliability",
+    "resource-terraform-state",
+    "examples"
+  ],
+  "ai": [
+    "concept-path",
+    "knowledge-mf-tensors",
+    "knowledge-mf-attention",
+    "knowledge-mf-decoder",
+    "knowledge-mf-autograd",
+    "knowledge-mf-gpu",
+    "knowledge-mf-roofline",
+    "concept-relations",
+    "examples",
+    "resource-d2l-zh",
+    "resource-one-gpu-lm",
+    "resource-ntu-genai"
+  ],
+  "agent": [
+    "concept-path",
+    "knowledge-ag-runtime",
+    "tool-task-contract",
+    "tool-finite-loop",
+    "knowledge-ag-tools",
+    "knowledge-ag-recovery",
+    "cancel-request-and-effect",
+    "knowledge-ag-fencing",
+    "knowledge-ag-authorization",
+    "approval-records",
+    "knowledge-ag-context",
+    "context-state-authority",
+    "stale-context-recovery",
+    "knowledge-ag-retrieval",
+    "retrieval-lexical-foundation",
+    "retrieval-evidence-pipeline",
+    "knowledge-ag-observability",
+    "agent-observation-signals",
+    "agent-trace-effect-boundary",
+    "knowledge-ag-evaluation",
+    "evaluation-metric-contract",
+    "knowledge-ag-sandbox",
+    "sandbox-authority-boundary",
+    "concept-relations",
+    "examples",
+    "resource-hf-agents",
+    "resource-ntu-genai",
+    "resource-berkeley-agents"
+  ]
+};
 function courseRedirectFor(path,search='',hash=''){
  if(path==='/start/'||path==='/start')return '/'+search+hash;
+ // Previously a track URL rendered a full field reference. Preserve its deep links.
+ const legacyTrack=path.match(/^\/track\/(cloud|ai|agent)\/?$/);
+ if(legacyTrack){
+  let anchor;try{anchor=decodeURIComponent(hash.slice(1));}catch{return null;}
+  if(legacyTrackKnowledgeAnchors[legacyTrack[1]].includes(anchor)){
+   const moduleId={cloud:'compute',ai:'model-foundations',agent:'agent'}[legacyTrack[1]];
+   return '/module/'+moduleId+'/'+search+hash;
+  }
+ }
  if(path!=='/article/model-serving/'&&path!=='/article/model-serving')return null;
  const query=new URLSearchParams(search);
  let anchor=hash.slice(1);
@@ -3783,7 +3858,7 @@ const chapterDependencies={
  'model-serving':[['transformer-block','推理使用已有参数，沿前缀计算下一词元，并维护中间缓存。']],
  'quantization-serving':[['model-serving','权重和KV的字节账是解释精度、打包与容量变化的起点。']],
  'inference-performance':[['model-serving','输入处理、逐词生成和缓存共同决定延迟与吞吐口径。']],
- 'ai-lifecycle':[['model-serving','服务使用的是完整模型版本，发布还需验证语义与回退。'],['checkpoint-recovery','继续训练的检查点与对外推理产物需要明确转换和验证。']],
+ 'ai-lifecycle':[['model-serving','服务使用的是完整模型版本，发布还需验证语义与回退。']],
  'moe-routing':[['transformer-block','普通前馈层扩展成多专家后，新增选择、分发和原位置合并。'],['tensor-parallel-math','设备上的参数与计算布局决定分发和通信代价。']],
  'speculative-decoding':[['model-serving','条件前缀和KV缓存把普通解码连接到批量验证与回退。'],['attention-mechanics','因果可见性决定每个验证位置能读取哪些历史。']],
  'agent-runtime':[],
@@ -3806,7 +3881,7 @@ const chapterOptionalConnections={
  'data-pipeline':[['training-storage','继续深入对象、文件与块存储的读取粒度和访问成本。']],
  'gpu-scheduling':[['scheduling-resources','补充普通Pod的节点可行性，再比较整组作业准入。']],
  'kubernetes-training':[['k8s-workloads','补充Job与Pod怎样组织任务和执行进程。'],['k8s-storage','补充持久卷、节点拓扑与放置约束之间的关系。']],
- 'ai-lifecycle':[['delivery','补充发布兼容和数据回退边界。']],
+ 'ai-lifecycle':[['checkpoint-recovery','负责继续训练的检查点时，再补齐优化器、数据进度与恢复验证。'],['delivery','补充发布兼容和数据回退边界。']],
  'inference-performance':[['observability','补充跨实例指标、直方图和追踪的聚合规则。']],
  'agent-sandbox':[['linux-resource','需要深入进程资源时再补这章；不要求完成Cloud课程。']],
  'agent-observability':[['observability','需要通用指标和追踪机制时再深入；Agent主线可独立学习。']],
@@ -3887,6 +3962,45 @@ articles.find(a=>a.id==='inference-performance').prereq='先读A3.4，理解输�
 articles.find(a=>a.id==='ai-lifecycle').prereq='先读A3.4与A2.8，区分模型产物、继续训练状态与服务版本；通用恢复和发布可按链接深入。';
 articles.find(a=>a.id==='multinode-lab').prereq='先读A2.4—A2.6，再阅读拓扑、启动与验收步骤；实际两机四卡实验另需两台Linux节点、每台至少两张NVIDIA GPU。';
 articles.find(a=>a.id==='production-readiness').prereq='选择一条已学主线及自己的实验或项目进行验收，不要求同时完成Cloud、AI和Agent全部课程。';
+
+
+;
+// learning-goals.js
+/* Learning goals are views over the same curriculum, never separate copies of lessons.
+   Each route adds its real prerequisite closure before offering a next lesson. */
+const learningProfiles={
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'部署一个有持久数据的服务，说明请求怎样抵达、配置怎样生效，以及一次失败发布怎样回退。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'给出一条故障时间线、一个容量预算和一次恢复对照；每个判断都指向相应信号。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'用同一训练任务比较正常执行与恢复执行的更新结果，并说明扩到多机时新增哪些环境条件。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'估算一个请求的 KV 缓存和并发容量，复算首词元延迟，再解释一次版本切换的验收条件。'},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，手算运算量与字节；比较参考实现的输出与梯度，再说明轨迹支持了哪个性能判断。'},
+ 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务；分别验证产物、权限拒绝与重试后的效果。'},
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'在工具提交后终止执行进程，恢复同一任务并核对效果与回执；再按适配器契约接入平台。'}
+};
+function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
+function learningProfileRoute(profile){
+ const result=[],seen=new Set(),visiting=new Set();
+ function visit(id){if(seen.has(id))return;if(visiting.has(id))throw Error('Learning prerequisite cycle: '+id);visiting.add(id);for(const[dep]of chapterDependencies[id]||[])visit(dep);visiting.delete(id);seen.add(id);result.push(id);}
+ profile.targets.forEach(visit);return result;
+}
+function learningProfilePriority(id,profile){const ids=learningProfileRoute(profile);return profile.targets.includes(id)?'岗位重点':ids.includes(id)?'先修基础':'选学专题';}
+function readingArticleURL(id){const profile=selectedLearningProfile();return articleURL(id)+(profile&&learningProfileRoute(profile).includes(id)?'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):'');}
+function learningGoalSelectorHTML(track){
+ const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
+ return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</nav>';
+}
+function learningGoalHTML(profile){
+ if(!profile)return '';
+ const route=learningProfileRoute(profile);
+ return '<section class="learning-goal" id="learning-goal"><h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a href="'+articleURL(id)+'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile)+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
+}
+function learningGoalChapterNav(a){
+ const profile=selectedLearningProfile();if(!profile)return '';
+ const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
+ if(index<0)return '';
+ const previous=articleById(route[index-1]),next=articleById(route[index+1]);
+ return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<p>已到本路线最后一章。回到路线页，用交付任务检查理解。</p>')+'</nav>';
+}
 
 
 ;
@@ -4178,14 +4292,14 @@ function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<details class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><summary><h2>把本领域连成一张图</h2></summary><p class="field-map-note">选一个概念看定义与相邻关系；箭头文字说明依赖、控制或结果，不表示全部串行执行。</p>'+
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>把本领域连成一张图</h2><p class="field-map-note">方框是本领域的核心对象，箭头表示作用或依赖。先看清它们的位置，再读下面的定义；图中数字对应展开后的关系说明。</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：圆圈数字对应箭头说明，方向表示作用或依赖。')+'<details class="field-map-explorer"><summary>查概念定义、箭头含义与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
   return '<div class="field-map-definition" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+' <a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
- '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ul class="field-map-edges">'+graph.edges.map(([from,verb,to,why])=>'<li data-concept-edge="'+from+' '+to+'"><div>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ul>'+
- '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>';
+ '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
+ '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
 }
 function fieldMapIndexHTML(track){return '<div class="field-map-index"><b>按领域看核心关系</b><p>'+modules.filter(m=>m.track===track&&fieldConceptMaps[m.id]).map(m=>'<a href="'+fieldMapURL(m.id)+'">'+m.n+' '+trainingEscape(m.name)+' →</a>').join('')+'</p></div>';}
 function chapterFieldConcepts(a){
@@ -4198,6 +4312,8 @@ function chapterFieldMapLink(a){const [moduleId,id]=chapterFieldConcepts(a)[0]||
 function initFieldConceptMaps(){
  for(const map of document.querySelectorAll('[data-field-map]')){
   const graph=fieldConceptMaps[map.dataset.fieldMap],buttons=[...map.querySelectorAll('[data-concept-focus]')];
+  const frame=map.querySelector('.training-figure > a');
+  if(frame&&frame.scrollWidth>frame.clientWidth)frame.scrollLeft=(frame.scrollWidth-frame.clientWidth)/2;
   const select=(id,keepPosition=false)=>{
    const controls=map.querySelector('.field-map-controls'),before=keepPosition?controls.getBoundingClientRect().top:0;
    const node=graph.nodes.find(n=>n[0]===id),active=node?id:'all';
@@ -4209,7 +4325,9 @@ function initFieldConceptMaps(){
    if(keepPosition){const delta=controls.getBoundingClientRect().top-before;if(delta)window.scrollTo({top:window.scrollY+delta,behavior:'instant'});}
   };
   for(const button of buttons)button.onclick=()=>select(button.dataset.conceptFocus,true);
-  map.classList.add('field-map-ready');select(new URLSearchParams(location.search).get('concept'));
+  const requested=new URLSearchParams(location.search).get('concept');
+  if(graph.nodes.some(n=>n[0]===requested))map.querySelector('.field-map-explorer').open=true;
+  map.classList.add('field-map-ready');select(requested);
  }
 }
 
@@ -4237,6 +4355,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'manual-sharding':{folder:'manual-sharding',title:'双进程手工状态分片'},
  'delivery-systems':{folder:'delivery-systems',title:'消息确认、Terraform状态与真实GitOps'},
  'runtime-scheduling':{folder:'runtime-scheduling',title:'真实容器限制与kind调度'},
  'speculative-decoding':{folder:'speculative-decoding',title:'精确采样与CPU缓存验证'},
@@ -4357,6 +4476,7 @@ labLearningCatalog.push(
  {id:'cloud-terraform-state-native',track:'cloud',stage:2,title:'状态锁、刷新与工作空间会保护哪一层',chapter:'terraform-state',anchor:'terraform-state-run',pack:'delivery-systems',files:['terraform_state.py'],env:'Terraform 1.13.0 · local 2.5.3 · Python 3.9+',kind:'真实CLI与文件',observe:'让第二进程取锁失败；分别观察配置、state和实物，再用两份状态争夺同一路径。',scope:'实际local backend和local_file，只操作自有临时目录；非云provider/remote backend。'},
  {id:'cloud-gitops-native',track:'cloud',stage:2,title:'同步健康为何仍返回旧版',chapter:'gitops-reconciliation',anchor:'gitops-native-run',pack:'delivery-systems',files:['gitops_reconcile.py','gitops-revisions.json','gitops-app/configmap.json','gitops-app/deployment.json','gitops-app/service.json'],env:'Linux Docker · kind 0.33 · kubectl · Python',kind:'真实Argo CD与HTTP',observe:'依次跟踪三个固定Git修订，核对自愈、清理、Pod UID和真实Service响应。',scope:'Argo CD Core 3.6.1、单机kind；业务v2断言独立于Synced/Healthy。'}
 );
+labLearningCatalog.push({id:'ai-manual-sharding',track:'ai',stage:2,title:'分片参数怎样回到一次正确的更新',chapter:'distributed-training',anchor:'manual-sharding-run',pack:'manual-sharding',files:['shard_linear.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实双进程与自动求导',observe:'各进程分别处理1与2条样本，逐次核对三轮梯度、拼回参数和SGD动量；错误局部均值应被拒绝。',scope:'手工all-gather与完整梯度all-reduce后切片；非FSDP API，不测GPU峰值、原生reduce-scatter或跨规模恢复。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

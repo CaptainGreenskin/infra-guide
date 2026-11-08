@@ -303,7 +303,7 @@ const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
 function learningContract(a){const content=`<div class="learning-contract"><strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}<p class="evidence-note">约 ${a.minutes} 分钟 · ${a.baseline||'训练代码基线 PyTorch 2.5.1'} · <a href="#/labs">实验验证范围 ↗</a></p></div>`;return '<details class="guided-contract"><summary>先修、学习目标与验证范围 · 约'+a.minutes+'分钟</summary>'+content+'</details>'}
-function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${conceptTOCLink(articleURL(a.id))}${a.sections.map((s,i)=>`<a href="${articleURL(a.id)}#section-${i+1}">${i+1}. ${s[0]}</a>`).join('')}</details>`}
+function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${conceptTOCLink(readingArticleURL(a.id))}${a.sections.map((s,i)=>`<a href="${readingArticleURL(a.id)}#section-${i+1}">${i+1}. ${s[0]}</a>`).join('')}</details>`}
 function courseIntro(){return `<div class="course-intro"><span class="small-badge">训练专题 / ${articles.filter(a=>a.module==='training').length} 章</span><h2>先理解一步训练，再走向多机多卡。</h2><p>从资源预算、数据与通信，到完整DDP程序、两机四卡手册和恢复对照。同一份实验贯穿执行机制与故障验证。</p><div class="course-links"><a class="btn" href="#/article/gpu-cluster">从全景开始 →</a><a class="btn secondary" href="#/labs">实验与验证记录 ↗</a></div><small>CPU/Gloo已有实测；真实GPU/NCCL与Kubernetes仍需目标环境验证。</small></div>`}
 function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="course-group"><div class="group-label">${g}</div>${list.filter(a=>a.group===i).map(chapterLink).join('')}</section>`).join('')}
 function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
@@ -328,7 +328,8 @@ function homePage(){
  </main>${footer()}`;
 }
 
-function trackPage(kind){if(kind==='cloud')cloudKnowledgePage(moduleFor('compute'));else infraKnowledgePage(moduleFor(kind==='ai'?'model-foundations':'agent'));}
+// A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
+function trackPage(kind){articlePage(articleById(trackDefinitions[kind].start));}
 
 function sidebarView(moduleId, current) {
  const track = current?chapterReadingContext(articleById(current)).track:moduleFor(moduleId).track;
@@ -344,9 +345,9 @@ function sidebarView(moduleId, current) {
    const startsGroup = article.group !== undefined && (!index || chapters[index-1].group !== article.group);
    const group = startsGroup ? '<div class="side-group">'+trainingGroups[article.group]+'</div>' : '';
    const selected = article.id === current ? 'class="current" aria-current="page"' : '';
-   return `${group}<a href="${articleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
+   return `${group}<a href="${readingArticleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
   }).join('');
-  const summaryHref=module.id==='practice'?articleURL(chapters[0].id):'/module/'+module.id+'/';
+  const summaryHref=readingArticleURL(chapters[0].id);
   return `<details ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
  }).join('');
  return `<aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
@@ -357,12 +358,12 @@ function sidebarView(moduleId, current) {
 function moduleOverview(m,list){return `<div class="module-intro"><b>这一模块的学习出口</b><ul>${m.outcomes.map(t=>'<li>'+t+'</li>').join('')}</ul><span>${list.length}章 · 先理解机制，再用问题和实验检验理解</span></div>`}
 function relatedReading(a){if(!a.related?.length)return '';return `<section class="related-reading"><h2>把这一章连回系统</h2>${a.related.map(id=>`<a href="${articleURL(id)}"><span>${articleById(id).number}</span>${articleById(id).title}<b>↗</b></a>`).join('')}</section>`}
 function roadmapPage(){
- const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),selected=trackDefinitions[key]?key:'cloud';
- const enhanced=typeof document.createElement==='function';
- simplePage('选择你的学习路线','LEARN THE CONNECTIONS','Cloud提供计算、网络和存储，AI把模型计算组织成训练与推理服务，Agent调用模型服务和工具完成任务。Agent可以直接使用已有模型服务，无需先学GPU训练；权限、版本、观测和恢复贯穿三条主线。',
+ const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),candidate=selectedLearningProfile(),selected=candidate?.track||(trackDefinitions[key]?key:'cloud');
+ const enhanced=typeof document.createElement==='function',profile=candidate?.track===selected?candidate:null;
+ simplePage(profile?profile.label+'学习路线':'选择你的学习路线','LEARN THE CONNECTIONS','Cloud提供计算、网络和存储，AI把模型计算组织成训练与推理服务，Agent调用模型服务和工具完成任务。Agent可以直接使用已有模型服务，无需先学GPU训练；权限、版本、观测和恢复贯穿三条主线。',
  `<nav class="route-selector" aria-label="学习方向">${Object.keys(trackDefinitions).map(k=>`<a href="/roadmap/?track=${k}#route-${k}" ${k===selected?'aria-current="page"':''}>${trackDefinitions[k].label} ↓</a>`).join('')}</nav>`+
- Object.entries(stages).map(([k,ss])=>`<section class="route-block" id="route-${k}" ${enhanced&&k!==selected?'hidden':''}><div class="route-title"><h2>${trackDefinitions[k].label}</h2></div>${trackModelHTML(k)}${ss.map(([title,ids],i)=>`<div class="roadmap-step"><span class="step-num">0${i+1}</span><div><h3>${title}</h3>${stageConnectionHTML(k,i)}${k==='cloud'?cloudStageStudyHTML(i):infraStageStudyHTML(k,i)}${ids.map(id=>`<a id="route-chapter-${k}-${id}" href="${articleURL(id)}">${articleById(id).number} ${articleById(id).title}${progress[id]?' ✓':' ↗'}</a>`).join('')}</div></div>`).join('')}${trackSynthesisHTML(k)}<a class="inline-link" href="/track/${k}/">继续读这条主线的系统知识 →</a></section>`).join(''));
- let anchor=null;try{const requested=decodeURIComponent(location.hash.slice(1));if(requested.startsWith('route-'+selected)||requested.startsWith('route-chapter-'+selected+'-'))anchor=requested;}catch{}
+ Object.entries(stages).map(([k,ss])=>`<section class="route-block" id="route-${k}" ${enhanced&&k!==selected?'hidden':''}><div class="route-title"><h2>${trackDefinitions[k].label}</h2></div>${learningGoalSelectorHTML(k)}${profile?.track===k?learningGoalHTML(profile):''}<details class="complete-course" ${!profile||profile.track!==k?'open':''}><summary>完整课程、领域图谱与阶段任务</summary>${trackModelHTML(k)}${ss.map(([title,ids],i)=>`<div class="roadmap-step"><span class="step-num">0${i+1}</span><div><h3>${title}</h3>${stageConnectionHTML(k,i)}${k==='cloud'?cloudStageStudyHTML(i):infraStageStudyHTML(k,i)}${ids.map(id=>`<a id="route-chapter-${k}-${id}" href="${articleURL(id)}">${articleById(id).number} ${articleById(id).title}${progress[id]?' ✓':' ↗'}</a>`).join('')}</div></div>`).join('')}${trackSynthesisHTML(k)}<a class="inline-link" href="/track/${k}/">开始阅读第一章 →</a></details></section>`).join(''));
+ let anchor=null;try{const requested=decodeURIComponent(location.hash.slice(1));if(requested==='learning-goal'||requested.startsWith('route-'+selected)||requested.startsWith('route-chapter-'+selected+'-'))anchor=requested;}catch{}
  if(anchor)requestAnimationFrame(()=>{const target=document.getElementById(anchor);target?.scrollIntoView();if(anchor.startsWith('route-chapter-'))target?.focus({preventScroll:true});});
 }
 function labsPage(){renderLabCatalog()}
@@ -684,7 +685,9 @@ function workshopPage(id) {
 const foundationChapters = new Set(['cloud-overview','linux-resource','distributed-systems','vpc-network','network-diagnosis','transformer-model','tokenization-embedding','attention-mechanics','autograd-training']);
 const focusChapters = new Set(['virtual-memory-oom','concurrency-pools','database-index-locks','cache-consistency','position-encoding','transformer-block','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','durable-workflows','agent-retrieval','agent-observability','agent-sandbox','kubernetes-basics','delivery','slo','observability','incident','gpu-cluster','distributed-training','gpu-memory','training-communication','checkpoint-recovery','model-serving','inference-performance','gpu-scheduling','agent-runtime','agent-recovery','agent-security','agent-evaluation']);
 function chapterPriority(id) {
- const level = foundationChapters.has(id) ? '基础必修' : focusChapters.has(id) ? '岗位重点' : '按需深入';
+ const profile=typeof selectedLearningProfile==='function'?selectedLearningProfile():null;
+ const cloudCore=['cloud-compute','iam-security','elasticity'];
+ const level = profile?learningProfilePriority(id,profile):foundationChapters.has(id)?'基础必修':focusChapters.has(id)||cloudCore.includes(id)?'岗位重点':'专题深入';
  return '<small class="chapter-priority">'+level+'</small> ';
 }
 
@@ -730,8 +733,8 @@ function outlinePage(){
  simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开',`先看三个领域怎样连接，再沿先修顺序展开 ${articles.length} 章。每章标出学习重点，具体练习在正文中完成。`,
  `<section class="outline-intro"><h2>先有全貌，再选一条主线</h2><p>Infra 是 Infrastructure（基础设施）的简称。Cloud 让应用可靠运行；AI Infra 支撑模型训练与推理；Agent Infra 组织模型、工具与执行状态。计算、网络、数据和权限是它们共同的底座。</p><div class="path-links"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">查看学习顺序与过关任务 →</a></div></section>
  <div class="outline-map">${studyMap.map(t=>`<section><h2>${t.title}</h2><p>${t.plain}</p><p class="outline-example">${t.example}</p></section>`).join('')}</div>
- <section class="quality-section"><h2>完整学习大纲</h2><p>先打底，再选方向：P0 用于按需补齐系统基础；Cloud 按 C1–C9 学习，AI 沿 A1→A2→A3，Agent 沿 G1→G10。已有基础可从对应章节开始，综合实战在最后连接各层能力。</p>
- ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc} <a href="/module/${m.id}/">阅读本领域系统知识 →</a></p>${articles.filter(a=>a.module===m.id).map(a=>`<a href="${articleURL(a.id)}">${chapterPriority(a.id)}${a.number} ${a.title} →</a>`).join('')}</details>`).join('')}</div>`).join('')}
+ <section class="quality-section"><h2>完整学习大纲</h2><p>先打底，再选方向：P0 用于按需补齐系统基础；Cloud 按 C1–C9 学习，AI 先建立 A1 基础，再按训练或推理分支学习；Agent 沿任务、权限、恢复和结果验收展开。已有基础可从对应章节开始，综合实战在最后连接各层能力。</p>
+ ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${learningGoalSelectorHTML(k)}${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc} <a href="${articleURL(articles.find(a=>a.module===m.id).id)}">从本领域第一章开始 →</a></p>${articles.filter(a=>a.module===m.id).map(a=>`<a href="${articleURL(a.id)}">${chapterPriority(a.id)}${a.number} ${a.title} →</a>`).join('')}</details>`).join('')}</div>`).join('')}
  <div class="outline-tree"><h3>综合实战</h3>${articles.filter(a=>a.module==='practice').map(a=>`<a href="${articleURL(a.id)}">${chapterPriority(a.id)}${a.number} ${a.title} →</a>`).join('')}</div></section>
  <p class="path-links"><a href="/interview/plan/">准备面试：按复习顺序找薄弱项 →</a><a href="/#sample-readings">第一次来：选一个样章 →</a></p>`);
 }
@@ -900,17 +903,17 @@ const cloudCoverageRows=[
  ['C1','计算、虚拟化与故障域','有系统知识、规格与容量推导。','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
  ['C2','云网络与协议','有 VPC、DNS、路由、NAT、入口、TCP/I/O 知识与时序实验。','BGP/IPv6、真实转发、MTU/conntrack 与大规模网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
  ['C3','存储、数据库与缓存','展开提交、undo/redo/binlog与PITR；真实MySQL 8.4容器验证崩溃、连续日志、缺段反例和恢复后写入，另有SQLite与附件恢复。','MySQL实测限于隔离容器；PostgreSQL、实际复制切主、物理断电与跨区恢复仍待目标环境。',['database-index-locks','cache-consistency','storage-recovery','mysql-recovery']],
- ['跨域','分布式协调与消息','讲超时、幂等、复制边界与事件确认，运行单库回执实验。','Raft/etcd 实现、Kafka/RocketMQ 消费与再均衡尚不足以独立应对深入研发面。',['distributed-systems','serverless-execution']],
- ['C4','容器与 Kubernetes','八篇展开运行时、控制面、工作负载、调度、CNI、CSI、配置和 HPA。','清单经离线 schema 核对；未在真实集群/CNI/CSI 下验证，Operator 编码还需补。',['container-runtime','k8s-workloads','k8s-networking','k8s-storage']],
+ ['跨域','分布式协调与消息','讲超时、幂等与事件确认；真实 RabbitMQ 单节点实验验证提交后重投、过早 ACK 和业务效果。','Raft/etcd、Kafka/RocketMQ 与再均衡仍需专项；单节点 RabbitMQ 不代表消息集群高可用已验收。',['distributed-systems','message-delivery']],
+ ['C4','容器与 Kubernetes','八篇展开运行时、控制面、工作负载、调度、CNI、CSI、配置和 HPA。Linux CI 已实测容器 namespace/cgroup，以及 kind 中的配额、节点放置与污点容忍。','单机 kind 不代表物理多机或云网络、存储验收；真实 CNI/CSI、etcd 恢复及 Operator 编码仍需深化。',['container-runtime','scheduling-resources','k8s-networking','k8s-storage']],
  ['C5','Serverless 与事件','展开执行环境、三种触发契约、部分批次响应、并发/下游与成本；真实进程退出和并发事务验证效果去重。','云函数、SQS 可见性/重驱、冷启动和真实伸缩尚未在供应商环境实测。',['serverless-execution']],
- ['C6','平台 API、IaC 与 GitOps','展开三方状态、保存计划、调谐、自愈/清理与兼容发布；真实 Terraform 1.13.0 内建 provider 实验和独立 GitOps 教学模型。','云 provider/remote backend、Argo/Flux 集群执行与 client-go/Operator 实现仍需专项；模型不是控制器实测。',['delivery','kubernetes-basics']],
+ ['C6','平台 API、IaC 与 GitOps','展开配置、状态与实物，以及源修订、集群对象、进程和业务结果；真实 Terraform 本地提供程序验证锁与漂移，Argo CD 在 kind 中验证自愈、清理与实际 HTTP 版本。','云提供程序、远端状态后端、client-go/Operator 实现及生产规模治理仍需专项；本地状态和单机 kind 有各自范围。',['delivery','terraform-state','gitops-reconciliation']],
  ['C7','身份、安全与多租户','展开认证/委托/授权、RBAC与IAM差异、token/密钥时序和分层隔离；真实HTTP的14组用例分别核对返回码与SQLite写入。','本地HMAC协议不是OIDC/JWT平台；真实云IAM、准入/RBAC和对抗隔离仍需目标环境验证。',['iam-security','agent-security','agent-sandbox']],
  ['C8','容量、性能与成本','展开同边界单位、积压守恒、准入、扩容关键路径、压测模型与单位成本；Fraction模型验证有限缓冲和排空。','模型不是压测；生产负载、完整账单归因与跨AZ故障后容量仍需实际交付证据。',['elasticity','k8s-autoscaling','cloud-compute']],
  ['C9','SRE 与恢复','展开请求加权SLI、多窗燃烧率、分布聚合、trace/日志、诊断与恢复；真实两段HTTP和promtool七组序列附源码证据。','未运行生产抓取、Alertmanager通知、真实oncall或跨区演练；规则求值不等于处置流程已验证。',['slo','observability','incident','resilience']]
 ];
 function cloudCoverageGuide(){
  const path=(ids)=>ids.map(id=>'<a href="/module/'+id+'/">'+moduleFor(id).n+' '+moduleFor(id).name+' →</a>').join('');
- return '<section class="cloud-coverage-intro"><h2>当前覆盖了知识骨架，岗位深度还要分方向</h2><p>Cloud 正文按九个实际领域组织，前置基础独立收纳。知识点、机制详解、本地实验、真实环境和资深项目经验是不同层次。下表逐项记录现有深度与缺口，不用章节数量推算面试覆盖率。</p></section>'+
+ return '<section class="cloud-coverage-intro"><h2>当前覆盖了知识骨架，岗位深度还要分方向</h2><p>Cloud 正文按九个实际领域组织，前置基础独立收纳。知识点、机制详解、本地实验、真实环境和资深项目经验是不同层次。下表逐项记录现有深度与缺口，不用章节数量推算面试覆盖率。</p><p class="evidence-note">领域与实验证据更新于2026-11-08；岗位来源仍按各自核对日期记录。<a href="/labs/#labs-cloud">查看Cloud实验、源码与验证范围 →</a></p></section>'+
  '<section class="cloud-role-paths"><h2>按目标岗位选择深入路径</h2><section><h3>Cloud / SRE</h3><p>前置：主力语言、Linux、网络与数据库。主线掌握资源、数据路径、编排、发布、容量与事故响应；Serverless 按岗位需求补充。</p><div class="path-links">'+path(['compute','network','cloud-data','native','cloud-delivery','cloud-capacity','sre'])+'</div><p><b>过关证据：</b>定位一个真实故障，写清止损和恢复条件，给出用户结果与复盘改进。</p></section><section><h3>云原生平台研发</h3><p>前置：Go/C++ 等主力语言、并发、Linux。重点深入 API、控制器、调度、网络/存储接口与多租户；需要写出可重试的控制逻辑。</p><div class="path-links">'+path(['native','network','cloud-data','cloud-delivery','cloud-security','cloud-capacity'])+'</div><p><b>当前缺口：</b>client-go/Operator、etcd 一致性与规模化控制面性能的完整实现课。</p></section><section><h3>IaaS、网络、存储与站点架构专项</h3><p>从计算、网络或存储选一条深入到实现、性能和故障域，再组合容量、安全与可靠性。资深架构岗位还需要跨团队交付和可量化治理结果。</p><div class="path-links">'+path(['compute','network','cloud-data','cloud-security','cloud-capacity','sre'])+'</div><p><b>当前缺口：</b>虚拟化、路由与存储内核等专项，以及跨 Region/AZ 的真实治理经验。通用指南不能代替这些深度。</p></section></section>'+
  '<section class="coverage-matrix"><h2>知识领域、现有证据与待补深度</h2>'+trainingTable(['领域','知识与证据','仍要补什么','进入正文'],cloudCoverageRows.map(([number,title,have,gap,ids,unit])=>[number+'<br>'+title,have,gap,(cloudModulePlan.find(row=>row[1]===number)?'<a href="/module/'+cloudModulePlan.find(row=>row[1]===number)[0]+'/">完整系统知识 →</a><br>':'')+ids.map(id=>readLink(id,articleById(id).title)).join('<br>')+(unit?'<br>'+unitLink(unit,'限时编码'):'')]))+'</section>'+
  '<section class="cloud-role-sources"><h2>本轮复核的三份官方岗位</h2>'+cloudRoleSources.map(role=>'<article><h3><a href="'+role.url+'" target="_blank" rel="noopener">'+role.name+' ↗</a></h3><p>'+role.type+' · '+role.date+'</p><p>'+role.skills+'</p>'+(role.data?'<p><a href="'+role.data+'" target="_blank" rel="noopener">官方岗位正文数据 ↗</a></p>':'')+'</article>').join('')+'<p class="evidence-note">核对于 2026-11-04。JD 用于确认工作要求；它们不是考题清单，资历与批次也不能混为一类。'+unitLink('experiences','公开面经另看来源索引')+'</p></section>'+

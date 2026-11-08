@@ -1,0 +1,2324 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "e37ba4220fc58b5b03ba309523445734446ed298",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_REVIEW_2026-11-08.json": "470b034722795f396fc58f1673fc5cea800a2da9036a1f0118dc973729299c39",
+    "docs/COHERENCE_READABILITY_2026-11-08.json": "e8088cc193472cdb9cdeb062e26dc0b183c2a679160df713ff837123d2812052",
+    "docs/CAUSAL_WALKTHROUGHS_2026-11-08.json": "8cc260c077d07c2e946f2f2daf85309cb51ae3cb2051df1b12f5b29449f8a98d",
+    "docs/SYSTEM_BUDGET_WALKTHROUGHS_2026-11-08.json": "128ba8e199d01e4a2d74c2b905aa9101e540c72ca2ee6a55053f54d1df3f611e",
+    "docs/CONCEPT_REVIEW_2026-11-05.json": "51505d99c9208ef5fa792dcf2c60db7507096f3af9b0bc55de9270185c9674e3"
+  },
+  "source_revisions": {
+    "dist/app.js": {
+      "previous_sha256": "092b50635eb4eaa4f5d909b142ce9b281fb3af3c3623214118f02fd4a006df78",
+      "reviewed_sha256": "e59eb47bddf5e09fc7c2df59bd37296f3c47721affabb3e946a194f2bfdba41b",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "bb803cb8d02924ad5ae23d38be02841d6d8a96a133bf4fff0951e0a06ab4f2a0",
+      "reviewed_sha256": "2818dae80b6e270c64c976fb3a2f367979eee9cb0226d9ae443ce24686698571",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/concept-paths.js": {
+      "previous_sha256": "4ee456832805a41635eba881f0a30b6fcaae801539ffa7c4729d6cafa7753ad9",
+      "reviewed_sha256": "23fd4fff19b2b079fbab7b43a28bbb08e1cbb7a7c3e91c858d657651b507eed2",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/course-map.js": {
+      "previous_sha256": "93136b33b9141cc9851203603d55d790bb24676b72b132e9e7f71e6c31d7d37c",
+      "reviewed_sha256": "638f47ae5c03aaa48dbd84cdd096967e010dff307b7e5a968923fb17fe47cc7b",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "b0111d9d10e2dc8c3b1bc7d56115e5e140a50645ca1010d3ed9aec400344a370",
+      "reviewed_sha256": "eab8d586f1456208b7a9225fde4e35b65baf56ecbb016ff954e2b0ae03183bb5",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/guided-lessons.js": {
+      "previous_sha256": "ec621c65b3ae10524a0d35e1ccb6eea4a745b3021375f69c5f5be48a69b5b18a",
+      "reviewed_sha256": "a5357631ba4c09a425cf837be9e04b599e5062148a57350a8766ef9b61699a0b",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/infra-knowledge.js": {
+      "previous_sha256": "9dd77891ab6c911d25c97d608f88fd76c5e2c2aab7fb2f0aec6a60b9f7918e16",
+      "reviewed_sha256": "9a1e7a7285c109182fd860553fc0dbaa964bb1c76e2595ccfde245b3402a5929",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/interview-paths.js": {
+      "previous_sha256": "986a79039c6e0aaf93d782c1ea18a2b5105128fe41ca35ade372adda9a6d91cf",
+      "reviewed_sha256": "e9de75577befc282450aad554da42375eeb25e21264cad19152357e305c3647e",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "78009bdc2a3c43d57d9c12887bcea8eaddf4abbe1e107d81b7849dd9e60c5d88",
+      "reviewed_sha256": "eb69b57c739db0c8c59a8d6578111060cf3261c8cb022b7801c094006943f8fb",
+      "scope": "Prerequisite-complete role views and the separation of inference from training recovery."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "17e4ebc5dd141297a9de612dd23256be4a678f5949cc5c1033b9f51527169989",
+      "reviewed_sha256": "6b60f78b75ecf9670c6069b6dfd39dd7591c335d22f756a6bd3c87088d835188",
+      "scope": "Prerequisite-complete role views and the separation of inference from training recovery."
+    },
+    "dist/model-lessons.js": {
+      "previous_sha256": "59957f7e5fc496445dbd105e1a008ec8b20cd7b01c9210acc033df8913693c35",
+      "reviewed_sha256": "c483f12ae48e9483d82702c1c577bc3af2e75c7a351ae964bc49323ffbd4a817",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "58154bdd024a6d7281e6b0c599e576f81fddc6deea04839777a0699fa7246f2c",
+      "reviewed_sha256": "795d780e1d101b54ad37ba55178b4f84d60e759966f9096eb2ecfda15382fb98",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/study-guides.js": {
+      "previous_sha256": "d71df6b4bcbe74d56fff1dc1b7a1405fb784ea12c4d2109d872280ea219316ea",
+      "reviewed_sha256": "bdefbf29e18f0dbc9cbc39512f52a0dd245cfd048d5f679bd2576c3e986c3e64",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/tool-runtime-lessons.js": {
+      "previous_sha256": "d7bff2f45c29160d44cc3da333109e83b707453b9c02f98eb177545ac71f1c41",
+      "reviewed_sha256": "58f6f5a4d8bd03c4d72d47392e5a62d169eb1a71ebab89f30cac4a8e9fa51d7d",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "58fdd04b933ba6ad7f53a3eb40d03b2b3efb8e7af8eb68de7c489b2412c795a8",
+      "reviewed_sha256": "cfa9bf2ffa448b39a3910dad19faadbe34aea790177833471653973656caaf44",
+      "scope": "Preserve immutable historical checks while independently validating the current whole course."
+    },
+    "scripts/check-concept-paths.cjs": {
+      "previous_sha256": "fc8c057a119b6d4c6d1dddc80d8a4fd57bddb2d06c80bf95822f78ed72bbd232",
+      "reviewed_sha256": "ce9aaf50ce57d6d0d3ee11aad5feb78b48dc978ac5947e797839d48b19889009",
+      "scope": "Preserve immutable historical checks while independently validating the current whole course."
+    },
+    "scripts/check-system-budget-walkthroughs.cjs": {
+      "previous_sha256": "0cccc9569f2c4a60a3373dcfc66c03aecd5c8d2477f752e061c878a5fbca4d9f",
+      "reviewed_sha256": "4ff19f86531848d32af9c15f9ab96fe26ef8d127a587cf60e46ee6a6337d99dc",
+      "scope": "Preserve immutable historical checks while independently validating the current whole course."
+    },
+    "scripts/coherence-review-records.cjs": {
+      "previous_sha256": "195493d9a06fded34cc28cde59a1cb5c4d1df333ca27d21735675bf7db08e8e6",
+      "reviewed_sha256": "77afc370adb53c03994f8f09c51590e892025f7387f67d790eeb3371acaf6f69",
+      "scope": "Preserve immutable historical checks while independently validating the current whole course."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "437bd971756e1c8f78050e763360e8281a6624d3659d0b3c032b5e5dfa5e4156",
+      "reviewed_sha256": "5a3a1f86ddf8191af27fa04b37bc04c00833f27664b86b11f66ca265de7298c3",
+      "scope": "Direct lesson navigation, readable field references and three normal-path introductions; original code and anchors preserved."
+    },
+    "dist/diagrams/field-agent.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3e1feb699b354f95f32197cdbcdb9c6ba062e6d28df12a0fb78b8a9488731bd7",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-cloud-capacity.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a6cda4b72ab84d310ad0d19490e396d571774e48489cbc07064be080487e8e8",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-cloud-data.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fcd52a52f0e4b6c069040c5e615bdfdbf76d7aea6687f120841a94e73a541b3f",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-cloud-delivery.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "26afb82f07cd80143c729cbef01fa8ef244b0a5ed1b84b9dcce058c12d9b9991",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-cloud-security.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0bb171f5015c7924c521aa9b90289351f5a6a420d0f0f220d15de8985f5135e9",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-compute.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2d45b9c05857f89e32773dd6a6401e33c0357eaed065a4a54b06437ca2c2a765",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-foundation.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1d85b902a04919c3cbd0e94caf81796301054d85da2a4a0038f85941f515a93a",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-model-foundations.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "79a6ff2d1a7b7e817a7c1a80eaea7b464c1ed26c059b8aa713b810a9054dbe52",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-native.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1d5ec65f7bf642bc33535a48120db0f46e55f5d484c2e6515f66e220e5cdc67b",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-network.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3d641530ca8ee623bf0056f4cd0fdf242340be1325f50a1fc48e27dbfce32a49",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-platform.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "96fc1c7c7aeaa527aef954f3a301c3c6b6b183c0bc9021a97a382c8cb3fc42fb",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-serverless.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "53c21dfe2aedc7c16c0b03cccdfa02ec3b5939a2968710eeeda7988068c28852",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-sre.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f8a3949f754a933f627fa28ddd4776efd7b31d6506120b8e708ca6bc28e7247e",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/diagrams/field-training.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "53fa2157cf5c5c7f254db82f9f4586f6f5804f32b30f865901673fd1190d9252",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d0826815b534713d08a12b37645e10ceb48ec93f29aa57381c849828197f64ac",
+      "scope": "Prerequisite-complete role views and the separation of inference from training recovery."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "773de7bf948e260e9366828ccf3615242b239a80a8a900f25beebd5fa34984cc",
+      "scope": "Preserve immutable historical checks while independently validating the current whole course."
+    },
+    "scripts/draw-field-maps.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f1e368397abfe01da978a3f256a6d3b03484867a775f7b1c44b3f761edd1a123",
+      "scope": "Visible authored field diagrams and matching definition/edge views."
+    },
+    "scripts/check-knowledge-resources.cjs": {
+      "previous_sha256": "494fd2c009b32c93e7cc47b6269fbf17de16c0473c5073a6f45272be685e496f",
+      "scope": "Retain all existing field reference/evidence checks while directing primary reading into lessons.",
+      "reviewed_sha256": "7b329439dfc554c0cbcab675d874455fa5efd799909c4a77c95d5cfbeb1cbb6d"
+    },
+    "scripts/check-ai-agent-systems.cjs": {
+      "previous_sha256": "6c85f423b8f9f93cd03e114fba018af5b9930999902896ff19d7c50759194244",
+      "scope": "Retain all existing field reference/evidence checks while directing primary reading into lessons.",
+      "reviewed_sha256": "149050c39adce52b94bac4f206efb95d2b2e5ec4527da6cbd9845da3b267d000"
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "7b360af5a6a5d9211648c6d1dcbd48461e20d30637b05b28bca8b20c50d5043f",
+      "scope": "Source changes supporting the reviewed whole-course lesson entries, visible diagrams, role routes and append-only review checks.",
+      "reviewed_sha256": "3d094e22a746b302b59eaba077afc61e15297d6a4cebdd9d8dfd939d7ccb83b4"
+    },
+    "dist/training-content.js": {
+      "previous_sha256": "81336d9789a450ba055cc847a46db7620a832efd484a1eee17d6e3d0daad4ead",
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "8e264cb1ce7862b4a9ae22209360da7507f2d1798ff37e157e17d1a6e717a6ee"
+    },
+    "scripts/content-at-commit.cjs": {
+      "previous_sha256": "19f4a607b6a1d5baaefaebfcb3ba40e3e2735c6609a59adc93a559683fff7f95",
+      "scope": "Source changes supporting the reviewed whole-course lesson entries, visible diagrams, role routes and append-only review checks.",
+      "reviewed_sha256": "70835aefb6eaf8d9ecff53be6af1b3fbac87cf929e0e499ae17eaef1e9790c9f"
+    },
+    "scripts/content-review-records.cjs": {
+      "previous_sha256": "a8a44963bc7ad4869fb16bd0ca9fcbe12694dfd94c3cf503529cf748e9ae3622",
+      "scope": "Source changes supporting the reviewed whole-course lesson entries, visible diagrams, role routes and append-only review checks.",
+      "reviewed_sha256": "25db2b19c00ed63dabd15198005112646990387dfe1004d846b73a3fae87e3af"
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "a1822743c61f0de5136b8aaaec7ff55740914349cebacd2a6d3745c908f3e4e9",
+      "scope": "Source changes supporting the reviewed whole-course lesson entries, visible diagrams, role routes and append-only review checks.",
+      "reviewed_sha256": "77ceb441c546979b42deb132eef2377828f98b509c5d97d374b8b6364673bc39"
+    },
+    "dist/diagrams/sharding-lifetimes.svg": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "513f43d8ec7f3607827bcf9b556e3404b89cf48a5500992764e55dd183554293"
+    },
+    "dist/labs/manual-sharding/shard_linear.py": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "b75003b7d8e34b4ea56dc3d5da4701307abdc2bbdb36206fb3232d26dac64be0"
+    },
+    "dist/manual-sharding-data.js": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "8ab72a9267efbe10d272d4890c3f9717233a881538fdd67b27cecd227fc8bc94"
+    },
+    "scripts/check-manual-sharding.cjs": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "7480eeb3e67a4642c1cba1ff67aee98a54b0216a84064163a1813c078a55f7d9"
+    },
+    "scripts/draw-sharding-lifetimes.py": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "5217ef08534a352752ee3fda66793cb847d5ca715a468fffc35b4e4135abea5b"
+    },
+    "scripts/embed-manual-sharding.cjs": {
+      "previous_sha256": null,
+      "scope": "Complete sharding lifetime explanation, real CPU/Gloo implementation, independent oracle and exact embedded/downloaded sources.",
+      "reviewed_sha256": "f26816cff4e5d5a1591e3987b3a45da3c7ea0233193b88466ce46ed369512093"
+    },
+    "scripts/check-runtime.cjs": {
+      "previous_sha256": "28007f8daea082c1d4f3412205d829a7d55687c78d0830defcb06f236d8d9ed9",
+      "scope": "Reviewed static role destinations, route inventory and combined runtime output; keep original chapter and code contracts.",
+      "reviewed_sha256": "0b8887d1e27ab3d2d183ea954c6f79c94f0757403ca622975dbafbea73371572"
+    },
+    "scripts/content-inventory.cjs": {
+      "previous_sha256": "17ab5a0f239876b8374bac4773cbdeac29d6e7a231168b84e53d3d9615434e00",
+      "scope": "Reviewed static role destinations, route inventory and combined runtime output; keep original chapter and code contracts.",
+      "reviewed_sha256": "4f89e8b70784ed328696623440431b8be678faedf2d3919a237ebb11250f3e9c"
+    }
+  },
+  "relationship_snapshot": {
+    "chapter_relations": [
+      {
+        "id": "linux-resource",
+        "required": [
+          [
+            "cloud-overview",
+            "服务最终由进程执行，资源读数要回到执行与等待。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1，理解进程在主机上运行。"
+      },
+      {
+        "id": "virtual-memory-oom",
+        "required": [
+          [
+            "linux-resource",
+            "进程持有地址空间；内存记账与限制解释它为什么会被终止。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.1 进程、线程与资源，认识进程、容器和 cgroup。"
+      },
+      {
+        "id": "concurrency-pools",
+        "required": [
+          [
+            "linux-resource",
+            "线程执行与等待进一步形成锁、队列和容量约束。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.1 的 CPU 与等待时间，理解线程共享进程资源。"
+      },
+      {
+        "id": "distributed-systems",
+        "required": [],
+        "optional": [],
+        "prereq": "知道请求有发起方和接收方即可；本章介绍超时与结果未知，不要求先完成Cloud课程。"
+      },
+      {
+        "id": "cloud-overview",
+        "required": [],
+        "optional": [],
+        "prereq": "能运行一个简单程序，了解客户端与服务端。"
+      },
+      {
+        "id": "cloud-compute",
+        "required": [
+          [
+            "linux-resource",
+            "实际CPU时间和工作集决定怎样比较云规格。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成P0.1，理解CPU时间与内存压力。"
+      },
+      {
+        "id": "vpc-network",
+        "required": [
+          [
+            "cloud-overview",
+            "请求必须经过地址、入口和返回路径才能触达服务。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1；知道IP地址与端口的用途。"
+      },
+      {
+        "id": "network-diagnosis",
+        "required": [
+          [
+            "vpc-network",
+            "先有往返路径，时间戳才能定位连接和传输卡在哪里。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C2.1；会在终端发起HTTP请求。"
+      },
+      {
+        "id": "tcp-event-loop",
+        "required": [
+          [
+            "network-diagnosis",
+            "请求时间边界继续下钻到字节流、缓冲和就绪事件。"
+          ],
+          [
+            "linux-resource",
+            "套接字由进程持有，I/O等待需要与CPU执行分开。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "了解进程与文件描述符的基本作用；先读云网络中的IP、端口与请求路径，不要求已有epoll编程经验。"
+      },
+      {
+        "id": "training-storage",
+        "required": [
+          [
+            "vpc-network",
+            "远程数据读取同时依赖访问单位与网络路径。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读云网络与请求路径，了解文件读取。配套程序使用 Python 3.9+ 标准库。"
+      },
+      {
+        "id": "database-index-locks",
+        "required": [
+          [
+            "concurrency-pools",
+            "查询除了读数据，还会等待连接与事务锁。"
+          ],
+          [
+            "training-storage",
+            "数据库把持久数据组织成可查询、可事务更新的结构。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.3 的等待队列及 C2.2 的请求时间边界，认识关系表的一行和查询条件。"
+      },
+      {
+        "id": "cache-consistency",
+        "required": [
+          [
+            "database-index-locks",
+            "事务提交和可见性决定缓存何时可能读旧或回填旧值。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 C3.2 的事务提交与可见性、P0.3 的共享状态与排队。"
+      },
+      {
+        "id": "storage-recovery",
+        "required": [
+          [
+            "training-storage",
+            "先规定数据的读取单位与版本，再定义一致发布和恢复材料。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C3.1；理解摘要可以检查内容是否变化。"
+      },
+      {
+        "id": "mysql-recovery",
+        "required": [
+          [
+            "database-index-locks",
+            "事务提交与回滚是解释各类数据库日志的起点。"
+          ],
+          [
+            "storage-recovery",
+            "基线、连续变化和恢复目标需要在同一历史上对齐。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "了解事务提交与回滚、主键和基本SQL；先读数据库访问与通用存储恢复，尚不了解redo/binlog也可以从本章第一节开始。"
+      },
+      {
+        "id": "container-runtime",
+        "required": [
+          [
+            "linux-resource",
+            "容器运行的仍是进程，隔离视图和资源限制分别作用。"
+          ],
+          [
+            "virtual-memory-oom",
+            "内存上限与进程地址空间不同，OOM要沿实际记账判断。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "知道进程、文件描述符和 CPU / 内存；内存基础可先读 P0 的虚拟内存章节。"
+      },
+      {
+        "id": "kubernetes-basics",
+        "required": [
+          [
+            "container-runtime",
+            "知道实际执行对象后，再理解声明如何被控制器推进。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成P0.1、C2.1；知道容器是进程的运行与隔离方式。"
+      },
+      {
+        "id": "k8s-workloads",
+        "required": [
+          [
+            "kubernetes-basics",
+            "控制循环具体组织副本、完成型任务和有身份的工作负载。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读容器运行原理与 Kubernetes 控制面；知道 Pod、Service 和期望状态。"
+      },
+      {
+        "id": "scheduling-resources",
+        "required": [
+          [
+            "kubernetes-basics",
+            "声明被接受之后，还需要为Pod找到满足约束的节点。"
+          ],
+          [
+            "cloud-compute",
+            "资源承诺与单节点形状共同决定放置可行性。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成P0.1、C4.2。"
+      },
+      {
+        "id": "k8s-networking",
+        "required": [
+          [
+            "k8s-workloads",
+            "副本先有身份与就绪条件，Service才能选择实际后端。"
+          ],
+          [
+            "vpc-network",
+            "Pod与Service路径仍要满足路由、端口和回程。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 VPC 的路由与回程；认识 Pod、网络命名空间、端口与 TCP 连接。"
+      },
+      {
+        "id": "k8s-storage",
+        "required": [
+          [
+            "scheduling-resources",
+            "卷的拓扑与挂载条件会反过来限制Pod能放在哪里。"
+          ],
+          [
+            "training-storage",
+            "卷提供的是存储访问能力，仍需解释底层数据语义。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先知道文件、块与对象存储的差别，认识 Pod 调度和故障域。"
+      },
+      {
+        "id": "config-secrets",
+        "required": [
+          [
+            "k8s-workloads",
+            "配置怎样进入容器，取决于Pod声明、进程启动和读取时机。"
+          ]
+        ],
+        "optional": [
+          [
+            "iam-security",
+            "继续深入凭据读取与间接授权。"
+          ],
+          [
+            "delivery",
+            "继续深入配置与代码的兼容发布。"
+          ]
+        ],
+        "prereq": "先认识Pod、容器和工作负载；授权与发布兼容可在相关章节继续深入，不作本章硬性先修。"
+      },
+      {
+        "id": "k8s-autoscaling",
+        "required": [
+          [
+            "scheduling-resources",
+            "伸缩建议只有在节点能放下新副本时才可能兑现。"
+          ],
+          [
+            "cloud-compute",
+            "资源预算与有效容量把指标变化连接到所需副本。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读计算资源、Pod工作负载与调度；本章解释伸缩反馈，容量与弹性章再展开故障域和完整时间预算。"
+      },
+      {
+        "id": "serverless-execution",
+        "required": [
+          [
+            "distributed-systems",
+            "托管执行仍会遇到超时、重复和未知结果。"
+          ],
+          [
+            "container-runtime",
+            "执行环境的创建、复用和状态寿命决定函数能依赖什么。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "知道 HTTP、队列、数据库事务和容器；能区分请求、执行尝试和业务动作。"
+      },
+      {
+        "id": "message-delivery",
+        "required": [
+          [
+            "serverless-execution",
+            "事件触发继续下钻到谁确认发送、谁确认处理及谁记录效果。"
+          ],
+          [
+            "database-index-locks",
+            "接收方事务把一次业务效果与稳定回执共同提交。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Serverless全景、超时与幂等、数据库事务；本章从消息代理、通道与确认对象开始，不要求已有RabbitMQ项目。"
+      },
+      {
+        "id": "delivery",
+        "required": [
+          [
+            "k8s-workloads",
+            "发布改变模板与副本，用户结果还取决于数据和配置兼容。"
+          ],
+          [
+            "storage-recovery",
+            "可回退交付需要可核对版本与明确恢复目标。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C4.2；理解不可变版本与提交点。"
+      },
+      {
+        "id": "terraform-state",
+        "required": [
+          [
+            "delivery",
+            "可追溯变更继续连接配置、状态记录与实际对象。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读交付章与文件/进程基础；本章逐步介绍IaC、提供程序、后端和工作空间，不要求已有Terraform项目。"
+      },
+      {
+        "id": "gitops-reconciliation",
+        "required": [
+          [
+            "delivery",
+            "一次交付继续发展成持续观察、比较和调谐。"
+          ],
+          [
+            "config-secrets",
+            "声明同步以后，配置仍需真正进入进程才改变业务结果。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Kubernetes控制面、工作负载和配置注入；本章先介绍GitOps、Application与同步关系，再进入实测。"
+      },
+      {
+        "id": "iam-security",
+        "required": [
+          [
+            "cloud-overview",
+            "服务访问资源之前，先区分谁调用、允许什么和范围在哪里。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1，了解服务会访问其他资源。"
+      },
+      {
+        "id": "elasticity",
+        "required": [
+          [
+            "cloud-compute",
+            "单实例能力要乘上有效副本，并考虑故障域和扩容时序。"
+          ],
+          [
+            "concurrency-pools",
+            "输入超过完成能力时，差额表现为排队或拒绝。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.2，能解释容量基线。"
+      },
+      {
+        "id": "slo",
+        "required": [],
+        "optional": [],
+        "prereq": "会计算比例；理解请求成功与业务成功的区别。"
+      },
+      {
+        "id": "observability",
+        "required": [
+          [
+            "slo",
+            "先定义用户相关的好坏事件，再决定指标与追踪要回答什么。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C9.1，理解有效事件的分母与基本请求路径。"
+      },
+      {
+        "id": "incident",
+        "required": [
+          [
+            "observability",
+            "信号只有放回请求路径和时间线，才能支持或排除原因。"
+          ],
+          [
+            "concurrency-pools",
+            "低CPU与高延迟可以由队列、连接池或锁等待连接起来。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C9.1与C9.2，理解请求分母、时间区间与连接池。"
+      },
+      {
+        "id": "resilience",
+        "required": [
+          [
+            "incident",
+            "先确定故障范围和恢复条件，再设计演练与切换。"
+          ],
+          [
+            "storage-recovery",
+            "恢复能力要由版本、材料和消费者结果证明。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C3.4、C9.1、C9.3。"
+      },
+      {
+        "id": "transformer-model",
+        "required": [],
+        "optional": [],
+        "prereq": "了解向量与乘法即可；文中从张量形状和逐项乘加开始。"
+      },
+      {
+        "id": "tokenization-embedding",
+        "required": [
+          [
+            "transformer-model",
+            "模型骨架里的输入、隐藏向量和输出分数需要具体编号与形状。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架，知道隐藏维度、词表和 logits 的位置。"
+      },
+      {
+        "id": "attention-mechanics",
+        "required": [
+          [
+            "tokenization-embedding",
+            "词元向量构成Q/K/V的输入，形状决定矩阵计算是否成立。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架与 token 到张量的路径；能检查矩阵乘法形状。"
+      },
+      {
+        "id": "transformer-block",
+        "required": [
+          [
+            "attention-mechanics",
+            "注意力输出还要经过前馈、残差与归一化，才构成完整层。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Attention 与 token 到张量的路径；知道分头、拼头与输出投影。"
+      },
+      {
+        "id": "position-encoding",
+        "required": [
+          [
+            "attention-mechanics",
+            "位置关系需要进入Q/K点积，而不是只给文本附一个序号。"
+          ],
+          [
+            "transformer-block",
+            "位置处理必须放回每层实际计算与缓存路径。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Attention 与 Decoder 结构；知道 Q、K 点积和因果可见性。"
+      },
+      {
+        "id": "autograd-training",
+        "required": [
+          [
+            "transformer-block",
+            "前向输出与目标形成损失，梯度再沿同一计算图更新参数。"
+          ],
+          [
+            "tokenization-embedding",
+            "有效标签、移位和掩码决定究竟在优化哪些预测。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读前五篇，能解释 token、掩码、残差和输出头。"
+      },
+      {
+        "id": "gpu-execution",
+        "required": [
+          [
+            "transformer-model",
+            "张量计算被映射到执行单元与多层存储，才有GPU工作量。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架；能解释张量形状和每元素字节数。"
+      },
+      {
+        "id": "roofline-model",
+        "required": [
+          [
+            "gpu-execution",
+            "算术吞吐与数据搬运共同限制算子的可达性能。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读GPU执行与存储；知道矩阵形状、FLOP与字节的含义。"
+      },
+      {
+        "id": "flash-attention-io",
+        "required": [
+          [
+            "attention-mechanics",
+            "分块必须保留注意力的同一归一化结果。"
+          ],
+          [
+            "roofline-model",
+            "减少中间数据搬运需要先有计算量与字节账。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Attention与Roofline；能解释softmax分母和HBM流量。"
+      },
+      {
+        "id": "tensor-parallel-math",
+        "required": [
+          [
+            "autograd-training",
+            "切开矩阵以后，前向数值和反向梯度都要重新对应。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读矩阵乘法、非线性与自动求导。实战基线 Python 3.12、PyTorch 2.5.1、CPU/Gloo。"
+      },
+      {
+        "id": "operator-profiling",
+        "required": [
+          [
+            "roofline-model",
+            "先算工作与字节，再用实际实现和轨迹验证瓶颈。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读向量矩阵、GPU执行与Roofline；不会写CUDA也能先完成本章CPU实验。"
+      },
+      {
+        "id": "gpu-cluster",
+        "required": [
+          [
+            "autograd-training",
+            "一项训练作业最终要推进有效目标、梯度与参数更新。"
+          ],
+          [
+            "gpu-execution",
+            "模型计算需要被放到有算力、内存和通信的执行环境。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读A1.1—A1.6，能区分输入、目标、反向与优化器更新；理解进程和持久存储。"
+      },
+      {
+        "id": "distributed-training",
+        "required": [
+          [
+            "gpu-cluster",
+            "资源分布后，要决定状态、计算与通信怎样划分。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.1，理解参数、梯度和优化器状态。"
+      },
+      {
+        "id": "gpu-memory",
+        "required": [
+          [
+            "distributed-training",
+            "副本或分片规则决定参数、梯度、优化器和激活怎样记账。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "理解前向、反向与优化器更新；先读A2.1—A2.2，能区分参数元素、张量与数据并行副本。"
+      },
+      {
+        "id": "ddp-code",
+        "required": [
+          [
+            "distributed-training",
+            "并行策略需要落实为参与进程、同步梯度和一致更新。"
+          ],
+          [
+            "gpu-memory",
+            "精度、累积与状态寿命决定程序能否在预算内执行。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成A2.1—A2.3；使用Python 3.10—3.12与PyTorch 2.5.1。先运行CPU/Gloo、FP32路径。"
+      },
+      {
+        "id": "training-communication",
+        "required": [
+          [
+            "ddp-code",
+            "具体同步点和参与者先确定，才能定位集合通信等待。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.4，理解 rank 和一次优化器更新。"
+      },
+      {
+        "id": "data-pipeline",
+        "required": [
+          [
+            "ddp-code",
+            "各进程必须持续得到有效且权重正确的输入，算力才有意义。"
+          ]
+        ],
+        "optional": [
+          [
+            "training-storage",
+            "继续深入对象、文件与块存储的读取粒度和访问成本。"
+          ]
+        ],
+        "prereq": "先读A2.4，理解每个进程如何取得训练输入；本章解释分片、读取与预处理，存储访问单位可按链接补读C3.1。"
+      },
+      {
+        "id": "multinode-lab",
+        "required": [
+          [
+            "training-communication",
+            "跨主机执行需要会合、参与者和数据通信共同成立。"
+          ],
+          [
+            "data-pipeline",
+            "多机验收还要确认输入覆盖与实际训练进度。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读A2.4—A2.6，再阅读拓扑、启动与验收步骤；实际两机四卡实验另需两台Linux节点、每台至少两张NVIDIA GPU。"
+      },
+      {
+        "id": "checkpoint-recovery",
+        "required": [
+          [
+            "ddp-code",
+            "恢复目标是继续同一更新过程，需要对齐参数、优化器与数据位置。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.4；本章 CPU 两进程即可验证。"
+      },
+      {
+        "id": "training-performance",
+        "required": [
+          [
+            "training-communication",
+            "吞吐测量必须包含计算之外的同步等待。"
+          ],
+          [
+            "checkpoint-recovery",
+            "完成时间和成本还要包含失败与恢复带来的工作。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.5—A2.8；性能数据需要真实目标硬件。"
+      },
+      {
+        "id": "training-platform",
+        "required": [
+          [
+            "gpu-cluster",
+            "平台把用户训练意图组织成可调度、可观察的作业。"
+          ],
+          [
+            "checkpoint-recovery",
+            "产物和恢复点给平台提供可核对的进度与完成依据。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "理解训练作业、容器与检查点；建议先读A2.1和A2.8。"
+      },
+      {
+        "id": "gpu-scheduling",
+        "required": [
+          [
+            "training-platform",
+            "作业提交以后，队列准入与整组放置决定何时能执行。"
+          ],
+          [
+            "distributed-training",
+            "进程组与并行布局决定资源形状和通信要求。"
+          ]
+        ],
+        "optional": [
+          [
+            "scheduling-resources",
+            "补充普通Pod的节点可行性，再比较整组作业准入。"
+          ]
+        ],
+        "prereq": "先读A3.1与A2.2，理解作业、进程组与并行布局；普通Pod的资源放置可按链接补读C4.4。"
+      },
+      {
+        "id": "kubernetes-training",
+        "required": [
+          [
+            "gpu-scheduling",
+            "资源准入继续落实为工作Pod、会合和共同生命周期。"
+          ],
+          [
+            "ddp-code",
+            "平台管理的是一份有明确启动与恢复契约的训练程序。"
+          ]
+        ],
+        "optional": [
+          [
+            "k8s-workloads",
+            "补充Job与Pod怎样组织任务和执行进程。"
+          ],
+          [
+            "k8s-storage",
+            "补充持久卷、节点拓扑与放置约束之间的关系。"
+          ]
+        ],
+        "prereq": "先理解训练作业、分布式程序与资源准入；Pod/Job/卷可按链接补齐。真实GPU实战另需目标环境，不把完成物理多机实验当作阅读前提。"
+      },
+      {
+        "id": "model-serving",
+        "required": [
+          [
+            "transformer-block",
+            "推理使用已有参数，沿前缀计算下一词元，并维护中间缓存。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "知道模型根据输入生成输出即可；正文解释必要术语。计算容量前可补读A2.3。"
+      },
+      {
+        "id": "quantization-serving",
+        "required": [
+          [
+            "model-serving",
+            "权重和KV的字节账是解释精度、打包与容量变化的起点。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A3.4 的 Prefill、Decode 与 KV 容量推导；能按张量形状计算字节数。"
+      },
+      {
+        "id": "inference-performance",
+        "required": [
+          [
+            "model-serving",
+            "输入处理、逐词生成和缓存共同决定延迟与吞吐口径。"
+          ]
+        ],
+        "optional": [
+          [
+            "observability",
+            "补充跨实例指标、直方图和追踪的聚合规则。"
+          ]
+        ],
+        "prereq": "先读A3.4，理解输入处理与持续生成；本章解释计时边界和聚合，通用指标与追踪可按链接延伸。"
+      },
+      {
+        "id": "ai-lifecycle",
+        "required": [
+          [
+            "model-serving",
+            "服务使用的是完整模型版本，发布还需验证语义与回退。"
+          ]
+        ],
+        "optional": [
+          [
+            "checkpoint-recovery",
+            "负责继续训练的检查点时，再补齐优化器、数据进度与恢复验证。"
+          ],
+          [
+            "delivery",
+            "补充发布兼容和数据回退边界。"
+          ]
+        ],
+        "prereq": "先读A3.4与A2.8，区分模型产物、继续训练状态与服务版本；通用恢复和发布可按链接深入。"
+      },
+      {
+        "id": "moe-routing",
+        "required": [
+          [
+            "transformer-block",
+            "普通前馈层扩展成多专家后，新增选择、分发和原位置合并。"
+          ],
+          [
+            "tensor-parallel-math",
+            "设备上的参数与计算布局决定分发和通信代价。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Transformer前馈层、softmax、张量并行与集合通信；本章从概念开始，不要求已有MoE训练经验。"
+      },
+      {
+        "id": "speculative-decoding",
+        "required": [
+          [
+            "model-serving",
+            "条件前缀和KV缓存把普通解码连接到批量验证与回退。"
+          ],
+          [
+            "attention-mechanics",
+            "因果可见性决定每个验证位置能读取哪些历史。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Transformer、Attention、模型推理服务；知道概率之和为1，以及KV缓存保存过去位置的键和值。"
+      },
+      {
+        "id": "agent-runtime",
+        "required": [],
+        "optional": [
+          [
+            "distributed-systems",
+            "按需深入超时、重试和未知结果；本章先建立任务与执行对象。"
+          ]
+        ],
+        "prereq": "能理解HTTP请求与数据库写入；建议先读P0.4。无需先学GPU训练。"
+      },
+      {
+        "id": "agent-security",
+        "required": [
+          [
+            "agent-runtime",
+            "模型提议要通过可信身份、任务委托与资源端授权才能执行。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读G1，认识任务、工具与运行时。认证、授权与提交边界在本章说明；需要云IAM时再补C7.1。"
+      },
+      {
+        "id": "agent-sandbox",
+        "required": [
+          [
+            "agent-security",
+            "业务允许的动作还要落到程序可访问的文件、网络与资源范围。"
+          ]
+        ],
+        "optional": [
+          [
+            "linux-resource",
+            "需要深入进程资源时再补这章；不要求完成Cloud课程。"
+          ]
+        ],
+        "prereq": "先读G1与G2，认识任务、工具和授权；本章解释执行资源边界，不要求完成Cloud或GPU课程。"
+      },
+      {
+        "id": "agent-recovery",
+        "required": [
+          [
+            "agent-runtime",
+            "工具效果和本地进度属于不同提交域，需要用稳定身份认回。"
+          ]
+        ],
+        "optional": [
+          [
+            "distributed-systems",
+            "把本章恢复窗口推广到通用跨服务失败语义。"
+          ]
+        ],
+        "prereq": "先读G1，了解数据库事务；超时与未知结果在本章就地解释，可按需补P0.4，不要求完成Cloud课程。"
+      },
+      {
+        "id": "agent-memory",
+        "required": [
+          [
+            "agent-recovery",
+            "持久执行状态、模型可见上下文和长期知识有不同用途与寿命。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成G1、G4；理解持久化与版本。"
+      },
+      {
+        "id": "agent-evaluation",
+        "required": [
+          [
+            "agent-security",
+            "任务验收要同时检查完成和越权拒绝。"
+          ],
+          [
+            "agent-memory",
+            "模型看到什么材料，需要与实际产物和任务目标分别核对。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成G1—G5。"
+      },
+      {
+        "id": "durable-workflows",
+        "required": [
+          [
+            "agent-recovery",
+            "单动作恢复进一步连接持久历史、重放和多执行者接管。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 G1、G4，能解释一次工具调用中的提交窗口。"
+      },
+      {
+        "id": "agent-retrieval",
+        "required": [
+          [
+            "agent-memory",
+            "长期资料经过检索和预算选择，才进入模型本次上下文。"
+          ],
+          [
+            "agent-security",
+            "索引命中不代替当前来源读取权限与版本检查。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 G2、G5，理解授权、上下文和持久状态的区别。"
+      },
+      {
+        "id": "agent-observability",
+        "required": [
+          [
+            "agent-recovery",
+            "轨迹要区分任务、逻辑动作和具体尝试，才能解释重试成本。"
+          ],
+          [
+            "agent-evaluation",
+            "观察到的运行过程最终要与任务结果和拒绝行为对齐。"
+          ]
+        ],
+        "optional": [
+          [
+            "observability",
+            "需要通用指标和追踪机制时再深入；Agent主线可独立学习。"
+          ]
+        ],
+        "prereq": "先读G4和G6，区分步骤、尝试与任务结果；通用指标和追踪可按需延伸，不作为整条Cloud先修。"
+      },
+      {
+        "id": "kairo-practice",
+        "required": [
+          [
+            "agent-evaluation",
+            "接入平台前先固定真实任务和独立验收判据。"
+          ],
+          [
+            "durable-workflows",
+            "适配器要兑现恢复和效果身份，而不是只返回一个成功字段。"
+          ],
+          [
+            "agent-retrieval",
+            "实际接入还需核对来源、授权与上下文交付。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Agent 运行时、权限与评估。通用校验只需 Python 3.9+；真实接入需要目标版本与接口。"
+      },
+      {
+        "id": "training-lab",
+        "required": [
+          [
+            "checkpoint-recovery",
+            "综合训练把中断、重启与继续更新放到一条可复查时间线。"
+          ],
+          [
+            "training-performance",
+            "同一工作量与恢复边界才能解释完整训练成本。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读A2.2、A2.4与A2.8。Linux/macOS，Python 3.10—3.12、PyTorch 2.5.1；CPU/Gloo即可完成本章。"
+      },
+      {
+        "id": "cloud-service-lab",
+        "required": [
+          [
+            "delivery",
+            "综合服务实验要证明配置和版本真正改变用户结果。"
+          ],
+          [
+            "slo",
+            "完成与可靠性要以同口径用户事件验收。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "Python 3.9+；集群部分需要独立测试集群、kubectl与相关权限。"
+      },
+      {
+        "id": "production-readiness",
+        "required": [],
+        "optional": [
+          [
+            "resilience",
+            "Cloud选择恢复演练验收。"
+          ],
+          [
+            "ai-lifecycle",
+            "AI选择产物与发布验收。"
+          ],
+          [
+            "kairo-practice",
+            "Agent选择适配器与真实任务验收。"
+          ]
+        ],
+        "prereq": "选择一条已学主线及自己的实验或项目进行验收，不要求同时完成Cloud、AI和Agent全部课程。"
+      }
+    ],
+    "knowledge_targets": [
+      {
+        "id": "service-model",
+        "module": "compute",
+        "articles": [
+          "cloud-overview"
+        ]
+      },
+      {
+        "id": "control-data-plane",
+        "module": "compute",
+        "articles": [
+          "cloud-overview",
+          "kubernetes-basics"
+        ]
+      },
+      {
+        "id": "fault-domain",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "resilience"
+        ]
+      },
+      {
+        "id": "vm-runtime",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "cpu-memory-placement",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "linux-resource"
+        ]
+      },
+      {
+        "id": "instance-lifecycle",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "delivery"
+        ]
+      },
+      {
+        "id": "resource-contract",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "scheduling-resources"
+        ]
+      },
+      {
+        "id": "vpc-subnet",
+        "module": "network",
+        "articles": [
+          "vpc-network"
+        ]
+      },
+      {
+        "id": "route-overlay",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "dns-discovery",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "nat-conntrack",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "network-diagnosis"
+        ]
+      },
+      {
+        "id": "lb-tls",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "transport-timeout",
+        "module": "network",
+        "articles": [
+          "network-diagnosis",
+          "distributed-systems",
+          "tcp-event-loop"
+        ]
+      },
+      {
+        "id": "io-model",
+        "module": "network",
+        "articles": [
+          "network-diagnosis",
+          "concurrency-pools",
+          "tcp-event-loop"
+        ]
+      },
+      {
+        "id": "network-boundary",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "storage-model",
+        "module": "cloud-data",
+        "articles": [
+          "training-storage"
+        ]
+      },
+      {
+        "id": "storage-performance",
+        "module": "cloud-data",
+        "articles": [
+          "training-storage",
+          "cloud-compute"
+        ]
+      },
+      {
+        "id": "durability-consistency",
+        "module": "cloud-data",
+        "articles": [
+          "storage-recovery",
+          "distributed-systems"
+        ]
+      },
+      {
+        "id": "database-service",
+        "module": "cloud-data",
+        "articles": [
+          "database-index-locks",
+          "storage-recovery",
+          "mysql-recovery"
+        ]
+      },
+      {
+        "id": "replication-failover",
+        "module": "cloud-data",
+        "articles": [
+          "distributed-systems",
+          "storage-recovery",
+          "resilience"
+        ]
+      },
+      {
+        "id": "cache-layer",
+        "module": "cloud-data",
+        "articles": [
+          "cache-consistency"
+        ]
+      },
+      {
+        "id": "messaging",
+        "module": "cloud-data",
+        "articles": [
+          "serverless-execution",
+          "distributed-systems",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "backup-restore",
+        "module": "cloud-data",
+        "articles": [
+          "storage-recovery",
+          "resilience",
+          "k8s-storage",
+          "mysql-recovery"
+        ]
+      },
+      {
+        "id": "container-isolation",
+        "module": "native",
+        "articles": [
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "reconciliation",
+        "module": "native",
+        "articles": [
+          "kubernetes-basics",
+          "k8s-workloads"
+        ]
+      },
+      {
+        "id": "workload-type",
+        "module": "native",
+        "articles": [
+          "k8s-workloads"
+        ]
+      },
+      {
+        "id": "placement",
+        "module": "native",
+        "articles": [
+          "scheduling-resources",
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "service-network",
+        "module": "native",
+        "articles": [
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "persistent-volume",
+        "module": "native",
+        "articles": [
+          "k8s-storage"
+        ]
+      },
+      {
+        "id": "health-rollout",
+        "module": "native",
+        "articles": [
+          "k8s-workloads",
+          "delivery"
+        ]
+      },
+      {
+        "id": "configuration",
+        "module": "native",
+        "articles": [
+          "config-secrets",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "autoscaling",
+        "module": "native",
+        "articles": [
+          "k8s-autoscaling",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "execution-environment",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution"
+        ]
+      },
+      {
+        "id": "trigger-delivery",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "event-idempotency",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "distributed-systems",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "concurrency-instances",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "k8s-autoscaling"
+        ]
+      },
+      {
+        "id": "serverless-cost",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "artifact-contract",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery"
+        ]
+      },
+      {
+        "id": "ci-cd",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "production-readiness"
+        ]
+      },
+      {
+        "id": "iac",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "cloud-compute",
+          "terraform-state"
+        ]
+      },
+      {
+        "id": "controller-api",
+        "module": "cloud-delivery",
+        "articles": [
+          "kubernetes-basics",
+          "distributed-systems",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "gitops",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "kubernetes-basics",
+          "config-secrets",
+          "gitops-reconciliation"
+        ]
+      },
+      {
+        "id": "release-strategy",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "k8s-workloads"
+        ]
+      },
+      {
+        "id": "rollback-compatibility",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "ai-lifecycle"
+        ]
+      },
+      {
+        "id": "authentication-authorization",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security"
+        ]
+      },
+      {
+        "id": "workload-identity",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "agent-security"
+        ]
+      },
+      {
+        "id": "secret-lifecycle",
+        "module": "cloud-security",
+        "articles": [
+          "config-secrets",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "tenant-isolation",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "scheduling-resources",
+          "agent-sandbox"
+        ]
+      },
+      {
+        "id": "execution-security",
+        "module": "cloud-security",
+        "articles": [
+          "container-runtime",
+          "agent-sandbox"
+        ]
+      },
+      {
+        "id": "audit-accountability",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "observability",
+          "agent-security"
+        ]
+      },
+      {
+        "id": "capacity-units",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "queue-backpressure",
+        "module": "cloud-capacity",
+        "articles": [
+          "elasticity",
+          "concurrency-pools"
+        ]
+      },
+      {
+        "id": "scaling-delay",
+        "module": "cloud-capacity",
+        "articles": [
+          "elasticity",
+          "k8s-autoscaling"
+        ]
+      },
+      {
+        "id": "performance-budget",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "network-diagnosis",
+          "observability"
+        ]
+      },
+      {
+        "id": "cost-efficiency",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "elasticity",
+          "serverless-execution"
+        ]
+      },
+      {
+        "id": "sli-slo",
+        "module": "sre",
+        "articles": [
+          "slo"
+        ]
+      },
+      {
+        "id": "observability-signals",
+        "module": "sre",
+        "articles": [
+          "observability"
+        ]
+      },
+      {
+        "id": "alert-burn",
+        "module": "sre",
+        "articles": [
+          "slo",
+          "observability"
+        ]
+      },
+      {
+        "id": "diagnosis-method",
+        "module": "sre",
+        "articles": [
+          "incident",
+          "network-diagnosis"
+        ]
+      },
+      {
+        "id": "incident-change",
+        "module": "sre",
+        "articles": [
+          "incident",
+          "delivery"
+        ]
+      },
+      {
+        "id": "resilience-patterns",
+        "module": "sre",
+        "articles": [
+          "resilience",
+          "distributed-systems"
+        ]
+      },
+      {
+        "id": "recovery-evidence",
+        "module": "sre",
+        "articles": [
+          "resilience",
+          "storage-recovery"
+        ]
+      },
+      {
+        "id": "mf-tensors",
+        "module": "model-foundations",
+        "articles": [
+          "transformer-model",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-attention",
+        "module": "model-foundations",
+        "articles": [
+          "attention-mechanics",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-decoder",
+        "module": "model-foundations",
+        "articles": [
+          "transformer-block",
+          "position-encoding",
+          "moe-routing"
+        ]
+      },
+      {
+        "id": "mf-autograd",
+        "module": "model-foundations",
+        "articles": [
+          "autograd-training",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-gpu",
+        "module": "model-foundations",
+        "articles": [
+          "gpu-execution",
+          "roofline-model",
+          "operator-profiling"
+        ]
+      },
+      {
+        "id": "mf-roofline",
+        "module": "model-foundations",
+        "articles": [
+          "roofline-model",
+          "flash-attention-io",
+          "tensor-parallel-math",
+          "operator-profiling"
+        ]
+      },
+      {
+        "id": "tr-step",
+        "module": "training",
+        "articles": [
+          "gpu-cluster",
+          "ddp-code"
+        ]
+      },
+      {
+        "id": "tr-memory",
+        "module": "training",
+        "articles": [
+          "gpu-memory",
+          "gpu-cluster"
+        ]
+      },
+      {
+        "id": "tr-ddp",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "ddp-code"
+        ]
+      },
+      {
+        "id": "tr-sharding",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "gpu-memory"
+        ]
+      },
+      {
+        "id": "tr-parallel",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "tensor-parallel-math",
+          "moe-routing"
+        ]
+      },
+      {
+        "id": "tr-collectives",
+        "module": "training",
+        "articles": [
+          "training-communication",
+          "training-performance"
+        ]
+      },
+      {
+        "id": "tr-input",
+        "module": "training",
+        "articles": [
+          "data-pipeline",
+          "gpu-cluster"
+        ]
+      },
+      {
+        "id": "tr-recovery",
+        "module": "training",
+        "articles": [
+          "checkpoint-recovery",
+          "multinode-lab",
+          "kubernetes-training",
+          "training-performance"
+        ]
+      },
+      {
+        "id": "sv-contract",
+        "module": "platform",
+        "articles": [
+          "training-platform",
+          "ai-lifecycle"
+        ]
+      },
+      {
+        "id": "sv-admission",
+        "module": "platform",
+        "articles": [
+          "gpu-scheduling",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "sv-prefill",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "inference-performance"
+        ]
+      },
+      {
+        "id": "sv-kv",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "gpu-scheduling"
+        ]
+      },
+      {
+        "id": "sv-batching",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "gpu-scheduling",
+          "inference-performance"
+        ]
+      },
+      {
+        "id": "sv-metrics",
+        "module": "platform",
+        "articles": [
+          "inference-performance",
+          "model-serving"
+        ]
+      },
+      {
+        "id": "sv-quantization",
+        "module": "platform",
+        "articles": [
+          "quantization-serving",
+          "gpu-memory"
+        ]
+      },
+      {
+        "id": "sv-optimizations",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "inference-performance",
+          "ai-lifecycle",
+          "speculative-decoding"
+        ]
+      },
+      {
+        "id": "sv-release",
+        "module": "platform",
+        "articles": [
+          "ai-lifecycle",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "ag-runtime",
+        "module": "agent",
+        "articles": [
+          "agent-runtime",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-tools",
+        "module": "agent",
+        "articles": [
+          "agent-runtime",
+          "agent-security",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-recovery",
+        "module": "agent",
+        "articles": [
+          "agent-recovery",
+          "durable-workflows"
+        ]
+      },
+      {
+        "id": "ag-fencing",
+        "module": "agent",
+        "articles": [
+          "agent-recovery",
+          "durable-workflows",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-authorization",
+        "module": "agent",
+        "articles": [
+          "agent-security",
+          "agent-runtime",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-context",
+        "module": "agent",
+        "articles": [
+          "agent-memory",
+          "agent-runtime"
+        ]
+      },
+      {
+        "id": "ag-retrieval",
+        "module": "agent",
+        "articles": [
+          "agent-retrieval",
+          "agent-memory",
+          "agent-evaluation"
+        ]
+      },
+      {
+        "id": "ag-observability",
+        "module": "agent",
+        "articles": [
+          "agent-observability",
+          "agent-evaluation",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-evaluation",
+        "module": "agent",
+        "articles": [
+          "agent-evaluation",
+          "agent-retrieval",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-sandbox",
+        "module": "agent",
+        "articles": [
+          "agent-sandbox",
+          "agent-security",
+          "kairo-practice"
+        ]
+      }
+    ],
+    "system_models": {
+      "cloud": {
+        "title": "一条请求怎样在受控资源上可靠完成",
+        "diagram": "v49-map-cloud",
+        "caption": "沿请求从左向右读；底部是管理请求执行的控制与观测，不是另一条串行请求。",
+        "relation": "请求通过网络到达计算进程，再读写数据；编排按声明安排这些进程，身份限定可执行的动作。容量与可靠性根据真实用户结果调整执行，并规定故障后的恢复目标。",
+        "anchors": [
+          [
+            "cloud-overview",
+            "请求与资源"
+          ],
+          [
+            "kubernetes-basics",
+            "声明与执行"
+          ],
+          [
+            "database-index-locks",
+            "数据与提交"
+          ],
+          [
+            "resilience",
+            "故障与恢复"
+          ]
+        ],
+        "exercise": "教学组合题：Git配置已是v2，控制器显示健康，HTTP仍v1；消费者提交37后退出，消息又被投递；同时用户延迟升高但CPU不忙。画出请求、控制与数据三条关系，分别提出下一项证据。",
+        "answer": "配置对象、进程环境和HTTP响应分开：检查模板与Pod身份，不能凭同步状态判新版生效。消息重投按原业务身份查询接收方回执，核对是否只有一次37。低CPU不排除连接池、锁或下游等待，应在同一时间窗定位请求区间。再说明权限在哪里执行、有效容量如何估计，以及恢复后用哪些用户断言验收。这是跨章推理题，各实验分别取证，不冒充一个已运行的生产系统。"
+      },
+      "ai": {
+        "title": "模型计算怎样变成可训练、可恢复、可服务的系统",
+        "diagram": "v49-map-ai",
+        "caption": "上方是训练更新闭环；检查点用于继续训练，转换并验证后的模型产物才进入推理服务。",
+        "relation": "模型把词元编号变成向量计算。训练将输出与目标比较，计算梯度并更新参数；推理使用已确定参数继续生成。GPU、数据与通信承载计算，检查点保存继续执行所需状态，平台负责资源、版本与完成验收。",
+        "anchors": [
+          [
+            "transformer-model",
+            "模型计算"
+          ],
+          [
+            "autograd-training",
+            "学习目标与更新"
+          ],
+          [
+            "checkpoint-recovery",
+            "训练状态与恢复"
+          ],
+          [
+            "model-serving",
+            "推理与缓存"
+          ]
+        ],
+        "exercise": "同一模型能加载，训练loss下降；两进程结果却与单进程目标不同，恢复后轨迹又变化，服务首词元延迟也变慢。画出训练与推理两条路径，指出这三个问题应分别核对哪一组对象。",
+        "answer": "先对齐有效标签、各进程样本权重、梯度同步与优化器更新，副本一致不等于全局目标正确。恢复要按保存边界核对模型、优化器、随机状态和数据位置；若在累积中间保存，还要定义窗口如何继续或重做。推理则另拆排队、输入处理、缓存与逐词生成，不能用训练吞吐解释首词元延迟。最后区分数值、任务质量与目标硬件性能三种证据。"
+      },
+      "agent": {
+        "title": "一项委托怎样变成有权限、能恢复、可验收的结果",
+        "diagram": "v49-map-agent",
+        "caption": "模型提议经过运行时检查再到工具；工具观察先形成事实与上下文，才进入下一次提议。",
+        "relation": "任务给出目标、范围与完成条件，模型只提出下一步。运行时检查参数和权限，再安排工具执行；效果接收方记录实际事实，历史支持恢复。检索提供获准且足够的证据进入上下文，观测与评估核对过程和最终结果。",
+        "anchors": [
+          [
+            "agent-runtime",
+            "任务与执行"
+          ],
+          [
+            "agent-security",
+            "授权与效果"
+          ],
+          [
+            "agent-recovery",
+            "回执与恢复"
+          ],
+          [
+            "agent-retrieval",
+            "证据与上下文"
+          ]
+        ],
+        "exercise": "模型说工具成功，但本地进度仍在执行中；检索找到了两份资料，预算只放入一份；恢复时又发现旧写权限已撤销。画出控制边界，说明哪些是未知，哪些可以继续，最终用什么验收。",
+        "answer": "执行器声明不替代接收方回执，先按原操作身份查询，不能换新身份再写。旧效果与新写权限分别判断，查询本身也要有当前读取权。检索命中不等于上下文证据齐备；预算缺关键来源时应报告不足或按规则调整输入。最终以真实产物、来源与拒绝行为验收。Agent使用模型服务即可，不以GPU训练课程为先修。"
+      }
+    },
+    "route_stages": {
+      "cloud": [
+        [
+          "先看全貌，再按需补系统前置",
+          [
+            "cloud-overview",
+            "linux-resource",
+            "virtual-memory-oom",
+            "concurrency-pools",
+            "distributed-systems"
+          ]
+        ],
+        [
+          "云资源、网络与数据主干",
+          [
+            "cloud-compute",
+            "vpc-network",
+            "network-diagnosis",
+            "tcp-event-loop",
+            "training-storage",
+            "database-index-locks",
+            "cache-consistency",
+            "storage-recovery",
+            "mysql-recovery"
+          ]
+        ],
+        [
+          "从容器到 Kubernetes 运行路径",
+          [
+            "container-runtime",
+            "kubernetes-basics",
+            "k8s-workloads",
+            "scheduling-resources",
+            "k8s-networking",
+            "k8s-storage",
+            "config-secrets",
+            "k8s-autoscaling"
+          ]
+        ],
+        [
+          "事件平台与可追溯交付",
+          [
+            "serverless-execution",
+            "message-delivery",
+            "delivery",
+            "terraform-state",
+            "gitops-reconciliation"
+          ]
+        ],
+        [
+          "身份隔离、容量与成本",
+          [
+            "iam-security",
+            "elasticity"
+          ]
+        ],
+        [
+          "可靠性与完整验收",
+          [
+            "slo",
+            "observability",
+            "incident",
+            "resilience",
+            "cloud-service-lab"
+          ]
+        ]
+      ],
+      "ai": [
+        [
+          "模型与计算原理",
+          [
+            "transformer-model",
+            "tokenization-embedding",
+            "attention-mechanics",
+            "transformer-block",
+            "position-encoding",
+            "autograd-training"
+          ]
+        ],
+        [
+          "GPU 执行、IO 与层内并行",
+          [
+            "gpu-execution",
+            "roofline-model",
+            "flash-attention-io",
+            "tensor-parallel-math",
+            "operator-profiling"
+          ]
+        ],
+        [
+          "训练系统与资源模型",
+          [
+            "gpu-cluster",
+            "distributed-training",
+            "gpu-memory"
+          ]
+        ],
+        [
+          "执行、恢复与作业平台",
+          [
+            "ddp-code",
+            "training-communication",
+            "data-pipeline",
+            "multinode-lab",
+            "checkpoint-recovery",
+            "training-performance",
+            "training-platform",
+            "gpu-scheduling",
+            "kubernetes-training",
+            "training-lab"
+          ]
+        ],
+        [
+          "推理、量化与模型发布",
+          [
+            "model-serving",
+            "quantization-serving",
+            "inference-performance",
+            "ai-lifecycle",
+            "moe-routing",
+            "speculative-decoding"
+          ]
+        ]
+      ],
+      "agent": [
+        [
+          "任务与执行边界",
+          [
+            "agent-runtime",
+            "agent-security",
+            "agent-sandbox"
+          ]
+        ],
+        [
+          "恢复、上下文与评估",
+          [
+            "agent-recovery",
+            "agent-memory",
+            "agent-evaluation"
+          ]
+        ],
+        [
+          "持久工作流与知识检索",
+          [
+            "durable-workflows",
+            "agent-retrieval"
+          ]
+        ],
+        [
+          "观测、接入与综合验收",
+          [
+            "agent-observability",
+            "kairo-practice",
+            "production-readiness"
+          ]
+        ]
+      ]
+    }
+  },
+  "review_scope": {
+    "chapters": 75,
+    "changed_bodies": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "distributed-training"
+    ],
+    "unchanged_bodies": 71,
+    "original_full_code_blocks": "all original blocks preserved byte-for-byte in original order",
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "hardware_execution_claims_added": 0,
+    "body_baseline_commit": "e37ba4220fc58b5b03ba309523445734446ed298",
+    "added_code_blocks": {
+      "distributed-training": 2
+    },
+    "manual_sharding": "two real CPU/Gloo workers; three global gradient/parameter/momentum updates; independent scalar oracle; wrong local-mean probe fails",
+    "static_role_destinations": 7,
+    "preserved_published_track_fragments": 53
+  }
+}

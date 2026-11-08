@@ -4,7 +4,7 @@ const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
 function learningContract(a){const content=`<div class="learning-contract"><strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}<p class="evidence-note">约 ${a.minutes} 分钟 · ${a.baseline||'训练代码基线 PyTorch 2.5.1'} · <a href="#/labs">实验验证范围 ↗</a></p></div>`;return '<details class="guided-contract"><summary>先修、学习目标与验证范围 · 约'+a.minutes+'分钟</summary>'+content+'</details>'}
-function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${conceptTOCLink(articleURL(a.id))}${a.sections.map((s,i)=>`<a href="${articleURL(a.id)}#section-${i+1}">${i+1}. ${s[0]}</a>`).join('')}</details>`}
+function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${conceptTOCLink(readingArticleURL(a.id))}${a.sections.map((s,i)=>`<a href="${readingArticleURL(a.id)}#section-${i+1}">${i+1}. ${s[0]}</a>`).join('')}</details>`}
 function courseIntro(){return `<div class="course-intro"><span class="small-badge">训练专题 / ${articles.filter(a=>a.module==='training').length} 章</span><h2>先理解一步训练，再走向多机多卡。</h2><p>从资源预算、数据与通信，到完整DDP程序、两机四卡手册和恢复对照。同一份实验贯穿执行机制与故障验证。</p><div class="course-links"><a class="btn" href="#/article/gpu-cluster">从全景开始 →</a><a class="btn secondary" href="#/labs">实验与验证记录 ↗</a></div><small>CPU/Gloo已有实测；真实GPU/NCCL与Kubernetes仍需目标环境验证。</small></div>`}
 function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="course-group"><div class="group-label">${g}</div>${list.filter(a=>a.group===i).map(chapterLink).join('')}</section>`).join('')}
 function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
@@ -29,7 +29,8 @@ function homePage(){
  </main>${footer()}`;
 }
 
-function trackPage(kind){if(kind==='cloud')cloudKnowledgePage(moduleFor('compute'));else infraKnowledgePage(moduleFor(kind==='ai'?'model-foundations':'agent'));}
+// A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
+function trackPage(kind){articlePage(articleById(trackDefinitions[kind].start));}
 
 function sidebarView(moduleId, current) {
  const track = current?chapterReadingContext(articleById(current)).track:moduleFor(moduleId).track;
@@ -45,9 +46,9 @@ function sidebarView(moduleId, current) {
    const startsGroup = article.group !== undefined && (!index || chapters[index-1].group !== article.group);
    const group = startsGroup ? '<div class="side-group">'+trainingGroups[article.group]+'</div>' : '';
    const selected = article.id === current ? 'class="current" aria-current="page"' : '';
-   return `${group}<a href="${articleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
+   return `${group}<a href="${readingArticleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
   }).join('');
-  const summaryHref=module.id==='practice'?articleURL(chapters[0].id):'/module/'+module.id+'/';
+  const summaryHref=readingArticleURL(chapters[0].id);
   return `<details ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
  }).join('');
  return `<aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
@@ -58,12 +59,12 @@ function sidebarView(moduleId, current) {
 function moduleOverview(m,list){return `<div class="module-intro"><b>这一模块的学习出口</b><ul>${m.outcomes.map(t=>'<li>'+t+'</li>').join('')}</ul><span>${list.length}章 · 先理解机制，再用问题和实验检验理解</span></div>`}
 function relatedReading(a){if(!a.related?.length)return '';return `<section class="related-reading"><h2>把这一章连回系统</h2>${a.related.map(id=>`<a href="${articleURL(id)}"><span>${articleById(id).number}</span>${articleById(id).title}<b>↗</b></a>`).join('')}</section>`}
 function roadmapPage(){
- const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),selected=trackDefinitions[key]?key:'cloud';
- const enhanced=typeof document.createElement==='function';
- simplePage('选择你的学习路线','LEARN THE CONNECTIONS','Cloud提供计算、网络和存储，AI把模型计算组织成训练与推理服务，Agent调用模型服务和工具完成任务。Agent可以直接使用已有模型服务，无需先学GPU训练；权限、版本、观测和恢复贯穿三条主线。',
+ const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),candidate=selectedLearningProfile(),selected=candidate?.track||(trackDefinitions[key]?key:'cloud');
+ const enhanced=typeof document.createElement==='function',profile=candidate?.track===selected?candidate:null;
+ simplePage(profile?profile.label+'学习路线':'选择你的学习路线','LEARN THE CONNECTIONS','Cloud提供计算、网络和存储，AI把模型计算组织成训练与推理服务，Agent调用模型服务和工具完成任务。Agent可以直接使用已有模型服务，无需先学GPU训练；权限、版本、观测和恢复贯穿三条主线。',
  `<nav class="route-selector" aria-label="学习方向">${Object.keys(trackDefinitions).map(k=>`<a href="/roadmap/?track=${k}#route-${k}" ${k===selected?'aria-current="page"':''}>${trackDefinitions[k].label} ↓</a>`).join('')}</nav>`+
- Object.entries(stages).map(([k,ss])=>`<section class="route-block" id="route-${k}" ${enhanced&&k!==selected?'hidden':''}><div class="route-title"><h2>${trackDefinitions[k].label}</h2></div>${trackModelHTML(k)}${ss.map(([title,ids],i)=>`<div class="roadmap-step"><span class="step-num">0${i+1}</span><div><h3>${title}</h3>${stageConnectionHTML(k,i)}${k==='cloud'?cloudStageStudyHTML(i):infraStageStudyHTML(k,i)}${ids.map(id=>`<a id="route-chapter-${k}-${id}" href="${articleURL(id)}">${articleById(id).number} ${articleById(id).title}${progress[id]?' ✓':' ↗'}</a>`).join('')}</div></div>`).join('')}${trackSynthesisHTML(k)}<a class="inline-link" href="/track/${k}/">继续读这条主线的系统知识 →</a></section>`).join(''));
- let anchor=null;try{const requested=decodeURIComponent(location.hash.slice(1));if(requested.startsWith('route-'+selected)||requested.startsWith('route-chapter-'+selected+'-'))anchor=requested;}catch{}
+ Object.entries(stages).map(([k,ss])=>`<section class="route-block" id="route-${k}" ${enhanced&&k!==selected?'hidden':''}><div class="route-title"><h2>${trackDefinitions[k].label}</h2></div>${learningGoalSelectorHTML(k)}${profile?.track===k?learningGoalHTML(profile):''}<details class="complete-course" ${!profile||profile.track!==k?'open':''}><summary>完整课程、领域图谱与阶段任务</summary>${trackModelHTML(k)}${ss.map(([title,ids],i)=>`<div class="roadmap-step"><span class="step-num">0${i+1}</span><div><h3>${title}</h3>${stageConnectionHTML(k,i)}${k==='cloud'?cloudStageStudyHTML(i):infraStageStudyHTML(k,i)}${ids.map(id=>`<a id="route-chapter-${k}-${id}" href="${articleURL(id)}">${articleById(id).number} ${articleById(id).title}${progress[id]?' ✓':' ↗'}</a>`).join('')}</div></div>`).join('')}${trackSynthesisHTML(k)}<a class="inline-link" href="/track/${k}/">开始阅读第一章 →</a></details></section>`).join(''));
+ let anchor=null;try{const requested=decodeURIComponent(location.hash.slice(1));if(requested==='learning-goal'||requested.startsWith('route-'+selected)||requested.startsWith('route-chapter-'+selected+'-'))anchor=requested;}catch{}
  if(anchor)requestAnimationFrame(()=>{const target=document.getElementById(anchor);target?.scrollIntoView();if(anchor.startsWith('route-chapter-'))target?.focus({preventScroll:true});});
 }
 function labsPage(){renderLabCatalog()}

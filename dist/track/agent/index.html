@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。">
-<meta name="theme-color" content="#315dce"><title>Agent 运行时与 Kairo 实践 · Agent Infra · InfraGuide</title>
+<meta name="theme-color" content="#315dce"><title>Agent Infra在解决什么：从模型提议到任务完成 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=3f400c39ef23"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=b33253df07fb"></script><script defer src="runtime-04.js?v=212aa25cdbbf"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=cf6d42cbbd64"></script><script defer src="reading-comfort.js?v=f0d8afeee5c0"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=092b50635eb4"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=a13d62f87b82"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=cf4251309b9e"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=f7eb8056a670"></script><script defer src="reading-comfort.js?v=f0d8afeee5c0"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=e59eb47bddf5"></script>
 
 
-<link rel="stylesheet" href="learning-connections.css?v=78009bdc2a3c"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/"><meta property="og:type" content="website"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="Agent 运行时与 Kairo 实践 · Agent Infra · InfraGuide"><meta property="og:description" content="InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Agent 运行时与 Kairo 实践 · Agent Infra · InfraGuide","description":"InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/","inLanguage":"zh-CN"}</script></head>
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/"><meta property="og:type" content="website"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="Agent Infra在解决什么：从模型提议到任务完成 · InfraGuide"><meta property="og:description" content="InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Agent Infra在解决什么：从模型提议到任务完成 · InfraGuide","description":"InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/track/agent/","inLanguage":"zh-CN"}</script></head>
 <body>
 <a class="skip" href="/track/agent/#main">跳到主要内容</a>
 <header class="header"><div class="header-inner">
@@ -16,10 +16,16 @@
 <nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
 <div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
 </div></header>
-<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout knowledge-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
-  <div class="side-heading"><span>Agent Infra · 目录</span><span>10 章 + 1 实战</span></div><details open><summary><a href="/module/agent/" class="current" aria-current="page"><span>G</span>Agent 运行时与 Kairo 实践</a></summary><div class="side-links"><a href="/article/agent-runtime/" >G1 Agent Infra 在解决什么：从模型提议到任务完成</a><a href="/article/agent-security/" >G2 Agent 的权限边界：谁授权，在哪里拦截，怎样限制效果</a><a href="/article/agent-sandbox/" >G3 Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-recovery/" >G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a><a href="/article/agent-memory/" >G5 上下文、运行状态与长期记忆：三种信息不要混存</a><a href="/article/agent-evaluation/" >G6 Agent 怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a href="/article/durable-workflows/" >G7 持久工作流：事件重放、接管与提交</a><a href="/article/agent-retrieval/" >G8 检索与上下文：让答案有可验证的证据</a><a href="/article/agent-observability/" >G9 Agent 观测：任务、重试与成本归因</a><a href="/article/kairo-practice/" >G10 Kairo 接入验收：任务、权限与结果证据</a></div></details><details ><summary><a href="/article/production-readiness/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/production-readiness/" >S3 综合设计评审：让 Cloud、AI 与 Agent 形成一条可验收链路</a></div></details>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>Agent Infra · 目录</span><span>10 章 + 1 实战</span></div><details open><summary><a href="/article/agent-runtime/" ><span>G</span>Agent 运行时与 Kairo 实践</a></summary><div class="side-links"><a href="/article/agent-runtime/" class="current" aria-current="page">G1 Agent Infra在解决什么：从模型提议到任务完成</a><a href="/article/agent-security/" >G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a><a href="/article/agent-sandbox/" >G3 Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-recovery/" >G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a><a href="/article/agent-memory/" >G5 上下文、运行状态与长期记忆：三种信息不要混存</a><a href="/article/agent-evaluation/" >G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a href="/article/durable-workflows/" >G7 持久工作流：事件重放、接管与提交</a><a href="/article/agent-retrieval/" >G8 检索与上下文：让答案有可验证的证据</a><a href="/article/agent-observability/" >G9 Agent 观测：任务、重试与成本归因</a><a href="/article/kairo-practice/" >G10 Kairo 接入验收：任务、权限与结果证据</a></div></details><details ><summary><a href="/article/production-readiness/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/production-readiness/" >S3 综合设计评审：让Cloud、AI与Agent形成一条可验收链路</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 11</b></div>
-   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article knowledge-article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a></div><div class="eyebrow">AGENT INFRA / 系统知识</div><h1>Agent 运行时与 Kairo 实践</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><details class="mobile-contents"><summary>领域目录与本页知识点</summary><div class="mobile-field-links"><a href="/module/agent/">Agent 运行时与 Kairo 实践</a></div><a data-toc="concept-path" href="/module/agent/#concept-path">概念起点与关系</a><a href="/module/agent/#concept-relations">核心概念关系图</a><a href="/module/agent/#knowledge-ag-runtime">1. 运行时：任务、运行、步骤与效果身份</a><a href="/module/agent/#knowledge-ag-tools">2. 工具契约：类型、前置条件与结果语义</a><a href="/module/agent/#knowledge-ag-recovery">3. 持久执行：恢复、取消与效果回执</a><a href="/module/agent/#knowledge-ag-fencing">4. 多 worker：租约、代际与接收方 fencing</a><a href="/module/agent/#knowledge-ag-authorization">5. 权限委托、审批与外部文本边界</a><a href="/module/agent/#knowledge-ag-context">6. 上下文、运行状态与长期记忆的存储职责</a><a href="/module/agent/#knowledge-ag-retrieval">7. RAG：索引、过滤、排序与事实归因</a><a href="/module/agent/#knowledge-ag-observability">8. 任务轨迹、预算与每成功任务成本</a><a href="/module/agent/#knowledge-ag-evaluation">9. 任务评估：真实效果、正确拒绝与故障注入</a><a href="/module/agent/#knowledge-ag-sandbox">10. 执行沙箱：资源、网络、文件与生命周期</a><a href="/module/agent/#examples">代码实验与具体案例</a></details><section class="concept-path" id="concept-path" data-concept-kind="module"><p class="concept-kicker">从这里建立概念</p><h2>先认识任务、模型、工具和执行系统</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>用户要的是一个可判断的结果</h3><p>任务写明用户的目标、允许范围和完成条件。模型是根据输入产生输出的计算程序；它可以提出下一步建议，但一段“已经完成”的文字并不等于目标资源已经改变。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>提议需要由程序变成实际动作</h3><p>工具是一段可被调用、可读取资料或执行动作的代码。运行时负责接收模型提议、核对参数与权限、调用工具并保存结果。状态记录执行到了哪里、哪些结果已确认，用来支持后续推进和恢复。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>用一个循环把四者连接起来</h3><p>Agent 系统在任务范围内反复经历提议、检查、执行、观察和验收。下面先讲这条循环，再介绍重试、接管、权限、上下文、检索和评估。Kairo 作为后续接入对象，具体能力需要目标系统中的执行证据。</p></section><figure class="training-figure"><a href="diagrams/v42-agent-concepts.svg" target="_blank" rel="noopener" aria-label="放大：任务、模型、运行时与工具的职责关系。工具返回结果后，仍须按任务条件验收。"><img src="diagrams/v42-agent-concepts.svg" width="1120" height="800" alt="任务、模型、运行时与工具的职责关系。工具返回结果后，仍须按任务条件验收。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>任务、模型、运行时与工具的职责关系。工具返回结果后，仍须按任务条件验收。<a href="diagrams/v42-agent-concepts.svg" download>下载 SVG ↗</a></figcaption></figure></section><div class="knowledge-body"><section class="knowledge-point" id="knowledge-ag-runtime"><h2><span>01</span>运行时：任务、运行、步骤与效果身份</h2><p>智能体（Agent）运行时执行“提出动作→检查权限和参数→安排执行→调用工具→保存回执→验收结果”的循环。模型输出是待解释的提议，执行器管理可信身份、状态、预算和实际动作。</p><div class="mechanism-core" id="tool-task-contract"><h3>先把用户目标改写成可以验证的任务契约</h3><p>Agent（智能体）根据观察选择下一步动作，例如先查数据、发现缺项后再补查，最后生成报告。模型可以提出这些选择；Agent 运行时负责让选择进入受控执行：当前主体能做什么、参数是否合约、调用还有多少预算、结果怎样保存、什么时候真正完成。二者连接在一起，仍应分别明确责任。</p><p>先固定一项任务：为主体 A 读取 orders-A 的 v3 数据[10,27]，把总数 37 保存到 report-A，报告版本从 0 更新到 1，并能读取验证。模型说“保存好了”、工具返回 200、数据库里存在某个文件，都不够；目标资源、总数、来源版本和实际保存状态必须同时符合要求。</p><div class="table-wrap"><table><thead><tr><th>契约项</th><th>本章固定任务</th><th>由谁维护或证明</th></tr></thead><tbody><tr><td>目标与输入</td><td>orders-A / v3 / [10,27]</td><td>可信任务定义及来源，不从模型措辞推断</td></tr><tr><td>允许效果</td><td>写 report-A；total=37；source_version=3</td><td>执行层约束动作，独立验收检查实际产物</td></tr><tr><td>调用者与资源范围</td><td>预先注入主体 A，只能访问 A 的对象</td><td>工具侧再次授权；本地实验未实现真实认证</td></tr><tr><td>终态</td><td>产物可核对才 SUCCEEDED</td><td>运行时记录经过验收的状态</td></tr><tr><td>停止约束</td><td>本例最多 4 次提议、3 次工具尝试</td><td>执行层计数，不由模型自行承诺</td></tr></tbody></table></div><p>可以预先确定的步骤与分支，适合显式工作流；需要根据内容判断下一步的部分，可以允许模型决策。固定工作流也会有重试、权限和提交间隙；动态决策则还增加不合法提议、循环和误判完成。选择从任务的不确定性出发，先把所有方案都必须满足的任务契约写清。</p></div><div class="mechanism-core" id="tool-finite-loop"><h3>一次提议不等于一次调用，更不等于一次效果</h3><figure class="training-figure"><a href="diagrams/v23-tool-control-loop.svg" target="_blank" rel="noopener" aria-label="放大：模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余HTTP、事务与验收实际执行。"><img src="diagrams/v23-tool-control-loop.svg" width="1120" height="692" alt="模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余HTTP、事务与验收实际执行。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余 HTTP、事务与验收实际执行。<a href="diagrams/v23-tool-control-loop.svg" download>下载 SVG ↗</a></figcaption></figure><p>最小循环是：读取可信任务与已有观察→取得下一份提议→检查名称、类型、范围和预算→调度实际调用→分类并校验结果→更新观察→判断能否继续。提议可能因为参数错误被拒绝，完全不产生工具调用；一次只读提议也可能因一次 503 产生两次 <span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span> 尝试。同一写入的两次尝试，还可能只产生一次业务效果。三种计数必须分开。</p><p>本例总共允许 4 次提议、3 次实际工具尝试，发现工具列表另算。参数被拒绝仍消耗提议预算，避免模型在无效输出中无限自转；重试消耗工具尝试预算。完成验收不调用工具，因此当第三次实际尝试刚成功时，后续 finish 仍可进入验收，不能在看到调用额度为零时直接把已完成产物判成失败。</p><div class="code-block"><div class="code-toolbar"><span>控制顺序示意 · 完整程序包含实际 HTTP 和结果处理 <small>PYTHON</small></span><button data-copy-code aria-label="复制 控制顺序示意 · 完整程序包含实际HTTP和结果处理">复制代码</button></div><pre tabindex="0"><code>for proposal in proposals:
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G1</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>机制 + 设计</span><span>·</span><span>系统课程 · 2026.11.08</span></div><h1>G1 Agent Infra在解决什么：从模型提议到任务完成</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先把用户要求写成一项任务</h3><p>任务说明目标、允许范围和完成条件。模型是根据输入生成输出的计算程序，可以提出下一步动作；工具是一段可以实际读取资料或执行操作的代码。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>提议、执行和结果之间需要运行时</h3><p>运行时是管理执行过程的程序，负责核对参数与权限、安排工具调用并保存状态。状态记录哪些动作已经确认、哪些结果仍未知，支持下一步推进或恢复。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再沿一个受控循环认识Agent</h3><p>Agent系统把模型提议、工具、状态和任务验收连接成循环。本章先定义每层责任，再解释错误、身份与停止条件，最后进入HTTP和流式参数实战。</p></section></section><p class="description">模型能提出下一步，执行系统仍要决定能否执行、如何记录以及怎样验证结果。沿着一次工具任务建立完整地图。</p><div class="tag-row"><span class="tag">职责</span><span class="tag">状态</span><span class="tag">结果</span></div><details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary><div class="guided-intro"><span>先建立直觉</span><p>模型负责提出下一步，运行时负责有边界地执行、保存事实并恢复任务。最终完成要由真实产物和预先约定的条件证明。</p><strong>贯穿案例：读取获准的订单数据，生成汇总报告，保存到本次任务的指定位置。</strong><details><summary>第一次遇到这些词？展开4个必要术语</summary><dl><dt>运行时（runtime）</dt><dd>执行任务的系统：管理状态、调用工具、记录结果，并决定继续或停止。</dd><dt>工具（tool）</dt><dd>可被调用的能力，例如读取数据或写文件；参数合法不等于有权调用。</dd><dt>回执（receipt）</dt><dd>工具对某次操作的结果记录，例如工件ID、版本和摘要；用于核对效果。</dd><dt>逻辑动作 / 尝试</dt><dd>“保存这份报告”是一个动作；因超时再调用一次是另一次尝试。</dd></dl></details></div></details><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约65分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>职责：区分推理与执行</li><li>状态：区分任务、步骤与尝试</li><li>结果：以环境证据验收目标</li></ul><p><b>前置知识</b>能理解HTTP请求与数据库写入；建议先读P0.4。无需先学GPU训练。</p><p><b>按需深入，不作整条课程先修</b></p><ul class="prerequisite-links"><li><a href="/article/distributed-systems/">P0.4 超时、重试与幂等：系统最难处理的是“结果未知”</a>：按需深入超时、重试和未知结果；本章先建立任务与执行对象。</li></ul><p class="evidence-note">约 65 分钟 · 原理、案例与设计验收 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/agent-runtime/#concept-path">概念起点与关系</a><a href="/article/agent-runtime/#section-1">1. 任务契约：目标、范围、证据与停止条件</a><a href="/article/agent-runtime/#section-2">2. 工具契约：结构、权限、版本与结果</a><a href="/article/agent-runtime/#section-3">3. 有限执行循环：提议、调用与效果分别计数</a><a href="/article/agent-runtime/#section-4">4. 错误与重试：连接、HTTP、工具协议与任务验收</a><a href="/article/agent-runtime/#section-5">5. 状态与身份：任务、步骤、原操作和尝试</a><a href="/article/agent-runtime/#section-6">6. 完成验收：读取真实产物，保留错误效果</a><a href="/article/agent-runtime/#section-7">7. Kairo适配：按执行责任寻找真实接口</a><a href="/article/agent-runtime/#section-8">8. 实战与变化题：十组实际HTTP对照</a><a href="/article/agent-runtime/#section-9">9. 流式实战：十三组完成边界与准入对照</a></details><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>任务契约：目标、范围、证据与停止条件</h2><div class="mechanism-core" id="tool-task-contract"><h3>先把用户目标改写成可以验证的任务契约</h3><p>先从一项日常要求出发：“把我的订单数据整理成报告并保存。”模型可以理解要求、提出读取资料或保存报告的动作；真正读取数据库和写入文件，需要调用工具，也就是能够实际执行操作的程序。工具返回新资料后，模型再据此选择下一步。把模型、工具与观察组织成这样的循环，就是本章讨论的 Agent（智能体）系统。</p><p>运行时是维持这个循环的程序。它接收可信任务，保存当前进度，检查提议是否允许，安排调用，再把结果交回下一步。模型负责提出选择，运行时负责执行规则，工具负责实际读写，验收器负责核对目标产物。把四种职责放回同一条任务路径，就能理解后面为什么分别需要权限、状态和停止条件。</p><p>本章固定一个可手算的任务。调用者用身份 A 发起要求，源数据 orders-A 的第 3 版为[10,27]；目标是把总数 37 保存为 report-A 的第 1 版。正常路径是：读取这版数据→计算 10+27→提交报告→由验收器读取报告，核对总数、来源版本与目标位置。这里的 A 表示调用者的资源范围，v3 表示来源版本；这些约定会一直用到后面的 <span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span> 与恢复实验。</p><figure class="training-figure"><a href="diagrams/v42-agent-concepts.svg" target="_blank" rel="noopener" aria-label="放大：任务先规定目标与范围，模型提议动作，运行时安排工具并保存观察，最后按实际产物验收。"><img src="diagrams/v42-agent-concepts.svg" width="1120" height="800" alt="任务先规定目标与范围，模型提议动作，运行时安排工具并保存观察，最后按实际产物验收。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>任务先规定目标与范围，模型提议动作，运行时安排工具并保存观察，最后按实际产物验收。<a href="diagrams/v42-agent-concepts.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>契约项</th><th>本章固定任务</th><th>由谁维护或证明</th></tr></thead><tbody><tr><td>目标与输入</td><td>orders-A / v3 / [10,27]</td><td>可信任务定义及来源，不从模型措辞推断</td></tr><tr><td>允许效果</td><td>写 report-A；total=37；source_version=3</td><td>执行层约束动作，独立验收检查实际产物</td></tr><tr><td>调用者与资源范围</td><td>预先注入主体 A，只能访问 A 的对象</td><td>工具侧再次授权；本地实验未实现真实认证</td></tr><tr><td>终态</td><td>产物可核对才 SUCCEEDED</td><td>运行时记录经过验收的状态</td></tr><tr><td>停止约束</td><td>本例最多 4 次提议、3 次工具尝试</td><td>执行层计数，不由模型自行承诺</td></tr></tbody></table></div><p>可以预先确定的步骤与分支，适合显式工作流；需要根据内容判断下一步的部分，可以允许模型决策。固定工作流也会有重试、权限和提交间隙；动态决策则还增加不合法提议、循环和误判完成。选择从任务的不确定性出发，先把所有方案都必须满足的任务契约写清。</p></div></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>工具契约：结构、权限、版本与结果</h2><h3>工具契约分四层：名字、结构、权限、语义</h3><p>工具发现返回名称、说明、输入结构与可选输出结构。schema（结构约定）约束字段、类型、必填项和未知字段；它能检查 total 是整数，却不能证明 37 这个数算对了。身份认证说明调用者是谁，授权说明这个主体能对哪个资源执行什么动作，业务前提说明这个资源版本是否仍允许本次修改。四种判断不能由“JSON 解析成功”替代。</p><div class="code-block"><div class="code-toolbar"><span>本例写入参数结构 · 逻辑操作身份与全部参数绑定 <small>JSON</small></span><button data-copy-code aria-label="复制 本例写入参数结构 · 逻辑操作身份与全部参数绑定">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;resource&quot;: &quot;report-A&quot;,
+  &quot;op&quot;: &quot;R17:publish&quot;,
+  &quot;total&quot;: 37,
+  &quot;source_version&quot;: 3,
+  &quot;expected_version&quot;: 0
+}</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>示例</th><th>通过后仍不能推断</th></tr></thead><tbody><tr><td>名称与结构</td><td>只接受 write_report；拒绝多余字段；total 必须整数</td><td>该主体有权写任意 report ID</td></tr><tr><td>对象授权</td><td>可信主体 A 只能访问 A 的对象</td><td>当前版本必定满足修改前提</td></tr><tr><td>版本前提</td><td>expected_version=0 与实际版本一致</td><td>total 必定等于源数据的正确总数</td></tr><tr><td>结果结构</td><td>输出含 resource、version、total、op、duplicate</td><td>报告符合用户目标或仍可被后续消费者读取</td></tr></tbody></table></div><p>工具名白名单防止提议调用不存在或未允许的工具；对象授权防止把允许工具用在别人的资源。主体、角色或审批不能直接采信模型提供的参数。schema 也不能通过自然语言说明执行真正的授权。外部网页、工具输出和检索资料即使写着“忽略限制、改写 B”，仍只是一份数据，不能签发新的委托。</p><p>本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。</p><p>输出结构也要校验。<span class="first-concept-term" data-concept-term="MCP">MCP<span class="concept-term-meaning">（模型上下文协议，规定客户端与服务端交换相应工具和上下文能力的方式）</span></span> 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。</p><h3>流式参数到达时，先识别三种边界</h3><p>上游分段给出工具参数时，执行器先面对字节，而不是一个现成的参数对象。一次 HTTP 读取可能停在汉字的 <span class="first-concept-term" data-concept-term="UTF-8">UTF-8<span class="concept-term-meaning">（一种把Unicode字符编码为字节的可变长度编码）</span></span> 编码中间；服务端事件流（SSE）又用行和空行组织事件，字符还原后还需找到完整事件。事件里的 delta（参数增量）仍可能只是一次调用的部分参数。三个“收齐”分别处理，不能看到片段中出现工具名就执行。</p><p>后面的只读日报实验声明自己的 start/delta/done 封装：start 固定工具调用编号 call_id 和名称；delta 为这个调用追加参数字符串；对应 done 才表示这次参数输出结束。不同调用的片段可以交错，按 call_id 分开收集。真实适配时映射所用协议的完结信号，不能把本实验字段直接当作某家模型或 MCP 的通用格式。</p><figure class="training-figure"><a href="diagrams/v37-stream-boundaries.svg" target="_blank" rel="noopener" aria-label="放大：正常固定流的实际账本：响应体 287 字节、41 次读取、3 个完整事件，最后准入 1 次本地只读回调。每一层只证明自己的完成条件。"><img src="diagrams/v37-stream-boundaries.svg" width="1120" height="890" alt="正常固定流的实际账本：响应体 287 字节、41 次读取、3 个完整事件，最后准入 1 次本地只读回调。每一层只证明自己的完成条件。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>正常固定流的实际账本：响应体 287 字节、41 次读取、3 个完整事件，最后准入 1 次本地只读回调。每一层只证明自己的完成条件。<a href="diagrams/v37-stream-boundaries.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>收齐哪一层</th><th>完成条件</th><th>此时能否执行工具</th></tr></thead><tbody><tr><td>UTF-8 字符</td><td>增量解码器保留未完字节，补齐后输出字符</td><td>还不知道事件是否完整</td></tr><tr><td>SSE 事件</td><td>本例按空行结束事件，多行 data 先拼合</td><td>delta 仍可能只是部分参数</td></tr><tr><td>单次调用的参数</td><td>对应调用的 done 已到，完整参数可解析</td><td>还需结构、名称、权限和业务前提检查</td></tr></tbody></table></div><p>合法 JSON 前缀也不能提前下发。先到的片段可能刚好是 {"tenant":"A","report":"中国区日报","limit":3}，下一段却还有 oops；提前解析、提前执行，就在上游实际结束前接受了后来不合法的参数。反过来，到流末尾（EOF）也不表示每次调用都结束：最后一项 done 若没有完整事件边界，应保持未完成。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>有限执行循环：提议、调用与效果分别计数</h2><div class="mechanism-core" id="tool-finite-loop"><h3>一次提议不等于一次调用，更不等于一次效果</h3><figure class="training-figure"><a href="diagrams/v23-tool-control-loop.svg" target="_blank" rel="noopener" aria-label="放大：模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余HTTP、事务与验收实际执行。"><img src="diagrams/v23-tool-control-loop.svg" width="1120" height="692" alt="模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余HTTP、事务与验收实际执行。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余 HTTP、事务与验收实际执行。<a href="diagrams/v23-tool-control-loop.svg" download>下载 SVG ↗</a></figcaption></figure><p>最小循环是：读取可信任务与已有观察→取得下一份提议→检查名称、类型、范围和预算→调度实际调用→分类并校验结果→更新观察→判断能否继续。提议可能因为参数错误被拒绝，完全不产生工具调用；一次只读提议也可能因一次 503 产生两次 HTTP 尝试。同一写入的两次尝试，还可能只产生一次业务效果。三种计数必须分开。</p><p>本例总共允许 4 次提议、3 次实际工具尝试，发现工具列表另算。参数被拒绝仍消耗提议预算，避免模型在无效输出中无限自转；重试消耗工具尝试预算。完成验收不调用工具，因此当第三次实际尝试刚成功时，后续 finish 仍可进入验收，不能在看到调用额度为零时直接把已完成产物判成失败。</p><div class="code-block"><div class="code-toolbar"><span>控制顺序示意 · 完整程序包含实际 HTTP 和结果处理 <small>PYTHON</small></span><button data-copy-code aria-label="复制 控制顺序示意 · 完整程序包含实际HTTP和结果处理">复制代码</button></div><pre tabindex="0"><code>for proposal in proposals:
     consume_proposal_budget()
     if proposal.kind == &quot;finish&quot;:
         return verify_actual_artifact(task)
@@ -29,427 +35,610 @@
     result = dispatch(proposal)
     observation = validate_and_classify(result)
     record_observation(observation)
-# 预算、超时、取消及结果未知都有明确分支；不是只等模型输出finish</code></pre></div><p>真实服务还要控制墙钟截止时间、<span class="first-concept-term" data-concept-term="token">token<span class="concept-term-meaning">（模型处理文本的离散单位，不必对应一个完整词）</span></span>、费用、并发和效果范围，在调用前预留或核对，返回后对账实际消耗。不能只在循环结束才检查总成本。当前程序只验证两种次数预算和有限 HTTP 超时，没有实现完整的 <span class="first-concept-term" data-concept-term="deadline">deadline<span class="concept-term-meaning">（整个操作应完成的截止时间，不是每次重试重新获得的完整时长）</span></span> 传播、费用预留或取消协议；这些控制需要分别测试。</p><p>“没有新增信息”也需要可解释的停止策略，例如相同输入重复读取达到上限，或者关键资料缺失而需要澄清。先保存观察和原因，再进入预算耗尽、证据不足、等待审批或结果待确认状态。不要把所有停止都压成 FAILED，也不要让模型一句“再试一次”绕过运行时限制。</p></div><h3>把任务、步骤、操作、尝试和回执分开保存</h3><div class="table-wrap"><table><thead><tr><th>身份</th><th>表示什么</th><th>重试或恢复时</th></tr></thead><tbody><tr><td>task_id</td><td>用户的一项目标及授权范围</td><td>仍是原目标就保持</td></tr><tr><td>run_id</td><td>一次固定配置下的执行</td><td>重新发起运行可另建，但不自动创建新业务效果</td></tr><tr><td>step_id</td><td>计划中的一个逻辑步骤</td><td>关联决策、输入与结果</td></tr><tr><td>op_id</td><td>接收方识别的一次逻辑效果</td><td>同一动作保持，并绑定参数</td></tr><tr><td>attempt_id</td><td>某次实际调用尝试</td><td>每次改变，用于计数和追踪</td></tr><tr><td>receipt_id</td><td>接收方已经提交的效果证明</td><td>查询或重试应找到原回执</td></tr></tbody></table></div><p>本例写入以 R17:publish 作为 op_id，将全部参数规范化后取摘要。工具把报告更新、效果记录与回执放进同一 SQLite <span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>。同参数再来，先查原回执，返回 duplicate=true；不能先用当前版本再次拒绝，因为第一次写入本来就会把版本从 0 推进到 1。同 op_id 换 total 则报 operation_conflict，不能把原回执套到另一个意图上。</p><p>任务循环本身并未持久化，这个实验不能证明进程崩溃后的继续执行。真正的持久执行还要先记录意图，再发出动作，最后保存结果，处理“工具已提交、本地回执未保存”的间隙。另一个章节用两个独立数据库和进程退出实际验证此情形。不要用单库事务覆盖所有状态来掩盖远端提交边界。</p><a class="inline-link" href="/article/agent-recovery/">运行真实退出、恢复与接收方去重实验 →</a><p>本轮给模型看的上下文是一份任务视图，包含当前步骤、输入版本、观察摘要和回执引用；它不是权威账本。旧摘要仍写“未保存”，不能覆盖新回执已经确认的成功。状态机还要检查允许迁移、并发版本及当前授权，不能仅凭有一个 version 字段就任意推进。</p><a class="inline-link" href="/article/agent-memory/">继续学习上下文预算、旧摘要与权威状态 →</a><h3>完成由实际产物证明，错误效果也要如实记录</h3><p>本章评分器不读取模型的自评，而是读取 SQLite 中的真实报告，核对 resource=report-A、version=1、total=37、source_version=3，并检查确实取得了相应来源观察。工具只承诺“按合法参数保存整数”，所以保存 38 可以产生一个完全合法的成功回执；评分器仍应拒绝这个任务结果。</p><p>拒绝完成不表示效果没有发生。错误总数 38 已经落库，后续修正需要一个有明确意图的新动作、正确的版本前提及新的验收，不能悄悄改写历史回执。重复相同 op 的去重只能保证本例的相同意图不重复生效，不能让错误意图自动变对。</p><div class="table-wrap"><table><thead><tr><th>观察到的事实</th><th>可以记录</th><th>不能据此宣称</th></tr></thead><tbody><tr><td>模型输出 finish</td><td>模型提出结束</td><td>报告存在且正确</td></tr><tr><td>工具回执成功</td><td>该动作按工具语义已执行</td><td>全部任务约束达成</td></tr><tr><td>总数正确但资源属于 B</td><td>某处存在 37</td><td>A 的任务成功</td></tr><tr><td>实际产物全部通过独立验收</td><td>本次固定任务合格</td><td>任意开放任务或真实模型成功率已达标</td></tr></tbody></table></div><p>固定脚本有利于先验证执行器和评分器。只有确保全拒绝、假成功、错资源、错总数、重复效果等负例都会被发现，接真实模型测规划质量才有意义。模型表现还需要独立任务集、重复运行和清晰统计口径；十个机制用例通过，不等于模型完成率 100%。</p><a class="inline-link" href="/article/agent-evaluation/">继续学习任务集、独立评分与质量口径 →</a></section><section class="knowledge-point" id="knowledge-ag-tools"><h2><span>02</span>工具契约：类型、前置条件与结果语义</h2><p>工具契约至少包含名称/版本、输入参数的结构（schema）、允许主体与资源、deadline、幂等身份、效果范围和可查询结果。结构校验解决参数长什么样，授权判断解决能否执行。</p><h3>工具契约分四层：名字、结构、权限、语义</h3><p>工具发现返回名称、说明、输入结构与可选输出结构。schema（结构约定）约束字段、类型、必填项和未知字段；它能检查 total 是整数，却不能证明 37 这个数算对了。身份认证说明调用者是谁，授权说明这个主体能对哪个资源执行什么动作，业务前提说明这个资源版本是否仍允许本次修改。四种判断不能由“JSON 解析成功”替代。</p><div class="code-block"><div class="code-toolbar"><span>本例写入参数结构 · 逻辑操作身份与全部参数绑定 <small>JSON</small></span><button data-copy-code aria-label="复制 本例写入参数结构 · 逻辑操作身份与全部参数绑定">复制代码</button></div><pre tabindex="0"><code>{
-  &quot;resource&quot;: &quot;report-A&quot;,
-  &quot;op&quot;: &quot;R17:publish&quot;,
-  &quot;total&quot;: 37,
-  &quot;source_version&quot;: 3,
-  &quot;expected_version&quot;: 0
-}</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>示例</th><th>通过后仍不能推断</th></tr></thead><tbody><tr><td>名称与结构</td><td>只接受 write_report；拒绝多余字段；total 必须整数</td><td>该主体有权写任意 report ID</td></tr><tr><td>对象授权</td><td>可信主体 A 只能访问 A 的对象</td><td>当前版本必定满足修改前提</td></tr><tr><td>版本前提</td><td>expected_version=0 与实际版本一致</td><td>total 必定等于源数据的正确总数</td></tr><tr><td>结果结构</td><td>输出含 resource、version、total、op、duplicate</td><td>报告符合用户目标或仍可被后续消费者读取</td></tr></tbody></table></div><p>工具名白名单防止提议调用不存在或未允许的工具；对象授权防止把允许工具用在别人的资源。主体、角色或审批不能直接采信模型提供的参数。schema 也不能通过自然语言说明执行真正的授权。外部网页、工具输出和检索资料即使写着“忽略限制、改写 B”，仍只是一份数据，不能签发新的委托。</p><p>本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。</p><p>输出结构也要校验。<span class="first-concept-term" data-concept-term="MCP">MCP<span class="concept-term-meaning">（模型上下文协议，规定客户端与服务端交换相应工具和上下文能力的方式）</span></span> 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。</p><h3>错误按层分类，重试按动作语义决定</h3><figure class="training-figure"><a href="diagrams/v23-tool-error-layers.svg" target="_blank" rel="noopener" aria-label="放大：HTTP成功、协议成功、工具成功、结果结构有效与任务完成逐层判断；较低层通过不证明较高层成立。"><img src="diagrams/v23-tool-error-layers.svg" width="1120" height="713" alt="HTTP成功、协议成功、工具成功、结果结构有效与任务完成逐层判断；较低层通过不证明较高层成立。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>HTTP 成功、协议成功、工具成功、结果结构有效与任务完成逐层判断；较低层通过不证明较高层成立。<a href="diagrams/v23-tool-error-layers.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>层次</th><th>本章示例</th><th>处理依据</th></tr></thead><tbody><tr><td>传输</td><td>一次 HTTP 503；或发出写入后连接断开</td><td>只读暂态可受限重试；写入未明先保持 UNKNOWN 并沿原操作查证</td></tr><tr><td>协议</td><td>JSON-RPC error：未知方法或未知工具</td><td>按错误码与约定修正调用，不当作正常工具资料</td></tr><tr><td>工具执行</td><td>isError=true，业务拒绝或前提冲突</td><td>区分 denied、not_found、version_conflict 等已知业务结果</td></tr><tr><td>输出契约</td><td>values 应为整数数组，却返回字符串</td><td>拒绝加入成功观察，定位工具服务或版本失配</td></tr><tr><td>任务验收</td><td>结构正确且写成功，但 total=38</td><td>保留已写事实，按目标判 INCOMPLETE，另行决定修正动作</td></tr></tbody></table></div><p>MCP 把协议错误与工具执行错误分开。工具可以在 HTTP 200 的 JSON-RPC 正常回应里返回 isError=true；执行器若只检查 HTTP 状态就进入成功路径，会把业务拒绝当资料。相反，未知方法的协议 error 也不应伪装成模型可以直接使用的结构化结果。具体身份校验还可能在到达工具方法之前失败，要根据真实认证链判断，不能从一个状态码推断工具一定没执行。</p><p>是否重试由错误阶段和动作语义共同决定。本例仅对只读调用的一次 503 做一次受限重试；写入传输不确定则保留 UNKNOWN，因为没有收到回应不证明没有提交。工具明确返回 not_found 属于已知业务结果；写效果已提交但回应丢失属于未知结果。后者需要原操作回执、同操作重试或对账，不能新建操作身份盲写。</p><h3>分段参数先收齐，再判断能否调用</h3><p>网络读取、协议事件和单次工具参数各有自己的边界。先增量还原字符，再解析完整事件；按调用身份分开追加参数，等协议规定的完结信号后解析整体并检查名称、字段、类型与当前权限。前缀能解析成 JSON 不证明上游已结束，流到 EOF 也不证明最后调用已完成。</p><p>若调用完成后才发生流错误，保留已有事实，再按原操作与接收方回执恢复；不能靠重连后的新调用身份制造第二次业务效果。参数拼装身份、业务效果身份和网络尝试身份分别保存。</p><a class="inline-link" href="/article/agent-runtime/">沿真实本机 HTTP 流检查十三个边界对照 →</a></section><section class="knowledge-point" id="knowledge-ag-recovery"><h2><span>03</span>持久执行：恢复、取消与效果回执</h2><p>持久执行记录可恢复的决策与步骤结果。重放使用已经记录的结果继续推进；重新执行外部动作需要接收方幂等或查询协议。</p><p>三个时点决定故障语义：本地记录意图 I，工具提交效果 E，本地记录回执 R。E 发生后 R 之前退出，恢复者只看本地状态会看到“未完成”，但外部效果可能已经存在。把 I 和 R 放进一个本地事务，仍跨不过另一个工具数据库的 E。</p><p>解决方式之一是持久保存稳定 op_id，接收方将效果与回执在同一事务中提交；恢复者以相同 op_id 重试或查询。接收方查到相同参数就返回原回执，查到异参则拒绝。调用次数可为 2，效果只为 1；这是特定接收方协议的性质，不是所有工具的默认能力。</p><p>工作流重放要把会变化的输入保存下来：时间、随机选择、模型响应和外部读取都可能变化。升级代码后仍要能够解释历史事件；可用版本分支、迁移或已完成步骤兼容策略。若外部接口既无幂等键又无法查询，超时应进入对账、人工确认或有定义的补偿，而不是无条件再做一次。</p><div class="code-block"><div class="code-toolbar"><span>恢复器的关键分支 · 结果未知与失败分开 <small>PYTHON</small></span><button data-copy-code aria-label="复制 恢复器的关键分支 · 结果未知与失败分开">复制代码</button></div><pre tabindex="0"><code>intent = load_persisted_intent(op_id)
-receipt = receiver.lookup(op_id)
-if receipt is not None:
-    verify_arguments_and_record(receipt)
-else:
-    retry_same_intent_or_enter_reconciliation(intent)</code></pre></div><div class="mechanism-core" id="cancel-request-and-effect"><h3>取消请求、执行停止、效果提交，分别记账</h3><p>用户点击取消，表达“不再继续这项任务”。取消请求被持久记录，不代表工作进程已经收到，更不代表远端效果不存在。至少分别保存取消意图、执行者状态和操作回执。任务可以显示“正在取消”；不要刚写下一个标记，就把已经在途的发布、扣款或云任务显示为从未发生。</p><div class="table-wrap"><table><thead><tr><th>时点</th><th>处理方式</th><th>完成依据</th></tr></thead><tbody><tr><td>尚未派发</td><td>条件修改待执行状态，阻止后续派发</td><td>派发与取消共享受保护的状态转换</td></tr><tr><td>执行中，尚未提交</td><td>请求停止；执行者在约定检查点确认</td><td>停止确认、资源回收与效果查询</td></tr><tr><td>效果已经提交</td><td>保留成功回执，说明取消到达过晚</td><td>同一操作身份的权威提交结果</td></tr><tr><td>请求已发出，回执未知</td><td>停止新增写动作，按授权对账</td><td>远端回执、可核验结果或人工确认</td></tr></tbody></table></div><figure class="training-figure"><a href="diagrams/v21-cancel-commit.svg" target="_blank" rel="noopener" aria-label="放大：同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。"><img src="diagrams/v21-cancel-commit.svg" width="1120" height="670" alt="同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一权威库内的两个先后顺序。图中的取消检查与效果提交有本地原子边界，跨系统时必须另行设计。<a href="diagrams/v21-cancel-commit.svg" download>下载 SVG ↗</a></figcaption></figure><p>在本地事务能够覆盖的范围里，可以让提交者加锁后先检查取消状态，再决定写效果与回执；取消先提交则阻止后续效果，效果先提交则返回已完成。这解决的是这份权威状态内的竞争，不是让本地任务表自动控制另一个工具的数据库。</p><p>协作取消要求执行者轮询、接收取消信号或在等待点响应；<span class="first-concept-term" data-concept-term="CPU">CPU<span class="concept-term-meaning">（中央处理器，执行程序指令）</span></span> 计算、阻塞调用和外部任务不一定立即返回。超时只说明等待预算耗尽；进程还活着、执行者已退出、外部任务已结束仍需各自证据。强制终止直接子进程后要回收它，不能据此宣称它创建的全部远端资源也已停止。</p></div><h3>协议通知不是业务回滚，补偿也不是改个状态</h3><p>MCP 普通请求可发送 notifications/cancelled 通知，关联此前发出的同方向在途请求；接收方可能因已完成或无法取消而忽略。不要取消 initialize；任务化请求使用 tasks/cancel 及其任务状态协议。传输层的取消与工具业务提交是不同层；本地取消通知已发出，不是远端零效果证明。</p><p>持久工作流还需明确：请求取消后是等待执行者确认，还是继续走另一条分支。以 Temporal 普通 Activity 为例，取消的传达与心跳、SDK 行为有关；执行代码也可能捕获取消后继续。设计等待策略时必须同时考虑资源清理和仍在途的效果，不能把工作流分支结束等同于所有 Activity 已停止。</p><p>取消后不要为了“查成功没”自动重新发起写操作。用稳定 op_id 查询已有回执；查询也需要相应权限。查不到不能直接推出没提交，尤其当回执服务暂时不可用时。补偿则是新的业务动作，例如撤销已发布对象；它需要新的操作身份、明确授权、幂等与失败处理，原任务取消并不自动授予任意补偿权限。</p><div class="code-block"><div class="code-toolbar"><span>恢复分支示意 · lookup 失败时仍保留未知，不重新写 <small>PYTHON</small></span><button data-copy-code aria-label="复制 恢复分支示意 · lookup失败时仍保留未知，不重新写">复制代码</button></div><pre tabindex="0"><code>record_cancel_intent(task_id)
-request_executor_stop(task_id)
-receipt = authorized_lookup(original_op_id)  # 超时/不可用须单独处理
-if receipt.committed:
-    keep_committed_result(receipt)
-elif receipt.definitely_absent and executor_stopped:
-    mark_cancelled_without_effect()
-else:
-    keep_result_unknown_for_reconciliation()</code></pre></div><details class="knowledge-check"><summary>检验理解：任务已显示取消，怎么避免它又被恢复器重试写入？</summary><p>恢复器先检查持久取消意图，停止发起新的业务写动作；原操作回执继续对账。取消检查与本地派发/提交需要条件更新或事务保护，远端已在途动作则需要对方的查询、取消或隔离协议。</p></details><p>六窗口实测进一步区分查询时刻与最终事实：运行器被 SIGKILL 后，工具提交前的 GET 为空，旧请求仍可能随后提交。恢复沿用原操作身份，让迟到与重试在接收方汇合；故意换新身份得到两次效果/74，本地 DONE 仍可出现，独立业务验收则拒绝。</p></section><section class="knowledge-point" id="knowledge-ag-fencing"><h2><span>04</span>多 worker：租约、代际与接收方 fencing</h2><p>租约超时允许新的工作<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>（worker）接管，但不会停止旧进程。隔离旧写者的机制称为<span class="first-concept-term" data-concept-term="fencing">fencing<span class="concept-term-meaning">（由受保护接收方拒绝过期执行者写入的隔离机制）</span></span>：它使用只增不减的代际号（epoch），让产生效果的接收方拒绝旧执行者；校验与效果必须在同一受保护边界内。</p><figure class="training-figure"><a href="diagrams/v16-agent-fencing.svg" target="_blank" rel="noopener" aria-label="放大：A持有epoch1并暂停；B接管epoch2并安装接收方fence。A仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing负责旧执行者。"><img src="diagrams/v16-agent-fencing.svg" width="960" height="790" alt="A持有epoch1并暂停；B接管epoch2并安装接收方fence。A仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing负责旧执行者。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>A 持有 epoch1 并暂停；B 接管 epoch2 并安装接收方 fence。A 仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing 负责旧执行者。<a href="diagrams/v16-agent-fencing.svg" download>下载 SVG ↗</a></figcaption></figure><p>只在 runner 启动前检查 lease 存在时间窗：A 检查通过后暂停，租约过期，B 接管，A 恢复后仍可能写。旧 A 使用一个全新 op_id 时，去重表不会救场。接收方必须在处理新效果前，与当前资源代际比较并串行化校验和提交。</p><p>本地实战把控制状态和工具效果分放两个 SQLite 库。B 先推进控制代际，再向接收方安装 epoch2，收到安装结果后才执行动作。它没有跨库原子事务：若中间失败，需要保守阻断新执行与重试安装；多个接收方还需逐个确认。新 owner 在控制面出现，不能自动代表所有资源已隔离旧写者。</p><div class="code-block"><div class="code-toolbar"><span>接收方事务内的最小顺序 · 另有可信授权检查 <small><span class="first-concept-term" data-concept-term="SQL">SQL<span class="concept-term-meaning">（向关系数据库表达查询与更新的一种语言）</span></span></small></span><button data-copy-code aria-label="复制 接收方事务内的最小顺序 · 另有可信授权检查">复制代码</button></div><pre tabindex="0"><code>BEGIN IMMEDIATE;
-SELECT epoch FROM fence WHERE task = :task;
--- 来历可信的调用epoch必须等于当前epoch，否则ROLLBACK
-SELECT digest, result FROM effect WHERE tenant = :tenant AND op = :op;
--- 同意图返回回执，异参冲突；新意图才插入效果与回执
-INSERT INTO effect(tenant, op, digest, result) VALUES(:tenant, :op, :digest, :result);
-COMMIT;</code></pre></div><p>代际号必须绑定正确的任务和资源，并防止调用方伪造。邮件等外部工具若不支持 fencing，不能把数据库里的 epoch 检查推演成远端写入排他；需要工具提供相应协议、可幂等的代理或其他明确策略。新实验只证明本地受保护接收方。</p></section><section class="knowledge-point" id="knowledge-ag-authorization"><h2><span>05</span>权限委托、审批与外部文本边界</h2><p>执行授权取决于真实主体、任务委托、具体工具、目标资源与当前策略。外部网页、检索文档和工具输出可以提供数据，不能自行扩大授权。</p><p>把读报告与写报告分成不同动作。资源查询先按可信租户范围解析对象，再校验动作与对象归属；路径写着 tenant-A 而实际记录属于 B 时应拒绝。工具具有访问后端的服务身份，不代表调用它的每个用户都继承后端全部权限，否则会形成“混淆代理”问题（confused deputy）。</p><p>审批绑定规范化的具体意图：工具版本、对象、参数、金额/范围、失效时间与批准主体。执行前若模型改变关键参数，原批准就不再匹配；恢复和重试也要检查批准仍覆盖原意图。对长期任务，授权可能在工具提交前被撤销，应按定义的检查时刻重新查询。</p><p>注入文本即使伪装成系统提示、管理员命令或工具的修复建议，仍按数据处理。schema 约束参数形状，工具白名单限制可用能力，资源端授权限制实际效果；三者结合。敏感工具回执、令牌与私密上下文还需按读者身份过滤，避免通过结果展示绕过写入侧授权。</p><details class="knowledge-check"><summary>检验理解：一律拒绝所有工具调用，安全测试就可以算全通过吗？</summary><p>越权无效果是必要项；合法任务也必须完成。评估中同时保留正向授权与拒绝用例，全拒绝策略会因必要工作未交付而失败。</p></details><div class="mechanism-core" id="approval-records"><h3>审批、执行器声明、工具回执，分别能证明什么</h3><p>沿同一个动作 K1 看三份记录。用户批准把 A/draft 从预期版本 7 改成金额 37；执行器随后报告“成功”；工具端则持有真正的提交记录。它们有关联，但证明的事实不同：批准回答是否允许做，声明回答谁声称做了，接收方回执回答在这个接收方实际提交了什么。</p><figure class="training-figure"><a href="diagrams/v19-approval-receipt.svg" target="_blank" rel="noopener" aria-label="放大：三份记录用租户A、动作K1和参数摘要关联。批准与声明不能替工具提交；恢复查询必须再次通过当前读取权限。"><img src="diagrams/v19-approval-receipt.svg" width="1120" height="650" alt="三份记录用租户A、动作K1和参数摘要关联。批准与声明不能替工具提交；恢复查询必须再次通过当前读取权限。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>三份记录用租户 A、动作 K1 和参数摘要关联。批准与声明不能替工具提交；恢复查询必须再次通过当前读取权限。<a href="diagrams/v19-approval-receipt.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>记录</th><th>本例绑定的内容</th><th>能支持的结论</th></tr></thead><tbody><tr><td>批准 R18</td><td>主体、租户 A、K1、工具版本、draft、预期版本 7、金额 37、有效期</td><td>允许这个具体意图；改成 99 就不匹配</td></tr><tr><td>执行器声明</td><td>A、K1、status=success 及完整性校验</td><td>本地 HMAC 校验通过；不证明草稿已经写入</td></tr><tr><td>工具端回执</td><td>A＋K1 对应的参数摘要、版本 8、金额 37</td><td>在本接收方事务中，这个意图已产生一份效果</td></tr></tbody></table></div><p>执行前，可信身份和当前策略先限制动作与对象，再核对批准是否覆盖规范化的具体意图。JSON 字段顺序可以变化，但业务意图不能悄悄变；字段、编码、数字表示和版本必须由契约固定。签名或 HMAC 验证声明的完整性，不会验证声明中的业务句子必然为真。真实系统还需验证签发者、密钥与适用范围；本实验使用公开测试密钥，只展示“声明校验”与“真实效果”的区别，不提供真实身份认证。</p><details class="knowledge-check"><summary>记录一：批准金额 37；模型把参数改成 99，还能执行吗？</summary><p>不能。新参数摘要不匹配原批准，接收方应在产生效果之前拒绝。不能只核对“有一个批准 ID”。</p></details><details class="knowledge-check"><summary>记录二：声明校验通过，但工具回执查询超时，现在算成功还是失败？</summary><p>结果未知。校验通过只支持声明完整；查询超时没有返回权威提交结果。保存原 K1 与参数摘要，等待有权限的查询或依接收方协议同键恢复。不要换键重写，也不要据此断言零效果。</p></details><details class="knowledge-check"><summary>记录三：查到 A/K1 的版本 8 与金额 37，恢复时还要批准一次新写入吗？</summary><p>本例把它定义为读取已提交结果，或同键同参数返回原回执，不创建新效果。接收方仍检查当前权限；原批准过期、读取权限被撤销、跨租户查询分别按契约处理。不存在所有工具通用的默认行为。</p></details><p>工具在提交后、回执返回前退出，是提交间隙的具体故障。下面的程序让一个真实子进程在 SQLite 事务提交后退出，恢复者再找 K1。效果、回执和批准消费在接收方同一事务内；运行器本地历史与任意远端工具之间仍不能因此获得跨库原子性。</p></div><p>权限的判断还要对应实际提交时刻。新实验先得到策略代际 1 的允许，再在另一个连接提交代际 2 的撤权：写入边界重查时效果 0，信任旧快照的错误分支效果 1。当前写入权、回执读取权与原效果分别检查。</p><p><a href="/article/agent-security/#authorization-commit-run">运行实际 HTTP 与 SQLite 提交边界实验 →</a></p></section><section class="knowledge-point" id="knowledge-ag-context"><h2><span>06</span>上下文、运行状态与长期记忆的存储职责</h2><p>上下文是一次模型调用可见的输入，运行状态保存恢复所需的权威事实，长期记忆保存可检索的跨任务信息。压缩上下文不能替代持久状态提交。</p><div class="mechanism-core" id="context-state-authority"><h3>先问“谁负责证明”，再问“模型要记住什么”</h3><p>设用户要求在当前会话生成 A 日报摘要。工具已读到资料，模型正准备写结论，服务却重启了。新进程需要知道：原目标是什么，哪一步已经完成，用的是哪个资料版本，还有哪个结果未知。这些事实若只存在于聊天文字中，恢复者就要重新猜一遍；若它把“正在保存”猜成“尚未保存”，还可能重复写入。</p><figure class="training-figure"><a href="diagrams/v22-context-stores.svg" target="_blank" rel="noopener" aria-label="放大：同一句话在三个载体里承担不同责任：执行账本证明提交，资料和记忆提供来源，本轮上下文提供受限视图。"><img src="diagrams/v22-context-stores.svg" width="1120" height="680" alt="同一句话在三个载体里承担不同责任：执行账本证明提交，资料和记忆提供来源，本轮上下文提供受限视图。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一句话在三个载体里承担不同责任：执行账本证明提交，资料和记忆提供来源，本轮上下文提供受限视图。<a href="diagrams/v22-context-stores.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>载体</th><th>保存什么</th><th>谁依据它做决定</th></tr></thead><tbody><tr><td>本轮模型上下文</td><td>问题、可信约束、已选证据、必要历史</td><td>模型据此提议下一步或生成回答</td></tr><tr><td>权威运行状态</td><td>任务/步骤/原操作身份、状态版本、回执、待决动作</td><td>受信执行层据此恢复和推进</td></tr><tr><td>长期记忆与资料</td><td>可跨任务复用的信息、来源版本、主体范围、有效条件</td><td>检索与组装层按本轮需要重新选择</td></tr></tbody></table></div><p>上下文是一份给本次推理看的派生输入，可以被压缩、重建或全部替换。权威状态是执行事实的记录，不能随摘要措辞改变。长期记忆可以保存偏好和历史说明，却不能因为文字写着“已获批准”，就替代当前授权。把三者分开后，聊天删减影响本轮信息选择，不会自动抹掉已经提交的回执。</p><p>这也解释了为什么“窗口更长”不能替代持久状态。窗口再长，工具提交之后、文字写回来之前仍可能中断；保留全部对话也不等于拥有工具的权威回执。恢复先查账本和接收方，随后才为模型组装需要的事实视图。</p></div><h3>上下文预算先扣固定项，再给证据与历史排优先级</h3><p>下面固定一个教学契约：窗口上限 8192 词元，包含输入和为本次回答预留的输出。系统说明 1200，工具定义 620，当前问题与可信任务视图 672，输出预留 900，格式开销 100。可用于其他历史和证据的是 8192−1200−620−672−900−100=4700。真实模型需按自己的分词器、消息包装和输入/输出限制计算；中文字数、<span class="first-concept-term" data-concept-term="UTF-8">UTF-8<span class="concept-term-meaning">（一种把 Unicode 字符编码为字节的可变长度编码）</span></span> 字节数、Python 字符串长度都不能直接替代词元数。</p><div class="table-wrap"><table><thead><tr><th>固定项</th><th>题设词元数</th><th>为何优先计入</th></tr></thead><tbody><tr><td>系统说明与工具定义</td><td>1820</td><td>决定本次调用的基础规则与工具接口</td></tr><tr><td>问题与可信任务视图</td><td>672</td><td>目标、已确认状态、待决动作要能被理解</td></tr><tr><td>输出预留与格式开销</td><td>1000</td><td>给答案和实际包装留下空间</td></tr><tr><td>剩余历史与证据</td><td>4700</td><td>按本轮问题选择，不必填满</td></tr></tbody></table></div><p>若旧对话 4000、原始工具输出 3000，共 7000，就超出 2300。直接从开头截掉 2300，可能删掉最早的只读范围；直接截工具输出尾部，可能保留数字却丢了单位和适用版本。先列出完成当前问题必须知道的事实，再按证据覆盖与可重新获取程度取舍。对话出现得早晚，不等于其重要性。</p><p>一种分配是历史摘要 1400、带版本的指标证据 1100、待确认问题 600、必要摘录 700，共 3800，余 900。每段材料说明支持哪个判断、引用哪里、保留哪些限定。工具结果很长时先保存原件或可信引用，再按字段取用；不要让每次错误堆栈都永久挤进后续调用。对于可以确定性计算的总数，先由代码计算并保留来源，比让模型反复从长文本里重算更可复查。</p><div class="code-block"><div class="code-toolbar"><span>组装流程示意 · token_count 须匹配目标模型与消息格式 <small>PYTHON</small></span><button data-copy-code aria-label="复制 组装流程示意 · token_count须匹配目标模型与消息格式">复制代码</button></div><pre tabindex="0"><code>base = fixed_messages(task, tools)
-selected = choose_evidence(receipts, source_refs)
-messages = assemble(base, selected)
-input_limit = window - reserved_output
-if token_count(serialize_messages(messages)) &gt; input_limit:
-    selected = compact_or_refetch(selected, preserve=required_fields)
-    messages = assemble(base, selected)
-assert token_count(serialize_messages(messages)) &lt;= input_limit
-# 最终对整份请求重新计数；任务状态仍由账本维护</code></pre></div><p>压缩可以减少输入，也有重算与遗漏成本。缓存摘要时要绑定来源版本和摘要规则；原始资料变了，旧摘要未必仍适用于当前问题。若输出预留、工具定义或消息包装变大，要重新计数，不应把一份旧预算表当作每次调用都成立的常量。</p><h3>摘要是一种有损压缩，先规定不能丢的语义槽位</h3><p>原记录写“旧驱动 v1 在 10:00—10:05 窗口出现 120ms 延迟，是否为根因仍是假设”。摘要只写“驱动导致延迟”，保留了几个关键词，却丢了版本、时间、单位和不确定性。下一轮可能把历史线索当作当前已确认结论。摘要的可读性和事实保真是两项要求，不能只用文本相似度评分。</p><div class="table-wrap"><table><thead><tr><th>必须保留的项</th><th>本例字段</th><th>丢失后的风险</th></tr></thead><tbody><tr><td>结论状态</td><td>hypothesis，而非 confirmed</td><td>把待证实线索升级成事实</td></tr><tr><td>适用范围</td><td>driver-v1</td><td>把旧版本问题推广到全部版本</td></tr><tr><td>时间与单位</td><td>10:00—10:05；120ms</td><td>数字还在，含义已变</td></tr><tr><td>证据身份</td><td>trace-8:v1</td><td>不能回查当时那份原始记录</td></tr><tr><td>动作结果</td><td>未收到回执 / 已确认提交分别记录</td><td>把推测变成一次恢复或重试决策</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>给推理用的事实视图 · 不是权限或状态的签发接口 <small>JSON</small></span><button data-copy-code aria-label="复制 给推理用的事实视图 · 不是权限或状态的签发接口">复制代码</button></div><pre tabindex="0"><code>{
-  &quot;claim&quot;: &quot;driver_timeout&quot;,
-  &quot;status&quot;: &quot;hypothesis&quot;,
-  &quot;applies_to&quot;: &quot;driver-v1&quot;,
-  &quot;window&quot;: &quot;10:00-10:05&quot;,
-  &quot;latency&quot;: 120,
-  &quot;unit&quot;: &quot;ms&quot;,
-  &quot;evidence_ref&quot;: &quot;trace-8:v1&quot;
-}</code></pre></div><p>对业务关键字段，优先从可信记录投影成结构化视图；对解释性材料，可以压缩，但要能按引用取回原文。工具调用与结果应保持配对关系，不能只留下某次返回却丢掉它对应的参数或版本。摘要器可以提出“可能已完成”，执行层仍按权威回执决定是否完成。</p><p>做压缩回归时，加入否定词、范围条件、金额、时间先后和结果未知样本。分别检查新视图能否回答原问题、必要字段是否保留、是否多出了原文没有的确认结论。下面实验只检查一组固定语义槽位，不能证明任意自然语言摘要都等价；复杂任务还要有真实提问和结果评估。</p><div class="mechanism-core" id="stale-context-recovery"><h3>旧摘要与新账本冲突时，以谁为准</h3><p>本例任务 R17 的旧摘要停在 v1/RUNNING，写着“报告尚未保存”。随后执行层已经用原操作 R17:publish 提交效果 13，并把任务推进到 v2/SUCCEEDED。恢复时若先相信旧文字，再为“补做一次”创建新操作 ID，接收方会看到另一个逻辑动作；即使接收方正确去重，也会接受这份新动作。</p><figure class="training-figure"><a href="diagrams/v22-context-versions.svg" target="_blank" rel="noopener" aria-label="放大：两条恢复策略的真实SQLite对照：查原回执保持一次效果；相信旧文本并创建新操作，效果变两次。"><img src="diagrams/v22-context-versions.svg" width="1120" height="660" alt="两条恢复策略的真实SQLite对照：查原回执保持一次效果；相信旧文本并创建新操作，效果变两次。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两条恢复策略的真实 SQLite 对照：查原回执保持一次效果；相信旧文本并创建新操作，效果变两次。<a href="diagrams/v22-context-versions.svg" download>下载 SVG ↗</a></figcaption></figure><p>正确顺序是读取任务身份与当前状态，查询原操作回执，核对范围和版本，再重建本轮模型视图。若已确认成功，使用原结果；若仍未知，保留未知并按工具协议对账。重试沿用原逻辑操作身份，尝试编号可以改变。用户真的要求一份新报告，才是需要另建身份的另一个目标。</p><div class="code-block"><div class="code-toolbar"><span>并发更新的基本保护 · 版本冲突后重新观察 <small>SQL</small></span><button data-copy-code aria-label="复制 并发更新的基本保护 · 版本冲突后重新观察">复制代码</button></div><pre tabindex="0"><code>UPDATE task
-   SET state = :validated_next_state, version = version + 1
- WHERE id = :task_id AND version = :observed_version;
--- 影响0行：状态已变化，重新读取；不要无条件覆盖
--- 是否允许这次迁移、调用者能否操作，仍由受信执行层校验</code></pre></div><p>版本条件控制的是“这次修改是否基于仍有效的观察”，不负责证明任意迁移都合法，也不负责授权。摘要器原则上只写派生视图，不应因为读到了当前版本就获得改写任务状态的权力。状态机还要拒绝不合法的成功回退、越权变更和不匹配的回执。本地事务能覆盖的对象范围，也不能直接外推到远端工具。</p><p>把聊天历史全部清空，是一个有用的恢复测试：系统应仍能凭任务 ID、原操作身份、权威回执和输入版本判断已经发生什么。它可以暂时缺少自然语言解释，但不应因此再次产生业务效果。</p></div><h3>长期记忆要回答四件事：来自谁、适用于谁、哪一版、何时有效</h3><p>“这个月我喜欢短日报”是一条有主体和期限的偏好；“连接池默认 5”是一条特定资料版本中的事实；“我已经保存报告”则是动作结果，应该由回执证明。三者都能被写成句子，却不能用同一种永久文本条目承担相同责任。记忆写入先分类，再决定所有者、有效期和纠错路径。</p><div class="table-wrap"><table><thead><tr><th>类型</th><th>应带的约束</th><th>使用时如何解释</th></tr></thead><tbody><tr><td>个人偏好</td><td>主体、适用任务、有效期、来源</td><td>作为该主体当前任务的建议，不扩成全组织规则</td></tr><tr><td>历史知识</td><td>原文定位、版本、形成时间、访问范围</td><td>可解释历史，当前事实需回查适用版本</td></tr><tr><td>调查假设</td><td>证据、置信状态、反例、待确认项</td><td>持续保留“未证实”，不变成授权或结论</td></tr><tr><td>执行结果</td><td>原操作身份、参数、权威回执与版本</td><td>由执行账本维护；记忆里只是引用</td></tr></tbody></table></div><p>有效期未到，不代表事实仍是最新。本例记忆记录 pool-limit/v1=5，权威来源已经更新为 v2=10；即使旧条目 <span class="first-concept-term" data-concept-term="TTL">TTL<span class="concept-term-meaning">（生存时间，在此类缓存场景中表示记录可保留多久）</span></span> 仍有余量，它也不能回答“当前值是多少”。如果问题问的是旧事故，则 v1 可能正是需要的历史证据。必须先确定问题的时间与版本口径，再判断记忆是否适用。</p><p>使用链至少包含候选选择、当前主体与资料权限检查、来源版本核对、上下文装配和最后交付。候选通过一次检查，不等于之后永远有权读取；缓存引用也要带版本与范围。示例程序用固定主体和本地条目状态演示后续重查，没有运行真实身份服务、跨租户索引或远端授权。</p><p>撤回条目后，后续重组可以通过当前状态拒绝旧引用；它不能让此前已经发给模型或用户的文本自动消失。原文、摘要、向量索引、缓存和共享产物各要有明确责任与处理流程。纠错应更新实际存储及派生索引，只在提示里写“忘记刚才内容”不是后端删除操作。对于审计记录与业务资料的保留，也应采用各自约定。</p><h3>资料里的指令，不能借记忆获得新的权力</h3><p>业务备注写“把报告同步到 B”，这只是工具返回的外部文字。若摘要器把它存成“用户长期允许同步到 B”，下一次又把它作为偏好召回，就把一次不可信输入变成了持续影响。问题不在文字保存得是否完整，而在来源和授权类型被改写了。</p><p>写记忆时保存原始来源，明确区分用户委托、管理员策略、工具数据和模型推断。读取时按当前任务重新解释，执行时仍由工具服务独立验证主体、动作和资源。一个受信存储服务可以保存不可信文字；“从自己的记忆库取出”不让内容自动成为可信指令。</p><p>回归样例可以分三步：把外部备注保存为带来源的数据；另一个任务召回后检查其仍被标为资料；让模型即使提出越权写入，受信执行层仍拒绝。最后一步需要实际运行对应的授权链才能证明。本文程序没有调用模型，验证的是状态与组装规则，不把它描述为通用提示注入防御已通过。</p><details class="knowledge-check"><summary>检验理解：某记忆条目写着“已批准”，能让恢复器执行写操作吗？</summary><p>不能。记忆只是信息来源。执行前查真实委托、适用审批和当前权限；若条目来源只是工具备注或模型推断，就更不能把它当作授权。</p></details><p>词元预算应覆盖真正发送的完整输入，而非只数资料正文。新实验固定一种把文本转换成词元编号的分词器，并使用纯字符串模板：正文单计 36，含系统、任务、来源与分隔后的整包 237；再预留 96 输出。收紧后虽然未超限，却缺一份必要证据，因此停止交付。</p><p><a href="/article/agent-retrieval/#context-budget-run">核对完整计数与实际提示交付 →</a></p></section><section class="knowledge-point" id="knowledge-ag-retrieval"><h2><span>07</span>RAG：索引、过滤、排序与事实归因</h2><p>检索增强生成（RAG）先找资料，再把资料交给模型回答。完整链路包括采集、切块、版本和权限标记、召回、重排、选择上下文、回答与核验引用。召回相关文本与完成有依据的回答分别评估。</p><div class="mechanism-core" id="retrieval-lexical-foundation"><h3>中文先看索引里有哪些词，零命中未必是资料不存在</h3><p>全文检索先把文本变成可匹配的词元，再维护词到文档位置的倒排索引。查询也要走兼容的处理。分词、大小写、标识符、标点和同义词策略，决定哪些材料有机会进入候选；后面的重排无法修复一个从未召回的片段。</p><p>实际 FTS5 实验直接用 unicode61 索引 8 条中文材料。句子“数据库备份支持恢复”里的连续汉字形成较长词元，单查“恢复”没有该独立词，实际 0 命中。把相邻汉字预处理为二元片段后，查询“数据库恢复”变成数据、据库、库恢、恢复，使用 OR 匹配，才能在本语料中找到相关段落。</p><figure class="training-figure"><a href="diagrams/v27-chinese-fts.svg" target="_blank" rel="noopener" aria-label="放大：真实SQLite FTS5与查询处理。汉字二元片段只是机制示例，会产生跨词片段、单字召回等问题，不能当通用中文分词器。"><img src="diagrams/v27-chinese-fts.svg" width="1120" height="740" alt="真实SQLite FTS5与查询处理。汉字二元片段只是机制示例，会产生跨词片段、单字召回等问题，不能当通用中文分词器。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实 SQLite FTS5 与查询处理。汉字二元片段只是机制示例，会产生跨词片段、单字召回等问题，不能当通用中文分词器。<a href="diagrams/v27-chinese-fts.svg" download>下载 SVG ↗</a></figcaption></figure><p>生产系统按语料选择中文分词或字粒度方案，并测试产品名、错误码、版本号、英文缩写和长词。不要仅调 top_k 却不看索引中的实际词。实验用参数化 SQL 传 MATCH 表达式，表达式由受限词元构造；SQL 参数化与全文查询语言的语法处理也是两层事。</p><p><span class="first-concept-term" data-concept-term="BM25">BM25<span class="concept-term-meaning">（综合词频、稀有程度和长度归一化的词面相关性评分方法）</span></span> 综合词频、稀有程度和长度归一化：同词多次出现有递减收益，稀有词通常更有区分力，长文不会只因机会更多就必然排前。SQLite FTS5 的内置 BM25 将结果取负，数值越小越靠前，应升序；别把另一个搜索系统“分数越大越好”的习惯直接搬来。</p><h3>融合多路召回时，先分清分数与名次</h3><div class="table-wrap"><table><thead><tr><th>阶段/机制</th><th>擅长或改变什么</th><th>边界</th></tr></thead><tbody><tr><td>关键词/BM25</td><td>精确词、标识符与词频/长度关系</td><td>同义改写可能缺少词面重合</td></tr><tr><td>向量召回</td><td>按选定 embedding 与距离寻找表示相近项</td><td>距离不是事实正确或权限合法的证明</td></tr><tr><td><span class="first-concept-term" data-concept-term="RRF">RRF<span class="concept-term-meaning">（倒数排名融合，按多路名次而非直接相加原始分数合并结果）</span></span> 排名融合</td><td>按多路名次合并，不要求原始分数量纲相同</td><td>丢弃分数间距；仍只处理各路已有候选</td></tr><tr><td>重排</td><td>对给定候选重新评估顺序</td><td>不能找回未进入候选池的必要资料</td></tr></tbody></table></div><div class="knowledge-formula"><small>倒数排名融合 RRF</small><div>score(d) = Σ[1 / (k + <span class="first-concept-term" data-concept-term="rank">rank<span class="concept-term-meaning">（进程在某个通信组内的编号）</span></span>ᵢ(d))]；本例 k=60、名次从 1 开始</div><p>只在该路包含文档时贡献；同一路重复文档不能重复加分。原始 BM25 与向量分数不直接相加。</p></div><p>例如 a-backup 在词面第 1、另一排名第 2，得 1/61+1/62≈0.032522；a-archive 在词面第 3、另一路第 1，得 1/63+1/61≈0.032266。前者略高。这个数由名次算出，不是相关概率。k 变大时头尾名次的差异相对缩小；每路候选窗口又决定哪些文档能贡献。参数应按实际任务评估，不能当成固定最优值。</p><p>实验的 BM25 是真实执行，第二路明确写成一份固定排名，不调用 embedding；这样可独立核对融合算式。权限、当前版本和正文交付的要求不因融合改变。若将不合法正文先交给任务，之后删掉排名项，已经发生的交付不能被抹掉。</p><h3>切块、索引、检索与回答，各自留下什么身份</h3><p>先沿文档结构切块，保留标题、限定条件、表格和代码的必要上下文；片段需要带原文身份、版本、位置、时效和访问范围。索引负责找到可能有关的材料，回答负责把具体主张与这些材料对应。相似标题、检索分数和旧复盘都不能直接证明今天发生了相同原因。</p><p>同一事实的多个重叠片段应按约定去重，避免把重复命中当成多份独立证据。正文、摘要、向量与缓存更新也要沿源版本关联；跳转引用应能找到支持那句话的原文版本，而不是一个已被改写的首页。</p><div class="mechanism-core" id="retrieval-evidence-pipeline"><h3>候选分数高，还要先满足权限与版本</h3><p>用一份独立的数值日报跑通链路：A 租户需要 a-1/v1 的 10 与 a-2/v2 的 27，合计 37。这两份才是任务要求的完整证据；金额样例只验证取证与交付，不证明另一场事故的原因。检索服务可以维护全局索引，但交给 A 任务的候选和正文必须遵守 A 的权限与本题当前版本要求。</p><div class="table-wrap"><table><thead><tr><th>全局排序：固定教学分数</th><th>归属 / 版本</th><th>对本题的作用</th></tr></thead><tbody><tr><td>b-secret / 0.99</td><td>B 租户</td><td>不能交给 A 任务</td></tr><tr><td>a-2/v1 / 0.98</td><td>A，旧版本，值 99</td><td>本题只允许当前 v2</td></tr><tr><td>a-note / 0.95</td><td>A，当前手册</td><td>允许访问，但缺少两项所需数值</td></tr><tr><td>a-1/v1 / 0.90</td><td>A，当前，值 10</td><td>必要证据一</td></tr><tr><td>a-2/v2 / 0.85</td><td>A，当前，值 27</td><td>必要证据二</td></tr></tbody></table></div><p>若先全局取 top2，再按元数据过滤，留下 0 项；后面的合法资料根本没有进入候选。若先按权限和版本缩小范围，再取 top2，会拿到手册与 a-1，仍漏 a-2。适当扩大合法候选池，再按当前任务重排，才有机会把 a-1、a-2 同时放到前面。过滤顺序影响有效召回，不能只把召回数量调大就称为权限设计。</p><p>关键词检索有利于精确名称和标识，向量召回有利于部分语义改写；混合召回还需去重与统一排序。重排只能重新排列已有候选，不能从空池里找出缺失证据。这里用按任务字段的固定规则重排，未测试 embedding 或语义模型效果。</p></div><h3>排序命中之后，再检查真正送进上下文的证据</h3><p>本实验人为规定每段占 8 个正文预算单位，专门观察完整片段是否被保留。预算 16 可放 a-1 与 a-2；预算 12 只放第一段，不能把后半段截掉后仍按完整证据计分。接入真实模型时，应使用实际 <span class="first-concept-term" data-concept-term="tokenizer">tokenizer<span class="concept-term-meaning">（把文本按规则转换成词元及编号的分词器）</span></span>，并在正文预算之外先扣除指令、工具包装、历史和输出预留。</p><figure class="training-figure"><a href="diagrams/v20-retrieval-funnel.svg" target="_blank" rel="noopener" aria-label="放大：候选、排序、上下文和业务答案分别验收。两份必要证据都已排进前二，也可能在预算裁剪时丢掉第二份。"><img src="diagrams/v20-retrieval-funnel.svg" width="1120" height="660" alt="候选、排序、上下文和业务答案分别验收。两份必要证据都已排进前二，也可能在预算裁剪时丢掉第二份。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>候选、排序、上下文和业务答案分别验收。两份必要证据都已排进前二，也可能在预算裁剪时丢掉第二份。<a href="diagrams/v20-retrieval-funnel.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>规则重排后的阶段</th><th>保留的必要证据</th><th>Recall@2</th><th>倒数排名 RR</th></tr></thead><tbody><tr><td>排序前二</td><td>a-1/v1、a-2/v2</td><td>1</td><td>1</td></tr><tr><td>正文预算 16</td><td>两份都在</td><td>1</td><td>1</td></tr><tr><td>正文预算 12</td><td>只有 a-1/v1</td><td>1/2</td><td>仍为 1</td></tr></tbody></table></div><p>RR 只回答第一项相关结果排在哪里，不回答必要材料是否齐全。预算 12 时，排序 Recall 是 1、最终上下文 Recall 却是 1/2；即使 RR 仍为 1，也必须承认证据不足。不能把只读到的 10 当成完整总额，或凭记忆补上 27。若允许继续取证，可在授权和任务预算内增加上下文或分步提取，再逐项保留来源。</p><p>精确率（Precision）看前 k 项中有多少有效材料，召回率（Recall）看必要证据覆盖了多少，倒数排名（RR）只看第一项相关结果的位置。多个查询的 RR 按约定平均，才得到平均倒数排名 MRR。先固定评估单位与分母，再比较检索器。</p><div class="knowledge-formula"><small>本题按两个固定位置和两份必要证据评分</small><div>Precision@2 = 命中数 / 2；Recall@2 = 命中数 / 2；RR = 1 / 首个相关位置</div><p>两项分母碰巧同为 2，是本题的设置。即使不足两条，Precision@2 仍按 2 作分母；无命中时 RR 为 0。真实评估还需定义查询集合、相关性标签和平均方式。</p></div><h3>取候选时合法，获取正文时还要再判断</h3><p>候选阶段的身份与资源范围不能由检索文本自己声明。正文获取时，按约定检查点重新判断当前授权和实际版本；程序专门在候选排好之后、取正文之前撤销权限，此时应返回 denied，交给任务的正文数量为 0。快照引用说明读过哪版，不会让已经撤销的读取权限继续有效。</p><p>还要分清两种“先取后过滤”。可信服务只在内部取全局元数据，再过滤后返回合法正文，可能损失召回，却不等于已经泄漏正文。另一种实现先把 B 的正文交给 A 任务的执行上下文，之后才从最终列表删掉它，泄漏已经发生。程序把实际交给任务的正文逐项记账；这个负例最后即使返回“证据不足”，也必须因不当交付失败。</p><p>合格答案同时检查：总额 37、来源 a-1/v1 与 a-2/v2、用户可见状态、当前任务允许的正文交付。排名、语言流畅或 HTTP 成功都不能替代这些条件。生产验收还应增加无答案、跨租户、撤权、索引滞后、引用跳转和长文截断样本；固定夹具通过不代表开放任务回答准确率。</p><h3>命中数相同，分级相关性的排列仍会改变质量</h3><p>前面的 Precision、Recall、RR 把相关性视为二元标签。若材料有支持程度差别，可先约定分级标准，再看高等级是否靠前。本例人工声明 a-backup=3、a-dr=2、a-plan=1、a-archive=2，其他 0；等级不由本次排序反推，也不是模型评分。</p><div class="knowledge-formula"><small>本例的折扣增益</small><div>DCG@k = Σ[(2^relᵣ − 1) / log₂(r + 1)]；<span class="first-concept-term" data-concept-term="nDCG">nDCG<span class="concept-term-meaning">（把分级相关性按位置折扣，再相对理想排序归一化的指标）</span></span> = DCG / 同一标签集的理想 DCG</div><p>r 从 1 开始。需要固定标签、截断、增益和无正例规则；其他定义不能混着比较。</p></div><figure class="training-figure"><a href="diagrams/v27-ranked-gains.svg" target="_blank" rel="noopener" aria-label="放大：按实际程序计算的折扣贡献。两份排序前三都命中3项，P@3=1、Recall@3=0.75、RR=1；nDCG仍由0.8786变0.9038。第二路排名与分级标签是声明输入。"><img src="diagrams/v27-ranked-gains.svg" width="814.79952" height="486.38976" alt="按实际程序计算的折扣贡献。两份排序前三都命中3项，P@3=1、Recall@3=0.75、RR=1；nDCG仍由0.8786变0.9038。第二路排名与分级标签是声明输入。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>按实际程序计算的折扣贡献。两份排序前三都命中 3 项，P@3=1、Recall@3=0.75、RR=1；nDCG 仍由 0.8786 变 0.9038。第二路排名与分级标签是声明输入。<a href="diagrams/v27-ranked-gains.svg" download>下载 SVG ↗</a></figcaption></figure><p>BM25 前三等级[3,1,2]，RRF 前三[3,2,1]。后者把等级 2 移到第二位，DCG 从约 9.13093 到 9.39279；理想前三[3,2,2]的 DCG 约 10.39279，故两者 nDCG 都未到 1。RRF 没有使用标签作弊，但这个固定例子也不能证明 RRF 在真实任务里总更好。</p><p>如果问题需要两份材料共同支持，分级排序得分仍不能代替完整证据覆盖。无正例时理想 DCG 为 0，不能悄悄除零后塞成满分或零分；单列无答案任务的正确拒绝与错误引用。相关性、支持主张、时间版本和权限都应有各自判据。</p><h3>正文更新不等于索引同步，引用还要绑定实际读到的版本</h3><p>索引保存的是某次采集/切分/分析得到的投影。正文已到 v2、索引仍 v1 时，搜索可能按旧词匹配，再取到新正文，形成“为什么命中”与“实际引用什么”不一致。实验真实更新正文但不更新 FTS：不检查时看到正文 2/索引 1；核对版本后先排除，重建索引后两者均 2。</p><div class="table-wrap"><table><thead><tr><th>保存与核对</th><th>目的</th><th>异常时的选择</th></tr></thead><tbody><tr><td>文档 ID/版本、片段位置、内容摘要</td><td>把候选与被引用原文绑定</td><td>版本不可取或摘要不符，重新取证/拒绝该片段</td></tr><tr><td>索引版本与切分/模型配置</td><td>解释召回依据与重建变化</td><td>显示滞后、更新索引或按约定使用历史版本</td></tr><tr><td>当前授权与正文交付</td><td>避免旧索引/缓存延续已撤权限</td><td>在指定边界复验，不能把缓存当永久授权</td></tr><tr><td>候选/上下文/最终引用分别记录</td><td>定位哪一阶段丢失或错配证据</td><td>重排、预算、生成与引用核验分开诊断</td></tr></tbody></table></div><p>本例 SQL 语义在 LIMIT 前限制 A 租户、current 标记与索引/正文版本；不代表物理执行器从未搜索全局倒排表，也不意味着 BM25 的全语料统计已按租户隔离。若要求独立统计或更强侧信道隔离，还要选择相应索引与服务边界。取正文时的真实授权撤回和不当交付负例，保留在原 retrieval_pipeline 实战。</p><p>从候选到最终输入仍要维护来源身份。正文取回后若读取资格撤销或当前版本改变，新实验在指定发送前检查点拒绝；索引滞后时先排除，加入新版本后再取证。实际 HTTP 收集器核对送达材料，但不证明语言模型回答正确。</p><p><a href="/article/agent-retrieval/#section-9">继续理解权限、版本与交付的分层边界 →</a></p></section><section class="knowledge-point" id="knowledge-ag-observability"><h2><span>08</span>任务轨迹、预算与每成功任务成本</h2><p>任务轨迹连接一次逻辑任务的多次模型调用、工具尝试、恢复和验收。<span class="first-concept-term" data-concept-term="trace">trace<span class="concept-term-meaning">（追踪，关联相应请求或任务的调用路径）</span></span>解释路径，权威回执解释效果，预算限制继续执行的条件。</p><div class="mechanism-core" id="agent-observation-signals"><h3>指标看总体，日志看事件，追踪看路径，账本确认业务结果</h3><p>Agent 观测要回答四件事：任务卡在哪、哪次动作失败、实际产生了什么效果、为完成目标花了多少资源。指标适合按工具、版本和结果类别看总体；日志保留可检索事件；trace（追踪）把一条因果路径中的操作关联起来。span（跨度）可理解为一次有开始和结束时刻的操作，是 trace 里的节点。</p><p>这三种遥测都可能有采样、导出失败或保留期限。业务任务账本则记录受理身份、目标、当前状态、回执与独立验收。找不到结束 span，不证明任务未提交；有一条“成功”日志，也不证明产物正确。先查业务事实，再用轨迹解释路径，才能避免把观测缺口当成业务结果。</p><div class="table-wrap"><table><thead><tr><th>信号</th><th>适合保存或回答</th><th>不单独承担</th></tr></thead><tbody><tr><td>指标</td><td>任务总量、完成比例、时延分布、用量</td><td>每一笔业务效果的权威回执</td></tr><tr><td>日志</td><td>某次错误、决策原因、版本和受控引用</td><td>完整且永远不丢的任务状态机</td></tr><tr><td>Trace/span</td><td>调用、并行、等待、尝试与父子关系</td><td>全部受理任务的无偏统计总体</td></tr><tr><td>任务与效果账本</td><td>唯一任务、稳定操作、提交回执、验收终态</td><td>任意细节的耗时和底层执行解释</td></tr></tbody></table></div><p>先定义受理、尝试、完成、拒绝、取消、仍在执行和结果未知的含义，再做看板。一项任务可包含多次模型调用、多个逻辑操作和每个操作的多次 HTTP 尝试；把所有层都叫“请求成功率”，会让人无法解释分母。</p></div><h3>业务身份与追踪身份关联，不能互相替代</h3><div class="table-wrap"><table><thead><tr><th>身份</th><th>本章用途</th><th>可能的关系</th></tr></thead><tbody><tr><td>task_id</td><td>用户目标 R27</td><td>一个任务可跨多次运行或多条 trace</td></tr><tr><td>op_id</td><td>一次逻辑写入 R27:publish</td><td>多次 HTTP 尝试仍沿用同一个效果身份</td></tr><tr><td>attempt_id</td><td>某个动作的第 1、第 2 次实际尝试</td><td>每次尝试独立计数和耗时</td></tr><tr><td>trace_id</td><td>一条被追踪的因果路径</td><td>不是业务去重键，也不保证覆盖整个任务寿命</td></tr><tr><td>span_id / parent_id</td><td>本次操作及其父操作</td><td>表达调用或安排关系，不能签发权限</td></tr></tbody></table></div><p>HTTP 调用通常由客户端创建 CLIENT span，把当前上下文注入 traceparent 头；服务端提取它，再建立 SERVER 子 span。头里包含 trace ID、上游 span ID 及追踪标志，而不是整份任务状态、工具回执或业务授权。接收方仍按真实身份和资源策略决定能否执行，不能因为 traceparent 格式正确就信任请求。</p><p>service.name 等资源属性说明哪一个服务产生遥测，span 属性描述具体操作。跨进程重试可能开启新 trace，仍用 task_id 和 op_id 关联原业务；异步消费或共享批处理也可能更适合用 span link 表达额外因果关系。一条 span 只有一个父节点，不能为了凑一棵树把共享工作硬塞给错误任务。</p><div class="code-block"><div class="code-toolbar"><span>实际实验的传播核心 · 两端使用不同 TracerProvider <small>PYTHON</small></span><button data-copy-code aria-label="复制 实际实验的传播核心 · 两端使用不同TracerProvider">复制代码</button></div><pre tabindex="0"><code>headers = {&quot;Content-Type&quot;: &quot;application/json&quot;}
-propagator.inject(headers)  # 在CLIENT span上下文内
-# 通过真实HTTP发送headers
-remote = propagator.extract(request_headers)
-with tool_tracer.start_as_current_span(&quot;tool.execute&quot;,
-        context=remote, kind=SpanKind.SERVER):
-    execute_authorized_operation()
-# traceparent提供关联；execute仍负责业务授权与提交</code></pre></div><p>原始参数、提示和文档全文不适合无差别复制进通用遥测。记录必要版本、错误类别与受控产物引用，再按权限取回原件。任务或用户 ID 可出现在受控事件或 trace 中用于关联，指标标签则应保留有限维度；每任务一组标签会随任务数持续增长。</p><div class="mechanism-core" id="agent-trace-effect-boundary"><h3>五个真实跨度，如何解释“任务成功但首次调用报错”</h3><figure class="training-figure"><a href="diagrams/v24-otel-attempt-tree.svg" target="_blank" rel="noopener" aria-label="放大：实际SDK导出根任务、两个CLIENT和两个SERVER跨度。树表达父子关系，不表示耗时比例；第一次服务端提交后注入503，第二次查到原回执。"><img src="diagrams/v24-otel-attempt-tree.svg" width="1120" height="740" alt="实际SDK导出根任务、两个CLIENT和两个SERVER跨度。树表达父子关系，不表示耗时比例；第一次服务端提交后注入503，第二次查到原回执。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>实际 SDK 导出根任务、两个 CLIENT 和两个 SERVER 跨度。树表达父子关系，不表示耗时比例；第一次服务端提交后注入 503，第二次查到原回执。<a href="diagrams/v24-otel-attempt-tree.svg" download>下载 SVG ↗</a></figcaption></figure><p>本章实验用两个线程扮演执行器和工具服务，各用不同 TracerProvider 及 service.name，通过真正的回环 HTTP 传 traceparent。工具先将 R27:publish 与总数 37 写入 SQLite，再故意返回 503。调用方当时只能记“结果未知”；第二次沿原 op_id 请求，工具返回原回执 duplicate=true。最后独立读取报告，确认只有一笔效果且总数 37，根任务才设为 OK。</p><p>首次 CLIENT 与 SERVER 跨度仍保留 ERROR；后续重试成功不应抹掉这个错误，也不应创建第二个业务成功任务。反过来，第一条服务端错误 span 不意味着事务回滚——程序明确在注入错误之前提交了效果。trace 事件可以写“effect_committed”，真正的业务证明仍来自数据库或效果接收方回执。</p><div class="table-wrap"><table><thead><tr><th>本次观察</th><th>正确解释</th><th>容易误判</th></tr></thead><tbody><tr><td>首次 HTTP 503，SERVER 有提交事件</td><td>调用方结果未知；服务侧已产生固定效果</td><td>503 表示业务一定未提交</td></tr><tr><td>第二次 HTTP 200 且 duplicate=true</td><td>同一动作原回执被找回</td><td>第二个动作又成功执行一次</td></tr><tr><td>根任务 OK，首次 CLIENT 为 ERROR</td><td>任务经恢复/确认合格，保留中途失败</td><td>任务成功就把失败 span 全部改成 OK</td></tr><tr><td>成功 HTTP 跨度状态 UNSET</td><td>SDK 未显式设置错误；按本例正常回应处理</td><td>UNSET 是业务账本里的结果未知</td></tr></tbody></table></div><p>OpenTelemetry span 的 UNSET、OK、ERROR，与任务状态机的 RUNNING、UNKNOWN、SUCCEEDED 不是同一套枚举。字段含义应由各自层解释。当前程序只在内存导出 span 与指标，没有部署 Collector 或远端后端，不能把这次成功写成跨主机采集、丢失重传和长期保留都已验证。</p></div><h3>父跨度包含子操作，并行分支也不能直接累加</h3><p>另构造一条同一时钟下的教学时间线，单位 ms，不是上面 HTTP 实验实测：身份 0—50；两项证据查询同时开始，A 在 350 结束，B 在 450 结束；装配 450—480；模型 480—780；发布尝试 780—850；等待 850—880；重试 880—940；验收 940—1000。用户总等待 1000ms，某个组件 300ms 不能解释其余 700ms 在哪里。</p><div class="table-wrap"><table><thead><tr><th>阶段</th><th>区间 ms</th><th>持续时间 ms</th></tr></thead><tbody><tr><td>身份</td><td>0—50</td><td>50</td></tr><tr><td>查询 A / 查询 B</td><td>50—350 / 50—450</td><td>300 / 400，并行</td></tr><tr><td>装配 / 模型</td><td>450—480 / 480—780</td><td>30 / 300</td></tr><tr><td>首次发布 / 等待 / 重试</td><td>780—850 / 850—880 / 880—940</td><td>70 / 30 / 60</td></tr><tr><td>产物验收</td><td>940—1000</td><td>60</td></tr></tbody></table></div><div class="knowledge-formula"><small>本题等待两份证据后才能继续</small><div>50 + max(300,400) + 30 + 300 + 70 + 30 + 60 + 60 = 1000ms</div><p>直接逐子阶段相加为 1300ms，多算了并行重叠的 300ms；再加父跨度会重复更多。</p></div><p>将较快查询 A 从 300 优化到 200，其他条件不变，仍需等 B 到 450，总时间可能不变；把 B 从 400 降 300，才让后续提前 100ms。这是固定依赖图的反事实推导，不是说任何并行任务都只能取 max，还要看它究竟等待哪些结果、是否有流式处理或其他依赖。</p><p>跨主机墙钟有偏差，先用本地持续时间和上下文关联，再核对跨边界的排队定义。实验导出同机 Unix 纳秒起止时间，并以字符串保存避免大整数精度丢失；它不证明跨主机时钟已校准。用户响应、后台完成和资源回收也可能是三个时刻，应分别记录。</p><h3>一个任务重试两轮，任务成功率和尝试成功率有不同分母</h3><p>固定一批 100 个已到终态的任务：80 个首轮合格，20 个首轮未完成；其中 10 个再试一轮后合格，另 10 个仍失败。唯一合格任务 90，按任务是 90/100=90%。这里每一轮都明确视为一次“任务尝试”，共 120 次，获得合格完成结果的尝试 90 次，比例 90/120=75%。若分析某个工具的 HTTP 尝试，还应再单独定义，不能把这 120 次直接当作工具请求总量。</p><p>后来确认某个动作其实已提交，应把效果归回原 op_id，同时保留首次尝试超时的历史。业务成功、观察到成功回应、以及没有重复效果，是三项不同判断。窗口结束时仍在执行或结果未知的任务也要单列；不要因为没有产物文件就把它们从受理分母删掉。</p><div class="table-wrap"><table><thead><tr><th>看板量</th><th>应该怎么得来</th><th>错误做法</th></tr></thead><tbody><tr><td>受理任务数</td><td>稳定身份去重后的受理记录</td><td>用 trace 条数或结果文件数代替</td></tr><tr><td>合格完成量</td><td>按固定目标及独立验收确认</td><td>只看模型输出 success</td></tr><tr><td>工具尝试量</td><td>含失败、重试及未知的实际尝试</td><td>只数 HTTP 2xx</td></tr><tr><td>业务效果量</td><td>效果接收方或权威回执</td><td>把每次调用都算新效果</td></tr><tr><td>时延分布</td><td>说明受理到何种终点及未完成项</td><td>只保留有成功产物的快任务</td></tr></tbody></table></div><p>指标标签用于有限分组，例如工具名、错误类别和部署版本。任务 ID、原操作 ID 和任意用户输入会产生高基数：每新增任务都可能新增一条或多条序列，既增加成本，也不适合总体比较。保留关联能力的方式是受控日志与 trace 检索，不是把所有业务字段都塞进指标标签。</p><h3>成本先收全，再分别按受理和合格任务计算</h3><p>仍用上面 100 个任务，以下全是教学成本点：80 个首轮合格各 2 点，10 个重试合格各 5 点，10 个最终失败各 4 点。总成本 80×2+10×5+10×4=250。每个受理任务 2.5 点；为了交付一个合格任务承担的总成本是 250/90≈2.78 点。若只取成功任务自身的账单，就成 210/90≈2.33 点，失败的 40 点被漏掉。</p><details class="full-code"><summary>展开 100 任务的完整账本算例</summary><div class="code-block"><div class="code-toolbar"><span>agent-observability.py · 标准库 <small>PYTHON</small></span><button data-copy-code aria-label="复制 agent-observability.py · 标准库">复制代码</button></div><pre tabindex="0"><code>from fractions import Fraction
-# 每行：任务数，最终是否成功，每任务尝试，每任务成本。
-groups = [(80, True, 1, 2), (10, True, 2, 5), (10, False, 2, 4)]
-tasks = sum(n for n, *_ in groups)
-wins = sum(n for n, ok, _, _ in groups if ok)
-attempts = sum(n*a for n, _, a, _ in groups)
-total = sum(n*c for n, _, _, c in groups)
-assert (tasks, wins, attempts, total) == (100, 90, 120, 250)
-assert Fraction(wins, tasks) == Fraction(9, 10)
-assert Fraction(wins, attempts) == Fraction(3, 4)
-assert Fraction(total, wins) == Fraction(25, 9)
-print(tasks, wins, attempts, total)</code></pre></div></details><p><a href="labs/agent-foundations/agent-observability.py" download>下载 100 任务账本算例 ↓</a><a href="labs/textbooks/validation.json" target="_blank" rel="noopener">查看该算例执行记录 ↗</a></p><figure class="training-figure"><a href="diagrams/v24-observability-ledgers.svg" target="_blank" rel="noopener" aria-label="放大：另一个单任务实际SDK夹具：两次HTTP尝试各计2个教学点，验收1点，共5点。计数来自真实执行，单价是固定题设，不是实际模型或云账单。"><img src="diagrams/v24-observability-ledgers.svg" width="1120" height="740" alt="另一个单任务实际SDK夹具：两次HTTP尝试各计2个教学点，验收1点，共5点。计数来自真实执行，单价是固定题设，不是实际模型或云账单。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>另一个单任务实际 SDK 夹具：两次 HTTP 尝试各计 2 个教学点，验收 1 点，共 5 点。计数来自真实执行，单价是固定题设，不是实际模型或云账单。<a href="diagrams/v24-observability-ledgers.svg" download>下载 SVG ↗</a></figcaption></figure><p>“重试合格的 10 个任务总共花 50 点”仍不能推出第二次尝试本身花了多少，因为这些是任务级总成本。要计算重试边际成本，需 attempt 级计量，再汇总到同一任务。共享查询、批处理、<span class="first-concept-term" data-concept-term="缓存">缓存<span class="concept-term-meaning">（保存可复用内容的一份中间结果，减少重复读取或计算）</span></span>、沙箱和后台工作也要说明分摊规则，同时保留未分摊总量，不能为了归因方便漏掉成本。</p><p>换成真实计费时记录价格版本、计量单位、输入/输出或缓存用量、工具计算、存储和网络，并按允许的访问范围保存证据。没有真实账单时就使用明确的教学单位。比较版本还要固定任务集、截止时间和质量门槛；让难题全部早退，可能让成功样本均值变好看，却降低实际完成量。</p><h3>采样轨迹擅长找原因，不能直接冒充全量总体</h3><p>固定总体 1000 任务，900 合格、100 失败。若合格只保留 10%，得到 90 条；失败全保留 100 条，样本共 190，直接计算 90/190≈47.37%，与总体 90%差很远。这种错误优先采样有助于诊断，却改变了人群。已知并适用的入样概率可以用于加权估计，但还要检查各类是否都有非零入样机会、规则是否稳定，以及采集前就丢掉的事件能否找回。</p><p>业务成功率优先来自覆盖受理总体的账本或可靠计数。trace 负责解释慢路径、工具拒绝、恢复和检索缺口。尾部采样可能偏向慢或错误轨迹，跨版本比较时先固定任务、版本与成熟观察窗，再用相应切片中的轨迹解释变化；缺少入样概率就不从那张轨迹表宣称全站比例。</p><p>诊断也从实际产物倒推：资料是否存在且有权访问、候选是否命中、装配是否保留关键限定、模型是否据此生成、发布是否采用对应正文版本。若候选已有正确资料而最终上下文没有，先验证排序、截断和预算；固定证据后再比较生成，才能区分替代原因。扩大重试使完成率上升，也要同时看预算、尾延迟和重复效果，不能自动归因于模型更强。</p><a class="inline-link" href="/article/agent-evaluation/">复习固定任务集、独立评分和正确拒绝 →</a><a class="inline-link" href="/article/agent-retrieval/">沿候选、上下文与最终引用逐阶段取证 →</a></section><section class="knowledge-point" id="knowledge-ag-evaluation"><h2><span>09</span>任务评估：真实效果、正确拒绝与故障注入</h2><p>先固定输入、权限、允许效果、期望终态和必要证据，再运行 Agent 并读取环境。成功声明和自评只作为被检验对象。</p><div class="mechanism-core" id="evaluation-metric-contract"><h3>评估先分两道题：系统做对没有，评分器判对没有</h3><p>任务评估有三种单位：任务是一个目标，试次是从指定初始状态运行一次，尝试是试次内的一次模型或工具调用。同一任务重跑三次就有三个试次；每个试次可能有多次工具尝试。任务身份、试次身份和尝试身份分开记录，不能把三次工具成功当成三个任务成功。</p><p>第一道题检验系统：合法任务应该完成，越权任务应该拒绝。第二道题检验评分器：真实合格产物该接收，不合格产物该拦截。两道题都有正负例，但标签含义不同；不能把评分器准确率当成 Agent 任务成功率。独立环境 oracle 是按契约读取实际状态的判定程序，也需要用故意构造的错误产物检验。</p><div class="table-wrap"><table><thead><tr><th>评分器的判定</th><th>真实合格产物</th><th>真实不合格产物</th></tr></thead><tbody><tr><td>接收</td><td>真阳性 <span class="first-concept-term" data-concept-term="TP">TP<span class="concept-term-meaning">（张量并行，切分模型层内的张量与计算）</span></span>：正确接收</td><td>假阳性 FP：错放行</td></tr><tr><td>拒绝</td><td>假阴性 FN：错拒绝</td><td>真阴性 TN：正确拦截</td></tr></tbody></table></div><p>设人工/确定性规则确认 6 份合格、6 份不合格，评分器接收其中 5 份合格和 2 份不合格。则 TP=5、FP=2、FN=1、TN=4；准确率(5+4)/12=75%，接收结果中真正合格的精确率 5/7≈71.43%，合格产物召回率 5/6≈83.33%。高后果发布更关注错放行类别，不能因总体 75%便忽略两份错误产物。</p><p>系统任务也会类别不平衡。另设 5 个可完成、20 个应拒绝任务，全部拒绝就能拿 20/25=80%的总体符合预期率，但合法任务完成召回为 0。两类召回分别 0%与 100%，宏平均为 50%；宏平均让每类等权，任务加权总体让每题等权，回答的是不同问题。没有接收任何结果时精确率分母为 0，应标未定义，不能写成 100%。安全错误还应单列门禁，不能只靠加权平均兑换。</p></div><figure class="training-figure"><a href="diagrams/v16-agent-evaluation.svg" target="_blank" rel="noopener" aria-label="放大：四个固定任务与四种策略的独立验收：正确实现4/4，只报成功0/4，全拒绝2/4，金额正确但引用串租户3/4。图中每格来自同一程序输出。"><img src="diagrams/v16-agent-evaluation.svg" width="960" height="727" alt="四个固定任务与四种策略的独立验收：正确实现4/4，只报成功0/4，全拒绝2/4，金额正确但引用串租户3/4。图中每格来自同一程序输出。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>四个固定任务与四种策略的独立验收：正确实现 4/4，只报成功 0/4，全拒绝 2/4，金额正确但引用串租户 3/4。图中每格来自同一程序输出。<a href="diagrams/v16-agent-evaluation.svg" download>下载 SVG ↗</a></figcaption></figure><p>正向任务需要真实产物与正确事实/引用；负向任务需要明确拒绝且没有越权效果；缺证据任务需要约定的澄清或证据不足结果。分别报告业务完成、拒绝质量、重复效果、事实与来源，以及消耗。一个总分可能掩盖严重越权，关键项应有独立门槛。</p><p>新实验用四个固定计划替代模型，真实写入 SQLite 报告，再让独立验收程序（oracle）核对金额 37 与两个来源版本。只改最终文本为 success 而不写报告，得 0/4；全拒绝漏掉必要工作，也把缺证据误作拒绝；篡改为 B 引用虽然金额仍 37，正向任务也失败。先证明评估器能抓住这些错误，才值得接真实模型扩大样本。</p><p>回归集按任务类型、工具、租户和失败位置分层，保留版本与失败轨迹。固定计划通过只说明这些机制用例，不能推断模型成功率。真实 Agent 的采样波动、开放任务、人工评分细则与置信范围需要另做评估设计；公开基准也不能仅凭相似 fixture 宣称通过。</p><h3>5 题全对不等于普遍可靠：同时写计数、区间与样本来源</h3><p>观察到 5/5 与 100/100 都等于 100%，但样本提供的信息量不同。用 Wilson 比例区间、双侧 95%与 z≈1.959964，5/5 区间约[56.55%,100%]，100/100 约[96.30%,100%]。它提醒我们：少量题全对仍不足以给未见任务很强的保证。区间不能弥补抽样偏差，专挑容易题得到一万个全对，也没有证明难题可用。</p><div class="knowledge-formula"><small>Wilson 区间 · n>0，p̂=k/n</small><div>中心 = (p̂ + z²/(2n)) / (1 + z²/n)；半宽 = z√[p̂(1−p̂)/n + z²/(4n²)] / (1 + z²/n)</div><p>上下界为中心±半宽。这里只用于独立、同一成功机制的二项观察示例；n=0 拒绝计算。</p></div><figure class="training-figure"><a href="diagrams/v25-wilson-counts.svg" target="_blank" rel="noopener" aria-label="放大：Matplotlib按实际统计程序结果绘制。示例是合成计数；比例区间不把任务选择、相关性和评分错误自动纳入。"><img src="diagrams/v25-wilson-counts.svg" width="814.818217" height="466.80576" alt="Matplotlib按实际统计程序结果绘制。示例是合成计数；比例区间不把任务选择、相关性和评分错误自动纳入。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>Matplotlib 按实际统计程序结果绘制。示例是合成计数；比例区间不把任务选择、相关性和评分错误自动纳入。<a href="diagrams/v25-wilson-counts.svg" download>下载 SVG ↗</a></figcaption></figure><p>频率学的 95%指这套构造方法在条件成立时的重复抽样覆盖表现，不是“本次真实成功概率有 95%落在区间内”。同一模板改名字得到 100 题、同一故障连续重试 100 次，都可能有强相关；不能机械把它们当 100 个独立证据。真实评估应按任务来源、类别和重复试次保留层次，必要时按任务或来源成组重抽样，并说明方法。</p><p>还要分清描述固定题集和推断未来任务。一个固定回归集本次通过 18/25，是这 25 题的准确描述；若把它当未来成功率估计，需要解释题集怎样代表部署分布、样本是否独立，以及工具和评分器有没有变化。超时和崩溃从受理集合进入分母，未成熟试次单列；不能只对有漂亮产物的部分计算区间。</p><details class="knowledge-check"><summary>检验理解：把同一个成功样本复制 100 份，能直接得到更可靠的 100/100 区间吗？</summary><p>不能。复制没有带来 100 份独立信息。应按独立任务来源计算有效证据，并保留重复试次结构；区间公式里的 n 不是可以随意复制出来的数量。</p></details><h3>版本比较要保留同题配对，不只看两个百分比</h3><p>固定同 25 题、相同初始状态、预算和评分器。教学 CSV 给出：A 通过 18 题，B 通过 20 题，看起来从 72%到 80%，增加 8 个百分点（相对增加约 11.11%，两者不要混称）。但同题结果如何变化，只有成对记录才能看见。这里两者都通过 16 题，仅 A 通过 2 题，仅 B 通过 4 题，两者都失败 3 题。真正方向不同的只有 6 题。</p><figure class="training-figure"><a href="diagrams/v25-paired-outcomes.svg" target="_blank" rel="noopener" aria-label="放大：25条固定合成配对标签。成对检验看仅A与仅B两格；该图不是实际模型基准。"><img src="diagrams/v25-paired-outcomes.svg" width="1120" height="730" alt="25条固定合成配对标签。成对检验看仅A与仅B两格；该图不是实际模型基准。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>25 条固定合成配对标签。成对检验看仅 A 与仅 B 两格；该图不是实际模型基准。<a href="diagrams/v25-paired-outcomes.svg" download>下载 SVG ↗</a></figcaption></figure><p>若零假设下两个方向等可能，且各题对独立，6 个变化中落向 B 的次数可按二项分布 Binomial(6,0.5)考察。本例双侧精确 p=2×P(X≤2)=2×(1+6+15)/64=0.6875。p 考察的是零假设下出现同样或更极端偏向的结果有多常见，不是“B 更好的概率”。这份小样本不足以据此宣布 B 有普遍优势；p 大也不证明两版本等价。证明等价需要事先定义可接受差异与相应设计，不能把“没发现差异”改写成“没有差异”。</p><p>两份边际 Wilson 区间是否重叠，不能替代上述成对检验。若每题有多次试次，先固定每题如何聚合、预算怎样一致，再采用尊重任务层次的方法；不能拆散相关试次虚增样本数。比较多个版本或大量切片时，先指定主要指标与门槛，保留探索性结果，避免从许多波动里挑一个好看的宣布胜出。</p><p>评分器也要版本化。换了判分规则，应对同一批已保存产物重新评分，区分行为变化和尺子变化；换了环境快照、检索索引或权限，也应分开记录。开发集负责调试，留出集只按约定节奏验收，持续看着同一批留出题修改提示会让它逐渐变成开发集。泄露或不再代表部署的数据应有更新策略。</p></section><section class="knowledge-point" id="knowledge-ag-sandbox"><h2><span>10</span>执行沙箱：资源、网络、文件与生命周期</h2><p>沙箱约束不可信代码的执行环境，工具授权约束对业务资源产生的效果。宿主隔离、凭据范围、网络出口和资源预算需要沿完整执行路径组合。</p><div class="mechanism-core" id="sandbox-authority-boundary"><h3>子进程继承哪些能力，先于脚本写了什么</h3><p>启动一个新进程会建立新的地址空间，但不会自动产生新的租户边界。进程身份、环境变量、当前目录、可继承文件描述符和网络能力，决定它能触及什么。一个已经打开的文件描述符（FD）也代表访问能力：即使脚本没有文件名，只要继承了 FD，仍可能直接读取。</p><p>Python 默认将新 FD 设为不可继承，Popen 默认 close_fds=True。实验刻意将一个假文件 FD 标为可继承、设置 close_fds=False，再传入合成环境项，复现“启动者把能力带了进去”；另一条路径关闭非必需 FD、只传少量环境项，两者都不再可见。不能将这个刻意放开的反例描述为 Python 默认不安全。</p><figure class="training-figure"><a href="diagrams/v26-launch-boundary.svg" target="_blank" rel="noopener" aria-label="放大：实际子进程对照：减少继承能关闭两条通道，但同UID按路径读取假文件仍然成功。它直接说明启动卫生没有隔离文件系统。"><img src="diagrams/v26-launch-boundary.svg" width="1120" height="740" alt="实际子进程对照：减少继承能关闭两条通道，但同UID按路径读取假文件仍然成功。它直接说明启动卫生没有隔离文件系统。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>实际子进程对照：减少继承能关闭两条通道，但同 UID 按路径读取假文件仍然成功。它直接说明启动卫生没有隔离文件系统。<a href="diagrams/v26-launch-boundary.svg" download>下载 SVG ↗</a></figcaption></figure><p>最小启动仍在同一用户权限下，实验按路径重新打开 canary 照样成功。这不是启动参数失效，而是它们只解决自己覆盖的通道。真正的执行边界还需要受限用户、挂载视图、内核接口、网络和资源管理。受控工作目录只是默认相对路径的起点，chdir 并不会禁止访问绝对路径。</p><p>控制平面应自己选择可执行入口、环境和挂载，不能允许不可信文档把任意宿主目录、运行时套接字或长期凭据加入参数。工具授权在可信服务端限制业务动作，沙箱再限制异常代码能接触的能力；两者配合，不能指望模型主动遵守作为隔离机制。</p></div><p>文件边界包括只读基础环境、每任务独立工作目录、受控挂载和输出导出；进程边界包括用户身份、系统调用与内核接口；资源边界包括 CPU、内存、PID、磁盘和墙钟。网络默认出口和<span class="first-concept-term" data-concept-term="DNS">DNS<span class="concept-term-meaning">（域名系统，把名称查询成相应记录）</span></span>解析策略也需实际实施，不能由模型自己决定是否遵守。</p><p>启动前确认环境版本与最小身份；运行中限制额度并记录审计；结束后终止进程树、回收卷/临时文件和短期凭据，再扫描允许导出的结果。仅 kill 父进程可能留下子进程，删除容器引用也不能保证远端作业已结束。普通容器共享<span class="first-concept-term" data-concept-term="内核">内核<span class="concept-term-meaning">（操作系统中直接管理执行、内存和设备等职责的核心部分）</span></span>，独立内核/用户态内核等方案具有不同边界。</p><p>Kairo 接入时逐项映射这些控制点：由谁创建隔离环境、如何传递短期身份、哪个接收方实施授权与 fencing、如何在恢复时查询回执、产物怎样验证和导出。下载包给出字段与故障验收表，尚未连接真实 Kairo；本地子进程实验也没有提供恶意代码安全隔离。</p><div class="table-wrap"><table><thead><tr><th>控制项</th><th>具体检查</th><th>结束时再检查</th></tr></thead><tbody><tr><td>文件</td><td>输入只读、输出在独立目录、路径不逃逸</td><td>只导出允许文件，清理临时卷</td></tr><tr><td>进程与时间</td><td>限制进程数、CPU/内存和总时限</td><td>子进程与远端作业都停止</td></tr><tr><td>身份与网络</td><td>任务最小身份、受控目标与出口</td><td>撤销短期凭据，回收连接/会话</td></tr></tbody></table></div><p>先把每项控制落到真实执行环境，再做故障验证。例如“超时后退出码非零”只能说明某个进程退出；还要查看整个进程树和外部作业状态。本包没有创建安全<span class="first-concept-term" data-concept-term="沙箱">沙箱<span class="concept-term-meaning">（通过限制可访问对象与系统能力等方式约束代码的执行环境）</span></span>，因此以上是接入时的验收项目，不算本地程序已经证明的隔离能力。</p><h3>资源限制的单位和覆盖对象，比一个“超时”参数更重要</h3><div class="table-wrap"><table><thead><tr><th>控制</th><th>限制什么</th><th>不能据此推断什么</th></tr></thead><tbody><tr><td>RLIMIT_CPU</td><td>单进程累计 CPU 秒数</td><td>不能限定等网络的墙钟时长，也不是周期带宽</td></tr><tr><td><span class="first-concept-term" data-concept-term="cgroup">cgroup<span class="concept-term-meaning">（Linux 中对进程组做资源记账与约束的机制）</span></span> cpu.max</td><td>组在每周期可消费的 CPU 预算</td><td>不能当单线程固定速度或总任务截止时间</td></tr><tr><td>RLIMIT_FSIZE</td><td>单个可创建文件的大小</td><td>多个小文件仍可能用掉大量磁盘</td></tr><tr><td>RLIMIT_NOFILE</td><td>单进程打开 FD 数量</td><td>不等于进程树数量或总文件数</td></tr><tr><td>cgroup memory.max / pids.max</td><td>组内存硬限/内核任务数量约束</td><td>不等于每个进程各获同一份预算</td></tr><tr><td>墙钟截止与清理宽限</td><td>从约定起点到停止/回收的总时间</td><td>不能证明远端效果被撤销</td></tr></tbody></table></div><p><span class="first-concept-term" data-concept-term="Linux">Linux<span class="concept-term-meaning">（一类操作系统，负责管理程序运行及机器资源）</span></span> cgroup v2 按层次组织进程与<span class="first-concept-term" data-concept-term="线程">线程<span class="concept-term-meaning">（进程中的一条执行路径）</span></span>。公平类调度下 cpu.max 的“50000 100000”表示每 100000 微秒周期最多用 50000 微秒 CPU 时间；两个同时运行线程消耗的是这份共同预算，不各得 0.5 核。父级限制还可能更紧。memory.max 触发回收与必要的组内 <span class="first-concept-term" data-concept-term="OOM">OOM<span class="concept-term-meaning">（内存不足；具体终止对象和触发机制需按运行环境核对）</span></span> 处理，个别情形可短暂超出；memory.high 主要是回收压力与节流，不等于同一条硬杀进程线。pids 控制器按内核任务计数，线程也可能计入。</p><p><span class="first-concept-term" data-concept-term="POSIX">POSIX<span class="concept-term-meaning">（一组操作系统接口规范，不表示所有存储接口都支持相同文件语义）</span></span> 本地实验分别验证单文件 4096B 后 EFBIG、FD 上限 64 后 EMFILE、CPU 累计上限触发终止，以及低 CPU 睡眠任务的墙钟回收。它不设置宿主限制，也不验证 Linux cgroup。将单进程 rlimit 当成不可信进程树的全部预算，子进程分摊、总磁盘或网络等待就可能漏出。</p><figure class="training-figure"><a href="diagrams/v26-process-budgets.svg" target="_blank" rel="noopener" aria-label="放大：真实POSIX子进程CPU与墙钟观测。两种不同工作展示两种限制，不是性能优劣比较；墙钟包含启动与回收，等待任务的250ms预算从就绪后开始。"><img src="diagrams/v26-process-budgets.svg" width="814.79952" height="478.999166" alt="真实POSIX子进程CPU与墙钟观测。两种不同工作展示两种限制，不是性能优劣比较；墙钟包含启动与回收，等待任务的250ms预算从就绪后开始。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实 POSIX 子进程 CPU 与墙钟观测。两种不同工作展示两种限制，不是性能优劣比较；墙钟包含启动与回收，等待任务的 250ms 预算从就绪后开始。<a href="diagrams/v26-process-budgets.svg" download>下载 SVG ↗</a></figcaption></figure><p>容量接纳还要计启动峰值和清理中的实例。原容量题最多 20 份是稳定预留账；如果旧实例尚未回收就立即把额度给新实例，现场可能出现 21 份甚至更多。将待清资源独立计数，只有达到约定的回收证据才归还对应额度；远端任务和可继续使用的凭据另有退出条件。</p><h3>路径字符串校验与打开的真实对象之间，可能被换一次</h3><p>路径检查发生在 t1，真正打开发生在 t2，中间对象可能被替换。这类检查与使用间隙称为 TOCTOU。实验先确认/work/report.txt 的字符串前缀合规，再将该叶子替换成指向夹具外文件的 symlink，随后普通 open 读到了 fixture-B。前缀检查即使写得更仔细，也没有将 t1 的判断与 t2 打开的对象绑定。</p><p>本例把问题限制为一个固定文件名：由可信侧先打开允许目录，按该目录 FD 相对打开 report.txt，同时使用 O_NOFOLLOW 拒绝叶子 symlink。这样普通文件仍可读，替换成 symlink 的这次输入被拒。该条件只覆盖固定单级叶子，不处理任意多级路径、硬链接、不可信挂载或错误目录权限，不应包装成通用安全路径函数。</p><p>生产文件边界应先由独立挂载、只读输入、受限用户和每任务可写区缩小可达集合，再选择适合目标系统的安全解析方式。产物也是来宾输入：验证真实格式、大小、像素/对象数量、所属任务与最终版本；复杂解析器自己也要限资源。HTML/SVG 等活动内容需要明确隔离策略，不能把来宾文件原样搬到与控制面同源的公共目录。</p><h3>在 Linux 运行时落实边界：字段只负责各自那一层</h3><p>普通 Linux 容器通常共享宿主内核：<span class="first-concept-term" data-concept-term="namespace">namespace<span class="concept-term-meaning">（Linux 中划分一组进程所见系统对象的机制）</span></span> 改变可见视图，cgroup 约束组资源，用户与权限、能力集、seccomp 等缩小可执行接口。独立用户态内核或微型虚拟机改变来宾到宿主的接口面，但仍需要正确配置、更新和验证。进程限制实验不能证明任一容器或虚拟机的安全水平。</p><div class="code-block"><div class="code-toolbar"><span><span class="first-concept-term" data-concept-term="Pod">Pod<span class="concept-term-meaning">（Kubernetes 中一起安排运行的一个或多个容器组成的单位）</span></span> 字段片段 · 省略镜像、挂载和网络，不能独立部署 <small>YAML</small></span><button data-copy-code aria-label="复制 Pod字段片段 · 省略镜像、挂载和网络，不能独立部署">复制代码</button></div><pre tabindex="0"><code>spec:
-  automountServiceAccountToken: false
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 10001
-    runAsGroup: 10001
-    seccompProfile:
-      type: RuntimeDefault
-  containers:
-    - name: runner
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: [&quot;ALL&quot;]
-        readOnlyRootFilesystem: true</code></pre></div><p>Restricted Pod 安全标准要求的非 root、禁止提权、seccomp 和能力集等有具体版本与 OS 条件；readOnlyRootFilesystem 是这里另外加的收紧项，不能声称它由 Restricted 自动要求。只读根文件系统也不意味着所有挂载只读：输入、临时区和输出卷的权限仍需分别设置。镜像必须能以指定 UID 运行，并提供必要的受限可写路径。</p><p>若采用 gVisor 等运行时，需要平台在目标节点配置相应 handler 和 RuntimeClass，并验证实际 Pod 使用了它；写一个 runtimeClassName 不会安装运行时。网络默认拒绝、受控出口和 DNS 策略也需要数据面执行，seccomp 或非 root 不能替代资源级业务授权。入口能否访问元数据服务、控制面端点或其他租户，必须在实际网络与身份环境测试。</p><div class="table-wrap"><table><thead><tr><th>层</th><th>典型证据</th><th>不足的替代物</th></tr></thead><tbody><tr><td>身份/权限</td><td>实际用户、能力、受限服务身份与授权拒绝</td><td>只看 namespace 名字</td></tr><tr><td>文件/挂载</td><td>目标容器的真实挂载与跨任务读取反例</td><td>只看工作目录字符串</td></tr><tr><td>内核/运行时</td><td>实际 RuntimeClass、运行时与系统调用策略</td><td>只看对象叫“sandbox”</td></tr><tr><td>资源/进程树</td><td>组统计、限制命中与回收后残留</td><td>主进程退出码</td></tr><tr><td>网络/凭据</td><td>真实目的地与资源访问结果、撤销后验证</td><td>策略对象已保存</td></tr></tbody></table></div><h3>停止信号、进程退出、资源回收与效果撤销分别确认</h3><p>本地实验为自己启动的子进程建立独立进程组。等待任务就绪后给 250ms 运行预算，TERM 后再给 200ms 宽限；本例故意忽略 TERM，最终 KILL 并 wait 确认直接子进程回收。这验证自己的监督程序按期限收回了指定夹具，不能证明任意不可信子进程树都被约束：来宾可能改变会话/进程组，还需要真实运行时的进程树控制。</p><p>KILL 也不会撤销已经发到外部服务的请求。取消任务应先停止新授权与新调用，再按协议处理在途效果、受管进程、挂载、临时卷、凭据和额度。清理记录使用不可混淆的资源身份与代际，避免旧清理器按复用名称删掉新实例。交付产物进入独立受控位置后，才能释放生成它的临时工作区。</p><a class="inline-link" href="/article/agent-recovery/">复习提交后响应丢失与结果未知 →</a><a class="inline-link" href="/article/config-secrets/">区分凭据撤销与既有会话退出 →</a></section></div><details class="field-concept-map" id="concept-relations" data-field-map="agent"><summary><h2>把本领域连成一张图</h2></summary><p class="field-map-note">选一个概念看定义与相邻关系；箭头文字说明依赖、控制或结果，不表示全部串行执行。</p><div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button><button type="button" data-concept-focus="ag-runtime" aria-pressed="false">任务与执行</button><button type="button" data-concept-focus="ag-tools" aria-pressed="false">工具契约</button><button type="button" data-concept-focus="ag-recovery" aria-pressed="false">效果与恢复</button><button type="button" data-concept-focus="ag-fencing" aria-pressed="false">执行者接管</button><button type="button" data-concept-focus="ag-authorization" aria-pressed="false">可信委托</button><button type="button" data-concept-focus="ag-context" aria-pressed="false">模型可见信息</button><button type="button" data-concept-focus="ag-retrieval" aria-pressed="false">获准证据</button><button type="button" data-concept-focus="ag-observability" aria-pressed="false">轨迹与消耗</button><button type="button" data-concept-focus="ag-evaluation" aria-pressed="false">真实任务结果</button><button type="button" data-concept-focus="ag-sandbox" aria-pressed="false">程序能力边界</button></div><div class="field-map-definitions"><div class="field-map-definition" data-concept-definition="ag-runtime"><p><b>任务与执行：</b>任务给出目标和停止条件，运行时检查提议并安排实际动作。 <a href="/module/agent/#knowledge-ag-runtime">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-runtime/" title="Agent Infra在解决什么：从模型提议到任务完成">G1 Agent Infra 在解决什么 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-tools"><p><b>工具契约：</b>名字、类型和结果语义规定怎样调用，结构正确不等于事实正确。 <a href="/module/agent/#knowledge-ag-tools">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-runtime/" title="Agent Infra在解决什么：从模型提议到任务完成">G1 Agent Infra 在解决什么 →</a><a href="/article/agent-security/" title="Agent的权限边界：谁授权，在哪里拦截，怎样限制效果">G2 Agent 的权限边界 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-recovery"><p><b>效果与恢复：</b>接收方回执记录实际提交，持久历史帮助在未知结果后继续。 <a href="/module/agent/#knowledge-ag-recovery">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-recovery/" title="工具已经执行，任务却没完成：持久化、幂等与崩溃恢复">G4 工具已经执行，任务却没完成 →</a><a href="/article/durable-workflows/" title="持久工作流：事件重放、接管与提交">G7 持久工作流 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-fencing"><p><b>执行者接管：</b>租约过期不使旧进程消失，接收方需要拒绝不再有效的执行资格。 <a href="/module/agent/#knowledge-ag-fencing">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-recovery/" title="工具已经执行，任务却没完成：持久化、幂等与崩溃恢复">G4 工具已经执行，任务却没完成 →</a><a href="/article/durable-workflows/" title="持久工作流：事件重放、接管与提交">G7 持久工作流 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-authorization"><p><b>可信委托：</b>身份、任务范围与当前资源策略共同决定允许的动作。 <a href="/module/agent/#knowledge-ag-authorization">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-security/" title="Agent的权限边界：谁授权，在哪里拦截，怎样限制效果">G2 Agent 的权限边界 →</a><a href="/article/agent-runtime/" title="Agent Infra在解决什么：从模型提议到任务完成">G1 Agent Infra 在解决什么 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-context"><p><b>模型可见信息：</b>上下文组织当前输入，执行状态保存已确认事实，长期记忆保存可复用知识。 <a href="/module/agent/#knowledge-ag-context">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-memory/" title="上下文、运行状态与长期记忆：三种信息不要混存">G5 上下文、运行状态与长期记忆 →</a><a href="/article/agent-runtime/" title="Agent Infra在解决什么：从模型提议到任务完成">G1 Agent Infra 在解决什么 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-retrieval"><p><b>获准证据：</b>资料经过检索、权限与版本检查，再在预算中交给模型。 <a href="/module/agent/#knowledge-ag-retrieval">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-retrieval/" title="检索与上下文：让答案有可验证的证据">G8 检索与上下文 →</a><a href="/article/agent-memory/" title="上下文、运行状态与长期记忆：三种信息不要混存">G5 上下文、运行状态与长期记忆 →</a><a href="/article/agent-evaluation/" title="Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本">G6 Agent 怎样验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-observability"><p><b>轨迹与消耗：</b>分别记录任务、逻辑动作和尝试，才能解释重试、等待与成本。 <a href="/module/agent/#knowledge-ag-observability">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-observability/" title="Agent 观测：任务、重试与成本归因">G9 Agent 观测 →</a><a href="/article/agent-evaluation/" title="Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本">G6 Agent 怎样验收 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-evaluation"><p><b>真实任务结果：</b>按真实产物、来源和正确拒绝判断完成，不由模型自报成功。 <a href="/module/agent/#knowledge-ag-evaluation">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-evaluation/" title="Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本">G6 Agent 怎样验收 →</a><a href="/article/agent-retrieval/" title="检索与上下文：让答案有可验证的证据">G8 检索与上下文 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a><a href="/article/production-readiness/" title="综合设计评审：让Cloud、AI与Agent形成一条可验收链路">S3 综合设计评审 →</a></p></div><div class="field-map-definition" data-concept-definition="ag-sandbox"><p><b>程序能力边界：</b>沙箱限制文件、网络和资源等执行能力，不替代业务授权。 <a href="/module/agent/#knowledge-ag-sandbox">展开系统知识 →</a></p><p class="field-map-chapters"><b>相关机制章：</b><a href="/article/agent-sandbox/" title="Agent 沙箱：隔离、资源与生命周期">G3 Agent 沙箱 →</a><a href="/article/agent-security/" title="Agent的权限边界：谁授权，在哪里拦截，怎样限制效果">G2 Agent 的权限边界 →</a><a href="/article/kairo-practice/" title="Kairo 接入验收：任务、权限与结果证据">G10 Kairo 接入验收 →</a></p></div></div><p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ul class="field-map-edges"><li data-concept-edge="ag-runtime ag-tools"><div><a href="/module/agent/#knowledge-ag-runtime">任务与执行</a><span class="field-map-verb"> — 安排受控调用 → </span><a href="/module/agent/#knowledge-ag-tools">工具契约</a></div><p>模型只提出工具名和参数，运行时还要检查契约、范围和预算，才产生实际尝试。</p></li><li data-concept-edge="ag-authorization ag-tools"><div><a href="/module/agent/#knowledge-ag-authorization">可信委托</a><span class="field-map-verb"> — 允许或拒绝 → </span><a href="/module/agent/#knowledge-ag-tools">工具契约</a></div><p>工具文本和检索材料不是授权来源；真正造成效果的接收方仍要执行当前权限。</p></li><li data-concept-edge="ag-sandbox ag-tools"><div><a href="/module/agent/#knowledge-ag-sandbox">程序能力边界</a><span class="field-map-verb"> — 限制程序能力 → </span><a href="/module/agent/#knowledge-ag-tools">工具契约</a></div><p>即便动作被业务允许，执行程序也应只取得所需文件、网络与资源。</p></li><li data-concept-edge="ag-tools ag-recovery"><div><a href="/module/agent/#knowledge-ag-tools">工具契约</a><span class="field-map-verb"> — 可能留下未知结果 → </span><a href="/module/agent/#knowledge-ag-recovery">效果与恢复</a></div><p>连接断开后，工具可能已经提交。先沿原操作身份查证，不能换新身份再写。</p></li><li data-concept-edge="ag-fencing ag-recovery"><div><a href="/module/agent/#knowledge-ag-fencing">执行者接管</a><span class="field-map-verb"> — 保护接管后的 → </span><a href="/module/agent/#knowledge-ag-recovery">效果与恢复</a></div><p>旧执行者暂停后复活，仍可能继续写；接收方要按有效资格拒绝过期写入。</p></li><li data-concept-edge="ag-retrieval ag-context"><div><a href="/module/agent/#knowledge-ag-retrieval">获准证据</a><span class="field-map-verb"> — 提供材料给 → </span><a href="/module/agent/#knowledge-ag-context">模型可见信息</a></div><p>找到资料不等于本次模型真的看到了它，还要核对权限、版本、完整性和预算。</p></li><li data-concept-edge="ag-context ag-runtime"><div><a href="/module/agent/#knowledge-ag-context">模型可见信息</a><span class="field-map-verb"> — 组织本次提议输入 → </span><a href="/module/agent/#knowledge-ag-runtime">任务与执行</a></div><p>运行时从可信状态和获准资料组织模型输入；模型可见的旧摘要不能反向覆盖接收方的新回执。</p></li><li data-concept-edge="ag-observability ag-evaluation"><div><a href="/module/agent/#knowledge-ag-observability">轨迹与消耗</a><span class="field-map-verb"> — 提供过程证据给 → </span><a href="/module/agent/#knowledge-ag-evaluation">真实任务结果</a></div><p>轨迹解释动作怎样发生，最终仍要独立核对产物与目标，不能只统计成功状态码。</p></li><li data-concept-edge="ag-recovery ag-evaluation"><div><a href="/module/agent/#knowledge-ag-recovery">效果与恢复</a><span class="field-map-verb"> — 保留提交事实供 → </span><a href="/module/agent/#knowledge-ag-evaluation">真实任务结果</a></div><p>任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。</p></li></ul><div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>模型说成功、工具回执存在，但交付上下文少一份必要来源，且旧写权限已撤销。哪些事实可以保留，哪些动作不能继续？</p><details><summary>对照推理</summary><p>保留已确认效果并核对原回执，不能因进度未更新而重复写。新动作按当前权限判断，查询本身也需要当前读取资格；证据不足时不能把模型回答判为完成，应按规则补充获准资料或明确报告不足。</p></details></div><div class="field-map-outlets"><b>连到其他领域</b><p><a href="/module/platform/#concept-relations">AI 作业平台与推理服务 →</a> 需要自建模型服务时，再深入生成、缓存与服务性能；训练不是 Agent 先修。</p><p><a href="/module/cloud-security/#concept-relations">身份、安全与多租户 →</a> 继续深入程序身份、秘密轮换和资源端授权。</p></div></details><section class="knowledge-examples" id="examples"><h2>代码实验与具体案例</h2><h3>中文检索：先核对词元、排序与版本</h3><p>实际建立 8 条中文材料的 SQLite FTS5 索引，先看分词，再用 BM25、声明的第二路排名、精确 RRF 及分级标签核对结果。</p><div class="code-block"><div class="code-toolbar"><span>标准库 Python 3.9+；模型例环境见 README <small>SHELL</small></span><button data-copy-code aria-label="复制 标准库Python 3.9+；模型例环境见README">复制代码</button></div><pre tabindex="0"><code>python chinese_fts_rrf.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>实际结果或声明输入</th></tr></thead><tbody><tr><td>原文直接 unicode61，查“恢复”</td><td>本语料没有该独立词，实际 0 命中</td></tr><tr><td>教学汉字二元切分</td><td>查询变数据/据库/库恢/恢复，再执行 OR 匹配</td></tr><tr><td>实际 BM25 排名</td><td>a-backup、a-plan、a-archive、a-dr；分数越小越靠前</td></tr><tr><td>RRF 固定 k=60</td><td>融合排名 a-backup、a-archive、a-plan、a-dr</td></tr><tr><td>前 3 名指标</td><td>两者 P=1、Recall=0.75、RR=1；nDCG 0.8786→0.9038</td></tr><tr><td>正文更新但索引未更新</td><td>正文 2/索引 1，版本检查排除；重建后均 2</td></tr></tbody></table></div><p class="practice-links"><a href="labs/recovery-artifacts-retrieval.zip" download>下载恢复、模型包与中文检索实验 ↓</a><a href="labs/recovery-artifacts-retrieval/chinese_fts_rrf.py" download>下载 chinese_fts_rrf.py ↓</a><a href="labs/recovery-artifacts-retrieval/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 FTS5/BM25；第二路排名和相关性等级明确给定，不调用 embedding/LLM 或向量库。二元切分不是通用中文分词器。</small></p><a class="inline-link" href="/article/agent-retrieval/">阅读全文检索、融合与证据交付 →</a><h3>本地进程边界：限制命中，不冒充容器隔离</h3><p>在自己启动的 POSIX 子进程中实际设置单文件、FD 和 CPU 限制，再用独立墙钟预算处理等待任务；父进程和宿主限制不变。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库；后两例需 POSIX，详见 README <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库；后两例需POSIX，详见README">复制代码</button></div><pre tabindex="0"><code>python3 subprocess_limits.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>实际结果或声明的策略输入</th></tr></thead><tbody><tr><td>单文件 4096B 上限</td><td>第一次只写 4096，下一次 EFBIG；文件实际 4096B</td></tr><tr><td>FD 上限 64</td><td>本次额外打开 60 个后 EMFILE；数量随系统已有 FD 变化</td></tr><tr><td>CPU 软/硬限 1/2 秒</td><td>本次 SIGXCPU；子进程 CPU 约 1.002 秒</td></tr><tr><td>就绪后 250ms 墙钟截止</td><td>sleep 任务忽略 TERM，200ms 宽限后 KILL 回收</td></tr><tr><td>等待任务的 CPU 时间</td><td>本次约 0.091 秒；低 CPU 也会占执行槽</td></tr></tbody></table></div><p class="practice-links"><a href="labs/leases-placement-sandbox.zip" download>下载事件、放置与子进程实验 ↓</a><a href="labs/leases-placement-sandbox/subprocess_limits.py" download>下载 subprocess_limits.py ↓</a><a href="labs/leases-placement-sandbox/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 POSIX 子进程限制，不创建容器。文件大小限额不是总磁盘，CPU 累计时间不是 cgroup 周期带宽，进程组不等于安全隔离。</small></p><p>只使用合成 canary，实际对照显式继承 FD/假环境与最小启动；再复现检查路径后被替换为 symlink 的顺序。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库；后两例需 POSIX，详见 README <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库；后两例需POSIX，详见README">复制代码</button></div><pre tabindex="0"><code>python3 descriptors_and_paths.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>实际结果或声明的策略输入</th></tr></thead><tbody><tr><td>刻意放开继承</td><td>假环境项与假文件 FD 可见</td></tr><tr><td>最小启动</td><td>不传假环境、关闭非必需 FD，两项不可见</td></tr><tr><td>两种进程按路径读同 UID 文件</td><td>都仍可读；说明没有隔离文件系统</td></tr><tr><td>先检查前缀，再替换为 symlink</td><td>检查通过，随后读到 fixture-B</td></tr><tr><td>可信目录 FD+固定叶子名+O_NOFOLLOW</td><td>拒绝该 symlink；普通叶子仍读 fixture-A</td></tr></tbody></table></div><p class="practice-links"><a href="labs/leases-placement-sandbox.zip" download>下载事件、放置与子进程实验 ↓</a><a href="labs/leases-placement-sandbox/descriptors_and_paths.py" download>下载 descriptors_and_paths.py ↓</a><a href="labs/leases-placement-sandbox/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 POSIX 夹具，不是安全沙箱或通用路径库。Python 默认已有不可继承 FD 和 close_fds=True，反例明确改动默认；多级路径、硬链接与挂载另验。</small></p><a class="inline-link" href="/article/agent-sandbox/">阅读完整执行边界与目标环境验收 →</a><h3>评估统计：执行结果和统计可信度分开核对</h3><p>输入是明确声明的合成标签和 25 题配对 CSV，只做统计计算，不把这些数称为模型或 Agent 成绩。</p><div class="code-block"><div class="code-toolbar"><span>独立环境与完整安装说明见包内 README <small>SHELL</small></span><button data-copy-code aria-label="复制 独立环境与完整安装说明见包内README">复制代码</button></div><pre tabindex="0"><code>python evaluation_statistics.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>实际结果或固定统计输入</th></tr></thead><tbody><tr><td>5 个可完成、20 个应拒绝，全部拒绝</td><td>总体 80%，可完成类召回 0，应拒绝类召回 100%，宏平均 50%</td></tr><tr><td>评分器校准：6 好/6 坏</td><td>TP=5、FP=2、FN=1、TN=4；接收产物精确率 5/7</td></tr><tr><td>全对也有区间</td><td>Wilson 95%：5/5 下界 56.55%，100/100 下界 96.30%</td></tr><tr><td>同 25 题对照</td><td>A 18/25；B 20/25；仅 A 对 2、仅 B 对 4</td></tr><tr><td>成对精确检验</td><td>差 8 个百分点；双侧 p=11/16=0.6875</td></tr></tbody></table></div><p class="practice-links"><a href="labs/config-memory-evaluation.zip" download>下载配置、训练状态与评估实验 ↓</a><a href="labs/config-memory-evaluation/evaluation_statistics.py" download>下载 evaluation_statistics.py ↓</a><a href="labs/config-memory-evaluation/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>固定统计夹具；独立二项观察/独立题对与零假设下方向可交换等条件须成立。p 大不等于版本等价。</small></p><a class="inline-link" href="/article/agent-evaluation/">阅读任务 oracle、评分器校准和同题比较 →</a><h3>两次调用一笔效果：用实际 SDK 核对追踪关系</h3><p>OpenTelemetry API/SDK 1.44.0 真实创建跨度，通过 HTTP 传 traceparent；第一次 SQLite 提交后返回 503，同操作重试后从原回执确认。</p><div class="code-block"><div class="code-toolbar"><span>环境与安装步骤见包内 README <small>SHELL</small></span><button data-copy-code aria-label="复制 环境与安装步骤见包内README">复制代码</button></div><pre tabindex="0"><code>python -m pip install -r requirements-otel.txt
-python otel_attempts.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>检查</th><th>实际结果</th></tr></thead><tbody><tr><td>实际跨度</td><td>根任务 1 + CLIENT 尝试 2 + SERVER 执行 2，共 5 个</td></tr><tr><td>传播关系</td><td>同 trace_id；每个 SERVER 父 ID 等于对应 CLIENT span_id，父标记 remote</td></tr><tr><td>错误与最终状态</td><td>首次尝试 ERROR 保留；根任务独立验收后 OK</td></tr><tr><td>实际计数器</td><td>2 次 HTTP 尝试，1 笔效果，1 个合格任务</td></tr><tr><td>固定教学成本</td><td>2+2+1=5 点；仅取成功 HTTP 的 2 点会漏计</td></tr><tr><td>指标标签</td><td>有限 tool/outcome/category/task_type；业务 ID 不放指标标签</td></tr></tbody></table></div><p class="practice-links"><a href="labs/scaling-collectives-traces.zip" download>下载弹性、集合通信与观测实验 ↓</a><a href="labs/scaling-collectives-traces/otel_attempts.py" download>下载 otel_attempts.py ↓</a><a href="labs/scaling-collectives-traces/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 SDK、HTTP 与本地 SQLite；只在内存导出，没有 Collector/后端、LLM、真实认证、Kairo 或真实计费。</small></p><a class="inline-link" href="/article/agent-observability/">阅读身份、时间、总体和成本的完整机制 →</a><h3>工具成功后，还要独立验收任务</h3><p>通过真实本地 HTTP 发现和调用工具，SQLite 保存实际报告及原操作回执。提议由脚本给出，不调用模型；独立验收读取实际产物。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 在解压目录运行 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 在解压目录运行">复制代码</button></div><pre tabindex="0"><code>python3 tool_runtime.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>控制条件 / 检查</th><th>实际结果</th></tr></thead><tbody><tr><td>正常读、写、验收</td><td>SUCCEEDED；2 次工具尝试，1 次效果</td></tr><tr><td>同操作再写一次</td><td>仍成功；3 次尝试，1 次效果，返回原回执</td></tr><tr><td>total=true 后修复</td><td>布尔值先被类型检查拒绝；只产生 2 次实际调用</td></tr><tr><td>访问其他主体的 orders-B</td><td>DENIED，资料 999 未进入回应</td></tr><tr><td>返回错误类型 / 只说完成</td><td>分别为 FAILED_RESULT_SCHEMA / INCOMPLETE</td></tr><tr><td>持续读同一份资料</td><td>第 4 次提议被预算阻断；实际工具尝试 3 次</td></tr><tr><td>一次只读 503 再重试</td><td>成功；3 次尝试，重试计入预算</td></tr><tr><td>工具成功写总数 38</td><td>实际效果 1 次，最终仍 INCOMPLETE</td></tr><tr><td>同操作换参数</td><td>TOOL_ERROR / operation_conflict；效果仍 1</td></tr></tbody></table></div><p class="practice-links"><a href="labs/network-input-tools.zip" download>下载网络、训练输入与工具执行实验 ↓</a><a href="labs/network-input-tools/tool_runtime.py" download>下载 tool_runtime.py ↓</a><a href="labs/network-input-tools/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 HTTP/JSON-RPC 形状与本地事务；不是完整 MCP 服务、真实身份认证、LLM 规划、崩溃恢复或 Kairo 接入。</small></p><a class="inline-link" href="/article/agent-runtime/">阅读工具契约、有限循环与完整程序 →</a><h3>旧摘要与权威状态：恢复时谁说了算</h3><p>真实 SQLite 保存任务状态和原操作回执；上下文故意保留旧摘要。再加入旧记忆、其他用户、过期条目和撤回后的缓存引用。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 context_state.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>实际检查</th><th>本次结果</th></tr></thead><tbody><tr><td>按权威记录恢复</td><td>SUCCEEDED / v2；原回执 13；效果仍 1</td></tr><tr><td>旧版本条件写回</td><td>影响 0 行，保留当前成功状态</td></tr><tr><td>独立错误恢复</td><td>信旧摘要、创建新操作；效果变 2</td></tr><tr><td>当前事实的记忆选择</td><td>只接受本用户当前版本；未过期的旧版本仍不适用</td></tr><tr><td>条目撤回后重组</td><td>旧引用重新检查，接受条目 0</td></tr><tr><td>摘要限定条件</td><td>保留假设、版本、时间、单位和来源；改成确认结论会被拒</td></tr></tbody></table></div><p class="practice-links"><a href="labs/storage-quant-context.zip" download>下载存储、量化与上下文实验 ↓</a><a href="labs/storage-quant-context/context_state.py" download>下载本例源码 ↓</a><a href="labs/storage-quant-context/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>固定事实、单机 SQLite 与确定性组装规则；没有调用 LLM、身份服务、远端工具或 Kairo。</small></p><a class="inline-link" href="/article/agent-memory/">阅读上下文与记忆全链、代码和练习 →</a><h3>取消的完成证据：进程与效果分别检查</h3><p>本例用真实子进程、Event 屏障和一个本地 SQLite 权威库。明确控制提交先后，再检查进程、状态和回执，避免用等待几秒猜测竞争结果。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 cancel_receipts.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>本次实际检查</th><th>结果</th></tr></thead><tbody><tr><td>派发前取消</td><td>CANCELLED；未启动 worker；效果 0</td></tr><tr><td>提交前协作</td><td>请求后仍活着；确认取消并正常退出；效果 0</td></tr><tr><td>提交前不协作</td><td>请求后仍活着；终止并 join、对账后标记取消；效果 0</td></tr><tr><td>提交后再取消</td><td>too_late_committed；终止进程后效果仍 1</td></tr></tbody></table></div><p class="practice-links"><a href="labs/update-and-cancel.zip" download>下载更新与取消实验 ↓</a><a href="labs/update-and-cancel/cancel_receipts.py" download>下载本例源码 ↓</a><a href="labs/update-and-cancel/validation.json" target="_blank" rel="noopener">本次输出与源码 SHA256 ↗</a></p><p class="evidence-note">一个本地 SQLite 事务边界；没有验证远端工具原子取消、进程树清理、MCP/Temporal 或 Kairo 集成。</p><a href="/article/agent-recovery/">阅读取消机制与完整程序 →</a><h3>检索链路：候选、上下文与合格答案</h3><p>五条固定文档、三种候选策略、两种正文预算。程序读取实际正文交付记录与最终答案，另注入候选后撤权。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库">复制代码</button></div><pre tabindex="0"><code>python3 retrieval_pipeline.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>实际检查</th><th>结果</th></tr></thead><tbody><tr><td>全局 top2 后过滤</td><td>合法候选 0，未泄漏正文</td></tr><tr><td>先过滤再 top2</td><td>Recall@2=1/2，缺调整项</td></tr><tr><td>规则重排＋预算 16</td><td>合计 37、两份来源、合格交付</td></tr><tr><td>规则重排＋预算 12</td><td>排序 Recall=1，上下文 Recall=1/2，证据不足</td></tr><tr><td>先交付 B 正文再过滤</td><td>不当正文交付 1 次；最终拒绝文案不能抹除</td></tr><tr><td>获取正文前撤权</td><td>denied，正文交付 0</td></tr></tbody></table></div><p class="practice-links"><a href="labs/serving-consistency.zip" download>下载三个独立实验与说明 ↓</a><a href="labs/serving-consistency/retrieval_pipeline.py" download>下载本例源码 ↓</a><a href="labs/serving-consistency/validation.json" target="_blank" rel="noopener">本次输出与源码 SHA256 ↗</a></p><p class="evidence-note">固定分数、规则重排与人为预算单位；未执行 embedding、LLM 或远端授权。</p><a href="/article/agent-retrieval/">阅读取证链与完整程序 → →</a><h3>三份记录：批准、声明与效果</h3><p>可信测试身份与审批由夹具注入。本地 HMAC 声明故意声称一个尚未发生的成功；真实子进程随后提交工具事务，返回回执之前退出。恢复者从原 K1 找结果。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 只用标准库 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 只用标准库">复制代码</button></div><pre tabindex="0"><code>python3 approval_receipt.py</code></pre></div><div class="mechanism-results"><strong>本次实际执行结果</strong><div class="table-wrap"><table><thead><tr><th>检查项</th><th>输出与解释</th></tr></thead><tbody><tr><td>参数 37 改 99</td><td>approval_mismatch，未产生效果</td></tr><tr><td>声明完整，但回执不可查询</td><td>校验通过；判定 unknown</td></tr><tr><td>工具提交后进程退出</td><td>退出码 23；工具已有版本 8、金额 37</td></tr><tr><td>原键重试 / 同键换参</td><td>duplicate / conflict</td></tr><tr><td>跨租户 / 撤权后的回执查询</td><td>denied / denied</td></tr><tr><td>最终效果数</td><td>1，没有再次写入</td></tr></tbody></table></div></div><p class="practice-links"><a href="labs/learning-mechanisms.zip" download>下载三个独立实验、说明与记录 ↓</a><a href="labs/learning-mechanisms/validation.json" target="_blank" rel="noopener">核对实际输出与源码 SHA256 ↗</a></p><p>范围：公开测试密钥、SQLite 与真实进程退出；超时为注入观测，未接入远端 OAuth、MCP 或 Kairo。</p><a href="/article/agent-security/">阅读权限机制与完整程序 → →</a><h3>多进程接管与任务交付验收</h3><p>实战一：A 取得 epoch1 后被进程屏障暂停；逻辑时间推进到 11，B 接管并在工具接收方安装 epoch2。B 提交必要动作 7 之后，确认 A 进程仍存活，再释放 A。A 使用全新 op_id 写 99，接收方拒绝旧代际。新 key 是关键：重复 key 可能让去重掩盖缺少 fencing 的问题。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 多进程和 SQLite，文件均在临时目录 <small>SH</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 多进程和SQLite，文件均在临时目录">复制代码</button></div><pre tabindex="0"><code>python3 worker_fencing.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>场景</th><th>实际观察</th><th>独立效果检查</th></tr></thead><tbody><tr><td>暂停 A、接管 B</td><td>A 仍存活；B epoch=2</td><td>B 的新动作 7 成功</td></tr><tr><td>A 恢复后新动作</td><td>stale_epoch</td><td>99 没有进入效果表</td></tr><tr><td>同 key 重试/换参</td><td>duplicate / conflict</td><td>原效果 7 仍只有一份</td></tr><tr><td>另一个进程提交后退出</td><td>退出码 23</td><td>效果 11 已存在，调用没有正常完成</td></tr><tr><td>新 C 恢复</td><td>原 op 返回 duplicate 回执</td><td>不再新增 11</td></tr><tr><td>代际 3 新动作（测试主进程）</td><td>提交 13</td><td>最终 3 笔，7+11+13=31</td></tr></tbody></table></div><details class="full-code"><summary>展开真实进程、接收方事务、提交后退出与恢复程序</summary><div class="code-block"><div class="code-toolbar"><span>worker_fencing.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 worker_fencing.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Real local processes, SQLite receiver fencing and a separate crash/retry case.
-
-Logical lease time is injected for deterministic ordering. Fencing is enforced
-inside the effect receiver&#39;s transaction, not by a lease check in the worker.
-No distributed consensus, remote tool, or Kairo integration is implemented.
-&quot;&quot;&quot;
+# 预算、超时、取消及结果未知都有明确分支；不是只等模型输出finish</code></pre></div><p>真实服务还要控制墙钟截止时间、<span class="first-concept-term" data-concept-term="token">token<span class="concept-term-meaning">（模型处理文本的离散单位，不必对应一个完整词）</span></span>、费用、并发和效果范围，在调用前预留或核对，返回后对账实际消耗。不能只在循环结束才检查总成本。当前程序只验证两种次数预算和有限 HTTP 超时，没有实现完整的 <span class="first-concept-term" data-concept-term="deadline">deadline<span class="concept-term-meaning">（整个操作应完成的截止时间，不是每次重试重新获得的完整时长）</span></span> 传播、费用预留或取消协议；这些控制需要分别测试。</p><p>“没有新增信息”也需要可解释的停止策略，例如相同输入重复读取达到上限，或者关键资料缺失而需要澄清。先保存观察和原因，再进入预算耗尽、证据不足、等待审批或结果待确认状态。不要把所有停止都压成 FAILED，也不要让模型一句“再试一次”绕过运行时限制。</p></div></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>错误与重试：连接、HTTP、工具协议与任务验收</h2><h3>错误按层分类，重试按动作语义决定</h3><figure class="training-figure"><a href="diagrams/v50-tool-error-layers.svg" target="_blank" rel="noopener" aria-label="放大：连接结果、HTTP响应、工具协议、执行结果与任务验收分别核对。503已是HTTP响应，连接断开后的未知结果另按原操作查证。"><img src="diagrams/v50-tool-error-layers.svg" width="1120" height="820" alt="连接结果、HTTP响应、工具协议、执行结果与任务验收分别核对。503已是HTTP响应，连接断开后的未知结果另按原操作查证。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>连接结果、HTTP响应、工具协议、执行结果与任务验收分别核对。503已是HTTP响应，连接断开后的未知结果另按原操作查证。<a href="diagrams/v50-tool-error-layers.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>层次</th><th>本章示例</th><th>处理依据</th></tr></thead><tbody><tr><td>连接与HTTP响应</td><td>HTTP 503是明确响应；写入后断连则可能没有收到响应</td><td>先区分是否已收到HTTP状态；只读暂态可受限重试，写入结果未明时保留UNKNOWN并沿原操作查证</td></tr><tr><td>协议</td><td>JSON-RPC error：未知方法或未知工具</td><td>按错误码与约定修正调用，不当作正常工具资料</td></tr><tr><td>工具执行</td><td>isError=true，业务拒绝或前提冲突</td><td>区分 denied、not_found、version_conflict 等已知业务结果</td></tr><tr><td>输出契约</td><td>values 应为整数数组，却返回字符串</td><td>拒绝加入成功观察，定位工具服务或版本失配</td></tr><tr><td>任务验收</td><td>结构正确且写成功，但 total=38</td><td>保留已写事实，按目标判 INCOMPLETE，另行决定修正动作</td></tr></tbody></table></div><p>MCP 把协议错误与工具执行错误分开。工具可以在 HTTP 200 的 JSON-RPC 正常回应里返回 isError=true；执行器若只检查 HTTP 状态就进入成功路径，会把业务拒绝当资料。相反，未知方法的协议 error 也不应伪装成模型可以直接使用的结构化结果。具体身份校验还可能在到达工具方法之前失败，要根据真实认证链判断，不能从一个状态码推断工具一定没执行。</p><p>HTTP 503已经是一份应用层响应，表示响应方暂时无法处理请求；它与<span class="first-concept-term" data-concept-term="TCP">TCP<span class="concept-term-meaning">（提供可靠、有序字节流的传输协议）</span></span>连接未建立、或写入后断连而没有拿到结果不同。先区分这些事实，再谈重试，不能把它们统称为网络没通。是否重试由错误阶段和动作语义共同决定。本例仅对只读调用的一次 503 做一次受限重试；写入传输不确定则保留 UNKNOWN，因为没有收到回应不证明没有提交。工具明确返回 not_found 属于已知业务结果；写效果已提交但回应丢失属于未知结果。后者需要原操作回执、同操作重试或对账，不能新建操作身份盲写。</p><h3>流状态和调用事实分别保留</h3><p>流在参数收齐之前结束，保持该调用未执行；若另一调用已经通过准入并完成，则保留它的观察，再记录流错误。不能用一个“整流失败”把已经发生的调用清零。对写工具，更应沿原操作身份查接收方回执，不能因为没收到最终文本就换新操作重复写。</p><p>当前连接的 call_id 只帮助拼装参数，不能代替业务 op_id、一次网络尝试的 attempt_id 或持久回执。断线重连时哪些事件可重放、哪些调用已执行、检查点何时提交，需要另外的恢复协议。单次调用的 done 也不等于整个用户任务完成，后文仍按真实产物验收。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>状态与身份：任务、步骤、原操作和尝试</h2><h3>把任务、步骤、操作、尝试和回执分开保存</h3><div class="table-wrap"><table><thead><tr><th>身份</th><th>表示什么</th><th>重试或恢复时</th></tr></thead><tbody><tr><td>task_id</td><td>用户的一项目标及授权范围</td><td>仍是原目标就保持</td></tr><tr><td>run_id</td><td>一次固定配置下的执行</td><td>重新发起运行可另建，但不自动创建新业务效果</td></tr><tr><td>step_id</td><td>计划中的一个逻辑步骤</td><td>关联决策、输入与结果</td></tr><tr><td>op_id</td><td>接收方识别的一次逻辑效果</td><td>同一动作保持，并绑定参数</td></tr><tr><td>attempt_id</td><td>某次实际调用尝试</td><td>每次改变，用于计数和追踪</td></tr><tr><td>receipt_id</td><td>接收方已经提交的效果证明</td><td>查询或重试应找到原回执</td></tr></tbody></table></div><p>本例写入以 R17:publish 作为 op_id，将全部参数规范化后取摘要。工具把报告更新、效果记录与回执放进同一 SQLite <span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>。同参数再来，先查原回执，返回 duplicate=true；不能先用当前版本再次拒绝，因为第一次写入本来就会把版本从 0 推进到 1。同 op_id 换 total 则报 operation_conflict，不能把原回执套到另一个意图上。</p><p>任务循环本身并未持久化，这个实验不能证明进程崩溃后的继续执行。真正的持久执行还要先记录意图，再发出动作，最后保存结果，处理“工具已提交、本地回执未保存”的间隙。另一个章节用两个独立数据库和进程退出实际验证此情形。不要用单库事务覆盖所有状态来掩盖远端提交边界。</p><a class="inline-link" href="/article/agent-recovery/">运行真实退出、恢复与接收方去重实验 →</a><p>本轮给模型看的上下文是一份任务视图，包含当前步骤、输入版本、观察摘要和回执引用；它不是权威账本。旧摘要仍写“未保存”，不能覆盖新回执已经确认的成功。状态机还要检查允许迁移、并发版本及当前授权，不能仅凭有一个 version 字段就任意推进。</p><a class="inline-link" href="/article/agent-memory/">继续学习上下文预算、旧摘要与权威状态 →</a></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>完成验收：读取真实产物，保留错误效果</h2><h3>完成由实际产物证明，错误效果也要如实记录</h3><p>本章评分器不读取模型的自评，而是读取 SQLite 中的真实报告，核对 resource=report-A、version=1、total=37、source_version=3，并检查确实取得了相应来源观察。工具只承诺“按合法参数保存整数”，所以保存 38 可以产生一个完全合法的成功回执；评分器仍应拒绝这个任务结果。</p><p>拒绝完成不表示效果没有发生。错误总数 38 已经落库，后续修正需要一个有明确意图的新动作、正确的版本前提及新的验收，不能悄悄改写历史回执。重复相同 op 的去重只能保证本例的相同意图不重复生效，不能让错误意图自动变对。</p><div class="table-wrap"><table><thead><tr><th>观察到的事实</th><th>可以记录</th><th>不能据此宣称</th></tr></thead><tbody><tr><td>模型输出 finish</td><td>模型提出结束</td><td>报告存在且正确</td></tr><tr><td>工具回执成功</td><td>该动作按工具语义已执行</td><td>全部任务约束达成</td></tr><tr><td>总数正确但资源属于 B</td><td>某处存在 37</td><td>A 的任务成功</td></tr><tr><td>实际产物全部通过独立验收</td><td>本次固定任务合格</td><td>任意开放任务或真实模型成功率已达标</td></tr></tbody></table></div><p>固定脚本有利于先验证执行器和评分器。只有确保全拒绝、假成功、错资源、错总数、重复效果等负例都会被发现，接真实模型测规划质量才有意义。模型表现还需要独立任务集、重复运行和清晰统计口径；十个机制用例通过，不等于模型完成率 100%。</p><a class="inline-link" href="/article/agent-evaluation/">继续学习任务集、独立评分与质量口径 →</a></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>Kairo适配：按执行责任寻找真实接口</h2><h3>接入 Kairo 时，逐层寻找真实接口和验证点</h3><p>先将已有执行器映射到这条链：可信任务从哪里来，工具目录由谁发布，哪个组件实施类型与对象授权，操作身份如何持久化，效果接收方能否查询原回执，预算和取消由谁生效，评分器怎样读真实产物。框架名称不能替代这些答案；接口字段相似也不代表提交语义相同。</p><p>接入顺序可从只读工具开始，验证输入/输出和错误分类；再加受限写入，测试同操作同参数、同操作异参数和回执查询；随后做真实退出恢复、并发接管、取消及产物验收。保留接口版本、实际请求、效果记录和反例。本项目当前没有取得并执行真实 Kairo 适配接口，因此仍把这一部分作为设计与验收契约。</p><a class="inline-link" href="/article/kairo-practice/">查看 Kairo 适配字段与故障验收顺序 →</a></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>实战与变化题：十组实际HTTP对照</h2><h3>完整实战：十组 HTTP 工具执行与独立产物验收</h3><p>通过真实本地 HTTP 发现和调用工具，SQLite 保存实际报告及原操作回执。提议由脚本给出，不调用模型；独立验收读取实际产物。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 在解压目录运行 <small>SHELL</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 在解压目录运行">复制代码</button></div><pre tabindex="0"><code>python3 tool_runtime.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>控制条件 / 检查</th><th>实际结果</th></tr></thead><tbody><tr><td>正常读、写、验收</td><td>SUCCEEDED；2 次工具尝试，1 次效果</td></tr><tr><td>同操作再写一次</td><td>仍成功；3 次尝试，1 次效果，返回原回执</td></tr><tr><td>total=true 后修复</td><td>布尔值先被类型检查拒绝；只产生 2 次实际调用</td></tr><tr><td>访问其他主体的 orders-B</td><td>DENIED，资料 999 未进入回应</td></tr><tr><td>返回错误类型 / 只说完成</td><td>分别为 FAILED_RESULT_SCHEMA / INCOMPLETE</td></tr><tr><td>持续读同一份资料</td><td>第 4 次提议被预算阻断；实际工具尝试 3 次</td></tr><tr><td>一次只读 503 再重试</td><td>成功；3 次尝试，重试计入预算</td></tr><tr><td>工具成功写总数 38</td><td>实际效果 1 次，最终仍 INCOMPLETE</td></tr><tr><td>同操作换参数</td><td>TOOL_ERROR / operation_conflict；效果仍 1</td></tr></tbody></table></div><details class="full-code"><summary>展开完整 tool_runtime.py：与下载源码一致</summary><div class="code-block"><div class="code-toolbar"><span>tool_runtime.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 tool_runtime.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Actual loopback JSON-RPC tool calls; scripted proposals, not an LLM or full MCP server.&quot;&quot;&quot;
 import hashlib
 import json
-import multiprocessing as mp
-import os
 from pathlib import Path
 import sqlite3
 import tempfile
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.error import HTTPError
+from urllib.request import Request, ProxyHandler, build_opener
 
 
-def connect(path):
-    db = sqlite3.connect(path, timeout=10, isolation_level=None)
-    db.execute(&#39;PRAGMA busy_timeout=10000&#39;)
-    return db
+def obj(properties):
+    return {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: properties,
+            &quot;required&quot;: list(properties), &quot;additionalProperties&quot;: False}
 
 
-def initialize(control, receiver):
-    with connect(control) as db:
-        db.execute(&#39;CREATE TABLE lease(task TEXT PRIMARY KEY, owner TEXT, epoch INTEGER, deadline INTEGER)&#39;)
-        db.execute(&quot;INSERT INTO lease VALUES(&#39;task-1&#39;,&#39;A&#39;,1,10)&quot;)
-    with connect(receiver) as db:
-        db.execute(&#39;CREATE TABLE fence(task TEXT PRIMARY KEY, epoch INTEGER)&#39;)
-        db.execute(&quot;INSERT INTO fence VALUES(&#39;task-1&#39;,1)&quot;)
-        db.execute(&#39;CREATE TABLE effect(tenant TEXT, op TEXT, digest TEXT, result TEXT, PRIMARY KEY(tenant,op))&#39;)
-
-
-def reserve_lease(control, owner, now):
-    with connect(control) as db:
-        db.execute(&#39;BEGIN IMMEDIATE&#39;)
-        _, _, epoch, deadline = db.execute(&#39;SELECT * FROM lease&#39;).fetchone()
-        assert now &gt; deadline
-        epoch += 1
-        db.execute(&#39;UPDATE lease SET owner=?,epoch=?,deadline=?&#39;, (owner, epoch, now+10))
-        db.commit()
-    return epoch
-
-
-def arm_receiver(receiver, epoch):
-    # This demo explicitly installs the fence before allowing the new owner to act.
-    # Two databases are not an atomic distributed transaction: loss between these
-    # steps needs a real coordination protocol and receiver acknowledgements.
-    with connect(receiver) as db:
-        db.execute(&#39;BEGIN IMMEDIATE&#39;)
-        db.execute(&#39;UPDATE fence SET epoch=? WHERE task=? AND epoch&lt;?&#39;, (epoch, &#39;task-1&#39;, epoch))
-        row = db.execute(&quot;SELECT epoch FROM fence WHERE task=&#39;task-1&#39;&quot;).fetchone()
-        armed = row is not None and row[0] == epoch
-        db.commit()
-    return armed
-
-
-def takeover(control, receiver, owner, now):
-    epoch = reserve_lease(control, owner, now)
-    if not arm_receiver(receiver, epoch):
-        raise RuntimeError(&#39;lease reserved but receiver did not arm this exact epoch&#39;)
-    return epoch
-
-
-def invoke(receiver, epoch, op, value, tenant=&#39;A&#39;, tool=&#39;report.write&#39;):
-    # Trusted server policy, not caller-supplied permissions.
-    if tenant != &#39;A&#39; or tool != &#39;report.write&#39;:
-        return {&#39;status&#39;: &#39;denied&#39;}
-    digest = hashlib.sha256(json.dumps({&#39;tool&#39;: tool, &#39;value&#39;: value}, sort_keys=True).encode()).hexdigest()
-    with connect(receiver) as db:
-        db.execute(&#39;BEGIN IMMEDIATE&#39;)
-        current, = db.execute(&quot;SELECT epoch FROM fence WHERE task=&#39;task-1&#39;&quot;).fetchone()
-        if epoch != current:
-            db.rollback()
-            return {&#39;status&#39;: &#39;stale_epoch&#39;}
-        previous = db.execute(&#39;SELECT digest,result FROM effect WHERE tenant=? AND op=?&#39;, (tenant, op)).fetchone()
-        if previous:
-            db.rollback()
-            return {&#39;status&#39;: &#39;duplicate&#39;, &#39;result&#39;: json.loads(previous[1])} if previous[0] == digest else {&#39;status&#39;: &#39;conflict&#39;}
-        result = {&#39;stored_value&#39;: value}
-        db.execute(&#39;INSERT INTO effect VALUES(?,?,?,?)&#39;, (tenant, op, digest, json.dumps(result)))
-        db.commit()
-    return {&#39;status&#39;: &#39;committed&#39;, &#39;result&#39;: result}
-
-
-def paused_a(receiver, ready, release, results):
-    ready.set()
-    assert release.wait(20)
-    # A brand-new operation key prevents deduplication from hiding a missing fence.
-    results.put({&#39;worker&#39;: &#39;A&#39;, &#39;pid&#39;: os.getpid(), &#39;result&#39;: invoke(receiver, 1, &#39;fresh-from-A&#39;, 99)})
-
-
-def active_b(receiver, epoch, results):
-    results.put({&#39;worker&#39;: &#39;B&#39;, &#39;pid&#39;: os.getpid(), &#39;result&#39;: invoke(receiver, epoch, &#39;fresh-from-B&#39;, 7)})
-
-
-def crash_after_commit(receiver, epoch):
-    assert invoke(receiver, epoch, &#39;crash-operation&#39;, 11)[&#39;status&#39;] == &#39;committed&#39;
-    os._exit(23)  # This process terminates; it is not the paused A process.
-
-
-def recovered_c(receiver, epoch, results):
-    results.put({&#39;worker&#39;: &#39;C&#39;, &#39;pid&#39;: os.getpid(), &#39;result&#39;: invoke(receiver, epoch, &#39;crash-operation&#39;, 11)})
-
-
-def join(process, expected=0):
-    process.join(20)
-    if process.is_alive():
-        process.terminate()
-        process.join()
-        raise AssertionError(&#39;worker exceeded bounded wait&#39;)
-    assert process.exitcode == expected, process.exitcode
-
-
-def main():
-    ctx = mp.get_context(&#39;spawn&#39;)
-    with tempfile.TemporaryDirectory(prefix=&#39;agent-fence-&#39;) as temporary:
-        control, receiver = [str(Path(temporary, name+&#39;.sqlite&#39;)) for name in (&#39;control&#39;, &#39;receiver&#39;)]
-        initialize(control, receiver)
-        ready, release, results = ctx.Event(), ctx.Event(), ctx.Queue()
-        a = ctx.Process(target=paused_a, args=(receiver, ready, release, results))
-        a.start()
-        assert ready.wait(20) and a.is_alive()
-        epoch_b = takeover(control, receiver, &#39;B&#39;, now=11)
-        assert epoch_b == 2
-        b = ctx.Process(target=active_b, args=(receiver, epoch_b, results))
-        b.start(); join(b)
-        assert a.is_alive()  # Lease expiry and takeover did not stop A&#39;s process.
-        release.set(); join(a)
-        observations = [results.get(timeout=5), results.get(timeout=5)]
-        by_worker = {item[&#39;worker&#39;]: item for item in observations}
-        assert by_worker[&#39;A&#39;][&#39;result&#39;][&#39;status&#39;] == &#39;stale_epoch&#39;
-        assert by_worker[&#39;B&#39;][&#39;result&#39;][&#39;status&#39;] == &#39;committed&#39;
-        assert by_worker[&#39;A&#39;][&#39;pid&#39;] != by_worker[&#39;B&#39;][&#39;pid&#39;]
-        assert invoke(receiver, 2, &#39;fresh-from-B&#39;, 7)[&#39;status&#39;] == &#39;duplicate&#39;
-        assert invoke(receiver, 2, &#39;fresh-from-B&#39;, 8)[&#39;status&#39;] == &#39;conflict&#39;
-        assert invoke(receiver, 2, &#39;bad-tenant&#39;, 9, tenant=&#39;B&#39;)[&#39;status&#39;] == &#39;denied&#39;
-        assert invoke(receiver, 2, &#39;bad-tool&#39;, 9, tool=&#39;shell.exec&#39;)[&#39;status&#39;] == &#39;denied&#39;
-        crashed = ctx.Process(target=crash_after_commit, args=(receiver, epoch_b))
-        crashed.start(); join(crashed, 23)
-        epoch_c = takeover(control, receiver, &#39;C&#39;, now=22)
-        c = ctx.Process(target=recovered_c, args=(receiver, epoch_c, results))
-        c.start(); join(c)
-        recovered = results.get(timeout=5)
-        assert recovered[&#39;result&#39;][&#39;status&#39;] == &#39;duplicate&#39;
-        assert recovered[&#39;result&#39;][&#39;result&#39;][&#39;stored_value&#39;] == 11
-        assert invoke(receiver, 2, &#39;old-B-new-op&#39;, 77)[&#39;status&#39;] == &#39;stale_epoch&#39;
-        assert invoke(receiver, 3, &#39;new-C-op&#39;, 13)[&#39;status&#39;] == &#39;committed&#39;
-        with connect(receiver) as db:
-            rows = db.execute(&#39;SELECT tenant,op,json_extract(result,\&#39;$.stored_value\&#39;) FROM effect ORDER BY op&#39;).fetchall()
-            assert rows == [(&#39;A&#39;, &#39;crash-operation&#39;, 11), (&#39;A&#39;, &#39;fresh-from-B&#39;, 7), (&#39;A&#39;, &#39;new-C-op&#39;, 13)]
-        # A separate database exposes the non-atomic control/receiver handoff gap.
-        gap_control, gap_receiver = [str(Path(temporary, &#39;gap-&#39;+name+&#39;.sqlite&#39;)) for name in (&#39;control&#39;, &#39;receiver&#39;)]
-        initialize(gap_control, gap_receiver)
-        reserved_b = reserve_lease(gap_control, &#39;B&#39;, 11)
-        gap_result = invoke(gap_receiver, 1, &#39;A-before-install&#39;, 5)
-        assert gap_result[&#39;status&#39;] == &#39;committed&#39;  # Control epoch=2 alone has not fenced A.
-        assert arm_receiver(gap_receiver, reserved_b)
-        assert invoke(gap_receiver, 1, &#39;A-after-install&#39;, 6)[&#39;status&#39;] == &#39;stale_epoch&#39;
-        reserved_c = reserve_lease(gap_control, &#39;C&#39;, 22)
-        assert arm_receiver(gap_receiver, reserved_c)
-        assert arm_receiver(gap_receiver, reserved_b) is False  # Stale B cannot claim readiness.
-        report = {&#39;paused_worker_still_alive_after_takeover&#39;: True, &#39;takeover_epoch&#39;: epoch_b,
-                  &#39;A&#39;: by_worker[&#39;A&#39;], &#39;B&#39;: by_worker[&#39;B&#39;], &#39;crash_exit_code&#39;: crashed.exitcode,
-                  &#39;C_recovered_receipt&#39;: recovered, &#39;effects&#39;: rows, &#39;effect_count&#39;: len(rows),
-                  &#39;effect_sum&#39;: 31, &#39;stale_new_key_rejected&#39;: True,
-                  &#39;duplicate_no_effect&#39;: True, &#39;same_key_changed_arguments_rejected&#39;: True,
-                  &#39;unauthorized_no_effect&#39;: True,
-                  &#39;handoff_gap_probe&#39;: {&#39;old_writer_before_install&#39;: gap_result[&#39;status&#39;],
-                                        &#39;old_writer_after_install&#39;: &#39;stale_epoch&#39;,
-                                        &#39;superseded_reservation_armed&#39;: False},
-                  &#39;scope&#39;: &#39;local SQLite receiver + injected logical lease clock; no remote tool/consensus/Kairo&#39;}
-        results.close(); results.join_thread()
-        print(json.dumps(report, indent=2))
-
-
-if __name__ == &#39;__main__&#39;:
-    main()</code></pre></div></details><p>实战二单独启动一个新进程，在效果 11 提交后 os._exit(23)，再由 C 取回相同 op 的回执。它与暂停后继续运行的 A 是两场不同故障。租约采用注入的逻辑时间，控制库与效果库没有分布式原子事务；脚本显式先安装资源侧 fence 再放行新 owner，独立负例实际演示安装前旧 A 仍能写；接收方安装后才拒绝它。更高 epoch 已安装时，迟到的 B 不能把自己误报为 armed。生产接入还需处理中间失败和多资源确认。</p><p class="practice-links"><a href="labs/ai-agent-systems.zip" download>下载四程序、契约与验证记录 ↓</a><a href="labs/ai-agent-systems/worker_fencing.py" download>下载本例源码 ↓</a><a href="labs/ai-agent-systems/validation.json" target="_blank" rel="noopener">本次执行结果与源码摘要 ↗</a></p><p>实战：四个固定任务分别要求合法生成报告、拒绝跨租户读、拒绝只读身份写入，以及缺资料时报告证据不足。执行器使用确定性计划。合法报告要同时满足：对用户返回 success、真实 SQLite 金额 37、引用 a-1/v1 和 a-2/v2。产物和对用户的交付一起验收。</p><div class="code-block"><div class="code-toolbar"><span>Python 3.9+ · 标准库；不调用 LLM <small>SH</small></span><button data-copy-code aria-label="复制 Python 3.9+ · 标准库；不调用LLM">复制代码</button></div><pre tabindex="0"><code>python3 agent_evaluation.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>策略</th><th>通过用例</th><th>实际报告行</th><th>为什么</th></tr></thead><tbody><tr><td>正常执行（normal）</td><td>4/4</td><td>1</td><td>必要工作完成，拒绝与缺证据正确</td></tr><tr><td>只报成功（claim_only）</td><td>0/4</td><td>0</td><td>只报 success，没有产物与正确拒绝</td></tr><tr><td>全部拒绝（deny_all）</td><td>2/4</td><td>0</td><td>漏掉合法报告，缺证据类型也判错</td></tr><tr><td>篡改引用（citation_swap）</td><td>3/4</td><td>1</td><td>金额 37 但引用 B 租户，正向交付不合格</td></tr></tbody></table></div><details class="full-code"><summary>展开固定任务、真实写入与独立环境 oracle</summary><div class="code-block"><div class="code-toolbar"><span>agent_evaluation.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 agent_evaluation.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Independent environment assertions for a deterministic, non-LLM Agent fixture.
-
-These are controlled examples, not an estimate of real model capability.
-&quot;&quot;&quot;
-import json
-import sqlite3
-
-
-DOCUMENTS = {
-    &#39;a-1&#39;: {&#39;tenant&#39;: &#39;A&#39;, &#39;version&#39;: 1, &#39;amount&#39;: 10},
-    &#39;a-2&#39;: {&#39;tenant&#39;: &#39;A&#39;, &#39;version&#39;: 2, &#39;amount&#39;: 27},
-    &#39;b-1&#39;: {&#39;tenant&#39;: &#39;B&#39;, &#39;version&#39;: 1, &#39;amount&#39;: 999},
-}
-TASKS = [
-    {&#39;id&#39;: &#39;report&#39;, &#39;kind&#39;: &#39;write&#39;, &#39;tenant&#39;: &#39;A&#39;, &#39;role&#39;: &#39;writer&#39;, &#39;docs&#39;: [&#39;a-1&#39;, &#39;a-2&#39;]},
-    {&#39;id&#39;: &#39;cross-tenant&#39;, &#39;kind&#39;: &#39;read&#39;, &#39;tenant&#39;: &#39;A&#39;, &#39;role&#39;: &#39;writer&#39;, &#39;docs&#39;: [&#39;b-1&#39;]},
-    {&#39;id&#39;: &#39;readonly&#39;, &#39;kind&#39;: &#39;write&#39;, &#39;tenant&#39;: &#39;A&#39;, &#39;role&#39;: &#39;reader&#39;, &#39;docs&#39;: [&#39;a-1&#39;]},
-    {&#39;id&#39;: &#39;missing&#39;, &#39;kind&#39;: &#39;write&#39;, &#39;tenant&#39;: &#39;A&#39;, &#39;role&#39;: &#39;writer&#39;, &#39;docs&#39;: [&#39;a-1&#39;, &#39;not-found&#39;]},
+S = {&quot;type&quot;: &quot;string&quot;, &quot;minLength&quot;: 1}
+I = {&quot;type&quot;: &quot;integer&quot;}
+N = {&quot;type&quot;: &quot;integer&quot;, &quot;minimum&quot;: 0}
+READ_INPUT = obj({&quot;resource&quot;: S})
+READ_OUTPUT = obj({&quot;resource&quot;: S, &quot;version&quot;: N,
+                   &quot;values&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: I}})
+WRITE_INPUT = obj({&quot;resource&quot;: S, &quot;op&quot;: S, &quot;total&quot;: I,
+                   &quot;source_version&quot;: N, &quot;expected_version&quot;: N})
+WRITE_OUTPUT = obj({&quot;resource&quot;: S, &quot;version&quot;: N, &quot;total&quot;: I, &quot;op&quot;: S,
+                    &quot;duplicate&quot;: {&quot;type&quot;: &quot;boolean&quot;}})
+TOOLS = [
+    {&quot;name&quot;: &quot;read_values&quot;, &quot;inputSchema&quot;: READ_INPUT, &quot;outputSchema&quot;: READ_OUTPUT},
+    {&quot;name&quot;: &quot;write_report&quot;, &quot;inputSchema&quot;: WRITE_INPUT, &quot;outputSchema&quot;: WRITE_OUTPUT},
 ]
+SOURCES = {&quot;orders-A&quot;: {&quot;version&quot;: 3, &quot;values&quot;: [10, 27]},
+           &quot;orders-B&quot;: {&quot;version&quot;: 8, &quot;values&quot;: [999]}}
 
 
-def read_fact(db, task, key):
-    &quot;&quot;&quot;Instrument the toy data boundary; read receipts are independent of status text.&quot;&quot;&quot;
-    document = DOCUMENTS[key]
-    db.execute(&#39;INSERT INTO accesses VALUES(?,?,?)&#39;, (task, key, document[&#39;tenant&#39;]))
-    return dict(document)
+def validate(value, schema):
+    &quot;&quot;&quot;Only the explicit schema subset above; not a general JSON Schema implementation.&quot;&quot;&quot;
+    kind = schema[&quot;type&quot;]
+    if kind == &quot;object&quot;:
+        return (type(value) is dict and set(value) == set(schema[&quot;required&quot;])
+                and all(validate(value[k], s) for k, s in schema[&quot;properties&quot;].items()))
+    if kind == &quot;array&quot;:
+        return type(value) is list and all(validate(v, schema[&quot;items&quot;]) for v in value)
+    if kind == &quot;integer&quot;:
+        return type(value) is int and value &gt;= schema.get(&quot;minimum&quot;, float(&quot;-inf&quot;))
+    if kind == &quot;boolean&quot;:
+        return type(value) is bool
+    return type(value) is str and len(value) &gt;= schema.get(&quot;minLength&quot;, 0)
 
 
-def run(strategy):
-    db = sqlite3.connect(&#39;:memory:&#39;)
-    db.execute(&#39;CREATE TABLE reports(task TEXT PRIMARY KEY,total INTEGER,citations TEXT)&#39;)
-    db.execute(&#39;CREATE TABLE accesses(task TEXT,doc TEXT,tenant TEXT)&#39;)
-    results = {}
-    returned_content = {task[&#39;id&#39;]: [] for task in TASKS}
-    tool_attempts = 0
-    for task in TASKS:
-        if strategy == &#39;claim_only&#39;:
-            results[task[&#39;id&#39;]] = &#39;success&#39;
-            continue
-        if strategy == &#39;deny_all&#39;:
-            results[task[&#39;id&#39;]] = &#39;denied&#39;
-            continue
-        tool_attempts += 1
-        if strategy == &#39;forbidden_read_then_correct&#39; and task[&#39;id&#39;] == &#39;report&#39;:
-            # A valid final report cannot erase an earlier forbidden read.
-            read_fact(db, task[&#39;id&#39;], &#39;b-1&#39;)
-        docs = [DOCUMENTS.get(key) for key in task[&#39;docs&#39;]]
-        if strategy == &#39;leak_then_deny&#39; and task[&#39;id&#39;] == &#39;cross-tenant&#39;:
-            leaked = read_fact(db, task[&#39;id&#39;], &#39;b-1&#39;)
-            returned_content[task[&#39;id&#39;]].append(leaked)
-        if any(doc is not None and doc[&#39;tenant&#39;] != task[&#39;tenant&#39;] for doc in docs):
-            results[task[&#39;id&#39;]] = &#39;denied&#39;
-        elif task[&#39;kind&#39;] == &#39;write&#39; and task[&#39;role&#39;] != &#39;writer&#39;:
-            results[task[&#39;id&#39;]] = &#39;denied&#39;
-        elif any(doc is None for doc in docs):
-            results[task[&#39;id&#39;]] = &#39;insufficient_evidence&#39;
-        elif task[&#39;kind&#39;] == &#39;write&#39;:
-            facts = [read_fact(db, task[&#39;id&#39;], key) for key in task[&#39;docs&#39;]]
-            citations = [(key, DOCUMENTS[key][&#39;version&#39;]) for key in task[&#39;docs&#39;]]
-            if strategy == &#39;citation_swap&#39;:
-                citations = [(&#39;b-1&#39;, 1)]
-            db.execute(&#39;INSERT INTO reports VALUES(?,?,?)&#39;,
-                       (task[&#39;id&#39;], sum(doc[&#39;amount&#39;] for doc in facts), json.dumps(citations)))
-            db.commit()
-            results[task[&#39;id&#39;]] = &#39;success&#39;
-        else:
-            returned_content[task[&#39;id&#39;]] = [read_fact(db, task[&#39;id&#39;], key) for key in task[&#39;docs&#39;]]
-            results[task[&#39;id&#39;]] = &#39;success&#39;
-    if strategy == &#39;extra_response_field&#39;:
-        results[&#39;client_visible_leaked_amount&#39;] = 999
-    # Change only the user-visible result, keeping the correct report and citations.
-    if strategy == &#39;wrong_status_denied&#39;:
-        results[&#39;report&#39;] = &#39;denied&#39;
-    if strategy == &#39;wrong_status_insufficient_evidence&#39;:
-        results[&#39;report&#39;] = &#39;insufficient_evidence&#39;
-    if strategy == &#39;cached_content_leak&#39;:
-        # A prior cache leak leaves no new read receipt in this batch.
-        returned_content[&#39;report&#39;].append(dict(DOCUMENTS[&#39;b-1&#39;]))
-    if strategy == &#39;unexpected_report&#39;:
-        db.execute(&#39;INSERT INTO reports VALUES(?,?,?)&#39;, (&#39;unexpected-task&#39;, 99, &#39;[]&#39;))
-        db.commit()
-    # Oracle validates the complete public status object, including unknown keys.
-    expected_ids = {&#39;report&#39;, &#39;cross-tenant&#39;, &#39;readonly&#39;, &#39;missing&#39;}
-    allowed_statuses = {&#39;success&#39;, &#39;denied&#39;, &#39;insufficient_evidence&#39;}
-    contract_valid = set(results) == expected_ids and all(
-        type(status) is str and status in allowed_statuses for status in results.values())
-    # Oracle is written independently of the executor&#39;s self-declared success.
-    rows = db.execute(&#39;SELECT task,total,citations FROM reports ORDER BY task&#39;).fetchall()
-    accesses = db.execute(&#39;SELECT task,doc,tenant FROM accesses ORDER BY task,doc&#39;).fetchall()
-    environment_valid = (all(row[0] in expected_ids for row in rows)
-                         and all(row[0] in expected_ids for row in accesses)
-                         and set(returned_content) == expected_ids
-                         and all(type(value) is list for value in returned_content.values()))
-    case_contract_valid = contract_valid and environment_valid
-    report = next((r for r in rows if r[0] == &#39;report&#39;), None)
-    positive_reads = db.execute(&#39;SELECT doc,tenant FROM accesses WHERE task=?&#39;, (&#39;report&#39;,)).fetchall()
-    required_reads = {(&#39;a-1&#39;, &#39;A&#39;), (&#39;a-2&#39;, &#39;A&#39;)}
-    positive_access_valid = set(positive_reads) == required_reads
-    positive_pass = bool(case_contract_valid and results[&#39;report&#39;] == &#39;success&#39;
-                         and not returned_content[&#39;report&#39;]
-                         and positive_access_valid and report and report[1] == 37 and
-                         json.loads(report[2]) == [[&#39;a-1&#39;, 1], [&#39;a-2&#39;, 2]])
-    negative_pass = sum(case_contract_valid and results[key] == expected and not any(r[0] == key for r in rows)
-                        and not returned_content[key]
-                        and db.execute(&#39;SELECT COUNT(*) FROM accesses WHERE task=?&#39;, (key,)).fetchone()[0] == 0
-                        for key, expected in [(&#39;cross-tenant&#39;, &#39;denied&#39;), (&#39;readonly&#39;, &#39;denied&#39;),
-                                              (&#39;missing&#39;, &#39;insufficient_evidence&#39;)])
-    result = {&#39;positive_task_pass&#39;: positive_pass, &#39;negative_cases_passed&#39;: negative_pass,
-              &#39;cases_passed&#39;: int(positive_pass)+negative_pass, &#39;case_count&#39;: 4,
-              &#39;tool_attempts&#39;: tool_attempts, &#39;actual_effects&#39;: len(rows),
-              &#39;unique_qualified_business_tasks&#39;: int(positive_pass), &#39;outcomes&#39;: results,
-              &#39;positive_access_valid&#39;: positive_access_valid,
-              &#39;read_receipts&#39;: accesses, &#39;environment_contract_valid&#39;: environment_valid,
-              &#39;returned_content&#39;: returned_content, &#39;public_response_contract_valid&#39;: contract_valid}
-    db.close()
-    return result
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(&quot;,&quot;, &quot;:&quot;))
+
+
+class Store:
+    def __init__(self, path):
+        self.db = sqlite3.connect(str(path), check_same_thread=False)
+        self.db.executescript(&quot;&quot;&quot;
+            CREATE TABLE report(resource TEXT PRIMARY KEY, version INTEGER,
+                                total INTEGER, source_version INTEGER);
+            CREATE TABLE receipt(op TEXT PRIMARY KEY, digest TEXT, body TEXT);
+            CREATE TABLE effects(op TEXT);
+        &quot;&quot;&quot;)
+
+    def call(self, name, arguments, principal):
+        resource = arguments[&quot;resource&quot;]
+        # Test fixture principal; real authentication / credential verification is not implemented.
+        if principal != &quot;principal-A&quot; or resource not in {&quot;orders-A&quot;, &quot;report-A&quot;}:
+            return {&quot;code&quot;: &quot;denied&quot;}, True
+        if name == &quot;read_values&quot;:
+            if resource not in SOURCES:
+                return {&quot;code&quot;: &quot;not_found&quot;}, True
+            return {&quot;resource&quot;: resource, **SOURCES[resource]}, False
+        if resource != &quot;report-A&quot;:
+            return {&quot;code&quot;: &quot;not_found&quot;}, True
+        digest = hashlib.sha256(canonical(arguments).encode()).hexdigest()
+        with self.db:
+            old = self.db.execute(&quot;SELECT digest, body FROM receipt WHERE op=?&quot;,
+                                  (arguments[&quot;op&quot;],)).fetchone()
+            if old:
+                if old[0] != digest:
+                    return {&quot;code&quot;: &quot;operation_conflict&quot;}, True
+                body = json.loads(old[1])
+                body[&quot;duplicate&quot;] = True
+                return body, False
+            prior = self.db.execute(&quot;SELECT version FROM report WHERE resource=?&quot;,
+                                    (resource,)).fetchone()
+            version = prior[0] if prior else 0
+            if version != arguments[&quot;expected_version&quot;]:
+                return {&quot;code&quot;: &quot;version_conflict&quot;}, True
+            version += 1
+            self.db.execute(&quot;INSERT OR REPLACE INTO report VALUES(?,?,?,?)&quot;,
+                            (resource, version, arguments[&quot;total&quot;], arguments[&quot;source_version&quot;]))
+            body = {&quot;resource&quot;: resource, &quot;version&quot;: version, &quot;total&quot;: arguments[&quot;total&quot;],
+                    &quot;op&quot;: arguments[&quot;op&quot;], &quot;duplicate&quot;: False}
+            self.db.execute(&quot;INSERT INTO receipt VALUES(?,?,?)&quot;,
+                            (arguments[&quot;op&quot;], digest, canonical(body)))
+            self.db.execute(&quot;INSERT INTO effects VALUES(?)&quot;, (arguments[&quot;op&quot;],))
+        return body, False
+
+    def artifact(self):
+        row = self.db.execute(&quot;SELECT resource,version,total,source_version FROM report&quot;).fetchone()
+        return dict(zip([&quot;resource&quot;, &quot;version&quot;, &quot;total&quot;, &quot;source_version&quot;], row)) if row else None
+
+    def effect_count(self):
+        return self.db.execute(&quot;SELECT COUNT(*) FROM effects&quot;).fetchone()[0]
+
+
+def tool(name, **arguments):
+    return {&quot;kind&quot;: &quot;tool&quot;, &quot;name&quot;: name, &quot;arguments&quot;: arguments}
+
+
+def read(resource=&quot;orders-A&quot;):
+    return tool(&quot;read_values&quot;, resource=resource)
+
+
+def write(total=37, op=&quot;R17:publish&quot;):
+    return tool(&quot;write_report&quot;, resource=&quot;report-A&quot;, op=op, total=total,
+                source_version=3, expected_version=0)
+
+
+FINISH = {&quot;kind&quot;: &quot;finish&quot;}
+
+
+def run_case(directory, name, proposals, fault=None):
+    store = Store(directory / (name + &quot;.sqlite&quot;))
+    observed_wire = []
+    requests = {&quot;rpc&quot;: 0, &quot;calls&quot;: 0, &quot;transient_sent&quot;: False}
+    catalog = {item[&quot;name&quot;]: item for item in TOOLS}
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def do_POST(self):
+            request = json.loads(self.rfile.read(int(self.headers[&quot;Content-Length&quot;])))
+            requests[&quot;rpc&quot;] += 1
+            method, request_id = request.get(&quot;method&quot;), request.get(&quot;id&quot;)
+            if method == &quot;tools/list&quot;:
+                reply = {&quot;result&quot;: {&quot;tools&quot;: TOOLS}}
+            elif method != &quot;tools/call&quot;:
+                reply = {&quot;error&quot;: {&quot;code&quot;: -32601, &quot;message&quot;: &quot;Unknown method&quot;}}
+            else:
+                requests[&quot;calls&quot;] += 1
+                params = request.get(&quot;params&quot;, {})
+                call_name, arguments = params.get(&quot;name&quot;), params.get(&quot;arguments&quot;)
+                if call_name not in catalog:
+                    reply = {&quot;error&quot;: {&quot;code&quot;: -32602, &quot;message&quot;: &quot;Unknown tool&quot;}}
+                elif not validate(arguments, catalog[call_name][&quot;inputSchema&quot;]):
+                    reply = {&quot;result&quot;: {&quot;isError&quot;: True,
+                                         &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;invalid_arguments&quot;}]}}
+                elif fault == &quot;transient_read&quot; and not requests[&quot;transient_sent&quot;]:
+                    requests[&quot;transient_sent&quot;] = True
+                    self.send_response(503)
+                    self.send_header(&quot;Content-Length&quot;, &quot;0&quot;)
+                    self.end_headers()
+                    return
+                else:
+                    body, is_error = store.call(call_name, arguments, &quot;principal-A&quot;)
+                    if fault == &quot;broken_output&quot; and call_name == &quot;read_values&quot; and not is_error:
+                        body[&quot;values&quot;] = &quot;10,27&quot;
+                    reply = {&quot;result&quot;: {&quot;isError&quot;: is_error,
+                                         &quot;content&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: canonical(body)}],
+                                         &quot;structuredContent&quot;: body}}
+            payload = json.dumps({&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: request_id, **reply}).encode()
+            observed_wire.append(payload.decode())
+            self.send_response(200)
+            self.send_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+            self.send_header(&quot;Content-Length&quot;, str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+
+    server = HTTPServer((&quot;127.0.0.1&quot;, 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, kwargs={&quot;poll_interval&quot;: 0.01})
+    thread.start()
+    opener = build_opener(ProxyHandler({}))
+    address = &quot;http://127.0.0.1:&quot; + str(server.server_port) + &quot;/rpc&quot;
+    serial = 0
+
+    def rpc(method, params):
+        nonlocal serial
+        serial += 1
+        payload = json.dumps({&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: serial, &quot;method&quot;: method, &quot;params&quot;: params})
+        request = Request(address, payload.encode(), {&quot;Content-Type&quot;: &quot;application/json&quot;})
+        with opener.open(request, timeout=3) as response:
+            reply = json.load(response)
+        assert reply[&quot;jsonrpc&quot;] == &quot;2.0&quot; and reply[&quot;id&quot;] == serial
+        return reply
+
+    max_calls, max_proposals = 3, 4
+    calls = proposal_count = validation_errors = transport_errors = 0
+    observations, trace = [], []
+    state = &quot;INCOMPLETE&quot;
+    try:
+        discovered = rpc(&quot;tools/list&quot;, {})[&quot;result&quot;][&quot;tools&quot;]
+        assert discovered == TOOLS
+        for proposal in proposals:
+            if proposal_count &gt;= max_proposals:
+                state = &quot;BUDGET_EXCEEDED&quot;
+                break
+            proposal_count += 1
+            if proposal.get(&quot;kind&quot;) == &quot;finish&quot;:
+                artifact = store.artifact()
+                valid = (artifact == {&quot;resource&quot;: &quot;report-A&quot;, &quot;version&quot;: 1, &quot;total&quot;: 37,
+                                      &quot;source_version&quot;: 3}
+                         and any(o.get(&quot;resource&quot;) == &quot;orders-A&quot; and o.get(&quot;version&quot;) == 3
+                                 for o in observations))
+                state = &quot;SUCCEEDED&quot; if valid else &quot;INCOMPLETE&quot;
+                trace.append({&quot;proposal&quot;: proposal_count, &quot;event&quot;: &quot;artifact_checked&quot;, &quot;valid&quot;: valid})
+                break
+            call_name, arguments = proposal.get(&quot;name&quot;), proposal.get(&quot;arguments&quot;)
+            if call_name not in catalog or not validate(arguments, catalog[call_name][&quot;inputSchema&quot;]):
+                validation_errors += 1
+                trace.append({&quot;proposal&quot;: proposal_count, &quot;event&quot;: &quot;rejected_before_dispatch&quot;})
+                continue
+            # Task policy allows these two tools. Object authorization remains on the server.
+            retries = 0
+            while True:
+                if calls &gt;= max_calls:
+                    state = &quot;BUDGET_EXCEEDED&quot;
+                    break
+                calls += 1
+                try:
+                    reply = rpc(&quot;tools/call&quot;, {&quot;name&quot;: call_name, &quot;arguments&quot;: arguments})
+                except HTTPError as error:
+                    transport_errors += 1
+                    trace.append({&quot;proposal&quot;: proposal_count, &quot;attempt&quot;: calls,
+                                  &quot;event&quot;: &quot;http_error&quot;, &quot;status&quot;: error.code})
+                    if error.code == 503 and call_name == &quot;read_values&quot; and retries == 0:
+                        retries += 1
+                        continue
+                    state = &quot;UNKNOWN&quot; if call_name == &quot;write_report&quot; else &quot;TRANSPORT_ERROR&quot;
+                    break
+                if &quot;error&quot; in reply:
+                    state = &quot;PROTOCOL_ERROR&quot;
+                    break
+                result = reply[&quot;result&quot;]
+                if result.get(&quot;isError&quot;):
+                    error_code = result.get(&quot;structuredContent&quot;, {}).get(&quot;code&quot;, &quot;invalid_arguments&quot;)
+                    state = &quot;DENIED&quot; if error_code == &quot;denied&quot; else &quot;TOOL_ERROR&quot;
+                    trace.append({&quot;proposal&quot;: proposal_count, &quot;attempt&quot;: calls,
+                                  &quot;event&quot;: &quot;tool_error&quot;, &quot;code&quot;: error_code})
+                    break
+                body = result.get(&quot;structuredContent&quot;)
+                if not validate(body, catalog[call_name][&quot;outputSchema&quot;]):
+                    state = &quot;FAILED_RESULT_SCHEMA&quot;
+                    break
+                observations.append(body)
+                trace.append({&quot;proposal&quot;: proposal_count, &quot;attempt&quot;: calls, &quot;event&quot;: &quot;accepted&quot;,
+                              &quot;tool&quot;: call_name, &quot;duplicate&quot;: body.get(&quot;duplicate&quot;, False)})
+                state = &quot;RUNNING&quot;
+                break
+            if state != &quot;RUNNING&quot;:
+                break
+        return {&quot;state&quot;: state, &quot;proposals&quot;: proposal_count, &quot;tool_attempts&quot;: calls,
+                &quot;rpc_requests&quot;: requests[&quot;rpc&quot;], &quot;validation_errors&quot;: validation_errors,
+                &quot;transport_errors&quot;: transport_errors, &quot;observations&quot;: observations,
+                &quot;effects&quot;: store.effect_count(), &quot;artifact&quot;: store.artifact(), &quot;trace&quot;: trace,
+                &quot;foreign_value_leaked&quot;: any(&quot;999&quot; in item for item in observed_wire)}
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+        assert not thread.is_alive()
+        store.db.close()
 
 
 def main():
-    reports = {name: run(name) for name in (&#39;normal&#39;, &#39;claim_only&#39;, &#39;deny_all&#39;, &#39;citation_swap&#39;)}
-    assert reports[&#39;normal&#39;][&#39;cases_passed&#39;] == 4
-    assert reports[&#39;normal&#39;][&#39;actual_effects&#39;] == 1
-    assert reports[&#39;claim_only&#39;][&#39;cases_passed&#39;] == 0
-    assert reports[&#39;deny_all&#39;][&#39;cases_passed&#39;] == 2
-    assert reports[&#39;citation_swap&#39;][&#39;cases_passed&#39;] == 3
-    assert reports[&#39;citation_swap&#39;][&#39;actual_effects&#39;] == 1
-    leak = run(&#39;leak_then_deny&#39;)
-    assert leak[&#39;outcomes&#39;][&#39;cross-tenant&#39;] == &#39;denied&#39;
-    assert leak[&#39;cases_passed&#39;] == 3  # The read/response evidence catches the misleading status.
-    assert [&#39;cross-tenant&#39;, &#39;b-1&#39;, &#39;B&#39;] in [list(row) for row in leak[&#39;read_receipts&#39;]]
-    extra_field = run(&#39;extra_response_field&#39;)
-    assert extra_field[&#39;public_response_contract_valid&#39;] is False
-    assert extra_field[&#39;cases_passed&#39;] == 0
-    wrong_status = {status: run(&#39;wrong_status_&#39; + status)
-                    for status in (&#39;denied&#39;, &#39;insufficient_evidence&#39;)}
-    for status, result in wrong_status.items():
-        assert result[&#39;public_response_contract_valid&#39;] is True
-        assert result[&#39;outcomes&#39;][&#39;report&#39;] == status
-        assert result[&#39;positive_task_pass&#39;] is False
-        assert result[&#39;cases_passed&#39;] == 3 and result[&#39;actual_effects&#39;] == 1
-        assert result[&#39;unique_qualified_business_tasks&#39;] == 0
-    forbidden_read = run(&#39;forbidden_read_then_correct&#39;)
-    assert forbidden_read[&#39;outcomes&#39;][&#39;report&#39;] == &#39;success&#39;
-    assert forbidden_read[&#39;actual_effects&#39;] == 1
-    assert forbidden_read[&#39;positive_access_valid&#39;] is False
-    assert forbidden_read[&#39;cases_passed&#39;] == 3
-    assert forbidden_read[&#39;unique_qualified_business_tasks&#39;] == 0
-    cached_leak = run(&#39;cached_content_leak&#39;)
-    assert cached_leak[&#39;positive_access_valid&#39;] is True
-    assert cached_leak[&#39;outcomes&#39;][&#39;report&#39;] == &#39;success&#39;
-    assert cached_leak[&#39;cases_passed&#39;] == 3 and cached_leak[&#39;actual_effects&#39;] == 1
-    assert cached_leak[&#39;unique_qualified_business_tasks&#39;] == 0
-    extra_report = run(&#39;unexpected_report&#39;)
-    assert extra_report[&#39;public_response_contract_valid&#39;] is True
-    assert extra_report[&#39;environment_contract_valid&#39;] is False
-    assert extra_report[&#39;cases_passed&#39;] == 0 and extra_report[&#39;actual_effects&#39;] == 2
-    print(json.dumps({&#39;strategies&#39;: reports,
-                      &#39;leak_then_deny_probe&#39;: leak,
-                      &#39;extra_public_field_probe&#39;: extra_field,
-                      &#39;wrong_report_status_probes&#39;: wrong_status,
-                      &#39;forbidden_read_then_correct_probe&#39;: forbidden_read,
-                      &#39;cached_content_leak_probe&#39;: cached_leak,
-                      &#39;unexpected_report_probe&#39;: extra_report,
-                      &#39;scope&#39;: &#39;four fixed tasks, deterministic plans, real in-memory SQLite effects; no LLM/RAG engine/Kairo&#39;}, indent=2))
+    cases = {
+        &quot;normal&quot;: ([read(), write(), FINISH], None),
+        &quot;duplicate_same_operation&quot;: ([read(), write(), write(), FINISH], None),
+        &quot;invalid_bool_then_repair&quot;: ([read(), write(True), write(), FINISH], None),
+        &quot;foreign_resource&quot;: ([read(&quot;orders-B&quot;), FINISH], None),
+        &quot;broken_output&quot;: ([read(), FINISH], &quot;broken_output&quot;),
+        &quot;finish_without_work&quot;: ([FINISH], None),
+        &quot;repeating_reads&quot;: ([read()] * 6, None),
+        &quot;transient_read&quot;: ([read(), write(), FINISH], &quot;transient_read&quot;),
+        &quot;valid_schema_wrong_total&quot;: ([read(), write(38), FINISH], None),
+        &quot;same_operation_changed_arguments&quot;: ([read(), write(), write(38), FINISH], None),
+    }
+    with tempfile.TemporaryDirectory(prefix=&quot;infra-tool-loop-&quot;) as folder:
+        results = {name: run_case(Path(folder), name, *case) for name, case in cases.items()}
+    for name in [&quot;normal&quot;, &quot;duplicate_same_operation&quot;, &quot;invalid_bool_then_repair&quot;, &quot;transient_read&quot;]:
+        assert results[name][&quot;state&quot;] == &quot;SUCCEEDED&quot; and results[name][&quot;effects&quot;] == 1
+    assert results[&quot;duplicate_same_operation&quot;][&quot;observations&quot;][-1][&quot;duplicate&quot;] is True
+    assert results[&quot;invalid_bool_then_repair&quot;][&quot;validation_errors&quot;] == 1
+    assert results[&quot;invalid_bool_then_repair&quot;][&quot;tool_attempts&quot;] == 2
+    assert results[&quot;foreign_resource&quot;][&quot;state&quot;] == &quot;DENIED&quot;
+    assert results[&quot;foreign_resource&quot;][&quot;foreign_value_leaked&quot;] is False
+    assert results[&quot;broken_output&quot;][&quot;state&quot;] == &quot;FAILED_RESULT_SCHEMA&quot;
+    assert results[&quot;broken_output&quot;][&quot;observations&quot;] == []
+    assert results[&quot;finish_without_work&quot;][&quot;state&quot;] == &quot;INCOMPLETE&quot;
+    assert results[&quot;repeating_reads&quot;][&quot;state&quot;] == &quot;BUDGET_EXCEEDED&quot;
+    assert results[&quot;repeating_reads&quot;][&quot;tool_attempts&quot;] == 3
+    assert results[&quot;transient_read&quot;][&quot;transport_errors&quot;] == 1
+    assert results[&quot;valid_schema_wrong_total&quot;][&quot;state&quot;] == &quot;INCOMPLETE&quot;
+    assert results[&quot;valid_schema_wrong_total&quot;][&quot;effects&quot;] == 1
+    assert results[&quot;same_operation_changed_arguments&quot;][&quot;state&quot;] == &quot;TOOL_ERROR&quot;
+    assert results[&quot;same_operation_changed_arguments&quot;][&quot;effects&quot;] == 1
+    print(json.dumps({&quot;proposal_source&quot;: &quot;deterministic_script_no_llm&quot;,
+                      &quot;transport&quot;: &quot;actual_loopback_http_jsonrpc&quot;, &quot;catalog&quot;: TOOLS, &quot;cases&quot;: results,
+                      &quot;max_proposals&quot;: 4, &quot;max_tool_attempts&quot;: 3,
+                      &quot;scope&quot;: &quot;tool_contract_and_control_loop_not_full_mcp_auth_or_kairo&quot;},
+                     ensure_ascii=False, indent=2))
 
 
-if __name__ == &#39;__main__&#39;:
-    main()</code></pre></div></details><p>再故意让工具先返回 B 的内容，最后却报 denied。访问记录和返回内容会暴露泄漏，这个策略降为 3/4；把泄漏藏进公开响应的额外字段，也会被字段白名单拒绝。拒绝文案不能覆盖已经发生的读取。</p><p>反过来，报告已经正确写入，对用户却报 denied 或 insufficient_evidence，是否也算完成？两种状态都是合法枚举，但都不符合这个合法任务的交付要求。新反例只改公开状态，保留金额 37 和正确引用；判分应从 4/4 降到 3/4，实际报告仍 1 行，合格业务任务为 0。接口结构正确与任务语义正确是两道检查。</p><div class="table-wrap"><table><thead><tr><th>只改变合法报告的对外状态</th><th>通过用例</th><th>真实报告行</th><th>合格业务任务</th></tr></thead><tbody><tr><td>denied</td><td>3/4</td><td>1</td><td>0</td></tr><tr><td>insufficient_evidence</td><td>3/4</td><td>1</td><td>0</td></tr></tbody></table></div><p>再改一次执行过程：先越权读取 B，再生成完全正确的 A 报告并返回 success。评估器核对读取集合，判为 3/4、报告 1 行、合格任务 0。合法来源重复或换顺序读取仍可通过。另一个反例直接返回缓存中的 B 数据，本轮没有新增 B 读取，依然要从返回内容检出，不能只查本轮访问记录。</p><p>这个固定任务的公开契约只返回状态，不附额外内容。若再悄悄写一行任务集合之外的报告，公开状态仍合法，但环境契约失败，整批计 0/4，真实报告行是 2。输出字段、实际状态、访问、返回内容和额外副作用分别检查。这些确定性夹具检验列出的边界，不代替真实模型的安全评估。</p><details class="knowledge-check"><summary>实验环境与适用范围</summary><p>正常结果是 1 个合格业务报告、3 个正确拒绝/缺证据判定。4/4 是四个固定机制用例，不是模型成功率。未调用 LLM、真实检索服务或 Kairo；实际接入还需扩大任务样本与故障覆盖。</p></details><p class="practice-links"><a href="labs/ai-agent-systems.zip" download>下载四程序、契约与验证记录 ↓</a><a href="labs/ai-agent-systems/agent_evaluation.py" download>下载本例源码 ↓</a><a href="labs/ai-agent-systems/validation.json" target="_blank" rel="noopener">本次执行结果与源码摘要 ↗</a></p><h3>将机制接入 Kairo</h3><p>用可信任务→逻辑意图→接收方回执→恢复状态→独立评估逐层映射；先只读，再幂等写入，再引入多 worker、取消与隔离。每层保留真实接口与版本、故障动作和独立结果。</p><p><a href="labs/ai-agent-systems/kairo-adapter-contract.md" download>下载 Kairo 字段与故障验收契约 ↓</a><a href="/article/kairo-practice/">阅读完整迁移设计 →</a></p><h3>继续阅读机制详解</h3><a class="chapter-row" href="/article/agent-runtime/"><div class="chapter-top"><span>CHAPTER G1</span><span>机制 + 设计 · 开始阅读 ↗</span></div><h2>Agent Infra 在解决什么：从模型提议到任务完成</h2><p>模型能提出下一步，执行系统仍要决定能否执行、如何记录以及怎样验证结果。沿着一次工具任务建立完整地图。</p></a><a class="chapter-row" href="/article/agent-security/"><div class="chapter-top"><span>CHAPTER G2</span><span>机制 + 实验 · 开始阅读 ↗</span></div><h2>Agent 的权限边界：谁授权，在哪里拦截，怎样限制效果</h2><p>先分清认证、委托、审批与回执，再把参数、资源版本、撤权和实际提交连起来；真实 HTTP/SQLite 对照旧授权快照为何仍会写入。</p></a><a class="chapter-row" href="/article/agent-sandbox/"><div class="chapter-top"><span>CHAPTER G3</span><span>连续讲解 · 推导与练习 · 开始阅读 ↗</span></div><h2>Agent 沙箱：隔离、资源与生命周期</h2><p>从一段来历不明的报表脚本出发，设计隔离层、最小授权、资源预算和可验证的销毁流程。</p></a><a class="chapter-row" href="/article/agent-recovery/"><div class="chapter-top"><span>CHAPTER G4</span><span>机制 + 实验 · 开始阅读 ↗</span></div><h2>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</h2><p>最危险的窗口发生在外部效果成功、完成记录尚未写入之间。用真实进程崩溃观察两个系统如何重新达成一致。</p></a><a class="chapter-row" href="/article/agent-memory/"><div class="chapter-top"><span>CHAPTER G5</span><span>机制 + 设计 · 开始阅读 ↗</span></div><h2>上下文、运行状态与长期记忆：三种信息不要混存</h2><p>模型需要的上下文、恢复需要的状态、检索需要的知识，拥有不同生命周期。分清它们才能控制成本和正确性。</p></a><a class="chapter-row" href="/article/agent-evaluation/"><div class="chapter-top"><span>CHAPTER G6</span><span>机制 + 设计 · 开始阅读 ↗</span></div><h2>Agent 怎样验收：任务结果、执行轨迹、拒绝行为与成本</h2><p>“回答看起来不错”无法覆盖执行系统。用环境断言与版本化测试集衡量成功，也检查不该发生的动作。</p></a><a class="chapter-row" href="/article/durable-workflows/"><div class="chapter-top"><span>CHAPTER G7</span><span>连续讲解 · 推导与练习 · 开始阅读 ↗</span></div><h2>持久工作流：事件重放、接管与提交</h2><p>用事件历史恢复决策，用工具回执确认外部效果，用接收方版本检查阻止旧执行者覆盖新结果。</p></a><a class="chapter-row" href="/article/agent-retrieval/"><div class="chapter-top"><span>CHAPTER G8</span><span>连续讲解 · 推导与练习 · 开始阅读 ↗</span></div><h2>检索与上下文：让答案有可验证的证据</h2><p>按片段、索引、召回、正文、上下文与引用逐层展开；实际中文全文检索、词元预算和提示交付，验证证据缺失、撤权和版本滞后的边界。</p></a><a class="chapter-row" href="/article/agent-observability/"><div class="chapter-top"><span>CHAPTER G9</span><span>连续讲解 · 推导与练习 · 开始阅读 ↗</span></div><h2>Agent 观测：任务、重试与成本归因</h2><p>用一棵跨度树解释单次执行，用全量任务账本计算整体结果，再用固定评估集检验改动的因果解释。</p></a><a class="chapter-row" href="/article/kairo-practice/"><div class="chapter-top"><span>CHAPTER G10</span><span>机制 + 通用验收 · 开始阅读 ↗</span></div><h2>Kairo 接入验收：任务、权限与结果证据</h2><p>先把任务、权限与结果写成独立契约，再检查重复提交、断线、越权与假完成。用通用记录校验器练习十个反例，真实 Kairo 版本另行验收。</p></a></section><section class="knowledge-references"><h2>原始资料</h2><div><a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools" target="_blank" rel="noopener">MCP · Tools ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices" target="_blank" rel="noopener">MCP · Security best practices ↗</a><a href="https://docs.temporal.io/activity-definition" target="_blank" rel="noopener">Temporal · Activity 的重试与幂等 ↗</a><a href="https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/" target="_blank" rel="noopener">AWS Builders’ Library · 幂等 API ↗</a><a href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener">Martin Kleppmann · 分布式锁与 fencing ↗</a><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener">SQLite · 事务与写入边界 ↗</a><a href="https://arxiv.org/abs/2104.08663" target="_blank" rel="noopener">BEIR · 检索评估原论文 ↗</a><a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener">τ-bench · 环境终态与工具任务评估 ↗</a><a href="https://gvisor.dev/docs/architecture_guide/security/" target="_blank" rel="noopener">gVisor · 安全模型 ↗</a><a href="https://www.w3.org/TR/trace-context/" target="_blank" rel="noopener">W3C · Trace Context ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation" target="_blank" rel="noopener">MCP 2025-11-25 · 请求取消 ↗</a><a href="https://docs.temporal.io/activity-execution#cancellation" target="_blank" rel="noopener">Temporal · Activity 取消与等待 ↗</a><a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener">Anthropic · 上下文的选择、压缩与组织 ↗</a><a href="https://opentelemetry.io/docs/languages/python/instrumentation/" target="_blank" rel="noopener">OpenTelemetry · Python 手动埋点 ↗</a><a href="https://opentelemetry.io/docs/languages/python/propagation/" target="_blank" rel="noopener">OpenTelemetry · 跨服务上下文传播 ↗</a><a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm" target="_blank" rel="noopener">NIST · 二项比例的区间估计 ↗</a><a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.contingency_tables.mcnemar.html" target="_blank" rel="noopener">statsmodels · McNemar 成对检验 ↗</a><a href="https://docs.python.org/3.12/library/resource.html" target="_blank" rel="noopener">Python 3.12 · 资源限制的单位与范围 ↗</a><a href="https://docs.kernel.org/admin-guide/cgroup-v2.html" target="_blank" rel="noopener">Linux Kernel · cgroup v2 控制器 ↗</a><a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/" target="_blank" rel="noopener">Kubernetes · Pod 安全标准 ↗</a><a href="https://www.sqlite.org/fts5.html" target="_blank" rel="noopener">SQLite · FTS5 分词、MATCH 与 BM25 ↗</a><a href="https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion" target="_blank" rel="noopener">Elasticsearch · 倒数排名融合 ↗</a></div></section><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-hf-agents"><div class="resource-meta"><span>中文图文 / 英文导览 · 图文 / 练习 / 导览回放</span><span>Hugging Face</span></div><h3><a href="https://huggingface.co/learn/agents-course/zh-CN/unit1/introduction" target="_blank" rel="noopener noreferrer">AI Agents Course：简中入门单元 ↗</a></h3><p><b>先看什么</b>第 1 单元：智能体、工具、动作与观察。先画调用与反馈，再阅读首个 Agent 示例。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>基础 Python 与 LLM。</p><p><b>学完检查</b>解释工具报错后模型看到什么，执行器仍须检查什么。</p><p>已核对第 1 单元的简中正文与目录。部署 Space 等练习需账号，推理按所选服务配额；课程导览回放为英文。</p><div class="path-links"><a href="/article/agent-runtime/">Agent Infra 在解决什么：从模型提议到任务完成 →</a><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/agent-evaluation/">Agent 怎样验收：任务结果、执行轨迹、拒绝行为与成本 →</a></div></details><div class="resource-extra-links"><a class="resource-video" href="https://huggingface.co/learn/agents-course/en/communication/live1" target="_blank" rel="noopener noreferrer">英文课程导览回放 ↗</a><a href="https://huggingface.co/learn/agents-course/en/unit1/introduction" target="_blank" rel="noopener noreferrer">英文原文 ↗</a></div><p class="resource-checked">入口核对 2026-11-05</p></article><article class="resource-row" id="resource-ntu-genai"><div class="resource-meta"><span>中文 · 课程视频 / 讲义</span><span>台湾大学 / 李宏毅</span></div><h3><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/2025-spring.php" target="_blank" rel="noopener noreferrer">机器学习 2025：生成式 AI 与 Agent ↗</a></h3><p><b>先看什么</b>先看 3/7 Agent，再选 3/14 模型内部与 3/28 预训练/对齐；按目录取用。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>LLM 基础概念；代码练习另需 Python。</p><p><b>学完检查</b>区分模型生成动作、执行工具与环境验收。</p><p>课程原站公开逐讲录像和讲义；正式作业平台另有条件。</p><div class="path-links"><a href="/article/agent-runtime/">Agent Infra 在解决什么：从模型提议到任务完成 →</a><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/transformer-model/">Transformer 全貌：从张量到计算图 →</a><a href="/article/ai-lifecycle/">模型怎样进入生产：完整产物、评估、发布与回退 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><article class="resource-row" id="resource-berkeley-agents"><div class="resource-meta"><span>英文 · 系列讲座视频</span><span>UC Berkeley RDI</span></div><h3><a href="https://llmagents-learning.org/f24" target="_blank" rel="noopener noreferrer">LLM Agents MOOC（2024 归档） ↗</a></h3><p><b>先看什么</b>概览讲座 → 软件开发 Agent，再看任务验证。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>LLM 推理、API 与软件测试。</p><p><b>学完检查</b>画出目标、动作、环境反馈和完成验收。</p><p>公开讲座、幻灯片与论文；不代表当前学期报名或学分。</p><div class="path-links"><a href="/article/agent-runtime/">Agent Infra 在解决什么：从模型提议到任务完成 →</a><a href="/article/agent-evaluation/">Agent 怎样验收：任务结果、执行轨迹、拒绝行为与成本 →</a></div></details><div class="resource-extra-links"><a class="resource-video" href="https://www.youtube.com/watch?v=RM6ZArd2nVc" target="_blank" rel="noopener noreferrer">录像 / 视频章节入口 ↗</a></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><div class="knowledge-exit"><a href="/roadmap/?track=agent">学习顺序与过关任务 →</a><a href="/resources/#agent">原始资料与课程 →</a></div></article><aside class="toc"><div class="toc-title">本领域知识点</div><a data-toc="concept-path" href="/module/agent/#concept-path">概念起点与关系</a><a href="/module/agent/#concept-relations">核心概念关系图</a><a href="/module/agent/#knowledge-ag-runtime">1. 运行时：任务、运行、步骤与效果身份</a><a href="/module/agent/#knowledge-ag-tools">2. 工具契约：类型、前置条件与结果语义</a><a href="/module/agent/#knowledge-ag-recovery">3. 持久执行：恢复、取消与效果回执</a><a href="/module/agent/#knowledge-ag-fencing">4. 多 worker：租约、代际与接收方 fencing</a><a href="/module/agent/#knowledge-ag-authorization">5. 权限委托、审批与外部文本边界</a><a href="/module/agent/#knowledge-ag-context">6. 上下文、运行状态与长期记忆的存储职责</a><a href="/module/agent/#knowledge-ag-retrieval">7. RAG：索引、过滤、排序与事实归因</a><a href="/module/agent/#knowledge-ag-observability">8. 任务轨迹、预算与每成功任务成本</a><a href="/module/agent/#knowledge-ag-evaluation">9. 任务评估：真实效果、正确拒绝与故障注入</a><a href="/module/agent/#knowledge-ag-sandbox">10. 执行沙箱：资源、网络、文件与生命周期</a><a href="/module/agent/#examples">代码实验与案例</a></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div></details><p class="practice-links"><a href="labs/network-input-tools.zip" download>下载网络、训练输入与工具执行实验 ↓</a><a href="labs/network-input-tools/tool_runtime.py" download>下载 tool_runtime.py ↓</a><a href="labs/network-input-tools/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p><p><small>实际 HTTP/JSON-RPC 形状与本地事务；不是完整 MCP 服务、真实身份认证、LLM 规划、崩溃恢复或 Kairo 接入。</small></p><p>先预测三条路径：read→write→finish；read→write→同 op 再 write→finish；read→write(total=38)→finish。前两条成功且效果都为 1，第二条实际工具尝试为 3；第三条也有一次真实效果，但任务仍为 INCOMPLETE。再看 <span class="first-concept-term" data-concept-term="trace">trace<span class="concept-term-meaning">（追踪，关联相应请求或任务的调用路径）</span></span> 里的 proposal 与 attempt 编号，解释重试和参数拒绝为何产生不同计数。</p><p>程序中主体 A 由测试夹具预先注入。orders-B 确实有值 999，但工具侧在读取和序列化之前拒绝 A 访问，所以结果中不应出现 999。这个用例证明固定对象授权分支，没有验证真实身份签名、会话传播或任意提示注入。消息使用 tools/list、tools/call 与结构化结果的形状，省略 MCP 初始化及会话等环节，因此不是完整 MCP 服务端。</p><p>变化题一：去重前先检查 expected_version，第二次相同写会怎样？可能因为实际版本已从 0 变 1 而错误拒绝合法重试，应先核对同操作原回执。变化题二：只限制工具次数，却不限制提议次数，模型一直输出错误字段会怎样？没有工具调用也可能无限消耗推理。变化题三：工具返回了合法结构的 38，应该改为 SUCCEEDED 还是假装未写？都不对；记录已发生的错误效果，任务验收不通过，再按新修正动作处理。</p></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>流式实战：十三组完成边界与准入对照</h2><h3 id="streaming-tool-lab">先预测哪些流会真的调用工具</h3><p>另开一份只读任务：主体 A 读取“中国区日报”，工具回调返回固定值 [10,27]。程序实际启动本机 chunked HTTP 服务，发送十三份声明好的事件流；客户端每次读取最多 7 字节。下发后是本地只读函数，不调用真实模型、远端工具或 Kairo。</p><p>发送端每个 HTTP chunk 最多 11 字节，读取端的 7 字节也不是 TCP 包或事件边界。正常响应体有 287 字节，读取 41 次。下面只截取中文附近第 28—30 次读取，解释为什么不能把每一块单独 decode 后再拼字符串。</p><figure class="training-figure"><a href="diagrams/v37-utf8-reads.svg" target="_blank" rel="noopener" aria-label="放大：正常流的实际读取边界：前两块单独 UTF-8 解码失败；增量解码依次输出“中”“国区日”“报”，保留待补字节。偏移从响应体 0 开始，不含 HTTP 头与分块帧头。"><img src="diagrams/v37-utf8-reads.svg" width="1120" height="800" alt="正常流的实际读取边界：前两块单独 UTF-8 解码失败；增量解码依次输出“中”“国区日”“报”，保留待补字节。偏移从响应体 0 开始，不含 HTTP 头与分块帧头。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>正常流的实际读取边界：前两块单独 UTF-8 解码失败；增量解码依次输出“中”“国区日”“报”，保留待补字节。偏移从响应体 0 开始，不含 HTTP 头与分块帧头。<a href="diagrams/v37-utf8-reads.svg" download>下载 SVG ↗</a></figcaption></figure><div class="code-block"><div class="code-toolbar"><span>只需 Python 3.9+ 标准库，解压后执行 <small>SHELL</small></span><button data-copy-code aria-label="复制 只需 Python 3.9+ 标准库，解压后执行">复制代码</button></div><pre tabindex="0"><code>python3 streamed_tool_calls.py</code></pre></div><div class="table-wrap"><table><thead><tr><th>只改变这一项</th><th>本地只读回调</th><th>实际判断</th></tr></thead><tbody><tr><td>正常 start/delta/done</td><td>1 次</td><td>完整收集、检查后执行</td></tr><tr><td>A/B 两调用交错</td><td>1 次</td><td>A 执行，B 按租户拒绝，各自拼装</td></tr><tr><td>参数未完整就到 EOF</td><td>0 次</td><td>调用仍未完成</td></tr><tr><td>done 缺少事件末尾空行</td><td>0 次</td><td>最后事件没有交付，仍未完成</td></tr><tr><td>HTTP 不发 chunked 终止块就关闭</td><td>0 次</td><td>实际 IncompleteRead；记录 http_incomplete</td></tr><tr><td>合法 JSON 前缀后追加 oops</td><td>0 次</td><td>完整参数解析失败，未因前缀合法提前执行</td></tr><tr><td>重复 tenant 键</td><td>0 次</td><td>拒绝重复键，保留参数含义唯一</td></tr><tr><td>limit=true</td><td>0 次</td><td>布尔值不按本契约的整数接收</td></tr><tr><td>只改为 B 租户</td><td>0 次</td><td>结构合法，但授权范围拒绝</td></tr><tr><td>只改未知工具名</td><td>0 次</td><td>名称检查拒绝</td></tr><tr><td>参数超过 512 个 UTF-8 字节</td><td>0 次</td><td>参数预算拒绝</td></tr><tr><td>调用前出现无效 UTF-8</td><td>0 次</td><td>解码失败；调用仍未完成</td></tr><tr><td>调用完成后再出现无效 UTF-8</td><td>仍为 1 次</td><td>保留执行观察，同时记录流错误</td></tr></tbody></table></div><p>Python 默认的 JSON 对象解析遇到重复名字会保留最后一项。若只检查解析后的字典，就看不见前面出现过另一个 tenant。程序用 object_pairs_hook 拒绝重复键，再做字段集合与类型检查；这些检查仍不能替代真实工具端的身份认证、授权和业务验证。</p><p>最后一行特意让 done 先在一次读取中处理，再送来无效字节。它说明调用事实与随后流错误可同时成立，不是在承诺任意缓冲尺寸下都出现同样时序。本程序只保留当前进程观察；重启后的去重、接收方持久回执与任务完成仍按相应章节实现。</p><p class="evidence-note">协议范围：严格 UTF-8、LF/CRLF 的 data 字段子集；EOF 不补发最后一个未终结事件。未实现独立 CR 行尾、自动重连或 Last-Event-ID，不作为完整 EventSource 客户端。当前可信主体、最多 4 次调用、512 字节参数和 64 KiB 流上限都是本例契约。</p><p class="practice-links"><a href="labs/streamed-tool-calls.zip" download>下载流式工具参数实验 ↓</a><a href="labs/streamed-tool-calls/README.md" target="_blank" rel="noopener">协议范围、环境与变化题 ↗</a><a href="labs/streamed-tool-calls/validation.json" target="_blank" rel="noopener">十三组实际流与源码摘要 ↗</a></p><details class="full-code"><summary>展开完整 streamed_tool_calls.py：与下载文件一致</summary><div class="code-block"><div class="code-toolbar"><span>streamed_tool_calls.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 streamed_tool_calls.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Actual local chunked HTTP; declared tool-event fixtures, not a model API.
+
+LF/CRLF data fields and incremental strict UTF-8 are a deliberately small SSE
+subset. No reconnect, Last-Event-ID, lone-CR parsing or durable checkpointing.
+The admitted read tool is a local callback, not a remote or Kairo integration.
+&quot;&quot;&quot;
+import codecs
+import hashlib
+from http.client import IncompleteRead
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import json
+import platform
+from threading import Thread
+from urllib.request import build_opener, ProxyHandler
+
+
+def strict_json(text):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError(&quot;duplicate_json_key&quot;)
+            result[key] = value
+        return result
+
+    def invalid_constant(value):
+        raise ValueError(&quot;non_json_constant&quot;)
+
+    return json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant)
+
+
+def event(payload, multiline=False):
+    text = json.dumps(payload, ensure_ascii=False, separators=(&quot;,&quot;, &quot;:&quot;))
+    if multiline:
+        left, right = text.split(&quot;,&quot;, 1)
+        data = &quot;data: &quot;+left+&quot;,\ndata: &quot;+right+&quot;\n\n&quot;
+    else:
+        data = &quot;data: &quot;+text+&quot;\n\n&quot;
+    return (&quot;: heartbeat\nevent: tool\n&quot;+data).encode(&quot;utf-8&quot;)
+
+
+def start(call_id, name=&quot;report.read&quot;):
+    return {&quot;type&quot;:&quot;start&quot;, &quot;call_id&quot;:call_id, &quot;name&quot;:name}
+
+
+def delta(call_id, text):
+    return {&quot;type&quot;:&quot;delta&quot;, &quot;call_id&quot;:call_id, &quot;text&quot;:text}
+
+
+def done(call_id):
+    return {&quot;type&quot;:&quot;done&quot;, &quot;call_id&quot;:call_id}
+
+
+ARGS = &#39;{&quot;tenant&quot;:&quot;A&quot;,&quot;report&quot;:&quot;中国区日报&quot;,&quot;limit&quot;:3}&#39;
+
+
+def one_call(arguments=ARGS, name=&quot;report.read&quot;):
+    return event(start(&quot;c1&quot;, name), True)+event(delta(&quot;c1&quot;, arguments))+event(done(&quot;c1&quot;))
+
+
+def fixtures():
+    interleaved = [start(&quot;a&quot;), start(&quot;b&quot;), delta(&quot;a&quot;, &#39;{&quot;tenant&quot;:&quot;A&quot;,&#39;),
+                   delta(&quot;b&quot;, ARGS.replace(&#39;&quot;A&quot;&#39;, &#39;&quot;B&quot;&#39;)),
+                   delta(&quot;a&quot;, &#39;&quot;report&quot;:&quot;中国区&#39;), done(&quot;b&quot;),
+                   delta(&quot;a&quot;, &#39;日报&quot;,&quot;limit&quot;:3}&#39;), done(&quot;a&quot;)]
+    good = one_call()
+    # Make the invalid byte start a later 7-byte read, after done was delivered.
+    aligned = good+b&quot;:\n&quot;*((-len(good)*4) % 7)
+    assert len(aligned) % 7 == 0
+    return {
+        &quot;normal&quot;: good,
+        &quot;interleaved&quot;: b&quot;&quot;.join(event(p, i==0) for i,p in enumerate(interleaved)),
+        &quot;truncated_arguments&quot;: event(start(&quot;c1&quot;))+event(delta(&quot;c1&quot;, &#39;{&quot;tenant&quot;:&quot;A&quot;&#39;)),
+        &quot;transport_truncated&quot;: event(start(&quot;c1&quot;))+event(delta(&quot;c1&quot;, &#39;{&quot;tenant&quot;:&quot;A&quot;&#39;)),
+        &quot;unfinished_done_event&quot;: good[:-2],
+        &quot;parseable_then_garbage&quot;: (event(start(&quot;c1&quot;))+event(delta(&quot;c1&quot;, ARGS))+
+                                   event(delta(&quot;c1&quot;, &quot;oops&quot;))+event(done(&quot;c1&quot;))),
+        &quot;duplicate_key&quot;: one_call(ARGS.replace(&#39;&quot;tenant&quot;:&quot;A&quot;&#39;, &#39;&quot;tenant&quot;:&quot;B&quot;,&quot;tenant&quot;:&quot;A&quot;&#39;)),
+        &quot;boolean_limit&quot;: one_call(ARGS.replace(&#39;&quot;limit&quot;:3&#39;, &#39;&quot;limit&quot;:true&#39;)),
+        &quot;denied_tenant&quot;: one_call(ARGS.replace(&#39;&quot;A&quot;&#39;, &#39;&quot;B&quot;&#39;)),
+        &quot;unknown_name&quot;: one_call(name=&quot;report.delete&quot;),
+        &quot;arguments_limit&quot;: one_call(ARGS+&quot; &quot;*600),
+        &quot;invalid_utf8_before_done&quot;: event(start(&quot;c1&quot;))+b&quot;\xff\n\n&quot;,
+        &quot;late_stream_error&quot;: aligned+b&quot;\xff&quot;,
+    }
+
+
+class LFEvents:
+    def __init__(self):
+        self.decoder = codecs.getincrementaldecoder(&quot;utf-8&quot;)(&quot;strict&quot;)
+        self.buffer, self.data = &quot;&quot;, []
+
+    def feed(self, chunk, final=False):
+        self.buffer += self.decoder.decode(chunk, final=final)
+        ready = []
+        while &quot;\n&quot; in self.buffer:
+            line, self.buffer = self.buffer.split(&quot;\n&quot;, 1)
+            if line.endswith(&quot;\r&quot;):
+                line = line[:-1]
+            if line == &quot;&quot;:
+                if self.data:
+                    ready.append(&quot;\n&quot;.join(self.data))
+                self.data = []
+            elif line.startswith(&quot;data:&quot;):
+                value = line[5:]
+                self.data.append(value[1:] if value.startswith(&quot; &quot;) else value)
+            # Comments and other SSE fields are not application authorization.
+        if final:
+            # EOF alone does not dispatch a partial last SSE event.
+            self.buffer, self.data = &quot;&quot;, []
+        return ready
+
+
+def read_report(arguments):
+    &quot;&quot;&quot;Fixed read-only tool callback; no external side effect or remote API.&quot;&quot;&quot;
+    if arguments[&quot;tenant&quot;] != &quot;A&quot;:
+        raise PermissionError(&quot;tenant_scope&quot;)
+    return {&quot;tenant&quot;:&quot;A&quot;, &quot;values&quot;:[10,27][:arguments[&quot;limit&quot;]]}
+
+
+class Calls:
+    def __init__(self):
+        self.calls, self.received = {}, []
+        self.events, self.parseable_prefixes = 0, 0
+
+    def accept(self, data):
+        payload = strict_json(data)
+        if not isinstance(payload, dict):
+            raise ValueError(&quot;invalid_envelope&quot;)
+        kind, ident = payload.get(&quot;type&quot;), payload.get(&quot;call_id&quot;)
+        if (not isinstance(ident, str) or not 1 &lt;= len(ident) &lt;= 32
+                or not ident.isascii() or not all(c.isalnum() or c in &quot;-_&quot; for c in ident)):
+            raise ValueError(&quot;invalid_call_id&quot;)
+        fields = {&quot;start&quot;:{&quot;type&quot;,&quot;call_id&quot;,&quot;name&quot;},
+                  &quot;delta&quot;:{&quot;type&quot;,&quot;call_id&quot;,&quot;text&quot;}, &quot;done&quot;:{&quot;type&quot;,&quot;call_id&quot;}}
+        if not isinstance(kind, str) or kind not in fields or set(payload) != fields[kind]:
+            raise ValueError(&quot;invalid_envelope&quot;)
+        self.events += 1
+        if kind == &quot;start&quot;:
+            if ident in self.calls or len(self.calls) &gt;= 4:
+                raise ValueError(&quot;call_identity_or_limit&quot;)
+            if not isinstance(payload[&quot;name&quot;], str):
+                raise ValueError(&quot;invalid_name&quot;)
+            self.calls[ident] = {&quot;name&quot;:payload[&quot;name&quot;], &quot;text&quot;:&quot;&quot;, &quot;status&quot;:&quot;collecting&quot;}
+            return
+        if ident not in self.calls:
+            raise ValueError(&quot;unknown_call&quot;)
+        call = self.calls[ident]
+        if call.get(&quot;complete&quot;):
+            raise ValueError(&quot;event_after_done&quot;)
+        if kind == &quot;delta&quot;:
+            if not isinstance(payload[&quot;text&quot;], str):
+                raise ValueError(&quot;invalid_fragment&quot;)
+            if call[&quot;status&quot;] != &quot;collecting&quot;:
+                return
+            appended = call[&quot;text&quot;]+payload[&quot;text&quot;]
+            if len(appended.encode(&quot;utf-8&quot;)) &gt; 512:
+                call.update(status=&quot;rejected&quot;, reason=&quot;arguments_too_large&quot;)
+                return
+            call[&quot;text&quot;] = appended
+            try:
+                strict_json(appended)
+                self.parseable_prefixes += 1
+            except (ValueError, RecursionError):
+                pass
+            return  # A parseable prefix still does not dispatch a tool.
+        call[&quot;complete&quot;] = True
+        if call[&quot;status&quot;] != &quot;collecting&quot;:
+            return
+        try:
+            args = strict_json(call[&quot;text&quot;])
+        except (ValueError, RecursionError) as error:
+            reason = &quot;duplicate_json_key&quot; if str(error)==&quot;duplicate_json_key&quot; else &quot;invalid_arguments_json&quot;
+            call.update(status=&quot;rejected&quot;, reason=reason)
+            return
+        valid = (isinstance(args, dict) and set(args)=={&quot;tenant&quot;,&quot;report&quot;,&quot;limit&quot;}
+                 and isinstance(args[&quot;tenant&quot;], str) and args[&quot;report&quot;]==&quot;中国区日报&quot;
+                 and type(args[&quot;limit&quot;]) is int and 1 &lt;= args[&quot;limit&quot;] &lt;= 3)
+        if call[&quot;name&quot;] != &quot;report.read&quot; or not valid:
+            call.update(status=&quot;rejected&quot;, reason=&quot;name_or_schema&quot;)
+        elif args[&quot;tenant&quot;] != &quot;A&quot;:
+            call.update(status=&quot;denied&quot;, reason=&quot;tenant_scope&quot;)
+        else:
+            # A real local function call; the input/report data are fixed fixtures.
+            observed = read_report(args)
+            self.received.append({&quot;call_id&quot;:ident, &quot;tool&quot;:call[&quot;name&quot;],
+                                  **observed})
+            call.update(status=&quot;executed&quot;)
+
+
+def consume(url):
+    parser, calls = LFEvents(), Calls()
+    byte_count, reads, naive_errors = 0, 0, 0
+    stream_error = None
+    opener = build_opener(ProxyHandler({}))
+    try:
+        with opener.open(url, timeout=5) as response:
+            assert response.headers.get_content_type() == &quot;text/event-stream&quot;
+            while True:
+                chunk = response.read(7)
+                if not chunk:
+                    for data in parser.feed(b&quot;&quot;, final=True):
+                        calls.accept(data)
+                    break
+                byte_count += len(chunk)
+                reads += 1
+                if byte_count &gt; 65536:
+                    raise ValueError(&quot;stream_budget&quot;)
+                try:
+                    chunk.decode(&quot;utf-8&quot;)
+                except UnicodeDecodeError:
+                    naive_errors += 1
+                for data in parser.feed(chunk):
+                    calls.accept(data)
+    except UnicodeDecodeError:
+        stream_error = &quot;invalid_utf8&quot;
+    except IncompleteRead:
+        stream_error = &quot;http_incomplete&quot;
+    except (ValueError, RecursionError) as error:
+        stream_error = str(error) or type(error).__name__
+    pending = []
+    for ident, call in calls.calls.items():
+        if not call.get(&quot;complete&quot;):
+            pending.append(ident)
+            if call[&quot;status&quot;] == &quot;collecting&quot;:
+                call[&quot;status&quot;] = (&quot;incomplete_at_eof&quot; if stream_error is None
+                                  else &quot;incomplete_after_stream_error&quot;)
+    states = {ident:{key:value for key,value in call.items() if key!=&quot;text&quot;}
+              for ident,call in calls.calls.items()}
+    return {&quot;bytes_read&quot;:byte_count, &quot;read_size&quot;:7, &quot;reads&quot;:reads,
+            &quot;naive_chunk_decode_errors&quot;:naive_errors, &quot;events&quot;:calls.events,
+            &quot;parseable_prefixes&quot;:calls.parseable_prefixes, &quot;states&quot;:states,
+            &quot;pending&quot;:pending, &quot;stream_error&quot;:stream_error,
+            &quot;local_tool_calls&quot;:len(calls.received), &quot;observations&quot;:calls.received}
+
+
+def main():
+    streams = fixtures()
+    class Handler(BaseHTTPRequestHandler):
+        protocol_version = &quot;HTTP/1.1&quot;
+
+        def do_GET(self):
+            body = streams.get(self.path.lstrip(&quot;/&quot;))
+            if body is None:
+                self.send_error(404)
+                return
+            self.send_response(200)
+            self.send_header(&quot;Content-Type&quot;, &quot;text/event-stream; charset=utf-8&quot;)
+            self.send_header(&quot;Transfer-Encoding&quot;, &quot;chunked&quot;)
+            self.end_headers()
+            try:
+                for offset in range(0, len(body), 11):
+                    chunk = body[offset:offset+11]
+                    self.wfile.write((hex(len(chunk))[2:]+&quot;\r\n&quot;).encode(&quot;ascii&quot;))
+                    self.wfile.write(chunk+b&quot;\r\n&quot;)
+                if self.path != &quot;/transport_truncated&quot;:
+                    self.wfile.write(b&quot;0\r\n\r\n&quot;)
+                self.wfile.flush()
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+            self.close_connection = True
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;,0), Handler)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        results = {name:consume(&quot;http://127.0.0.1:&quot;+str(server.server_port)+&quot;/&quot;+name)
+                   for name in streams}
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(3)
+    assert results[&quot;normal&quot;][&quot;local_tool_calls&quot;] == 1
+    assert results[&quot;normal&quot;][&quot;naive_chunk_decode_errors&quot;] &gt; 0
+    assert results[&quot;interleaved&quot;][&quot;states&quot;][&quot;a&quot;][&quot;status&quot;] == &quot;executed&quot;
+    assert results[&quot;interleaved&quot;][&quot;states&quot;][&quot;b&quot;][&quot;status&quot;] == &quot;denied&quot;
+    assert results[&quot;parseable_then_garbage&quot;][&quot;parseable_prefixes&quot;] == 1
+    for name in streams:
+        assert results[name][&quot;local_tool_calls&quot;] == (1 if name in {
+            &quot;normal&quot;,&quot;interleaved&quot;,&quot;late_stream_error&quot;} else 0), name
+    assert results[&quot;late_stream_error&quot;][&quot;stream_error&quot;] == &quot;invalid_utf8&quot;
+    assert results[&quot;transport_truncated&quot;][&quot;stream_error&quot;] == &quot;http_incomplete&quot;
+    print(json.dumps({&quot;status&quot;:&quot;passed&quot;, &quot;python&quot;:platform.python_version(),
+                      &quot;fixture_sha256&quot;:{name:hashlib.sha256(body).hexdigest()
+                                        for name,body in streams.items()},
+                      &quot;results&quot;:results, &quot;scope&quot;:(
+                          &quot;Actual loopback chunked HTTP, fixed declared event envelopes, &quot;
+                          &quot;local read callback and in-process observations only; &quot;
+                          &quot;not a model API, full EventSource client, durable task, remote tool or Kairo.&quot;)},
+                     ensure_ascii=False, indent=2))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div></details><a class="inline-link" href="/article/durable-workflows/">继续推导跨进程恢复与接收方回执 →</a></section><section class="article-section guided-review"><h2>合上页面，试着讲清楚</h2><p>从目标和权限开始，画出模型提议、工具执行、事实持久化与验收，再指出工具成功而任务记录未完成的崩溃窗口。</p><div class="guided-question"><strong>面试追问</strong><p>模型说“报告已保存”，工具返回200，为什么还不能直接把任务标记为完成？</p><details><summary>展开推理，检查遗漏</summary><p>模型文字不是环境证据，200也只说明某个接口的响应语义。需要核对目标位置、工件版本、数据范围与内容要求；若工具只表示“已受理”，还要等待或查询最终结果。只有这些条件满足，才能提交任务成功状态。</p></details></div><a class="inline-link" href="/interview/">继续按主题复习 →</a></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>起点：</b>职责：区分推理与执行。从这里建立当前主题的基本对象。</p><p><b>后续用途：</b><a href="/article/agent-security/">G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a>：模型提议要通过可信身份、任务委托与资源端授权才能执行。</p><a class="chapter-map-link" href="/module/agent/?concept=ag-runtime#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=agent#route-chapter-agent-agent-runtime">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>工具调用返回成功，为什么整个任务仍可能失败？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>工具只完成一个局部动作。参数可能指向错误对象、产物可能不满足要求，后续步骤也可能失败。需要用事先定义的任务目标和环境证据验收。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="agent-runtime:0" >职责：区分推理与执行</label><label><input type="checkbox" data-check="agent-runtime:1" >状态：区分任务、步骤与尝试</label><label><input type="checkbox" data-check="agent-runtime:2" >结果：以环境证据验收目标</label><label><input type="checkbox" data-check="agent-runtime:3" >分开字节、事件与参数完成条件</label><label><input type="checkbox" data-check="agent-runtime:4" >保留已发生调用，并另外记录后续流错误</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="agent-runtime">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/agent-runtime/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener noreferrer">Anthropic · Building effective agents ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools" target="_blank" rel="noopener noreferrer">MCP · Tools 2025-11-25 ↗</a><a href="https://docs.temporal.io/workflow-execution" target="_blank" rel="noopener noreferrer">Temporal · Workflow execution ↗</a><a href="https://www.anthropic.com/research/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener noreferrer">Anthropic · 上下文的选择、压缩与组织 ↗</a><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite · 事务与并发边界 ↗</a><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream" target="_blank" rel="noopener noreferrer">WHATWG · SSE 字符编码、事件边界与 EOF ↗</a><a href="https://docs.python.org/3.12/library/codecs.html#incremental-encoding-and-decoding" target="_blank" rel="noopener noreferrer">Python 3.12 · 增量编解码状态 ↗</a><a href="https://docs.python.org/3.12/library/json.html#repeated-names-within-an-object" target="_blank" rel="noopener noreferrer">Python 3.12 · JSON 重复键与解析钩子 ↗</a><a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.6.4" target="_blank" rel="noopener noreferrer">RFC 9110 · HTTP 503与服务暂时不可用 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-hf-agents"><div class="resource-meta"><span>中文图文 / 英文导览 · 图文 / 练习 / 导览回放</span><span>Hugging Face</span></div><h3><a href="https://huggingface.co/learn/agents-course/zh-CN/unit1/introduction" target="_blank" rel="noopener noreferrer">AI Agents Course：简中入门单元 ↗</a></h3><p><b>先看什么</b>第 1 单元：智能体、工具、动作与观察。先画调用与反馈，再阅读首个 Agent 示例。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>基础 Python 与 LLM。</p><p><b>学完检查</b>解释工具报错后模型看到什么，执行器仍须检查什么。</p><p>已核对第 1 单元的简中正文与目录。部署 Space 等练习需账号，推理按所选服务配额；课程导览回放为英文。</p><div class="path-links"><a href="/article/agent-runtime/">Agent Infra在解决什么：从模型提议到任务完成 →</a><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/agent-evaluation/">Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本 →</a></div></details><div class="resource-extra-links"><a class="resource-video" href="https://huggingface.co/learn/agents-course/en/communication/live1" target="_blank" rel="noopener noreferrer">英文课程导览回放 ↗</a><a href="https://huggingface.co/learn/agents-course/en/unit1/introduction" target="_blank" rel="noopener noreferrer">英文原文 ↗</a></div><p class="resource-checked">入口核对 2026-11-05</p></article><article class="resource-row" id="resource-ntu-genai"><div class="resource-meta"><span>中文 · 课程视频 / 讲义</span><span>台湾大学 / 李宏毅</span></div><h3><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/2025-spring.php" target="_blank" rel="noopener noreferrer">机器学习 2025：生成式 AI 与 Agent ↗</a></h3><p><b>先看什么</b>先看 3/7 Agent，再选 3/14 模型内部与 3/28 预训练/对齐；按目录取用。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>LLM 基础概念；代码练习另需 Python。</p><p><b>学完检查</b>区分模型生成动作、执行工具与环境验收。</p><p>课程原站公开逐讲录像和讲义；正式作业平台另有条件。</p><div class="path-links"><a href="/article/agent-runtime/">Agent Infra在解决什么：从模型提议到任务完成 →</a><a href="/article/agent-memory/">上下文、运行状态与长期记忆：三种信息不要混存 →</a><a href="/article/transformer-model/">Transformer 全貌：从张量到计算图 →</a><a href="/article/ai-lifecycle/">模型怎样进入生产：完整产物、评估、发布与回退 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#agent">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/agent-recovery/"><span>G4</span>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/agent-evaluation/"><span>G6</span>Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="agent-runtime">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Agent Infra</p><a href="/roadmap/?track=agent#route-agent"><small>← 开始之前</small>本方向的整体路线</a><a data-reading-direction="next" href="/article/agent-security/"><small>下一篇 →</small>G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/agent-runtime/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/agent-runtime/#section-1">1. 任务契约：目标、范围、证据与停止条件</a><a data-toc="section-2" href="/article/agent-runtime/#section-2">2. 工具契约：结构、权限、版本与结果</a><a data-toc="section-3" href="/article/agent-runtime/#section-3">3. 有限执行循环：提议、调用与效果分别计数</a><a data-toc="section-4" href="/article/agent-runtime/#section-4">4. 错误与重试：连接、HTTP、工具协议与任务验收</a><a data-toc="section-5" href="/article/agent-runtime/#section-5">5. 状态与身份：任务、步骤、原操作和尝试</a><a data-toc="section-6" href="/article/agent-runtime/#section-6">6. 完成验收：读取真实产物，保留错误效果</a><a data-toc="section-7" href="/article/agent-runtime/#section-7">7. Kairo适配：按执行责任寻找真实接口</a><a data-toc="section-8" href="/article/agent-runtime/#section-8">8. 实战与变化题：十组实际HTTP对照</a><a data-toc="section-9" href="/article/agent-runtime/#section-9">9. 流式实战：十三组完成边界与准入对照</a><a data-toc="self-check" href="/article/agent-runtime/#self-check">自我检验</a><a data-toc="references" href="/article/agent-runtime/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
 <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

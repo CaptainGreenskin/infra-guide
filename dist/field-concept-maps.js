@@ -285,14 +285,14 @@ function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<details class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><summary><h2>把本领域连成一张图</h2></summary><p class="field-map-note">选一个概念看定义与相邻关系；箭头文字说明依赖、控制或结果，不表示全部串行执行。</p>'+
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>把本领域连成一张图</h2><p class="field-map-note">方框是本领域的核心对象，箭头表示作用或依赖。先看清它们的位置，再读下面的定义；图中数字对应展开后的关系说明。</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：圆圈数字对应箭头说明，方向表示作用或依赖。')+'<details class="field-map-explorer"><summary>查概念定义、箭头含义与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
   return '<div class="field-map-definition" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+' <a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
- '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ul class="field-map-edges">'+graph.edges.map(([from,verb,to,why])=>'<li data-concept-edge="'+from+' '+to+'"><div>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ul>'+
- '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>';
+ '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
+ '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
 }
 function fieldMapIndexHTML(track){return '<div class="field-map-index"><b>按领域看核心关系</b><p>'+modules.filter(m=>m.track===track&&fieldConceptMaps[m.id]).map(m=>'<a href="'+fieldMapURL(m.id)+'">'+m.n+' '+trainingEscape(m.name)+' →</a>').join('')+'</p></div>';}
 function chapterFieldConcepts(a){
@@ -305,6 +305,8 @@ function chapterFieldMapLink(a){const [moduleId,id]=chapterFieldConcepts(a)[0]||
 function initFieldConceptMaps(){
  for(const map of document.querySelectorAll('[data-field-map]')){
   const graph=fieldConceptMaps[map.dataset.fieldMap],buttons=[...map.querySelectorAll('[data-concept-focus]')];
+  const frame=map.querySelector('.training-figure > a');
+  if(frame&&frame.scrollWidth>frame.clientWidth)frame.scrollLeft=(frame.scrollWidth-frame.clientWidth)/2;
   const select=(id,keepPosition=false)=>{
    const controls=map.querySelector('.field-map-controls'),before=keepPosition?controls.getBoundingClientRect().top:0;
    const node=graph.nodes.find(n=>n[0]===id),active=node?id:'all';
@@ -316,6 +318,8 @@ function initFieldConceptMaps(){
    if(keepPosition){const delta=controls.getBoundingClientRect().top-before;if(delta)window.scrollTo({top:window.scrollY+delta,behavior:'instant'});}
   };
   for(const button of buttons)button.onclick=()=>select(button.dataset.conceptFocus,true);
-  map.classList.add('field-map-ready');select(new URLSearchParams(location.search).get('concept'));
+  const requested=new URLSearchParams(location.search).get('concept');
+  if(graph.nodes.some(n=>n[0]===requested))map.querySelector('.field-map-explorer').open=true;
+  map.classList.add('field-map-ready');select(requested);
  }
 }

@@ -60,8 +60,79 @@ const quantizationLegacyAnchors={
  'section-8':'section-1','quantization-number-map':'quantization-number-map',
  'section-9':'section-3','section-10':'section-4','section-11':'section-5'
 };
+// Fixed published track fragments, including inner diagrams and executable examples.
+const legacyTrackKnowledgeAnchors={
+  "cloud": [
+    "concept-path",
+    "knowledge-service-model",
+    "knowledge-control-data-plane",
+    "knowledge-fault-domain",
+    "knowledge-vm-runtime",
+    "virtualization-resource-contract",
+    "knowledge-cpu-memory-placement",
+    "knowledge-instance-lifecycle",
+    "knowledge-resource-contract",
+    "concept-relations",
+    "resource-aws-reliability",
+    "resource-terraform-state",
+    "examples"
+  ],
+  "ai": [
+    "concept-path",
+    "knowledge-mf-tensors",
+    "knowledge-mf-attention",
+    "knowledge-mf-decoder",
+    "knowledge-mf-autograd",
+    "knowledge-mf-gpu",
+    "knowledge-mf-roofline",
+    "concept-relations",
+    "examples",
+    "resource-d2l-zh",
+    "resource-one-gpu-lm",
+    "resource-ntu-genai"
+  ],
+  "agent": [
+    "concept-path",
+    "knowledge-ag-runtime",
+    "tool-task-contract",
+    "tool-finite-loop",
+    "knowledge-ag-tools",
+    "knowledge-ag-recovery",
+    "cancel-request-and-effect",
+    "knowledge-ag-fencing",
+    "knowledge-ag-authorization",
+    "approval-records",
+    "knowledge-ag-context",
+    "context-state-authority",
+    "stale-context-recovery",
+    "knowledge-ag-retrieval",
+    "retrieval-lexical-foundation",
+    "retrieval-evidence-pipeline",
+    "knowledge-ag-observability",
+    "agent-observation-signals",
+    "agent-trace-effect-boundary",
+    "knowledge-ag-evaluation",
+    "evaluation-metric-contract",
+    "knowledge-ag-sandbox",
+    "sandbox-authority-boundary",
+    "concept-relations",
+    "examples",
+    "resource-hf-agents",
+    "resource-ntu-genai",
+    "resource-berkeley-agents"
+  ]
+};
 function courseRedirectFor(path,search='',hash=''){
  if(path==='/start/'||path==='/start')return '/'+search+hash;
+ // Previously a track URL rendered a full field reference. Preserve its deep links.
+ const legacyTrack=path.match(/^\/track\/(cloud|ai|agent)\/?$/);
+ if(legacyTrack){
+  let anchor;try{anchor=decodeURIComponent(hash.slice(1));}catch{return null;}
+  if(legacyTrackKnowledgeAnchors[legacyTrack[1]].includes(anchor)){
+   const moduleId={cloud:'compute',ai:'model-foundations',agent:'agent'}[legacyTrack[1]];
+   return '/module/'+moduleId+'/'+search+hash;
+  }
+ }
  if(path!=='/article/model-serving/'&&path!=='/article/model-serving')return null;
  const query=new URLSearchParams(search);
  let anchor=hash.slice(1);

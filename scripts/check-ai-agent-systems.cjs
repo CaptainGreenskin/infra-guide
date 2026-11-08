@@ -22,8 +22,8 @@ for(const domain of d.infraKnowledgeDomains){
  assert(!page.includes('undefined'));assert(page.indexOf('class="knowledge-references"')>page.indexOf('id="examples"'));assert(page.includes('resource-recommendations'));assert(page.includes('class="github-link"'));
 }
 const html=route=>fs.readFileSync('dist/'+route+'/index.html','utf8');
-assert(html('track/ai').includes('knowledge-mf-tensors'));
-assert(html('track/agent').includes('knowledge-ag-runtime'));
+assert(html('module/model-foundations').includes('knowledge-mf-tensors'));
+assert(html('module/agent').includes('knowledge-ag-runtime'));
 for(const [file,hash]of Object.entries(d.aiAgentValidation.source_sha256)){
  const bytes=fs.readFileSync('dist/labs/ai-agent-systems/'+file);
  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),hash,file);

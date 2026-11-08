@@ -1,0 +1,70 @@
+/* Whole-course contracts: one main reading path, real concept graphs and role prerequisites.
+   UI checks describe organization, not a measured claim of human comprehension. */
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={URLSearchParams,location:{search:''},articleURL:id=>'/article/'+id+'/'};vm.createContext(c);
+for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
+const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions})',c)));
+const legacy=JSON.parse(JSON.stringify(vm.runInContext('legacyTrackKnowledgeAnchors',c)));
+for(const[track,anchors]of Object.entries(legacy))for(const anchor of anchors){
+ const moduleId={cloud:'compute',ai:'model-foundations',agent:'agent'}[track];
+ c.args=['/track/'+track+'/','?campaign=reader','#'+anchor];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/module/'+moduleId+'/?campaign=reader#'+anchor);
+ assert(fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8').includes('id="'+anchor+'"'),track+': original field fragment '+anchor);
+}
+const courseReview=require('./coherence-review-records.cjs').laterUpdates.at(-1).review_scope;
+const previous=require('./content-at-commit.cjs')(courseReview.body_baseline_commit);
+const changed=[];
+for(const a of data.articles){
+ const old=previous.find(x=>x.id===a.id);assert(old);assert.equal(a.title,old.title);
+ assert.deepEqual(a.sections.map(s=>s[0]),old.sections.map(s=>s[0]),a.id+': preserve headings and section links');
+ if(JSON.stringify(a.sections)!==JSON.stringify(old.sections))changed.push(a.id);
+ const oldBody=old.sections.map(s=>s[1]).join(''),body=a.sections.map(s=>s[1]).join('');
+ const blocks=body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[],oldBlocks=oldBody.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[];
+ let index=0;for(const block of oldBlocks){const at=blocks.indexOf(block,index);assert(at>=index,a.id+': original complete code removed or reordered');index=at+1;}
+ assert.equal(blocks.length-oldBlocks.length,courseReview.added_code_blocks?.[a.id]||0,a.id+': undeclared added source');
+ for(const[,id]of oldBody.matchAll(/\bid="([^"]+)"/g))assert(body.includes('id="'+id+'"'),a.id+': original inner anchor '+id);
+}
+assert.deepEqual(changed.sort(),[...courseReview.changed_bodies].sort());
+for(const[track,t]of Object.entries(data.tracks)){
+ const html=fs.readFileSync('dist/track/'+track+'/index.html','utf8');
+ const a=data.articles.find(a=>a.id===t.start);
+ assert(html.includes('<h1>'+a.number+' '+a.title+'</h1>'),track+': enter the actual first lesson');
+ assert(!html.includes('class="knowledge-body"'),track+': no full field textbook before the first lesson');
+ for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
+}
+for(const[moduleId,g]of Object.entries(data.maps)){
+ const html=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8');
+ assert(html.includes('<section class="field-concept-map"'),'map is visible rather than a closed details');
+ assert(html.indexOf('id="concept-relations"')<html.indexOf('class="knowledge-point"'),'map must precede extended field explanations');
+ const svg=fs.readFileSync('dist/diagrams/field-'+moduleId+'.svg','utf8');
+ for(const[id]of g.nodes)assert(svg.includes('data-concept="'+id+'"'));
+ for(const[from,,to]of g.edges)assert(svg.includes('data-edge="'+from+' '+to+'"'));
+ assert.equal((svg.match(/data-concept=/g)||[]).length,g.nodes.length);
+ assert.equal((svg.match(/data-edge=/g)||[]).length,g.edges.length);
+ assert(html.includes('diagrams/field-'+moduleId+'.svg'));
+ c.args=['/track/'+({compute:'cloud','model-foundations':'ai',agent:'agent'}[moduleId]||'cloud')+'/','?campaign=reader','#knowledge-'+g.nodes[0][0]];
+ if(['compute','model-foundations','agent'].includes(moduleId))assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/module/'+moduleId+'/?campaign=reader#knowledge-'+g.nodes[0][0]);
+}
+const routes={};
+for(const[id,profile]of Object.entries(data.profiles)){
+ c.profile=profile;const route=JSON.parse(JSON.stringify(vm.runInContext('learningProfileRoute(profile)',c)));routes[id]=route;
+ assert.equal(new Set(route).size,route.length,id+': no duplicate lessons');
+ for(const chapter of route){assert(data.articles.some(a=>a.id===chapter));for(const[dep]of data.needs[chapter])assert(route.indexOf(dep)>=0&&route.indexOf(dep)<route.indexOf(chapter),id+': missing or late prerequisite '+dep);}
+ for(const target of profile.targets)assert(route.includes(target));
+ if(profile.track==='agent')assert(route.every(id=>data.articles.find(a=>a.id===id).module==='agent'||id==='production-readiness'));
+ const html=fs.readFileSync('dist/roadmap/'+id+'/index.html','utf8');
+ assert(html.includes('id="learning-goal"')&&html.includes('<h1>'+profile.label+'学习路线</h1>'),id+': complete static role destination');
+ for(const chapter of route)assert(html.includes('/article/'+chapter+'/?goal='+id),id+': static role route omitted '+chapter);
+}
+assert.deepEqual(Object.keys(data.profiles),JSON.parse(fs.readFileSync('docs/CONTENT_READING_2026-11-08.json')).route_views);
+assert(!routes['ai-inference'].includes('ddp-code'),'inference readers should not be forced through distributed training');
+assert(routes['ai-training'].includes('checkpoint-recovery'));assert(!routes['ai-training'].includes('quantization-serving'));
+for(const id of ['cloud-platform','cloud-sre'])for(const core of ['cloud-compute','iam-security'])assert(routes[id].includes(core));
+c.location.search='?goal=ai-inference';
+assert(vm.runInContext('chapterPriority("model-serving")',c).includes('岗位重点'));
+assert(vm.runInContext('chapterPriority("attention-mechanics")',c).includes('先修基础'));
+assert(vm.runInContext('chapterPriority("ddp-code")',c).includes('选学专题'));
+assert(vm.runInContext('learningGoalChapterNav(articleById("model-serving"))',c).includes('?goal=ai-inference'));
+for(const text of ['GPU 内核负责计算。','操作系统内核负责管理进程。']){c.text='<p>'+text+'</p>';assert(!vm.runInContext('explainFirstConceptTerms(text)',c).includes('data-concept-term="内核"'),'ambiguous kernel must be defined in context');}
+c.text='<p>操作系统内核。</p>';assert(vm.runInContext('explainFirstConceptTerms(text)',c).includes('data-concept-term="操作系统内核"'),'the explicit operating-system term retains its useful definition');
+console.log('PASS: three direct lesson entries, 14 visible graphs with 100 nodes /87 edges, original track concept links, seven prerequisite-complete role routes and context-specific priority/continuation; GPU kernel is never mislabeled as OS kernel.');
