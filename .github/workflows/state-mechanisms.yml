@@ -4,8 +4,8 @@ on:
   push:
     branches: ['content/coordinated-state-*']
     paths:
-      - 'dist/labs/etcd-consensus/**'
-      - 'dist/labs/mysql-replication/**'
+      - 'dist/labs/etcd-consensus/etcd_lab.py'
+      - 'dist/labs/mysql-replication/replication_lab.py'
       - '.github/workflows/state-mechanisms.yml'
 permissions:
   contents: read

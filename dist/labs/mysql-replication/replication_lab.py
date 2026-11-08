@@ -217,7 +217,7 @@ def run(lab):
         "GRANT SELECT,INSERT,UPDATE ON "+DB+".* TO 'writer'@'%';")
     lab.sql(replica,"SET GLOBAL super_read_only=ON; CHANGE REPLICATION SOURCE TO SOURCE_HOST='source',"
         "SOURCE_USER='repl',SOURCE_PASSWORD="+quoted(REPL_PASSWORD)+",SOURCE_AUTO_POSITION=1,"
-        "SOURCE_CONNECT_RETRY=1,SOURCE_RETRY_COUNT=20,SOURCE_GET_SOURCE_PUBLIC_KEY=1; START REPLICA;")
+        "SOURCE_CONNECT_RETRY=1,SOURCE_RETRY_COUNT=20,GET_SOURCE_PUBLIC_KEY=1; START REPLICA;")
     initial_gtid=lab.scalar(source,'SELECT @@GLOBAL.gtid_executed')
     assert lab.wait_gtid(replica,initial_gtid,25)==0
     assert lab.state(replica)['balance']==100
