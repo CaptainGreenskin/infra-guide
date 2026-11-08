@@ -1,0 +1,72 @@
+name: Native message state and GitOps mechanisms
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'content/delivery-*']
+    paths:
+      - 'dist/labs/delivery-systems/*.py'
+      - 'dist/labs/delivery-systems/Dockerfile.mq-client'
+      - 'dist/labs/delivery-systems/gitops-*.json'
+      - 'dist/labs/delivery-systems/gitops-app/*.json'
+      - '.github/workflows/delivery-systems.yml'
+permissions:
+  contents: read
+jobs:
+  messages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Observe publisher confirms, ACK, redelivery and durable restart
+        run: python3 -B dist/labs/delivery-systems/mq_delivery.py --output native-results/mq.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: delivery-mq-results
+          path: native-results/
+          retention-days: 14
+  terraform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install official pinned Terraform
+        run: |
+          mkdir -p "$RUNNER_TEMP/guide-terraform"
+          cd "$RUNNER_TEMP/guide-terraform"
+          curl --fail --location --retry 3 https://releases.hashicorp.com/terraform/1.13.0/terraform_1.13.0_linux_amd64.zip -o terraform_1.13.0_linux_amd64.zip
+          curl --fail --location --retry 3 https://releases.hashicorp.com/terraform/1.13.0/terraform_1.13.0_SHA256SUMS -o terraform_1.13.0_SHA256SUMS
+          sha256sum --ignore-missing -c terraform_1.13.0_SHA256SUMS
+          unzip -q terraform_1.13.0_linux_amd64.zip
+          echo "$RUNNER_TEMP/guide-terraform" >> "$GITHUB_PATH"
+      - name: Observe actual lock, refresh-only, file drift and workspace collision
+        run: python3 -B dist/labs/delivery-systems/terraform_state.py --output native-results/terraform.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: delivery-terraform-results
+          path: native-results/
+          retention-days: 14
+  gitops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install official pinned kind
+        run: |
+          mkdir -p "$RUNNER_TEMP/guide-kind"
+          cd "$RUNNER_TEMP/guide-kind"
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o kind-linux-amd64
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64.sha256sum -o kind-linux-amd64.sha256sum
+          sha256sum -c kind-linux-amd64.sha256sum
+          chmod +x kind-linux-amd64
+          mv kind-linux-amd64 kind
+          echo "$RUNNER_TEMP/guide-kind" >> "$GITHUB_PATH"
+      - name: Observe real Argo CD reconcile and independent HTTP business version
+        run: python3 -B dist/labs/delivery-systems/gitops_reconcile.py --output native-results/gitops.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: delivery-gitops-results
+          path: native-results/
+          retention-days: 14
