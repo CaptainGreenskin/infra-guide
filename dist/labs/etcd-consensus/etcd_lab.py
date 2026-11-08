@@ -375,8 +375,8 @@ class Lab:
         # The controlled resumed stream contains one PUT. Apply the actual
         # delivered event to the newly listed cache, then compare a separate
         # full prefix read rather than treating watch cancellation as recovery.
-        for event in restarted_watch['events']:
-            cache[event['key']] = event['value']
+        for resumed_event in restarted_watch['events']:
+            cache[resumed_event['key']] = resumed_event['value']
         full_range_after = normalized_range(self.json(restored_name, 'get', PREFIX, '--prefix'))
         restored_after = self.read(restored_name)
 

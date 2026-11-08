@@ -246,6 +246,10 @@ def oracle(state,expected):
 
 def run(lab):
     source,replica=lab.setup()
+    # Official image initialization can execute local GTIDs. Capture their
+    # provenance before creating this business DB or starting replication.
+    source_bootstrap=lab.scalar(source,'SELECT @@GLOBAL.gtid_executed')
+    replica_bootstrap=lab.scalar(replica,'SELECT @@GLOBAL.gtid_executed')
     lab.sql(source,"CREATE USER 'repl'@'%' IDENTIFIED BY "+quoted(REPL_PASSWORD)+"; "
         "GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%'; CREATE DATABASE "+DB+"; "
         "CREATE TABLE "+DB+".account(id INT PRIMARY KEY,balance INT NOT NULL) ENGINE=InnoDB; "
@@ -332,6 +336,10 @@ def run(lab):
     pre_switch_replica=lab.state(replica)
     oracle(pre_switch_source,expected_old);oracle(pre_switch_replica,expected_old)
     assert pre_switch_source['receipts']==pre_switch_replica['receipts']
+    allowed_target=frozen_gtid+(','+replica_bootstrap if replica_bootstrap else '')
+    unexpected_target=lab.scalar(replica,'SELECT GTID_SUBTRACT(@@GLOBAL.gtid_executed,'+quoted(allowed_target)+')')
+    missing_target=lab.scalar(replica,'SELECT GTID_SUBTRACT('+quoted(frozen_gtid)+',@@GLOBAL.gtid_executed)')
+    assert unexpected_target=='' and missing_target=='', 'candidate has an unexplained GTID difference'
     lab.sql(replica,'STOP REPLICA; RESET REPLICA ALL;')
     lab.docker('stop','--time','15',source,timeout=25)
     old_running=json.loads(lab.docker('inspect',source).stdout)[0]['State']['Running']
@@ -343,7 +351,8 @@ def run(lab):
     final=lab.state(replica)
     final_oracle=oracle(final,dict(expected_old,NEW_WRITER=3))
     assert final['server_uuid']!=pre_switch_source['server_uuid']
-    return {'environment':metadata,'initial':{'balance':100,'replica_wait':0},
+    return {'environment':metadata,'initial':{'balance':100,'replica_wait':0,
+                                            'source_bootstrap_gtid':source_bootstrap,'replica_bootstrap_gtid':replica_bootstrap},
             'read_views':{'rr':{'begin_before_update':True,'first':rr_first,'same_transaction':rr_second,'after_commit':rr_fresh},
                           'rc':{'first':rc_first,'same_transaction':rc_second}},
             'lag':{'source_target':lag_target,'status':status,'received_contains_target':received,
@@ -351,6 +360,8 @@ def run(lab):
                    'source':lag_source,'replica':lag_replica,'promote_allowed':False},
             'caught_up':{'wait':catchup_wait,'replica':caught_up},
             'switchover':{'frozen_target':frozen_gtid,'wait':final_gate,'source_before_stop':pre_switch_source,
+                          'allowed_initial_gtids':replica_bootstrap,'allowed_target_gtids':allowed_target,
+                          'unexpected_target_gtids':unexpected_target,'missing_target_gtids':missing_target,
                           'replica_before_promotion':pre_switch_replica,'old_writer_error':re.search(r'ERROR (\d+)',denied.stderr).group(1),
                           'old_admin_error':'1290','old_container_running':old_running,
                           'old_stopped_write_exit':old_after_stop.returncode,'new_primary':final,'oracle':final_oracle},
