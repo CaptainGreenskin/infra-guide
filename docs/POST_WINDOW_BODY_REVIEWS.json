@@ -3784,6 +3784,24 @@
         "验收：为一次突发和一次区故障算两笔账",
         "配套实战：积压守恒、有限缓冲与单位成本"
       ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7e7bea0eed4e01db91cf34fca169a78617d696c9e15b5b36312e20a7cb76f8ec",
+      "reviewed_content_sha256": "14a43d04470c848b4300075369007ef20744b44434c08a5a1a3c396230a6daa4",
+      "scope": "Define CPU resource units and remove duplicate image presentation in Agent observation",
+      "observation": "One paragraph defines millicpu and CPU requests before the existing90m/100m/900m aggregate. Two copied image anchors become plain links while retaining their URLs and all three original figures. The18-percent weighted ratio,50-percent mean of ratios, missing/zero distinction, original source and actual records remain unchanged.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

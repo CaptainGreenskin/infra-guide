@@ -1,45 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 754" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 950" role="img" aria-labelledby="title desc">
 <title id="title">AI 作业平台与推理服务：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="754" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="950" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">AI 作业平台与推理服务</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
 <metadata>{&quot;module&quot;: &quot;platform&quot;, &quot;main_edges&quot;: [0, 1, 2, 3, 4], &quot;rows&quot;: [[&quot;sv-contract&quot;, &quot;sv-release&quot;], [&quot;sv-admission&quot;, &quot;sv-prefill&quot;], [&quot;sv-optimizations&quot;, &quot;sv-kv&quot;, &quot;sv-batching&quot;], [&quot;sv-quantization&quot;, &quot;sv-metrics&quot;]]}</metadata>
-<path data-edge="sv-contract sv-admission" data-emphasis="main" d="M411.0 228 C411.0 264.0 411.0 264.0 411.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sv-contract sv-prefill" data-emphasis="main" d="M411.0 228 C411.0 264.0 709.0 264.0 709.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sv-prefill sv-kv" data-emphasis="main" d="M709.0 384 C709.0 420.0 560.0 420.0 560.0 452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sv-batching sv-kv" data-emphasis="main" d="M858.0 456 V428 H560.0 V452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sv-batching sv-metrics" data-emphasis="main" d="M858.0 540 C858.0 576.0 709.0 576.0 709.0 608" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sv-quantization sv-metrics" data-emphasis="other" d="M411.0 612 V584 H709.0 V608" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="sv-optimizations sv-prefill" data-emphasis="other" d="M262.0 456 V438 H26 V282 H709.0 V296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="sv-release sv-contract" data-emphasis="other" d="M709.0 144 V116 H411.0 V140" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<g data-relation-label="1"><rect x="344.0" y="248.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="411.0" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">1 · 提出资源需要</text></g>
-<g data-relation-label="2"><rect x="484.5" y="248.5" width="151" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">2 · 交付完整模型给</text></g>
-<g data-relation-label="3"><rect x="576.0" y="404.5" width="117" height="30" rx="6" fill="#f8fafc"/><text x="634.5" y="425.5" text-anchor="middle" fill="#315fe5" font-size="17">3 · 产生并读取</text></g>
-<g data-relation-label="4"><rect x="710.1" y="413" width="117" height="30" rx="6" fill="#f8fafc"/><text x="768.6" y="434" text-anchor="middle" fill="#315fe5" font-size="17">4 · 受容量限制</text></g>
-<g data-relation-label="5"><rect x="716.5" y="560.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="783.5" y="581.5" text-anchor="middle" fill="#315fe5" font-size="17">5 · 改变等待分布</text></g>
-<g data-relation-label="6"><rect x="484.5" y="569" width="151" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="590" text-anchor="middle" fill="#8b9bb3" font-size="17">6 · 影响资源与时延</text></g>
-<g data-relation-label="7"><rect x="77.0" y="423" width="134" height="30" rx="6" fill="#f8fafc"/><text x="144.0" y="444" text-anchor="middle" fill="#8b9bb3" font-size="17">7 · 利用条件前缀</text></g>
-<g data-relation-label="8"><rect x="484.5" y="101" width="151" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="122" text-anchor="middle" fill="#8b9bb3" font-size="17">8 · 验收产物与行为</text></g>
-<g data-concept="sv-contract"><rect x="279.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">作业与完整产物</text></g>
-<g data-concept="sv-admission"><rect x="279.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">资源准入</text></g>
-<g data-concept="sv-prefill"><rect x="577.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">输入与生成</text></g>
-<g data-concept="sv-kv"><rect x="428.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">历史键值状态</text></g>
-<g data-concept="sv-batching"><rect x="726.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">请求调度</text></g>
-<g data-concept="sv-metrics"><rect x="577.0" y="612" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="663" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">用户计时口径</text></g>
-<g data-concept="sv-quantization"><rect x="279.0" y="612" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="663" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">数值与字节</text></g>
-<g data-concept="sv-optimizations"><rect x="130.0" y="456" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">候选与验证</text></g>
-<g data-concept="sv-release"><rect x="577.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">版本与验收</text></g>
-<text x="560" y="732" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<path data-edge="sv-contract sv-admission" data-emphasis="main" d="M295.0 258 C295.0 314.0 411.0 314.0 411.0 366" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sv-contract sv-prefill" data-emphasis="main" d="M527.0 258 C527.0 314.0 825.0 314.0 825.0 366" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sv-prefill sv-kv" data-emphasis="main" d="M709.0 454 C709.0 530.0 444.0 530.0 444.0 602" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sv-batching sv-kv" data-emphasis="main" d="M858.0 606 V568.0 H676.0 V602" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sv-batching sv-metrics" data-emphasis="main" d="M858.0 690 C858.0 736.0 825.0 736.0 825.0 778" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sv-quantization sv-metrics" data-emphasis="other" d="M411.0 782 V744.0 H593.0 V778" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="sv-optimizations sv-prefill" data-emphasis="other" d="M262.0 606 V510.0 H26 V332.0 H593.0 V366" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="sv-release sv-contract" data-emphasis="other" d="M709.0 174 V136.0 H411.0 V170" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<g data-relation-label="1"><rect x="231.463125" y="283.0703125" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="331.703125" y="311.0703125" text-anchor="middle" fill="#315fe5" font-size="22">1 · 提出资源需要</text></g>
+<g data-relation-label="2"><rect x="608.864" y="301.648" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="720.104" y="329.648" text-anchor="middle" fill="#315fe5" font-size="22">2 · 交付完整模型给</text></g>
+<g data-relation-label="3"><rect x="487.26" y="509.5" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="576.5" y="537.5" text-anchor="middle" fill="#315fe5" font-size="22">3 · 产生并读取</text></g>
+<g data-relation-label="4"><rect x="686.86" y="548.0" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="776.1" y="576.0" text-anchor="middle" fill="#315fe5" font-size="22">4 · 受容量限制</text></g>
+<g data-relation-label="5"><rect x="741.26" y="715.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="841.5" y="743.5" text-anchor="middle" fill="#315fe5" font-size="22">5 · 改变等待分布</text></g>
+<g data-relation-label="6"><rect x="390.76" y="724.0" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="502.0" y="752.0" text-anchor="middle" fill="#536783" font-size="22">6 · 影响资源与时延</text></g>
+<g data-relation-label="7"><rect x="43.75999999999999" y="490.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="144.0" y="518.0" text-anchor="middle" fill="#536783" font-size="22">7 · 利用条件前缀</text></g>
+<g data-relation-label="8"><rect x="448.76" y="116.0" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="560.0" y="144.0" text-anchor="middle" fill="#536783" font-size="22">8 · 验收产物与行为</text></g>
+<g data-concept="sv-contract"><rect x="279.0" y="174" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="225" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">作业与完整产物</text></g>
+<g data-concept="sv-admission"><rect x="279.0" y="370" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="421" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">资源准入</text></g>
+<g data-concept="sv-prefill"><rect x="577.0" y="370" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="421" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">输入与生成</text></g>
+<g data-concept="sv-kv"><rect x="428.0" y="606" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="657" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">历史键值状态</text></g>
+<g data-concept="sv-batching"><rect x="726.0" y="606" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="657" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">请求调度</text></g>
+<g data-concept="sv-metrics"><rect x="577.0" y="782" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="833" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">用户计时口径</text></g>
+<g data-concept="sv-quantization"><rect x="279.0" y="782" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="833" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">数值与字节</text></g>
+<g data-concept="sv-optimizations"><rect x="130.0" y="606" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="657" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">候选与验证</text></g>
+<g data-concept="sv-release"><rect x="577.0" y="174" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="225" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">版本与验收</text></g>
+<text x="560" y="928" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

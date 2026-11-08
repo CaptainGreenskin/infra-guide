@@ -1,41 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 754" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 960" role="img" aria-labelledby="title desc">
 <title id="title">云上 AI 训练：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="754" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="960" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">云上 AI 训练</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
 <metadata>{&quot;module&quot;: &quot;training&quot;, &quot;main_edges&quot;: [0, 5, 6], &quot;rows&quot;: [[&quot;tr-input&quot;], [&quot;tr-step&quot;, &quot;tr-ddp&quot;, &quot;tr-parallel&quot;], [&quot;tr-memory&quot;, &quot;tr-collectives&quot;, &quot;tr-sharding&quot;], [&quot;tr-recovery&quot;]]}</metadata>
-<path data-edge="tr-input tr-step" data-emphasis="main" d="M560.0 228 C560.0 264.0 262.0 264.0 262.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="tr-ddp tr-collectives" data-emphasis="other" d="M560.0 384 C560.0 420.0 560.0 420.0 560.0 452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="tr-ddp tr-step" data-emphasis="other" d="M560.0 300 V272 H262.0 V296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="tr-sharding tr-memory" data-emphasis="other" d="M858.0 456 V428 H262.0 V452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="tr-parallel tr-collectives" data-emphasis="other" d="M858.0 384 C858.0 420.0 560.0 420.0 560.0 452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="tr-step tr-memory" data-emphasis="main" d="M262.0 384 C262.0 420.0 262.0 420.0 262.0 452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="tr-recovery tr-step" data-emphasis="main" d="M560.0 612 V594 H26 V282 H262.0 V296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<g data-relation-label="1"><rect x="388.104" y="243.272" width="134" height="30" rx="6" fill="#f8fafc"/><text x="455.104" y="264.272" text-anchor="middle" fill="#315fe5" font-size="17">1 · 提供监督输入</text></g>
-<g data-relation-label="2"><rect x="493.0" y="386.8240000000001" width="134" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="407.8240000000001" text-anchor="middle" fill="#8b9bb3" font-size="17">2 · 通过通信同步</text></g>
-<g data-relation-label="3"><rect x="224.8" y="257" width="134" height="30" rx="6" fill="#f8fafc"/><text x="291.8" y="278" text-anchor="middle" fill="#8b9bb3" font-size="17">3 · 组织多副本的</text></g>
-<g data-relation-label="4"><rect x="671.8" y="413" width="134" height="30" rx="6" fill="#f8fafc"/><text x="738.8" y="434" text-anchor="middle" fill="#8b9bb3" font-size="17">4 · 改变驻留峰值</text></g>
-<g data-relation-label="5"><rect x="523.992" y="421.096" width="134" height="30" rx="6" fill="#f8fafc"/><text x="590.992" y="442.096" text-anchor="middle" fill="#8b9bb3" font-size="17">5 · 决定交换什么</text></g>
-<g data-relation-label="6"><rect x="186.5" y="404.5" width="151" height="30" rx="6" fill="#f8fafc"/><text x="262.0" y="425.5" text-anchor="middle" fill="#315fe5" font-size="17">6 · 消耗并产生状态</text></g>
-<g data-relation-label="7"><rect x="226.0" y="579" width="134" height="30" rx="6" fill="#f8fafc"/><text x="293.0" y="600" text-anchor="middle" fill="#315fe5" font-size="17">7 · 恢复同一过程</text></g>
-<g data-concept="tr-step"><rect x="130.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">一次有效更新</text></g>
-<g data-concept="tr-memory"><rect x="130.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">状态与峰值</text></g>
-<g data-concept="tr-ddp"><rect x="428.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">副本与全局目标</text></g>
-<g data-concept="tr-sharding"><rect x="726.0" y="456" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">训练状态分片</text></g>
-<g data-concept="tr-parallel"><rect x="726.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">计算与专家布局</text></g>
-<g data-concept="tr-collectives"><rect x="428.0" y="456" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">参与者与通信</text></g>
+<path data-edge="tr-input tr-step" data-emphasis="main" d="M560.0 228 C560.0 304.0 146.0 304.0 146.0 376" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="tr-ddp tr-collectives" data-emphasis="other" d="M560.0 464 C560.0 540.0 444.0 540.0 444.0 612" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="tr-ddp tr-step" data-emphasis="other" d="M560.0 380 V342.0 H262.0 V376" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="tr-sharding tr-memory" data-emphasis="other" d="M858.0 616 V578.0 H378.0 V612" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="tr-parallel tr-collectives" data-emphasis="other" d="M858.0 464 C858.0 540.0 676.0 540.0 676.0 612" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="tr-step tr-memory" data-emphasis="main" d="M262.0 464 C262.0 540.0 146.0 540.0 146.0 612" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="tr-recovery tr-step" data-emphasis="main" d="M560.0 792 V754.0 H26 V284.0 H378.0 V376" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<g data-relation-label="1"><rect x="395.0725" y="253.0625" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="495.3125" y="281.0625" text-anchor="middle" fill="#315fe5" font-size="22">1 · 提供监督输入</text></g>
+<g data-relation-label="2"><rect x="401.76" y="519.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="502.0" y="547.5" text-anchor="middle" fill="#536783" font-size="22">2 · 通过通信同步</text></g>
+<g data-relation-label="3"><rect x="392.71" y="322.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="492.95" y="350.0" text-anchor="middle" fill="#536783" font-size="22">3 · 组织多副本的</text></g>
+<g data-relation-label="4"><rect x="757.76" y="558.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="858.0" y="586.0" text-anchor="middle" fill="#536783" font-size="22">4 · 改变驻留峰值</text></g>
+<g data-relation-label="5"><rect x="712.5841875" y="499.0980625000002" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="812.8241875" y="527.0980625000002" text-anchor="middle" fill="#536783" font-size="22">5 · 决定交换什么</text></g>
+<g data-relation-label="6"><rect x="92.75999999999999" y="519.5" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="204.0" y="547.5" text-anchor="middle" fill="#315fe5" font-size="22">6 · 消耗并产生状态</text></g>
+<g data-relation-label="7"><rect x="192.76" y="734.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="293.0" y="762.0" text-anchor="middle" fill="#315fe5" font-size="22">7 · 恢复同一过程</text></g>
+<g data-concept="tr-step"><rect x="130.0" y="380" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="431" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">一次有效更新</text></g>
+<g data-concept="tr-memory"><rect x="130.0" y="616" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="667" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">状态与峰值</text></g>
+<g data-concept="tr-ddp"><rect x="428.0" y="380" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="431" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">副本与全局目标</text></g>
+<g data-concept="tr-sharding"><rect x="726.0" y="616" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="667" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">训练状态分片</text></g>
+<g data-concept="tr-parallel"><rect x="726.0" y="380" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="431" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">计算与专家布局</text></g>
+<g data-concept="tr-collectives"><rect x="428.0" y="616" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="667" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">参与者与通信</text></g>
 <g data-concept="tr-input"><rect x="428.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
 <text x="560.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">有效数据供给</text></g>
-<g data-concept="tr-recovery"><rect x="428.0" y="612" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="663" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可继续的状态</text></g>
-<text x="560" y="732" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<g data-concept="tr-recovery"><rect x="428.0" y="792" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="843" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可继续的状态</text></g>
+<text x="560" y="938" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

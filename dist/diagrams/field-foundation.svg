@@ -1,31 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 598" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 784" role="img" aria-labelledby="title desc">
 <title id="title">前置基础知识：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="598" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="784" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">前置基础知识</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
 <metadata>{&quot;module&quot;: &quot;foundation&quot;, &quot;main_edges&quot;: [0, 1, 2], &quot;rows&quot;: [[&quot;prerequisite-5&quot;], [&quot;prerequisite-1&quot;, &quot;prerequisite-2&quot;], [&quot;prerequisite-3&quot;, &quot;prerequisite-4&quot;]]}</metadata>
-<path data-edge="prerequisite-1 prerequisite-2" data-emphasis="main" d="M411.0 300 V272 H709.0 V296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="prerequisite-2 prerequisite-3" data-emphasis="main" d="M709.0 384 C709.0 420.0 411.0 420.0 411.0 452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="prerequisite-3 prerequisite-4" data-emphasis="main" d="M411.0 456 V428 H709.0 V452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="prerequisite-5 prerequisite-1" data-emphasis="other" d="M560.0 228 C560.0 264.0 411.0 264.0 411.0 296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="prerequisite-5 prerequisite-4" data-emphasis="other" d="M560.0 228 V256 H26 V438 H709.0 V452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<g data-relation-label="1"><rect x="525.0" y="257" width="70" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="278" text-anchor="middle" fill="#315fe5" font-size="17">1 · 承载</text></g>
-<g data-relation-label="2"><rect x="518.5" y="404.5" width="83" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="425.5" text-anchor="middle" fill="#315fe5" font-size="17">2 · 延伸到</text></g>
-<g data-relation-label="3"><rect x="373.8" y="413" width="134" height="30" rx="6" fill="#f8fafc"/><text x="440.8" y="434" text-anchor="middle" fill="#315fe5" font-size="17">3 · 承载远程读写</text></g>
-<g data-relation-label="4"><rect x="450.5" y="248.5" width="70" height="30" rx="6" fill="#f8fafc"/><text x="485.5" y="269.5" text-anchor="middle" fill="#8b9bb3" font-size="17">4 · 核对</text></g>
-<g data-relation-label="5"><rect x="258.0" y="241" width="70" height="30" rx="6" fill="#f8fafc"/><text x="293.0" y="262" text-anchor="middle" fill="#8b9bb3" font-size="17">5 · 验证</text></g>
-<g data-concept="prerequisite-1"><rect x="279.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行与资源</text></g>
-<g data-concept="prerequisite-2"><rect x="577.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">并发与程序</text></g>
-<g data-concept="prerequisite-3"><rect x="279.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">通信与协议</text></g>
-<g data-concept="prerequisite-4"><rect x="577.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">数据与失败</text></g>
+<path data-edge="prerequisite-1 prerequisite-2" data-emphasis="main" d="M527.0 380 V342.0 H709.0 V376" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="prerequisite-2 prerequisite-3" data-emphasis="main" d="M709.0 464 C709.0 540.0 295.0 540.0 295.0 612" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="prerequisite-3 prerequisite-4" data-emphasis="main" d="M527.0 616 V578.0 H593.0 V612" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="prerequisite-5 prerequisite-1" data-emphasis="other" d="M444.0 228 C444.0 304.0 295.0 304.0 295.0 376" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="prerequisite-5 prerequisite-4" data-emphasis="other" d="M676.0 228 V284.0 H26 V520.0 H825.0 V612" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<g data-relation-label="1"><rect x="561.76" y="322.0" width="112.48" height="40" rx="6" fill="#f8fafc"/><text x="618.0" y="350.0" text-anchor="middle" fill="#315fe5" font-size="22">1 · 承载</text></g>
+<g data-relation-label="2"><rect x="330.52256249999994" y="539.5344375" width="134.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="397.76256249999994" y="567.5344375" text-anchor="middle" fill="#315fe5" font-size="22">2 · 延伸到</text></g>
+<g data-relation-label="3"><rect x="484.51" y="558.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="584.75" y="586.0" text-anchor="middle" fill="#315fe5" font-size="22">3 · 承载远程读写</text></g>
+<g data-relation-label="4"><rect x="291.20799999999997" y="294.688" width="112.48" height="40" rx="6" fill="#f8fafc"/><text x="347.448" y="322.688" text-anchor="middle" fill="#536783" font-size="22">4 · 核对</text></g>
+<g data-relation-label="5"><rect x="148.51" y="264.0" width="112.48" height="40" rx="6" fill="#f8fafc"/><text x="204.75" y="292.0" text-anchor="middle" fill="#536783" font-size="22">5 · 验证</text></g>
+<g data-concept="prerequisite-1"><rect x="279.0" y="380" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="431" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行与资源</text></g>
+<g data-concept="prerequisite-2"><rect x="577.0" y="380" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="431" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">并发与程序</text></g>
+<g data-concept="prerequisite-3"><rect x="279.0" y="616" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="667" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">通信与协议</text></g>
+<g data-concept="prerequisite-4"><rect x="577.0" y="616" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="667" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">数据与失败</text></g>
 <g data-concept="prerequisite-5"><rect x="428.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
 <text x="560.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">工程工具</text></g>
-<text x="560" y="576" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<text x="560" y="762" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

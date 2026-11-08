@@ -9,7 +9,7 @@
  const matches=(html,pattern)=>[...html.matchAll(pattern)].map(m=>m[0]);
  const code=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
  const figures=html=>matches(html,/<figure\b[\s\S]*?<\/figure>/g);
- const links=html=>matches(html,/<a\b[^>]*>[\s\S]*?<\/a>/g).join('');
+ const links=html=>matches(html,/<a\b[^>]*>[\s\S]*?<\/a>/g).map(link=>/<img\b/.test(link)?link.replace(/^(<a\b[^>]*>)[\s\S]*(<\/a>)$/,'$1查看图解 ↗$2'):link).join('');
  const a=articles.find(x=>x.id==='agent-observability');
  const titles=['观测职责：指标、日志、追踪与业务账本','身份与传播：task、op、trace和span','错误与效果：五个span怎样解释一次恢复','时间与因果：并行、等待及关键路径','总体口径：任务、尝试、效果与未完成项','成本账本：全量成本、分摊与合格分母','采样与诊断：先确认总体，再解释路径','实战与变化题：真实SDK、HTTP与输出关系'];
  if(!a||a.sections.length!==8||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Agent signals source changed');
@@ -120,7 +120,7 @@
  ])+
  p('诊断从验收失败的具体主张出发。先找原资料及可访问版本，再查候选是否命中、装配是否保留关键限定、模型是否据此生成、发布是否保存对应正文。若候选里有正确材料而模型输入没有，优先复现排序、截断与预算；若输入齐全而结论错误，再固定这份输入比较生成。保留每阶段版本，才能找到偏差从哪里开始。',
  '追踪中的因果关联与统计上的因果效应需要分清：c1 是 s1 的父跨度，说明这次请求怎样被安排和传递；“新版本使任务成功率提高”则是关于改动效果的判断。一条成功轨迹不能排除任务变简单、重试预算增大或样本更换等原因。先用轨迹提出机制解释，再在固定任务和条件下验证改动，结论才与证据对应。')+
- fold('指标缺失、真实零与完整性检查',p('指标样本缺失时，先查采集覆盖。配套 Prometheus 合成练习中，两项用量均为 90m，request 分别为 100m、900m，整体为 (90+90)/(100+900)=18%；逐项百分比再平均却得到 50%。另一个缺指标用例得到朴素比值 9%，同时完整性标记为 0；“观测到零”用例才同时得到比值 0、完整性 1，全部缺失则没有结果。这些数展示聚合分母与观测完整性，不能把没有数据自动补成业务正常。Agent 计数器同样要检查采集范围、重复记录及丢失，再与业务账本对账。')+'<p><a href="labs/scaling-collectives-traces/validation.json" target="_blank" rel="noopener">查看 Prometheus 与 SDK 的配套实际记录 ↗</a></p>')+
+ fold('指标缺失、真实零与完整性检查',p('指标样本缺失时，先查采集覆盖。配套 Prometheus 的独立CPU聚合练习中，m表示毫核，1000m等于1个CPU单位；request指实例声明的CPU请求量，不是HTTP请求。两个实例实际用量各为90m，请求量分别为100m、900m，整体为 (90+90)/(100+900)=18%；逐项百分比再平均却得到 50%。另一个缺指标用例得到朴素比值 9%，同时完整性标记为 0；“观测到零”用例才同时得到比值 0、完整性 1，全部缺失则没有结果。这些数展示聚合分母与观测完整性，不能把没有数据自动补成业务正常。Agent 计数器同样要检查采集范围、重复记录及丢失，再与业务账本对账。')+'<p><a href="labs/scaling-collectives-traces/validation.json" target="_blank" rel="noopener">查看 Prometheus 与 SDK 的配套实际记录 ↗</a></p>')+
  links(old[6]),
 
  anchor('subsection-8-323gx5')+
@@ -160,5 +160,5 @@
  for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
  bodies.forEach((body,i)=>a.sections[i][1]=body);
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
- a.intro=a.desc;a.updated='2026.11.08';
+ a.intro=a.desc;a.updated='2026.11.09';
 })();

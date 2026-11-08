@@ -160,6 +160,14 @@ articles.find(a=>a.id==='kubernetes-training').prereq='先理解训练作业、�
 articles.find(a=>a.id==='data-pipeline').prereq='先读A2.4，理解每个进程如何取得训练输入；本章解释分片、读取与预处理，存储访问单位可按链接补读C3.1。';
 articles.find(a=>a.id==='gpu-scheduling').prereq='先读A3.1与A2.2，理解作业、进程组与并行布局；普通Pod的资源放置可按链接补读C4.4。';
 articles.find(a=>a.id==='inference-performance').prereq='先读A3.4，理解输入处理与持续生成；本章解释计时边界和聚合，通用指标与追踪可按链接延伸。';
-articles.find(a=>a.id==='ai-lifecycle').prereq='先读A3.4与A2.8，区分模型产物、继续训练状态与服务版本；通用恢复和发布可按链接深入。';
+articles.find(a=>a.id==='ai-lifecycle').prereq='先理解模型推理、服务版本与请求结果；训练检查点与恢复可按需补读，不作为推理路线的先修。';
 articles.find(a=>a.id==='multinode-lab').prereq='先读A2.4—A2.6，再阅读拓扑、启动与验收步骤；实际两机四卡实验另需两台Linux节点、每台至少两张NVIDIA GPU。';
 articles.find(a=>a.id==='production-readiness').prereq='选择一条已学主线及自己的实验或项目进行验收，不要求同时完成Cloud、AI和Agent全部课程。';
+// Preparation follows the selected route; optional topics stay optional.
+articles.find(a=>a.id==='kubernetes-basics').prereq='先认识进程、容器与资源限制；本章从API对象与控制器讲起。IP和端口可按需复习，VPC路由在容器网络章继续深入。';
+articles.find(a=>a.id==='serverless-execution').prereq='先认识容器运行环境、超时与重复执行；消息投递和事务回执在本章逐层介绍，数据库机制可按需深入。';
+articles.find(a=>a.id==='autograd-training').prereq='先理解词元向量、注意力与Decoder块的前向计算；本章再定义损失、梯度和优化器。位置编码专题可按需深入。';
+articles.find(a=>a.id==='gpu-cluster').prereq='先认识前向预测、损失、反向梯度、优化器更新与GPU执行；可沿自动求导和GPU执行章补齐，位置编码专题按需深入。';
+articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。';
+articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
+for(const id of ['kubernetes-basics','serverless-execution','autograd-training','gpu-cluster','ai-lifecycle','agent-evaluation','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';

@@ -1,29 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 442" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 528" role="img" aria-labelledby="title desc">
 <title id="title">Serverless 与事件驱动：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="442" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="528" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">Serverless 与事件驱动</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
 <metadata>{&quot;module&quot;: &quot;serverless&quot;, &quot;main_edges&quot;: [0, 2, 3], &quot;rows&quot;: [[&quot;trigger-delivery&quot;, &quot;concurrency-instances&quot;], [&quot;event-idempotency&quot;, &quot;execution-environment&quot;, &quot;serverless-cost&quot;]]}</metadata>
-<path data-edge="trigger-delivery execution-environment" data-emphasis="main" d="M411.0 228 C411.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="trigger-delivery event-idempotency" data-emphasis="other" d="M411.0 228 C411.0 264.0 262.0 264.0 262.0 296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="concurrency-instances execution-environment" data-emphasis="main" d="M709.0 228 C709.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="concurrency-instances serverless-cost" data-emphasis="main" d="M709.0 228 C709.0 264.0 858.0 264.0 858.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<g data-relation-label="1"><rect x="435.5" y="248.5" width="100" height="30" rx="6" fill="#f8fafc"/><text x="485.5" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">1 · 安排调用</text></g>
-<g data-relation-label="2"><rect x="269.5" y="248.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="336.5" y="269.5" text-anchor="middle" fill="#8b9bb3" font-size="17">2 · 要求处理重复</text></g>
-<g data-relation-label="3"><rect x="559.0" y="248.5" width="151" height="30" rx="6" fill="#f8fafc"/><text x="634.5" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">3 · 受环境模型约束</text></g>
-<g data-relation-label="4"><rect x="748.5" y="248.5" width="70" height="30" rx="6" fill="#f8fafc"/><text x="783.5" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">4 · 改变</text></g>
-<g data-concept="execution-environment"><rect x="428.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行环境</text></g>
+<path data-edge="trigger-delivery execution-environment" data-emphasis="main" d="M527.0 228 C527.0 294.0 444.0 294.0 444.0 356" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="trigger-delivery event-idempotency" data-emphasis="other" d="M295.0 228 C295.0 294.0 262.0 294.0 262.0 356" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="concurrency-instances execution-environment" data-emphasis="main" d="M593.0 228 C593.0 294.0 676.0 294.0 676.0 356" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="concurrency-instances serverless-cost" data-emphasis="main" d="M825.0 228 C825.0 294.0 858.0 294.0 858.0 356" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<g data-relation-label="1"><rect x="374.392" y="305.216" width="156.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="452.632" y="333.216" text-anchor="middle" fill="#315fe5" font-size="22">1 · 安排调用</text></g>
+<g data-relation-label="2"><rect x="189.60375" y="247.125" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="289.84375" y="275.125" text-anchor="middle" fill="#536783" font-size="22">2 · 要求处理重复</text></g>
+<g data-relation-label="3"><rect x="549.38165625" y="296.25425" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="660.62165625" y="324.25425" text-anchor="middle" fill="#315fe5" font-size="22">3 · 受环境模型约束</text></g>
+<g data-relation-label="4"><rect x="790.144" y="283.168" width="112.48" height="40" rx="6" fill="#f8fafc"/><text x="846.384" y="311.168" text-anchor="middle" fill="#315fe5" font-size="22">4 · 改变</text></g>
+<g data-concept="execution-environment"><rect x="428.0" y="360" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="411" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行环境</text></g>
 <g data-concept="trigger-delivery"><rect x="279.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
 <text x="411.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">触发与投递</text></g>
-<g data-concept="event-idempotency"><rect x="130.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">业务身份</text></g>
+<g data-concept="event-idempotency"><rect x="130.0" y="360" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="411" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">业务身份</text></g>
 <g data-concept="concurrency-instances"><rect x="577.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
 <text x="709.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">并发与实例</text></g>
-<g data-concept="serverless-cost"><rect x="726.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">成本与适用范围</text></g>
-<text x="560" y="420" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<g data-concept="serverless-cost"><rect x="726.0" y="360" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="411" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">成本与适用范围</text></g>
+<text x="560" y="506" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

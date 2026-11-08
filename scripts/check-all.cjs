@@ -9,7 +9,7 @@ const checks=[
  'check-cloud-operations.cjs','check-ai-agent-systems.cjs','check-learning-mechanisms.cjs',
  'check-serving-consistency.cjs','check-update-and-cancel.cjs','check-storage-quant-context.cjs',
  'check-network-input-tools.cjs','check-scaling-collective-traces.cjs',
- 'check-config-memory-evaluation.cjs','check-leases-placement-sandbox.cjs',
+ 'check-config-memory-evaluation.cjs','check-leases-placement-sandbox.cjs','check-field-map-layout.cjs',
  'check-recovery-artifacts-retrieval.cjs','check-compute-transport.cjs',
  'check-training-capstone.cjs','check-storage-parallel-acceptance.cjs','check-supervision-gradients.cjs','check-sql-paths-snapshots.cjs','check-streamed-tool-calls.cjs','check-agent-boundaries.cjs','check-operators-routing.cjs','check-cuda-core.cjs','check-transport-recovery.cjs','check-runtime-speculative-crashes.cjs','check-delivery-systems.cjs','check-learning-connections.cjs','check-field-concepts.cjs','check-causal-walkthroughs.cjs','check-system-budget-walkthroughs.cjs','check-course-reading.cjs','check-course-continuity.cjs','check-manual-sharding.cjs','check-chapter-navigation.cjs','check-cloud-proxy.cjs','check-inference-cache.cjs','check-agent-planning.cjs','check-etcd-consensus.cjs','check-mysql-replication.cjs','check-mcp-protocol.cjs','check-torch-checkpoint.cjs','check-sdpa-cache.cjs','check-langgraph-workflow.cjs','check-kubernetes-identity.cjs','check-kubernetes-service.cjs','check-concept-reading.cjs','check-static-reading.cjs','check-reading-context.cjs','check-editorial-evidence.cjs'
 ];

@@ -1,37 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 754" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 930" role="img" aria-labelledby="title desc">
 <title id="title">SRE、可观测与故障恢复：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="754" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="930" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">SRE、可观测与故障恢复</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
 <metadata>{&quot;module&quot;: &quot;sre&quot;, &quot;main_edges&quot;: [0, 2, 3, 5], &quot;rows&quot;: [[&quot;sli-slo&quot;], [&quot;observability-signals&quot;, &quot;alert-burn&quot;, &quot;resilience-patterns&quot;], [&quot;diagnosis-method&quot;], [&quot;incident-change&quot;, &quot;recovery-evidence&quot;]]}</metadata>
-<path data-edge="sli-slo observability-signals" data-emphasis="main" d="M560.0 228 C560.0 264.0 262.0 264.0 262.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="sli-slo alert-burn" data-emphasis="other" d="M560.0 228 C560.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="observability-signals diagnosis-method" data-emphasis="main" d="M262.0 384 C262.0 420.0 560.0 420.0 560.0 452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="diagnosis-method incident-change" data-emphasis="main" d="M560.0 540 C560.0 576.0 411.0 576.0 411.0 608" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="resilience-patterns recovery-evidence" data-emphasis="other" d="M858.0 384 V412 H26 V594 H709.0 V608" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="recovery-evidence sli-slo" data-emphasis="main" d="M709.0 612 V594 H1094 V126 H560.0 V140" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<g data-relation-label="1"><rect x="344.0" y="248.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="411.0" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">1 · 定义测量问题</text></g>
-<g data-relation-label="2"><rect x="484.5" y="248.5" width="151" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="269.5" text-anchor="middle" fill="#8b9bb3" font-size="17">2 · 给出允许失败量</text></g>
-<g data-relation-label="3"><rect x="352.5" y="404.5" width="117" height="30" rx="6" fill="#f8fafc"/><text x="411.0" y="425.5" text-anchor="middle" fill="#315fe5" font-size="17">3 · 支持或排除</text></g>
-<g data-relation-label="4"><rect x="435.5" y="560.5" width="100" height="30" rx="6" fill="#f8fafc"/><text x="485.5" y="581.5" text-anchor="middle" fill="#315fe5" font-size="17">4 · 指导止损</text></g>
-<g data-relation-label="5"><rect x="541.4" y="397" width="134" height="30" rx="6" fill="#f8fafc"/><text x="608.4" y="418" text-anchor="middle" fill="#8b9bb3" font-size="17">5 · 接受故障验证</text></g>
-<g data-relation-label="6"><rect x="866.5" y="579" width="70" height="30" rx="6" fill="#f8fafc"/><text x="901.5" y="600" text-anchor="middle" fill="#315fe5" font-size="17">6 · 闭合</text></g>
-<g data-concept="sli-slo"><rect x="428.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">用户结果与目标</text></g>
-<g data-concept="observability-signals"><rect x="130.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">证据信号</text></g>
-<g data-concept="alert-burn"><rect x="428.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">行动触发</text></g>
-<g data-concept="diagnosis-method"><rect x="428.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可证伪的解释</text></g>
-<g data-concept="incident-change"><rect x="279.0" y="612" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="411.0" y="663" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">事故与变更</text></g>
-<g data-concept="resilience-patterns"><rect x="726.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">故障保护</text></g>
-<g data-concept="recovery-evidence"><rect x="577.0" y="612" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="709.0" y="663" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">恢复验收</text></g>
-<text x="560" y="732" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<path data-edge="sli-slo observability-signals" data-emphasis="main" d="M444.0 258 C444.0 294.0 262.0 294.0 262.0 326" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="sli-slo alert-burn" data-emphasis="other" d="M676.0 258 C676.0 294.0 560.0 294.0 560.0 326" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="observability-signals diagnosis-method" data-emphasis="main" d="M262.0 414 C262.0 470.0 560.0 470.0 560.0 522" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="diagnosis-method incident-change" data-emphasis="main" d="M560.0 610 C560.0 686.0 411.0 686.0 411.0 758" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="resilience-patterns recovery-evidence" data-emphasis="other" d="M858.0 414 V488.0 H26 V666.0 H825.0 V758" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="recovery-evidence sli-slo" data-emphasis="main" d="M593.0 762 V724.0 H1094 V136.0 H560.0 V170" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<g data-relation-label="1"><rect x="252.76" y="273.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="353.0" y="301.5" text-anchor="middle" fill="#315fe5" font-size="22">1 · 定义测量问题</text></g>
+<g data-relation-label="2"><rect x="506.76" y="273.5" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="618.0" y="301.5" text-anchor="middle" fill="#536783" font-size="22">2 · 给出允许失败量</text></g>
+<g data-relation-label="3"><rect x="267.0490625" y="439.0703125" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="356.2890625" y="467.0703125" text-anchor="middle" fill="#315fe5" font-size="22">3 · 支持或排除</text></g>
+<g data-relation-label="4"><rect x="385.20799999999997" y="676.688" width="156.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="463.448" y="704.688" text-anchor="middle" fill="#315fe5" font-size="22">4 · 指导止损</text></g>
+<g data-relation-label="5"><rect x="570.56" y="468.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="670.8" y="496.0" text-anchor="middle" fill="#536783" font-size="22">5 · 接受故障验证</text></g>
+<g data-relation-label="6"><rect x="837.3599999999999" y="704.0" width="112.48" height="40" rx="6" fill="#f8fafc"/><text x="893.5999999999999" y="732.0" text-anchor="middle" fill="#315fe5" font-size="22">6 · 闭合</text></g>
+<g data-concept="sli-slo"><rect x="428.0" y="174" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="225" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">用户结果与目标</text></g>
+<g data-concept="observability-signals"><rect x="130.0" y="330" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="381" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">证据信号</text></g>
+<g data-concept="alert-burn"><rect x="428.0" y="330" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="381" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">行动触发</text></g>
+<g data-concept="diagnosis-method"><rect x="428.0" y="526" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="577" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可证伪的解释</text></g>
+<g data-concept="incident-change"><rect x="279.0" y="762" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="813" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">事故与变更</text></g>
+<g data-concept="resilience-patterns"><rect x="726.0" y="330" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="381" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">故障保护</text></g>
+<g data-concept="recovery-evidence"><rect x="577.0" y="762" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="813" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">恢复验收</text></g>
+<text x="560" y="908" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>
