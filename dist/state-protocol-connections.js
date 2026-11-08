@@ -12,12 +12,21 @@ for(const[chapter,target,reason]of [
  const list=chapterOptionalConnections[chapter]||(chapterOptionalConnections[chapter]=[]);
  if(!list.some(([id])=>id===target))list.push([target,reason]);
 }
-for(const[profile,targets]of [
- ['cloud-platform',['control-plane-consensus']],
- ['cloud-sre',['control-plane-consensus','mysql-replication']],
- ['agent-app',['mcp-protocol']],
- ['agent-platform',['mcp-protocol']]
-])for(const id of targets)if(!learningProfiles[profile].targets.includes(id))learningProfiles[profile].targets.push(id);
+// Insert each lesson into its teaching sequence. Appending a target would put
+// introductory protocol/state knowledge after the profile's final capstone.
+for(const[profile,id,before]of [
+ ['cloud-platform','control-plane-consensus','serverless-execution'],
+ ['cloud-sre','mysql-replication','k8s-networking'],
+ ['cloud-sre','control-plane-consensus','elasticity'],
+ ['agent-app','mcp-protocol','agent-security'],
+ ['agent-platform','mcp-protocol','agent-sandbox']
+]){
+ const targets=learningProfiles[profile].targets;
+ if(targets.includes(id))continue;
+ const position=targets.indexOf(before);
+ if(position<0)throw Error('Missing teaching position for '+profile+': '+before);
+ targets.splice(position,0,id);
+}
 courseStageConnections.cloud[1]=['把单进程放到跨机器的数据路径','资源供给 → 地址与路由 → 数据提交 → 日志与副本应用 → 恢复与写入资格','把CPU、网络、事务、缓存、复制与恢复放回同一次请求，分别解释可见性、进度和谁能继续写。'];
 courseStageConnections.cloud[2]=['把执行对象交给声明式控制','容器 → API期望 → 多数派提交与变更观察 → 调谐 → 放置 → 可用服务','对象持久保存、观察者追上版本、进程运行和业务可用分别取证；成员隔离不等于应用进程立即停止。'];
 courseStageConnections.agent[0]=['先规定委托与实际执行之间的边界','用户目标 → 模型提议 → 工具契约与协议消息 → 可信检查 → 受限执行','运行时负责调用和验收，协议连接工具提供方，身份、授权和隔离分别约束实际动作；每一步都要明确负责的对象。'];

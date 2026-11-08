@@ -74,6 +74,21 @@ for(const[id,profile]of Object.entries(data.profiles)){
 assert.deepEqual(Object.keys(data.profiles),JSON.parse(fs.readFileSync('docs/CONTENT_READING_2026-11-08.json')).route_views);
 assert(!routes['ai-inference'].includes('ddp-code'),'inference readers should not be forced through distributed training');
 assert(routes['ai-training'].includes('checkpoint-recovery'));assert(!routes['ai-training'].includes('quantization-serving'));
+// Prerequisite closure alone does not protect a coherent teaching sequence.
+// These new normal-path topics must precede later application/capstone work.
+for(const id of ['agent-app','agent-platform']){
+ const route=routes[id];
+ assert.equal(route.indexOf('mcp-protocol'),route.indexOf('agent-runtime')+1,id+': tool protocol follows the runtime');
+ assert(route.indexOf('mcp-protocol')<route.indexOf('agent-security'),id+': normal tool contract before permission enforcement');
+}
+assert(routes['cloud-platform'].indexOf('k8s-autoscaling')<routes['cloud-platform'].indexOf('control-plane-consensus'));
+assert(routes['cloud-platform'].indexOf('control-plane-consensus')<routes['cloud-platform'].indexOf('serverless-execution'));
+assert(routes['cloud-sre'].indexOf('mysql-replication')>routes['cloud-sre'].indexOf('mysql-recovery'));
+assert(routes['cloud-sre'].indexOf('mysql-replication')<routes['cloud-sre'].indexOf('k8s-networking'));
+assert(routes['cloud-sre'].indexOf('control-plane-consensus')>routes['cloud-sre'].indexOf('k8s-networking'));
+assert(routes['cloud-sre'].indexOf('control-plane-consensus')<routes['cloud-sre'].indexOf('elasticity'));
+for(const[id,capstone]of [['cloud-platform','cloud-service-lab'],['cloud-sre','cloud-service-lab'],['agent-platform','production-readiness']])
+ assert.equal(routes[id].at(-1),capstone,id+': final capstone follows the new core lessons');
 for(const id of ['cloud-platform','cloud-sre'])for(const core of ['cloud-compute','iam-security'])assert(routes[id].includes(core));
 c.location.search='?goal=ai-inference';
 assert(vm.runInContext('chapterPriority("model-serving")',c).includes('岗位重点'));

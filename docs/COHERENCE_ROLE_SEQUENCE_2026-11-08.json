@@ -1,0 +1,47 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "96d8218a9b2331c7ac1feeb9bf94ac73ff076e15",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NORMAL_PATHS_2026-11-08.json": "33842416f91050b0d0852387a1a4ef78fb7a1cda68c56a3db44592479379bc43",
+    "docs/CONTENT_NORMAL_PATHS_2026-11-08.json": "98f6aec82411c5d6592f0d876c8a445d4cfae1cadb8b819eff904d3c3a76e0ba"
+  },
+  "source_revisions": {
+    "dist/state-protocol-connections.js": {
+      "previous_sha256": "ab513e8845b9c52a5599667c9861f739312f74304ee294e1540f26b0fbcae79c",
+      "reviewed_sha256": "b4aff5bb9d4a4db3684bd83684dce8d9c43c2995b12caee33a4a87be4f37e02d",
+      "scope": "Role-route teaching order: new protocol/state topics inserted before dependent practice and final capstones; original profile targets keep their relative order."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "32f2375b511e60986edaf320fe7bce2aa80cc24c30fe6a73769c83017b713c3c",
+      "reviewed_sha256": "86088c60e5cfe38eecd3f3633314a803e8e85031f96ca27e8bd99e20c287dfbb",
+      "scope": "Role-route teaching order: new protocol/state topics inserted before dependent practice and final capstones; original profile targets keep their relative order."
+    },
+    "docs/REFERENCE_QUALITY_STANDARD_2026-11-08.md": {
+      "previous_sha256": "cadc465c54f1165396ec9092b754e500a1125c02fe4af8996b8130958a7ee9cc",
+      "reviewed_sha256": "566ef4df97d72532503264ae5e0c997ec195a6a3f777785c54bd9c7f2909d1b1",
+      "scope": "Role-route teaching order: new protocol/state topics inserted before dependent practice and final capstones; original profile targets keep their relative order."
+    }
+  },
+  "observation": "Public goal=agent-platform UI displayed MCP as12/12 after production-readiness despite a valid prerequisite closure. Corrected all five newly inserted role targets, with explicit teaching-neighbor and terminal-capstone checks.",
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "96d8218a9b2331c7ac1feeb9bf94ac73ff076e15",
+    "new_chapters": [],
+    "changed_bodies": [],
+    "unchanged_bodies": 78,
+    "added_code_blocks": {},
+    "original_full_code_blocks": "all78 current authored bodies/headings/code/anchors unchanged; role target insertion order corrected",
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 281,
+    "new_lab_packs": 0,
+    "new_lab_tasks": 0,
+    "new_figures": 0,
+    "reader_mastery_claims_added": 0
+  }
+}
