@@ -1,0 +1,68 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "8781d818aac521ae01bd0643cbf762b20e91ec57",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_IDENTITY_TRAINING_SERVICE_2026-11-09.json": "cb5e556ffe3c8fa20595e9fdac8f68441cd77f2985b1c36f4a1e8500a83b8084"
+  },
+  "body_revisions": [
+    {
+      "id": "mysql-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1b2bc1bf889e4594a0ca153c748c1ab6956e50e8ad80c697e4c4e2412041d080",
+      "reviewed_content_sha256": "fb8bfcf36578a68a4bcbc6b9fc43a11ddedb7988eba15306bf4b248dd2c11ce1",
+      "scope": "A committed transaction through page/log persistence and a selected recovery target",
+      "observation": "Nine full sections define rows, pages and redo/undo/binlog before crash recovery and point-in-time recovery. The consistent base, matching coordinate, actual ROW events and transaction stopping boundary precede the real MySQL replay and business acceptance.",
+      "headings": [
+        "先分清事务、数据页与三类日志",
+        "提交为什么可以早于全部数据页写回",
+        "崩溃恢复与历史恢复，目标有什么区别",
+        "行格式binlog为什么会改变你的手算",
+        "一致性基线必须带上它对应的恢复坐标",
+        "连续日志与停止位置怎样共同确定恢复范围",
+        "从数据库启动，走到业务可以继续写入",
+        "运行真实MySQL的四份恢复与一次崩溃对照",
+        "面试追问：用恢复目标约束你的方案"
+      ]
+    },
+    {
+      "id": "mysql-replication",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c86a3ff303672f7dd497fa70d05d4cc5c7182c9ae332b3755b6f17506207a34c",
+      "reviewed_content_sha256": "63712ec6929b92b528965ac066e2cce2ac59ce9b985a50220eb01540b954d27d",
+      "scope": "Source commit, replica application and new-write ownership",
+      "observation": "Nine full sections connect row versions and RR/RC snapshots to the source, receive and apply chain, then GTID target/set checks, controlled write fencing and planned promotion. Independent capacity examples remain separate from the native fixture.",
+      "headings": [
+        "从一行数据，分清提交、版本与读视图",
+        "用两条真实连接理解RR与RC",
+        "把一次源提交放进复制链",
+        "GTID记录事务身份，集合表达应用目标",
+        "旧读要分别查事务视图和复制应用",
+        "计划切换：先收回旧写，再追齐与开放新写",
+        "读副本、分片与热点，各解决哪种容量问题",
+        "沿完整程序核对读视图、复制和交接",
+        "把图上的边界变成面试追问"
+      ]
+    },
+    {
+      "id": "tcp-event-loop",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "5d42d21fc910f64a1bc6c2ead6e87b8d9d74491137e27057995b4027ddb6f6bb",
+      "reviewed_content_sha256": "a6ab2f4df77317064b4533de6139094ca85d145644e55422766c4c5c7060f165",
+      "scope": "One byte stream through framing, half-close and readiness-driven execution",
+      "observation": "Nine complete sections follow socket ownership and one declared byte stream through sequence space, message framing, application response, flow control and nonblocking scheduling. LT/ET readiness and actual Linux epoll evidence retain separate protocols and scope.",
+      "headings": [
+        "先认识套接字、连接与字节流",
+        "连接建立后，序号怎样对应到字节",
+        "字节怎样成为两条完整消息",
+        "半关闭后，为什么还能收到回应",
+        "发送成功、流量控制与应用背压",
+        "非阻塞I/O：就绪、操作与业务完成",
+        "LT与ET：通知规则怎样影响读取循环",
+        "先预测，再运行四组观察",
+        "把机制用于诊断与面试表达"
+      ]
+    }
+  ],
+  "knowledge_revisions": []
+}

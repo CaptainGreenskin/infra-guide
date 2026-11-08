@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="680" viewBox="0 0 1120 680" role="img" aria-labelledby="title desc">
+<title id="title">100条请求时长：合并样本再取p99</title>
+<desc id="desc">同一窗口，实例A有99条10毫秒请求，实例B有1条1000毫秒请求。最近秩p99取合并后第99项，结果10毫秒。局部p99等权平均505毫秒、按请求量加权19.9毫秒，都不等于全局p99。同一输入的累计桶为10毫秒99条、300毫秒99条、1000毫秒100条、正无穷100条。此图是精确样本的手算示意，不是Prometheus桶插值结果或HTTP实测。</desc>
+<metadata id="v71-sre-data">{"kind":"request-duration-distribution","unit":"ms","population":"One independent same-window duration fixture; not the 1000-success histogram, RED ledger or HTTP experiment","groups":[{"instance":"A","count":99,"duration_ms":10},{"instance":"B","count":1,"duration_ms":1000}],"quantile":{"q":0.99,"method":"nearest-rank: ceil(q*n), rank starts at 1","rank":99,"global_ms":10,"instance_ms":{"A":10,"B":1000},"unweighted_mean_ms":505,"request_weighted_mean_ms":19.9},"cumulative_buckets":[{"le_ms":10,"count":99},{"le_ms":300,"count":99},{"le_ms":1000,"count":100},{"le_ms":"+Inf","count":100}],"scope":"Exact sample sorting and cumulative counts; no bucket interpolation or measured HTTP timing"}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10" fill="none" stroke="#53708e" stroke-width="1.7"/></marker><style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#183048}.title{font-size:32px;font-weight:700}.sub{font-size:21px;fill:#54677c}.label{font-size:25px;font-weight:650}.body{font-size:23px}.small{font-size:20px}.blue{fill:#285e9e}.amber{fill:#9a5b0b}.line{stroke:#53708e;stroke-width:2;fill:none}</style></defs>
+<rect width="1120" height="680" rx="18" fill="#f7f9fc"/>
+<text x="40" y="55" class="title">p99取排序位置，不能平均局部p99</text>
+<text x="40" y="91" class="sub">固定输入：同一窗口100条时长；最近秩 = 第 ceil(0.99 × 100) 项</text>
+<rect x="40" y="121" width="500" height="127" rx="12" fill="#e7f0fc" stroke="#9bb9dc"/>
+<text x="62" y="160" class="label blue">实例 A：99 条 × 10ms</text>
+<text x="62" y="204" class="body">局部 p99 = 第99项 = 10ms</text>
+<rect x="580" y="121" width="500" height="127" rx="12" fill="#fff0d9" stroke="#d3af77"/>
+<text x="602" y="160" class="label amber">实例 B：1 条 × 1000ms</text>
+<text x="602" y="204" class="body">局部 p99 = 第1项 = 1000ms</text>
+<path d="M290 248 V280 H530 M830 248 V280 H590 M560 265 V310" class="line" marker-end="url(#arrow)"/>
+<rect x="400" y="263" width="320" height="32" fill="#f7f9fc"/>
+<text x="560" y="286" class="small" text-anchor="middle">合并同窗样本，按时长排序</text>
+<text x="40" y="341" class="label">全局：第1..99项均10ms；第100项为1000ms</text>
+<rect x="40" y="362" width="736" height="48" rx="7" fill="#b7d1f3"/>
+<rect x="800" y="362" width="280" height="48" rx="7" fill="#efc27e"/>
+<text x="62" y="394" class="body">第1..99项：99条 × 10ms</text>
+<text x="940" y="394" class="body" text-anchor="middle">第100项：1000ms</text>
+<path d="M730 454 V417" class="line" marker-end="url(#arrow)"/>
+<text x="714" y="452" class="label blue" text-anchor="end">第99项：全局 p99 = 10ms</text>
+<text x="800" y="449" class="small">按组列示，宽度不代表数量或时长</text>
+<rect x="40" y="477" width="1040" height="153" rx="12" fill="#fff" stroke="#c6d1dd"/>
+<text x="62" y="514" class="body">同一输入的累计桶：≤10ms 99；≤300ms 99；≤1000ms 100；+Inf 100</text>
+<text x="62" y="554" class="body">局部p99等权平均：505ms；按请求数加权：19.9ms</text>
+<text x="62" y="596" class="label blue">两种平均都无法恢复第99项；那条1000ms也并未消失。</text>
+<text x="40" y="658" class="small">精确样本手算示意 · 不与后文1000条成功请求的桶插值、实际HTTP计时合并</text>
+</svg>

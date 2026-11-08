@@ -80,7 +80,12 @@ if(require.main===module){
  }
  const c={};vm.createContext(c);for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
  if(!vm.runInContext('articles.some(a=>a.id==="mysql-replication")',c))vm.runInContext(fs.readFileSync('dist/mysql-replication.js','utf8'),c);
- const a=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="mysql-replication"))',c));assert.equal(a.module,'cloud-data');assert(a.sections.length>=8);assert.equal(a.updated,'2026.11.08');assert(a.minutes>=40);
+ const a=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="mysql-replication"))',c));assert.equal(a.module,'cloud-data');assert(a.sections.length>=8);assert(a.minutes>=40);
+ const reviews=require('./content-review-records.cjs');
+ const currentReview=[...reviews.new_chapter_reviews,...reviews.body_revisions].filter(r=>r.id===a.id).at(-1);
+ assert(currentReview,'replication chapter needs a signed current-body review');
+ assert.equal(a.updated,currentReview.reviewed_at.slice(0,10).replaceAll('-','.'));
+ assert.equal(hash(JSON.stringify({title:a.title,sections:a.sections})),currentReview.reviewed_content_sha256,'native evidence and the current full-body review must both remain valid');
  const body=a.sections.map(s=>s[1]).join(''),code=[...body.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>decode(m[1]));assert(code.includes(source.toString().trim()));assert(body.includes('id="mysql-replication-run"'));
  assert.equal(code.length,4,'SQL walkthrough, exact gate excerpt, command and complete Python source');
  const nativeLines=source.toString().split(/\r?\n/),gateStart=nativeLines.findIndex(line=>line.startsWith('    allowed_target='));assert(gateStart>=0);

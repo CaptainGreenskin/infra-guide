@@ -3676,6 +3676,96 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "345ebca67be19e3c4b41bd117383acbd7fb32506fee30745ef2effd00179e19f",
+      "reviewed_content_sha256": "56eaf9f0de7867c3d38be90c2e929dab5e9aacda6d82feae68deee7f94a81b65",
+      "scope": "From explicit training configuration to the actual update loop",
+      "observation": "Eight complete sections define model/data, launcher and ranks, sampler, accumulation window and optimizer-call counters before mixed precision probes and epoch-end recovery. Explicit1024/32/32 fixture overrides are separated from unchanged source defaults.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
+    },
+    {
+      "id": "incident",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "3654ba52ac95f285434659294f6f6b6ee0c7b25445b1c0eea407c889ffd9d27f",
+      "reviewed_content_sha256": "58b636bb2526abfbd0bd90d2b3f06119f4d0f3fc448ce5c2d7641e90d77bddf4",
+      "scope": "A falsifiable cause through one request path and one measured change",
+      "observation": "Eight complete sections explain the normal request and connection occupancy before the201st request,560ms path and queue conservation, then change one condition and compare actual results with the declared model and residual.",
+      "headings": [
+        "先规定分母、窗口和可接受结果",
+        "先看结果，保留两个竞争解释",
+        "选一项能改变判断的探测",
+        "沿第201个请求，把560毫秒逐段算清",
+        "把排队增长还原成容量算术",
+        "保留功能，只改变占用区间",
+        "用相同触发条件复测，并解释剩余差值",
+        "运行程序，交一页能追问的结论"
+      ]
+    },
+    {
+      "id": "observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1328a226d33b60c3ea1bf679adc26df10a0a41acbc9e3527fd0829a742b4b6a0",
+      "reviewed_content_sha256": "770eaf138a8a5b1e7fd5dd0e2d385ea281c63acf6735cd696b5cd4b77245f3b6",
+      "scope": "User requests, measured distributions and correlated HTTP work",
+      "observation": "Nine complete sections connect request start/end and outcome to metrics/logs/traces, resource conditions, histogram aggregation, bounded labels and actual two-HTTP trace evidence. New diagrams explain the same declared inputs and do not infer production performance.",
+      "headings": [
+        "从一个能复述的用户现象开始",
+        "RED 看用户请求，USE 查资源上的排队",
+        "为什么局部 p99 不能拼成全局 p99",
+        "直方图让“超过目标的有几次”比 p99 更直接",
+        "让指标可定位，同时控制标签组合",
+        "还原一次慢请求的因果路径",
+        "观测链也有失败模式，用已知输入校核它",
+        "课堂验收：查出故障，也查出图表的问题",
+        "配套实战：两段HTTP与父子trace关联"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "940c13e136a5317138e9e768b758ad4dd61b3c7aa828e8e55039f8cdf2991bf0",
+      "reviewed_content_sha256": "63586969b1e771a75fcfc35f576b1fe272d0e4e33a15564204b6a05c8950ae14",
+      "scope": "User events to a correctly scoped indicator, target and error budget",
+      "observation": "Eight complete sections establish the user request population, good/bad event counts and measurement window, then weighted aggregation, budgets, burn rates and rule evaluation. Low/no traffic and publishing decisions retain their precise assumptions.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "training-lab",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "6d5013659d6bf5beef5a4626f33d029b1f7960d4b67d2485d43d51c9b1d434e2",
+      "reviewed_content_sha256": "8cbc9802cc7f33bb749ca589dad45ea65be8e331c6f16fa0eb2381cc5588da7b",
+      "scope": "Three fresh processes and independently compared complete training state",
+      "observation": "Seven full sections first establish continuous, saved and resumed normal execution, then the state required for the next update, independent comparisons and specific invalid configurations. Oldtorch.save, nativeDCP and four-rank records keep their own inputs and exact/numerical contracts.",
+      "headings": [
+        "先讲清：恢复的是下一次更新所需的状态",
+        "两套基准，各自检验一件事",
+        "实战：一条入口，三次独立训练",
+        "先读日志，再看“完全相同”具体比较什么",
+        "三个反例：错误原因和拒绝结果必须对得上",
+        "出现差异时，从第一个不同字段定位",
+        "本机通过后，怎样进入两机四卡"
+      ]
     }
   ]
 }

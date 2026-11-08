@@ -6,7 +6,9 @@ const query=value=>{c.query=value;return JSON.parse(JSON.stringify(vm.runInConte
 const index=JSON.parse(JSON.stringify(vm.runInContext('buildSiteSearchIndex().map(e=>({id:e.id,type:e.type,path:e.path,anchor:e.anchor}))',c)));
 assert.equal(index.length,inventory.search);assert.equal(new Set(index.map(e=>e.id)).size,inventory.search);assert.equal(index.filter(e=>e.type==='knowledge').length,95);
 for(const entry of index){const file=path.join('dist',entry.path,'index.html');assert(fs.existsSync(file),entry.id+': destination');if(entry.anchor)assert(fs.readFileSync(file,'utf8').includes('id="'+entry.anchor+'"'),entry.id+': point anchor');}
-assert.equal(query('traceparent')[0].id,'article:agent-observability');assert.equal(query('traceparent')[0].anchor,'section-2');
+const propagation=query('traceparent');
+assert.deepEqual(propagation.slice(0,2).map(r=>[r.id,r.anchor,r.tier]),[['article:observability','section-9',5],['article:agent-observability','section-2',5]],'both independently explained propagation paths should match their actual prose');
+assert.equal(query('Agent traceparent')[0].id,'article:agent-observability','an explicit track term selects the Agent explanation');
 assert(query('traceparent').every(r=>!['article:gpu-cluster','article:agent-runtime'].includes(r.id)));
 assert.equal(query('SQL 索引')[0].id,'article:database-index-locks');
 assert.equal(query('cpu.max')[0].id,'article:linux-resource');assert.equal(query('cpu.max')[0].anchor,'section-3');

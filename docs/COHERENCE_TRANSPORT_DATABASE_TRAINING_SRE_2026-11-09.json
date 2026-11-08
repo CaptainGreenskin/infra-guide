@@ -1,0 +1,235 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "8781d818aac521ae01bd0643cbf762b20e91ec57",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_IDENTITY_TRAINING_SERVICE_2026-11-09.json": "f20bcef4a61c9177ef38678d1c2b22459d587c5ea4595ca1b89a0b057c479809",
+    "docs/COHERENCE_NETWORK_CONFIG_MODEL_DELIVERY_2026-11-09.json": "a85e00472831602b866d57374e949b4523cbfbdc60bf8f233eb866c7a3139fbf",
+    "docs/COHERENCE_ORCHESTRATION_RECOVERY_2026-11-09.json": "2008f0bde2fdb85e9253492ec177871a79f90dbc05facd2083a0551584d52d84",
+    "docs/COHERENCE_DIRECTORY_HIERARCHY_2026-11-09.json": "01ffb705cacb5b167472fb25e66c2eb80529ae049a3292991e208325ff7222f2",
+    "docs/CONTENT_IDENTITY_TRAINING_SERVICE_2026-11-09.json": "cb5e556ffe3c8fa20595e9fdac8f68441cd77f2985b1c36f4a1e8500a83b8084",
+    "docs/COURSE_MIGRATION_2026-11-07.json": "507bbdd7b37eb199da555c5b7aa1c642c59800ea96bda394cb0cedccbdeb5d81",
+    "docs/QUALITY_AUDIT_2026-11-04.json": "d82977e8ed064d319e92692cbe6f7282b39f6a407fa95240b5899756e69f9ab1"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "d610529bfa1c234476f691934d47d125482d9790e325c1c710b998fbac249077",
+      "reviewed_sha256": "092defe7d8990e57920ec04cda1ee1011002f62b599084800ecd6a11fa7bc0cd",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "87d2cae0c32789ab24f610e695045f0ae534abde32028f27aa7234ccf29d574a",
+      "reviewed_sha256": "3bfcaba9f06a2e8e888868bd7830897aa7defdc928d4a02e02d8eb045e48e4ed",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/diagrams/v71-sre-duration-distribution.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cead7f6eb0be44e93a7d058a9e98863f3374a7399a44c5e0f38f06705975901a",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/diagrams/v71-sre-parallel-spans.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "faf787b52e4c24c28a5651edfa2bcf9d7667989fc81c1bfd8f9dde3841e8693b",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a21528389049b6cf2edc0cfb3f478fe7a0c6bbd5f6a7a7700386d1c9fc9558f0",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-tcp-database-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e684cc8a34b15a4026ec446d2fd9a421637e0ee1e575bb8236eb375b738cfad0",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/progressive-training-program-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "686824ccd5335dec12c66e529c87494de0802b792fe0ce455d5295722e2efd5f",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "ccff0c6b24b3d2c6dd81562064de86a7544021a0048f127bea9a45726761c61d",
+      "reviewed_sha256": "9c0449def1976a4b01f3c7cc8ffbac9ea254d11e74c00aa2a6569d7c403bc1ff",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "1843b5a1e951c9462250cab578f76827e4b63a6a5a5513563cf64b511b2c1ce3",
+      "reviewed_sha256": "17a85889ed77f23b8d2b887612263948e50a7d3b000f41e6145aafc427417d20",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "7a151126f817b73704ae3e27d43e80149e000af50c213680cd96aa1e6d131f54",
+      "reviewed_sha256": "cb8814fac4d2781dabcea3f18c9cb4e0d87043050a8b3fc9a3b18d4011857b36",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/CONTENT_TRANSPORT_DATABASE_TRAINING_SRE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f0595a86c26e5931a999e5d767ff40141be778b577f734f7d34caa073de508d1",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/ITERATION_2026-11-09_TRANSPORT_DATABASE_TRAINING_SRE.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8422470b60b59f04084fdbcfbed57c777bcb2f9098df76d7c06880004548e7df",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "11080191ad08e1d99b35cdcfc1c17d017646335cb4b762513c0213657db339cc",
+      "reviewed_sha256": "12e8f57c68b601fdf52c89616f17684ad43d106f61f0d793ff8d0abe837f37a5",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5f0d138d636fa7a5022174faac845dede83ddc8b06025ae09a2bc8d6d868a991",
+      "reviewed_sha256": "bb385836ca19a856ab076832d9885d7bbb5cd2a2dc7bb3d9cce96e759e15af44",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "docs/WHOLE_SITE_IMPLEMENTATION_2026-11-08.md": {
+      "previous_sha256": "5931610935fd7720ec57999b94725967dfb97f480418fbc770b12fe6f2b2d06c",
+      "reviewed_sha256": "ff01a8b0c5eb6929d04ec782fc67d1eefef4a91555d657e79bb5aaf588425372",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "a3e34ba3b4f52d6e61538707e984e249e51e9b9da000909231188b3fc3645051",
+      "reviewed_sha256": "24b5a78dd1ee58903c7d606000abb5334e769e026ba6a2e947af0b18966c1d1d",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "cf559b76c183c8ddb54441f3cf9c617defea285277a206c8ee2babfb52bd4566",
+      "reviewed_sha256": "9bc8a2813dc1a6a861e526a66f0527fb6bd0bc64b7274f18f27ea7b075bd513d",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-mysql-replication.cjs": {
+      "previous_sha256": "25817dd33d3be9d9659af2b1ac083eecb2350e6a038a24901c941c203479b947",
+      "reviewed_sha256": "85f17bfc3aa6937daf0529b131f3321354c3abc1e30e2d78230bc89ce09a24d9",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-site-search.cjs": {
+      "previous_sha256": "18b106bf8526aa5cb66d2482b239f6b09b838abd664df89e84a14414d1667086",
+      "reviewed_sha256": "55615fc2374fdaedcdf3d28154784ec22717f185c02d15ae262d38c8ccf042e8",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "scripts/check-sre-reading.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "43a6834b85058ba0eff8665fc705f8c8a0649ac700800f54d6c15aec66af2aec",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "1133e4514145f578def8a64ca90987d0098911f74d18a8d5a3ce55318a93afe7",
+      "reviewed_sha256": "65d414ccf57ce6772afa45a5de0e237ebb7783869cfcf0f25697ea38a0c57b55",
+      "scope": "Eight complete Cloud/AI/SRE bodies; concept dependencies, normal transport/database/training/request flows and independently scoped actual programs; original source/figures/URLs/IDs and hardware/Kairo/reader boundaries retained."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "8781d818aac521ae01bd0643cbf762b20e91ec57",
+    "new_chapters": [],
+    "full_body_chapters": [
+      "tcp-event-loop",
+      "mysql-recovery",
+      "mysql-replication",
+      "ddp-code",
+      "training-lab",
+      "slo",
+      "observability",
+      "incident"
+    ],
+    "continuity_only_chapters": [],
+    "changed_bodies": [
+      "ddp-code",
+      "incident",
+      "mysql-recovery",
+      "mysql-replication",
+      "observability",
+      "slo",
+      "tcp-event-loop",
+      "training-lab"
+    ],
+    "unchanged_bodies": 70,
+    "added_code_blocks": {},
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "role_routes": 7,
+    "visible_subsections": 191,
+    "section_topic_views": 670,
+    "standalone_bodies_with_closing_review": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "cloud-compute",
+      "kubernetes-basics",
+      "tokenization-embedding",
+      "attention-mechanics",
+      "agent-security",
+      "agent-memory",
+      "transformer-block",
+      "position-encoding",
+      "agent-sandbox",
+      "agent-recovery",
+      "cloud-service-lab",
+      "storage-recovery",
+      "k8s-storage",
+      "autograd-training",
+      "gpu-memory",
+      "durable-workflows",
+      "vpc-network",
+      "network-diagnosis",
+      "training-communication",
+      "data-pipeline",
+      "agent-observability",
+      "serverless-execution",
+      "message-delivery",
+      "model-serving",
+      "inference-performance",
+      "agent-evaluation",
+      "agent-retrieval",
+      "linux-resource",
+      "virtual-memory-oom",
+      "concurrency-pools",
+      "distributed-systems",
+      "training-platform",
+      "gpu-scheduling",
+      "kubernetes-training",
+      "mcp-protocol",
+      "kairo-practice",
+      "operator-profiling",
+      "training-storage",
+      "database-index-locks",
+      "cache-consistency",
+      "gpu-execution",
+      "roofline-model",
+      "flash-attention-io",
+      "tensor-parallel-math",
+      "container-runtime",
+      "k8s-workloads",
+      "scheduling-resources",
+      "checkpoint-recovery",
+      "training-performance",
+      "k8s-networking",
+      "config-secrets",
+      "k8s-autoscaling",
+      "quantization-serving",
+      "ai-lifecycle",
+      "delivery",
+      "resilience",
+      "multinode-lab",
+      "terraform-state",
+      "iam-security",
+      "gpu-cluster",
+      "distributed-training",
+      "production-readiness",
+      "tcp-event-loop",
+      "mysql-recovery",
+      "mysql-replication",
+      "ddp-code",
+      "training-lab",
+      "slo",
+      "observability",
+      "incident"
+    ],
+    "reader_mastery_claims_added": 0,
+    "experiment_packs": 48,
+    "learning_tasks": 88,
+    "new_experiment_packs": [],
+    "new_task_ids": []
+  }
+}
