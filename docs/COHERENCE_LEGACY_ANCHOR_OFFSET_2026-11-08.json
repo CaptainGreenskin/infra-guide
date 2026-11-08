@@ -1,0 +1,61 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "adcb6904c382774d6b229f83573c44c61f35f4ef",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NETWORK_COMMUNICATION_2026-11-08.json": "ad09493cb984accafbaca59e59b5db0f84508618403190e8aaf7571bd37f593d"
+  },
+  "source_revisions": {
+    "dist/reading-comfort.css": {
+      "previous_sha256": "e8751e7782097735d0a0ba9bdbe29cdc5354d798c9ade811a16cf79abddf7eee",
+      "reviewed_sha256": "b3fdd2e2f8314a7c5d9f9f601295c999c0568644bfe136c2a9102e67d0af38e7",
+      "scope": "Keep the parent topic heading fully below the fixed reading toolbar when a published legacy subsection URL lands on its retained zero-height anchor. Additional40px accounts for the heading before the anchor. All78 bodies, URLs, code, figures and route behavior remain unchanged."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "adcb6904c382774d6b229f83573c44c61f35f4ef",
+    "new_chapters": [],
+    "changed_bodies": [],
+    "unchanged_bodies": 78,
+    "added_code_blocks": {},
+    "original_full_code_blocks": "all78 prior complete pre blocks, authored source h2 titles and public inner IDs retained",
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 266,
+    "section_topic_views": 670,
+    "chapter_topic_views": 78,
+    "standalone_bodies_with_closing_review": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "cloud-compute",
+      "kubernetes-basics",
+      "tokenization-embedding",
+      "attention-mechanics",
+      "agent-security",
+      "agent-memory",
+      "transformer-block",
+      "position-encoding",
+      "agent-sandbox",
+      "agent-recovery",
+      "cloud-service-lab",
+      "storage-recovery",
+      "k8s-storage",
+      "autograd-training",
+      "gpu-memory",
+      "durable-workflows",
+      "vpc-network",
+      "network-diagnosis",
+      "training-communication",
+      "data-pipeline",
+      "agent-observability"
+    ],
+    "reader_mastery_claims_added": 0
+  },
+  "observation": "At390px the legacy anchor landed at154px while its preceding h2 was partially under the toolbar. The40px extra scroll margin aligns that h2 with normal section navigation; verify actual DOM geometry and screenshots at390/1280px."
+}
