@@ -1,0 +1,39 @@
+name: Native Kubernetes workload identity
+on:
+  push:
+    branches: [content/native-identity-20261108]
+    paths:
+      - dist/labs/kubernetes-identity/identity_lab.py
+      - .github/workflows/kubernetes-identity.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  identity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pinned official Kubernetes tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/guide-identity-tools"
+          cd "$RUNNER_TEMP/guide-identity-tools"
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o kind-linux-amd64
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64.sha256sum -o kind-linux-amd64.sha256sum
+          sha256sum -c kind-linux-amd64.sha256sum
+          mv kind-linux-amd64 kind
+          curl --fail --location --retry 3 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl -o kubectl
+          curl --fail --location --retry 3 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl.sha256 -o kubectl.sha256
+          python3 -c 'from pathlib import Path; import hashlib; assert hashlib.sha256(Path("kubectl").read_bytes()).hexdigest()==Path("kubectl.sha256").read_text().strip()'
+          chmod +x kind kubectl
+          echo "$RUNNER_TEMP/guide-identity-tools" >> "$GITHUB_PATH"
+      - name: Run owned cluster identity and authorization cases
+        run: python3 -B dist/labs/kubernetes-identity/identity_lab.py --output native-results/identity.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-kubernetes-identity
+          path: native-results/identity.json
+          retention-days: 1
