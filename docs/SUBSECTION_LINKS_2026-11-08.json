@@ -182,7 +182,8 @@
         "subsection-5-dj0iar",
         "subsection-6-1m57fcl",
         "subsection-7-1njkucl"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "k8s-storage",
@@ -209,6 +210,10 @@
         "subsection-6-dpipfj",
         "subsection-7-wkh4cz",
         "subsection-7-5pl5op"
+      ],
+      "visible_targets": [
+        "subsection-7-wkh4cz",
+        "subsection-7-5pl5op"
       ]
     },
     {
@@ -221,6 +226,10 @@
         "subsection-5-1ye4m7x",
         "subsection-6-nhfr0o",
         "subsection-7-1cxb905",
+        "subsection-8-1qdvyvu",
+        "subsection-8-cjjpw2"
+      ],
+      "visible_targets": [
         "subsection-8-1qdvyvu",
         "subsection-8-cjjpw2"
       ]
@@ -508,7 +517,8 @@
         "subsection-4-1vuiqtr",
         "subsection-5-1drpdp8",
         "subsection-5-1sbp3h2"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "inference-performance",
@@ -540,7 +550,8 @@
         "subsection-6-15mcx71",
         "subsection-7-1bdkyq8",
         "subsection-8-1an19m4"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "moe-routing",

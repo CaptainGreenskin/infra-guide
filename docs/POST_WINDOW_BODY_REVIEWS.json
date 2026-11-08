@@ -3415,6 +3415,76 @@
         "从一次快照形成可复现实验",
         "交一份可核对的答案"
       ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "0797d211e8393056c2534b83ea85bb1077a9b341270ce7b09348bff8bf4e5a6b",
+      "reviewed_content_sha256": "e313c94707007783ae3bca23290fbf1d9a097e183c14c1932a6f232ef40617a6",
+      "scope": "One complete model meaning from export to a fixed request and rollout",
+      "observation": "Eight full sections first connect candidate export, loading, fixed-request versions and outputs, then vocabulary/weight IDs, conditional generations, evaluation/cohorts and complete-bundle rollback. Original CPU records and declared rollout fixtures remain separate.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "407539d45854031bf0b3a6082fcfd11509c58d0c17fe8882ce5d8739c902311f",
+      "reviewed_content_sha256": "422b7d8284d746ef20d55dc02701e810cd56f8934c2c300d59881bdb2851ce78",
+      "scope": "Source configuration to files, process snapshots and effective credentials",
+      "observation": "Seven full sections follow source objects, environment/projection/subPath, open file descriptions, validated snapshots and credential sessions; original programs and old-source/old-FD boundaries remain explicit.",
+      "headings": [
+        "对象与版本：期望、文件、内存和认证",
+        "传播路径：环境变量、投射与subPath",
+        "一致快照：完整读取、校验和请求切换",
+        "全局约束：连接预算、截止时间与回退",
+        "Secret与身份：分发、存储和执行权限",
+        "凭据轮换：兼容窗口、撤销与旧会话",
+        "实战与变化题：文件、进程和真实HTTP"
+      ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7e4af51d480431aa2564db48bd2580cd7a81e51b2a51fe9422a096538cb9659f",
+      "reviewed_content_sha256": "c0f0782d1a4cf848fc714803ddbb2132aba3fad79e67bd9f38a5c487d8edb86c",
+      "scope": "Measured demand through constrained replicas to usable capacity",
+      "observation": "Eight full sections align the request denominator and missing samples with raw ratio recommendations, min/max and rate policies, delayed capacity and downstream budgets. Three/one mathematical recommendations do not override the YAML minimum of four.",
+      "headings": [
+        "控制链：建议、期望与实际可用容量",
+        "CPU口径：单位、request与匹配集合",
+        "保守计算：缺指标、容差与方向变化",
+        "指标选择：资源、容器、业务与外部信号",
+        "容量空窗：积压、净余量与有界接纳",
+        "伸缩行为：稳定窗口、速率与上下界",
+        "下游预算：副本、连接与实际完成率",
+        "实战与变化题：数学参考和真实规则引擎"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1c2c50ec2a3cce6d852cc40d658403284d27ba8a1349e4b851e4d51114cf1981",
+      "reviewed_content_sha256": "c3a64de597564e170784676931aa137b3dc80ae28daca8a778e9405147b59845",
+      "scope": "Service discovery and the complete connection/return path",
+      "observation": "Seven full sections define names, endpoints and identity before controller updates, packet forwarding, source/NAT, policy directions, retries and separately identified native Service/TLS fixtures.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
     }
   ]
 }

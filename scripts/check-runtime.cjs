@@ -20,13 +20,20 @@ function capture(files,base){
  return {initialization:hash(JSON.stringify(data)),pages};
 }
 for(const base of ['/','/infra-guide/'])assert.deepEqual(capture(plan.publicFiles,base),capture(canonical,base),base+': combined classic scripts change initialization or rendered content');
+const readerManifest=JSON.parse(read('reader-runtime-manifest.json')),bootstrap=readerManifest.assets.find(a=>a.file.includes('reader-bootstrap.'));
 const pages=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
+let lightArticles=0;
 assert.equal(pages.length,inventory.html);
 for(const file of pages){
  const html=read(file),scripts=[...html.matchAll(/<script defer src="([^"?]+)\?v=([\da-f]+)"/g)];
  assert.deepEqual(scripts.map(m=>m[1]),plan.publicFiles,file+': public load order');
  for(const m of scripts)assert.equal(m[2],hash(read(m[1])).slice(0,12),file+': stale script fingerprint');
+ const template=html.match(/<template id="reader-full-runtime">([\s\S]*?)<\/template>/),activeHTML=html.replace(/<template id="reader-full-runtime">[\s\S]*?<\/template>/g,'');
+ const active=[...activeHTML.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(m=>m[1]);
+ if(file.startsWith('article/')){assert(template,file+': explicit complete-runtime fallback');assert.deepEqual(active,['/'+bootstrap.file],file+': only one initial bootstrap');lightArticles++;}
+ else{assert(!template,file+': nonarticle retains the complete runtime');assert.equal(active.length,plan.publicFiles.length);}
  assert(html.includes('id="app"')&&html.includes('<main'),file+': initial full HTML missing');
 }
+assert.equal(lightArticles,inventory.chapters);
 const compressed=files=>files.reduce((total,file)=>total+zlib.gzipSync(read(file)).length,0);
-console.log('PASS: '+canonical.length+' canonical scripts → '+plan.publicFiles.length+' public requests; initialization and all route outputs match byte-for-byte at root and/infra-guide, all static pages retain full HTML and matching asset hashes. Gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; not a network timing claim.');
+console.log('PASS: '+canonical.length+' canonical scripts and '+plan.publicFiles.length+' complete-runtime files remain equivalent at root/Pages; '+lightArticles+' full-text article pages start with one bootstrap and retain nine inert fallback scripts. Legacy gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; reader assets checked separately, not a network timing claim.');

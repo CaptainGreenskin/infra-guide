@@ -15,10 +15,12 @@
 
 当前78章：Cloud 35、AI 29、Agent 11、综合实战3；46个完整实验包、86项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
-本轮[编排、恢复与继续执行](docs/ITERATION_2026-11-09_ORCHESTRATION_RECOVERY.md)重排五章39节，串起容器、副本、调度，以及训练更新、恢复与成本；另补 Agent 工具的正向接线。52章由正文逐层定义概念，复习与资料分别归入章末可展开区域。
+本轮[网络、配置与模型交付](docs/ITERATION_2026-11-09_NETWORK_CONFIG_MODEL_DELIVERY.md)重排五章35节，连接服务发现与回程、配置与进程快照、指标与可用容量、量化格式与真实算子、模型版本与请求输出。57章由正文逐层定义概念。78个文章页直接沿用静态正文，正常阅读只加载轻量控件，完整搜索索引在首次搜索时加载；失败时保留完整运行时回退。
 
 <details>
 <summary>历次内容修订与执行记录</summary>
+
+本轮[编排、恢复与继续执行](docs/ITERATION_2026-11-09_ORCHESTRATION_RECOVERY.md)重排五章39节，串起容器、副本、调度，以及训练更新、恢复与成本；另补 Agent 工具的正向接线。52章由正文逐层定义概念，复习与资料分别归入章末可展开区域。
 
 本轮[统一目录层次](docs/ITERATION_2026-11-09_DIRECTORY_HIERARCHY.md)，全站大纲与章节侧栏共用概念名称和主题分组。目录先显示知识范围，点击直接进入完整正文。
 
@@ -127,7 +129,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json` 和各目录 HTML 都是生成物。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
+浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json`、`reader-assets/`、`reader-runtime-manifest.json` 和各目录 HTML 都是生成物。轻量阅读器的构建源在 `scripts/article-reader/`；文章元数据不包含完整正文，搜索索引独立按需加载。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

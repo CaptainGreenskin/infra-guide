@@ -1,0 +1,198 @@
+{
+  "schema": 1,
+  "staticReadingVersion": "52fa5b77f0ce6235172b9081e2b7adab8ebd5be44870f77e7404445aa423a1b9",
+  "articles": 78,
+  "initialExecutableScripts": 1,
+  "normalReaderScriptRequests": 2,
+  "fullFallbackScripts": 9,
+  "initialReaderJSBytes": 83669,
+  "metadataBytes": 25457,
+  "metadataSha256": "b0cd0153360922b80939d5708386a8036f532c25e5a760ae58e18e05fccb2e6a",
+  "assets": [
+    {
+      "file": "reader-assets/reader-bootstrap.11112f7bba10.js",
+      "url": "/reader-assets/reader-bootstrap.11112f7bba10.js",
+      "bytes": 4373,
+      "sha256": "11112f7bba10674db4740653c694a42f9230ff7281e4a56a010586fe1e166386"
+    },
+    {
+      "file": "reader-assets/reader-runtime.bafa2ff636a3.js",
+      "url": "/reader-assets/reader-runtime.bafa2ff636a3.js",
+      "bytes": 79296,
+      "sha256": "bafa2ff636a308f44039339f6cb765376c254e2f62eba0a3faf1d54540ac7b7c"
+    },
+    {
+      "file": "reader-assets/search-index.1565fd45e55e.json",
+      "url": "/reader-assets/search-index.1565fd45e55e.json",
+      "bytes": 8386753,
+      "sha256": "1565fd45e55e80ac881d0d236d7f408f19963bd7cc0108ae7d8d3f7386c3c388"
+    }
+  ],
+  "reusedFunctions": [
+    {
+      "name": "escapeHTML",
+      "sha256": "56a9682d0293b4ccf16d44b3621c46625ff59ab625652439bd76fcbdda38ca07"
+    },
+    {
+      "name": "trainingEscape",
+      "sha256": "56a9682d0293b4ccf16d44b3621c46625ff59ab625652439bd76fcbdda38ca07"
+    },
+    {
+      "name": "hostedPath",
+      "sha256": "9de574b1d01e9003748c9aaa7f0ff9a3ba50e8c5ba3fac64310eef58ec7d26b1"
+    },
+    {
+      "name": "documentPathname",
+      "sha256": "507e9904505553fa9be60d50a9b2aca36103e0064088732fe6089b87ec2741fa"
+    },
+    {
+      "name": "publicRoute",
+      "sha256": "f07e5ca185f4537c07873d8eac40bf7b10f70c43d140c2f5469228b5b67c41d8"
+    },
+    {
+      "name": "readerInternalHref",
+      "sha256": "de97115443a03f2934c0caca95df3a9933aadddc8d9107c08fbf6f8e7c227087"
+    },
+    {
+      "name": "cleanInternalHTML",
+      "sha256": "743d602ac511ad9bd6af4878f6e4f467517942bc2972ab84d587901666687630"
+    },
+    {
+      "name": "normalizeInternalLinks",
+      "sha256": "8b3a11786c54b5fa5f7a9baac3638e7e786a1666827bb6ff5497520bde42bfda"
+    },
+    {
+      "name": "initReaderActions",
+      "sha256": "a6621ba69301c77ecccb5d0ab97ff7d6ef1bda2feb187a6f9f5f0b94a9f964bf"
+    },
+    {
+      "name": "chapterDirectoryTitle",
+      "sha256": "aeb3218ca948a95b03532e59f69cf3ae055a3e7ff59b4c8f3a03481c228ae8a0"
+    },
+    {
+      "name": "courseDirectoryEntries",
+      "sha256": "6fe025a3d23b52578712de5369a18baa295d359c1584436964a783529a919332"
+    },
+    {
+      "name": "chapterReadingContext",
+      "sha256": "2eebf05f7197c1d31a198feef599d50d0f246447a8bbf6522754cf6c84e45143"
+    },
+    {
+      "name": "chapterReadingNav",
+      "sha256": "561173a84aaccd6a806192d3200899c8e82d56210e09aa1653eaacda071c186f"
+    },
+    {
+      "name": "selectedLearningProfile",
+      "sha256": "07e71ed04c57c91b00b52a76c9f2c370cd2f8635a375a01238aa3dcd7c170b82"
+    },
+    {
+      "name": "learningProfilePriority",
+      "sha256": "d22dbc9c8d6115c8cf1c3363c4f39246749104e263682871874edcce5582d77d"
+    },
+    {
+      "name": "readingArticleURL",
+      "sha256": "e8e5350b0d912ef7d1270d36e6849839bd3437eb89975f8ee813c88f7b9ea761"
+    },
+    {
+      "name": "learningGoalChapterNav",
+      "sha256": "3e311c4141e14ce0fe885cb2634eeb88f59e2ed340afe539debb6db1718f2f5e"
+    },
+    {
+      "name": "learningContextHref",
+      "sha256": "ba2f936aa4a8e08a1bf7ee29ca97770029fba367bb2ca37d29826393e26aa346"
+    },
+    {
+      "name": "practiceArticleForContext",
+      "sha256": "8d7df7d223c592bffa9391cc54e998b9706405bd4747362b1b32241fa6d7c11b"
+    },
+    {
+      "name": "sidebarView",
+      "sha256": "5371848f313e0131fdd76529c6dfe72c8d45719c80ff556fe662b16829b8eac8"
+    },
+    {
+      "name": "courseRedirectFor",
+      "sha256": "bc84b05fb2b8684c927f2edde45272f9439047e37e37267cb62a6d02bc3a6bb1"
+    },
+    {
+      "name": "legacySectionTarget",
+      "sha256": "a34e10c377c5c4f4c25537a34ee3cc822818c3943cc9ea33063c59bf39c8df64"
+    },
+    {
+      "name": "restoreDocumentFragment",
+      "sha256": "21725d1d8567e710c8f92e15756582a84b64a4e868bb5dc5004e1df57aa5ced1"
+    },
+    {
+      "name": "hydrateStaticArticle",
+      "sha256": "3f457eecd5fb1f29a9992a49c1b7e0c7ba0d29a288092a45aefdaf2d82857478"
+    },
+    {
+      "name": "initInteractive",
+      "sha256": "3a58c8d4368749593060d9478e3d00fb77fb35694888b45e8b735565cfc82e0f"
+    },
+    {
+      "name": "attentionExample",
+      "sha256": "61a920c1e82bb4d98b26518132bf91b826c99b335562bec015757bb2092c7102"
+    },
+    {
+      "name": "initAttentionDemo",
+      "sha256": "b4626bce925f5cd8c5f9836ff92ea6d0fc0153efbb7aaac70a2199e6d2c98a07"
+    },
+    {
+      "name": "sloCalculation",
+      "sha256": "66ed9a0ec86399d57c53364c58ad7f645acb12fda469ee10713b56a9a9dc3110"
+    },
+    {
+      "name": "kvCalculation",
+      "sha256": "41d40bbe66b126a3ec76bfe4c1f9ebaf26e11416b23a95143898be18de76fdde"
+    },
+    {
+      "name": "initSystemInteractive",
+      "sha256": "4e69b438cae1fce485c39c5e8e3820fa0622e806666693789d4f48de811a844d"
+    },
+    {
+      "name": "readStore",
+      "sha256": "13021e0b4f8c957b4719a112f9089470d262b26ab154f32b6c3421d9eac378df"
+    },
+    {
+      "name": "writeStore",
+      "sha256": "6e3fed95585e89170e7d0252e1975cc8c1c2198ad17da7df23069cd489b4a443"
+    },
+    {
+      "name": "toast",
+      "sha256": "a84320e34156d2a2ae8744acca158d9f7d9921cb76f4dae4e54a24f7fb3fa4d4"
+    },
+    {
+      "name": "searchPlainText",
+      "sha256": "49ca398fd391b609e584e9c73940736cc6c7ab2d7e181c982a4f73d71f4a646d"
+    },
+    {
+      "name": "normalizeSearchText",
+      "sha256": "9b64aae928dc48fd9376aeb6ac96dccb262172a622bbdab2f4c824880b0a965d"
+    },
+    {
+      "name": "searchFind",
+      "sha256": "84ed3c17da138229c21d21db316d09bae10da973bc326e55eed1a1fdb28509a3"
+    },
+    {
+      "name": "searchContains",
+      "sha256": "4123039715d54dd7c5c3e6b0a1ca18604507aeaae4892dd71a5b8bc910d4cefb"
+    },
+    {
+      "name": "siteSearchExcerpt",
+      "sha256": "3a497170e8360784610ee64cbb47d4d9e1542fa50a854084ded06f6b4cf9cbb3"
+    },
+    {
+      "name": "rankSiteSearch",
+      "sha256": "22662073ec9a99843312c9be6056b53d1b74fd4f947a2545a06728b6d701af0d"
+    },
+    {
+      "name": "siteSearchHighlight",
+      "sha256": "9cfa904638dd89125ee48f6fb11b8e728b9809aca4d53ec261595c7ac02605ef"
+    },
+    {
+      "name": "followCourseRedirect",
+      "sha256": "95a46568bbc8632f9f49df171dbb04de73f539f56321ad81c7b9ce38020defdf"
+    }
+  ],
+  "searchEntries": 173
+}

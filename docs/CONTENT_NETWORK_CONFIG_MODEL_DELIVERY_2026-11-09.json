@@ -1,0 +1,26 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "e77f4d39c077fd79d1ea56b38102c2a785fcce50",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_ORCHESTRATION_RECOVERY_2026-11-09.json": "53eac847a278800f6f97784f23987908f3ac62c97f57d27456220a7910ac840c"
+  },
+  "body_revisions": [
+    {
+      "id": "quantization-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "0608fb36d8c5461eb2673bda68832ad24a262694a201bd2fe874698b13e2ff32",
+      "reviewed_content_sha256": "99783fcc6ea113ec0dda67c0eacd46f161f2f4021b3492dae64df1c0661b3b0f",
+      "scope": "Numerical formats, real byte layout and quantized execution",
+      "observation": "Five full sections define the represented object, bits, scales and zero points before grouping, packing, grouped dot products and actual CPU INT8. The initial affine example explicitly uses unsigned8-bit values, separately from signedINT4.",
+      "headings": [
+        "量化基础：整数、比例尺与零点",
+        "分组：谁共享同一把比例尺",
+        "量化的字节与执行账本",
+        "校准与质量：先解释误差，再比较性能",
+        "量化实战：INT4打包与CPU INT8执行"
+      ]
+    }
+  ],
+  "knowledge_revisions": []
+}

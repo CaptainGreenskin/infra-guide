@@ -21,7 +21,7 @@ const shell=fs.readFileSync(path.join(root,'src/page-shell.html'),'utf8');
 const scripts=[...shell.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]);
 // Match the preserved HTML to the exact canonical reading implementation. Exclude
 // the generated token itself so repeated builds do not change it recursively.
-const versionInputs=['src/page-shell.html','scripts/render-pages.cjs',...scripts.filter(f=>f!=='static-reading-version.js').map(f=>'dist/'+f)];
+const versionInputs=['src/page-shell.html','scripts/render-pages.cjs',...['build.cjs','reader-bootstrap.js','reader-glue.js','reader-startup.js'].map(f=>'scripts/article-reader/'+f),...scripts.filter(f=>f!=='static-reading-version.js').map(f=>'dist/'+f)];
 const staticVersion=require('crypto').createHash('sha256');
 for(const file of versionInputs)staticVersion.update(file+'\0').update(fs.readFileSync(path.join(root,file)));
 const staticReadingVersion=staticVersion.digest('hex');
@@ -42,6 +42,9 @@ const context={document,window:{addEventListener:noop,scrollTo:noop},location:{p
 vm.createContext(context);
 for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
 const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits,learningProfiles})',context);
+const reader=require('./article-reader/build.cjs').buildReader({context,staticReadingVersion,root,assetDirectory:path.join(dist,'reader-assets'),assetPublicPath:'/reader-assets/'});
+const readerManifest={schema:1,staticReadingVersion,articles:data.articles.length,initialExecutableScripts:1,normalReaderScriptRequests:2,fullFallbackScripts:9,initialReaderJSBytes:reader.initialReaderJSBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:require('crypto').createHash('sha256').update(JSON.stringify(reader.metadata)).digest('hex'),assets:[reader.bootstrapAsset,reader.runtimeAsset,reader.searchAsset],reusedFunctions:reader.provenance,searchEntries:reader.index.length};
+fs.writeFileSync(path.join(dist,'reader-runtime-manifest.json'),JSON.stringify(readerManifest,null,2)+'\n');
 fs.writeFileSync(path.join(root,'docs/CHAPTER_REVIEW_2026-11-04.json'),JSON.stringify({date:'2026-11-04',status:'reviewed_and_revised',chapters:vm.runInContext('chapterReadingEdits',context)},null,2)+'\n');
 const routes=[{route:'/',call:'home()'},{route:'/start/',call:'startPage()',alias:'/'},{route:'/outline/',call:'outlinePage()'},{route:'/interview/',call:'interviewPage()'},{route:'/roadmap/',call:'roadmap()'},...Object.entries(data.learningProfiles).map(([id,profile])=>({route:'/roadmap/'+id+'/',call:'roadmapPage()',description:profile.aim})),{route:'/labs/',call:'labsPage()'},{route:'/resources/',call:'resourcesPage()'},{route:'/problems/',call:'problemsPage()'},{route:'/about/',call:'editorialPage()'},...Object.entries(data.interviewUnits).map(([key, unit]) => ({route:'/interview/'+key+'/', description:unit[1], call:'workshopPage('+JSON.stringify(key)+')'})),...Object.keys(data.trackDefinitions).map(id=>({route:'/track/'+id+'/',call:'trackPage('+JSON.stringify(id)+')'})),...data.modules.map(m=>({route:'/module/'+m.id+'/',call:'modulePage(moduleFor('+JSON.stringify(m.id)+'))'})),...data.articles.map(a=>({route:'/article/'+a.id+'/',article:a,call:'articlePage(articleById('+JSON.stringify(a.id)+'))'}))];
 const chapterDates=new Map(data.articles.map(a=>{
@@ -73,6 +76,7 @@ for(const entry of routes){
  const head='<link rel="canonical" href="'+url+'"><meta property="og:type" content="'+(entry.article?'article':'website')+'"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(description)+'"><meta property="og:url" content="'+url+'"><meta name="twitter:card" content="summary"><script type="application/ld+json">'+JSON.stringify(schema).replace(/</g,'\\u003c')+'</script>';
  html=html.replace('</head>',head+(entry.alias?'<meta name="robots" content="noindex,follow">':'')+'</head>').replace('href="#main"','href="'+entry.route+'#main"');
  context.renderedHTML=html;html=vm.runInContext('cleanInternalHTML(renderedHTML)',context);
+ html=reader.patchArticleHTML(html,entry.route);
  const target=path.join(dist,entry.route.slice(1),'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,html);
 }
 fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+routes.filter(r=>!r.alias).map(r=>'<url><loc>'+data.publicSiteOrigin+r.route+'</loc><lastmod>'+lastModified(r.route)+'</lastmod></url>').join('\n')+'\n</urlset>\n');

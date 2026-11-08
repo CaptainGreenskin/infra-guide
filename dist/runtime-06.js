@@ -8983,6 +8983,420 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
 
 
 ;
+// progressive-cloud-network-config-reading.js
+/* Connect placed Pods to request paths, effective configuration and usable scaled capacity.
+   Load after the existing progressive lessons and before first-reading-flow.js. */
+(()=>{
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span id="'+id+'"></span>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
+ const matches=(html,re)=>[...html.matchAll(re)].map(m=>m[0]);
+ const blocks=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=html=>matches(html,/<figure\b[\s\S]*?<\/figure>/g);
+ const links=html=>{
+  const rest=html.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<pre\b[\s\S]*?<\/pre>/g,'');
+  const found=matches(rest,/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
+  return found.length?'<p class="practice-links">'+found.join(' ')+'</p>':'';
+ };
+ const select=(id,titles)=>{
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Network/config source changed: '+id);
+  return a;
+ };
+ const published={
+  'k8s-networking':['subsection-1-rccynd','subsection-2-8a7h3t','subsection-3-4aahv','subsection-4-1jc1u8z','subsection-5-dj0iar','subsection-6-1m57fcl','subsection-7-1njkucl'],
+  'config-secrets':['subsection-1-7kw63x','subsection-2-cufyfb','subsection-3-1f8tsyf','subsection-4-yc8oql','subsection-5-42cx9r','subsection-6-dpipfj','subsection-7-wkh4cz','subsection-7-5pl5op'],
+  'k8s-autoscaling':['subsection-1-3leldk','subsection-2-5hh76l','subsection-3-okwq7o','subsection-4-1iqesp6','subsection-5-1ye4m7x','subsection-6-nhfr0o','subsection-7-1cxb905','subsection-8-1qdvyvu','subsection-8-cjjpw2']
+ };
+ function replace(a,bodies,desc){
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  const pres=html=>matches(html,/<pre\b[\s\S]*?<\/pre>/g);
+  const hrefs=html=>[...html.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]).sort();
+  const ids=html=>[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+  if(bodies.length!==a.sections.length)throw Error('Network/config section count changed: '+a.id);
+  if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Network/config original code changed: '+a.id);
+  if(JSON.stringify(figures(before).sort())!==JSON.stringify(figures(after).sort()))throw Error('Network/config figure changed: '+a.id);
+  if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after)))throw Error('Network/config href multiset changed: '+a.id);
+  const nextIds=ids(after);
+  for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Network/config anchor lost: '+a.id+'/'+id);
+  if(new Set(nextIds).size!==nextIds.length)throw Error('Network/config duplicate anchor: '+a.id);
+  bodies.forEach((body,i)=>a.sections[i][1]=body);a.desc=desc;a.intro=desc;a.updated='2026.11.09';
+ }
+
+ const network=select('k8s-networking',['服务发现：名字、地址、端口与应用身份','后端集合：selector、端口与EndpointSlice','数据转发：连接跟踪、来源与完整回程','网络策略：选择器、方向与NAT边界','外部入口：TLS终止、代理与重试预算','逐层诊断：从同一源位置验证到业务回执','实战与变化题：真实TLS、SNI和HTTP Host']);
+ const n=network.sections.map(s=>s[1]),n1=blocks(n[1]),n2=blocks(n[2]),n3=blocks(n[3]),n5=blocks(n[5]),n6=blocks(n[6]);
+ if(n1.length!==1||n2.length!==1||n3.length!==1||n5.length!==1||n6.length!==2)throw Error('Kubernetes network code layout changed');
+ replace(network,[
+ anchor('service-name-address-identity')+anchor('subsection-1-rccynd')+
+ p('容器章解释进程怎样启动，工作负载与调度章使一组 Pod 出现并就绪。本章把客户端接到它们：Pod 是会被替换的实例，Service 按规则组织当前后端，提供稳定的访问入口，DNS 再让客户端通过名字发现入口。正常请求依次完成解析、连接、身份校验和应用处理，回包沿相应网络路径返回。',
+ '先用 reports 服务作地址示意。DNS 名字帮助发现位置，IP 与端口定位传输目标，端点集合记录当前后端，TLS 身份用于确认对端是谁。四者通过配置关联：同一个稳定名字可以在不同时间对应不同后端，客户端仍应验证约定的服务身份。')+
+ table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
+ figures(n[0]).join('')+
+ p('普通 ClusterIP Service 的 DNS 地址记录通常指向其虚拟 IP。无头服务 headless（clusterIP: None）可让名字解析到后端地址集合；ExternalName 则提供指向另一名字的 CNAME 别名。解析回答“这次获得了什么地址”，后续连接与业务仍沿各自路径执行，DNS 缓存和连接池也各有生命周期。',
+ '证书 SAN 是证书声明的适用名字。TLS 客户端使用 server_hostname 指定校验名，适用时还在 SNI 中发送该名字，帮助服务端选择证书；HTTP Host 或 HTTP/2 的 :authority 决定应用路由。证书链可信、名字匹配和资源存在逐项成立，请求才到达目标服务。入口代理若终止 TLS，入口到后端便是另一段连接，使用自己的传输与信任配置。'),
+
+ anchor('subsection-2-8a7h3t')+
+ p('Service 的 selector 是选择后端 Pod 的标签条件。控制器观察匹配 Pod，把地址、端口和端点条件写入 EndpointSlice；一个 Service 可以有多个切片。节点上的 Service 实现再观察这些 API 对象，将稳定入口连接到可用目标。控制面保存后端事实，数据面执行实际转发。',
+ '下面 selector 选择 app=reports，客户端连接 port=443，命名 targetPort=https 在 Pod 端口声明中解析为 8443。containerPort 是端口信息，应用本身仍要监听可达地址，例如 0.0.0.0:8443；仅声明端口不会替程序执行 listen。')+n1[0]+
+ p('端点条件中，ready 用于常规流量资格，terminating 标记正在终止，serving 可表达终止期仍能提供服务。常规 ready 与正在服务、未终止有关，publishNotReadyAddresses 等配置会改变相应行为。诊断时取该 Service 全部 EndpointSlice，合并并去重，再按端口和条件核对目标。',
+ '已有原生 service_lab.py 使用独立的 guide-service：两个业务 Pod，ClusterIP:80 转到 Pod:8080。一次 readiness 失败后，相关 UID 的端点 ready=false，稳定的新连接样本仅收到另一 UID；恢复后同一 UID 再接流量，重启计数不变。这验证原生 Service 与就绪链，端口和身份都不同于上面的 443→8443 示意。API 更新到数据面采用新规则仍有传播过程。',
+ '若 DNS 正常返回 Service IP，端点集合仍可为空。先核对 selector、标签、就绪与目标端口；只有解析证据指向 DNS，才进一步定位解析服务。'),
+
+ anchor('service-flow-return')+anchor('subsection-3-4aahv')+
+ p('CNI 是容器网络接口，网络插件据此为 Pod 连接和配置所需网络；Service 实现负责稳定入口到后端的选择与转发，DNS 负责名字解析。常见 Linux 集群由 kube-proxy 观察 Service 与 EndpointSlice 并配置内核规则，业务报文随后在内核数据面转发。其他实现可以采用不同机制，报文不会逐包经过 API Server。',
+ '沿示意连接追一次地址变化：客户端 10.42.1.7:53000 连 Service 10.96.0.20:443，本次选择 Pod 10.42.2.8:8443。DNAT 改写目的地址，SNAT 改写源地址。是否保留客户端来源，取决于流量策略与具体路径；应用记录或使用来源时，要看它实际收到的地址。')+n2[0]+
+ p('conntrack 是连接跟踪，保存连接方向、状态以及相应 NAT 关联。在这种实现中，新连接选定后端后，后续报文沿用该关联，回包再恢复客户端预期的连接。已有 TCP 连接不会因增加一个 Pod 就自动拆成两份。HTTP keep-alive、HTTP/2 和数据库连接池还会在一条连接上发送多个请求，连接分布与请求分布因此需要分别统计。',
+ '跨节点路径还包括 Pod 路由、底层网络及可能的封装。MTU 是路径允许的报文大小约束；封装占用部分空间。小包成功、大传输停住时，检查 MTU 和路径 MTU 发现；请求到达而回应未到时，沿回程路由、NAT 与策略核对。固定源/目的 IP、端口和协议这五元组，再关联两端观察，才能找到同一条连接。'),
+
+ anchor('subsection-4-1jc1u8z')+
+ p('NetworkPolicy 是按选择器描述 Pod 流量许可的 API 对象，由支持它的网络实现执行。ingress 表示进入目的 Pod 的方向，egress 表示离开源 Pod 的方向；Pod 被声明了相应方向的 NetworkPolicy 选中，就在该方向进入隔离；未隔离时默认允许，隔离后按该方向的允许规则放行。两端相应方向都隔离时，需要源出口与目的入口同时允许。')+
+ figures(n[3]).join('')+
+ p('下面策略位于 apps，用顶层 podSelector 选中 app=reports 作为目的。同一个 from 条目内，namespaceSelector 和 podSelector 同时成立，表示“team=analytics 命名空间里的 role=reader Pod”；如果拆成两个 from 条目，便变成两个允许来源的并集，范围会改变。')+n3[0]+
+ p('team=analytics 是命名空间标签，名称相同并不自动有该标签。此例只声明目的入口 TCP 8443；若 reader 的出口也隔离，还需配置相应出站许可。同一端同一方向的多条允许策略也取并集，规则顺序不提供“后写覆盖前写”的拒绝语义。',
+ 'DNS 查询同样需要出站路径，按实际解析器地址与 UDP/TCP 端口放行。Service 转发前后匹配哪些地址、hostNetwork 或节点流量如何处理，要对照网络实现和 NAT 时点。这里许可的是网络层与传输层流量，业务接收方继续校验身份、租户和资源权限；两层规则各自取证。'),
+
+ anchor('subsection-5-dj0iar')+
+ p('外部客户端还要经过入口。Ingress 或 Gateway 对象保存路由意图，安装的控制器将它交给实际代理或负载均衡数据面。代理接受连接、可终止 TLS，再选择上游后端；边车或服务网格还可能在 Pod 周围增加代理。每多一层，就多一份连接池、发现缓存、超时与重试配置。',
+ '给同一请求分配总截止时间 800 ms。假设连接和校验 80 ms、入口排队 120 ms、一次后端尝试 250 ms，且这些阶段串行。剩给后端 600 ms，最多可容纳两次 250 ms 加 100 ms 间隔。传递剩余预算，才能让内层知道用户还愿意等多久；给每层重新发一份 800 ms 会让工作超出原终点。',
+ '再单独估算重试放大：客户端最多三次，每次入口最多两次，每次服务再最多两次，在独立嵌套且不共享次数预算的题设中，下游最多 3×2×2＝12 次尝试。实际策略要共同限制错误类别、次数、总时间与并发。',
+ '读失败可重新取值，写回应缺失却可能是提交后结果未知。自动重试写入时，需要稳定操作身份和可查回执，由接收方区分同一动作的重投与新业务。网络成功、HTTP 响应和业务提交分别对应连接、应用与数据事实。'),
+
+ anchor('subsection-6-1m57fcl')+
+ p('先从发生故障的源位置重现请求，再沿发现、传输、身份、应用和业务缩小范围。同一台电脑与某个 Pod 可能使用不同身份、DNS、策略和代理；每次比较固定源和目标，只改变一项条件。')+
+ table(['检查','已经确认什么','接着核对'],[['DNS 得到预期记录','该次解析返回了答案','Service 类型、缓存与后续路径'],['直连某个 Pod 实际端口','同源到这个后端的路径','其他后端与 Service 选择'],['Service 连接建立','这次传输到达某个目标','TLS 名字、信任与 HTTP 路由'],['HTTP 2xx','收到一个应用响应','版本、内容、权限与业务效果'],['按业务 ID 查到权威回执','对应动作存在可核对结果','产物及消费者目标']])+n5[0]+
+ p('命令分别读取源 Pod 的解析配置、Service 与全部端点、Pod 网络位置和策略。结合请求时间、源节点、目标、证书名字、HTTP 状态及业务 ID 形成同一次观察。直连 Pod 成功而 Service 失败，提示后端进程可达，可继续查入口到后端的映射；同一域名换信任根或 HTTP Host，则分别定位 TLS 与应用路由。'),
+
+ anchor('subsection-7-1njkucl')+
+ p('tls_identity.py 使用独立本机夹具验证传输、身份和 HTTP 路由。临时 CA（证书签发机构）签发 reports.internal.test 证书，客户端始终连接 127.0.0.1，再控制信任根、TLS 校验名与 HTTP Host。它不会查询集群 DNS，也不配置 Service、CNI 或系统信任。')+n6[0]+
+ table(['本次实际动作','结果'],[['只建立 TCP，不发送 TLS/HTTP','连接成功，HTTP 请求计数仍为零'],['信任临时 CA，TLS 名字与 Host 都正确','HTTP 200，返回独立报告 R17/v3/37'],['名字错误，或不信任 CA','证书校验失败，没有进入 HTTP 处理'],['TLS 名字正确，HTTP Host 错误','TLS 通过，HTTP 421 unknown_virtual_host'],['最终服务端记录','四次 SNI，两次 HTTP，证书校验始终开启']])+
+ p('SNI 出现在 TLS 阶段，最初纯 TCP 探测不计入四次 SNI。两次证书校验失败也没有发送 HTTP 请求。运行前先按这个顺序预测计数，再对照完整代码；HTTP 421 是此夹具为错误虚拟主机选择的应用响应。报告名 R17 与其他章节相近，输入和服务进程仍彼此独立。')+
+ fold('tls_identity.py 完整源码',n6[1])+links(n[6])+
+ p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
+ ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
+
+ const config=select('config-secrets',['对象与版本：期望、文件、内存和认证','传播路径：环境变量、投射与subPath','一致快照：完整读取、校验和请求切换','全局约束：连接预算、截止时间与回退','Secret与身份：分发、存储和执行权限','凭据轮换：兼容窗口、撤销与旧会话','实战与变化题：文件、进程和真实HTTP']);
+ const q=config.sections.map(s=>s[1]),q1=blocks(q[1]),q6=blocks(q[6]);
+ if(q1.length!==1||q6.length!==4)throw Error('Configuration code layout changed');
+ replace(config,[
+ anchor('config-effective-versions')+anchor('subsection-1-7kw63x')+
+ p('前面已经有运行中的 Pod、可写卷和可达服务，本章让应用取得本次应该使用的参数与凭据。配置控制程序行为，例如连接池大小与等待时间；凭据证明调用方持有某种身份，例如令牌或密钥；授权判断该身份允许访问哪些资源。ConfigMap 保存普通配置，Secret 保存需限制分发的敏感数据。',
+ '正常更新按一条路径推进：保存源对象→传到容器环境或文件→进程读取并校验候选→切换生效快照→用真实请求验证。凭据还多一段：服务端是否接受新认证、旧凭据与会话如何退出。每一步记录版本与时间，才能判断更新停在哪里。')+
+ table(['观察对象','记录什么','可能出现的相邻状态'],[['API 源对象','期望配置或凭据版本','源 v2，节点文件仍 v1'],['容器路径','此刻重新打开可读的内容','文件 v2，进程校验失败仍用 v1'],['进程生效快照','已校验并发布的应用代际','配置 v2，旧连接仍复用原会话'],['下游认证与效果','新认证、资源范围与实际请求结果','新密钥可用，旧会话尚未退出']])+
+ p('应用代际是为候选生效顺序定义的版本号，可以配合内容摘要识别一次发布。Kubernetes resourceVersion 是用于 API 观察和并发控制的不透明版本值，不按整数作业务代际，也不跨对象比较大小。记录中关联镜像、配置摘要与凭据版本即可定位内容，不保存秘密原文。'),
+
+ anchor('subsection-2-cufyfb')+
+ p('注入是把 API 对象变成进程可消费输入的过程，方式不同，刷新路径也不同。环境变量在启动时交给进程；投射卷把 ConfigMap 或 Secret 键呈现在文件路径；外部客户端则按自身订阅、缓存或续期协议取值。')+
+ table(['方式','源更新后的正常行为','应用怎样取得新值'],[['env / envFrom','不会自动改变已运行进程的环境','重启或替换实例，在启动时读取；源对象修改本身不触发 Deployment 模板发布'],['普通投射卷','kubelet 最终传播更新，受同步与缓存检测机制影响','重新读取并校验内容，再发布生效快照'],['subPath 挂载','不获得这类源对象的自动更新','重建挂载或采用另一种更新机制'],['外部配置或身份客户端','依赖客户端刷新、缓存和失败策略','观察版本、到期、校验与切换结果']])+
+ p('文件路径是重新查找内容的入口，FD（文件描述符）是进程已经打开的对象。路径指向新内容后，旧 FD 可以继续读取旧对象，解析到内存中的配置也会继续存在。收到文件事件时应重新核对完整内容；监视器若绑定的是被替换对象，还需按机制重新建立观察，不能只计事件次数。',
+ '本地 config_snapshots.py 明确保留 v1、v2 两个目录，并切换 current 链接，以观察旧 FD 与新路径。真实 kubelet 投射及旧目录清理不在这个程序里。它还启动真实子进程：启动环境模板从 4 改 6，旧子进程仍读 4，新子进程才读 6。若希望 Deployment 自动以新配置重建，可以把版本或摘要放入 Pod 模板，并实际执行相应发布流程。')+q1[0],
+
+ anchor('subsection-3-1f8tsyf')+
+ p('配置快照是一组共同生效的字段。声明 v1 为 pool=4、timeout_ms=100，v2 为 6、50。程序先读 current/pool 得 4，路径切换后再读 timeout_ms 得 50，就拼出从未发布的 4/50。两次独立打开成功，不保证属于同一份版本。')+
+ figures(q[2]).join('')+
+ p('正常加载先一次打开完整 JSON，读完后解析为候选；或先固定保留中的版本目录，再读取该目录全部字段。多文件清单还需核对成员与摘要，确保字段属于同一发布。候选先验证结构、精确类型、单位、范围及共同约束，全部通过再构造不可变快照。',
+ '发布是把生效引用切到候选，实际并发环境使用相应锁或版本协议。请求开始时捕获一次引用，整次请求沿用它；切换后的新请求捕获新快照。于是旧请求完整使用 4/100，新请求完整使用 6/50，内存中可以同时保留两个有效版本。旧连接池等资源对象另按排空和释放协议退出。',
+ '候选不合法时保留最后已知可用快照，同时报告候选代际、失败类别和上次成功时间。本地 Python 程序只演示单线程发布，不把一个语言的引用行为外推为多线程、多进程的一致切换协议。'),
+
+ anchor('subsection-4-yc8oql')+
+ p('字段范围合法以后，还要检查部署整体。配置夹具中四个实例共享 32 个应用连接预算：pool=6 时最多 24，pool=9 虽在允许的 1..12 范围内，总量 36 仍应拒绝。稳定数量之外，滚动更新还可能同时运行新旧实例，需要按“各代际副本数×各自池上限”求和，加上其他客户端与余量。',
+ '若实例数改为六，pool=6 也会达到 36；继续用固定四实例校验，就遗漏了变化的条件。副本数量、连接池配置和下游预算应在同一份设计中核对。连接数满足预算以后，还要看数据库的查询、锁和实际完成率，后面的 HPA 章会继续计算扩容对下游的影响。',
+ '时间配置要标明作用范围：建连、等池、单次 RPC 或整个请求截止时间。外层仅剩 80 ms，内层再等待 100 ms 后重试，会让工作越过用户终点。将单位、剩余预算与重试归属一起校验，更新后再观察真实等待和完成率。',
+ '回退业务值时仍发布新代际。例如把 v2 的 6/50 回到 4/100，代际用 7；迟到的 v1 候选继续被拒。顺序号描述当前决策的先后，值可以合法回退；镜像解析能力和当前凭据的有效性仍要满足，否则回退镜像也无法恢复旧行为。'),
+
+ anchor('subsection-5-42cx9r')+
+ p('Secret 是敏感数据的分发对象，正常路径从受限 API 写入，经受控存储和节点分发，交给确实需要它的容器。Secret.data 的 base64 是可逆字节编码；传输 TLS 保护链路，静态加密保护相应存储，RBAC 等授权控制 API 操作，节点和容器权限再约束落地内容的读取。每层承担自己的保护职责。',
+ '检查权限时沿实际取得能力的路径看。能在某命名空间创建任意 Pod 的主体，可能通过工作负载挂载其 Secret，即使没有直接 get Secret 的权限。应限制工作负载创建和可用服务账号、挂载对象与容器分发范围；只采集指标的辅助容器不必同时取得业务数据密钥。',
+ '工作负载身份把运行实体关联到服务身份，短期令牌还声明受众、范围和到期时间，客户端需要按协议续期。认证确认身份，业务授权判断租户和资源访问。将长期凭据排除在镜像、前端文件、Git 历史与实验输出之外，观察记录使用非敏感版本号与认证结果。本章所有公开实验密钥均为无生产权限的常量。')+links(q[4]),
+
+ anchor('subsection-6-dpipfj')+
+ p('凭据轮换是把客户端从旧认证能力迁到新能力，再确认旧能力退出。服务端支持双凭据时，正常顺序为：启用 v2 并保留 v1，验证 v2 的新认证及所需范围，分发并校验候选，逐副本迁移，按约定退出旧客户端，最后撤销 v1 并验证它不能再建立新认证。')+
+ figures(q[5]).join('')+
+ p('credential_rotation.py 独立控制服务接受的版本、客户端当前版本和会话。先撤 v1、客户端还用 v1 的错误分支得到 401；双版本重叠分支允许迁移后再撤旧。重叠窗口要覆盖刷新、滚动、令牌与连接寿命，同时有截止时间及退出证据。只支持单凭据的服务需要协调切换或维护；已泄露凭据则按事件处置，可能需要立即撤销并承担中断。',
+ '撤销密钥与撤销会话不总是同一件事。该夹具用 v1 创建独立会话，撤销 v1 后新认证 401，原会话仍 200；显式撤会话后才 401。真实服务可能逐请求校验、建连时认证或使用另发会话，要分别测试。业务回退也使用当前合法凭据，不能靠重新启用泄露密钥恢复旧版本。'),
+
+ h('subsection-7-wkh4cz','文件、候选与进程环境：三个观察视角')+
+ p('先运行 config_snapshots.py。它在本地临时目录保存完整 v1、v2，切换 current，观察独立读字段、保留 FD、请求持有快照和新进程环境。源文件、内存引用与进程环境分别取证，没有运行 Kubernetes 投射或文件 watch。')+q6[0]+
+ table(['实际分支','结果'],[['分开读字段','4/50，从未作为一组发布'],['旧 FD / 重新打开路径','完整 v1 / 完整 v2'],['在途请求 / 新请求','完整 v1 / 完整 v2'],['五类无效候选','缺字段、bool 当整数、全局预算、坏 JSON、旧代际，均保留 v2'],['回退原业务值','发布代际 7 的 4/100'],['启动环境模板 4→6','旧子进程仍 4，新子进程 6']])+
+ p('Config 用 frozen dataclass 表达不可变值。read_candidate 精确要求整数，避免 Python 的 bool 被当作普通整数接收；先构造通过检查的候选，再替换 active。两个版本目录始终保留，是本实验观察旧 FD 的条件，不承诺真实投射卷旧内容的保留期限。')+
+ fold('config_snapshots.py 完整源码',q6[1])+
+ h('subsection-7-5pl5op','新认证与原会话：两类退出证据')+
+ p('credential_rotation.py 是另一份本机 HTTP 夹具。服务端决定接受哪些实验密钥，客户端只在新候选探测成功后改变 active；独立会话保存在服务端内存中。运行前分别预测撤密钥和撤会话的影响。')+q6[2]+
+ table(['实际分支','结果'],[['启用 v2 并保留 v1','v2 探测 200，未重载客户端用 v1 也为 200'],['错误候选','401，active 保持 v2'],['撤销 v1 的新认证','v1 为 401，v2 为 200'],['早先创建的独立会话','撤密钥后仍 200，撤会话后 401'],['先撤 v1 的反例','旧客户端 401，重载 v2 后 200']])+
+ fold('credential_rotation.py 完整源码',q6[3])+links(q[6])+
+ p('两项程序证明本地文件/进程和固定认证协议的行为。目标集群再分别记录源保存、文件可见、候选加载、生效切换、新认证和撤销六个时刻，覆盖 env、普通投射与 subPath。应用加载了 v2，只说明其中一步；还要核对各副本、新认证、旧会话处理和真实请求质量，才完成这次变更。')
+ ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。');
+
+ const scaling=select('k8s-autoscaling',['控制链：建议、期望与实际可用容量','CPU口径：单位、request与匹配集合','保守计算：缺指标、容差与方向变化','指标选择：资源、容器、业务与外部信号','容量空窗：积压、净余量与有界接纳','伸缩行为：稳定窗口、速率与上下界','下游预算：副本、连接与实际完成率','实战与变化题：数学参考和真实规则引擎']);
+ const s=scaling.sections.map(x=>x[1]),s5=blocks(s[5]),s7=blocks(s[7]);
+ if(s5.length!==1||s7.length!==7)throw Error('Autoscaling code layout changed');
+ replace(scaling,[
+ anchor('scaling-control-chain')+anchor('subsection-1-3leldk')+
+ p('前面已能创建副本、给 Pod 找节点并让请求到达后端。弹性伸缩再根据负载调整资源：水平伸缩增加同类副本，垂直伸缩改变单副本资源，节点伸缩提供可放置的新节点。HPA 是水平 Pod 自动伸缩器，它通过目标的 scale 接口调整期望副本，随后仍由工作负载控制器、调度器、节点和应用完成执行链。')+
+ table(['控制对象','改变什么','完成之后还要看什么'],[['HPA','目标工作负载的副本期望','Pod 创建、绑定、Ready 与有效完成率'],['VPA 类机制','单 Pod 资源建议或配置','调整方式，以及 request 对 HPA 分母的影响'],['节点伸缩','可放置的节点资源与形状','配额、库存、节点加入及设备/卷准备'],['事件驱动伸缩','用队列等外部信号触发容量变化','信号、启动、消费与确认协议']])+
+ p('沿同一工作负载记录三个数：指标算法的建议、工作负载的目标期望、实际可接请求副本。原始建议 6，经上下界与行为策略处理后才形成伸缩动作；期望 6 而只创建 4，查配额和控制器；创建 6 而两个 Pending，查节点形状；全部绑定但只有四个 Ready，查节点准备、探针和预热。',
+ 'HPA 不启动容器，节点伸缩也不替应用修复不匹配的硬亲和或卷拓扑。若固定容量数据库已经饱和，更多前端副本还可能增加争抢。先确定哪一层能力不足，再选择要改变的对象。'),
+
+ anchor('subsection-2-5hh76l')+
+ p('CPU 利用率要先规定分母。1000m 等于一个 CPU 单位，180m 表示采样窗口中约 0.18 CPU 的使用水平。HPA 的 CPU Utilization 按相关 request 求比例，request 是调度请求，不是 limit，也不是整台宿主的 CPU 总量。指标通常通过资源指标 API 提供，例如 metrics-server 汇集节点侧用量；HPA 还需将样本匹配到目标 Pod。',
+ '先假设四个 Ready Pod，指标完整、各 request 200m、各使用 180m，目标 60%。总量 720m/800m＝90%，ceil 表示向上取整，基础建议 ceil(4×90/60)＝6。若总工作仍为 720m 且可均匀分摊，六个各用 120m，达到 request 的 60%；创建和就绪还需要后续时间。')+
+ figures(s[1]).join('')+
+ p('只把 request 改成 400m，使用量不变，利用率变为 720/1600＝45%，基础建议变为 3。request 也改变节点放置，所以修改它会同时改变调度账和控制信号。这里先算比例阶段，尚未加 min/maxReplicas；后面的 YAML 设最小四副本，其最终结果不能缩到三。',
+ '再用异构请求检查口径：A 用 90m、request 100m，B 用 90m、request 900m。所核对 Kubernetes v1.34.1 资源函数先求匹配用量之和除以请求之和，取整数百分数，得到 18%；逐 Pod 百分比平均却是 (90%＋10%)/2＝50%。同 request 时两者相同，换分布后差别才暴露。CPU 已被节流时，用量还可能低于希望执行的需求，要结合限额和完成情况判断。'),
+
+ anchor('subsection-3-okwq7o')+
+ p('指标缺失表示没有可用样本，测得零表示确实观察到零消费。每个样本都应带对象、单位、时刻与覆盖窗口，CPU 计算还涉及就绪和初始化分类。先定位哪些 Pod 与 request 已匹配，再按所用控制器规则处理缺项；把所有缺项直接填零，会把采集失败解释成容量过剩。',
+ '以下固定采用已核对的 v1.34.1 资源计算：原方向为扩容时，缺指标按零使用量补入；原方向为缩容时，按 max(100%,目标百分比) 的 request 补值。目标 60% 时，缩容缺项补 100% request。重新计算后，若落入容差或改变伸缩方向，保持当前副本。')+
+ table(['四 Pod，各 request 200m，目标 60%','补值后整数利用率','参考结果'],[['三个 180m，一个缺失','540/800 → 67%','ceil(4×67/60)＝5'],['三个 170m，一个缺失','510/800 → 63%','比例仅高 5%，处于本例 10% 容差，保持 4'],['三个 60m，一个缺失','(180＋200)/800 → 47%','ceil(4×47/60)＝4'],['一个 20m，三个缺失','(20＋600)/800 → 77%','由缩转扩，保持 4']])+
+ p('第一行仅按已知样本会得到 90% 和六副本，补值后的结果则为五；状态展示的原始平均值也可能仍是 90%。参考程序把其余列出的 Pod 都视为 Ready，未复制完整分类、策略或控制循环。因此现场同时保存 Pod 集合、指标时刻、conditions 和伸缩事件。',
+ '看板若用“有样本的用量总和/所有 request 总和”，缺项常被隐含按零处理。这不等于上述缩容保守分支。应另显示完整性和新鲜度，区分零用量、部分缺失与全部遥测不存在。'),
+
+ anchor('subsection-4-1iqesp6')+
+ p('指标先表示负载，再通过所选目标换算建议。CPU 适合能随副本分担的计算负载；数据库阻塞时 CPU 低，排队却可以持续增长。队列深度是尚未完成的工作存量，还要结合到达率、每副本有效完成率与期望排空时间，才能计算所需容量。')+
+ table(['HPA 指标类型','用于计算的量','接入时核对'],[['Resource / Utilization','用量相对 request 的百分比','匹配容器、请求与采样窗'],['Resource / AverageValue','每 Pod 原始平均资源用量','单位与均值，不沿用同一百分比分母'],['ContainerResource','指定容器的资源','滚动期间容器名与相关 request'],['Pods / 自定义指标','每 Pod 业务量，例如在途工作','适配器、采样集合与完成能力'],['Object / External','对象或外部信号，例如队列积压','指标服务、权限、可用性及目标类型']])+
+ p('多个指标各算建议，控制器通常采用较大者。某指标取数失败，而其他有效指标仅要求缩容时，可能跳过缩容；有效指标仍要求扩容时可以继续扩容。最终行为按运行版本与配置核对。',
+ '从零启动需要零副本时仍存在的信号，例如独立队列指标。是否支持 minReplicas=0、允许的指标与组件，取决于对应版本和功能配置；不存在的 Pod 无法提供自身 CPU 来触发第一次启动。'),
+
+ anchor('scaling-delay-queue')+anchor('subsection-5-1ye4m7x')+
+ p('另设容量题，把建议到真实能力之间的等待放回用户时间。旧容量 120 次/秒，输入由 120 升到 180。指标等待 20 秒、控制与放置 15 秒、初始化 40 秒，题设三段串行，新能力统一在第 75 秒到达。期间净流入 60 次/秒，积压为 60×75＝4500 项。')+
+ figures(s[4]).join('')+
+ p('按同一窗口记守恒：新积压＝旧积压＋接纳量−完成量−明确丢弃或过期量，队列最低为零。新容量若只有 180 次/秒，刚好处理新输入，4500 项没有净余量排空；若为 240 次/秒，净余量 60，还需 4500/60＝75 秒，到第 150 秒清空。',
+ '将队列上限设 500 时，参考程序在前 75 秒拒绝 4000 项，随后按每秒一步模型在第 84 秒清空。它改变接纳量，不能当作同一批用户全部完成得更快。同步请求可明确拒绝或降级，必须完成的异步工作则需持久队列和相应期限。',
+ '真实能力可能分批到达，初始化也可重叠，应按各时段重新计算。程序只描述总量，不模拟逐请求 FIFO 或超时分布，所以 84 秒不是某个请求的 p99。把空窗改为 120 秒，未限队列先积压 7200，240/s 容量再需 120 秒排空，总计 240 秒。'),
+
+ anchor('subsection-6-nhfr0o')+
+ p('基础建议还要经过稳定窗口、速率与上下界。缩容稳定窗口保留近期建议中的较高值，避免短暂下降立刻删除容量。声明窗口 300 秒，依次记录 t=0 建议 6、60 建议 3、180 建议 4、301 建议 3、481 建议 3；本例在 60 秒取 6，在 301 秒取仍留在窗口中的 4，到 481 秒才取 3。',
+ '速率策略规定一段时间最多改变多少副本。下面扩容策略每 60 秒最多增加两个，缩容每 60 秒最多减少一个；periodSeconds 用于约束回看区间，不表示控制器只在其结束时检查一次。多策略的 Max/Min 选择、此前已发生的动作以及 min/maxReplicas 共同约束最终修改。')+s5[0]+
+ p('该示例最小四、最大八，CPU 目标 60%，尚未在集群运行；Deployment、CPU requests 与指标链均需预先成立。稳定窗口的 6/4/3 历史是独立算例，不能拿其中三副本直接覆盖这份最小四的配置。对目标系统再验证启动、排空、故障余量和下一次扩回前的承载能力。'),
+
+ anchor('subsection-7-1cxb905')+
+ p('扩容还要接回配置章的全局预算。以下独立题设：数据库允许 200 个连接，其他客户端占 80，每个应用 Pod 池上限 40。应用剩余 120，所以按连接预算最多三个 Pod。若每 Pod 能完成 60 次/秒，三个仅提供 180 次/秒，只追平前面的输入，不能清除旧积压。',
+ '要用四个 Pod 提供 240 次/秒，floor 表示向下取整，每池上限需不超过 floor((200−80)/4)＝30，且在这种池配置下数据库和应用仍能达到预期完成率。池上限限制潜在连接数，不证明真实并发能力。上节 YAML 的最大八只演示字段，不适用于这份连接预算；滚动额外副本与启动建连也要计入。')+
+ table(['观测','沿哪条关系继续核对'],[['副本增加、CPU 下降、超时更多','连接等待、数据库完成率与重试，判断是否把压力移到下游'],['建议增加、Pod 持续 Pending','配额、调度条件、节点形状与卷拓扑'],['新副本已就绪、流量仍在旧 Pod','端点规则、新旧连接数及每连接请求量'],['缩容后短时失败','停止接新工作、排空时序与业务回执']])+
+ p('将副本、池上限和实际下游完成率放在同一窗口，才能决定扩容是否有收益。网络章的连接复用还解释了新 Pod 为什么可能暂时没有工作；Ready 数量与实际参与完成的容量也要分别观察。')+links(s[6]),
+
+ h('subsection-8-1qdvyvu','用参考程序复算比例、窗口与队列')+
+ p('scaling_reference.py 先按固定 v1.34.1 资源规则处理七组完整或缺指标输入，再独立计算容量空窗、稳定窗口和数据库连接预算。它使用标准库和精确比例，不启动指标 API、HPA 或节点。')+s7[0]+
+ table(['实际核对','结果'],[['四个 180m，request 200m→400m','基础建议 6→3'],['100m/900m request，各用 90m','合并利用率 18%，错误逐 Pod 平均 50%'],['三个 180m，一个缺项','补值后 67%，建议 5'],['三个 60m，一个缺项','按 request 的 100% 补值后 47%，建议 4'],['缺项落入容差或导致方向反转','保持四副本'],['180/s 或 240/s 新容量','4500 不减，或第 150 秒清空'],['上限 500 的队列','拒绝 4000，第 84 秒清空']])+
+ p('逐项预测后对照 recommendation、queue_model 和历史窗口代码。七种资源建议依次为 6、3、1、5、4、4、4；异构双 Pod 算例的一副本也是策略前结果，不套用示例 YAML 最小四。固定流体模型验证数量守恒，不生成请求延迟分布。')+
+ fold('scaling_reference.py 完整源码',s7[1])+
+ h('subsection-8-cjjpw2','用真实规则引擎区分缺失与零')+
+ p('prometheus_cpu.py 调用 promtool 3.5.0 的规则解析与测试，输入是四组固定 CPU gauge，即给定时刻的用量值。此处规则供看板展示加权比值与完整性，未接入 HPA；它与前面资源控制器参考分别验收。')+s7[2]+
+ table(['实际规则输入','输出'],[['不同 request','加权比值 0.18，错误均值 0.5'],['一个 Pod 用量缺失','朴素比值 0.09，完整性 0'],['明确观察到零','比值 0，完整性 1'],['全部遥测不存在','没有结果，不补成 CPU 0 或完整性 0']])+
+ p('fuzzy_compare 允许浮点末位差异，测试仍核对数值和标签。下面保留程序与实际规则、四组测试；promtool 执行证明规则引擎按输入工作，不证明 metrics-server、采样或 HPA 适配器已在集群运行。')+
+ fold('prometheus_cpu.py 完整源码',s7[3])+fold('cpu.rules.yaml 原规则',s7[4])+fold('cpu.test.yaml 四组测试',s7[5])+links(s[7])+
+ p('目标集群验收沿同一负载保存：指标时间与覆盖集合、HPA conditions、desiredReplicas、Pod 创建/绑定/Ready、新容量完成率、接纳、拒绝和积压。再将保存的控制配置与事件对应到下面的只读观察。')+s7[6]+
+ p('CPU 下降可能来自更多副本，也可能来自请求被拒、下游阻塞或指标丢失。伸缩完成由用户目标定义：同一窗口内知道实际接纳与完成多少、还积压多少、容量何时可用，再看延迟和成本，才能把伸缩动作接回业务结果。')
+ ],'沿指标、HPA 计算、期望副本和实际服务容量解释伸缩，再以整数比例、缺指标、队列空窗与下游预算核对结果。');
+})();
+
+
+;
+// progressive-quantization-delivery-reading.js
+/* Explain a numerical representation before its execution, then publish one complete model meaning. */
+(()=>{
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
+ const legacy=id=>'<span id="'+id+'" class="legacy-subsection-anchor" aria-hidden="true"></span>';
+ const all=(s,re)=>[...s.matchAll(re)].map(m=>m[0]);
+ const codes=s=>all(s,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figs=s=>all(s,/<figure\b[\s\S]*?<\/figure>/g);
+ const ids=s=>[...s.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+ const bag=x=>JSON.stringify(x.slice().sort());
+ function rewrite(id,count,make,published){
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==count)throw Error('Quantization delivery layout changed: '+id);
+  const old=a.sections.map(s=>s[1]),body=make(old);
+  if(body.length!==count)throw Error('Incomplete quantization delivery body: '+id);
+  const next=body.map((b,i)=>{
+   const links=all(old[i].replace(/<figure\b[\s\S]*?<\/figure>/g,''),/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g).join(' · ')
+    .replace('复习评分器校准、小样本区间与同题配对 →','延伸：评分器校准、小样本区间与同题配对 →')
+    .replace('继续验证引擎加载、KV 与实际请求路径 →','回看引擎加载、KV 与实际请求路径 →');
+   return b+(links?'<p class="practice-links">'+links+'</p>':'');
+  });
+  const before=old.join(''),after=next.join('');
+  if(JSON.stringify(all(before,/<pre\b[\s\S]*?<\/pre>/g))!==JSON.stringify(all(after,/<pre\b[\s\S]*?<\/pre>/g)))throw Error('Original quantization delivery code changed: '+id);
+  if(bag(figs(before))!==bag(figs(after)))throw Error('Original quantization delivery figures changed: '+id);
+  if(bag(all(before,/\bhref=["'][^"']+["']/g))!==bag(all(after,/\bhref=["'][^"']+["']/g)))throw Error('Original quantization delivery URLs changed: '+id);
+  for(const anchor of [...ids(before),...published])if(!ids(after).includes(anchor))throw Error('Quantization delivery anchor lost: '+anchor);
+  if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra quantization delivery heading or anchor: '+id);
+  next.forEach((b,i)=>a.sections[i][1]=b);a.updated='2026.11.09';
+ }
+ rewrite('quantization-serving',5,old=>[
+ legacy('quantization-number-map')+legacy('subsection-1-e82fyf')+
+ p('前面的训练章节保存了参数和继续更新所需的状态。固定参数用于推理时，还可以改变参数的数值表示，再检查同一输入得到怎样的输出。量化就是用有限格点近似原来的数：先选整数范围与映射，保存整数和映射参数，执行时按相同约定解释它们。位数减少能缩小元素载荷，误差与实际算子则要继续核对。',
+ '浮点格式用指数和有效数字表示数值，FP16每数16bit、FP32每数32bit；bit是一位二进制，8bit组成1字节。整数格式INT4每项4bit，共有16种编码。量化参数中的scale（比例尺）s表示一格对应多大数值，zero point（零点）z表示浮点0映射到哪个整数。反量化是按这些参数把整数还原为近似浮点值。',
+ '先用8bit无符号编码（整数范围0–255）手算仿射映射：s=0.02、z=50，权重w=1.2先除以0.02得到60，再加50，整数q=110；还原时(110−50)×0.02=1.2。保持这份范围，w=4.6会得到280，超出范围后截到255，还原为4.1。这种边界截断叫裁剪；范围内落在格点之间的数还需要舍入。')+
+ knowledgeFormula('仿射量化：同一参数完成编码与解释','q=clamp(round(w/s)+z, qmin, qmax)；ŵ=(q−z)×s','s为正；round选邻近整数，clamp把超出范围的值截到qmin/qmax。ŵ是近似恢复值。')+
+ p('固定整数格数时，扩大数值覆盖范围通常要增大s，可以减少裁剪，却让相邻格点间隔更大。对称量化把z固定为0。本章INT4参考程序选择[-7,7]，用本组max(abs(w))/7求s；4bit补码可表示[-8,7]，其中−8在这份自定义格式中留空。全零组取s=1、q=0。')+
+ codes(old[0])[0]+
+ p('这段代码使用舍入到最近偶数：恰在两整数中间时选择偶数。f32把s先保存成float32，再用这一个实际数值量化与回读，避免写文件前后使用两把略有差别的比例尺。直接astype成整数只做类型转换；这里需要的是范围、映射、舍入和编码共同组成的格式。'),
+
+ legacy('subsection-2-hfszdc')+
+ p('用同一线性层把分组放回计算。写作y=xWᵀ+b：x有8个输入特征，W按[输出,输入]保存为4行8列，b给4个输出各加一个偏置。每一行权重与x做点积，得到一个输出通道。本章固定32个权重，第一行有一个远大于其他值的12，称为离群值。',
+ '若32项共用一个s，12决定最大值，s约为12/7=1.714286，0.12等小权重便舍入到0。若沿每行每4项一组，第一组仍受12影响；第一行后四项[0.24,−0.30,0.06,−0.12]却可使用约0.30/7=0.042857的s，0.24对应整数6，近似恢复为0.257143。更细的格点被保留在这一个组内。')+
+ table(['分组粒度','32项需要的比例尺数','共享范围'],[
+ ['per-tensor：整张量','1','全部32个权重'],
+ ['per-channel：每输出通道','4','每行8个权重'],
+ ['group size=4','8','沿每行输入轴，每4项一组'],
+ ['group size=2','16','沿同一轴，每2项一组']
+ ])+
+ figs(old[1])[0]+
+ p('比例尺沿哪条轴使用，是格式的一部分。这里输出轴是W的行、输入轴是列，组内整数使用该组的s；广播表示把某项参数按约定位置复用于多项数据。转置、张量并行切分或重新打包后，都需同步更新轴、组与参数布局。引擎还可能要求组大小、补齐和打包次序。',
+ '本例较小组降低了两组线性输入的输出误差，也增加比例尺数量。真实模型经过多层计算、非线性和词元选择，任务收益仍由固定任务集判断。对敏感通道或模块保留较高精度，是另一项可明确记录的配置选择。'),
+
+ legacy('subsection-3-uz1007')+
+ p('整数范围确定后，还要把编码实际放进字节。两个4bit值可共用1字节：−7的4bit补码是1001，3是0011。规定前一项放低4位，就得到00111001，即0x39。解包时1001按有符号规则减16，得到−7；奇数项末尾的半字节也按固定规则补齐。Python列表中的小整数本身仍是Python对象。')+
+ codes(old[2])[0]+
+ table(['同一32权重','整数载荷','float32比例尺','张量载荷'],[
+ ['FP16纯权重','64B','无此项','64B'],
+ ['INT4整张量','16B','1×4B','20B'],
+ ['INT4每输出通道','16B','4×4B','32B'],
+ ['INT4每4项一组','16B','8×4B','48B'],
+ ['INT4每2项一组','16B','16×4B','80B']
+ ])+
+ p('参考文件另有12B文件头保存形状和分组，group size=4的文件因此为60B。最细分组的80B张量载荷已经超过FP16的64B：元数据也占空间。实际模型还需算未量化模块、零点、索引、对齐和容器格式。',
+ '换成声明的量级题：70亿权重全由FP16改为INT4，每128项保存一个4B比例尺，不保存零点且恰好整除。FP16为14GB；INT4整数3.5GB，比例尺0.21875GB，合计3.71875GB；这里GB=10亿字节。这份账只描述权重表示。')+
+ legacy('subsection-3-j83oe9')+
+ p('执行时，W指权重，A指层中流动的激活，也就是输入或中间数据。W4A16描述相应路径的4bit权重和16bit激活，W8A8描述8bit权重与8bit激活；偏置、累加器及其他模块的类型还需查看实现。累加器保存多项乘积的部分和，通常用更宽表示来容纳范围。',
+ '若权重与激活都对称量化，单组的点积近似为sx×sw×Σ(qx×qw)，再加偏置。权重有多组比例尺时，先求各组整数部分和、分别乘sw,g，再合并为b+sx×Σg[sw,g×Σi∈g(qx,i×qw,i)]。非零零点还需在每项乘法中减去相应零点；长度和数值范围也要满足累加器容量。')+
+ figs(old[2])[0]+
+ p('存储与执行可以采用不同路径：先把权重展开成浮点，或由融合算子边解包边计算。若整层先展开为FP16且压缩权重仍驻留，两份权重会同时占空间；运行峰值还包含激活、临时工作区和KV缓存，后者保存生成时先前位置的键值状态。磁盘产物、常驻权重与同一时刻峰值应分列。',
+ '权重搬运受限时，减少字节可能改善速度；小矩阵、转换成本、算子回退或其他等待会改变收益。比较固定模型目标、输入输出长度、并发和质量门槛，再量目标设备。下面INT4程序核对格式和数学，CPU INT8程序核对另一条真实算子路径，两者都没有延迟测试。'),
+
+ legacy('subsection-4-its870')+
+ p('校准用代表性输入观察数值分布，据此选择范围或变换；评估用另外保留的任务检查结果。训练后量化PTQ在已有参数上做这项处理，量化感知训练QAT则让训练过程考虑量化误差。模型如何获得低精度表示，与最终调用哪一种服务算子需要分别记录。',
+ '静态激活量化预先固定范围，动态方法在运行时按相应粒度观察输入并计算比例尺。沿本章同一权重程序，先把静态范围定为±0.5，保留输入却包含3.0：它被裁到0.5，裁剪1项；动态范围覆盖当前±3.0。两者使用同一份已反量化权重，隔离激活误差后，最大输出误差分别约2.000225和0.06928。',
+ '这说明该输入超出了校准覆盖。范围更宽会减少裁剪、增加格点间隔，动态方案也付出观测和缩放成本。校准清单、评估清单、范围、分组与代码版本一起保存，才能重做同一比较。')+
+ table(['逐层核对','具体对象'],[
+ ['格式','形状、轴、组、比例尺、打包次序与加载后类型'],
+ ['数值','同输入层输出误差、有限值与关键边界'],
+ ['任务','中文、长文本、代码、数字、拒答及结构化输出的固定样本'],
+ ['服务','相同负载下延迟、吞吐、峰值、错误与回退比例']
+ ])+
+ p('层误差小，也可能改变选择。两个候选分数0.501、0.500变成0.498、0.503，第一名已交换，后续生成可能随之改变。单独统计数字、格式和任务通过情况，再在同一质量门槛下比较性能；保留原高精度产物及其输入语义，作为可验证的回退版本。')+
+ legacy('subsection-4-1vuiqtr')+
+ fold('选读GPTQ、AWQ、SmoothQuant与QLoRA：把名称放回处理步骤',
+ p('这些方法处理量化或适配训练的不同环节。GPTQ使用近似二阶信息估计量化部分权重后如何补偿重建误差；AWQ根据激活分布识别敏感权重通道，再选择缩放以降低低比特误差。SmoothQuant通过等价变换把一部分激活量化困难转到权重，服务于W8A8等路径。',
+ '缩放的一个可复算形式是xWᵀ=(xD⁻¹)(WD)ᵀ。D是沿输入特征排列、对角项均非零的对角矩阵：x的各项除以对应系数，W的对应列乘同一系数。x=[2,4]、W=[3,−1]时输出2；取D=diag(2,0.5)，得到[1,8]与[6,−0.5]，点积仍为6−4=2。浮点函数保持，随后离散量化仍引入误差。',
+ 'QLoRA属于适配训练：冻结低比特基座，训练低秩适配器，即用较少参数表示权重的调整。基座、激活、适配参数和优化器状态各记各的字节，连接前面训练状态的账本。它不等于把一次推理文件改成某个后缀。',
+ '上述缩放例子用于解释范围转移，不是完整复现论文。具体方法的校准数据、数值配置、导出布局与目标引擎一起决定结果；本章程序执行的是前面自定义INT4格式参考和CPU动态INT8。')),
+
+ legacy('subsection-5-1drpdp8')+
+ p('先运行标准库INT4参考。32个权重固定为4×8，其中一个为12；两条8维输入分别进入同一线性层。程序实际量化、打包、写文件、回读，再反量化计算输出；独立十进制点积常量先核对浮点基线。')+
+ codes(old[4])[0]+
+ table(['实际分组方案','张量载荷（另加12B头）','两组输入最大输出误差'],[
+ ['整张量一组','20B','2.45'],
+ ['每输出通道一组','32B','0.7125'],
+ ['每4项一组','48B','0.1875'],
+ ['每2项一组','80B','0.106072'],
+ ['FP16权重账','64B','作为字节对照']
+ ])+
+ p('回读检查同时覆盖比例尺、负数、奇数个INT4值和全零组。激活探针核对±0.5与包含3的保留输入，并验证“各组分别恢复比例”与反量化点积一致；统一套第一个scale的错误路径产生不同输出。这些断言检查实际数值与字节。')+
+ fold('展开完整int4_groups.py：固定输入、文件布局与独立数值检查',codes(old[4])[1])+
+ legacy('subsection-5-1sbp3h2')+
+ p('第二份程序从相同W、偏置和两条输入建立float32 Linear(8,4)，调用PyTorch 2.5.1动态量化，将Linear替换成CPU量化模块。权重实际是torch.qint8；模块接收和返回浮点张量，内部调用相应动态量化算子。这个接口特点说明“INT8模块”并不要求调用方先把所有输入输出改成整数。')+
+ codes(old[4])[2]+
+ table(['实际CPU执行','本次记录'],[
+ ['后端与模块','PyTorch 2.5.1 / qnnpack / 动态量化Linear'],
+ ['两组输入最大绝对误差','0.148362，小于预设教学阈值0.2'],
+ ['自建TorchScript保存再加载','与保存前量化输出最大差0'],
+ ['权重元素载荷','float32的128B → int8的32B'],
+ ['整份TorchScript文件','7364B，包含其他状态与序列化结构']
+ ])+
+ p('程序先检查supported_engines；初始engine=none时，从编译包已有支持项中选择qnnpack等后端，再转换和执行。NoQEngine应回到这份CPU支持列表排查。该程序不读取上一份INT4文件，目标GPU或其他引擎需要自己的格式与算子。0.2只约束这两条线性输入，任务质量与性能另按前节评估。')+
+ fold('展开完整int8_runtime.py：模块替换、实际执行与产物回读',codes(old[4])[3])+
+ p('练习保持W不变，把group size从4改成2：先算8个与16个比例尺、48B与80B载荷，再运行比较输出误差。接着把保留激活分别放到校准范围内外，指出舍入和裁剪各发生在哪一步。部署记录补上设备、格式、算子、任务质量、服务负载和回退束；目标环境尚未测到的结果单列为待验证。')
+ ],['subsection-1-e82fyf','subsection-2-hfszdc','subsection-3-uz1007','subsection-3-j83oe9','subsection-4-its870','subsection-4-1vuiqtr','subsection-5-1drpdp8','subsection-5-1sbp3h2']);
+
+ rewrite('ai-lifecycle',8,old=>[
+ legacy('model-bundle-contract')+legacy('subsection-1-1vzo0i0')+
+ p('训练恢复保存“怎样从某次更新继续”，模型发布安排“请求按哪套固定含义得到回答”。先从一份已核对的参数状态导出候选产物，绑定输入处理、模型结构和运行配置，加载并验证；服务就绪后，新请求选择这一版本，记录实际使用的成员，直到输出结束。量化参数改变时，也沿这条流程建立新候选。',
+ '一条文本请求先由模板组织内容，再由tokenizer（分词器）转换为词元ID。词表规定ID与词元的对应，特殊token表达消息边界等含义；模型按这些ID读取权重、产生输出分数，解码和停止规则决定最终交付。把这些互相解释的产物固定在一起，称为模型版本束。')+
+ table(['对象','正常使用方式','主要内容'],[
+ ['训练检查点','恢复到指定更新后继续训练','参数、optimizer历史、scaler、随机状态、数据进度与训练配置'],
+ ['推理版本束','按固定输入输出协议执行请求','权重/分片、结构、词表、特殊token、模板、生成与量化配置、引擎依赖'],
+ ['生产别名或路由','选择新请求使用的已验证束','不可变版本引用、发布代际与分流规则']
+ ])+
+ p('清单manifest记录成员名、大小、内容摘要及模型、协议、加载器和运行库约束；部署记录再关联镜像摘要、硬件、精度与并行配置。正常发布先准备全部不可变成员，再更新对外引用。production或latest是可以改指向的别名，请求日志同时保存当时解析出的束版本和清单摘要，方便在别名改变后继续解释原请求。'),
+
+ legacy('subsection-2-1k3gdnf')+
+ p('候选束准备好后，门禁按层检查它能否进入下一阶段。先确认拿到所需字节，再由目标加载器解释结构，接着核对输入输出含义、任务效果与实际服务能力。每层对应不同对象，失败原因也能落到具体位置。')+
+ table(['门禁','直接检查','例子'],[
+ ['字节完整','成员齐全，长度与摘要符合清单','缺分片、错文件或字节改变'],
+ ['结构与加载','shape/dtype、算子和分片布局符合目标运行时','维度、数据类型或引擎不兼容'],
+ ['输入输出语义','ID、模板、特殊边界和工具格式含义保持','词表交换导致读错权重行'],
+ ['任务质量','代表性数据与关键切片达到门槛','平均分提高，重要类别退化'],
+ ['服务能力','目标负载下的加载、延迟、错误、容量与资源','冷加载或长输入KV容量不足']
+ ])+
+ p('shape描述张量各轴长度，dtype描述元素表示。Safetensors保存张量的名称、类型、形状和数据，供加载器还原；本例以它读取张量，不使用通用pickle对象加载。内容摘要用于核对字节身份，受信来源和签名链用于核对发布者；大小限制与任务语义继续各自检查。',
+ '本例文件很小，加载器读入并验证长度、摘要后，直接从已验证的同一份字节读取张量。若校验路径后又重新打开可变文件，内容可能已经改变。大型模型则按引擎与分片安排不可变暂存、校验和加载，并实测RAM/GPU加载峰值与启动时间。'),
+
+ legacy('subsection-3-opr7s5')+
+ p('用实际CPU小模型看同一输入怎样跨过这些层。embedding（词嵌入）按ID查权重行，本例每行只有一个数；readout把该数乘1、加0，作为输出。词表含A、B和未知项，固定输出约定是A→1、B→2、未知→0。r17、r18、r19都是本例版本名。')+
+ table(['完整束或组合','词表A/B对应ID','embedding三行','实际A/B输出'],[
+ ['r17','A=0，B=1','[1,2,0]','A=1，B=2'],
+ ['r18：只交换词表','A=1，B=0','[1,2,0]','A=2，B=1'],
+ ['r19：词表与对应行一起交换','A=1，B=0','[2,1,0]','A=1，B=2'],
+ ['混装r19权重与r17词表','A=0，B=1','[2,1,0]','A=2，B=1']
+ ])+
+ p('例如r18收到A，词表先给出ID 1，随后查到权重第二行2，输出便为2。三个版本张量形状相同，各自文件摘要也可以正确；固定语义检查才发现r18违反A→1的约定。r19同时调整映射两侧，恢复了这条约定。')+
+ figs(old[2])[0]+
+ p('因此一次请求需要固定完整组合。语言模型也按同一关系核对词表、特殊token、聊天模板、位置与工具格式；更开放的任务质量再由版本化任务与评分器评估。eval()切换部分算子的训练/评估行为，参数对象仍可被修改；部署方案应为在途请求保留其完整束，避免发布时原地改写。'),
+
+ legacy('subsection-4-4s93fv')+
+ p('路由指针保存当前束版本、发布代际和清单摘要。代际是每次成功发布递增的序号。发布器先读取r17/代际1及摘要，准备并验证r19，再要求“当前仍等于这组旧值”才切换到r19/代际2。SQLite程序用一条带WHERE条件的UPDATE和事务完成这一步，更新0行表示原条件已经失效。',
+ '有效回退使用完整r17再次发布，版本回到r17，代际前进到3。只比较版本名会漏掉中间的变化；连同代际与摘要比较，旧的r17/1发布请求就不能把r17/3当成原状态。发布超时后，先查询当前指针及相应发布记录，再处理是否重试。')+
+ figs(old[3])[0]+
+ p('服务侧还要完成加载与接流量。Ready在这里表示副本已经满足约定接流量条件；控制面指针更新后，各副本达到该条件的时间可能不同。新请求按实际路由选择就绪的束，在请求开始时捕获其模型、输入处理与缓存规则，后续词元继续使用这一组合。旧请求按自身协议结束并排空。',
+ 'KV缓存保存先前位置计算出的键值，前缀缓存复用某段输入的已有计算；二者都依赖具体模型与输入语义。缓存归属应包含相应版本和配置，跨版本复用需要验证兼容关系。本地实验用旧束对象引用模拟请求固定版本；分布式副本收敛、流式排空和缓存兼容属于目标服务验证。'),
+
+ legacy('subsection-5-wrf9vk')+
+ p('离线门禁用事先确定的数据、评分方式和阈值筛选候选。切片是按语言、任务、长度或后果等属性划出的子集，帮助看到总体分数里容易被稀释的变化。下面S/X是独立手算题，与CPU小模型版本无关。',
+ '固定1000题，普通900、关键100。S通过855+95=950题，总体95%；X通过882+80=962题，总体96.2%。若关键切片的门槛是90%，X的关键80%仍未达到要求，发布留在基线。')+
+ table(['固定题集','普通900题','关键100题','总体1000题'],[
+ ['基线S','855/900=95%','95/100=95%','950/1000=95%'],
+ ['候选X','882/900=98%','80/100=80%','962/1000=96.2%']
+ ])+
+ p('冻结题集版本、来源、评分器、输出预算与关键门槛，再以同题配对和必要重复比较。评分器也会出错，小样本结果还会波动，应保留原始输出及判断依据。关键高后果任务按自己的门槛处理，量化章的层误差可以提供原因线索，最终任务效果由这里的检查回答。'),
+
+ legacy('subsection-6-15mcx71')+
+ p('灰度把少量实际请求交给已通过自己离线门禁的候选，同时保留稳定版。cohort是按分流规则归属的一组请求；记录实际服务版本，便能分别统计。这里另用独立候选Y作题，它不是上一节离线被拒的X。',
+ '一个固定教学窗口内，Y处理1000请求、失败8次，错误率0.8%；稳定版19000请求、失败38次，错误率0.2%。合并是46/20000=0.23%。若候选门槛0.5%，就应停止继续放量；总表中的较低错误率没有描述Y自己的表现。配置5%是分流目标，分母按实际收到并依协议归属的请求统计。')+
+ table(['实际分组的声明输入','请求数','失败数','错误率'],[
+ ['候选Y','1000','8','0.8%'],
+ ['稳定版','19000','38','0.2%'],
+ ['混合','20000','46','0.23%']
+ ])+
+ p('比较时对齐任务、输入长度、输出预算、硬件、缓存冷热和窗口。TTFT是从约定请求起点到首个输出词元的时间，后续输出间隔刻画生成过程；超时和未完成流也保留在协议规定的统计中。质量、服务与成本分别记录，再按预设条件放量、停止或回退。',
+ '影子流量把请求复制给另一版本用于观察；如果输出能触发外部动作，就要将影子执行限定到隔离接收方或只读路径。Agent会根据模型输出提出工具动作，运行时再处理权限、参数约定schema及任务状态。发布记录把模型束、Agent提示、工具schema、策略版本与任务身份关联，便于区分模型变化和执行效果。'),
+
+ legacy('subsection-7-1bdkyq8')+
+ p('回退沿正常发布流程使用完整旧束：保留旧成员、加载器与依赖镜像，准备兼容设备和容量，加载并完成门禁，再以当前指针为条件发布旧版本。若新旧服务需要短时共存，还要预算两份权重、缓存与排空中的请求资源。',
+ '本例先复制残缺r17，删除tokenizer。加载在缺成员处停止，SQLite指针继续为r19/2；再加载完整r17，通过语义检查后才切到r17/3。旧标签指向的成员、运行环境与可用容量共同决定回退是否能执行。',
+ '目标服务还要观察新请求实际命中旧完整束、输出与服务指标恢复，并保留旧流结束记录。已经交付的回答和外部已提交效果留在原业务历史里，后续纠正沿任务身份、接收方回执与对账处理。上线前可把旧束加载、兼容窗口和恢复容量作为单独演练。'),
+
+ legacy('subsection-8-1an19m4')+
+ p('实际程序使用PyTorch 2.5.1、Safetensors 0.8.0和CPU，创建3×1 embedding、1×1 readout及偏置。它把权重、model.json、tokenizer.json与大小/摘要/运行库清单绑定成束，再用SQLite验证条件发布。模型参数由夹具明确赋值，A/B输出约定用于核对语义映射。')+
+ codes(old[7])[0].replaceAll('标准库 Python 3.9+；模型例环境见 README','PyTorch 2.5.1 / Safetensors 0.8.0 · 模型例环境见 README').replaceAll('标准库Python 3.9+；模型例环境见README','PyTorch2.5.1 / Safetensors0.8.0 · 模型例环境见README')+
+ table(['实际执行','结果'],[
+ ['r17完整束','A→1、B→2、未知→0，门禁通过'],
+ ['r18只换词表','完整性和shape通过；A→2、B→1，语义门禁拒绝'],
+ ['r19词表与权重行同时更新','再次满足固定输出约定'],
+ ['r19权重与r17词表混装','输出交换，完整组合检查发现差异'],
+ ['SQLite指针','r17/1→r19/2→r17/3；迟到旧发布者更新0行'],
+ ['缺回退成员 / 篡改权重','加载或摘要检查停止，未使用坏束切换']
+ ])+
+ p('顺着源码读：make_bundle生成三个独立目录；load_bundle保留已校验字节并加载；gate对三个固定输入逐项预测；activate先检查语义，再条件更新指针。in_flight保存原r17束对象，切换后对它输入A仍输出1，说明该本地引用保留了原映射。')+
+ fold('展开完整artifact_bundle.py：实际张量、语义检查与条件指针',codes(old[7])[1])+
+ fold('展开固定模型环境requirements-model.txt',codes(old[7])[2])+
+ p('练习解释r17、r19各自通过，为何混装仍失败；再画出版本名回退而代际递增的三次指针状态。程序只处理自建临时文件与本地数据库，证明CPU张量包和固定语义的发布机制。真实语言模型质量、引擎/并行兼容、GPU加载峰值、在线灰度和在途排空，应在对应目标环境继续验证。')
+ ],['subsection-1-1vzo0i0','subsection-2-1k3gdnf','subsection-3-opr7s5','subsection-4-4s93fv','subsection-5-wrf9vk','subsection-6-15mcx71','subsection-7-1bdkyq8','subsection-8-1an19m4']);
+})();
+
+
+;
 // first-reading-flow.js
 /* First reading: identify the components before calculations, contracts and failure cases. */
 function conceptReadingTable(headers,rows){return '<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
@@ -10911,7 +11325,7 @@ const conceptSectionTitles={
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance','k8s-networking','config-secrets','k8s-autoscaling','quantization-serving','ai-lifecycle']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}
@@ -10977,5 +11391,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="5e3b727c2eaf479a1422a42d59028d57467b08e45c86ed1169ae2dea2bfa3679";
+const staticReadingVersion="52fa5b77f0ce6235172b9081e2b7adab8ebd5be44870f77e7404445aa423a1b9";
 

@@ -77,7 +77,12 @@ for(const row of reviewedPoints){const p=currentPoints.find(p=>p.id===row.id);le
 assert.equal(fresh.eight_hour_progress.reviewed_chapters,reviewed.length);assert.equal(fresh.eight_hour_progress.reviewed_knowledge_points,reviewedPoints.length);
 assert.equal(fresh.chapters.length,66);
 assert.deepEqual([...fresh.chapters,...migration.new_chapter_reviews,...expansion.new_chapter_reviews].map(a=>a.id).sort(),data.articles.map(a=>a.id).sort());
-for(const row of migration.new_chapter_reviews){const a=data.articles.find(a=>a.id===row.id);assert(row.observation&&row.review_scope&&row.reviewed_at);assert.equal(row.review,'reorganized_existing_content');assert.equal(row.reviewed_content_sha256,signature({title:a.title,sections:a.sections}),row.id+': changed after relocation review');}
+for(const row of migration.new_chapter_reviews){
+ const a=data.articles.find(a=>a.id===row.id);assert(row.observation&&row.review_scope&&row.reviewed_at);assert.equal(row.review,'reorganized_existing_content');
+ let expected=row.reviewed_content_sha256;
+ for(const revision of expansion.body_revisions.filter(r=>r.id===row.id)){assert.equal(revision.previous_content_sha256,expected,row.id+': broken relocated-body review chain');assert(revision.scope&&revision.observation&&revision.reviewed_at);expected=revision.reviewed_content_sha256;}
+ assert.equal(expected,signature({title:a.title,sections:a.sections}),row.id+': changed after its latest explicit relocation/body review');
+}
 for(const row of expansion.new_chapter_reviews){const a=data.articles.find(a=>a.id===row.id);assert(row.review==='new_teaching_unit'&&row.observation&&row.review_scope&&row.reviewed_at);let expected=row.reviewed_content_sha256;for(const revision of (expansion.body_revisions||[]).filter(x=>x.id===row.id)){assert.equal(revision.previous_content_sha256,expected);assert(revision.scope&&revision.observation&&revision.reviewed_at);expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:a.title,sections:a.sections}),row.id+': changed after new teaching-unit review');}
 // A revised unit is a signed historical body. Follow its later explicit revisions
 // instead of requiring a legitimately edited chapter to stay frozen at that unit.

@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "canonical_script_count": 210,
+  "canonical_script_count": 212,
   "public_script_count": 9,
   "bundles": [
     {
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "11a105698aaec26c0921245851a5e018e4202f622174149d537891702933ca25",
-      "bytes": 2814711,
+      "sha256": "347978dbe7d734dd394666b44b0314300306c64c9d715affb76ddbed39533fed",
+      "bytes": 2881393,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -994,6 +994,16 @@
           "bytes": 28886
         },
         {
+          "file": "progressive-cloud-network-config-reading.js",
+          "sha256": "da9037ec84f1808ff5e41a0d3d2dbd7d6f695df703a2c762dda15f9b96b6f8c3",
+          "bytes": 39930
+        },
+        {
+          "file": "progressive-quantization-delivery-reading.js",
+          "sha256": "a7974bfac96f459ca1fdd8ceca244b7edba6af699587f90c812988b9c5c5956b",
+          "bytes": 26559
+        },
+        {
           "file": "first-reading-flow.js",
           "sha256": "43599c73ba518227f860206537b7a4cddeab413492fd65c1489e8a44ac2b2bef",
           "bytes": 6029
@@ -1065,8 +1075,8 @@
         },
         {
           "file": "concept-navigation.js",
-          "sha256": "be775d50750f4607402c85e0e6f30ec13061fc60fd5db52dbe9b6fd435840969",
-          "bytes": 10214
+          "sha256": "8b70f8da655b47d8d84a9546e262a73a5ac724e84d5f20c078d76721f79f4324",
+          "bytes": 10304
         },
         {
           "file": "chapter-navigation.js",
@@ -1075,7 +1085,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "6039ef63369c56ee2931fc52013f3c1624210a6d3e9568c3a41c29e25baab6a4",
+          "sha256": "0391677a3d3785d758ca2caf61cbb9be715fae51facf1c26fe42a9ad4bb8f6c0",
           "bytes": 145
         }
       ]
