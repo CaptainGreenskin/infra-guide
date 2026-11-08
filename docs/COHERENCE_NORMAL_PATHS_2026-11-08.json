@@ -1,0 +1,88 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "9ed4f6088dee1346e0bdae13fe150748a4f9ae3f",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TERM_CONTEXT_2026-11-08.json": "213f403e78611877b0377b2bfb5ee8ff964320d6cdc0a31192dd76b4029ac2f0",
+    "docs/COHERENCE_STATE_PROTOCOL_2026-11-08.json": "e1ca52b33687c56374fad8b6451bbcaa580f7d0f0e9bc921ac631f0f9ff164ef",
+    "docs/CONTENT_STATE_PROTOCOL_2026-11-08.json": "7721898c644c32fc9a9acfede5008e623d1197ea1372ff01556c9577ee9e13d0"
+  },
+  "source_revisions": {
+    "dist/mcp-protocol.js": {
+      "previous_sha256": "22ebc25d9932037e550d6fd3a6e239de68086a92372f89cc298a1cf63df2750d",
+      "reviewed_sha256": "131383aeaa10ac8ad948b185214b32689424937cdcd24a69e128d341102f2016",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "dist/mysql-replication.js": {
+      "previous_sha256": "638fa57e3712e38b99d3946467270022094c4b4b3a63a2127b712afecfc9eb21",
+      "reviewed_sha256": "85303d8f1b0e92cd28854733e3a0f6638e914cd1ca1e7a1db07c21b980edb06d",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/build-mcp-protocol.py": {
+      "previous_sha256": "e35d1018c70a70ad7c1609c0d901197afa9e199056c40cf099cee71162310785",
+      "reviewed_sha256": "1826180c13e68d70eaadc0c2619fcebb9dd0d7473e52b73207d4b1f1aaa379bd",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/build-mysql-replication.py": {
+      "previous_sha256": "d38807e0d95b017e415b1c00bbe0dbdfc0a893e08c62e0cc07cb9524c6988555",
+      "reviewed_sha256": "e4a776bf193cb451a4ff1e2e23d46fa9d59448258822c0c27b1cbff3d2928da1",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/check-mcp-protocol.cjs": {
+      "previous_sha256": "903263b0db991ff195f101928c6d65199a9b0184ad0661e5607979d8e4ecaa56",
+      "reviewed_sha256": "64f69c089bf1ee68fa3e01270d734f0c42d22839ad36fe85970ee820a74a8e5c",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/check-mysql-replication.cjs": {
+      "previous_sha256": "0f5514c7a79e95d8f46d73b0a4ffdc2b4d2941990ac9764a9a1587cbf9badb76",
+      "reviewed_sha256": "25817dd33d3be9d9659af2b1ac083eecb2350e6a038a24901c941c203479b947",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/mcp-protocol.template.js": {
+      "previous_sha256": "95f5151308b900e51359d3b0a7ac08937d21b4af1977d2440f0fc386cf04c2a2",
+      "reviewed_sha256": "65e3cbfc5820336c5a6ee38b8e5719dd916ae223eb4f512528a950bfe8dc149c",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "scripts/mysql-replication.template.js": {
+      "previous_sha256": "f0f93d8001e25f3e486ec1f3bcfbb267fbe1c4daff2cb1ad9e2bb5b45d0fbe22",
+      "reviewed_sha256": "d3576021041435742ed8b4e65c6c4c33b380edd1cdd2637fdd99839a0e1949f1",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "docs/CONTENT_NORMAL_PATHS_2026-11-08.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "98f6aec82411c5d6592f0d876c8a445d4cfae1cadb8b819eff904d3c3a76e0ba",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    },
+    "docs/REFERENCE_QUALITY_STANDARD_2026-11-08.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cadc465c54f1165396ec9092b754e500a1125c02fe4af8996b8130958a7ee9cc",
+      "scope": "Read-only benchmark review led to two locally connected normal-path examples; previous chapter bodies, code, routes, maps and actual execution evidence retained."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "9ed4f6088dee1346e0bdae13fe150748a4f9ae3f",
+    "new_chapters": [],
+    "changed_bodies": [
+      "mcp-protocol",
+      "mysql-replication"
+    ],
+    "unchanged_bodies": 76,
+    "added_code_blocks": {
+      "mcp-protocol": 1,
+      "mysql-replication": 1
+    },
+    "original_full_code_blocks": "all78 original source blocks and headings preserved; two exact-source excerpts added",
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 281,
+    "new_lab_packs": 0,
+    "new_lab_tasks": 0,
+    "new_figures": 0,
+    "reader_mastery_claims_added": 0
+  }
+}

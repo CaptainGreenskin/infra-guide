@@ -45,7 +45,20 @@ const mcpProtocolSections=[
    ['<code>clientInfo</code>','客户端自行声明的实现名字和版本','infra-guide-host / 1.0.0'],
    ['<code>clientCapabilities</code>','客户端声明支持的可选能力','空对象；本例未开放其他客户端能力']
   ])+
+  para('先沿现代连接走完一次正常读取：本例主动探测版本与能力，调用tools/list发现工具，再按发现到的参数契约调用read_batch，最终认回结果37。这里不是先猜一份请求JSON；服务端已经通过工具列表说明了允许怎样调用。',
+  'tools/list返回工具名与输入结构inputSchema。输入结构用JSON Schema描述参数对象的字段和类型；下面只提取本次真实响应中read_batch的必要约束。本次调用的两个字段都必填，值都必须是字符串，而且不接受额外字段。下一节再展开其他工具和输出结构。')+
+  mcpProtocolTable(['已发现的契约项目','实际规则','本次调用怎样填写'],[
+   ['工具名','<code>'+trainingEscape(mcpProtocolEvidence.read_batch_contract.name)+'</code>','选择read_batch'],
+   ['参数整体','<code>'+trainingEscape(mcpProtocolEvidence.read_batch_contract.inputSchema.type)+'</code>：字段组成的对象','填写task_id与batch_id'],
+   ['task_id','<code>'+trainingEscape(mcpProtocolEvidence.read_batch_contract.inputSchema.properties.task_id.type)+'</code>；必填','字符串report-A'],
+   ['batch_id','<code>'+trainingEscape(mcpProtocolEvidence.read_batch_contract.inputSchema.properties.batch_id.type)+'</code>；必填','字符串base'],
+   ['额外字段','additionalProperties='+trainingEscape(String(mcpProtocolEvidence.read_batch_contract.inputSchema.additionalProperties)),'不附带其他字段']
+  ])+
+  para('对应到官方SDK，下面三行是从已执行的client_lab.py逐字摘出的调用表达式。Python的await表示在这一行等待调用结果；等待期间，可让其他异步工作继续推进。这三行本身仍按顺序等待各自结果。此时程序已经进入stdio和ClientSession上下文；这里省略了返回值赋值、观察记录及断言，也省略了错误与取消对照，不是一份可单独运行的程序。完整程序仍放在本章实战节。')+
+  trainingCode('跟读实际执行的现代SDK表达式 · 节选','PYTHON',mcpProtocolEvidence.normal_sdk_excerpt.text)+
+  para('第一行读取并采用服务端的发现结果；第二行取得工具契约；第三行把符合该契约的任务与批次交给read_batch。SDK据此组织的完整请求如下；成功响应中的37由下一节继续拆开。')+
   mcpProtocolJSON('这些概念放回真实请求：本次read_batch的完整发送字段',mcpProtocolEvidence.call_request)+
+  para('同一次调用的响应id为<code>'+trainingEscape(String(mcpProtocolEvidence.call_response.id))+'</code>，与上面的请求一致；结构化数据字段structuredContent中的values为<code>'+trainingEscape(JSON.stringify(mcpProtocolEvidence.call_response.result.structuredContent.values))+'</code>，total为<code>'+trainingEscape(String(mcpProtocolEvidence.call_response.result.structuredContent.total))+'</code>。至此认回了基础批次的两个值及其合计。完整响应怎样表达工具结果，下一节再逐项拆解。')+
   para('能力说明支持什么协议功能。例如服务端tools.listChanged=false表示没有声明工具列表变化通知能力，不是“工具不能使用”。实现信息也不是身份凭据，攻击者可以自称某个客户端名字。业务授权要回到可信身份、任务委托与资源策略，不能看clientInfo便放行。',
   '2025-11-25及更早版本采用另一条规则：客户端先发initialize，交换版本、能力和实现信息；收到成功响应后，再发notifications/initialized，进入普通操作。本例为它另起一份服务端进程并调用initialize()，协商结果是2025-11-25。两代消息有兼容关系，但不能把旧握手当成现代必经步骤，也不能在同一段时序里任意混用。')+
   mcpProtocolFigure('versions',780,'本次两条真实连接：现代主动discover；旧版initialize后通知就绪。每条连接采用各自版本规则。')+

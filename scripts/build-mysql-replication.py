@@ -121,7 +121,13 @@ def main():
     (LAB/'validation.json').write_text(dump(record))
     draw(native['result'])
     template=(ROOT/'scripts/mysql-replication.template.js').read_text()
+    source_lines=source.splitlines()
+    gate_start=next(i for i,line in enumerate(source_lines) if line.startswith('    allowed_target='))
+    gate_lines=source_lines[gate_start:gate_start+4]
+    assert gate_lines[-1].startswith('    assert unexpected_target==')
+    gate_excerpt='\n'.join(line[4:] for line in gate_lines)
     template=template.replace('__MYSQL_REPLICATION_SOURCE__',json.dumps(source,ensure_ascii=False))
+    template=template.replace('__MYSQL_REPLICATION_GATE_EXCERPT__',json.dumps(gate_excerpt,ensure_ascii=False))
     template=template.replace('__MYSQL_REPLICATION_EVIDENCE__',json.dumps({'verified_on':native['verified_on'],'ci':record['ci'],'read_views':native['result']['read_views'],'lag_target':native['result']['lag']['source_target']},ensure_ascii=False))
     (ROOT/'dist/mysql-replication.js').write_text(template)
     with zipfile.ZipFile(LAB.with_suffix('.zip'),'w',zipfile.ZIP_DEFLATED) as archive:

@@ -113,13 +113,42 @@ assert.equal(data.article.module,'agent');assert.equal(data.article.sections.len
 const body=data.article.sections.map(s=>s[1]).join('');assert(body.includes('id="mcp-protocol-run"'));
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&amp;/g,'&');
 const blocks=[...body.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(x=>decode(x[1]));
-assert.equal(blocks.length,7);
+assert.equal(blocks.length,8);
 for(const file of ['client_lab.py','server.py'])assert(blocks.includes(data.files[file].trim()),file+': complete source in lesson');
 const sent=outgoing(record.program.modern),received=incoming(record.program.modern);
 assert.deepStrictEqual(data.evidence.call_request,sent.find(x=>x.method==='tools/call'&&x.params.name==='read_batch'));
 assert.deepStrictEqual(data.evidence.call_response,received.find(x=>x.id===data.evidence.call_request.id));
 assert.deepStrictEqual(data.evidence.protocol_error_response,received.find(x=>x.error));
 assert.deepStrictEqual(data.evidence.cancel_notification,sent.find(x=>x.method==='notifications/cancelled'));
+// The early teaching bridge comes from the same actual tools/list and executed source.
+const listRequest=sent.find(x=>x.method==='tools/list');
+const readTool=received.find(x=>x.id===listRequest.id).result.tools.find(tool=>tool.name==='read_batch');
+assert.deepStrictEqual(data.evidence.read_batch_contract,{name:readTool.name,inputSchema:readTool.inputSchema});
+assert.deepStrictEqual(data.evidence.read_batch_contract.inputSchema.required,['task_id','batch_id']);
+const excerpt=data.evidence.normal_sdk_excerpt,lines=data.files['client_lab.py'].split('\n');
+assert.equal(excerpt.fragments.length,3);
+assert.deepStrictEqual(excerpt.fragments.map(fragment=>fragment.method),['server/discover','tools/list','tools/call']);
+for(const fragment of excerpt.fragments){
+ assert.equal(fragment.file,'client_lab.py');
+ assert(Number.isInteger(fragment.start_line)&&Number.isInteger(fragment.end_line));
+ assert(fragment.start_line>0&&fragment.end_line>=fragment.start_line);
+ assert(lines.slice(fragment.start_line-1,fragment.end_line).join('\n').includes(fragment.expression),'SDK excerpt differs from its original source lines');
+}
+assert.equal(excerpt.fragments[0].expression,'await session.discover()');
+assert.equal(excerpt.fragments[1].expression,'await session.list_tools()');
+assert.equal(excerpt.fragments[2].expression,'await session.call_tool("read_batch", {"task_id": "report-A", "batch_id": "base"})');
+assert.equal(excerpt.text,excerpt.fragments.map(fragment=>fragment.expression).join('\n'));
+const early=data.article.sections[2][1];
+const earlyBlocks=[...early.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(match=>decode(match[1]));
+assert.deepStrictEqual(earlyBlocks,[excerpt.text,JSON.stringify(data.evidence.call_request,null,2)]);
+assert(early.indexOf('已发现的契约项目')<early.indexOf('跟读实际执行的现代SDK表达式'));
+assert(early.indexOf('跟读实际执行的现代SDK表达式')<early.indexOf('这些概念放回真实请求'));
+assert(early.includes('这里省略了返回值赋值、观察记录及断言')&&early.includes('不是一份可单独运行的程序'));
+assert(early.indexOf('同一次调用的响应id为')>early.indexOf('这些概念放回真实请求'));
+assert(early.indexOf('同一次调用的响应id为')<early.indexOf('2025-11-25及更早版本'));
+assert(early.includes('响应id为<code>'+data.evidence.call_response.id+'</code>'));
+assert(early.includes('values为<code>'+JSON.stringify(data.evidence.call_response.result.structuredContent.values)+'</code>'));
+assert(early.includes('total为<code>'+data.evidence.call_response.result.structuredContent.total+'</code>'));
 const metadata={};for(const[name,height]of [['objects',660],['versions',780],['cancellation',820]]){
  const svg=fs.readFileSync('dist/diagrams/mcp-protocol-'+name+'.svg','utf8');
  assert(svg.includes('viewBox="0 0 1120 '+height+'"')&&svg.includes('<title')&&svg.includes('<desc'));
@@ -140,4 +169,4 @@ with zipfile.ZipFile(folder.with_suffix('.zip')) as archive:
  assert sorted(archive.namelist())==sorted('mcp-protocol/'+name for name in names)
  for name in names: assert archive.read('mcp-protocol/'+name)==(folder/name).read_bytes(),name
 `],{encoding:'utf8'});
-console.log('PASS: source-bound official SDK2.3 modern/legacy stdio record; independent request/response/progress/cancellation and authoritative42-vs41 oracles; actual cleanup/exit evidence, rejection probes, complete inline source, 3 data-bound SVGs and ZIP. Set INFRA_MCP_PYTHON for a fresh SDK replay.');
+console.log('PASS: source-bound official SDK2.3 modern/legacy stdio record; independent request/response/progress/cancellation and authoritative42-vs41 oracles; actual tools/list contract and exact executed SDK excerpt precede raw request; cleanup/exit evidence, rejection probes, complete source, 3 data-bound SVGs and ZIP. Set INFRA_MCP_PYTHON for a fresh SDK replay.');

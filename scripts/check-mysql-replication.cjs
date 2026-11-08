@@ -63,6 +63,15 @@ if(require.main===module){
  assert(/^https:\/\/github.com\/CaptainGreenskin\/infra-guide\/actions\/runs\/\d+$/.test(record.ci.run_url));assert(/^[a-f0-9]{40}$/.test(record.ci.commit));
  assert.equal(hash(cp.execFileSync('git',['show',record.ci.commit+':dist/labs/mysql-replication/replication_lab.py'])),hash(source),'native CI commit must contain this exact program');
  const uuid='11111111-1111-1111-1111-111111111111';assert(subset(uuid+':2:4-5',uuid+':1-6'));assert(!subset(uuid+':3-5',uuid+':1-3:5'));assert(!subset(uuid+':1','22222222-2222-2222-2222-222222222222:1'));assert.throws(()=>gtidSet(uuid+':0'));
+ // Enumerate only these tiny teaching sets, independently of interval containment.
+ const replicaUuid='22222222-2222-2222-2222-222222222222';
+ const atoms=text=>{const values=new Set();for(const[id,ranges]of gtidSet(text))for(const[lo,hi]of ranges)for(let n=lo;n<=hi;n++)values.add(id+':'+n);return values;};
+ const minus=(a,b)=>{const other=atoms(b);return [...atoms(a)].filter(id=>!other.has(id)).sort();};
+ const sourceGoal=uuid+':1-8',bootstrap=replicaUuid+':1-2',allowed=sourceGoal+','+bootstrap;
+ const missing=uuid+':1-6:8,'+bootstrap,extra=sourceGoal+','+replicaUuid+':1-3';
+ assert.deepStrictEqual(minus(sourceGoal,missing),[uuid+':7']);assert.deepStrictEqual(minus(missing,allowed),[]);
+ assert(subset(sourceGoal,extra));assert.deepStrictEqual(minus(sourceGoal,extra),[]);assert.deepStrictEqual(minus(extra,allowed),[replicaUuid+':3']);
+ assert.deepStrictEqual(minus(sourceGoal,allowed),[]);assert.deepStrictEqual(minus(allowed,allowed),[]);
  for(const mutate of [x=>{x.lag.replica.balance=142;},x=>{x.lag.promote_allowed=true;},x=>{x.switchover.old_container_running=true;},x=>{x.switchover.new_primary.receipts.pop();},x=>{x.switchover.new_primary.receipts[0].delta++;},x=>{x.switchover.replica_before_promotion.executed+=','+x.environment.replica_uuid+':99999';}]){const bad=JSON.parse(JSON.stringify(native));mutate(bad.result);assert.throws(()=>verifyNative(bad,source));}
  const decode=s=>s.replace(/&quot;/g,'"').replace(/&#x27;|&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
  for(const [name,expected]of [['views',r.read_views],['pipeline',r.lag],['switch',r.switchover]]){
@@ -73,7 +82,14 @@ if(require.main===module){
  if(!vm.runInContext('articles.some(a=>a.id==="mysql-replication")',c))vm.runInContext(fs.readFileSync('dist/mysql-replication.js','utf8'),c);
  const a=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="mysql-replication"))',c));assert.equal(a.module,'cloud-data');assert(a.sections.length>=8);assert.equal(a.updated,'2026.11.08');assert(a.minutes>=40);
  const body=a.sections.map(s=>s[1]).join(''),code=[...body.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>decode(m[1]));assert(code.includes(source.toString().trim()));assert(body.includes('id="mysql-replication-run"'));
- assert.equal(code.length,3,'command, SQL walkthrough and complete Python source');
+ assert.equal(code.length,4,'SQL walkthrough, exact gate excerpt, command and complete Python source');
+ const nativeLines=source.toString().split(/\r?\n/),gateStart=nativeLines.findIndex(line=>line.startsWith('    allowed_target='));assert(gateStart>=0);
+ const gateLines=nativeLines.slice(gateStart,gateStart+4);assert(gateLines[3].startsWith('    assert unexpected_target=='));
+ const gateExcerpt=gateLines.map(line=>line.slice(4)).join('\n');
+ assert.equal(vm.runInContext('mysqlReplicationGateExcerpt',c),gateExcerpt);assert(code.includes(gateExcerpt),'gate excerpt must be the same four native source lines with only common indent removed');
+ assert(a.sections[3][1].includes('S:1-6:8')&&a.sections[3][1].includes('S:7')&&a.sections[3][1].includes('R:3'),'locally explain missing and unknown-extra GTIDs');
+ assert(a.sections[1][1].includes('100（事务41）→110（事务47）→130（事务50）→135（事务51）'));
+ assert(a.sections[1][1].includes('全部是用于解释的教学假设')&&a.sections[3][1].includes('连续四行'),'separate teaching identities and the actual code excerpt');
  const walkthrough=vm.runInContext('mysqlReplicationReadSQL',c).trim();assert(code.includes(walkthrough),'inline SQL must match the authored role walkthrough');
  const sql=walkthrough.replace(/--[^\n]*/g,'').replace(/\s+/g,' ').trim();
  assert.equal((sql.match(/SELECT JSON_OBJECT/gi)||[]).length,5);

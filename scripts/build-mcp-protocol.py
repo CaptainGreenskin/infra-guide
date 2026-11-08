@@ -4,6 +4,7 @@ Use the lab's pinned Python environment. --from-record only regenerates artifact
 after verifying every recorded source hash; it does not claim a fresh execution.
 """
 import argparse
+import ast
 import hashlib
 import html
 import json
@@ -37,7 +38,26 @@ def svg(name, title, desc, height, metadata, body):
     (ROOT / "dist/diagrams" / ("mcp-protocol-" + name + ".svg")).write_text(text)
 
 
-def generate(record):
+def sdk_excerpt():
+    source = (LAB / "client_lab.py").read_text()
+    awaits = sorted((node for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Await)),
+                    key=lambda node: (node.lineno, node.col_offset))
+    fragments = []
+    for attribute, method in [("discover", "server/discover"), ("list_tools", "tools/list"), ("call_tool", "tools/call")]:
+        candidates = [node for node in awaits if isinstance(node.value, ast.Call)
+                      and isinstance(node.value.func, ast.Attribute)
+                      and isinstance(node.value.func.value, ast.Name)
+                      and node.value.func.value.id == "session" and node.value.func.attr == attribute]
+        if attribute == "call_tool":
+            candidates = [node for node in candidates if node.value.args
+                          and isinstance(node.value.args[0], ast.Constant) and node.value.args[0].value == "read_batch"]
+        node = candidates[0]
+        fragments.append({"file": "client_lab.py", "start_line": node.lineno, "end_line": node.end_lineno,
+                          "method": method, "expression": ast.get_source_segment(source, node)})
+    return {"fragments": fragments, "text": "\n".join(fragment["expression"] for fragment in fragments)}
+
+
+def generate(record, lesson_only=False):
     program = record["program"]
     modern, legacy = program["modern"], program["legacy"]
     outgoing = [x["message"] for x in modern["trace"] if x["direction"] == "client_to_server"]
@@ -52,10 +72,21 @@ def generate(record):
     legacy_initialize_id = next(x["id"] for x in legacy_outgoing if x.get("method") == "initialize")
     legacy_list_id = next(x["id"] for x in legacy_outgoing if x.get("method") == "tools/list")
     legacy_call_id = next(x["id"] for x in legacy_outgoing if x.get("method") == "tools/call")
+    listed = next(x["result"]["tools"] for x in incoming if x.get("id") == modern_list_id)
+    read_tool = next(tool for tool in listed if tool["name"] == "read_batch")
     evidence = {"sdk": program["sdk"], "python": program["python"],
                 "modern_metadata": modern["metadata"], "legacy_metadata": legacy["metadata"],
                 "call_request": call, "call_response": response, "protocol_error_response": error,
-                "cancel_notification": cancel, "source_sha256": record["source_sha256"]}
+                "cancel_notification": cancel, "source_sha256": record["source_sha256"],
+                "read_batch_contract": {"name": read_tool["name"], "inputSchema": read_tool["inputSchema"]},
+                "normal_sdk_excerpt": sdk_excerpt()}
+    template = (ROOT / "scripts/mcp-protocol.template.js").read_text()
+    sources = {name: (LAB / name).read_text() for name in FILES}
+    output = template.replace("__MCP_FILES__", json.dumps(sources, ensure_ascii=False)).replace("__MCP_EVIDENCE__", json.dumps(evidence, ensure_ascii=False))
+    assert "__MCP_" not in output
+    (ROOT / "dist/mcp-protocol.js").write_text(output)
+    if lesson_only:
+        return
 
     svg("objects", "先把四个对象放到同一张图里", "宿主包含MCP客户端，独立服务端提供工具，订单来源由独立判据核对。", 660,
         {"source": json.loads((LAB / "orders.json").read_text()), "tools": list(modern["tools"]),
@@ -136,11 +167,6 @@ def generate(record):
 <text x="245" y="730" class="small">关闭服务端标准输入</text><text x="526" y="730" class="small">留下server_stopped事件</text><text x="857" y="730" class="small">独立PID检查通过</text>
 <text x="34" y="793" class="small muted">协议取消不等于外部效果撤销；这里仅验证只读处理器、真实文件关闭与本次服务端退出。</text>''')
 
-    template = (ROOT / "scripts/mcp-protocol.template.js").read_text()
-    sources = {name: (LAB / name).read_text() for name in FILES}
-    output = template.replace("__MCP_FILES__", json.dumps(sources, ensure_ascii=False)).replace("__MCP_EVIDENCE__", json.dumps(evidence, ensure_ascii=False))
-    assert "__MCP_" not in output
-    (ROOT / "dist/mcp-protocol.js").write_text(output)
     with zipfile.ZipFile(LAB.with_suffix(".zip"), "w", zipfile.ZIP_DEFLATED) as archive:
         for name in FILES + ["validation.json"]:
             entry = zipfile.ZipInfo("mcp-protocol/" + name, date_time=(2026, 11, 8, 0, 0, 0))
@@ -152,7 +178,10 @@ def generate(record):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--from-record", action="store_true")
+    parser.add_argument("--lesson-only", action="store_true", help="With --from-record, update only lesson JS; preserve diagrams and ZIP")
     args = parser.parse_args()
+    if args.lesson_only and not args.from_record:
+        parser.error("--lesson-only requires --from-record")
     if args.from_record:
         record = json.loads((LAB / "validation.json").read_text())
     else:
@@ -165,8 +194,9 @@ def main():
         (LAB / "validation.json").write_text(dump(record))
     for name in FILES:
         assert sha(LAB / name) == record["source_sha256"][name], name + ": source changed after execution record"
-    generate(record)
-    print("PASS: real SDK modern/legacy/semantic-negative record, complete source, three original data-bound SVGs and ZIP.")
+    generate(record, lesson_only=args.lesson_only)
+    print("PASS: source-verified lesson-only rebuild; execution record, SVGs and ZIP untouched." if args.lesson_only else
+          "PASS: real SDK modern/legacy/semantic-negative record, complete source, three original data-bound SVGs and ZIP.")
 
 
 if __name__ == "__main__":
