@@ -1,0 +1,250 @@
+{
+  "status": "passed",
+  "checked_on": "2026-11-08",
+  "source_sha256": {
+    "replication_lab.py": "9afd52cfd3a6f4ec053976403e8679eab283c24047a0c4c86f6217b9d1640d8b",
+    "README.md": "403546f2e5b3255665fcdc03f3dcc9dbedd62bc79e9620b72761a9faf67c4e66",
+    "native-record.json": "e96bb7657955c87987e7392e5ee865da03fc06b511e818614724db0ae9d778cd"
+  },
+  "ci": {
+    "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42471646629",
+    "commit": "f9e86bc18e320ed808f88c60bf961232cb79fc65"
+  },
+  "execution": {
+    "environment": {
+      "image_requested": "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902",
+      "image": "sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902",
+      "repo_digests": [
+        "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902"
+      ],
+      "source_version": "8.4.13",
+      "replica_version": "8.4.13",
+      "source_uuid": "596f9dc7-db5f-11f1-91ca-96a73a22a90d",
+      "replica_uuid": "598464d5-db5f-11f1-afcb-266fc1f14a54",
+      "python": "3.14.4",
+      "docker_server": "29.4.2",
+      "local_unix_endpoint_verified": true
+    },
+    "initial": {
+      "balance": 100,
+      "replica_wait": 0,
+      "source_bootstrap_gtid": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-5",
+      "replica_bootstrap_gtid": "598464d5-db5f-11f1-afcb-266fc1f14a54:1-5"
+    },
+    "read_views": {
+      "rr": {
+        "begin_before_update": true,
+        "first": {
+          "balance": 110,
+          "isolation": "REPEATABLE-READ",
+          "connection": 16
+        },
+        "same_transaction": {
+          "balance": 110,
+          "isolation": "REPEATABLE-READ",
+          "connection": 16
+        },
+        "after_commit": {
+          "balance": 130,
+          "isolation": "REPEATABLE-READ",
+          "connection": 16
+        }
+      },
+      "rc": {
+        "first": {
+          "balance": 130,
+          "isolation": "READ-COMMITTED",
+          "connection": 19
+        },
+        "same_transaction": {
+          "balance": 135,
+          "isolation": "READ-COMMITTED",
+          "connection": 19
+        }
+      }
+    },
+    "lag": {
+      "source_target": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-17",
+      "status": {
+        "Replica_IO_Running": "Yes",
+        "Replica_SQL_Running": "No",
+        "Retrieved_Gtid_Set": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-17",
+        "Executed_Gtid_Set": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-16,\n598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+        "Seconds_Behind_Source": "NULL",
+        "Last_IO_Errno": "0",
+        "Last_SQL_Errno": "0",
+        "Auto_Position": "1"
+      },
+      "received_contains_target": 1,
+      "executed_contains_target": 0,
+      "wait_before_apply": 1,
+      "source": {
+        "balance": 142,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-17",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          },
+          {
+            "id": "RECEIVED_NOT_APPLIED",
+            "delta": 7
+          }
+        ],
+        "server_uuid": "596f9dc7-db5f-11f1-91ca-96a73a22a90d"
+      },
+      "replica": {
+        "balance": 135,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-16,\n598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          }
+        ],
+        "server_uuid": "598464d5-db5f-11f1-afcb-266fc1f14a54"
+      },
+      "promote_allowed": false
+    },
+    "caught_up": {
+      "wait": 0,
+      "replica": {
+        "balance": 142,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-17,\n598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          },
+          {
+            "id": "RECEIVED_NOT_APPLIED",
+            "delta": 7
+          }
+        ],
+        "server_uuid": "598464d5-db5f-11f1-afcb-266fc1f14a54"
+      }
+    },
+    "switchover": {
+      "frozen_target": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-18",
+      "wait": 0,
+      "source_before_stop": {
+        "balance": 142,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-18",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          },
+          {
+            "id": "RECEIVED_NOT_APPLIED",
+            "delta": 7
+          }
+        ],
+        "server_uuid": "596f9dc7-db5f-11f1-91ca-96a73a22a90d"
+      },
+      "allowed_initial_gtids": "598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+      "allowed_target_gtids": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-18,598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+      "unexpected_target_gtids": "",
+      "missing_target_gtids": "",
+      "replica_before_promotion": {
+        "balance": 142,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-18,\n598464d5-db5f-11f1-afcb-266fc1f14a54:1-5",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          },
+          {
+            "id": "RECEIVED_NOT_APPLIED",
+            "delta": 7
+          }
+        ],
+        "server_uuid": "598464d5-db5f-11f1-afcb-266fc1f14a54"
+      },
+      "old_writer_error": "1290",
+      "old_admin_error": "1290",
+      "old_container_running": false,
+      "old_stopped_write_exit": 1,
+      "new_primary": {
+        "balance": 145,
+        "executed": "596f9dc7-db5f-11f1-91ca-96a73a22a90d:1-18,\n598464d5-db5f-11f1-afcb-266fc1f14a54:1-7",
+        "receipts": [
+          {
+            "id": "AFTER_FIRST_READ",
+            "delta": 20
+          },
+          {
+            "id": "BEFORE_FIRST_READ",
+            "delta": 10
+          },
+          {
+            "id": "NEW_WRITER",
+            "delta": 3
+          },
+          {
+            "id": "RC_UPDATE",
+            "delta": 5
+          },
+          {
+            "id": "RECEIVED_NOT_APPLIED",
+            "delta": 7
+          }
+        ],
+        "server_uuid": "598464d5-db5f-11f1-afcb-266fc1f14a54"
+      },
+      "oracle": {
+        "balance": 145,
+        "receipt_ids": [
+          "AFTER_FIRST_READ",
+          "BEFORE_FIRST_READ",
+          "NEW_WRITER",
+          "RC_UPDATE",
+          "RECEIVED_NOT_APPLIED"
+        ],
+        "ledger_difference": 0
+      }
+    },
+    "scope": "real local two-server MySQL; controlled planned switch with old container stopped; no production HA, WAN, proxy or power-loss proof"
+  },
+  "scope": "Actual Linux Docker two-instance MySQL, read-view/GTID/apply-lag/planned-switch observations. No production HA or cross-host fencing claim."
+}

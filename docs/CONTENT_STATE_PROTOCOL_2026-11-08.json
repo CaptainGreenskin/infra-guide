@@ -1,0 +1,102 @@
+{
+  "reviewed_on": "2026-11-08",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_READING_2026-11-08.json": "40847d62a8443b12387fec8a55525c86aefe177ea77e2d161f40ebb8dc472a34",
+    "docs/CONTENT_EXPANSIONS_2026-11-08_DELIVERY.json": "be87e7b5a409f75c761ff5fa3d7e059441fd1ed3918d1ba5e95c678a64358fec"
+  },
+  "new_chapter_reviews": [
+    {
+      "id": "control-plane-consensus",
+      "module": "native",
+      "title": "控制面协调存储：从多数派提交到观察与恢复",
+      "track": "cloud",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "Continuous objects, dependencies, normal mechanism, concrete values, actual implementation, failure probes and scope. Existing chapters and numbers unchanged.",
+      "observation": "Pinned native product on isolated Linux Docker; independent observations, ownership of cleanup, exact executed source and scope. Actual quorum/read/watch/snapshot or InnoDB/GTID/switch evidence; no physical fault-domain or production HA claim.",
+      "reviewed_content_sha256": "e18b883fa5d21a716680c5181b580f992606bd05b0aa75773af60919d45ab61f"
+    },
+    {
+      "id": "mysql-replication",
+      "module": "cloud-data",
+      "title": "MySQL复制与切换：先解释旧读，再证明谁能写",
+      "track": "cloud",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "Continuous objects, dependencies, normal mechanism, concrete values, actual implementation, failure probes and scope. Existing chapters and numbers unchanged.",
+      "observation": "Pinned native product on isolated Linux Docker; independent observations, ownership of cleanup, exact executed source and scope. Actual quorum/read/watch/snapshot or InnoDB/GTID/switch evidence; no physical fault-domain or production HA claim.",
+      "reviewed_content_sha256": "71c127d9a0b3ca4519eccc2494ffe85cd838f2d0fcdd0dea76cf80d7b39435f3"
+    },
+    {
+      "id": "mcp-protocol",
+      "module": "agent",
+      "title": "MCP协议与真实SDK：发现、调用、进度与取消",
+      "track": "agent",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "Continuous objects, dependencies, normal mechanism, concrete values, actual implementation, failure probes and scope. Existing chapters and numbers unchanged.",
+      "observation": "Official SDK2.3.0/Python3.12 stdio, modern/legacy connections, real progress/cancellation/process cleanup and independent42-vs41 semantic rejection; no HTTP/OAuth/LLM/Kairo claim.",
+      "reviewed_content_sha256": "e7e9413931522273180005edf3fc116476a28f56ce4c3ca35dce0c71c07ad085"
+    }
+  ],
+  "new_concept_reviews": [
+    {
+      "id": "control-plane-consensus",
+      "reviewed_at": "2026-11-08",
+      "scope": "Three staged concept relationships precede the new chapter; body explains the same objects and implementation boundaries.",
+      "observation": "Each declared term is introduced in the sequence; prior75 sequences remain byte-for-byte as data.",
+      "reviewed_path_sha256": "e85937e6d2049db211cd30a6a50313851f8b2c480413a88ca756b2fcf919b3e1"
+    },
+    {
+      "id": "mysql-replication",
+      "reviewed_at": "2026-11-08",
+      "scope": "Three staged concept relationships precede the new chapter; body explains the same objects and implementation boundaries.",
+      "observation": "Each declared term is introduced in the sequence; prior75 sequences remain byte-for-byte as data.",
+      "reviewed_path_sha256": "f3a6647b6fc295fecb7ca68968576df4283e93b1500ebad792a5ac118a61a37f"
+    },
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-08",
+      "scope": "Three staged concept relationships precede the new chapter; body explains the same objects and implementation boundaries.",
+      "observation": "Each declared term is introduced in the sequence; prior75 sequences remain byte-for-byte as data.",
+      "reviewed_path_sha256": "4f85bfa9a7696c1a5e3727f87b9d5e3fae4139c773f506481a0c73992c2fb9c6"
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "database-service",
+      "reviewed_at": "2026-11-08",
+      "scope": "Connect existing field concept to its new real implementation chapter, in learning order.",
+      "observation": "Same95 field points and100 map nodes; no new introductory filler or external-project list.",
+      "previous_content_sha256": "7388b546ca46d026ff7ab532d22c92414240d6a96f5a0d4525491e067ac3261b",
+      "reviewed_content_sha256": "d63dd688790ee2317383bd03eaf22ef145a746d5f78936e6a26ad0a0a89462a0"
+    },
+    {
+      "id": "replication-failover",
+      "reviewed_at": "2026-11-08",
+      "scope": "Connect existing field concept to its new real implementation chapter, in learning order.",
+      "observation": "Same95 field points and100 map nodes; no new introductory filler or external-project list.",
+      "previous_content_sha256": "0423b14b0163535bd8b0f8b5ee2ffc2482121eecc4e15b52fbbbc801bd311d86",
+      "reviewed_content_sha256": "da1b484724927c7b5cf141c45c50c526abb8e7f5f1b966cbf962b45acec56654"
+    },
+    {
+      "id": "reconciliation",
+      "reviewed_at": "2026-11-08",
+      "scope": "Connect existing field concept to its new real implementation chapter, in learning order.",
+      "observation": "Same95 field points and100 map nodes; no new introductory filler or external-project list.",
+      "previous_content_sha256": "30772ee94d5ef22541902e963de7cf48bfdbbdd15b8f289cb054073c3ec49ce3",
+      "reviewed_content_sha256": "7c26607b2ceb4f36f2b0b35e90b68b80871b6ecd77660dd32efce348f93988af"
+    },
+    {
+      "id": "ag-tools",
+      "reviewed_at": "2026-11-08",
+      "scope": "Connect existing field concept to its new real implementation chapter, in learning order.",
+      "observation": "Same95 field points and100 map nodes; no new introductory filler or external-project list.",
+      "previous_content_sha256": "bd6cba280de33a42de2385e9c4d4d599650d81c5cc8048efa96b2981a0e7b8ee",
+      "reviewed_content_sha256": "165105086b61084d993b53ccd00cc74ecef4e5ac279c2f6bd2d71970206686ac"
+    }
+  ],
+  "body_revisions": [],
+  "revised_teaching_units": []
+}

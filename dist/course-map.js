@@ -9,7 +9,7 @@ const courseDomainPlan=[
  ['model-foundations','A1',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','operator-profiling']],
  ['training','A2',['gpu-cluster','distributed-training','gpu-memory','ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance']],
  ['platform','A3',['training-platform','gpu-scheduling','kubernetes-training','model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing','speculative-decoding']],
- ['agent','G',['agent-runtime','agent-security','agent-sandbox','agent-recovery','agent-memory','agent-evaluation','durable-workflows','agent-retrieval','agent-observability','kairo-practice']],
+ ['agent','G',['agent-runtime','mcp-protocol','agent-security','agent-sandbox','agent-recovery','agent-memory','agent-evaluation','durable-workflows','agent-retrieval','agent-observability','kairo-practice']],
  ['practice','S',['training-lab','cloud-service-lab','production-readiness']]
 ];
 const courseChapterById=id=>{const a=articles.find(x=>x.id===id);if(!a)throw Error('course-map: unknown chapter '+id);return a};
@@ -19,10 +19,12 @@ for(const[moduleId,n,ids]of courseDomainPlan){
  const m=modules.find(x=>x.id===moduleId);
  if(!m)throw Error('course-map: unknown module '+moduleId);
  m.n=n;
+ let mainChapter=0;
  ids.forEach((articleId,index)=>{
   const a=courseChapterById(articleId);
   a.module=moduleId;
-  a.number=/\d$/.test(n)?n+'.'+(index+1):n+(index+1);
+  // The protocol lesson expands G1 without renumbering published G2–G10.
+  a.number=articleId==='mcp-protocol'?'G1.1':n+(/\d$/.test(n)?'.':'')+(++mainChapter);
   if(moduleId!=='training'&&a.group!==undefined)delete a.group; // 分组标签只属于 A2 训练模块
  });
 }
@@ -49,7 +51,7 @@ const courseReadingStages={
   ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing','speculative-decoding']]
  ],
  agent:[
-  ['任务与执行边界',['agent-runtime','agent-security','agent-sandbox']],
+  ['任务与执行边界',['agent-runtime','mcp-protocol','agent-security','agent-sandbox']],
   ['恢复、上下文与评估',['agent-recovery','agent-memory','agent-evaluation']],
   ['持久工作流与知识检索',['durable-workflows','agent-retrieval']],
   ['观测、接入与综合验收',['agent-observability','kairo-practice','production-readiness']]

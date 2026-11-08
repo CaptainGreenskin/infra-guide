@@ -22,9 +22,10 @@ assert.equal(new Set(declared).size,declared.length,'a chapter must belong to ex
 assert.deepEqual([...declared].sort(),[...ids].sort(),'the domain plan must account for every chapter');
 for(const[module,prefix,chapters]of data.courseDomainPlan){
  const m=data.modules.find(m=>m.id===module);assert(m&&m.n===prefix,module+': matching domain label');
+ let mainChapter=0;const nested={'mcp-protocol':'G1.1'};
  chapters.forEach((id,index)=>{
   const a=data.articles.find(a=>a.id===id);assert.equal(a.module,module);
-  assert.equal(a.number,prefix+(/\d$/.test(prefix)?'.':'')+(index+1));
+  assert.equal(a.number,nested[id]||prefix+(/\d$/.test(prefix)?'.':'')+(++mainChapter));
  });
 }
 assert.equal(data.articles.find(a=>a.id==='kubernetes-training').number,'A3.3');

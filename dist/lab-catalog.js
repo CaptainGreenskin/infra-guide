@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'etcd-consensus':{folder:'etcd-consensus',title:'三成员共识、分区与恢复观察'},
+ 'mysql-replication':{folder:'mysql-replication',title:'真实读视图、复制与计划切换'},
+ 'mcp-protocol':{folder:'mcp-protocol',title:'真实MCP SDK、版本与调用生命周期'},
  'cloud-proxy':{folder:'cloud-proxy',title:'HTTP代理、连接复用与受限重试'},
  'inference-cache':{folder:'inference-cache',title:'物理缓存块、共享与调度'},
  'agent-planning':{folder:'agent-planning',title:'计划、事实与持久等待'},
@@ -128,6 +131,9 @@ labLearningCatalog.push({id:'ai-manual-sharding',track:'ai',stage:2,title:'分�
 labLearningCatalog.push({"id":"cloud-proxy","track":"cloud","stage":2,"title":"沿真实代理核对连接、排空和写入结果","chapter":"vpc-network","anchor":"cloud-proxy-run","pack":"cloud-proxy","files":["proxy_lab.py","README.md"],"env":"Python 3.9+ · 标准库 / 本机HTTP / SQLite","kind":"真实HTTP代理与业务写入","observe":"三个查询复用上游连接；B排空后旧请求完成、新请求走A；重试受共同截止时间与次数约束，错误重试写入得到74而非37。","scope":"受控小型Content-Length消息；上游窗口从入口校验后计时，无TLS、NGINX执行、云负载均衡或性能实测。"},
 {"id":"ai-physical-cache","track":"ai","stage":2,"title":"缓存真的存了什么，复用以后还算得对吗","chapter":"inference-performance","anchor":"inference-cache-run","pack":"inference-cache","files":["paged_cache.py","README.md","contracts.json"],"env":"Python 3.9+ · 标准库 / CPU","kind":"真实块池与标量注意力","observe":"逐格对照独立完整前缀计算，核对共享、写时复制、满池拒绝、槽代次与重算；同一17请求比较计算机会与等待取舍。","scope":"两层标量因果注意力、实际列表存储与离散迭代；非完整Transformer、vLLM运行、GPU内核或时延实测。"},
 {"id":"agent-planning","track":"agent","stage":2,"title":"计划改变后，哪些事实和批准仍然有效","chapter":"durable-workflows","anchor":"agent-planning-run","pack":"agent-planning","files":["planning_lab.py","README.md"],"env":"Python 3.9+ · 标准库 / SQLite / 子进程","kind":"真实新进程与持久状态","observe":"基础37加补录5得到42；恢复时复用有效事实，旧批准不能授权新草稿；错误汇总缓存可令流程DONE，但独立产物验收应拒绝。","scope":"固定提议来源和本地SQLite事务；不运行LLM、Temporal/LangGraph SDK、远端效果协议或Kairo适配器。"});
+labLearningCatalog.push({"id":"cloud-etcd-consensus","track":"cloud","stage":2,"title":"隔离成员以后，谁还能确认最新状态","chapter":"control-plane-consensus","anchor":"etcd-consensus-run","pack":"etcd-consensus","files":["etcd_lab.py","README.md"],"env":"Linux · Python3.9+ · 本地Docker · etcd3.6.16固定镜像","kind":"真实三成员与独立快照恢复","observe":"真实断开旧leader网络，核对多数侧42与孤立侧37；恢复多数可写43；旧快照37经重新列举与watch接续到47，完整缓存另行读取核对。","scope":"隔离Linux CI、同宿主容器；明文合成配置，无生产TLS/RBAC、物理故障域、Kubernetes整体验收或吞吐测量。"},
+{"id":"cloud-mysql-replication","track":"cloud","stage":2,"title":"分开行版本、复制应用和新写资格","chapter":"mysql-replication","anchor":"mysql-replication-run","pack":"mysql-replication","files":["replication_lab.py","README.md"],"env":"Linux · Python3.9+ · 本地Docker · MySQL8.4.13固定镜像","kind":"真实双实例、连接与受控切换","observe":"同连接RR读110/110、提交后130，RC读130/135；副本收到却未应用目标，冻结G与先验B两向核对，硬停旧实例后新写至145。","scope":"合成账本与有计划交接；无跨机房、生产代理切流、自动故障切换、断电或零丢失承诺。"},
+{"id":"agent-mcp-protocol","track":"agent","stage":1,"title":"沿真实SDK读懂工具发现、取消与结果验收","chapter":"mcp-protocol","anchor":"mcp-protocol-run","pack":"mcp-protocol","files":["client_lab.py","server.py","orders.json","requirements.txt","README.md"],"env":"Python3.12 · 官方mcp2.3.0 · stdio子进程","kind":"真实现代与旧版MCP连接","observe":"两代版本流程分别运行，核对请求、进度与取消；处理器关文件后同连接继续读5；结构通过的41仍被权威来源42拒绝，EOF后核对进程回收。","scope":"只读资料与固定宿主决策；未验证HTTP/OAuth、外部副作用撤销、LLM规划或Kairo适配器。"});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

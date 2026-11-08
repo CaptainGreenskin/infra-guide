@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="820" viewBox="0 0 1120 820" role="img" aria-labelledby="title desc">
+<title id="title">取消一个调用，与关闭整个服务分别检查</title><desc id="desc">等待进度后发取消通知，服务端处理器finally关闭文件，随后同连接查询仍成功；最后EOF退出。</desc>
+<metadata>{"cancel_notification": {"jsonrpc": "2.0", "method": "notifications/cancelled", "params": {"requestId": 8, "reason": "caller cancelled"}}, "server_cleanup": {"event": "watch_cleanup", "request_id": 8, "file_closed": true}, "after_cancel": {"task_id": "report-A", "version": 3, "batch_ids": ["late"], "values": [5], "total": 5}, "server_exit_event": true, "server_process_reaped": true, "cancelled_response_absent": true}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10" fill="none" stroke="#65778f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:20px;fill:#26364e}.title{font-size:27px;font-weight:700}.heading{font-size:21px;font-weight:650}.small{font-size:18px}.tiny{font-size:17px}.muted{fill:#5c6d85}.blue{fill:#315dce}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.5}.line{stroke:#65778f;stroke-width:2;fill:none;marker-end:url(#arrow)}.dashed{stroke-dasharray:7 6}.good{fill:#eaf6f0}.wait{fill:#fff4dc}.bad{fill:#ffeded}.soft{fill:#edf2ff}</style>
+<rect width="1120" height="820" rx="16" fill="#f8fafd"/>
+<text x="34" y="48" class="title">沿同一次调用，把停止事实逐层核对</text>
+<text x="34" y="83" class="small muted">下面是受控程序的先后关系，不是毫秒性能报告；没有外部写入或业务回滚。</text>
+<text x="40" y="137" class="heading">事件</text><text x="241" y="137" class="heading">客户端等待者</text><text x="518" y="137" class="heading">协议与服务端</text><text x="848" y="137" class="heading">实际资源</text>
+<path d="M30 157H1090" stroke="#b7c7dd" stroke-width="2"/>
+<rect x="225" y="184" width="260" height="92" rx="8" class="soft"/><rect x="507" y="184" width="310" height="92" rx="8" class="soft"/><rect x="837" y="184" width="251" height="92" rx="8" class="wait"/>
+<text x="40" y="220" class="heading">① 发出请求</text><text x="245" y="220">等待 tools/call 8</text><text x="526" y="220">watch_batch已进入</text><text x="857" y="220">来源文件已打开</text>
+<text x="245" y="253" class="small">同一连接还有其他请求</text><text x="526" y="253" class="small">发出一次真实进度</text><text x="857" y="253" class="small">处理器继续等待</text>
+<rect x="225" y="303" width="260" height="92" rx="8" class="wait"/><rect x="507" y="303" width="310" height="92" rx="8" class="wait"/><rect x="837" y="303" width="251" height="92" rx="8" class="wait"/>
+<text x="40" y="340" class="heading">② 确认已开始</text><text x="245" y="340">进度回调设置事件</text><text x="526" y="340">progressToken=8</text><text x="857" y="340">文件仍由调用持有</text>
+<text x="245" y="373" class="small">现在才取消等待作用域</text><text x="526" y="373" class="small">通知自身没有请求id</text><text x="857" y="373" class="small">尚未宣称清理完成</text>
+<rect x="225" y="422" width="260" height="92" rx="8" class="bad"/><rect x="507" y="422" width="310" height="92" rx="8" class="soft"/><rect x="837" y="422" width="251" height="92" rx="8" class="good"/>
+<text x="40" y="459" class="heading">③ 发取消通知</text><text x="245" y="459">本地等待已取消</text><text x="526" y="459">requestId=8 → 处理器取消</text><text x="857" y="459">finally关闭文件</text>
+<text x="245" y="492" class="small">SDK实际发送cancelled</text><text x="526" y="492" class="small">没有id8的结果或错误响应</text><text x="857" y="492" class="small">file_closed=true</text>
+<rect x="225" y="541" width="260" height="92" rx="8" class="good"/><rect x="507" y="541" width="310" height="92" rx="8" class="good"/><rect x="837" y="541" width="251" height="92" rx="8" class="good"/>
+<text x="40" y="578" class="heading">④ 连接继续用</text><text x="245" y="578">请求9读取late</text><text x="526" y="578">同一服务端返回5</text><text x="857" y="578">旧文件保持关闭</text>
+<text x="245" y="611" class="small">得到另一个正常结果</text><text x="526" y="611" class="small">单调用取消未杀死服务</text><text x="857" y="611" class="small">独立事件文件可核对</text>
+<rect x="225" y="660" width="260" height="92" rx="8" class="box"/><rect x="507" y="660" width="310" height="92" rx="8" class="box"/><rect x="837" y="660" width="251" height="92" rx="8" class="good"/>
+<text x="40" y="697" class="heading">⑤ 关闭连接</text><text x="245" y="697">退出stdio上下文</text><text x="526" y="697">输入EOF，服务端退出</text><text x="857" y="697">进程已被回收</text>
+<text x="245" y="730" class="small">关闭服务端标准输入</text><text x="526" y="730" class="small">留下server_stopped事件</text><text x="857" y="730" class="small">独立PID检查通过</text>
+<text x="34" y="793" class="small muted">协议取消不等于外部效果撤销；这里仅验证只读处理器、真实文件关闭与本次服务端退出。</text></svg>

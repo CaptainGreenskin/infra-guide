@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="780" viewBox="0 0 1120 780" role="img" aria-labelledby="title desc">
+<title id="title">现代与旧版，起点由协议版本决定</title><desc id="desc">真实ClientSession.discover使用2026-07-28，独立initialize连接协商2025-11-25；不是同一连接混用。</desc>
+<metadata>{"modern_first": {"jsonrpc": "2.0", "id": 1, "method": "server/discover", "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": {"name": "infra-guide-host", "version": "1.0.0"}, "io.modelcontextprotocol/clientCapabilities": {}}}}, "modern_discovery": {"_meta": {"io.modelcontextprotocol/serverInfo": {"name": "infra-guide-orders", "version": "1.0.0"}}, "ttlMs": 0, "cacheScope": "private", "supportedVersions": ["2026-07-28"], "capabilities": {"tools": {"listChanged": false}}, "resultType": "complete"}, "legacy_metadata": {"protocolVersion": "2025-11-25", "capabilities": {"tools": {"listChanged": false}}, "serverInfo": {"name": "infra-guide-orders", "version": "1.0.0"}}, "legacy_outgoing": [{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-11-25", "capabilities": {}, "clientInfo": {"name": "infra-guide-host", "version": "1.0.0"}}}, {"jsonrpc": "2.0", "method": "notifications/initialized"}, {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "read_batch", "arguments": {"task_id": "report-A", "batch_id": "base"}}}]}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10" fill="none" stroke="#65778f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:20px;fill:#26364e}.title{font-size:27px;font-weight:700}.heading{font-size:21px;font-weight:650}.small{font-size:18px}.tiny{font-size:17px}.muted{fill:#5c6d85}.blue{fill:#315dce}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.5}.line{stroke:#65778f;stroke-width:2;fill:none;marker-end:url(#arrow)}.dashed{stroke-dasharray:7 6}.good{fill:#eaf6f0}.wait{fill:#fff4dc}.bad{fill:#ffeded}.soft{fill:#edf2ff}</style>
+<rect width="1120" height="780" rx="16" fill="#f8fafd"/>
+<text x="34" y="48" class="title">两条真实连接，按各自版本规则前进</text>
+<rect x="26" y="83" width="527" height="620" rx="12" class="soft"/>
+<rect x="567" y="83" width="527" height="620" rx="12" class="box"/>
+<text x="48" y="120" class="heading blue">现代 · 2026-07-28</text><text x="590" y="120" class="heading">旧版 · 2025-11-25</text>
+<text x="48" y="155" class="small">本例主动探测；现代协议不要求握手</text><text x="590" y="155" class="small">本例另起进程，明确走初始化路径</text>
+<text x="70" y="197">客户端</text><text x="412" y="197">服务端</text><text x="611" y="197">客户端</text><text x="954" y="197">服务端</text>
+<path d="M111 214V610M452 214V610M651 214V610M992 214V610" fill="none" stroke="#b7c7dd" stroke-width="2"/>
+<path d="M113 252H448" class="line"/><text x="180" y="240" class="small">server/discover · id1</text>
+<path d="M449 310H115" class="line"/><text x="157" y="298" class="small">支持版本、服务端能力</text>
+<path d="M113 408H448" class="line"/><text x="207" y="396" class="small">tools/list · id2</text>
+<path d="M449 458H115" class="line"/><text x="222" y="446" class="small">三个工具及结构</text>
+<path d="M113 541H448" class="line"/><text x="198" y="529" class="small">tools/call · id3</text>
+<path d="M449 590H115" class="line"/><text x="201" y="578" class="small">read_batch → 37</text>
+<path d="M653 252H988" class="line"/><text x="738" y="240" class="small">initialize · id1</text>
+<path d="M989 310H655" class="line"/><text x="724" y="298" class="small">协商版本、双方能力</text>
+<path d="M653 359H988" class="line"/><text x="684" y="347" class="small">notifications/initialized</text>
+<path d="M653 408H988" class="line"/><text x="748" y="396" class="small">tools/list · id2</text>
+<path d="M989 458H655" class="line"/><text x="760" y="446" class="small">三个工具及结构</text>
+<path d="M653 541H988" class="line"/><text x="742" y="529" class="small">tools/call · id3</text>
+<path d="M989 590H655" class="line"/><text x="742" y="578" class="small">read_batch → 37</text>
+<text x="49" y="647" class="small">每个请求携带必需_meta：</text><text x="49" y="678" class="tiny">协议版本、客户端实现、客户端能力</text>
+<text x="590" y="647" class="small">先完成本连接的initialize握手</text><text x="590" y="678" class="tiny">成功响应后，客户端通知已就绪</text>
+<text x="34" y="745" class="small muted">请求id只认回相应请求；包版本mcp 2.3.0、宿主版本1.0.0与日期协议版本不是同一项。</text></svg>

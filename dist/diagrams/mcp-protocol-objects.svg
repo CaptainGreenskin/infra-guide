@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="660" viewBox="0 0 1120 660" role="img" aria-labelledby="title desc">
+<title id="title">先把四个对象放到同一张图里</title><desc id="desc">宿主包含MCP客户端，独立服务端提供工具，订单来源由独立判据核对。</desc>
+<metadata>{"source": {"task_id": "report-A", "version": 3, "batches": {"base": [10, 27], "late": [5]}}, "tools": ["read_batch", "scan_batches", "watch_batch"], "normal_total": 42, "wrong_total": 41}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10" fill="none" stroke="#65778f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:20px;fill:#26364e}.title{font-size:27px;font-weight:700}.heading{font-size:21px;font-weight:650}.small{font-size:18px}.tiny{font-size:17px}.muted{fill:#5c6d85}.blue{fill:#315dce}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.5}.line{stroke:#65778f;stroke-width:2;fill:none;marker-end:url(#arrow)}.dashed{stroke-dasharray:7 6}.good{fill:#eaf6f0}.wait{fill:#fff4dc}.bad{fill:#ffeded}.soft{fill:#edf2ff}</style>
+<rect width="1120" height="660" rx="16" fill="#f8fafd"/>
+<text x="34" y="48" class="title">MCP连接怎样进入一项真实任务</text>
+<text x="34" y="82" class="small muted">这条图只画modern连接；实际实验还另起legacy与wrong-total两份服务端。</text>
+<rect x="34" y="124" width="325" height="269" rx="12" class="box"/>
+<text x="54" y="162" class="heading">宿主 · client_lab.py</text><text x="54" y="198">目标：汇总 report-A</text>
+<rect x="54" y="223" width="285" height="112" rx="9" class="soft"/>
+<text x="73" y="254" class="heading blue">MCP客户端</text><text x="73" y="285" class="small">官方ClientSession</text><text x="73" y="316" class="small">请求、响应、进度与取消</text>
+<text x="54" y="366" class="small">保留任务目标和独立验收</text>
+<rect x="455" y="124" width="315" height="269" rx="12" class="box"/>
+<text x="475" y="162" class="heading">独立进程 · server.py</text><text x="475" y="198">MCP服务端</text>
+<rect x="475" y="223" width="275" height="112" rx="9" class="good"/>
+<text x="495" y="254" class="heading">公开工具</text><text x="495" y="285" class="small">read_batch / scan_batches</text><text x="495" y="316" class="small">watch_batch</text>
+<text x="475" y="366" class="small">验证输入，读取固定来源</text>
+<path d="M362 245H447" class="line"/><path d="M447 305H362" class="line"/>
+<text x="372" y="225" class="tiny">stdio</text><text x="369" y="285" class="tiny">JSON消息</text>
+<rect x="854" y="160" width="232" height="200" rx="12" class="box"/>
+<text x="874" y="196" class="heading">orders.json</text><text x="874" y="232">report-A / v3</text><text x="874" y="268">base：[10,27]</text><text x="874" y="304">late：[5]</text><text x="874" y="338" class="small">独立权威输入</text>
+<path d="M776 259H845" class="line"/><text x="783" y="238" class="tiny">只读</text>
+<path d="M966 371V460H195V405" class="line dashed"/><text x="430" y="449" class="small">宿主另行读取来源，核对版本、值和总数</text>
+<rect x="34" y="500" width="1052" height="118" rx="12" class="soft"/>
+<text x="54" y="535" class="heading">三种信息，各有自己的职责</text>
+<text x="54" y="569">请求id：认回一次响应</text><text x="416" y="569">task_id：说明业务目标</text><text x="789" y="569">来源与判据：核对42</text>
+<text x="54" y="601" class="small muted">同一个进程或相同clientInfo不构成认证；连接也不保存隐含对话或任务身份。</text></svg>

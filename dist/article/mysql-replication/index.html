@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="从InnoDB行版本、读视图和复制进度，走到GTID准入、旧写隔离与双实例受控切换。">
+<meta name="theme-color" content="#315dce"><title>MySQL复制与切换：先解释旧读，再证明谁能写 · InfraGuide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=91d76baa3a46"><script defer src="runtime-01.js?v=b87d39227c29"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=0ee1e2414992"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=9d9efd1c4234"></script><script defer src="reading-comfort.js?v=957da22bcd26"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=7e5cc054c4aa"></script>
+
+
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-replication/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="MySQL复制与切换：先解释旧读，再证明谁能写 · InfraGuide"><meta property="og:description" content="从InnoDB行版本、读视图和复制进度，走到GTID准入、旧写隔离与双实例受控切换。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-replication/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MySQL复制与切换：先解释旧读，再证明谁能写","description":"从InnoDB行版本、读视图和复制进度，走到GTID准入、旧写隔离与双实例受控切换。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-replication/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-replication/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<body>
+<a class="skip" href="/article/mysql-replication/#main">跳到主要内容</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="/" aria-label="InfraGuide 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 24h17a6 6 0 0 0 0-12A9 9 0 0 0 8 10a7 7 0 0 0 0 14Z"/></svg><span>Infra<span class="brand-light"> Guide</span></span></a>
+<nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
+<div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
+</div></header>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>Cloud Infra · 目录</span><span>35 章 + 1 实战</span></div><details ><summary><a href="/article/linux-resource/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" >P0.1 进程、线程与资源：为什么机器空闲，程序仍然很慢</a><a href="/article/virtual-memory-oom/" >P0.2 虚拟内存与 OOM：导出任务为什么被终止</a><a href="/article/concurrency-pools/" >P0.3 并发与线程池：锁、排队和容量</a><a href="/article/distributed-systems/" >P0.4 超时、重试与幂等：系统最难处理的是“结果未知”</a></div></details><details ><summary><a href="/article/cloud-overview/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" >C1.1 云计算架构：服务模型、资源与责任边界</a><a href="/article/cloud-compute/" >C1.2 计算资源：虚拟化、规格与容量预算</a></div></details><details ><summary><a href="/article/vpc-network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" >C2.1 云网络：DNS、路由、访问控制与返回路径</a><a href="/article/network-diagnosis/" >C2.2 网络诊断：连接、首字节与传输时序</a><a href="/article/tcp-event-loop/" >C2.3 TCP与I/O：从连接、字节流到epoll事件循环</a></div></details><details open><summary><a href="/article/training-storage/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" >C3.1 云存储：块、文件、对象与访问性能</a><a href="/article/database-index-locks/" >C3.2 数据库访问：索引、事务与锁等待</a><a href="/article/cache-consistency/" >C3.3 缓存一致性与击穿：旧值为何重新出现</a><a href="/article/storage-recovery/" >C3.4 存储发布与恢复：版本、提交点与校验</a><a href="/article/mysql-recovery/" >C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a><a href="/article/mysql-replication/" class="current" aria-current="page">C3.6 MySQL复制与切换：先解释旧读，再证明谁能写</a></div></details><details ><summary><a href="/article/container-runtime/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" >C4.1 容器运行原理：镜像、进程、隔离与资源</a><a href="/article/kubernetes-basics/" >C4.2 Kubernetes 控制面：对象、调谐与生命周期</a><a href="/article/k8s-workloads/" >C4.3 Kubernetes 工作负载：从声明到可用与滚动更新</a><a href="/article/scheduling-resources/" >C4.4 Kubernetes 调度：资源、亲和与拓扑约束</a><a href="/article/k8s-networking/" >C4.5 Kubernetes 网络：从 DNS、Service 到容器回包</a><a href="/article/k8s-storage/" >C4.6 Kubernetes 存储：PVC、拓扑、挂载与数据恢复</a><a href="/article/config-secrets/" >C4.7 配置与密钥：传播、重读与版本生效</a><a href="/article/k8s-autoscaling/" >C4.8 Kubernetes 弹性：HPA、节点容量与排队预算</a><a href="/article/control-plane-consensus/" >C4.9 控制面协调存储：从多数派提交到观察与恢复</a></div></details><details ><summary><a href="/article/serverless-execution/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" >C5.1 Serverless 与事件驱动：执行、重试、幂等与成本</a><a href="/article/message-delivery/" >C5.2 消息投递与确认：从入队、处理到业务完成</a></div></details><details ><summary><a href="/article/delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" >C6.1 平台交付：制品、配置、数据迁移与回退</a><a href="/article/terraform-state/" >C6.2 Terraform状态与漂移：配置、锁、刷新和资源归属</a><a href="/article/gitops-reconciliation/" >C6.3 GitOps调谐：从Git期望到对象、进程与业务结果</a></div></details><details ><summary><a href="/article/iam-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" >C7.1 身份与最小权限：谁能让系统做什么</a></div></details><details ><summary><a href="/article/elasticity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" >C8.1 容量与弹性：故障域、扩容时序与排队</a></div></details><details ><summary><a href="/article/slo/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" >C9.1 可靠性目标：SLI、SLO 与错误预算</a><a href="/article/observability/" >C9.2 可观测性：用指标定位范围，用日志和追踪解释路径</a><a href="/article/incident/" >C9.3 故障诊断：影响、时间线、假设与验证</a><a href="/article/resilience/" >C9.4 恢复工程：故障域、RPO、RTO 与演练</a></div></details><details ><summary><a href="/article/cloud-service-lab/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/cloud-service-lab/" >S2 综合实战：一个服务的探针、版本发布与指标验证</a></div></details>
+  <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 36</b></div>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/cloud-data/">云存储与数据服务</a><span>／</span><span>C3.6</span></div><div class="article-meta"><span class="category">云存储与数据服务</span><span>机制 + 原生实验</span><span>·</span><span>复制与切换 · 2026.11.08</span></div><h1>C3.6 MySQL复制与切换：先解释旧读，再证明谁能写</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先确定同一个数据库里读到哪一版</h3><p>事务把一组数据库操作放进约定的提交范围。更新可能留下不同的行版本，读视图决定本次普通一致读应选哪些已提交版本；同一实例上的旧读，不能直接解释成远端副本落后。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>再区分另一份数据库收到什么、应用了什么</h3><p>复制把源端的事务记录送往副本，接收和应用是两个阶段。GTID是标识一项事务的全局编号；比较收到与已执行的编号集合，才能判断某项写入是否已经进入副本可查询的状态。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>最后决定新的写入由谁接受</h3><p>切换改变服务读写指向。先停止旧端接收新的业务写入，固定最终提交集合，再核对候选已经应用、隔离旧实例，新端才可承接写入。本章把读视图、复制停顿和有计划切换放进同一组真实数据库结果，不用副本数量代替恢复证据。</p></section></section><p class="description">从InnoDB行版本、读视图和复制进度，走到GTID准入、旧写隔离与双实例受控切换。</p><div class="tag-row"><span class="tag">InnoDB</span><span class="tag">MVCC</span><span class="tag">GTID</span><span class="tag">复制</span><span class="tag">受控切换</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约50分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>解释同一实例的快照旧读与副本应用落后，选择对应的检查方法。</li><li>沿接收、应用和业务读取核对GTID目标，说明等待成功与失败各允许做什么。</li><li>用真实双实例结果核对旧写拒绝、完整回执、新实例继续写入，并界定计划切换的条件。</li></ul><p><b>前置知识</b>先读索引与事务、存储恢复和MySQL日志恢复；会区分事务提交、binlog与业务回执。</p><ul class="prerequisite-links"><li><a href="/article/mysql-recovery/">C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a>：提交日志、恢复坐标与连续变化记录，继续连接副本应用和新写资格。</li><li><a href="/article/database-index-locks/">C3.2 数据库访问：索引、事务与锁等待</a>：普通一致读与事务提交先确定，才能分开行版本旧读和副本落后。</li></ul><p class="evidence-note">约 50 分钟 · MySQL 8.4.13 · 单机Docker双实例 · Python标准库 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/cloud-data/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/mysql-replication/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/mysql-replication/#section-1">1. 从一行数据，分清提交、版本与读视图</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-1g0a9o4" href="/article/mysql-replication/#subsection-1-1g0a9o4">用一组事务号，把“可见”变成可判断的规则</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/mysql-replication/#section-2">2. 用两条真实连接理解RR与RC</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-yifrop" href="/article/mysql-replication/#subsection-2-yifrop">RR保留首次普通一致性读建立的视图</a><a class="chapter-toc-level-3" data-toc="subsection-2-197pyo7" href="/article/mysql-replication/#subsection-2-197pyo7">RC在每条普通一致性读时取得新视图</a><a class="chapter-toc-level-3" data-toc="subsection-2-xdwl6j" href="/article/mysql-replication/#subsection-2-xdwl6j">把时间线对应到A/B角色的SQL</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/mysql-replication/#section-3">3. 把一次源提交放进复制链</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/mysql-replication/#section-4">4. GTID记录事务身份，集合表达应用目标</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-1lauqe1" href="/article/mysql-replication/#subsection-4-1lauqe1">从单个事务身份到一组已完成工作</a><a class="chapter-toc-level-3" data-toc="subsection-4-1vn9znl" href="/article/mysql-replication/#subsection-4-1vn9znl">等待对象是明确集合，不是“落后大概为零”</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/mysql-replication/#section-5">5. 旧读要分别查事务视图和复制应用</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/mysql-replication/#section-6">6. 计划切换：先收回旧写，再追齐与开放新写</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/mysql-replication/#section-7">7. 读副本、分片与热点，各解决哪种容量问题</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/mysql-replication/#section-8">8. 沿完整程序核对读视图、复制和交接</a></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/mysql-replication/#section-9">9. 把图上的边界变成面试追问</a></div></details><p class="intro">数据库已经提交，另一次查询为什么还读到旧值？先沿单实例中的行版本理解读取，再把同一笔提交放到两个实例之间，最后讨论谁有资格接收新写入。</p><p class="article-context-link" id="core-knowledge"><a href="/module/cloud-data/">本领域系统知识：云存储与数据服务 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>从一行数据，分清提交、版本与读视图</h2><p>前一章说明提交事实怎样依靠日志恢复。本章继续看读取：InnoDB是一种事务存储引擎；一个逻辑行可以对应多个历史版本。事务把余额从100改为110时，其他正在读取的事务未必都应立即看见110。</p><p>多版本并发控制（MVCC）让普通查询按规定选择可见版本。更新后的行带有修改它的事务信息，<span class="first-concept-term" data-concept-term="undo">undo<span class="concept-term-meaning">（撤销信息，用于回滚及引擎支持的历史版本读取）</span></span>记录保存回滚与重建旧版本所需的信息；读取需要旧版本时，沿这些历史信息构造相应结果。undo不是另一条用来复制所有业务的<span class="first-concept-term" data-concept-term="binlog">binlog<span class="concept-term-meaning">（MySQL的二进制日志，用于其支持的复制与恢复流程）</span></span>。</p><p>读视图是一次一致性读取使用的可见性规则：它区分在其建立时已经提交的事务、仍活动的事务及之后的事务。判断依靠事务身份与活动集合等状态，不是简单比较两次查询的墙钟时间。这里的普通一致性读，就是没有FOR UPDATE或FOR SHARE的相应SELECT。</p><div class="table-wrap"><table><thead><tr><th>对象</th><th>回答的问题</th><th>本章中的位置</th></tr></thead><tbody><tr><td>事务提交</td><td>这组修改是否已经完成提交</td><td>写连接的+10或+20及对应回执共同提交</td></tr><tr><td>行版本与undo</td><td>旧值如何被重建，哪些变化属于哪个事务</td><td>100、110、130的版本关系</td></tr><tr><td>读视图</td><td>本次普通查询允许看见哪些版本</td><td>RR与RC对视图寿命的不同规定</td></tr><tr><td>复制进度</td><td>另一个实例已经收到、应用了哪些提交</td><td>后文135与142的差别</td></tr><tr><td>写入资格</td><td>现在允许哪个实例接收新的业务修改</td><td>受控切换时的拒绝、追齐和停止旧源</td></tr></tbody></table></div><p>这五项沿因果连接，却不是同一个状态。“源端已经提交”不能自动推出“所有副本已应用”，副本已应用也不能自动替换某个旧读事务的视图。先把单实例里的规则讲清，再把实例数量增加。</p><h3 id="subsection-1-1g0a9o4">用一组事务号，把“可见”变成可判断的规则</h3><p>另外设一组便于手算的内部事务号：视图建立时，下一个可分配事务号为50，其他仍活动的读写事务为42、45，读者自己的事务号为48。对一份行版本，先看它由哪个事务修改；若不可见，再沿undo寻找更早的可见版本。</p><div class="table-wrap"><table><thead><tr><th>行版本的修改事务号</th><th>对这份视图是否可见</th><th>原因</th></tr></thead><tbody><tr><td>41</td><td>可见</td><td>比最早仍活动的42更早，属于该视图之前已完成的范围</td></tr><tr><td>42</td><td>不可见</td><td>建立视图时仍活动；它之后再提交，也不改写这份旧视图</td></tr><tr><td>47</td><td>可见</td><td>小于50，且不在当时的活动集合中</td></tr><tr><td>50</td><td>不可见</td><td>落在视图建立以后分配的范围</td></tr><tr><td>48（当前读者自己）</td><td>自身修改可见</td><td>当前事务自己的修改有专门的可见性处理</td></tr></tbody></table></div><p>这张表解释的是8.4.13的ReadView判断关系，事务号是教学题设，并非后文实验读取的内部字段。InnoDB事务号与复制GTID是两套身份，不能把41、42或50填入GTID等待函数。下一节回到真实<span class="first-concept-term" data-concept-term="SQL">SQL<span class="concept-term-meaning">（向关系数据库表达查询与更新的一种语言）</span></span>，观察这些规则怎样决定账户的返回值。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>用两条真实连接理解RR与RC</h2><h3 id="subsection-2-yifrop">RR保留首次普通一致性读建立的视图</h3><p>REPEATABLE READ（RR，可重复读）通常让同一事务内的普通一致性读复用首次此类读取建立的视图。START TRANSACTION只是开始事务；本例没有使用WITH CONSISTENT SNAPSHOT，因此开始事务与第一次读表之间仍可能有其他提交。</p><p>账户初始为100。读连接A先开始RR事务，写连接B提交+10，A才第一次查询，所以A看见110。B再提交+20，源的当前值已经是130；A在原事务内第二次普通查询仍为110。A提交自己的读事务，下一次读取建立新视图，才读到130。</p><h3 id="subsection-2-197pyo7">RC在每条普通一致性读时取得新视图</h3><p>READ COMMITTED（RC，读已提交）在同一事务的每条普通一致性读使用新的视图。本例RC连接先看见130；写连接提交+5以后，RC事务中的第二次普通查询看见135。两种隔离级别都没有读取另一个事务尚未提交的余额。</p><figure class="training-figure"><a href="diagrams/mysql-replication-views.svg" target="_blank" rel="noopener" aria-label="放大：真实连接上的读取时间线：RR为110、110、130；RC为130、135。开始事务和首次读表是两个时刻。"><img src="diagrams/mysql-replication-views.svg" width="1120" height="820" loading="lazy" alt="真实连接上的读取时间线：RR为110、110、130；RC为130、135。开始事务和首次读表是两个时刻。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实连接上的读取时间线：RR为110、110、130；RC为130、135。开始事务和首次读表是两个时刻。</figcaption></figure><div class="table-wrap"><table><thead><tr><th>观察</th><th>RR实际返回</th><th>RC实际返回</th><th>应检查的边界</th></tr></thead><tbody><tr><td>首次普通读取</td><td>110</td><td>130</td><td>视图分别在各自实验的这个位置建立</td></tr><tr><td>另一写连接提交后，同一事务再读</td><td>110</td><td>135</td><td>视图是复用还是重新取得</td></tr><tr><td>结束RR读事务后再读</td><td>130</td><td>此对照无需额外读取</td><td>旧视图的寿命到事务结束为止</td></tr></tbody></table></div><p>程序把连接ID一起写入结果，防止“其实每次换了新连接”冒充同一事务。RR与RC使用同一账户顺序执行，初始余额分别不同，图中明确标注；不能把两段时间线的第一次读误当成同一时刻。</p><p>当前事务自己的修改另有可见性规则，普通SELECT也不能概括UPDATE、DELETE或锁定读的全部行为。SELECT FOR UPDATE是带锁的读取，需要结合当前记录、访问路径和锁等待解释；本例没有把它混进普通一致性读的对照。长时间持有旧视图还可能延长历史版本的保留，增加undo清理压力；应从事务寿命和实际负载检查，而不是看到旧读就修改复制参数。</p><h3 id="subsection-2-xdwl6j">把时间线对应到A/B角色的SQL</h3><p>下面按读角色A、写角色B重排完整程序中已经执行的语句，供就地跟读。完整程序的Session保持读连接；每次Lab.change另开写连接，并把余额修改与回执放进同一事务。RC部分另建一个读连接。注释指出每一步属于谁，不能把整段交给同一个连接顺序执行来验证并发；实际运行使用第8节的完整Python程序。</p><p>本段从新建账户100、空回执表开始。先看RR的110→110→130，再接RC的130→135。JSON_OBJECT只把余额、连接ID和隔离级别包装为可核对的返回值，访问account的仍是普通一致性读。</p><div class="code-block"><div class="code-toolbar"><span>已执行程序的SQL跟读版 · 按注释区分A/B角色 <small>SQL</small></span><button data-copy-code aria-label="复制 已执行程序的SQL跟读版 · 按注释区分A/B角色">复制代码</button></div><pre tabindex="0"><code>-- 按完整程序的执行顺序，交替查看读角色A与写角色B。
+-- 本段起点：account(id=1).balance=100，receipt为空。
+-- A：RR读连接，先开始事务，暂不读表。
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+START TRANSACTION;
+
+-- B：Lab.change(source,&#39;BEFORE_FIRST_READ&#39;,10)的完整事务。
+START TRANSACTION;
+UPDATE replica_lab.account SET balance=balance+(10) WHERE id=1;
+INSERT INTO replica_lab.receipt VALUES (&#39;BEFORE_FIRST_READ&#39;,10);
+COMMIT;
+
+-- A：Session.balance()中的普通SELECT；首次读到110。
+SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),
+                   &#39;isolation&#39;,@@transaction_isolation)
+FROM replica_lab.account WHERE id=1;
+
+-- B：+20与其回执一起提交，当前源余额成为130。
+START TRANSACTION;
+UPDATE replica_lab.account SET balance=balance+(20) WHERE id=1;
+INSERT INTO replica_lab.receipt VALUES (&#39;AFTER_FIRST_READ&#39;,20);
+COMMIT;
+
+-- A：原RR事务仍读110；结束后再读130。
+SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),
+                   &#39;isolation&#39;,@@transaction_isolation)
+FROM replica_lab.account WHERE id=1;
+COMMIT;
+SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),
+                   &#39;isolation&#39;,@@transaction_isolation)
+FROM replica_lab.account WHERE id=1;
+
+-- 关闭原A，另开RC读连接；仍称读角色A。
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+START TRANSACTION;
+SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),
+                   &#39;isolation&#39;,@@transaction_isolation)
+FROM replica_lab.account WHERE id=1; -- 130
+
+-- B：Lab.change(source,&#39;RC_UPDATE&#39;,5)仍保证两表共同提交。
+START TRANSACTION;
+UPDATE replica_lab.account SET balance=balance+(5) WHERE id=1;
+INSERT INTO replica_lab.receipt VALUES (&#39;RC_UPDATE&#39;,5);
+COMMIT;
+
+-- A：同一个RC事务的下一次普通读取得新视图，返回135。
+SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),
+                   &#39;isolation&#39;,@@transaction_isolation)
+FROM replica_lab.account WHERE id=1;
+COMMIT;</code></pre></div></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>把一次源提交放进复制链</h2><p>源实例接收本章的业务写入；副本实例从源取回变化，再在本地应用。这里讨论的是异步复制：源完成自己的提交后即可向客户端确认，不能由这个确认推断副本已经接收或应用。</p><p>binlog是服务器层的事务事件流。源上的发送<span class="first-concept-term" data-concept-term="线程">线程<span class="concept-term-meaning">（进程中的一条执行路径）</span></span>把事件发给副本；副本的<span class="first-concept-term" data-concept-term="I/O">I/O<span class="concept-term-meaning">（输入与输出，例如读文件和收发网络数据）</span></span>接收线程取回事件并写入relay log（中继日志）；应用线程再读取这些事件，推进副本数据。多线程应用还会增加协调与工作线程；本实验配置一个应用<span class="first-concept-term" data-concept-term="worker">worker<span class="concept-term-meaning">（承担相应工作的执行者，具体可以是进程或其他运行单元）</span></span>，便于检查先后关系。</p><div class="table-wrap"><table><thead><tr><th>阶段</th><th>持有的事实</th><th>仍不能推出什么</th></tr></thead><tbody><tr><td>源提交</td><td>源账户与业务回执已经提交</td><td>副本已经获得这次变化</td></tr><tr><td>副本接收</td><td>该复制通道已经收到相应GTID事件</td><td>副本查询可以看见该业务</td></tr><tr><td>副本应用</td><td>事务已在副本执行进度中</td><td>某个旧RR读视图已被替换</td></tr><tr><td>副本查询</td><td>这个连接和事务实际返回了数据</td><td>其他连接必然使用同一视图</td></tr><tr><td>写入口开放</td><td>控制逻辑允许向候选目标发新写入</td><td>旧实例已经失去写入能力</td></tr></tbody></table></div><p>复制延迟可能出现在取回、落盘、应用或查询所处的不同阶段。本例只停SQL应用线程，保留接收线程运行，让“收到了却没读到”的边界可直接观察。接收集合本身不是宿主机断电后的持久化验收；日志同步策略、存储和故障条件仍需另外验证。</p><p>半同步复制是在源确认路径上增加副本接收确认的一类模式，确认边界仍需要看具体配置；接收确认不等于所有副本都已应用。本实验按前述异步链运行；半同步在这里用于区分接收与应用的确认条件。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>GTID记录事务身份，集合表达应用目标</h2><h3 id="subsection-4-1lauqe1">从单个事务身份到一组已完成工作</h3><p>本章使用的全局事务标识GTID采用默认的“来源服务器UUID:事务序号”形式。UUID用来区分事务来源，序号标记该来源中的事务身份；它不是磁盘字节位置，也不是业务操作ID。一个实例可能接收不同来源的事务，因此进度表达为GTID集合。</p><p>例如用S简写一个来源UUID，S:1-8表示该来源的1到8号事务；S:1-5:8表示还缺6与7，不能仅比较最大的数字8。这个S只是讲解用缩写，不能直接送给MySQL函数。实际程序使用每次初始化产生的完整UUID和集合。</p><p>本章把源提交+7后记录的目标叫G₁；停止旧写以后，另取最终交接目标G₂。两次取值的时机不同，不能混用。实际运行还揭示一个准备条件：官方镜像启动副本时，已经存在它自己UUID下的初始化事务。程序在创建本题业务、开始复制之前，把这一可信初始集合记为B。切换时，目标只允许含G₂与已知B中的事务，并分别核对缺少和多出。不能先看到额外事务，再事后把它们全部命名为“初始化”；同一副本UUID下以后出现的新事务，也不能自动并入B。</p><div class="table-wrap"><table><thead><tr><th>状态或函数</th><th>含义</th><th>本章的用法</th></tr></thead><tbody><tr><td>Retrieved_Gtid_Set</td><td>这个复制通道已接收到的事务集合</td><td>确认源的目标已取回</td></tr><tr><td>@@GLOBAL.gtid_executed / Executed_Gtid_Set</td><td>服务器已执行的GTID集合</td><td>确认目标事务已应用；注意可能含其他来源</td></tr><tr><td>GTID_SUBSET(目标,执行集合)</td><td>目标中每个GTID是否都在执行集合内</td><td>检查覆盖关系，返回1或0</td></tr><tr><td>GTID_SUBTRACT(集合A,集合B)</td><td>A里有哪些事务不在B内</td><td>查缺少或额外历史，不能只看覆盖</td></tr><tr><td>WAIT_FOR_EXECUTED_GTID_SET(目标,正数秒)</td><td>在给定时间内等待目标全部执行</td><td>0是成功，1是超时；其他失败应检查错误</td></tr></tbody></table></div><h3 id="subsection-4-1vn9znl">等待对象是明确集合，不是“落后大概为零”</h3><p>本例在源提交+7以后读出一份目标集合G₁，副本接收集合覆盖G₁，但执行集合不覆盖G₁。等待G₁、最多1秒，返回1。副本当前新查询仍为135，而源为142；这一结果足以拒绝本题的提前放开新写。</p><p>恢复应用后，最多25秒的等待返回0，接着用新查询核对账户和回执。时间窗口是测试上限，不是承诺复制在生产中25秒必定完成。函数的0秒或省略超时表示无限等待，不是“立即看看”；程序明确只传正数。</p><p>Seconds_Behind_Source是一个诊断信号，受线程和时间等条件影响；它不是按某一写请求建立的完成凭据。要确认读到某次写入，可把该次写入对应的GTID目标交给实际读取候选，限时等待并检查结果，再建立合适的读事务。超时后选择回源、返回重试提示或失败，要由业务的时延和一致性约定决定。</p></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>旧读要分别查事务视图和复制应用</h2><figure class="training-figure"><a href="diagrams/mysql-replication-pipeline.svg" target="_blank" rel="noopener" aria-label="放大：源为142、副本新查询为135；接收线程运行、应用线程暂停，目标G₁已收到但尚未应用。"><img src="diagrams/mysql-replication-pipeline.svg" width="1120" height="840" loading="lazy" alt="源为142、副本新查询为135；接收线程运行、应用线程暂停，目标G₁已收到但尚未应用。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>源为142、副本新查询为135；接收线程运行、应用线程暂停，目标G₁已收到但尚未应用。</figcaption></figure><div class="table-wrap"><table><thead><tr><th>表现</th><th>事实来自哪里</th><th>有效检查</th><th>不能替代的动作</th></tr></thead><tbody><tr><td>同一源实例，RR两次读110</td><td>旧读视图仍然有效，源当前已为130</td><td>连接ID、隔离级别、首次读与事务结束位置</td><td>反复等副本复制</td></tr><tr><td>副本新查询135，源142</td><td>+7已收到却未应用</td><td>接收/执行集合、线程状态、等待函数返回</td><td>单纯重连副本</td></tr><tr><td>副本已应用到G₁，旧RR事务仍旧读</td><td>应用完成与视图建立存在先后</td><td>结束旧视图或按契约采用新的读取</td><td>看到WAIT返回0就忽略当前事务</td></tr><tr><td>结果来自缓存而非数据库</td><td>应用还有另一份已缓存状态</td><td>确认真正读取路径、缓存版本和失效条件</td><td>把缓存返回当作数据库查询证据</td></tr></tbody></table></div><p>第三行是把前两条机制连起来的推论，不是本次脚本新增的一组副本RR测量。先说清证据和推理的边界，再设计需要补做的实验。缓存的版本与回填问题继续读<a href="/article/cache-consistency/">缓存一致性</a>；复制线程的应用进度无法替它自动处理旧<span class="first-concept-term" data-concept-term="缓存">缓存<span class="concept-term-meaning">（保存可复用内容的一份中间结果，减少重复读取或计算）</span></span>。</p><p>业务要求“我刚写过，随后必须读到”时，至少要明确：写确认来自哪个实例，候选副本要覆盖哪个目标，读取在哪个事务中发生，等待超过期限怎么办。读写分离只是流量分配方式，不能单凭“读走副本”推出某种一致性保证。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>计划切换：先收回旧写，再追齐与开放新写</h2><p>计划切换发生在旧源仍可联系、可以安排停止写入的条件下。本章先撤销旧业务账号的写权限，再设置super_read_only，实际发起写请求核对拒绝，随后记录冻结后的最终源目标G₂。到此才能把“追齐某个目标”变成有限问题；如果源还在不断接受新写，先前记录的G₁并不是最终交接点。撤销权限等管理变化也可能形成事务，最终交接集合要在冻结后实际取得；余额同为142，不等于GTID集合相同。</p><p>read_only限制普通客户端写入，但某些有管理权限的连接仍有例外；super_read_only进一步限制相应管理连接的客户端更新。复制应用线程仍可执行复制变化，且这些实例级开关不会自动复制成另一实例的同值设置。有权限的管理员也可以重新关闭开关，所以这不是能在任意网络分区下强制隔离旧写的完整机制。</p><figure class="training-figure"><a href="diagrams/mysql-replication-switch.svg" target="_blank" rel="noopener" aria-label="放大：本题的五道交接条件：收回旧写、取得冻结目标、候选追齐、停止旧实例、最后开放新写。"><img src="diagrams/mysql-replication-switch.svg" width="1120" height="880" loading="lazy" alt="本题的五道交接条件：收回旧写、取得冻结目标、候选追齐、停止旧实例、最后开放新写。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>本题的五道交接条件：收回旧写、取得冻结目标、候选追齐、停止旧实例、最后开放新写。</figcaption></figure><div class="table-wrap"><table><thead><tr><th>交接条件</th><th>本次怎样实际检查</th><th>失败时保持什么状态</th></tr></thead><tbody><tr><td>旧写停止</td><td>撤销业务写权限；super_read_only；业务与管理员写都尝试并被拒绝</td><td>不开放候选新写</td></tr><tr><td>候选包含最终源目标</td><td>正数超时等待G₂成功；核对实际账户和完整回执</td><td>继续等待或终止这次切换</td></tr><tr><td>业务历史一致</td><td>两边读取账户、操作ID集合与每笔增量；GTID只允许G₂与先验B</td><td>不因一个余额相同而放行</td></tr><tr><td>旧执行实例不能继续写</td><td>真实停止本次创建的旧<span class="first-concept-term" data-concept-term="容器">容器<span class="concept-term-meaning">（将应用进程、所需文件及相应隔离与资源约束组织起来的运行实例）</span></span>，查Running=false及旧端写失败</td><td>不把入口已改名当成旧写隔离</td></tr><tr><td>新实例接管后能继续业务</td><td>停止旧复制通道、明确新端权限，再提交唯一NEW_WRITER +3</td><td>保留冻结与错误证据，按既定方案处理</td></tr></tbody></table></div><p>fencing指让已经失去资格的旧执行者无法继续影响受保护资源。这里仅对自己创建的旧容器兑现：硬停止该容器，然后才开放新端。生产中若旧主失联但仍可能服务另一批客户端，需要与平台、网络、存储或资源端授权结合设计可兑现的隔离；“连不上它”本身不是停止证明。</p><p>本例没有业务代理或<span class="first-concept-term" data-concept-term="DNS">DNS<span class="concept-term-meaning">（域名系统，把名称查询成相应记录）</span></span>入口切流，客户端由脚本直接选择明确的实例。它也没有模拟旧源失联时的自动故障切换。后者可能拿不到最终已确认历史，应先说明允许的数据丢失窗口<span class="first-concept-term" data-concept-term="RPO">RPO<span class="concept-term-meaning">（恢复点目标，约束允许的数据丢失窗口）</span></span>、可接受的恢复时间<span class="first-concept-term" data-concept-term="RTO">RTO<span class="concept-term-meaning">（恢复时间目标，约束恢复到约定服务状态所需时间）</span></span>和可获得的证据，不能把这组受控计划切换外推成任意故障零丢失。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>读副本、分片与热点，各解决哪种容量问题</h2><p>增加读副本可以把允许读取副本的查询分散出去，但新增写入仍须经过相应写入规则，复制应用本身也要消耗资源。单个写热点、重复应用的成本与一致性要求，不会因为副本数量增加而自动消失。</p><p>分片是把不同数据放到不同实例或实例组。分片键决定一条记录归属哪片，路由规则把请求送到拥有它的目标；每片内部的索引再定位具体行。按范围切分便于连续范围访问，却可能让最新区间很热；按散列分配通常更容易分散大量不同键，但范围查询可能需要多片汇总。</p><p>下面声明各次请求的成本相同，单片在这组固定负载下可完成600次/秒；只比较路由后的工作分布，新增汇总和跨片事务成本另算。</p><div class="table-wrap"><table><thead><tr><th>规则与题设</th><th>推导</th><th>要付出的代价</th></tr></thead><tbody><tr><td>按tenant_id路由；T1为800请求/秒，T2/T3各100</td><td>即使有4片，T1仍可能单独压在一片；总量1000不能简单除4</td><td>增加片数不等于拆开同一个热租户</td></tr><tr><td>声明单片可承受600请求/秒</td><td>T1的800超过单片假设上限；其他片有空闲也不能直接代它读本地数据</td><td>先核对访问单位、写路径和可移动数据</td></tr><tr><td>把T1按账户子键拆成两组，各400请求/秒</td><td>两组在题设中都低于600，才有新的可行放置</td><td>租户范围查询需要汇合，跨组修改需要新的事务安排</td></tr><tr><td>同一账户本身承受800次串行余额更新</td><td>按账户键散列后仍是同一个热键</td><td>需要评估业务是否允许合并、批量或改变写入模型</td></tr></tbody></table></div><p>这些数字是声明的容量算例，没有运行分布式分片基准。跨片转账涉及两个数据拥有者的共同提交；原来一个InnoDB事务的原子性不能直接覆盖两个独立实例。全局唯一约束、关联查询、迁移期间的路由版本与重复写入，都要重新设计。</p><p>MySQL表分区把一张表按规则拆成内部存储部分；它不自动提供跨独立服务器的分片路由、全局事务与故障切换。选型前先画清“分的是表内存储、不同实例的数据，还是同一数据的副本”。</p></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>沿完整程序核对读视图、复制和交接</h2><div id="mysql-replication-run"><p>完整实验只用Python标准库调用Docker与mysql客户端，不需要真实业务账号或外部数据库。它创建两个隔离MySQL实例，所有数据与密码均为本地教学夹具；不暴露宿主机端口。每个容器内存上限1GiB，首次镜像下载时间另计。</p><p>服务器固定为MySQL 8.4.13的官方镜像摘要；完整摘要、实际image ID与两个server UUID写入执行记录。脚本同时记录自身SHA256，网页、源码包与图都以这一份实际运行绑定。</p><div class="code-block"><div class="code-toolbar"><span>下载并解压完整mysql-replication目录，在该目录执行 <small>SHELL</small></span><button data-copy-code aria-label="复制 下载并解压完整mysql-replication目录，在该目录执行">复制代码</button></div><pre tabindex="0"><code>python3 -B replication_lab.py --output mysql-result.json
+python3 -m json.tool mysql-result.json</code></pre></div><p><a href="labs/mysql-replication.zip" download>下载完整实验包 →</a> · <a href="labs/mysql-replication/README.md">逐步解释与运行条件</a> · <a href="labs/mysql-replication/replication_lab.py">完整程序</a> · <a href="labs/mysql-replication/validation.json">实际执行与CI来源</a>。输出是本次真实读数；UUID和事务序号随初始化改变，应比较关系与业务结果，不照抄固定GTID坐标。</p><div class="table-wrap"><table><thead><tr><th>源码入口</th><th>把哪条机制落实到对象</th><th>应核对什么</th></tr></thead><tbody><tr><td>Session.request与balance</td><td>一个mysql子进程维持一条实际连接</td><td>两次读取连接ID相同，RR/RC返回值不同</td></tr><tr><td>Lab.change</td><td>账户修改与唯一回执在一个事务提交</td><td>不出现只改余额却缺少同笔回执</td></tr><tr><td>replication_status、wait_gtid</td><td>分别观察接收/应用，再等明确目标集合</td><td>应用暂停时1秒等待返回1，恢复后正数等待返回0</td></tr><tr><td>受控切换段</td><td>撤销写、冻结目标、核对候选、停止旧容器、开放新写</td><td>步骤顺序及真实旧写拒绝，而非只修改一个状态标识</td></tr><tr><td>oracle与state</td><td>重新读取实际账户和每笔回执</td><td>初始100加五笔增量为145，所有操作恰好一次</td></tr></tbody></table></div><details class="knowledge-check"><summary>展开完整replication_lab.py：与下载文件逐字一致</summary><div class="code-block"><div class="code-toolbar"><span>replication_lab.py · 两个真实MySQL实例 <small>PYTHON</small></span><button data-copy-code aria-label="复制 replication_lab.py · 两个真实MySQL实例">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Two real MySQL 8.4.13 servers: read views, apply lag and a planned switchover.
+
+Python 3.9+ and a Linux Docker daemon. Synthetic data, no published ports.
+Creates and removes only the resources whose IDs this process created.
+This is not a production failover controller, proxy or fencing service.
+&quot;&quot;&quot;
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import re
+import selectors
+import subprocess
+import tempfile
+import time
+import uuid
+import xml.etree.ElementTree as ET
+from urllib.parse import urlsplit
+
+
+IMAGE = &#39;mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902&#39;
+VERSION = &#39;8.4.13&#39;
+ROOT_PASSWORD = &#39;isolated-guide-root&#39;
+WRITER_PASSWORD = &#39;isolated-guide-writer&#39;
+REPL_PASSWORD = &#39;isolated-guide-replica&#39;
+DB = &#39;replica_lab&#39;
+
+
+def validate_local_endpoint(value):
+    &quot;&quot;&quot;Pure guard: refuse TCP/SSH and nonlocal/malformed unix URLs without echoing them.&quot;&quot;&quot;
+    parsed=urlsplit(value)
+    if (parsed.scheme!=&#39;unix&#39; or parsed.netloc or not parsed.path.startswith(&#39;/&#39;)
+            or parsed.query or parsed.fragment):
+        raise ValueError(&#39;This isolated lesson requires a local unix Docker endpoint&#39;)
+
+
+def verify_local_docker():
+    # DOCKER_HOST may override the selected context. Check it before any daemon call.
+    override=os.environ.get(&#39;DOCKER_HOST&#39;)
+    if override:
+        validate_local_endpoint(override)
+    # These two commands inspect local CLI metadata; they do not contact a daemon.
+    context=subprocess.run([&#39;docker&#39;,&#39;context&#39;,&#39;show&#39;],capture_output=True,text=True,timeout=10)
+    if context.returncode:
+        raise RuntimeError(&#39;Cannot identify the selected local Docker context&#39;)
+    name=context.stdout.strip()
+    if not name:
+        raise RuntimeError(&#39;Docker context name is empty&#39;)
+    details=subprocess.run([&#39;docker&#39;,&#39;context&#39;,&#39;inspect&#39;,name,&#39;--format&#39;,&#39;{{.Endpoints.docker.Host}}&#39;],
+                           capture_output=True,text=True,timeout=10)
+    if details.returncode:
+        raise RuntimeError(&#39;Cannot inspect the selected local Docker endpoint&#39;)
+    validate_local_endpoint(details.stdout.strip())
+
+
+def quoted(value):
+    return &quot;&#39;&quot; + str(value).replace(&quot;&#39;&quot;, &quot;&#39;&#39;&quot;) + &quot;&#39;&quot;
+
+
+class Session:
+    &quot;&quot;&quot;One mysql client process keeps one actual server connection alive.&quot;&quot;&quot;
+    def __init__(self, lab, name):
+        self.process = subprocess.Popen(lab.client(name), stdin=subprocess.PIPE,
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                        text=True, bufsize=1)
+        self.selector = selectors.DefaultSelector()
+        self.selector.register(self.process.stdout, selectors.EVENT_READ)
+
+    def request(self, sql, returns_json=False):
+        marker = uuid.uuid4().hex
+        statement = sql.rstrip().rstrip(&#39;;&#39;)+&#39;;\n&#39;
+        if not returns_json:
+            statement += &quot;SELECT JSON_OBJECT(&#39;__marker&#39;, &#39;&quot;+marker+&quot;&#39;);\n&quot;
+        self.process.stdin.write(statement)
+        self.process.stdin.flush()
+        deadline = time.monotonic()+12
+        while time.monotonic() &lt; deadline:
+            if not self.selector.select(max(.01, deadline-time.monotonic())):
+                break
+            line = self.process.stdout.readline()
+            if not line:
+                detail = self.process.stderr.read()
+                raise RuntimeError(&#39;Persistent mysql session closed: &#39;+detail[-1000:])
+            result = json.loads(line)
+            if returns_json:
+                return result
+            if result.get(&#39;__marker&#39;) == marker:
+                return None
+        raise TimeoutError(&#39;Persistent mysql session exceeded its command deadline&#39;)
+
+    def balance(self):
+        return self.request(&quot;SELECT JSON_OBJECT(&#39;balance&#39;,balance,&#39;connection&#39;,CONNECTION_ID(),&quot;
+                            &quot;&#39;isolation&#39;,@@transaction_isolation) FROM replica_lab.account WHERE id=1&quot;, True)
+
+    def close(self):
+        if self.process.poll() is None:
+            try:
+                self.process.stdin.write(&#39;ROLLBACK;\nquit\n&#39;)
+                self.process.stdin.flush()
+                self.process.communicate(timeout=4)
+            except (BrokenPipeError, subprocess.TimeoutExpired):
+                self.process.kill()
+                self.process.communicate(timeout=4)
+        self.selector.close()
+
+
+class Lab:
+    def __init__(self, image):
+        self.image = image
+        self.prefix = &#39;infra-replica-&#39;+uuid.uuid4().hex[:12]
+        self.network = None
+        self.containers, self.volumes, self.sessions = [], [], []
+
+    def docker(self, *args, data=None, check=True, timeout=30):
+        result = subprocess.run([&#39;docker&#39;, *args], input=data, capture_output=True,
+                                text=True, timeout=timeout)
+        if check and result.returncode:
+            raise RuntimeError(&#39;docker &#39;+args[0]+&#39; failed: &#39;+(result.stderr or result.stdout)[-1800:])
+        return result
+
+    def client(self, name, user=&#39;root&#39;, headings=False):
+        password = ROOT_PASSWORD if user == &#39;root&#39; else WRITER_PASSWORD
+        args = [&#39;docker&#39;,&#39;exec&#39;,&#39;-i&#39;,&#39;-e&#39;,&#39;MYSQL_PWD=&#39;+password,name,&#39;mysql&#39;,
+                &#39;-u&#39;+user,&#39;--batch&#39;,&#39;--raw&#39;,&#39;--unbuffered&#39;,&#39;--connect-timeout=3&#39;]
+        if not headings:
+            args.append(&#39;--skip-column-names&#39;)
+        return args
+
+    def sql(self, name, sql, user=&#39;root&#39;, check=True, timeout=30, headings=False):
+        result = subprocess.run(self.client(name,user,headings), input=sql+&#39;\n&#39;, capture_output=True,
+                                text=True, timeout=timeout)
+        if check and result.returncode:
+            raise RuntimeError(&#39;mysql command failed: &#39;+result.stderr[-1500:])
+        return result
+
+    def scalar(self, name, sql):
+        output = self.sql(name,sql).stdout.strip()
+        assert &#39;\n&#39; not in output, &#39;expected a scalar, got &#39;+repr(output)
+        return output
+
+    def setup(self):
+        verify_local_docker()
+        assert self.docker(&#39;info&#39;,&#39;--format&#39;,&#39;{{.OSType}}&#39;).stdout.strip()==&#39;linux&#39;, &#39;Linux containers are required&#39;
+        self.docker(&#39;pull&#39;,self.image,timeout=180)
+        network_name = self.prefix+&#39;-network&#39;
+        self.network = self.docker(&#39;network&#39;,&#39;create&#39;,&#39;--internal&#39;,&#39;--label&#39;,&#39;infraguide=mysql-replication&#39;,network_name).stdout.strip()
+        names = []
+        for role,server_id in [(&#39;source&#39;,11),(&#39;replica&#39;,22)]:
+            volume = self.prefix+&#39;-&#39;+role+&#39;-data&#39;
+            self.docker(&#39;volume&#39;,&#39;create&#39;,&#39;--label&#39;,&#39;infraguide=mysql-replication&#39;,volume)
+            self.volumes.append(volume)
+            name = self.prefix+&#39;-&#39;+role
+            container = self.docker(&#39;create&#39;,&#39;--name&#39;,name,&#39;--network&#39;,network_name,
+                &#39;--network-alias&#39;,role,&#39;--memory&#39;,&#39;1g&#39;,&#39;--pids-limit&#39;,&#39;256&#39;,
+                &#39;--env&#39;,&#39;MYSQL_ROOT_PASSWORD=&#39;+ROOT_PASSWORD,
+                &#39;--mount&#39;,&#39;type=volume,source=&#39;+volume+&#39;,target=/var/lib/mysql&#39;,self.image,
+                &#39;--server-id=&#39;+str(server_id),&#39;--gtid-mode=ON&#39;,&#39;--enforce-gtid-consistency=ON&#39;,
+                &#39;--log-bin=mysql-bin&#39;,&#39;--log-replica-updates=ON&#39;,&#39;--binlog-format=ROW&#39;,
+                &#39;--replica-parallel-workers=1&#39;,&#39;--innodb-buffer-pool-size=67108864&#39;,
+                &#39;--innodb-redo-log-capacity=67108864&#39;,&#39;--max-connections=30&#39;,
+                &#39;--sync-binlog=1&#39;,&#39;--innodb-flush-log-at-trx-commit=1&#39;).stdout.strip()
+            self.containers.append(container)
+            names.append(name)
+            self.docker(&#39;start&#39;,container)
+        for name in names:
+            deadline = time.monotonic()+120
+            while True:
+                probe = self.sql(name,&#39;SELECT IF(@@port=3306 AND @@skip_networking=0,1,0)&#39;,check=False,timeout=7)
+                if probe.returncode == 0 and probe.stdout.strip() == &#39;1&#39;:
+                    break
+                if time.monotonic() &gt;= deadline:
+                    logs = self.docker(&#39;logs&#39;,name,check=False).stdout[-2000:]
+                    raise TimeoutError(&#39;MySQL was not ready: &#39;+logs)
+                time.sleep(.5)
+            actual = self.scalar(name,&#39;SELECT VERSION()&#39;)
+            assert actual.startswith(VERSION), actual
+        return names
+
+    def session(self,name):
+        value = Session(self,name)
+        self.sessions.append(value)
+        return value
+
+    def change(self,name,op,delta,user=&#39;writer&#39;):
+        assert re.fullmatch(&#39;[A-Z0-9_]+&#39;,op)
+        return self.sql(name,&#39;START TRANSACTION; UPDATE &#39;+DB+&#39;.account SET balance=balance+(&#39;
+                        +str(delta)+&#39;) WHERE id=1; INSERT INTO &#39;+DB+&#39;.receipt VALUES (&#39;
+                        +quoted(op)+&#39;,&#39;+str(delta)+&#39;); COMMIT;&#39;,user=user)
+
+    def state(self,name):
+        value = json.loads(self.sql(name,&quot;SELECT JSON_OBJECT(&#39;balance&#39;,(SELECT balance FROM &quot;+DB+&quot;.account WHERE id=1),&quot;
+            &quot;&#39;receipts&#39;,COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT(&#39;id&#39;,op,&#39;delta&#39;,delta)) FROM &quot;+DB+&quot;.receipt),JSON_ARRAY()),&quot;
+            &quot;&#39;server_uuid&#39;,@@server_uuid,&#39;executed&#39;,@@GLOBAL.gtid_executed)&quot;).stdout)
+        value[&#39;receipts&#39;].sort(key=lambda r:r[&#39;id&#39;])
+        return value
+
+    def replication_status(self,name):
+        # A GTID set can contain embedded newlines. Physical TSV lines are not rows.
+        args=[&#39;docker&#39;,&#39;exec&#39;,&#39;-i&#39;,&#39;-e&#39;,&#39;MYSQL_PWD=&#39;+ROOT_PASSWORD,name,&#39;mysql&#39;,
+              &#39;-uroot&#39;,&#39;--xml&#39;,&#39;--connect-timeout=3&#39;]
+        result=subprocess.run(args,input=&#39;SHOW REPLICA STATUS;\n&#39;,capture_output=True,text=True,timeout=15)
+        if result.returncode:
+            raise RuntimeError(&#39;MySQL replication status failed: &#39;+result.stderr[-1600:])
+        try:
+            rows=ET.fromstring(result.stdout).findall(&#39;row&#39;)
+            assert len(rows)==1, &#39;Expected one replication channel&#39;
+            status={field.attrib[&#39;name&#39;]:(&#39;NULL&#39; if field.attrib.get(&#39;{http://www.w3.org/2001/XMLSchema-instance}nil&#39;)==&#39;true&#39; else (field.text or &#39;&#39;))
+                    for field in rows[0].findall(&#39;field&#39;)}
+        except (ET.ParseError,AssertionError,KeyError) as error:
+            raise RuntimeError(str(error)+&#39;; actual XML status: &#39;+result.stdout[:1800]) from error
+        fields = [&#39;Replica_IO_Running&#39;,&#39;Replica_SQL_Running&#39;,&#39;Retrieved_Gtid_Set&#39;,&#39;Executed_Gtid_Set&#39;,
+                  &#39;Seconds_Behind_Source&#39;,&#39;Last_IO_Errno&#39;,&#39;Last_SQL_Errno&#39;,&#39;Auto_Position&#39;]
+        return {field:status[field] for field in fields}
+
+    def wait_gtid(self,name,target,seconds):
+        assert 0 &lt; seconds &lt;= 30, &#39;zero means an unbounded wait in MySQL&#39;
+        return int(self.scalar(name,&#39;SELECT WAIT_FOR_EXECUTED_GTID_SET(&#39;+quoted(target)+&#39;,&#39;+str(seconds)+&#39;)&#39;))
+
+    def cleanup(self):
+        errors=[]
+        for session in self.sessions:
+            try: session.close()
+            except Exception as error: errors.append(str(error))
+        for container in reversed(self.containers):
+            result=self.docker(&#39;rm&#39;,&#39;-f&#39;,container,check=False,timeout=30)
+            if result.returncode: errors.append(result.stderr[-500:])
+        for volume in reversed(self.volumes):
+            result=self.docker(&#39;volume&#39;,&#39;rm&#39;,volume,check=False)
+            if result.returncode: errors.append(result.stderr[-500:])
+        if self.network:
+            result=self.docker(&#39;network&#39;,&#39;rm&#39;,self.network,check=False)
+            if result.returncode: errors.append(result.stderr[-500:])
+        return errors
+
+
+def oracle(state,expected):
+    &quot;&quot;&quot;Independent business check: exact operation set, deltas and base conservation.&quot;&quot;&quot;
+    actual={r[&#39;id&#39;]:r[&#39;delta&#39;] for r in state[&#39;receipts&#39;]}
+    assert len(actual)==len(state[&#39;receipts&#39;]) and actual==expected, (actual,expected)
+    assert state[&#39;balance&#39;]==100+sum(expected.values()),state
+    return {&#39;balance&#39;:state[&#39;balance&#39;],&#39;receipt_ids&#39;:sorted(actual),&#39;ledger_difference&#39;:state[&#39;balance&#39;]-100-sum(actual.values())}
+
+
+def run(lab):
+    source,replica=lab.setup()
+    # Official image initialization can execute local GTIDs. Capture their
+    # provenance before creating this business DB or starting replication.
+    source_bootstrap=lab.scalar(source,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    replica_bootstrap=lab.scalar(replica,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    lab.sql(source,&quot;CREATE USER &#39;repl&#39;@&#39;%&#39; IDENTIFIED BY &quot;+quoted(REPL_PASSWORD)+&quot;; &quot;
+        &quot;GRANT REPLICATION SLAVE ON *.* TO &#39;repl&#39;@&#39;%&#39;; CREATE DATABASE &quot;+DB+&quot;; &quot;
+        &quot;CREATE TABLE &quot;+DB+&quot;.account(id INT PRIMARY KEY,balance INT NOT NULL) ENGINE=InnoDB; &quot;
+        &quot;CREATE TABLE &quot;+DB+&quot;.receipt(op VARCHAR(40) PRIMARY KEY,delta INT NOT NULL) ENGINE=InnoDB; &quot;
+        &quot;INSERT INTO &quot;+DB+&quot;.account VALUES (1,100); &quot;
+        &quot;CREATE USER &#39;writer&#39;@&#39;%&#39; IDENTIFIED BY &quot;+quoted(WRITER_PASSWORD)+&quot;; &quot;
+        &quot;GRANT SELECT,INSERT,UPDATE ON &quot;+DB+&quot;.* TO &#39;writer&#39;@&#39;%&#39;;&quot;)
+    lab.sql(replica,&quot;SET GLOBAL super_read_only=ON; CHANGE REPLICATION SOURCE TO SOURCE_HOST=&#39;source&#39;,&quot;
+        &quot;SOURCE_USER=&#39;repl&#39;,SOURCE_PASSWORD=&quot;+quoted(REPL_PASSWORD)+&quot;,SOURCE_AUTO_POSITION=1,&quot;
+        &quot;SOURCE_CONNECT_RETRY=1,SOURCE_RETRY_COUNT=20,GET_SOURCE_PUBLIC_KEY=1; START REPLICA;&quot;)
+    initial_gtid=lab.scalar(source,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    assert lab.wait_gtid(replica,initial_gtid,25)==0
+    assert lab.state(replica)[&#39;balance&#39;]==100
+    metadata={&#39;image_requested&#39;:lab.image,&#39;image&#39;:json.loads(lab.docker(&#39;image&#39;,&#39;inspect&#39;,lab.image).stdout)[0][&#39;Id&#39;],
+              &#39;repo_digests&#39;:json.loads(lab.docker(&#39;image&#39;,&#39;inspect&#39;,lab.image).stdout)[0].get(&#39;RepoDigests&#39;,[]),
+              &#39;source_version&#39;:lab.scalar(source,&#39;SELECT VERSION()&#39;),&#39;replica_version&#39;:lab.scalar(replica,&#39;SELECT VERSION()&#39;),
+              &#39;source_uuid&#39;:lab.scalar(source,&#39;SELECT @@server_uuid&#39;),&#39;replica_uuid&#39;:lab.scalar(replica,&#39;SELECT @@server_uuid&#39;),
+              &#39;python&#39;:platform.python_version(),&#39;docker_server&#39;:lab.docker(&#39;version&#39;,&#39;--format&#39;,&#39;{{.Server.Version}}&#39;).stdout.strip(),
+              &#39;local_unix_endpoint_verified&#39;:True}
+
+    # A real RR connection starts before the writer, but first reads after +10.
+    rr=lab.session(source)
+    rr.request(&#39;SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; START TRANSACTION&#39;)
+    lab.change(source,&#39;BEFORE_FIRST_READ&#39;,10)
+    rr_first=rr.balance()
+    lab.change(source,&#39;AFTER_FIRST_READ&#39;,20)
+    rr_second=rr.balance()
+    rr.request(&#39;COMMIT&#39;)
+    rr_fresh=rr.balance()
+    assert [rr_first[&#39;balance&#39;],rr_second[&#39;balance&#39;],rr_fresh[&#39;balance&#39;]]==[110,110,130]
+    assert rr_first[&#39;connection&#39;]==rr_second[&#39;connection&#39;]==rr_fresh[&#39;connection&#39;]
+    rr.close()
+
+    rc=lab.session(source)
+    rc.request(&#39;SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; START TRANSACTION&#39;)
+    rc_first=rc.balance()
+    lab.change(source,&#39;RC_UPDATE&#39;,5)
+    rc_second=rc.balance()
+    rc.request(&#39;COMMIT&#39;)
+    assert [rc_first[&#39;balance&#39;],rc_second[&#39;balance&#39;]]==[130,135]
+    assert rc_first[&#39;connection&#39;]==rc_second[&#39;connection&#39;]
+    rc.close()
+    before_lag=lab.scalar(source,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    assert lab.wait_gtid(replica,before_lag,25)==0
+
+    # Receiver continues; applier is deliberately stopped before another commit.
+    lab.sql(replica,&#39;STOP REPLICA SQL_THREAD&#39;)
+    lab.change(source,&#39;RECEIVED_NOT_APPLIED&#39;,7)
+    lag_target=lab.scalar(source,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    deadline=time.monotonic()+25
+    while True:
+        status=lab.replication_status(replica)
+        received=int(lab.scalar(replica,&#39;SELECT GTID_SUBSET(&#39;+quoted(lag_target)+&#39;,&#39;+quoted(status[&#39;Retrieved_Gtid_Set&#39;])+&#39;)&#39;))
+        if received==1: break
+        assert time.monotonic()&lt;deadline,&#39;receiver never obtained source target&#39;
+        time.sleep(.2)
+    lag_source,lag_replica=lab.state(source),lab.state(replica)
+    applied=int(lab.scalar(replica,&#39;SELECT GTID_SUBSET(&#39;+quoted(lag_target)+&#39;,@@GLOBAL.gtid_executed)&#39;))
+    premature_wait=lab.wait_gtid(replica,lag_target,1)
+    assert status[&#39;Replica_IO_Running&#39;]==&#39;Yes&#39; and status[&#39;Replica_SQL_Running&#39;]==&#39;No&#39;
+    assert status[&#39;Last_IO_Errno&#39;]==&#39;0&#39; and status[&#39;Last_SQL_Errno&#39;]==&#39;0&#39;
+    assert [lag_source[&#39;balance&#39;],lag_replica[&#39;balance&#39;],received,applied,premature_wait]==[142,135,1,0,1]
+    expected_before={&#39;BEFORE_FIRST_READ&#39;:10,&#39;AFTER_FIRST_READ&#39;:20,&#39;RC_UPDATE&#39;:5}
+    oracle(lag_replica,expected_before)
+    expected_old=dict(expected_before,RECEIVED_NOT_APPLIED=7)
+    oracle(lag_source,expected_old)
+
+    lab.sql(replica,&#39;START REPLICA SQL_THREAD&#39;)
+    catchup_wait=lab.wait_gtid(replica,lag_target,25)
+    assert catchup_wait==0
+    caught_up=lab.state(replica)
+    oracle(caught_up,expected_old)
+
+    # A planned switch has a reachable old source and stops its writers first.
+    lab.sql(source,&quot;REVOKE INSERT,UPDATE ON &quot;+DB+&quot;.* FROM &#39;writer&#39;@&#39;%&#39;; SET GLOBAL super_read_only=ON;&quot;)
+    denied=lab.sql(source,&quot;INSERT INTO &quot;+DB+&quot;.receipt VALUES (&#39;OLD_WRITER&#39;,999)&quot;,user=&#39;writer&#39;,check=False)
+    assert denied.returncode and re.search(r&#39;ERROR (1142|1290)&#39;,denied.stderr),denied.stderr
+    admin_denied=lab.sql(source,&quot;INSERT INTO &quot;+DB+&quot;.receipt VALUES (&#39;OLD_ADMIN&#39;,999)&quot;,check=False)
+    assert admin_denied.returncode and &#39;1290&#39; in admin_denied.stderr,admin_denied.stderr
+    frozen_gtid=lab.scalar(source,&#39;SELECT @@GLOBAL.gtid_executed&#39;)
+    final_gate=lab.wait_gtid(replica,frozen_gtid,25)
+    assert final_gate==0
+    pre_switch_source=lab.state(source)
+    pre_switch_replica=lab.state(replica)
+    oracle(pre_switch_source,expected_old);oracle(pre_switch_replica,expected_old)
+    assert pre_switch_source[&#39;receipts&#39;]==pre_switch_replica[&#39;receipts&#39;]
+    allowed_target=frozen_gtid+(&#39;,&#39;+replica_bootstrap if replica_bootstrap else &#39;&#39;)
+    unexpected_target=lab.scalar(replica,&#39;SELECT GTID_SUBTRACT(@@GLOBAL.gtid_executed,&#39;+quoted(allowed_target)+&#39;)&#39;)
+    missing_target=lab.scalar(replica,&#39;SELECT GTID_SUBTRACT(&#39;+quoted(frozen_gtid)+&#39;,@@GLOBAL.gtid_executed)&#39;)
+    assert unexpected_target==&#39;&#39; and missing_target==&#39;&#39;, &#39;candidate has an unexplained GTID difference&#39;
+    lab.sql(replica,&#39;STOP REPLICA; RESET REPLICA ALL;&#39;)
+    lab.docker(&#39;stop&#39;,&#39;--time&#39;,&#39;15&#39;,source,timeout=25)
+    old_running=json.loads(lab.docker(&#39;inspect&#39;,source).stdout)[0][&#39;State&#39;][&#39;Running&#39;]
+    old_after_stop=lab.sql(source,&quot;INSERT INTO &quot;+DB+&quot;.receipt VALUES (&#39;OLD_AFTER_STOP&#39;,999)&quot;,user=&#39;writer&#39;,check=False)
+    assert old_running is False and old_after_stop.returncode!=0
+    lab.sql(replica,&quot;SET GLOBAL super_read_only=OFF; SET GLOBAL read_only=OFF; &quot;
+            &quot;GRANT INSERT,UPDATE ON &quot;+DB+&quot;.* TO &#39;writer&#39;@&#39;%&#39;;&quot;)
+    lab.change(replica,&#39;NEW_WRITER&#39;,3)
+    final=lab.state(replica)
+    final_oracle=oracle(final,dict(expected_old,NEW_WRITER=3))
+    assert final[&#39;server_uuid&#39;]!=pre_switch_source[&#39;server_uuid&#39;]
+    return {&#39;environment&#39;:metadata,&#39;initial&#39;:{&#39;balance&#39;:100,&#39;replica_wait&#39;:0,
+                                            &#39;source_bootstrap_gtid&#39;:source_bootstrap,&#39;replica_bootstrap_gtid&#39;:replica_bootstrap},
+            &#39;read_views&#39;:{&#39;rr&#39;:{&#39;begin_before_update&#39;:True,&#39;first&#39;:rr_first,&#39;same_transaction&#39;:rr_second,&#39;after_commit&#39;:rr_fresh},
+                          &#39;rc&#39;:{&#39;first&#39;:rc_first,&#39;same_transaction&#39;:rc_second}},
+            &#39;lag&#39;:{&#39;source_target&#39;:lag_target,&#39;status&#39;:status,&#39;received_contains_target&#39;:received,
+                   &#39;executed_contains_target&#39;:applied,&#39;wait_before_apply&#39;:premature_wait,
+                   &#39;source&#39;:lag_source,&#39;replica&#39;:lag_replica,&#39;promote_allowed&#39;:False},
+            &#39;caught_up&#39;:{&#39;wait&#39;:catchup_wait,&#39;replica&#39;:caught_up},
+            &#39;switchover&#39;:{&#39;frozen_target&#39;:frozen_gtid,&#39;wait&#39;:final_gate,&#39;source_before_stop&#39;:pre_switch_source,
+                          &#39;allowed_initial_gtids&#39;:replica_bootstrap,&#39;allowed_target_gtids&#39;:allowed_target,
+                          &#39;unexpected_target_gtids&#39;:unexpected_target,&#39;missing_target_gtids&#39;:missing_target,
+                          &#39;replica_before_promotion&#39;:pre_switch_replica,&#39;old_writer_error&#39;:re.search(r&#39;ERROR (\d+)&#39;,denied.stderr).group(1),
+                          &#39;old_admin_error&#39;:&#39;1290&#39;,&#39;old_container_running&#39;:old_running,
+                          &#39;old_stopped_write_exit&#39;:old_after_stop.returncode,&#39;new_primary&#39;:final,&#39;oracle&#39;:final_oracle},
+            &#39;scope&#39;:&#39;real local two-server MySQL; controlled planned switch with old container stopped; no production HA, WAN, proxy or power-loss proof&#39;}
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&#39;--image&#39;,default=IMAGE)
+    parser.add_argument(&#39;--output&#39;,&#39;--report&#39;,dest=&#39;report&#39;,required=True)
+    args=parser.parse_args()
+    lab=Lab(args.image)
+    started=time.monotonic()
+    record={&#39;schema&#39;:1,&#39;status&#39;:&#39;failed&#39;,&#39;source_sha256&#39;:hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            &#39;verified_on&#39;:datetime.now(timezone.utc).date().isoformat()}
+    error=None
+    try:
+        record[&#39;result&#39;]=run(lab)
+        record[&#39;status&#39;]=&#39;passed&#39;
+    except Exception as caught:
+        error=caught
+        record[&#39;error&#39;]=str(caught)
+    finally:
+        try: record[&#39;cleanup_errors&#39;]=lab.cleanup()
+        except Exception as caught: record[&#39;cleanup_errors&#39;]=[str(caught)]
+        if record[&#39;cleanup_errors&#39;]:
+            record[&#39;status&#39;]=&#39;failed&#39;
+            error=error or RuntimeError(&#39;owned resource cleanup did not complete&#39;)
+        record[&#39;elapsed_seconds&#39;]=round(time.monotonic()-started,3)
+        Path(args.report).parent.mkdir(parents=True,exist_ok=True)
+        Path(args.report).write_text(json.dumps(record,ensure_ascii=False,indent=2)+&#39;\n&#39;)
+    if error: raise SystemExit(str(error))
+    print(json.dumps({&#39;status&#39;:record[&#39;status&#39;],&#39;report&#39;:args.report,&#39;balance&#39;:record[&#39;result&#39;][&#39;switchover&#39;][&#39;oracle&#39;][&#39;balance&#39;]}))
+
+
+if __name__==&#39;__main__&#39;:
+    main()</code></pre></div></details><p>程序在失败时保留failed结果并非零退出，清理也只针对自己成功创建的资源。普通网页<span class="first-concept-term" data-concept-term="CI">CI<span class="concept-term-meaning">（持续集成，持续检查并整合代码变更）</span></span>核对原生执行记录、程序SHA、独立GTID与业务算式、SVG数据和ZIP内容，不会在未运行Docker时冒充重跑。源码变动后，需要重新执行原生实验。</p><p>目标是单机双实例和受控切换；跨机房、生产负载、宿主机断电、云数据库与真实应用切流均不在这份通过记录内。新副本从这组很小的完整binlog历史建立；已有大数据集的基线、日志与恢复目标，接着核对前一章的<a href="/article/mysql-recovery/">MySQL恢复实验</a>。</p></div></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>把图上的边界变成面试追问</h2><div class="table-wrap"><table><thead><tr><th>追问</th><th>沿哪条因果回答</th><th>答案缺少什么就不能下结论</th></tr></thead><tbody><tr><td>提交后读旧，是不是数据库不一致</td><td>确认读取实例、事务视图、复制应用与缓存路径</td><td>没有确定读取对象，只给复制加等待</td></tr><tr><td>GTID最大的副本能否直接提升</td><td>先检查完整集合缺口与额外历史，再解释业务完整性和旧写资格</td><td>只比较一个最大序号或一个余额</td></tr><tr><td>主从切换怎样保证没有双写</td><td>说明旧主可达条件、停止旧写的实际机制，以及新写开放顺序</td><td>只更新路由或只发一个readonly命令</td></tr><tr><td>复制和备份为什么都需要</td><td>复制延续变化，备份与连续日志允许选择历史恢复目标</td><td>把误删复制成功解释成误删可撤销</td></tr><tr><td>加副本和分库分表为什么还会有热点</td><td>回到访问单位、分片键、写入顺序与跨片约束</td><td>只把总QPS平均分给机器数</td></tr></tbody></table></div><p>合上页面，先画单实例的读视图时间线，再画两实例的提交、接收、应用和查询，最后在图上标出停止旧写与开放新写的条件。如果这三张图还能相互对应，才把相同思路迁移到缓存、消息消费者或其他数据库。不同系统的具体保证仍要分别核对。</p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/mysql-recovery/">C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a>：提交日志、恢复坐标与连续变化记录，继续连接副本应用和新写资格。</p><a class="chapter-map-link" href="/module/cloud-data/?concept=replication-failover#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-mysql-replication">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>副本已应用到写请求返回的GTID，但同一条RR读事务仍读旧值。此时再等一次复制能解决吗？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>先确认读请求在副本哪个事务中。若该RR事务的读视图早于应用完成，普通一致性读仍可沿旧视图读取；结束旧事务并建立新的读取，才重新判断最新可见状态。GTID应用进度与读视图分别检查，不能互相替代。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="mysql-replication:0" >RR事务第一次查询之前别的事务已提交，这笔提交是否可见？</label><label><input type="checkbox" data-check="mysql-replication:1" >副本已接收目标GTID，为什么还可能读不到相应业务？</label><label><input type="checkbox" data-check="mysql-replication:2" >目标覆盖源GTID集合以后，还需要哪些证据才允许新写入？</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="mysql-replication">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mysql-replication/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-consistent-read.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：一致性非锁定读 ↗</a><a href="https://github.com/mysql/mysql-server/blob/mysql-8.4.13/storage/innobase/include/read0types.h" target="_blank" rel="noopener noreferrer">MySQL 8.4.13：ReadView可见性判断的实现 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-threads.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：复制接收与应用线程 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-gtids-concepts.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：GTID格式与存储 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/gtid-functions.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：GTID集合与等待函数 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_read_only" target="_blank" rel="noopener noreferrer">MySQL 8.4：read_only与super_read_only ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-gtids-failover.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：GTID与切换 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/replication-semisync.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：半同步复制的确认边界 ↗</a><a href="https://dev.mysql.com/doc/refman/8.4/en/partitioning-overview.html" target="_blank" rel="noopener noreferrer">MySQL 8.4：表分区概览 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/mysql-recovery/"><span>C3.5</span>MySQL日志与恢复：从提交、崩溃到按点重放<b>↗</b></a><a href="/article/database-index-locks/"><span>C3.2</span>数据库访问：索引、事务与锁等待<b>↗</b></a><a href="/article/cache-consistency/"><span>C3.3</span>缓存一致性与击穿：旧值为何重新出现<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="mysql-replication">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Cloud Infra</p><a data-reading-direction="previous" href="/article/mysql-recovery/"><small>← 上一篇</small>C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a><a data-reading-direction="next" href="/article/container-runtime/"><small>下一篇 →</small>C4.1 容器运行原理：镜像、进程、隔离与资源</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/mysql-replication/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/mysql-replication/#section-1">1. 从一行数据，分清提交、版本与读视图</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-1g0a9o4" href="/article/mysql-replication/#subsection-1-1g0a9o4">用一组事务号，把“可见”变成可判断的规则</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/mysql-replication/#section-2">2. 用两条真实连接理解RR与RC</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-yifrop" href="/article/mysql-replication/#subsection-2-yifrop">RR保留首次普通一致性读建立的视图</a><a class="chapter-toc-level-3" data-toc="subsection-2-197pyo7" href="/article/mysql-replication/#subsection-2-197pyo7">RC在每条普通一致性读时取得新视图</a><a class="chapter-toc-level-3" data-toc="subsection-2-xdwl6j" href="/article/mysql-replication/#subsection-2-xdwl6j">把时间线对应到A/B角色的SQL</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/mysql-replication/#section-3">3. 把一次源提交放进复制链</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/mysql-replication/#section-4">4. GTID记录事务身份，集合表达应用目标</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-1lauqe1" href="/article/mysql-replication/#subsection-4-1lauqe1">从单个事务身份到一组已完成工作</a><a class="chapter-toc-level-3" data-toc="subsection-4-1vn9znl" href="/article/mysql-replication/#subsection-4-1vn9znl">等待对象是明确集合，不是“落后大概为零”</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/mysql-replication/#section-5">5. 旧读要分别查事务视图和复制应用</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/mysql-replication/#section-6">6. 计划切换：先收回旧写，再追齐与开放新写</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/mysql-replication/#section-7">7. 读副本、分片与热点，各解决哪种容量问题</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/mysql-replication/#section-8">8. 沿完整程序核对读视图、复制和交接</a></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/mysql-replication/#section-9">9. 把图上的边界变成面试追问</a></div><a data-toc="self-check" href="/article/mysql-replication/#self-check">自我检验</a><a data-toc="references" href="/article/mysql-replication/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

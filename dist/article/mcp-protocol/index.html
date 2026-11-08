@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="先把宿主、客户端、服务端和消息关系讲清，再用官方SDK实际运行现代协议、旧版兼容、失败分层与取消清理。">
+<meta name="theme-color" content="#315dce"><title>MCP协议与真实SDK：发现、调用、进度与取消 · InfraGuide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=91d76baa3a46"><script defer src="runtime-01.js?v=b87d39227c29"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=0ee1e2414992"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=9d9efd1c4234"></script><script defer src="reading-comfort.js?v=957da22bcd26"></script><script defer src="site-search.js?v=66ebaa1f38d2"></script><script defer src="app.js?v=7e5cc054c4aa"></script>
+
+
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mcp-protocol/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="MCP协议与真实SDK：发现、调用、进度与取消 · InfraGuide"><meta property="og:description" content="先把宿主、客户端、服务端和消息关系讲清，再用官方SDK实际运行现代协议、旧版兼容、失败分层与取消清理。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mcp-protocol/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MCP协议与真实SDK：发现、调用、进度与取消","description":"先把宿主、客户端、服务端和消息关系讲清，再用官方SDK实际运行现代协议、旧版兼容、失败分层与取消清理。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mcp-protocol/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mcp-protocol/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<body>
+<a class="skip" href="/article/mcp-protocol/#main">跳到主要内容</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="/" aria-label="InfraGuide 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 24h17a6 6 0 0 0 0-12A9 9 0 0 0 8 10a7 7 0 0 0 0 14Z"/></svg><span>Infra<span class="brand-light"> Guide</span></span></a>
+<nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
+<div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
+</div></header>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>Agent Infra · 目录</span><span>11 章 + 1 实战</span></div><details open><summary><a href="/article/agent-runtime/" ><span>G</span>Agent 运行时与 Kairo 实践</a></summary><div class="side-links"><a href="/article/agent-runtime/" >G1 Agent Infra在解决什么：从模型提议到任务完成</a><a href="/article/mcp-protocol/" class="current" aria-current="page">G1.1 MCP协议与真实SDK：发现、调用、进度与取消</a><a href="/article/agent-security/" >G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a><a href="/article/agent-sandbox/" >G3 Agent 沙箱：隔离、资源与生命周期</a><a href="/article/agent-recovery/" >G4 工具已经执行，任务却没完成：持久化、幂等与崩溃恢复</a><a href="/article/agent-memory/" >G5 上下文、运行状态与长期记忆：三种信息不要混存</a><a href="/article/agent-evaluation/" >G6 Agent怎样验收：任务结果、执行轨迹、拒绝行为与成本</a><a href="/article/durable-workflows/" >G7 持久工作流：事件重放、接管与提交</a><a href="/article/agent-retrieval/" >G8 检索与上下文：让答案有可验证的证据</a><a href="/article/agent-observability/" >G9 Agent 观测：任务、重试与成本归因</a><a href="/article/kairo-practice/" >G10 Kairo 接入验收：任务、权限与结果证据</a></div></details><details ><summary><a href="/article/production-readiness/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/production-readiness/" >S3 综合设计评审：让Cloud、AI与Agent形成一条可验收链路</a></div></details>
+  <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 12</b></div>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/agent/">Agent 运行时与 Kairo 实践</a><span>／</span><span>G1.1</span></div><div class="article-meta"><span class="category">Agent 运行时与 Kairo 实践</span><span>原理 + 官方SDK实战</span><span>·</span><span>工具协议专题 · 2026.11.08</span></div><h1>G1.1 MCP协议与真实SDK：发现、调用、进度与取消</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先把调用工具的两端找出来</h3><p>客户端由应用或Agent运行时管理，向服务端发出调用；服务端公布工具并执行相应程序。模型可以提出建议，真正建立连接、检查调用和读取结果的是程序。协议约定两端怎样交换可解释的消息。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>连接方法先对应到明确的协议版本</h3><p>版本决定消息约定。2026-07-28这代MCP在每个请求声明版本与能力，较早版本使用初始化握手。发现可用工具和连接服务器，不会自动给予业务权限；本章分别运行两代流程，避免把一种启动方法讲成永久规则。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再把消息结果连回任务与生命周期</h3><p>请求标识帮助匹配一次协议调用的响应，它不自动成为跨重试的业务动作身份。参数结构通过、工具报告成功、实际资料正确要分别核对；进度、取消和连接关闭也各有作用范围，最后用真实SDK与独立来源验收这些关系。</p></section></section><p class="description">先把宿主、客户端、服务端和消息关系讲清，再用官方SDK实际运行现代协议、旧版兼容、失败分层与取消清理。</p><div class="tag-row"><span class="tag">MCP</span><span class="tag">stdio</span><span class="tag">协议版本</span><span class="tag">官方SDK</span><span class="tag">取消</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约45分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>画清宿主、客户端、服务端、工具与权威来源的关系</li><li>区分现代逐请求规则与旧版initialize握手</li><li>沿真实消息认回结果、进度与取消，并核对处理器和文件清理</li><li>用独立来源拒绝结构合法且isError=false的错误41</li></ul><p><b>前置知识</b>先理解Agent任务、工具提议、执行结果与完成判据；本章直接用脚本发起调用，不要求GPU训练知识。</p><ul class="prerequisite-links"><li><a href="/article/agent-runtime/">G1 Agent Infra在解决什么：从模型提议到任务完成</a>：先区分任务、模型提议和工具执行，再把一项受控调用落实为真实协议交换。</li></ul><p class="evidence-note">约 45 分钟 · Python 3.12.13 · mcp 2.3.0 · 真实stdio子进程；2026-07-28与2025-11-25分开验证 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/agent/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/mcp-protocol/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/mcp-protocol/#section-1">1. 先分清宿主、客户端、服务端与工具</a></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/mcp-protocol/#section-2">2. 请求、响应、通知，先按消息职责读</a></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/mcp-protocol/#section-3">3. 版本决定起点：现代逐请求，旧版先初始化</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/mcp-protocol/#section-4">4. 发现工具之后，再把参数交给执行者</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/mcp-protocol/#section-5">5. 收到结果、工具成功与任务正确，要分开验</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/mcp-protocol/#section-6">6. 进度属于调用过程，不能代替完成结果</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/mcp-protocol/#section-7">7. 取消后，分别检查等待者、处理器和资源</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/mcp-protocol/#section-8">8. 实战：三个进程、两代协议与独立验收</a></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/mcp-protocol/#section-9">9. 把协议连接回Agent系统的责任边界</a></div></details><p class="intro">从一份42的订单汇总出发，沿真实stdio消息和来源事实读懂MCP；协议成功之后，任务仍要独立验收。</p><p class="article-context-link"><a href="/module/agent/">本领域系统知识：Agent 运行时与 Kairo 实践 →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>先分清宿主、客户端、服务端与工具</h2><p>上一章已经把模型提议、工具执行和任务完成分开。现在追踪其中一段：宿主应用想读取订单批次，怎样找到工具、发送参数，并认回这一调用的结果？MCP（Model Context Protocol，模型上下文协议）为这些交互约定消息和能力。本章直接用脚本发起调用，先看清协议如何工作，之后再把模型放回提议位置。</p><p>宿主应用是组织任务、模型与工具的程序；MCP客户端是宿主中负责一种协议交互的部件。MCP服务端接收请求，提供工具、资料或提示模板等能力。工具是服务端公开的一项操作，例如read_batch读取一个批次。模型可以提出要调用哪个工具，实际连接、参数交付、超时和结果核对仍由执行系统负责。</p><div class="table-wrap"><table><thead><tr><th>对象</th><th>本例在哪里</th><th>负责什么</th></tr></thead><tbody><tr><td>宿主应用</td><td>client_lab.py</td><td>固定任务report-A，选择调用，收集结果，按来源独立核对42</td></tr><tr><td>MCP客户端</td><td>宿主中的ClientSession实例</td><td>组织协议请求、对应响应，分发进度，传递取消</td></tr><tr><td>MCP服务端</td><td>独立运行的server.py<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span></td><td>公布3个工具，校验参数，读取固定资料，返回结果</td></tr><tr><td>资料与业务判据</td><td>orders.json及宿主验收函数</td><td>基础[10,27]与补录[5]是来源；协议通过后仍要核对总数和版本</td></tr></tbody></table></div><figure class="training-figure"><a href="diagrams/mcp-protocol-objects.svg" target="_blank" rel="noopener" aria-label="放大：同一份订单任务：宿主包含客户端，服务端另起进程，协议连接与权威来源分开。"><img src="diagrams/mcp-protocol-objects.svg" width="1120" height="660" alt="同一份订单任务：宿主包含客户端，服务端另起进程，协议连接与权威来源分开。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一份订单任务：宿主包含客户端，服务端另起进程，协议连接与权威来源分开。</figcaption></figure><p>本章使用标准输入输出传输（stdio）：客户端启动服务端子进程，通过管道读写<span class="first-concept-term" data-concept-term="UTF-8">UTF-8<span class="concept-term-meaning">（一种把Unicode字符编码为字节的可变长度编码）</span></span>编码的一行一条JSON消息。JSON是用字段名和值表示数据的文本格式，工具参数和结果都可以用它表达。服务端标准输出必须留给协议；普通日志写到标准错误或独立文件，否则一句调试文字也可能破坏消息解析。</p><p>另一种常见传输通过<span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span>连接服务端。本章没有启动HTTP服务器，也没有实现其认证流程；先把同一份消息的责任看清，再按实际部署方式选择传输。MCP还可以公开资料读取和提示模板能力，这个受控服务端只公开工具，发现结果中也只声明tools能力。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>请求、响应、通知，先按消息职责读</h2><p>JSON-RPC规定了请求与响应的基本形状。请求带method方法名、params参数和id请求标识；响应带相同id，并返回result结果或error协议错误。客户端可以同时等待多个调用，依靠id把各份响应交还给正确的等待者。</p><p>通知只单向报告一件事，不等待对应响应，因此没有id。进度通知说“做到哪里”，取消通知说“请停止哪项尚在执行的请求”。通知中的progressToken或requestId是被引用的标识，不等于通知本身拥有一个请求id。下一节先明确版本和元数据，再读本例真正发出的完整请求。</p><div class="table-wrap"><table><thead><tr><th>消息里的名字</th><th>属于什么对象</th><th>本例怎样使用</th></tr></thead><tbody><tr><td>JSON-RPC id</td><td>本方向的一次协议请求</td><td>读取base用id3，等待调用用id8；重连后可以出现相同数字</td></tr><tr><td>method与工具name</td><td>协议方法与服务端公开的操作</td><td>tools/call是方法，read_batch是这次选择的工具</td></tr><tr><td>arguments.task_id</td><td>业务任务的显式引用</td><td>report-A说明正在读取哪份固定任务资料；不由连接身份暗中推断</td></tr><tr><td>一次业务操作的稳定标识</td><td>需要跨尝试认回的业务意图</td><td>本例工具只读；若改为写入，必须另按接收方契约记录稳定身份与回执</td></tr><tr><td>progressToken</td><td>某次进行中调用的进度关联</td><td>SDK本次选择与请求id相同的7或8；协议没有要求两者必须相等</td></tr></tbody></table></div><p>请求id用于对应消息，不提供跨连接去重，也不是业务授权。ClientSession是SDK管理消息和连接的类名；现代MCP并不把一条管道当成一次对话或一项任务。需要跨请求保留的业务状态，应有显式标识；宿主中的上下文、服务端资源和连接各有自己的寿命。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>版本决定起点：现代逐请求，旧版先初始化</h2><p>截至本章核对的2026-07-28版，现代MCP没有初始化握手。每个请求在_meta中携带协议版本、客户端实现信息和客户端能力，服务端独立判断该请求。版本不支持时返回明确错误；客户端再选择共同支持版本或报告不兼容。不能把某次较早请求中的上下文当成后来请求的隐含前提。</p><p>server/discover用于发现服务端支持的版本和能力，是可选探测。现代客户端也可以直接发带完整元数据的普通请求，处理不支持版本的错误；同时兼容新旧服务端的stdio客户端可以先探测，再根据结果选择相应路径。本例主动调用ClientSession.discover()，目的是把所选路径和返回能力留成可检查记录。</p><p>下面三个字段都位于_meta，名称统一带io.modelcontextprotocol/前缀。表中使用字段短名，紧接下方的实际消息保留完整名称。</p><div class="table-wrap"><table><thead><tr><th>字段短名</th><th>含义</th><th>本次实际值</th></tr></thead><tbody><tr><td><code>protocolVersion</code></td><td>这次请求使用的协议版本</td><td>2026-07-28</td></tr><tr><td><code>clientInfo</code></td><td>客户端自行声明的实现名字和版本</td><td>infra-guide-host / 1.0.0</td></tr><tr><td><code>clientCapabilities</code></td><td>客户端声明支持的可选能力</td><td>空对象；本例未开放其他客户端能力</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>这些概念放回真实请求：本次read_batch的完整发送字段 <small>JSON</small></span><button data-copy-code aria-label="复制 这些概念放回真实请求：本次read_batch的完整发送字段">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 3,
+  &quot;method&quot;: &quot;tools/call&quot;,
+  &quot;params&quot;: {
+    &quot;name&quot;: &quot;read_batch&quot;,
+    &quot;arguments&quot;: {
+      &quot;task_id&quot;: &quot;report-A&quot;,
+      &quot;batch_id&quot;: &quot;base&quot;
+    },
+    &quot;_meta&quot;: {
+      &quot;io.modelcontextprotocol/protocolVersion&quot;: &quot;2026-07-28&quot;,
+      &quot;io.modelcontextprotocol/clientInfo&quot;: {
+        &quot;name&quot;: &quot;infra-guide-host&quot;,
+        &quot;version&quot;: &quot;1.0.0&quot;
+      },
+      &quot;io.modelcontextprotocol/clientCapabilities&quot;: {}
+    }
+  }
+}</code></pre></div><p>能力说明支持什么协议功能。例如服务端tools.listChanged=false表示没有声明工具列表变化通知能力，不是“工具不能使用”。实现信息也不是身份凭据，攻击者可以自称某个客户端名字。业务授权要回到可信身份、任务委托与资源策略，不能看clientInfo便放行。</p><p>2025-11-25及更早版本采用另一条规则：客户端先发initialize，交换版本、能力和实现信息；收到成功响应后，再发notifications/initialized，进入普通操作。本例为它另起一份服务端进程并调用initialize()，协商结果是2025-11-25。两代消息有兼容关系，但不能把旧握手当成现代必经步骤，也不能在同一段时序里任意混用。</p><figure class="training-figure"><a href="diagrams/mcp-protocol-versions.svg" target="_blank" rel="noopener" aria-label="放大：本次两条真实连接：现代主动discover；旧版initialize后通知就绪。每条连接采用各自版本规则。"><img src="diagrams/mcp-protocol-versions.svg" width="1120" height="780" alt="本次两条真实连接：现代主动discover；旧版initialize后通知就绪。每条连接采用各自版本规则。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>本次两条真实连接：现代主动discover；旧版initialize后通知就绪。每条连接采用各自版本规则。</figcaption></figure><p>本实验的SDK包版本是mcp 2.3.0，宿主实现版本是1.0.0，协议版本是日期2026-07-28或2025-11-25。这三个版本回答不同问题：用了哪份库、运行哪个应用实现、按哪一份消息契约交互。遇到文档或示例不一致，先把这三项对齐。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>发现工具之后，再把参数交给执行者</h2><p>tools/list返回工具名、描述和输入结构。输入结构inputSchema使用JSON Schema描述允许的字段、类型和必需项；本例read_batch要求字符串task_id与batch_id，并拒绝额外字段。发现工具是取得调用契约，实际执行仍需另发tools/call。</p><div class="table-wrap"><table><thead><tr><th>工具</th><th>输入与操作</th><th>正常输出或结束条件</th></tr></thead><tbody><tr><td>read_batch</td><td>task_id、batch_id；读取一份固定批次</td><td>base返回[10,27]与total=37；late返回[5]</td></tr><tr><td>scan_batches</td><td>task_id、batch_ids；依次读取多个批次</td><td>base、late合并为[10,27,5]与total=42，并报告进度</td></tr><tr><td>watch_batch</td><td>task_id、batch_id；打开来源文件后等待</td><td>保持进行中，供下一节实际取消并检查资源清理</td></tr></tbody></table></div><p>SDK负责消息传递，不替代服务端的业务检查。本例在服务端处理器里明确调用JSON Schema校验；参数形状正确之后，再查任务与批次是否存在。把batch_id写成27属于类型错误；写成字符串missing则形状正确，但找不到业务资料。两种情况都需要清楚反馈，不能等到任意数据库异常再笼统返回失败。</p><p>输出结构outputSchema同样约束字段与类型。成功结果可以同时包含便于机器使用的structuredContent和便于展示的content文本；本例两者表达同一份JSON，客户端逐项核对一致。isError表示工具是否报告执行错误；现代结果中的resultType说明结果属于哪种类型，本例complete表示本轮已返回完整结果。结构校验能发现缺字段、错误类型，却不知道某个合法整数是否满足这项任务。</p><div class="code-block"><div class="code-toolbar"><span>本次正常读取的响应：id3对应前面的请求 <small>JSON</small></span><button data-copy-code aria-label="复制 本次正常读取的响应：id3对应前面的请求">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 3,
+  &quot;result&quot;: {
+    &quot;content&quot;: [
+      {
+        &quot;text&quot;: &quot;{\&quot;task_id\&quot;: \&quot;report-A\&quot;, \&quot;version\&quot;: 3, \&quot;batch_ids\&quot;: [\&quot;base\&quot;], \&quot;values\&quot;: [10, 27], \&quot;total\&quot;: 37}&quot;,
+        &quot;type&quot;: &quot;text&quot;
+      }
+    ],
+    &quot;isError&quot;: false,
+    &quot;resultType&quot;: &quot;complete&quot;,
+    &quot;structuredContent&quot;: {
+      &quot;task_id&quot;: &quot;report-A&quot;,
+      &quot;version&quot;: 3,
+      &quot;batch_ids&quot;: [
+        &quot;base&quot;
+      ],
+      &quot;values&quot;: [
+        10,
+        27
+      ],
+      &quot;total&quot;: 37
+    },
+    &quot;_meta&quot;: {
+      &quot;io.modelcontextprotocol/serverInfo&quot;: {
+        &quot;name&quot;: &quot;infra-guide-orders&quot;,
+        &quot;version&quot;: &quot;1.0.0&quot;
+      }
+    }
+  }
+}</code></pre></div></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>收到结果、工具成功与任务正确，要分开验</h2><p>协议错误在JSON-RPC的error中返回；工具执行错误放在工具结果里，并设isError=true。这里的“工具执行错误”也包括参数值不适用或业务资料不存在。上层要根据错误所属层决定修正参数、报告缺失，还是停止本次任务，不能把所有错误统一重试。</p><div class="table-wrap"><table><thead><tr><th>本次实际情形</th><th>消息或SDK所见</th><th>继续核对什么</th></tr></thead><tbody><tr><td>未知工具unknown_tool</td><td>JSON-RPC error，code=-32602；客户端捕获MCPError</td><td>先修正工具选择，不把不存在的工具当成临时服务故障</td></tr><tr><td>batch_id=27</td><td>返回工具结果，isError=true</td><td>类型不符；用发现到的inputSchema检查调用参数</td></tr><tr><td>batch_id=missing</td><td>返回工具结果，isError=true</td><td>类型正确，资料不存在；核对业务目标与来源</td></tr><tr><td>正常扫描两份批次</td><td>isError=false；结构合法；total=42</td><td>宿主重新读取权威来源，核对版本、值和总数</td></tr><tr><td>故意错误的第三个服务端</td><td>isError=false；结构合法；total=41</td><td>SDK可接收，独立任务判据必须拒绝</td></tr></tbody></table></div><div class="code-block"><div class="code-toolbar"><span>未知工具的真实协议错误响应 <small>JSON</small></span><button data-copy-code aria-label="复制 未知工具的真实协议错误响应">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 6,
+  &quot;error&quot;: {
+    &quot;code&quot;: -32602,
+    &quot;message&quot;: &quot;Unknown tool: unknown_tool&quot;
+  }
+}</code></pre></div><p>现代结果中的resultType=complete表示本轮请求返回了完整结果；它不抹掉isError，也不证明业务正确。第三份进程专门开启wrong-total反例：返回[10,27,5]，却把total写成41。字段齐全、总数也是整数，因此输出结构验证通过；宿主直接读取orders.json，算得10+27+5=42，拒绝把这份报告视为完成。</p><p>这个判据不相信服务端自己宣布的成功，也不只比较两份来自同一错误函数的输出。它读取独立来源，并同时核对task_id、来源版本、批次列表、值与总数。完整<span class="first-concept-term" data-concept-term="Agent">Agent<span class="concept-term-meaning">（在任务范围内组织模型与工具反复推进工作的智能体系统）</span></span>还要验证权限、实际副作用和用户目标，接着在任务验收章节展开。</p></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>进度属于调用过程，不能代替完成结果</h2><p>客户端希望收到进度时，在这次调用中提供progressToken。服务端随后发送notifications/progress，携带该<span class="first-concept-term" data-concept-term="token">token<span class="concept-term-meaning">（模型处理文本的离散单位，不必对应一个完整词）</span></span>、当前进度、可选总量和说明；同一进行中操作的进度数值应递增。宿主提供一个回调函数，即让SDK在收到这类消息后调用的处理函数。进度是过程观察，不要求每个工具都发送，也不是业务提交回执。</p><p>本例scan_batches先读base，再读late。真实通知依次是1/2、2/2；它们引用请求7中提供的进度token7，但通知本身没有id。工具最终结果另以id7返回42。请求标识、进度关联、业务任务report-A分别把消息、过程和目标串起来。</p><div class="table-wrap"><table><thead><tr><th>实际观测</th><th>对应对象</th><th>不能据此推出</th></tr></thead><tbody><tr><td>progress=1,total=2</td><td>已报告读完base</td><td>补录已经读到或总数已经正确</td></tr><tr><td>progress=2,total=2</td><td>已报告读完两份输入</td><td>宿主已经处理完全部进度回调</td></tr><tr><td>id7的工具结果total=42</td><td>本次调用已返回结果</td><td>更大的用户任务已验收或报告已经发布</td></tr></tbody></table></div><p>真实传输中，进度通知与最终响应分别交付，客户端回调可能还在处理时call_tool()就已返回。本程序用一个可设置、可等待的同步信号确认第二份回调，并给等待设置5秒上限。这里的5秒是测试的停止条件，不是测出来的网络性能；不能靠“睡一会儿”假定回调已经到齐。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>取消后，分别检查等待者、处理器和资源</h2><p>取消至少涉及三份状态：客户端是否还在等，服务端处理器是否停止，处理器持有的资源是否释放。协议取消通知引用一项已发出、被认为仍在进行中的请求。它表达停止意图；处理已经完成、标识未知或工具无法取消时，对端可能无法按意图停下。旧版initialize握手不能作为客户端取消目标。已经发生的外部业务效果也不会因为一份通知自动撤销。</p><p>AnyIO是组织Python异步任务的库，让程序在一段工作等待时仍可推进其他工作。取消作用域是用来限定这些工作寿命的代码块。在官方Python SDK 2.3.0中，取消等待请求的任务或其取消作用域，会让SDK消息分发部件发送对应的notifications/cancelled。本例先等watch_batch报告文件已经打开，再取消它的等待作用域，避免在请求尚未开始时就自称验证了服务端取消；这也不是业务审批或回滚<span class="first-concept-term" data-concept-term="事务">事务<span class="concept-term-meaning">（把一组操作放进约定提交与并发规则中的处理单位）</span></span>。</p><div class="code-block"><div class="code-toolbar"><span>SDK本次实际发出的取消通知：通知自身没有id <small>JSON</small></span><button data-copy-code aria-label="复制 SDK本次实际发出的取消通知：通知自身没有id">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;method&quot;: &quot;notifications/cancelled&quot;,
+  &quot;params&quot;: {
+    &quot;requestId&quot;: 8,
+    &quot;reason&quot;: &quot;caller cancelled&quot;
+  }
+}</code></pre></div><figure class="training-figure"><a href="diagrams/mcp-protocol-cancellation.svg" target="_blank" rel="noopener" aria-label="放大：调用8被取消后，文件已关闭，服务端仍能处理调用9；EOF后的进程退出是另一步。"><img src="diagrams/mcp-protocol-cancellation.svg" width="1120" height="820" alt="调用8被取消后，文件已关闭，服务端仍能处理调用9；EOF后的进程退出是另一步。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>调用8被取消后，文件已关闭，服务端仍能处理调用9；EOF后的进程退出是另一步。</figcaption></figure><p>服务端处理器捕获取消，finally关闭真实文件；宿主从独立事件文件核对file_closed=true，并确认没有针对id8的响应。随后用同一个客户端、同一份服务端进程读取late，返回5。这证明本例取消了一个调用并清理资源，而不是杀死整个服务来制造“没有响应”。</p><p>最后退出stdio上下文：客户端关闭写向服务端的输入管道，服务端读到EOF（字节流结束）并退出。SDK回收它后，宿主再检查该进程标识（PID）已经不存在。本例服务端没有派生其他进程；连接关闭、业务任务结束、所有派生资源退出仍是三种不同边界，真实服务需要各自管理。</p></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>实战：三个进程、两代协议与独立验收</h2><div id="mcp-protocol-run"><p>完整实验已经使用官方SDK真实运行。modern、legacy、wrong-total各启动独立server.py；工具只读本地固定资料，没有模型或网络服务，无需账号与密钥。环境为Python 3.12.13与mcp 2.3.0，依赖精确固定在下载包。进程存活检查使用macOS/<span class="first-concept-term" data-concept-term="Linux">Linux<span class="concept-term-meaning">（一类操作系统，负责管理程序运行及机器资源）</span></span>的进程接口，本次验证macOS；Linux可按同一命令复跑。</p><div class="code-block"><div class="code-toolbar"><span>解压完整mcp-protocol目录，在该目录执行 <small>SHELL</small></span><button data-copy-code aria-label="复制 解压完整mcp-protocol目录，在该目录执行">复制代码</button></div><pre tabindex="0"><code>python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -B client_lab.py --output-dir run-01 &gt; result.json
+python3 -m json.tool result.json</code></pre></div><p>run-01必须尚不存在；要重跑可换新目录，或不传--output-dir，使用自动清理的临时目录。result.json是这次运行实际生成的结果；预先保存的validation.json用于核对源码与作者当时的输出，不能代替自己的执行。</p><div class="table-wrap"><table><thead><tr><th>先读哪段源码</th><th>把哪条知识落实成行为</th><th>应看到的检查</th></tr></thead><tbody><tr><td>server.py的工具声明与call_tool</td><td>输入结构、工具错误、JSON-RPC错误分别返回</td><td>类型27、missing、unknown_tool落入不同分支</td></tr><tr><td>client_lab.py的connection</td><td>真实stdio、官方ClientSession与两种版本起点</td><td>现代所有请求带_meta；旧版有initialize和initialized</td></tr><tr><td>Tap与服务端事件文件</td><td>观察真实传输消息与真实处理器行为</td><td>消息方向、请求id、通知引用和资源清理能互相核对</td></tr><tr><td>watch_batch与waiting_call</td><td>等待进度后取消一个调用，保留连接</td><td>id8取消，无对应响应；文件关闭；id9仍返回5</td></tr><tr><td>matches_source与independent_oracle</td><td>直接读取权威来源验收</td><td>正常42通过；结构合法但错误的41被拒绝</td></tr></tbody></table></div><details class="full-code"><summary>展开完整server.py · 与下载源码逐字一致</summary><div class="code-block"><div class="code-toolbar"><span>server.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 server.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Read-only MCP server: official mcp==2.3.0, real stdio, no model or HTTP.
+
+stdout belongs to the protocol. Evidence is written to an explicit JSONL file.
+This teaching server trusts its local launcher; it implements no authentication.
+&quot;&quot;&quot;
+import argparse
+from contextlib import asynccontextmanager
+import json
+import os
+from pathlib import Path
+
+import anyio
+from jsonschema import validate, ValidationError
+from mcp import MCPError, types
+from mcp.server import Server, ServerRequestContext
+from mcp.server.stdio import stdio_server
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;--fixture&quot;, type=Path, required=True)
+    parser.add_argument(&quot;--events&quot;, type=Path, required=True)
+    parser.add_argument(&quot;--wrong-total&quot;, action=&quot;store_true&quot;, help=&quot;Intentional semantic error for the independent oracle&quot;)
+    args = parser.parse_args()
+    fixture = json.loads(args.fixture.read_text())
+
+    def event(kind, **body):
+        with args.events.open(&quot;a&quot;, encoding=&quot;utf8&quot;) as output:
+            output.write(json.dumps({&quot;event&quot;: kind, **body}, ensure_ascii=False) + &quot;\n&quot;)
+
+    batch_schema = {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;task_id&quot;: {&quot;type&quot;: &quot;string&quot;}, &quot;batch_id&quot;: {&quot;type&quot;: &quot;string&quot;}},
+                    &quot;required&quot;: [&quot;task_id&quot;, &quot;batch_id&quot;], &quot;additionalProperties&quot;: False}
+    scan_schema = {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;task_id&quot;: {&quot;type&quot;: &quot;string&quot;}, &quot;batch_ids&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}, &quot;minItems&quot;: 1}},
+                   &quot;required&quot;: [&quot;task_id&quot;, &quot;batch_ids&quot;], &quot;additionalProperties&quot;: False}
+    schemas = {&quot;read_batch&quot;: batch_schema, &quot;scan_batches&quot;: scan_schema, &quot;watch_batch&quot;: batch_schema}
+    descriptions = {&quot;read_batch&quot;: &quot;Read one fixed order batch.&quot;, &quot;scan_batches&quot;: &quot;Read several batches with progress.&quot;,
+                    &quot;watch_batch&quot;: &quot;Open a local source and wait until cancelled; demonstration only.&quot;}
+    output_schema = {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {
+        &quot;task_id&quot;: {&quot;type&quot;: &quot;string&quot;}, &quot;version&quot;: {&quot;type&quot;: &quot;integer&quot;},
+        &quot;batch_ids&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}},
+        &quot;values&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;integer&quot;}}, &quot;total&quot;: {&quot;type&quot;: &quot;integer&quot;}},
+        &quot;required&quot;: [&quot;task_id&quot;, &quot;version&quot;, &quot;batch_ids&quot;, &quot;values&quot;, &quot;total&quot;], &quot;additionalProperties&quot;: False}
+
+    def result(data=None, error=None):
+        return types.CallToolResult(content=[types.TextContent(type=&quot;text&quot;, text=error or json.dumps(data, ensure_ascii=False))],
+                                    structured_content=data, is_error=error is not None)
+
+    @asynccontextmanager
+    async def lifespan(server):
+        event(&quot;server_started&quot;, pid=os.getpid())
+        try:
+            yield None
+        finally:
+            event(&quot;server_stopped&quot;)
+
+    async def list_tools(ctx: ServerRequestContext, params):
+        event(&quot;list_tools&quot;, request_id=ctx.request_id, protocol=ctx.protocol_version)
+        return types.ListToolsResult(tools=[types.Tool(name=name, description=descriptions[name], input_schema=schema,
+                                                      output_schema=output_schema)
+                                           for name, schema in schemas.items()])
+
+    async def call_tool(ctx: ServerRequestContext, params):
+        name, arguments = params.name, params.arguments or {}
+        event(&quot;call_received&quot;, name=name, request_id=ctx.request_id, protocol=ctx.protocol_version)
+        if name not in schemas:
+            raise MCPError(-32602, &quot;Unknown tool: &quot; + name)
+        try:
+            validate(arguments, schemas[name])
+        except ValidationError:
+            event(&quot;input_rejected&quot;, name=name)
+            return result(error=&quot;Arguments do not match the advertised JSON Schema&quot;)
+        if arguments[&quot;task_id&quot;] != fixture[&quot;task_id&quot;]:
+            event(&quot;business_rejected&quot;, name=name)
+            return result(error=&quot;The requested task does not exist&quot;)
+        batch_ids = arguments.get(&quot;batch_ids&quot;, [arguments.get(&quot;batch_id&quot;)])
+        if any(batch not in fixture[&quot;batches&quot;] for batch in batch_ids):
+            event(&quot;business_rejected&quot;, name=name)
+            return result(error=&quot;The requested batch does not exist&quot;)
+        if name == &quot;watch_batch&quot;:
+            try:
+                with args.fixture.open(&quot;rb&quot;) as resource:
+                    resource.read(1)
+                    event(&quot;watch_opened&quot;, request_id=ctx.request_id)
+                    try:
+                        await ctx.session.report_progress(1, total=2, message=&quot;local source opened&quot;)
+                        await anyio.sleep_forever()
+                    except anyio.get_cancelled_exc_class():
+                        event(&quot;watch_cancelled&quot;, request_id=ctx.request_id)
+                        raise
+            finally:
+                event(&quot;watch_cleanup&quot;, request_id=ctx.request_id, file_closed=resource.closed)
+        values = []
+        for index, batch in enumerate(batch_ids, 1):
+            values.extend(fixture[&quot;batches&quot;][batch])
+            if name == &quot;scan_batches&quot;:
+                await ctx.session.report_progress(index, total=len(batch_ids), message=&quot;read &quot; + batch)
+        event(&quot;tool_completed&quot;, name=name, request_id=ctx.request_id)
+        return result({&quot;task_id&quot;: fixture[&quot;task_id&quot;], &quot;version&quot;: fixture[&quot;version&quot;],
+                       &quot;batch_ids&quot;: batch_ids, &quot;values&quot;: values,
+                       &quot;total&quot;: sum(values) - int(args.wrong_total and name == &quot;scan_batches&quot;)})
+
+    server = Server(&quot;infra-guide-orders&quot;, version=&quot;1.0.0&quot;, lifespan=lifespan,
+                    on_list_tools=list_tools, on_call_tool=call_tool)
+
+    async def run():
+        async with stdio_server() as streams:
+            await server.run(*streams, server.create_initialization_options())
+
+    anyio.run(run)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div></details><details class="full-code"><summary>展开完整client_lab.py · 与下载源码逐字一致</summary><div class="code-block"><div class="code-toolbar"><span>client_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 client_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Actual official-SDK stdio requests and cancellation, with independent source checks.
+
+Python 3.12 + requirements.txt. Every connection launches its own read-only server.
+Modern discovery and legacy initialize are exercised as separate connections.
+&quot;&quot;&quot;
+import argparse
+from importlib.metadata import version
+import json
+import os
+from pathlib import Path
+import platform
+import sys
+import tempfile
+
+import anyio
+from mcp import MCPError, types
+from mcp.client import ClientSession
+from mcp.client.stdio import StdioServerParameters, stdio_client
+
+
+ROOT = Path(__file__).resolve().parent
+
+
+class Tap:
+    &quot;&quot;&quot;Observe actual messages on the SDK transport; never synthesize messages.&quot;&quot;&quot;
+    def __init__(self, stream, trace, direction):
+        self.stream, self.trace, self.direction = stream, trace, direction
+
+    @property
+    def last_context(self):
+        return getattr(self.stream, &quot;last_context&quot;, None)
+
+    def record(self, item):
+        if hasattr(item, &quot;message&quot;):
+            self.trace.append({&quot;direction&quot;: self.direction,
+                               &quot;message&quot;: item.message.model_dump(by_alias=True, exclude_none=True)})
+
+    async def send(self, item):
+        self.record(item)
+        await self.stream.send(item)
+
+    async def receive(self):
+        item = await self.stream.receive()
+        self.record(item)
+        return item
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        try:
+            return await self.receive()
+        except anyio.EndOfStream:
+            raise StopAsyncIteration
+
+    async def aclose(self):
+        await self.stream.aclose()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        await self.aclose()
+
+
+def events(path):
+    return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+
+
+async def event_arrives(path, name):
+    with anyio.fail_after(5):
+        while True:
+            found = [row for row in events(path) if row[&quot;event&quot;] == name]
+            if found:
+                return found[-1]
+            await anyio.sleep(.01)
+
+
+def value(result):
+    assert not result.is_error
+    assert json.loads(result.content[0].text) == result.structured_content
+    return result.structured_content
+
+
+def matches_source(data, source, batch_ids):
+    expected = [number for batch in batch_ids for number in source[&quot;batches&quot;][batch]]
+    return (data.get(&quot;task_id&quot;) == source[&quot;task_id&quot;] and data.get(&quot;version&quot;) == source[&quot;version&quot;]
+            and data.get(&quot;batch_ids&quot;) == batch_ids and data.get(&quot;values&quot;) == expected
+            and data.get(&quot;total&quot;) == sum(expected))
+
+
+async def connection(folder, legacy=False, wrong_total=False):
+    trace, progress = [], []
+    label = &quot;wrong-total&quot; if wrong_total else &quot;legacy&quot; if legacy else &quot;modern&quot;
+    log = folder / (label + &quot;.jsonl&quot;)
+    server = StdioServerParameters(command=sys.executable,
+                                  args=[str(ROOT / &quot;server.py&quot;), &quot;--fixture&quot;, str(ROOT / &quot;orders.json&quot;), &quot;--events&quot;, str(log)])
+    if wrong_total:
+        server.args.append(&quot;--wrong-total&quot;)
+    with (folder / (label + &quot;.stderr&quot;)).open(&quot;w&quot;) as stderr:
+        async with stdio_client(server, errlog=stderr) as (read, write):
+            async with ClientSession(Tap(read, trace, &quot;server_to_client&quot;), Tap(write, trace, &quot;client_to_server&quot;),
+                                     read_timeout_seconds=5, client_info=types.Implementation(name=&quot;infra-guide-host&quot;, version=&quot;1.0.0&quot;)) as session:
+                initial = await session.initialize() if legacy else await session.discover()
+                metadata = initial.model_dump(by_alias=True, exclude_none=True)
+                tools = await session.list_tools()
+                advertised = {tool.name: tool.input_schema for tool in tools.tools}
+                assert set(advertised) == {&quot;read_batch&quot;, &quot;scan_batches&quot;, &quot;watch_batch&quot;}
+                base = value(await session.call_tool(&quot;read_batch&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_id&quot;: &quot;base&quot;}))
+                assert base[&quot;total&quot;] == 37
+                if wrong_total:
+                    wrong = await session.call_tool(&quot;scan_batches&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_ids&quot;: [&quot;base&quot;, &quot;late&quot;]})
+                    data = value(wrong)
+                    source = json.loads((ROOT / &quot;orders.json&quot;).read_text())
+                    expected = sum(sum(v) for v in source[&quot;batches&quot;].values())
+                    rejected = not matches_source(data, source, [&quot;base&quot;, &quot;late&quot;])
+                    assert not wrong.is_error and rejected
+                    result = {&quot;metadata&quot;: metadata, &quot;scan&quot;: data, &quot;is_error&quot;: wrong.is_error,
+                              &quot;independent_expected&quot;: expected, &quot;semantic_error_rejected&quot;: rejected}
+                elif legacy:
+                    result = {&quot;metadata&quot;: metadata, &quot;base&quot;: base}
+                else:
+                    invalid = await session.call_tool(&quot;read_batch&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_id&quot;: 27})
+                    missing = await session.call_tool(&quot;read_batch&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_id&quot;: &quot;missing&quot;})
+                    assert invalid.is_error and missing.is_error
+                    try:
+                        await session.call_tool(&quot;unknown_tool&quot;, {})
+                    except MCPError as error:
+                        protocol_error = {&quot;code&quot;: error.code, &quot;message&quot;: str(error)}
+                    else:
+                        raise AssertionError(&quot;unknown tool should produce a protocol error&quot;)
+                    progress_ready = anyio.Event()
+
+                    async def on_progress(done, total, message):
+                        progress.append({&quot;done&quot;: done, &quot;total&quot;: total, &quot;message&quot;: message})
+                        if done == 2:
+                            progress_ready.set()
+
+                    scan = value(await session.call_tool(&quot;scan_batches&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_ids&quot;: [&quot;base&quot;, &quot;late&quot;]},
+                                                         progress_callback=on_progress))
+                    with anyio.fail_after(5):
+                        await progress_ready.wait()
+                    cancellation_started, cancellation_finished = anyio.Event(), anyio.Event()
+                    pending = {}
+
+                    async def watch_progress(done, total, message):
+                        pending[&quot;progress&quot;] = {&quot;done&quot;: done, &quot;total&quot;: total, &quot;message&quot;: message}
+                        cancellation_started.set()
+
+                    async def waiting_call():
+                        try:
+                            with anyio.CancelScope() as scope:
+                                pending[&quot;scope&quot;] = scope
+                                try:
+                                    await session.call_tool(&quot;watch_batch&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_id&quot;: &quot;base&quot;},
+                                                            progress_callback=watch_progress)
+                                except anyio.get_cancelled_exc_class():
+                                    pending[&quot;cancelled&quot;] = True
+                                    raise
+                        finally:
+                            cancellation_finished.set()
+
+                    async with anyio.create_task_group() as group:
+                        group.start_soon(waiting_call)
+                        with anyio.fail_after(5):
+                            await cancellation_started.wait()
+                            pending[&quot;scope&quot;].cancel()
+                            await cancellation_finished.wait()
+                        cleanup = await event_arrives(log, &quot;watch_cleanup&quot;)
+                        assert cleanup[&quot;file_closed&quot;] and pending[&quot;cancelled&quot;]
+                    after_cancel = value(await session.call_tool(&quot;read_batch&quot;, {&quot;task_id&quot;: &quot;report-A&quot;, &quot;batch_id&quot;: &quot;late&quot;}))
+                    result = {&quot;metadata&quot;: metadata, &quot;base&quot;: base, &quot;invalid_is_error&quot;: invalid.is_error,
+                              &quot;missing_is_error&quot;: missing.is_error, &quot;protocol_error&quot;: protocol_error,
+                              &quot;scan&quot;: scan, &quot;progress&quot;: progress, &quot;cancel_progress&quot;: pending[&quot;progress&quot;],
+                              &quot;cancelled_waiter&quot;: pending[&quot;cancelled&quot;], &quot;server_cleanup&quot;: cleanup,
+                              &quot;after_cancel&quot;: after_cancel}
+    rows = events(log)
+    pid = next(row[&quot;pid&quot;] for row in rows if row[&quot;event&quot;] == &quot;server_started&quot;)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        reaped = True
+    else:
+        reaped = False
+    assert reaped and rows[-1][&quot;event&quot;] == &quot;server_stopped&quot;
+    result.update(trace=trace, events=[{k: v for k, v in row.items() if k != &quot;pid&quot;} for row in rows],
+                  server_exit_event=True, server_process_reaped=reaped, tools=advertised)
+    return result
+
+
+def independent_oracle(result):
+    source = json.loads((ROOT / &quot;orders.json&quot;).read_text())
+    modern, legacy = result[&quot;modern&quot;], result[&quot;legacy&quot;]
+    expected_values = source[&quot;batches&quot;][&quot;base&quot;] + source[&quot;batches&quot;][&quot;late&quot;]
+    assert matches_source(modern[&quot;scan&quot;], source, [&quot;base&quot;, &quot;late&quot;])
+    assert sum(expected_values) == 42
+    assert legacy[&quot;base&quot;] == modern[&quot;base&quot;]
+    outgoing = [row[&quot;message&quot;] for row in modern[&quot;trace&quot;] if row[&quot;direction&quot;] == &quot;client_to_server&quot;]
+    incoming = [row[&quot;message&quot;] for row in modern[&quot;trace&quot;] if row[&quot;direction&quot;] == &quot;server_to_client&quot;]
+    watch = next(row for row in outgoing if row.get(&quot;method&quot;) == &quot;tools/call&quot; and row[&quot;params&quot;][&quot;name&quot;] == &quot;watch_batch&quot;)
+    cancel = next(row for row in outgoing if row.get(&quot;method&quot;) == &quot;notifications/cancelled&quot;)
+    assert cancel[&quot;params&quot;][&quot;requestId&quot;] == watch[&quot;id&quot;]
+    assert not any(row.get(&quot;id&quot;) == watch[&quot;id&quot;] for row in incoming)
+    assert modern[&quot;server_cleanup&quot;][&quot;request_id&quot;] == watch[&quot;id&quot;]
+    assert modern[&quot;after_cancel&quot;][&quot;total&quot;] == sum(source[&quot;batches&quot;][&quot;late&quot;])
+    assert [row[&quot;done&quot;] for row in modern[&quot;progress&quot;]] == [1, 2]
+    assert outgoing[0][&quot;method&quot;] == &quot;server/discover&quot;
+    assert not any(row.get(&quot;method&quot;) == &quot;initialize&quot; for row in outgoing)
+    requests = [row for row in outgoing if &quot;id&quot; in row]
+    assert len({row[&quot;id&quot;] for row in requests}) == len(requests)
+    for request in requests:
+        metadata = request[&quot;params&quot;][&quot;_meta&quot;]
+        assert metadata[&quot;io.modelcontextprotocol/protocolVersion&quot;] == &quot;2026-07-28&quot;
+        assert metadata[&quot;io.modelcontextprotocol/clientInfo&quot;][&quot;name&quot;] == &quot;infra-guide-host&quot;
+        assert &quot;io.modelcontextprotocol/clientCapabilities&quot; in metadata
+    legacy_out = [row[&quot;message&quot;] for row in legacy[&quot;trace&quot;] if row[&quot;direction&quot;] == &quot;client_to_server&quot;]
+    assert legacy_out[0][&quot;method&quot;] == &quot;initialize&quot;
+    assert legacy_out[1][&quot;method&quot;] == &quot;notifications/initialized&quot;
+    assert legacy[&quot;metadata&quot;][&quot;protocolVersion&quot;] == &quot;2025-11-25&quot;
+    assert result[&quot;wrong_total&quot;][&quot;scan&quot;][&quot;total&quot;] == 41
+    assert result[&quot;wrong_total&quot;][&quot;semantic_error_rejected&quot;] and not result[&quot;wrong_total&quot;][&quot;is_error&quot;]
+    return {&quot;expected_total&quot;: 42, &quot;cancel_request_id&quot;: watch[&quot;id&quot;], &quot;cancelled_response_absent&quot;: True,
+            &quot;all_modern_requests_carry_metadata&quot;: True,
+            &quot;modern_first_method&quot;: outgoing[0][&quot;method&quot;], &quot;legacy_first_method&quot;: legacy_out[0][&quot;method&quot;]}
+
+
+async def run(folder):
+    result = {&quot;sdk&quot;: version(&quot;mcp&quot;), &quot;python&quot;: platform.python_version(),
+              &quot;modern&quot;: await connection(folder), &quot;legacy&quot;: await connection(folder, legacy=True),
+              &quot;wrong_total&quot;: await connection(folder, wrong_total=True)}
+    result[&quot;independent_oracle&quot;] = independent_oracle(result)
+    result[&quot;status&quot;] = &quot;passed&quot;
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&quot;--output-dir&quot;, type=Path)
+    args = parser.parse_args()
+    if args.output_dir:
+        args.output_dir.mkdir(parents=True, exist_ok=False)
+        result = anyio.run(run, args.output_dir)
+    else:
+        with tempfile.TemporaryDirectory(prefix=&quot;infra-mcp-&quot;) as temporary:
+            result = anyio.run(run, Path(temporary))
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre></div></details><p><a href="labs/mcp-protocol.zip" download>下载完整实验ZIP ↗</a> · <a href="labs/mcp-protocol/README.md">运行说明与验证边界 ↗</a> · <a href="labs/mcp-protocol/validation.json">源码摘要与真实执行记录 ↗</a>。参数结构、返回值和图中请求编号来自同一次程序输出；Tap只观察真实SDK流，不制造响应。</p></div></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>把协议连接回Agent系统的责任边界</h2><p>MCP把工具发现和调用变成可互通的契约，宿主仍要负责选择暴露哪些工具、决定何时执行、控制预算和独立验收。客户端实现信息是声明，不是认证；连接已经建立，也不等于当前任务有权读取某份资料。HTTP场景的认证与凭据传递需要另按传输规范实施，不能从这个stdio夹具外推。</p><div class="table-wrap"><table><thead><tr><th>接下来遇到的问题</th><th>继续哪条知识链</th><th>本章留下的边界</th></tr></thead><tbody><tr><td>知道工具名，是否就能执行</td><td><a href="/article/agent-security/">可信身份、任务委托与提交授权</a></td><td>本地启动者受信；未实现HTTP认证或远端身份</td></tr><tr><td>取消或断线后，外部写入是否发生</td><td><a href="/article/agent-recovery/">效果、回执、恢复与业务去重</a></td><td>本章只有只读工具与文件清理，不证明写入回滚</td></tr><tr><td>同一连接的多次调用怎样组成任务</td><td><a href="/article/durable-workflows/">计划、事实、持久等待与恢复</a></td><td>协议请求id不替代业务操作身份或持久历史</td></tr><tr><td>模型应该看到哪些结果与资料</td><td><a href="/article/agent-memory/">模型上下文与执行状态</a></td><td>连接寿命不等于对话记忆或资料有效期</td></tr><tr><td>怎样接到Kairo</td><td><a href="/article/kairo-practice/">真实接口映射与独立验收</a></td><td>SDK程序不是Kairo适配器，目标平台仍需实际版本与接口证据</td></tr></tbody></table></div><p>用同一份任务复述整条链：宿主说明要读report-A的批次，客户端按确定版本发现和调用工具，服务端校验并读取来源，响应按请求id认回，进度与取消各走自己的通知，最后由宿主核对42。把这几步画在一张图里，再讨论换成远端HTTP、写入工具或多个执行者时，哪一条责任需要新增机制。</p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/agent-runtime/">G1 Agent Infra在解决什么：从模型提议到任务完成</a>：先区分任务、模型提议和工具执行，再把一项受控调用落实为真实协议交换。</p><a class="chapter-map-link" href="/module/agent/?concept=ag-tools#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=agent#route-chapter-agent-mcp-protocol">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>宿主重新连接服务端后，新的请求也使用id8。能否用这个数字认回上次发布操作，或把上次批准应用到这次调用？如果这次工具只读成功且结构合法，total却是41，任务完成了吗？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。请求id只在相应消息与连接方向内认回响应，不是跨尝试的业务身份或授权。写入需按效果接收方契约保存稳定操作与批准绑定。只读返回的41也未满足当前来源[10,27,5]的42，必须由独立任务判据拒绝。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="mcp-protocol:0" >为什么2026-07-28连接不需要initialize，而示例中仍可以主动discover？</label><label><input type="checkbox" data-check="mcp-protocol:1" >请求id、进度token、task_id和业务操作身份分别属于谁？</label><label><input type="checkbox" data-check="mcp-protocol:2" >未知工具、错误参数、缺批次、错误总数41分别在哪一层被拒绝？</label><label><input type="checkbox" data-check="mcp-protocol:3" >call_tool返回后，能否断言所有进度回调都处理完？</label><label><input type="checkbox" data-check="mcp-protocol:4" >取消等待之后，需要什么证据证明服务端处理器和资源也已清理？</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="mcp-protocol">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/mcp-protocol/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic" target="_blank" rel="noopener noreferrer">MCP 2026-07-28 · 消息与逐请求上下文 ↗</a><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning" target="_blank" rel="noopener noreferrer">MCP 2026-07-28 · 版本与兼容 ↗</a><a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools" target="_blank" rel="noopener noreferrer">MCP 2026-07-28 · 工具与结果 ↗</a><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/stdio" target="_blank" rel="noopener noreferrer">MCP 2026-07-28 · stdio传输 ↗</a><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle" target="_blank" rel="noopener noreferrer">MCP 2025-11-25 · 旧版初始化 ↗</a><a href="https://github.com/modelcontextprotocol/python-sdk/blob/v2.3.0/docs/migration.md" target="_blank" rel="noopener noreferrer">官方Python SDK 2.3.0 · 版本迁移与取消 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/agent-runtime/"><span>G1</span>Agent Infra在解决什么：从模型提议到任务完成<b>↗</b></a><a href="/article/agent-security/"><span>G2</span>Agent的权限边界：谁授权，在哪里拦截，怎样限制效果<b>↗</b></a><a href="/article/agent-recovery/"><span>G4</span>工具已经执行，任务却没完成：持久化、幂等与崩溃恢复<b>↗</b></a><a href="/article/durable-workflows/"><span>G7</span>持久工作流：事件重放、接管与提交<b>↗</b></a><a href="/article/agent-memory/"><span>G5</span>上下文、运行状态与长期记忆：三种信息不要混存<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="mcp-protocol">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Agent Infra</p><a data-reading-direction="previous" href="/article/agent-runtime/"><small>← 上一篇</small>G1 Agent Infra在解决什么：从模型提议到任务完成</a><a data-reading-direction="next" href="/article/agent-security/"><small>下一篇 →</small>G2 Agent的权限边界：谁授权，在哪里拦截，怎样限制效果</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/mcp-protocol/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/mcp-protocol/#section-1">1. 先分清宿主、客户端、服务端与工具</a></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/mcp-protocol/#section-2">2. 请求、响应、通知，先按消息职责读</a></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/mcp-protocol/#section-3">3. 版本决定起点：现代逐请求，旧版先初始化</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/mcp-protocol/#section-4">4. 发现工具之后，再把参数交给执行者</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/mcp-protocol/#section-5">5. 收到结果、工具成功与任务正确，要分开验</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/mcp-protocol/#section-6">6. 进度属于调用过程，不能代替完成结果</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/mcp-protocol/#section-7">7. 取消后，分别检查等待者、处理器和资源</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/mcp-protocol/#section-8">8. 实战：三个进程、两代协议与独立验收</a></div><div class="chapter-toc-section"><a data-toc="section-9" href="/article/mcp-protocol/#section-9">9. 把协议连接回Agent系统的责任边界</a></div><a data-toc="self-check" href="/article/mcp-protocol/#self-check">自我检验</a><a data-toc="references" href="/article/mcp-protocol/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

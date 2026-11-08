@@ -55,5 +55,11 @@ const record=JSON.parse(fs.readFileSync('docs/CONCEPT_REVIEW_2026-11-05.json','u
 // Preserve the published concept audit; the current source is checked by the
 // append-only coherence review, including the later ambiguous-kernel repair.
 for(const[file,sha]of Object.entries(record.source_sha256))assert.equal(crypto.createHash('sha256').update(require('child_process').execFileSync('git',['show','814dfe982040fe1ea79b7b2a4ebb9645c5e11d48:'+file])).digest('hex'),sha,file+': published reviewed revision');
-assert.equal(record.chapters.length,inventory.chapters);assert.equal(record.modules.length,14);
+assert.equal(record.chapters.length,75);assert.equal(record.modules.length,14);
+const originalConcepts=require('./content-at-commit.cjs').evaluate('da60d2825a5f5a93a08b68a871ace14a69ab7c6e','chapterConceptPaths');
+for(const[id,path]of Object.entries(originalConcepts))assert.deepEqual(JSON.parse(JSON.stringify(data.chapterConceptPaths[id])),path,id+': original concept sequence changed without a separate review');
+const additions=require('./content-review-records.cjs').new_concept_reviews;
+const addedConcepts=Object.keys(data.chapterConceptPaths).filter(id=>!Object.hasOwn(originalConcepts,id));
+assert.deepEqual(addedConcepts.sort(),additions.map(row=>row.id).sort());
+for(const row of additions){assert(row.scope&&row.observation&&row.reviewed_at);assert.equal(crypto.createHash('sha256').update(JSON.stringify(data.chapterConceptPaths[row.id])).digest('hex'),row.reviewed_path_sha256,row.id+': unreviewed new concept sequence');}
 console.log('PASS: '+inventory.chapters+' chapter / 14 system-page concept sequences, preserved section anchors and protected code/links, first-use boundaries, ambiguous meanings, original diagrams and reviewed revisions. Reader comprehension still needs human feedback.');

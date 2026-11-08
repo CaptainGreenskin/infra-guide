@@ -272,7 +272,7 @@ const fieldConceptMaps={
   answer:'保留已确认效果并核对原回执，不能因进度未更新而重复写。新动作按当前权限判断，查询本身也需要当前读取资格；证据不足时不能把模型回答判为完成，应按规则补充获准资料或明确报告不足。',
   outlets:[['platform','需要自建模型服务时，再深入生成、缓存与服务性能；训练不是Agent先修。'],['cloud-security','继续深入程序身份、秘密轮换和资源端授权。']]}
 };
-const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation']};
+const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation'],'mysql-replication':['cloud-data','replication-failover']};
 
 function fieldPointRecords(moduleId){
  if(moduleId==='foundation')return cloudPrerequisites.map(([title,lead,chapters],i)=>({id:'prerequisite-'+(i+1),title,lead,articles:chapters}));

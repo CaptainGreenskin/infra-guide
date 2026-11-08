@@ -627,6 +627,28 @@
     {
       "id": "production-readiness",
       "targets": []
+    },
+    {
+      "id": "control-plane-consensus",
+      "targets": [
+        "etcd-consensus-run",
+        "subsection-8-gy93cg"
+      ]
+    },
+    {
+      "id": "mysql-replication",
+      "targets": [
+        "subsection-1-1g0a9o4",
+        "subsection-2-yifrop",
+        "subsection-2-197pyo7",
+        "subsection-2-xdwl6j",
+        "subsection-4-1lauqe1",
+        "subsection-4-1vn9znl"
+      ]
+    },
+    {
+      "id": "mcp-protocol",
+      "targets": []
     }
   ]
 }

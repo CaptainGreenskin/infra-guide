@@ -1,0 +1,32 @@
+{
+  "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42471646629",
+  "source_commit": "f9e86bc18e320ed808f88c60bf961232cb79fc65",
+  "jobs": [
+    {
+      "name": "quorum",
+      "databaseId": 128703582575,
+      "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42471646629/job/128703582575",
+      "conclusion": "success"
+    },
+    {
+      "name": "replication",
+      "databaseId": 128703582950,
+      "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42471646629/job/128703582950",
+      "conclusion": "success"
+    }
+  ],
+  "records": {
+    "etcd": {
+      "sha256": "39b60a3b5dcba2b203d1392b9b6c64e016c4871478d5a7645cb83ce39acac697",
+      "source": "dist/labs/etcd-consensus/etcd_lab.py",
+      "source_sha256": "85415281113096df75039ccbe1667dbc63b272935bcc059bdc36b06b64c72c16",
+      "status": "passed"
+    },
+    "mysql": {
+      "sha256": "e96bb7657955c87987e7392e5ee865da03fc06b511e818614724db0ae9d778cd",
+      "source": "dist/labs/mysql-replication/replication_lab.py",
+      "source_sha256": "9afd52cfd3a6f4ec053976403e8679eab283c24047a0c4c86f6217b9d1640d8b",
+      "status": "passed"
+    }
+  }
+}

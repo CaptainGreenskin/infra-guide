@@ -12,8 +12,8 @@ const ids=[...new Set(data.edits.map(e=>e.id))];assert.deepEqual(ids,['slo','gpu
 for(const track of ['cloud','ai','agent'])assert.equal(ids.filter(id=>data.modules.find(m=>m.id===data.articles.find(a=>a.id===id).module).track===track).length,1);
 const pre=body=>body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[],all=a=>a.sections.map(s=>s[1]).join('');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
-for(const a of data.articles){
- const before=prior.find(x=>x.id===a.id);assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]),a.id+': section anchors and headings');
+for(const before of prior){
+ const a=data.articles.find(x=>x.id===before.id);assert(a,before.id+': published chapter removed');assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]),a.id+': section anchors and headings');
  if(!ids.includes(a.id)){assert.deepEqual(published.find(x=>x.id===a.id).sections,before.sections,a.id+': unreviewed V51 body change');continue;}
  let index=0;const current=pre(all(a));for(const original of pre(all(before))){const at=current.indexOf(original,index);assert(at>=index,a.id+': original complete code removed, reordered or modified');index=at+1;}
  assert.equal(current.length-pre(all(before)).length,a.id==='agent-memory'?0:1,a.id+': unexpected new code');

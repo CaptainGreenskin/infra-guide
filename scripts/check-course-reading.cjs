@@ -13,9 +13,11 @@ for(const[track,anchors]of Object.entries(legacy))for(const anchor of anchors){
 }
 const courseReview=require('./coherence-review-records.cjs').laterUpdates.at(-1).review_scope;
 const previous=require('./content-at-commit.cjs')(courseReview.body_baseline_commit);
-const changed=[];
+const changed=[],added=[];
 for(const a of data.articles){
- const old=previous.find(x=>x.id===a.id);assert(old);assert.equal(a.title,old.title);
+ const old=previous.find(x=>x.id===a.id);
+ if(!old){assert((courseReview.new_chapters||[]).includes(a.id),a.id+': undeclared new chapter');added.push(a.id);continue;}
+ assert.equal(a.title,old.title);assert.equal(a.number,old.number,a.id+': published display number changed');
  assert.deepEqual(a.sections.map(s=>s[0]),old.sections.map(s=>s[0]),a.id+': preserve headings and section links');
  if(JSON.stringify(a.sections)!==JSON.stringify(old.sections))changed.push(a.id);
  const oldBody=old.sections.map(s=>s[1]).join(''),body=a.sections.map(s=>s[1]).join('');
@@ -25,6 +27,9 @@ for(const a of data.articles){
  for(const[,id]of oldBody.matchAll(/\bid="([^"]+)"/g))assert(body.includes('id="'+id+'"'),a.id+': original inner anchor '+id);
 }
 assert.deepEqual(changed.sort(),[...courseReview.changed_bodies].sort());
+assert.deepEqual(added.sort(),[...(courseReview.new_chapters||[])].sort());
+assert.equal(data.articles.length,previous.length+added.length);
+for(const a of previous)assert(data.articles.some(current=>current.id===a.id),a.id+': published chapter removed');
 const records=require('./content-review-records.cjs'),migration=JSON.parse(fs.readFileSync('docs/COURSE_MIGRATION_2026-11-07.json'));
 const dated=[...JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.json')).revisions,...records.body_revisions].filter(r=>r.previous_content_sha256&&r.previous_content_sha256!==r.reviewed_content_sha256).concat(records.new_chapter_reviews,migration.new_chapter_reviews,records.revised_teaching_units.map(r=>({...r,id:r.chapter})));
 for(const row of dated){

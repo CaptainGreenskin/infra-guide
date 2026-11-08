@@ -1,0 +1,1771 @@
+{
+  "schema": "mcp-protocol-v1",
+  "status": "passed",
+  "verified_on": "2026-11-08",
+  "command": "python -B client_lab.py",
+  "environment": {
+    "python": "3.12.13",
+    "sdk": "2.3.0",
+    "os": "Darwin",
+    "transport": "actual SDK stdio subprocesses"
+  },
+  "source_sha256": {
+    "client_lab.py": "48cd164d01d0dd16f0f174e5cb0ffd2b1b3f70cbfe0850c4de29440331820dbe",
+    "server.py": "7bc7dfeb50b6af28696c509b5ee02bfc4935fc4825d16fbc696fcb93018a76e5",
+    "orders.json": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "05be3f5dbbef2b10eba76e73f6a183f9e6aa33f340a56902142c541ceef95f62"
+  },
+  "program": {
+    "sdk": "2.3.0",
+    "python": "3.12.13",
+    "modern": {
+      "metadata": {
+        "_meta": {
+          "io.modelcontextprotocol/serverInfo": {
+            "name": "infra-guide-orders",
+            "version": "1.0.0"
+          }
+        },
+        "ttlMs": 0,
+        "cacheScope": "private",
+        "supportedVersions": [
+          "2026-07-28"
+        ],
+        "capabilities": {
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "resultType": "complete"
+      },
+      "base": {
+        "task_id": "report-A",
+        "version": 3,
+        "batch_ids": [
+          "base"
+        ],
+        "values": [
+          10,
+          27
+        ],
+        "total": 37
+      },
+      "invalid_is_error": true,
+      "missing_is_error": true,
+      "protocol_error": {
+        "code": -32602,
+        "message": "Unknown tool: unknown_tool"
+      },
+      "scan": {
+        "task_id": "report-A",
+        "version": 3,
+        "batch_ids": [
+          "base",
+          "late"
+        ],
+        "values": [
+          10,
+          27,
+          5
+        ],
+        "total": 42
+      },
+      "progress": [
+        {
+          "done": 1.0,
+          "total": 2.0,
+          "message": "read base"
+        },
+        {
+          "done": 2.0,
+          "total": 2.0,
+          "message": "read late"
+        }
+      ],
+      "cancel_progress": {
+        "done": 1.0,
+        "total": 2.0,
+        "message": "local source opened"
+      },
+      "cancelled_waiter": true,
+      "server_cleanup": {
+        "event": "watch_cleanup",
+        "request_id": 8,
+        "file_closed": true
+      },
+      "after_cancel": {
+        "task_id": "report-A",
+        "version": 3,
+        "batch_ids": [
+          "late"
+        ],
+        "values": [
+          5
+        ],
+        "total": 5
+      },
+      "trace": [
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "server/discover",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "cacheScope": "private",
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "resultType": "complete",
+              "supportedVersions": [
+                "2026-07-28"
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "cacheScope": "private",
+              "resultType": "complete",
+              "tools": [
+                {
+                  "description": "Read one fixed order batch.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "read_batch",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Read several batches with progress.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_ids"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "scan_batches",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Open a local source and wait until cancelled; demonstration only.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "watch_batch",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "base"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"base\"], \"values\": [10, 27], \"total\": 37}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "base"
+                ],
+                "values": [
+                  10,
+                  27
+                ],
+                "total": 37
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": 27
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "result": {
+              "content": [
+                {
+                  "text": "Arguments do not match the advertised JSON Schema",
+                  "type": "text"
+                }
+              ],
+              "isError": true,
+              "resultType": "complete",
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "missing"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "result": {
+              "content": [
+                {
+                  "text": "The requested batch does not exist",
+                  "type": "text"
+                }
+              ],
+              "isError": true,
+              "resultType": "complete",
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "method": "tools/call",
+            "params": {
+              "name": "unknown_tool",
+              "arguments": {},
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "error": {
+              "code": -32602,
+              "message": "Unknown tool: unknown_tool"
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 7,
+            "method": "tools/call",
+            "params": {
+              "name": "scan_batches",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_ids": [
+                  "base",
+                  "late"
+                ]
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {},
+                "progressToken": 7
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "method": "notifications/progress",
+            "params": {
+              "progressToken": 7,
+              "progress": 1,
+              "total": 2,
+              "message": "read base"
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "method": "notifications/progress",
+            "params": {
+              "progressToken": 7,
+              "progress": 2,
+              "total": 2,
+              "message": "read late"
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 7,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"base\", \"late\"], \"values\": [10, 27, 5], \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "base",
+                  "late"
+                ],
+                "values": [
+                  10,
+                  27,
+                  5
+                ],
+                "total": 42
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 8,
+            "method": "tools/call",
+            "params": {
+              "name": "watch_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "base"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {},
+                "progressToken": 8
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "method": "notifications/progress",
+            "params": {
+              "progressToken": 8,
+              "progress": 1,
+              "total": 2,
+              "message": "local source opened"
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "method": "notifications/cancelled",
+            "params": {
+              "requestId": 8,
+              "reason": "caller cancelled"
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "late"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"late\"], \"values\": [5], \"total\": 5}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "late"
+                ],
+                "values": [
+                  5
+                ],
+                "total": 5
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "event": "server_started"
+        },
+        {
+          "event": "list_tools",
+          "request_id": 2,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 3,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "tool_completed",
+          "name": "read_batch",
+          "request_id": 3
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 4,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "input_rejected",
+          "name": "read_batch"
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 5,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "business_rejected",
+          "name": "read_batch"
+        },
+        {
+          "event": "call_received",
+          "name": "unknown_tool",
+          "request_id": 6,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "call_received",
+          "name": "scan_batches",
+          "request_id": 7,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "tool_completed",
+          "name": "scan_batches",
+          "request_id": 7
+        },
+        {
+          "event": "call_received",
+          "name": "watch_batch",
+          "request_id": 8,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "watch_opened",
+          "request_id": 8
+        },
+        {
+          "event": "watch_cancelled",
+          "request_id": 8
+        },
+        {
+          "event": "watch_cleanup",
+          "request_id": 8,
+          "file_closed": true
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 9,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "tool_completed",
+          "name": "read_batch",
+          "request_id": 9
+        },
+        {
+          "event": "server_stopped"
+        }
+      ],
+      "server_exit_event": true,
+      "server_process_reaped": true,
+      "tools": {
+        "read_batch": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "additionalProperties": false
+        },
+        "scan_batches": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_ids"
+          ],
+          "additionalProperties": false
+        },
+        "watch_batch": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "legacy": {
+      "metadata": {
+        "protocolVersion": "2025-11-25",
+        "capabilities": {
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "serverInfo": {
+          "name": "infra-guide-orders",
+          "version": "1.0.0"
+        }
+      },
+      "base": {
+        "task_id": "report-A",
+        "version": 3,
+        "batch_ids": [
+          "base"
+        ],
+        "values": [
+          10,
+          27
+        ],
+        "total": 37
+      },
+      "trace": [
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {
+              "protocolVersion": "2025-11-25",
+              "capabilities": {},
+              "clientInfo": {
+                "name": "infra-guide-host",
+                "version": "1.0.0"
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "protocolVersion": "2025-11-25",
+              "serverInfo": {
+                "name": "infra-guide-orders",
+                "version": "1.0.0"
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "method": "notifications/initialized"
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list"
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "tools": [
+                {
+                  "description": "Read one fixed order batch.",
+                  "inputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "name": "read_batch",
+                  "outputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Read several batches with progress.",
+                  "inputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_ids"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "name": "scan_batches",
+                  "outputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Open a local source and wait until cancelled; demonstration only.",
+                  "inputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  },
+                  "name": "watch_batch",
+                  "outputSchema": {
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "base"
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"base\"], \"values\": [10, 27], \"total\": 37}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "base"
+                ],
+                "values": [
+                  10,
+                  27
+                ],
+                "total": 37
+              }
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "event": "server_started"
+        },
+        {
+          "event": "list_tools",
+          "request_id": 2,
+          "protocol": "2025-11-25"
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 3,
+          "protocol": "2025-11-25"
+        },
+        {
+          "event": "tool_completed",
+          "name": "read_batch",
+          "request_id": 3
+        },
+        {
+          "event": "server_stopped"
+        }
+      ],
+      "server_exit_event": true,
+      "server_process_reaped": true,
+      "tools": {
+        "read_batch": {
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "scan_batches": {
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_ids"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        },
+        "watch_batch": {
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "type": "object",
+          "additionalProperties": false
+        }
+      }
+    },
+    "wrong_total": {
+      "metadata": {
+        "_meta": {
+          "io.modelcontextprotocol/serverInfo": {
+            "name": "infra-guide-orders",
+            "version": "1.0.0"
+          }
+        },
+        "ttlMs": 0,
+        "cacheScope": "private",
+        "supportedVersions": [
+          "2026-07-28"
+        ],
+        "capabilities": {
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "resultType": "complete"
+      },
+      "scan": {
+        "task_id": "report-A",
+        "version": 3,
+        "batch_ids": [
+          "base",
+          "late"
+        ],
+        "values": [
+          10,
+          27,
+          5
+        ],
+        "total": 41
+      },
+      "is_error": false,
+      "independent_expected": 42,
+      "semantic_error_rejected": true,
+      "trace": [
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "server/discover",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "cacheScope": "private",
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "resultType": "complete",
+              "supportedVersions": [
+                "2026-07-28"
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "cacheScope": "private",
+              "resultType": "complete",
+              "tools": [
+                {
+                  "description": "Read one fixed order batch.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "read_batch",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Read several batches with progress.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_ids"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "scan_batches",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "description": "Open a local source and wait until cancelled; demonstration only.",
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "batch_id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "batch_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "watch_batch",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "batch_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "task_id",
+                      "version",
+                      "batch_ids",
+                      "values",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "read_batch",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_id": "base"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"base\"], \"values\": [10, 27], \"total\": 37}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "base"
+                ],
+                "values": [
+                  10,
+                  27
+                ],
+                "total": 37
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "direction": "client_to_server",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {
+              "name": "scan_batches",
+              "arguments": {
+                "task_id": "report-A",
+                "batch_ids": [
+                  "base",
+                  "late"
+                ]
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "infra-guide-host",
+                  "version": "1.0.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          }
+        },
+        {
+          "direction": "server_to_client",
+          "message": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"task_id\": \"report-A\", \"version\": 3, \"batch_ids\": [\"base\", \"late\"], \"values\": [10, 27, 5], \"total\": 41}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "task_id": "report-A",
+                "version": 3,
+                "batch_ids": [
+                  "base",
+                  "late"
+                ],
+                "values": [
+                  10,
+                  27,
+                  5
+                ],
+                "total": 41
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-orders",
+                  "version": "1.0.0"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "event": "server_started"
+        },
+        {
+          "event": "list_tools",
+          "request_id": 2,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "call_received",
+          "name": "read_batch",
+          "request_id": 3,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "tool_completed",
+          "name": "read_batch",
+          "request_id": 3
+        },
+        {
+          "event": "call_received",
+          "name": "scan_batches",
+          "request_id": 4,
+          "protocol": "2026-07-28"
+        },
+        {
+          "event": "tool_completed",
+          "name": "scan_batches",
+          "request_id": 4
+        },
+        {
+          "event": "server_stopped"
+        }
+      ],
+      "server_exit_event": true,
+      "server_process_reaped": true,
+      "tools": {
+        "read_batch": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "additionalProperties": false
+        },
+        "scan_batches": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_ids"
+          ],
+          "additionalProperties": false
+        },
+        "watch_batch": {
+          "type": "object",
+          "properties": {
+            "task_id": {
+              "type": "string"
+            },
+            "batch_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "batch_id"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "independent_oracle": {
+      "expected_total": 42,
+      "cancel_request_id": 8,
+      "cancelled_response_absent": true,
+      "all_modern_requests_carry_metadata": true,
+      "modern_first_method": "server/discover",
+      "legacy_first_method": "initialize"
+    },
+    "status": "passed"
+  },
+  "scope": "Actual official SDK 2.3.0, modern+legacy stdio and read-only fixture; no HTTP/OAuth/LLM/write-effect rollback/Kairo."
+}

@@ -1,0 +1,2538 @@
+{
+  "checked_on": "2026-11-08",
+  "status": "passed",
+  "source_sha256": {
+    "etcd_lab.py": "85415281113096df75039ccbe1667dbc63b272935bcc059bdc36b06b64c72c16",
+    "README.md": "3a00a7a44f22efbba6c7289b093b44d25d86546af41cc244f22656cc4a5b8b01"
+  },
+  "origin": {
+    "kind": "isolated Linux Docker in GitHub Actions",
+    "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42471646629",
+    "source_commit": "f9e86bc18e320ed808f88c60bf961232cb79fc65"
+  },
+  "execution": {
+    "schema": 1,
+    "status": "passed",
+    "source_sha256": {
+      "etcd_lab.py": "85415281113096df75039ccbe1667dbc63b272935bcc059bdc36b06b64c72c16"
+    },
+    "version": "3.6.16",
+    "image": "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+    "python": "3.14.4",
+    "system": "Linux",
+    "scope": [
+      "real three-container etcd cluster on one Linux Docker host",
+      "actual peer network partition; client exec uses member loopback",
+      "independent single-member snapshot restore, not a Kubernetes restore",
+      "plaintext isolated synthetic configuration; no production TLS/RBAC, physical-AZ or throughput test"
+    ],
+    "observation": {
+      "initial": {
+        "members": [
+          {
+            "name": "infra-etcd-3cfb7bcfcb51-n0",
+            "id": "15524364946534927838"
+          },
+          {
+            "name": "infra-etcd-3cfb7bcfcb51-n1",
+            "id": "2226843427764874273"
+          },
+          {
+            "name": "infra-etcd-3cfb7bcfcb51-n2",
+            "id": "7891799260605606917"
+          }
+        ],
+        "leader_id": "15524364946534927838",
+        "term": 2,
+        "quorum": 2,
+        "first_put_revision": 2,
+        "read": {
+          "revision": 2,
+          "cluster_id": "1251586427138963347",
+          "member_id": "15524364946534927838",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "37",
+              "create_revision": 2,
+              "mod_revision": 2,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        }
+      },
+      "watch": {
+        "list_revision": 3,
+        "events_revision": 4,
+        "events": [
+          {
+            "key": "/lesson/config/release",
+            "value": "v2",
+            "mod_revision": 4
+          },
+          {
+            "key": "/lesson/config/route",
+            "value": "A",
+            "mod_revision": 4
+          }
+        ],
+        "response": {
+          "response_revision": 4,
+          "canceled": false,
+          "compact_revision": 0,
+          "events": [
+            {
+              "key": "/lesson/config/release",
+              "value": "v2",
+              "mod_revision": 4
+            },
+            {
+              "key": "/lesson/config/route",
+              "value": "A",
+              "mod_revision": 4
+            }
+          ],
+          "raw_response": "{\"Header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":4,\"raft_term\":2},\"Events\":[{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvcmVsZWFzZQ==\",\"create_revision\":3,\"mod_revision\":4,\"version\":2,\"value\":\"djI=\"}},{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvcm91dGU=\",\"create_revision\":4,\"mod_revision\":4,\"version\":1,\"value\":\"QQ==\"}}],\"CompactRevision\":0,\"Canceled\":false,\"Created\":false}"
+        }
+      },
+      "compaction": {
+        "requested_revision": 4,
+        "old_watch": {
+          "response_revision": 0,
+          "canceled": true,
+          "compact_revision": 4,
+          "events": [],
+          "raw_response": "{\"Header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"raft_term\":2},\"Events\":[],\"CompactRevision\":4,\"Canceled\":true,\"Created\":false}"
+        }
+      },
+      "lease": {
+        "id": "999413990597275147",
+        "ttl_seconds": 4,
+        "initial_present": true,
+        "initial_lease_id": "999413990597275147",
+        "expired_absent": true
+      },
+      "snapshot": {
+        "revision": 6,
+        "captured": {
+          "revision": 6,
+          "cluster_id": "1251586427138963347",
+          "member_id": "15524364946534927838",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "37",
+              "create_revision": 2,
+              "mod_revision": 2,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        },
+        "sha256": "062770a1eca8a0466c71f7508f9caf6e3f8597ab0d1a9907b5e1e440fb6df5be",
+        "bytes": 20512,
+        "status": {
+          "hash": 2479273482,
+          "revision": 6,
+          "totalKey": 3,
+          "totalSize": 20480,
+          "version": "3.6.0"
+        },
+        "independent_status_raw": "{\"hash\":2479273482,\"revision\":6,\"totalKey\":3,\"totalSize\":20480,\"version\":\"3.6.0\"}\n"
+      },
+      "partition": {
+        "isolated_member_id": "15524364946534927838",
+        "isolated_name": "infra-etcd-3cfb7bcfcb51-n0",
+        "majority_leader_id": "2226843427764874273",
+        "majority_term": 3,
+        "majority_after_write": {
+          "revision": 7,
+          "cluster_id": "1251586427138963347",
+          "member_id": "2226843427764874273",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "42",
+              "create_revision": 2,
+              "mod_revision": 7,
+              "version": 2,
+              "lease": "0"
+            }
+          }
+        },
+        "minority_serializable": {
+          "revision": 6,
+          "cluster_id": "1251586427138963347",
+          "member_id": "15524364946534927838",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "37",
+              "create_revision": 2,
+              "mod_revision": 2,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        },
+        "minority_linearizable_exit": 1,
+        "minority_write_exit": 1,
+        "after_rejoin": {
+          "revision": 7,
+          "cluster_id": "1251586427138963347",
+          "member_id": "15524364946534927838",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "42",
+              "create_revision": 2,
+              "mod_revision": 7,
+              "version": 2,
+              "lease": "0"
+            }
+          }
+        }
+      },
+      "cas": {
+        "old_mod_revision": 2,
+        "old_revision_succeeded": false,
+        "verified_value": "42"
+      },
+      "lost_quorum": {
+        "running_members": 1,
+        "required_quorum": 2,
+        "linearizable_exit": 1,
+        "write_exit": 1,
+        "after_second_member": {
+          "revision": 8,
+          "cluster_id": "1251586427138963347",
+          "member_id": "15524364946534927838",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "43",
+              "create_revision": 2,
+              "mod_revision": 8,
+              "version": 3,
+              "lease": "0"
+            }
+          }
+        },
+        "all_members_recovered": [
+          {
+            "revision": 8,
+            "cluster_id": "1251586427138963347",
+            "member_id": "15524364946534927838",
+            "rows": {
+              "/lesson/config/limit": {
+                "value": "43",
+                "create_revision": 2,
+                "mod_revision": 8,
+                "version": 3,
+                "lease": "0"
+              }
+            }
+          },
+          {
+            "revision": 8,
+            "cluster_id": "1251586427138963347",
+            "member_id": "2226843427764874273",
+            "rows": {
+              "/lesson/config/limit": {
+                "value": "43",
+                "create_revision": 2,
+                "mod_revision": 8,
+                "version": 3,
+                "lease": "0"
+              }
+            }
+          },
+          {
+            "revision": 8,
+            "cluster_id": "1251586427138963347",
+            "member_id": "7891799260605606917",
+            "rows": {
+              "/lesson/config/limit": {
+                "value": "43",
+                "create_revision": 2,
+                "mod_revision": 8,
+                "version": 3,
+                "lease": "0"
+              }
+            }
+          }
+        ]
+      },
+      "restore": {
+        "bump_revision": 1000,
+        "mark_compacted": true,
+        "before_new_write": {
+          "revision": 1006,
+          "cluster_id": "16859121579132816125",
+          "member_id": "12266717027811571892",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "37",
+              "create_revision": 2,
+              "mod_revision": 2,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        },
+        "old_watch": {
+          "response_revision": 0,
+          "canceled": true,
+          "compact_revision": 1006,
+          "events": [],
+          "raw_response": "{\"Header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"raft_term\":2},\"Events\":[],\"CompactRevision\":1006,\"Canceled\":true,\"Created\":false}"
+        },
+        "relist": {
+          "revision": 1006,
+          "cluster_id": "16859121579132816125",
+          "member_id": "12266717027811571892",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "37",
+              "create_revision": 2,
+              "mod_revision": 2,
+              "version": 1,
+              "lease": "0"
+            },
+            "/lesson/config/release": {
+              "value": "v2",
+              "create_revision": 3,
+              "mod_revision": 4,
+              "version": 2,
+              "lease": "0"
+            },
+            "/lesson/config/route": {
+              "value": "A",
+              "create_revision": 4,
+              "mod_revision": 4,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        },
+        "restarted_watch": {
+          "response_revision": 1007,
+          "canceled": false,
+          "compact_revision": 0,
+          "events": [
+            {
+              "key": "/lesson/config/limit",
+              "value": "47",
+              "mod_revision": 1007
+            }
+          ],
+          "raw_response": "{\"Header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1007,\"raft_term\":2},\"Events\":[{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":1007,\"version\":2,\"value\":\"NDc=\"}}],\"CompactRevision\":0,\"Canceled\":false,\"Created\":false}"
+        },
+        "rebuilt_cache": {
+          "/lesson/config/limit": "47",
+          "/lesson/config/release": "v2",
+          "/lesson/config/route": "A"
+        },
+        "full_range_after": {
+          "revision": 1007,
+          "cluster_id": "16859121579132816125",
+          "member_id": "12266717027811571892",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "47",
+              "create_revision": 2,
+              "mod_revision": 1007,
+              "version": 2,
+              "lease": "0"
+            },
+            "/lesson/config/release": {
+              "value": "v2",
+              "create_revision": 3,
+              "mod_revision": 4,
+              "version": 2,
+              "lease": "0"
+            },
+            "/lesson/config/route": {
+              "value": "A",
+              "create_revision": 4,
+              "mod_revision": 4,
+              "version": 1,
+              "lease": "0"
+            }
+          }
+        },
+        "after_new_write": {
+          "revision": 1007,
+          "cluster_id": "16859121579132816125",
+          "member_id": "12266717027811571892",
+          "rows": {
+            "/lesson/config/limit": {
+              "value": "47",
+              "create_revision": 2,
+              "mod_revision": 1007,
+              "version": 2,
+              "lease": "0"
+            }
+          }
+        }
+      },
+      "image_repo_digests": [
+        "gcr.io/etcd-development/etcd@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132"
+      ]
+    },
+    "cleanup": {
+      "remaining": [],
+      "complete": true
+    },
+    "commands": [
+      {
+        "argv": [
+          "docker",
+          "context",
+          "inspect",
+          "--format",
+          "{{.Endpoints.docker.Host}}"
+        ],
+        "exit_code": 0,
+        "stdout": "unix:///var/run/docker.sock\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{.OSType}}"
+        ],
+        "exit_code": 0,
+        "stdout": "linux\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "pull",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132"
+        ],
+        "exit_code": 0,
+        "stdout": "gcr.io/etcd-development/etcd@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132: Pulling from etcd-development/etcd\n2ff934cbec26: Pulling fs layer\nd086f8ff3238: Pulling fs layer\n9ba40c786558: Pulling fs layer\ndf858486bb79: Pulling fs layer\nff7e8b387b66: Pulling fs layer\ndf858486bb79: Download complete\nd086f8ff3238: Download complete\n2ff934cbec26: Download complete\n9ba40c786558: Download complete\nff7e8b387b66: Download complete\n2ff934cbec26: Pull complete\nff7e8b387b66: Pull complete\ndf858486bb79: Pull complete\nd086f8ff3238: Pull complete\n9ba40c786558: Pull complete\nDigest: sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132\nStatus: Downloaded newer image for gcr.io/etcd-development/etcd@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132\ngcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "image",
+          "inspect",
+          "--format",
+          "{{json .RepoDigests}}",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132"
+        ],
+        "exit_code": 0,
+        "stdout": "[\"gcr.io/etcd-development/etcd@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132\"]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "create",
+          "--internal",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-net"
+        ],
+        "exit_code": 0,
+        "stdout": "e8b5e6def5e8f42dc4cac5b400a127051e5db2a694fbd2c14a8e7a25d0f038f6\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "create",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-snap"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-snap\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "create",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-n0-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n0-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "-d",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "--hostname",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "--memory=256m",
+          "--pids-limit=128",
+          "--user=0:0",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-n0-data,target=/data",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcd",
+          "--name=infra-etcd-3cfb7bcfcb51-n0",
+          "--data-dir=/data/member",
+          "--listen-client-urls=http://0.0.0.0:2379",
+          "--advertise-client-urls=http://infra-etcd-3cfb7bcfcb51-n0:2379",
+          "--listen-peer-urls=http://0.0.0.0:2380",
+          "--initial-advertise-peer-urls=http://infra-etcd-3cfb7bcfcb51-n0:2380",
+          "--initial-cluster=infra-etcd-3cfb7bcfcb51-n0=http://infra-etcd-3cfb7bcfcb51-n0:2380,infra-etcd-3cfb7bcfcb51-n1=http://infra-etcd-3cfb7bcfcb51-n1:2380,infra-etcd-3cfb7bcfcb51-n2=http://infra-etcd-3cfb7bcfcb51-n2:2380",
+          "--initial-cluster-token=infra-etcd-3cfb7bcfcb51-original",
+          "--initial-cluster-state=new",
+          "--logger=zap",
+          "--log-level=error"
+        ],
+        "exit_code": 0,
+        "stdout": "3f350b60def3a79f29c8e19b6daa711854e0497cf49473087cead29da2756ac3\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "create",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-n1-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n1-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "-d",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "--hostname",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "--memory=256m",
+          "--pids-limit=128",
+          "--user=0:0",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-n1-data,target=/data",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcd",
+          "--name=infra-etcd-3cfb7bcfcb51-n1",
+          "--data-dir=/data/member",
+          "--listen-client-urls=http://0.0.0.0:2379",
+          "--advertise-client-urls=http://infra-etcd-3cfb7bcfcb51-n1:2379",
+          "--listen-peer-urls=http://0.0.0.0:2380",
+          "--initial-advertise-peer-urls=http://infra-etcd-3cfb7bcfcb51-n1:2380",
+          "--initial-cluster=infra-etcd-3cfb7bcfcb51-n0=http://infra-etcd-3cfb7bcfcb51-n0:2380,infra-etcd-3cfb7bcfcb51-n1=http://infra-etcd-3cfb7bcfcb51-n1:2380,infra-etcd-3cfb7bcfcb51-n2=http://infra-etcd-3cfb7bcfcb51-n2:2380",
+          "--initial-cluster-token=infra-etcd-3cfb7bcfcb51-original",
+          "--initial-cluster-state=new",
+          "--logger=zap",
+          "--log-level=error"
+        ],
+        "exit_code": 0,
+        "stdout": "dbfd4c01d3ec6307c3579cf12f4f5ddb31dfe3297fe3e639b8287dcf1f427af1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "create",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-n2-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n2-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "-d",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "--hostname",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "--memory=256m",
+          "--pids-limit=128",
+          "--user=0:0",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-n2-data,target=/data",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcd",
+          "--name=infra-etcd-3cfb7bcfcb51-n2",
+          "--data-dir=/data/member",
+          "--listen-client-urls=http://0.0.0.0:2379",
+          "--advertise-client-urls=http://infra-etcd-3cfb7bcfcb51-n2:2379",
+          "--listen-peer-urls=http://0.0.0.0:2380",
+          "--initial-advertise-peer-urls=http://infra-etcd-3cfb7bcfcb51-n2:2380",
+          "--initial-cluster=infra-etcd-3cfb7bcfcb51-n0=http://infra-etcd-3cfb7bcfcb51-n0:2380,infra-etcd-3cfb7bcfcb51-n1=http://infra-etcd-3cfb7bcfcb51-n1:2380,infra-etcd-3cfb7bcfcb51-n2=http://infra-etcd-3cfb7bcfcb51-n2:2380",
+          "--initial-cluster-token=infra-etcd-3cfb7bcfcb51-original",
+          "--initial-cluster-state=new",
+          "--logger=zap",
+          "--log-level=error"
+        ],
+        "exit_code": 0,
+        "stdout": "112e3e7bb0952f3bb050d271cc05f53b41abc4c9df30e787c977b3727a0aac92\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"14.114613ms\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"3.39352ms\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"3.027796ms\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":1,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":11,\"raftTerm\":2,\"raftAppliedIndex\":11,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":1,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":11,\"raftTerm\":2,\"raftAppliedIndex\":11,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":1,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":11,\"raftTerm\":2,\"raftAppliedIndex\":11,\"dbSizeInUse\":16384,\"storageVersion\":\"3.5.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "37"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":2,\"raft_term\":2}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":2,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/release",
+          "v1"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":3,\"raft_term\":2}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/",
+          "--prefix"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":3,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"},{\"key\":\"L2xlc3Nvbi9jb25maWcvcmVsZWFzZQ==\",\"create_revision\":3,\"mod_revision\":3,\"version\":1,\"value\":\"djE=\"}],\"count\":2}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "txn"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":4,\"raft_term\":2},\"succeeded\":true,\"responses\":[{\"Response\":{\"response_put\":{\"header\":{\"revision\":4}}}},{\"Response\":{\"response_put\":{\"header\":{\"revision\":4}}}}]}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-0"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-watch-0\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-watch-0",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "--memory=128m",
+          "--pids-limit=64",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://infra-etcd-3cfb7bcfcb51-n0:2379",
+          "--dial-timeout=1s",
+          "--write-out=json",
+          "watch",
+          "/lesson/config/",
+          "--prefix",
+          "--rev=4"
+        ],
+        "exit_code": 137,
+        "stdout": "{\"Header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":4,\"raft_term\":2},\"Events\":[{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvcmVsZWFzZQ==\",\"create_revision\":3,\"mod_revision\":4,\"version\":2,\"value\":\"djI=\"}},{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvcm91dGU=\",\"create_revision\":4,\"mod_revision\":4,\"version\":1,\"value\":\"QQ==\"}}],\"CompactRevision\":0,\"Canceled\":false,\"Created\":false}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "compaction",
+          "4"
+        ],
+        "exit_code": 0,
+        "stdout": "compacted revision 4\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-1"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-watch-1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-watch-1",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "--memory=128m",
+          "--pids-limit=64",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://infra-etcd-3cfb7bcfcb51-n0:2379",
+          "--dial-timeout=1s",
+          "--write-out=json",
+          "watch",
+          "/lesson/config/",
+          "--prefix",
+          "--rev=3"
+        ],
+        "exit_code": 5,
+        "stdout": "{\"Header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"raft_term\":2},\"Events\":[],\"CompactRevision\":4,\"Canceled\":true,\"Created\":false}\n",
+        "stderr": "watch was canceled (etcdserver: mvcc: required revision has been compacted)\nError: watch is canceled by the server\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "lease",
+          "grant",
+          "4"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":4,\"raft_term\":2,\"ID\":999413990597275147,\"TTL\":4,\"Error\":\"\"}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/ephemeral/owner",
+          "worker-A",
+          "--lease=ddea1bab51b2e0b"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":5,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9lcGhlbWVyYWwvb3duZXI=\",\"create_revision\":5,\"mod_revision\":5,\"version\":1,\"value\":\"d29ya2VyLUE=\",\"lease\":999413990597275147}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/ephemeral/owner"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":6,\"raft_term\":2}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":6,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "snapshot",
+          "save",
+          "/snapshots/seed.db"
+        ],
+        "exit_code": 0,
+        "stdout": "Snapshot saved at /snapshots/seed.db\nServer version 3.6.0\n",
+        "stderr": "{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.940243Z\",\"caller\":\"snapshot/v3_snapshot.go:83\",\"msg\":\"created temporary db file\",\"path\":\"/snapshots/seed.db.part\"}\n{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.941151Z\",\"logger\":\"client\",\"caller\":\"v3@v3.6.16/maintenance.go:236\",\"msg\":\"opened snapshot stream; downloading\"}\n{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.942566Z\",\"caller\":\"snapshot/v3_snapshot.go:96\",\"msg\":\"fetching snapshot\",\"endpoint\":\"http://127.0.0.1:2379\"}\n{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.942818Z\",\"logger\":\"client\",\"caller\":\"v3@v3.6.16/maintenance.go:302\",\"msg\":\"completed snapshot read; closing\"}\n{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.944004Z\",\"caller\":\"snapshot/v3_snapshot.go:111\",\"msg\":\"fetched snapshot\",\"endpoint\":\"http://127.0.0.1:2379\",\"size\":\"20 kB\",\"took\":\"3.693478ms\",\"etcd-version\":\"3.6.0\"}\n{\"level\":\"info\",\"ts\":\"2026-11-08T10:29:59.944056Z\",\"caller\":\"snapshot/v3_snapshot.go:121\",\"msg\":\"saved\",\"path\":\"/snapshots/seed.db\"}\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdutl",
+          "--write-out=json",
+          "snapshot",
+          "status",
+          "/snapshots/seed.db"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"hash\":2479273482,\"revision\":6,\"totalKey\":3,\"totalSize\":20480,\"version\":\"3.6.0\"}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots,readonly",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdutl",
+          "--write-out=json",
+          "snapshot",
+          "status",
+          "/snapshots/seed.db"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"hash\":2479273482,\"revision\":6,\"totalKey\":3,\"totalSize\":20480,\"version\":\"3.6.0\"}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "disconnect",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "infra-etcd-3cfb7bcfcb51-n0"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":6,\"raft_term\":2},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":15524364946534927838,\"raftIndex\":18,\"raftTerm\":2,\"raftAppliedIndex\":18,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":6,\"raft_term\":3},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":2226843427764874273,\"raftIndex\":19,\"raftTerm\":3,\"raftAppliedIndex\":19,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "status"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"Endpoint\":\"http://127.0.0.1:2379\",\"Status\":{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":6,\"raft_term\":3},\"version\":\"3.6.16\",\"dbSize\":20480,\"leader\":2226843427764874273,\"raftIndex\":19,\"raftTerm\":3,\"raftAppliedIndex\":19,\"dbSizeInUse\":16384,\"storageVersion\":\"3.6.0\",\"dbSizeQuota\":2147483648,\"downgradeInfo\":{}}}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"2.866617ms\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "42"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":7,\"raft_term\":3}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":7,\"raft_term\":3},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":7,\"version\":2,\"value\":\"NDI=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit",
+          "--consistency=s"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":6,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "{\"level\":\"warn\",\"ts\":\"2026-11-08T10:30:03.614049Z\",\"logger\":\"etcd-client\",\"caller\":\"v3@v3.6.16/retry_interceptor.go:68\",\"msg\":\"retrying of unary invoker failed\",\"target\":\"etcd-endpoints://0x3d8fc1aeaf00/127.0.0.1:2379\",\"peer\":\"Peer{Addr: '127.0.0.1:2379', LocalAddr: '127.0.0.1:46584', AuthInfo: 'insecure'}\",\"method\":\"/etcdserverpb.KV/Range\",\"attempt\":0,\"error\":\"rpc error: code = DeadlineExceeded desc = context deadline exceeded\"}\nError: context deadline exceeded\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "99"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "{\"level\":\"warn\",\"ts\":\"2026-11-08T10:30:05.671313Z\",\"logger\":\"etcd-client\",\"caller\":\"v3@v3.6.16/retry_interceptor.go:68\",\"msg\":\"retrying of unary invoker failed\",\"target\":\"etcd-endpoints://0x3126c088c1e0/127.0.0.1:2379\",\"peer\":\"Peer{Addr: '127.0.0.1:2379', LocalAddr: '127.0.0.1:46588', AuthInfo: 'insecure'}\",\"method\":\"/etcdserverpb.KV/Put\",\"attempt\":0,\"error\":\"rpc error: code = DeadlineExceeded desc = stream terminated by RST_STREAM with error code: CANCEL\"}\nError: context deadline exceeded\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "connect",
+          "--alias",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "infra-etcd-3cfb7bcfcb51-net",
+          "infra-etcd-3cfb7bcfcb51-n0"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":7,\"raft_term\":3},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":7,\"version\":2,\"value\":\"NDI=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "txn"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":7,\"raft_term\":3},\"responses\":[{\"Response\":{\"response_range\":{\"header\":{\"revision\":7},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":7,\"version\":2,\"value\":\"NDI=\"}],\"count\":1}}}]}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":7,\"raft_term\":3},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":7,\"version\":2,\"value\":\"NDI=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "stop",
+          "-t",
+          "1",
+          "infra-etcd-3cfb7bcfcb51-n1"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "stop",
+          "-t",
+          "1",
+          "infra-etcd-3cfb7bcfcb51-n2"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n2\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "{\"level\":\"warn\",\"ts\":\"2026-11-08T10:30:11.341129Z\",\"logger\":\"etcd-client\",\"caller\":\"v3@v3.6.16/retry_interceptor.go:68\",\"msg\":\"retrying of unary invoker failed\",\"target\":\"etcd-endpoints://0x28fce7ddc5a0/127.0.0.1:2379\",\"peer\":\"Peer{Addr: '127.0.0.1:2379', LocalAddr: '127.0.0.1:46630', AuthInfo: 'insecure'}\",\"method\":\"/etcdserverpb.KV/Range\",\"attempt\":0,\"error\":\"rpc error: code = DeadlineExceeded desc = context deadline exceeded\"}\nError: context deadline exceeded\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "99"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "{\"level\":\"warn\",\"ts\":\"2026-11-08T10:30:13.396824Z\",\"logger\":\"etcd-client\",\"caller\":\"v3@v3.6.16/retry_interceptor.go:68\",\"msg\":\"retrying of unary invoker failed\",\"target\":\"etcd-endpoints://0xc1a97366780/127.0.0.1:2379\",\"peer\":\"Peer{Addr: '127.0.0.1:2379', LocalAddr: '127.0.0.1:47038', AuthInfo: 'insecure'}\",\"method\":\"/etcdserverpb.KV/Put\",\"attempt\":0,\"error\":\"rpc error: code = DeadlineExceeded desc = context deadline exceeded\"}\nError: context deadline exceeded\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "start",
+          "infra-etcd-3cfb7bcfcb51-n1"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"1.455561101s\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "43"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":8,\"raft_term\":5}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "start",
+          "infra-etcd-3cfb7bcfcb51-n2"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n2\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n0",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":15524364946534927838,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n1",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":2226843427764874273,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-n2",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":1251586427138963347,\"member_id\":7891799260605606917,\"revision\":8,\"raft_term\":5},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":8,\"version\":3,\"value\":\"NDM=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "create",
+          "--internal",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-restored-net"
+        ],
+        "exit_code": 0,
+        "stdout": "d521c40cd9d81e82e0a0b874aec6d9f7eb51ce09ac8ad4b4eec6034ad276d31e\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "create",
+          "--label",
+          "infraguide=isolated-etcd-lesson",
+          "infra-etcd-3cfb7bcfcb51-restored-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-restored-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "--user=0:0",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots,readonly",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-restored-data,target=/data",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdutl",
+          "snapshot",
+          "restore",
+          "/snapshots/seed.db",
+          "--name=infra-etcd-3cfb7bcfcb51-restored",
+          "--data-dir=/data/member",
+          "--initial-cluster=infra-etcd-3cfb7bcfcb51-restored=http://infra-etcd-3cfb7bcfcb51-restored:2380",
+          "--initial-advertise-peer-urls=http://infra-etcd-3cfb7bcfcb51-restored:2380",
+          "--initial-cluster-token=infra-etcd-3cfb7bcfcb51-restored",
+          "--bump-revision=1000",
+          "--mark-compacted"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "2026-11-08T10:30:15Z\tinfo\tsnapshot/v3_snapshot.go:305\trestoring snapshot\t{\"path\": \"/snapshots/seed.db\", \"wal-dir\": \"/data/member/member/wal\", \"data-dir\": \"/data/member\", \"snap-dir\": \"/data/member/member/snap\", \"initial-memory-map-size\": 10737418240}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbackend/backend.go:203\tOpening db file (/data/member/member/snap/db) with mode -rw------- and with options: {Timeout: 0s, NoGrowSync: false, NoFreelistSync: true, PreLoadFreelist: false, FreelistType: , ReadOnly: false, MmapFlags: 8000, InitialMmapSize: 10737418240, PageSize: 0, NoSync: false, OpenFile: 0x0, Mlock: false, Logger: 0x899af1a2170}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbbolt@v1.4.3/db.go:322\tOpening bbolt db (/data/member/member/snap/db) successfully\n2026-11-08T10:30:15Z\tinfo\tschema/membership.go:138\tTrimming membership information from the backend...\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbackend/backend.go:203\tOpening db file (/data/member/member/snap/db) with mode -rw------- and with options: {Timeout: 0s, NoGrowSync: false, NoFreelistSync: true, PreLoadFreelist: false, FreelistType: , ReadOnly: false, MmapFlags: 8000, InitialMmapSize: 10737418240, PageSize: 0, NoSync: false, OpenFile: 0x0, Mlock: false, Logger: 0x899af1a21a8}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbbolt@v1.4.3/db.go:322\tOpening bbolt db (/data/member/member/snap/db) successfully\n2026-11-08T10:30:15Z\tinfo\tsnapshot/v3_snapshot.go:396\tbumping latest revision\t{\"latest-revision\": 6, \"bump-amount\": 1000, \"new-latest-revision\": 1006}\n2026-11-08T10:30:15Z\tinfo\tsnapshot/v3_snapshot.go:413\tmarking revision compacted\t{\"revision\": 1006}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbackend/backend.go:203\tOpening db file (/data/member/member/snap/db) with mode -rw------- and with options: {Timeout: 0s, NoGrowSync: false, NoFreelistSync: true, PreLoadFreelist: false, FreelistType: , ReadOnly: false, MmapFlags: 8000, InitialMmapSize: 10737418240, PageSize: 0, NoSync: false, OpenFile: 0x0, Mlock: false, Logger: 0x899af1a21f0}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbbolt@v1.4.3/db.go:322\tOpening bbolt db (/data/member/member/snap/db) successfully\n2026-11-08T10:30:15Z\tinfo\tmembership/cluster.go:424\tadded member\t{\"cluster-id\": \"e9f7a1c0b5558afd\", \"local-member-id\": \"0\", \"added-peer-id\": \"aa3c22251af1b8b4\", \"added-peer-peer-urls\": [\"http://infra-etcd-3cfb7bcfcb51-restored:2380\"], \"added-peer-is-learner\": false}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbackend/backend.go:203\tOpening db file (/data/member/member/snap/db) with mode -rw------- and with options: {Timeout: 0s, NoGrowSync: false, NoFreelistSync: true, PreLoadFreelist: false, FreelistType: , ReadOnly: false, MmapFlags: 8000, InitialMmapSize: 10737418240, PageSize: 0, NoSync: false, OpenFile: 0x0, Mlock: false, Logger: 0x899af1a22c0}\n2026-11-08T10:30:15Z\tinfo\tbbolt\tbbolt@v1.4.3/db.go:322\tOpening bbolt db (/data/member/member/snap/db) successfully\n2026-11-08T10:30:15Z\tinfo\tsnapshot/v3_snapshot.go:333\trestored snapshot\t{\"path\": \"/snapshots/seed.db\", \"wal-dir\": \"/data/member/member/wal\", \"data-dir\": \"/data/member\", \"snap-dir\": \"/data/member/member/snap\", \"initial-memory-map-size\": 10737418240}\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "-d",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "--hostname",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-restored-net",
+          "--memory=256m",
+          "--pids-limit=128",
+          "--user=0:0",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-restored-data,target=/data",
+          "--mount",
+          "type=volume,source=infra-etcd-3cfb7bcfcb51-snap,target=/snapshots",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcd",
+          "--name=infra-etcd-3cfb7bcfcb51-restored",
+          "--data-dir=/data/member",
+          "--listen-client-urls=http://0.0.0.0:2379",
+          "--advertise-client-urls=http://infra-etcd-3cfb7bcfcb51-restored:2379",
+          "--listen-peer-urls=http://0.0.0.0:2380",
+          "--initial-advertise-peer-urls=http://infra-etcd-3cfb7bcfcb51-restored:2380",
+          "--initial-cluster=infra-etcd-3cfb7bcfcb51-restored=http://infra-etcd-3cfb7bcfcb51-restored:2380",
+          "--initial-cluster-token=infra-etcd-3cfb7bcfcb51-restored",
+          "--initial-cluster-state=new",
+          "--logger=zap",
+          "--log-level=error"
+        ],
+        "exit_code": 0,
+        "stdout": "163bf9e5cc0b21c37d9f725e3eb1d9efceabb8cbee9e7cc31db4b14a8886a866\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "endpoint",
+          "health"
+        ],
+        "exit_code": 0,
+        "stdout": "[{\"endpoint\":\"http://127.0.0.1:2379\",\"health\":true,\"took\":\"653.216468ms\"}]\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1006,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-2"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-watch-2\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-watch-2",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-restored-net",
+          "--memory=128m",
+          "--pids-limit=64",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://infra-etcd-3cfb7bcfcb51-restored:2379",
+          "--dial-timeout=1s",
+          "--write-out=json",
+          "watch",
+          "/lesson/config/",
+          "--prefix",
+          "--rev=9"
+        ],
+        "exit_code": 5,
+        "stdout": "{\"Header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"raft_term\":2},\"Events\":[],\"CompactRevision\":1006,\"Canceled\":true,\"Created\":false}\n",
+        "stderr": "watch was canceled (etcdserver: mvcc: required revision has been compacted)\nError: watch is canceled by the server\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/",
+          "--prefix"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1006,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":2,\"version\":1,\"value\":\"Mzc=\"},{\"key\":\"L2xlc3Nvbi9jb25maWcvcmVsZWFzZQ==\",\"create_revision\":3,\"mod_revision\":4,\"version\":2,\"value\":\"djI=\"},{\"key\":\"L2xlc3Nvbi9jb25maWcvcm91dGU=\",\"create_revision\":4,\"mod_revision\":4,\"version\":1,\"value\":\"QQ==\"}],\"count\":3}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "put",
+          "/lesson/config/limit",
+          "47"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1007,\"raft_term\":2}}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-3"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-watch-3\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "run",
+          "--name",
+          "infra-etcd-3cfb7bcfcb51-watch-3",
+          "--network",
+          "infra-etcd-3cfb7bcfcb51-restored-net",
+          "--memory=128m",
+          "--pids-limit=64",
+          "gcr.io/etcd-development/etcd:v3.6.16@sha256:b29d816b546a1966fe7034a33b34e231fa98c47ce4d2883f70b0555020b22132",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://infra-etcd-3cfb7bcfcb51-restored:2379",
+          "--dial-timeout=1s",
+          "--write-out=json",
+          "watch",
+          "/lesson/config/",
+          "--prefix",
+          "--rev=1007"
+        ],
+        "exit_code": 137,
+        "stdout": "{\"Header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1007,\"raft_term\":2},\"Events\":[{\"kv\":{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":1007,\"version\":2,\"value\":\"NDc=\"}}],\"CompactRevision\":0,\"Canceled\":false,\"Created\":false}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/",
+          "--prefix"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1007,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":1007,\"version\":2,\"value\":\"NDc=\"},{\"key\":\"L2xlc3Nvbi9jb25maWcvcmVsZWFzZQ==\",\"create_revision\":3,\"mod_revision\":4,\"version\":2,\"value\":\"djI=\"},{\"key\":\"L2xlc3Nvbi9jb25maWcvcm91dGU=\",\"create_revision\":4,\"mod_revision\":4,\"version\":1,\"value\":\"QQ==\"}],\"count\":3}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "exec",
+          "-i",
+          "infra-etcd-3cfb7bcfcb51-restored",
+          "/usr/local/bin/etcdctl",
+          "--endpoints=http://127.0.0.1:2379",
+          "--dial-timeout=1s",
+          "--command-timeout=2s",
+          "--write-out=json",
+          "get",
+          "/lesson/config/limit"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"header\":{\"cluster_id\":16859121579132816125,\"member_id\":12266717027811571892,\"revision\":1007,\"raft_term\":2},\"kvs\":[{\"key\":\"L2xlc3Nvbi9jb25maWcvbGltaXQ=\",\"create_revision\":2,\"mod_revision\":1007,\"version\":2,\"value\":\"NDc=\"}],\"count\":1}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "cp",
+          "infra-etcd-3cfb7bcfcb51-n0:/snapshots/seed.db",
+          "/tmp/infra-etcd-snapshot-dqssl80o/seed.db"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-3"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-3\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-watch-3"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-3\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-2"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-2\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-watch-2"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-2\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-restored"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-restored\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-restored"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-restored\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-1"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-1\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-watch-1"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-1\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-watch-0"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-0\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-watch-0"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-watch-0\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-n2"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n2\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n2"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-n2\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-n1"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n1\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n1"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-n1\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "rm",
+          "-f",
+          "infra-etcd-3cfb7bcfcb51-n0"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n0\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "container",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n0"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: No such container: infra-etcd-3cfb7bcfcb51-n0\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-restored-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-restored-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-restored-data"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: get infra-etcd-3cfb7bcfcb51-restored-data: no such volume\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-n2-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n2-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n2-data"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: get infra-etcd-3cfb7bcfcb51-n2-data: no such volume\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-n1-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n1-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n1-data"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: get infra-etcd-3cfb7bcfcb51-n1-data: no such volume\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-n0-data"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-n0-data\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-n0-data"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: get infra-etcd-3cfb7bcfcb51-n0-data: no such volume\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-snap"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-snap\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "volume",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-snap"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: get infra-etcd-3cfb7bcfcb51-snap: no such volume\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-restored-net"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-restored-net\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-restored-net"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: network infra-etcd-3cfb7bcfcb51-restored-net not found\n"
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "rm",
+          "infra-etcd-3cfb7bcfcb51-net"
+        ],
+        "exit_code": 0,
+        "stdout": "infra-etcd-3cfb7bcfcb51-net\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "docker",
+          "network",
+          "inspect",
+          "infra-etcd-3cfb7bcfcb51-net"
+        ],
+        "exit_code": 1,
+        "stdout": "[]\n",
+        "stderr": "Error response from daemon: network infra-etcd-3cfb7bcfcb51-net not found\n"
+      }
+    ]
+  }
+}
