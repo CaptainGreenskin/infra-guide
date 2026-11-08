@@ -29,11 +29,11 @@ for(const a of d.articles){
 for(const[id,expected]of [['cloud-overview','linux-resource'],['training-lab','model-serving'],['kairo-practice','production-readiness']]){c.a=d.articles.find(a=>a.id===id);assert.equal(vm.runInContext('chapterReadingContext(a).next.id',c),expected);}
 c.a=d.articles.find(a=>a.id==='distributed-systems');assert.notEqual(vm.runInContext('chapterReadingContext(a).next.id',c),'cloud-overview','do not loop back from P0 to the overview');
 const changed=new Set(d.log.map(r=>r[0]));assert.equal(changed.size,6);
-const baseCommit='c6f47c9bcd8b7c9dfb284422957fd24c149447a7',before={};vm.createContext(before);
-const oldShell=cp.execFileSync('git',['show',baseCommit+':src/page-shell.html'],{encoding:'utf8'});
-for(const[,f]of oldShell.matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(cp.execFileSync('git',['show',baseCommit+':dist/'+f],{encoding:'utf8',maxBuffer:16*1024*1024}),before,{filename:f});
-const oldArticles=vm.runInContext('articles',before),blocks=html=>html.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[];
-for(const a of d.articles){const old=oldArticles.find(x=>x.id===a.id);assert.deepEqual(blocks(a.sections.map(s=>s[1]).join('')),blocks(old.sections.map(s=>s[1]).join('')),a.id+': executed code changed in a prose revision');if(!changed.has(a.id))assert.equal(JSON.stringify(a.sections),JSON.stringify(old.sections),a.id+': unreviewed body change');}
+// Preserve the V50 six-body audit at its published boundary. Subsequent body edits
+// are checked against this exact publication by check-causal-walkthroughs.cjs.
+const atCommit=require('./content-at-commit.cjs');
+const oldArticles=atCommit('c6f47c9bcd8b7c9dfb284422957fd24c149447a7'),publishedArticles=atCommit('8d5b31ef7859aa3c44766c1492b18e1577e8d821'),blocks=html=>html.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[];
+for(const a of publishedArticles){const old=oldArticles.find(x=>x.id===a.id);assert.deepEqual(blocks(a.sections.map(s=>s[1]).join('')),blocks(old.sections.map(s=>s[1]).join('')),a.id+': executed code changed in the published V50 prose revision');if(!changed.has(a.id))assert.equal(JSON.stringify(a.sections),JSON.stringify(old.sections),a.id+': unreviewed V50 body change');}
 const runtime=d.articles.find(a=>a.id==='agent-runtime');assert(runtime.sections[3][1].includes('<td>连接与HTTP响应</td>'));assert(runtime.sections[3][1].includes('v50-tool-error-layers'));
 assert(!runtime.sections[3][1].includes('v23-tool-error-layers'),'canonical figure must consistently use the new layer diagram');assert(runtime.sections[3][1].includes('<img src="diagrams/v50-tool-error-layers.svg" width="1120" height="820"'),'diagram dimensions must match the actual new SVG');
 const appSource=fs.readFileSync('dist/app.js','utf8'),fragmentStart=appSource.indexOf('function restoreDocumentFragment'),fragmentEnd=appSource.indexOf('\nconst $',fragmentStart),fragmentCode=appSource.slice(fragmentStart,fragmentEnd);

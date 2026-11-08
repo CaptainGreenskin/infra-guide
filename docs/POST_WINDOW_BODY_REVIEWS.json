@@ -1879,6 +1879,60 @@
         "出现差异时，从第一个不同字段定位",
         "本机通过后，怎样进入两机四卡"
       ]
+    },
+    {
+      "id": "gpu-execution",
+      "previous_content_sha256": "94dba6b9a985ba0ff493206bd13dd0bf40f23ac0e95a9ca17cd94a80b0f5195d",
+      "reviewed_content_sha256": "3d2e42a50b94dc01207d842ef35a7e7c9935a5fceb4a6df51706987ff4d2e4de",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Reviewed three complete chapters; rewrote their middle mechanisms and removed duplicated memory prose. Added four original diagrams and two CPU arithmetic snippets; original executable blocks and laboratory sources remain byte-for-byte unchanged.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "previous_content_sha256": "96dcbfb625fbcee2b4f527471bc4d2b2344bee5ca5f849346c304bf2a779c5ba",
+      "reviewed_content_sha256": "9c31547b85d8e95df90fd64ef3deb35ba892ef0eacccad1fde8345c1d2c66ab9",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Reviewed three complete chapters; rewrote their middle mechanisms and removed duplicated memory prose. Added four original diagrams and two CPU arithmetic snippets; original executable blocks and laboratory sources remain byte-for-byte unchanged.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "slo",
+      "previous_content_sha256": "5778167683a0389d065fafda72b365512f7ae40c376322761092b933c9021c44",
+      "reviewed_content_sha256": "940c13e136a5317138e9e768b758ad4dd61b3c7aa828e8e55039f8cdf2991bf0",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Reviewed three complete chapters; rewrote their middle mechanisms and removed duplicated memory prose. Added four original diagrams and two CPU arithmetic snippets; original executable blocks and laboratory sources remain byte-for-byte unchanged.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
     }
   ]
 }

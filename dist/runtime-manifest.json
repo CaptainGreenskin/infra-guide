@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 164,
+  "canonical_script_count": 165,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "0ae3825deae3cb05a66d208598dc98e342d067a90491c352ed8e987efdc4f967",
-      "bytes": 368607,
+      "sha256": "b6cbdbb5a1ee4fe9da099b9b2301ed5511e4d2f8e5adbd0b45921b23d3e31467",
+      "bytes": 368845,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "3696b1e9cdefaa8fbe7e64a310cd1093f3f7ed762f7d76d612cfe97759124068",
-          "bytes": 10476
+          "sha256": "513b65752404feda64592b5afa8f328b2e1ebe7a2abdde5782cc6cf57ee8913e",
+          "bytes": 10714
         },
         {
           "file": "training-content.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "8ac9df5ab39c12948383f6d9158a13fb3336fb4cff6b7138fd10b5f81fa15002",
-      "bytes": 1177991,
+      "sha256": "87e39139227c96a001e6545631f9294bda1985133c57ca6e752491ae1435ad23",
+      "bytes": 1201743,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -802,6 +802,11 @@
           "file": "readability-revisions.js",
           "sha256": "184af2bf487c0f2bf085547b6835e32ce8ea615456ecf6b343409bd18ad551c4",
           "bytes": 6810
+        },
+        {
+          "file": "causal-walkthroughs.js",
+          "sha256": "90d741d98cacb9ef1edc213e50dae2334932556f30ead9c10bd75537cf0393a1",
+          "bytes": 23722
         },
         {
           "file": "concept-paths-data.js",

@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-08",
+  "base_source_commit": "8d5b31ef7859aa3c44766c1492b18e1577e8d821",
+  "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+  "reader_trials": 0,
+  "preserved_previous_records": {
+    "docs/COHERENCE_REVIEW_2026-11-08.json": "470b034722795f396fc58f1673fc5cea800a2da9036a1f0118dc973729299c39",
+    "docs/COHERENCE_READABILITY_2026-11-08.json": "e8088cc193472cdb9cdeb062e26dc0b183c2a679160df713ff837123d2812052"
+  },
+  "body_reviews": [
+    {
+      "id": "slo",
+      "previous_content_sha256": "5778167683a0389d065fafda72b365512f7ae40c376322761092b933c9021c44",
+      "reviewed_content_sha256": "940c13e136a5317138e9e768b758ad4dd61b3c7aa828e8e55039f8cdf2991bf0",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Define SLI/SLO and mature event cohorts before aggregation and budget; separate exact request-weighted accounting from uniform-traffic burn-rate extrapolation; follow real rule inputs before implementation.",
+      "reviewed_at": "2026-11-08"
+    },
+    {
+      "id": "gpu-execution",
+      "previous_content_sha256": "94dba6b9a985ba0ff493206bd13dd0bf40f23ac0e95a9ca17cd94a80b0f5195d",
+      "reviewed_content_sha256": "3d2e42a50b94dc01207d842ef35a7e7c9935a5fceb4a6df51706987ff4d2e4de",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Define logical threads, blocks, warps and physical SMs before index code; connect layout, memory and resources to same-stream events and explicit end-to-end boundaries; no new GPU measurements.",
+      "reviewed_at": "2026-11-08"
+    },
+    {
+      "id": "agent-memory",
+      "previous_content_sha256": "96dcbfb625fbcee2b4f527471bc4d2b2344bee5ca5f849346c304bf2a779c5ba",
+      "reviewed_content_sha256": "9c31547b85d8e95df90fd64ef3deb35ba892ef0eacccad1fde8345c1d2c66ab9",
+      "scope": "2026-11-08 causal body walkthroughs: SLO event accounting, CUDA execution layers, Agent information lifecycle",
+      "observation": "Connect authority, memory and assembled model input; trace actual SQLite functions, distinguish one local atomic commit from remote commit gaps; remove duplicated applicability prose and distinguish task/source versions.",
+      "reviewed_at": "2026-11-08"
+    }
+  ],
+  "source_revisions": {
+    "src/page-shell.html": {
+      "previous_sha256": "eb5e1a6395b3dc329a6ee5d1694ed170bf29cc748728469e0e04a4957ef60b98",
+      "reviewed_sha256": "637ec59f55a8c14a31c8e57bb14590a862e3d3d9b22a9d5feda5caf1ee53cd5d",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "dist/causal-walkthroughs.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "90d741d98cacb9ef1edc213e50dae2334932556f30ead9c10bd75537cf0393a1",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/draw-causal-walkthroughs.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2c337ea833481e45c9f435db87dbae4dca6d7efda31ebbc2c26ac516eaacbd95",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/content-at-commit.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "19f4a607b6a1d5baaefaebfcb3ba40e3e2735c6609a59adc93a559683fff7f95",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/check-causal-walkthroughs.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "812a35bbe7ab47f609a2f79f8e1e6afce25731a9778c1e4079a7b5fb4c434c5d",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "1750c7c0df0e08bdfcf9201ce7bb84cec64360f6c37101ded0e2406c297a8e44",
+      "reviewed_sha256": "c5e9b36c456c3cdee9664c79ca857e4b7457e56f25bbf91e16cc8684d582f3e7",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/coherence-review-records.cjs": {
+      "previous_sha256": "cd128ca35e93087bfe3a2c285cfd3f414dc4c1ba3b8ff03c5643aa91890a9ce0",
+      "reviewed_sha256": "202832d66fa30f72766faf2254cd187616300baf01e3cf9976002e6ff957411a",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "e6c67e309867311e7a3e29cd2105f6213ef5c978778b9d551366775e468e333b",
+      "reviewed_sha256": "db4734013db6e9769f0b5f6ee473768f40334c40736a4b108184549701493a11",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "dist/diagrams/v51-slo-event-ledger.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "946b581aaa66c3a3562bbd435391347dc917ce0100d995852d299478395d380e",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "dist/diagrams/v51-gpu-work-mapping.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d987cbda615fb8fbf00db2c5d3ceea50090eb2584feb8753ada7154a16cbcd11",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "dist/diagrams/v51-gpu-time-boundaries.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "38b76ab4f118c939b9b1d4483b08269f9d72dd423a1002b350b4107f3e25161e",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    },
+    "dist/diagrams/v51-agent-information-flow.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3715eb3e6eaca86737fd7ededadc01402c8bd672ecd63fbad6726333b9927449",
+      "scope": "Three chapter causal explanations, preserved published checks and executable-source boundaries"
+    }
+  },
+  "original_code_blocks": "All original pre blocks remain byte-for-byte and in order; only two additional inline standard-library snippets.",
+  "figures": 4,
+  "added_laboratory_packages": 0,
+  "evidence_scope": "CPU arithmetic and local SQLite replay; existing native Prometheus record preserved. No new GPU, LLM, Kairo or production telemetry result."
+}
