@@ -12,7 +12,8 @@ for(const[id,name,anchor]of pairs){
  const mechanismIndex=article.sections.findIndex(section=>section[1].includes('id="'+anchor+'"'));
  const experimentIndex=article.sections.findIndex(section=>[...section[1].matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(match=>decode(match[1])===source.trim()));
  assert(mechanismIndex>=0&&experimentIndex>mechanismIndex,id+': explain the mechanism before the executable experiment');
- assert(html.indexOf('id="'+anchor+'"')<html.indexOf('本次实际执行结果'));
+ const staticMechanism=html.indexOf('id="'+anchor+'"'),staticExperiment=html.indexOf('id="section-'+(experimentIndex+1)+'"');
+ assert(staticMechanism>=0&&staticExperiment>staticMechanism,id+': static mechanism precedes its source-matched experiment');
  assert(html.includes('data-reader-contents')&&html.includes('data-reader-large')&&html.includes('data-reader-focus'));
  assert([...html.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(match=>decode(match[1])===source.trim()),'static source mismatch: '+name);
  const actual=JSON.parse(execFileSync('python3',['dist/labs/learning-mechanisms/'+name],{encoding:'utf8',timeout:25000}));

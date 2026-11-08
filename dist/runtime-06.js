@@ -5236,7 +5236,7 @@ const progressiveAgentSectionTitles={
  replace(storage,[
  h('subsection-1-trt373','容器路径与数据生命周期')+
  p('前面的工作负载章节说明了 Pod 怎样被重建。本章给重建后的进程找回数据：应用打开 /data/progress.sqlite 时，/data 是进程看到的目录；目录背后可以是容器可写层，也可以是挂载进来的卷。挂载是把一份存储接到进程的某个路径，因此先认清这条关联，才能判断文件随什么对象保留。')+
- table(['数据位置','随什么保留','典型用途'],[['容器可写层','随本次容器实例；重建容器应预期重新开始','可重新生成的临时文件'],['emptyDir 临时卷','随同一个 Pod；容器重启可继续使用，Pod 删除后移除','Pod 内容器共享的临时工作区'],['节点本地路径','随指定节点上的文件；换节点需要重建或恢复','可重建缓存，或有专门恢复方案的本地数据'],['PVC 关联的持久卷','卷生命周期可独立于单个 Pod','替换 Pod 后继续使用的数据库等状态']])+
+ table(['数据位置','随什么保留','典型用途'],[['容器可写层','随本次容器实例；重建容器应预期重新开始','可重新生成的临时文件'],['emptyDir 临时卷','随同一个 Pod；容器重启可继续使用，Pod 删除后移除','Pod 内容器共享的临时工作区'],['节点本地路径','随指定节点上的文件；换节点需要重建或恢复','可重建缓存，或有专门恢复方案的本地数据'],['持久卷','卷生命周期可独立于单个 Pod','替换 Pod 后继续使用的数据库等状态']])+
  p('例如旧 Pod 把已确认进度写在持久卷，替换 Pod 把同一卷挂到 /data，程序便能读取同一份进度。若程序实际写入 /tmp/progress.sqlite，/data 的持久卷就没有参与这次写入。挂载还会遮住镜像中同路径的原有内容，镜像文件通常不会自动复制进新卷。',
  '找到原数据之后，数据库可能还要用日志恢复事务。下面依次走过声明、卷、节点、容器路径和业务读写，使每一步都能对应一个可检查对象。'),
 
@@ -5782,6 +5782,662 @@ const progressiveAgentSectionTitles={
  for(const[,id]of old.matchAll(/\bid="([^"]+)"/g))if(!now.includes('id="'+id+'"'))throw Error('Workflow reading lost anchor '+id);
  const urls=new Set([...now.matchAll(/\bhref="([^"]+)"/g)].map(m=>m[1]));
  for(const[,url]of old.matchAll(/\bhref="([^"]+)"/g))if(!urls.has(url))throw Error('Workflow reading lost URL '+url);
+})();
+
+
+;
+// progressive-network-reading.js
+/* Rebuild the final network lessons around objects, request flow and executable evidence.
+   Published section positions, source blocks, figures and subsection URLs stay stable. */
+(()=>{
+ const p=(...rows)=>rows.map(row=>'<p>'+row+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const code=html=>[...html.matchAll(/<div class="code-block">[\s\S]*?<\/pre><\/div>/g)].map(m=>m[0]);
+ const figures=html=>[...html.matchAll(/<figure\b[\s\S]*?<\/figure>/g)].map(m=>m[0]);
+ const details=html=>[...html.matchAll(/<details\b[\s\S]*?<\/details>/g)].map(m=>m[0]);
+ const link=(id,label)=>'<a class="inline-link" href="#/article/'+id+'">'+label+' →</a>';
+ const source=(url,label)=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>';
+ const select=(id,titles)=>{
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Progressive network source changed: '+id);
+  return a;
+ };
+ const replace=(a,bodies,desc,anchors)=>{
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  const pre=html=>html.match(/<pre\b[\s\S]*?<\/pre>/g)||[];
+  if(bodies.length!==a.sections.length||JSON.stringify(pre(before))!==JSON.stringify(pre(after)))throw Error('Network source blocks changed: '+a.id);
+  if(JSON.stringify(figures(before).sort())!==JSON.stringify(figures(after).sort()))throw Error('Network figures changed: '+a.id);
+  for(const m of before.matchAll(/\bhref=["']([^"']+)["']/g))if(![...after.matchAll(/\bhref=["']([^"']+)["']/g)].some(x=>x[1]===m[1]))throw Error('Network source URL lost: '+m[1]);
+  for(const id of [...anchors,...[...before.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1])])if(!after.includes('id="'+id+'"')&&!after.includes("id='"+id+"'"))throw Error('Network anchor lost: '+id);
+  a.updated='2026.11.08';a.desc=desc;a.intro=desc;
+  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ };
+
+ const vpc=select('vpc-network',['把一个地址拆成名字、端口和真正的连接对端','DNS 改了，哪批客户端会先看见','路由表选择下一跳，不负责给业务授权','安全组、ACL 与响应的临时端口','NAT 让连接如何出去，又如何回来','把“服务端处理完成”与“用户收到结果”拆开','验收：画出路和门，再画回来的路']);
+ const v=vpc.sections.map(s=>s[1]);
+ replace(vpc,[
+ h('subsection-1-1mbleem','域名、IP 与监听端口')+p(
+ '一笔订单查询从客户端进程出发，经过网络到达提供查询的进程，再带回结果。域名提供名称，IP 地址提供通信位置，端口把到达主机的数据交给相应的传输端点。服务进程通过套接字使用网络；套接字是程序向操作系统申请的通信接口。',
+ '例如 <code>https://api.example.test/orders/O-104</code> 中，api.example.test 是域名，/orders/O-104 是应用路径，https 表示使用受 TLS 保护的 HTTP，默认目标端口为 443。DNS（域名系统）把名称查成地址等记录；得到多个 IP 时，客户端还要选择实际连接地址。域名本身不传送订单数据。',
+ '服务把套接字绑定到本地地址与端口，再监听连接。<code>10.20.4.7:443</code> 表示这两个条件；同一主机可以在不同端口提供不同服务。<code>127.0.0.1</code> 是本机回环地址，绑定在它上面的监听者供本机访问；绑定实例地址的监听者才可通过相应网络路径接收连接。')+
+ h('subsection-1-r9coc9','HTTPS 请求的正常顺序')+
+ table(['阶段','建立什么关系','后续如何使用'],[
+ ['DNS 查询','名称 → 一个或多个候选地址','选择目的 IP'],
+ ['TCP 建连','客户端本地 IP/临时端口 ↔ 服务 IP/监听端口','提供双向、可靠、有序的字节流'],
+ ['TLS 握手','协商通信密钥，并按配置验证服务器身份','加密及保护后续应用数据'],
+ ['HTTP 请求与响应','方法、路径、头、正文 ↔ 状态、头、正文','应用读取订单结果']])+p(
+ 'HTTP 定义应用消息，GET 表示本例读取操作；TLS 负责保护这些消息，TCP 在下面传送连续字节。客户端发起连接时，操作系统通常为它选择一个临时端口。响应沿同一连接反向返回，客户端按 HTTP 规则判断响应何时完整，才得到这次查询的结果。',
+ '这个顺序对应新建的 HTTP/1.1 HTTPS 连接。持久连接允许后续请求复用已经建立的通信关系，因此一次请求未必再次解析、建连和握手。HTTP/3 使用 QUIC；本章的分段推导先固定在 TCP 路径上。')+
+ h('subsection-1-1u49a9r','客户端、入口与后端')+p(
+ '云上通常先到入口 P，再由 P 访问订单后端 A 或 B。代理是代客户端接收并转交工作的程序；负载均衡是从多个后端中分配工作的机制。HTTP 代理接收客户端连接，再使用自己到后端的连接，所以客户端的连接对端 P 与实际查询订单的 A 可以是不同进程。',
+ '正常往返为“客户端发请求 → P 接收并选择 A → A 读取订单 → P 读到响应 → 客户端读到响应”。每一段有独立的地址、端口与完成时刻。后面依次解释名称如何得到地址、数据如何选路和通过规则，再展开 P 怎样选择后端、复用连接与退出旧实例。'),
+
+ h('subsection-2-1ra10dq','DNS 解析与缓存')+p(
+ 'DNS 记录由负责某个名称区域的权威服务器提供。应用通常先问本机或配置的解析服务，递归解析器代表客户端寻找答案，并缓存允许缓存的结果。A 记录提供 IPv4 地址，AAAA 记录提供 IPv6 地址；同一名称可以对应多个候选地址。名称查询结束后，真正的连接使用其中的实际 IP。',
+ 'TTL 是记录允许被缓存的时间长度。设解析器在 09:59:50 缓存旧地址，TTL 为 60 秒，权威记录在 10:00:00 改成新地址。按这份缓存的计时，它可继续使用旧值到 10:00:50；另一个解析器在 10:00:10 首次查询，可能直接得到新值。变更发生时，两者所持记录的剩余寿命不同。')+
+ table(['对象','正常更新链上的动作','观察到的结果'],[
+ ['权威记录','发布新地址','之后的查询可取得新内容'],
+ ['递归解析器及客户端缓存','旧记录过期或刷新','之后的解析可能返回新地址'],
+ ['客户端连接池','关闭旧连接，按需要新建','新连接才会使用新选出的地址'],
+ ['入口后端集合','更新后端选择资格','入口把新工作分配给当前后端']])+p(
+ '因此 DNS 切换同时涉及“何时重新查名称”和“何时重新建连接”。应用已经持有指向旧入口的连接时，权威记录更新不会改写这条连接。验证切换应把解析结果、实际连接 IP 与后端响应身份对应到同一批请求。')+
+ h('subsection-2-o5xitb','地址映射与服务名称')+p(
+ '一个入口可用同一 IP 承载多个站点，地址只把连接送到监听者，服务名称再参与站点选择和身份校验。HTTPS 中，TLS 握手发送的 SNI 名称帮助服务器选择证书，客户端按要访问的名称校验证书；握手后的 HTTP Host 字段再说明本次请求访问哪个站点。第六节会用真实握手把它们分别验证。',
+ '比较解析路径时，可以保留原 URL，通过 curl 的 <code>--resolve 域名:端口:IP</code> 只指定该域名与端口的连接地址。这样仍使用原域名进行 SNI、证书名称校验和 HTTP 站点选择。若直接把 URL 改成 https://IP/，或同时改换入口，就改变了更多条件，计时差异的解释也随之扩大。'),
+
+ h('subsection-3-11xx3nz','VPC、子网与 CIDR')+p(
+ 'VPC 是云平台中一份逻辑隔离的网络环境，用户在其中规划地址、子网和路由。子网从地址空间中划出一个范围，实例通过网络接口取得其中的地址，并受所关联的路由与边界规则约束。要说明“两个实例在什么范围内”，先需要描述地址集合的记法。',
+ 'IPv4 地址共 32 位，常写成四段十进制数，每段 8 位。CIDR 用“网络地址/前缀长度”表示一个地址集合：<code>10.30.8.0/24</code> 固定前 24 位，余下 8 位可变化，共 2⁸=256 个地址。这里是集合大小，云子网可分配的地址数再按产品的保留规则计算。',
+ '<code>10.30.8.42</code> 属于上述 /24，10.30.9.42 不属于；/32 固定全部位，仅匹配一个 IPv4 地址；/0 不固定任何位，可匹配所有 IPv4 地址。以下 10.* 地址是私网教学题设，先用它们计算选择规则。')+figures(v[2]).join('')+
+ h('subsection-3-148u85l','路由与最长前缀匹配')+p(
+ '路由表把目的地址范围关联到下一跳，即把数据继续交给的网络目标。表中的 local 表示本地网络，peer 表示两个私有网络的对等互联；默认出口承担其他目标的转发，下一节后的 NAT 会说明出口地址如何转换。先筛出能包含目的 IP 的行，再在匹配行中选择最长前缀。')+
+ table(['目的范围','下一跳','访问 10.30.8.42 时'],[
+ ['10.20.0.0/16','local','不匹配'],['10.30.8.0/24','peer','匹配 24 位，选中'],['0.0.0.0/0','默认出口','匹配 0 位']])+p(
+ '加入 <code>10.30.8.42/32 → inspection</code> 后，.42 会改选这个更具体的目标，.43 仍走 peer；inspection 在题中只是转发目标的名称。调换表格行序不会改变上述最长前缀结果。相同前缀存在不同来源时，优先级由产品规则决定，文末模型会拒绝未定义的同前缀竞争。')+
+ h('subsection-3-sivj74','双向选路与监听位置')+p(
+ '设 A 的地址为 10.20.4.7，B 为 10.30.8.42。A 通过自己的表选出 peer，B 收到请求后，响应以 10.20.4.7 为目标，再查 B 侧路由。B 需要相应的返回路径，例如 <code>10.20.0.0/16 → peer-back</code>。每一侧选择都成立，往返路径才完整。',
+ '选路完成后，流量继续经过访问规则，抵达绑定相应地址与端口的程序。三项分别回答“交给哪里”“允许通过吗”“谁来接收”。因此本机回环查询、经实例 IP 查询、跨 VPC 查询各自覆盖不同范围，比较时应明确实际来源和目的端点。')+
+ '<p>'+source('https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html','Amazon VPC：最长前缀及同前缀优先级')+'</p>',
+
+ h('subsection-4-esyras','五元组与请求响应方向')+p(
+ '访问控制需要知道正在检查哪段通信。源 IP、源端口、目的 IP、目的端口和传输协议组成五元组。以客户端 <code>10.20.4.7:51000</code> 访问 <code>10.30.8.42:443/TCP</code> 为例，51000 是本题选取的临时端口，443 是服务监听端口；返回方向交换两端。')+
+ table(['方向','来源端点','目的端点','目的端口'],[
+ ['请求','10.20.4.7:51000','10.30.8.42:443','443'],['响应','10.30.8.42:443','10.20.4.7:51000','51000']])+
+ h('subsection-4-19347no','安全组、网络 ACL 与连接状态')+p(
+ '以 AWS 的对象语义为例，安全组关联到相应网络接口并跟踪连接状态；已允许连接的响应按连接跟踪规则放行。网络 ACL 是子网出入边界的规则列表，按编号从小到大匹配，命中后作出允许或拒绝决定；它不保存连接状态，所以请求与响应需要各自符合对应方向的规则。',
+ '若服务子网允许入站目的 443，却只允许出站目的 443，客户端的请求可能进入，回到 51000 的响应却无法通过该无状态规则。应按实际五元组核对两个方向、规则顺序与关联子网。临时端口范围取决于操作系统及配置，51000 用来展示交换关系。')+
+ h('subsection-4-1j8zqu6','网络放行与 HTTP 响应来源')+p(
+ '通过网络规则后，入口策略、HTTP 路由和业务授权仍各有判定。HTTP 403 表达某个响应方拒绝这次访问；收到它说明已获得 HTTP 消息，下一步应寻找生成者。入口日志中的后端地址、上游状态与相同请求 ID 的应用事件，可以区分入口代答与应用拒绝。',
+ '例如入口收到查询后直接返回 403，后端没有该请求，修改后端监听端口不会改变入口策略。若应用已经记录同一请求并返回 403，则继续检查它读取的身份、资源与权限。证据抵达哪个对象，诊断就沿那个对象的规则推进。')+
+ '<p>'+source('https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html','Amazon VPC：子网 ACL、规则顺序与有状态规则')+'</p>',
+
+ h('subsection-5-1quqkxj','NAT 映射与回程')+p(
+ 'NAT 是网络地址转换，在转发时改写地址或端口。典型出站场景中，私网客户端先发起连接，出口建立映射，外部服务把响应送回转换后的端点，出口再映射回原客户端。映射把这条通信的两个观察位置关联起来。')+
+ table(['观察位置','来源端点','目的端点'],[
+ ['私网发出','10.20.4.7:51000','198.51.100.9:443'],['经出口转换','203.0.113.5:62000','198.51.100.9:443'],['外部响应到出口','198.51.100.9:443','203.0.113.5:62000'],['映射回私网','198.51.100.9:443','10.20.4.7:51000']])+p(
+ '198.51.100.* 与 203.0.113.* 来自文档示例网段，62000 是这道题的转换端口。实际分配由设备和连接状态决定，源端口可以变化。外部服务看到的是转换后的网络来源；调用者的账号与权限仍由应用认证和授权确定。')+
+ h('subsection-5-1iyumle','出站连接与服务入口')+p(
+ '正常出站需要实例路由把目标交给可用出口，出口具备后续路径，访问规则允许通信，响应再按映射返回。私网实例成功下载文件，验证的是这一条主动出站路径。对外提供订单服务，则还要配置外部可达的入口、监听、后端选择和两段返回路径。',
+ '出口上的地址、端口和连接跟踪都有容量及生命周期。许多短连接同时集中到相同对端时，应按实际对端统计新建率、失败与连接状态，再比较复用前后的结果。第六节把“保留一条连接、连续承载多次请求”展开成真实代理程序，这也会解释请求数为何不等于连接数。'),
+
+ h('subsection-6-p8ekpv','转发层次与两段连接')+p(
+ '入口 P 把外部访问接到内部后端。通常所说的四层关注 TCP 等传输层的地址、端口与连接状态，七层关注 HTTP 等应用协议的消息。HTTP 代理能按 Host、路径与方法分配请求；内容受 TLS 加密时，需要先在入口完成解密，才能按这些 HTTP 字段选择。')+
+ table(['入口形态','选择依据','通信关系'],[
+ ['四层地址转换或直接返回','地址、端口与连接状态','按部署路径转发报文'],
+ ['完整 TCP 代理','在连接建立时等阶段选择后端','前端 TCP 与后端 TCP 独立，可转交加密字节'],
+ ['HTTP 代理','每次请求的站点、路径、方法等','分别解析前端请求与后端响应，可复用上游连接']])+p(
+ '本章程序采用 HTTP 代理：客户端 → P → A/B。客户端与 P 之间叫前端连接，P 与后端之间叫上游连接；“上游”是代理对被调用服务的称呼。图中 P-c1、P-c2 是两条前端连接，A-c1 是一条上游连接，箭头上的三次查询先后借用它。')+figures(v[5])[0]+
+ h('subsection-6-hfdnxr','TLS、证书、SNI 与 Host')+p(
+ 'TLS 握手建立加密通信所需的状态，并按配置验证对端身份。证书把公钥与服务器名称等信息关联，CA（证书颁发机构）负责签发；客户端检查信任链，并核对证书的名称是否匹配目标服务。SNI 在握手中携带服务名，帮助服务端选择证书；HTTP Host 在握手完成后指定请求站点。两者工作在不同阶段。')+
+ table(['TLS 部署方式','身份验证关系','HTTP 在哪里可见'],[
+ ['P 转交 TLS 字节','客户端验证最终服务的证书','解密端读取 HTTP'],
+ ['P 终止 TLS，后端使用 HTTP','客户端验证 P','P 与后端均可读各自 HTTP 消息'],
+ ['P 终止 TLS，再用 TLS 访问后端','客户端验证 P；P 单独验证后端','P 分别处理前后两段加密及 HTTP']])+p(
+ '真实的 <code>tls_identity.py</code> 将 TCP 连接地址固定为 127.0.0.1 的临时端口，证书名称固定为 <code>reports.internal.test</code>。它用 OpenSSL 命令创建一天有效的临时 CA，并把服务名写进服务器证书的 SAN 字段（证书中列出可验证名称的位置）。客户端在本进程的 TLS 配置对象 SSLContext 中加载该 CA，保持证书链和名称验证，再通过 <code>wrap_socket(server_hostname=...)</code> 指定服务名并发送 HTTP。')+
+ table(['只改变的条件','真实结果','定位到的边界'],[
+ ['正确 CA、服务名、Host','200，业务 total=37','握手与站点选择均通过'],
+ ['服务名改成 wrong.internal.test','证书校验失败','握手结束前被拒绝，未发送 HTTP'],
+ ['客户端未信任临时 CA','证书校验失败','信任链校验'],
+ ['TLS 名称正确，Host 改成 other.internal.test','TLS 通过，HTTP 421','HTTP 站点选择']])+p(
+ '服务端 SNI 回调记录握手名称，HTTP 处理器单独记录请求；两次失败握手没有进入 HTTP，请求记录恰好两条。可到 <a href="#/article/k8s-networking?section=7">TLS、证书名称和 HTTP Host 实验</a>运行并核对 <a href="labs/network-input-tools/tls_identity.py">源码</a>。本章 P/A/B 程序使用明文 HTTP，前端 Host 为 orders.lab.test，上游改成 orders.internal.test；这两个名称由请求头直接传入。')+
+ h('subsection-6-pe1x30','后端资格与连接池')+p(
+ '每次分配先从当前允许接新工作的后端中选择，再为选中的后端借连接。就绪状态表达分配资格，连接池保存已经连好的可复用连接。本例每个后端只有一条 HTTP/1.1 连接，锁覆盖发送请求和完整读取响应，因此同一后端的请求串行使用它。',
+ '客户端在 P-c1 查询两次，再换 P-c2 查询一次，三个响应均来自 A-c1。前端连接变化不会强迫代理放弃仍可用的上游连接；读取完整响应使后续请求能从清楚的消息边界开始。允许的在途工作数、忙连接数和空闲连接缓存数是不同量，例如 NGINX upstream keepalive 约束每个 worker 保留的空闲连接数量。')+
+ h('subsection-6-1ovzwml','排空与在途工作')+p(
+ '排空分成两个动作：退出新工作的候选集合，继续处理先前已分配的工作。在程序中，B 先接到 /hold 请求，事件通知驱动“已经开始”；驱动再标记 B 排空，快照中 active=1。新查询于是走 A，随后驱动放行 B 的旧查询，active 减到 0 时关闭 B 的池连接。')+figures(v[5])[1]+p(
+ '<code>Control.reserve</code> 在选择时就增加 active，<code>release</code> 在一次尝试结束后减少。因此 active 包括已分配但仍在等池锁的工作。连接池中的空闲连接可以保留，但只要 B 不再具备资格，就不应接到新工作。发布时再给排空设置最长等待，并与进程退出协调；<a href="#/article/k8s-networking">服务网络</a>和<a href="#/article/k8s-workloads">工作负载生命周期</a>会继续展开这条传播链。')+
+ h('subsection-6-zn6f9f','重试条件与共同截止时间')+p(
+ '重试会再次执行同一业务操作，需要先确定能否重放。本例 GET 只查询订单，收到 503 或丢失上游响应后可按策略换后端；POST /publish 会写入 SQLite，默认只尝试一次。请求 ID 用于串联日志，只有业务把操作身份与提交结果原子保存，才具备相应的去重能力。',
+ '时间预算从同一计时起点扣减。设用户总预算 800 ms，前面建连用 80 ms、排队用 120 ms，留下 600 ms；安排两次各 250 ms 的尝试和一次 100 ms 间隔，恰好用满。若第一次实际已花 430 ms，再等 100 ms，第二次只剩 70 ms。每次换后端重新给 600 ms 会突破原预算。')+
+ table(['约束','本程序怎样实现','计时范围'],[
+ ['次数与目标','最多两次，tried 排除已试后端','同一个 HTTP 请求'],
+ ['共同 deadline','普通请求 2 s，/slow-first 为 0.25 s','入口校验并读完小请求体后开始'],
+ ['池与 I/O 等待','拿锁、建连及响应均使用剩余时间','同一上游窗口逐步扣减'],
+ ['响应完整期限','定时器到期 shutdown 本次 socket','防止持续少量字节拖过共同期限']])+p(
+ '代理先缓冲受控请求体，完整读到上游响应，再决定向客户端发送什么；请求与响应均限制为最多 4096 字节，采用 Content-Length 界定正文。这样 GET 的一次失败尝试尚未把半份响应交给客户端，仍可作整体重试决策。流式转发需要另行规定部分内容已经下发后的处理。',
+ 'socket 的一次等待超时与整个请求的截止时间覆盖不同范围；本程序额外用定时器守住完整上游窗口。它的起点晚于客户端发请求，终点也未包含下行传输，不能拿 0.25 s 直接当用户端 TTFB。多层独立重试还会相乘：客户端、入口、服务分别尝试 3、2、2 次，最坏可产生 12 次后端调用。')+
+ h('subsection-6-1tnymhz','提交、完整响应与用户结果')+p(
+ '沿一条请求分别记业务提交、P 完整读取响应、客户端完整读取响应三个事件。若后端在客户端起算 460 ms 时完成，而客户端在 500 ms 放弃，剩余 40 ms 还要覆盖响应回到 P、P 处理和下行传输；后端完成时间本身不能决定用户结果。',
+ '写入实验使这几个时刻可独立核对：后端提交 total=37 后主动关闭 socket，P 只能返回 502“写入结果未知”，SQLite 仍有一行。放开 POST 重试的负例会向两个后端各提交一次，客户端仍收到 502，库中却累计 74。下一节运行这条因果链，下一章再把<a href="#/article/network-diagnosis">网络排障</a>落实为同一请求的阶段计时。')+
+ '<details><summary>生产代理配置的口径对照</summary>'+p(
+ 'NGINX 的空闲 keepalive 缓存与总连接上限分别配置；proxy_next_upstream 决定哪些情况允许尝试下一后端，并另有次数、时间参数。其下一后端时间窗口与本实验覆盖完整上游响应的 deadline 需要分别读取定义。')+'<p>'+source('https://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive','NGINX：空闲上游连接')+' · '+source('https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream','NGINX：下一后端与重放条件')+' · '+source('https://docs.python.org/3/library/ssl.html#ssl.SSLContext.check_hostname','Python：TLS 证书名称校验')+'</p></details>',
+
+ h('cloud-proxy-run','HTTP 代理实验')+p(
+ '程序在 127.0.0.1 的三个临时端口启动真实 HTTP/1.1 服务 P、A、B，客户端经 P 查询 O-104。代理记录选择与上游尝试，后端记录实际接收连接及请求，临时 SQLite 记录独立的写入效果。先预测“更换前端连接”“B 排空”“提交后丢响应”各会改变哪个对象，再核对输出。',
+ '使用 Python 3.9+ 标准库，下载并解压 <a href="labs/cloud-proxy.zip" download>完整实验包</a>，进入 cloud-proxy 目录运行：')+code(v[6])[0]+p(
+ '<code>positive</code> 保存受限策略，<code>unsafe_write_retry</code> 在另一份临时环境中重放 POST。P-c1、A-c1 等编号按各监听者接受连接的顺序生成，地址里的临时端口由操作系统选择。它们用于关联本次运行的两段连接。')+
+ table(['场景','客户端结果','独立核对的事实'],[
+ ['错误前端 Host','421，0 次上游尝试','后端无 wrong-host 请求'],
+ ['两次同前端查询，再换前端','三个 200，各尝试一次','两个前端连接，三次均使用 A-c1'],
+ ['B 持有旧请求时排空','新查询 A:200，旧查询随后 B:200','drain_started 的 active=1，旧请求完成后归零'],
+ ['B 临时繁忙','200，两次尝试','同一 rid，B:503 后 A:200'],
+ ['两个后端都繁忙','503，两次尝试','到达次数上限后停止'],
+ ['/slow-first 用尽共同窗口','504，一次尝试','B 收到请求，未重新给 A 一份预算'],
+ ['POST 提交后断开响应','502，一次尝试','数据库一行，total=37'],
+ ['负例：允许 POST 换后端','502，两次尝试','数据库两行，total 合计 74']])+
+ h('subsection-7-g5284x','选择、复用与完成事件')+p(
+ '按执行顺序读源码：<code>Control.reserve</code> 检查 ready、draining、tried 并登记 active；<code>Pool.exchange</code> 等锁、借用或新建连接、发送并完整读取响应；<code>Proxy.process</code> 按错误与业务条件决定是否继续；finally 中的 <code>release</code> 归还在途计数。数据库的 INSERT/提交发生在后端主动断开之前。',
+ '用 accepted 的真实套接字地址对照 upstream_attempt，验证前后两段连接及复用。日志 seq 表示观测写入顺序；client_received 表示驱动已完整读取下行响应，upstream_response 表示 P 已完整读取上游响应。后端写出之后追加的日志还会受线程调度影响，应围绕需要验证的接收事件排序。',
+ '排空由两组 Event 明确控制先后，慢请求在 P 超时后才由驱动放行。它们验证资格、通信等待与后端执行的独立性；端口、调度间隔及一次运行的耗时不构成生产性能结论。阅读 <a href="labs/cloud-proxy/README.md">运行说明与读源码顺序</a>、<a href="labs/cloud-proxy/proxy_lab.py">完整源码文件</a>及<a href="labs/cloud-proxy/validation.json">实际运行记录与源码摘要</a>，可以对照这一份纯 HTTP、单连接池槽位实现。')+details(v[6])[0]+p(
+ '变化练习：B 仍有空闲连接但已排空，下一次分配应被 reserve 排除；若要使 POST 可重放，应把业务操作键与已提交结果保存成原子关系。沿<a href="#/article/distributed-systems">超时、重试与幂等</a>继续完成这个提交协议。')+
+ h('subsection-7-a6sxak','往返路径练习')+p(
+ '设外部用户经入口 443 查询订单，入口再访问后端端口。画出客户端临时端口、入口监听端口、入口的上游临时端口与后端监听端口，给两段连接各补上回程。随后把 DNS 答案、路由下一跳、网络规则、入口后端选择和业务响应放到对应位置。',
+ '现在增加现象：私网后端能调用外部 API，外部用户查询超时。先说明这项成功覆盖的是主动出站路径，再为实际失败请求索取入口收包、上游连接与后端请求记录。若入口 503 且无后端地址，核对选择资格及入口字段；若后端已经返回同一请求的 503，则继续追其处理条件。每项证据都要落在图中一段路径上。')+
+ h('v43-route-practice','CIDR 与路由选择模型')+p(
+ '最后用 route_walk.py 校验第三节的地址推导：先看 .42 同时命中 /24 与 /0，再加入 /32，删除 B 侧返回路由，最后补回。lookup 用 ipaddress 判断集合成员并按前缀长度排序，输出 matched 与所选 target；同前缀竞争会报错，等待产品规则补充。')+code(v[6])[2]+details(v[6])[1]+p(
+ '<a href="labs/mechanism-walkthroughs.zip" download>下载机制跟读实验包 ↓</a> · <a href="labs/mechanism-walkthroughs/route_walk.py" download>下载 route_walk.py ↓</a> · <a href="labs/mechanism-walkthroughs/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a>',
+ '该模型执行地址集合与选择规则；P/A/B 程序执行真实本机 HTTP 代理。把两者的结果分别对应到请求图中，再到目标云环境读取实际路由、规则与流量，便能区分推导成立与实际配置生效。')
+ ],'从域名、端点和 VPC 地址规划出发，沿一次查询的去程与回程理解路由、访问控制、NAT，以及入口代理的连接复用、TLS 身份、排空与重试。',[
+ 'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
+ ]);
+
+ const diagnosis=select('network-diagnosis',['TCP连接：序号、确认与握手','传输能力：窗口、RTT与应用背压','结束与探测：半关闭、状态与超时','先固定同一个查询，再比较快慢','在一只秒表上读出六个时刻','先确认谁生成了错误','看到什么证据，决定下一次探测什么','修复后验证的是原始现象','课堂练习：用两个反例检验判断','本地实验：同样多等 150 毫秒，慢在哪一段','实战：按长度解帧，再验证TCP半关闭','实战：非阻塞发送、接收读取与应用回执']);
+ const n=diagnosis.sections.map(s=>s[1]);
+ replace(diagnosis,[
+ '<div id="tcp-connection-contract">'+anchor('subsection-1-peucok')+p(
+ '上一章把查询分成客户端到入口、入口到后端两段连接。本章进入每段连接：发送进程把字节交给套接字，操作系统传输并重组，接收进程再读取、解析和处理。TCP 提供双向、可靠、有序的字节流；每个方向各自维护字节序号，应用另行定义一条请求的边界与结果。',
+ '建立连接时，两端先同步初始序号。用教学数值表示：A 发送 SYN、seq=100；B 发送 SYN、seq=900，同时 ACK=101；A 回复 ACK=901。SYN 占一个序号，所以 A 后续数据从 101 起。若它的 100 字节被连续接收，下一个期望位置为 201，确认号就推进到 201。')+figures(n[0]).join('')+p(
+ 'ACK 确认的是 TCP 接收进度。字节可能仍在接收端内核缓冲中，应用尚未读取；应用读到了字节，也还要解析、鉴权和提交。发送方 send 返回的字节数又更早，只说明本地发送路径接受了这一部分数据。后面的真实程序会分别记录发送进度、接收总量和应用回执，把这些边界逐个核对。')+'</div>',
+
+ anchor('subsection-2-1mjk258')+p(
+ '发送方与接收方都用缓冲暂存字节。接收方通过接收窗口 rwnd 通告可接收空间，发送方用拥塞窗口 cwnd 约束网络中的未确认数据；两项共同限制继续发送的范围。流量控制照顾接收能力，拥塞控制依据网络反馈调整发送节奏。RTT 是发送到收到相应确认的往返时延，窗口等待因此也受距离与路径影响。')+
+ table(['机制','正常推进','受限时的表现'],[
+ ['TCP 接收窗口','应用读取后可释放接收空间','应用暂停读取，内核缓冲逐步占满'],
+ ['拥塞窗口与丢包恢复','按确认、丢包等反馈控制在途数据','发送节奏下降或重传'],
+ ['本地发送缓冲','内核接收应用提交的字节并继续发送','非阻塞 send 暂时不可用，或只接受部分字节'],
+ ['应用背压','按下游消费能力限制上游生产','有界队列等待、拒绝或取消，控制驻留工作量']])+p(
+ '用稳定长流作数量估算：有效字节率受“路径字节带宽”和“min(rwnd,cwnd)÷RTT”等约束。题设带宽 100 Mbit/s、RTT 50 ms，满带宽的一次往返约需 100,000,000÷8×0.05=625,000 字节在途，约 610 KiB。若有效窗口仅 256 KiB，窗口项为 256 KiB÷0.05s=5 MiB/s，低于链路约 11.92 MiB/s 的字节能力。',
+ '这个算式解释窗口与时延怎样共同约束传输；实际吞吐还受已有在途数据、发送节奏、CPU 和应用供给影响。若慢在应用消费，扩大缓冲增加的是可暂存量，可能同时增加等待。应把应用队列、接收读取、发送阻塞和最终完成量放在一起观察。第十二节用暂停读取再恢复的受控实验，验证其中一条背压链。'),
+
+ anchor('subsection-3-1mjn4i8')+p(
+ '双向字节流可以分别结束。<code>shutdown(SHUT_WR)</code> 关闭本端发送方向，已排队的数据继续按协议处理；对端读完该方向的数据后 recv 返回空字节，称为 EOF。本端的接收方向仍可工作，因此客户端可以“发送请求 → 半关闭 → 继续读取回应”。',
+ 'TCP 用 FIN 表达一个方向不再发送新数据，另一端确认后可继续发送自己的数据，再结束自己的方向。FIN 和 ACK 可以合在同一个报文中。常见关闭路径由此产生几个可观察状态：')+
+ table(['状态','正在保留什么条件','结合什么理解'],[
+ ['TIME_WAIT','为旧连接报文和结束确认保留状态','主动关闭位置、短连接率与连接复用'],
+ ['CLOSE_WAIT','收到对端 FIN，等待本地应用结束发送方向','本地关闭路径、未结束工作与持续时间'],
+ ['SYN_SENT / SYN-RECEIVED','连接序号同步尚在推进','实际端点、方向与握手回应'],
+ ['ESTABLISHED','连接已经建立','还需独立观察应用读写与工作进展']])+p(
+ '大量短连接会带来大量 TIME_WAIT，持续积累的 CLOSE_WAIT 则提供检查应用关闭路径的线索。状态需要结合速率、持续时间和进程解释；看到 ESTABLISHED 后，仍应继续观察对应请求的读取、处理与写出。',
+ 'TCP keepalive 探测空闲连接条件，HTTP 持久连接用来复用通信，应用心跳表达业务自行定义的信号。一次操作超时只表示本次等待越过期限，取消本地等待也需要另外传递取消机制才能影响远端工作。是否提交，应查那次操作的业务结果。')+details(n[2]).join('')+
+ '<details><summary>TIME_WAIT 的归属与计时</summary>'+p('主动关闭的一侧常进入 TIME_WAIT，同时关闭时双方也可能进入。协议中的 2×MSL 表示两倍最大报文生存时间；具体计时与允许的复用按系统实现读取。')+'</details>',
+
+ p('现在固定诊断对象：客户端查询订单 O-104，经过入口 P 到后端。先保存时间窗口与时区、来源网络、域名及实际 IP、方法与路径、请求 ID、响应状态和字节数。请求 ID 关联业务路径，连接端点关联 TCP 路径；代理重试时，同一个业务请求还可能对应多次上游尝试。',
+ '以下计时案例使用同一入口 IP、无请求体的 HTTPS GET、HTTP/1.1、每次新建连接，最终均为 200，大小一致。没有中间 1xx、重定向或自动重试。先把协议消息如何从字节流中读完整说清楚，再在下一节为这个往返过程放上计时点。')+
+ '<div id="tcp-message-boundary">'+h('subsection-4-15zyt9a','字节流与长度解帧')+p(
+ 'HTTP 自己定义消息边界，自定义协议也必须做这件事。TCP 保存字节顺序，却不保存一次 send 对应一次 recv 的关系。接收程序可能一次读到半条消息，也可能同时读到多条；所谓解帧，就是从持续输入的字节中识别并取出完整消息。',
+ '本章协议使用“四字节大端长度＋UTF-8 正文”。大端表示高位字节在前，长度记录编码后的字节数。中文“云上训练”有 4 个字符、12 字节，连同长度头为 16 字节；两条同等长度的消息共 32 字节。程序每次 recv 最多读 7 字节，解析器需要跨调用保存未完成部分。')+figures(n[3]).join('')+
+ table(['缓冲状态','解析动作'],[
+ ['不足 4 字节','保留长度头片段，继续读取'],
+ ['头完整，正文不足','先验证长度上限，再保留并等待'],
+ ['已有完整帧','取出并解码正文，继续循环处理后续帧'],
+ ['读取到 EOF','检查缓冲是否恰好为空，剩余片段按截断处理']])+p(
+ '完整 Decoder 先把 chunk 追加到 bytearray，从头部读 size，超过 4096 就拒绝；不足 4+size 时停下来等数据。下面是头部已解析、长度已验证后的核心，删除的恰好是这一整帧：')+code(n[3])[0]+p(
+ '解析器的输出是消息列表，外层可以把它们交给业务队列。长度上限管理单条消息大小，连接缓冲、完成期限与业务队列还需各自有界。否则即使单帧合法，持续发送快于处理也会累积驻留工作。')+
+ h('subsection-4-1xtsiga','EOF 与应用结果')+p(
+ '正常收发为“发送两帧 → 客户端半关闭 → 服务端读到 EOF 并检查无残帧 → 服务端回送一帧 → 客户端读到回应”。EOF 结束输入方向，协议检查决定输入是否完整。长度声称 12、实际只剩 11 字节时，连接即使正常结束也必须报截断。',
+ '回应“已接收2条”是这个程序主动定义的应用回执，证明接收端解析出两条消息。真实订单协议还应规定回执代表已接收、已排队还是已提交。后面用 curl 衡量消息到达时刻时，也要把“首字节已到”与“完整结果已读到”分别记录。')+details(n[3]).join('')+'</div>',
+
+ p('curl 的这些计时字段表示从本次操作起点到某个事件的累计秒数。按上一节的新连接题设，先解析，随后 TCP 建连、TLS 握手、传输准备、收到首字节，最后完成传输。相邻事件相减，才得到对应区间的耗时。',
+ '下面命令每次启动独立 curl 进程，使用直连 HTTP/1.1 并保留证书验证。先把 TEST_URL 设为可采样的只读 HTTPS 接口；3 s 限制包含解析、TCP 与 TLS 握手的连接阶段，8 s 限制整个操作。保存退出码、远端 IP、协议、连接数和下载字节数，才能判断样本是否符合比较条件。')+code(n[4])[0]+p(
+ '以下是构造的教学数据，用毫秒展示两个成功请求；0.470 秒写作 470 ms。每列使用自己的操作起点，相同计时点的差额用于定位新增时间落在哪个区间。')+
+ table(['事件 / curl 字段','基线 / ms','慢请求 / ms','慢请求相邻区间 / ms'],[
+ ['解析完成 · time_namelookup','20','20','20 − 0 = 20'],
+ ['TCP 连接完成 · time_connect','50','50','50 − 20 = 30'],
+ ['TLS 握手完成 · time_appconnect','90','90','90 − 50 = 40'],
+ ['传输准备完成 · time_pretransfer','92','92','92 − 90 = 2'],
+ ['收到首字节 · time_starttransfer','180','470','470 − 92 = 378'],
+ ['传输完成 · time_total','208','498','498 − 470 = 28']])+p(
+ '慢请求从起点到首字节的 TTFB 为 470 ms；从准备完成到首字节为 378 ms。基线同一区间为 180−92=88 ms，多出的 290 ms 与总时长差 498−208=290 ms 一致。六个区间相加回到 498 ms，可以检查有无重复记账。',
+ '客户端的 378 ms 覆盖请求发送、网络往返、入口排队和后端工作等过程，不能直接命名为“后端执行时间”。首字节通常从响应头开始，最后 28 ms 还可能包含剩余头部及正文；TTFB 也不同于 AI 服务完成第一个业务 token 的时间。拿到区间后，下一步是去对应进程寻找更细事件。')+
+ '<details><summary>计时定义与其他连接方式</summary>'+p(
+ '传输准备完成与收到首字节的准确边界以 libcurl 定义为准。已有连接可省略新的 TCP/TLS 阶段；大请求体还把上传放在响应首字节之前；HTTP/2 可复用并发流，HTTP/3 基于 QUIC；显式代理与重定向会改变拓扑或累计请求范围。应先记录实际路径与请求次数，再解释各个字段。')+'<p>'+source('https://curl.se/docs/manpage.html','curl：命令与计时字段')+' · '+source('https://curl.se/libcurl/c/CURLINFO_PRETRANSFER_TIME_T.html','libcurl：传输准备完成')+' · '+source('https://curl.se/libcurl/c/CURLINFO_STARTTRANSFER_TIME_T.html','libcurl：首字节边界')+'</p></details>',
+
+ p('HTTP 响应由生成状态码、响应头与正文的进程构造，代理也可以直接生成。因此先把两个结果分开：curl 是否完成了通信操作，应用结果是否满足业务预期。上一节命令未使用 --fail，完整收到 HTTP 503 时仍可退出 0；握手失败或超时则通常有非零退出码，后续尚未发生的计时点不能拿零代入成功样本公式。')+
+ table(['观察','已经确认的边界','继续核对'],[
+ ['入口 503，无后端选择记录','入口已形成 HTTP 响应','是否没有合格后端、入口策略或容量受限'],
+ ['入口记上游 503，后端有同一 ID','请求已到达该后端并得到相应状态','后端为何拒绝或暂时不可用'],
+ ['证书校验失败','TCP 之后的 TLS 身份验证未完成','信任链、证书名称及 SNI'],
+ ['最终 200 但正文不符','通信完成，业务内容未达预期','路径、版本、站点及数据结果']])+p(
+ '本地 infra_lab.py 会实际生成 200、503 和 404，并记录应用信号。用它练习把 HTTP 状态与应用处理对应起来；多级入口则继续关联每一段代理与后端事件。')+code(n[5])[0]+link('cloud-service-lab','在本地服务实验中观察 HTTP 状态与可用性'),
+
+ p('订单例中解析、TCP、TLS、准备和最后传输区间稳定，新增 290 ms 落在准备完成到首字节。先取同一请求 ID 的入口接收、开始上游尝试、收到上游首字节，以及后端子调用时长，和一条快请求对照。若差额集中在转发前，继续查入口排队；若在数据库子调用，继续区分等连接与执行。')+
+ table(['重复出现的变化','一次有区分力的探测','支持继续查什么'],[
+ ['解析阶段增长','同客户端保留 URL，用 --resolve 固定同一个已知 IP','差额消失时支持查询解析路径与缓存'],
+ ['TCP 阶段增长','按实际 IP/地址族分组，核对入口是否收到连接尝试','区分特定地址路径、监听和访问规则'],
+ ['TLS 阶段增长或校验失败','保留相同域名、IP 和证书验证，关联入口握手日志','证书链、名称或握手处理'],
+ ['准备后至首字节增长','同一请求 ID 对照入口分段与应用调用','排队、上游等待及应用处理'],
+ ['首字节后增长','固定响应大小，对照服务端输出和接收方读取','慢速生成、传输约束或接收消费']])+p(
+ '每次只改变解释所需的一个条件。--resolve 的域名和端口要与 URL 匹配，连接 IP 也保持为比较对象，才能保留原 SNI、证书名称与 Host，同时隔离名称查询。若换了另一个入口，变化同时包含转发及后端路径，应按新的比较范围解释。')+
+ '<p>'+source('https://everything.curl.dev/usingcurl/connections/name.html','everything curl：指定地址并保留域名')+'</p>',
+
+ p('修复验收先回到原请求条件：来源网络、域名与实际入口、请求内容、连接策略、负载和超时保持可比，观察覆盖原来间歇性问题的窗口。记录成功、错误与超时的数量，再看用户结果、完成率及延迟分布；同一批样本中的超时要作为未按期限完成保留下来。',
+ '按来源、目标 IP 和请求类型分组，先对每个成功请求计算阶段耗时，再求各阶段 p95。分别求两个累计时刻的 p95 后相减，通常不等于区间的 p95，因为两个分位点可能属于不同请求。20、40、378 ms 是本题数值，健康标准来自该服务的业务目标。',
+ '把配置改动、预期变化与实际顺序写在同一时间线上：哪段等待先下降，错误是否减少，完成量和下游压力怎样变化。这样可以确认原现象恢复，也能发现排队是否移到另一个位置。')+link('incident','把请求口径、探测与修复证据写进故障时间线'),
+
+ p('继续使用 O-104 的计时点，分别检验“累计时刻相减”和“连接复用后解释范围改变”。先写出区间、支持的判断与下一项证据，再对照解法。')+
+ table(['变化条件','需要推导的结果'],[
+ ['甲：TLS 完成 90 ms，准备完成 112 ms，首字节 470 ms','算 TTFB、TLS 后到首字节、准备后到首字节，以及 TLS 到准备的增量'],
+ ['乙：复用连接，握手字段为零；收到 503，应用查不到同一请求','说明哪些新建连接差值不适用，并提出两项区分响应来源的证据']])+
+ '<details><summary>参考推导与判断范围</summary>'+p(
+ '甲的 TTFB 为 470 ms；TLS 后到首字节为 470−90=380 ms；准备后到首字节为 470−112=358 ms。TLS 到准备为 22 ms，比原来的 2 ms 增加 20 ms。准备点后移，并没有改变本题首字节时刻，只改变两个相邻区间的分配。',
+ '乙需先确认连接复用及实际路径，不能把零握手字段解释为本次握手花了零毫秒。查入口是否选中后端、上游状态是什么；再查后端的同一 ID、时间窗口与采集完整性。应用暂时搜不到日志可以形成候选，尚不足以独立证明入口代答。')+'</details>',
+
+ p('现在把等待放到真实程序的两个位置。timing_lab.py 在 127.0.0.1 临时端口启动 HTTP 服务，使用 Content-Length: 5 返回 hello。/late-headers 在发送响应头之前 sleep(0.15)；/late-body 先发送并 flush 响应头，再等待 0.15 秒后写正文。两个请求都是 200、同样大小、各启动一次 curl。',
+ '预测：头部之前的等待会进入“连接完成到首字节”；头部已经送出后的等待会进入“首字节到完成”。下载脚本，使用 Python 3 与 curl 运行：')+code(n[9])[0]+
+ table(['一次保存的执行记录','连接完成 → 首字节','首字节 → 结束'],[
+ ['响应头延后','155.9 ms','0.1 ms'],['正文延后','0.6 ms','155.6 ms']])+p(
+ 'measure 读取 time_connect、time_starttransfer 和 time_total，先检查状态、字节数与时刻顺序，再计算两个差值。断言只要求注入的 150 ms 在预期区间可见，并留出计时舍入余量。表中小数属于保存的单次观测，复跑关注等待位置与差值关系。',
+ '本例是回环明文 HTTP，直接连接 IP，没有 TLS 阶段。它把计时边界落实为可见的响应写出动作；前面的 HTTPS 表则用于解析、建连、握手与多进程路径的推导。')+
+ '<p class="practice-links"><a href="labs/network-timing/timing_lab.py" download>下载 Python 脚本 ↓</a><a href="labs/network-timing/validation.json" target="_blank" rel="noopener">查看本次执行记录 ↗</a></p>',
+
+ p('tcp_framing.py 将第四节的协议放到真实回环 TCP 上。frame 先编码 UTF-8，再用 <code>struct.pack("!I", len(body))</code> 写入四字节大端长度；Decoder 保存跨读取的 bytearray，feed 反复取完整帧，finish 在 EOF 时拒绝残留。连接两端均采用相同规则解析。',
+ '程序先在内存中用整块、逐字节、2/5/余下三种切分验证同一串 wire；随后启动 127.0.0.1 临时监听，客户端两次 sendall，服务端每次 recv(7)。客户端关闭发送方向后继续读，服务端读到 EOF、确认两帧完整，再回送“已接收2条”。运行前先预测这条回应能否沿原连接返回。')+code(n[10])[0]+
+ table(['检查对象','保存的结果与解释'],[
+ ['字符、正文与线长','每条 4 字符、12 字节；两帧共 32 字节'],
+ ['真实读取分段','一次观测为 7 / 7 / 2 / 7 / 7 / 2，合计 32'],
+ ['解析输出','云上训练、恢复完成，三种人为切分均一致'],
+ ['半关闭后','服务端先见 EOF，客户端仍收到应用回应'],
+ ['非法或未完成输入','超过 4096 拒绝；头截断、正文截断均报错']])+p(
+ 'recv(7) 是单次读取上限，切分由到达与调度决定。解析正确性依赖缓冲与长度检查，不能依赖表中的分段。独立的 parser_probes 固定输入切分，真实套接字部分核对双向收发和半关闭，两类证据共同覆盖协议与连接行为。')+details(n[10]).join('')+
+ '<p><a href="labs/learning-mechanisms.zip" download>下载三个独立实验、说明与记录 ↓</a> · <a href="labs/learning-mechanisms/validation.json" target="_blank" rel="noopener">核对实际输出与源码 SHA256 ↗</a></p>',
+
+ anchor('subsection-12-1kp22io')+p(
+ '最后沿第二节的背压链执行一次。socket_backpressure.py 准备 786432 字节负载，接收线程先等待 Event、不调用 recv；发送端切为非阻塞，每次取至多 16384 字节调用 send，按实际返回的 count 推进 offset。写暂时不可用时抛出 BlockingIOError，程序记录这一受控边界再允许对端读取。',
+ '接收应用开始读取后，selectors 监听可写事件，发送循环继续处理剩余字节，并受一个 8 秒 deadline 约束。可写通知表示值得再次尝试，代码仍处理再次阻塞与短写。全部发送后客户端 shutdown(SHUT_WR)，转为读取回执；接收端读到 EOF 后回送收到的总字节数和 SHA256 内容摘要，用来校验两端内容一致。')+code(n[11])[0]+
+ table(['本次记录','数值或结果','验证的对象'],[
+ ['负载与最终接收量','786432 字节，SHA256 一致','完整数据内容'],
+ ['应用开始读之前','send 已接受 16384 字节，随后观察到阻塞','本地发送进度可早于应用读取'],
+ ['实际缓冲返回值','发送 16384，接收 326640 字节','getsockopt 读到的平台实际值'],
+ ['成功 send / 短写','48 次 / 0 次','一次观测的调用结果'],
+ ['发送半关闭后','仍读到 JSON 应用回执','反向通信与接收端明确确认']])+p(
+ '发送路径、对端内核、接收应用是三个位置。应用暂停时，对端内核仍可能接收并确认部分字节，本地 send 因而可以先推进；缓冲资源有限后，写入会受到约束。恢复读取释放空间，事件循环随后继续。应用回执再把“实际读到全部内容”落实为总量和摘要。')+
+ '<details><summary>复跑差异与观测范围</summary>'+p('不同系统可能在受控负载上限前尚未阻塞，实际缓冲和短写次数也可能变化。程序始终按 count 推进，并保存 blocked_before_application_read 的真实值；它没有测量 cwnd 或抓取 TCP ACK。该结果用于理解发送循环、应用消费与回执边界，实际传输仍需结合路径的 RTT、重传和队列观察。')+'</details>'+details(n[11]).join('')+
+ '<p><a href="labs/compute-and-transport.zip" download>下载 CPU 记账与套接字背压实验 ↓</a> · <a href="labs/compute-and-transport/socket_backpressure.py" download>下载 socket_backpressure.py ↓</a> · <a href="labs/compute-and-transport/validation.json" target="_blank" rel="noopener">实际输出与源码摘要 ↗</a></p>'+
+ '<details><summary>发送与关闭 API 的精确定义</summary><p>'+source('https://docs.python.org/3/library/socket.html#socket.socket.send','Python：send 返回的实际字节数')+' · '+source('https://docs.python.org/3/library/socket.html#socket.socket.shutdown','Python：分别关闭收发方向')+' · '+source('https://www.rfc-editor.org/rfc/rfc9293.html','RFC 9293：TCP 字节流、确认与连接状态')+'</p></details>'
+ ],'把 TCP 字节交付、协议消息和业务结果分层理解，再用同一请求的阶段计时定位等待，通过真实 HTTP、长度解帧与非阻塞发送实验核对判断。',[
+ 'subsection-1-peucok','subsection-2-1mjk258','subsection-3-1mjn4i8','subsection-4-15zyt9a','subsection-4-1xtsiga','subsection-12-1kp22io'
+ ]);
+})();
+
+
+;
+// progressive-training-io-reading.js
+/* Read the participants and input objects before waits, capacity and recovery.
+   Load after the progressive/bridge lessons and before first-reading-flow.js. */
+(()=>{
+ const p=(...rows)=>rows.map(row=>'<p>'+row+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
+ const t=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
+ const blocks=html=>[...html.matchAll(/<div class="code-block">[\s\S]*?<\/pre><\/div>/g)].map(m=>m[0]);
+ const figures=html=>html.match(/<figure\b[\s\S]*?<\/figure>/g)||[];
+ const downloads=html=>[...html.matchAll(/<p class="practice-links">[\s\S]*?<\/p>/g)].map(m=>m[0]);
+ const source=(url,label)=>'<p><a href="'+url+'" target="_blank" rel="noopener">'+label+' ↗</a></p>';
+ const select=(id,titles)=>{
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Progressive training IO source changed: '+id);
+  return a;
+ };
+ const replace=(a,bodies,ids,desc)=>{
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  const pre=html=>html.match(/<pre\b[\s\S]*?<\/pre>/g)||[];
+  if(bodies.length!==a.sections.length)throw Error('Training IO section count changed: '+a.id);
+  if(JSON.stringify(pre(before))!==JSON.stringify(pre(after)))throw Error('Training IO original code changed: '+a.id);
+  if(JSON.stringify(figures(before).slice().sort())!==JSON.stringify(figures(after).slice().sort()))throw Error('Training IO original figure changed: '+a.id);
+  for(const m of before.matchAll(/\bid=["']([^"']+)["']/g))if(!after.includes('id="'+m[1]+'"')&&!after.includes("id='"+m[1]+"'"))throw Error('Training IO anchor lost: '+m[1]);
+  for(const id of ids)if(!after.includes('id="'+id+'"'))throw Error('Training IO published heading lost: '+id);
+  const hrefs=[...after.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]);
+  for(const m of before.matchAll(/\bhref=["']([^"']+)["']/g))if(!hrefs.includes(m[1]))throw Error('Training IO source URL lost: '+m[1]);
+  bodies.forEach((body,i)=>a.sections[i][1]=body);
+  a.desc=desc;a.intro=desc;a.updated='2026.11.08';
+ };
+
+ const comm=select('training-communication',['参与与布局：进程组、rank和操作结果','数值正确性：分片、变长与全局分母','调用契约：顺序、操作、shape与dtype','等待含义：异步句柄与慢rank到达','计算重叠：桶就绪和暴露的通信尾部','量级估算：环形字节账与带宽单位','分层诊断：会合、数值、规模与完整训练','实战与变化题：真实Gloo数值和协议反例']);
+ const c=comm.sections.map(s=>s[1]),c1=blocks(c[1]),c3=blocks(c[3]),c7=blocks(c[7]);
+ if(c1.length!==1||c3.length!==1||c7.length!==2||downloads(c[7]).length!==1)throw Error('Collective source block layout changed');
+ const ci=['subsection-1-yhnylp','subsection-2-1xgbpee','subsection-3-12u9vvw','subsection-4-9tsq35','subsection-5-1l82yca','subsection-6-pn22ky','subsection-7-1apl07f','subsection-8-g1wiy8'];
+ replace(comm,[
+ '<div class="mechanism-core" id="collective-members-layout">'+anchor(ci[0])+
+ p('上一章的训练循环由多个进程各自执行。进程有自己的模型状态、输入和执行进度；某一时刻需要交换梯度时，它们共同调用集合通信。集合通信的“集合”指参加这一次操作的一组进程。一次集合操作由参与成员、各成员的输入和约定的输出共同确定。',
+ '分布式作业先建立默认进程组。world_size 是这个组的进程数，global rank 是进程在默认组中的编号，从 0 开始。local rank 是一台主机内的进程编号，设备编号用于选择当前进程使用的设备；在常见的一进程一卡配置中，启动程序会建立它们的映射。映射需要由程序明确设置，rank 这个数字本身不会替进程选好 GPU。')+
+ t(['概念','描述的对象','本章怎样使用'],[['进程','独立执行训练或实验的程序实例','本机启动两个 CPU 进程'],['rank','某个进程组内的成员编号','默认组中的 rank 0、rank 1'],['进程组','本次通信的成员集合及通信上下文','两人组中的两者都参加相应操作'],['后端 backend','实现通信的运行库','程序实际使用 CPU/Gloo；GPU 集合通信常用 NCCL']])+
+ p('先用同样的输入比较几种操作：rank 0 持有 [1,2,3,4]，rank 1 持有 [10,20,30,40]。下面每一行都是独立算例，重新从这两份输入开始。shape 表示张量的形状，本例输入都是一维、4 个元素；dtype 表示每个元素的数值类型。SUM 表示逐位置相加。')+
+ t(['独立操作','rank 0 的输出','rank 1 的输出'],[['Broadcast，根为本组 rank 0','[1,2,3,4]','[1,2,3,4]'],['Reduce SUM，根为本组 rank 0','[11,22,33,44]','该接口不承诺在非根保留最终和'],['AllReduce SUM','[11,22,33,44]','[11,22,33,44]'],['AllGather，按本组 rank 收齐','[1,2,3,4,10,20,30,40]','同一份 8 元素结果'],['ReduceScatter SUM，等分两片','[11,22]','[33,44]']])+
+ p('AllReduce 的输出与输入形状相同；AllGather 在这里使每个进程收齐两份输入；ReduceScatter 则让每个进程只保留归约后的一片。SUM 本身不除以进程数。默认 DDP 的梯度同步具有组内平均的语义，这是训练封装所做的处理，不能把所有 AllReduce SUM 都读成“平均梯度”。自定义通信钩子时还要重新核对实际归一化。')+p('进程组也可以只包含作业的一部分成员。另设一个有 8 个进程的作业：全局 rank 2 和 6 组成两人组，按本例成员顺序，它们在子组中的编号是 0 和 1。子组内的 AllGather 按组内编号排列输出，ReduceScatter 也按这个编号分片。因此，读张量的第几片时，要先知道它属于哪个组、该组怎样映射全局成员。')+'</div>'+
+ fold('子组建立与根编号的接口约定',p('本章使用的 PyTorch 2.5.1 中，按默认 new_group 方式建组时，默认组的所有进程都应进入建组调用，即使某进程不是新组成员；各进程按相同顺序建组。后续子组集合操作只由该组成员参加。use_local_synchronization=True 是有额外条件的选项，不能据此随意改变重叠子组的建立顺序。',
+ '上表的根编号描述操作语义。写具体调用时要再看参数定义：原生 NCCL 的 root 使用通信器内的 rank；PyTorch 2.5.1 的 dist.broadcast(..., src=2, group=subgroup) 中，src 使用全局 rank。若本例子组由全局 2、6 构成，选择第一个成员作根时传 src=2，不能直接传子组编号 0。')+source('https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/distributed_c10d.py','PyTorch 2.5.1：new_group、broadcast 与 rank 映射')),
+
+ anchor(ci[1])+
+ p('现在沿实际数值走一遍。rank 0、rank 1 分别把上一节的输入交给 AllReduce SUM：第一个位置是 1+10=11，第二个是 2+20=22，余下得到 33、44。操作完成后，两者都保存完整的 [11,22,33,44]。如果另从原输入做 ReduceScatter SUM，两个 rank 分别得到前半 [11,22] 和后半 [33,44]；再把这两片 AllGather，便重新得到完整的和。')+
+ figures(c[1]).join('')+
+ p('图中的中间和用来说明数学结果，并不表示真实实现先把所有输入送到 rank 0。AllReduce 规定“结果是什么”，后端再选择怎样传输。ReduceScatter 加 AllGather 可以构成相同结果，但两次独立调用和一次融合的 AllReduce 可能有不同调度与开销。末节程序实际尝试 reduce_scatter_tensor；记录中的 supported_here=true 只说明所记录的 PyTorch/Gloo 组合支持这个接口。',
+ '接着换一组独立输入，研究长度不同的记录：rank 0 有 [2,4,6]，rank 1 只有 [20]。要计算所有真实元素的平均值，先得到总和 32，再除以真实元素数 4，结果为 8。两个 rank 各算均值，得到 4 与 20，再把它们等权平均会得到 12；这种做法给只有一个元素的 rank 与有三个元素的 rank 相同权重，已经改变了问题。',
+ '通信还需要接收方知道各片长度。本例先用定长的单元素整数张量交换长度 [3,1]，把数据补到共同长度 3，再收齐两份张量。rank 1 的传输缓冲是 [20,0,0]，后两个 0 只是占位；收齐后按原长度取回 [2,4,6] 与 [20]。下面片段把本 rank 的输入记为 local_values，world_size 是成员数，lengths 收集各成员的长度。')+c1[0]+
+ p('补齐把传输形状变成规则的形状，并没有增加两条真实记录。若将填充值也计入分母，就会算成 32/6≈5.3333。实际程序另外归约本地 sum 与有效 count，因此均值的含义由真实数据决定。只需要总均值时，可以直接汇总这些统计量；这里收齐值是为了逐项展示和检查。',
+ '训练里的有效 label 数也有同样的分母问题。不同 rank 的有效预测目标数量不同，应先定义全局训练目标，再接回 DDP 的默认平均行为。某个 rank 没有目标时，可贡献 sum=0、count=0；全组 count=0 时，所有成员还要按共同规则处理。单独求空张量均值会引入 NaN，单独跳过通信会改变成员调用顺序。',
+ '固定整数例子在 float64 中能够精确表示，程序因而使用精确断言。一般浮点归约受加法顺序影响，换算法或规模后可能出现末位差异；比较真实模型时要按任务约定数值误差范围。')+
+ linkTo('distributed-training','把全局分母接回分布式梯度')+linkTo('data-pipeline','继续看有效目标怎样从数据产生'),
+
+ '<div class="mechanism-core" id="collective-signature-order">'+anchor(ci[2])+
+ p('正常的一次集合操作可以按四个问题检查：谁参加，做什么，张量怎样解释，排在第几次。两人组中的 AllReduce 需要两人都调用；它们在同一个逻辑位置选择相同操作和归约方式，并提供接口要求的兼容 dtype、元素数量与形状。对于 AllGather、ReduceScatter，还要把发送片与接收片的布局对应起来。',
+ '调用顺序把各进程各自执行的代码连接起来。例如先归约梯度，再归约计数，所有成员都按这个顺序执行，前一次才能和前一次配对。rank 0 的第七次调用若是 AllReduce，而 rank 1 的第七次是 Broadcast，即使两边都传 float32[2]，也无法形成所需的同一个操作。只看代码中都出现了“通信函数”还不够。',
+ '分支也需要维持这种共同顺序。例如某个 rank 发现一个坏样本，若业务规则要求整组跳过本轮，可以在各成员仍正常运行的共同阶段交换标志，再一致决定是否继续。若只有发现问题的进程提前 return，其他进程就可能等待没有到来的调用。已经退出或崩溃的成员无法再参加标志交换，接下来由作业故障处理和恢复机制接管。',
+ '多个进程组之间也有执行次序。尤其使用多个 NCCL 组或多个发起线程时，要显式协调各 rank 的调用及流依赖。另开一个组、线程或 CUDA 流，只是提供了另一个执行上下文，仍需保证共同顺序、数据依赖和缓冲区寿命。')+'</div>'+
+ fold('形状和操作不一致的独立对照',p('末节程序在正常数值实验结束后，另起进程与进程组运行两种错误：shape_mismatch 使用 [2] 与 [3] 做 AllReduce；order_mismatch 使用相同 [2]，但一个 rank 做 AllReduce，另一个做 Broadcast。这两种情况互相独立。DETAIL 调试包装器比较调用指纹，记录的双方都收到 RuntimeError，消息包含真实 operators 与 shapes。',
+ '此图同时给出两种不匹配和后文的迟到对照。失败对照证明本次调试检查发现了不兼容调用；其他后端、版本或未启用检查时，错误表现可能包括等待或超时。调试检查本身也会改变执行过程，不能拿它的耗时作无调试的性能测量。')+figures(c[2]).join('')),
+
+ anchor(ci[3])+
+ p('各 rank 各自读取数据、执行计算，到达同一个集合调用的时间可以不同。较早到达的进程可能先进入通信，然后等其他成员提供输入。于是本地观察到的一段“通信时间”，既可能包含传输，也可能包含别的进程尚未到达的等待。要解释这段时间，先把调用之前的数据取得、计算和张量就绪也放到时间线上。',
+ '本章实际程序先执行 barrier，使两个成员经过共同的阶段边界，再让 rank 1 在调用前 sleep 80ms。rank 0 提供数值 1，rank 1 提供 2，然后都执行异步 AllReduce SUM 并等待，最后都读到 3。rank 0 的计时已经开始时，rank 1 可能还在睡眠；rank 1 自己的计时却在睡眠之后才开始。两段本地持续时间因而有不同的起点。',
+ 'async_op=True 返回 Work 工作句柄，程序可用它建立后续的等待关系。本例是 CPU/Gloo：work.wait() 阻塞当前进程，等该操作完成后才读取结果。下面片段将待归约的单元素张量记为 value、句柄记为 work；计时覆盖本地发起与等待，不能单独命名为网络传输时长。')+c3[0]+
+ p('保存的运行记录中，rank 0 的 call+wait 约 81.821ms，rank 1 约 0.452ms；80ms 是程序注入值，这两段耗时是当次测量值，每次运行可以变化。它把“一个成员迟到，使另一个成员等得久”变成了可检查的因果对照。输入读取或反向计算在真实训练中也可能造成迟到，要靠相应训练时间线确认。',
+ '换成 CUDA/NCCL 时，要区分主机函数返回与设备执行完成。PyTorch 2.5.1 的 NCCL Work.wait() 会让当前 CUDA 流等待该通信完成；通常依靠流依赖继续安排后续工作，不能把主机返回解释为整张 GPU 的工作已结束。阻塞等待配置等情形还可能让主机等待。转到另一条流消费结果时，仍须建立那条流需要的依赖；通信尚在使用的缓冲也必须保留。',
+ '比较 rank 时记录同一任务、同一更新或桶、同一调用序号下的阶段持续时间。跨主机绝对时钟可能有偏差，未经校准的时间戳不能直接相减得到精确传输延迟。先用本地时长及共同阶段身份建立对应关系，再分析到达差和完成差。')+
+ fold('CPU 与 CUDA 等待的版本依据',source('https://github.com/pytorch/pytorch/blob/v2.5.1/docs/source/distributed.rst','PyTorch 2.5.1：同步、异步 collective 与跨 CUDA 流使用结果')+source('https://github.com/pytorch/pytorch/blob/v2.5.1/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp','PyTorch 2.5.1：WorkNCCL 的流等待与阻塞等待实现')),
+
+ anchor(ci[4])+
+ p('反向传播逐步得到各参数的梯度，所有参数的梯度并非同时就绪。DDP 把梯度组织成桶，一个桶满足就绪和发起次序条件后便可同步；剩余反向计算继续生成后面桶的梯度。这样，通信与计算才有机会同时推进。异步句柄提供安排工作的方式，真正是否重叠仍取决于依赖、执行资源和时间线。',
+ '使用一组独立的教学时刻：反向计算从 0 到 6ms；第一桶在 2ms 就绪，通信占 2—5ms；第二桶在 6ms 就绪，通信占 6—8ms。假设这些工作能够按图景重叠且没有额外竞争，本轮到 8ms 完成。将各段持续时间相加得到 6+3+2=11ms，会把重叠部分重复计算。这里的完成时间由最长依赖链决定，这条链称为关键路径。',
+ '若仅将第一桶通信从 3ms 缩到 1ms，第二桶仍要等到 6ms 才能开始，完成时刻仍可能是 8ms。第二桶在反向结束后留下的 2ms，是本例暴露在计算之外的通信尾部。优化一段通信，只有改变了最终依赖链，才会缩短这一轮。')+
+ t(['调整或观察','怎样影响机制','继续核对什么'],[['更小的桶','部分梯度可较早达到桶就绪条件','更多启动与调度开销、既定发起顺序'],['更大的桶','一次处理更多数据','等待梯度齐备的时间、缓冲内存'],['计算与通信区间相交','两类工作在时间上重叠','资源争用及最终完成时刻'],['单独通信测试更快','固定条件的通信操作更快','真实输入、桶就绪与训练更新的墙钟时间']])+
+ p('GPU 上的计算和通信可能争用内存带宽或执行资源，两个区间相交并不保证二者各自保持原速度。记录桶就绪、发起和完成，再与计算事件对齐，才能判断重叠带来的实际变化。容量也参与约束：更多在途工作会让更多缓冲同时存活。',
+ '比较训练吞吐时，先固定口径。强扩展保持全局任务大小，弱扩展保持每 rank 工作量；两者改变了不同条件。全作业吞吐应使用全体 rank 实际完成的有效工作量和作业墙钟时间，同时核对全局批大小、有效目标和更新数。各 rank 的本地吞吐简单平均，不能代替这个作业口径。'),
+
+ anchor(ci[5])+
+ p('通信的语义、实现算法和性能指标是三层问题。先知道要做 AllReduce，再选择一个明确算法模型，才能估计数据怎样移动。本节另设 N=4 个 rank，每个 rank 输入 M=16MiB；MiB 表示 2²⁰ 字节。只研究理想环形 ReduceScatter 加 AllGather，每个输入均分为 N 块，因此每块 4MiB。',
+ 'ReduceScatter 阶段有 N−1=3 轮，每个 rank 每轮发送一块并接收一块，累计发送 12MiB。AllGather 阶段也有 3 轮，累计再发送 12MiB。两阶段中，每 rank 发送 24MiB，也接收 24MiB；若把 4 个 rank 的发送量求和，全组是 96MiB。报告字节量时，要写清是单个 rank、全组，还是发送加接收。')+
+ t(['理想环形阶段','每 rank 输入/输出布局','每 rank 发送载荷'],[['ReduceScatter','M 字节输入 → M/N 字节归约片','(N−1)M/N'],['AllGather','M/N 字节片 → M 字节完整结果','(N−1)M/N'],['两阶段合计','AllReduce 的完整输入输出','2(N−1)M/N；本题为 24MiB']])+
+ p('设 α 是每轮启动时间，B 是本模型每 rank 的有效单向载荷带宽，T 是估计持续时间。将六轮启动和发送载荷相加，可写成 <code>T ≈ 2(N−1)α + 2(N−1)M/(NB)</code>。这里用发送字节除以 B；接收能够按模型同时进行，不把接收量再加到同一分母。若实际资源不能满足这些条件，就需要另建模型。',
+ '继续假设 B=8GiB/s，α=10μs。GiB 为 2³⁰ 字节，所以 B=8192MiB/s；传输项为 24/8192 秒，约 2.93ms，启动项为 6×10μs=0.06ms，合计约 2.99ms。这是指定假设下的量级计算。链路规格中的 Gb/s 使用 bit，常按十进制表示；1 byte=8 bit，比较前还需统一十进制、二进制和位、字节。',
+ '真实库可以选择其他算法、协议、通道和分层路径。拓扑、GPU 与网卡的位置以及竞争都可能改变实现成本。nccl-tests 的算法带宽与总线带宽有自己的载荷折算，不能直接当作某块网卡的观测值。本章没有测 NCCL 或物理链路；要评估目标集群，应保留参与组、实际映射、消息大小、版本、配置、算法及指标定义。')+
+ fold('集合操作的官方定义',source('https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html','NCCL：集合操作、根 rank 与分片布局')),
+
+ anchor(ci[6])+
+ p('一次完整训练先让进程属于同一个作业，再让各进程取得输入、执行计算、交换梯度，最后进行有效更新。会合负责让进程找到共同成员与启动配置；集合通信负责交换训练中的数据。MASTER_ADDR 和 MASTER_PORT 是常见会合配置，知道会合地址，并不等于已经检查全部 NCCL 数据连接。',
+ '验证也按这条正常路径展开。先完成会合，确认进程身份和设备映射；再做小张量通信，手算结果并核对双方输出；随后在目标规模、目标拓扑上持续执行通信；最后运行真实训练，检查输入、更新和质量，并测完整路径。每一级都有自己的起点、终点和可证明的范围。')+
+ t(['阶段','记录的对象','这一级建立的证据'],[['作业会合','任务身份、成员、版本、设备映射','这些进程按共同配置进入作业'],['小集合操作','组、操作、输入与输出','相应数值和基本通信功能可工作'],['目标规模通信','目标消息、拓扑、重复测量与错误','该规模和配置下的通信表现'],['完整训练','输入消费、有效更新、质量及墙钟时间','所定义训练任务的实际进展和成本']])+
+ p('遇到等待时，按同一训练阶段查看所有 rank 的前后关系。若各 rank 到达集合调用之前已经相差很大，先查迟到者的输入、计算或内存；若到达接近，但完成时间仍很长，再结合操作规模、路径与资源竞争调查通信部分。一个 rank 先 OOM 或退出，其他 rank 随后报通信超时，最早的异常更接近起因。',
+ '跨节点路径还要分别确认目标环境实际具备和使用了什么：驱动、容器可见设备、选中的网卡、路由、RDMA 配置、GPU 互联与拓扑属于不同对象。TCP 小通信成功只建立相应功能证据。更改接口或参数后，使用同一负载复测，并记录选路和代价，才能判断变化。',
+ '继续阅读时，把这里的成员、阶段和计时边界带到多机手册，再把实际输入消费与检查点恢复接起来。末节先用两个本机进程把数值、等待和调用协议逐项变成可检查的结果。')+
+ linkTo('checkpoint-recovery','把已完成更新与恢复边界对应起来')+linkTo('multinode-lab','继续执行两机四卡的阶段验证'),
+
+ anchor(ci[7])+
+ p('完整程序 collective_contracts.py 使用 Python 3.12.13、PyTorch 2.5.1 的已记录环境，在本机启动两个 CPU/Gloo 进程。主函数依次运行 correct、shape_mismatch、order_mismatch；每一项重新创建临时目录和进程组，前一种失败不会充当下一种实验的输入。正常分支先做数值与变长汇总，最后才做受控迟到。',
+ '将文件保存到解压目录，在匹配环境中执行下面的命令。运行前先写下两份向量的和、每个归约片以及变长均值；运行后用输出中的 modes 按实验名称核对。源码把支持能力、数值、错误消息与注入值分别写入结果，便于区分程序条件和实际测量。')+c7[0]+
+ t(['输出位置','保存记录中的结果','怎样解释'],[['correct → all_reduce_sum','两个 rank 都是 [11,22,33,44]','原始 SUM；explicit_rank_mean 另除以 2'],['correct → reduce_scatter_tensor / all_gather_shards','本次支持；分别 [11,22]、[33,44]，再收齐','分片顺序和重建结果相符'],['correct → ragged','sum=32、count=4、global_mean=8','逐 rank 均值平均为 12；计入填充为约 5.3333'],['correct → delayed_arrival','注入 0/80ms；call+wait 约 81.821/0.452ms','两 rank 均得到 3；持续时间随运行变化'],['shape_mismatch / order_mismatch','双方 rejected 与 fingerprint_diagnostic 为真','错误指纹分别指向形状与操作']])+
+ p('读正常分支时，注意 original 保留原输入，summed 是它的副本；ReduceScatter 使用 original，避免把已经归约的 summed 再归约一次。变长分支中，lengths 决定如何去掉传输填充，totals 汇总真实 sum 和 count。迟到分支在启动计时前才注入睡眠，所以不同 rank 的本地时间包含不同等待。')+
+ fold('展开完整 collective_contracts.py：与下载源码一致',c7[1])+downloads(c[7])[0]+
+ p('变化练习可以让 rank 1 的变长输入为空，rank 0 仍为 [2,4,6]。此时全局 sum=12、count=3、均值=4；需要同时处理空输入的传输和本地统计，不再执行空均值归约，并更新固定断言。全组都为空时，再定义统一的 count=0 分支。先写清预期，再修改程序，才能解释新的结果。',
+ '现有记录验证了真实本机进程间 CPU 集合操作及指定对照，未执行 GPU、RDMA、多主机或吞吐测量。把同一输入输出关系搬到目标训练环境后，还要重新验证流依赖、目标规模和完整更新。')
+ ],ci,'从进程和张量开始，手算集合通信，再沿成员到达、异步等待与计时理解一次训练同步。');
+
+ const data=select('data-pipeline',['数据对象：Dataset、Sampler、批次与worker','跨rank分片：补齐、两层丢尾与epoch','多worker流式输入：覆盖正确后还要核对步数','样本打包：注意力、位置与损失目标','供给能力：速率、缓冲、内存与流水重叠','恢复与长尾：消费进展、输入版本与慢rank','实战与变化题：实际分流和打包数值对照']);
+ const d=data.sections.map(s=>s[1]),d1=blocks(d[1]),d2=blocks(d[2]),d3=blocks(d[3]),d6=blocks(d[6]),dl=downloads(d[6]);
+ if(d1.length!==1||d2.length!==1||d3.length!==1||d6.length!==4||dl.length!==2)throw Error('Input source block layout changed');
+ const di=['subsection-1-2kpzoy','subsection-2-3mzhb3','subsection-3-lkc1ar','subsection-4-1xdh65w','subsection-5-pn7hyb','subsection-6-101j0v8','subsection-7-1jzf8j8','subsection-7-1v4jgvi'];
+ replace(data,[
+ '<div class="mechanism-core" id="input-dataset-sampler-loader">'+anchor(di[0])+
+ p('训练循环中的 batch 从哪里来？存储先提供文件或对象中的内容，程序读取、解码、变换，得到单条样本，再按规则组成批次。对语言模型，样本还要经过分词，产生词元编号、位置、可见范围和预测标签；最后交给当前训练进程做前向计算和反向传播。数据管道就是把这些对象和步骤连接起来的程序。',
+ '先给每条原始样本一个稳定的 ID。ID 表示“这是哪条记录”，样本内容是模型要处理的数据；一条样本可以变成很多词元，也可能产生多个训练片段。批次 batch 是一次交付给训练进程的一组输入。有效目标则是本轮实际参与损失的预测位置。样本数、物理词元数和有效目标数因而需要分别统计。',
+ 'PyTorch 的 Dataset 描述数据怎样取得。Map-style Dataset 按索引读取，例如 dataset[7]；IterableDataset 通过迭代器持续产出，适合按流或分片读取。Sampler 为可索引数据产生索引顺序；BatchSampler 把索引组成批；collate_fn 把取到的一组样本整理成模型需要的张量。DataLoader 调度这些步骤，将批次交付给训练进程。')+
+ t(['对象','本例中的职责','交给下一步的内容'],[['原始记录与样本 ID','稳定识别内容和来源版本','例如 ID 7 的文本'],['Dataset','把记录读取并变成单条样本','样本 ID、特征及长度'],['Sampler / BatchSampler','确定顺序、分配与组批索引','例如 [0,2,4,6]'],['collate_fn','对齐、填充或组织张量','词元、mask、位置与 labels'],['DataLoader 与 worker','安排加载工作并交付批次','当前 rank 可以消费的主机批次'],['训练进程','搬运输入并执行计算、累积与更新','有效目标、梯度和更新进度']])+
+ p('rank 是训练进程的身份，worker 是一个 DataLoader 用于加载数据的子进程。num_workers=0 时在训练进程中加载；num_workers=2 时，该 DataLoader 使用两个加载子进程。两个 rank 每个各设两个 worker，就有四个加载 worker，之外还有两个训练进程。一个 worker 处理更多文件，不会自动增加训练 rank。',
+ 'Map-style 的采样索引由加载器主进程生成，再分派给 worker 取样；IterableDataset 的每个 worker 则有自己的数据集副本和迭代器。因此，跨 rank 的分配、rank 内的 worker 分工是两个层次。下面先在有限索引表上算清分配，再看流式副本怎样避免重复。')+'</div>',
+
+ anchor(di[1])+
+ p('固定一个独立算例：数据集只有 11 条记录，ID 为 0—10；两个训练 rank，shuffle=False，batch_size=4。DistributedSampler 给不同 rank 产生各自索引。drop_last=False 时，它为均分需要把序列补到 12 项：末尾再加入一个 0。然后交错分配，rank 0 得到 [0,2,4,6,8,10]，rank 1 得到 [1,3,5,7,9,0]。',
+ '每 rank 的六个索引再由 DataLoader 组成一批 4 项和一批 2 项。总交付 12 次，唯一 ID 仍为 11；ID 0 在这轮出现两次。分片成功让各 rank 有等长索引，也明确引入了补齐重复，训练或验证如何计入这次重复，需要按任务规则决定。',
+ '若改成 Sampler 的 drop_last=True，先把总索引截到能被两个 rank 均分的 10 项，再交错分配。两个 rank 各得 5 项，ID 10 没有进入这轮。DataLoader 自己也有 drop_last，它处理的是这些本地索引能否组成完整交付批次。两个开关发生的位置不同，应当逐层计算。')+
+ t(['Sampler drop_last','Loader drop_last','每 rank 实际批次大小','全组交付与覆盖'],[['False','False','4、2，共 2 批','12 次；11 个唯一 ID；0 重复'],['True','False','4、1，共 2 批','10 次；漏 ID 10'],['False','True','只有 4，共 1 批','8 次；漏 8、9、10'],['True','True','只有 4，共 1 批','8 次；漏 8、9、10']])+
+ p('Sampler 决定索引分配，DataLoader 的 batch_size 决定本地组批，二者可以一起使用。下面保留接口示例；它额外启用了 shuffle，每轮先调用 set_epoch，再创建当轮迭代器。epoch 表示一次按本轮采样规则遍历数据的轮次，种子与 epoch 一起确定可复现排列。')+d1[0]+
+ p('示例中的 seed=17 固定基础随机种子。若每轮不更新 epoch，Sampler 会继续使用同一轮排列；末节程序保存了 epoch 0、未更新 epoch、epoch 1 的索引供对照。使用 sampler 时不再要求 DataLoader 自己 shuffle；若显式传 batch_sampler，则应按该接口的互斥规则设置其他组批参数。',
+ '若两个 rank 都各自使用普通 DataLoader 完整遍历这 11 项，每个 ID 就被交付两次，总计 22 次。DDP 不负责替输入自动分片。反过来，即使每 rank 索引长度相同，变长记录的有效目标数也可能不同；训练损失要按目标定义归一化，验证指标要明确补齐项是否重复计分。数量一致、覆盖正确和权重正确是不同检查。')+
+ fold('采样与加载接口依据',source('https://github.com/pytorch/pytorch/blob/v2.5.1/torch/utils/data/distributed.py','PyTorch 2.5.1：DistributedSampler 的补齐、丢尾与 set_epoch')+source('https://github.com/pytorch/pytorch/blob/v2.5.1/torch/utils/data/dataloader.py','PyTorch 2.5.1：DataLoader 与组批参数')),
+
+ '<div class="mechanism-core" id="input-worker-batch-count">'+anchor(di[2])+
+ p('流式数据通常没有一个方便随机访问的完整索引表。IterableDataset 让每个 worker 从自己的迭代器产出数据，因此要明确每份副本读取哪些内容。本节保留同样的 ID 0—10，另设 batch_size=2；每个 rank 有两个 worker。这个流式实验与上一节的 Map-style 实验分别计算，批大小也不同。',
+ '对这份有限、各副本都能按同一顺序枚举的源，先把所有 worker 编号为 0、1、2、3。编号等于 rank×每 rank worker 数+本地 worker_id，分区总数为 world_size×每 rank worker 数。ID 的序号除以 4 的余数等于哪个编号，就由哪个 worker 产出。get_worker_info() 提供当前加载 worker 的编号和数量；在主进程加载时返回 None，片段就按单 worker 处理。')+d2[0]+
+ t(['训练 rank / worker','负责的样本 ID','保留尾批时，batch_size=2'],[['rank 0 / worker 0','[0,4,8]','[0,4]、[8]'],['rank 0 / worker 1','[1,5,9]','[1,5]、[9]'],['rank 1 / worker 0','[2,6,10]','[2,6]、[10]'],['rank 1 / worker 1','[3,7]','[3,7]']])+
+ p('按 ID 核对，11 条记录各出现一次；按批次核对，rank 0 两个 worker 共交付 4 批，rank 1 共交付 3 批。两项结论可以同时成立。若训练循环每批都进入同一梯度集合操作，不等批次数便要求额外的训练协议，例如受控补齐、共同固定的步数，或适用且正确配置的不等输入机制；同时要核对目标权重及其他集合调用。')+figures(d[2]).join('')+
+ p('开启流式多 worker 的 drop_last 时，各 worker 副本各自丢掉不满一批的尾部。本例丢掉 [8]、[9]、[10]，只剩四个完整批，共 8 项，两个 rank 各 2 批。把四个 worker 的记录先合成一条全局序列再丢尾，会得出另一种结果，因此不能拿全局样本数直接代替逐 worker 计算。',
+ '错误对照仅按 index % world_size == rank 过滤：同一个 rank 的两个 worker 都会产出相同的那一半流。最终 11 个 ID 各交付两次，总计 22 次。真实存储更常按文件分片、对象范围或源分区分工，避免所有 worker 扫描全量内容后丢掉大部分；分工还要处理 worker 数变化、故障重读和交接。',
+ '末节程序只在各自加载循环结束后做一次 all_gather_object 收集结果，没有每批训练，也没有逐批集合通信。因此 [4,3] 是不等批次的真实证据，程序本身能够正常结束；把它解释成“本实验必然卡死”会错读代码。')+'</div>',
+
+ anchor(di[3])+
+ p('组批之前还要决定模型看到什么。padding 把短样本补到共同长度，让张量形状规则；填充位置是否参与注意力、是否参与损失，需要分别设置。packing 把多个短文档放进一个物理序列，减少空位置。若训练目标要求文档独立，那么物理拼在一起之后，仍需保持文档内的上下文、位置语义和预测关系。',
+ '设独立文档 A=[11,12,EOS]，B=[21,EOS]；本例 EOS 的词元编号为 2，表示文档结束。下一词元训练让当前位置预测同文档的下一项：A 的 11 预测 12，12 预测 EOS；B 的 21 预测 EOS，一共 3 个有效目标。各文档最后的 EOS 在这份独立文档任务中没有下一目标。',
+ '将两篇文档串成 [11,12,EOS,21,EOS] 后，普通整体移位会额外建立“A 的 EOS 预测 B 的 21”，得到 4 个目标。EOS 是一个输入编号，模型和损失函数不会仅凭这个编号自动去掉跨文档目标。下面用 document_ids 保留文档身份，positions 表示文档内位置；i 是读取上下文的位置，j 是它可能读取的位置，allowed(i,j) 表示这次读取是否允许。')+d3[0]+
+ p('上面的 shifted_y 列出前四个输入位置的下一目标，-100 是本例约定的损失忽略值；最后一个输入位置没有本段下一目标，完整模型输入中还需按实现采用对应的忽略处理。有效目标数因而为 3。这里的 allowed(i,j) 表示输入位置 i 能否读取位置 j：既要求 j 不在 i 的未来，也要求二者属于同一文档。')+figures(d[3]).join('')+
+ p('文档 B 的第一个词元在物理位置 3。如果只有普通因果 mask，它可以读取 A 的三个位置和自己；文档内因果 mask 则只允许它读取自己。这是可见范围的区别。把跨文档 label 忽略，仅改变该预测位置是否计入损失，并不会自动阻止 B 的其他预测读取 A；两层机制都要与训练目标一致。',
+ '位置编号是第三层。本数值参考给 token 向量加上与绝对位置有关的固定向量，因此 B 的位置从 0、1 开始，才能与逐文档独立计算相同。若改为 3、4，输入向量本身已经变化。这个结论针对程序定义的数学；真实 RoPE 或其他位置机制，应根据其平移性质、缩放方式、内核实现和模型契约核对，不能仅用“是否归零”作通用判据。',
+ '跨文档连续训练也可以是有意定义的任务，此时应按那份目标设置边界。比较 packing 前后时，先固定语义，再核对模型输出、有效 label 与损失分母。只看到 padding 比例下降，还不能推出训练质量等价或真实速度按同样比例提升。')+
+ fold('数据提前结束时怎样处理',p('文档结束、固定长度块结束和整个数据源结束是三种边界。数据中提前出现 EOS 是否结束当前文档，由数据构建规则决定；普通 DataLoader 不会按这个词元编号自动停止读取。源提前读完时，当前未满块可以按任务选择交付变长输入、填充并遮罩、丢弃，或暂存残余与后续文档继续打包；选择会改变覆盖、有效目标数和恢复所需状态。若填入 EOS 或 padding，也要明确其位置究竟是实际训练目标还是纯占位。',
+ '某个 rank 的源先结束，还要回到上一节的批次与同步协议。若打包器缓存了半篇文档、部分词元或未交付的残余，这些内容属于输入进度的一部分，后面保存消费游标时不能只记录文件名。')),
+
+ anchor(di[4])+
+ p('数据含义正确后，才讨论怎样持续供给。读取、解压、解码、分词、组批、主机到设备搬运和模型计算有前后依赖。worker 可以提前准备下一批，让 CPU 工作与当前批的模型计算有机会重叠；预取缓冲保存已准备或正在准备的后续任务，吸收短暂波动。缓冲并不会提高一个长期过慢阶段的持续处理能力。',
+ '先统一速率单位。另设每批 64 个样本，模型每 80ms 消费一批，需求为 1/0.08=12.5 批/s，即 800 样本/s。数据端每 100ms 交付一批，只供给 10 批/s，即 640 样本/s。若当前已有 8 批可消费，且供需恒定，缓冲每秒减少 2.5 批，约 3.2 秒后见底。这是一组流体速率算例，实际批次抖动还要看时间分布。',
+ '在本章 PyTorch 配置中，prefetch_factor 表示每 worker 预取的批数。任务可以处于等待调度、读取变换中，或已经就绪；配置的预取数不能直接读成“内存里已有这么多可消费批”。它也不是当前训练实际消费的步数。')+
+ t(['独立算例','计算','含义'],[['4 rank × 每 rank 4 worker × prefetch_factor 2','32 个预取批任务','按该配置的计划规模估量'],['每批均为 32MiB，32 批同时物化','1024MiB=1GiB','只统计这部分批张量的载荷'],['串行读取 4ms、变换 6ms、计算 10ms','首批依赖经过 20ms','三阶段还未形成稳态重叠'],['三阶段资源独立、稳定且能理想流水','稳态批间隔下界 10ms','由最慢阶段决定的理想值']])+
+ p('真实内存还包括解码对象、数据集副本、拼接临时区、共享内存、页锁定副本及其他缓冲。增 worker 同时增大 CPU 并发、远端存储请求和这些对象的潜在在途数量；应观察交付尾延迟及相应资源，再判断是否减少了训练进程等待。pin_memory 提供页锁定主机内存，non_blocking 请求接口允许的异步行为；流依赖、硬件能力与资源竞争仍决定实际搬运能否和计算重叠。',
+ '定位输入路径可使用三组对照：A 在设备侧使用固定张量，B 用内存中的同形状主机批次，C 使用真实存储与变换。保持模型、shape、dtype、目标和计时边界一致，再比较完整轮次。若分别测得 120、145、210ms，25ms、65ms 是这些运行路径的差值；各阶段可能重叠或互相影响，不能直接将差值命名为独立 PCIe 或对象存储耗时。',
+ '读取端的 bytes/s、组批端的 samples/s 和模型端的有效 tokens/s 属于不同对象。最后应把时间窗口内实际消费且参与所定义目标的量作为分子，并记录等待、shape 分布和质量口径。上述数字都是说明单位与依赖的独立算例。'),
+
+ anchor(di[5])+
+ p('现在把数据管道接回训练更新。读取一个样本，只说明内容进入了加载过程；DataLoader 返回一个 batch，说明训练进程收到了它；forward/backward 完成后，它可能只贡献了累积窗口的一部分梯度；优化器完成一次有效更新，才推进相应参数状态。定义进度时，要先说明记录的是哪一个事件。',
+ '例如更新 100 的检查点已经提交，下一批 A 被消费，后面的 B、C 仍在预取队列。若检查点只保存“读取到 C”，恢复后从 C 后面开始，就会跳过未完成的训练工作。若从更新 100 对应的已提交消费边界重做后续输入，则允许按约定重做尚未提交的部分。中途精确继续还需要把输入、随机状态、累积状态及参数状态放到同一个安全边界。',
+ '输入身份也属于恢复状态。保存不可变分片清单或内容版本、Dataset 与变换版本、分词器版本、采样种子与 epoch、rank/worker 划分、补齐丢尾规则，以及打包残余的处理方式。随机变换要说明各进程和 worker 的种子及后续状态。源内容或分词器改变时，同一个索引就可能对应另一份训练输入。')+
+ t(['需要记录的层次','关联内容','恢复时的用途'],[['输入版本','分片清单、内容版本、变换和分词器','找到同一份原始及派生数据'],['采样状态','seed、epoch、排列或可重建规则','恢复预期顺序与重复规则'],['消费边界','已提交更新对应的样本/词元位置','处理已读未用和需要重做的部分'],['中间状态','累积梯度、随机源、打包残余等','在所承诺的中途边界继续'],['成员配置','world_size、rank/worker 分工','成员数变化时重新解释分配']])+
+ p('本站最小 DDP 程序采用 epoch 边界恢复：按它的保存契约，从完成轮次之后继续。它没有保存任意 worker 的预取队列，也没有承诺任意微批边界继续。若 world_size 或 worker 数变化，原 rank 的局部位置通常不能直接作为新分工下的位置；应选择明确的重新分配、重做与去重规则，再验证覆盖和更新结果。',
+ '进度记录还能解释慢 rank。比较取得下一批、计算开始、桶就绪、集合调用与更新完成，便能把输入迟到接到上一章的通信等待。独立概率算例中，若每 rank 每步有 1% 的输入停顿概率，8 个 rank 至少一个停顿的概率为 1−0.99⁸≈7.73%。这里明确假设各 rank 独立；共享存储拥塞或公共故障常有相关性，实际分布要重新测量。',
+ '恢复验收由训练消费者完成：加载同一输入身份和对应状态，继续执行后续更新，再比较所定义的结果。游标文件存在、下载完成或队列非空，分别建立了局部证据；训练真正推进到预期状态，才回答这次恢复是否可用。')+
+ linkTo('checkpoint-recovery','学习训练状态与输入边界的一致恢复')+linkTo('multinode-lab','把样本与更新进度带入多机验收'),
+
+ h(di[6],'采样分流程序与覆盖结果')+
+ p('sampler_coverage.py 的保存记录来自 Python 3.12.13、PyTorch 2.5.1、CPU/Gloo。两个 rank 先各自运行 Map-style 对照，这部分 DataLoader 设置 num_workers=0；再分别创建 num_workers=2 的流式加载器，真实启动四个加载 worker。因此，“每 rank 两 worker”描述流式阶段，不能套到程序的所有阶段。',
+ '保存文件后执行命令，先比较 map_summary，再比较 iterable_summary，最后进入 ranks 查看每个具体索引和 worker 批次。程序只在各 rank 加载完毕之后汇总记录，training_step_executed=false；它验证输入交付，没有执行模型训练。')+d6[0]+
+ t(['实验分支','已保存的交付结果','对应检查'],[['sampler_0_loader_0','12 次，唯一 11；重复 0；批数 [2,2]','Sampler 补齐、Loader 保留尾批'],['sampler_1_loader_0','10 次，漏 10；批数 [2,2]','Sampler 丢尾'],['sampler_0_loader_1 / sampler_1_loader_1','8 次，漏 8/9/10；批数 [1,1]','Loader 丢掉本地尾批'],['no_sampler','22 次；每个 ID 重复；批数 [3,3]','两个 rank 都读全量'],['unsharded_workers','22 次；每个 ID 重复；批数 [6,6]','只分 rank，未分本地 worker'],['sharded_keep / sharded_drop','11 次、批数 [4,3] / 8 次、批数 [2,2]','先分别证明覆盖，再计算每 worker 尾部']])+
+ p('四种 Map-style 开关使用同一固定的 11 项数据；流式分支另用批大小 2。shuffle 对照的 first 与 repeated 都属于 epoch 0，second 属于 epoch 1。检查这些前提后，再把程序输出与手算索引对齐，才能解释重复、遗漏和批次数各由哪层产生。')+
+ fold('展开完整 sampler_coverage.py：与下载源码一致',d6[1])+dl[0]+
+ p('变化练习：只把 Map-style 的 batch_size 改成 3。补齐模式中每 rank 正好 6 项，Loader 无论是否丢尾都会交付两批，全组仍有 12 次交付和重复 ID 0。流式分支仍需逐 worker 重新算。若改变 SIZE、WORLD 或批大小，还要同时更新程序中的固定断言，避免把旧预期触发的失败误读成加载器错误。')+
+ h(di[7],'打包程序与逐文档参考')+
+ p('packing_boundaries.py 是另一份独立实验，只用 Python 标准库。它固定两篇文档、二维 token 向量和加法位置向量，先逐文档算参考输出，再算正确打包、普通因果 mask、延续绝对位置三个分支。它没有调用分词器、真实语言模型、RoPE 或 GPU。')+d6[2]+
+ t(['分支','输出差异或目标数','原因'],[['文档内因果 mask，文档内位置','最大绝对差 0','本程序中输入和可见范围保持一致'],['普通因果 mask','最大绝对差约 0.792277','B 可以读取 A'],['隔离文档但位置延续为 3、4','最大绝对差约 0.678339','本程序的绝对位置输入改变'],['独立文档 labels / 整体直接移位','3 个 / 4 个有效目标','后者多出 A 的 EOS 预测 B 首词元']])+
+ p('先看 B 的首位置：参考输出是 [-1,0]，因为它只能读取自己。再检查 allowed_attention 中跨文档的 False，以及 shifted_labels 中的 -100，把输出差异与具体输入关系对应起来。源码对每个位置比较完整输出，而不仅检查是否插入 EOS。')+
+ fold('展开完整 packing_boundaries.py：与下载源码一致',d6[3])+dl[1]+
+ p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
+ ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
+})();
+
+
+;
+// progressive-agent-signals-reading.js
+/* Follow a task through observations, then count its cohort and all of its costs.
+   Load after existing bridges/progressive lessons and before first-reading-flow.js. */
+(()=>{
+ const p=(...rows)=>rows.map(row=>'<p>'+row+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
+ const matches=(html,pattern)=>[...html.matchAll(pattern)].map(m=>m[0]);
+ const code=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=html=>matches(html,/<figure\b[\s\S]*?<\/figure>/g);
+ const links=html=>matches(html,/<a\b[^>]*>[\s\S]*?<\/a>/g).join('');
+ const a=articles.find(x=>x.id==='agent-observability');
+ const titles=['观测职责：指标、日志、追踪与业务账本','身份与传播：task、op、trace和span','错误与效果：五个span怎样解释一次恢复','时间与因果：并行、等待及关键路径','总体口径：任务、尝试、效果与未完成项','成本账本：全量成本、分摊与合格分母','采样与诊断：先确认总体，再解释路径','实战与变化题：真实SDK、HTTP与输出关系'];
+ if(!a||a.sections.length!==8||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Agent signals source changed');
+ const old=a.sections.map(s=>s[1]),c1=code(old[1]),c5=code(old[5]),c7=code(old[7]);
+ if(c1.length!==1||c5.length!==1||c7.length!==3)throw Error('Agent signals original code layout changed');
+ const bodies=[
+ '<div class="mechanism-core" id="agent-observation-signals">'+
+ p('任务运行时保存“现在做到哪里”，可观测性进一步解释“怎样走到这里、时间和资源花在哪里”。先固定任务 R27：把总数 37 的报告发布一次，并核对保存后的报告。正常过程是准备正文→发布→读取产物验收。准备、发布、验收是步骤；其中发布这项逻辑操作可因网络或服务错误尝试多次，用户目标仍是同一个。',
+ '这几层身份决定后面怎样计数。任务是一个待验收的用户目标；步骤是执行计划中的阶段；逻辑操作表达一次具体业务意图；尝试是为执行该意图实际发起的一次调用。一个步骤可调用多个操作，一个操作可有多次尝试。在代码中加入观测记录称为插桩。跨度是这些记录的观测单位：一次 HTTP 尝试常同时对应客户端和服务端两个跨度。')+
+ table(['层次','R27 中的对象','跨重试怎样处理'],[
+  ['任务 task','发布并验收这份报告，task_id=R27','继续关联原任务'],
+  ['步骤 step','准备正文、发布、验收','分别保存阶段、输入输出版本和依赖'],
+  ['逻辑操作 operation','发布总数 37，op_id=R27:publish','确认原意图仍相同时沿用操作身份'],
+  ['尝试 attempt','第 1 次、第 2 次实际 HTTP 调用','每次独立记录序号、回应、耗时与用量']
+ ])+
+ p('有了对象，再选记录方法。指标把许多事件聚合成数量和分布；日志保留某一事件的细节；追踪把相关操作连成路径；业务账本保存受理、状态、回执与验收事实。它们通过任务和操作身份相互关联，解决的问题各有侧重。')+
+ table(['记录','适合回答','本章中的读法'],[
+  ['指标 metrics','发生多少、占比多少、耗时怎样分布','看任务、工具、结果类别与版本的总体变化'],
+  ['日志 logs','某个时刻发生了什么、带哪些细节','查尝试序号、错误原因、正文版本及受控产物引用'],
+  ['追踪 trace','哪些操作关联，调用和等待怎样连接','沿跨度的父子关系与时间线找慢路径'],
+  ['任务与效果账本 ledger','受理哪个目标、提交哪个效果、是否验收合格','查询 R27 和 R27:publish，核对真实报告']
+ ])+
+ p('例如看板显示发布错误增加，先按工具与版本缩小范围，再用任务身份查日志和追踪，最后到效果接收方核对报告。业务提交与遥测记录是不同动作：提交后遥测可能丢失，记录“成功”后验收也可能发现正文错误。因此效果以接收方状态或权威回执确认，轨迹用于解释执行经过。')+'</div>'+
+ fold('记录字段：怎样关联而不把正文复制到所有系统',p('指标维度使用工具名、结果类别、部署版本等有限集合。若给每个任务、用户或操作建立一个指标标签值，时间序列会随业务身份持续增长，这称为高基数。具体身份留在有访问控制的日志、追踪和账本中；提示、文档与报告正文保存为受控原件，遥测中记录必要的版本、摘要与引用。模型输入中的上下文、运行状态和记忆还可沿下文连接复习。')+links(old[0])),
+
+ p('追踪 trace 是由相关跨度组成的一条执行轨迹；跨度 span 是其中一次被观测的操作，记录名称、开始与结束时刻、属性、事件和状态。trace_id 把跨度归入同一条轨迹，span_id 标识当前跨度，parent_id 指向它的上游跨度。父子关系表达谁调用或安排了谁，时间线再说明操作何时重叠、何时等待。',
+ '追踪上下文 trace context 是让后续操作接续这条轨迹所需的关联信息，包括 trace_id、当前 span_id 与追踪标志等。这里的 context 与模型上下文不同：模型上下文是交给模型的消息、文档和工具结果；追踪上下文随调用传播，帮助观测系统关联操作。把二者都叫“上下文”而不说明对象，会把提示材料与执行身份混在一起。')+
+ table(['字段或对象','在正常发布中的作用'],[
+  ['task_id / op_id','关联业务目标 R27 与逻辑发布 R27:publish'],
+  ['根跨度 s0','覆盖这次被观测的任务执行'],
+  ['客户端跨度 c1','记录执行器发起的一次 HTTP 尝试，父节点是 s0'],
+  ['服务端跨度 s1','记录工具处理这次请求，父节点是 c1'],
+  ['traceparent 请求头','跨 HTTP 携带当前追踪身份、上游跨度身份与标志']
+ ])+
+ p('先沿一次正常调用走通传播。执行器在根跨度 s0 内创建 CLIENT 跨度 c1，并把 c1 设为当前跨度；inject 读取当前上下文，把它编码进 HTTP 的 traceparent 头。工具服务收到请求后 extract 提取远端上下文，以它为父创建 SERVER 跨度 s1。s1 继续使用原 trace_id，同时生成自己的 span_id，其 parent_id 等于 c1 的 span_id。s0、c1、s1 是教学占位名，真实编号由 SDK 生成。',
+ '工具按正文中的 op_id 和 total 处理发布，执行器取得回执后读取产物，再记录验收结果。一次业务尝试于是有两端视角：CLIENT 覆盖调用方看到的往返，SERVER 覆盖服务端处理区间。后者通常包含在前者的等待中，二者的持续时间不能直接相加当作用户时延。')+
+ fold('传播核心片段：先注入，再提取并建立子跨度',c1[0]+p('这是传播机制的简写，其中 execute_authorized_operation 是说明性占位函数；第 8 节完整程序直接在 Handler.do_POST 中执行 SQLite 操作。HTTP 正文携带 op_id 与 total，traceparent 携带追踪关联，资源服务仍使用自己的业务身份和授权规则。'))+
+ p('业务 task_id 与 op_id 独立于追踪编号：长任务恢复后可以进入另一条 trace，仍关联原任务与操作。')+fold('多服务与共享批处理的额外关联',p('service.name 标明遥测由哪个服务产生，跨度属性描述这次操作。若共享批处理与多个任务有关，可通过 span link 记录额外关联；一个跨度的父节点仍只有一个。第 8 节再介绍创建与导出这些记录的 SDK 对象。')),
+
+ '<div class="mechanism-core" id="agent-trace-effect-boundary">'+
+ p('正常传播走通后，再加入第 8 节程序中的一次故障。工具在 SQLite 中以 op 为主键保存效果：第一次看到 R27:publish 时插入总数 37 并提交；以后遇到相同操作先查询既有记录，核对 total 一致后返回原回执。去重发生在持有效果的工具端，观测系统记录这一过程。',
+ '程序故意在第一次提交完成后返回 HTTP 503。执行器确实收到了错误 HTTP 回应，却没有取得能够确认发布结果的成功回执，于是把本次业务结果记为待查证。它仍用 R27:publish 发起第二次尝试，工具找到已提交记录，返回 receipt-1 与 duplicate=true；执行器独立读取报告，确认只有一行且总数为 37，才把根任务标为验收成功。')+
+ figures(old[2]).join('')+
+ table(['发生顺序','效果接收方事实','对应观测'],[
+  ['第一次服务端事务提交','保存一笔 R27:publish=37','s1 记录 effect_committed 事件'],
+  ['随后注入 HTTP 503','刚才的提交已经完成','c1、s1 均为 ERROR；c1 记录 result_unknown'],
+  ['第二次请求到达','查到原记录并复用回执','c2→s2；s2 记录 receipt_reused、duplicate=true'],
+  ['执行器检查产物','一笔效果，总数 37，回执符合约定','s0 记录 artifact_checked，状态设为 OK']
+ ])+
+ p('重试后得到一个合格任务、两次 HTTP 尝试和一笔业务效果。首次尝试的 ERROR 继续保留，它说明那次调用遇到的情况；根跨度的 OK 说明应用最终验收通过。两个成功 HTTP 跨度在本例中保持默认 UNSET，因为程序没有显式设置它们为 OK。UNSET、OK、ERROR 是跨度状态，RUNNING、UNKNOWN、SUCCEEDED 等则是应用自行定义的业务状态，两套状态应分别解释。',
+ '提交事件有助于理解顺序，SQLite 行及返回回执负责确认本例效果。这里存在“提交成功、遥测尚未记录”的间隙，因而不能只数 effect_committed 事件来建设业务去重。相同原则也适用于日志、效果计数器和根跨度状态。')+'</div>',
+
+ anchor('subsection-4-1yz19uz')+
+ p('跨度树告诉我们操作关系，时间线用来判断等待。下面另设一条 R27 的教学时间线，所有阶段使用同一时钟、单位 ms；它用于计算依赖，不是 HTTP 程序的实际耗时。身份检查用 50ms；查询 A、B 同时开始，分别用 300ms、400ms；装配必须等两份材料齐全，再执行模型、发布、等待、重试和验收。')+
+ figures(old[3]).join('')+
+ table(['阶段','起止时刻 ms','持续时间 ms'],[
+  ['身份检查','0—50','50'],
+  ['查询 A / 查询 B','50—350 / 50—450','300 / 400，同时进行'],
+  ['装配 / 模型','450—480 / 480—780','30 / 300'],
+  ['发布 / 等待 / 重试','780—850 / 850—880 / 880—940','70 / 30 / 60'],
+  ['验收','940—1000','60']
+ ])+
+ p('端到端墙钟时间是用户从起点到终点实际经历的时间，本题为 1000−0=1000ms。由于装配要等两份查询结果，这一段等待 max(300,400)=400ms，于是总时间为 50+400+30+300+70+30+60+60=1000ms。按依赖从起点走到终点、决定最早完成时刻的最长路径，称为关键路径；本题经过较慢的查询 B。',
+ '把表中所有阶段的持续时间相加则得到 1300ms，多出的 300ms 是 A 与 B 的重叠区间。再加根跨度的 1000ms，还会重复计算已包含的子操作。持续时间之和描述这些观测区间合计有多长；它既不是用户等待，也不能直接当作 CPU 时间或计费资源量。')+
+ table(['时间口径','怎样计算','解释时要保留的条件'],[
+  ['墙钟时间 wall time','终点减起点，本题 1000ms','明确是用户返回、产物验收还是后台结束'],
+  ['跨度持续时间之和','逐跨度相加；本题叶阶段合计 1300ms','包含并行重叠，父子相加还包含嵌套重叠'],
+  ['独占时间 exclusive time','父区间减去其直接子跨度区间的并集','表示未被这些子跨度覆盖的区间，可能含等待与未插桩工作']
+ ])+
+ p('若表中各阶段全都作为根的直接子跨度，且正好覆盖整个任务，根的独占时间便为 0；这只说明所有时间已被子阶段覆盖。查询 A 从 300ms 降到 200ms 时，装配仍等 B，到达终点的时刻不变；B 从 400ms 降到 300ms 时，在其余依赖与耗时不变的题设下，总时间降到 900ms。这是对固定依赖图的推导，实际优化还需检查是否改变了并行度、共享资源竞争和后续工作。')+
+ fold('跨服务计时与等待区间',p('单机本地持续时间与跨主机绝对时刻有不同前提。跨主机墙钟偏差可能使图上的先后关系看起来反常，传播关系也不会自动校准时钟。应说明跨度覆盖哪段排队、重试等待或后台工作，再结合各端本地持续时间解释。SDK 实验把同机 Unix 纳秒起止时刻存成十进制字符串，避免 JavaScript 大整数精度损失；这些值不表示已经验证跨主机时钟。')+links(old[3])),
+
+ p('理解一个任务以后，再定义一批任务的统计总体。总体是按受理时间、任务类型、版本和观察截止时间选定的一组唯一任务。先保存受理身份，再连接最终验收和全部尝试，才能同时看到完成者、失败者与仍在执行者。trace 条数、HTTP 条数、结果文件数都只是这组任务产生的记录，数量关系需要另行计算。',
+ '下面固定一批 100 个已经到终态的任务：80 个首轮合格，其余 20 个都再处理一轮，其中 10 个合格、10 个最终失败。这里明确把一轮完整处理定义为一次“任务尝试”；一轮内部仍可能有多次模型和工具调用。它是总体算例，独立于前面 R27 的两次 HTTP 尝试。')+
+ table(['任务组','唯一任务数','任务尝试轮数','最终合格数'],[
+  ['首轮合格','80','80×1=80','80'],
+  ['再试一轮合格','10','10×2=20','10'],
+  ['再试一轮仍失败','10','10×2=20','0'],
+  ['合计','100','120','90']
+ ])+
+ p('任务最终合格率为 90/100=90%。本题获得合格完成结果的尝试轮数为 90，因此按任务尝试计算是 90/120=75%。二者分别回答“多少用户目标最终交付”与“多少处理轮次获得合格结果”。工具 HTTP 成功比例要从实际 HTTP 调用重新计数，不能把这 120 轮直接用作工具分母。',
+ '观察截止时间同样属于指标定义。假设这同一批任务在较早快照中为 80 个已合格、10 个最终失败、10 个仍在执行或待确认，此刻已确认合格占受理任务的 80/100=80%；若只看已有判定的 90 个，得到的 80/90≈88.89% 是另一个条件比例。等后 10 个也合格，才得到上表的最终 90%。删除尚未结束的任务，会悄悄改变问题。',
+ '时延也应保留这种完整口径：先说明起点和终点，再分别报告已合格任务时延、失败或取消用时，以及在途任务数和当前年龄。只对成功结束者计算 P95，可以描述这一组完成者；若慢任务仍在执行，它就不能代表全部受理任务的最终等待分布。取消待确认、结果未知应有明确状态与数量，随查询和验收推进到终态。'),
+
+ anchor('subsection-6-1q7kv9j')+
+ p('沿用同一批 100 个任务，把成本与刚才的任务组逐一对应。以下“点”是题设中的教学成本单位：首轮合格的每任务 2 点，再试合格的每任务 5 点，最终失败的每任务 4 点。任务是否合格影响交付量，已经发生的尝试与用量仍进入总成本。')+
+ table(['任务组','任务数 × 每任务成本','该组成本'],[
+  ['首轮合格','80×2','160 点'],
+  ['再试合格','10×5','50 点'],
+  ['最终失败','10×4','40 点'],
+  ['全部受理任务','160+50+40','250 点']
+ ])+
+ p('每个受理任务平均成本为 250/100=2.5 点；交付一个合格任务所承担的全量成本为 250/90≈2.78 点。若仅保留合格任务自身消耗，得到 (160+50)/90≈2.33 点，回答的是“合格任务自身平均花多少”，失败任务的 40 点没有进入这个问题。经营或容量判断使用哪一种口径，应连同分子和分母一起写明。')+
+ fold('运行 100 任务成本账本',c5[0]+'<p>'+links(old[5])+'</p>')+
+ p('任务组成本还没有细到每次尝试。“再试合格的 10 个任务共花 50 点”只包含任务总数，无法拆出第二轮额外花多少。要计算重试边际成本，应先按 attempt 记录实际用量与价格，再归回 op_id 和 task_id；共享检索、批处理、缓存、沙箱和后台工作要给出分摊依据，并保留总量与未分摊量以供对账。',
+ '回到单任务 R27，SDK 程序拥有更细的教学账本：两次 HTTP 尝试各 2 点，产物验收 1 点，总共 5 点，交付一个合格任务，因此为 5/1=5 点。只取成功 HTTP 的 2 点，会漏掉第一次尝试与验收。这里的 5 点属于单任务 HTTP 夹具；上表再试组每任务也是 5 点，是另设的任务级题设，不能据此反推那 10 个任务也各有两次 HTTP 调用。')+
+ figures(old[5]).join('')+
+ p('实际计费时，成本账连接输入、输出及缓存用量、工具计算、存储和网络等计量项，同时固定单价、币种与价格版本。比较两个方案还要固定任务集合、质量要求、截止时间与重试预算：减少处理难题可能降低账单，也可能同时降低合格完成量。合格任务为零时，单列总成本与零完成，单位合格成本为未定义，不能填成 0。'),
+
+ anchor('subsection-7-uqlgd8')+
+ p('一条任务轨迹包含许多跨度、属性和事件，全部长期保存会消耗资源。采样是从运行记录中选择一部分保留；头部采样在较早阶段决定，尾部采样根据后续结果选择，因而可以更关注慢任务或错误。采样规则决定看到哪类任务，读样本比例前必须先检查这层选择。',
+ '设总体有 1000 个任务，900 合格、100 失败。若合格只保留 10%，失败全部保留，样本中便有 90 个合格、100 个失败。直接计算 90/190≈47.37%，描述的是被保留的样本，原总体仍为 900/1000=90%。本题已知每类的入样概率，可把合格权重设为 1/0.1=10、失败权重设为 1，按加权计数得到 900/(900+100)=90%。实际估计还需入样概率适用、各类有非零入样机会，并考虑抽样波动和采集丢失。')+
+ table(['分析问题','优先使用的证据','接着怎样解释'],[
+  ['本批任务完成了多少','覆盖受理总体的业务账本与可靠汇总','按同一任务、版本和观察截止时间统计'],
+  ['哪些阶段变慢','对应切片中的跨度与时间线','检查并行、排队、等待和关键路径'],
+  ['报告哪里失真','各阶段输入输出版本与实际产物','沿资料、候选、装配、生成、发布定位首次偏差'],
+  ['某项改动是否改善结果','固定任务、预算及判分规则的对照','控制替代解释，再比较成对结果和波动']
+ ])+
+ p('诊断从验收失败的具体主张出发。先找原资料及可访问版本，再查候选是否命中、装配是否保留关键限定、模型是否据此生成、发布是否保存对应正文。若候选里有正确材料而模型输入没有，优先复现排序、截断与预算；若输入齐全而结论错误，再固定这份输入比较生成。保留每阶段版本，才能找到偏差从哪里开始。',
+ '追踪中的因果关联与统计上的因果效应需要分清：c1 是 s1 的父跨度，说明这次请求怎样被安排和传递；“新版本使任务成功率提高”则是关于改动效果的判断。一条成功轨迹不能排除任务变简单、重试预算增大或样本更换等原因。先用轨迹提出机制解释，再在固定任务和条件下验证改动，结论才与证据对应。')+
+ fold('指标缺失、真实零与完整性检查',p('指标样本缺失时，先查采集覆盖。配套 Prometheus 合成练习中，两项用量均为 90m，request 分别为 100m、900m，整体为 (90+90)/(100+900)=18%；逐项百分比再平均却得到 50%。另一个缺指标用例得到朴素比值 9%，同时完整性标记为 0；“观测到零”用例才同时得到比值 0、完整性 1，全部缺失则没有结果。这些数展示聚合分母与观测完整性，不能把没有数据自动补成业务正常。Agent 计数器同样要检查采集范围、重复记录及丢失，再与业务账本对账。')+'<p><a href="labs/scaling-collectives-traces/validation.json" target="_blank" rel="noopener">查看 Prometheus 与 SDK 的配套实际记录 ↗</a></p>')+
+ links(old[6]),
+
+ anchor('subsection-8-323gx5')+
+ p('现在把前面的对象落到 otel_attempts.py。实验固定 Python 3.12 与 OpenTelemetry API/SDK 1.44.0，手动创建跨度并通过真实回环 HTTP 传播 traceparent，工具效果保存到临时 SQLite。执行器与工具服务在本机同一进程的两个线程中运行，各有自己的 TracerProvider 和 service.name；共享内存导出器便于最后一次读取所有跨度。')+
+ table(['程序对象','负责的工作','跟读位置'],[
+  ['TracerProvider → tracer','配置跨度创建、采样、资源和导出；tracer 创建具体跨度','main 中创建 runner 与 tool 两套对象'],
+  ['Propagator','把当前追踪上下文编码进请求头，再从接收头提取','CLIENT 内 inject，Handler 内 extract'],
+  ['MeterProvider → meter → instrument','管理指标，创建计数器与耗时直方图','attempts、effects、successes、cost、duration'],
+  ['SQLite 与本地 ledger','分别保存真实效果和教学成本明细','effect 表、cost_ledger 输出']
+ ])+
+ p('下载实验包，在其中的 scaling-collectives-traces 目录使用独立 Python 环境，按包内 README 准备依赖后执行：')+c7[0]+
+ p('跟读时先看根跨度 agent.task 与 for number in [1,2]：每轮新建 CLIENT 跨度，保留 R27、R27:publish 与当前尝试序号，再注入请求头。Handler.do_POST 提取头并创建 SERVER 跨度；事务上下文退出、SQLite 提交之后才发出 effect_committed 事件和效果计数。第二次走查询旧记录分支，产生 receipt_reused，不再增加效果数。',
+ '客户端 finally 无论这轮收到 503 还是 200，都记录本次耗时、增加一次尝试与 2 点教学成本。循环结束后，程序直接查询 effect 表并核对回执，才增加一个合格任务与 1 点验收成本。最后 get_finished_spans 读取五个跨度，InMemoryMetricReader 读取指标，程序中的断言逐项核对它们。')+
+ table(['输出项','固定应有的关系或数量','怎样理解'],[
+  ['spans','根跨度 1、CLIENT 2、SERVER 2，共 5 个','所有 trace_id 相同；两个 CLIENT 的父号都是根号'],
+  ['received_traceparent','两条头里的上游号分别为 c1、c2','对应 SERVER 的 parent_id 匹配，parent_remote=true'],
+  ['lab.tool.attempts','http_error=1，ok=1，合计 2','实际发起并记录的 HTTP 尝试'],
+  ['lab.tool.effects / lab.task.successes','各为 1','本次夹具在提交后、验收后分别计数'],
+  ['lab.tool.duration','count=2，sum_ms 随运行变化','两次本地 HTTP 计时值的总和；不是根任务耗时'],
+  ['lab.teaching.cost / cost_ledger','工具 4 点、验收 1 点，合计 5','失败尝试、成功尝试和验收全部保留']
+ ])+
+ p('先检查关系和数量，再看随机编号与耗时。trace_id、span_id 和毫秒数每次都可能不同；两个 SERVER 的父号匹配、原操作一笔效果、错误尝试保留、根任务验收通过，才是稳定复现条件。duration 的计时从构造请求前开始、在 finally 中结束，CLIENT 跨度还包含周边插桩与计数工作，因此这两种耗时也无需逐字相等。')+
+ fold('完整 otel_attempts.py：与下载源码一致',c7[1])+
+ fold('本次固定的 OpenTelemetry 依赖',c7[2])+
+ '<p class="practice-links">'+links(old[7]).replace(/<a class="inline-link"[\s\S]*?<\/a>/g,'')+'</p>'+
+ fold('实验范围与三个变化题',p('程序显式采用 ALWAYS_ON，完整核对五个跨度；它未测试概率或尾部采样。span 事件写入内存导出器，指标写入内存 reader；程序没有部署 Collector、远端遥测后端、LLM、真实身份服务或 Kairo，教学成本也没有连接真实账单。接入分布式系统时，需要继续检验跨服务传播、采集覆盖、导出与保留，并以业务记录核对遥测缺口。',
+ '变化一：去掉 inject，工具端无法接续原父跨度，本例核对同一 trace_id 与请求头的断言会失败。先用原 task_id、op_id 与可信调用记录关联业务，再修复传播。变化二：保留 traceparent 却每轮生成新 op_id，会把重试改成另一项发布意图；本例固定 op_id 的断言会先拒绝这项变更。若工具接受这种新操作身份，追踪父子关系仍无法替接收方合并效果。变化三：把第一轮成本或验收成本删掉，单位合格成本会下降，但实际用量没有变化；应从 ledger 与计数器对账发现漏项。'))+
+ (old[7].match(/<a class="inline-link"[\s\S]*?<\/a>/)?.[0]||'')
+ ];
+ const before=old.join(''),after=bodies.join('');
+ const pre=html=>matches(html,/<pre\b[^>]*>[\s\S]*?<\/pre>/g);
+ if(JSON.stringify(pre(before))!==JSON.stringify(pre(after)))throw Error('Agent signals original code changed');
+ if(JSON.stringify(figures(before).slice().sort())!==JSON.stringify(figures(after).slice().sort()))throw Error('Agent signals original figure changed');
+ for(const m of before.matchAll(/\bid=["']([^"']+)["']/g))if(!after.includes('id="'+m[1]+'"')&&!after.includes("id='"+m[1]+"'"))throw Error('Agent signals anchor lost: '+m[1]);
+ const hrefs=matches(after,/\bhref=["'][^"']+["']/g);
+ for(const m of before.matchAll(/\bhref=["'][^"']+["']/g))if(!hrefs.includes(m[0]))throw Error('Agent signals source URL lost: '+m[0]);
+ for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
+ bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
+ a.intro=a.desc;a.updated='2026.11.08';
 })();
 
 
@@ -7603,7 +8259,7 @@ const conceptSectionTitles={
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}

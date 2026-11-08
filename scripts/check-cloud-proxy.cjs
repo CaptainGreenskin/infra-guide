@@ -146,8 +146,9 @@ const sourceHtml = vm.runInContext('trainingCode("proxy_lab.py", "Python", cloud
 assert(body.includes(sourceHtml), 'Complete inline source must match the downloadable source');
 assert(body.includes('id="cloud-proxy-run"'));
 assert(body.includes('v43-route-practice'));
-assert(body.indexOf('先区分四层转发和七层代理') < body.indexOf('先运行：两个后端'));
-assert(body.indexOf('先运行：两个后端') < body.indexOf('v43-route-practice'));
+const layerIndex=body.indexOf('id="subsection-6-p8ekpv"'),runIndex=body.indexOf('id="cloud-proxy-run"'),practiceIndex=body.indexOf('id="v43-route-practice"');
+assert(layerIndex>=0&&runIndex>layerIndex,'Transfer layers precede the source-matched proxy run');
+assert(practiceIndex>runIndex,'The round-trip exercise follows the actual proxy run');
 assert.equal(800 - 80 - 120, 600);
 assert.equal(2 * 250 + 100, 600);
 assert.equal(600 - 430 - 100, 70);

@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "canonical_script_count": 192,
+  "canonical_script_count": 195,
   "public_script_count": 9,
   "bundles": [
     {
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "0206fc93a1945c87327f03dad300069c62374b9affb19e41b1b409e9f20ed78e",
-      "bytes": 2209029,
+      "sha256": "31d27b8b7b14aa8567df14aa7870de696a2f26a2c66fd69107f6385f61265a08",
+      "bytes": 2334389,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -900,8 +900,8 @@
         },
         {
           "file": "progressive-storage-reading.js",
-          "sha256": "cda9ae6821d5ed9688b7068ead09286d9db53f6863c2d28de68ea3370797d2f7",
-          "bytes": 35023
+          "sha256": "7ac7eb6f85bea366c9559905f141a7c9b001750224228ba94c054c26fd4403b1",
+          "bytes": 35010
         },
         {
           "file": "progressive-training-reading.js",
@@ -912,6 +912,21 @@
           "file": "progressive-workflow-reading.js",
           "sha256": "304554516156a5888ca1fa9a471bdfb14ef5a59fed1d45af51ff0784e0089fb8",
           "bytes": 25630
+        },
+        {
+          "file": "progressive-network-reading.js",
+          "sha256": "effeab373d274989d5d26b127f045dab61aa0621bc674418f30c10fd30008a80",
+          "bytes": 51790
+        },
+        {
+          "file": "progressive-training-io-reading.js",
+          "sha256": "40cdcb335509c2a97e8b2afcff208355d787342e7c621c831a98d4fc0cc7d777",
+          "bytes": 46801
+        },
+        {
+          "file": "progressive-agent-signals-reading.js",
+          "sha256": "731c8ca382e5d8783eab755b09ac460e9b86b7dd1a8c49cd37bad95efb09434e",
+          "bytes": 26561
         },
         {
           "file": "first-reading-flow.js",
@@ -980,8 +995,8 @@
         },
         {
           "file": "concept-navigation.js",
-          "sha256": "baac5d41f68a5ea6ad3219c7af5bd84d32e34339e40627788f61c1d7a742390c",
-          "bytes": 7997
+          "sha256": "5aa1a0a11a77c8d6f6e946a474d4036cc22af6a887b471828f2d35bd82472129",
+          "bytes": 8094
         },
         {
           "file": "chapter-navigation.js",

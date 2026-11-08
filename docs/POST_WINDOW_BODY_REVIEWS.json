@@ -2583,6 +2583,116 @@
         "验收：让真实消费者说恢复完成了",
         "配套实战：完整恢复、缺段拒绝与消费者继续"
       ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "ef75a800397a4fe048b904de22676550bc7d277c039673bac11b0dbdbffc4a80",
+      "reviewed_content_sha256": "16d8b56dff0833bad9c7202478023e987f8a1413dc9ccf98fc363d965d34604b",
+      "scope": "Task and operation to actualpropagation, finaleffect and cohortcost",
+      "observation": "Eight sections separate task/step/op/attempt/span, normalHTTPpropagation and committed503recovery, criticalpath, unfinishedcohort, completecost and sampling. Unused SDK detail is optional; actualfive-span source is preserved.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "f2ba001b6880448b979b4c3a14eaa7383d6ec64f3b09fff5945b08cfefd91b9a",
+      "reviewed_content_sha256": "5465a58f03f8da80688d4c22d25e7e00a5007115fd9fc7acf01aa09bb8f75f4d",
+      "scope": "Samples through rank and worker assignment to targets and committed consumption",
+      "observation": "Seven sections explain Dataset/Sampler/Loader, bothdroplast layers, realworker batchcounts, packedmask/positions/labels, rate/queue capacity and inputrecovery. All actualsourceand recordednumeric results remain distinct.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "45988028af0ea3169171c852a73f4a56a73b71fd915810b3685e7bf69a6b8e40",
+      "reviewed_content_sha256": "f7162bb33d8af07818cb6db6fe0b0c790ba28a0697cc8ff183cfb40978f02b55",
+      "scope": "Persistentvolume introduced before PVC",
+      "observation": "One lifecycle-table label now says persistentvolume; PVC is first defined with the APIobjects insectiontwo. The rest of the previouslyreviewed eight-section body is unchanged.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "eac9196f8305f59dd6bb102b5e0989b09680a2e4e0bdfa86aefc52e757e27a4c",
+      "reviewed_content_sha256": "410c6cd4b63db10d9f2b6d03619b069059fd5ece55f6907b583a460d78cf10e7",
+      "scope": "TCP bytes, application messages and outcomes before diagnostic inference",
+      "observation": "Twelve sections connect sequence/window/halfclose to framing, requestidentity, timingdifferences, competinghypotheses, distributionchecks and actualprograms. Four duplicate fullsection H3 topics become stablelegacyanchors.",
+      "headings": [
+        "TCP连接：序号、确认与握手",
+        "传输能力：窗口、RTT与应用背压",
+        "结束与探测：半关闭、状态与超时",
+        "先固定同一个查询，再比较快慢",
+        "在一只秒表上读出六个时刻",
+        "先确认谁生成了错误",
+        "看到什么证据，决定下一次探测什么",
+        "修复后验证的是原始现象",
+        "课堂练习：用两个反例检验判断",
+        "本地实验：同样多等 150 毫秒，慢在哪一段",
+        "实战：按长度解帧，再验证TCP半关闭",
+        "实战：非阻塞发送、接收读取与应用回执"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "58659641368a64f9c313a3a15fa92c338072df814e6b9adf1672896002582934",
+      "reviewed_content_sha256": "7b05419d9eebd0720c87958bd6505aadfc63e1737ac530d812eeb534ce6b85bb",
+      "scope": "Member, tensor and collective result before waits and measured training",
+      "observation": "Eight sections handcompute collectives, raggedvaliddenominators and ringbytes, then explain arrival, Work/CUDAstream dependencies, buckets and fulltraining. The subgroup example follows operationdefinitions; pinnedPyTorch source defines root and wait semantics.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "899b100398d460e68ab30f41053db201f84dfaea50eed53dc1a32ca6d7d174cc",
+      "reviewed_content_sha256": "55add2c9cff243891d76b361ea6ae021f35da71a99bbc349a6213b8e3bd62435",
+      "scope": "Request objects and normal round trips before network and proxy decisions",
+      "observation": "Seven sections introduce endpoint identities, DNS/cache, CIDR/routes, policy directions, NAT and proxy/TLS completion. ActualHTTP proxy and TLS fixtures remain separate; all source, figures and publicanchors retained.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
     }
   ]
 }
