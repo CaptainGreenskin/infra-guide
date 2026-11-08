@@ -1,0 +1,23 @@
+{
+  "cuda_release": "12.9.1",
+  "target": "linux-x86_64",
+  "manifest_url": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_12.9.1.json",
+  "manifest_sha256": "8335301010b0023ee1ff61eb11e2600ca62002d76780de4089011ad77e0c7630",
+  "components": {
+    "cuda_nvcc": {
+      "relative_path": "cuda_nvcc/linux-x86_64/cuda_nvcc-linux-x86_64-12.9.86-archive.tar.xz",
+      "sha256": "7a1a5b652e5ef85c82b721d10672fc9a2dbaab44e9bd3c65a69517bf53998c35",
+      "size": "81100244"
+    },
+    "cuda_cudart": {
+      "relative_path": "cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-12.9.79-archive.tar.xz",
+      "sha256": "1f6ad42d4f530b24bfa35894ccf6b7209d2354f59101fd62ec4a6192a184ce99",
+      "size": "1514676"
+    },
+    "cuda_cccl": {
+      "relative_path": "cuda_cccl/linux-x86_64/cuda_cccl-linux-x86_64-12.9.27-archive.tar.xz",
+      "sha256": "8b1a5095669e94f2f9afd7715533314d418179e9452be61e2fde4c82a3e542aa",
+      "size": "997888"
+    }
+  }
+}
