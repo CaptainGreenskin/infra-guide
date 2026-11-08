@@ -25,3 +25,7 @@
 ## 逐层讲解与连续阅读补充
 
 本轮将概念型小节名延伸至全部78章，正文、两种目录与搜索共同消费；实际深化计算资源、Kubernetes、Token/Embedding、Attention、Agent权限与记忆六章。九章的可选概念回顾移到章末，保留旧URL、锚点、完整源代码与原执行记录。README将历次修订收进可展开记录。详见[逐层讲解修订](ITERATION_2026-11-08_PROGRESSIVE_READING.md)。真人试读、GPU/物理多机和Kairo适配边界仍未由本轮作者审读代替。
+
+## 从对象关系到实际执行补充
+
+继续重排Decoder、位置编码、Agent执行环境、Agent恢复与云服务实战五章完整正文，并将Kubernetes基础章接回原生Service实验。新增实验在隔离单宿主kind实际执行，记录真实ClusterIP请求、探针、模板发布与回退，完整序列保留传播期失败；另修正文、搜索和领域跳转的岗位路线保持，以及综合实战的方向选择。详见[执行与阅读修订](ITERATION_2026-11-08_EXECUTION_READING.md)。全站78章、45实验包、85项任务；真人、GPU/物理多机与Kairo仍按原边界待验。

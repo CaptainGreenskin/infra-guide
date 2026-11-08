@@ -154,7 +154,7 @@ const conceptTermPattern=new RegExp(conceptGlossary.map(e=>e.term).sort((a,b)=>b
 function conceptSeen(path){return new Set(path?.terms||[]);}
 function conceptVisibleNeighbour(parts,index,direction){let out='';for(let i=index+direction;i>=0&&i<parts.length&&out.length<60;i+=direction){if(/^<\/?(?:p|li|h[1-6]|section)\b/i.test(parts[i]))break;if(!parts[i].startsWith('<'))out=direction>0?out+parts[i]:parts[i]+out;}return direction>0?out.slice(0,60):out.slice(-60);}
 function explainFirstConceptTerms(html,seen=new Set()){
- const parts=html.split(/(<[^>]+>)/g),protectedTags=new Set(['pre','code','a','button','summary','script','style','svg','textarea','select','label','figure','h1','h2','h3','h4','h5','h6']);
+ const parts=html.split(/(<[^>]+>)/g),protectedTags=new Set(['pre','code','a','button','summary','script','style','svg','textarea','select','label','figure','h1','h2','h3','h4','h5','h6','dfn','var']);
  const stack=[];
  return parts.map((part,index)=>{
   if(part.startsWith('<')){const m=part.match(/^<\s*(\/?)([a-z0-9]+)/i);if(m&&protectedTags.has(m[2].toLowerCase())){const tag=m[2].toLowerCase();if(m[1]){const at=stack.lastIndexOf(tag);if(at>=0)stack.splice(at,1);}else if(!/\/\s*>$/.test(part))stack.push(tag);}return part;}

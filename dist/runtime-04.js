@@ -905,7 +905,7 @@ const cloudCoverageRows=[
  ['C2','云网络与协议','有 VPC、DNS、路由、NAT、入口、TCP/I/O 知识与时序实验。','BGP/IPv6、真实转发、MTU/conntrack 与大规模网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
  ['C3','存储、数据库与缓存','展开提交、undo/redo/binlog与PITR；真实MySQL容器验证恢复、RR/RC旧读、复制应用及两实例计划切换，另有SQLite与附件恢复。','MySQL实测限于隔离容器和计划切换；PostgreSQL、生产自动故障切换、物理断电与跨区恢复仍待目标环境。',['database-index-locks','cache-consistency','storage-recovery','mysql-recovery','mysql-replication']],
  ['跨域','分布式协调与消息','讲超时、幂等与事件确认；真实etcd三成员实验验证多数派与历史观察，RabbitMQ单节点验证提交后重投、过早ACK和业务效果。','Raft算法实现、Kafka/RocketMQ与再均衡仍需专项；同宿主etcd及单节点RabbitMQ不代表跨物理故障域高可用已验收。',['distributed-systems','message-delivery']],
- ['C4','容器与 Kubernetes','覆盖运行时、控制面、工作负载、调度、网络、存储、配置与弹性。Linux CI已实测容器约束、kind放置和etcd协调存储。','kind与etcd均为同宿主实验；多物理节点、云CNI/CSI、生产控制面恢复和Operator实现仍需专项。',['container-runtime','scheduling-resources','k8s-networking','k8s-storage']],
+ ['C4','容器与 Kubernetes','覆盖运行时、控制面、工作负载、调度、网络、存储、配置与弹性。Linux CI已实测容器约束、kind放置、etcd协调存储，以及Service请求、探针、模板发布与回退。','kind与etcd均为同宿主实验；多物理节点、云CNI/CSI、生产控制面恢复和Operator实现仍需专项。',['container-runtime','scheduling-resources','k8s-networking','k8s-storage','cloud-service-lab']],
  ['C5','Serverless 与事件','展开执行环境、三种触发契约、部分批次响应、并发/下游与成本；真实进程退出和并发事务验证效果去重。','云函数、SQS 可见性/重驱、冷启动和真实伸缩尚未在供应商环境实测。',['serverless-execution']],
  ['C6','平台 API、IaC 与 GitOps','展开配置、状态与实物，以及源修订、集群对象、进程和业务结果；真实 Terraform 本地提供程序验证锁与漂移，Argo CD 在 kind 中验证自愈、清理与实际 HTTP 版本。','云提供程序、远端状态后端、client-go/Operator 实现及生产规模治理仍需专项；本地状态和单机 kind 有各自范围。',['delivery','terraform-state','gitops-reconciliation']],
  ['C7','身份、安全与多租户','展开认证、委托、授权及RBAC；原生ServiceAccount以同一凭证核对200→403→200，另有HMAC/HTTP与SQLite效果对照。','原生ServiceAccount与RBAC已在隔离kind验证；云IAM、准入策略、凭证投射/刷新与生产对抗隔离仍待目标环境。',['iam-security','agent-security','agent-sandbox']],

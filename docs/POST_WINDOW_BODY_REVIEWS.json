@@ -2375,6 +2375,117 @@
         "验收：不要只看 loss 有没有下降",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "e1f215ea23d7a1208a4a74b1da495d1a1e489db0e48eca471d1143c64342f496",
+      "reviewed_content_sha256": "9083cd24064ad9db3383bce63757afb131102b954199f986c66cbf4dfe1aa874",
+      "scope": "Normal external commit, saved observation and verification before crash windows",
+      "observation": "The body follows independent runner/tool stores through INTENT, effect, receipt, OBSERVED, identity/content validation and DONE. Frozen parameters, cancellation, transfer and two distinct negative oracles are explicit. Full prior code, figures and records retained.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "012468beb78954778188dbe1f1844195c4c22f702a0f2a9a84d4ea780dbb6b7a",
+      "reviewed_content_sha256": "b7741bfc5f31da1155956bc7bad564dcdcb13af9db01f38e51d549285c668718",
+      "scope": "Task, execution identity and capabilities before isolation cases",
+      "observation": "A normal chart task introduces input, execution instance and artifact; identity, inherited descriptors, files, network and budget lead to lifecycle and POSIX verification. Existing sandbox models and target-environment boundaries retained.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "5296e378afef7d6afc5efde524b0f4a13cb0a380dfd3459bb5bfdfc10f5ecc9d",
+      "reviewed_content_sha256": "f9436b833b45d6a95ea8d7b0cf68e2518e96788fdb23483678887d09a17aa818",
+      "scope": "Real Service request and control objects through probes and template recovery",
+      "observation": "A successful source-pinned native CI run connects independent API snapshots and actual ClusterIP HTTP responses across six stages. Two new SVGs, core API snippets and complete downloadable source preserve297 requests including one propagation failure; old code and handbook retained as optional historical material.",
+      "headings": [
+        "实验分为已执行本地部分与待验集群部分",
+        "先运行，再解释输出",
+        "把本地信号交给Kubernetes",
+        "观察版本，再回退版本",
+        "读源码，把结果连接到机制"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "1371a9b45d133a957fb2c35ec021260edc5207b884ac2aca1ea9260b0e73f692",
+      "reviewed_content_sha256": "16f0626506ba8902fd98d767ceb1090dbeab0245954d64eb4307ded9b8e59303",
+      "scope": "Connect probe concepts to native Service observations",
+      "observation": "The three-layer observation section now links application signals, API conditions and real Service requests to the successful independent native experiment. Long-lived connections and termination draining remain separate pending experiments.",
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ]
+    },
+    {
+      "id": "position-encoding",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "185a1bc25c4b0333670ba5c5a398d6cc18b6d7434c647ae2b78d3e8fb64e091a",
+      "reviewed_content_sha256": "ff4210bcd061c77e51045f9bc0f44ff8a3ee16d9865bddd4ec8d8966b8b7da88",
+      "scope": "Position objects from ordering to rotation and cached coordinates",
+      "observation": "Absolute positions precede2D rotations, relative inner products and multi-pair layouts. Independent hand calculations connect to the actual RoPE source; cache coordinate and training length are distinguished. Original complete source and anchors retained.",
+      "headings": [
+        "把位置打乱，再问模型能发现什么",
+        "先看两种绝对位置表示",
+        "从单位圆构造二维旋转",
+        "为什么留下的是 n−m，再平移一次验证",
+        "多频率怎样装进一个 attention head",
+        "缓存里有两种“位置”：逻辑序号与物理槽位",
+        "把长度调大之前，需要证明哪件事",
+        "用一份标准库脚本检查三个独立不变量",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "3d0855495fc55d5db0428a36a799affdcd1da7b6177f07ccad876d683788bcbd",
+      "reviewed_content_sha256": "9472e7705c9bcbab0af1670522ea47ac5a2f49567a14375aeacb0496dc25d83e",
+      "scope": "Decoder computation from branch output to residual, norm and feed-forward",
+      "observation": "One model tracks attention output, residual derivatives, feature-axis norms and SwiGLU before its layer ledger and CPU trace. Two-dimensional hand cases explicitly differ from the664-parameter model. Complete prior code, figures and links retained.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
     }
   ]
 }

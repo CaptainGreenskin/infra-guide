@@ -97,14 +97,14 @@ const conceptSectionTitles={
  ...progressiveAiSectionTitles,
  ...progressiveAgentSectionTitles,
  'training-lab':['完整训练状态与恢复边界','更新语义与恢复对照','两进程训练与新进程恢复实战','状态比较与运行日志','配置与优化器反例','恢复差异的定位方法','GPU、多机与集群验收'],
- 'cloud-service-lab':['实验组成与验证范围','本地服务、存储与指标实战','Kubernetes 探针与端点','版本发布与回退','源码路径与变化练习'],
+ 'cloud-service-lab':['服务实例、探针与控制链','探针条件与容器重启','Service 请求与后端条件','模板修订、发布与回退','原生实验、源码与验收'],
  'cloud-overview':['云计算的基本对象','一次云上请求','运行职责、数据面与控制面','HTTP 状态与健康检查','Cloud、AI 与 Agent 的关系'],
  'transformer-model':['Transformer 整体结构','张量与形状','矩阵乘法与线性层','Decoder 的核心模块','模型形状与参数账本','计算量与存储规模','训练与自回归生成','序列长度与注意力复杂度','标签对齐与因果验证'],
  'agent-runtime':['Agent 的组成与职责','工具调用契约','执行循环与预算','错误分类与重试','任务状态与操作身份','任务完成与产物验证','Kairo 接入关系','HTTP 工具实战','流式工具调用']
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}
@@ -120,3 +120,7 @@ function chapterReadingContentsHTML(article,navigation=chapterNavigation(article
  const concept=conceptTOCLink(readingArticleURL(article.id),optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
  return optionalConceptReviews.has(article.id)?topics+concept:concept+topics;
 }
+
+// These standalone chapters define their objects in authored prose. Do not
+// append a second generic definition or reinterpret a mathematical symbol.
+function chapterConceptProse(article,html,seen){return optionalConceptReviews.has(article.id)?html:explainFirstConceptTerms(html,seen);}

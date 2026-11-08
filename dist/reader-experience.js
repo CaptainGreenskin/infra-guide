@@ -1,6 +1,14 @@
-function publicRoute(value){const [path,query]=value.replace(/^#/,'').split('?');return hostedPath((path==='/'?'/':path.replace(/\/$/,'')+'/')+(query?'?'+query:''))}
-function cleanInternalHTML(html){return html.replace(/href="#\/([^\"]*)"/g,(_,path)=>'href="'+publicRoute('/'+path)+'"')}
-function normalizeInternalLinks(){document.querySelectorAll('a[href^="#/"],a[href^="/"]').forEach(a=>{const href=a.getAttribute('href');a.setAttribute('href',href.startsWith('#/')?publicRoute(href):hostedPath(href))})}
+function publicRoute(value){
+ const raw=value.replace(/^#/,''),hashAt=raw.indexOf('#'),fragment=hashAt<0?'':raw.slice(hashAt),withoutHash=hashAt<0?raw:raw.slice(0,hashAt);
+ const queryAt=withoutHash.indexOf('?'),path=queryAt<0?withoutHash:withoutHash.slice(0,queryAt),query=queryAt<0?'':withoutHash.slice(queryAt);
+ return hostedPath((path==='/'?'/':path.replace(/\/$/,'')+'/')+query+fragment);
+}
+function readerInternalHref(value){
+ const normalized=value.startsWith('#/')?publicRoute(value):hostedPath(value.startsWith('article/')?'/'+value:value);
+ return typeof learningContextHref==='function'?learningContextHref(normalized):normalized;
+}
+function cleanInternalHTML(html){return html.replace(/href="((?:#\/|\/(?!\/)|article\/)[^"]*)"/g,(_,href)=>'href="'+readerInternalHref(href.replace(/&amp;/g,'&')).replace(/&/g,'&amp;')+'"');}
+function normalizeInternalLinks(){document.querySelectorAll('a[href^="#/"],a[href^="/"],a[href^="article/"]').forEach(a=>a.setAttribute('href',readerInternalHref(a.getAttribute('href'))))}
 const publicSiteOrigin='https://cloud-infra-guide-llh.tautagave4.chatgpt.site';
 function readerActionsHTML(a){return `<section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="${a.id}">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="${publicSiteOrigin}/article/${a.id}/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section>`}
 function initReaderActions(){document.querySelectorAll('[data-download-note]').forEach(button=>button.onclick=()=>{const block=button.closest('details'),answer=block.querySelector('[data-reader-answer]').value.trim(),question=block.querySelector('[data-reader-question]').value.trim(),error=block.querySelector('.reader-error');if(!answer&&!question){error.textContent='先写下一项练习结果或一个具体问题，再下载。';return}error.textContent='';const a=articles.find(x=>x.id===button.dataset.downloadNote),body=['InfraGuide 阅读记录',a.number+' '+a.title,publicSiteOrigin+'/article/'+a.id+'/','','练习答案 / 实验结果：',answer||'未填写','','卡点 / 希望补充的例子：',question||'未填写','','这是一份读者主动填写的记录，不代表网站已自动收到反馈。'].join('\n');const url=URL.createObjectURL(new Blob([body],{type:'text/plain;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='infraguide-'+a.id+'-notes.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);error.textContent='阅读记录已生成，可回到原文评论或私信中分享。'});document.querySelectorAll('.share-url').forEach(input=>input.onclick=()=>input.select())}

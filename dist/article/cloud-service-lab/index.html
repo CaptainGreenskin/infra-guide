@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="先在本地观察HTTP与存储机制，再将同样的信号交给Kubernetes。用实际状态变化理解平台责任。">
+<meta name="description" content="沿正常请求认识 Deployment、Pod、Service 与探针，再实际验证摘新流量、容器重启和 v1 → v2 → v1。">
 <meta name="theme-color" content="#315dce"><title>综合实战：一个服务的探针、版本发布与指标验证 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=4e8873b70275"><script defer src="runtime-01.js?v=ceeebf3f8459"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=c7cafad0f586"></script><script defer src="runtime-04.js?v=17fb14f9cde3"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=8bf102d8d53f"></script><script defer src="reading-comfort.js?v=ac134a98bbff"></script><script defer src="site-search.js?v=044486da86c5"></script><script defer src="app.js?v=2e85fc309c10"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=99d7e07854b6"><script defer src="runtime-01.js?v=123d11f225c7"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=58d86497ad2c"></script><script defer src="runtime-04.js?v=e9c2332f7182"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=25aa2d129952"></script><script defer src="reading-comfort.js?v=ac134a98bbff"></script><script defer src="site-search.js?v=044486da86c5"></script><script defer src="app.js?v=90b6fd94725a"></script>
 
 
-<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="综合实战：一个服务的探针、版本发布与指标验证 · InfraGuide"><meta property="og:description" content="先在本地观察HTTP与存储机制，再将同样的信号交给Kubernetes。用实际状态变化理解平台责任。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"综合实战：一个服务的探针、版本发布与指标验证","description":"先在本地观察HTTP与存储机制，再将同样的信号交给Kubernetes。用实际状态变化理解平台责任。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/","dateModified":"2026-11-03","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="综合实战：一个服务的探针、版本发布与指标验证 · InfraGuide"><meta property="og:description" content="沿正常请求认识 Deployment、Pod、Service 与探针，再实际验证摘新流量、容器重启和 v1 → v2 → v1。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"综合实战：一个服务的探针、版本发布与指标验证","description":"沿正常请求认识 Deployment、Pod、Service 与探针，再实际验证摘新流量、容器重启和 v1 → v2 → v1。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
 <body>
 <a class="skip" href="/article/cloud-service-lab/#main">跳到主要内容</a>
 <header class="header"><div class="header-inner">
@@ -19,8 +19,30 @@
 <noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>Cloud Infra · 目录</span><span>35 章 + 1 实战</span></div><details ><summary><a href="/article/linux-resource/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" title="进程、线程与资源：为什么机器空闲，程序仍然很慢" >P0.1 进程、线程与资源</a><a href="/article/virtual-memory-oom/" title="虚拟内存与 OOM：导出任务为什么被终止" >P0.2 虚拟内存与 OOM</a><a href="/article/concurrency-pools/" title="并发与线程池：锁、排队和容量" >P0.3 并发、锁与线程池</a><a href="/article/distributed-systems/" title="超时、重试与幂等：系统最难处理的是“结果未知”" >P0.4 超时、重试与幂等</a></div></details><details ><summary><a href="/article/cloud-overview/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" title="云计算架构：服务模型、资源与责任边界" >C1.1 云计算架构与服务模型</a><a href="/article/cloud-compute/" title="计算资源：虚拟化、规格与容量预算" >C1.2 虚拟化与计算资源</a></div></details><details ><summary><a href="/article/vpc-network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" title="云网络：DNS、路由、访问控制与返回路径" >C2.1 DNS、路由与网络边界</a><a href="/article/network-diagnosis/" title="网络诊断：连接、首字节与传输时序" >C2.2 网络诊断与请求时序</a><a href="/article/tcp-event-loop/" title="TCP与I/O：从连接、字节流到epoll事件循环" >C2.3 TCP、I/O 与 epoll</a></div></details><details ><summary><a href="/article/training-storage/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" title="云存储：块、文件、对象与访问性能" >C3.1 块、文件与对象存储</a><a href="/article/database-index-locks/" title="数据库访问：索引、事务与锁等待" >C3.2 SQL 索引、事务与锁</a><a href="/article/cache-consistency/" title="缓存一致性与击穿：旧值为何重新出现" >C3.3 缓存一致性与击穿</a><a href="/article/storage-recovery/" title="存储发布与恢复：版本、提交点与校验" >C3.4 存储版本、发布与恢复</a><a href="/article/mysql-recovery/" title="MySQL日志与恢复：从提交、崩溃到按点重放" >C3.5 MySQL 日志与恢复</a><a href="/article/mysql-replication/" title="MySQL复制与切换：先解释旧读，再证明谁能写" >C3.6 MySQL 复制与切换</a></div></details><details ><summary><a href="/article/container-runtime/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" title="容器运行原理：镜像、进程、隔离与资源" >C4.1 容器、镜像与隔离</a><a href="/article/kubernetes-basics/" title="Kubernetes 控制面：对象、调谐与生命周期" >C4.2 Kubernetes 对象与控制面</a><a href="/article/k8s-workloads/" title="Kubernetes 工作负载：从声明到可用与滚动更新" >C4.3 工作负载与滚动更新</a><a href="/article/scheduling-resources/" title="Kubernetes 调度：资源、亲和与拓扑约束" >C4.4 调度、亲和与拓扑</a><a href="/article/k8s-networking/" title="Kubernetes 网络：从 DNS、Service 到容器回包" >C4.5 Pod、Service 与容器网络</a><a href="/article/k8s-storage/" title="Kubernetes 存储：PVC、拓扑、挂载与数据恢复" >C4.6 PVC、持久卷与恢复</a><a href="/article/config-secrets/" title="配置与密钥：传播、重读与版本生效" >C4.7 配置、密钥与生效过程</a><a href="/article/k8s-autoscaling/" title="Kubernetes 弹性：HPA、节点容量与排队预算" >C4.8 HPA 与节点容量</a><a href="/article/control-plane-consensus/" title="控制面协调存储：从多数派提交到观察与恢复" >C4.9 etcd、多数派与恢复</a></div></details><details ><summary><a href="/article/serverless-execution/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" title="Serverless 与事件驱动：执行、重试、幂等与成本" >C5.1 Serverless 与事件驱动</a><a href="/article/message-delivery/" title="消息投递与确认：从入队、处理到业务完成" >C5.2 消息投递与确认</a></div></details><details ><summary><a href="/article/delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" title="平台交付：制品、配置、数据迁移与回退" >C6.1 制品、发布与回退</a><a href="/article/terraform-state/" title="Terraform状态与漂移：配置、锁、刷新和资源归属" >C6.2 Terraform 状态与漂移</a><a href="/article/gitops-reconciliation/" title="GitOps调谐：从Git期望到对象、进程与业务结果" >C6.3 GitOps 与持续调谐</a></div></details><details ><summary><a href="/article/iam-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" title="身份与最小权限：谁能让系统做什么" >C7.1 身份、授权与最小权限</a></div></details><details ><summary><a href="/article/elasticity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" title="容量与弹性：故障域、扩容时序与排队" >C8.1 容量、排队与弹性</a></div></details><details ><summary><a href="/article/slo/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" title="可靠性目标：SLI、SLO 与错误预算" >C9.1 SLI、SLO 与错误预算</a><a href="/article/observability/" title="可观测性：用指标定位范围，用日志和追踪解释路径" >C9.2 指标、日志与追踪</a><a href="/article/incident/" title="故障诊断：影响、时间线、假设与验证" >C9.3 故障诊断与时间线</a><a href="/article/resilience/" title="恢复工程：故障域、RPO、RTO 与演练" >C9.4 RPO、RTO 与恢复工程</a></div></details><details open><summary><a href="/article/cloud-service-lab/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/cloud-service-lab/" title="综合实战：一个服务的探针、版本发布与指标验证" class="current" aria-current="page">S2 云服务发布与观测实战</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 36</b></div>
-   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/practice/">综合设计与工程实战</a><span>／</span><span>S2</span></div><div class="article-meta"><span class="category">综合设计与工程实战</span><span>机制 + 实验</span><span>·</span><span>系统课程 · 2026.11.03</span></div><h1>S2 综合实战：一个服务的探针、版本发布与指标验证</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先有实际处理请求的服务进程</h3><p>服务对外接收请求，进程是它的一次运行实例。版本标识具体程序或配置。机器上的进程存在，不代表当前版本已经能够正确处理用户输入。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>健康探测与用户结果各自提供证据</h3><p>探针是按规定发起的健康检查；指标汇总请求和资源表现；发布让某个版本接入实际流量。探针通过、版本切换与业务正确需要分别观察。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再从本机运行走向集群验收</h3><p>本章先执行本地服务、请求与指标，再解释如何把相应信号交给Kubernetes。目标集群手册按其环境继续验证，不把本地结果直接当成集群已运行。</p></section></section><p class="description">先在本地观察HTTP与存储机制，再将同样的信号交给Kubernetes。用实际状态变化理解平台责任。</p><div class="tag-row"><span class="tag">本地</span><span class="tag">集群</span><span class="tag">交付</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约8分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>本地：执行五组机制实验</li><li>集群：观察探针与端点状态</li><li>交付：检验版本响应和回退范围</li></ul><p><b>前置知识</b>Python 3.9+；集群部分需要独立测试集群、kubectl与相关权限。</p><ul class="prerequisite-links"><li><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：综合服务实验要证明配置和版本真正改变用户结果。</li><li><a href="/article/slo/">C9.1 可靠性目标：SLI、SLO 与错误预算</a>：完成与可靠性要以同口径用户事件验收。</li></ul><p class="evidence-note">约 8 分钟 · Python 3.9+ · 标准库实验 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/practice/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/cloud-service-lab/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/cloud-service-lab/#section-1">1. 实验组成与验证范围</a></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/cloud-service-lab/#section-2">2. 本地服务、存储与指标实战</a></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/cloud-service-lab/#section-3">3. Kubernetes 探针与端点</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/cloud-service-lab/#section-4">4. 版本发布与回退</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/cloud-service-lab/#section-5">5. 源码路径与变化练习</a></div></details><section class="article-section" id="section-1"><h2><span class="section-index">01</span>实验组成与验证范围</h2><p>本地脚本仅使用Python标准库：真实loopback <span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span>请求、文件版本提交与摘要校验，以及<span class="first-concept-term" data-concept-term="SLO">SLO<span class="concept-term-meaning">（对服务质量指标及其统计窗口设定的目标）</span></span>、推理时序和任务契约的固定样例。运行失败会以非零状态退出，报告保留环境与每项断言结果。</p><p><span class="first-concept-term" data-concept-term="Kubernetes">Kubernetes<span class="concept-term-meaning">（统一管理多台机器上容器化应用的系统）</span></span>手册使用独立教学服务，不申请云资源。它要求已有测试<span class="first-concept-term" data-concept-term="集群">集群<span class="concept-term-meaning">（按协议协同工作的一组服务实例及其管理组件，可部署在一台或多台机器上）</span></span>，本轮没有执行，因此集群预期不是实测结论。Python的http.server适合这个教学实验，不作为生产服务实现。</p><div class="download-box"><div><strong>配套系统实验包</strong><span>Python 标准库 · Cloud / AI 指标 / <span class="first-concept-term" data-concept-term="Agent">Agent<span class="concept-term-meaning">（在任务范围内组织模型与工具反复推进工作的智能体系统）</span></span> 恢复 · 附实测记录</span></div><a href="labs/infra-systems.zip" download>下载实验包 ↓</a></div></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>本地服务、存储与指标实战</h2><div class="code-block"><div class="code-toolbar"><span>在解压后的实验目录执行 <small>BASH</small></span><button data-copy-code aria-label="复制 在解压后的实验目录执行">复制代码</button></div><pre tabindex="0"><code>python3 infra_lab.py --output runs/core-report.json
-python3 agent_lab.py --output runs/agent-report.json</code></pre></div><div class="table-wrap"><table><thead><tr><th>现象</th><th>预期证据</th><th>对应机制</th></tr></thead><tbody><tr><td>readiness变差但进程存活</td><td>/ready=503，/live=200，/work=200</td><td>健康信号与路由消费分离</td></tr><tr><td>新版本未写完整</td><td>CURRENT仍指向有效版本</td><td>提交点控制可见性</td></tr><tr><td>存储内容损坏</td><td>摘要校验拒绝</td><td>完整性验证</td></tr><tr><td>两组流量大小不同</td><td>全局成功率989/1000</td><td>按事件数聚合</td></tr><tr><td>单token输出</td><td><span class="first-concept-term" data-concept-term="TPOT">TPOT<span class="concept-term-meaning">（按规定公式计算的后续词元平均输出间隔）</span></span>为空</td><td>时间口径的边界处理</td></tr></tbody></table></div><p>HTTP耗时只是本地单次观察，不能用作云延迟或容量基准。指标样例是人工构造数据，不是线上测量。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>Kubernetes 探针与端点</h2><p>手册先创建专用<span class="first-concept-term" data-concept-term="namespace">namespace<span class="concept-term-meaning">（命名空间，划定一组名称或对象所属的独立范围）</span></span>，将probe_server.py作为<span class="first-concept-term" data-concept-term="ConfigMap">ConfigMap<span class="concept-term-meaning">（组织普通配置数据的Kubernetes对象）</span></span>挂载，部署一个副本并暴露<span class="first-concept-term" data-concept-term="Service">Service<span class="concept-term-meaning">（为一组后端提供相对稳定访问入口的Kubernetes资源对象）</span></span>。通过创建/tmp/not-ready使/ready返回503，再观察<span class="first-concept-term" data-concept-term="Pod">Pod<span class="concept-term-meaning">（Kubernetes中一起安排运行的一个或多个容器组成的单位）</span></span> Ready、EndpointSlice ready条件与restartCount。</p><p>预期readiness失败影响端点就绪状态，而不因它本身触发重启。直接port-forward到Pod会绕过Service后端选择，不能拿它仍能访问来证明readiness无效。</p><details class="full-code"><summary>展开deployment.yaml</summary><div class="code-block"><div class="code-toolbar"><span>deployment.yaml · 目标集群待验证 <small>YAML</small></span><button data-copy-code aria-label="复制 deployment.yaml · 目标集群待验证">复制代码</button></div><pre tabindex="0"><code>apiVersion: apps/v1
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/practice/?track=cloud">综合设计与工程实战</a><span>／</span><span>S2</span></div><div class="article-meta"><span class="category">综合设计与工程实战</span><span>机制 + 实验</span><span>·</span><span>系统课程 · 2026.11.08</span></div><h1>S2 综合实战：一个服务的探针、版本发布与指标验证</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><p class="description">沿正常请求认识 Deployment、Pod、Service 与探针，再实际验证摘新流量、容器重启和 v1 → v2 → v1。</p><div class="tag-row"><span class="tag">本地</span><span class="tag">集群</span><span class="tag">交付</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约8分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>对象：走通同一 Service 的正常请求</li><li>健康：区分是否接流量与是否重启</li><li>交付：从真实响应验收发布和回退</li></ul><p><b>前置知识</b>先了解容器与 HTTP；本地实验需 Python，原生实战需 Linux、本机 Docker、固定版本 kind/kubectl。</p><ul class="prerequisite-links"><li><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：综合服务实验要证明配置和版本真正改变用户结果。</li><li><a href="/article/slo/">C9.1 可靠性目标：SLI、SLO 与错误预算</a>：完成与可靠性要以同口径用户事件验收。</li></ul><p class="evidence-note">约 8 分钟 · Python 3.9+ · 标准库实验 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/practice/?track=cloud">← 返回本模块目录</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/cloud-service-lab/#section-1">1. 服务实例、探针与控制链</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-187qiqd" href="/article/cloud-service-lab/#subsection-1-187qiqd">从一条正常请求认识四个对象</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/cloud-service-lab/#section-2">2. 探针条件与容器重启</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-bcb81p" href="/article/cloud-service-lab/#subsection-2-bcb81p">先给健康信号各自的职责</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/cloud-service-lab/#section-3">3. Service 请求与后端条件</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-17g9b68" href="/article/cloud-service-lab/#subsection-3-17g9b68">应用能响应，不等于 Service 仍会选择它</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/cloud-service-lab/#section-4">4. 模板修订、发布与回退</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-129mvih" href="/article/cloud-service-lab/#subsection-4-129mvih">模板变化、Pod 变化与用户版本是三个时刻</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/cloud-service-lab/#section-5">5. 原生实验、源码与验收</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-5-19ohru2" href="/article/cloud-service-lab/#subsection-5-19ohru2">自己运行，并用业务结果验收</a></div></div><a data-toc="concept-path" href="/article/cloud-service-lab/#concept-path">概念回顾</a></details><p class="intro">先在本地观察HTTP与存储机制，再将同样的信号交给Kubernetes。用实际状态变化理解平台责任。</p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>服务实例、探针与控制链</h2><div class="mechanism-core" id="kubernetes-service-normal"><h3 id="subsection-1-187qiqd">从一条正常请求认识四个对象</h3><p>先部署一个运行两个副本的服务。客户端请求固定入口，转发组件在就绪副本中选择后端，应用返回它真正运行的版本。先把这条正常请求走通，再分别改变健康信号和版本，继续用同一入口核对用户实际收到什么。</p><p>Deployment 声明“运行两个副本”，控制器据此创建 Pod；Pod 是容器运行的单位，每个对象都有独立 UID。Service 用标签选择这一组 Pod，提供稳定的集群内 IP（ClusterIP）。EndpointSlice 保存后端地址和就绪条件，转发组件观察这些对象、更新转发规则。节点代理 kubelet 按探针检查应用，再更新就绪或推进容器重启。Service 不是额外业务进程，EndpointSlice 也不承载 HTTP 请求。</p><figure class="training-figure"><a class="figure-link" href="diagrams/kubernetes-service-flow.svg" target="_blank" rel="noopener" aria-label="放大：Deployment维护两个v1 Pod；客户端新请求经Service ClusterIP到就绪后端，返回请求ID、版本与Pod UID"><img src="diagrams/kubernetes-service-flow.svg" width="1120" height="658" alt="Deployment维护两个v1 Pod；客户端新请求经Service ClusterIP到就绪后端，返回请求ID、版本与Pod UID" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一个 /work 输入贯穿图、代码和六个阶段；虚线是控制关系，实线是普通客户端的 HTTP 数据路径。<a href="diagrams/kubernetes-service-flow.svg" download>下载 SVG ↗</a></figcaption></figure><p>正常路径中，两个业务 Pod 都是 Ready，端点 ready=true；持续客户端确实从同一个 ClusterIP 收到两个 UID 的 v1 响应。接下来分别观察“是否接新流量”“是否重启”和“运行哪个版本”，三个问题使用不同证据。</p></div><details class="full-code service-legacy"><summary>历史来源：原有本地机制实验（保留原文）</summary><p>以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。</p><p>本地脚本仅使用Python标准库：真实loopback HTTP请求、文件版本提交与摘要校验，以及SLO、推理时序和任务契约的固定样例。运行失败会以非零状态退出，报告保留环境与每项断言结果。</p><p>Kubernetes手册使用独立教学服务，不申请云资源。它要求已有测试集群，本轮没有执行，因此集群预期不是实测结论。Python的http.server适合这个教学实验，不作为生产服务实现。</p><div class="download-box"><div><strong>配套系统实验包</strong><span>Python 标准库 · Cloud / AI 指标 / Agent 恢复 · 附实测记录</span></div><a href="labs/infra-systems.zip" download>下载实验包 ↓</a></div></details></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>探针条件与容器重启</h2><div class="mechanism-core" id="kubernetes-service-objects"><h3 id="subsection-2-bcb81p">先给健康信号各自的职责</h3><p>应用提供 /ready、/live 和 /work；节点上的 kubelet 按配置周期请求前两个接口。readiness 回答“现在是否适合接新工作”：失败会影响 Pod Ready 和端点就绪。liveness 回答“是否需要靠重启恢复”：连续失败达到阈值后，kubelet 重启相应容器。Running 只说明生命周期阶段，不能替代这两种判断。</p><p>下面的字段属于同一份双副本夹具。Service 的 80 端口转到应用 8080；selector 与 Pod 标签 app=guide-service 对应。探针直接检查 Pod 应用；客户端仍请求 Service，不把探针请求当作业务流量。</p><div class="code-block"><div class="code-toolbar"><span>对象核心字段 · 完整可运行对象见本节源码</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-yaml"># 同一个 guide-service 的核心字段；完整对象由实验程序创建
+# Deployment.spec.template.spec.containers[0]
+env: [{name: APP_VERSION, value: v1}]
+readinessProbe:
+  httpGet: {path: /ready, port: 8080}
+  periodSeconds: 1
+  failureThreshold: 1
+livenessProbe:
+  httpGet: {path: /live, port: 8080}
+  periodSeconds: 2
+  failureThreshold: 3
+# Service.spec：selector 匹配 Pod 标签
+selector: {app: guide-service}
+ports: [{port: 80, targetPort: 8080}]</code></pre></div><p>当 /ready 失败而 /live、/work 仍成功时，应用进程仍有处理能力，但不再适合接新工作。探针只提供信号；是否减少新流量，要继续看平台如何更新端点和转发规则。下面以同一个 /work 请求验证这条因果链。</p></div><details class="full-code service-legacy"><summary>历史来源：原有本地机制实验（保留原文）</summary><p>以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。</p><div class="code-block"><div class="code-toolbar"><span>在解压后的实验目录执行 <small>BASH</small></span><button data-copy-code aria-label="复制 在解压后的实验目录执行">复制代码</button></div><pre tabindex="0"><code>python3 infra_lab.py --output runs/core-report.json
+python3 agent_lab.py --output runs/agent-report.json</code></pre></div><div class="table-wrap"><table><thead><tr><th>现象</th><th>预期证据</th><th>对应机制</th></tr></thead><tbody><tr><td>readiness变差但进程存活</td><td>/ready=503，/live=200，/work=200</td><td>健康信号与路由消费分离</td></tr><tr><td>新版本未写完整</td><td>CURRENT仍指向有效版本</td><td>提交点控制可见性</td></tr><tr><td>存储内容损坏</td><td>摘要校验拒绝</td><td>完整性验证</td></tr><tr><td>两组流量大小不同</td><td>全局成功率989/1000</td><td>按事件数聚合</td></tr><tr><td>单token输出</td><td>TPOT为空</td><td>时间口径的边界处理</td></tr></tbody></table></div><p>HTTP耗时只是本地单次观察，不能用作云延迟或容量基准。指标样例是人工构造数据，不是线上测量。</p></details></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>Service 请求与后端条件</h2><div class="mechanism-core" id="kubernetes-service-probes"><h3 id="subsection-3-17g9b68">应用能响应，不等于 Service 仍会选择它</h3><p>独立客户端 Pod 持续向 http://10.96.63.29/work 发请求。每次使用新连接和唯一请求 ID，响应回显这个 ID、实际 APP_VERSION 与 Pod UID。管理端另读 API；因此“应用返回了什么”和“平台把谁标为就绪”可以相互核对。</p><div class="code-block"><div class="code-toolbar"><span>同一正常请求的核心 API · 在客户端 Pod 内执行</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-python"># 客户端 Pod 内；service_url 固定为本次 ClusterIP 的 /work
+request_id = uuid.uuid4().hex
+request = urllib.request.Request(service_url,
+    headers={&#39;X-Request-ID&#39;: request_id, &#39;Connection&#39;: &#39;close&#39;})
+opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+with opener.open(request, timeout=2) as response:
+    body = json.load(response)
+    assert response.status == 200
+    assert body[&#39;request_id&#39;] == request_id
+    # 再核对 body[&#39;version&#39;] 与 body[&#39;pod_uid&#39;]</code></pre></div><p>只在一个业务容器创建 /tmp/not-ready 后，该 Pod 的 /ready=503，/live=200、/work=200。API 观察到 Pod Ready=false、对应 EndpointSlice ready=false；其地址仍可留在对象中。对象收敛后，连续 20 条 Service 响应只来自另一 Pod，两个 Pod 的重启次数均未增加。删除标记后，同一 UID 恢复就绪，响应再次覆盖两个后端。</p><p>再单独让 /live 失败，/ready 此时仍为 200。达到本例阈值后，同一 Pod UID 的容器重启一次，restartCount 从 0 变为 1，响应中的进程实例 ID 也改变。readiness 失败期间没有重启，liveness 失败后发生重启，两条因果路径由不同注入与实测区分。</p><figure class="training-figure"><a class="figure-link" href="diagrams/kubernetes-service-changes.svg" target="_blank" rel="noopener" aria-label="放大：六个阶段分别核对Ready后端与实际Service版本；readiness失败不重启，liveness单独失败重启，v2发布后undo回v1"><img src="diagrams/kubernetes-service-changes.svg" width="1120" height="752" alt="六个阶段分别核对Ready后端与实际Service版本；readiness失败不重启，liveness单独失败重启，v2发布后undo回v1" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>每阶段保存 API 快照与连续 20 条实际新连接样本；完整持续序列包含传播期间请求。<a href="diagrams/kubernetes-service-changes.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>客户端阶段标签</th><th>完整序列请求数</th><th>非 200 / 传输失败</th><th>选取的稳定窗口</th></tr></thead><tbody><tr><td>正常 v1</td><td>27</td><td>0</td><td>20 条均 200</td></tr><tr><td>readiness 失败</td><td>31</td><td>0</td><td>20 条均 200</td></tr><tr><td>readiness 恢复</td><td>84</td><td>1</td><td>20 条均 200</td></tr><tr><td>liveness 重启后</td><td>67</td><td>0</td><td>20 条均 200</td></tr><tr><td>发布 v2</td><td>65</td><td>0</td><td>20 条均 200</td></tr><tr><td>undo 回 v1</td><td>22</td><td>0</td><td>20 条均 200</td></tr></tbody></table></div><p>阶段标签在 API 收敛后切换，因此完整阶段也会包含随后故障注入与传播中的请求；右列是其中满足条件的一段，不能代表全程零错误、负载均衡公平或服务 SLO。</p><details><summary>按需：采样窗口、传播与终止边界</summary><p>程序等待对象状态，再切换客户端阶段标记，直到最后连续 20 条成功、实际 UID 集合与 ready 后端集合一致；采样前后各读一次 API。达到条件前的请求仍在原始记录中。稳定窗口不能证明传播期间零失败，也不能保证未来所有请求；端点状态与数据平面之间仍有异步传播。</p><p>本例关闭连接复用，只检查受控新请求。长连接、在途请求、preStop 排空和云负载均衡的健康检查需要独立实验；不从几秒固定等待推断它们已完成。Pod 内 loopback 诊断只用来核对三个应用接口，不计入 Service 业务样本。</p></details></div><details class="full-code service-legacy"><summary>历史来源：原有目标集群手册与源码（保留原文）</summary><p>以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。</p><p>手册先创建专用namespace，将probe_server.py作为ConfigMap挂载，部署一个副本并暴露Service。通过创建/tmp/not-ready使/ready返回503，再观察Pod Ready、EndpointSlice ready条件与restartCount。</p><p>预期readiness失败影响端点就绪状态，而不因它本身触发重启。直接port-forward到Pod会绕过Service后端选择，不能拿它仍能访问来证明readiness无效。</p><details class="full-code"><summary>展开deployment.yaml</summary><div class="code-block"><div class="code-toolbar"><span>deployment.yaml · 目标集群待验证 <small>YAML</small></span><button data-copy-code aria-label="复制 deployment.yaml · 目标集群待验证">复制代码</button></div><pre tabindex="0"><code>apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: infra-demo
@@ -88,7 +110,13 @@ spec:
     app: infra-demo
   ports:
     - port: 80
-      targetPort: 8080</code></pre></div></details></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>版本发布与回退</h2><p>使用APP_VERSION把v1改成v2，这会修改Pod模板。等待rollout后，在测试环境访问应用响应，检查实际版本字段；rollout <span class="first-concept-term" data-concept-term="undo">undo<span class="concept-term-meaning">（撤销信息，用于回滚及引擎支持的历史版本读取）</span></span>后重新检查v1。仅命令成功不足以说明读者看到的服务版本已恢复。</p><p>只清理本实验新建的namespace。若同名namespace已存在，先确认归属并调整实验名称，不能把其他人的资源混入或删掉。完整命令与边界见下方手册。</p><details class="full-code"><summary>展开完整运行手册</summary><div class="code-block"><div class="code-toolbar"><span>README.md <small>MARKDOWN</small></span><button data-copy-code aria-label="复制 README.md">复制代码</button></div><pre tabindex="0"><code># InfraGuide · Cloud / AI / Agent 系统实验包
+      targetPort: 8080</code></pre></div></details></details></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>模板修订、发布与回退</h2><div class="mechanism-core" id="kubernetes-service-rollout"><h3 id="subsection-4-129mvih">模板变化、Pod 变化与用户版本是三个时刻</h3><p>APP_VERSION 位于 Deployment 的 Pod 模板中。将它从 v1 改为 v2，会触发控制器创建新版本副本；本例 maxUnavailable=0、maxSurge=1，允许先增加一份，再逐步替换。等待 rollout 完成后，还要检查新 Pod 的 Ready、端点 UID 和实际 HTTP 版本。Service 的 UID 与 ClusterIP 在整个发布中保持相同。</p><div class="code-block"><div class="code-toolbar"><span>发布与回退核心 API · 使用本次私有管理上下文</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-python"># 程序的 self.k 始终带本次私有 kubeconfig/context/namespace
+self.k(&#39;set&#39;, &#39;env&#39;, &#39;deployment/guide-service&#39;, &#39;APP_VERSION=v2&#39;)
+self.k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/guide-service&#39;, &#39;--timeout=180s&#39;)
+# 等待 Pod/EndpointSlice 后，再经同一 ClusterIP 读取实际 v2
+self.k(&#39;rollout&#39;, &#39;undo&#39;, &#39;deployment/guide-service&#39;, &#39;--to-revision=1&#39;)
+self.k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/guide-service&#39;, &#39;--timeout=180s&#39;)
+# 再等对象并实际读取 v1；不把命令成功当作请求结果</code></pre></div><div class="table-wrap"><table><thead><tr><th>阶段</th><th>同一 Service 的实际响应</th><th>继续核对</th></tr></thead><tbody><tr><td>初始版本</td><td>20 / 20 返回 v1</td><td>响应覆盖两个初始 Pod UID</td></tr><tr><td>发布新模板</td><td>20 / 20 返回 v2</td><td>响应 UID 属于新模板 Pod</td></tr><tr><td>undo 初始模板</td><td>20 / 20 再次返回 v1</td><td>Ready、端点与回退后 Pod UID 一致</td></tr></tbody></table></div><p>rollout undo 回退的是历史 Pod 模板。这里版本来自模板环境变量，因此回退后真实读到 v1；如果模板引用的同名 ConfigMap 内容或数据库结构另有变化，它们不会随这条命令自动恢复。先识别版本来自哪里，再决定需要恢复哪些外部状态。</p></div><details class="full-code service-legacy"><summary>历史来源：原有目标集群手册与源码（保留原文）</summary><p>以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。</p><p>使用APP_VERSION把v1改成v2，这会修改Pod模板。等待rollout后，在测试环境访问应用响应，检查实际版本字段；rollout undo后重新检查v1。仅命令成功不足以说明读者看到的服务版本已恢复。</p><p>只清理本实验新建的namespace。若同名namespace已存在，先确认归属并调整实验名称，不能把其他人的资源混入或删掉。完整命令与边界见下方手册。</p><details class="full-code"><summary>展开完整运行手册</summary><div class="code-block"><div class="code-toolbar"><span>README.md <small>MARKDOWN</small></span><button data-copy-code aria-label="复制 README.md">复制代码</button></div><pre tabindex="0"><code># InfraGuide · Cloud / AI / Agent 系统实验包
 
 Python 3.9+，仅使用标准库。本地实验不申请云资源、不访问外部业务、不调用真实模型或 Kairo。
 本包用小系统验证语义，不是生产实现或性能基准。
@@ -170,7 +198,482 @@ kubectl -n infra-guide-lab rollout status deployment/infra-demo --timeout=120s
 
 validation.json记录本次实际执行环境、结果、脚本摘要和未验证项。
 改变Python脚本后需重跑相应验证再生成发布包。
-不用把临时目录内容、真实token或私有项目数据写入报告。</code></pre></div></details></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>源码路径与变化练习</h2><p>先找HTTP状态由哪段代码控制，再找CURRENT更新位置、摘要验证和指标分母。尝试解释每个断言为何存在，以及移除它会漏掉哪类错误。</p><p>修改脚本后应重跑受影响实验，并记录新环境与摘要。本站验证记录只对发布的原始版本成立，不能自动覆盖读者修改后的程序。</p><details class="full-code"><summary>展开完整 infra_lab.py</summary><div class="code-block"><div class="code-toolbar"><span>infra_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 infra_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;InfraGuide local mechanisms lab. Python 3.9+, standard library only.
+不用把临时目录内容、真实token或私有项目数据写入报告。</code></pre></div></details></details></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>原生实验、源码与验收</h2><div class="mechanism-core" id="kubernetes-service-run"><h3 id="subsection-5-19ohru2">自己运行，并用业务结果验收</h3><p>先预测：只让 /ready 失败，Pod UID、restartCount、端点条件与客户端 UID 分别会怎样变化？再预测只让 /live 失败和回退模板的结果。下载完整程序，在 Linux、本机 Docker、kind v0.33.0、kubectl v1.35.8 与 Python 3.9+ 环境运行：</p><div class="code-block"><div class="code-toolbar"><span>运行独立原生实验；第二条仅离线复核记录</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-sh">python3 -B service_lab.py --output service-record.json
+python3 -B service_lab.py --check-record service-record.json</code></pre></div><p>验收依次核对请求 ID、版本、Pod UID，以及独立读取的 Ready、EndpointSlice 和重启次数；任意一项失配都不能用命令成功替代。实验创建随机命名的专有 kind 集群，显式使用自己的 kubeconfig/context，退出时只删除该集群。</p><p>本次记录来自单 Linux 宿主的 kind，验证原生探针、真实 ClusterIP 数据路径与模板恢复。它不代表生产云网络、多故障域可用性、容量或长连接排空。原有本地实验继续解释应用、文件与指标机制，不替代本次 Kubernetes 对象与业务结果。</p><details class="full-code"><summary>运行方法、实际来源、完整源码与离线验收记录</summary><p>原生记录来源：<a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42484558716" target="_blank" rel="noopener">隔离 Linux CI 运行</a>；Kubernetes v1.35.8。记录绑定冻结源码摘要，并确认自有集群清理完成。下载源码后修改任何行为，都应重新运行并产生新记录。</p><div class="code-block"><div class="code-toolbar"><span>service_lab.py · 完整源码</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-python">&quot;&quot;&quot;Observe probes, real ClusterIP requests, a template rollout and rollback in an owned kind cluster.&quot;&quot;&quot;
+import argparse
+import hashlib
+import ipaddress
+import json
+import os
+from pathlib import Path
+import platform
+import shutil
+import subprocess
+import tempfile
+import time
+import uuid
+
+NODE_IMAGE = &#39;kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0&#39;
+PYTHON_IMAGE = &#39;python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844&#39;
+NAMESPACE = &#39;service-lab&#39;
+SAMPLE_SIZE = 20
+APP_CODE = r&#39;&#39;&#39;
+import json,os,uuid
+from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import urlsplit
+INSTANCE = uuid.uuid4().hex
+class Handler(BaseHTTPRequestHandler):
+ def do_GET(self):
+  path=urlsplit(self.path).path
+  status=200
+  if path==&#39;/ready&#39; and Path(&#39;/tmp/not-ready&#39;).exists():status=503
+  elif path==&#39;/live&#39; and Path(&#39;/tmp/not-live&#39;).exists():status=503
+  elif path not in (&#39;/ready&#39;,&#39;/live&#39;,&#39;/work&#39;):status=404
+  body=json.dumps({&#39;version&#39;:os.environ[&#39;APP_VERSION&#39;],&#39;pod_uid&#39;:os.environ[&#39;POD_UID&#39;],
+   &#39;pod_name&#39;:os.environ[&#39;POD_NAME&#39;],&#39;instance_id&#39;:INSTANCE,&#39;path&#39;:path,
+   &#39;request_id&#39;:self.headers.get(&#39;X-Request-ID&#39;,&#39;&#39;),&#39;status&#39;:status}).encode()
+  self.send_response(status);self.send_header(&#39;Content-Type&#39;,&#39;application/json&#39;)
+  self.send_header(&#39;Content-Length&#39;,str(len(body)));self.send_header(&#39;Connection&#39;,&#39;close&#39;)
+  self.end_headers();self.wfile.write(body);self.close_connection=True
+ def log_message(self,*args):pass
+ThreadingHTTPServer((&#39;0.0.0.0&#39;,8080),Handler).serve_forever()
+&#39;&#39;&#39;
+CLIENT_CODE = r&#39;&#39;&#39;
+import json,os,time,uuid,urllib.request,urllib.error
+from pathlib import Path
+url=os.environ[&#39;SERVICE_URL&#39;]
+seq=0
+opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+while True:
+ seq+=1
+ phase=Path(&#39;/tmp/phase&#39;).read_text().strip() if Path(&#39;/tmp/phase&#39;).exists() else &#39;startup&#39;
+ request_id=uuid.uuid4().hex
+ row={&#39;seq&#39;:seq,&#39;phase&#39;:phase,&#39;request_id&#39;:request_id,&#39;url&#39;:url,
+      &#39;started_at&#39;:time.time(),&#39;new_connection&#39;:True}
+ request=urllib.request.Request(url,headers={&#39;X-Request-ID&#39;:request_id,&#39;Connection&#39;:&#39;close&#39;})
+ try:
+  with opener.open(request,timeout=2) as response:
+   row.update(status=response.status,body=json.load(response))
+ except urllib.error.HTTPError as error:
+  row.update(status=error.code,body=json.load(error));error.close()
+ except Exception as error:
+  row.update(status=None,error_type=type(error).__name__)
+ row[&#39;completed_at&#39;]=time.time()
+ print(json.dumps(row,separators=(&#39;,&#39;,&#39;:&#39;)),flush=True)
+ time.sleep(.2)
+&#39;&#39;&#39;
+
+
+def source_sha():
+    return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+
+
+def ready_uids(snapshot):
+    return {row[&#39;pod_uid&#39;] for row in snapshot[&#39;endpoints&#39;] if row[&#39;conditions&#39;].get(&#39;ready&#39;) is True}
+
+
+def verify(o):
+    &quot;&quot;&quot;Use actual response identities and independent API observations, not command exit codes.&quot;&quot;&quot;
+    assert o[&#39;client&#39;][&#39;path&#39;] == &#39;in-cluster client Pod -&gt; Service ClusterIP:80 -&gt; Pod:8080&#39;
+    cluster_ip = o[&#39;client&#39;][&#39;cluster_ip&#39;]
+    assert ipaddress.ip_address(cluster_ip).is_private
+    assert o[&#39;client&#39;][&#39;service_url&#39;] == &#39;http://&#39; + cluster_ip + &#39;/work&#39;
+    assert o[&#39;client&#39;][&#39;environment_proxy_used&#39;] is False
+    assert o[&#39;client&#39;][&#39;port_forward_used&#39;] is False
+    requests = o[&#39;requests&#39;]
+    by_seq = {r[&#39;seq&#39;]: r for r in requests}
+    assert len(by_seq) == len(requests) and len(requests) &gt;= SAMPLE_SIZE * 6
+    assert len({r[&#39;request_id&#39;] for r in requests}) == len(requests)
+    for row in requests:
+        assert row[&#39;url&#39;] == o[&#39;client&#39;][&#39;service_url&#39;] and row[&#39;new_connection&#39;] is True
+        assert row[&#39;completed_at&#39;] &gt;= row[&#39;started_at&#39;]
+        if row.get(&#39;status&#39;) == 200:
+            assert row[&#39;body&#39;][&#39;request_id&#39;] == row[&#39;request_id&#39;]
+            assert row[&#39;body&#39;][&#39;path&#39;] == &#39;/work&#39; and row[&#39;body&#39;][&#39;status&#39;] == 200
+    cases = o[&#39;cases&#39;]
+    names = (&#39;normal_v1&#39;, &#39;readiness_failed&#39;, &#39;readiness_recovered&#39;, &#39;liveness_restarted&#39;, &#39;rolled_v2&#39;, &#39;undo_v1&#39;)
+    assert set(cases) == set(names)
+    all_sample_ids = set()
+    for name in names:
+        case = cases[name]
+        before, after = case[&#39;api_before&#39;], case[&#39;api_after&#39;]
+        assert before[&#39;service&#39;] == after[&#39;service&#39;] == o[&#39;service&#39;]
+        assert before[&#39;service&#39;][&#39;cluster_ip&#39;] == cluster_ip
+        assert len(before[&#39;pods&#39;]) == len(after[&#39;pods&#39;]) == 2
+        assert {r[&#39;uid&#39;] for r in before[&#39;pods&#39;]} == {r[&#39;uid&#39;] for r in after[&#39;pods&#39;]}
+        assert ready_uids(before) == ready_uids(after)
+        samples = [by_seq[i] for i in case[&#39;sample_sequences&#39;]]
+        assert len(samples) == SAMPLE_SIZE
+        assert len(set(case[&#39;sample_sequences&#39;])) == SAMPLE_SIZE
+        assert not (all_sample_ids &amp; set(case[&#39;sample_sequences&#39;]))
+        all_sample_ids.update(case[&#39;sample_sequences&#39;])
+        assert case[&#39;sample_sequences&#39;] == list(range(samples[0][&#39;seq&#39;], samples[0][&#39;seq&#39;] + SAMPLE_SIZE))
+        assert all(r[&#39;phase&#39;] == name and r[&#39;status&#39;] == 200 for r in samples)
+        expected = ready_uids(after)
+        assert {r[&#39;body&#39;][&#39;pod_uid&#39;] for r in samples} == expected
+        version = &#39;v2&#39; if name == &#39;rolled_v2&#39; else &#39;v1&#39;
+        assert all(r[&#39;body&#39;][&#39;version&#39;] == version for r in samples)
+        for snapshot in (before, after):
+            assert snapshot[&#39;deployment&#39;][&#39;template_version&#39;] == version
+            assert snapshot[&#39;deployment&#39;][&#39;observed_generation&#39;] &gt;= snapshot[&#39;deployment&#39;][&#39;generation&#39;]
+            for pod in snapshot[&#39;pods&#39;]:
+                assert pod[&#39;version&#39;] == version and pod[&#39;deleting&#39;] is False
+                endpoint = [e for e in snapshot[&#39;endpoints&#39;] if e[&#39;pod_uid&#39;] == pod[&#39;uid&#39;]]
+                assert len(endpoint) == 1 and endpoint[0][&#39;addresses&#39;] == [pod[&#39;ip&#39;]]
+                assert endpoint[0][&#39;conditions&#39;].get(&#39;ready&#39;) == pod[&#39;ready&#39;]
+                assert endpoint[0][&#39;conditions&#39;].get(&#39;terminating&#39;, False) is False
+        assert all(p[&#39;ready&#39;] for p in after[&#39;pods&#39;]) if name != &#39;readiness_failed&#39; else True
+    normal = {p[&#39;uid&#39;]: p for p in cases[&#39;normal_v1&#39;][&#39;api_after&#39;][&#39;pods&#39;]}
+    victim = o[&#39;readiness&#39;][&#39;pod_uid&#39;]
+    assert victim in normal and len(ready_uids(cases[&#39;normal_v1&#39;][&#39;api_after&#39;])) == 2
+    for name in (&#39;readiness_failed&#39;, &#39;readiness_recovered&#39;):
+        for snapshot in (cases[name][&#39;api_before&#39;], cases[name][&#39;api_after&#39;]):
+            assert {p[&#39;uid&#39;] for p in snapshot[&#39;pods&#39;]} == set(normal)
+            assert all(p[&#39;restart_count&#39;] == normal[p[&#39;uid&#39;]][&#39;restart_count&#39;] for p in snapshot[&#39;pods&#39;])
+    failed = cases[&#39;readiness_failed&#39;][&#39;api_after&#39;]
+    assert ready_uids(failed) == set(normal) - {victim}
+    assert next(p for p in failed[&#39;pods&#39;] if p[&#39;uid&#39;] == victim)[&#39;ready&#39;] is False
+    assert o[&#39;readiness&#39;][&#39;direct_probe&#39;][&#39;ready&#39;][&#39;status&#39;] == 503
+    assert o[&#39;readiness&#39;][&#39;direct_probe&#39;][&#39;live&#39;][&#39;status&#39;] == 200
+    assert o[&#39;readiness&#39;][&#39;direct_probe&#39;][&#39;work&#39;][&#39;status&#39;] == 200
+    assert all(r[&#39;body&#39;][&#39;pod_uid&#39;] == victim for r in o[&#39;readiness&#39;][&#39;direct_probe&#39;].values())
+    assert ready_uids(cases[&#39;readiness_recovered&#39;][&#39;api_after&#39;]) == set(normal)
+    restarted = {p[&#39;uid&#39;]: p for p in cases[&#39;liveness_restarted&#39;][&#39;api_after&#39;][&#39;pods&#39;]}
+    assert set(restarted) == set(normal)
+    assert restarted[victim][&#39;restart_count&#39;] == normal[victim][&#39;restart_count&#39;] + 1
+    assert all(p[&#39;restart_count&#39;] == normal[uid][&#39;restart_count&#39;] for uid,p in restarted.items() if uid != victim)
+    assert o[&#39;liveness&#39;][&#39;direct_probe&#39;][&#39;live&#39;][&#39;status&#39;] == 503
+    assert o[&#39;liveness&#39;][&#39;direct_probe&#39;][&#39;ready&#39;][&#39;status&#39;] == 200
+    old_instance = o[&#39;readiness&#39;][&#39;direct_probe&#39;][&#39;work&#39;][&#39;body&#39;][&#39;instance_id&#39;]
+    after_instances = {by_seq[i][&#39;body&#39;][&#39;instance_id&#39;] for i in cases[&#39;liveness_restarted&#39;][&#39;sample_sequences&#39;]
+                       if by_seq[i][&#39;body&#39;][&#39;pod_uid&#39;] == victim}
+    assert len(after_instances) == 1 and old_instance not in after_instances
+    v2 = cases[&#39;rolled_v2&#39;][&#39;api_after&#39;]
+    undo = cases[&#39;undo_v1&#39;][&#39;api_after&#39;]
+    assert ready_uids(v2).isdisjoint(set(normal)) and ready_uids(undo).isdisjoint(ready_uids(v2))
+    assert o[&#39;rollout&#39;][&#39;undo_to_revision&#39;] == 1
+    assert cases[&#39;normal_v1&#39;][&#39;api_after&#39;][&#39;deployment&#39;][&#39;revision&#39;] == &#39;1&#39;
+    assert int(v2[&#39;deployment&#39;][&#39;revision&#39;]) &gt;= 2
+    assert int(undo[&#39;deployment&#39;][&#39;revision&#39;]) &gt; int(v2[&#39;deployment&#39;][&#39;revision&#39;])
+
+
+class Lab:
+    def __init__(self):
+        self.name = &#39;infra-service-&#39; + uuid.uuid4().hex[:12]
+        self.kubeconfig = None
+        self.created = False
+        self.stage = &#39;preflight&#39;
+        self.observation = {&#39;cases&#39;: {}, &#39;requests&#39;: []}
+
+    def command(self, *argv, data=None, check=True, timeout=180):
+        result = subprocess.run(argv, input=data, text=True, capture_output=True, timeout=timeout)
+        if check and result.returncode:
+            raise RuntimeError(&#39;Command failed at &#39; + self.stage + &#39; (exit &#39; + str(result.returncode) + &#39;)&#39;)
+        return result
+
+    def k(self, *args, data=None):
+        return self.command(&#39;kubectl&#39;, &#39;--kubeconfig&#39;, str(self.kubeconfig), &#39;--context&#39;, &#39;kind-&#39; + self.name,
+                            &#39;--request-timeout=15s&#39;, &#39;-n&#39;, NAMESPACE, *args, data=data)
+
+    def apply(self, obj):
+        self.k(&#39;apply&#39;, &#39;-f&#39;, &#39;-&#39;, data=json.dumps(obj))
+
+    def get(self, resource, *args):
+        return json.loads(self.k(&#39;get&#39;, resource, *args, &#39;-o&#39;, &#39;json&#39;).stdout)
+
+    def wait(self, predicate, description, seconds=150):
+        self.stage = description
+        deadline = time.monotonic() + seconds
+        while time.monotonic() &lt; deadline:
+            value = predicate()
+            if value:
+                return value
+            time.sleep(.4)
+        raise AssertionError(&#39;Deadline exceeded: &#39; + description)
+
+    def snapshot(self):
+        service = self.get(&#39;service&#39;, &#39;guide-service&#39;)
+        deployment = self.get(&#39;deployment&#39;, &#39;guide-service&#39;)
+        pods = self.get(&#39;pods&#39;, &#39;-l&#39;, &#39;app=guide-service&#39;).get(&#39;items&#39;) or []
+        slices = self.get(&#39;endpointslices.discovery.k8s.io&#39;, &#39;-l&#39;, &#39;kubernetes.io/service-name=guide-service&#39;).get(&#39;items&#39;) or []
+        result = {&#39;service&#39;: {&#39;uid&#39;: service[&#39;metadata&#39;][&#39;uid&#39;], &#39;cluster_ip&#39;: service[&#39;spec&#39;][&#39;clusterIP&#39;],
+                             &#39;port&#39;: service[&#39;spec&#39;][&#39;ports&#39;][0][&#39;port&#39;], &#39;target_port&#39;: service[&#39;spec&#39;][&#39;ports&#39;][0][&#39;targetPort&#39;],
+                             &#39;selector&#39;: service[&#39;spec&#39;][&#39;selector&#39;],
+                             &#39;publish_not_ready_addresses&#39;: service[&#39;spec&#39;].get(&#39;publishNotReadyAddresses&#39;, False)},
+            &#39;deployment&#39;: {&#39;uid&#39;: deployment[&#39;metadata&#39;][&#39;uid&#39;], &#39;generation&#39;: deployment[&#39;metadata&#39;][&#39;generation&#39;],
+                &#39;observed_generation&#39;: (deployment.get(&#39;status&#39;) or {}).get(&#39;observedGeneration&#39;, 0),
+                &#39;revision&#39;: (deployment[&#39;metadata&#39;].get(&#39;annotations&#39;) or {}).get(&#39;deployment.kubernetes.io/revision&#39;, &#39;&#39;),
+                &#39;template_version&#39;: next(e[&#39;value&#39;] for e in deployment[&#39;spec&#39;][&#39;template&#39;][&#39;spec&#39;][&#39;containers&#39;][0][&#39;env&#39;] if e[&#39;name&#39;] == &#39;APP_VERSION&#39;)},
+            &#39;pods&#39;: [], &#39;endpoints&#39;: []}
+        for pod in pods:
+            status = pod.get(&#39;status&#39;) or {}
+            statuses = status.get(&#39;containerStatuses&#39;) or []
+            result[&#39;pods&#39;].append({&#39;name&#39;: pod[&#39;metadata&#39;][&#39;name&#39;], &#39;uid&#39;: pod[&#39;metadata&#39;][&#39;uid&#39;],
+                &#39;ip&#39;: status.get(&#39;podIP&#39;), &#39;deleting&#39;: bool(pod[&#39;metadata&#39;].get(&#39;deletionTimestamp&#39;)),
+                &#39;ready&#39;: any(c[&#39;type&#39;] == &#39;Ready&#39; and c[&#39;status&#39;] == &#39;True&#39; for c in (status.get(&#39;conditions&#39;) or [])),
+                &#39;restart_count&#39;: sum(c[&#39;restartCount&#39;] for c in statuses),
+                &#39;version&#39;: next(e[&#39;value&#39;] for e in pod[&#39;spec&#39;][&#39;containers&#39;][0][&#39;env&#39;] if e[&#39;name&#39;] == &#39;APP_VERSION&#39;)})
+        for slice_ in slices:
+            for endpoint in (slice_.get(&#39;endpoints&#39;) or []):
+                result[&#39;endpoints&#39;].append({&#39;slice_uid&#39;: slice_[&#39;metadata&#39;][&#39;uid&#39;], &#39;addresses&#39;: endpoint[&#39;addresses&#39;],
+                    &#39;pod_uid&#39;: (endpoint.get(&#39;targetRef&#39;) or {}).get(&#39;uid&#39;), &#39;conditions&#39;: endpoint.get(&#39;conditions&#39;) or {}})
+        result[&#39;pods&#39;].sort(key=lambda p: p[&#39;uid&#39;])
+        result[&#39;endpoints&#39;].sort(key=lambda e: e[&#39;pod_uid&#39;] or &#39;&#39;)
+        return result
+
+    def converged(self, version, unavailable=None, restarts=None):
+        s = self.snapshot()
+        if len(s[&#39;pods&#39;]) != 2 or any(p[&#39;deleting&#39;] or p[&#39;version&#39;] != version or not p[&#39;ip&#39;] for p in s[&#39;pods&#39;]):
+            return False
+        expected = {p[&#39;uid&#39;] for p in s[&#39;pods&#39;] if p[&#39;uid&#39;] != unavailable}
+        if ready_uids(s) != expected or len(s[&#39;endpoints&#39;]) != 2:
+            return False
+        if any(p[&#39;ready&#39;] != (p[&#39;uid&#39;] != unavailable) for p in s[&#39;pods&#39;]):
+            return False
+        if restarts and any(p[&#39;restart_count&#39;] != restarts[p[&#39;uid&#39;]] for p in s[&#39;pods&#39;]):
+            return False
+        if s[&#39;deployment&#39;][&#39;observed_generation&#39;] &lt; s[&#39;deployment&#39;][&#39;generation&#39;]:
+            return False
+        return s
+
+    def read_requests(self):
+        lines = self.k(&#39;logs&#39;, &#39;service-client&#39;).stdout.splitlines()
+        return [json.loads(line) for line in lines if line.strip()]
+
+    def sample(self, case, snapshot, version):
+        self.stage = &#39;sample real Service requests: &#39; + case
+        self.k(&#39;exec&#39;, &#39;service-client&#39;, &#39;--&#39;, &#39;python&#39;, &#39;-c&#39;,
+               &quot;from pathlib import Path;Path(&#39;/tmp/phase.next&#39;).write_text(&quot; + repr(case) + &quot;);Path(&#39;/tmp/phase.next&#39;).replace(&#39;/tmp/phase&#39;)&quot;)
+        expected = ready_uids(snapshot)
+        def success():
+            rows = [r for r in self.read_requests() if r[&#39;phase&#39;] == case]
+            tail = rows[-SAMPLE_SIZE:]
+            if len(tail) != SAMPLE_SIZE:
+                return False
+            if not all(r.get(&#39;status&#39;) == 200 and r[&#39;body&#39;][&#39;version&#39;] == version and
+                       r[&#39;body&#39;][&#39;request_id&#39;] == r[&#39;request_id&#39;] and r[&#39;body&#39;][&#39;pod_uid&#39;] in expected for r in tail):
+                return False
+            if {r[&#39;body&#39;][&#39;pod_uid&#39;] for r in tail} != expected:
+                return False
+            return tail
+        rows = self.wait(success, self.stage, 90)
+        after = self.snapshot()
+        self.observation[&#39;cases&#39;][case] = {&#39;api_before&#39;: snapshot, &#39;api_after&#39;: after,
+            &#39;sample_sequences&#39;: [r[&#39;seq&#39;] for r in rows],
+            &#39;phase_requests_observed&#39;: len([r for r in self.read_requests() if r[&#39;phase&#39;] == case])}
+
+    def direct_probe(self, pod):
+        # This is a named diagnostic from inside one Pod. It is never counted as Service traffic.
+        script = &quot;&quot;&quot;import json,urllib.request,urllib.error
+result={}
+for path in (&#39;ready&#39;,&#39;live&#39;,&#39;work&#39;):
+ try:
+  with urllib.request.urlopen(&#39;http://127.0.0.1:8080/&#39;+path,timeout=3) as response:
+   result[path]={&#39;status&#39;:response.status,&#39;body&#39;:json.load(response)}
+ except urllib.error.HTTPError as error:
+  result[path]={&#39;status&#39;:error.code,&#39;body&#39;:json.load(error)};error.close()
+print(json.dumps(result))&quot;&quot;&quot;
+        return json.loads(self.k(&#39;exec&#39;, pod, &#39;--&#39;, &#39;python&#39;, &#39;-c&#39;, script).stdout)
+
+    def marker(self, pod, name, exists):
+        self.k(&#39;exec&#39;, pod, &#39;--&#39;, &#39;python&#39;, &#39;-c&#39;,
+               &quot;from pathlib import Path;p=Path(&#39;/tmp/&quot; + name + &quot;&#39;);&quot; + (&quot;p.touch()&quot; if exists else &quot;p.unlink()&quot;))
+
+    def run(self, folder):
+        assert platform.system() == &#39;Linux&#39;, &#39;Native lab requires Linux&#39;
+        for executable in (&#39;docker&#39;, &#39;kind&#39;, &#39;kubectl&#39;):
+            assert shutil.which(executable), &#39;Missing &#39; + executable
+        assert not os.environ.get(&#39;DOCKER_HOST&#39;), &#39;DOCKER_HOST overrides are not accepted&#39;
+        assert not os.environ.get(&#39;KIND_EXPERIMENTAL_PROVIDER&#39;), &#39;Use the Docker kind provider&#39;
+        endpoint = json.loads(self.command(&#39;docker&#39;, &#39;context&#39;, &#39;inspect&#39;).stdout)[0][&#39;Endpoints&#39;][&#39;docker&#39;][&#39;Host&#39;]
+        assert endpoint.startswith(&#39;unix://&#39;), &#39;Only local Docker Unix sockets are accepted&#39;
+        assert self.name not in self.command(&#39;kind&#39;, &#39;get&#39;, &#39;clusters&#39;).stdout.splitlines()
+        kind_version = self.command(&#39;kind&#39;, &#39;version&#39;).stdout.strip()
+        assert kind_version.split()[1] == &#39;v0.33.0&#39;, &#39;Use pinned kind v0.33.0&#39;
+        client_version = json.loads(self.command(&#39;kubectl&#39;, &#39;version&#39;, &#39;--client&#39;, &#39;-o&#39;, &#39;json&#39;).stdout)[&#39;clientVersion&#39;][&#39;gitVersion&#39;]
+        assert client_version == &#39;v1.35.8&#39;, &#39;Use pinned kubectl v1.35.8&#39;
+        self.kubeconfig = folder / &#39;kubeconfig&#39;
+        self.stage = &#39;create owned cluster&#39;
+        self.created = True
+        self.command(&#39;kind&#39;, &#39;create&#39;, &#39;cluster&#39;, &#39;--name&#39;, self.name, &#39;--kubeconfig&#39;, str(self.kubeconfig),
+                     &#39;--image&#39;, NODE_IMAGE, &#39;--wait&#39;, &#39;150s&#39;, timeout=400)
+        self.kubeconfig.chmod(0o600)
+        self.stage = &#39;prepare isolated objects&#39;
+        self.apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;Namespace&#39;, &#39;metadata&#39;: {&#39;name&#39;: NAMESPACE}})
+        self.apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;ConfigMap&#39;, &#39;metadata&#39;: {&#39;name&#39;: &#39;service-code&#39;, &#39;namespace&#39;: NAMESPACE},
+                    &#39;data&#39;: {&#39;app.py&#39;: APP_CODE, &#39;client.py&#39;: CLIENT_CODE}})
+        pod_spec = {&#39;automountServiceAccountToken&#39;: False, &#39;terminationGracePeriodSeconds&#39;: 5,
+            &#39;containers&#39;: [{&#39;name&#39;: &#39;app&#39;, &#39;image&#39;: PYTHON_IMAGE, &#39;command&#39;: [&#39;python&#39;, &#39;-u&#39;, &#39;/code/app.py&#39;],
+                &#39;ports&#39;: [{&#39;name&#39;: &#39;http&#39;, &#39;containerPort&#39;: 8080}],
+                &#39;env&#39;: [{&#39;name&#39;: &#39;APP_VERSION&#39;, &#39;value&#39;: &#39;v1&#39;},
+                    {&#39;name&#39;: &#39;POD_UID&#39;, &#39;valueFrom&#39;: {&#39;fieldRef&#39;: {&#39;fieldPath&#39;: &#39;metadata.uid&#39;}}},
+                    {&#39;name&#39;: &#39;POD_NAME&#39;, &#39;valueFrom&#39;: {&#39;fieldRef&#39;: {&#39;fieldPath&#39;: &#39;metadata.name&#39;}}}],
+                &#39;readinessProbe&#39;: {&#39;httpGet&#39;: {&#39;path&#39;: &#39;/ready&#39;, &#39;port&#39;: &#39;http&#39;}, &#39;periodSeconds&#39;: 1, &#39;failureThreshold&#39;: 1},
+                &#39;livenessProbe&#39;: {&#39;httpGet&#39;: {&#39;path&#39;: &#39;/live&#39;, &#39;port&#39;: &#39;http&#39;}, &#39;periodSeconds&#39;: 2, &#39;failureThreshold&#39;: 3},
+                &#39;resources&#39;: {&#39;requests&#39;: {&#39;cpu&#39;: &#39;25m&#39;, &#39;memory&#39;: &#39;24Mi&#39;}, &#39;limits&#39;: {&#39;memory&#39;: &#39;96Mi&#39;}},
+                &#39;volumeMounts&#39;: [{&#39;name&#39;: &#39;code&#39;, &#39;mountPath&#39;: &#39;/code&#39;, &#39;readOnly&#39;: True}]}],
+            &#39;volumes&#39;: [{&#39;name&#39;: &#39;code&#39;, &#39;configMap&#39;: {&#39;name&#39;: &#39;service-code&#39;}}]}
+        self.apply({&#39;apiVersion&#39;: &#39;apps/v1&#39;, &#39;kind&#39;: &#39;Deployment&#39;, &#39;metadata&#39;: {&#39;name&#39;: &#39;guide-service&#39;, &#39;namespace&#39;: NAMESPACE},
+            &#39;spec&#39;: {&#39;replicas&#39;: 2, &#39;revisionHistoryLimit&#39;: 3, &#39;selector&#39;: {&#39;matchLabels&#39;: {&#39;app&#39;: &#39;guide-service&#39;}},
+                &#39;strategy&#39;: {&#39;type&#39;: &#39;RollingUpdate&#39;, &#39;rollingUpdate&#39;: {&#39;maxUnavailable&#39;: 0, &#39;maxSurge&#39;: 1}},
+                &#39;template&#39;: {&#39;metadata&#39;: {&#39;labels&#39;: {&#39;app&#39;: &#39;guide-service&#39;}}, &#39;spec&#39;: pod_spec}}})
+        self.apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;Service&#39;, &#39;metadata&#39;: {&#39;name&#39;: &#39;guide-service&#39;, &#39;namespace&#39;: NAMESPACE},
+            &#39;spec&#39;: {&#39;selector&#39;: {&#39;app&#39;: &#39;guide-service&#39;}, &#39;ports&#39;: [{&#39;port&#39;: 80, &#39;targetPort&#39;: 8080}]}})
+        initial = self.wait(lambda: self.converged(&#39;v1&#39;), &#39;initial ready Pods and EndpointSlices&#39;, 240)
+        self.observation[&#39;service&#39;] = initial[&#39;service&#39;]
+        cluster_ip = initial[&#39;service&#39;][&#39;cluster_ip&#39;]
+        self.observation[&#39;client&#39;] = {&#39;path&#39;: &#39;in-cluster client Pod -&gt; Service ClusterIP:80 -&gt; Pod:8080&#39;,
+            &#39;cluster_ip&#39;: cluster_ip, &#39;service_url&#39;: &#39;http://&#39; + cluster_ip + &#39;/work&#39;,
+            &#39;environment_proxy_used&#39;: False, &#39;port_forward_used&#39;: False}
+        self.apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;Pod&#39;, &#39;metadata&#39;: {&#39;name&#39;: &#39;service-client&#39;, &#39;namespace&#39;: NAMESPACE},
+            &#39;spec&#39;: {&#39;automountServiceAccountToken&#39;: False, &#39;restartPolicy&#39;: &#39;Never&#39;,
+                &#39;containers&#39;: [{&#39;name&#39;: &#39;client&#39;, &#39;image&#39;: PYTHON_IMAGE, &#39;command&#39;: [&#39;python&#39;, &#39;-u&#39;, &#39;/code/client.py&#39;],
+                    &#39;env&#39;: [{&#39;name&#39;: &#39;SERVICE_URL&#39;, &#39;value&#39;: self.observation[&#39;client&#39;][&#39;service_url&#39;]}],
+                    &#39;resources&#39;: {&#39;requests&#39;: {&#39;cpu&#39;: &#39;10m&#39;, &#39;memory&#39;: &#39;24Mi&#39;}, &#39;limits&#39;: {&#39;memory&#39;: &#39;96Mi&#39;}},
+                    &#39;volumeMounts&#39;: [{&#39;name&#39;: &#39;code&#39;, &#39;mountPath&#39;: &#39;/code&#39;, &#39;readOnly&#39;: True}]}],
+                &#39;volumes&#39;: [{&#39;name&#39;: &#39;code&#39;, &#39;configMap&#39;: {&#39;name&#39;: &#39;service-code&#39;}}]}})
+        self.k(&#39;wait&#39;, &#39;pod/service-client&#39;, &#39;--for=condition=Ready&#39;, &#39;--timeout=180s&#39;)
+        self.sample(&#39;normal_v1&#39;, initial, &#39;v1&#39;)
+        victim = initial[&#39;pods&#39;][0]
+        counts = {p[&#39;uid&#39;]: p[&#39;restart_count&#39;] for p in initial[&#39;pods&#39;]}
+        self.stage = &#39;inject readiness failure in one Pod&#39;
+        self.marker(victim[&#39;name&#39;], &#39;not-ready&#39;, True)
+        self.observation[&#39;readiness&#39;] = {&#39;pod_uid&#39;: victim[&#39;uid&#39;], &#39;direct_probe&#39;: self.direct_probe(victim[&#39;name&#39;])}
+        failed = self.wait(lambda: self.converged(&#39;v1&#39;, victim[&#39;uid&#39;], counts), &#39;wait Ready false and endpoint ready false&#39;)
+        self.sample(&#39;readiness_failed&#39;, failed, &#39;v1&#39;)
+        self.stage = &#39;recover same Pod readiness&#39;
+        self.marker(victim[&#39;name&#39;], &#39;not-ready&#39;, False)
+        recovered = self.wait(lambda: self.converged(&#39;v1&#39;, restarts=counts), &#39;wait same Pods recover readiness&#39;)
+        self.sample(&#39;readiness_recovered&#39;, recovered, &#39;v1&#39;)
+        self.stage = &#39;inject liveness failure separately&#39;
+        self.marker(victim[&#39;name&#39;], &#39;not-live&#39;, True)
+        self.observation[&#39;liveness&#39;] = {&#39;pod_uid&#39;: victim[&#39;uid&#39;], &#39;direct_probe&#39;: self.direct_probe(victim[&#39;name&#39;])}
+        restarted_counts = dict(counts)
+        restarted_counts[victim[&#39;uid&#39;]] += 1
+        restarted = self.wait(lambda: self.converged(&#39;v1&#39;, restarts=restarted_counts), &#39;wait liveness restart and readiness recovery&#39;)
+        self.sample(&#39;liveness_restarted&#39;, restarted, &#39;v1&#39;)
+        self.stage = &#39;change Deployment template to v2&#39;
+        self.k(&#39;set&#39;, &#39;env&#39;, &#39;deployment/guide-service&#39;, &#39;APP_VERSION=v2&#39;)
+        self.k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/guide-service&#39;, &#39;--timeout=180s&#39;)
+        v2 = self.wait(lambda: self.converged(&#39;v2&#39;), &#39;wait v2 Pods and endpoints&#39;)
+        self.sample(&#39;rolled_v2&#39;, v2, &#39;v2&#39;)
+        self.stage = &#39;undo Deployment template to revision 1&#39;
+        self.k(&#39;rollout&#39;, &#39;undo&#39;, &#39;deployment/guide-service&#39;, &#39;--to-revision=1&#39;)
+        self.k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/guide-service&#39;, &#39;--timeout=180s&#39;)
+        undone = self.wait(lambda: self.converged(&#39;v1&#39;), &#39;wait rollback v1 Pods and endpoints&#39;)
+        self.sample(&#39;undo_v1&#39;, undone, &#39;v1&#39;)
+        self.observation[&#39;rollout&#39;] = {&#39;undo_to_revision&#39;: 1, &#39;changed_field&#39;: &#39;spec.template.spec.containers[name=app].env[APP_VERSION]&#39;}
+        self.observation[&#39;requests&#39;] = self.read_requests()
+        self.stage = &#39;verify independent API and business response oracle&#39;
+        verify(self.observation)
+        return {&#39;kind&#39;: kind_version, &#39;kubectl&#39;: client_version,
+                &#39;kubernetes&#39;: json.loads(self.k(&#39;version&#39;, &#39;-o&#39;, &#39;json&#39;).stdout)[&#39;serverVersion&#39;][&#39;gitVersion&#39;]}
+
+    def cleanup(self):
+        if not self.created:
+            return {&#39;complete&#39;: True, &#39;owned_cluster_absent&#39;: True, &#39;delete_attempted&#39;: False}
+        self.stage = &#39;delete owned cluster&#39;
+        deleted = self.command(&#39;kind&#39;, &#39;delete&#39;, &#39;cluster&#39;, &#39;--name&#39;, self.name, check=False)
+        remaining = self.command(&#39;kind&#39;, &#39;get&#39;, &#39;clusters&#39;, check=False)
+        absent = remaining.returncode == 0 and self.name not in remaining.stdout.splitlines()
+        return {&#39;complete&#39;: deleted.returncode == 0 and absent, &#39;owned_cluster_absent&#39;: absent,
+                &#39;delete_attempted&#39;: True, &#39;delete_exit_code&#39;: deleted.returncode}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(&#39;--output&#39;, type=Path, default=Path(&#39;service-record.json&#39;))
+    parser.add_argument(&#39;--check-record&#39;, type=Path)
+    args = parser.parse_args()
+    if args.check_record:
+        record = json.loads(args.check_record.read_text())
+        assert record[&#39;source_sha256&#39;][&#39;service_lab.py&#39;] == source_sha()
+        verify(record[&#39;observation&#39;])
+        assert record[&#39;status&#39;] == &#39;passed&#39; and record[&#39;cleanup&#39;][&#39;complete&#39;] and record[&#39;cleanup&#39;][&#39;owned_cluster_absent&#39;]
+        print(&#39;PASS: independent API state and actual ClusterIP HTTP bodies agree&#39;)
+        return
+    lab = Lab()
+    report = {&#39;schema&#39;: 1, &#39;status&#39;: &#39;failed&#39;, &#39;system&#39;: platform.system(), &#39;node_image&#39;: NODE_IMAGE,
+        &#39;python_image&#39;: PYTHON_IMAGE, &#39;source_sha256&#39;: {&#39;service_lab.py&#39;: source_sha()},
+        &#39;scope&#39;: &#39;Native Kubernetes on one kind Linux host with controlled fresh HTTP connections; not cloud load balancers, multi-host networks, fault-domain availability or long-lived connection draining.&#39;}
+    with tempfile.TemporaryDirectory(prefix=&#39;infra-service-&#39;) as tmp:
+        try:
+            report[&#39;versions&#39;] = lab.run(Path(tmp))
+            report[&#39;status&#39;] = &#39;passed&#39;
+        except Exception as error:
+            # Only allowlist frames in this source file; never serialize error text or locals.
+            frames = []
+            trace = error.__traceback__
+            while trace:
+                if Path(trace.tb_frame.f_code.co_filename).resolve() == Path(__file__).resolve():
+                    frames.append({&#39;function&#39;: trace.tb_frame.f_code.co_name, &#39;line&#39;: trace.tb_lineno})
+                trace = trace.tb_next
+            report[&#39;failure&#39;] = {&#39;stage&#39;: lab.stage, &#39;type&#39;: type(error).__name__, &#39;source_frames&#39;: frames}
+        finally:
+            report[&#39;observation&#39;] = lab.observation
+            report[&#39;cleanup&#39;] = lab.cleanup()
+            if not report[&#39;cleanup&#39;][&#39;complete&#39;]:
+                report[&#39;status&#39;] = &#39;failed&#39;
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + &#39;\n&#39;)
+    print(json.dumps({&#39;status&#39;: report[&#39;status&#39;], &#39;failure&#39;: report.get(&#39;failure&#39;), &#39;cleanup&#39;: report[&#39;cleanup&#39;]}))
+    if report[&#39;status&#39;] != &#39;passed&#39;:
+        raise SystemExit(1)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()
+</code></pre></div><details class="full-code"><summary>完整 README：观察顺序、安全隔离、官方语义与范围</summary><div class="code-block"><div class="code-toolbar"><span>README.md</span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-markdown"># 原生 Kubernetes：探针、Service 与版本恢复
+
+先沿一条正常请求认识对象，再改变其中一个条件。Deployment 声明两个业务副本；每个 Pod 有独立 UID；Service 提供稳定 ClusterIP，按标签匹配业务 Pod；EndpointSlice 保存该 Service 后端地址及就绪条件。独立客户端 Pod 持续向 **同一个 ClusterIP:80/work** 发出新 HTTP 请求，应用在响应中回显请求 ID、实际版本、Pod UID 与进程实例 ID。
+
+## 运行
+
+需要 Python 3.9+、Linux、本机 Docker Unix socket、kind **v0.33.0**、kubectl **v1.35.8**。官方工具下载与 SHA256 校验步骤位于仓库 `.github/workflows/kubernetes-service.yml`。
+
+```sh
+python3 -B service_lab.py --output service-record.json
+python3 -B service_lab.py --check-record service-record.json
+```
+
+节点固定为 `kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0`；应用与客户端使用官方 Python 镜像 `python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844`。后者是多架构镜像清单摘要，CI 在 Linux amd64 上选择相应清单。
+
+程序只创建随机命名的 `infra-service-*` kind 集群，不接受外部集群参数。每条 kubectl 命令显式使用自己的临时 kubeconfig 与 context；kubeconfig 权限为 0600。拒绝非空 DOCKER_HOST、非 Unix socket 的 Docker context 及其他 kind provider；finally 只删除本次命名集群并确认其消失。三个 Pod 均关闭 ServiceAccount token 自动挂载，执行记录不保存 token、私钥或 kubeconfig 正文。
+
+## 先预测六个阶段
+
+1. **正常 v1**：两个 Pod 均 Ready，两个 EndpointSlice 后端 ready=true；同一 ClusterIP 的响应样本包含两者 UID，版本均为 v1。
+2. **readiness 失败**：只在其中一个业务容器创建 `/tmp/not-ready`。该应用 `/ready=503`，`/live=200`、`/work=200`；API 中此 Pod Ready=false、对应端点 ready=false；持续客户端稳定样本只收到另一 UID，两个 Pod 的 restartCount 均保持不变。端点可以仍保留在对象中，不能只数地址。
+3. **readiness 恢复**：删除该标记；同一 Pod UID 恢复 Ready，端点重新 ready=true；HTTP 再次包含两者 UID，重启次数仍不变。
+4. **单独的 liveness 失败**：创建 `/tmp/not-live`；此时直接探测 `/live=503`、`/ready=200`。kubelet 达到配置阈值后重启该容器。原 Pod UID 保持不变，restartCount 增加一次，响应的进程实例 ID 改变，再经 Service 读到 v1。实验的故障标记位于容器可写层，新容器启动后消失。
+5. **发布 v2**：`kubectl set env deployment/guide-service APP_VERSION=v2` 改变 Pod 模板。等待对象收敛后，EndpointSlice 对应新 Pod UID；实际 ClusterIP 响应全部为 v2。
+6. **回退 v1**：`kubectl rollout undo ... --to-revision=1` 恢复初始模板。再次等待 Ready 与端点收敛，再从同一 ClusterIP 实际读到 v1。回退范围是 Pod 模板，本例没有迁移数据库或改变外部 ConfigMap 内容。
+
+## 怎样验收
+
+客户端从程序开始持续运行，每条请求都带唯一 ID，使用显式禁用环境代理的 urllib opener，并关闭连接复用；不通过 port-forward，不直连 Pod IP 充当业务路径。管理端的 Pod 内 loopback 请求只用于区分应用的三个接口，记录在 `direct_probe` 中，与 Service 流量分开。
+
+每阶段先轮询 API 的对象条件，再切换客户端阶段标记；等待最后连续 **20 条** HTTP 成功且响应 UID 集合与 ready 后端集合相同。保存抽样窗口前、后的独立 API 快照，并继续核对请求 ID、实际版本、Pod UID、Ready、EndpointSlice 条件及重启次数。记录还保留完整持续请求序列，阶段稳定样本不代表传播期间零失败；不以固定 sleep 推断端点生效。采样是受控有限窗口，不能证明所有未来请求都成功。
+
+`--check-record` 离线验证记录中的对象事实和真实 HTTP 内容，并核对源码 SHA256；不会连接 Docker。站点的离线检查器另有独立的业务验收逻辑及篡改负例，只有显式设置 `INFRA_GUIDE_RUN_KUBERNETES_SERVICE=1` 才新建 kind。
+
+## 范围与原有手册
+
+这是单 Linux 宿主上的 kind 集群，覆盖原生探针、Service 数据路径、Pod 模板发布与回退。它不验证生产云负载均衡、多宿主网络、多故障域可用性、容量、长连接/在途请求排空或 preStop 终止窗口。Python `http.server` 仅用于教学。
+
+原有 `infra-systems/infra_lab.py` 的 loopback、存储与指标实验保持独立；原有 `probe_server.py` / `deployment.yaml` 目标集群手册也保留为历史来源。本实验使用新的双副本夹具和持续客户端，不把旧手册执行状态或本地结果改写成这次原生记录。
+
+## 官方语义
+
+- [Service、选择器与 ClusterIP](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [readiness 与 liveness 的动作区别](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
+- [EndpointSlice 的 ready、serving 与 terminating](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/)
+- [Deployment 更新与回滚的 Pod 模板范围](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [kind 安装与官方校验](https://kind.sigs.k8s.io/docs/user/quick-start/)
+
+只有真实运行成功、完成自有集群清理，且记录与冻结源码摘要一致后，才发布原生通过结论。
+</code></pre></div></details><p class="practice-links"><a href="labs/kubernetes-service.zip" download>下载完整实验包 ↓</a><a href="labs/kubernetes-service/service_lab.py" download>下载完整源码 ↓</a><a href="labs/kubernetes-service/README.md" download>下载运行手册 ↓</a><a href="labs/kubernetes-service/validation.json" target="_blank" rel="noopener">查看实际记录与来源 ↗</a></p></details></div><details class="full-code service-legacy"><summary>历史来源：原有目标集群手册与源码（保留原文）</summary><p>以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。</p><p>先找HTTP状态由哪段代码控制，再找CURRENT更新位置、摘要验证和指标分母。尝试解释每个断言为何存在，以及移除它会漏掉哪类错误。</p><p>修改脚本后应重跑受影响实验，并记录新环境与摘要。本站验证记录只对发布的原始版本成立，不能自动覆盖读者修改后的程序。</p><details class="full-code"><summary>展开完整 infra_lab.py</summary><div class="code-block"><div class="code-toolbar"><span>infra_lab.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 infra_lab.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;InfraGuide local mechanisms lab. Python 3.9+, standard library only.
 No cloud resources or production endpoints are used. See README.md.
 &quot;&quot;&quot;
 import argparse
@@ -378,7 +881,7 @@ if __name__ == &#39;__main__&#39;:
     destination = Path(args.output)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report,ensure_ascii=False,indent=2)+&#39;\n&#39;)
-    print(json.dumps(report,ensure_ascii=False,indent=2))</code></pre></div></details></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：综合服务实验要证明配置和版本真正改变用户结果。</p><a class="chapter-map-link" href="/module/native/?concept=health-rollout#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-cloud-service-lab">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>readiness失败后，通过Pod port-forward仍能访问/work，是否说明Service摘流失败？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。port-forward直接到Pod可能绕过Service端点选择。应观察Pod与EndpointSlice就绪条件，并从符合真实路由路径的客户端验证Service行为。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="cloud-service-lab:0" >本地：执行五组机制实验</label><label><input type="checkbox" data-check="cloud-service-lab:1" >集群：观察探针与端点状态</label><label><input type="checkbox" data-check="cloud-service-lab:2" >交付：检验版本响应和回退范围</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="cloud-service-lab">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.python.org/3/library/http.server.html" target="_blank" rel="noopener noreferrer">Python · http.server ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/pods/probes/" target="_blank" rel="noopener noreferrer">Kubernetes · 容器探针 ↗</a><a href="https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/" target="_blank" rel="noopener noreferrer">Kubernetes · EndpointSlices ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener noreferrer">Kubernetes · Deployment ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-k8s-basics"><div class="resource-meta"><span>中文 · 图文 / 实操</span><span>Kubernetes</span></div><h3><a href="https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics/" target="_blank" rel="noopener noreferrer">Kubernetes 官方中文基础教程 ↗</a></h3><p><b>先看什么</b>部署 → 暴露应用 → 扩缩 → 更新，再回查对象与端点。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>容器与基本命令行。</p><p><b>学完检查</b>分别验证期望副本、Ready、EndpointSlice 和经过 Service 的请求。</p><p>文字公开；动手需已有本地或测试集群。</p><div class="path-links"><a href="/article/kubernetes-basics/">Kubernetes 控制面：对象、调谐与生命周期 →</a><a href="/article/k8s-workloads/">Kubernetes 工作负载：从声明到可用与滚动更新 →</a><a href="/article/k8s-networking/">Kubernetes 网络：从 DNS、Service 到容器回包 →</a><a href="/article/cloud-service-lab/">综合实战：一个服务的探针、版本发布与指标验证 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#cloud">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/kubernetes-basics/"><span>C4.2</span>Kubernetes 控制面：对象、调谐与生命周期<b>↗</b></a><a href="/article/delivery/"><span>C6.1</span>平台交付：制品、配置、数据迁移与回退<b>↗</b></a><a href="/article/storage-recovery/"><span>C3.4</span>存储发布与恢复：版本、提交点与校验<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="cloud-service-lab">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Cloud Infra</p><a data-reading-direction="previous" href="/article/resilience/"><small>← 上一篇</small>C9.4 恢复工程：故障域、RPO、RTO 与演练</a><a href="/roadmap/?track=cloud#synthesis-cloud"><small>串起整条主线 →</small>完成跨章推演</a></nav></article><aside class="toc"><div class="toc-title">本文目录</div><a data-toc="concept-path" href="/article/cloud-service-lab/#concept-path">概念起点与关系</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/cloud-service-lab/#section-1">1. 实验组成与验证范围</a></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/cloud-service-lab/#section-2">2. 本地服务、存储与指标实战</a></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/cloud-service-lab/#section-3">3. Kubernetes 探针与端点</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/cloud-service-lab/#section-4">4. 版本发布与回退</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/cloud-service-lab/#section-5">5. 源码路径与变化练习</a></div><a data-toc="self-check" href="/article/cloud-service-lab/#self-check">自我检验</a><a data-toc="references" href="/article/cloud-service-lab/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+    print(json.dumps(report,ensure_ascii=False,indent=2))</code></pre></div></details></details></section><details class="concept-review"><summary>概念回顾：本章对象与关系</summary><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先有实际处理请求的服务进程</h3><p>服务对外接收请求，进程是它的一次运行实例。版本标识具体程序或配置。机器上的进程存在，不代表当前版本已经能够正确处理用户输入。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>健康探测与用户结果各自提供证据</h3><p>探针是按规定发起的健康检查；指标汇总请求和资源表现；发布让某个版本接入实际流量。探针通过、版本切换与业务正确需要分别观察。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>再从本机运行走向集群验收</h3><p>本章先执行本地服务、请求与指标，再解释如何把相应信号交给Kubernetes。目标集群手册按其环境继续验证，不把本地结果直接当成集群已运行。</p></section></section></details><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：综合服务实验要证明配置和版本真正改变用户结果。</p><a class="chapter-map-link" href="/module/native/?concept=health-rollout#concept-relations">在领域图谱中看本章相关概念 →</a><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-cloud-service-lab">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>readiness失败后，通过Pod port-forward仍能访问/work，是否说明Service摘流失败？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>不能。port-forward直接到Pod可能绕过Service端点选择。应观察Pod与EndpointSlice就绪条件，并从符合真实路由路径的客户端验证Service行为。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="cloud-service-lab:0" >本地：执行五组机制实验</label><label><input type="checkbox" data-check="cloud-service-lab:1" >集群：观察探针与端点状态</label><label><input type="checkbox" data-check="cloud-service-lab:2" >交付：检验版本响应和回退范围</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="cloud-service-lab">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/cloud-service-lab/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://docs.python.org/3/library/http.server.html" target="_blank" rel="noopener noreferrer">Python · http.server ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/pods/probes/" target="_blank" rel="noopener noreferrer">Kubernetes · 容器探针 ↗</a><a href="https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/" target="_blank" rel="noopener noreferrer">Kubernetes · EndpointSlices ↗</a><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener noreferrer">Kubernetes · Deployment ↗</a><a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener noreferrer">Kubernetes · Service 与 ClusterIP ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="resource-recommendations"><h2>延伸资料与视频</h2><article class="resource-row" id="resource-k8s-basics"><div class="resource-meta"><span>中文 · 图文 / 实操</span><span>Kubernetes</span></div><h3><a href="https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics/" target="_blank" rel="noopener noreferrer">Kubernetes 官方中文基础教程 ↗</a></h3><p><b>先看什么</b>部署 → 暴露应用 → 扩缩 → 更新，再回查对象与端点。</p><details><summary>先修、学完检查与访问条件</summary><p><b>先修</b>容器与基本命令行。</p><p><b>学完检查</b>分别验证期望副本、Ready、EndpointSlice 和经过 Service 的请求。</p><p>文字公开；动手需已有本地或测试集群。</p><div class="path-links"><a href="/article/kubernetes-basics/">Kubernetes 控制面：对象、调谐与生命周期 →</a><a href="/article/k8s-workloads/">Kubernetes 工作负载：从声明到可用与滚动更新 →</a><a href="/article/k8s-networking/">Kubernetes 网络：从 DNS、Service 到容器回包 →</a><a href="/article/cloud-service-lab/">综合实战：一个服务的探针、版本发布与指标验证 →</a></div></details><div class="resource-extra-links"></div><p class="resource-checked">入口核对 2026-11-04</p></article><a class="inline-link" href="/resources/#cloud">查看这一方向的完整推荐 →</a></section><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/kubernetes-basics/"><span>C4.2</span>Kubernetes 控制面：对象、调谐与生命周期<b>↗</b></a><a href="/article/delivery/"><span>C6.1</span>平台交付：制品、配置、数据迁移与回退<b>↗</b></a><a href="/article/storage-recovery/"><span>C3.4</span>存储发布与恢复：版本、提交点与校验<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="cloud-service-lab">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><p class="reading-sequence-label">按学习路线连续阅读 · Cloud Infra</p><a data-reading-direction="previous" href="/article/resilience/"><small>← 上一篇</small>C9.4 恢复工程：故障域、RPO、RTO 与演练</a><a href="/roadmap/?track=cloud#synthesis-cloud"><small>串起整条主线 →</small>完成跨章推演</a></nav></article><aside class="toc"><div class="toc-title">本文目录</div><div class="chapter-toc-section"><a data-toc="section-1" href="/article/cloud-service-lab/#section-1">1. 服务实例、探针与控制链</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-1-187qiqd" href="/article/cloud-service-lab/#subsection-1-187qiqd">从一条正常请求认识四个对象</a></div></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/cloud-service-lab/#section-2">2. 探针条件与容器重启</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-2-bcb81p" href="/article/cloud-service-lab/#subsection-2-bcb81p">先给健康信号各自的职责</a></div></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/cloud-service-lab/#section-3">3. Service 请求与后端条件</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-3-17g9b68" href="/article/cloud-service-lab/#subsection-3-17g9b68">应用能响应，不等于 Service 仍会选择它</a></div></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/cloud-service-lab/#section-4">4. 模板修订、发布与回退</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-4-129mvih" href="/article/cloud-service-lab/#subsection-4-129mvih">模板变化、Pod 变化与用户版本是三个时刻</a></div></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/cloud-service-lab/#section-5">5. 原生实验、源码与验收</a><div class="chapter-toc-children"><a class="chapter-toc-level-3" data-toc="subsection-5-19ohru2" href="/article/cloud-service-lab/#subsection-5-19ohru2">自己运行，并用业务结果验收</a></div></div><a data-toc="concept-path" href="/article/cloud-service-lab/#concept-path">概念回顾</a><a data-toc="self-check" href="/article/cloud-service-lab/#self-check">自我检验</a><a data-toc="references" href="/article/cloud-service-lab/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
 <dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 </body></html>

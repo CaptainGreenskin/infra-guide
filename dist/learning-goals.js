@@ -33,3 +33,32 @@ function learningGoalChapterNav(a){
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<p>已到本路线最后一章。回到路线页，用交付任务检查理解。</p>')+'</nav>';
 }
+
+// Follow a selected learning route through prose, search and field references.
+// An explicit destination goal wins; an unrelated chapter keeps its normal URL.
+function learningContextHref(href){
+ if(typeof href!=='string'||!href.startsWith('/')||href.startsWith('//'))return href;
+ const hashAt=href.indexOf('#'),fragment=hashAt<0?'':href.slice(hashAt),withoutHash=hashAt<0?href:href.slice(0,hashAt);
+ const queryAt=withoutHash.indexOf('?'),pathname=queryAt<0?withoutHash:withoutHash.slice(0,queryAt);
+ const query=new URLSearchParams(queryAt<0?'':withoutHash.slice(queryAt+1));
+ const articleId=pathname.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1],moduleId=pathname.match(/\/module\/([a-z0-9-]+)\/?$/)?.[1];
+ if(!articleId&&!moduleId)return href;
+ const profile=selectedLearningProfile(),explicitGoal=query.has('goal');let changed=false;
+ if(moduleId==='practice'){
+  const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
+  const currentId=(typeof location==='undefined'?'':location.pathname||'').match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
+  const current=articles.find(a=>a.id===currentId);
+  const explicitProfile=explicitGoal?learningProfiles[query.get('goal')]:null;
+  const track=query.get('track')||explicitProfile?.track||profile?.track||currentParams.get('track')||(current?chapterReadingContext(current).track:null);
+  if(track&&Object.hasOwn(trackDefinitions,track)&&!query.has('track')){query.set('track',track);changed=true;}
+  if(!explicitGoal&&profile&&profile.track===track){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
+ }else if(!explicitGoal&&profile){
+  const matches=articleId?learningProfileRoute(profile).includes(articleId):modules.some(m=>m.id===moduleId&&m.track===profile.track);
+  if(matches){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
+ }
+ return changed?pathname+'?'+query.toString()+fragment:href;
+}
+function practiceArticleForContext(){
+ const requested=new URLSearchParams(typeof location==='undefined'?'':location.search).get('track'),track=requested||selectedLearningProfile()?.track;
+ return articles.find(a=>a.module==='practice'&&chapterReadingContext(a).track===track)||articles.find(a=>a.module==='practice');
+}
