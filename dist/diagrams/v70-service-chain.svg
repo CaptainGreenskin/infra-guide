@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 830" role="img" aria-labelledby="title desc">
+<title id="title">一份37报告：提交、推理、效果发布与授权读取</title>
+<desc id="desc">HTTP入口先返回202；新worker调用真实CPU Linear取得37，再向独立接收方提交。接收方同一事务保存完整产物、操作回执和发布指针。入口当前授权控制读取，独立oracle从来源、模型契约和各数据库验收。</desc>
+<metadata>{"schema":"integrated-service-chain-v1","source_sha256":{"README.md":"1362959509aaab85f825e676f1c3ab0c31c0dff303c5018b862a0f4d9a501b13","integrated_service.py":"6e0fef5ae3ceb685702a779f607622441628d90f1d38c062a872a37ee9925d2c","model-contract.json":"cd82246825933d23dbec95adb24f739ea33ee563ff4666fc5645610c56b56550","requirements.txt":"8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e","source.json":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"task_id":"task-A","input":[10,27],"source":"daily-values/v1","model":"linear-sum-v1","normal":{"expected_total":37,"model_calls":1,"tool_attempts":1,"effect_count":1,"artifact_count":1,"publication_count":1},"recovery":{"worker_attempts":2,"model_calls":1,"tool_attempts":2,"effect_count":1},"domains":["tasks.sqlite","model.sqlite","receiver.sqlite"],"scope":"loopback HTTP, fixed plan, real CPU Linear; not LLM/GPU/Kairo"}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#45657e"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#23384b}.head{font-size:24px;font-weight:650}.sub{font-size:16px;fill:#526b80}.name{font-size:19px;font-weight:650}.body{font-size:16px}.small{font-size:14px;fill:#526b80}.link{fill:none;stroke:#45657e;stroke-width:2.2;marker-end:url(#arrow)}</style>
+<rect width="1120" height="830" fill="#fbfdff"/>
+<text x="40" y="39" class="head">一份37报告，四类进程与三份持久账</text>
+<text x="40" y="66" class="sub">固定计划：冻结输入 → CPU推理 → 门禁 → 保存并发布 → 授权读取</text>
+<rect x="40" y="100" width="300" height="150" rx="8" fill="#edf5ff" stroke="#8db0d6"/>
+<text x="58" y="131" class="name">① HTTP入口 / API进程</text>
+<text x="58" y="161" class="body">POST /tasks → 202 ACCEPTED</text>
+<text x="58" y="186" class="body">task-A；daily-values/v1</text>
+<text x="58" y="211" class="body">tasks.sqlite：输入、状态、资格</text>
+<rect x="410" y="100" width="290" height="150" rx="8" fill="#fff5e5" stroke="#d8b677"/>
+<text x="428" y="131" class="name">② 新worker进程</text>
+<text x="428" y="161" class="body">读取冻结输入和模型束</text>
+<text x="428" y="186" class="body">固定计划；持久化推理结果</text>
+<text x="428" y="211" class="body">门禁核对来源、模型和37</text>
+<rect x="770" y="100" width="310" height="150" rx="8" fill="#eaf7ef" stroke="#8ab99b"/>
+<text x="788" y="131" class="name">③ 独立CPU模型进程</text>
+<text x="788" y="161" class="body">真实 PyTorch Linear(2,1)</text>
+<text x="788" y="186" class="body">权重[1,1]；偏置0</text>
+<text x="788" y="211" class="body">[10,27] → 37；model.sqlite</text>
+<path class="link" d="M340 165H405"/>
+<path class="link" d="M700 165H765"/>
+<text x="416" y="279" class="small">/infer绑定模型束摘要；返回值和输入身份</text>
+<path class="link" d="M925 250V294H555V254"/>
+<path class="link" d="M555 250V344"/>
+<text x="576" y="326" class="small">operation = task-A:save</text>
+<rect x="410" y="350" width="670" height="165" rx="8" fill="#eaf7ef" stroke="#8ab99b"/>
+<text x="428" y="381" class="name">④ 独立HTTP效果接收方</text>
+<text x="428" y="411" class="body">同一 receiver.sqlite 事务：</text>
+<text x="428" y="436" class="body">完整产物 + 效果/回执 + report-A发布指针</text>
+<text x="428" y="461" class="body">提交后才返回；同操作同内容返回原回执</text>
+<text x="428" y="486" class="body">正常：效果1 / 产物1 / 发布指针1</text>
+<rect x="40" y="350" width="300" height="165" rx="8" fill="#edf5ff" stroke="#8db0d6"/>
+<text x="58" y="381" class="name">⑤ 入口按当前授权读取</text>
+<text x="58" y="411" class="body">Alice / A，资格有效 → 200</text>
+<text x="58" y="436" class="body">Bob / B，跨租户 → 403</text>
+<text x="58" y="461" class="body">A撤权后新读取 → 403</text>
+<text x="58" y="486" class="body">产物是否有效与当前可读分开</text>
+<path class="link" d="M410 435H345"/>
+<path class="link" d="M190 250V344"/>
+<text x="40" y="548" class="small">入口任务库和接收方不是同一事务；接收方提交时，worker本地确认仍可为空。</text>
+<rect x="40" y="590" width="1040" height="138" rx="8" fill="#fff5e5" stroke="#d8b677"/>
+<text x="58" y="621" class="name">⑥ 独立oracle直接读权威来源和真实记录</text>
+<text x="58" y="651" class="body">source.json重算37；model-contract.json与批准/实际模型文件核对版本和字节</text>
+<text x="58" y="676" class="body">只读 tasks.sqlite、model.sqlite、receiver.sqlite，检查真实报告、来源和效果份数</text>
+<text x="58" y="701" class="body">不采用worker自报成功；正确37也不能替代模型版本与一份效果的条件</text>
+<path class="link" stroke-dasharray="5 5" d="M745 515V582"/>
+<rect x="40" y="761" width="1040" height="43" rx="6" fill="#fdf0ef" stroke="#d39b91"/>
+<text x="57" y="788" class="body">恢复窗口：接收方已发布1份、本地未确认 → 新进程沿原操作恢复 → 工具尝试2，效果仍1</text>
+</svg>

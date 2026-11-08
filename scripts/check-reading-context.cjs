@@ -25,6 +25,11 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(vm.runInContext('practiceArticleForContext().id',c),capstone);
   c.location.pathname=base+'article/tokenization-embedding/';
  }
+ c.profileKey='agent-app';
+ const applicationRoute=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(learningProfiles[profileKey]))',c));
+ assert(applicationRoute.includes('agent-recovery')&&!applicationRoute.includes('agent-sandbox'),'the application route retains an independent recovery lesson');
+ const recoveryOpening=data.articles.find(a=>a.id==='agent-recovery').sections[0][1];
+ assert(!/^<p>上一章/.test(recoveryOpening),'recovery prose must not assume the sandbox chapter on a route that skips it');
  c.location.search='';
  for(const[track,id]of Object.entries({cloud:'cloud-service-lab',ai:'training-lab',agent:'production-readiness'})){
   c.location.pathname=base+'article/'+id+'/';

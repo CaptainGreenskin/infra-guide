@@ -1,0 +1,29 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "0314566d76a259f52437fa7217cae6da80e80d3b",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_RELEASE_RECOVERY_RETRIEVAL_2026-11-09.json": "6a6fb90dfee08af89e1ff4e7a36a411541baa72c3f02ee8551126a557e9122bd"
+  },
+  "body_revisions": [
+    {
+      "id": "terraform-state",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "8912fa8b4907b1949ebb4e5a52264dee79e75747c9bed41ed38822bbd992afa1",
+      "reviewed_content_sha256": "bf7c128f93df62eacff660cf9dbac0df21c59eb6785a5281a1f5fd4af7b191c4",
+      "scope": "Desired configuration, observed resource and durable state",
+      "observation": "Eight complete sections define configuration, provider read, in-memory/saved plan, apply and persisted state before locks, refresh modes and workspace ownership. Detailed exit code0/1/2 explicitly requires -detailed-exitcode; actual local provider records and full sources retain their boundary.",
+      "headings": [
+        "先分清配置、状态记录与实际资源",
+        "计划先读取，执行才兑现变更",
+        "状态锁保护的是哪一份共同记录",
+        "一次关闭刷新，怎样得到误导性的绿灯",
+        "只刷新状态，为什么文件仍然没有恢复",
+        "工作空间分开了状态，为什么仍会互相覆盖",
+        "把计划、状态和交付流程连起来",
+        "运行实验，分别读取三份事实"
+      ]
+    }
+  ],
+  "knowledge_revisions": []
+}

@@ -1,0 +1,1023 @@
+{
+  "schema": "integrated-service-validation-v1",
+  "verified_on": "2026-11-09",
+  "command": "../ddp-step-env/bin/python -B dist/labs/integrated-service/integrated_service.py",
+  "source_sha256": {
+    "README.md": "1362959509aaab85f825e676f1c3ab0c31c0dff303c5018b862a0f4d9a501b13",
+    "integrated_service.py": "6e0fef5ae3ceb685702a779f607622441628d90f1d38c062a872a37ee9925d2c",
+    "model-contract.json": "cd82246825933d23dbec95adb24f739ea33ee563ff4666fc5645610c56b56550",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+    "source.json": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+  },
+  "program": {
+    "schema": "integrated-service-v1",
+    "status": "passed",
+    "environment": {
+      "python": "3.12.13",
+      "torch": "2.5.1",
+      "sqlite": "3.53.3",
+      "platform": "Darwin",
+      "device": "cpu"
+    },
+    "cases": {
+      "normal": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25086,
+            "url": "http://127.0.0.1:64983"
+          },
+          "model": {
+            "pid": 25083,
+            "url": "http://127.0.0.1:64980"
+          },
+          "receiver": {
+            "pid": 25085,
+            "url": "http://127.0.0.1:64982"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": false,
+              "operation_id": "task-A:save",
+              "operation_identity_bypassed": false,
+              "pid": 25087,
+              "release_gate": {
+                "mode": "enforced",
+                "violations": []
+              },
+              "task_id": "task-A",
+              "total": 37.0
+            }
+          }
+        ],
+        "commit_gap": null,
+        "gate_refusal": null,
+        "oracle": {
+          "accepted": true,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": true,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": true,
+            "one_effect_and_artifact": true,
+            "one_published_target": true,
+            "actual_report_matches_source": true,
+            "actual_report_uses_approved_model": true,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            37.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 1,
+          "model_calls": 1,
+          "tool_attempts": 1,
+          "effect_count": 1,
+          "artifact_count": 1,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166802039213000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 3,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166802185701000\",\"task_id\":\"task-A\"}"
+            }
+          ]
+        },
+        "authorization": null,
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25088,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      },
+      "recover_same_operation": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25093,
+            "url": "http://127.0.0.1:65001"
+          },
+          "model": {
+            "pid": 25089,
+            "url": "http://127.0.0.1:64999"
+          },
+          "receiver": {
+            "pid": 25092,
+            "url": "http://127.0.0.1:65000"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 23,
+            "result": {
+              "event": "exit_after_receiver_commit_before_task_ack",
+              "operation_id": "task-A:save",
+              "pid": 25094,
+              "receipt": {
+                "artifact_id": "artifact-c29944c5437896d9",
+                "content_sha256": "d978c3115c49bb7d9ec738a1c5c7e1610112f9555f4cbca13802199f50af4000",
+                "operation_id": "task-A:save"
+              }
+            }
+          },
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": true,
+              "operation_id": "task-A:save",
+              "operation_identity_bypassed": false,
+              "pid": 25095,
+              "release_gate": {
+                "mode": "enforced",
+                "violations": []
+              },
+              "task_id": "task-A",
+              "total": 37.0
+            }
+          }
+        ],
+        "commit_gap": {
+          "task_status": "RUNNING",
+          "task_stage": "MODEL_READY",
+          "local_receipt": null,
+          "receiver_effects": 1,
+          "published_reports": 1
+        },
+        "gate_refusal": null,
+        "oracle": {
+          "accepted": true,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": true,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": true,
+            "one_effect_and_artifact": true,
+            "one_published_target": true,
+            "actual_report_matches_source": true,
+            "actual_report_uses_approved_model": true,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            37.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 2,
+          "model_calls": 1,
+          "tool_attempts": 2,
+          "effect_count": 1,
+          "artifact_count": 1,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            },
+            {
+              "seq": 2,
+              "op": "task-A:save",
+              "duplicate": 1
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166803086962000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 3,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 4,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166803327713000\",\"task_id\":\"task-A\"}"
+            }
+          ]
+        },
+        "authorization": null,
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25096,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      },
+      "unsafe_new_operation": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25107,
+            "url": "http://127.0.0.1:65026"
+          },
+          "model": {
+            "pid": 25097,
+            "url": "http://127.0.0.1:65023"
+          },
+          "receiver": {
+            "pid": 25106,
+            "url": "http://127.0.0.1:65024"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 23,
+            "result": {
+              "event": "exit_after_receiver_commit_before_task_ack",
+              "operation_id": "task-A:save",
+              "pid": 25108,
+              "receipt": {
+                "artifact_id": "artifact-c29944c5437896d9",
+                "content_sha256": "d978c3115c49bb7d9ec738a1c5c7e1610112f9555f4cbca13802199f50af4000",
+                "operation_id": "task-A:save"
+              }
+            }
+          },
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": false,
+              "operation_id": "task-A:save:retry-2",
+              "operation_identity_bypassed": true,
+              "pid": 25109,
+              "release_gate": {
+                "mode": "enforced",
+                "violations": []
+              },
+              "task_id": "task-A",
+              "total": 37.0
+            }
+          }
+        ],
+        "commit_gap": {
+          "task_status": "RUNNING",
+          "task_stage": "MODEL_READY",
+          "local_receipt": null,
+          "receiver_effects": 1,
+          "published_reports": 1
+        },
+        "gate_refusal": null,
+        "oracle": {
+          "accepted": false,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": true,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": true,
+            "one_effect_and_artifact": false,
+            "one_published_target": true,
+            "actual_report_matches_source": true,
+            "actual_report_uses_approved_model": true,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            37.0,
+            37.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 2,
+          "model_calls": 1,
+          "tool_attempts": 2,
+          "effect_count": 2,
+          "artifact_count": 2,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save",
+            "task-A:save:retry-2"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            },
+            {
+              "seq": 2,
+              "op": "task-A:save:retry-2",
+              "duplicate": 0
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166804215262000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 3,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 4,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166804443367000\",\"task_id\":\"task-A\"}"
+            }
+          ]
+        },
+        "authorization": null,
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25110,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      },
+      "read_authorization": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25113,
+            "url": "http://127.0.0.1:65054"
+          },
+          "model": {
+            "pid": 25111,
+            "url": "http://127.0.0.1:65052"
+          },
+          "receiver": {
+            "pid": 25112,
+            "url": "http://127.0.0.1:65053"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": false,
+              "operation_id": "task-A:save",
+              "operation_identity_bypassed": false,
+              "pid": 25114,
+              "release_gate": {
+                "mode": "enforced",
+                "violations": []
+              },
+              "task_id": "task-A",
+              "total": 37.0
+            }
+          }
+        ],
+        "commit_gap": null,
+        "gate_refusal": null,
+        "oracle": {
+          "accepted": true,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": true,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": true,
+            "one_effect_and_artifact": true,
+            "one_published_target": true,
+            "actual_report_matches_source": true,
+            "actual_report_uses_approved_model": true,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            37.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 1,
+          "model_calls": 1,
+          "tool_attempts": 1,
+          "effect_count": 1,
+          "artifact_count": 1,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166805300654000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"mode\":\"enforced\",\"violations\":[]}"
+            },
+            {
+              "seq": 3,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166805443137000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 4,
+              "kind": "report_read",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "report-A"
+            },
+            {
+              "seq": 5,
+              "kind": "report_read",
+              "actor": "bob",
+              "allowed": 0,
+              "details": "report-A"
+            },
+            {
+              "seq": 6,
+              "kind": "report_read",
+              "actor": "alice",
+              "allowed": 0,
+              "details": "report-A"
+            }
+          ]
+        },
+        "authorization": {
+          "initial_read": 200,
+          "other_tenant": 403,
+          "revoked_actor": 403,
+          "receiver_reads_before": 2,
+          "receiver_reads_after": 2,
+          "denied_responses": [
+            {
+              "error": "report_read_denied"
+            },
+            {
+              "error": "report_read_denied"
+            }
+          ],
+          "artifact_retained": true
+        },
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25115,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      },
+      "wrong_weights": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25121,
+            "url": "http://127.0.0.1:65085"
+          },
+          "model": {
+            "pid": 25116,
+            "url": "http://127.0.0.1:65082"
+          },
+          "receiver": {
+            "pid": 25120,
+            "url": "http://127.0.0.1:65084"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": false,
+              "operation_id": "task-A:save",
+              "operation_identity_bypassed": false,
+              "pid": 25123,
+              "release_gate": {
+                "mode": "bypassed_negative",
+                "violations": [
+                  "model_binding",
+                  "content_total"
+                ]
+              },
+              "task_id": "task-A",
+              "total": 38.0
+            }
+          }
+        ],
+        "commit_gap": null,
+        "gate_refusal": {
+          "worker": {
+            "exit_code": 24,
+            "result": {
+              "event": "release_gate_rejected",
+              "gate": {
+                "mode": "enforced",
+                "violations": [
+                  "model_binding",
+                  "content_total"
+                ]
+              },
+              "pid": 25122
+            }
+          },
+          "effects_before_bypass": 0
+        },
+        "oracle": {
+          "accepted": false,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": false,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": false,
+            "one_effect_and_artifact": true,
+            "one_published_target": true,
+            "actual_report_matches_source": false,
+            "actual_report_uses_approved_model": false,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            38.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 2,
+          "model_calls": 1,
+          "tool_attempts": 1,
+          "effect_count": 1,
+          "artifact_count": 1,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "be9a30fc34662e1f67b5945c5bd4530a2ee8cde62515490adb19d917d95eaf26"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166806541447000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 0,
+              "details": "{\"mode\":\"enforced\",\"violations\":[\"model_binding\",\"content_total\"]}"
+            },
+            {
+              "seq": 3,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 0,
+              "details": "{\"mode\":\"bypassed_negative\",\"violations\":[\"model_binding\",\"content_total\"]}"
+            },
+            {
+              "seq": 4,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166806771893000\",\"task_id\":\"task-A\"}"
+            }
+          ]
+        },
+        "authorization": null,
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25124,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      },
+      "wrong_version": {
+        "accepted_http_status": 202,
+        "accepted_response": {
+          "artifact": null,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "effects_at_acceptance": 0,
+        "submission_retry": {
+          "duplicate": true,
+          "status": "ACCEPTED",
+          "task_id": "task-A"
+        },
+        "services": {
+          "api": {
+            "pid": 25127,
+            "url": "http://127.0.0.1:65104"
+          },
+          "model": {
+            "pid": 25125,
+            "url": "http://127.0.0.1:65102"
+          },
+          "receiver": {
+            "pid": 25126,
+            "url": "http://127.0.0.1:65103"
+          }
+        },
+        "workers": [
+          {
+            "exit_code": 0,
+            "result": {
+              "duplicate": false,
+              "operation_id": "task-A:save",
+              "operation_identity_bypassed": false,
+              "pid": 25129,
+              "release_gate": {
+                "mode": "bypassed_negative",
+                "violations": [
+                  "model_binding"
+                ]
+              },
+              "task_id": "task-A",
+              "total": 37.0
+            }
+          }
+        ],
+        "commit_gap": null,
+        "gate_refusal": {
+          "worker": {
+            "exit_code": 24,
+            "result": {
+              "event": "release_gate_rejected",
+              "gate": {
+                "mode": "enforced",
+                "violations": [
+                  "model_binding"
+                ]
+              },
+              "pid": 25128
+            }
+          },
+          "effects_before_bypass": 0
+        },
+        "oracle": {
+          "accepted": false,
+          "checks": {
+            "source_is_declared_task_input": true,
+            "approved_weights_match_contract": true,
+            "approved_artifact_bytes": true,
+            "approved_config_matches_contract": true,
+            "selected_bundle_is_approved": false,
+            "selected_artifact_bytes": true,
+            "frozen_task_input_and_model": false,
+            "one_effect_and_artifact": true,
+            "one_published_target": true,
+            "actual_report_matches_source": true,
+            "actual_report_uses_approved_model": false,
+            "task_and_target_match": true,
+            "artifact_and_effect_digests": true,
+            "effect_receipts_match_records": true,
+            "local_completion_references_publication": true,
+            "real_model_call_recorded": true
+          },
+          "expected_total": 37,
+          "actual_totals": [
+            37.0
+          ],
+          "task_status": "SUCCEEDED",
+          "task_stage": "REPORT_CONFIRMED",
+          "worker_attempts": 2,
+          "model_calls": 1,
+          "tool_attempts": 1,
+          "effect_count": 1,
+          "artifact_count": 1,
+          "publication_count": 1,
+          "operations": [
+            "task-A:save"
+          ],
+          "tool_attempt_records": [
+            {
+              "seq": 1,
+              "op": "task-A:save",
+              "duplicate": 0
+            }
+          ],
+          "approved_model": {
+            "bundle_id": "linear-sum-v1",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "selected_model": {
+            "bundle_id": "linear-sum-v2",
+            "config_sha256": "0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf",
+            "weights_sha256": "43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"
+          },
+          "source": {
+            "id": "daily-values",
+            "version": 1,
+            "sha256": "edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"
+          },
+          "api_audit": [
+            {
+              "seq": 1,
+              "kind": "accepted",
+              "actor": "alice",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166807668488000\",\"task_id\":\"task-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 0,
+              "details": "{\"mode\":\"enforced\",\"violations\":[\"model_binding\"]}"
+            },
+            {
+              "seq": 3,
+              "kind": "release_gate",
+              "actor": "worker",
+              "allowed": 0,
+              "details": "{\"mode\":\"bypassed_negative\",\"violations\":[\"model_binding\"]}"
+            },
+            {
+              "seq": 4,
+              "kind": "completed",
+              "actor": "worker",
+              "allowed": 1,
+              "details": "{\"at_ns\":\"1794166807914527000\",\"task_id\":\"task-A\"}"
+            }
+          ]
+        },
+        "authorization": null,
+        "completed_repeat": {
+          "exit_code": 0,
+          "result": {
+            "already_complete": true,
+            "pid": 25130,
+            "task_id": "task-A"
+          }
+        },
+        "completed_repeat_unchanged": true
+      }
+    },
+    "capacity": {
+      "arrival_and_completion_tasks_per_second": 2,
+      "end_to_end_seconds": 30,
+      "queue_and_other_wait_seconds": 10,
+      "slot_occupancy_seconds_per_task": 20,
+      "mean_in_system": 60,
+      "mean_busy_slots": 40,
+      "slots_for_70_percent_target": 58,
+      "utilization_at_64_slots": 0.625,
+      "ideal_slot_capacity_tasks_per_second": 3.2,
+      "scope": "independent declared steady-state arithmetic, not measured HTTP/model latency or a load test"
+    },
+    "cleanup": {
+      "all_children_reaped": true,
+      "owned_process_groups_only": true,
+      "reaped_count": 34,
+      "supervision_seconds": 90,
+      "temporary_directories": "removed"
+    },
+    "scope": "single host, public identity fixture, fixed plan, CPU Linear inference, loopback HTTP and independent SQLite domains; no LLM/training/GPU/Kairo, production authentication, concurrent workers, fencing or power-loss durability"
+  }
+}

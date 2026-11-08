@@ -13,12 +13,14 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前78章：Cloud 35、AI 29、Agent 11、综合实战3；47个完整实验包、87项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前78章：Cloud 35、AI 29、Agent 11、综合实战3；48个完整实验包、88项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
-本轮[交付、恢复与证据链](docs/ITERATION_2026-11-09_RELEASE_RECOVERY_RETRIEVAL.md)重排五章49节：先走通发布、恢复、四进程训练、检索和工作流的正常关系，再展开机制与独立案例。60章由正文逐层定义概念；新增双投影SQLite程序、两幅图和两启动器四CPU进程实战。四进程记录保留逐位比较失败及声明数值契约，设备与真实读者边界继续单独核对。
+本轮[身份、训练更新与完整服务](docs/ITERATION_2026-11-09_IDENTITY_TRAINING_SERVICE.md)精修五章41节：从资源配置走到真实状态，从请求身份走到授权效果，从同一训练目标走到梯度合并与状态分片。65章由正文逐层定义概念；综合实战补上HTTP入口、真实CPU模型、独立报告接收方和新进程恢复，图、源码与六组实际结果对应同一份输入。
 
 <details>
 <summary>历次内容修订与执行记录</summary>
+
+本轮[交付、恢复与证据链](docs/ITERATION_2026-11-09_RELEASE_RECOVERY_RETRIEVAL.md)重排五章49节：先走通发布、恢复、四进程训练、检索和工作流的正常关系，再展开机制与独立案例。60章由正文逐层定义概念；新增双投影SQLite程序、两幅图和两启动器四CPU进程实战。四进程记录保留逐位比较失败及声明数值契约，设备与真实读者边界继续单独核对。
 
 本轮[网络、配置与模型交付](docs/ITERATION_2026-11-09_NETWORK_CONFIG_MODEL_DELIVERY.md)重排五章35节，连接服务发现与回程、配置与进程快照、指标与可用容量、量化格式与真实算子、模型版本与请求输出。57章由正文逐层定义概念。78个文章页直接沿用静态正文，正常阅读只加载轻量控件，完整搜索索引在首次搜索时加载；失败时保留完整运行时回退。
 
@@ -131,7 +133,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json`、`reader-assets/`、`reader-runtime-manifest.json` 和各目录 HTML 都是生成物。轻量阅读器的构建源在 `scripts/article-reader/`；文章元数据不包含完整正文，搜索索引独立按需加载。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。
+浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json`、`reader-assets/`、`reader-runtime-manifest.json` 和各目录 HTML 都是生成物。轻量阅读器的构建源在 `scripts/article-reader/`；文章元数据不包含完整正文，搜索索引独立按需加载。 `multinode-launch-data.js` 由 `scripts/embed-multinode-launch.cjs` 从实验源码与固定记录生成；修改下载包里的规范源文件后重新构建。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。 `integrated-service-data.js`由`scripts/embed-integrated-service.cjs`从完整服务源码和实际验证记录生成。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

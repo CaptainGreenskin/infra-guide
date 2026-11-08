@@ -3584,6 +3584,98 @@
         "实战：完整前缀与恢复后的外部效果",
         "评分练习：恢复点合格是否意味着服务已恢复"
       ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9083cd24064ad9db3383bce63757afb131102b954199f986c66cbf4dfe1aa874",
+      "reviewed_content_sha256": "20ae01135a60b84b62482e517f4122356cc87bfc7bdac0bdeffd303d2544d8bf",
+      "scope": "Route-independent opening for application learners",
+      "observation": "The application route skips sandboxG3; G4 now names the sandbox chapter explicitly and starts the independent demo account operation without implying the preceding lesson wasG3. No prerequisite or original program changes.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b5c1c1cd73079659b442764163b07aff857652f553c9088f1d296444fc0070ec",
+      "reviewed_content_sha256": "4ce4bd4e79ce80772e8048ce669fa1300c223c4d201bf3552a537d221f771b5c",
+      "scope": "Local contributions to a correctly normalized global update and sharded state",
+      "observation": "Eight full sections connect a declared scalar example through unequal counts, accumulation/tail windows, loss scaling and actual optimizer updates, then state sharding and strategy constraints. Existing manual sharding, token/DDP and update-window fixtures retain their own parameters and actual CPU scope.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "bbc15d48535031731d4f0a9de9a6430614f5b0f510d04182c713999cd86b0f19",
+      "reviewed_content_sha256": "90af253efaf0064e06c3f9714b2c0ceaa4f75fd965be2ea32f115ec606d367a1",
+      "scope": "One training task through admission, placement, data and first update",
+      "observation": "Eight full sections connect run/attempt/worker/rank ownership, quotas and placement, the same128-sample update window, completed updates, epoch checkpoint and failure timeline. Old6.2 references and premature state/model estimates are repaired; independent Transformer estimates remain selected reading.",
+      "headings": [
+        "先固定一份任务契约",
+        "三种职责，串成一条依赖链",
+        "获得额度，还不等于整组能放下",
+        "分到资源后，先把输入送到每个成员",
+        "两批凑成一次更新，更新后再谈保存",
+        "读一条时间线，找第一个断点",
+        "把模型账本接回资源量级",
+        "用本地实验走通协议，再迁移到多机"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b3594c425220c2286a60cce79327cccf039415588a2d5b60ffe88c75a60b1a53",
+      "reviewed_content_sha256": "64bc80e85ad279e5a429f2a04356323ead1925d51858c2e9247e15d02cc11264",
+      "scope": "Workload identity through credentials, authorization and actual effects",
+      "observation": "Nine complete sections follow one request from principal and credentials to authentication, action/resource/condition authorization and business evidence. AWS assumed-role identity/session and Kubernetes Role permission rules are distinguished; independent export, HMAC and native ConfigMap fixtures remain separate.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e59bddf962de7c6178d02be369e649d8b06d87b29818186ac14bbe14e3ac37ca",
+      "reviewed_content_sha256": "9eb7c6a26939862ab80174657235bd180dc26778c31225508c7cf4cd707b4b42",
+      "scope": "A complete user task through real HTTP, model inference and durable effects",
+      "observation": "Eight full sections first establish source/model/task identity and normal request-to-report flow, then distinguish total residence time from execution occupancy, permissions, failures, independent acceptance and observations. A complete local service package executes actual CPU inference, HTTP services, persistent records and recovery; fixed planning and target-environment limits are explicit.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

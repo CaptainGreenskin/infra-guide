@@ -266,7 +266,8 @@
       "id": "terraform-state",
       "targets": [
         "terraform-state-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "gitops-reconciliation",
@@ -408,7 +409,8 @@
         "subsection-4-1sqlkzh",
         "subsection-4-6ow1nm",
         "subsection-4-1r9crh6"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "gpu-memory",

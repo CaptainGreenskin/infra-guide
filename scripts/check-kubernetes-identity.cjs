@@ -106,11 +106,13 @@ assert.deepEqual(article.sections.map(s=>s[0]),titles);
 article.sections.forEach((s,i)=>assert(s[1].startsWith(original[i][1]),'Legacy body/code must stay intact'));
 const embedded=JSON.parse(vm.runInContext('JSON.stringify(kubernetesIdentityEvidence)',c));assert.deepEqual(embedded,validation);
 assert.equal(vm.runInContext('kubernetesIdentitySource',c),source);
-// This also works before the shared shell is integrated: load current authored
-// content, then append the bridge explicitly and compare the actual old body.
+// Compare the bridge at its real composition boundary. Later complete-body
+// revisions depend on this material and cannot run before it has been injected.
 const runtime={};vm.createContext(runtime);
-for(const[,file]of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g))
- if(file!=='app.js'&&file!=='kubernetes-identity-bridge.js')vm.runInContext(read('dist/'+file),runtime,{filename:file});
+for(const[,file]of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)){
+ if(file==='kubernetes-identity-bridge.js')break;
+ if(file!=='app.js')vm.runInContext(read('dist/'+file),runtime,{filename:file});
+}
 const actualBefore=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="iam-security"))',runtime));
 vm.runInContext(read('dist/kubernetes-identity-bridge.js'),runtime,{filename:'kubernetes-identity-bridge.js'});
 const actualAfter=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="iam-security"))',runtime));

@@ -5035,7 +5035,7 @@ const progressiveAgentSectionTitles={
  {
   const a=articleById('agent-recovery'),before=a.sections.map(s=>s[1]),old=[...before];
   a.sections[0][1]=
-   p('上一章让R27的脚本在受管环境中生成产物，并分别确认停止、回收和外部效果。本章转向一项独立教学动作：给demo账户增加37，最终只增加一次。这里用logical-add-1标识该动作，与R17只读委托、R18审批写入和R27画图任务没有共享数据库或运行链；数字37只是便于核对的固定业务值。',
+   p('沙箱章用R27说明受管脚本执行、停止与资源回收。本章转向一项独立教学动作：给demo账户增加37，最终只增加一次。这里用logical-add-1标识该动作，与R17只读委托、R18审批写入和R27画图任务没有共享数据库或运行链；数字37只是便于核对的固定业务值。',
      '运行器是安排步骤、发起工具调用并保存本地进度的程序；工具服务是真正修改目标资源的接收方。本例运行器用runner.sqlite保存任务，工具用tool.sqlite保存账户计数与回执，双方通过本地HTTP通信。两个文件属于独立持久化域：各自事务可以让域内修改一起提交或回滚。')+
    table(['事实由谁保存','正常一次加37中保存什么','证明什么'],[
     ['运行器的持久意图','原操作编号、参数指纹与阶段；请求参数由冻结的程序常量提供','这项动作已经准备，后续能找到原记录'],
@@ -5132,7 +5132,7 @@ const progressiveAgentSectionTitles={
     oldTable(old[8],1)+fold('完整agent_lab.py',code(old[8],4))+
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
-  finish(a,before);
+  finish(a,before);a.updated='2026.11.09';
  }
 })();
 
@@ -10073,6 +10073,540 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
 
 
 ;
+// progressive-terraform-identity-reading.js
+/* Follow resource observations and request identities through their own normal paths.
+   Load after the progressive lessons and before first-reading-flow.js. */
+(()=>{
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span id="'+id+'"></span>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
+ const matches=(html,re)=>[...html.matchAll(re)].map(m=>m[0]);
+ const pres=html=>matches(html,/<pre\b[\s\S]*?<\/pre>/g);
+ const blocks=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=html=>matches(html,/<figure\b[\s\S]*?<\/figure>/g);
+ const ids=html=>[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+ const hrefs=html=>[...html.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]);
+ const bag=values=>JSON.stringify(values.slice().sort());
+ const links=html=>matches(html.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<pre\b[\s\S]*?<\/pre>/g,''),/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
+ const linkRow=values=>values.length?'<p class="practice-links">'+values.join(' ')+'</p>':'';
+ const published={'terraform-state':['terraform-state-run'],'iam-security':['subsection-2-1dlazmr']};
+ function select(id,titles){
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Terraform/identity source layout changed: '+id);
+  return a;
+ }
+ function rewrite(a,bodies,desc,addedFigures=[]){
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Terraform/identity H2 layout changed: '+a.id);
+  if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Original Terraform/identity pre bytes or order changed: '+a.id);
+  if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original Terraform/identity figure changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Terraform/identity href multiset changed: '+a.id);
+  const afterIds=ids(after);
+  for(const id of [...ids(before),...published[a.id]])if(!afterIds.includes(id))throw Error('Terraform/identity anchor lost: '+a.id+'/'+id);
+  if(new Set(afterIds).size!==afterIds.length)throw Error('Terraform/identity duplicate explicit anchor: '+a.id);
+  bodies.forEach((body,i)=>a.sections[i][1]=body);a.desc=desc;a.intro=desc;a.updated='2026.11.09';
+ }
+
+ const terraform=select('terraform-state',['先分清配置、状态记录与实际资源','计划先读取，执行才兑现变更','状态锁保护的是哪一份共同记录','一次关闭刷新，怎样得到误导性的绿灯','只刷新状态，为什么文件仍然没有恢复','工作空间分开了状态，为什么仍会互相覆盖','把计划、状态和交付流程连起来','运行实验，分别读取三份事实']);
+ const t=terraform.sections.map(s=>s[1]),t2=blocks(t[1]),t8=blocks(t[7]);
+ if(t2.length!==1||t8.length!==2||pres(t.join('')).length!==3||figures(t.join('')).length!==3)throw Error('Terraform original evidence extraction changed');
+ rewrite(terraform,[
+ p('交付要先明确将要改变什么。基础设施即代码（IaC）把资源期望写成可版本化的配置，再由工具读取目标系统、比较并执行变化。Terraform是这样的工具：它管理一组有名字的资源，通过状态记录把配置里的名字关联到实际对象。',
+ '正常路径是：加载配置与所选状态，借助提供程序读取实际对象，生成本次计划，审阅后执行，再保存新的状态并核对实物。配置描述想要什么，状态保存已经绑定了谁及上次记录的属性，实际资源存在于目标系统；一次外部修改可以只改变其中一份事实。')+
+ table(['对象','本章的具体值','职责'],[['配置','local_file.managed，路径managed.txt，内容alpha','声明要管理的资源及期望属性'],['提供程序 provider','hashicorp/local 2.5.3','解释local_file类型，读取或修改文件'],['实际资源','文件系统中的managed.txt','保存此刻真正可读的字节'],['状态 state','资源绑定、标识与已知属性','让后续操作找回同一个受管对象'],['后端 backend','本次为local后端','存放状态，并提供相应状态锁'],['计划 plan','根据本次输入提出的变化','交给审阅者及后续apply执行']])+
+ p('local提供程序和local后端虽然同名，操作的对象不同：前者管理文件资源，后者保存Terraform自己的状态。本例配置地址local_file.managed也不是文件内容或云平台ID；它是配置内部的资源名字，实际对象的标识规则由提供程序定义。',
+ '图中alpha是配置要求，outside是随后人为写入的内容。沿配置、状态和实物分别读数，便能判断变化发生在哪一层。云实例通常由平台ID识别，不能把本例文件内容校验的规则直接用于所有云资源。')+figures(t[0]).join(''),
+
+ p('init准备后端和提供程序，validate检查配置，plan再为本次操作建立观察。普通计划先读所选state，经提供程序刷新资源事实，在内存中比较当前观察与配置，再列出所需动作。保存计划会把这次决定写入计划文件；这一步尚未兑现其中的资源修改。',
+ 'apply执行计划中的动作，并保存相应state。显式传入保存计划时，执行的是那份计划；没有传计划文件时，apply会先生成新计划。refresh-only则选择另一种目的：仅计划如何把记录对齐到实际观察，不把资源改回配置；应用这份计划以后，新的认识才被持久保存。')+t2[0]+
+ p('本章驱动对用于判断变化的plan统一添加-detailed-exitcode。这个选项把“命令执行成功”进一步分成有无差异；自动化必须按这一约定读取退出码。普通plan成功时，不能仅凭其默认退出码区分有变化与无变化。')+
+ table(['带-detailed-exitcode的plan退出码','含义','下一步'],[['0','计划成功，差异为空','核对本次观察范围与独立实物读数'],['1','命令失败','先查看锁、配置、权限或读取错误'],['2','计划成功，存在差异','审阅动作，决定是否执行']])+
+ p('退出2不是执行失败，也不表示资源已经被修改。退出0只说明这次采用的输入未产生差异；是否读取了最新资源、选了哪个工作空间，仍决定它回答的是哪个问题。后文的“0”和“2”都沿这份详细退出码约定；状态锁冲突返回的1则是一条真正的失败路径。'),
+
+ p('共享一份state的执行者需要协调。两个操作都从旧记录出发，可能各自决定修改并覆盖后保存的结果。支持锁定的后端会为相关操作取得这份状态的锁，按其协议完成读取、执行与保存，再释放，让其他操作重新取得当前记录。',
+ '本次local后端通过操作系统API锁定本地状态；.terraform.tfstate.lock.info记录锁的相关信息。是否实现互斥不能只看这个说明文件是否存在，更不能把删除它当作让活跃操作安全结束。')+
+ figures(t[2]).join('')+
+ p('实验用两个真实Terraform进程固定并发顺序。第一个apply已经创建alpha文件，又在terraform_data.gate的local-exec执行钩子中暂停，此时仍持有状态锁。第二个plan设置-lock-timeout=0s，立即因无法取得锁而退出1；父进程确认第一个仍存活后才放行，首个apply成功结束。随后同配置的详细计划退出0。',
+ '屏障是把程序停在指定位置、等待另一方放行的实验控制点；这里的内建terraform_data资源及执行钩子用来稳定制造锁占用窗口。它们不是管理普通云资源所必需的步骤。',
+ '状态锁的范围是这一本账。人工写文件、另一个工作空间或另一套state仍可能修改同一实物。远端后端是否支持锁及怎样恢复，取决于后端实现；发现锁占用时先关联持有者与操作结果，确认没有活跃写入后再处理遗留状态。'),
+
+ p('首次apply后，配置要求alpha，state记着alpha，managed.txt也确实是alpha。现在程序绕过Terraform，把同一文件写成outside；这次外部编辑只改变实物，先前状态记录尚未改变。漂移就是实际对象与受管期望或既有观察之间出现的偏离。',
+ '接着运行带-detailed-exitcode和-refresh=false的计划。关闭刷新使提供程序不再读取最新文件，计划仍用state中的alpha与配置alpha比较，因此退出0。独立读managed.txt却是outside。这两份结果分别描述比较输入与真实字节，可以同时成立。')+
+ table(['时点','配置','持久state中的文件内容','独立读取实物'],[['首次应用完成','alpha','alpha','alpha'],['外部编辑完成','alpha','alpha','outside'],['关闭刷新后生成计划','alpha','alpha','outside；本次计划差异为空']])+
+ p('如果流水线把这一行0解释成“环境没有漂移”，就扩大了命令的检查范围。保留刷新选项、后端、工作空间、提供程序版本和直接文件读数，才能复原这次比较。云API权限、缓存及未受管字段同样会影响能观察到的事实，但具体行为应由对应提供程序验证。'),
+
+ p('现在保持配置alpha与磁盘outside，生成refresh-only计划。这次提供程序重新读文件。官方local 2.5.3用保存的内容摘要标识这份文件资源；内容校验不符时，把原受管资源从刷新后的观察中移除。因此resource_drift里出现local_file.managed的delete。这个动作描述原绑定已经失效，尚不是一次删除磁盘文件的操作。',
+ '这份详细刷新计划退出2。apply它之后，持久state不再包含local_file.managed，磁盘仍保留outside；内建屏障资源的记录仍在。再生成普通计划，配置要求的文件没有有效绑定，于是resource_changes提出create。执行该计划，提供程序把实际文件写回alpha，并重新记录受管对象。')+
+ table(['步骤','变化落在哪一层','实际文件'],[['生成refresh-only计划','内存观察及计划中发现旧绑定不再有效','outside'],['apply刷新计划','把新观察保存到state，移除旧文件绑定','仍为outside'],['生成普通修复计划','按配置提出create','仍为outside'],['apply修复计划','执行文件写入并更新state','恢复alpha']])+
+ p('JSON中的resource_drift与resource_changes承担不同说明：前者描述刷新发现的偏离，后者描述该计划准备执行的资源动作。审阅delete/create时，要先确定它属于哪一层、哪一种计划。其他提供程序可能把外部编辑报告为属性变化或替换；本例的删除绑定规则来自这个固定版本的local_file。',
+ '有意的外部变更可以通过调整配置及刷新记录纳入管理；无意漂移可以选择按原配置修复。先决定期望，再审阅覆盖内容和影响范围，才能让执行兑现正确目标。'),
+
+ p('CLI工作空间（workspace）让同一配置选择不同state。每份状态历史有自己的lineage标识，serial记录该历史中的快照推进；它们帮助区分历史与版本，不是资源的访问凭据或全局所有权。改变工作空间也不会自动改变配置中的文件路径。',
+ '实验创建blue与green。blue用content=alpha应用，green再用content=beta应用；两份state具有不同lineage，却都管理ROOT/managed.txt。green完成后文件是beta，blue还记着alpha。切回blue，用详细退出码计划但关闭刷新，仍得到0；允许刷新以后得到2。')+figures(t[5]).join('')+
+ table(['观察位置','记住或读到的内容','说明'],[['blue state','alpha','blue自己的管理历史'],['green state','beta','green的另一份管理历史'],['同一个managed.txt','beta','最后一次实际写入的结果'],['blue重新读取后','发现原文件绑定已失效','可提出变化，不再把缓存认识当成现场']])+
+ p('两份状态的锁各保护自己的记录，不能阻止对方操作相同目标。环境隔离还需设计资源名字、账号、目标位置与执行身份；工作空间名本身不会建立这些边界。转交受管对象时，应安排状态迁移或导入、验证原管理者退出，再核对新归属。简单复制state会把同一绑定交给更多执行者。'),
+
+ p('把上述关系带入交付流水线，每次执行都要固定配置修订、变量、提供程序版本、后端与工作空间，记录计划采用了什么观察，再让审阅和执行绑定到同一份计划。之后重新读取目标对象，确认应用真正需要的资源和属性已兑现。',
+ '保存计划不会因编辑配置自动升级；另一执行推进state后，旧计划也可能因状态前提失效而被拒绝。交付章的内建资源实验专门验证这两种顺序，本章的local_file则继续验证锁、外部编辑和刷新。两份实验使用不同资源类型，判断时保留各自输入与记录。',
+ 'state和计划可能包含敏感属性，即使终端隐藏了某些值，也应按保存文件的实际内容控制访问、传输和留存。源代码的公开范围不能直接决定这些运行记录的公开范围。',
+ 'Terraform可由流水线周期执行，GitOps控制器持续调谐自己的受管对象。若二者反复把同一副本字段改成2和3，会形成来回覆盖。先明确对象或字段由谁管理、另一方怎样引用或退出，才能让自动化形成一条可解释的控制链。')+linkRow(links(t[6])),
+
+ anchor('terraform-state-run')+
+ p('既有terraform_state.py在Linux CI以Terraform 1.13.0和官方hashicorp/local 2.5.3执行。它只管理自己临时目录里的文件和状态，使用专用CLI配置；不是云资源或远端后端实验。首次init需要下载该固定提供程序，Docker与Kubernetes不是这项实验的前提。',
+ '程序先用两个进程验证锁，再依次外部编辑、关闭刷新、应用refresh-only、按配置修复，最后比较两个工作空间。各阶段同时保存state和实物读数，计划函数明确添加-detailed-exitcode。')+t8[0]+
+ table(['固定记录中的检查','实际结果'],[['并发状态锁','第二个plan退出1；第一个apply仍运行，放行后成功'],['外部编辑后不刷新','详细计划退出0；文件outside，state仍记alpha'],['应用refresh-only','详细计划退出2；旧文件绑定移除，磁盘outside保留'],['普通修复','提出create，执行后文件与状态恢复alpha'],['工作空间碰撞','blue/green历史不同、目标同路径；blue不刷新退出0，刷新退出2']])+
+ p('可用terraform state pull核对lineage、serial及资源地址，用计划JSON区分漂移与拟执行动作，再直接读取managed.txt。不要拿state里的content代替文件读数，也不要把本例state快照序号当成其他工作空间可比较的统一时钟。完整记录及程序摘要保留在下载包。')+
+ fold('展开terraform_state.py：固定版本、并发屏障与逐阶段断言',t8[1])+linkRow(links(t[7]))+
+ p('复算一条完整路径：alpha三者一致→实物outside→不刷新计划0→刷新计划2→应用刷新后绑定消失→普通计划create→执行回alpha。然后解释blue为何仍能覆盖green写过的同一个文件。答案要分别落到读取、记录、执行与归属，并能从记录中找出各阶段的独立读数。')
+ ],'沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。');
+
+ const identityFigure='<figure class="training-figure"><a href="diagrams/v70-identity-models.svg" target="_blank" rel="noopener" aria-label="放大：AWS角色身份与Kubernetes权限规则的不同位置"><img src="diagrams/v70-identity-models.svg" width="1120" height="760" alt="AWS角色是可被代入的身份；Kubernetes ServiceAccount是主体，Role保存权限规则，RoleBinding关联主体与规则。两条请求都先认证再授权。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两套对象模型分别解释自己的请求。AWS示意没有实际云执行；Kubernetes具体观测来自独立原生API夹具。<a href="diagrams/v70-identity-models.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const identity=select('iam-security',['门能打开，不代表屋里什么都能动','沿着身份链走一遍，找出每次委托','从一项具体任务推导最少的权限','允许、缺少允许、显式拒绝是三种判断','两次拒绝与一次更危险的成功','短期凭证要处理签发、续期和撤销三个时刻','把最小权限验收写成正例和负例','课堂验收：单次成功可以说明多少事','配套实战：真实HTTP授权与无副作用验收']);
+ const i=identity.sections.map(s=>s[1]),i2=blocks(i[1]),i3=blocks(i[2]),i9=blocks(i[8]),i9links=links(i[8]);
+ if(i2.length!==4||i3.length!==1||i9.length!==6||i9links.length!==7||pres(i.join('')).length!==11||figures(i.join('')).length!==2)throw Error('Identity original evidence extraction changed');
+ rewrite(identity,[
+ p('程序向另一个系统发起动作时，接收方需要回答两件事：请求代表谁，以及这次动作是否被允许。主体是被识别的用户、服务或程序身份；凭据是用来证明身份或委托的材料。认证验证凭据并建立主体，授权再按主体、动作、资源和请求条件作决定，允许以后才进入受保护的业务操作。',
+ '正常路径依次是：平台确认用户与任务归属，给工作负载安排获准身份，工作负载取得适用凭据，接收方认证，再评估具体请求，最后执行并记录效果。一次登录、一次凭据签发和一次对象读取，是这条链上的不同事件。')+
+ table(['决策位置','要确认的事实','本章导出设计题'],[['用户进入平台','用户属于哪个租户，能否提交任务','用户A获准提交任务17'],['平台安排执行者','任务能使用哪个工作负载身份和目标范围','固定输入版本v3与任务17输出位置'],['数据接收方','请求代表谁，当前动作与目标是否被允许','读取A输入，写入A任务17结果'],['业务完成后','实际效果及所属对象是否正确','结果存在、归属正确，拒绝请求没有先写数据']])+
+ p('用A租户导出作设计例：后台工作者读固定输入v3，把结果写到任务17目录。若存储返回拒绝访问，应先沿身份、动作和目标定位这一跳。直接增加管理员权限会同时扩大其他资源和动作的可达范围，还可能让其他租户借平台发起越权操作。')+linkRow(links(i[0])),
+
+ p('委托让一个程序以获准身份执行任务，平台仍需把原用户和任务约束落实到目标。人员可以有部署权限，运行中的工作负载则使用自己的主体；下游通常看到该工作负载的调用身份，不会自动取得最初用户的全部业务归属信息。',
+ '在AWS中，IAM角色是一种可被代入的身份。信任策略说明谁可取得该角色会话及相应条件，权限策略说明这个角色可访问哪些动作和资源。STS的AssumeRole在规则满足后返回临时凭据：访问密钥ID、秘密访问密钥和会话token；调用者随后用这些材料按AWS API协议发起请求。会话策略可以进一步收窄本次会话的相应权限。',
+ '为同账号AWS服务指定运行角色是另一种委托入口。iam:PassRole检查部署者能否把指定角色传给相应服务，服务之后再按自己的信任关系代入角色；它不表示部署者本人已获得该角色会话。应一起约束可传角色、接收服务以及能控制工作负载代码和配置的接口。')+linkRow(links(i[1]))+
+ p('Kubernetes采用另一组对象：ServiceAccount为工作负载提供主体身份，Role保存命名空间内的权限规则，RoleBinding把规则关联到主体。这里的Role不是待取得的登录身份，也不负责签发凭据；TokenRequest API负责申请有期限、面向指定受众的ServiceAccount token。受众是这份凭据预期适用的接收方。')+
+ identityFigure+
+ anchor('kubernetes-identity-normal')+h('subsection-2-1dlazmr','沿ServiceAccount身份读取一份ConfigMap')+
+ p('原生identity_lab.py使用独立输入report-a/reports-v1，data.value="37"。report-a是命名空间（namespace），界定对象的命名范围；另一个命名空间中的同名reports-v1是另一份资源。管理路径为report-a中的report-reader申请token；业务客户端加载CA（证书签发机构）的证书来验证HTTPS服务器证书，再携带Authorization: Bearer凭据请求这个ConfigMap。CA证书用于验证服务器，Bearer材料用于让API识别请求者，两者各有用途。',
+ 'API认证出的完整主体名为system:serviceaccount:report-a:report-reader。授权时通过RoleBinding找到相应Role，核对namespace、get动作、configmaps类型和reports-v1名称，允许后返回200。客户端再核对对象名称、归属及37，才完成这次读取。')+figures(i[1]).join('')+
+ p('核心API中的self.k是显式使用本实验私有kubeconfig的管理调用；self.opener是仅加载CA的业务HTTPS客户端；PATH指向上述固定对象。TokenRequest在本例由管理员代为申请，不能由此推断这个只读ServiceAccount本身有签发token的管理权限。')+i2[0]+
+ p('token的sub声明主体，aud声明适用接收方，exp声明到期时间；解码这些字段用于观察，验真仍由接收方完成。本记录申请600秒，实际exp−iat也是600秒。SelfSubjectReview返回当前请求实际使用的主体；TokenReview则请API检查给定token对指定受众是否通过认证，不替代具体资源动作的授权。')+
+ fold('按需核对凭据声明、TokenRequest与CA/Bearer客户端',i2.slice(1).join(''))+
+ p('实际Pod通常可通过kubelet管理的投射凭据取得并更新token，应用仍需按使用方式读取。本实验选择管理申请和独立客户端，未验证投射或自动刷新。业务客户端也未加载管理员证书，否则一次管理员读取成功可能掩盖report-reader没有权限。'),
+
+ p('最小权限从具体工作推导：导出器读取A的固定输入，写A的任务17输出，按需要查询上传结果。读、写、列举和删除是不同动作，目标也要分到正确对象或范围；已知完整对象名的读取不必因此取得列举整个桶的权限。业务版本v3的名字还需映射为所用存储API支持的对象标识与条件。',
+ '先算一组宽泛规则的影响：把读、写、删除三个动作都授给A、B两个任务目录，在这个简化直积模型中开放3×2=6种动作目录组合。真正需求应分别表达A输入读取与任务17输出写入，避免用一组动作乘上一组资源扩大组合。真实IAM动作可支持哪些资源粒度，要查对应服务。',
+ '条件值还要有可信来源。若用户随意填写tenant，平台再据此签发会话标签或选择输出前缀，用户就能把目标改成B。应先由认证身份及受信任务记录确定归属，再生成目标与受控属性。JSON Schema只能检查字段形状，租户归属由业务权威记录检查。')+
+ anchor('kubernetes-identity-rbac')+
+ p('在原生读取夹具中，把需求翻译成Role：apiGroups中的空字符串表示核心API组，resources=configmaps选择对象类型，verbs=get允许取得单个已知对象，resourceNames=reports-v1限定名称。Role位于report-a；RoleBinding的subjects指向report-a/report-reader，roleRef指向该权限规则。')+i3[0]+
+ table(['请求事实','本例匹配条件','实际负例'],[['主体','report-a/report-reader','从拒绝响应和SelfSubjectReview核对实际主体'],['作用范围','report-a / configmaps / reports-v1','换名称、跨namespace或读Secret均403'],['动作','get单个已知对象','PATCH修改、list列举均403'],['返回对象','预期namespace、名称及data.value=37','状态码之外继续检查内容']])+
+ p('Kubernetes API中的get与list是不同权限动作：读取一个已知名称与列举集合，即使用相同HTTP方法，也要分别授权。RBAC规则累加所有适用绑定的允许，没有Deny规则；排查时应检查该主体是否还从其他RoleBinding或ClusterRoleBinding获得权限。配置读取资格也不自动授予报表服务中的任意用户数据访问。'),
+
+ p('再用AWS展开权限求值，先固定这张表的范围：同账号，请求权限来自角色身份策略和本次会话策略，没有资源策略直接授权，也不加入额外边界或组织策略。角色允许读取A输入对象及写任务17输出，会话策略只允许读取该输入；这里对输入的访问用GetObject表示，对输出用PutObject表示。')+
+ table(['同一会话的请求','角色策略','会话策略','本例结果'],[['GetObject：A输入','允许','允许','可继续执行相应读取'],['PutObject：任务17输出','允许','未允许','缺少会话允许，拒绝'],['GetObject：B输入','资源不匹配','未允许','拒绝'],['A输入匹配新增显式Deny条件','原有允许仍在','原有允许仍在','显式拒绝覆盖允许']])+
+ p('前两层都允许时，再加入一条适用于当前请求的显式Deny，例如禁止读取被标为隔离的对象，匹配请求仍会失败。缺少任何匹配Allow造成的拒绝，通常称隐式拒绝；显式拒绝则来自实际匹配的Deny语句。排查需要找出是哪种结果，不能把每次403都当作存在一条待删除的Deny。',
+ '这份角色与会话的交集模型有明确前提。真实AWS请求还可能有资源策略、权限边界与组织策略等授权或限制；同账号资源策略授予角色ARN与授予特定会话的规则也有区别。ARN是AWS资源标识。先列出本次主体和适用策略，再按其组合规则求值，不能把所有来源一律当成同一个交集。',
+ '前节Kubernetes的Role规则采用累加允许，本节的AWS策略可以含显式拒绝。两套求值规则分别解释自己的请求，角色同名不意味着规则可以互换。')+linkRow(links(i[3])),
+
+ p('沿正常链定位两种拒绝。若工作负载尚未取得AWS角色会话，先查调用身份、信任主体、角色标识及取得会话所需条件。若已经携带正确会话发起PutObject，则查动作、对象ARN、请求条件和适用策略；对象加密时还可能涉及独立密钥权限。两次失败停在不同决策点。',
+ '更需要解释的是越权却成功：B租户请求平台把结果写入A目录，平台用自己的大权限身份执行成功。下游只证明该工作负载被允许，平台仍需证明这项委托来自有权用户。因此应先用任务权威记录确认租户与输出归属，再生成规范目标；能在下游收窄的动作与资源也同时收窄。',
+ '部署权限也属于这条链。允许指定高权运行身份、又允许修改执行代码的用户，可能借运行中的服务取得原本没有的能力。对可传角色、工作负载创建或修改、任务目标生成分别设边界，才能使正常部署与越权路径有不同结果。',
+ 'AWS讨论的confused deputy是受托服务替不适当委托方完成动作的情形。第三方跨账号委托可结合合适的ExternalId条件区分客户上下文；服务主体则可能使用来源账号、来源资源等条件。字段的适用场景需按具体服务核对，最终仍要把本次调用绑定到正确客户和任务。')+linkRow(links(i[4])),
+
+ p('凭据生命周期至少涉及签发、续期和接收方是否接受当前请求。先用独立时间题：10:00签发，10:45到期；10:30停止签发新凭据。在只改变未来签发、既有权限不变的模型中，原凭据还有15分钟有效期。停止续签本身没有改写已签材料的到期时间。',
+ '要阻断现有访问，还需按目标机制修改当前权限、撤销相应资格或改变受信密钥等，并观察它们何时在接收方生效。应用缓存和已经建立的会话也有各自退出方式。核对一次原来允许的请求从何时开始失败，比只记录控制台上的修改时刻更接近实际结果。')+
+ anchor('kubernetes-identity-changes')+
+ table(['原生API改变的条件','认证结果','同一读取请求'],[['reader-1不变，删除唯一业务RoleBinding','TokenReview仍为true','200→403'],['恢复该RoleBinding','同一主体仍通过认证','403→200，再读出37'],['换为reports-api.invalid受众的token','TokenReview为false','401'],['删除另一枚token所绑定的Pod UID','轮询后观察到认证失败','同token请求401']])+
+ p('这些结果来自同一次Kubernetes夹具。前三次200→403→200使用完全相同的reader-1；改变的是当前RBAC允许。错误受众的token由同一来源签发，但并不适用于这个API。401在这条实验路径上表示凭据未被接受，403响应则明确带出已识别的report-reader主体。')+figures(i[5]).join('')+
+ p('最后一组另用绑定Pod UID的token。UID标识具体对象，同名重建会是另一个UID。该Pod由一个不存在的调度器保持Pending，只提供API中真实存在的绑定对象，没有运行报表容器。删除命令完成后程序开始计时，经过19次TokenReview检查观察到失败，并用HTTP核对401；包含随后HTTP核对的记录耗时为9.959秒。',
+ '这是一次观察，不是所有接收方在发出delete时立即失效的时限。在线TokenReview能按API状态检查绑定对象；只在本地核对签名和时间的验证者，还需考虑自己怎样获知权限或绑定状态变化。原请求已经读出的数据和已经完成的业务效果，也不会随凭据失效自动撤回。',
+ '审计用主体、任务、资源、动作、凭据来源或版本及决定关联这条时间线，不保存原始密钥或token。Secret的编码形式也不能代替其存储加密、读取控制和注入机制。'),
+
+ p('最小权限既要保留必要功能，也要在受保护效果发生前拦住越权。先在导出设计题中定义四项调用：读本租户固定输入、写本次任务输出、写另一任务输出、删除输入；前两项应成功，后两项应拒绝。每项同时核对实际主体、目标版本、返回结果和最终产物。',
+ '只检查拒绝码可能漏掉“先修改，最后才报拒绝”的错误路径。需要独立读取受保护对象或接收方记录，在请求前后比较。反过来，全部拒绝也不能说明策略正确：应让必要正例持续成功，避免把一个不可用的空身份当作最小权限。')+
+ table(['改变一个条件','预期检查','证据位置'],[['主体不变，目标改到其他租户或任务','拒绝且目标未被修改','接收方决定与独立数据读取'],['凭据仍可信，动作超出当前允许','授权拒绝','当前策略、调用上下文与效果'],['受众错误、过期或签名不符','认证失败','验证结果与实际请求'],['恢复必要授权','正例重新成功','目标内容及实际主体']])+
+ p('本地工具策略、HTTP服务与Kubernetes API各能验证自己的执行边界。Agent权限实验可继续检查受控工具动作；第九节的HTTP与原生程序则分别查看SQLite效果和API对象。将它们带入真实云身份时，仍需按对应账号、信任与资源策略执行同样的正反核对。')+linkRow(links(i[6])),
+
+ p('回到A租户任务17：用户有提交本租户任务的权限，平台有创建工作者的权限，获准工作负载可读输入v3、写任务17输出。用户却把路径改为任务18，并要求使用运维管理员角色。提交被接受、拿到某个凭据和成功写入，各自能说明哪一层，必须分别回答。',
+ '正常实现先从受信任务记录取得租户和任务身份，再生成规范输出目标；运行身份从平台预先允许的集合中选择。数据接收方继续评估实际请求。于是写17可成功，改写18或扩大角色的请求应在产生效果前被相应决策点拒绝。')+
+ table(['课堂核对项；各两分','答案应落到的事实'],[['主体与目标分开','谁发起动作，读写哪份输入和输出'],['取得身份与执行权限分开','谁可取得角色会话，取得后可做什么'],['委托来自受信记录','路径与运行身份不能由客户端自授'],['一对必要正反例','允许写17，拒绝写18，独立核对产物'],['停止续签后的现有调用','检查到期、当前权限及接收方实际决定']])+
+ p('继续把方案翻译成具体平台：AWS确定角色会话与适用策略；Kubernetes先确定ServiceAccount主体，再关联Role规则。写出这些对象及正常调用顺序，才有条件解释哪次修改会使一次拒绝变成允许。'),
+
+ p('authorization_http_lab.py在本机创建HTTP服务与SQLite，使用自定义HMAC凭据；HMAC用共享密钥校验消息内容。另一份identity_lab.py的固定记录来自Linux上真实kind API。两份程序的主体、对象和信任实现分别核对。',
+ '先运行标准库HTTP程序。它有reader-A与writer-A两个主体，报表rA/rB在数据库中分别属于A/B。签发材料带有主体、租户、scopes（声明的动作范围）、受众、到期及策略代际epoch；epoch是本例识别当前策略资格版本的整数。接收方还查当前服务端策略和实际行归属，再决定是否执行写入。')+i9[0]+
+ table(['本机HTTP实际检查','结果'],[['读A的rA；writer-A获准写A','200，A最终1次写入'],['跨租户或用A路径包装B的rB','403，B写入0'],['reader-A声明write scope但服务端仍只读','403，签发材料不能扩大当前策略'],['过期、零期限、错误受众、伪造签名','401'],['reader-A的策略代际1→2','旧代际403，新代际200'],['信任K2后移除K1','K2通过，K1凭据401'],['本次审计','14次请求各有独立request_id，不记录凭据']])+
+ fold('展开既有HTTP实验结果',i9[1])+
+ fold('展开authorization_http_lab.py完整源码',i9[2])+
+ p('持有HMAC共享密钥的一方也能签发这份本地凭据；它不是只持公钥验签的信任分工。这个两段式实验格式也不是JWT/OIDC实现。程序核对14项请求；其中A只写一笔是这次固定调用集合的结果，没有提供任意重试的业务去重保证。')+linkRow(i9links.slice(0,3))+
+ p('下面另保留rbac-readonly.yaml配置审阅示例，namespace为infra-security-lab。它展示ServiceAccount、只读Role及RoleBinding的对应，未作为上一份HMAC程序的一部分执行，也不是下方原生记录使用的report-a对象。')+
+ fold('展开独立最小RBAC配置：infra-security-lab',i9[3])+
+ anchor('kubernetes-identity-run')+
+ p('原生identity_lab.py在Linux CI实际运行kind v0.33.0、Kubernetes v1.35.8；固定节点镜像摘要、私有kubeconfig和随机命名集群写在程序中。业务请求只使用CA信任和ServiceAccount Bearer材料，管理证书仅用于准备对象、TokenRequest/TokenReview及独立读取。')+i9[4]+
+ table(['原生API固定检查','结果'],[['report-a/report-reader读reports-v1','200，ConfigMap内容37；SelfSubjectReview核对完整主体'],['其他名称、namespace、PATCH、Secret、list','五组403，响应主体仍是report-reader'],['同reader-1删除/恢复业务绑定','200→403→200；三个阶段认证均通过'],['错误受众 / 删除绑定Pod后','401 / 401，TokenReview认证失败'],['独立管理员前后读取四个对象','UID、resourceVersion与数据摘要全部不变']])+
+ p('独立读数覆盖三个ConfigMap和一个教学Secret，检查拒绝路径是否修改了任何受保护对象；读到37则证明必要正例仍可用。固定执行来自隔离Linux CI，节点镜像有内容摘要，结束时确认本次集群已删除。--check-record只复核已有记录，不启动Docker；完整实验运行分支则会建立自己的集群。')+linkRow(i9links.slice(3,4))+
+ fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
+ p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
+ ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure]);
+})();
+
+
+;
+// progressive-training-step-strategies-reading.js
+/* Follow one submitted training task, then keep one global objective while changing its layout.
+   Load after the progressive lessons and before first-reading-flow.js; course numbering happens later. */
+(()=>{
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
+ const anchor=id=>'<span id="'+id+'" class="legacy-subsection-anchor" aria-hidden="true"></span>';
+ const matches=(s,re)=>[...s.matchAll(re)].map(m=>m[0]);
+ const blocks=s=>matches(s,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=s=>matches(s,/<figure\b[\s\S]*?<\/figure>/g);
+ const links=s=>matches(s.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<pre\b[\s\S]*?<\/pre>/g,''),/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
+ const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' ')+'</p>':'';
+ const bag=items=>JSON.stringify(items.slice().sort());
+ const published={
+  'gpu-cluster':[],
+  'distributed-training':['subsection-3-ea74bh','subsection-3-rfjab','subsection-3-1sne7s7','subsection-4-tiieih','subsection-4-1sqlkzh','subsection-4-6ow1nm','subsection-4-1r9crh6']
+ };
+ const select=(id,titles)=>{
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Training step source layout changed: '+id);
+  return a;
+ };
+ function replace(a,bodies,desc){
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  const pres=s=>matches(s,/<pre\b[\s\S]*?<\/pre>/g);
+  const hrefs=s=>matches(s,/\bhref=["'][^"']+["']/g);
+  const ids=s=>[...s.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+  if(bodies.length!==a.sections.length||/<h[23]\b/i.test(after))throw Error('Training step heading layout changed: '+a.id);
+  if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Original training step code bytes or order changed: '+a.id);
+  if(bag(figures(before))!==bag(figures(after)))throw Error('Original training step figure changed: '+a.id);
+  if(bag(hrefs(before))!==bag(hrefs(after)))throw Error('Training step href multiset changed: '+a.id);
+  for(const id of [...ids(before),...published[a.id]])if(!ids(after).includes(id))throw Error('Training step anchor lost: '+a.id+'/'+id);
+  if(new Set(ids(after)).size!==ids(after).length)throw Error('Training step duplicate anchor: '+a.id);
+  bodies.forEach((body,i)=>a.sections[i][1]=body);a.desc=desc;a.intro=desc;a.updated='2026.11.09';
+ }
+
+ const overview=select('gpu-cluster',['先固定一份任务契约','三种职责，串成一条依赖链','获得额度，还不等于整组能放下','分到资源后，先把输入送到每个成员','两批凑成一次更新，更新后再谈保存','读一条时间线，找第一个断点','把模型账本接回资源量级','用本地实验走通协议，再迁移到多机']);
+ const g=overview.sections.map(s=>s[1]),g8=blocks(g[7]);
+ if(g8.length!==1||figures(g.join('')).length!==1)throw Error('Training overview preserved material changed');
+ replace(overview,[
+ p('云上训练把一份学习目标交给一组进程执行。模型参数是要调整的数字，数据提供输入与目标，优化器根据梯度更新参数；平台负责为这些计算准备资源、身份、输入和持久输出。本章沿同一个小型分类任务，从提交走到第一次实际优化器调用，再走到可恢复的轮末状态。',
+ '先给对象命名：训练任务 run 记为 R1，本次执行 attempt 记为 A1；原图用 run-017、attempt-1 标识它们。R1 固定程序、数据与训练目标，A1 表示这些条件下的一次执行。worker 是运行训练脚本的进程，rank 是它在通信组内的编号。下面固定两个 worker，rank 分别为0、1；同一任务重试时保留目标，由任务管理策略创建新的执行记录。')+
+ table(['本章固定对象','约定','下一步怎样使用'],[
+ ['程序与环境','PyTorch 2.5.1、相同源码摘要；本机使用CPU、Gloo通信后端和FP32','两进程运行相同训练逻辑'],
+ ['输入与模型','1024条固定合成样本，输入128维、目标10类，隐藏宽32','按相同生成方法构造数据与小型分类模型'],
+ ['进程与小批','通信组大小world_size=2，每rank每小批32条','分片以后各自执行前向和反向'],
+ ['累积与更新','每rank累积2个小批','一个完整更新窗口覆盖128条全局样本'],
+ ['保存边界','每轮末提交检查点，恢复保持world size及配置','新进程从已提交的下一轮继续']
+ ])+
+ p('任务契约把上述条件连同镜像或环境、数据版本、超参数、输出位置与访问身份一起固定。平台据此安排执行，后续检查点也据此判断能否接续。合成数据用于检验系统机制；集群时间线是教学构造，脚本的本机实际记录在末节单独说明。'),
+
+ p('先走一遍正常流程：平台记录R1与A1，按规则准入并放置两个worker；worker取得身份、建立通信组，读到各自数据。两边计算前向与损失、反向累积梯度，在窗口末同步，再各自调用优化器。整轮完成后提交持久检查点。每一步都有自己的执行者和结果。')+
+ table(['职责','正常推进什么','本例中的交接'],[
+ ['控制平面','受理、额度、准入、放置与执行管理','把A1交给能够满足条件的节点和进程'],
+ ['数据路径','取得固定输入，保存可恢复产物','把对应样本交给worker，把轮末状态交给持久存储'],
+ ['计算路径','前向、损失、反向、梯度同步和参数更新','两个rank共同完成同一全局更新目标']
+ ])+
+ figures(g[1]).join('')+
+ p('三种职责可以由同一服务或不同组件承担，图中箭头表示依赖关系。受理记录标识任务已被保存，节点绑定记录标识位置，worker日志标识输入和计算进展，检查点与恢复比较标识持久接续。把这些记录关联到同一任务、执行与rank，就能从正常链条定位后面的故障。'),
+
+ p('准入决定这次执行能否占用约定资源，放置决定具体由哪些节点承载。假设租户额度允许2张卡，而任务要求同一节点两卡：两台节点各空一张，数量虽然合计2，仍不满足同节点形状。设备型号和显存、网络互联、卷位置与亲和条件也都参与放置。',
+ '成组准入让相关资源在规则内获准，随后每个成员仍需绑定、启动并会合。GPU迁移通常采用每个worker绑定一张可见GPU。local rank是节点内编号，global rank是组内编号；两台机器各一个worker时，local rank都可为0，global rank分别为0、1。节点内设备可见性和绑定关系随启动记录一起核对。',
+ '本机CPU基线用Gloo组织通信，GPU目标环境通常使用NCCL。先由启动器创建worker并传入身份，再由训练程序初始化通信组；组内参与者按相同顺序执行相应集合调用。具体启动、会合入口及物理两机网络在后面的两机四卡章展开。'),
+
+ p('分布式数据并行（DDP）让worker分别计算数据贡献，再同步梯度。数据分片由采样程序安排：本例先用相同种子与轮次生成1024条样本的全局顺序，两个rank各取512条，再按32条组批，每rank得到16个小批。每轮调用set_epoch(epoch)，按约定生成下一轮顺序。',
+ '训练身份需要能读取本次输入并写入输出；平台控制器的权限与worker的权限分别核对。正常输入路径从固定数据版本，经过读取、解码和组批，到达每个worker。rank0拿到首批时，rank1也要有自己的首批，才能一起推进后面的同步。')+
+ table(['一个完整窗口','rank0','rank1','共同结果'],[
+ ['第一个小批','32条，计算loss与本地梯度','另32条，计算loss与本地梯度','本地梯度先保留'],
+ ['第二个小批','再32条，累加梯度并进入同步','再32条，累加梯度并进入同步','四份小批共128条'],
+ ['窗口末','使用同步梯度调用优化器','使用相同规则调用优化器','完成一次全局更新']
+ ])+
+ p('这里所有小批等长。每个小批的损失先对32条求均值，再除以累积数2；两rank同步时再平均，单样本系数便是1/32×1/2×1/2=1/128。有效目标数不等时，应先写出整个窗口的全局分母；下一章用同一组标量输入推导这一步。'),
+
+ p('累积窗口把多次前反向组织成一次优化器更新。首个小批的前向和反向都放在no_sync中，保留本地贡献；第二批按同步路径汇合累计梯度，再尝试step，之后清梯度。本例每rank16个小批形成8个窗口，FP32基线每轮实际调用优化器8次。',
+ '更新完成后，参数和优化器历史仍在进程内存。轮末保存先汇集各rank随机状态，由rank0把完整模型、优化器、各rank随机状态、下一轮索引next_epoch与配置签名写到同目录临时文件，刷新后替换checkpoint.pt；成员在保存屏障处会合。所用精度的附加状态也一并保存，本例FP32的梯度缩放器状态为空。恢复时各rank读取同一已提交状态，载入训练状态后恢复自身随机源，再从next_epoch开始。',
+ '保存边界决定故障后的重做范围：本程序在整轮边界提交，完成过一次step但尚未到轮末时，下一次启动仍从上个已提交轮次重做。适用POSIX路径的文件切换、对象存储提交和存储掉电是不同问题，迁移时要检查对应的持久协议。')+
+ table(['观察点','本例正常含义'],[
+ ['loss已计算','前向与目标比较产生了数值'],
+ ['attempted_update_windows','到达窗口末并尝试更新的次数'],
+ ['applied_optimizer_steps','实际完成优化器调用的次数，由回调计数'],
+ ['checkpoint与next_epoch','一组训练状态已提交，标记下一轮位置'],
+ ['连续与恢复对照','重新启动后，按指定比较协议核对接续结果']
+ ])+
+ p('FP16的梯度缩放可能因非有限数跳过优化器调用，所以尝试数与实际数分别保留；实际调用也不保证每个参数都变化或任务质量改善。本章先用固定FP32输入走通正常更新，精度机制在后续显存与混合精度章说明。'),
+
+ p('正常链条建立后，再只改变一个条件：让rank1在读取分片时被拒绝。下面0至7秒属于同一次A1的声明输入，用来追因果；修正后则先结束旧A1，再为同一任务R1启动新执行A2。表中的秒数不是跨机器实测的单向网络耗时。')+
+ table(['时刻：教学输入','rank0','rank1','沿依赖判断'],[
+ ['0秒','任务受理','同一R1/A1','已记录执行意图'],
+ ['2秒','获准并绑定','获准并绑定','资源位置已确定'],
+ ['4秒','启动并建立通信组','启动并建立通信组','可以继续取业务输入'],
+ ['5秒','完成首批无同步反向','读取分片被拒绝','第一处未满足条件在rank1输入'],
+ ['7秒','第二批进入梯度汇合并等待','尚未进入训练计算','通信等待是缺少对端贡献的后果'],
+ ['结束旧A1','停止等待并回收旧worker','保留首个异常，回收旧worker','结束全组；未提交的累积梯度随旧进程退出丢弃'],
+ ['修正后启动A2','恢复最近已提交的轮末；首轮无检查点时回初始状态','读取同一提交状态，恢复自身随机源','新通信组建立后，从共同边界重新取数和计算'],
+ ['A2窗口末','完成两个小批，实际调用1次','完成两个小批，实际调用1次','新执行的首次更新成立，轮末保存随后验证']
+ ])+
+ p('先检查rank1使用的身份、对象路径与数据版本。这里采用结束并回收A1全部worker、再启动A2的任务管理策略；R1的程序、数据与训练目标保持固定。A2先建立新的通信组，再从最近已提交轮末恢复训练状态；没有检查点就按固定初值与种子重新开始。它重新计算自己的输入窗口，不承接A1中rank0仅存在于内存的梯度。',
+ '若新执行的输入和更新已完成，保存却失败，再转查输出身份、空间与提交路径。记录R1、A1/A2、rank和第一条异常，分别核对每次执行的进展，才能把“等待”追到它缺少的前置条件。'),
+
+ p('前面的128维分类程序负责解释执行流程。真实模型还会通过张量形状改变资源需求：输入变长，激活、注意力工作量和缓存都会变化，调度资源与数据供给需要据此重新核对。以下独立小模型题用于复习量级，不参与上面的1024样本训练。')+
+ fold('选读：B=2、T=4、D=8、V=6的独立形状账本',
+ p('本题B是批大小、T是序列长度、D是隐藏宽度、V是词表大小。输入ID形状为[2,4]，嵌入为[2,4,8]；普通两头注意力的Q/K/V为[2,2,4,4]，词表分数为[2,4,6]。V=6是这份独立题设，与模型基础章的V=8分别使用。',
+ '其他维度固定，把T从4增到8，嵌入元素翻倍，单头逻辑分数矩阵由16变64，增加到4倍。整轮耗时仍由前馈、融合执行、输入、通信与重叠共同决定。先定位哪项状态和工作量增加，再测对应显存与关键路径。')+linkRow(links(g[6]))),
+
+ p('在已有PyTorch 2.5.1环境中，运行完整DDP实验包的固定CPU/Gloo配置。源码会生成相同合成数据，启动两个真实进程，并在每轮输出全局样本数、尝试窗口、实际调用与检查点。')+
+ g8[0].replace('6.4 的完整包；这里预览同一验证配置','完整DDP实验包 · 固定CPU/Gloo配置')+
+ table(['实际CPU基线','对应本章推导'],[
+ ['两个rank，每轮全局1024样本','各512条、16个小批'],
+ ['每轮8个尝试窗口、8次实际调用','每窗口全局128条'],
+ ['连续四轮与两轮后恢复到四轮','固定配置下完整状态逐项精确一致'],
+ ['accum改为3','16小批不能整除，程序拒绝该配置']
+ ])+
+ p('这些实际结果属于指定两rank、FP32、CPU/Gloo和轮末正常保存的程序。GPU/NCCL、物理双机、其他进程规模与精度需要自己的执行和比较记录。后面按并行策略、显存、完整DDP程序、通信与输入、两机四卡、恢复和性能逐步增加条件。',
+ '读完时沿同一窗口复述：谁提供128条样本，梯度何时同步，实际step由哪里计数，故障后能从哪个提交点继续。把每个问题对应到下面完整程序中的位置，再进入下一章改变数据与状态的分配方式。')+
+ linkRow(links(g[7]))
+ ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
+
+ const strategies=select('distributed-training',['数据并行：分数据，复制副本','平均梯度为什么可能对应错的目标','完整更新：归一化、尾窗与裁剪顺序','分片：减少长期持有的状态','模型并行：切分计算图','按限制因素选择策略','用相同口径评价扩展','真实两进程：从单步梯度走到状态更新']);
+ const d=strategies.sections.map(s=>s[1]),d3=blocks(d[2]),d4=blocks(d[3]),d8=blocks(d[7]),d8links=links(d[7]);
+ if(d3.length!==1||d4.length!==2||d8.length!==4||figures(d.join('')).length!==3)throw Error('Parallel strategy preserved material changed');
+ const scaling=d[6].match(/<div id="scaling-demo"><\/div>/)?.[0];
+ if(!scaling)throw Error('Parallel scaling widget missing');
+ replace(strategies,[
+ p('并行策略安排数据、模型计算与训练状态由哪些进程负责。先固定同一个训练目标，再改变这些对象的分布，才能判断各进程合起来是否仍在计算同一次更新。分布式数据并行（DDP）在每个rank保存模型副本，各算一份数据，反向时同步梯度，再分别调用相同的优化器。',
+ '把模型缩成一个参数w，所有样本输入为1，预测就是w。全局标签固定为[−2,−4,−6,−8]，初值w=0。每个样本损失为½(w−y)²，梯度为w−y，四项贡献因此是2、4、6、8。目标是四样本均值：梯度(2+4+6+8)/4=5；SGD即随机梯度下降，以学习率0.1执行w←w−0.1×5，得到−0.5。')+
+ table(['先平均分片','rank0','rank1'],[
+ ['标签','[−2,−4]','[−6,−8]'],
+ ['本地梯度均值','(2+4)/2=3','(6+8)/2=7'],
+ ['默认DDP平均后','(3+7)/2=5','同样为5'],
+ ['各自执行SGD后','w=−0.5','w=−0.5']
+ ])+
+ figures(d[0]).join('')+
+ p('默认DDP把相应梯度平均到各副本。各进程从相同参数与优化器状态出发，再按相同规则更新，就可以持续保持副本一致；它无需每步让rank0单独训练完再广播新权重。数据选择仍由采样器负责，模型及优化器的完整副本仍占据每个rank的空间。')+linkRow(links(d[0])),
+
+ p('保持这四个标签与w=0不变，只改分片：rank0拿[−2]，rank1拿[−4,−6,−8]。若分别取本地均值，两个梯度是2和6，默认DDP再平均得到4，更新为−0.4。副本彼此一致，目标却已经变成“两个rank均等”，而原目标要求四个样本均等。',
+ '改用整个更新窗口的有效目标数N=4，并令W=2表示参与默认梯度平均的进程数。各rank先求自己的损失总和，再乘W/N；rank0反传梯度为(2/4)×2=1，rank1为(2/4)×(4+6+8)=9。DDP平均(1+9)/2=5，恢复同一全局目标。')+
+ table(['同一四样本输入','两个rank局部均值再平均','全局均值'],[
+ ['每项损失','2；8、18、32','合计60'],
+ ['日志若直接平均两个均值','(2+58/3)/2=32/3','60/4=15'],
+ ['反向梯度','(2+6)/2=4','20/4=5'],
+ ['学习率0.1的更新','−0.4','−0.5']
+ ])+
+ p('一般形式是：本rank反传损失＝(W/N)×本rank在完整窗口内的损失总和。默认DDP再除以W，留下全局梯度总和除以N。N要按真实目标计数：语言模型在标签移位和忽略规则后数有效词元；带权目标可能使用权重和。自定义通信hook、join或其他平均组改变前提时，也要重新核对。')+
+ fold('选读：旧版w=1手算的独立初值与标签',p('另一组等长题从w=1出发，rank0标签[0,2]、rank1标签[2,4]，本地梯度均值0与−2，DDP后为−1，SGD学习率0.1更新到1.1；不同步则分别到1和1.2。',
+ '再单独设rank A标签[0]、rank B标签[3,3,3]，仍以w=1、½(w−y)²计算。A的平均loss为0.5，B为2；平均局部均值为1.25，全局均值为1.625，梯度分别为−0.5与−1.25。这两组是额外手算，主线与后面的标量程序始终使用w=0及[−2,−4,−6,−8]。')),
+
+ anchor('subsection-3-ea74bh')+anchor('optimizer-update-window')+anchor('subsection-3-rfjab')+
+ p('微批次是一次取数据与前反向，累积窗口是一组共同贡献一次优化器更新的微批次。继续使用同一四标签输入，把它分成两个对齐微批：rank0先取[−2]、再取空集；rank1先取[−4]、再取[−6,−8]。整个窗口的N仍为4，各批损失总和都乘相同W/N，累计后的全局梯度仍为5。',
+ '首批的no_sync同时包住前向与反向，贡献先留在本地；最后一批走同步路径，再更新并清梯度。rank0的第二批虽然没有目标，仍经模型构造可微零损失，参与匹配的同步。所有rank先共同确定完整窗口的N和调用次序，再开始反向。')+
+ table(['窗口条件','采用的规则','为什么'],[
+ ['正常两批，N=4','先本地累积，末批同步；只按N归一化一次','四项贡献仍各占全局的1/4'],
+ ['某rank本地为空','模型支持的零贡献继续参加所需同步','对端仍需要本组的对应调用'],
+ ['全局N=0','各rank共同跳过反向与step','没有本次目标，优化器历史保持'],
+ ['尾窗实际只有一批','按这批实际N同步和更新，或明确记录丢弃策略','名义累积2不代表还存在另一份数据']
+ ])+
+ anchor('subsection-3-1sne7s7')+
+ p('得到全局梯度后再执行需要的裁剪和优化器更新。L2范数衡量联合梯度向量的大小，范数裁剪在超过阈值时按同一比例缩小整个向量；各rank先裁本地梯度，可能改变合成结果，后面的二维反例还会改变方向。主线未启用裁剪的标量SGD按梯度5更新到−0.5；启用裁剪是在更新规则里另外声明的操作。',
+ '下面窗口骨架约定应用提供global_valid_count与summed_valid_loss，另声明联合范数阈值1，展示包含裁剪的顺序。若对本节标量应用该阈值，梯度5缩为约1，SGD结果约为−0.1；后面的token_ddp保持无裁剪基线，update_windows再实际检查裁剪。')+
+ d3[0]+
+ p('优化器历史也属于更新状态。例如加入动量，令vₜ=0.9vₜ₋₁+gₜ、wₜ=wₜ₋₁−0.1vₜ，初始v=0。gₜ指归一化并按需裁剪后的全局梯度。空窗若仍step，历史动量可能继续改变参数，所以本例选择全局空窗不step。',
+ '自动混合精度AMP让适合的算子使用较低精度，同时在需要处保留较高精度。FP16范围有限，小梯度可能下溢；梯度缩放先把损失乘共同因子S，反向得到放大的梯度，更新前再除回S。它处理数值范围，前面的W/N处理训练目标，两者作用不同。',
+ '在同一有效窗口内，参与平均的缩放梯度需要一致的S。所有微批累积并同步完成后，对同一优化器调用一次unscale_恢复尺度，再裁剪，随后scaler.step与scaler.update。scaler.step发现非有限梯度时可跳过底层optimizer.step，update为后续窗口调整比例尺；中途改变S或混加已反缩放的梯度，会破坏累计值。实际调用次数由明确的计数机制观察，不能用常为None的返回值判断。这里解释固定PyTorch 2.5.1的FP16规则，后面的CPU/float64程序没有执行AMP。')+
+ fold('选读：裁剪顺序的二维反例与扩展窗口图',
+ p('独立梯度向量[6,0]与[0,2]先平均成[3,1]，再裁到范数1，约为[0.94868,0.31623]；先各自裁剪再平均却约为[0.5,0.5]。这里联合范数针对复制式DDP，分片模型要按全模型定义求范数。',
+ '下图属于后面update_windows.py的独立三参数回归实验：五个微批形成7、0、3个有效样本的三个窗口；第一窗与尾窗执行更新，中间空窗保留参数和动量。它扩展同一归一化规则，输入与主线四标签标量分别记录。')+figures(d[2]).join('')),
+
+ anchor('subsection-4-tiieih')+
+ p('数据并行的目标可以保持不变，长期保存状态的方式则可以改变。普通DDP每rank都有完整参数、梯度和优化器状态；分片把这些状态分给不同rank负责。计算某层时可以临时取齐参数，计算结束再释放完整副本，负责该片的rank用相应梯度和优化器历史更新本地参数。',
+ 'ZeRO按状态种类减少冗余：Stage 1分优化器状态，Stage 2再分梯度，Stage 3再分参数。FSDP是完全分片数据并行；以PyTorch 2.5.1的FULL_SHARD策略为例，参数计算前聚合、计算后重新分片，梯度同步并分片，优化器在本地更新归属状态。具体生命周期由策略决定。')+
+ anchor('subsection-4-1sqlkzh')+
+ p('先独立做规模预算：P个参数、W个进程，固定参数与梯度均为FP32，Adam保存梯度的一阶、二阶统计各一份FP32历史，不另算主权重副本。参数占4P字节，梯度4P，优化器8P。下表令P=10亿、W=4，GB按10亿字节计算，只列这些长期状态。')+
+ table(['保存方式','每rank近似字节数','本题数值'],[
+ ['完整复制','4P+4P+8P','16GB'],
+ ['只分优化器','4P+4P+8P/W','10GB'],
+ ['再分梯度','4P+(4P+8P)/W','7GB'],
+ ['三类全部分片','(4P+4P+8P)/W','4GB']
+ ])+
+ p('激活是前向留下、反向仍会使用的中间值；临时完整参数、通信缓冲和预取也占空间。因此4GB是长期状态小计，实际峰值需按同一时刻同时存活的对象另算。参数分成四份，并不会自动让每份激活也缩为四分之一。')+
+ anchor('subsection-4-6ow1nm')+
+ p('all-gather把各rank的片段收齐；reduce-scatter先归约对应贡献，再把结果片分给归属rank。完整分片前向进入第一层前取齐参数，算完释放临时完整参数、保留所需激活；第二层重复。反向从第二层返回，为所需梯度重新取得参数，归约并分配参数梯度，再回到第一层，最后本地更新。是否还要除以有效目标数，继续由真实损失与归约规则决定。')+
+ figures(d[3]).join('')+
+ p('分组决定一次取齐多少参数。大组需要更多临时空间，小组增加通信与调用次数；预取提前准备下一组，用更多驻留换取重叠。评估峰值时把当前组、预取组、未释放激活、梯度与缓冲列在同一时间线上，并按实际存储去重。')+
+ anchor('subsection-4-1r9crh6')+anchor('manual-sharding-run')+
+ p('配套手工程序用两个真实CPU/Gloo进程落实状态归属。它采用x@W布局，第一层W形状[4,6]、第二层[6,3]，共24+18=42个参数，每rank负责21个参数、21个梯度和21个SGD动量元素。rank0处理1条样本、rank1处理2条，每条有3个标量预测目标，损失为全局9个目标的½平方误差均值。',
+ '这里梯度通信采用SUM求和，局部损失总和直接除以9；它没有默认DDP额外除以W的步骤，因而不再乘W。两层tanh模型及SGD动量是这份程序的独立配置，SGD只有一份动量，与上面的FP32/Adam规模预算分别记账。')+
+ d4[0]+
+ p('每次更新前比较本地梯度片，更新后比较拼回的参数和动量，连续执行三次。实际全局loss约为0.318769、0.315201、0.308496，按相对误差rtol=1e−10、绝对误差atol=1e−12的契约比较；错误的局部均值分母会被梯度断言拒绝。forward保存输入与参数片，backward重新gather参数，读源码时沿这两个位置核对生命周期。')+
+ fold('shard_linear.py完整源码：参数归属与独立全批次参考',d4[1])+
+ p('程序确实执行参数all-gather，梯度采用完整all-reduce后切片，验证归约和归属语义。它没有调用FSDP或原生reduce-scatter，也另保留完整参考模型；状态元素数不能转写成进程总内存或GPU显存收益。FSDP接口、CUDA重叠、峰值与分片检查点按目标实现另外验证。')+linkRow(links(d[3])),
+
+ p('模型并行进一步切分计算图。张量并行TP把层内矩阵或相关张量分到多个设备，部分输出或梯度再按布局交换、合并；流水线并行PP把连续层分为阶段，微批次在阶段之间前进，并在反向沿依赖返回。前面张量并行章已有矩阵与流水线算例，这里把它们放回策略选择。')+
+ table(['策略','主要分配什么','新增协调'],[
+ ['DDP','不同数据，复制式模型状态','同步梯度，保持相同更新规则'],
+ ['完整分片数据并行','长期参数、梯度与优化器状态','按层取齐参数、归约并分配梯度'],
+ ['TP','一层中的张量和计算','对齐切分轴、部分结果和层内通信'],
+ ['PP','不同层与微批次执行阶段','阶段间传输、激活寿命和流水线调度']
+ ])+
+ p('这些方式可以组合，但通信组与状态归属随之增多。TP频繁交换部分结果，受互联与布局影响；PP需要用微批次填充阶段，工作不均会留下空闲。先验证单一布局的前向、梯度和更新，再逐步组合，才能定位哪种切分改变了结果或关键路径。')+linkRow(links(d[4])),
+
+ p('选择策略先定位限制对象：是长期模型状态放不下，单层临时计算太大，激活主导峰值，还是可放下但完成工作太慢。对应的改动会改变不同成本，训练目标和比较输入保持一致。')+
+ table(['限制','优先核对的机制','付出的代价'],[
+ ['可放下，吞吐不足','DDP、批次大小、数据供给','梯度同步、全局batch与收敛变化'],
+ ['参数或优化器状态过大','状态分片、精度；必要时把状态卸载到主机','参数聚合、转换或主机传输'],
+ ['单层计算过大','TP及该层实现','高频交换、布局与拓扑约束'],
+ ['模型很深，需跨设备安排层','PP与微批调度','阶段空闲、工作不均与激活寿命'],
+ ['激活主导','序列长度、微批大小、反向前重算所需激活','输入或批次变化，或额外前向计算']
+ ])+
+ p('例如前节16GB完整状态已经超过某卡可用预算时，增加DDP副本仍让每卡保存同样状态。分片可以减少长期持有量，随后还需检查临时取齐与激活峰值。若真正瓶颈在输入等待或通信，单看静态字节表也无法解释步时。把状态、实际执行时刻和目标质量一起记录，再决定采用哪项机制。'),
+
+ p('扩展比较先定义单位。令Q₁为单设备完成率、Qₙ为n设备完成率，吞吐加速比S=Qₙ/Q₁，扩展效率E=S/n。这里n表示测量设备数，与前面窗口有效目标数N分别使用；完成率要按同一种样本、词元或其他工作单位统计。')+
+ scaling+
+ p('固定每卡batch扩卡，会增大全局batch；固定全局batch扩卡，会减少每卡工作量。前者考察更大吞吐任务，后者考察同一更新的分摊，报告标明采用哪一种。即使目标loss形式相同，batch变化也可能改变优化过程，最终还需比较达到相同任务质量所用的时间。',
+ '同时保存模型与数据、精度、并行配置、预热和正式窗口，以及所有rank的完成时间。延迟、通信和数据等待沿关键路径分析，吞吐再连接资源总时长与成本；后续性能章在这些共同口径下展开。'),
+
+ fold('扩展实战：五微批、尾窗、空窗、裁剪与动量',
+ p('update_windows.py使用独立三参数线性回归模型，初始[w0,w1,b]=[0.2,−0.3,0.1]，平方误差没有主线的½因子。两个rank各有五个对齐微批，名义累积2，形成有效样本数7、0、3的三个窗口；程序与独立单进程全窗口参考逐次比较。')+
+ d8[0]+
+ table(['实际CPU/float64核对','结果'],[
+ ['正常窗 / 全局空窗 / 一批尾窗','两批N=7 → 两批N=0 → 一批N=3'],
+ ['反向同步标记','[false,true] → [] → [true]'],
+ ['实际optimizer.step累计','1 → 1 → 2，空窗参数与动量保留'],
+ ['最终[w0,w1,b]','约0.388016 / −0.199119 / 0.244997'],
+ ['逐次独立全局参考','裁剪前后梯度、参数、动量的最大绝对差小于1e−11'],
+ ['局部微批均值 / 固定名义尾窗分母','分别偏离参考；后者在尾窗把梯度减半']
+ ])+
+ fold('update_windows.py完整源码：每一次更新对照参考',d8[1])+
+ linkRow(d8links.filter(x=>x.includes('update-and-cancel'))))+
+ p('主线标量程序token_ddp.py则直接使用w=0、学习率0.1及[−2,−4,−6,−8]，每项损失为½(w−y)²。它让两个真实CPU/Gloo进程分别执行局部均值、全局分母和两微批累积，再构造局部空、全局空的变化。先按前面同一四项梯度预测输出，再运行下面命令。')+
+ d8[2]+
+ table(['同一标量程序中的分支','同步后梯度','更新后w'],[
+ ['不等局部均值再平均','4','−0.4'],
+ ['整个窗口的全局分母','5','−0.5'],
+ ['相同四目标分为两微批累积','5','−0.5'],
+ ['只保留rank1的三个有效目标','6','−0.6'],
+ ['两个rank都没有有效目标','无反向，实际step为0','保持0']
+ ])+
+ p('程序每个分支重新设置初值，结果是不同条件的独立对照。两微批分支记录no_sync标记[false,true]，单进程四目标基准独立得到梯度5。日志里的valid_tokens是这份历史程序字段名，实际对象是标量回归目标，不是语言模型词元。')+
+ fold('token_ddp.py完整源码：主线标量与独立梯度参考',d8[3])+
+ linkRow(d8links.filter(x=>x.includes('ai-agent-systems')))+
+ p('三类CPU程序各回答一层问题：标量检查平均与分母，完整窗口检查实际更新和优化器历史，手工分片检查状态归属及重建。它们都按各自输入和数值协议核对，未执行GPU/NCCL、AMP或原生FSDP。进入其他规模时保留新的实际比较结果，包括严格比较未通过的记录；这些局部通过不自动覆盖另一份恢复或性能实验。')+
+ linkRow(d8links.filter(x=>x.includes('multinode-lab')).map(x=>x.replace('下一步：按两机四卡手册检查设备、会合、通信与恢复','后续实践：按两机四卡手册检查设备、会合、通信与恢复')))
+ ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
+})();
+
+
+;
+// integrated-service-data.js
+const integratedServiceSource="\"\"\"Local HTTP -> durable task -> CPU Linear -> effect/publication -> authorized read.\n\nThe plan and public Bearer tokens are fixtures. No LLM, training, GPU or Kairo.\nOnly the suite owns child process groups; all network destinations are loopback.\n\"\"\"\nfrom __future__ import annotations\n\nimport argparse\nimport hashlib\nimport json\nimport math\nimport os\nfrom pathlib import Path\nimport platform\nimport shutil\nimport signal\nimport sqlite3\nimport subprocess\nimport sys\nimport tempfile\nimport time\nfrom http.server import BaseHTTPRequestHandler, ThreadingHTTPServer\nfrom urllib.error import HTTPError\nfrom urllib.parse import urlsplit\nfrom urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener\n\nHERE = Path(__file__).resolve().parent\nTOKENS = {\"fixture-user-A\": (\"alice\", \"A\"), \"fixture-user-B\": (\"bob\", \"B\")}\nSERVICE = \"fixture-service-A\"\nTASK, TARGET = \"task-A\", \"report-A\"\n\n\ndef encoded(value):\n    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(\",\", \":\"))\n\n\ndef digest(value):\n    return hashlib.sha256(encoded(value).encode()).hexdigest()\n\n\ndef file_sha(path):\n    return hashlib.sha256(Path(path).read_bytes()).hexdigest()\n\n\ndef load(path):\n    return json.loads(Path(path).read_text())\n\n\ndef save(path, value):\n    path = Path(path)\n    pending = path.with_suffix(path.suffix + \".tmp\")\n    pending.write_text(encoded(value) + \"\\n\")\n    os.replace(pending, path)\n\n\ndef db(path, readonly=False):\n    connection = sqlite3.connect(\"file:\" + str(Path(path).resolve()) + \"?mode=ro\", uri=True, timeout=5) if readonly else sqlite3.connect(path, timeout=5)\n    connection.row_factory = sqlite3.Row\n    return connection\n\n\nclass NoRedirect(HTTPRedirectHandler):\n    def redirect_request(self, *_):\n        raise ValueError(\"redirects are not part of this loopback experiment\")\n\n\ndef http_json(url, method=\"GET\", body=None, token=SERVICE):\n    parts = urlsplit(url)\n    if parts.scheme != \"http\" or parts.hostname != \"127.0.0.1\":\n        raise ValueError(\"only this experiment's loopback HTTP services are allowed\")\n    request = Request(url, data=None if body is None else encoded(body).encode(), method=method,\n                      headers={\"Authorization\": \"Bearer \" + token, \"Content-Type\": \"application/json\"})\n    try:\n        # Ignore HTTP_PROXY/HTTPS_PROXY; fixed local services never redirect.\n        with build_opener(ProxyHandler({}), NoRedirect()).open(request, timeout=5) as response:\n            return response.status, json.load(response)\n    except HTTPError as error:\n        with error:\n            return error.code, json.load(error)\n\n\ndef rpc(url, method=\"GET\", body=None, token=SERVICE):\n    status, result = http_json(url, method, body, token)\n    if status not in (200, 201, 202):\n        raise RuntimeError(f\"HTTP {status}: {result}\")\n    return result\n\n\ndef torch_runtime():\n    import torch\n    if torch.__version__.split(\"+\")[0] != \"2.5.1\":\n        raise RuntimeError(\"Use the pinned PyTorch 2.5.1 environment\")\n    torch.set_num_threads(1)\n    return torch\n\n\ndef prepare(folder, variant):\n    folder.mkdir(parents=True, exist_ok=False)\n    for name in (\"source.json\", \"model-contract.json\"):\n        shutil.copyfile(HERE / name, folder / name)\n    contract = load(folder / \"model-contract.json\")\n    torch = torch_runtime()\n    approved = folder / \"approved\"\n    approved.mkdir()\n    config = {\"architecture\": contract[\"architecture\"], \"input\": 2, \"output\": 1,\n              \"dtype\": contract[\"dtype\"], \"runtime\": \"torch==2.5.1\"}\n    save(approved / \"config.json\", config)\n    torch.save({\"weight\": torch.tensor(contract[\"weight\"], dtype=torch.float64),\n                \"bias\": torch.tensor(contract[\"bias\"], dtype=torch.float64)}, approved / \"weights.pt\")\n\n    def manifest(directory, bundle_id):\n        value = {\"bundle_id\": bundle_id, \"config_sha256\": file_sha(directory / \"config.json\"),\n                 \"weights_sha256\": file_sha(directory / \"weights.pt\")}\n        save(directory / \"manifest.json\", value)\n\n    manifest(approved, contract[\"bundle_id\"])\n    selected = approved\n    if variant in (\"wrong_weights\", \"wrong_version\"):\n        selected = folder / \"selected-wrong\"\n        shutil.copytree(approved, selected)\n        if variant == \"wrong_weights\":\n            torch.save({\"weight\": torch.tensor(contract[\"weight\"], dtype=torch.float64),\n                        \"bias\": torch.tensor([1], dtype=torch.float64)}, selected / \"weights.pt\")\n        manifest(selected, contract[\"bundle_id\"] if variant == \"wrong_weights\" else \"linear-sum-v2\")\n    save(folder / \"deployment.json\", {\"alias\": contract[\"alias\"], \"bundle_directory\": selected.name})\n    with db(folder / \"tasks.sqlite\") as con:\n        con.executescript(\"\"\"\n        CREATE TABLE tasks(id TEXT PRIMARY KEY, request_id TEXT UNIQUE, request_digest TEXT,\n          actor TEXT,tenant TEXT,target TEXT,source TEXT,source_sha TEXT,bundle TEXT,bundle_sha TEXT,\n          stage TEXT,status TEXT,attempts INT,model_result TEXT,receipt TEXT);\n        CREATE TABLE grants(actor TEXT PRIMARY KEY,report_read INT);\n        INSERT INTO grants VALUES('alice',1),('bob',1);\n        CREATE TABLE audit(seq INTEGER PRIMARY KEY,kind TEXT,actor TEXT,allowed INT,details TEXT);\n        \"\"\")\n    with db(folder / \"receiver.sqlite\") as con:\n        con.executescript(\"\"\"\n        CREATE TABLE effects(op TEXT PRIMARY KEY,intent TEXT,artifact TEXT,receipt TEXT);\n        CREATE TABLE artifacts(id TEXT PRIMARY KEY,body TEXT,content_sha TEXT);\n        CREATE TABLE publications(tenant TEXT,target TEXT,artifact TEXT,PRIMARY KEY(tenant,target));\n        CREATE TABLE attempts(seq INTEGER PRIMARY KEY,op TEXT,duplicate INT);\n        CREATE TABLE reads(seq INTEGER PRIMARY KEY,artifact TEXT);\n        \"\"\")\n\n\nclass Handler(BaseHTTPRequestHandler):\n    def log_message(self, *_):\n        pass\n\n    def answer(self, status, value):\n        data = encoded(value).encode()\n        self.send_response(status)\n        self.send_header(\"Content-Type\", \"application/json\")\n        self.send_header(\"Content-Length\", str(len(data)))\n        self.end_headers()\n        self.wfile.write(data)\n\n    def do_GET(self):\n        self.handle_request()\n\n    def do_POST(self):\n        self.handle_request()\n\n    def handle_request(self):\n        try:\n            size = int(self.headers.get(\"Content-Length\", \"0\"))\n            if size < 0 or size > 65536:\n                return self.answer(413, {\"error\": \"request_size\"})\n            body = json.loads(self.rfile.read(size)) if size else None\n            token = self.headers.get(\"Authorization\", \"\").removeprefix(\"Bearer \")\n            status, result = self.server.dispatch(self.command, self.path, body, token)\n            self.answer(status, result)\n        except (KeyError, TypeError, ValueError) as error:\n            self.answer(400, {\"error\": type(error).__name__})\n\n\ndef api_dispatch(folder, method, path, body, token):\n    service = token == SERVICE\n    identity = TOKENS.get(token)\n    if not service and identity is None:\n        return 401, {\"error\": \"unauthenticated\"}\n    if method == \"POST\" and path == \"/tasks\":\n        if identity != (\"alice\", \"A\"):\n            return 403, {\"error\": \"submit_denied\"}\n        if set(body) != {\"request_id\", \"source_id\", \"target\", \"model_alias\"}:\n            return 400, {\"error\": \"request_schema\"}\n        if body[\"source_id\"] != \"daily-values\" or body[\"target\"] != TARGET or body[\"model_alias\"] != \"approved-sum\":\n            return 403, {\"error\": \"delegation_scope\"}\n        with db(folder / \"tasks.sqlite\") as con:\n            con.execute(\"BEGIN IMMEDIATE\")\n            existing = con.execute(\"SELECT * FROM tasks WHERE request_id=?\", (body[\"request_id\"],)).fetchone()\n            if existing:\n                if existing[\"request_digest\"] != digest(body):\n                    return 409, {\"error\": \"request_conflict\"}\n                return 200, {\"task_id\": existing[\"id\"], \"duplicate\": True, \"status\": existing[\"status\"]}\n            source = load(folder / \"source.json\")\n            deployment = load(folder / \"deployment.json\")\n            bundle = load(folder / deployment[\"bundle_directory\"] / \"manifest.json\")\n            con.execute(\"INSERT INTO tasks VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)\",\n                        (TASK, body[\"request_id\"], digest(body), \"alice\", \"A\", TARGET, encoded(source),\n                         file_sha(folder / \"source.json\"), encoded(bundle), digest(bundle), \"INPUT_FROZEN\", \"ACCEPTED\", 0, None, None))\n            con.execute(\"INSERT INTO audit(kind,actor,allowed,details) VALUES('accepted','alice',1,?)\",\n                        (encoded({\"task_id\": TASK, \"at_ns\": str(time.time_ns())}),))\n        return 202, {\"task_id\": TASK, \"status\": \"ACCEPTED\", \"artifact\": None}\n    if service and path in {\"/work/\" + TASK + \"/\" + action for action in (\"start\", \"model\", \"gate\", \"complete\")}:\n        action = path.rsplit(\"/\", 1)[-1]\n        with db(folder / \"tasks.sqlite\") as con:\n            con.execute(\"BEGIN IMMEDIATE\")\n            row = con.execute(\"SELECT * FROM tasks WHERE id=?\", (TASK,)).fetchone()\n            if row is None:\n                return 404, {\"error\": \"task_not_found\"}\n            if method == \"POST\" and action == \"start\":\n                if row[\"status\"] != \"SUCCEEDED\":\n                    con.execute(\"UPDATE tasks SET attempts=attempts+1,status='RUNNING' WHERE id=?\", (TASK,))\n            elif method == \"POST\" and action == \"model\":\n                con.execute(\"UPDATE tasks SET model_result=?,stage='MODEL_READY' WHERE id=?\", (encoded(body), TASK))\n            elif method == \"POST\" and action == \"gate\":\n                con.execute(\"INSERT INTO audit(kind,actor,allowed,details) VALUES('release_gate','worker',?,?)\",\n                            (int(not body[\"violations\"]), encoded(body)))\n            elif method == \"POST\" and action == \"complete\":\n                con.execute(\"UPDATE tasks SET receipt=?,stage='REPORT_CONFIRMED',status='SUCCEEDED' WHERE id=?\", (encoded(body), TASK))\n                con.execute(\"INSERT INTO audit(kind,actor,allowed,details) VALUES('completed','worker',1,?)\",\n                            (encoded({\"task_id\": TASK, \"at_ns\": str(time.time_ns())}),))\n            else:\n                return 404, {\"error\": \"work_action\"}\n            updated = dict(con.execute(\"SELECT * FROM tasks WHERE id=?\", (TASK,)).fetchone())\n        for key in (\"source\", \"bundle\", \"model_result\", \"receipt\"):\n            updated[key] = json.loads(updated[key]) if updated[key] is not None else None\n        return 200, updated\n    if method == \"GET\" and path == \"/reports/\" + TARGET and identity:\n        actor, tenant = identity\n        with db(folder / \"tasks.sqlite\") as con:\n            con.execute(\"BEGIN IMMEDIATE\")\n            row = con.execute(\"SELECT tenant FROM tasks WHERE id=?\", (TASK,)).fetchone()\n            grant = con.execute(\"SELECT report_read FROM grants WHERE actor=?\", (actor,)).fetchone()\n            allowed = bool(row and row[\"tenant\"] == tenant and grant and grant[0])\n            con.execute(\"INSERT INTO audit(kind,actor,allowed,details) VALUES('report_read',?,?,?)\", (actor, int(allowed), TARGET))\n        if not allowed:\n            return 403, {\"error\": \"report_read_denied\"}\n        receiver = load(folder / \"endpoints.json\")[\"receiver\"]\n        return http_json(receiver + \"/reports/\" + TARGET)\n    return 404, {\"error\": \"not_found\"}\n\n\ndef receiver_dispatch(folder, method, path, body, token):\n    if token != SERVICE:\n        return 401, {\"error\": \"service_identity\"}\n    if method == \"POST\" and path == \"/effects\":\n        if set(body) != {\"operation_id\", \"report\"}:\n            return 400, {\"error\": \"effect_schema\"}\n        report = body[\"report\"]\n        if report[\"tenant\"] != \"A\" or report[\"target\"] != TARGET or report[\"task_id\"] != TASK:\n            return 403, {\"error\": \"effect_scope\"}\n        op, intent = body[\"operation_id\"], digest(report)\n        with db(folder / \"receiver.sqlite\") as con:\n            con.execute(\"BEGIN IMMEDIATE\")\n            old = con.execute(\"SELECT * FROM effects WHERE op=?\", (op,)).fetchone()\n            if old:\n                if old[\"intent\"] != intent:\n                    return 409, {\"error\": \"operation_conflict\"}\n                con.execute(\"INSERT INTO attempts(op,duplicate) VALUES(?,1)\", (op,))\n                return 200, {\"receipt\": json.loads(old[\"receipt\"]), \"duplicate\": True}\n            artifact = \"artifact-\" + hashlib.sha256(op.encode()).hexdigest()[:16]\n            receipt = {\"operation_id\": op, \"artifact_id\": artifact, \"content_sha256\": intent}\n            con.execute(\"INSERT INTO artifacts VALUES(?,?,?)\", (artifact, encoded(report), intent))\n            con.execute(\"INSERT INTO effects VALUES(?,?,?,?)\", (op, intent, artifact, encoded(receipt)))\n            con.execute(\"INSERT INTO publications VALUES(?,?,?) ON CONFLICT(tenant,target) DO UPDATE SET artifact=excluded.artifact\",\n                        (\"A\", TARGET, artifact))\n            con.execute(\"INSERT INTO attempts(op,duplicate) VALUES(?,0)\", (op,))\n        # The report body, effect/receipt and visible pointer have committed together.\n        return 201, {\"receipt\": receipt, \"duplicate\": False}\n    if method == \"GET\" and path == \"/reports/\" + TARGET:\n        with db(folder / \"receiver.sqlite\") as con:\n            row = con.execute(\"SELECT a.* FROM publications p JOIN artifacts a ON a.id=p.artifact WHERE p.tenant='A' AND p.target=?\", (TARGET,)).fetchone()\n            if row is None:\n                return 404, {\"error\": \"not_published\"}\n            con.execute(\"INSERT INTO reads(artifact) VALUES(?)\", (row[\"id\"],))\n        return 200, {\"artifact_id\": row[\"id\"], \"content_sha256\": row[\"content_sha\"], \"report\": json.loads(row[\"body\"])}\n    return 404, {\"error\": \"not_found\"}\n\n\ndef serve(folder, role):\n    if role == \"model\":\n        torch = torch_runtime()\n        directory = folder / load(folder / \"deployment.json\")[\"bundle_directory\"]\n        manifest = load(directory / \"manifest.json\")\n        if manifest[\"weights_sha256\"] != file_sha(directory / \"weights.pt\") or manifest[\"config_sha256\"] != file_sha(directory / \"config.json\"):\n            raise ValueError(\"bundle_digest_mismatch\")\n        config = load(directory / \"config.json\")\n        model = torch.nn.Linear(config[\"input\"], config[\"output\"], dtype=torch.float64)\n        model.load_state_dict(torch.load(directory / \"weights.pt\", map_location=\"cpu\", weights_only=True))\n        model.eval()\n        with db(folder / \"model.sqlite\") as con:\n            con.execute(\"CREATE TABLE calls(seq INTEGER PRIMARY KEY,input TEXT,output REAL,bundle TEXT)\")\n\n        def dispatch(method, path, body, token):\n            if token != SERVICE:\n                return 401, {\"error\": \"service_identity\"}\n            if method != \"POST\" or path != \"/infer\":\n                return 404, {\"error\": \"not_found\"}\n            if body[\"bundle_sha256\"] != digest(manifest):\n                return 409, {\"error\": \"bundle_pin_mismatch\"}\n            values = body[\"values\"]\n            if len(values) != 2 or any(type(value) is not int for value in values):\n                return 400, {\"error\": \"two_integer_inputs\"}\n            with torch.no_grad():\n                result = model(torch.tensor([values], dtype=torch.float64)).item()\n            with db(folder / \"model.sqlite\") as con:\n                con.execute(\"INSERT INTO calls(input,output,bundle) VALUES(?,?,?)\", (encoded(values), result, encoded(manifest)))\n            return 200, {\"total\": result, \"bundle\": manifest, \"bundle_sha256\": digest(manifest),\n                         \"input_sha256\": digest(values), \"device\": \"cpu\", \"dtype\": \"float64\", \"torch\": torch.__version__}\n    else:\n        dispatch = lambda method, path, body, token: (api_dispatch if role == \"api\" else receiver_dispatch)(folder, method, path, body, token)\n    server = ThreadingHTTPServer((\"127.0.0.1\", 0), Handler)\n    server.daemon_threads = True\n    server.dispatch = dispatch\n    save(folder / (role + \"-ready.json\"), {\"url\": \"http://127.0.0.1:\" + str(server.server_port), \"pid\": os.getpid()})\n    try:\n        server.serve_forever(poll_interval=0.05)\n    finally:\n        server.server_close()\n\n\ndef worker(folder, crash=False, fresh_operation=False, bypass_release_gate=False):\n    endpoints = load(folder / \"endpoints.json\")\n    task = rpc(endpoints[\"api\"] + \"/work/\" + TASK + \"/start\", \"POST\", {})\n    if task[\"status\"] == \"SUCCEEDED\":\n        return {\"pid\": os.getpid(), \"already_complete\": True, \"task_id\": TASK}\n    if task[\"model_result\"] is None:\n        result = rpc(endpoints[\"model\"] + \"/infer\", \"POST\", {\"values\": task[\"source\"][\"values\"], \"bundle_sha256\": task[\"bundle_sha\"]})\n        if result[\"bundle\"] != task[\"bundle\"] or result[\"input_sha256\"] != digest(task[\"source\"][\"values\"]):\n            raise ValueError(\"inference_identity_mismatch\")\n        task = rpc(endpoints[\"api\"] + \"/work/\" + TASK + \"/model\", \"POST\", result)\n    result = task[\"model_result\"]\n    # The normal release gate checks the task's frozen input/model and its declared\n    # numerical content condition before any effect request is sent.\n    authoritative_source = load(folder / \"source.json\")\n    approved_manifest = load(folder / \"approved\" / \"manifest.json\")\n    violations = []\n    if task[\"source\"] != authoritative_source or task[\"source_sha\"] != file_sha(folder / \"source.json\"):\n        violations.append(\"source_binding\")\n    if task[\"bundle\"] != approved_manifest or result[\"bundle\"] != approved_manifest:\n        violations.append(\"model_binding\")\n    if result[\"input_sha256\"] != digest(authoritative_source[\"values\"]):\n        violations.append(\"model_input_binding\")\n    if not math.isfinite(result[\"total\"]) or result[\"total\"] != sum(authoritative_source[\"values\"]):\n        violations.append(\"content_total\")\n    gate = {\"mode\": \"bypassed_negative\" if bypass_release_gate else \"enforced\", \"violations\": violations}\n    rpc(endpoints[\"api\"] + \"/work/\" + TASK + \"/gate\", \"POST\", gate)\n    if violations and not bypass_release_gate:\n        print(encoded({\"pid\": os.getpid(), \"event\": \"release_gate_rejected\", \"gate\": gate}), flush=True)\n        os._exit(24)\n    report = {\"task_id\": TASK, \"tenant\": task[\"tenant\"], \"target\": task[\"target\"], \"total\": result[\"total\"],\n              \"source\": {\"id\": task[\"source\"][\"id\"], \"version\": task[\"source\"][\"version\"], \"sha256\": task[\"source_sha\"]},\n              \"model\": task[\"bundle\"], \"input_sha256\": result[\"input_sha256\"]}\n    # Deliberate negative: change the logical identity only when explicitly asked.\n    operation = TASK + \":save\" + (\":retry-\" + str(task[\"attempts\"]) if fresh_operation else \"\")\n    response = rpc(endpoints[\"receiver\"] + \"/effects\", \"POST\", {\"operation_id\": operation, \"report\": report})\n    if crash:\n        print(encoded({\"pid\": os.getpid(), \"event\": \"exit_after_receiver_commit_before_task_ack\", \"operation_id\": operation, \"receipt\": response[\"receipt\"]}), flush=True)\n        os._exit(23)\n    published = rpc(endpoints[\"receiver\"] + \"/reports/\" + TARGET)\n    if published[\"artifact_id\"] != response[\"receipt\"][\"artifact_id\"] or published[\"content_sha256\"] != digest(report):\n        raise ValueError(\"published_report_mismatch\")\n    rpc(endpoints[\"api\"] + \"/work/\" + TASK + \"/complete\", \"POST\", response[\"receipt\"])\n    return {\"pid\": os.getpid(), \"task_id\": TASK, \"operation_id\": operation, \"duplicate\": response[\"duplicate\"], \"total\": report[\"total\"],\n            \"release_gate\": gate, \"operation_identity_bypassed\": fresh_operation}\n\n\ndef independent_oracle(folder):\n    # Read authoritative files and DB rows directly; no worker return value or trace input.\n    source = load(folder / \"source.json\")\n    contract = load(folder / \"model-contract.json\")\n    approved = folder / \"approved\"\n    approved_manifest = load(approved / \"manifest.json\")\n    selected = folder / load(folder / \"deployment.json\")[\"bundle_directory\"]\n    selected_manifest = load(selected / \"manifest.json\")\n    torch = torch_runtime()\n    approved_weights = torch.load(approved / \"weights.pt\", map_location=\"cpu\", weights_only=True)\n    expected_total = sum(source[\"values\"])\n    with db(folder / \"tasks.sqlite\", True) as con:\n        task = dict(con.execute(\"SELECT * FROM tasks WHERE id=?\", (TASK,)).fetchone())\n        audit = [dict(row) for row in con.execute(\"SELECT * FROM audit ORDER BY seq\")]\n    with db(folder / \"receiver.sqlite\", True) as con:\n        effects = [dict(row) for row in con.execute(\"SELECT * FROM effects ORDER BY op\")]\n        artifacts = [dict(row) for row in con.execute(\"SELECT * FROM artifacts ORDER BY id\")]\n        publications = [dict(row) for row in con.execute(\"SELECT * FROM publications\")]\n        attempts = [dict(row) for row in con.execute(\"SELECT * FROM attempts ORDER BY seq\")]\n    with db(folder / \"model.sqlite\", True) as con:\n        calls = [dict(row) for row in con.execute(\"SELECT * FROM calls ORDER BY seq\")]\n    reports = [json.loads(row[\"body\"]) for row in artifacts]\n    expected_source = {\"id\": source[\"id\"], \"version\": source[\"version\"], \"sha256\": file_sha(folder / \"source.json\")}\n    artifact_digests = {row[\"id\"]: row[\"content_sha\"] for row in artifacts}\n    effect_receipts = [json.loads(row[\"receipt\"]) for row in effects]\n    local_receipt = json.loads(task[\"receipt\"]) if task[\"receipt\"] else None\n    checks = {\n        \"source_is_declared_task_input\": source[\"tenant\"] == \"A\" and source[\"values\"] == [10, 27],\n        \"approved_weights_match_contract\": torch.equal(approved_weights[\"weight\"], torch.tensor(contract[\"weight\"], dtype=torch.float64)) and torch.equal(approved_weights[\"bias\"], torch.tensor(contract[\"bias\"], dtype=torch.float64)),\n        \"approved_artifact_bytes\": approved_manifest[\"weights_sha256\"] == file_sha(approved / \"weights.pt\") and approved_manifest[\"config_sha256\"] == file_sha(approved / \"config.json\"),\n        \"approved_config_matches_contract\": load(approved / \"config.json\") == {\"architecture\": contract[\"architecture\"], \"input\": 2, \"output\": 1, \"dtype\": contract[\"dtype\"], \"runtime\": \"torch==2.5.1\"},\n        \"selected_bundle_is_approved\": selected_manifest == approved_manifest and selected_manifest[\"bundle_id\"] == contract[\"bundle_id\"],\n        \"selected_artifact_bytes\": selected_manifest[\"weights_sha256\"] == file_sha(selected / \"weights.pt\") and selected_manifest[\"config_sha256\"] == file_sha(selected / \"config.json\"),\n        \"frozen_task_input_and_model\": task[\"id\"] == contract[\"task_id\"] and task[\"actor\"] == \"alice\" and task[\"tenant\"] == source[\"tenant\"] and task[\"target\"] == contract[\"target\"] and json.loads(task[\"source\"]) == source and task[\"source_sha\"] == expected_source[\"sha256\"] and json.loads(task[\"bundle\"]) == approved_manifest and task[\"bundle_sha\"] == digest(approved_manifest),\n        \"one_effect_and_artifact\": len(effects) == len(artifacts) == contract[\"required_artifacts\"],\n        \"one_published_target\": len(publications) == 1 and publications[0][\"tenant\"] == \"A\" and publications[0][\"target\"] == contract[\"target\"] and publications[0][\"artifact\"] in {row[\"id\"] for row in artifacts},\n        \"actual_report_matches_source\": bool(reports) and all(report[\"total\"] == expected_total and report[\"source\"] == expected_source and report[\"input_sha256\"] == digest(source[\"values\"]) for report in reports),\n        \"actual_report_uses_approved_model\": bool(reports) and all(report[\"model\"] == approved_manifest for report in reports),\n        \"task_and_target_match\": bool(reports) and all(report[\"task_id\"] == contract[\"task_id\"] and report[\"target\"] == contract[\"target\"] and report[\"tenant\"] == source[\"tenant\"] for report in reports),\n        \"artifact_and_effect_digests\": all(row[\"content_sha\"] == digest(json.loads(row[\"body\"])) for row in artifacts) and all(row[\"intent\"] == artifact_digests.get(row[\"artifact\"]) for row in effects),\n        \"effect_receipts_match_records\": all(json.loads(row[\"receipt\"]) == {\"operation_id\": row[\"op\"], \"artifact_id\": row[\"artifact\"], \"content_sha256\": row[\"intent\"]} for row in effects),\n        \"local_completion_references_publication\": task[\"status\"] == \"SUCCEEDED\" and isinstance(local_receipt, dict) and local_receipt in effect_receipts and len(publications) == 1 and local_receipt.get(\"artifact_id\") == publications[0][\"artifact\"],\n        \"real_model_call_recorded\": len(calls) == 1 and json.loads(calls[0][\"input\"]) == source[\"values\"] and json.loads(calls[0][\"bundle\"]) == selected_manifest and bool(reports) and all(calls[0][\"output\"] == report[\"total\"] and json.loads(calls[0][\"bundle\"]) == report[\"model\"] for report in reports),\n    }\n    return {\"accepted\": all(checks.values()), \"checks\": checks, \"expected_total\": expected_total,\n            \"actual_totals\": [report[\"total\"] for report in reports], \"task_status\": task[\"status\"], \"task_stage\": task[\"stage\"],\n            \"worker_attempts\": task[\"attempts\"], \"model_calls\": len(calls), \"tool_attempts\": len(attempts),\n            \"effect_count\": len(effects), \"artifact_count\": len(artifacts), \"publication_count\": len(publications),\n            \"operations\": [row[\"op\"] for row in effects], \"tool_attempt_records\": attempts,\n            \"approved_model\": approved_manifest, \"selected_model\": selected_manifest, \"source\": expected_source,\n            \"api_audit\": audit}\n\n\nclass Supervisor:\n    def __init__(self):\n        self.deadline = time.monotonic() + 90\n        self.processes = []\n        self.reaped = []\n        self.previous_alarm = signal.signal(signal.SIGALRM, self.expired)\n        signal.setitimer(signal.ITIMER_REAL, 90)\n\n    @staticmethod\n    def expired(*_):\n        raise TimeoutError(\"90 second suite supervision budget exhausted\")\n\n    def timeout(self):\n        remaining = self.deadline - time.monotonic()\n        if remaining <= 0:\n            raise TimeoutError(\"90 second suite supervision budget exhausted\")\n        return min(15, remaining)\n\n    def start(self, folder, role):\n        process = subprocess.Popen([sys.executable, \"-B\", str(Path(__file__).resolve()), \"serve\", \"--folder\", str(folder), \"--role\", role],\n                                   stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, start_new_session=True)\n        self.processes.append(process)\n        ready = folder / (role + \"-ready.json\")\n        limit = time.monotonic() + self.timeout()\n        while not ready.exists():\n            if process.poll() is not None:\n                raise RuntimeError(f\"{role} exited: {process.stderr.read()}\")\n            if time.monotonic() >= limit:\n                raise TimeoutError(role + \" did not become ready\")\n            time.sleep(0.02)\n        return load(ready)\n\n    def run_worker(self, folder, **flags):\n        args = [sys.executable, \"-B\", str(Path(__file__).resolve()), \"worker\", \"--folder\", str(folder)]\n        args.extend(\"--\" + name.replace(\"_\", \"-\") for name, enabled in flags.items() if enabled)\n        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)\n        self.processes.append(process)\n        stdout, stderr = process.communicate(timeout=self.timeout())\n        if process.returncode not in (0, 23, 24):\n            raise RuntimeError(f\"worker {process.returncode}: {stderr}\")\n        return {\"exit_code\": process.returncode, \"result\": json.loads(stdout)}\n\n    def stop(self):\n        for process in reversed(self.processes):\n            if process.poll() is None:\n                try:\n                    os.killpg(process.pid, signal.SIGTERM)\n                except ProcessLookupError:\n                    pass\n                try:\n                    process.wait(timeout=3)\n                except subprocess.TimeoutExpired:\n                    try:\n                        os.killpg(process.pid, signal.SIGKILL)\n                    except ProcessLookupError:\n                        pass\n                    process.wait(timeout=3)\n            else:\n                process.wait()\n            for stream in (process.stdout, process.stderr):\n                if stream:\n                    stream.close()\n            if process.pid not in self.reaped:\n                self.reaped.append(process.pid)\n        self.processes.clear()\n\n    def close(self):\n        # Cleanup is outside the workload alarm, including a timeout raised while\n        # a per-case stop was already in progress. Repeated wait/close is safe.\n        signal.setitimer(signal.ITIMER_REAL, 0)\n        signal.signal(signal.SIGALRM, self.previous_alarm)\n        self.stop()\n\n\ndef case(folder, variant, supervisor):\n    prepare(folder, variant)\n    try:\n        model = supervisor.start(folder, \"model\")\n        receiver = supervisor.start(folder, \"receiver\")\n        save(folder / \"endpoints.json\", {\"model\": model[\"url\"], \"receiver\": receiver[\"url\"]})\n        api = supervisor.start(folder, \"api\")\n        endpoints = load(folder / \"endpoints.json\")\n        save(folder / \"endpoints.json\", {**endpoints, \"api\": api[\"url\"]})\n        submission = {\"request_id\": \"submit-A-001\", \"source_id\": \"daily-values\", \"target\": TARGET, \"model_alias\": \"approved-sum\"}\n        accepted_status, accepted = http_json(api[\"url\"] + \"/tasks\", \"POST\", submission, \"fixture-user-A\")\n        assert accepted_status == 202 and accepted[\"status\"] == \"ACCEPTED\" and accepted[\"artifact\"] is None\n        with db(folder / \"receiver.sqlite\", True) as con:\n            effects_at_acceptance = con.execute(\"SELECT COUNT(*) FROM effects\").fetchone()[0]\n        assert effects_at_acceptance == 0\n        duplicate_status, duplicate = http_json(api[\"url\"] + \"/tasks\", \"POST\", submission, \"fixture-user-A\")\n        assert duplicate_status == 200 and duplicate[\"task_id\"] == accepted[\"task_id\"]\n        workers = []\n        gap = None\n        gate_refusal = None\n        if variant in (\"wrong_weights\", \"wrong_version\"):\n            refused = supervisor.run_worker(folder)\n            assert refused[\"exit_code\"] == 24\n            with db(folder / \"receiver.sqlite\", True) as con:\n                before_bypass = con.execute(\"SELECT COUNT(*) FROM effects\").fetchone()[0]\n            assert before_bypass == 0\n            gate_refusal = {\"worker\": refused, \"effects_before_bypass\": before_bypass}\n        if variant in (\"recover_same_operation\", \"unsafe_new_operation\"):\n            workers.append(supervisor.run_worker(folder, crash_after_tool=True))\n            assert workers[-1][\"exit_code\"] == 23\n            with db(folder / \"tasks.sqlite\", True) as con:\n                task = dict(con.execute(\"SELECT * FROM tasks\").fetchone())\n            with db(folder / \"receiver.sqlite\", True) as con:\n                gap = {\"task_status\": task[\"status\"], \"task_stage\": task[\"stage\"], \"local_receipt\": task[\"receipt\"],\n                       \"receiver_effects\": con.execute(\"SELECT COUNT(*) FROM effects\").fetchone()[0],\n                       \"published_reports\": con.execute(\"SELECT COUNT(*) FROM publications\").fetchone()[0]}\n            assert gap == {\"task_status\": \"RUNNING\", \"task_stage\": \"MODEL_READY\", \"local_receipt\": None, \"receiver_effects\": 1, \"published_reports\": 1}\n        workers.append(supervisor.run_worker(folder, fresh_operation=variant == \"unsafe_new_operation\",\n                                              bypass_release_gate=variant in (\"wrong_weights\", \"wrong_version\")))\n        assert workers[-1][\"exit_code\"] == 0\n        state = independent_oracle(folder)\n        expected_acceptance = variant in (\"normal\", \"recover_same_operation\", \"read_authorization\")\n        assert state[\"accepted\"] is expected_acceptance\n        if variant == \"recover_same_operation\":\n            assert state[\"worker_attempts\"] == state[\"tool_attempts\"] == 2 and state[\"effect_count\"] == 1\n            assert workers[0][\"result\"][\"pid\"] != workers[1][\"result\"][\"pid\"]\n        if variant == \"unsafe_new_operation\":\n            assert state[\"task_status\"] == \"SUCCEEDED\" and state[\"effect_count\"] == state[\"artifact_count\"] == 2 and state[\"actual_totals\"] == [37.0, 37.0]\n        if variant == \"wrong_weights\":\n            assert state[\"actual_totals\"] == [38.0] and not state[\"checks\"][\"actual_report_matches_source\"]\n        if variant == \"wrong_version\":\n            assert state[\"actual_totals\"] == [37.0] and not state[\"checks\"][\"selected_bundle_is_approved\"]\n        read_status, visible = http_json(api[\"url\"] + \"/reports/\" + TARGET, token=\"fixture-user-A\")\n        assert read_status == 200 and visible[\"report\"][\"total\"] == state[\"actual_totals\"][0]\n        authorization = None\n        if variant == \"read_authorization\":\n            with db(folder / \"receiver.sqlite\", True) as con:\n                reads_before = con.execute(\"SELECT COUNT(*) FROM reads\").fetchone()[0]\n            other_status, other = http_json(api[\"url\"] + \"/reports/\" + TARGET, token=\"fixture-user-B\")\n            with db(folder / \"tasks.sqlite\") as con:\n                con.execute(\"UPDATE grants SET report_read=0 WHERE actor='alice'\")\n            revoked_status, revoked = http_json(api[\"url\"] + \"/reports/\" + TARGET, token=\"fixture-user-A\")\n            with db(folder / \"receiver.sqlite\", True) as con:\n                reads_after = con.execute(\"SELECT COUNT(*) FROM reads\").fetchone()[0]\n            assert other_status == revoked_status == 403 and other == revoked == {\"error\": \"report_read_denied\"}\n            assert reads_after == reads_before\n            state = independent_oracle(folder)\n            denied = [row for row in state[\"api_audit\"] if row[\"kind\"] == \"report_read\" and not row[\"allowed\"]]\n            assert [row[\"actor\"] for row in denied] == [\"bob\", \"alice\"]\n            authorization = {\"initial_read\": 200, \"other_tenant\": other_status, \"revoked_actor\": revoked_status,\n                             \"receiver_reads_before\": reads_before, \"receiver_reads_after\": reads_after,\n                             \"denied_responses\": [other, revoked], \"artifact_retained\": state[\"artifact_count\"] == 1}\n        # Completed work is a no-op on another process; no extra inference/effect.\n        before_repeat = (state[\"worker_attempts\"], state[\"model_calls\"], state[\"tool_attempts\"], state[\"effect_count\"])\n        repeated = supervisor.run_worker(folder)\n        after_repeat = independent_oracle(folder)\n        assert before_repeat == (after_repeat[\"worker_attempts\"], after_repeat[\"model_calls\"], after_repeat[\"tool_attempts\"], after_repeat[\"effect_count\"])\n        return {\"accepted_http_status\": accepted_status, \"accepted_response\": accepted, \"effects_at_acceptance\": effects_at_acceptance,\n                \"submission_retry\": duplicate, \"services\": {\"api\": api, \"model\": model, \"receiver\": receiver},\n                \"workers\": workers, \"commit_gap\": gap, \"gate_refusal\": gate_refusal, \"oracle\": state, \"authorization\": authorization,\n                \"completed_repeat\": repeated, \"completed_repeat_unchanged\": True}\n    finally:\n        supervisor.stop()\n\n\ndef suite(root):\n    supervisor = Supervisor()\n    try:\n        cases = {name: case(root / name, name, supervisor) for name in\n                 (\"normal\", \"recover_same_operation\", \"unsafe_new_operation\", \"read_authorization\", \"wrong_weights\", \"wrong_version\")}\n        capacity = {\"arrival_and_completion_tasks_per_second\": 2, \"end_to_end_seconds\": 30,\n                    \"queue_and_other_wait_seconds\": 10, \"slot_occupancy_seconds_per_task\": 20,\n                    \"mean_in_system\": 2 * 30, \"mean_busy_slots\": 2 * 20,\n                    \"slots_for_70_percent_target\": math.ceil(2 * 20 / 0.7),\n                    \"utilization_at_64_slots\": 2 * 20 / 64, \"ideal_slot_capacity_tasks_per_second\": 64 / 20,\n                    \"scope\": \"independent declared steady-state arithmetic, not measured HTTP/model latency or a load test\"}\n        return {\"schema\": \"integrated-service-v1\", \"status\": \"passed\", \"environment\": {\"python\": platform.python_version(),\n                \"torch\": torch_runtime().__version__, \"sqlite\": sqlite3.sqlite_version, \"platform\": platform.system(), \"device\": \"cpu\"},\n                \"cases\": cases, \"capacity\": capacity, \"cleanup\": {\"all_children_reaped\": True, \"owned_process_groups_only\": True,\n                \"reaped_count\": len(supervisor.reaped), \"supervision_seconds\": 90},\n                \"scope\": \"single host, public identity fixture, fixed plan, CPU Linear inference, loopback HTTP and independent SQLite domains; no LLM/training/GPU/Kairo, production authentication, concurrent workers, fencing or power-loss durability\"}\n    finally:\n        supervisor.close()\n\n\ndef main():\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\"command\", choices=(\"suite\", \"serve\", \"worker\", \"oracle\"), nargs=\"?\", default=\"suite\")\n    parser.add_argument(\"--folder\", type=Path)\n    parser.add_argument(\"--role\", choices=(\"api\", \"model\", \"receiver\"))\n    parser.add_argument(\"--output-dir\", type=Path, help=\"must not exist; keeps only this experiment's files\")\n    parser.add_argument(\"--crash-after-tool\", action=\"store_true\")\n    parser.add_argument(\"--fresh-operation\", action=\"store_true\")\n    parser.add_argument(\"--bypass-release-gate\", action=\"store_true\", help=\"deliberate negative only\")\n    args = parser.parse_args()\n    if args.command == \"serve\":\n        serve(args.folder.resolve(), args.role)\n    elif args.command == \"worker\":\n        print(encoded(worker(args.folder.resolve(), args.crash_after_tool, args.fresh_operation, args.bypass_release_gate)))\n    elif args.command == \"oracle\":\n        print(encoded(independent_oracle(args.folder.resolve())))\n    elif args.output_dir:\n        args.output_dir.mkdir(parents=True, exist_ok=False)\n        result = suite(args.output_dir.resolve())\n        result[\"cleanup\"][\"temporary_directories\"] = \"retained_by_request\"\n        print(json.dumps(result, ensure_ascii=False, indent=2))\n    else:\n        with tempfile.TemporaryDirectory(prefix=\"infra-integrated-service-\") as temp:\n            result = suite(Path(temp))\n        result[\"cleanup\"][\"temporary_directories\"] = \"removed\"\n        print(json.dumps(result, ensure_ascii=False, indent=2))\n\n\nif __name__ == \"__main__\":\n    main()\n";
+const integratedServiceValidation={"schema":"integrated-service-validation-v1","verified_on":"2026-11-09","command":"../ddp-step-env/bin/python -B dist/labs/integrated-service/integrated_service.py","source_sha256":{"README.md":"1362959509aaab85f825e676f1c3ab0c31c0dff303c5018b862a0f4d9a501b13","integrated_service.py":"6e0fef5ae3ceb685702a779f607622441628d90f1d38c062a872a37ee9925d2c","model-contract.json":"cd82246825933d23dbec95adb24f739ea33ee563ff4666fc5645610c56b56550","requirements.txt":"8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e","source.json":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"program":{"schema":"integrated-service-v1","status":"passed","environment":{"python":"3.12.13","torch":"2.5.1","sqlite":"3.53.3","platform":"Darwin","device":"cpu"},"cases":{"normal":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25086,"url":"http://127.0.0.1:64983"},"model":{"pid":25083,"url":"http://127.0.0.1:64980"},"receiver":{"pid":25085,"url":"http://127.0.0.1:64982"}},"workers":[{"exit_code":0,"result":{"duplicate":false,"operation_id":"task-A:save","operation_identity_bypassed":false,"pid":25087,"release_gate":{"mode":"enforced","violations":[]},"task_id":"task-A","total":37}}],"commit_gap":null,"gate_refusal":null,"oracle":{"accepted":true,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":true,"selected_artifact_bytes":true,"frozen_task_input_and_model":true,"one_effect_and_artifact":true,"one_published_target":true,"actual_report_matches_source":true,"actual_report_uses_approved_model":true,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[37],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":1,"model_calls":1,"tool_attempts":1,"effect_count":1,"artifact_count":1,"publication_count":1,"operations":["task-A:save"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166802039213000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":3,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166802185701000\",\"task_id\":\"task-A\"}"}]},"authorization":null,"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25088,"task_id":"task-A"}},"completed_repeat_unchanged":true},"recover_same_operation":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25093,"url":"http://127.0.0.1:65001"},"model":{"pid":25089,"url":"http://127.0.0.1:64999"},"receiver":{"pid":25092,"url":"http://127.0.0.1:65000"}},"workers":[{"exit_code":23,"result":{"event":"exit_after_receiver_commit_before_task_ack","operation_id":"task-A:save","pid":25094,"receipt":{"artifact_id":"artifact-c29944c5437896d9","content_sha256":"d978c3115c49bb7d9ec738a1c5c7e1610112f9555f4cbca13802199f50af4000","operation_id":"task-A:save"}}},{"exit_code":0,"result":{"duplicate":true,"operation_id":"task-A:save","operation_identity_bypassed":false,"pid":25095,"release_gate":{"mode":"enforced","violations":[]},"task_id":"task-A","total":37}}],"commit_gap":{"task_status":"RUNNING","task_stage":"MODEL_READY","local_receipt":null,"receiver_effects":1,"published_reports":1},"gate_refusal":null,"oracle":{"accepted":true,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":true,"selected_artifact_bytes":true,"frozen_task_input_and_model":true,"one_effect_and_artifact":true,"one_published_target":true,"actual_report_matches_source":true,"actual_report_uses_approved_model":true,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[37],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":2,"model_calls":1,"tool_attempts":2,"effect_count":1,"artifact_count":1,"publication_count":1,"operations":["task-A:save"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0},{"seq":2,"op":"task-A:save","duplicate":1}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166803086962000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":3,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":4,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166803327713000\",\"task_id\":\"task-A\"}"}]},"authorization":null,"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25096,"task_id":"task-A"}},"completed_repeat_unchanged":true},"unsafe_new_operation":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25107,"url":"http://127.0.0.1:65026"},"model":{"pid":25097,"url":"http://127.0.0.1:65023"},"receiver":{"pid":25106,"url":"http://127.0.0.1:65024"}},"workers":[{"exit_code":23,"result":{"event":"exit_after_receiver_commit_before_task_ack","operation_id":"task-A:save","pid":25108,"receipt":{"artifact_id":"artifact-c29944c5437896d9","content_sha256":"d978c3115c49bb7d9ec738a1c5c7e1610112f9555f4cbca13802199f50af4000","operation_id":"task-A:save"}}},{"exit_code":0,"result":{"duplicate":false,"operation_id":"task-A:save:retry-2","operation_identity_bypassed":true,"pid":25109,"release_gate":{"mode":"enforced","violations":[]},"task_id":"task-A","total":37}}],"commit_gap":{"task_status":"RUNNING","task_stage":"MODEL_READY","local_receipt":null,"receiver_effects":1,"published_reports":1},"gate_refusal":null,"oracle":{"accepted":false,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":true,"selected_artifact_bytes":true,"frozen_task_input_and_model":true,"one_effect_and_artifact":false,"one_published_target":true,"actual_report_matches_source":true,"actual_report_uses_approved_model":true,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[37,37],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":2,"model_calls":1,"tool_attempts":2,"effect_count":2,"artifact_count":2,"publication_count":1,"operations":["task-A:save","task-A:save:retry-2"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0},{"seq":2,"op":"task-A:save:retry-2","duplicate":0}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166804215262000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":3,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":4,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166804443367000\",\"task_id\":\"task-A\"}"}]},"authorization":null,"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25110,"task_id":"task-A"}},"completed_repeat_unchanged":true},"read_authorization":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25113,"url":"http://127.0.0.1:65054"},"model":{"pid":25111,"url":"http://127.0.0.1:65052"},"receiver":{"pid":25112,"url":"http://127.0.0.1:65053"}},"workers":[{"exit_code":0,"result":{"duplicate":false,"operation_id":"task-A:save","operation_identity_bypassed":false,"pid":25114,"release_gate":{"mode":"enforced","violations":[]},"task_id":"task-A","total":37}}],"commit_gap":null,"gate_refusal":null,"oracle":{"accepted":true,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":true,"selected_artifact_bytes":true,"frozen_task_input_and_model":true,"one_effect_and_artifact":true,"one_published_target":true,"actual_report_matches_source":true,"actual_report_uses_approved_model":true,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[37],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":1,"model_calls":1,"tool_attempts":1,"effect_count":1,"artifact_count":1,"publication_count":1,"operations":["task-A:save"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166805300654000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":1,"details":"{\"mode\":\"enforced\",\"violations\":[]}"},{"seq":3,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166805443137000\",\"task_id\":\"task-A\"}"},{"seq":4,"kind":"report_read","actor":"alice","allowed":1,"details":"report-A"},{"seq":5,"kind":"report_read","actor":"bob","allowed":0,"details":"report-A"},{"seq":6,"kind":"report_read","actor":"alice","allowed":0,"details":"report-A"}]},"authorization":{"initial_read":200,"other_tenant":403,"revoked_actor":403,"receiver_reads_before":2,"receiver_reads_after":2,"denied_responses":[{"error":"report_read_denied"},{"error":"report_read_denied"}],"artifact_retained":true},"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25115,"task_id":"task-A"}},"completed_repeat_unchanged":true},"wrong_weights":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25121,"url":"http://127.0.0.1:65085"},"model":{"pid":25116,"url":"http://127.0.0.1:65082"},"receiver":{"pid":25120,"url":"http://127.0.0.1:65084"}},"workers":[{"exit_code":0,"result":{"duplicate":false,"operation_id":"task-A:save","operation_identity_bypassed":false,"pid":25123,"release_gate":{"mode":"bypassed_negative","violations":["model_binding","content_total"]},"task_id":"task-A","total":38}}],"commit_gap":null,"gate_refusal":{"worker":{"exit_code":24,"result":{"event":"release_gate_rejected","gate":{"mode":"enforced","violations":["model_binding","content_total"]},"pid":25122}},"effects_before_bypass":0},"oracle":{"accepted":false,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":false,"selected_artifact_bytes":true,"frozen_task_input_and_model":false,"one_effect_and_artifact":true,"one_published_target":true,"actual_report_matches_source":false,"actual_report_uses_approved_model":false,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[38],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":2,"model_calls":1,"tool_attempts":1,"effect_count":1,"artifact_count":1,"publication_count":1,"operations":["task-A:save"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"be9a30fc34662e1f67b5945c5bd4530a2ee8cde62515490adb19d917d95eaf26"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166806541447000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":0,"details":"{\"mode\":\"enforced\",\"violations\":[\"model_binding\",\"content_total\"]}"},{"seq":3,"kind":"release_gate","actor":"worker","allowed":0,"details":"{\"mode\":\"bypassed_negative\",\"violations\":[\"model_binding\",\"content_total\"]}"},{"seq":4,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166806771893000\",\"task_id\":\"task-A\"}"}]},"authorization":null,"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25124,"task_id":"task-A"}},"completed_repeat_unchanged":true},"wrong_version":{"accepted_http_status":202,"accepted_response":{"artifact":null,"status":"ACCEPTED","task_id":"task-A"},"effects_at_acceptance":0,"submission_retry":{"duplicate":true,"status":"ACCEPTED","task_id":"task-A"},"services":{"api":{"pid":25127,"url":"http://127.0.0.1:65104"},"model":{"pid":25125,"url":"http://127.0.0.1:65102"},"receiver":{"pid":25126,"url":"http://127.0.0.1:65103"}},"workers":[{"exit_code":0,"result":{"duplicate":false,"operation_id":"task-A:save","operation_identity_bypassed":false,"pid":25129,"release_gate":{"mode":"bypassed_negative","violations":["model_binding"]},"task_id":"task-A","total":37}}],"commit_gap":null,"gate_refusal":{"worker":{"exit_code":24,"result":{"event":"release_gate_rejected","gate":{"mode":"enforced","violations":["model_binding"]},"pid":25128}},"effects_before_bypass":0},"oracle":{"accepted":false,"checks":{"source_is_declared_task_input":true,"approved_weights_match_contract":true,"approved_artifact_bytes":true,"approved_config_matches_contract":true,"selected_bundle_is_approved":false,"selected_artifact_bytes":true,"frozen_task_input_and_model":false,"one_effect_and_artifact":true,"one_published_target":true,"actual_report_matches_source":true,"actual_report_uses_approved_model":false,"task_and_target_match":true,"artifact_and_effect_digests":true,"effect_receipts_match_records":true,"local_completion_references_publication":true,"real_model_call_recorded":true},"expected_total":37,"actual_totals":[37],"task_status":"SUCCEEDED","task_stage":"REPORT_CONFIRMED","worker_attempts":2,"model_calls":1,"tool_attempts":1,"effect_count":1,"artifact_count":1,"publication_count":1,"operations":["task-A:save"],"tool_attempt_records":[{"seq":1,"op":"task-A:save","duplicate":0}],"approved_model":{"bundle_id":"linear-sum-v1","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"selected_model":{"bundle_id":"linear-sum-v2","config_sha256":"0d38ac2b19748b8e9cbef0b178e18a26c6ce20e3a3fc595f97ce4ae4baad09bf","weights_sha256":"43bcd59e0cab70fb1f8898a53c2f7ac2ff2a04f42b9cdab021cfaa336998ba1f"},"source":{"id":"daily-values","version":1,"sha256":"edf81c052af139ba142615fb71703935768239a28f4f3b87162713eef5015f2f"},"api_audit":[{"seq":1,"kind":"accepted","actor":"alice","allowed":1,"details":"{\"at_ns\":\"1794166807668488000\",\"task_id\":\"task-A\"}"},{"seq":2,"kind":"release_gate","actor":"worker","allowed":0,"details":"{\"mode\":\"enforced\",\"violations\":[\"model_binding\"]}"},{"seq":3,"kind":"release_gate","actor":"worker","allowed":0,"details":"{\"mode\":\"bypassed_negative\",\"violations\":[\"model_binding\"]}"},{"seq":4,"kind":"completed","actor":"worker","allowed":1,"details":"{\"at_ns\":\"1794166807914527000\",\"task_id\":\"task-A\"}"}]},"authorization":null,"completed_repeat":{"exit_code":0,"result":{"already_complete":true,"pid":25130,"task_id":"task-A"}},"completed_repeat_unchanged":true}},"capacity":{"arrival_and_completion_tasks_per_second":2,"end_to_end_seconds":30,"queue_and_other_wait_seconds":10,"slot_occupancy_seconds_per_task":20,"mean_in_system":60,"mean_busy_slots":40,"slots_for_70_percent_target":58,"utilization_at_64_slots":0.625,"ideal_slot_capacity_tasks_per_second":3.2,"scope":"independent declared steady-state arithmetic, not measured HTTP/model latency or a load test"},"cleanup":{"all_children_reaped":true,"owned_process_groups_only":true,"reaped_count":34,"supervision_seconds":90,"temporary_directories":"removed"},"scope":"single host, public identity fixture, fixed plan, CPU Linear inference, loopback HTTP and independent SQLite domains; no LLM/training/GPU/Kairo, production authentication, concurrent workers, fencing or power-loss durability"}};
+
+
+;
+// progressive-integrated-service-reading.js
+/* One real numerical service, then capacity and failure reasoning over its boundaries. */
+(()=>{
+ if(typeof integratedServiceSource!=='string'||typeof integratedServiceValidation==='undefined')throw Error('Missing integrated service source/evidence');
+ const a=articles.find(x=>x.id==='production-readiness');
+ if(!a)throw Error('Missing integrated design chapter');
+ const expected=['把资料分析服务写成一份用户契约','画出控制面、执行面与权威记录','先做一笔从流量到在途工作的容量预算','把身份、数据版本和模型版本捆在同一条链','用五个故障窗口检查端到端一致性','定义评估集，让可靠性结论有分母','让观测与演练覆盖设计假设','练习：用一页纸组织一次设计面试'];
+ if(JSON.stringify(a.sections.map(s=>s[0]))!==JSON.stringify(expected))throw Error('Integrated service section identities changed');
+ const before=a.sections.map(s=>s[1]),identity=JSON.stringify([a.id,a.title,a.number,a.module]);
+ const p=(...items)=>items.map(text=>'<p>'+text+'</p>').join('');
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
+ const matches=(text,re)=>[...text.matchAll(re)].map(m=>m[0]);
+ const figures=text=>matches(text,/<figure\b[\s\S]*?<\/figure>/g);
+ const links=text=>matches(text.replace(/<figure\b[\s\S]*?<\/figure>/g,''),/<a\b[^>]*href=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g).join(' · ');
+ const existingLinks=index=>links(before[index])?'<p class="practice-links">'+links(before[index])+'</p>':'';
+ const evidence=integratedServiceValidation.program;
+ if(integratedServiceValidation.schema!=='integrated-service-validation-v1'||evidence?.status!=='passed'||evidence.environment.torch!=='2.5.1'||evidence.environment.device!=='cpu')throw Error('Unexpected integrated service evidence');
+ const normal=evidence.cases.normal.oracle,recovered=evidence.cases.recover_same_operation.oracle,unsafe=evidence.cases.unsafe_new_operation.oracle;
+ if(normal.expected_total!==37||normal.effect_count!==1||!normal.accepted||recovered.tool_attempts!==2||recovered.effect_count!==1||!recovered.accepted||unsafe.effect_count!==2||unsafe.accepted)throw Error('Integrated service record contradicts lesson');
+ if(evidence.capacity.mean_in_system!==60||evidence.capacity.mean_busy_slots!==40||evidence.capacity.slots_for_70_percent_target!==58)throw Error('Integrated service capacity boundaries changed');
+ const body=[
+  p('把资料分析缩成一项可以逐步核对的任务：租户A的用户alice要求读取daily-values/v1中的两个数10、27，使用批准的数值模型，生成一份report-A，并在有读取资格时取得它。输入来自固定source.json；报告不仅要写37，还要保存来源身份、模型束身份和内容摘要。',
+  '本例真实运行PyTorch Linear(2,1)：它把两个输入分别乘权重再相加，最后加偏置。固定权重[1,1]、偏置0，所以[10,27]得到1×10+1×27+0=37。模型束linear-sum-v1包含配置、权重及两者摘要。执行器的计划预先固定，负责调用模型与工具；这里没有语言生成、模型规划或训练。')+
+  table(['正常推进','实际对象与记录'],[
+   ['提交并冻结','POST /tasks保存task-A、请求身份submit-A-001、源v1和确定模型束，返回202 ACCEPTED'],
+   ['读取并推理','新worker取得冻结输入，调用独立CPU模型服务的/infer，保存37和实际模型身份'],
+   ['提交前核对','确认来源/输入一致、模型束获准、数值满足任务条件，再允许写报告'],
+   ['工具提交并发布','接收方沿task-A:save保存完整产物、操作回执和report-A指针，同一事务提交'],
+   ['本地确认与读取','worker核对已发布内容后保存SUCCEEDED；入口再按当前身份与资格向用户交付']
+  ])+p('202只说明任务已经受理：本次实际记录中，此刻接收方效果数为0。报告发布和任务完成发生在后续推进，不能把提交接口返回时间当成完整任务时间。最终验收直接读取真实来源和报告，检查总数37、两个输入的版本、批准模型束与一份效果。'),
+
+  p('这条链由四类进程执行：入口API、CPU模型服务、效果接收方和每次新建的worker。控制面保存任务及读取资格，worker按固定计划推进，模型服务只计算数值，接收方持有真正的报告与发布指针。进程之间实际发送本机HTTP；一个进程返回成功，只能先说明它自己负责的那一段。')+
+  trainingFigure('v70-service-chain','同一份daily-values/v1=[10,27]经过真实CPU模型得到37。任务库、模型调用库与效果接收方分别保存事实；oracle直接读取来源、模型契约和这些记录。')+
+  table(['权威位置','保存什么','能够回答什么'],[
+   ['tasks.sqlite','冻结输入、模型束、阶段、尝试数、本地回执、当前读取资格','任务准备做什么、本地已经确认什么、现在允许谁读取'],
+   ['model.sqlite及模型文件','真实模型调用的输入、输出、模型束；配置和权重字节','本次实际计算了什么、用了哪份模型'],
+   ['receiver.sqlite','效果、完整产物、操作回执和目标发布指针','报告是否真正提交、发布的是哪份内容'],
+   ['source.json与model-contract.json','固定来源与批准数值模型契约','独立重算与比较的依据']
+  ])+p('接收方把效果、回执与发布指针放在同一SQLite事务里，因此读者看到的是已完整提交的报告。接收方与tasks.sqlite之间没有共同事务：报告可以已发布，而worker尚未保存本地确认。恢复正是沿这两份记录的差异推进。任务ID关联目标，操作ID关联一次逻辑写入，worker尝试号记录实际推进次数，它们没有一一对应关系。')+
+  fold('通用Agent中的提议、授权与效果',p('下面保留一般Agent的关系图。需要动态决策的实现可以让模型提出动作；本次数值实验使用固定计划，只验证真实调用、提交、恢复和验收的接线。')+figures(before[1]).join('')),
+
+  p('容量计算先选择边界和单位。下面另设独立稳态题，不采用实验HTTP或Linear调用的实际耗时：每秒接纳并完成2个任务，从受理到完整任务结束平均30秒；其中10秒用于排队或不占该类执行槽的依赖等待，每任务在同类执行池累计占用20槽秒。槽位是这个池同一时刻可承载一份执行的资源单位。')+
+  table(['统计边界','计算','得到什么'],[
+   ['完整任务：λ=2任务/秒，W=30秒','L=λW=2×30=60任务','系统内平均在途，包括等待与执行'],
+   ['同类执行池：S=20槽秒/任务','平均忙槽=2×20=40槽','只计算这个资源池的占用'],
+   ['希望平均利用率不超过70%','ceil(40/0.7)=58槽','题设负载下的初步资源数'],
+   ['实际提供64槽','40/64=62.5%','该池平均利用率'],
+   ['只看这类槽的理想上限','64槽÷20槽秒/任务=3.2任务/秒','其他模型、工具或存储环节仍可能更紧']
+  ])+p('60个在途不是60个同时执行者。题设平均有40个忙槽，其余停留发生在池外，不能一概称为这个池的排队长度。若调用依赖时仍占着该池槽位，那段等待就应计入S；30秒端到端停留与20槽秒资源需求不能互换。',
+  'Little关系L=λW需要同一工作总体、同一起止边界和可比较的稳定统计窗口。持续输入超过完成能力、队列不断增长时，不能假定已有这组稳态平均数。实际准入还要看尾部时长、租户公平性和依赖容量，槽位数量也不替代节点形状与整组可行性。')+
+  fold('另一份成本题：分母仍是完整任务',p('独立题设为100个原始任务、150次模型调用、220次工具调用，最终80个任务合格，总成本100单位。每原始任务成本100/100=1，每合格任务承担的全量成本100/80=1.25。失败和重试用量仍留在分子，不能用一次模型调用的均价代替整任务成本。这些数没有来自下面六个协议场景。'))+existingLinks(2),
+
+  p('身份决定谁提出任务，来源版本决定读取哪份内容，模型束决定用哪套数值与配置计算。入口将fixture-user-A映射为alice/A，将fixture-user-B映射为bob/B；映射来自公开固定测试夹具，请求自己填写另一个租户不会改变它。服务之间使用单独的固定服务凭据，接收方只接受A、task-A和report-A范围内的写入。',
+  'worker的正常提交门禁先核对冻结来源及其文件摘要，再比较实际模型束与批准清单，并检查输入摘要和声明的总数条件37。模型服务加载前也校验配置与权重的真实字节。绑定摘要可发现内容不匹配，可信批准记录则决定这份模型是否属于本任务，二者分别判断。')+
+  table(['需要绑定的对象','本例怎样落地'],[
+   ['来源','daily-values/v1、租户A、source.json文件摘要，模型输入摘要对应[10,27]'],
+   ['模型束','linear-sum-v1、配置/权重SHA-256、规范manifest摘要；实际CPU/float64、PyTorch2.5.1'],
+   ['工具意图','task-A:save绑定目标及整份报告；同键改内容返回冲突'],
+   ['读取资格','入口按当前任务归属与report_read判断，再取得发布产物']
+  ])+p('读取实验先让A取得200与37，再让B跨租户查询，返回403；随后先提交A的读取撤权，再持原凭据发起新读，也返回403。两次拒绝都没有增加接收方读取。已发布报告仍存在且内容有效，当前用户能否读取则是另一项判断。对于语言模型，词表、模板和生成设置也应进入相应完整版本清单。')+existingLinks(3),
+
+  p('先看正常写入：task-A:save携带报告37，接收方在本地事务中写入效果、完整产物与发布指针，提交后才返回回执，worker再把确认写入任务库。现在只把退出放在“接收方已提交、worker本地未确认”之间，实际子进程调用os._exit(23)：')+
+  table(['观察位置','退出后真实记录','新进程怎样继续'],[
+   ['任务库','RUNNING / MODEL_READY；本地receipt为空；推理结果已保存','取回原来源、模型束及结果，不再调用模型'],
+   ['接收方','效果1、产物1、发布指针1','沿原task-A:save与同一报告重试，返回原回执'],
+   ['恢复后的任务库','worker尝试2、工具尝试2、模型调用1','核对发布内容后保存SUCCEEDED；效果仍1']
+  ])+p('错误对照故意把恢复操作改成新ID。接收方依法将它视为另一项写入，产生第二份产物；当前报告依然显示37，任务也能SUCCEEDED，独立oracle却因效果2、产物2而拒绝。错误来自调用者破坏逻辑身份协议，不能靠最终数值相同掩盖。')+
+  table(['原设计中的失败窗口','本例实际覆盖','继续设计时的边界'],[
+   ['受理后回执不确定','相同提交键再次请求，得到原task-A','未注入提交响应丢失'],
+   ['模型调用等待','有HTTP超时与总监督预算','未注入模型超时、取消或服务故障'],
+   ['工具提交、本地未确认','真实退出23与新worker恢复；同键1份、新键2份','未运行同时存活的多个worker或fencing'],
+   ['产物未完整发布','完整报告与指针同库原子提交','未模拟远端多文件上传中断'],
+   ['资格变化','先提交撤权，后发新读取，实际403','检查后已在途的跨HTTP交付另定协议']
+  ])+p('错误模型也先走正常门禁：偏置改1的真实Linear输出38，同值错版本则输出37但束名为v2，两者均在写入前退出24、效果0。只有显式bypass-release-gate负例才故意继续提交；独立oracle分别识别错误总数/模型字节和未批准版本。跨库动作已经提交时，补偿仍应作为另一项获准动作，而不是删除本地状态就当它未发生。'),
+
+  p('独立验收器oracle直接读取源JSON、模型契约、批准和实际模型文件、任务库、模型调用库及接收方库。它从10与27重算37，核对模型字节和版本，再检查真实产物、来源、目标、效果份数及发布指针。worker返回的success或SUCCEEDED不会成为这些事实的替身。')+
+  table(['实际场景','应观察的结果','独立产物判断'],[
+   ['normal','模型1次、工具1次，报告37，效果/产物各1','接收'],
+   ['recover_same_operation','退出后原键恢复，工具2次、效果仍1','接收'],
+   ['unsafe_new_operation','故意换键，报告值仍37，效果/产物各2','拒绝'],
+   ['read_authorization','原产物有效；跨租户及撤权后新读取均403','产物接收，读取判据单独核对'],
+   ['wrong_weights','正常门禁先拦住；故意绕过后实际写38','拒绝'],
+   ['wrong_version','正常门禁先拦住；故意绕过后写37但模型束v2','拒绝']
+  ])+p('status=passed表示这些场景分别满足事先规定的正例或负例判据。六个协议场景不是从用户流量抽样，不能把oracle接收比例当作服务成功率。oracle.accepted评价产物、版本和份数；当前读取资格与拒绝时没有交付正文，继续由真实HTTP结果和读取记录检验。')+
+  fold('总体比例与依赖成功率',p('另设20题：12简单、4长文档、4恢复。A分别通过12、2、1，总体15/20=75%；B通过11、4、3，总体18/20=90%，还要单独看简单题的退化。比较前固定输入、初态、时间与调用预算，避免旧产物让新试次无需工作就通过。模型调用成功率99.9%也不等于任务成功率99.9%；应直接测任务完成条件，在没有独立性依据时不机械相乘各段平均值。'))+existingLinks(5),
+
+  p('同一任务的记录用不同身份连接。task-A贯穿受理与完成；task-A:save贯穿工具尝试与回执；worker尝试号与PID区分实际进程；源版本、模型束与摘要说明每次使用的内容。实际观测中，恢复将worker和工具尝试从1变为2，模型调用仍1、效果仍1；这几个计数分别解释重做了哪段工作。',
+  '入口审计保存accepted、release_gate和completed，接收方保存每次操作是否duplicate，模型库记录实际输入输出。accepted与completed时刻来自同一API进程并以十进制字符串保存纳秒；这些事件用于确认受理早于完成，不代表已经测过跨机器时钟或生产延迟。业务效果仍以接收方数据库核对，遥测用于解释经过。',
+  'suite给自己启动的服务和worker建立独立POSIX进程组，以90秒监督运行；HTTP等待至多5秒，子进程使用剩余期限。退出时终止并wait这些进程组，默认临时目录删除；显式output-dir才保留文件。它不配置容器隔离或生产资源限制，本轮也未做云端负载、冷启动或节点故障压测。',
+  '范围集中在单宿主、真实本机HTTP、CPU数值推理、SQLite分域提交、主动退出恢复和指定时点的读取撤权。授权检查与后续跨HTTP交付之间没有全局原子性；并发撤权、活着的旧worker、物理断电和多宿主接管仍需目标环境验收。没有真实LLM、模型规划、GPU或Kairo接入。'),
+
+  '<span class="legacy-subsection-anchor" id="integrated-service-run" aria-hidden="true"></span>'+p('下载完整实验目录，在已有PyTorch2.5.1的Python环境执行下面命令。先读normal的202响应、四类进程和oracle，再读recover_same_operation的commit_gap；最后比较错误操作身份及错误模型束。保留目录后，还可单独运行oracle，直接检查已经退出的服务留下的数据库。')+
+  trainingCode('解压integrated-service目录后执行','BASH','python -B integrated_service.py > result.json\n# 保留数据库：runs必须尚不存在\npython -B integrated_service.py --output-dir runs > retained-result.json\npython -B integrated_service.py oracle --folder runs/normal\npython -B integrated_service.py oracle --folder runs/unsafe_new_operation')+
+  '<p class="practice-links"><a href="labs/integrated-service.zip" download>下载完整实验包 ↓</a> · <a href="labs/integrated-service/README.md">运行与记录说明 →</a> · <a href="labs/integrated-service/integrated_service.py" download>完整Python源码 ↓</a> · <a href="labs/integrated-service/validation.json">实际结果与源码摘要 →</a></p>'+
+  fold('完整integrated_service.py：入口、模型、工具、恢复与独立验收',trainingCode('integrated_service.py','PYTHON',integratedServiceSource))+
+  p('给自己的设计画同样一条正常路径，再选一个明确提交窗口：提前固定来源、模型束与操作身份，记录退出前两边各有什么，用新的执行者恢复，最后从真实来源与产物独立验收。若模型计算更快却没有明显缩短任务时间，就比较同一任务的排队、模型、工具与发布区间，再检查它是否把更多到达量推给了工具；不要只比较模型内部计时。',
+  '这个数值案例提供可复查的接线起点。训练恢复和Kairo接入仍各自使用对应程序、输入与目标环境：')+existingLinks(7)
+ ];
+ const now=body.join(''),old=before.join('');
+ if(JSON.stringify([a.id,a.title,a.number,a.module])!==identity||body.length!==8)throw Error('Integrated service chapter identity changed');
+ for(const original of figures(old))if(!now.includes(original))throw Error('Integrated service lost original figure');
+ for(const token of matches(old,/\bhref=["'][^"']+["']/g))if(!now.includes(token))throw Error('Integrated service lost original link '+token);
+ for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g))if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Integrated service lost published ID '+id);
+ if(matches(old,/<pre\b/g).length!==0||!now.includes(trainingEscape(integratedServiceSource.trim())))throw Error('Integrated service full source binding changed');
+ body.forEach((text,index)=>{if(text===before[index])throw Error('Integrated service section was not revised');a.sections[index][1]=text;});
+ a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
+ a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
+})();
+
+
+;
 // first-reading-flow.js
 /* First reading: identify the components before calculations, contracts and failure cases. */
 function conceptReadingTable(headers,rows){return '<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
@@ -11701,6 +12235,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'integrated-service':{folder:'integrated-service',title:'HTTP任务、CPU模型与独立效果恢复'},
  'multinode-launch':{folder:'multinode-launch',title:'两启动器、四进程训练与恢复对照'},
  'cuda-core':{folder:'cuda-core',title:'CUDA线程、归约与分块实现'},
  'torch-checkpoint':{folder:'torch-checkpoint',title:'PyTorch原生分布式检查点'},
@@ -11848,7 +12383,8 @@ labLearningCatalog.push({"id": "cloud-kubernetes-identity", "track": "cloud", "s
 {"id": "ai-sdpa-cache", "track": "ai", "stage": 2, "title": "同一小模型比较完整前缀与缓存生成", "chapter": "model-serving", "anchor": "sdpa-cache-run", "pack": "sdpa-cache", "files": ["cache_lab.py", "tiny_decoder.py", "requirements.txt", "README.md"], "env": "PyTorch2.5.1 · CPU · SDPBackend.MATH", "kind": "真实SDPA与KV缓存API", "observe": "复用664参数模型权重，核对完整、逐位置与两位置续算；错误因果对齐应被logits对照发现，生成缓存按2→3→4推进。", "scope": "验证CPU原生API、掩码和生成状态，不是FlashAttention设备内核或GPU性能测试。"},
 {"id": "agent-langgraph-workflow", "track": "agent", "stage": 2, "title": "持久暂停、并行与新进程恢复", "chapter": "durable-workflows", "anchor": "langgraph-workflow-run", "pack": "langgraph-workflow", "files": ["workflow_lab.py", "orders.json", "requirements.txt", "README.md"], "env": "LangGraph1.2.20 · checkpoint-sqlite3.1.3 · Python3.12", "kind": "真实框架与独立HTTP效果", "observe": "42报告在新进程恢复；同一暂存动作2次尝试仅1份效果，新UUID反例2份；并行失败恢复保留已成功分支。", "scope": "无模型、单宿主SQLite检查点与自建HTTP接收方；未验证真实审批身份、任意远端事务、跨机或Kairo。"});
 labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子映射到GPU线程与共享内存',chapter:'operator-profiling',anchor:'cuda-core-run',pack:'cuda-core',files:['cuda_lab.cu','reference.py','build.py','toolchain-lock.json','README.md'],env:'Linux x86_64 · CUDA12.9.1；执行另需计算能力8.0+ GPU与兼容驱动',kind:'真实CUDA编译 · GPU待验',observe:'读懂逐行归约、稳定softmax和16×16分块GEMM；用13组独立参考与错误归一化核对目标GPU回读。',scope:'隔离Linux CI验证NVCC、链接与PTX入口；CPU校验器16种错误变异通过。GPU数值执行、Nsight与性能仍待目标环境验收。'});
-labLearningCatalog.push({id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-multinode'),0,{id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
+labLearningCatalog.push({id:'shared-integrated-service',track:'agent',stage:3,title:'把任务、模型、报告与恢复接成真实服务',chapter:'production-readiness',anchor:'integrated-service-run',pack:'integrated-service',files:['integrated_service.py','source.json','model-contract.json','requirements.txt','README.md'],env:'Linux/macOS · Python3.10+ · PyTorch2.5.1 CPU',kind:'真实HTTP / CPU模型 / 独立SQLite域',observe:'输入10和27，实际模型输出37；提交后退出再用新进程恢复，分别核对效果份数、权重/版本、读取资格及独立产物验收。',scope:'固定计划、公开身份夹具、同宿主服务与串行worker；不运行语言模型、训练、GPU或Kairo，容量另为声明算例。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -11999,12 +12535,13 @@ const conceptSectionTitles={
  'training-storage':['存储接口与读写路径',...progressiveCloudSectionTitles['training-storage'].slice(1)],
  'model-serving':['模型服务的对象与生成路径',...progressiveAiSectionTitles['model-serving'].slice(1)],
  'operator-profiling':['算子、类型与内存布局','稳定 Softmax 与数值参考','GPU 线程映射与树形归约','GEMM 访问、分块与同步','FLOP、字节与算术强度','预热、异步计时与测量边界','CPU 轨迹与 GPU 采集边界','CPU/CUDA 实现与数值验收','算子正确性与性能判据'],
+ 'production-readiness':['服务目标与任务契约','进程职责与持久记录','任务负载与执行槽预算','身份、来源与模型版本','效果提交与进程恢复','独立产物验收与评估集合','观测记录与执行边界','HTTP、模型与任务恢复实战'],
  'training-platform':['作业、worker、rank 与执行轮次','准入、启动与训练生命周期','任务契约与控制器协调','训练终态与不可变产物','失败分类、重试与取消','控制、执行与发布的交接','提交、等待与终态仲裁练习'],
  'agent-runtime':['Agent 的组成与职责','工具调用契约','执行循环与预算','错误分类与重试','任务状态与操作身份','任务完成与产物验证','Kairo 接入关系','HTTP 工具实战','流式工具调用']
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance','k8s-networking','config-secrets','k8s-autoscaling','quantization-serving','ai-lifecycle','delivery','resilience','multinode-lab']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance','k8s-networking','config-secrets','k8s-autoscaling','quantization-serving','ai-lifecycle','delivery','resilience','multinode-lab','terraform-state','iam-security','gpu-cluster','distributed-training','production-readiness']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}
@@ -12070,5 +12607,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="d2400f805abbc2eaf31d68ad4981237b940a0f23a9d95b1b09b30f74fe027608";
+const staticReadingVersion="e9dce027ddb58c6213ec6524ed73050440a5af8bf2d00e9ae043b768f8863391";
 

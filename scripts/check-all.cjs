@@ -3,7 +3,7 @@ const path=require('path'),{spawnSync}=require('child_process');
 const root=path.resolve(__dirname,'..'),args=process.argv.slice(2);
 if(args.some(arg=>arg!=='--pages')||new Set(args).size!==args.length){console.error('Usage: node scripts/check-all.cjs [--pages]');process.exit(2);}
 const checks=[
- 'check-content.cjs','check-runtime.cjs','check-article-reader.cjs','check-multinode-launch.cjs','check-release-recovery-reading.cjs','check-startup-recovery.cjs','check-site-search.cjs','check-lab-catalog.cjs','check-reader-resources.cjs',
+ 'check-content.cjs','check-runtime.cjs','check-article-reader.cjs','check-multinode-launch.cjs','check-release-recovery-reading.cjs','check-integrated-service.cjs','check-startup-recovery.cjs','check-site-search.cjs','check-lab-catalog.cjs','check-reader-resources.cjs',
  'check-public-pages.cjs','check-concept-paths.cjs','check-course-migration.cjs','check-body-walkthroughs.cjs','check-textbooks.cjs','check-cloud-course.cjs',
  'check-knowledge-resources.cjs','check-mechanism-models.cjs','check-cloud-deepening.cjs',
  'check-cloud-operations.cjs','check-ai-agent-systems.cjs','check-learning-mechanisms.cjs',

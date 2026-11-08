@@ -10,6 +10,8 @@ for(const [,file] of shell.matchAll(/<script defer src="([^"]+)"/g))vm.runInCont
 const {units,packs,articles}=vm.runInContext('({units:labLearningCatalog,packs:labArchiveCatalog,articles})',c);
 assert.equal(new Set(units.map(u=>u.id)).size,units.length,'duplicate task anchor');
 assert.deepEqual([...new Set(units.map(u=>u.pack).filter(Boolean))].sort(),Object.keys(packs).sort(),'orphan archive or undefined bundle');
+const localLaunchAt=units.findIndex(u=>u.id==='ai-multinode-local'),physicalLaunchAt=units.findIndex(u=>u.id==='ai-multinode');
+assert(localLaunchAt>=0&&physicalLaunchAt>localLaunchAt,'run the local launcher exercise before the physical-node target handbook');
 const allStrings=value=>typeof value==='string'?[value]:value&&typeof value==='object'?Object.values(value).flatMap(allStrings):[];
 const zipChecks=[];let boundFiles=0,pendingFiles=0;
 for(const unit of units){
