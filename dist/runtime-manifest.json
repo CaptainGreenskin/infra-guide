@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 155,
+  "canonical_script_count": 161,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "bec8b696dc4428dd864d103743fa41e27b9740b1300b5cf7d9b66e872d05e668",
-      "bytes": 367922,
+      "sha256": "dc2e4a171c842ea57bdbbd5eb355c41e2ae2807dab82f71310d4a1bd24d2c729",
+      "bytes": 368550,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "891e2f777b3503b2fcda6b1145193d56429ffd7ec1f58bb72b4bc89853ca5761",
-          "bytes": 9791
+          "sha256": "8ac057fe793e5ed508ffdb9021f2ae36febb3a83fd350aef3d5f0488cf7fd78e",
+          "bytes": 10419
         },
         {
           "file": "training-content.js",
@@ -331,8 +331,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "e642695b04823ac6ff3321c57d1b3d2d4725ed77e04ce8ffcc30c947c674d67b",
-      "bytes": 333102,
+      "sha256": "fe93a9b79cdcd59de37831dc8241593f1951dbbf69a21bb077e92bb387e501a8",
+      "bytes": 333548,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -361,8 +361,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "e29550b57cdb75860e70ae9837f4d443bf7a45c7d32c46835dde54a4b951f583",
-          "bytes": 17266
+          "sha256": "5ce3966127d7e2e083b97b60d7d1869031a9fb95252347a3fad8d3a4f99b6d4c",
+          "bytes": 17712
         },
         {
           "file": "interview-practice.js",
@@ -545,8 +545,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "9dfedd0106629adb9499b5b461f4aa4bfb754c34c02305faed650165c77f4f22",
-      "bytes": 990868,
+      "sha256": "c588a9dd06efad95dab2b780e2c98441f6df971e475b346bbf92b4d0a79eaa1e",
+      "bytes": 1128156,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -779,9 +779,34 @@
           "bytes": 13096
         },
         {
+          "file": "delivery-native-data.js",
+          "sha256": "039536245b4997ef2d2dab467988d056a74a4003e23dda0f126bc7e94f7f6f52",
+          "bytes": 59118
+        },
+        {
+          "file": "terraform-state-lessons.js",
+          "sha256": "09fbf4b9934ab2e23f2f93a735d7303f6c1ac8f7ead669fbff52469486627322",
+          "bytes": 14343
+        },
+        {
+          "file": "gitops-reconciliation-lessons.js",
+          "sha256": "abdde7e493be600c5b1df4986eae7e6af4dc7cb2134364ef33932987c91f1dd2",
+          "bytes": 14800
+        },
+        {
+          "file": "message-delivery-lessons.js",
+          "sha256": "8f34ab9705d295fb7d447cfe0aa02989c48446e88052f12be33fa59272bce3bf",
+          "bytes": 15266
+        },
+        {
           "file": "concept-paths-data.js",
           "sha256": "2301c7c39f6498302f3df73ad4a093da1afd9cca0dd3b419ef5a2b6f57286e3f",
           "bytes": 74664
+        },
+        {
+          "file": "delivery-course-links.js",
+          "sha256": "1734498cdb7f3add4f258c5f577e8fdde67602fd604e9632894fb2b917941072",
+          "bytes": 6101
         },
         {
           "file": "continuous-course-links.js",
@@ -795,13 +820,18 @@
         },
         {
           "file": "course-map.js",
-          "sha256": "746e8970a9a0db3ea8ce4caf4ebd5558b7207ece521c06a58693d74df4577545",
-          "bytes": 6650
+          "sha256": "93136b33b9141cc9851203603d55d790bb24676b72b132e9e7f71e6c31d7d37c",
+          "bytes": 6628
+        },
+        {
+          "file": "learning-connections.js",
+          "sha256": "9fd8ca8886fe1c275188c55b42267f641b666e9ed65e25e2de0b1b8f6ae2835d",
+          "bytes": 25703
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "81ca150f01a2fda694ffe0cfdb4ca4a62b382404c62d537105a3e52581dc2208",
-          "bytes": 42330
+          "sha256": "7b360af5a6a5d9211648c6d1dcbd48461e20d30637b05b28bca8b20c50d5043f",
+          "bytes": 44106
         }
       ]
     }
@@ -809,8 +839,8 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "dc2f6df57abc7451386e491f57c37e5f2450f8c3ca0c823cf05f1b831f60818e",
-      "bytes": 11283
+      "sha256": "a4cef03bcde6bd97266729944ae6425630d874f73bd3f62301d102a11f9ad000",
+      "bytes": 12394
     },
     {
       "file": "site-search.js",
@@ -819,8 +849,8 @@
     },
     {
       "file": "app.js",
-      "sha256": "3586a0edf667b282e29458f5bd91d15eced5ce8cf3e16b8b48cad3ec037b344b",
-      "bytes": 18360
+      "sha256": "47878df982ab2f639362db034a1646fe7b52eda168bd1e58741791fbb73e09e4",
+      "bytes": 18387
     }
   ]
 }

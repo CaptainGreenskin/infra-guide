@@ -1,0 +1,795 @@
+{
+  "date": "2026-11-08",
+  "status": "passed",
+  "ci": {
+    "run_id": 42445552027,
+    "source_commit": "778d692f473092e47b0a5147f2f922a3ec10f918",
+    "conclusion": "success",
+    "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027"
+  },
+  "source_sha256": {
+    "terraform_state.py": "7964acb67a56161bfe198ef3fb96a6e5b0fc06cb7e53e36fd91fbd36cf448b6a",
+    "Dockerfile.mq-client": "7215fb46378b0ccf4fd7396baebd00571d8ebfe2f7935598c623d0c7daeb91b6",
+    "mq_client.py": "ec87547b68059cf67150c19e0389fbd55f0d7f734a5652cc9895ca5b7e8e86e6",
+    "mq_delivery.py": "56dbfc6d49e93763c548e9d6f73bd64ff4306310bd7be46e79a007fab607eaf8",
+    "gitops-revisions.json": "e20d061c44ef37f1198d137a6628ef9582377fbd1ea1f6b769245a7cd3511579",
+    "gitops_reconcile.py": "dcbf6b3b9a1b97ad9ea5344851c6f4429fc5177aa41808103794a77f1cb38bff",
+    "gitops-app/deployment.json": "041b4d73d2dc6d5d6fcb59c49e688dfaf36e6d19971b8247e31af0f98431a0d2",
+    "gitops-app/service.json": "e46bc1e4541c95184cf0bbff11c1bc5b62d185b5951f51cf9f8cd69982ed48a0",
+    "gitops-app/configmap.json": "103caaa2d6402a4f832dbfb924bc753f32cf2c2b94eed409c84d26c115000ba4"
+  },
+  "native": {
+    "mq": {
+      "schema": 1,
+      "status": "passed",
+      "broker_image": "rabbitmq@sha256:485319d42170eab53d8a030e1cc49d95e41f5d325479fa504736db8091981eb7",
+      "execution": {
+        "schema": 1,
+        "status": "passed",
+        "broker_version": "4.4.0",
+        "pika_version": "1.3.2",
+        "cases": {
+          "mandatory": {
+            "unroutable_detected": true
+          },
+          "confirm_without_route": {
+            "publish_returned_normally": true,
+            "queue_exists": false
+          },
+          "effect_before_ack_crash": {
+            "kill_exit": -9,
+            "first_delivery": {
+              "message_id": "transport-1",
+              "delivery_tag": 1
+            },
+            "redelivery": {
+              "message_id": "transport-1",
+              "delivery_tag": 1,
+              "redelivered": true
+            },
+            "republished_message_id": "new-transport-same-business",
+            "at_crash": {
+              "effects": 1,
+              "total": 37,
+              "operations": [
+                [
+                  "report-27",
+                  37
+                ]
+              ],
+              "duplicate": null
+            },
+            "recovered": {
+              "effects": 1,
+              "total": 37,
+              "operations": [
+                [
+                  "report-27",
+                  37
+                ]
+              ],
+              "duplicate": true
+            },
+            "after_republish": {
+              "effects": 1,
+              "total": 37,
+              "operations": [
+                [
+                  "report-27",
+                  37
+                ]
+              ],
+              "duplicate": true
+            }
+          },
+          "ack_before_effect_negative": {
+            "kill_exit": -9,
+            "ready_messages": 0,
+            "business": {
+              "effects": 0,
+              "total": 0,
+              "operations": [],
+              "duplicate": null
+            },
+            "business_oracle_passed": false
+          },
+          "prefetch_push": {
+            "prefetch": 1,
+            "delivered_before_ack": 1,
+            "ready_before_ack": 1,
+            "delivered_after_ack": 2,
+            "ready_after_all_ack": 0
+          },
+          "prefetch_get_exception": {
+            "prefetch": 1,
+            "unacked_get_deliveries": 2,
+            "ready_before_ack": 0
+          },
+          "wrong_channel_ack": {
+            "reply_code": 406,
+            "wrong_channel_closed": true,
+            "right_channel_open": true
+          }
+        },
+        "durable_before_restart": {
+          "ready_messages": 1,
+          "delivery_mode": 2
+        },
+        "source_sha256": "ec87547b68059cf67150c19e0389fbd55f0d7f734a5652cc9895ca5b7e8e86e6",
+        "scope": "actual AMQP broker and SQLite consumer effects, own internal Docker network; not SQS/Lambda/HA"
+      },
+      "after_broker_restart": {
+        "broker_version": "4.4.0",
+        "persistent_body": {
+          "amount": 7,
+          "op": "survive-restart"
+        },
+        "ready_after_ack": 0,
+        "scope": "same durable single-node broker volume after container restart, not power loss or HA"
+      },
+      "source_sha256": {
+        "mq_delivery.py": "56dbfc6d49e93763c548e9d6f73bd64ff4306310bd7be46e79a007fab607eaf8",
+        "mq_client.py": "ec87547b68059cf67150c19e0389fbd55f0d7f734a5652cc9895ca5b7e8e86e6",
+        "Dockerfile.mq-client": "7215fb46378b0ccf4fd7396baebd00571d8ebfe2f7935598c623d0c7daeb91b6"
+      },
+      "scope": "actual isolated RabbitMQ, manual ACK and publisher confirms, one-node durable restart; no SQS/Lambda/HA/cloud claim"
+    },
+    "terraform": {
+      "schema": 1,
+      "status": "passed",
+      "version": {
+        "terraform_version": "1.13.0",
+        "platform": "linux_amd64",
+        "provider_selections": {
+          "registry.terraform.io/hashicorp/local": "2.5.3"
+        },
+        "terraform_outdated": false
+      },
+      "lock": {
+        "second_exit": 1,
+        "first_still_running": true,
+        "lock_operation": "OperationTypeApply",
+        "file_during_apply": "alpha"
+      },
+      "initial": {
+        "serial": 3,
+        "lineage": "a30fb67a-5d2d-f510-7b78-4031e1f1cafc",
+        "resources": [
+          {
+            "address": "local_file.managed",
+            "content": "alpha"
+          },
+          {
+            "address": "terraform_data.gate",
+            "content": null
+          }
+        ]
+      },
+      "external_edit": {
+        "actual_file": "outside",
+        "cached_plan_exit": 0,
+        "cached_state": {
+          "serial": 3,
+          "lineage": "a30fb67a-5d2d-f510-7b78-4031e1f1cafc",
+          "resources": [
+            {
+              "address": "local_file.managed",
+              "content": "alpha"
+            },
+            {
+              "address": "terraform_data.gate",
+              "content": null
+            }
+          ]
+        }
+      },
+      "refresh_only": {
+        "plan_exit": 2,
+        "drifts": [
+          {
+            "address": "local_file.managed",
+            "actions": [
+              "delete"
+            ]
+          }
+        ],
+        "state": {
+          "serial": 4,
+          "lineage": "a30fb67a-5d2d-f510-7b78-4031e1f1cafc",
+          "resources": [
+            {
+              "address": "terraform_data.gate",
+              "content": null
+            }
+          ]
+        },
+        "actual_file_after_apply": "outside"
+      },
+      "repair": {
+        "actions": [
+          {
+            "address": "local_file.managed",
+            "actions": [
+              "create"
+            ]
+          },
+          {
+            "address": "terraform_data.gate",
+            "actions": [
+              "no-op"
+            ]
+          }
+        ],
+        "actual_file": "alpha",
+        "state": {
+          "serial": 6,
+          "lineage": "a30fb67a-5d2d-f510-7b78-4031e1f1cafc",
+          "resources": [
+            {
+              "address": "local_file.managed",
+              "content": "alpha"
+            },
+            {
+              "address": "terraform_data.gate",
+              "content": null
+            }
+          ]
+        }
+      },
+      "workspaces": {
+        "blue": {
+          "serial": 3,
+          "lineage": "d330b779-d408-c70a-1d69-b562065023e0",
+          "resources": [
+            {
+              "address": "local_file.managed",
+              "content": "alpha"
+            },
+            {
+              "address": "terraform_data.gate",
+              "content": null
+            }
+          ]
+        },
+        "green": {
+          "serial": 3,
+          "lineage": "9051aaac-7ce7-131e-9d88-c5b30e83a00d",
+          "resources": [
+            {
+              "address": "local_file.managed",
+              "content": "beta"
+            },
+            {
+              "address": "terraform_data.gate",
+              "content": null
+            }
+          ]
+        },
+        "same_target": "ROOT/managed.txt",
+        "actual_file": "beta",
+        "blue_cached_plan_exit": 0,
+        "blue_fresh_plan_exit": 2
+      },
+      "source_sha256": "7964acb67a56161bfe198ef3fb96a6e5b0fc06cb7e53e36fd91fbd36cf448b6a",
+      "provider_lock_sha256": "f33a30465c9bac7f983e583e57b993842ea5bc33c7db6630d4b16628c6109972",
+      "scope": "actual Terraform local backend + official local_file; temp files only, not cloud provider/remote backend/HA"
+    },
+    "gitops": {
+      "schema": 1,
+      "status": "passed",
+      "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+      "kubernetes": "v1.35.8",
+      "argo_version": "v3.6.1",
+      "argo_manifest_url": "https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.1/manifests/core-install.yaml",
+      "argo_manifest_sha256": "0b38189d6e1fd76ef5c3db10355026c48a02020d82bf21a1a1b5ab16dffe4f3c",
+      "sources": {
+        "repo": "https://github.com/CaptainGreenskin/infra-guide.git",
+        "path": "dist/labs/delivery-systems/gitops-app",
+        "v1": "fb18c80ebda55f22180f7cd9a19360cb9e739202",
+        "config_only_v2": "872b300361e5a4ad9339d775c9e3310e60466fe1",
+        "rollout_v2": "703f38b1a3e29e66212595735fc54af02a694050"
+      },
+      "records": {
+        "v1": {
+          "status": {
+            "sync": "Synced",
+            "revision": "fb18c80ebda55f22180f7cd9a19360cb9e739202",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "http": {
+            "version": "v1",
+            "pod": "guide-web-6b94f6999-8z822"
+          },
+          "pod": {
+            "name": "guide-web-6b94f6999-8z822",
+            "uid": "726eabfd-cb7c-4deb-a51d-ac98a015049f"
+          },
+          "desired_config": "v1"
+        },
+        "self_heal_off": {
+          "status": {
+            "sync": "OutOfSync",
+            "revision": "fb18c80ebda55f22180f7cd9a19360cb9e739202",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "live_replicas": 2
+        },
+        "self_heal_on": {
+          "status": {
+            "sync": "Synced",
+            "revision": "fb18c80ebda55f22180f7cd9a19360cb9e739202",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "live_replicas": 1,
+          "http": {
+            "version": "v1",
+            "pod": "guide-web-6b94f6999-8z822"
+          },
+          "pod": {
+            "name": "guide-web-6b94f6999-8z822",
+            "uid": "726eabfd-cb7c-4deb-a51d-ac98a015049f"
+          },
+          "desired_config": "v1"
+        },
+        "prune_off": {
+          "status": {
+            "sync": "OutOfSync",
+            "revision": "872b300361e5a4ad9339d775c9e3310e60466fe1",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "retired_exists": true,
+          "unmanaged_exists": true
+        },
+        "v2_synced_but_old_business": {
+          "status": {
+            "sync": "Synced",
+            "revision": "872b300361e5a4ad9339d775c9e3310e60466fe1",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "http": {
+            "version": "v1",
+            "pod": "guide-web-6b94f6999-8z822"
+          },
+          "pod": {
+            "name": "guide-web-6b94f6999-8z822",
+            "uid": "726eabfd-cb7c-4deb-a51d-ac98a015049f"
+          },
+          "desired_config": "v2",
+          "retired_exists": false,
+          "unmanaged_exists": true,
+          "business_oracle_passed": false
+        },
+        "v3_new_pod": {
+          "status": {
+            "sync": "Synced",
+            "revision": "703f38b1a3e29e66212595735fc54af02a694050",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "http": {
+            "version": "v2",
+            "pod": "guide-web-7c79866cc4-h5h4w"
+          },
+          "pod": {
+            "name": "guide-web-7c79866cc4-h5h4w",
+            "uid": "9c937556-2f8b-46b3-a3aa-df86d08a045c"
+          },
+          "desired_config": "v2",
+          "business_oracle_passed": true
+        },
+        "return_to_v1": {
+          "status": {
+            "sync": "Synced",
+            "revision": "fb18c80ebda55f22180f7cd9a19360cb9e739202",
+            "health": "Healthy",
+            "operation": "Succeeded",
+            "conditions": []
+          },
+          "http": {
+            "version": "v1",
+            "pod": "guide-web-6b94f6999-4g2d2"
+          },
+          "pod": {
+            "name": "guide-web-6b94f6999-4g2d2",
+            "uid": "dd39ede9-c43c-4751-a6dc-f44c8b3a122b"
+          },
+          "desired_config": "v1",
+          "managed_config_recreated": true
+        }
+      },
+      "source_sha256": "dcbf6b3b9a1b97ad9ea5344851c6f4429fc5177aa41808103794a77f1cb38bff",
+      "revision_file_sha256": "e20d061c44ef37f1198d137a6628ef9582377fbd1ea1f6b769245a7cd3511579",
+      "scope": "real Argo CD Core Git fetch/reconcile and HTTP in a single-host kind cluster; not cloud/prod/physical multi-node"
+    }
+  },
+  "git_history": {
+    "v1": {
+      "configmap.json": {
+        "sha256": "9fa896dc4c35220c7eec1bab0862f9f640e8268b0f97bd5dc4cf2a49d36adab0",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "guide-version"
+          },
+          "data": {
+            "version": "v1"
+          }
+        }
+      },
+      "deployment.json": {
+        "sha256": "792fbd082ed79641e06b3b4971e34d9dcdb0b18890c9083da4cf51d364df0b47",
+        "object": {
+          "apiVersion": "apps/v1",
+          "kind": "Deployment",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "app": "guide-web"
+              }
+            },
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "guide-web"
+                },
+                "annotations": {
+                  "guide/revision": "v1"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "web",
+                    "image": "python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7",
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "import json,os,socket\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nclass H(BaseHTTPRequestHandler):\n def do_GET(self):\n  b=json.dumps({\"version\":os.environ[\"BUSINESS_VERSION\"],\"pod\":socket.gethostname()}).encode(); self.send_response(200); self.send_header(\"Content-Length\",str(len(b))); self.end_headers(); self.wfile.write(b)\n def log_message(self,*args): pass\nHTTPServer((\"0.0.0.0\",8080),H).serve_forever()"
+                    ],
+                    "env": [
+                      {
+                        "name": "BUSINESS_VERSION",
+                        "valueFrom": {
+                          "configMapKeyRef": {
+                            "name": "guide-version",
+                            "key": "version"
+                          }
+                        }
+                      }
+                    ],
+                    "ports": [
+                      {
+                        "containerPort": 8080
+                      }
+                    ],
+                    "readinessProbe": {
+                      "httpGet": {
+                        "path": "/version",
+                        "port": 8080
+                      }
+                    },
+                    "resources": {
+                      "requests": {
+                        "cpu": "25m",
+                        "memory": "32Mi"
+                      },
+                      "limits": {
+                        "cpu": "200m",
+                        "memory": "128Mi"
+                      }
+                    },
+                    "securityContext": {
+                      "allowPrivilegeEscalation": false,
+                      "readOnlyRootFilesystem": true,
+                      "runAsNonRoot": true,
+                      "runAsUser": 10001,
+                      "capabilities": {
+                        "drop": [
+                          "ALL"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "retired.json": {
+        "sha256": "7d7bd1cb901abac377392aead60e8ec55ebe73a0c21a70d91882118ee56e37a5",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "guide-retired"
+          },
+          "data": {
+            "purpose": "remove-from-git-in-v2"
+          }
+        }
+      },
+      "service.json": {
+        "sha256": "e46bc1e4541c95184cf0bbff11c1bc5b62d185b5951f51cf9f8cd69982ed48a0",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "selector": {
+              "app": "guide-web"
+            },
+            "ports": [
+              {
+                "port": 8080,
+                "targetPort": 8080
+              }
+            ]
+          }
+        }
+      }
+    },
+    "config_only_v2": {
+      "configmap.json": {
+        "sha256": "103caaa2d6402a4f832dbfb924bc753f32cf2c2b94eed409c84d26c115000ba4",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "guide-version"
+          },
+          "data": {
+            "version": "v2"
+          }
+        }
+      },
+      "deployment.json": {
+        "sha256": "792fbd082ed79641e06b3b4971e34d9dcdb0b18890c9083da4cf51d364df0b47",
+        "object": {
+          "apiVersion": "apps/v1",
+          "kind": "Deployment",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "app": "guide-web"
+              }
+            },
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "guide-web"
+                },
+                "annotations": {
+                  "guide/revision": "v1"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "web",
+                    "image": "python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7",
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "import json,os,socket\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nclass H(BaseHTTPRequestHandler):\n def do_GET(self):\n  b=json.dumps({\"version\":os.environ[\"BUSINESS_VERSION\"],\"pod\":socket.gethostname()}).encode(); self.send_response(200); self.send_header(\"Content-Length\",str(len(b))); self.end_headers(); self.wfile.write(b)\n def log_message(self,*args): pass\nHTTPServer((\"0.0.0.0\",8080),H).serve_forever()"
+                    ],
+                    "env": [
+                      {
+                        "name": "BUSINESS_VERSION",
+                        "valueFrom": {
+                          "configMapKeyRef": {
+                            "name": "guide-version",
+                            "key": "version"
+                          }
+                        }
+                      }
+                    ],
+                    "ports": [
+                      {
+                        "containerPort": 8080
+                      }
+                    ],
+                    "readinessProbe": {
+                      "httpGet": {
+                        "path": "/version",
+                        "port": 8080
+                      }
+                    },
+                    "resources": {
+                      "requests": {
+                        "cpu": "25m",
+                        "memory": "32Mi"
+                      },
+                      "limits": {
+                        "cpu": "200m",
+                        "memory": "128Mi"
+                      }
+                    },
+                    "securityContext": {
+                      "allowPrivilegeEscalation": false,
+                      "readOnlyRootFilesystem": true,
+                      "runAsNonRoot": true,
+                      "runAsUser": 10001,
+                      "capabilities": {
+                        "drop": [
+                          "ALL"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "service.json": {
+        "sha256": "e46bc1e4541c95184cf0bbff11c1bc5b62d185b5951f51cf9f8cd69982ed48a0",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "selector": {
+              "app": "guide-web"
+            },
+            "ports": [
+              {
+                "port": 8080,
+                "targetPort": 8080
+              }
+            ]
+          }
+        }
+      }
+    },
+    "rollout_v2": {
+      "configmap.json": {
+        "sha256": "103caaa2d6402a4f832dbfb924bc753f32cf2c2b94eed409c84d26c115000ba4",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "guide-version"
+          },
+          "data": {
+            "version": "v2"
+          }
+        }
+      },
+      "deployment.json": {
+        "sha256": "041b4d73d2dc6d5d6fcb59c49e688dfaf36e6d19971b8247e31af0f98431a0d2",
+        "object": {
+          "apiVersion": "apps/v1",
+          "kind": "Deployment",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "app": "guide-web"
+              }
+            },
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "guide-web"
+                },
+                "annotations": {
+                  "guide/revision": "v2"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "name": "web",
+                    "image": "python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7",
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "import json,os,socket\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nclass H(BaseHTTPRequestHandler):\n def do_GET(self):\n  b=json.dumps({\"version\":os.environ[\"BUSINESS_VERSION\"],\"pod\":socket.gethostname()}).encode(); self.send_response(200); self.send_header(\"Content-Length\",str(len(b))); self.end_headers(); self.wfile.write(b)\n def log_message(self,*args): pass\nHTTPServer((\"0.0.0.0\",8080),H).serve_forever()"
+                    ],
+                    "env": [
+                      {
+                        "name": "BUSINESS_VERSION",
+                        "valueFrom": {
+                          "configMapKeyRef": {
+                            "name": "guide-version",
+                            "key": "version"
+                          }
+                        }
+                      }
+                    ],
+                    "ports": [
+                      {
+                        "containerPort": 8080
+                      }
+                    ],
+                    "readinessProbe": {
+                      "httpGet": {
+                        "path": "/version",
+                        "port": 8080
+                      }
+                    },
+                    "resources": {
+                      "requests": {
+                        "cpu": "25m",
+                        "memory": "32Mi"
+                      },
+                      "limits": {
+                        "cpu": "200m",
+                        "memory": "128Mi"
+                      }
+                    },
+                    "securityContext": {
+                      "allowPrivilegeEscalation": false,
+                      "readOnlyRootFilesystem": true,
+                      "runAsNonRoot": true,
+                      "runAsUser": 10001,
+                      "capabilities": {
+                        "drop": [
+                          "ALL"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "service.json": {
+        "sha256": "e46bc1e4541c95184cf0bbff11c1bc5b62d185b5951f51cf9f8cd69982ed48a0",
+        "object": {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "guide-web"
+          },
+          "spec": {
+            "selector": {
+              "app": "guide-web"
+            },
+            "ports": [
+              {
+                "port": 8080,
+                "targetPort": 8080
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "scope": "Actual single broker, Terraform local provider/backend and single-host kind/Argo CD. No SQS/Lambda/cloud provider/HA or human reader result."
+}

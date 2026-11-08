@@ -1202,6 +1202,60 @@
         "缓存"
       ],
       "sha256": "e0ba8149f8430c0c4ab8de9b3fdb74d34e7b67a529473a2b7ae6edd7c227868e"
+    },
+    {
+      "id": "message-delivery",
+      "stages": [
+        "先把业务动作和运输消息分开",
+        "再分清三份确认来自谁",
+        "把退出位置放回数据路径"
+      ],
+      "introduced_terms": [
+        "消息",
+        "生产者",
+        "代理",
+        "消费者",
+        "确认",
+        "回执",
+        "通道"
+      ],
+      "sha256": "a64b32fb15ed8910eaf5a750e6899eebb61c93cab7ada3a03fde2875e3f92f2a"
+    },
+    {
+      "id": "terraform-state",
+      "stages": [
+        "先有期望、记录和真正存在的对象",
+        "再看工具通过谁读取和修改",
+        "最后把多人操作与归属连起来"
+      ],
+      "introduced_terms": [
+        "配置",
+        "状态",
+        "资源",
+        "提供程序",
+        "后端",
+        "计划",
+        "工作空间"
+      ],
+      "sha256": "ec16500fe921ee86eb4bd7cd8e0dc1ed11285a19fc4e2cb065226c1b51a6e277"
+    },
+    {
+      "id": "gitops-reconciliation",
+      "stages": [
+        "先有一份确定版本的声明",
+        "再把对象状态和进程状态分开",
+        "用同一服务贯穿策略与验收"
+      ],
+      "introduced_terms": [
+        "Git",
+        "期望",
+        "控制器",
+        "调谐",
+        "同步",
+        "健康",
+        "业务结果"
+      ],
+      "sha256": "4e16884dff75e7828b6d22706c0c4497c8662475430d00c92b4fff0485fd6279"
     }
   ],
   "modules": [
@@ -1447,6 +1501,7 @@
     "dist/diagrams/v42-agent-concepts.svg": "7d29d3c3d189c16c93b097d522c1d8887dcce9a821f876fabda67068de52b331",
     "dist/diagrams/v42-decoder-path.svg": "ca7a2a94737aec696928c10510187d1919bf77454b0c2cd62d44be5c8ac3773d",
     "dist/continuous-course-links.js": "98d18439712dff5e19c8de88aac807f4090b47a46ee04c4a49a7d698994c4ae7",
-    "dist/speculative-decoding-lessons.js": "3e2a71b624f45a4f0cb7694013b7e4c42be6b92692c2d78aa09792f24e429fc2"
+    "dist/speculative-decoding-lessons.js": "3e2a71b624f45a4f0cb7694013b7e4c42be6b92692c2d78aa09792f24e429fc2",
+    "dist/delivery-course-links.js": "1734498cdb7f3add4f258c5f577e8fdde67602fd604e9632894fb2b917941072"
   }
 }

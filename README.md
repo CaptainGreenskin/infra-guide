@@ -13,15 +13,13 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前72章：Cloud 30、AI 29、Agent 10、综合实战3。领域入口提供系统知识，详细文章按机制展开。内容正在持续精修，质量以解释是否清楚、例子能否复算和代码是否对应为准。
+当前75章：Cloud 33、AI 29、Agent 10、综合实战3；33个完整实验包、73项学习任务。领域入口先讲系统知识，文章再展开机制。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供三张系统关系图、阶段衔接和跨章推演；每章说明先修概念与后续用途，可返回路线定位。Agent可以从任务与工具开始，不以完成Cloud或GPU训练课程为前提。
 
-Agent沿现有两章深化：授权提交边界与完整检索上下文。17种HTTP观察、FTS5与真实BPE分别核对当前权限、原回执、237/36词元预算和实际交付；上一阶段29个完整实验包、66项学习任务。[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。
+本轮新增C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐。[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD：分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[本轮内容与连贯性审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
 
-AI新增「动手算子与性能分析」「MoE路由与专家执行」：C11实际编译、PyTorch 2.5.1 CPU原始轨迹、两执行进程路由与容量反例；均提供完整包和源码绑定记录。CUDA/Nsight与GPU EP尚待目标硬件验证。
+已有实验包括Linux TCP/epoll、MySQL日志恢复、Docker资源与Kubernetes调度、CPU/Gloo训练恢复、手写算子与MoE进程分发、精确推测采样、Agent授权与崩溃窗口、中文检索及实际分词预算。CUDA/Nsight、GPU/NCCL、物理多节点、云CNI/CSI、生产负载和Kairo接入分别保留待验范围，不由CPU或kind结果推断。
 
-新一轮 [六个教学单元目标](docs/CONTINUOUS_GOAL_2026-11-07.md) 按批次发布。Cloud 新增 TCP/epoll 与 MySQL 恢复两章，真实 Linux epoll 和 MySQL 8.4.13 的 [CI 运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42378802001) 与完整实验包绑定；缺段恢复出现“余额125、回执少一笔”的反例。
-
-本轮[四个深化单元](docs/CONTINUOUS_GOAL_2026-11-08.md)：C4.1容器资源、C4.4调度、A3.9推测解码、G4崩溃恢复。附12张新图、3个完整实验包；当前共32包、70项学习任务。[Linux Docker/kind实测](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42432475291)区分配额与放置，精确采样/CPU缓存与六次真实进程崩溃分别验证。物理多节点、GPU加速、断电与Kairo仍未据此验收。
+[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。检查和作者审读用于发现错误，读者能否独立画出知识关系、解释条件并完成迁移题，仍需实际试读验证。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
 
@@ -80,7 +78,7 @@ python dist/labs/ai-agent-systems/token_ddp.py
 | `dist/labs/` | 实验源码、下载包、执行记录 |
 | `scripts/` | 页面生成、内容检查与实验验证 |
 | `docs/` | 内容审阅与迭代记录 |
-| `dist/**/index.html` | 生成的106个页面（105个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
+| `dist/**/index.html` | 生成的109个页面（108个规范入口与1个旧入口兼容页）；由内容脚本重新生成 |
 
 修改正文后，用与 CI 相同的入口检查。`--pages` 另检查 GitHub 项目路径：
 

@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-08",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXPANSIONS_2026-11-08.json": "700c8ad53ec91538e45bbb81ca95cfd532e89cf954c907bec3c3331454eb49e4"
+  },
+  "new_chapter_reviews": [
+    {
+      "id": "message-delivery",
+      "module": "serverless",
+      "title": "消息投递与确认：从入队、处理到业务完成",
+      "track": "cloud",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "逐节审读对象关系、条件、实际目标工具与独立结果；完整程序与图对应。",
+      "observation": "RabbitMQ/本地Terraform状态/真实Argo CD分别在隔离Linux CI执行，严格区分运输、记录与业务事实；非生产云验收。",
+      "reviewed_content_sha256": "7f538765d48762ce55080054cdf90aa360658001662854e4eddecbc154974d03"
+    },
+    {
+      "id": "terraform-state",
+      "module": "cloud-delivery",
+      "title": "Terraform状态与漂移：配置、锁、刷新和资源归属",
+      "track": "cloud",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "逐节审读对象关系、条件、实际目标工具与独立结果；完整程序与图对应。",
+      "observation": "RabbitMQ/本地Terraform状态/真实Argo CD分别在隔离Linux CI执行，严格区分运输、记录与业务事实；非生产云验收。",
+      "reviewed_content_sha256": "8912fa8b4907b1949ebb4e5a52264dee79e75747c9bed41ed38822bbd992afa1"
+    },
+    {
+      "id": "gitops-reconciliation",
+      "module": "cloud-delivery",
+      "title": "GitOps调谐：从Git期望到对象、进程与业务结果",
+      "track": "cloud",
+      "review": "new_teaching_unit",
+      "reviewed_at": "2026-11-08",
+      "review_scope": "逐节审读对象关系、条件、实际目标工具与独立结果；完整程序与图对应。",
+      "observation": "RabbitMQ/本地Terraform状态/真实Argo CD分别在隔离Linux CI执行，严格区分运输、记录与业务事实；非生产云验收。",
+      "reviewed_content_sha256": "a930339def3f53d83795ed8b3bd2f381468bb78169bf4e75f99a581b39acc567"
+    }
+  ],
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "trigger-delivery",
+      "reviewed_at": "2026-11-08",
+      "scope": "知识点连到本轮独立机制章，分开运输/记录/实际效果；明确目标对象不只远端资源。",
+      "observation": "真实AMQP、local_file及Argo CD分别核对，对照输入与边界不混用。",
+      "previous_content_sha256": "fe12d74678388e9017b1457be6e06f5679c6fe72f9c3b38063b14c32a65a9a7e",
+      "reviewed_content_sha256": "aa438c8dd76f90f5b106d250a3dd04d227ae773d4730b3c7eba84200ee5b5969"
+    },
+    {
+      "id": "event-idempotency",
+      "reviewed_at": "2026-11-08",
+      "scope": "知识点连到本轮独立机制章，分开运输/记录/实际效果；明确目标对象不只远端资源。",
+      "observation": "真实AMQP、local_file及Argo CD分别核对，对照输入与边界不混用。",
+      "previous_content_sha256": "441b8978ac47afe9c11589a5e7e2e29c5c9901a721aefc31453fdb1dbb30fd3f",
+      "reviewed_content_sha256": "dbc663f5b004c7b01884beae84e91a8c641a616aed5300098fa9a855bb306640"
+    },
+    {
+      "id": "iac",
+      "reviewed_at": "2026-11-08",
+      "scope": "知识点连到本轮独立机制章，分开运输/记录/实际效果；明确目标对象不只远端资源。",
+      "observation": "真实AMQP、local_file及Argo CD分别核对，对照输入与边界不混用。",
+      "previous_content_sha256": "7558f7ae9af64fd06c50acf96bdc5a23bca8864c316566944b6989d2f5ad90cb",
+      "reviewed_content_sha256": "44c5e0e5f6a7a868d5c4a8002ad13f751241a6ceca1af493bfc33c04f47f4ac2"
+    },
+    {
+      "id": "gitops",
+      "reviewed_at": "2026-11-08",
+      "scope": "知识点连到本轮独立机制章，分开运输/记录/实际效果；明确目标对象不只远端资源。",
+      "observation": "真实AMQP、local_file及Argo CD分别核对，对照输入与边界不混用。",
+      "previous_content_sha256": "dd91f1c2995f533cf7e5a85a3137c14492e4121b095ba6fac13e2495395ab65e",
+      "reviewed_content_sha256": "10b2c6e072d829bba73c981a4b6dc5e4bb951e5ef5bbfe8e22d81096df4787fe"
+    },
+    {
+      "id": "messaging",
+      "reviewed_at": "2026-11-08",
+      "scope": "消息队列知识点直接连接真实AMQP确认与崩溃重投机制章，保留运输/业务边界。",
+      "observation": "C3数据服务的消息知识与C5事件执行相互连接，读者无需自行猜测对应机制章。",
+      "previous_content_sha256": "ab7ce5d4af00b3312a31994f97698acfd15b8bee97d2ab7d072b96db4b8d0e1b",
+      "reviewed_content_sha256": "8d5ffe1ca712f9e89fb084a8d361ea1ad322cda80fabbb09e8f572fa671dc023"
+    }
+  ],
+  "revised_teaching_units": []
+}

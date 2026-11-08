@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="用真实Argo CD和三个固定Git修订，讲透自动同步、自愈、清理及“绿灯却仍返回旧版”的原因。">
+<meta name="theme-color" content="#315dce"><title>GitOps调谐：从Git期望到对象、进程与业务结果 · InfraGuide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=04c2c911ebff"><script defer src="runtime-01.js?v=dc2e4a171c84"></script><script defer src="runtime-02.js?v=0e16e8e335bd"></script><script defer src="runtime-03.js?v=42b378a9adc8"></script><script defer src="runtime-04.js?v=fe93a9b79cdc"></script><script defer src="runtime-05.js?v=6831fe7965bc"></script><script defer src="runtime-06.js?v=c588a9dd06ef"></script><script defer src="reading-comfort.js?v=a4cef03bcde6"></script><script defer src="site-search.js?v=d634ee795d81"></script><script defer src="app.js?v=47878df982ab"></script>
+
+
+<link rel="stylesheet" href="learning-connections.css?v=b591c34e8188"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/gitops-reconciliation/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="GitOps调谐：从Git期望到对象、进程与业务结果 · InfraGuide"><meta property="og:description" content="用真实Argo CD和三个固定Git修订，讲透自动同步、自愈、清理及“绿灯却仍返回旧版”的原因。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/gitops-reconciliation/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"GitOps调谐：从Git期望到对象、进程与业务结果","description":"用真实Argo CD和三个固定Git修订，讲透自动同步、自愈、清理及“绿灯却仍返回旧版”的原因。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/gitops-reconciliation/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/gitops-reconciliation/","dateModified":"2026-11-08","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
+<body>
+<a class="skip" href="/article/gitops-reconciliation/#main">跳到主要内容</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="/" aria-label="InfraGuide 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 24h17a6 6 0 0 0 0-12A9 9 0 0 0 8 10a7 7 0 0 0 0 14Z"/></svg><span>Infra<span class="brand-light"> Guide</span></span></a>
+<nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
+<div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
+</div></header>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+  <div class="side-heading"><span>Cloud Infra · 领域与章节</span><span>33 章</span></div><details ><summary><a href="/module/foundation/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" >P0.1 进程、线程与资源：为什么机器空闲，程序仍然很慢</a><a href="/article/virtual-memory-oom/" >P0.2 虚拟内存与 OOM：导出任务为什么被终止</a><a href="/article/concurrency-pools/" >P0.3 并发与线程池：锁、排队和容量</a><a href="/article/distributed-systems/" >P0.4 超时、重试与幂等：系统最难处理的是“结果未知”</a></div></details><details ><summary><a href="/module/compute/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" >C1.1 云计算架构：服务模型、资源与责任边界</a><a href="/article/cloud-compute/" >C1.2 计算资源：虚拟化、规格与容量预算</a></div></details><details ><summary><a href="/module/network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" >C2.1 云网络：DNS、路由、访问控制与返回路径</a><a href="/article/network-diagnosis/" >C2.2 网络诊断：连接、首字节与传输时序</a><a href="/article/tcp-event-loop/" >C2.3 TCP与I/O：从连接、字节流到epoll事件循环</a></div></details><details ><summary><a href="/module/cloud-data/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" >C3.1 云存储：块、文件、对象与访问性能</a><a href="/article/database-index-locks/" >C3.2 数据库访问：索引、事务与锁等待</a><a href="/article/cache-consistency/" >C3.3 缓存一致性与击穿：旧值为何重新出现</a><a href="/article/storage-recovery/" >C3.4 存储发布与恢复：版本、提交点与校验</a><a href="/article/mysql-recovery/" >C3.5 MySQL日志与恢复：从提交、崩溃到按点重放</a></div></details><details ><summary><a href="/module/native/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" >C4.1 容器运行原理：镜像、进程、隔离与资源</a><a href="/article/kubernetes-basics/" >C4.2 Kubernetes 控制面：对象、调谐与生命周期</a><a href="/article/k8s-workloads/" >C4.3 Kubernetes 工作负载：从声明到可用与滚动更新</a><a href="/article/scheduling-resources/" >C4.4 Kubernetes 调度：资源、亲和与拓扑约束</a><a href="/article/k8s-networking/" >C4.5 Kubernetes 网络：从 DNS、Service 到容器回包</a><a href="/article/k8s-storage/" >C4.6 Kubernetes 存储：PVC、拓扑、挂载与数据恢复</a><a href="/article/config-secrets/" >C4.7 配置与密钥：传播、重读与版本生效</a><a href="/article/k8s-autoscaling/" >C4.8 Kubernetes 弹性：HPA、节点容量与排队预算</a></div></details><details ><summary><a href="/module/serverless/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" >C5.1 Serverless 与事件驱动：执行、重试、幂等与成本</a><a href="/article/message-delivery/" >C5.2 消息投递与确认：从入队、处理到业务完成</a></div></details><details open><summary><a href="/module/cloud-delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" >C6.1 平台交付：制品、配置、数据迁移与回退</a><a href="/article/terraform-state/" >C6.2 Terraform状态与漂移：配置、锁、刷新和资源归属</a><a href="/article/gitops-reconciliation/" class="current" aria-current="page">C6.3 GitOps调谐：从Git期望到对象、进程与业务结果</a></div></details><details ><summary><a href="/module/cloud-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" >C7.1 身份与最小权限：谁能让系统做什么</a></div></details><details ><summary><a href="/module/cloud-capacity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" >C8.1 容量与弹性：故障域、扩容时序与排队</a></div></details><details ><summary><a href="/module/sre/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" >C9.1 可靠性目标：SLI、SLO 与错误预算</a><a href="/article/observability/" >C9.2 可观测性：用指标定位范围，用日志和追踪解释路径</a><a href="/article/incident/" >C9.3 故障诊断：影响、时间线、假设与验证</a><a href="/article/resilience/" >C9.4 恢复工程：故障域、RPO、RTO 与演练</a></div></details>
+  <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 33</b></div>
+   <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/cloud-delivery/">平台工程、IaC 与 GitOps</a><span>／</span><span>C6.3</span></div><div class="article-meta"><span class="category">平台工程、IaC 与 GitOps</span><span>机制 + 真实控制器 + HTTP</span><span>·</span><span>GitOps调谐 · 2026.11.08</span></div><h1>C6.3 GitOps调谐：从Git期望到对象、进程与业务结果</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><section class="concept-path" id="concept-path" data-concept-kind="chapter"><h2>概念与关系</h2><section class="concept-step"><h3><span aria-hidden="true">1</span>先有一份确定版本的声明</h3><p>Git保存版本化内容，期望说明要在目标系统中建立什么。控制器不断观察现场，与期望比较，再执行调整；调谐是这个持续循环，不是一条永远成功的同步命令。</p></section><section class="concept-step"><h3><span aria-hidden="true">2</span>再把对象状态和进程状态分开</h3><p>同步判断声明比较范围，健康判断资源规则；业务结果来自真实进程处理请求。配置已经改变，不代表旧进程已重新读取，也不代表用户已经拿到正确版本。</p></section><section class="concept-step"><h3><span aria-hidden="true">3</span>用同一服务贯穿策略与验收</h3><p>本章先解释自动同步、自愈、清理和配置生效，再让真实控制器跟踪三份固定源。每次同时看源、对象、进程身份和响应，最后用独立判据决定是否完成交付。</p></section></section><p class="description">用真实Argo CD和三个固定Git修订，讲透自动同步、自愈、清理及“绿灯却仍返回旧版”的原因。</p><div class="tag-row"><span class="tag">GitOps</span><span class="tag">同步</span><span class="tag">自愈</span><span class="tag">版本验收</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约45分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>区分源、对象、进程与业务结果</li><li>解释自动同步、自愈和清理的作用域</li><li>按实际HTTP结果验收切换与回退</li></ul><p><b>前置知识</b>先读Kubernetes控制面、工作负载和配置注入；本章先介绍GitOps、Application与同步关系，再进入实测。</p><ul class="prerequisite-links"><li><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：一次交付继续发展成持续观察、比较和调谐。</li><li><a href="/article/config-secrets/">C4.7 配置与密钥：传播、重读与版本生效</a>：声明同步以后，配置仍需真正进入进程才改变业务结果。</li></ul><p class="evidence-note">约 45 分钟 · Argo CD 3.6.1 / kind单机；只操作自有集群 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/cloud-delivery/">← 返回本模块目录</a><a data-toc="concept-path" href="/article/gitops-reconciliation/#concept-path">概念起点与关系</a><a href="/article/gitops-reconciliation/#section-1">1. 先画出Git、控制器、集群和业务四层关系</a><a href="/article/gitops-reconciliation/#section-2">2. Synced、Healthy与业务正确，分别证明什么</a><a href="/article/gitops-reconciliation/#section-3">3. 自动同步、自愈和清理，是三个不同开关</a><a href="/article/gitops-reconciliation/#section-4">4. 清理依据受管关系，不是删除所有多余对象</a><a href="/article/gitops-reconciliation/#section-5">5. 环境变量为什么不会随ConfigMap自动改值</a><a href="/article/gitops-reconciliation/#section-6">6. 三个固定提交，把控制面绿灯与用户结果对上</a><a href="/article/gitops-reconciliation/#section-7">7. 回退要改变期望，再验证旧版本还能工作</a><a href="/article/gitops-reconciliation/#section-8">8. 从源到响应，按最后成功阶段排障</a><a href="/article/gitops-reconciliation/#section-9">9. 在独立kind集群重放，再读完整源码</a></details><p class="intro">同步声明、资源健康、用户得到正确版本，是相连的三项检查。沿同一服务逐层取得事实，才能判断交付是否完成。</p><p class="article-context-link" id="core-knowledge"><a href="/module/cloud-delivery/">本领域系统知识：平台工程、IaC 与 GitOps →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>先画出Git、控制器、集群和业务四层关系</h2><p>Git保存版本化文件，每个提交标识一份确定的历史内容；提交SHA是标识该提交的一串摘要，本实验固定完整值。<span class="first-concept-term" data-concept-term="GitOps">GitOps<span class="concept-term-meaning">（以版本库中的声明为依据持续同步实际环境的管理方式）</span></span>用这样的声明作为期望，由控制器持续读取目标系统、比较差异并推进调整；调谐就是这种“观察、比较、执行、再观察”的循环。它不是一次git push就同步执行到底的脚本。</p><p>Argo CD是本章使用的GitOps工具。Application对象描述源仓库、路径、修订和目标<span class="first-concept-term" data-concept-term="集群">集群<span class="concept-term-meaning">（由多台机器及其管理组件共同组成的系统）</span></span>/命名空间；控制器取得声明，比较并同步受管对象。<span class="first-concept-term" data-concept-term="Kubernetes">Kubernetes<span class="concept-term-meaning">（统一管理多台机器上容器化应用的系统）</span></span>控制器再把<span class="first-concept-term" data-concept-term="Deployment">Deployment<span class="concept-term-meaning">（管理可替换服务副本和更新过程的Kubernetes工作负载对象）</span></span>等声明推进成实际<span class="first-concept-term" data-concept-term="Pod">Pod<span class="concept-term-meaning">（Kubernetes中一起安排运行的一个或多个容器组成的单位）</span></span>和<span class="first-concept-term" data-concept-term="进程">进程<span class="concept-term-meaning">（一份正在运行的程序实例）</span></span>，业务请求最后才从这些进程获得结果。每层都有自己的状态与失败方式。</p><p>图中Synced表示比较范围内的声明相符，Healthy表示资源健康规则通过。UID是Kubernetes为对象分配的唯一身份；名称相同的Pod重建后，UID会变化。先把这些状态放在各自层次上，下一节再解释它们为什么不能替代业务验收。</p><figure class="training-figure"><a href="diagrams/v49-gitops-four-facts.svg" target="_blank" rel="noopener" aria-label="放大：同一服务的四层事实：固定Git提交、集群对象、进程已读配置、HTTP实际版本。上游一致不自动证明下游已经切换。"><img src="diagrams/v49-gitops-four-facts.svg" width="960" height="580" alt="同一服务的四层事实：固定Git提交、集群对象、进程已读配置、HTTP实际版本。上游一致不自动证明下游已经切换。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一服务的四层事实：固定Git提交、集群对象、进程已读配置、HTTP实际版本。上游一致不自动证明下游已经切换。<a href="diagrams/v49-gitops-four-facts.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>对象</th><th>负责什么</th><th>本章证据</th></tr></thead><tbody><tr><td>Git修订</td><td>确定期望清单</td><td>三个完整提交SHA</td></tr><tr><td>Application与控制器</td><td>比较和同步受管资源</td><td>同步修订、操作结果、差异</td></tr><tr><td>Deployment / Pod</td><td>推进副本与容器生命周期</td><td>模板、Pod UID与就绪状态</td></tr><tr><td>业务服务</td><td>处理真实请求</td><td>经<span class="first-concept-term" data-concept-term="Service">Service<span class="concept-term-meaning">（为一组后端提供相对稳定访问入口的Kubernetes资源对象）</span></span>请求/version得到的JSON</td></tr></tbody></table></div><p>UID是Kubernetes为对象分配的唯一身份。名称相同的Pod重建后，UID会变化；比较它可以帮助判断进程是否真的被替换。本章同时看名称、UID、配置和响应，避免仅凭“版本号字段已改”推断整条链都完成。</p></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>Synced、Healthy与业务正确，分别证明什么</h2><p>Synced表示Argo CD在其比较与管理范围内认为现场对象与目标声明一致。Healthy表示按资源健康规则，受管资源达到相应健康条件。操作Succeeded表示这次同步操作完成；这些判断都没有自动定义“用户应该看到v2”这条业务要求。</p><p>Deployment可以有足够可用副本，却运行着启动时读取的旧配置。健康端点如果只返回<span class="first-concept-term" data-concept-term="HTTP">HTTP<span class="concept-term-meaning">（规定一类应用请求与响应格式和语义的协议）</span></span> 200，也可以在返回旧版本时仍成功。业务验收要在任务开始时另定，例如“请求/version得到version=v2”，再从实际服务路径执行，而不是让应用自行声称已经满足新目标。</p><div class="table-wrap"><table><thead><tr><th>信号</th><th>能支持的判断</th><th>还要继续核对</th></tr></thead><tbody><tr><td>同步修订等于目标SHA</td><td>控制器比较的是这份源</td><td>实际字段、忽略规则和受管范围</td></tr><tr><td>Synced</td><td>比较范围内声明一致</td><td>进程怎样读取配置</td></tr><tr><td>Healthy</td><td>资源健康规则通过</td><td>当前用户结果是否符合目标</td></tr><tr><td>HTTP 200且version=v2</td><td>这次路径返回预期值</td><td>覆盖范围、质量、负载与其他业务约束</td></tr></tbody></table></div><p>本章只验证一个简单版本接口，不能用它替代真实服务的完整验收。实际发布还要覆盖数据兼容、权限、关键查询和性能。先把判断拆清，再安排各自探针，才能解释多个绿灯为何仍可能遗漏问题。</p></section><section class="article-section" id="section-3"><h2><span class="section-index">03</span>自动同步、自愈和清理，是三个不同开关</h2><p>自动同步让控制器在满足规则时推进新的源差异。自愈selfHeal让它对现场漂移再次同步；清理prune允许删除已经由本应用管理、却从期望中移除的对象。启用自动同步，并不等于自愈和清理都已启用；相应enabled总开关关闭时，单独填写另外两个字段也不会自动执行。</p><p>实际实验的Git期望为一个副本。先关闭自愈，把现场手工扩为两个；控制器看见OutOfSync，但现场仍是两个，资源健康仍为Healthy。开启自愈后，同一Git修订下副本恢复为一个。这里改变的是执行策略，源内容没有换版。</p><figure class="training-figure"><a href="diagrams/v49-gitops-policy-matrix.svg" target="_blank" rel="noopener" aria-label="放大：真实策略对照：自愈关闭时保留现场2副本，开启后恢复1；清理关闭保留已移出Git的受管ConfigMap，开启后删除它，未受管对象保留。"><img src="diagrams/v49-gitops-policy-matrix.svg" width="960" height="530" alt="真实策略对照：自愈关闭时保留现场2副本，开启后恢复1；清理关闭保留已移出Git的受管ConfigMap，开启后删除它，未受管对象保留。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>真实策略对照：自愈关闭时保留现场2副本，开启后恢复1；清理关闭保留已移出Git的受管ConfigMap，开启后删除它，未受管对象保留。<a href="diagrams/v49-gitops-policy-matrix.svg" download>下载 SVG ↗</a></figcaption></figure><div class="code-block"><div class="code-toolbar"><span>本实验先关闭自愈和清理，再分别开启 <small>YAML</small></span><button data-copy-code aria-label="复制 本实验先关闭自愈和清理，再分别开启">复制代码</button></div><pre tabindex="0"><code>syncPolicy:
+  automated:
+    enabled: true
+    selfHeal: false
+    prune: false</code></pre></div><p>调谐有检测、排队与执行时序，不能承诺现场一变就瞬时恢复。自动同步也有同修订去重、失败重试等具体规则；实验通过明确刷新和状态等待取证，不把某次等待时长当作默认服务承诺。多套自动化若争改同一字段，应先界定所有权，不能只把自愈调得更频繁。</p></section><section class="article-section" id="section-4"><h2><span class="section-index">04</span>清理依据受管关系，不是删除所有多余对象</h2><p>v1源中有一份guide-retired <span class="first-concept-term" data-concept-term="ConfigMap">ConfigMap<span class="concept-term-meaning">（组织普通配置数据的Kubernetes对象）</span></span>。ConfigMap是Kubernetes保存非敏感键值配置的对象。v2从Git移除它；prune关闭时，同步操作可以成功，旧对象却仍在，应用仍为OutOfSync。开启清理以后，这个受管对象被删除。</p><p>同一命名空间还放了一份由实验直接创建、未交给该Application管理的unmanaged ConfigMap。它在两种清理策略下都保留。清理要根据工具记录的受管身份和规则判断，不应被理解为“命名空间里凡不在这份Git里的都删掉”。</p><p>删除本身还有权限、保护注解、终结器和传播等语义。终结器是要求控制器完成清理后才能最终移除对象的一组标记；空源是否允许被自动清空，也有额外配置。本例只验证两份普通ConfigMap的归属与清理，不据此承诺所有自定义资源都能立即删除或恢复。</p><div class="table-wrap"><table><thead><tr><th>v2源已移除旧配置后</th><th>prune关闭</th><th>prune开启</th></tr></thead><tbody><tr><td>guide-retired，原来受管</td><td>保留</td><td>删除</td></tr><tr><td>unmanaged，从未交给本应用</td><td>保留</td><td>保留</td></tr><tr><td>同步操作与整体差异</td><td>操作成功，但仍OutOfSync</td><td>本例达到Synced</td></tr></tbody></table></div></section><section class="article-section" id="section-5"><h2><span class="section-index">05</span>环境变量为什么不会随ConfigMap自动改值</h2><p>环境变量是一份提供给进程的启动环境。本例Pod通过configMapKeyRef把ConfigMap的version键注入BUSINESS_VERSION，Python服务从这份环境中读取版本。之后只修改ConfigMap对象，没有修改Pod模板，也没有重建进程，已有环境变量不会跟着变。</p><p>这与文件投射和应用主动热重载不同。卷中的配置文件可能按相应规则更新，但应用是否重新打开、解析并切换仍需明确；环境变量路径更不能靠对象更新自动注入旧进程。排查时把“控制面对象值”“进程读入值”“请求返回值”分别拿出来。</p><div class="code-block"><div class="code-toolbar"><span>本实验的注入点；完整Deployment见实验包 <small>YAML</small></span><button data-copy-code aria-label="复制 本实验的注入点；完整Deployment见实验包">复制代码</button></div><pre tabindex="0"><code>env:
+  - name: BUSINESS_VERSION
+    valueFrom:
+      configMapKeyRef:
+        name: guide-version
+        key: version</code></pre></div><p>可选方案包括版本化配置引用、把配置摘要纳入Pod模板以触发替换，或设计应用自己的校验与热重载。本章使用最容易观察的一种：在Git中改变模板注解guide/revision，引发新Pod。这个注解只是本例的声明变化，不是Argo CD专用的魔法字段。</p><a class="inline-link" href="/article/config-secrets/">继续比较环境变量、卷文件与进程内缓存 →</a></section><section class="article-section" id="section-6"><h2><span class="section-index">06</span>三个固定提交，把控制面绿灯与用户结果对上</h2><p>三个Git提交使用同一路径，按顺序只增加必要变化。第一份fb18c80提供v1配置与模板；第二份872b300把配置改v2、移除旧ConfigMap，但保持模板不变；第三份703f38b再把模板注解改为v2。完整SHA保存在gitops-revisions.json，控制器状态必须对应那个完整修订。</p><figure class="training-figure"><a href="diagrams/v49-gitops-version-path.svg" target="_blank" rel="noopener" aria-label="放大：实际结果：第二个提交经清理后Synced/Healthy，但Pod UID与之前相同，HTTP仍v1；第三个提交更换模板后，UID变化，HTTP才为v2。"><img src="diagrams/v49-gitops-version-path.svg" width="960" height="515" alt="实际结果：第二个提交经清理后Synced/Healthy，但Pod UID与之前相同，HTTP仍v1；第三个提交更换模板后，UID变化，HTTP才为v2。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>实际结果：第二个提交经清理后Synced/Healthy，但Pod UID与之前相同，HTTP仍v1；第三个提交更换模板后，UID变化，HTTP才为v2。<a href="diagrams/v49-gitops-version-path.svg" download>下载 SVG ↗</a></figcaption></figure><div class="table-wrap"><table><thead><tr><th>源修订</th><th>配置对象</th><th>Pod身份</th><th>Argo状态</th><th>真实HTTP / 目标</th></tr></thead><tbody><tr><td>fb18c80</td><td>v1</td><td>初始Pod</td><td>Synced / Healthy</td><td>v1 / v1，通过</td></tr><tr><td>872b300，清理完成后</td><td>v2</td><td>同一个UID</td><td>Synced / Healthy</td><td>v1 / v2，拒绝</td></tr><tr><td>703f38b</td><td>v2</td><td>新UID</td><td>Synced / Healthy</td><td>v2 / v2，通过</td></tr></tbody></table></div><p>第二行不是模拟出来的告警标签：实验真正启动HTTP服务，经集群Service发请求，再读JSON的version；另从<span class="first-concept-term" data-concept-term="API">API<span class="concept-term-meaning">（供程序调用的接口）</span></span>取得Pod UID和配置。独立验收判据是version应为v2，因而明确失败。等第三行通过以后，才能在这个实验范围内说新版已生效。</p><p>Pod UID变化也不能单独证明业务正确。新Pod可能注入了错误配置，服务选择器可能指向另一组后端，进程还可能缓存旧数据。本例同时核对身份、源、配置和实际响应，让每一条因果都能找到相应记录。</p></section><section class="article-section" id="section-7"><h2><span class="section-index">07</span>回退要改变期望，再验证旧版本还能工作</h2><p>实验最后把Application的目标修订改回第一份固定SHA。控制器将配置与模板恢复到v1，新Pod返回v1，并重建v1仍声明的guide-retired对象。这是改变期望修订触发的调谐，不是调用Argo CD的rollback API；自动同步开启时，后者有专门限制。</p><p>源版本回去了，不表示数据库、外部写入和已清理产物也能倒流。本实验没有数据迁移，只验证这一组配置、模板和HTTP服务。真实回退要先检查旧代码所需数据结构、凭据和外部接口是否仍存在，再用同一组用户断言验收。</p><p>紧急手改现场也要有归位计划。自愈开启时，控制器可能把手改恢复为Git期望；若需要暂时接管，先定义策略与权限，再把修复反映到受控声明或完成正式交接，避免两个写者互相抵消。</p><a class="inline-link" href="/article/delivery/">回到数据兼容与发布退出条件 →</a></section><section class="article-section" id="section-8"><h2><span class="section-index">08</span>从源到响应，按最后成功阶段排障</h2><div class="table-wrap"><table><thead><tr><th>阶段</th><th>先取哪份证据</th><th>典型下一步</th></tr></thead><tbody><tr><td>源读取</td><td>repoURL、路径、完整修订与条件</td><td>核对访问、渲染与源内容</td></tr><tr><td>比较与同步</td><td>资源差异、操作结果、项目规则</td><td>检查字段归属、权限与同步策略</td></tr><tr><td>集群执行</td><td>模板、代次、Pod与事件</td><td>检查调度、镜像、配置和探针</td></tr><tr><td>业务生效</td><td>进程读数、Service响应及期望值</td><td>检查读取时机、路由、缓存和任务语义</td></tr></tbody></table></div><p>AppProject为本实验限定源仓库、目标命名空间及允许的ConfigMap、Service和Deployment类型。它是Argo CD层面的项目规则，不替代Kubernetes执行身份的权限，也不证明业务租户隔离。本次控制器只部署在自己创建的kind集群中，结束删除该集群。</p><p>记录时间线时保留“源变更”“控制器观察”“对象同步”“新Pod就绪”“首个正确业务响应”几个事件。图中的箭头表示因果与先后，不把它们画成等宽就宣称同样耗时。健康、同步和用户结果分别计量，排障才能收敛到具体边界。</p></section><section class="article-section" id="section-9"><h2><span class="section-index">09</span>在独立kind集群重放，再读完整源码</h2><p>本次实际运行Argo CD Core v3.6.1、kind v0.33.0和Kubernetes v1.35.8。Core模式运行同步所需组件，通过Kubernetes的Application等资源交互，不需要额外对外暴露管理界面。本实验读取本站公开夹具，固定三个修订；没有使用用户的私有仓库凭据。</p><p>程序创建随机命名集群，每次kubectl都指定自己的临时kubeconfig与context；不会使用用户当前默认集群。所有应用资源都在guide-demo中，服务只在该集群内访问。kind仍是单机节点<span class="first-concept-term" data-concept-term="容器">容器<span class="concept-term-meaning">（将应用进程、所需文件及相应隔离与资源约束组织起来的运行实例）</span></span>，不据此验证云生产、跨主机网络、真实<span class="first-concept-term" data-concept-term="CSI">CSI<span class="concept-term-meaning">（容器存储接口，连接编排系统与存储驱动）</span></span>或高可用控制面。</p><h3 id="gitops-native-run" class="walkthrough-run">运行 gitops_reconcile.py</h3><div class="code-block"><div class="code-toolbar"><span>解压完整包，在文件目录执行 <small>BASH</small></span><button data-copy-code aria-label="复制 解压完整包，在文件目录执行">复制代码</button></div><pre tabindex="0"><code>python3 -B gitops_reconcile.py --output runs/gitops-record.json</code></pre></div><p><a href="/labs/delivery-systems.zip" download>下载完整实验包 ↓</a> · <a href="/labs/delivery-systems/gitops_reconcile.py" download>下载源码 ↓</a> · <a href="/labs/delivery-systems/validation.json">核对实际结果与源码摘要 →</a></p><details class="full-code"><summary>展开完整源码 · gitops_reconcile.py</summary><div class="code-block"><div class="code-toolbar"><span>gitops_reconcile.py <small>PYTHON</small></span><button data-copy-code aria-label="复制 gitops_reconcile.py">复制代码</button></div><pre tabindex="0"><code>&quot;&quot;&quot;Actual Argo CD Core + kind, three immutable public revisions, independent HTTP version oracle.&quot;&quot;&quot;
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+import time
+import urllib.request
+import uuid
+
+NODE_IMAGE = &#39;kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0&#39;
+ARGO_VERSION = &#39;v3.6.1&#39;
+ARGO_URL = &#39;https://raw.githubusercontent.com/argoproj/argo-cd/&#39; + ARGO_VERSION + &#39;/manifests/core-install.yaml&#39;
+
+
+def command(*parts, data=None, check=True, timeout=240):
+    r = subprocess.run(parts, input=data, text=True, capture_output=True, timeout=timeout)
+    if check and r.returncode:
+        raise RuntimeError(parts[0] + &#39;: &#39; + r.stderr[-4500:])
+    return r
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(&#39;--output&#39;, type=Path, default=Path(&#39;gitops-record.json&#39;))
+    args = ap.parse_args()
+    sources = json.loads(Path(__file__).with_name(&#39;gitops-revisions.json&#39;).read_text())
+    assert not os.environ.get(&#39;DOCKER_HOST&#39;)
+    endpoint = json.loads(command(&#39;docker&#39;, &#39;context&#39;, &#39;inspect&#39;).stdout)[0][&#39;Endpoints&#39;][&#39;docker&#39;][&#39;Host&#39;]
+    assert endpoint.startswith(&#39;unix://&#39;), &#39;Only a local Docker context is accepted&#39;
+    name = &#39;infra-gitops-&#39; + uuid.uuid4().hex[:10]
+    assert name not in command(&#39;kind&#39;, &#39;get&#39;, &#39;clusters&#39;).stdout.splitlines()
+    records = {}
+    with tempfile.TemporaryDirectory(prefix=&#39;infra-gitops-&#39;) as tmp:
+        root = Path(tmp)
+        kubeconfig = root / &#39;kubeconfig&#39;
+
+        def k(*parts, data=None, check=True):
+            return command(&#39;kubectl&#39;, &#39;--kubeconfig&#39;, str(kubeconfig), &#39;--context&#39;, &#39;kind-&#39; + name,
+                           &#39;--request-timeout=30s&#39;, *parts, data=data, check=check)
+
+        def get(kind, obj, ns=&#39;guide-demo&#39;):
+            return json.loads(k(&#39;get&#39;, kind, obj, &#39;-n&#39;, ns, &#39;-o&#39;, &#39;json&#39;).stdout)
+
+        def apply(obj):
+            return k(&#39;apply&#39;, &#39;-f&#39;, &#39;-&#39;, data=json.dumps(obj))
+
+        def exists(kind, obj):
+            return bool(k(&#39;get&#39;, kind, obj, &#39;-n&#39;, &#39;guide-demo&#39;, &#39;--ignore-not-found&#39;, &#39;-o&#39;, &#39;name&#39;).stdout.strip())
+
+        def patch_app(patch):
+            k(&#39;patch&#39;, &#39;application&#39;, &#39;guide&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;--type=merge&#39;, &#39;-p&#39;, json.dumps(patch))
+            k(&#39;annotate&#39;, &#39;application&#39;, &#39;guide&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;argocd.argoproj.io/refresh=hard&#39;, &#39;--overwrite&#39;)
+
+        def wait(label, predicate, timeout=150):
+            deadline = time.monotonic() + timeout
+            last = None
+            while time.monotonic() &lt; deadline:
+                try:
+                    last = predicate()
+                    if last:
+                        return last
+                except (RuntimeError, KeyError, IndexError):
+                    pass
+                time.sleep(1)
+            raise AssertionError(label + &#39;: condition not reached; last=&#39; + str(last))
+
+        def app_status():
+            app = get(&#39;application&#39;, &#39;guide&#39;, &#39;argocd&#39;)
+            st = app.get(&#39;status&#39;, {})
+            return {&#39;sync&#39;: st.get(&#39;sync&#39;, {}).get(&#39;status&#39;), &#39;revision&#39;: st.get(&#39;sync&#39;, {}).get(&#39;revision&#39;),
+                    &#39;health&#39;: st.get(&#39;health&#39;, {}).get(&#39;status&#39;),
+                    &#39;operation&#39;: st.get(&#39;operationState&#39;, {}).get(&#39;phase&#39;),
+                    &#39;conditions&#39;: st.get(&#39;conditions&#39;, [])}
+
+        def synced(revision):
+            st = app_status()
+            return st if st[&#39;revision&#39;] == revision and st[&#39;sync&#39;] == &#39;Synced&#39; and st[&#39;health&#39;] == &#39;Healthy&#39; else False
+
+        def active_pods():
+            items = json.loads(k(&#39;get&#39;, &#39;pods&#39;, &#39;-n&#39;, &#39;guide-demo&#39;, &#39;-l&#39;, &#39;app=guide-web&#39;, &#39;-o&#39;, &#39;json&#39;).stdout)[&#39;items&#39;]
+            return [p for p in items if not p[&#39;metadata&#39;].get(&#39;deletionTimestamp&#39;)]
+
+        def one_ready_pod():
+            pods = active_pods()
+            if len(pods) != 1:
+                return False
+            p = pods[0]
+            if not any(c[&#39;type&#39;] == &#39;Ready&#39; and c[&#39;status&#39;] == &#39;True&#39; for c in p.get(&#39;status&#39;, {}).get(&#39;conditions&#39;, [])):
+                return False
+            return {&#39;name&#39;: p[&#39;metadata&#39;][&#39;name&#39;], &#39;uid&#39;: p[&#39;metadata&#39;][&#39;uid&#39;]}
+
+        def response():
+            pod = wait(&#39;single ready application pod&#39;, one_ready_pod)
+            script = &#39;import json,urllib.request; print(urllib.request.urlopen(&quot;http://guide-web:8080/version&quot;,timeout=3).read().decode())&#39;
+            body = json.loads(k(&#39;exec&#39;, &#39;-n&#39;, &#39;guide-demo&#39;, pod[&#39;name&#39;], &#39;--&#39;, &#39;python&#39;, &#39;-c&#39;, script).stdout)
+            return {&#39;http&#39;: body, &#39;pod&#39;: pod, &#39;desired_config&#39;: get(&#39;configmap&#39;, &#39;guide-version&#39;)[&#39;data&#39;][&#39;version&#39;]}
+
+        try:
+            command(&#39;kind&#39;, &#39;create&#39;, &#39;cluster&#39;, &#39;--name&#39;, name, &#39;--kubeconfig&#39;, str(kubeconfig),
+                    &#39;--image&#39;, NODE_IMAGE, &#39;--wait&#39;, &#39;150s&#39;, timeout=400)
+            for ns in (&#39;argocd&#39;, &#39;guide-demo&#39;):
+                apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;Namespace&#39;, &#39;metadata&#39;: {&#39;name&#39;: ns}})
+            install = urllib.request.urlopen(ARGO_URL, timeout=45).read()
+            install_path = root / &#39;argocd-core.yaml&#39;
+            install_path.write_bytes(install)
+            # Fresh, owned cluster: create avoids oversized last-applied annotations on CRDs.
+            k(&#39;create&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;-f&#39;, str(install_path))
+            k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/argocd-repo-server&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;--timeout=180s&#39;)
+            project = {&#39;apiVersion&#39;: &#39;argoproj.io/v1alpha1&#39;, &#39;kind&#39;: &#39;AppProject&#39;,
+                       &#39;metadata&#39;: {&#39;name&#39;: &#39;guide-scope&#39;, &#39;namespace&#39;: &#39;argocd&#39;},
+                       &#39;spec&#39;: {&#39;sourceRepos&#39;: [sources[&#39;repo&#39;]],
+                                &#39;destinations&#39;: [{&#39;server&#39;: &#39;https://kubernetes.default.svc&#39;, &#39;namespace&#39;: &#39;guide-demo&#39;}],
+                                &#39;clusterResourceWhitelist&#39;: [], &#39;namespaceResourceWhitelist&#39;: [
+                                    {&#39;group&#39;: &#39;&#39;, &#39;kind&#39;: &#39;ConfigMap&#39;}, {&#39;group&#39;: &#39;&#39;, &#39;kind&#39;: &#39;Service&#39;},
+                                    {&#39;group&#39;: &#39;apps&#39;, &#39;kind&#39;: &#39;Deployment&#39;}]}}
+            apply(project)
+            apply({&#39;apiVersion&#39;: &#39;v1&#39;, &#39;kind&#39;: &#39;ConfigMap&#39;, &#39;metadata&#39;: {&#39;name&#39;: &#39;unmanaged&#39;, &#39;namespace&#39;: &#39;guide-demo&#39;}, &#39;data&#39;: {&#39;owner&#39;: &#39;outside-this-application&#39;}})
+            apply({&#39;apiVersion&#39;: &#39;argoproj.io/v1alpha1&#39;, &#39;kind&#39;: &#39;Application&#39;,
+                   &#39;metadata&#39;: {&#39;name&#39;: &#39;guide&#39;, &#39;namespace&#39;: &#39;argocd&#39;},
+                   &#39;spec&#39;: {&#39;project&#39;: &#39;guide-scope&#39;, &#39;source&#39;: {&#39;repoURL&#39;: sources[&#39;repo&#39;], &#39;path&#39;: sources[&#39;path&#39;],
+                             &#39;targetRevision&#39;: sources[&#39;v1&#39;], &#39;directory&#39;: {}},
+                            &#39;destination&#39;: {&#39;server&#39;: &#39;https://kubernetes.default.svc&#39;, &#39;namespace&#39;: &#39;guide-demo&#39;},
+                            &#39;syncPolicy&#39;: {&#39;automated&#39;: {&#39;enabled&#39;: True, &#39;selfHeal&#39;: False, &#39;prune&#39;: False}}}})
+            initial = wait(&#39;v1 synced and healthy&#39;, lambda: synced(sources[&#39;v1&#39;]), timeout=240)
+            records[&#39;v1&#39;] = {&#39;status&#39;: initial, **response()}
+            assert records[&#39;v1&#39;][&#39;http&#39;][&#39;version&#39;] == &#39;v1&#39;
+            k(&#39;scale&#39;, &#39;deployment/guide-web&#39;, &#39;-n&#39;, &#39;guide-demo&#39;, &#39;--replicas=2&#39;)
+            k(&#39;rollout&#39;, &#39;status&#39;, &#39;deployment/guide-web&#39;, &#39;-n&#39;, &#39;guide-demo&#39;, &#39;--timeout=90s&#39;)
+            k(&#39;annotate&#39;, &#39;application&#39;, &#39;guide&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;argocd.argoproj.io/refresh=hard&#39;, &#39;--overwrite&#39;)
+            wait(&#39;drift detected&#39;, lambda: app_status()[&#39;sync&#39;] == &#39;OutOfSync&#39;)
+            records[&#39;self_heal_off&#39;] = {&#39;status&#39;: app_status(), &#39;live_replicas&#39;: get(&#39;deployment&#39;, &#39;guide-web&#39;)[&#39;spec&#39;][&#39;replicas&#39;]}
+            assert records[&#39;self_heal_off&#39;][&#39;live_replicas&#39;] == 2
+            patch_app({&#39;spec&#39;: {&#39;syncPolicy&#39;: {&#39;automated&#39;: {&#39;selfHeal&#39;: True}}}})
+            wait(&#39;self healed v1&#39;, lambda: synced(sources[&#39;v1&#39;]))
+            before_v2 = response()
+            records[&#39;self_heal_on&#39;] = {&#39;status&#39;: app_status(), &#39;live_replicas&#39;: get(&#39;deployment&#39;, &#39;guide-web&#39;)[&#39;spec&#39;][&#39;replicas&#39;], **before_v2}
+            assert records[&#39;self_heal_on&#39;][&#39;live_replicas&#39;] == 1
+            patch_app({&#39;spec&#39;: {&#39;source&#39;: {&#39;targetRevision&#39;: sources[&#39;config_only_v2&#39;]}}})
+
+            def v2_applied():
+                st = app_status()
+                return st if (st[&#39;revision&#39;] == sources[&#39;config_only_v2&#39;] and st[&#39;operation&#39;] == &#39;Succeeded&#39;
+                              and get(&#39;configmap&#39;, &#39;guide-version&#39;)[&#39;data&#39;][&#39;version&#39;] == &#39;v2&#39;) else False
+            wait(&#39;v2 manifests applied, pruning disabled&#39;, v2_applied)
+            records[&#39;prune_off&#39;] = {&#39;status&#39;: app_status(), &#39;retired_exists&#39;: exists(&#39;configmap&#39;, &#39;guide-retired&#39;),
+                                    &#39;unmanaged_exists&#39;: exists(&#39;configmap&#39;, &#39;unmanaged&#39;)}
+            assert records[&#39;prune_off&#39;][&#39;retired_exists&#39;] and records[&#39;prune_off&#39;][&#39;unmanaged_exists&#39;]
+            patch_app({&#39;spec&#39;: {&#39;syncPolicy&#39;: {&#39;automated&#39;: {&#39;prune&#39;: True}}}})
+            wait(&#39;managed retired ConfigMap pruned&#39;, lambda: not exists(&#39;configmap&#39;, &#39;guide-retired&#39;))
+            wait(&#39;v2 fully synced and healthy&#39;, lambda: synced(sources[&#39;config_only_v2&#39;]))
+            v2 = response()
+            records[&#39;v2_synced_but_old_business&#39;] = {&#39;status&#39;: app_status(), **v2,
+                &#39;retired_exists&#39;: exists(&#39;configmap&#39;, &#39;guide-retired&#39;), &#39;unmanaged_exists&#39;: exists(&#39;configmap&#39;, &#39;unmanaged&#39;),
+                &#39;business_oracle_passed&#39;: v2[&#39;http&#39;][&#39;version&#39;] == &#39;v2&#39;}
+            assert v2[&#39;desired_config&#39;] == &#39;v2&#39; and v2[&#39;http&#39;][&#39;version&#39;] == &#39;v1&#39;
+            assert v2[&#39;pod&#39;][&#39;uid&#39;] == before_v2[&#39;pod&#39;][&#39;uid&#39;]
+            assert records[&#39;v2_synced_but_old_business&#39;][&#39;unmanaged_exists&#39;]
+            patch_app({&#39;spec&#39;: {&#39;source&#39;: {&#39;targetRevision&#39;: sources[&#39;rollout_v2&#39;]}}})
+            wait(&#39;new template v2&#39;, lambda: synced(sources[&#39;rollout_v2&#39;]))
+            v3 = response()
+            assert v3[&#39;http&#39;][&#39;version&#39;] == &#39;v2&#39; and v3[&#39;pod&#39;][&#39;uid&#39;] != v2[&#39;pod&#39;][&#39;uid&#39;]
+            records[&#39;v3_new_pod&#39;] = {&#39;status&#39;: app_status(), **v3, &#39;business_oracle_passed&#39;: True}
+            # Change desired revision; this is not the disabled-with-auto-sync rollback API.
+            patch_app({&#39;spec&#39;: {&#39;source&#39;: {&#39;targetRevision&#39;: sources[&#39;v1&#39;]}}})
+            wait(&#39;return desired revision to v1&#39;, lambda: synced(sources[&#39;v1&#39;]))
+            back = response()
+            assert back[&#39;http&#39;][&#39;version&#39;] == &#39;v1&#39; and exists(&#39;configmap&#39;, &#39;guide-retired&#39;)
+            records[&#39;return_to_v1&#39;] = {&#39;status&#39;: app_status(), **back, &#39;managed_config_recreated&#39;: True}
+            report = {&#39;schema&#39;: 1, &#39;status&#39;: &#39;passed&#39;, &#39;kind&#39;: command(&#39;kind&#39;, &#39;version&#39;).stdout.strip(),
+                      &#39;kubernetes&#39;: json.loads(k(&#39;version&#39;, &#39;-o&#39;, &#39;json&#39;).stdout)[&#39;serverVersion&#39;][&#39;gitVersion&#39;],
+                      &#39;argo_version&#39;: ARGO_VERSION, &#39;argo_manifest_url&#39;: ARGO_URL,
+                      &#39;argo_manifest_sha256&#39;: hashlib.sha256(install).hexdigest(), &#39;sources&#39;: sources,
+                      &#39;records&#39;: records, &#39;source_sha256&#39;: hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                      &#39;revision_file_sha256&#39;: hashlib.sha256(Path(__file__).with_name(&#39;gitops-revisions.json&#39;).read_bytes()).hexdigest(),
+                      &#39;scope&#39;: &#39;real Argo CD Core Git fetch/reconcile and HTTP in a single-host kind cluster; not cloud/prod/physical multi-node&#39;}
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(json.dumps(report, indent=2) + &#39;\n&#39;)
+            print(json.dumps(report))
+        except Exception:
+            if kubeconfig.exists():
+                status = k(&#39;get&#39;, &#39;application&#39;, &#39;guide&#39;, &#39;-n&#39;, &#39;argocd&#39;, &#39;-o&#39;, &#39;json&#39;, check=False)
+                if status.returncode == 0:
+                    # Only application status; never write kubeconfig or Secret data to artifacts.
+                    failure = json.loads(status.stdout).get(&#39;status&#39;, {})
+                    args.output.parent.mkdir(parents=True, exist_ok=True)
+                    args.output.with_suffix(&#39;.failure.json&#39;).write_text(json.dumps(failure, indent=2))
+            raise
+        finally:
+            command(&#39;kind&#39;, &#39;delete&#39;, &#39;cluster&#39;, &#39;--name&#39;, name, check=False)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre></div></details><details class="full-code"><summary>展开完整源码 · gitops-revisions.json</summary><div class="code-block"><div class="code-toolbar"><span>gitops-revisions.json <small>JSON</small></span><button data-copy-code aria-label="复制 gitops-revisions.json">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;repo&quot;: &quot;https://github.com/CaptainGreenskin/infra-guide.git&quot;,
+  &quot;path&quot;: &quot;dist/labs/delivery-systems/gitops-app&quot;,
+  &quot;v1&quot;: &quot;fb18c80ebda55f22180f7cd9a19360cb9e739202&quot;,
+  &quot;config_only_v2&quot;: &quot;872b300361e5a4ad9339d775c9e3310e60466fe1&quot;,
+  &quot;rollout_v2&quot;: &quot;703f38b1a3e29e66212595735fc54af02a694050&quot;
+}</code></pre></div></details><details class="full-code"><summary>展开完整源码 · gitops-app/configmap.json</summary><div class="code-block"><div class="code-toolbar"><span>gitops-app/configmap.json <small>JSON</small></span><button data-copy-code aria-label="复制 gitops-app/configmap.json">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;apiVersion&quot;: &quot;v1&quot;,
+  &quot;kind&quot;: &quot;ConfigMap&quot;,
+  &quot;metadata&quot;: {
+    &quot;name&quot;: &quot;guide-version&quot;
+  },
+  &quot;data&quot;: {
+    &quot;version&quot;: &quot;v2&quot;
+  }
+}</code></pre></div></details><details class="full-code"><summary>展开完整源码 · gitops-app/deployment.json</summary><div class="code-block"><div class="code-toolbar"><span>gitops-app/deployment.json <small>JSON</small></span><button data-copy-code aria-label="复制 gitops-app/deployment.json">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;apiVersion&quot;: &quot;apps/v1&quot;,
+  &quot;kind&quot;: &quot;Deployment&quot;,
+  &quot;metadata&quot;: {
+    &quot;name&quot;: &quot;guide-web&quot;
+  },
+  &quot;spec&quot;: {
+    &quot;replicas&quot;: 1,
+    &quot;selector&quot;: {
+      &quot;matchLabels&quot;: {
+        &quot;app&quot;: &quot;guide-web&quot;
+      }
+    },
+    &quot;template&quot;: {
+      &quot;metadata&quot;: {
+        &quot;labels&quot;: {
+          &quot;app&quot;: &quot;guide-web&quot;
+        },
+        &quot;annotations&quot;: {
+          &quot;guide/revision&quot;: &quot;v2&quot;
+        }
+      },
+      &quot;spec&quot;: {
+        &quot;containers&quot;: [
+          {
+            &quot;name&quot;: &quot;web&quot;,
+            &quot;image&quot;: &quot;python@sha256:e064671ca452259bab50e8e2c7bd896e39e9a343bb06ca25234adf6fe18d0fc7&quot;,
+            &quot;command&quot;: [
+              &quot;python&quot;,
+              &quot;-u&quot;,
+              &quot;-c&quot;,
+              &quot;import json,os,socket\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nclass H(BaseHTTPRequestHandler):\n def do_GET(self):\n  b=json.dumps({\&quot;version\&quot;:os.environ[\&quot;BUSINESS_VERSION\&quot;],\&quot;pod\&quot;:socket.gethostname()}).encode(); self.send_response(200); self.send_header(\&quot;Content-Length\&quot;,str(len(b))); self.end_headers(); self.wfile.write(b)\n def log_message(self,*args): pass\nHTTPServer((\&quot;0.0.0.0\&quot;,8080),H).serve_forever()&quot;
+            ],
+            &quot;env&quot;: [
+              {
+                &quot;name&quot;: &quot;BUSINESS_VERSION&quot;,
+                &quot;valueFrom&quot;: {
+                  &quot;configMapKeyRef&quot;: {
+                    &quot;name&quot;: &quot;guide-version&quot;,
+                    &quot;key&quot;: &quot;version&quot;
+                  }
+                }
+              }
+            ],
+            &quot;ports&quot;: [
+              {
+                &quot;containerPort&quot;: 8080
+              }
+            ],
+            &quot;readinessProbe&quot;: {
+              &quot;httpGet&quot;: {
+                &quot;path&quot;: &quot;/version&quot;,
+                &quot;port&quot;: 8080
+              }
+            },
+            &quot;resources&quot;: {
+              &quot;requests&quot;: {
+                &quot;cpu&quot;: &quot;25m&quot;,
+                &quot;memory&quot;: &quot;32Mi&quot;
+              },
+              &quot;limits&quot;: {
+                &quot;cpu&quot;: &quot;200m&quot;,
+                &quot;memory&quot;: &quot;128Mi&quot;
+              }
+            },
+            &quot;securityContext&quot;: {
+              &quot;allowPrivilegeEscalation&quot;: false,
+              &quot;readOnlyRootFilesystem&quot;: true,
+              &quot;runAsNonRoot&quot;: true,
+              &quot;runAsUser&quot;: 10001,
+              &quot;capabilities&quot;: {
+                &quot;drop&quot;: [
+                  &quot;ALL&quot;
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}</code></pre></div></details><details class="full-code"><summary>展开完整源码 · gitops-app/service.json</summary><div class="code-block"><div class="code-toolbar"><span>gitops-app/service.json <small>JSON</small></span><button data-copy-code aria-label="复制 gitops-app/service.json">复制代码</button></div><pre tabindex="0"><code>{
+  &quot;apiVersion&quot;: &quot;v1&quot;,
+  &quot;kind&quot;: &quot;Service&quot;,
+  &quot;metadata&quot;: {
+    &quot;name&quot;: &quot;guide-web&quot;
+  },
+  &quot;spec&quot;: {
+    &quot;selector&quot;: {
+      &quot;app&quot;: &quot;guide-web&quot;
+    },
+    &quot;ports&quot;: [
+      {
+        &quot;port&quot;: 8080,
+        &quot;targetPort&quot;: 8080
+      }
+    ]
+  }
+}</code></pre></div></details><p>先预测只改配置时UID和HTTP会不会变化，再运行。接着切换自愈与清理，逐项核对受管对象、未受管对象和实际响应。若某个等待条件失败，先读保留下来的Application状态；不要直接延长所有超时或把业务断言删掉。</p></section><aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2><p><b>承接：</b><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：一次交付继续发展成持续观察、比较和调谐。</p><a class="inline-link" href="/roadmap/?track=cloud#route-chapter-cloud-gitops-reconciliation">在学习路线中定位这一章 →</a></aside><details class="chapter-practice" id="chapter-practice"><summary>练习、自检与阅读反馈</summary><section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>Git配置v2，Argo显示Synced/Healthy，但Pod UID没变、HTTP仍v1。应重跑同步、改业务断言，还是先找配置进入进程的方式？</p><details class="full-code"><summary>展开参考答案与推理</summary><p>先核对注入与读取时机。环境变量通常来自启动环境，只改ConfigMap不改变旧进程；按受控声明更新模板或实现明确热重载，再验证新UID、实际配置与Service响应，保留原v2断言。</p></details></section><section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist"><label><input type="checkbox" data-check="gitops-reconciliation:0" >Synced、Healthy和Succeeded各在判断哪一层？</label><label><input type="checkbox" data-check="gitops-reconciliation:1" >自愈开启会不会自动允许删除旧对象？</label><label><input type="checkbox" data-check="gitops-reconciliation:2" >ConfigMap改了为什么UID和环境变量可能不变？</label><label><input type="checkbox" data-check="gitops-reconciliation:3" >怎样独立验证新版与回退结果？</label><small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section><section class="reader-actions"><h2>阅读反馈与分享</h2><details><summary>留下本章阅读记录与具体反馈</summary><label>我的练习答案或实验结果<textarea data-reader-answer rows="3" maxlength="1800" placeholder="写下你算出的结果，或实验报告中最关键的一项。"></textarea></label><label>哪句话没理解，或还缺哪个例子？<textarea data-reader-question rows="3" maxlength="1800" placeholder="具体到一句解释、一个假设或一段代码，方便下一次改进。"></textarea></label><button class="btn secondary" data-download-note="gitops-reconciliation">下载阅读记录 ↓</button><p class="evidence-note">内容不会自动发送。下载后可作为评论或私信反馈给分享这篇文章的人。</p><p class="reader-error" role="status"></p></details><details><summary>分享这一章</summary><label>可直接打开的章节链接<input class="share-url" readonly value="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/gitops-reconciliation/" aria-label="章节分享链接"></label><p class="evidence-note">选中链接复制；也可以直接分享浏览器中的当前地址。</p></details></section></details><section class="article-section references" id="references"><h2><span class="section-index">↗</span>参考资料</h2><a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/core/" target="_blank" rel="noopener noreferrer">Argo CD · Core安装与使用 ↗</a><a href="https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/" target="_blank" rel="noopener noreferrer">Argo CD · 自动同步、自愈与清理 ↗</a><a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/health/" target="_blank" rel="noopener noreferrer">Argo CD · 资源健康判断 ↗</a><a href="https://argo-cd.readthedocs.io/en/stable/user-guide/projects/" target="_blank" rel="noopener noreferrer">Argo CD · 项目中的源与目标限制 ↗</a><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" target="_blank" rel="noopener noreferrer">Kubernetes · ConfigMap注入与更新 ↗</a></section><details class="chapter-further"><summary>延伸资料与相关章节</summary><section class="related-reading"><h2>把这一章连回系统</h2><a href="/article/delivery/"><span>C6.1</span>平台交付：制品、配置、数据迁移与回退<b>↗</b></a><a href="/article/terraform-state/"><span>C6.2</span>Terraform状态与漂移：配置、锁、刷新和资源归属<b>↗</b></a><a href="/article/kubernetes-basics/"><span>C4.2</span>Kubernetes 控制面：对象、调谐与生命周期<b>↗</b></a><a href="/article/config-secrets/"><span>C4.7</span>配置与密钥：传播、重读与版本生效<b>↗</b></a><a href="/article/k8s-workloads/"><span>C4.3</span>Kubernetes 工作负载：从声明到可用与滚动更新<b>↗</b></a></section></details><div class="completion"><span>把理解变成能力：画出来、讲清楚、做一次实验。</span><button class="read-btn " data-read="gitops-reconciliation">标记为已读</button></div><nav class="article-nav" aria-label="相邻文章"><a href="/article/terraform-state/"><small>← 上一篇</small>Terraform状态与漂移：配置、锁、刷新和资源归属</a><a href="/article/iam-security/"><small>下一篇 →</small>身份与最小权限：谁能让系统做什么</a></nav></article><aside class="toc"><div class="toc-title">本文目录 / ON THIS PAGE</div><a data-toc="concept-path" href="/article/gitops-reconciliation/#concept-path">概念起点与关系</a><a data-toc="section-1" href="/article/gitops-reconciliation/#section-1">1. 先画出Git、控制器、集群和业务四层关系</a><a data-toc="section-2" href="/article/gitops-reconciliation/#section-2">2. Synced、Healthy与业务正确，分别证明什么</a><a data-toc="section-3" href="/article/gitops-reconciliation/#section-3">3. 自动同步、自愈和清理，是三个不同开关</a><a data-toc="section-4" href="/article/gitops-reconciliation/#section-4">4. 清理依据受管关系，不是删除所有多余对象</a><a data-toc="section-5" href="/article/gitops-reconciliation/#section-5">5. 环境变量为什么不会随ConfigMap自动改值</a><a data-toc="section-6" href="/article/gitops-reconciliation/#section-6">6. 三个固定提交，把控制面绿灯与用户结果对上</a><a data-toc="section-7" href="/article/gitops-reconciliation/#section-7">7. 回退要改变期望，再验证旧版本还能工作</a><a data-toc="section-8" href="/article/gitops-reconciliation/#section-8">8. 从源到响应，按最后成功阶段排障</a><a data-toc="section-9" href="/article/gitops-reconciliation/#section-9">9. 在独立kind集群重放，再读完整源码</a><a data-toc="self-check" href="/article/gitops-reconciliation/#self-check">自我检验</a><a data-toc="references" href="/article/gitops-reconciliation/#references">参考资料</a><div class="toc-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/></svg> 阅读 · 理解 · 实践</div></aside></main><footer class="footer"><div class="container"><span>© 2026 InfraGuide · 从理解原理，到构建系统。</span><span>原创工程内容 · <a href="/about/">关于本站</a> · <a href="/roadmap/">学习路线</a></span></div></footer></div><!-- APP_END -->
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="search-head"><span id="search-title" class="sr-only">搜索知识库</span><input id="search-input" type="search" placeholder="搜索知识点、章节或技术名…" aria-label="搜索关键词" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false" maxlength="160"><button id="search-close" class="quiet" aria-label="关闭搜索">Esc</button></div><p id="search-status" role="status" aria-live="polite"></p><div id="search-results" role="listbox" aria-label="搜索结果"></div><div class="search-hint">知识点与章节 · 多个词用空格分开 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

@@ -45,14 +45,14 @@ const courseReadingStages={
   ['模型与计算原理',['transformer-model','tokenization-embedding','attention-mechanics','transformer-block','position-encoding','autograd-training']],
   ['GPU 执行、IO 与层内并行',['gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','operator-profiling']],
   ['训练系统与资源模型',['gpu-cluster','distributed-training','gpu-memory']],
-  ['执行、恢复与作业平台',['ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance','training-platform','gpu-scheduling','kubernetes-training']],
-  ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing','speculative-decoding','training-lab']]
+  ['执行、恢复与作业平台',['ddp-code','training-communication','data-pipeline','multinode-lab','checkpoint-recovery','training-performance','training-platform','gpu-scheduling','kubernetes-training','training-lab']],
+  ['推理、量化与模型发布',['model-serving','quantization-serving','inference-performance','ai-lifecycle','moe-routing','speculative-decoding']]
  ],
  agent:[
-  ['任务与执行边界',['distributed-systems','agent-runtime','agent-security','agent-sandbox']],
+  ['任务与执行边界',['agent-runtime','agent-security','agent-sandbox']],
   ['恢复、上下文与评估',['agent-recovery','agent-memory','agent-evaluation']],
   ['持久工作流与知识检索',['durable-workflows','agent-retrieval']],
-  ['轨迹、隔离与综合验收',['agent-observability','kairo-practice','production-readiness']]
+  ['观测、接入与综合验收',['agent-observability','kairo-practice','production-readiness']]
  ]
 };
 // 旧的量化链接落到对应新小节；不把所有深链接挤到同一句迁移说明。

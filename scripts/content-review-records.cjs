@@ -1,6 +1,6 @@
 /* Later editorial stages append separate ledgers; completed records remain byte-for-byte. */
 const fs=require('fs'),path=require('path'),crypto=require('crypto'),assert=require('assert');
-const root=path.resolve(__dirname,'..'),files=['CONTENT_EXPANSIONS_2026-11-07.json','CONTENT_EXPANSIONS_2026-11-08.json'];
+const root=path.resolve(__dirname,'..'),files=['CONTENT_EXPANSIONS_2026-11-07.json','CONTENT_EXPANSIONS_2026-11-08.json','CONTENT_EXPANSIONS_2026-11-08_DELIVERY.json'];
 const stages=files.map(f=>JSON.parse(fs.readFileSync(path.join(root,'docs',f),'utf8')));
 for(const stage of stages){
  assert(stage.historical_eight_hour_counts_unchanged);

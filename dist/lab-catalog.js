@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'delivery-systems':{folder:'delivery-systems',title:'消息确认、Terraform状态与真实GitOps'},
  'runtime-scheduling':{folder:'runtime-scheduling',title:'真实容器限制与kind调度'},
  'speculative-decoding':{folder:'speculative-decoding',title:'精确采样与CPU缓存验证'},
  'agent-crash-windows':{folder:'agent-crash-windows',title:'六个真实进程崩溃窗口'},
@@ -113,6 +114,11 @@ labLearningCatalog.push(
  {id:'cloud-scheduler-native',track:'cloud',stage:2,title:'从配额拒绝走到资源形状与约束冲突',chapter:'scheduling-resources',anchor:'scheduler-native-run',pack:'runtime-scheduling',files:['schedule_lab.py'],env:'Linux Docker · kind 0.33.0 · kubectl · Python',kind:'真实kind调度',observe:'按对象不存在、Unschedulable、节点绑定与Ready分别核对；容忍不豁免反亲和。',scope:'实际API与scheduler；多个节点容器共享单机，不证明物理多机或云CNI/CSI。'},
  {id:'ai-speculative-sampling',track:'ai',stage:1,title:'精确补回采样概率，再核对实际K/V',chapter:'speculative-decoding',anchor:'spec-exact-run',pack:'speculative-decoding',files:['exact_sampling.py','cache_verify.py'],env:'Python 3.9+；缓存需Python 3.10–3.12/PyTorch 2.5.1 CPU',kind:'精确概率与CPU张量',observe:'枚举27条完整序列；再运行cache_verify.py比较接受、拒绝及不裁缓存的真实数值。',scope:'未训练模型与受控草稿，只验证分布与缓存；不是GPU速度或真实草稿质量。'},
  {id:'agent-crash-windows',track:'agent',stage:2,title:'六个SIGKILL窗口：旧请求还会提交吗',chapter:'agent-recovery',anchor:'agent-crash-windows-run',pack:'agent-crash-windows',files:['crash_windows.py'],env:'POSIX · Python 3.9+ · 标准库 / SQLite',kind:'真实子进程与HTTP',observe:'工具保持存活，按同一身份恢复；换身份产生74与篡改观察都被独立验收拒绝。',scope:'只验证进程崩溃与固定本地工具协议；断电、多运行器接管和Kairo接口仍待目标环境。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-message-native',track:'cloud',stage:2,title:'入队、ACK与业务完成各自确认什么',chapter:'message-delivery',anchor:'message-native-run',pack:'delivery-systems',files:['mq_delivery.py','mq_client.py','Dockerfile.mq-client'],env:'Linux Docker · Python 3.9+ · 镜像内Pika 1.3.2',kind:'真实消息代理',observe:'核对无路由确认、业务提交后崩溃重投、过早ACK负例、预取接口与持久重启。',scope:'RabbitMQ 4.4单节点、自有内部网络；不是SQS/Lambda或高可用测试。'},
+ {id:'cloud-terraform-state-native',track:'cloud',stage:2,title:'状态锁、刷新与工作空间会保护哪一层',chapter:'terraform-state',anchor:'terraform-state-run',pack:'delivery-systems',files:['terraform_state.py'],env:'Terraform 1.13.0 · local 2.5.3 · Python 3.9+',kind:'真实CLI与文件',observe:'让第二进程取锁失败；分别观察配置、state和实物，再用两份状态争夺同一路径。',scope:'实际local backend和local_file，只操作自有临时目录；非云provider/remote backend。'},
+ {id:'cloud-gitops-native',track:'cloud',stage:2,title:'同步健康为何仍返回旧版',chapter:'gitops-reconciliation',anchor:'gitops-native-run',pack:'delivery-systems',files:['gitops_reconcile.py','gitops-revisions.json','gitops-app/configmap.json','gitops-app/deployment.json','gitops-app/service.json'],env:'Linux Docker · kind 0.33 · kubectl · Python',kind:'真实Argo CD与HTTP',observe:'依次跟踪三个固定Git修订，核对自愈、清理、Pod UID和真实Service响应。',scope:'Argo CD Core 3.6.1、单机kind；业务v2断言独立于Synced/Healthy。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

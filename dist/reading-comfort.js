@@ -9,7 +9,11 @@ function initReadingComfort(){
  const preference=readStore('infraguide-reading',{large:false,focus:false});
  root.classList.toggle('reading-large',!!article&&preference.large===true);
  root.classList.toggle('reading-focus',!!article&&preference.focus===true);
- if(!article){root.classList.remove('reading-controls-ready');return;}
+ if(!article){
+  root.classList.remove('reading-controls-ready');
+  if(document.querySelector('.track-system-model')){comfortAbort=new AbortController();initReaderFigures(document.querySelector('#main'),comfortAbort.signal);}
+  return;
+ }
  comfortAbort=new AbortController();
  const signal=comfortAbort.signal;
  // The sticky toolbar replaces the repeated inline mobile contents only when it works.
@@ -69,6 +73,39 @@ function initReadingComfort(){
  document.body.appendChild(directory);
  toolbar.querySelector('[data-reader-contents]').addEventListener('click',()=>openModal(directory),{signal});
 
+ initReaderFigures(article,signal);
+
+ function openModal(dialog){document.body.classList.add('reader-modal-open');dialog.showModal();}
+ function closeModal(dialog){dialog.close();document.body.classList.remove('reader-modal-open');}
+ for(const dialog of [directory]){
+  dialog.querySelector('[data-reader-close]').addEventListener('click',()=>closeModal(dialog),{signal});
+  dialog.addEventListener('close',()=>document.body.classList.remove('reader-modal-open'),{signal});
+  dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeModal(dialog);}},{signal});
+ }
+ signal.addEventListener('abort',()=>{directory.close();directory.remove();document.body.classList.remove('reader-modal-open');},{once:true});
+
+ const navLinks=[...document.querySelectorAll('.toc a')];
+ function linkTarget(link){const url=new URL(link.href,location.href);if(url.pathname!==location.pathname)return '';const section=url.searchParams.get('section');return url.hash?decodeURIComponent(url.hash.slice(1)):section?(/^\d+$/.test(section)?'section-'+section:section):'';}
+ const targets=new Map(navLinks.map(link=>[link,linkTarget(link)]));
+ const directoryLinks=[...directoryNav.querySelectorAll('[data-reader-target]')];
+ let queued=false,lastActive='';
+ function updateCurrent(){
+  queued=false;
+  const edge=toolbar.getBoundingClientRect().bottom+48;
+  let active=sections[0]?.id||'';
+  for(const section of sections){if(section.getBoundingClientRect().top<=edge)active=section.id;else break;}
+  if(active===lastActive)return;lastActive=active;
+  for(const link of navLinks){const current=targets.get(link)===active;link.classList.toggle('active',current);if(current)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
+  for(const link of directoryLinks){if(link.dataset.readerTarget===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
+ }
+ function schedule(){if(!queued){queued=true;requestAnimationFrame(updateCurrent);}}
+ window.addEventListener('scroll',schedule,{passive:true,signal});
+ window.addEventListener('resize',schedule,{passive:true,signal});
+ schedule();
+}
+
+// The same zoom/pan controls serve article figures and the whole-course maps.
+function initReaderFigures(container,signal){
  const figureDialog=document.createElement('dialog');
  figureDialog.className='reader-dialog reader-figure-dialog';
  figureDialog.setAttribute('aria-labelledby','reader-figure-title');
@@ -90,7 +127,7 @@ function initReadingComfort(){
  figureDialog.querySelector('[data-reader-zoom]').addEventListener('click',()=>{const first=Math.max(1.5*expandedImage.getBoundingClientRect().width/stage.clientWidth,960/stage.clientWidth);setImageScale(Math.min(imageFits?first:imageScale+0.5,4));},{signal});
  expandedImage.addEventListener('load',()=>{if(imageFits)fitFigure();},{signal});
  window.addEventListener('resize',()=>{if(figureDialog.open&&imageFits)fitFigure();},{signal});
- for(const figure of article.querySelectorAll('.training-figure')){
+ for(const figure of container.querySelectorAll('.training-figure')){
   const image=figure.querySelector('img');if(!image)continue;
   function showFigure(event){
    event.preventDefault();
@@ -110,29 +147,8 @@ function initReadingComfort(){
 
  function openModal(dialog){document.body.classList.add('reader-modal-open');dialog.showModal();}
  function closeModal(dialog){dialog.close();document.body.classList.remove('reader-modal-open');}
- for(const dialog of [directory,figureDialog]){
-  dialog.querySelector('[data-reader-close]').addEventListener('click',()=>closeModal(dialog),{signal});
-  dialog.addEventListener('close',()=>document.body.classList.remove('reader-modal-open'),{signal});
-  dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeModal(dialog);}},{signal});
- }
- signal.addEventListener('abort',()=>{directory.close();figureDialog.close();directory.remove();figureDialog.remove();document.body.classList.remove('reader-modal-open');},{once:true});
-
- const navLinks=[...document.querySelectorAll('.toc a')];
- function linkTarget(link){const url=new URL(link.href,location.href);if(url.pathname!==location.pathname)return '';const section=url.searchParams.get('section');return url.hash?decodeURIComponent(url.hash.slice(1)):section?(/^\d+$/.test(section)?'section-'+section:section):'';}
- const targets=new Map(navLinks.map(link=>[link,linkTarget(link)]));
- const directoryLinks=[...directoryNav.querySelectorAll('[data-reader-target]')];
- let queued=false,lastActive='';
- function updateCurrent(){
-  queued=false;
-  const edge=toolbar.getBoundingClientRect().bottom+48;
-  let active=sections[0]?.id||'';
-  for(const section of sections){if(section.getBoundingClientRect().top<=edge)active=section.id;else break;}
-  if(active===lastActive)return;lastActive=active;
-  for(const link of navLinks){const current=targets.get(link)===active;link.classList.toggle('active',current);if(current)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
-  for(const link of directoryLinks){if(link.dataset.readerTarget===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
- }
- function schedule(){if(!queued){queued=true;requestAnimationFrame(updateCurrent);}}
- window.addEventListener('scroll',schedule,{passive:true,signal});
- window.addEventListener('resize',schedule,{passive:true,signal});
- schedule();
+ figureDialog.querySelector('[data-reader-close]').addEventListener('click',()=>closeModal(figureDialog),{signal});
+ figureDialog.addEventListener('close',()=>document.body.classList.remove('reader-modal-open'),{signal});
+ figureDialog.addEventListener('click',event=>{if(event.target===figureDialog){const box=figureDialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeModal(figureDialog);}},{signal});
+ signal.addEventListener('abort',()=>{figureDialog.close();figureDialog.remove();document.body.classList.remove('reader-modal-open');},{once:true});
 }
