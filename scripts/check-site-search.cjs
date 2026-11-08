@@ -16,7 +16,7 @@ assert.deepEqual(query('ＴＣＰ'),query('tcp'));assert.deepEqual(query('  KV  
 assert.deepEqual(query('完全不存在的条目xyz'),[]);assert.deepEqual(query('<>'),[]);
 assert.equal(query('').length,6);
 c.q='流式';const streamed=JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(q).find(r=>r.id==="article:agent-runtime")',c)));
-assert.equal(streamed.anchor,'section-9');assert.equal(streamed.tier,4);assert(streamed.excerpt.startsWith('流式实战：十三组完成边界与准入对照。'));assert(!streamed.excerpt.includes('下载流式工具参数实验'));
+assert.equal(streamed.anchor,'section-9');assert.equal(streamed.tier,4);assert(streamed.excerpt.startsWith('流式工具调用。'));assert(streamed.excerpt.includes('先预测哪些流会真的调用工具'));assert(streamed.excerpt.includes('中国区日报'));assert(!streamed.excerpt.includes('下载流式工具参数实验'));
 
 // Independent corpus distinguishes title/prose/code priority and abbreviation boundaries.
 const fixture={modules:[{id:'test'}],cloudKnowledgeDomains:[],cloudKnowledgeExplanations:{},infraKnowledgeDomains:[],articles:[

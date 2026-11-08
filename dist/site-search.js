@@ -13,9 +13,9 @@ function buildSiteSearchIndex(){
  const entries=[];
  const add=(entry,segments)=>{entry.titleText=searchPlainText(entry.title);entry.titleNorm=normalizeSearchText(entry.titleText);entry.desc=searchPlainText(entry.desc);entry.descNorm=normalizeSearchText(entry.desc+' '+(entry.tags||[]).join(' '));entry.segments=segments.map(s=>({...s,proseNorm:normalizeSearchText(searchPlainText(s.text.replace(/<pre\b[^>]*>[\s\S]*?<\/pre>/g,''))),text:searchPlainText(s.text),heading:searchPlainText(s.heading)})).map(s=>({...s,norm:normalizeSearchText(s.heading+' '+s.text),headingNorm:normalizeSearchText(s.heading),conceptNorm:normalizeSearchText(s.conceptTitle||'')}));entry.allNorm=[entry.titleNorm,entry.descNorm,...entry.segments.map(s=>s.norm)].join(' ');entry.order=entries.length;entries.push(entry);};
  for(const a of modules.flatMap(m=>articles.filter(a=>a.module===m.id))){
-  const segments=a.sections.map(([heading,text],i)=>({heading,text,anchor:'section-'+(i+1)}));
+  const segments=a.sections.map(([heading,text],i)=>({heading:typeof chapterSectionTitle==='function'?chapterSectionTitle(a,i):heading,text,anchor:'section-'+(i+1)}));
   const primer=typeof chapterConceptPaths!=='undefined'?chapterConceptPaths[a.id]:null;
-  if(primer)segments.unshift({heading:'概念起点与关系',text:primer.steps.map(([title,body])=>'<p>'+title+'。'+body+'</p>').join(''),anchor:'concept-path'});
+  if(primer){const review=typeof optionalConceptReviews!=='undefined'&&optionalConceptReviews.has(a.id);const segment={heading:review?'概念回顾':'概念起点与关系',text:primer.steps.map(([title,body])=>'<p>'+title+'。'+body+'</p>').join(''),anchor:'concept-path'};if(review)segments.push(segment);else segments.unshift(segment);}
   add({id:'article:'+a.id,type:'article',title:a.title,desc:a.desc,tags:a.tags,module:a.module,number:a.number,path:'/article/'+a.id+'/'},segments);
  }
  for(const d of cloudKnowledgeDomains)for(const p of d.points)add({id:'knowledge:'+p[0],type:'knowledge',title:p[1],desc:p[2],module:d.module,path:'/module/'+d.module+'/',anchor:'knowledge-'+p[0]},knowledgeSearchSegments(d.module,p[0],{heading:p[1],text:cloudKnowledgeExplanations[p[0]]||''}));

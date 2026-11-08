@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "canonical_script_count": 183,
+  "canonical_script_count": 186,
   "public_script_count": 9,
   "bundles": [
     {
@@ -336,8 +336,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "2bbdbce2e9ef0c1354891dd25551f59450cbccfd7c3524c10b187cbf7301e0e6",
-      "bytes": 335286,
+      "sha256": "17fb14f9cde3aa6d1ae471a4347683ea1b0c0bff96668b3382f6a64ff3f9b0db",
+      "bytes": 335251,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -366,8 +366,8 @@
         },
         {
           "file": "site-pages.js",
-          "sha256": "ec96a7a0bd72f5d02a38a61d90886d974f67487898d64cd15bd1592988e1030f",
-          "bytes": 18539
+          "sha256": "da03485c6a3fa709f5d1e89e794ed4836193a6c64c3ca5c5d7011acd2dcae4a1",
+          "bytes": 18504
         },
         {
           "file": "interview-practice.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "2879a55fbca4feea3b902587bbbfb6976a3fad884348b07ef0b051c48e5e3734",
-      "bytes": 1720899,
+      "sha256": "8bf102d8d53fd06e3721e4ab96eb8d658ca7e3742118e2d6c0eab4fbb0242101",
+      "bytes": 1828432,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -869,6 +869,21 @@
           "bytes": 46785
         },
         {
+          "file": "progressive-cloud-reading.js",
+          "sha256": "de32673997b11f831a1cae756aa135795065a6cad32bcf755f7c51cde906fcda",
+          "bytes": 40084
+        },
+        {
+          "file": "progressive-ai-reading.js",
+          "sha256": "eb6ac9c05f6ae6b01a33fada9a2fc7edb92bee575c2e6cfce27bf42822e8ad2f",
+          "bytes": 37282
+        },
+        {
+          "file": "progressive-agent-reading.js",
+          "sha256": "f329d1166544a08e6d29da5521c33d6b0691d36ce99d4c2ad04151a9331a87ae",
+          "bytes": 28931
+        },
+        {
           "file": "first-reading-flow.js",
           "sha256": "43599c73ba518227f860206537b7a4cddeab413492fd65c1489e8a44ac2b2bef",
           "bytes": 6029
@@ -895,8 +910,8 @@
         },
         {
           "file": "concept-paths.js",
-          "sha256": "a9126ca9d2173fe2ca5207825054fc362c04ab04cc1139595f790bd613b89d01",
-          "bytes": 17522
+          "sha256": "a154a58199d2251c3c923433d7a82c7f4db337faa4bb5df777630d719e3c26fb",
+          "bytes": 17554
         },
         {
           "file": "course-map.js",
@@ -935,8 +950,8 @@
         },
         {
           "file": "concept-navigation.js",
-          "sha256": "eb2fd512ba1aa5eb138b9347e1f675d00527de2697ca268fe43b47ee2999c61e",
-          "bytes": 6075
+          "sha256": "60d66d36071c6869da8f3b27e2d7f188e4e16fbace4d79d8900204c5114875a3",
+          "bytes": 7174
         },
         {
           "file": "chapter-navigation.js",
@@ -949,18 +964,18 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "957da22bcd26c07b0029190e73d396e77afdf0c1501adaa992eccdae145bb7c9",
-      "bytes": 12839
+      "sha256": "ac134a98bbff6c26bf734f4a1964bf5363c23e7b569f9be8e2f2bcc0864941ec",
+      "bytes": 12994
     },
     {
       "file": "site-search.js",
-      "sha256": "66ebaa1f38d2447b6f6afff3217d47f6e3284c8089da2ea7609363861b311b61",
-      "bytes": 7335
+      "sha256": "044486da86c54062afc888f0a87de53aaabed4ce838b444a1122a0e2177c4556",
+      "bytes": 7583
     },
     {
       "file": "app.js",
-      "sha256": "cf2e38989e406e769113b61da017f730173368dac9de042c34ff355dbe4d84dc",
-      "bytes": 18111
+      "sha256": "2e85fc309c109c3839ab3a9e3e2abe37f886be78fe7f92f1d31896774b5ebf26",
+      "bytes": 18173
     }
   ]
 }

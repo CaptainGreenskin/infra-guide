@@ -1,6 +1,6 @@
 {
   "reviewed_on": "2026-11-08",
-  "scope": "Visible authored h3/h4; optional details, code and figure headings excluded. Preserve these published IDs when revising their headings.",
+  "scope": "Published h3/h4 IDs remain reachable, including headings moved into optional details. targets preserves the published inventory; visible_targets, where present, records the current concise contents.",
   "chapters": [
     {
       "id": "linux-resource",
@@ -298,6 +298,16 @@
         "subsection-5-4meaf4",
         "subsection-5-12z3xau",
         "v43-attention-practice"
+      ],
+      "visible_targets": [
+        "subsection-1-bc8625",
+        "subsection-2-sawdtb",
+        "subsection-4-jajsfp",
+        "subsection-4-h4v7m8",
+        "subsection-4-eh89y2",
+        "subsection-5-4meaf4",
+        "subsection-5-12z3xau",
+        "v43-attention-practice"
       ]
     },
     {
@@ -530,7 +540,8 @@
       "targets": [
         "subsection-1-1igz5hm",
         "authorization-commit-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "agent-sandbox",
@@ -565,6 +576,16 @@
         "subsection-6-4asmho",
         "subsection-7-1iwapob",
         "subsection-7-9i1in"
+      ],
+      "visible_targets": [
+        "subsection-2-1u8gjho",
+        "subsection-2-1hk9rfn",
+        "subsection-2-1q2st0k",
+        "subsection-3-1uq9t9d",
+        "subsection-3-c0vptt",
+        "subsection-4-17hu0bc",
+        "subsection-5-15nbv4g",
+        "subsection-6-4asmho"
       ]
     },
     {

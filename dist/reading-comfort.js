@@ -52,13 +52,14 @@ function initReadingComfort(){
   const link=document.createElement('a');
   const desktopTarget=document.querySelector('.toc a[data-toc="'+section.id+'"]');
   link.href=desktopTarget?.getAttribute('href')||location.pathname+location.search+'#'+section.id;
-  link.textContent=(section.matches('h3,h4')?section:section.querySelector('h2')).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
+  link.textContent=(section.id==='concept-path'&&desktopTarget?desktopTarget:(section.matches('h3,h4')?section:section.querySelector('h2'))).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
   link.dataset.readerTarget=section.id;
   if(section.matches('h3,h4'))link.classList.add('reader-subheading-'+section.tagName.slice(1));
   link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));
    // A directory target may live inside the optional practice/further-reading block.
    // pushState does not fire hashchange, so reveal it before attempting to scroll.
    for(let parent=section;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
+   const child=section.querySelector(':scope > details.article-case');if(child)child.open=true;
    section.scrollIntoView({behavior:'instant',block:'start'});section.setAttribute('tabindex','-1');section.focus({preventScroll:true});updateCurrent();},{signal});
   directoryNav.appendChild(link);
  }

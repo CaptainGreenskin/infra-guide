@@ -1,0 +1,166 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "c754de4bea9076279b0dd87eb64fe46a576ebe9d",
+  "reader_trials": 0,
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONCEPT_READING_2026-11-08.json": "458914e3e0b7e09e563e8f6a41b400ed9981463ab2f2e2d831f2deb34aa711f8",
+    "docs/COHERENCE_ROLE_SEQUENCE_2026-11-08.json": "df7a80b122c5362f828a12c9ab5300557199d7398b83d829de9702e64f83bfa8",
+    "docs/COHERENCE_NORMAL_PATHS_2026-11-08.json": "33842416f91050b0d0852387a1a4ef78fb7a1cda68c56a3db44592479379bc43",
+    "docs/CONTENT_NORMAL_PATHS_2026-11-08.json": "98f6aec82411c5d6592f0d876c8a445d4cfae1cadb8b819eff904d3c3a76e0ba",
+    "docs/QUALITY_AUDIT_2026-11-04.json": "d82977e8ed064d319e92692cbe6f7282b39f6a407fa95240b5899756e69f9ab1"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "7eff63a3e06d42a2ef31f004ce330461e03862e2cf089b95a9df8cbdb1e955e7",
+      "reviewed_sha256": "e70d577356f42d0eae281cedc049f13ecb22bd482e74dcea60ad00a8f6a1c826",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/app.js": {
+      "previous_sha256": "cf2e38989e406e769113b61da017f730173368dac9de042c34ff355dbe4d84dc",
+      "reviewed_sha256": "2e85fc309c109c3839ab3a9e3e2abe37f886be78fe7f92f1d31896774b5ebf26",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "eb2fd512ba1aa5eb138b9347e1f675d00527de2697ca268fe43b47ee2999c61e",
+      "reviewed_sha256": "60d66d36071c6869da8f3b27e2d7f188e4e16fbace4d79d8900204c5114875a3",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/concept-paths.js": {
+      "previous_sha256": "a9126ca9d2173fe2ca5207825054fc362c04ab04cc1139595f790bd613b89d01",
+      "reviewed_sha256": "a154a58199d2251c3c923433d7a82c7f4db337faa4bb5df777630d719e3c26fb",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f329d1166544a08e6d29da5521c33d6b0691d36ce99d4c2ad04151a9331a87ae",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "eb6ac9c05f6ae6b01a33fada9a2fc7edb92bee575c2e6cfce27bf42822e8ad2f",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/progressive-cloud-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "de32673997b11f831a1cae756aa135795065a6cad32bcf755f7c51cde906fcda",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "88cfdd55f3c1ac8c34dc68216779f3ee162f88a633364590a5e765ac97cbc23a",
+      "reviewed_sha256": "4e8873b70275000bb6fc94436e129232cc80df6b3c66938c7907eb6e10304d95",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "957da22bcd26c07b0029190e73d396e77afdf0c1501adaa992eccdae145bb7c9",
+      "reviewed_sha256": "ac134a98bbff6c26bf734f4a1964bf5363c23e7b569f9be8e2f2bcc0864941ec",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "ec96a7a0bd72f5d02a38a61d90886d974f67487898d64cd15bd1592988e1030f",
+      "reviewed_sha256": "da03485c6a3fa709f5d1e89e794ed4836193a6c64c3ca5c5d7011acd2dcae4a1",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "dist/site-search.js": {
+      "previous_sha256": "66ebaa1f38d2447b6f6afff3217d47f6e3284c8089da2ea7609363861b311b61",
+      "reviewed_sha256": "044486da86c54062afc888f0a87de53aaabed4ce838b444a1122a0e2177c4556",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "docs/ITERATION_2026-11-08_PROGRESSIVE_READING.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8801afc5aac10012f598c987bbcb0b46086e512f06fae49cdbed2f04a5d56ff8",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "2094a4ac6850e3c78511a3f9b2f23cc72b1be1e4f18b6295c5902f1d8dea16af",
+      "reviewed_sha256": "fb5714d9fba3f46c4bc651346b739344c8af2abf00b2ce0e802c3e575a2fe7c5",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "1406f7658253c396f502846bbb52e740afa2d6d08fefbfe314a19665941bad25",
+      "reviewed_sha256": "9d4bb00b321b3dc6d34a983548a1491fa5dee6242a2493918e5b7ec8a3a19915",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "docs/WHOLE_SITE_IMPLEMENTATION_2026-11-08.md": {
+      "previous_sha256": "896743aae0c3a16d8fd246dceadba3796cd5c2bc0257868badc76e11739de738",
+      "reviewed_sha256": "78830a54844ae5a2202fc7a247926434f0d593cee1aa3f0270cdf8138ea1fe87",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-agent-boundaries.cjs": {
+      "previous_sha256": "440b463b67e2e197c19c2dd743a75978a489c845b746c4d9aefa3196472a6dd8",
+      "reviewed_sha256": "10d4136ab045d79661094798df8e4a3106de01f8ce93c7c69edc010018f8183e",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-causal-walkthroughs.cjs": {
+      "previous_sha256": "42d0bd4692c9ee6aa7722235a1c1a725b3bbdc95e8f76e4219c36fa0a1044a26",
+      "reviewed_sha256": "222b1cc58fa26910f628910a27eefa50207e74c533eade989ad7dec4d004882e",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-chapter-navigation.cjs": {
+      "previous_sha256": "a417841ec882322f8436e94b38323f8ad1c4489a123eca198cc8b4e6e93ae8c5",
+      "reviewed_sha256": "91447a7c2bcdf10984b7d1778291ebad3291960de2d37d21df7cbfe9e42a7fe8",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-concept-paths.cjs": {
+      "previous_sha256": "7f28703fedf3df3a49dfaa33c123ea380bd2cccf28fd72b193368780398e6206",
+      "reviewed_sha256": "2ba2ea2a647827a86caad9e740a23258bee1a91993acbf7d4559cea5d2e842f8",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "e2e428923ec2fd81fff2aa6fd0f61bfdf2b638141c162bd9a756039287bd0805",
+      "reviewed_sha256": "5a0e021e126d0eb3d4b754f751dd8c1242a4aedf9d496770557c9be856e7a99d",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "b5b4b7c0021b83ee8012495eb0db1750c85885d0ae89b127d839f095362a5c5c",
+      "reviewed_sha256": "f880a7d22568786124c9328424a73fe160075a4c13aac9eca29ac31cb7766887",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "scripts/check-site-search.cjs": {
+      "previous_sha256": "88125f8002a1b72f7627dca09b9c459c3a88ea77f5d1f68c4b6076b579ea51d8",
+      "reviewed_sha256": "6ad26bb72cc58667476fab5787a44009af7805ceac2b095fc58bfe645154bce6",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "2aff6b6ff02d0dd852572bd29cf4a63f0bdf351fc4f2b99b44bf2ab7b9789299",
+      "reviewed_sha256": "f11c20a74e572fee9e30711a0124196c805cb7d26f586ae0552854a4d62a16b3",
+      "scope": "Whole-site concept section names, six progressively explained bodies, chapter-end concept reviews and matching search/contents; public URLs, section/subsection IDs, original full source and execution records retained."
+    }
+  },
+  "review_scope": {
+    "chapters": 78,
+    "body_baseline_commit": "c754de4bea9076279b0dd87eb64fe46a576ebe9d",
+    "new_chapters": [],
+    "changed_bodies": [
+      "agent-memory",
+      "agent-security",
+      "attention-mechanics",
+      "cloud-compute",
+      "kubernetes-basics",
+      "tokenization-embedding"
+    ],
+    "unchanged_bodies": 72,
+    "added_code_blocks": {},
+    "original_full_code_blocks": "all78 prior complete pre blocks, authored source h2 titles and public inner IDs retained",
+    "preserved_published_numbers": 78,
+    "field_maps": 14,
+    "nodes": 100,
+    "edges": 87,
+    "role_routes": 7,
+    "visible_subsections": 281,
+    "section_topic_views": 670,
+    "chapter_topic_views": 78,
+    "standalone_bodies_with_closing_review": [
+      "cloud-overview",
+      "transformer-model",
+      "agent-runtime",
+      "cloud-compute",
+      "kubernetes-basics",
+      "tokenization-embedding",
+      "attention-mechanics",
+      "agent-security",
+      "agent-memory"
+    ],
+    "reader_mastery_claims_added": 0
+  }
+}

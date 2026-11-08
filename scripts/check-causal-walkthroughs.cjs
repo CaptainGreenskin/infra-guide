@@ -38,7 +38,7 @@ const result=JSON.parse(cp.execFileSync('python3',['-B','dist/labs/storage-quant
 assert.deepEqual(result.correct_recovery,{authority_state:'SUCCEEDED',authority_version:2,original_op:'R17:publish',receipt:13,effects:1,stale_update_rows:0,needs_chat_history:false});
 assert.equal(result.negative_summary_recovery.effects,2);assert.deepEqual(result.memory_selection.accepted,[{memory_id:'current',source_version:2,value:10}]);assert.deepEqual(result.after_retraction.accepted,[]);
 const stateSource=fs.readFileSync('dist/labs/storage-quant-context/context_state.py','utf8');assert(stateSource.includes('db.execute("BEGIN IMMEDIATE")'));assert(stateSource.indexOf('receiver(db, task[1])')<stateSource.indexOf('db.commit()'));
-const memory=data.articles.find(a=>a.id==='agent-memory');assert(!memory.sections[4][1].includes('检索出来之后，按本次问题重新判定适用性'));assert(memory.sections[3][1].includes('同一事务内更新'));assert(memory.sections[4][1].includes('各自计数'));
+const memory=data.articles.find(a=>a.id==='agent-memory');assert(!memory.sections[4][1].includes('检索出来之后，按本次问题重新判定适用性'));assert(memory.sections[3][1].includes('任务表与效果表在同一SQLite事务提交'));assert(memory.sections[4][1].includes('属于不同对象，各自推进'));
 for(const name of ['v51-slo-event-ledger','v51-gpu-work-mapping','v51-gpu-time-boundaries','v51-agent-information-flow']){
  const svg=fs.readFileSync('dist/diagrams/'+name+'.svg','utf8');assert(svg.includes('<title')&&svg.includes('<desc')&&svg.includes('<metadata>'));
  assert(svg.includes('viewBox="0 0 1120 '));assert(data.articles.some(a=>all(a).includes('diagrams/'+name+'.svg')));
@@ -48,6 +48,7 @@ const priorReview=JSON.parse(cp.execFileSync('git',['show','8d5b31ef7859aa3c4476
 const currentReview=JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.json','utf8'));
 assert.deepEqual(currentReview.revisions.slice(0,priorReview.revisions.length),priorReview.revisions,'published body reviews must remain unchanged');
 assert.equal(review.reader_trials,0);assert.deepEqual(review.body_reviews.map(r=>r.id),ids);
-for(const row of review.body_reviews){const a=data.articles.find(a=>a.id===row.id),old=prior.find(a=>a.id===row.id);assert.equal(row.previous_content_sha256,sha(JSON.stringify({title:old.title,sections:old.sections})));assert.equal(row.reviewed_content_sha256,sha(JSON.stringify({title:a.title,sections:a.sections})));assert(row.scope&&row.observation);}
+// The V51 signed body describes its published revision; the current six-body changes have a separate chained review.
+for(const row of review.body_reviews){const a=published.find(a=>a.id===row.id),old=prior.find(a=>a.id===row.id);assert.equal(row.previous_content_sha256,sha(JSON.stringify({title:old.title,sections:old.sections})));assert.equal(row.reviewed_content_sha256,sha(JSON.stringify({title:a.title,sections:a.sections})));assert(row.scope&&row.observation);}
 for(const[file,revision]of Object.entries(review.source_revisions))assert.equal(revision.reviewed_sha256,sha(cp.execFileSync('git',['show',publishedCommit+':'+file],{maxBuffer:16*1024*1024})),file+': published V51 source differs from review');
 console.log('PASS: three reviewed body walkthroughs, all72 other bodies and original full source blocks preserved; actual Fraction/index boundary replays, independent uneven-traffic budgets and fresh SQLite state/memory replay. Four original teaching diagrams; no GPU, production telemetry, LLM or Kairo execution inferred.');

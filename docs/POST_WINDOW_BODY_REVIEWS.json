@@ -2261,6 +2261,120 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "9c31547b85d8e95df90fd64ef3deb35ba892ef0eacccad1fde8345c1d2c66ab9",
+      "reviewed_content_sha256": "fcfa3dcc8f388f33bbc89e085e432591eb4bfeb59e4bdac466c5f5ff5ceebacd",
+      "scope": "Task information from source to input, state and memory",
+      "observation": "The body progressively separates context input, durable execution state and reusable memory; budgeting, source/version/authorization checks and original state recovery cases follow their objects. All complete source and real observations retained.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "37248c505ef312631209f9152bc82dca08d540e9cb86681b14b4ab309f810b64",
+      "reviewed_content_sha256": "210a21dd4e2ae30f2fda583d0ea95e104b141392ab239f082d8db00d7298ec9c",
+      "scope": "Tool contract to identity, delegation and committed effect",
+      "observation": "The body connects MCP structural contracts to trusted identity, task scope, intent-bound approval, policy changes and resource-side effects; normal37 report precedes rejection and recovery. All original full source and authoritative observations retained.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "7cae1839c2b8d9ee25612674cedcb7c90243cce435631974785daaf62c374c64",
+      "reviewed_content_sha256": "e2a9dc861f0a7efe2b0b83d20a829188c2d040b2f2fc785258976c31a31204d0",
+      "scope": "One attention computation across examples and scale",
+      "observation": "Q/K/V roles and axes precede scores, scaling, masks, Softmax and weighted values; reduced/expanded examples explicitly name changed dimensions; multihead/GQA and cached positions follow the same objects. Existing executed sources and comparisons retained.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "cloud-compute",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "c773e249191b85e712d17c53daa914c1d5ecba4be0f52708a12a9cb1fbb61558",
+      "reviewed_content_sha256": "e0c95640f4a97535b003ff2366a013b245113db727089e17fa818ac237945ffd",
+      "scope": "Compute resources from execution object to capacity",
+      "observation": "The body connects physical host/VM/container, thread execution, CPU and memory budgets, request residency and measured cases; normal resource flow precedes bottlenecks and counterexamples. Original complete source, figures and public anchors retained.",
+      "headings": [
+        "计算形态：裸金属、虚拟机与容器",
+        "vCPU资源保证：核心、线程、超分与持续能力",
+        "内存与设备：地址转换、NUMA和I/O路径",
+        "突发性能：CPU积分与持续负载",
+        "规格问题先要有一份工作说明",
+        "CPU 秒、墙钟秒和利用率的单位",
+        "平均工作量会随输入分布移动",
+        "在途数量怎样转化成活动状态和内存",
+        "吞吐上界由最紧的资源决定",
+        "压测怎样避免“自己把流量降下来了”",
+        "实测：CPU时间、等待与线程",
+        "验收：把四核写成待验证的候选"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "7488d20e2a2e60689cdedeb5052dd665fa87920b4d19f2e0111bece8cd58744e",
+      "reviewed_content_sha256": "1371a9b45d133a957fb2c35ec021260edc5207b884ac2aca1ea9260b0e73f692",
+      "scope": "Kubernetes object relations and normal reconciliation",
+      "observation": "The body progressively introduces desired state, API objects, controllers, scheduling and node execution, then connects Pod conditions, endpoints and the original reconciliation experiment; existing runnable source and anchored evidence retained.",
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "be348aa70a7609fd24ced0cca9cd1b834528b418a7cb7eedbeda9ea28de427fe",
+      "reviewed_content_sha256": "35126b8cfe64dd375de66e63e547ab20e84a4231ef7536583d2feec736f89c48",
+      "scope": "Text to IDs, embeddings and prediction targets",
+      "observation": "Tokenizer/vocabulary/vector roles precede ID contracts; tensor axes, output scores, probability and loss form one normal chain. Input changes in hand examples and next-chapter use are explicit; complete numerical programs retained.",
+      "headings": [
+        "先约定词表，再说模型看到了什么",
+        "子词为什么值得学，字节又处在哪一层",
+        "查哪几行，为什么形状变成 [B,T,D]",
+        "输出头怎样把向量变成八个候选分数",
+        "输入取前一段，标签取后一段",
+        "注意力掩码、损失忽略和 padding 行各做什么",
+        "同一 ID 出现两次，反向时写哪一行",
+        "验收：不要只看 loss 有没有下降",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }

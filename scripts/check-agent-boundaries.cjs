@@ -63,6 +63,6 @@ with zipfile.ZipFile('dist/labs/agent-boundaries.zip') as z:
 const retrievalPage=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
 assert(/<div class="mechanism-core" id="retrieval-evidence-pipeline">/.test(retrievalPage),'restored legacy anchor must retain sticky-header scroll margin');
 for(const[id,anchor]of [['agent-security','authorization-commit-run'],['agent-retrieval','context-budget-run']]){
- const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');assert(page.includes('id="'+anchor+'"'));assert(page.indexOf('id="concept-path"')<page.indexOf('class="article-section"'));
+ const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');assert(page.includes('id="'+anchor+'"'));c.id=id;const review=vm.runInContext('optionalConceptReviews.has(id)',c);assert.equal(page.indexOf('id="concept-path"')<page.indexOf('class="article-section"'),!review,id+': reviewed standalone body and remaining prerequisite preview use their documented positions');
 }
 console.log('PASS: fresh HTTP/SQLite authorization effects and stale-policy counterexample; independent complete prompt digest, 237/36 BPE budget and 163-token evidence loss, version/ACL gates, UTF-8 boundaries, exact sources/ZIP and six figure records. Set INFRA_CONTEXT_PYTHON for a fresh pinned tokenizer replay; no LLM/Kairo claims.');

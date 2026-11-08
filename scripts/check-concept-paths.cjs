@@ -3,7 +3,7 @@ const inventory=require('./content-inventory.cjs');
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
 const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
-const data=vm.runInContext('({articles,modules,moduleConceptPaths,chapterConceptPaths,conceptGlossary})',c);
+const data=vm.runInContext('({articles,modules,moduleConceptPaths,chapterConceptPaths,conceptGlossary,optionalConceptReviews})',c);
 assert.equal(data.articles.length,inventory.chapters);assert.equal(Object.keys(data.chapterConceptPaths).length,inventory.chapters);
 assert.equal(Object.keys(data.moduleConceptPaths).length,14);
 assert.equal(new Set(data.conceptGlossary.map(e=>e.term)).size,data.conceptGlossary.length);
@@ -19,10 +19,12 @@ for(const[kind,paths]of [['module',data.moduleConceptPaths],['chapter',data.chap
  assert(html.includes('data-concept-kind="'+kind+'"'),id+': visible intro');
  assert(/href="[^"]+\/#concept-path"/.test(html),id+': direct contents link');
  const introAt=html.indexOf('id="concept-path"'),advancedAt=html.search(kind==='chapter'?/class="article-section"/:/class="knowledge-point"/);
- assert(advancedAt>introAt,id+': concepts before advanced prose');
+ const reviewedBody=kind==='chapter'&&data.optionalConceptReviews.has(id);
+ if(reviewedBody){assert(advancedAt<introAt,id+': reviewed standalone body precedes optional review');assert(html.indexOf('id="section-'+data.articles.find(a=>a.id===id).sections.length+'"')<introAt,id+': review follows the complete chapter');}
+ else assert(advancedAt>introAt,id+': concept sequence precedes advanced prose');
  if(kind==='chapter'){
   const article=data.articles.find(a=>a.id===id);assert(article,id+': live chapter');
-  assert(introAt<html.indexOf('class="description"'),id+': concepts before advanced chapter summary');
+  if(!reviewedBody)assert(introAt<html.indexOf('class="description"'),id+': concepts before advanced chapter summary');
   for(let i=1;i<=article.sections.length;i++)assert(html.includes('id="section-'+i+'"'),id+': preserve section anchor '+i);
   assert(!/<details[^>]*class="concept-question-preview"[^>]*\bopen\b/.test(html),id+': case preview optional');
  }
@@ -48,6 +50,7 @@ for(const text of ['携带该token，当前进度和说明。','访问token已�
 const mcpProgress=data.articles.find(a=>a.id==='mcp-protocol').sections[5][1];
 assert(mcpProgress.includes('progressToken')&&mcpProgress.includes('进度关联'));
 assert(!run(mcpProgress).includes('模型处理文本的离散单位'),'actual MCP progress text must not acquire a model-token meaning');
+const namespaced=run('<p>namespace划定对象范围。</p>');assert(namespaced.includes('命名空间')&&!namespaced.includes('Linux中划分'),'generic namespace must not force Linux isolation into Kubernetes prose');
 const cluster=run('<p>恢复为独立新单成员集群。</p>');
 assert(cluster.includes('可部署在一台或多台机器上')&&!cluster.includes('由多台机器及其管理组件共同组成'),'logical cluster membership must not imply multiple physical machines');
 // Whole existing code, link and figure blocks survive the real prose pass byte-for-byte.
@@ -56,7 +59,7 @@ for(const a of data.articles){c.a=a;const seen=vm.runInContext('conceptSeen(chap
  for(const[,body]of a.sections){c.body=body;const output=vm.runInContext('explainFirstConceptTerms(body,seen)',c);assert.deepEqual(protectedBlocks(output),protectedBlocks(body),a.id+': unchanged code / links / figures');}
 }
 const cloud=fs.readFileSync('dist/track/cloud/index.html','utf8');
-assert(cloud.includes('从用户的一次访问认识服务')&&cloud.indexOf('从用户的一次访问认识服务')<cloud.indexOf('id="section-1"'),'Cloud basic objects precede the actual first lesson');
+assert(cloud.includes('从用户的一次访问认识服务')&&cloud.indexOf('id="section-1"')<cloud.indexOf('id="concept-path"'),'Cloud standalone first lesson retains its closing concept review');
 const conceptHit=vm.runInContext('rankSiteSearch("取回内容").find(r=>r.id==="article:attention-mechanics")',c);
 assert(conceptHit&&conceptHit.anchor==='concept-path','search finds new explanation at the actual concept anchor');
 assert.equal(vm.runInContext('buildSiteSearchIndex().length',c),inventory.search,'do not add duplicate chapter results');

@@ -21,3 +21,7 @@
 新增独立章详见[协调、复制与协议实现](ITERATION_2026-11-08_STATE_PROTOCOL.md)。两组原生Linux实验已运行并核对，MCP实际SDK包含现代/旧版和取消清理；课程全站回归与公开阅读继续按本轮记录验收。
 
 本轮继续按[概念层次与精炼阅读](ITERATION_2026-11-08_CONCEPT_READING.md)收紧导航、14张图和三个入门章，并接回DCP/SDPA/LangGraph/原生RBAC。章节总数仍为78，原编号及锚点保留；新增实战的完整记录与源码按需展开。真实读者、GPU/物理多机与Kairo仍按各自边界待验。
+
+## 逐层讲解与连续阅读补充
+
+本轮将概念型小节名延伸至全部78章，正文、两种目录与搜索共同消费；实际深化计算资源、Kubernetes、Token/Embedding、Attention、Agent权限与记忆六章。九章的可选概念回顾移到章末，保留旧URL、锚点、完整源代码与原执行记录。README将历次修订收进可展开记录。详见[逐层讲解修订](ITERATION_2026-11-08_PROGRESSIVE_READING.md)。真人试读、GPU/物理多机和Kairo适配边界仍未由本轮作者审读代替。

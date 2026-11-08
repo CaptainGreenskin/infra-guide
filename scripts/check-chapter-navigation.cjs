@@ -17,7 +17,8 @@ for(const a of articles){
  }
  const old=published.chapters.find(row=>row.id===a.id);assert(old,a.id+': missing published navigation review');
  const current=nav.flatMap(section=>section.children.map(h=>h.id));
- for(const id of old.targets)assert(current.includes(id),a.id+': published subsection target removed; preserve its authored ID when changing a heading');
+ for(const id of old.targets)assert(current.includes(id)||new RegExp('\\bid=[\"\']'+id+'[\"\']').test(page),a.id+': published subsection target removed; retain its authored ID even inside optional detail');
+ if(old.visible_targets)assert.deepEqual(current,old.visible_targets,a.id+': reviewed concise contents');
 }
 const run=html=>{c.test={id:'fixture',sections:[['Mechanism',html]]};return JSON.parse(JSON.stringify(vm.runInContext('chapterNavigation(test)[0]',c)));};
 const original='<h3 id="author-id">真实标题</h3><pre><code>&lt;h3&gt;示例&lt;/h3&gt;</code></pre><details><summary>选读</summary><h3>隐藏说明</h3></details><h3>先讲对象</h3><h4>再讲关系</h4>';

@@ -2,9 +2,12 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
-const data=JSON.parse(vm.runInContext('JSON.stringify({articles,maps:fieldConceptMaps,guides:fieldConceptReadings,titles:conceptDirectoryTitles,sections:conceptSectionTitles})',c));
+const data=JSON.parse(vm.runInContext('JSON.stringify({articles,maps:fieldConceptMaps,guides:fieldConceptReadings,titles:conceptDirectoryTitles,sections:conceptSectionTitles,standalone:[...optionalConceptReviews]})',c));
+const searchTopics=JSON.parse(vm.runInContext('JSON.stringify(Object.fromEntries(buildSiteSearchIndex().filter(e=>e.type==="article").map(e=>[e.id.slice(8),Object.fromEntries(e.segments.filter(s=>s.anchor.startsWith("section-")).map(s=>[s.anchor,s.heading]))])))',c));
 assert.deepEqual(Object.keys(data.titles).sort(),data.articles.map(a=>a.id).sort(),'every existing chapter has a reviewed concept name');
+assert.deepEqual(Object.keys(data.sections).sort(),data.articles.map(a=>a.id).sort(),'every chapter has reviewed section topics');
 for(const a of data.articles){
+ assert.equal(data.sections[a.id].length,a.sections.length,a.id+': all section positions retained');
  const label=data.titles[a.id];assert(label.length>=4&&label.length<=32);
  assert(!/为什么|怎样|如何|证明|先.*再/.test(label),a.id+': navigation should name its subject');
  const page=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');
@@ -16,15 +19,23 @@ for(const a of data.articles){
   assert.equal(nav[i].title,data.sections[a.id]?.[i]||a.sections[i][0]);
   assert(page.includes('id="section-'+(i+1)+'"'));
   assert(page.includes(nav[i].title),a.id+': body and contents use the same subject name');
+  assert(nav[i].title.length>=3&&nav[i].title.length<=36,a.id+': concise subject heading');
+  assert(!/为什么|怎样|如何|证明|先.*再/.test(nav[i].title),a.id+': section heading names its knowledge subject');
+  assert.equal(searchTopics[a.id]['section-'+(i+1)].replace(/\s+/g,''),nav[i].title.replace(/\s+/g,''),a.id+': search heading matches actual lesson');
  }
 }
-const first=['cloud-overview','transformer-model','agent-runtime'];
+const first=data.standalone;
+assert.equal(first.length,9,'nine reviewed standalone bodies');
 for(const id of first){
  const a=data.articles.find(x=>x.id===id);assert.equal(data.sections[id].length,a.sections.length);
  const page=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
  assert(page.includes('<details class="concept-review"><summary>概念回顾：本章对象与关系</summary>'));
  assert(!/<details class="concept-review"[^>]*\bopen\b/.test(page));
  assert(page.includes('id="concept-path"'),'published concept anchor retained');
+ assert(page.indexOf('id="section-'+a.sections.length+'"')<page.indexOf('id="concept-path"'),id+': concept review follows the full standalone body');
+ const toc=page.match(/<aside class="toc">([\s\S]*?)<\/aside>/)?.[1];assert(toc);
+ assert(toc.indexOf('#section-'+a.sections.length+'"')<toc.indexOf('#concept-path"'),id+': contents follow the real reading order');
+ c.a=a;assert.equal(vm.runInContext('chapterInitialConceptTerms(a).size',c),0,id+': never assume optional definitions were read');
 }
 const model=data.articles.find(a=>a.id==='transformer-model');
 for(const term of ['Embedding','Attention','FFN','归一化','残差连接','输出投影'])assert(model.sections[0][1].includes(term),'model components precede matrix arithmetic: '+term);
@@ -69,4 +80,4 @@ for(const[id,graph]of Object.entries(data.maps)){
  edgeCount+=badges.length;
 }
 assert.equal(edgeCount,87);
-console.log('PASS: 78 concise concept labels, three concept-led opening chapters with shared body/contents topics, preserved anchors/full titles, and87 visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');
+console.log('PASS: 78 complete concept-based chapter outlines and matching search headings, nine standalone bodies with closing optional reviews, preserved anchors/full titles, and87 visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');

@@ -31,7 +31,7 @@ const conceptGlossary=[
  ['Hypervisor','虚拟机监控器，管理虚拟CPU、内存和设备等对象'],
  ['操作系统内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
  ['内核','操作系统中直接管理执行、内存和设备等职责的核心部分'],
- ['namespace','Linux中划分一组进程所见系统对象的机制'],
+ ['namespace','命名空间，划定一组名称或对象所属的独立范围'],
  ['cgroup','Linux中对进程组做资源记账与约束的机制'],
  ['KVM','Linux提供的一组硬件辅助虚拟机执行接口与机制'],
  ['NUMA','非一致内存访问，处理器访问不同位置内存的代价可能不同'],
@@ -184,11 +184,11 @@ function conceptPathHTML(path,kind){
 function moduleConceptIntro(m){return conceptPathHTML(moduleConceptPaths[m.id],'module');}
 function chapterConceptIntro(a){
  const content=conceptPathHTML(chapterConceptPaths[a.id],'chapter');
- // These opening chapters now introduce the objects in their actual body.
+ // These reviewed chapters introduce the objects progressively in their body.
  // Keep the earlier concept path available at its published anchor as a review.
  return optionalConceptReviews.has(a.id)
   ?'<details class="concept-review"><summary>概念回顾：本章对象与关系</summary>'+content+'</details>'
   :content;
 }
 function chapterQuestionPreview(a){const original=guidedIntro(a);return original?'<details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary>'+original+'</details>':'';}
-function conceptTOCLink(path){return '<a data-toc="concept-path" href="'+path+'#concept-path">概念起点与关系</a>';}
+function conceptTOCLink(path,label='概念起点与关系'){return '<a data-toc="concept-path" href="'+path+'#concept-path">'+label+'</a>';}

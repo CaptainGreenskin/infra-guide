@@ -15,6 +15,11 @@
 
 当前78章：Cloud 35、AI 29、Agent 11、综合实战3；44个完整实验包、84项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
+这轮[逐层讲解与连续阅读](docs/ITERATION_2026-11-08_PROGRESSIVE_READING.md)统一全站小节的概念名称，使正文、本文目录和搜索结果使用同一套标题；计算资源、Kubernetes、分词与嵌入、注意力、Agent权限和记忆六章重排整章解释。九个已独立介绍对象的章节把概念预览收为章末回顾，代码和完整实验按需展开。
+
+<details>
+<summary>历次内容修订与执行记录</summary>
+
 本轮[概念层次与精炼阅读](docs/ITERATION_2026-11-08_CONCEPT_READING.md)统一78章导航短名，14张图直接标明关系，三个入门章先讲组件与正常过程，再读推导与实战；原生DCP、SDPA、LangGraph与ServiceAccount/RBAC分别接回对应机制，详细证据按需展开。
 
 本轮新增[协调存储、数据库复制与MCP协议](docs/ITERATION_2026-11-08_STATE_PROTOCOL.md)三个独立章：先解释对象、版本和执行链，再读真实etcd/MySQL/官方MCP SDK。原生Linux CI核对网络分区、快照后重新观察、复制应用落后和受控写入交接；SDK实跑两代版本、进度、取消与独立结果验收。保留原75章的正文、编号和公开链接，新增内容纳入领域图谱、先修与岗位路线。
@@ -32,6 +37,8 @@
 C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐配有[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)：实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD，分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[机制章审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
 
 已有实验包括Linux TCP/epoll、MySQL日志恢复、Docker资源与Kubernetes调度、CPU/Gloo训练恢复、手写算子与MoE进程分发、精确推测采样、Agent授权与崩溃窗口、中文检索及实际分词预算。CUDA/Nsight、GPU/NCCL、物理多节点、云CNI/CSI、生产负载和Kairo接入分别保留待验范围，不由CPU或kind结果推断。
+
+</details>
 
 [首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。检查和作者审读用于发现错误，读者能否独立画出知识关系、解释条件并完成迁移题，仍需实际试读验证。
 
