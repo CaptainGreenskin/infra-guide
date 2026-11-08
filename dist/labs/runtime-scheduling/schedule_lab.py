@@ -15,7 +15,10 @@ PAUSE = 'registry.k8s.io/pause:3.10'
 
 
 def command(*args, data=None, check=True, timeout=240):
-    return subprocess.run(args, input=data, text=True, capture_output=True, check=check, timeout=timeout)
+    result = subprocess.run(args, input=data, text=True, capture_output=True, timeout=timeout)
+    if check and result.returncode:
+        raise RuntimeError(f'{args[0]} failed: {result.stderr[-6000:]}')
+    return result
 
 
 def milli(value):
@@ -81,8 +84,9 @@ def main():
         try:
             command('kind', 'create', 'cluster', '--name', name, '--kubeconfig', str(kubeconfig),
                     '--config', str(config), '--image', NODE_IMAGE, '--wait', '150s', timeout=400)
-            command('docker', 'pull', PAUSE)
-            command('kind', 'load', 'docker-image', PAUSE, '--name', name)
+            # Pull through each node's CRI, avoiding Docker multi-platform export differences.
+            for node in command('kind', 'get', 'nodes', '--name', name).stdout.splitlines():
+                command('docker', 'exec', node, 'crictl', 'pull', PAUSE)
             nodes = get('nodes')['items']
             workers = sorted(n['metadata']['name'] for n in nodes if 'node-role.kubernetes.io/control-plane' not in n['metadata']['labels'])
             assert len(workers) == 2
