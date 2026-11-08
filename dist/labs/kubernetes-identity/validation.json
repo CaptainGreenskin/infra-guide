@@ -1,0 +1,541 @@
+{
+  "checked_on": "2026-11-08",
+  "status": "passed",
+  "source_sha256": {
+    "identity_lab.py": "56a46b3f00a5deea7478eb29ac13f73233fbdc22756c781165e4db8de692c337",
+    "README.md": "a6b357406b436400f07e6bd7a3e6974948b7dbba7801904a116867e9749ae191"
+  },
+  "origin": {
+    "kind": "isolated Linux Docker in GitHub Actions",
+    "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42476371903",
+    "source_commit": "9ab0ea868b09a20f041eb5f839ba1fce823b6600"
+  },
+  "execution": {
+    "schema": 1,
+    "status": "passed",
+    "system": "Linux",
+    "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+    "source_sha256": {
+      "identity_lab.py": "56a46b3f00a5deea7478eb29ac13f73233fbdc22756c781165e4db8de692c337"
+    },
+    "scope": "Native kind API authentication/RBAC on one Linux host; not cloud IAM, token projection/refresh or production multi-tenancy.",
+    "versions": {
+      "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+      "kubernetes": "v1.35.8"
+    },
+    "observation": {
+      "http": [
+        {
+          "case": "who_am_i",
+          "credential_ref": "reader-1",
+          "method": "POST",
+          "path": "/apis/authentication.k8s.io/v1/selfsubjectreviews",
+          "status": 201,
+          "body": {
+            "kind": "SelfSubjectReview",
+            "apiVersion": "authentication.k8s.io/v1",
+            "metadata": {
+              "creationTimestamp": "2026-11-08T11:41:36Z"
+            },
+            "status": {
+              "userInfo": {
+                "username": "system:serviceaccount:report-a:report-reader",
+                "uid": "ff84bfb6-8a94-4c57-9e0a-941d3ea5672b",
+                "groups": [
+                  "system:serviceaccounts",
+                  "system:serviceaccounts:report-a",
+                  "system:authenticated"
+                ],
+                "extra": {
+                  "authentication.kubernetes.io/credential-id": [
+                    "JTI=82d5edfa-d93d-4d0f-89ff-c8a2c7b184ca"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "case": "read_allowed",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 200,
+          "body": {
+            "kind": "ConfigMap",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "reports-v1",
+              "namespace": "report-a",
+              "uid": "132bedcd-fa77-4720-a5fd-d28704475143",
+              "resourceVersion": "447",
+              "creationTimestamp": "2026-11-08T11:41:35Z",
+              "annotations": {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"value\":\"37\"},\"kind\":\"ConfigMap\",\"metadata\":{\"annotations\":{},\"name\":\"reports-v1\",\"namespace\":\"report-a\"}}\n"
+              },
+              "managedFields": [
+                {
+                  "manager": "kubectl-client-side-apply",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-08T11:41:35Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:data": {
+                      ".": {},
+                      "f:value": {}
+                    },
+                    "f:metadata": {
+                      "f:annotations": {
+                        ".": {},
+                        "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "data": {
+              "value": "37"
+            }
+          }
+        },
+        {
+          "case": "other_name",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v2",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "configmaps \"reports-v2\" is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot get resource \"configmaps\" in API group \"\" in the namespace \"report-a\"",
+            "reason": "Forbidden",
+            "details": {
+              "name": "reports-v2",
+              "kind": "configmaps"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "other_namespace",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-b/configmaps/reports-v1",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "configmaps \"reports-v1\" is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot get resource \"configmaps\" in API group \"\" in the namespace \"report-b\"",
+            "reason": "Forbidden",
+            "details": {
+              "name": "reports-v1",
+              "kind": "configmaps"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "patch_denied",
+          "credential_ref": "reader-1",
+          "method": "PATCH",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "configmaps \"reports-v1\" is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot patch resource \"configmaps\" in API group \"\" in the namespace \"report-a\"",
+            "reason": "Forbidden",
+            "details": {
+              "name": "reports-v1",
+              "kind": "configmaps"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "secret_denied",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/secrets/report-signing",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "secrets \"report-signing\" is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot get resource \"secrets\" in API group \"\" in the namespace \"report-a\"",
+            "reason": "Forbidden",
+            "details": {
+              "name": "report-signing",
+              "kind": "secrets"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "list_denied",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "configmaps is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot list resource \"configmaps\" in API group \"\" in the namespace \"report-a\"",
+            "reason": "Forbidden",
+            "details": {
+              "kind": "configmaps"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "binding_removed",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "configmaps \"reports-v1\" is forbidden: User \"system:serviceaccount:report-a:report-reader\" cannot get resource \"configmaps\" in API group \"\" in the namespace \"report-a\"",
+            "reason": "Forbidden",
+            "details": {
+              "name": "reports-v1",
+              "kind": "configmaps"
+            },
+            "code": 403
+          }
+        },
+        {
+          "case": "binding_restored",
+          "credential_ref": "reader-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 200,
+          "body": {
+            "kind": "ConfigMap",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "reports-v1",
+              "namespace": "report-a",
+              "uid": "132bedcd-fa77-4720-a5fd-d28704475143",
+              "resourceVersion": "447",
+              "creationTimestamp": "2026-11-08T11:41:35Z",
+              "annotations": {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"value\":\"37\"},\"kind\":\"ConfigMap\",\"metadata\":{\"annotations\":{},\"name\":\"reports-v1\",\"namespace\":\"report-a\"}}\n"
+              },
+              "managedFields": [
+                {
+                  "manager": "kubectl-client-side-apply",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-08T11:41:35Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:data": {
+                      ".": {},
+                      "f:value": {}
+                    },
+                    "f:metadata": {
+                      "f:annotations": {
+                        ".": {},
+                        "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "data": {
+              "value": "37"
+            }
+          }
+        },
+        {
+          "case": "wrong_audience",
+          "credential_ref": "wrong-audience",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 401,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "Unauthorized",
+            "reason": "Unauthorized",
+            "code": 401
+          }
+        },
+        {
+          "case": "bound_before_delete",
+          "credential_ref": "bound-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 200,
+          "body": {
+            "kind": "ConfigMap",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "reports-v1",
+              "namespace": "report-a",
+              "uid": "132bedcd-fa77-4720-a5fd-d28704475143",
+              "resourceVersion": "447",
+              "creationTimestamp": "2026-11-08T11:41:35Z",
+              "annotations": {
+                "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"value\":\"37\"},\"kind\":\"ConfigMap\",\"metadata\":{\"annotations\":{},\"name\":\"reports-v1\",\"namespace\":\"report-a\"}}\n"
+              },
+              "managedFields": [
+                {
+                  "manager": "kubectl-client-side-apply",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-08T11:41:35Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:data": {
+                      ".": {},
+                      "f:value": {}
+                    },
+                    "f:metadata": {
+                      "f:annotations": {
+                        ".": {},
+                        "f:kubectl.kubernetes.io/last-applied-configuration": {}
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "data": {
+              "value": "37"
+            }
+          }
+        },
+        {
+          "case": "bound_after_delete",
+          "credential_ref": "bound-1",
+          "method": "GET",
+          "path": "/api/v1/namespaces/report-a/configmaps/reports-v1",
+          "status": 401,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "Unauthorized",
+            "reason": "Unauthorized",
+            "code": 401
+          }
+        }
+      ],
+      "token_reviews": {
+        "before_binding_removed": {
+          "authenticated": true,
+          "user": {
+            "username": "system:serviceaccount:report-a:report-reader",
+            "uid": "ff84bfb6-8a94-4c57-9e0a-941d3ea5672b",
+            "groups": [
+              "system:serviceaccounts",
+              "system:serviceaccounts:report-a",
+              "system:authenticated"
+            ],
+            "extra": {
+              "authentication.kubernetes.io/credential-id": [
+                "JTI=82d5edfa-d93d-4d0f-89ff-c8a2c7b184ca"
+              ]
+            }
+          },
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ]
+        },
+        "without_binding": {
+          "authenticated": true,
+          "user": {
+            "username": "system:serviceaccount:report-a:report-reader",
+            "uid": "ff84bfb6-8a94-4c57-9e0a-941d3ea5672b",
+            "groups": [
+              "system:serviceaccounts",
+              "system:serviceaccounts:report-a",
+              "system:authenticated"
+            ],
+            "extra": {
+              "authentication.kubernetes.io/credential-id": [
+                "JTI=82d5edfa-d93d-4d0f-89ff-c8a2c7b184ca"
+              ]
+            }
+          },
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ]
+        },
+        "after_binding_restored": {
+          "authenticated": true,
+          "user": {
+            "username": "system:serviceaccount:report-a:report-reader",
+            "uid": "ff84bfb6-8a94-4c57-9e0a-941d3ea5672b",
+            "groups": [
+              "system:serviceaccounts",
+              "system:serviceaccounts:report-a",
+              "system:authenticated"
+            ],
+            "extra": {
+              "authentication.kubernetes.io/credential-id": [
+                "JTI=82d5edfa-d93d-4d0f-89ff-c8a2c7b184ca"
+              ]
+            }
+          },
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ]
+        },
+        "wrong_audience": {
+          "authenticated": false,
+          "user": {},
+          "error": "[invalid bearer token, token audiences [\"reports-api.invalid\"] is invalid for the target audiences [\"https://kubernetes.default.svc.cluster.local\"]]"
+        },
+        "bound_before_delete": {
+          "authenticated": true,
+          "user": {
+            "username": "system:serviceaccount:report-a:report-reader",
+            "uid": "ff84bfb6-8a94-4c57-9e0a-941d3ea5672b",
+            "groups": [
+              "system:serviceaccounts",
+              "system:serviceaccounts:report-a",
+              "system:authenticated"
+            ],
+            "extra": {
+              "authentication.kubernetes.io/credential-id": [
+                "JTI=f392b397-a37b-406f-a4a0-e6fa8853faa6"
+              ],
+              "authentication.kubernetes.io/pod-name": [
+                "identity-bound"
+              ],
+              "authentication.kubernetes.io/pod-uid": [
+                "e4cc9079-a9d6-4689-9554-c9881a653321"
+              ]
+            }
+          },
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ]
+        },
+        "bound_after_delete": {
+          "authenticated": false,
+          "user": {},
+          "error": "[invalid bearer token, service account token has been invalidated]"
+        }
+      },
+      "credentials": {
+        "reader-1": {
+          "subject": "system:serviceaccount:report-a:report-reader",
+          "issuer": "https://kubernetes.default.svc.cluster.local",
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ],
+          "issued_at": 1794138096,
+          "expires_at": 1794138696,
+          "expiration_timestamp": "2026-11-08T11:51:36Z"
+        },
+        "wrong-audience": {
+          "subject": "system:serviceaccount:report-a:report-reader",
+          "issuer": "https://kubernetes.default.svc.cluster.local",
+          "audiences": [
+            "reports-api.invalid"
+          ],
+          "issued_at": 1794138096,
+          "expires_at": 1794138696,
+          "expiration_timestamp": "2026-11-08T11:51:36Z"
+        },
+        "bound-1": {
+          "subject": "system:serviceaccount:report-a:report-reader",
+          "issuer": "https://kubernetes.default.svc.cluster.local",
+          "audiences": [
+            "https://kubernetes.default.svc.cluster.local"
+          ],
+          "issued_at": 1794138097,
+          "expires_at": 1794138697,
+          "expiration_timestamp": "2026-11-08T11:51:37Z",
+          "bound_pod_uid": "e4cc9079-a9d6-4689-9554-c9881a653321"
+        }
+      },
+      "tls": {
+        "ca_verified": true,
+        "client_certificate_loaded": false,
+        "environment_proxy_used": false,
+        "endpoint_loopback": true
+      },
+      "before": {
+        "/api/v1/namespaces/report-a/configmaps/reports-v1": {
+          "uid": "132bedcd-fa77-4720-a5fd-d28704475143",
+          "resource_version": "447",
+          "data_sha256": "2746989f03d08cdd9a798edaa6cd2ccc63f39f42ce538625240bd5c2f189f869"
+        },
+        "/api/v1/namespaces/report-a/configmaps/reports-v2": {
+          "uid": "385ca367-e403-4466-a990-7b9aaf2174a2",
+          "resource_version": "449",
+          "data_sha256": "186e428f8ed296208ea0219c9c1bd70c090b96a2d87a7126b31e7ee25154433c"
+        },
+        "/api/v1/namespaces/report-b/configmaps/reports-v1": {
+          "uid": "086960cf-204f-4c26-93bf-d5a0ab220a47",
+          "resource_version": "450",
+          "data_sha256": "05f50ef1d3a0132f1a348efa6a5589ec4f74a436da1ba4fb1043b664abc8e02e"
+        },
+        "/api/v1/namespaces/report-a/secrets/report-signing": {
+          "uid": "1036a55a-26e3-404f-96f9-d3fb56e0fd2f",
+          "resource_version": "452",
+          "data_sha256": "99d87358e09a57e24082cc4c9ab889ed0c7b98833aa31d96136dcda543a7a5ea"
+        }
+      },
+      "bound_pod": {
+        "name": "identity-bound",
+        "uid": "e4cc9079-a9d6-4689-9554-c9881a653321",
+        "deleted": true,
+        "revocation_checks": 19,
+        "revocation_observed_seconds": 9.959
+      },
+      "after": {
+        "/api/v1/namespaces/report-a/configmaps/reports-v1": {
+          "uid": "132bedcd-fa77-4720-a5fd-d28704475143",
+          "resource_version": "447",
+          "data_sha256": "2746989f03d08cdd9a798edaa6cd2ccc63f39f42ce538625240bd5c2f189f869"
+        },
+        "/api/v1/namespaces/report-a/configmaps/reports-v2": {
+          "uid": "385ca367-e403-4466-a990-7b9aaf2174a2",
+          "resource_version": "449",
+          "data_sha256": "186e428f8ed296208ea0219c9c1bd70c090b96a2d87a7126b31e7ee25154433c"
+        },
+        "/api/v1/namespaces/report-b/configmaps/reports-v1": {
+          "uid": "086960cf-204f-4c26-93bf-d5a0ab220a47",
+          "resource_version": "450",
+          "data_sha256": "05f50ef1d3a0132f1a348efa6a5589ec4f74a436da1ba4fb1043b664abc8e02e"
+        },
+        "/api/v1/namespaces/report-a/secrets/report-signing": {
+          "uid": "1036a55a-26e3-404f-96f9-d3fb56e0fd2f",
+          "resource_version": "452",
+          "data_sha256": "99d87358e09a57e24082cc4c9ab889ed0c7b98833aa31d96136dcda543a7a5ea"
+        }
+      }
+    },
+    "cleanup": {
+      "complete": true,
+      "owned_cluster_absent": true,
+      "delete_attempted": true,
+      "delete_exit_code": 0
+    }
+  }
+}

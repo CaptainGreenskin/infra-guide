@@ -27,6 +27,13 @@
 .concept-step>h3{margin:0 0 9px!important;font-size:18px!important;display:flex;gap:12px;align-items:baseline}
 .concept-step>h3>span{color:var(--blue);font:12px/1.6 ui-monospace,monospace;flex:none}
 .concept-step>p{margin:0!important}
+.concept-review{margin:16px 0;color:var(--muted)}
+.concept-review>summary{cursor:pointer;font-size:14px;line-height:1.7}
+.concept-review .concept-path{margin:18px 0 0;color:var(--ink);padding-bottom:18px}
+.article-case{margin:16px 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.article-case>summary{cursor:pointer;color:var(--blue);font-size:15px;line-height:1.8}
+.chapter-toc-case-details{margin:6px 0 8px 12px}
+.chapter-toc-case-details>summary{cursor:pointer;font-size:12px;color:var(--muted)}
 .concept-question-preview{margin:18px 0 24px;border-bottom:1px solid var(--line);padding:0 0 10px}
 .concept-question-preview>summary{min-height:44px;line-height:1.8;padding:10px 0;color:var(--blue);font-size:13px;cursor:pointer}
 .concept-question-preview .guided-intro{margin-top:15px}

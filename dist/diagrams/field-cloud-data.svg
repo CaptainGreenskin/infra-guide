@@ -1,48 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 638" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 598" role="img" aria-labelledby="title desc">
 <title id="title">云存储与数据服务：核心概念关系</title>
-<desc id="desc">箭头连接真实概念，数字对应正文关系说明。方向表示作用或依赖，不表示全部串行执行。</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7590bd"/></marker></defs>
-<rect width="1120" height="638" rx="12" fill="#f8fafc"/>
+<desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
+<defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
+<rect width="1120" height="598" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">云存储与数据服务</text>
-<text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">方框：概念　箭头：作用或依赖</text>
-<path data-edge="storage-model storage-performance" d="M262.0 200 C262.0 236.0 262.0 236.0 262.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="262.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="262.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">1</text></g>
-<path data-edge="storage-model database-service" d="M262.0 200 C262.0 236.0 560.0 236.0 560.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="411.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="411.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">2</text></g>
-<path data-edge="database-service durability-consistency" d="M560.0 356 C560.0 392.0 411.0 392.0 411.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="485.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="485.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">3</text></g>
-<path data-edge="replication-failover backup-restore" d="M858.0 356 C858.0 392.0 709.0 392.0 709.0 424" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="783.5" cy="392.0" r="13" fill="#fff" stroke="#7590bd"/><text x="783.5" y="397.0" text-anchor="middle" fill="#36527e" font-size="16">4</text></g>
-<path data-edge="cache-layer database-service" d="M560.0 200 C560.0 236.0 560.0 236.0 560.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="560.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">5</text></g>
-<path data-edge="messaging database-service" d="M858.0 200 C858.0 236.0 560.0 236.0 560.0 268" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="709.0" cy="236.0" r="13" fill="#fff" stroke="#7590bd"/><text x="709.0" y="241.0" text-anchor="middle" fill="#36527e" font-size="16">6</text></g>
-<path data-edge="backup-restore durability-consistency" d="M577.0 470.0 L547.0 470.0" fill="none" stroke="#7590bd" stroke-width="2.3" marker-end="url(#arrow)"/>
-<g><circle cx="560.0" cy="470.0" r="13" fill="#fff" stroke="#7590bd"/><text x="560.0" y="475.0" text-anchor="middle" fill="#36527e" font-size="16">7</text></g>
-<g data-concept="storage-model"><rect x="130.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="148.0" y="140" fill="#6a7f9e" font-size="15">概念 01</text>
-<text x="262.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">访问单位</text></g>
-<g data-concept="storage-performance"><rect x="130.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="148.0" y="296" fill="#6a7f9e" font-size="15">概念 02</text>
-<text x="262.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">完成代价</text></g>
-<g data-concept="durability-consistency"><rect x="279.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="297.0" y="452" fill="#6a7f9e" font-size="15">概念 03</text>
-<text x="411.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">确认与观察</text></g>
-<g data-concept="database-service"><rect x="428.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="446.0" y="296" fill="#6a7f9e" font-size="15">概念 04</text>
-<text x="560.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">事务提交</text></g>
-<g data-concept="replication-failover"><rect x="726.0" y="272" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="744.0" y="296" fill="#6a7f9e" font-size="15">概念 05</text>
-<text x="858.0" y="330" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">复制与写入资格</text></g>
-<g data-concept="cache-layer"><rect x="428.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="446.0" y="140" fill="#6a7f9e" font-size="15">概念 06</text>
-<text x="560.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">中间副本</text></g>
-<g data-concept="messaging"><rect x="726.0" y="116" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="744.0" y="140" fill="#6a7f9e" font-size="15">概念 07</text>
-<text x="858.0" y="174" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">异步工作</text></g>
-<g data-concept="backup-restore"><rect x="577.0" y="428" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="595.0" y="452" fill="#6a7f9e" font-size="15">概念 08</text>
-<text x="709.0" y="486" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">恢复材料</text></g>
-<text x="560" y="610" text-anchor="middle" fill="#536783" font-size="17">圆圈数字对应正文箭头说明 · 点图放大</text>
+<text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
+<metadata>{&quot;module&quot;: &quot;cloud-data&quot;, &quot;main_edges&quot;: [0, 1, 2], &quot;rows&quot;: [[&quot;storage-model&quot;, &quot;cache-layer&quot;, &quot;messaging&quot;], [&quot;storage-performance&quot;, &quot;database-service&quot;, &quot;replication-failover&quot;], [&quot;durability-consistency&quot;, &quot;backup-restore&quot;]]}</metadata>
+<path data-edge="storage-model storage-performance" data-emphasis="main" d="M262.0 228 C262.0 264.0 262.0 264.0 262.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="storage-model database-service" data-emphasis="main" d="M262.0 228 C262.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="database-service durability-consistency" data-emphasis="main" d="M560.0 384 C560.0 420.0 411.0 420.0 411.0 452" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="replication-failover backup-restore" data-emphasis="other" d="M858.0 384 C858.0 420.0 709.0 420.0 709.0 452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="cache-layer database-service" data-emphasis="other" d="M560.0 228 C560.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="messaging database-service" data-emphasis="other" d="M858.0 228 C858.0 264.0 560.0 264.0 560.0 296" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="backup-restore durability-consistency" data-emphasis="other" d="M709.0 456 V428 H411.0 V452" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<g data-relation-label="1"><rect x="195.0" y="248.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="262.0" y="269.5" text-anchor="middle" fill="#315fe5" font-size="17">1 · 决定测量单位</text></g>
+<g data-relation-label="2"><rect x="462.00800000000004" y="265.096" width="134" height="30" rx="6" fill="#f8fafc"/><text x="529.008" y="286.096" text-anchor="middle" fill="#315fe5" font-size="17">2 · 承载持久读写</text></g>
+<g data-relation-label="3"><rect x="418.5" y="404.5" width="134" height="30" rx="6" fill="#f8fafc"/><text x="485.5" y="425.5" text-anchor="middle" fill="#315fe5" font-size="17">3 · 落实提交规则</text></g>
+<g data-relation-label="4"><rect x="730.052" y="399.272" width="151" height="30" rx="6" fill="#f8fafc"/><text x="805.552" y="420.272" text-anchor="middle" fill="#8b9bb3" font-size="17">4 · 与历史恢复互补</text></g>
+<g data-relation-label="5"><rect x="476.0" y="230.82400000000007" width="168" height="30" rx="6" fill="#f8fafc"/><text x="560.0" y="251.82400000000007" text-anchor="middle" fill="#8b9bb3" font-size="17">5 · 复用并可能落后于</text></g>
+<g data-relation-label="6"><rect x="669.1039999999999" y="243.272" width="168" height="30" rx="6" fill="#f8fafc"/><text x="753.1039999999999" y="264.272" text-anchor="middle" fill="#8b9bb3" font-size="17">6 · 触发处理但不代替</text></g>
+<g data-relation-label="7"><rect x="582.4" y="413" width="134" height="30" rx="6" fill="#f8fafc"/><text x="649.4" y="434" text-anchor="middle" fill="#8b9bb3" font-size="17">7 · 验证恢复后的</text></g>
+<g data-concept="storage-model"><rect x="130.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">访问单位</text></g>
+<g data-concept="storage-performance"><rect x="130.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">完成代价</text></g>
+<g data-concept="durability-consistency"><rect x="279.0" y="456" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">确认与观察</text></g>
+<g data-concept="database-service"><rect x="428.0" y="300" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">事务提交</text></g>
+<g data-concept="replication-failover"><rect x="726.0" y="300" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="351" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">复制与写入资格</text></g>
+<g data-concept="cache-layer"><rect x="428.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">中间副本</text></g>
+<g data-concept="messaging"><rect x="726.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">异步工作</text></g>
+<g data-concept="backup-restore"><rect x="577.0" y="456" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="507" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">恢复材料</text></g>
+<text x="560" y="576" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

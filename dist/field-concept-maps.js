@@ -10,7 +10,7 @@ const fieldConceptMaps={
   edges:[
    ['prerequisite-1','承载','prerequisite-2','线程要使用CPU，也可能等待共享数据。并发数增加，可能增加吞吐，也可能只增加锁等待。'],
    ['prerequisite-2','延伸到','prerequisite-3','本地线程可以共享内存；远端程序要通过消息协作，连接和等待因此成为新的边界。'],
-   ['prerequisite-3','不能代替','prerequisite-4','字节到达或HTTP有响应，不等于数据已按业务规则提交；没有响应也不证明未提交。'],
+   ['prerequisite-3','承载远程读写','prerequisite-4','协议把请求交给远程程序，事务与业务规则决定何时提交。调用超时后，还需按操作身份核对接收方结果。'],
    ['prerequisite-5','核对','prerequisite-1','将CPU时间、内存记账和I/O等待分别取证，才能判断程序到底在哪里消耗或等待。'],
    ['prerequisite-5','验证','prerequisite-4','在提交前后制造可控失败，再读取实际数据和回执，比只看退出码更能说明恢复行为。']],
   question:'CPU很低，线程都在等连接；一次写入超时，查询却找到了回执。分别画出等待对象和提交边界，哪些结论已经成立？',
@@ -70,7 +70,7 @@ const fieldConceptMaps={
    ['storage-model','决定测量单位','storage-performance','先固定每次操作读写多大、是否持久化，再比较每秒操作数、吞吐和尾延迟。'],
    ['storage-model','承载持久读写','database-service','数据库事务最终要通过相应存储路径保存变化；文件系统语义不能直接套到对象API上。'],
    ['database-service','落实提交规则','durability-consistency','事务返回成功以后，仍要说明哪些故障下保留数据，以及其他读取按何种规则看见它。'],
-   ['replication-failover','提供冗余而非历史撤销','backup-restore','误删也可能同步到副本。恢复历史目标需要可用材料及连续变化，不能只数当前副本。'],
+   ['replication-failover','与历史恢复互补','backup-restore','复制延续当前变化，备份与连续日志用于重建历史目标。误删也会被复制，两者共同组成恢复方案。'],
    ['cache-layer','复用并可能落后于','database-service','数据库已提交新值，旧读取仍可能稍后回填缓存。提交点与回填版本要放在同一时间线上。'],
    ['messaging','触发处理但不代替','database-service','消费者收到消息或发出ACK，不自动证明事务已经提交；重复投递要沿稳定业务身份处理。'],
    ['backup-restore','验证恢复后的','durability-consistency','恢复完成还要核对已确认记录、版本和实际查询，备份任务成功本身不提供这些结论。']],
@@ -240,7 +240,7 @@ const fieldConceptMaps={
    ['sv-prefill','产生并读取','sv-kv','缓存对应已处理位置，不总等于屏幕上已显示的输出数；停止时最后输出可能尚未再次送入模型。'],
    ['sv-batching','受容量限制','sv-kv','每个请求都占相应状态，权重放得下不代表任意并发都能进入。'],
    ['sv-batching','改变等待分布','sv-metrics','批次更大可能提高吞吐，也可能增加首词元等待；比较要固定输入和质量口径。'],
-   ['sv-quantization','改变表示但不替代','sv-metrics','字节减少不保证端到端更快，需要实际执行、质量和同负载计时。'],
+   ['sv-quantization','影响资源与时延','sv-metrics','量化改变数值表示与字节布局，具体内核负责计算。按同一负载比较质量、排队和执行耗时，才能判断有效服务能力。'],
    ['sv-optimizations','利用条件前缀','sv-prefill','候选并行核对仍要保持因果位置、正确概率与缓存回退；目标调用减少不等于加速倍数。'],
    ['sv-release','验收产物与行为','sv-contract','能加载只是起点，分词规则、任务质量、服务表现与可回退性要分别核对。']],
   question:'权重成功加载，量化后字节减少，目标模型调用数也少了，为什么首词元延迟仍可能变差？',
@@ -262,7 +262,7 @@ const fieldConceptMaps={
    ['ag-runtime','安排受控调用','ag-tools','模型只提出工具名和参数，运行时还要检查契约、范围和预算，才产生实际尝试。'],
    ['ag-authorization','允许或拒绝','ag-tools','工具文本和检索材料不是授权来源；真正造成效果的接收方仍要执行当前权限。'],
    ['ag-sandbox','限制程序能力','ag-tools','即便动作被业务允许，执行程序也应只取得所需文件、网络与资源。'],
-   ['ag-tools','可能留下未知结果','ag-recovery','连接断开后，工具可能已经提交。先沿原操作身份查证，不能换新身份再写。'],
+   ['ag-tools','交付执行结果','ag-recovery','运行时保存工具结果；产生外部写入时，还要关联接收方回执。恢复沿原操作身份核对已完成与待继续的工作。'],
    ['ag-fencing','保护接管后的','ag-recovery','旧执行者暂停后复活，仍可能继续写；接收方要按有效资格拒绝过期写入。'],
    ['ag-retrieval','提供材料给','ag-context','找到资料不等于本次模型真的看到了它，还要核对权限、版本、完整性和预算。'],
    ['ag-context','组织本次提议输入','ag-runtime','运行时从可信状态和获准资料组织模型输入；模型可见的旧摘要不能反向覆盖接收方的新回执。'],
@@ -271,6 +271,23 @@ const fieldConceptMaps={
   question:'模型说成功、工具回执存在，但交付上下文少一份必要来源，且旧写权限已撤销。哪些事实可以保留，哪些动作不能继续？',
   answer:'保留已确认效果并核对原回执，不能因进度未更新而重复写。新动作按当前权限判断，查询本身也需要当前读取资格；证据不足时不能把模型回答判为完成，应按规则补充获准资料或明确报告不足。',
   outlets:[['platform','需要自建模型服务时，再深入生成、缓存与服务性能；训练不是Agent先修。'],['cloud-security','继续深入程序身份、秘密轮换和资源端授权。']]}
+};
+// Reading emphasis changes the presentation, never the meaning/direction of an edge.
+const fieldConceptReadings={
+ foundation:{main:[0,1,2],lead:'先看程序怎样执行和共享数据，再把本地读写扩展到网络与事务。工程工具用来观察和验证这条链。'},
+ compute:{main:[0,1,2,3],lead:'先分清服务责任，再看控制面怎样创建实例、实例怎样承载程序。配额和故障域约束资源供给与副本分布。'},
+ network:{main:[0,1,4,5,6],lead:'名称解析提供访问位置，再沿入口、连接和应用请求往返。地址、路由与访问策略分别约束这条路径。'},
+ 'cloud-data':{main:[0,1,2],lead:'从读写接口进入数据库提交，再看缓存、复制、消息和备份怎样围绕同一份数据工作。'},
+ native:{main:[0,1,2,5,6],lead:'期望对象经过调度变成进程，进程通过就绪检查后接收流量。存储、配置和伸缩分别约束这条主线。'},
+ serverless:{main:[0,2,3],lead:'事件触发函数，执行环境承载调用；业务身份处理重复，并发影响资源占用，成本对齐有效产出。'},
+ 'cloud-delivery':{main:[0,2,3,4],lead:'流水线生成完整版本，版本化声明交给控制器，发布策略决定新旧版本怎样获得流量。回退受数据兼容条件约束。'},
+ 'cloud-security':{main:[0,2],lead:'程序先取得身份，资源端再按主体、动作和对象授权。凭据寿命、执行隔离与审计提供不同层面的约束。'},
+ 'cloud-capacity':{main:[0,1],lead:'先统一到达量、完成量和在途量，再看队列与扩容空窗。性能预算定位瓶颈，成本对齐有效产出。'},
+ sre:{main:[0,2,3,5],lead:'从用户质量目标确定要采集的信号，沿证据诊断与恢复，再用同一用户目标验收。'},
+ 'model-foundations':{main:[0,1,2],lead:'先看输入经过注意力和模型层产生预测，再接训练更新。GPU执行与Roofline是实现和性能分析分支。'},
+ training:{main:[0,5,6],lead:'沿数据进入一次更新，再观察状态占用与保存恢复。副本、分片和计算布局通过集合通信扩展这个过程。'},
+ platform:{main:[0,1,2,3,4],lead:'先区分作业申请资源与模型进入推理两条路径，再把生成、缓存、调度和计时连起来。优化与发布围绕这两条路径展开。'},
+ agent:{main:[0,3,6,8],lead:'先沿上下文、动作提议、受控工具、持久事实与结果验收理解任务。检索补充输入，权限和沙箱限制动作，观测记录过程。'}
 };
 const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation'],'mysql-replication':['cloud-data','replication-failover']};
 
@@ -285,7 +302,7 @@ function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>把本领域连成一张图</h2><p class="field-map-note">方框是本领域的核心对象，箭头表示作用或依赖。先看清它们的位置，再读下面的定义；图中数字对应展开后的关系说明。</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：圆圈数字对应箭头说明，方向表示作用或依赖。')+'<details class="field-map-explorer"><summary>查概念定义、箭头含义与相关章节</summary>'+
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];

@@ -1,0 +1,6 @@
+{
+  "task_id": "report-A",
+  "target": "report-A",
+  "base": {"resource": "orders-A", "version": 3, "values": [10, 27], "extra_ref": "late-A/v1"},
+  "extra": {"resource": "late-A", "version": 1, "values": [5]}
+}

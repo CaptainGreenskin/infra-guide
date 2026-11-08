@@ -42,6 +42,8 @@ vm.runInNewContext(fragmentCode+';restoreDocumentFragment()', {location:{hash:'#
 for(const[id,bad]of [['transformer-model','第 0.3 章'],['transformer-block','这是0.6节'],['training-lab','先用 6.2']])assert(!d.articles.find(a=>a.id===id).sections.some(s=>s[1].includes(bad)));
 // Independent arithmetic for the two synthesis questions.
 assert.equal((120*30+300)/30,130);assert.equal(2*4*8,64);assert.equal(2*2*4*4,64);assert.equal(2*8*8,128);assert.equal(2*2*8*8,256);
-const {record,update}=require('./coherence-review-records.cjs');assert.equal(update.reader_trials,0);assert.deepEqual(update.field_maps,d.maps);
+const {record,update,laterUpdates}=require('./coherence-review-records.cjs');assert.equal(update.reader_trials,0);
+const latestMaps=[...laterUpdates].reverse().find(stage=>stage.field_maps_snapshot)?.field_maps_snapshot||update.field_maps;
+assert.deepEqual(latestMaps,d.maps,'current maps must match the latest separate relationship review');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');for(const[file,expected]of Object.entries(record.source_sha256))assert.equal(sha(fs.readFileSync(file)),expected,file+': unreviewed source change');
 console.log('PASS: 14 connected field maps /95 existing points+5 prerequisite groups /87 authored relationships; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six reviewed prose revisions preserve every full code block. Human comprehension is not inferred.');

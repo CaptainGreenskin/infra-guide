@@ -1,0 +1,16 @@
+{
+  "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42476371903",
+  "source_commit": "9ab0ea868b09a20f041eb5f839ba1fce823b6600",
+  "jobs": [
+    {
+      "name": "identity",
+      "conclusion": "success",
+      "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42476371903/job/128718532158"
+    }
+  ],
+  "record_sha256": "08fd418e99fd8525062a1097b955d21f9d8993bfeca1e4d47e7b07b9239244b4",
+  "source_sha256": {
+    "identity_lab.py": "56a46b3f00a5deea7478eb29ac13f73233fbdc22756c781165e4db8de692c337"
+  },
+  "scope": "Native kind API authentication/RBAC on one Linux host; not cloud IAM, token projection/refresh or production multi-tenancy."
+}

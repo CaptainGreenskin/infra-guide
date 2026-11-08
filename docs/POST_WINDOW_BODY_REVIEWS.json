@@ -2114,6 +2114,153 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "12328c42af6713d68ff8ad3f5948b51d35f03a90d6d2852acd8d6d26eab1bdc9",
+      "reviewed_content_sha256": "d96bd7c06a4a6cbd70af414ca892cf7e33785b519856744ce06fe8b1c0bc49a8",
+      "scope": "Concise normal task flow and optional contract detail",
+      "observation": "Defines model/runtime/tools in one37-report flow; contract table is optional, while original source, code and IDs remain intact. Long cases folded only in the renderer after subsection IDs are generated.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "477e253a723a526b26dd99278b09f11385ed9971e061d40c7b7ba2d42633f480",
+      "reviewed_content_sha256": "82893e8966cc547e72ea59d40e5b97a23524bf6094031ecd2f0bb218b896da51",
+      "scope": "Teaching checkpoint contract connected to actual DCP",
+      "observation": "PyTorch2.5.1 CPU/Gloo two-rank Stateful save/load in new processes, exact original continuous baseline state and inputs, reset-Adam and missing.metadata controls; no FSDP/GPU claim.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "57560529eb407bd545a53e830a5795cc0c2d618bd9e44b68e0531d13f87db25b",
+      "reviewed_content_sha256": "cd66866db6db3b7806f087acbc5a98d8d21d812b45222ca729e34579d7e96c50",
+      "scope": "Normal resource responsibilities before exceptions",
+      "observation": "Responsibility table now explains how entrance/compute/storage/authorization/recovery participate in one request. Original code and source section titles unchanged.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "4b0aefc094383622b165f44b053f65d15a398a92fbeaee355d60608b7f99d7d2",
+      "reviewed_content_sha256": "570993bd0c47936a7dd238bd8f66fc19c140ccaf43c63b20521a171f2b332cf0",
+      "scope": "Durable waiting connected to real workflow SDK",
+      "observation": "LangGraph1.2.20/File-SQLite, new-process resume, independentHTTP stage/publish effects, stable-op versus newUUID reentry, actual parallel failure resume and source-based42 report oracle; optional detailed evidence.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "5788bbaf7c6b6609a894b627e9894ce6d8892b92bd8eb392bde36f2d8f96a7fb",
+      "reviewed_content_sha256": "0434290931e99d722811aa8d75437e14518b4d9a0abedbd23c3edda6bc8a8653",
+      "scope": "Continue the mask coordinate rule into its real API",
+      "observation": "Short cross-chapter link reaches the same TinyDecoder native SDPA cache example; original section headings and full code retained.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "f4f9054ef488016f9e074def06fb6a94eb0cd94acd2cc4efb4e408150cdaf6ae",
+      "reviewed_content_sha256": "b3594c425220c2286a60cce79327cccf039415588a2d5b60ffe88c75a60b1a53",
+      "scope": "Native ServiceAccount, authentication and authorization",
+      "observation": "Isolated actual kind CI, CA+Bearer without admin clientcert, SSR identity, same credential200/403/200, explicit403 boundaries, audience/Pod401 and unchanged protected objects; native source and cleanup verified.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "04099cdab247155691e610c44477da33308ad9dd58c31ed4d8b4e6cc878115a5",
+      "reviewed_content_sha256": "65b5a926dae1ef1a72d6dbda0853ca45c41498729e53e2ad8c9e34b6655b53df",
+      "scope": "Same model through native cached SDPA",
+      "observation": "Original664-parameter TinyDecoder, full/piecewise logits, explicit logical-offset mask, actual wrong non-square causal rejection, same P2/G3 generation ledger; CPU MATH only.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "e2fe80601197159dedd476c46fdc0e5d543f16b83b04f508ea1175ffcf1c5127",
+      "reviewed_content_sha256": "043b3a8f921bce4a86843bfea82d1e916db207e74732e551620516e6cc28ac5e",
+      "scope": "Components and relationships before tensor arithmetic",
+      "observation": "First section introduces eight model components, then the same V8/B2/T4 inputs and shifted targets; ignored supervision is connected to later training. Original figures retained.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
     }
   ]
 }

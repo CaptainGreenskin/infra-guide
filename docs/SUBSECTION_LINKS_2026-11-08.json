@@ -242,7 +242,9 @@
     },
     {
       "id": "iam-security",
-      "targets": []
+      "targets": [
+        "subsection-2-1dlazmr"
+      ]
     },
     {
       "id": "elasticity",
@@ -414,7 +416,8 @@
       "id": "checkpoint-recovery",
       "targets": [
         "subsection-1-zredmh",
-        "subsection-1-1mlk4h4"
+        "subsection-1-1mlk4h4",
+        "torch-checkpoint-path"
       ]
     },
     {
@@ -444,6 +447,7 @@
     {
       "id": "model-serving",
       "targets": [
+        "sdpa-cache-path",
         "subsection-5-qvstci"
       ]
     },
@@ -587,8 +591,10 @@
         "subsection-8-19qsp4l",
         "subsection-8-1hxbx9c",
         "subsection-8-1ugi1r3",
+        "langgraph-workflow-objects",
         "agent-planning-run",
-        "subsection-9-62i94t"
+        "subsection-9-62i94t",
+        "langgraph-workflow-run"
       ]
     },
     {

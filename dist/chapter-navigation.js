@@ -24,10 +24,14 @@ function chapterNavigation(article){
    }
    return token;
   });
-  return {title,html,id:'section-'+(index+1),children};
+  return {title:chapterSectionTitle(article,index),originalTitle:title,html,id:'section-'+(index+1),children};
  });
 }
 function chapterContentsHTML(article,navigation=chapterNavigation(article)){
  const url=readingArticleURL(article.id),escape=trainingEscape;
- return navigation.map((s,index)=>'<div class="chapter-toc-section"><a data-toc="'+s.id+'" href="'+url+'#'+s.id+'">'+(index+1)+'. '+escape(s.title)+'</a>'+(s.children.length?'<div class="chapter-toc-children">'+s.children.map(h=>'<a class="chapter-toc-level-'+h.level+'" data-toc="'+escape(h.id)+'" href="'+url+'#'+encodeURIComponent(h.id)+'">'+escape(h.title)+'</a>').join('')+'</div>':'')+'</div>').join('');
+ return navigation.map((s,index)=>{
+  const children=s.children.map(h=>'<a class="chapter-toc-level-'+h.level+'" data-toc="'+escape(h.id)+'" href="'+url+'#'+encodeURIComponent(h.id)+'">'+escape(h.title)+'</a>').join('');
+  const nested=!children?'':isOptionalCaseSection(article,index)?'<details class="chapter-toc-case-details"><summary>实战小节</summary>'+children+'</details>':'<div class="chapter-toc-children">'+children+'</div>';
+  return '<div class="chapter-toc-section"><a data-toc="'+s.id+'" href="'+url+'#'+s.id+'">'+(index+1)+'. '+escape(s.title)+'</a>'+nested+'</div>';
+ }).join('');
 }

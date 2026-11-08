@@ -107,7 +107,10 @@ assert.equal(current.title,baseline.title);assert.deepEqual(current.sections.map
 assert.equal(current.updated,'2026.11.08');assert.equal(current.minutes,55);
 const all=current.sections.map(s=>s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
 const pre=s=>[...s.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
-const oldPre=pre(before),newPre=pre(all);assert.equal(newPre.length,oldPre.length+2);
+const oldPre=pre(before),newPre=pre(all);
+// The original planning stage added two blocks; the independently checked
+// native framework bridge adds six while retaining every prior source block.
+assert.equal(newPre.length,oldPre.length+2+6);
 let cursor=-1;for(const original of oldPre){const at=newPre.indexOf(original,cursor+1);assert(at>cursor,'old complete pre bytes/order changed');cursor=at;}
 for(const[,id]of before.matchAll(/\bid="([^"]+)"/g))assert(all.includes('id="'+id+'"'),'missing old inner anchor '+id);
 const full=[...all.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>decode(m[1]));

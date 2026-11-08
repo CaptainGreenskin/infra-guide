@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 440" role="img" aria-labelledby="title desc">
+<title id="title">42报告怎样暂停，再由新进程继续</title><desc id="desc">图状态已有42草稿，审批节点暂存后interrupt。文件检查点保留等待，旧进程退出；新进程打开同一文件、传同一thread_id和Command批准，从审批节点开头重入，稳定操作去重后发布。</desc>
+<metadata>{&quot;expected_total&quot;: 42, &quot;counts&quot;: {&quot;read_base&quot;: 1, &quot;read_extra&quot;: 1, &quot;draft&quot;: 1, &quot;check_total&quot;: 1, &quot;check_sources&quot;: 1, &quot;approval_publish&quot;: 2}, &quot;parallel_overlap_proven&quot;: true, &quot;source_sha256&quot;: {&quot;workflow_lab.py&quot;: &quot;da659b3dc8fab096f52a7b3b8869e957da1cc1eb40da9cec5c50ffdb3aa78356&quot;, &quot;orders.json&quot;: &quot;24a92c2da5ad573c155abde2d272d0f4b28c79845503613143a31964150ac6bb&quot;, &quot;requirements.txt&quot;: &quot;6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75&quot;, &quot;README.md&quot;: &quot;c0d238302fc54212cbe3755af7ea127d02fe942a5ffcd32f1faa772de7cdc28e&quot;}}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#526987" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#23354d;font-size:18px}.title{font-size:25px;font-weight:700}.label{font-size:18px;font-weight:650}.small{font-size:16px}.muted{fill:#5c6d82}.box{fill:#fff;stroke:#bdcde0;stroke-width:1.5}.good{fill:#ecf7f2;stroke:#80bca6;stroke-width:1.5}.wait{fill:#fff6e5;stroke:#d9b45d;stroke-width:1.5}.bad{fill:#fff0f0;stroke:#dba5a5;stroke-width:1.5}.line{stroke:#526987;stroke-width:2;fill:none;marker-end:url(#arrow)}.persist{stroke:#8a70b5;stroke-width:2;fill:none;stroke-dasharray:7 5;marker-end:url(#arrow)}</style>
+<rect width="1080" height="440" rx="16" fill="#f8fafd"/>
+<text x="32" y="43" class="title">状态留下来，进程可以退出</text>
+<rect x="32" y="74" width="280" height="112" rx="10" class="box"/><text x="51" y="106" class="label">state：42草稿</text><text x="51" y="138">基础37＋补录5</text><text x="51" y="168" class="small muted">来源与稳定操作身份已保存</text>
+<path d="M319 130H368" class="line"/>
+<rect x="386" y="74" width="302" height="112" rx="10" class="wait"/><text x="405" y="106" class="label">node：approval_publish</text><text x="405" y="138">暂存 → interrupt 等批准</text><text x="405" y="168" class="small muted">暂存已提交；还没有发布报告</text>
+<path d="M695 130H744" class="persist"/>
+<rect x="762" y="74" width="286" height="112" rx="10" class="box"/><text x="781" y="106" class="label">文件检查点</text><text x="781" y="138">state＋待决中断</text><text x="781" y="168" class="small muted">thread_id = report-A</text>
+<path d="M905 194V235H174V263" class="persist"/>
+<text x="361" y="224" class="small muted">旧进程退出；新进程打开同一文件、同一thread</text>
+<rect x="32" y="278" width="280" height="112" rx="10" class="box"/><text x="51" y="310" class="label">Command(resume=批准)</text><text x="51" y="342">绑定42草稿摘要</text><text x="51" y="372" class="small muted">输入交给原来的interrupt</text>
+<path d="M319 334H368" class="line"/>
+<rect x="386" y="278" width="302" height="112" rx="10" class="wait"/><text x="405" y="310" class="label">从审批节点开头重入</text><text x="405" y="342">再次暂存 → 原回执</text><text x="405" y="372" class="small muted">2次尝试，暂存效果仍1份</text>
+<path d="M695 334H744" class="line"/>
+<rect x="762" y="278" width="286" height="112" rx="10" class="good"/><text x="781" y="310" class="label">发布42报告</text><text x="781" y="342">匹配批准后才执行</text><text x="781" y="372" class="small muted">接收方在独立事务内提交</text>
+<text x="32" y="424" class="small muted">实线：执行推进。虚线：检查点与恢复。实测数量来自同一正常场景。</text></svg>

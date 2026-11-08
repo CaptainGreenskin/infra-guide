@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 530" role="img" aria-labelledby="title desc">
+<title id="title">同一个TinyDecoder的SDPA缓存正常路径</title><desc id="desc">先缓存输入0和1，再处理2和3；新query逻辑位置决定可见范围，随后继续原残差、前馈和输出头。</desc>
+<metadata>{&quot;schema&quot;: &quot;sdpa-cache-v1&quot;, &quot;source_sha256&quot;: {&quot;cache_lab.py&quot;: &quot;0095bbd7dda812dfc88360b1aac3515c17df8c32e50723547ca78194e451076c&quot;, &quot;tiny_decoder.py&quot;: &quot;724963cf4a04ac76f6b7d125876d0be1947b1b29a6b0a159a5bb347477dc3e6f&quot;, &quot;README.md&quot;: &quot;b3b09720231d8238f13c62ec25f524dee8778aa24dac6777e35ba16d370e602a&quot;, &quot;requirements.txt&quot;: &quot;8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e&quot;}, &quot;model_parameters&quot;: 664, &quot;query_positions&quot;: [2, 3], &quot;visible&quot;: [[true, true, true, false], [true, true, true, true]], &quot;kv_shape&quot;: [2, 2, 4, 4], &quot;backend&quot;: &quot;SDPBackend.MATH&quot;, &quot;logits_max_error&quot;: 1.7763568394002505e-15}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#4d668a" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#263951;font-size:18px}.title{font-size:25px;font-weight:700}.label{font-size:20px;font-weight:650}.small{font-size:16px}.box{fill:white;stroke:#b5c7de}.good,.yes{fill:#edf8f1;stroke:#8cbda1}.no{fill:#eef1f6;stroke:#cbd4e0}.arrow{fill:none;stroke:#4d668a;stroke-width:2;marker-end:url(#arrow)}</style><rect width="1024" height="530" rx="16" fill="#f8fafd"/>
+<text x="32" y="42" class="title">先接上历史，再按逻辑位置读缓存</text>
+<rect x="32" y="78" width="205" height="84" rx="10" class="box"/><text x="48" y="108" class="label">新输入 [2,3]</text><text x="48" y="138" class="small">past=2，length=2</text>
+<path d="M243 119H263" class="arrow"/>
+<rect x="276" y="78" width="222" height="84" rx="10" class="box"/><text x="292" y="108" class="label">位置表与QKV投影</text><text x="292" y="138" class="small">新Q的位置为2、3</text>
+<path d="M504 119H524" class="arrow"/>
+<rect x="537" y="78" width="205" height="84" rx="10" class="good"/><text x="553" y="108" class="label">追加新K/V</text><text x="553" y="138" class="small">合并后位置0、1、2、3</text>
+<path d="M748 119H768" class="arrow"/>
+<rect x="781" y="78" width="211" height="84" rx="10" class="good"/><text x="797" y="108" class="label">原生SDPA</text><text x="797" y="138" class="small">新Q读取合法K/V</text>
+<rect x="537" y="190" width="205" height="61" rx="9" class="box"/><text x="553" y="215">已有缓存K/V</text><text x="553" y="238" class="small">来自先前输入[0,1]</text><path d="M640 184V169" class="arrow"/>
+<text x="32" y="280" class="label">可见矩阵：key位置 ≤ query位置</text>
+<text x="180" y="307" class="small">0</text><text x="244" y="307" class="small">1</text><text x="308" y="307" class="small">2</text><text x="372" y="307" class="small">3</text>
+<text x="32" y="347">query位置2</text><text x="32" y="407">query位置3</text>
+<rect x="178" y="316" width="54" height="48" rx="7" class="yes"/><text x="196" y="347">✓</text><rect x="242" y="316" width="54" height="48" rx="7" class="yes"/><text x="260" y="347">✓</text><rect x="306" y="316" width="54" height="48" rx="7" class="yes"/><text x="324" y="347">✓</text><rect x="370" y="316" width="54" height="48" rx="7" class="no"/><text x="388" y="347">—</text><rect x="178" y="376" width="54" height="48" rx="7" class="yes"/><text x="196" y="407">✓</text><rect x="242" y="376" width="54" height="48" rx="7" class="yes"/><text x="260" y="407">✓</text><rect x="306" y="376" width="54" height="48" rx="7" class="yes"/><text x="324" y="407">✓</text><rect x="370" y="376" width="54" height="48" rx="7" class="yes"/><text x="388" y="407">✓</text>
+<text x="32" y="461" class="small">局部行0 → 逻辑位置2；局部行1 → 逻辑位置3</text>
+<rect x="519" y="295" width="473" height="143" rx="10" class="box"/><text x="539" y="327" class="label">SDPA之后，继续原模型的层</text><text x="539" y="359">残差 → 前馈 → 输出头 → logits</text><text x="539" y="388" class="small">与完整[0,1,2,3]的对应位置逐项核对</text><text x="539" y="416" class="small">相同权重、664参数；缓存不增加参数</text>
+<path d="M886 168V282" class="arrow"/>
+<text x="32" y="506" class="small">矩阵取自本次实际两位置续算；行列坐标与程序的query_positions、visible一致。</text></svg>

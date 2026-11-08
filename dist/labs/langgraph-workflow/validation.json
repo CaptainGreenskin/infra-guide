@@ -1,0 +1,1405 @@
+{
+  "schema": "langgraph-workflow-validation-v1",
+  "verified_on": "2026-11-08",
+  "command": "python -B workflow_lab.py",
+  "source_sha256": {
+    "workflow_lab.py": "da659b3dc8fab096f52a7b3b8869e957da1cc1eb40da9cec5c50ffdb3aa78356",
+    "orders.json": "24a92c2da5ad573c155abde2d272d0f4b28c79845503613143a31964150ac6bb",
+    "requirements.txt": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+    "README.md": "c0d238302fc54212cbe3755af7ea127d02fe942a5ffcd32f1faa772de7cdc28e"
+  },
+  "official_source_verification": [
+    {
+      "distribution": "langgraph",
+      "version": "1.2.20",
+      "metadata": "https://pypi.org/pypi/langgraph/1.2.20/json",
+      "source_archive": "https://files.pythonhosted.org/packages/41/77/892e53207bfadd4b114d274737735444d06216ec9a88dfc4def9bd888254/langgraph-1.2.20.tar.gz",
+      "source_archive_sha256": "79f86df92f2dd17d5ec464cab68dbb685439ab102ca39f0b1b7b198025a2414c",
+      "files": [
+        {
+          "path": "langgraph/types.py",
+          "sha256": "3a76d057207066e77f2e7684b0e3822466578516f4d01b931590299fc8a53f3b",
+          "matches_release": true
+        },
+        {
+          "path": "langgraph/graph/state.py",
+          "sha256": "d8c8021a93a8fc895d62335a9482e50d51353343bf885901e6487611dcd0d212",
+          "matches_release": true
+        },
+        {
+          "path": "langgraph/channels/binop.py",
+          "sha256": "775399a9680071cf662b4a131ab80aa36fe8b8302270361d1e8e9e0d709df80f",
+          "matches_release": true
+        }
+      ]
+    },
+    {
+      "distribution": "langgraph-checkpoint-sqlite",
+      "version": "3.1.3",
+      "metadata": "https://pypi.org/pypi/langgraph-checkpoint-sqlite/3.1.3/json",
+      "source_archive": "https://files.pythonhosted.org/packages/6a/b7/abc333499322d7d00284255c6a56271c7741f65fba5114a137f96023df43/langgraph_checkpoint_sqlite-3.1.3.tar.gz",
+      "source_archive_sha256": "df305e347e66d97375e680bc4a5337e4d37d5a4996b3c24f49a942c515caa7d7",
+      "files": [
+        {
+          "path": "langgraph/checkpoint/sqlite/__init__.py",
+          "sha256": "13829d2b3961129e13ee3113a6674bff790181d26e5cae83c3bfabd6cca9074c",
+          "matches_release": true
+        }
+      ]
+    }
+  ],
+  "program": {
+    "schema": "langgraph-workflow-v1",
+    "status": "passed",
+    "environment": {
+      "python": "3.12.13",
+      "sqlite": "3.53.3",
+      "platform": "Darwin",
+      "packages": {
+        "langgraph": "1.2.20",
+        "langgraph-checkpoint": "4.3.1",
+        "langgraph-checkpoint-sqlite": "3.1.3"
+      }
+    },
+    "cases": {
+      "stable": {
+        "waiting": {
+          "error": null,
+          "pid": 53197,
+          "state": {
+            "checkpoint_count": 6,
+            "next": [
+              "approval_publish"
+            ],
+            "tasks": [
+              {
+                "error": null,
+                "interrupts": [
+                  {
+                    "id": "423dbc4076007e27c6eea8b14cff210f",
+                    "value": {
+                      "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                      "task_id": "report-A",
+                      "total": 42
+                    }
+                  }
+                ],
+                "name": "approval_publish"
+              }
+            ],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "stage_op": "report-A:stage",
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "after_parallel_failure": null,
+        "before_resume_receiver": {
+          "effects": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": false
+            }
+          ],
+          "reports": []
+        },
+        "resumed": {
+          "error": null,
+          "pid": 53207,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": true,
+                "op": "report-A:stage",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "completed_again": {
+          "error": null,
+          "pid": 53208,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": true,
+                "op": "report-A:stage",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "wrong_thread": {
+          "error": null,
+          "pid": 53206,
+          "state": {
+            "checkpoint_count": 0,
+            "next": [],
+            "tasks": [],
+            "values": {}
+          }
+        },
+        "counts": {
+          "read_base": 1,
+          "read_extra": 1,
+          "draft": 1,
+          "check_total": 1,
+          "check_sources": 1,
+          "approval_publish": 2
+        },
+        "parallel_overlap_proven": true,
+        "events": [
+          {
+            "seq": 1,
+            "node": "read_base",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 8459152448
+          },
+          {
+            "seq": 2,
+            "node": "read_extra",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 8459152448
+          },
+          {
+            "seq": 3,
+            "node": "draft",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 8459152448
+          },
+          {
+            "seq": 4,
+            "node": "check_sources",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 6112309248
+          },
+          {
+            "seq": 5,
+            "node": "check_total",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 6129135616
+          },
+          {
+            "seq": 6,
+            "node": "check_total",
+            "kind": "finish",
+            "pid": 53197,
+            "tid": 6129135616
+          },
+          {
+            "seq": 7,
+            "node": "check_sources",
+            "kind": "finish",
+            "pid": 53197,
+            "tid": 6112309248
+          },
+          {
+            "seq": 8,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53197,
+            "tid": 8459152448
+          },
+          {
+            "seq": 9,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53207,
+            "tid": 8459152448
+          }
+        ],
+        "same_operation_changed_content": "operation_conflict_409",
+        "receiver": {
+          "effects": [
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            },
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": false
+            },
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": true
+            },
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "duplicate": false
+            }
+          ],
+          "reports": [
+            {
+              "op": "report-A:publish",
+              "target": "report-A",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "accepted": true,
+          "expected_total": 42,
+          "checks": {
+            "one_staged_draft": true,
+            "one_publish_effect": true,
+            "one_report": true,
+            "all_effect_contents_match_source": true,
+            "report_matches_source": true
+          },
+          "staged_effects": 1,
+          "published_effects": 1,
+          "report_count": 1
+        }
+      },
+      "new_id_on_reentry": {
+        "waiting": {
+          "error": null,
+          "pid": 53211,
+          "state": {
+            "checkpoint_count": 6,
+            "next": [
+              "approval_publish"
+            ],
+            "tasks": [
+              {
+                "error": null,
+                "interrupts": [
+                  {
+                    "id": "d2a8d63e8d8ad2099f2a5851c1ed68b2",
+                    "value": {
+                      "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                      "task_id": "report-A",
+                      "total": 42
+                    }
+                  }
+                ],
+                "name": "approval_publish"
+              }
+            ],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "stage_op": "report-A:stage",
+              "task_id": "report-A",
+              "unsafe": true
+            }
+          }
+        },
+        "after_parallel_failure": null,
+        "before_resume_receiver": {
+          "effects": [
+            {
+              "op": "8df34872-d57d-4fde-86b8-e3f60a1a7551",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "8df34872-d57d-4fde-86b8-e3f60a1a7551",
+              "phase": "stage",
+              "duplicate": false
+            }
+          ],
+          "reports": []
+        },
+        "resumed": {
+          "error": null,
+          "pid": 53216,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "b6eaaa15-cf20-4bbe-ab83-194e55f676b6",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": true
+            }
+          }
+        },
+        "completed_again": {
+          "error": null,
+          "pid": 53221,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "b6eaaa15-cf20-4bbe-ab83-194e55f676b6",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": true
+            }
+          }
+        },
+        "wrong_thread": {
+          "error": null,
+          "pid": 53214,
+          "state": {
+            "checkpoint_count": 0,
+            "next": [],
+            "tasks": [],
+            "values": {}
+          }
+        },
+        "counts": {
+          "read_base": 1,
+          "read_extra": 1,
+          "draft": 1,
+          "check_total": 1,
+          "check_sources": 1,
+          "approval_publish": 2
+        },
+        "parallel_overlap_proven": true,
+        "events": [
+          {
+            "seq": 1,
+            "node": "read_base",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 8459152448
+          },
+          {
+            "seq": 2,
+            "node": "read_extra",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 8459152448
+          },
+          {
+            "seq": 3,
+            "node": "draft",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 8459152448
+          },
+          {
+            "seq": 4,
+            "node": "check_sources",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 6154547200
+          },
+          {
+            "seq": 5,
+            "node": "check_total",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 6171373568
+          },
+          {
+            "seq": 6,
+            "node": "check_total",
+            "kind": "finish",
+            "pid": 53211,
+            "tid": 6171373568
+          },
+          {
+            "seq": 7,
+            "node": "check_sources",
+            "kind": "finish",
+            "pid": 53211,
+            "tid": 6154547200
+          },
+          {
+            "seq": 8,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53211,
+            "tid": 8459152448
+          },
+          {
+            "seq": 9,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53216,
+            "tid": 8459152448
+          }
+        ],
+        "same_operation_changed_content": "operation_conflict_409",
+        "receiver": {
+          "effects": [
+            {
+              "op": "8df34872-d57d-4fde-86b8-e3f60a1a7551",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            },
+            {
+              "op": "b6eaaa15-cf20-4bbe-ab83-194e55f676b6",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            },
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "8df34872-d57d-4fde-86b8-e3f60a1a7551",
+              "phase": "stage",
+              "duplicate": false
+            },
+            {
+              "op": "b6eaaa15-cf20-4bbe-ab83-194e55f676b6",
+              "phase": "stage",
+              "duplicate": false
+            },
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "duplicate": false
+            }
+          ],
+          "reports": [
+            {
+              "op": "report-A:publish",
+              "target": "report-A",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "accepted": false,
+          "expected_total": 42,
+          "checks": {
+            "one_staged_draft": false,
+            "one_publish_effect": true,
+            "one_report": true,
+            "all_effect_contents_match_source": true,
+            "report_matches_source": true
+          },
+          "staged_effects": 2,
+          "published_effects": 1,
+          "report_count": 1
+        }
+      },
+      "parallel_failure": {
+        "waiting": {
+          "error": null,
+          "pid": 53224,
+          "state": {
+            "checkpoint_count": 6,
+            "next": [
+              "approval_publish"
+            ],
+            "tasks": [
+              {
+                "error": null,
+                "interrupts": [
+                  {
+                    "id": "47941f2740a49a14b3ae3bc485314955",
+                    "value": {
+                      "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                      "task_id": "report-A",
+                      "total": 42
+                    }
+                  }
+                ],
+                "name": "approval_publish"
+              }
+            ],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "stage_op": "report-A:stage",
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "after_parallel_failure": {
+          "error": "injected_source_check",
+          "pid": 53223,
+          "state": {
+            "checkpoint_count": 5,
+            "next": [
+              "check_sources"
+            ],
+            "tasks": [
+              {
+                "error": null,
+                "interrupts": [],
+                "name": "check_total"
+              },
+              {
+                "error": "RuntimeError('injected_source_check')",
+                "interrupts": [],
+                "name": "check_sources"
+              }
+            ],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "stage_op": "report-A:stage",
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "before_resume_receiver": {
+          "effects": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": false
+            }
+          ],
+          "reports": []
+        },
+        "resumed": {
+          "error": null,
+          "pid": 53227,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": true,
+                "op": "report-A:stage",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "completed_again": {
+          "error": null,
+          "pid": 53228,
+          "state": {
+            "checkpoint_count": 7,
+            "next": [],
+            "tasks": [],
+            "values": {
+              "base_total": 37,
+              "checks": [
+                "sources",
+                "total"
+              ],
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              },
+              "extra_ref": "late-A/v1",
+              "extra_total": 5,
+              "manifest": [
+                {
+                  "resource": "orders-A",
+                  "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                  "version": 3
+                },
+                {
+                  "resource": "late-A",
+                  "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                  "version": 1
+                }
+              ],
+              "publish_op": "report-A:publish",
+              "publish_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": false,
+                "op": "report-A:publish",
+                "phase": "publish"
+              },
+              "stage_op": "report-A:stage",
+              "stage_receipt": {
+                "draft_digest": "8ee29b371c5f29f92b5b45e0d6cd7ae11dd127a4cdeaffb08cce2395f1353b06",
+                "duplicate": true,
+                "op": "report-A:stage",
+                "phase": "stage"
+              },
+              "task_id": "report-A",
+              "unsafe": false
+            }
+          }
+        },
+        "wrong_thread": {
+          "error": null,
+          "pid": 53226,
+          "state": {
+            "checkpoint_count": 0,
+            "next": [],
+            "tasks": [],
+            "values": {}
+          }
+        },
+        "counts": {
+          "read_base": 1,
+          "read_extra": 1,
+          "draft": 1,
+          "check_total": 1,
+          "check_sources": 2,
+          "approval_publish": 2
+        },
+        "parallel_overlap_proven": true,
+        "events": [
+          {
+            "seq": 1,
+            "node": "read_base",
+            "kind": "enter",
+            "pid": 53223,
+            "tid": 8459152448
+          },
+          {
+            "seq": 2,
+            "node": "read_extra",
+            "kind": "enter",
+            "pid": 53223,
+            "tid": 8459152448
+          },
+          {
+            "seq": 3,
+            "node": "draft",
+            "kind": "enter",
+            "pid": 53223,
+            "tid": 8459152448
+          },
+          {
+            "seq": 4,
+            "node": "check_sources",
+            "kind": "enter",
+            "pid": 53223,
+            "tid": 6149042176
+          },
+          {
+            "seq": 5,
+            "node": "check_total",
+            "kind": "enter",
+            "pid": 53223,
+            "tid": 6165868544
+          },
+          {
+            "seq": 6,
+            "node": "check_total",
+            "kind": "finish",
+            "pid": 53223,
+            "tid": 6165868544
+          },
+          {
+            "seq": 7,
+            "node": "check_sources",
+            "kind": "injected_failure",
+            "pid": 53223,
+            "tid": 6149042176
+          },
+          {
+            "seq": 8,
+            "node": "check_sources",
+            "kind": "enter",
+            "pid": 53224,
+            "tid": 8459152448
+          },
+          {
+            "seq": 9,
+            "node": "check_sources",
+            "kind": "finish",
+            "pid": 53224,
+            "tid": 8459152448
+          },
+          {
+            "seq": 10,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53224,
+            "tid": 8459152448
+          },
+          {
+            "seq": 11,
+            "node": "approval_publish",
+            "kind": "enter",
+            "pid": 53227,
+            "tid": 8459152448
+          }
+        ],
+        "same_operation_changed_content": "operation_conflict_409",
+        "receiver": {
+          "effects": [
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            },
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ],
+          "attempts": [
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": false
+            },
+            {
+              "op": "report-A:stage",
+              "phase": "stage",
+              "duplicate": true
+            },
+            {
+              "op": "report-A:publish",
+              "phase": "publish",
+              "duplicate": false
+            }
+          ],
+          "reports": [
+            {
+              "op": "report-A:publish",
+              "target": "report-A",
+              "draft": {
+                "sources": [
+                  {
+                    "resource": "orders-A",
+                    "values_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+                    "version": 3
+                  },
+                  {
+                    "resource": "late-A",
+                    "values_sha256": "1ae3592f8248c3f879b56afe3f2ce6aad45ba898434796d35c565684397fb3e6",
+                    "version": 1
+                  }
+                ],
+                "target": "report-A",
+                "total": 42
+              }
+            }
+          ]
+        },
+        "oracle": {
+          "accepted": true,
+          "expected_total": 42,
+          "checks": {
+            "one_staged_draft": true,
+            "one_publish_effect": true,
+            "one_report": true,
+            "all_effect_contents_match_source": true,
+            "report_matches_source": true
+          },
+          "staged_effects": 1,
+          "published_effects": 1,
+          "report_count": 1
+        }
+      },
+      "corrupt_report": {
+        "accepted": false,
+        "expected_total": 42,
+        "checks": {
+          "one_staged_draft": true,
+          "one_publish_effect": true,
+          "one_report": true,
+          "all_effect_contents_match_source": true,
+          "report_matches_source": false
+        },
+        "staged_effects": 1,
+        "published_effects": 1,
+        "report_count": 1
+      }
+    },
+    "cleanup": {
+      "receiver_children_reaped": true,
+      "worker_children_reaped": true,
+      "case_directories": "removed"
+    }
+  }
+}

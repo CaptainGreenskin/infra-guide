@@ -100,5 +100,5 @@ schedulingDepth.sections=[
 ];
 Object.assign(schedulingDepth,{textbook:true,minutes:45,updated:'2026.11.08',refs:['rtResources','rtQuota','rtAssign','rtTaint','rtKind','kueue']});
 const c4Coverage=cloudCoverageRows.find(r=>r[0]==='C4');
-c4Coverage[2]='八篇展开运行时、控制面、工作负载、调度、CNI、CSI、配置与HPA；已在Linux Docker读取实际namespace/cgroup限制，并用kind验证配额拒绝、CPU形状、污点与反亲和。';
+c4Coverage[2]='覆盖运行时、控制面、工作负载、调度、网络、存储、配置与HPA；Linux Docker与kind验证执行约束和放置，etcd三成员实验继续核对提交、观察及恢复。';
 c4Coverage[3]='kind是单机节点容器实验；真实多物理节点、云CNI/CSI、生产伸缩与Operator实现仍待专项验证。';

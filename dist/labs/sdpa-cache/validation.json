@@ -1,0 +1,691 @@
+{
+  "schema": "sdpa-cache-v1",
+  "verified_on": "2026-11-08",
+  "status": "passed",
+  "environment": {
+    "python": "3.12.13",
+    "system": "Darwin",
+    "machine": "arm64",
+    "torch": "2.5.1"
+  },
+  "command": "python -B cache_lab.py",
+  "source_sha256": {
+    "cache_lab.py": "0095bbd7dda812dfc88360b1aac3515c17df8c32e50723547ca78194e451076c",
+    "tiny_decoder.py": "724963cf4a04ac76f6b7d125876d0be1947b1b29a6b0a159a5bb347477dc3e6f",
+    "README.md": "b3b09720231d8238f13c62ec25f524dee8778aa24dac6777e35ba16d370e602a",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "program": {
+    "status": "passed",
+    "torch": "2.5.1",
+    "device": "cpu",
+    "dtype": "float64",
+    "backend": "SDPBackend.MATH",
+    "observed_backend_events": [
+      "aten::_scaled_dot_product_attention_math",
+      "aten::scaled_dot_product_attention"
+    ],
+    "model_parameters": 664,
+    "vocab_size": 8,
+    "max_positions": 4,
+    "weights": "same state_dict after original example's one SGD update",
+    "training_loss_before": 8.627936874049762,
+    "paper_api": {
+      "expected_full": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.5,
+          3.0
+        ],
+        [
+          3.5,
+          2.0
+        ]
+      ],
+      "native_full": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.5,
+          3.0
+        ],
+        [
+          3.5,
+          2.0
+        ]
+      ],
+      "native_last": [
+        3.5,
+        2.0
+      ],
+      "wrong_is_causal_last": [
+        2.0,
+        0.0
+      ],
+      "last_visible": [
+        true,
+        true,
+        true
+      ],
+      "wrong_visible": [
+        true,
+        false,
+        false
+      ]
+    },
+    "cases": {
+      "single": {
+        "chunks": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "logits_max_error": 1.7763568394002505e-15,
+        "trace": [
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "query_positions": [
+              0
+            ],
+            "visible": [
+              [
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 1
+          },
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "query_positions": [
+              1
+            ],
+            "visible": [
+              [
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 2
+          },
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              3,
+              4
+            ],
+            "query_positions": [
+              2
+            ],
+            "visible": [
+              [
+                true,
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 3
+          },
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              4,
+              4
+            ],
+            "query_positions": [
+              3
+            ],
+            "visible": [
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 4
+          }
+        ]
+      },
+      "two_position": {
+        "chunks": [
+          2,
+          2
+        ],
+        "logits_max_error": 1.7763568394002505e-15,
+        "trace": [
+          {
+            "input_shape": [
+              2,
+              2
+            ],
+            "q_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "query_positions": [
+              0,
+              1
+            ],
+            "visible": [
+              [
+                true,
+                false
+              ],
+              [
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                false
+              ],
+              [
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 2
+          },
+          {
+            "input_shape": [
+              2,
+              2
+            ],
+            "q_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              4,
+              4
+            ],
+            "query_positions": [
+              2,
+              3
+            ],
+            "visible": [
+              [
+                true,
+                true,
+                true,
+                false
+              ],
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true,
+                true,
+                false
+              ],
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 4
+          }
+        ]
+      },
+      "prefill_then_decode": {
+        "chunks": [
+          2,
+          1,
+          1
+        ],
+        "logits_max_error": 1.7763568394002505e-15,
+        "trace": [
+          {
+            "input_shape": [
+              2,
+              2
+            ],
+            "q_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              2,
+              4
+            ],
+            "query_positions": [
+              0,
+              1
+            ],
+            "visible": [
+              [
+                true,
+                false
+              ],
+              [
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                false
+              ],
+              [
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 2
+          },
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              3,
+              4
+            ],
+            "query_positions": [
+              2
+            ],
+            "visible": [
+              [
+                true,
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 3
+          },
+          {
+            "input_shape": [
+              2,
+              1
+            ],
+            "q_shape": [
+              2,
+              2,
+              1,
+              4
+            ],
+            "kv_shape": [
+              2,
+              2,
+              4,
+              4
+            ],
+            "query_positions": [
+              3
+            ],
+            "visible": [
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "required_visible": [
+              [
+                true,
+                true,
+                true,
+                true
+              ]
+            ],
+            "mask_mode": "explicit_positions",
+            "cache_length": 4
+          }
+        ]
+      }
+    },
+    "negative_is_causal": {
+      "assertion_rejected": true,
+      "logits_max_error": 1.2041463644694508,
+      "actual_first_decode_qk_lengths": [
+        1,
+        3
+      ],
+      "trace": [
+        {
+          "input_shape": [
+            2,
+            2
+          ],
+          "q_shape": [
+            2,
+            2,
+            2,
+            4
+          ],
+          "kv_shape": [
+            2,
+            2,
+            2,
+            4
+          ],
+          "query_positions": [
+            0,
+            1
+          ],
+          "visible": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ],
+          "required_visible": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ],
+          "mask_mode": "upper_left_causal",
+          "cache_length": 2
+        },
+        {
+          "input_shape": [
+            2,
+            1
+          ],
+          "q_shape": [
+            2,
+            2,
+            1,
+            4
+          ],
+          "kv_shape": [
+            2,
+            2,
+            3,
+            4
+          ],
+          "query_positions": [
+            2
+          ],
+          "visible": [
+            [
+              true,
+              false,
+              false
+            ]
+          ],
+          "required_visible": [
+            [
+              true,
+              true,
+              true
+            ]
+          ],
+          "mask_mode": "upper_left_causal",
+          "cache_length": 3
+        },
+        {
+          "input_shape": [
+            2,
+            1
+          ],
+          "q_shape": [
+            2,
+            2,
+            1,
+            4
+          ],
+          "kv_shape": [
+            2,
+            2,
+            4,
+            4
+          ],
+          "query_positions": [
+            3
+          ],
+          "visible": [
+            [
+              true,
+              false,
+              false,
+              false
+            ]
+          ],
+          "required_visible": [
+            [
+              true,
+              true,
+              true,
+              true
+            ]
+          ],
+          "mask_mode": "upper_left_causal",
+          "cache_length": 4
+        }
+      ]
+    },
+    "generation": {
+      "prompt": [
+        0,
+        1
+      ],
+      "output_count": 3,
+      "generated_ids": [
+        1,
+        1,
+        1
+      ],
+      "logical_sequence_including_last_output": [
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "trace": [
+        {
+          "phase": "prefill",
+          "input_ids": [
+            0,
+            1
+          ],
+          "selected_id": 1,
+          "cache_length": 2,
+          "query_positions": [
+            0,
+            1
+          ],
+          "visible": [
+            [
+              true,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ],
+          "logits_max_error": 0.0
+        },
+        {
+          "phase": "decode",
+          "input_ids": [
+            1
+          ],
+          "selected_id": 1,
+          "cache_length": 3,
+          "query_positions": [
+            2
+          ],
+          "visible": [
+            [
+              true,
+              true,
+              true
+            ]
+          ],
+          "logits_max_error": 0.0
+        },
+        {
+          "phase": "decode",
+          "input_ids": [
+            1
+          ],
+          "selected_id": 1,
+          "cache_length": 4,
+          "query_positions": [
+            3
+          ],
+          "visible": [
+            [
+              true,
+              true,
+              true,
+              true
+            ]
+          ],
+          "logits_max_error": 5.551115123125783e-17
+        }
+      ],
+      "final_cached_positions": 4,
+      "last_output_not_forwarded": 1
+    },
+    "scope": "actual PyTorch SDPA CPU MATH calls; unchanged full-prefix TinyDecoder oracle; no FlashAttention GPU, tokenizer, trained language quality or speed claim"
+  }
+}

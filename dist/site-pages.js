@@ -44,9 +44,10 @@ function sidebarView(moduleId, current) {
   const chapters = topicArticles.filter(article => article.module === module.id);
   const links = chapters.map((article, index) => {
    const startsGroup = article.group !== undefined && (!index || chapters[index-1].group !== article.group);
-   const group = startsGroup ? '<div class="side-group">'+trainingGroups[article.group]+'</div>' : '';
+   const groupTitle=conceptDirectoryGroups[article.id]||(startsGroup?trainingGroups[article.group]:'');
+   const group = groupTitle ? '<div class="side-group">'+trainingEscape(groupTitle)+'</div>' : '';
    const selected = article.id === current ? 'class="current" aria-current="page"' : '';
-   return `${group}<a href="${readingArticleURL(article.id)}" ${selected}>${article.number} ${article.title}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
+   return `${group}<a href="${readingArticleURL(article.id)}" title="${trainingEscape(article.title)}" ${selected}>${article.number} ${trainingEscape(chapterDirectoryTitle(article))}${progress[article.id]?'<span class="read-mark">✓</span>':''}</a>`;
   }).join('');
   const summaryHref=readingArticleURL(chapters[0].id);
   return `<details ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;

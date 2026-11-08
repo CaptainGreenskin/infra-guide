@@ -1,0 +1,166 @@
+{
+  "schema": "torch-checkpoint-v1",
+  "verified_on": "2026-11-08",
+  "status": "passed",
+  "environment": {
+    "python": "3.12.13",
+    "system": "Darwin",
+    "machine": "arm64",
+    "torch": "2.5.1"
+  },
+  "command": "python -B run_lab.py",
+  "source_sha256": {
+    "train_dcp.py": "a7fb762fb7a43771662788220644e38916547afcbd2f448f425e1b121a070709",
+    "run_lab.py": "0a3a5e4e78ad88990ccbf12bba2bfccefc787ddad38733debab3ef8679ba507f",
+    "reference_train.py": "5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66",
+    "README.md": "6d8cfc66aa837173fae017a93f7040e35b702685bf9aa4d115f6dfe9066da7af",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "program": {
+    "status": "passed",
+    "torch": "2.5.1",
+    "backend": "gloo",
+    "device": "cpu",
+    "world_size": 2,
+    "reference": "unaltered copy of existing labs/ddp/train_ddp.py",
+    "config": {
+      "device": "cpu",
+      "precision": "fp32",
+      "batch_size": 32,
+      "accum": 2,
+      "samples": 1024,
+      "hidden": 32,
+      "seed": 23,
+      "world_size": 2
+    },
+    "continuous_epochs": 4,
+    "split_epochs": [
+      2,
+      2
+    ],
+    "restored_next_epoch": 4,
+    "applied_updates": 32,
+    "exact_fields": [
+      "model",
+      "optimizer",
+      "scaler",
+      "next_epoch",
+      "signature",
+      "rng_by_rank"
+    ],
+    "all_reference_fields_exact": true,
+    "old_launch_completed_before_resume": true,
+    "stopped_worker_pids": [
+      50763,
+      50764
+    ],
+    "resumed_worker_pids": [
+      50775,
+      50776
+    ],
+    "resume_first_batch_ids": [
+      [
+        132,
+        830,
+        741,
+        141,
+        940,
+        885,
+        980,
+        63,
+        591,
+        811,
+        595,
+        84,
+        875,
+        667,
+        789,
+        1019,
+        335,
+        216,
+        805,
+        95,
+        713,
+        896,
+        307,
+        755,
+        683,
+        74,
+        880,
+        13,
+        584,
+        970,
+        408,
+        529
+      ],
+      [
+        189,
+        561,
+        735,
+        449,
+        558,
+        498,
+        198,
+        1006,
+        649,
+        586,
+        67,
+        1003,
+        611,
+        72,
+        224,
+        925,
+        849,
+        39,
+        366,
+        708,
+        481,
+        23,
+        253,
+        857,
+        331,
+        647,
+        396,
+        11,
+        636,
+        192,
+        954,
+        848
+      ]
+    ],
+    "independent_sampler_coverage": [
+      512,
+      512
+    ],
+    "checkpoint_files": [
+      {
+        "name": ".metadata",
+        "bytes": 9428,
+        "sha256": "da5e74053cfa0967c7f48920443c95284b55ac5c1ffae36c7ffa3be28ee0303a"
+      },
+      {
+        "name": "__0_0.distcp",
+        "bytes": 41364,
+        "sha256": "4ac53b5f1269ecc0578021b8e64e7919ee6a0d44ee1032f35bdd78cf37253c21"
+      },
+      {
+        "name": "__1_0.distcp",
+        "bytes": 74044,
+        "sha256": "1efcd0ab1783e89a0cd6cd5e67866d2e4cde96895ad108afaf47d3e67a559e9c"
+      }
+    ],
+    "metadata_key_count": 41,
+    "weights_only_control": {
+      "restored_input_and_rng": true,
+      "optimizer_restored": false,
+      "difference": "state.model.0.weight: tensor_values",
+      "max_parameter_error": 0.007780134677886963
+    },
+    "missing_metadata_control": {
+      "exit_code": 1,
+      "file_not_found": true,
+      "completed_state_exported": false
+    },
+    "scope": "actual synchronous Stateful DCP, two local CPU/Gloo ranks, fixed epoch boundary; no FSDP/DTensor reshard/GPU/object store/power-loss claim"
+  }
+}

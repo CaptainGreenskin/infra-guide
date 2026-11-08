@@ -182,6 +182,13 @@ function conceptPathHTML(path,kind){
  return '<section class="concept-path" id="concept-path" data-concept-kind="'+kind+'">'+(kind==='module'?'<p class="concept-kicker">从这里建立概念</p>':'')+'<h2>'+trainingEscape(path.title||'概念与关系')+'</h2>'+steps+(path.diagram?figure(path.diagram,path.diagramCaption||captions[Object.keys(moduleConceptPaths).find(k=>moduleConceptPaths[k]===path)]||'概念之间的关系示意。'):'')+'</section>';
 }
 function moduleConceptIntro(m){return conceptPathHTML(moduleConceptPaths[m.id],'module');}
-function chapterConceptIntro(a){return conceptPathHTML(chapterConceptPaths[a.id],'chapter');}
+function chapterConceptIntro(a){
+ const content=conceptPathHTML(chapterConceptPaths[a.id],'chapter');
+ // These opening chapters now introduce the objects in their actual body.
+ // Keep the earlier concept path available at its published anchor as a review.
+ return optionalConceptReviews.has(a.id)
+  ?'<details class="concept-review"><summary>概念回顾：本章对象与关系</summary>'+content+'</details>'
+  :content;
+}
 function chapterQuestionPreview(a){const original=guidedIntro(a);return original?'<details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary>'+original+'</details>':'';}
 function conceptTOCLink(path){return '<a data-toc="concept-path" href="'+path+'#concept-path">概念起点与关系</a>';}

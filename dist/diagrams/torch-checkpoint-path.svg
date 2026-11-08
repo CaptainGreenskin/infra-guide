@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 610" role="img" aria-labelledby="title desc">
+<title id="title">原生DCP正常保存与新进程恢复</title><desc id="desc">两个CPU rank在同一步共同调用同步保存，旧进程结束后，新进程先分配目标状态再加载，从第2轮继续。</desc>
+<metadata>{&quot;schema&quot;: &quot;torch-checkpoint-v1&quot;, &quot;source_sha256&quot;: {&quot;train_dcp.py&quot;: &quot;a7fb762fb7a43771662788220644e38916547afcbd2f448f425e1b121a070709&quot;, &quot;run_lab.py&quot;: &quot;0a3a5e4e78ad88990ccbf12bba2bfccefc787ddad38733debab3ef8679ba507f&quot;, &quot;reference_train.py&quot;: &quot;5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66&quot;, &quot;README.md&quot;: &quot;6d8cfc66aa837173fae017a93f7040e35b702685bf9aa4d115f6dfe9066da7af&quot;, &quot;requirements.txt&quot;: &quot;8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e&quot;}, &quot;saved_updates&quot;: 16, &quot;resumed_updates&quot;: 32, &quot;next_epoch_at_save&quot;: 2, &quot;world_size&quot;: 2, &quot;actual_api&quot;: &quot;torch.distributed.checkpoint.save/load&quot;, &quot;measured_timeline&quot;: false}</metadata>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#4d668a" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;fill:#263951;font-size:17px}.title{font-size:25px;font-weight:700}.label{font-size:20px;font-weight:650}.small{font-size:15px}.lane{stroke:#c9d5e5;stroke-width:2}.box{fill:white;stroke:#b5c7de}.good{fill:#edf8f1;stroke:#8cbda1}.arrow{fill:none;stroke:#4d668a;stroke-width:2;marker-end:url(#arrow)}</style><rect width="1024" height="610" rx="16" fill="#f8fafd"/>
+<text x="32" y="42" class="title">同一次第16步更新，从旧进程交到新进程</text>
+<text x="65" y="84" class="label">rank 0 · CPU</text><text x="370" y="84" class="label">DCP共享目录</text><text x="730" y="84" class="label">rank 1 · CPU</text>
+<path d="M160 98V567M512 98V567M864 98V567" class="lane"/>
+<rect x="32" y="112" width="270" height="64" rx="9" class="box"/><text x="48" y="138">模型、Adam、进度</text><text x="48" y="161" class="small">next_epoch=2，更新16次</text>
+<rect x="722" y="112" width="270" height="64" rx="9" class="box"/><text x="738" y="138">同一步模型、Adam、进度</text><text x="738" y="161" class="small">汇集各rank RNG清单</text>
+<path d="M310 145H357" class="arrow"/><path d="M714 145H667" class="arrow"/>
+<rect x="370" y="112" width="284" height="64" rx="9" class="good"/><text x="387" y="138">所有rank调用同步save</text><text x="387" y="161" class="small">state_dict → 规划数据写入</text>
+<path d="M512 180V208" class="arrow"/>
+<rect x="370" y="222" width="284" height="73" rx="9" class="box"/><text x="387" y="248">先写.distcp数据</text><text x="387" y="272">再完成.metadata位置清单</text>
+<text x="32" y="257">save返回后，旧进程退出</text><text x="722" y="257">save返回后，旧进程退出</text>
+<path d="M32 326H992" stroke="#a8b8ce" stroke-dasharray="6 6"/><text x="337" y="351" class="small">旧torchrun已结束，随后启动新的两个worker</text>
+<rect x="32" y="372" width="270" height="68" rx="9" class="box"/><text x="48" y="399">创建模型、Adam与目标树</text><text x="48" y="423" class="small">get_state_dict分配加载对象</text>
+<rect x="722" y="372" width="270" height="68" rx="9" class="box"/><text x="738" y="399">创建模型、Adam与目标树</text><text x="738" y="423" class="small">双方都调用load</text>
+<path d="M310 407H357" class="arrow"/><path d="M714 407H667" class="arrow"/><rect x="370" y="372" width="284" height="68" rx="9" class="good"/><text x="387" y="399">按.metadata读回状态</text><text x="387" y="423" class="small">load_state_dict → set_state_dict</text>
+<path d="M160 445V473" class="arrow"/><path d="M864 445V473" class="arrow"/>
+<rect x="32" y="487" width="270" height="64" rx="9" class="good"/><text x="48" y="514">安装本rank RNG与进度</text><text x="48" y="538" class="small">从第2轮继续，最终32次更新</text>
+<rect x="722" y="487" width="270" height="64" rx="9" class="good"/><text x="738" y="514">安装本rank RNG与进度</text><text x="738" y="538" class="small">实际输入ID独立核对</text>
+<text x="32" y="589" class="small">DCP组织一个目录的数据读写；CURRENT等发布协议决定选用哪个目录。</text></svg>
