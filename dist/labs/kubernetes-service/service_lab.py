@@ -194,28 +194,29 @@ class Lab:
     def snapshot(self):
         service = self.get('service', 'guide-service')
         deployment = self.get('deployment', 'guide-service')
-        pods = self.get('pods', '-l', 'app=guide-service')['items']
-        slices = self.get('endpointslices.discovery.k8s.io', '-l', 'kubernetes.io/service-name=guide-service')['items']
+        pods = self.get('pods', '-l', 'app=guide-service').get('items') or []
+        slices = self.get('endpointslices.discovery.k8s.io', '-l', 'kubernetes.io/service-name=guide-service').get('items') or []
         result = {'service': {'uid': service['metadata']['uid'], 'cluster_ip': service['spec']['clusterIP'],
                              'port': service['spec']['ports'][0]['port'], 'target_port': service['spec']['ports'][0]['targetPort'],
                              'selector': service['spec']['selector'],
                              'publish_not_ready_addresses': service['spec'].get('publishNotReadyAddresses', False)},
             'deployment': {'uid': deployment['metadata']['uid'], 'generation': deployment['metadata']['generation'],
-                'observed_generation': deployment.get('status', {}).get('observedGeneration', 0),
-                'revision': deployment['metadata'].get('annotations', {}).get('deployment.kubernetes.io/revision', ''),
+                'observed_generation': (deployment.get('status') or {}).get('observedGeneration', 0),
+                'revision': (deployment['metadata'].get('annotations') or {}).get('deployment.kubernetes.io/revision', ''),
                 'template_version': next(e['value'] for e in deployment['spec']['template']['spec']['containers'][0]['env'] if e['name'] == 'APP_VERSION')},
             'pods': [], 'endpoints': []}
         for pod in pods:
-            statuses = pod.get('status', {}).get('containerStatuses', [])
+            status = pod.get('status') or {}
+            statuses = status.get('containerStatuses') or []
             result['pods'].append({'name': pod['metadata']['name'], 'uid': pod['metadata']['uid'],
-                'ip': pod.get('status', {}).get('podIP'), 'deleting': bool(pod['metadata'].get('deletionTimestamp')),
-                'ready': any(c['type'] == 'Ready' and c['status'] == 'True' for c in pod.get('status', {}).get('conditions', [])),
+                'ip': status.get('podIP'), 'deleting': bool(pod['metadata'].get('deletionTimestamp')),
+                'ready': any(c['type'] == 'Ready' and c['status'] == 'True' for c in (status.get('conditions') or [])),
                 'restart_count': sum(c['restartCount'] for c in statuses),
                 'version': next(e['value'] for e in pod['spec']['containers'][0]['env'] if e['name'] == 'APP_VERSION')})
         for slice_ in slices:
-            for endpoint in slice_.get('endpoints', []):
+            for endpoint in (slice_.get('endpoints') or []):
                 result['endpoints'].append({'slice_uid': slice_['metadata']['uid'], 'addresses': endpoint['addresses'],
-                    'pod_uid': endpoint.get('targetRef', {}).get('uid'), 'conditions': endpoint.get('conditions', {})})
+                    'pod_uid': (endpoint.get('targetRef') or {}).get('uid'), 'conditions': endpoint.get('conditions') or {}})
         result['pods'].sort(key=lambda p: p['uid'])
         result['endpoints'].sort(key=lambda e: e['pod_uid'] or '')
         return result
@@ -400,7 +401,14 @@ def main():
             report['versions'] = lab.run(Path(tmp))
             report['status'] = 'passed'
         except Exception as error:
-            report['failure'] = {'stage': lab.stage, 'type': type(error).__name__}
+            # Only allowlist frames in this source file; never serialize error text or locals.
+            frames = []
+            trace = error.__traceback__
+            while trace:
+                if Path(trace.tb_frame.f_code.co_filename).resolve() == Path(__file__).resolve():
+                    frames.append({'function': trace.tb_frame.f_code.co_name, 'line': trace.tb_lineno})
+                trace = trace.tb_next
+            report['failure'] = {'stage': lab.stage, 'type': type(error).__name__, 'source_frames': frames}
         finally:
             report['observation'] = lab.observation
             report['cleanup'] = lab.cleanup()
