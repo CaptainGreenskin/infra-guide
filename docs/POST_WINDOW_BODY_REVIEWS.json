@@ -1933,6 +1933,61 @@
         "评分练习：两组流量和一次快速消耗",
         "配套实战：真实Prometheus规则求值"
       ]
+    },
+    {
+      "id": "roofline-model",
+      "previous_content_sha256": "eb9516ed8db28ff38fc73404f3dcfc4cead40efaff5c1897073fd5d812694a41",
+      "reviewed_content_sha256": "901eabd7d5528810fb58352965037ae61b21c9e50053cb6c02b145ed18e9f90a",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Read three complete chapters and corrected middle-of-body dependencies: effective capacity versus completion, token rows versus user requests, computational units, and stable operation versus trace identities. Added four original diagrams and one standard-library forecast; preserved every original source block and existing laboratory artifact.",
+      "headings": [
+        "先问一次执行做了多少工作",
+        "先写数据账本，再算算术强度",
+        "两条上限怎样合成一条屋顶",
+        "批次改变的是权重复用，不只是显存占用",
+        "从瓶颈判断到可证伪的优化方案",
+        "局部快一倍，整体能快多少",
+        "为什么同一算子会有两种算术强度",
+        "把预算与计时写成一份可复查记录",
+        "练习：为一项优化写出收益边界"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "previous_content_sha256": "d7eff95a800b2c9fc0e4a125404418876a0fe8b4209d3c9c1229883e80358456",
+      "reviewed_content_sha256": "ef75a800397a4fe048b904de22676550bc7d277c039673bac11b0dbdbffc4a80",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Read three complete chapters and corrected middle-of-body dependencies: effective capacity versus completion, token rows versus user requests, computational units, and stable operation versus trace identities. Added four original diagrams and one standard-library forecast; preserved every original source block and existing laboratory artifact.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "previous_content_sha256": "685a709ac74f6722c05aa28b2df867ec1580ee2b53ba9dfb3016249eff056aa9",
+      "reviewed_content_sha256": "87c73e8853cb3962581c1664c5e076c449aa2fc5e6c78e4fda09bf5faa95df1a",
+      "reviewed_at": "2026-11-08",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Read three complete chapters and corrected middle-of-body dependencies: effective capacity versus completion, token rows versus user requests, computational units, and stable operation versus trace identities. Added four original diagrams and one standard-library forecast; preserved every original source block and existing laboratory artifact.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
     }
   ]
 }

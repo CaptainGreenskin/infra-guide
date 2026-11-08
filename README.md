@@ -15,9 +15,11 @@
 
 当前75章：Cloud 33、AI 29、Agent 10、综合实战3；33个完整实验包、73项学习任务。领域入口先讲系统知识，文章再展开机制。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)连接三条系统主线、14组领域关系及详细章节。领域图谱可聚焦概念、解释关系、打开相应知识点与机制章；搜索也支持概念名称。章末上下篇采用同一学习路线，综合实战留在所属方向。Agent可以从任务与工具开始，不以完成Cloud或GPU训练课程为前提。
 
-本轮继续[精修三章正文](docs/ITERATION_2026-11-08_CAUSAL_WALKTHROUGHS.md)：沿同一组输入讲清SLO事件与预算、GPU执行和计时、Agent状态与记忆，再跟读已有完整实验。新增四种图解、两段标准库算例；保留已发布代码与真实环境边界。
+本轮[深化容量、Roofline与Agent观测](docs/ITERATION_2026-11-08_SYSTEM_BUDGETS.md)，先把对象、单位和因果讲清，再跟读原有程序；补四张图并重放本地实战，保留各环境验证边界。
 
-本轮[概念关系与易读性修订](docs/ITERATION_2026-11-08_READABILITY.md)把95个领域知识点和5组前置基础连接起来，修正6章的跨章引用、解释衔接与错误分层。目录按领域组织，连续阅读按先修顺序推进，旧URL及小节锚点保留。
+前一轮[精修三章正文](docs/ITERATION_2026-11-08_CAUSAL_WALKTHROUGHS.md)：沿同一组输入讲清SLO事件与预算、GPU执行和计时、Agent状态与记忆，再跟读已有完整实验。新增四种图解、两段标准库算例；保留已发布代码与真实环境边界。
+
+全站[概念关系与易读性修订](docs/ITERATION_2026-11-08_READABILITY.md)把95个领域知识点和5组前置基础连接起来，修正6章的跨章引用、解释衔接与错误分层。目录按领域组织，连续阅读按先修顺序推进，旧URL及小节锚点保留。
 
 C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐配有[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)：实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD，分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[机制章审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
 

@@ -1,0 +1,111 @@
+{
+  "date": "2026-11-08",
+  "base_source_commit": "89db380eb03f932c423eb2f22976e87a2aec18f2",
+  "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+  "reader_trials": 0,
+  "preserved_previous_records": {
+    "docs/COHERENCE_REVIEW_2026-11-08.json": "470b034722795f396fc58f1673fc5cea800a2da9036a1f0118dc973729299c39",
+    "docs/COHERENCE_READABILITY_2026-11-08.json": "e8088cc193472cdb9cdeb062e26dc0b183c2a679160df713ff837123d2812052",
+    "docs/CAUSAL_WALKTHROUGHS_2026-11-08.json": "8cc260c077d07c2e946f2f2daf85309cb51ae3cb2051df1b12f5b29449f8a98d"
+  },
+  "body_reviews": [
+    {
+      "id": "elasticity",
+      "previous_content_sha256": "685a709ac74f6722c05aa28b2df867ec1580ee2b53ba9dfb3016249eff056aa9",
+      "reviewed_content_sha256": "87c73e8853cb3962581c1664c5e076c449aa2fc5e6c78e4fda09bf5faa95df1a",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Define arrival, effective capacity, completed work and backlog before a piecewise capacity curve; distinguish spare capacity, failure-domain loss and actual queue recovery; follow source conservation.",
+      "reviewed_at": "2026-11-08"
+    },
+    {
+      "id": "roofline-model",
+      "previous_content_sha256": "eb9516ed8db28ff38fc73404f3dcfc4cead40efaff5c1897073fd5d812694a41",
+      "reviewed_content_sha256": "901eabd7d5528810fb58352965037ae61b21c9e50053cb6c02b145ed18e9f90a",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Define symbol units before ratios; derive input/weight/output bytes; keep token rows distinct from user requests and output Y distinct from compute C; connect min-rate/max-time and existing executable columns.",
+      "reviewed_at": "2026-11-08"
+    },
+    {
+      "id": "agent-observability",
+      "previous_content_sha256": "d7eff95a800b2c9fc0e4a125404418876a0fe8b4209d3c9c1229883e80358456",
+      "reviewed_content_sha256": "ef75a800397a4fe048b904de22676550bc7d277c039673bac11b0dbdbffc4a80",
+      "scope": "2026-11-08 system budget walkthroughs: capacity, Roofline and Agent observation",
+      "observation": "Walk one operation through two attempts and five span identities; distinguish explicit HTTP response from unknown business result and UNSET from task UNKNOWN; explain parallel time, task/attempt denominators and actual SDK functions.",
+      "reviewed_at": "2026-11-08"
+    }
+  ],
+  "source_revisions": {
+    "src/page-shell.html": {
+      "previous_sha256": "637ec59f55a8c14a31c8e57bb14590a862e3d3d9b22a9d5feda5caf1ee53cd5d",
+      "reviewed_sha256": "437bd971756e1c8f78050e763360e8281a6624d3659d0b3c032b5e5dfa5e4156",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "dist/capacity-roofline-observation.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9d8b3b0cf57ba292044efdc55a57cb04a31100e91e02cabc7f8fa9d4c4235dfd",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "scripts/draw-system-budget-walkthroughs.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "aad5f066c085061f8cf1bda81f70f9cbed3a3264d7d54097893540d56479dd1d",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "scripts/check-system-budget-walkthroughs.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0cccc9569f2c4a60a3373dcfc66c03aecd5c8d2477f752e061c878a5fbca4d9f",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "scripts/check-causal-walkthroughs.cjs": {
+      "previous_sha256": "812a35bbe7ab47f609a2f79f8e1e6afce25731a9778c1e4079a7b5fb4c434c5d",
+      "reviewed_sha256": "8f49f3840876e41c17288587b48b3fdebd39cb0cf255adb93e0021e88a5336a1",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "scripts/coherence-review-records.cjs": {
+      "previous_sha256": "202832d66fa30f72766faf2254cd187616300baf01e3cf9976002e6ff957411a",
+      "reviewed_sha256": "195493d9a06fded34cc28cde59a1cb5c4d1df333ca27d21735675bf7db08e8e6",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "db4734013db6e9769f0b5f6ee473768f40334c40736a4b108184549701493a11",
+      "reviewed_sha256": "58fdd04b933ba6ad7f53a3eb40d03b2b3efb8e7af8eb68de7c489b2412c795a8",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "dist/diagrams/v52-capacity-backlog.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dd630a7469c9ac148e67fd4f757d2945abe5f8407490bb2ad9dc0f6623407d2c",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "dist/diagrams/v52-roofline-byte-ledger.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "35155bfe0a52b97860e7418ceef6902ddbbb05f432129d25a5c87b4c8bd092f9",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "dist/diagrams/v52-agent-five-spans.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0197c2a20a05cda8d48f725fd4c519adcbbb027e15bd3cdb66d9cf635b406c38",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    },
+    "dist/diagrams/v52-agent-critical-path.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7ff037ff641718669f630a278e32386b672e29026eda86297a627cec40762444",
+      "scope": "Three middle-of-body system walkthroughs with preserved published audits and executable sources"
+    }
+  },
+  "observation_replay": {
+    "source_sha256": "3427879ce24c68290a25eaecf0f1db3a790d398b3dce3c1a4ab901b7ae5e5826",
+    "sdk": "1.41.1",
+    "api": "1.41.1",
+    "spans": 5,
+    "http_attempts": 2,
+    "effects": 1,
+    "unique_verified_tasks": 1,
+    "cost": 5,
+    "parent_header_relations_verified": true,
+    "published_baseline_unchanged": "1.44.0",
+    "scope": "actual_sdk_and_http_no_collector_backend_llm_kairo_or_real_auth"
+  },
+  "figures": 4,
+  "added_laboratory_packages": 0,
+  "original_code_blocks": "All original pre blocks retained byte-for-byte and in order; one additional inline standard-library forecast.",
+  "evidence_scope": "CPU arithmetic and local SDK/HTTP/SQLite replay; no autoscaler, GPU, Collector, LLM, Kairo or real billing result."
+}

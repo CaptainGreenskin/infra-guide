@@ -4,13 +4,17 @@ const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,edits:causalWalkthroughRevisions,code:causalTeachingCode})',c)));
 const prior=require('./content-at-commit.cjs')('8d5b31ef7859aa3c44766c1492b18e1577e8d821');
+// Check the unchanged-body claim at the publication that made it. Current later
+// edits have their own whole-corpus comparison in check-system-budget-walkthroughs.
+const publishedCommit='89db380eb03f932c423eb2f22976e87a2aec18f2';
+const published=require('./content-at-commit.cjs')(publishedCommit);
 const ids=[...new Set(data.edits.map(e=>e.id))];assert.deepEqual(ids,['slo','gpu-execution','agent-memory']);
 for(const track of ['cloud','ai','agent'])assert.equal(ids.filter(id=>data.modules.find(m=>m.id===data.articles.find(a=>a.id===id).module).track===track).length,1);
 const pre=body=>body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[],all=a=>a.sections.map(s=>s[1]).join('');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 for(const a of data.articles){
  const before=prior.find(x=>x.id===a.id);assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]),a.id+': section anchors and headings');
- if(!ids.includes(a.id)){assert.deepEqual(a.sections,before.sections,a.id+': unreviewed body change');continue;}
+ if(!ids.includes(a.id)){assert.deepEqual(published.find(x=>x.id===a.id).sections,before.sections,a.id+': unreviewed V51 body change');continue;}
  let index=0;const current=pre(all(a));for(const original of pre(all(before))){const at=current.indexOf(original,index);assert(at>=index,a.id+': original complete code removed, reordered or modified');index=at+1;}
  assert.equal(current.length-pre(all(before)).length,a.id==='agent-memory'?0:1,a.id+': unexpected new code');
  const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
@@ -45,5 +49,5 @@ const currentReview=JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.js
 assert.deepEqual(currentReview.revisions.slice(0,priorReview.revisions.length),priorReview.revisions,'published body reviews must remain unchanged');
 assert.equal(review.reader_trials,0);assert.deepEqual(review.body_reviews.map(r=>r.id),ids);
 for(const row of review.body_reviews){const a=data.articles.find(a=>a.id===row.id),old=prior.find(a=>a.id===row.id);assert.equal(row.previous_content_sha256,sha(JSON.stringify({title:old.title,sections:old.sections})));assert.equal(row.reviewed_content_sha256,sha(JSON.stringify({title:a.title,sections:a.sections})));assert(row.scope&&row.observation);}
-for(const[file,revision]of Object.entries(review.source_revisions))assert.equal(revision.reviewed_sha256,sha(fs.readFileSync(file)),file+': changed after review');
+for(const[file,revision]of Object.entries(review.source_revisions))assert.equal(revision.reviewed_sha256,sha(cp.execFileSync('git',['show',publishedCommit+':'+file],{maxBuffer:16*1024*1024})),file+': published V51 source differs from review');
 console.log('PASS: three reviewed body walkthroughs, all72 other bodies and original full source blocks preserved; actual Fraction/index boundary replays, independent uneven-traffic budgets and fresh SQLite state/memory replay. Four original teaching diagrams; no GPU, production telemetry, LLM or Kairo execution inferred.');

@@ -4,8 +4,9 @@ const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 const baseFile='docs/COHERENCE_REVIEW_2026-11-08.json',baseBytes=fs.readFileSync(baseFile),base=JSON.parse(baseBytes);
 const update=JSON.parse(fs.readFileSync('docs/COHERENCE_READABILITY_2026-11-08.json'));
 const bodyUpdate=JSON.parse(fs.readFileSync('docs/CAUSAL_WALKTHROUGHS_2026-11-08.json'));
+const systemUpdate=JSON.parse(fs.readFileSync('docs/SYSTEM_BUDGET_WALKTHROUGHS_2026-11-08.json'));
 const source_sha256={...base.source_sha256};
-for(const stage of [update,bodyUpdate]){
+for(const stage of [update,bodyUpdate,systemUpdate]){
  for(const[file,expected]of Object.entries(stage.preserved_previous_records))assert.equal(sha(fs.readFileSync(file)),expected,file+': published review must remain unchanged');
  for(const[file,review]of Object.entries(stage.source_revisions)){
   let previous=source_sha256[file];
@@ -14,4 +15,4 @@ for(const stage of [update,bodyUpdate]){
   assert(review.scope&&review.reviewed_sha256);source_sha256[file]=review.reviewed_sha256;
  }
 }
-module.exports={record:{...base,source_sha256},update,bodyUpdate};
+module.exports={record:{...base,source_sha256},update,bodyUpdate,systemUpdate};
