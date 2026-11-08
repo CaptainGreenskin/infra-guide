@@ -1,0 +1,33 @@
+name: Native container and scheduler mechanisms
+on:
+  workflow_dispatch:
+  push:
+    branches: ['content/runtime-*']
+    paths:
+      - 'dist/labs/runtime-scheduling/**'
+      - '.github/workflows/runtime-scheduling.yml'
+permissions:
+  contents: read
+jobs:
+  linux-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Read actual container namespaces and limits
+        run: python3 dist/labs/runtime-scheduling/container_limits.py --output native-records/container-record.json
+      - name: Install release-pinned kind
+        run: |
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o kind-linux-amd64
+          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64.sha256sum -o kind-linux-amd64.sha256sum
+          sha256sum -c kind-linux-amd64.sha256sum
+          sudo install kind-linux-amd64 /usr/local/bin/kind
+      - name: Observe real admission, scheduling and node binding
+        run: python3 dist/labs/runtime-scheduling/schedule_lab.py --output native-records/scheduling-record.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-runtime-scheduling-records
+          path: native-records/
+          if-no-files-found: error
+          retention-days: 14
