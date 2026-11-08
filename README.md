@@ -13,12 +13,14 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前78章：Cloud 35、AI 29、Agent 11、综合实战3；45个完整实验包、85项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前78章：Cloud 35、AI 29、Agent 11、综合实战3；46个完整实验包、86项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
-这轮[事件、推理与任务评估](docs/ITERATION_2026-11-08_EVENTS_SERVING_QUALITY.md)重写 Serverless、消息投递、模型推理、推理性能、Agent 评估与检索六章，共65节。30章直接从连续正文讲解概念；82个阅读入口复用已有静态正文，启动时保留笔记、练习展开、自检和所选岗位路线。
+这轮[系统基础、训练平台与工具接入](docs/ITERATION_2026-11-08_PREREQUISITES_PLATFORM_CUDA.md)重写十章83节，40章由正文逐层介绍概念；补齐求和、softmax和分块GEMM的真实CUDA源码、线程/尾块图及[Linux编译记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42497594271)。设备数值执行和性能仍待GPU验收。
 
 <details>
 <summary>历次内容修订与执行记录</summary>
+
+这轮[事件、推理与任务评估](docs/ITERATION_2026-11-08_EVENTS_SERVING_QUALITY.md)重写 Serverless、消息投递、模型推理、推理性能、Agent 评估与检索六章，共65节。30章直接从连续正文讲解概念；82个阅读入口复用已有静态正文，启动时保留笔记、练习展开、自检和所选岗位路线。
 
 这轮[请求、通信与观测](docs/ITERATION_2026-11-08_NETWORK_COMMUNICATION.md)沿一次请求、一次训练同步和一次任务执行重写五章。概念在进入推导前定义，22处重复标题收为旧锚点；24章直接进入连续正文，完整源码和补充对照按需展开。
 

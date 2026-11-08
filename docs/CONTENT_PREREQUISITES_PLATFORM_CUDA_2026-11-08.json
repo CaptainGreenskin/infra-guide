@@ -1,0 +1,48 @@
+{
+  "reviewed_on": "2026-11-08",
+  "base_source_commit": "29b6160cbe16aee20bed478423935e4e43b60899",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EVENTS_BODY_REVIEW_2026-11-08.json": "d8975c4e5ea8d87927b843ffc9908d06c034c4abdc9cd7fcdf6a5d145722857a"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "ebe71767d05536230763d157fa7bab2709eda96803c651c2f5728d575bb6944a",
+      "reviewed_content_sha256": "73233642a355e8b39bcec6b87887dbfd31996c46f8de8f5a4181c94f4e3b531a",
+      "scope": "Host/client/server and message roles before cancellation and independent acceptance",
+      "observation": "Nine complete sections define transport, versions, requests/notifications and tools before actual SDK 2.3 stdio replay; structural result41 remains distinct from authoritative42 and HTTP cancellation is source observation only.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    },
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "af8830f97e3f6f463fea33189911564150cc0043f995b49c016f3dbcdaca1a32",
+      "reviewed_content_sha256": "11e9bd4aa4373a019e4d6ebcc789b78d0f6d7c8139a9a19db139f3d004069825",
+      "scope": "Numerical contract to actual source, compiler and pending GPU readback",
+      "observation": "Nine complete sections connect CPU references to source-bound float32 CUDA row reduction, stable softmax and shared-memory tiled GEMM. Original CPU code and figures remain; two new diagrams map threads and tails. Real Linux NVCC compilation and PTX are distinct from pending GPU numerical execution, Nsight and performance.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    }
+  ]
+}

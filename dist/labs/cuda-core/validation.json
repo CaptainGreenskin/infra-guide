@@ -1,0 +1,36 @@
+{
+  "checked_on": "2026-11-09",
+  "status": "compile-validated-device-pending",
+  "device_execution": false,
+  "source_sha256": {
+    "cuda_lab.cu": "a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141",
+    "reference.py": "8a0f741c92191ade250f4275557e0081007ad08b416519532f28e6f745263948",
+    "build.py": "dd4512a250dc60db606e69e6697b790664855f75290480068a18410b46bce907",
+    "toolchain-lock.json": "9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca",
+    "README.md": "a2d4415b5c17385b5b00b239b78a9ebb5d91de8279e16c3a2305bf4eaebfcf76"
+  },
+  "origin": {
+    "kind": "isolated Linux x86_64 NVCC compilation and no-kernel availability probe",
+    "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42497594271",
+    "source_commit": "6b6638c02e33089eb63ac32b0b4a2913178d4138",
+    "artifact": "cuda-core-compilation-and-probe"
+  },
+  "artifacts_sha256": {
+    "binary-help.log": "1512dbe265773a284bc98500ca871dae69bce13365285718c3da65a4c6f1f611",
+    "compile-binary.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compile-ptx.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compile-record.json": "257659a03804c901690b8bbfc4632ea3f9ae19247d63a9d4f677512b8d6e9d76",
+    "cpu-selftest.log": "f01aa183088c44634ba156e015c597843feafaacacafaa25824c39f1b622b52e",
+    "cuda_lab.ptx": "c9e41655ad0abb88c78957b46590a566c632f04764fa736575068e804da30222",
+    "device-probe.json": "0defdd0bb70b6fe9c5c51e5bc1dba93119e4732cc4668338d661aba06f628561",
+    "device-probe.log": "0defdd0bb70b6fe9c5c51e5bc1dba93119e4732cc4668338d661aba06f628561",
+    "gcc-version.log": "59d1cbef41d4ae78d5063d525b7aa13d18dc0493ea00537efc19b2ee398cb5a8",
+    "host-oracle.json": "f01aa183088c44634ba156e015c597843feafaacacafaa25824c39f1b622b52e",
+    "nvcc-version.log": "77d7ef23109cd2437a8b9cf5efbc4e89996b816276077edb86143ee04f6d5269"
+  },
+  "device_validation": {
+    "status": "not-run",
+    "reason": "No compatible GPU execution in this validation run"
+  },
+  "scope": "Real pinned NVCC host/device compilation and PTX entry checks, independent CPU synthetic-record oracle and archive-link tests. No CUDA kernel execution, GPU readback, Nsight or GPU timing is claimed."
+}

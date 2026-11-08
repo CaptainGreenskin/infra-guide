@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "device_execution": false,
+  "started_at_utc": "2026-11-08T16:00:04.548701+00:00",
+  "host": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.3"
+  },
+  "core_sha256": {
+    "cuda_lab.cu": "a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141",
+    "reference.py": "8a0f741c92191ade250f4275557e0081007ad08b416519532f28e6f745263948",
+    "build.py": "dd4512a250dc60db606e69e6697b790664855f75290480068a18410b46bce907",
+    "toolchain-lock.json": "9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca"
+  },
+  "commands": [
+    {
+      "label": "cpu-selftest",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/reference.py",
+        "--self-test",
+        "--json",
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cpu-selftest.json"
+      ],
+      "shell_display": "/usr/bin/python3 -B /home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/reference.py --self-test --json /home/runner/work/infra-guide/infra-guide/cuda-core-results/cpu-selftest.json",
+      "returncode": 0,
+      "stdout": "{\n  \"status\": \"passed\",\n  \"device_execution\": false,\n  \"source_sha256\": \"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\",\n  \"synthetic_fixtures\": 13,\n  \"synthetic_values_checked\": 3338,\n  \"mutations_rejected\": [\n    \"wrong_shape\",\n    \"wrong_value\",\n    \"missing_case\",\n    \"duplicate_case\",\n    \"profile_only\",\n    \"source_mismatch\",\n    \"nonfinite_value\",\n    \"empty_readbacks\",\n    \"wrong_elements\",\n    \"wrong_error_summary\",\n    \"loosened_tolerance\",\n    \"no_device_execution\",\n    \"negative_not_executed\",\n    \"negative_normalized\",\n    \"negative_wrong_value\",\n    \"negative_nonfinite\"\n  ],\n  \"scope\": \"CPU-only synthetic-record validator self-test; no GPU execution.\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "label": "nvcc-version",
+      "argv": [
+        "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc",
+        "--version"
+      ],
+      "shell_display": "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc --version",
+      "returncode": 0,
+      "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Tue_May_27_02:21:03_PDT_2025\nCuda compilation tools, release 12.9, V12.9.86\nBuild cuda_12.9.r12.9/compiler.36037853_0\n",
+      "stderr": ""
+    },
+    {
+      "label": "gcc-version",
+      "argv": [
+        "/usr/bin/g++",
+        "--version"
+      ],
+      "shell_display": "/usr/bin/g++ --version",
+      "returncode": 0,
+      "stdout": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    },
+    {
+      "label": "compile-binary",
+      "argv": [
+        "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc",
+        "-std=c++17",
+        "-O2",
+        "-lineinfo",
+        "--compiler-bindir",
+        "/usr/bin/g++",
+        "-I/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/include",
+        "-L/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/lib",
+        "-DGUIDE_SOURCE_SHA256=\"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\"",
+        "--cudart=static",
+        "-gencode=arch=compute_80,code=sm_80",
+        "-gencode=arch=compute_80,code=compute_80",
+        "/home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/cuda_lab.cu",
+        "-o",
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab"
+      ],
+      "shell_display": "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc -std=c++17 -O2 -lineinfo --compiler-bindir /usr/bin/g++ -I/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/include -L/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/lib '-DGUIDE_SOURCE_SHA256=\"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\"' --cudart=static -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_80,code=compute_80 /home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/cuda_lab.cu -o /home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "compile-ptx",
+      "argv": [
+        "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc",
+        "-std=c++17",
+        "-O2",
+        "-lineinfo",
+        "--compiler-bindir",
+        "/usr/bin/g++",
+        "-I/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/include",
+        "-L/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/lib",
+        "-DGUIDE_SOURCE_SHA256=\"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\"",
+        "--ptx",
+        "-arch=compute_80",
+        "/home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/cuda_lab.cu",
+        "-o",
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab.ptx"
+      ],
+      "shell_display": "/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/bin/nvcc -std=c++17 -O2 -lineinfo --compiler-bindir /usr/bin/g++ -I/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/include -L/home/runner/work/_temp/cuda-core-redist/toolkit-9cb7b795c5af65f0b47e466b1f9cad8c2ee92a4cf1bb4d42109fde08b4b050ca/lib '-DGUIDE_SOURCE_SHA256=\"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\"' --ptx -arch=compute_80 /home/runner/work/infra-guide/infra-guide/dist/labs/cuda-core/cuda_lab.cu -o /home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab.ptx",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "binary-help",
+      "argv": [
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab",
+        "--help"
+      ],
+      "shell_display": "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab --help",
+      "returncode": 0,
+      "stdout": "cuda_lab [--json FILE] [--probe-only | --profile-gemm]\nDefault: 13 small GPU correctness fixtures plus a bad-softmax rejection.\n--probe-only queries availability without launching a kernel.\n--profile-gemm selects one 512x512 GEMM, not the complete correctness suite.\n",
+      "stderr": ""
+    },
+    {
+      "label": "device-probe",
+      "argv": [
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab",
+        "--probe-only",
+        "--json",
+        "/home/runner/work/infra-guide/infra-guide/cuda-core-results/device-probe.json"
+      ],
+      "shell_display": "/home/runner/work/infra-guide/infra-guide/cuda-core-results/cuda_lab --probe-only --json /home/runner/work/infra-guide/infra-guide/cuda-core-results/device-probe.json",
+      "returncode": 2,
+      "stdout": "{\"status\":\"not-run\",\"device_execution\":false,\"device_count\":0,\"source_sha256\":\"a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141\",\"cuda_probe\":\"CUDA driver version is insufficient for CUDA runtime version\"}\n",
+      "stderr": ""
+    }
+  ],
+  "scope": "Pinned CUDA compilation, CPU oracle self-test, executable help and availability probe only; no kernels launched.",
+  "archive_safety_selftest": {
+    "status": "passed",
+    "device_execution": false,
+    "mutations_rejected": [
+      "linked_parent_escape",
+      "link_cycle",
+      "dangling_link",
+      "absolute_link"
+    ],
+    "same_directory_chain_accepted": true
+  },
+  "cpu_selftest": {
+    "status": "passed",
+    "device_execution": false,
+    "source_sha256": "a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141",
+    "synthetic_fixtures": 13,
+    "synthetic_values_checked": 3338,
+    "mutations_rejected": [
+      "wrong_shape",
+      "wrong_value",
+      "missing_case",
+      "duplicate_case",
+      "profile_only",
+      "source_mismatch",
+      "nonfinite_value",
+      "empty_readbacks",
+      "wrong_elements",
+      "wrong_error_summary",
+      "loosened_tolerance",
+      "no_device_execution",
+      "negative_not_executed",
+      "negative_normalized",
+      "negative_wrong_value",
+      "negative_nonfinite"
+    ],
+    "scope": "CPU-only synthetic-record validator self-test; no GPU execution."
+  },
+  "toolkit": {
+    "release": "12.9.1",
+    "target": "linux-x86_64",
+    "manifest_url": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_12.9.1.json",
+    "manifest_sha256": "8335301010b0023ee1ff61eb11e2600ca62002d76780de4089011ad77e0c7630",
+    "components": {
+      "cuda_cccl": {
+        "relative_path": "cuda_cccl/linux-x86_64/cuda_cccl-linux-x86_64-12.9.27-archive.tar.xz",
+        "sha256": "8b1a5095669e94f2f9afd7715533314d418179e9452be61e2fde4c82a3e542aa",
+        "size": "997888",
+        "version": "12.9.27",
+        "archive_root": "cuda_cccl-linux-x86_64-12.9.27-archive",
+        "members": 1805,
+        "regular_file_bytes": 13333419,
+        "relative_symlinks": 0
+      },
+      "cuda_cudart": {
+        "relative_path": "cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-12.9.79-archive.tar.xz",
+        "sha256": "1f6ad42d4f530b24bfa35894ccf6b7209d2354f59101fd62ec4a6192a184ce99",
+        "size": "1514676",
+        "version": "12.9.79",
+        "archive_root": "cuda_cudart-linux-x86_64-12.9.79-archive",
+        "members": 113,
+        "regular_file_bytes": 9684697,
+        "relative_symlinks": 2
+      },
+      "cuda_nvcc": {
+        "relative_path": "cuda_nvcc/linux-x86_64/cuda_nvcc-linux-x86_64-12.9.86-archive.tar.xz",
+        "sha256": "7a1a5b652e5ef85c82b721d10672fc9a2dbaab44e9bd3c65a69517bf53998c35",
+        "size": "81100244",
+        "version": "12.9.86",
+        "archive_root": "cuda_nvcc-linux-x86_64-12.9.86-archive",
+        "members": 56,
+        "regular_file_bytes": 333272320,
+        "relative_symlinks": 2
+      }
+    }
+  },
+  "nvcc_version": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Tue_May_27_02:21:03_PDT_2025\nCuda compilation tools, release 12.9, V12.9.86\nBuild cuda_12.9.r12.9/compiler.36037853_0\n",
+  "gcc_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "compilation": {
+    "status": "passed",
+    "binary": {
+      "path": "cuda_lab",
+      "sha256": "321be8ef819b5599cbd360d2389efdd2573bed292142e54d861ae727f4745c0e",
+      "bytes": 1118920,
+      "targets": [
+        "sm_80",
+        "compute_80"
+      ]
+    },
+    "ptx": {
+      "path": "cuda_lab.ptx",
+      "sha256": "c9e41655ad0abb88c78957b46590a566c632f04764fa736575068e804da30222",
+      "bytes": 27571,
+      "target": "compute_80",
+      "verified_entries": [
+        "row_softmax_kernel",
+        "row_sum_kernel",
+        "tiled_matmul_kernel"
+      ]
+    }
+  },
+  "device_probe": {
+    "status": "not-run",
+    "device_execution": false,
+    "device_count": 0,
+    "source_sha256": "a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141",
+    "cuda_probe": "CUDA driver version is insufficient for CUDA runtime version",
+    "returncode": 2
+  },
+  "finished_at_utc": "2026-11-08T16:00:23.296573+00:00"
+}

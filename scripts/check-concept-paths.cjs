@@ -48,7 +48,7 @@ for(const text of ['携带该token，当前进度和说明。','访问token已�
  assert(!run('<p>'+text+'</p>').includes('data-concept-term="token"'),'ambiguous token needs an authored local definition: '+text);
 }
 const mcpProgress=data.articles.find(a=>a.id==='mcp-protocol').sections[5][1];
-assert(mcpProgress.includes('progressToken')&&mcpProgress.includes('进度关联'));
+assert(mcpProgress.includes('progressToken')&&mcpProgress.includes('把通知交给正确调用')&&mcpProgress.includes('通知本身没有 id'),'MCP progress token is an authored call correlation, separate from a model token');
 assert(!run(mcpProgress).includes('模型处理文本的离散单位'),'actual MCP progress text must not acquire a model-token meaning');
 const namespaced=run('<p>namespace划定对象范围。</p>');assert(namespaced.includes('命名空间')&&!namespaced.includes('Linux中划分'),'generic namespace must not force Linux isolation into Kubernetes prose');
 const cluster=run('<p>恢复为独立新单成员集群。</p>');

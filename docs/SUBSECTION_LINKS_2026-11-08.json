@@ -365,7 +365,8 @@
       "targets": [
         "operator-cpu-run",
         "operator-profile-run"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "gpu-cluster",
@@ -462,7 +463,8 @@
         "subsection-6-hkgbar",
         "subsection-7-rj185v",
         "subsection-10-a5hs8s"
-      ]
+      ],
+      "visible_targets": []
     },
     {
       "id": "kubernetes-training",

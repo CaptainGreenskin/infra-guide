@@ -1,0 +1,4 @@
+cuda_lab [--json FILE] [--probe-only | --profile-gemm]
+Default: 13 small GPU correctness fixtures plus a bad-softmax rejection.
+--probe-only queries availability without launching a kernel.
+--profile-gemm selects one 512x512 GEMM, not the complete correctness suite.

@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "device_execution": false,
+  "source_sha256": "a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141",
+  "synthetic_fixtures": 13,
+  "synthetic_values_checked": 3338,
+  "mutations_rejected": [
+    "wrong_shape",
+    "wrong_value",
+    "missing_case",
+    "duplicate_case",
+    "profile_only",
+    "source_mismatch",
+    "nonfinite_value",
+    "empty_readbacks",
+    "wrong_elements",
+    "wrong_error_summary",
+    "loosened_tolerance",
+    "no_device_execution",
+    "negative_not_executed",
+    "negative_normalized",
+    "negative_wrong_value",
+    "negative_nonfinite"
+  ],
+  "scope": "CPU-only synthetic-record validator self-test; no GPU execution."
+}

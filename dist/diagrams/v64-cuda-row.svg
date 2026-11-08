@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="665" viewBox="0 0 1120 665" role="img" aria-labelledby="title desc">
+<title id="title">一行257列如何交给256个线程</title><desc id="desc">每行一个线程块。第0线程读取第0和256列，其余各读一列，块内共享内存经过8轮树形合并。</desc>
+<style>text{font-family:"PingFang SC","Microsoft YaHei",sans-serif}</style>
+<rect width="1120" height="665" fill="#fff"/>
+<text x="32" y="48" font-size="32" fill="#1c283d" font-weight="650" text-anchor="start">同一行的数据怎样变成一个输出</text>
+<text x="32" y="89" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">257 列，256 个线程；图示一行，其他行由别的块独立处理。</text>
+<rect x="32" y="122" width="194" height="82" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="129" y="155" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">x[0]</text>
+<text x="129" y="186" font-size="22" fill="#66738a" font-weight="400" text-anchor="middle">x[256]</text>
+<path d="M129 204 L129 234" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="32" y="234" width="194" height="92" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="129" y="269" font-size="25" fill="#1c283d" font-weight="550" text-anchor="middle">线程 0</text>
+<text x="129" y="304" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">两项局部和</text>
+<path d="M129 326 L129 356" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="246" y="122" width="194" height="82" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="343" y="155" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">x[1]</text>
+<text x="343" y="186" font-size="22" fill="#66738a" font-weight="400" text-anchor="middle">—</text>
+<path d="M343 204 L343 234" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="246" y="234" width="194" height="92" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="343" y="269" font-size="25" fill="#1c283d" font-weight="550" text-anchor="middle">线程 1</text>
+<text x="343" y="304" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">一项局部和</text>
+<path d="M343 326 L343 356" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="460" y="122" width="194" height="82" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="557" y="155" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">x[2]</text>
+<text x="557" y="186" font-size="22" fill="#66738a" font-weight="400" text-anchor="middle">—</text>
+<path d="M557 204 L557 234" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="460" y="234" width="194" height="92" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="557" y="269" font-size="25" fill="#1c283d" font-weight="550" text-anchor="middle">线程 2</text>
+<text x="557" y="304" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">一项局部和</text>
+<path d="M557 326 L557 356" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="674" y="122" width="194" height="82" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="771" y="155" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">…</text>
+<text x="771" y="186" font-size="22" fill="#66738a" font-weight="400" text-anchor="middle">…</text>
+<path d="M771 204 L771 234" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="674" y="234" width="194" height="92" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="771" y="269" font-size="25" fill="#1c283d" font-weight="550" text-anchor="middle">…</text>
+<text x="771" y="304" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">…</text>
+<path d="M771 326 L771 356" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="888" y="122" width="194" height="82" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="985" y="155" font-size="25" fill="#1c283d" font-weight="400" text-anchor="middle">x[255]</text>
+<text x="985" y="186" font-size="22" fill="#66738a" font-weight="400" text-anchor="middle">—</text>
+<path d="M985 204 L985 234" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="888" y="234" width="194" height="92" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="985" y="269" font-size="25" fill="#1c283d" font-weight="550" text-anchor="middle">线程 255</text>
+<text x="985" y="304" font-size="21" fill="#66738a" font-weight="400" text-anchor="middle">一项局部和</text>
+<path d="M985 326 L985 356" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="32" y="356" width="1050" height="69" rx="6" fill="#edf6f2" stroke="#dce3ed"/>
+<text x="557" y="386" font-size="26" fill="#287b69" font-weight="550" text-anchor="middle">partial[0…255]：每个线程写自己的位置</text>
+<text x="557" y="413" font-size="21" fill="#287b69" font-weight="400" text-anchor="middle">屏障：写齐以后，才让其他线程读取</text>
+<path d="M557 425 L557 451" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="185" y="451" width="744" height="80" rx="6" fill="#f3f5fa" stroke="#dce3ed"/>
+<text x="557" y="484" font-size="27" fill="#315dce" font-weight="550" text-anchor="middle">128 → 64 → 32 → 16 → 8 → 4 → 2 → 1</text>
+<text x="557" y="516" font-size="22" fill="#1c283d" font-weight="400" text-anchor="middle">每轮部分线程相加，全部线程经过屏障</text>
+<path d="M557 531 L557 551" fill="none" stroke="#315dce" stroke-width="2"/>
+<rect x="383" y="551" width="348" height="57" rx="6" fill="#eaf0ff" stroke="#dce3ed"/>
+<text x="557" y="589" font-size="27" fill="#315dce" font-weight="550" text-anchor="middle">线程 0 写 y[row]</text>
+<text x="32" y="646" font-size="23" fill="#66738a" font-weight="400" text-anchor="start">5 列时，多余线程贡献 0；它们仍参与每一轮屏障。</text>
+<metadata>{&quot;kind&quot;: &quot;source_mapping&quot;, &quot;rows&quot;: 3, &quot;cols&quot;: 257, &quot;threads&quot;: 256, &quot;shared_bytes&quot;: 1024, &quot;reduction_rounds&quot;: 8, &quot;source_sha256&quot;: &quot;a54993093276b1acf6ef36295442dadf8495ddc9482d7dfc09bb1455f9bb7141&quot;, &quot;device_execution&quot;: false}</metadata>
+</svg>

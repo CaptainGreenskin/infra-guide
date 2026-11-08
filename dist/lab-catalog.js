@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'cuda-core':{folder:'cuda-core',title:'CUDA线程、归约与分块实现'},
  'torch-checkpoint':{folder:'torch-checkpoint',title:'PyTorch原生分布式检查点'},
  'sdpa-cache':{folder:'sdpa-cache',title:'同模型SDPA缓存生成'},
  'langgraph-workflow':{folder:'langgraph-workflow',title:'真实工作流暂停与新进程恢复'},
@@ -144,6 +145,7 @@ labLearningCatalog.push({"id": "cloud-kubernetes-identity", "track": "cloud", "s
 {"id": "ai-torch-checkpoint", "track": "ai", "stage": 2, "title": "新进程用DCP恢复同一步训练状态", "chapter": "checkpoint-recovery", "anchor": "torch-checkpoint-run", "pack": "torch-checkpoint", "files": ["train_dcp.py", "run_lab.py", "reference_train.py", "requirements.txt", "README.md"], "env": "PyTorch2.5.1 · 两个CPU/Gloo进程", "kind": "真实原生DCP保存与恢复", "observe": "连续四轮对照两轮保存后新进程恢复；逐项比较模型、Adam、随机状态与输入进度，并检测缺元数据和只恢复权重。", "scope": "同宿主固定配置同步DCP；没有FSDP/DTensor重分片、GPU/NCCL、多机或掉电实测。"},
 {"id": "ai-sdpa-cache", "track": "ai", "stage": 2, "title": "同一小模型比较完整前缀与缓存生成", "chapter": "model-serving", "anchor": "sdpa-cache-run", "pack": "sdpa-cache", "files": ["cache_lab.py", "tiny_decoder.py", "requirements.txt", "README.md"], "env": "PyTorch2.5.1 · CPU · SDPBackend.MATH", "kind": "真实SDPA与KV缓存API", "observe": "复用664参数模型权重，核对完整、逐位置与两位置续算；错误因果对齐应被logits对照发现，生成缓存按2→3→4推进。", "scope": "验证CPU原生API、掩码和生成状态，不是FlashAttention设备内核或GPU性能测试。"},
 {"id": "agent-langgraph-workflow", "track": "agent", "stage": 2, "title": "持久暂停、并行与新进程恢复", "chapter": "durable-workflows", "anchor": "langgraph-workflow-run", "pack": "langgraph-workflow", "files": ["workflow_lab.py", "orders.json", "requirements.txt", "README.md"], "env": "LangGraph1.2.20 · checkpoint-sqlite3.1.3 · Python3.12", "kind": "真实框架与独立HTTP效果", "observe": "42报告在新进程恢复；同一暂存动作2次尝试仅1份效果，新UUID反例2份；并行失败恢复保留已成功分支。", "scope": "无模型、单宿主SQLite检查点与自建HTTP接收方；未验证真实审批身份、任意远端事务、跨机或Kairo。"});
+labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子映射到GPU线程与共享内存',chapter:'operator-profiling',anchor:'cuda-core-run',pack:'cuda-core',files:['cuda_lab.cu','reference.py','build.py','toolchain-lock.json','README.md'],env:'Linux x86_64 · CUDA12.9.1；执行另需计算能力8.0+ GPU与兼容驱动',kind:'真实CUDA编译 · GPU待验',observe:'读懂逐行归约、稳定softmax和16×16分块GEMM；用13组独立参考与错误归一化核对目标GPU回读。',scope:'隔离Linux CI验证NVCC、链接与PTX入口；CPU校验器16种错误变异通过。GPU数值执行、Nsight与性能仍待目标环境验收。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

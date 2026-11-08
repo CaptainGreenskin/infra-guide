@@ -2799,6 +2799,151 @@
         "可运行练习：提交后退出，再投一次",
         "配套实战：批次部分失败与提交后退出"
       ]
+    },
+    {
+      "id": "concurrency-pools",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "3bdf27fc7e30ba70e5cfdc24330f22899d8548f8cc68cfe568481235125ad7f5",
+      "reviewed_content_sha256": "02f2bcda0aac59743847765ee2cdb8f57c39da96b2b88a5b7a719c8795427678",
+      "scope": "Task execution, shared state and locks before queue and pool limits",
+      "observation": "Nine complete sections define task/thread, concurrency/parallelism, races and critical sections before pool throughput, bounded queues, cancellation, deterministic interleaving and budgets.",
+      "headings": [
+        "八份订单同时到达，忙的是谁",
+        "读、改、写三个动作构成一次竞态",
+        "什么该在锁内，什么应该移到锁外",
+        "从数据库占用时间算出线程池之外的瓶颈",
+        "排队、取消和背压如何形成一套协议",
+        "一次不会随机碰运气的竞态实验",
+        "让指标对应到位置，再做一次受控调整",
+        "验收：从三张队列里找出该改的那一张",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "distributed-systems",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "8ae8c5ce17eb57fd9a0b88e8ab0e616dfbc50018d4d2bfda18e090731f3b36d1",
+      "reviewed_content_sha256": "91787d38438216d2527000bef06c03d27fb56f36df801fd082d251dfbdbe31b0",
+      "scope": "Normal effect and receipt before timeout, retry and recovery",
+      "observation": "Eight complete sections define requests, receivers, durable effects and receipts before unknown outcomes, common deadlines, layered retries, jitter and atomic idempotency.",
+      "headings": [
+        "一次超时，留下了哪两份事实",
+        "截止时间、单次超时与取消不是同一个动作",
+        "重试让一次故障变成多少负载",
+        "哪些错误值得再试，要看效果语义",
+        "退避、抖动与恢复探测各解决哪种同步",
+        "把去重放在效果拥有者的边界",
+        "怎样验证重试没有把故障扩大",
+        "练习：用两个时间线回答面试追问"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "ee863f3b2453597ea220808f52acb6e63a98b0cba7e7ec8c4f6b85c792aa1cc6",
+      "reviewed_content_sha256": "5ed0717446508cbfc5bee67ea8e2c83b5af47ac7b4d6e596ad910300d3c9ed44",
+      "scope": "Resource eligibility before allowance, placement and collective readiness",
+      "observation": "Ten complete sections define Pod/UID/Ready and quota/admission/placement before resource shape, transactional reservations, actual two-process contention and single-host-kind boundaries.",
+      "headings": [
+        "状态与职责：额度、获准、放置、就绪与进展",
+        "配额与借用：名义份额、flavor和公平",
+        "资源形状：单节点、拓扑与可行解",
+        "并发预留：快照、整组与失败回滚",
+        "多租户隔离需要多层配合",
+        "启动与恢复：就绪期限、失效与回收",
+        "队列策略：回填、预留与抢占代价",
+        "用用户等待时间衡量调度效果",
+        "交一份可核对的答案",
+        "实战与变化题：穷举参考及真实两进程争抢"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "78881f5db7cdcdcd590d27e4927c2ae2d524d428824dd34a7f8291aa6d2bf3f7",
+      "reviewed_content_sha256": "44b979a8113dec333ae1c868e7fce1752afed0f798dc23d8c058ffdb1e999e05",
+      "scope": "Delegation and evidence responsibility before target acceptance",
+      "observation": "Nine complete sections introduce tasks, adapter and authority before acceptance/dedup/reconnect, controlled fixtures and record validation. One positive plus ten negative records check consistency only; provenance remains unverified and no actual Kairo run is inferred.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "05d55a8e5347268038448b72c656bc5bd2a0740b8199d9f809ecb69b0ea23da5",
+      "reviewed_content_sha256": "320ae69cee14e533ed968ea2f22aaf45efa73b9401f9cd32d7fa936b28122375",
+      "scope": "Kubernetes resource objects before whole-group training lifecycle",
+      "observation": "Seven complete sections relate cluster/node/Pod/Job/process/device plugin to single-Pod torchrun, workqueue versus fixed completions, common rendezvous and coordinated attempts.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "linux-resource",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "5016fa8c30a7defceb059a5ed943ab726a4778cdf614fd62c1214cd451f91b92",
+      "reviewed_content_sha256": "a94f95cb6d0084d56115aa44456102e8dd542fc8e05a6c78b98cfcd51c035394",
+      "scope": "Process/thread and CPU time before cgroup budgets and observed waits",
+      "observation": "Six complete sections define normal process execution, shared state, namespaces, containers and cgroups before quota arithmetic, resource hypotheses and read-only same-window observation.",
+      "headings": [
+        "先把“很慢”拆成执行与等待",
+        "从进程到容器：隔离视图与约束资源各做什么",
+        "把0.5核翻译成一笔CPU时间预算",
+        "把“低CPU”变成可以区分的假设",
+        "只读观测：先找范围，再比较变化",
+        "回到500毫秒：先解释等待，再讨论扩容"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "4f4a4e52bbde6ab1087257d4f707ebea1055dc4b8a761a2d9145b6b5d9bd7c29",
+      "reviewed_content_sha256": "0b20c6f2847d03e25e339483795d1ead6f2229e42bf6a2fbab21d00a20b541d0",
+      "scope": "Jobs and normal delivery before submission identity and recovery",
+      "observation": "Seven complete sections connect job/worker/rank/run/attempt to queue/start/update timelines, task contracts, immutable artifacts and coordinated retry/cancel handoffs.",
+      "headings": [
+        "从一份训练脚本到一次可追踪运行",
+        "生命周期需要多个可解释的等待状态",
+        "先定义最小契约，再谈自动化",
+        "完成状态必须连接到产物",
+        "失败后的系统动作要可预测",
+        "交接给调度和发布时，协议要留下什么",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "virtual-memory-oom",
+      "reviewed_at": "2026-11-08",
+      "previous_content_sha256": "c41b633a7d343aa6ca0978b0ecf3c068aaa75e7cb9c853ec5d26c662d2720207",
+      "reviewed_content_sha256": "bcf173d8d0acafb8be508970979e1413a7e92f4b890cac8e428ae9bb0cd8beab",
+      "scope": "Addresses, mapping and page lifetime before counters and OOM",
+      "observation": "Nine complete sections connect virtual addresses, backing and resident/shared pages to overlapping export lifetimes, group budgets, reclaim, OOM and source-bound standard-library models.",
+      "headings": [
+        "一份导出任务留下三个互相矛盾的读数",
+        "地址是一张地图，访问才提出具体的页需求",
+        "同一份内存有三种观察范围",
+        "把四份导出的重叠高峰放进预算",
+        "从回收到 OOM，中间还有哪些状态",
+        "把观测收在同一个故障窗口",
+        "用几十行以内的模型重放存活区间",
+        "验收：哪项改动真正降低了风险",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }
