@@ -3,6 +3,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist');
 require('./embed-manual-sharding.cjs');
+require('./embed-multinode-launch.cjs');
 require('./embed-cloud-proxy-bridge.cjs')();
 require('./embed-inference-cache-bridge.cjs');
 const practiceEvidence = {};

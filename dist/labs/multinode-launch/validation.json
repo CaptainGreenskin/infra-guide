@@ -1,0 +1,711 @@
+{
+  "verified_at_utc": "2026-11-08T18:46:50.130065+00:00",
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "device": "cpu",
+    "backend": "gloo",
+    "physical_hosts": 1,
+    "launchers": 2,
+    "workers_per_launcher": 2
+  },
+  "source_sha256": {
+    "verify_launch.py": "c01b98f4f509a0e9a243fbacc0f417209c1a5a9329982349c5b0c4ce6631acff",
+    "launch_worker.py": "16076d5fb9bc8fce2872ec3d1b16e428c4240d25c5f65bb9909110afb0090638",
+    "train_ddp.py": "5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66",
+    "compare_checkpoints.py": "4d5837c390a3d29c709c4f7fba6f66d559e36bc9733491d447b3fa795dbfff17"
+  },
+  "configuration": {
+    "samples": 8192,
+    "world_size": 4,
+    "hidden": 32,
+    "batch_size_per_rank": 64,
+    "accum": 2,
+    "target_epochs": 2,
+    "precision": "fp32",
+    "seed": 23
+  },
+  "runs": {
+    "full": {
+      "commands": [
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=0",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/full",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ],
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=1",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/full",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ]
+      ],
+      "launcher_exit_codes": [
+        0,
+        0
+      ],
+      "rank_observations": [
+        {
+          "rank": 0,
+          "local_rank": 0,
+          "group_rank": 0,
+          "role_rank": 0,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 1,
+          "local_rank": 1,
+          "group_rank": 0,
+          "role_rank": 1,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 2,
+          "local_rank": 0,
+          "group_rank": 1,
+          "role_rank": 2,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 3,
+          "local_rank": 1,
+          "group_rank": 1,
+          "role_rank": 3,
+          "world_size": 4,
+          "local_world_size": 2
+        }
+      ],
+      "all_workers_same_host": true,
+      "checkpoint_created": true,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 4,
+          "backend": "gloo",
+          "effective_batch": 512,
+          "start_epoch": 0,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 1,
+          "loss": 2.2813006043434143,
+          "samples": 8192,
+          "seconds": 0.12552074994891882,
+          "samples_per_second": 65264.10974547051,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 1,
+          "seconds": 0.005580416996963322
+        },
+        {
+          "event": "epoch",
+          "epoch": 2,
+          "loss": 2.192510962486267,
+          "samples": 8192,
+          "seconds": 0.05431079107802361,
+          "samples_per_second": 150835.58602987873,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "full/checkpoint.pt",
+          "next_epoch": 2,
+          "seconds": 0.0034722500713542104
+        }
+      ],
+      "applied_calls_per_rank": 32
+    },
+    "split": {
+      "commands": [
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=0",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=1",
+          "--save-dir=<temporary>/split",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ],
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=1",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=1",
+          "--save-dir=<temporary>/split",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ]
+      ],
+      "launcher_exit_codes": [
+        0,
+        0
+      ],
+      "rank_observations": [
+        {
+          "rank": 0,
+          "local_rank": 0,
+          "group_rank": 0,
+          "role_rank": 0,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 1,
+          "local_rank": 1,
+          "group_rank": 0,
+          "role_rank": 1,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 2,
+          "local_rank": 0,
+          "group_rank": 1,
+          "role_rank": 2,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 3,
+          "local_rank": 1,
+          "group_rank": 1,
+          "role_rank": 3,
+          "world_size": 4,
+          "local_world_size": 2
+        }
+      ],
+      "all_workers_same_host": true,
+      "checkpoint_created": true,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 4,
+          "backend": "gloo",
+          "effective_batch": 512,
+          "start_epoch": 0,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 1,
+          "loss": 2.2813006043434143,
+          "samples": 8192,
+          "seconds": 0.09756712499074638,
+          "samples_per_second": 83962.707733542,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "split/checkpoint.pt",
+          "next_epoch": 1,
+          "seconds": 0.0036419579992070794
+        }
+      ],
+      "applied_calls_per_rank": 16
+    },
+    "resumed": {
+      "commands": [
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=0",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/resumed",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2",
+          "--resume=<temporary>/split/checkpoint.pt"
+        ],
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=1",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/resumed",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2",
+          "--resume=<temporary>/split/checkpoint.pt"
+        ]
+      ],
+      "launcher_exit_codes": [
+        0,
+        0
+      ],
+      "rank_observations": [
+        {
+          "rank": 0,
+          "local_rank": 0,
+          "group_rank": 0,
+          "role_rank": 0,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 1,
+          "local_rank": 1,
+          "group_rank": 0,
+          "role_rank": 1,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 2,
+          "local_rank": 0,
+          "group_rank": 1,
+          "role_rank": 2,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 3,
+          "local_rank": 1,
+          "group_rank": 1,
+          "role_rank": 3,
+          "world_size": 4,
+          "local_world_size": 2
+        }
+      ],
+      "all_workers_same_host": true,
+      "checkpoint_created": true,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 4,
+          "backend": "gloo",
+          "effective_batch": 512,
+          "start_epoch": 1,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 2,
+          "loss": 2.192510962486267,
+          "samples": 8192,
+          "seconds": 0.08961649995762855,
+          "samples_per_second": 91411.7378370417,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "resumed/checkpoint.pt",
+          "next_epoch": 2,
+          "seconds": 0.0035706249764189124
+        }
+      ],
+      "applied_calls_per_rank": 16
+    },
+    "repeat_full": {
+      "commands": [
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=0",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/repeat-full",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ],
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=1",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/repeat-full",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=2"
+        ]
+      ],
+      "launcher_exit_codes": [
+        0,
+        0
+      ],
+      "rank_observations": [
+        {
+          "rank": 0,
+          "local_rank": 0,
+          "group_rank": 0,
+          "role_rank": 0,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 1,
+          "local_rank": 1,
+          "group_rank": 0,
+          "role_rank": 1,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 2,
+          "local_rank": 0,
+          "group_rank": 1,
+          "role_rank": 2,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 3,
+          "local_rank": 1,
+          "group_rank": 1,
+          "role_rank": 3,
+          "world_size": 4,
+          "local_world_size": 2
+        }
+      ],
+      "all_workers_same_host": true,
+      "checkpoint_created": true,
+      "records": [
+        {
+          "event": "start",
+          "world_size": 4,
+          "backend": "gloo",
+          "effective_batch": 512,
+          "start_epoch": 0,
+          "precision": "fp32",
+          "torch_version": "2.5.1"
+        },
+        {
+          "event": "epoch",
+          "epoch": 1,
+          "loss": 2.2813006043434143,
+          "samples": 8192,
+          "seconds": 0.08718254195991904,
+          "samples_per_second": 93963.76632108477,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "repeat-full/checkpoint.pt",
+          "next_epoch": 1,
+          "seconds": 0.003924667020328343
+        },
+        {
+          "event": "epoch",
+          "epoch": 2,
+          "loss": 2.192510962486267,
+          "samples": 8192,
+          "seconds": 0.053413458983413875,
+          "samples_per_second": 153369.58429417212,
+          "attempted_update_windows": 16,
+          "applied_optimizer_steps": 16,
+          "optimizer_steps": 16
+        },
+        {
+          "event": "checkpoint",
+          "path": "repeat-full/checkpoint.pt",
+          "next_epoch": 2,
+          "seconds": 0.0035977920051664114
+        }
+      ],
+      "applied_calls_per_rank": 32
+    }
+  },
+  "negative_probes": {
+    "changed_configuration": {
+      "commands": [
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=0",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/bad-configuration",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=4",
+          "--resume=<temporary>/split/checkpoint.pt"
+        ],
+        [
+          "python",
+          "-m",
+          "torch.distributed.run",
+          "--nnodes=2",
+          "--nproc-per-node=2",
+          "--node-rank=1",
+          "--master-addr=127.0.0.1",
+          "--master-port=<loopback-port>",
+          "<lab>/launch_worker.py",
+          "--epochs=2",
+          "--save-dir=<temporary>/bad-configuration",
+          "--device=cpu",
+          "--samples=8192",
+          "--hidden=32",
+          "--batch-size=64",
+          "--accum=4",
+          "--resume=<temporary>/split/checkpoint.pt"
+        ]
+      ],
+      "launcher_exit_codes": [
+        1,
+        1
+      ],
+      "rank_observations": [
+        {
+          "rank": 0,
+          "local_rank": 0,
+          "group_rank": 0,
+          "role_rank": 0,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 1,
+          "local_rank": 1,
+          "group_rank": 0,
+          "role_rank": 1,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 2,
+          "local_rank": 0,
+          "group_rank": 1,
+          "role_rank": 2,
+          "world_size": 4,
+          "local_world_size": 2
+        },
+        {
+          "rank": 3,
+          "local_rank": 1,
+          "group_rank": 1,
+          "role_rank": 3,
+          "world_size": 4,
+          "local_world_size": 2
+        }
+      ],
+      "all_workers_same_host": true,
+      "checkpoint_created": false,
+      "records": [],
+      "matched_error": "Resume requires the same world size, device, precision and training settings"
+    },
+    "changed_optimizer": {
+      "exit_code": 1,
+      "matched_error": "state.optimizer.state",
+      "model_weights_unchanged": true
+    },
+    "changed_rank_rng": {
+      "exit_code": 1,
+      "matched_error": "state.rng_by_rank[1].cpu",
+      "model_weights_unchanged": true
+    }
+  },
+  "full_state_comparison": {
+    "exit_code": 1,
+    "message": "AssertionError: state.model.0.weight: tensor values differ"
+  },
+  "recovery_numerical_comparison": {
+    "contract": {
+      "floating_atol": 1e-06,
+      "floating_rtol": 0,
+      "rng_counters_metadata": "exact"
+    },
+    "bitwise_equal": false,
+    "different_float_tensors": [
+      {
+        "path": "state.model.0.weight",
+        "max_absolute_error": 7.450580596923828e-09,
+        "differing_elements": 425
+      },
+      {
+        "path": "state.model.0.bias",
+        "max_absolute_error": 3.725290298461914e-09,
+        "differing_elements": 4
+      },
+      {
+        "path": "state.model.3.weight",
+        "max_absolute_error": 7.450580596923828e-09,
+        "differing_elements": 17
+      },
+      {
+        "path": "state.model.3.bias",
+        "max_absolute_error": 5.820766091346741e-11,
+        "differing_elements": 1
+      },
+      {
+        "path": "state.optimizer.state.0.exp_avg",
+        "max_absolute_error": 9.313225746154785e-10,
+        "differing_elements": 2275
+      },
+      {
+        "path": "state.optimizer.state.0.exp_avg_sq",
+        "max_absolute_error": 2.2737367544323206e-13,
+        "differing_elements": 1215
+      },
+      {
+        "path": "state.optimizer.state.1.exp_avg",
+        "max_absolute_error": 9.313225746154785e-10,
+        "differing_elements": 13
+      },
+      {
+        "path": "state.optimizer.state.1.exp_avg_sq",
+        "max_absolute_error": 1.1368683772161603e-13,
+        "differing_elements": 9
+      },
+      {
+        "path": "state.optimizer.state.2.exp_avg",
+        "max_absolute_error": 9.313225746154785e-10,
+        "differing_elements": 174
+      },
+      {
+        "path": "state.optimizer.state.2.exp_avg_sq",
+        "max_absolute_error": 9.094947017729282e-13,
+        "differing_elements": 100
+      },
+      {
+        "path": "state.optimizer.state.3.exp_avg",
+        "max_absolute_error": 1.862645149230957e-09,
+        "differing_elements": 3
+      },
+      {
+        "path": "state.optimizer.state.3.exp_avg_sq",
+        "max_absolute_error": 9.094947017729282e-13,
+        "differing_elements": 1
+      }
+    ],
+    "max_absolute_error": 7.450580596923828e-09,
+    "within_declared_contract": true
+  },
+  "continuous_repeat_comparison": {
+    "exit_code": 0,
+    "message": "PASS: model, optimizer, scaler, RNG, epoch and configuration are exactly equal."
+  },
+  "continuous_repeat_numerical_comparison": {
+    "contract": {
+      "floating_atol": 1e-06,
+      "floating_rtol": 0,
+      "rng_counters_metadata": "exact"
+    },
+    "bitwise_equal": true,
+    "different_float_tensors": [],
+    "max_absolute_error": 0,
+    "within_declared_contract": true
+  },
+  "final_state": {
+    "next_epoch": 2,
+    "rng_rank_count": 4,
+    "compared_fields": [
+      "model",
+      "next_epoch",
+      "optimizer",
+      "rng_by_rank",
+      "scaler",
+      "signature"
+    ]
+  },
+  "not_executed": [
+    "multiple physical hosts",
+    "CUDA/NCCL",
+    "GPU/LLM performance",
+    "arbitrary mid-step crash",
+    "power loss",
+    "Kubernetes/cloud networking"
+  ],
+  "status": "passed_declared_numerical_contract"
+}

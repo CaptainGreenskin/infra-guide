@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 212,
+  "canonical_script_count": 216,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "6c852f1a2cb35f6415ceba8344c0e971f3b8a7af93edcc0bad0115537b004ca0",
-      "bytes": 385295,
+      "sha256": "cb93121ae42603df550ea314e72597443c458950eb3a93ffb465defcfd42396c",
+      "bytes": 385421,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "54e187a783480ecb079a0914eec02e13defaea6c559609c26e368610ec4fcb43",
-          "bytes": 13339
+          "sha256": "e30aec14da006bcf22c28d124406ba4fdf79cd6b55a61f7f4c2e46576834255c",
+          "bytes": 13465
         },
         {
           "file": "manual-sharding-data.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "347978dbe7d734dd394666b44b0314300306c64c9d715affb76ddbed39533fed",
-      "bytes": 2881393,
+      "sha256": "c5c0ed593bc7be74b602b59da57d3c808dc1224a571548269545c8444038d7d2",
+      "bytes": 3017508,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -1004,6 +1004,26 @@
           "bytes": 26559
         },
         {
+          "file": "multinode-launch-data.js",
+          "sha256": "0cd0e421d6fbd31525ab686dd4d69658acbc288659923a561cc7ea150c61a36d",
+          "bytes": 25281
+        },
+        {
+          "file": "progressive-delivery-recovery-reading.js",
+          "sha256": "7e6b6bf8516efe1c25431cfe8bc2046121ce748ea11d2266c9291885257b4484",
+          "bytes": 41539
+        },
+        {
+          "file": "progressive-multinode-reading.js",
+          "sha256": "fdc675e143595e1b3872e1ae74aa9589a560769877dd66afb9ffaca7a8696120",
+          "bytes": 22218
+        },
+        {
+          "file": "progressive-agent-retrieval-workflow-reading.js",
+          "sha256": "efaed64570c1f5a9683458e0262cd76d8d5ea6483ded9ebbb10d4a0aa39ef8ba",
+          "bytes": 45819
+        },
+        {
           "file": "first-reading-flow.js",
           "sha256": "43599c73ba518227f860206537b7a4cddeab413492fd65c1489e8a44ac2b2bef",
           "bytes": 6029
@@ -1070,13 +1090,13 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "30830ce2d05920c87342aa33dbb129b97fe0330fa4ac1f6f40ead1838f148d56",
-          "bytes": 53907
+          "sha256": "9fddd6a558ad9f68d154ca07a53f925e273ae894ab6fb5ef7c709a0c41c7b617",
+          "bytes": 54723
         },
         {
           "file": "concept-navigation.js",
-          "sha256": "8b70f8da655b47d8d84a9546e262a73a5ac724e84d5f20c078d76721f79f4324",
-          "bytes": 10304
+          "sha256": "30710ac3e2b7814db7db8e2004ca133fe81253e7ad1819ed08acc47908da5003",
+          "bytes": 10571
         },
         {
           "file": "chapter-navigation.js",
@@ -1085,7 +1105,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "0391677a3d3785d758ca2caf61cbb9be715fae51facf1c26fe42a9ad4bb8f6c0",
+          "sha256": "1ebe1ad700dcf5ead42813c4e0ee5ed6ffdc9bf32c432e7592bd10d15fbfc0cc",
           "bytes": 145
         }
       ]

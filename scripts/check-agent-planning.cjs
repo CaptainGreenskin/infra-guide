@@ -104,7 +104,12 @@ assert(injected);
 const current=JSON.parse(JSON.stringify(vm.runInContext("articles.find(a=>a.id==='durable-workflows')",context)));
 const baseline=require('./content-at-commit.cjs')('b06a0633d54a0ecfad39e6e3d55850a0caa0d36e').find(a=>a.id==='durable-workflows');
 assert.equal(current.title,baseline.title);assert.deepEqual(current.sections.map(s=>s[0]),baseline.sections.map(s=>s[0]));
-assert.equal(current.updated,'2026.11.08');assert.equal(current.minutes,55);
+// Later reviewed prose may advance the publication date; require its signed body,
+// rather than freezing the date of the original implementation bridge forever.
+const proseRevisions=JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.json')).revisions.filter(row=>row.id==='durable-workflows');
+const latestProse=proseRevisions.at(-1);
+if(latestProse)assert.equal(latestProse.reviewed_content_sha256,sha(JSON.stringify({title:current.title,sections:current.sections})),'current workflow body must match its latest explicit review');
+assert.equal(current.updated,latestProse?latestProse.reviewed_at.slice(0,10).replaceAll('-','.'):'2026.11.08');assert.equal(current.minutes,55);
 const all=current.sections.map(s=>s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
 const pre=s=>[...s.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
 const oldPre=pre(before),newPre=pre(all);

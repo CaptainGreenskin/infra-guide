@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="800" viewBox="0 0 1120 800" role="img" aria-labelledby="title description">
+ <title id="title">迁移先保证共存，再退出旧契约</title>
+ <desc id="description">body是兼容期权威源。summary与evidence都要有效且源版本等于当前body_version；旧读写者、积压任务和回退窗口退出前保留body。此图描述迁移契约，不是已执行的生产发布。</desc>
+ <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#315dce"/></marker></defs>
+ <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
+  <rect x="1" y="1" width="1118" height="798" rx="12" fill="#f7f9fd" stroke="#ccd8e8"/>
+  <text x="36" y="49" font-size="28" font-weight="700" fill="#17263e">迁移先保证共存，再退出旧契约</text>
+  <text x="36" y="83" font-size="18" fill="#56667d">声明的字段迁移契约 · 两份投影对应同一源版本，发布与回退分别核对。</text>
+  <rect x="36" y="110" width="246" height="102" rx="10" fill="#edf2ff" stroke="#9eb6e5"/>
+  <text x="58" y="145" font-size="21" font-weight="700" fill="#315dce">body / body_version</text>
+  <text x="58" y="174" font-size="18" fill="#17263e">源修改时</text>
+  <text x="58" y="198" font-size="18" fill="#17263e">同事务推进版本</text>
+  <path d="M282 161H332" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="342" y="110" width="348" height="102" rx="10" fill="#fff" stroke="#9eb6e5"/>
+  <text x="364" y="146" font-size="22" fill="#17263e">summary + evidence</text>
+  <text x="364" y="178" font-size="18" fill="#56667d">按源版本条件，同时提交两份投影</text>
+  <path d="M690 161H738" stroke="#315dce" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="748" y="110" width="336" height="102" rx="10" fill="#edf6f3" stroke="#91b7a9"/>
+  <text x="770" y="146" font-size="20" font-weight="700" fill="#12725b">两份有效，源版本都等于当前版</text>
+  <text x="770" y="178" font-size="20" fill="#17263e">才切新读；否则读取 body</text>
+  <text x="36" y="253" font-size="19" fill="#56667d">例如 body_version=2，投影版本为 [2,1]：仍拒绝新读，不能只看摘要已追平。</text>
+
+  <rect x="36" y="280" width="1048" height="45" rx="6" fill="#e7edf7"/>
+  <text x="54" y="310" font-size="21" font-weight="700" fill="#315dce">阶段</text>
+  <text x="234" y="310" font-size="21" font-weight="700" fill="#315dce">写入条件</text>
+  <text x="552" y="310" font-size="21" font-weight="700" fill="#315dce">读者路径</text>
+  <text x="848" y="310" font-size="21" font-weight="700" fill="#315dce">能否删 body</text>
+
+  <rect x="36" y="334" width="1048" height="90" rx="8" fill="#fff" stroke="#ccd8e8"/>
+  <text x="54" y="370" font-size="23" font-weight="700" fill="#17263e">1　扩展</text>
+  <text x="234" y="368" font-size="20" fill="#17263e">保留 body，增加可空投影</text>
+  <text x="234" y="399" font-size="20" fill="#17263e">源变化必须推进 body_version</text>
+  <text x="552" y="368" font-size="20" fill="#17263e">旧读者：body</text>
+  <text x="552" y="399" font-size="20" fill="#17263e">新读者：暂走 body</text>
+  <text x="848" y="385" font-size="22" font-weight="700" fill="#ad4a35">不能</text>
+
+  <rect x="36" y="433" width="1048" height="90" rx="8" fill="#fff" stroke="#ccd8e8"/>
+  <text x="54" y="469" font-size="23" font-weight="700" fill="#17263e">2　追平</text>
+  <text x="234" y="467" font-size="20" fill="#17263e">升级／冻结旧写者，或可靠覆盖</text>
+  <text x="234" y="498" font-size="20" fill="#17263e">全部写入口的源版本推进</text>
+  <text x="552" y="467" font-size="20" fill="#17263e">旧读者：body</text>
+  <text x="552" y="498" font-size="20" fill="#17263e">新读者：同版门禁＋回退</text>
+  <text x="848" y="484" font-size="22" font-weight="700" fill="#ad4a35">不能</text>
+
+  <rect x="36" y="532" width="1048" height="90" rx="8" fill="#edf6f3" stroke="#91b7a9"/>
+  <text x="54" y="568" font-size="23" font-weight="700" fill="#17263e">3　切读</text>
+  <text x="234" y="566" font-size="20" fill="#17263e">兼容期继续维护完整 body</text>
+  <text x="234" y="597" font-size="20" fill="#17263e">核对投影内容、版本与滞后</text>
+  <text x="552" y="566" font-size="20" fill="#17263e">新读者：成套投影</text>
+  <text x="552" y="597" font-size="20" fill="#17263e">需要止损时可切回 body</text>
+  <text x="848" y="583" font-size="22" font-weight="700" fill="#ad4a35">窗口内不能</text>
+
+  <rect x="36" y="631" width="1048" height="90" rx="8" fill="#fff" stroke="#ccd8e8"/>
+  <text x="54" y="667" font-size="23" font-weight="700" fill="#17263e">4　退出</text>
+  <text x="234" y="665" font-size="20" fill="#17263e">旧读写者、积压与离线任务退出</text>
+  <text x="234" y="696" font-size="20" fill="#17263e">回退窗口结束，恢复材料可用</text>
+  <text x="552" y="665" font-size="20" fill="#17263e">删除旧列属于另一次发布</text>
+  <text x="552" y="696" font-size="20" fill="#17263e">旧镜像不再天然兼容</text>
+  <text x="848" y="682" font-size="22" font-weight="700" fill="#12725b">核验后再删</text>
+  <text x="36" y="765" font-size="18" fill="#56667d">SQLite短例实际验证两份投影门禁；滚动、灰度与退出条件仍由目标应用验证。</text>
+ </g>
+</svg>

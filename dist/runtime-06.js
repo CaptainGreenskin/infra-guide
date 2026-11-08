@@ -9397,6 +9397,682 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
 
 
 ;
+// multinode-launch-data.js
+const multinodeLaunchSource="\"\"\"Two real local torchrun launchers, two CPU/Gloo workers each.\n\nRun directly with Python 3.10-3.12 + PyTorch 2.5.1 on Linux/macOS.\nAll processes and checkpoints are local and temporary. This is not a physical\nmulti-host, GPU/NCCL, performance, or arbitrary mid-step crash experiment.\n\"\"\"\nimport argparse\nfrom datetime import datetime, timezone\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport platform\nimport signal\nimport socket\nimport subprocess\nimport sys\nimport tempfile\nimport time\n\nimport torch\n\nLAB = Path(__file__).resolve().parent\nSOURCES = ('verify_launch.py', 'launch_worker.py', 'train_ddp.py', 'compare_checkpoints.py')\nREJECTION = 'Resume requires the same world size, device, precision and training settings'\n\n\ndef sha(path):\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n\n\ndef free_port():\n    with socket.socket() as sock:\n        sock.bind(('127.0.0.1', 0))\n        return sock.getsockname()[1]\n\n\ndef stop_owned(processes):\n    for process in processes:\n        if process.poll() is None:\n            try:\n                os.killpg(process.pid, signal.SIGTERM)\n            except ProcessLookupError:\n                pass\n    for process in processes:\n        try:\n            process.wait(timeout=5)\n        except subprocess.TimeoutExpired:\n            try:\n                os.killpg(process.pid, signal.SIGKILL)\n            except ProcessLookupError:\n                pass\n            process.wait()\n\n\ndef launch(directory, label, epochs, resume=None, changed=None, expected_error=None):\n    output = directory / label\n    output.mkdir()\n    proof = output / 'ranks'\n    port = free_port()\n    config = {'device': 'cpu', 'samples': 8192, 'hidden': 32, 'batch-size': 64, 'accum': 2}\n    config.update(changed or {})\n    workers = [str(LAB / 'launch_worker.py'), '--epochs=' + str(epochs),\n               '--save-dir=' + str(output)]\n    workers += ['--' + key + '=' + str(value) for key, value in config.items()]\n    if resume is not None:\n        workers.append('--resume=' + str(resume))\n    processes, streams, commands = [], [], []\n    try:\n        for node in (0, 1):\n            argv = [sys.executable, '-m', 'torch.distributed.run', '--nnodes=2',\n                    '--nproc-per-node=2', '--node-rank=' + str(node),\n                    '--master-addr=127.0.0.1', '--master-port=' + str(port)] + workers\n            stdout = (output / ('agent-' + str(node) + '.stdout')).open('w')\n            stderr = (output / ('agent-' + str(node) + '.stderr')).open('w')\n            streams += [stdout, stderr]\n            env = dict(os.environ, OMP_NUM_THREADS='1', INFRA_LAUNCH_RECORD_DIR=str(proof))\n            processes.append(subprocess.Popen(argv, cwd=directory, env=env, text=True,\n                                              stdout=stdout, stderr=stderr, start_new_session=True))\n            commands.append(['python' if item == sys.executable else\n                             item.replace(str(LAB), '<lab>').replace(str(directory), '<temporary>')\n                             .replace('--master-port=' + str(port), '--master-port=<loopback-port>')\n                             for item in argv])\n        deadline = time.monotonic() + 90\n        while any(process.poll() is None for process in processes):\n            if time.monotonic() >= deadline:\n                raise RuntimeError('local launch exceeded 90s; only owned process groups are stopped')\n            time.sleep(0.03)\n    finally:\n        stop_owned(processes)\n        for stream in streams:\n            stream.close()\n    codes = [process.returncode for process in processes]\n    stderr = '\\n'.join((output / ('agent-' + str(node) + '.stderr')).read_text() for node in (0, 1))\n    checkpoint = output / 'checkpoint.pt'\n    if expected_error:\n        assert all(code != 0 for code in codes) and expected_error in stderr, stderr[-3000:]\n        assert not checkpoint.exists()\n    else:\n        assert codes == [0, 0], stderr[-3000:]\n        assert checkpoint.exists()\n    observations = [json.loads(path.read_text()) for path in sorted(proof.glob('rank-*.json'))]\n    assert len(observations) == 4\n    assert len({row.pop('_host') for row in observations}) == 1\n    expected = [(0, 0, 0), (1, 1, 0), (2, 0, 1), (3, 1, 1)]\n    assert [(r['rank'], r['local_rank'], r['group_rank']) for r in observations] == expected\n    assert all(r['world_size'] == 4 and r['local_world_size'] == 2 and r['role_rank'] == r['rank']\n               for r in observations)\n    records = []\n    for node in (0, 1):\n        for line in (output / ('agent-' + str(node) + '.stdout')).read_text().splitlines():\n            if line.startswith('{'):\n                row = json.loads(line)\n                if 'path' in row:\n                    row['path'] = str(Path(row['path']).relative_to(directory))\n                records.append(row)\n    result = {'commands': commands, 'launcher_exit_codes': codes, 'rank_observations': observations,\n              'all_workers_same_host': True, 'checkpoint_created': checkpoint.exists(), 'records': records}\n    if expected_error:\n        result['matched_error'] = expected_error\n    else:\n        start = next(row for row in records if row['event'] == 'start')\n        assert start['world_size'] == 4 and start['effective_batch'] == 512\n        first = 1 if resume else 0\n        assert start['start_epoch'] == first\n        rows = [row for row in records if row['event'] == 'epoch']\n        assert [row['epoch'] for row in rows] == list(range(first + 1, epochs + 1))\n        for row in rows:\n            assert row['samples'] == 8192\n            assert row['attempted_update_windows'] == row['applied_optimizer_steps'] == 16\n        result['applied_calls_per_rank'] = sum(row['applied_optimizer_steps'] for row in rows)\n    return checkpoint, result\n\n\ndef compare(directory, first, second, expected_error=None, allow_difference=False):\n    result = subprocess.run([sys.executable, str(LAB / 'compare_checkpoints.py'), str(first), str(second)],\n                            cwd=directory, text=True, capture_output=True, timeout=30)\n    if expected_error:\n        assert result.returncode != 0 and expected_error in result.stderr\n        return {'exit_code': result.returncode, 'matched_error': expected_error}\n    if allow_difference and result.returncode != 0:\n        return {'exit_code': result.returncode, 'message': result.stderr.strip().splitlines()[-1]}\n    assert result.returncode == 0, result.stderr[-2000:]\n    return {'exit_code': 0, 'message': result.stdout.strip()}\n\n\ndef numerical_state(first, second):\n    \"\"\"An explicit teaching contract, separate from bitwise equality.\n\n    Floating model/Adam tensors use atol=1e-6, rtol=0. Counters, metadata,\n    tensor layouts and all per-rank RNG bytes must remain exactly equal.\n    This bound is declared for this tiny CPU program, not for arbitrary models.\n    \"\"\"\n    rows = []\n    def walk(a, b, path='state'):\n        if isinstance(a, torch.Tensor):\n            assert isinstance(b, torch.Tensor) and a.shape == b.shape and a.dtype == b.dtype, path\n            if not torch.equal(a, b):\n                assert a.is_floating_point() and not path.endswith('.step'), path\n                assert torch.isfinite(a).all() and torch.isfinite(b).all(), path\n                error = (a.double() - b.double()).abs().max().item()\n                rows.append({'path': path, 'max_absolute_error': error,\n                             'differing_elements': int((a != b).sum().item())})\n                assert torch.allclose(a, b, atol=1e-6, rtol=0), (path, error)\n        elif isinstance(a, dict):\n            assert isinstance(b, dict) and a.keys() == b.keys(), path\n            for key in a:\n                walk(a[key], b[key], path + '.' + str(key))\n        elif isinstance(a, (list, tuple)):\n            assert type(a) is type(b) and len(a) == len(b), path\n            for index, (x, y) in enumerate(zip(a, b)):\n                walk(x, y, path + '[' + str(index) + ']')\n        else:\n            assert type(a) is type(b) and a == b, path\n    a = torch.load(first, map_location='cpu', weights_only=True)\n    b = torch.load(second, map_location='cpu', weights_only=True)\n    walk(a, b)\n    return {'contract': {'floating_atol': 1e-6, 'floating_rtol': 0,\n                          'rng_counters_metadata': 'exact'},\n            'bitwise_equal': not rows, 'different_float_tensors': rows,\n            'max_absolute_error': max((row['max_absolute_error'] for row in rows), default=0),\n            'within_declared_contract': True}\n\n\ndef main():\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--report', default='run-report.json')\n    args = parser.parse_args()\n    if os.name != 'posix' or any(key in os.environ for key in ('RANK', 'LOCAL_RANK', 'WORLD_SIZE')):\n        parser.error('run directly on Linux/macOS, outside torchrun')\n    report = {'verified_at_utc': datetime.now(timezone.utc).isoformat(),\n              'environment': {'python': platform.python_version(), 'torch': str(torch.__version__),\n                              'platform': platform.platform(), 'device': 'cpu', 'backend': 'gloo',\n                              'physical_hosts': 1, 'launchers': 2, 'workers_per_launcher': 2},\n              'source_sha256': {name: sha(LAB / name) for name in SOURCES},\n              'configuration': {'samples': 8192, 'world_size': 4, 'hidden': 32,\n                                'batch_size_per_rank': 64, 'accum': 2, 'target_epochs': 2,\n                                'precision': 'fp32', 'seed': 23}, 'runs': {}, 'negative_probes': {}}\n    with tempfile.TemporaryDirectory(prefix='infra-multinode-launch-') as temporary:\n        directory = Path(temporary)\n        full, report['runs']['full'] = launch(directory, 'full', 2)\n        split, report['runs']['split'] = launch(directory, 'split', 1)\n        resumed, report['runs']['resumed'] = launch(directory, 'resumed', 2, resume=split)\n        report['full_state_comparison'] = compare(directory, full, resumed, allow_difference=True)\n        report['recovery_numerical_comparison'] = numerical_state(full, resumed)\n        repeated, report['runs']['repeat_full'] = launch(directory, 'repeat-full', 2)\n        report['continuous_repeat_comparison'] = compare(directory, full, repeated, allow_difference=True)\n        report['continuous_repeat_numerical_comparison'] = numerical_state(full, repeated)\n        final = torch.load(resumed, map_location='cpu', weights_only=True)\n        assert final['next_epoch'] == 2 and len(final['rng_by_rank']) == 4\n        report['final_state'] = {'next_epoch': final['next_epoch'], 'rng_rank_count': len(final['rng_by_rank']),\n                                 'compared_fields': sorted(final.keys())}\n        _, report['negative_probes']['changed_configuration'] = launch(\n            directory, 'bad-configuration', 2, resume=split, changed={'accum': 4}, expected_error=REJECTION)\n        for key, field in [('changed_optimizer', 'state.optimizer.state'),\n                           ('changed_rank_rng', 'state.rng_by_rank[1].cpu')]:\n            damaged = torch.load(resumed, map_location='cpu', weights_only=True)\n            if key == 'changed_optimizer':\n                moment = next(state['exp_avg'] for state in damaged['optimizer']['state'].values())\n                moment.view(-1)[0] += 0.25\n            else:\n                damaged['rng_by_rank'][1]['cpu'][0] ^= 1\n            assert all(torch.equal(value, damaged['model'][name]) for name, value in final['model'].items())\n            path = directory / (key + '.pt')\n            torch.save(damaged, path)\n            probe = compare(directory, resumed, path, expected_error=field)\n            probe['model_weights_unchanged'] = True\n            report['negative_probes'][key] = probe\n    report['not_executed'] = ['multiple physical hosts', 'CUDA/NCCL', 'GPU/LLM performance',\n                              'arbitrary mid-step crash', 'power loss', 'Kubernetes/cloud networking']\n    report['status'] = 'passed_declared_numerical_contract'\n    target = Path(args.report)\n    target.parent.mkdir(parents=True, exist_ok=True)\n    target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\\n')\n    print(json.dumps({'status': report['status'], 'report': str(target), 'ranks': 4,\n                      'updates_per_epoch': 16, 'exact_recovery': report['recovery_numerical_comparison']['bitwise_equal'],\n                      'max_absolute_error': report['recovery_numerical_comparison']['max_absolute_error']}))\n\n\nif __name__ == '__main__':\n    main()\n";
+const multinodeLaunchWorkerSource="\"\"\"Record torchrun's actual rank allocation, then execute the unchanged teaching trainer.\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nimport runpy\nimport socket\n\nrecord_dir = Path(os.environ['INFRA_LAUNCH_RECORD_DIR'])\nrecord_dir.mkdir(parents=True, exist_ok=True)\nrecord = {key.lower(): int(os.environ[key]) for key in\n          ('RANK', 'LOCAL_RANK', 'GROUP_RANK', 'ROLE_RANK', 'WORLD_SIZE', 'LOCAL_WORLD_SIZE')}\n# Hostnames are checked locally and removed from the published report.\nrecord['_host'] = socket.gethostname()\n(record_dir / ('rank-' + str(record['rank']) + '.json')).write_text(json.dumps(record))\nrunpy.run_path(str(Path(__file__).with_name('train_ddp.py')), run_name='__main__')\n";
+const multinodeLaunchValidation={"verified_at_utc":"2026-11-08T18:46:50.130065+00:00","environment":{"python":"3.12.13","torch":"2.5.1","platform":"macOS-26.2-arm64-arm-64bit","device":"cpu","backend":"gloo","physical_hosts":1,"launchers":2,"workers_per_launcher":2},"source_sha256":{"verify_launch.py":"c01b98f4f509a0e9a243fbacc0f417209c1a5a9329982349c5b0c4ce6631acff","launch_worker.py":"16076d5fb9bc8fce2872ec3d1b16e428c4240d25c5f65bb9909110afb0090638","train_ddp.py":"5a0a7a6fa00bcd21410e863879cc9101a156694f1141bb25c1b2f82f1cb65e66","compare_checkpoints.py":"4d5837c390a3d29c709c4f7fba6f66d559e36bc9733491d447b3fa795dbfff17"},"configuration":{"samples":8192,"world_size":4,"hidden":32,"batch_size_per_rank":64,"accum":2,"target_epochs":2,"precision":"fp32","seed":23},"runs":{"full":{"commands":[["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=0","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/full","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"],["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=1","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/full","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"]],"launcher_exit_codes":[0,0],"rank_observations":[{"rank":0,"local_rank":0,"group_rank":0,"role_rank":0,"world_size":4,"local_world_size":2},{"rank":1,"local_rank":1,"group_rank":0,"role_rank":1,"world_size":4,"local_world_size":2},{"rank":2,"local_rank":0,"group_rank":1,"role_rank":2,"world_size":4,"local_world_size":2},{"rank":3,"local_rank":1,"group_rank":1,"role_rank":3,"world_size":4,"local_world_size":2}],"all_workers_same_host":true,"checkpoint_created":true,"records":[{"event":"start","world_size":4,"backend":"gloo","effective_batch":512,"start_epoch":0,"precision":"fp32","torch_version":"2.5.1"},{"event":"epoch","epoch":1,"loss":2.2813006043434143,"samples":8192,"seconds":0.12552074994891882,"samples_per_second":65264.10974547051,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"full/checkpoint.pt","next_epoch":1,"seconds":0.005580416996963322},{"event":"epoch","epoch":2,"loss":2.192510962486267,"samples":8192,"seconds":0.05431079107802361,"samples_per_second":150835.58602987873,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"full/checkpoint.pt","next_epoch":2,"seconds":0.0034722500713542104}],"applied_calls_per_rank":32},"split":{"commands":[["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=0","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=1","--save-dir=<temporary>/split","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"],["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=1","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=1","--save-dir=<temporary>/split","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"]],"launcher_exit_codes":[0,0],"rank_observations":[{"rank":0,"local_rank":0,"group_rank":0,"role_rank":0,"world_size":4,"local_world_size":2},{"rank":1,"local_rank":1,"group_rank":0,"role_rank":1,"world_size":4,"local_world_size":2},{"rank":2,"local_rank":0,"group_rank":1,"role_rank":2,"world_size":4,"local_world_size":2},{"rank":3,"local_rank":1,"group_rank":1,"role_rank":3,"world_size":4,"local_world_size":2}],"all_workers_same_host":true,"checkpoint_created":true,"records":[{"event":"start","world_size":4,"backend":"gloo","effective_batch":512,"start_epoch":0,"precision":"fp32","torch_version":"2.5.1"},{"event":"epoch","epoch":1,"loss":2.2813006043434143,"samples":8192,"seconds":0.09756712499074638,"samples_per_second":83962.707733542,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"split/checkpoint.pt","next_epoch":1,"seconds":0.0036419579992070794}],"applied_calls_per_rank":16},"resumed":{"commands":[["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=0","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/resumed","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2","--resume=<temporary>/split/checkpoint.pt"],["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=1","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/resumed","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2","--resume=<temporary>/split/checkpoint.pt"]],"launcher_exit_codes":[0,0],"rank_observations":[{"rank":0,"local_rank":0,"group_rank":0,"role_rank":0,"world_size":4,"local_world_size":2},{"rank":1,"local_rank":1,"group_rank":0,"role_rank":1,"world_size":4,"local_world_size":2},{"rank":2,"local_rank":0,"group_rank":1,"role_rank":2,"world_size":4,"local_world_size":2},{"rank":3,"local_rank":1,"group_rank":1,"role_rank":3,"world_size":4,"local_world_size":2}],"all_workers_same_host":true,"checkpoint_created":true,"records":[{"event":"start","world_size":4,"backend":"gloo","effective_batch":512,"start_epoch":1,"precision":"fp32","torch_version":"2.5.1"},{"event":"epoch","epoch":2,"loss":2.192510962486267,"samples":8192,"seconds":0.08961649995762855,"samples_per_second":91411.7378370417,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"resumed/checkpoint.pt","next_epoch":2,"seconds":0.0035706249764189124}],"applied_calls_per_rank":16},"repeat_full":{"commands":[["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=0","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/repeat-full","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"],["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=1","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/repeat-full","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=2"]],"launcher_exit_codes":[0,0],"rank_observations":[{"rank":0,"local_rank":0,"group_rank":0,"role_rank":0,"world_size":4,"local_world_size":2},{"rank":1,"local_rank":1,"group_rank":0,"role_rank":1,"world_size":4,"local_world_size":2},{"rank":2,"local_rank":0,"group_rank":1,"role_rank":2,"world_size":4,"local_world_size":2},{"rank":3,"local_rank":1,"group_rank":1,"role_rank":3,"world_size":4,"local_world_size":2}],"all_workers_same_host":true,"checkpoint_created":true,"records":[{"event":"start","world_size":4,"backend":"gloo","effective_batch":512,"start_epoch":0,"precision":"fp32","torch_version":"2.5.1"},{"event":"epoch","epoch":1,"loss":2.2813006043434143,"samples":8192,"seconds":0.08718254195991904,"samples_per_second":93963.76632108477,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"repeat-full/checkpoint.pt","next_epoch":1,"seconds":0.003924667020328343},{"event":"epoch","epoch":2,"loss":2.192510962486267,"samples":8192,"seconds":0.053413458983413875,"samples_per_second":153369.58429417212,"attempted_update_windows":16,"applied_optimizer_steps":16,"optimizer_steps":16},{"event":"checkpoint","path":"repeat-full/checkpoint.pt","next_epoch":2,"seconds":0.0035977920051664114}],"applied_calls_per_rank":32}},"negative_probes":{"changed_configuration":{"commands":[["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=0","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/bad-configuration","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=4","--resume=<temporary>/split/checkpoint.pt"],["python","-m","torch.distributed.run","--nnodes=2","--nproc-per-node=2","--node-rank=1","--master-addr=127.0.0.1","--master-port=<loopback-port>","<lab>/launch_worker.py","--epochs=2","--save-dir=<temporary>/bad-configuration","--device=cpu","--samples=8192","--hidden=32","--batch-size=64","--accum=4","--resume=<temporary>/split/checkpoint.pt"]],"launcher_exit_codes":[1,1],"rank_observations":[{"rank":0,"local_rank":0,"group_rank":0,"role_rank":0,"world_size":4,"local_world_size":2},{"rank":1,"local_rank":1,"group_rank":0,"role_rank":1,"world_size":4,"local_world_size":2},{"rank":2,"local_rank":0,"group_rank":1,"role_rank":2,"world_size":4,"local_world_size":2},{"rank":3,"local_rank":1,"group_rank":1,"role_rank":3,"world_size":4,"local_world_size":2}],"all_workers_same_host":true,"checkpoint_created":false,"records":[],"matched_error":"Resume requires the same world size, device, precision and training settings"},"changed_optimizer":{"exit_code":1,"matched_error":"state.optimizer.state","model_weights_unchanged":true},"changed_rank_rng":{"exit_code":1,"matched_error":"state.rng_by_rank[1].cpu","model_weights_unchanged":true}},"full_state_comparison":{"exit_code":1,"message":"AssertionError: state.model.0.weight: tensor values differ"},"recovery_numerical_comparison":{"contract":{"floating_atol":0.000001,"floating_rtol":0,"rng_counters_metadata":"exact"},"bitwise_equal":false,"different_float_tensors":[{"path":"state.model.0.weight","max_absolute_error":7.450580596923828e-9,"differing_elements":425},{"path":"state.model.0.bias","max_absolute_error":3.725290298461914e-9,"differing_elements":4},{"path":"state.model.3.weight","max_absolute_error":7.450580596923828e-9,"differing_elements":17},{"path":"state.model.3.bias","max_absolute_error":5.820766091346741e-11,"differing_elements":1},{"path":"state.optimizer.state.0.exp_avg","max_absolute_error":9.313225746154785e-10,"differing_elements":2275},{"path":"state.optimizer.state.0.exp_avg_sq","max_absolute_error":2.2737367544323206e-13,"differing_elements":1215},{"path":"state.optimizer.state.1.exp_avg","max_absolute_error":9.313225746154785e-10,"differing_elements":13},{"path":"state.optimizer.state.1.exp_avg_sq","max_absolute_error":1.1368683772161603e-13,"differing_elements":9},{"path":"state.optimizer.state.2.exp_avg","max_absolute_error":9.313225746154785e-10,"differing_elements":174},{"path":"state.optimizer.state.2.exp_avg_sq","max_absolute_error":9.094947017729282e-13,"differing_elements":100},{"path":"state.optimizer.state.3.exp_avg","max_absolute_error":1.862645149230957e-9,"differing_elements":3},{"path":"state.optimizer.state.3.exp_avg_sq","max_absolute_error":9.094947017729282e-13,"differing_elements":1}],"max_absolute_error":7.450580596923828e-9,"within_declared_contract":true},"continuous_repeat_comparison":{"exit_code":0,"message":"PASS: model, optimizer, scaler, RNG, epoch and configuration are exactly equal."},"continuous_repeat_numerical_comparison":{"contract":{"floating_atol":0.000001,"floating_rtol":0,"rng_counters_metadata":"exact"},"bitwise_equal":true,"different_float_tensors":[],"max_absolute_error":0,"within_declared_contract":true},"final_state":{"next_epoch":2,"rng_rank_count":4,"compared_fields":["model","next_epoch","optimizer","rng_by_rank","scaler","signature"]},"not_executed":["multiple physical hosts","CUDA/NCCL","GPU/LLM performance","arbitrary mid-step crash","power loss","Kubernetes/cloud networking"],"status":"passed_declared_numerical_contract"};
+
+
+;
+// progressive-delivery-recovery-reading.js
+/* Read one release contract through migration, then recover a usable business state.
+   Load after the existing progressive lessons and before first-reading-flow.js. */
+(()=>{
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const anchor=id=>'<span id="'+id+'"></span>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body,id='')=>'<details class="full-code"'+(id?' id="'+id+'"':'')+'><summary>'+title+'</summary>'+body+'</details>';
+ const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const code=(title,source)=>'<div class="code-block"><div class="code-toolbar"><span>'+esc(title)+' <small>PYTHON</small></span><button type="button" data-copy-code>复制代码</button></div><pre tabindex="0"><code class="language-python">'+esc(source)+'</code></pre></div>';
+ const matches=(html,re)=>[...html.matchAll(re)].map(m=>m[0]);
+ const pres=html=>matches(html,/<pre\b[\s\S]*?<\/pre>/g);
+ const blocks=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=html=>matches(html,/<figure\b[\s\S]*?<\/figure>/g);
+ const hrefs=html=>[...html.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]);
+ const ids=html=>[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+ const bag=values=>JSON.stringify(values.slice().sort());
+ const links=html=>matches(html.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<pre\b[\s\S]*?<\/pre>/g,''),/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
+ const linkRow=values=>values.length?'<p class="practice-links">'+values.join(' ')+'</p>':'';
+ const stdlibCommand=block=>block.replaceAll('标准库 Python 3.9+；模型例环境见 README','Python 3.9+ · 标准库').replaceAll('标准库Python 3.9+；模型例环境见README','Python 3.9+ · 标准库');
+ const published={delivery:['subsection-8-1mpi7nq','subsection-8-lctfpe'],resilience:['subsection-1-1ww2dsc','subsection-5-1dwp2yh','subsection-6-vxh3b7','subsection-7-1bgmbh8','subsection-9-xbrzl7','subsection-9-qtm6c2']};
+ function select(id,titles){
+  const a=articles.find(x=>x.id===id);
+  if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Delivery/recovery source layout changed: '+id);
+  return a;
+ }
+ function rewrite(a,bodies,desc,addedFigures=[],addedPres=[]){
+  const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
+  if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Delivery/recovery H2 layout changed: '+a.id);
+  const remaining=pres(after).slice();
+  for(const block of addedPres){const at=remaining.indexOf(block);if(at<0||remaining.lastIndexOf(block)!==at)throw Error('New projection source missing or duplicated');remaining.splice(at,1);}
+  if(JSON.stringify(pres(before))!==JSON.stringify(remaining))throw Error('Original delivery/recovery pre bytes or order changed: '+a.id);
+  if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original delivery/recovery figure changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Delivery/recovery href multiset changed: '+a.id);
+  const nextIds=ids(after);
+  for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Delivery/recovery anchor lost: '+a.id+'/'+id);
+  if(new Set(nextIds).size!==nextIds.length)throw Error('Delivery/recovery duplicate explicit anchor: '+a.id);
+  bodies.forEach((body,i)=>a.sections[i][1]=body);a.desc=desc;a.intro=desc;a.updated='2026.11.09';
+ }
+
+ const projectionSource=String.raw`"""SQLite migration fixture: fixed delimiter projection, not model summarization."""
+import json
+import sqlite3
+
+db = sqlite3.connect(":memory:")
+db.executescript("""
+CREATE TABLE reports(
+  id INTEGER PRIMARY KEY, body TEXT NOT NULL, body_version INTEGER NOT NULL,
+  summary TEXT, evidence TEXT,
+  summary_source_version INTEGER, evidence_source_version INTEGER
+);
+INSERT INTO reports(id,body,body_version) VALUES(17,'摘要甲|证据甲',1);
+""")
+
+
+def read_report():
+    body, version, summary, evidence, sv, ev = db.execute(
+        "SELECT body,body_version,summary,evidence,summary_source_version,"
+        "evidence_source_version FROM reports WHERE id=17").fetchone()
+    allowed = summary is not None and evidence is not None and sv == ev == version
+    return {"body_version": version, "projection_versions": [sv, ev],
+            "allow_new": allowed,
+            "selected": {"summary": summary, "evidence": evidence} if allowed else {"body": body}}
+
+
+def publish(version, summary, evidence):
+    with db:
+        return db.execute(
+            "UPDATE reports SET summary=?,evidence=?,summary_source_version=?,"
+            "evidence_source_version=? WHERE id=17 AND body_version=?",
+            (summary, evidence, version, version, version)).rowcount
+
+
+def rebuild():
+    body, version = db.execute("SELECT body,body_version FROM reports WHERE id=17").fetchone()
+    summary, evidence = body.split("|", 1)
+    return publish(version, summary, evidence)
+
+
+initial = read_report()
+assert rebuild() == 1
+v1_ready = read_report()
+with db:
+    db.execute("UPDATE reports SET body=?,body_version=body_version+1 WHERE id=17",
+               ("摘要乙|证据乙",))
+body_advanced = read_report()
+stale_publish_rows = publish(1, "摘要甲", "证据甲")
+assert stale_publish_rows == 0
+# Deliberately incomplete repair: one projection catches up, the other does not.
+with db:
+    db.execute("UPDATE reports SET summary=?,summary_source_version=2 WHERE id=17", ("摘要乙",))
+summary_only = read_report()
+assert rebuild() == 1
+v2_ready = read_report()
+assert [x["allow_new"] for x in [initial, v1_ready, body_advanced, summary_only, v2_ready]] == [False, True, False, False, True]
+assert body_advanced["selected"] == {"body": "摘要乙|证据乙"}
+assert summary_only["projection_versions"] == [2, 1]
+assert v1_ready["selected"] == {"summary": "摘要甲", "evidence": "证据甲"}
+assert v2_ready["selected"] == {"summary": "摘要乙", "evidence": "证据乙"}
+db.close()
+print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial": initial,
+                  "v1_ready": v1_ready, "body_advanced": body_advanced,
+                  "stale_publish_rows": stale_publish_rows, "summary_only": summary_only,
+                  "v2_ready": v2_ready}, ensure_ascii=False, indent=2))
+`;
+ const projectionCode=code('delivery_projection_pair.py · Python 3.9+ / sqlite3',projectionSource);
+ const compatibilityFigure='<figure class="training-figure"><a href="diagrams/v69-delivery-compatibility.svg" target="_blank" rel="noopener" aria-label="放大：兼容迁移的读写条件与退出边界"><img src="diagrams/v69-delivery-compatibility.svg" width="1120" height="800" alt="兼容迁移：保留body，推进源版本，两份投影同版后切读，旧读写者与回退窗口退出后再删旧列。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>声明的迁移契约。summary 与 evidence 都要对应当前 body_version；现场程序分别验证局部机制，不是一次已执行的生产迁移。<a href="diagrams/v69-delivery-compatibility.svg" download>下载 SVG ↗</a></figcaption></figure>';
+
+ const delivery=select('delivery',['一个新镜像为什么能让旧服务一起出错','滚动发布改变的是哪一层状态','先扩展数据契约，再切换读写','用可比较的流量判断是否扩大','恢复旧镜像之前先问还能读写什么','在练习环境核验控制面与用户行为','评分练习：为删除旧列写退出条件','配套实战：真实 Terraform 计划与 GitOps 调谐模型']);
+ const d=delivery.sections.map(s=>s[1]),d3=blocks(d[2]),d6=blocks(d[5]),d8=blocks(d[7]);
+ if(d3.length!==1||d6.length!==1||d8.length!==7||pres(d.join('')).length!==9)throw Error('Delivery original code extraction changed');
+ rewrite(delivery,[
+ p('发布把一套确定的软件与运行条件交给实际请求。制品是构建得到的交付内容，容器镜像是其中一种；配置给程序提供地址、开关等参数；数据契约规定程序读写哪些字段、它们表达什么。镜像、配置和数据一起满足约定，应用才能按预期处理请求。',
+ '正常路径是：固定制品与配置版本，准备兼容的数据结构，启动新实例，检查它具备接流量条件，再逐步把请求交给它。滚动替换期间，新旧实例会同时存在，旧连接和后台任务也可能继续运行。因此一次发布要同时解释“新程序如何工作”和“尚未退出的旧程序如何工作”。',
+ '下面固定八副本日报服务作设计题。旧读者从 body 取得完整记录；新读者准备读取 summary 与 evidence，分别表达摘要和原始证据。本章保留 body 作为兼容期的权威源，新字段是由某个确定源版本产生的投影，即面向另一种读取方式组织出的数据。新写入在兼容期仍需维护完整 body。')+
+ table(['交付对象','要固定的内容','正常验收'],[['制品','镜像内容摘要、平台架构及运行依赖','实际实例运行了这一内容'],['配置','内容版本、引用及读写开关','进程已加载目标版本'],['数据契约','body 与两个投影的含义、源版本和兼容范围','新旧程序均能处理约定输入'],['流量与验证','新旧版本归属、任务样本和停止条件','实际输出、权限和服务指标符合目标']])+
+ p('交付清单把这些版本及验证方法关联起来。可变标签最终解析到哪个镜像、同名配置当时是什么内容，都要能追回。日报的行为条件也写进清单：授权用户能读到所属报告，摘要与证据来自同一份内容，已确认更新不丢失。后面的发布、灰度和回退围绕这一组条件判断。'),
+
+ p('Deployment 保存 Pod 模板，由 ReplicaSet 控制器维持相应模板的副本。修改镜像、环境变量或配置引用会改变模板，控制器据此逐步增减新旧 ReplicaSet；单独调整副本数不会因此产生新的模板修订。调度、镜像拉取和容器启动再把声明变成实例。',
+ 'Ready 表示 Pod 达到配置的接流量条件；Available 还考虑 Deployment 要求的最短就绪时间。它们帮助控制滚动过程，业务断言则检查实际报告。就绪探针应覆盖该副本提供服务的必要条件；仅探测端口可能漏掉配置或数据契约错误，反复依赖一个偶发慢的共享服务又可能使所有副本同时失去流量资格。')+
+ table(['八副本的控制预算','手算','含义'],[['maxSurge=25%','8×25%=2','滚动过程中允许比期望多创建两个副本'],['maxUnavailable=25%','8×25%=2','控制器的可用副本目标下界为8−2=6'],['资源准备','为额外实例准备资源','终止宽限期内的旧Pod还可能继续占用资源']])+
+ p('六个可用副本是这组参数的控制预算，前提是资源和启动条件允许控制器推进。每个副本能贡献多少有效吞吐，要在相同负载下验证。正在终止的连接、正在回填的数据和共享数据库连接池，也都要纳入发布容量。',
+ 'rollout undo 恢复的是相应 Pod 模板修订。数据库记录、外部调用、已覆盖文件和模板所引用的同名配置，有各自的变化历史。回退方案需先确认旧程序还能使用眼前的数据和配置。'),
+
+ p('数据迁移先扩展结构，再迁移读写，最后退出旧契约。先加允许为空的 summary、evidence 和各自的源版本，保留 body；旧读者继续读 body，新读者在投影不完整时沿旧路径读取。兼容期的新写接口也先形成完整 body，再按该源版本生成两份投影，避免只更新新列而让旧读者读到旧内容。每次改 body，都在同一数据库事务推进 body_version，使每次源变化有可判断的身份。',
+ '回填按旧记录补齐投影。声明有十二万行、每分钟处理四千行，忽略竞争和重试，工作量下界为120000÷4000=30分钟。回填仍与在线写入共享数据库，需要控制锁等待和负载；“扫过所有行”只证明处理覆盖，不证明结果对应最新源版本。')+
+ table(['时刻','源记录','投影与版本','能否使用新读路径'],[['回填完成','body为甲版，版本1','summary甲、evidence甲，两个源版本均1','两份内容有效时允许'],['旧写者随后修改','body为乙版，版本2','两份投影仍标记版本1','拒绝旧投影，读取body'],['只修复摘要','body仍为乙版，版本2','summary版本2，evidence版本1','仍拒绝不成套的投影'],['两份追平','body仍为乙版，版本2','summary乙、evidence乙，两个源版本均2','允许按同版组合读取']])+
+ p('投影发布要与源版本关联：先读取某版 body，计算两份投影，再以“body_version 仍等于这一版”为条件，在一个事务中发布两份内容和源版本。读者从同一一致性视图取出源版本和投影，只在两份内容均有效、两个源版本均非空且都等于 body_version 时切读。这样既拦住迟到的旧回填，也拦住只追平一个字段的半成品。',
+ '下面保留的旧片段解释 summary 单投影的版本条件。完整日报还需对 evidence 执行相同检查，并让两份内容按上述事务边界一起发布；下一份 SQLite 程序把这个缺口补成可运行的正反例。')+d3[0]+
+ p('delivery_projection_pair.py 使用独立内存 SQLite。为使转换可复算，body 固定写成“摘要甲|证据甲”，按第一个竖线分出两段，乙版同理；这是字段迁移夹具，不调用摘要模型。程序先使甲版成套，推进 body 后拒绝旧投影，再故意只更新 summary 验证仍被拒绝，最后一起追平。')+
+ fold('展开完整SQLite程序：两份投影的同版门禁与迟到回填',projectionCode,'delivery-projection-pair-lab')+
+ p('程序的 allow_new 依次为 false、true、false、false、true；迟到甲版的条件更新影响0行。它验证这份字段契约的事务与版本条件。真实摘要与证据的有效性仍需应用自己的内容检查，不能把字段有值或版本相等当成内容正确。')+
+ compatibilityFigure+
+ p('切读前还要覆盖全部写入口。可以先升级或冻结只写 body 的旧写者，等待在途写入排空，再追平并对账；若必须让旧写者继续存在，就用覆盖所有入口的可靠机制在每次修改 body 的同一事务推进源版本，再让投影跟进。旧客户端能绕过版本推进时，读者会误把旧投影当成当前版。',
+ '变更捕获把源修改传给投影处理者，但事件可能积压、重复或乱序。处理者仍需条件提交和追平判断。确认完整契约后小范围切读，并保留回切 body 的能力；删除 body 要等旧读写者、延迟消息、离线任务及回退窗口都退出。'),
+
+ p('灰度是把一部分实际流量交给候选版本，并按实际服务版本分别观察结果。先确认新旧候选都能处理当前数据契约，再确定分流单位，例如请求、用户或租户；日志保留实际版本，避免把配置上的5%当成观测分母。',
+ '在独立的十分钟计数题中，新版处理500次、失败8次，旧版处理9500次、失败19次。新版错误率8÷500=1.6%，旧版19÷9500=0.2%；合并为27÷10000=0.27%。发布判定要保留这两组分母，混合总表会稀释候选版本的退化。',
+ '比较还要对齐输入难度与环境。若新版只处理大日报或只在一个可用区运行，两个比例包含了这些差异。按报告大小、租户类别和部署位置对照同类请求，记录延迟分布、摘要与证据一致性、权限负例及迁移滞后。小样本结论需结合观察窗口与预设停止条件。',
+ '放量同时改变资源需求。新实例预热缓存，新旧实例共用数据库连接，回填又消耗I/O，这些工作会叠加。暂停扩大流量、把读开关切回 body、恢复旧模板和重建数据是不同动作。先选能阻止影响继续扩大的动作，再按兼容条件决定下一步。'),
+
+ p('回退先匹配一个仍能工作的平台组合：旧制品、对应配置、当前数据契约、消息格式及所需容量。兼容矩阵把“哪版读者能解释哪版数据、哪版写者会产生什么格式”列在一起，才能判断改回某个版本后会发生什么。')+
+ table(['当前状态','旧版本能否直接回来','需要先满足的条件'],[['body仍完整，旧配置可取用','具备回退基础','核对旧程序读写、权限与当前数据'],['summary/evidence已切读，body仍维护','可先按开关回到旧读路径','body未落后，两种路径结果一致'],['body已删除或旧消息格式已不兼容','不能仅恢复旧镜像','先恢复兼容接口，或制定向前修复方案']])+
+ p('例如旧模板引用 report-config，而发布时覆盖了这个同名对象的地址。模板回退后，旧程序仍可能读到新地址。让引用绑定内容版本，并观察进程实际加载的非敏感标识，才能恢复原组合。',
+ '消息也有读写契约。新版本已经发送的事件可能仍在队列、延迟重试或离线消费者中。先让消费者同时理解两种格式，再切生产者；退出旧格式前，核对保留期和积压。回退镜像不会撤回已发送消息。',
+ '若变化已经不可逆，先停止继续写错，再依据可信来源对受影响记录做带条件的修复。整库倒回旧快照会同时丢掉故障后合法提交的新业务，需按恢复目标另行设计。兼容矩阵因此既是发布入口条件，也是回退出口条件。'),
+
+ p('把观察分成控制对象、运行实例和用户结果三层。先记录 Deployment 模板修订、镜像与配置引用；再记录 Pod UID、就绪状态和进程已加载版本；最后从实际入口发送请求，核对返回版本、报告内容和权限。UID 是对象身份，Pod 同名重建后仍是另一个实例。',
+ '下面的既有练习使用专用命名空间 infra-guide-lab 和 Deployment infra-demo，只改变 Pod 模板中的 APP_VERSION，再执行回退。它用于核对模板修订与响应版本，不执行前面的日报字段迁移。')+d6[0]+
+ p('rollout status 等待相应发布状态；随后仍需按实验包部署的入口发送多次请求，记录时刻、目标和实际版本。控制面保存模板、节点开始运行新实例、用户拿到正确新版结果之间，还有调度、拉取、就绪和端点传播。',
+ '滚动前已建立的连接可能继续由旧实例处理。分别观察旧连接、新连接和终止宽限期，才能解释短时混合版本。回退后重复同一组请求和数据断言，确认旧程序能继续读写。此步骤保留为目标测试集群练习，本轮没有创建集群；前面的 SQLite 只验证独立字段迁移条件。')+linkRow(links(d[5])),
+
+ p('沿八副本题继续决策：maxSurge与maxUnavailable各为2，回填还余两万行、每分钟四千行。仅工作量就还需20000÷4000=5分钟；这个时刻不能因“新版已就绪”就删除 body。还要追到最新源版本，并核对 summary/evidence 两份内容。',
+ '给迁移写出能执行的退出条件：所有只读或只写旧契约的实例和任务已退出；积压事件与延迟重试已跨过边界；投影有效且同版；回退窗口及恢复材料已有安排。每个条件都应对应对象清单、版本、计数或实际查询。',
+ '再看三个变化：summary已追平而evidence仍旧，读者应走 body；新版失败率1.6%却只看见全局0.27%，应停止扩大并分组调查；旧模板恢复而配置被覆盖，应重新组装兼容版本。把答案落到这三条可观察关系，才能说明自己的回退动作会改变什么。',
+ '同样的交付清单也用于模型服务：权重、分词器、模板和评估版本共同决定输入输出含义。恢复某个镜像后，仍需核对这些成员是否配套。')+linkRow(links(d[6])),
+
+ p('前面的发布流程依赖“明确期望、审阅变化、执行后再观察”。基础设施即代码 IaC 用可版本化配置表达资源期望；Terraform 是实现这种工作流的工具。配置说明想要什么，state 保存配置地址与受管对象的绑定及已知属性，plan 保存本次准备执行的动作，apply 执行相应计划。provider 是读取和修改相应资源类型的插件。')+
+ h('subsection-8-1mpi7nq','保存计划后，编辑配置会改变待执行内容吗？')+
+ p('既有 terraform_lab.py 使用真实 Terraform 1.13.0 CLI 和内建 terraform_data。这个资源把声明输入保存在本地状态中；replicas=2与digest只是发布清单数据，不会创建两个Pod。程序先保存v1计划，再把配置改为v2，执行保存计划，核对实际输出仍为v1。')+d8[0]+
+ fold('展开main.tf：本地发布清单及内建资源',d8[1])+
+ table(['实际CLI步骤','结果','对交付的意义'],[['保存v1计划后编辑为v2，再apply v1.tfplan','仍得到v1摘要','审阅和执行应绑定同一份计划'],['重新计划并应用v2','state中的输出更新为v2','新的期望需要新的计划'],['无变化计划','详细退出码为0','在本次比较范围内没有变化'],['另一份apply已推进state，再执行旧计划','拒绝陈旧计划','执行前仍需满足计划的状态前提']])+
+ fold('展开既有Terraform验证摘要',d8[2])+
+ p('init准备工作目录，validate检查配置，show展示计划或状态，output读取输出值。上面的结果来自真实CLI记录，覆盖本地state与保存计划；远端资源漂移读取、远程backend的状态存放和锁，不属于这份内建资源实验。下一章继续把配置、state和实际资源放到同一条刷新路径。')+
+ fold('展开terraform_lab.py完整驱动',d8[3])+
+ h('subsection-8-lctfpe','持续调谐中的修复、清理与业务验收')+
+ p('GitOps让控制器持续读取版本库中的期望、观察目标系统，再推进差异。受管对象是这条控制链明确负责的对象；self-heal表示修复现场对受管内容的偏离，prune表示清理已从期望移除的受管对象。同步一致、资源健康与业务结果在不同层，需分别检查。',
+ '既有 gitops_model.py 用普通字典表示这些对象，是独立的标准库模型。声明reports副本为2、现场手改为5；关闭自愈保持5，开启后spec回到2但available仍0，随后把available设为2才得到模型健康。这里spec是期望字段，available是模型记录的可用数量。')+d8[4]+
+ table(['模型中的变化','结果'],[['自愈关闭 / 开启','现场副本5 / 受管spec恢复2'],['spec匹配但available=0','synced_model=true，healthy_model=false'],['从期望移除已登记config','prune关闭保留；开启后只删这份受管对象'],['现场有未登记unmanaged对象','清理后仍保留'],['资源健康但HTTP返回旧版本','业务断言失败']])+
+ fold('展开gitops_model.py完整程序',d8[5])+
+ p('模型用config这条字典记录代表配置资源，未调用Kubernetes API。下面的Argo CD Application则是一份目标配置示例：它指定源仓库、修订、路径和目标集群，开启自动同步与selfHeal，关闭prune。allowEmpty=false保留自动清空资源集合时的删除保护；它不代替对象归属与清理策略。repoURL等占位值需要替换，控制器、源访问和项目权限也需预先具备。')+
+ fold('展开既有Argo CD配置示例',d8[6])+
+ p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
+ ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
+
+ const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
+ const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);
+ if(r9.length!==4||r9links.length!==6||figures(r.join('')).length!==2)throw Error('Recovery original evidence extraction changed');
+ rewrite(resilience,[
+ anchor('recovery-business-contract')+
+ p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
+ '备份保存过去某个状态的材料；日志记录随后发生的变化；副本保留另一份正在同步的运行状态。副本可以帮助持续承载，历史材料则帮助找回过去。合法但错误的删除可能迅速复制到所有副本，因此多副本和可恢复历史分别解决不同问题。')+
+ h('subsection-1-1ww2dsc','恢复涉及哪些对象')+
+ table(['对象','正常职责','恢复时检查'],[['业务记录与附件','按报告引用取得对应版本的内容','数据库行、对象版本和摘要能相互对应'],['备份与连续变化','提供可取用的历史状态','材料齐全，密钥、权限和版本可用'],['查询者与后台任务','读取或继续处理业务记录','目标查询及权限负例通过，任务进度可核对'],['写入执行者与外部接收方','修改业务或完成通知等动作','允许的执行者明确，既有结果可查询']])+
+ p('业务提交清单记录一笔提交依赖的不可变对象版本与摘要，帮助从“文件都在”走到“这份报告确实可读”。清单要求保留哪些对象，由业务历史决定：本章报告夹具要求恢复前缀中的每份报告都有附件；已按协议合法删除的中间文件不因此需要永久保留。写入接管与外部结果的机制，在第七节按请求路径展开。'),
+
+ p('固定一个故障设计题：日报服务跨甲乙两个可用区，各有两个查询副本；它们读取同一业务数据及附件。午间一次错误迁移删除证据索引，删除又同步到备用数据库。四个查询实例仍健康，用户却拿不到带完整证据的日报。要恢复的是正确、授权可读的业务状态。',
+ '先定义最低服务：允许授权用户查询故障前约定范围内的报告和附件；暂时只读，避免修复过程中继续写错；后台通知待核对原结果后再继续。这样数据库连通、只读查询恢复和全面开放写入各有明确终点。',
+ '再固定故障假设。单副本退出、整个可用区不可达、逻辑误删、密钥不可用与网络分区，影响的材料和权限不同。恢复手册应说明这次覆盖哪一种、哪些记录仍可信、谁能开始恢复。后面的分钟预算是这组业务目标下的声明题，不是一次云容灾实测。'),
+
+ p('故障域是一组可能因同一原因一起失效的对象。沿一次查询画依赖，比只数应用副本更有用：两个区的应用可能共用数据库主写入口、对象索引、身份策略或发布流水线。一份错误配置也可能同时进入所有实例。机器分散能隔开某些硬件故障，仍需检查这些共享依赖。',
+ '再沿恢复动作画一条路径：谁取得备份、凭什么解密、经哪条网络装载、用哪个账号切换入口。备份在异地，密钥和恢复身份却只在故障区域可用时，材料虽在，恢复仍无法开始。独立性要相对于既定故障判断；两个账号也可能共用一条会同时撤销权限的组织策略。',
+ '复制链同样可能扩大错误。备用库很快应用删除，有助于保持副本接近，却没有保存误删之前的历史。设计时分别列出持续服务副本、受保护的备份与日志保留、恢复权限和可验证历史；演练再检查它们是否会被同一故障或操作一起破坏。'),
+
+ p('恢复点目标 RPO 规定允许回到多旧的业务状态；恢复时间目标 RTO 规定从约定中断起点到最低服务恢复的时长。它们各有起止点：前者沿数据历史向后看，后者沿恢复过程向前计时。都要注明业务范围、故障类型及允许只读等降级条件。',
+ '声明目标为RPO 15分钟、RTO 45分钟，故障发生于12:00。若可验证业务状态完整到11:54，恢复点距故障6分钟，满足前一目标；若只装回11:30基线，则是30分钟，超过目标。备份每15分钟启动一次，尚不能说明这份材料何时完成、能否取用及覆盖到哪个提交。')+
+ table(['材料能证明的历史','距12:00','本题恢复点判断'],[['基线11:30，所需首段日志已缺且无替代材料','30分钟','只能证明基线，超出15分钟'],['连续前缀到11:42，之后缺段','18分钟','可保留此前缀，仍超目标'],['连续且业务完整到11:54','6分钟','恢复点满足目标']])+
+ p('连续是指基线之后所需的变化能按对应恢复协议衔接，不能跳过未知段直接套后面的事件。业务完整还包括附件、索引和授权读取：数据库到11:54而必要附件缺失，不能据数据库位置单独宣布通过。选择哪个共同恢复点，下一节用实际对象夹具计算。'),
+
+ h('subsection-5-1dwp2yh','用报告引用求最后完整前缀')+
+ p('下面切到独立的 consistent_recovery_cut.py。它用真实SQLite Backup API生成基线，并由应用逻辑日志增加报告；不是前面错误迁移的真实现场。基线seq100位于11:30，A租户已有R1→object-v1，另外保留B租户的一份报告。后续三个事件按序号连续添加R2、R3、R4，各自记录附件名、内容摘要和题设分钟。')+
+ table(['提交','题设时刻','新增报告的依赖'],[['100基线','11:30','R1→object-v1'],['101','11:42','R2→object-v2'],['102','11:54','R3→object-v3'],['103','11:57','R4→object-v4']])+
+ p('故障设在12:00，只从恢复材料中移除object-v3。若只重放数据库到103，integrity_check仍为ok，表里有R1至R4，名义位置距故障3分钟；实际可读的却只有R1、R2、R4。物理结构正确、数据库位置接近和业务依赖完整，是三次不同的检查。')+figures(r[4]).join('')+
+ p('按完整提交前缀恢复时，每次插入报告和推进进度后，在同一事务中检查所有必要引用。102发现缺v3，回滚这一步并停止，最后完整状态为101/11:42，可读R1、R2。12:00−11:42=18分钟，超过15分钟目标。18分钟表示恢复点的年龄，不表示恰好少了18分钟里每一笔业务，也不是报告数量。',
+ '补齐v3后可到103，缺口3分钟；日志缺102时不能跳到103，只能到101；v2内容摘要不符时101也不能接受，剩100基线。v4存在不能替代v3。本题要求保留前缀里全部报告，若业务允许跳过、重建或补偿某笔提交，必须另外定义可验证的协议。',
+ '真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
+
+ h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
+ p('另给一组串行演练预算：12:00中断，目标是在45分钟内恢复授权只读查询。恢复点选在哪里决定可接受的数据历史；下面各阶段耗时决定服务何时回来，两条时间轴分别计算。')+
+ table(['依赖阶段','时间区间','耗时'],[['发现中断','12:00→12:04','4分钟'],['判断并冻结错误写入','12:04→12:08','4分钟'],['取得恢复权限','12:08→12:12','4分钟'],['装载数据','12:12→12:28','16分钟'],['重放所需变化','12:28→12:33','5分钟'],['消费者与权限校验','12:33→12:38','5分钟'],['切流并观察稳定','12:38→12:42','4分钟']])+
+ p('按本题串行依赖，RTO口径的恢复时长为4+4+4+16+5+5+4=42分钟，距离45分钟目标还有3分钟。单看启动恢复命令到装载结束的16分钟，会漏掉发现、决策、权限、重放和用户验证；把前节18分钟的恢复点年龄再加进来，则混合了数据历史与操作耗时。',
+ '装载量320GiB、有效吞吐20GiB/分钟时，仅传输就需16分钟。数据翻倍且吞吐不变，装载变32分钟，总预算变58分钟，超过目标13分钟。解压、写入竞争和重放也可能随规模改变，应按实际阶段测量，再判断增加下载带宽能否缩短瓶颈。',
+ '若部分工作可以并行，应沿依赖图求最长路径。例如独立目标的预置可提前完成，但在缺密钥时不能假定已完成解密。手册同时记录阶段起止、数据量、吞吐与输出验证，下一次演练才能比较预置热数据、并行恢复或更快存储改善了哪一段。'),
+
+ p('准备开放写入时，还要确定现在由谁接收新业务。网络分区下，联系不上旧主库，并不说明它已停止写入。写入权威是系统认可的执行资格；接管机制必须使已经过时的执行者无法继续产生受保护效果。改DNS、宣布提升或停止某个进程，都需与接收方实际拒绝旧请求的证据对应。',
+ '一种表达方式是代际号：每次获准接管推进一个单调变化的编号，请求携带相应编号，真正执行修改的一侧在提交处检查它。检查和修改必须受同一原子条件保护，否则“先查代际、后无条件写”仍留下旧执行者插入的间隙。代际号用来识别新旧资格，认证与谁有权提升它另由可信机制负责。')+
+ h('subsection-7-1bgmbh8','旧应用状态与接收方效果分别恢复')+
+ p('再看独立的 recovered_effects.py。outbox是应用保存待发送动作的表；接收方回执是另一侧保存的动作结果。业务动作ID notify-R27标识同一次通知，total=37是它的内容，PENDING/DONE表达应用尚待确认或已确认。本例接收方把动作ID和内容一起检查：同ID同内容返回原回执，同ID换内容拒绝。',
+ '程序先备份PENDING应用库，再发送通知。接收方已提交效果后注入HTTP 503，因此发送者看到失败时，效果仍可能存在。沿原ID确认后应用标为DONE；恢复旧应用备份，又会看到PENDING，接收方那一笔效果并未倒退。')+figures(r[6]).join('')+
+ p('受信夹具控制器把接收方独立数据库中的代际从1升到2。接收方用BEGIN IMMEDIATE事务先核对代际，再检查动作身份和内容、写入效果；旧代际的新请求得到409，当前代际沿原ID得到200/duplicate=true。应用据原回执恢复DONE，效果仍是一笔37；独立反例换成新动作ID，接收方便新增第二笔。',
+ '接收方的权威记录和回执不随应用备份回退，否则旧执行者和旧动作可能重新被接受。本例演示本机HTTP与事务条件，未实现生产身份或分区中的权威存储。真实接管需验证授权提升、存储一致性和旧写拒绝；无法查询且没有幂等协议的外部动作，恢复后应进入受控核对。',
+ '开放入口还要逐步接纳工作：缓存冷启动、旧积压和客户端重试会一起访问刚恢复的下游。按并发与截止预算放量，观察好事件、连接等待、积压与重复结果，再从只读推进到完整服务。'),
+
+ p('演练先固定故障范围、源版本、最低服务和两个时间目标，再准备隔离数据及可核对的初始结果。报告行、附件版本、摘要、权限正反例和已发送动作，都应能从预置清单查回；外部通知使用隔离接收方。这样注入故障后，验证者有明确的预期。',
+ '按手册选择基线与连续材料，恢复到隔离目标，逐项验证记录依赖、授权查询和实际内容。数据物理校验通过而索引错误，或查询成功却跨租户泄露，都不能进入接流量阶段。要恢复写入，再核对旧执行者已被拒绝及外部动作沿原身份得到正确确认。',
+ '同时记录实际发现、决策、取权、装载、重放、校验和切流的起止。数据完整到允许恢复点、服务在目标时间内恢复，两项分别出结论。演练结束核对临时资源清理、备份保留和审计材料，避免清理破坏后续恢复所需历史。',
+ '已有存储程序可验证版本与提交清单，工具恢复程序可验证提交后的确认间隙，下一节两份本地程序各提供一段机制证据。多区入口、真实密钥、备份协议和身份仍需在其目标环境演练；库大小、索引、权限或加密配置变化后，重测受影响路径。')+linkRow(links(r[7])),
+
+ h('subsection-9-xbrzl7','真实SQLite备份与完整报告前缀')+
+ p('先运行 consistent_recovery_cut.py。程序自己创建源库、基线库、应用日志和对象目录，使用SQLite Backup API复制数据库。每条日志插入一份报告，并保存对象名与SHA256内容摘要。恢复器逐事务验证前缀，既检查数据库结构，也按应用查询读取附件。')+stdlibCommand(r9[0])+
+ table(['改变的材料','检查结果'],[['只缺object-v3，直接重放到103','integrity_check=ok；R3附件缺失，业务不合格'],['按提交验证完整状态','停101/11:42，可读R1/R2，恢复点年龄18分钟'],['全部材料齐备','到103/11:57，四份A报告可读，年龄3分钟'],['日志缺102','不能跳103，停101'],['object-v2摘要不符','101事务回滚，保留100/11:30'],['按A租户执行查询','取不到B-report，验证本例消费者谓词']])+
+ fold('展开consistent_recovery_cut.py完整源码',r9[1])+linkRow(r9links.slice(0,3))+
+ p('源码中的minute是声明输入，用来计算恢复点年龄；程序没有测出云端RTO，也没有实现数据库物理WAL。A租户谓词通过只是这份查询的负例，不替代已部署IAM。先手算缺v3与缺102的停止位置，再把输出中的报告行集合、可读集合和停止原因逐项核对。')+
+ h('subsection-9-qtm6c2','本机HTTP回执与旧写者拒绝')+
+ p('再运行 recovered_effects.py。它使用另一组临时SQLite数据库和127.0.0.1随机端口，与前一个报告前缀实验相互独立；通知R27/37也不是其中R1至R4的一次重放。它验证应用备份倒退后，怎样沿原业务身份确认仍存在的接收方效果。')+stdlibCommand(r9[2])+
+ table(['本次步骤','实际观察'],[['提交后注入503，再沿原ID确认','效果存在，确认返回原回执'],['恢复旧应用备份','outbox从DONE倒回PENDING'],['接收方代际升2，旧代际发起新动作','409 stale_owner_generation'],['当前代际沿notify-R27/37重投','200 duplicate=true，仍一笔37'],['同ID把37改38','409 intent_conflict'],['独立接收方副本改用新ID','效果计数变2']])+
+ fold('展开recovered_effects.py完整源码',r9[3])+linkRow(r9links.slice(3))+
+ p('两份程序只使用自己的临时数据；HTTP程序在结束时关闭服务线程。确认恢复后的应用最终为DONE、接收方仍只有原动作，再检查独立反例确实多一笔。本轮可在本地复跑这些标准库机制；真实故障切换、认证、密钥与用户恢复时间沿前节手册另验。'),
+
+ p('最后换一组独立时间题：14:00发生中断，可验证业务状态完整到13:52，14:48授权只读查询恢复。目标RPO为10分钟、RTO为45分钟。恢复点年龄是8分钟，符合目标；服务恢复历时48分钟，超出3分钟。14:20完成数据装载只代表中间阶段，不能替换用户恢复时刻。',
+ '解释这份结论时，给出证明13:52业务完整的提交清单、附件与权限结果，再沿恢复阶段找出超出的时间。随后提出能影响该路径的改进，例如预置大数据、提前验证恢复身份或缩短串行校验，并在同一故障范围下复测。',
+ '再判断两个变化：若数据库位置仍到13:52却缺一份必要附件，应先修正业务恢复点结论；若查询已恢复而旧执行者仍能写入，完整写服务尚未通过接管条件。这样每个目标都落到具体状态与观察，而不是归结为副本更多或备份更频繁。')+linkRow(links(r[9]))
+ ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。');
+})();
+
+
+;
+// progressive-multinode-reading.js
+/* Read the fixed two-node launch as a process and state lifecycle, then run its commands.
+   Load after the progressive lessons and before first-reading-flow.js. */
+(()=>{
+ const a=articles.find(x=>x.id==='multinode-lab');
+ const titles=['环境与实验边界','安装与检查','逐级启动，再加入第二台节点','核对成功的证据','故障定位与结束实验','迁移到真实 Transformer 工作负载'];
+ if(!a||a.title!=='两机四卡 DDP：从环境检查到训练验收'||a.sections.length!==6||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Multinode lesson layout changed');
+ const old=a.sections.map(s=>s[1]);
+ const all=(s,re)=>[...s.matchAll(re)].map(m=>m[0]);
+ const blocks=s=>all(s,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const fig=s=>all(s,/<figure\b[\s\S]*?<\/figure>/g);
+ const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
+ const links=all(old[1],/<a\b[^>]*\bhref=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g).join(' ');
+ const install=blocks(old[1]),launch=blocks(old[2]);
+ if(install.length!==1||launch.length!==4||fig(old.join('')).length!==1)throw Error('Multinode preserved material layout changed');
+ if(typeof multinodeLaunchSource!=='string'||typeof multinodeLaunchWorkerSource!=='string'||typeof multinodeLaunchValidation!=='object')throw Error('Load multinode launch sources before the reading lesson');
+ const v=multinodeLaunchValidation;
+ if(v.environment.physical_hosts!==1||v.environment.launchers!==2||v.environment.workers_per_launcher!==2||v.configuration.samples!==8192||v.configuration.batch_size_per_rank!==64||v.configuration.accum!==2||v.configuration.hidden!==32)throw Error('Multinode CPU fixture configuration changed');
+ const numeric=v.recovery_numerical_comparison;
+ if(numeric.bitwise_equal!==false||!numeric.within_declared_contract||numeric.contract.floating_atol!==1e-6||numeric.contract.floating_rtol!==0||v.full_state_comparison.exit_code!==1||v.continuous_repeat_comparison.exit_code!==0)throw Error('Review the recorded multinode recovery boundary');
+ const practiceLinks='<p class="practice-links"><a href="labs/multinode-launch.zip" download>下载四进程启动与恢复实验 ↓</a> <a href="labs/multinode-launch/README.md" target="_blank" rel="noopener">运行说明与比较契约 ↗</a> <a href="labs/multinode-launch/validation.json" target="_blank" rel="noopener">实际记录与源码摘要 ↗</a> <a href="labs/multinode-launch/verify_launch.py" download>下载 verify_launch.py ↓</a></p>';
+ const newPractice='<span id="multinode-launch-run"></span>'+p('本次新增实验把两个启动器真正运行起来，每个创建两个 CPU/Gloo worker，使用原字节 train_ddp.py。verify_launch.py 在本机为两组启动器选择共同的回环入口，以同一临时目录保存状态；launch_worker.py 先记录各 worker 取得的身份，再执行训练程序。输入为8192样本、每rank小批64、累积2，隐藏宽度明确设为32，与GPU手册默认256分别记录。')+
+ code('解压新实验包后，在已有 PyTorch 2.5.1 环境中直接运行','SHELL','python verify_launch.py --report run-report.json')+
+ table(['实际核对','本次记录'],[
+ ['worker 身份 (RANK, LOCAL_RANK, GROUP_RANK)','(0,0,0)、(1,1,0)、(2,0,1)、(3,1,1)'],
+ ['每轮全局输入 / 有效 batch','8192 / 512；每rank32小批、16窗口、16次实际调用'],
+ ['连续两轮 / 一轮保存后恢复到两轮','每rank32次实际调用 / 16＋16次，next_epoch=2'],
+ ['结构、配置、计数与随机状态','逐项相同，保留4份rank随机状态'],
+ ['原严格比较器','拒绝逐位相等：state.model.0.weight存在浮点差异'],
+ ['单列浮点数值契约','atol=1e−6（绝对差上限为百万分之一）、rtol=0；最大绝对差约'+numeric.max_absolute_error.toExponential(6)]
+ ])+
+ p('GROUP_RANK 是这里实际记录的启动器组编号，本次分别对应两个静态节点编号。程序从每个 worker 的环境读取这些身份，核对四份记录来自同一宿主，再独立读取各轮日志和检查点。记录显示两个启动器都以0退出，完整训练的32次调用与恢复前后16＋16次相符。',
+ '比较分开保留两种结果：位级一致性未达成；本程序声明的数值契约及状态、更新核对通过。atol=1e−6限制每个浮点元素的绝对差，rtol=0不追加随参考值放大的相对余量；模型与Adam浮点状态按此比较，计数、结构、配置及4份随机状态仍要求精确相同。实际最大绝对差为'+numeric.max_absolute_error.toExponential()+'。本次另做的连续重复运行逐位相同，因此恢复对照差异的具体原因尚未查明，不能直接归因于Gloo。',
+ '负例保持模型权重不变，只改Adam矩量或rank1随机状态，原严格比较器分别拒绝；改变accum后恢复也被配置签名拒绝。这让检查覆盖下一次更新所依赖的状态。该数值契约只适用于这份小型CPU程序；物理双机网络、GPU/NCCL、模型任务质量及任意轮中故障恢复继续按各自目标验证。')+
+ fold('verify_launch.py 完整源码：启动、独立读取、两种比较与负例',code('verify_launch.py','PYTHON',multinodeLaunchSource))+
+ fold('launch_worker.py 完整源码：记录身份后执行原训练程序',code('launch_worker.py','PYTHON',multinodeLaunchWorkerSource))+
+ practiceLinks;
+ const newFigure='<figure class="training-figure"><a href="diagrams/v69-ddp-rank-processes.svg" target="_blank" rel="noopener" aria-label="放大：两个启动器、四个训练进程与独立通信路径"><img src="diagrams/v69-ddp-rank-processes.svg" width="1080" height="760" alt="两机四卡目标布局：每台torchrun启动两个worker，按local rank绑定可见GPU；会合初始化与NCCL训练通信分开表示" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两机四卡的目标逻辑布局。图在本机绘制，不表示已在物理双机或 GPU 上执行。<a href="diagrams/v69-ddp-rank-processes.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const bodies=[
+ p('前面的分布式数据并行（DDP）程序已经让模型副本处理各自数据、汇合梯度并更新。本章把相同程序分到两台机器：每台运行一个启动器，由它创建两个训练进程，每个进程使用一张 GPU，四个进程组成固定通信组。先明确谁启动谁、谁和谁通信，再执行安装与启动命令。',
+ '节点是承载程序的机器；launcher 是启动器，本例使用 torchrun；worker 是实际运行 train_ddp.py 的 Python 进程。启动器为本机 worker 分配身份、启动并监视它们，worker 自己执行取数据、前反向和更新。DDP 包装每个 worker 中的模型，负责相应梯度同步。')+
+ table(['编号或数量','本章含义','两节点、每节点两进程'],[
+ ['NODE_RANK / --node-rank','传给本节点启动器的节点编号','A 为 0，B 为 1'],
+ ['LOCAL_RANK','worker 在本节点内的编号','两台各有 0、1'],
+ ['RANK','worker 在整个通信组内的编号','A 为 0、1；B 为 2、3'],
+ ['WORLD_SIZE','组内 worker 总数','2 台×2 进程＝4'],
+ ['可见 GPU 编号','当前进程看到的设备序号','每台的 worker 分别绑定 cuda:0、cuda:1']
+ ])+
+ p('这里采用固定成员、每台相同进程数的启动方式，全局编号可按 NODE_RANK×2＋LOCAL_RANK 核对。节点 B 的 local rank 0 因而是全局 rank 2。CUDA_VISIBLE_DEVICES 可以重排可见设备，cuda:0 指当前可见列表的第一个设备；启动时同时保存可见列表与设备身份，才能对应到实际卡。编号关系只用于这份固定布局，弹性成员变化需要重新确认身份与状态归属。',
+ '会合（rendezvous）让参与者找到彼此、交换初始化信息。两端使用同一 MASTER_ADDR:MASTER_PORT，本章是 A 的内网地址 10.0.1.10:29500。launch_2nodes.sh 在 PyTorch 2.5.1 下采用默认的 static 会合后端、两个固定节点和 --max-restarts=0；两台都启动后，worker 从环境变量取得身份，再由 init_process_group 建立用于集合通信的进程组。')+
+ newFigure+
+ p('会合入口属于初始化路径。训练中归约梯度等张量通信由后端组织：本例 CUDA 路径选择 NCCL，CPU 路径选择 Gloo。NCCL 会按实际设备和互联建立节点内、跨节点通信；仅让 29500 端口可达，还不足以确认训练数据通信。网络规则要覆盖这两台节点之间实际需要的双向路径，使用所选网卡或 RDMA 时再核对对应条件。',
+ '目标环境是两台 Linux 节点、每台至少两张可见 NVIDIA GPU，Python 3.10—3.12、PyTorch 2.5.1、相同代码与训练配置。原有记录已验证本机 CPU/Gloo；物理双机、CUDA/NCCL 和 GPU 精度仍按目标环境留证。小型合成模型用于核对执行与恢复关系。')+
+ fold('选读：原有 rank 与 GPU 简图',fig(old[0]).join('')),
+
+ p('先准备同一份实验包与独立输出位置。包中的 train_ddp.py 完成训练和轮末保存，launch_2nodes.sh 在每台启动两个 worker，check_env.py 列出本机环境，compare_checkpoints.py 比较连续与恢复运行的完整状态。两端使用相同源码摘要，才能把差异归到这次环境或执行过程。')+
+ '<p class="practice-links">'+links+'</p>'+
+ p('GPU 驱动管理硬件，PyTorch 包携带相应 CUDA 运行时；下面安装基线选择 CUDA 12.4 包，主机驱动需支持它。check_env.py 读取 PyTorch 版本、后端支持与本机可见设备；nvidia-smi 再提供驱动及设备信息。先读这些结果，再进入跨节点启动。')+
+ install[0]+
+ p('检查点还有一条共享存储路径。本例不是每个 rank 各写一片：轮末各 rank 把自己的随机状态交给 rank0，rank0 保存完整模型、优化器和这些状态。恢复时每个 rank 都执行 torch.load，读取同一已提交文件。因此 A、B 上的 TRAIN_OUT 必须指向同一份持久文件，而不只是拼写相同的路径。',
+ '例如两台分别 mkdir /mnt/shared/cloudinfra-ddp/run-001，得到的可能是两块本地盘上的两个目录。A 的 rank0 保存后，B 仍看不到它。挂载真实共享 POSIX 文件系统后，在专用实验目录写入一个临时标记，从另一端读回相同内容并核对权限，再删除标记；这是共享可见性的检查，训练保存和恢复随后继续核对。对象存储 URL 需要自己的提交与读取实现，本程序的 Path 不负责这层转换。')+
+ table(['启动前固定','正常关系'],[
+ ['程序与环境','两端代码摘要、PyTorch 版本和配置一致；驱动支持所选运行时'],
+ ['设备','每台至少两个可见 GPU，两个 local rank 各有独立绑定'],
+ ['网络','同一会合入口，加上后端实际使用的双向通信路径'],
+ ['输出与权限','双方可访问同一专用 POSIX 目录，保留检查点与实验记录'],
+ ['成本与退出','使用已获准的实验节点，记录开始时间及自建资源范围，结束后按该范围释放']
+ ]),
+
+ p('逐级启动是在保持程序不变时增加一个执行条件。先在每台单独运行单 GPU，再在每台运行两个 GPU worker，最后让两台各自的启动器加入同一组。单机阶段的 --standalone 建立本机独立会合；跨节点阶段改用共同的 A 端入口。每次实验使用独立目录，并等上一组进程退出后再开始下一组。')+
+ launch[0]+
+ p('这两条命令采用本程序默认 CUDA、FP32、8192 样本、每 rank 小批 64、累积 2 批，先只运行一轮。单 GPU 的有效 batch 为 128，单机双 GPU 为 256；这一步验证启动与训练能推进，尚未固定同一全局 batch 来比较速度。两台本机阶段都通过后，再运行下面的四进程目标。',
+ '节点 A 的 NODE_RANK=0；两端 MASTER_ADDR 都填写 A 的真实内网地址，不能在 B 上改成 B 自己。MASTER_PORT 在脚本中默认为 29500，双方必须一致且未与其他作业冲突。TRAIN_OUT 则是已经核对共享可见性的同一个专用目录。节点 A 与 B 分别执行：')+
+ launch[1]+launch[2]+
+ p('两端启动器读取 --nnodes=2 与 --nproc-per-node=2，建立各自的两个 worker。train_ddp.py 按 LOCAL_RANK 设置 CUDA 设备，再初始化 NCCL 进程组，随后构造相同的合成数据和初始模型。DistributedSampler 按全局 rank 分配样本，DDP 在同步反向中汇合梯度；每个 worker 用相同优化器规则更新自己的模型副本。',
+ '完整启动脚本末尾的 "$@" 把附加参数传给训练程序，后续恢复命令据此指定累计目标轮数和检查点。当前脚本固定成员并关闭自动重启；成员失败后先结束本次实验、保存各端首个异常，再决定从哪个已提交检查点启动新一组进程。')+
+ fold('launch_2nodes.sh 完整源码：两端执行同一份脚本',launch[3]),
+
+ p('用这份默认输入先算训练量。8192 条固定合成分类样本由四个 rank 分担，每个获得 2048 条；每小批 64 条，得到 32 个小批。两批累积成一个更新窗口，所以每 rank 每轮 16 个窗口，一个完整窗口覆盖 4×64×2＝512 条样本。本例可整除，采样器和 DataLoader 的 drop_last 不丢数据；更换样本数后要按实际处理数重新核对。')+
+ table(['同一默认配置','计算','应核对的记录'],[
+ ['进程组','2 节点×2 worker＝4','start.world_size=4，各全局 rank 唯一'],
+ ['每 rank 样本','8192÷4＝2048','采样与全局 epoch.samples=8192'],
+ ['每 rank 小批','2048÷64＝32','本地迭代次数'],
+ ['更新窗口','32÷2＝16','attempted_update_windows=16'],
+ ['有效 batch','64×2×4＝512','start.effective_batch=512'],
+ ['实际优化器调用','默认 FP32 正常路径为 16','applied_optimizer_steps 与各 rank 一致']
+ ])+
+ p('前一小批在 no_sync 中完成前向和反向，梯度留在本地；第二小批同步反向后再尝试优化器调用、清梯度。程序通过 step 完成后触发的回调（post hook）记录实际 AdamW.step 次数，并归约检查各 rank 的计数相同。FP16 的缩放器可能因非有限梯度跳过调用，尝试窗口与实际调用因而分别记录。rank0 汇总输出，日志只有一份 epoch 记录并不表示其他进程没有训练。',
+ '完成一轮后，save_checkpoint 先汇集各 rank 的 CPU、DataLoader 随机状态，CUDA 路径再包含各自 CUDA 随机状态。rank0 将完整模型、优化器、缩放器、next_epoch、配置签名与随机状态写入同目录临时文件，刷新缓冲、用 fsync 请求同步该文件，再 os.replace 为 checkpoint.pt；各 rank 随后在组屏障 barrier 会合，全部到达后 rank0 才打印 checkpoint 记录。适用文件系统的同目录替换提供文件切换语义，存储掉电与其他存储协议另需验证。',
+ '恢复会重新创建进程组、数据、模型与优化器。每个 rank 读取同一文件，校验 world size、设备类型、精度、batch、累积和数据/模型配置，再载入模型与优化器，最后恢复自己编号对应的随机状态，并从 next_epoch 开始。这样初始化新模型消耗的随机数不会挤占恢复后的 Dropout 序列。本程序只提交整轮状态，轮中故障会重做尚未提交的那一轮。',
+ '默认脚本训练四轮。保留相同 TRAIN_OUT 和固定训练配置，在两端都执行 bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"，表示总目标为六轮；若检查点 next_epoch=4，就再运行第5、6轮。下一章再对照连续运行与恢复运行的最终状态，覆盖参数、优化器、缩放器、各 rank 随机状态、游标和配置。')+
+ table(['验证阶段','具体动作与结果','结论范围'],[
+ ['本机设备','检查可见设备与实际绑定','本机设备输入成立'],
+ ['会合与组身份','核对四个 rank 与 WORLD_SIZE=4','组成员符合这次固定布局'],
+ ['首次集合通信','各 rank 贡献 rank＋1，同组 SUM 应为 10','该次集合调用在组内完成'],
+ ['训练更新','核对8192样本、16窗口、实际调用与有限 loss','相应输入与训练路径推进'],
+ ['保存与恢复','各端可读取已提交状态，再做连续/恢复比较','固定配置、指定边界的恢复通过']
+ ])+
+ p('1＋2＋3＋4＝10 是四进程的集合通信检查目标，原 GPU 手册尚未执行该检查。检查点存在以后还要真正恢复，loss 有限以后还要按任务评估质量。合成小模型的训练量与结果用于核对机制，性能结论留给固定负载、精度和质量目标的测量。'),
+
+ p('失败定位沿正常依赖链回到第一处未满足条件。保留两端启动器和各 worker 的记录，按节点、rank、阶段与时间关联；一个 worker 先报错退出后，其他 worker 的集合通信超时可能只是等待它的后果。优先处理最早异常，才能避免把输入或存储错误误当成通信调优问题。')+
+ table(['最先停住的阶段','先核对什么','为什么'],[
+ ['启动前或设备绑定','代码、Python 环境、可见设备数、LOCAL_RANK','两个本机 worker 各要有自己的可见 GPU'],
+ ['会合初始化','两端存活、固定节点数、不同 NODE_RANK、相同 MASTER_ADDR/PORT','成员需要通过同一入口加入同一组'],
+ ['集合通信或反向','所有 rank 首个异常、所选网卡、后端双向路径、输入是否齐备','端口连通与其他成员仍在运行是不同条件'],
+ ['轮末保存','rank0 写权限、共享挂载、存储空间、临时文件和替换结果','其他 rank 在等待共同保存完成'],
+ ['重新启动恢复','检查点已提交且双方可读、配置签名相同','每个 rank 都独立加载并恢复自身状态']
+ ])+
+ p('成功结束时先保存完整命令、环境、各端退出码和所需检查点，再确认本次启动器及其 worker 已退出，检查相关 GPU 进程与本次通信端口。失败或主动停止时，向两端本次作业的启动器发出停止，核对所属子进程是否结束；对照启动记录处理遗留进程，避免影响同机其他任务。训练程序在正常异常清理路径中销毁进程组，强制终止后的资源状态仍由实际进程与平台记录核对。',
+ '保留最后一个已提交检查点与失败日志，确认不再写入后再清理本次临时文件。共享输出若将用于恢复，不能随训练进程退出一起删除；实验结束后按预先记录的范围释放自建节点、卷和其他资源，并记录终止时间。小模型在两机跑通说明这条执行路径成立，真实跨节点带宽、NCCL 性能与单位成本随后分别测量。'),
+
+ newPractice+
+ fold('复习：旧两进程恢复与四进程启动记录',p('现有 validation.json 的两进程 CPU/Gloo 对照使用另一份固定配置：1024 样本、每 rank 小批32、累积2，每轮16小批、8个窗口、8次实际优化器调用。连续四轮与两轮保存后恢复到四轮的模型、优化器、缩放器、next_epoch、配置及逐 rank 随机状态精确一致；accum=3 和改变 batch 后恢复分别被程序拒绝。它是本机逻辑基线，与前面的8192/64四进程目标分开记录。',
+ '既有两启动器记录也在同一主机运行四个 CPU rank，使用1024样本、每 rank小批32，得到有效batch256、每轮4个更新窗口。它验证启动脚本的两个节点编号与本机四进程路径；两份“节点”仍共用宿主和回环网络。物理两机、GPU/NCCL、BF16/FP16 需要各自目标环境的设备、通信、数值与恢复记录。',
+ '两进程的精确比较与四进程的数值契约各自保留，改变进程规模后重新执行相同状态检查。'))+
+ p('迁移到 Transformer 时，先在单 GPU 替换模型和数据，保留同一组固定输入，核对词元与标签对齐、忽略位置、前反向及实际优化器调用；再逐级增加进程。有效词元数不同的 rank 需要按整个更新窗口的全局目标数归一化，不能直接沿用本例等样本小批的 loss/accum。',
+ '随后扩展检查点清单：加入所用学习率计划、数据游标、分词器和数据版本、模型配置及并行分片关系。明确这次保存对应哪次更新、哪个数据位置与哪些随机流，再选择整轮或更细的恢复边界。最后对固定模型、数据、精度、全局 batch 和质量目标测延迟、吞吐与成本，让一次“能启动”自然走到“能更新、能恢复、结果可比较”。')
+ ];
+ const before=old.join(''),after=bodies.join('');
+ const pres=s=>all(s,/<pre\b[\s\S]*?<\/pre>/g);
+ const hrefs=s=>all(s,/\bhref=["'][^"']+["']/g).sort();
+ const ids=s=>[...s.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+ if(JSON.stringify([...pres(before),...pres(newPractice)])!==JSON.stringify(pres(after)))throw Error('Original multinode code order or declared practice changed');
+ if(JSON.stringify(fig(before).sort())!==JSON.stringify(fig(after.replace(newFigure,'')).sort()))throw Error('Original multinode figures changed');
+ if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after.replace(newFigure,'').replace(practiceLinks,''))))throw Error('Original multinode links changed');
+ const published=[]; // docs/SUBSECTION_LINKS_2026-11-08.json has no published subsection IDs here.
+ for(const id of [...ids(before),...published])if(!ids(after).includes(id))throw Error('Multinode anchor lost: '+id);
+ if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra multinode heading or duplicate anchor');
+ bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.desc='先把两个启动器、四个训练进程、会合与通信组连起来，再按同一输入核对启动、更新、共享检查点和恢复。';
+ a.intro=a.desc;a.updated='2026.11.09';
+})();
+
+
+;
+// progressive-agent-retrieval-workflow-reading.js
+/* Follow the task before opening its independent mechanism fixtures.
+   Published section identities and every original code/figure/link stay in place. */
+(()=>{
+ if(typeof articles==='undefined')return;
+ const p=(...items)=>items.map(text=>'<p>'+text+'</p>').join('');
+ const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
+ const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
+ const matches=(body,re)=>[...body.matchAll(re)].map(m=>m[0]);
+ const pres=body=>matches(body,/<pre\b[^>]*>[\s\S]*?<\/pre>/g);
+ const codes=body=>matches(body,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
+ const figures=body=>matches(body,/<figure\b[\s\S]*?<\/figure>/g);
+ const hrefs=body=>matches(body,/\bhref=["'][^"']+["']/g);
+ const ids=body=>[...body.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
+ const links=body=>matches(body.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<div class="code-block">[\s\S]*?<\/pre><\/div>/g,''),/<a\b[^>]*href=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
+ const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' · ')+'</p>':'';
+ const anchors=body=>matches(body,/<span\b[^>]*class="legacy-subsection-anchor"[^>]*><\/span>/g).join('');
+ function same(label,before,after){if(JSON.stringify(before)!==JSON.stringify(after))throw Error('V69 Agent reading changed '+label);}
+ function finish(a,before,bodies){
+  if(bodies.length!==before.length)throw Error('V69 Agent section count changed: '+a.id);
+  bodies.forEach((body,index)=>{
+   same(a.id+' section '+(index+1)+' source bytes/order',pres(before[index]),pres(body));
+   same(a.id+' section '+(index+1)+' figure bytes/order',figures(before[index]),figures(body));
+   same(a.id+' section '+(index+1)+' URL bytes/order',hrefs(before[index]),hrefs(body));
+   same(a.id+' section '+(index+1)+' published IDs',ids(before[index]).sort(),ids(body).sort());
+   if(!body||body===before[index])throw Error('V69 Agent section was not revised: '+a.id+' '+(index+1));
+  });
+  same(a.id+' global source order',pres(before.join('')),pres(bodies.join('')));
+  bodies.forEach((body,index)=>a.sections[index][1]=body);
+  a.updated='2026.11.09';
+ }
+
+ {
+  const a=articles.find(x=>x.id==='agent-retrieval');
+  if(!a)throw Error('V69 missing Agent retrieval chapter');
+  const expected=['检索、上下文与最终主张是怎样连接的','片段、版本与来源：先保留能追回原文的身份','词面检索：中文分词、倒排与BM25','混合召回：分数、名次、RRF与重排','召回范围、候选数量与证据齐备要分开','完整词元预算：正文、模板与输出预留一起算','排序指标与任务证据：换一道排障题核对','分级指标：DCG、nDCG与支持程度','授权复检：可信装配器与模型输入之间还有一道边界','版本推进与索引滞后：旧值27不能悄悄变成新证据','引用要同时满足定位、支持与读取资格','真实检索实战：FTS5、融合和更新','跑通从过滤到证据交付的链路','前五名指标程序的源码与结果','实战：完整BPE预算、版本复检与实际提示交付'];
+  same('retrieval section identities',a.sections.map(s=>s[0]),expected);
+  const old=a.sections.map(s=>s[1]),f=old.map(figures),c=old.map(codes),l=old.map(links);
+  same('retrieval code inventory',c.map(x=>x.length),[0,0,0,0,0,0,0,0,0,0,0,2,3,1,2]);
+  const body=[
+   p('检索帮助任务从资料中找出可用的证据。来源是保存事实的业务系统或原始材料；文档是其中可定位的内容对象；片段是为寻找和引用而切出的内容单位。索引把片段整理成便于查询的数据结构，检索器据此给出候选。候选还要经过正文读取、证据选择和输入装配，才进入模型本次实际收到的上下文。',
+   '固定一项费用任务：用户要本月总额及依据。租户A的a-1/v1保存基础费用10，a-2/v2保存本月调整27；应回答10+27=37，并分别引用这两个版本。旧调整a-2/v1=99、另一租户的999以及只有27的输入，都不满足任务。检索增强生成RAG把取回的材料加入模型输入，使回答可以依据这些材料形成。')+
+   table(['推进位置','正常费用任务留下的对象','下一步依赖'],[
+    ['提出查询','寻找本月基础与调整费用','查询范围来自可信任务身份'],
+    ['取得候选','a-1/v1、a-2/v2的身份和排序','取正文时继续核对读取资格与版本'],
+    ['读取并选择证据','10、27及其月份、单位和来源','两类费用都齐备，才能计算本月总额'],
+    ['装配并发送','任务要求、来源身份、正文与输出约定','整份输入满足窗口，接收端取得对应内容'],
+    ['形成并验收主张','37与两个可定位的引用','核对算式、适用范围、来源和实际保存结果']
+   ])+f[0][0]+p('这条路径区分了“找到相关项”“取得适用正文”“完整送入输入”和“回答获得支持”。本章本地HTTP实验实际验证到输入送达：接收端是提示收集器，37是从来源独立算出的参考值。模型生成与回答正确率需要另行执行和验收。'),
+
+   p('同一份资料会更新，因此候选需要携带文档ID、版本和片段位置。文档ID回答是哪份资料，版本回答是哪次内容，位置回答支持结论的原文在哪里。a-2/v1=99与a-2/v2=27属于同一文档的不同版本；本任务要求当前本月资料，二者不能互换。',
+   '切分要保留一项事实成立所需的条件。“本月调整费用27元”包含项目、时间、金额与单位；只留下27，后续即使算术正确，也无法说明它能否用于本月总额。否定、例外和适用对象同样随事实保留。相邻片段可以重叠，但两段重复文字仍属于同一个来源。')+
+   table(['身份或校验项','费用任务中的作用'],[
+    ['a-1/v1、a-2/v2','在候选、正文、输入清单和最终引用中关联同一份材料'],
+    ['片段位置','定位支持基础10或调整27的具体范围'],
+    ['SHA-256内容摘要','按规定字节编码计算内容指纹，核对取回内容是否匹配'],
+    ['当前指针与读取资格','分别确定适用版本和当前主体能否取得正文']
+   ])+p('摘要相符支持内容一致；它不签发读取资格，也不决定版本是否适用于任务。后续每次跨过索引、正文、装配与发送边界，都要能沿这些身份找到实际使用的资料。'),
+
+   anchors(old[2])+p('词面检索按文字匹配候选。分析器把文档切成检索词元，倒排索引保存某词元出现在哪些文档或位置；查询用兼容的分析规则处理，才能匹配这些索引项。费用查询中的项目名、月份或编号可以成为检索条件，但“金额是多少”最终仍要由取回正文回答。',
+   '本章实验使用SQLite数据库的全文检索扩展FTS5。匹配到多份资料后，BM25依据词频、词的稀有程度和文档长度评分：同一词反复出现的收益逐渐减小，稀有词区分力较强，长度归一化减少长文档仅凭篇幅占优。FTS5将BM25结果取负，因此程序按较小值排在前面。排序只处理已命中的候选。')+
+   fold('中文索引对照：为什么资料在库里却没有命中',p('chinese_fts_rrf.py使用独立的8条中文材料。unicode61分析器未给“数据库备份支持恢复”生成单独的“恢复”词元，查“恢复”得到0项。换成相邻汉字二元片段后，“数据库恢复”形成“数据、据库、库恢、恢复”，以OR连接可匹配任意一项。')+f[2][0]+p('这个分析器会产生跨词片段；产品名、错误码、版本、缩写与单字查询仍须用实际语料检查。程序先去重词元、为每项加引号，再把MATCH表达式作为SQL参数。SQL参数化和FTS查询语法各有边界。查询在LIMIT之前限制租户、当前状态与索引版本；共享索引仍提供BM25的底层语料统计。')),
+
+   anchors(old[3])+p('同义表达可能没有相同字面，向量召回为此提供另一种候选来源：嵌入模型embedding把查询与片段编码成向量，再按约定距离寻找接近项。词面路适合精确术语与编号，向量路可能覆盖改写。两路分数具有不同定义，融合前要选择明确的比较方法。',
+   '倒数排名融合RRF使用名次而非原始分数。某项在一路排第r名，就贡献1/(k+r)；将各路贡献相加。本例k=60、名次从1开始，未出现的一路贡献0，同一路同一对象先去重。融合以后，重排器还可在这份候选池内重新比较任务相关性；未被召回的材料不会凭重排出现。')+
+   fold('独立八文档题：手算名次融合',table(['文档','词面名次','声明第二路名次','RRF'],[
+    ['a-backup','1','2','1/61+1/62≈0.032522'],
+    ['a-archive','3','1','1/63+1/61≈0.032266']
+   ])+p('a-backup略高。k越大，不同名次的贡献差距相对越小；每路保留的候选深度也会影响参与者。第12节实际运行FTS5/BM25，第二路固定为[a-archive,a-backup,a-plan]，未调用嵌入模型；融合分数也不是相关概率。费用任务的规则重排另见第13节，其规则依据材料类别，不读取标准答案集合。')),
+
+   anchors(old[4])+p('费用任务需要基础项和调整项各一份。top_k只规定一轮最多保留多少候选，并不表达这两类证据是否齐全。先限定当前主体可搜索的资料与适用版本，再选择前k项；取得候选后，仍检查它们能否覆盖任务所需事实。',
+   '访问控制列表ACL记录谁可以读取对象。实验从可信会话和资源记录取得主体、租户与资格；文档里的“允许访问”只是正文。取正文时，资源服务按实际对象再次执行资格与版本检查，读取后才交付允许字段。')+
+   table(['阶段','费用任务的检查对象','不足时停在哪里'],[
+    ['候选','a-1/v1与a-2/v2都被找到','检查范围、索引和候选深度'],
+    ['正文','取得获准的同版内容','拒绝错租户、旧版或已撤权的读取'],
+    ['证据装配','基础、调整及适用条件全部保留','缺一类就报告证据不足'],
+    ['发送与回答','收到对应输入；37由两个引用支持','分别核对输入送达和主张成立']
+   ])+p('可信检索服务先处理候选元数据，与把正文交给任务是两个时点。全局top2再过滤可能没有剩余项；先把越权正文放进任务缓冲区再删除，则已经发生交付。第13节用delivery表记录实际进入任务的正文，使最终答案和执行过程都可独立检查。'),
+
+   p('上下文装配器把任务要求、来源身份、所选正文和输出约定序列化成模型输入。模型分词器把文本编码为词元编号；计数取决于编码器与完整输入形状，不能用汉字数、字符数或UTF-8字节数替代。BPE字节对编码通过逐步合并字节或子词片段形成词元。',
+   'context_budget.py固定分词库tiktoken 0.12.0与cl100k_base编码，对自行定义的完整字符串计数。两份费用正文分开编码共36词元，加入系统要求、任务、来源ID/版本/SHA-256、正文与JSON格式后为237。每加入一整段材料，都重新编码整份候选输入。')+
+   table(['窗口账项','本例数值'],[
+    ['完整输入','237'],['输出预留','96'],['合计','237+96=333'],['声明窗口与剩余','512；512−333=179']
+   ])+f[5][0]+p('512是教学窗口，237对应这份字符串模板；真实聊天封装或后端改变时要重新计数。总预算收紧到259后，输入上限为163，只容下排在前面的a-2/v2。两份资料虽都召回，输入只留下调整27；程序检查缺少基础项后停止，HTTP新增请求为0。')+
+   fold('词元边界与证据边界',p('整体编码可能在分段连接处发生合并，因此分段计数之和未必等于整段计数。“中国🙂恢复”取前2词元会截断表情字节，默认解码得到“中国�”；退回严格可解码边界得到“中国”。')+f[5][1]+p('字符完整以后，还要检查事实的条件是否完整。程序用encode_ordinary把来源里的类似结束标记按普通文字编码；这验证分词行为，恶意文字是否影响真实模型仍需模型实验。')),
+
+   p('排序评估先把问题、候选单位和标准证据固定下来，再问前k项覆盖多少。Precision@k是前k项中的相关项数除以k；Recall@k是命中的标准证据数除以标准证据总数；倒数排名RR取首个相关项位置的倒数，没有命中则为0。多个查询的RR按既定口径平均才是MRR。',
+   '费用任务需要基础与调整两类证据；下面独立的排障题R27则要求判断“今天变慢是否由昨天配置更新引起”。其标准集合为E1延迟时间线、E2配置变更时间、E3适用版本的连接池说明。固定前5项互不重复，直接计算：')+
+   table(['排序','命中数','Precision@5','Recall@5','RR'],[
+    ['old、E1、note、E2、other','2','2/5','2/3','1/2'],
+    ['E1、old、note、other、extra','1','1/5','1/3','1']
+   ])+p('第二种排序把首个相关项提前，却丢掉另一项必要证据。RR与覆盖率因此可以反向变化。真实评估还要规定返回不足k项、重复片段和部分支持的处理方式；无答案题的标准集合为空，应单列检验证据不足行为。比较版本也需固定按查询等权或按证据数量加权的口径。'),
+
+   anchors(old[7])+p('二元相关性只区分相关与不相关；分级标签还表达支持程度。折扣累积增益DCG把第r名的等级g变成(2^g−1)/log₂(r+1)，累加前k名；理想DCG由同一标签集按最佳顺序排列得到。nDCG是实际值与理想值之比，衡量这份排序接近声明理想排序的程度。')+
+   fold('独立八文档题：相关项数量相同，等级顺序仍不同',p('本题预先声明a-backup=3、a-dr=2、a-plan=1、a-archive=2，其他为0。标签只交给评价程序，不作为检索输入。')+f[7][0]+table(['前三项等级','DCG@3','nDCG@3'],[
+    ['BM25：[3,1,2]','约9.13093','约0.8786'],
+    ['RRF：[3,2,1]','约9.39279','约0.9038'],
+    ['理想：[3,2,2]','约10.39279','1']
+   ])+p('两份实际前三都命中3个相关项，标准集合有4项，故Precision@3=1、Recall@3=0.75、RR=1保持不变；把等级2前移仍可提高nDCG。这组指标描述声明语料的排序，并不代替费用任务的证据齐备检查。标准集合无正例时，理想DCG为0，应单列无答案任务。')),
+
+   p('从取得正文到实际发送，资格仍可能变化。可信装配器可在内存保有两份费用资料，但模型接收端是否还能取得它们，需要按发送协议重新判断。缓存键至少区分租户、适当的主体或权限范围、来源与版本；命中缓存之后也要核对当前读取资格。',
+   '实验先取得a-1/v1与a-2/v2，再由另一个SQLite连接撤销a-2资格。发送前recheck读取当前状态，返回authorization_changed，HTTP接收端新增请求为0。这里证明了指定撤权窗口中的处理，装配器持有正文与向接收端交付正文分别记录。',
+   'recheck和随后的HTTP发送不属于一个跨系统原子事务。资格若在检查后改变，实际系统还要规定在途请求语义与接收端实施点；已经发送的内容也无法通过删除索引收回。'),
+
+   p('费用任务要求当前版本。a-2/v2的27已被装配后，来源新增v3=30并推进current指针，发送前检查便应识别source_version_changed，停止发送旧包。要完成更新后的任务，重新查询并取得a-1/v1和a-2/v3，再按10+30=40核对证据。历史快照型任务可以采用另一规则，但需固定任务时间与历史读取资格。',
+   '正文更新和索引更新分别发生。正文已为v3、索引还为v2时，当前版本条件会排除旧候选，只剩基础项；把v3实际加入索引后，两类材料才重新齐备。内容摘要与旧v2相符，只能确认拿到旧内容，不能把它提升为当前证据。')+
+   table(['观察','下一步'],[
+    ['正文v3、索引v2','推进索引并重新检索，保留证据不足状态'],
+    ['候选v2、实际正文v3','重新关联身份并装配'],
+    ['新索引返回v3','重算完整输入与当前参考40'],
+    ['旧内容仍在缓存','重新检查当前资格和任务版本规则']
+   ])+p('第12节另用a-backup从正文1更新到2，观察相同的索引滞后关系；它使用自己的八文档输入。两项记录各自核对文档名与版本。'),
+
+   p('引用把一个主张连接到能够支持它的具体材料。费用答案37应把基础10指向a-1/v1，把本月调整27指向a-2/v2及相应片段。可定位、实际支持主张、查看者有权读取，是三个分别需要检查的条件。只有“费用说明”标题，还无法核对这条算式。',
+   '结论的范围随证据保留。材料若只允许本月加27，回答就不能扩大成以后每月都加；单位、否定和例外也要保留。来自同一资料的重叠片段仍是一份来源。证据不齐时，应说明缺少哪一类材料。',
+   '引用历史结论时固定当时版本。旧链接若直接跳到当前新正文，读者就无法复查旧判断；应在资格允许时提供明确历史视图，失去资格则显示不可访问。验收时依次查候选、正文、实际输入与答案，首次出现差异的位置就是继续定位的起点。')+linkRow(l[10]),
+
+   anchors(old[11])+p('chinese_fts_rrf.py集中验证中文匹配、名次融合和分级评价。独立语料有8条文档，实际BM25表与声明的第二路排名参与RRF，预先给定等级只用于评价。正常结果先由同一套分析器和查询得到，再改变正文版本观察旧索引。')+c[11][0]+
+   table(['执行环节','应核对的程序对象与结果'],[
+    ['分析与匹配','raw_vocabulary无独立“恢复”；二元query_terms为数据/据库/库恢/恢复'],
+    ['词面排序','search限定租户、current和版本，得到a-backup、a-plan、a-archive、a-dr'],
+    ['融合与评价','rrf得到a-backup、a-archive、a-plan、a-dr；nDCG约0.8786→0.9038'],
+    ['更新','正文1→2时排除旧索引；重建后正文2/索引2']
+   ])+p('手算a-backup的1/61+1/62并核对rrf_results，再查stale_index_without_check与after_reindex。这里执行了FTS5/BM25；第二路排名、相关性等级和二元分析器都具有明确的教学输入范围。')+fold('完整chinese_fts_rrf.py',c[11][1])+linkRow(l[11]),
+
+   p('retrieval_pipeline.py把费用任务缩成五文档SQLite输入，逐项隔离候选范围、规则重排、装配和正文交付。固定分数从高到低为B/b-secret/v1=999（0.99）、旧a-2/v1=99（0.98）、当前手册a-note（0.95）、基础a-1/v1=10（0.90）、调整a-2/v2=27（0.85）。每份占8个教学预算单位，预算16或12用于控制能装下几份材料。')+c[12][0]+p('全局top2再过滤得到空表；先过滤再top2得到a-note与a-1。规则重排在三个合法候选内优先base与adjustment，选到两份费用。GOLD标准集合只用于独立评分，执行阶段不读取它。')+
+   table(['只改变的条件','排序、正文与判定'],[
+    ['post_filter','合法候选0，正文交付0，证据不足'],
+    ['pre_filter','a-note、a-1；Precision@2=Recall@2=RR=1/2，仍缺调整项'],
+    ['rule_rerank、预算16','排序与上下文Recall均1；总额37、两个来源，合格'],
+    ['rule_rerank、预算12','排序Recall为1，实际只交付a-1，上下文Recall为1/2，证据不足'],
+    ['unsafe_post_filter','过滤前已交付B与旧版正文，即使最后拒绝也不合格'],
+    ['revoked_before_fetch','候选之后撤权，正文交付0，denied']
+   ])+p('grade重新查询delivery表，核对越权或过期交付、实际答案37和两个版本引用。这个程序读取真实SQLite正文并生成确定性算术答案；固定分数、材料类别规则和8单位预算不代表嵌入模型、学习型重排器或模型词元。')+fold('完整retrieval_pipeline.py',c[12][1])+linkRow(l[12])+fold('独立R27排障题：前五名指标的计算源码',c[12][2]),
+
+   p('agent-retrieval.py核对第7节的指标算式，输入是固定标准集合{E1,E2,E3}与两个互不重复的前五名列表。Fraction保存精确分子分母；程序输出应与手算逐项相同：')+
+   table(['声明排序','Precision@5、Recall@5、RR'],[
+    ['old、E1、note、E2、other','(2/5, 2/3, 1/2)'],
+    ['E1、old、note、other、extra','(1/5, 1/3, 1)']
+   ])+p('返回项数5、标准证据数3与首个相关项的位置，分别决定三个分母。此程序没有建立索引或执行召回；它验证固定列表的计算实现，检索服务质量还需在声明任务集上实际运行。')+linkRow(l[13])+fold('指标程序的实际输出',c[13][0]),
+
+   anchors(old[14])+p('context_budget.py沿费用任务执行完整输入交付。setup建立来源、current指针、资格与FTS5索引；retrieve取得候选，fetch读取同版正文，render序列化任务与来源，pack用固定BPE编码器逐段检查整份输入，recheck复核资格和版本，最后通过HTTP交给回环收集器。按实验包README准备固定依赖；tiktoken首次取得cl100k_base词表需要网络，后续可以使用缓存。')+c[14][0]+linkRow(l[14].slice(0,3))+
+   table(['场景','核对的结果','新增HTTP请求'],[
+    ['正常a-1/v1、a-2/v2','正文单计36，完整输入237，预留96，总333≤512；参考37','1'],
+    ['总预算259','输入上限163，只保留a-2/v2，insufficient_evidence','0'],
+    ['取回后撤资格','authorization_changed','0'],
+    ['取回后来源升v3','source_version_changed','0'],
+    ['旧索引→加入v3','仅基础项→两类齐备，当前参考40','0，仅检查新证据'],
+    ['伪造跨租户/旧版候选','b-1/v1、a-2/v1在fetch被拒','0'],
+    ['截“中国🙂恢复”前2词元','默认中国�；严格有效前缀中国','未发送']
+   ])+p('正常候选顺序为a-2/v2、a-1/v1。收集器重算收到的完整字符串词元数，检查窗口和来源清单，返回提示SHA-256；发送方再核对这份回执。整次实验实际收到一份正常请求，两个版本及输入摘要相符。')+
+   fold('完整context_budget.py',c[14][1])+p('这份回执确认哪份输入交给了收集器；工具效果回执确认外部动作提交了什么；任务验收检查实际答案及引用。三类记录分别保存输入交付、业务效果和任务结果，各自保留对象与身份。实验运行了FTS5、固定编码器和本地HTTP，没有调用生成模型；预发送复检与远端交付之间的在途规则仍需另定。')+linkRow(l[14].slice(3))
+  ];
+  finish(a,old,body);
+ }
+
+ // The isolated native-bridge check deliberately omits its prerequisite, then
+ // injects that bridge alone. Leave that baseline available for its own contract.
+ if(typeof langgraphWorkflowBridgeReview==='undefined')return;
+ {
+  const a=articles.find(x=>x.id==='durable-workflows');
+  if(!a)throw Error('V69 missing durable workflow chapter');
+  const expected=['把一份日报拆成可以恢复的承诺','历史写下事实，状态由事实推得','重放为什么不该再次询问模型','单执行者的提交间隙，先读两本账','接管先经过控制库，再经过效果接收方','把旧写隔离和业务去重放在同一事务里','三次观察，分别证明哪一个边界','等待、取消与超时怎样决定下一步','先预测，再执行已有的多进程程序','旧任务、升级和保留期一起验收'];
+  same('workflow section identities',a.sections.map(s=>s[0]),expected);
+  const old=a.sections.map(s=>s[1]),f=old.map(figures),c=old.map(codes),l=old.map(links);
+  same('workflow code inventory',c.map(x=>x.length),[0,0,2,3,0,0,0,0,7,2]);
+  const body=[
+   p('工作流是规定一项任务中步骤、依赖和推进条件的程序；一次运行是它为某个任务保存的状态与记录。工具恢复章关注一项外部动作的提交与回执，本章把多个动作连成能够等待、继续和验收的任务。模型可以提出计划，执行器负责接纳允许的步骤、保存结果并推进。',
+   '固定目标report-A：orders-A/v3包含[10,27]并引用late-A/v1；实际读取补录得到[5]，报告总数为42，来源清单应包含这两个版本。任务完成还要求内容检查、匹配批准和一份实际发布。')+
+   table(['正常推进','已经取得什么','可以继续的条件'],[
+    ['读基础→读补录','基础37、补录引用，再取得补录5','引用解析到实际来源；两份读取结果都已保存'],
+    ['汇总→检查','草稿42、完整来源清单','金额与来源检查均通过'],
+    ['保存草稿→等待批准','待批准正文及其身份','批准针对当前任务、目标和这份草稿'],
+    ['发布→验收','接收方报告和回执','实际报告为42、来源相符、只发布一份']
+   ])+
+   h('subsection-1-3htvho','步骤依赖与计划修订')+p('计划安排未来要做的工作，事实保存已经取得的结果。基础读取先产生补录引用，所以补录读取依赖基础；汇总依赖两份资料；发布依赖检查和批准。固定工作流预先写好这些分支即可完成本题。动态版本初始计划漏掉补录读取，执行器先保存缺失条件，进入NEEDS_REPLAN，再接纳包含read_extra的新计划，保留仍适用的基础事实。')+f[0][0]+
+   h('subsection-1-z363qn','工作请求与确认结果')+p('执行请求表达准备做什么，确认结果保存实际观察到什么。planning_lab.py用RUNNING表示可推进，DRAFT_READY表示草稿已形成，WAITING_APPROVAL表示等待当前草稿的批准；DONE表示本地流程已经结束。等待时保存状态后进程可以退出，后续新进程读取同一任务记录，取得适用批准后继续发布。',
+   '最后由独立验收直接读取来源和真实报告，检查42、目标、来源与份数。流程状态、模型声明或图已结束都只是各自的记录，是否满足用户目标仍由实际产物决定。')+linkRow(l[0]),
+
+   h('subsection-2-1pgk1ak','历史、快照与可恢复状态')+p('持久化把新进程继续任务所需的信息保存在进程之外。事件历史按顺序记录已接纳的请求和结果；检查点保存某个执行位置的状态及待决工作。report-A读取来源后，后续进程至少需要知道读了哪个版本、取得什么结果，以及接下来还缺哪一步。普通Python局部变量只存在于当前调用栈，进程退出后要从持久记录重新取得这些依据。')+
+   table(['planning_lab.py保存位置','任务中的内容','恢复时的用途'],[
+    ['plans','已接纳步骤与计划版本revision','确定接下来允许采用的安排'],
+    ['facts','步骤名、输入身份和已确认结果','复用当前输入仍适用的读取或计算'],
+    ['runtime','当前阶段、游标、预算和草稿','判断推进、等待或结束'],
+    ['signals','批准内容、输入标识和消费状态','取得与当前草稿匹配的外部输入'],
+    ['reports','实际交付正文和来源清单','独立核对最终业务结果']
+   ])+
+   h('subsection-2-u7tby','按确认结果恢复下一步')+p('恢复先读取已有事实，再决定是否安排新工作。基础和补录结果已经保存，就使用它们汇总；草稿和等待条件已保存，就查找适用批准；发布是否发生则向持有效果的接收方查证。重放型实现会重新运行决定步骤的代码，并把请求与历史对应；检查点型实现从保存的状态和待决任务继续。具体哪段代码重入，由所用实现规定。')+
+   h('subsection-2-1cfmvg2','事实复用的输入身份')+p('计划版本revision属于步骤安排，源版本属于某一份数据。计划1改成2时，orders-A仍为v3，基础事实37可以保留；新增late-A/v1后，汇总输入集合改变，旧汇总37就需要重算为42。',
+   'planning_lab.py以步骤名和输入身份共同作为事实键。来源清单记录资源、版本和内容摘要；摘要按固定编码计算SHA-256，用来比较内容身份。汇总键还绑定任务、目标与整份清单。只按步骤名sum缓存，可能找到一份真实保存的旧结果，却把它用于另一组输入。'),
+
+   h('subsection-3-ueacvx','决定代码与历史相容性')+p('确定性重放要求决定代码在相同历史下产生相容的工作安排。外部读取、实时模型或系统随机数可能每次给出新值；需要这些值时，把调用安排为能够记录结果的工作，后续决定消费其保存结果。这样恢复可以解释原来的决定，新的外部调用也有明确的发生位置。框架提供的时间、随机和版本接口应按对应SDK规则使用。')+
+   fold('独立23练习：本地解释器怎样匹配工作请求',p('workflow_history.py将外部工作称为活动。read-1/read_metrics读取23，draft-1/render_draft用结果生成文本；两项按活动ID、类型与顺序匹配旧历史。换类型、遗漏旧命令或在完成历史后增加命令会触发相容性错误。它保存args但不比较参数语义，未实现按定义版本选择代码。这个独立解释器用来观察结果记录，未运行Temporal SDK。'))+
+   h('subsection-3-1amsab8','结果记录前后的两种恢复')+p('活动返回结果与结果进入持久历史是两个时点。已经记录完成结果时，新进程可以复用；只有安排记录而没有完成记录时，工作可能重新执行。重放能保留哪份结果，取决于退出前真正提交了哪些事实。')+
+   fold('23来源改为999：只改变进程退出位置',p('这份独立练习在读取后把来源改成999，再分别恢复。退出码23和24只是两个故障窗口的进程返回值。')+f[2][0]+table(['退出位置','持久记录','实际恢复'],[
+    ['completed写入后退出23','安排及结果23','复用23；读取总计1次'],
+    ['活动返回、completed未写入时退出24','只有读取安排','重新读999；读取总计2次'],
+    ['完整历史再重放','读取、草稿和结束均已记录','新增活动0次，新增事件0条']
+   ]))+
+   h('v43-history-practice','用独立调用记录核对重放')+p('事件历史和活动调用次数写入两个SQLite文件，真实子进程在指定窗口退出。观察Runner.activity的历史匹配，以及读取返回后append(completed)的位置，再对照after_crash和after_gap_resume。')+c[2][0]+linkRow(l[2].slice(0,3))+fold('完整workflow_history.py',c[2][1])+linkRow(l[2].slice(3)),
+
+   p('report-A发布跨过两个持久化位置：工作流保存待执行意图，接收方保存报告及操作回执。发布前先固定report-A:publish与具体草稿；接收方将效果和回执共同提交；工作流取得并核对回执后，保存自己的后续状态。若接收方已提交、工作流尚未确认，新进程仍沿原操作身份和内容查询或重试。')+
+   table(['保存位置','提交间隙后要查的事实'],[
+    ['工作流记录','原操作身份、目标和具体草稿'],
+    ['效果接收方','该操作是否已提交、参数是否相同、原回执是什么'],
+    ['恢复后的工作流','核对结果后保存确认，再推进后续工作']
+   ])+
+   fold('独立op-001计数例：两本账的最小对照',p('agent_lab.py的op-001使工具库计数加一。提交后退出23，运行器仍RUNNING、尝试1，工具效果为1；沿原键恢复后SUCCEEDED、尝试2、效果仍1。它只验证这笔计数动作，图中历史编号9.2对应现G4。')+f[3][0])+linkRow(l[3].slice(0,1))+
+   h('langgraph-workflow-objects','把持久等待映射到LangGraph')+p('实际workflow_lab.py使用LangGraph 1.2.20，把同样的42目标写成有状态图。state是本次数据，ReportState约定它的字段，node是接收状态并返回更新的函数，edge规定推进依赖。checkpointer保存框架检查点；SqliteSaver写入checkpoints.sqlite，thread_id=report-A定位这条执行，与操作系统线程编号分别处理，资源权限仍来自任务委托。',
+   '图先读基础、读补录、形成草稿、完成两项检查。approval_publish节点向独立HTTP接收方暂存草稿，再调用interrupt保存待批准对象并暂停。新进程打开相同检查点，以同一thread_id传Command(resume=批准)继续；批准值成为interrupt的返回值，经草稿摘要核对后才能发布。')+fold('42图的原生API与依赖图',c[3][0]+f[3][1])+
+   h('langgraph-workflow-wait','并行分支的更新与汇合')+p('金额与来源检查都依赖草稿，彼此可以并行。reducer规定同一状态字段的多份更新怎样合并：checks用operator.add连接["total"]与["sources"]，每个分支只返回自己的新增项。add_edge的起点列表要求两路完成后才进入审批。')+fold('分支更新与显式失败恢复',c[3][1]+p('真实执行器线程的同步点验证了两分支重叠。来源检查主动抛异常时，金额分支的成功更新保存为pending writes；新进程invoke(None)补做来源检查。记录中金额检查1次、来源检查2次，两项结果各合并1份。这是显式异常后的分支恢复。'))+
+   h('langgraph-workflow-reentry','节点重入与外部效果去重')+p('本例中断恢复会从approval_publish节点开头重入，再次执行暂存。暂停前stage_receipt尚是局部变量，没有作为节点更新返回；接收方的暂存却已经提交。正常路径在初始状态中固定report-A:stage，两次尝试由接收方认作同一操作，只保留一份效果。若在节点中每次新建UUID，就会成为两笔暂存。')+fold('中断节点的原代码与两次暂存',c[3][2]+f[3][2])+p('durability="sync"让下一步开始前先写框架检查点；HTTP接收方的receiver.sqlite仍是独立事务域。节点重入规则说明哪段代码会再走，接收方操作协议说明这些调用产生几份效果，两者共同决定恢复结果。')+linkRow(l[3].slice(1)),
+
+   p('单执行者恢复之外，还可能出现旧执行者A暂停但未退出，新执行者B已经接手。租约是一份有期限的工作权约定，控制库保存当前持有者、代际和期限；epoch代际是这项所有权递增的编号。效果接收方也保存当前接受的代际，按它拒绝旧持有者的新写入，这称为fencing旧写隔离。',
+   'B先在控制库取得代际2，再把2安装到接收方，确认安装后使用2写入。A即使仍活着，携带1的新动作也会被已经安装2的接收方拒绝。控制权记录与写入口分别有自己的提交时点。')+
+   table(['阶段','控制库/接收方代际','写入口的规则'],[
+    ['A运行','1/1','A的1可提交'],
+    ['B取得租约、尚未安装','2/1','接收方仍按1判断'],
+    ['B完成安装','2/2','拒绝A的1，允许B的2'],
+    ['C取得并安装3','3/3','只接受当前3的新写']
+   ])+p('worker_fencing.py将控制库与接收方分开：reserve_lease更新租约，arm_receiver安装接收方fence。函数返回True表示该代际已armed，并未在控制库另存一个armed字段；已安装3时，迟到的2返回False，不会把代际降回2。')+
+   fold('安装空窗的生效点',p('控制库为2、接收方仍为1时，旧A还可能提交全新动作；实际独立数据库对照观察了这个空窗。安装2后，旧写才按新规则被拒绝。生产协议还要确定可信代际如何签发、怎样确认安装、安装失败怎样恢复；调用者自行填写更大整数不构成工作权。')),
+
+   p('旧写隔离检查执行者现在有没有新写资格，业务去重检查这笔逻辑动作是否已经提交。接收方在一个受保护的提交边界内，先核对当前代际，再核对操作身份与内容，最后共同提交新效果和回执。安装新代际与执行写入也要受同一类事务保护，避免检查以后资格又变化。',
+   '下面用worker_fencing.py的独立数值写入说明两项检查。它保存7、11、13等标量，不发布42报告。B已取得并安装2时：')+
+   table(['请求','代际判断','操作判断与结果'],[
+    ['B/2，fresh-from-B，值7','当前2','首次提交7及回执'],
+    ['B/2，同键同值7','当前2','duplicate，不增加效果'],
+    ['B/2，同键改值8','当前2','内容冲突，原效果保留'],
+    ['A/1，全新键和值99','旧代际1','stale_epoch，拒绝新写']
+   ])+p('新键可能绕过去重，却绕不过过期代际检查；当前持有者仍可能重复同一动作，因此也需要业务去重。新持有者接续旧操作时，使用自己的当前代际和原业务键，既取得原结果，又维持旧执行者的隔离。',
+   '本例invoke在SQLite BEGIN IMMEDIATE后读fence、查操作记录并写效果；代际安装也是写事务，两者由数据库串行化。固定租户和工具白名单属于测试夹具，真实身份认证与代际签发不在其中。'),
+
+   p('接管实验分别观察“旧执行者仍活着”“进程已退出”和“接收方已经提交”。让A停在同步点并确认仍存活，B安装2、提交7后再释放A；A用全新键写99时应被拒绝。另一子进程提交11后退出，C安装3并沿原键取得11；C再以新键写13，验证新持有者仍可推进。')+
+   table(['观察','实际结果','证明的边界'],[
+    ['暂停A→B接管→释放A','A返回stale_epoch；B提交7','活着的旧执行者也不能新写'],
+    ['提交11→退出23→C接管','C用当前3和原键得到duplicate/11','恢复认回已提交效果'],
+    ['C新键提交13','效果7、11、13，数3、和31','正常新写仍成立'],
+    ['独立安装空窗','控制2/接收方1；安装前可旧写，安装后拒绝','生效点在接收方安装']
+   ])+p('31只合计正式实验的三份效果；空窗对照使用另一数据库。独立核对效果集合、回执与参数冲突，才能判断拒绝回应是否真的对应零新增旧写。租约时间采用注入的逻辑整数；进程暂停、退出与SQLite事务实际执行。'),
+
+   h('subsection-8-mctg3k','推进、重规划与持久等待')+p('42任务中的等待条件决定下一步，而不是等待进程本身维持任务。发现补录引用、原计划却缺read_extra时，NEEDS_REPLAN保存这一缺口；接纳新计划后才能继续。资料齐备形成草稿后，WAITING_APPROVAL保存当前草稿的等待条件。后续进程先查持久输入，已经有适用批准就直接消费，仍缺则继续等待。')+f[7][0]+p('本地动态夹具有3次提议预算，接纳一次后剩2。它对当前观察与候选步骤共同计算签名；相同观察下，同样的无效提议即使改了理由，连续两次仍判无进展，进入STOPPED_NO_PROGRESS。预算用尽进入相应STOPPED_*终态。来源升版时，本例要求重新接纳计划，使失效条件保持明确。')+
+   h('subsection-8-19qsp4l','批准绑定当前草稿')+p('planning_lab.py的批准同时绑定任务、报告目标、计划revision、input_digest、draft_digest和决定。输入摘要input_digest标识来源清单，草稿摘要draft_digest标识待发布正文，消费前重新比较当前值。信号ID去重确认收过这条消息，内容绑定决定它还能不能批准当前草稿。',
+   'changed_input使用独立数据库，初始v3没有补录引用，先形成并批准37；把orders-A推进到v4并加入补录后，才生成新42草稿。旧批准保留在历史，重复投递可返回duplicate_signal，但applies_current=false，发布必须等待新批准。early_signal则在DRAFT_READY后、进入等待前保存当前批准，后续推进能够取到它。')+f[7][1]+
+   h('subsection-8-1hxbx9c','整项任务的次数与时间预算')+p('次数限制约束任务实际发起多少次尝试，截止时间约束约定起点以来的累计时长。60秒已花24秒调用、8秒核对、5秒退避，剩23秒；预留3秒保存最终记录，下次调用最多20秒。恢复后继续沿剩余预算推进，等待和清理是否计入也要在边界中规定。')+
+   h('subsection-8-1ugi1r3','取消后的执行与效果确认')+p('取消先持久保存停止意图，阻止新工作，再终止在途调用和回收受管资源。已经提交的发布仍按原操作身份查证；撤回是另行授权的补偿动作。执行者停止、接收方效果和用户是否收到结果各自留有状态。')+linkRow(l[7]),
+
+   h('agent-planning-run','从来源到42报告的完整状态机')+p('planning_lab.py让推进、提议和批准分别在新Python子进程中执行，同一场景共用SQLite任务文件，各场景独立建立初态。固定分支和动态计划都按同一来源关系交付42，程序据plans、facts、runtime、signals与reports核对推进；提议来自固定夹具，没有调用模型。')+c[8][0]+
+   table(['场景','核对的状态与产物'],[
+    ['adaptive / fixed','动态计划2、预算3→2；固定计划1；各有一份42报告'],
+    ['changed_input','旧37草稿和旧批准不适用，新42批准到来才发布'],
+    ['early_signal','DRAFT_READY后批准已入库，等待时直接消费'],
+    ['no_progress / budget','分别按无进展或预算用尽停止，报告0份'],
+    ['invalid_plan','错误安排被拒，保留计划1与重规划条件']
+   ])+
+   h('subsection-9-62i94t','从实际产物发现错误完成')+p('wrong_cache_key只用sum查找旧事实，流程可以产生计划2、批准和DONE，实际报告却仍为37。独立验收重新读权威来源并计算42，因此拒绝。corrupt_artifact保留总数42，只改真实报告的来源摘要，同样被拒绝。正确路径完成后再恢复，事件、事实、信号和报告快照保持不变。',
+   '此状态机将来源验证、批准消费、报告和DONE放在同一SQLite事务；它展示单库协议。外部接收方的提交间隙由第4节的稳定操作协议处理，不能把单库原子性直接扩展过去。')+fold('完整planning_lab.py',c[8][1])+
+   fold('独立接管程序worker_fencing.py：三份效果与安装空窗',p('本程序验证第5—7节的分库接管，按自己的输入检查effect_count=3、effect_sum=31及独立空窗；它不读report-A来源。')+c[8][2]+c[8][3])+
+   h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方')+p('workflow_lab.py实际运行固定LangGraph 1.2.20与SQLite检查点包3.1.3。工作进程读取来源JSON，构建ReportState和依赖图，用同一个检查点文件与thread_id继续。独立HTTP接收方在另一个进程保存暂存、发布和报告；独立验收器oracle重新读取来源及接收方数据库判断结果。')+c[8][4]+
+   table(['场景','实际框架记录','业务验收'],[
+    ['stable','读基础、补录、草稿及两检查各1次；审批节点2次','暂存尝试2、效果1；发布1、报告42，接收'],
+    ['new_id_on_reentry','同样的检查点与42草稿，节点内每次新建UUID','暂存2份，图结束仍拒绝'],
+    ['parallel_failure','金额检查1次、来源检查2次；恢复失败分支','两检查各合并1份，接收'],
+    ['corrupt_report','框架检查点保留，只把实际报告42改41','独立oracle拒绝']
+   ])+p('stable还核对换thread_id为空状态、结束后再次invoke(None)不增节点或效果，以及原发布键改总数41返回409且不覆盖报告。并行失败为主动抛异常后的恢复，未测试物理断电或多宿主故障。批准由本地可信夹具提供，没有真实审批身份、模型或Kairo。')+
+   fold('完整workflow_lab.py与固定依赖',c[8][5]+c[8][6])+linkRow(l[8]),
+
+   p('持久任务跨越代码发布时，新进程还需要找到原定义、状态格式、来源和未决工作。事件重放检查新代码产生的命令与旧历史是否相容；检查点恢复检查状态字段、节点和中断含义能否继续解释。先固定旧运行与记录验证，再选择继续旧版、显式迁移或框架版本机制。')+
+   table(['仍要恢复的对象','对应保留要求'],[
+    ['工作流历史或检查点','在任务允许恢复期间，旧记录和定义保持可读'],
+    ['接收方操作回执','覆盖允许的重试期限，保留原操作身份与内容'],
+    ['来源与产物版本','保留当时版本、摘要和受保护引用，能够重算或验收'],
+    ['批准与身份','保留批准记录，继续执行时重新核对适用内容与当前资格']
+   ])+p('接收方只留7天回执、协调端却允许30天后自动重试，就留下23天的判断缺口。可以延长接收方记录，也可以在边界外停止自动新写并转查证；仅有本地DONE无法补回接收方已经遗忘的事实。')+
+   fold('最小代际与回执模型：原源码和输出',p('durable-workflows.py使用进程内字典，generation=42是代际编号。它说明判断顺序；持久状态、真实进程和分库安装分别由本章前述程序验证。')+c[9][0]+c[9][1]+linkRow(l[9].slice(0,2)))+
+   p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
+  ];
+  finish(a,old,body);
+ }
+})();
+
+
+;
 // first-reading-flow.js
 /* First reading: identify the components before calculations, contracts and failure cases. */
 function conceptReadingTable(headers,rows){return '<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
@@ -11025,6 +11701,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'multinode-launch':{folder:'multinode-launch',title:'两启动器、四进程训练与恢复对照'},
  'cuda-core':{folder:'cuda-core',title:'CUDA线程、归约与分块实现'},
  'torch-checkpoint':{folder:'torch-checkpoint',title:'PyTorch原生分布式检查点'},
  'sdpa-cache':{folder:'sdpa-cache',title:'同模型SDPA缓存生成'},
@@ -11171,6 +11848,7 @@ labLearningCatalog.push({"id": "cloud-kubernetes-identity", "track": "cloud", "s
 {"id": "ai-sdpa-cache", "track": "ai", "stage": 2, "title": "同一小模型比较完整前缀与缓存生成", "chapter": "model-serving", "anchor": "sdpa-cache-run", "pack": "sdpa-cache", "files": ["cache_lab.py", "tiny_decoder.py", "requirements.txt", "README.md"], "env": "PyTorch2.5.1 · CPU · SDPBackend.MATH", "kind": "真实SDPA与KV缓存API", "observe": "复用664参数模型权重，核对完整、逐位置与两位置续算；错误因果对齐应被logits对照发现，生成缓存按2→3→4推进。", "scope": "验证CPU原生API、掩码和生成状态，不是FlashAttention设备内核或GPU性能测试。"},
 {"id": "agent-langgraph-workflow", "track": "agent", "stage": 2, "title": "持久暂停、并行与新进程恢复", "chapter": "durable-workflows", "anchor": "langgraph-workflow-run", "pack": "langgraph-workflow", "files": ["workflow_lab.py", "orders.json", "requirements.txt", "README.md"], "env": "LangGraph1.2.20 · checkpoint-sqlite3.1.3 · Python3.12", "kind": "真实框架与独立HTTP效果", "observe": "42报告在新进程恢复；同一暂存动作2次尝试仅1份效果，新UUID反例2份；并行失败恢复保留已成功分支。", "scope": "无模型、单宿主SQLite检查点与自建HTTP接收方；未验证真实审批身份、任意远端事务、跨机或Kairo。"});
 labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子映射到GPU线程与共享内存',chapter:'operator-profiling',anchor:'cuda-core-run',pack:'cuda-core',files:['cuda_lab.cu','reference.py','build.py','toolchain-lock.json','README.md'],env:'Linux x86_64 · CUDA12.9.1；执行另需计算能力8.0+ GPU与兼容驱动',kind:'真实CUDA编译 · GPU待验',observe:'读懂逐行归约、稳定softmax和16×16分块GEMM；用13组独立参考与错误归一化核对目标GPU回读。',scope:'隔离Linux CI验证NVCC、链接与PTX入口；CPU校验器16种错误变异通过。GPU数值执行、Nsight与性能仍待目标环境验收。'});
+labLearningCatalog.push({id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -11312,6 +11990,7 @@ const conceptSectionTitles={
  ...progressiveCloudSectionTitles,
  ...progressiveAiSectionTitles,
  ...progressiveAgentSectionTitles,
+ 'multinode-lab':['启动器、训练进程与通信组','设备、网络与共享存储','从单机到双机的启动流程','训练计数、检查点与恢复','失败定位与资源退出','CPU对照与真实模型迁移'],
  'training-lab':['完整训练状态与恢复边界','更新语义与恢复对照','两进程训练与新进程恢复实战','状态比较与运行日志','配置与优化器反例','恢复差异的定位方法','GPU、多机与集群验收'],
  'durable-workflows':['任务目标与步骤依赖','历史、检查点与事实复用','确定性重放与活动结果','工具提交与框架恢复','执行接管与代际安装','旧写隔离与业务去重','接管窗口与提交恢复','计划、审批与持久等待','工作流恢复与框架实战','工作流升级与历史保留'],
  'cloud-service-lab':['服务实例、探针与控制链','探针条件与容器重启','Service 请求与后端条件','模板修订、发布与回退','原生实验、源码与验收'],
@@ -11325,7 +12004,7 @@ const conceptSectionTitles={
 };
 function chapterDirectoryTitle(article){return conceptDirectoryTitles[article.id]||article.title;}
 function chapterSectionTitle(article,index){return conceptSectionTitles[article.id]?.[index]||article.sections[index][0];}
-const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance','k8s-networking','config-secrets','k8s-autoscaling','quantization-serving','ai-lifecycle']);
+const optionalConceptReviews=new Set(['cloud-overview','transformer-model','agent-runtime','cloud-compute','kubernetes-basics','tokenization-embedding','attention-mechanics','agent-security','agent-memory','transformer-block','position-encoding','agent-sandbox','agent-recovery','cloud-service-lab','storage-recovery','k8s-storage','autograd-training','gpu-memory','durable-workflows','vpc-network','network-diagnosis','training-communication','data-pipeline','agent-observability','serverless-execution','message-delivery','model-serving','inference-performance','agent-evaluation','agent-retrieval','linux-resource','virtual-memory-oom','concurrency-pools','distributed-systems','training-platform','gpu-scheduling','kubernetes-training','mcp-protocol','kairo-practice','operator-profiling','training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math','container-runtime','k8s-workloads','scheduling-resources','checkpoint-recovery','training-performance','k8s-networking','config-secrets','k8s-autoscaling','quantization-serving','ai-lifecycle','delivery','resilience','multinode-lab']);
 function chapterInitialConceptTerms(article){return optionalConceptReviews.has(article.id)?new Set():conceptSeen(chapterConceptPaths[article.id]);}
 const optionalCaseSections={'agent-runtime':[7,8]};
 function isOptionalCaseSection(article,index){return optionalCaseSections[article.id]?.includes(index)||false;}
@@ -11391,5 +12070,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="52fa5b77f0ce6235172b9081e2b7adab8ebd5be44870f77e7404445aa423a1b9";
+const staticReadingVersion="d2400f805abbc2eaf31d68ad4981237b940a0f23a9d95b1b09b30f74fe027608";
 

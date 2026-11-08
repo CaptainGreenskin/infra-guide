@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 760" role="img" aria-labelledby="title desc">
+  <title id="title">两个启动器、四个训练进程与两条通信路径</title>
+  <desc id="desc">固定两机四卡的目标逻辑布局。节点A的torchrun启动全局rank0和1，节点B启动rank2和3；每台local rank为0和1，各自绑定一张可见GPU。两端通过A的10.0.1.10:29500会合，NCCL另行组织训练张量通信。此图在本机绘制，不表示已在物理双机或GPU上执行。</desc>
+  <defs>
+    <marker id="control-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#267361"/></marker>
+    <marker id="process-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#586b86"/></marker>
+    <marker id="data-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#315dce"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;fill:#203553}
+    .title{font-size:25px;font-weight:700}.label{font-size:20px;font-weight:600}.body{font-size:18px}.small{font-size:16px;fill:#52667f}.control{stroke:#267361;stroke-width:2;stroke-dasharray:6 5;fill:none}.flow{stroke:#586b86;stroke-width:2;fill:none}.data{stroke:#315dce;stroke-width:2;fill:none}
+  </style>
+  <rect width="1080" height="760" rx="14" fill="#f6f8fc"/>
+  <text x="30" y="44" class="title">两机四卡：先启动进程，再建立训练通信</text>
+  <text x="30" y="78" class="body">固定目标布局：WORLD_SIZE = 4，每台 1 个 launcher、2 个 worker、2 张可见 GPU</text>
+
+  <rect x="300" y="109" width="480" height="80" rx="10" fill="#e7f4ee" stroke="#71aa95"/>
+  <text x="540" y="139" text-anchor="middle" class="label">会合 / 初始化入口（位于节点 A）</text>
+  <text x="540" y="169" text-anchor="middle" class="body">两端相同：10.0.1.10 : 29500</text>
+
+  <rect x="30" y="224" width="490" height="346" rx="12" fill="#edf2fe" stroke="#9bb1dc"/>
+  <rect x="560" y="224" width="490" height="346" rx="12" fill="#edf2fe" stroke="#9bb1dc"/>
+  <text x="275" y="254" text-anchor="middle" class="label">节点 A · NODE_RANK = 0</text>
+  <text x="805" y="254" text-anchor="middle" class="label">节点 B · NODE_RANK = 1</text>
+
+  <rect x="60" y="276" width="430" height="56" rx="9" fill="#fff" stroke="#bac8de"/>
+  <rect x="590" y="276" width="430" height="56" rx="9" fill="#fff" stroke="#bac8de"/>
+  <text x="275" y="311" text-anchor="middle" class="label">torchrun · 本机启动器</text>
+  <text x="805" y="311" text-anchor="middle" class="label">torchrun · 本机启动器</text>
+  <path d="M90 276V210H410V190" class="control" marker-end="url(#control-arrow)"/>
+  <path d="M990 276V210H670V190" class="control" marker-end="url(#control-arrow)"/>
+
+  <path d="M275 333V353M805 333V353" class="flow"/>
+  <path d="M275 353H160V372" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M275 353H390V372" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M805 353H690V372" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M805 353H920V372" class="flow" marker-end="url(#process-arrow)"/>
+  <rect x="60" y="374" width="200" height="83" rx="9" fill="#fff" stroke="#bac8de"/>
+  <rect x="290" y="374" width="200" height="83" rx="9" fill="#fff" stroke="#bac8de"/>
+  <rect x="590" y="374" width="200" height="83" rx="9" fill="#fff" stroke="#bac8de"/>
+  <rect x="820" y="374" width="200" height="83" rx="9" fill="#fff" stroke="#bac8de"/>
+  <text x="160" y="407" text-anchor="middle" class="label">worker · RANK 0</text>
+  <text x="390" y="407" text-anchor="middle" class="label">worker · RANK 1</text>
+  <text x="690" y="407" text-anchor="middle" class="label">worker · RANK 2</text>
+  <text x="920" y="407" text-anchor="middle" class="label">worker · RANK 3</text>
+  <text x="160" y="438" text-anchor="middle" class="body">LOCAL_RANK = 0</text>
+  <text x="390" y="438" text-anchor="middle" class="body">LOCAL_RANK = 1</text>
+  <text x="690" y="438" text-anchor="middle" class="body">LOCAL_RANK = 0</text>
+  <text x="920" y="438" text-anchor="middle" class="body">LOCAL_RANK = 1</text>
+
+  <path d="M160 458V486" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M390 458V486" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M690 458V486" class="flow" marker-end="url(#process-arrow)"/>
+  <path d="M920 458V486" class="flow" marker-end="url(#process-arrow)"/>
+  <rect x="60" y="489" width="200" height="53" rx="9" fill="#e1eafb" stroke="#819fd2"/>
+  <rect x="290" y="489" width="200" height="53" rx="9" fill="#e1eafb" stroke="#819fd2"/>
+  <rect x="590" y="489" width="200" height="53" rx="9" fill="#e1eafb" stroke="#819fd2"/>
+  <rect x="820" y="489" width="200" height="53" rx="9" fill="#e1eafb" stroke="#819fd2"/>
+  <text x="160" y="522" text-anchor="middle" class="label">可见 cuda:0</text>
+  <text x="390" y="522" text-anchor="middle" class="label">可见 cuda:1</text>
+  <text x="690" y="522" text-anchor="middle" class="label">可见 cuda:0</text>
+  <text x="920" y="522" text-anchor="middle" class="label">可见 cuda:1</text>
+
+  <path d="M160 545V606" class="data" marker-start="url(#data-arrow)" marker-end="url(#data-arrow)"/>
+  <path d="M390 545V606" class="data" marker-start="url(#data-arrow)" marker-end="url(#data-arrow)"/>
+  <path d="M690 545V606" class="data" marker-start="url(#data-arrow)" marker-end="url(#data-arrow)"/>
+  <path d="M920 545V606" class="data" marker-start="url(#data-arrow)" marker-end="url(#data-arrow)"/>
+  <rect x="60" y="610" width="960" height="66" rx="10" fill="#e7edfd" stroke="#819fd2"/>
+  <text x="540" y="638" text-anchor="middle" class="label">训练张量通信：NCCL 后端组织集合调用</text>
+  <text x="540" y="664" text-anchor="middle" class="small">逻辑连接示意；节点内 / 跨节点路径由实际互联决定，训练张量不都经过会合端口。</text>
+
+  <text x="30" y="709" class="body">检查点走存储路径：rank0 写完整状态；恢复时每个 rank 读取同一已提交文件。</text>
+  <text x="30" y="739" class="small">本机绘制的目标布局；物理两机、GPU/NCCL 执行与性能需在目标环境验证。</text>
+</svg>
