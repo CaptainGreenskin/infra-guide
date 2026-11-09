@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 486" role="img" aria-labelledby="title desc">
+  <title id="title">短输入耗尽后，DDP 同步参数但动量仍分开</title>
+  <desc id="desc">两进程第一步都更新到 1。只剩 rank 0 更新时，初始分母给出参数 2.375，活跃分母给出 3.25。前一组参数广播后两边仍保留不同动量，显式恢复动量才使下一步更新一致。</desc>
+  <metadata>{"record":"labs/ddp-uneven-join/validation.json","targets":[[2,8],[6]],"initial_weight":2.375,"active_weight":3.25,"stale_next":[3.71875,3.53125],"restored_next":3.71875}</metadata>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#526783"/></marker></defs>
+  <rect x="1" y="1" width="478" height="484" rx="17" fill="#f7faff" stroke="#d2dfef"/>
+  <g font-family="system-ui,'PingFang SC',sans-serif" text-anchor="middle" fill="#1b2b49">
+    <text x="240" y="39" font-size="21" font-weight="700">两个 rank 的输入次数不同</text>
+    <rect x="22" y="59" width="202" height="63" rx="8" fill="#e8efff"/>
+    <rect x="256" y="59" width="202" height="63" rx="8" fill="#e7f6f2"/>
+    <text x="123" y="85" font-size="17" font-weight="700">rank 0　读 2 → 8</text>
+    <text x="357" y="85" font-size="17" font-weight="700">rank 1　只读 6</text>
+    <text x="123" y="109" font-size="16">第 1 步：w = 1，m = −4</text>
+    <text x="357" y="109" font-size="16">第 1 步：w = 1，m = −4</text>
+    <path d="M123 128v23M357 128v23" stroke="#526783" fill="none" marker-end="url(#arrow)"/>
+    <rect x="22" y="156" width="202" height="80" rx="8" fill="#e8efff"/>
+    <rect x="256" y="156" width="202" height="80" rx="8" fill="#e7f6f2"/>
+    <text x="123" y="181" font-size="17" font-weight="700">第 2 步，仍有输入</text>
+    <text x="123" y="206" font-size="16">梯度 −7 ÷ 2 或 −7 ÷ 1</text>
+    <text x="357" y="181" font-size="17" font-weight="700">输入耗尽，进入 Join</text>
+    <text x="357" y="206" font-size="16">参加通信，动量停在 −4</text>
+    <path d="M123 242v22M357 242v22" stroke="#526783" fill="none" marker-end="url(#arrow)"/>
+    <rect x="22" y="269" width="436" height="72" rx="8" fill="#fff" stroke="#d2dfef"/>
+    <text x="240" y="297" font-size="17" font-weight="700">结束时广播最后更新的模型参数</text>
+    <text x="240" y="323" font-size="16">初始分母：w = 2.375　活跃分母：w = 3.25</text>
+    <path d="M240 346v23" stroke="#526783" fill="none" marker-end="url(#arrow)"/>
+    <rect x="22" y="374" width="436" height="91" rx="8" fill="#fdf0da"/>
+    <text x="240" y="400" font-size="17" font-weight="700">两边从 w = 2.375 再读目标 5</text>
+    <text x="240" y="426" font-size="16">各自动量：w = 3.71875 / 3.53125</text>
+    <text x="240" y="451" font-size="16">同步动量：两边 w = 3.71875</text>
+  </g>
+</svg>

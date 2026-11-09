@@ -1,0 +1,982 @@
+{
+  "status": "passed",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "workload_image": "python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.14.4"
+  },
+  "source_sha256": {
+    "pdb_rollout.py": "b9eaf0d381add8e84d8fb7deb91634e30bdea9acfa1272b1761af13b171a1e8b"
+  },
+  "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+  "versions": {
+    "clientVersion": {
+      "major": "1",
+      "minor": "35",
+      "gitVersion": "v1.35.8",
+      "gitCommit": "1c2e10a409eb1b03f2f28f401ce935312e20d9fb",
+      "gitTreeState": "clean",
+      "buildDate": "2026-08-20T15:19:06Z",
+      "goVersion": "go1.26.5",
+      "compiler": "gc",
+      "platform": "linux/amd64"
+    },
+    "kustomizeVersion": "v5.7.1",
+    "serverVersion": {
+      "major": "1",
+      "minor": "35",
+      "emulationMajor": "1",
+      "emulationMinor": "35",
+      "minCompatibilityMajor": "1",
+      "minCompatibilityMinor": "34",
+      "gitVersion": "v1.35.8",
+      "gitCommit": "1c2e10a409eb1b03f2f28f401ce935312e20d9fb",
+      "gitTreeState": "clean",
+      "buildDate": "2026-08-20T15:16:16Z",
+      "goVersion": "go1.26.5",
+      "compiler": "gc",
+      "platform": "linux/amd64"
+    }
+  },
+  "manifest": {
+    "apiVersion": "v1",
+    "kind": "List",
+    "items": [
+      {
+        "apiVersion": "v1",
+        "kind": "Namespace",
+        "metadata": {
+          "name": "pdb-lab"
+        }
+      },
+      {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "reports",
+          "namespace": "pdb-lab"
+        },
+        "spec": {
+          "replicas": 3,
+          "selector": {
+            "matchLabels": {
+              "app": "reports"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "reports",
+                "lab-version": "v1"
+              }
+            },
+            "spec": {
+              "terminationGracePeriodSeconds": 2,
+              "containers": [
+                {
+                  "name": "reports",
+                  "image": "python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844",
+                  "imagePullPolicy": "IfNotPresent",
+                  "command": [
+                    "sh",
+                    "-ec",
+                    "touch /tmp/ready; exec sleep 3600"
+                  ],
+                  "readinessProbe": {
+                    "exec": {
+                      "command": [
+                        "test",
+                        "-f",
+                        "/tmp/ready"
+                      ]
+                    },
+                    "periodSeconds": 1
+                  }
+                }
+              ]
+            }
+          },
+          "strategy": {
+            "type": "RollingUpdate",
+            "rollingUpdate": {
+              "maxSurge": 0,
+              "maxUnavailable": 1
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "policy/v1",
+        "kind": "PodDisruptionBudget",
+        "metadata": {
+          "name": "reports",
+          "namespace": "pdb-lab"
+        },
+        "spec": {
+          "minAvailable": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "reports"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "initial": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-5km7z",
+        "uid": "2ac52913-44c8-42e8-b76c-3f1bbf814eba",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-5mvq6",
+        "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 1,
+      "observedGeneration": 1,
+      "replicas": 3,
+      "availableReplicas": 3,
+      "updatedReplicas": 3,
+      "templateVersion": "v1",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 1,
+      "minAvailable": 2,
+      "observedGeneration": 1,
+      "disruptionsAllowed": 1,
+      "currentHealthy": 3,
+      "desiredHealthy": 2,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "True",
+          "observedGeneration": 1,
+          "lastTransitionTime": "2026-11-09T09:11:15Z",
+          "reason": "SufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "allowed_eviction": {
+    "method": "POST",
+    "path": "/api/v1/namespaces/pdb-lab/pods/reports-5dd89794d7-5km7z/eviction",
+    "pod": {
+      "name": "reports-5dd89794d7-5km7z",
+      "uid": "2ac52913-44c8-42e8-b76c-3f1bbf814eba",
+      "owner": "reports-5dd89794d7",
+      "version": "v1",
+      "phase": "Running",
+      "ready": true,
+      "deleting": false
+    },
+    "request": {
+      "apiVersion": "policy/v1",
+      "kind": "Eviction",
+      "metadata": {
+        "name": "reports-5dd89794d7-5km7z",
+        "namespace": "pdb-lab"
+      },
+      "deleteOptions": {
+        "preconditions": {
+          "uid": "2ac52913-44c8-42e8-b76c-3f1bbf814eba"
+        }
+      }
+    },
+    "http_status": 201,
+    "response": {
+      "kind": "Status",
+      "apiVersion": "v1",
+      "metadata": {},
+      "status": "Success",
+      "code": 201
+    }
+  },
+  "after_eviction": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-5mvq6",
+        "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-7lznb",
+        "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 1,
+      "observedGeneration": 1,
+      "replicas": 3,
+      "availableReplicas": 3,
+      "updatedReplicas": 3,
+      "templateVersion": "v1",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 1,
+      "minAvailable": 2,
+      "observedGeneration": 1,
+      "disruptionsAllowed": 1,
+      "currentHealthy": 3,
+      "desiredHealthy": 2,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "True",
+          "observedGeneration": 1,
+          "lastTransitionTime": "2026-11-09T09:11:17Z",
+          "reason": "SufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "strict": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-5mvq6",
+        "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-7lznb",
+        "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 1,
+      "observedGeneration": 1,
+      "replicas": 3,
+      "availableReplicas": 3,
+      "updatedReplicas": 3,
+      "templateVersion": "v1",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 2,
+      "minAvailable": 3,
+      "observedGeneration": 2,
+      "disruptionsAllowed": 0,
+      "currentHealthy": 3,
+      "desiredHealthy": 3,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "False",
+          "observedGeneration": 2,
+          "lastTransitionTime": "2026-11-09T09:11:23Z",
+          "reason": "InsufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "blocked_eviction": {
+    "method": "POST",
+    "path": "/api/v1/namespaces/pdb-lab/pods/reports-5dd89794d7-5mvq6/eviction",
+    "pod": {
+      "name": "reports-5dd89794d7-5mvq6",
+      "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+      "owner": "reports-5dd89794d7",
+      "version": "v1",
+      "phase": "Running",
+      "ready": true,
+      "deleting": false
+    },
+    "request": {
+      "apiVersion": "policy/v1",
+      "kind": "Eviction",
+      "metadata": {
+        "name": "reports-5dd89794d7-5mvq6",
+        "namespace": "pdb-lab"
+      },
+      "deleteOptions": {
+        "preconditions": {
+          "uid": "6d26107d-5605-4141-8856-05734a82d95a"
+        }
+      }
+    },
+    "http_status": 429,
+    "response": {
+      "kind": "Status",
+      "apiVersion": "v1",
+      "metadata": {},
+      "status": "Failure",
+      "message": "Cannot evict pod as it would violate the pod's disruption budget.",
+      "reason": "TooManyRequests",
+      "details": {
+        "causes": [
+          {
+            "reason": "DisruptionBudget",
+            "message": "The disruption budget reports needs 3 healthy pods and has 3 currently"
+          }
+        ]
+      },
+      "code": 429
+    }
+  },
+  "still_present_after_rejection": "6d26107d-5605-4141-8856-05734a82d95a",
+  "direct_delete": {
+    "method": "DELETE",
+    "path": "/api/v1/namespaces/pdb-lab/pods/reports-5dd89794d7-5mvq6",
+    "pod": {
+      "name": "reports-5dd89794d7-5mvq6",
+      "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+      "owner": "reports-5dd89794d7",
+      "version": "v1",
+      "phase": "Running",
+      "ready": true,
+      "deleting": false
+    },
+    "request": {
+      "preconditions": {
+        "uid": "6d26107d-5605-4141-8856-05734a82d95a"
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "reports-5dd89794d7-5mvq6",
+        "generateName": "reports-5dd89794d7-",
+        "namespace": "pdb-lab",
+        "uid": "6d26107d-5605-4141-8856-05734a82d95a",
+        "resourceVersion": "575",
+        "generation": 2,
+        "creationTimestamp": "2026-11-09T09:11:11Z",
+        "deletionTimestamp": "2026-11-09T09:11:25Z",
+        "deletionGracePeriodSeconds": 2,
+        "labels": {
+          "app": "reports",
+          "lab-version": "v1",
+          "pod-template-hash": "5dd89794d7"
+        },
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "kind": "ReplicaSet",
+            "name": "reports-5dd89794d7",
+            "uid": "947a101c-7d12-4001-8d18-e58434d348a7",
+            "controller": true,
+            "blockOwnerDeletion": true
+          }
+        ],
+        "managedFields": [
+          {
+            "manager": "kube-controller-manager",
+            "operation": "Update",
+            "apiVersion": "v1",
+            "time": "2026-11-09T09:11:11Z",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:generateName": {},
+                "f:labels": {
+                  ".": {},
+                  "f:app": {},
+                  "f:lab-version": {},
+                  "f:pod-template-hash": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"947a101c-7d12-4001-8d18-e58434d348a7\"}": {}
+                }
+              },
+              "f:spec": {
+                "f:containers": {
+                  "k:{\"name\":\"reports\"}": {
+                    ".": {},
+                    "f:command": {},
+                    "f:image": {},
+                    "f:imagePullPolicy": {},
+                    "f:name": {},
+                    "f:readinessProbe": {
+                      ".": {},
+                      "f:exec": {
+                        ".": {},
+                        "f:command": {}
+                      },
+                      "f:failureThreshold": {},
+                      "f:periodSeconds": {},
+                      "f:successThreshold": {},
+                      "f:timeoutSeconds": {}
+                    },
+                    "f:resources": {},
+                    "f:terminationMessagePath": {},
+                    "f:terminationMessagePolicy": {}
+                  }
+                },
+                "f:dnsPolicy": {},
+                "f:enableServiceLinks": {},
+                "f:restartPolicy": {},
+                "f:schedulerName": {},
+                "f:securityContext": {},
+                "f:terminationGracePeriodSeconds": {}
+              }
+            }
+          },
+          {
+            "manager": "kubelet",
+            "operation": "Update",
+            "apiVersion": "v1",
+            "time": "2026-11-09T09:11:14Z",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {
+                  "k:{\"type\":\"ContainersReady\"}": {
+                    ".": {},
+                    "f:lastProbeTime": {},
+                    "f:lastTransitionTime": {},
+                    "f:observedGeneration": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"Initialized\"}": {
+                    ".": {},
+                    "f:lastProbeTime": {},
+                    "f:lastTransitionTime": {},
+                    "f:observedGeneration": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"PodReadyToStartContainers\"}": {
+                    ".": {},
+                    "f:lastProbeTime": {},
+                    "f:lastTransitionTime": {},
+                    "f:observedGeneration": {},
+                    "f:status": {},
+                    "f:type": {}
+                  },
+                  "k:{\"type\":\"PodScheduled\"}": {
+                    "f:observedGeneration": {}
+                  },
+                  "k:{\"type\":\"Ready\"}": {
+                    ".": {},
+                    "f:lastProbeTime": {},
+                    "f:lastTransitionTime": {},
+                    "f:observedGeneration": {},
+                    "f:status": {},
+                    "f:type": {}
+                  }
+                },
+                "f:containerStatuses": {},
+                "f:hostIP": {},
+                "f:hostIPs": {},
+                "f:observedGeneration": {},
+                "f:phase": {},
+                "f:podIP": {},
+                "f:podIPs": {
+                  ".": {},
+                  "k:{\"ip\":\"10.244.0.5\"}": {
+                    ".": {},
+                    "f:ip": {}
+                  }
+                },
+                "f:startTime": {}
+              }
+            },
+            "subresource": "status"
+          }
+        ]
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "kube-api-access-dljvk",
+            "projected": {
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "name": "kube-root-ca.crt",
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "path": "namespace",
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "defaultMode": 420
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "reports",
+            "image": "python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844",
+            "command": [
+              "sh",
+              "-ec",
+              "touch /tmp/ready; exec sleep 3600"
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "kube-api-access-dljvk",
+                "readOnly": true,
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+              }
+            ],
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "test",
+                  "-f",
+                  "/tmp/ready"
+                ]
+              },
+              "timeoutSeconds": 1,
+              "periodSeconds": 1,
+              "successThreshold": 1,
+              "failureThreshold": 3
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always",
+        "terminationGracePeriodSeconds": 2,
+        "dnsPolicy": "ClusterFirst",
+        "serviceAccountName": "default",
+        "serviceAccount": "default",
+        "nodeName": "guide-pdb-db582fa4bd-control-plane",
+        "securityContext": {},
+        "schedulerName": "default-scheduler",
+        "tolerations": [
+          {
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          },
+          {
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "effect": "NoExecute",
+            "tolerationSeconds": 300
+          }
+        ],
+        "priority": 0,
+        "enableServiceLinks": true,
+        "preemptionPolicy": "PreemptLowerPriority"
+      },
+      "status": {
+        "observedGeneration": 1,
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "PodReadyToStartContainers",
+            "observedGeneration": 1,
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T09:11:13Z"
+          },
+          {
+            "type": "Initialized",
+            "observedGeneration": 1,
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T09:11:11Z"
+          },
+          {
+            "type": "Ready",
+            "observedGeneration": 1,
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T09:11:14Z"
+          },
+          {
+            "type": "ContainersReady",
+            "observedGeneration": 1,
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T09:11:14Z"
+          },
+          {
+            "type": "PodScheduled",
+            "observedGeneration": 1,
+            "status": "True",
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T09:11:11Z"
+          }
+        ],
+        "hostIP": "172.18.0.2",
+        "hostIPs": [
+          {
+            "ip": "172.18.0.2"
+          }
+        ],
+        "podIP": "10.244.0.5",
+        "podIPs": [
+          {
+            "ip": "10.244.0.5"
+          }
+        ],
+        "startTime": "2026-11-09T09:11:11Z",
+        "containerStatuses": [
+          {
+            "name": "reports",
+            "state": {
+              "running": {
+                "startedAt": "2026-11-09T09:11:13Z"
+              }
+            },
+            "lastState": {},
+            "ready": true,
+            "restartCount": 0,
+            "image": "sha256:6aead542d468d5e99b0795777ec50fd233b236d99e08be4f18267eb02112067b",
+            "imageID": "docker.io/library/python@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844",
+            "containerID": "containerd://0444b2b057c4d4b1259993c323a4c6c0635bcf09320613d6c2c217852415aa46",
+            "started": true,
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "kube-api-access-dljvk",
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ],
+            "user": {
+              "linux": {
+                "uid": 0,
+                "gid": 0,
+                "supplementalGroups": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  10,
+                  11,
+                  20,
+                  26,
+                  27
+                ]
+              }
+            }
+          }
+        ],
+        "qosClass": "BestEffort"
+      }
+    }
+  },
+  "before_rollout": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-7lznb",
+        "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-f8hbd",
+        "uid": "179fd9b6-3471-411d-b4af-ef57f233423d",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 1,
+      "observedGeneration": 1,
+      "replicas": 3,
+      "availableReplicas": 3,
+      "updatedReplicas": 3,
+      "templateVersion": "v1",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 2,
+      "minAvailable": 3,
+      "observedGeneration": 2,
+      "disruptionsAllowed": 0,
+      "currentHealthy": 3,
+      "desiredHealthy": 3,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "False",
+          "observedGeneration": 2,
+          "lastTransitionTime": "2026-11-09T09:11:23Z",
+          "reason": "InsufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "stalled_rollout": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-7lznb",
+        "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-6cccd7dc98-j9jck",
+        "uid": "45d5da94-16a3-4256-9f4e-30709d2b94ef",
+        "owner": "reports-6cccd7dc98",
+        "version": "v2",
+        "phase": "Running",
+        "ready": false,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 2,
+      "observedGeneration": 2,
+      "replicas": 3,
+      "availableReplicas": 2,
+      "updatedReplicas": 1,
+      "templateVersion": "v2",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 2,
+      "minAvailable": 3,
+      "observedGeneration": 2,
+      "disruptionsAllowed": 0,
+      "currentHealthy": 2,
+      "desiredHealthy": 3,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "False",
+          "observedGeneration": 2,
+          "lastTransitionTime": "2026-11-09T09:11:23Z",
+          "reason": "InsufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "blocked_during_rollout": {
+    "method": "POST",
+    "path": "/api/v1/namespaces/pdb-lab/pods/reports-5dd89794d7-7lznb/eviction",
+    "pod": {
+      "name": "reports-5dd89794d7-7lznb",
+      "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+      "owner": "reports-5dd89794d7",
+      "version": "v1",
+      "phase": "Running",
+      "ready": true,
+      "deleting": false
+    },
+    "request": {
+      "apiVersion": "policy/v1",
+      "kind": "Eviction",
+      "metadata": {
+        "name": "reports-5dd89794d7-7lznb",
+        "namespace": "pdb-lab"
+      },
+      "deleteOptions": {
+        "preconditions": {
+          "uid": "21452f4e-3bdb-44c4-8604-024c40038e12"
+        }
+      }
+    },
+    "http_status": 429,
+    "response": {
+      "kind": "Status",
+      "apiVersion": "v1",
+      "metadata": {},
+      "status": "Failure",
+      "message": "Cannot evict pod as it would violate the pod's disruption budget.",
+      "reason": "TooManyRequests",
+      "details": {
+        "causes": [
+          {
+            "reason": "DisruptionBudget",
+            "message": "The disruption budget reports needs 3 healthy pods and has 2 currently"
+          }
+        ]
+      },
+      "code": 429
+    }
+  },
+  "undo_command": "deployment.apps/reports rolled back",
+  "after_undo": {
+    "pods": [
+      {
+        "name": "reports-5dd89794d7-7lznb",
+        "uid": "21452f4e-3bdb-44c4-8604-024c40038e12",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-dqjdz",
+        "uid": "74311b7b-9b98-4f65-844c-29a31d2450f5",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      },
+      {
+        "name": "reports-5dd89794d7-rmgj9",
+        "uid": "8a2257d2-0d13-445b-bb17-9d27c9b107b8",
+        "owner": "reports-5dd89794d7",
+        "version": "v1",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false
+      }
+    ],
+    "deployment": {
+      "generation": 3,
+      "observedGeneration": 3,
+      "replicas": 3,
+      "availableReplicas": 3,
+      "updatedReplicas": 3,
+      "templateVersion": "v1",
+      "maxUnavailable": 1,
+      "maxSurge": 0
+    },
+    "pdb": {
+      "generation": 2,
+      "minAvailable": 3,
+      "observedGeneration": 2,
+      "disruptionsAllowed": 0,
+      "currentHealthy": 3,
+      "desiredHealthy": 3,
+      "expectedPods": 3,
+      "conditions": [
+        {
+          "type": "DisruptionAllowed",
+          "status": "False",
+          "observedGeneration": 2,
+          "lastTransitionTime": "2026-11-09T09:11:23Z",
+          "reason": "InsufficientPods",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "cluster_cleaned": true
+}

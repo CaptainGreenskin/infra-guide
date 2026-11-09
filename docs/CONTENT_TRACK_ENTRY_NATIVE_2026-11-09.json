@@ -1,0 +1,55 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "ebff1ffe719838148cb6d69e33189dc7e26fad98",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_FOCUSED_CONCEPT_NATIVE_2026-11-09.json": "302d42ce133c924efe8d61bcdf083c687d96d7bed948ff86692e4ae783e11192"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ab0ca71159bbab77b01d626c502cef5b82d5def22573e920f5d371a8a75cf88f",
+      "reviewed_content_sha256": "f8706a19b8fe3a83093a78a1ce8a7c53eb99a6b1b09100b67e7fa2ddc4846d87",
+      "scope": "Run native MCP SDK tool list invalidation and an independently checked approval boundary over two stdio sessions.",
+      "observation": "The stale approval wrote to the new default destination. The guarded host refreshed and stopped, the tool rejected the old digest, and explicit approval produced one SQLite row.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "k8s-workloads",
+      "reviewed_at": "2026-11-09",
+      "scope": "Compare the Kubernetes Eviction subresource, direct deletion and Deployment rollout with the same ready Pods and strict PDB.",
+      "observation": "The API accepted an eviction while budget remained, then refused under a stricter budget. Direct deletion and controller rollout could reduce or replace replicas. Undo restored three ready replicas in a single-node kind cluster.",
+      "reviewed_content_sha256": "d0c27551458840f9f3653dea32ff4e9630036d0561c782970aa2fdd7ff77135e",
+      "record": "dist/labs/kubernetes-pdb-rollout/validation.json"
+    },
+    {
+      "chapter": "ddp-code",
+      "reviewed_at": "2026-11-09",
+      "scope": "Observe uneven input termination, two weighting choices and the optimizer-state boundary with two actual CPU/Gloo ranks.",
+      "observation": "An unmatched operation timed out. The two join denominators produced different weights. After model broadcast, old SGD momentum still diverged until it was explicitly synchronized.",
+      "reviewed_content_sha256": "217fde7dfd7c201b06fdb76e9cf299a88fc0edbcae0f44b920b4cfb911e29e7d",
+      "record": "dist/labs/ddp-uneven-join/validation.json"
+    },
+    {
+      "chapter": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "scope": "Run native MCP SDK tool list invalidation and an independently checked approval boundary over two stdio sessions.",
+      "observation": "The stale approval wrote to the new default destination. The guarded host refreshed and stopped, the tool rejected the old digest, and explicit approval produced one SQLite row.",
+      "reviewed_content_sha256": "f8706a19b8fe3a83093a78a1ce8a7c53eb99a6b1b09100b67e7fa2ddc4846d87",
+      "record": "dist/labs/mcp-catalog-refresh/validation.json"
+    }
+  ]
+}

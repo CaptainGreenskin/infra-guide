@@ -104,6 +104,23 @@
  linkRow(links(d[7]).map(x=>x.replace(/>[^<]*<\/a>$/, '>后续：两机四卡的分阶段验收 →</a>')))
  ],'沿两个CPU进程的一次128样本更新窗口，读懂输入分片、梯度累积、实际step计数与轮末保存，再对照完整可运行源码。');
 
+ ddp.sections[1][1]+='<h3 id="native-ddp-join">一个 rank 提前读完，另一个怎样继续</h3>'+
+ p('前面的采样器让两个 rank 拿到相同数量的小批。若在分片后各自过滤数据，或者两个流式数据源提前结束的时刻不同，循环次数仍可能不同。分布式训练中的集合通信要求组员按相同次序进入对应操作。一个 rank 留在循环里，另一个读完就停止参加，等待就出现在下一次需要两者共同参与的位置。')+
+ p('本实验把每个小批缩成一个目标值。rank 0 依次读 2、8，rank 1 只读 6。预测值是唯一参数 <code>w</code>，损失为 <code>(w − 目标)² / 2</code>，所以本地梯度为 <code>w − 目标</code>。SGD 动量 <code>m</code> 保存过去梯度对下一次更新的影响。本例每步计算 <code>m = 0.5 × m + g</code>，再用 <code>w = w − 0.25 × m</code> 更新。两者初值均为 0。')+
+ trainingFigure('ddp-uneven-join','两进程实跑。从首次同步走到短输入耗尽、尾部归约和模型广播，再核对下一次更新。')+
+ p('第一步的梯度是 <code>(−2 − 6) / 2 = −4</code>，两边都得到 <code>w = 1</code>、<code>m = −4</code>。第二步只剩 rank 0 的目标 8，本地梯度为 <code>1 − 8 = −7</code>。下面四组运行只改变 rank 提前读完后的处理方式。')+
+ table(['处理方式','第二步通信和梯度','本次观察'],[
+ ['直接退出循环','rank 1 等在循环外，未补对应通信','rank 0 的 Gloo 操作超时，第二步没有完成'],
+ ['检测到耗尽就报错','<code>throw_on_early_termination=True</code>','两个 rank 各报耗尽相关错误，都只更新一次'],
+ ['按初始进程数平均','<code>model.join(divide_by_initial_world_size=True)</code>，梯度 −7 / 2','rank 0 更新到 2.375，退出后两边参数均为 2.375'],
+ ['按活跃进程数平均','<code>divide_by_initial_world_size=False</code>，梯度 −7 / 1','rank 0 更新到 3.25，退出后两边参数均为 3.25']
+ ])+
+ p('<code>join()</code> 让提前读完的 rank 留在通信组里，代为参加 DDP 自己预期的集合操作。归约时它没有本地数据梯度，相当于在求和中加 0。分母取 2 时，第二步仍把每个有效样本梯度乘以 1/2。取 1 时，唯一剩下的样本在这一步得到全权重。先决定尾部样本应占多少，再选参数。用户额外发出的集合操作也需要匹配，存在这类操作时可启用耗尽即报错，再按业务策略处理。')+
+ p('退出时 DDP 同步模型参数。按初始进程数平均的那组，rank 0 的动量走了两步，变成 −5.5。rank 1 只更新一次，动量仍为 −4。让两边下一步都读目标 5，归约梯度都为 −2.625，结果却分别更新到 3.71875 和 3.53125。随后回到同一模型快照，显式把 rank 0 的动量广播给 rank 1，两边重新更新后才都得到 3.71875。真实训练跨边界接续时，还要核对所用优化器、学习率计划、输入与随机状态。')+
+ p('解压后用带 CPU/Gloo 的 PyTorch 2.5.1 环境执行 <code>python -B ddp_uneven_join.py &gt; replay.json</code>。先读 <code>steps</code> 确认真正执行的更新数，再对照 <code>after_iterator</code> 与 <code>next_balanced_step</code>。本机实验验证两个 CPU 进程和固定的 SGD 动量。本机约 4 秒的 Gloo 超时只用于结束反例，不能用作生产延迟阈值。')+
+ '<p class="practice-links"><a href="labs/ddp-uneven-join.zip" download>下载完整实验包 ↓</a> · <a href="labs/ddp-uneven-join/ddp_uneven_join.py">跟读完整源码</a> · <a href="labs/ddp-uneven-join/README.md">环境与复跑说明</a> · <a href="labs/ddp-uneven-join/validation.json">查看两进程实跑记录</a></p>'+
+ '<p class="source-at"><a href="https://docs.pytorch.org/tutorials/advanced/generic_join.html">PyTorch Join 通信与提前终止 ↗</a></p>';
+
  const lab=select('training-lab',['先讲清：恢复的是下一次更新所需的状态','两套基准，各自检验一件事','实战：一条入口，三次独立训练','先读日志，再看“完全相同”具体比较什么','三个反例：错误原因和拒绝结果必须对得上','出现差异时，从第一个不同字段定位','本机通过后，怎样进入两机四卡']);
  const l=lab.sections.map(s=>s[1]),l3=blocks(l[2]),l4=blocks(l[3]),l6=blocks(l[5]);
  if(l3.length!==2||l4.length!==1||l6.length!==1||figures(l.join('')).length!==1)throw Error('Training capstone preserved material changed');

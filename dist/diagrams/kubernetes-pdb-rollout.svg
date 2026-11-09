@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="529" viewBox="0 0 460 529" role="img" aria-labelledby="title desc">
+  <title id="title">同一组三副本的驱逐、删除与发布</title>
+  <desc id="desc">三个 v1 就绪时，最少保留两个的 PDB 允许驱逐一个，控制器补回三个。最少保留三个时驱逐返回 429，同一 Pod 的直接删除仍成功。坏版本发布替换一个旧 Pod，停在两个就绪 v1 和一个未就绪 v2。撤销后回到三个就绪 v1。</desc>
+  <metadata>{"ready":[3,3,2,3],"minimum":[2,3,3,3],"allowed":[1,0,0,0],"blocked":[429,429],"stalled_versions":["v1","v1","v2"]}</metadata>
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0L7 3.5L0 7Z" fill="#47649c"/>
+    </marker>
+  </defs>
+  <style>
+    text{font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;fill:#182b4a}
+    .heading{font-size:25px;font-weight:700}.label{font-size:19px;font-weight:700}.copy{font-size:17px}
+    .line{stroke:#47649c;stroke-width:2;marker-end:url(#arr)}.fault{fill:#872c31}
+  </style>
+  <rect width="460" height="529" rx="16" fill="#f5f8fe"/>
+  <text class="heading" x="22" y="40">同一组三副本，三种控制路径</text>
+  <rect x="22" y="63" width="416" height="90" rx="10" fill="#fff" stroke="#a4b9dd"/>
+  <text class="label" x="39" y="91">① 三个就绪，最少保留两个</text>
+  <text class="copy" x="39" y="121">Eviction 用掉一个名额，补回三个就绪</text>
+  <path class="line" d="M230 154v18"/>
+
+  <rect x="22" y="176" width="416" height="108" rx="10" fill="#fff" stroke="#a4b9dd"/>
+  <text class="label" x="39" y="204">② 最少保留三个，驱逐名额为零</text>
+  <text class="copy fault" x="39" y="232">Eviction 返回 429，Pod UID 仍在</text>
+  <text class="copy" x="39" y="257">同一 UID 走直接 DELETE，随后补副本</text>
+  <path class="line" d="M230 285v18"/>
+
+  <rect x="22" y="307" width="416" height="108" rx="10" fill="#fff4ef" stroke="#d5aa99"/>
+  <text class="label" x="39" y="335">③ 发布容许一个副本不可用</text>
+  <text class="copy" x="39" y="365">v1 就绪 × 2，v2 未就绪 × 1</text>
+  <text class="copy fault" x="39" y="390">发布停住，健康 Pod 的驱逐仍返回 429</text>
+  <path class="line" d="M230 416v18"/>
+
+  <rect x="22" y="438" width="416" height="67" rx="10" fill="#edf4ff" stroke="#a4b9dd"/>
+  <text class="label" x="39" y="465">④ 撤销发布</text>
+  <text class="copy" x="39" y="489">三个 v1 就绪，最少保留三个的预算仍生效</text>
+</svg>

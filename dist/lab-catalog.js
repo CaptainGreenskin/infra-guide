@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'kubernetes-pdb-rollout':{folder:'kubernetes-pdb-rollout',title:'Kubernetes 驱逐、直接删除与滚动更新'},
+ 'ddp-uneven-join':{folder:'ddp-uneven-join',title:'DDP 输入耗尽、归约分母与动量恢复'},
+ 'mcp-catalog-refresh':{folder:'mcp-catalog-refresh',title:'MCP 工具目录变化、批准与写入边界'},
  'tls-proxy-hops':{folder:'tls-proxy-hops',title:'HTTPS 代理两段身份与连接复用'},
  'triton-tail-mask':{folder:'triton-tail-mask',title:'Triton 尾部掩码、归一化与独立参考'},
  'mcp-trace-reentry':{folder:'mcp-trace-reentry',title:'进程恢复后的跨度链接、MCP 传播与独立回执'},
@@ -257,6 +260,11 @@ labLearningCatalog.push(
  {id:'tls-proxy-hops',track:'cloud',stage:2,title:'沿 HTTPS 代理分别校验入口和上游',chapter:'vpc-network',anchor:'native-tls-proxy',pack:'tls-proxy-hops',files:['tls_proxy_hops.py'],env:'Python 3.9+ · OpenSSL / LibreSSL',kind:'真实本机 HTTPS',observe:'四次入口握手均成功。A 的两个请求复用上游连接，B 的证书名称错配得到 502，B 的 HTTP 账本没有这次请求。',scope:'本机 HTTP/1.1 与独立证书链。'},
  {id:'ai-triton-tail-mask',track:'ai',stage:2,title:'一个尾块为什么会改掉整行概率',chapter:'operator-profiling',anchor:'triton-tail-mask-run',pack:'triton-tail-mask',files:['triton_tail_mask.py','requirements-linux.txt'],env:'Linux x86_64 · Python 3.12 · Triton 3.3.1',kind:'真实 Triton CPU 解释器',observe:'用独立参考与输出哨兵核对读写掩码，再看补零为何会改变有效位置的分母。',scope:'CPU 解释器运行，真实 GPU 数值、计时和访存仍待设备验收。'},
  {id:'agent-mcp-trace-reentry',track:'agent',stage:2,title:'进程退出后，怎样把新追踪接回原执行',chapter:'agent-observability',anchor:'native-mcp-trace-reentry',pack:'mcp-trace-reentry',files:['trace_reentry.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · OpenTelemetry SDK 1.45.2',kind:'真实 MCP HTTP、跨度链接与 SQLite',observe:'分别核对三条追踪、一个跨度链接和同一业务回执。用接收方账本数实际写入。',scope:'本机三个独立调用进程、一个 MCP HTTP 服务及 SQLite。Kairo 接入另验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-kubernetes-pdb-rollout',track:'cloud',stage:2,title:'驱逐被拒绝，为什么发布仍能减少就绪副本',chapter:'k8s-workloads',anchor:'native-pdb-eviction-rollout',pack:'kubernetes-pdb-rollout',files:['pdb_rollout.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8',kind:'真实驱逐、直接删除与滚动发布',observe:'对照宽松和收紧预算的驱逐响应，再检查直接删除、就绪副本减少与回退。',scope:'单节点 kind，使用固定就绪探测与 Pod 身份。'},
+ {id:'ai-ddp-uneven-join',track:'ai',stage:2,title:'一个 rank 提前读完，另一个怎样继续',chapter:'ddp-code',anchor:'native-ddp-join',pack:'ddp-uneven-join',files:['ddp_uneven_join.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 CPU/Gloo',kind:'真实两进程 DDP 与动量对照',observe:'比较等待超时、协调报错和两种归约分母，再检查两份模型参数相等时动量是否相同。',scope:'本机两 CPU 进程、固定 SGD 动量和合成输入。物理多机与 GPU 另验。'},
+ {id:'agent-mcp-catalog-refresh',track:'agent',stage:2,title:'工具改了含义，怎样处理旧批准',chapter:'mcp-protocol',anchor:'native-mcp-catalog-refresh',pack:'mcp-catalog-refresh',files:['catalog_refresh.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0',kind:'真实 MCP 工具列表变化与 SQLite 对照',observe:'观察工具变化通知和重读目录，再对照旧批准的拒绝和新批准产生的唯一写入。',scope:'本机 stdio 会话、固定工具描述和独立 SQLite。Kairo 接入另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

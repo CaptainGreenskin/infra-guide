@@ -1,0 +1,267 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "ebff1ffe719838148cb6d69e33189dc7e26fad98",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_RECORD_FORMAT_2026-11-09.json": "f715d5469bf77342cfa76e81986ca8fd264cdc36f2bf7958b709e1884fc4b47c"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "097bba3d6913c74550ccdcb178e64ae62c4befd339502a1115aefbe6d592faf1",
+      "reviewed_sha256": "e7e5122260cb01313eddd0535f6bf670d6fcb8cf78d072736b47a821515bf5f0",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/app.js": {
+      "previous_sha256": "01cc2fc8b9853b9bc62b3cae565baf7ee522563cef06aca34462d63acef802e0",
+      "reviewed_sha256": "c917660f7d4d89313768ce3fee70b8f5b4b7523fd4d784164a9785734251ae16",
+      "scope": "Start all three tracks in their first real lesson and show a compact overview linking all 14 field maps before its first numbered section."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "f2cb06d4142d515699e203e1a587481a8bcd8358c6acb82d538309de5ec656c2",
+      "reviewed_sha256": "0a154e940e897da6fc85acde7a1ac0fece615e64913af3db1569337fc83cfcb5",
+      "scope": "Start all three tracks in their first real lesson and show a compact overview linking all 14 field maps before its first numbered section."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "7286f6f75e2c3c1d794a614ee207af0c83ebc0f3a2a883d4dfba7e5029aad142",
+      "reviewed_sha256": "3abe497fc92c7870378c16c3d0350856111e5722cfbaf066b3e62b5723c01414",
+      "scope": "Start all three tracks in their first real lesson and show a compact overview linking all 14 field maps before its first numbered section."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "b26d9684f41e6baf634ea959f6c4b316ac7e49beb4c43e626d1638d44794fe34",
+      "reviewed_sha256": "a09991d08c1ce06c6da8c5c411eb8bb01aedb615db77e7631eb27b9a70955b4a",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "77a5d52f737e61daed09675865b09b7ad831d5fe0778a8ba7ecb30678ba3cdd4",
+      "reviewed_sha256": "76b3d97a11f55fcdfaa3a9218044cb81de279c43736313b85b1f0a68f798ad24",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "e82ff5221abd3e48c20ee91ae130ae871154d918b9d94ad0ba161c5d48dc90f0",
+      "reviewed_sha256": "203caefc16c990e1f0f64298d47b2d3a047e03e4c43c6fb2e12f51a6ce13600c",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/progressive-cloud-orchestration-reading.js": {
+      "previous_sha256": "9dca5c0c573528470289a7d0ef9b7eccb7ecb7d5ef9602b75ed11bcb49f1e680",
+      "reviewed_sha256": "dec63976ba6130e81e495f20899d2812b6c47be47ca8906409878452e8aa79ea",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/progressive-training-program-reading.js": {
+      "previous_sha256": "686824ccd5335dec12c66e529c87494de0802b792fe0ce455d5295722e2efd5f",
+      "reviewed_sha256": "05999c8a408ff5da114fa9ca9885d0f42bd02d9900aa8234b73a5cb8a8c8ce16",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "26639a19d6d5ffaa8753eec494d3b1492a3709ae382800afe06eaa11a3b3ff4c",
+      "reviewed_sha256": "5d3bfdd9106f45ad3f7a042b65d2bae1ea2d077769dfac20a5591ef71f33b92f",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "553c44571e10ec607168a738da9ef0f2f3ff1d48f64e67dbeb61c7e21e3d1eda",
+      "reviewed_sha256": "0bfd9679ac4654d05c087fc7d647002d2fd4fc0b078a35aaf7cbf448d8b093f4",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "49e83adeb959835dc57326e8a118772aedb85070536ae14f2ebbb1603c03a5a0",
+      "reviewed_sha256": "0c5b5cfb774aefb11f44d0ce702fd7efb19d15759eb44990306d4a6b67ed2854",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "7d5f7d09ef6458bfa76182416913d630f3822f74088a63481095e0ed2d8d606e",
+      "reviewed_sha256": "d5d842351bbc8bae17d207787b112d0c71b21b2a36da7c3f21c78f660903b076",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "b6afd7b7312ecedba9813df79d4823cd717cb49db1d5b9e50125ad7b81099f4b",
+      "reviewed_sha256": "4a2610e4f7b3db574e3e22f505748c07b054f3c412595ad65e484e7bdc645367",
+      "scope": "Start all three tracks in their first real lesson and show a compact overview linking all 14 field maps before its first numbered section."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "aa277a4ec63d290d93224c53e77a8c777fd1bec9d6a8376079c19bff4a6752fe",
+      "reviewed_sha256": "84f92ec1b5a91afccc8f0502ba131ebb7bc92de183ed6e3e45c3205224a446f4",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "dist/diagrams/kubernetes-pdb-rollout.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e2b5548fc7e398813561331dcc9c450f9027c6fe5b78916d0a53a2a18f2180bd",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "scripts/check-kubernetes-pdb-rollout.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e2712e508e6e80605cb0a1a14048a75740259c7e60c9b44930d1ab02b0afb30a",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/diagrams/ddp-uneven-join.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "96c78d01e983b2d081b638a14e7eb3dbe81fe285b191b1496ccabb16fd2aadbb",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "scripts/check-ddp-uneven-join.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ed7e66aec1e28713ec519b0b136940ba2efd54af017468defdd71cf15e03f4f8",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/diagrams/mcp-catalog-refresh.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c6536ad801122ff077023edf55942deda67dd321b006b142be8b765e49cde934",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "scripts/check-mcp-catalog-refresh.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9f6c7f631a64ee6ae413a065cb5e732865bdc837dbe40f1eaa3ea2eacb0cf424",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/kubernetes-pdb-rollout.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2fb9e351af9c52a4a5e1bf5c8faeb7dd2d183e956eb01d6d15ae73444807ab94",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/labs/kubernetes-pdb-rollout/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8c88fc78d0c378f16198520fcca224e2f73d3187a80059702ecd868795f5e1ec",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/labs/kubernetes-pdb-rollout/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "62b1ba782fca2094e8fc384a19a64d6750a62803f599a62a674ec84acb03b2ad",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/labs/kubernetes-pdb-rollout/pdb_rollout.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b9eaf0d381add8e84d8fb7deb91634e30bdea9acfa1272b1761af13b171a1e8b",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/labs/kubernetes-pdb-rollout/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2299c8e9fa434f9fd483910090fc8fa83e9a77cf1251bf526131e53b810fb74f",
+      "scope": "Link actual Kubernetes responses and replica/UID history to the correct eviction or rollout controller boundary."
+    },
+    "dist/labs/ddp-uneven-join.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3f6a11988a2f16b57605063d5f31af4df78e770e862e9a131ed719c6b8543abe",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/labs/ddp-uneven-join/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "196b4d0dc513025fe1886f2568f9ca8c19117f3a36caf3ef1c7ed5d8f3f04ca8",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/labs/ddp-uneven-join/ddp_uneven_join.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "80b4a5cac6e1d1640ca4a58509c0922fe756c59f592c1c1489ce635e6b0aa21b",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/labs/ddp-uneven-join/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/labs/ddp-uneven-join/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1021142431f901953587782f91da93c127ac667eb83bb4aae7db6c7051b29954",
+      "scope": "Validate uneven DDP inputs with two ranks, exact weight arithmetic and the optimizer-state counterexample."
+    },
+    "dist/labs/mcp-catalog-refresh.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dc23713e382bea15a3e5fdc9d6bd6841746babfb8a94dea3508f19b96b0c230e",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "49672a81f04a5be4a452ca6f637e3744994f5c68176a0d1dab3ee27d6dced429",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/catalog_refresh.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "eadc6f077ecf8f5e6b6e3c77a3df4058318442ac2073059d405f36a2643d5dac",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/guarded.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2540637cee3c55a7d9b72b77bfc54d3b909ec768e345b8655f15be9bf9dbb3f3",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/unsafe.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2540637cee3c55a7d9b72b77bfc54d3b909ec768e345b8655f15be9bf9dbb3f3",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "dist/labs/mcp-catalog-refresh/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "40d97e70d57614f6a9ac836603dac20ba030d6778414d447a123e144eeed5b58",
+      "scope": "Bind native tool list invalidation and versioned approval to independent SQLite effects."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "1ede2a7982b86fb9a458518d9e194df1958b0eb59a2721ad8b8209df65510b87",
+      "reviewed_sha256": "e6e01b57d44a48065b929c8231f294d5a77cb8cb37bfe863034b8a5d38b2e6fb",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "f66054acad88f717d84774809809c3eb8103da3bda1a76d7938894784aef00aa",
+      "reviewed_sha256": "6fab3c05141d1ee1c87e34c2cec226d82cb02902fc5f8f615f776b79529501a4",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "docs/CONTENT_TRACK_ENTRY_NATIVE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "448998b3c3e516e4aab4525bb7ce072ad67755ab67ffdc56e620c9e4b63eba57",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "fa38d2b07ace6d684b292b280d119f20f72491bbafd032558ef27df9670fcf96",
+      "reviewed_sha256": "8b0a78edd55ae9c3ca6b55aeadc02ce173dbfa623cb28a8cd37aefa79170d427",
+      "scope": "Connect new experiments and their exact teaching subsections to the reader route."
+    }
+  },
+  "article_sections": {
+    "k8s-workloads": {
+      "sections": [
+        6
+      ],
+      "scope": "Compare the Kubernetes Eviction subresource, direct deletion and Deployment rollout with the same ready Pods and strict PDB.",
+      "observation": "The API accepted an eviction while budget remained, then refused under a stricter budget. Direct deletion and controller rollout could reduce or replace replicas. Undo restored three ready replicas in a single-node kind cluster."
+    },
+    "ddp-code": {
+      "sections": [
+        2
+      ],
+      "scope": "Observe uneven input termination, two weighting choices and the optimizer-state boundary with two actual CPU/Gloo ranks.",
+      "observation": "An unmatched operation timed out. The two join denominators produced different weights. After model broadcast, old SGD momentum still diverged until it was explicitly synchronized."
+    },
+    "mcp-protocol": {
+      "sections": [
+        2,
+        4,
+        9
+      ],
+      "scope": "Run native MCP SDK tool list invalidation and an independently checked approval boundary over two stdio sessions.",
+      "observation": "The stale approval wrote to the new default destination. The guarded host refreshed and stopped, the tool rejected the old digest, and explicit approval produced one SQLite row."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "ebff1ffe719838148cb6d69e33189dc7e26fad98",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-workloads",
+      "ddp-code",
+      "mcp-protocol"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "role_chapter_positions": 114,
+    "experiment_packs": 88,
+    "learning_tasks": 130
+  }
+}

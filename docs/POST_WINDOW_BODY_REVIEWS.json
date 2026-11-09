@@ -4970,6 +4970,42 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "k8s-workloads",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1454b404c7a82343f223d78cd8502f14690e0ba2ddc3965e0e9ddd9645c0cac3",
+      "reviewed_content_sha256": "d0c27551458840f9f3653dea32ff4e9630036d0561c782970aa2fdd7ff77135e",
+      "scope": "Compare the Kubernetes Eviction subresource, direct deletion and Deployment rollout with the same ready Pods and strict PDB.",
+      "observation": "The API accepted an eviction while budget remained, then refused under a stricter budget. Direct deletion and controller rollout could reduce or replace replicas. Undo restored three ready replicas in a single-node kind cluster.",
+      "headings": [
+        "apply 成功，只完成了哪一步",
+        "先选工作负载，再写副本数",
+        "三副本滚动更新，先算允许范围",
+        "三种探针：动作、连续阈值与故障放大",
+        "四种失败，四个取证入口",
+        "PDB、滚动更新和节点故障分别约束什么",
+        "排空与退出：逐条核对完成证据",
+        "一份清单，三次单变量练习"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "56eaf9f0de7867c3d38be90c2e929dab5e9aacda6d82feae68deee7f94a81b65",
+      "reviewed_content_sha256": "217fde7dfd7c201b06fdb76e9cf299a88fc0edbcae0f44b920b4cfb911e29e7d",
+      "scope": "Observe uneven input termination, two weighting choices and the optimizer-state boundary with two actual CPU/Gloo ranks.",
+      "observation": "An unmatched operation timed out. The two join denominators produced different weights. After model broadcast, old SGD momentum still diverged until it was explicitly synchronized.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
     }
   ]
 }

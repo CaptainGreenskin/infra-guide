@@ -3,7 +3,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c={URLSearchParams,location:{search:''},articleURL:id=>'/article/'+id+'/'};vm.createContext(c);
 for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions})',c)));
+const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions})',c)));
 const legacy=JSON.parse(JSON.stringify(vm.runInContext('legacyTrackKnowledgeAnchors',c)));
 for(const[track,anchors]of Object.entries(legacy))for(const anchor of anchors){
  const moduleId={cloud:'compute',ai:'model-foundations',agent:'agent'}[track];
@@ -45,6 +45,7 @@ const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
 for(const a of data.articles){
  const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),date=(a.updated||'2026.11.03').replaceAll('.','-');
  checkArticleHeader(html,a);
+ if(!Object.values(data.tracks).some(track=>track.start===a.id))assert(!html.includes('class="track-entry-overview"'),a.id+': ordinary lessons remain focused on their own topic');
  const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
  assert.equal(schema.dateModified,date,a.id+': structured data retains the editorial date');
  assert(sitemap.includes('/article/'+a.id+'/</loc><lastmod>'+date+'</lastmod>'),a.id+': sitemap retains the editorial date');
@@ -56,6 +57,16 @@ for(const[track,t]of Object.entries(data.tracks)){
  checkArticleHeader(html,a);
  assert(html.includes('<h1>'+a.number+' '+a.title+'</h1>'),track+': enter the actual first lesson');
  assert(!html.includes('class="knowledge-body"'),track+': no full field textbook before the first lesson');
+ const expectedMapLinks=data.modules.filter(m=>m.track===track&&Object.hasOwn(data.maps,m.id)).map(m=>'/module/'+m.id+'/#concept-relations').sort();
+ for(const source of [html,fs.readFileSync('dist/article/'+a.id+'/index.html','utf8')]){
+  const entries=source.match(/<section class="track-entry-overview"[\s\S]*?<\/section>/g)||[];
+  assert.equal(entries.length,1,track+': one overview in the first lesson');
+  assert(entries[0].includes('id="track-overview-'+track+'"')&&source.indexOf(entries[0])<source.indexOf('id="section-1"'),track+': show the course map before the first mechanism');
+  const mapLinks=[...entries[0].matchAll(/href="(\/module\/[^"]+?\/#concept-relations)"/g)].map(([,href])=>href).sort();
+  assert.deepEqual(mapLinks,expectedMapLinks,track+': first lesson connects all of its field maps');
+  assert(entries[0].includes('href="/roadmap/?track='+track+'#route-'+track+'"'),track+': full reading order');
+ }
+
  for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
 }
 const practiceHTML=fs.readFileSync('dist/module/practice/index.html','utf8');

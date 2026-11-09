@@ -13,7 +13,7 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接进入第一章，侧栏直接进入正文。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。每张图下有一道判断题，可展开结果并查看原始记录，也能直达正文实战。正文可以直接跳到对应概念，从定义返回整张图或继续读相关章节。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，正文的目录、上下章与路线定位都保留当前岗位。Agent 可独立学习。
+当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接打开第一章。正文前的学习全貌连到本方向的领域图谱和学习顺序。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。每张图下有一道判断题，可展开结果并查看原始记录，也能直达正文实战。正文可以直接跳到对应概念，从定义返回整张图或继续读相关章节。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，正文的目录、上下章与路线定位都保留当前岗位。Agent 可独立学习。
 
 Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、目标右移、交叉注意力和实际的三轮生成。需要深入时，从同一例子进入掩码实验，再切换到独立的仅解码器算例。文章内搜索打开即显示推荐，查询时只下载可能含匹配项的索引分片。 [一句话走完 Transformer](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#translation-reading-path)
 
@@ -32,6 +32,8 @@ Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、�
 算子章沿同一个 C 扩展实跑编译、链接和加载错误。Agent 工作流章沿同一个发布动作核对并行提议、冲突处理和检查点重放。SLO 章运行 Prometheus 抓取两个实例，并记录计数器归零和长短窗状态。 [CPython 扩展装载](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#native-python-extension) · [并行归并与重放](https://captaingreenskin.github.io/infra-guide/article/durable-workflows/#native-parallel-merge) · [真实抓取与告警](https://captaingreenskin.github.io/infra-guide/article/slo/#live-prometheus-burn)
 
 网络章分别核对客户端到代理、代理到后端的两段 TLS。算子章用 Triton 的 CPU 解释器观察尾块读写和归一化。Agent 可观测性章用三个独立进程核对跨追踪链接与一笔实际写入。 [双段 TLS](https://captaingreenskin.github.io/infra-guide/article/vpc-network/#native-tls-proxy) · [Triton 尾块](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#triton-tail-mask-run) · [MCP 恢复追踪](https://captaingreenskin.github.io/infra-guide/article/agent-observability/#native-mcp-trace-reentry)
+
+Kubernetes 工作负载章对照真实驱逐、直接删除与发布回退。DDP 章复现一个进程提前读完后的超时、归约分母与动量差异。MCP 章对照工具目录变化后，旧批准与新批准各造成多少实际写入。 [驱逐与发布](https://captaingreenskin.github.io/infra-guide/article/k8s-workloads/#native-pdb-eviction-rollout) · [不等长 DDP](https://captaingreenskin.github.io/infra-guide/article/ddp-code/#native-ddp-join) · [工具目录变更](https://captaingreenskin.github.io/infra-guide/article/mcp-protocol/#native-mcp-catalog-refresh)
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 

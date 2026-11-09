@@ -8051,7 +8051,7 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
     ['来源 version','返回 3，对应资料 v3','数据来自哪一版来源'],
     ['进度 progressToken','后面的扫描使用 7，等待使用 8','过程通知对应哪个进行中的调用']
    ])+
-   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执；本章工具只读。'),
+   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节另有目录换版的写入对照。'),
 
    p('通信双方必须使用相同的消息规则，协议版本说明采用哪份规则。本次官方库是 mcp 2.3.0，客户端应用实现版本是 1.0.0，现代协议版本是 2026-07-28。这三项分别定位库、应用和交互约定，不能用其中一项代替另外两项。',
    '2026-07-28 版没有初始化握手。现代请求用 _meta 保存附带信息，逐次携带 protocolVersion（协议版本）、clientInfo（客户端实现信息）和 clientCapabilities（客户端能力），完整字段名带 io.modelcontextprotocol/ 前缀。server/discover 是可选的版本与能力探测；本例主动调用 discover() 并采用结果，然后再发现和调用工具。现代客户端也可按已知规则直接请求，处理不支持版本的错误。')+
@@ -8129,7 +8129,7 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
    p('把这次调用放回 Agent：模型可以提出工具名和参数，宿主按当前任务决定是否执行，客户端传递消息，服务端校验与操作资源，宿主再验收。可信身份来自认证链路，任务委托规定允许动作，资源服务在实际读取或提交处执行权限检查。clientInfo、task_id、已建立连接都不能代替这些检查。')+
    table(['系统还要保存的事实','为何需要','本章已经观察到的范围'],[
     ['身份、任务委托与允许资源','发现工具不等于获准执行所有操作','本地服务信任启动者；未实现 HTTP 认证'],
-    ['稳定业务操作与接收方回执','超时或断线后确认效果，避免盲目重复写入','只读来源与文件清理；未验证写入幂等或业务回滚'],
+    ['稳定业务操作与接收方回执','超时或断线后确认效果，避免盲目重复写入','批次实验核对文件清理，目录换版实验核对实际写入目标'],
     ['任务状态与交付结果','多次调用组成目标，重连后查询原工作','请求、进度与连接均不保存完整任务历史'],
     ['真实产物与独立来源','工具成功、结构正确之后仍要验收目标','report-A/v3 的 42 与错误 41 对照']
    ])+
@@ -8137,6 +8137,21 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
    sourceLinks(old[8])
   ];
   finish(a,old,bodies,'从调用者、工具契约和单次结果出发，追踪官方 SDK 2.3.0 的真实调用、两代协议、进度与取消，再按独立来源验收 42。');
+  a.sections[3][1]+=
+   '<h3 id="native-mcp-catalog-refresh">工具仍叫同一个名字，为什么要重新确认</h3>'+
+   p('工具目录是服务端当前对外声明的工具、说明和参数规则。宿主在选工具时保存一份目录，批准则绑定当时要执行的具体动作。看另一组独立的本机实验。<code>publish_report</code> 的 v1 只收 <code>report_id</code>，默认写归档区 <code>archive</code>。v2 保留原必填项，增加可选的 <code>destination</code>，省略时改写共享区 <code>shared</code>。旧参数依然符合结构，却会产生另一个效果。',
+   '在 2026-07-28 版中，客户端先用 <code>subscriptions/listen</code> 订阅目录变化。实验等到订阅确认，再让服务端切换版本。<code>notifications/tools/list_changed</code> 携带订阅标识，提示宿主重读；完整的新版定义来自随后的一次 <code>tools/list</code>。重新连接时也应重读所需的目录。')+
+   trainingFigure('mcp-catalog-refresh','两条实际执行路径用同一份 report-A。沿用旧批准写到共享区。重读目录后，旧批准在宿主被拦，旧摘要在接收端也被拒绝。')+
+   table(['实验动作','协议与宿主记录','接收方实际效果'],[
+    ['收到通知后沿用旧批准','仍提交 report-A，省略 destination，调用成功','写入 shared，金额 42'],
+    ['重新读取目录再用旧批准','摘要变化，宿主停止派发','账本为空'],
+    ['测试程序直发旧摘要','服务端拒绝过期契约，返回 stale contract','账本仍为空'],
+    ['预览并明确确认 shared','新批准绑定新摘要和显式目的地','写入 shared，账本有一行 42']
+   ])+
+   p('摘要是把工具名、说明与输入输出规则按固定格式整理后算出的短标识。沿 <code>contract</code>、<code>dispatch_approved</code> 和 <code>call_tool</code> 读代码。宿主比较新旧摘要，接收端在实际写入前再次比较，以应对目录读取后又发生变化。本例把预期摘要放进自定义的 <code>_meta</code> 字段。业务身份、权限和去重各自需要检查。')+
+   p('解压后按运行说明执行 <code>python -B catalog_refresh.py --output-dir replay &gt; replay.json</code>。查看通知、第二次 <code>tools/list</code> 和两份 SQLite 账本。实验使用 MCP SDK 2.3.0 的真实 stdio 通信，批准由固定测试夹具提供。')+
+   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>';
+  a.updated='2026.11.09';
  }
  }
 
@@ -9228,6 +9243,19 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '按三次单变量练习分别修改镜像引用、requests 或 Service selector（后端标签选择条件）。先预测最早失败点，再保存“声明→事件→容器状态→端点→用户响应”。错误镜像应追下载与启动，不可满足请求应追调度条件，错误 selector 应追后端选择；直接 curl 一个 Pod IP 成功，只验证该地址上的应用。',
  '配套 verify.py 可在本机核对本地 HTTP 端点、SIGTERM 退出和独立事务、算式；它不创建 Kubernetes。另一个原生 service_lab.py 使用自己的双副本、持续 ClusterIP 客户端和 API 快照，已有 readiness、liveness、v1→v2→v1 记录。两份程序分别取证：前者验证清单外的本地机制，后者验证实际集群链，二者均不替代本题三副本与容量条件的目标验证。')+links(w[7])
  ],'沿 Deployment、ReplicaSet 与 Pod 的正常补副本过程，解释滚动更新、探针、维护预算与终止，再按对象和请求核对结果。');
+
+ workloads.sections[5][1]+=
+ h('native-pdb-eviction-rollout','同一组三副本，驱逐、直接删除与发布各走哪条路')+
+ p('隔离集群里只有一组 <code>app=reports</code> Pod。Deployment 维持三个副本，PDB 用同一个标签选中它们。用 <code>currentHealthy</code> 读取 PDB 当前统计的健康数，用 <code>disruptionsAllowed</code> 读取还可申请的驱逐数。等控制器都观察到当前配置、上一轮驱逐结清后，三个就绪减去最少两个，剩一个名额。')+
+ trainingFigure('kubernetes-pdb-rollout','从同一组 reports Pod 读四个时刻。驱逐记录看 HTTP 状态和 Pod UID，发布记录看版本与就绪条件。')+
+ table(['动作','用什么证据判断'],[
+  ['最少保留 2 个，向 Pod 的 <code>/eviction</code> 发 POST','本次驱逐返回 HTTP 201。旧 UID 消失，新 UID 就绪后健康数回到 3。'],
+  ['改为最少保留 3 个，尝试驱逐一个健康 Pod','<code>disruptionsAllowed=0</code>，HTTP 429 的原因详情是 <code>DisruptionBudget</code>。同一 UID 仍存在。'],
+  ['对刚被拒绝的 Pod 发直接 DELETE','带 UID 条件的 DELETE 返回 HTTP 200，副本控制器随后补回第三个 Pod。'],
+  ['以 <code>maxSurge=0</code>、<code>maxUnavailable=1</code> 发布永远未就绪的 v2','一份旧副本已被替换。两个 v1 就绪，一个 v2 正在运行但未就绪。此时维护驱逐仍返回 429，撤销发布后回到三个就绪 v1。']])+
+ p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
+ p('在 Linux 本机 Docker 上解压后运行 <code>python3 -B pdb_rollout.py --output replay.json</code>。先对照 <code>blocked_eviction</code> 和 <code>direct_delete</code> 的请求路径与 UID，再按 <code>before_rollout</code>、<code>stalled_rollout</code>、<code>after_undo</code> 逐份核对版本、健康数和预算。这里运行的是单节点 kind。多节点排空、故障域和实际服务流量要到对应环境验证。')+
+ '<p class="practice-links"><a href="labs/kubernetes-pdb-rollout.zip" download>下载实验包 ↓</a> · <a href="labs/kubernetes-pdb-rollout/pdb_rollout.py">查看完整源码</a> · <a href="labs/kubernetes-pdb-rollout/README.md">分步复跑</a> · <a href="labs/kubernetes-pdb-rollout/validation.json">查看真实 API 记录</a> · <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/api-eviction/">Eviction API 文档 ↗</a></p>';
 
  const scheduling=select('scheduling-resources',['一个Pod从提交到运行，要过哪些关','request、limit和用量是三笔账','配额拒绝后，为什么查不到那个Pod','逐节点检查资源，再求可行集合','标签、亲和、污点与抢占分别改变哪道条件','把调度等待放回端到端完成时间','用对象、条件和事件判断卡在哪里','在隔离kind集群重放完整链条']);
  const s=scheduling.sections.map(x=>x[1]),s2=blocks(s[2]),s6=blocks(s[6]),s7=blocks(s[7]);
@@ -11649,6 +11677,23 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  linkRow(links(d[7]).map(x=>x.replace(/>[^<]*<\/a>$/, '>后续：两机四卡的分阶段验收 →</a>')))
  ],'沿两个CPU进程的一次128样本更新窗口，读懂输入分片、梯度累积、实际step计数与轮末保存，再对照完整可运行源码。');
 
+ ddp.sections[1][1]+='<h3 id="native-ddp-join">一个 rank 提前读完，另一个怎样继续</h3>'+
+ p('前面的采样器让两个 rank 拿到相同数量的小批。若在分片后各自过滤数据，或者两个流式数据源提前结束的时刻不同，循环次数仍可能不同。分布式训练中的集合通信要求组员按相同次序进入对应操作。一个 rank 留在循环里，另一个读完就停止参加，等待就出现在下一次需要两者共同参与的位置。')+
+ p('本实验把每个小批缩成一个目标值。rank 0 依次读 2、8，rank 1 只读 6。预测值是唯一参数 <code>w</code>，损失为 <code>(w − 目标)² / 2</code>，所以本地梯度为 <code>w − 目标</code>。SGD 动量 <code>m</code> 保存过去梯度对下一次更新的影响。本例每步计算 <code>m = 0.5 × m + g</code>，再用 <code>w = w − 0.25 × m</code> 更新。两者初值均为 0。')+
+ trainingFigure('ddp-uneven-join','两进程实跑。从首次同步走到短输入耗尽、尾部归约和模型广播，再核对下一次更新。')+
+ p('第一步的梯度是 <code>(−2 − 6) / 2 = −4</code>，两边都得到 <code>w = 1</code>、<code>m = −4</code>。第二步只剩 rank 0 的目标 8，本地梯度为 <code>1 − 8 = −7</code>。下面四组运行只改变 rank 提前读完后的处理方式。')+
+ table(['处理方式','第二步通信和梯度','本次观察'],[
+ ['直接退出循环','rank 1 等在循环外，未补对应通信','rank 0 的 Gloo 操作超时，第二步没有完成'],
+ ['检测到耗尽就报错','<code>throw_on_early_termination=True</code>','两个 rank 各报耗尽相关错误，都只更新一次'],
+ ['按初始进程数平均','<code>model.join(divide_by_initial_world_size=True)</code>，梯度 −7 / 2','rank 0 更新到 2.375，退出后两边参数均为 2.375'],
+ ['按活跃进程数平均','<code>divide_by_initial_world_size=False</code>，梯度 −7 / 1','rank 0 更新到 3.25，退出后两边参数均为 3.25']
+ ])+
+ p('<code>join()</code> 让提前读完的 rank 留在通信组里，代为参加 DDP 自己预期的集合操作。归约时它没有本地数据梯度，相当于在求和中加 0。分母取 2 时，第二步仍把每个有效样本梯度乘以 1/2。取 1 时，唯一剩下的样本在这一步得到全权重。先决定尾部样本应占多少，再选参数。用户额外发出的集合操作也需要匹配，存在这类操作时可启用耗尽即报错，再按业务策略处理。')+
+ p('退出时 DDP 同步模型参数。按初始进程数平均的那组，rank 0 的动量走了两步，变成 −5.5。rank 1 只更新一次，动量仍为 −4。让两边下一步都读目标 5，归约梯度都为 −2.625，结果却分别更新到 3.71875 和 3.53125。随后回到同一模型快照，显式把 rank 0 的动量广播给 rank 1，两边重新更新后才都得到 3.71875。真实训练跨边界接续时，还要核对所用优化器、学习率计划、输入与随机状态。')+
+ p('解压后用带 CPU/Gloo 的 PyTorch 2.5.1 环境执行 <code>python -B ddp_uneven_join.py &gt; replay.json</code>。先读 <code>steps</code> 确认真正执行的更新数，再对照 <code>after_iterator</code> 与 <code>next_balanced_step</code>。本机实验验证两个 CPU 进程和固定的 SGD 动量。本机约 4 秒的 Gloo 超时只用于结束反例，不能用作生产延迟阈值。')+
+ '<p class="practice-links"><a href="labs/ddp-uneven-join.zip" download>下载完整实验包 ↓</a> · <a href="labs/ddp-uneven-join/ddp_uneven_join.py">跟读完整源码</a> · <a href="labs/ddp-uneven-join/README.md">环境与复跑说明</a> · <a href="labs/ddp-uneven-join/validation.json">查看两进程实跑记录</a></p>'+
+ '<p class="source-at"><a href="https://docs.pytorch.org/tutorials/advanced/generic_join.html">PyTorch Join 通信与提前终止 ↗</a></p>';
+
  const lab=select('training-lab',['先讲清：恢复的是下一次更新所需的状态','两套基准，各自检验一件事','实战：一条入口，三次独立训练','先读日志，再看“完全相同”具体比较什么','三个反例：错误原因和拒绝结果必须对得上','出现差异时，从第一个不同字段定位','本机通过后，怎样进入两机四卡']);
  const l=lab.sections.map(s=>s[1]),l3=blocks(l[2]),l4=blocks(l[3]),l6=blocks(l[5]);
  if(l3.length!==2||l4.length!==1||l6.length!==1||figures(l.join('')).length!==1)throw Error('Training capstone preserved material changed');
@@ -13774,13 +13819,13 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 /* Learning goals are views over the same curriculum, never separate copies of lessons.
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
- 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14312,6 +14357,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'kubernetes-pdb-rollout':{folder:'kubernetes-pdb-rollout',title:'Kubernetes 驱逐、直接删除与滚动更新'},
+ 'ddp-uneven-join':{folder:'ddp-uneven-join',title:'DDP 输入耗尽、归约分母与动量恢复'},
+ 'mcp-catalog-refresh':{folder:'mcp-catalog-refresh',title:'MCP 工具目录变化、批准与写入边界'},
  'tls-proxy-hops':{folder:'tls-proxy-hops',title:'HTTPS 代理两段身份与连接复用'},
  'triton-tail-mask':{folder:'triton-tail-mask',title:'Triton 尾部掩码、归一化与独立参考'},
  'mcp-trace-reentry':{folder:'mcp-trace-reentry',title:'进程恢复后的跨度链接、MCP 传播与独立回执'},
@@ -14570,6 +14618,11 @@ labLearningCatalog.push(
  {id:'ai-triton-tail-mask',track:'ai',stage:2,title:'一个尾块为什么会改掉整行概率',chapter:'operator-profiling',anchor:'triton-tail-mask-run',pack:'triton-tail-mask',files:['triton_tail_mask.py','requirements-linux.txt'],env:'Linux x86_64 · Python 3.12 · Triton 3.3.1',kind:'真实 Triton CPU 解释器',observe:'用独立参考与输出哨兵核对读写掩码，再看补零为何会改变有效位置的分母。',scope:'CPU 解释器运行，真实 GPU 数值、计时和访存仍待设备验收。'},
  {id:'agent-mcp-trace-reentry',track:'agent',stage:2,title:'进程退出后，怎样把新追踪接回原执行',chapter:'agent-observability',anchor:'native-mcp-trace-reentry',pack:'mcp-trace-reentry',files:['trace_reentry.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · OpenTelemetry SDK 1.45.2',kind:'真实 MCP HTTP、跨度链接与 SQLite',observe:'分别核对三条追踪、一个跨度链接和同一业务回执。用接收方账本数实际写入。',scope:'本机三个独立调用进程、一个 MCP HTTP 服务及 SQLite。Kairo 接入另验。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-kubernetes-pdb-rollout',track:'cloud',stage:2,title:'驱逐被拒绝，为什么发布仍能减少就绪副本',chapter:'k8s-workloads',anchor:'native-pdb-eviction-rollout',pack:'kubernetes-pdb-rollout',files:['pdb_rollout.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8',kind:'真实驱逐、直接删除与滚动发布',observe:'对照宽松和收紧预算的驱逐响应，再检查直接删除、就绪副本减少与回退。',scope:'单节点 kind，使用固定就绪探测与 Pod 身份。'},
+ {id:'ai-ddp-uneven-join',track:'ai',stage:2,title:'一个 rank 提前读完，另一个怎样继续',chapter:'ddp-code',anchor:'native-ddp-join',pack:'ddp-uneven-join',files:['ddp_uneven_join.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 CPU/Gloo',kind:'真实两进程 DDP 与动量对照',observe:'比较等待超时、协调报错和两种归约分母，再检查两份模型参数相等时动量是否相同。',scope:'本机两 CPU 进程、固定 SGD 动量和合成输入。物理多机与 GPU 另验。'},
+ {id:'agent-mcp-catalog-refresh',track:'agent',stage:2,title:'工具改了含义，怎样处理旧批准',chapter:'mcp-protocol',anchor:'native-mcp-catalog-refresh',pack:'mcp-catalog-refresh',files:['catalog_refresh.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0',kind:'真实 MCP 工具列表变化与 SQLite 对照',observe:'观察工具变化通知和重读目录，再对照旧批准的拒绝和新批准产生的唯一写入。',scope:'本机 stdio 会话、固定工具描述和独立 SQLite。Kairo 接入另验。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -14792,5 +14845,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="d9f7988deff55eba66a76600d740225c8be6666140b8dc26e67441f436c3d741";
+const staticReadingVersion="2035181c83c8f4f5fe41891ca911e76b0ea9264ac41187f79c71cdc2a69d1426";
 

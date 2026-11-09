@@ -328,6 +328,32 @@ function homePage(){
  </main>${footer()}`;
 }
 
+const trackEntryOverviews={
+ cloud:{lead:'沿一次服务请求认识资源、网络和数据，再看怎样上线服务、限制操作和恢复故障。',rows:[
+  ['请求怎样跑起来',[['compute','计算与虚拟化'],['network','云网络'],['cloud-data','存储与数据']]],
+  ['应用怎样上线',[['native','容器与 Kubernetes'],['serverless','Serverless'],['cloud-delivery','IaC 与 GitOps']]],
+  ['系统怎样长期运转',[['cloud-security','身份安全'],['cloud-capacity','容量与成本'],['sre','SRE 与恢复']]]
+ ],extra:['foundation','按需补系统基础']},
+ ai:{lead:'先认识模型怎样计算，再看多台设备怎样一起训练，以及训练产物怎样变成推理服务。',rows:[
+  ['理解模型计算',[['model-foundations','Transformer、GPU 与算子']]],
+  ['完成训练与恢复',[['training','并行、数据、通信与检查点']]],
+  ['部署并验证服务',[['platform','作业调度、推理与交付']]]
+ ]},
+ agent:{lead:'沿一项委托理解模型怎样提出动作、运行时怎样执行，以及出错后怎样继续并验收结果。',rows:[
+  ['安全执行工具',[['/article/mcp-protocol/','工具接口'],['/article/agent-security/','授权'],['/article/agent-sandbox/','隔离']]],
+  ['处理状态与证据',[['/article/agent-recovery/','回执与恢复'],['/article/durable-workflows/','持久工作流'],['/article/agent-memory/','上下文'],['/article/agent-retrieval/','检索与证据']]],
+  ['核对实际任务',[['/article/agent-observability/','追踪'],['/article/agent-evaluation/','评估'],['/article/kairo-practice/','Kairo 接入']]]
+ ],extra:['agent','查看 Agent 核心关系图']}
+};
+function trackEntryOverviewHTML(article){
+ const track=Object.keys(trackEntryOverviews).find(key=>trackDefinitions[key].start===article.id);
+ if(!track)return '';
+ const {lead,rows,extra}=trackEntryOverviews[track];
+ const link=([target,label])=>'<a href="'+(target.startsWith('/')?target:fieldMapURL(target))+'">'+label+'</a>';
+ const heading='track-overview-'+track;
+ return '<section class="track-entry-overview" aria-labelledby="'+heading+'"><h2 id="'+heading+'">'+trackDefinitions[track].label+' 学习全貌</h2><p>'+lead+'</p><ol>'+rows.map(([label,links])=>'<li><b>'+label+'</b><span>'+links.map(link).join('')+'</span></li>').join('')+'</ol><div class="track-entry-links">'+(extra?link(extra):'')+'<a href="/roadmap/?track='+track+'#route-'+track+'">完整学习顺序 →</a></div></section>';
+}
+
 // A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
 function trackPage(kind){articlePage(articleById(trackDefinitions[kind].start));}
 

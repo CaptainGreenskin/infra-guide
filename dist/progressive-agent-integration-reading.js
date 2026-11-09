@@ -53,7 +53,7 @@
     ['来源 version','返回 3，对应资料 v3','数据来自哪一版来源'],
     ['进度 progressToken','后面的扫描使用 7，等待使用 8','过程通知对应哪个进行中的调用']
    ])+
-   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执；本章工具只读。'),
+   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节另有目录换版的写入对照。'),
 
    p('通信双方必须使用相同的消息规则，协议版本说明采用哪份规则。本次官方库是 mcp 2.3.0，客户端应用实现版本是 1.0.0，现代协议版本是 2026-07-28。这三项分别定位库、应用和交互约定，不能用其中一项代替另外两项。',
    '2026-07-28 版没有初始化握手。现代请求用 _meta 保存附带信息，逐次携带 protocolVersion（协议版本）、clientInfo（客户端实现信息）和 clientCapabilities（客户端能力），完整字段名带 io.modelcontextprotocol/ 前缀。server/discover 是可选的版本与能力探测；本例主动调用 discover() 并采用结果，然后再发现和调用工具。现代客户端也可按已知规则直接请求，处理不支持版本的错误。')+
@@ -131,7 +131,7 @@
    p('把这次调用放回 Agent：模型可以提出工具名和参数，宿主按当前任务决定是否执行，客户端传递消息，服务端校验与操作资源，宿主再验收。可信身份来自认证链路，任务委托规定允许动作，资源服务在实际读取或提交处执行权限检查。clientInfo、task_id、已建立连接都不能代替这些检查。')+
    table(['系统还要保存的事实','为何需要','本章已经观察到的范围'],[
     ['身份、任务委托与允许资源','发现工具不等于获准执行所有操作','本地服务信任启动者；未实现 HTTP 认证'],
-    ['稳定业务操作与接收方回执','超时或断线后确认效果，避免盲目重复写入','只读来源与文件清理；未验证写入幂等或业务回滚'],
+    ['稳定业务操作与接收方回执','超时或断线后确认效果，避免盲目重复写入','批次实验核对文件清理，目录换版实验核对实际写入目标'],
     ['任务状态与交付结果','多次调用组成目标，重连后查询原工作','请求、进度与连接均不保存完整任务历史'],
     ['真实产物与独立来源','工具成功、结构正确之后仍要验收目标','report-A/v3 的 42 与错误 41 对照']
    ])+
@@ -139,6 +139,21 @@
    sourceLinks(old[8])
   ];
   finish(a,old,bodies,'从调用者、工具契约和单次结果出发，追踪官方 SDK 2.3.0 的真实调用、两代协议、进度与取消，再按独立来源验收 42。');
+  a.sections[3][1]+=
+   '<h3 id="native-mcp-catalog-refresh">工具仍叫同一个名字，为什么要重新确认</h3>'+
+   p('工具目录是服务端当前对外声明的工具、说明和参数规则。宿主在选工具时保存一份目录，批准则绑定当时要执行的具体动作。看另一组独立的本机实验。<code>publish_report</code> 的 v1 只收 <code>report_id</code>，默认写归档区 <code>archive</code>。v2 保留原必填项，增加可选的 <code>destination</code>，省略时改写共享区 <code>shared</code>。旧参数依然符合结构，却会产生另一个效果。',
+   '在 2026-07-28 版中，客户端先用 <code>subscriptions/listen</code> 订阅目录变化。实验等到订阅确认，再让服务端切换版本。<code>notifications/tools/list_changed</code> 携带订阅标识，提示宿主重读；完整的新版定义来自随后的一次 <code>tools/list</code>。重新连接时也应重读所需的目录。')+
+   trainingFigure('mcp-catalog-refresh','两条实际执行路径用同一份 report-A。沿用旧批准写到共享区。重读目录后，旧批准在宿主被拦，旧摘要在接收端也被拒绝。')+
+   table(['实验动作','协议与宿主记录','接收方实际效果'],[
+    ['收到通知后沿用旧批准','仍提交 report-A，省略 destination，调用成功','写入 shared，金额 42'],
+    ['重新读取目录再用旧批准','摘要变化，宿主停止派发','账本为空'],
+    ['测试程序直发旧摘要','服务端拒绝过期契约，返回 stale contract','账本仍为空'],
+    ['预览并明确确认 shared','新批准绑定新摘要和显式目的地','写入 shared，账本有一行 42']
+   ])+
+   p('摘要是把工具名、说明与输入输出规则按固定格式整理后算出的短标识。沿 <code>contract</code>、<code>dispatch_approved</code> 和 <code>call_tool</code> 读代码。宿主比较新旧摘要，接收端在实际写入前再次比较，以应对目录读取后又发生变化。本例把预期摘要放进自定义的 <code>_meta</code> 字段。业务身份、权限和去重各自需要检查。')+
+   p('解压后按运行说明执行 <code>python -B catalog_refresh.py --output-dir replay &gt; replay.json</code>。查看通知、第二次 <code>tools/list</code> 和两份 SQLite 账本。实验使用 MCP SDK 2.3.0 的真实 stdio 通信，批准由固定测试夹具提供。')+
+   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>';
+  a.updated='2026.11.09';
  }
  }
 

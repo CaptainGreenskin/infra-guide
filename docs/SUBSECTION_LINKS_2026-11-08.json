@@ -166,11 +166,13 @@
       "targets": [
         "subsection-4-4ww5rs",
         "subsection-4-15h5yam",
-        "subsection-7-aclmrr"
+        "subsection-7-aclmrr",
+        "native-pdb-eviction-rollout"
       ],
       "visible_targets": [
         "subsection-4-4ww5rs",
-        "subsection-4-15h5yam"
+        "subsection-4-15h5yam",
+        "native-pdb-eviction-rollout"
       ]
     },
     {
@@ -536,9 +538,12 @@
     {
       "id": "ddp-code",
       "targets": [
-        "subsection-3-r2s4n5"
+        "subsection-3-r2s4n5",
+        "native-ddp-join"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-ddp-join"
+      ]
     },
     {
       "id": "training-communication",
@@ -945,9 +950,11 @@
       "targets": [
         "mcp-model-tool-observation",
         "mcp-http-cancellation-run",
-        "native-mcp-http-authorization"
+        "native-mcp-http-authorization",
+        "native-mcp-catalog-refresh"
       ],
       "visible_targets": [
+        "native-mcp-catalog-refresh",
         "mcp-http-cancellation-run",
         "mcp-model-tool-observation",
         "native-mcp-http-authorization"

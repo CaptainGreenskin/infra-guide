@@ -137,6 +137,19 @@
  '配套 verify.py 可在本机核对本地 HTTP 端点、SIGTERM 退出和独立事务、算式；它不创建 Kubernetes。另一个原生 service_lab.py 使用自己的双副本、持续 ClusterIP 客户端和 API 快照，已有 readiness、liveness、v1→v2→v1 记录。两份程序分别取证：前者验证清单外的本地机制，后者验证实际集群链，二者均不替代本题三副本与容量条件的目标验证。')+links(w[7])
  ],'沿 Deployment、ReplicaSet 与 Pod 的正常补副本过程，解释滚动更新、探针、维护预算与终止，再按对象和请求核对结果。');
 
+ workloads.sections[5][1]+=
+ h('native-pdb-eviction-rollout','同一组三副本，驱逐、直接删除与发布各走哪条路')+
+ p('隔离集群里只有一组 <code>app=reports</code> Pod。Deployment 维持三个副本，PDB 用同一个标签选中它们。用 <code>currentHealthy</code> 读取 PDB 当前统计的健康数，用 <code>disruptionsAllowed</code> 读取还可申请的驱逐数。等控制器都观察到当前配置、上一轮驱逐结清后，三个就绪减去最少两个，剩一个名额。')+
+ trainingFigure('kubernetes-pdb-rollout','从同一组 reports Pod 读四个时刻。驱逐记录看 HTTP 状态和 Pod UID，发布记录看版本与就绪条件。')+
+ table(['动作','用什么证据判断'],[
+  ['最少保留 2 个，向 Pod 的 <code>/eviction</code> 发 POST','本次驱逐返回 HTTP 201。旧 UID 消失，新 UID 就绪后健康数回到 3。'],
+  ['改为最少保留 3 个，尝试驱逐一个健康 Pod','<code>disruptionsAllowed=0</code>，HTTP 429 的原因详情是 <code>DisruptionBudget</code>。同一 UID 仍存在。'],
+  ['对刚被拒绝的 Pod 发直接 DELETE','带 UID 条件的 DELETE 返回 HTTP 200，副本控制器随后补回第三个 Pod。'],
+  ['以 <code>maxSurge=0</code>、<code>maxUnavailable=1</code> 发布永远未就绪的 v2','一份旧副本已被替换。两个 v1 就绪，一个 v2 正在运行但未就绪。此时维护驱逐仍返回 429，撤销发布后回到三个就绪 v1。']])+
+ p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
+ p('在 Linux 本机 Docker 上解压后运行 <code>python3 -B pdb_rollout.py --output replay.json</code>。先对照 <code>blocked_eviction</code> 和 <code>direct_delete</code> 的请求路径与 UID，再按 <code>before_rollout</code>、<code>stalled_rollout</code>、<code>after_undo</code> 逐份核对版本、健康数和预算。这里运行的是单节点 kind。多节点排空、故障域和实际服务流量要到对应环境验证。')+
+ '<p class="practice-links"><a href="labs/kubernetes-pdb-rollout.zip" download>下载实验包 ↓</a> · <a href="labs/kubernetes-pdb-rollout/pdb_rollout.py">查看完整源码</a> · <a href="labs/kubernetes-pdb-rollout/README.md">分步复跑</a> · <a href="labs/kubernetes-pdb-rollout/validation.json">查看真实 API 记录</a> · <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/api-eviction/">Eviction API 文档 ↗</a></p>';
+
  const scheduling=select('scheduling-resources',['一个Pod从提交到运行，要过哪些关','request、limit和用量是三笔账','配额拒绝后，为什么查不到那个Pod','逐节点检查资源，再求可行集合','标签、亲和、污点与抢占分别改变哪道条件','把调度等待放回端到端完成时间','用对象、条件和事件判断卡在哪里','在隔离kind集群重放完整链条']);
  const s=scheduling.sections.map(x=>x[1]),s2=blocks(s[2]),s6=blocks(s[6]),s7=blocks(s[7]);
  if(s2.length!==1||s6.length!==1||s7.length!==2)throw Error('Scheduling code layout changed');

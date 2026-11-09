@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "environment": {
+    "torch": "2.5.1",
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "machine": "arm64",
+    "device": "cpu",
+    "backend": "gloo"
+  },
+  "source_sha256": {
+    "ddp_uneven_join.py": "80b4a5cac6e1d1640ca4a58509c0922fe756c59f592c1c1489ce635e6b0aa21b",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "targets": [
+    [
+      2,
+      8
+    ],
+    [
+      6
+    ]
+  ],
+  "outcomes": {
+    "no_join": [
+      {
+        "rank": 0,
+        "steps": [
+          {
+            "target": 2,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "gloo_timeout",
+        "runtime_error": "[/Users/runner/work/pytorch/pytorch/pytorch/third_party/gloo/gloo/transport/uv/unbound_buffer.cc:103] Timed out waiting 4000ms for send operation to complete",
+        "after_iterator": {
+          "weight": 1.0,
+          "momentum": -4.0
+        }
+      },
+      {
+        "rank": 1,
+        "steps": [
+          {
+            "target": 6,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "exhausted_without_collective",
+        "after_iterator": {
+          "weight": 1.0,
+          "momentum": -4.0
+        }
+      }
+    ],
+    "fail_fast": [
+      {
+        "rank": 0,
+        "steps": [
+          {
+            "target": 2,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "peer_exhausted",
+        "runtime_error": "Detected at least one rank that exhausted inputs. Throwing across all ranks.",
+        "after_iterator": {
+          "weight": 1.0,
+          "momentum": -4.0
+        }
+      },
+      {
+        "rank": 1,
+        "steps": [
+          {
+            "target": 6,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "local_exhausted",
+        "runtime_error": "Rank 1 exhausted all inputs.",
+        "after_iterator": {
+          "weight": 1.0,
+          "momentum": -4.0
+        }
+      }
+    ],
+    "initial_world": [
+      {
+        "rank": 0,
+        "steps": [
+          {
+            "target": 2,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          },
+          {
+            "target": 8,
+            "gradient": -3.5,
+            "weight": 2.375,
+            "momentum": -5.5
+          }
+        ],
+        "outcome": "completed",
+        "after_iterator": {
+          "weight": 2.375,
+          "momentum": -5.5
+        },
+        "next_balanced_step": {
+          "stale": {
+            "target": 5,
+            "gradient": -2.625,
+            "weight": 3.71875,
+            "momentum": -5.375
+          },
+          "restored": {
+            "target": 5,
+            "gradient": -2.625,
+            "weight": 3.71875,
+            "momentum": -5.375
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "steps": [
+          {
+            "target": 6,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "completed",
+        "after_iterator": {
+          "weight": 2.375,
+          "momentum": -4.0
+        },
+        "next_balanced_step": {
+          "stale": {
+            "target": 5,
+            "gradient": -2.625,
+            "weight": 3.53125,
+            "momentum": -4.625
+          },
+          "restored": {
+            "target": 5,
+            "gradient": -2.625,
+            "weight": 3.71875,
+            "momentum": -5.375
+          }
+        }
+      }
+    ],
+    "active_world": [
+      {
+        "rank": 0,
+        "steps": [
+          {
+            "target": 2,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          },
+          {
+            "target": 8,
+            "gradient": -7.0,
+            "weight": 3.25,
+            "momentum": -9.0
+          }
+        ],
+        "outcome": "completed",
+        "after_iterator": {
+          "weight": 3.25,
+          "momentum": -9.0
+        }
+      },
+      {
+        "rank": 1,
+        "steps": [
+          {
+            "target": 6,
+            "gradient": -4.0,
+            "weight": 1.0,
+            "momentum": -4.0
+          }
+        ],
+        "outcome": "completed",
+        "after_iterator": {
+          "weight": 3.25,
+          "momentum": -4.0
+        }
+      }
+    ]
+  }
+}
