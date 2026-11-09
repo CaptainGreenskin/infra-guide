@@ -20,13 +20,12 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/guide-kueue-tools"
           cd "$RUNNER_TEMP/guide-kueue-tools"
+          # Digests from the official kind release and dl.k8s.io checksums.
           curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64 -o kind-linux-amd64
-          curl --fail --location --retry 3 https://kind.sigs.k8s.io/dl/v0.33.0/kind-linux-amd64.sha256sum -o kind-linux-amd64.sha256sum
-          sha256sum -c kind-linux-amd64.sha256sum
+          printf '%s  %s\n' 'aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d' kind-linux-amd64 | sha256sum --check --strict
           mv kind-linux-amd64 kind
           curl --fail --location --retry 3 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl -o kubectl
-          curl --fail --location --retry 3 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl.sha256 -o kubectl.sha256
-          python3 -c 'from pathlib import Path; import hashlib; assert hashlib.sha256(Path("kubectl").read_bytes()).hexdigest()==Path("kubectl.sha256").read_text().strip()'
+          printf '%s  %s\n' '874d5e72dbb819f43cff16bcd1e4f8bac5b7f2361fe1e55049b0a6c676fb0cbf' kubectl | sha256sum --check --strict
           chmod +x kind kubectl
           echo "$RUNNER_TEMP/guide-kueue-tools" >> "$GITHUB_PATH"
       - name: Observe Kueue admission, then Pod placement and output
