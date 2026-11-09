@@ -1,29 +1,62 @@
-name: Pinned CUDA core compilation
+name: Pinned CUDA GEMM variants compilation
 on:
   push:
-    branches: [content/cuda-core-20261108]
-    paths:
-      - dist/labs/cuda-core/**
-      - .github/workflows/cuda-core.yml
+    branches: [evidence/gemm-variants-20261109]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   compile:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v6
-      - name: Build pinned NVIDIA toolkit, validate host oracle, probe without launching kernels
-        run: >-
-          python3 -B dist/labs/cuda-core/build.py
-          --fetch-toolkit
-          --output-dir cuda-core-results
-          --cache-dir "${{ runner.temp }}/cuda-core-redist"
+      - name: Prepare the existing pinned NVIDIA toolkit
+        run: python3 -B dist/labs/cuda-core/build.py --fetch-toolkit --output-dir /tmp/cuda-core-results --cache-dir "${RUNNER_TEMP}/cuda-core-redist"
+      - name: Compile three GEMM variants and probe device availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir=gemm-compile
+          mkdir -p "$dir"
+          source=dist/labs/gemm-variants/gemm_variants.cu
+          source_sha=$(sha256sum "$source" | cut -d ' ' -f 1)
+          lock_sha=$(sha256sum dist/labs/cuda-core/toolchain-lock.json | cut -d ' ' -f 1)
+          toolkit="$RUNNER_TEMP/cuda-core-redist/toolkit-$lock_sha"
+          export PATH="$toolkit/bin:$PATH"
+          common=(-O3 -std=c++17 -lineinfo "-I$toolkit/include" "-L$toolkit/lib" "-DGEMM_SOURCE_SHA256=\"$source_sha\"")
+          nvcc --version > "$dir/nvcc-version.log"
+          nvcc "${common[@]}" --cudart=static -gencode arch=compute_80,code=sm_80 -gencode arch=compute_80,code=compute_80 "$source" -o "$RUNNER_TEMP/gemm_variants"
+          nvcc "${common[@]}" --ptx -arch=compute_80 "$source" -o "$dir/gemm_variants.ptx"
+          "$RUNNER_TEMP/gemm_variants" --help > "$dir/binary-help.log"
+          probe_rc=0
+          "$RUNNER_TEMP/gemm_variants" --probe-only > "$dir/device-probe.json" || probe_rc=$?
+          [[ "$probe_rc" = 0 || "$probe_rc" = 2 ]]
+          python3 - "$source" "$RUNNER_TEMP/gemm_variants" "$probe_rc" <<'PY'
+          from hashlib import sha256
+          import json, os, re, sys
+          from pathlib import Path
+          source, binary = map(Path, sys.argv[1:3])
+          rc = int(sys.argv[3])
+          out = Path('gemm-compile')
+          digest = lambda p: sha256(p.read_bytes()).hexdigest()
+          ptx = out/'gemm_variants.ptx'
+          entries = sorted(re.findall(r'\.entry\s+(gemm_\w+_kernel)\(', ptx.read_text()))
+          assert entries == ['gemm_naive_kernel','gemm_reuse_kernel','gemm_tiled_kernel'], entries
+          assert all(name.encode() in binary.read_bytes() for name in entries)
+          probe = json.loads((out/'device-probe.json').read_text())
+          assert probe['device_execution'] is False and probe['source_sha256'] == digest(source)
+          assert (probe['status'], rc) in [('not-run', 2), ('device-detected', 0)]
+          record = dict(status='compile-validated-device-pending', device_execution=False,
+                        source_sha256=digest(source), workflow_commit=os.environ['GITHUB_SHA'],
+                        workflow_run_id=int(os.environ['GITHUB_RUN_ID']), nvcc=(out/'nvcc-version.log').read_text(),
+                        targets=['sm_80','compute_80'], entries=entries, ptx_sha256=digest(ptx),
+                        binary_sha256=digest(binary), probe=probe, probe_exit_code=rc)
+          (out/'validation.json').write_text(json.dumps(record, indent=2)+'\n')
+          PY
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: cuda-core-compilation-and-probe
-          path: cuda-core-results/
+          name: gemm-variants-compile
+          path: gemm-compile/
           if-no-files-found: error
           retention-days: 7
