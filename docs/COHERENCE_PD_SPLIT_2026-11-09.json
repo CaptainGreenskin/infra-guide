@@ -1,0 +1,128 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "f089ead287834814520efc86aa307dd8e19aeedc",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_BODY_REVIEW_SELECTION_2026-11-09.json": "5abe2dfd70b87e16b6efccb4c4b5e23d1c90d48dbe9a1ea6b6fdd27709c3e6ef"
+  },
+  "source_revisions": {
+    "dist/ai-serving-knowledge.js": {
+      "previous_sha256": "c6a0472c9fcb49a7d87bc20c5e8d7c6f2d16cb77d3691349981dd24457cdf6c7",
+      "reviewed_sha256": "b8fe4d871c76bfa74ad667447c1eae431b3f74ef4c0837112ea15760fec1fe21",
+      "scope": "Link the existing Prefill/Decode definition to the exact run."
+    },
+    "dist/interview-companies.js": {
+      "previous_sha256": "667f4968c3db434d2fdc697eab7bc2dea9b1727fa4ac2a56e9a98e06463e5b13",
+      "reviewed_sha256": "0ecbdbcae272fe9dd7aae622f5c266be7c11d6764f7b20b8d4c83c83c5990b7c",
+      "scope": "Link the inference role to evidence and retain the target GPU validation boundary."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "11136b34da46d9444ca70a792e21539f565ba990a22f9162f0a77571b945b442",
+      "reviewed_sha256": "239e27ac377d18917242fa6c8f74f133c6abd2fa7a47d5b551b10d8695a6337b",
+      "scope": "Register the reproducible CPU experiment, downloadable archive and evidence boundary."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "82b46edba63b7785614ed87e0908b1666fb46a34ee0d6501e715f30ffa37918a",
+      "reviewed_sha256": "bd2d51ec469fdf03053c6b366bf9e5b897e52d1d062af726bf447f8a0e6fa624",
+      "scope": "Connect the role route to the cache handoff and measurement exercise."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "2e80ae7dd4962993d23c182f02189b85685a2e5c07f00340ea64cbe261b03724",
+      "reviewed_sha256": "45873298b20c2c5622338ada9a2b7ee6d7e94f53d0bfdd4f3efb88bb99814f0c",
+      "scope": "Add a three-layout same-input CPU experiment with actual interprocess cache bytes and a checksum failure after the first output."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "1cc4437c02ae267832211f0fefddb40471746407f2eb3e654082ed1ac69ca33d",
+      "reviewed_sha256": "f66a599b93ebb00d0c4f0f0f9c3c1f69d38b57ea20b9d3acfbdefd16c9d14ab5",
+      "scope": "Bind the new diagram native viewport."
+    },
+    "dist/diagrams/pd-split-handoff.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "14e36429f131206d72d4b6a9dfa9728b2852db53549dc928d04cfcea3353da8d",
+      "scope": "Draw request paths, verified handoff and first-output timing boundaries."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "d8ae281a92178670a956e3447625a7d07adf74b590df78b2f3ef908a263fd237",
+      "reviewed_sha256": "0d97a46d34a044a3b5192c6d551dc34afe6bb90db14ebb2fc60783af8dcb2e65",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "ef8a98264386fda49c91358682833516927b2b89fee2080cd0f3ddb93b1acc2c",
+      "reviewed_sha256": "4ea0dd3618f12912a57e0dab3bdc9639f85c0fa9511cbbc0ef6c85c7d6c16518",
+      "scope": "Fingerprint the current course rendering sources."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "2de108ad544f3f909a8570787d60defbd2bc12221ceffc82fa2e546e5d344179",
+      "reviewed_sha256": "4da8ba5d685d2410f5f911a13310cf6341880cc0d26474868b6d7cb4a5444c9e",
+      "scope": "Include independent live and frozen lab checks in CI."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "90b88f364ba42880a52c7cfb067adca96246bde4c2341959923aa1237ad38673",
+      "reviewed_sha256": "c6a89b283aaf8568dcd91a168cf2f6ec1950d22c59273b5ae7033158d64fda2c",
+      "scope": "Keep the prior cache and queue invariants while isolating the exact new experiment."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "48586144447f8f8f9fbbf3d8810c2825eab8fd0a1c632ccd7c96f0323eb98853",
+      "reviewed_sha256": "5c700fac88b244c32c15384e98dfe8ded407690df1eae78d9100afa7e95c4e81",
+      "scope": "Require the role gate to retain its direct experiment link."
+    },
+    "scripts/check-pd-split.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "23ef8e96efa6a885b446972875c84338922057edc35c298df0bc02edbf62364d",
+      "scope": "Reconstruct output tokens, message bytes, observed intervals and admission results independently."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "f7e7fea0b3c884672eb3e969b28336a55a48ecb3608c161367035f0d025411de",
+      "reviewed_sha256": "4865a99bdaf9f49ebd90c89881815721556f686e2991d5795220a50ca44144f7",
+      "scope": "Append the reviewed chapter body without rewriting historical reviews."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "443f8419c9cdb451e89d39b65994953f8ed80597be5d226a59e9ad8ed4566e52",
+      "reviewed_sha256": "29d72d44ba73292140d8670fdd01032d9d075624514c665320b0d5655d3da8f1",
+      "scope": "Add the exact fragment to the section navigation."
+    },
+    "docs/CONTENT_PD_SPLIT_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f8b4eb05117a65dde1d8e21261ced0b14d62c42f8c832f11df340b24c2099ab8",
+      "scope": "Record the exact reviewed knowledge point and evidence-backed body."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "29bde2af9a2801b37d52f2b7711f3560c09ab87668a6ec5270e83fafd0177a2f",
+      "reviewed_sha256": "eb4eb6eeb6267645f207f2fd395f9ce64581ace98efece8d63c77d8098a68446",
+      "scope": "Append the new content review."
+    },
+    "dist/labs/pd-split.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0e76daa435313eefdd4106cb8edb46c1cf3a5cd216c8adad0b96826d45f0090f",
+      "scope": "Archive the exact reviewed inputs and record."
+    },
+    "dist/labs/pd-split/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4798b89033818d35e2bec3597217f22e6cd75425504b98ce96881fe08093e11e",
+      "scope": "Bind the exact runnable example and recorded CPU observations."
+    },
+    "dist/labs/pd-split/pd_split.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "73952eff8c23058e02d16e131f618b9101b168c36e492f2d53105fc17f5b87d4",
+      "scope": "Bind the exact runnable example and recorded CPU observations."
+    },
+    "dist/labs/pd-split/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6332bafb3c83978c50f6f542adac45567649c54ad08c6f5e08fc4249fd064447",
+      "scope": "Bind the exact runnable example and recorded CPU observations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "f089ead287834814520efc86aa307dd8e19aeedc",
+    "chapters": 78,
+    "changed_bodies": [
+      "inference-performance"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "inference-performance": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

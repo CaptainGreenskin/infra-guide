@@ -1,0 +1,28 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "f089ead287834814520efc86aa307dd8e19aeedc",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_VISUAL_MECHANISMS_2026-11-09.json": "759eb19f6ac0a50009151e95aa86c07622acd7dd0a0aec71c7bc6a3c81ba5c9b"
+  },
+  "knowledge_revisions": [
+    {
+      "id": "sv-prefill",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "a4a54150bccfd082cdbc3560b3d4e9d2373badd0abc7521b099d84f768786111",
+      "reviewed_content_sha256": "ccc2f18c21095bfde800b5af402113f8fc0c210e107569b5519398d6984f3944",
+      "scope": "Connect the existing distinction between prefill and incremental decode to the native handoff experiment.",
+      "observation": "The conceptual incremental code and article references are preserved."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "scope": "Add a three-layout same-input CPU experiment with actual interprocess cache bytes and a checksum failure after the first output.",
+      "observation": "The frozen and replayed traces compare output identity, message sizes, independent scheduling and exact measurement endpoints without claiming GPU or cross-host speed.",
+      "reviewed_content_sha256": "e535139fb5a8a115f4881c38e528980b00748ed2dd45095d13120e651b8eafd9",
+      "record": "dist/labs/pd-split/validation.json"
+    }
+  ]
+}

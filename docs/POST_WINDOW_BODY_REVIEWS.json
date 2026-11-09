@@ -5504,6 +5504,24 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "6fb18269bc3461b8c7e8cd9f1a282c1d245090ea230f3274a75ae0a583c84a52",
+      "reviewed_content_sha256": "e535139fb5a8a115f4881c38e528980b00748ed2dd45095d13120e651b8eafd9",
+      "scope": "Add a three-layout same-input CPU experiment with actual interprocess cache bytes and a checksum failure after the first output.",
+      "observation": "The frozen and replayed traces compare output identity, message sizes, independent scheduling and exact measurement endpoints without claiming GPU or cross-host speed.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

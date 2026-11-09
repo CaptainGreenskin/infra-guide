@@ -25,7 +25,7 @@ function companyStudyGuide() {
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照'),'手算样本数不等时的正确更新，再与本机 DDP 对照。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
   ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验'),'有测量方法，缺真实 GPU 算子剖析、代码优化及回归数据。'],
-  ['推理引擎与调度','txInference',false,readLink('inference-performance','区分 TTFT 与 TPOT'),'已有逻辑预算和时序练习，仍要测 PD 分离与异构芯片。'],
+  ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
   ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
   ['沙箱隔离与性能','txSandbox',false,readLink('agent-security','定位执行边界'),'需要真实沙箱的冷启动、资源回收与并发隔离对照。']
  ];

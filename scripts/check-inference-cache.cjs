@@ -165,9 +165,18 @@ const codeBlocks=html=>[...html.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=
 const queueCode=codeBlocks(queueBody.slice(queueStart));
 assert.equal(queueCode.length,1,'native queue unit has one distinct run command');
 assert(queueCode[0].includes('concurrency_lab.py'),'native queue run command');
+const disaggregationBody=article.sections[2][1];
+const disaggregationStart=disaggregationBody.indexOf('<div class="mechanism-core" data-practice="pd-split">');
+const disaggregationEnd=disaggregationBody.indexOf('<h3 id="vllm-v1-request-path">',disaggregationStart);
+assert(disaggregationStart>=0&&disaggregationEnd>disaggregationStart,'isolate the later disaggregation experiment');
+const disaggregationCode=codeBlocks(disaggregationBody.slice(disaggregationStart,disaggregationEnd));
+assert.equal(disaggregationCode.length,1);
+assert(disaggregationCode[0].includes('pd_split.py'),'disaggregation experiment has its own run command');
 let total=0;
 for(let i=0;i<article.sections.length;i++){
- const html=article.sections[i][1],pre=codeBlocks(i===queueSection?html.slice(0,queueStart):html);
+ const html=article.sections[i][1];
+ const historical=i===2?html.slice(0,disaggregationStart)+html.slice(disaggregationEnd):i===queueSection?html.slice(0,queueStart):html;
+ const pre=codeBlocks(historical);
  const original=contract.original_pre_sha256[i];
  assert.deepStrictEqual(pre.map(digest).filter(hash=>original.includes(hash)),original,'all original full pre blocks in order: '+i);
  for(const id of contract.inner_ids[i])assert(html.includes('id="'+id+'"'),'existing internal ID '+id);

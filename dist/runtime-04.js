@@ -118,7 +118,8 @@ infraKnowledgeDomains.push({module:'platform',track:'ai',refs:['v16GQA','v16Cach
  para('提示有S个位置时，prefill能并行计算多个查询位置；得到末位置logits后选择第一个输出token。下一步输入这个新token，生成它的K/V并查询所有允许的历史KV，再选后续token。缓存保存历史K/V，并不缓存未来token的计算，也不等同于省掉整层前向。',
  'decode常见单序列query长度为1。多个序列组批后可以提高矩阵运算的复用，但每个序列拥有自己的长度、位置和状态。低batch时权重读取与kernel开销可能更突出；长上下文下KV读取也可能成为主项。预填充和解码的瓶颈，会随张量形状、模型与实现变化，要用设备上的性能记录确认。',
  '采样需要明确温度、top-k/top-p、随机种子和停止条件；输出EOS、长度上限、取消与执行失败分别计数。比较两引擎前固定tokenizer、模板、输入长度、最大输出与质量口径；同样文本经过不同模板后可能已经是不同工作负载。')+
- code('因果增量路径 · 概念代码','PYTHON','cache = prefill(prompt_ids, position_ids=range(len(prompt_ids)))\ntoken = sample(last_logits)\nwhile not stop(token):\n    emit(token)\n    logits, cache = decode(token, cache, position=len(cache))\n    token = sample(logits)')},
+ code('因果增量路径 · 概念代码','PYTHON','cache = prefill(prompt_ids, position_ids=range(len(prompt_ids)))\ntoken = sample(last_logits)\nwhile not stop(token):\n    emit(token)\n    logits, cache = decode(token, cache, position=len(cache))\n    token = sample(logits)')+
+ para('把两个阶段交给不同进程时，接收方需要先验收提示长度、首词元和历史 K/V，再从下一位置继续。用<a href="/article/inference-performance/#native-pd-split">分池实验</a>核对交接的字节、等待和损坏后的结果。')},
  {id:'sv-kv',title:'KV Cache：GQA 字节账、分块与增长',articles:['model-serving','gpu-scheduling'],lead:'普通全注意力、各层相同KV头数且K/V维度相同的逻辑缓存量，可从层数、KV头数、头维、位置数与字节数直接推导。使用KV头数，而非查询头数。',body:
  knowledgeFormula('单序列逻辑KV','bytes = 2 × L × hKV × dh × T × b','2对应K和V；T是实际缓存位置数，b是每元素字节。滑窗、MLA、混合层与量化元数据需使用各自模型。')+
  figure('v16-ai-kv-budget','指定题设：32层、8个KV头、128头维、2字节，每位置128KiB；8192位置为1GiB。相同查询头数下，32个KV头的MHA为4GiB。')+
@@ -669,7 +670,7 @@ function companyStudyGuide() {
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照'),'手算样本数不等时的正确更新，再与本机 DDP 对照。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
   ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验'),'有测量方法，缺真实 GPU 算子剖析、代码优化及回归数据。'],
-  ['推理引擎与调度','txInference',false,readLink('inference-performance','区分 TTFT 与 TPOT'),'已有逻辑预算和时序练习，仍要测 PD 分离与异构芯片。'],
+  ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
   ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
   ['沙箱隔离与性能','txSandbox',false,readLink('agent-security','定位执行边界'),'需要真实沙箱的冷启动、资源回收与并发隔离对照。']
  ];

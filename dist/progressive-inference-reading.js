@@ -336,6 +336,33 @@
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
+ performance.sections[2][1]+='<div class="mechanism-core" data-practice="pd-split">'+
+  heading('native-pd-split','实战：把预填充和逐步生成交给不同进程')+
+  p('共置时，一个工作进程既处理输入，也继续生成。若调度器先取新来的长提示，已经开始输出的短请求就要等。分池时，预填充进程 P 处理输入并选出首个输出，解码进程 D 继续生成。D 需要同一请求的提示长度、首个输出和历史 K/V，才能在正确的位置继续写入。')+
+  trainingFigure('pd-split-handoff','共置路径保留进程内状态。分池路径先产生首项，再通过本机套接字交接 KV；接收端验收后，才开始下一步解码。')+
+  p('三组对照使用相同输入和整数计算规则。A 有 4 个提示位置、生成 4 项，B 有 8192 个提示位置、生成 2 项。每个位置存两个 16 位整数 K 和 V，共 4 字节。分池按 4 字节长度前缀、9 字节请求头、KV 数值、32 字节校验摘要传输。先手算 A 为 4+9+4×4+32=61 字节，B 为 4+9+8192×4+32=32813 字节。两项都是应用消息的字节数。')+
+  table(['对照','从记录核对','回答什么问题'],[
+   ['单进程共置','B 先于 A 的下一步占用共用进程','首项已经收到，后续仍可能排队'],
+   ['分池','独立进程验收 A 的交接，再输出 A 的第二项','等待被拆成了交接、接收检查和解码执行'],
+   ['双进程共置','每个请求留在自己的进程，核对 B 预填充和 A 解码是否重叠','增加工作进程也能减少这组请求的相互等待'],
+   ['交接失败','破坏校验摘要后重跑接收校验','已经产生的首项与后续失败分别记录']
+  ])+
+  p('先算 A 的首项。提示 [3,1,4,1] 按位置 i 生成 K=(词元+i) mod 257、V=(3×词元+2×i) mod 257，得到 (3,9)、(2,5)、(6,16)、(4,9)。最后一个提示词元为 1，所以查询值 q=1+(1 mod 11)=2。每个 K 的权重是 1+(q×K mod 19)，加权和为 377，权重之和为 34。向下取整后加上缓存长度，得到首项 floor(377/34)+4=15。',
+  '下一轮把 15 放到位置 4，追加 K/V 为 (19,53)，按同一规则得到 16。继续两轮应得到 25、36。实验用这套整数规则核对接收后的历史状态与位置，省去模型权重和浮点误差。')+
+  p('实验用本机单调时钟，所有进程共用一个计时起点。首词元延迟（TTFT）从协调进程接到请求算到工作进程产生首项。平均后续间隔（TPOT）用末项减首项，再除以输出数减一。这里 P 在交接前就产生首项，交接因此落在首项到第二项之间。真实服务的客户端计时还要跟踪输出的网络和协议传输。')+
+  trainingCode('解压后运行三组对照和一次失败路径','SHELL',`python3 -B pd_split.py --write-record replay.json`)+
+  p('在 <code>report.split.events</code> 中找 A 的首项、<code>kv_ready</code> 和第二项。把第二项减首项，得到首次停顿。再用 <code>decode_start</code> 减 <code>max(decode_queued, kv_ready)</code>，得到缓存和任务都就绪之后的排队。交接耗时与排队可能重叠，按事件关系算，避免重复相加。',
+  '默认门槛是 TTFT≤30 毫秒且 TPOT≤1.5 毫秒。先复算单条请求是否同时达标，再用达标完成数除以从首个到达到最后完成的时间。')+
+  table(['一次保留记录','A 排入解码到开算','A / B 平均后续间隔','达标完成数'],[
+   ['单进程共置','1.820 ms','1.171 / 0.721 ms','2 / 2'],
+   ['分池','0.058 ms','0.611 / 2.644 ms','1 / 2'],
+   ['双进程共置','0.071 ms','0.605 / 0.644 ms','2 / 2']
+  ])+
+  p('这次分池里，A 排入解码后等得更短，B 的平均后续间隔却超过门槛。B 从发送 KV 到接收侧验收用了 1.366 毫秒，缓存和任务都就绪后只再等 0.020 毫秒。只看 A 或只看解码就绪队列，都会漏掉 B 的变化。三组输出都相同，重跑的时长会变。')+
+  p('本机运行的是整数玩具核。单进程共置展示排队，双进程共置和分池都展示重叠，分池另有状态交接。同步门固定比较中的相对顺序。记录验证跨进程的实际字节、输出一致性和观测方法。GPU 上的吞吐、跨机网络及固定总算力下的收益需要在目标引擎上重测。'+
+  ' <a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe 论文中的设备预算与达标请求率 ↗</a>')+
+  '<p class="practice-links"><a href="/labs/pd-split.zip" download>下载源码与记录 ↓</a> · <a href="/labs/pd-split/validation.json">查看原始时间线和验收结果</a></p></div>';
+
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=

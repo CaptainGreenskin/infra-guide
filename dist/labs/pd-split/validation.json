@@ -1,0 +1,916 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "73952eff8c23058e02d16e131f618b9101b168c36e492f2d53105fc17f5b87d4",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "clock": "CLOCK_MONOTONIC",
+    "transport": "socketpair",
+    "scope": "single_host_cpu"
+  },
+  "report": {
+    "requests": [
+      {
+        "request_id": "A",
+        "prompt_tokens": 4,
+        "output_tokens": 4,
+        "prompt_recipe": {
+          "kind": "literal",
+          "tokens": [
+            3,
+            1,
+            4,
+            1
+          ]
+        },
+        "prompt_sha256": "bff29b82159cae5b6a6c36350f6a6e059a6e22beca5ffd1320b84f8b91886620"
+      },
+      {
+        "request_id": "B",
+        "prompt_tokens": 8192,
+        "output_tokens": 2,
+        "prompt_recipe": {
+          "kind": "linear_mod",
+          "count": 8192,
+          "multiplier": 17,
+          "offset": 11,
+          "modulus": 257
+        },
+        "prompt_sha256": "1d2bfb256fa6cc3d161782ee51642c4e56aa5d4f24e4208a68ba6ec75b5c55a4"
+      }
+    ],
+    "slo": {
+      "ttft_ns": 30000000,
+      "tpot_ns": 1500000
+    },
+    "colocated": {
+      "worker_pids": {
+        "shared": 47367
+      },
+      "events": [
+        {
+          "request_id": "A",
+          "event": "arrival",
+          "ns": 1280289000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_queued",
+          "ns": 1280312000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_start",
+          "ns": 1280901000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 1280978000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 0,
+          "value": 15
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_end",
+          "ns": 1281038000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_ready",
+          "ns": 1281076000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "B",
+          "event": "arrival",
+          "ns": 1281093000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_queued",
+          "ns": 1281095000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_start",
+          "ns": 1281214000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_wait",
+          "ns": 1282577000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_queued",
+          "ns": 1282660000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_release",
+          "ns": 1282670000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 1284454000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 0,
+          "value": 96
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_end",
+          "ns": 1284463000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_ready",
+          "ns": 1284466000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_start",
+          "ns": 1284480000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 1284485000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 1,
+          "value": 16
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 1284488000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 2,
+          "value": 25
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 1284490000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 3,
+          "value": 36
+        },
+        {
+          "request_id": "A",
+          "event": "decode_end",
+          "ns": 1284492000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_queued",
+          "ns": 1284599000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_start",
+          "ns": 1284632000,
+          "pid": 47367,
+          "worker": "shared"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 1285175000,
+          "pid": 47367,
+          "worker": "shared",
+          "index": 1,
+          "value": 98
+        },
+        {
+          "request_id": "B",
+          "event": "decode_end",
+          "ns": 1285177000,
+          "pid": 47367,
+          "worker": "shared"
+        }
+      ],
+      "per_request": {
+        "A": {
+          "outputs": [
+            15,
+            16,
+            25,
+            36
+          ],
+          "ttft_ns": 689000,
+          "tpot_ns": 1170666.6666666667,
+          "token_intervals_ns": [
+            3507000,
+            3000,
+            2000
+          ],
+          "decode_queue_ns": 1820000,
+          "decode_ready_queue_ns": 1820000,
+          "kv_cache_bytes": 16,
+          "wire_bytes": 0,
+          "kv_handoff_ns": null,
+          "within_slo": true
+        },
+        "B": {
+          "outputs": [
+            96,
+            98
+          ],
+          "ttft_ns": 3361000,
+          "tpot_ns": 721000.0,
+          "token_intervals_ns": [
+            721000
+          ],
+          "decode_queue_ns": 33000,
+          "decode_ready_queue_ns": 33000,
+          "kv_cache_bytes": 32768,
+          "wire_bytes": 0,
+          "kv_handoff_ns": null,
+          "within_slo": true
+        }
+      },
+      "cohort": {
+        "completed_count": 2,
+        "slo_met_count": 2,
+        "window_ns": 4888000,
+        "goodput_requests_per_second": 409.16530278232403
+      }
+    },
+    "split": {
+      "worker_pids": {
+        "prefill": 47408,
+        "decode": 47409
+      },
+      "events": [
+        {
+          "request_id": "A",
+          "event": "arrival",
+          "ns": 275046000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_queued",
+          "ns": 275058000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_receive_start",
+          "ns": 275401000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_start",
+          "ns": 275556000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 275739000,
+          "pid": 47408,
+          "worker": "prefill",
+          "index": 0,
+          "value": 15
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_end",
+          "ns": 275849000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "B",
+          "event": "arrival",
+          "ns": 275911000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_queued",
+          "ns": 275912000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_send_start",
+          "ns": 275918000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_send_end",
+          "ns": 275965000,
+          "pid": 47408,
+          "worker": "prefill",
+          "frame_bytes": 61,
+          "frame_sha256": "a40a05639dd86d9144ed3d8d5ea2cd26f7386746a5ce23aae2eaadff997cf7e9"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_receive_end",
+          "ns": 275978000,
+          "pid": 47409,
+          "worker": "decode",
+          "frame_bytes": 61,
+          "frame_sha256": "a40a05639dd86d9144ed3d8d5ea2cd26f7386746a5ce23aae2eaadff997cf7e9"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_start",
+          "ns": 275984000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_ready",
+          "ns": 275991000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_wait",
+          "ns": 277435000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_queued",
+          "ns": 277496000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_start",
+          "ns": 277554000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 277564000,
+          "pid": 47409,
+          "worker": "decode",
+          "index": 1,
+          "value": 16
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 277568000,
+          "pid": 47409,
+          "worker": "decode",
+          "index": 2,
+          "value": 25
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 277571000,
+          "pid": 47409,
+          "worker": "decode",
+          "index": 3,
+          "value": 36
+        },
+        {
+          "request_id": "A",
+          "event": "decode_end",
+          "ns": 277572000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_release",
+          "ns": 277666000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_receive_start",
+          "ns": 278757000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 279290000,
+          "pid": 47408,
+          "worker": "prefill",
+          "index": 0,
+          "value": 96
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_end",
+          "ns": 279295000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_send_start",
+          "ns": 279952000,
+          "pid": 47408,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_queued",
+          "ns": 279956000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_send_end",
+          "ns": 280044000,
+          "pid": 47408,
+          "worker": "prefill",
+          "frame_bytes": 32813,
+          "frame_sha256": "1384e218f6bd3c6edd778abf253fba66bb4b8ddbe401c92f58ae0d4357f33f32"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_receive_end",
+          "ns": 280056000,
+          "pid": 47409,
+          "worker": "decode",
+          "frame_bytes": 32813,
+          "frame_sha256": "1384e218f6bd3c6edd778abf253fba66bb4b8ddbe401c92f58ae0d4357f33f32"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_ready",
+          "ns": 281318000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_start",
+          "ns": 281338000,
+          "pid": 47409,
+          "worker": "decode"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 281934000,
+          "pid": 47409,
+          "worker": "decode",
+          "index": 1,
+          "value": 98
+        },
+        {
+          "request_id": "B",
+          "event": "decode_end",
+          "ns": 281942000,
+          "pid": 47409,
+          "worker": "decode"
+        }
+      ],
+      "per_request": {
+        "A": {
+          "outputs": [
+            15,
+            16,
+            25,
+            36
+          ],
+          "ttft_ns": 693000,
+          "tpot_ns": 610666.6666666666,
+          "token_intervals_ns": [
+            1825000,
+            4000,
+            3000
+          ],
+          "decode_queue_ns": 58000,
+          "decode_ready_queue_ns": 58000,
+          "kv_cache_bytes": 16,
+          "wire_bytes": 61,
+          "kv_handoff_ns": 73000,
+          "within_slo": true
+        },
+        "B": {
+          "outputs": [
+            96,
+            98
+          ],
+          "ttft_ns": 3379000,
+          "tpot_ns": 2644000.0,
+          "token_intervals_ns": [
+            2644000
+          ],
+          "decode_queue_ns": 1382000,
+          "decode_ready_queue_ns": 20000,
+          "kv_cache_bytes": 32768,
+          "wire_bytes": 32813,
+          "kv_handoff_ns": 1366000,
+          "within_slo": false
+        }
+      },
+      "cohort": {
+        "completed_count": 2,
+        "slo_met_count": 1,
+        "window_ns": 6896000,
+        "goodput_requests_per_second": 145.01160092807424
+      }
+    },
+    "colocated_two_workers": {
+      "worker_pids": {
+        "shared_A": 47420,
+        "shared_B": 47421
+      },
+      "events": [
+        {
+          "request_id": "A",
+          "event": "arrival",
+          "ns": 234429000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_queued",
+          "ns": 234451000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_start",
+          "ns": 235029000,
+          "pid": 47420,
+          "worker": "shared_A"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 235177000,
+          "pid": 47420,
+          "worker": "shared_A",
+          "index": 0,
+          "value": 15
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_end",
+          "ns": 235222000,
+          "pid": 47420,
+          "worker": "shared_A"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_ready",
+          "ns": 235226000,
+          "pid": 47420,
+          "worker": "shared_A"
+        },
+        {
+          "request_id": "B",
+          "event": "arrival",
+          "ns": 235291000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_queued",
+          "ns": 235293000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_start",
+          "ns": 235397000,
+          "pid": 47421,
+          "worker": "shared_B"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_wait",
+          "ns": 236850000,
+          "pid": 47421,
+          "worker": "shared_B"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_queued",
+          "ns": 236904000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_start",
+          "ns": 236975000,
+          "pid": 47420,
+          "worker": "shared_A"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 236985000,
+          "pid": 47420,
+          "worker": "shared_A",
+          "index": 1,
+          "value": 16
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 236989000,
+          "pid": 47420,
+          "worker": "shared_A",
+          "index": 2,
+          "value": 25
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 236992000,
+          "pid": 47420,
+          "worker": "shared_A",
+          "index": 3,
+          "value": 36
+        },
+        {
+          "request_id": "A",
+          "event": "decode_end",
+          "ns": 236993000,
+          "pid": 47420,
+          "worker": "shared_A"
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_gate_release",
+          "ns": 237063000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 238766000,
+          "pid": 47421,
+          "worker": "shared_B",
+          "index": 0,
+          "value": 96
+        },
+        {
+          "request_id": "B",
+          "event": "prefill_end",
+          "ns": 238772000,
+          "pid": 47421,
+          "worker": "shared_B"
+        },
+        {
+          "request_id": "B",
+          "event": "kv_ready",
+          "ns": 238774000,
+          "pid": 47421,
+          "worker": "shared_B"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_queued",
+          "ns": 238806000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "B",
+          "event": "decode_start",
+          "ns": 238873000,
+          "pid": 47421,
+          "worker": "shared_B"
+        },
+        {
+          "request_id": "B",
+          "event": "token",
+          "ns": 239410000,
+          "pid": 47421,
+          "worker": "shared_B",
+          "index": 1,
+          "value": 98
+        },
+        {
+          "request_id": "B",
+          "event": "decode_end",
+          "ns": 239413000,
+          "pid": 47421,
+          "worker": "shared_B"
+        }
+      ],
+      "per_request": {
+        "A": {
+          "outputs": [
+            15,
+            16,
+            25,
+            36
+          ],
+          "ttft_ns": 748000,
+          "tpot_ns": 605000.0,
+          "token_intervals_ns": [
+            1808000,
+            4000,
+            3000
+          ],
+          "decode_queue_ns": 71000,
+          "decode_ready_queue_ns": 71000,
+          "kv_cache_bytes": 16,
+          "wire_bytes": 0,
+          "kv_handoff_ns": null,
+          "within_slo": true
+        },
+        "B": {
+          "outputs": [
+            96,
+            98
+          ],
+          "ttft_ns": 3475000,
+          "tpot_ns": 644000.0,
+          "token_intervals_ns": [
+            644000
+          ],
+          "decode_queue_ns": 67000,
+          "decode_ready_queue_ns": 67000,
+          "kv_cache_bytes": 32768,
+          "wire_bytes": 0,
+          "kv_handoff_ns": null,
+          "within_slo": true
+        }
+      },
+      "cohort": {
+        "completed_count": 2,
+        "slo_met_count": 2,
+        "window_ns": 4984000,
+        "goodput_requests_per_second": 401.2841091492777
+      }
+    },
+    "negative": {
+      "fault": "checksum_corruption",
+      "events": [
+        {
+          "request_id": "A",
+          "event": "arrival",
+          "ns": 286912000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_queued",
+          "ns": 286929000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_receive_start",
+          "ns": 287362000,
+          "pid": 47441,
+          "worker": "decode"
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_start",
+          "ns": 287490000,
+          "pid": 47440,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "token",
+          "ns": 287583000,
+          "pid": 47440,
+          "worker": "prefill",
+          "index": 0,
+          "value": 15
+        },
+        {
+          "request_id": "A",
+          "event": "prefill_end",
+          "ns": 287613000,
+          "pid": 47440,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_send_start",
+          "ns": 287631000,
+          "pid": 47440,
+          "worker": "prefill"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_send_end",
+          "ns": 287695000,
+          "pid": 47440,
+          "worker": "prefill",
+          "frame_bytes": 61,
+          "frame_sha256": "9204b4a1df61c9c8d25a782ec3e17e9babf63f84d34261792f7fd3f00baed58c"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_receive_end",
+          "ns": 287713000,
+          "pid": 47441,
+          "worker": "decode",
+          "frame_bytes": 61,
+          "frame_sha256": "9204b4a1df61c9c8d25a782ec3e17e9babf63f84d34261792f7fd3f00baed58c"
+        },
+        {
+          "request_id": "A",
+          "event": "kv_rejected",
+          "ns": 287724000,
+          "pid": 47441,
+          "worker": "decode",
+          "reason": "checksum_mismatch"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_queued",
+          "ns": 287784000,
+          "pid": 47353,
+          "worker": "coordinator"
+        },
+        {
+          "request_id": "A",
+          "event": "decode_rejected",
+          "ns": 287831000,
+          "pid": 47441,
+          "worker": "decode",
+          "reason": "cache_not_ready"
+        }
+      ],
+      "outputs": [
+        15
+      ],
+      "kv_rejection": "checksum_mismatch",
+      "decode_rejection": "cache_not_ready"
+    }
+  }
+}

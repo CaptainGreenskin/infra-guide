@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'pd-split':{folder:'pd-split',title:'预填充与解码分池、缓存交接和输出间隔'},
  'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
  'ddp-target-preflight':{folder:'ddp-target-preflight',title:'两机四卡上机前的设备身份与集合通信检查'},
  'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
@@ -297,6 +298,12 @@ labLearningCatalog.push(
  {id:'cloud-incident-connection-lease',track:'cloud',stage:3,title:'同样拿不到连接，等待发生在哪',chapter:'incident',anchor:'incident-connection-lease',pack:'incident-connection-lease',files:['incident_connection_lease.py'],env:'Python 3.9+ · SQLite 与标准库 HTTP',kind:'真实 SQLite 锁、HTTP 与连接租借',observe:'保留 B 等连接的表象，分别核对 A 遇到 SQLITE_BUSY 或持连接等待 HTTP。移动 HTTP 调用后，检查 B 能否提前完成并保留原回执。',scope:'本机单连接租借、固定 SQLite 与 HTTP 夹具，观察事件顺序。'},
  {id:'ai-ddp-target-preflight',track:'ai',stage:2,title:'四份日志怎样核对会合、归约和设备绑定',chapter:'multinode-lab',anchor:'native-ddp-target-preflight',pack:'ddp-target-preflight',files:['target_probe.py','run_local.py'],env:'本机 PyTorch CPU/Gloo · 目标为两台 Linux 与四张完整 GPU',kind:'真实本机四进程与目标验收门槛',observe:'两份 launcher 启动四个本机进程，核对每个 rank 的 [1,2,3,4] 与总和 10。用同一门槛拒绝 CPU 或同宿主记录，再按卡型准备真实环境。',scope:'本机四进程 Gloo 已运行。物理双机、GPU/NCCL 和硬件分配仍待目标环境验收。'}
 );
+labLearningCatalog.push({
+ id:'ai-pd-split',track:'ai',stage:2,title:'首项已经收到，后续词元为什么还会等',chapter:'inference-performance',anchor:'native-pd-split',pack:'pd-split',
+ files:['pd_split.py'],env:'Python 3.9+ · Linux / macOS',kind:'实跑记录',
+ observe:'对同一批输入比较单进程共置、双进程共置和分池，复算首项延迟和后续间隔，并核对交接字节与损坏后的拒绝。',
+ scope:'真实本机进程与套接字，整数玩具核；目标推理引擎与跨机性能待验。'
+});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

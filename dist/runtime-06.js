@@ -7280,6 +7280,33 @@ const progressiveAgentSectionTitles={
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
+ performance.sections[2][1]+='<div class="mechanism-core" data-practice="pd-split">'+
+  heading('native-pd-split','实战：把预填充和逐步生成交给不同进程')+
+  p('共置时，一个工作进程既处理输入，也继续生成。若调度器先取新来的长提示，已经开始输出的短请求就要等。分池时，预填充进程 P 处理输入并选出首个输出，解码进程 D 继续生成。D 需要同一请求的提示长度、首个输出和历史 K/V，才能在正确的位置继续写入。')+
+  trainingFigure('pd-split-handoff','共置路径保留进程内状态。分池路径先产生首项，再通过本机套接字交接 KV；接收端验收后，才开始下一步解码。')+
+  p('三组对照使用相同输入和整数计算规则。A 有 4 个提示位置、生成 4 项，B 有 8192 个提示位置、生成 2 项。每个位置存两个 16 位整数 K 和 V，共 4 字节。分池按 4 字节长度前缀、9 字节请求头、KV 数值、32 字节校验摘要传输。先手算 A 为 4+9+4×4+32=61 字节，B 为 4+9+8192×4+32=32813 字节。两项都是应用消息的字节数。')+
+  table(['对照','从记录核对','回答什么问题'],[
+   ['单进程共置','B 先于 A 的下一步占用共用进程','首项已经收到，后续仍可能排队'],
+   ['分池','独立进程验收 A 的交接，再输出 A 的第二项','等待被拆成了交接、接收检查和解码执行'],
+   ['双进程共置','每个请求留在自己的进程，核对 B 预填充和 A 解码是否重叠','增加工作进程也能减少这组请求的相互等待'],
+   ['交接失败','破坏校验摘要后重跑接收校验','已经产生的首项与后续失败分别记录']
+  ])+
+  p('先算 A 的首项。提示 [3,1,4,1] 按位置 i 生成 K=(词元+i) mod 257、V=(3×词元+2×i) mod 257，得到 (3,9)、(2,5)、(6,16)、(4,9)。最后一个提示词元为 1，所以查询值 q=1+(1 mod 11)=2。每个 K 的权重是 1+(q×K mod 19)，加权和为 377，权重之和为 34。向下取整后加上缓存长度，得到首项 floor(377/34)+4=15。',
+  '下一轮把 15 放到位置 4，追加 K/V 为 (19,53)，按同一规则得到 16。继续两轮应得到 25、36。实验用这套整数规则核对接收后的历史状态与位置，省去模型权重和浮点误差。')+
+  p('实验用本机单调时钟，所有进程共用一个计时起点。首词元延迟（TTFT）从协调进程接到请求算到工作进程产生首项。平均后续间隔（TPOT）用末项减首项，再除以输出数减一。这里 P 在交接前就产生首项，交接因此落在首项到第二项之间。真实服务的客户端计时还要跟踪输出的网络和协议传输。')+
+  trainingCode('解压后运行三组对照和一次失败路径','SHELL',`python3 -B pd_split.py --write-record replay.json`)+
+  p('在 <code>report.split.events</code> 中找 A 的首项、<code>kv_ready</code> 和第二项。把第二项减首项，得到首次停顿。再用 <code>decode_start</code> 减 <code>max(decode_queued, kv_ready)</code>，得到缓存和任务都就绪之后的排队。交接耗时与排队可能重叠，按事件关系算，避免重复相加。',
+  '默认门槛是 TTFT≤30 毫秒且 TPOT≤1.5 毫秒。先复算单条请求是否同时达标，再用达标完成数除以从首个到达到最后完成的时间。')+
+  table(['一次保留记录','A 排入解码到开算','A / B 平均后续间隔','达标完成数'],[
+   ['单进程共置','1.820 ms','1.171 / 0.721 ms','2 / 2'],
+   ['分池','0.058 ms','0.611 / 2.644 ms','1 / 2'],
+   ['双进程共置','0.071 ms','0.605 / 0.644 ms','2 / 2']
+  ])+
+  p('这次分池里，A 排入解码后等得更短，B 的平均后续间隔却超过门槛。B 从发送 KV 到接收侧验收用了 1.366 毫秒，缓存和任务都就绪后只再等 0.020 毫秒。只看 A 或只看解码就绪队列，都会漏掉 B 的变化。三组输出都相同，重跑的时长会变。')+
+  p('本机运行的是整数玩具核。单进程共置展示排队，双进程共置和分池都展示重叠，分池另有状态交接。同步门固定比较中的相对顺序。记录验证跨进程的实际字节、输出一致性和观测方法。GPU 上的吞吐、跨机网络及固定总算力下的收益需要在目标引擎上重测。'+
+  ' <a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe 论文中的设备预算与达标请求率 ↗</a>')+
+  '<p class="practice-links"><a href="/labs/pd-split.zip" download>下载源码与记录 ↓</a> · <a href="/labs/pd-split/validation.json">查看原始时间线和验收结果</a></p></div>';
+
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
@@ -14103,7 +14130,7 @@ const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。用<a href="/article/inference-performance/?goal=ai-inference#native-pd-split">推理分池实验</a>复算交接字节和首项后的等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
@@ -14652,6 +14679,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'pd-split':{folder:'pd-split',title:'预填充与解码分池、缓存交接和输出间隔'},
  'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
  'ddp-target-preflight':{folder:'ddp-target-preflight',title:'两机四卡上机前的设备身份与集合通信检查'},
  'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
@@ -14949,6 +14977,12 @@ labLearningCatalog.push(
  {id:'cloud-incident-connection-lease',track:'cloud',stage:3,title:'同样拿不到连接，等待发生在哪',chapter:'incident',anchor:'incident-connection-lease',pack:'incident-connection-lease',files:['incident_connection_lease.py'],env:'Python 3.9+ · SQLite 与标准库 HTTP',kind:'真实 SQLite 锁、HTTP 与连接租借',observe:'保留 B 等连接的表象，分别核对 A 遇到 SQLITE_BUSY 或持连接等待 HTTP。移动 HTTP 调用后，检查 B 能否提前完成并保留原回执。',scope:'本机单连接租借、固定 SQLite 与 HTTP 夹具，观察事件顺序。'},
  {id:'ai-ddp-target-preflight',track:'ai',stage:2,title:'四份日志怎样核对会合、归约和设备绑定',chapter:'multinode-lab',anchor:'native-ddp-target-preflight',pack:'ddp-target-preflight',files:['target_probe.py','run_local.py'],env:'本机 PyTorch CPU/Gloo · 目标为两台 Linux 与四张完整 GPU',kind:'真实本机四进程与目标验收门槛',observe:'两份 launcher 启动四个本机进程，核对每个 rank 的 [1,2,3,4] 与总和 10。用同一门槛拒绝 CPU 或同宿主记录，再按卡型准备真实环境。',scope:'本机四进程 Gloo 已运行。物理双机、GPU/NCCL 和硬件分配仍待目标环境验收。'}
 );
+labLearningCatalog.push({
+ id:'ai-pd-split',track:'ai',stage:2,title:'首项已经收到，后续词元为什么还会等',chapter:'inference-performance',anchor:'native-pd-split',pack:'pd-split',
+ files:['pd_split.py'],env:'Python 3.9+ · Linux / macOS',kind:'实跑记录',
+ observe:'对同一批输入比较单进程共置、双进程共置和分池，复算首项延迟和后续间隔，并核对交接字节与损坏后的拒绝。',
+ scope:'真实本机进程与套接字，整数玩具核；目标推理引擎与跨机性能待验。'
+});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15188,5 +15222,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="38785cfe8b420bb0f66a1144211e358416e0c89a5cd00103844ee4470bfce981";
+const staticReadingVersion="1d50b45ab4797ce9a7450c010a00306ed24a94d9995942e4fbd7f69a3f017acc";
 
