@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
+ 'warp-memory-sectors':{folder:'warp-memory-sectors',title:'同一矩阵的 lane 地址与扇区归组'},
  'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
  'training-submission-preflight':{folder:'training-submission-preflight',title:'训练提交、输入摘要与启动前校验'},
  'kubernetes-gloo-job':{folder:'kubernetes-gloo-job',title:'同一 Indexed Job 的双节点 CPU/Gloo 更新'},
@@ -284,6 +286,10 @@ labLearningCatalog.push(
  {id:'cloud-http-operation-retry',track:'cloud',stage:0,title:'响应超时后，复用原动作编号会发生什么',chapter:'distributed-systems',anchor:'http-operation-retry',pack:'http-operation-retry',files:['http_operation_retry.py'],env:'Python 3.9+ · 标准库',kind:'真实 HTTP 超时与 SQLite 回执',observe:'首次请求提交后暂缓响应。比较原动作重试、同一编号改参数和新编号，按回执与效果记录独立核对。',scope:'本机 HTTP、并发请求和 SQLite 事务。'},
  {id:'ai-training-submission-preflight',track:'ai',stage:2,title:'训练启动前，怎样发现版本和文件内容不一致',chapter:'training-platform',anchor:'native-training-submission-preflight',pack:'training-submission-preflight',files:['submission_preflight.py'],env:'Python 3.9+ · 标准库',kind:'真实文件、SQLite 登记与子进程',observe:'用九个提交检查同键复用、意图冲突、摘要不符和正常新作业。数子进程的实际启动，核对两次精确参数更新。',scope:'本机可信输入、SQLite 与子进程，作业登记与启动之间有独立的恢复窗口。'},
  {id:'ai-kubernetes-gloo-job',track:'ai',stage:2,title:'一个训练 Job 等到第二个节点后，怎样证明共同更新',chapter:'kubernetes-training',anchor:'native-kubernetes-gloo-job',pack:'kubernetes-gloo-job',files:['Dockerfile','job.json','observe_job.py','rank_step.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8 · PyTorch 2.5.1 CPU/Gloo',kind:'真实 Indexed Job、Pod DNS 与两节点 DDP',observe:'确认同一批 Pod 从一个不可调度走到两个工作节点，随后核对共同会合、四个样本和两份权重 1.125。',scope:'同一 Linux 宿主的两个 kind 工作节点，固定输入和一次 CPU 更新。物理多机、GPU 和 NCCL 待验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-bounded-worker-queue',track:'cloud',stage:0,title:'加一个工作线程，任务改在哪等',chapter:'concurrency-pools',anchor:'bounded-worker-queue',pack:'bounded-worker-queue',files:['bounded_worker_queue.py'],env:'Python 3.9+ · 标准库',kind:'真实线程、队列与信号量',observe:'固定一个排队位置和一个下游许可，对照一线程与两线程时谁排队、谁占住线程等许可、谁被拒绝。',scope:'本机真实同步原语、固定四次提交和受控放行。'},
+ {id:'ai-warp-memory-sectors',track:'ai',stage:1,title:'同一矩阵按行和按列读，地址会落在哪些扇区',chapter:'gpu-execution',anchor:'native-warp-memory-sectors',pack:'warp-memory-sectors',files:['address_trace.c','run_trace.py'],env:'Python 3.9+ · C17 编译器 · macOS arm64 实测',kind:'真实主机地址轨迹与 CUDA 编译对照',observe:'核对连续、偏移、跨行和尾部的 lane 地址。比较每组扇区数的累加与整块矩阵的去重覆盖，再读 PTX 的地址计算。',scope:'C17 本机读取与 32 字节地址归组模型。PTX 来自固定编译记录，设备事务和耗时待验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

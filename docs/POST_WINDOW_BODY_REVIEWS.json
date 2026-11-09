@@ -5206,6 +5206,77 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "concurrency-pools",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b7c83a0a0b51a14e1d9f8fa770edf82f3dadcac26090c6091ce7deffad2b18ef",
+      "reviewed_content_sha256": "9bea56fbb23e30fa4a3d31b280040ddbde12b6b631b19e3c58f931be95b8dbb9",
+      "scope": "Compare real workers, a single FIFO waiting slot and a single downstream permit under the same gated arrivals.",
+      "observation": "With two workers B waits for the downstream permit rather than the FIFO, C can enter, D is still rejected, and maximum downstream occupancy remains one.",
+      "headings": [
+        "八份订单同时到达，忙的是谁",
+        "读、改、写三个动作构成一次竞态",
+        "什么该在锁内，什么应该移到锁外",
+        "从数据库占用时间算出线程池之外的瓶颈",
+        "排队、取消和背压如何形成一套协议",
+        "一次不会随机碰运气的竞态实验",
+        "让指标对应到位置，再做一次受控调整",
+        "验收：从三张队列里找出该改的那一张",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "cd66866db6db3b7806f087acbc5a98d8d21d812b45222ca729e34579d7e96c50",
+      "reviewed_content_sha256": "08a17c100f743f69c9fe0bf7be2283434edd1bf341c5660a27afc65a80566efe",
+      "scope": "Continue from local readiness and liveness signals to the existing exact native Service exercise.",
+      "observation": "Compare the same three HTTP paths with endpoint readiness and observed backend selection, retaining the original local scope and assets.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "d294ac944a9f3aeac3f36fa4b0361bb5694f0b12c50af8fef0b2d9d0bdc7059b",
+      "reviewed_content_sha256": "f689b59d04d876da4306d95d08f71dbca1e5ec9f08e53478c099ea7517e0edb7",
+      "scope": "Read the same aligned host matrix in two lane orders and verify each address and modeled 32-byte sector. Connect the address arithmetic to existing PTX compile evidence.",
+      "observation": "The row and column traces cover the same union of 128 sectors with different per-group sums of 128 and 1024. Native evidence is C17 on the host and CUDA compile only.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "90af253efaf0064e06c3f9714b2c0ceaa4f75fd965be2ea32f115ec606d367a1",
+      "reviewed_content_sha256": "cb73bdc0814e244f72cc69fc358478deba0353b49e017ae64963c556ed783a99",
+      "scope": "Give the exact package and recovery exercise for the existing CPU command, then separately point to a versioned own single-GPU run.",
+      "observation": "The same 1024/32/2 fixture is available as continuous four epochs versus two plus two. The pinned single-card example has a different model and records 100 steps, 409600 tokens and approximately 2.57 GiB allocated.",
+      "headings": [
+        "先固定一份任务契约",
+        "三种职责，串成一条依赖链",
+        "获得额度，还不等于整组能放下",
+        "分到资源后，先把输入送到每个成员",
+        "两批凑成一次更新，更新后再谈保存",
+        "读一条时间线，找第一个断点",
+        "把模型账本接回资源量级",
+        "用本地实验走通协议，再迁移到多机"
+      ]
     }
   ]
 }

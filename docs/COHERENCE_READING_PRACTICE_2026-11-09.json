@@ -1,0 +1,210 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "fcd0d183447ee904caef1c87d24b890267efcabc",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_EXECUTION_BRIDGES_2026-11-09.json": "4db656ae30875b0ca8ccaf8cff3014d852123996b07e28695b656ccb54e0a5e3"
+  },
+  "source_revisions": {
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "10a8ff413fa9a06eae8450e832bf30b147fa87faafe941bc89a497e79e15c7c7",
+      "reviewed_sha256": "250efc8fd07d35bd8adbdd1251a7974fbf83f3f02448e1ef688a7f42239f1af6",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "5e41dd41978cd2349fb55c0f3ca28026f5be51c1983b3c97b5b317876c039822",
+      "reviewed_sha256": "ea09ec664ccaf72df0dc5c2c4189d954d9bd7d8d53dd55c5499314311816bab4",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "d67794ddc217f99505b94f72f2dee7cd32b1d23cfc12683426e184df96bd1a19",
+      "reviewed_sha256": "61e233f28202f0d81b124deb8131b10eb3db1f0ca72cf631faf07b3cd2c572cd",
+      "scope": "Connect first lessons to exact existing end-to-end experiments, and distinguish the documented single-GPU run from the CPU fixture."
+    },
+    "dist/progressive-prerequisites-reading.js": {
+      "previous_sha256": "7a5c88e6d5c57966ea7ff00690510d94701677aba12f0ff6a726eb9e937ba88a",
+      "reviewed_sha256": "8c73ff8e2d12a3697c4341723e91eb3f43485402c18c0f20d0837c164c0dddc1",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "031be28a3bcddd19a360b3a613fdefa5318ec301612a6c7407ff9483cff82389",
+      "reviewed_sha256": "c664a1e1575ec1770b2e54c9cae38530e260abdcadc5c38135c9ddd5181b9b57",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "31a21f09aabb88852eeef25c81cd53f21aeb5e9c082bcead06ee6e72afb3500c",
+      "reviewed_sha256": "da4667f31e88c5a09aea05b2acd4f4b4f777483fdd6f70c06832f813eb1017f8",
+      "scope": "Connect first lessons to exact existing end-to-end experiments, and distinguish the documented single-GPU run from the CPU fixture."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "2ed0ba2b0408d568c0a3fe5b378128efd9a672592dd4cf4f9a80b29722f8af3d",
+      "reviewed_sha256": "f18b81260d2842209d2f644250de4d986a0cbe7d82e76aa421530e3ad6bdb576",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "d40b5064d23a7c2af46fe014af0a874e482227c6dea76a2f9b200d65b47be6da",
+      "reviewed_sha256": "e1fe06b0134cbc3869cc81975c7f43e50a6e716bfa45ea226bbd923400a559ba",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "4c80577cc652916d2632ac235bf587f639c027c7bcfd86e0d1ff75c6b3c904a9",
+      "reviewed_sha256": "96ccce84be19201ab9337a4faef8c18ad5ac3b4597950884ed5fce957b13e2cb",
+      "scope": "Keep the initial lab-to-article links in the active learning route before deferred application startup, preserving explicit choices and unrelated destinations."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "e1561a40d76e52d1670c64d566104e83b2cc5e863dff138936c320d34a83d346",
+      "reviewed_sha256": "c9be5cbecadf9a12653949ea8655b74e8c3be9de4393eac81b56e4230861c902",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "cd09293df2efa97e8938e80fe86f0f3723bea2973d382561276a1d17183dbe0b",
+      "reviewed_sha256": "78bcb9a2307bb451ba0842dca30ed90da42ae602af319e730e293b4df56b596e",
+      "scope": "Keep the initial lab-to-article links in the active learning route before deferred application startup, preserving explicit choices and unrelated destinations."
+    },
+    "dist/diagrams/bounded-worker-queue.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d7df1813ca2b4203bb0693e05d5b3beeef962ab35506a3ab59062ea1e305f1af",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "scripts/check-bounded-worker-queue.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a0cc185a16efbcdb688844ad6a4355fb82c1fb936456f95b06f370bdcb2714c",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/diagrams/warp-memory-sectors.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7f3d3f9965187eeb3adec4c5cf6dee93662dec0579dad5622c6e449690f44f67",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "scripts/check-warp-memory-sectors.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d37f84c67dd46f6f1a3f6d5335df25de650d3621afebc370aebc8e85cbd8c751",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/labs/bounded-worker-queue.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8169e904c9546cb992399354490c49d2324f89bb5ce97d81d01c8e675b911fb2",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/labs/bounded-worker-queue/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3ae405c685ea7363daece36b82ee09cc87206efbb6f63507644c96b85800eada",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/labs/bounded-worker-queue/bounded_worker_queue.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "60e5869cc8dc35e9117618e2d69789e27e6106f3bbec0f06e5adc45c9d64d47d",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/labs/bounded-worker-queue/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1260d1c9055e92c9a8507f41550f28d414e249693e85f7954d3eb6a7cd1f9d19",
+      "scope": "Bind a real bounded FIFO and exclusive permit to deterministic before-release evidence."
+    },
+    "dist/labs/warp-memory-sectors.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6326e2bb8f4eb625868afaaa52002d4d75451ed92172f9605f37ab068b0cb317",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/labs/warp-memory-sectors/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5c0d8ad884eedc0ceeeba3b5cb7de46f08f1ebf447892483ce0fc171c0f42ae2",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/labs/warp-memory-sectors/address_trace.c": {
+      "previous_sha256": null,
+      "reviewed_sha256": "17e9956d09ebfa6cfaa45a42aba82e48a5139a97e62f22d146336830c473a427",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/labs/warp-memory-sectors/run_trace.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b7b4ff3f4652d55e08f43dddbacf20dc332a0e2ddc0d326ad6134d91cfc7f383",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "dist/labs/warp-memory-sectors/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f1ef054d1a35487eab58e9093d394b1837408a40aa71a726f4e70af86e39b287",
+      "scope": "Bind exact C17 host address traces and compiler-only PTX provenance with explicit scope."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "96c8edd4afdc429f4dd5846ddd32b3ddd44f3ca48f2f4b28949e3fe7977bbdf5",
+      "reviewed_sha256": "c2453ada4a30c265242bcc75d88d54b8f21c9c326ee45fb2269f50452e42b55c",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "cb5b8ac9d2360f9cde916b0396abf329c2175e53e8ea696d7dba86663f69743d",
+      "reviewed_sha256": "0c3c831feb1046bc3fcb73568af385639a862b710d6f31068a6110227752aa17",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_READING_PRACTICE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "76b29885a493798562fff713e0fbbfaa12032e3f6c62210ee9e6dd11c1650a60",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "e77b39c270358ba475e452206abdbd6a56da6f80f0dcd3a75106f92f19dfe886",
+      "reviewed_sha256": "37475890d157444b5f42a11a06c9e5a861b2a4da265cf64308262739f85b617b",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    }
+  },
+  "article_sections": {
+    "concurrency-pools": {
+      "sections": [
+        7
+      ],
+      "scope": "Compare real workers, a single FIFO waiting slot and a single downstream permit under the same gated arrivals.",
+      "observation": "With two workers B waits for the downstream permit rather than the FIFO, C can enter, D is still rejected, and maximum downstream occupancy remains one."
+    },
+    "gpu-execution": {
+      "sections": [
+        4
+      ],
+      "scope": "Read the same aligned host matrix in two lane orders and verify each address and modeled 32-byte sector. Connect the address arithmetic to existing PTX compile evidence.",
+      "observation": "The row and column traces cover the same union of 128 sectors with different per-group sums of 128 and 1024. Native evidence is C17 on the host and CUDA compile only."
+    },
+    "cloud-overview": {
+      "sections": [
+        4
+      ],
+      "scope": "Continue from local readiness and liveness signals to the existing exact native Service exercise.",
+      "observation": "Compare the same three HTTP paths with endpoint readiness and observed backend selection, retaining the original local scope and assets."
+    },
+    "gpu-cluster": {
+      "sections": [
+        8
+      ],
+      "scope": "Give the exact package and recovery exercise for the existing CPU command, then separately point to a versioned own single-GPU run.",
+      "observation": "The same 1024/32/2 fixture is available as continuous four epochs versus two plus two. The pinned single-card example has a different model and records 100 steps, 409600 tokens and approximately 2.57 GiB allocated."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "fcd0d183447ee904caef1c87d24b890267efcabc",
+    "chapters": 78,
+    "changed_bodies": [
+      "concurrency-pools",
+      "cloud-overview",
+      "gpu-execution",
+      "gpu-cluster"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "concurrency-pools": 1,
+      "gpu-execution": 2
+    },
+    "field_maps": 14,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "outline_role_selectors": 0,
+    "reader_trial_entries": 3,
+    "actual_reader_sessions": 0,
+    "chapters_with_catalog_tasks": 76,
+    "role_chapter_positions": 114,
+    "experiment_packs": 96,
+    "learning_tasks": 141
+  }
+}

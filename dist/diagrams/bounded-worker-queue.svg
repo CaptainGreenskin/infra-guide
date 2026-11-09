@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 728 278" role="img" aria-labelledby="title desc">
+  <title id="title">加一个线程以后，B 改在哪等</title>
+  <desc id="desc">一个线程时 B 在队列，C 和 D 被拒绝。两个线程时 B 已在第二个线程上等待下游许可，C 在队列，D 被拒绝。两轮唯一的下游许可都由 A 持有。</desc>
+  <metadata>{"workers_1":{"queued":["B"],"waiting_for_downstream":[],"holding_downstream":["A"],"rejected":["C","D"]},"workers_2":{"queued":["C"],"waiting_for_downstream":["B"],"holding_downstream":["A"],"rejected":["D"]},"queue_capacity":1,"downstream_capacity":1}</metadata>
+  <rect width="728" height="278" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" fill="#203553" font-size="20">
+    <text x="20" y="34" font-weight="700" fill="#264fac">A 暂停时的任务分布</text>
+    <g text-anchor="middle" fill="#475b79" font-size="18">
+      <text x="176" y="68">入口拒绝</text>
+      <text x="319" y="68">等待线程</text>
+      <text x="480" y="68">工作线程</text>
+      <text x="637" y="68">下游许可</text>
+    </g>
+    <g fill="#fff" stroke="#c1cce2">
+      <rect x="20" y="79" width="688" height="65" rx="8"/>
+      <rect x="20" y="153" width="688" height="65" rx="8"/>
+    </g>
+    <g stroke="#e0e7f3">
+      <path d="M104 79v65m144-65v65m141-65v65m180-65v65"/>
+      <path d="M104 153v65m144-65v65m141-65v65m180-65v65"/>
+    </g>
+    <g text-anchor="middle">
+      <text x="62" y="119" font-size="18" font-weight="700">1 线程</text>
+      <text x="62" y="193" font-size="18" font-weight="700">2 线程</text>
+      <text x="176" y="119">C、D</text>
+      <text x="176" y="193">D</text>
+      <text x="319" y="119">B</text>
+      <text x="319" y="193">C</text>
+      <text x="480" y="119">A 占用</text>
+      <text x="480" y="181">A 占用</text>
+      <text x="480" y="205">B 等许可</text>
+      <text x="637" y="119" fill="#264fac" font-weight="700">A 持有</text>
+      <text x="637" y="193" fill="#264fac" font-weight="700">A 持有</text>
+    </g>
+    <text x="20" y="253" fill="#475b79" font-size="17">两轮都只有 1 个排队位置和 1 个下游许可。</text>
+  </g>
+</svg>

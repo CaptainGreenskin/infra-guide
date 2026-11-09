@@ -7770,6 +7770,23 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
     '再给查询设置 200 毫秒客户端超时：若数据库后台继续执行，连接占用就未必减少。要确认执行是否取消、事务是否结束以及连接何时可以安全复用，再评价容量变化。事务是数据库把一组操作作为整体提交或撤销的边界，下一章继续解释查询与事务锁等待。')+supporting(s[7]),
    p('下载文件与上面的屏障实验一致，用 <code>python3 concurrency-pools.py</code> 运行。正常结束时没有文本输出：程序用断言检查未保护结果 8、加锁结果 9。验证记录保存执行状态、环境和文件摘要；有断言或屏障错误时，进程会报错退出。')+records(s[8])
   ]);
+  a.sections[6][1]+=
+   '<h3 id="bounded-worker-queue">实测加一个工作线程，任务改在哪等</h3>'+p(
+   '把队列位置、工作线程和下游连接分开计数。队列位置只留给已受理、尚未分到线程的任务。线程取走任务后，这个位置立刻腾出；如果线程还没借到连接，它仍占用线程。信号量是一组可借还的许可，实验用一个许可代表一个可用的下游位置。',
+   '按 A、B、C、D 的顺序提交四个相同任务。让 A 先借到唯一许可，再由实验暂缓放行。在这个窗口里比较一个与两个工作线程，队列大小始终为一。先猜 B 等在哪里、C 能否入队，再看实际状态。')+
+   '<figure><img src="diagrams/bounded-worker-queue.svg" alt="一个线程时 B 排队且 C、D 被拒绝。两个线程时 B 等下游许可，C 排队且 D 被拒绝。两轮下游都由 A 占用。"><figcaption>同一批到达加一个工作线程后，B 移到了下游等待，C 获得了空出的排队位置。</figcaption></figure>'+
+   p('代码用 <code>Queue(maxsize=1)</code> 保留一个排队位置。<code>put_nowait</code> 立即尝试入队，满时抛出 <code>Full</code>，提交方据此记录拒绝。工作线程调用 <code>get()</code> 取任务，随后用 <code>BoundedSemaphore(1)</code> 申请下游许可。两轮都等 A 已持有许可才继续提交；第二轮还等 B 的首次申请遇到忙，才送入 C 和 D。下载解压后，用 Python 3.9 或以上版本运行。')+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B bounded_worker_queue.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/bounded-worker-queue.zip" download>下载实验包 ↓</a><a href="labs/bounded-worker-queue/bounded_worker_queue.py" download>下载 Python 脚本 ↓</a><a href="labs/bounded-worker-queue/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   table(['线程数','已受理但在队列','已拿到线程，等下游','下游占用','拒绝'],[
+    ['1','B','无','A','C、D'],
+    ['2','C','B','A','D']
+   ])+p(
+   '在运行记录中跟同一个任务比较时刻。用“线程开始”减“受理”得到排队时间，用“拿到许可”减“线程开始”得到申请下游位置的耗时。第二个线程让 C 也被接收，但两轮同时持有许可的任务最多仍为一。所有受理项最终各返回 42，被拒的项没有进入线程。',
+   '队列按入队先后分派任务。任务离开队列后，还要竞争其他资源。冻结记录中 C 虽然后入队，却先于 B 拿到许可并完成；复跑时，许可竞争的顺序可以不同。若业务要求严格按顺序处理，要在业务生效处定义顺序，不能只依赖入口队列。',
+   '本机实验用信号量控制单个位置。实际服务可按同样的阶段标记线程池受理、借到数据库连接、查完归还和拒绝，分别判断要增加的是排队空间、工作线程，还是下游承载能力。')+
+   '<p class="source-at"><a href="https://docs.python.org/3/library/queue.html#queue.Queue" target="_blank" rel="noopener noreferrer">Python 的有界队列与满队列行为 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 
  {
@@ -9116,6 +9133,32 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('例如1F1B的微批0在S0第1槽前向，S1在第2槽前向、第3槽反向，S0到第4槽才拿到梯度做反向。两种排法的前反向都在第10槽完成，每个阶段各做8项，按这段窗口计算的忙碌比例均为8/10。',
  '再数为反向保存的激活。每个微批在本阶段完成前向后增加一份，直到本阶段反向结束才释放。GPipe在反向开始前两阶段都各有4份，峰值是4/4。1F1B的S0在第2槽后同时保存微批0和1，第4槽结束释放微批0，再在第5槽纳入微批2，峰值是2份。S1每次前向紧接同一微批的反向，峰值是1份。本题的收益是降低激活峰值，实际显存还要按每份大小、缓冲与重算策略计算。')+
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
+
+ const warpMemory=articles.find(a=>a.id==='gpu-execution');
+ warpMemory.sections[3][1]+=
+ '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
+ p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+
+ ' <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-c-best-practices-guide/index.html#coalesced-access-to-global-memory">NVIDIA 合并访问说明 ↗</a>',
+ '程序用本机 C 编译器构建，再从一块实际分配的 32 字节对齐数组中读取。记录的是各 lane 相对数组首地址的字节偏移。先控制只改一项：相邻步长、起点偏移，或参与读取的 lane 数。')+
+ trainingFigure('warp-memory-sectors','先按一条读取指令给活跃 lane 的地址分组，再区分每组的访问和整块矩阵的覆盖。')+
+ table(['一次分组读取','地址偏移（字节）','有效字节','不同扇区'],[
+ ['连续且对齐','0、4、…、124','128','4'],
+ ['起点右移一个元素','4、8、…、128','128','5'],
+ ['沿列读，行步长为 32 项','0、128、…、3,968','128','32'],
+ ['只有前 7 个 lane 参与','0、4、…、24','28','1']
+ ])+
+ p('第二行仍连续，最后 4 字节却进入第 5 个扇区。第三行相邻地址差 128 字节，32 个 lane 各落在不同扇区。最后一行剩下 25 个 lane 被跳过，没有产生地址。程序先按 lane 算指针，再对实际读取位置归组。')+
+ trainingCode('地址追踪的核心几行','C',`
+int index = first + lane * stride;
+const volatile float *address = source + index;
+size_t offset = (size_t)(address - source) * sizeof(*address);
+int sector = (int)(offset / SECTOR_BYTES);
+float value = *address;
+ `)+
+ p('放回整个 32×32 矩阵。按行分 32 组，每组读一行，扇区数相加是 32×4=128。按列也分 32 组，每组读一列，扇区数相加是 32×32=1,024。两路逐项复制的结果一致，把所有组的扇区再做一次去重，也都只覆盖 128 个扇区。按列时，相邻几列会反复请求各行的同一扇区，后续访问有机会复用缓存。因而 1,024÷128 不能换算成显存流量比或速度比。',
+ '再读一次已编译的 CUDA 逐行求和。它把块号和线程号组合成 <code>row × cols + col</code>。对应 PTX 先取 <code>%tid.x</code>，把元素下标左移两位换成字节，再由 <code>ld.global.f32</code> 发出标量加载。同一指令上相邻活跃线程的地址差是 4 字节；一个线程的下一轮才跳 256 项，也就是 1,024 字节。判断一次读能怎样合并，要比较同一条指令的各 lane。这个 PTX 来自原有真实编译，设备加载与缓存行为仍需在 GPU 上观测。')+
+ trainingCode('解压后编译并运行地址追踪','SHELL','python3 -B run_trace.py > replay.json')+
+ '<p class="practice-links"><a href="labs/warp-memory-sectors.zip" download>下载可运行实验 ↓</a> · <a href="labs/warp-memory-sectors/address_trace.c">查看 C 源码 →</a> · <a href="labs/warp-memory-sectors/README.md">复跑说明 →</a> · <a href="labs/warp-memory-sectors/validation.json">核对各 lane 地址与扇区 →</a> · <a href="labs/cuda-core/cuda_lab.ptx">查看 CUDA 逐行求和 PTX →</a> · <a href="labs/cuda-core/compile-record.json">核对 PTX 编译记录 →</a></p>';
 })();
 
 
@@ -11194,6 +11237,8 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
 
+ overview.sections[7][1]+=p('解压<a href="labs/training-capstone.zip" download>训练恢复实验包</a>后，上面的命令只运行连续四轮。要验证恢复的一致性，跟着<a href="/article/training-lab/#section-3">综合实战的三次运行</a>，用同样的 1,024 样本、32 批大小和累积 2 步，比较连续四轮与保存后两轮加两轮。分别核对模型、优化器状态和实际更新次数。','再读<a href="https://github.com/CaptainGreenskin/one-gpu-lm/blob/8399be36fa8467b8e9323172756dc656757c6fb3/experiments/002-first-train/results/pro6000-first/summary.json">一次中文小模型单卡记录</a>，练习把设备、工作量和显存放在同一份账上。该次 RTX PRO 6000 训练完成 100 步，共处理 409,600 个 token，峰值已分配显存约 2.57 GiB。CPU 实验使用不同模型和配置；要比较设备速度，先固定模型、数据和统计窗口。');
+
  const strategies=select('distributed-training',['数据并行：分数据，复制副本','平均梯度为什么可能对应错的目标','完整更新：归一化、尾窗与裁剪顺序','分片：减少长期持有的状态','模型并行：切分计算图','按限制因素选择策略','用相同口径评价扩展','真实两进程：从单步梯度走到状态更新']);
  const d=strategies.sections.map(s=>s[1]),d3=blocks(d[2]),d4=blocks(d[3]),d8=blocks(d[7]),d8links=links(d[7]);
  if(d3.length!==1||d4.length!==2||d8.length!==4||figures(d.join('')).length!==3)throw Error('Parallel strategy preserved material changed');
@@ -12819,7 +12864,8 @@ const firstReadingChanges=[];
   ['<td>无状态和有状态系统采用同一恢复方式</td>','<td>发现不可用副本，切换或重建所需状态</td>']
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
- a.updated='2026.11.08';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
+ a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];
@@ -14508,6 +14554,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
+ 'warp-memory-sectors':{folder:'warp-memory-sectors',title:'同一矩阵的 lane 地址与扇区归组'},
  'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
  'training-submission-preflight':{folder:'training-submission-preflight',title:'训练提交、输入摘要与启动前校验'},
  'kubernetes-gloo-job':{folder:'kubernetes-gloo-job',title:'同一 Indexed Job 的双节点 CPU/Gloo 更新'},
@@ -14793,6 +14841,10 @@ labLearningCatalog.push(
  {id:'ai-training-submission-preflight',track:'ai',stage:2,title:'训练启动前，怎样发现版本和文件内容不一致',chapter:'training-platform',anchor:'native-training-submission-preflight',pack:'training-submission-preflight',files:['submission_preflight.py'],env:'Python 3.9+ · 标准库',kind:'真实文件、SQLite 登记与子进程',observe:'用九个提交检查同键复用、意图冲突、摘要不符和正常新作业。数子进程的实际启动，核对两次精确参数更新。',scope:'本机可信输入、SQLite 与子进程，作业登记与启动之间有独立的恢复窗口。'},
  {id:'ai-kubernetes-gloo-job',track:'ai',stage:2,title:'一个训练 Job 等到第二个节点后，怎样证明共同更新',chapter:'kubernetes-training',anchor:'native-kubernetes-gloo-job',pack:'kubernetes-gloo-job',files:['Dockerfile','job.json','observe_job.py','rank_step.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8 · PyTorch 2.5.1 CPU/Gloo',kind:'真实 Indexed Job、Pod DNS 与两节点 DDP',observe:'确认同一批 Pod 从一个不可调度走到两个工作节点，随后核对共同会合、四个样本和两份权重 1.125。',scope:'同一 Linux 宿主的两个 kind 工作节点，固定输入和一次 CPU 更新。物理多机、GPU 和 NCCL 待验。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-bounded-worker-queue',track:'cloud',stage:0,title:'加一个工作线程，任务改在哪等',chapter:'concurrency-pools',anchor:'bounded-worker-queue',pack:'bounded-worker-queue',files:['bounded_worker_queue.py'],env:'Python 3.9+ · 标准库',kind:'真实线程、队列与信号量',observe:'固定一个排队位置和一个下游许可，对照一线程与两线程时谁排队、谁占住线程等许可、谁被拒绝。',scope:'本机真实同步原语、固定四次提交和受控放行。'},
+ {id:'ai-warp-memory-sectors',track:'ai',stage:1,title:'同一矩阵按行和按列读，地址会落在哪些扇区',chapter:'gpu-execution',anchor:'native-warp-memory-sectors',pack:'warp-memory-sectors',files:['address_trace.c','run_trace.py'],env:'Python 3.9+ · C17 编译器 · macOS arm64 实测',kind:'真实主机地址轨迹与 CUDA 编译对照',observe:'核对连续、偏移、跨行和尾部的 lane 地址。比较每组扇区数的累加与整块矩阵的去重覆盖，再读 PTX 的地址计算。',scope:'C17 本机读取与 32 字节地址归组模型。PTX 来自固定编译记录，设备事务和耗时待验。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15032,5 +15084,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="50217a183f87c13762dfd5f49d0d25203af005da5bd2fdc5ef51f535d79b3bd4";
+const staticReadingVersion="94c10987dee42ea053f562b0e03a5c092afc1157a0033cfec0c4d11b0365626e";
 

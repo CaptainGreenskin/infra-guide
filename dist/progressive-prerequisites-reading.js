@@ -133,6 +133,23 @@
     '再给查询设置 200 毫秒客户端超时：若数据库后台继续执行，连接占用就未必减少。要确认执行是否取消、事务是否结束以及连接何时可以安全复用，再评价容量变化。事务是数据库把一组操作作为整体提交或撤销的边界，下一章继续解释查询与事务锁等待。')+supporting(s[7]),
    p('下载文件与上面的屏障实验一致，用 <code>python3 concurrency-pools.py</code> 运行。正常结束时没有文本输出：程序用断言检查未保护结果 8、加锁结果 9。验证记录保存执行状态、环境和文件摘要；有断言或屏障错误时，进程会报错退出。')+records(s[8])
   ]);
+  a.sections[6][1]+=
+   '<h3 id="bounded-worker-queue">实测加一个工作线程，任务改在哪等</h3>'+p(
+   '把队列位置、工作线程和下游连接分开计数。队列位置只留给已受理、尚未分到线程的任务。线程取走任务后，这个位置立刻腾出；如果线程还没借到连接，它仍占用线程。信号量是一组可借还的许可，实验用一个许可代表一个可用的下游位置。',
+   '按 A、B、C、D 的顺序提交四个相同任务。让 A 先借到唯一许可，再由实验暂缓放行。在这个窗口里比较一个与两个工作线程，队列大小始终为一。先猜 B 等在哪里、C 能否入队，再看实际状态。')+
+   '<figure><img src="diagrams/bounded-worker-queue.svg" alt="一个线程时 B 排队且 C、D 被拒绝。两个线程时 B 等下游许可，C 排队且 D 被拒绝。两轮下游都由 A 占用。"><figcaption>同一批到达加一个工作线程后，B 移到了下游等待，C 获得了空出的排队位置。</figcaption></figure>'+
+   p('代码用 <code>Queue(maxsize=1)</code> 保留一个排队位置。<code>put_nowait</code> 立即尝试入队，满时抛出 <code>Full</code>，提交方据此记录拒绝。工作线程调用 <code>get()</code> 取任务，随后用 <code>BoundedSemaphore(1)</code> 申请下游许可。两轮都等 A 已持有许可才继续提交；第二轮还等 B 的首次申请遇到忙，才送入 C 和 D。下载解压后，用 Python 3.9 或以上版本运行。')+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B bounded_worker_queue.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/bounded-worker-queue.zip" download>下载实验包 ↓</a><a href="labs/bounded-worker-queue/bounded_worker_queue.py" download>下载 Python 脚本 ↓</a><a href="labs/bounded-worker-queue/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   table(['线程数','已受理但在队列','已拿到线程，等下游','下游占用','拒绝'],[
+    ['1','B','无','A','C、D'],
+    ['2','C','B','A','D']
+   ])+p(
+   '在运行记录中跟同一个任务比较时刻。用“线程开始”减“受理”得到排队时间，用“拿到许可”减“线程开始”得到申请下游位置的耗时。第二个线程让 C 也被接收，但两轮同时持有许可的任务最多仍为一。所有受理项最终各返回 42，被拒的项没有进入线程。',
+   '队列按入队先后分派任务。任务离开队列后，还要竞争其他资源。冻结记录中 C 虽然后入队，却先于 B 拿到许可并完成；复跑时，许可竞争的顺序可以不同。若业务要求严格按顺序处理，要在业务生效处定义顺序，不能只依赖入口队列。',
+   '本机实验用信号量控制单个位置。实际服务可按同样的阶段标记线程池受理、借到数据库连接、查完归还和拒绝，分别判断要增加的是排队空间、工作线程，还是下游承载能力。')+
+   '<p class="source-at"><a href="https://docs.python.org/3/library/queue.html#queue.Queue" target="_blank" rel="noopener noreferrer">Python 的有界队列与满队列行为 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 
  {

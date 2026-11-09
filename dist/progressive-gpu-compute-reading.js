@@ -352,4 +352,30 @@
  p('例如1F1B的微批0在S0第1槽前向，S1在第2槽前向、第3槽反向，S0到第4槽才拿到梯度做反向。两种排法的前反向都在第10槽完成，每个阶段各做8项，按这段窗口计算的忙碌比例均为8/10。',
  '再数为反向保存的激活。每个微批在本阶段完成前向后增加一份，直到本阶段反向结束才释放。GPipe在反向开始前两阶段都各有4份，峰值是4/4。1F1B的S0在第2槽后同时保存微批0和1，第4槽结束释放微批0，再在第5槽纳入微批2，峰值是2份。S1每次前向紧接同一微批的反向，峰值是1份。本题的收益是降低激活峰值，实际显存还要按每份大小、缓冲与重算策略计算。')+
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
+
+ const warpMemory=articles.find(a=>a.id==='gpu-execution');
+ warpMemory.sections[3][1]+=
+ '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
+ p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+
+ ' <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-c-best-practices-guide/index.html#coalesced-access-to-global-memory">NVIDIA 合并访问说明 ↗</a>',
+ '程序用本机 C 编译器构建，再从一块实际分配的 32 字节对齐数组中读取。记录的是各 lane 相对数组首地址的字节偏移。先控制只改一项：相邻步长、起点偏移，或参与读取的 lane 数。')+
+ trainingFigure('warp-memory-sectors','先按一条读取指令给活跃 lane 的地址分组，再区分每组的访问和整块矩阵的覆盖。')+
+ table(['一次分组读取','地址偏移（字节）','有效字节','不同扇区'],[
+ ['连续且对齐','0、4、…、124','128','4'],
+ ['起点右移一个元素','4、8、…、128','128','5'],
+ ['沿列读，行步长为 32 项','0、128、…、3,968','128','32'],
+ ['只有前 7 个 lane 参与','0、4、…、24','28','1']
+ ])+
+ p('第二行仍连续，最后 4 字节却进入第 5 个扇区。第三行相邻地址差 128 字节，32 个 lane 各落在不同扇区。最后一行剩下 25 个 lane 被跳过，没有产生地址。程序先按 lane 算指针，再对实际读取位置归组。')+
+ trainingCode('地址追踪的核心几行','C',`
+int index = first + lane * stride;
+const volatile float *address = source + index;
+size_t offset = (size_t)(address - source) * sizeof(*address);
+int sector = (int)(offset / SECTOR_BYTES);
+float value = *address;
+ `)+
+ p('放回整个 32×32 矩阵。按行分 32 组，每组读一行，扇区数相加是 32×4=128。按列也分 32 组，每组读一列，扇区数相加是 32×32=1,024。两路逐项复制的结果一致，把所有组的扇区再做一次去重，也都只覆盖 128 个扇区。按列时，相邻几列会反复请求各行的同一扇区，后续访问有机会复用缓存。因而 1,024÷128 不能换算成显存流量比或速度比。',
+ '再读一次已编译的 CUDA 逐行求和。它把块号和线程号组合成 <code>row × cols + col</code>。对应 PTX 先取 <code>%tid.x</code>，把元素下标左移两位换成字节，再由 <code>ld.global.f32</code> 发出标量加载。同一指令上相邻活跃线程的地址差是 4 字节；一个线程的下一轮才跳 256 项，也就是 1,024 字节。判断一次读能怎样合并，要比较同一条指令的各 lane。这个 PTX 来自原有真实编译，设备加载与缓存行为仍需在 GPU 上观测。')+
+ trainingCode('解压后编译并运行地址追踪','SHELL','python3 -B run_trace.py > replay.json')+
+ '<p class="practice-links"><a href="labs/warp-memory-sectors.zip" download>下载可运行实验 ↓</a> · <a href="labs/warp-memory-sectors/address_trace.c">查看 C 源码 →</a> · <a href="labs/warp-memory-sectors/README.md">复跑说明 →</a> · <a href="labs/warp-memory-sectors/validation.json">核对各 lane 地址与扇区 →</a> · <a href="labs/cuda-core/cuda_lab.ptx">查看 CUDA 逐行求和 PTX →</a> · <a href="labs/cuda-core/compile-record.json">核对 PTX 编译记录 →</a></p>';
 })();

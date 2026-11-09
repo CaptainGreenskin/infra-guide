@@ -1,0 +1,229 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "bounded_worker_queue.py": "60e5869cc8dc35e9117618e2d69789e27e6106f3bbec0f06e5adc45c9d64d47d"
+  },
+  "environment": {
+    "os": "Darwin",
+    "python": "3.9.6"
+  },
+  "arrivals": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "queue_capacity": 1,
+  "downstream_capacity": 1,
+  "cases": {
+    "workers_1": {
+      "workers": 1,
+      "snapshot": {
+        "queue_depth": 1,
+        "queued": [
+          "B"
+        ],
+        "waiting_for_downstream": [],
+        "holding_downstream": [
+          "A"
+        ],
+        "rejected": [
+          "C",
+          "D"
+        ]
+      },
+      "events": [
+        {
+          "event": "admitted",
+          "task": "A",
+          "at_ns": 62625
+        },
+        {
+          "event": "worker_started",
+          "task": "A",
+          "at_ns": 80375
+        },
+        {
+          "event": "downstream_acquired",
+          "task": "A",
+          "at_ns": 83208
+        },
+        {
+          "event": "admitted",
+          "task": "B",
+          "at_ns": 108250
+        },
+        {
+          "event": "rejected",
+          "task": "C",
+          "at_ns": 111458
+        },
+        {
+          "event": "rejected",
+          "task": "D",
+          "at_ns": 113166
+        },
+        {
+          "event": "snapshot",
+          "task": null,
+          "at_ns": 119833
+        },
+        {
+          "event": "release_A_gate",
+          "task": "A",
+          "at_ns": 120291
+        },
+        {
+          "event": "downstream_released",
+          "task": "A",
+          "at_ns": 132041
+        },
+        {
+          "event": "completed",
+          "task": "A",
+          "at_ns": 135375,
+          "result": 42
+        },
+        {
+          "event": "worker_started",
+          "task": "B",
+          "at_ns": 139708
+        },
+        {
+          "event": "downstream_acquired",
+          "task": "B",
+          "at_ns": 140875
+        },
+        {
+          "event": "downstream_released",
+          "task": "B",
+          "at_ns": 141458
+        },
+        {
+          "event": "completed",
+          "task": "B",
+          "at_ns": 142958,
+          "result": 42
+        }
+      ]
+    },
+    "workers_2": {
+      "workers": 2,
+      "snapshot": {
+        "queue_depth": 1,
+        "queued": [
+          "C"
+        ],
+        "waiting_for_downstream": [
+          "B"
+        ],
+        "holding_downstream": [
+          "A"
+        ],
+        "rejected": [
+          "D"
+        ]
+      },
+      "events": [
+        {
+          "event": "admitted",
+          "task": "A",
+          "at_ns": 64000
+        },
+        {
+          "event": "worker_started",
+          "task": "A",
+          "at_ns": 74084
+        },
+        {
+          "event": "downstream_acquired",
+          "task": "A",
+          "at_ns": 75584
+        },
+        {
+          "event": "admitted",
+          "task": "B",
+          "at_ns": 84417
+        },
+        {
+          "event": "worker_started",
+          "task": "B",
+          "at_ns": 90792
+        },
+        {
+          "event": "downstream_busy",
+          "task": "B",
+          "at_ns": 92084
+        },
+        {
+          "event": "admitted",
+          "task": "C",
+          "at_ns": 101834
+        },
+        {
+          "event": "rejected",
+          "task": "D",
+          "at_ns": 103209
+        },
+        {
+          "event": "snapshot",
+          "task": null,
+          "at_ns": 106375
+        },
+        {
+          "event": "release_A_gate",
+          "task": "A",
+          "at_ns": 106834
+        },
+        {
+          "event": "downstream_released",
+          "task": "A",
+          "at_ns": 114792
+        },
+        {
+          "event": "completed",
+          "task": "A",
+          "at_ns": 118000,
+          "result": 42
+        },
+        {
+          "event": "worker_started",
+          "task": "C",
+          "at_ns": 120917
+        },
+        {
+          "event": "downstream_acquired",
+          "task": "C",
+          "at_ns": 122042
+        },
+        {
+          "event": "downstream_released",
+          "task": "C",
+          "at_ns": 122542
+        },
+        {
+          "event": "completed",
+          "task": "C",
+          "at_ns": 124000,
+          "result": 42
+        },
+        {
+          "event": "downstream_acquired",
+          "task": "B",
+          "at_ns": 129542
+        },
+        {
+          "event": "downstream_released",
+          "task": "B",
+          "at_ns": 130292
+        },
+        {
+          "event": "completed",
+          "task": "B",
+          "at_ns": 132625,
+          "result": 42
+        }
+      ]
+    }
+  }
+}

@@ -115,6 +115,8 @@
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
 
+ overview.sections[7][1]+=p('解压<a href="labs/training-capstone.zip" download>训练恢复实验包</a>后，上面的命令只运行连续四轮。要验证恢复的一致性，跟着<a href="/article/training-lab/#section-3">综合实战的三次运行</a>，用同样的 1,024 样本、32 批大小和累积 2 步，比较连续四轮与保存后两轮加两轮。分别核对模型、优化器状态和实际更新次数。','再读<a href="https://github.com/CaptainGreenskin/one-gpu-lm/blob/8399be36fa8467b8e9323172756dc656757c6fb3/experiments/002-first-train/results/pro6000-first/summary.json">一次中文小模型单卡记录</a>，练习把设备、工作量和显存放在同一份账上。该次 RTX PRO 6000 训练完成 100 步，共处理 409,600 个 token，峰值已分配显存约 2.57 GiB。CPU 实验使用不同模型和配置；要比较设备速度，先固定模型、数据和统计窗口。');
+
  const strategies=select('distributed-training',['数据并行：分数据，复制副本','平均梯度为什么可能对应错的目标','完整更新：归一化、尾窗与裁剪顺序','分片：减少长期持有的状态','模型并行：切分计算图','按限制因素选择策略','用相同口径评价扩展','真实两进程：从单步梯度走到状态更新']);
  const d=strategies.sections.map(s=>s[1]),d3=blocks(d[2]),d4=blocks(d[3]),d8=blocks(d[7]),d8links=links(d[7]);
  if(d3.length!==1||d4.length!==2||d8.length!==4||figures(d.join('')).length!==3)throw Error('Parallel strategy preserved material changed');

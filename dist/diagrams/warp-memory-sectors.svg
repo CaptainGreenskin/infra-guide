@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="370" viewBox="0 0 960 370" role="img" aria-labelledby="title desc">
+  <title id="title">按一条指令给地址分组，连续、偏移和跨行读取的扇区数不同</title>
+  <desc id="desc">32 个 lane 读取对齐连续的 128 字节，触及 4 个扇区。连续起点右移 4 字节后触及 5 个扇区。按列读时相邻地址差 128 字节，触及 32 个扇区。整块按行和按列的各组扇区数之和为 128 和 1024，对全块去重后都为 128。</desc>
+  <metadata>{"record":"labs/warp-memory-sectors/validation.json","examples":[4,5,32,1],"group_sums":[128,1024],"unions":[128,128]}</metadata>
+  <defs>
+    <pattern id="sector" width="82" height="42" patternUnits="userSpaceOnUse">
+      <rect x="0.5" y="0.5" width="81" height="41" rx="2" fill="none" stroke="#6f89b0"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="370" rx="16" fill="#f7faff"/>
+  <g font-family="system-ui, sans-serif" fill="#162c4a">
+    <text x="32" y="42" font-size="24" font-weight="700">相同的有效字节，可以落进不同数量的扇区</text>
+    <text x="32" y="70" font-size="16" fill="#415676">蓝色表示这组 lane 实际读取的字节，每格 32 字节。</text>
+    <g font-size="14" text-anchor="middle">
+      <text x="249" y="104">0–31</text>
+      <text x="331" y="104">32–63</text>
+      <text x="413" y="104">64–95</text>
+      <text x="495" y="104">96–127</text>
+      <text x="577" y="104">128–159</text>
+    </g>
+    <g fill="#b4d0fd">
+      <rect x="208" y="116" width="328" height="42"/>
+      <rect x="218.25" y="170" width="328" height="42"/>
+      <rect x="208" y="224" width="10.25" height="42"/>
+      <rect x="536" y="224" width="10.25" height="42"/>
+    </g>
+    <g>
+      <g transform="translate(208 116)"><rect width="410" height="42" fill="url(#sector)"/></g>
+      <g transform="translate(208 170)"><rect width="410" height="42" fill="url(#sector)"/></g>
+      <g transform="translate(208 224)"><rect width="410" height="42" fill="url(#sector)"/></g>
+    </g>
+    <g font-size="17" font-weight="650">
+      <text x="32" y="143">连续且对齐</text>
+      <text x="32" y="197">右移一个 FP32</text>
+      <text x="32" y="251">按列，相邻差 128 B</text>
+      <text x="640" y="143">4 个扇区</text>
+      <text x="640" y="197">5 个扇区</text>
+      <text x="640" y="251">… 32 个扇区</text>
+    </g>
+    <path d="M32 290 H928" stroke="#b3c5df"/>
+    <text x="32" y="320" font-size="16" font-weight="650">整个 32×32 矩阵：逐组计数后相加，按行 128，按列 1,024。</text>
+    <text x="32" y="346" font-size="16" fill="#415676">合在一起去重，两路都覆盖 128 个扇区。两种数描述不同层次。</text>
+  </g>
+</svg>

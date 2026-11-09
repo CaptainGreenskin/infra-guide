@@ -1,0 +1,27 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "fcd0d183447ee904caef1c87d24b890267efcabc",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXECUTION_BRIDGES_2026-11-09.json": "d8df2f329188fedbee26be9146843cb8542648398a1446afc4b2ee1dc92923b6"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "concurrency-pools",
+      "reviewed_at": "2026-11-09",
+      "scope": "Compare real workers, a single FIFO waiting slot and a single downstream permit under the same gated arrivals.",
+      "observation": "With two workers B waits for the downstream permit rather than the FIFO, C can enter, D is still rejected, and maximum downstream occupancy remains one.",
+      "reviewed_content_sha256": "9bea56fbb23e30fa4a3d31b280040ddbde12b6b631b19e3c58f931be95b8dbb9",
+      "record": "dist/labs/bounded-worker-queue/validation.json"
+    },
+    {
+      "chapter": "gpu-execution",
+      "reviewed_at": "2026-11-09",
+      "scope": "Read the same aligned host matrix in two lane orders and verify each address and modeled 32-byte sector. Connect the address arithmetic to existing PTX compile evidence.",
+      "observation": "The row and column traces cover the same union of 128 sectors with different per-group sums of 128 and 1024. Native evidence is C17 on the host and CUDA compile only.",
+      "reviewed_content_sha256": "f689b59d04d876da4306d95d08f71dbca1e5ec9f08e53478c099ea7517e0edb7",
+      "record": "dist/labs/warp-memory-sectors/validation.json"
+    }
+  ]
+}

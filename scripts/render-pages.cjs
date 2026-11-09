@@ -47,6 +47,21 @@ vm.createContext(context);
 for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
 const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits,learningProfiles})',context);
 const reader=require('./article-reader/build.cjs').buildReader({context,staticReadingVersion,root,assetDirectory:path.join(dist,'reader-assets'),assetPublicPath:'/reader-assets/'});
+// The lab directory is clickable while the full runtime is still downloading.
+function restoreInitialLabRole(roles){
+ const goal=new URLSearchParams(location.search).get('goal');
+ if(!Object.hasOwn(roles,goal))return;
+ const chapters=roles[goal];
+ for(const link of document.querySelectorAll('.lab-unit-actions a[href]')){
+  const url=new URL(link.href);
+  const chapter=url.pathname.match(/\/article\/([a-z0-9-]+)\/$/)?.[1];
+  if(url.origin!==location.origin||!chapters.includes(chapter)||url.searchParams.has('goal'))continue;
+  url.searchParams.set('goal',goal);
+  link.setAttribute('href',url.pathname+url.search+url.hash);
+ }
+}
+const labRoleChapters=vm.runInContext('JSON.stringify(Object.fromEntries(Object.entries(learningProfiles).map(([id,profile])=>[id,learningProfileRoute(profile)])))',context);
+const labRoleScript='<script data-early-lab-role>('+restoreInitialLabRole.toString()+')('+labRoleChapters+');</script>';
 const earlyFigureBytes=Buffer.byteLength(earlyFigures);
 const readerManifest={schema:1,staticReadingVersion,articles:data.articles.length,initialExecutableScripts:2,normalReaderScriptRequests:2,fullFallbackScripts:9,initialReaderJSBytes:reader.initialReaderJSBytes+earlyFigureBytes,initialInlineFigureBytes:earlyFigureBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:require('crypto').createHash('sha256').update(JSON.stringify(reader.metadata)).digest('hex'),assets:[reader.bootstrapAsset,reader.runtimeAsset,reader.searchCatalogAsset,...reader.searchRouteAssets,...reader.searchShardAssets],reusedFunctions:reader.provenance,searchEntries:reader.index.length,searchLayout:{schema:2,catalog:reader.searchCatalogAsset.file,routes:reader.searchRouteAssets.length,shards:reader.searchShardAssets.length}};
 fs.writeFileSync(path.join(dist,'reader-runtime-manifest.json'),JSON.stringify(readerManifest,null,2)+'\n');
@@ -78,6 +93,7 @@ for(const entry of routes){
  const staticArticle=entry.article?.id||(entry.route.startsWith('/track/')?data.trackDefinitions[entry.route.split('/')[2]]?.start:entry.route==='/module/practice/'?vm.runInContext('practiceArticleForContext().id',context):null);
  const staticAttributes=' data-static-path="'+esc(entry.route)+'" data-static-version="'+staticReadingVersion+'"'+(staticArticle?' data-static-article="'+esc(staticArticle)+'"':'');
  let html=versionedShell.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(title)+'</title>').replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(description)+'">').replace(/<!-- APP_START -->[\s\S]*?<!-- APP_END -->/,'<!-- APP_START --><div id="app"'+staticAttributes+'>'+body+'</div><!-- APP_END -->');
+ if(entry.route==='/labs/')html=html.replace('<!-- APP_END -->',()=>'<!-- APP_END -->'+labRoleScript);
  const head='<link rel="canonical" href="'+url+'"><meta property="og:type" content="'+(entry.article?'article':'website')+'"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(description)+'"><meta property="og:url" content="'+url+'"><meta name="twitter:card" content="summary"><script type="application/ld+json">'+JSON.stringify(schema).replace(/</g,'\\u003c')+'</script>';
  html=html.replace('</head>',head+(entry.alias?'<meta name="robots" content="noindex,follow">':'')+'</head>').replace('href="#main"','href="'+entry.route+'#main"');
  context.renderedHTML=html;html=vm.runInContext('cleanInternalHTML(renderedHTML)',context);

@@ -14,7 +14,9 @@
     },
     {
       "id": "concurrency-pools",
-      "targets": []
+      "targets": [
+        "bounded-worker-queue"
+      ]
     },
     {
       "id": "distributed-systems",
@@ -452,7 +454,9 @@
     },
     {
       "id": "gpu-execution",
-      "targets": []
+      "targets": [
+        "native-warp-memory-sectors"
+      ]
     },
     {
       "id": "roofline-model",

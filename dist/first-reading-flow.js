@@ -126,7 +126,8 @@ const firstReadingChanges=[];
   ['<td>无状态和有状态系统采用同一恢复方式</td>','<td>发现不可用副本，切换或重建所需状态</td>']
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
- a.updated='2026.11.08';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
+ a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];
