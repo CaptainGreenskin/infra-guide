@@ -147,7 +147,6 @@ def agent_config(scratch, port, api_socket, bundle):
     server_address = "127.0.0.1"
     server_port = "{port}"
     socket_path = {q(api_socket)}
-    admin_socket_path = {q(scratch / 'agent-admin.sock')}
     trust_bundle_path = {q(bundle)}
     trust_domain = "{DOMAIN}"
 }}
