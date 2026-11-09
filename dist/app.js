@@ -26,7 +26,34 @@ function sidebar(moduleId,current){return sidebarView(moduleId,current)}
 function breadcrumbs(m,end=''){return `<div class="breadcrumb"><a href="#/">知识库</a><span>／</span><a href="#/module/${m.id}">${m.name}</a>${end?`<span>／</span><span>${end}</span>`:''}</div>`}
 function modulePage(m){if(infraDomain(m.id)){infraKnowledgePage(m);return}if(m.track==='cloud'){cloudKnowledgePage(m);return}const first=m.id==='practice'?practiceArticleForContext():articles.find(a=>a.module===m.id);if(first)articlePage(first);}
 
-function articlePage(a,anchor){const navigation=chapterNavigation(a);const conceptTerms=chapterInitialConceptTerms(a);const m=moduleFor(a.module);document.title=`${a.title} · InfraGuide`;$('#app').innerHTML=`<main class="doc-layout" id="main" tabindex="-1">${sidebar(a.module,a.id)}<article class="article">${breadcrumbs(m,a.number)}<div class="article-meta"><span class="category">${m.name}</span><span>${a.level}</span><span>·</span><span>${a.edition||"训练专题"}</span></div><h1>${a.number} ${a.title}</h1>${readingToolbarHTML()}${optionalConceptReviews.has(a.id)?'':chapterConceptIntro(a)}<p class="description">${a.desc}</p>${tags(a.tags)}${chapterQuestionPreview(a)}${learningContract(a)}${mobileContents(a)}${a.intro!==a.desc?'<p class="intro">'+a.intro+"</p>":""}${trackEntryOverviewHTML(a)}${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}</section>`).join('')}${chapterConnectionHTML(a)}${chapterPracticeHTML(a)}${chapterReferencesHTML(a)}<div class="completion"><button class="read-btn ${progress[a.id]?'done':''}" data-read="${a.id}">${progress[a.id]?'✓ 已读 · 点击取消':'标记为已读'}</button></div>${learningGoalChapterNav(a)||chapterReadingNav(a)}</article><aside class="toc"><div class="toc-title">本文目录</div>${chapterReadingContentsHTML(a,navigation)}<a data-toc="self-check" href="${readingArticleURL(a.id)}#self-check">自我检验</a><a data-toc="references" href="${readingArticleURL(a.id)}#references">参考资料</a><div class="toc-note">${icon('book')} 阅读 · 理解 · 实践</div></aside></main>${footer()}`;initInteractive();if(anchor)requestAnimationFrame(()=>{const target=document.getElementById(/^\d+$/.test(anchor)?`section-${anchor}`:anchor);for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;const child=target?.querySelector?.(':scope > details.article-case');if(child)child.open=true;target?.scrollIntoView({behavior:'instant'})})}
+function articlePage(a,anchor,showTrackOverview=false){
+ const navigation=chapterNavigation(a),conceptTerms=chapterInitialConceptTerms(a),m=moduleFor(a.module);
+ const sections=navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}</section>`).join('');
+ const intro=a.intro!==a.desc?'<p class="intro">'+a.intro+'</p>':'';
+ const overview=trackEntryOverviewHTML(a,showTrackOverview);
+ const read=progress[a.id];
+ const href=readingArticleURL(a.id);
+ document.title=`${a.title} · InfraGuide`;
+ $('#app').innerHTML=`<main class="doc-layout" id="main" tabindex="-1">${sidebar(a.module,a.id)}
+  <article class="article">${breadcrumbs(m,a.number)}<h1>${a.number} ${a.title}</h1>
+   ${readingToolbarHTML()}${mobileContents(a)}${showTrackOverview?overview:''}${intro}
+   ${optionalConceptReviews.has(a.id)?'':chapterConceptIntro(a)}${learningContract(a,m,showTrackOverview?'':overview)}
+   ${sections}${chapterConnectionHTML(a)}${chapterPracticeHTML(a)}${chapterReferencesHTML(a)}
+   <div class="completion"><button class="read-btn ${read?'done':''}" data-read="${a.id}">${read?'✓ 已读 · 点击取消':'标记为已读'}</button></div>
+   ${learningGoalChapterNav(a)||chapterReadingNav(a)}
+  </article>
+  <aside class="toc"><div class="toc-title">本文目录</div>${chapterReadingContentsHTML(a,navigation)}
+   <a data-toc="self-check" href="${href}#self-check">自我检验</a><a data-toc="references" href="${href}#references">参考资料</a>
+  </aside></main>${footer()}`;
+ initInteractive();
+ if(anchor)requestAnimationFrame(()=>{
+  const target=document.getElementById(/^\d+$/.test(anchor)?`section-${anchor}`:anchor);
+  for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
+  const child=target?.querySelector?.(':scope > details.article-case');
+  if(child)child.open=true;
+  target?.scrollIntoView({behavior:'instant'});
+ });
+}
 function roadmap(){roadmapPage()}
 let currentPath='';
 function route(){const hash=documentPathname()+(location.search||''),[path,query]=hash.split('?'),parts=path.split('/').filter(Boolean),anchor=legacySectionTarget(parts[0]==='article'?parts[1]:'',new URLSearchParams(query||'').get('section'));if(path===currentPath&&parts[0]==='article'&&anchor){document.getElementById(/^\d+$/.test(anchor)?`section-${anchor}`:anchor)?.scrollIntoView({behavior:'instant'});return}currentPath=path;observer?.disconnect();$('#search-dialog').close();$('.top-nav').classList.remove('mobile-open');$('#mobile-menu').setAttribute('aria-expanded','false');document.querySelectorAll('.top-nav a').forEach(a=>a.classList.remove('active'));window.scrollTo({top:0,left:0,behavior:'instant'});if(!parts.length)home();else if(parts[0]==='module'&&moduleFor(parts[1])){modulePage(moduleFor(parts[1]));document.querySelector(`.top-nav a[href="#/module/${parts[1]}"]`)?.classList.add('active')}else if(parts[0]==='article'&&articles.find(a=>a.id===parts[1])){const a=articles.find(a=>a.id===parts[1]);articlePage(a,anchor);document.querySelector(`.top-nav a[href="#/module/${a.module}"]`)?.classList.add('active')}else if(parts[0]==='start')startPage();else if(parts[0]==='outline')outlinePage();else if(parts[0]==='interview'&&parts.length===2&&Object.hasOwn(interviewUnits,parts[1]))workshopPage(parts[1]);else if(parts[0]==='interview'&&parts.length===1)interviewPage();else if(parts[0]==='resources')resourcesPage();else if(parts[0]==='roadmap')roadmap();else if(parts[0]==='about')editorialPage();else if(parts[0]==='track'&&['cloud','ai','agent'].includes(parts[1]))trackPage(parts[1]);else if(parts[0]==='labs')labsPage();else if(parts[0]==='problems')problemsPage();else{$('#app').innerHTML=`<main id="main" class="not-found" tabindex="-1"><h1>没有找到这个章节</h1><p>你可以返回知识库，或搜索相关内容。</p><a class="btn" href="#/">返回知识库</a></main>`;document.title='章节未找到 · InfraGuide'}let navHref=parts[0]==='track'?'#/track/'+parts[1]:parts[0]==='article'?'#/track/'+chapterReadingContext(articles.find(a=>a.id===parts[1])).track:parts[0]==='module'?'#/track/'+(parts[1]==='practice'?chapterReadingContext(practiceArticleForContext()).track:trackForModule(parts[1])):'#/'+parts[0];if(navHref==='#/track/shared')navHref='#/labs';normalizeInternalLinks();document.querySelector('.top-nav a[href="'+publicRoute(navHref)+'"]')?.classList.add('active');initReadingComfort();initFieldConceptMaps();$('#main')?.focus({preventScroll:true});restoreDocumentFragment()}
@@ -50,6 +77,10 @@ function hydrateStaticArticle(){
  }
  const roleNav=learningGoalChapterNav(article),currentNav=$('.goal-reading-nav')||$('.article-nav');
  if(roleNav&&currentNav)currentNav.outerHTML=roleNav;
+ if(parts[0]==='track'&&location.search){
+  const jump=$('.track-entry-head a');
+  jump?.setAttribute('href',location.pathname+location.search+'#section-1');
+ }
  const read=document.querySelector('[data-read="'+id+'"]');
  if(read){read.classList.toggle('done',!!progress[id]);read.textContent=progress[id]?'✓ 已读 · 点击取消':'标记为已读';}
  let changedChecks=false;

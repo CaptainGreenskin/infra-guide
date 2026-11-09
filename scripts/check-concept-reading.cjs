@@ -44,7 +44,12 @@ assert(model.sections[6][1].includes('将有效目标对应的行纳入损失'),
 assert(model.sections[6][1].includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));
 const agent=data.articles.find(a=>a.id==='agent-runtime');
-assert(agent.sections[0][1].includes('读取这版数据→计算 10+27→提交报告→由验收器读取报告'));
+let taskPosition=-1;
+for(const step of ['指定位置却找不到报告','工具从 orders-A 的第 3 版取回两笔订单 [10, 27]','合计 10+27=37','写工具返回后，验收器到指定位置另读一次']){
+ const next=agent.sections[0][1].indexOf(step);
+ assert(next>taskPosition,'the runtime example follows the same input, expected result and independent readback');
+ taskPosition=next;
+}
 assert(agent.sections[0][1].includes('<details class="concept-task-detail">'));
 const agentPage=fs.readFileSync('dist/article/agent-runtime/index.html','utf8');
 assert.equal((agentPage.match(/<details class="article-case">/g)||[]).length,2,'two long cases are optional after the core concepts');

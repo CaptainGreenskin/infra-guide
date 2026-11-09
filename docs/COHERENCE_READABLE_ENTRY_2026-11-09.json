@@ -1,0 +1,103 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "9226dae6b3382503e18d364e2f40ee3f807eccb5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_BOUNDARIES_2026-11-09.json": "3565163fb726021658955dabf3ef0f320d27bcc905c7e5d6fbf9dab1f83e98d5"
+  },
+  "source_revisions": {
+    "dist/app.js": {
+      "previous_sha256": "c917660f7d4d89313768ce3fee70b8f5b4b7523fd4d784164a9785734251ae16",
+      "reviewed_sha256": "b59cdf808f2a893aa9d0aa15ff8ad6bf63c450aff23ff3fea886b3e2e02e01eb",
+      "scope": "Keep the title, reading controls, and section order in the main reading area. Only direction-entry URLs display the open course map."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "aa06dfafc337188225716472937031a86fd32721958133112ca40c30147000d3",
+      "reviewed_sha256": "0eb6c59ccefc5d289a4f8060ee2f8a6815fdba3ca5f6f3d9f3d2e02d91823403",
+      "scope": "Combine optional front matter into one native disclosure and link directly from each track map to its first section."
+    },
+    "dist/concept-paths.js": {
+      "previous_sha256": "1d2fc0c55a85244af6e21aadbe08831ee601469f7f63e6fc810f759c60771c86",
+      "reviewed_sha256": "3aa5550b04d250b92f7786e1c9062eb1dc292d5bfb3ce7ef3a3d44bd22d2cbd0",
+      "scope": "Render the existing introductory question within the consolidated guide."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "3ceea2620ec27a70b51039ba496a41e915493e98fc01102309b2c4f6309dedad",
+      "reviewed_sha256": "bd30e7b77935c2868607cd038c1970ed7a93929ce0b17442e9914490e168affe",
+      "scope": "Reduce front-matter spacing without changing the sticky toolbar or fragment offsets."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "79ab17f3da430362ff9cb0846382c0ec61228bd99fd39aad4b8863691a15d427",
+      "reviewed_sha256": "29a040083519419afdd9c034ad02390c13c1ac2a24f57a2dae3efae90c982aad",
+      "scope": "Keep the three track overviews compact and the jump to the first section accessible."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "29991f91437172d4cba10852cb3b4865e58a0f890e15602f9c0b6894e32574a7",
+      "reviewed_sha256": "f6cfdcc737e69dd32cbf6a1db137d374b486101ce97dd4960fb0bc296007b16b",
+      "scope": "Lead the capacity lesson with the ticket-sale traffic burst and the resulting unfinished work."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "ac6a993af262c826fde36f91166c669d2a5ecb7e7b8c3e930931562fc28754b6",
+      "reviewed_sha256": "db51a1ed4ffa736f0276546f91f893e8b7c5fab952ac036edc365b97b646bf92",
+      "scope": "Explain the runtime by following one report from missing output to an independent readback."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "644e878aeb5f5c94fa28a2592b80ff554700d73fc84e86cf754eccfd9df79572",
+      "reviewed_sha256": "ad3af274ed19f431accc5baa1abda86d053955b51a3c7b5e4948526b52550935",
+      "scope": "Start with the actual client wait and later token intervals for request B."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "5f92bf013b1f3c12014b2d7b2055d9869483c77526c93021ed0d58a30b79f82d",
+      "reviewed_sha256": "0fc17286d7e508fb23bd7ea99fb142d8f8e6e79c95406f265cfb960867f2a700",
+      "scope": "Fingerprint the updated reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "789dd07fec1d1ca11de77b71c87761731a0b038ddf4530614d4a1f59d8c8ae63",
+      "reviewed_sha256": "496bd5127ceeb4df971e130d7e09448ec9f931094281a7aa16b21dfc6375fd1d",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "1815daccbcaedce25426c9519d848091df4b3e0033042df66773e254d2a38630",
+      "reviewed_sha256": "9503c17a2f0c3447cdbc67286e9928fc282a76851f58f55136f838182bd4109f",
+      "scope": "Require the single closed guide, visible course map only on each track entry, and exact chapter and field anchors."
+    },
+    "scripts/check-concept-paths.cjs": {
+      "previous_sha256": "dfafd98fb738f9be2c222883360c6b21ed33a28fc70e314d5abd6ff3c984e8ed",
+      "reviewed_sha256": "883a18ab68ff56c4c015a8ba381caf6fa5f5b5d0aed77ac0c4e4184463f4d405",
+      "scope": "Keep the guided question inside the optional guide while preserving the full concept review."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "956155bc11edd0b128e510986542c3c5d98e5c2ee8ffa27c6e45df65629da801",
+      "reviewed_sha256": "e4a47d40cf198d784b4793c09af9b5b27899737ef20ef129202212a8c6d77f1e",
+      "scope": "Check the observed Agent fixture in its current authored order."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "13da4cd26d35d479f2cbfb0f0330b2e61d1e9978802e0a699458df3380d4797b",
+      "reviewed_sha256": "f0272d4f1933a594f18ba0f159ec9cb4b4a2ad60d48574b9b3e85a7f911a3a27",
+      "scope": "Append the opening revisions for chapters already covered by the post-window body ledger."
+    },
+    "docs/CONTENT_READABLE_ENTRY_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "be7043b1615c219e04c1b4ff13155ac7242f819a51895e6b5023169c6a8c0102",
+      "scope": "Record the precise sections and source-bound teaching example."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "8fe5b79507efeaf1f39380b97b262c1e6673810f232aceddb113e5e0e9c14386",
+      "reviewed_sha256": "67b4717e6729bbbba335ce6de26ae26fc386a79c93e706a5baf875222276ec30",
+      "scope": "Append the chapter reading review."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "9226dae6b3382503e18d364e2f40ee3f807eccb5",
+    "chapters": 78,
+    "changed_bodies": [
+      "elasticity",
+      "agent-runtime",
+      "inference-performance"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

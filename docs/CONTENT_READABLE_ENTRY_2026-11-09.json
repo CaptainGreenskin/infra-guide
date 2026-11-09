@@ -1,0 +1,19 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "9226dae6b3382503e18d364e2f40ee3f807eccb5",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_BOUNDARIES_2026-11-09.json": "1151de7afa7e59828f548bb40fd30aae467f77cf60ff5e64c78c9d2ea1e742b2"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "scope": "Start with the actual client wait and later token intervals for request B.",
+      "observation": "Preserve the 51-output calculation and all implementation artifacts. Separate client observations, server scheduling, and the later teaching example.",
+      "reviewed_content_sha256": "cd037042016326dcca0b8ddad0047e2dfd2579e394833df68cd9a39de37053f6",
+      "record": "dist/labs/native-inference-queue/validation.json"
+    }
+  ]
+}

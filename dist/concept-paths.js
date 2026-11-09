@@ -190,5 +190,4 @@ function chapterConceptIntro(a){
   ?'<details class="concept-review"><summary>概念回顾：本章对象与关系</summary>'+content+'</details>'
   :content;
 }
-function chapterQuestionPreview(a){const original=guidedIntro(a);return original?'<details class="concept-question-preview"><summary>选读：用一个问题预览本章</summary>'+original+'</details>':'';}
 function conceptTOCLink(path,label='概念起点与关系'){return '<a data-toc="concept-path" href="'+path+'#concept-path">'+label+'</a>';}

@@ -3,7 +3,15 @@ const aiModules=trackDefinitions.ai.modules;
 const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
-function learningContract(a){const content=`<div class="learning-contract"><strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}<p class="evidence-note">约 ${a.minutes} 分钟 · ${a.baseline||'训练代码基线 PyTorch 2.5.1'} · <a href="#/labs">实验验证范围 ↗</a></p></div>`;return '<details class="guided-contract"><summary>先修、学习目标与验证范围 · 约'+a.minutes+'分钟</summary>'+content+'</details>'}
+function learningContract(a,m,overview){
+ return `<details class="guided-contract"><summary>先修与实验条件</summary><div class="learning-contract">
+  <p class="description">${a.desc}</p>
+  <div class="article-meta"><span class="category">${m.name}</span><span>${a.level}</span><span>·</span><span>${a.edition||'训练专题'}</span></div>
+  ${tags(a.tags)}
+  <strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}
+  <p class="evidence-note">约 ${a.minutes} 分钟 · ${a.baseline||'训练代码基线 PyTorch 2.5.1'} · <a href="#/labs">实验验证范围 ↗</a></p>${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${overview}${guidedIntro(a)}
+ </div></details>`;
+}
 function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${chapterReadingContentsHTML(a)}</details>`}
 function courseIntro(){return `<div class="course-intro"><span class="small-badge">训练专题 / ${articles.filter(a=>a.module==='training').length} 章</span><h2>先理解一步训练，再走向多机多卡。</h2><p>从资源预算、数据与通信，到完整DDP程序、两机四卡手册和恢复对照。同一份实验贯穿执行机制与故障验证。</p><div class="course-links"><a class="btn" href="#/article/gpu-cluster">从全景开始 →</a><a class="btn secondary" href="#/labs">实验与验证记录 ↗</a></div><small>CPU/Gloo已有实测；真实GPU/NCCL与Kubernetes仍需目标环境验证。</small></div>`}
 function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="course-group"><div class="group-label">${g}</div>${list.filter(a=>a.group===i).map(chapterLink).join('')}</section>`).join('')}
@@ -46,19 +54,20 @@ const trackEntryOverviews={
   ['核对实际任务',[['/article/agent-observability/','追踪'],['/article/agent-evaluation/','评估'],['/article/kairo-practice/','Kairo 接入']]]
  ],extra:['agent','查看 Agent 核心关系图']}
 };
-function trackEntryOverviewHTML(article){
+function trackEntryOverviewHTML(article,showTrackOverview){
  const track=Object.keys(trackEntryOverviews).find(key=>trackDefinitions[key].start===article.id);
  if(!track)return '';
  const {lead,rows,extra}=trackEntryOverviews[track];
  const link=([target,label])=>'<a href="'+(target.startsWith('/')?target:fieldMapURL(target))+'">'+label+'</a>';
  const heading='track-overview-'+track;
- return '<section class="track-entry-overview" aria-labelledby="'+heading+'"><h2 id="'+heading+'">'+trackDefinitions[track].label+' 学习全貌</h2><p>'+lead+'</p><ol>'+rows.map(([label,links])=>'<li><b>'+label+'</b><span>'+links.map(link).join('')+'</span></li>').join('')+'</ol><div class="track-entry-links">'+(extra?link(extra):'')+'<a href="/roadmap/?track='+track+'#route-'+track+'">完整学习顺序 →</a></div></section>';
+ const bodyPath=showTrackOverview?hostedPath('/track/'+track+'/')+location.search:readingArticleURL(article.id);
+ return '<section class="track-entry-overview" aria-labelledby="'+heading+'"><div class="track-entry-head"><h2 id="'+heading+'">'+trackDefinitions[track].label+' 学习全貌</h2><a href="'+trainingEscape(bodyPath)+'#section-1">读正文 ↓</a></div><p>'+lead+'</p><ol>'+rows.map(([label,links])=>'<li><b>'+label+'</b><span>'+links.map(link).join('')+'</span></li>').join('')+'</ol><div class="track-entry-links">'+(extra?link(extra):'')+'<a href="/roadmap/?track='+track+'#route-'+track+'">完整学习顺序 →</a></div></section>';
 }
 
 // A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
 function trackPage(kind){
  const track=trackDefinitions[kind];
- articlePage(articleById(track.start));
+ articlePage(articleById(track.start),null,true);
  document.title=track.label+' 中文学习路线 · InfraGuide';
 }
 

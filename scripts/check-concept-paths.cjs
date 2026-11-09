@@ -26,7 +26,11 @@ for(const[kind,paths]of [['module',data.moduleConceptPaths],['chapter',data.chap
   const article=data.articles.find(a=>a.id===id);assert(article,id+': live chapter');
   if(!reviewedBody)assert(introAt<html.indexOf('class="description"'),id+': concepts before advanced chapter summary');
   for(let i=1;i<=article.sections.length;i++)assert(html.includes('id="section-'+i+'"'),id+': preserve section anchor '+i);
-  assert(!/<details[^>]*class="concept-question-preview"[^>]*\bopen\b/.test(html),id+': case preview optional');
+  if(html.includes('class="guided-intro"')){
+   const guideStart=html.indexOf('<details class="guided-contract">');
+   const question=html.indexOf('class="guided-intro"');
+   assert(guideStart>=0&&question>guideStart&&question<advancedAt,id+': introductory question lives in the closed guide');
+  }
  }
 }
 const run=html=>{c.fixture=html;return vm.runInContext('explainFirstConceptTerms(fixture)',c);};

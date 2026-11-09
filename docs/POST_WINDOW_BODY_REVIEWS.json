@@ -5580,6 +5580,61 @@
         "在本地验证容量与代际条件",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "cf19a54564c11a44738aa4f0d6b7fd76c22caa17ec720e30f051da52fcf09c11",
+      "reviewed_content_sha256": "0ad7b08098b41f9edb39821a44898b5d4991a084cc48dd1cdf3a94005b2f4372",
+      "scope": "Lead the capacity lesson with the ticket-sale traffic burst and the resulting unfinished work.",
+      "observation": "Keep the original fluid-model assumptions, the backlog equation, and every table, diagram, link, and executable sample.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "804ac181638740144a08905d62f32c04d1c1c7acb8d998dc4ed33b0f40e1fbd0",
+      "reviewed_content_sha256": "4bd05391b208fd2d323d98017b731be2b05f815d085bb0407a420f649a29a9ac",
+      "scope": "Explain the runtime by following one report from missing output to an independent readback.",
+      "observation": "Keep the exact tenant, version and amount. The local HTTP proposal is scripted and the recovery lesson remains a separate operation.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e535139fb5a8a115f4881c38e528980b00748ed2dd45095d13120e651b8eafd9",
+      "reviewed_content_sha256": "cd037042016326dcca0b8ddad0047e2dfd2579e394833df68cd9a39de37053f6",
+      "scope": "Start with the actual client wait and later token intervals for request B.",
+      "observation": "Preserve the 51-output calculation and all implementation artifacts. Separate client observations, server scheduling, and the later teaching example.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

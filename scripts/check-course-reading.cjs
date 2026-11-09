@@ -39,9 +39,16 @@ for(const row of dated){
  assert((a.updated||'2026.11.03')>=date,row.id+': publication date predates its recorded body change');
 }
 function checkArticleHeader(html,a){
+ const guideStart=html.indexOf('<details class="guided-contract"><summary>先修与实验条件</summary>');
+ const firstSection=html.indexOf('id="section-1"');
+ assert(guideStart>html.indexOf('<h1>')&&guideStart<firstSection,a.id+': one closed guide before the body');
+ assert.equal((html.match(/<details class="guided-contract"/g)||[]).length,1);
+ const guide=html.slice(guideStart,firstSection);
+ for(const marker of ['class="description"','class="article-meta"','class="tag-row"','class="evidence-note"','实验验证范围'])assert(guide.includes(marker),a.id+': folded '+marker);
+ assert(!html.slice(html.indexOf('<article class="article">'),guideStart).includes('class="tag-row"'),a.id+': article tags do not delay the body');
  const meta=html.match(/<div class="article-meta">([\s\S]*?)<\/div>/)?.[1];
- assert(meta?.includes('<span>'+(a.edition||'训练专题')+'</span>'),a.id+': edition still appears in the header');
- assert(!/\d{4}[.\/-]\d{1,2}[.\/-]\d{1,2}/.test(meta),a.id+': article header must not show a revision date');
+ assert(meta?.includes('<span>'+(a.edition||'训练专题')+'</span>'),a.id+': guide retains the edition');
+ assert(!/\d{4}[.\/-]\d{1,2}[.\/-]\d{1,2}/.test(meta),a.id+': guide does not show a revision date');
 }
 const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
 for(const a of data.articles){
@@ -60,10 +67,13 @@ for(const[track,t]of Object.entries(data.tracks)){
  assert(html.includes('<h1>'+a.number+' '+a.title+'</h1>'),track+': enter the actual first lesson');
  assert(!html.includes('class="knowledge-body"'),track+': no full field textbook before the first lesson');
  const expectedMapLinks=data.modules.filter(m=>m.track===track&&Object.hasOwn(data.maps,m.id)).map(m=>'/module/'+m.id+'/#concept-relations').sort();
- for(const source of [html,fs.readFileSync('dist/article/'+a.id+'/index.html','utf8')]){
+ for(const [source,isEntry] of [[html,true],[fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),false]]){
   const entries=source.match(/<section class="track-entry-overview"[\s\S]*?<\/section>/g)||[];
   assert.equal(entries.length,1,track+': one overview in the first lesson');
-  assert(entries[0].includes('id="track-overview-'+track+'"')&&source.indexOf(entries[0])<source.indexOf('id="section-1"'),track+': show the course map before the first mechanism');
+  assert(entries[0].includes('id="track-overview-'+track+'"')&&source.indexOf(entries[0])<source.indexOf('id="section-1"'),track+': retain the overview and its published fragment');
+  assert.equal(source.indexOf(entries[0])<source.indexOf('<details class="guided-contract">'),isEntry,track+': only the track entry opens with the map visible');
+  const bodyPath=isEntry?'/track/'+track+'/':'/article/'+a.id+'/';
+  assert(entries[0].includes('href="'+bodyPath+'#section-1"'),track+': jump to the first section from the map');
   const mapLinks=[...entries[0].matchAll(/href="(\/module\/[^"]+?\/#concept-relations)"/g)].map(([,href])=>href).sort();
   assert.deepEqual(mapLinks,expectedMapLinks,track+': first lesson connects all of its field maps');
   assert(entries[0].includes('href="/roadmap/?track='+track+'#route-'+track+'"'),track+': full reading order');
