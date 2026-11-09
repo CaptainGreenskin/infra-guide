@@ -5096,6 +5096,116 @@
         "从一次快照形成可复现实验",
         "交一份可核对的答案"
       ]
+    },
+    {
+      "id": "distributed-systems",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "91787d38438216d2527000bef06c03d27fb56f36df801fd082d251dfbdbe31b0",
+      "reviewed_content_sha256": "78ec9f1cb1789fbe2e68839c93324b5c4b72827fdf231a80618c9461bcf4d63e",
+      "scope": "Observe a real HTTP client timing out after the original handler committed to SQLite, then retry with both stable and fresh operation identity.",
+      "observation": "Same operation returned the first effect and receipt, the changed payload conflicted and a new operation produced a second effect.",
+      "headings": [
+        "一次超时，留下了哪两份事实",
+        "截止时间、单次超时与取消不是同一个动作",
+        "重试让一次故障变成多少负载",
+        "哪些错误值得再试，要看效果语义",
+        "退避、抖动与恢复探测各解决哪种同步",
+        "把去重放在效果拥有者的边界",
+        "怎样验证重试没有把故障扩大",
+        "练习：用两个时间线回答面试追问"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "558bc747a8de32cd3899b62ea13318bdb9ca8afebf68698a9ebe95966d1f8f5f",
+      "reviewed_content_sha256": "d990de6fd557419a85c511abcd14e50a9158f235251cebd0a89ff713c95a1004",
+      "scope": "Connect submission-key conflict and retry semantics to actual code, data and base-model bytes before launching a training subprocess.",
+      "observation": "Nine fixtures created exactly two run rows and two child processes. Their exact updated weights were 13/8 and 31/16.",
+      "headings": [
+        "从一份训练脚本到一次可追踪运行",
+        "生命周期需要多个可解释的等待状态",
+        "先定义最小契约，再谈自动化",
+        "完成状态必须连接到产物",
+        "失败后的系统动作要可预测",
+        "交接给调度和发布时，协议要留下什么",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "eedc28d81506d2fc266621f89c6cff55b741304b7948d484b6fb84963fedfbfc",
+      "reviewed_content_sha256": "5803ea35f6e01c252dc986ff68f461584affc7b78c3e252f1b24cb4be7574d5b",
+      "scope": "Bridge the existing independent Kueue job outputs to the exact lesson that verifies a shared training update.",
+      "observation": "The new link distinguishes task completion from shared training and leads to an immutable real two-worker kind run.",
+      "headings": [
+        "状态与职责：额度、获准、放置、就绪与进展",
+        "配额与借用：名义份额、flavor和公平",
+        "资源形状：单节点、拓扑与可行解",
+        "并发预留：快照、整组与失败回滚",
+        "多租户隔离需要多层配合",
+        "启动与恢复：就绪期限、失效与回收",
+        "队列策略：回填、预留与抢占代价",
+        "用用户等待时间衡量调度效果",
+        "交一份可核对的答案",
+        "实战与变化题：穷举参考及真实两进程争抢"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9ae4f8e655e3695347dd2f7f68e29505b858f2ac3d72fa7a7fbd8aeb52802383",
+      "reviewed_content_sha256": "7b7816ed6c26de03c615c092ffdcf8bfce3a43a48d3c5bbc0cabd1dd82005b6c",
+      "scope": "Follow one real Indexed Job through a scheduler block, the same Pod UIDs on different workers, rank-0 Pod DNS and a common Gloo update.",
+      "observation": "With one eligible worker, index 1 was Unschedulable. After labeling the other worker, the same Pods resolved 10.244.1.2, reduced four samples and both reported weight 1.125. Evidence is one Linux host, two kind workers, CPU/Gloo.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "392cd8a6286f345c03aac12e35d3f0091635f272b6510e0f1ae595b827eb8343",
+      "reviewed_content_sha256": "804ac181638740144a08905d62f32c04d1c1c7acb8d998dc4ed33b0f40e1fbd0",
+      "scope": "Connect the beginner report example to the same input and verified effect in the existing independent HTTP capstone.",
+      "observation": "The optional exact link retains required lesson order and shows how 10 plus 27 becomes observable acceptance, receipt and independent 37.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "a85311d25f9bbf1f22cc1d6220c6b4e0287219b1215c70a0c8e4d1befd56d8d1",
+      "reviewed_content_sha256": "34a37fe7f5b390f31f7c4f804caa845359b65fee660572b98aea9061cec574d3",
+      "scope": "Give the Kairo integration lesson a separate optional write-path exercise that uses the existing S3 capstone.",
+      "observation": "The text distinguishes the read-only 23 from the independent write of 37. The Kairo target environment remains pending.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

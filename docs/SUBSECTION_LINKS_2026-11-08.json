@@ -18,7 +18,9 @@
     },
     {
       "id": "distributed-systems",
-      "targets": []
+      "targets": [
+        "http-operation-retry"
+      ]
     },
     {
       "id": "cloud-overview",
@@ -605,7 +607,9 @@
     },
     {
       "id": "training-platform",
-      "targets": []
+      "targets": [
+        "native-training-submission-preflight"
+      ]
     },
     {
       "id": "gpu-scheduling",
@@ -626,7 +630,8 @@
     {
       "id": "kubernetes-training",
       "targets": [
-        "training-object-chain"
+        "training-object-chain",
+        "native-kubernetes-gloo-job"
       ]
     },
     {

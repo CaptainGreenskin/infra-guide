@@ -74,7 +74,8 @@ const runtimeCompletion=infraReadableHTML(
  ['总数正确但资源属于B','某处存在37','A的任务成功'],
  ['实际产物全部通过独立验收','本次固定任务合格','任意开放任务或真实模型成功率已达标']])+
  para('固定脚本有利于先验证执行器和评分器。只有确保全拒绝、假成功、错资源、错总数、重复效果等负例都会被发现，接真实模型测规划质量才有意义。模型表现还需要独立任务集、重复运行和清晰统计口径；十个机制用例通过，不等于模型完成率100%。')+
- linkTo('agent-evaluation','继续学习任务集、独立评分与质量口径'));
+ linkTo('agent-evaluation','继续学习任务集、独立评分与质量口径')+
+ para('选做<a href="/article/production-readiness/#integrated-service-run">沿同一组数字验收 37 报告</a>。综合实战沿用输入 10、27 和目标 report-A，另建一份本地任务。先看入口返回 HTTP 202，确认任务已受理。再从接收方找提交回执，最后用独立验收器从来源重算 37，核对实际报告和写入次数。'));
 
 const runtimeKairo=infraReadableHTML(
  knowledgeSubhead('接入Kairo时，逐层寻找真实接口和验证点')+

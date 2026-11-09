@@ -1,0 +1,272 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "28dbe43bc2852f192874fbe705d0973998fd39c6",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CHAPTER_PRACTICE_2026-11-09.json": "09afd84cffa484f494a5d2212d67d00132435ab90c0479004e3b80a274403a1d"
+  },
+  "source_revisions": {
+    ".github/workflows/kubernetes-gloo-job.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0ab48370c4c6a71e0dc8c781fe73bd80c6cbce95b9660389ac4815febc544c59",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "c84b906ba7ddf3d881c29bb12c8ca702f71bad553b3dd29a2350505e1c4af3ad",
+      "reviewed_sha256": "10a8ff413fa9a06eae8450e832bf30b147fa87faafe941bc89a497e79e15c7c7",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "c160730935e5cb5b68ff9af4c2ffa83307e95e51219299866a12406043467417",
+      "reviewed_sha256": "5e41dd41978cd2349fb55c0f3ca28026f5be51c1983b3c97b5b317876c039822",
+      "scope": "Make the new evidence and exact chapter anchors part of the existing curriculum and AI training route."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "d5762d2bb598573144bed03d15ebbe57fffed02a84d525bdd93e664051c4d8ce",
+      "reviewed_sha256": "a17a187a19cc1af00fcb56e443763de12627fc8a6869abc03ab720afb51a4fd7",
+      "scope": "Make the new evidence and exact chapter anchors part of the existing curriculum and AI training route."
+    },
+    "dist/progressive-prerequisites-reading.js": {
+      "previous_sha256": "4893dfd4afb959a0fbf3da525b90e8a85f12330f03cb76d7e19a8a6eed4cfc73",
+      "reviewed_sha256": "7a5c88e6d5c57966ea7ff00690510d94701677aba12f0ff6a726eb9e937ba88a",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/progressive-training-platform-reading.js": {
+      "previous_sha256": "3de6bf901e3583e842bfedf7b798cb69bcf50e05508fe01cbf9bed147180b59c",
+      "reviewed_sha256": "42014a91511895ddffec00b06bd5ddcc8c2e1d7588f78659d2295e439904d3c6",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "5d3bfdd9106f45ad3f7a042b65d2bae1ea2d077769dfac20a5591ef71f33b92f",
+      "reviewed_sha256": "afe822dba511fa9a95252762784d094851727f38acb6cec0dbc4554cc88e6e20",
+      "scope": "Connect the introductory Agent report and Kairo chapter to the exact optional S3 exercise with separate scopes."
+    },
+    "dist/tool-runtime-lessons.js": {
+      "previous_sha256": "58f6f5a4d8bd03c4d72d47392e5a62d169eb1a71ebab89f30cac4a8e9fa51d7d",
+      "reviewed_sha256": "75c0268b7c1fac47df4f6d2c51f105e9ae026edbaacf8f9350c9ab32638ccf6d",
+      "scope": "Connect the introductory Agent report and Kairo chapter to the exact optional S3 exercise with separate scopes."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "1b42ec5829b36be253510fa14c0475aeceb6e44b243105016fb4095347f846f3",
+      "reviewed_sha256": "2ed0ba2b0408d568c0a3fe5b378128efd9a672592dd4cf4f9a80b29722f8af3d",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "c94794b5a133288b259c33ae70fbf0009229928646fed29f4365d6a076b5fc75",
+      "reviewed_sha256": "d40b5064d23a7c2af46fe014af0a874e482227c6dea76a2f9b200d65b47be6da",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "2b2625b93c0bd262e215e4176219da0cad446a32bda9bb241b69dffbd6caf5f3",
+      "reviewed_sha256": "e1561a40d76e52d1670c64d566104e83b2cc5e863dff138936c320d34a83d346",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "9ee81d29ff1fe5ba082cd7e5f21507fa6d5b6e8957ee46b068e738f53b0f2b94",
+      "reviewed_sha256": "ad535aeaec6dcf9e9f2c07d906c14a01d12a77a816a99e7d73c0d65fac356c58",
+      "scope": "Make the new evidence and exact chapter anchors part of the existing curriculum and AI training route."
+    },
+    "dist/diagrams/http-operation-retry.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5f4fc28a9d9309f9fdca5e9f401baf7a478df03db99aab3c902f5ef08a7a17f1",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "scripts/check-http-operation-retry.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f34fc287e128ef4a20e14430edba35c0da32016efbcd1b05b4fe8dd6955babb6",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/diagrams/training-submission-preflight.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d5af3ac84f8ec57ff96c219ec5fc7b596b6d73a90049a45d7162dde93144ca89",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "scripts/check-training-submission-preflight.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f06e40cc19ea67b84af0c9bb9ce168fb029a7019d51725f338bab34237edca31",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/diagrams/kubernetes-gloo-job.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fe8e5c7e91f09b1fa0286d82a06059f51e935ae4f5da61c838c069ed87d1f5b8",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "scripts/check-kubernetes-gloo-job.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2921d1a5c6eb9fd1a9450428adaa31a364556a7a2ef834bad9b34190914305cf",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/http-operation-retry.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "14ebb1424089ae26fbeeef1e4eb369807ba773e4d718bab2eb58f476c0448423",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/labs/http-operation-retry/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a898d85cf1dd769781272c0280c1002e01461e8826dc0d18549b5390633044ca",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/labs/http-operation-retry/http_operation_retry.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "03146b087a8d3c2a7bfc6b200ba76cdd004c5770eb9299d25bb4563abe7762bd",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/labs/http-operation-retry/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1f626a3cb50dcc0cede570f1e1bb858143ab4d4618afb32df7a47c8c528512e4",
+      "scope": "Bind a real post-commit HTTP timeout to stable identity, a conflict, and a second effect."
+    },
+    "dist/labs/training-submission-preflight.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cf4352a642c29f4f8508aa7eb7108646a5951500606519500ed539817aaa69a7",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/labs/training-submission-preflight/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3f001a9a6ead6848f632ef28228724e4c9f5005263b109cfb88df4eb7e0258f0",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/labs/training-submission-preflight/submission_preflight.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e7404e2943e6c14e923111bbbf41c8fc97f7594ff771c66bb870f62adc525820",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/labs/training-submission-preflight/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5ad234ef70e514e29ce41602e1ab0e25dd9c9360c3c2d3f8703f2964a0b3242b",
+      "scope": "Bind local submission/replay and input validation to child execution, and connect real scheduler placement to shared training."
+    },
+    "dist/labs/kubernetes-gloo-job.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "03aa846572a7354cd0ca4c0ce03534b262bc58f868632874fa850d0056818d92",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/Dockerfile": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e87dfa81aec13d05375edeb9697ec66dcc87c9b79d6863abdc5c0404f990b232",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5124f6780db35d659669b68998d9cffd0af34747fdeb5ba91d635966004890ca",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/job.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3aef5bbb5795d2c9a54810edc1a5e12792e3f14185e7ebc2e5a2d12a055400ad",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/observe_job.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "71fc58d681423b54d0123f9fb20a9fb4e3228f6d98d685345f16078692800571",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/rank_step.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "239fc5e77da039988a27456bd007c8e55eaedee191a91703ee858fc3af1d591b",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "dist/labs/kubernetes-gloo-job/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "53ea50e91f9d20c98f00711104bfa55b061e524dc7182443343ab5183b391e18",
+      "scope": "Bind the executable manifest and source to a completed public Linux CI run with native Pod and Gloo evidence."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "8a9223d2e922d9cf91cbd657d880f2fbfcfd5c37da1fb876ee6e913f774ff063",
+      "reviewed_sha256": "96c8edd4afdc429f4dd5846ddd32b3ddd44f3ca48f2f4b28949e3fe7977bbdf5",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "bcc7a4938b0e33bf3941b7d5c10d755f12cb5b2ea9fffc405b635f4be05354b1",
+      "reviewed_sha256": "cb5b8ac9d2360f9cde916b0396abf329c2175e53e8ea696d7dba86663f69743d",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_EXECUTION_BRIDGES_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d8df2f329188fedbee26be9146843cb8542648398a1446afc4b2ee1dc92923b6",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "df1d6b77c26694c1efdcdcc5edaa15e8bc6da5dbe838651720a9a15581d5fd90",
+      "reviewed_sha256": "e77b39c270358ba475e452206abdbd6a56da6f80f0dcd3a75106f92f19dfe886",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    }
+  },
+  "article_sections": {
+    "distributed-systems": {
+      "sections": [
+        7
+      ],
+      "scope": "Observe a real HTTP client timing out after the original handler committed to SQLite, then retry with both stable and fresh operation identity.",
+      "observation": "Same operation returned the first effect and receipt, the changed payload conflicted and a new operation produced a second effect."
+    },
+    "training-platform": {
+      "sections": [
+        3
+      ],
+      "scope": "Connect submission-key conflict and retry semantics to actual code, data and base-model bytes before launching a training subprocess.",
+      "observation": "Nine fixtures created exactly two run rows and two child processes. Their exact updated weights were 13/8 and 31/16."
+    },
+    "gpu-scheduling": {
+      "sections": [
+        10
+      ],
+      "scope": "Bridge the existing independent Kueue job outputs to the exact lesson that verifies a shared training update.",
+      "observation": "The new link distinguishes task completion from shared training and leads to an immutable real two-worker kind run."
+    },
+    "kubernetes-training": {
+      "sections": [
+        6
+      ],
+      "scope": "Follow one real Indexed Job through a scheduler block, the same Pod UIDs on different workers, rank-0 Pod DNS and a common Gloo update.",
+      "observation": "With one eligible worker, index 1 was Unschedulable. After labeling the other worker, the same Pods resolved 10.244.1.2, reduced four samples and both reported weight 1.125. Evidence is one Linux host, two kind workers, CPU/Gloo."
+    },
+    "agent-runtime": {
+      "sections": [
+        6
+      ],
+      "scope": "Connect the beginner report example to the same input and verified effect in the existing independent HTTP capstone.",
+      "observation": "The optional exact link retains required lesson order and shows how 10 plus 27 becomes observable acceptance, receipt and independent 37."
+    },
+    "kairo-practice": {
+      "sections": [
+        9
+      ],
+      "scope": "Give the Kairo integration lesson a separate optional write-path exercise that uses the existing S3 capstone.",
+      "observation": "The text distinguishes the read-only 23 from the independent write of 37. The Kairo target environment remains pending."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "28dbe43bc2852f192874fbe705d0973998fd39c6",
+    "chapters": 78,
+    "changed_bodies": [
+      "distributed-systems",
+      "training-platform",
+      "gpu-scheduling",
+      "kubernetes-training",
+      "agent-runtime",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "distributed-systems": 1,
+      "training-platform": 2,
+      "kubernetes-training": 2
+    },
+    "field_maps": 14,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "outline_role_selectors": 0,
+    "reader_trial_entries": 3,
+    "actual_reader_sessions": 0,
+    "chapters_with_catalog_tasks": 74,
+    "role_chapter_positions": 114,
+    "experiment_packs": 94,
+    "learning_tasks": 139
+  }
+}

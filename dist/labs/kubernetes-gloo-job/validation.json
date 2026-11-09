@@ -1,0 +1,150 @@
+{
+  "after": [
+    {
+      "hostname": "training-ddp-0",
+      "index": 0,
+      "ip": "10.244.1.2",
+      "node": "infra-gloo-b77e0177-worker",
+      "owner_uid": "5f94f9b1-36db-4dfd-9448-1024be4de3a0",
+      "phase": "Succeeded",
+      "pod": "training-ddp-0-jlvm2",
+      "pod_scheduled": {
+        "message": null,
+        "reason": null,
+        "status": "True"
+      },
+      "uid": "1d71a3a0-69d7-46de-b43f-bf288bc2b25f"
+    },
+    {
+      "hostname": "training-ddp-1",
+      "index": 1,
+      "ip": "10.244.2.2",
+      "node": "infra-gloo-b77e0177-worker2",
+      "owner_uid": "5f94f9b1-36db-4dfd-9448-1024be4de3a0",
+      "phase": "Succeeded",
+      "pod": "training-ddp-1-c8s24",
+      "pod_scheduled": {
+        "message": null,
+        "reason": null,
+        "status": "True"
+      },
+      "uid": "feaa23f6-8c42-4625-8777-372fc3bab646"
+    }
+  ],
+  "before": [
+    {
+      "hostname": "training-ddp-0",
+      "index": 0,
+      "ip": null,
+      "node": "infra-gloo-b77e0177-worker",
+      "owner_uid": "5f94f9b1-36db-4dfd-9448-1024be4de3a0",
+      "phase": "Pending",
+      "pod": "training-ddp-0-jlvm2",
+      "pod_scheduled": {
+        "message": null,
+        "reason": null,
+        "status": "True"
+      },
+      "uid": "1d71a3a0-69d7-46de-b43f-bf288bc2b25f"
+    },
+    {
+      "hostname": "training-ddp-1",
+      "index": 1,
+      "ip": null,
+      "node": null,
+      "owner_uid": "5f94f9b1-36db-4dfd-9448-1024be4de3a0",
+      "phase": "Pending",
+      "pod": "training-ddp-1-c8s24",
+      "pod_scheduled": {
+        "message": "0/3 nodes are available: 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) didn't match pod anti-affinity rules, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/3 nodes are available: 1 No preemption victims found for incoming pod, 2 Preemption is not helpful for scheduling.",
+        "reason": "Unschedulable",
+        "status": "False"
+      },
+      "uid": "feaa23f6-8c42-4625-8777-372fc3bab646"
+    }
+  ],
+  "control": {
+    "initial_worker": "infra-gloo-b77e0177-worker",
+    "newly_labeled_worker": "infra-gloo-b77e0177-worker2"
+  },
+  "environment": {
+    "cluster": "infra-gloo-b77e0177",
+    "github_run_id": "42599803867",
+    "github_sha": "d584451295e52d39e7027b71bd8c09bfd353845e",
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kind_node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+    "kubernetes": "v1.35.8",
+    "trainer_image_id": "sha256:17e5155b41a2f749770aca14cecf9638a8364f06484b95421e73e80489962cb7"
+  },
+  "job": {
+    "completed_indexes": "0,1",
+    "conditions": [
+      {
+        "lastProbeTime": "2026-11-09T10:19:38Z",
+        "lastTransitionTime": "2026-11-09T10:19:38Z",
+        "message": "Reached expected number of succeeded pods",
+        "reason": "CompletionsReached",
+        "status": "True",
+        "type": "SuccessCriteriaMet"
+      },
+      {
+        "lastProbeTime": "2026-11-09T10:19:38Z",
+        "lastTransitionTime": "2026-11-09T10:19:38Z",
+        "message": "Reached expected number of succeeded pods",
+        "reason": "CompletionsReached",
+        "status": "True",
+        "type": "Complete"
+      }
+    ],
+    "mode": "Indexed",
+    "succeeded": 2,
+    "uid": "5f94f9b1-36db-4dfd-9448-1024be4de3a0"
+  },
+  "rank_logs": [
+    {
+      "backend": "gloo",
+      "device": "cpu",
+      "global_samples": 4,
+      "gradient": -1.25,
+      "local_loss_sum": 0.5,
+      "master_host": "training-ddp-0.ranks",
+      "master_ip": "10.244.1.2",
+      "node": "infra-gloo-b77e0177-worker",
+      "pod_ip": "10.244.1.2",
+      "rank": 0,
+      "targets": [
+        0.0
+      ],
+      "torch": "2.5.1+cpu",
+      "updated_weight": 1.125,
+      "world_size": 2
+    },
+    {
+      "backend": "gloo",
+      "device": "cpu",
+      "global_samples": 4,
+      "gradient": -1.25,
+      "local_loss_sum": 6.0,
+      "master_host": "training-ddp-0.ranks",
+      "master_ip": "10.244.1.2",
+      "node": "infra-gloo-b77e0177-worker2",
+      "pod_ip": "10.244.2.2",
+      "rank": 1,
+      "targets": [
+        3.0,
+        3.0,
+        3.0
+      ],
+      "torch": "2.5.1+cpu",
+      "updated_weight": 1.125,
+      "world_size": 2
+    }
+  ],
+  "source_sha256": {
+    "Dockerfile": "e87dfa81aec13d05375edeb9697ec66dcc87c9b79d6863abdc5c0404f990b232",
+    "job.json": "3aef5bbb5795d2c9a54810edc1a5e12792e3f14185e7ebc2e5a2d12a055400ad",
+    "observe_job.py": "71fc58d681423b54d0123f9fb20a9fb4e3228f6d98d685345f16078692800571",
+    "rank_step.py": "239fc5e77da039988a27456bd007c8e55eaedee191a91703ee858fc3af1d591b"
+  },
+  "status": "passed"
+}

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="404" viewBox="0 0 920 404" role="img" aria-labelledby="title desc">
+ <title id="title">同一个 Job 从等待节点到共同更新</title>
+ <desc id="desc">两个索引中的一个先绑定，另一个等待节点。放开第二个节点后原 Pod 继续绑定。两份日志都记录 4 个样本和 1.125 的新权重。</desc>
+ <metadata>{"before":{"bound":1,"unschedulable":1},"after":{"ranks":[0,1],"nodes":2,"samples":4,"gradient":-1.25,"updated_weight":1.125}}</metadata>
+ <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#3565c6"/></marker></defs>
+ <rect x="1" y="1" width="918" height="402" rx="16" fill="#f7f9fd" stroke="#dbe4f1"/>
+ <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#192b4b">
+  <text x="35" y="47" font-size="27" font-weight="700">一个 Job，两个 Pod，一次共同更新</text>
+  <text x="36" y="78" font-size="16" fill="#526988">保持 Job 与 Pod 的唯一身份不变，只改变第二个节点是否符合条件</text>
+  <text x="42" y="123" font-size="20" font-weight="700">① 只有一个节点符合条件</text>
+  <text x="540" y="123" font-size="20" font-weight="700">② 两个节点都符合条件</text>
+  <rect x="38" y="144" width="320" height="63" rx="8" fill="#e8f0ff" stroke="#83a5e9"/>
+  <rect x="38" y="221" width="320" height="63" rx="8" fill="#fff4df" stroke="#d79a42"/>
+  <text x="54" y="181" font-size="18">一个 Pod 已绑定工作节点</text>
+  <text x="54" y="258" font-size="18">另一个 Pod 等待调度</text>
+  <path d="M376 214H518" stroke="#3565c6" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="392" y="193" font-size="16" font-weight="600" fill="#315eae">加节点标签</text>
+  <rect x="538" y="144" width="342" height="63" rx="8" fill="#e8f0ff" stroke="#83a5e9"/>
+  <rect x="538" y="221" width="342" height="63" rx="8" fill="#e8f0ff" stroke="#83a5e9"/>
+  <text x="554" y="181" font-size="18">索引 0 → rank 0，处理 1 个样本</text>
+  <text x="554" y="258" font-size="18">索引 1 → rank 1，处理 3 个样本</text>
+  <rect x="38" y="311" width="842" height="57" rx="8" fill="#e6f5ef" stroke="#8ac4ad"/>
+  <text x="56" y="346" font-size="19" font-weight="600" fill="#1b5745">同一 Gloo 组 · 全局 4 个样本 · 两份日志的新权重均为 1.125</text>
+ </g>
+</svg>

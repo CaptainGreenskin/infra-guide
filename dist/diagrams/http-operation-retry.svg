@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 282" role="img" aria-labelledby="title desc">
+  <title id="title">提交在先，响应超时后复用原动作</title>
+  <desc id="desc">第一次请求在接收方提交效果和回执。原响应头被暂缓，调用方读取超时。第二次尝试沿用原动作编号，接收方查出原回执，没有新增效果。节点间距不表示时长。</desc>
+  <metadata>{"operation":"reserve-1","attempts":["attempt-1","attempt-2"],"effect_id":1,"effect_count_after_retry":1,"timeout_stage":"response_header","time_scale":false}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#506f9f"/>
+    </marker>
+  </defs>
+  <rect width="680" height="282" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" font-size="19" fill="#21324e">
+    <text x="24" y="34" fill="#264fac" font-weight="700">调用方</text>
+    <text x="24" y="172" fill="#264fac" font-weight="700">接收方</text>
+    <g fill="#fff" stroke="#c2cde3">
+      <rect x="24" y="49" width="139" height="52" rx="8"/>
+      <rect x="188" y="49" width="139" height="52" rx="8"/>
+      <rect x="352" y="49" width="139" height="52" rx="8"/>
+      <rect x="516" y="49" width="139" height="52" rx="8"/>
+      <rect x="24" y="187" width="139" height="52" rx="8"/>
+      <rect x="188" y="187" width="139" height="52" rx="8"/>
+      <rect x="352" y="187" width="139" height="52" rx="8"/>
+      <rect x="516" y="187" width="139" height="52" rx="8"/>
+    </g>
+    <g fill="none" stroke="#506f9f" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M163 75 H182 M327 75 H346 M491 75 H510"/>
+      <path d="M163 213 H182 M327 213 H346 M491 213 H510"/>
+      <path d="M93 102 V180 M421 102 V180 M585 186 V107" stroke-dasharray="4 4"/>
+    </g>
+    <g text-anchor="middle">
+      <text x="93" y="81">发首次请求</text>
+      <text x="257" y="81">等响应头超时</text>
+      <text x="421" y="81">沿用动作编号</text>
+      <text x="585" y="81">收到原回执</text>
+      <text x="93" y="219">提交效果与回执</text>
+      <text x="257" y="219">暂缓原响应</text>
+      <text x="421" y="219">查到原回执</text>
+      <text x="585" y="219">仍有 1 条效果</text>
+    </g>
+    <text x="24" y="266" font-size="16" fill="#475b79">两次尝试共用动作编号 reserve-1。节点间距仅作示意。</text>
+  </g>
+</svg>

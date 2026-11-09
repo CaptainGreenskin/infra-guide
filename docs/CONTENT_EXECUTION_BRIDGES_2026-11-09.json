@@ -1,0 +1,45 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "28dbe43bc2852f192874fbe705d0973998fd39c6",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CHAPTER_PRACTICE_2026-11-09.json": "48a8bc38ff52434a7fb347db3241bbf7f53e43d051aff008632e2c212227b2fd"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "distributed-systems",
+      "reviewed_at": "2026-11-09",
+      "scope": "Observe a real HTTP client timing out after the original handler committed to SQLite, then retry with both stable and fresh operation identity.",
+      "observation": "Same operation returned the first effect and receipt, the changed payload conflicted and a new operation produced a second effect.",
+      "reviewed_content_sha256": "78ec9f1cb1789fbe2e68839c93324b5c4b72827fdf231a80618c9461bcf4d63e",
+      "record": "dist/labs/http-operation-retry/validation.json"
+    },
+    {
+      "chapter": "training-platform",
+      "reviewed_at": "2026-11-09",
+      "scope": "Connect submission-key conflict and retry semantics to actual code, data and base-model bytes before launching a training subprocess.",
+      "observation": "Nine fixtures created exactly two run rows and two child processes. Their exact updated weights were 13/8 and 31/16.",
+      "reviewed_content_sha256": "d990de6fd557419a85c511abcd14e50a9158f235251cebd0a89ff713c95a1004",
+      "record": "dist/labs/training-submission-preflight/validation.json"
+    },
+    {
+      "chapter": "kubernetes-training",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow one real Indexed Job through a scheduler block, the same Pod UIDs on different workers, rank-0 Pod DNS and a common Gloo update.",
+      "observation": "With one eligible worker, index 1 was Unschedulable. After labeling the other worker, the same Pods resolved 10.244.1.2, reduced four samples and both reported weight 1.125. Evidence is one Linux host, two kind workers, CPU/Gloo.",
+      "reviewed_content_sha256": "7b7816ed6c26de03c615c092ffdcf8bfce3a43a48d3c5bbc0cabd1dd82005b6c",
+      "record": "dist/labs/kubernetes-gloo-job/validation.json"
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "ag-runtime",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7f704b883bc62852ac35c03012ea6bac493f22c8feb5a77a24a738fe8ae9d622",
+      "reviewed_content_sha256": "70cdf4ff045bdeac1ffc05ba09002036840fcaed4ac3c185478dea30fe292c91",
+      "scope": "Show the exact optional S3 continuation under the shared Agent execution and evaluation explanation.",
+      "observation": "The ag-runtime field point keeps its full original body. Only the optional report handoff with the same 10 and 27 inputs is appended."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="400" viewBox="0 0 920 400" role="img" aria-labelledby="title desc">
+  <title id="title">训练提交要先判断意图，再检查实际输入</title>
+  <desc id="desc">租户与提交键指向已有作业时，规范化清单相同则重用原作业，清单变更则拒绝。新键依次核对代码、数据与权重摘要，通过后启动真实子进程，读取校验过的字节并记录一次更新。实跑只启动了两个子进程。</desc>
+  <metadata>{"record":"labs/training-submission-preflight/validation.json","keys":["train-daily","next-key"],"run_ids":["run-001","run-002"],"worker_starts":2,"updated_weights":["13/8","31/16"]}</metadata>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5574a8"/>
+    </marker>
+  </defs>
+  <rect width="920" height="400" rx="17" fill="#f7faff"/>
+  <g font-family="system-ui, sans-serif" fill="#162c4a">
+    <text x="36" y="48" font-size="26" font-weight="700">同一个训练请求要先过两道检查</text>
+    <text x="36" y="80" font-size="16" fill="#415676">提交键标记一次意图，清单和文件摘要分别核对意图与字节。</text>
+    <g fill="#e8effc" stroke="#b2c4e2">
+      <rect x="36" y="122" width="160" height="111" rx="11"/>
+      <rect x="254" y="122" width="176" height="111" rx="11"/>
+      <rect x="491" y="122" width="175" height="111" rx="11"/>
+      <rect x="725" y="122" width="159" height="111" rx="11"/>
+    </g>
+    <g fill="none" stroke="#5574a8" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M196 177 H244"/>
+      <path d="M430 177 H481"/>
+      <path d="M666 177 H715"/>
+      <path d="M342 233 V271"/>
+      <path d="M578 233 V271"/>
+    </g>
+    <g text-anchor="middle" font-size="16">
+      <text x="116" y="154" font-weight="650">提交请求</text>
+      <text x="116" y="184">租户与提交键</text>
+      <text x="116" y="208">规范化清单</text>
+      <text x="342" y="154" font-weight="650">查 SQLite 登记</text>
+      <text x="342" y="184">新键继续</text>
+      <text x="342" y="208">旧键看清单摘要</text>
+      <text x="578" y="154" font-weight="650">检查实际内容</text>
+      <text x="578" y="184">代码、数据和权重</text>
+      <text x="578" y="208">与清单摘要一致</text>
+      <text x="805" y="154" font-weight="650">启动 worker</text>
+      <text x="805" y="184">收到已核对字节</text>
+      <text x="805" y="208">执行一次更新</text>
+    </g>
+    <g fill="#fff" stroke="#c3cfe0">
+      <rect x="236" y="278" width="212" height="61" rx="9"/>
+      <rect x="472" y="278" width="212" height="61" rx="9"/>
+    </g>
+    <g text-anchor="middle" font-size="15">
+      <text x="342" y="303">同一意图，返回原作业</text>
+      <text x="342" y="326">不同意图，报冲突</text>
+      <text x="578" y="303">任一摘要不符，拒绝</text>
+      <text x="578" y="326">保留失败证据</text>
+    </g>
+    <text x="36" y="373" font-size="16" fill="#415676">实跑登记两个作业，子进程实际启动两次，更新后权重依次为 13/8 和 31/16。</text>
+  </g>
+</svg>

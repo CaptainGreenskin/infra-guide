@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
+ 'training-submission-preflight':{folder:'training-submission-preflight',title:'训练提交、输入摘要与启动前校验'},
+ 'kubernetes-gloo-job':{folder:'kubernetes-gloo-job',title:'同一 Indexed Job 的双节点 CPU/Gloo 更新'},
  'process-wait-accounting':{folder:'process-wait-accounting',title:'管道读等待、子进程回收与 CPU 记账'},
  'training-useful-tokens':{folder:'training-useful-tokens',title:'有效 token、填充计算与实际 CPU 训练计时'},
  'int8-batch-quality':{folder:'int8-batch-quality',title:'动态 INT8 合批、分类门槛与前向计时'},
@@ -276,6 +279,11 @@ labLearningCatalog.push(
  {id:'ai-useful-token-throughput',track:'ai',stage:2,title:'同样的 352 个目标，怎样比较训练吞吐',chapter:'training-performance',anchor:'cpu-useful-token-throughput',pack:'training-useful-tokens',files:['useful_tokens.py','requirements.txt'],env:'macOS arm64 · Python 3.12 · PyTorch 2.5.1 CPU',kind:'真实单线程训练更新与性能轨迹',observe:'核对两条路径的损失、梯度与更新结果，再看填充行数和同一有效分母下的吞吐。用错误分母重现不同更新。',scope:'本机固定 token 分类器、两条 CPU 路径与配对计时。'},
  {id:'ai-rope-offset',track:'ai',stage:1,title:'位置整体平移后，什么量保持不变',chapter:'position-encoding',anchor:'section-9',pack:'textbook-examples',folder:'model-foundations',files:['rope.py'],env:'Python 3.9+ · 标准库',kind:'可运行二维数值对照',observe:'比较平移前后的查询与键点积，再故意用错查询位置，看点积如何变化。',scope:'固定二维向量与旋转角度。'},
  {id:'ai-roofline-model',track:'ai',stage:1,title:'融合算子和矩阵分块分别省下哪些字节',chapter:'roofline-model',anchor:'section-8',pack:'textbook-examples',folder:'cloud-foundations',files:['roofline-model.py'],env:'Python 3.9+ · 标准库',kind:'可运行字节预算模型',observe:'计算融合前后的元素读写量，再用矩阵乘的运算量和输入输出字节推导算术强度。',scope:'理想化数据搬运账与模型上限，设备实测另见算子分析章。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-http-operation-retry',track:'cloud',stage:0,title:'响应超时后，复用原动作编号会发生什么',chapter:'distributed-systems',anchor:'http-operation-retry',pack:'http-operation-retry',files:['http_operation_retry.py'],env:'Python 3.9+ · 标准库',kind:'真实 HTTP 超时与 SQLite 回执',observe:'首次请求提交后暂缓响应。比较原动作重试、同一编号改参数和新编号，按回执与效果记录独立核对。',scope:'本机 HTTP、并发请求和 SQLite 事务。'},
+ {id:'ai-training-submission-preflight',track:'ai',stage:2,title:'训练启动前，怎样发现版本和文件内容不一致',chapter:'training-platform',anchor:'native-training-submission-preflight',pack:'training-submission-preflight',files:['submission_preflight.py'],env:'Python 3.9+ · 标准库',kind:'真实文件、SQLite 登记与子进程',observe:'用九个提交检查同键复用、意图冲突、摘要不符和正常新作业。数子进程的实际启动，核对两次精确参数更新。',scope:'本机可信输入、SQLite 与子进程，作业登记与启动之间有独立的恢复窗口。'},
+ {id:'ai-kubernetes-gloo-job',track:'ai',stage:2,title:'一个训练 Job 等到第二个节点后，怎样证明共同更新',chapter:'kubernetes-training',anchor:'native-kubernetes-gloo-job',pack:'kubernetes-gloo-job',files:['Dockerfile','job.json','observe_job.py','rank_step.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8 · PyTorch 2.5.1 CPU/Gloo',kind:'真实 Indexed Job、Pod DNS 与两节点 DDP',observe:'确认同一批 Pod 从一个不可调度走到两个工作节点，随后核对共同会合、四个样本和两份权重 1.125。',scope:'同一 Linux 宿主的两个 kind 工作节点，固定输入和一次 CPU 更新。物理多机、GPU 和 NCCL 待验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

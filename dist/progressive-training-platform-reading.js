@@ -199,5 +199,52 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
  '<p class="practice-links"><a href="labs/kueue-admission.zip" download>下载完整实验 ↓</a> · <a href="labs/kueue-admission/validation.json">查看执行记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42567524901">核对 Linux CI ↗</a></p>';
  gpu.sections[9][1]=kueueReading+gpu.sections[9][1];
  kube.sections[2][1]+=p('可先运行真实 CPU 例子。两个 Indexed Pod 按各自的完成索引读取不同数据，输出 37 和 12。观察 Kueue 获准、Pod 绑定与 Job 完成，再对照本节的共同会合要求。'+kueueLab);
+
+ platform.sections[2][1]+=
+ '<h3 id="native-training-submission-preflight">实跑：重复提交为什么返回原作业</h3>'+
+ p('发出提交后连接断了，客户端不知道平台是否已经接收。它重发同一租户下的提交键，平台先查登记。清单按固定的 JSON 键顺序编码后计算摘要，这份规范化摘要代表提交意图。只改变缩进或字段顺序，原始文件摘要会变，规范化摘要保持一致，平台返回原作业。换了数据摘要还沿用旧键，平台报告意图冲突。',
+ '首次出现的提交键才继续检查实际输入。清单里的摘要回答“要用哪个版本”，文件路径只回答“去哪里读”。本机程序对训练代码、数据和基础权重计算 SHA-256。数据和权重即使保持同样的文件名与大小，内容变化也会被拒绝。子进程从标准输入接收刚刚校验的那份数据与权重，在更新前再次核对摘要。')+
+ trainingFigure('training-submission-preflight','旧提交键检查意图，新提交键核对实际输入。两个拒绝分支都发生在启动 worker 之前。')+
+ trainingCode('按提交键决定下一步','TEXT',`
+查找 (租户, 提交键)
+    已登记，意图摘要相同 → 返回原作业
+    已登记，意图摘要不同 → 报告冲突
+    未登记 → 检查代码、数据与基础权重摘要
+               任一不符 → 拒绝，不登记作业
+               全部通过 → 登记作业，启动 worker
+ `)+
+ t(['本机实跑','返回结果','累计 worker 启动'],[
+ ['首次提交，再原样或换排版重发','完成并返回 run-001，两次重发都重用它','1 次'],
+ ['新键仍钉住旧输入，但实际数据、权重或代码不同','分别拒绝数据、权重或代码摘要不符','1 次'],
+ ['改用新数据的清单，仍带旧键','意图冲突，旧作业保持原样','1 次'],
+ ['新清单与新数据一致，使用新键','完成 run-002，重发也只返回它','2 次']
+ ])+
+ p('子进程确实执行了一次参数更新。模型预测是权重乘以输入，初始权重为 1，步长为 1/8。首个作业的输入与目标是 (1, 3)、(2, 6)。用一半平方误差计算平均梯度，得到 [(1−3)×1＋(2−6)×2]÷2=−5，更新后权重为 13/8。新数据把目标改为 4 和 8，第二个作业的更新后权重为 31/16。分别核对两个权重和两条子进程启动记录，就能确认运行的是预期输入。',
+ '实验用 SQLite 把查询和登记放在同一个本机事务。登记后、启动前若发生崩溃，还需要控制器重新读取已登记的意图，协调同一执行尝试。下一节继续用产物清单验证完成状态。这里的摘要只核对字节，云上的身份、存储和训练资源另有各自的验证。')+
+ trainingCode('解压后用 Python 标准库复跑','SHELL','python3 -B submission_preflight.py > replay.json')+
+ '<p class="practice-links"><a href="labs/training-submission-preflight.zip" download>下载可运行实验 ↓</a> · <a href="labs/training-submission-preflight/submission_preflight.py">查看完整源码 →</a> · <a href="labs/training-submission-preflight/README.md">复跑与检查 →</a> · <a href="labs/training-submission-preflight/validation.json">核对作业与进程记录 →</a> · <a href="https://www.sqlite.org/lang_transaction.html">SQLite 事务接口 ↗</a></p>';
+ const nativeJobReading='<h3 id="native-kubernetes-gloo-job">让同一个 Job 跨两个工作节点更新参数</h3>'+
+ p('前面的调度实验确认 Pod 能放到哪里，本节继续核对容器里的训练进程做了什么。给同一个 Job 两个完成索引，分别交给 rank 0 和 rank 1。索引说明控制器如何编号，rank 说明进程在训练组中的身份。实验让它们一一对应，然后检查这两个身份是否确实会合。')+
+ trainingFigure('kubernetes-gloo-job','同一个 Job 先有一个 Pod 等节点，再让两份日志证明共同更新。')+
+ p('先只给一个工作节点加实验标签。Job 要求两个 Pod 都选择带标签的节点，同时要求同一主机上最多放一个这样的 Pod。这条约束叫硬反亲和。观测到一个 Pod 已有节点名，另一个的 <code>PodScheduled=False</code> 且原因为 <code>Unschedulable</code> 后，再给第二个工作节点加标签。按 Pod 的 UID 前后比对，可以确认是原来等待的 Pod 继续推进。')+
+ p('两个 Pod 启动后还要找到共同的会合地址。这里用无头 Service <code>ranks</code> 提供各 Pod 的 DNS 名字。它没有一个统一的虚拟 IP。Indexed Job 给 Pod 分配形如 <code>training-ddp-0</code> 的主机名，配上 Service 子域，两个进程就能把 <code>training-ddp-0.ranks</code> 解析到 rank 0 的 Pod IP。<code>publishNotReadyAddresses</code> 允许 DNS 在就绪检查通过前公布地址，进程用同一地址和端口建立 CPU 通信组。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Indexed Job 的索引与主机名')+' · '+source('https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods','Pod 与无头 Service 的 DNS'))+
+ trainingCode('从完成索引走到一次同步更新','PYTHON',`rank = int(os.environ["JOB_COMPLETION_INDEX"])
+dist.init_process_group("gloo", init_method=f"tcp://{ip}:{port}",
+                        rank=rank, world_size=2)
+count = torch.tensor(targets.numel(), dtype=torch.float64)
+dist.all_reduce(count, op=dist.ReduceOp.SUM)
+(loss_sum * 2 / count).backward()
+torch.optim.SGD(model.parameters(), lr=.1).step()`)+
+ p('这里的 <code>count</code> 起初是本地样本数，归约后变成全局样本数 4。DDP 会平均两个 rank 的梯度，因此反向前把各自的损失和乘以 <code>2/4</code>。和<a href="/article/distributed-training/#section-2">训练章</a>用同一组目标：rank 0 处理 [0]，rank 1 处理 [3,3,3]。参数从 1 开始，四个样本的梯度是 1、−2、−2、−2，均值为 −1.25。学习率 0.1 时，新权重是 1.125。')+
+ t(['在哪一层查','实际记录'],[
+  ['节点放置','索引 0 先绑定工作节点，索引 1 为 Unschedulable。增加节点标签后，相同的两个 Pod UID 分别绑定到两个 kind 工作节点。'],
+  ['通信与参数','两份日志的会合地址都解析到 rank 0 的 Pod IP。两个进程分别看到 4 个全局样本、−1.25 的梯度和 1.125 的新权重。'],
+  ['作业结束','两个 Pod 均为 Succeeded，Job 条件为 Complete，并记录两个完成索引。']
+ ])+
+ trainingCode('解压后创建独立 kind 集群并复跑','SHELL','python3 -B observe_job.py --output ./my-validation.json')+
+ p('复跑需要 Docker、kind 和 kubectl。实验发生在同一 Linux 宿主上的两个 kind 节点，使用 CPU/Gloo。训练结束后清理临时集群。GPU 设备、NCCL、物理机间网络和整组恢复需要各自的目标环境证据。')+
+ '<p class="practice-links"><a href="labs/kubernetes-gloo-job.zip" download>下载完整实验 ↓</a> · <a href="labs/kubernetes-gloo-job/job.json">查看 Job 与 Service →</a> · <a href="labs/kubernetes-gloo-job/validation.json">核对 Pod 与训练日志 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42599803867">核对 Linux CI ↗</a></p>';
+ kube.sections[5][1]+=nativeJobReading;
+ gpu.sections[9][1]+=p('本节两份容器输出验证了独立任务的完成。下一步沿<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">同一个 Job 的两节点共同更新</a>，用 Pod UID、会合地址、全局样本数和新权重依次核对放置与训练。');
  for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
 })();

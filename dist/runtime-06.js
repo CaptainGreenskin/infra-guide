@@ -7801,6 +7801,24 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
    p('甲题沿两条时间线记录：调用方第 100 毫秒超时，第 101 毫秒用新键再次发送；接收方首次在第 120 毫秒提交。首次已生效、第二次能否再生效，需要查询两份动作的提交记录，超时本身不能回答。保持原逻辑动作身份，并由接收方把效果与回执原子关联，才能安全恢复这种未知状态。',
     '乙题中，三层各最多 3 次尝试给出最底层 27 次的最坏调用数；500 毫秒给出整个任务的时间预算。次数限制不能阻止一次调用拖得太久，时间限制也不能单独限制短时间内发出的调用数。共十分：观察与提交、逻辑身份、原子回执边界、尝试树与预算、可观察验收，各两分。')+supporting(s[7])
   ]);
+  a.sections[6][1]+=
+   '<h3 id="http-operation-retry">实测响应超时后复用原动作</h3>'+p(
+   '用一次预留 2 本书的请求来验证。动作编号 <code>reserve-1</code> 表示“这一次预留”，尝试编号 <code>attempt-1</code> 表示“第一次发送”。两者分别通过 HTTP 请求头传递，请求头是随请求一起发送的附加字段。接收方读取请求正文里的商品和数量，并按租户与动作编号查回执。')+
+   '<figure><img src="diagrams/http-operation-retry.svg" alt="接收方先提交效果与回执，暂缓原响应。调用方读响应头超时后，沿用动作编号重试，接收方查到原回执，效果仍为一条。"><figcaption>一次动作发了两次请求。第二次尝试可以在原处理函数结束前读到回执。</figcaption></figure>'+
+   p('代码使用 SQLite，一个可把数据库保存在本地文件里的数据库引擎。<code>BEGIN IMMEDIATE</code> 从查回执前就取得写事务，其他写者须等待。没有旧回执时，<code>reserve()</code> 插入效果，拿到它的编号，再把参数和该编号写入回执，最后用 <code>db.commit()</code> 一次提交。重试读到同一动作的回执后，逐项比较解析出的商品和数量，JSON 字段换顺序仍表示相同参数。',
+   '首次事务提交后，实验暂停原请求的处理函数，使它暂时不发响应头。控制程序用另一条数据库连接确认两张表已有记录，调用方随后限时 120 毫秒读取响应头，并实际收到超时。接下来在原处理函数仍暂停时，另开 HTTP 连接重试。下载解压后，用 Python 3.9 或以上版本运行。')+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B http_operation_retry.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/http-operation-retry.zip" download>下载实验包 ↓</a><a href="labs/http-operation-retry/http_operation_retry.py" download>下载 Python 脚本 ↓</a><a href="labs/http-operation-retry/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   table(['这次发送','调用方看见什么','数据库里的效果 / 回执'],[
+    ['reserve-1，2 本','响应头超时','1 条 / 1 条'],
+    ['reserve-1，2 本，换 JSON 字段顺序','200，返回效果编号 1','1 条 / 1 条'],
+    ['reserve-1，改成 3 本','409，参数冲突','1 条 / 1 条'],
+    ['reserve-2，仍是 2 本','201，创建效果编号 2','2 条 / 2 条']
+   ])+p(
+   '把第一次连接的超时和数据库查到的结果分别记下来。前者回答调用方等到了什么，后者回答接收方已经改变了什么。用同一编号重试可以找回原回执；改用新编号时，接收方按新动作提交，预留总量就从 2 本变成了 4 本。',
+   '实验绑定固定租户，把效果与回执放在同一个库里。服务涉及外部付款或发信时，先查真正执行该动作的接收方怎样识别动作与查询回执。若还要在请求高峰压住重试流量，回到第三节核对尝试层级与总预算。')+
+   '<p class="source-at"><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite 的事务与写入规则 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 })();
 
@@ -8008,6 +8026,53 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
  '<p class="practice-links"><a href="labs/kueue-admission.zip" download>下载完整实验 ↓</a> · <a href="labs/kueue-admission/validation.json">查看执行记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42567524901">核对 Linux CI ↗</a></p>';
  gpu.sections[9][1]=kueueReading+gpu.sections[9][1];
  kube.sections[2][1]+=p('可先运行真实 CPU 例子。两个 Indexed Pod 按各自的完成索引读取不同数据，输出 37 和 12。观察 Kueue 获准、Pod 绑定与 Job 完成，再对照本节的共同会合要求。'+kueueLab);
+
+ platform.sections[2][1]+=
+ '<h3 id="native-training-submission-preflight">实跑：重复提交为什么返回原作业</h3>'+
+ p('发出提交后连接断了，客户端不知道平台是否已经接收。它重发同一租户下的提交键，平台先查登记。清单按固定的 JSON 键顺序编码后计算摘要，这份规范化摘要代表提交意图。只改变缩进或字段顺序，原始文件摘要会变，规范化摘要保持一致，平台返回原作业。换了数据摘要还沿用旧键，平台报告意图冲突。',
+ '首次出现的提交键才继续检查实际输入。清单里的摘要回答“要用哪个版本”，文件路径只回答“去哪里读”。本机程序对训练代码、数据和基础权重计算 SHA-256。数据和权重即使保持同样的文件名与大小，内容变化也会被拒绝。子进程从标准输入接收刚刚校验的那份数据与权重，在更新前再次核对摘要。')+
+ trainingFigure('training-submission-preflight','旧提交键检查意图，新提交键核对实际输入。两个拒绝分支都发生在启动 worker 之前。')+
+ trainingCode('按提交键决定下一步','TEXT',`
+查找 (租户, 提交键)
+    已登记，意图摘要相同 → 返回原作业
+    已登记，意图摘要不同 → 报告冲突
+    未登记 → 检查代码、数据与基础权重摘要
+               任一不符 → 拒绝，不登记作业
+               全部通过 → 登记作业，启动 worker
+ `)+
+ t(['本机实跑','返回结果','累计 worker 启动'],[
+ ['首次提交，再原样或换排版重发','完成并返回 run-001，两次重发都重用它','1 次'],
+ ['新键仍钉住旧输入，但实际数据、权重或代码不同','分别拒绝数据、权重或代码摘要不符','1 次'],
+ ['改用新数据的清单，仍带旧键','意图冲突，旧作业保持原样','1 次'],
+ ['新清单与新数据一致，使用新键','完成 run-002，重发也只返回它','2 次']
+ ])+
+ p('子进程确实执行了一次参数更新。模型预测是权重乘以输入，初始权重为 1，步长为 1/8。首个作业的输入与目标是 (1, 3)、(2, 6)。用一半平方误差计算平均梯度，得到 [(1−3)×1＋(2−6)×2]÷2=−5，更新后权重为 13/8。新数据把目标改为 4 和 8，第二个作业的更新后权重为 31/16。分别核对两个权重和两条子进程启动记录，就能确认运行的是预期输入。',
+ '实验用 SQLite 把查询和登记放在同一个本机事务。登记后、启动前若发生崩溃，还需要控制器重新读取已登记的意图，协调同一执行尝试。下一节继续用产物清单验证完成状态。这里的摘要只核对字节，云上的身份、存储和训练资源另有各自的验证。')+
+ trainingCode('解压后用 Python 标准库复跑','SHELL','python3 -B submission_preflight.py > replay.json')+
+ '<p class="practice-links"><a href="labs/training-submission-preflight.zip" download>下载可运行实验 ↓</a> · <a href="labs/training-submission-preflight/submission_preflight.py">查看完整源码 →</a> · <a href="labs/training-submission-preflight/README.md">复跑与检查 →</a> · <a href="labs/training-submission-preflight/validation.json">核对作业与进程记录 →</a> · <a href="https://www.sqlite.org/lang_transaction.html">SQLite 事务接口 ↗</a></p>';
+ const nativeJobReading='<h3 id="native-kubernetes-gloo-job">让同一个 Job 跨两个工作节点更新参数</h3>'+
+ p('前面的调度实验确认 Pod 能放到哪里，本节继续核对容器里的训练进程做了什么。给同一个 Job 两个完成索引，分别交给 rank 0 和 rank 1。索引说明控制器如何编号，rank 说明进程在训练组中的身份。实验让它们一一对应，然后检查这两个身份是否确实会合。')+
+ trainingFigure('kubernetes-gloo-job','同一个 Job 先有一个 Pod 等节点，再让两份日志证明共同更新。')+
+ p('先只给一个工作节点加实验标签。Job 要求两个 Pod 都选择带标签的节点，同时要求同一主机上最多放一个这样的 Pod。这条约束叫硬反亲和。观测到一个 Pod 已有节点名，另一个的 <code>PodScheduled=False</code> 且原因为 <code>Unschedulable</code> 后，再给第二个工作节点加标签。按 Pod 的 UID 前后比对，可以确认是原来等待的 Pod 继续推进。')+
+ p('两个 Pod 启动后还要找到共同的会合地址。这里用无头 Service <code>ranks</code> 提供各 Pod 的 DNS 名字。它没有一个统一的虚拟 IP。Indexed Job 给 Pod 分配形如 <code>training-ddp-0</code> 的主机名，配上 Service 子域，两个进程就能把 <code>training-ddp-0.ranks</code> 解析到 rank 0 的 Pod IP。<code>publishNotReadyAddresses</code> 允许 DNS 在就绪检查通过前公布地址，进程用同一地址和端口建立 CPU 通信组。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Indexed Job 的索引与主机名')+' · '+source('https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods','Pod 与无头 Service 的 DNS'))+
+ trainingCode('从完成索引走到一次同步更新','PYTHON',`rank = int(os.environ["JOB_COMPLETION_INDEX"])
+dist.init_process_group("gloo", init_method=f"tcp://{ip}:{port}",
+                        rank=rank, world_size=2)
+count = torch.tensor(targets.numel(), dtype=torch.float64)
+dist.all_reduce(count, op=dist.ReduceOp.SUM)
+(loss_sum * 2 / count).backward()
+torch.optim.SGD(model.parameters(), lr=.1).step()`)+
+ p('这里的 <code>count</code> 起初是本地样本数，归约后变成全局样本数 4。DDP 会平均两个 rank 的梯度，因此反向前把各自的损失和乘以 <code>2/4</code>。和<a href="/article/distributed-training/#section-2">训练章</a>用同一组目标：rank 0 处理 [0]，rank 1 处理 [3,3,3]。参数从 1 开始，四个样本的梯度是 1、−2、−2、−2，均值为 −1.25。学习率 0.1 时，新权重是 1.125。')+
+ t(['在哪一层查','实际记录'],[
+  ['节点放置','索引 0 先绑定工作节点，索引 1 为 Unschedulable。增加节点标签后，相同的两个 Pod UID 分别绑定到两个 kind 工作节点。'],
+  ['通信与参数','两份日志的会合地址都解析到 rank 0 的 Pod IP。两个进程分别看到 4 个全局样本、−1.25 的梯度和 1.125 的新权重。'],
+  ['作业结束','两个 Pod 均为 Succeeded，Job 条件为 Complete，并记录两个完成索引。']
+ ])+
+ trainingCode('解压后创建独立 kind 集群并复跑','SHELL','python3 -B observe_job.py --output ./my-validation.json')+
+ p('复跑需要 Docker、kind 和 kubectl。实验发生在同一 Linux 宿主上的两个 kind 节点，使用 CPU/Gloo。训练结束后清理临时集群。GPU 设备、NCCL、物理机间网络和整组恢复需要各自的目标环境证据。')+
+ '<p class="practice-links"><a href="labs/kubernetes-gloo-job.zip" download>下载完整实验 ↓</a> · <a href="labs/kubernetes-gloo-job/job.json">查看 Job 与 Service →</a> · <a href="labs/kubernetes-gloo-job/validation.json">核对 Pod 与训练日志 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42599803867">核对 Linux CI ↗</a></p>';
+ kube.sections[5][1]+=nativeJobReading;
+ gpu.sections[9][1]+=p('本节两份容器输出验证了独立任务的完成。下一步沿<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">同一个 Job 的两节点共同更新</a>，用 Pod UID、会合地址、全局样本数和新权重依次核对放置与训练。');
  for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
 })();
 
@@ -8251,7 +8316,8 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
 
    p('用证据回答对应范围的问题：能力说明用于列出接口映射；本地程序报告说明校验器在这些夹具上的行为；演示视频需要补目标版本、输入和反例才便于复查；真实目标环境记录还要有可信来源、初态与独立业务断言。完成适配后，只把实际运行并覆盖的项目标为通过。',
    '练习：某目标版本三次重复任务中两次正确，一次发生未授权效果。应保留三次输入、预算、决策来源、权威状态与业务事实，单独列出越权，判定该条件不通过。两次成功不能抵消一次禁止效果。修复后重跑原失败条件与合法正例，再决定这一版本在该条件下是否可接受。')+
-   sourceLinks(old[8])
+   sourceLinks(old[8])+
+   p('选做<a href="/article/production-readiness/#integrated-service-run">从本机服务查回 37 报告的验收证据</a>。那份实战用 10、27 生成并写入 report-A，能从接收库查回报告和回执。本章的 23 日报是只读练习，校验器检查给定记录。接入 Kairo 时，由测试者从目标环境取得原任务的读取、交付和效果记录，再按只读契约验收。')
   ];
   finish(a,old,bodies,'从只读日报的任务、会话、工具与回执出发，写清 Kairo 待接入接口，再用独立契约校验一份正例和十个反例。');
  }
@@ -13899,7 +13965,7 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
@@ -14442,6 +14508,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
+ 'training-submission-preflight':{folder:'training-submission-preflight',title:'训练提交、输入摘要与启动前校验'},
+ 'kubernetes-gloo-job':{folder:'kubernetes-gloo-job',title:'同一 Indexed Job 的双节点 CPU/Gloo 更新'},
  'process-wait-accounting':{folder:'process-wait-accounting',title:'管道读等待、子进程回收与 CPU 记账'},
  'training-useful-tokens':{folder:'training-useful-tokens',title:'有效 token、填充计算与实际 CPU 训练计时'},
  'int8-batch-quality':{folder:'int8-batch-quality',title:'动态 INT8 合批、分类门槛与前向计时'},
@@ -14719,6 +14788,11 @@ labLearningCatalog.push(
  {id:'ai-rope-offset',track:'ai',stage:1,title:'位置整体平移后，什么量保持不变',chapter:'position-encoding',anchor:'section-9',pack:'textbook-examples',folder:'model-foundations',files:['rope.py'],env:'Python 3.9+ · 标准库',kind:'可运行二维数值对照',observe:'比较平移前后的查询与键点积，再故意用错查询位置，看点积如何变化。',scope:'固定二维向量与旋转角度。'},
  {id:'ai-roofline-model',track:'ai',stage:1,title:'融合算子和矩阵分块分别省下哪些字节',chapter:'roofline-model',anchor:'section-8',pack:'textbook-examples',folder:'cloud-foundations',files:['roofline-model.py'],env:'Python 3.9+ · 标准库',kind:'可运行字节预算模型',observe:'计算融合前后的元素读写量，再用矩阵乘的运算量和输入输出字节推导算术强度。',scope:'理想化数据搬运账与模型上限，设备实测另见算子分析章。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-http-operation-retry',track:'cloud',stage:0,title:'响应超时后，复用原动作编号会发生什么',chapter:'distributed-systems',anchor:'http-operation-retry',pack:'http-operation-retry',files:['http_operation_retry.py'],env:'Python 3.9+ · 标准库',kind:'真实 HTTP 超时与 SQLite 回执',observe:'首次请求提交后暂缓响应。比较原动作重试、同一编号改参数和新编号，按回执与效果记录独立核对。',scope:'本机 HTTP、并发请求和 SQLite 事务。'},
+ {id:'ai-training-submission-preflight',track:'ai',stage:2,title:'训练启动前，怎样发现版本和文件内容不一致',chapter:'training-platform',anchor:'native-training-submission-preflight',pack:'training-submission-preflight',files:['submission_preflight.py'],env:'Python 3.9+ · 标准库',kind:'真实文件、SQLite 登记与子进程',observe:'用九个提交检查同键复用、意图冲突、摘要不符和正常新作业。数子进程的实际启动，核对两次精确参数更新。',scope:'本机可信输入、SQLite 与子进程，作业登记与启动之间有独立的恢复窗口。'},
+ {id:'ai-kubernetes-gloo-job',track:'ai',stage:2,title:'一个训练 Job 等到第二个节点后，怎样证明共同更新',chapter:'kubernetes-training',anchor:'native-kubernetes-gloo-job',pack:'kubernetes-gloo-job',files:['Dockerfile','job.json','observe_job.py','rank_step.py'],env:'Linux x86_64 · kind 0.33.0 · Kubernetes 1.35.8 · PyTorch 2.5.1 CPU/Gloo',kind:'真实 Indexed Job、Pod DNS 与两节点 DDP',observe:'确认同一批 Pod 从一个不可调度走到两个工作节点，随后核对共同会合、四个样本和两份权重 1.125。',scope:'同一 Linux 宿主的两个 kind 工作节点，固定输入和一次 CPU 更新。物理多机、GPU 和 NCCL 待验。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -14958,5 +15032,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="6855110988f49700b066968c2b985fe2e68c8589fce778aaf5b30f2703bd04c1";
+const staticReadingVersion="50217a183f87c13762dfd5f49d0d25203af005da5bd2fdc5ef51f535d79b3bd4";
 

@@ -1,0 +1,186 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "http_operation_retry.py": "03146b087a8d3c2a7bfc6b200ba76cdd004c5770eb9299d25bb4563abe7762bd"
+  },
+  "environment": {
+    "os": "Darwin",
+    "python": "3.9.6",
+    "sqlite": "3.51.0"
+  },
+  "header_read_timeout_ms": 120,
+  "requests": [
+    {
+      "operation": "reserve-1",
+      "attempt": "attempt-1",
+      "field_order": [
+        "sku",
+        "quantity"
+      ],
+      "quantity": 2
+    },
+    {
+      "operation": "reserve-1",
+      "attempt": "attempt-2",
+      "field_order": [
+        "quantity",
+        "sku"
+      ],
+      "quantity": 2
+    },
+    {
+      "operation": "reserve-1",
+      "attempt": "attempt-3",
+      "field_order": [
+        "sku",
+        "quantity"
+      ],
+      "quantity": 3
+    },
+    {
+      "operation": "reserve-2",
+      "attempt": "attempt-4",
+      "field_order": [
+        "sku",
+        "quantity"
+      ],
+      "quantity": 2
+    }
+  ],
+  "first_observation": "response_header_timeout",
+  "first_handler_still_open_after_retry": true,
+  "initial": {
+    "effects": [],
+    "receipts": []
+  },
+  "before_header_read": {
+    "effects": [
+      [
+        1,
+        "demo",
+        "book",
+        2
+      ]
+    ],
+    "receipts": [
+      [
+        "demo",
+        "reserve-1",
+        "book",
+        2,
+        1
+      ]
+    ]
+  },
+  "after_timeout": {
+    "effects": [
+      [
+        1,
+        "demo",
+        "book",
+        2
+      ]
+    ],
+    "receipts": [
+      [
+        "demo",
+        "reserve-1",
+        "book",
+        2,
+        1
+      ]
+    ]
+  },
+  "same_operation": {
+    "status": 200,
+    "body": {
+      "operation": "reserve-1",
+      "effect_id": 1,
+      "quantity": 2
+    }
+  },
+  "after_retry": {
+    "effects": [
+      [
+        1,
+        "demo",
+        "book",
+        2
+      ]
+    ],
+    "receipts": [
+      [
+        "demo",
+        "reserve-1",
+        "book",
+        2,
+        1
+      ]
+    ]
+  },
+  "changed_payload": {
+    "status": 409,
+    "body": {
+      "error": "operation_payload_conflict"
+    }
+  },
+  "after_conflict": {
+    "effects": [
+      [
+        1,
+        "demo",
+        "book",
+        2
+      ]
+    ],
+    "receipts": [
+      [
+        "demo",
+        "reserve-1",
+        "book",
+        2,
+        1
+      ]
+    ]
+  },
+  "new_operation": {
+    "status": 201,
+    "body": {
+      "operation": "reserve-2",
+      "effect_id": 2,
+      "quantity": 2
+    }
+  },
+  "final": {
+    "effects": [
+      [
+        1,
+        "demo",
+        "book",
+        2
+      ],
+      [
+        2,
+        "demo",
+        "book",
+        2
+      ]
+    ],
+    "receipts": [
+      [
+        "demo",
+        "reserve-1",
+        "book",
+        2,
+        1
+      ],
+      [
+        "demo",
+        "reserve-2",
+        "book",
+        2,
+        2
+      ]
+    ]
+  }
+}

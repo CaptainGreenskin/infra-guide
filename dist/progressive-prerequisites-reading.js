@@ -164,5 +164,23 @@
    p('甲题沿两条时间线记录：调用方第 100 毫秒超时，第 101 毫秒用新键再次发送；接收方首次在第 120 毫秒提交。首次已生效、第二次能否再生效，需要查询两份动作的提交记录，超时本身不能回答。保持原逻辑动作身份，并由接收方把效果与回执原子关联，才能安全恢复这种未知状态。',
     '乙题中，三层各最多 3 次尝试给出最底层 27 次的最坏调用数；500 毫秒给出整个任务的时间预算。次数限制不能阻止一次调用拖得太久，时间限制也不能单独限制短时间内发出的调用数。共十分：观察与提交、逻辑身份、原子回执边界、尝试树与预算、可观察验收，各两分。')+supporting(s[7])
   ]);
+  a.sections[6][1]+=
+   '<h3 id="http-operation-retry">实测响应超时后复用原动作</h3>'+p(
+   '用一次预留 2 本书的请求来验证。动作编号 <code>reserve-1</code> 表示“这一次预留”，尝试编号 <code>attempt-1</code> 表示“第一次发送”。两者分别通过 HTTP 请求头传递，请求头是随请求一起发送的附加字段。接收方读取请求正文里的商品和数量，并按租户与动作编号查回执。')+
+   '<figure><img src="diagrams/http-operation-retry.svg" alt="接收方先提交效果与回执，暂缓原响应。调用方读响应头超时后，沿用动作编号重试，接收方查到原回执，效果仍为一条。"><figcaption>一次动作发了两次请求。第二次尝试可以在原处理函数结束前读到回执。</figcaption></figure>'+
+   p('代码使用 SQLite，一个可把数据库保存在本地文件里的数据库引擎。<code>BEGIN IMMEDIATE</code> 从查回执前就取得写事务，其他写者须等待。没有旧回执时，<code>reserve()</code> 插入效果，拿到它的编号，再把参数和该编号写入回执，最后用 <code>db.commit()</code> 一次提交。重试读到同一动作的回执后，逐项比较解析出的商品和数量，JSON 字段换顺序仍表示相同参数。',
+   '首次事务提交后，实验暂停原请求的处理函数，使它暂时不发响应头。控制程序用另一条数据库连接确认两张表已有记录，调用方随后限时 120 毫秒读取响应头，并实际收到超时。接下来在原处理函数仍暂停时，另开 HTTP 连接重试。下载解压后，用 Python 3.9 或以上版本运行。')+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B http_operation_retry.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/http-operation-retry.zip" download>下载实验包 ↓</a><a href="labs/http-operation-retry/http_operation_retry.py" download>下载 Python 脚本 ↓</a><a href="labs/http-operation-retry/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   table(['这次发送','调用方看见什么','数据库里的效果 / 回执'],[
+    ['reserve-1，2 本','响应头超时','1 条 / 1 条'],
+    ['reserve-1，2 本，换 JSON 字段顺序','200，返回效果编号 1','1 条 / 1 条'],
+    ['reserve-1，改成 3 本','409，参数冲突','1 条 / 1 条'],
+    ['reserve-2，仍是 2 本','201，创建效果编号 2','2 条 / 2 条']
+   ])+p(
+   '把第一次连接的超时和数据库查到的结果分别记下来。前者回答调用方等到了什么，后者回答接收方已经改变了什么。用同一编号重试可以找回原回执；改用新编号时，接收方按新动作提交，预留总量就从 2 本变成了 4 本。',
+   '实验绑定固定租户，把效果与回执放在同一个库里。服务涉及外部付款或发信时，先查真正执行该动作的接收方怎样识别动作与查询回执。若还要在请求高峰压住重试流量，回到第三节核对尝试层级与总预算。')+
+   '<p class="source-at"><a href="https://www.sqlite.org/lang_transaction.html" target="_blank" rel="noopener noreferrer">SQLite 的事务与写入规则 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 })();

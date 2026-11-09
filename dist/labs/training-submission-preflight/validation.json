@@ -1,0 +1,153 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "submission_preflight.py": "e7404e2943e6c14e923111bbbf41c8fc97f7594ff771c66bb870f62adc525820"
+  },
+  "environment": {
+    "python": "3.9.6",
+    "system": "Darwin",
+    "machine": "arm64",
+    "sqlite": "3.51.0"
+  },
+  "cases": {
+    "initial": {
+      "manifest_raw_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "outcome": "launched",
+      "run_id": "run-001",
+      "attempt_id": "run-001/attempt-1",
+      "worker": {
+        "observed": {
+          "data_sha256": "0c1ee11783a52b0170b727072a9cd1cc68a67c6b35cd13aff10de0672215f72a",
+          "base_sha256": "21a3ba691474929a13b4cc470ed9c2daaa7f786c952a12b57ebe7722865d1501"
+        },
+        "samples": 2,
+        "initial_weight": "1",
+        "gradient": "-5",
+        "updated_weight": "13/8"
+      },
+      "worker_starts_total": 1
+    },
+    "identical_retry": {
+      "manifest_raw_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "outcome": "reused",
+      "run_id": "run-001",
+      "state": "completed",
+      "worker_starts_total": 1
+    },
+    "formatted_retry": {
+      "manifest_raw_sha256": "14cf90a74123751e85f3975fcc92b6fc5cf7742e68374bc7714a28cc167d8265",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "outcome": "reused",
+      "run_id": "run-001",
+      "state": "completed",
+      "worker_starts_total": 1
+    },
+    "stale_data": {
+      "manifest_raw_sha256": "14cf90a74123751e85f3975fcc92b6fc5cf7742e68374bc7714a28cc167d8265",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "outcome": "input_digest_mismatch",
+      "file": "dataset.json",
+      "actual_sha256": "8c443e28338b6218515d69c61a747fb197106ebda818e126eb35236aeb4bb342",
+      "expected_sha256": "0c1ee11783a52b0170b727072a9cd1cc68a67c6b35cd13aff10de0672215f72a",
+      "size": 14,
+      "worker_starts_total": 1
+    },
+    "stale_base": {
+      "manifest_raw_sha256": "14cf90a74123751e85f3975fcc92b6fc5cf7742e68374bc7714a28cc167d8265",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "outcome": "input_digest_mismatch",
+      "file": "base.json",
+      "actual_sha256": "387eca6bb4971eac83ea0e5084012874a7b6708dbb814a44d31a3b7995afedbb",
+      "expected_sha256": "21a3ba691474929a13b4cc470ed9c2daaa7f786c952a12b57ebe7722865d1501",
+      "size": 13,
+      "worker_starts_total": 1
+    },
+    "stale_code": {
+      "manifest_raw_sha256": "5f28af1f5337b5b1970bc41bd92dc6bdf69a93f3d2fbdaf89cfff7babdfdd87f",
+      "contract_sha256": "5f28af1f5337b5b1970bc41bd92dc6bdf69a93f3d2fbdaf89cfff7babdfdd87f",
+      "outcome": "code_digest_mismatch",
+      "actual_sha256": "e7404e2943e6c14e923111bbbf41c8fc97f7594ff771c66bb870f62adc525820",
+      "expected_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "worker_starts_total": 1
+    },
+    "changed_manifest_old_key": {
+      "manifest_raw_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "contract_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "outcome": "intent_conflict",
+      "run_id": "run-001",
+      "worker_starts_total": 1
+    },
+    "changed_manifest_new_key": {
+      "manifest_raw_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "contract_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "outcome": "launched",
+      "run_id": "run-002",
+      "attempt_id": "run-002/attempt-1",
+      "worker": {
+        "observed": {
+          "data_sha256": "8c443e28338b6218515d69c61a747fb197106ebda818e126eb35236aeb4bb342",
+          "base_sha256": "21a3ba691474929a13b4cc470ed9c2daaa7f786c952a12b57ebe7722865d1501"
+        },
+        "samples": 2,
+        "initial_weight": "1",
+        "gradient": "-15/2",
+        "updated_weight": "31/16"
+      },
+      "worker_starts_total": 2
+    },
+    "new_run_retry": {
+      "manifest_raw_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "contract_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "outcome": "reused",
+      "run_id": "run-002",
+      "state": "completed",
+      "worker_starts_total": 2
+    }
+  },
+  "ledger": [
+    {
+      "run_id": "run-001",
+      "tenant": "team-a",
+      "key": "train-daily",
+      "contract_sha256": "a78e40662a87b79d02071057dd5f69be30ba9e6f53feaa47ea5156bb613fe452",
+      "state": "completed",
+      "worker": {
+        "observed": {
+          "data_sha256": "0c1ee11783a52b0170b727072a9cd1cc68a67c6b35cd13aff10de0672215f72a",
+          "base_sha256": "21a3ba691474929a13b4cc470ed9c2daaa7f786c952a12b57ebe7722865d1501"
+        },
+        "samples": 2,
+        "initial_weight": "1",
+        "gradient": "-5",
+        "updated_weight": "13/8"
+      }
+    },
+    {
+      "run_id": "run-002",
+      "tenant": "team-a",
+      "key": "next-key",
+      "contract_sha256": "efea1de8f143f59e17738ea0767d2c2d69baf2d2c9b0a3bfd73f152749ade142",
+      "state": "completed",
+      "worker": {
+        "observed": {
+          "data_sha256": "8c443e28338b6218515d69c61a747fb197106ebda818e126eb35236aeb4bb342",
+          "base_sha256": "21a3ba691474929a13b4cc470ed9c2daaa7f786c952a12b57ebe7722865d1501"
+        },
+        "samples": 2,
+        "initial_weight": "1",
+        "gradient": "-15/2",
+        "updated_weight": "31/16"
+      }
+    }
+  ],
+  "worker_starts": [
+    {
+      "attempt_id": "run-001/attempt-1"
+    },
+    {
+      "attempt_id": "run-002/attempt-1"
+    }
+  ]
+}
