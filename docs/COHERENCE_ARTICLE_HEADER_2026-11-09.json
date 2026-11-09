@@ -1,0 +1,57 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "6218ae77b82dd43f75b7fd49bc9cab972d5fd63a",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ROLE_POSITION_NATIVE_2026-11-09.json": "b6d0e69670c826a844f2de62d996d85e07de9325960b86faeaace5f08476628a"
+  },
+  "source_revisions": {
+    "dist/app.js": {
+      "previous_sha256": "9931bec1a16f5c59a9e7cbb61b99acc5992fa7859c05b3f219d996653a836f06",
+      "reviewed_sha256": "b316b864297551e64b6fdaf579c3484ff3ef409b3a590d05fabbf0bfa3fa05ee",
+      "scope": "Remove the visible revision date from the shared article header while retaining revision chronology and machine-readable dates."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "86088c60e5cfe38eecd3f3633314a803e8e85031f96ca27e8bd99e20c287dfbb",
+      "reviewed_sha256": "b6afd7b7312ecedba9813df79d4823cd717cb49db1d5b9e50125ad7b81099f4b",
+      "scope": "Remove the visible revision date from the shared article header while retaining revision chronology and machine-readable dates."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "e9ffd20421045ee89216169da21c5f0238e7ede037b91c171a00e466af27f2f7",
+      "reviewed_sha256": "ba801bf4fce10730f3f8c0552ce8ef7b6219d25e97bce8a1b40cd05a6fba95f8",
+      "scope": "Bind the static reader to the revised public header and navigation."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2004f7fab455f3de4c5debed1c8ec967547c8fe6eff40ebc82d8ce12e6a1f182",
+      "reviewed_sha256": "1311973f13770e944dea40ce5f192b907569eb737ef0db936c25ab8feb95cb90",
+      "scope": "Bind the static reader to the revised public header and navigation."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "1c564710e1736fd4031fa840f8d669af95b21b82a295e63228b73b1f06f2e2c7",
+      "reviewed_sha256": "365ba084397a322e2bfc0c441458cdee995900cf30aca030322923d4b72530fd",
+      "scope": "Place interview review after the primary study tracks and resources on every public page."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "5e444f62f5956933c7ad046bba27145fc16e2ad8abc08636736c6fea0d3bb32a",
+      "reviewed_sha256": "12587ea6b77e41329db2f29f0d396111a0128c26ee916dddd4656ea264bfe7dd",
+      "scope": "Place interview review after the primary study tracks and resources on every public page."
+    }
+  },
+  "article_sections": {},
+  "review_scope": {
+    "body_baseline_commit": "6218ae77b82dd43f75b7fd49bc9cab972d5fd63a",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "role_chapter_positions": 114,
+    "experiment_packs": 82,
+    "learning_tasks": 124,
+    "article_header_pages": 82,
+    "primary_nav_pages": 119
+  }
+}

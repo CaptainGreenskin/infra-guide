@@ -35,18 +35,33 @@ const dated=[...JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.json')
 for(const row of dated){
  const a=data.articles.find(a=>a.id===row.id),date=row.reviewed_at.slice(0,10).replaceAll('-','.');
  assert((a.updated||'2026.11.03')>=date,row.id+': publication date predates its recorded body change');
- const html=fs.readFileSync('dist/article/'+row.id+'/index.html','utf8'),sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
- assert(html.includes(a.updated),row.id+': visible revision date missing');
- assert(sitemap.includes('/article/'+row.id+'/</loc><lastmod>'+a.updated.replaceAll('.','-')+'</lastmod>'),row.id+': sitemap date differs from reader-visible revision');
+}
+function checkArticleHeader(html,a){
+ const meta=html.match(/<div class="article-meta">([\s\S]*?)<\/div>/)?.[1];
+ assert(meta?.includes('<span>'+(a.edition||'训练专题')+'</span>'),a.id+': edition still appears in the header');
+ assert(!/\d{4}[.\/-]\d{1,2}[.\/-]\d{1,2}/.test(meta),a.id+': article header must not show a revision date');
+}
+const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
+for(const a of data.articles){
+ const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),date=(a.updated||'2026.11.03').replaceAll('.','-');
+ checkArticleHeader(html,a);
+ const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+ assert.equal(schema.dateModified,date,a.id+': structured data retains the editorial date');
+ assert(sitemap.includes('/article/'+a.id+'/</loc><lastmod>'+date+'</lastmod>'),a.id+': sitemap retains the editorial date');
 }
 assert(data.articles.find(a=>a.id==='distributed-training').minutes>=32,'expanded sharding chapter must retain the reviewed reading estimate');
 for(const[track,t]of Object.entries(data.tracks)){
  const html=fs.readFileSync('dist/track/'+track+'/index.html','utf8');
  const a=data.articles.find(a=>a.id===t.start);
+ checkArticleHeader(html,a);
  assert(html.includes('<h1>'+a.number+' '+a.title+'</h1>'),track+': enter the actual first lesson');
  assert(!html.includes('class="knowledge-body"'),track+': no full field textbook before the first lesson');
  for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
 }
+const practiceHTML=fs.readFileSync('dist/module/practice/index.html','utf8');
+const defaultPractice=data.articles.find(a=>practiceHTML.includes('data-static-article="'+a.id+'"'));
+assert(defaultPractice?.module==='practice');
+checkArticleHeader(practiceHTML,defaultPractice);
 for(const[moduleId,g]of Object.entries(data.maps)){
  const html=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8');
  assert(html.includes('<section class="field-concept-map"'),'map is visible rather than a closed details');

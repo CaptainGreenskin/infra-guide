@@ -4,8 +4,16 @@ const dist=path.resolve(__dirname,'../dist');
 const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
 assert.equal(urls.length,inventory.canonical);assert.equal(new Set(urls.map(u=>u.href)).size,inventory.canonical);
+const primaryOrder=['/outline/','/track/cloud/','/track/ai/','/track/agent/','/labs/','/resources/','/interview/'];
+function checkPrimaryOrder(html,route){
+ const nav=html.match(/<nav class="top-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+ assert(nav,route+': primary navigation exists');
+ assert.deepEqual([...nav.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([,href])=>href),primaryOrder,route+': study paths before interview review');
+}
+
 for(const url of urls){
  const file=path.join(dist,url.pathname,'index.html'),html=fs.readFileSync(file,'utf8');
+ checkPrimaryOrder(html,url.pathname);
  assert(html.includes('<link rel="canonical" href="'+url.href+'">'),url.pathname+': canonical');
  assert(/<h1[ >]/.test(html),url.pathname+': initial heading');
  assert(html.includes('property="og:title"')&&html.includes('property="og:description"'),url.pathname+': sharing metadata');
@@ -18,6 +26,7 @@ for(const url of urls){
    assert(fs.existsSync(path.join(dist,target)),url.pathname+': missing '+target);
  }
 }
+checkPrimaryOrder(fs.readFileSync(path.join(dist,'start/index.html'),'utf8'),'/start/');
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
 const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
@@ -38,7 +47,7 @@ assert(vm.runInContext('attentionExample(0,false,true).output[0]!==attentionExam
 const record=JSON.parse(fs.readFileSync(path.join(dist,'labs/attention/validation.json'),'utf8'));
 assert.equal(record.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/attention/attention_lab.py'))).digest('hex'));
 assert.equal(record.report.status,'passed');
-console.log('PASS: '+inventory.canonical+' canonical full-text routes plus a retained start alias, social metadata, crawlable links, sitemap and attention calculations/evidence.');
+console.log('PASS: '+inventory.canonical+' canonical full-text routes plus a retained start alias, ordered primary navigation, social metadata, crawlable links, sitemap and attention calculations/evidence.');
 
 const ddpRecord=JSON.parse(fs.readFileSync(path.join(dist,'labs/ddp-step/validation.json'),'utf8'));
 assert.equal(ddpRecord.report.status,'passed');
