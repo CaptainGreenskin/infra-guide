@@ -39,8 +39,9 @@ for(const id of first){
 }
 const model=data.articles.find(a=>a.id==='transformer-model');
 for(const term of ['Embedding','Attention','FFN','归一化','残差连接','输出投影'])assert(model.sections[0][1].includes(term),'model components precede matrix arithmetic: '+term);
-assert(model.sections[0][1].includes('训练章节还会把部分目标标为忽略'));
-assert(model.sections[0][1].includes('input=s[:-1]、target=s[1:]'));
+assert(model.sections[0][1].includes('每条取前四项作输入、后四项作目标'),'the first reading defines the label shift');
+assert(model.sections[6][1].includes('将有效目标对应的行纳入损失'),'the training explanation specifies which targets count');
+assert(model.sections[6][1].includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));
 const agent=data.articles.find(a=>a.id==='agent-runtime');
 assert(agent.sections[0][1].includes('读取这版数据→计算 10+27→提交报告→由验收器读取报告'));

@@ -1,0 +1,33 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "d3adb2c303518d9e55d27b4a62a66984a0ad71d0",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_AI_READING_BENCHMARK_2026-11-09.json": "e7517a3702476494ca4930beaa6275108430c173462553dfd8d24dd72010c405"
+  },
+  "source_revisions": {
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "b4f05a35a7c0e2b12501eeb020dca1608e89ca40a12471d51da2b58596ea88c6",
+      "reviewed_sha256": "ea98a667e8da97f9ea341d7940c585386f22f032208fcd7788240d2852172dc0",
+      "scope": "Require the original URL inventory plus the two explicit primary references for the new pipeline schedule."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "19ccad8191d6cb7c337be9b024543b506fbfa92e44c1d6755318640c95b26e92",
+      "reviewed_sha256": "956155bc11edd0b128e510986542c3c5d98e5c2ee8ffa27c6e45df65629da801",
+      "scope": "Require input/label alignment in the first section and effective-target semantics with actual per-sequence counts in the training section."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3ba0bf918475a4a6d77e5b39a65a3f7235174214",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "attention-mechanics",
+      "tensor-parallel-math"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7
+  }
+}
