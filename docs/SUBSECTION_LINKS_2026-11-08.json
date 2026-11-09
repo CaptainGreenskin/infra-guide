@@ -317,7 +317,9 @@
     },
     {
       "id": "observability",
-      "targets": []
+      "targets": [
+        "collector-sampling-check"
+      ]
     },
     {
       "id": "incident",
@@ -450,7 +452,8 @@
         "context-parallel-merge",
         "context-parallel-cost",
         "context-parallel-lab",
-        "ring-context-training"
+        "ring-context-training",
+        "ragged-ring-training"
       ]
     },
     {
@@ -525,9 +528,12 @@
         "subsection-5-1l82yca",
         "subsection-6-pn22ky",
         "subsection-7-1apl07f",
-        "subsection-8-g1wiy8"
+        "subsection-8-g1wiy8",
+        "ragged-ring-communication"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "ragged-ring-communication"
+      ]
     },
     {
       "id": "data-pipeline",
@@ -598,13 +604,15 @@
         "sdpa-cache-path",
         "subsection-5-qvstci",
         "native-inference-request-path",
-        "native-inference-engine-lab"
+        "native-inference-engine-lab",
+        "native-inference-prefix"
       ],
       "visible_targets": [
         "native-inference-request-path",
         "sdpa-cache-path",
         "subsection-5-qvstci",
-        "native-inference-engine-lab"
+        "native-inference-engine-lab",
+        "native-inference-prefix"
       ]
     },
     {
@@ -836,9 +844,12 @@
         "subsection-4-1yz19uz",
         "subsection-6-1q7kv9j",
         "subsection-7-uqlgd8",
-        "subsection-8-323gx5"
+        "subsection-8-323gx5",
+        "native-tail-sampling-ledger"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-tail-sampling-ledger"
+      ]
     },
     {
       "id": "kairo-practice",

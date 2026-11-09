@@ -1,0 +1,41 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 127.0.0.1:58825
+
+processors:
+  tail_sampling:
+    decision_wait: 3s
+    num_traces: 64
+    policies:
+      - name: error-span
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+
+exporters:
+  file/full:
+    path: full-traces.jsonl
+    flush_interval: 100ms
+  file/sampled:
+    path: sampled-traces.jsonl
+    flush_interval: 100ms
+
+service:
+  telemetry:
+    metrics:
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 127.0.0.1
+                port: 58826
+  pipelines:
+    traces/full:
+      receivers: [otlp]
+      exporters: [file/full]
+    traces/sampled:
+      receivers: [otlp]
+      processors: [tail_sampling]
+      exporters: [file/sampled]

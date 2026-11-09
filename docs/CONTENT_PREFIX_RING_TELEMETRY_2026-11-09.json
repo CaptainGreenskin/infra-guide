@@ -1,0 +1,34 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "133c8faaa7a478a9b698dd7f71841ef5d9e96690",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_RUNTIME_CONTRASTS_2026-11-09.json": "7f45b01419cd40dacf07dfae590ce7ed60abcaee8b9837ec2ff5e09ec5e98a17"
+  },
+  "revised_teaching_units": [
+    {
+      "chapter": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow same-slot prefix reuse through request completion, explicit erase, and an identical cold request.",
+      "observation": "Compare raw responses and slot states. Cached and evaluated prompt counts differ while token output is preserved.",
+      "reviewed_content_sha256": "5fff12e7afff9d29bf998744e8f3dbc4f76a10c16aece3ae0749fe3456f392a0",
+      "record": "dist/labs/native-inference-prefix/validation.json"
+    },
+    {
+      "chapter": "flash-attention-io",
+      "reviewed_at": "2026-11-09",
+      "scope": "Extend the real forward and backward ring to unequal logical shards in equal wire packets.",
+      "observation": "Two and three native CPU/Gloo runs match dense output, input gradients and update. Admitting a padding row breaks equivalence.",
+      "reviewed_content_sha256": "9ea6be0bc53613217b6d9ad83d7ec0067595b3b0601dd08bd589d44eb82e5d71",
+      "record": "dist/labs/ragged-ring/validation.json"
+    },
+    {
+      "chapter": "agent-observability",
+      "reviewed_at": "2026-11-09",
+      "scope": "Contrast trace-level error selection with task completion, retry attempts and receiver effects.",
+      "observation": "The fixed native Collector split exports three versus two traces. An independent SQLite read verifies two completions, four attempts and two effects.",
+      "reviewed_content_sha256": "1ccc9e8227d6f900fadd268f7ad5db57fb00276d43c610bab0ab85c5baf33f14",
+      "record": "dist/labs/otel-tail-ledger/validation.json"
+    }
+  ]
+}

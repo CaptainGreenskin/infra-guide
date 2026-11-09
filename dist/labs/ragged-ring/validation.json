@@ -1,0 +1,491 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "python": "3.12.13",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "source_sha256": {
+    "ring_ragged.py": "d278940156b8d8fea12c9f3b4addf00224bcd54b99e94b9025b2cfe12e273657",
+    "record.py": "e269e15af24d3c623aeb48aea25729d2833df51e07f99f7b7e55852e66a63f7f"
+  },
+  "scope": "single-host CPU/Gloo, real point-to-point exchange, dense autograd oracle on each process",
+  "cases": [
+    {
+      "name": "two-ranks",
+      "launcher_exit_code": 0,
+      "result": {
+        "status": "passed",
+        "source_sha256": "d278940156b8d8fea12c9f3b4addf00224bcd54b99e94b9025b2cfe12e273657",
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "device": "cpu",
+        "dtype": "float64",
+        "world_size": 2,
+        "positions": 1025,
+        "width": 16,
+        "learning_rate": 0.1,
+        "tolerance": 1e-10,
+        "mask_padding": true,
+        "header_fields": [
+          "owner",
+          "start",
+          "count"
+        ],
+        "reasons": [],
+        "ranks": [
+          {
+            "rank": 0,
+            "positions": [
+              0,
+              512
+            ],
+            "wire_rows": 513,
+            "padding_rows": 1,
+            "forward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                1,
+                512,
+                513
+              ]
+            ],
+            "backward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                1,
+                512,
+                513
+              ]
+            ],
+            "returned_header": [
+              0,
+              0,
+              512
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 3.3306690738754696e-16,
+              "loss": 5.551115123125783e-17,
+              "projection_gradients": 5.692061405548898e-19,
+              "weight_gradients": 1.6479873021779667e-17,
+              "updated_weights": 6.938893903907228e-18
+            },
+            "drop_remote_dkv_max_abs_error": 0.0005682612198076326
+          },
+          {
+            "rank": 1,
+            "positions": [
+              512,
+              1025
+            ],
+            "wire_rows": 513,
+            "padding_rows": 0,
+            "forward_headers": [
+              [
+                1,
+                512,
+                513
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "backward_headers": [
+              [
+                1,
+                512,
+                513
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "returned_header": [
+              1,
+              512,
+              513
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 1.4137996329210978e-16,
+              "loss": 5.551115123125783e-17,
+              "projection_gradients": 8.046812998915853e-21,
+              "weight_gradients": 1.6479873021779667e-17,
+              "updated_weights": 6.938893903907228e-18
+            },
+            "drop_remote_dkv_max_abs_error": 0.0005682612198076326
+          }
+        ]
+      }
+    },
+    {
+      "name": "three-ranks",
+      "launcher_exit_code": 0,
+      "result": {
+        "status": "passed",
+        "source_sha256": "d278940156b8d8fea12c9f3b4addf00224bcd54b99e94b9025b2cfe12e273657",
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "device": "cpu",
+        "dtype": "float64",
+        "world_size": 3,
+        "positions": 1537,
+        "width": 16,
+        "learning_rate": 0.1,
+        "tolerance": 1e-10,
+        "mask_padding": true,
+        "header_fields": [
+          "owner",
+          "start",
+          "count"
+        ],
+        "reasons": [],
+        "ranks": [
+          {
+            "rank": 0,
+            "positions": [
+              0,
+              512
+            ],
+            "wire_rows": 513,
+            "padding_rows": 1,
+            "forward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                2,
+                1024,
+                513
+              ],
+              [
+                1,
+                512,
+                512
+              ]
+            ],
+            "backward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                2,
+                1024,
+                513
+              ],
+              [
+                1,
+                512,
+                512
+              ]
+            ],
+            "returned_header": [
+              0,
+              0,
+              512
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 3.3306690738754696e-16,
+              "loss": 0.0,
+              "projection_gradients": 4.87890977618477e-19,
+              "weight_gradients": 1.0842021724855044e-17,
+              "updated_weights": 1.3877787807814457e-17
+            },
+            "drop_remote_dkv_max_abs_error": 0.0004077834341211441
+          },
+          {
+            "rank": 1,
+            "positions": [
+              512,
+              1024
+            ],
+            "wire_rows": 513,
+            "padding_rows": 1,
+            "forward_headers": [
+              [
+                1,
+                512,
+                512
+              ],
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                2,
+                1024,
+                513
+              ]
+            ],
+            "backward_headers": [
+              [
+                1,
+                512,
+                512
+              ],
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                2,
+                1024,
+                513
+              ]
+            ],
+            "returned_header": [
+              1,
+              512,
+              512
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 1.4137996329210978e-16,
+              "loss": 0.0,
+              "projection_gradients": 2.0328790734103208e-20,
+              "weight_gradients": 1.0842021724855044e-17,
+              "updated_weights": 1.3877787807814457e-17
+            },
+            "drop_remote_dkv_max_abs_error": 0.0004077834341211441
+          },
+          {
+            "rank": 2,
+            "positions": [
+              1024,
+              1537
+            ],
+            "wire_rows": 513,
+            "padding_rows": 0,
+            "forward_headers": [
+              [
+                2,
+                1024,
+                513
+              ],
+              [
+                1,
+                512,
+                512
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "backward_headers": [
+              [
+                2,
+                1024,
+                513
+              ],
+              [
+                1,
+                512,
+                512
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "returned_header": [
+              2,
+              1024,
+              513
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 1.1275702593849246e-16,
+              "loss": 0.0,
+              "projection_gradients": 5.293955920339377e-21,
+              "weight_gradients": 1.0842021724855044e-17,
+              "updated_weights": 1.3877787807814457e-17
+            },
+            "drop_remote_dkv_max_abs_error": 0.0004077834341211441
+          }
+        ]
+      }
+    },
+    {
+      "name": "unmasked-padding",
+      "launcher_exit_code": 1,
+      "result": {
+        "status": "rejected",
+        "source_sha256": "d278940156b8d8fea12c9f3b4addf00224bcd54b99e94b9025b2cfe12e273657",
+        "torch": "2.5.1",
+        "backend": "gloo",
+        "device": "cpu",
+        "dtype": "float64",
+        "world_size": 2,
+        "positions": 1025,
+        "width": 16,
+        "learning_rate": 0.1,
+        "tolerance": 1e-10,
+        "mask_padding": false,
+        "header_fields": [
+          "owner",
+          "start",
+          "count"
+        ],
+        "reasons": [
+          {
+            "rank": 0,
+            "metric": "loss"
+          },
+          {
+            "rank": 0,
+            "metric": "projection_gradients"
+          },
+          {
+            "rank": 0,
+            "metric": "weight_gradients"
+          },
+          {
+            "rank": 0,
+            "metric": "updated_weights"
+          },
+          {
+            "rank": 0,
+            "metric": "padding_gradient"
+          },
+          {
+            "rank": 1,
+            "metric": "output"
+          },
+          {
+            "rank": 1,
+            "metric": "loss"
+          },
+          {
+            "rank": 1,
+            "metric": "projection_gradients"
+          },
+          {
+            "rank": 1,
+            "metric": "weight_gradients"
+          },
+          {
+            "rank": 1,
+            "metric": "updated_weights"
+          }
+        ],
+        "ranks": [
+          {
+            "rank": 0,
+            "positions": [
+              0,
+              512
+            ],
+            "wire_rows": 513,
+            "padding_rows": 1,
+            "forward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                1,
+                512,
+                513
+              ]
+            ],
+            "backward_headers": [
+              [
+                0,
+                0,
+                512
+              ],
+              [
+                1,
+                512,
+                513
+              ]
+            ],
+            "returned_header": [
+              0,
+              0,
+              512
+            ],
+            "padding_gradient_max_abs": 9.755259827578722e-06,
+            "errors": {
+              "output": 3.3306690738754696e-16,
+              "loss": 8.912387117199216e-08,
+              "projection_gradients": 1.658746029726517e-08,
+              "weight_gradients": 2.714872274746995e-07,
+              "updated_weights": 2.7148722742120768e-08
+            },
+            "drop_remote_dkv_max_abs_error": 0.0005675946280849476
+          },
+          {
+            "rank": 1,
+            "positions": [
+              512,
+              1025
+            ],
+            "wire_rows": 513,
+            "padding_rows": 0,
+            "forward_headers": [
+              [
+                1,
+                512,
+                513
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "backward_headers": [
+              [
+                1,
+                512,
+                513
+              ],
+              [
+                0,
+                0,
+                512
+              ]
+            ],
+            "returned_header": [
+              1,
+              512,
+              513
+            ],
+            "padding_gradient_max_abs": 0.0,
+            "errors": {
+              "output": 7.751218255959424e-05,
+              "loss": 8.912387117199216e-08,
+              "projection_gradients": 1.519265330002649e-08,
+              "weight_gradients": 2.714872274746995e-07,
+              "updated_weights": 2.7148722742120768e-08
+            },
+            "drop_remote_dkv_max_abs_error": 0.0005675946280849476
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -312,10 +312,26 @@
  p('本次实测为 CPU/Gloo。每次点对点收发都等待完成，以便按步核对。包内也给出 CUDA/NCCL 启动参数，供两卡及多机环境复验。完整矩阵参照仅用于数值核对，不能拿这个程序测训练显存或通信重叠。')+
  '<p class="practice-links"><a href="labs/ring-context-training.zip" download>下载环形实战 ↓</a> · <a href="labs/ring-context-training/ring_training.py">点对点源码</a> · <a href="labs/ring-context-training/validation.json">三进程记录</a></p>';
 
+ contextAttention[7][1]+='<h3 id="ragged-ring-training">分片长度不等时，哪些位置还可以读</h3>'+
+ p('上面的程序把序列均分，每个进程的真实位置数与通信包行数相同。换成五个位置，rank 0 持有位置 0、1，rank 1 持有位置 2、3、4。程序把两份 K/V 都补成三行来收发，rank 0 多出一行填充。包头带原拥有者、全局起点和有效行数，让接收方知道哪几行属于真实序列。')+
+ trainingFigure('ragged-ring-layout','位置 2 的查询要同时检查真实行数与因果位置。只检查因果位置会把 rank 0 的填充误当成另一条位置 2。')+
+ p('设图中三个合法分数都是 0，三个真实 V 分量为 2、4、6。正确分母是 exp(0) 的三项之和，输出为 4。如果只用起点加包内下标来判断因果可见性，rank 0 最后一行会被误当成位置 2。它的 K、V 虽是零，分数仍是 0，指数为 1，分母变成 4，输出降为 3。')+
+ p('实跑把 1025 个位置切成 512 和 513 行，再把 1537 个位置切成 512、512 和 513 行。两个实验的通信包都长 513 行。接收一块后，先按有效行数和全局位置屏蔽列，再更新在线 Softmax 的行统计。反向使用同样的掩码，把 dK、dV 加到包里。最后一跳收到原来的包头时，原拥有者只取有效梯度行参与权重更新。')+
+ table(['实跑对照','用完整注意力与自动求导核对'],[
+  ['两进程，1025 个位置','最大输出误差约 3.33×10⁻¹⁶，填充梯度为 0'],
+  ['三进程，1537 个位置','最大输出误差约 3.33×10⁻¹⁶，填充梯度为 0'],
+  ['两进程，撤掉有效行掩码','rank 1 的输出误差约 7.75×10⁻⁵，rank 0 的填充行收到非零梯度，程序拒绝结果']
+ ])+
+ p('在实验目录运行 <code>python3 -B record.py --output replay.json</code>，依次复跑两组正例和一组拒绝对照。查看前向收到的包头、反向返回的包头、输出误差和填充梯度。这个对照验证本机 CPU/Gloo 的数值与收发关系。完整参照仍在每个进程里建立，设备显存与并行效率另需测量。')+
+ '<p class="practice-links"><a href="/labs/ragged-ring.zip" download>下载不等长分片实验 ↓</a> · <a href="/labs/ragged-ring/README.md">复跑步骤</a> · <a href="/labs/ragged-ring/validation.json">实际记录与源码摘要</a> · <a href="/article/training-communication/#ragged-ring-communication">从包形状计算通信字节</a></p>';
+
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';
  const collectiveVolume=collective.sections[5];
  collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
+ collectiveVolume[1]+='<h3 id="ragged-ring-communication">不等长位置分片怎样约定收发形状</h3>'+
+ p('同一序列有 1025 个位置时，两个进程可以分别负责 512、513 行查询。这里的通信协议把 K/V 包统一成 513 行。接收方按固定形状分配缓冲，再读另一个三个 int64 的包头，知道原拥有者、全局起点和有效行数。每跳先约定头和数据的收发顺序，程序等本次收发完成后再计算。')+
+ p('按实验的 16 项特征和 float64 计算，包头固定 24 字节。补的一行在前向多传 K 和 V 共 2×16×8=256 字节。反向还带 dK、dV，同一填充行多传 4×16×8=512 字节。这是每次发送的应用数据账。有效行掩码影响数值，填充在内存和链路上仍然占空间。<a href="/article/flash-attention-io/#ragged-ring-training">核对实际包头、梯度归还和去掉掩码的失败对照</a>。');
 
  const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
  pipelineSection[1]+='<h3 id="pipeline-training-schedules">完整训练的时序与激活峰值</h3>'+

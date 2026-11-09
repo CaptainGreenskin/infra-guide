@@ -6549,6 +6549,15 @@ const progressiveAgentSectionTitles={
  for(const m of before.matchAll(/\bhref=["'][^"']+["']/g))if(!hrefs.includes(m[0]))throw Error('Agent signals source URL lost: '+m[0]);
  for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[6][1]+=p('刚才的比例来自题设。下一节把同一批任务同时送入全量导出与错误优先导出，再直接查接收方的 SQLite 账本。重点看先失败后成功的任务，它会被错误规则选中。<a href="/article/agent-observability/#native-tail-sampling-ledger">直接看三条任务的实际记录 ↓</a>');
+ a.sections[7][1]+=h('native-tail-sampling-ledger','错误跨度被留下，任务最后仍可成功')+
+  p('把上面的内存导出换成独立的 OpenTelemetry Collector。实验用 OpenTelemetry 的传输协议 OTLP，把跨度经 HTTP 交给接收器。Collector 把同一批跨度分给两条管道。全量管道直接导出，采样管道为每条追踪留出 3 秒收集窗口，按 <code>traceId</code> 汇合已到达的跨度，然后用 <code>status_code</code> 策略选择至少有一个 <code>ERROR</code> 跨度的追踪。')+
+  trainingFigure('otel-tail-ledger','同一批任务的追踪走两条采集管道。接收库单独保留任务结果、尝试与提交效果。')+
+  p('对照三个结果。首次成功的任务没有错误跨度，采样后找不到这条追踪。提交后返回 503 的任务第二次拿到原回执，根跨度仍是 OK，第一次尝试的错误让整条追踪留下。提交前失败的任务同样留下，接收库中没有对应效果。',
+  '先按 <code>traceId</code> 分组。全量文件是 3 条追踪、11 个跨度，采样文件是 2 条追踪、8 个跨度。用 <code>parentSpanId</code> 找出失败的工具调用，再用 <code>app.task_id</code> 回查账本。样本里的任务成功比例为 1/2，账本总体为 2/3。四次尝试对应两份实际效果，重试取回执只增加一次尝试。')+
+  p('阅读配置时，从 <code>traces/full</code> 与 <code>traces/sampled</code> 的共同 <code>receivers: [otlp]</code> 开始。只有后者经过 <code>processors: [tail_sampling]</code>，因此比较只改变一处处理规则。解压后按运行说明准备官方发行包，用 <code>python -B tail_ledger.py --collector-archive 归档路径 --output-dir replay</code> 复跑。')+
+  '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
+  p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
  a.intro=a.desc;a.updated='2026.11.09';
 })();
@@ -7206,6 +7215,23 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
   '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
   ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+ serving.sections[6][1]+=
+  heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
+  p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
+  trainingFigure('native-inference-prefix','三轮实际记录一致：B 命中前三位置；清除后全部重算。图中编号是人工模型词元，不代表业务文本质量。')+
+  table(['阶段','复用 / 新算提示位置','完成后的保留位置','输出编号'],[
+   ['冷 A','0 / 4','6','[7,8,9]'],['暖 B','3 / 2','7','[11,12,13]'],
+   ['显式 erase','返回 n_erased=7','0','无生成'],['冷 B','0 / 5','7','[11,12,13]']
+  ])+
+  p('先手算暖 B：A 结束时已处理 [1,4,5,6,7,8]，与 B 从起点比较，在第四个编号处不同。因此本次真正送入预填充批次的是 [5,10]，位置是 3、4；再送入 11 和 12，位置是 5、6，最终选出 13。冷 B 先送完整五个提示，再送 11、12。两条路径的输出相同，但新算提示位置分别是 2 和 5。最后输出的 13 没有再次进入模型，所以保留长度是 5+3−1=7。',
+  '暖 B 完成的快照同时包含 is_processing=false 与 n_prompt_tokens=7：空闲说明无任务在执行，不能据此说缓存为空。erase 返回 7 后，快照变为 0；再发相同 B，响应 cache_n=0、prompt_n=5。把这三处记录接起来，才能判断下一条请求确实走了冷路径。快照里的保留长度也不是本次命中数，后者应看完成响应的 timings.cache_n。',
+  '这里调用的 prompt_clear 会移除该序列的 KV 关联并清空提示状态；实验未测分配器或进程 RSS，不能说底层缓冲区已交还操作系统。它也不代表 vLLM 共享块的引用归零或驱逐策略。少算 3 个提示位置同样不能推出端到端快 60%：还存在排队、解码和交付阶段，这份微型模型记录没有证明生产性能。',
+  '复跑下载包中的 <code>python3 -B prefix_lab.py --engine /path/to/llama-server --output prefix-results</code>。脚本校验固定 macOS ARM64 b12110 二进制，使用标准库生成模型并完成三轮请求。完整请求体、槽位快照、原生批次行和源码哈希都随包提供。完全匹配提示仍重算末位置的边界，已由上一份四请求实验验证；本次 B 为部分命中，二者要分开读。')+
+  '<p><a href="labs/native-inference-prefix.zip" download>下载完整前缀实验</a> · <a href="labs/native-inference-prefix/prefix_lab.py">完整 Python 源码</a> · <a href="labs/native-inference-prefix/validation.json">执行记录</a> · <a href="labs/native-inference-prefix/responses.json">原始响应与快照</a> · <a href="labs/native-inference-prefix/native-logs.json">原生批次日志</a> · <a href="labs/native-inference-prefix/README.md">复跑说明与自测</a></p>'+
+  p('自测：不看结果表，写出暖 B 的三个输入批次，并解释为何 idle 与缓存为空不是同一判断。再提出“全部提示命中就不再前向”的反例：固定版本需要末位置分数，上一份重复请求仍处理最后一个提示位置。源码定位见 '+
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。');
+ performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
+ serving.updated='2026.11.09';
  performance.updated='2026.11.09';
 })();
 
@@ -8831,10 +8857,26 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('本次实测为 CPU/Gloo。每次点对点收发都等待完成，以便按步核对。包内也给出 CUDA/NCCL 启动参数，供两卡及多机环境复验。完整矩阵参照仅用于数值核对，不能拿这个程序测训练显存或通信重叠。')+
  '<p class="practice-links"><a href="labs/ring-context-training.zip" download>下载环形实战 ↓</a> · <a href="labs/ring-context-training/ring_training.py">点对点源码</a> · <a href="labs/ring-context-training/validation.json">三进程记录</a></p>';
 
+ contextAttention[7][1]+='<h3 id="ragged-ring-training">分片长度不等时，哪些位置还可以读</h3>'+
+ p('上面的程序把序列均分，每个进程的真实位置数与通信包行数相同。换成五个位置，rank 0 持有位置 0、1，rank 1 持有位置 2、3、4。程序把两份 K/V 都补成三行来收发，rank 0 多出一行填充。包头带原拥有者、全局起点和有效行数，让接收方知道哪几行属于真实序列。')+
+ trainingFigure('ragged-ring-layout','位置 2 的查询要同时检查真实行数与因果位置。只检查因果位置会把 rank 0 的填充误当成另一条位置 2。')+
+ p('设图中三个合法分数都是 0，三个真实 V 分量为 2、4、6。正确分母是 exp(0) 的三项之和，输出为 4。如果只用起点加包内下标来判断因果可见性，rank 0 最后一行会被误当成位置 2。它的 K、V 虽是零，分数仍是 0，指数为 1，分母变成 4，输出降为 3。')+
+ p('实跑把 1025 个位置切成 512 和 513 行，再把 1537 个位置切成 512、512 和 513 行。两个实验的通信包都长 513 行。接收一块后，先按有效行数和全局位置屏蔽列，再更新在线 Softmax 的行统计。反向使用同样的掩码，把 dK、dV 加到包里。最后一跳收到原来的包头时，原拥有者只取有效梯度行参与权重更新。')+
+ table(['实跑对照','用完整注意力与自动求导核对'],[
+  ['两进程，1025 个位置','最大输出误差约 3.33×10⁻¹⁶，填充梯度为 0'],
+  ['三进程，1537 个位置','最大输出误差约 3.33×10⁻¹⁶，填充梯度为 0'],
+  ['两进程，撤掉有效行掩码','rank 1 的输出误差约 7.75×10⁻⁵，rank 0 的填充行收到非零梯度，程序拒绝结果']
+ ])+
+ p('在实验目录运行 <code>python3 -B record.py --output replay.json</code>，依次复跑两组正例和一组拒绝对照。查看前向收到的包头、反向返回的包头、输出误差和填充梯度。这个对照验证本机 CPU/Gloo 的数值与收发关系。完整参照仍在每个进程里建立，设备显存与并行效率另需测量。')+
+ '<p class="practice-links"><a href="/labs/ragged-ring.zip" download>下载不等长分片实验 ↓</a> · <a href="/labs/ragged-ring/README.md">复跑步骤</a> · <a href="/labs/ragged-ring/validation.json">实际记录与源码摘要</a> · <a href="/article/training-communication/#ragged-ring-communication">从包形状计算通信字节</a></p>';
+
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';
  const collectiveVolume=collective.sections[5];
  collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
+ collectiveVolume[1]+='<h3 id="ragged-ring-communication">不等长位置分片怎样约定收发形状</h3>'+
+ p('同一序列有 1025 个位置时，两个进程可以分别负责 512、513 行查询。这里的通信协议把 K/V 包统一成 513 行。接收方按固定形状分配缓冲，再读另一个三个 int64 的包头，知道原拥有者、全局起点和有效行数。每跳先约定头和数据的收发顺序，程序等本次收发完成后再计算。')+
+ p('按实验的 16 项特征和 float64 计算，包头固定 24 字节。补的一行在前向多传 K 和 V 共 2×16×8=256 字节。反向还带 dK、dV，同一填充行多传 4×16×8=512 字节。这是每次发送的应用数据账。有效行掩码影响数值，填充在内存和链路上仍然占空间。<a href="/article/flash-attention-io/#ragged-ring-training">核对实际包头、梯度归还和去掉掩码的失败对照</a>。');
 
  const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
  pipelineSection[1]+='<h3 id="pipeline-training-schedules">完整训练的时序与激活峰值</h3>'+
@@ -11066,6 +11108,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g))if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Integrated service lost published ID '+id);
  if(matches(old,/<pre\b/g).length!==0||!now.includes(trainingEscape(integratedServiceSource.trim())))throw Error('Integrated service full source binding changed');
  body.forEach((text,index)=>{if(text===before[index])throw Error('Integrated service section was not revised');a.sections[index][1]=text;});
+ a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
  a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();
@@ -11684,6 +11727,10 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
    p('这里的等待和处理均以sleep注入，是墙钟延迟，未测CPU计算。程序直接实现最小version-00 traceparent解析与父子字段断言，不使用OpenTelemetry SDK，没有验证完整标准兼容性、采样导出或生产负载。历史结果保留原始实测值，重新运行时毫秒数会变化；请求数、失败数和身份关系才是固定验收项。')+linkRow(l[8])
   ];
   finish(a,old,bodies,24);
+  a.sections[6][1]+='<h3 id="collector-sampling-check">同一批追踪，经过两条采集管道</h3>'+
+   p('OpenTelemetry Collector 是独立运行的采集程序。接收器读取应用发来的记录，处理器可筛选记录，导出器将剩余记录写到目标。实验把同一个接收器接到两条管道。一条直接写出，另一条等一段时间，把同一追踪的跨度聚在一起，再按错误状态选择整条追踪。',
+   '判断观测链有无漏报时，先对比同一批输入的全量导出与采样导出，再对照业务账本。全量导出说明本次接收器看到了什么。账本回答用户任务是否完成、接收方到底写了几次。若任务最后成功、某次尝试却失败，采样可能保留这条轨迹，失败尝试与失败任务必须分开计数。'+
+   '<a href="/article/agent-observability/#native-tail-sampling-ledger">沿真实 Collector 的两份导出复算 →</a>');
  }
 
  {
@@ -13486,12 +13533,12 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。三项实跑使用独立夹具。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
- 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -13979,6 +14026,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'native-inference-prefix':{folder:'native-inference-prefix',title:'原生推理槽的前缀复用与清除'},
+ 'ragged-ring':{folder:'ragged-ring',title:'不等长环形注意力与填充负例'},
+ 'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
  'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
  'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
@@ -14180,6 +14230,18 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mc
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
  {id:'ai-native-inference-queue',track:'ai',stage:2,title:'两条真实请求怎样在单槽与双槽里推进',chapter:'inference-performance',anchor:'native-inference-queue',pack:'native-inference-queue',files:['concurrency_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实 HTTP 流、引擎任务日志与指标',observe:'从原生任务身份区分等待和同时活跃，再用客户端时钟复算 TTFT 与 TPOT。',scope:'两条固定请求，单槽和双槽各三次。生产容量与 GPU 需要对应环境。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-ring-context-training')+1,0,
+ {id:'ai-ragged-ring',track:'ai',stage:2,title:'长序列切不均时，怎样排除填充行',chapter:'flash-attention-io',anchor:'ragged-ring-training',pack:'ragged-ring',files:['ring_ragged.py','record.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实点对点收发与梯度对照',observe:'核对每个分片的全局起点和真实长度，再去掉有效行掩码，看零填充怎样改变归一化。',scope:'单机 CPU 多进程数值与通信验证。完整参考矩阵用于核对。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
+ {id:'ai-native-inference-prefix',track:'ai',stage:2,title:'同槽空闲后怎样复用提示，清除后重算几项',chapter:'model-serving',anchor:'native-inference-prefix',pack:'native-inference-prefix',files:['prefix_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际 HTTP、槽状态与缓存操作',observe:'对比同一个提示复用三项与清除后全部重算，核对保留位置和相同输出。',scope:'固定合成模型和单槽。记录逻辑缓存状态。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sre')+1,0,
+ {id:'cloud-collector-sampling',track:'cloud',stage:2,title:'同一批追踪为何导出三条和两条',chapter:'observability',anchor:'collector-sampling-check',pack:'otel-tail-ledger',files:['collector.yaml','tail_ledger.py'],env:'Python 3.12 · OpenTelemetry Collector Contrib 0.130.0',kind:'真实 OTLP/HTTP 与两条采集管道',observe:'核对接收器、处理器和导出器，比较全量与错误采样的分母。',scope:'本机 Collector 与三个固定任务。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-observation')+1,0,
+ {id:'agent-otel-tail-ledger',track:'agent',stage:2,title:'失败尝试、成功任务与提交效果怎样分开数',chapter:'agent-observability',anchor:'native-tail-sampling-ledger',pack:'otel-tail-ledger',files:['tail_ledger.py','collector.yaml','source.json'],env:'Python 3.12 · OTel SDK 1.44.0 · Collector Contrib 0.130.0',kind:'真实 HTTP、采样导出与 SQLite 对账',observe:'找出提交后 503 并重试成功的根跨度，再用任务与接收库分开核对次数。',scope:'单机采集与本地任务账本。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14403,5 +14465,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="7452605378f4687b42872146c10f5e6f6cc917af1c8a17393e044771f7d9514e";
+const staticReadingVersion="1fae3edcc48e5e10d91d5977dec13e9d1f8627856e3359da2d0fe6dec72f673b";
 

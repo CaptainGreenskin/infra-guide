@@ -351,5 +351,22 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
   '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
   ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+ serving.sections[6][1]+=
+  heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
+  p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
+  trainingFigure('native-inference-prefix','三轮实际记录一致：B 命中前三位置；清除后全部重算。图中编号是人工模型词元，不代表业务文本质量。')+
+  table(['阶段','复用 / 新算提示位置','完成后的保留位置','输出编号'],[
+   ['冷 A','0 / 4','6','[7,8,9]'],['暖 B','3 / 2','7','[11,12,13]'],
+   ['显式 erase','返回 n_erased=7','0','无生成'],['冷 B','0 / 5','7','[11,12,13]']
+  ])+
+  p('先手算暖 B：A 结束时已处理 [1,4,5,6,7,8]，与 B 从起点比较，在第四个编号处不同。因此本次真正送入预填充批次的是 [5,10]，位置是 3、4；再送入 11 和 12，位置是 5、6，最终选出 13。冷 B 先送完整五个提示，再送 11、12。两条路径的输出相同，但新算提示位置分别是 2 和 5。最后输出的 13 没有再次进入模型，所以保留长度是 5+3−1=7。',
+  '暖 B 完成的快照同时包含 is_processing=false 与 n_prompt_tokens=7：空闲说明无任务在执行，不能据此说缓存为空。erase 返回 7 后，快照变为 0；再发相同 B，响应 cache_n=0、prompt_n=5。把这三处记录接起来，才能判断下一条请求确实走了冷路径。快照里的保留长度也不是本次命中数，后者应看完成响应的 timings.cache_n。',
+  '这里调用的 prompt_clear 会移除该序列的 KV 关联并清空提示状态；实验未测分配器或进程 RSS，不能说底层缓冲区已交还操作系统。它也不代表 vLLM 共享块的引用归零或驱逐策略。少算 3 个提示位置同样不能推出端到端快 60%：还存在排队、解码和交付阶段，这份微型模型记录没有证明生产性能。',
+  '复跑下载包中的 <code>python3 -B prefix_lab.py --engine /path/to/llama-server --output prefix-results</code>。脚本校验固定 macOS ARM64 b12110 二进制，使用标准库生成模型并完成三轮请求。完整请求体、槽位快照、原生批次行和源码哈希都随包提供。完全匹配提示仍重算末位置的边界，已由上一份四请求实验验证；本次 B 为部分命中，二者要分开读。')+
+  '<p><a href="labs/native-inference-prefix.zip" download>下载完整前缀实验</a> · <a href="labs/native-inference-prefix/prefix_lab.py">完整 Python 源码</a> · <a href="labs/native-inference-prefix/validation.json">执行记录</a> · <a href="labs/native-inference-prefix/responses.json">原始响应与快照</a> · <a href="labs/native-inference-prefix/native-logs.json">原生批次日志</a> · <a href="labs/native-inference-prefix/README.md">复跑说明与自测</a></p>'+
+  p('自测：不看结果表，写出暖 B 的三个输入批次，并解释为何 idle 与缓存为空不是同一判断。再提出“全部提示命中就不再前向”的反例：固定版本需要末位置分数，上一份重复请求仍处理最后一个提示位置。源码定位见 '+
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。');
+ performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
+ serving.updated='2026.11.09';
  performance.updated='2026.11.09';
 })();

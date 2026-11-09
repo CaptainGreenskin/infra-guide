@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'native-inference-prefix':{folder:'native-inference-prefix',title:'原生推理槽的前缀复用与清除'},
+ 'ragged-ring':{folder:'ragged-ring',title:'不等长环形注意力与填充负例'},
+ 'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
  'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
  'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
@@ -201,6 +204,18 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mc
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
  {id:'ai-native-inference-queue',track:'ai',stage:2,title:'两条真实请求怎样在单槽与双槽里推进',chapter:'inference-performance',anchor:'native-inference-queue',pack:'native-inference-queue',files:['concurrency_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实 HTTP 流、引擎任务日志与指标',observe:'从原生任务身份区分等待和同时活跃，再用客户端时钟复算 TTFT 与 TPOT。',scope:'两条固定请求，单槽和双槽各三次。生产容量与 GPU 需要对应环境。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-ring-context-training')+1,0,
+ {id:'ai-ragged-ring',track:'ai',stage:2,title:'长序列切不均时，怎样排除填充行',chapter:'flash-attention-io',anchor:'ragged-ring-training',pack:'ragged-ring',files:['ring_ragged.py','record.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实点对点收发与梯度对照',observe:'核对每个分片的全局起点和真实长度，再去掉有效行掩码，看零填充怎样改变归一化。',scope:'单机 CPU 多进程数值与通信验证。完整参考矩阵用于核对。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
+ {id:'ai-native-inference-prefix',track:'ai',stage:2,title:'同槽空闲后怎样复用提示，清除后重算几项',chapter:'model-serving',anchor:'native-inference-prefix',pack:'native-inference-prefix',files:['prefix_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际 HTTP、槽状态与缓存操作',observe:'对比同一个提示复用三项与清除后全部重算，核对保留位置和相同输出。',scope:'固定合成模型和单槽。记录逻辑缓存状态。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sre')+1,0,
+ {id:'cloud-collector-sampling',track:'cloud',stage:2,title:'同一批追踪为何导出三条和两条',chapter:'observability',anchor:'collector-sampling-check',pack:'otel-tail-ledger',files:['collector.yaml','tail_ledger.py'],env:'Python 3.12 · OpenTelemetry Collector Contrib 0.130.0',kind:'真实 OTLP/HTTP 与两条采集管道',observe:'核对接收器、处理器和导出器，比较全量与错误采样的分母。',scope:'本机 Collector 与三个固定任务。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-observation')+1,0,
+ {id:'agent-otel-tail-ledger',track:'agent',stage:2,title:'失败尝试、成功任务与提交效果怎样分开数',chapter:'agent-observability',anchor:'native-tail-sampling-ledger',pack:'otel-tail-ledger',files:['tail_ledger.py','collector.yaml','source.json'],env:'Python 3.12 · OTel SDK 1.44.0 · Collector Contrib 0.130.0',kind:'真实 HTTP、采样导出与 SQLite 对账',observe:'找出提交后 503 并重试成功的根跨度，再用任务与接收库分开核对次数。',scope:'单机采集与本地任务账本。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

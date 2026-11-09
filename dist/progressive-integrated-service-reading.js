@@ -103,6 +103,7 @@
  for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g))if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Integrated service lost published ID '+id);
  if(matches(old,/<pre\b/g).length!==0||!now.includes(trainingEscape(integratedServiceSource.trim())))throw Error('Integrated service full source binding changed');
  body.forEach((text,index)=>{if(text===before[index])throw Error('Integrated service section was not revised');a.sections[index][1]=text;});
+ a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
  a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();

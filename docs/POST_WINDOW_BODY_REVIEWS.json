@@ -4550,6 +4550,134 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "770eaf138a8a5b1e7fd5dd0e2d385ea281c63acf6735cd696b5cd4b77245f3b6",
+      "reviewed_content_sha256": "9d8a389ebb8f3e829fbcdc9bac59efaebd18db29b439b92367ebebc53de01695",
+      "scope": "Introduce the Collector receiver, processor and exporter before following one cohort through two pipelines.",
+      "observation": "Cloud SRE role links to the concept and then the actual output comparison.",
+      "headings": [
+        "从一个能复述的用户现象开始",
+        "RED 看用户请求，USE 查资源上的排队",
+        "为什么局部 p99 不能拼成全局 p99",
+        "直方图让“超过目标的有几次”比 p99 更直接",
+        "让指标可定位，同时控制标签组合",
+        "还原一次慢请求的因果路径",
+        "观测链也有失败模式，用已知输入校核它",
+        "课堂验收：查出故障，也查出图表的问题",
+        "配套实战：两段HTTP与父子trace关联"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "6e8fb7acfb1cd5901a72ce18fe2ab7f14a23e97b805955b923b523f4d8658cf8",
+      "reviewed_content_sha256": "9ea6be0bc53613217b6d9ad83d7ec0067595b3b0601dd08bd589d44eb82e5d71",
+      "scope": "Extend the real forward and backward ring to unequal logical shards in equal wire packets.",
+      "observation": "Two and three native CPU/Gloo runs match dense output, input gradients and update. Admitting a padding row breaks equivalence.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "772ba254bbd1620e6de93a20eb7201447611708ee59b09fb5d2d38afe0aa214c",
+      "reviewed_content_sha256": "1938781c89066f4f10fcbabc247102afed884f2ef9202b4a7a970232138582f3",
+      "scope": "Separate physical send shape from logical owner and position ranges before the ring exercise.",
+      "observation": "The exact section handoff follows the real header, valid count and returning gradients.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ef5e6c7ca162e531dc95ee2418cebe5da1537ce554c4dc03507f11a5e4b35862",
+      "reviewed_content_sha256": "5fff12e7afff9d29bf998744e8f3dbc4f76a10c16aece3ae0749fe3456f392a0",
+      "scope": "Follow same-slot prefix reuse through request completion, explicit erase, and an identical cold request.",
+      "observation": "Compare raw responses and slot states. Cached and evaluated prompt counts differ while token output is preserved.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "d690e78e43fb23007ad8eb34ffbb3be1440e728018553d42c6583339399b98d4",
+      "reviewed_content_sha256": "a56566de5cf601dcb6cc3d5df44c2f036c00500bf9eb3d30d5ff57e346150f43",
+      "scope": "Separate release of a busy inference slot from explicit eviction of its retained context.",
+      "observation": "The native queue and native prefix exercises link directly and use distinct controls.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "14a43d04470c848b4300075369007ef20744b44434c08a5a1a3c396230a6daa4",
+      "reviewed_content_sha256": "1ccc9e8227d6f900fadd268f7ad5db57fb00276d43c610bab0ab85c5baf33f14",
+      "scope": "Contrast trace-level error selection with task completion, retry attempts and receiver effects.",
+      "observation": "The fixed native Collector split exports three versus two traces. An independent SQLite read verifies two completions, four attempts and two effects.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9eb7c6a26939862ab80174657235bd180dc26778c31225508c7cf4cd707b4b42",
+      "reviewed_content_sha256": "3091c33a284c39ca705df4aa795b7f5e425751474c9e6a3c8e8d5ec03abff737",
+      "scope": "Turn telemetry coverage into an acceptance check alongside the existing independent receiver oracle.",
+      "observation": "The design review links the separate three-task fixture for determining trace selection and authoritative denominators.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

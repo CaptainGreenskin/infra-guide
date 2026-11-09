@@ -1,0 +1,331 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "133c8faaa7a478a9b698dd7f71841ef5d9e96690",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_RUNTIME_CONTRASTS_GATES_2026-11-09.json": "b9e10f9b5f65f532d0fcba91b66c9a24a3c314a1c95c3f2e3c958aafb2fa9131"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "508fb22f0469d48b5c5c32ee63b9983c597eb6698a3a3de6b5ba69183e93f794",
+      "reviewed_sha256": "43f77083178eb15cb91876091417c4313db5dcc0f424e5433659cbbe027304d8",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "a382f8d6d237cc10e2294e1b5af94cb1415039f7e31ba0af65bc7f207a102e37",
+      "reviewed_sha256": "4944e1a568d253cafc7bdfafb41b45fbce02001bd91769156540cbb672555ebb",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/diagrams/native-inference-prefix.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1aa9478fbe9129efc6cca4e9b27476e7b479e3f409537ea56c09928f164b5e3f",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/diagrams/ragged-ring-layout.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "224aa574921a4fa8fda8d47e20dd7f13923c3fb75d7845476da187859461b10a",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/diagrams/otel-tail-ledger.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0d4d026b194e065fca7f07fbd15e114fee2fb9789adc03d655954f04f04925c7",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "f1041cd6f7177f8dfbc0de62952eb6fe11d721eca39012e121d48697a315f8d0",
+      "reviewed_sha256": "1d0d7a359125aeed4071f7c4415f70cdc7d09621c38d84382829a50649e9a78a",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "f66174a08f3365dfa864e3e6978394cb48c05a7261a34e162e4b44fde53aee85",
+      "reviewed_sha256": "bf7a52b1d78eb867534c0357c0c3b5d4e816fcbfb4737b7b4e2ca10aaf2fb594",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "ee6746d2162c66a8ec76ab1c50a1a22cd0a35265acc834035e4f5f690c63b9ae",
+      "reviewed_sha256": "ca1e9aee4b9ccf5d4582b642fbb0692f7be76c199620084f476a47ee38145df9",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "f2e2c59226cd68081697e6bb603eac6924631d33e6de7aa3580c50ce7e32c55c",
+      "reviewed_sha256": "031be28a3bcddd19a360b3a613fdefa5318ec301612a6c7407ff9483cff82389",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "9cd194670b54f8505475b1c0e4dbc2871652751fb7bd5ceabc29d4b8636afa86",
+      "reviewed_sha256": "a3b97c2d332aab3094dcefd3b84f8793de39f08626b00d9f5be7a9ee88c0eb04",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/progressive-integrated-service-reading.js": {
+      "previous_sha256": "3c2c1ff708a6ed7df4d1fd568b090c1857e440ff5b83444e8ca307497a8d2d36",
+      "reviewed_sha256": "d868c92e6a343bdee1c8435c6163d85b27b5e7f2959d8cab78e97fd8f91460fe",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "a21528389049b6cf2edc0cfb3f478fe7a0c6bbd5f6a7a7700386d1c9fc9558f0",
+      "reviewed_sha256": "d4f0ceffb2d626f0632c2ebf7df396c2fd5b62cda7f1345572c1e31d73f6c469",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "3aec1a0db7ca42190a8313ac5acd9e0855ce59197e12c5a95883b2a131aecd5c",
+      "reviewed_sha256": "2ef3930969ad4d22980fc5dc44dc3df0e0fe6016d63c3d1b6b1367c816513789",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "5b9de8794c071154ea71bfe86c88b2f867bdae22e78ef60277c47e9b7c755e4c",
+      "reviewed_sha256": "cbd5a7831d00ad10b8d6a5906dfab25de8114bec64ffe167bee486129f79725e",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "4d2402f134abf3b84c24916f093ee849a772a5c7435291502aa6e9fa59feb106",
+      "reviewed_sha256": "fdfdf4b241af2b15aa1bc9015acab34adbf9140ba79ebe47c82f736d9fbe17a4",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "scripts/check-inference-prefix.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e5db676393bca65e4fb3b1f908286a94e33afbeae3a1d0d43ce3c64b5fb4179c",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "scripts/check-ragged-ring.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "29ce155b72e1324e69aab3b47cb3d4dc23389a35fd2547dd7fe939715e020ec3",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "scripts/check-otel-tail-ledger.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6617000a2ae2a0f2d7be8033c675adfefbe1ea146cf209fa6bbc4f9c722eee6d",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "585119513a5d39b311a46a56420b8f6a5a1ca67dcb017b149540a79056e5be94",
+      "reviewed_sha256": "367aa89ed00b45ce2d9fa21547003a121843e6c79a278c91cfcf8baf6e8b0a1c",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "dist/labs/native-inference-prefix.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "17ff6ae66ba34c01c1260c38edd6bcf32500735c584794c7dff30c1303d6acb9",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "051aeb0d46e26d188fd77403f49b01884351f4cdfe533f2e7637679b9024d2a7",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/make_fixture.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/native-logs.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "04a86431daef924a9b416f8e3f68b532d60a566fbadfd05f2daaeea24461bcba",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/prefix_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8480d4c7b5aab59717b4124c5a662dbb35789a0b4e0b0ad66c477b50f5f45ddd",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/responses.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "86871bfe695058899010f94ad5424cf9f9956ee0b70a791f545516a1c653c2e5",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/native-inference-prefix/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a595f2263e3ad86832d75a7437cbb066cde6177ca7b5ca1db3fa7f2818392efd",
+      "scope": "Show retained cache state separately from queue release and explicit erasure."
+    },
+    "dist/labs/ragged-ring.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "35b7ea90d27b199979595590665a7efa8970d25eaba56ae38d612115bb10c283",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/labs/ragged-ring/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "41d6034996b81136d6023a6f4706d3f6b3f30aa9c165a9ead6167db6085e40b5",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/labs/ragged-ring/record.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e269e15af24d3c623aeb48aea25729d2833df51e07f99f7b7e55852e66a63f7f",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/labs/ragged-ring/ring_ragged.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d278940156b8d8fea12c9f3b4addf00224bcd54b99e94b9025b2cfe12e273657",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/labs/ragged-ring/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6878c421f68bc1894d76f5161e9281dc2d3c5ca2b71e19df17e23d968c1bd805",
+      "scope": "Expose unequal shard boundaries, physical packet layout, and a detectable padding error."
+    },
+    "dist/labs/otel-tail-ledger.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "930a3a8760fce2efe400f343fc9099d5551a963f09045d2f13c85e12e0c57c4f",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4bb617f2d64a4399ea15e4580822605758b02e5689b2d06aedaa11b6fc74f768",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/collector-effective.yaml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "eb9e289704e975c263228366c57798392ef6f8ee309f6f75c1b4a24330ecc6f2",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/collector-lock.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ddc28f870879bd21f2e270d33cfc496812bcbbd44f11f579012d2603d63a49e8",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/collector-metrics.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "17e8539d94ad514d99b6bfbbed7add7c2618ee047ade4935f1b69a02b388532b",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/collector.log": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2652ef8584ec8fd733b7820e98513e9bc7c16a8fd9195268098e35b9500926e6",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/collector.yaml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f4190cbf433f9e8e9611fbae514e62caf51dd010acec0bbc2c18124dde0cb865",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/full-traces.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "93d78c8b48ecab8d37586a059338c6e1fd10243141fec887d12e95dab665e5e0",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/ledger.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "aee5a1e69f871bf3be0bc106b7ca9f368003b5bb44deba00d0213915266346d8",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/official-assets.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f6d0ad51507161095574ded6ce585115b0b95f6c940339008f2c9e8ff0b63dfa",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "686743a2e6099425a00c7a5745925859ae78015dfb0cee0aa36a914b5c1af98b",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/sampled-traces.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "41278399fc6a90cef0306c17d09495120b71e0d0fdcf915a3b55e5546c3d29a8",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/source.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bfee9aca44d9acf2c74705d4addd780f73d7b2fa7dc27ba62cdec3337220fc13",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/tail_ledger.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "075cd1bdc6bfcc20158329fef2ee96077c018cc078fd5e7a8df539be9bb6f723",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "dist/labs/otel-tail-ledger/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "be97d2953f0984f80960b7db90fc59e8dac64b43b66dec82bdcc5fce0c30b215",
+      "scope": "Bind independent task outcomes to actual full and sampled Collector exports."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "ed4e00ef3defc0ba8119470e0a0cd7fd5b438dc4a430bff7672744f05d52da51",
+      "reviewed_sha256": "8a509ee9f0041d08b6ac4910f21ed74d27b4f44ce29f625744732b90e18a5a24",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "63b17c3bc35410a113b3a34962ecba44d5897847fc6336d78a6db5a46186ff03",
+      "reviewed_sha256": "e14bb7f1dcbd1498842abdfd7334d984310254a2c079b1aac66787b2383a77c2",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "docs/CONTENT_PREFIX_RING_TELEMETRY_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ce9cd56ccefae0f4b1361e9a7617a559970b0a6ba0f8660bea15125d9ea5395e",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "e5b8c213d713ec89f0b86b43a0fab2cfe8ab8a9a9d5b743a60b0b3fbc58bb93b",
+      "reviewed_sha256": "1f89f8997f769390fc1491faa89e28b3389c89df459155f1621f2f83a0f69cca",
+      "scope": "Connect each new measured contrast to its precise subsection and role route while preserving existing links."
+    }
+  },
+  "article_sections": {
+    "model-serving": {
+      "sections": [
+        7
+      ],
+      "scope": "Follow same-slot prefix reuse through request completion, explicit erase, and an identical cold request.",
+      "observation": "Compare raw responses and slot states. Cached and evaluated prompt counts differ while token output is preserved."
+    },
+    "inference-performance": {
+      "sections": [
+        7
+      ],
+      "scope": "Separate release of a busy inference slot from explicit eviction of its retained context.",
+      "observation": "The native queue and native prefix exercises link directly and use distinct controls."
+    },
+    "flash-attention-io": {
+      "sections": [
+        8
+      ],
+      "scope": "Extend the real forward and backward ring to unequal logical shards in equal wire packets.",
+      "observation": "Two and three native CPU/Gloo runs match dense output, input gradients and update. Admitting a padding row breaks equivalence."
+    },
+    "training-communication": {
+      "sections": [
+        6
+      ],
+      "scope": "Separate physical send shape from logical owner and position ranges before the ring exercise.",
+      "observation": "The exact section handoff follows the real header, valid count and returning gradients."
+    },
+    "agent-observability": {
+      "sections": [
+        7,
+        8
+      ],
+      "scope": "Contrast trace-level error selection with task completion, retry attempts and receiver effects.",
+      "observation": "The fixed native Collector split exports three versus two traces. An independent SQLite read verifies two completions, four attempts and two effects."
+    },
+    "observability": {
+      "sections": [
+        7
+      ],
+      "scope": "Introduce the Collector receiver, processor and exporter before following one cohort through two pipelines.",
+      "observation": "Cloud SRE role links to the concept and then the actual output comparison."
+    },
+    "production-readiness": {
+      "sections": [
+        7
+      ],
+      "scope": "Turn telemetry coverage into an acceptance check alongside the existing independent receiver oracle.",
+      "observation": "The design review links the separate three-task fixture for determining trace selection and authoritative denominators."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "133c8faaa7a478a9b698dd7f71841ef5d9e96690",
+    "chapters": 78,
+    "changed_bodies": [
+      "observability",
+      "flash-attention-io",
+      "training-communication",
+      "model-serving",
+      "inference-performance",
+      "agent-observability",
+      "production-readiness"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 70,
+    "learning_tasks": 111
+  }
+}

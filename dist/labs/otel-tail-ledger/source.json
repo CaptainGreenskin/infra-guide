@@ -1,0 +1,8 @@
+{
+  "report_total": 37,
+  "cases": [
+    {"task_id": "R27-normal", "first_response": 200, "effect_before_first_response": true, "retry": false},
+    {"task_id": "R27-retry", "first_response": 503, "effect_before_first_response": true, "retry": true},
+    {"task_id": "R27-failed", "first_response": 500, "effect_before_first_response": false, "retry": false}
+  ]
+}

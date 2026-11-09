@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="555" viewBox="0 0 960 555" role="img" aria-labelledby="title desc">
+  <title id="title">五个位置如何放进两个等长通信包</title>
+  <desc id="desc">rank 0 持有位置 0 和 1，加一行填充，rank 1 持有位置 2 到 4。位置 2 的查询只读三个真实位置。全零分数时，漏挡填充会把分母从 3 增为 4，输出从 4 变为 3。</desc>
+  <metadata>{"positions":5,"position_ranges_half_open":[[0,2],[2,5]],"wire_rows":3,"query_position":2,"visible_positions":[0,1,2],"real_values":[2,4,6],"padding_value":0,"masked_output":4,"unmasked_output":3,"runtime_shapes":{"1025":[512,513],"1537":[512,512,513]}}</metadata>
+  <defs>
+    <style>
+      text { font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #172536; }
+      .title { font-size: 28px; font-weight: 700; }
+      .section { font-size: 20px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .note { font-size: 16px; fill: #465b6c; }
+      .label { font-size: 15px; font-weight: 650; letter-spacing: .4px; fill: #526778; }
+      .valid { fill: #e8f4ff; stroke: #4779a8; stroke-width: 1.5; }
+      .padding { fill: #fff1e8; stroke: #b15724; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .muted { fill: #f1f4f6; stroke: #bac6cf; stroke-width: 1.5; }
+      .pass { fill: #e8f7ef; stroke: #418365; stroke-width: 1.5; }
+      .fail { fill: #fff1e8; stroke: #b15724; stroke-width: 1.5; }
+    </style>
+  </defs>
+  <rect x="1" y="1" width="958" height="553" rx="20" fill="#fbfdff" stroke="#cbd7e1"/>
+  <text class="title" x="42" y="55">五个位置如何放进两个等长通信包</text>
+  <text class="note" x="42" y="86">每包都传三行，包头给出归属、全局起点和真实行数。</text>
+  <text class="label" x="42" y="122">本地分片与包头</text>
+  <text class="label" x="347" y="122">传输行 0</text>
+  <text class="label" x="535" y="122">传输行 1</text>
+  <text class="label" x="723" y="122">传输行 2</text>
+  <g data-rank="0">
+    <text class="section" x="42" y="163">rank 0</text>
+    <text class="note" x="42" y="188">起点 0 · 有效 2 行</text>
+    <rect class="valid" x="332" y="135" width="174" height="62" rx="9"/>
+    <rect class="valid" x="520" y="135" width="174" height="62" rx="9"/>
+    <rect class="padding" x="708" y="135" width="174" height="62" rx="9"/>
+    <text class="body" x="350" y="172">位置 0</text>
+    <text class="body" x="538" y="172">位置 1</text>
+    <text class="body" x="726" y="172">填充 · K/V 为零</text>
+  </g>
+  <g data-rank="1">
+    <text class="section" x="42" y="236">rank 1</text>
+    <text class="note" x="42" y="261">起点 2 · 有效 3 行</text>
+    <rect class="valid" x="332" y="208" width="174" height="62" rx="9"/>
+    <rect class="muted" x="520" y="208" width="174" height="62" rx="9"/>
+    <rect class="muted" x="708" y="208" width="174" height="62" rx="9"/>
+    <text class="body" x="350" y="245">位置 2</text>
+    <text class="body" x="538" y="245">位置 3 · 未来</text>
+    <text class="body" x="726" y="245">位置 4 · 未来</text>
+  </g>
+  <text class="body" x="42" y="311">查询位置 2 可读位置 0、1、2。设分数都是 0，三项 V 分别为 2、4、6。</text>
+  <g data-case="masked-padding">
+    <rect class="pass" x="42" y="337" width="416" height="109" rx="12"/>
+    <text class="section" x="62" y="372">检查位置和有效行数</text>
+    <text class="body" x="62" y="413">(2 + 4 + 6) ÷ 3 = 4</text>
+  </g>
+  <g data-case="unmasked-padding">
+    <rect class="fail" x="476" y="337" width="442" height="109" rx="12"/>
+    <text class="section" x="496" y="372">只检查位置，误读填充行</text>
+    <text class="body" x="496" y="413">(2 + 4 + 6 + 0) ÷ 4 = 3</text>
+  </g>
+  <text class="note" x="42" y="486">手算缩小到五个位置。实跑的两组切分为 512 + 513 和 512 + 512 + 513。</text>
+  <text class="note" x="42" y="514">两组实跑都按每包 513 行收发。反向回到原拥有者后，只用有效行更新权重。</text>
+</svg>

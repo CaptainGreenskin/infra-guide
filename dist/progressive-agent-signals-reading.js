@@ -159,6 +159,15 @@
  for(const m of before.matchAll(/\bhref=["'][^"']+["']/g))if(!hrefs.includes(m[0]))throw Error('Agent signals source URL lost: '+m[0]);
  for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[6][1]+=p('刚才的比例来自题设。下一节把同一批任务同时送入全量导出与错误优先导出，再直接查接收方的 SQLite 账本。重点看先失败后成功的任务，它会被错误规则选中。<a href="/article/agent-observability/#native-tail-sampling-ledger">直接看三条任务的实际记录 ↓</a>');
+ a.sections[7][1]+=h('native-tail-sampling-ledger','错误跨度被留下，任务最后仍可成功')+
+  p('把上面的内存导出换成独立的 OpenTelemetry Collector。实验用 OpenTelemetry 的传输协议 OTLP，把跨度经 HTTP 交给接收器。Collector 把同一批跨度分给两条管道。全量管道直接导出，采样管道为每条追踪留出 3 秒收集窗口，按 <code>traceId</code> 汇合已到达的跨度，然后用 <code>status_code</code> 策略选择至少有一个 <code>ERROR</code> 跨度的追踪。')+
+  trainingFigure('otel-tail-ledger','同一批任务的追踪走两条采集管道。接收库单独保留任务结果、尝试与提交效果。')+
+  p('对照三个结果。首次成功的任务没有错误跨度，采样后找不到这条追踪。提交后返回 503 的任务第二次拿到原回执，根跨度仍是 OK，第一次尝试的错误让整条追踪留下。提交前失败的任务同样留下，接收库中没有对应效果。',
+  '先按 <code>traceId</code> 分组。全量文件是 3 条追踪、11 个跨度，采样文件是 2 条追踪、8 个跨度。用 <code>parentSpanId</code> 找出失败的工具调用，再用 <code>app.task_id</code> 回查账本。样本里的任务成功比例为 1/2，账本总体为 2/3。四次尝试对应两份实际效果，重试取回执只增加一次尝试。')+
+  p('阅读配置时，从 <code>traces/full</code> 与 <code>traces/sampled</code> 的共同 <code>receivers: [otlp]</code> 开始。只有后者经过 <code>processors: [tail_sampling]</code>，因此比较只改变一处处理规则。解压后按运行说明准备官方发行包，用 <code>python -B tail_ledger.py --collector-archive 归档路径 --output-dir replay</code> 复跑。')+
+  '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
+  p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
  a.intro=a.desc;a.updated='2026.11.09';
 })();

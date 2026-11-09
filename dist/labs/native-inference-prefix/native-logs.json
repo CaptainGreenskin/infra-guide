@@ -1,0 +1,5705 @@
+[
+  {
+    "repeat": 1,
+    "lines": [
+      {
+        "line": 103,
+        "text": "0.00.262.732 D load_tensors: layer   0 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 104,
+        "text": "0.00.262.733 D load_tensors: layer   1 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 163,
+        "text": "0.00.265.645 I llama_kv_cache:        CPU KV buffer size =     0.02 MiB"
+      },
+      {
+        "line": 262,
+        "text": "0.00.267.207 I sched_reserve:        CPU compute buffer size =     0.03 MiB"
+      },
+      {
+        "line": 270,
+        "text": "0.00.267.638 D init: input batch info:"
+      },
+      {
+        "line": 271,
+        "text": "0.00.267.638 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 272,
+        "text": "0.00.267.638 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 273,
+        "text": "0.00.267.639 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 274,
+        "text": "0.00.267.639 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 275,
+        "text": "0.00.267.639 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 276,
+        "text": "0.00.267.645 D ubatch_print:   token      = 0xc8483c170"
+      },
+      {
+        "line": 277,
+        "text": "0.00.267.645 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 278,
+        "text": "0.00.267.645 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 279,
+        "text": "0.00.267.646 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 280,
+        "text": "0.00.267.646 D ubatch_print:   pos        = 0xc8483c1e0"
+      },
+      {
+        "line": 281,
+        "text": "0.00.267.646 D ubatch_print:   n_seq_id   = 0xc8483c1b0"
+      },
+      {
+        "line": 282,
+        "text": "0.00.267.646 D ubatch_print:   seq_id     = 0xc8505e880"
+      },
+      {
+        "line": 283,
+        "text": "0.00.267.646 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 284,
+        "text": "0.00.267.649 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 285,
+        "text": "0.00.267.649 D ubatch_print:   output     = 0xc8480c180"
+      },
+      {
+        "line": 286,
+        "text": "0.00.267.649 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 287,
+        "text": "0.00.267.649 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 288,
+        "text": "0.00.267.650 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 289,
+        "text": "0.00.267.651 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 290,
+        "text": "0.00.267.651 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 291,
+        "text": "0.00.267.651 D ubatch_print:   ]"
+      },
+      {
+        "line": 295,
+        "text": "0.00.267.654 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 296,
+        "text": "0.00.267.654 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 297,
+        "text": "0.00.267.655 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 298,
+        "text": "0.00.267.655 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 299,
+        "text": "0.00.267.655 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 300,
+        "text": "0.00.267.655 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 301,
+        "text": "0.00.267.657 D ubatch_print:   token      = 0xc8483c190"
+      },
+      {
+        "line": 302,
+        "text": "0.00.267.658 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 303,
+        "text": "0.00.267.658 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 304,
+        "text": "0.00.267.658 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 305,
+        "text": "0.00.267.658 D ubatch_print:   pos        = 0xc8483c140"
+      },
+      {
+        "line": 306,
+        "text": "0.00.267.658 D ubatch_print:   n_seq_id   = 0xc8483c1c0"
+      },
+      {
+        "line": 307,
+        "text": "0.00.267.658 D ubatch_print:   seq_id     = 0xc8483c220"
+      },
+      {
+        "line": 308,
+        "text": "0.00.267.658 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 309,
+        "text": "0.00.267.659 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 310,
+        "text": "0.00.267.659 D ubatch_print:   output     = 0xc8483c230"
+      },
+      {
+        "line": 311,
+        "text": "0.00.267.659 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 312,
+        "text": "0.00.267.659 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 313,
+        "text": "0.00.267.659 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 314,
+        "text": "0.00.267.660 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 315,
+        "text": "0.00.267.660 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 316,
+        "text": "0.00.267.660 D ubatch_print:   ]"
+      },
+      {
+        "line": 317,
+        "text": "0.00.269.759 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 128, kv_unified = 'false'"
+      },
+      {
+        "line": 396,
+        "text": "0.00.277.004 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 407,
+        "text": "0.00.297.314 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 430,
+        "text": "0.00.298.486 I slot   operator(): id  0 | task 1 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4"
+      },
+      {
+        "line": 431,
+        "text": "0.00.298.498 I slot   operator(): id  0 | task 1 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 442,
+        "text": "0.00.298.516 D init: input batch info:"
+      },
+      {
+        "line": 443,
+        "text": "0.00.298.517 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 444,
+        "text": "0.00.298.517 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 445,
+        "text": "0.00.298.517 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 446,
+        "text": "0.00.298.517 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 447,
+        "text": "0.00.298.517 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 448,
+        "text": "0.00.298.523 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 449,
+        "text": "0.00.298.524 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 450,
+        "text": "0.00.298.524 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 451,
+        "text": "0.00.298.524 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 452,
+        "text": "0.00.298.524 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 453,
+        "text": "0.00.298.524 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 454,
+        "text": "0.00.298.524 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 455,
+        "text": "0.00.298.524 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 456,
+        "text": "0.00.298.525 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 457,
+        "text": "0.00.298.525 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 458,
+        "text": "0.00.298.528 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 459,
+        "text": "0.00.298.528 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 460,
+        "text": "0.00.298.528 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 461,
+        "text": "0.00.298.529 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 462,
+        "text": "0.00.298.530 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 463,
+        "text": "0.00.298.530 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 464,
+        "text": "0.00.298.531 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 465,
+        "text": "0.00.298.531 D ubatch_print:   ]"
+      },
+      {
+        "line": 469,
+        "text": "0.00.298.535 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 470,
+        "text": "0.00.298.535 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 471,
+        "text": "0.00.298.535 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 472,
+        "text": "0.00.298.535 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 473,
+        "text": "0.00.298.535 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 474,
+        "text": "0.00.298.535 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 475,
+        "text": "0.00.298.538 D ubatch_print:   token      = 0xc8483c2f0"
+      },
+      {
+        "line": 476,
+        "text": "0.00.298.538 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 477,
+        "text": "0.00.298.538 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 478,
+        "text": "0.00.298.538 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 479,
+        "text": "0.00.298.538 D ubatch_print:   pos        = 0xc8483c300"
+      },
+      {
+        "line": 480,
+        "text": "0.00.298.538 D ubatch_print:   n_seq_id   = 0xc8483c310"
+      },
+      {
+        "line": 481,
+        "text": "0.00.298.539 D ubatch_print:   seq_id     = 0xc8505e880"
+      },
+      {
+        "line": 482,
+        "text": "0.00.298.539 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 483,
+        "text": "0.00.298.539 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 484,
+        "text": "0.00.298.539 D ubatch_print:   output     = 0xc8483c2a0"
+      },
+      {
+        "line": 485,
+        "text": "0.00.298.540 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 486,
+        "text": "0.00.298.540 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 487,
+        "text": "0.00.298.540 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 488,
+        "text": "0.00.298.540 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 489,
+        "text": "0.00.298.541 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 490,
+        "text": "0.00.298.541 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 491,
+        "text": "0.00.298.541 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 492,
+        "text": "0.00.298.541 D ubatch_print:   ]"
+      },
+      {
+        "line": 494,
+        "text": "0.00.298.632 D slot process_toke: id  0 | task 1 | n_gen = 1, n_remaining = 2, next token:     7 ' one'"
+      },
+      {
+        "line": 510,
+        "text": "0.00.298.642 D init: input batch info:"
+      },
+      {
+        "line": 511,
+        "text": "0.00.298.642 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 512,
+        "text": "0.00.298.642 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 513,
+        "text": "0.00.298.642 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 514,
+        "text": "0.00.298.643 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 515,
+        "text": "0.00.298.643 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 516,
+        "text": "0.00.298.645 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 517,
+        "text": "0.00.298.646 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 518,
+        "text": "0.00.298.646 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 519,
+        "text": "0.00.298.646 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 520,
+        "text": "0.00.298.646 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 521,
+        "text": "0.00.298.646 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 522,
+        "text": "0.00.298.646 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 523,
+        "text": "0.00.298.646 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 524,
+        "text": "0.00.298.647 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 525,
+        "text": "0.00.298.647 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 526,
+        "text": "0.00.298.647 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 527,
+        "text": "0.00.298.647 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 528,
+        "text": "0.00.298.647 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 529,
+        "text": "0.00.298.648 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 530,
+        "text": "0.00.298.648 D ubatch_print:   ]"
+      },
+      {
+        "line": 534,
+        "text": "0.00.298.650 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 535,
+        "text": "0.00.298.650 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 536,
+        "text": "0.00.298.650 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 537,
+        "text": "0.00.298.650 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 538,
+        "text": "0.00.298.650 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 539,
+        "text": "0.00.298.651 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 540,
+        "text": "0.00.298.653 D ubatch_print:   token      = 0xc8483c1c0"
+      },
+      {
+        "line": 541,
+        "text": "0.00.298.653 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 542,
+        "text": "0.00.298.653 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 543,
+        "text": "0.00.298.653 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 544,
+        "text": "0.00.298.654 D ubatch_print:   pos        = 0xc8483c220"
+      },
+      {
+        "line": 545,
+        "text": "0.00.298.654 D ubatch_print:   n_seq_id   = 0xc8483c240"
+      },
+      {
+        "line": 546,
+        "text": "0.00.298.654 D ubatch_print:   seq_id     = 0xc8483c230"
+      },
+      {
+        "line": 547,
+        "text": "0.00.298.654 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 548,
+        "text": "0.00.298.654 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 549,
+        "text": "0.00.298.654 D ubatch_print:   output     = 0xc8483c330"
+      },
+      {
+        "line": 550,
+        "text": "0.00.298.655 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 551,
+        "text": "0.00.298.655 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 552,
+        "text": "0.00.298.655 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 553,
+        "text": "0.00.298.655 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 554,
+        "text": "0.00.298.655 D ubatch_print:   ]"
+      },
+      {
+        "line": 556,
+        "text": "0.00.298.689 D slot process_toke: id  0 | task 1 | n_gen = 2, n_remaining = 1, next token:     8 ' two'"
+      },
+      {
+        "line": 569,
+        "text": "0.00.298.695 D init: input batch info:"
+      },
+      {
+        "line": 570,
+        "text": "0.00.298.695 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 571,
+        "text": "0.00.298.695 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 572,
+        "text": "0.00.298.695 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 573,
+        "text": "0.00.298.697 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 574,
+        "text": "0.00.298.697 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 578,
+        "text": "0.00.298.706 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 579,
+        "text": "0.00.298.707 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 580,
+        "text": "0.00.298.707 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 581,
+        "text": "0.00.298.707 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 582,
+        "text": "0.00.298.707 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 583,
+        "text": "0.00.298.707 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 584,
+        "text": "0.00.298.707 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 585,
+        "text": "0.00.298.707 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 586,
+        "text": "0.00.298.708 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 587,
+        "text": "0.00.298.708 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 588,
+        "text": "0.00.298.708 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 589,
+        "text": "0.00.298.708 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 590,
+        "text": "0.00.298.708 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 591,
+        "text": "0.00.298.709 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 592,
+        "text": "0.00.298.709 D ubatch_print:   ]"
+      },
+      {
+        "line": 596,
+        "text": "0.00.298.710 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 597,
+        "text": "0.00.298.710 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 598,
+        "text": "0.00.298.710 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 599,
+        "text": "0.00.298.710 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 600,
+        "text": "0.00.298.711 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 601,
+        "text": "0.00.298.711 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 602,
+        "text": "0.00.298.713 D ubatch_print:   token      = 0xc8483c2f0"
+      },
+      {
+        "line": 603,
+        "text": "0.00.298.713 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 604,
+        "text": "0.00.298.713 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 605,
+        "text": "0.00.298.713 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 606,
+        "text": "0.00.298.714 D ubatch_print:   pos        = 0xc8483c300"
+      },
+      {
+        "line": 607,
+        "text": "0.00.298.714 D ubatch_print:   n_seq_id   = 0xc8483c310"
+      },
+      {
+        "line": 608,
+        "text": "0.00.298.714 D ubatch_print:   seq_id     = 0xc8483c320"
+      },
+      {
+        "line": 609,
+        "text": "0.00.298.714 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 610,
+        "text": "0.00.298.714 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 611,
+        "text": "0.00.298.715 D ubatch_print:   output     = 0xc8483c2a0"
+      },
+      {
+        "line": 612,
+        "text": "0.00.298.715 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 613,
+        "text": "0.00.298.715 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 614,
+        "text": "0.00.298.715 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 615,
+        "text": "0.00.298.715 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 616,
+        "text": "0.00.298.715 D ubatch_print:   ]"
+      },
+      {
+        "line": 619,
+        "text": "0.00.298.733 D slot process_toke: id  0 | task 1 | n_gen = 3, n_remaining = 0, next token:     9 ' three'"
+      },
+      {
+        "line": 627,
+        "text": "0.00.298.739 I slot      release: id  0 | task 1 | stop processing: n_tokens = 6, truncated = 0"
+      },
+      {
+        "line": 633,
+        "text": "0.00.298.741 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 647,
+        "text": "0.00.299.902 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 670,
+        "text": "0.00.300.922 I slot   operator(): id  0 | task 6 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 671,
+        "text": "0.00.300.925 I slot   operator(): id  0 | task 6 | cached n_tokens = 3, memory_seq_rm [3, end)"
+      },
+      {
+        "line": 682,
+        "text": "0.00.300.935 D init: input batch info:"
+      },
+      {
+        "line": 683,
+        "text": "0.00.300.936 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 684,
+        "text": "0.00.300.936 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 685,
+        "text": "0.00.300.936 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 686,
+        "text": "0.00.300.936 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 687,
+        "text": "0.00.300.936 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 688,
+        "text": "0.00.300.940 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 689,
+        "text": "0.00.300.940 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 690,
+        "text": "0.00.300.940 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 691,
+        "text": "0.00.300.940 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 692,
+        "text": "0.00.300.940 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 693,
+        "text": "0.00.300.940 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 694,
+        "text": "0.00.300.940 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 695,
+        "text": "0.00.300.941 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 696,
+        "text": "0.00.300.941 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 697,
+        "text": "0.00.300.942 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 698,
+        "text": "0.00.300.942 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 699,
+        "text": "0.00.300.942 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 700,
+        "text": "0.00.300.942 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 701,
+        "text": "0.00.300.943 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 702,
+        "text": "0.00.300.943 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 703,
+        "text": "0.00.300.944 D ubatch_print:   ]"
+      },
+      {
+        "line": 707,
+        "text": "0.00.300.946 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 708,
+        "text": "0.00.300.946 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 709,
+        "text": "0.00.300.946 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 710,
+        "text": "0.00.300.947 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 711,
+        "text": "0.00.300.947 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 712,
+        "text": "0.00.300.947 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 713,
+        "text": "0.00.300.949 D ubatch_print:   token      = 0xc8483c2d0"
+      },
+      {
+        "line": 714,
+        "text": "0.00.300.950 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 715,
+        "text": "0.00.300.950 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 716,
+        "text": "0.00.300.950 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 717,
+        "text": "0.00.300.950 D ubatch_print:   pos        = 0xc8483c2b0"
+      },
+      {
+        "line": 718,
+        "text": "0.00.300.950 D ubatch_print:   n_seq_id   = 0xc8483c320"
+      },
+      {
+        "line": 719,
+        "text": "0.00.300.950 D ubatch_print:   seq_id     = 0xc8483c1b0"
+      },
+      {
+        "line": 720,
+        "text": "0.00.300.950 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 721,
+        "text": "0.00.300.951 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 722,
+        "text": "0.00.300.951 D ubatch_print:   output     = 0xc8483c2a0"
+      },
+      {
+        "line": 723,
+        "text": "0.00.300.951 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 724,
+        "text": "0.00.300.951 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 725,
+        "text": "0.00.300.951 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 726,
+        "text": "0.00.300.952 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 727,
+        "text": "0.00.300.952 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 728,
+        "text": "0.00.300.952 D ubatch_print:   ]"
+      },
+      {
+        "line": 730,
+        "text": "0.00.301.004 D slot process_toke: id  0 | task 6 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 746,
+        "text": "0.00.301.013 D init: input batch info:"
+      },
+      {
+        "line": 747,
+        "text": "0.00.301.013 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 748,
+        "text": "0.00.301.013 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 749,
+        "text": "0.00.301.013 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 750,
+        "text": "0.00.301.013 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 751,
+        "text": "0.00.301.013 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 752,
+        "text": "0.00.301.016 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 753,
+        "text": "0.00.301.016 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 754,
+        "text": "0.00.301.016 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 755,
+        "text": "0.00.301.017 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 756,
+        "text": "0.00.301.017 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 757,
+        "text": "0.00.301.017 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 758,
+        "text": "0.00.301.017 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 759,
+        "text": "0.00.301.017 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 760,
+        "text": "0.00.301.018 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 761,
+        "text": "0.00.301.018 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 762,
+        "text": "0.00.301.018 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 763,
+        "text": "0.00.301.018 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 764,
+        "text": "0.00.301.018 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 765,
+        "text": "0.00.301.019 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 766,
+        "text": "0.00.301.019 D ubatch_print:   ]"
+      },
+      {
+        "line": 770,
+        "text": "0.00.301.021 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 771,
+        "text": "0.00.301.021 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 772,
+        "text": "0.00.301.021 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 773,
+        "text": "0.00.301.021 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 774,
+        "text": "0.00.301.021 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 775,
+        "text": "0.00.301.021 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 776,
+        "text": "0.00.301.024 D ubatch_print:   token      = 0xc8483c220"
+      },
+      {
+        "line": 777,
+        "text": "0.00.301.024 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 778,
+        "text": "0.00.301.024 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 779,
+        "text": "0.00.301.024 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 780,
+        "text": "0.00.301.024 D ubatch_print:   pos        = 0xc8483c240"
+      },
+      {
+        "line": 781,
+        "text": "0.00.301.024 D ubatch_print:   n_seq_id   = 0xc8483c230"
+      },
+      {
+        "line": 782,
+        "text": "0.00.301.024 D ubatch_print:   seq_id     = 0xc8483c340"
+      },
+      {
+        "line": 783,
+        "text": "0.00.301.024 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 784,
+        "text": "0.00.301.025 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 785,
+        "text": "0.00.301.025 D ubatch_print:   output     = 0xc8483c330"
+      },
+      {
+        "line": 786,
+        "text": "0.00.301.025 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 787,
+        "text": "0.00.301.025 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 788,
+        "text": "0.00.301.025 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 789,
+        "text": "0.00.301.026 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 790,
+        "text": "0.00.301.026 D ubatch_print:   ]"
+      },
+      {
+        "line": 792,
+        "text": "0.00.301.062 D slot process_toke: id  0 | task 6 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 805,
+        "text": "0.00.301.069 D init: input batch info:"
+      },
+      {
+        "line": 806,
+        "text": "0.00.301.070 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 807,
+        "text": "0.00.301.070 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 808,
+        "text": "0.00.301.070 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 809,
+        "text": "0.00.301.070 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 810,
+        "text": "0.00.301.070 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 814,
+        "text": "0.00.301.073 D ubatch_print:   token      = 0xc8483c2e0"
+      },
+      {
+        "line": 815,
+        "text": "0.00.301.073 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 816,
+        "text": "0.00.301.073 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 817,
+        "text": "0.00.301.073 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 818,
+        "text": "0.00.301.073 D ubatch_print:   pos        = 0xc8483c170"
+      },
+      {
+        "line": 819,
+        "text": "0.00.301.073 D ubatch_print:   n_seq_id   = 0xc8483c1e0"
+      },
+      {
+        "line": 820,
+        "text": "0.00.301.073 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 821,
+        "text": "0.00.301.074 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 822,
+        "text": "0.00.301.074 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 823,
+        "text": "0.00.301.074 D ubatch_print:   output     = 0xc8480c240"
+      },
+      {
+        "line": 824,
+        "text": "0.00.301.074 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 825,
+        "text": "0.00.301.075 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 826,
+        "text": "0.00.301.075 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 827,
+        "text": "0.00.301.075 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 828,
+        "text": "0.00.301.075 D ubatch_print:   ]"
+      },
+      {
+        "line": 832,
+        "text": "0.00.301.077 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 833,
+        "text": "0.00.301.077 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 834,
+        "text": "0.00.301.077 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 835,
+        "text": "0.00.301.077 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 836,
+        "text": "0.00.301.077 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 837,
+        "text": "0.00.301.077 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 838,
+        "text": "0.00.301.080 D ubatch_print:   token      = 0xc8483c2d0"
+      },
+      {
+        "line": 839,
+        "text": "0.00.301.080 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 840,
+        "text": "0.00.301.080 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 841,
+        "text": "0.00.301.080 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 842,
+        "text": "0.00.301.080 D ubatch_print:   pos        = 0xc8483c2b0"
+      },
+      {
+        "line": 843,
+        "text": "0.00.301.081 D ubatch_print:   n_seq_id   = 0xc8483c320"
+      },
+      {
+        "line": 844,
+        "text": "0.00.301.081 D ubatch_print:   seq_id     = 0xc8483c1b0"
+      },
+      {
+        "line": 845,
+        "text": "0.00.301.081 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 846,
+        "text": "0.00.301.081 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 847,
+        "text": "0.00.301.081 D ubatch_print:   output     = 0xc8483c360"
+      },
+      {
+        "line": 848,
+        "text": "0.00.301.081 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 849,
+        "text": "0.00.301.081 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 850,
+        "text": "0.00.301.082 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 851,
+        "text": "0.00.301.082 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 852,
+        "text": "0.00.301.082 D ubatch_print:   ]"
+      },
+      {
+        "line": 855,
+        "text": "0.00.301.100 D slot process_toke: id  0 | task 6 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 863,
+        "text": "0.00.301.105 I slot      release: id  0 | task 6 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 869,
+        "text": "0.00.301.109 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 883,
+        "text": "0.00.302.093 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 891,
+        "text": "0.00.302.868 I slot prompt_clear: id  0 | task -1 | clearing prompt with 7 tokens"
+      },
+      {
+        "line": 895,
+        "text": "0.00.302.871 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 908,
+        "text": "0.00.303.758 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 931,
+        "text": "0.00.304.617 I slot   operator(): id  0 | task 13 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 932,
+        "text": "0.00.304.618 I slot   operator(): id  0 | task 13 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 940,
+        "text": "0.00.304.626 D init: input batch info:"
+      },
+      {
+        "line": 941,
+        "text": "0.00.304.627 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 945,
+        "text": "0.00.304.629 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 946,
+        "text": "0.00.304.629 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 947,
+        "text": "0.00.304.630 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 948,
+        "text": "0.00.304.630 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 949,
+        "text": "0.00.304.633 D ubatch_print:   token      = 0xc8505e880"
+      },
+      {
+        "line": 950,
+        "text": "0.00.304.633 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 951,
+        "text": "0.00.304.633 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 952,
+        "text": "0.00.304.633 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 953,
+        "text": "0.00.304.633 D ubatch_print:   pos        = 0xc8505e8a0"
+      },
+      {
+        "line": 954,
+        "text": "0.00.304.633 D ubatch_print:   n_seq_id   = 0xc8505e900"
+      },
+      {
+        "line": 955,
+        "text": "0.00.304.634 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 956,
+        "text": "0.00.304.634 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 957,
+        "text": "0.00.304.634 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 958,
+        "text": "0.00.304.634 D ubatch_print:   output     = 0xc8480c220"
+      },
+      {
+        "line": 959,
+        "text": "0.00.304.635 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 960,
+        "text": "0.00.304.635 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 961,
+        "text": "0.00.304.635 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 962,
+        "text": "0.00.304.636 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 963,
+        "text": "0.00.304.636 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 964,
+        "text": "0.00.304.636 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 965,
+        "text": "0.00.304.637 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 966,
+        "text": "0.00.304.637 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 967,
+        "text": "0.00.304.637 D ubatch_print:   ]"
+      },
+      {
+        "line": 971,
+        "text": "0.00.304.640 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 972,
+        "text": "0.00.304.640 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 973,
+        "text": "0.00.304.640 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 974,
+        "text": "0.00.304.640 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 975,
+        "text": "0.00.304.640 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 976,
+        "text": "0.00.304.640 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 977,
+        "text": "0.00.304.643 D ubatch_print:   token      = 0xc8505ea00"
+      },
+      {
+        "line": 978,
+        "text": "0.00.304.643 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 979,
+        "text": "0.00.304.643 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 980,
+        "text": "0.00.304.643 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 981,
+        "text": "0.00.304.643 D ubatch_print:   pos        = 0xc8505e9c0"
+      },
+      {
+        "line": 982,
+        "text": "0.00.304.643 D ubatch_print:   n_seq_id   = 0xc8505e9a0"
+      },
+      {
+        "line": 983,
+        "text": "0.00.304.643 D ubatch_print:   seq_id     = 0xc85418a20"
+      },
+      {
+        "line": 984,
+        "text": "0.00.304.643 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 985,
+        "text": "0.00.304.644 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 986,
+        "text": "0.00.304.644 D ubatch_print:   output     = 0xc8483c1e0"
+      },
+      {
+        "line": 987,
+        "text": "0.00.304.644 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 988,
+        "text": "0.00.304.644 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 989,
+        "text": "0.00.304.644 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 990,
+        "text": "0.00.304.645 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 991,
+        "text": "0.00.304.645 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 992,
+        "text": "0.00.304.645 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 993,
+        "text": "0.00.304.646 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 994,
+        "text": "0.00.304.646 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 995,
+        "text": "0.00.304.646 D ubatch_print:   ]"
+      },
+      {
+        "line": 997,
+        "text": "0.00.304.691 D slot process_toke: id  0 | task 13 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 1010,
+        "text": "0.00.304.698 D init: input batch info:"
+      },
+      {
+        "line": 1011,
+        "text": "0.00.304.698 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1012,
+        "text": "0.00.304.698 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1013,
+        "text": "0.00.304.698 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1014,
+        "text": "0.00.304.698 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1015,
+        "text": "0.00.304.698 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1016,
+        "text": "0.00.304.701 D ubatch_print:   token      = 0xc8505e880"
+      },
+      {
+        "line": 1017,
+        "text": "0.00.304.701 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1018,
+        "text": "0.00.304.701 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1019,
+        "text": "0.00.304.701 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1020,
+        "text": "0.00.304.701 D ubatch_print:   pos        = 0xc8505e8a0"
+      },
+      {
+        "line": 1021,
+        "text": "0.00.304.701 D ubatch_print:   n_seq_id   = 0xc8505e900"
+      },
+      {
+        "line": 1022,
+        "text": "0.00.304.701 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 1023,
+        "text": "0.00.304.702 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1024,
+        "text": "0.00.304.702 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1025,
+        "text": "0.00.304.702 D ubatch_print:   output     = 0xc8480c220"
+      },
+      {
+        "line": 1026,
+        "text": "0.00.304.702 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1027,
+        "text": "0.00.304.702 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1028,
+        "text": "0.00.304.703 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1029,
+        "text": "0.00.304.703 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1030,
+        "text": "0.00.304.703 D ubatch_print:   ]"
+      },
+      {
+        "line": 1034,
+        "text": "0.00.304.705 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1035,
+        "text": "0.00.304.705 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1036,
+        "text": "0.00.304.705 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1037,
+        "text": "0.00.304.705 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1038,
+        "text": "0.00.304.705 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1039,
+        "text": "0.00.304.705 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1040,
+        "text": "0.00.304.708 D ubatch_print:   token      = 0xc8483c240"
+      },
+      {
+        "line": 1041,
+        "text": "0.00.304.708 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1042,
+        "text": "0.00.304.708 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1043,
+        "text": "0.00.304.708 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1044,
+        "text": "0.00.304.708 D ubatch_print:   pos        = 0xc8483c230"
+      },
+      {
+        "line": 1045,
+        "text": "0.00.304.709 D ubatch_print:   n_seq_id   = 0xc8483c340"
+      },
+      {
+        "line": 1046,
+        "text": "0.00.304.709 D ubatch_print:   seq_id     = 0xc8483c370"
+      },
+      {
+        "line": 1047,
+        "text": "0.00.304.709 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1048,
+        "text": "0.00.304.709 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1049,
+        "text": "0.00.304.709 D ubatch_print:   output     = 0xc8483c330"
+      },
+      {
+        "line": 1050,
+        "text": "0.00.304.710 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1051,
+        "text": "0.00.304.710 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1052,
+        "text": "0.00.304.710 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1053,
+        "text": "0.00.304.710 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1054,
+        "text": "0.00.304.710 D ubatch_print:   ]"
+      },
+      {
+        "line": 1059,
+        "text": "0.00.304.755 D slot process_toke: id  0 | task 13 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 1072,
+        "text": "0.00.304.764 D init: input batch info:"
+      },
+      {
+        "line": 1073,
+        "text": "0.00.304.764 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1074,
+        "text": "0.00.304.764 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1075,
+        "text": "0.00.304.764 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1076,
+        "text": "0.00.304.764 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1077,
+        "text": "0.00.304.764 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1078,
+        "text": "0.00.304.768 D ubatch_print:   token      = 0xc8505e880"
+      },
+      {
+        "line": 1079,
+        "text": "0.00.304.768 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1080,
+        "text": "0.00.304.768 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1081,
+        "text": "0.00.304.768 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1082,
+        "text": "0.00.304.769 D ubatch_print:   pos        = 0xc8505e8a0"
+      },
+      {
+        "line": 1083,
+        "text": "0.00.304.769 D ubatch_print:   n_seq_id   = 0xc8505e900"
+      },
+      {
+        "line": 1084,
+        "text": "0.00.304.769 D ubatch_print:   seq_id     = 0xc854188a0"
+      },
+      {
+        "line": 1085,
+        "text": "0.00.304.769 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1086,
+        "text": "0.00.304.770 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1087,
+        "text": "0.00.304.770 D ubatch_print:   output     = 0xc8480c220"
+      },
+      {
+        "line": 1088,
+        "text": "0.00.304.770 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1089,
+        "text": "0.00.304.772 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1090,
+        "text": "0.00.304.772 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1094,
+        "text": "0.00.304.775 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1095,
+        "text": "0.00.304.776 D ubatch_print:   ]"
+      },
+      {
+        "line": 1099,
+        "text": "0.00.304.778 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1100,
+        "text": "0.00.304.778 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1101,
+        "text": "0.00.304.779 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1102,
+        "text": "0.00.304.779 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1103,
+        "text": "0.00.304.779 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1104,
+        "text": "0.00.304.779 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1105,
+        "text": "0.00.304.781 D ubatch_print:   token      = 0xc8483c1e0"
+      },
+      {
+        "line": 1106,
+        "text": "0.00.304.782 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1107,
+        "text": "0.00.304.782 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1108,
+        "text": "0.00.304.782 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1109,
+        "text": "0.00.304.782 D ubatch_print:   pos        = 0xc8483c310"
+      },
+      {
+        "line": 1110,
+        "text": "0.00.304.782 D ubatch_print:   n_seq_id   = 0xc8483c300"
+      },
+      {
+        "line": 1111,
+        "text": "0.00.304.782 D ubatch_print:   seq_id     = 0xc8483c2f0"
+      },
+      {
+        "line": 1112,
+        "text": "0.00.304.782 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1113,
+        "text": "0.00.304.783 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1114,
+        "text": "0.00.304.783 D ubatch_print:   output     = 0xc8483c220"
+      },
+      {
+        "line": 1115,
+        "text": "0.00.304.783 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1116,
+        "text": "0.00.304.783 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1117,
+        "text": "0.00.304.783 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1118,
+        "text": "0.00.304.784 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1119,
+        "text": "0.00.304.784 D ubatch_print:   ]"
+      },
+      {
+        "line": 1122,
+        "text": "0.00.304.811 D slot process_toke: id  0 | task 13 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 1130,
+        "text": "0.00.304.818 I slot      release: id  0 | task 13 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 1136,
+        "text": "0.00.304.820 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1150,
+        "text": "0.00.305.775 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1159,
+        "text": "0.00.306.587 D ~llama_context:        CPU compute buffer size is   0.0304 MiB, matches expectation of   0.0304 MiB"
+      },
+      {
+        "line": 1160,
+        "text": "0.00.306.588 D ~llama_context:        CPU compute buffer size is   0.0000 MiB, matches expectation of   0.0000 MiB"
+      }
+    ]
+  },
+  {
+    "repeat": 2,
+    "lines": [
+      {
+        "line": 103,
+        "text": "0.00.051.120 D load_tensors: layer   0 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 104,
+        "text": "0.00.051.120 D load_tensors: layer   1 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 163,
+        "text": "0.00.051.706 I llama_kv_cache:        CPU KV buffer size =     0.02 MiB"
+      },
+      {
+        "line": 262,
+        "text": "0.00.052.067 I sched_reserve:        CPU compute buffer size =     0.03 MiB"
+      },
+      {
+        "line": 270,
+        "text": "0.00.052.089 D init: input batch info:"
+      },
+      {
+        "line": 271,
+        "text": "0.00.052.089 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 272,
+        "text": "0.00.052.089 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 273,
+        "text": "0.00.052.089 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 274,
+        "text": "0.00.052.089 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 275,
+        "text": "0.00.052.090 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 276,
+        "text": "0.00.052.097 D ubatch_print:   token      = 0xb77028160"
+      },
+      {
+        "line": 277,
+        "text": "0.00.052.097 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 278,
+        "text": "0.00.052.097 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 279,
+        "text": "0.00.052.097 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 280,
+        "text": "0.00.052.097 D ubatch_print:   pos        = 0xb770281e0"
+      },
+      {
+        "line": 281,
+        "text": "0.00.052.097 D ubatch_print:   n_seq_id   = 0xb770281d0"
+      },
+      {
+        "line": 282,
+        "text": "0.00.052.098 D ubatch_print:   seq_id     = 0xb76866ac0"
+      },
+      {
+        "line": 283,
+        "text": "0.00.052.098 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 284,
+        "text": "0.00.052.100 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 285,
+        "text": "0.00.052.100 D ubatch_print:   output     = 0xb77028170"
+      },
+      {
+        "line": 286,
+        "text": "0.00.052.100 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 287,
+        "text": "0.00.052.100 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 288,
+        "text": "0.00.052.101 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 289,
+        "text": "0.00.052.102 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 290,
+        "text": "0.00.052.102 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 291,
+        "text": "0.00.052.102 D ubatch_print:   ]"
+      },
+      {
+        "line": 295,
+        "text": "0.00.052.106 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 296,
+        "text": "0.00.052.106 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 297,
+        "text": "0.00.052.106 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 298,
+        "text": "0.00.052.106 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 299,
+        "text": "0.00.052.106 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 300,
+        "text": "0.00.052.106 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 301,
+        "text": "0.00.052.109 D ubatch_print:   token      = 0xb77028220"
+      },
+      {
+        "line": 302,
+        "text": "0.00.052.109 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 303,
+        "text": "0.00.052.109 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 304,
+        "text": "0.00.052.110 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 305,
+        "text": "0.00.052.110 D ubatch_print:   pos        = 0xb77028240"
+      },
+      {
+        "line": 306,
+        "text": "0.00.052.110 D ubatch_print:   n_seq_id   = 0xb77028250"
+      },
+      {
+        "line": 307,
+        "text": "0.00.052.110 D ubatch_print:   seq_id     = 0xb77028260"
+      },
+      {
+        "line": 308,
+        "text": "0.00.052.110 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 309,
+        "text": "0.00.052.112 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 310,
+        "text": "0.00.052.112 D ubatch_print:   output     = 0xb76d14120"
+      },
+      {
+        "line": 311,
+        "text": "0.00.052.112 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 312,
+        "text": "0.00.052.112 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 313,
+        "text": "0.00.052.113 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 314,
+        "text": "0.00.052.113 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 315,
+        "text": "0.00.052.113 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 316,
+        "text": "0.00.052.113 D ubatch_print:   ]"
+      },
+      {
+        "line": 317,
+        "text": "0.00.052.187 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 128, kv_unified = 'false'"
+      },
+      {
+        "line": 396,
+        "text": "0.00.053.507 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 407,
+        "text": "0.00.069.817 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 430,
+        "text": "0.00.070.893 I slot   operator(): id  0 | task 1 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4"
+      },
+      {
+        "line": 431,
+        "text": "0.00.070.896 I slot   operator(): id  0 | task 1 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 439,
+        "text": "0.00.070.911 D init: input batch info:"
+      },
+      {
+        "line": 440,
+        "text": "0.00.070.912 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 441,
+        "text": "0.00.070.912 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 442,
+        "text": "0.00.070.912 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 443,
+        "text": "0.00.070.912 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 444,
+        "text": "0.00.070.912 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 445,
+        "text": "0.00.070.917 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 446,
+        "text": "0.00.070.917 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 447,
+        "text": "0.00.070.917 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 448,
+        "text": "0.00.070.917 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 449,
+        "text": "0.00.070.918 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 450,
+        "text": "0.00.070.918 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 451,
+        "text": "0.00.070.918 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 452,
+        "text": "0.00.070.918 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 453,
+        "text": "0.00.070.919 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 454,
+        "text": "0.00.070.920 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 455,
+        "text": "0.00.070.920 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 456,
+        "text": "0.00.070.920 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 457,
+        "text": "0.00.070.920 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 458,
+        "text": "0.00.070.921 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 459,
+        "text": "0.00.070.922 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 460,
+        "text": "0.00.070.922 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 461,
+        "text": "0.00.070.923 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 462,
+        "text": "0.00.070.923 D ubatch_print:   ]"
+      },
+      {
+        "line": 469,
+        "text": "0.00.070.935 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 470,
+        "text": "0.00.070.935 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 471,
+        "text": "0.00.070.935 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 472,
+        "text": "0.00.070.935 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 473,
+        "text": "0.00.070.936 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 474,
+        "text": "0.00.070.936 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 475,
+        "text": "0.00.070.939 D ubatch_print:   token      = 0xb77028330"
+      },
+      {
+        "line": 476,
+        "text": "0.00.070.939 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 477,
+        "text": "0.00.070.940 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 478,
+        "text": "0.00.070.940 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 479,
+        "text": "0.00.070.940 D ubatch_print:   pos        = 0xb77028340"
+      },
+      {
+        "line": 480,
+        "text": "0.00.070.940 D ubatch_print:   n_seq_id   = 0xb77028350"
+      },
+      {
+        "line": 481,
+        "text": "0.00.070.940 D ubatch_print:   seq_id     = 0xb76866ac0"
+      },
+      {
+        "line": 482,
+        "text": "0.00.070.940 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 483,
+        "text": "0.00.070.941 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 484,
+        "text": "0.00.070.941 D ubatch_print:   output     = 0xb76d14220"
+      },
+      {
+        "line": 485,
+        "text": "0.00.070.941 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 486,
+        "text": "0.00.070.941 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 487,
+        "text": "0.00.070.941 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 488,
+        "text": "0.00.070.942 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 489,
+        "text": "0.00.070.943 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 490,
+        "text": "0.00.070.943 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 491,
+        "text": "0.00.070.943 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 492,
+        "text": "0.00.070.944 D ubatch_print:   ]"
+      },
+      {
+        "line": 494,
+        "text": "0.00.071.026 D slot process_toke: id  0 | task 1 | n_gen = 1, n_remaining = 2, next token:     7 ' one'"
+      },
+      {
+        "line": 507,
+        "text": "0.00.071.040 D init: input batch info:"
+      },
+      {
+        "line": 508,
+        "text": "0.00.071.041 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 509,
+        "text": "0.00.071.041 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 510,
+        "text": "0.00.071.042 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 511,
+        "text": "0.00.071.042 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 512,
+        "text": "0.00.071.043 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 516,
+        "text": "0.00.071.050 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 517,
+        "text": "0.00.071.051 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 518,
+        "text": "0.00.071.051 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 519,
+        "text": "0.00.071.051 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 520,
+        "text": "0.00.071.051 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 521,
+        "text": "0.00.071.051 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 522,
+        "text": "0.00.071.051 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 523,
+        "text": "0.00.071.052 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 524,
+        "text": "0.00.071.054 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 525,
+        "text": "0.00.071.054 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 526,
+        "text": "0.00.071.054 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 527,
+        "text": "0.00.071.054 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 528,
+        "text": "0.00.071.054 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 529,
+        "text": "0.00.071.055 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 530,
+        "text": "0.00.071.056 D ubatch_print:   ]"
+      },
+      {
+        "line": 534,
+        "text": "0.00.071.060 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 535,
+        "text": "0.00.071.060 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 536,
+        "text": "0.00.071.060 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 537,
+        "text": "0.00.071.061 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 538,
+        "text": "0.00.071.061 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 539,
+        "text": "0.00.071.061 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 540,
+        "text": "0.00.071.064 D ubatch_print:   token      = 0xb77028310"
+      },
+      {
+        "line": 541,
+        "text": "0.00.071.064 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 542,
+        "text": "0.00.071.064 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 543,
+        "text": "0.00.071.064 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 544,
+        "text": "0.00.071.064 D ubatch_print:   pos        = 0xb77028320"
+      },
+      {
+        "line": 545,
+        "text": "0.00.071.065 D ubatch_print:   n_seq_id   = 0xb770282d0"
+      },
+      {
+        "line": 546,
+        "text": "0.00.071.065 D ubatch_print:   seq_id     = 0xb77028220"
+      },
+      {
+        "line": 547,
+        "text": "0.00.071.065 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 548,
+        "text": "0.00.071.066 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 549,
+        "text": "0.00.071.066 D ubatch_print:   output     = 0xb76d14260"
+      },
+      {
+        "line": 550,
+        "text": "0.00.071.066 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 551,
+        "text": "0.00.071.066 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 552,
+        "text": "0.00.071.066 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 553,
+        "text": "0.00.071.067 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 554,
+        "text": "0.00.071.067 D ubatch_print:   ]"
+      },
+      {
+        "line": 556,
+        "text": "0.00.071.175 D slot process_toke: id  0 | task 1 | n_gen = 2, n_remaining = 1, next token:     8 ' two'"
+      },
+      {
+        "line": 569,
+        "text": "0.00.071.184 D init: input batch info:"
+      },
+      {
+        "line": 570,
+        "text": "0.00.071.184 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 571,
+        "text": "0.00.071.184 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 572,
+        "text": "0.00.071.186 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 573,
+        "text": "0.00.071.186 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 574,
+        "text": "0.00.071.186 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 578,
+        "text": "0.00.071.192 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 579,
+        "text": "0.00.071.192 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 580,
+        "text": "0.00.071.192 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 581,
+        "text": "0.00.071.192 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 582,
+        "text": "0.00.071.193 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 583,
+        "text": "0.00.071.193 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 584,
+        "text": "0.00.071.193 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 585,
+        "text": "0.00.071.193 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 586,
+        "text": "0.00.071.194 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 587,
+        "text": "0.00.071.194 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 588,
+        "text": "0.00.071.194 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 589,
+        "text": "0.00.071.194 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 590,
+        "text": "0.00.071.194 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 591,
+        "text": "0.00.071.195 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 592,
+        "text": "0.00.071.196 D ubatch_print:   ]"
+      },
+      {
+        "line": 596,
+        "text": "0.00.071.198 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 597,
+        "text": "0.00.071.199 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 598,
+        "text": "0.00.071.199 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 599,
+        "text": "0.00.071.199 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 600,
+        "text": "0.00.071.199 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 601,
+        "text": "0.00.071.199 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 602,
+        "text": "0.00.071.202 D ubatch_print:   token      = 0xb77028340"
+      },
+      {
+        "line": 603,
+        "text": "0.00.071.202 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 604,
+        "text": "0.00.071.202 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 605,
+        "text": "0.00.071.202 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 606,
+        "text": "0.00.071.202 D ubatch_print:   pos        = 0xb77028330"
+      },
+      {
+        "line": 607,
+        "text": "0.00.071.203 D ubatch_print:   n_seq_id   = 0xb77028350"
+      },
+      {
+        "line": 608,
+        "text": "0.00.071.203 D ubatch_print:   seq_id     = 0xb77028360"
+      },
+      {
+        "line": 609,
+        "text": "0.00.071.203 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 610,
+        "text": "0.00.071.203 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 611,
+        "text": "0.00.071.204 D ubatch_print:   output     = 0xb76d14250"
+      },
+      {
+        "line": 612,
+        "text": "0.00.071.204 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 613,
+        "text": "0.00.071.204 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 614,
+        "text": "0.00.071.204 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 615,
+        "text": "0.00.071.204 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 616,
+        "text": "0.00.071.204 D ubatch_print:   ]"
+      },
+      {
+        "line": 619,
+        "text": "0.00.071.234 D slot process_toke: id  0 | task 1 | n_gen = 3, n_remaining = 0, next token:     9 ' three'"
+      },
+      {
+        "line": 627,
+        "text": "0.00.071.247 I slot      release: id  0 | task 1 | stop processing: n_tokens = 6, truncated = 0"
+      },
+      {
+        "line": 633,
+        "text": "0.00.071.250 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 647,
+        "text": "0.00.072.338 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 670,
+        "text": "0.00.073.420 I slot   operator(): id  0 | task 6 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 671,
+        "text": "0.00.073.422 I slot   operator(): id  0 | task 6 | cached n_tokens = 3, memory_seq_rm [3, end)"
+      },
+      {
+        "line": 682,
+        "text": "0.00.073.439 D init: input batch info:"
+      },
+      {
+        "line": 683,
+        "text": "0.00.073.440 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 684,
+        "text": "0.00.073.440 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 685,
+        "text": "0.00.073.440 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 686,
+        "text": "0.00.073.440 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 687,
+        "text": "0.00.073.440 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 688,
+        "text": "0.00.073.445 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 689,
+        "text": "0.00.073.445 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 690,
+        "text": "0.00.073.445 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 691,
+        "text": "0.00.073.446 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 692,
+        "text": "0.00.073.446 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 693,
+        "text": "0.00.073.446 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 694,
+        "text": "0.00.073.446 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 695,
+        "text": "0.00.073.446 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 696,
+        "text": "0.00.073.447 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 697,
+        "text": "0.00.073.447 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 698,
+        "text": "0.00.073.447 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 699,
+        "text": "0.00.073.447 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 700,
+        "text": "0.00.073.448 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 701,
+        "text": "0.00.073.449 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 702,
+        "text": "0.00.073.449 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 703,
+        "text": "0.00.073.450 D ubatch_print:   ]"
+      },
+      {
+        "line": 707,
+        "text": "0.00.073.453 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 708,
+        "text": "0.00.073.453 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 709,
+        "text": "0.00.073.453 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 710,
+        "text": "0.00.073.453 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 711,
+        "text": "0.00.073.453 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 712,
+        "text": "0.00.073.453 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 713,
+        "text": "0.00.073.456 D ubatch_print:   token      = 0xb77028240"
+      },
+      {
+        "line": 714,
+        "text": "0.00.073.456 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 715,
+        "text": "0.00.073.456 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 716,
+        "text": "0.00.073.456 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 717,
+        "text": "0.00.073.457 D ubatch_print:   pos        = 0xb77028360"
+      },
+      {
+        "line": 718,
+        "text": "0.00.073.457 D ubatch_print:   n_seq_id   = 0xb77028260"
+      },
+      {
+        "line": 719,
+        "text": "0.00.073.457 D ubatch_print:   seq_id     = 0xb77028370"
+      },
+      {
+        "line": 720,
+        "text": "0.00.073.457 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 721,
+        "text": "0.00.073.457 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 722,
+        "text": "0.00.073.458 D ubatch_print:   output     = 0xb76d141d0"
+      },
+      {
+        "line": 723,
+        "text": "0.00.073.458 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 724,
+        "text": "0.00.073.458 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 725,
+        "text": "0.00.073.458 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 726,
+        "text": "0.00.073.458 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 727,
+        "text": "0.00.073.459 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 728,
+        "text": "0.00.073.459 D ubatch_print:   ]"
+      },
+      {
+        "line": 730,
+        "text": "0.00.073.525 D slot process_toke: id  0 | task 6 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 746,
+        "text": "0.00.073.534 D init: input batch info:"
+      },
+      {
+        "line": 747,
+        "text": "0.00.073.534 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 748,
+        "text": "0.00.073.534 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 749,
+        "text": "0.00.073.534 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 750,
+        "text": "0.00.073.535 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 751,
+        "text": "0.00.073.535 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 752,
+        "text": "0.00.073.538 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 753,
+        "text": "0.00.073.538 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 754,
+        "text": "0.00.073.538 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 755,
+        "text": "0.00.073.538 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 756,
+        "text": "0.00.073.538 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 757,
+        "text": "0.00.073.538 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 758,
+        "text": "0.00.073.539 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 759,
+        "text": "0.00.073.539 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 760,
+        "text": "0.00.073.539 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 761,
+        "text": "0.00.073.539 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 762,
+        "text": "0.00.073.540 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 763,
+        "text": "0.00.073.540 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 764,
+        "text": "0.00.073.540 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 765,
+        "text": "0.00.073.540 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 766,
+        "text": "0.00.073.541 D ubatch_print:   ]"
+      },
+      {
+        "line": 770,
+        "text": "0.00.073.542 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 771,
+        "text": "0.00.073.543 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 772,
+        "text": "0.00.073.543 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 773,
+        "text": "0.00.073.543 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 774,
+        "text": "0.00.073.543 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 775,
+        "text": "0.00.073.543 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 776,
+        "text": "0.00.073.545 D ubatch_print:   token      = 0xb77028320"
+      },
+      {
+        "line": 777,
+        "text": "0.00.073.546 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 778,
+        "text": "0.00.073.546 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 779,
+        "text": "0.00.073.546 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 780,
+        "text": "0.00.073.546 D ubatch_print:   pos        = 0xb77028310"
+      },
+      {
+        "line": 781,
+        "text": "0.00.073.546 D ubatch_print:   n_seq_id   = 0xb770282d0"
+      },
+      {
+        "line": 782,
+        "text": "0.00.073.546 D ubatch_print:   seq_id     = 0xb77028220"
+      },
+      {
+        "line": 783,
+        "text": "0.00.073.546 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 784,
+        "text": "0.00.073.547 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 785,
+        "text": "0.00.073.547 D ubatch_print:   output     = 0xb76d14280"
+      },
+      {
+        "line": 786,
+        "text": "0.00.073.547 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 787,
+        "text": "0.00.073.547 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 788,
+        "text": "0.00.073.547 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 789,
+        "text": "0.00.073.548 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 790,
+        "text": "0.00.073.548 D ubatch_print:   ]"
+      },
+      {
+        "line": 792,
+        "text": "0.00.073.596 D slot process_toke: id  0 | task 6 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 805,
+        "text": "0.00.073.602 D init: input batch info:"
+      },
+      {
+        "line": 806,
+        "text": "0.00.073.602 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 810,
+        "text": "0.00.073.604 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 811,
+        "text": "0.00.073.604 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 812,
+        "text": "0.00.073.604 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 813,
+        "text": "0.00.073.604 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 814,
+        "text": "0.00.073.607 D ubatch_print:   token      = 0xb770282e0"
+      },
+      {
+        "line": 815,
+        "text": "0.00.073.607 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 816,
+        "text": "0.00.073.607 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 817,
+        "text": "0.00.073.607 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 818,
+        "text": "0.00.073.608 D ubatch_print:   pos        = 0xb77028160"
+      },
+      {
+        "line": 819,
+        "text": "0.00.073.608 D ubatch_print:   n_seq_id   = 0xb770281e0"
+      },
+      {
+        "line": 820,
+        "text": "0.00.073.608 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 821,
+        "text": "0.00.073.608 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 822,
+        "text": "0.00.073.608 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 823,
+        "text": "0.00.073.608 D ubatch_print:   output     = 0xb770281d0"
+      },
+      {
+        "line": 824,
+        "text": "0.00.073.609 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 825,
+        "text": "0.00.073.609 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 826,
+        "text": "0.00.073.609 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 827,
+        "text": "0.00.073.609 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 828,
+        "text": "0.00.073.610 D ubatch_print:   ]"
+      },
+      {
+        "line": 832,
+        "text": "0.00.073.611 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 833,
+        "text": "0.00.073.611 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 834,
+        "text": "0.00.073.612 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 835,
+        "text": "0.00.073.612 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 836,
+        "text": "0.00.073.612 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 837,
+        "text": "0.00.073.612 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 838,
+        "text": "0.00.073.614 D ubatch_print:   token      = 0xb77028360"
+      },
+      {
+        "line": 839,
+        "text": "0.00.073.614 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 840,
+        "text": "0.00.073.614 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 841,
+        "text": "0.00.073.615 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 842,
+        "text": "0.00.073.615 D ubatch_print:   pos        = 0xb77028240"
+      },
+      {
+        "line": 843,
+        "text": "0.00.073.615 D ubatch_print:   n_seq_id   = 0xb77028260"
+      },
+      {
+        "line": 844,
+        "text": "0.00.073.615 D ubatch_print:   seq_id     = 0xb77028370"
+      },
+      {
+        "line": 845,
+        "text": "0.00.073.615 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 846,
+        "text": "0.00.073.615 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 847,
+        "text": "0.00.073.616 D ubatch_print:   output     = 0xb76d14290"
+      },
+      {
+        "line": 848,
+        "text": "0.00.073.616 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 849,
+        "text": "0.00.073.616 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 850,
+        "text": "0.00.073.616 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 851,
+        "text": "0.00.073.616 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 852,
+        "text": "0.00.073.617 D ubatch_print:   ]"
+      },
+      {
+        "line": 855,
+        "text": "0.00.073.635 D slot process_toke: id  0 | task 6 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 863,
+        "text": "0.00.073.640 I slot      release: id  0 | task 6 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 869,
+        "text": "0.00.073.642 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 883,
+        "text": "0.00.074.623 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 891,
+        "text": "0.00.075.522 I slot prompt_clear: id  0 | task -1 | clearing prompt with 7 tokens"
+      },
+      {
+        "line": 895,
+        "text": "0.00.075.526 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 908,
+        "text": "0.00.076.274 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 931,
+        "text": "0.00.077.206 I slot   operator(): id  0 | task 13 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 932,
+        "text": "0.00.077.208 I slot   operator(): id  0 | task 13 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 943,
+        "text": "0.00.077.220 D init: input batch info:"
+      },
+      {
+        "line": 944,
+        "text": "0.00.077.221 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 945,
+        "text": "0.00.077.221 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 946,
+        "text": "0.00.077.221 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 947,
+        "text": "0.00.077.221 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 948,
+        "text": "0.00.077.221 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 949,
+        "text": "0.00.077.225 D ubatch_print:   token      = 0xb76904020"
+      },
+      {
+        "line": 950,
+        "text": "0.00.077.225 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 951,
+        "text": "0.00.077.225 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 952,
+        "text": "0.00.077.225 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 953,
+        "text": "0.00.077.225 D ubatch_print:   pos        = 0xb76904160"
+      },
+      {
+        "line": 954,
+        "text": "0.00.077.225 D ubatch_print:   n_seq_id   = 0xb76904180"
+      },
+      {
+        "line": 955,
+        "text": "0.00.077.226 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 956,
+        "text": "0.00.077.226 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 957,
+        "text": "0.00.077.227 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 958,
+        "text": "0.00.077.227 D ubatch_print:   output     = 0xb770281e0"
+      },
+      {
+        "line": 959,
+        "text": "0.00.077.227 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 960,
+        "text": "0.00.077.227 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 961,
+        "text": "0.00.077.228 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 962,
+        "text": "0.00.077.228 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 963,
+        "text": "0.00.077.229 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 964,
+        "text": "0.00.077.229 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 965,
+        "text": "0.00.077.229 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 966,
+        "text": "0.00.077.230 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 967,
+        "text": "0.00.077.230 D ubatch_print:   ]"
+      },
+      {
+        "line": 971,
+        "text": "0.00.077.233 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 972,
+        "text": "0.00.077.233 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 973,
+        "text": "0.00.077.233 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 974,
+        "text": "0.00.077.234 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 975,
+        "text": "0.00.077.234 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 976,
+        "text": "0.00.077.234 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 977,
+        "text": "0.00.077.236 D ubatch_print:   token      = 0xb769041c0"
+      },
+      {
+        "line": 978,
+        "text": "0.00.077.236 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 979,
+        "text": "0.00.077.237 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 980,
+        "text": "0.00.077.237 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 981,
+        "text": "0.00.077.237 D ubatch_print:   pos        = 0xb769041e0"
+      },
+      {
+        "line": 982,
+        "text": "0.00.077.237 D ubatch_print:   n_seq_id   = 0xb76904200"
+      },
+      {
+        "line": 983,
+        "text": "0.00.077.237 D ubatch_print:   seq_id     = 0xb772f8d80"
+      },
+      {
+        "line": 984,
+        "text": "0.00.077.237 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 985,
+        "text": "0.00.077.238 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 986,
+        "text": "0.00.077.238 D ubatch_print:   output     = 0xb76d14150"
+      },
+      {
+        "line": 987,
+        "text": "0.00.077.238 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 988,
+        "text": "0.00.077.238 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 989,
+        "text": "0.00.077.238 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 990,
+        "text": "0.00.077.239 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 991,
+        "text": "0.00.077.239 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 992,
+        "text": "0.00.077.240 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 993,
+        "text": "0.00.077.240 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 994,
+        "text": "0.00.077.240 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 995,
+        "text": "0.00.077.241 D ubatch_print:   ]"
+      },
+      {
+        "line": 997,
+        "text": "0.00.077.334 D slot process_toke: id  0 | task 13 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 1010,
+        "text": "0.00.077.345 D init: input batch info:"
+      },
+      {
+        "line": 1011,
+        "text": "0.00.077.345 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1012,
+        "text": "0.00.077.345 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1013,
+        "text": "0.00.077.347 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1014,
+        "text": "0.00.077.347 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1015,
+        "text": "0.00.077.348 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1019,
+        "text": "0.00.077.356 D ubatch_print:   token      = 0xb76904020"
+      },
+      {
+        "line": 1020,
+        "text": "0.00.077.357 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1021,
+        "text": "0.00.077.357 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1022,
+        "text": "0.00.077.357 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1023,
+        "text": "0.00.077.357 D ubatch_print:   pos        = 0xb76904160"
+      },
+      {
+        "line": 1024,
+        "text": "0.00.077.357 D ubatch_print:   n_seq_id   = 0xb76904180"
+      },
+      {
+        "line": 1025,
+        "text": "0.00.077.357 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 1026,
+        "text": "0.00.077.357 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1027,
+        "text": "0.00.077.358 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1028,
+        "text": "0.00.077.358 D ubatch_print:   output     = 0xb770281e0"
+      },
+      {
+        "line": 1029,
+        "text": "0.00.077.358 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1030,
+        "text": "0.00.077.358 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1031,
+        "text": "0.00.077.358 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1032,
+        "text": "0.00.077.359 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1033,
+        "text": "0.00.077.359 D ubatch_print:   ]"
+      },
+      {
+        "line": 1037,
+        "text": "0.00.077.360 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1038,
+        "text": "0.00.077.361 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1039,
+        "text": "0.00.077.361 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1040,
+        "text": "0.00.077.361 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1041,
+        "text": "0.00.077.361 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1042,
+        "text": "0.00.077.361 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1043,
+        "text": "0.00.077.363 D ubatch_print:   token      = 0xb77028240"
+      },
+      {
+        "line": 1044,
+        "text": "0.00.077.363 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1045,
+        "text": "0.00.077.364 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1046,
+        "text": "0.00.077.364 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1047,
+        "text": "0.00.077.364 D ubatch_print:   pos        = 0xb77028260"
+      },
+      {
+        "line": 1048,
+        "text": "0.00.077.364 D ubatch_print:   n_seq_id   = 0xb77028370"
+      },
+      {
+        "line": 1049,
+        "text": "0.00.077.364 D ubatch_print:   seq_id     = 0xb77028310"
+      },
+      {
+        "line": 1050,
+        "text": "0.00.077.364 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1051,
+        "text": "0.00.077.365 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1052,
+        "text": "0.00.077.365 D ubatch_print:   output     = 0xb76d14210"
+      },
+      {
+        "line": 1053,
+        "text": "0.00.077.365 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1054,
+        "text": "0.00.077.365 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1055,
+        "text": "0.00.077.365 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1056,
+        "text": "0.00.077.366 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1057,
+        "text": "0.00.077.366 D ubatch_print:   ]"
+      },
+      {
+        "line": 1059,
+        "text": "0.00.077.401 D slot process_toke: id  0 | task 13 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 1072,
+        "text": "0.00.077.407 D init: input batch info:"
+      },
+      {
+        "line": 1073,
+        "text": "0.00.077.407 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1074,
+        "text": "0.00.077.407 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1075,
+        "text": "0.00.077.407 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1076,
+        "text": "0.00.077.407 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1077,
+        "text": "0.00.077.407 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1081,
+        "text": "0.00.077.410 D ubatch_print:   token      = 0xb76904020"
+      },
+      {
+        "line": 1082,
+        "text": "0.00.077.410 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1083,
+        "text": "0.00.077.410 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1084,
+        "text": "0.00.077.410 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1085,
+        "text": "0.00.077.410 D ubatch_print:   pos        = 0xb76904160"
+      },
+      {
+        "line": 1086,
+        "text": "0.00.077.410 D ubatch_print:   n_seq_id   = 0xb76904180"
+      },
+      {
+        "line": 1087,
+        "text": "0.00.077.411 D ubatch_print:   seq_id     = 0xb77400870"
+      },
+      {
+        "line": 1088,
+        "text": "0.00.077.411 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1089,
+        "text": "0.00.077.411 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1090,
+        "text": "0.00.077.411 D ubatch_print:   output     = 0xb770281e0"
+      },
+      {
+        "line": 1091,
+        "text": "0.00.077.412 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1092,
+        "text": "0.00.077.412 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1093,
+        "text": "0.00.077.412 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1094,
+        "text": "0.00.077.412 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1095,
+        "text": "0.00.077.412 D ubatch_print:   ]"
+      },
+      {
+        "line": 1099,
+        "text": "0.00.077.414 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1100,
+        "text": "0.00.077.414 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1101,
+        "text": "0.00.077.414 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1102,
+        "text": "0.00.077.414 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1103,
+        "text": "0.00.077.414 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1104,
+        "text": "0.00.077.414 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1105,
+        "text": "0.00.077.417 D ubatch_print:   token      = 0xb770281d0"
+      },
+      {
+        "line": 1106,
+        "text": "0.00.077.417 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1107,
+        "text": "0.00.077.417 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1108,
+        "text": "0.00.077.417 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1109,
+        "text": "0.00.077.417 D ubatch_print:   pos        = 0xb77028220"
+      },
+      {
+        "line": 1110,
+        "text": "0.00.077.417 D ubatch_print:   n_seq_id   = 0xb77028250"
+      },
+      {
+        "line": 1111,
+        "text": "0.00.077.417 D ubatch_print:   seq_id     = 0xb77028330"
+      },
+      {
+        "line": 1112,
+        "text": "0.00.077.417 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1113,
+        "text": "0.00.077.418 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1114,
+        "text": "0.00.077.418 D ubatch_print:   output     = 0xb76d14270"
+      },
+      {
+        "line": 1115,
+        "text": "0.00.077.418 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1116,
+        "text": "0.00.077.418 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1117,
+        "text": "0.00.077.418 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1118,
+        "text": "0.00.077.419 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1119,
+        "text": "0.00.077.419 D ubatch_print:   ]"
+      },
+      {
+        "line": 1122,
+        "text": "0.00.077.436 D slot process_toke: id  0 | task 13 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 1130,
+        "text": "0.00.077.441 I slot      release: id  0 | task 13 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 1136,
+        "text": "0.00.077.443 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1150,
+        "text": "0.00.078.198 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1159,
+        "text": "0.00.078.687 D ~llama_context:        CPU compute buffer size is   0.0304 MiB, matches expectation of   0.0304 MiB"
+      },
+      {
+        "line": 1160,
+        "text": "0.00.078.688 D ~llama_context:        CPU compute buffer size is   0.0000 MiB, matches expectation of   0.0000 MiB"
+      }
+    ]
+  },
+  {
+    "repeat": 3,
+    "lines": [
+      {
+        "line": 103,
+        "text": "0.00.050.191 D load_tensors: layer   0 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 104,
+        "text": "0.00.050.192 D load_tensors: layer   1 assigned to device CPU, is_swa = 0"
+      },
+      {
+        "line": 163,
+        "text": "0.00.051.365 I llama_kv_cache:        CPU KV buffer size =     0.02 MiB"
+      },
+      {
+        "line": 262,
+        "text": "0.00.051.748 I sched_reserve:        CPU compute buffer size =     0.03 MiB"
+      },
+      {
+        "line": 270,
+        "text": "0.00.051.768 D init: input batch info:"
+      },
+      {
+        "line": 271,
+        "text": "0.00.051.769 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 272,
+        "text": "0.00.051.769 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 273,
+        "text": "0.00.051.769 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 274,
+        "text": "0.00.051.769 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 275,
+        "text": "0.00.051.769 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 276,
+        "text": "0.00.051.773 D ubatch_print:   token      = 0xb48cb0160"
+      },
+      {
+        "line": 277,
+        "text": "0.00.051.774 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 278,
+        "text": "0.00.051.774 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 279,
+        "text": "0.00.051.774 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 280,
+        "text": "0.00.051.774 D ubatch_print:   pos        = 0xb48cb0210"
+      },
+      {
+        "line": 281,
+        "text": "0.00.051.774 D ubatch_print:   n_seq_id   = 0xb48cb0220"
+      },
+      {
+        "line": 282,
+        "text": "0.00.051.774 D ubatch_print:   seq_id     = 0xb494e8000"
+      },
+      {
+        "line": 283,
+        "text": "0.00.051.774 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 284,
+        "text": "0.00.051.776 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 285,
+        "text": "0.00.051.776 D ubatch_print:   output     = 0xb48cb0190"
+      },
+      {
+        "line": 286,
+        "text": "0.00.051.776 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 287,
+        "text": "0.00.051.776 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 288,
+        "text": "0.00.051.776 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 289,
+        "text": "0.00.051.777 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 290,
+        "text": "0.00.051.778 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 291,
+        "text": "0.00.051.778 D ubatch_print:   ]"
+      },
+      {
+        "line": 295,
+        "text": "0.00.051.781 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 296,
+        "text": "0.00.051.782 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 297,
+        "text": "0.00.051.782 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 298,
+        "text": "0.00.051.782 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 299,
+        "text": "0.00.051.782 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 300,
+        "text": "0.00.051.782 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 301,
+        "text": "0.00.051.785 D ubatch_print:   token      = 0xb48cb0230"
+      },
+      {
+        "line": 302,
+        "text": "0.00.051.785 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 303,
+        "text": "0.00.051.785 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 304,
+        "text": "0.00.051.785 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 305,
+        "text": "0.00.051.785 D ubatch_print:   pos        = 0xb48cb0250"
+      },
+      {
+        "line": 306,
+        "text": "0.00.051.785 D ubatch_print:   n_seq_id   = 0xb48cb0260"
+      },
+      {
+        "line": 307,
+        "text": "0.00.051.785 D ubatch_print:   seq_id     = 0xb48cb0270"
+      },
+      {
+        "line": 308,
+        "text": "0.00.051.786 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 309,
+        "text": "0.00.051.786 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 310,
+        "text": "0.00.051.786 D ubatch_print:   output     = 0xb490e00b0"
+      },
+      {
+        "line": 311,
+        "text": "0.00.051.787 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 312,
+        "text": "0.00.051.787 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 313,
+        "text": "0.00.051.787 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 314,
+        "text": "0.00.051.787 D ubatch_print:     0: id =      0 (           <unk>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 315,
+        "text": "0.00.051.788 D ubatch_print:     1: id =      0 (           <unk>), pos =    1, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 316,
+        "text": "0.00.051.788 D ubatch_print:   ]"
+      },
+      {
+        "line": 317,
+        "text": "0.00.051.878 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 128, kv_unified = 'false'"
+      },
+      {
+        "line": 396,
+        "text": "0.00.053.291 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 407,
+        "text": "0.00.107.966 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 430,
+        "text": "0.00.108.626 I slot   operator(): id  0 | task 1 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4"
+      },
+      {
+        "line": 431,
+        "text": "0.00.108.633 I slot   operator(): id  0 | task 1 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 442,
+        "text": "0.00.108.663 D init: input batch info:"
+      },
+      {
+        "line": 443,
+        "text": "0.00.108.664 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 444,
+        "text": "0.00.108.664 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 445,
+        "text": "0.00.108.664 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 446,
+        "text": "0.00.108.664 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 447,
+        "text": "0.00.108.664 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 448,
+        "text": "0.00.108.670 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 449,
+        "text": "0.00.108.670 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 450,
+        "text": "0.00.108.670 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 451,
+        "text": "0.00.108.670 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 452,
+        "text": "0.00.108.671 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 453,
+        "text": "0.00.108.671 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 454,
+        "text": "0.00.108.671 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 455,
+        "text": "0.00.108.671 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 456,
+        "text": "0.00.108.674 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 457,
+        "text": "0.00.108.674 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 458,
+        "text": "0.00.108.675 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 459,
+        "text": "0.00.108.675 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 460,
+        "text": "0.00.108.675 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 461,
+        "text": "0.00.108.676 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 462,
+        "text": "0.00.108.677 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 463,
+        "text": "0.00.108.677 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 464,
+        "text": "0.00.108.678 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 465,
+        "text": "0.00.108.678 D ubatch_print:   ]"
+      },
+      {
+        "line": 469,
+        "text": "0.00.108.683 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 470,
+        "text": "0.00.108.683 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 471,
+        "text": "0.00.108.683 D ubatch_print:   n_tokens     = 4"
+      },
+      {
+        "line": 472,
+        "text": "0.00.108.683 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 473,
+        "text": "0.00.108.683 D ubatch_print:   n_seqs       = 4"
+      },
+      {
+        "line": 474,
+        "text": "0.00.108.683 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 475,
+        "text": "0.00.108.686 D ubatch_print:   token      = 0xb48cb0360"
+      },
+      {
+        "line": 476,
+        "text": "0.00.108.686 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 477,
+        "text": "0.00.108.686 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 478,
+        "text": "0.00.108.686 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 479,
+        "text": "0.00.108.686 D ubatch_print:   pos        = 0xb48cb0370"
+      },
+      {
+        "line": 480,
+        "text": "0.00.108.686 D ubatch_print:   n_seq_id   = 0xb48cb0380"
+      },
+      {
+        "line": 481,
+        "text": "0.00.108.687 D ubatch_print:   seq_id     = 0xb4909a8e0"
+      },
+      {
+        "line": 482,
+        "text": "0.00.108.687 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 483,
+        "text": "0.00.108.687 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 484,
+        "text": "0.00.108.687 D ubatch_print:   output     = 0xb490e02d0"
+      },
+      {
+        "line": 485,
+        "text": "0.00.108.687 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 486,
+        "text": "0.00.108.688 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 487,
+        "text": "0.00.108.688 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 488,
+        "text": "0.00.108.688 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 489,
+        "text": "0.00.108.689 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 490,
+        "text": "0.00.108.689 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 491,
+        "text": "0.00.108.689 D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 492,
+        "text": "0.00.108.689 D ubatch_print:   ]"
+      },
+      {
+        "line": 494,
+        "text": "0.00.108.796 D slot process_toke: id  0 | task 1 | n_gen = 1, n_remaining = 2, next token:     7 ' one'"
+      },
+      {
+        "line": 510,
+        "text": "0.00.108.810 D init: input batch info:"
+      },
+      {
+        "line": 511,
+        "text": "0.00.108.811 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 512,
+        "text": "0.00.108.811 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 513,
+        "text": "0.00.108.811 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 514,
+        "text": "0.00.108.811 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 515,
+        "text": "0.00.108.811 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 516,
+        "text": "0.00.108.814 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 517,
+        "text": "0.00.108.814 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 518,
+        "text": "0.00.108.815 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 519,
+        "text": "0.00.108.815 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 520,
+        "text": "0.00.108.815 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 521,
+        "text": "0.00.108.815 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 522,
+        "text": "0.00.108.815 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 523,
+        "text": "0.00.108.815 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 524,
+        "text": "0.00.108.816 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 525,
+        "text": "0.00.108.816 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 526,
+        "text": "0.00.108.816 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 527,
+        "text": "0.00.108.816 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 528,
+        "text": "0.00.108.816 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 529,
+        "text": "0.00.108.817 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 530,
+        "text": "0.00.108.817 D ubatch_print:   ]"
+      },
+      {
+        "line": 534,
+        "text": "0.00.108.819 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 535,
+        "text": "0.00.108.819 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 536,
+        "text": "0.00.108.819 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 537,
+        "text": "0.00.108.819 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 538,
+        "text": "0.00.108.819 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 539,
+        "text": "0.00.108.820 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 540,
+        "text": "0.00.108.822 D ubatch_print:   token      = 0xb48cb0340"
+      },
+      {
+        "line": 541,
+        "text": "0.00.108.822 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 542,
+        "text": "0.00.108.823 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 543,
+        "text": "0.00.108.823 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 544,
+        "text": "0.00.108.823 D ubatch_print:   pos        = 0xb48cb0350"
+      },
+      {
+        "line": 545,
+        "text": "0.00.108.823 D ubatch_print:   n_seq_id   = 0xb48cb0120"
+      },
+      {
+        "line": 546,
+        "text": "0.00.108.823 D ubatch_print:   seq_id     = 0xb48cb0230"
+      },
+      {
+        "line": 547,
+        "text": "0.00.108.823 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 548,
+        "text": "0.00.108.824 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 549,
+        "text": "0.00.108.824 D ubatch_print:   output     = 0xb490e0300"
+      },
+      {
+        "line": 550,
+        "text": "0.00.108.824 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 551,
+        "text": "0.00.108.824 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 552,
+        "text": "0.00.108.824 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 553,
+        "text": "0.00.108.824 D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 554,
+        "text": "0.00.108.825 D ubatch_print:   ]"
+      },
+      {
+        "line": 556,
+        "text": "0.00.108.863 D slot process_toke: id  0 | task 1 | n_gen = 2, n_remaining = 1, next token:     8 ' two'"
+      },
+      {
+        "line": 569,
+        "text": "0.00.108.868 D init: input batch info:"
+      },
+      {
+        "line": 570,
+        "text": "0.00.108.868 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 571,
+        "text": "0.00.108.868 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 572,
+        "text": "0.00.108.868 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 573,
+        "text": "0.00.108.869 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 574,
+        "text": "0.00.108.869 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 578,
+        "text": "0.00.108.871 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 579,
+        "text": "0.00.108.872 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 580,
+        "text": "0.00.108.872 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 581,
+        "text": "0.00.108.872 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 582,
+        "text": "0.00.108.872 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 583,
+        "text": "0.00.108.872 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 584,
+        "text": "0.00.108.872 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 585,
+        "text": "0.00.108.872 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 586,
+        "text": "0.00.108.873 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 587,
+        "text": "0.00.108.873 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 588,
+        "text": "0.00.108.873 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 589,
+        "text": "0.00.108.873 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 590,
+        "text": "0.00.108.873 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 591,
+        "text": "0.00.108.874 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 592,
+        "text": "0.00.108.874 D ubatch_print:   ]"
+      },
+      {
+        "line": 596,
+        "text": "0.00.108.875 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 597,
+        "text": "0.00.108.876 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 598,
+        "text": "0.00.108.876 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 599,
+        "text": "0.00.108.876 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 600,
+        "text": "0.00.108.876 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 601,
+        "text": "0.00.108.876 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 602,
+        "text": "0.00.108.878 D ubatch_print:   token      = 0xb48cb0370"
+      },
+      {
+        "line": 603,
+        "text": "0.00.108.879 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 604,
+        "text": "0.00.108.879 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 605,
+        "text": "0.00.108.879 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 606,
+        "text": "0.00.108.879 D ubatch_print:   pos        = 0xb48cb0360"
+      },
+      {
+        "line": 607,
+        "text": "0.00.108.879 D ubatch_print:   n_seq_id   = 0xb48cb0380"
+      },
+      {
+        "line": 608,
+        "text": "0.00.108.879 D ubatch_print:   seq_id     = 0xb48cb0390"
+      },
+      {
+        "line": 609,
+        "text": "0.00.108.879 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 610,
+        "text": "0.00.108.880 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 611,
+        "text": "0.00.108.880 D ubatch_print:   output     = 0xb490e02f0"
+      },
+      {
+        "line": 612,
+        "text": "0.00.108.880 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 613,
+        "text": "0.00.108.880 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 614,
+        "text": "0.00.108.880 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 615,
+        "text": "0.00.108.880 D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 616,
+        "text": "0.00.108.881 D ubatch_print:   ]"
+      },
+      {
+        "line": 619,
+        "text": "0.00.108.899 D slot process_toke: id  0 | task 1 | n_gen = 3, n_remaining = 0, next token:     9 ' three'"
+      },
+      {
+        "line": 627,
+        "text": "0.00.108.906 I slot      release: id  0 | task 1 | stop processing: n_tokens = 6, truncated = 0"
+      },
+      {
+        "line": 633,
+        "text": "0.00.108.908 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 647,
+        "text": "0.00.109.552 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 670,
+        "text": "0.00.110.127 I slot   operator(): id  0 | task 6 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 671,
+        "text": "0.00.110.128 I slot   operator(): id  0 | task 6 | cached n_tokens = 3, memory_seq_rm [3, end)"
+      },
+      {
+        "line": 682,
+        "text": "0.00.110.137 D init: input batch info:"
+      },
+      {
+        "line": 683,
+        "text": "0.00.110.137 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 684,
+        "text": "0.00.110.138 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 685,
+        "text": "0.00.110.138 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 686,
+        "text": "0.00.110.138 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 687,
+        "text": "0.00.110.138 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 688,
+        "text": "0.00.110.141 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 689,
+        "text": "0.00.110.141 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 690,
+        "text": "0.00.110.141 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 691,
+        "text": "0.00.110.141 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 692,
+        "text": "0.00.110.141 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 693,
+        "text": "0.00.110.141 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 694,
+        "text": "0.00.110.142 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 695,
+        "text": "0.00.110.142 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 696,
+        "text": "0.00.110.142 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 697,
+        "text": "0.00.110.142 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 698,
+        "text": "0.00.110.143 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 699,
+        "text": "0.00.110.143 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 700,
+        "text": "0.00.110.143 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 701,
+        "text": "0.00.110.143 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 702,
+        "text": "0.00.110.144 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 703,
+        "text": "0.00.110.144 D ubatch_print:   ]"
+      },
+      {
+        "line": 707,
+        "text": "0.00.110.146 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 708,
+        "text": "0.00.110.146 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 709,
+        "text": "0.00.110.146 D ubatch_print:   n_tokens     = 2"
+      },
+      {
+        "line": 710,
+        "text": "0.00.110.146 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 711,
+        "text": "0.00.110.146 D ubatch_print:   n_seqs       = 2"
+      },
+      {
+        "line": 712,
+        "text": "0.00.110.146 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 713,
+        "text": "0.00.110.149 D ubatch_print:   token      = 0xb48cb0250"
+      },
+      {
+        "line": 714,
+        "text": "0.00.110.149 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 715,
+        "text": "0.00.110.149 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 716,
+        "text": "0.00.110.149 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 717,
+        "text": "0.00.110.149 D ubatch_print:   pos        = 0xb48cb0390"
+      },
+      {
+        "line": 718,
+        "text": "0.00.110.149 D ubatch_print:   n_seq_id   = 0xb48cb0270"
+      },
+      {
+        "line": 719,
+        "text": "0.00.110.150 D ubatch_print:   seq_id     = 0xb48cb03a0"
+      },
+      {
+        "line": 720,
+        "text": "0.00.110.150 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 721,
+        "text": "0.00.110.150 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 722,
+        "text": "0.00.110.150 D ubatch_print:   output     = 0xb490e0160"
+      },
+      {
+        "line": 723,
+        "text": "0.00.110.150 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 724,
+        "text": "0.00.110.151 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 725,
+        "text": "0.00.110.151 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 726,
+        "text": "0.00.110.151 D ubatch_print:     0: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 727,
+        "text": "0.00.110.151 D ubatch_print:     1: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 728,
+        "text": "0.00.110.152 D ubatch_print:   ]"
+      },
+      {
+        "line": 730,
+        "text": "0.00.110.191 D slot process_toke: id  0 | task 6 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 743,
+        "text": "0.00.110.197 D init: input batch info:"
+      },
+      {
+        "line": 747,
+        "text": "0.00.110.198 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 748,
+        "text": "0.00.110.198 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 749,
+        "text": "0.00.110.198 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 750,
+        "text": "0.00.110.198 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 751,
+        "text": "0.00.110.198 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 752,
+        "text": "0.00.110.201 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 753,
+        "text": "0.00.110.201 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 754,
+        "text": "0.00.110.201 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 755,
+        "text": "0.00.110.201 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 756,
+        "text": "0.00.110.201 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 757,
+        "text": "0.00.110.201 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 758,
+        "text": "0.00.110.202 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 759,
+        "text": "0.00.110.202 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 760,
+        "text": "0.00.110.202 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 761,
+        "text": "0.00.110.202 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 762,
+        "text": "0.00.110.202 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 763,
+        "text": "0.00.110.203 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 764,
+        "text": "0.00.110.203 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 765,
+        "text": "0.00.110.203 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 766,
+        "text": "0.00.110.203 D ubatch_print:   ]"
+      },
+      {
+        "line": 770,
+        "text": "0.00.110.205 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 771,
+        "text": "0.00.110.205 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 772,
+        "text": "0.00.110.205 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 773,
+        "text": "0.00.110.205 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 774,
+        "text": "0.00.110.205 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 775,
+        "text": "0.00.110.205 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 776,
+        "text": "0.00.110.208 D ubatch_print:   token      = 0xb48cb0350"
+      },
+      {
+        "line": 777,
+        "text": "0.00.110.208 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 778,
+        "text": "0.00.110.208 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 779,
+        "text": "0.00.110.208 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 780,
+        "text": "0.00.110.208 D ubatch_print:   pos        = 0xb48cb0340"
+      },
+      {
+        "line": 781,
+        "text": "0.00.110.208 D ubatch_print:   n_seq_id   = 0xb48cb0120"
+      },
+      {
+        "line": 782,
+        "text": "0.00.110.208 D ubatch_print:   seq_id     = 0xb48cb0230"
+      },
+      {
+        "line": 783,
+        "text": "0.00.110.208 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 784,
+        "text": "0.00.110.209 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 785,
+        "text": "0.00.110.209 D ubatch_print:   output     = 0xb490e0320"
+      },
+      {
+        "line": 786,
+        "text": "0.00.110.209 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 787,
+        "text": "0.00.110.209 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 788,
+        "text": "0.00.110.209 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 789,
+        "text": "0.00.110.210 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 790,
+        "text": "0.00.110.210 D ubatch_print:   ]"
+      },
+      {
+        "line": 792,
+        "text": "0.00.110.240 D slot process_toke: id  0 | task 6 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 805,
+        "text": "0.00.110.248 D init: input batch info:"
+      },
+      {
+        "line": 806,
+        "text": "0.00.110.248 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 807,
+        "text": "0.00.110.248 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 808,
+        "text": "0.00.110.248 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 809,
+        "text": "0.00.110.248 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 810,
+        "text": "0.00.110.249 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 814,
+        "text": "0.00.110.251 D ubatch_print:   token      = 0xb48cb0310"
+      },
+      {
+        "line": 815,
+        "text": "0.00.110.251 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 816,
+        "text": "0.00.110.251 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 817,
+        "text": "0.00.110.252 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 818,
+        "text": "0.00.110.252 D ubatch_print:   pos        = 0xb48cb0160"
+      },
+      {
+        "line": 819,
+        "text": "0.00.110.252 D ubatch_print:   n_seq_id   = 0xb48cb0210"
+      },
+      {
+        "line": 820,
+        "text": "0.00.110.252 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 821,
+        "text": "0.00.110.252 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 822,
+        "text": "0.00.110.252 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 823,
+        "text": "0.00.110.253 D ubatch_print:   output     = 0xb48cb0220"
+      },
+      {
+        "line": 824,
+        "text": "0.00.110.253 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 825,
+        "text": "0.00.110.253 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 826,
+        "text": "0.00.110.253 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 827,
+        "text": "0.00.110.253 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 828,
+        "text": "0.00.110.254 D ubatch_print:   ]"
+      },
+      {
+        "line": 832,
+        "text": "0.00.110.255 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 833,
+        "text": "0.00.110.255 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 834,
+        "text": "0.00.110.255 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 835,
+        "text": "0.00.110.255 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 836,
+        "text": "0.00.110.255 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 837,
+        "text": "0.00.110.255 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 838,
+        "text": "0.00.110.258 D ubatch_print:   token      = 0xb48cb0390"
+      },
+      {
+        "line": 839,
+        "text": "0.00.110.258 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 840,
+        "text": "0.00.110.258 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 841,
+        "text": "0.00.110.258 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 842,
+        "text": "0.00.110.258 D ubatch_print:   pos        = 0xb48cb0250"
+      },
+      {
+        "line": 843,
+        "text": "0.00.110.258 D ubatch_print:   n_seq_id   = 0xb48cb0270"
+      },
+      {
+        "line": 844,
+        "text": "0.00.110.258 D ubatch_print:   seq_id     = 0xb48cb03a0"
+      },
+      {
+        "line": 845,
+        "text": "0.00.110.259 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 846,
+        "text": "0.00.110.259 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 847,
+        "text": "0.00.110.259 D ubatch_print:   output     = 0xb490e0330"
+      },
+      {
+        "line": 848,
+        "text": "0.00.110.259 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 849,
+        "text": "0.00.110.259 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 850,
+        "text": "0.00.110.260 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 851,
+        "text": "0.00.110.260 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 852,
+        "text": "0.00.110.260 D ubatch_print:   ]"
+      },
+      {
+        "line": 855,
+        "text": "0.00.110.277 D slot process_toke: id  0 | task 6 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 863,
+        "text": "0.00.110.282 I slot      release: id  0 | task 6 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 869,
+        "text": "0.00.110.284 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 883,
+        "text": "0.00.110.889 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 891,
+        "text": "0.00.111.364 I slot prompt_clear: id  0 | task -1 | clearing prompt with 7 tokens"
+      },
+      {
+        "line": 895,
+        "text": "0.00.111.367 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 908,
+        "text": "0.00.111.874 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 931,
+        "text": "0.00.112.869 I slot   operator(): id  0 | task 13 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 5"
+      },
+      {
+        "line": 932,
+        "text": "0.00.112.869 I slot   operator(): id  0 | task 13 | cached n_tokens = 0, memory_seq_rm [0, end)"
+      },
+      {
+        "line": 943,
+        "text": "0.00.112.882 D init: input batch info:"
+      },
+      {
+        "line": 944,
+        "text": "0.00.112.882 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 945,
+        "text": "0.00.112.883 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 946,
+        "text": "0.00.112.883 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 947,
+        "text": "0.00.112.883 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 948,
+        "text": "0.00.112.883 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 949,
+        "text": "0.00.112.887 D ubatch_print:   token      = 0xb4909a8e0"
+      },
+      {
+        "line": 950,
+        "text": "0.00.112.887 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 951,
+        "text": "0.00.112.887 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 952,
+        "text": "0.00.112.888 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 953,
+        "text": "0.00.112.888 D ubatch_print:   pos        = 0xb4909a9e0"
+      },
+      {
+        "line": 954,
+        "text": "0.00.112.888 D ubatch_print:   n_seq_id   = 0xb4909aa00"
+      },
+      {
+        "line": 955,
+        "text": "0.00.112.888 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 956,
+        "text": "0.00.112.888 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 957,
+        "text": "0.00.112.889 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 958,
+        "text": "0.00.112.889 D ubatch_print:   output     = 0xb48cb0210"
+      },
+      {
+        "line": 959,
+        "text": "0.00.112.890 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 960,
+        "text": "0.00.112.890 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 961,
+        "text": "0.00.112.890 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 962,
+        "text": "0.00.112.891 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 963,
+        "text": "0.00.112.891 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 964,
+        "text": "0.00.112.892 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 965,
+        "text": "0.00.112.892 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 966,
+        "text": "0.00.112.893 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 967,
+        "text": "0.00.112.893 D ubatch_print:   ]"
+      },
+      {
+        "line": 971,
+        "text": "0.00.112.896 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 972,
+        "text": "0.00.112.896 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 973,
+        "text": "0.00.112.896 D ubatch_print:   n_tokens     = 5"
+      },
+      {
+        "line": 974,
+        "text": "0.00.112.896 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 975,
+        "text": "0.00.112.896 D ubatch_print:   n_seqs       = 5"
+      },
+      {
+        "line": 976,
+        "text": "0.00.112.896 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 977,
+        "text": "0.00.112.899 D ubatch_print:   token      = 0xb4909aa40"
+      },
+      {
+        "line": 978,
+        "text": "0.00.112.899 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 979,
+        "text": "0.00.112.899 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 980,
+        "text": "0.00.112.899 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 981,
+        "text": "0.00.112.899 D ubatch_print:   pos        = 0xb4909aa60"
+      },
+      {
+        "line": 982,
+        "text": "0.00.112.900 D ubatch_print:   n_seq_id   = 0xb4909aa80"
+      },
+      {
+        "line": 983,
+        "text": "0.00.112.900 D ubatch_print:   seq_id     = 0xb490a47e0"
+      },
+      {
+        "line": 984,
+        "text": "0.00.112.900 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 985,
+        "text": "0.00.112.900 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 986,
+        "text": "0.00.112.901 D ubatch_print:   output     = 0xb490e00e0"
+      },
+      {
+        "line": 987,
+        "text": "0.00.112.901 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 988,
+        "text": "0.00.112.901 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 989,
+        "text": "0.00.112.901 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 990,
+        "text": "0.00.112.901 D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 991,
+        "text": "0.00.112.902 D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 992,
+        "text": "0.00.112.902 D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 993,
+        "text": "0.00.112.903 D ubatch_print:     3: id =      5 (           green), pos =    3, n_seq_id =  1, seq_id = [0], output = 0"
+      },
+      {
+        "line": 994,
+        "text": "0.00.112.903 D ubatch_print:     4: id =     10 (            four), pos =    4, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 995,
+        "text": "0.00.112.903 D ubatch_print:   ]"
+      },
+      {
+        "line": 997,
+        "text": "0.00.112.965 D slot process_toke: id  0 | task 13 | n_gen = 1, n_remaining = 2, next token:    11 ' five'"
+      },
+      {
+        "line": 1013,
+        "text": "0.00.112.973 D init: input batch info:"
+      },
+      {
+        "line": 1014,
+        "text": "0.00.112.973 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1015,
+        "text": "0.00.112.973 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1016,
+        "text": "0.00.112.974 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1017,
+        "text": "0.00.112.974 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1018,
+        "text": "0.00.112.974 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1019,
+        "text": "0.00.112.978 D ubatch_print:   token      = 0xb4909a8e0"
+      },
+      {
+        "line": 1020,
+        "text": "0.00.112.978 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1021,
+        "text": "0.00.112.978 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1022,
+        "text": "0.00.112.978 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1023,
+        "text": "0.00.112.978 D ubatch_print:   pos        = 0xb4909a9e0"
+      },
+      {
+        "line": 1024,
+        "text": "0.00.112.978 D ubatch_print:   n_seq_id   = 0xb4909aa00"
+      },
+      {
+        "line": 1025,
+        "text": "0.00.112.978 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 1026,
+        "text": "0.00.112.978 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1027,
+        "text": "0.00.112.979 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1028,
+        "text": "0.00.112.979 D ubatch_print:   output     = 0xb48cb0210"
+      },
+      {
+        "line": 1029,
+        "text": "0.00.112.980 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1030,
+        "text": "0.00.112.980 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1031,
+        "text": "0.00.112.980 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1032,
+        "text": "0.00.112.981 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1033,
+        "text": "0.00.112.981 D ubatch_print:   ]"
+      },
+      {
+        "line": 1037,
+        "text": "0.00.112.984 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1038,
+        "text": "0.00.112.984 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1039,
+        "text": "0.00.112.984 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1040,
+        "text": "0.00.112.984 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1041,
+        "text": "0.00.112.984 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1042,
+        "text": "0.00.112.984 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1043,
+        "text": "0.00.112.987 D ubatch_print:   token      = 0xb48cb0370"
+      },
+      {
+        "line": 1044,
+        "text": "0.00.112.987 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1045,
+        "text": "0.00.112.987 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1046,
+        "text": "0.00.112.987 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1047,
+        "text": "0.00.112.987 D ubatch_print:   pos        = 0xb48cb0270"
+      },
+      {
+        "line": 1048,
+        "text": "0.00.112.987 D ubatch_print:   n_seq_id   = 0xb48cb03a0"
+      },
+      {
+        "line": 1049,
+        "text": "0.00.112.987 D ubatch_print:   seq_id     = 0xb48cb0340"
+      },
+      {
+        "line": 1050,
+        "text": "0.00.112.988 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1051,
+        "text": "0.00.112.988 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1052,
+        "text": "0.00.112.988 D ubatch_print:   output     = 0xb490e02b0"
+      },
+      {
+        "line": 1053,
+        "text": "0.00.112.988 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1054,
+        "text": "0.00.112.988 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1055,
+        "text": "0.00.112.989 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1056,
+        "text": "0.00.112.989 D ubatch_print:     0: id =     11 (            five), pos =    5, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1057,
+        "text": "0.00.112.989 D ubatch_print:   ]"
+      },
+      {
+        "line": 1059,
+        "text": "0.00.113.038 D slot process_toke: id  0 | task 13 | n_gen = 2, n_remaining = 1, next token:    12 ' six'"
+      },
+      {
+        "line": 1072,
+        "text": "0.00.113.043 D init: input batch info:"
+      },
+      {
+        "line": 1073,
+        "text": "0.00.113.043 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1074,
+        "text": "0.00.113.044 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1075,
+        "text": "0.00.113.044 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1076,
+        "text": "0.00.113.044 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1080,
+        "text": "0.00.113.046 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1081,
+        "text": "0.00.113.049 D ubatch_print:   token      = 0xb4909a8e0"
+      },
+      {
+        "line": 1082,
+        "text": "0.00.113.049 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1083,
+        "text": "0.00.113.049 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1084,
+        "text": "0.00.113.049 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1085,
+        "text": "0.00.113.049 D ubatch_print:   pos        = 0xb4909a9e0"
+      },
+      {
+        "line": 1086,
+        "text": "0.00.113.049 D ubatch_print:   n_seq_id   = 0xb4909aa00"
+      },
+      {
+        "line": 1087,
+        "text": "0.00.113.049 D ubatch_print:   seq_id     = 0xb490a49c0"
+      },
+      {
+        "line": 1088,
+        "text": "0.00.113.050 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1089,
+        "text": "0.00.113.050 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1090,
+        "text": "0.00.113.050 D ubatch_print:   output     = 0xb48cb0210"
+      },
+      {
+        "line": 1091,
+        "text": "0.00.113.050 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1092,
+        "text": "0.00.113.050 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1093,
+        "text": "0.00.113.050 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1094,
+        "text": "0.00.113.051 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1095,
+        "text": "0.00.113.051 D ubatch_print:   ]"
+      },
+      {
+        "line": 1099,
+        "text": "0.00.113.053 D ubatch_add: added ubatch to split:"
+      },
+      {
+        "line": 1100,
+        "text": "0.00.113.053 D ubatch_print:   equal_seqs   = 0"
+      },
+      {
+        "line": 1101,
+        "text": "0.00.113.053 D ubatch_print:   n_tokens     = 1"
+      },
+      {
+        "line": 1102,
+        "text": "0.00.113.053 D ubatch_print:   n_seq_tokens = 1"
+      },
+      {
+        "line": 1103,
+        "text": "0.00.113.053 D ubatch_print:   n_seqs       = 1"
+      },
+      {
+        "line": 1104,
+        "text": "0.00.113.053 D ubatch_print:   n_seqs_unq   = 1"
+      },
+      {
+        "line": 1105,
+        "text": "0.00.113.056 D ubatch_print:   token      = 0xb48cb0220"
+      },
+      {
+        "line": 1106,
+        "text": "0.00.113.056 D ubatch_print:   embd       = 0x0"
+      },
+      {
+        "line": 1107,
+        "text": "0.00.113.056 D ubatch_print:   embd_state = 0x0"
+      },
+      {
+        "line": 1108,
+        "text": "0.00.113.056 D ubatch_print:   embd_row   = 0x0"
+      },
+      {
+        "line": 1109,
+        "text": "0.00.113.056 D ubatch_print:   pos        = 0xb48cb0230"
+      },
+      {
+        "line": 1110,
+        "text": "0.00.113.057 D ubatch_print:   n_seq_id   = 0xb48cb0260"
+      },
+      {
+        "line": 1111,
+        "text": "0.00.113.057 D ubatch_print:   seq_id     = 0xb48cb0380"
+      },
+      {
+        "line": 1112,
+        "text": "0.00.113.057 D ubatch_print:   seq_id_unq = [ 0 ]"
+      },
+      {
+        "line": 1113,
+        "text": "0.00.113.057 D ubatch_print:   seq_idx    = [0...............................................................................................................................................................................................................................................................]"
+      },
+      {
+        "line": 1114,
+        "text": "0.00.113.057 D ubatch_print:   output     = 0xb490e0310"
+      },
+      {
+        "line": 1115,
+        "text": "0.00.113.057 D ubatch_print:   type       = 0x0"
+      },
+      {
+        "line": 1116,
+        "text": "0.00.113.058 D ubatch_print:   n_outputs  = 1"
+      },
+      {
+        "line": 1117,
+        "text": "0.00.113.058 D ubatch_print:   token     = ["
+      },
+      {
+        "line": 1118,
+        "text": "0.00.113.058 D ubatch_print:     0: id =     12 (             six), pos =    6, n_seq_id =  1, seq_id = [0], output = 1"
+      },
+      {
+        "line": 1119,
+        "text": "0.00.113.058 D ubatch_print:   ]"
+      },
+      {
+        "line": 1122,
+        "text": "0.00.113.079 D slot process_toke: id  0 | task 13 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'"
+      },
+      {
+        "line": 1130,
+        "text": "0.00.113.086 I slot      release: id  0 | task 13 | stop processing: n_tokens = 7, truncated = 0"
+      },
+      {
+        "line": 1136,
+        "text": "0.00.113.087 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1150,
+        "text": "0.00.113.981 I srv  update_slots: all slots are idle"
+      },
+      {
+        "line": 1159,
+        "text": "0.00.114.479 D ~llama_context:        CPU compute buffer size is   0.0304 MiB, matches expectation of   0.0304 MiB"
+      },
+      {
+        "line": 1160,
+        "text": "0.00.114.481 D ~llama_context:        CPU compute buffer size is   0.0000 MiB, matches expectation of   0.0000 MiB"
+      }
+    ]
+  }
+]

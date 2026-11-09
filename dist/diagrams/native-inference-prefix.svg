@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="580" viewBox="0 0 960 580" role="img" aria-labelledby="title desc">
+<title id="title">同一槽位：暖前缀、显式清除与冷请求</title><desc id="desc">A 提示 1,4,5,6。B 提示 1,4,5,5,10 复用前三位置，新增计算两位置。暖 B 和清除后冷 B 都输出 11,12,13。暖 B 结束槽位空闲但保留七位置；erase 返回七，随后缓存为零。三轮原生 CPU 实测，人工权重，不是性能基准。</desc>
+<metadata>{"warm_hit":3,"warm_prefill":2,"cold_prefill":5,"erased":7,"output_ids":[11,12,13],"repetitions":3}</metadata>
+<rect width="960" height="580" rx="20" fill="#f3f8fc"/>
+<g font-family="system-ui, sans-serif" fill="#17304a" font-size="20">
+<text x="36" y="44" font-size="26" font-weight="700">空闲的 slot，仍可保留下一次请求能用的前缀</text>
+<text x="36" y="78">固定单槽位 · 同模型与位置 · 三轮真实 CPU 执行 · 人工权重</text>
+<text x="36" y="132" font-weight="700">先执行 A</text><text x="220" y="132">提示 [1, 4, 5, 6] → 输出 [7, 8, 9]</text>
+<text x="220" y="164">结束保留 6 位置；最后选出的 9 尚未再次输入</text>
+<text x="36" y="224" font-weight="700">暖 B</text>
+<g text-anchor="middle"><rect x="220" y="194" width="85" height="48" rx="8" fill="#b7e8e4"/><rect x="313" y="194" width="85" height="48" rx="8" fill="#b7e8e4"/><rect x="406" y="194" width="85" height="48" rx="8" fill="#b7e8e4"/><rect x="499" y="194" width="85" height="48" rx="8" fill="#ffd9af"/><rect x="592" y="194" width="85" height="48" rx="8" fill="#ffd9af"/><text x="262" y="225">1</text><text x="355" y="225">4</text><text x="448" y="225">5</text><text x="541" y="225">5</text><text x="634" y="225">10</text></g>
+<text x="220" y="273" fill="#087e83">命中位置 0–2：3 个</text><text x="499" y="273" fill="#9a5513">新算位置 3–4：2 个</text>
+<text x="710" y="224">→ 11 → 12 → 13</text>
+<path d="M38 303H922" stroke="#c9d7e3"/>
+<text x="36" y="343" font-weight="700">结束后</text><text x="220" y="343">idle + 保留 7 位置</text><path d="M447 336H495" stroke="#277a9b" stroke-width="3"/><path d="M485 329L497 336L485 343" fill="none" stroke="#277a9b" stroke-width="3"/><text x="514" y="343">erase 返回 7</text><text x="739" y="343">→ 保留 0 位置</text>
+<text x="220" y="379">7 = 5 个提示 + 已回送的 11、12；输出 13 不在缓存里</text>
+<text x="36" y="433" font-weight="700">冷 B</text><rect x="211" y="403" width="482" height="47" rx="8" fill="#ffd9af"/><text x="228" y="433">[1, 4, 5, 5, 10] 全部新算：5 个位置</text><text x="710" y="433">→ 11 → 12 → 13</text>
+<text x="36" y="493" font-weight="700">独立核对：请求体 → 原生批次 → 输出编号 → 槽位快照</text>
+<text x="36" y="531">erase 清除序列状态；未测物理内存归还，不能推出吞吐提升比例。</text>
+<text x="36" y="559" font-size="18">来源：native-inference-prefix / responses.json 与 native-logs.json；llama.cpp b12110</text>
+</g></svg>

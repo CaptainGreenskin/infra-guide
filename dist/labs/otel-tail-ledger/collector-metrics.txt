@@ -1,0 +1,115 @@
+# HELP otelcol_exporter_send_failed_spans__spans__total Number of spans in failed attempts to send to destination. [alpha]
+# TYPE otelcol_exporter_send_failed_spans__spans__total counter
+otelcol_exporter_send_failed_spans__spans__total{exporter="file/full",otel_scope_name="go.opentelemetry.io/collector/exporter/exporterhelper",otel_scope_schema_url="",otel_scope_version=""} 0
+otelcol_exporter_send_failed_spans__spans__total{exporter="file/sampled",otel_scope_name="go.opentelemetry.io/collector/exporter/exporterhelper",otel_scope_schema_url="",otel_scope_version=""} 0
+# HELP otelcol_exporter_sent_spans__spans__total Number of spans successfully sent to destination. [alpha]
+# TYPE otelcol_exporter_sent_spans__spans__total counter
+otelcol_exporter_sent_spans__spans__total{exporter="file/full",otel_scope_name="go.opentelemetry.io/collector/exporter/exporterhelper",otel_scope_schema_url="",otel_scope_version=""} 11
+otelcol_exporter_sent_spans__spans__total{exporter="file/sampled",otel_scope_name="go.opentelemetry.io/collector/exporter/exporterhelper",otel_scope_schema_url="",otel_scope_version=""} 8
+# HELP otelcol_process_cpu_seconds_total Total CPU user and system time in seconds [alpha]
+# TYPE otelcol_process_cpu_seconds_total counter
+otelcol_process_cpu_seconds_total{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 0.1627310833333333
+# HELP otelcol_process_memory_rss_bytes Total physical memory (resident set size) [alpha]
+# TYPE otelcol_process_memory_rss_bytes gauge
+otelcol_process_memory_rss_bytes{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 1.01302272e+08
+# HELP otelcol_process_runtime_heap_alloc_bytes Bytes of allocated heap objects (see 'go doc runtime.MemStats.HeapAlloc') [alpha]
+# TYPE otelcol_process_runtime_heap_alloc_bytes gauge
+otelcol_process_runtime_heap_alloc_bytes{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 2.5927784e+07
+# HELP otelcol_process_runtime_total_alloc_bytes_total Cumulative bytes allocated for heap objects (see 'go doc runtime.MemStats.TotalAlloc') [alpha]
+# TYPE otelcol_process_runtime_total_alloc_bytes_total counter
+otelcol_process_runtime_total_alloc_bytes_total{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 3.9700672e+07
+# HELP otelcol_process_runtime_total_sys_memory_bytes Total bytes of memory obtained from the OS (see 'go doc runtime.MemStats.Sys') [alpha]
+# TYPE otelcol_process_runtime_total_sys_memory_bytes gauge
+otelcol_process_runtime_total_sys_memory_bytes{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 4.2353928e+07
+# HELP otelcol_process_uptime_seconds_total Uptime of the process [alpha]
+# TYPE otelcol_process_uptime_seconds_total counter
+otelcol_process_uptime_seconds_total{otel_scope_name="go.opentelemetry.io/collector/service",otel_scope_schema_url="",otel_scope_version=""} 4.111887
+# HELP otelcol_processor_tail_sampling_count_traces_sampled__traces__total Count of traces that were sampled or not per sampling policy
+# TYPE otelcol_processor_tail_sampling_count_traces_sampled__traces__total counter
+otelcol_processor_tail_sampling_count_traces_sampled__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",sampled="false"} 1
+otelcol_processor_tail_sampling_count_traces_sampled__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",sampled="true"} 2
+# HELP otelcol_processor_tail_sampling_global_count_traces_sampled__traces__total Global count of traces that were sampled or not by at least one policy
+# TYPE otelcol_processor_tail_sampling_global_count_traces_sampled__traces__total counter
+otelcol_processor_tail_sampling_global_count_traces_sampled__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",sampled="false"} 1
+otelcol_processor_tail_sampling_global_count_traces_sampled__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",sampled="true"} 2
+# HELP otelcol_processor_tail_sampling_new_trace_id_received__traces__total Counts the arrival of new traces
+# TYPE otelcol_processor_tail_sampling_new_trace_id_received__traces__total counter
+otelcol_processor_tail_sampling_new_trace_id_received__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 3
+# HELP otelcol_processor_tail_sampling_sampling_decision_latency__s Latency (in microseconds) of a given sampling policy
+# TYPE otelcol_processor_tail_sampling_sampling_decision_latency__s histogram
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="1"} 1
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="2"} 1
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="5"} 2
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="10"} 2
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="25"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="50"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="75"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="100"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="150"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="200"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="300"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="400"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="500"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="750"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="1000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="2000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="3000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="4000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="5000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="10000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="20000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="30000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="50000"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span",le="+Inf"} 3
+otelcol_processor_tail_sampling_sampling_decision_latency__s_sum{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span"} 18
+otelcol_processor_tail_sampling_sampling_decision_latency__s_count{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",policy="error-span"} 3
+# HELP otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds Latency (in milliseconds) of each run of the sampling decision timer
+# TYPE otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds histogram
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="1"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="2"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="5"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="10"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="25"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="50"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="75"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="100"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="150"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="200"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="300"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="400"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="500"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="750"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="1000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="2000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="3000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="4000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="5000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="10000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="20000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="30000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="50000"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_bucket{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version="",le="+Inf"} 4
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_sum{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 1
+otelcol_processor_tail_sampling_sampling_decision_timer_latency_milliseconds_count{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 4
+# HELP otelcol_processor_tail_sampling_sampling_policy_evaluation_error__errors__total Count of sampling policy evaluation errors
+# TYPE otelcol_processor_tail_sampling_sampling_policy_evaluation_error__errors__total counter
+otelcol_processor_tail_sampling_sampling_policy_evaluation_error__errors__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 0
+# HELP otelcol_processor_tail_sampling_sampling_trace_dropped_too_early__traces__total Count of traces that needed to be dropped before the configured wait time
+# TYPE otelcol_processor_tail_sampling_sampling_trace_dropped_too_early__traces__total counter
+otelcol_processor_tail_sampling_sampling_trace_dropped_too_early__traces__total{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 0
+# HELP otelcol_processor_tail_sampling_sampling_traces_on_memory__traces_ Tracks the number of traces current on memory
+# TYPE otelcol_processor_tail_sampling_sampling_traces_on_memory__traces_ gauge
+otelcol_processor_tail_sampling_sampling_traces_on_memory__traces_{otel_scope_name="github.com/open-telemetry/opentelemetry-collector-contrib/processor/tailsamplingprocessor",otel_scope_schema_url="",otel_scope_version=""} 3
+# HELP otelcol_receiver_accepted_spans__spans__total Number of spans successfully pushed into the pipeline. [alpha]
+# TYPE otelcol_receiver_accepted_spans__spans__total counter
+otelcol_receiver_accepted_spans__spans__total{otel_scope_name="go.opentelemetry.io/collector/receiver/receiverhelper",otel_scope_schema_url="",otel_scope_version="",receiver="otlp",transport="http"} 11
+# HELP otelcol_receiver_refused_spans__spans__total Number of spans that could not be pushed into the pipeline. [alpha]
+# TYPE otelcol_receiver_refused_spans__spans__total counter
+otelcol_receiver_refused_spans__spans__total{otel_scope_name="go.opentelemetry.io/collector/receiver/receiverhelper",otel_scope_schema_url="",otel_scope_version="",receiver="otlp",transport="http"} 0
+# HELP promhttp_metric_handler_errors_total Total number of internal errors encountered by the promhttp metric handler.
+# TYPE promhttp_metric_handler_errors_total counter
+promhttp_metric_handler_errors_total{cause="encoding"} 0
+promhttp_metric_handler_errors_total{cause="gathering"} 0
+# HELP target_info Target metadata
+# TYPE target_info gauge
+target_info{service_instance_id="44dd50aa-3869-4ff2-84ca-3261df268e5e",service_name="otelcol-contrib",service_version="0.130.0"} 1

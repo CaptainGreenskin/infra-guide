@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 558" role="img" aria-labelledby="title desc">
+  <title id="title">同一批任务的全量追踪、尾部采样与业务账本</title>
+  <desc id="desc">三项报告任务分别首次成功、提交后503重试成功、提交前失败。真实 Collector 把同一批 OTLP 跨度送到两条管道。全量文件有三条追踪和十一个跨度，ERROR 尾采样保留重试成功和最终失败两条追踪，共八个跨度。重试成功的根仍为 OK。独立 SQLite 账本记录三项任务、两项成功、四次尝试和两份效果。样本中一半成功，账本中三分之二成功。</desc>
+  <metadata>{"record":"labs/otel-tail-ledger/validation.json","full_traces":3,"full_spans":11,"sampled_traces":2,"sampled_spans":8,"tasks":3,"successes":2,"attempts":4,"effects":2}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#466181"/>
+    </marker>
+  </defs>
+  <style>
+    text {font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #192c45}
+    .title {font-size: 29px; font-weight: 750}
+    .label {font-size: 22px; font-weight: 720}
+    .body {font-size: 19px}
+    .muted {fill: #3c5570}
+    .arrow {fill: none; stroke: #466181; stroke-width: 3; marker-end: url(#arrow)}
+  </style>
+  <rect width="1120" height="558" rx="22" fill="#f7fafc"/>
+  <text x="40" y="53" class="title">同一批任务进入两条追踪管道</text>
+
+  <rect x="40" y="90" width="279" height="257" rx="15" fill="#eef3fa" stroke="#91a9c4"/>
+  <text x="61" y="125" class="label">执行器与报告工具</text>
+  <text x="61" y="166" class="body">首次成功　200</text>
+  <text x="61" y="202" class="body">重试成功　503 → 200</text>
+  <text x="61" y="238" class="body">最终失败　500</text>
+  <path d="M61 266H299" stroke="#b6c7d9"/>
+  <text x="61" y="302" class="body muted">两进程通过 HTTP 传播身份</text>
+  <text x="61" y="329" class="body muted">SDK 导出各自的 span</text>
+
+  <path d="M320 214H380" class="arrow"/>
+  <rect x="388" y="150" width="263" height="125" rx="15" fill="#e9effb" stroke="#7e9ac2"/>
+  <text x="409" y="188" class="label">Collector</text>
+  <text x="409" y="222" class="body">OTLP/HTTP 接收器</text>
+  <text x="409" y="251" class="body muted">将同一输入分发两路</text>
+
+  <path d="M652 191H687V143H729" class="arrow"/>
+  <path d="M652 238H687V273H729" class="arrow"/>
+  <rect x="737" y="87" width="343" height="111" rx="15" fill="#eef5fc" stroke="#91a9c4"/>
+  <text x="759" y="123" class="label">全量导出</text>
+  <text x="759" y="159" class="body">3 条追踪 · 11 个跨度</text>
+  <rect x="737" y="219" width="343" height="128" rx="15" fill="#fff1de" stroke="#c39450"/>
+  <text x="759" y="255" class="label">ERROR 尾部采样</text>
+  <text x="759" y="287" class="body">2 条追踪 · 8 个跨度</text>
+  <text x="759" y="319" class="body muted">保留重试成功与最终失败</text>
+
+  <path d="M180 348V391" class="arrow"/>
+  <rect x="40" y="400" width="1040" height="117" rx="15" fill="#e7f4ed" stroke="#72a88d"/>
+  <text x="61" y="438" class="label">独立 SQLite 账本</text>
+  <text x="61" y="479" class="body">3 项任务 · 2 项成功 · 4 次尝试 · 2 份效果</text>
+  <text x="642" y="440" class="label">业务成功 2/3</text>
+  <text x="642" y="479" class="body">采样根成功 1/2，重试成功的根为 OK</text>
+</svg>

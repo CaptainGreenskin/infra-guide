@@ -1,0 +1,47 @@
+{
+  "schema": "otel-tail-ledger-v1",
+  "status": "passed",
+  "collector": {
+    "target": "Darwin-arm64",
+    "version_output": "otelcol-contrib version 0.130.0",
+    "archive_name": "otelcol-contrib_0.130.0_darwin_arm64.tar.gz",
+    "archive_sha256": "f851c6c59a896badcbdb76b40571f8c70f9df0d1af32834784ba7240be1bc774",
+    "binary_sha256": "acc59b45bf2b9e2e9ec26131d2d8621f94fd0b81460349959aba3c415b1c54c6"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "sqlite": "3.53.3",
+    "sdk": "1.44.0",
+    "otlp_http_exporter": "1.44.0"
+  },
+  "observed": {
+    "tasks": 3,
+    "verified_successes": 2,
+    "attempts": 4,
+    "effects": 2,
+    "full_trace_count": 3,
+    "sampled_trace_count": 2,
+    "sampling_decisions": {
+      "true": 2,
+      "false": 1
+    }
+  },
+  "source_sha256": {
+    "tail_ledger.py": "075cd1bdc6bfcc20158329fef2ee96077c018cc078fd5e7a8df539be9bb6f723",
+    "collector.yaml": "f4190cbf433f9e8e9611fbae514e62caf51dd010acec0bbc2c18124dde0cb865",
+    "collector-lock.json": "ddc28f870879bd21f2e270d33cfc496812bcbbd44f11f579012d2603d63a49e8",
+    "source.json": "bfee9aca44d9acf2c74705d4addd780f73d7b2fa7dc27ba62cdec3337220fc13",
+    "requirements.txt": "686743a2e6099425a00c7a5745925859ae78015dfb0cee0aa36a914b5c1af98b",
+    "README.md": "4bb617f2d64a4399ea15e4580822605758b02e5689b2d06aedaa11b6fc74f768",
+    "official-assets.json": "f6d0ad51507161095574ded6ce585115b0b95f6c940339008f2c9e8ff0b63dfa"
+  },
+  "artifact_sha256": {
+    "collector-effective.yaml": "eb9e289704e975c263228366c57798392ef6f8ee309f6f75c1b4a24330ecc6f2",
+    "collector.log": "2652ef8584ec8fd733b7820e98513e9bc7c16a8fd9195268098e35b9500926e6",
+    "collector-metrics.txt": "17e8539d94ad514d99b6bfbbed7add7c2618ee047ade4935f1b69a02b388532b",
+    "full-traces.jsonl": "93d78c8b48ecab8d37586a059338c6e1fd10243141fec887d12e95dab665e5e0",
+    "sampled-traces.jsonl": "41278399fc6a90cef0306c17d09495120b71e0d0fdcf915a3b55e5546c3d29a8",
+    "ledger.sqlite": "aee5a1e69f871bf3be0bc106b7ca9f368003b5bb44deba00d0213915266346d8"
+  },
+  "scope": "local real SDK, HTTP, Collector and SQLite on fixed synthetic tasks"
+}

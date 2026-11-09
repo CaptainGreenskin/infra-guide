@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "backend": "CPU",
+  "engine_commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+  "engine_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+  "fixture_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66",
+  "host": {
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "source_sha256": {
+    "prefix_lab.py": "8480d4c7b5aab59717b4124c5a662dbb35789a0b4e0b0ad66c477b50f5f45ddd",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf"
+  },
+  "evidence_sha256": {
+    "responses.json": "86871bfe695058899010f94ad5424cf9f9956ee0b70a791f545516a1c653c2e5",
+    "native-logs.json": "04a86431daef924a9b416f8e3f68b532d60a566fbadfd05f2daaeea24461bcba"
+  },
+  "repetitions": 3,
+  "warm_hit_positions": 3,
+  "warm_new_prompt_positions": 2,
+  "cold_new_prompt_positions": 5,
+  "erased_positions": 7,
+  "output_ids": [
+    11,
+    12,
+    13
+  ],
+  "scope": "native CPU control path; synthetic weights; no GPU or capacity/performance claim"
+}
