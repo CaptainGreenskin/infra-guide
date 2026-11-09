@@ -11,7 +11,7 @@
 
 ## 运行
 
-需要 Python 3.9+、本机 Linux Docker、kind v0.33.0、kubectl v1.35.8、Helm 3.13.0 或更高。Cilium 固定为 1.20.4，官方版本矩阵包含 Kubernetes 1.35。Helm 包、Kubernetes 节点镜像和 Python 夹具镜像使用源码中锁定的摘要。首次运行需要读取公共发布源和镜像仓库。
+需要 Python 3.9+、本机 Linux amd64 Docker、kind v0.33.0、kubectl v1.35.8、Helm 3.13.0 或更高。Cilium 固定为 1.20.4，官方版本矩阵包含 Kubernetes 1.35。Helm 包、Kubernetes 节点镜像和 Python 夹具镜像使用源码中锁定的摘要，Python 直接固定官方 linux/amd64 镜像清单。首次运行需要读取公共发布源和镜像仓库。
 
 ```sh
 python3 -B network_policy_lab.py --json native-record.json

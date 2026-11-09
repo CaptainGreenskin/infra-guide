@@ -22,7 +22,8 @@ NODE_IMAGE = 'kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce
 CILIUM_VERSION = '1.20.4'
 CHART_URL = f'https://helm.cilium.io/cilium-{CILIUM_VERSION}.tgz'
 CHART_SHA = '505abff8385811df1a949776fc42e9f10697989a332acc86d6e8933efcb855ed'
-PYTHON_IMAGE = 'python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0bf6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844'
+# Pin the official linux/amd64 image manifest directly.
+PYTHON_IMAGE = 'docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431'
 NS, PORT = 'policy-lab', 8080
 CLIENTS = ('trusted', 'untrusted')
 INGRESS, DENY, ALLOW = 'ingress-trusted', 'egress-isolate-trusted', 'egress-orders-trusted'
@@ -131,7 +132,7 @@ def preflight():
     match = re.search(r'v(\d+)\.(\d+)\.(\d+)', helm)
     require(match and tuple(map(int, match.groups())) >= (3, 13, 0), 'Helm >=3.13.0 required')
     engine = command(['docker', 'info', '--format', '{{.OSType}} {{.Architecture}} {{.KernelVersion}}']).strip()
-    require(engine.startswith('linux '), 'Linux Docker engine required')
+    require(engine.startswith(('linux x86_64 ', 'linux amd64 ')), 'Linux amd64 Docker engine required')
     return {'kind': version, 'kubectl': kubectl, 'helm': helm, 'docker_kernel': engine}
 
 
