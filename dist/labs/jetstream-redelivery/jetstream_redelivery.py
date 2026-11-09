@@ -160,7 +160,7 @@ async def observe_case(url, admin, directory, mode):
             confirmation = await second.ack_sync(timeout=4)
             after_ack = consumer_state(await admin.consumer_info(stream, durable))
             result = {
-                'consumer': {'name': cfg.durable_name, 'ack_policy': cfg.ack_policy.value,
+                'consumer': {'name': cfg.durable_name, 'ack_policy': AckPolicy(cfg.ack_policy).value,
                              'ack_wait_seconds': cfg.ack_wait, 'max_ack_pending': cfg.max_ack_pending,
                              'max_deliver': cfg.max_deliver},
                 'publish_ack': {'stream': publish.stream, 'stream_seq': publish.seq},
