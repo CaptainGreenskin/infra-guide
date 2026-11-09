@@ -1,0 +1,29 @@
+name: Triton tail mask interpreter evidence
+on:
+  push:
+    branches: [evidence/triton-tail-mask-20261109]
+permissions:
+  contents: read
+jobs:
+  cpu-interpreter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      TRITON_INTERPRET: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned Linux wheels
+        run: python -m pip install -r dist/labs/triton-tail-mask/requirements-linux.txt
+      - name: Execute the Triton kernel and both controls
+        run: |
+          mkdir native-results
+          python -B dist/labs/triton-tail-mask/triton_tail_mask.py > native-results/validation.json
+          git rev-parse HEAD > native-results/source-commit.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-triton-tail-mask
+          path: native-results/
+          if-no-files-found: error
