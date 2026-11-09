@@ -1,0 +1,35 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "d8dce73856bb74842872fe45d9f1eb6ee43da8d8",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SEARCH_ENTRY_2026-11-09.json": "b8c2de6b1bf78cc8fb8bafdd73382f01a6866669cc3899d84dbc84a38db009d7"
+  },
+  "source_revisions": {
+    "src/page-shell.html": {
+      "previous_sha256": "365ba084397a322e2bfc0c441458cdee995900cf30aca030322923d4b72530fd",
+      "reviewed_sha256": "56327e61210b1707a519f473cb5d2fa1191ae49a1eeeaa65c447dfc86db1a801",
+      "scope": "Keep the fallback homepage title aligned with the published course title."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "96ccce84be19201ab9337a4faef8c18ad5ac3b4597950884ed5fce957b13e2cb",
+      "reviewed_sha256": "343e0c1f65103743568b6005bd415a3008a23c6a0e13e44ccd6bd3b2d6f664e6",
+      "scope": "Generate distinct search descriptions for the three reading entries and homepage without changing canonical paths or the sitemap."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "00b68918cb11a95238d6137fb7a8e9586fd86613d2de44f7cd69e4ed19e71118",
+      "reviewed_sha256": "3ceb04c1332981cb85c02ce0677c875d685f94269815a3efdcdedd6b13f52935",
+      "scope": "Verify the initial HTML identifies the site and describes each course entry."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2b2ff0c4effd8f5b4d2996fff56c4e6facb38b53750502699cbbe302ee07472c",
+      "reviewed_sha256": "ef8a98264386fda49c91358682833516927b2b89fee2080cd0f3ddb93b1acc2c",
+      "scope": "Fingerprint the exact metadata and previously reviewed figure and laboratory sources."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "5df3f2d21cd47b0e13983f42b4b4686a56f2aa2d0fa4435573ee7b8f27634703",
+      "reviewed_sha256": "d8ae281a92178670a956e3447625a7d07adf74b590df78b2f3ef908a263fd237",
+      "scope": "Bind the regenerated reader and search assets to the same published document sources."
+    }
+  }
+}
