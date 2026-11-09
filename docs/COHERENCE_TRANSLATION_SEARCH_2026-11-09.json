@@ -1,0 +1,109 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "215cdfe28a60ff8e156b81ce140f489f03b98c9b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_RUNTIME_PATHS_2026-11-09.json": "52000ceeafd60a55e81907deae0f895d890de41ae3ffa04f511cf1e445110074"
+  },
+  "source_revisions": {
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "cfd9f2b9ea45965250f7b19fad107c7646fb304713527ee391a51d920a23ce33",
+      "reviewed_sha256": "52897b7490ceee774534648379fc9f54a706f469518ce4fcf6d1cd0871d5a6d8",
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "d5713508e73ae7e82e1677d16528a0d75580a0c7b31d9b7653f29af42e1e4993",
+      "reviewed_sha256": "09acdd71c7c7fb838eda6f4cae89570f1474d3abe5b8dc58ba2b62906238ed5f",
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "a8382d80990c0c5e1904ecfbc4db7345c2e5025482846d71240cec3c4542e037",
+      "reviewed_sha256": "c7eb8890ae70a616faaeb7ac08164b27550c3840208fbb6a6befaf84000e367e",
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model."
+    },
+    "scripts/check-reading-lab-bridges.cjs": {
+      "previous_sha256": "8deeb1743c88c561a141659c964a6b0c06cc63d6021878bc5b8b08b9989389d0",
+      "reviewed_sha256": "512b011a1ad7c52b7e4055c2917e82a0b3bdd996b1ca825f03fa6a52d853464f",
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model."
+    },
+    "dist/app.js": {
+      "previous_sha256": "40a2d0499189e0ace96fe22d9ce4aa658233c309f1d80ece058a3f7614f8b109",
+      "reviewed_sha256": "9931bec1a16f5c59a9e7cbb61b99acc5992fa7859c05b3f219d996653a836f06",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "dist/site-search.js": {
+      "previous_sha256": "9c4cf623103743389b92addcb674c0b24c79fc48f7188297b94e898ae74dbbbf",
+      "reviewed_sha256": "54221cacebd1f396144ebd644ab252a94e40996f12bf789744e4557000bf426c",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "cd627fe7cc7d354a1e41eb87b9ca1099d17c469f9f4f85bd1e1d35b3a48f86ff",
+      "reviewed_sha256": "162bc8424632c3972020a1c1bc43c77308dbc94f384a64f966eceb6e60e41569",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/article-reader/search-data.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "be9bd9c313913a3f9806ae1b331f20a3f7565e8da641d42c8ad3ad96888cc999",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/article-reader/reader-glue.js": {
+      "previous_sha256": "91f78a195bf751ab951b27cb44608d3fc312598a1c2c85f7e95411c140f5a961",
+      "reviewed_sha256": "b462863067b0cb59221f2a6fa465721247d05b9f22ad8623ed06973154219bcd",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/article-reader/reader-startup.js": {
+      "previous_sha256": "c301d851454f9d2d6911ef85d9a9ea03de75d3b7efcc33eb4864a82d65a348f2",
+      "reviewed_sha256": "18c2531266ed18e95465627ef65619f7dcfd6aa7e1984be8b8b7213809c3f396",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "663c01d0e02202cb4ee67f42e40550ab31af3b282d1bc44130666ac22f97c2b6",
+      "reviewed_sha256": "600d010ce2fa8064879fd7c87eedd059c0c384d7df1186625be14df3a8515753",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "73b44a9286b149708b930947626e3ac634b3105f751c31ab1d3012f9cc0b2b36",
+      "reviewed_sha256": "4c80577cc652916d2632ac235bf587f639c027c7bcfd86e0d1ff75c6b3c904a9",
+      "scope": "Keep the complete ranking and excerpts while requesting only conservative candidate shards. Verify empty search, late responses, retry, IME and full-reader handoff."
+    },
+    "README.md": {
+      "previous_sha256": "3e8e1087c7934bd0ff6b67dacda59088bc8b8ab6006ece62841f3602aa2fc29a",
+      "reviewed_sha256": "4f61b7e33a7591a8de2e8d174ae73971d407538b92e078c378baa3e9060b4f06",
+      "scope": "Publish the recorded translation path and lazy reader search together."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "3fd933127731f54c191fcd3bfecdbee06c8c97ae247544a7beb9a0b453731359",
+      "reviewed_sha256": "960335b008f0b2c36c19584ca63499328cfb25ede6d49db8e79fa02591006d31",
+      "scope": "Publish the recorded translation path and lazy reader search together."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "25af74a00010905e087615fe3139236645de5c0fdef373c57946c337b8e6b87a",
+      "reviewed_sha256": "d242366c915e734bc2b5e6e48eb2ccf442ba15e0fc2bdf71bf5afc33b682941a",
+      "scope": "Publish the recorded translation path and lazy reader search together."
+    }
+  },
+  "article_sections": {
+    "transformer-model": {
+      "sections": [
+        1,
+        7,
+        9
+      ],
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model.",
+      "observation": "Both static entry routes show the three real held-out decoding steps. The supplied-prefix source substitution changes the second word from circle to square. The existing code, figure, lab and URL stay in the full walkthrough."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "215cdfe28a60ff8e156b81ce140f489f03b98c9b",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 64,
+    "learning_tasks": 104
+  }
+}

@@ -347,12 +347,14 @@
         "training-versus-generation",
         "model-compute-to-infra",
         "encoder-decoder-translation",
-        "sequence-models"
+        "sequence-models",
+        "translation-reading-path"
       ],
       "visible_targets": [
         "text-to-next-token",
         "sequence-models",
         "transformer-architecture-choices",
+        "translation-reading-path",
         "ai-infra-map",
         "tiny-decoder-input",
         "decoder-attention-first-pass",

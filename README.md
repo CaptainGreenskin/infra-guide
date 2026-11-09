@@ -15,6 +15,8 @@
 
 当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接进入第一章，侧栏直接进入正文。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent 可独立学习。
 
+Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、目标右移、交叉注意力和实际的三轮生成。需要深入时，从同一例子进入掩码实验，再切换到独立的仅解码器算例。文章内搜索打开即显示推荐，查询时只下载可能含匹配项的索引分片。 [一句话走完 Transformer](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#translation-reading-path)
+
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
 入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)
@@ -161,7 +163,7 @@ node scripts/check-all.cjs --pages
 
 此命令重新生成页面，再执行全部内容与路径检查；不会安装 PyTorch 或冒充重跑需要额外环境的实验。普通标准库实验会按各检查的实际逻辑复跑，外部工具及 PyTorch 记录按源码摘要、独立算式和下载包复核；修改相关程序后仍需按实验说明实际重跑。
 
-浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json`、`reader-assets/`、`reader-runtime-manifest.json` 和各目录 HTML 都是生成物。轻量阅读器的构建源在 `scripts/article-reader/`；文章元数据不包含完整正文，搜索索引独立按需加载。 `multinode-launch-data.js` 由 `scripts/embed-multinode-launch.cjs` 从实验源码与固定记录生成；修改下载包里的规范源文件后重新构建。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。 `integrated-service-data.js`由`scripts/embed-integrated-service.cjs`从完整服务源码和实际验证记录生成。
+浏览器加载的 `dist/runtime-*.js`、`runtime-manifest.json`、`reader-assets/`、`reader-runtime-manifest.json` 和各目录 HTML 都是生成物。轻量阅读器的构建源在 `scripts/article-reader/`。文章元数据和搜索索引独立生成，有效查询先按词片段过滤候选分片，再使用全站同一套搜索排序。 `multinode-launch-data.js` 由 `scripts/embed-multinode-launch.cjs` 从实验源码与固定记录生成。修改规范内容文件后运行上述命令，不手改合并脚本。顺序来自 `src/page-shell.html`；新增课程脚本后，运行时检查会比较合并前后全部路由。 `integrated-service-data.js` 由 `scripts/embed-integrated-service.cjs` 从完整服务源码和实际验证记录生成。
 
 修改本轮实验后，用已有PyTorch环境重新执行并生成对应的源码包与记录：
 

@@ -105,6 +105,23 @@ for(const [i,translation] of translations.entries()){
 }
 assert.deepEqual(aiRecord.same_target_prefix,{prefix:[1,3],source_ids:[[1,5],[1,6]],next_ids:[7,8],next_tokens:['circle','square']});
 page('transformer-model',['id="encoder-decoder-translation"','article/transformer-model/#encoder-decoder-translation','diagrams/encoder-decoder-translation.svg','labs/encoder-decoder.zip']);
+const tourAnchor='translation-reading-path';
+const tourTrace=translations.find(row=>row.source.join(' ')==='红 圆');
+assert(tourTrace,'the first reading example must have a held-out replay');
+const displayWord=id=>vocab.target[id].replace(/[<>]/g,'').replace(/^(bos|eos)$/,token=>token.toUpperCase());
+for(const route of ['article/transformer-model','track/ai']){
+ const html=readFileSync('dist/'+route+'/index.html','utf8');
+ const tour=html.match(new RegExp('<h3 id="'+tourAnchor+'">[\\s\\S]*?(?=<h3\\b)'))?.[0];
+ assert(tour,route+': static first reading example');
+ assert(html.includes('href="/article/transformer-model/#'+tourAnchor+'"'),route+': direct access to first reading with a document base');
+ assert(tour.includes('/article/transformer-model/#encoder-decoder-translation'),route+': full experiment link');
+ for(const [index,event] of tourTrace.events.entries()){
+  const prefix=event.decoder_input.map(displayWord).join(', ');
+  const word=displayWord(event.selected);
+  const result=word==='EOS'?'EOS，结束':word;
+  assert(tour.includes('<tr><td>'+(index+1)+'</td><td>['+prefix+']</td><td>'+result+'</td></tr>'),route+': rendered generation diverged from replay at step '+(index+1));
+ }
+}
 
 const cloud=lab('kubernetes-network-policy'),cloudRecord=json(cloud+'validation.json');
 const provenance=json(cloud+'ci-record.json');

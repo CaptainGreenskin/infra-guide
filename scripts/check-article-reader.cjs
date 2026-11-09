@@ -5,6 +5,7 @@
 'use strict';
 const assert=require('assert'),fs=require('fs'),os=require('os'),path=require('path'),vm=require('vm'),crypto=require('crypto');
 const {TextDecoder}=require('util');
+const {gzipSync}=require('node:zlib');
 const inventory=require('./content-inventory.cjs');
 const {buildReader}=require('./article-reader/build.cjs');
 const {runtimePlan}=require('./build-runtime.cjs');
@@ -20,6 +21,20 @@ assert.equal(files.at(-1),'app.js','evaluate the final canonical app too');
 const sources=new Map(files.map(file=>[file,read('dist/'+file)]));
 const compiled=files.map(file=>new vm.Script(sources.get(file),{filename:file}));
 
+class DOMEventTarget extends EventTarget{
+ addEventListener(type,listener,options){
+  const signal=options?.signal;
+  if(!signal)return super.addEventListener(type,listener,options);
+  if(signal.aborted)return;
+  // Node can collect an earlier abort-removal callback when the same target
+  // has several listeners. Keep each cleanup while using native dispatch.
+  const listenerOptions={...options};
+  delete listenerOptions.signal;
+  super.addEventListener(type,listener,listenerOptions);
+  signal.addEventListener('abort',()=>super.removeEventListener(type,listener,listenerOptions),{once:true});
+ }
+}
+
 function makeVM(base='/'){
  const noop=()=>{},sink={innerHTML:''},grid={innerHTML:''};
  const stub={addEventListener:noop,setAttribute:noop,removeAttribute:noop,focus:noop,close:noop,showModal:noop,classList:{toggle:noop,remove:noop,add:noop}};
@@ -34,7 +49,7 @@ function probeRuntime(reader){
  const startup=read('scripts/article-reader/reader-startup.js');
  assert.equal(reader.runtime.split(startup).length,2,'replace exactly the real startup boundary');
  const preflight=startup.indexOf('try{');assert(preflight>0,'retain cleanup declarations and external-event registration before startup');
- const bridge=`globalThis.__probe={metadata:{${Object.keys(reader.metadata).join(',')}},sidebarView,learningGoalChapterNav,learningContextHref,readerInternalHref,cleanInternalHTML,chapterReadingContext,chapterReadingNav,readingArticleURL,practiceArticleForContext,learningProfileRoute,courseRedirectFor,legacySectionTarget,attentionExample,sloCalculation,kvCalculation,sinusoidalPositionPair,sinusoidalPositionGraphic,rankSiteSearch,siteSearchHighlight,search,loadSearchIndex,bindApplicationEvents,setComfortAbort:value=>comfortAbort=value,getAbortState:()=>({reader:readerAbort.signal.aborted,comfort:comfortAbort?.signal.aborted}),setIndex:value=>siteSearchCache=value,setProgress:value=>progress=value,getSearch:()=>({searchItems,searchIndex,latestSearchQuery,cache:siteSearchCache})};return;`;
+ const bridge=`globalThis.__probe={metadata:{${Object.keys(reader.metadata).join(',')}},sidebarView,learningGoalChapterNav,learningContextHref,readerInternalHref,cleanInternalHTML,chapterReadingContext,chapterReadingNav,readingArticleURL,practiceArticleForContext,learningProfileRoute,courseRedirectFor,legacySectionTarget,attentionExample,sloCalculation,kvCalculation,sinusoidalPositionPair,sinusoidalPositionGraphic,rankSiteSearch,siteSearchHighlight,search,loadSearchCandidates,suspendSearch,bindApplicationEvents,setComfortAbort:value=>comfortAbort=value,getAbortState:()=>({reader:readerAbort.signal.aborted,comfort:comfortAbort?.signal.aborted}),setProgress:value=>progress=value,getSearch:()=>({searchItems,searchIndex,latestSearchQuery,cacheSize:searchAssetCache.size}),settleSearchAssets:()=>Promise.allSettled([...searchAssetCache.values()])};return;`;
  // Keep the production external-fallback subscription. Only hydration/startup
  // itself is replaced; its actual event cleanup can then be tested separately.
  return new vm.Script(reader.runtime.replace(startup,startup.slice(0,preflight)+bridge),{filename:'reader-runtime-probe.js'});
@@ -44,7 +59,7 @@ function lightVM(script,base='/',runtimeMode){
  const nodes={},state={fetches:0};
  const context={URLSearchParams,URL,AbortController,TextDecoder,crypto:crypto.webcrypto,setTimeout,clearTimeout,
   location:{pathname:base,search:'',hash:'',origin:'http://localhost'},localStorage:{getItem:()=>null,setItem(){}},
-  document:Object.assign(new EventTarget(),{documentElement:{getAttribute:name=>name==='data-reader-runtime'?runtimeMode:null},querySelector:s=>s==='base'?{getAttribute:()=>base}:s==='link[rel=canonical]'?{href:'https://example.test'+base}:nodes[s]||null}),window:new EventTarget(),
+  document:Object.assign(new DOMEventTarget(),{documentElement:{getAttribute:name=>name==='data-reader-runtime'?runtimeMode:null},querySelector:s=>s==='base'?{getAttribute:()=>base}:s==='link[rel=canonical]'?{href:'https://example.test'+base}:nodes[s]||null}),window:new DOMEventTarget(),
   fetch(){state.fetches++;throw Error('unexpected eager search request');}};
  vm.createContext(context);script.runInContext(context);
  assert.equal(state.fetches,0,'initializing the light runtime does not fetch the search index');
@@ -52,7 +67,7 @@ function lightVM(script,base='/',runtimeMode){
   assert.equal(context.__probe,undefined,'light startup arriving late leaves full runtime in charge');
   return;
  }
- assert.equal(context.__probe.getSearch().cache,null,'the light runtime starts without an eager index');
+ assert.equal(context.__probe.getSearch().cacheSize,0,'the light runtime starts without a fetched search asset');
  return {context,p:context.__probe,nodes,state};
 }
 
@@ -81,12 +96,14 @@ function assertMetadata(metadata,canonical){
 
 function checkManifest(reader,canonical){
  const earlyFigureBytes=Buffer.byteLength(read('dist/reader-figures.js'));
+ const searchLayout={schema:2,catalog:reader.searchCatalogAsset.file,routes:reader.searchRouteAssets.length,shards:reader.searchShardAssets.length};
  const expected={schema:1,staticReadingVersion:reader.version,articles:reader.metadata.articles.length,initialExecutableScripts:2,normalReaderScriptRequests:2,fullFallbackScripts:9,
   initialReaderJSBytes:reader.initialReaderJSBytes+earlyFigureBytes,initialInlineFigureBytes:earlyFigureBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:hash(JSON.stringify(reader.metadata)),
-  assets:[reader.bootstrapAsset,reader.runtimeAsset,reader.searchAsset],reusedFunctions:reader.provenance,searchEntries:reader.index.length};
+  assets:[reader.bootstrapAsset,reader.runtimeAsset,...searchAssets(reader).map(([,asset])=>asset)],reusedFunctions:reader.provenance,searchEntries:reader.index.length,searchLayout};
  const published=JSON.parse(read('dist/reader-runtime-manifest.json'));
  assert.deepStrictEqual(published,expected,'published reader manifest matches a fresh build from the final canonical VM');
- assert.equal(expected.assets.length,3);
+ assert(searchLayout.routes>1&&searchLayout.shards>1,'the search directory and entries are sharded');
+ assert.equal(new Set(expected.assets.map(asset=>asset.url)).size,expected.assets.length,'each published reader asset has a distinct URL');
  for(const asset of expected.assets){
   const bytes=fs.readFileSync(path.join(root,'dist',asset.file));
   assert.equal(bytes.length,asset.bytes,asset.file+': published byte count');
@@ -94,13 +111,40 @@ function checkManifest(reader,canonical){
   assert.equal(path.basename(asset.file),path.basename(asset.url));
   assert(path.basename(asset.file).includes(asset.sha256.slice(0,12)),asset.file+': content fingerprint');
  }
- assert.deepStrictEqual(reader.index,json(canonical,'buildSiteSearchIndex()'),'all original search entry and segment fields survive serialization');
+ assert.deepStrictEqual(reader.index,json(canonical,'buildSiteSearchIndex()'),'the full reference uses all canonical search entries and fields');
  assert.equal(reader.index.length,inventory.search);
  assert.equal(new Set(reader.index.map(e=>e.id)).size,inventory.search);
- assert.equal(reader.index.filter(e=>e.type==='knowledge').length,95);
- const payload=JSON.parse(read('dist/'+reader.searchAsset.file));
- assert.deepStrictEqual(payload,{schema:1,staticReadingVersion:reader.version,entries:reader.index});
+ assert.equal(reader.searchKnowledgeCount,95);
+ assert.equal(reader.searchKnowledgeCount,reader.index.filter(e=>e.type==='knowledge').length);
+ assert.deepStrictEqual(reader.searchSuggestions,json(canonical,'rankSiteSearch("").map(({id,type,titleText,desc,module,number,path,anchor})=>({id,type,titleText,desc,module,number,path,anchor}))'),'the six in-runtime suggestions keep their canonical presentation');
+ const catalog=JSON.parse(read('dist/'+reader.searchCatalogAsset.file));
+ assert.equal(catalog.schema,2);
+ assert.equal(catalog.kind,'catalog');
+ assert.equal(catalog.staticReadingVersion,reader.version);
+ for(const [kind,list] of [['routes',reader.searchRouteAssets],['entries',reader.searchShardAssets]]){
+  const descriptors=catalog[kind==='routes'?'routes':'shards'];
+  assert.equal(descriptors.length,list.length,kind+' descriptors');
+  for(const [i,asset] of list.entries()){
+   const descriptor=descriptors[i];
+   const payload=JSON.parse(read('dist/'+asset.file));
+   assert.deepStrictEqual(descriptor,{url:asset.url,sha256:asset.sha256,token:payload.token});
+   assert.equal(payload.schema,2);
+   assert.equal(payload.kind,kind);
+   assert(Array.isArray(payload.rows),asset.file+': compact leaf rows');
+  }
+ }
+ const oldBytes=Buffer.byteLength(JSON.stringify({schema:1,staticReadingVersion:reader.version,entries:reader.index}));
+ const searchBytes=searchAssets(reader).reduce((total,[,asset])=>total+asset.bytes,0);
+ assert(searchBytes<oldBytes,'the full directory and compact shards are smaller than the former monolith');
  return expected;
+}
+
+function searchAssets(reader){
+ return [['catalog',reader.searchCatalogAsset],...reader.searchRouteAssets.map(asset=>['routes',asset]),...reader.searchShardAssets.map(asset=>['entries',asset])];
+}
+
+function resultProjection({id,type,titleText,module,number,path,anchor,excerpt,terms,matchLabel}){
+ return plain({id,type,titleText,module,number,path,anchor,excerpt,terms,matchLabel});
 }
 
 function contextProjection(key,value){
@@ -156,14 +200,25 @@ function checkNavigation(reader,lightScript,originals){
  return {navCases,contextCases,redirectCases};
 }
 
-function checkRankingAndMath(reader,lightScript,original){
- const {p}=lightVM(lightScript);p.setIndex(reader.index);
- const queries=[...new Set(['','GPU','幂等','恢复','tools/call','structuredContent','operation_id','R17','27','base10','DDP','KV Cache','etcd','LINUX','无法匹配zzzzz','４２','a b c',...reader.index.map(e=>e.titleText)])];
- assert.equal(queries.length,190,'the reviewed corpus includes every article and knowledge title');
+async function checkRankingAndMath(reader,lightScript,original,assets){
+ const fixture=lightVM(lightScript),{p}=fixture;
+ mountSearchAssets(fixture,assets);
+ const expectedById=new Map(reader.index.map(entry=>[entry.id,entry])),seen=new Set();
+ const queries=[...new Set(['GPU','幂等','恢复','tools/call','structuredContent','operation_id','R17','27','base10','DDP','KV Cache','etcd','LINUX','无法匹配zzzzz','４２','a b c',...reader.index.map(e=>e.titleText),
+  'traceparent','Agent traceparent','SQL 索引','ＳＱＬ 索引','cpu.max','节点放置','ＴＣＰ','ＴＰ','恢','发','all_to_all_single','prefix_attention.py','__name__','C++','._+','++','流式','éhttp','<>'])];
+ assert(queries.length>=190,'the reviewed corpus includes every article and knowledge title plus edge cases');
  for(const q of queries){
   original.q=q;
-  assert.equal(JSON.stringify(p.rankSiteSearch(q)),vm.runInContext('JSON.stringify(rankSiteSearch(q))',original),'complete ranked records, tie order, excerpts and anchors: '+q);
+  const candidates=await p.loadSearchCandidates(q);
+  assert(Array.isArray(candidates),q+': completed candidate load');
+  assert.equal(new Set(candidates.map(entry=>entry.id)).size,candidates.length,q+': unique candidate union');
+  for(const entry of candidates)if(!seen.has(entry.id)){
+   assert.deepStrictEqual(plain(entry),expectedById.get(entry.id),'exact unpacking of candidate '+entry.id);
+   seen.add(entry.id);
+  }
+  assert.deepStrictEqual(plain(p.rankSiteSearch(q,candidates)),json(original,'rankSiteSearch(q)'),'complete ranked records, tie order, excerpts and anchors: '+q);
  }
+ assert.equal(seen.size,reader.index.length,'all canonical entries unpacked through the URL-bound loader');
  let mathCases=0;
  for(const position of [0,1,2,3])for(const causal of [false,true])for(const future of [false,true]){
   original.args=[position,causal,future];assert.deepStrictEqual(plain(p.attentionExample(...original.args)),json(original,'attentionExample(...args)'));mathCases++;
@@ -195,67 +250,202 @@ function checkRankingAndMath(reader,lightScript,original){
  return {searchCases:queries.length,mathCases};
 }
 
-function searchNodes(nodes){
- const state={resultRenders:0},retry={onclick:null};
- nodes['#search-input']={value:'',removeAttribute(){}};nodes['#search-status']={textContent:''};
- nodes['#search-results']={value:'',set innerHTML(value){this.value=value;if(value.includes('class="search-result"'))state.resultRenders++;},get innerHTML(){return this.value;},querySelector:selector=>selector==='[data-search-retry]'?retry:null};
- return {state,retry};
+function eventNode(){
+ const attributes=new Map();
+ return Object.assign(new DOMEventTarget(),{setAttribute:(key,value)=>attributes.set(key,value),removeAttribute:key=>attributes.delete(key),
+  getAttribute:key=>attributes.get(key),focus(){},classList:{toggle(){return false;},remove(){},add(){},contains(){return false;}}});
 }
+
+function searchNodes(nodes){
+ const state={resultRenders:0},retry=eventNode();
+ const input=nodes['#search-input']=Object.assign(eventNode(),{value:''});
+ const status=nodes['#search-status']={textContent:''};
+ const results=nodes['#search-results']={value:'',set innerHTML(value){this.value=value;if(value.includes('class="search-result"'))state.resultRenders++;},get innerHTML(){return this.value;},querySelector:selector=>selector==='[data-search-retry]'?retry:null};
+ return {state,retry,input,status,results};
+}
+
+function searchClock(context){
+ let now=0,serial=0;
+ const timers=new Map();
+ context.setTimeout=(fn,delay)=>{const id=++serial;timers.set(id,{at:now+delay,fn});return id;};
+ context.clearTimeout=id=>timers.delete(id);
+ return {advance(ms){
+  const end=now+ms;
+  while(timers.size){
+   const [id,timer]=[...timers].sort(([,a],[,b])=>a.at-b.at)[0];
+   if(timer.at>end)break;
+   now=timer.at;timers.delete(id);timer.fn();
+  }
+  now=end;
+ }};
+}
+
+function deferred(){
+ let resolve;
+ const promise=new Promise(done=>{resolve=done;});
+ return {promise,resolve};
+}
+
+async function until(condition,label){
+ for(let i=0;i<500&&!condition();i++)await new Promise(resolve=>setTimeout(resolve,4));
+ assert(condition(),label);
+}
+
 function response(bytes){return {ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};}
 
-async function checkLazySearch(reader,lightScript,indexBytes){
- const lazy=lightVM(lightScript),{state}=searchNodes(lazy.nodes);let fetches=0,release,requested;
- lazy.context.fetch=(url,options)=>{fetches++;requested={url,options};return new Promise(resolve=>{release=resolve;});};
- assert.equal(fetches,0);
- lazy.nodes['#search-input'].value='GPU';const first=lazy.p.search('GPU');
- lazy.nodes['#search-input'].value='幂等';const second=lazy.p.search('幂等');
- assert.equal(fetches,1,'concurrent input shares one pending request');
- assert.equal(requested.url,reader.searchAsset.url);assert.equal(requested.options.credentials,'same-origin');
- assert.equal(lazy.nodes['#search-status'].textContent,'正在加载完整搜索索引…');
- assert.equal(lazy.p.getSearch().cache,null,'pending bytes are not a usable index');
- release(response(indexBytes));await Promise.all([first,second]);
- assert.equal(lazy.p.getSearch().latestSearchQuery,'幂等');
- assert.equal(lazy.nodes['#search-input'].value,'幂等','loading preserves typed input');
- assert.equal(state.resultRenders,1,'only the latest pending query renders results');
- assert.deepStrictEqual(plain(lazy.p.getSearch().searchItems),plain(lazy.p.rankSiteSearch('幂等').slice(0,24)));
- await lazy.p.search('GPU');assert.equal(fetches,1,'loaded index is reused');
-
- const pages=lightVM(lightScript,'/infra-guide/');searchNodes(pages.nodes);let pagesURL;
- pages.context.fetch=async url=>{pagesURL=url;return response(indexBytes);};await pages.p.search('恢复');
- assert.equal(pagesURL,'/infra-guide'+reader.searchAsset.url,'lazy asset uses the Pages prefix');
-
- const failures=[
-  {name:'network',fetch:async()=>{throw Error('network');}},
-  {name:'HTTP',fetch:async()=>({ok:false,status:503})},
-  {name:'digest',fetch:async()=>response(Buffer.from('{}'))},
-  {name:'version',noCrypto:true,fetch:async()=>response(Buffer.from(JSON.stringify({schema:1,staticReadingVersion:'previous-release',entries:reader.index})))}
- ];
- for(const test of failures){
-  const retryVM=lightVM(lightScript),{retry}=searchNodes(retryVM.nodes);if(test.noCrypto)retryVM.context.crypto=undefined;
-  let attempts=0;retryVM.context.fetch=async()=>++attempts===1?test.fetch():response(indexBytes);
-  retryVM.nodes['#search-input'].value='恢复';await retryVM.p.search('恢复');
-  assert.equal(attempts,1,test.name);assert.equal(retryVM.p.getSearch().cache,null,test.name+': reject unusable index');
-  assert.equal(retryVM.nodes['#search-input'].value,'恢复',test.name+': preserve input on failure');
-  assert(retryVM.nodes['#search-status'].textContent.includes('重试'),test.name+': actionable retry');
-  assert.equal(typeof retry.onclick,'function',test.name+': bind the actual retry control');
-  retryVM.nodes['#search-input'].value='幂等';await retry.onclick();
-  assert.equal(attempts,2,test.name+': clear the failed promise');
-  assert.deepStrictEqual(plain(retryVM.p.getSearch().searchItems),plain(retryVM.p.rankSiteSearch('幂等').slice(0,24)),test.name+': retry the current input');
- }
- return {sharedPendingFetch:true,latestQueryWins:true,retryCases:failures.length,noEagerIndex:true};
+function mountSearchAssets(fixture,assets,override){
+ const base=fixture.context.document.querySelector('base').getAttribute('href'),prefix=base.slice(0,-1);
+ const requests=[];
+ fixture.context.fetch=async (url,options)=>{
+  assert(url.startsWith(prefix+'/reader-assets/'),'same-origin reader search URL for '+base);
+  const data=assets.get(url.slice(prefix.length));
+  assert(data,'only generated search assets may be fetched: '+url);
+  assert.equal(options.credentials,'same-origin');
+  assert(options.signal instanceof AbortSignal,'search fetch participates in fallback cancellation');
+  const request={...data,url,signal:options.signal};
+  requests.push(request);
+  return override?.(request)??response(request.bytes);
+ };
+ return requests;
 }
 
-async function checkExternalFallback(lightScript,indexBytes){
- const f=lightVM(lightScript),searchState=searchNodes(f.nodes),controls=['#search-open','#search-close','#theme','#mobile-menu','.skip'];
- const calls={opened:0,closed:0,focus:0,comfort:0,fetches:0};
- const classes={toggle(){return false;},remove(){},add(){},contains(){return false;}};
- const node=()=>Object.assign(new EventTarget(),{setAttribute(){},removeAttribute(){},classList:classes,focus(){calls.focus++;}});
- for(const selector of controls)f.nodes[selector]=node();
- f.nodes['#search-input']=Object.assign(node(),{value:''});
- f.nodes['#search-dialog']=Object.assign(node(),{open:false,showModal(){this.open=true;calls.opened++;},close(){this.open=false;calls.closed++;}});
- f.nodes['.top-nav']=node();f.nodes['#main']=node();
- f.context.document.documentElement={classList:classes};
- let resolveFetch;f.context.fetch=()=>{calls.fetches++;return new Promise(resolve=>{resolveFetch=resolve;});};
+function typeSearch(fixture,input,value){
+ input.value=value;
+ return fixture.p.search(value);
+}
+
+async function checkWireBudget(lightScript,assets){
+ const budget={HPA:250000,etcd:210000,GPU:680000,'恢复':1400000},observed={};
+ for(const [query,limit] of Object.entries(budget)){
+  const fixture=lightVM(lightScript),requests=mountSearchAssets(fixture,assets);
+  const candidates=await fixture.p.loadSearchCandidates(query);
+  assert(fixture.p.rankSiteSearch(query,candidates).length,query+': budget covers a real search result');
+  assert.equal(requests.filter(r=>r.kind==='catalog').length,1,query+': one catalog request');
+  observed[query]=requests.reduce((total,r)=>total+gzipSync(r.bytes).length,0);
+  assert(observed[query]<limit,query+': cold gzip bytes '+observed[query]+' exceeds '+limit);
+ }
+ return observed;
+}
+
+async function checkLazySearch(reader,lightScript,assets){
+ const lazy=lightVM(lightScript,'/infra-guide/'),{state,input,status,results}=searchNodes(lazy.nodes),clock=searchClock(lazy.context);
+ const catalog=deferred();
+ const requests=mountSearchAssets(lazy,assets,request=>request.kind==='catalog'?catalog.promise:undefined);
+ for(const q of ['', '  ']){
+  const pending=typeSearch(lazy,input,q);
+  assert.deepStrictEqual(Array.from(lazy.p.getSearch().searchItems,resultProjection),Array.from(lazy.p.rankSiteSearch(q,reader.index).slice(0,24),resultProjection),'blank suggestions render synchronously');
+  assert(status.textContent.includes('95个知识点'),'suggestions use the global knowledge count');
+  await pending;
+ }
+ await typeSearch(lazy,input,'<>');
+ assert.equal(status.textContent,'没有找到匹配内容。');
+ clock.advance(100);
+ assert.equal(requests.length,0,'blank and punctuation-only input never fetch');
+ await typeSearch(lazy,input,'');
+ const rendersBefore=state.resultRenders;
+ const first=typeSearch(lazy,input,'GPU');
+ assert.equal(lazy.p.getSearch().searchItems.length,0,'new input immediately clears stale selection');
+ assert(!results.innerHTML.includes('class="search-result"'),'old links are removed while waiting');
+ assert.equal(status.textContent,'正在搜索相关内容…');
+ clock.advance(99);
+ const second=typeSearch(lazy,input,'幂等');
+ clock.advance(99);
+ assert.equal(requests.length,0,'the last input gets its own 100 ms debounce window');
+ clock.advance(1);
+ await until(()=>requests.length===1,'a debounced input starts the catalog request');
+ assert.equal(requests[0].kind,'catalog');
+ assert.equal(requests[0].url,'/infra-guide'+reader.searchCatalogAsset.url,'all search assets use the Pages base');
+ const finalQuery='prefix_attention.py';
+ const third=typeSearch(lazy,input,finalQuery);
+ clock.advance(100);
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(requests.length,1,'queries share one pending catalog request');
+ catalog.resolve(response(requests[0].bytes));
+ await Promise.all([first,second,third]);
+ const expected=plain(lazy.p.rankSiteSearch(finalQuery,reader.index).slice(0,24));
+ assert(expected.length,finalQuery+': fixture has real search results');
+ assert.deepStrictEqual(plain(lazy.p.getSearch().searchItems),expected);
+ assert.equal(lazy.p.getSearch().latestSearchQuery,finalQuery);
+ assert.equal(input.value,finalQuery,'loading preserves typed input');
+ assert.equal(state.resultRenders,rendersBefore+1,'only the latest pending query renders results');
+ const cold=lightVM(lightScript,'/infra-guide/'),coldRequests=mountSearchAssets(cold,assets);
+ await cold.p.loadSearchCandidates(finalQuery);
+ assert.deepStrictEqual(requests.map(r=>r.url),coldRequests.map(r=>r.url),'superseded catalog wait starts no old route or entry fetches');
+ const entryReads=requests.filter(r=>r.kind==='entries').length;
+ assert(entryReads>0&&entryReads<reader.searchShardAssets.length,'a specific code identifier transfers only candidate entry shards');
+ const repeat=typeSearch(lazy,input,finalQuery);clock.advance(100);await repeat;
+ assert.equal(requests.length,coldRequests.length,'loaded catalog, route and entry shards are reused');
+
+ const delayed=lightVM(lightScript),route=deferred();
+ let current=true,held;
+ const delayedRequests=mountSearchAssets(delayed,assets,request=>{
+  if(request.kind==='routes'&&!held){held=request;return route.promise;}
+ });
+ const cancelled=delayed.p.loadSearchCandidates(finalQuery,()=>current);
+ await until(()=>held,'the first route response can be delayed');
+ current=false;route.resolve(response(held.bytes));
+ assert.equal(await cancelled,null,'superseded route lookup returns no candidate result');
+ assert(!delayedRequests.some(r=>r.kind==='entries'),'superseded route lookup starts no entry downloads');
+
+ const failures=[
+  {name:'network',kind:'catalog',fail:()=>{throw Error('network');}},
+  {name:'HTTP',kind:'catalog',fail:()=>({ok:false,status:503})},
+  {name:'digest',kind:'catalog',fail:()=>response(Buffer.from('{}'))},
+  {name:'version',kind:'catalog',noCrypto:true,mutate:payload=>{payload.staticReadingVersion='previous-release';}},
+  {name:'route token',kind:'routes',noCrypto:true,mutate:payload=>{payload.token='0000000000000000';}},
+  {name:'out-of-range HPA posting',kind:'routes',query:'HPA',noCrypto:true,mutate:payload=>{
+   const posting=payload.rows.find(([gram])=>gram==='hpa');
+   assert(posting,'HPA must have a real route posting');
+   posting[1]=[999]; // Keep the advertised leaf token so posting validation must reject it.
+  }},
+  {name:'entry token',kind:'entries',noCrypto:true,mutate:payload=>{payload.token='0000000000000000';}}
+ ];
+ for(const test of failures){
+  const f=lightVM(lightScript),{input,status,retry,results}=searchNodes(f.nodes),clock=searchClock(f.context);
+  if(test.noCrypto)f.context.crypto=undefined;
+  let failed;
+  const attempted=mountSearchAssets(f,assets,request=>{
+   if(request.kind!==test.kind||failed)return;
+   failed=request;
+   if(test.fail)return test.fail();
+   const payload=JSON.parse(request.bytes);
+   test.mutate(payload);
+   return response(Buffer.from(JSON.stringify(payload)));
+  });
+  const initialQuery=test.query??finalQuery;
+  const initial=typeSearch(f,input,initialQuery);
+  clock.advance(100);await initial;
+  assert(failed,test.name+': directed bad response reached the loader');
+  assert.equal(input.value,initialQuery,test.name+': preserve input on failure');
+  assert(status.textContent.includes('重试'),test.name+': actionable retry');
+  assert(results.innerHTML.includes('data-search-retry'),test.name+': expose the retry control');
+  assert.equal(f.p.getSearch().searchItems.length,0,test.name+': unusable assets do not render results');
+  const retryQuery=test.kind==='catalog'?'幂等':initialQuery;
+  input.value=retryQuery;
+  retry.dispatchEvent(new Event('click'));
+  clock.advance(100);
+  await until(()=>f.p.getSearch().searchItems.length>0,test.name+': actual retry event renders results');
+  assert.deepStrictEqual(plain(f.p.getSearch().searchItems),plain(f.p.rankSiteSearch(retryQuery,reader.index).slice(0,24)),test.name+': retry uses current input');
+  assert.equal(attempted.filter(r=>r.url===failed.url).length,2,test.name+': clear and retry the failed cached request');
+  assert.equal(new Set(attempted.map(r=>r.url)).size,attempted.length-1,test.name+': other assets are reused');
+ }
+ return {retryCases:failures.length,wire:await checkWireBudget(lightScript,assets)};
+}
+
+async function checkExternalFallback(lightScript,assets){
+ const f=lightVM(lightScript),{state,input,results}=searchNodes(f.nodes),clock=searchClock(f.context);
+ const controls=['#search-open','#search-close','#theme','#mobile-menu','.skip'],calls={opened:0,closed:0,comfort:0,navigated:0};
+ for(const selector of controls)f.nodes[selector]=eventNode();
+ const dialog=f.nodes['#search-dialog']=Object.assign(eventNode(),{open:false,showModal(){this.open=true;calls.opened++;},
+  close(){this.open=false;calls.closed++;this.dispatchEvent(new Event('close'));}});
+ f.nodes['.top-nav']=eventNode();f.nodes['#main']=eventNode();
+ f.context.document.documentElement={classList:eventNode().classList};
+ f.context.location.assign=()=>calls.navigated++;
+ const entry=deferred();
+ let held;
+ const requests=mountSearchAssets(f,assets,request=>{
+  if(request.kind==='entries'&&!held){held=request;return entry.promise;}
+ });
  f.p.bindApplicationEvents();
  assert(controls.every(selector=>typeof f.nodes[selector].onclick==='function'),'actual application property handlers are bound');
  const comfortController=new AbortController(),comfortTarget=new EventTarget();
@@ -265,18 +455,40 @@ async function checkExternalFallback(lightScript,indexBytes){
  const shortcut=()=>Object.assign(new Event('keydown',{cancelable:true}),{key:'k',ctrlKey:true,metaKey:false});
  f.context.document.dispatchEvent(shortcut());
  assert.equal(calls.opened,1,'real EventTarget dispatch reaches the actual Ctrl+K listener');
- assert.equal(calls.fetches,1);const pending=f.p.search('幂等');
+ assert.equal(f.p.getSearch().searchItems.length,6,'opening shows suggestions');
+ assert.equal(requests.length,0,'opening the dialog does not request search data');
+
+ input.dispatchEvent(new Event('compositionstart'));
+ input.value='恢';
+ input.dispatchEvent(Object.assign(new Event('input'),{isComposing:true}));
+ input.dispatchEvent(Object.assign(new Event('keydown',{cancelable:true}),{key:'Enter',isComposing:true,keyCode:229}));
+ clock.advance(100);
+ assert.equal(requests.length,0,'Chinese IME composition does not start a partial query');
+ assert.equal(calls.navigated,0,'IME Enter cannot follow a stale suggestion');
+ input.value='prefix_attention.py';
+ input.dispatchEvent(new Event('compositionend'));
+ clock.advance(100);
+ await until(()=>held,'the committed query reaches an entry request');
  assert.deepStrictEqual(plain(f.p.getAbortState()),{reader:false,comfort:false});
- // Dispatch externally: do not call requestFullRuntime() or releaseReader().
- // This regresses the late-fallback path where bootstrap initiates the switch.
+ assert.equal(f.p.getSearch().searchItems.length,0,'results stay cleared while an entry is pending');
+ const renders=state.resultRenders,requestCount=requests.length;
+ // Dispatch externally: this is the late-fallback path initiated by bootstrap.
  f.context.window.dispatchEvent(new Event('reader-full-runtime'));
  assert.deepStrictEqual(plain(f.p.getAbortState()),{reader:true,comfort:true},'external fallback aborts both reader listener groups');
+ assert(held.signal.aborted,'fallback aborts the active search request signal');
  assert(controls.every(selector=>f.nodes[selector].onclick===null),'external fallback clears every application property handler');
+ assert.equal(dialog.open,false);assert.equal(calls.closed,1,'fallback closes the active search dialog');
+ assert.equal(input.getAttribute('aria-expanded'),'false');
+ assert.equal(results.innerHTML,'','fallback clears any remaining search presentation');
  f.context.document.dispatchEvent(shortcut());comfortTarget.dispatchEvent(new Event('input'));
- assert.equal(calls.opened,1);assert.equal(calls.closed,0,'the released Ctrl+K listener no longer handles keys');assert.equal(calls.comfort,1);
- resolveFetch(response(indexBytes));await pending;await new Promise(resolve=>setImmediate(resolve));
- assert.equal(searchState.state.resultRenders,0,'a search pending before external fallback cannot render after release');
- assert.equal(calls.fetches,1,'the fallback cleanup starts no new search request');
+ assert.equal(calls.opened,1,'the released Ctrl+K listener cannot reopen the dialog');
+ assert.equal(calls.closed,1,'fallback closes the dialog exactly once');
+ assert.equal(calls.comfort,1,'the released comfort listener no longer handles input');
+ entry.resolve(response(held.bytes));
+ await f.p.settleSearchAssets();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(state.resultRenders,renders,'a late entry response cannot render after release');
+ assert.equal(requests.length,requestCount,'fallback cleanup starts no new search request');
 }
 
 function appFragment(html){const match=html.match(/<!-- APP_START -->([\s\S]*?)<!-- APP_END -->/);assert(match,'full initial APP fragment');return match[1];}
@@ -377,7 +589,7 @@ async function checkBootstrap(reader,legacy){
  ];
  for(const test of tests){
   const f=await fixture(test);assert.equal(f.requested.length,test.want,test.name+': request decision');
-  assert(!f.requested.some(url=>url.includes('search-index')),test.name+': no eager index');
+  assert(!f.requested.some(url=>searchAssets(reader).some(([,asset])=>url.endsWith(asset.url))),test.name+': no eager search asset');
   if(test.want===1&&!test.failed){
    assert.deepStrictEqual(f.requested,[(test.base?test.base.slice(0,-1):'')+reader.runtimeAsset.url],test.name+': light asset path');
    assert.equal(f.banners.length,0);
@@ -400,17 +612,19 @@ async function main(){
   const originals=new Map([['/',makeVM('/')],['/infra-guide/',makeVM('/infra-guide/')]]),canonical=originals.get('/').context;
   const version=vm.runInContext('staticReadingVersion',canonical);
   const reader=buildReader({context:canonical,staticReadingVersion:version,root,readSource:read,assetDirectory:path.join(temp,'reader-assets'),assetPublicPath:'/reader-assets/'});
-  assertMetadata(reader.metadata,canonical);checkManifest(reader,canonical);
-  for(const asset of [reader.bootstrapAsset,reader.runtimeAsset,reader.searchAsset])assert(fs.readFileSync(path.join(temp,'reader-assets',path.basename(asset.file))).equals(fs.readFileSync(path.join(dist,asset.file))),asset.file+': production and temporary assets are byte-identical');
+  assertMetadata(reader.metadata,canonical);const manifest=checkManifest(reader,canonical);
+  const temporaryBytes=asset=>fs.readFileSync(path.join(temp,'reader-assets',path.basename(asset.file)));
+  for(const asset of manifest.assets)assert(temporaryBytes(asset).equals(fs.readFileSync(path.join(dist,asset.file))),asset.file+': production and temporary assets are byte-identical');
+  const assets=new Map(searchAssets(reader).map(([kind,asset])=>[asset.url,{kind,bytes:temporaryBytes(asset)}]));
   const lightScript=probeRuntime(reader);
   lightVM(lightScript,'/infra-guide/','full');
   const navigation=checkNavigation(reader,lightScript,originals);
-  const ranking=checkRankingAndMath(reader,lightScript,canonical);
-  const lazy=await checkLazySearch(reader,lightScript,fs.readFileSync(path.join(temp,'reader-assets',path.basename(reader.searchAsset.file))));
-  await checkExternalFallback(lightScript,fs.readFileSync(path.join(temp,'reader-assets',path.basename(reader.searchAsset.file))));
+  const ranking=await checkRankingAndMath(reader,lightScript,canonical,assets);
+  const lazy=await checkLazySearch(reader,lightScript,assets);
+  await checkExternalFallback(lightScript,assets);
   const html=checkPublishedHTML(reader,originals.get('/'));
   const bootstrapCases=await checkBootstrap(reader,html.legacy);
-  console.log('PASS: '+files.length+' final canonical sources; 3 reader assets and manifest byte-identical; '+reader.index.length+' complete search entries / '+ranking.searchCases+' full rankings; '+navigation.navCases+' article/role/base navigation cases, '+navigation.contextCases+' context cases, '+navigation.redirectCases+' redirects; '+ranking.mathCases+' shared mathematical cases; '+html.articles+' unchanged full static articles / '+html.anchors+' anchors, '+html.otherPages+' complete-runtime routes; '+bootstrapCases+' bootstrap decisions, external fallback releases both listener groups/property handlers/pending search, lazy shared fetch/latest query/'+lazy.retryCases+' retries, no eager index. VM bootstrap decisions do not prove final browser fallback execution or UI state.');
+  console.log('PASS: '+files.length+' final canonical sources; '+manifest.assets.length+' reader assets and manifest byte-identical; '+reader.index.length+' complete search entries / '+ranking.searchCases+' exact full rankings through the loader; '+navigation.navCases+' article/role/base navigation cases, '+navigation.contextCases+' context cases, '+navigation.redirectCases+' redirects; '+ranking.mathCases+' shared mathematical cases; '+html.articles+' unchanged full static articles / '+html.anchors+' anchors, '+html.otherPages+' complete-runtime routes; '+bootstrapCases+' bootstrap decisions, external fallback closes the dialog and releases listeners/pending search; zero-fetch suggestions, IME, latest query, '+lazy.retryCases+' retries. Cold gzip bytes from mock-fetched asset bodies: '+JSON.stringify(lazy.wire)+'. VM checks do not prove final browser fallback execution or UI state.');
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

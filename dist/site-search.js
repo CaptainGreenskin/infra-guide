@@ -30,9 +30,9 @@ function siteSearchExcerpt(text,terms){
  const end=Math.min(plain.length,start+136);
  return (start?'…':'')+plain.slice(start,end)+(end<plain.length?'…':'');
 }
-function rankSiteSearch(value){
+function rankSiteSearch(value,availableIndex){
  const query=normalizeSearchText(value),terms=[...new Set(query.split(' ').filter(Boolean))];
- const index=siteSearchCache||(siteSearchCache=buildSiteSearchIndex());
+ const index=availableIndex??(siteSearchCache||(siteSearchCache=buildSiteSearchIndex()));
  if(!terms.length&&String(value).trim())return [];
  if(!terms.length){const suggestions=['article:cloud-overview','knowledge:mf-tensors','knowledge:tr-ddp','knowledge:sv-kv','knowledge:ag-runtime','knowledge:ag-recovery'];return suggestions.map(id=>index.find(e=>e.id===id)).filter(Boolean).map(e=>({...e,excerpt:siteSearchExcerpt(e.desc,[]),terms:[],matchLabel:'从这里开始'}));}
  const all=text=>terms.every(term=>searchContains(text,term)),coverage=text=>terms.filter(term=>searchContains(text,term)).length,results=[];

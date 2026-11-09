@@ -1,6 +1,7 @@
 /* Build-time adapter over the site's final VM state. No Git, runtime content replay, or external packages. */
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto');
+const {buildSearchData,routingGrams,routingBucket,restoreSearchEntry}=require('./search-data.cjs');
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
 function buildReader({context,staticReadingVersion,root,readSource,assetDirectory,assetPublicPath='/reader-assets/'}){
  if(!context||!vm.isContext(context))throw Error('Pass the final render-pages VM context');
@@ -22,16 +23,18 @@ function buildReader({context,staticReadingVersion,root,readSource,assetDirector
  }
  const names=['hostedPath','documentPathname','publicRoute','readerInternalHref','cleanInternalHTML','normalizeInternalLinks','initReaderActions','chapterDirectoryTitle','courseDirectoryEntries','chapterReadingContext','chapterReadingNav','selectedLearningProfile','learningProfilePriority','readingArticleURL','learningGoalChapterNav','learningContextHref','practiceArticleForContext','sidebarView','courseRedirectFor','legacySectionTarget','restoreDocumentFragment','hydrateStaticArticle','initInteractive','attentionExample','initAttentionDemo','sloCalculation','kvCalculation','sinusoidalPositionPair','sinusoidalPositionGraphic','sinusoidalPositionReading','sinusoidalPositionOptions','initSinusoidalPositionDemo','initSystemInteractive','readStore','writeStore','toast'];
  const searchFunctions=['searchPlainText','normalizeSearchText','searchFind','searchContains','siteSearchExcerpt','rankSiteSearch','siteSearchHighlight'];
- const searchAsset=asset('search-index','json',JSON.stringify({schema:1,staticReadingVersion:version,entries:index}));
+ const suggestions=json("rankSiteSearch('').map(({id,type,titleText,desc,module,number,path,anchor})=>({id,type,titleText,desc,module,number,path,anchor}))");
+ const {catalogAsset:searchCatalogAsset,routeAssets:searchRouteAssets,shardAssets:searchShardAssets,suggestions:searchSuggestions,knowledgeCount:searchKnowledgeCount}=
+  buildSearchData({index,normalizeSearchText:vm.runInContext('normalizeSearchText',context),asset,version,suggestions});
  const app=readSource('dist/app.js'),start=app.indexOf("$('#search-open').onclick"),end=app.indexOf('function followCourseRedirect');
  if(start<0||end<=start)throw Error('Full app event boundaries changed');
  let glue=app.slice(start,end);
  const filterBranch="const f=e.target.closest('[data-filter]');if(f){filter=f.dataset.filter;renderModuleGrid()}";
  if(!glue.includes(filterBranch))throw Error('Full app event structure changed');
  glue=glue.replace(filterBranch,'').replaceAll("$('#search-input').addEventListener(","listen($('#search-input'),").replaceAll("$('#search-dialog').addEventListener(","listen($('#search-dialog'),").replaceAll('document.addEventListener(','listen(document,');
- const searchRender=vm.runInContext('search.toString()',context).replace(/^function search\(/,'function renderSearch(');
- const rankOriginal=vm.runInContext('rankSiteSearch.toString()',context);
- if(!rankOriginal.includes('siteSearchCache||(siteSearchCache=buildSiteSearchIndex())'))throw Error('Ranking acquisition boundary changed');
+ const searchAcquisition='(siteSearchCache||(siteSearchCache=buildSiteSearchIndex()))';
+ const rankOriginal=fn('rankSiteSearch');
+ if(!rankOriginal.includes(searchAcquisition))throw Error('Ranking acquisition boundary changed');
  const runtime=[
   '(function(){\n\'use strict\';\n','const staticReadingVersion='+JSON.stringify(version)+';\n',
   Object.entries(metadata).map(([name,value])=>'const '+name+'='+JSON.stringify(value)+';\n').join(''),
@@ -43,9 +46,11 @@ function buildReader({context,staticReadingVersion,root,readSource,assetDirector
   "let progress=readStore('cloudinfra-progress',{});if(!progress||typeof progress!=='object'||Array.isArray(progress))progress={};\nlet checks=readStore('cloudinfra-checks',{});if(!checks||typeof checks!=='object'||Array.isArray(checks))checks={};\nlet searchIndex=-1,searchItems=[],toastTimer,currentPath='';\nconst ordered=modules.flatMap(m=>articles.filter(a=>a.module===m.id));\n",
   readSource('dist/reading-comfort.js'),
   "// Module field-map widgets are explicitly unsupported on the article path.\nfunction initFieldConceptMaps(){if(document.querySelector('[data-field-map]'))throw Error('unsupported article field map');}\n",
-  'let siteSearchCache=null;\n',
-  searchFunctions.map(name=>name==='rankSiteSearch'?fn(name).replace('siteSearchCache||(siteSearchCache=buildSiteSearchIndex())',"siteSearchCache||(()=>{throw Error('search index is not loaded')})()"):fn(name)).join(''),
-  searchRender+'\n',own('reader-glue.js').replace('__SEARCH_URL__',JSON.stringify(searchAsset.url)).replace('__SEARCH_DIGEST__',JSON.stringify(searchAsset.sha256)),
+  searchFunctions.map(name=>name==='rankSiteSearch'?rankOriginal.replace(searchAcquisition,"(()=>{throw Error('pass search candidates explicitly')})()"):fn(name)).join(''),
+  [routingGrams,routingBucket,restoreSearchEntry].map(f=>f.toString()).join('\n'),
+  fn('clearSearchSelection'),fn('renderSearch'),own('reader-glue.js')
+   .replace('__SEARCH_CATALOG__',JSON.stringify({url:searchCatalogAsset.url,sha256:searchCatalogAsset.sha256}))
+   .replace('__SEARCH_SUGGESTIONS__',JSON.stringify(searchSuggestions)).replace('__SEARCH_KNOWLEDGE_COUNT__',String(searchKnowledgeCount)),
   vm.runInContext('openSearch.toString()',context)+'\n','function bindApplicationEvents(){\n'+glue+'\n}\n',fn('followCourseRedirect'),own('reader-startup.js'),'\n})();\n'
  ].join('\n');
  new vm.Script(runtime,{filename:'reader-runtime.js'});const runtimeAsset=asset('reader-runtime','js',runtime);
@@ -65,6 +70,7 @@ function buildReader({context,staticReadingVersion,root,readSource,assetDirector
   if(html.match(/<!-- APP_START -->([\s\S]*?)<!-- APP_END -->/)?.[1]!==before)throw Error(id+': static surface changed');
   return html;
  }
- return {metadata,index,version,provenance,runtime,bootstrap,searchAsset,runtimeAsset,bootstrapAsset,patchArticleHTML,initialReaderJSBytes:bootstrapAsset.bytes+runtimeAsset.bytes};
+ return {metadata,index,version,provenance,runtime,bootstrap,searchCatalogAsset,searchRouteAssets,searchShardAssets,searchSuggestions,searchKnowledgeCount,
+  runtimeAsset,bootstrapAsset,patchArticleHTML,initialReaderJSBytes:bootstrapAsset.bytes+runtimeAsset.bytes};
 }
 module.exports={buildReader};

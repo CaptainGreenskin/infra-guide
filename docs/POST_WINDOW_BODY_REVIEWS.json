@@ -4326,6 +4326,25 @@
         "在本地验证容量与代际条件",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "faa17046827ede680a96c523783ca914ba104e72e23de262403f5b3a793c197e",
+      "reviewed_content_sha256": "83684ef428463a635cfa628b1cab096c25689165d6c49304f38a94119fbbc74a",
+      "scope": "Read the same translation from embeddings through source encoding, right-shifted supervision, cross-attention and greedy decoding before moving to the independent decoder-only model.",
+      "observation": "Both static entry routes show the three real held-out decoding steps. The supplied-prefix source substitution changes the second word from circle to square. The existing code, figure, lab and URL stay in the full walkthrough.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
     }
   ]
 }

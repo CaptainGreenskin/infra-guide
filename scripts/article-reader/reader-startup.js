@@ -1,5 +1,7 @@
 function releaseReader(){
  readerAbort.abort();comfortAbort?.abort();
+ const dialog=$('#search-dialog');
+ if(dialog?.open){suspendSearch();$('#search-input').setAttribute('aria-expanded','false');dialog.close();}
  for(const selector of ['#search-open','#search-close','#theme','#mobile-menu','.skip']){const node=$(selector);if(node)node.onclick=null;}
 }
 function requestFullRuntime(reason){releaseReader();window.dispatchEvent(new CustomEvent('reader-full-runtime',{detail:{reason}}));}

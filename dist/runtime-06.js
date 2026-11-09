@@ -12184,7 +12184,7 @@ const firstReadingChanges=[];
  if(!overview||!overview.includes('v42-ai-concepts.svg'))throw Error('Missing model overview figure');
  if(!blockFlow||!blockFlow.includes('v9-model-flow.svg'))throw Error('Missing decoder block flow figure');
  section[1]=`<h3 id="text-to-next-token">一句话怎样变成下一词元的预测</h3>`+para(
- '看到“请把门关”，你会结合前文判断接下来可能是“上”，也可能接着补充其他内容。一个用于续写的语言模型做的工作，是给下一项的所有候选打分。Transformer 是组织这套序列计算的一种结构。',
+ '把「红 圆」译成英文时，模型怎样先选出 red，再选出 circle？每一步都要结合已有内容，为下一项的候选打分。Transformer 是组织这套序列计算的一种结构。可以先认清下面的部件，再<a href="/article/transformer-model/#translation-reading-path">跟同一句翻译走完三轮</a>。',
  '分词器先把文本切成词元（token），再按词表给每个词元查出编号。词元可以是字、词片段或字节片段。模型收到编号后，词嵌入表把每个编号换成向量，也就是一组参与计算的数字。向量经过多层处理，最后变成每个候选编号的得分，称为 logits。生成程序按规则选出一个编号，接到已有序列后面，再预测下一项。这种逐项续写叫自回归生成。')+
  conceptReadingTable(['组件','负责什么','在模型中的关系'],[
   ['分词器与词表','把文本片段转换为编号','为词嵌入提供查表编号'],
@@ -12206,14 +12206,20 @@ const firstReadingChanges=[];
  para('输入已经给定时，卷积和自注意力可并行算同一层的多个位置。全范围注意力能在一层内连接相隔很远的合法位置，也要对更多位置打分。逐词生成时仍要等上一步选出词元，第 7、8 节会分别解释生成顺序与注意力的计算量。<a href="/article/attention-mechanics/#section-1">从一个查询开始手算注意力的权重 →</a>')+
  '<p class="source-at"><a href="https://doi.org/10.1207/s15516709cog1402_1">循环状态原论文</a> · <a href="https://proceedings.mlr.press/v70/gehring17a.html">序列卷积原论文</a> · <a href="https://arxiv.org/html/1706.03762v7#S4">Transformer 原论文的路径对照</a></p>'+
  `<h3 id="transformer-architecture-choices">三种架构的区别在于谁能读取谁</h3>`+
- para('注意力让一个位置从一组允许读取的位置汇总信息。同一条序列内部读取叫自注意力，从另一条序列的表示中读取叫交叉注意力。用“关门”译成英文举例，中文是源序列，已生成的英文是目标前缀。下表比较每种结构能读取哪些输入。')+
+ para('注意力让一个位置从一组允许读取的位置汇总信息。同一条序列内部读取叫自注意力，从另一条序列的表示中读取叫交叉注意力。翻译时，中文是源序列，已经有的英文是目标前缀。三种结构对输入的组织方式不同。')+
  conceptReadingTable(['结构','位置能读取什么','任务例子'],[
   ['仅编码器（Encoder-only）','同一输入内的左右上下文都可参与计算，填充位置可被屏蔽','用整句表示做分类，如 <a href="https://arxiv.org/abs/1810.04805">BERT</a>'],
   ['编码器与解码器（Encoder–Decoder）','编码器先整理源句。解码器用自注意力读取目标前缀，再用得到的目标表示查询源句表示','先读完整中文，再逐步生成英文，如 <a href="https://arxiv.org/abs/1706.03762">原始 Transformer</a>'],
-  ['仅解码器（Decoder-only）','指令、原文和已生成文本在一条序列里，每个位置只读自己及之前的位置','把“翻译成英文：关门”与译文放在一条序列里做续写，如 <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>']
+  ['仅解码器（Decoder-only）','指令、原文和已生成文本在一条序列里，每个位置只读自己及之前的位置','接在「把红 圆翻译成英文」后续写，如 <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>']
  ])+
- para('用两个目标位置和三个源位置看交叉注意力。每个目标位置各自查询三个源位置，分数表有 2 行、3 列。对每一行单独分配权重，再混合对应的三个源向量，最终得到两个更新后的目标向量。行数由发起查询的一侧决定，列数由提供候选的一侧决定。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>',
- '下面沿仅解码器结构展开。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。限制位置只能读到已出现内容的规则叫因果约束。')+
+ `<h3 id="translation-reading-path">沿一句「红 圆」走完 Transformer</h3>`+
+ para('先看源端。实验把「红」和「圆」分别查成向量，加上各自的位置向量。编码器用自注意力让两个位置互相读取，得到两条带上下文的源表示。接下来，解码器每次都能查询这两条表示。',
+ '再看训练输入怎样构造。BOS 标记开始，EOS 标记结束。若用 red circle 做训练样本，目标输入是 [BOS, red, circle]，预测标签是 [red, circle, EOS]。每行预测下一项。预测 circle 的那一行只能从目标侧读到 [BOS, red]。限制每个位置只能读自己与前文的规则叫因果约束。训练时把正确的前缀交给模型，叫教师强制（teacher forcing）。',
+ '这一行再用交叉注意力从「红」「圆」两条源表示汇总信息。一套独立的匹配与汇总叫一个注意力头。对每个头，三个目标位置各产生一行分数，两个源位置各占一列。')+
+ conceptReadingTable(['生成轮次','这轮已知的目标输入','这轮选出的词'],[
+  ['1','[BOS]','red'],['2','[BOS, red]','circle'],['3','[BOS, red, circle]','EOS，结束']
+ ])+
+ para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
  para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
  conceptReadingTable(['学习线','沿同一个模型追什么','从哪章继续'],[
@@ -12224,6 +12230,7 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>')+
  `<h3 id="tiny-decoder-input">下面用哪组输入计算</h3>`+para(
+ '上面的翻译实验有独立的源端和目标端。第 2 节起切换到另一份只用解码器的小模型，在一条编号序列里计算续写。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。',
  '本章用一组可手算的模型尺寸。词表 V=8，每个位置的特征宽度 D=8，每批样本 B=2，每条输入长度 T=4。两条原始编号序列为 [0,1,2,3,4] 和 [4,5,6,7,0]。编号在这里用于查表，所有编号都是普通词元。',
  '训练时每条取前四项作输入、后四项作目标。第一条的第 0 位看到 0，目标是 1。第 3 位看到 [0,1,2,3]，目标是 4。第 2、3 节先把这些位置和特征变成可以计算的形状，第 4 节再把各运算装回同一块。');
  a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
@@ -12254,7 +12261,7 @@ const firstReadingChanges=[];
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
   ['读提示（prefill）','[0,1]','1','2'],['逐词生成（decode）','上一轮选出的 1','1','3'],['逐词生成（decode）','上一轮选出的 1','1','4']
  ])+
- para('对照两条路径里的第 3 个输入位置。训练序列是 [0,1,2,3]，模型会读到数据给出的 2，即使上一行的最高分候选不是 2。训练使用真实前缀的做法叫教师强制（teacher forcing）。生成从 [0,1] 起步，第一轮选出了 1，于是第 3 个输入位置读到的是 1。提示之后新增的部分来自模型自己的输出。')+
+ para('第 1 节在翻译里看到的教师强制，同样适用于这里只用解码器的模型。训练序列是 [0,1,2,3]，第 3 个输入读到数据给出的 2。生成从 [0,1] 起步，第一轮选出了 1，第 3 个输入因此是 1。提示之后新增的部分来自模型自己的输出。')+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。因为过去位置读不到未来，追加词元后，旧位置在固定参数和相同可见规则下的 K、V 可以复用。新位置仍要计算自己的 Q、K、V，再用自己的 Q 匹配包括历史在内的合法位置。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
@@ -12263,8 +12270,8 @@ const firstReadingChanges=[];
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。');
 
  a.sections[8][1]+='<h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
- '接回第 1 节的编码器—解码器结构。这个小模型有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器先把源词变成一组带上下文的向量，代码记为 <code>memory</code>。解码器先读取已知的目标前缀，再向源向量查询本步需要的信息。',
- '用“红”和“红 方”核对一个混合批。<code>BOS</code> 是开始，<code>EOS</code> 是结束，<code>PAD</code> 用来补齐批内长度。训练时将真实译词右移一格，最前面放 BOS。标签保留原顺序，最后放 EOS。长句输入是 [BOS, red, square]，标签是 [red, square, EOS]。因此预测 square 的那一行可以看见 red。')+
+ '回到第 1 节的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
+ '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
  trainingFigure('encoder-decoder-translation','混合批的两条样本。交叉注意力矩阵的行来自目标，列来自源。')+
  conceptReadingTable(['计算','读取范围','掩码从哪里来'],[
   ['源端自注意力','每个源位置可读取全部有效源词','源端 PAD 挡住填充列'],
@@ -14311,5 +14318,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="08cfd29a70c5e10c86cccdd13dd07414f68dffc3d856429c97c871dbb1f3c1ef";
+const staticReadingVersion="94ab19c467f7971568c2035b8206f1cbd9b8cd26062476b53b84749a9d066b99";
 

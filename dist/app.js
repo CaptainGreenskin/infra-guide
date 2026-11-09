@@ -83,16 +83,40 @@ function hydrateStaticArticle(){
 }
 function initInteractive(){initReaderActions();initAttentionDemo();initSystemInteractive();if($('#topology-demo')){let mode=0;const render=()=>{const info=[['单卡训练','一张 GPU 承载训练：先关注显存容量、算子效率与数据输入。'],['单机多卡','多张 GPU 在同一节点协作：新增梯度同步、数据分片与机内互联问题。'],['多机多卡','跨节点通信成为关键路径之一：同时验证网络、拓扑、任务协调与整体恢复。']];const node=(n,c)=>`<div class="gpu-node"><small>NODE ${n}</small><div class="gpu-chips">${Array.from({length:c},(_,i)=>`<span>GPU ${i}</span>`).join('')}</div></div>`;$('#topology-demo').innerHTML=`<div class="interactive"><div class="segmented" aria-label="训练拓扑">${info.map((x,i)=>`<button data-topology="${i}" class="${i===mode?'active':''}" aria-pressed="${i===mode}">${x[0]}</button>`).join('')}</div><div class="topology-nodes">${node('A',mode?2:1)}${mode===2?'<div class="network-bridge">⇄<br>节点间网络</div>'+node('B',2):''}</div><p class="demo-caption" aria-live="polite">${info[mode][1]}</p></div>`;$('#topology-demo').querySelectorAll('button').forEach(b=>b.onclick=()=>{mode=Number(b.dataset.topology);render()})};render()}
 if($('#scaling-demo')){$('#scaling-demo').innerHTML=`<div class="interactive"><p class="demo-caption">计算示例：初始数值仅演示公式，不是实测基准。可填入同口径的真实结果。</p><div class="calc-fields"><label>单卡吞吐（样本/秒）<input id="base-throughput" type="number" min="0.01" step="any" value="100"></label><label>多卡吞吐（样本/秒）<input id="multi-throughput" type="number" min="0.01" step="any" value="620"></label><label>GPU 数量<input id="gpu-count" type="number" min="1" max="100000" step="1" value="8"></label></div><div id="calc-result" aria-live="polite"></div></div>`;const calc=()=>{const a=Number($('#base-throughput').value),b=Number($('#multi-throughput').value),n=Number($('#gpu-count').value);$('#calc-result').innerHTML=(!Number.isFinite(a)||!Number.isFinite(b)||a<=0||b<=0||!Number.isInteger(n)||n<1||n>100000)?'<p class="calc-error">请输入正数吞吐和有效的整数 GPU 数量。</p>':`<div class="calc-output"><div><strong>${(b/a).toFixed(2)}×</strong><small>吞吐加速比</small></div><div><strong>${(b/a/n*100).toFixed(1)}%</strong><small>扩展效率</small></div></div>${b/a/n>1?'<p class="demo-caption">效率超过 100%，请检查比较口径；缓存和工作负载变化也可能带来超线性结果。</p>':''}`};document.querySelectorAll('.calc-fields input').forEach(i=>i.addEventListener('input',calc));calc()}}
-function search(q=''){
- const ranked=rankSiteSearch(q);searchItems=ranked.slice(0,24);searchIndex=-1;
+function clearSearchSelection(){
+ searchItems=[];searchIndex=-1;
  $('#search-input').removeAttribute('aria-activedescendant');
- $('#search-status').textContent=q.trim()?(ranked.length?'找到 '+ranked.length+' 项'+(ranked.length>24?'，先显示前24项；可补充关键词缩小范围。':''):'没有找到匹配内容。'):'可搜'+articles.length+'章、'+siteSearchCache.filter(item=>item.type==='knowledge').length+'个知识点；先选一项，或输入技术名。';
+}
+function suspendSearch(){
+ clearSearchSelection();
+ $('#search-status').textContent='';
+ $('#search-results').innerHTML='';
+}
+function renderSearch(q,ranked,knowledgeCount){
+ clearSearchSelection();
+ searchItems=ranked.slice(0,24);
+ $('#search-status').textContent=q.trim()?(ranked.length?'找到 '+ranked.length+' 项'+(ranked.length>24?'，先显示前24项；可补充关键词缩小范围。':''):'没有找到匹配内容。'):'可搜'+articles.length+'章、'+knowledgeCount+'个知识点；先选一项，或输入技术名。';
  $('#search-results').innerHTML=searchItems.length?searchItems.map((r,i)=>`<a class="search-result" id="site-search-${i}" role="option" aria-selected="false" tabindex="-1" href="${learningContextHref(hostedPath(r.path)+(r.anchor?'#'+r.anchor:''))}"><small>${r.type==='knowledge'?'系统知识点':'章节 '+r.number} · ${escapeHTML(moduleFor(r.module).name)}<span>${r.matchLabel}</span></small><strong>${siteSearchHighlight(r.titleText,r.terms)}</strong><p>${siteSearchHighlight(r.excerpt,r.terms)}</p></a>`).join(''):`<p class="search-empty">试试「GPU」「幂等」或「恢复」。多个关键词之间加空格。</p>`;
 }
+function search(q=''){
+ const ranked=rankSiteSearch(q);
+ renderSearch(q,ranked,siteSearchCache.filter(item=>item.type==='knowledge').length);
+}
 function openSearch(){$('#search-dialog').showModal();$('#search-input').setAttribute('aria-expanded','true');$('#search-input').value='';search();$('#search-input').focus()}
-$('#search-open').onclick=openSearch;$('#search-close').onclick=()=>$('#search-dialog').close();$('#search-input').addEventListener('input',e=>search(e.target.value));$('#search-dialog').addEventListener('click',e=>{if(e.target===$('#search-dialog'))$('#search-dialog').close();if(e.target.closest('.search-result'))$('#search-dialog').close()});
-$('#search-dialog').addEventListener('close',()=>{$('#search-input').setAttribute('aria-expanded','false');$('#search-input').removeAttribute('aria-activedescendant')});
+$('#search-open').onclick=startSearch;$('#search-close').onclick=()=>$('#search-dialog').close();
+let searchComposing=false;
+function startSearch(){searchComposing=false;openSearch()}
+$('#search-input').addEventListener('compositionstart',()=>{if($('#search-dialog').open){searchComposing=true;suspendSearch()}});
+$('#search-input').addEventListener('compositionend',e=>{if(searchComposing&&$('#search-dialog').open){searchComposing=false;search(e.target.value)}});
+$('#search-input').addEventListener('input',e=>{if($('#search-dialog').open&&!searchComposing&&!e.isComposing)search(e.target.value)});
+$('#search-dialog').addEventListener('click',e=>{if(e.target===$('#search-dialog'))$('#search-dialog').close();if(e.target.closest('.search-result'))$('#search-dialog').close()});
+$('#search-dialog').addEventListener('close',()=>{
+ if($('#search-dialog').open)return;
+ searchComposing=false;
+ $('#search-input').setAttribute('aria-expanded','false');suspendSearch();
+});
 $('#search-input').addEventListener('keydown',e=>{
+ if(!$('#search-dialog').open||searchComposing||e.isComposing||e.keyCode===229)return;
  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
   e.preventDefault();if(!searchItems.length)return;
   searchIndex=searchIndex<0?(e.key==='ArrowDown'?0:searchItems.length-1):(searchIndex+(e.key==='ArrowDown'?1:-1)+searchItems.length)%searchItems.length;
@@ -102,7 +126,7 @@ $('#search-input').addEventListener('keydown',e=>{
   e.preventDefault();const result=searchItems[Math.max(0,searchIndex)];location.assign(learningContextHref(hostedPath(result.path)+(result.anchor?'#'+result.anchor:'')));$('#search-dialog').close();
  }
 });
-document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();if($('#search-dialog').open)$('#search-dialog').close();else openSearch()}});
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();if($('#search-dialog').open)$('#search-dialog').close();else startSearch()}});
 function applyTheme(dark){document.documentElement.classList.toggle('dark',dark);$('#theme').setAttribute('aria-label',dark?'切换浅色模式':'切换深色模式')}
 applyTheme(readStore('cloudinfra-dark',false)===true);$('#theme').onclick=()=>{const dark=!document.documentElement.classList.contains('dark');applyTheme(dark);writeStore('cloudinfra-dark',dark)};
 $('#mobile-menu').onclick=()=>{const open=$('.top-nav').classList.toggle('mobile-open');$('#mobile-menu').setAttribute('aria-expanded',open)};
