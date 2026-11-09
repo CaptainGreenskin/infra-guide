@@ -186,8 +186,6 @@ def execute(cluster, record):
     versions = json.loads(cluster.kube("version", "-o", "json"))
     assert versions["serverVersion"]["gitVersion"] == versions["clientVersion"]["gitVersion"] == "v1.35.8"
     record["versions"] = versions
-    run("docker", "pull", IMAGE, timeout=150)
-    run("kind", "load", "docker-image", IMAGE, "--name", cluster.name, timeout=100)
     cluster.open_api()
     record["manifest"] = initial_manifest()
     cluster.kube("apply", "-f", "-", data=json.dumps(record["manifest"]))
