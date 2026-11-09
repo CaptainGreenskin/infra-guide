@@ -240,4 +240,17 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('下载的 cache-consistency.py 是前面四事件变量回放，与 cache_outbox.py 的真实事务实验分别运行。它应输出普通分支缓存 (7,pending)、保护分支为空、源状态为 (8,shipped)。下方保留已发布原输出，环境与源码摘要见验证记录。')+
  links(c[8])+fold('四事件回放的原运行输出',c8[0])
  ],'从数据库权威状态与旁路缓存开始，沿晚回填、事务发件箱、版本水位和同键合并解释一致性与回源容量。');
+
+ cache.sections[6][1]+=h('native-redis-client-tracking','进程内副本遇到 Redis 失效，旧回复还能回填吗')+
+ p('在应用与共享 Redis 之间再加一层进程内缓存。应用首次用 <code>GET order:104</code> 读 Redis，之后可从自身内存读取。读连接打开 <code>CLIENT TRACKING ON</code> 后，Redis 记住它读取过的键。其他连接更新这个键时，Redis 发送 <code>invalidate</code> 推送。推送给出要清除的键名，新的值仍由应用另行读取。')+
+ p('一条连接可以同时承载 GET 回复与推送。使用 <code>REDIRECT</code> 时，读连接 D 负责取值，通知连接 I 接收推送，两个接收顺序由应用分别处理。实验先从 Redis 的命令计数确认它已处理旧 GET，再让另一条连接写入 v8。双连接分支刻意先读取 I，再从 D 取回积压的旧回复。')+
+ '<figure class="training-figure"><a href="diagrams/redis-client-tracking.svg" target="_blank" rel="noopener" aria-label="放大 Redis 回复与失效时序"><img src="diagrams/redis-client-tracking.svg" width="460" height="558" alt="单连接先读取 v7 回复，再处理失效。双连接先读取失效，再收到 v7。用加载编号拒绝旧回填，断开通知连接后清空本地副本。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一个订单先被读到 v7，随后更新为 v8。图中顺序是客户端实际读取消息的顺序。<a href="diagrams/redis-client-tracking.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['顺序','观察到的结果','应用要做什么'],[
+  ['同一连接','D 先收到 v7，再收到失效；更新未读过的 order:105 没有推送','按流顺序处理回复与失效'],
+  ['通知改走另一条连接','I 先收到失效，D 后读出 v7；直接回填会留下 v7','失效时撤销加载编号 1，只允许当前的编号 2 回填 v8'],
+  ['通知连接被关闭','I 读到 EOF，D 收到重定向已断开的推送；旧缓存和在途回复都是 v8','清掉全部本地值和加载编号，重建两条连接并登记后读到 v9']
+ ])+
+ p('给每次加载分配唯一编号，收到失效时同时移除本地值和加载编号。回填前把回复携带的编号与当前编号比对，并在同一个串行处理步骤内写入。这样即使收到旧回复时已有一次新加载在途，旧编号 1 也不会覆盖编号 2。前面数据库算例中的版本水位依据业务版本判断新旧。这里的加载编号只在本进程区分两次读取。')+
+ p('读到 EOF 表示通知连接已经关闭，下一次本地命中前先清空受该连接保护的副本和在途编号。重连后要重新登记 Tracking，并重新读取所需的键。生产客户端还要为长时间没有响应的连接设置探活和超时，在无法确认通知可达期间按业务承诺处理读取。实跑范围为单个 Redis 8.2.6 进程与本机私有套接字，应用主动安排消费顺序。')+
+ '<p class="practice-links"><a href="labs/redis-client-tracking.zip" download>下载 Redis 实验与运行说明 ↓</a> · <a href="labs/redis-client-tracking/tracking_lab.py">查看完整程序</a> · <a href="labs/redis-client-tracking/validation.json">核对原始 RESP3 帧与结果</a> · <a href="https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions">Redis 客户端缓存规范 ↗</a></p>';
 })();

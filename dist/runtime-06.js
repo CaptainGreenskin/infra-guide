@@ -5697,6 +5697,22 @@ const progressiveAgentSectionTitles={
   fold('展开完整checkpoint_saved_tensors.py：与下载源码一致',codes(m[10])[3])+
   p('以上是已有PyTorch 2.5.1/CPU记录，本次未新增运行。第一例数保留的训练状态，第二例数指定观察点供反向保存的存储；两者都不报告CUDA峰值、reserved或CPU RSS。到GPU环境时，沿本章的完整窗口测量步骤，分别记录首次与稳态、每个rank的峰值、步耗时及相同目标下的数值结果。')
  ]);
+
+ memory.sections[5][1]+='<h3 id="native-amp-window">两个微批中，哪一个数先溢出</h3>'+
+  p('沿前面的窗口顺序实跑一次。模型是一层无偏置线性层，只有一个 FP32 参数 w。两个微批各有一个样本，目标为 0。前向由 CPU autocast 选择 FP16，输出转回 FP32 算平方损失。两项取平均，所以每次对 <code>loss / 2</code> 做缩放和反向。设 y=w×x、缩放因子为 S，此时输出梯度是 S×y，求权重梯度还要再乘输入 x。每个微批沿自己的反向路径求梯度，累积发生在 FP32 参数的 <code>.grad</code>。',
+  '先送两个 1。S=32768 时，每个微批的权重梯度都是可表示的 32768。两项进到 FP32 后相加成 65536，撤销缩放得到 2。AdamW 完成第一次更新，权重从 1 变成 0.875。现在保持同一个缩放因子，将第二个输入改为 2。前向输出变成 0.875 和 1.75，平均损失是 (0.875²+1.75²)/2=1.9140625。',
+  '再跟第二个微批。输出梯度是 1.75×32768=57344，仍在 FP16 范围内。权重梯度继续乘 2，理想结果 114688 超过最大有限值 65504。脚本在 PyTorch 反向图的 <code>ToCopyBackward0</code> 边读取实际梯度，FP16 权重梯度已是 <code>Inf</code>。下一步转成 FP32，参数收到的仍是 <code>Inf</code>。从相同初始状态走全 FP32 对照，缩放 32768 时撤销缩放后得到有限的 4.375。')+
+  trainingFigure('native-amp-window','同一对输入、同一个权重、同一个损失。两次用不同缩放因子反向，结果分别是跳过更新和更新一次。')+
+  table(['窗口','缩放前→后','两个 FP16 权重梯度','撤销缩放后','AdamW 步数'],[
+   ['两个 1','32768 → 32768','32768、32768','2','0 → 1'],
+   ['输入 1、2，溢出','32768 → 16384','28672、Inf','Inf','1 → 1'],
+   ['显式重送 1、2','16384 → 16384','14336、57344','4.375','1 → 2']
+  ])+
+  p('每个窗口只在两次反向结束后调用一次 <code>scaler.unscale_(optimizer)</code>。第二行检测到非有限梯度，<code>scaler.step</code> 跳过底层 AdamW 调用，权重和两份矩都保留原值。随后 <code>scaler.update()</code> 将 S 减半。第三行先在 FP32 中累积 14336+57344=71680，再除以 16384 得到 4.375。两次 <code>scaler.step</code> 都返回 <code>None</code>，本例用非融合 AdamW 的执行后钩子、步数和两份矩交叉核对更新。',
+  '在溢出窗口结束后保存模型、优化器和 scaler。完整恢复后，下一窗口和不中断路径的重试逐项一致。只加载模型与优化器时，新 scaler 从 32768 起步，第二个微批再次溢出。记录还显示从 16384 起连续两个窗口成功后，缩放因子涨回 32768。实验显式重送输入，实际训练由训练循环决定是否重放。<a href="/article/checkpoint-recovery/#checkpoint-consistent-state">把 scaler 放回检查点的对象清单 →</a>',
+  '本例验证 PyTorch 2.5.1 在 CPU 单进程上的标量反向、非融合 AdamW 和内存内检查点往返。解压后在 Python 3.12 与 PyTorch 2.5.1 环境运行 <code>python -B amp_window.py &gt; replay.json</code>，先看每个微批的 <code>weight_gradient_before_widening</code>，再核对窗口前后状态。')+
+  '<p class="practice-links"><a href="labs/native-amp-window.zip" download>下载源码与记录 ↓</a> · <a href="labs/native-amp-window/README.md">运行说明 →</a> · <a href="labs/native-amp-window/validation.json">查看反向与恢复记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/amp/grad_scaler.py#L237-L447">PyTorch 2.5.1 的缩放与跳步源码 ↗</a></p>';
+ memory.updated='2026.11.09';
 })();
 
 
@@ -8568,6 +8584,19 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('下载的 cache-consistency.py 是前面四事件变量回放，与 cache_outbox.py 的真实事务实验分别运行。它应输出普通分支缓存 (7,pending)、保护分支为空、源状态为 (8,shipped)。下方保留已发布原输出，环境与源码摘要见验证记录。')+
  links(c[8])+fold('四事件回放的原运行输出',c8[0])
  ],'从数据库权威状态与旁路缓存开始，沿晚回填、事务发件箱、版本水位和同键合并解释一致性与回源容量。');
+
+ cache.sections[6][1]+=h('native-redis-client-tracking','进程内副本遇到 Redis 失效，旧回复还能回填吗')+
+ p('在应用与共享 Redis 之间再加一层进程内缓存。应用首次用 <code>GET order:104</code> 读 Redis，之后可从自身内存读取。读连接打开 <code>CLIENT TRACKING ON</code> 后，Redis 记住它读取过的键。其他连接更新这个键时，Redis 发送 <code>invalidate</code> 推送。推送给出要清除的键名，新的值仍由应用另行读取。')+
+ p('一条连接可以同时承载 GET 回复与推送。使用 <code>REDIRECT</code> 时，读连接 D 负责取值，通知连接 I 接收推送，两个接收顺序由应用分别处理。实验先从 Redis 的命令计数确认它已处理旧 GET，再让另一条连接写入 v8。双连接分支刻意先读取 I，再从 D 取回积压的旧回复。')+
+ '<figure class="training-figure"><a href="diagrams/redis-client-tracking.svg" target="_blank" rel="noopener" aria-label="放大 Redis 回复与失效时序"><img src="diagrams/redis-client-tracking.svg" width="460" height="558" alt="单连接先读取 v7 回复，再处理失效。双连接先读取失效，再收到 v7。用加载编号拒绝旧回填，断开通知连接后清空本地副本。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一个订单先被读到 v7，随后更新为 v8。图中顺序是客户端实际读取消息的顺序。<a href="diagrams/redis-client-tracking.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['顺序','观察到的结果','应用要做什么'],[
+  ['同一连接','D 先收到 v7，再收到失效；更新未读过的 order:105 没有推送','按流顺序处理回复与失效'],
+  ['通知改走另一条连接','I 先收到失效，D 后读出 v7；直接回填会留下 v7','失效时撤销加载编号 1，只允许当前的编号 2 回填 v8'],
+  ['通知连接被关闭','I 读到 EOF，D 收到重定向已断开的推送；旧缓存和在途回复都是 v8','清掉全部本地值和加载编号，重建两条连接并登记后读到 v9']
+ ])+
+ p('给每次加载分配唯一编号，收到失效时同时移除本地值和加载编号。回填前把回复携带的编号与当前编号比对，并在同一个串行处理步骤内写入。这样即使收到旧回复时已有一次新加载在途，旧编号 1 也不会覆盖编号 2。前面数据库算例中的版本水位依据业务版本判断新旧。这里的加载编号只在本进程区分两次读取。')+
+ p('读到 EOF 表示通知连接已经关闭，下一次本地命中前先清空受该连接保护的副本和在途编号。重连后要重新登记 Tracking，并重新读取所需的键。生产客户端还要为长时间没有响应的连接设置探活和超时，在无法确认通知可达期间按业务承诺处理读取。实跑范围为单个 Redis 8.2.6 进程与本机私有套接字，应用主动安排消费顺序。')+
+ '<p class="practice-links"><a href="labs/redis-client-tracking.zip" download>下载 Redis 实验与运行说明 ↓</a> · <a href="labs/redis-client-tracking/tracking_lab.py">查看完整程序</a> · <a href="labs/redis-client-tracking/validation.json">核对原始 RESP3 帧与结果</a> · <a href="https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions">Redis 客户端缓存规范 ↗</a></p>';
 })();
 
 
@@ -10599,6 +10628,24 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
   kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
   kairo.updated='2026.11.09';
+ }
+ {
+  const a=articleById('agent-retrieval');
+  const qdrantAnchor='<h3 id="native-qdrant-retrieval">在 Qdrant 取候选，到来源库核对版本</h3>';
+  a.sections[11][1]+=qdrantAnchor+
+  p('上面的融合算例给定了第二路排名。这里把向量交给真实的 Qdrant 服务计算。集合规定向量维数和打分方法。每个点由编号、向量和附加字段组成，附加字段称为 payload。本例只把租户、索引中的可读标记和来源版本放入 payload。正文金额保存在独立的 SQLite 来源库。')+
+  p('查询向量是 [1,0]。集合用点积，计算式是 1×第一项＋0×第二项。编号 701 的向量是 [0.99,0.1]，因此得分 0.99。服务收到 <code>POST /collections/evidence/points/query</code> 后，按指定条件做精确打分并返回前 k 项。全局前两名都是 B 租户的点，先取前两名再筛掉 B，会得到空表。把租户 A 与可读标记写入查询的 <code>filter.must</code>，在符合条件的候选里取前两名，得到 101、102。只限制租户时，得分 0.95 的 105 仍会进入结果。')+
+  trainingFigure('qdrant-retrieval','同一查询在全局候选和受限候选里排名不同。实际交付还要对照来源库当时的资格和版本。')+
+  p('第二次取到 101、102 后，实验先保留这组候选，再从来源库撤回 102 的读取资格，并把 103 从第 1 版金额 41 更新到第 2 版金额 42。装配程序用可信租户和候选编号查来源，只读租户、资格和版本三个字段。三项通过才读取正文。此时 102 仍出现在已取回的候选中，正文读取记录里只留下 101。')+
+  table(['受限查询或变化','索引返回编号','实际读取的正文'],[
+   ['变化前，k=2','101、102','101/v1=10，102/v1=27'],
+   ['取回后撤权，沿用 k=2 的候选','101、102','101/v1=10，共 1 项'],
+   ['索引仍旧，扩大到 k=4','101、102、103、104','101/v1=10，104/v1=7'],
+   ['更新索引，再查询 k=2','101、103','101/v1=10，103/v2=42']
+  ])+
+  p('k=4 让 104 有机会进入可用证据。103 的旧版候选仍被拒绝，扩大候选数无法推进索引版本。刷新索引时把 102 标成不可读，把 103 的版本与固定向量改到第 2 版，下一次才能读到 42。两项可用材料是否支持用户的具体问题，还要按第 11 节另行核对。')+
+  fold('跟源码复跑并核对两份记录',p('运行器创建真实集合，为 <code>tenant</code> 与 <code>eligible</code> 建字段索引，写入 7 个点，再发送 6 次精确查询。对照 <code>exchanges.json</code> 的请求、返回编号和分数，再从 <code>authority.sqlite</code> 的 <code>body_reads</code> 查实际取过哪些版本。拒绝 102 或 103 旧版时，该次装配没有对应正文读取。实验使用人工给定的二维向量、单节点 Qdrant 和本地 SQLite 事务。近似搜索召回、生产权限同步与模型回答要另取证据。'))+
+  '<p class="practice-links"><a href="labs/qdrant-retrieval.zip" download>下载运行器与证据 ↓</a> · <a href="labs/qdrant-retrieval/README.md">复跑说明</a> · <a href="labs/qdrant-retrieval/validation.json">查看实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42581362152">Linux CI 实跑 ↗</a> · <a href="https://api.qdrant.tech/api-reference/search/query-points">Qdrant 查询接口 ↗</a></p>';
  }
 })();
 
@@ -13642,11 +13689,11 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
- 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
+ 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
@@ -14057,26 +14104,27 @@ const chapterFieldPrimaryConcepts={
 
 // Each prompt follows one existing concept into a checkable experiment.
 const fieldPracticePaths={
- foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。'],
- compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。'],
- network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。'],
- 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。'],
- native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。'],
- serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。'],
- 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。'],
- 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。'],
- 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。'],
- sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。'],
- 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。'],
- training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。'],
- platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。'],
- agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。']
+ foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。','同时运行时峰值为 96＋4×44＝272 MiB，超过预算 16 MiB。把第四个任务错开，最多三个重叠，峰值降到 228 MiB。这里核对的是模型的内存账本。'],
+ compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。','本机记录里，计算用了约 100 毫秒墙钟和 100 毫秒 CPU。等待用了约 130 毫秒墙钟，CPU 时间只有约 0.08 毫秒。任务经过的时间和进程占用 CPU 的时间分别记账。'],
+ network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。','应用把文件描述符放回自己的就绪队列。Linux 实验里，内核只通知一次，应用随后分三轮读到 ab、cd、ef，再读得到 EAGAIN，表示此刻已经没有数据可取。'],
+ 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。','副本先读到 135，主库已是 142。目标事务已进入副本的接收位置，尚未进入执行位置。要在副本看到这笔写入，得等事务应用后再发起读取。'],
+ native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。','同一个 Pod 里，重新打开投射文件读到 v2，沿用旧句柄仍读到 v1。启动时的环境变量与 subPath 挂载也保持 v1。对照源版本、Pod 身份和文件记录，就能分清更新发生在哪一层。'],
+ serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。','只按业务键去重时，先到的 A 留下一笔 37，B 成为重复写。接收方核对执行代际后，先拒绝旧代际的 A，最后只留下 B 写入的一笔 37。'],
+ 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。','控制器显示 Synced 时，Git 的配置已经是 v2，原 Pod 仍返回 v1。下一次改动触发 Pod 替换后，新的 Pod 才实际返回 v2。对照配置、Pod UID 和 HTTP 响应。'],
+ 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。','删除角色绑定后，同一凭据读取配置从 200 变为 403。恢复绑定后又得到 200。授权规则变了，凭据仍对应同一个服务账号。'],
+ 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。','前 10 秒到达量比处理量多 200 份。无限缓冲不拒绝，第 20 秒清空。上限 160 时拒绝 40 份，之后按每秒 20 份净消化，再用 8 秒，第 18 秒清空。秒数由模型的分段速率推得。'],
+ sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。','含提交后 503 的整条追踪仍被采样保留，重试 200 也在同一条追踪里。采样只保留了 2 条追踪。业务账本有 3 项任务、2 项成功，成功率用 2÷3。'],
+ 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。','两次目标前缀都是 BOS、red。源句为「红 圆」时下一词是 circle，换成「红 方」就变成 square。目标侧输入相同，差别从编码器的源表示传来。'],
+ training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。','每轮 8192 个样本、16 次参数更新，两轮各项计数累计为 16384 和 32。两条本机 CPU 路径的四份随机状态按位相同，模型和优化器的浮点结果按约定误差核对。'],
+ platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。','暖槽复用 3 项，B 只需新算 2 项。显式清除后，B 的 5 项提示都要重新计算。两次输出的词元编号一致。'],
+ agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。','提交前断流，回执查询没有找到报告，接收库是 0 份。提交后断流，查询能找回原回执，接收库保留 1 份金额 42 的报告。两次工具处理器都完成清理。']
 };
 function fieldPracticeHTML(moduleId, names){
- const [conceptId,labId,question]=fieldPracticePaths[moduleId];
+ const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a></section>';
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+
+  '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
 }
 
 function fieldPointRecords(moduleId){
@@ -14159,6 +14207,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'redis-client-tracking':{folder:'redis-client-tracking',title:'Redis 回复、失效推送与迟到的回填'},
+ 'native-amp-window':{folder:'native-amp-window',title:'两个微批的混合精度反向、跳步与恢复'},
+ 'qdrant-retrieval':{folder:'qdrant-retrieval',title:'真实向量候选、租户过滤与当前来源验收'},
  'spiffe-workload-identity':{folder:'spiffe-workload-identity',title:'SPIRE 工作负载证明、双向 TLS 与资源授权'},
  'native-model-rollout':{folder:'native-model-rollout',title:'真实模型输出门禁、流绑定与版本回退'},
  'mcp-http-authorization':{folder:'mcp-http-authorization',title:'MCP HTTP 令牌校验与工具资源授权'},
@@ -14393,6 +14444,9 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mc
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
 );
 labLearningCatalog.push(
+ {id:'cloud-redis-client-tracking',track:'cloud',stage:2,title:'收到 Redis 失效后，旧读回复还能填回本地吗',chapter:'cache-consistency',anchor:'native-redis-client-tracking',pack:'redis-client-tracking',files:['tracking_lab.py'],env:'Python 3.9+ · Redis 8.2.6 · 本机 Unix 套接字',kind:'真实 Redis 回复与推送',observe:'比较单连接顺序、双连接旧回复和断开通知连接，再核对当前读取编号。',scope:'单进程 Redis 和受控的客户端消费顺序。'},
+ {id:'ai-native-amp-window',track:'ai',stage:2,title:'前向损失有限，为什么优化器跳过这次更新',chapter:'gpu-memory',anchor:'native-amp-window',pack:'native-amp-window',files:['amp_window.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU FP16 autocast',kind:'真实缩放反向、AdamW 与检查点',observe:'找出转回 FP32 前的非有限梯度，再对照跳步、重试以及只恢复模型和优化器的结果。',scope:'单进程 CPU 标量模型、两个微批与非融合 AdamW。'},
+ {id:'agent-native-qdrant-retrieval',track:'agent',stage:2,title:'两个高分结果，为什么只能交付一条正文',chapter:'agent-retrieval',anchor:'native-qdrant-retrieval',pack:'qdrant-retrieval',files:['qdrant_retrieval.py','source.json'],env:'Python 3.12+ · Qdrant 1.19.1 · Linux amd64 CPU',kind:'真实向量查询与 SQLite 正文准入',observe:'比较全局截断与租户内筛选。撤销权限并更新源版本后，核对候选、实际正文读取和返回数量。',scope:'单节点精确向量检索、固定合成语料与本机权威来源。'},
  {id:'cloud-spiffe-workload-identity',track:'cloud',stage:2,title:'两个工作负载都通过双向 TLS，谁可以写报告',chapter:'iam-security',anchor:'native-spiffe-workload-identity',pack:'spiffe-workload-identity',files:['spire_identity_lab.py','workload.go','go.mod','go.sum'],env:'Linux amd64 · Python 3.11+ · Go 1.26.1 · SPIRE 1.16.0',kind:'原生工作负载证明与双向 TLS',observe:'对照同一系统用户下的三种身份结果。用证书主体与报告账本核对 403 和 201。',scope:'单 Linux 节点、固定执行文件选择器与本机回环请求。'},
  {id:'ai-native-model-rollout',track:'ai',stage:2,title:'服务探活通过，模型输出还可能错吗',chapter:'ai-lifecycle',anchor:'native-model-rollout',pack:'native-model-rollout',files:['rollout_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'三个原生模型服务与流式输出',observe:'先按固定输出拒绝错误候选，再看已接收的流怎样跨过发布与回退。',scope:'固定合成模型、本机 CPU 和教学入口。入口固定交付版本，原生计算可能已经完成。'},
  {id:'agent-mcp-http-authorization',track:'agent',stage:2,title:'通过 MCP 令牌校验后，能读哪个租户的报告',chapter:'mcp-protocol',anchor:'native-mcp-http-authorization',pack:'mcp-http-authorization',files:['authorization_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 授权与 SQLite 读取证据',observe:'沿同一签名令牌区分受众、通用权限和报告归属。用账本核对正文到底读了几次。',scope:'本机资源服务端和临时签发夹具。登录流程、生产身份服务与 Kairo 另验。'}
@@ -14619,5 +14673,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2304943031d42a13afc0b0e33741360af7e5f0722f2f691e735afd9b833fcff6";
+const staticReadingVersion="962e159bf33a308e68e6b298ee00e7fd6df1f5ae7a0b1909ce49eaabd0e604fb";
 

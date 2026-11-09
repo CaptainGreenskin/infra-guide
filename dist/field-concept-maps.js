@@ -311,26 +311,27 @@ const chapterFieldPrimaryConcepts={
 
 // Each prompt follows one existing concept into a checkable experiment.
 const fieldPracticePaths={
- foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。'],
- compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。'],
- network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。'],
- 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。'],
- native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。'],
- serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。'],
- 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。'],
- 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。'],
- 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。'],
- sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。'],
- 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。'],
- training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。'],
- platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。'],
- agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。']
+ foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。','同时运行时峰值为 96＋4×44＝272 MiB，超过预算 16 MiB。把第四个任务错开，最多三个重叠，峰值降到 228 MiB。这里核对的是模型的内存账本。'],
+ compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。','本机记录里，计算用了约 100 毫秒墙钟和 100 毫秒 CPU。等待用了约 130 毫秒墙钟，CPU 时间只有约 0.08 毫秒。任务经过的时间和进程占用 CPU 的时间分别记账。'],
+ network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。','应用把文件描述符放回自己的就绪队列。Linux 实验里，内核只通知一次，应用随后分三轮读到 ab、cd、ef，再读得到 EAGAIN，表示此刻已经没有数据可取。'],
+ 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。','副本先读到 135，主库已是 142。目标事务已进入副本的接收位置，尚未进入执行位置。要在副本看到这笔写入，得等事务应用后再发起读取。'],
+ native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。','同一个 Pod 里，重新打开投射文件读到 v2，沿用旧句柄仍读到 v1。启动时的环境变量与 subPath 挂载也保持 v1。对照源版本、Pod 身份和文件记录，就能分清更新发生在哪一层。'],
+ serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。','只按业务键去重时，先到的 A 留下一笔 37，B 成为重复写。接收方核对执行代际后，先拒绝旧代际的 A，最后只留下 B 写入的一笔 37。'],
+ 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。','控制器显示 Synced 时，Git 的配置已经是 v2，原 Pod 仍返回 v1。下一次改动触发 Pod 替换后，新的 Pod 才实际返回 v2。对照配置、Pod UID 和 HTTP 响应。'],
+ 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。','删除角色绑定后，同一凭据读取配置从 200 变为 403。恢复绑定后又得到 200。授权规则变了，凭据仍对应同一个服务账号。'],
+ 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。','前 10 秒到达量比处理量多 200 份。无限缓冲不拒绝，第 20 秒清空。上限 160 时拒绝 40 份，之后按每秒 20 份净消化，再用 8 秒，第 18 秒清空。秒数由模型的分段速率推得。'],
+ sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。','含提交后 503 的整条追踪仍被采样保留，重试 200 也在同一条追踪里。采样只保留了 2 条追踪。业务账本有 3 项任务、2 项成功，成功率用 2÷3。'],
+ 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。','两次目标前缀都是 BOS、red。源句为「红 圆」时下一词是 circle，换成「红 方」就变成 square。目标侧输入相同，差别从编码器的源表示传来。'],
+ training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。','每轮 8192 个样本、16 次参数更新，两轮各项计数累计为 16384 和 32。两条本机 CPU 路径的四份随机状态按位相同，模型和优化器的浮点结果按约定误差核对。'],
+ platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。','暖槽复用 3 项，B 只需新算 2 项。显式清除后，B 的 5 项提示都要重新计算。两次输出的词元编号一致。'],
+ agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。','提交前断流，回执查询没有找到报告，接收库是 0 份。提交后断流，查询能找回原回执，接收库保留 1 份金额 42 的报告。两次工具处理器都完成清理。']
 };
 function fieldPracticeHTML(moduleId, names){
- const [conceptId,labId,question]=fieldPracticePaths[moduleId];
+ const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a></section>';
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+
+  '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
 }
 
 function fieldPointRecords(moduleId){

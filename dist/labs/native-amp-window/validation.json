@@ -1,0 +1,870 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "amp_window.py": "265c59cf2866158c71241bd8d28c1bf42339e601824b7ac767ac9a6f65502891"
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.13",
+    "system": "Darwin",
+    "machine": "arm64",
+    "torch": "2.5.1",
+    "torch_commit": "a8d6afb511a69687bbb2b7e88a3cf67917e1697e",
+    "threads": 1
+  },
+  "config": {
+    "initial_scale": 32768,
+    "growth_interval": 2,
+    "growth_factor": 2,
+    "backoff_factor": 0.5,
+    "lr": 0.125,
+    "betas": [
+      0.5,
+      0.75
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0,
+    "fused": false,
+    "foreach": false
+  },
+  "windows": {
+    "warmup": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 1.0,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {},
+        "scaler": {
+          "scale": 32768,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 1.0,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 32768.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 32768.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 32768.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 32768.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 1,
+          "output": {
+            "value": 1.0,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 32768.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 32768.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 32768.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 65536.0,
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.0,
+      "unscaled_gradient": {
+        "value": 2.0,
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 1,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "cleared_gradient": true
+    },
+    "overflow": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.875,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 0.765625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.75,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 3.0625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": "Inf",
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": "Inf",
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 57344.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": "Inf",
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.9140625,
+      "unscaled_gradient": {
+        "value": "Inf",
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 0,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "cleared_gradient": true
+    },
+    "retry": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.875,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 0.765625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 14336.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 14336.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 14336.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 14336.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.75,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 3.0625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 57344.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 57344.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 71680.0,
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.9140625,
+      "unscaled_gradient": {
+        "value": 4.375,
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 1,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.7490723133087158,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 2.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 2.6875,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 5.53515625,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "cleared_gradient": true
+    },
+    "growth": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 0.7490723133087158,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 2.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 2.6875,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 5.53515625,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.7490234375,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 0.5610361099243164,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 12272.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 12272.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 12272.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 12272.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.498046875,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 2.2441444396972656,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 49088.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 49088.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 24544.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 61360.0,
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.402590274810791,
+      "unscaled_gradient": {
+        "value": 3.7451171875,
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 1,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.6228263974189758,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 3.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 3.21630859375,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 7.657842636108398,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "cleared_gradient": true
+    },
+    "with_scaler": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.875,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 0.765625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 14336.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 14336.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 14336.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 14336.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.75,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 3.0625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 57344.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 57344.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 71680.0,
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.9140625,
+      "unscaled_gradient": {
+        "value": 4.375,
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 1,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.7490723133087158,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 2.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 2.6875,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 5.53515625,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "cleared_gradient": true
+    },
+    "without_scaler": {
+      "autocast": true,
+      "before": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.875,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 0.765625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.75,
+            "dtype": "torch.float16"
+          },
+          "loss": {
+            "value": 3.0625,
+            "dtype": "torch.float32"
+          },
+          "weight_cast_node": "ToCopyBackward0",
+          "weight_gradient_before_widening": {
+            "value": "Inf",
+            "dtype": "torch.float16"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": "Inf",
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 57344.0,
+            "dtype": "torch.float16"
+          },
+          "accumulated_gradient": {
+            "value": "Inf",
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.9140625,
+      "unscaled_gradient": {
+        "value": "Inf",
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 0,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 16384.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "cleared_gradient": true
+    },
+    "fp32_control": {
+      "autocast": false,
+      "before": {
+        "weight": {
+          "value": 0.875,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 1.0,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 0
+        }
+      },
+      "microbatches": [
+        {
+          "x": 1,
+          "output": {
+            "value": 0.875,
+            "dtype": "torch.float32"
+          },
+          "loss": {
+            "value": 0.765625,
+            "dtype": "torch.float32"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          },
+          "accumulated_gradient": {
+            "value": 28672.0,
+            "dtype": "torch.float32"
+          }
+        },
+        {
+          "x": 2,
+          "output": {
+            "value": 1.75,
+            "dtype": "torch.float32"
+          },
+          "loss": {
+            "value": 3.0625,
+            "dtype": "torch.float32"
+          },
+          "gradient_at_fp32_parameter": {
+            "value": 114688.0,
+            "dtype": "torch.float32"
+          },
+          "output_gradient": {
+            "value": 57344.0,
+            "dtype": "torch.float32"
+          },
+          "accumulated_gradient": {
+            "value": 143360.0,
+            "dtype": "torch.float32"
+          }
+        }
+      ],
+      "mean_loss": 1.9140625,
+      "unscaled_gradient": {
+        "value": 4.375,
+        "dtype": "torch.float32"
+      },
+      "optimizer_calls": 1,
+      "scaler_step_returned_none": true,
+      "after": {
+        "weight": {
+          "value": 0.7490723133087158,
+          "dtype": "torch.float32"
+        },
+        "optimizer": {
+          "step": {
+            "value": 2.0,
+            "dtype": "torch.float32"
+          },
+          "exp_avg": {
+            "value": 2.6875,
+            "dtype": "torch.float32"
+          },
+          "exp_avg_sq": {
+            "value": 5.53515625,
+            "dtype": "torch.float32"
+          }
+        },
+        "scaler": {
+          "scale": 32768.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2,
+          "_growth_tracker": 1
+        }
+      },
+      "cleared_gradient": true
+    }
+  }
+}

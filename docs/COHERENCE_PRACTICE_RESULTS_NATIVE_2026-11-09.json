@@ -1,0 +1,255 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "fd746652a5d76e9c249724647ca90ac84df3569b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FIELD_PRACTICE_NATIVE_2026-11-09.json": "0fb569d3a1b374654464f914f6c0b55f54428286ce85540cdfebd3b65d02804f"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "13962df4e8ae5c4e94a12b2a4ac0741cd148217796477c1f1e511ad86cd86d31",
+      "reviewed_sha256": "1065f84d6cf3e93c308e837a351119ab87e4214967cbb7ea3df5fd78c0e637c8",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "cae44bc0d1fca296d124df0127e11121c24f5247c05b5f194981c26160dca882",
+      "reviewed_sha256": "82c5353f9ddcbf8a0bcf918b3f28c801a04eea269917eff227dc5df8a85d9eb0",
+      "scope": "Keep field prompts visible, place each result and its original record behind a disclosure, and protect the shared heading fragment from sticky headers."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "d27cf850f24672e086aa209076b183690594ba9103a24169e2d2b486f3b8762b",
+      "reviewed_sha256": "9819afcc8e21b485b75a757d58de86d754d4653b0007f4d28f201b4710af2a0a",
+      "scope": "Keep field prompts visible, place each result and its original record behind a disclosure, and protect the shared heading fragment from sticky headers."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "7c53fc3bf260aa3b46f4a74e9dcc894554f6f97b8ef9723982821fbc0df3f38b",
+      "reviewed_sha256": "985714ffacfa65447020c48f10ea8466d9b3439d5ca56105f033662d52e79d10",
+      "scope": "Keep field prompts visible, place each result and its original record behind a disclosure, and protect the shared heading fragment from sticky headers."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "95ef22d3e2bcadc130c49c5fcd9263e66a899417eebaa17f5782bc4ccc39631a",
+      "reviewed_sha256": "3f91ae0a61834304aee5756fe8d59856c28bec46fb682807fb435dc8bd975e82",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/redis-client-tracking.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9f651b6faee168c2004078e3a09c5ab6d454759156b83e2af54ac836ef405bba",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/diagrams/native-amp-window.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2e31e3cf8ae16bfb82cfa1957066391eee4b2d3baf7995a13de01a610eaefa25",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "a89de2902229f98990ddaad4558579df42b9b5688e03cdfbfa65cef93ae62287",
+      "reviewed_sha256": "995b5c92c9355485453381e4f42b7f703c9ace6a371234d98f6a4ab9512b33a1",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "5f9ae0a6b9edc45bd4d11cd2f08e6674a2dc5fbcfaf54d66815d02ca072b9d6d",
+      "reviewed_sha256": "74c5b7d2e37c06696da8616c8e690d16292db2513c28404e55afa4bc524741a4",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/progressive-cloud-data-reading.js": {
+      "previous_sha256": "9939771f44e80cd4e183cdd1f79e92e875847ed53005bf0dfffb91b1dd07281c",
+      "reviewed_sha256": "b65408dabb914cd5c6fc97161e8a431f54a9748645f60c0c715d471fa62fd064",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/progressive-training-reading.js": {
+      "previous_sha256": "c0ffde54b66f79351ce098530e2515097fbc9e8e713622fa6486728c0e9c6986",
+      "reviewed_sha256": "b0bfee85cbced0adc258db8ad40d31935be4f7f80633328413356acc14fa23d2",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "acb00173ce87380994b9b791473268a279b013fe478345fb9335c05d0150a6d9",
+      "reviewed_sha256": "af209e3e129f42d7a0f2a990749e44eaf48d2d44435e10fd3faa3990160c58a6",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "935110bb01088480cc8a103fb6d725b7c82067bbe0913846020c3993650d1863",
+      "reviewed_sha256": "2588f2b0f0a80309a72992eb0c59bc63d68a81156bf43f2e15743f10e527d404",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "b2c258e4b833000376a6cae7771ab9823d9357f03fb9091e6854071b2088af34",
+      "reviewed_sha256": "9e6577bf0a181526451ed22db837111c57ef1028bd96bdd72a6d773f53a73f2a",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-redis-client-tracking.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d11157fb08c35c60ab3b538ba1c8c4accfabdcfd4f76782ca31b2c5a19ae202a",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "scripts/check-native-amp-window.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4a9428d1b129746534d58d6c200aea04b6e5c698c4ab2f70e0fd4c4f915a4a49",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "01e3fd7594f4d297d5cc89703cbe87693f28ec85e54f8de708c879932ba96b06",
+      "reviewed_sha256": "23d2b4b8657c0d322b26fad06010cfc00d4aa716d0b83a36880abddd99fae05c",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "a50baa476eaf9bdc77ee4a92fef684e927cf9538d6aa49e912c51ace58cdb7c8",
+      "reviewed_sha256": "4a1f646ae2431d516db571203459c0cc29a5e3a94b5423248118dddadb89f603",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/qdrant-retrieval.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a53b08e2fc89a0fe53863c9f1e863934efd8cc574a3734ad1f84174a169ee3df",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "3db00a2b5edfc5299d91d99bb5c03d0301d2587264f708ef91140293ad300e78",
+      "reviewed_sha256": "f4e5a994e7daa6863155c6c6721c618e8b71d3f8c50b5f66f3e9a2cb2250d2f0",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "scripts/check-qdrant-retrieval.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9d64cdaedcb4e420dde478066f4c2845168b82dc055bec823d7d79a2c87bea72",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/redis-client-tracking.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "db7a3bb3b5aa09166f6040e9f1049588ef694b381fe1daccced456f77001ea69",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/labs/redis-client-tracking/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b0df859e6cab81e1e74d6747c96bd3f6f8940da38846eefd232428e3ac3d0700",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/labs/redis-client-tracking/tracking_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "545c0895db543ca8290b27206d08ca914c0db8b2f3fe9f867ac2dc96476c2559",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/labs/redis-client-tracking/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e215269f48135262aa2a54986c0912629232c5639b9a2ba7e6aa795e080d82c9",
+      "scope": "Bind actual Redis stream ordering, invalidations and late cache writes to the same fixture."
+    },
+    "dist/labs/native-amp-window.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1b769d12e598771e1c19bbdb908efa8ddd3849ba9a97f27351201ededba94808",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/labs/native-amp-window/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5cd91c34218aea937fd08b5ae071235ccb5d9bc132c0e224f04c348e98ac20ea",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/labs/native-amp-window/amp_window.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "265c59cf2866158c71241bd8d28c1bf42339e601824b7ac767ac9a6f65502891",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/labs/native-amp-window/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9306fdf86b26c92e16e716aa2407af773756a829ff0496bd14373cd5c5771947",
+      "scope": "Bind actual CPU autocast, gradient overflow, optimizer skip and scaler restoration to one accumulation window."
+    },
+    "dist/labs/qdrant-retrieval.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fe8d1008271b4013d12e7bc81d15a407578f1ac44db5eaf19db1e6370cdc1013",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "78201f3373ef936dda812aa0e4848f495c1965df46e89db459bcd7c00358ee67",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/authority.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "425371cdefe2ddcde3fcfcae0777eb5245e20be358d7a65e2698a90a068667d8",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d46332d0fc017cc05fda6c82e23057f30138f753a1187dcd8dad4878567c885d",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/exchanges.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "23655d12ce1540ec815b2bf0fbebfec19b5011d36ab8d4904c364c8cff5aee4d",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/qdrant_retrieval.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "996dff66e2846da46fc47de83697f49d3a4beb423cdcc3f955aac779b5137cf5",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/source.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "41221d32b82401b520a3b87a10fe10a87140d2e47b85a98af58ed677efa10577",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "dist/labs/qdrant-retrieval/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8437801f35e7444437c0b9d286ba2cfc6f4e8999ff2d11022e28c4233771865b",
+      "scope": "Bind native candidate query, tenant filtering, authoritative version, and allowed body reads to the same request."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "42520752b67c4110a0f4944437fca6d5c46dc5c53e9faec5cc8de651e00838a5",
+      "reviewed_sha256": "f137c77fc65f96318c1c8085b729b099841acdeaf6b3acb84b34593d8f67955d",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "61dd6acb8fa0de37adebb64c14c971833b4a3317881267d42f4c22a42cd621c2",
+      "reviewed_sha256": "f20e90b86c9ed9043e5b8a001212f07e27f1ebd696d075bf247f6f92afa23190",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_PRACTICE_RESULTS_NATIVE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2711bd683293a95f0b115186cf0265f389cf2c9efa598baeabe44a6fceeda5ed",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "a59314915f52f9f9f4b5eae756bcdd3436b1fb42a1bc5a64d89bde2bef2bb2be",
+      "reviewed_sha256": "6713c7613d7120732de5ef289b141fb596839c66c3db1036eef47e4b52732567",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    }
+  },
+  "article_sections": {
+    "cache-consistency": {
+      "sections": [
+        7
+      ],
+      "scope": "Follow native RESP3 tracking from a previously read key to a late GET response and a broken notification path.",
+      "observation": "One connection delivered the old response before invalidation. Separate consumption let the invalidation arrive first, and a loading identity blocked the late fill."
+    },
+    "gpu-memory": {
+      "sections": [
+        6
+      ],
+      "scope": "Track the actual FP16 backward value through two microbatches, a skipped step and checkpoint restoration.",
+      "observation": "The loss and output gradient stayed finite while the FP16 weight gradient overflowed. The restored scale enabled the next AdamW step."
+    },
+    "agent-retrieval": {
+      "sections": [
+        12
+      ],
+      "scope": "Separate native vector retrieval, authorization and source-version evidence, and actual body reads.",
+      "observation": "A global two-result cutoff excluded the eligible tenant. After the index became stale, source checks rejected revoked and outdated candidates before reading their bodies."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "fd746652a5d76e9c249724647ca90ac84df3569b",
+    "chapters": 78,
+    "changed_bodies": [
+      "cache-consistency",
+      "gpu-memory",
+      "agent-retrieval"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "experiment_packs": 79,
+    "learning_tasks": 121
+  }
+}

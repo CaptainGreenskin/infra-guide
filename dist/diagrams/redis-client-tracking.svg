@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="558" viewBox="0 0 460 558" role="img" aria-labelledby="tracking-title tracking-desc">
+  <title id="tracking-title">Redis 客户端缓存的响应、失效与断线</title>
+  <desc id="tracking-desc">单连接上旧值先到、失效随后。双连接的客户端先处理通知再读旧响应，旧加载编号被拒绝。通知断线后清除本地副本和加载编号，重连后重新读到 v9。</desc>
+  <metadata>{"key":"order:104","single":["v7/pending","invalidate","v8/shipped"],"split":["invalidate","v7/pending","v8/shipped"],"guarded_old_fill":false,"after_reconnect":"v9/delivered"}</metadata>
+  <rect width="460" height="558" rx="14" fill="#f2f6fb"/>
+  <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#132b46">
+    <text x="24" y="34" font-size="23" font-weight="700">同一键的回复与失效</text>
+    <text x="24" y="62" font-size="18" fill="#435b76">横向按应用读取消息的顺序</text>
+    <rect x="18" y="79" width="424" height="131" rx="10" fill="#fff" stroke="#a1b5cc"/>
+    <g data-case="single">
+      <text x="34" y="112" font-size="19" font-weight="700">单连接 · 先回复，后失效</text>
+      <path d="M55 164H415m-10-6 10 6-10 6" stroke="#627b99" stroke-width="2" fill="none"/>
+      <circle cx="96" cy="164" r="6" fill="#335eae"/>
+      <circle cx="228" cy="164" r="6" fill="#a35219"/>
+      <circle cx="365" cy="164" r="6" fill="#147358"/>
+      <g text-anchor="middle" font-size="18" font-weight="650">
+        <text x="96" y="146" fill="#254c9a">旧回复 v7</text>
+        <text x="228" y="146" fill="#8c4716">失效通知</text>
+        <text x="365" y="146" fill="#146348">再读 v8</text>
+      </g>
+      <text x="34" y="193" font-size="17" fill="#435b76">旧回复与失效共用一条流</text>
+    </g>
+    <rect x="18" y="225" width="424" height="203" rx="10" fill="#fff" stroke="#a1b5cc"/>
+    <g data-case="split">
+      <text x="34" y="257" font-size="19" font-weight="700">双连接 · 先读通知，后读旧回复</text>
+      <g font-size="18" font-weight="650">
+        <text x="35" y="291">通知 I</text><text x="35" y="345">数据 D</text>
+      </g>
+      <path d="M99 302H415m-10-6 10 6-10 6M99 357H415m-10-6 10 6-10 6" stroke="#627b99" stroke-width="2" fill="none"/>
+      <path d="M160 308v49" fill="none" stroke="#a35219" stroke-width="2" stroke-dasharray="4 4"/>
+      <circle cx="160" cy="302" r="6" fill="#a35219"/>
+      <circle cx="260" cy="357" r="6" fill="#335eae"/>
+      <circle cx="366" cy="357" r="6" fill="#147358"/>
+      <g text-anchor="middle" font-size="18" font-weight="650">
+        <text x="160" y="284" fill="#8c4716">失效</text>
+        <text x="260" y="338" fill="#254c9a">旧回复 v7</text>
+        <text x="366" y="338" fill="#146348">新回复 v8</text>
+        <text x="160" y="389" fill="#8c4716">撤销编号 1</text>
+        <text x="260" y="389" fill="#254c9a">拒收编号 1</text>
+        <text x="366" y="389" fill="#146348">接纳编号 2</text>
+      </g>
+      <text x="34" y="413" font-size="17" fill="#435b76">旧值仍能到达，回填资格已被撤销</text>
+    </g>
+    <rect x="18" y="444" width="424" height="97" rx="10" fill="#e4edf8" stroke="#a1b5cc"/>
+    <g data-case="disconnect">
+      <text x="34" y="476" font-size="19" font-weight="700">通知断开 · 本地副本全清</text>
+      <text x="34" y="512" font-size="18" fill="#435b76">读到 EOF → 清空值与编号 → 重建后读 v9</text>
+    </g>
+  </g>
+</svg>

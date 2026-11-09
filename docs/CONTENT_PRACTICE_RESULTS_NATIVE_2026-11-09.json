@@ -1,0 +1,35 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "fd746652a5d76e9c249724647ca90ac84df3569b",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_FIELD_PRACTICE_NATIVE_2026-11-09.json": "7e3ed8e31e8267b3977d426d685e1a7cbcf48cc1e8f70952f5e377b1537120da"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "cache-consistency",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow native RESP3 tracking from a previously read key to a late GET response and a broken notification path.",
+      "observation": "One connection delivered the old response before invalidation. Separate consumption let the invalidation arrive first, and a loading identity blocked the late fill.",
+      "reviewed_content_sha256": "6170d8057130b894a7b73423ec24a48836a92df0f3a0aa2a687636a5ac4565f5",
+      "record": "dist/labs/redis-client-tracking/validation.json"
+    },
+    {
+      "chapter": "gpu-memory",
+      "reviewed_at": "2026-11-09",
+      "scope": "Track the actual FP16 backward value through two microbatches, a skipped step and checkpoint restoration.",
+      "observation": "The loss and output gradient stayed finite while the FP16 weight gradient overflowed. The restored scale enabled the next AdamW step.",
+      "reviewed_content_sha256": "93936897bfacf8f21b5cf8787455c44a20dfc184d4c47fd276abca91bcb243ca",
+      "record": "dist/labs/native-amp-window/validation.json"
+    },
+    {
+      "chapter": "agent-retrieval",
+      "reviewed_at": "2026-11-09",
+      "scope": "Separate native vector retrieval, authorization and source-version evidence, and actual body reads.",
+      "observation": "A global two-result cutoff excluded the eligible tenant. After the index became stale, source checks rejected revoked and outdated candidates before reading their bodies.",
+      "reviewed_content_sha256": "1fbc59fe05b8e56a60ae87120cb6e96abdf8584c1256c29c543c7fb3a2950a5b",
+      "record": "dist/labs/qdrant-retrieval/validation.json"
+    }
+  ]
+}

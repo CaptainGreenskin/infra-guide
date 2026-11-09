@@ -116,11 +116,13 @@
         "subsection-3-n6f1z3",
         "subsection-4-1tpwch1",
         "subsection-4-1gsa4y3",
-        "subsection-7-1rj2qy"
+        "subsection-7-1rj2qy",
+        "native-redis-client-tracking"
       ],
       "visible_targets": [
         "subsection-4-1tpwch1",
-        "subsection-4-1gsa4y3"
+        "subsection-4-1gsa4y3",
+        "native-redis-client-tracking"
       ]
     },
     {
@@ -511,6 +513,17 @@
         "subsection-9-1sk5pf9",
         "subsection-9-r44dc9",
         "subsection-11-em7gfe",
+        "subsection-11-11crht8",
+        "native-amp-window"
+      ],
+      "visible_targets": [
+        "subsection-1-40kyla",
+        "subsection-3-1xxxqsz",
+        "native-amp-window",
+        "subsection-8-1hcmeye",
+        "subsection-9-1sk5pf9",
+        "subsection-9-r44dc9",
+        "subsection-11-em7gfe",
         "subsection-11-11crht8"
       ]
     },
@@ -852,9 +865,12 @@
         "subsection-4-d55j16",
         "subsection-8-1fb7qa2",
         "subsection-12-1p2vzym",
-        "context-budget-run"
+        "context-budget-run",
+        "native-qdrant-retrieval"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-qdrant-retrieval"
+      ]
     },
     {
       "id": "agent-observability",

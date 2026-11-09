@@ -1,0 +1,216 @@
+{
+  "status": "passed",
+  "scope": "native local exact vector query, indexed payload filters, source-level version and authorization gate",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.3",
+    "sqlite": "3.45.1",
+    "qdrant": {
+      "title": "qdrant - vector search engine",
+      "version": "1.19.1",
+      "commit": "6ab21cac18ebb6f4ae29102c7f8f5cc11affd5de"
+    },
+    "qdrant_binary_sha256": "7951936099f2bdc05776f875f5b683fe49beeb8c8ad71e4ff7ae042e984efc83"
+  },
+  "source_sha256": {
+    "qdrant_retrieval.py": "996dff66e2846da46fc47de83697f49d3a4beb423cdcc3f955aac779b5137cf5",
+    "source.json": "41221d32b82401b520a3b87a10fe10a87140d2e47b85a98af58ed677efa10577"
+  },
+  "raw_sha256": {
+    "exchanges.json": "23655d12ce1540ec815b2bf0fbebfec19b5011d36ab8d4904c364c8cff5aee4d",
+    "authority.sqlite": "425371cdefe2ddcde3fcfcae0777eb5245e20be358d7a65e2698a90a068667d8"
+  },
+  "global_top2": [
+    701,
+    702
+  ],
+  "postfiltered_global_top2": [],
+  "tenant_only_top2": [
+    105,
+    101
+  ],
+  "cases": {
+    "baseline_k2": {
+      "candidate_ids": [
+        101,
+        102
+      ],
+      "decisions": [
+        {
+          "id": 101,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        },
+        {
+          "id": 102,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        }
+      ],
+      "evidence": [
+        {
+          "id": 101,
+          "version": 1,
+          "amount": 10
+        },
+        {
+          "id": 102,
+          "version": 1,
+          "amount": 27
+        }
+      ],
+      "status": "ready"
+    },
+    "retained_k2": {
+      "candidate_ids": [
+        101,
+        102
+      ],
+      "decisions": [
+        {
+          "id": 101,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        },
+        {
+          "id": 102,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": false,
+            "version": 1
+          },
+          "decision": "revoked"
+        }
+      ],
+      "evidence": [
+        {
+          "id": 101,
+          "version": 1,
+          "amount": 10
+        }
+      ],
+      "status": "insufficient"
+    },
+    "stale_k4": {
+      "candidate_ids": [
+        101,
+        102,
+        103,
+        104
+      ],
+      "decisions": [
+        {
+          "id": 101,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        },
+        {
+          "id": 102,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": false,
+            "version": 1
+          },
+          "decision": "revoked"
+        },
+        {
+          "id": 103,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 2
+          },
+          "decision": "stale_version"
+        },
+        {
+          "id": 104,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        }
+      ],
+      "evidence": [
+        {
+          "id": 101,
+          "version": 1,
+          "amount": 10
+        },
+        {
+          "id": 104,
+          "version": 1,
+          "amount": 7
+        }
+      ],
+      "status": "ready"
+    },
+    "refreshed_k2": {
+      "candidate_ids": [
+        101,
+        103
+      ],
+      "decisions": [
+        {
+          "id": 101,
+          "index_version": 1,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 1
+          },
+          "decision": "delivered"
+        },
+        {
+          "id": 103,
+          "index_version": 2,
+          "authoritative_header": {
+            "tenant": "A",
+            "eligible": true,
+            "version": 2
+          },
+          "decision": "delivered"
+        }
+      ],
+      "evidence": [
+        {
+          "id": 101,
+          "version": 1,
+          "amount": 10
+        },
+        {
+          "id": 103,
+          "version": 2,
+          "amount": 42
+        }
+      ],
+      "status": "ready"
+    }
+  }
+}

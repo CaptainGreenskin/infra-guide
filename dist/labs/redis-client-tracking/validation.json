@@ -1,0 +1,501 @@
+{
+  "schema": "redis-client-tracking-v1",
+  "status": "passed",
+  "source_sha256": {
+    "tracking_lab.py": "545c0895db543ca8290b27206d08ca914c0db8b2f3fe9f867ac2dc96476c2559"
+  },
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "redis": "Redis server v=8.2.6 sha=00000000:1 malloc=libc bits=64 build=f0e94972b33e8fe6",
+    "redis_binary_sha256": "880a3fbf21a2c76242e7d9ad7b19b4e1ede60b52f1514e72818d7328c1aa823f",
+    "redis_archive_sha256": "78dd7326c5c959202c6c3849d3ea9c61896d78d647c20f6542b52c0917f96eac"
+  },
+  "cases": {
+    "single": {
+      "get_calls": [
+        0,
+        1
+      ],
+      "ordered_delivery": [
+        "v7/pending",
+        [
+          "invalidate",
+          [
+            "order:104"
+          ]
+        ]
+      ],
+      "fresh_value": "v8/shipped",
+      "push_before_barrier": 1
+    },
+    "split": {
+      "get_calls": [
+        2,
+        3
+      ],
+      "tickets": [
+        1,
+        2
+      ],
+      "naive_after_old_reply": "v7/pending",
+      "old_fill_accepted": false,
+      "fresh_fill_accepted": true,
+      "guarded_value": "v8/shipped"
+    },
+    "disconnect": {
+      "get_calls": [
+        5,
+        6
+      ],
+      "eof": true,
+      "redirect_ids": [
+        9,
+        11
+      ],
+      "naive_retained_value": "v8/shipped",
+      "guarded_value_during_gap": null,
+      "old_fill_accepted": false,
+      "guarded_value_after_reconnect": "v9/delivered"
+    }
+  },
+  "wire": [
+    {
+      "step": "writer-hello",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "writer-hello",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:4\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "single-start",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$10\r\nv7/pending\r\n"
+    },
+    {
+      "step": "single-start",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "single-D-hello",
+      "connection": "single-D",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "single-D-hello",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:5\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "single-D-track",
+      "connection": "single-D",
+      "direction": "sent",
+      "raw": "*3\r\n$6\r\nCLIENT\r\n$8\r\nTRACKING\r\n$2\r\nON\r\n"
+    },
+    {
+      "step": "single-D-track",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "single-get-baseline",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "single-get-baseline",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=274\r\ntxt:# Commandstats\r\ncmdstat_set:calls=1,usec=28,usec_per_call=28.00,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=2,usec=12,usec_per_call=6.00,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=1,usec=2,usec_per_call=2.00,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "single-old-get",
+      "connection": "single-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "single-get-fence-0",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "single-get-fence-0",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=435\r\ntxt:# Commandstats\r\ncmdstat_set:calls=1,usec=28,usec_per_call=28.00,rejected_calls=0,failed_calls=0\r\ncmdstat_info:calls=1,usec=15,usec_per_call=15.00,rejected_calls=0,failed_calls=0\r\ncmdstat_get:calls=1,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=2,usec=12,usec_per_call=6.00,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=1,usec=2,usec_per_call=2.00,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "single-untracked-write",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:105\r\n$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "single-untracked-write",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "single-tracked-write",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "single-tracked-write",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "single-barrier",
+      "connection": "single-D",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nECHO\r\n$11\r\nsingle-done\r\n"
+    },
+    {
+      "step": "single-old-reply",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": "$10\r\nv7/pending\r\n"
+    },
+    {
+      "step": "single-invalidate",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": ">2\r\n$10\r\ninvalidate\r\n*1\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "single-barrier",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": "$11\r\nsingle-done\r\n"
+    },
+    {
+      "step": "single-fresh-get",
+      "connection": "single-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "single-fresh-get",
+      "connection": "single-D",
+      "direction": "received",
+      "raw": "$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "split-start",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$10\r\nv7/pending\r\n"
+    },
+    {
+      "step": "split-start",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "split-D-hello",
+      "connection": "split-D",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "split-D-hello",
+      "connection": "split-D",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:6\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "split-I-hello",
+      "connection": "split-I",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "split-I-hello",
+      "connection": "split-I",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:7\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "split-D-track",
+      "connection": "split-D",
+      "direction": "sent",
+      "raw": "*5\r\n$6\r\nCLIENT\r\n$8\r\nTRACKING\r\n$2\r\nON\r\n$8\r\nREDIRECT\r\n$1\r\n7\r\n"
+    },
+    {
+      "step": "split-D-track",
+      "connection": "split-D",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "split-get-baseline",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "split-get-baseline",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=514\r\ntxt:# Commandstats\r\ncmdstat_set:calls=4,usec=32,usec_per_call=8.00,rejected_calls=0,failed_calls=0\r\ncmdstat_info:calls=2,usec=25,usec_per_call=12.50,rejected_calls=0,failed_calls=0\r\ncmdstat_echo:calls=1,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_get:calls=2,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=4,usec=15,usec_per_call=3.75,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=2,usec=3,usec_per_call=1.50,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "split-old-get",
+      "connection": "split-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "split-get-fence-0",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "split-get-fence-0",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=514\r\ntxt:# Commandstats\r\ncmdstat_set:calls=4,usec=32,usec_per_call=8.00,rejected_calls=0,failed_calls=0\r\ncmdstat_info:calls=3,usec=40,usec_per_call=13.33,rejected_calls=0,failed_calls=0\r\ncmdstat_echo:calls=1,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_get:calls=3,usec=1,usec_per_call=0.33,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=4,usec=15,usec_per_call=3.75,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=2,usec=3,usec_per_call=1.50,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "split-tracked-write",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "split-tracked-write",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "split-invalidate",
+      "connection": "split-I",
+      "direction": "received",
+      "raw": ">2\r\n$10\r\ninvalidate\r\n*1\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "split-fresh-get",
+      "connection": "split-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "split-old-reply",
+      "connection": "split-D",
+      "direction": "received",
+      "raw": "$10\r\nv7/pending\r\n"
+    },
+    {
+      "step": "split-fresh-reply",
+      "connection": "split-D",
+      "direction": "received",
+      "raw": "$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "drop-start",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "drop-start",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "drop-D-hello",
+      "connection": "drop-D",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "drop-D-hello",
+      "connection": "drop-D",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:8\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "drop-I-hello",
+      "connection": "drop-I",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "drop-I-hello",
+      "connection": "drop-I",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:9\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "drop-D-track",
+      "connection": "drop-D",
+      "direction": "sent",
+      "raw": "*5\r\n$6\r\nCLIENT\r\n$8\r\nTRACKING\r\n$2\r\nON\r\n$8\r\nREDIRECT\r\n$1\r\n9\r\n"
+    },
+    {
+      "step": "drop-D-track",
+      "connection": "drop-D",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "drop-warm-get",
+      "connection": "drop-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "drop-warm-get",
+      "connection": "drop-D",
+      "direction": "received",
+      "raw": "$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "drop-get-baseline",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "drop-get-baseline",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=514\r\ntxt:# Commandstats\r\ncmdstat_set:calls=6,usec=35,usec_per_call=5.83,rejected_calls=0,failed_calls=0\r\ncmdstat_info:calls=4,usec=49,usec_per_call=12.25,rejected_calls=0,failed_calls=0\r\ncmdstat_echo:calls=1,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_get:calls=5,usec=2,usec_per_call=0.40,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=6,usec=21,usec_per_call=3.50,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=3,usec=3,usec_per_call=1.00,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "drop-pending-get",
+      "connection": "drop-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "drop-get-fence-0",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*2\r\n$4\r\nINFO\r\n$12\r\ncommandstats\r\n"
+    },
+    {
+      "step": "drop-get-fence-0",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "=514\r\ntxt:# Commandstats\r\ncmdstat_set:calls=6,usec=35,usec_per_call=5.83,rejected_calls=0,failed_calls=0\r\ncmdstat_info:calls=5,usec=55,usec_per_call=11.00,rejected_calls=0,failed_calls=0\r\ncmdstat_echo:calls=1,usec=0,usec_per_call=0.00,rejected_calls=0,failed_calls=0\r\ncmdstat_get:calls=6,usec=2,usec_per_call=0.33,rejected_calls=0,failed_calls=0\r\ncmdstat_hello:calls=6,usec=21,usec_per_call=3.50,rejected_calls=0,failed_calls=0\r\ncmdstat_client|tracking:calls=3,usec=3,usec_per_call=1.00,rejected_calls=0,failed_calls=0\r\n\r\n"
+    },
+    {
+      "step": "drop-kill-invalidation-socket",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*4\r\n$6\r\nCLIENT\r\n$4\r\nKILL\r\n$2\r\nID\r\n$1\r\n9\r\n"
+    },
+    {
+      "step": "drop-kill-invalidation-socket",
+      "connection": "writer",
+      "direction": "received",
+      "raw": ":1\r\n"
+    },
+    {
+      "step": "drop-observe-eof",
+      "connection": "drop-I",
+      "direction": "eof",
+      "raw": ""
+    },
+    {
+      "step": "drop-write-during-gap",
+      "connection": "writer",
+      "direction": "sent",
+      "raw": "*3\r\n$3\r\nSET\r\n$9\r\norder:104\r\n$12\r\nv9/delivered\r\n"
+    },
+    {
+      "step": "drop-write-during-gap",
+      "connection": "writer",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "drop-pending-reply",
+      "connection": "drop-D",
+      "direction": "received",
+      "raw": "$10\r\nv8/shipped\r\n"
+    },
+    {
+      "step": "drop-redis-redirect-broken",
+      "connection": "drop-D",
+      "direction": "received",
+      "raw": ">2\r\n$21\r\ntracking-redir-broken\r\n:9\r\n"
+    },
+    {
+      "step": "recover-D-hello",
+      "connection": "recover-D",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "recover-D-hello",
+      "connection": "recover-D",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:10\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "recover-I-hello",
+      "connection": "recover-I",
+      "direction": "sent",
+      "raw": "*2\r\n$5\r\nHELLO\r\n$1\r\n3\r\n"
+    },
+    {
+      "step": "recover-I-hello",
+      "connection": "recover-I",
+      "direction": "received",
+      "raw": "%7\r\n$6\r\nserver\r\n$5\r\nredis\r\n$7\r\nversion\r\n$5\r\n8.2.6\r\n$5\r\nproto\r\n:3\r\n$2\r\nid\r\n:11\r\n$4\r\nmode\r\n$10\r\nstandalone\r\n$4\r\nrole\r\n$6\r\nmaster\r\n$7\r\nmodules\r\n*1\r\n%4\r\n$4\r\nname\r\n$9\r\nvectorset\r\n$3\r\nver\r\n:1\r\n$4\r\npath\r\n$0\r\n\r\n$4\r\nargs\r\n*0\r\n"
+    },
+    {
+      "step": "recover-D-track",
+      "connection": "recover-D",
+      "direction": "sent",
+      "raw": "*5\r\n$6\r\nCLIENT\r\n$8\r\nTRACKING\r\n$2\r\nON\r\n$8\r\nREDIRECT\r\n$2\r\n11\r\n"
+    },
+    {
+      "step": "recover-D-track",
+      "connection": "recover-D",
+      "direction": "received",
+      "raw": "+OK\r\n"
+    },
+    {
+      "step": "recover-fresh-get",
+      "connection": "recover-D",
+      "direction": "sent",
+      "raw": "*2\r\n$3\r\nGET\r\n$9\r\norder:104\r\n"
+    },
+    {
+      "step": "recover-fresh-get",
+      "connection": "recover-D",
+      "direction": "received",
+      "raw": "$12\r\nv9/delivered\r\n"
+    }
+  ],
+  "cleanup": {
+    "redis_exit_code": 0,
+    "scratch_removed": true
+  }
+}

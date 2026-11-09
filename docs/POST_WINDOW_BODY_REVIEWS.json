@@ -4832,6 +4832,71 @@
         "实战：改参被拒、提交后退出与原键取回执",
         "实战：提交时重查，抓住旧授权快照"
       ]
+    },
+    {
+      "id": "cache-consistency",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "bfca06d89121f80debbbcab8974684121b31d29f8a5a1dcb42cfa52c3867d25c",
+      "reviewed_content_sha256": "6170d8057130b894a7b73423ec24a48836a92df0f3a0aa2a687636a5ac4565f5",
+      "scope": "Follow native RESP3 tracking from a previously read key to a late GET response and a broken notification path.",
+      "observation": "One connection delivered the old response before invalidation. Separate consumption let the invalidation arrive first, and a loading identity blocked the late fill.",
+      "headings": [
+        "先回答“谁有资格说订单已经发货”",
+        "读穿旁路缓存的三个步骤",
+        "一次旧读怎样穿过成功的失效",
+        "用版本水位挡回旧值，它需要哪些前提",
+        "热点击穿与集中到期，先算回源预算",
+        "领先请求失败后，谁负责唤醒等待者",
+        "从事件回放走到真实事务",
+        "验收：为不同读者分别签一份承诺",
+        "四事件短回放的源码与结果"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "4ddf4635c3727d680943c48a26c27401805167d9a597b705de689bd18ecbe81e",
+      "reviewed_content_sha256": "93936897bfacf8f21b5cf8787455c44a20dfc184d4c47fd276abca91bcb243ca",
+      "scope": "Track the actual FP16 backward value through two microbatches, a skipped step and checkpoint restoration.",
+      "observation": "The loss and output gradient stayed finite while the FP16 weight gradient overflowed. The restored scale enabled the next AdamW step.",
+      "headings": [
+        "统计对象：逻辑元素、共享存储与设备口径",
+        "一份参数，为什么有五笔显存开销",
+        "实际状态：dtype、AdamW与首次更新",
+        "保持有效 batch 时，累积改变了哪笔开销",
+        "FP16 与 BF16 的区别",
+        "在有效 batch 边界更新",
+        "沿一步训练找峰值，再测每张卡",
+        "激活重计算：保存对象、重算与数值核对",
+        "根据失败阶段选择重计算或分片",
+        "用算术核对账本",
+        "实战与变化题：真实CPU张量和重计算"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "0de8a6d70b55e63f16459708281772f64e8b720868897a69672ea8590c9868ef",
+      "reviewed_content_sha256": "1fbc59fe05b8e56a60ae87120cb6e96abdf8584c1256c29c543c7fb3a2950a5b",
+      "scope": "Separate native vector retrieval, authorization and source-version evidence, and actual body reads.",
+      "observation": "A global two-result cutoff excluded the eligible tenant. After the index became stale, source checks rejected revoked and outdated candidates before reading their bodies.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
     }
   ]
 }

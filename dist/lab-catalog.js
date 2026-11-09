@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'redis-client-tracking':{folder:'redis-client-tracking',title:'Redis 回复、失效推送与迟到的回填'},
+ 'native-amp-window':{folder:'native-amp-window',title:'两个微批的混合精度反向、跳步与恢复'},
+ 'qdrant-retrieval':{folder:'qdrant-retrieval',title:'真实向量候选、租户过滤与当前来源验收'},
  'spiffe-workload-identity':{folder:'spiffe-workload-identity',title:'SPIRE 工作负载证明、双向 TLS 与资源授权'},
  'native-model-rollout':{folder:'native-model-rollout',title:'真实模型输出门禁、流绑定与版本回退'},
  'mcp-http-authorization':{folder:'mcp-http-authorization',title:'MCP HTTP 令牌校验与工具资源授权'},
@@ -234,6 +237,9 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mc
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
 );
 labLearningCatalog.push(
+ {id:'cloud-redis-client-tracking',track:'cloud',stage:2,title:'收到 Redis 失效后，旧读回复还能填回本地吗',chapter:'cache-consistency',anchor:'native-redis-client-tracking',pack:'redis-client-tracking',files:['tracking_lab.py'],env:'Python 3.9+ · Redis 8.2.6 · 本机 Unix 套接字',kind:'真实 Redis 回复与推送',observe:'比较单连接顺序、双连接旧回复和断开通知连接，再核对当前读取编号。',scope:'单进程 Redis 和受控的客户端消费顺序。'},
+ {id:'ai-native-amp-window',track:'ai',stage:2,title:'前向损失有限，为什么优化器跳过这次更新',chapter:'gpu-memory',anchor:'native-amp-window',pack:'native-amp-window',files:['amp_window.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU FP16 autocast',kind:'真实缩放反向、AdamW 与检查点',observe:'找出转回 FP32 前的非有限梯度，再对照跳步、重试以及只恢复模型和优化器的结果。',scope:'单进程 CPU 标量模型、两个微批与非融合 AdamW。'},
+ {id:'agent-native-qdrant-retrieval',track:'agent',stage:2,title:'两个高分结果，为什么只能交付一条正文',chapter:'agent-retrieval',anchor:'native-qdrant-retrieval',pack:'qdrant-retrieval',files:['qdrant_retrieval.py','source.json'],env:'Python 3.12+ · Qdrant 1.19.1 · Linux amd64 CPU',kind:'真实向量查询与 SQLite 正文准入',observe:'比较全局截断与租户内筛选。撤销权限并更新源版本后，核对候选、实际正文读取和返回数量。',scope:'单节点精确向量检索、固定合成语料与本机权威来源。'},
  {id:'cloud-spiffe-workload-identity',track:'cloud',stage:2,title:'两个工作负载都通过双向 TLS，谁可以写报告',chapter:'iam-security',anchor:'native-spiffe-workload-identity',pack:'spiffe-workload-identity',files:['spire_identity_lab.py','workload.go','go.mod','go.sum'],env:'Linux amd64 · Python 3.11+ · Go 1.26.1 · SPIRE 1.16.0',kind:'原生工作负载证明与双向 TLS',observe:'对照同一系统用户下的三种身份结果。用证书主体与报告账本核对 403 和 201。',scope:'单 Linux 节点、固定执行文件选择器与本机回环请求。'},
  {id:'ai-native-model-rollout',track:'ai',stage:2,title:'服务探活通过，模型输出还可能错吗',chapter:'ai-lifecycle',anchor:'native-model-rollout',pack:'native-model-rollout',files:['rollout_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'三个原生模型服务与流式输出',observe:'先按固定输出拒绝错误候选，再看已接收的流怎样跨过发布与回退。',scope:'固定合成模型、本机 CPU 和教学入口。入口固定交付版本，原生计算可能已经完成。'},
  {id:'agent-mcp-http-authorization',track:'agent',stage:2,title:'通过 MCP 令牌校验后，能读哪个租户的报告',chapter:'mcp-protocol',anchor:'native-mcp-http-authorization',pack:'mcp-http-authorization',files:['authorization_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 授权与 SQLite 读取证据',observe:'沿同一签名令牌区分受众、通用权限和报告归属。用账本核对正文到底读了几次。',scope:'本机资源服务端和临时签发夹具。登录流程、生产身份服务与 Kairo 另验。'}

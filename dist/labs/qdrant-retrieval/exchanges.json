@@ -1,0 +1,672 @@
+[
+  {
+    "label": "engine",
+    "method": "GET",
+    "path": "/",
+    "request": null,
+    "http_status": 200,
+    "response": {
+      "title": "qdrant - vector search engine",
+      "version": "1.19.1",
+      "commit": "6ab21cac18ebb6f4ae29102c7f8f5cc11affd5de"
+    }
+  },
+  {
+    "label": "collection",
+    "method": "PUT",
+    "path": "/collections/evidence",
+    "request": {
+      "vectors": {
+        "size": 2,
+        "distance": "Dot"
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": true,
+      "status": "ok",
+      "time": 0.013218803
+    }
+  },
+  {
+    "label": "payload_index_tenant",
+    "method": "PUT",
+    "path": "/collections/evidence/index?wait=true",
+    "request": {
+      "field_name": "tenant",
+      "field_schema": "keyword"
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "operation_id": 2,
+        "status": "completed"
+      },
+      "status": "ok",
+      "time": 0.018134184
+    }
+  },
+  {
+    "label": "payload_index_eligible",
+    "method": "PUT",
+    "path": "/collections/evidence/index?wait=true",
+    "request": {
+      "field_name": "eligible",
+      "field_schema": "bool"
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "operation_id": 4,
+        "status": "completed"
+      },
+      "status": "ok",
+      "time": 0.015872586
+    }
+  },
+  {
+    "label": "initial_index",
+    "method": "PUT",
+    "path": "/collections/evidence/points?wait=true",
+    "request": {
+      "points": [
+        {
+          "id": 701,
+          "vector": [
+            0.99,
+            0.1
+          ],
+          "payload": {
+            "tenant": "B",
+            "eligible": true,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 702,
+          "vector": [
+            0.97,
+            0.2
+          ],
+          "payload": {
+            "tenant": "B",
+            "eligible": true,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 105,
+          "vector": [
+            0.95,
+            0.3
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": false,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 101,
+          "vector": [
+            0.9,
+            0.4
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": true,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 102,
+          "vector": [
+            0.85,
+            0.5
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": true,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 103,
+          "vector": [
+            0.8,
+            0.6
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": true,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 104,
+          "vector": [
+            0.7,
+            0.7
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": true,
+            "source_version": 1
+          }
+        }
+      ]
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "operation_id": 5,
+        "status": "completed"
+      },
+      "status": "ok",
+      "time": 0.000677159
+    }
+  },
+  {
+    "label": "collection_info",
+    "method": "GET",
+    "path": "/collections/evidence",
+    "request": null,
+    "http_status": 200,
+    "response": {
+      "result": {
+        "status": "green",
+        "optimizer_status": "ok",
+        "indexed_vectors_count": 0,
+        "points_count": 7,
+        "segments_count": 2,
+        "config": {
+          "params": {
+            "vectors": {
+              "size": 2,
+              "distance": "Dot"
+            },
+            "shard_number": 1,
+            "replication_factor": 1,
+            "write_consistency_factor": 1,
+            "on_disk_payload": true
+          },
+          "hnsw_config": {
+            "m": 16,
+            "ef_construct": 100,
+            "full_scan_threshold": 10000,
+            "max_indexing_threads": 0,
+            "on_disk": false
+          },
+          "optimizer_config": {
+            "deleted_threshold": 0.2,
+            "vacuum_min_vector_number": 1000,
+            "default_segment_number": 0,
+            "max_segment_size": null,
+            "memmap_threshold": null,
+            "indexing_threshold": 10000,
+            "flush_interval_sec": 5,
+            "max_optimization_threads": null,
+            "prevent_unoptimized": null
+          },
+          "wal_config": {
+            "wal_capacity_mb": 32,
+            "wal_segments_ahead": 0,
+            "wal_retain_closed": 1
+          },
+          "quantization_config": null
+        },
+        "payload_schema": {
+          "tenant": {
+            "data_type": "keyword",
+            "points": 7
+          },
+          "eligible": {
+            "data_type": "bool",
+            "points": 7
+          }
+        },
+        "update_queue": {
+          "length": 0
+        }
+      },
+      "status": "ok",
+      "time": 0.000137818
+    }
+  },
+  {
+    "label": "global_k2",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 2,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ]
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 701,
+            "version": 5,
+            "score": 0.99,
+            "payload": {
+              "tenant": "B",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 702,
+            "version": 5,
+            "score": 0.97,
+            "payload": {
+              "tenant": "B",
+              "eligible": true,
+              "source_version": 1
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.000519394
+    }
+  },
+  {
+    "label": "tenant_k2",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 2,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ],
+      "filter": {
+        "must": [
+          {
+            "key": "tenant",
+            "match": {
+              "value": "A"
+            }
+          }
+        ]
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 105,
+            "version": 5,
+            "score": 0.95,
+            "payload": {
+              "tenant": "A",
+              "eligible": false,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 101,
+            "version": 5,
+            "score": 0.9,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.000247684
+    }
+  },
+  {
+    "label": "baseline_k2",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 2,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ],
+      "filter": {
+        "must": [
+          {
+            "key": "tenant",
+            "match": {
+              "value": "A"
+            }
+          },
+          {
+            "key": "eligible",
+            "match": {
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 101,
+            "version": 5,
+            "score": 0.9,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 102,
+            "version": 5,
+            "score": 0.85,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.000193302
+    }
+  },
+  {
+    "label": "retained_k2",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 2,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ],
+      "filter": {
+        "must": [
+          {
+            "key": "tenant",
+            "match": {
+              "value": "A"
+            }
+          },
+          {
+            "key": "eligible",
+            "match": {
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 101,
+            "version": 5,
+            "score": 0.9,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 102,
+            "version": 5,
+            "score": 0.85,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.000205175
+    }
+  },
+  {
+    "label": "stale_k4",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 4,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ],
+      "filter": {
+        "must": [
+          {
+            "key": "tenant",
+            "match": {
+              "value": "A"
+            }
+          },
+          {
+            "key": "eligible",
+            "match": {
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 101,
+            "version": 5,
+            "score": 0.9,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 102,
+            "version": 5,
+            "score": 0.85,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 103,
+            "version": 5,
+            "score": 0.8,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 104,
+            "version": 5,
+            "score": 0.7,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.000169388
+    }
+  },
+  {
+    "label": "refresh_index",
+    "method": "PUT",
+    "path": "/collections/evidence/points?wait=true",
+    "request": {
+      "points": [
+        {
+          "id": 102,
+          "vector": [
+            0.85,
+            0.5
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": false,
+            "source_version": 1
+          }
+        },
+        {
+          "id": 103,
+          "vector": [
+            0.88,
+            0.6
+          ],
+          "payload": {
+            "tenant": "A",
+            "eligible": true,
+            "source_version": 2
+          }
+        }
+      ]
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "operation_id": 6,
+        "status": "completed"
+      },
+      "status": "ok",
+      "time": 0.000328247
+    }
+  },
+  {
+    "label": "refreshed_k2",
+    "method": "POST",
+    "path": "/collections/evidence/points/query",
+    "request": {
+      "query": [
+        1,
+        0
+      ],
+      "limit": 2,
+      "params": {
+        "exact": true
+      },
+      "with_vector": false,
+      "with_payload": [
+        "tenant",
+        "eligible",
+        "source_version"
+      ],
+      "filter": {
+        "must": [
+          {
+            "key": "tenant",
+            "match": {
+              "value": "A"
+            }
+          },
+          {
+            "key": "eligible",
+            "match": {
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "http_status": 200,
+    "response": {
+      "result": {
+        "points": [
+          {
+            "id": 101,
+            "version": 5,
+            "score": 0.9,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 1
+            }
+          },
+          {
+            "id": 103,
+            "version": 6,
+            "score": 0.88,
+            "payload": {
+              "tenant": "A",
+              "eligible": true,
+              "source_version": 2
+            }
+          }
+        ]
+      },
+      "status": "ok",
+      "time": 0.00016555
+    }
+  }
+]

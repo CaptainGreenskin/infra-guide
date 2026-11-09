@@ -3,8 +3,8 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const files=[...fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]).filter(f=>f!=='app.js');
 const gateTargets={
  'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity']],
- 'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['elasticity','section-7'],['resilience','section-9']],
- 'ai-training':[['gpu-scheduling','native-kueue-admission'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run']],
+ 'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking']],
+ 'ai-training':[['gpu-memory','native-amp-window'],['gpu-scheduling','native-kueue-admission'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run']],
  'ai-inference':[['model-serving','section-4'],['model-serving','native-inference-prefix'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
  'ai-operators':[['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training']],
  'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['agent-observability','native-tail-sampling-ledger']]
@@ -75,6 +75,11 @@ for(const base of ['/','/infra-guide/']){
  assert(!applicationRoute.includes(service.id),'the shared experiment is optional on the application route');
  c.location.pathname=base+'roadmap/agent-app/';
  c.location.search='';
+ const retrievalPath='/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval';
+ assert(applicationRoute.includes('agent-retrieval'),'application route covers retrieval');
+ assert(data.articles.find(a=>a.id==='agent-retrieval').sections.some(([,body])=>body.includes('id="native-qdrant-retrieval"')),'retrieval lab anchor exists');
+ assert(vm.runInContext('learningGoalHTML(selectedLearningProfile())',c).includes('href="'+retrievalPath+'"'),'application gate links to actual retrieval');
+ assert.equal(run(retrievalPath),base+retrievalPath.slice(1),'retrieval experiment retains the application goal');
  assert(vm.runInContext('learningGoalHTML(selectedLearningProfile())',c).includes('href="'+applicationService+'"'),'application gate links to the exact experiment');
  assert.equal(run(applicationService),base+applicationService.slice(1),'shared experiment keeps the explicit application goal and fragment');
  c.location.pathname=base+servicePath.slice(1);

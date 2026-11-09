@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="465" viewBox="0 0 440 465" role="img" aria-labelledby="title description">
+  <title id="title">一个 FP16 累积窗口怎样溢出与重试</title>
+  <desc id="description">权重0.875、两个输入1和2。高缩放时，第二微批的输出梯度57344仍有限，乘2求权重梯度时溢出。优化器跳步，缩放减半。重试得到4.375并更新。</desc>
+  <metadata>{"weight":0.875,"inputs":[1,2],"mean_loss":1.9140625,"high_scale":32768,"high_second_output_gradient":57344,"high_second_weight_exact":114688,"max_fp16":65504,"high_optimizer_calls":0,"low_scale":16384,"low_weight_gradients":[14336,57344],"low_accumulated_fp32":71680,"low_unscaled":4.375,"low_optimizer_calls":1}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L8 5L1 9" fill="none" stroke="#65728a" stroke-width="1.7"/></marker>
+    <style>text{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans SC','PingFang SC',sans-serif;fill:#19273b}.title{font-size:22px;font-weight:700}.label{font-size:16px;font-weight:700}.value{font-size:17px}.muted{fill:#43536a}.alert{fill:#a33027;font-weight:700}.pass{fill:#176442;font-weight:700}</style>
+  </defs>
+  <rect width="440" height="465" rx="16" fill="#f6f8fb"/>
+  <text class="title" x="23" y="36">同一窗口，两次反向结果</text>
+  <text class="value muted" x="23" y="62">权重 0.875 · 输入 1、2 · 损失 1.9140625</text>
+  <rect x="23" y="84" width="394" height="144" rx="12" fill="#fff3ef" stroke="#e3bcb1"/>
+  <text class="label alert" x="40" y="111">第一次 · 缩放 32768</text>
+  <text class="value" x="40" y="139">第二个输出的梯度 57344，仍有限</text>
+  <text class="value" x="40" y="169">再乘输入 2，得到 114688</text>
+  <text class="value alert" x="40" y="199">超过 FP16 上限 65504，变成 Inf</text>
+  <path d="M220 233v27" stroke="#65728a" fill="none" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="label muted" x="237" y="250">跳步，缩放减半</text>
+  <rect x="23" y="270" width="394" height="146" rx="12" fill="#eef7f1" stroke="#a9cdbc"/>
+  <text class="label pass" x="40" y="298">重送同一输入 · 缩放 16384</text>
+  <text class="value" x="40" y="327">两项 FP16 梯度：14336、57344</text>
+  <text class="value" x="40" y="357">在 FP32 相加得 71680，再除以 16384</text>
+  <text class="value pass" x="40" y="386">梯度 4.375，AdamW 更新一次</text>
+  <text class="value muted" x="23" y="446">证据来自 PyTorch 2.5.1 · CPU 单进程</text>
+</svg>

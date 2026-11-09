@@ -278,4 +278,20 @@
   fold('展开完整checkpoint_saved_tensors.py：与下载源码一致',codes(m[10])[3])+
   p('以上是已有PyTorch 2.5.1/CPU记录，本次未新增运行。第一例数保留的训练状态，第二例数指定观察点供反向保存的存储；两者都不报告CUDA峰值、reserved或CPU RSS。到GPU环境时，沿本章的完整窗口测量步骤，分别记录首次与稳态、每个rank的峰值、步耗时及相同目标下的数值结果。')
  ]);
+
+ memory.sections[5][1]+='<h3 id="native-amp-window">两个微批中，哪一个数先溢出</h3>'+
+  p('沿前面的窗口顺序实跑一次。模型是一层无偏置线性层，只有一个 FP32 参数 w。两个微批各有一个样本，目标为 0。前向由 CPU autocast 选择 FP16，输出转回 FP32 算平方损失。两项取平均，所以每次对 <code>loss / 2</code> 做缩放和反向。设 y=w×x、缩放因子为 S，此时输出梯度是 S×y，求权重梯度还要再乘输入 x。每个微批沿自己的反向路径求梯度，累积发生在 FP32 参数的 <code>.grad</code>。',
+  '先送两个 1。S=32768 时，每个微批的权重梯度都是可表示的 32768。两项进到 FP32 后相加成 65536，撤销缩放得到 2。AdamW 完成第一次更新，权重从 1 变成 0.875。现在保持同一个缩放因子，将第二个输入改为 2。前向输出变成 0.875 和 1.75，平均损失是 (0.875²+1.75²)/2=1.9140625。',
+  '再跟第二个微批。输出梯度是 1.75×32768=57344，仍在 FP16 范围内。权重梯度继续乘 2，理想结果 114688 超过最大有限值 65504。脚本在 PyTorch 反向图的 <code>ToCopyBackward0</code> 边读取实际梯度，FP16 权重梯度已是 <code>Inf</code>。下一步转成 FP32，参数收到的仍是 <code>Inf</code>。从相同初始状态走全 FP32 对照，缩放 32768 时撤销缩放后得到有限的 4.375。')+
+  trainingFigure('native-amp-window','同一对输入、同一个权重、同一个损失。两次用不同缩放因子反向，结果分别是跳过更新和更新一次。')+
+  table(['窗口','缩放前→后','两个 FP16 权重梯度','撤销缩放后','AdamW 步数'],[
+   ['两个 1','32768 → 32768','32768、32768','2','0 → 1'],
+   ['输入 1、2，溢出','32768 → 16384','28672、Inf','Inf','1 → 1'],
+   ['显式重送 1、2','16384 → 16384','14336、57344','4.375','1 → 2']
+  ])+
+  p('每个窗口只在两次反向结束后调用一次 <code>scaler.unscale_(optimizer)</code>。第二行检测到非有限梯度，<code>scaler.step</code> 跳过底层 AdamW 调用，权重和两份矩都保留原值。随后 <code>scaler.update()</code> 将 S 减半。第三行先在 FP32 中累积 14336+57344=71680，再除以 16384 得到 4.375。两次 <code>scaler.step</code> 都返回 <code>None</code>，本例用非融合 AdamW 的执行后钩子、步数和两份矩交叉核对更新。',
+  '在溢出窗口结束后保存模型、优化器和 scaler。完整恢复后，下一窗口和不中断路径的重试逐项一致。只加载模型与优化器时，新 scaler 从 32768 起步，第二个微批再次溢出。记录还显示从 16384 起连续两个窗口成功后，缩放因子涨回 32768。实验显式重送输入，实际训练由训练循环决定是否重放。<a href="/article/checkpoint-recovery/#checkpoint-consistent-state">把 scaler 放回检查点的对象清单 →</a>',
+  '本例验证 PyTorch 2.5.1 在 CPU 单进程上的标量反向、非融合 AdamW 和内存内检查点往返。解压后在 Python 3.12 与 PyTorch 2.5.1 环境运行 <code>python -B amp_window.py &gt; replay.json</code>，先看每个微批的 <code>weight_gradient_before_widening</code>，再核对窗口前后状态。')+
+  '<p class="practice-links"><a href="labs/native-amp-window.zip" download>下载源码与记录 ↓</a> · <a href="labs/native-amp-window/README.md">运行说明 →</a> · <a href="labs/native-amp-window/validation.json">查看反向与恢复记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/amp/grad_scaler.py#L237-L447">PyTorch 2.5.1 的缩放与跳步源码 ↗</a></p>';
+ memory.updated='2026.11.09';
 })();

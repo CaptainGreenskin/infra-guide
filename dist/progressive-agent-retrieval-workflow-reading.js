@@ -335,4 +335,22 @@
   kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
   kairo.updated='2026.11.09';
  }
+ {
+  const a=articleById('agent-retrieval');
+  const qdrantAnchor='<h3 id="native-qdrant-retrieval">在 Qdrant 取候选，到来源库核对版本</h3>';
+  a.sections[11][1]+=qdrantAnchor+
+  p('上面的融合算例给定了第二路排名。这里把向量交给真实的 Qdrant 服务计算。集合规定向量维数和打分方法。每个点由编号、向量和附加字段组成，附加字段称为 payload。本例只把租户、索引中的可读标记和来源版本放入 payload。正文金额保存在独立的 SQLite 来源库。')+
+  p('查询向量是 [1,0]。集合用点积，计算式是 1×第一项＋0×第二项。编号 701 的向量是 [0.99,0.1]，因此得分 0.99。服务收到 <code>POST /collections/evidence/points/query</code> 后，按指定条件做精确打分并返回前 k 项。全局前两名都是 B 租户的点，先取前两名再筛掉 B，会得到空表。把租户 A 与可读标记写入查询的 <code>filter.must</code>，在符合条件的候选里取前两名，得到 101、102。只限制租户时，得分 0.95 的 105 仍会进入结果。')+
+  trainingFigure('qdrant-retrieval','同一查询在全局候选和受限候选里排名不同。实际交付还要对照来源库当时的资格和版本。')+
+  p('第二次取到 101、102 后，实验先保留这组候选，再从来源库撤回 102 的读取资格，并把 103 从第 1 版金额 41 更新到第 2 版金额 42。装配程序用可信租户和候选编号查来源，只读租户、资格和版本三个字段。三项通过才读取正文。此时 102 仍出现在已取回的候选中，正文读取记录里只留下 101。')+
+  table(['受限查询或变化','索引返回编号','实际读取的正文'],[
+   ['变化前，k=2','101、102','101/v1=10，102/v1=27'],
+   ['取回后撤权，沿用 k=2 的候选','101、102','101/v1=10，共 1 项'],
+   ['索引仍旧，扩大到 k=4','101、102、103、104','101/v1=10，104/v1=7'],
+   ['更新索引，再查询 k=2','101、103','101/v1=10，103/v2=42']
+  ])+
+  p('k=4 让 104 有机会进入可用证据。103 的旧版候选仍被拒绝，扩大候选数无法推进索引版本。刷新索引时把 102 标成不可读，把 103 的版本与固定向量改到第 2 版，下一次才能读到 42。两项可用材料是否支持用户的具体问题，还要按第 11 节另行核对。')+
+  fold('跟源码复跑并核对两份记录',p('运行器创建真实集合，为 <code>tenant</code> 与 <code>eligible</code> 建字段索引，写入 7 个点，再发送 6 次精确查询。对照 <code>exchanges.json</code> 的请求、返回编号和分数，再从 <code>authority.sqlite</code> 的 <code>body_reads</code> 查实际取过哪些版本。拒绝 102 或 103 旧版时，该次装配没有对应正文读取。实验使用人工给定的二维向量、单节点 Qdrant 和本地 SQLite 事务。近似搜索召回、生产权限同步与模型回答要另取证据。'))+
+  '<p class="practice-links"><a href="labs/qdrant-retrieval.zip" download>下载运行器与证据 ↓</a> · <a href="labs/qdrant-retrieval/README.md">复跑说明</a> · <a href="labs/qdrant-retrieval/validation.json">查看实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42581362152">Linux CI 实跑 ↗</a> · <a href="https://api.qdrant.tech/api-reference/search/query-points">Qdrant 查询接口 ↗</a></p>';
+ }
 })();
