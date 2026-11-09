@@ -7045,6 +7045,48 @@ const progressiveAgentSectionTitles={
   '乙平均两实例p95。给出1000条10ms与10条1000ms，让它先合并计数再求95%位置，得到10ms而非505ms。最后为“生成很顺却客户端停顿”设计对照：同时记录服务端逐项生成和客户端逐消息接收；前者平稳、后者成团时，继续查交付链，前者本身有空档时，再关联调度与执行。',
   '可按五项各2分检查答案：端点与单位明确；51项用50间隔且单项为空；分位数和窗口分子可复算；对照能区分计算与交付；失败、质量及未完成请求有明确口径。最后从一次循环指出输入、输出、KV长度各何时变化，时间与容量两份账才能闭合。')
  ],'先固定首输出、逐项间隔与窗口分母，再逐轮复算准入和分块，最后对照CPU物理缓存与调度的实际证据。');
+
+ serving.sections[1][1]+=
+  heading('native-inference-request-path','把三轮生成放进真实引擎')+
+  p('上一张表只看模型输入和输出。现在沿同一过程看服务怎么执行。llama-server 收到 HTTP 请求后将提示变成词元编号，创建任务，再把任务交给空闲的 slot。这里的 slot 是执行位置，保存当前任务、已处理的位置和生成状态。服务需要等待空位时，任务还没有开始模型前向。')+
+  trainingFigure('v77-engine-path','提示的末位置产生首个输出。若继续生成，上一轮选出的词元才进入模型，写入自己的 K/V。')+
+  p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
+  '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
+  '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
+ serving.sections[4][1]+=
+  '<p class="practice-links"><a href="article/inference-performance/#vllm-v1-request-path">把这张块表接进 vLLM V1 的调度、写入和归还 →</a></p>';
+ serving.sections[6][1]+=
+  heading('native-inference-engine-lab','在本机跟四次真实请求')+
+  p('实验用 llama.cpp b12110 的 HTTP 服务，固定一个 slot，模型为本地生成的单层 Llama 合成权重。GGUF 是把权重、词表与模型配置一起存放的文件格式。程序先请求 <code>/tokenize</code>，再把返回的 [1,4,5,6] 或 [1,4,5,10] 送给 <code>/completion</code>。开头的 1 是起始标记。四次请求都生成三个词元。')+
+  table(['本轮请求','复用的提示词元','实际新算的提示词元','输出编号'],[
+   ['首次 red green blue','0','4','[7,8,9]'],
+   ['原样重发，开启复用','3','1','[7,8,9]'],
+   ['改成 red green four，开启复用','3','1','[11,12,13]'],
+   ['原样重发 red green four，关闭复用','0','4','[11,12,13]']
+  ])+
+  p('对照前两行，引擎找到 4 个相同提示位置，随后把可复用长度降到 3。两行选出相同的输出，第二行实际少算 3 个提示位置。对照最后两行，输入相同且只切换复用，输出仍相同。用响应的 <code>timings.cache_n</code> 与 <code>timings.prompt_n</code> 分别核对复用和新算的提示词元。',
+  '再对照第一行的实际批次。首先把 [1,4,5,6] 送到位置 0–3，只取位置 3 的候选分数，选出编号 7。随后输入 [7] 到位置 4，选出 8。再输入 [8] 到位置 5，选出 9 后结束。所以响应中的 <code>tokens_cached</code> 是留在槽中的 4+3−1=6 个已计算位置。它和本次省去的提示计算数量分别回答不同问题。')+
+  p('脚本从原生响应和批次日志核对这些数字。把每批输入的编号抄到第 2 节图里，就能看出哪个输出进入了下一轮。流式响应还带有提示处理进度事件，脚本先按事件类型将它们分开，再数实际输出。')+
+  trainingCode('解压后运行，指定已安装的 llama-server','SHELL','python3 engine_walkthrough.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="labs/native-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-inference/README.md">环境与运行步骤</a> · <a href="labs/native-inference/engine_walkthrough.py">请求和校验源码</a> · <a href="labs/native-inference/validation.json">实际记录与源码摘要</a></p>'+
+  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。真实模型服务的多槽调度、GPU 表现与线上延迟需要各自的实验。');
+
+ const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
+ const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
+ performance.sections[2][1]+=
+  heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
+  p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
+  '<ol>'+
+  '<li><strong>进入等待队列。</strong>请求编号、提示词元编号、采样参数进入 <code>EngineCoreRequest</code>，随后成为调度器的等待项。 '+vllmLink('engine/processor.py','L424-L436','准备输入')+' · '+vllmLink('core/sched/scheduler.py','L1094-L1106','登记请求')+'</li>'+
+  '<li><strong>为本轮选词元、分配块。</strong>查询连续命中的整块，减去已计算位置，再按本轮的词元额度取一段。KV 管理器给这些位置分块。若空间不足，这条请求可能延后。 '+vllmLink('core/sched/scheduler.py','L380-L489','预算与分块')+' · '+vllmLink('core/kv_cache_manager.py','L153-L212','命中与分配')+'</li>'+
+  '<li><strong>执行模型批次。</strong>执行器按各请求的已计算长度准备待处理编号和逻辑位置。块表给出位置对应的物理存储，写入映射告诉注意力算子新 K/V 应存在哪里。 '+vllmLink('engine/core.py','L280-L299','一次执行循环')+' · '+vllmLink('worker/gpu_model_runner.py','L862-L969','准备模型输入')+'</li>'+
+  '<li><strong>收下输出，归还引用。</strong>调度器把采样得到的编号追加到对应请求，判断输出上限等结束条件。结束后归还该请求的块引用。仍有其他引用的块继续使用，归零的块可以成为可分配候选。 '+vllmLink('core/sched/scheduler.py','L909-L970','收下输出')+' · '+vllmLink('core/block_pool.py','L236-L266','引用与归还')+'</li>'+
+  '</ol>'+
+  p('输出处理器把新编号逐步转回文本，组装请求结果。客户端的接收时刻还要经过传输。 '+vllmLink('engine/output_processor.py','L408-L434','逐步解码与组装输出'))+
+  p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
+  '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
+  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+ performance.updated='2026.11.09';
 })();
 
 
@@ -8072,6 +8114,19 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  a.desc=a.intro='从数据契约与数值参考出发，逐步读懂求和、softmax 和分块矩阵乘法的线程映射、共享内存与同步，再区分正确性、编译证据和性能测量。';
  a.baseline='CPU实验：Python 3.9+与C11；CUDA编译：Linux x86_64、CUDA12.9.1；GPU执行另需兼容设备与驱动';
  a.refs=[...new Set([...a.refs,'cudaCoreGuide','cudaCoreCompiler'])];a.updated='2026.11.08';
+
+ a.sections[3][1]+=
+ '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+
+ p('接着前面的分块乘法，固定行主序 FP32 输入和乘加顺序。朴素版每个线程直接读 A 的一行与 B 的一列，计算一个输出。分块版先把 A、B 的小块装入共享内存，块里的线程再各算一个输出。双行复用版保持 16×16 个线程，每个线程多算一行同一列。它读到一个 B 值后，分别乘两行对应的 A 值，累加到两个寄存器。')+
+ trainingFigure('v77-gemm-reuse','覆盖同样的 32×16 输出时，两个分块线程块各装载一次 B。同一块内计算两行，可以只装载一次 B。')+
+ p('只看 K 轴上 16 项的完整一段。两个普通线程块分别装入 16×16 的 A 和 B，共请求 1024 个 FP32 值。双行复用的一个线程块装入 32×16 的 A 和 16×16 的 B，共请求 768 个值，少 256 个值，即 1024 字节。这是从源码数出的装载量，缓存命中会改变实际显存流量。共享内存和寄存器也会变动，所以速度需要在同一设备上测。');
+ a.sections[7][1]+=
+ '<h3 id="same-device-gemm">同卡对照三种 GEMM</h3>'+
+ p('先用同一参考逐项检查三个版本。设备验收程序会对五种形状的 8430 个结果逐项回读，其中 35×67×19 同时触发行、列和 K 轴的尾块。越界装载补零，屏障仍由整块线程到达，只有有效位置写回。')+
+ trainingCode('按实验说明编译后，在同一张卡上验数值并计时','SHELL','./gemm_variants --validate > validate.json\n./gemm_variants --benchmark > benchmark.json')+
+ p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
+ '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
+ '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
 })();
 
 
@@ -8600,6 +8655,15 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  ])+
  p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
  '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
+ contextAttention[7][1]+=
+ '<h3 id="ring-context-training">让 K/V 沿环传递，再完成一次参数更新</h3>'+
+ p('上一题先收齐 K/V，再检查四行前向。这次把同样的因果注意力放到三个进程。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
+ trainingFigure('v77-ring-training','三进程前向每人查看三个来源。反向多送最后一跳，把各自的 dK、dV 还给原拥有者。')+
+ p('反向时，每个本地 Q 可能对多个进程的 K、V 产生梯度。程序把 K、V 和两个累加量 dK、dV 一起送上环。每个进程用自己的 Q 重新算该块的注意力权重，再把梯度贡献加到包里。最后多送一次，原拥有者才收回已经合并的梯度。得到本地 dQ、dK、dV 后，各进程求本地三个投影矩阵的梯度，再求和更新同一份权重。')+
+ p('用完整因果注意力和 PyTorch 自动求导独立核对。三进程实测的最大输出误差约 3.33×10⁻¹⁶，更新后权重的最大误差约 1.39×10⁻¹⁷。若只保留各进程自己的 dK、dV 贡献，权重梯度误差约 4.07×10⁻⁴，判据会拒绝。两进程 1024 位置的对照也已执行。')+
+ trainingCode('从解压目录运行三进程实战','SHELL','python -m torch.distributed.run --standalone --nproc_per_node=3 ring_training.py --positions 1536')+
+ p('本次实测为 CPU/Gloo。每次点对点收发都等待完成，以便按步核对。包内也给出 CUDA/NCCL 启动参数，供两卡及多机环境复验。完整矩阵参照仅用于数值核对，不能拿这个程序测训练显存或通信重叠。')+
+ '<p class="practice-links"><a href="labs/ring-context-training.zip" download>下载环形实战 ↓</a> · <a href="labs/ring-context-training/ring_training.py">点对点源码</a> · <a href="labs/ring-context-training/validation.json">三进程记录</a></p>';
 
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';
@@ -13521,6 +13585,9 @@ function chapterReadingNav(a){
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
  'context-parallel':{folder:'context-parallel',title:'两进程因果注意力与位置对照'},
+ 'native-inference':{folder:'native-inference',title:'真实推理引擎与前缀复用'},
+ 'ring-context-training':{folder:'ring-context-training',title:'环形注意力前向与梯度归还'},
+ 'gemm-variants':{folder:'gemm-variants',title:'CUDA GEMM 三种线程映射'},
  'integrated-service':{folder:'integrated-service',title:'HTTP任务、CPU模型与独立效果恢复'},
  'multinode-launch':{folder:'multinode-launch',title:'两启动器、四进程训练与恢复对照'},
  'cuda-core':{folder:'cuda-core',title:'CUDA线程、归约与分块实现'},
@@ -13609,6 +13676,7 @@ const labLearningCatalog=[
  {id:'ai-updates',track:'ai',stage:2,title:'不等长、尾窗口、空窗口与梯度裁剪',chapter:'distributed-training',pack:'update-and-cancel',files:['update_windows.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank + 独立基准',observe:'使用 7、0、3 个有效目标的窗口，核对全局分母、裁剪顺序及空窗不推进动量。',scope:'固定模型与精度，不把窗口数当成任意优化器的实际更新数。'},
  {id:'ai-collectives',track:'ai',stage:2,title:'集合通信的数值、形状与调用顺序',chapter:'training-communication',pack:'scaling-collectives-traces',files:['collective_contracts.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'核对规约、变长收集、重排与归一化，再运行形状和操作不一致的独立失败对照。',scope:'通信确实发生在本机 CPU；不证明 NCCL、RDMA 或物理网络性能。'},
  {id:'ai-context-parallel',track:'ai',stage:2,title:'长序列切开以后，哪一行还要读远端 KV',chapter:'flash-attention-io',anchor:'context-parallel-lab',pack:'context-parallel',files:['context_attention.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两进程与独立矩阵参考',observe:'收齐 KV 后按原位置分块计算，核对全部四行、远端统计和两种错误实现。',scope:'本机 CPU 单头因果前向。Ring 传递、目标设备性能和训练反向另验。'},
+ {id:'ai-ring-context-training',track:'ai',stage:2,title:'沿环传递，最后一跳把梯度还给谁',chapter:'flash-attention-io',anchor:'ring-context-training',pack:'ring-context-training',files:['ring_training.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实点对点收发与权重更新',observe:'两、三进程切分 1024、1536 个位置，对照输出、梯度和更新。漏掉远端 dK/dV 时用独立参照拒绝。',scope:'本机 CPU 单头。CUDA/NCCL 和物理多节点待验。'},
  {id:'ai-tp-gradients',track:'ai',stage:2,title:'张量并行：前向部分和与反向输入梯度',chapter:'tensor-parallel-math',pack:'storage-parallel-acceptance',files:['tp_forward_backward.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两成员 TP 组',observe:'求和后加一次偏置得到[12,5]；两份输入梯度合为[39,42]，局部参数梯度和更新对照完整基线。',scope:'局部自动求导加显式dY与归约，不是生产TP层；未运行GPU或真实多机。'},
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
  {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
@@ -13617,6 +13685,7 @@ const labLearningCatalog=[
  {id:'ai-operator-profile',track:'ai',stage:2,title:'用CPU实际轨迹分清外层区间与内部算子',chapter:'operator-profiling',anchor:'operator-profile-run',pack:'operators-routing',files:['cpu_profile.py'],env:'Python 3.9+ · PyTorch；记录版本2.5.1 CPU',kind:'真实CPU Profiler',observe:'预热后5次线性、softmax与求和，核对15条命名区间和算子事件。',scope:'采集形状/内存有开销，不把包含子事件的时间重复相加，不作为GPU计时。'},
  {id:'ai-moe-routing',track:'ai',stage:2,title:'八条分配乱序返回，仍按原身份合并',chapter:'moe-routing',anchor:'moe-routing-run',pack:'operators-routing',files:['moe_routing.py'],env:'Python 3.9+ · 标准库',kind:'实际两执行进程与声明路由策略',observe:'四个输入按Top-2分发，比较正确/错误合并以及容量3下的保留6、丢2。',scope:'固定线性专家；逻辑rank与通信160B为声明算式，没有GPU/NCCL或模型训练。'},
  {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'model-serving',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
+ {id:'ai-native-inference',track:'ai',stage:2,title:'同一条提示，真实引擎还要前向几项',chapter:'model-serving',anchor:'native-inference-engine-lab',pack:'native-inference',files:['engine_walkthrough.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实引擎、回环 HTTP 与逐轮记录',observe:'核对输入词元、前缀命中、新算提示和实际输出，比较关闭复用的对照。',scope:'单 slot、合成小模型、CPU；vLLM 的多请求块池另作源码走读。'},
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},
  {id:'ai-artifacts',track:'ai',stage:3,title:'文件和形状都正确，词表仍可能装错',chapter:'ai-lifecycle',pack:'recovery-artifacts-retrieval',files:['artifact_bundle.py'],env:'Python 3.12 + PyTorch 2.5.1 + Safetensors 0.8.0',kind:'CPU 产物保存与加载',observe:'交换词表 ID 后让语义门禁拒绝；固定完整版本束，再验证条件发布与回退代际。',scope:'三条固定语义与本地生产指针，不是 LLM 质量或线上灰度测试。'},
  {id:'ai-recovery',track:'ai',stage:3,title:'一条命令比较连续四轮和保存后的 2+2 轮',chapter:'training-lab',pack:'training-capstone',files:['verify_run.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python 3.10—3.12 + PyTorch 2.5.1',kind:'真实两 rank 完整恢复',observe:'两条路径各有 32 次实际调用；模型、优化器、随机状态和配置逐项相等，三个负例必须被拒绝。',scope:'轮末正常保存后重启；没有任意微批崩溃、掉电或 GPU 证据。'},
@@ -13670,6 +13739,7 @@ labLearningCatalog.push({"id": "cloud-kubernetes-identity", "track": "cloud", "s
 {"id": "ai-sdpa-cache", "track": "ai", "stage": 2, "title": "同一小模型比较完整前缀与缓存生成", "chapter": "model-serving", "anchor": "sdpa-cache-run", "pack": "sdpa-cache", "files": ["cache_lab.py", "tiny_decoder.py", "requirements.txt", "README.md"], "env": "PyTorch2.5.1 · CPU · SDPBackend.MATH", "kind": "真实SDPA与KV缓存API", "observe": "复用664参数模型权重，核对完整、逐位置与两位置续算；错误因果对齐应被logits对照发现，生成缓存按2→3→4推进。", "scope": "验证CPU原生API、掩码和生成状态，不是FlashAttention设备内核或GPU性能测试。"},
 {"id": "agent-langgraph-workflow", "track": "agent", "stage": 2, "title": "持久暂停、并行与新进程恢复", "chapter": "durable-workflows", "anchor": "langgraph-workflow-run", "pack": "langgraph-workflow", "files": ["workflow_lab.py", "orders.json", "requirements.txt", "README.md"], "env": "LangGraph1.2.20 · checkpoint-sqlite3.1.3 · Python3.12", "kind": "真实框架与独立HTTP效果", "observe": "42报告在新进程恢复；同一暂存动作2次尝试仅1份效果，新UUID反例2份；并行失败恢复保留已成功分支。", "scope": "无模型、单宿主SQLite检查点与自建HTTP接收方；未验证真实审批身份、任意远端事务、跨机或Kairo。"});
 labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子映射到GPU线程与共享内存',chapter:'operator-profiling',anchor:'cuda-core-run',pack:'cuda-core',files:['cuda_lab.cu','reference.py','build.py','toolchain-lock.json','README.md'],env:'Linux x86_64 · CUDA12.9.1；执行另需计算能力8.0+ GPU与兼容驱动',kind:'真实CUDA编译 · GPU待验',observe:'读懂逐行归约、稳定softmax和16×16分块GEMM；用13组独立参考与错误归一化核对目标GPU回读。',scope:'隔离Linux CI验证NVCC、链接与PTX入口；CPU校验器16种错误变异通过。GPU数值执行、Nsight与性能仍待目标环境验收。'});
+labLearningCatalog.push({id:'ai-same-device-gemm',track:'ai',stage:2,title:'同卡比较朴素、分块和双行复用 GEMM',chapter:'operator-profiling',anchor:'same-device-gemm',pack:'gemm-variants',files:['gemm_variants.cu'],env:'Linux x86_64 · CUDA 12.9.1；执行需计算能力 8.0+ GPU 与兼容驱动',kind:'真实 CUDA 编译 · GPU 待验',observe:'同一输入逐项验尾块，再固定设备、流、数据与样本顺序，分开记录 CUDA event 和 Nsight。',scope:'Linux 编译和设备探测有记录。设备数值回读、计时和计数器均待实际 GPU。'});
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-multinode'),0,{id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
 labLearningCatalog.push({id:'shared-integrated-service',track:'agent',stage:3,title:'把任务、模型、报告与恢复接成真实服务',chapter:'production-readiness',anchor:'integrated-service-run',pack:'integrated-service',files:['integrated_service.py','source.json','model-contract.json','requirements.txt','README.md'],env:'Linux/macOS · Python3.10+ · PyTorch2.5.1 CPU',kind:'真实HTTP / CPU模型 / 独立SQLite域',observe:'输入10和27，实际模型输出37；提交后退出再用新进程恢复，分别核对效果份数、权重/版本、读取资格及独立产物验收。',scope:'固定计划、公开身份夹具、同宿主服务与串行worker；不运行语言模型、训练、GPU或Kairo，容量另为声明算例。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
@@ -13894,5 +13964,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="ecff56dde67c0f474e7f77f604a5018be9c16062e54f0235eac8e086e67a205c";
+const staticReadingVersion="6612c7adfef8714a8fca7ba04a4726ae44d647f4faa0beb14d6ed665b5e1bbab";
 

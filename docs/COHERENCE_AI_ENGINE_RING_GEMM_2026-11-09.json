@@ -1,0 +1,158 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "ecae081521f6c306f8c8d55d2f0cbc36e1649131",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONTEXT_PARALLEL_2026-11-09.json": "5d879f9a2aa88e3af0f6f1d91c7ee172e2307fb985b3f44c6d8fc7142e481e32"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "b2caf50b555859dbb796e3f7cc45d530a4188780722f69afe7af8753457c3653",
+      "reviewed_sha256": "3f3ac8c709b445b577ffc9cc41959a9260017a8a5ea5573bd4aa8d007c603864",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "04de6f01d627fac6b86c23d3ec481b28d228633e271e532abbafce9ee6423a61",
+      "reviewed_sha256": "37a5a295a222184970c9a542b75f03a1ce60965905b36166d52ee05001ed7ce5",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "28f581290afa8e9ca2d10d9963e649a39096192bd5c1f9d6e97a008ba2b8d08a",
+      "reviewed_sha256": "f697be86d0a80861796eb126d029abad2989a45b546e303bacaee0134345204c",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "642ff8788b79550174b415f9684e8391552d2b21bfc572527a6f8c767c719032",
+      "reviewed_sha256": "f2e2c59226cd68081697e6bb603eac6924631d33e6de7aa3580c50ce7e32c55c",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "a532c2426543c15a6816b534d7e69770692ff7597e8037ed6ecbad287d0f9777",
+      "reviewed_sha256": "9f9f949e78849cb494d793026f41dc0113f3a12e7a8da8b2058e1c0bfd267389",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "scripts/check-ai-engine-ring-gemm.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0ed33250ca262f73f6c602fa677a890af96931f48e4e0f90caacd9d4359d9baa",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "f7d90070581a7d1c468e043c7887f0e2ec16f3f2568a28ff1808c70a19313b8f",
+      "reviewed_sha256": "bc5d1202e447ee09574ce7d25d4a211414ee8b63f18a2da4533d7a9ec9ac58d8",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "05bf2fba73c04bd222200c4369ddffeb93527c9450e11970e2f5c3b1c2230f73",
+      "reviewed_sha256": "bb60e3d13a95fbe141f04bd5d59ae8041ccb62ac5e48afa2b36fe217a1db47a4",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "2850d5520028f8fc6536256b19b1060ce870b0dc38746c7424e923c0afcbe859",
+      "reviewed_sha256": "ec2228e305b2e110b4c4d3266f4d05b873955c8ea9e57562afb26d0071727e29",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "39e8bbd1ee963af5487d838f615d946d9d9bb6e4ac7334f0a26699c03086997f",
+      "reviewed_sha256": "84e82eaeef0025020218eaab6986cb779cc70589a0ca0a2865d451b496077c61",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "29af69970a942fd677b169842d7c13d9388bacac91be921ddaa677d40ce4fa56",
+      "reviewed_sha256": "7e92162e00c7a4cbc6509dfadc042cd34fbf0d4b6c75569950c5705f94b695e1",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "c519e233a465687373bbd387f0c1456b3b3a9c84fea9ee9340dc108b5278c644",
+      "reviewed_sha256": "63543c40474457c40777976be0058cc6fb5c20f093c1fd7e3a67a4b93a3ec2e8",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "6710dd0c26ecca6eae528ce2c7124a259d083b157ee1bfb37c303d4743f1f4aa",
+      "reviewed_sha256": "37bd3475e56c88bcf2f7ab772c566fb55c150f73d2805672c88def6b9e765ee0",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "f11d89ef189dfb4e80cdadca0bed852f4467e3d217759266c151a6895efd2cdd",
+      "reviewed_sha256": "1509c371c1be88b7b0c8345fc0d270b9945cf1c512c4ca8ce5d10bfa6805fb26",
+      "scope": "Trace one real local inference request and add a separately scoped reading of pinned vLLM V1 source while preserving published material."
+    }
+  },
+  "article_sections": {
+    "flash-attention-io": {
+      "sections": [
+        8
+      ],
+      "scope": "Execute block rotation, backward accumulation and a parameter update with two and three local Gloo ranks",
+      "observation": "Append a distinct ring exercise after the original AllGather lab. Preserve all existing pre, figure and URL inventories. Compare all outputs and gradients with dense autograd and reject dropping remote dK/dV. CUDA/NCCL remains a target-environment check."
+    },
+    "operator-profiling": {
+      "sections": [
+        4,
+        8
+      ],
+      "scope": "Compare three GEMM mappings under one numerical and measurement contract",
+      "observation": "Append source-derived load arithmetic and a portable same-device launch protocol. Bind the actual Linux compilation and availability probe to the CUDA source. Kernel execution, event measurements and Nsight counters remain pending."
+    },
+    "model-serving": {
+      "sections": [
+        2,
+        5,
+        7
+      ],
+      "scope": "Follow a real single-slot inference request from input to emitted output and compare prompt reuse",
+      "observation": "Keep the previous SDPA, arithmetic, code and figures. Add an original request graph and the locally executed CPU llama.cpp cases. Prompt work, reused prefix, engine input batches and emitted ids are checked separately."
+    },
+    "inference-performance": {
+      "sections": [
+        3
+      ],
+      "scope": "Connect the original KV block-pool explanation to the pinned vLLM V1 request path",
+      "observation": "Retain the prior simulator and physical-pool examples. Follow one ordinary request through scheduling, block mapping, execution and release. The block arithmetic is a source-derived example, separate from native llama.cpp execution."
+    }
+  },
+  "executed_asset_sha256": {
+    "dist/diagrams/v77-engine-path.svg": "2abda91564f41af4bab63f029b5cd0e6978bc23e619bee9a17d90b4a93b2126e",
+    "dist/diagrams/v77-ring-training.svg": "1b53fa0d6912d70dccea60dc332109c359bc53cf9151cd322c3091d88f2ab0c4",
+    "dist/diagrams/v77-gemm-reuse.svg": "b1882358605bb900fb69bbeb33560038ced388562b2a43abfb8fcf6ea04f1c65",
+    "dist/labs/native-inference.zip": "1ec9b53be57a7bebd9dc945bce5e49086ea8098a52f8eebc3ff653edb58fdc95",
+    "dist/labs/native-inference/README.md": "649552efc8e9b89427eb8fc5e310183ba72a95b8317e1aee7cd565b0107876f5",
+    "dist/labs/native-inference/engine_walkthrough.py": "96dcaa8e6d5d5ebc1222adb413415848601991e17cf805f64a180a939af1c348",
+    "dist/labs/native-inference/make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+    "dist/labs/native-inference/native-responses.json": "6c1be37965362ab6bcd2a41ef7473bb4a35b1fb2aa0ba8a49f1a0254b936cd8c",
+    "dist/labs/native-inference/native-stderr.log": "c4a1ebb736ad41d6f4366870fd7208f67cadf71d7d91c1689d4347617453d539",
+    "dist/labs/native-inference/validation.json": "f59ce2567018b4d721fe17c444c77d494b423ffe2a6fcdadc84f02764e2acae7",
+    "dist/labs/ring-context-training.zip": "0abe0544dcf58e9141193749384b4b895ba15b0f5a466a2618f0a29d8e3880ed",
+    "dist/labs/ring-context-training/README.md": "e5d639df7c87096e7097c76e64f28dc1db8569da533371f0221809cd9b8d937d",
+    "dist/labs/ring-context-training/ring_training.py": "b39dcaaeebeea209d04e46ef40174b974cd89182442bec6a98c9e128be2b6963",
+    "dist/labs/ring-context-training/two-ranks.json": "1c42bebbed56cb5cf6df76ac828003e01045b84440d3afe89b116887bd51a2e6",
+    "dist/labs/ring-context-training/validation.json": "d087127d4d74a145526d11c0a3f72fbfccf1d0b5890045d5db0ffee4fc076e03",
+    "dist/labs/gemm-variants.zip": "b61994dfc01c6635526b165f436497d45dc32828bd4d03f89867b38217fd3596",
+    "dist/labs/gemm-variants/README.md": "cd085faf0a89cb9f319ddb253ec223c3d07ec0c0f12eb1811ba7f55bdbfa93d5",
+    "dist/labs/gemm-variants/binary-help.log": "61519ba4fd72251cbc0270701b70f2df0467fb4aa30e518af94745e6e3ddfb74",
+    "dist/labs/gemm-variants/device-probe.json": "5309baae3d6915840572b46cb80068d0c7deda8d279ad1f5c6a3b453b3436494",
+    "dist/labs/gemm-variants/gemm_variants.cu": "51a6aa4f08e0e95072d288b49ed80ea2fd00e181ecfd37aa714ca101ce1cf855",
+    "dist/labs/gemm-variants/gemm_variants.ptx": "86f4b06549a565937c3b5987117fad275f08ec79826e131324e9eead8b55b451",
+    "dist/labs/gemm-variants/nvcc-version.log": "77d7ef23109cd2437a8b9cf5efbc4e89996b816276077edb86143ee04f6d5269",
+    "dist/labs/gemm-variants/validation.json": "d434effc21b8b132daafcb67052715657f81dcec7b29d6787824617a70cdf384"
+  },
+  "review_scope": {
+    "body_baseline_commit": "ecae081521f6c306f8c8d55d2f0cbc36e1649131",
+    "chapters": 78,
+    "changed_bodies": [
+      "flash-attention-io",
+      "operator-profiling",
+      "model-serving",
+      "inference-performance"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "model-serving": 1,
+      "flash-attention-io": 1,
+      "operator-profiling": 1
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 52,
+    "learning_tasks": 92
+  }
+}

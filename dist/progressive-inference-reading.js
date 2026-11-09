@@ -299,4 +299,46 @@
   '乙平均两实例p95。给出1000条10ms与10条1000ms，让它先合并计数再求95%位置，得到10ms而非505ms。最后为“生成很顺却客户端停顿”设计对照：同时记录服务端逐项生成和客户端逐消息接收；前者平稳、后者成团时，继续查交付链，前者本身有空档时，再关联调度与执行。',
   '可按五项各2分检查答案：端点与单位明确；51项用50间隔且单项为空；分位数和窗口分子可复算；对照能区分计算与交付；失败、质量及未完成请求有明确口径。最后从一次循环指出输入、输出、KV长度各何时变化，时间与容量两份账才能闭合。')
  ],'先固定首输出、逐项间隔与窗口分母，再逐轮复算准入和分块，最后对照CPU物理缓存与调度的实际证据。');
+
+ serving.sections[1][1]+=
+  heading('native-inference-request-path','把三轮生成放进真实引擎')+
+  p('上一张表只看模型输入和输出。现在沿同一过程看服务怎么执行。llama-server 收到 HTTP 请求后将提示变成词元编号，创建任务，再把任务交给空闲的 slot。这里的 slot 是执行位置，保存当前任务、已处理的位置和生成状态。服务需要等待空位时，任务还没有开始模型前向。')+
+  trainingFigure('v77-engine-path','提示的末位置产生首个输出。若继续生成，上一轮选出的词元才进入模型，写入自己的 K/V。')+
+  p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
+  '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
+  '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
+ serving.sections[4][1]+=
+  '<p class="practice-links"><a href="article/inference-performance/#vllm-v1-request-path">把这张块表接进 vLLM V1 的调度、写入和归还 →</a></p>';
+ serving.sections[6][1]+=
+  heading('native-inference-engine-lab','在本机跟四次真实请求')+
+  p('实验用 llama.cpp b12110 的 HTTP 服务，固定一个 slot，模型为本地生成的单层 Llama 合成权重。GGUF 是把权重、词表与模型配置一起存放的文件格式。程序先请求 <code>/tokenize</code>，再把返回的 [1,4,5,6] 或 [1,4,5,10] 送给 <code>/completion</code>。开头的 1 是起始标记。四次请求都生成三个词元。')+
+  table(['本轮请求','复用的提示词元','实际新算的提示词元','输出编号'],[
+   ['首次 red green blue','0','4','[7,8,9]'],
+   ['原样重发，开启复用','3','1','[7,8,9]'],
+   ['改成 red green four，开启复用','3','1','[11,12,13]'],
+   ['原样重发 red green four，关闭复用','0','4','[11,12,13]']
+  ])+
+  p('对照前两行，引擎找到 4 个相同提示位置，随后把可复用长度降到 3。两行选出相同的输出，第二行实际少算 3 个提示位置。对照最后两行，输入相同且只切换复用，输出仍相同。用响应的 <code>timings.cache_n</code> 与 <code>timings.prompt_n</code> 分别核对复用和新算的提示词元。',
+  '再对照第一行的实际批次。首先把 [1,4,5,6] 送到位置 0–3，只取位置 3 的候选分数，选出编号 7。随后输入 [7] 到位置 4，选出 8。再输入 [8] 到位置 5，选出 9 后结束。所以响应中的 <code>tokens_cached</code> 是留在槽中的 4+3−1=6 个已计算位置。它和本次省去的提示计算数量分别回答不同问题。')+
+  p('脚本从原生响应和批次日志核对这些数字。把每批输入的编号抄到第 2 节图里，就能看出哪个输出进入了下一轮。流式响应还带有提示处理进度事件，脚本先按事件类型将它们分开，再数实际输出。')+
+  trainingCode('解压后运行，指定已安装的 llama-server','SHELL','python3 engine_walkthrough.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="labs/native-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-inference/README.md">环境与运行步骤</a> · <a href="labs/native-inference/engine_walkthrough.py">请求和校验源码</a> · <a href="labs/native-inference/validation.json">实际记录与源码摘要</a></p>'+
+  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。真实模型服务的多槽调度、GPU 表现与线上延迟需要各自的实验。');
+
+ const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
+ const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
+ performance.sections[2][1]+=
+  heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
+  p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
+  '<ol>'+
+  '<li><strong>进入等待队列。</strong>请求编号、提示词元编号、采样参数进入 <code>EngineCoreRequest</code>，随后成为调度器的等待项。 '+vllmLink('engine/processor.py','L424-L436','准备输入')+' · '+vllmLink('core/sched/scheduler.py','L1094-L1106','登记请求')+'</li>'+
+  '<li><strong>为本轮选词元、分配块。</strong>查询连续命中的整块，减去已计算位置，再按本轮的词元额度取一段。KV 管理器给这些位置分块。若空间不足，这条请求可能延后。 '+vllmLink('core/sched/scheduler.py','L380-L489','预算与分块')+' · '+vllmLink('core/kv_cache_manager.py','L153-L212','命中与分配')+'</li>'+
+  '<li><strong>执行模型批次。</strong>执行器按各请求的已计算长度准备待处理编号和逻辑位置。块表给出位置对应的物理存储，写入映射告诉注意力算子新 K/V 应存在哪里。 '+vllmLink('engine/core.py','L280-L299','一次执行循环')+' · '+vllmLink('worker/gpu_model_runner.py','L862-L969','准备模型输入')+'</li>'+
+  '<li><strong>收下输出，归还引用。</strong>调度器把采样得到的编号追加到对应请求，判断输出上限等结束条件。结束后归还该请求的块引用。仍有其他引用的块继续使用，归零的块可以成为可分配候选。 '+vllmLink('core/sched/scheduler.py','L909-L970','收下输出')+' · '+vllmLink('core/block_pool.py','L236-L266','引用与归还')+'</li>'+
+  '</ol>'+
+  p('输出处理器把新编号逐步转回文本，组装请求结果。客户端的接收时刻还要经过传输。 '+vllmLink('engine/output_processor.py','L408-L434','逐步解码与组装输出'))+
+  p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
+  '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
+  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+ performance.updated='2026.11.09';
 })();

@@ -392,7 +392,8 @@
         "context-parallel-attention",
         "context-parallel-merge",
         "context-parallel-cost",
-        "context-parallel-lab"
+        "context-parallel-lab",
+        "ring-context-training"
       ]
     },
     {
@@ -409,9 +410,14 @@
       "id": "operator-profiling",
       "targets": [
         "operator-cpu-run",
-        "operator-profile-run"
+        "operator-profile-run",
+        "gemm-two-row-reuse",
+        "same-device-gemm"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "gemm-two-row-reuse",
+        "same-device-gemm"
+      ]
     },
     {
       "id": "gpu-cluster",
@@ -524,7 +530,15 @@
       "id": "model-serving",
       "targets": [
         "sdpa-cache-path",
-        "subsection-5-qvstci"
+        "subsection-5-qvstci",
+        "native-inference-request-path",
+        "native-inference-engine-lab"
+      ],
+      "visible_targets": [
+        "native-inference-request-path",
+        "sdpa-cache-path",
+        "subsection-5-qvstci",
+        "native-inference-engine-lab"
       ]
     },
     {
@@ -551,6 +565,24 @@
         "subsection-3-10ydz4e",
         "subsection-3-cwmlui",
         "subsection-3-nrn0x9",
+        "subsection-6-lachm",
+        "subsection-6-i6f5lp",
+        "subsection-6-10lmpd4",
+        "subsection-6-10t5wk9",
+        "subsection-6-38l2a0",
+        "subsection-6-1i98zxe",
+        "subsection-6-1ajl0y9",
+        "vllm-v1-request-path"
+      ],
+      "visible_targets": [
+        "subsection-3-zgqy1s",
+        "subsection-3-svno8c",
+        "subsection-3-1nk63tb",
+        "subsection-3-icqxg5",
+        "subsection-3-10ydz4e",
+        "subsection-3-cwmlui",
+        "subsection-3-nrn0x9",
+        "vllm-v1-request-path",
         "subsection-6-lachm",
         "subsection-6-i6f5lp",
         "subsection-6-10lmpd4",

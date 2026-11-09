@@ -1,0 +1,784 @@
+{
+  "completions": {
+    "cache_disabled": {
+      "events": [
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 0,
+            "processed": 0,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 0,
+            "processed": 4,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": " five",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            11
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 1
+        },
+        {
+          "content": " six",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            12
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 2
+        },
+        {
+          "content": " seven",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            13
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3
+        },
+        {
+          "content": "",
+          "generation_settings": {
+            "adaptive_decay": 0.8999999761581421,
+            "adaptive_target": -1.0,
+            "backend_sampling": false,
+            "chat_format": "Content-only",
+            "dry_allowed_length": 2,
+            "dry_base": 1.75,
+            "dry_multiplier": 0.0,
+            "dry_penalty_last_n": 64,
+            "dry_sequence_breakers": [
+              "\n",
+              ":",
+              "\"",
+              "*"
+            ],
+            "dynatemp_exponent": 1.0,
+            "dynatemp_range": 0.0,
+            "frequency_penalty": 0.0,
+            "generation_prompt": "",
+            "grammar": "",
+            "grammar_lazy": false,
+            "grammar_triggers": [],
+            "ignore_eos": false,
+            "logit_bias": [],
+            "lora": [],
+            "max_tokens": 3,
+            "min_keep": 0,
+            "min_p": 0.05000000074505806,
+            "mirostat": 0,
+            "mirostat_eta": 0.10000000149011612,
+            "mirostat_tau": 5.0,
+            "n_discard": 0,
+            "n_keep": 0,
+            "n_predict": 3,
+            "n_probs": 0,
+            "post_sampling_probs": false,
+            "presence_penalty": 0.0,
+            "preserved_tokens": [],
+            "reasoning_format": "deepseek",
+            "reasoning_in_content": false,
+            "repeat_last_n": 64,
+            "repeat_penalty": 1.0,
+            "samplers": [
+              "penalties",
+              "dry",
+              "top_n_sigma",
+              "top_k",
+              "typ_p",
+              "top_p",
+              "min_p",
+              "xtc",
+              "temperature"
+            ],
+            "seed": 7,
+            "speculative.types": "none",
+            "stop": [],
+            "stream": true,
+            "temperature": 0.0,
+            "timings_per_token": false,
+            "top_k": 40,
+            "top_n_sigma": -1.0,
+            "top_p": 0.949999988079071,
+            "typical_p": 1.0,
+            "xtc_probability": 0.0,
+            "xtc_threshold": 0.10000000149011612
+          },
+          "has_new_line": false,
+          "id_slot": 0,
+          "index": 0,
+          "model": "synthetic-cache-walkthrough",
+          "prompt": "<s> red green four",
+          "stop": true,
+          "stop_type": "limit",
+          "stopping_word": "",
+          "timings": {
+            "cache_n": 0,
+            "predicted_ms": 0.09,
+            "predicted_n": 3,
+            "predicted_per_second": 22222.222222222223,
+            "predicted_per_token_ms": 0.045,
+            "prompt_ms": 0.082,
+            "prompt_n": 4,
+            "prompt_per_second": 48780.487804878045,
+            "prompt_per_token_ms": 0.0205
+          },
+          "tokens": [],
+          "tokens_cached": 6,
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3,
+          "truncated": false
+        }
+      ],
+      "http_status": 200,
+      "request": {
+        "cache_prompt": false,
+        "id_slot": 0,
+        "n_predict": 3,
+        "prompt": [
+          1,
+          4,
+          5,
+          10
+        ],
+        "return_progress": true,
+        "return_tokens": true,
+        "seed": 7,
+        "stream": true,
+        "temperature": 0.0
+      }
+    },
+    "changed_suffix": {
+      "events": [
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 3,
+            "processed": 3,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 3,
+            "processed": 4,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": " five",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            11
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 1
+        },
+        {
+          "content": " six",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            12
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 2
+        },
+        {
+          "content": " seven",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            13
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3
+        },
+        {
+          "content": "",
+          "generation_settings": {
+            "adaptive_decay": 0.8999999761581421,
+            "adaptive_target": -1.0,
+            "backend_sampling": false,
+            "chat_format": "Content-only",
+            "dry_allowed_length": 2,
+            "dry_base": 1.75,
+            "dry_multiplier": 0.0,
+            "dry_penalty_last_n": 64,
+            "dry_sequence_breakers": [
+              "\n",
+              ":",
+              "\"",
+              "*"
+            ],
+            "dynatemp_exponent": 1.0,
+            "dynatemp_range": 0.0,
+            "frequency_penalty": 0.0,
+            "generation_prompt": "",
+            "grammar": "",
+            "grammar_lazy": false,
+            "grammar_triggers": [],
+            "ignore_eos": false,
+            "logit_bias": [],
+            "lora": [],
+            "max_tokens": 3,
+            "min_keep": 0,
+            "min_p": 0.05000000074505806,
+            "mirostat": 0,
+            "mirostat_eta": 0.10000000149011612,
+            "mirostat_tau": 5.0,
+            "n_discard": 0,
+            "n_keep": 0,
+            "n_predict": 3,
+            "n_probs": 0,
+            "post_sampling_probs": false,
+            "presence_penalty": 0.0,
+            "preserved_tokens": [],
+            "reasoning_format": "deepseek",
+            "reasoning_in_content": false,
+            "repeat_last_n": 64,
+            "repeat_penalty": 1.0,
+            "samplers": [
+              "penalties",
+              "dry",
+              "top_n_sigma",
+              "top_k",
+              "typ_p",
+              "top_p",
+              "min_p",
+              "xtc",
+              "temperature"
+            ],
+            "seed": 7,
+            "speculative.types": "none",
+            "stop": [],
+            "stream": true,
+            "temperature": 0.0,
+            "timings_per_token": false,
+            "top_k": 40,
+            "top_n_sigma": -1.0,
+            "top_p": 0.949999988079071,
+            "typical_p": 1.0,
+            "xtc_probability": 0.0,
+            "xtc_threshold": 0.10000000149011612
+          },
+          "has_new_line": false,
+          "id_slot": 0,
+          "index": 0,
+          "model": "synthetic-cache-walkthrough",
+          "prompt": "<s> red green four",
+          "stop": true,
+          "stop_type": "limit",
+          "stopping_word": "",
+          "timings": {
+            "cache_n": 3,
+            "predicted_ms": 0.077,
+            "predicted_n": 3,
+            "predicted_per_second": 25974.025974025975,
+            "predicted_per_token_ms": 0.0385,
+            "prompt_ms": 0.048,
+            "prompt_n": 1,
+            "prompt_per_second": 20833.333333333332,
+            "prompt_per_token_ms": 0.048
+          },
+          "tokens": [],
+          "tokens_cached": 6,
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3,
+          "truncated": false
+        }
+      ],
+      "http_status": 200,
+      "request": {
+        "cache_prompt": true,
+        "id_slot": 0,
+        "n_predict": 3,
+        "prompt": [
+          1,
+          4,
+          5,
+          10
+        ],
+        "return_progress": true,
+        "return_tokens": true,
+        "seed": 7,
+        "stream": true,
+        "temperature": 0.0
+      }
+    },
+    "cold": {
+      "events": [
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 0,
+            "processed": 0,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 0,
+            "processed": 4,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": " one",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            7
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 1
+        },
+        {
+          "content": " two",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            8
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 2
+        },
+        {
+          "content": " three",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            9
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3
+        },
+        {
+          "content": "",
+          "generation_settings": {
+            "adaptive_decay": 0.8999999761581421,
+            "adaptive_target": -1.0,
+            "backend_sampling": false,
+            "chat_format": "Content-only",
+            "dry_allowed_length": 2,
+            "dry_base": 1.75,
+            "dry_multiplier": 0.0,
+            "dry_penalty_last_n": 64,
+            "dry_sequence_breakers": [
+              "\n",
+              ":",
+              "\"",
+              "*"
+            ],
+            "dynatemp_exponent": 1.0,
+            "dynatemp_range": 0.0,
+            "frequency_penalty": 0.0,
+            "generation_prompt": "",
+            "grammar": "",
+            "grammar_lazy": false,
+            "grammar_triggers": [],
+            "ignore_eos": false,
+            "logit_bias": [],
+            "lora": [],
+            "max_tokens": 3,
+            "min_keep": 0,
+            "min_p": 0.05000000074505806,
+            "mirostat": 0,
+            "mirostat_eta": 0.10000000149011612,
+            "mirostat_tau": 5.0,
+            "n_discard": 0,
+            "n_keep": 0,
+            "n_predict": 3,
+            "n_probs": 0,
+            "post_sampling_probs": false,
+            "presence_penalty": 0.0,
+            "preserved_tokens": [],
+            "reasoning_format": "deepseek",
+            "reasoning_in_content": false,
+            "repeat_last_n": 64,
+            "repeat_penalty": 1.0,
+            "samplers": [
+              "penalties",
+              "dry",
+              "top_n_sigma",
+              "top_k",
+              "typ_p",
+              "top_p",
+              "min_p",
+              "xtc",
+              "temperature"
+            ],
+            "seed": 7,
+            "speculative.types": "none",
+            "stop": [],
+            "stream": true,
+            "temperature": 0.0,
+            "timings_per_token": false,
+            "top_k": 40,
+            "top_n_sigma": -1.0,
+            "top_p": 0.949999988079071,
+            "typical_p": 1.0,
+            "xtc_probability": 0.0,
+            "xtc_threshold": 0.10000000149011612
+          },
+          "has_new_line": false,
+          "id_slot": 0,
+          "index": 0,
+          "model": "synthetic-cache-walkthrough",
+          "prompt": "<s> red green blue",
+          "stop": true,
+          "stop_type": "limit",
+          "stopping_word": "",
+          "timings": {
+            "cache_n": 0,
+            "predicted_ms": 0.145,
+            "predicted_n": 3,
+            "predicted_per_second": 13793.103448275862,
+            "predicted_per_token_ms": 0.0725,
+            "prompt_ms": 0.211,
+            "prompt_n": 4,
+            "prompt_per_second": 18957.34597156398,
+            "prompt_per_token_ms": 0.05275
+          },
+          "tokens": [],
+          "tokens_cached": 6,
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3,
+          "truncated": false
+        }
+      ],
+      "http_status": 200,
+      "request": {
+        "cache_prompt": true,
+        "id_slot": 0,
+        "n_predict": 3,
+        "prompt": [
+          1,
+          4,
+          5,
+          6
+        ],
+        "return_progress": true,
+        "return_tokens": true,
+        "seed": 7,
+        "stream": true,
+        "temperature": 0.0
+      }
+    },
+    "repeat": {
+      "events": [
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 3,
+            "processed": 3,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": "",
+          "id_slot": -1,
+          "index": 0,
+          "prompt_progress": {
+            "cache": 3,
+            "processed": 4,
+            "time_ms": 0,
+            "total": 4
+          },
+          "stop": false,
+          "tokens": [
+            0
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 0
+        },
+        {
+          "content": " one",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            7
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 1
+        },
+        {
+          "content": " two",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            8
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 2
+        },
+        {
+          "content": " three",
+          "id_slot": -1,
+          "index": 0,
+          "stop": false,
+          "tokens": [
+            9
+          ],
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3
+        },
+        {
+          "content": "",
+          "generation_settings": {
+            "adaptive_decay": 0.8999999761581421,
+            "adaptive_target": -1.0,
+            "backend_sampling": false,
+            "chat_format": "Content-only",
+            "dry_allowed_length": 2,
+            "dry_base": 1.75,
+            "dry_multiplier": 0.0,
+            "dry_penalty_last_n": 64,
+            "dry_sequence_breakers": [
+              "\n",
+              ":",
+              "\"",
+              "*"
+            ],
+            "dynatemp_exponent": 1.0,
+            "dynatemp_range": 0.0,
+            "frequency_penalty": 0.0,
+            "generation_prompt": "",
+            "grammar": "",
+            "grammar_lazy": false,
+            "grammar_triggers": [],
+            "ignore_eos": false,
+            "logit_bias": [],
+            "lora": [],
+            "max_tokens": 3,
+            "min_keep": 0,
+            "min_p": 0.05000000074505806,
+            "mirostat": 0,
+            "mirostat_eta": 0.10000000149011612,
+            "mirostat_tau": 5.0,
+            "n_discard": 0,
+            "n_keep": 0,
+            "n_predict": 3,
+            "n_probs": 0,
+            "post_sampling_probs": false,
+            "presence_penalty": 0.0,
+            "preserved_tokens": [],
+            "reasoning_format": "deepseek",
+            "reasoning_in_content": false,
+            "repeat_last_n": 64,
+            "repeat_penalty": 1.0,
+            "samplers": [
+              "penalties",
+              "dry",
+              "top_n_sigma",
+              "top_k",
+              "typ_p",
+              "top_p",
+              "min_p",
+              "xtc",
+              "temperature"
+            ],
+            "seed": 7,
+            "speculative.types": "none",
+            "stop": [],
+            "stream": true,
+            "temperature": 0.0,
+            "timings_per_token": false,
+            "top_k": 40,
+            "top_n_sigma": -1.0,
+            "top_p": 0.949999988079071,
+            "typical_p": 1.0,
+            "xtc_probability": 0.0,
+            "xtc_threshold": 0.10000000149011612
+          },
+          "has_new_line": false,
+          "id_slot": 0,
+          "index": 0,
+          "model": "synthetic-cache-walkthrough",
+          "prompt": "<s> red green blue",
+          "stop": true,
+          "stop_type": "limit",
+          "stopping_word": "",
+          "timings": {
+            "cache_n": 3,
+            "predicted_ms": 0.114,
+            "predicted_n": 3,
+            "predicted_per_second": 17543.859649122805,
+            "predicted_per_token_ms": 0.057,
+            "prompt_ms": 0.072,
+            "prompt_n": 1,
+            "prompt_per_second": 13888.88888888889,
+            "prompt_per_token_ms": 0.072
+          },
+          "tokens": [],
+          "tokens_cached": 6,
+          "tokens_evaluated": 4,
+          "tokens_predicted": 3,
+          "truncated": false
+        }
+      ],
+      "http_status": 200,
+      "request": {
+        "cache_prompt": true,
+        "id_slot": 0,
+        "n_predict": 3,
+        "prompt": [
+          1,
+          4,
+          5,
+          6
+        ],
+        "return_progress": true,
+        "return_tokens": true,
+        "seed": 7,
+        "stream": true,
+        "temperature": 0.0
+      }
+    }
+  },
+  "tokenizations": {
+    "red green blue": {
+      "request": {
+        "add_special": true,
+        "content": "red green blue",
+        "with_pieces": true
+      },
+      "response": {
+        "tokens": [
+          {
+            "id": 1,
+            "piece": "<s>"
+          },
+          {
+            "id": 4,
+            "piece": " red"
+          },
+          {
+            "id": 5,
+            "piece": " green"
+          },
+          {
+            "id": 6,
+            "piece": " blue"
+          }
+        ]
+      }
+    },
+    "red green four": {
+      "request": {
+        "add_special": true,
+        "content": "red green four",
+        "with_pieces": true
+      },
+      "response": {
+        "tokens": [
+          {
+            "id": 1,
+            "piece": "<s>"
+          },
+          {
+            "id": 4,
+            "piece": " red"
+          },
+          {
+            "id": 5,
+            "piece": " green"
+          },
+          {
+            "id": 10,
+            "piece": " four"
+          }
+        ]
+      }
+    }
+  }
+}

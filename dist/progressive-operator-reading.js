@@ -112,4 +112,17 @@
  a.desc=a.intro='从数据契约与数值参考出发，逐步读懂求和、softmax 和分块矩阵乘法的线程映射、共享内存与同步，再区分正确性、编译证据和性能测量。';
  a.baseline='CPU实验：Python 3.9+与C11；CUDA编译：Linux x86_64、CUDA12.9.1；GPU执行另需兼容设备与驱动';
  a.refs=[...new Set([...a.refs,'cudaCoreGuide','cudaCoreCompiler'])];a.updated='2026.11.08';
+
+ a.sections[3][1]+=
+ '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+
+ p('接着前面的分块乘法，固定行主序 FP32 输入和乘加顺序。朴素版每个线程直接读 A 的一行与 B 的一列，计算一个输出。分块版先把 A、B 的小块装入共享内存，块里的线程再各算一个输出。双行复用版保持 16×16 个线程，每个线程多算一行同一列。它读到一个 B 值后，分别乘两行对应的 A 值，累加到两个寄存器。')+
+ trainingFigure('v77-gemm-reuse','覆盖同样的 32×16 输出时，两个分块线程块各装载一次 B。同一块内计算两行，可以只装载一次 B。')+
+ p('只看 K 轴上 16 项的完整一段。两个普通线程块分别装入 16×16 的 A 和 B，共请求 1024 个 FP32 值。双行复用的一个线程块装入 32×16 的 A 和 16×16 的 B，共请求 768 个值，少 256 个值，即 1024 字节。这是从源码数出的装载量，缓存命中会改变实际显存流量。共享内存和寄存器也会变动，所以速度需要在同一设备上测。');
+ a.sections[7][1]+=
+ '<h3 id="same-device-gemm">同卡对照三种 GEMM</h3>'+
+ p('先用同一参考逐项检查三个版本。设备验收程序会对五种形状的 8430 个结果逐项回读，其中 35×67×19 同时触发行、列和 K 轴的尾块。越界装载补零，屏障仍由整块线程到达，只有有效位置写回。')+
+ trainingCode('按实验说明编译后，在同一张卡上验数值并计时','SHELL','./gemm_variants --validate > validate.json\n./gemm_variants --benchmark > benchmark.json')+
+ p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
+ '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
+ '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
 })();

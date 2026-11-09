@@ -172,7 +172,7 @@ assert.equal(vm.runInContext('inferenceCacheSource',context),source);
 assert([...article.sections[5][1].matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].some(m=>decode(m[1])===source.trim()));
 assert(article.sections[2][1].includes('id="inference-cache-mechanism"'));
 assert(article.sections[5][1].includes('id="inference-cache-run"'));
-assert.equal(article.updated,'2026.11.08');assert(article.minutes>=50);
+assert(article.updated>='2026.11.08');assert(article.minutes>=50);
 execFileSync('python3',['-c',`from pathlib import Path
 import zipfile
 lab=Path('dist/labs/inference-cache')

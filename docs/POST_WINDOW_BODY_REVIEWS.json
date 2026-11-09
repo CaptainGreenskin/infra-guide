@@ -3954,6 +3954,61 @@
         "分层诊断：会合、数值、规模与完整训练",
         "实战与变化题：真实Gloo数值和协议反例"
       ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "690e971b54a10d9a539f4e21ba0cba92cc516161db737ac4c52e2964cbe9fece",
+      "reviewed_content_sha256": "6e8fb7acfb1cd5901a72ce18fe2ab7f14a23e97b805955b923b523f4d8658cf8",
+      "scope": "Execute block rotation, backward accumulation and a parameter update with two and three local Gloo ranks",
+      "observation": "Append a distinct ring exercise after the original AllGather lab. Preserve all existing pre, figure and URL inventories. Compare all outputs and gradients with dense autograd and reject dropping remote dK/dV. CUDA/NCCL remains a target-environment check.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1121b5ccc047a86cc8b585abb3427fe4d7605bd8c45ca426592c22b29b721756",
+      "reviewed_content_sha256": "caf7afc855996cd76a30ed4b651806218ae6b71d07afefba583577be3a9e6878",
+      "scope": "Follow a real single-slot inference request from input to emitted output and compare prompt reuse",
+      "observation": "Keep the previous SDPA, arithmetic, code and figures. Add an original request graph and the locally executed CPU llama.cpp cases. Prompt work, reused prefix, engine input batches and emitted ids are checked separately.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "3f685b7da24f8d3f22f9a3f0eda437e76d80028c0fd2b2fd2289adcc9b91254f",
+      "reviewed_content_sha256": "372694922860688cb094135d0464cc23397324ade6b447b0b060e13837112a9c",
+      "scope": "Connect the original KV block-pool explanation to the pinned vLLM V1 request path",
+      "observation": "Retain the prior simulator and physical-pool examples. Follow one ordinary request through scheduling, block mapping, execution and release. The block arithmetic is a source-derived example, separate from native llama.cpp execution.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

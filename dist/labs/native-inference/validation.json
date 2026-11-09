@@ -1,0 +1,445 @@
+{
+  "cases": [
+    {
+      "api": {
+        "cache_n": 0,
+        "content": " one two three",
+        "output_ids": [
+          7,
+          8,
+          9
+        ],
+        "predicted_n": 3,
+        "prompt_n": 4,
+        "prompt_progress": [
+          {
+            "cache": 0,
+            "processed": 0,
+            "total": 4
+          },
+          {
+            "cache": 0,
+            "processed": 4,
+            "total": 4
+          }
+        ],
+        "tokens_cached": 6,
+        "tokens_evaluated": 4
+      },
+      "cache_prompt": true,
+      "matching_previous_prompt_prefix_ids": [],
+      "name": "cold",
+      "native": {
+        "all_match_before_last_token_recheck": null,
+        "batches": [
+          {
+            "n_tokens": 4,
+            "rows": [
+              {
+                "logits_requested": false,
+                "position": 0,
+                "sequence": 0,
+                "token_id": 1
+              },
+              {
+                "logits_requested": false,
+                "position": 1,
+                "sequence": 0,
+                "token_id": 4
+              },
+              {
+                "logits_requested": false,
+                "position": 2,
+                "sequence": 0,
+                "token_id": 5
+              },
+              {
+                "logits_requested": true,
+                "position": 3,
+                "sequence": 0,
+                "token_id": 6
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 4,
+                "sequence": 0,
+                "token_id": 7
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 5,
+                "sequence": 0,
+                "token_id": 8
+              }
+            ]
+          }
+        ],
+        "kept_prefix_tokens": 0,
+        "prompt_tokens": 4,
+        "removed_from_position": 0,
+        "sampled_ids": [
+          7,
+          8,
+          9
+        ],
+        "slot_id": 0,
+        "slot_tokens_at_finish": 6
+      },
+      "prompt_ids": [
+        1,
+        4,
+        5,
+        6
+      ],
+      "text": "red green blue"
+    },
+    {
+      "api": {
+        "cache_n": 3,
+        "content": " one two three",
+        "output_ids": [
+          7,
+          8,
+          9
+        ],
+        "predicted_n": 3,
+        "prompt_n": 1,
+        "prompt_progress": [
+          {
+            "cache": 3,
+            "processed": 3,
+            "total": 4
+          },
+          {
+            "cache": 3,
+            "processed": 4,
+            "total": 4
+          }
+        ],
+        "tokens_cached": 6,
+        "tokens_evaluated": 4
+      },
+      "cache_prompt": true,
+      "matching_previous_prompt_prefix_ids": [
+        1,
+        4,
+        5,
+        6
+      ],
+      "name": "repeat",
+      "native": {
+        "all_match_before_last_token_recheck": 4,
+        "batches": [
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 3,
+                "sequence": 0,
+                "token_id": 6
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 4,
+                "sequence": 0,
+                "token_id": 7
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 5,
+                "sequence": 0,
+                "token_id": 8
+              }
+            ]
+          }
+        ],
+        "kept_prefix_tokens": 3,
+        "prompt_tokens": 4,
+        "removed_from_position": 3,
+        "sampled_ids": [
+          7,
+          8,
+          9
+        ],
+        "slot_id": 0,
+        "slot_tokens_at_finish": 6
+      },
+      "prompt_ids": [
+        1,
+        4,
+        5,
+        6
+      ],
+      "text": "red green blue"
+    },
+    {
+      "api": {
+        "cache_n": 3,
+        "content": " five six seven",
+        "output_ids": [
+          11,
+          12,
+          13
+        ],
+        "predicted_n": 3,
+        "prompt_n": 1,
+        "prompt_progress": [
+          {
+            "cache": 3,
+            "processed": 3,
+            "total": 4
+          },
+          {
+            "cache": 3,
+            "processed": 4,
+            "total": 4
+          }
+        ],
+        "tokens_cached": 6,
+        "tokens_evaluated": 4
+      },
+      "cache_prompt": true,
+      "matching_previous_prompt_prefix_ids": [
+        1,
+        4,
+        5
+      ],
+      "name": "changed_suffix",
+      "native": {
+        "all_match_before_last_token_recheck": null,
+        "batches": [
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 3,
+                "sequence": 0,
+                "token_id": 10
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 4,
+                "sequence": 0,
+                "token_id": 11
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 5,
+                "sequence": 0,
+                "token_id": 12
+              }
+            ]
+          }
+        ],
+        "kept_prefix_tokens": 3,
+        "prompt_tokens": 4,
+        "removed_from_position": 3,
+        "sampled_ids": [
+          11,
+          12,
+          13
+        ],
+        "slot_id": 0,
+        "slot_tokens_at_finish": 6
+      },
+      "prompt_ids": [
+        1,
+        4,
+        5,
+        10
+      ],
+      "text": "red green four"
+    },
+    {
+      "api": {
+        "cache_n": 0,
+        "content": " five six seven",
+        "output_ids": [
+          11,
+          12,
+          13
+        ],
+        "predicted_n": 3,
+        "prompt_n": 4,
+        "prompt_progress": [
+          {
+            "cache": 0,
+            "processed": 0,
+            "total": 4
+          },
+          {
+            "cache": 0,
+            "processed": 4,
+            "total": 4
+          }
+        ],
+        "tokens_cached": 6,
+        "tokens_evaluated": 4
+      },
+      "cache_prompt": false,
+      "matching_previous_prompt_prefix_ids": [
+        1,
+        4,
+        5,
+        10
+      ],
+      "name": "cache_disabled",
+      "native": {
+        "all_match_before_last_token_recheck": null,
+        "batches": [
+          {
+            "n_tokens": 4,
+            "rows": [
+              {
+                "logits_requested": false,
+                "position": 0,
+                "sequence": 0,
+                "token_id": 1
+              },
+              {
+                "logits_requested": false,
+                "position": 1,
+                "sequence": 0,
+                "token_id": 4
+              },
+              {
+                "logits_requested": false,
+                "position": 2,
+                "sequence": 0,
+                "token_id": 5
+              },
+              {
+                "logits_requested": true,
+                "position": 3,
+                "sequence": 0,
+                "token_id": 10
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 4,
+                "sequence": 0,
+                "token_id": 11
+              }
+            ]
+          },
+          {
+            "n_tokens": 1,
+            "rows": [
+              {
+                "logits_requested": true,
+                "position": 5,
+                "sequence": 0,
+                "token_id": 12
+              }
+            ]
+          }
+        ],
+        "kept_prefix_tokens": 0,
+        "prompt_tokens": 4,
+        "removed_from_position": 0,
+        "sampled_ids": [
+          11,
+          12,
+          13
+        ],
+        "slot_id": 0,
+        "slot_tokens_at_finish": 6
+      },
+      "prompt_ids": [
+        1,
+        4,
+        5,
+        10
+      ],
+      "text": "red green four"
+    }
+  ],
+  "engine": {
+    "args": [
+      "--ctx-size",
+      "128",
+      "--parallel",
+      "1",
+      "--device",
+      "none",
+      "--n-gpu-layers",
+      "0",
+      "--threads",
+      "1",
+      "--threads-batch",
+      "1",
+      "--batch-size",
+      "32",
+      "--ubatch-size",
+      "32",
+      "--no-warmup",
+      "--cache-ram",
+      "0",
+      "--cache-reuse",
+      "0",
+      "--verbose",
+      "--no-ui",
+      "--fit",
+      "off",
+      "--alias",
+      "synthetic-cache-walkthrough"
+    ],
+    "backend": "CPU",
+    "batch_debug_env": {
+      "LLAMA_BATCH_DEBUG": "1"
+    },
+    "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+    "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+    "platform": "Darwin arm64",
+    "version": "0.9.0-dev (build 12110, commit cd959bae9)"
+  },
+  "model": {
+    "architecture": "llama",
+    "bytes": 22144,
+    "gguf_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66",
+    "kind": "synthetic"
+  },
+  "scope": "one native loopback server, one CPU slot, synthetic weights, greedy generation",
+  "source_sha256": {
+    "engine_walkthrough.py": "96dcaa8e6d5d5ebc1222adb413415848601991e17cf805f64a180a939af1c348",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf"
+  },
+  "status": "passed"
+}

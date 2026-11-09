@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="368" viewBox="0 0 440 368" role="img" aria-labelledby="ring-title ring-desc">
+  <title id="ring-title">三个 CPU rank 的环形注意力训练</title>
+  <desc id="ring-desc">CPU/Gloo 实验处理 1536 个位置，每个 rank 持有 512 个位置。每跳 rank i 发送到 (i+1) mod 3。前向的 Q 留在本地。两个交换后，rank 0 依次查看归属 0、2、1 的 K/V 块，rank 1 查看 1、0、2，rank 2 查看 2、1、0。反向的包带着 K/V 和累计的 dK/dV。各 rank 加上本地 Q 的贡献，第三跳把累计梯度还给归属 rank。</desc>
+  <metadata id="ring-training-case">{"device":"cpu","backend":"gloo","world_size":3,"positions":1536,"position_ranges_half_open":[[0,512],[512,1024],[1024,1536]],"send_edges":[[0,1],[1,2],[2,0]],"forward_hops":2,"forward_owners":[[0,2,1],[1,0,2],[2,1,0]],"backward_hops":3,"backward_owner_0_path":[0,1,2,0],"backward_returned_owners":[0,1,2]}</metadata>
+  <defs>
+    <marker id="ring-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 8 4 0 8z" fill="#42628f"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="366" rx="13" fill="#fcfdff" stroke="#c3d0df"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#192d47">
+    <text x="17" y="31" font-size="23" font-weight="700">环形注意力训练</text>
+    <rect x="317" y="12" width="106" height="28" rx="14" fill="#e3ebf7"/>
+    <text x="370" y="32" text-anchor="middle" fill="#264c79" font-size="16" font-weight="650">CPU / Gloo</text>
+    <text x="17" y="55" fill="#425771" font-size="17">1536 个位置 · 3 个 rank 各持有 512 个</text>
+
+    <g data-rank="0" data-range="0 512">
+      <rect x="17" y="70" width="112" height="47" rx="6" fill="#eaf2ff" stroke="#a7bbdf"/>
+      <text x="73" y="90" text-anchor="middle" fill="#184b91" font-size="17" font-weight="700">rank 0</text>
+      <text x="73" y="109" text-anchor="middle" font-size="16">0–511</text>
+    </g>
+    <g data-rank="1" data-range="512 1024">
+      <rect x="164" y="70" width="112" height="47" rx="6" fill="#e8f6f2" stroke="#9ac6bb"/>
+      <text x="220" y="90" text-anchor="middle" fill="#126357" font-size="17" font-weight="700">rank 1</text>
+      <text x="220" y="109" text-anchor="middle" font-size="16">512–1023</text>
+    </g>
+    <g data-rank="2" data-range="1024 1536">
+      <rect x="311" y="70" width="112" height="47" rx="6" fill="#f1ebfa" stroke="#c0aed9"/>
+      <text x="367" y="90" text-anchor="middle" fill="#67448c" font-size="17" font-weight="700">rank 2</text>
+      <text x="367" y="109" text-anchor="middle" font-size="16">1024–1535</text>
+    </g>
+    <g fill="none" stroke="#42628f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#ring-arrow)">
+      <path data-edge="0 1" d="M132 92H160"/>
+      <path data-edge="1 2" d="M279 92H307"/>
+      <path data-edge="2 0" d="M367 117V130H73V119"/>
+    </g>
+    <text x="220" y="152" text-anchor="middle" fill="#425771" font-size="17">每跳从 rank i 发送到 (i+1) mod 3</text>
+
+    <text x="17" y="177" font-size="19" font-weight="700">前向 2 跳 · Q 留在本地，逐块查看 K/V</text>
+    <g font-size="16" text-anchor="middle">
+      <rect x="17" y="185" width="406" height="94" rx="7" fill="#ffffff" stroke="#c3d0df"/>
+      <path d="M18 193Q18 186 25 186H415Q422 186 422 193V209H18Z" fill="#edf2f8"/>
+      <path d="M18 209H422M18 232H422M18 255H422M110 186V278M215 186V278M319 186V278" stroke="#d8e1ec"/>
+      <text y="203" fill="#425771" font-weight="650"><tspan x="63">计算端</tspan><tspan x="162">本地归属</tspan><tspan x="267">第 1 跳收到</tspan><tspan x="371">第 2 跳收到</tspan></text>
+      <text data-forward-rank="0" y="226"><tspan x="63" font-weight="650">rank 0</tspan><tspan x="162" fill="#184b91" font-size="18" font-weight="700">0</tspan><tspan x="267" fill="#67448c" font-size="18" font-weight="700">2</tspan><tspan x="371" fill="#126357" font-size="18" font-weight="700">1</tspan></text>
+      <text data-forward-rank="1" y="249"><tspan x="63" font-weight="650">rank 1</tspan><tspan x="162" fill="#126357" font-size="18" font-weight="700">1</tspan><tspan x="267" fill="#184b91" font-size="18" font-weight="700">0</tspan><tspan x="371" fill="#67448c" font-size="18" font-weight="700">2</tspan></text>
+      <text data-forward-rank="2" y="272"><tspan x="63" font-weight="650">rank 2</tspan><tspan x="162" fill="#67448c" font-size="18" font-weight="700">2</tspan><tspan x="267" fill="#126357" font-size="18" font-weight="700">1</tspan><tspan x="371" fill="#184b91" font-size="18" font-weight="700">0</tspan></text>
+    </g>
+
+    <text x="17" y="305" font-size="19" font-weight="700">反向 3 跳 · 累加并归还 dK/dV</text>
+    <rect x="17" y="314" width="406" height="41" rx="6" fill="#eaf0f9"/>
+    <text x="27" y="332" font-size="17" font-weight="650" data-backward-owner="0">归属 0 的包　0 → 1 → 2 → 0</text>
+    <text x="27" y="351" fill="#425771" font-size="16">每站加上本地 Q 的贡献，末跳归还原 rank。</text>
+  </g>
+</svg>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="660" viewBox="0 0 440 660" role="img" aria-labelledby="engine-path-title engine-path-desc">
+  <title id="engine-path-title">一次推理请求的执行路径</title>
+  <desc id="engine-path-desc">HTTP 请求带来提示词。分词把文本转成 token ID，引擎用 slot 保存该请求的执行状态。Prefill 处理提示词，若复用前缀 K/V 则从可复用前缀之后继续，并保存各层新增的 K/V。引擎从最后提示位置的 logits 选出首个输出 ID。每次追加输出后检查结束条件。继续时，下一轮送入上次输出的 token ID，读已有 K/V、追加本轮 K/V，再选出新输出 ID。结束时返回结果并释放 slot。</desc>
+  <defs>
+    <marker id="engine-path-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#345cb7"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="658" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" fill="#20314e" font-size="17">
+    <text x="36" y="33" font-size="23" font-weight="bold">一次推理请求怎样执行</text>
+    <text x="36" y="55" fill="#536783" font-size="16">从提示词到逐轮输出</text>
+
+    <g id="http-request" data-step="request">
+      <rect x="36" y="70" width="380" height="44" rx="6" fill="#fff" stroke="#a4b6d3"/>
+      <text x="50" y="98" font-weight="bold">HTTP 请求 · 接收提示词</text>
+    </g>
+    <g id="tokenize-prompt" data-step="tokenize">
+      <rect x="36" y="138" width="380" height="52" rx="6" fill="#fff" stroke="#a4b6d3"/>
+      <text x="50" y="159" font-weight="bold">Tokenize · 分词</text>
+      <text x="50" y="181">把提示词转成 token ID 序列</text>
+    </g>
+    <g id="request-slot" data-step="slot">
+      <rect x="36" y="214" width="380" height="52" rx="6" fill="#fff" stroke="#a4b6d3"/>
+      <text x="50" y="235" font-weight="bold">引擎 slot</text>
+      <text x="50" y="257">保存这一次请求的执行状态</text>
+    </g>
+    <g id="prefill" data-step="prefill">
+      <rect x="36" y="290" width="380" height="74" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="50" y="312" font-weight="bold">Prefill · 处理提示词</text>
+      <text x="50" y="333">送入提示词，或从可复用前缀之后继续</text>
+      <text x="50" y="354">为送入的 token 保存各层 K/V</text>
+    </g>
+    <g id="sample-first-id" data-step="sample-first">
+      <rect x="36" y="388" width="380" height="42" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="50" y="415" font-weight="bold">Sample · 选出首个输出 ID</text>
+    </g>
+    <g id="append-output" data-step="output">
+      <rect x="36" y="454" width="380" height="56" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="50" y="477" font-weight="bold">追加输出，判断是否结束</text>
+      <text x="50" y="499">输出 ID 可转回文本</text>
+    </g>
+    <g id="decode-next-token" data-step="decode">
+      <rect x="36" y="538" width="245" height="103" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="50" y="562" font-weight="bold">Decode · 下一轮</text>
+      <text x="50" y="583">送入上一次输出的 token ID</text>
+      <text x="50" y="604">读已有 K/V，追加本轮 K/V</text>
+      <text x="50" y="625">从本轮分数选出新输出 ID</text>
+    </g>
+    <g id="finish-and-release" data-step="finish">
+      <rect x="301" y="538" width="115" height="82" rx="6" fill="#fff" stroke="#a4b6d3"/>
+      <text x="358.5" y="562" text-anchor="middle" font-weight="bold">结束请求</text>
+      <text x="358.5" y="583" text-anchor="middle">返回结果</text>
+      <text x="358.5" y="604" text-anchor="middle">释放 slot</text>
+    </g>
+
+    <g fill="none" stroke="#345cb7" stroke-width="1.7" stroke-linejoin="round" marker-end="url(#engine-path-arrow)">
+      <path data-edge="http-request tokenize-prompt" d="M58 114v21"/>
+      <path data-edge="tokenize-prompt request-slot" d="M58 190v21"/>
+      <path data-edge="request-slot prefill" d="M58 266v21"/>
+      <path data-edge="prefill sample-first-id" d="M58 364v21"/>
+      <path data-edge="sample-first-id append-output" d="M58 430v21"/>
+      <path data-edge="append-output decode-next-token" d="M58 510v25"/>
+      <path data-edge="append-output finish-and-release" d="M337 510v25"/>
+      <path data-edge="decode-next-token append-output" d="M36 596H20V481H34"/>
+    </g>
+    <g fill="#38538b" font-size="15">
+      <text x="76" y="131">提示词文本</text>
+      <text x="76" y="207">提示词 ID</text>
+      <text x="76" y="283">调度提示词计算</text>
+      <text x="76" y="381">最后提示位置的候选分数（logits）</text>
+      <text x="76" y="447">首个输出 ID</text>
+      <text x="76" y="530">继续</text>
+      <text x="355" y="530">结束</text>
+      <text x="14" y="548" text-anchor="middle" font-size="14" transform="rotate(-90 14 548)">新输出 ID</text>
+    </g>
+  </g>
+</svg>

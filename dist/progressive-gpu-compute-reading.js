@@ -302,6 +302,15 @@
  ])+
  p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
  '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
+ contextAttention[7][1]+=
+ '<h3 id="ring-context-training">让 K/V 沿环传递，再完成一次参数更新</h3>'+
+ p('上一题先收齐 K/V，再检查四行前向。这次把同样的因果注意力放到三个进程。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
+ trainingFigure('v77-ring-training','三进程前向每人查看三个来源。反向多送最后一跳，把各自的 dK、dV 还给原拥有者。')+
+ p('反向时，每个本地 Q 可能对多个进程的 K、V 产生梯度。程序把 K、V 和两个累加量 dK、dV 一起送上环。每个进程用自己的 Q 重新算该块的注意力权重，再把梯度贡献加到包里。最后多送一次，原拥有者才收回已经合并的梯度。得到本地 dQ、dK、dV 后，各进程求本地三个投影矩阵的梯度，再求和更新同一份权重。')+
+ p('用完整因果注意力和 PyTorch 自动求导独立核对。三进程实测的最大输出误差约 3.33×10⁻¹⁶，更新后权重的最大误差约 1.39×10⁻¹⁷。若只保留各进程自己的 dK、dV 贡献，权重梯度误差约 4.07×10⁻⁴，判据会拒绝。两进程 1024 位置的对照也已执行。')+
+ trainingCode('从解压目录运行三进程实战','SHELL','python -m torch.distributed.run --standalone --nproc_per_node=3 ring_training.py --positions 1536')+
+ p('本次实测为 CPU/Gloo。每次点对点收发都等待完成，以便按步核对。包内也给出 CUDA/NCCL 启动参数，供两卡及多机环境复验。完整矩阵参照仅用于数值核对，不能拿这个程序测训练显存或通信重叠。')+
+ '<p class="practice-links"><a href="labs/ring-context-training.zip" download>下载环形实战 ↓</a> · <a href="labs/ring-context-training/ring_training.py">点对点源码</a> · <a href="labs/ring-context-training/validation.json">三进程记录</a></p>';
 
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';

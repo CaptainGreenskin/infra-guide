@@ -47,17 +47,22 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
    if(re===prePattern){
     former.push(
      '<pre tabindex="0"><code>dist.all_gather(keys, local_k)\ndist.all_gather(values, local_v)</code></pre>',
-     '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=2 context_attention.py &gt; local-record.json</code></pre>');
+     '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=2 context_attention.py &gt; local-record.json</code></pre>',
+     '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=3 ring_training.py --positions 1536</code></pre>');
    }else if(re===figurePattern){
-    const contextFigure=current.filter(f=>f.includes('src="diagrams/v76-context-parallel.svg"'));
-    assert.equal(contextFigure.length,1);
-    former.push(contextFigure[0]);
+    for(const name of ['v76-context-parallel','v77-ring-training']){
+     const figure=current.filter(f=>f.includes('src="diagrams/'+name+'.svg"'));
+     assert.equal(figure.length,1);
+     former.push(figure[0]);
+    }
    }else{
     former.push(...[
      'diagrams/v76-context-parallel.svg','diagrams/v76-context-parallel.svg',
      'https://arxiv.org/html/2310.01889#S3',
      'https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html#context-parallel-overview',
-     'labs/context-parallel.zip','labs/context-parallel/context_attention.py','labs/context-parallel/validation.json'
+     'labs/context-parallel.zip','labs/context-parallel/context_attention.py','labs/context-parallel/validation.json',
+     'diagrams/v77-ring-training.svg','diagrams/v77-ring-training.svg',
+     'labs/ring-context-training.zip','labs/ring-context-training/ring_training.py','labs/ring-context-training/validation.json'
     ].map(url=>'href="'+url+'"'));
    }
   }

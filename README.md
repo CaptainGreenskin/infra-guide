@@ -13,13 +13,17 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前78章：Cloud 35、AI 29、Agent 11、综合实战3；49个完整实验包、89项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前78章：Cloud 35、AI 29、Agent 11、综合实战3；52个完整实验包、92项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
 入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)
 
 FlashAttention 章沿在线归一化接入上下文并行。先画两个进程各自能读取的位置，再手算远端块如何进入同一个分母，最后用两进程 CPU/Gloo 对照完整矩阵。 [上下文并行](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#context-parallel-attention) · [实验与记录](https://captaingreenskin.github.io/infra-guide/labs/?track=ai#lab-ai-context-parallel)
+
+推理路线从提示词元、预填充与采样接到真实的 llama.cpp CPU 请求，比较同槽复用和重新计算。再读固定版本的 vLLM V1 调度、块表和引用归还，沿整块边界手算实际前向工作量。 [引擎实跑](https://captaingreenskin.github.io/infra-guide/article/model-serving/#native-inference-engine-lab) · [vLLM V1 源码跟读](https://captaingreenskin.github.io/infra-guide/article/inference-performance/#vllm-v1-request-path)
+
+长序列实验继续验证逐块环传、反向梯度归还和一次参数更新，两、三进程 CPU/Gloo 均已复跑。算子章给出同卡比较三个 GEMM 的源码、逐项校验、轮换计时和 Nsight 步骤，设备测量待实际 GPU。 [环形训练](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#ring-context-training) · [CUDA 同卡实验](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#same-device-gemm)
 
 <details>
 <summary>历次内容修订与执行记录</summary>

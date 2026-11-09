@@ -1,0 +1,29 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "ecae081521f6c306f8c8d55d2f0cbc36e1649131",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PREREQUISITE_READERS_2026-11-09.json": "e19a57c1a6785fd2465b0684cbf296d1a3a627782bc4933e4e776eb7e7b3507b"
+  },
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e131f6a8b4879f0d7ad8199da70f889f91ad4f6e58729be3215f0fcefac384ab",
+      "reviewed_content_sha256": "53aa8ca5b8c544049bae20aada557bd60e2617f8882e71edb11a9312dd626be2",
+      "scope": "Compare three GEMM mappings under one numerical and measurement contract",
+      "observation": "Append source-derived load arithmetic and a portable same-device launch protocol. Bind the actual Linux compilation and availability probe to the CUDA source. Kernel execution, event measurements and Nsight counters remain pending.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    }
+  ]
+}
