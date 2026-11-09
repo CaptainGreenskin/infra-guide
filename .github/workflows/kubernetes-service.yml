@@ -1,16 +1,16 @@
-name: Native Kubernetes Service and rollout
+name: Native Kubernetes NetworkPolicy with Cilium
 on:
   push:
-    branches: [content/native-identity-20261108]
+    branches: [evidence/network-policy-20261109]
     paths:
-      - dist/labs/kubernetes-service/service_lab.py
+      - dist/labs/kubernetes-network-policy/network_policy_lab.py
       - .github/workflows/kubernetes-service.yml
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   service:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -29,11 +29,20 @@ jobs:
           python3 -c 'from pathlib import Path; import hashlib; assert hashlib.sha256(Path("kubectl").read_bytes()).hexdigest()==Path("kubectl.sha256").read_text().strip()'
           chmod +x kind kubectl
           echo "$RUNNER_TEMP/guide-service-tools" >> "$GITHUB_PATH"
-      - name: Run owned cluster probes, ClusterIP requests, rollout and undo
-        run: python3 -B dist/labs/kubernetes-service/service_lab.py --output native-results/service.json
+          curl --fail --location --retry 3 https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz -o helm.tar.gz
+          curl --fail --location --retry 3 https://get.helm.sh/helm-v3.19.0-linux-amd64.tar.gz.sha256sum -o helm.tar.gz.sha256sum
+          printf '%s  %s\n' "$(cut -d ' ' -f 1 helm.tar.gz.sha256sum)" helm.tar.gz | sha256sum -c -
+          tar -xzf helm.tar.gz linux-amd64/helm
+          mv linux-amd64/helm helm
+      - name: Run owned kind cluster and observe Cilium policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p native-results
+          python3 -B dist/labs/kubernetes-network-policy/network_policy_lab.py --json native-results/validation.json 2>&1 | tee native-results/run.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-kubernetes-service
-          path: native-results/service.json
-          retention-days: 1
+          name: native-kubernetes-network-policy
+          path: native-results/
+          retention-days: 7
