@@ -35,6 +35,8 @@ Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、�
 
 Kubernetes 工作负载章对照真实驱逐、直接删除与发布回退。DDP 章复现一个进程提前读完后的超时、归约分母与动量差异。MCP 章对照工具目录变化后，旧批准与新批准各造成多少实际写入。 [驱逐与发布](https://captaingreenskin.github.io/infra-guide/article/k8s-workloads/#native-pdb-eviction-rollout) · [不等长 DDP](https://captaingreenskin.github.io/infra-guide/article/ddp-code/#native-ddp-join) · [工具目录变更](https://captaingreenskin.github.io/infra-guide/article/mcp-protocol/#native-mcp-catalog-refresh)
 
+正文的「本章实战与验收」可定位运行小节和实验室记录，岗位学习中的实验往返保留所选路线。量化章用真实 QNNPACK 核对同一输入随合批范围变化的分类，只对通过质量门槛的形状计时。 [动态 INT8 实验](https://captaingreenskin.github.io/infra-guide/article/quantization-serving/#native-int8-batch-quality)
+
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
 入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)
@@ -110,7 +112,7 @@ C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐配有[隔离Linux CI
 
 </details>
 
-[首批15分钟试读材料](docs/reader-trial/brief.md)已准备，当前真人试读样本0人。检查和作者审读用于发现错误，读者能否独立画出知识关系、解释条件并完成迁移题，仍需实际试读验证。
+[站内 15 分钟试读](https://captaingreenskin.github.io/infra-guide/about/#reader-trial)可从首页样章区进入。记录方法见[试读方案](docs/reader-trial/brief.md)，当前真人试读样本 0 人。检查和作者审读用于发现错误，读者能否独立画出知识关系、解释条件并完成迁移题，仍需实际试读验证。
 
 本次集中迭代的修订范围、执行证据和待验缺口见 [8小时迭代交付清单](docs/EIGHT_HOUR_ACCEPTANCE_2026-11-05.md)。
 

@@ -143,7 +143,7 @@ function chapterConnectionHTML(a){
  return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2>'+
  (incoming.length?'<p><b>承接：</b>'+item(incoming[0])+'</p>':'<p><b>起点：</b>'+a.objectives[0]+'。从这里建立当前主题的基本对象。</p>')+
  (outgoing.length?'<p><b>后续用途：</b>'+item(outgoing[0])+'</p>':optional.length?'<p><b>按需延伸：</b>'+item(optional[0])+'</p>':'')+
- chapterFieldMapLink(a)+
+ chapterFieldMapLink(a)+chapterLabLinksHTML(a)+
  '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">在学习路线中定位这一章 →</a></aside>';
 }
 function stageConnectionHTML(track,index){const [from,chain,result]=courseStageConnections[track][index];return '<div class="stage-connection"><p><b>'+from+'</b></p><p class="concept-chain">'+chain+'</p><p>'+result+'</p></div>';}

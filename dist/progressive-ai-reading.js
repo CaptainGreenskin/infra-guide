@@ -163,6 +163,8 @@ const progressiveAiSectionTitles={
   '沿用三位置的因果读取关系，完整路径一次计算三行；增量路径先处理位置0并保留K₀、V₀，再处理位置1、追加K₁、V₁，由Q₁读取前两项，最后由Q₂读取三项。每次新增query读到的候选、分数与Value，正好对应完整矩阵的同一合法行，因此输出分别仍为[2,0]、[0.5,3]、[3.5,2]。',
   '完整Decoder的每一层都维护自己的K/V。固定模型与位置规则、保持相同前缀并采用评估设置时，因果约束使旧位置不依赖后来追加的内容，旧K/V因而可以复用。新位置需要当前Q和历史K/V，过去Q不必为了这个新增输出永久保存。',
   '这样省去旧位置的重复前向，但新query仍读取合法历史，缓存也随已处理位置增长。完整前缀与缓存路径应比较每个新增位置的数值；模型服务章用原664参数TinyDecoder的相同权重，实际对照整段、逐位置和两位置续算，并追踪新输出何时进入缓存。')+
+  para('先用四位置固定向量复算。解压后运行 <code>python3 attention_lab.py --output runs/attention-report.json</code>，核对逐项追加 K、V 与整段计算的最大误差，再改最后位置的 V，观察它是否影响前三个位置。')+
+  '<p class="practice-links"><a href="labs/attention-mechanics.zip" download>下载基础实验 ↓</a> · <a href="labs/attention/validation.json">查看数值记录 ↗</a></p>'+
   '<p><a class="inline-link" href="article/model-serving/#sdpa-cache-path">继续原生SDPA缓存路径与同模型对照 →</a></p>';
  attention.sections[6][1]=para(
   '普通多头注意力（MHA）让每个query头各有一组K/V头。分组查询注意力（GQA）则让几个query头共用一组K/V；每个query仍按自己的Q计算权重，因此同组query可以产生不同输出。多查询注意力（MQA）可看作全部query头共用一组K/V的情形。',

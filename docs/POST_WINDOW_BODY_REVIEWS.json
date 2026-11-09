@@ -5006,6 +5006,63 @@
         "保存边界决定恢复后重做什么",
         "先验收本机，再增加物理节点"
       ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b5c758df3626313af90cb48012139a08e1eff8e23e4f3f4c606eb747a4812bce",
+      "reviewed_content_sha256": "bda65ed1ccee586bd0c717aef094385a0bf8a46c1a01f12276ed609d4d782bf2",
+      "scope": "Connect the existing standard-library attention and KV equality fixture to its exact mechanism section.",
+      "observation": "The source and immutable record are reachable from the existing full versus incremental calculation.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "30c3d87b948b29ad2d5722c02444cf1da58170df4581d1c01cf6982287f7c489",
+      "reviewed_content_sha256": "4dc9fdced17cc3f7c91387d9b568a07ab61ee29a7daabac71f1deeeb7e4ea44d",
+      "scope": "Give the uneven sample-denominator comparison a direct link to its two-rank CPU program and report.",
+      "observation": "The recorded 1.05 versus 1.125 weight contrast remains explicitly separate from the surrounding worked numbers.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "48e8d2d7e91ff045572788afa691ccbaf4642eb54162f142170cb74f9ec8bfcc",
+      "reviewed_content_sha256": "550afc6d5a17ec80472f846a25ac7d4d2c320a58ec34e7d1eddfebc36fd46790",
+      "scope": "Make the existing independent worker-fencing disclosure addressable from the experiment catalog.",
+      "observation": "The exact link opens the actual code and commands. All previous prose and code remain available.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

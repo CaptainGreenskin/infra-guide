@@ -4521,6 +4521,8 @@ const progressiveAiSectionTitles={
   '沿用三位置的因果读取关系，完整路径一次计算三行；增量路径先处理位置0并保留K₀、V₀，再处理位置1、追加K₁、V₁，由Q₁读取前两项，最后由Q₂读取三项。每次新增query读到的候选、分数与Value，正好对应完整矩阵的同一合法行，因此输出分别仍为[2,0]、[0.5,3]、[3.5,2]。',
   '完整Decoder的每一层都维护自己的K/V。固定模型与位置规则、保持相同前缀并采用评估设置时，因果约束使旧位置不依赖后来追加的内容，旧K/V因而可以复用。新位置需要当前Q和历史K/V，过去Q不必为了这个新增输出永久保存。',
   '这样省去旧位置的重复前向，但新query仍读取合法历史，缓存也随已处理位置增长。完整前缀与缓存路径应比较每个新增位置的数值；模型服务章用原664参数TinyDecoder的相同权重，实际对照整段、逐位置和两位置续算，并追踪新输出何时进入缓存。')+
+  para('先用四位置固定向量复算。解压后运行 <code>python3 attention_lab.py --output runs/attention-report.json</code>，核对逐项追加 K、V 与整段计算的最大误差，再改最后位置的 V，观察它是否影响前三个位置。')+
+  '<p class="practice-links"><a href="labs/attention-mechanics.zip" download>下载基础实验 ↓</a> · <a href="labs/attention/validation.json">查看数值记录 ↗</a></p>'+
   '<p><a class="inline-link" href="article/model-serving/#sdpa-cache-path">继续原生SDPA缓存路径与同模型对照 →</a></p>';
  attention.sections[6][1]=para(
   '普通多头注意力（MHA）让每个query头各有一组K/V头。分组查询注意力（GQA）则让几个query头共用一组K/V；每个query仍按自己的Q计算权重，因此同组query可以产生不同输出。多查询注意力（MQA）可看作全部query头共用一组K/V的情形。',
@@ -9882,6 +9884,28 @@ set_state_dict(model, optimizer, model_state_dict=state["model"],
  p('练习保持W不变，把group size从4改成2：先算8个与16个比例尺、48B与80B载荷，再运行比较输出误差。接着把保留激活分别放到校准范围内外，指出舍入和裁剪各发生在哪一步。部署记录补上设备、格式、算子、任务质量、服务负载和回退束；目标环境尚未测到的结果单列为待验证。')
  ],['subsection-1-e82fyf','subsection-2-hfszdc','subsection-3-uz1007','subsection-3-j83oe9','subsection-4-its870','subsection-4-1vuiqtr','subsection-5-1drpdp8','subsection-5-1sbp3h2']);
 
+ const batchQuality = articles.find(a=>a.id==='quantization-serving');
+ batchQuality.sections[4][1]+=
+ '<h3 id="native-int8-batch-quality">同一条输入换个同批伙伴，为什么会改分类</h3>'+
+ p('上一段验证了动态 INT8 的实际算子与产物回读。把它用于合批时，还要核对一个问题：每行的输入没变，整批用的比例尺可能变。下面仍用 PyTorch 2.5.1 的 QNNPACK CPU 后端，先检查分类，再比较两条合格路径的耗时。',
+ '固定无偏置的 256×256 线性层。只有权重 <code>W[1,0]</code> 和 <code>W[2,1]</code> 为 1，所以输入前两项分别成为类别 1 和 2 的分数，其余分数为 0。分数最高的编号就是预测类别，若并列则取第一个。目标行固定为 <code>[1,0,…]</code>，期望类别一直是 1。')+
+ trainingFigure('int8-batch-quality','目标行本身不变。QNNPACK 2.5.1 的动态线性算子为整批激活选取同一把比例尺。')+
+ p('当目标与 <code>[0,1024,…]</code> 一起输入时，整批最小值为 0、最大值为 1024。激活使用 0–255 的格点，比例尺约为 <code>1024/255=4.02</code>。目标特征 1 除以 4.02 后舍入为 0，导致该行的所有分数为 0，程序按并列规则选了类别 0。与 <code>[0,8,…]</code> 合批时，格点间隔约 0.031，特征 1 仍能保留为正数。')+
+ table(['输入怎样组织','FP32 实际类别','动态 INT8 实际类别'],[
+ ['目标行独立运行','[1]','[1]'],
+ ['目标行与 8 合批','[1,2]','[1,2]'],
+ ['目标行与 1024 合批','[1,2]','[0,2]'],
+ ['目标行与 1024 分开运行','[1,2]','[1,2]']
+ ])+
+ p('实测的 CPU 算子记录包括 <code>quantized::linear_dynamic</code> 和 <code>aten::quantize_per_tensor</code>。固定版本源码先求整个输入张量的最小值和最大值，再用同一个比例尺量化；这个结果对应的是该后端实现。若改用逐行激活比例尺，或者分别执行再合并结果，应重新测量质量和耗时。')+
+ p('实验要求这组固定输入的预测类别逐行正确。第三组 INT8 失败，所以记录中没有那组的速度比较。前两组各预热 80 次，再交替先运行 FP32 或 INT8，共采 12 对样本。每个样本计 400 次同步 CPU 前向，记录总纳秒，最后换算为单次均值的 p50 和 p90。表中是本机这一次记录。')+
+ table(['通过分类检查的输入形状','FP32 p50','INT8 p50'],[
+ ['1×256','约 3.36 微秒','约 29.85 微秒'],
+ ['2×256','约 8.76 微秒','约 29.60 微秒']
+ ])+
+ p('这份计时含 Python 前向调用、输出分配和本轮动态量化，权重转换、分类检查与 profiler 在计时前完成。它只比较本机固定张量与单线程下的两条前向路径。服务端排队、解码和设备级吞吐需要在各自环境测量。解压并安装依赖后，运行 <code>python -B int8_batch_quality.py --output replay.json</code>，先核对四组类别，再比较同一形状的计时。')+
+ '<p class="practice-links"><a href="labs/int8-batch-quality.zip" download>下载实验包 ↓</a> · <a href="labs/int8-batch-quality/int8_batch_quality.py">完整源码</a> · <a href="labs/int8-batch-quality/README.md">复跑说明</a> · <a href="labs/int8-batch-quality/validation.json">实测分数与计时</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/aten/src/ATen/native/quantized/cpu/qlinear_dynamic.cpp#L224-L351">固定版本 QNNPACK 源码 ↗</a></p>';
+
  rewrite('ai-lifecycle',8,old=>[
  legacy('model-bundle-contract')+legacy('subsection-1-1vzo0i0')+
  p('训练恢复保存“怎样从某次更新继续”，模型发布安排“请求按哪套固定含义得到回答”。先从一份已核对的参数状态导出候选产物，绑定输入处理、模型结构和运行配置，加载并验证；服务就绪后，新请求选择这一版本，记录实际使用的成员，直到输出结束。量化参数改变时，也沿这条流程建立新候选。',
@@ -10659,6 +10683,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
   a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
@@ -11179,6 +11204,10 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('三类CPU程序各回答一层问题：标量检查平均与分母，完整窗口检查实际更新和优化器历史，手工分片检查状态归属及重建。它们都按各自输入和数值协议核对，未执行GPU/NCCL、AMP或原生FSDP。进入其他规模时保留新的实际比较结果，包括严格比较未通过的记录；这些局部通过不自动覆盖另一份恢复或性能实验。')+
  linkRow(d8links.filter(x=>x.includes('multinode-lab')).map(x=>x.replace('下一步：按两机四卡手册检查设备、会合、通信与恢复','后续实践：按两机四卡手册检查设备、会合、通信与恢复')))
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
+
+ strategies.sections[1][1]+=
+ p('用两进程把这组独立手算跑一遍。按包内说明安装 PyTorch 2.5.1，运行 <code>python ddp_step.py --output runs/ddp-step-report.json</code>。从 w=1 起步时，局部均值方案更新到 1.05，全局分母方案更新到 1.125，后者与单进程基准一致。')+
+ '<p class="practice-links"><a href="labs/ddp-one-step.zip" download>下载单步实验 ↓</a> · <a href="labs/ddp-step/validation.json">查看两进程与独立基准 ↗</a></p>';
 
  strategies.sections[3][1]+='<h3 id="native-fsdp-run">用原生 FSDP 核对两个进程各持有什么</h3>'+p(
  'PyTorch 的 FSDP 会先包装模型，再决定参数怎样分片，所以 Adam 在包装后创建。本次独立实验只用一个 <code>Linear(2,2)</code>，即四个权重和两个偏置。两个进程分别处理一条和两条样本，每条有两个目标。总共有六个参与损失的标量，按全局六项的均值训练。',
@@ -13784,7 +13813,7 @@ function chapterConnectionHTML(a){
  return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2>'+
  (incoming.length?'<p><b>承接：</b>'+item(incoming[0])+'</p>':'<p><b>起点：</b>'+a.objectives[0]+'。从这里建立当前主题的基本对象。</p>')+
  (outgoing.length?'<p><b>后续用途：</b>'+item(outgoing[0])+'</p>':optional.length?'<p><b>按需延伸：</b>'+item(optional[0])+'</p>':'')+
- chapterFieldMapLink(a)+
+ chapterFieldMapLink(a)+chapterLabLinksHTML(a)+
  '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">在学习路线中定位这一章 →</a></aside>';
 }
 function stageConnectionHTML(track,index){const [from,chain,result]=courseStageConnections[track][index];return '<div class="stage-connection"><p><b>'+from+'</b></p><p class="concept-chain">'+chain+'</p><p>'+result+'</p></div>';}
@@ -13822,7 +13851,7 @@ const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
@@ -13861,8 +13890,14 @@ function learningContextHref(href){
  const query=new URLSearchParams(queryAt<0?'':withoutHash.slice(queryAt+1));
  const articleId=pathname.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1],moduleId=pathname.match(/\/module\/([a-z0-9-]+)\/?$/)?.[1];
  const position=/\/roadmap\/?$/.test(pathname)?fragment.match(/^#route-chapter-(cloud|ai|agent)-([a-z0-9-]+)$/):null;
- if(!articleId&&!moduleId&&!position)return href;
+ const labTask=/\/labs\/?$/.test(pathname)&&/^#lab-[a-z0-9-]+$/.test(fragment);
+ if(!articleId&&!moduleId&&!position&&!labTask)return href;
  const profile=selectedLearningProfile(),explicitGoal=query.has('goal');
+ if(labTask){
+  if(explicitGoal||!profile||query.get('track')!==profile.track)return href;
+  query.set('goal',Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile));
+  return pathname+'?'+query.toString()+fragment;
+ }
  if(position){
   if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1]||!learningProfileRoute(profile).includes(position[2]))return href;
   const goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
@@ -14262,8 +14297,9 @@ const fieldPracticePaths={
 function fieldPracticeHTML(moduleId, names){
  const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
  const unit=labLearningCatalog.find(item=>item.id===labId);
- const article=articleById(unit.chapter);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+
+ const article=articleById(unit.chapter),profile=selectedLearningProfile();
+ const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+
   '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
 }
 
@@ -14357,6 +14393,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'int8-batch-quality':{folder:'int8-batch-quality',title:'动态 INT8 合批、分类门槛与前向计时'},
  'kubernetes-pdb-rollout':{folder:'kubernetes-pdb-rollout',title:'Kubernetes 驱逐、直接删除与滚动更新'},
  'ddp-uneven-join':{folder:'ddp-uneven-join',title:'DDP 输入耗尽、归约分母与动量恢复'},
  'mcp-catalog-refresh':{folder:'mcp-catalog-refresh',title:'MCP 工具目录变化、批准与写入边界'},
@@ -14475,17 +14512,17 @@ const labLearningCatalog=[
  {id:'cloud-sre',track:'cloud',stage:2,title:'容量守恒、用户结果与 SLO 告警',chapter:'slo',pack:'cloud-operations',files:['capacity_lab.py','telemetry_lab.py','promtool_lab.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'模型 + 本机 HTTP + 规则',observe:'分别算准入与积压、跟踪两服务请求，再用七组序列验证聚合、无流量和长短窗。',scope:'本机 HTTP 与真实规则求值；不是生产流量、抓取服务或告警通知。'},
  {id:'cloud-mysql-pitr',track:'cloud',stage:2,title:'金额125正确，恢复历史仍可能缺一笔',chapter:'mysql-recovery',anchor:'mysql-pitr-run',pack:'transport-recovery',files:['mysql_restore.py','Dockerfile.tools'],env:'Linux/macOS · 本地Docker引擎 · Python 3.9+',kind:'真实MySQL 8.4容器',observe:'核对基线、全量历史、缺首段、正确按点恢复与后续写入；另做进程崩溃对照。',scope:'公共Linux CI实测；未验证物理断电、主从切换或跨区域云服务。'},
  {id:'cloud-delivery',track:'cloud',stage:3,title:'保存的 Terraform 计划与 GitOps 调谐',chapter:'delivery',pack:'cloud-deepening',files:['terraform_lab.py','gitops_model.py','main.tf'],env:'Python 3.9+ + Terraform 1.13.0',kind:'真实 CLI + 调谐模型',observe:'验证旧计划、状态推进后的陈旧计划拒绝；另用模型区分同步、健康、自愈和清理。',scope:'Terraform 本地 state 与内建 provider 实测；Argo CD 尚未同步集群。'},
- {id:'cloud-recovery',track:'cloud',stage:3,title:'数据库恢复后，附件与外部通知也要对得上',chapter:'resilience',pack:'recovery-artifacts-retrieval',files:['consistent_recovery_cut.py','recovered_effects.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'实际备份与 HTTP',observe:'缺一个附件时回退到完整提交前缀；应用备份恢复后沿原业务 ID 查询外部回执。',scope:'时间点为题设，日志是应用协议；不是数据库物理 WAL 或跨区容灾。'},
+ {id:'cloud-recovery',track:'cloud',stage:3,title:'数据库恢复后，附件与外部通知也要对得上',chapter:'resilience',anchor:'section-9',pack:'recovery-artifacts-retrieval',files:['consistent_recovery_cut.py','recovered_effects.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'实际备份与 HTTP',observe:'缺一个附件时回退到完整提交前缀；应用备份恢复后沿原业务 ID 查询外部回执。',scope:'时间点为题设，日志是应用协议；不是数据库物理 WAL 或跨区容灾。'},
  {id:'cloud-incident',track:'cloud',stage:3,title:'SQL 慢与持连接等待，为什么曲线一样',chapter:'incident',pack:'incident-model',files:['incident_model.py'],env:'Python 3.9+ · 标准库',kind:'确定性排队模型',observe:'保持到达序列、连接数不变，分别移动 SQL 和外部等待，比较相同延迟背后的不同原因。',scope:'整数事件模型，不执行真实 SQL 等待或压力测试。'},
  {id:'cloud-native-service',track:'cloud',stage:3,title:'同一Service入口，核对探针、发布与回退',chapter:'cloud-service-lab',anchor:'kubernetes-service-normal',pack:'kubernetes-service',files:['service_lab.py','README.md'],env:'Linux · 本机Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3.9+',kind:'原生kind与真实ClusterIP请求',observe:'双副本持续收请求，独立读取Ready/EndpointSlice/重启计数；区分readiness摘新流量、liveness重启、v2发布和undo后的实际v1。',scope:'公共Linux CI已执行，保存297条请求含1次传播期失败；6组稳定窗口各20条，不代表全程零错误、长连接排空或生产云网络。'},
  {id:'cloud-service',track:'cloud',stage:3,title:'把请求、探针与交付版本连起来',chapter:'cloud-service-lab',pack:'infra-systems',files:['infra_lab.py','probe_server.py'],pendingFiles:['probe_server.py'],env:'Python 3.9+ · 标准库',kind:'本机服务与目标手册',observe:'核对实际本机请求、完整文件版本和摘要，再进入探针、端点和回退的集群步骤。',scope:'infra_lab 本机部分已执行；probe_server 配合集群探针、EndpointSlice 与版本回退仍待目标环境验证。'},
  {id:'ai-supervision',track:'ai',stage:1,title:'标签对齐、共享梯度与不等长微批',chapter:'tokenization-embedding',pack:'supervision-gradients',files:['supervision_gradients.py'],env:'PyTorch 2.5.1 CPU；参考模式只需 Python 3.9+',kind:'实际自动求导与独立链式法则',observe:'分开查表和输出路径，验证 PAD 行仍可更新；逐项核对 16 个导数，再比较有效目标与微批的平均权重。',scope:'局部 H=E[id]/2，无注意力；六项交叉熵与另四项平方损失分别记账，不测 GPU。'},
- {id:'ai-attention',track:'ai',stage:1,title:'手算 Attention，再比较整段与逐词元计算',chapter:'attention-mechanics',pack:'attention-mechanics',files:['attention_lab.py'],env:'Python 3.9+ · 标准库',kind:'数值语义实验',observe:'改未来位置与可见位置，核对因果遮罩、键值缓存（KV Cache）等价和有效目标分母。',scope:'固定向量与独立手算，不调用模型或 GPU。'},
+ {id:'ai-attention',track:'ai',stage:1,title:'手算 Attention，再比较整段与逐词元计算',chapter:'attention-mechanics',anchor:'section-6',pack:'attention-mechanics',files:['attention_lab.py'],env:'Python 3.9+ · 标准库',kind:'数值语义实验',observe:'改未来位置与可见位置，核对因果遮罩、键值缓存（KV Cache）等价和有效目标分母。',scope:'固定向量与独立手算，不调用模型或 GPU。'},
  {id:'ai-prefix-attention',track:'ai',stage:1,title:'前两格互相可见，续写还能保持因果吗',chapter:'attention-mechanics',anchor:'prefix-attention-mask',pack:'prefix-attention',files:['prefix_attention.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实 SDPA 与数值反例',observe:'单独改动提示内部和续写中的值，对照普通因果、双向前缀及错误平移掩码。',scope:'固定四位置、单头数学后端，比较输出和分段读取。'},
  {id:'ai-foundations',track:'ai',stage:1,title:'从词表、位置与 664 参数 Decoder 走一遍更新',chapter:'autograd-training',pack:'textbook-examples',folder:'model-foundations',files:['tokenization.py','rope.py','tiny_decoder.py','io_attention.py'],env:'Python 3.9+；Decoder 需 PyTorch 2.5.1',kind:'标准库数值 + CPU 自动求导',observe:'分别核对标签、相对位置、整批/微批更新及在线 softmax；每个程序有自己的输入。',scope:'小模型和数值参考，不是 FlashAttention 内核或大模型训练基准。'},
  {id:'ai-packing',track:'ai',stage:1,title:'拼接文档时，EOS 不能代替注意力边界',chapter:'data-pipeline',pack:'network-input-tools',files:['packing_boundaries.py'],env:'Python 3.9+ · 标准库',kind:'固定向量对照',observe:'正确文档内遮罩与位置和逐文档相同；仅插 EOS 或延续位置会改变本例输出。',scope:'位置向量为教学输入，不实现 RoPE 或 GPU packing。'},
  {id:'ai-sampler',track:'ai',stage:2,title:'训练进程与数据加载进程，会重复交付样本吗',chapter:'data-pipeline',pack:'network-input-tools',files:['sampler_coverage.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实多进程数据加载',observe:'两个训练进程（rank），每个进程两个加载进程（worker）。核对 11 条数据在补齐、丢尾和分流后的唯一 ID、交付数与批次数。',scope:'保存成文件运行；不执行训练步、GPU 拷贝或吞吐测试。'},
- {id:'ai-ddp-step',track:'ai',stage:2,title:'两个副本相同，不代表全局梯度算对了',chapter:'distributed-training',pack:'ddp-one-step',files:['ddp_step.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'等长、不等长和有效目标分母分别与独立单进程目标及手算核对。',scope:'float64 小规模单步基准，不含 GPU 性能。'},
+ {id:'ai-ddp-step',track:'ai',stage:2,title:'两个副本相同，不代表全局梯度算对了',chapter:'distributed-training',anchor:'section-2',pack:'ddp-one-step',files:['ddp_step.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'对照等长与不等长样本，再用独立单进程基准核对全局样本分母。',scope:'float64 小规模单步基准，不含 GPU 性能。'},
  {id:'ai-updates',track:'ai',stage:2,title:'不等长、尾窗口、空窗口与梯度裁剪',chapter:'distributed-training',pack:'update-and-cancel',files:['update_windows.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank + 独立基准',observe:'使用 7、0、3 个有效目标的窗口，核对全局分母、裁剪顺序及空窗不推进动量。',scope:'固定模型与精度，不把窗口数当成任意优化器的实际更新数。'},
  {id:'ai-collectives',track:'ai',stage:2,title:'集合通信的数值、形状与调用顺序',chapter:'training-communication',pack:'scaling-collectives-traces',files:['collective_contracts.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'核对规约、变长收集、重排与归一化，再运行形状和操作不一致的独立失败对照。',scope:'通信确实发生在本机 CPU；不证明 NCCL、RDMA 或物理网络性能。'},
  {id:'ai-context-parallel',track:'ai',stage:2,title:'长序列切开以后，哪一行还要读远端 KV',chapter:'flash-attention-io',anchor:'context-parallel-lab',pack:'context-parallel',files:['context_attention.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两进程与独立矩阵参考',observe:'收齐 KV 后按原位置分块计算，核对全部四行、远端统计和两种错误实现。',scope:'本机 CPU 单头因果前向。Ring 传递、目标设备性能和训练反向另验。'},
@@ -14499,7 +14536,7 @@ const labLearningCatalog=[
  {id:'ai-operator-profile',track:'ai',stage:2,title:'用CPU实际轨迹分清外层区间与内部算子',chapter:'operator-profiling',anchor:'operator-profile-run',pack:'operators-routing',files:['cpu_profile.py'],env:'Python 3.9+ · PyTorch；记录版本2.5.1 CPU',kind:'真实CPU Profiler',observe:'预热后5次线性、softmax与求和，核对15条命名区间和算子事件。',scope:'采集形状/内存有开销，不把包含子事件的时间重复相加，不作为GPU计时。'},
  {id:'ai-moe-routing',track:'ai',stage:2,title:'八条分配乱序返回，仍按原身份合并',chapter:'moe-routing',anchor:'moe-routing-run',pack:'operators-routing',files:['moe_routing.py'],env:'Python 3.9+ · 标准库',kind:'实际两执行进程与声明路由策略',observe:'四个输入按Top-2分发，比较正确/错误合并以及容量3下的保留6、丢2。',scope:'固定线性专家；逻辑rank与通信160B为声明算式，没有GPU/NCCL或模型训练。'},
  {id:'ai-native-expert-parallel',track:'ai',stage:2,title:'专家算完，怎样把结果和梯度还给原位置',chapter:'moe-routing',anchor:'native-expert-parallel',pack:'native-expert-parallel',files:['expert_parallel.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实非等长集合通信与自动求导',observe:'两个进程各持一份专家，按原身份核对输出、输入与专家梯度，再观察同形状的错序反例。',scope:'固定 Top-1 路由与线性专家，范围为本机 CPU。'},
- {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'model-serving',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
+ {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'inference-performance',anchor:'subsection-6-1ajl0y9',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
  {id:'ai-native-inference',track:'ai',stage:2,title:'同一条提示，真实引擎还要前向几项',chapter:'model-serving',anchor:'native-inference-engine-lab',pack:'native-inference',files:['engine_walkthrough.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实引擎、回环 HTTP 与逐轮记录',observe:'核对输入词元、前缀命中、新算提示和实际输出，比较关闭复用的对照。',scope:'单 slot、合成小模型、CPU；vLLM 的多请求块池另作源码走读。'},
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},
  {id:'ai-artifacts',track:'ai',stage:3,title:'文件和形状都正确，词表仍可能装错',chapter:'ai-lifecycle',pack:'recovery-artifacts-retrieval',files:['artifact_bundle.py'],env:'Python 3.12 + PyTorch 2.5.1 + Safetensors 0.8.0',kind:'CPU 产物保存与加载',observe:'交换词表 ID 后让语义门禁拒绝；固定完整版本束，再验证条件发布与回退代际。',scope:'三条固定语义与本地生产指针，不是 LLM 质量或线上灰度测试。'},
@@ -14511,8 +14548,8 @@ const labLearningCatalog=[
  {id:'agent-streams',track:'agent',stage:1,title:'流式参数先收齐，再判断工具能否执行',chapter:'agent-runtime',anchor:'streaming-tool-lab',pack:'streamed-tool-calls',files:['streamed_tool_calls.py'],env:'Python 3.9+ · 标准库 / 本机 HTTP',kind:'真实分块传输 + 声明的事件流',observe:'十三组对照分开 UTF-8、事件、参数完结与准入；未收齐不调用，已完成后流错误仍保留那次本地调用。',scope:'本地只读回调与进程内观察，不是模型 API、完整 EventSource、持久回执或 Kairo。'},
  {id:'agent-approval',track:'agent',stage:2,title:'批准过一次，不代表任意新参数都获批',chapter:'agent-security',pack:'learning-mechanisms',files:['approval_receipt.py'],env:'Python 3.9+ · 标准库',kind:'本机回执协议',observe:'绑定操作与参数，工具提交后退出再查询；错误参数和无匹配批准应拒绝。',scope:'受控批准夹具，不接入人工审批服务。'},
  {id:'agent-commit-authorization',track:'agent',stage:2,title:'检查之后撤权，实际提交还会写入吗',chapter:'agent-security',anchor:'authorization-commit-run',pack:'agent-boundaries',files:['authorization_commit.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实HTTP与独立数据库连接',observe:'比较当前epoch2拒绝与旧epoch1负例，并分开原K1回执读取与再次写入。',scope:'固定可信身份、逻辑过期时间与本地串行事务；没有OAuth/MCP/Kairo或跨服务原子性。'},
- {id:'agent-fencing',track:'agent',stage:2,title:'新执行者接管后，迟到的旧执行者还能写吗',chapter:'agent-recovery',pack:'ai-agent-systems',files:['worker_fencing.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实多进程状态竞争',observe:'暂停旧执行者、推进代际并接管，让接收方在效果提交处拒绝旧代际。',scope:'固定本机协议；代际不是认证凭据，不冒充目标 Kairo 调度器。'},
- {id:'agent-cancel',track:'agent',stage:2,title:'取消请求、停止执行与已经提交分别记录',chapter:'durable-workflows',pack:'update-and-cancel',files:['cancel_receipts.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'真实进程与回执',observe:'在提交前后设置取消窗口，查询独立接收方，解释停止进程为何不能撤销已提交的效果。',scope:'固定状态协议，不证明任意远端工具支持回滚。'},
+ {id:'agent-fencing',track:'agent',stage:2,title:'新执行者接管后，迟到的旧执行者还能写吗',chapter:'durable-workflows',anchor:'worker-fencing-run',pack:'ai-agent-systems',files:['worker_fencing.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实多进程状态竞争',observe:'暂停旧执行者、推进代际并接管，让接收方在效果提交处拒绝旧代际。',scope:'固定本机协议；代际不是认证凭据，不冒充目标 Kairo 调度器。'},
+ {id:'agent-cancel',track:'agent',stage:2,title:'取消请求、停止执行与已经提交分别记录',chapter:'agent-recovery',anchor:'section-5',pack:'update-and-cancel',files:['cancel_receipts.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'真实进程与回执',observe:'在提交前后设置取消窗口，查询独立接收方，解释停止进程为何不能撤销已提交的效果。',scope:'固定状态协议，不证明任意远端工具支持回滚。'},
  {id:'agent-context',track:'agent',stage:2,title:'旧摘要、权威状态与撤回后上下文',chapter:'agent-memory',pack:'storage-quant-context',files:['context_state.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机版本与条件写入',observe:'保留旧摘要、更新权威事实，再用版本条件阻止旧状态写回；撤回材料后重新构造上下文。',scope:'固定摘要与模型输出，不运行真实压缩模型或长期记忆服务。'},
  {id:'agent-retrieval',track:'agent',stage:2,title:'中文检索、RRF 与分级 nDCG',chapter:'agent-retrieval',pack:'recovery-artifacts-retrieval',files:['chinese_fts_rrf.py'],env:'Python 3.9+ · SQLite 需支持 FTS5',kind:'真实 FTS5 + 固定第二路',observe:'比较原始中文与二元片段索引，执行 BM25，再用声明排名融合并计算分级指标。',scope:'第二路不是 embedding；相关性等级为教学标签，不是检索排行榜。'},
  {id:'agent-delivery',track:'agent',stage:2,title:'检索命中后，再核对最终正文权限与版本',chapter:'agent-retrieval',pack:'serving-consistency',files:['retrieval_pipeline.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实分阶段检索夹具',observe:'在召回、重排和交付之间撤权或改版本；最终上下文不得泄露已经无权的正文。',scope:'固定资料与任务，不调用向量数据库或真实模型。'},
@@ -14523,7 +14560,7 @@ const labLearningCatalog=[
  {id:'agent-contract-record',track:'agent',stage:3,title:'按测试者契约，拒绝十种外表正常的记录',chapter:'kairo-practice',pack:'storage-parallel-acceptance',files:['acceptance_record.py','readonly-contract.example.json','readonly-evidence.example.json'],env:'Python 3.9+ · 标准库',kind:'通用记录校验夹具',observe:'分开权限/标准答案与观测记录，检查原任务、对应来源值、total=23及B快照；来源未核实保持false。',scope:'只验证声明记录的一致性，不调用模型/工具/Kairo，也不证明记录来源真实。'},
  {id:'agent-sandbox',track:'agent',stage:3,title:'CPU、墙钟、文件描述符与路径分别限',chapter:'agent-sandbox',pack:'leases-placement-sandbox',files:['subprocess_limits.py','descriptors_and_paths.py'],env:'POSIX · Python 3.9+ · 标准库',kind:'实际受信子进程',observe:'观察文件、FD、CPU 与墙钟限制，再用继承和路径替换反例检验启动边界。',scope:'只管理自己的受信进程；没有创建安全容器或隔离同 UID 文件系统。'},
  {id:'agent-native-sandbox',track:'agent',stage:3,title:'报告写成了，原始输入有没有被改动',chapter:'agent-sandbox',anchor:'native-sandbox-container',pack:'sandbox-container',files:['sandbox_container.py','source.json'],env:'Linux amd64 · 本机 Docker · Python 3',kind:'真实非 root 容器与主机侧验收',observe:'比较只读与可写输入挂载，核对报告、源字节、权限和清理。',scope:'独立本机容器与合成文件，范围为实验设置和观测。'},
- {id:'agent-kairo',track:'agent',stage:3,title:'把本地不变量变成 Kairo 接入验收',chapter:'kairo-practice',files:[],env:'真实 Kairo 版本、接口与独立测试环境',kind:'目标环境手册',observe:'逐项映射任务身份、工具回执、状态、接管、撤权与独立结果验收，保留目标版本记录。',scope:'目前是映射和验收设计，未声明 Kairo 已接入或真实多 worker 验收通过。'}
+ {id:'agent-kairo',track:'agent',stage:3,title:'把本地不变量变成 Kairo 接入验收',chapter:'kairo-practice',anchor:'section-7',files:[],env:'真实 Kairo 版本、接口与独立测试环境',kind:'目标环境手册',observe:'逐项映射任务身份、工具回执、状态、接管、撤权与独立结果验收，保留目标版本记录。',scope:'目前是映射和验收设计，未声明 Kairo 已接入或真实多 worker 验收通过。'}
 ];
 labLearningCatalog.push(
  {id:'cloud-route-walk',track:'cloud',stage:1,title:'从地址位算到最长前缀，再查回程',chapter:'vpc-network',pack:'mechanism-walkthroughs',files:['route_walk.py'],anchor:'v43-route-practice',env:'Python 3.9+ · 标准库',kind:'路由选择模型',observe:'打印/0、/24、/32的匹配，改变表格顺序与回程条目，分别解释结果。',scope:'只执行声明的地址集合与选择规则；未配置VPC或测量实际转发。'},
@@ -14623,6 +14660,8 @@ labLearningCatalog.push(
  {id:'ai-ddp-uneven-join',track:'ai',stage:2,title:'一个 rank 提前读完，另一个怎样继续',chapter:'ddp-code',anchor:'native-ddp-join',pack:'ddp-uneven-join',files:['ddp_uneven_join.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 CPU/Gloo',kind:'真实两进程 DDP 与动量对照',observe:'比较等待超时、协调报错和两种归约分母，再检查两份模型参数相等时动量是否相同。',scope:'本机两 CPU 进程、固定 SGD 动量和合成输入。物理多机与 GPU 另验。'},
  {id:'agent-mcp-catalog-refresh',track:'agent',stage:2,title:'工具改了含义，怎样处理旧批准',chapter:'mcp-protocol',anchor:'native-mcp-catalog-refresh',pack:'mcp-catalog-refresh',files:['catalog_refresh.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0',kind:'真实 MCP 工具列表变化与 SQLite 对照',observe:'观察工具变化通知和重读目录，再对照旧批准的拒绝和新批准产生的唯一写入。',scope:'本机 stdio 会话、固定工具描述和独立 SQLite。Kairo 接入另验。'}
 );
+labLearningCatalog.push({id:'cloud-storage-journal-recovery',track:'cloud',stage:2,title:'从备份恢复到 103，再处理下一笔事务',chapter:'storage-recovery',anchor:'section-8',pack:'cloud-deepening',files:['recovery_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实备份与事务回放',observe:'核对序号 102 缺失时的拒绝、重复 103 的结果，以及恢复后处理 104 的余额。',scope:'本机 SQLite 备份与教学日志，MySQL 日志另见 C3.4。'});
+labLearningCatalog.push({id:'ai-int8-batch-quality',track:'ai',stage:2,title:'同一个输入，为什么换个同批伙伴就改了分类',chapter:'quantization-serving',anchor:'native-int8-batch-quality',pack:'int8-batch-quality',files:['int8_batch_quality.py','requirements.txt'],env:'macOS arm64 · Python 3.12 · PyTorch 2.5.1 QNNPACK',kind:'真实动态 INT8 与分类门槛',observe:'固定目标行，改变同批输入范围。先核对类别与得分，再只对通过质量门槛的形状比较实际前向耗时。',scope:'本机单线程线性层与固定输入。服务负载与 GPU 另验。'});
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -14632,22 +14671,36 @@ function labCatalogRunPath(unit){
  const at=article.sections.findIndex(s=>unit.files.some(file=>s[1].includes(file)));
  return '/article/'+unit.chapter+'/'+(at<0?'':'#section-'+(at+1));
 }
-function labCatalogUnitHTML(unit,index){
+function chapterLabLinksHTML(article){
+ const units=labLearningCatalog.filter(unit=>unit.chapter===article.id);
+ if(!units.length)return '';
+ const rows=units.map(unit=>{
+  const title=escapeHTML(unit.title),catalogHref='/labs/?track='+unit.track+'#lab-'+unit.id;
+  const boundary=unit.kind==='目标环境手册'?'目标环境待验':unit.pendingFiles?.length?'含目标环境待验项':'';
+  return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'" aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
+ }).join('');
+ return '<details class="chapter-lab-links" id="chapter-experiments"><summary>本章实战与验收（'+units.length+'）</summary><ul>'+rows+'</ul></details>';
+}
+function labCatalogUnitHTML(unit,index,roleReturn=""){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+roleReturn+'</div>'+links+'</div></li>';
 }
 function renderLabCatalog(){
  const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
+ const profile=selectedLearningProfile();
+ const role=profile&&(selected==='all'||selected===profile.track)?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
+ const returnLink=role?'<a href="/roadmap/'+role+'/#learning-goal">返回'+escapeHTML(profile.label)+'学习路线 →</a>':'<a href="/roadmap/">回到系统学习路线 →</a>';
  const nav='<nav class="lab-track-nav" aria-label="选择实验方向">'+[['all','全部'],...Object.entries(labTrackCatalog).map(([id,t])=>[id,t.name])].map(([id,name])=>'<a href="/labs/'+(id==='all'?'':('?track='+id))+'#labs-'+(id==='all'?'all':id)+'"'+(id===selected?' aria-current="page"':'')+'>'+name+' <span>'+labLearningCatalog.filter(u=>id==='all'||u.track===id).length+'</span></a>').join('')+'</nav>';
+ const taskReturn=unit=>role&&location.hash==='#lab-'+unit.id?returnLink:'';
  const groups=Object.entries(labTrackCatalog).filter(([id])=>selected==='all'||selected===id).map(([id,track])=>{
   const units=labLearningCatalog.filter(u=>u.track===id),optional=units.filter(u=>u.stage===0);
-  const prerequisites=optional.length?'<details class="lab-optional"><summary>按需补系统前置：内存、并发、SQL 与缓存</summary><ul class="lab-learning-sequence">'+optional.map(u=>labCatalogUnitHTML(u,null)).join('')+'</ul></details>':'';
-  return '<section class="lab-track-section" id="labs-'+id+'"><h2>'+track.name+'</h2><p class="lab-track-lead">'+track.lead+'</p>'+prerequisites+'<ol class="lab-learning-sequence">'+units.filter(u=>u.stage!==0).map(labCatalogUnitHTML).join('')+'</ol></section>';
+  const prerequisites=optional.length?'<details class="lab-optional"><summary>按需补系统前置：内存、并发、SQL 与缓存</summary><ul class="lab-learning-sequence">'+optional.map(u=>labCatalogUnitHTML(u,null,taskReturn(u))).join('')+'</ul></details>':'';
+  return '<section class="lab-track-section" id="labs-'+id+'"><h2>'+track.name+'</h2><p class="lab-track-lead">'+track.lead+'</p>'+prerequisites+'<ol class="lab-learning-sequence">'+units.filter(u=>u.stage!==0).map((u,index)=>labCatalogUnitHTML(u,index,taskReturn(u))).join('')+'</ol></section>';
  }).join('');
  const intro='<div class="lab-catalog-intro" id="labs-all"><p>先选方向，按编号读机制、运行代码，再核对输出。带“按需先修”的任务只用于补缺口；遇到需要额外环境的实验，可先继续阅读机制。</p><p>每项都写明要观察什么、所需环境和验证范围。下载包可能包含不同方向的独立程序，请按本任务文件名运行。目标环境手册保留待验状态。</p></div>';
- simplePage('实战实验室','LEARN · RUN · CHECK','按 Cloud、AI、Agent 的学习顺序找实验。先讲清机制，再用代码、反例和真实记录核对理解。',intro+nav+'<div class="lab-catalog-page">'+groups+'</div><p class="evidence-note lab-catalog-note">本机执行记录对应固定源码与当时的软件版本。真实云、GPU、Kubernetes/CSI、生产模型及 Kairo 的证据，以各任务列出的目标环境验收为准。<a href="/roadmap/">回到系统学习路线 →</a></p>');
+ simplePage('实战实验室','LEARN · RUN · CHECK','按 Cloud、AI、Agent 的学习顺序找实验。先讲清机制，再用代码、反例和真实记录核对理解。',intro+nav+'<div class="lab-catalog-page">'+groups+'</div><p class="evidence-note lab-catalog-note">本机执行记录对应固定源码与当时的软件版本。真实云、GPU、Kubernetes/CSI、生产模型及 Kairo 的证据，以各任务列出的目标环境验收为准。'+returnLink+'</p>');
 }
 
 
@@ -14845,5 +14898,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2035181c83c8f4f5fe41891ca911e76b0ea9264ac41187f79c71cdc2a69d1426";
+const staticReadingVersion="967d7caf10788a77313211998413f55e358ef5937cf8eed9d89a1fd15dcbe06d";
 

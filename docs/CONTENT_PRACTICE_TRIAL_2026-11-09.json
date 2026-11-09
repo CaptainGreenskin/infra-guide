@@ -1,0 +1,35 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "c5ec649ee081dfa7a37598e0e7728411301e456c",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_TRACK_ENTRY_NATIVE_2026-11-09.json": "448998b3c3e516e4aab4525bb7ce072ad67755ab67ffdc56e620c9e4b63eba57"
+  },
+  "body_revisions": [
+    {
+      "id": "quantization-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "99783fcc6ea113ec0dda67c0eacd46f161f2f4021b3492dae64df1c0661b3b0f",
+      "reviewed_content_sha256": "caaf65fdfcddeb24d58accc0daddea50e228773a86d02efc203c26425e0156cb",
+      "scope": "Run native PyTorch QNNPACK dynamic INT8 with a fixed input row and vary only its batch partner.",
+      "observation": "An outlier batch changed the target class from 1 to 0. Splitting the same inputs restored the class, and only the passing input shapes were timed. Evidence is single-threaded CPU forward, not service latency.",
+      "headings": [
+        "量化基础：整数、比例尺与零点",
+        "分组：谁共享同一把比例尺",
+        "量化的字节与执行账本",
+        "校准与质量：先解释误差，再比较性能",
+        "量化实战：INT4打包与CPU INT8执行"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "quantization-serving",
+      "reviewed_at": "2026-11-09",
+      "scope": "Run native PyTorch QNNPACK dynamic INT8 with a fixed input row and vary only its batch partner.",
+      "observation": "An outlier batch changed the target class from 1 to 0. Splitting the same inputs restored the class, and only the passing input shapes were timed. Evidence is single-threaded CPU forward, not service latency.",
+      "reviewed_content_sha256": "caaf65fdfcddeb24d58accc0daddea50e228773a86d02efc203c26425e0156cb",
+      "record": "dist/labs/int8-batch-quality/validation.json"
+    }
+  ]
+}

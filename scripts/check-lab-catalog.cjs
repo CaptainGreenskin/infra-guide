@@ -21,7 +21,12 @@ for(const unit of units){
  c.catalogUnit=unit;
  const run=vm.runInContext('labCatalogRunPath(catalogUnit)',c),[chapterPath,anchor]=run.split('#');
  const page=fs.readFileSync(path.join(dist,chapterPath,'index.html'),'utf8');
- if(anchor)assert(page.includes('id="'+anchor+'"'),unit.id+': missing run target');
+ assert(anchor&&page.includes('id="'+anchor+'"'),unit.id+': missing exact run target');
+ const chapterLinks=page.match(/<details class="chapter-lab-links"[^>]*>[\s\S]*?<\/details>/g)||[];
+ assert.equal(chapterLinks.length,1,unit.chapter+': one compact chapter practice disclosure');
+ assert(chapterLinks[0].includes('href="'+run+'"'),unit.id+': chapter links to its exact run section');
+ assert(chapterLinks[0].includes('href="/labs/?track='+unit.track+'#lab-'+unit.id+'"'),unit.id+': chapter links to the exact catalog evidence row');
+ if(unit.kind==='目标环境手册')assert(chapterLinks[0].includes('目标环境待验'),unit.id+': planned evidence is marked');
  if(!unit.files.length){assert.equal(unit.kind,'目标环境手册');continue;}
  const recordPath=vm.runInContext('labCatalogRecordPath(catalogUnit)',c),record=JSON.parse(fs.readFileSync(path.join(dist,recordPath),'utf8')),hashes=allStrings(record);
  for(const file of unit.files){
@@ -32,6 +37,25 @@ for(const unit of units){
   if(unit.pack)zipChecks.push({archive:path.join(dist,'labs',unit.pack+'.zip'),source:path.join(dist,source),name:file});
  }
  for(const pending of unit.pendingFiles||[])assert(unit.files.includes(pending));
+}
+const correctedTargets={
+ 'ai-attention':['attention-mechanics','section-6',6,'attention_lab.py'],
+ 'ai-ddp-step':['distributed-training','section-2',2,'ddp_step.py'],
+ 'ai-serving':['inference-performance','subsection-6-1ajl0y9',6,'serving_scheduler.py'],
+ 'agent-fencing':['durable-workflows','worker-fencing-run',9,'worker_fencing.py'],
+ 'agent-cancel':['agent-recovery','section-5',5,'cancel_receipts.py'],
+ 'agent-kairo':['kairo-practice','section-7',7],
+ 'cloud-recovery':['resilience','section-9',9,'recovered_effects.py'],
+ 'cloud-storage-journal-recovery':['storage-recovery','section-8',8,'recovery_lab.py']
+};
+for(const [id,[chapter,anchor,section,file]] of Object.entries(correctedTargets)){
+ const unit=units.find(unit=>unit.id===id),a=articles.find(article=>article.id===chapter);
+ assert(unit.chapter===chapter&&unit.anchor===anchor,id+': use the actual section for this experiment');
+ if(file)assert(unit.files.includes(file)&&a.sections[section-1][1].includes(file),id+': referenced program appears in the selected section');
+}
+for(const article of articles){
+ const page=fs.readFileSync(path.join(dist,'article',article.id,'index.html'),'utf8');
+ assert.equal(page.includes('class="chapter-lab-links"'),units.some(unit=>unit.chapter===article.id),article.id+': only show real catalog tasks');
 }
 // Independently read ZIP members rather than trusting the JavaScript file lists.
 const zipper=cp.spawnSync('python3',['-c',`import sys,json,zipfile,pathlib
@@ -53,6 +77,11 @@ for(const selected of ['','cloud','ai','agent','unknown']){
  }
  assert.equal((sink.innerHTML.match(/aria-current="page"/g)||[]).length,1,'direction selection semantics');
 }
+c.location.search='?track=ai&goal=ai-training';c.location.hash='#lab-ai-ddp-uneven-join';vm.runInContext('labsPage()',c);
+const targeted=sink.innerHTML.match(/id="lab-ai-ddp-uneven-join"[\s\S]*?<li class="lab-learning-unit"/)?.[0];
+assert(targeted?.includes('href="/roadmap/ai-training/#learning-goal"'),'the focused experiment exposes a return to the current role');
+c.location.search='?track=agent&goal=ai-training';vm.runInContext('labsPage()',c);
+assert(!sink.innerHTML.includes('/roadmap/ai-training/'),'a different direction does not present a mismatched role return');
 const staticPage=fs.readFileSync(path.join(dist,'labs/index.html'),'utf8');
 for(const unit of units)assert(staticPage.includes('id="lab-'+unit.id+'"'),'static full catalog omitted '+unit.id);
 assert(staticPage.includes('目标环境待验')&&staticPage.includes('已有本地记录'));

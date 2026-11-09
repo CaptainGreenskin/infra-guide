@@ -1,0 +1,566 @@
+{
+  "status": "passed",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "backend": "qnnpack",
+    "intraop_threads": 1,
+    "interop_threads": 1
+  },
+  "source_sha256": {
+    "int8_batch_quality.py": "6df57f971374b465913de1dcba66474bad76eba82dd13f606c468091201d7e1b",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "fixture": {
+    "shape": [
+      256,
+      256
+    ],
+    "nonzero_weights": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        2,
+        1,
+        1
+      ]
+    ],
+    "first_two_input_features": {
+      "target": [
+        1,
+        0
+      ],
+      "regular": [
+        0,
+        8
+      ],
+      "outlier": [
+        0,
+        1024
+      ]
+    },
+    "remaining_input_features": "all zero"
+  },
+  "weights": {
+    "float_dtype": "torch.float32",
+    "quantized_dtype": "torch.qint8",
+    "quantized_scale": 0.007843137718737125,
+    "quantized_zero_point": 0
+  },
+  "profile": {
+    "case": "regular_batch",
+    "operators": [
+      "aten::_local_scalar_dense",
+      "aten::empty",
+      "aten::fill_",
+      "aten::item",
+      "aten::max",
+      "aten::min",
+      "aten::q_zero_point",
+      "aten::quantize_per_tensor",
+      "aten::to",
+      "quantized::linear_dynamic"
+    ]
+  },
+  "cases": {
+    "singleton": {
+      "rows": [
+        "target"
+      ],
+      "execution": "together",
+      "forward_batch_sizes": [
+        1
+      ],
+      "expected_labels": [
+        1
+      ],
+      "fp32": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1
+        ],
+        "correct": 1,
+        "passed": true
+      },
+      "int8": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            0.9960785508155823,
+            0.0
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1
+        ],
+        "correct": 1,
+        "passed": true
+      }
+    },
+    "regular_batch": {
+      "rows": [
+        "target",
+        "regular"
+      ],
+      "execution": "together",
+      "forward_batch_sizes": [
+        2
+      ],
+      "expected_labels": [
+        1,
+        2
+      ],
+      "fp32": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            8.0
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1,
+          2
+        ],
+        "correct": 2,
+        "passed": true
+      },
+      "int8": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            0.9999847412109375,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            7.968628406524658
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1,
+          2
+        ],
+        "correct": 2,
+        "passed": true
+      }
+    },
+    "outlier_batch": {
+      "rows": [
+        "target",
+        "outlier"
+      ],
+      "execution": "together",
+      "forward_batch_sizes": [
+        2
+      ],
+      "expected_labels": [
+        1,
+        2
+      ],
+      "fp32": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1024.0
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1,
+          2
+        ],
+        "correct": 2,
+        "passed": true
+      },
+      "int8": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1019.9844360351562
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          0,
+          2
+        ],
+        "correct": 1,
+        "passed": false
+      }
+    },
+    "outlier_split": {
+      "rows": [
+        "target",
+        "outlier"
+      ],
+      "execution": "split",
+      "forward_batch_sizes": [
+        1,
+        1
+      ],
+      "expected_labels": [
+        1,
+        2
+      ],
+      "fp32": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1024.0
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1,
+          2
+        ],
+        "correct": 2,
+        "passed": true
+      },
+      "int8": {
+        "scores_0_to_2": [
+          [
+            0.0,
+            0.9960785508155823,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1019.9844360351562
+          ]
+        ],
+        "other_columns_abs_max": 0.0,
+        "labels": [
+          1,
+          2
+        ],
+        "correct": 2,
+        "passed": true
+      }
+    }
+  },
+  "timings": {
+    "singleton": {
+      "input_shape": [
+        1,
+        256
+      ],
+      "warmup_calls_per_engine": 80,
+      "calls_per_sample": 400,
+      "samples": [
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1373458,
+            "int8": 11711500
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11664083,
+            "fp32": 1289333
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1280500,
+            "int8": 11885625
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11846500,
+            "fp32": 1338375
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1311625,
+            "int8": 11828000
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12013542,
+            "fp32": 1370625
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1377417,
+            "int8": 12267209
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11994458,
+            "fp32": 1337125
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1332667,
+            "int8": 11866417
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12152041,
+            "fp32": 1395167
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 1347708,
+            "int8": 12614541
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12403333,
+            "fp32": 1363083
+          }
+        }
+      ],
+      "summary": {
+        "fp32": {
+          "p50_us_per_call": 3.357604,
+          "p90_us_per_call": 3.443542
+        },
+        "int8": {
+          "p50_us_per_call": 29.850104,
+          "p90_us_per_call": 31.008333
+        }
+      }
+    },
+    "regular_batch": {
+      "input_shape": [
+        2,
+        256
+      ],
+      "warmup_calls_per_engine": 80,
+      "calls_per_sample": 400,
+      "samples": [
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3576250,
+            "int8": 11804666
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11746250,
+            "fp32": 3363667
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3337500,
+            "int8": 11785708
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11746625,
+            "fp32": 3314417
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3297458,
+            "int8": 11827917
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12566167,
+            "fp32": 3428750
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3617833,
+            "int8": 11854875
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 11858708,
+            "fp32": 3320583
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3645625,
+            "int8": 11779167
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12281792,
+            "fp32": 3585166
+          }
+        },
+        {
+          "order": [
+            "fp32",
+            "int8"
+          ],
+          "duration_ns": {
+            "fp32": 3579125,
+            "int8": 13201667
+          }
+        },
+        {
+          "order": [
+            "int8",
+            "fp32"
+          ],
+          "duration_ns": {
+            "int8": 12335125,
+            "fp32": 3688709
+          }
+        }
+      ],
+      "summary": {
+        "fp32": {
+          "p50_us_per_call": 8.75625,
+          "p90_us_per_call": 9.114062
+        },
+        "int8": {
+          "p50_us_per_call": 29.60349,
+          "p90_us_per_call": 31.415418
+        }
+      }
+    },
+    "outlier_batch": null
+  }
+}

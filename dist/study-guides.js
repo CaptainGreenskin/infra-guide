@@ -41,9 +41,9 @@ function outlineDirectoryHTML(chapters){
 }
 function outlinePage(){
  simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开','Infra（基础设施）提供运行所需的资源与执行系统：Cloud 支撑应用，AI Infra 支撑模型训练与推理，Agent Infra 组织模型、工具与任务状态。计算、网络、数据和权限是共同底座。',
- `<nav class="path-links" aria-label="选择学习方向"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">学习顺序与过关任务 →</a></nav>
+ `<nav class="path-links" aria-label="选择学习方向"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/roadmap/">学习路线与岗位重点 →</a></nav>
  <section class="quality-section"><h2>完整学习大纲</h2><p>P0 按需补齐系统基础；Cloud 沿 C1–C9 学习；AI 先读 A1，再选训练或推理；Agent 从任务、工具执行读到恢复与验收。展开领域即可选择章节，综合实战放在最后。</p>
- ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${learningGoalSelectorHTML(k)}${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details data-directory-module="${m.id}"><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc}</p>${outlineDirectoryHTML(articles.filter(a=>a.module===m.id))}</details>`).join('')}</div>`).join('')}
+ ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details data-directory-module="${m.id}"><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc}</p>${outlineDirectoryHTML(articles.filter(a=>a.module===m.id))}</details>`).join('')}</div>`).join('')}
  <div class="outline-tree" data-directory-module="practice"><h3>综合实战</h3>${outlineDirectoryHTML(articles.filter(a=>a.module==='practice'))}</div></section>
  <p class="path-links"><a href="/interview/plan/">准备面试：按复习顺序找薄弱项 →</a><a href="/#sample-readings">第一次来：选一个样章 →</a></p>`);
 }

@@ -19,7 +19,7 @@ function homePage(){
  <aside class="home-reading-order" aria-label="一章的阅读顺序"><h2>一章，顺着四步读</h2><ol><li><b>认识对象</b><span>这个概念是什么？</span></li><li><b>弄清关系</b><span>它与前面的知识怎样连接？</span></li><li><b>跟算例子</b><span>每一步为什么得到这个结果？</span></li><li><b>运行验证</b><span>换一个条件，结论还成立吗？</span></li></ol></aside></div></section>
  <section class="track-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
  <div class="shared-line"><b>共同的工程底座</b><span>计算与数据路径 · 身份与权限 · 可观测性 · 版本与恢复</span><a href="/article/cloud-overview/">建立系统地图 →</a></div>
- <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。</p></div></div>
+ <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。 <a class="inline-link" href="/about/#reader-trial">参加 15 分钟试读 →</a></p></div></div>
  <div class="start-paths">${[
  ['Cloud Infra','约10分钟','服务成功率到底怎么算？','slo','把不同流量的实例合起来，算清全局成功率和错误预算。','设总事件1000、好事件990、目标99%。解释预算为什么刚好用完。','无需额外环境'],
  ['AI Infra','约20分钟','KV Cache 为什么能减少重复计算？','model-serving','沿三个 token 的生成过程，区分输入位置、输出和缓存。','运行 attention_lab.py，核对 cache_max_abs_error，再解释移除因果 mask 的变化。','Python 3.9+，无需 GPU'],
@@ -98,7 +98,44 @@ function roadmapPage(){
 function labsPage(){renderLabCatalog()}
 const problemItems=[['服务已经启动，用户却访问失败','沿DNS、连接、TLS和HTTP定位最后成功阶段。','vpc-network','Cloud'],['机器CPU不高，请求仍然很慢','区分执行时间、连接池与下游等待。','linux-resource','Cloud'],['集群还有GPU，Pod却无法调度','检查资源形状、单节点可行性与放置约束。','scheduling-resources','Cloud'],['readiness失败，为什么进程没重启','分清启动、存活和流量资格。','kubernetes-basics','Cloud'],['回滚镜像后，行为没有恢复','检查配置、数据与外部产物版本。','delivery','Cloud'],['多个实例的p99怎么合并','回到分布与可聚合直方图。','observability','SRE'],['备份成功，却无法恢复服务','验证清单、提交点和实际消费者。','storage-recovery','SRE'],['训练OOM，增加GPU仍没解决','先算状态与激活，再判断复制还是分片。','gpu-memory','AI'],['多机启动等待或通信超时','找最早异常，再区分会合与数据通信。','training-communication','AI'],['GPU经常等待数据','用三组输入对照定位关键路径。','data-pipeline','AI'],['保存了检查点，却不能继续','核对状态、规模、进度和数据顺序。','checkpoint-recovery','AI'],['权重放得下，并发却上不去','按上下文和并发估算KV容量。','model-serving','AI'],['首token延迟报告互相矛盾','统一客户端与服务端计时边界。','inference-performance','AI'],['工具已生效，任务还停在运行中','检查提交间隙与接收方幂等语义。','agent-recovery','Agent'],['工具结果要求提升权限','把外部文本与可信授权分开。','agent-security','Agent'],['Agent说成功，实际产物却不对','用环境断言验收任务结果。','agent-evaluation','Agent']];
 function problemsPage(){simplePage('问题索引','START WITH A SYMPTOM','先选择现象，再通过证据判断原因。这里提供排查入口，不预先替你认定根因。',`<div class="problem-list">${problemItems.map(([t,d,id,tag])=>`<a href="${articleURL(id)}"><span class="tag">${tag}</span><div><h2>${t}</h2><p>${d}</p></div><b>↗</b></a>`).join('')}</div>`)}
-function editorialPage(){simplePage('内容与证据标准','EXPLAIN THE SYSTEM · SHOW THE EVIDENCE','高信息量来自清晰的因果链：知道为什么，理解怎样工作，能够计算或验证，再讨论选择。',`<section class="quality-section"><h2>同一网站，三条独立主线</h2><div class="track-grid">${Object.keys(trackDefinitions).map(trackCard).join('')}</div><p>Cloud建立系统底座；AI展开训练与推理；Agent研究工具执行、状态与任务验收，并连接Kairo实践。可靠性、权限、版本和成本贯穿三条路线，综合实战连接跨层依赖。</p></section><section class="quality-section"><h2>一章内容怎样展开</h2><p>默认读者第一次接触这个领域。入口和每章都先介绍基本对象，接着解释对象之间的关系，再讲机制、推导和边界，最后进入案例与代码。专业词在进入推理前给出含义；图、表、代码围绕同一组对象与数字展开，最后改变条件检验理解。</p>${trainingTable(['阅读顺序','必须回答的问题','读者得到什么'],[['对象与关系','概念是什么，彼此怎样连接，为什么需要它','学习起点与全局地图'],['机制与因果','输入如何经过状态变化成为输出','可以解释的执行路径'],['走通一个例子','具体数字、事件或代码怎样对应机制','可复查的推导'],['选择与失败','什么时候成立，什么条件下失效','工程判断与反例'],['练习与验证','换一个条件，你能否独立解释','迁移能力与证据']])}<p>本站文章、图和实验代码独立编写。领域知识、详细章节与实验相互连接，学习后可以改变条件，重新解释结果。</p></section><section class="quality-section"><h2>当前交付与验证边界</h2><p>共${articles.length}章：Cloud ${courseChapterCount('cloud')}章、AI ${courseChapterCount('ai')}章、Agent ${courseChapterCount('agent')}章、综合实战${courseChapterCount('shared')}章。全部提供前置知识、学习出口、机制正文、迁移练习和来源。章节齐备与真实环境已验证是两种不同状态。</p><p>Linux容器、消息代理、MySQL恢复、Terraform本地提供程序、kind调度与Argo CD调谐，以及CPU/Gloo实验均附范围、结果与源码摘要。真实GPU、物理多节点、云CNI/CSI、生产负载和Kairo仍需对应环境验收。<a href="#/labs">查看逐项验证记录 →</a></p></section><section class="quality-section"><h2>内容维护的质量门槛</h2>${trainingTable(['门槛','检查方式'],[['准确性','优先官方资料，注明产品语义、版本与假设'],['可理解性','先定义对象与关系，再有连续推导、例子和反例'],['可复现性','完整代码、命令、依赖、预期结果与源码摘要一致'],['可审查性','保留失败边界，不用CPU结果推断GPU或集群结果'],['可维护性','修改实验后重跑相关验证；版本变化复查对应事实']])}<p>当前优先按读者理解卡点，逐章深化连续解释、手算例子与反例；有合适环境时，再补真实GPU、Kubernetes和Kairo验收。新章节按问题价值增加，已有章节按错误、过时信息和验证缺口持续修订。</p></section><section class="quality-section"><h2>阅读与隐私</h2><p>学习路线按依赖组织；目录按系统领域组织；实验室提供代码和证据；问题索引连接现象与机制。搜索覆盖正文，阅读勾选与主题仅保存在当前浏览器。</p></section>`)}
+function readerTrialHTML(){
+ const tasks=[
+  {
+   track:'Cloud Infra',chapter:'tcp-event-loop',reading:'TCP 与 I/O，第 1–3 节',
+   focus:'套接字与字节流 → 字节序号 → 消息解帧',
+   questions:['连接、字节流和应用消息是什么关系？','长度头应写正文的字符数还是编码后的字节数，为什么？'],
+   transfer:'4 字节长度头写明正文长 6 字节，正文是 abcdef。三次读到的块依次为「头前 2 字节」「头后 2 字节 + abc」「def」。在哪次能交付消息？前两次保留什么？'
+  },
+  {
+   track:'AI Infra',chapter:'operator-profiling',reading:'算子与性能分析，第 1–2 节',
+   focus:'输入与输出约定 → 稳定 softmax',
+   questions:['减去同一最大值为什么不改变 softmax 的比例？','输出行和为 1，为什么还不能认定计算正确？'],
+   transfer:'一行输入是 [3,3,3]，程序输出 [1,0,0]，行和为 1。它通过了吗？预期每项是什么，应该怎样核对？'
+  },
+  {
+   track:'Agent Infra',chapter:'agent-retrieval',reading:'检索与上下文，第 1–2 节',
+   focus:'检索到最终主张 → 片段与来源版本',
+   questions:['索引、来源正文与最终上下文是什么关系？','同一文档的旧版与当前版为什么不能直接互换？'],
+   transfer:'检索第一名是旧调整 99，真正送入上下文的只有当前调整 27。能交付「本月总额 27」吗？还缺哪份材料，需要核对哪些身份与条件？'
+  }
+ ];
+ const feedbackBody=[
+  '### 阅读范围','- 方向与小节链接','- 对这个主题的基础','- 设备（手机或电脑）',
+  '','### 实际进度','- 第 2 分钟找到的位置','- 最后读到哪里和实际用时',
+  '','### 卡点与回答','- 卡住的术语或原句','- 两道概念题的回答','- 迁移题的判断和依据'
+ ].join('\n');
+ const feedbackURL='https://github.com/CaptainGreenskin/infra-guide/issues/new?title='+encodeURIComponent('15 分钟试读反馈')+'&amp;body='+encodeURIComponent(feedbackBody);
+ return `<section class="quality-section" id="reader-trial" aria-labelledby="reader-trial-title">
+ <h2 id="reader-trial-title">15 分钟试读</h2>
+ <p>选一个你不熟悉的方向，只读指定小节。手机或电脑都可以，无需安装软件。</p>
+ <ol><li><b>第 2 分钟</b> 记下找到的位置和卡住的术语或原句。</li><li><b>第 10 分钟</b> 合上正文，用自己的话回答两道概念题。</li><li><b>第 15 分钟</b> 做一道迁移题，写出判断依据。时间到了就记下读到的位置。</li></ol>
+ ${tasks.map(({track,chapter,reading,focus,questions,transfer})=>`<section><h3>${track}</h3><p><a href="${articleURL(chapter)}#section-1">阅读${reading} →</a><br>${focus}</p><details class="article-case"><summary>展开 ${track} 读后题</summary><ol>${questions.map(question=>`<li>${question}</li>`).join('')}</ol><p><b>迁移题</b> ${transfer}</p></details></section>`).join('')}
+ <p>如愿意反馈，可以打开预填的 GitHub 草稿，挑选愿意公开的阅读记录后再提交。提交后，GitHub 会公开显示你的账号名和内容。请省略姓名、单位与联系方式。</p>
+ <p><a href="${feedbackURL}" target="_blank" rel="noopener noreferrer">打开 GitHub 反馈草稿 ↗</a></p>
+ </section>`;
+}
+
+function editorialPage(){simplePage('内容与证据标准','EXPLAIN THE SYSTEM · SHOW THE EVIDENCE','高信息量来自清晰的因果链：知道为什么，理解怎样工作，能够计算或验证，再讨论选择。',`<section class="quality-section"><h2>同一网站，三条独立主线</h2><div class="track-grid">${Object.keys(trackDefinitions).map(trackCard).join('')}</div><p>Cloud建立系统底座；AI展开训练与推理；Agent研究工具执行、状态与任务验收，并连接Kairo实践。可靠性、权限、版本和成本贯穿三条路线，综合实战连接跨层依赖。</p></section><section class="quality-section"><h2>一章内容怎样展开</h2><p>默认读者第一次接触这个领域。入口和每章都先介绍基本对象，接着解释对象之间的关系，再讲机制、推导和边界，最后进入案例与代码。专业词在进入推理前给出含义；图、表、代码围绕同一组对象与数字展开，最后改变条件检验理解。</p>${trainingTable(['阅读顺序','必须回答的问题','读者得到什么'],[['对象与关系','概念是什么，彼此怎样连接，为什么需要它','学习起点与全局地图'],['机制与因果','输入如何经过状态变化成为输出','可以解释的执行路径'],['走通一个例子','具体数字、事件或代码怎样对应机制','可复查的推导'],['选择与失败','什么时候成立，什么条件下失效','工程判断与反例'],['练习与验证','换一个条件，你能否独立解释','迁移能力与证据']])}<p>本站文章、图和实验代码独立编写。领域知识、详细章节与实验相互连接，学习后可以改变条件，重新解释结果。</p></section><section class="quality-section"><h2>当前交付与验证边界</h2><p>共${articles.length}章：Cloud ${courseChapterCount('cloud')}章、AI ${courseChapterCount('ai')}章、Agent ${courseChapterCount('agent')}章、综合实战${courseChapterCount('shared')}章。全部提供前置知识、学习出口、机制正文、迁移练习和来源。章节齐备与真实环境已验证是两种不同状态。</p><p>Linux容器、消息代理、MySQL恢复、Terraform本地提供程序、kind调度与Argo CD调谐，以及CPU/Gloo实验均附范围、结果与源码摘要。真实GPU、物理多节点、云CNI/CSI、生产负载和Kairo仍需对应环境验收。<a href="#/labs">查看逐项验证记录 →</a></p></section><section class="quality-section"><h2>内容维护的质量门槛</h2>${trainingTable(['门槛','检查方式'],[['准确性','优先官方资料，注明产品语义、版本与假设'],['可理解性','先定义对象与关系，再有连续推导、例子和反例'],['可复现性','完整代码、命令、依赖、预期结果与源码摘要一致'],['可审查性','保留失败边界，不用CPU结果推断GPU或集群结果'],['可维护性','修改实验后重跑相关验证；版本变化复查对应事实']])}<p>当前优先按读者理解卡点，逐章深化连续解释、手算例子与反例；有合适环境时，再补真实GPU、Kubernetes和Kairo验收。新章节按问题价值增加，已有章节按错误、过时信息和验证缺口持续修订。</p></section>${readerTrialHTML()}<section class="quality-section"><h2>阅读与隐私</h2><p>学习路线按依赖组织；目录按系统领域组织；实验室提供代码和证据；问题索引连接现象与机制。搜索覆盖正文，阅读勾选与主题仅保存在当前浏览器。</p></section>`)}
 
 function chapterPracticeHTML(a){
  const exercise=a.exercise?'<section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>'+a.exercise[0]+'</p><details class="full-code"><summary>展开参考答案与推理</summary><p>'+a.exercise[1]+'</p></details></section>':'';

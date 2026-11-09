@@ -114,6 +114,28 @@
  p('练习保持W不变，把group size从4改成2：先算8个与16个比例尺、48B与80B载荷，再运行比较输出误差。接着把保留激活分别放到校准范围内外，指出舍入和裁剪各发生在哪一步。部署记录补上设备、格式、算子、任务质量、服务负载和回退束；目标环境尚未测到的结果单列为待验证。')
  ],['subsection-1-e82fyf','subsection-2-hfszdc','subsection-3-uz1007','subsection-3-j83oe9','subsection-4-its870','subsection-4-1vuiqtr','subsection-5-1drpdp8','subsection-5-1sbp3h2']);
 
+ const batchQuality = articles.find(a=>a.id==='quantization-serving');
+ batchQuality.sections[4][1]+=
+ '<h3 id="native-int8-batch-quality">同一条输入换个同批伙伴，为什么会改分类</h3>'+
+ p('上一段验证了动态 INT8 的实际算子与产物回读。把它用于合批时，还要核对一个问题：每行的输入没变，整批用的比例尺可能变。下面仍用 PyTorch 2.5.1 的 QNNPACK CPU 后端，先检查分类，再比较两条合格路径的耗时。',
+ '固定无偏置的 256×256 线性层。只有权重 <code>W[1,0]</code> 和 <code>W[2,1]</code> 为 1，所以输入前两项分别成为类别 1 和 2 的分数，其余分数为 0。分数最高的编号就是预测类别，若并列则取第一个。目标行固定为 <code>[1,0,…]</code>，期望类别一直是 1。')+
+ trainingFigure('int8-batch-quality','目标行本身不变。QNNPACK 2.5.1 的动态线性算子为整批激活选取同一把比例尺。')+
+ p('当目标与 <code>[0,1024,…]</code> 一起输入时，整批最小值为 0、最大值为 1024。激活使用 0–255 的格点，比例尺约为 <code>1024/255=4.02</code>。目标特征 1 除以 4.02 后舍入为 0，导致该行的所有分数为 0，程序按并列规则选了类别 0。与 <code>[0,8,…]</code> 合批时，格点间隔约 0.031，特征 1 仍能保留为正数。')+
+ table(['输入怎样组织','FP32 实际类别','动态 INT8 实际类别'],[
+ ['目标行独立运行','[1]','[1]'],
+ ['目标行与 8 合批','[1,2]','[1,2]'],
+ ['目标行与 1024 合批','[1,2]','[0,2]'],
+ ['目标行与 1024 分开运行','[1,2]','[1,2]']
+ ])+
+ p('实测的 CPU 算子记录包括 <code>quantized::linear_dynamic</code> 和 <code>aten::quantize_per_tensor</code>。固定版本源码先求整个输入张量的最小值和最大值，再用同一个比例尺量化；这个结果对应的是该后端实现。若改用逐行激活比例尺，或者分别执行再合并结果，应重新测量质量和耗时。')+
+ p('实验要求这组固定输入的预测类别逐行正确。第三组 INT8 失败，所以记录中没有那组的速度比较。前两组各预热 80 次，再交替先运行 FP32 或 INT8，共采 12 对样本。每个样本计 400 次同步 CPU 前向，记录总纳秒，最后换算为单次均值的 p50 和 p90。表中是本机这一次记录。')+
+ table(['通过分类检查的输入形状','FP32 p50','INT8 p50'],[
+ ['1×256','约 3.36 微秒','约 29.85 微秒'],
+ ['2×256','约 8.76 微秒','约 29.60 微秒']
+ ])+
+ p('这份计时含 Python 前向调用、输出分配和本轮动态量化，权重转换、分类检查与 profiler 在计时前完成。它只比较本机固定张量与单线程下的两条前向路径。服务端排队、解码和设备级吞吐需要在各自环境测量。解压并安装依赖后，运行 <code>python -B int8_batch_quality.py --output replay.json</code>，先核对四组类别，再比较同一形状的计时。')+
+ '<p class="practice-links"><a href="labs/int8-batch-quality.zip" download>下载实验包 ↓</a> · <a href="labs/int8-batch-quality/int8_batch_quality.py">完整源码</a> · <a href="labs/int8-batch-quality/README.md">复跑说明</a> · <a href="labs/int8-batch-quality/validation.json">实测分数与计时</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/aten/src/ATen/native/quantized/cpu/qlinear_dynamic.cpp#L224-L351">固定版本 QNNPACK 源码 ↗</a></p>';
+
  rewrite('ai-lifecycle',8,old=>[
  legacy('model-bundle-contract')+legacy('subsection-1-1vzo0i0')+
  p('训练恢复保存“怎样从某次更新继续”，模型发布安排“请求按哪套固定含义得到回答”。先从一份已核对的参数状态导出候选产物，绑定输入处理、模型结构和运行配置，加载并验证；服务就绪后，新请求选择这一版本，记录实际使用的成员，直到输出结束。量化参数改变时，也沿这条流程建立新候选。',

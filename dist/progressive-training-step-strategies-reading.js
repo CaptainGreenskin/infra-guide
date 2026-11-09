@@ -241,6 +241,10 @@
  linkRow(d8links.filter(x=>x.includes('multinode-lab')).map(x=>x.replace('下一步：按两机四卡手册检查设备、会合、通信与恢复','后续实践：按两机四卡手册检查设备、会合、通信与恢复')))
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
 
+ strategies.sections[1][1]+=
+ p('用两进程把这组独立手算跑一遍。按包内说明安装 PyTorch 2.5.1，运行 <code>python ddp_step.py --output runs/ddp-step-report.json</code>。从 w=1 起步时，局部均值方案更新到 1.05，全局分母方案更新到 1.125，后者与单进程基准一致。')+
+ '<p class="practice-links"><a href="labs/ddp-one-step.zip" download>下载单步实验 ↓</a> · <a href="labs/ddp-step/validation.json">查看两进程与独立基准 ↗</a></p>';
+
  strategies.sections[3][1]+='<h3 id="native-fsdp-run">用原生 FSDP 核对两个进程各持有什么</h3>'+p(
  'PyTorch 的 FSDP 会先包装模型，再决定参数怎样分片，所以 Adam 在包装后创建。本次独立实验只用一个 <code>Linear(2,2)</code>，即四个权重和两个偏置。两个进程分别处理一条和两条样本，每条有两个目标。总共有六个参与损失的标量，按全局六项的均值训练。',
  '初始权重两行分别为 [1/4,−1/2] 和 [3/4,1/8]，偏置为 [0,0]。rank 0 的输入 [1,2] 对应目标 [0,1]。rank 1 的输入 [0,−1] 和 [2,1] 分别对应 [1,0] 和 [−3/4,1]。每项损失是预测与目标之差的平方再除以 2。',

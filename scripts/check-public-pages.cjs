@@ -27,8 +27,24 @@ for(const url of urls){
  }
 }
 checkPrimaryOrder(fs.readFileSync(path.join(dist,'start/index.html'),'utf8'),'/start/');
+const home=fs.readFileSync(path.join(dist,'index.html'),'utf8');
+assert(home.includes('href="/about/#reader-trial"'),'home links directly to the public trial');
+const about=fs.readFileSync(path.join(dist,'about/index.html'),'utf8');
+const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
+assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
+const trialTargets=[...trial.matchAll(/href="(\/article\/[^"]+?\/#section-1)"/g)].map(([,href])=>href);
+assert.deepEqual(trialTargets,['tcp-event-loop','operator-profiling','agent-retrieval'].map(chapter=>'/article/'+chapter+'/#section-1'));
+assert.equal((trial.match(/<details class="article-case">/g)||[]).length,3,'the three question sets are closed initially');
+const feedback=new URL(trial.match(/href="(https:\/\/github.com\/CaptainGreenskin\/infra-guide\/issues\/new[^"]+)"/)?.[1].replaceAll('&amp;','&'));
+assert.equal(feedback.searchParams.get('title'),'15 分钟试读反馈');
+assert(feedback.searchParams.get('body').includes('卡住的术语或原句'));
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
+assert(!outlineTree.includes('learning-goal-selector')&&!outlineTree.includes('aria-current="page"'),'the outline is a stable chapter directory');
+assert(outline.includes('href="/roadmap/">学习路线与岗位重点 →'),'a single link leads to the route selector');
+const roadmap=fs.readFileSync(path.join(dist,'roadmap/index.html'),'utf8');
+assert.equal((roadmap.match(/class="learning-goal-selector"/g)||[]).length,3,'the course and role selector stays on the roadmap');
+for(const role of ['cloud-platform','cloud-sre','ai-training','ai-inference','ai-operators','agent-app','agent-platform'])assert(roadmap.includes('/roadmap/'+role+'/#learning-goal'),role+': keep the exact role destination');
 const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
 assert.equal(outlineChapterCount,inventory.chapters);
 assert(outline.includes('Infra（基础设施）')&&outline.includes('计算、网络、数据和权限是共同底座。'),'define the three directions before their directory');

@@ -329,8 +329,9 @@ const fieldPracticePaths={
 function fieldPracticeHTML(moduleId, names){
  const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
  const unit=labLearningCatalog.find(item=>item.id===labId);
- const article=articleById(unit.chapter);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+
+ const article=articleById(unit.chapter),profile=selectedLearningProfile();
+ const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+
   '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
 }
 

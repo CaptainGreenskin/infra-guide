@@ -5,14 +5,14 @@ const gateTargets={
  'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['k8s-workloads','native-pdb-eviction-rollout'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity'],['vpc-network','native-tls-proxy']],
  'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['slo','live-prometheus-burn'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking']],
  'ai-training':[['gpu-memory','native-amp-window'],['ddp-code','native-ddp-join'],['gpu-scheduling','native-kueue-admission'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run']],
- 'ai-inference':[['model-serving','section-4'],['model-serving','native-inference-prefix'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
+ 'ai-inference':[['model-serving','section-4'],['quantization-serving','native-int8-batch-quality'],['model-serving','native-inference-prefix'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
  'ai-operators':[['operator-profiling','native-python-extension'],['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training'],['operator-profiling','triton-tail-mask-run']],
  'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['mcp-protocol','native-mcp-catalog-refresh'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['agent-observability','native-tail-sampling-ledger'],['agent-observability','native-mcp-trace-reentry']]
 };
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
  for(const file of files)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
- const data=JSON.parse(vm.runInContext('JSON.stringify({profiles:learningProfiles,articles,modules})',c));
+ const data=JSON.parse(vm.runInContext('JSON.stringify({profiles:learningProfiles,articles,modules,labs:labLearningCatalog})',c));
  const run=href=>{c.href=href;return vm.runInContext('readerInternalHref(href)',c);};
  for(const[key,p]of Object.entries(data.profiles)){
   c.location.search='?goal='+key;c.profileKey=key;
@@ -28,6 +28,19 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(run('/article/'+id+'/?goal=#detail'),base+'article/'+id+'/?goal=#detail',key+': explicit reset wins');
   assert.equal(run('/module/'+mod+'/?concept=opaque#concept-relations'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#concept-relations',key+': field detour keeps context');
   assert.equal(run('/module/'+mod+'/?concept=opaque#map-concept-opaque'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#map-concept-opaque',key+': focused field detour keeps context');
+  const unit=data.labs.find(lab=>lab.track===p.track&&ids.includes(lab.chapter));
+  const task='#lab-'+unit.id,labPath='/labs/?track='+p.track;
+  assert.equal(run(labPath+task),base+labPath.slice(1)+'&goal='+key+task,key+': lab evidence keeps active role');
+  assert.equal(run(labPath+'&goal='+task),base+labPath.slice(1)+'&goal='+task,key+': explicit lab context reset wins');
+  const crossTrack=p.track==='cloud'?'ai':'cloud';
+  assert.equal(run('/labs/?track='+crossTrack+task),base+'labs/?track='+crossTrack+task,key+': different track has independent lab view');
+  assert.equal(run(labPath+'#labs-'+p.track),base+labPath.slice(1)+'#labs-'+p.track,key+': plain lab directory stays generic');
+  c.location.pathname=base+'labs/';c.location.search='?track='+p.track+'&goal='+key;
+  c.selectedLab=unit;
+  const runTarget=vm.runInContext('labCatalogRunPath(selectedLab)',c),[runPath,runAnchor]=runTarget.split('#');
+  assert(runAnchor);
+  assert.equal(run(runTarget),base+runPath.slice(1)+'?goal='+key+'#'+runAnchor,key+': from lab back to exact lesson anchor');
+  c.location.pathname=base+'article/tokenization-embedding/';c.location.search='?goal='+key;
   const gate=vm.runInContext('learningGoalHTML(learningProfiles[profileKey])',c);
  const staticRole=base==='/'?fs.readFileSync('dist/roadmap/'+key+'/index.html','utf8'):'';
  for(const chapter of ids){
@@ -64,6 +77,14 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(vm.runInContext('practiceArticleForContext().id',c),capstone);
   c.location.pathname=base+'article/tokenization-embedding/';
  }
+ c.location.pathname=base+'module/training/';c.location.search='?goal=ai-inference';
+ c.trainingPractice=vm.runInContext('fieldPracticeHTML("training",{"tr-recovery":"检查点恢复"})',c);
+ assert(c.trainingPractice.includes('岗位选读'),'the inference role sees the training field exercise as optional');
+ const trainingExercise=c.trainingPractice.match(/href="([^"]+)"/)[1];
+ assert.equal(run(trainingExercise),base+trainingExercise.slice(1),'optional field exercises do not take over the role route');
+ c.location.search='?goal=ai-training';
+ assert(!vm.runInContext('fieldPracticeHTML("training",{"tr-recovery":"检查点恢复"})',c).includes('岗位选读'),'the training role owns its core exercise');
+ c.location.pathname=base+'article/tokenization-embedding/';
  c.profileKey='agent-app';
  const applicationRoute=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(learningProfiles[profileKey]))',c));
  assert(applicationRoute.includes('agent-recovery')&&!applicationRoute.includes('agent-sandbox'),'the application route retains an independent recovery lesson');

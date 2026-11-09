@@ -1,0 +1,222 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "c5ec649ee081dfa7a37598e0e7728411301e456c",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRACK_ENTRY_NATIVE_2026-11-09.json": "e60311ea7cf15367cd08bdc576df243942ca5dca71bcfcaa0792a1856dcdcdc9"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "e7e5122260cb01313eddd0535f6bf670d6fcb8cf78d072736b47a821515bf5f0",
+      "reviewed_sha256": "cc735c8afe3d79efe5f04f0e8657de9bcc802392e24f44f10792cfa73e724a9d",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "0a154e940e897da6fc85acde7a1ac0fece615e64913af3db1569337fc83cfcb5",
+      "reviewed_sha256": "3d51a26fd485b2a7628621049cfa9a418d183b399f0176b87257551c4b5693c6",
+      "scope": "Make the existing trial readable from the homepage with exact lesson sections and an optional public feedback draft. No trial outcome is inferred."
+    },
+    "dist/study-guides.js": {
+      "previous_sha256": "03700de6ffc04f8a3b79c5e7dbc2f771588eb138042f32526227b0aeac5ad00e",
+      "reviewed_sha256": "dd7a68755c358bc9e4212f9fcb1d6f00a3ab275725fc6d961c3e46c197197d3d",
+      "scope": "Present a stable chapter directory and keep all role selectors in the dedicated roadmap."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "b66f5645e64291e47ea8630c11a5ebdb949a0a9676ffe18ea0202c0d9c339608",
+      "reviewed_sha256": "b4ea0ed8714a0fb148d7c795cddaac41e8952720c30212fc666f26fc936185ff",
+      "scope": "Present a stable chapter directory and keep all role selectors in the dedicated roadmap."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "282c1540b0ad7a1dedf0f972871119cb3b408f920c52006fa46015248cca236d",
+      "reviewed_sha256": "381e7bad66fe88abe1205af40d1ed8b076ebc24a15f1f5f4ce0a35f88e462a55",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "07e914dab193f5d1a5ae07cd6a8ac2217cfe55fab17f9c5367f5c84bbeef123e",
+      "reviewed_sha256": "37e0accbc555933a57a7705c6921cc7fd813f3aa4bf80c143baf578752e7cae9",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "3abe497fc92c7870378c16c3d0350856111e5722cfbaf066b3e62b5723c01414",
+      "reviewed_sha256": "c06dbe84e33b402eec98212662681b12113a9966e51c2cd3f537981e857ca1f5",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "a09991d08c1ce06c6da8c5c411eb8bb01aedb615db77e7631eb27b9a70955b4a",
+      "reviewed_sha256": "c0edc6ec616ea7ca11e386c45a5f3ac990e3202a1dbc2bf7bd294a908c4c6b0e",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "76b3d97a11f55fcdfaa3a9218044cb81de279c43736313b85b1f0a68f798ad24",
+      "reviewed_sha256": "9697e053a3157baefc9dbbbfcbadd213f76a83cf81109a388ed2a5c355f659ab",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "203caefc16c990e1f0f64298d47b2d3a047e03e4c43c6fb2e12f51a6ce13600c",
+      "reviewed_sha256": "43f01f85b5952571e6687b52cce11d419449915de70c5fdf69ede99072f61173",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "95cf5e0814b7ce0c84a3971059ffc1756847768ef792a0f27c4ab040119dc3f7",
+      "reviewed_sha256": "89b4744500b5f19c84374b940df88755ebb59e01e18052ecb47b28c6b2e07229",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "c3701fc82e3eb179e74c5f621369858a210e0fbc09792adc15fb12987fc5d53b",
+      "reviewed_sha256": "31a21f09aabb88852eeef25c81cd53f21aeb5e9c082bcead06ee6e72afb3500c",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "331d47735b77bbf5277ec186bce10dd0cb8628737063f97fe9f15d22baec9f0d",
+      "reviewed_sha256": "b53de3ed330238e663c6da9d6b8b57e57e0b5801f43df16a114bf7c553706e48",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/progressive-quantization-delivery-reading.js": {
+      "previous_sha256": "fc39ba7345e7915d3095ea046368f47f12dbb3f52895a4db06b31796b90d8dfc",
+      "reviewed_sha256": "c67a62a9e152db6a6d2db92e9da4ecbf31c31a1bcf3a0adcbb9fe55284749551",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "0bfd9679ac4654d05c087fc7d647002d2fd4fc0b078a35aaf7cbf448d8b093f4",
+      "reviewed_sha256": "8a5ab42064f8623a1ca11a8868deb3eaf7b2c855a27b4702c762b13ccba11a5e",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "0c5b5cfb774aefb11f44d0ce702fd7efb19d15759eb44990306d4a6b67ed2854",
+      "reviewed_sha256": "23e4b6d19c552f76481c1c06379dd1f22a7790007c9a3fce6532ed63e620185b",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "d5d842351bbc8bae17d207787b112d0c71b21b2a36da7c3f21c78f660903b076",
+      "reviewed_sha256": "0838781d21c93ec2e5a7d7e484b5b5ca50284b2b14608e2f1b6d90be6d366c51",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "63912edf2c4adf40a81e8419403b69479162b4837f42d86b5bf84c04485c7bd0",
+      "reviewed_sha256": "3a1b8a71ba2dce2217e37468ec8e8b105370187eee5e6d8bf280a8998a7a22e8",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "84f92ec1b5a91afccc8f0502ba131ebb7bc92de183ed6e3e45c3205224a446f4",
+      "reviewed_sha256": "9ee81d29ff1fe5ba082cd7e5f21507fa6d5b6e8957ee46b068e738f53b0f2b94",
+      "scope": "Bind article practice, exact catalog rows, full reading order and verified records while preserving the current role and marking optional excursions."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "12587ea6b77e41329db2f29f0d396111a0128c26ee916dddd4656ea264bfe7dd",
+      "reviewed_sha256": "f12f6ea5d2348eb6d68e0a6510e39c5a1263215df7e9b6c1e3f39326c039d90f",
+      "scope": "Make the existing trial readable from the homepage with exact lesson sections and an optional public feedback draft. No trial outcome is inferred."
+    },
+    "dist/diagrams/int8-batch-quality.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "144839dae981df134e5de4d72eb02b74a4943285b2bf86a3b87eb6581f7f39da",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "scripts/check-int8-batch-quality.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c9310cd645270944227b5e7119e355782d16ee9bfcb734b31871287d4d974882",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/labs/int8-batch-quality.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4b718215abcda9e627e3bb63ba9ea95bdfa3901b0c899ed5ae391eb0001d0077",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/labs/int8-batch-quality/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "79c23ed729eec8610e6f23fd87ec7931d3944e85f6fe1e71aad297e374b42bdc",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/labs/int8-batch-quality/int8_batch_quality.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6df57f971374b465913de1dcba66474bad76eba82dd13f606c468091201d7e1b",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/labs/int8-batch-quality/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "dist/labs/int8-batch-quality/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8d9c2b2f42eb5bae46b09c1d0b18ca1bfa42c5b302bd32bd44a815893db0b35a",
+      "scope": "Bind actual QNNPACK behavior, an outlier counterexample and raw timings from quality-qualified CPU runs."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e6e01b57d44a48065b929c8231f294d5a77cb8cb37bfe863034b8a5d38b2e6fb",
+      "reviewed_sha256": "03d538749a0183266d6da8fd04ec340e61cb385e97aa0a50d0390c7d1d2395da",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "6fab3c05141d1ee1c87e34c2cec226d82cb02902fc5f8f615f776b79529501a4",
+      "reviewed_sha256": "29356eadc63a9a91a7d944ed97a3df4915d0ce19731170190cbaa4ab9812b529",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "docs/CONTENT_PRACTICE_TRIAL_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f79a602cc227e31a23ce84ecc062d1470c2b339bf9081198728884df81076d9b",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "8b0a78edd55ae9c3ca6b55aeadc02ce173dbfa623cb28a8cd37aefa79170d427",
+      "reviewed_sha256": "0156a2b763b7ef5892bd4796977f5b937d4840cac8a6072802d680dcfbe86f55",
+      "scope": "Connect previously published programs and their exact teaching sections to the current reading route."
+    }
+  },
+  "article_sections": {
+    "attention-mechanics": {
+      "sections": [
+        6
+      ],
+      "scope": "Connect the existing standard-library attention and KV equality fixture to its exact mechanism section.",
+      "observation": "The source and immutable record are reachable from the existing full versus incremental calculation."
+    },
+    "distributed-training": {
+      "sections": [
+        2
+      ],
+      "scope": "Give the uneven sample-denominator comparison a direct link to its two-rank CPU program and report.",
+      "observation": "The recorded 1.05 versus 1.125 weight contrast remains explicitly separate from the surrounding worked numbers."
+    },
+    "durable-workflows": {
+      "sections": [
+        9
+      ],
+      "scope": "Make the existing independent worker-fencing disclosure addressable from the experiment catalog.",
+      "observation": "The exact link opens the actual code and commands. All previous prose and code remain available."
+    },
+    "quantization-serving": {
+      "sections": [
+        5
+      ],
+      "scope": "Run native PyTorch QNNPACK dynamic INT8 with a fixed input row and vary only its batch partner.",
+      "observation": "An outlier batch changed the target class from 1 to 0. Splitting the same inputs restored the class, and only the passing input shapes were timed. Evidence is single-threaded CPU forward, not service latency."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "c5ec649ee081dfa7a37598e0e7728411301e456c",
+    "chapters": 78,
+    "changed_bodies": [
+      "attention-mechanics",
+      "distributed-training",
+      "quantization-serving",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "outline_role_selectors": 0,
+    "reader_trial_entries": 3,
+    "actual_reader_sessions": 0,
+    "chapters_with_catalog_tasks": 67,
+    "role_chapter_positions": 114,
+    "experiment_packs": 89,
+    "learning_tasks": 132
+  }
+}

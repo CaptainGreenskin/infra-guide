@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 434" role="img" aria-labelledby="title desc">
+  <title id="title">同一输入随合批范围变化而跨过质量门槛</title>
+  <desc id="desc">目标行固定为一和零。独立输入时量化整数为二百五十五，与八合批时为三十二，与一千零二十四合批时为零，导致类别从一变为零。拆开同一对输入后恢复原有类别。</desc>
+  <metadata>{"record":"labs/int8-batch-quality/validation.json","target_feature":1,"input_maxima":[1,8,1024],"estimated_target_codes":[255,32,0],"target_labels":[1,1,0],"split_labels":[1,2]}</metadata>
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#56718f"/></marker>
+  </defs>
+  <rect x="1" y="1" width="488" height="432" rx="18" fill="#f7faff" stroke="#d2dfef"/>
+  <g font-family="system-ui,'PingFang SC',sans-serif" text-anchor="middle" fill="#192b47">
+    <text x="245" y="37" font-size="21" font-weight="700">目标行的第 0 个特征始终为 1</text>
+    <text x="83" y="74" font-size="16" font-weight="650">本轮输入</text>
+    <text x="246" y="74" font-size="16" font-weight="650">整批量化</text>
+    <text x="408" y="74" font-size="16" font-weight="650">目标行结果</text>
+    <g fill="#e6efff">
+      <rect x="17" y="89" width="132" height="68" rx="8"/><rect x="17" y="176" width="132" height="68" rx="8"/><rect x="17" y="263" width="132" height="68" rx="8"/>
+    </g>
+    <g fill="#edf2f9">
+      <rect x="180" y="89" width="132" height="68" rx="8"/><rect x="180" y="176" width="132" height="68" rx="8"/><rect x="180" y="263" width="132" height="68" rx="8"/>
+    </g>
+    <g fill="#e1f3ec"><rect x="342" y="89" width="132" height="68" rx="8"/><rect x="342" y="176" width="132" height="68" rx="8"/></g>
+    <rect x="342" y="263" width="132" height="68" rx="8" fill="#fdecd9"/>
+    <g stroke="#56718f" marker-end="url(#arrow)">
+      <path d="M154 123h20"/><path d="M317 123h20"/><path d="M154 210h20"/><path d="M317 210h20"/><path d="M154 297h20"/><path d="M317 297h20"/>
+    </g>
+    <g font-size="16" font-weight="650">
+      <text x="83" y="116">单独输入</text><text x="83" y="203">与正常行合批</text><text x="83" y="290">与离群行合批</text>
+      <text x="246" y="116">最大值 1</text><text x="246" y="203">最大值 8</text><text x="246" y="290">最大值 1024</text>
+      <text x="408" y="116">类别 1</text><text x="408" y="203">类别 1</text><text x="408" y="290">类别 0</text>
+    </g>
+    <g font-size="15">
+      <text x="83" y="141">范围 0–1</text><text x="83" y="228">范围 0–8</text><text x="83" y="315">范围 0–1024</text>
+      <text x="246" y="141">目标编码 255</text><text x="246" y="228">目标编码 32</text><text x="246" y="315">目标编码 0</text>
+      <text x="408" y="141">通过分类检查</text><text x="408" y="228">通过分类检查</text><text x="408" y="315">停止速度对比</text>
+    </g>
+    <rect x="17" y="352" width="457" height="65" rx="8" fill="#fff" stroke="#d2dfef"/>
+    <text x="245" y="380" font-size="17" font-weight="650">保持两条输入，各自做一次前向</text>
+    <text x="245" y="403" font-size="15">目标行恢复类别 1，离群行仍是类别 2</text>
+  </g>
+</svg>
