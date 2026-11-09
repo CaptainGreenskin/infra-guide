@@ -1,0 +1,15 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "010f313c268b4e2847a68c9c3c05458cf97e0d18",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SEARCH_METADATA_2026-11-09.json": "4d66b7310812c8cea7c17f01be5725a2567706ed5d49b7305ee992409e23bce4"
+  },
+  "source_revisions": {
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "4a2610e4f7b3db574e3e22f505748c07b054f3c412595ad65e484e7bdc645367",
+      "reviewed_sha256": "1815daccbcaedce25426c9519d848091df4b3e0033042df66773e254d2a38630",
+      "scope": "Select the latest whole-course body review explicitly, preserving all body and historical code checks when later reviews cover only metadata."
+    }
+  }
+}

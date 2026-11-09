@@ -11,7 +11,9 @@ for(const[track,anchors]of Object.entries(legacy))for(const anchor of anchors){
  assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/module/'+moduleId+'/?campaign=reader#'+anchor);
  assert(fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8').includes('id="'+anchor+'"'),track+': original field fragment '+anchor);
 }
-const courseReview=require('./coherence-review-records.cjs').laterUpdates.at(-1).review_scope;
+const reviews=require('./coherence-review-records.cjs').laterUpdates;
+const courseReview=reviews.findLast(({review_scope})=>review_scope?.body_baseline_commit)?.review_scope;
+assert(courseReview,'a whole-course body review must precede metadata-only reviews');
 const previous=require('./content-at-commit.cjs')(courseReview.body_baseline_commit);
 const changed=[],added=[];
 for(const a of data.articles){
