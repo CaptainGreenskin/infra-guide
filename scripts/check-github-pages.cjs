@@ -8,6 +8,15 @@ function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){c
 walk(root);assert.equal(pages,inventory.pages);
 const crypto=require('crypto'),reader=JSON.parse(fs.readFileSync(path.join(root,'reader-runtime-manifest.json'),'utf8'));
 const digest=data=>crypto.createHash('sha256').update(data).digest('hex');
+const readerAssets=fs.readdirSync(path.join('dist','reader-assets'),{withFileTypes:true});
+for(const asset of readerAssets){
+ const file=path.join('reader-assets',asset.name);
+ const fingerprint=asset.name.match(/\.([a-f0-9]{12})\.(?:js|json)$/)?.[1];
+ assert(asset.isFile()&&fingerprint,file+': expected an immutable reader asset');
+ const source=fs.readFileSync(path.join('dist',file));
+ assert.equal(digest(source).slice(0,12),fingerprint,file+': filename must match its bytes');
+ assert(source.equals(fs.readFileSync(path.join(root,file))),file+': keep earlier reader URLs byte-for-byte');
+}
 for(const asset of reader.assets){const data=fs.readFileSync(path.join(root,asset.file));assert.equal(digest(data),asset.sha256,asset.file+': Pages reader bytes must retain their hash');assert.equal(data.length,asset.bytes);assert(asset.file.includes('.'+asset.sha256.slice(0,12)+'.'));assert(data.equals(fs.readFileSync(path.join('dist',asset.file))),asset.file+': no reader JSON/JS origin drift');}
 for(const id of inventory.ids){
  const html=fs.readFileSync(path.join(root,'article',id,'index.html'),'utf8'),template=html.match(/<template id="reader-full-runtime">([\s\S]*?)<\/template>/);
@@ -25,4 +34,4 @@ for(const basePath of ['/','/infra-guide/']){
  assert.equal(vm.runInContext("hostedPath('//example.com/')",c),'//example.com/');
  assert.equal(vm.runInContext("hostedPath(hostedPath('/article/model-serving/'))",c),basePath+'article/model-serving/');
 }
-console.log('PASS: '+pages+' Pages HTML files / '+links+' local links/assets, public repository entry and both root/subpath routing.');
+console.log('PASS: '+pages+' Pages HTML files / '+links+' local links/assets, '+readerAssets.length+' immutable reader assets, public repository entry and both root/subpath routing.');

@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "e53b8e90feb12344a1649040a5989035dbe1fa65",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_COMPILER_GPU_CACHE_2026-11-09.json": "e2aa11dcb9a318b4ea7f0dfea31b3a3fe19595edf60095c4a5cada1139766f60"
+  },
+  "source_revisions": {
+    ".github/workflows/pages.yml": {
+      "previous_sha256": "ce60b87925e55d6472b0d4f193ddde6d5929784c8eee15159b1515256bc58061",
+      "reviewed_sha256": "e351f21bd3b58dd4f15062eee4bd46e46cb69596ddd4646bb1320ec74c06800f",
+      "scope": "Publish the checked site using the supported deployment action and verify the served manifest and article version after publication."
+    },
+    "scripts/check-github-pages.cjs": {
+      "previous_sha256": "6f0cbf92a011c0ef2c3655a75e41c2bc80160ad6f90f7eb0979492530afcfa86",
+      "reviewed_sha256": "74147ec7cb2da2ed5ab519ba967488743d9f7d05933cb797d6c6f7ecf2c8ed63",
+      "scope": "Require current and earlier fingerprinted reader files to retain their public names and exact bytes."
+    }
+  }
+}
