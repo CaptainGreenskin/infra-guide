@@ -43,6 +43,32 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
    // The added training timeline cites the two papers that define its schedules.
    former.push('href="https://arxiv.org/abs/1811.06965"','href="https://arxiv.org/abs/2104.04473"');
   }
+  if(id==='database-index-locks'){
+   if(re===prePattern){
+    const addition=section(id,6).split('<h3 id="native-innodb-lab">');
+    assert.equal(addition.length,2);
+    const blocks=addition[1].match(re)||[];
+    assert.equal(blocks.length,2);
+    assert(blocks[0].includes('EXPLAIN ANALYZE')&&blocks[0].includes('CREATE INDEX ix_orders_tenant_seq'));
+    assert(blocks[1].includes('innodb_lab.py --json native-record.json')&&blocks[1].includes('innodb_lab.py --check-record native-record.json'));
+    // The InnoDB exercise follows the SQLite code and precedes the last legacy output.
+    former.splice(former.length-1,0,...blocks);
+   }else if(re===figurePattern){
+    const added=current.filter(f=>f.includes('src="diagrams/innodb-lock-waits.svg"'));
+    assert.equal(added.length,1);
+    former.push(added[0]);
+   }else{
+    former.push(...[
+     'https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze',
+     'diagrams/innodb-lock-waits.svg','diagrams/innodb-lock-waits.svg',
+     '/article/database-index-locks/#native-innodb-lab',
+     'https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html',
+     'labs/innodb.zip','labs/innodb/validation.json',
+     'https://github.com/CaptainGreenskin/infra-guide/actions/runs/42555714589',
+     'https://dev.mysql.com/doc/refman/8.4/en/performance-schema-data-lock-waits-table.html'
+    ].map(url=>'href="'+url+'"'));
+   }
+  }
   if(id==='flash-attention-io'){
    if(re===prePattern){
     former.push(

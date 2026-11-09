@@ -30,6 +30,19 @@ for(const base of ['/','/infra-guide/']){
  assert(applicationRoute.includes('agent-recovery')&&!applicationRoute.includes('agent-sandbox'),'the application route retains an independent recovery lesson');
  const recoveryOpening=data.articles.find(a=>a.id==='agent-recovery').sections[0][1];
  assert(!/^<p>上一章/.test(recoveryOpening),'recovery prose must not assume the sandbox chapter on a route that skips it');
+ const recoveryAnchor='#mcp-commit-recovery',recoveryPath='/article/durable-workflows/';
+ const mcpClosing=data.articles.find(a=>a.id==='mcp-protocol').sections.at(-1)[1];
+ const recoveryBody=data.articles.find(a=>a.id==='durable-workflows').sections[8][1];
+ assert(mcpClosing.includes('href="'+recoveryPath+recoveryAnchor+'"'),'MCP points straight to the optional write-recovery experiment');
+ assert(recoveryBody.includes('id="'+recoveryAnchor.slice(1)+'"'),'native experiment keeps its section anchor');
+ assert(!applicationRoute.includes('durable-workflows'),'the optional experiment does not extend the application route');
+ c.location.pathname=base+'article/mcp-protocol/';
+ c.location.search='?goal=agent-app';
+ assert.equal(run(recoveryPath+recoveryAnchor),base+recoveryPath.slice(1)+recoveryAnchor);
+ c.location.search='?goal=agent-platform';
+ const platformRecovery=recoveryPath+'?goal=agent-platform'+recoveryAnchor;
+ assert.equal(run(recoveryPath+recoveryAnchor),base+platformRecovery.slice(1));
+ assert(vm.runInContext('learningGoalHTML(learningProfiles["agent-platform"])',c).includes('href="'+platformRecovery+'"'),'platform practice links to the experiment with its selected goal');
  c.location.search='';
  for(const[track,id]of Object.entries({cloud:'cloud-service-lab',ai:'training-lab',agent:'production-readiness'})){
   c.location.pathname=base+'article/'+id+'/';

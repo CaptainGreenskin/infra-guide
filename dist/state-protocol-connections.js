@@ -29,6 +29,6 @@ for(const[profile,id,before]of [
 }
 courseStageConnections.cloud[1]=['把单进程放到跨机器的数据路径','资源供给 → 地址与路由 → 数据提交 → 日志与副本应用 → 恢复与写入资格','把CPU、网络、事务、缓存、复制与恢复放回同一次请求，分别解释可见性、进度和谁能继续写。'];
 courseStageConnections.cloud[2]=['把执行对象交给声明式控制','容器 → API期望 → 多数派提交与变更观察 → 调谐 → 放置 → 可用服务','对象持久保存、观察者追上版本、进程运行和业务可用分别取证；成员隔离不等于应用进程立即停止。'];
-courseStageConnections.agent[0]=['先规定委托与实际执行之间的边界','用户目标 → 模型提议 → 工具契约与协议消息 → 可信检查 → 受限执行','运行时负责调用和验收，协议连接工具提供方，身份、授权和隔离分别约束实际动作；每一步都要明确负责的对象。'];
+courseStageConnections.agent[0]=['先规定委托与实际执行之间的边界','工具发现与契约 → 模型提议 → 宿主检查 → MCP 客户端派发调用 → 资源端授权与受限执行','宿主按用户委托选出本轮可用工具，核对提议的参数、范围与预算后再派发。资源端依据当前权限决定能否读取或提交。'];
 learningTrackModels.cloud.anchors.push(['control-plane-consensus','控制状态与观察'],['mysql-replication','副本应用与写资格']);
 learningTrackModels.agent.anchors.splice(1,0,['mcp-protocol','协议与工具连接']);

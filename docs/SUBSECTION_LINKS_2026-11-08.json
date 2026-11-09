@@ -99,11 +99,15 @@
         "subsection-4-1ks0063",
         "subsection-5-121tvoc",
         "sql-plan-lab",
-        "sql-snapshot-lab"
+        "sql-snapshot-lab",
+        "innodb-wait-graph",
+        "native-innodb-lab"
       ],
       "visible_targets": [
+        "innodb-wait-graph",
         "sql-plan-lab",
-        "sql-snapshot-lab"
+        "sql-snapshot-lab",
+        "native-innodb-lab"
       ]
     },
     {
@@ -438,9 +442,12 @@
         "subsection-4-tiieih",
         "subsection-4-1sqlkzh",
         "subsection-4-6ow1nm",
-        "subsection-4-1r9crh6"
+        "subsection-4-1r9crh6",
+        "native-fsdp-run"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-fsdp-run"
+      ]
     },
     {
       "id": "gpu-memory",

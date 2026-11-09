@@ -1,0 +1,624 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "1ce3668b645197288b8d091c0840e0818a3d1b1fdfd299259eba83d48ce07987",
+  "requested_image": "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902",
+  "scope": "one actual MySQL InnoDB instance; synthetic queries, lock waits and deadlock; no replication or benchmark",
+  "owned_resource_name": "infra-innodb-309fc5dff033",
+  "environment": {
+    "version": "8.4.13",
+    "docker_kernel": "linux x86_64 7.0.0-1017-azure",
+    "image_id": "sha256:0f1a0ccadda3a1734d1db557e203ec58621d56fa248525016e85fe4f631311ec",
+    "repo_digests": [
+      "mysql@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902"
+    ],
+    "image_architecture": "amd64",
+    "host_python": "3.12.3",
+    "network_mode": "none"
+  },
+  "settings": {
+    "performance_schema": 1,
+    "innodb_deadlock_detect": 1
+  },
+  "tables": [
+    {
+      "name": "accounts",
+      "engine": "InnoDB"
+    },
+    {
+      "name": "orders",
+      "engine": "InnoDB"
+    },
+    {
+      "name": "receipts",
+      "engine": "InnoDB"
+    }
+  ],
+  "query": {
+    "sql": "SELECT id, amount FROM innodb_lab.orders WHERE tenant_id=7 AND created_seq BETWEEN 200 AND 250 ORDER BY created_seq,id",
+    "orders": 4096,
+    "before": {
+      "tree": "-> Sort: innodb_lab.orders.created_seq, innodb_lab.orders.id  (cost=410 rows=4096) (actual time=0.478..0.479 rows=51 loops=1)\n    -> Filter: ((innodb_lab.orders.tenant_id = 7) and (innodb_lab.orders.created_seq between 200 and 250))  (cost=410 rows=4096) (actual time=0.368..0.461 rows=51 loops=1)\n        -> Table scan on orders  (cost=410 rows=4096) (actual time=0.0365..0.337 rows=4096 loops=1)",
+      "rows": [
+        [
+          3207,
+          43
+        ],
+        [
+          3223,
+          58
+        ],
+        [
+          3239,
+          73
+        ],
+        [
+          3255,
+          88
+        ],
+        [
+          3271,
+          6
+        ],
+        [
+          3287,
+          21
+        ],
+        [
+          3303,
+          36
+        ],
+        [
+          3319,
+          51
+        ],
+        [
+          3335,
+          66
+        ],
+        [
+          3351,
+          81
+        ],
+        [
+          3367,
+          96
+        ],
+        [
+          3383,
+          14
+        ],
+        [
+          3399,
+          29
+        ],
+        [
+          3415,
+          44
+        ],
+        [
+          3431,
+          59
+        ],
+        [
+          3447,
+          74
+        ],
+        [
+          3463,
+          89
+        ],
+        [
+          3479,
+          7
+        ],
+        [
+          3495,
+          22
+        ],
+        [
+          3511,
+          37
+        ],
+        [
+          3527,
+          52
+        ],
+        [
+          3543,
+          67
+        ],
+        [
+          3559,
+          82
+        ],
+        [
+          3575,
+          97
+        ],
+        [
+          3591,
+          15
+        ],
+        [
+          3607,
+          30
+        ],
+        [
+          3623,
+          45
+        ],
+        [
+          3639,
+          60
+        ],
+        [
+          3655,
+          75
+        ],
+        [
+          3671,
+          90
+        ],
+        [
+          3687,
+          8
+        ],
+        [
+          3703,
+          23
+        ],
+        [
+          3719,
+          38
+        ],
+        [
+          3735,
+          53
+        ],
+        [
+          3751,
+          68
+        ],
+        [
+          3767,
+          83
+        ],
+        [
+          3783,
+          1
+        ],
+        [
+          3799,
+          16
+        ],
+        [
+          3815,
+          31
+        ],
+        [
+          3831,
+          46
+        ],
+        [
+          3847,
+          61
+        ],
+        [
+          3863,
+          76
+        ],
+        [
+          3879,
+          91
+        ],
+        [
+          3895,
+          9
+        ],
+        [
+          3911,
+          24
+        ],
+        [
+          3927,
+          39
+        ],
+        [
+          3943,
+          54
+        ],
+        [
+          3959,
+          69
+        ],
+        [
+          3975,
+          84
+        ],
+        [
+          3991,
+          2
+        ],
+        [
+          4007,
+          17
+        ]
+      ]
+    },
+    "after": {
+      "tree": "-> Index range scan on orders using ix_orders_tenant_seq over (tenant_id = 7 AND 200 <= created_seq <= 250), with index condition: ((innodb_lab.orders.tenant_id = 7) and (innodb_lab.orders.created_seq between 200 and 250))  (cost=23.2 rows=51) (actual time=0.0638..0.0677 rows=51 loops=1)",
+      "rows": [
+        [
+          3207,
+          43
+        ],
+        [
+          3223,
+          58
+        ],
+        [
+          3239,
+          73
+        ],
+        [
+          3255,
+          88
+        ],
+        [
+          3271,
+          6
+        ],
+        [
+          3287,
+          21
+        ],
+        [
+          3303,
+          36
+        ],
+        [
+          3319,
+          51
+        ],
+        [
+          3335,
+          66
+        ],
+        [
+          3351,
+          81
+        ],
+        [
+          3367,
+          96
+        ],
+        [
+          3383,
+          14
+        ],
+        [
+          3399,
+          29
+        ],
+        [
+          3415,
+          44
+        ],
+        [
+          3431,
+          59
+        ],
+        [
+          3447,
+          74
+        ],
+        [
+          3463,
+          89
+        ],
+        [
+          3479,
+          7
+        ],
+        [
+          3495,
+          22
+        ],
+        [
+          3511,
+          37
+        ],
+        [
+          3527,
+          52
+        ],
+        [
+          3543,
+          67
+        ],
+        [
+          3559,
+          82
+        ],
+        [
+          3575,
+          97
+        ],
+        [
+          3591,
+          15
+        ],
+        [
+          3607,
+          30
+        ],
+        [
+          3623,
+          45
+        ],
+        [
+          3639,
+          60
+        ],
+        [
+          3655,
+          75
+        ],
+        [
+          3671,
+          90
+        ],
+        [
+          3687,
+          8
+        ],
+        [
+          3703,
+          23
+        ],
+        [
+          3719,
+          38
+        ],
+        [
+          3735,
+          53
+        ],
+        [
+          3751,
+          68
+        ],
+        [
+          3767,
+          83
+        ],
+        [
+          3783,
+          1
+        ],
+        [
+          3799,
+          16
+        ],
+        [
+          3815,
+          31
+        ],
+        [
+          3831,
+          46
+        ],
+        [
+          3847,
+          61
+        ],
+        [
+          3863,
+          76
+        ],
+        [
+          3879,
+          91
+        ],
+        [
+          3895,
+          9
+        ],
+        [
+          3911,
+          24
+        ],
+        [
+          3927,
+          39
+        ],
+        [
+          3943,
+          54
+        ],
+        [
+          3959,
+          69
+        ],
+        [
+          3975,
+          84
+        ],
+        [
+          3991,
+          2
+        ],
+        [
+          4007,
+          17
+        ]
+      ]
+    }
+  },
+  "connections": {
+    "left": 34,
+    "right": 35
+  },
+  "wait": {
+    "before": [
+      [
+        1,
+        100
+      ],
+      [
+        2,
+        100
+      ]
+    ],
+    "edge": {
+      "table": "accounts",
+      "engine": "INNODB",
+      "schema": "innodb_lab",
+      "holding_row": "1",
+      "waiting_row": "1",
+      "holding_mode": "X,REC_NOT_GAP",
+      "holding_type": "RECORD",
+      "waiting_mode": "X,REC_NOT_GAP",
+      "waiting_type": "RECORD",
+      "holding_index": "PRIMARY",
+      "waiting_index": "PRIMARY",
+      "holding_status": "GRANTED",
+      "waiting_status": "WAITING",
+      "holding_lock_id": "140278924000472:150:3:4:2:140278799321136",
+      "waiting_lock_id": "140278924001280:156:3:4:2:140278799327312",
+      "holding_connection": 34,
+      "waiting_connection": 35
+    },
+    "observer_while_waiting": [
+      [
+        1,
+        100
+      ],
+      [
+        2,
+        100
+      ]
+    ],
+    "resumed_statement": {
+      "errors": [],
+      "values": [
+        "1"
+      ]
+    },
+    "after": [
+      [
+        1,
+        130
+      ],
+      [
+        2,
+        100
+      ]
+    ],
+    "receipts": [
+      [
+        "wait-holder",
+        10,
+        0
+      ],
+      [
+        "wait-waiter",
+        20,
+        0
+      ]
+    ]
+  },
+  "deadlock": {
+    "first_edge": {
+      "table": "accounts",
+      "engine": "INNODB",
+      "schema": "innodb_lab",
+      "holding_row": "2",
+      "waiting_row": "2",
+      "holding_mode": "X,REC_NOT_GAP",
+      "holding_type": "RECORD",
+      "waiting_mode": "X,REC_NOT_GAP",
+      "waiting_type": "RECORD",
+      "holding_index": "PRIMARY",
+      "waiting_index": "PRIMARY",
+      "holding_status": "GRANTED",
+      "waiting_status": "WAITING",
+      "holding_lock_id": "140278924001280:158:3:4:3:140278799327312",
+      "waiting_lock_id": "140278924000472:152:3:4:3:140278799321480",
+      "holding_connection": 35,
+      "waiting_connection": 34
+    },
+    "second_updates": {
+      "left": {
+        "errors": [],
+        "values": [
+          "1"
+        ]
+      },
+      "right": {
+        "errors": [
+          {
+            "code": 1213,
+            "sqlstate": "40001",
+            "message": "Deadlock found when trying to get lock; try restarting transaction",
+            "raw": "ERROR 1213 (40001) at line 9: Deadlock found when trying to get lock; try restarting transaction"
+          }
+        ],
+        "values": [
+          "-1"
+        ]
+      }
+    },
+    "victim": "right",
+    "committed": "left",
+    "observer_before_commit": [
+      [
+        1,
+        130
+      ],
+      [
+        2,
+        100
+      ]
+    ],
+    "innodb_status": "InnoDB\t\t\n=====================================\n2026-11-09 03:19:27 140278872241728 INNODB MONITOR OUTPUT\n=====================================\nPer second averages calculated from the last 2 seconds\n-----------------\nBACKGROUND THREAD\n-----------------\nsrv_master_thread loops: 2 srv_active, 0 srv_shutdown, 0 srv_idle\nsrv_master_thread log flush and writes: 0\n----------\nSEMAPHORES\n----------\nOS WAIT ARRAY INFO: reservation count 3\nOS WAIT ARRAY INFO: signal count 5\nRW-shared spins 0, rounds 0, OS waits 0\nRW-excl spins 0, rounds 0, OS waits 0\nRW-sx spins 0, rounds 0, OS waits 0\nSpin rounds per wait: 0.00 RW-shared, 0.00 RW-excl, 0.00 RW-sx\n------------------------\nLATEST DETECTED DEADLOCK\n------------------------\n2026-11-09 03:19:27 140278262380096\n*** (1) TRANSACTION:\nTRANSACTION 1861, ACTIVE 0 sec starting index read\nmysql tables in use 1, locked 1\nLOCK WAIT 4 lock struct(s), heap size 1128, 2 row lock(s), undo log entries 2\nMySQL thread id 34, OS thread handle 140278874355264, query id 164 localhost root updating\nUPDATE innodb_lab.accounts SET balance=balance+5 WHERE id=2\n\n*** (1) HOLDS THE LOCK(S):\nRECORD LOCKS space id 3 page no 4 n bits 72 index PRIMARY of table `innodb_lab`.`accounts` trx id 1861 lock_mode X locks rec but not gap\nRecord lock, heap no 2 PHYSICAL RECORD: n_fields 4; compact format; info bits 0\n 0: len 4; hex 80000001; asc     ;;\n 1: len 6; hex 000000000745; asc      E;;\n 2: len 7; hex 01000001240151; asc     $ Q;;\n 3: len 4; hex 80000085; asc     ;;\n\n\n*** (1) WAITING FOR THIS LOCK TO BE GRANTED:\nRECORD LOCKS space id 3 page no 4 n bits 72 index PRIMARY of table `innodb_lab`.`accounts` trx id 1861 lock_mode X locks rec but not gap waiting\nRecord lock, heap no 3 PHYSICAL RECORD: n_fields 4; compact format; info bits 0\n 0: len 4; hex 80000002; asc     ;;\n 1: len 6; hex 000000000746; asc      F;;\n 2: len 7; hex 02000001240151; asc     $ Q;;\n 3: len 4; hex 8000006b; asc    k;;\n\n\n*** (2) TRANSACTION:\nTRANSACTION 1862, ACTIVE 0 sec starting index read\nmysql tables in use 1, locked 1\nLOCK WAIT 4 lock struct(s), heap size 1128, 2 row lock(s), undo log entries 2\nMySQL thread id 35, OS thread handle 140278873298496, query id 169 localhost root updating\nUPDATE innodb_lab.accounts SET balance=balance+11 WHERE id=1\n\n*** (2) HOLDS THE LOCK(S):\nRECORD LOCKS space id 3 page no 4 n bits 72 index PRIMARY of table `innodb_lab`.`accounts` trx id 1862 lock_mode X locks rec but not gap\nRecord lock, heap no 3 PHYSICAL RECORD: n_fields 4; compact format; info bits 0\n 0: len 4; hex 80000002; asc     ;;\n 1: len 6; hex 000000000746; asc      F;;\n 2: len 7; hex 02000001240151; asc     $ Q;;\n 3: len 4; hex 8000006b; asc    k;;\n\n\n*** (2) WAITING FOR THIS LOCK TO BE GRANTED:\nRECORD LOCKS space id 3 page no 4 n bits 72 index PRIMARY of table `innodb_lab`.`accounts` trx id 1862 lock_mode X locks rec but not gap waiting\nRecord lock, heap no 2 PHYSICAL RECORD: n_fields 4; compact format; info bits 0\n 0: len 4; hex 80000001; asc     ;;\n 1: len 6; hex 000000000745; asc      E;;\n 2: len 7; hex 01000001240151; asc     $ Q;;\n 3: len 4; hex 80000085; asc     ;;\n\n*** WE ROLL BACK TRANSACTION (2)\n------------\nTRANSACTIONS\n------------\nTrx id counter 1864\nPurge done for trx's n:o < 1864 undo n:o < 0 state: running but idle\nHistory list length 15\nLIST OF TRANSACTIONS FOR EACH SESSION:\n---TRANSACTION 421753900712744, not started\n0 lock struct(s), heap size 1128, 0 row lock(s)\n---TRANSACTION 421753900711936, not started\n0 lock struct(s), heap size 1128, 0 row lock(s)\n---TRANSACTION 421753900710320, not started\n0 lock struct(s), heap size 1128, 0 row lock(s)\n---TRANSACTION 421753900709512, not started\n0 lock struct(s), heap size 1128, 0 row lock(s)\n---TRANSACTION 1861, ACTIVE 0 sec\n4 lock struct(s), heap size 1128, 2 row lock(s), undo log entries 3\nMySQL thread id 34, OS thread handle 140278874355264, query id 171 localhost root\n--------\nFILE I/O\n--------\nI/O thread 0 state: waiting for completed aio requests (insert buffer thread)\nI/O thread 1 state: waiting for completed aio requests (read thread)\nI/O thread 2 state: waiting for completed aio requests (read thread)\nI/O thread 3 state: waiting for completed aio requests (read thread)\nI/O thread 4 state: waiting for completed aio requests (read thread)\nI/O thread 5 state: waiting for completed aio requests (write thread)\nI/O thread 6 state: waiting for completed aio requests (write thread)\nI/O thread 7 state: waiting for completed aio requests (write thread)\nI/O thread 8 state: waiting for completed aio requests (write thread)\nPending normal aio reads: [0, 0, 0, 0] , aio writes: [0, 0, 0, 0] ,\n ibuf aio reads:\nPending flushes (fsync) log: 0; buffer pool: 0\n1070 OS file reads, 271 OS file writes, 199 OS fsyncs\n441.80 reads/s, 32123 avg bytes/read, 111.89 writes/s, 82.17 fsyncs/s\n-------------------------------------\nINSERT BUFFER AND ADAPTIVE HASH INDEX\n-------------------------------------\nIbuf: size 1, free list len 0, seg size 2, 0 merges\nmerged operations:\n insert 0, delete mark 0, delete 0\ndiscarded operations:\n insert 0, delete mark 0, delete 0\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\nHash table size 17393, node heap has 0 buffer(s)\n0.00 hash searches/s, 4589.71 non-hash searches/s\n---\nLOG\n---\nLog capacity                 67108864\nLog capacity used            67108864\nLog sequence number          29903174\nLog buffer assigned up to    29903174\nLog buffer completed up to   29903174\nLog written up to            29903164\nLog flushed up to            29903164\nAdded dirty pages up to      29903174\nPages flushed up to          29454273\nLast checkpoint at           29454273\nLog minimum file id is       14\nLog maximum file id is       14\n191 log i/o's done, 95.50 log i/o's/second\n----------------------\nBUFFER POOL AND MEMORY\n----------------------\nTotal large memory allocated 0\nDictionary memory allocated 533652\nBuffer pool size   4096\nFree buffers       2869\nDatabase pages     1227\nOld database pages 433\nModified db pages  290\nPending reads      0\nPending writes: LRU 0, flush list 0, single page 0\nPages made young 39, not young 255\n17.47 youngs/s, 114.20 non-youngs/s\nPages read 1041, created 192, written 22\n466.21 reads/s, 85.99 creates/s, 9.85 writes/s\nBuffer pool hit rate 968 / 1000, young-making rate 1 / 1000 not 8 / 1000\nPages read ahead 0.00/s, evicted without access 0.00/s, Random read ahead 0.00/s\nLRU len: 1227, unzip_LRU len: 0\nI/O sum[36]:cur[0], unzip sum[0]:cur[0]\n--------------\nROW OPERATIONS\n--------------\n0 queries inside InnoDB, 0 queries in queue\n0 read views open inside InnoDB\nProcess ID=1, Main thread ID=140278111397440 , state=sleeping\nNumber of rows inserted 4102, updated 5, deleted 0, read 8309\n2049.98 inserts/s, 2.50 updates/s, 0.00 deletes/s, 4152.42 reads/s\nNumber of system rows inserted 81, updated 367, deleted 23, read 5113\n40.48 inserts/s, 183.41 updates/s, 11.49 deletes/s, 2555.22 reads/s\n----------------------------\nEND OF INNODB MONITOR OUTPUT\n============================",
+    "after": [
+      [
+        1,
+        133
+      ],
+      [
+        2,
+        105
+      ]
+    ],
+    "receipts": [
+      [
+        "dead-left",
+        3,
+        5
+      ],
+      [
+        "wait-holder",
+        10,
+        0
+      ],
+      [
+        "wait-waiter",
+        20,
+        0
+      ]
+    ]
+  },
+  "final_connections": {
+    "left": 34,
+    "right": 35
+  },
+  "remaining_waits": [],
+  "cleanup": {
+    "attempted": true,
+    "remaining_containers": [],
+    "remaining_volumes": []
+  }
+}

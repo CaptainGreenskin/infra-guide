@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 468" role="img" aria-labelledby="title desc">
+ <title id="title">从一次索引记录等待到死锁</title>
+ <desc id="desc">上半图中乙等待甲持有的主键记录，甲提交后乙可以继续。下半图中甲和乙分别持有记录一和记录二，又分别申请对方持有的记录。两条等待边构成环，InnoDB 回滚其中一个事务。</desc>
+ <defs>
+  <marker id="wait-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5 0 7Z" fill="#8a4116"/></marker>
+ </defs>
+ <rect width="440" height="468" rx="18" fill="#f8fbff"/>
+ <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" fill="#17304d" font-size="18">
+  <text x="22" y="38" font-size="25" font-weight="700">等一条边，还是等成一个环</text>
+  <rect x="22" y="58" width="396" height="140" rx="12" fill="#e9f3ff"/>
+  <text x="38" y="85" font-size="21" font-weight="650">单向等待</text>
+  <rect x="38" y="105" width="97" height="43" rx="6" fill="#fff"/>
+  <rect x="305" y="105" width="97" height="43" rx="6" fill="#fff"/>
+  <text x="53" y="133">乙 · 请求</text><text x="319" y="133">甲 · 持有</text>
+  <path d="M145 134H295" stroke="#8a4116" stroke-width="2.4" marker-end="url(#wait-arrow)"/>
+  <text x="175" y="123" fill="#763512">等记录 1</text>
+  <text x="38" y="175">甲提交释放锁，乙可继续执行。</text>
+
+  <rect x="22" y="214" width="396" height="210" rx="12" fill="#fff2e9"/>
+  <text x="38" y="242" font-size="21" font-weight="650">相反的访问顺序</text>
+  <rect x="38" y="282" width="112" height="60" rx="6" fill="#fff"/>
+  <rect x="290" y="282" width="112" height="60" rx="6" fill="#fff"/>
+  <text x="52" y="306" font-weight="650">甲</text><text x="52" y="329">持有记录 1</text>
+  <text x="304" y="306" font-weight="650">乙</text><text x="304" y="329">持有记录 2</text>
+  <path d="M153 294H279" stroke="#8a4116" stroke-width="2.4" marker-end="url(#wait-arrow)"/>
+  <path d="M287 333H161" stroke="#8a4116" stroke-width="2.4" marker-end="url(#wait-arrow)"/>
+  <text x="176" y="281" fill="#763512">等记录 2</text>
+  <text x="176" y="359" fill="#763512">等记录 1</text>
+  <text x="38" y="391">引擎选一个事务整笔回滚。</text>
+  <text x="38" y="413">另一事务可继续，提交后再验收。</text>
+  <text x="22" y="451" fill="#345e87">箭头从等待者指向持锁者。</text>
+ </g>
+</svg>

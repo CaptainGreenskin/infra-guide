@@ -1,0 +1,199 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "6114022f4549d15c4158440d06e72c6ac6edb507",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_READING_LAB_COMPATIBILITY_2026-11-09.json": "b8d23af47f50f74b2dc42bd9571ca4ca5a6e07abff07f5134a06deb86df8f42f"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "6419da457c2ca388f518369502194c2554da4fcceea8dd6af63b0eb34151c05a",
+      "reviewed_sha256": "210fed9fbe35a7f0ace3179e614aa5c1909d6cc386a91cb0d81a842d091dd3e8",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/progressive-cloud-data-reading.js": {
+      "previous_sha256": "284879f79a9956816857ac07bc00537921ac415ed5bf80b393d18c4ecc74f8f3",
+      "reviewed_sha256": "9939771f44e80cd4e183cdd1f79e92e875847ed53005bf0dfffb91b1dd07281c",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "277e1bd9716ae07b74ca1e46992ce908b8fe3a762eab535e7db243f158acb676",
+      "reviewed_sha256": "ae0ab665e40f6d6e6161e761c838e6f514a997ffd1827d0b757e3c72a79fd047",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "5e609dc272abf71cd0989c5db37bc89887f829c3834e3a385537e3f4df4c5381",
+      "reviewed_sha256": "ac6a993af262c826fde36f91166c669d2a5ecb7e7b8c3e930931562fc28754b6",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "40ad6e8f7642a30273e2b470dc4e76f3e80137b0fde8b4bb233bed2fa1e35720",
+      "reviewed_sha256": "65d55c4681fc579abd227ccfac95c3674c7de0b6db42cb3b83268299d0d6bfd9",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/state-protocol-connections.js": {
+      "previous_sha256": "b4aff5bb9d4a4db3684bd83684dce8d9c43c2995b12caee33a4a87be4f37e02d",
+      "reviewed_sha256": "56b34b3cc5ee171b6cc18714e870997b7587a61b2f9847572237e845994b724d",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "179fde78304586312c6c775880810d12de7b3ecfc3a78cfd0a45cf3a6bbfa368",
+      "reviewed_sha256": "a0496b181160767ca8b5ae2f340a31b8371d9e9a5ce3f4fc57635891f2ec4a6c",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "cb872d0b748d8616340b6f199d808af6bf9c09e5e3be943d2377d46d109d6305",
+      "reviewed_sha256": "25634254f744f8a01e1de5c9d44796205d06042a8f92d2472a0b77779b6dfb0c",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "1ca254fbb7345bbf7d9a9d6173d66763833e1ea57be7654de8d9b5d99d3a3561",
+      "reviewed_sha256": "4654239cf2e7bb198a73f11285c20ee9ac19c3ac1c7dfebeb8265575e2796f74",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "b17962d5fbf47ddb0a6f9ed15911ce6b8ccc9c01943a75ba4f28773fcc0c55ea",
+      "reviewed_sha256": "e62245e695bf0cf71b0b9225cb8a62e03b1e192ad412173de697a03137b313cc",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "307a0381c1d1352083ccad5292c885f450cdeba824277f86011b1c4ee5c0dc4d",
+      "reviewed_sha256": "cacef1120b5066fb6d5ebd65293507628bfdd3fb87944f851fc451be24432c19",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "71ec7e7684399f9008f13cd42c433fe1b2b79b708b901c287c4add606f4b699e",
+      "reviewed_sha256": "a36d45592cc9448017d37afb11916212573c6b6cfd039dc815edbf3750b78480",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "bb60e3d13a95fbe141f04bd5d59ae8041ccb62ac5e48afa2b36fe217a1db47a4",
+      "reviewed_sha256": "70954ded0dc8bffc6822150477bf8732cffa8bcaee11c00143e9ff12b81b9625",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "scripts/check-native-innodb-fsdp.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a571337cf17701caaf71c2c9b061b43dab14a3d89b05e33dc64548d2dc738c56",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "fb14c2740bc996791ec67ec0dc580c056c033250047b789448b3ede8ea751538",
+      "reviewed_sha256": "b8b9797d5ece8c4418f4cb8ad901f88a3d0690f0970ddf3894afaba0161700e8",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "b6f2e8c999670c03f82f6bf13587d67bc4b4989f290faa910452be4fc868cafc",
+      "reviewed_sha256": "0efedf6e5eded389cb51ddaedf0377e657b51e4f2db173c6c8ed1597cd9849d0",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "docs/CONTENT_NATIVE_STATE_PATHS_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "368830972fc16b4e252584ba85c2a23bbc7d9aece03aec1c5075e2ac4719f659",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "1509c371c1be88b7b0c8345fc0d270b9945cf1c512c4ca8ce5d10bfa6805fb26",
+      "reviewed_sha256": "c6cbe7239f0ba9f09b37991fafec75ca021ef41f0b37a97a9c18a8c16e0b12fe",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/innodb.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d5dfdd94c14082c8954cd9e2a86eff190e21ecd41c69a507b6e541639a70fe75",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/diagrams/innodb-lock-waits.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "becd2e6be608c03f84e4f0ff2fdd18d7d888bcb6f85ebb431f7bc711b444882d",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/innodb/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "def019e1dab6cffba3b49eb4ab877b094e478fd156c6c36ff53d11559d249474",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/innodb/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "47ded8244ee4073e2c3a57d8fa66f2f3a13781842337387f791c29820bfb3adf",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/innodb/innodb_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1ce3668b645197288b8d091c0840e0818a3d1b1fdfd299259eba83d48ce07987",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/innodb/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9f0b44da6699a4902c459e9a60dd7e63f6a1fd010f05f757de1e7d3c04567a3b",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/native-fsdp.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "93d5214624262eacf3d9b74e8ef88945afd21989c71daf972dcb761ec94de33a",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/diagrams/native-fsdp-state.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a34c0d8a0e0b1eede81a72df02b3365d76f55aa19b03bbdf901145b4dde68124",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/native-fsdp/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bad39f1e41be75ba05caeed935683c25b5fd06f24d185e9fc01d06394bc42180",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/native-fsdp/fsdp_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a60f365c68744c36fdc7b911712b9bceac5be5628705b35510226707d2acb72",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    },
+    "dist/labs/native-fsdp/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ffe088cc8a9154453e3cf1f2856e6d1b4e4140168f4e6adbc35af1250051ad27",
+      "scope": "Bind native mechanism evidence and the Agent platform handoff to existing lessons, routes and source."
+    }
+  },
+  "article_sections": {
+    "database-index-locks": {
+      "sections": [
+        1,
+        4,
+        6,
+        7
+      ],
+      "scope": "Observe MySQL plans, live wait edges and whole-transaction deadlock rollback",
+      "observation": "Keep the SQLite reference and its exact code. Add MySQL 8.4.13 same-query scan comparison, real three-connection observation, a two-transaction deadlock, independently reconciled balances and receipts, and scoped teardown."
+    },
+    "distributed-training": {
+      "sections": [
+        4
+      ],
+      "scope": "Follow one full-shard CPU update across real FSDP and an independent full batch",
+      "observation": "Add two native updates with uneven local target counts, record both local shards and named full states, observe actual CPU collective events and separate root parameter views from live buffer allocation."
+    },
+    "mcp-protocol": {
+      "sections": [
+        9
+      ],
+      "scope": "Connect the native read tool to a separate native write-recovery exercise",
+      "observation": "Keep the source-bound protocol section and make its handoff to the existing real MCP commit recovery visible. Distinguish tool discovery, host checks, dispatch, and receiver authorization on the Agent route."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "6114022f4549d15c4158440d06e72c6ac6edb507",
+    "chapters": 78,
+    "changed_bodies": [
+      "database-index-locks",
+      "distributed-training",
+      "mcp-protocol"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "database-index-locks": 2,
+      "distributed-training": 2
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 57,
+    "learning_tasks": 97
+  }
+}

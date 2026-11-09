@@ -102,7 +102,7 @@
  replace(database,[
  p('存储接口解决怎样取得字节，数据库把数据组织成有字段的行，并用查询与事务管理它们。表保存记录，列定义记录的属性，主键标识一行；连接是程序向数据库发命令的会话，事务是在连接上组织的一组读写。索引影响访问哪些数据，事务和锁影响并发变化怎样推进。',
  '本章查询一家店最近十笔已完成订单：tenant 指租户或店铺，status 是状态，created 是创建序号，id 用于区分同序号的订单。需求是限定租户和状态，按 created、id 从大到小返回十条；结果为空也是合法结果。先固定筛选、排序与返回字段，才能判断索引是否适合。',
- '促销时入口 trace 报告数据库调用耗时 700 毫秒。这个 span 是一段计时范围，可能覆盖等连接、传输、执行、等锁与结果返回。计划解释数据怎样被访问，连接和事务记录解释时间耗在哪里。下面用 SQLite 复现两条路径：查询做了过多工作，以及写者正在等待另一个事务。')+links(d[0]),
+ '促销时入口 trace 报告数据库调用耗时 700 毫秒。这个 span 是一段计时范围，可能覆盖等连接、传输、执行、等锁与结果返回。计划解释数据怎样被访问，连接和事务记录解释时间耗在哪里。先用 SQLite 分开看查询和写者竞争，再在真实 InnoDB 上读取执行树、索引记录的等待关系和死锁后的账本。')+links(d[0]),
 
  p('索引是一份按键排序的辅助数据结构。查询可以先找到一段键，再取得对应表行；这个选择过程叫访问路径。本章普通 SQLite rowid 表中，INTEGER PRIMARY KEY 是行标识 rowid 的别名，二级索引按索引键排序并携带定位行所需的 rowid。数据库按页保存这些结构，一次候选项检查与一次物理读盘并无固定对应。',
  '复合索引的键由多列按先后组成，像按“店铺、状态、时间、订单号”编排的目录。键 (tenant,status,created,id) 把同一店铺、同一状态放在连续区间中，区间内再按时间与编号排列。查询先定位 tenant 和 status，再逆序取最新十条，满足条件后可以提前停止。所有排序方向一起反转时可反向遍历；混合方向需按索引定义重新检查。',
@@ -155,6 +155,34 @@
  p('配套基础程序只需 Python 标准库，在临时目录建库并清理。先预测建索引后的 id 是否改变，以及甲回滚前后乙能否开始写，再运行下载文件。下面保留已发布的本次输出；环境、源码摘要与执行记录在原验证链接中。')+
  links(d[8])+fold('基础程序的原运行输出',d8[0])
  ],'从订单查询认识索引的定位、排序与覆盖，再以事务、快照和写者竞争解释读写正确性与等待。');
+
+ database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
+ database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
+ '在 InnoDB 里，用完整主键等值命中一条已有记录时，修改通常锁住该主键记录。按范围扫描时，还要看隔离级别、实际访问的索引范围与约束检查。在可重复读下，范围锁可包含索引记录和它前面的间隙。读已提交下，普通搜索和扫描通常省去间隙锁，外键与重复键检查另有规则。先核对本次语句和实际锁对象，再决定要缩短事务、调整访问范围还是统一访问顺序。',
+ '把每个事务画成一个点。乙申请甲持有的锁，就从乙画箭头指向甲。只有一条边时，甲提交后乙可以推进。甲和乙各持有一个主键记录，又申请对方的记录，两条边便构成死锁。开启检测时，InnoDB 会回滚其中一个事务，使另一方继续。')+
+ trainingFigure('innodb-lock-waits','同一条等待边可因持锁者提交而消失，也可在相反锁顺序下形成环。')+
+ p('捕获到 1213 后，重试要从新事务开始，重读并重新核对业务条件。锁等待超时 1205 的默认回滚范围是当前语句。处理超时前先确认会话里哪些变化仍在事务中，再决定回滚或继续。<a href="/article/database-index-locks/#native-innodb-lab">看真实 MySQL 的等待边与回滚 →</a> · <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html">MySQL 错误与回滚范围 ↗</a>');
+
+ database.sections[6][1]+=h('native-innodb-lab','用同一实例核对访问计划、锁等待与死锁')+p(
+ '在独立 MySQL 8.4.13 实例写入 4,096 条订单，租户按 16 个编号轮换。租户 7 在创建序号 200 到 250 的每个位置恰有一条订单。先预测两次查询应返回相同的 51 条 id 与金额，再比较计划里实际输出行数和排序节点。')+
+ trainingCode('固定 SELECT，先看原计划，再新增一个索引','SQL',`EXPLAIN ANALYZE
+SELECT id, amount FROM innodb_lab.orders
+WHERE tenant_id=7 AND created_seq BETWEEN 200 AND 250
+ORDER BY created_seq,id;
+
+CREATE INDEX ix_orders_tenant_seq
+ON innodb_lab.orders(tenant_id,created_seq,id);
+ANALYZE TABLE innodb_lab.orders;`)+
+ p('加索引前，扫描节点输出 4,096 行，随后筛选与排序。加索引后，查询进入租户 7 的时间范围，扫描节点输出 51 行。这里返回了索引之外的 amount，所以范围查找缩小了候选，仍要读取相应数据行。先逐条核对结果，再解释执行树的变化。')+
+ p('等待实验使用同一实例上的两个持久连接，账户表独立于订单查询。甲将主键 1 的余额加 10，保持事务。乙对同一记录加 20，第三个观察连接从 <code>performance_schema.data_lock_waits</code> 看到乙等甲。该表的锁 ID 可连接 <code>data_locks</code>，取到索引 PRIMARY、记录号 1 及锁状态。线程 ID 再连接 <code>threads</code>，得到应用可核对的连接 ID。甲提交前，观察者普通查询仍看到 100；甲提交后乙继续，最后余额 130，两笔回执都在。')+
+ p('死锁从余额 [130,100] 开始。甲先改记录 1，再请求记录 2；乙先改记录 2，再请求记录 1。程序先读到第一条等待边，才发反向 UPDATE。数据库返回一次 1213，另一个事务继续。每方在等待前就写入本次回执，所以只看谁的最后一句报错还不够。验收要同时看受害者的第一笔修改和回执都撤销，以及存活事务的两笔修改与回执一起提交。')+
+ table(['提交的是谁','记录 1','记录 2','死锁阶段留下的回执'],[
+  ['甲，按 +3、+5 更新','133','105','dead-left'],
+  ['乙，按 +11、+7 更新','141','107','dead-right']
+ ])+
+ p('先算出表中两种合法结局，再从记录检查实际选了哪一方。这次 Linux CI 中，乙收到 1213（SQLSTATE 40001），甲提交后实际余额为 [133,105]，死锁阶段只留下 dead-left。程序接受两种有账可核对的结局。实验只创建自己的容器和数据卷，结束后核对清理。')+
+ trainingCode('运行实战，再离线核对 MySQL 原始记录','SHELL','python3 -B innodb_lab.py --json native-record.json\npython3 -B innodb_lab.py --check-record native-record.json')+
+ '<p class="practice-links"><a href="labs/innodb.zip" download>下载源码、说明和原始记录 ↓</a> · <a href="labs/innodb/validation.json">查看执行树、等待边与结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42555714589">Linux CI 执行 ↗</a> · <a href="https://dev.mysql.com/doc/refman/8.4/en/performance-schema-data-lock-waits-table.html">MySQL 等待关系表 ↗</a></p>';
 
  const cache=select('cache-consistency',['先回答“谁有资格说订单已经发货”','读穿旁路缓存的三个步骤','一次旧读怎样穿过成功的失效','用版本水位挡回旧值，它需要哪些前提','热点击穿与集中到期，先算回源预算','领先请求失败后，谁负责唤醒等待者','从事件回放走到真实事务','验收：为不同读者分别签一份承诺','四事件短回放的源码与结果']);
  const c=cache.sections.map(x=>x[1]),c2=blocks(c[2]),c6=blocks(c[6]),c8=blocks(c[8]);

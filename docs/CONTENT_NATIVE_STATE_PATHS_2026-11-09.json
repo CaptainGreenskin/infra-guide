@@ -1,0 +1,47 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "6114022f4549d15c4158440d06e72c6ac6edb507",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_AI_ENGINE_RING_GEMM_2026-11-09.json": "958e2b58dec3e5dfd460c95ab49fbac0a0e106001dba5957f008d106b249bf7e"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "dfe3b899c23d7754b756b9900681730aa58e20cf03c27a0359c79f99d9646de3",
+      "reviewed_content_sha256": "87e02d2c4bf5f8f5ae1fdda47101aede522254fd2cf9b6c3e5f2947a03a58a0f",
+      "scope": "Connect the native read tool to a separate native write-recovery exercise",
+      "observation": "Keep the source-bound protocol section and make its handoff to the existing real MCP commit recovery visible. Distinguish tool discovery, host checks, dispatch, and receiver authorization on the Agent route.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "database-index-locks",
+      "reviewed_at": "2026-11-09",
+      "scope": "Observe MySQL plans, live wait edges and whole-transaction deadlock rollback",
+      "observation": "Keep the SQLite reference and its exact code. Add MySQL 8.4.13 same-query scan comparison, real three-connection observation, a two-transaction deadlock, independently reconciled balances and receipts, and scoped teardown.",
+      "reviewed_content_sha256": "dfccbc262f800351b5e43fdadf481b8b697bf57da0abcb04f2416bb77735973b",
+      "record": "dist/labs/innodb/validation.json"
+    },
+    {
+      "chapter": "distributed-training",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow one full-shard CPU update across real FSDP and an independent full batch",
+      "observation": "Add two native updates with uneven local target counts, record both local shards and named full states, observe actual CPU collective events and separate root parameter views from live buffer allocation.",
+      "reviewed_content_sha256": "7dfdcb537830a70c54d1ab28c4832b730f78caf010dd4c145d8b47fd6a5d61f1",
+      "record": "dist/labs/native-fsdp/validation.json"
+    }
+  ]
+}

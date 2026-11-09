@@ -4103,6 +4103,43 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "database-index-locks",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "54ec5844f166c5ab9f2b16e75517c2dd6903516b00b1009bf064a13010bc056b",
+      "reviewed_content_sha256": "dfccbc262f800351b5e43fdadf481b8b697bf57da0abcb04f2416bb77735973b",
+      "scope": "Observe MySQL plans, live wait edges and whole-transaction deadlock rollback",
+      "observation": "Keep the SQLite reference and its exact code. Add MySQL 8.4.13 same-query scan comparison, real three-connection observation, a two-transaction deadlock, independently reconciled balances and receipts, and scoped teardown.",
+      "headings": [
+        "入口说数据库用了 700 毫秒，先确定它测了什么",
+        "索引先按键排列，再指向数据所在的位置",
+        "用两种数据分布推导候选工作量",
+        "索引也有价格，要让写和读一起验收",
+        "事务把多步写入变成一个可判定的结果",
+        "索引命中了，为什么写请求还是要等",
+        "用两个连接区分访问路径和写者竞争",
+        "验收：两起同名告警需要不同的修复",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "4ce4bd4e79ce80772e8048ce669fa1300c223c4d201bf3552a537d221f771b5c",
+      "reviewed_content_sha256": "7dfdcb537830a70c54d1ab28c4832b730f78caf010dd4c145d8b47fd6a5d61f1",
+      "scope": "Follow one full-shard CPU update across real FSDP and an independent full batch",
+      "observation": "Add two native updates with uneven local target counts, record both local shards and named full states, observe actual CPU collective events and separate root parameter views from live buffer allocation.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
     }
   ]
 }

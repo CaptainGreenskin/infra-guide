@@ -8245,7 +8245,7 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  replace(database,[
  p('存储接口解决怎样取得字节，数据库把数据组织成有字段的行，并用查询与事务管理它们。表保存记录，列定义记录的属性，主键标识一行；连接是程序向数据库发命令的会话，事务是在连接上组织的一组读写。索引影响访问哪些数据，事务和锁影响并发变化怎样推进。',
  '本章查询一家店最近十笔已完成订单：tenant 指租户或店铺，status 是状态，created 是创建序号，id 用于区分同序号的订单。需求是限定租户和状态，按 created、id 从大到小返回十条；结果为空也是合法结果。先固定筛选、排序与返回字段，才能判断索引是否适合。',
- '促销时入口 trace 报告数据库调用耗时 700 毫秒。这个 span 是一段计时范围，可能覆盖等连接、传输、执行、等锁与结果返回。计划解释数据怎样被访问，连接和事务记录解释时间耗在哪里。下面用 SQLite 复现两条路径：查询做了过多工作，以及写者正在等待另一个事务。')+links(d[0]),
+ '促销时入口 trace 报告数据库调用耗时 700 毫秒。这个 span 是一段计时范围，可能覆盖等连接、传输、执行、等锁与结果返回。计划解释数据怎样被访问，连接和事务记录解释时间耗在哪里。先用 SQLite 分开看查询和写者竞争，再在真实 InnoDB 上读取执行树、索引记录的等待关系和死锁后的账本。')+links(d[0]),
 
  p('索引是一份按键排序的辅助数据结构。查询可以先找到一段键，再取得对应表行；这个选择过程叫访问路径。本章普通 SQLite rowid 表中，INTEGER PRIMARY KEY 是行标识 rowid 的别名，二级索引按索引键排序并携带定位行所需的 rowid。数据库按页保存这些结构，一次候选项检查与一次物理读盘并无固定对应。',
  '复合索引的键由多列按先后组成，像按“店铺、状态、时间、订单号”编排的目录。键 (tenant,status,created,id) 把同一店铺、同一状态放在连续区间中，区间内再按时间与编号排列。查询先定位 tenant 和 status，再逆序取最新十条，满足条件后可以提前停止。所有排序方向一起反转时可反向遍历；混合方向需按索引定义重新检查。',
@@ -8298,6 +8298,34 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('配套基础程序只需 Python 标准库，在临时目录建库并清理。先预测建索引后的 id 是否改变，以及甲回滚前后乙能否开始写，再运行下载文件。下面保留已发布的本次输出；环境、源码摘要与执行记录在原验证链接中。')+
  links(d[8])+fold('基础程序的原运行输出',d8[0])
  ],'从订单查询认识索引的定位、排序与覆盖，再以事务、快照和写者竞争解释读写正确性与等待。');
+
+ database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
+ database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
+ '在 InnoDB 里，用完整主键等值命中一条已有记录时，修改通常锁住该主键记录。按范围扫描时，还要看隔离级别、实际访问的索引范围与约束检查。在可重复读下，范围锁可包含索引记录和它前面的间隙。读已提交下，普通搜索和扫描通常省去间隙锁，外键与重复键检查另有规则。先核对本次语句和实际锁对象，再决定要缩短事务、调整访问范围还是统一访问顺序。',
+ '把每个事务画成一个点。乙申请甲持有的锁，就从乙画箭头指向甲。只有一条边时，甲提交后乙可以推进。甲和乙各持有一个主键记录，又申请对方的记录，两条边便构成死锁。开启检测时，InnoDB 会回滚其中一个事务，使另一方继续。')+
+ trainingFigure('innodb-lock-waits','同一条等待边可因持锁者提交而消失，也可在相反锁顺序下形成环。')+
+ p('捕获到 1213 后，重试要从新事务开始，重读并重新核对业务条件。锁等待超时 1205 的默认回滚范围是当前语句。处理超时前先确认会话里哪些变化仍在事务中，再决定回滚或继续。<a href="/article/database-index-locks/#native-innodb-lab">看真实 MySQL 的等待边与回滚 →</a> · <a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html">MySQL 错误与回滚范围 ↗</a>');
+
+ database.sections[6][1]+=h('native-innodb-lab','用同一实例核对访问计划、锁等待与死锁')+p(
+ '在独立 MySQL 8.4.13 实例写入 4,096 条订单，租户按 16 个编号轮换。租户 7 在创建序号 200 到 250 的每个位置恰有一条订单。先预测两次查询应返回相同的 51 条 id 与金额，再比较计划里实际输出行数和排序节点。')+
+ trainingCode('固定 SELECT，先看原计划，再新增一个索引','SQL',`EXPLAIN ANALYZE
+SELECT id, amount FROM innodb_lab.orders
+WHERE tenant_id=7 AND created_seq BETWEEN 200 AND 250
+ORDER BY created_seq,id;
+
+CREATE INDEX ix_orders_tenant_seq
+ON innodb_lab.orders(tenant_id,created_seq,id);
+ANALYZE TABLE innodb_lab.orders;`)+
+ p('加索引前，扫描节点输出 4,096 行，随后筛选与排序。加索引后，查询进入租户 7 的时间范围，扫描节点输出 51 行。这里返回了索引之外的 amount，所以范围查找缩小了候选，仍要读取相应数据行。先逐条核对结果，再解释执行树的变化。')+
+ p('等待实验使用同一实例上的两个持久连接，账户表独立于订单查询。甲将主键 1 的余额加 10，保持事务。乙对同一记录加 20，第三个观察连接从 <code>performance_schema.data_lock_waits</code> 看到乙等甲。该表的锁 ID 可连接 <code>data_locks</code>，取到索引 PRIMARY、记录号 1 及锁状态。线程 ID 再连接 <code>threads</code>，得到应用可核对的连接 ID。甲提交前，观察者普通查询仍看到 100；甲提交后乙继续，最后余额 130，两笔回执都在。')+
+ p('死锁从余额 [130,100] 开始。甲先改记录 1，再请求记录 2；乙先改记录 2，再请求记录 1。程序先读到第一条等待边，才发反向 UPDATE。数据库返回一次 1213，另一个事务继续。每方在等待前就写入本次回执，所以只看谁的最后一句报错还不够。验收要同时看受害者的第一笔修改和回执都撤销，以及存活事务的两笔修改与回执一起提交。')+
+ table(['提交的是谁','记录 1','记录 2','死锁阶段留下的回执'],[
+  ['甲，按 +3、+5 更新','133','105','dead-left'],
+  ['乙，按 +11、+7 更新','141','107','dead-right']
+ ])+
+ p('先算出表中两种合法结局，再从记录检查实际选了哪一方。这次 Linux CI 中，乙收到 1213（SQLSTATE 40001），甲提交后实际余额为 [133,105]，死锁阶段只留下 dead-left。程序接受两种有账可核对的结局。实验只创建自己的容器和数据卷，结束后核对清理。')+
+ trainingCode('运行实战，再离线核对 MySQL 原始记录','SHELL','python3 -B innodb_lab.py --json native-record.json\npython3 -B innodb_lab.py --check-record native-record.json')+
+ '<p class="practice-links"><a href="labs/innodb.zip" download>下载源码、说明和原始记录 ↓</a> · <a href="labs/innodb/validation.json">查看执行树、等待边与结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42555714589">Linux CI 执行 ↗</a> · <a href="https://dev.mysql.com/doc/refman/8.4/en/performance-schema-data-lock-waits-table.html">MySQL 等待关系表 ↗</a></p>';
 
  const cache=select('cache-consistency',['先回答“谁有资格说订单已经发货”','读穿旁路缓存的三个步骤','一次旧读怎样穿过成功的失效','用版本水位挡回旧值，它需要哪些前提','热点击穿与集中到期，先算回源预算','领先请求失败后，谁负责唤醒等待者','从事件回放走到真实事务','验收：为不同读者分别签一份承诺','四事件短回放的源码与结果']);
  const c=cache.sections.map(x=>x[1]),c2=blocks(c[2]),c6=blocks(c[6]),c8=blocks(c[8]);
@@ -10602,7 +10630,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  ])+
  p('激活是前向留下、反向仍会使用的中间值；临时完整参数、通信缓冲和预取也占空间。因此4GB是长期状态小计，实际峰值需按同一时刻同时存活的对象另算。参数分成四份，并不会自动让每份激活也缩为四分之一。')+
  anchor('subsection-4-6ow1nm')+
- p('all-gather把各rank的片段收齐；reduce-scatter先归约对应贡献，再把结果片分给归属rank。完整分片前向进入第一层前取齐参数，算完释放临时完整参数、保留所需激活；第二层重复。反向从第二层返回，为所需梯度重新取得参数，归约并分配参数梯度，再回到第一层，最后本地更新。是否还要除以有效目标数，继续由真实损失与归约规则决定。')+
+ p('all-gather把各rank的片段收齐；reduce-scatter先归约对应贡献，再把结果片分给归属rank。完整分片为计算准备对应组的完整参数，随后将参数视图切回分片。反向要用完整参数，可以复用尚在的缓冲，也可以重新取得，再归约并分配梯度。以 PyTorch 2.5.1 为例，FULL_SHARD 根组前向结束后切回分片视图，同时保留完整缓冲供反向使用。是否还要除以有效目标数，继续由真实损失与归约规则决定。')+
  figures(d[3]).join('')+
  p('分组决定一次取齐多少参数。大组需要更多临时空间，小组增加通信与调用次数；预取提前准备下一组，用更多驻留换取重叠。评估峰值时把当前组、预取组、未释放激活、梯度与缓冲列在同一时间线上，并按实际存储去重。')+
  anchor('subsection-4-1r9crh6')+anchor('manual-sharding-run')+
@@ -10611,7 +10639,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  d4[0]+
  p('每次更新前比较本地梯度片，更新后比较拼回的参数和动量，连续执行三次。实际全局loss约为0.318769、0.315201、0.308496，按相对误差rtol=1e−10、绝对误差atol=1e−12的契约比较；错误的局部均值分母会被梯度断言拒绝。forward保存输入与参数片，backward重新gather参数，读源码时沿这两个位置核对生命周期。')+
  fold('shard_linear.py完整源码：参数归属与独立全批次参考',d4[1])+
- p('程序确实执行参数all-gather，梯度采用完整all-reduce后切片，验证归约和归属语义。它没有调用FSDP或原生reduce-scatter，也另保留完整参考模型；状态元素数不能转写成进程总内存或GPU显存收益。FSDP接口、CUDA重叠、峰值与分片检查点按目标实现另外验证。')+linkRow(links(d[3])),
+ p('程序确实执行参数all-gather，梯度采用完整all-reduce后切片，验证归约和归属语义。它没有调用FSDP或原生reduce-scatter，也另保留完整参考模型；状态元素数不能转写成进程总内存或GPU显存收益。下面另用原生 FSDP 核对参数、梯度和 Adam 状态的归属。')+linkRow(links(d[3])),
 
  p('模型并行进一步切分计算图。张量并行TP把层内矩阵或相关张量分到多个设备，部分输出或梯度再按布局交换、合并；流水线并行PP把连续层分为阶段，微批次在阶段之间前进，并在反向沿依赖返回。前面张量并行章已有矩阵与流水线算例，这里把它们放回策略选择。')+
  table(['策略','主要分配什么','新增协调'],[
@@ -10665,6 +10693,31 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('三类CPU程序各回答一层问题：标量检查平均与分母，完整窗口检查实际更新和优化器历史，手工分片检查状态归属及重建。它们都按各自输入和数值协议核对，未执行GPU/NCCL、AMP或原生FSDP。进入其他规模时保留新的实际比较结果，包括严格比较未通过的记录；这些局部通过不自动覆盖另一份恢复或性能实验。')+
  linkRow(d8links.filter(x=>x.includes('multinode-lab')).map(x=>x.replace('下一步：按两机四卡手册检查设备、会合、通信与恢复','后续实践：按两机四卡手册检查设备、会合、通信与恢复')))
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
+
+ strategies.sections[3][1]+='<h3 id="native-fsdp-run">用原生 FSDP 核对两个进程各持有什么</h3>'+p(
+ 'PyTorch 的 FSDP 会先包装模型，再决定参数怎样分片，所以 Adam 在包装后创建。本次独立实验只用一个 <code>Linear(2,2)</code>，即四个权重和两个偏置。两个进程分别处理一条和两条样本，每条有两个目标。总共有六个参与损失的标量，按全局六项的均值训练。',
+ '初始权重两行分别为 [1/4,−1/2] 和 [3/4,1/8]，偏置为 [0,0]。rank 0 的输入 [1,2] 对应目标 [0,1]。rank 1 的输入 [0,−1] 和 [2,1] 分别对应 [1,0] 和 [−3/4,1]。每项损失是预测与目标之差的平方再除以 2。',
+ '先手算第一个权重的梯度。它只处理第一个输出，贡献为（该输出预测 − 目标）乘第一个输入。rank 0 的一项贡献是 −3/4。rank 1 的两项贡献是 0 和 3/2，三项相加为 3/4，除以全局六个标量得到 1/8。若分别除以各自的 2 与 4，再让两个 rank 等权平均，这个梯度变成 0。')+
+ trainingFigure('native-fsdp-state','同一个六参数线性层。观察稳定分片、反向后的梯度片和更新后的 Adam 历史。')+
+ p('这个 PyTorch 2.5.1 的 FULL_SHARD 路径按进程数平均梯度。本地将各项损失相加再乘 2/6，归约平均后恰好得到全局均值的梯度。反向完成后分别读两个进程的参数与梯度，更新后再读 Adam 保存的一阶和二阶历史。')+
+ trainingCode('把原生包装与全局损失的分母放到同一段代码','PYTHON',`model = FSDP(inner, sharding_strategy=ShardingStrategy.FULL_SHARD,
+             device_id=torch.device("cpu"))
+optimizer = torch.optim.Adam(model.parameters(), lr=LR, foreach=False)
+
+output = model(X[rows])
+local_sum = half_squared_error(output, Y[rows]).sum()
+(world * local_sum / total_targets).backward()`)+
+ table(['读哪个时刻','本实验要核对的量'],[
+  ['包装以后','每个进程有 3 个本地参数元素'],
+  ['反向以后','各自收到 3 个梯度元素，拼起来等于完整批次的梯度'],
+  ['Adam 更新以后','每个进程的一阶与二阶历史各 3 项'],
+  ['取回完整状态','按 weight、bias 比较参数、两份历史和更新步数']
+ ])+
+ p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
+ p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
+ trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
+ p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值、通信耗时和跨规模恢复需各自实测。')+
+ '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
 })();
 
 
@@ -12130,6 +12183,8 @@ const firstReadingChanges=[];
   }
   article.updated='2026.11.09';
  }
+ const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
+ mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 })();
 
 
@@ -13160,7 +13215,7 @@ const learningProfiles={
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'估算一个请求的 KV 缓存和并发容量，复算首词元延迟，再解释一次版本切换的验收条件。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，手算运算量与字节；比较参考实现的输出与梯度，再说明轨迹支持了哪个性能判断。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务；分别验证产物、权限拒绝与重试后的效果。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'在工具提交后终止执行进程，恢复同一任务并核对效果与回执；再按适配器契约接入平台。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>自检。工具已返回回执，图恢复同一任务时仍要重跑 publish。先预测沿用操作 ID 或按尝试生成 ID 各会留下几份报告，再用两份数据库的记录核对金额、回执和图的终态。可只读记录，也可运行实验。目标平台另按适配器契约验收。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -13250,7 +13305,7 @@ for(const[profile,id,before]of [
 }
 courseStageConnections.cloud[1]=['把单进程放到跨机器的数据路径','资源供给 → 地址与路由 → 数据提交 → 日志与副本应用 → 恢复与写入资格','把CPU、网络、事务、缓存、复制与恢复放回同一次请求，分别解释可见性、进度和谁能继续写。'];
 courseStageConnections.cloud[2]=['把执行对象交给声明式控制','容器 → API期望 → 多数派提交与变更观察 → 调谐 → 放置 → 可用服务','对象持久保存、观察者追上版本、进程运行和业务可用分别取证；成员隔离不等于应用进程立即停止。'];
-courseStageConnections.agent[0]=['先规定委托与实际执行之间的边界','用户目标 → 模型提议 → 工具契约与协议消息 → 可信检查 → 受限执行','运行时负责调用和验收，协议连接工具提供方，身份、授权和隔离分别约束实际动作；每一步都要明确负责的对象。'];
+courseStageConnections.agent[0]=['先规定委托与实际执行之间的边界','工具发现与契约 → 模型提议 → 宿主检查 → MCP 客户端派发调用 → 资源端授权与受限执行','宿主按用户委托选出本轮可用工具，核对提议的参数、范围与预算后再派发。资源端依据当前权限决定能否读取或提交。'];
 learningTrackModels.cloud.anchors.push(['control-plane-consensus','控制状态与观察'],['mysql-replication','副本应用与写资格']);
 learningTrackModels.agent.anchors.splice(1,0,['mcp-protocol','协议与工具连接']);
 
@@ -13648,6 +13703,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'innodb':{folder:'innodb',title:'原生 InnoDB 执行树与事务锁'},
+ 'native-fsdp':{folder:'native-fsdp',title:'原生 FSDP 的参数片、梯度与 Adam 状态'},
  'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
  'kubernetes-network-policy':{folder:'kubernetes-network-policy',title:'Cilium 实测入站、出站和 DNS'},
  'mcp-recovery':{folder:'mcp-recovery',title:'真实 MCP 提交与工作流崩溃恢复'},
@@ -13813,6 +13870,12 @@ labLearningCatalog.push(
  {id:'ai-encoder-decoder',track:'ai',stage:1,title:'从源词、目标右移到逐词翻译',chapter:'transformer-model',anchor:'encoder-decoder-translation',pack:'encoder-decoder',files:['encoder_decoder.py','source.json'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实训练、掩码对照与逐词生成',observe:'核对源句和目标前缀各提供什么，分别改变未来目标和源端填充，再从起始词逐步生成。',scope:'固定小词表和合成组合，只验证本实验的结构、数值与输出。'},
  {id:'cloud-network-policy',track:'cloud',stage:2,title:'为什么 DNS 失败而订单端口仍然可达',chapter:'k8s-networking',anchor:'kubernetes-network-policy-run',pack:'kubernetes-network-policy',files:['network_policy_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Cilium 1.20.4',kind:'真实 Kubernetes 策略与跨节点 Pod 连接',observe:'连续七个策略阶段分别发 DNS 和新建 TCP/HTTP 请求，独立核对源、目的 Pod、后端 UID 和清理结果。',scope:'两个 kind 节点同属一台 Linux 主机。观测直接访问 Pod IP 与单独的 Service 解析。'},
  {id:'agent-mcp-recovery',track:'agent',stage:2,title:'图没保存回执，工具已经提交时怎样恢复',chapter:'durable-workflows',anchor:'mcp-commit-recovery',pack:'mcp-recovery',files:['workflow.py','mcp_bridge.py','source.json','README.md'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、进程崩溃与接收方事务',observe:'在回执到达后杀掉图进程，再启动新进程与新 MCP 会话。两次调用只留一份 42 报告，尝试号反例留下两份。',scope:'本机 stdio、独立 SQLite 提交与图检查点。Kairo 和远端恢复按目标环境验收。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sql-snapshot')+1,0,
+ {id:'cloud-innodb',track:'cloud',stage:2,title:'从实际扫描行数走到 InnoDB 死锁回滚',chapter:'database-index-locks',anchor:'native-innodb-lab',pack:'innodb',files:['innodb_lab.py'],env:'Linux Docker · MySQL 8.4.13 · Python 3.9+',kind:'真实 InnoDB 执行树与持久连接',observe:'同一查询对照 4,096 与 51 行的扫描节点，读真实锁等待边，核对 1213、受害事务整笔回滚与存活方的余额和回执。',scope:'单容器与合成数据。固定主键记录锁与读查询范围；云数据库、复制和吞吐需另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-manual-sharding')+1,0,
+ {id:'ai-native-fsdp',track:'ai',stage:2,title:'用原生 FSDP 跑两次正确的全局更新',chapter:'distributed-training',anchor:'native-fsdp-run',pack:'native-fsdp',files:['fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · 两个 CPU/Gloo 进程',kind:'真实 FULL_SHARD、Profiler 与 Adam 更新',observe:'每个 rank 三项参数和梯度，两份 Adam 历史各三项。重建完整状态，核对两次全批次参考及不等局部均值反例。',scope:'固定单机 CPU、模型与输入。完整状态在内存中提取。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14036,5 +14099,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="e2912aa821ad51b5f7e5ffd154e0d9156dc42e76d06c058a1f808254e5bc4b99";
+const staticReadingVersion="1390782a01a3c3ab2c035ca79d71ad4cced801385e7e2aec82fd522794df2a7d";
 

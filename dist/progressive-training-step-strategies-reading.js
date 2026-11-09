@@ -177,7 +177,7 @@
  ])+
  p('激活是前向留下、反向仍会使用的中间值；临时完整参数、通信缓冲和预取也占空间。因此4GB是长期状态小计，实际峰值需按同一时刻同时存活的对象另算。参数分成四份，并不会自动让每份激活也缩为四分之一。')+
  anchor('subsection-4-6ow1nm')+
- p('all-gather把各rank的片段收齐；reduce-scatter先归约对应贡献，再把结果片分给归属rank。完整分片前向进入第一层前取齐参数，算完释放临时完整参数、保留所需激活；第二层重复。反向从第二层返回，为所需梯度重新取得参数，归约并分配参数梯度，再回到第一层，最后本地更新。是否还要除以有效目标数，继续由真实损失与归约规则决定。')+
+ p('all-gather把各rank的片段收齐；reduce-scatter先归约对应贡献，再把结果片分给归属rank。完整分片为计算准备对应组的完整参数，随后将参数视图切回分片。反向要用完整参数，可以复用尚在的缓冲，也可以重新取得，再归约并分配梯度。以 PyTorch 2.5.1 为例，FULL_SHARD 根组前向结束后切回分片视图，同时保留完整缓冲供反向使用。是否还要除以有效目标数，继续由真实损失与归约规则决定。')+
  figures(d[3]).join('')+
  p('分组决定一次取齐多少参数。大组需要更多临时空间，小组增加通信与调用次数；预取提前准备下一组，用更多驻留换取重叠。评估峰值时把当前组、预取组、未释放激活、梯度与缓冲列在同一时间线上，并按实际存储去重。')+
  anchor('subsection-4-1r9crh6')+anchor('manual-sharding-run')+
@@ -186,7 +186,7 @@
  d4[0]+
  p('每次更新前比较本地梯度片，更新后比较拼回的参数和动量，连续执行三次。实际全局loss约为0.318769、0.315201、0.308496，按相对误差rtol=1e−10、绝对误差atol=1e−12的契约比较；错误的局部均值分母会被梯度断言拒绝。forward保存输入与参数片，backward重新gather参数，读源码时沿这两个位置核对生命周期。')+
  fold('shard_linear.py完整源码：参数归属与独立全批次参考',d4[1])+
- p('程序确实执行参数all-gather，梯度采用完整all-reduce后切片，验证归约和归属语义。它没有调用FSDP或原生reduce-scatter，也另保留完整参考模型；状态元素数不能转写成进程总内存或GPU显存收益。FSDP接口、CUDA重叠、峰值与分片检查点按目标实现另外验证。')+linkRow(links(d[3])),
+ p('程序确实执行参数all-gather，梯度采用完整all-reduce后切片，验证归约和归属语义。它没有调用FSDP或原生reduce-scatter，也另保留完整参考模型；状态元素数不能转写成进程总内存或GPU显存收益。下面另用原生 FSDP 核对参数、梯度和 Adam 状态的归属。')+linkRow(links(d[3])),
 
  p('模型并行进一步切分计算图。张量并行TP把层内矩阵或相关张量分到多个设备，部分输出或梯度再按布局交换、合并；流水线并行PP把连续层分为阶段，微批次在阶段之间前进，并在反向沿依赖返回。前面张量并行章已有矩阵与流水线算例，这里把它们放回策略选择。')+
  table(['策略','主要分配什么','新增协调'],[
@@ -240,4 +240,29 @@
  p('三类CPU程序各回答一层问题：标量检查平均与分母，完整窗口检查实际更新和优化器历史，手工分片检查状态归属及重建。它们都按各自输入和数值协议核对，未执行GPU/NCCL、AMP或原生FSDP。进入其他规模时保留新的实际比较结果，包括严格比较未通过的记录；这些局部通过不自动覆盖另一份恢复或性能实验。')+
  linkRow(d8links.filter(x=>x.includes('multinode-lab')).map(x=>x.replace('下一步：按两机四卡手册检查设备、会合、通信与恢复','后续实践：按两机四卡手册检查设备、会合、通信与恢复')))
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
+
+ strategies.sections[3][1]+='<h3 id="native-fsdp-run">用原生 FSDP 核对两个进程各持有什么</h3>'+p(
+ 'PyTorch 的 FSDP 会先包装模型，再决定参数怎样分片，所以 Adam 在包装后创建。本次独立实验只用一个 <code>Linear(2,2)</code>，即四个权重和两个偏置。两个进程分别处理一条和两条样本，每条有两个目标。总共有六个参与损失的标量，按全局六项的均值训练。',
+ '初始权重两行分别为 [1/4,−1/2] 和 [3/4,1/8]，偏置为 [0,0]。rank 0 的输入 [1,2] 对应目标 [0,1]。rank 1 的输入 [0,−1] 和 [2,1] 分别对应 [1,0] 和 [−3/4,1]。每项损失是预测与目标之差的平方再除以 2。',
+ '先手算第一个权重的梯度。它只处理第一个输出，贡献为（该输出预测 − 目标）乘第一个输入。rank 0 的一项贡献是 −3/4。rank 1 的两项贡献是 0 和 3/2，三项相加为 3/4，除以全局六个标量得到 1/8。若分别除以各自的 2 与 4，再让两个 rank 等权平均，这个梯度变成 0。')+
+ trainingFigure('native-fsdp-state','同一个六参数线性层。观察稳定分片、反向后的梯度片和更新后的 Adam 历史。')+
+ p('这个 PyTorch 2.5.1 的 FULL_SHARD 路径按进程数平均梯度。本地将各项损失相加再乘 2/6，归约平均后恰好得到全局均值的梯度。反向完成后分别读两个进程的参数与梯度，更新后再读 Adam 保存的一阶和二阶历史。')+
+ trainingCode('把原生包装与全局损失的分母放到同一段代码','PYTHON',`model = FSDP(inner, sharding_strategy=ShardingStrategy.FULL_SHARD,
+             device_id=torch.device("cpu"))
+optimizer = torch.optim.Adam(model.parameters(), lr=LR, foreach=False)
+
+output = model(X[rows])
+local_sum = half_squared_error(output, Y[rows]).sum()
+(world * local_sum / total_targets).backward()`)+
+ table(['读哪个时刻','本实验要核对的量'],[
+  ['包装以后','每个进程有 3 个本地参数元素'],
+  ['反向以后','各自收到 3 个梯度元素，拼起来等于完整批次的梯度'],
+  ['Adam 更新以后','每个进程的一阶与二阶历史各 3 项'],
+  ['取回完整状态','按 weight、bias 比较参数、两份历史和更新步数']
+ ])+
+ p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
+ p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
+ trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
+ p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值、通信耗时和跨规模恢复需各自实测。')+
+ '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
 })();

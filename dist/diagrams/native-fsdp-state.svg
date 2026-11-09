@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 456" role="img" aria-labelledby="title desc">
+ <title id="title">六个参数怎样分给两个进程</title>
+ <desc id="desc">线性层的四个权重和两个偏置被原生 FSDP 分成两个三元素参数片。前向和反向需要完整参数，反向归约后各进程收到对应的梯度片，用本地 Adam 状态更新。实验核对状态元素和数值。</desc>
+ <defs>
+  <marker id="phase-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5 0 7Z" fill="#42749d"/></marker>
+ </defs>
+ <rect width="440" height="456" rx="18" fill="#f8fbff"/>
+ <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" fill="#17304d" font-size="17">
+  <text x="22" y="38" font-size="25" font-weight="700">一层线性变换，两份状态</text>
+  <text x="22" y="68" fill="#345e87">四个权重 + 两个偏置，共六项</text>
+  <g font-weight="650">
+   <rect x="22" y="84" width="195" height="53" rx="8" fill="#e4f2ff"/>
+   <text x="39" y="116">rank 0 · 参数片 3 项</text>
+   <rect x="223" y="84" width="195" height="53" rx="8" fill="#e8f5ee"/>
+   <text x="240" y="116">rank 1 · 参数片 3 项</text>
+  </g>
+  <path d="M220 143V164" stroke="#42749d" stroke-width="2.2" marker-end="url(#phase-arrow)"/>
+  <rect x="22" y="174" width="396" height="72" rx="10" fill="#eef1ff"/>
+  <text x="39" y="201" font-size="19" font-weight="650">前向与反向需要时取齐参数</text>
+  <text x="39" y="229">同一组参数分别处理各自输入。</text>
+  <path d="M220 253V274" stroke="#42749d" stroke-width="2.2" marker-end="url(#phase-arrow)"/>
+  <rect x="22" y="284" width="396" height="74" rx="10" fill="#ecf7f4"/>
+  <text x="39" y="311" font-size="19" font-weight="650">归约后各持有 3 项梯度</text>
+  <text x="39" y="339">每片对应 Adam 一阶、二阶状态各 3 项。</text>
+  <path d="M220 365V386" stroke="#42749d" stroke-width="2.2" marker-end="url(#phase-arrow)"/>
+  <rect x="22" y="395" width="396" height="44" rx="10" fill="#eaf1f8"/>
+  <text x="39" y="423">本地更新，再按名称取回完整状态核对。</text>
+ </g>
+</svg>

@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'innodb':{folder:'innodb',title:'原生 InnoDB 执行树与事务锁'},
+ 'native-fsdp':{folder:'native-fsdp',title:'原生 FSDP 的参数片、梯度与 Adam 状态'},
  'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
  'kubernetes-network-policy':{folder:'kubernetes-network-policy',title:'Cilium 实测入站、出站和 DNS'},
  'mcp-recovery':{folder:'mcp-recovery',title:'真实 MCP 提交与工作流崩溃恢复'},
@@ -165,6 +167,12 @@ labLearningCatalog.push(
  {id:'ai-encoder-decoder',track:'ai',stage:1,title:'从源词、目标右移到逐词翻译',chapter:'transformer-model',anchor:'encoder-decoder-translation',pack:'encoder-decoder',files:['encoder_decoder.py','source.json'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实训练、掩码对照与逐词生成',observe:'核对源句和目标前缀各提供什么，分别改变未来目标和源端填充，再从起始词逐步生成。',scope:'固定小词表和合成组合，只验证本实验的结构、数值与输出。'},
  {id:'cloud-network-policy',track:'cloud',stage:2,title:'为什么 DNS 失败而订单端口仍然可达',chapter:'k8s-networking',anchor:'kubernetes-network-policy-run',pack:'kubernetes-network-policy',files:['network_policy_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Cilium 1.20.4',kind:'真实 Kubernetes 策略与跨节点 Pod 连接',observe:'连续七个策略阶段分别发 DNS 和新建 TCP/HTTP 请求，独立核对源、目的 Pod、后端 UID 和清理结果。',scope:'两个 kind 节点同属一台 Linux 主机。观测直接访问 Pod IP 与单独的 Service 解析。'},
  {id:'agent-mcp-recovery',track:'agent',stage:2,title:'图没保存回执，工具已经提交时怎样恢复',chapter:'durable-workflows',anchor:'mcp-commit-recovery',pack:'mcp-recovery',files:['workflow.py','mcp_bridge.py','source.json','README.md'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、进程崩溃与接收方事务',observe:'在回执到达后杀掉图进程，再启动新进程与新 MCP 会话。两次调用只留一份 42 报告，尝试号反例留下两份。',scope:'本机 stdio、独立 SQLite 提交与图检查点。Kairo 和远端恢复按目标环境验收。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sql-snapshot')+1,0,
+ {id:'cloud-innodb',track:'cloud',stage:2,title:'从实际扫描行数走到 InnoDB 死锁回滚',chapter:'database-index-locks',anchor:'native-innodb-lab',pack:'innodb',files:['innodb_lab.py'],env:'Linux Docker · MySQL 8.4.13 · Python 3.9+',kind:'真实 InnoDB 执行树与持久连接',observe:'同一查询对照 4,096 与 51 行的扫描节点，读真实锁等待边，核对 1213、受害事务整笔回滚与存活方的余额和回执。',scope:'单容器与合成数据。固定主键记录锁与读查询范围；云数据库、复制和吞吐需另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-manual-sharding')+1,0,
+ {id:'ai-native-fsdp',track:'ai',stage:2,title:'用原生 FSDP 跑两次正确的全局更新',chapter:'distributed-training',anchor:'native-fsdp-run',pack:'native-fsdp',files:['fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · 两个 CPU/Gloo 进程',kind:'真实 FULL_SHARD、Profiler 与 Adam 更新',observe:'每个 rank 三项参数和梯度，两份 Adam 历史各三项。重建完整状态，核对两次全批次参考及不等局部均值反例。',scope:'固定单机 CPU、模型与输入。完整状态在内存中提取。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
