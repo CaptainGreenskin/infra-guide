@@ -14,9 +14,11 @@ const pre=body=>body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[],all=a=>a.sections
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 for(const before of prior){
  const a=data.articles.find(x=>x.id===before.id);assert(a,before.id+': published chapter removed');assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]),a.id+': section anchors and headings');
- if(!ids.includes(a.id)){assert.deepEqual(published.find(x=>x.id===a.id).sections,before.sections,a.id+': unreviewed V51 body change');continue;}
- let index=0;const current=pre(all(a));for(const original of pre(all(before))){const at=current.indexOf(original,index);assert(at>=index,a.id+': original complete code removed, reordered or modified');index=at+1;}
- assert.equal(current.length-pre(all(before)).length,a.id==='agent-memory'?0:1,a.id+': unexpected new code');
+ const signed=published.find(x=>x.id===a.id);
+ if(!ids.includes(a.id)){assert.deepEqual(signed.sections,before.sections,a.id+': unreviewed V51 body change');continue;}
+ const historical=pre(all(signed));
+ assert.equal(historical.length-pre(all(before)).length,a.id==='agent-memory'?0:1,a.id+': unexpected new V51 code');
+ let index=0;const current=pre(all(a));for(const original of historical){const at=current.indexOf(original,index);assert(at>=index,a.id+': published complete code removed, reordered or modified');index=at+1;}
  const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
  assert(html.includes('在领域图谱中看本章相关概念'));
 }

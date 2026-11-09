@@ -61,6 +61,11 @@
       "reviewed_sha256": "78bcb9a2307bb451ba0842dca30ed90da42ae602af319e730e293b4df56b596e",
       "scope": "Keep the initial lab-to-article links in the active learning route before deferred application startup, preserving explicit choices and unrelated destinations."
     },
+    "scripts/check-causal-walkthroughs.cjs": {
+      "previous_sha256": "222b1cc58fa26910f628910a27eefa50207e74c533eade989ad7dec4d004882e",
+      "reviewed_sha256": "98b817b474e0a25c92da28cbea637d88f006bbd0a26efee69148ff574b900988",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
     "dist/diagrams/bounded-worker-queue.svg": {
       "previous_sha256": null,
       "reviewed_sha256": "d7df1813ca2b4203bb0693e05d5b3beeef962ab35506a3ab59062ea1e305f1af",
