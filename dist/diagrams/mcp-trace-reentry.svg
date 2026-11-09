@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 530" role="img" aria-labelledby="title desc">
+  <title id="title">三条追踪怎样对应同一次报告发布</title>
+  <desc id="desc">三个独立调用进程各有一条新追踪。恢复组的根跨度有一条链接指向首次根跨度，对照组无链接。三次工具请求各自把发送跨度作为服务端父节点。SQLite 记录三次尝试和一份报告，两个恢复进程都拿到原回执。</desc>
+  <metadata>{"record":"labs/mcp-trace-reentry/validation.json","traces":3,"links":1,"effects":1,"attempts":3}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#3d5b80"/>
+    </marker>
+    <marker id="link" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#7047a0"/>
+    </marker>
+    <style>
+      text {font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif; fill:#172c46}
+      .title {font-size:28px;font-weight:750}
+      .label {font-size:19px;font-weight:650}
+      .body {font-size:18px}
+      .muted {fill:#3e566f}
+      .purple {fill:#63318f}
+      .parent {fill:none;stroke:#3d5b80;stroke-width:2.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="920" height="530" rx="22" fill="#f7fafc"/>
+  <text x="35" y="50" class="title">三条追踪，一次报告发布</text>
+  <text x="35" y="81" class="body muted">实线箭头表示当前调用的父子关系，虚线箭头表示跨追踪链接。</text>
+
+  <g>
+    <rect x="35" y="108" width="850" height="81" rx="10" fill="#eaf1fa"/>
+    <rect x="35" y="221" width="850" height="81" rx="10" fill="#f1ebf9"/>
+    <rect x="35" y="334" width="850" height="81" rx="10" fill="#edf2f5"/>
+    <text x="52" y="143" class="label">首次运行</text><text x="52" y="170" class="body muted">追踪 A</text>
+    <text x="52" y="256" class="label">恢复运行</text><text x="52" y="283" class="body muted">追踪 B</text>
+    <text x="52" y="369" class="label">无链接对照</text><text x="52" y="396" class="body muted">追踪 C</text>
+  </g>
+  <g fill="white" stroke="#93a9c4">
+    <rect x="225" y="127" width="136" height="42" rx="8"/>
+    <rect x="225" y="240" width="136" height="42" rx="8"/>
+    <rect x="225" y="353" width="136" height="42" rx="8"/>
+    <rect x="427" y="127" width="134" height="42" rx="8"/>
+    <rect x="427" y="240" width="134" height="42" rx="8"/>
+    <rect x="427" y="353" width="134" height="42" rx="8"/>
+    <rect x="710" y="127" width="148" height="42" rx="8"/>
+    <rect x="710" y="240" width="148" height="42" rx="8"/>
+    <rect x="710" y="353" width="148" height="42" rx="8"/>
+  </g>
+  <g class="label" text-anchor="middle">
+    <text x="293" y="155">根跨度</text><text x="494" y="155">发送跨度</text><text x="784" y="155">接收跨度</text>
+    <text x="293" y="268">根跨度</text><text x="494" y="268">发送跨度</text><text x="784" y="268">接收跨度</text>
+    <text x="293" y="381">根跨度</text><text x="494" y="381">发送跨度</text><text x="784" y="381">接收跨度</text>
+  </g>
+  <g class="parent">
+    <path d="M363 148H423"/><path d="M564 148H706"/>
+    <path d="M363 261H423"/><path d="M564 261H706"/>
+    <path d="M363 374H423"/><path d="M564 374H706"/>
+  </g>
+  <g class="body muted" text-anchor="middle">
+    <text x="635" y="138">traceparent</text>
+    <text x="635" y="251">traceparent</text>
+    <text x="635" y="364">traceparent</text>
+  </g>
+  <path d="M293 237V173" stroke="#7047a0" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#link)"/>
+  <text x="310" y="211" class="body purple">Span Link</text>
+
+  <rect x="35" y="445" width="850" height="56" rx="10" fill="#e7f2e9" stroke="#9cbaaa"/>
+  <text x="52" y="480" class="label">SQLite 账本</text>
+  <text x="225" y="480" class="body">同一操作号 · 3 次尝试 · 1 份合计 42 的报告 · 同一个回执</text>
+</svg>

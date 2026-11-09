@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'tls-proxy-hops':{folder:'tls-proxy-hops',title:'HTTPS 代理两段身份与连接复用'},
+ 'triton-tail-mask':{folder:'triton-tail-mask',title:'Triton 尾部掩码、归一化与独立参考'},
+ 'mcp-trace-reentry':{folder:'mcp-trace-reentry',title:'进程恢复后的跨度链接、MCP 传播与独立回执'},
  'prometheus-live-burn':{folder:'prometheus-live-burn',title:'真实抓取、计数器归零与长短窗告警状态'},
  'python-extension-loader':{folder:'python-extension-loader',title:'CPython 扩展编译、链接、导入和动态依赖'},
  'langgraph-parallel-merge':{folder:'langgraph-parallel-merge',title:'并行提议的冲突归并、检查点重放与接收方回执'},
@@ -249,6 +252,11 @@ labLearningCatalog.push(
  {id:'cloud-spiffe-workload-identity',track:'cloud',stage:2,title:'两个工作负载都通过双向 TLS，谁可以写报告',chapter:'iam-security',anchor:'native-spiffe-workload-identity',pack:'spiffe-workload-identity',files:['spire_identity_lab.py','workload.go','go.mod','go.sum'],env:'Linux amd64 · Python 3.11+ · Go 1.26.1 · SPIRE 1.16.0',kind:'原生工作负载证明与双向 TLS',observe:'对照同一系统用户下的三种身份结果。用证书主体与报告账本核对 403 和 201。',scope:'单 Linux 节点、固定执行文件选择器与本机回环请求。'},
  {id:'ai-native-model-rollout',track:'ai',stage:2,title:'服务探活通过，模型输出还可能错吗',chapter:'ai-lifecycle',anchor:'native-model-rollout',pack:'native-model-rollout',files:['rollout_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'三个原生模型服务与流式输出',observe:'先按固定输出拒绝错误候选，再看已接收的流怎样跨过发布与回退。',scope:'固定合成模型、本机 CPU 和教学入口。入口固定交付版本，原生计算可能已经完成。'},
  {id:'agent-mcp-http-authorization',track:'agent',stage:2,title:'通过 MCP 令牌校验后，能读哪个租户的报告',chapter:'mcp-protocol',anchor:'native-mcp-http-authorization',pack:'mcp-http-authorization',files:['authorization_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 授权与 SQLite 读取证据',observe:'沿同一签名令牌区分受众、通用权限和报告归属。用账本核对正文到底读了几次。',scope:'本机资源服务端和临时签发夹具。登录流程、生产身份服务与 Kairo 另验。'}
+);
+labLearningCatalog.push(
+ {id:'tls-proxy-hops',track:'cloud',stage:2,title:'沿 HTTPS 代理分别校验入口和上游',chapter:'vpc-network',anchor:'native-tls-proxy',pack:'tls-proxy-hops',files:['tls_proxy_hops.py'],env:'Python 3.9+ · OpenSSL / LibreSSL',kind:'真实本机 HTTPS',observe:'四次入口握手均成功。A 的两个请求复用上游连接，B 的证书名称错配得到 502，B 的 HTTP 账本没有这次请求。',scope:'本机 HTTP/1.1 与独立证书链。'},
+ {id:'ai-triton-tail-mask',track:'ai',stage:2,title:'一个尾块为什么会改掉整行概率',chapter:'operator-profiling',anchor:'triton-tail-mask-run',pack:'triton-tail-mask',files:['triton_tail_mask.py','requirements-linux.txt'],env:'Linux x86_64 · Python 3.12 · Triton 3.3.1',kind:'真实 Triton CPU 解释器',observe:'用独立参考与输出哨兵核对读写掩码，再看补零为何会改变有效位置的分母。',scope:'CPU 解释器运行，真实 GPU 数值、计时和访存仍待设备验收。'},
+ {id:'agent-mcp-trace-reentry',track:'agent',stage:2,title:'进程退出后，怎样把新追踪接回原执行',chapter:'agent-observability',anchor:'native-mcp-trace-reentry',pack:'mcp-trace-reentry',files:['trace_reentry.py','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · OpenTelemetry SDK 1.45.2',kind:'真实 MCP HTTP、跨度链接与 SQLite',observe:'分别核对三条追踪、一个跨度链接和同一业务回执。用接收方账本数实际写入。',scope:'本机三个独立调用进程、一个 MCP HTTP 服务及 SQLite。Kairo 接入另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

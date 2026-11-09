@@ -1,0 +1,28 @@
+{
+  "environment": {
+    "python": "3.12.13",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "httpx2": "2.16.0",
+    "uvicorn": "0.54.0",
+    "opentelemetry-sdk": "1.45.2"
+  },
+  "source_sha256": {
+    "trace_reentry.py": "55e84ec597b03fcfb81b93bacf63fd47b52c774a62c1f4e966f6af7777268761",
+    "README.md": "25b2c96d47153df57a76a0e8a5fa2a0ff74838594c43773d3c08447046675f48",
+    "requirements.txt": "0fcc769fc91d1e6d79e1eee58b826f2bd74e326c657968dfcccc82ca11a23da2"
+  },
+  "artifact_sha256": {
+    "trace-record.json": "05a0a73fe7e86fae8628f15426a1e25867ccd33e7b069dafdbe0287a0fd55ff3",
+    "ledger.sqlite": "73c587bf95351e86b88a2490b867739a9e9c88636a9ec2dd059ac5f811383dfb"
+  },
+  "results": {
+    "traces": 3,
+    "links": 1,
+    "effects": 1,
+    "attempts": 3,
+    "receipts": [
+      "receipt-report-A-v3"
+    ]
+  }
+}

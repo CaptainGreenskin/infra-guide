@@ -4935,6 +4935,41 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "55add2c9cff243891d76b361ea6ae021f35da71a99bbc349a6213b8e3bd62435",
+      "reviewed_content_sha256": "faa175e89366ef6c62c2a8e21922a5d36698f5c68faf15b02b06dab42fa6403b",
+      "scope": "Follow two independently verified HTTPS hops and use separate proxy and origin connection records.",
+      "observation": "The entry TLS session was valid in all four requests. Two entry connections reused one origin connection. The wrong origin name returned 502 before the origin received HTTP.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1ccc9e8227d6f900fadd268f7ad5db57fb00276d43c610bab0ab85c5baf33f14",
+      "reviewed_content_sha256": "2b3d9f5119e6a32be7d4961e5b6caecf9a61f48f56c6672bf9a659e9d6d6b9a1",
+      "scope": "Use the real MCP and OpenTelemetry SDKs across process restarts to distinguish parent propagation, span links and committed effects.",
+      "observation": "Three traces and attempts produced one receipt and one committed report. A new root linked to the original root while HTTP receive spans remained children of the current send spans.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

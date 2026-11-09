@@ -1,0 +1,366 @@
+{
+  "checkpoint": {
+    "task": "report-A",
+    "op": "report-A/v3:publish",
+    "total": 42,
+    "origin": {
+      "traceparent": "00-71f180d244fe7ea46f3d715da087a4de-92bcf96dad15b9bb-03"
+    }
+  },
+  "clients": {
+    "first": {
+      "pid": 19138,
+      "result": {
+        "task": "report-A",
+        "op": "report-A/v3:publish",
+        "total": 42,
+        "receipt": "receipt-report-A-v3",
+        "outcome": "committed"
+      },
+      "spans": [
+        {
+          "name": "mcp.tools/call.send",
+          "context": {
+            "trace_id": "0x71f180d244fe7ea46f3d715da087a4de",
+            "span_id": "0xcdbd607f577053c6",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.CLIENT",
+          "parent_id": "0x92bcf96dad15b9bb",
+          "start_time": "2026-11-09T08:37:29.959862Z",
+          "end_time": "2026-11-09T08:37:29.990931Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "d91073ec-ba2d-43cf-a2d3-e9e473d5f7fe",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        },
+        {
+          "name": "agent.report.run",
+          "context": {
+            "trace_id": "0x71f180d244fe7ea46f3d715da087a4de",
+            "span_id": "0x92bcf96dad15b9bb",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.INTERNAL",
+          "parent_id": null,
+          "start_time": "2026-11-09T08:37:29.959525Z",
+          "end_time": "2026-11-09T08:37:29.990953Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.case": "first",
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "d91073ec-ba2d-43cf-a2d3-e9e473d5f7fe",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        }
+      ]
+    },
+    "resume-linked": {
+      "pid": 19139,
+      "result": {
+        "task": "report-A",
+        "op": "report-A/v3:publish",
+        "total": 42,
+        "receipt": "receipt-report-A-v3",
+        "outcome": "reused"
+      },
+      "spans": [
+        {
+          "name": "mcp.tools/call.send",
+          "context": {
+            "trace_id": "0x55924218b7dc189c26de09dc85f603b0",
+            "span_id": "0x28624dfaf0c0b085",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.CLIENT",
+          "parent_id": "0x1d5541923b0d1b22",
+          "start_time": "2026-11-09T08:37:30.358734Z",
+          "end_time": "2026-11-09T08:37:30.379649Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "4669d53f-7318-42f8-ad98-bb37c42d8f00",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        },
+        {
+          "name": "agent.report.run",
+          "context": {
+            "trace_id": "0x55924218b7dc189c26de09dc85f603b0",
+            "span_id": "0x1d5541923b0d1b22",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.INTERNAL",
+          "parent_id": null,
+          "start_time": "2026-11-09T08:37:30.358661Z",
+          "end_time": "2026-11-09T08:37:30.379664Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.case": "resume-linked",
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [
+            {
+              "context": {
+                "trace_id": "0x71f180d244fe7ea46f3d715da087a4de",
+                "span_id": "0x92bcf96dad15b9bb",
+                "trace_state": "[]"
+              },
+              "attributes": {
+                "app.relation": "resumes"
+              }
+            }
+          ],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "4669d53f-7318-42f8-ad98-bb37c42d8f00",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        }
+      ]
+    },
+    "resume-unlinked": {
+      "pid": 19140,
+      "result": {
+        "task": "report-A",
+        "op": "report-A/v3:publish",
+        "total": 42,
+        "receipt": "receipt-report-A-v3",
+        "outcome": "reused"
+      },
+      "spans": [
+        {
+          "name": "mcp.tools/call.send",
+          "context": {
+            "trace_id": "0xe7814ac0aa42068657ef14d63eec00a0",
+            "span_id": "0xea3c5cf8a16efe51",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.CLIENT",
+          "parent_id": "0x893d421fe17533e4",
+          "start_time": "2026-11-09T08:37:30.772362Z",
+          "end_time": "2026-11-09T08:37:30.794767Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "f6a8f54c-ad55-4beb-a171-e943c1acc950",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        },
+        {
+          "name": "agent.report.run",
+          "context": {
+            "trace_id": "0xe7814ac0aa42068657ef14d63eec00a0",
+            "span_id": "0x893d421fe17533e4",
+            "trace_state": "[]"
+          },
+          "kind": "SpanKind.INTERNAL",
+          "parent_id": null,
+          "start_time": "2026-11-09T08:37:30.772287Z",
+          "end_time": "2026-11-09T08:37:30.794802Z",
+          "status": {
+            "status_code": "UNSET"
+          },
+          "attributes": {
+            "app.case": "resume-unlinked",
+            "app.op": "report-A/v3:publish"
+          },
+          "events": [],
+          "links": [],
+          "resource": {
+            "attributes": {
+              "telemetry.sdk.language": "python",
+              "telemetry.sdk.name": "opentelemetry",
+              "telemetry.sdk.version": "1.45.2",
+              "service.instance.id": "f6a8f54c-ad55-4beb-a171-e943c1acc950",
+              "service.name": "report-runner"
+            },
+            "schema_url": ""
+          }
+        }
+      ]
+    }
+  },
+  "server": {
+    "pid": 19135,
+    "requests": [
+      {
+        "method": "POST",
+        "path": "/mcp",
+        "mcp_method": "tools/call",
+        "traceparent": "00-71f180d244fe7ea46f3d715da087a4de-cdbd607f577053c6-03",
+        "parent_is_remote": true,
+        "protocol": "2026-07-28",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/mcp",
+        "mcp_method": "tools/call",
+        "traceparent": "00-55924218b7dc189c26de09dc85f603b0-28624dfaf0c0b085-03",
+        "parent_is_remote": true,
+        "protocol": "2026-07-28",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/mcp",
+        "mcp_method": "tools/call",
+        "traceparent": "00-e7814ac0aa42068657ef14d63eec00a0-ea3c5cf8a16efe51-03",
+        "parent_is_remote": true,
+        "protocol": "2026-07-28",
+        "status": 200
+      }
+    ],
+    "spans": [
+      {
+        "name": "mcp.tools/call.receive",
+        "context": {
+          "trace_id": "0x71f180d244fe7ea46f3d715da087a4de",
+          "span_id": "0xc816af05d216d816",
+          "trace_state": "[]"
+        },
+        "kind": "SpanKind.SERVER",
+        "parent_id": "0xcdbd607f577053c6",
+        "start_time": "2026-11-09T08:37:29.988952Z",
+        "end_time": "2026-11-09T08:37:29.990180Z",
+        "status": {
+          "status_code": "UNSET"
+        },
+        "attributes": {
+          "app.op": "report-A/v3:publish"
+        },
+        "events": [],
+        "links": [],
+        "resource": {
+          "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.45.2",
+            "service.instance.id": "5fd23be9-9998-46f5-91cc-f4c855818698",
+            "service.name": "report-tool"
+          },
+          "schema_url": ""
+        }
+      },
+      {
+        "name": "mcp.tools/call.receive",
+        "context": {
+          "trace_id": "0x55924218b7dc189c26de09dc85f603b0",
+          "span_id": "0x0131280d4a34471a",
+          "trace_state": "[]"
+        },
+        "kind": "SpanKind.SERVER",
+        "parent_id": "0x28624dfaf0c0b085",
+        "start_time": "2026-11-09T08:37:30.377941Z",
+        "end_time": "2026-11-09T08:37:30.378892Z",
+        "status": {
+          "status_code": "UNSET"
+        },
+        "attributes": {
+          "app.op": "report-A/v3:publish"
+        },
+        "events": [],
+        "links": [],
+        "resource": {
+          "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.45.2",
+            "service.instance.id": "5fd23be9-9998-46f5-91cc-f4c855818698",
+            "service.name": "report-tool"
+          },
+          "schema_url": ""
+        }
+      },
+      {
+        "name": "mcp.tools/call.receive",
+        "context": {
+          "trace_id": "0xe7814ac0aa42068657ef14d63eec00a0",
+          "span_id": "0x1656a2dd2a34b90c",
+          "trace_state": "[]"
+        },
+        "kind": "SpanKind.SERVER",
+        "parent_id": "0xea3c5cf8a16efe51",
+        "start_time": "2026-11-09T08:37:30.792022Z",
+        "end_time": "2026-11-09T08:37:30.793725Z",
+        "status": {
+          "status_code": "UNSET"
+        },
+        "attributes": {
+          "app.op": "report-A/v3:publish"
+        },
+        "events": [],
+        "links": [],
+        "resource": {
+          "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.45.2",
+            "service.instance.id": "5fd23be9-9998-46f5-91cc-f4c855818698",
+            "service.name": "report-tool"
+          },
+          "schema_url": ""
+        }
+      }
+    ]
+  }
+}

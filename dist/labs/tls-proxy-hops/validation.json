@@ -1,0 +1,227 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "tls_proxy_hops.py": "fc09c80aa37ab59bd5d84ec5f6909f8b1f825e9b52a434082aef0e4456ef0ba3"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "ssl": "OpenSSL 3.6.3 9 Jun 2026",
+    "openssl_cli": "OpenSSL 3.6.3 9 Jun 2026 (Library: OpenSSL 3.6.3 9 Jun 2026)"
+  },
+  "responses": [
+    {
+      "request": "a1",
+      "host": "orders.lab.test",
+      "edge_peer": {
+        "verified_name": "edge.lab.test",
+        "certificate_names": [
+          "edge.lab.test"
+        ],
+        "protocol": "TLSv1.3"
+      },
+      "status": 200,
+      "result": {
+        "order": "O-104",
+        "total": 37,
+        "origin": "A",
+        "connection": "A-1"
+      },
+      "upstream": {
+        "backend": "A",
+        "mode": "fresh",
+        "tls_name": "a.origin.test",
+        "http_host": "orders.origin.test",
+        "peer": {
+          "verified_name": "a.origin.test",
+          "certificate_names": [
+            "a.origin.test"
+          ],
+          "protocol": "TLSv1.3"
+        }
+      }
+    },
+    {
+      "request": "a2",
+      "host": "orders.lab.test",
+      "edge_peer": {
+        "verified_name": "edge.lab.test",
+        "certificate_names": [
+          "edge.lab.test"
+        ],
+        "protocol": "TLSv1.3"
+      },
+      "status": 200,
+      "result": {
+        "order": "O-104",
+        "total": 37,
+        "origin": "A",
+        "connection": "A-1"
+      },
+      "upstream": {
+        "backend": "A",
+        "mode": "reused",
+        "tls_name": "a.origin.test",
+        "http_host": "orders.origin.test",
+        "peer": {
+          "verified_name": "a.origin.test",
+          "certificate_names": [
+            "a.origin.test"
+          ],
+          "protocol": "TLSv1.3"
+        }
+      }
+    },
+    {
+      "request": "b1",
+      "host": "audit.lab.test",
+      "edge_peer": {
+        "verified_name": "edge.lab.test",
+        "certificate_names": [
+          "edge.lab.test"
+        ],
+        "protocol": "TLSv1.3"
+      },
+      "status": 200,
+      "result": {
+        "order": "O-104",
+        "total": 37,
+        "origin": "B",
+        "connection": "B-1"
+      },
+      "upstream": {
+        "backend": "B",
+        "mode": "fresh",
+        "tls_name": "b.origin.test",
+        "http_host": "audit.origin.test",
+        "peer": {
+          "verified_name": "b.origin.test",
+          "certificate_names": [
+            "b.origin.test"
+          ],
+          "protocol": "TLSv1.3"
+        }
+      }
+    },
+    {
+      "request": "bad",
+      "host": "audit.lab.test",
+      "edge_peer": {
+        "verified_name": "edge.lab.test",
+        "certificate_names": [
+          "edge.lab.test"
+        ],
+        "protocol": "TLSv1.3"
+      },
+      "status": 502,
+      "result": {
+        "error": "origin certificate verification failed"
+      },
+      "upstream": {
+        "backend": "B",
+        "mode": "fresh",
+        "tls_name": "a.origin.test",
+        "http_host": "audit.origin.test",
+        "verification_error": "Hostname mismatch, certificate is not valid for 'a.origin.test'."
+      }
+    }
+  ],
+  "listeners": {
+    "P": {
+      "sni_attempts": [
+        "edge.lab.test",
+        "edge.lab.test",
+        "edge.lab.test",
+        "edge.lab.test"
+      ],
+      "handshakes": [
+        {
+          "connection": "P-1",
+          "sni": "edge.lab.test"
+        },
+        {
+          "connection": "P-2",
+          "sni": "edge.lab.test"
+        },
+        {
+          "connection": "P-3",
+          "sni": "edge.lab.test"
+        },
+        {
+          "connection": "P-4",
+          "sni": "edge.lab.test"
+        }
+      ],
+      "http_requests": [
+        {
+          "request": "a1",
+          "host": "orders.lab.test",
+          "sni": "edge.lab.test",
+          "connection": "P-1"
+        },
+        {
+          "request": "a2",
+          "host": "orders.lab.test",
+          "sni": "edge.lab.test",
+          "connection": "P-2"
+        },
+        {
+          "request": "b1",
+          "host": "audit.lab.test",
+          "sni": "edge.lab.test",
+          "connection": "P-3"
+        },
+        {
+          "request": "bad",
+          "host": "audit.lab.test",
+          "sni": "edge.lab.test",
+          "connection": "P-4"
+        }
+      ]
+    },
+    "A": {
+      "sni_attempts": [
+        "a.origin.test"
+      ],
+      "handshakes": [
+        {
+          "connection": "A-1",
+          "sni": "a.origin.test"
+        }
+      ],
+      "http_requests": [
+        {
+          "request": "a1",
+          "host": "orders.origin.test",
+          "sni": "a.origin.test",
+          "connection": "A-1"
+        },
+        {
+          "request": "a2",
+          "host": "orders.origin.test",
+          "sni": "a.origin.test",
+          "connection": "A-1"
+        }
+      ]
+    },
+    "B": {
+      "sni_attempts": [
+        "b.origin.test",
+        "a.origin.test"
+      ],
+      "handshakes": [
+        {
+          "connection": "B-1",
+          "sni": "b.origin.test"
+        }
+      ],
+      "http_requests": [
+        {
+          "request": "b1",
+          "host": "audit.origin.test",
+          "sni": "b.origin.test",
+          "connection": "B-1"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="442" viewBox="0 0 440 442" role="img" aria-labelledby="title description">
+  <title id="title">同一行数据，两个填充值</title>
+  <desc id="description">五个有效位置在长度八的计算块内。后三个位置不读取也不写回。归约时填负无穷，指数贡献为零，五项和为一。填零会多出三个指数一，五项和变成三十一除以一百二十七。</desc>
+  <metadata>{"width":5,"block":8,"valid":[true,true,true,true,true,false,false,false],"fill":["-inf","0"],"first_output":["16/31","16/127"],"active_sum":["1","31/127"]}</metadata>
+  <defs>
+    <style>text{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans SC','PingFang SC',sans-serif;fill:#19273b}.title{font-size:22px;font-weight:700}.label{font-size:17px;font-weight:700}.body{font-size:16px}.muted{fill:#43536a}.good{fill:#145639}.bad{fill:#912e25}</style>
+  </defs>
+  <rect width="440" height="442" rx="16" fill="#f6f8fb"/>
+  <text x="22" y="36" class="title">同一行数据，两个填充值</text>
+  <text x="22" y="65" class="body muted">有效列数 5 · 计算块宽度 8</text>
+  <path d="M22 80h239v44H22z" fill="#e6f0ff" stroke="#a9bfdd"/>
+  <path d="M261 80h157v44H261z" fill="#ecedf0" stroke="#bac0ca"/>
+  <path d="M71 80v44m48-44v44m48-44v44m48-44v44m98-44v44m52-44v44" stroke="#a5b4c9"/>
+  <g text-anchor="middle" class="label">
+    <text x="47" y="108">0</text><text x="95" y="108">1</text><text x="143" y="108">2</text><text x="191" y="108">3</text><text x="238" y="108">4</text>
+    <text x="287" y="108">5</text><text x="339" y="108">6</text><text x="392" y="108">7</text>
+  </g>
+  <text x="22" y="151" class="body">前五项读写，后三项由掩码屏蔽</text>
+  <path d="M220 162v19" stroke="#75859b" stroke-width="2"/><path d="m214 176 6 6 6-6" stroke="#75859b" fill="none" stroke-width="2"/>
+  <rect x="22" y="190" width="396" height="102" rx="12" fill="#edf7ef" stroke="#b1cdbb"/>
+  <text x="38" y="218" class="label good">填 −∞ · 三项各贡献 0</text>
+  <text x="38" y="246" class="body">指数分母 31/32 → 第一项 16/31</text>
+  <text x="38" y="274" class="label good">有效输出和 1</text>
+  <rect x="22" y="304" width="396" height="102" rx="12" fill="#fff2ed" stroke="#e4bcb2"/>
+  <text x="38" y="332" class="label bad">填 0 · 三项各贡献 1</text>
+  <text x="38" y="360" class="body">指数分母 127/32 → 第一项 16/127</text>
+  <text x="38" y="388" class="label bad">有效输出和 31/127</text>
+  <text x="22" y="428" class="body muted">分母按未减最大值的等价形式计算</text>
+</svg>

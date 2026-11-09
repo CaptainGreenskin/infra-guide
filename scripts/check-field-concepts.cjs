@@ -14,7 +14,12 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  assert.equal(seen.size,ids.length,moduleId+': isolated concept');for(const[id,label,meaning]of graph.nodes)assert(label&&meaning.length>=18,id);
  assert(graph.question&&graph.answer);for(const[target,why]of graph.outlets)assert(d.maps[target]&&why.length>=15);
  const html=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8');assert.equal((html.match(/id="concept-relations"/g)||[]).length,1);assert(html.includes('role="status"'));assert(html.indexOf('id="concept-relations"')<html.indexOf('id="examples"'));
- for(const id of ids)assert(html.includes('id="knowledge-'+id+'"'),moduleId+': definition target missing '+id);
+ for(const id of ids){
+  assert(/^[a-z0-9-]+$/.test(id),moduleId+': stable concept fragment');
+  assert(html.includes('id="knowledge-'+id+'"'),moduleId+': definition target missing '+id);
+  assert.equal(html.split('id="map-concept-'+id+'" tabindex="-1"').length,2,moduleId+': unique focusable concept target '+id);
+  assert(html.includes('href="/module/'+moduleId+'/#concept-relations">查看整张图 →'),moduleId+': return link resolves with the site base element');
+ }
  const [concept,labId,question,result]=d.practice[moduleId];
  const unit=d.labs.find(lab=>lab.id===labId),chapter=d.articles.find(a=>a.id===unit?.chapter);
  assert(chapter?.module===moduleId&&points.some(p=>p.id===concept&&p.articles.includes(chapter.id)),moduleId+': practice follows an existing concept into its own field');
@@ -45,10 +50,13 @@ const routeIds=Object.values(d.routes).flatMap(stages=>stages.flatMap(s=>s[1]));
 assert.equal(vm.runInContext('chapterReadingContext(undefined).track',c),'shared','missing article routes must retain the not-found page without crashing');
 for(const a of d.articles){
  c.a=a;const r=JSON.parse(JSON.stringify(vm.runInContext('chapterReadingContext(a)',c))),refs=JSON.parse(JSON.stringify(vm.runInContext('chapterFieldConcepts(a)',c)));
- assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];assert(definition?.includes('href="/article/'+a.id+'/"'),a.id+': concept must link back to this chapter');}
+ assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];assert(definition?.includes('href="/article/'+a.id+'/"'),a.id+': concept must link back to this chapter');}
  assert(r.ids.includes(a.id));const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),nav=html.match(/<nav class="article-nav"[\s\S]*?<\/nav>/)[0];
  const capstone=r.ids.find(id=>d.articles.find(a=>a.id===id).module==='practice'),sidebar=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];assert(sidebar.includes('<summary><a href="/article/'+capstone+'/"'),a.id+': practice group must stay in the current route');
  if(r.previous)assert(nav.includes('href="/article/'+r.previous.id+'/"'));if(r.next)assert(nav.includes('href="/article/'+r.next.id+'/"'));
+ const [primaryModule,primaryId]=refs[0];
+ const exactLink='class="chapter-map-link" href="/module/'+primaryModule+'/?concept='+primaryId+'#map-concept-'+primaryId+'"';
+ assert(html.includes(exactLink),a.id+': go directly to the primary definition');
  assert(html.includes('在领域图谱中看本章相关概念'));if(a.module==='practice'){assert(html.includes('本方向')||nav.includes('学习路线'));const side=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];for(const other of d.articles.filter(x=>x.module==='practice'&&x.id!==a.id))assert(!side.includes('/article/'+other.id+'/'),a.id+': unrelated capstone in current sidebar');}
 }
 for(const[id,expected]of [['cloud-overview','linux-resource'],['training-lab','model-serving'],['kairo-practice','production-readiness']]){c.a=d.articles.find(a=>a.id===id);assert.equal(vm.runInContext('chapterReadingContext(a).next.id',c),expected);}

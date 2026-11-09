@@ -2,12 +2,12 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const files=[...fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]).filter(f=>f!=='app.js');
 const gateTargets={
- 'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity']],
+ 'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity'],['vpc-network','native-tls-proxy']],
  'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['slo','live-prometheus-burn'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking']],
  'ai-training':[['gpu-memory','native-amp-window'],['gpu-scheduling','native-kueue-admission'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run']],
  'ai-inference':[['model-serving','section-4'],['model-serving','native-inference-prefix'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
- 'ai-operators':[['operator-profiling','native-python-extension'],['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training']],
- 'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['agent-observability','native-tail-sampling-ledger']]
+ 'ai-operators':[['operator-profiling','native-python-extension'],['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training'],['operator-profiling','triton-tail-mask-run']],
+ 'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['agent-observability','native-tail-sampling-ledger'],['agent-observability','native-mcp-trace-reentry']]
 };
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
@@ -27,6 +27,7 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(run('/article/'+id+'/?goal=agent-app#detail'),base+'article/'+id+'/?goal=agent-app#detail',key+': explicit choice wins');
   assert.equal(run('/article/'+id+'/?goal=#detail'),base+'article/'+id+'/?goal=#detail',key+': explicit reset wins');
   assert.equal(run('/module/'+mod+'/?concept=opaque#concept-relations'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#concept-relations',key+': field detour keeps context');
+  assert.equal(run('/module/'+mod+'/?concept=opaque#map-concept-opaque'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#map-concept-opaque',key+': focused field detour keeps context');
   const gate=vm.runInContext('learningGoalHTML(learningProfiles[profileKey])',c);
  const staticRole=base==='/'?fs.readFileSync('dist/roadmap/'+key+'/index.html','utf8'):'';
  for(const chapter of ids){

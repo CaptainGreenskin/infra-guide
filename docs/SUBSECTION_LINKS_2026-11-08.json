@@ -57,7 +57,8 @@
         "cloud-proxy-run",
         "subsection-7-g5284x",
         "subsection-7-a6sxak",
-        "v43-route-practice"
+        "v43-route-practice",
+        "native-tls-proxy"
       ]
     },
     {
@@ -479,12 +480,14 @@
         "operator-profile-run",
         "gemm-two-row-reuse",
         "same-device-gemm",
-        "native-python-extension"
+        "native-python-extension",
+        "triton-tail-mask-run"
       ],
       "visible_targets": [
         "gemm-two-row-reuse",
         "same-device-gemm",
-        "native-python-extension"
+        "native-python-extension",
+        "triton-tail-mask-run"
       ]
     },
     {
@@ -884,10 +887,12 @@
         "subsection-6-1q7kv9j",
         "subsection-7-uqlgd8",
         "subsection-8-323gx5",
-        "native-tail-sampling-ledger"
+        "native-tail-sampling-ledger",
+        "native-mcp-trace-reentry"
       ],
       "visible_targets": [
-        "native-tail-sampling-ledger"
+        "native-tail-sampling-ledger",
+        "native-mcp-trace-reentry"
       ]
     },
     {

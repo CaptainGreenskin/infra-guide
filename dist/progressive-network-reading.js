@@ -164,6 +164,19 @@
  'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
  ]);
 
+ vpc.updated='2026.11.09';
+ vpc.sections[6][1]+=
+ h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
+ '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+
+ table(['连接','谁校验谁','握手后发送的 HTTP Host'],[
+ ['客户端 → P','客户端信任入口 CA，校验 edge.lab.test','orders.lab.test 或 audit.lab.test'],
+ ['P → A','P 信任上游 CA，校验 a.origin.test','orders.origin.test'],
+ ['P → B','P 信任上游 CA，校验 b.origin.test','audit.origin.test']])+
+ p('沿同一个 O-104 订单走四次。a1 和 a2 分别走 P-1、P-2，后端都收到查询，且同用一条 A-1。b1 走 P-3，由 P 新建 B-1。最后一条仍用正确的入口名称，P 按故障路由连到 B 的地址，却要求证书匹配 a.origin.test。B 的证书列出的是 b.origin.test，P 的名称校验失败并返回 502。B 的握手回调收到这次 SNI，但 HTTP 账本只有 b1。')+
+ trainingFigure('tls-proxy-hops','用客户端状态、入口连接编号和后端握手记录分别确认哪一段成功，哪一段失败。')+
+ p('为什么故障请求没借到已经验证过的 B-1？<code>Route</code> 用后端地址、校验名称与上游 Host 等配置区分连接，本实验的池固定使用同一份上游信任配置。改了预期证书名称，原池条目就不能用于这条路由。按 <code>OriginPool.query</code> → <code>TLSListener.get_request</code> → <code>record_request</code> 跟读，可以看到新建、握手和 HTTP 接收分别在哪里记账。',
+ '解压后运行 <code>python3 -B tls_proxy_hops.py &gt; replay.json</code>。先在 <code>responses</code> 找到 bad 的入口证书和 502，再在 <code>listeners.B</code> 核对两次 SNI、一次成功握手、一次 HTTP 请求。<a href="labs/tls-proxy-hops.zip" download>下载实验包 ↓</a> · <a href="labs/tls-proxy-hops/README.md">运行与源码跟读</a> · <a href="labs/tls-proxy-hops/tls_proxy_hops.py">完整 Python 源码</a> · <a href="labs/tls-proxy-hops/validation.json">实际运行记录</a>');
+
  const diagnosis=select('network-diagnosis',['TCP连接：序号、确认与握手','传输能力：窗口、RTT与应用背压','结束与探测：半关闭、状态与超时','先固定同一个查询，再比较快慢','在一只秒表上读出六个时刻','先确认谁生成了错误','看到什么证据，决定下一次探测什么','修复后验证的是原始现象','课堂练习：用两个反例检验判断','本地实验：同样多等 150 毫秒，慢在哪一段','实战：按长度解帧，再验证TCP半关闭','实战：非阻塞发送、接收读取与应用回执']);
  const n=diagnosis.sections.map(s=>s[1]);
  replace(diagnosis,[

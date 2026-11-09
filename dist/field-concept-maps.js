@@ -340,7 +340,7 @@ function fieldPointRecords(moduleId){
  if(cloud)return cloud.points.map(p=>({id:p[0],title:p[1],lead:p[2],articles:p[4]}));
  return infraKnowledgeDomains.find(d=>d.module===moduleId)?.points||[];
 }
-function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept):'')+'#concept-relations';}
+function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
@@ -349,7 +349,7 @@ function fieldConceptMapHTML(moduleId){
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
-  return '<div class="field-map-definition" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+' <a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
+  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
  '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
@@ -367,8 +367,14 @@ function chapterFieldConcepts(a){
  }
  return found.slice(0,3);
 }
-function chapterFieldMapLink(a){const [moduleId,id]=chapterFieldConcepts(a)[0]||[];return moduleId?'<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">在领域图谱中看本章相关概念 →</a>':'';}
+function chapterFieldMapLink(a){
+ const [moduleId,id]=chapterFieldConcepts(a)[0]||[];
+ if(!moduleId)return '';
+ const [,label]=fieldConceptMaps[moduleId].nodes.find(node=>node[0]===id);
+ return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">在领域图谱中看本章相关概念 · '+trainingEscape(label)+' →</a>';
+}
 function initFieldConceptMaps(){
+ const hash=location.hash||'',fragment=hash.match(/^#map-concept-([a-z0-9-]+)$/)?.[1];
  for(const map of document.querySelectorAll('[data-field-map]')){
   const graph=fieldConceptMaps[map.dataset.fieldMap],buttons=[...map.querySelectorAll('[data-concept-focus]')];
   const frame=map.querySelector('.training-figure > a');
@@ -384,8 +390,12 @@ function initFieldConceptMaps(){
    if(keepPosition){const delta=controls.getBoundingClientRect().top-before;if(delta)window.scrollTo({top:window.scrollY+delta,behavior:'instant'});}
   };
   for(const button of buttons)button.onclick=()=>select(button.dataset.conceptFocus,true);
-  const requested=new URLSearchParams(location.search).get('concept');
-  if(graph.nodes.some(n=>n[0]===requested))map.querySelector('.field-map-explorer').open=true;
+  const anchored=graph.nodes.some(node=>node[0]===fragment);
+  const requested=anchored?fragment:new URLSearchParams(location.search).get('concept');
+  if(graph.nodes.some(node=>node[0]===requested))map.querySelector('.field-map-explorer').open=true;
   map.classList.add('field-map-ready');select(requested);
+  if(anchored)requestAnimationFrame(()=>{
+   if(location.hash===hash)document.getElementById('map-concept-'+fragment)?.focus({preventScroll:true});
+  });
  }
 }

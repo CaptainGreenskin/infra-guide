@@ -168,6 +168,18 @@
   p('阅读配置时，从 <code>traces/full</code> 与 <code>traces/sampled</code> 的共同 <code>receivers: [otlp]</code> 开始。只有后者经过 <code>processors: [tail_sampling]</code>，因此比较只改变一处处理规则。解压后按运行说明准备官方发行包，用 <code>python -B tail_ledger.py --collector-archive 归档路径 --output-dir replay</code> 复跑。')+
   '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
   p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
+ a.sections[7][1]+=h('native-mcp-trace-reentry','进程退出后，用跨度链接接回原来的执行')+
+  p('首次运行 <code>report-A</code> 时，调用方先把待处理操作 <code>report-A/v3:publish</code> 和当时的根跨度编号存进检查点。MCP 工具已经写入合计 42 的报告，实验保留待处理状态，让新的调用进程从这份检查点继续。这样就能分别验证两件事：追踪能否从新进程回查第一次运行，发布会不会再写一份。')+
+  p('这里把每次独立启动划为一条追踪。<strong>跨度链接（Span Link）</strong> 保存另一个跨度的追踪号与跨度号，用来标记因果关系。新根跨度把旧根加进 <code>links</code>，自己的 <code>parent_id</code> 仍为空。当前工具调用另建发送跨度，将它写入 HTTP 的 <code>traceparent</code> 请求头。接收跨度因此是<strong>这一次发送跨度</strong>的子节点。')+
+  trainingFigure('mcp-trace-reentry','三次工具调用各有一条追踪。恢复组用跨度链接找到第一次运行，接收方按同一操作号返回原回执。')+
+  table(['本地复跑','追踪关系','接收方结果'],[
+   ['首次运行','创建根 A，保存它的上下文','提交报告，返回 <code>receipt-report-A-v3</code>'],
+   ['从检查点恢复','创建根 B，链接到根 A','按原操作号返回同一回执'],
+   ['关闭链接再恢复','创建根 C，仍传播本次请求头','仍返回同一回执']
+  ])+
+  p('顺着源码读三处。<code>run_client()</code> 从检查点读出旧跨度，用 <code>Context()</code> 启动新根并传入 <code>links</code>。HTTP 请求钩子给实际的 <code>tools/call</code> 填入当前发送跨度的请求头，服务端在 <code>asgi()</code> 提取这个父节点。<code>publish()</code> 以 <code>op</code> 为主键，同一个 SQLite 事务里读取原回执并写入尝试。三次实际请求都有接收跨度，数据库只留下一个报告。')+
+  p('运行 <code>python -B trace_reentry.py replay</code> 后，先在追踪记录里核对 B 的链接指向 A，再核对每次接收的父号等于本次发送的跨度号。最后直接查 SQLite 的 <code>reports</code> 和 <code>attempts</code>，应分别为 1 行和 3 行。这里观测丢了链接时仍可按操作号找业务记录，正好能与<a href="/article/durable-workflows/">持久工作流</a>一章的恢复条件对照。')+
+  '<p class="practice-links"><a href="/labs/mcp-trace-reentry/trace_reentry.py">查看完整源码</a> · <a href="/labs/mcp-trace-reentry.zip" download>下载实验 ↓</a> · <a href="/labs/mcp-trace-reentry/README.md">分步复跑</a> · <a href="/labs/mcp-trace-reentry/trace-record.json">真实跨度和 HTTP 请求头</a> · <a href="/labs/mcp-trace-reentry/validation.json">查看验收结果</a></p>';
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
  a.intro=a.desc;a.updated='2026.11.09';
 })();

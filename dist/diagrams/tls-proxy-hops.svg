@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="578" viewBox="0 0 540 578" role="img" aria-labelledby="title desc">
+  <title id="title">代理两侧各验证一次服务端身份</title>
+  <desc id="desc">客户端验证 P 的 edge.lab.test 证书。P 按 HTTP Host 和路径选择上游，并独立校验证书。两条客户端连接复用 A-1，正常的 B 请求建立 B-1，错配请求到达 B 的 TLS 层并失败，B 没收到对应 HTTP 请求。</desc>
+  <metadata>{"front":["P-1","P-2","P-3","P-4"],"origin":["A-1","A-1","B-1",null],"statuses":[200,200,200,502],"failed_sni":"a.origin.test"}</metadata>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8" fill="#37589b"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; fill: #1e2b43; }
+    .heading { font-size: 26px; font-weight: 700; }
+    .label { font-size: 20px; font-weight: 650; }
+    .copy { font-size: 18px; }
+    .mono { font-family: ui-monospace, monospace; font-size: 18px; }
+    .fault { fill: #922c2f; }
+    .line { fill: none; stroke: #37589b; stroke-width: 2; marker-end: url(#arrow); }
+  </style>
+  <rect width="540" height="578" rx="16" fill="#f6f9fe"/>
+  <text class="heading" x="24" y="42">代理两侧各验证一次服务端身份</text>
+
+  <rect x="24" y="66" width="492" height="109" rx="12" fill="#fff" stroke="#b4c8e5"/>
+  <text class="label" x="43" y="97">① 客户端 → 代理 P</text>
+  <text class="copy" x="43" y="127">客户端用入口 CA 校验 edge.lab.test</text>
+  <text class="copy" x="43" y="153">握手完成后，P 按收到的 Host 与路径选路</text>
+  <path class="line" d="M270 176 V197"/>
+
+  <rect x="24" y="200" width="492" height="137" rx="12" fill="#edf3ff" stroke="#b4c8e5"/>
+  <text class="label" x="43" y="232">② 代理 P → 后端 A 或 B</text>
+  <text class="copy" x="43" y="263">新建连接时，用上游 CA 校验 A 或 B 的名称</text>
+  <text class="mono" x="43" y="288">a.origin.test / b.origin.test</text>
+  <text class="copy" x="43" y="313">握手完成后，P 发送该路由配置的上游 Host</text>
+  <path class="line" d="M270 338 V359"/>
+
+  <rect x="24" y="362" width="492" height="192" rx="12" fill="#fff" stroke="#b4c8e5"/>
+  <text class="label" x="43" y="394">③ 核对实际连接和客户端状态码</text>
+  <text class="copy" x="43" y="426">P-1 → A-1 新建 · P-2 → A-1 复用</text>
+  <text class="copy" x="439" y="426">200</text>
+  <text class="copy" x="43" y="453">P-3 → B-1 新建</text>
+  <text class="copy" x="439" y="453">200</text>
+  <rect x="35" y="471" width="470" height="68" rx="8" fill="#fceff0"/>
+  <text class="copy fault" x="43" y="499">P-4 → 按 A 的名称校验 B，握手失败</text>
+  <text class="copy fault" x="439" y="499">502</text>
+  <text class="copy fault" x="43" y="524">B 收到 SNI，没有收到这次 HTTP 查询</text>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "scope": "Official Triton CPU interpreter execution",
+  "repository": "CaptainGreenskin/infra-guide",
+  "workflow": ".github/workflows/triton-tail-mask.yml",
+  "runner": "ubuntu-24.04",
+  "branch": "evidence/triton-tail-mask-20261109",
+  "commit": "33331c06ff56e3b5de8d59ea5647216a393a6604",
+  "run_id": 42587107250,
+  "run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42587107250",
+  "artifact": "native-triton-tail-mask",
+  "artifact_id": 13659583638,
+  "artifact_sha256": "e8dfefd2b8be026cc73d417561a9f5d36d754bc5a6409096874c756778f53c37",
+  "validation_sha256": "d6555213cb2fc9d616874e6d71e7ae4c7769af08a371c54b65107010dbcfbf06"
+}

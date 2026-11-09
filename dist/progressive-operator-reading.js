@@ -142,4 +142,23 @@
  '在具备开发头文件和共享 Python 库的 macOS arm64 上解压后，运行 <code>python3.12 -B extension_loader.py &gt; replay.json</code>。结果记录编译器、链接器和导入器的实际诊断。实测范围为 CPython 扩展和 CPU 数值。')+
  '<p class="practice-links"><a href="labs/python-extension-loader.zip" download>下载 C 源码与复跑脚本 ↓</a> · <a href="labs/python-extension-loader/README.md">查看运行说明 →</a> · <a href="labs/python-extension-loader/validation.json">查看原始故障与恢复记录 →</a></p>'+
  '<p class="source-at"><a href="https://docs.python.org/3.12/extending/building.html">CPython 扩展的构建与初始化 ↗</a> · <a href="https://docs.python.org/3.12/library/importlib.html#importlib.machinery.EXTENSION_SUFFIXES">Python 识别的扩展后缀 ↗</a> · <a href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/RunpathDependentLibraries.html">Apple 动态库搜索路径 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="triton-tail-mask-run">Triton 尾块：掩码挡住读写，填充值决定归约</h3>'+
+ p('前面用 CUDA 指定每个线程处理哪些数据。Triton 用程序实例描述一块数据上的计算。本例让一个实例处理一行。行长是 5，计算块宽度取 8。三个超出行长的计算位置叫尾块中的无效位置。掩码 <code>col &lt; width</code> 为每个位置给出一个真假值，读写只对为真的位置生效。'+
+ ' 归约会把计算块里的多个值合为一个值。求最大值和求和都覆盖这 8 个位置，所以还要给三个无效位置填值。')+
+ trainingFigure('triton-tail-mask','行长为 5、块宽为 8。掩码保护读写，填充值控制三个无效位置是否改变 softmax 分母。')+
+ p('softmax 先减去整行最大值，再取指数，最后除以指数和。无效位置填负无穷时，有限的有效分数决定最大值。负无穷减去这个最大值仍是负无穷，取指数得到 0。写回时再用同一掩码，保留前五项。')+
+ table(['内核代码','这一步的作用'],[
+  ['<code>col = tl.arange(0, BLOCK)</code>','生成 0 到 7 的列号，行首偏移由行号乘步长得到'],
+  ['<code>tl.load(inputs + offset, mask=valid, other=PAD)</code>','从有效列读入，其他位置使用指定的填充值'],
+  ['<code>maximum = tl.max(values, axis=0)</code>','取得计算块的最大分数，供每项指数共用'],
+  ['<code>normalizer = tl.sum(exponentials, axis=0)</code>','把整个计算块的指数加起来'],
+  ['<code>tl.store(outputs + offset, exponentials / normalizer, mask=valid)</code>','归一化后只写入有效列']
+ ])+
+ p('把第一行设为 −ln 2、−2 ln 2，直到 −5 ln 2。不减最大值时，五项指数是 1/2、1/4、1/8、1/16、1/32，和为 31/32，所以第一项概率是 16/31。保持读写掩码，只将填充值从负无穷改为 0，便多加三个 exp(0)。分母变成 127/32，第一项概率变成 16/127。最终写回的五项加起来只有 31/127。减最大值会对分子分母乘同一因子，结果保持相同。')+
+ p('解压实验包，在 Linux x86_64 的 Python 3.12 虚拟环境内安装 <code>requirements-linux.txt</code>，再执行 <code>TRITON_INTERPRET=1 python -B triton_tail_mask.py &gt; replay.json</code>。实验用 NumPy float64 独立计算参考值，逐项核对 5、8、33 列两种填法的输出。8 列恰好用满计算块，两种填法的结果完全一样。另一行从 1000 递减，核对减最大值能避开指数溢出。有效列之外的输出一直是 −777，即使填零把分母算错，写回检查也能通过。')+
+ '<p class="practice-links"><a href="labs/triton-tail-mask.zip" download>下载 Triton 实验包 ↓</a> · <a href="labs/triton-tail-mask/triton_tail_mask.py" download>查看完整内核和对照脚本 ↓</a> · <a href="labs/triton-tail-mask/README.md">安装与复跑说明 →</a> · <a href="labs/triton-tail-mask/validation.json">查看逐项执行记录 →</a></p>'+
+ p('执行记录来自 Triton 3.3.1 官方 CPU 解释器。它顺序运行各实例，核对掩码、填充和归约语义。编译、GPU 访存安全和计时需要目标设备上的证据。理解这个分母后，可接着看 '+linkTo('flash-attention-io','分块注意力怎样跨块合并最大值与指数和')+'。')+
+ '<p class="source-at"><a href="https://triton-lang.org/main/programming-guide/chapter-3/debugging.html">Triton 解释器 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/02-fused-softmax.html">Triton 官方 softmax 教程 ↗</a></p>';
 })();
