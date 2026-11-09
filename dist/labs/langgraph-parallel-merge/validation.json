@@ -1,0 +1,348 @@
+{
+  "status": "passed",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.13",
+    "sqlite": "3.53.3",
+    "langgraph": "1.2.20",
+    "langgraph_checkpoint_sqlite": "3.1.3"
+  },
+  "scope": "native LangGraph 2-thread branches and a new-process checkpoint replay with a local SQLite receiver",
+  "source_sha256": {
+    "parallel_merge.py": "d37b36ab39776baa2a69d1b6f0c3ef45e092f0a0365eeb630c5d8db447a222be",
+    "fixture.json": "7ebd1ec4e88da3161bfa684fb897b25fc50d9c7123ad823462ee346421330adb",
+    "requirements.txt": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75"
+  },
+  "raw_sha256": {
+    "receiver.sqlite": "342c79fed1cf4375b525425008a11c773384ba2e03494f726c47e09f1213aa23",
+    "checkpoints.sqlite": "258e270fb093d96749ebac948397150c04db6712e868744cf47a2f72c0cb75e1"
+  },
+  "cases": {
+    "default_channel": {
+      "error_type": "InvalidUpdateError",
+      "error": "At key 'proposals': Can receive only one value per step. Use an Annotated key to handle multiple values.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE",
+      "visits": [
+        {
+          "seq": 1,
+          "case_id": "default_channel",
+          "node": "draft_a",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 2,
+          "case_id": "default_channel",
+          "node": "draft_b",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 3,
+          "case_id": "default_channel",
+          "node": "draft_a",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 4,
+          "case_id": "default_channel",
+          "node": "draft_b",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6138064896
+        }
+      ],
+      "requests": [],
+      "effects": []
+    },
+    "append_only": {
+      "proposals": [
+        {
+          "operation_id": "report-A:publish",
+          "payload": {
+            "report": "ops-daily",
+            "total": 42
+          },
+          "origin": "draft_a"
+        },
+        {
+          "operation_id": "report-A:publish",
+          "payload": {
+            "report": "ops-daily",
+            "total": 42
+          },
+          "origin": "draft_b"
+        }
+      ],
+      "decision": "list_observed",
+      "visits": [
+        {
+          "seq": 5,
+          "case_id": "append_only",
+          "node": "draft_a",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 6,
+          "case_id": "append_only",
+          "node": "draft_b",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 7,
+          "case_id": "append_only",
+          "node": "draft_a",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 8,
+          "case_id": "append_only",
+          "node": "draft_b",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 9,
+          "case_id": "append_only",
+          "node": "decide",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 8459152448
+        }
+      ],
+      "requests": [],
+      "effects": []
+    },
+    "canonical_same": {
+      "proposals": {
+        "report-A:publish": {
+          "{\"report\":\"ops-daily\",\"total\":42}": [
+            "draft_a",
+            "draft_b"
+          ]
+        }
+      },
+      "decision": "publish",
+      "receipt": "report-A:publish:receipt-1",
+      "replay_checkpoint_next": [
+        "publish"
+      ],
+      "replay_checkpoint_id": "1f1dc13e-3cdc-62bc-8002-1132e665d08f",
+      "replay": {
+        "decision": "publish",
+        "receipt": "report-A:publish:receipt-1"
+      },
+      "visits": [
+        {
+          "seq": 10,
+          "case_id": "canonical_same",
+          "node": "draft_a",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 11,
+          "case_id": "canonical_same",
+          "node": "draft_b",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 12,
+          "case_id": "canonical_same",
+          "node": "draft_a",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 13,
+          "case_id": "canonical_same",
+          "node": "draft_b",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 14,
+          "case_id": "canonical_same",
+          "node": "decide",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 8459152448
+        },
+        {
+          "seq": 15,
+          "case_id": "canonical_same",
+          "node": "publish",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 8459152448
+        },
+        {
+          "seq": 26,
+          "case_id": "canonical_same",
+          "node": "publish",
+          "stage": "entered",
+          "pid": 89704,
+          "tid": 8459152448
+        }
+      ],
+      "requests": [
+        {
+          "seq": 1,
+          "case_id": "canonical_same",
+          "operation_id": "report-A:publish",
+          "payload": "{\"report\":\"ops-daily\",\"total\":42}",
+          "result": "committed",
+          "receipt": "report-A:publish:receipt-1",
+          "pid": 89703
+        },
+        {
+          "seq": 2,
+          "case_id": "canonical_same",
+          "operation_id": "report-A:publish",
+          "payload": "{\"report\":\"ops-daily\",\"total\":42}",
+          "result": "duplicate",
+          "receipt": "report-A:publish:receipt-1",
+          "pid": 89704
+        }
+      ],
+      "effects": [
+        {
+          "case_id": "canonical_same",
+          "operation_id": "report-A:publish",
+          "payload": "{\"report\":\"ops-daily\",\"total\":42}",
+          "receipt": "report-A:publish:receipt-1"
+        }
+      ]
+    },
+    "canonical_conflict": {
+      "proposals": {
+        "report-A:publish": {
+          "{\"report\":\"ops-daily\",\"total\":41}": [
+            "draft_b"
+          ],
+          "{\"report\":\"ops-daily\",\"total\":42}": [
+            "draft_a"
+          ]
+        }
+      },
+      "decision": "review_required",
+      "visits": [
+        {
+          "seq": 16,
+          "case_id": "canonical_conflict",
+          "node": "draft_a",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 17,
+          "case_id": "canonical_conflict",
+          "node": "draft_b",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 18,
+          "case_id": "canonical_conflict",
+          "node": "draft_a",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 19,
+          "case_id": "canonical_conflict",
+          "node": "draft_b",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 20,
+          "case_id": "canonical_conflict",
+          "node": "decide",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 8459152448
+        }
+      ],
+      "requests": [],
+      "effects": []
+    },
+    "canonical_conflict_reverse": {
+      "proposals": {
+        "report-A:publish": {
+          "{\"report\":\"ops-daily\",\"total\":41}": [
+            "draft_b"
+          ],
+          "{\"report\":\"ops-daily\",\"total\":42}": [
+            "draft_a"
+          ]
+        }
+      },
+      "decision": "review_required",
+      "visits": [
+        {
+          "seq": 21,
+          "case_id": "canonical_conflict_reverse",
+          "node": "draft_a",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 22,
+          "case_id": "canonical_conflict_reverse",
+          "node": "draft_b",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 23,
+          "case_id": "canonical_conflict_reverse",
+          "node": "draft_b",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6138064896
+        },
+        {
+          "seq": 24,
+          "case_id": "canonical_conflict_reverse",
+          "node": "draft_a",
+          "stage": "emitted",
+          "pid": 89703,
+          "tid": 6121238528
+        },
+        {
+          "seq": 25,
+          "case_id": "canonical_conflict_reverse",
+          "node": "decide",
+          "stage": "entered",
+          "pid": 89703,
+          "tid": 8459152448
+        }
+      ],
+      "requests": [],
+      "effects": []
+    }
+  }
+}

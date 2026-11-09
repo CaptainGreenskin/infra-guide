@@ -15,7 +15,7 @@ const checks=[
  'check-reading-lab-bridges.cjs','check-native-innodb-fsdp.cjs','check-reader-figures.cjs','check-native-csi-fsdp-reshard.cjs','check-prefix-attention.cjs','check-config-projection.cjs','check-native-runtime-paths.cjs',
  'check-approval-reentry.cjs','check-inference-queue.cjs',
  'check-inference-prefix.cjs','check-ragged-ring.cjs','check-otel-tail-ledger.cjs',
- 'check-jetstream-redelivery.cjs','check-vllm-block-lifecycle.cjs','check-mcp-http-cancellation.cjs','check-native-model-rollout.cjs','check-mcp-http-authorization.cjs','check-spiffe-workload-identity.cjs','check-redis-client-tracking.cjs','check-native-amp-window.cjs','check-qdrant-retrieval.cjs'
+ 'check-jetstream-redelivery.cjs','check-vllm-block-lifecycle.cjs','check-mcp-http-cancellation.cjs','check-native-model-rollout.cjs','check-mcp-http-authorization.cjs','check-spiffe-workload-identity.cjs','check-redis-client-tracking.cjs','check-native-amp-window.cjs','check-qdrant-retrieval.cjs','check-python-extension-loader.cjs','check-langgraph-parallel-merge.cjs','check-prometheus-live-burn.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
 run('render-pages.cjs');for(const file of checks)run(file);

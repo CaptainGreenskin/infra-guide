@@ -4897,6 +4897,44 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "63586969b1e771a75fcfc35f576b1fe272d0e4e33a15564204b6a05c8950ae14",
+      "reviewed_content_sha256": "2960be6d05a095c68773abbde6197d8dacd21d069bb513711698c9011e6fac12",
+      "scope": "Scrape actual counters and compare per-instance rates with aggregation before reset handling.",
+      "observation": "Real samples showed the aggregation error at one instance reset and an actual alert pending, firing, and returning inactive as the short window recovered.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "40b2c29af991808f5f66a2edc8120338af8146750a5ba6b472c568f8f8793a1a",
+      "reviewed_content_sha256": "48e8d2d7e91ff045572788afa691ccbaf4642eb54162f142170cb74f9ec8bfcc",
+      "scope": "Observe same-step branch writes, canonical conflict resolution and replay from one native checkpoint.",
+      "observation": "A conflicting value remained pending for review with zero effects. A new process replaying the publish step returned the original receipt and kept one effect.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

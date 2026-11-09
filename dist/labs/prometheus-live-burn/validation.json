@@ -1,0 +1,1877 @@
+{
+  "status": "passed",
+  "scope": "loopback HTTP scraping of controlled counter batches and live rule evaluation",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.3"
+  },
+  "source_sha256": {
+    "prometheus_live_burn.py": "a453c4dfcad39ece2c08ea8cb8b71e965619fa3da43b5efd56b501fa2a9d6785",
+    "live-burn.rules.yaml": "4b3c402f29a4a7fc2641b4593a62f3415250c0bdb5a954e72a09c31b6aa59d68"
+  },
+  "build": {
+    "version": "3.5.0",
+    "revision": "8be3a9560fbdd18a94dedec4b747c35178177202",
+    "branch": "HEAD",
+    "buildUser": "root@4451b64cb451",
+    "buildDate": "20250714-16:15:23",
+    "goVersion": "go1.24.5"
+  },
+  "binary_sha256": "4ee49f574d80682b6571f017c8f42f2532aa3603b725b51ecb0cb864f06c2282",
+  "observed_scrapes": [
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10100,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2100,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10200,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2200,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10300,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2300,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10400,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2400,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10500,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2500,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": false,
+      "good": 10600,
+      "bad": 1000
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2600,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "healthy",
+      "reset": true,
+      "good": 0,
+      "bad": 0
+    },
+    {
+      "replica": "beta",
+      "phase": "healthy",
+      "reset": false,
+      "good": 2700,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 60,
+      "bad": 40
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 2800,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 120,
+      "bad": 80
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 2900,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 180,
+      "bad": 120
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3000,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 240,
+      "bad": 160
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3100,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 300,
+      "bad": 200
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3200,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 360,
+      "bad": 240
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3300,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 420,
+      "bad": 280
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3400,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 480,
+      "bad": 320
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3500,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 540,
+      "bad": 360
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3600,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 600,
+      "bad": 400
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3700,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 660,
+      "bad": 440
+    },
+    {
+      "replica": "beta",
+      "phase": "fault",
+      "reset": false,
+      "good": 3800,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "fault",
+      "reset": false,
+      "good": 720,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 3900,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "recovery",
+      "reset": false,
+      "good": 820,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 4000,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "recovery",
+      "reset": false,
+      "good": 920,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 4100,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "recovery",
+      "reset": false,
+      "good": 1020,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 4200,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "recovery",
+      "reset": false,
+      "good": 1120,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 4300,
+      "bad": 600
+    },
+    {
+      "replica": "alpha",
+      "phase": "recovery",
+      "reset": false,
+      "good": 1220,
+      "bad": 480
+    },
+    {
+      "replica": "beta",
+      "phase": "recovery",
+      "reset": false,
+      "good": 4400,
+      "bad": 600
+    }
+  ],
+  "snapshots": [
+    {
+      "label": "healthy",
+      "query_time": 1794211434.832,
+      "samples": {
+        "short": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio6s",
+              "job": "reports"
+            },
+            "value": [
+              1794211434.832,
+              "0"
+            ]
+          }
+        ],
+        "long": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio16s",
+              "job": "reports"
+            },
+            "value": [
+              1794211434.832,
+              "0"
+            ]
+          }
+        ],
+        "alert": [],
+        "active_at": [],
+        "resets": [
+          {
+            "metric": {},
+            "value": [
+              1794211434.832,
+              "0"
+            ]
+          }
+        ],
+        "rate_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211434.832,
+              "0"
+            ]
+          }
+        ],
+        "sum_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211434.832,
+              "0"
+            ]
+          }
+        ],
+        "raw_counters": [
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "600"
+              ],
+              [
+                1794211430.675,
+                "600"
+              ],
+              [
+                1794211431.675,
+                "600"
+              ],
+              [
+                1794211432.675,
+                "600"
+              ],
+              [
+                1794211433.675,
+                "600"
+              ],
+              [
+                1794211434.675,
+                "600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "2100"
+              ],
+              [
+                1794211430.675,
+                "2200"
+              ],
+              [
+                1794211431.675,
+                "2300"
+              ],
+              [
+                1794211432.675,
+                "2400"
+              ],
+              [
+                1794211433.675,
+                "2500"
+              ],
+              [
+                1794211434.675,
+                "2600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "1000"
+              ],
+              [
+                1794211430.189,
+                "1000"
+              ],
+              [
+                1794211431.189,
+                "1000"
+              ],
+              [
+                1794211432.189,
+                "1000"
+              ],
+              [
+                1794211433.189,
+                "1000"
+              ],
+              [
+                1794211434.189,
+                "1000"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "10100"
+              ],
+              [
+                1794211430.189,
+                "10200"
+              ],
+              [
+                1794211431.189,
+                "10300"
+              ],
+              [
+                1794211432.189,
+                "10400"
+              ],
+              [
+                1794211433.189,
+                "10500"
+              ],
+              [
+                1794211434.189,
+                "10600"
+              ]
+            ]
+          }
+        ],
+        "alert_history": []
+      }
+    },
+    {
+      "label": "counter_reset",
+      "query_time": 1794211436.13,
+      "samples": {
+        "short": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio6s",
+              "job": "reports"
+            },
+            "value": [
+              1794211436.13,
+              "0"
+            ]
+          }
+        ],
+        "long": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio16s",
+              "job": "reports"
+            },
+            "value": [
+              1794211436.13,
+              "0"
+            ]
+          }
+        ],
+        "alert": [],
+        "active_at": [],
+        "resets": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.13,
+              "1"
+            ]
+          }
+        ],
+        "rate_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.13,
+              "0"
+            ]
+          }
+        ],
+        "sum_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.13,
+              "119.99999999999999"
+            ]
+          }
+        ],
+        "raw_counters": [
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "600"
+              ],
+              [
+                1794211430.675,
+                "600"
+              ],
+              [
+                1794211431.675,
+                "600"
+              ],
+              [
+                1794211432.675,
+                "600"
+              ],
+              [
+                1794211433.675,
+                "600"
+              ],
+              [
+                1794211434.675,
+                "600"
+              ],
+              [
+                1794211435.675,
+                "600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "2100"
+              ],
+              [
+                1794211430.675,
+                "2200"
+              ],
+              [
+                1794211431.675,
+                "2300"
+              ],
+              [
+                1794211432.675,
+                "2400"
+              ],
+              [
+                1794211433.675,
+                "2500"
+              ],
+              [
+                1794211434.675,
+                "2600"
+              ],
+              [
+                1794211435.675,
+                "2700"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "1000"
+              ],
+              [
+                1794211430.189,
+                "1000"
+              ],
+              [
+                1794211431.189,
+                "1000"
+              ],
+              [
+                1794211432.189,
+                "1000"
+              ],
+              [
+                1794211433.189,
+                "1000"
+              ],
+              [
+                1794211434.189,
+                "1000"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "10100"
+              ],
+              [
+                1794211430.189,
+                "10200"
+              ],
+              [
+                1794211431.189,
+                "10300"
+              ],
+              [
+                1794211432.189,
+                "10400"
+              ],
+              [
+                1794211433.189,
+                "10500"
+              ],
+              [
+                1794211434.189,
+                "10600"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ]
+            ]
+          }
+        ],
+        "alert_history": []
+      }
+    },
+    {
+      "label": "pending",
+      "query_time": 1794211436.689,
+      "samples": {
+        "short": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio6s",
+              "job": "reports"
+            },
+            "value": [
+              1794211436.689,
+              "0.044444444444444446"
+            ]
+          }
+        ],
+        "long": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio16s",
+              "job": "reports"
+            },
+            "value": [
+              1794211436.689,
+              "0.031816408399275714"
+            ]
+          }
+        ],
+        "alert": [
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "pending",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "value": [
+              1794211436.689,
+              "1"
+            ]
+          }
+        ],
+        "active_at": [
+          {
+            "metric": {
+              "__name__": "ALERTS_FOR_STATE",
+              "alertname": "GuideLiveFastBurn",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "value": [
+              1794211436.689,
+              "1794211436"
+            ]
+          }
+        ],
+        "resets": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.689,
+              "1"
+            ]
+          }
+        ],
+        "rate_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.689,
+              "7.999999999999999"
+            ]
+          }
+        ],
+        "sum_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211436.689,
+              "119.99999999999999"
+            ]
+          }
+        ],
+        "raw_counters": [
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "600"
+              ],
+              [
+                1794211430.675,
+                "600"
+              ],
+              [
+                1794211431.675,
+                "600"
+              ],
+              [
+                1794211432.675,
+                "600"
+              ],
+              [
+                1794211433.675,
+                "600"
+              ],
+              [
+                1794211434.675,
+                "600"
+              ],
+              [
+                1794211435.675,
+                "600"
+              ],
+              [
+                1794211436.675,
+                "600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "2100"
+              ],
+              [
+                1794211430.675,
+                "2200"
+              ],
+              [
+                1794211431.675,
+                "2300"
+              ],
+              [
+                1794211432.675,
+                "2400"
+              ],
+              [
+                1794211433.675,
+                "2500"
+              ],
+              [
+                1794211434.675,
+                "2600"
+              ],
+              [
+                1794211435.675,
+                "2700"
+              ],
+              [
+                1794211436.675,
+                "2800"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "1000"
+              ],
+              [
+                1794211430.189,
+                "1000"
+              ],
+              [
+                1794211431.189,
+                "1000"
+              ],
+              [
+                1794211432.189,
+                "1000"
+              ],
+              [
+                1794211433.189,
+                "1000"
+              ],
+              [
+                1794211434.189,
+                "1000"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ],
+              [
+                1794211436.189,
+                "40"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "10100"
+              ],
+              [
+                1794211430.189,
+                "10200"
+              ],
+              [
+                1794211431.189,
+                "10300"
+              ],
+              [
+                1794211432.189,
+                "10400"
+              ],
+              [
+                1794211433.189,
+                "10500"
+              ],
+              [
+                1794211434.189,
+                "10600"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ],
+              [
+                1794211436.189,
+                "60"
+              ]
+            ]
+          }
+        ],
+        "alert_history": [
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "pending",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "values": [
+              [
+                1794211436.64,
+                "1"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "firing",
+      "query_time": 1794211440.768,
+      "samples": {
+        "short": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio6s",
+              "job": "reports"
+            },
+            "value": [
+              1794211440.768,
+              "0.1904113177888394"
+            ]
+          }
+        ],
+        "long": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio16s",
+              "job": "reports"
+            },
+            "value": [
+              1794211440.768,
+              "0.09731094147582697"
+            ]
+          }
+        ],
+        "alert": [
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "firing",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "value": [
+              1794211440.768,
+              "1"
+            ]
+          }
+        ],
+        "active_at": [
+          {
+            "metric": {
+              "__name__": "ALERTS_FOR_STATE",
+              "alertname": "GuideLiveFastBurn",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "value": [
+              1794211440.768,
+              "1794211436"
+            ]
+          }
+        ],
+        "resets": [
+          {
+            "metric": {},
+            "value": [
+              1794211440.768,
+              "0"
+            ]
+          }
+        ],
+        "rate_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211440.768,
+              "37.19333333333333"
+            ]
+          }
+        ],
+        "sum_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211440.768,
+              "152"
+            ]
+          }
+        ],
+        "raw_counters": [
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "600"
+              ],
+              [
+                1794211430.675,
+                "600"
+              ],
+              [
+                1794211431.675,
+                "600"
+              ],
+              [
+                1794211432.675,
+                "600"
+              ],
+              [
+                1794211433.675,
+                "600"
+              ],
+              [
+                1794211434.675,
+                "600"
+              ],
+              [
+                1794211435.675,
+                "600"
+              ],
+              [
+                1794211436.675,
+                "600"
+              ],
+              [
+                1794211437.675,
+                "600"
+              ],
+              [
+                1794211438.675,
+                "600"
+              ],
+              [
+                1794211439.675,
+                "600"
+              ],
+              [
+                1794211440.675,
+                "600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211429.675,
+                "2100"
+              ],
+              [
+                1794211430.675,
+                "2200"
+              ],
+              [
+                1794211431.675,
+                "2300"
+              ],
+              [
+                1794211432.675,
+                "2400"
+              ],
+              [
+                1794211433.675,
+                "2500"
+              ],
+              [
+                1794211434.675,
+                "2600"
+              ],
+              [
+                1794211435.675,
+                "2700"
+              ],
+              [
+                1794211436.675,
+                "2800"
+              ],
+              [
+                1794211437.675,
+                "2900"
+              ],
+              [
+                1794211438.675,
+                "3000"
+              ],
+              [
+                1794211439.675,
+                "3100"
+              ],
+              [
+                1794211440.675,
+                "3200"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "1000"
+              ],
+              [
+                1794211430.189,
+                "1000"
+              ],
+              [
+                1794211431.189,
+                "1000"
+              ],
+              [
+                1794211432.189,
+                "1000"
+              ],
+              [
+                1794211433.189,
+                "1000"
+              ],
+              [
+                1794211434.189,
+                "1000"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ],
+              [
+                1794211436.189,
+                "40"
+              ],
+              [
+                1794211437.189,
+                "80"
+              ],
+              [
+                1794211438.189,
+                "120"
+              ],
+              [
+                1794211439.189,
+                "160"
+              ],
+              [
+                1794211440.189,
+                "200"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211429.189,
+                "10100"
+              ],
+              [
+                1794211430.189,
+                "10200"
+              ],
+              [
+                1794211431.189,
+                "10300"
+              ],
+              [
+                1794211432.189,
+                "10400"
+              ],
+              [
+                1794211433.189,
+                "10500"
+              ],
+              [
+                1794211434.189,
+                "10600"
+              ],
+              [
+                1794211435.189,
+                "0"
+              ],
+              [
+                1794211436.189,
+                "60"
+              ],
+              [
+                1794211437.189,
+                "120"
+              ],
+              [
+                1794211438.189,
+                "180"
+              ],
+              [
+                1794211439.189,
+                "240"
+              ],
+              [
+                1794211440.189,
+                "300"
+              ]
+            ]
+          }
+        ],
+        "alert_history": [
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "firing",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "values": [
+              [
+                1794211440.64,
+                "1"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "pending",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "values": [
+              [
+                1794211436.64,
+                "1"
+              ],
+              [
+                1794211437.64,
+                "1"
+              ],
+              [
+                1794211438.64,
+                "1"
+              ],
+              [
+                1794211439.64,
+                "1"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "recovered",
+      "query_time": 1794211452.815,
+      "samples": {
+        "short": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio6s",
+              "job": "reports"
+            },
+            "value": [
+              1794211452.815,
+              "0"
+            ]
+          }
+        ],
+        "long": [
+          {
+            "metric": {
+              "__name__": "job:lab_bad_ratio16s",
+              "job": "reports"
+            },
+            "value": [
+              1794211452.815,
+              "0.13333333333333333"
+            ]
+          }
+        ],
+        "alert": [],
+        "active_at": [],
+        "resets": [
+          {
+            "metric": {},
+            "value": [
+              1794211452.815,
+              "0"
+            ]
+          }
+        ],
+        "rate_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211452.815,
+              "0"
+            ]
+          }
+        ],
+        "sum_first_bad": [
+          {
+            "metric": {},
+            "value": [
+              1794211452.815,
+              "7.999999999999999"
+            ]
+          }
+        ],
+        "raw_counters": [
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211437.675,
+                "600"
+              ],
+              [
+                1794211438.675,
+                "600"
+              ],
+              [
+                1794211439.675,
+                "600"
+              ],
+              [
+                1794211440.675,
+                "600"
+              ],
+              [
+                1794211441.675,
+                "600"
+              ],
+              [
+                1794211442.675,
+                "600"
+              ],
+              [
+                1794211443.675,
+                "600"
+              ],
+              [
+                1794211444.675,
+                "600"
+              ],
+              [
+                1794211445.675,
+                "600"
+              ],
+              [
+                1794211446.675,
+                "600"
+              ],
+              [
+                1794211447.675,
+                "600"
+              ],
+              [
+                1794211448.675,
+                "600"
+              ],
+              [
+                1794211449.675,
+                "600"
+              ],
+              [
+                1794211450.675,
+                "600"
+              ],
+              [
+                1794211451.675,
+                "600"
+              ],
+              [
+                1794211452.675,
+                "600"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:35969",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "beta"
+            },
+            "values": [
+              [
+                1794211437.675,
+                "2900"
+              ],
+              [
+                1794211438.675,
+                "3000"
+              ],
+              [
+                1794211439.675,
+                "3100"
+              ],
+              [
+                1794211440.675,
+                "3200"
+              ],
+              [
+                1794211441.675,
+                "3300"
+              ],
+              [
+                1794211442.675,
+                "3400"
+              ],
+              [
+                1794211443.675,
+                "3500"
+              ],
+              [
+                1794211444.675,
+                "3600"
+              ],
+              [
+                1794211445.675,
+                "3700"
+              ],
+              [
+                1794211446.675,
+                "3800"
+              ],
+              [
+                1794211447.675,
+                "3900"
+              ],
+              [
+                1794211448.675,
+                "4000"
+              ],
+              [
+                1794211449.675,
+                "4100"
+              ],
+              [
+                1794211450.675,
+                "4200"
+              ],
+              [
+                1794211451.675,
+                "4300"
+              ],
+              [
+                1794211452.675,
+                "4400"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "bad",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211437.189,
+                "80"
+              ],
+              [
+                1794211438.189,
+                "120"
+              ],
+              [
+                1794211439.189,
+                "160"
+              ],
+              [
+                1794211440.189,
+                "200"
+              ],
+              [
+                1794211441.189,
+                "240"
+              ],
+              [
+                1794211442.189,
+                "280"
+              ],
+              [
+                1794211443.189,
+                "320"
+              ],
+              [
+                1794211444.189,
+                "360"
+              ],
+              [
+                1794211445.189,
+                "400"
+              ],
+              [
+                1794211446.189,
+                "440"
+              ],
+              [
+                1794211447.189,
+                "480"
+              ],
+              [
+                1794211448.189,
+                "480"
+              ],
+              [
+                1794211449.189,
+                "480"
+              ],
+              [
+                1794211450.189,
+                "480"
+              ],
+              [
+                1794211451.189,
+                "480"
+              ],
+              [
+                1794211452.189,
+                "480"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "lab_requests_total",
+              "instance": "127.0.0.1:45027",
+              "job": "reports",
+              "outcome": "good",
+              "replica": "alpha"
+            },
+            "values": [
+              [
+                1794211437.189,
+                "120"
+              ],
+              [
+                1794211438.189,
+                "180"
+              ],
+              [
+                1794211439.189,
+                "240"
+              ],
+              [
+                1794211440.189,
+                "300"
+              ],
+              [
+                1794211441.189,
+                "360"
+              ],
+              [
+                1794211442.189,
+                "420"
+              ],
+              [
+                1794211443.189,
+                "480"
+              ],
+              [
+                1794211444.189,
+                "540"
+              ],
+              [
+                1794211445.189,
+                "600"
+              ],
+              [
+                1794211446.189,
+                "660"
+              ],
+              [
+                1794211447.189,
+                "720"
+              ],
+              [
+                1794211448.189,
+                "820"
+              ],
+              [
+                1794211449.189,
+                "920"
+              ],
+              [
+                1794211450.189,
+                "1020"
+              ],
+              [
+                1794211451.189,
+                "1120"
+              ],
+              [
+                1794211452.189,
+                "1220"
+              ]
+            ]
+          }
+        ],
+        "alert_history": [
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "firing",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "values": [
+              [
+                1794211440.64,
+                "1"
+              ],
+              [
+                1794211441.64,
+                "1"
+              ],
+              [
+                1794211442.64,
+                "1"
+              ],
+              [
+                1794211443.64,
+                "1"
+              ],
+              [
+                1794211444.64,
+                "1"
+              ],
+              [
+                1794211445.64,
+                "1"
+              ],
+              [
+                1794211446.64,
+                "1"
+              ],
+              [
+                1794211447.64,
+                "1"
+              ],
+              [
+                1794211448.64,
+                "1"
+              ],
+              [
+                1794211449.64,
+                "1"
+              ],
+              [
+                1794211450.64,
+                "1"
+              ],
+              [
+                1794211451.64,
+                "1"
+              ]
+            ]
+          },
+          {
+            "metric": {
+              "__name__": "ALERTS",
+              "alertname": "GuideLiveFastBurn",
+              "alertstate": "pending",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "values": [
+              [
+                1794211436.64,
+                "1"
+              ],
+              [
+                1794211437.64,
+                "1"
+              ],
+              [
+                1794211438.64,
+                "1"
+              ],
+              [
+                1794211439.64,
+                "1"
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "clean_exit": true
+}

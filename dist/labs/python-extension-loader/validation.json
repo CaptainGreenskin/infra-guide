@@ -1,0 +1,340 @@
+{
+  "status": "passed",
+  "scope": "macOS arm64 CPython C extension and native CPU dot product",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.12.13",
+    "compiler": "Apple clang version 17.0.0 (clang-1700.6.3.2)\nTarget: arm64-apple-darwin25.2.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "extension_suffixes": [
+      ".cpython-312-darwin.so",
+      ".abi3.so",
+      ".so"
+    ],
+    "ext_suffix": ".cpython-312-darwin.so"
+  },
+  "source_sha256": {
+    "extension_loader.py": "f782023edcd99685848dd95b2ff14392586c8760e6240c4759c4e217172673f2",
+    "rowdot.c": "cbe46f50b2b17fcaed6cfcb8bb34e2318ab41afcbf3ac166859cc4f85951fabb",
+    "rowdot_module.c": "f64d8dfebe7feda6af8944686829282ee4a34f06eee0b25cd6fb07a38da77983"
+  },
+  "build": {
+    "missing_header": {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-nostdinc",
+        "-c",
+        "<source>/rowdot_module.c",
+        "-o",
+        "<work>/missing_header.o"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "<source>/rowdot_module.c:2:10: fatal error: 'Python.h' file not found\n    2 | #include <Python.h>\n      |          ^~~~~~~~~~\n1 error generated.\n",
+      "object_created": false
+    },
+    "compile": {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-I",
+        "<python-include>",
+        "-c",
+        "<source>/rowdot_module.c",
+        "-o",
+        "<work>/rowdot_module.o"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "compile_wrong_entry": {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-I",
+        "<python-include>",
+        "-DROW_INIT=PyInit_other",
+        "-c",
+        "<source>/rowdot_module.c",
+        "-o",
+        "<work>/wrong_entry.o"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "provider": {
+      "argv": [
+        "clang",
+        "-std=c11",
+        "-dynamiclib",
+        "-Wl,-install_name,@rpath/libinfraguide_rowdot_fixture.dylib",
+        "<source>/rowdot.c",
+        "-o",
+        "<work>/libinfraguide_rowdot_fixture.dylib"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "missing_link_input": {
+      "argv": [
+        "clang",
+        "-bundle",
+        "-L",
+        "<python-lib>",
+        "-lpython3.12",
+        "-Wl,-rpath,@loader_path",
+        "<work>/rowdot_module.o",
+        "-o",
+        "<work>/missing_provider.so"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "Undefined symbols for architecture arm64:\n  \"_infraguide_rowdot3\", referenced from:\n      _dot3 in rowdot_module.o\nld: symbol(s) not found for architecture arm64\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+      "extension_created": false
+    },
+    "link": {
+      "argv": [
+        "clang",
+        "-bundle",
+        "-L",
+        "<python-lib>",
+        "-lpython3.12",
+        "-Wl,-rpath,@loader_path",
+        "<work>/rowdot_module.o",
+        "<work>/libinfraguide_rowdot_fixture.dylib",
+        "-o",
+        "<work>/infra_rowdot.cpython-312-darwin.so"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "link_wrong_entry": {
+      "argv": [
+        "clang",
+        "-bundle",
+        "-L",
+        "<python-lib>",
+        "-lpython3.12",
+        "-Wl,-rpath,@loader_path",
+        "<work>/wrong_entry.o",
+        "<work>/libinfraguide_rowdot_fixture.dylib",
+        "-o",
+        "<work>/wrong_entry.so"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "binary": {
+    "success": {
+      "nm": {
+        "argv": [
+          "nm",
+          "-gU",
+          "<work>/infra_rowdot.cpython-312-darwin.so"
+        ],
+        "exit": 0,
+        "stdout": "0000000000000550 T _PyInit_infra_rowdot\n",
+        "stderr": ""
+      },
+      "dependencies": {
+        "argv": [
+          "otool",
+          "-L",
+          "<work>/infra_rowdot.cpython-312-darwin.so"
+        ],
+        "exit": 0,
+        "stdout": "<work>/infra_rowdot.cpython-312-darwin.so:\n\t/opt/homebrew/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python (compatibility version 3.12.0, current version 3.12.0)\n\t@rpath/libinfraguide_rowdot_fixture.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+        "stderr": ""
+      },
+      "rpaths": [
+        "path @loader_path (offset 12)"
+      ]
+    },
+    "wrong_entry": {
+      "nm": {
+        "argv": [
+          "nm",
+          "-gU",
+          "<work>/wrong_entry.so"
+        ],
+        "exit": 0,
+        "stdout": "0000000000000550 T _PyInit_other\n",
+        "stderr": ""
+      },
+      "dependencies": {
+        "argv": [
+          "otool",
+          "-L",
+          "<work>/wrong_entry.so"
+        ],
+        "exit": 0,
+        "stdout": "<work>/wrong_entry.so:\n\t/opt/homebrew/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/Python (compatibility version 3.12.0, current version 3.12.0)\n\t@rpath/libinfraguide_rowdot_fixture.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+        "stderr": ""
+      },
+      "rpaths": [
+        "path @loader_path (offset 12)"
+      ]
+    },
+    "provider": {
+      "nm": {
+        "argv": [
+          "nm",
+          "-gU",
+          "<work>/libinfraguide_rowdot_fixture.dylib"
+        ],
+        "exit": 0,
+        "stdout": "00000000000002f0 T _infraguide_rowdot3\n",
+        "stderr": ""
+      },
+      "dependencies": {
+        "argv": [
+          "otool",
+          "-L",
+          "<work>/libinfraguide_rowdot_fixture.dylib"
+        ],
+        "exit": 0,
+        "stdout": "<work>/libinfraguide_rowdot_fixture.dylib:\n\t@rpath/libinfraguide_rowdot_fixture.dylib (compatibility version 0.0.0, current version 0.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+        "stderr": ""
+      },
+      "rpaths": []
+    }
+  },
+  "cases": {
+    "suffix": {
+      "filename": "infra_rowdot.foreign-fixture.so",
+      "extension_sha256": "8b07cd9acc15b4004b8dcb1c542a33c0e532fb09afed9997fabb43786c896137",
+      "provider_sha256": "afd7d88acc32173da15f6f99333819a0ccd9c1ec339f7dbbf861c4173eea367e",
+      "run": {
+        "argv": [
+          "<python>",
+          "-I",
+          "-B",
+          "-c",
+          "\nimport importlib\nimport importlib.machinery\nimport json\nimport sys\n\nroot = sys.argv[1]\nsys.path[:] = [root]\nname = \"infra_rowdot\"\nspec = importlib.machinery.PathFinder.find_spec(name, [root])\nresult = {\"discovered\": spec is not None}\ntry:\n    module = importlib.import_module(name)\nexcept ImportError as exc:\n    result.update(error_type=type(exc).__name__, error=str(exc))\nelse:\n    result[\"origin\"] = module.__file__\n    result[\"output\"] = [\n        module.dot3((-1.25, 0.5, -0.5), (-1.5, 1.0, 0.0)),\n        module.dot3((1.0, 2.0, 3.0), (-1.0, 0.0, 2.0)),\n    ]\n    try:\n        module.dot3((1.0, 2.0), (1.0, 2.0, 3.0))\n    except TypeError as exc:\n        result[\"shape_error\"] = type(exc).__name__\nprint(json.dumps(result))\n",
+          "<work>/suffix"
+        ],
+        "exit": 0,
+        "stdout": "{\"discovered\": false, \"error_type\": \"ModuleNotFoundError\", \"error\": \"No module named 'infra_rowdot'\"}\n",
+        "stderr": ""
+      },
+      "observation": {
+        "discovered": false,
+        "error_type": "ModuleNotFoundError",
+        "error": "No module named 'infra_rowdot'"
+      }
+    },
+    "symbol": {
+      "filename": "infra_rowdot.cpython-312-darwin.so",
+      "extension_sha256": "f9045a302608ecfc90d66f2a5ae36c6f33f195bf8b8636dc30263fdd50c4a277",
+      "provider_sha256": "afd7d88acc32173da15f6f99333819a0ccd9c1ec339f7dbbf861c4173eea367e",
+      "run": {
+        "argv": [
+          "<python>",
+          "-I",
+          "-B",
+          "-c",
+          "\nimport importlib\nimport importlib.machinery\nimport json\nimport sys\n\nroot = sys.argv[1]\nsys.path[:] = [root]\nname = \"infra_rowdot\"\nspec = importlib.machinery.PathFinder.find_spec(name, [root])\nresult = {\"discovered\": spec is not None}\ntry:\n    module = importlib.import_module(name)\nexcept ImportError as exc:\n    result.update(error_type=type(exc).__name__, error=str(exc))\nelse:\n    result[\"origin\"] = module.__file__\n    result[\"output\"] = [\n        module.dot3((-1.25, 0.5, -0.5), (-1.5, 1.0, 0.0)),\n        module.dot3((1.0, 2.0, 3.0), (-1.0, 0.0, 2.0)),\n    ]\n    try:\n        module.dot3((1.0, 2.0), (1.0, 2.0, 3.0))\n    except TypeError as exc:\n        result[\"shape_error\"] = type(exc).__name__\nprint(json.dumps(result))\n",
+          "<work>/symbol"
+        ],
+        "exit": 0,
+        "stdout": "{\"discovered\": true, \"error_type\": \"ImportError\", \"error\": \"dynamic module does not define module export function (PyInit_infra_rowdot)\"}\n",
+        "stderr": ""
+      },
+      "observation": {
+        "discovered": true,
+        "error_type": "ImportError",
+        "error": "dynamic module does not define module export function (PyInit_infra_rowdot)"
+      }
+    },
+    "dependency": {
+      "filename": "infra_rowdot.cpython-312-darwin.so",
+      "extension_sha256": "8b07cd9acc15b4004b8dcb1c542a33c0e532fb09afed9997fabb43786c896137",
+      "provider_sha256": null,
+      "run": {
+        "argv": [
+          "<python>",
+          "-I",
+          "-B",
+          "-c",
+          "\nimport importlib\nimport importlib.machinery\nimport json\nimport sys\n\nroot = sys.argv[1]\nsys.path[:] = [root]\nname = \"infra_rowdot\"\nspec = importlib.machinery.PathFinder.find_spec(name, [root])\nresult = {\"discovered\": spec is not None}\ntry:\n    module = importlib.import_module(name)\nexcept ImportError as exc:\n    result.update(error_type=type(exc).__name__, error=str(exc))\nelse:\n    result[\"origin\"] = module.__file__\n    result[\"output\"] = [\n        module.dot3((-1.25, 0.5, -0.5), (-1.5, 1.0, 0.0)),\n        module.dot3((1.0, 2.0, 3.0), (-1.0, 0.0, 2.0)),\n    ]\n    try:\n        module.dot3((1.0, 2.0), (1.0, 2.0, 3.0))\n    except TypeError as exc:\n        result[\"shape_error\"] = type(exc).__name__\nprint(json.dumps(result))\n",
+          "<work>/dependency"
+        ],
+        "exit": 0,
+        "stdout": "{\"discovered\": true, \"error_type\": \"ImportError\", \"error\": \"dlopen(<work>/dependency/infra_rowdot.cpython-312-darwin.so, 0x0002): Library not loaded: @rpath/libinfraguide_rowdot_fixture.dylib\\n  Referenced from: <1A7034C1-4E40-3220-A90C-337FA981CDF0> <work>/dependency/infra_rowdot.cpython-312-darwin.so\\n  Reason: tried: '<work>/dependency/libinfraguide_rowdot_fixture.dylib' (no such file), '<work>/dependency/libinfraguide_rowdot_fixture.dylib' (no such file), '/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file)\"}\n",
+        "stderr": ""
+      },
+      "observation": {
+        "discovered": true,
+        "error_type": "ImportError",
+        "error": "dlopen(<work>/dependency/infra_rowdot.cpython-312-darwin.so, 0x0002): Library not loaded: @rpath/libinfraguide_rowdot_fixture.dylib\n  Referenced from: <1A7034C1-4E40-3220-A90C-337FA981CDF0> <work>/dependency/infra_rowdot.cpython-312-darwin.so\n  Reason: tried: '<work>/dependency/libinfraguide_rowdot_fixture.dylib' (no such file), '<work>/dependency/libinfraguide_rowdot_fixture.dylib' (no such file), '/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/lib/libinfraguide_rowdot_fixture.dylib' (no such file)"
+      }
+    },
+    "success": {
+      "filename": "infra_rowdot.cpython-312-darwin.so",
+      "extension_sha256": "8b07cd9acc15b4004b8dcb1c542a33c0e532fb09afed9997fabb43786c896137",
+      "provider_sha256": "afd7d88acc32173da15f6f99333819a0ccd9c1ec339f7dbbf861c4173eea367e",
+      "run": {
+        "argv": [
+          "<python>",
+          "-I",
+          "-B",
+          "-c",
+          "\nimport importlib\nimport importlib.machinery\nimport json\nimport sys\n\nroot = sys.argv[1]\nsys.path[:] = [root]\nname = \"infra_rowdot\"\nspec = importlib.machinery.PathFinder.find_spec(name, [root])\nresult = {\"discovered\": spec is not None}\ntry:\n    module = importlib.import_module(name)\nexcept ImportError as exc:\n    result.update(error_type=type(exc).__name__, error=str(exc))\nelse:\n    result[\"origin\"] = module.__file__\n    result[\"output\"] = [\n        module.dot3((-1.25, 0.5, -0.5), (-1.5, 1.0, 0.0)),\n        module.dot3((1.0, 2.0, 3.0), (-1.0, 0.0, 2.0)),\n    ]\n    try:\n        module.dot3((1.0, 2.0), (1.0, 2.0, 3.0))\n    except TypeError as exc:\n        result[\"shape_error\"] = type(exc).__name__\nprint(json.dumps(result))\n",
+          "<work>/success"
+        ],
+        "exit": 0,
+        "stdout": "{\"discovered\": true, \"origin\": \"<work>/success/infra_rowdot.cpython-312-darwin.so\", \"output\": [2.375, 5.0], \"shape_error\": \"TypeError\"}\n",
+        "stderr": ""
+      },
+      "observation": {
+        "discovered": true,
+        "origin": "<work>/success/infra_rowdot.cpython-312-darwin.so",
+        "output": [
+          2.375,
+          5.0
+        ],
+        "shape_error": "TypeError"
+      }
+    },
+    "restored": {
+      "filename": "infra_rowdot.cpython-312-darwin.so",
+      "extension_sha256": "8b07cd9acc15b4004b8dcb1c542a33c0e532fb09afed9997fabb43786c896137",
+      "provider_sha256": "afd7d88acc32173da15f6f99333819a0ccd9c1ec339f7dbbf861c4173eea367e",
+      "run": {
+        "argv": [
+          "<python>",
+          "-I",
+          "-B",
+          "-c",
+          "\nimport importlib\nimport importlib.machinery\nimport json\nimport sys\n\nroot = sys.argv[1]\nsys.path[:] = [root]\nname = \"infra_rowdot\"\nspec = importlib.machinery.PathFinder.find_spec(name, [root])\nresult = {\"discovered\": spec is not None}\ntry:\n    module = importlib.import_module(name)\nexcept ImportError as exc:\n    result.update(error_type=type(exc).__name__, error=str(exc))\nelse:\n    result[\"origin\"] = module.__file__\n    result[\"output\"] = [\n        module.dot3((-1.25, 0.5, -0.5), (-1.5, 1.0, 0.0)),\n        module.dot3((1.0, 2.0, 3.0), (-1.0, 0.0, 2.0)),\n    ]\n    try:\n        module.dot3((1.0, 2.0), (1.0, 2.0, 3.0))\n    except TypeError as exc:\n        result[\"shape_error\"] = type(exc).__name__\nprint(json.dumps(result))\n",
+          "<work>/dependency"
+        ],
+        "exit": 0,
+        "stdout": "{\"discovered\": true, \"origin\": \"<work>/dependency/infra_rowdot.cpython-312-darwin.so\", \"output\": [2.375, 5.0], \"shape_error\": \"TypeError\"}\n",
+        "stderr": ""
+      },
+      "observation": {
+        "discovered": true,
+        "origin": "<work>/dependency/infra_rowdot.cpython-312-darwin.so",
+        "output": [
+          2.375,
+          5.0
+        ],
+        "shape_error": "TypeError"
+      }
+    }
+  }
+}

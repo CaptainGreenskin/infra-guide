@@ -354,3 +354,15 @@
   '<p class="practice-links"><a href="labs/qdrant-retrieval.zip" download>下载运行器与证据 ↓</a> · <a href="labs/qdrant-retrieval/README.md">复跑说明</a> · <a href="labs/qdrant-retrieval/validation.json">查看实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42581362152">Linux CI 实跑 ↗</a> · <a href="https://api.qdrant.tech/api-reference/search/query-points">Qdrant 查询接口 ↗</a></p>';
  }
 })();
+
+// Preserve the earlier workflow inventory while extending its native practice.
+(()=>{
+ const a=articleById('durable-workflows');
+ const p=text=>'<p>'+text+'</p>';
+ a.sections[8][1]+='<h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
+ p('沿用第 4 节的并行汇合。这次分支 A 和 B 都为 <code>report-A:publish</code> 生成同一份日报的候选。两支在同一个执行步返回。如果都写入普通状态字段，LangGraph 报 <code>InvalidUpdateError</code>，还未进入汇合节点。把字段改成列表并用 <code>operator.add</code>，两条金额 42 都能存下来。若把两项当作不同金额相加，会算成 84。')+
+ p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
+ trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
+ p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
+ '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>';
+})();

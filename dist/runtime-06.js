@@ -8337,6 +8337,23 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
  '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
  '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>'+
+ p('前面的 CPU 实验用 ctypes 调用普通 C 动态库。本例把同一个三项点积包成可直接 import 的 CPython 扩展。C 源码先编译成目标文件 .o，再链接成扩展文件。扩展把两个三元素序列转成 double 数组，交给同目录的点积库计算，再把结果转回 Python 浮点数。')+
+ trainingFigure('python-extension-loader','从编译、链接、搜索扩展到装载依赖和查找入口。补回点积动态库后，同一扩展给出 2.375 和 5.0。')+
+ table(['停在哪一步','实验只改变这一项','先检查什么'],[
+  ['编译源码','省去 Python 头文件目录，编译器找不到 Python.h','编译命令中的 <code>-I</code> 和当前解释器的头文件目录'],
+  ['链接扩展','保留目标文件和 Python 库，省去点积库，链接器找不到 <code>_infraguide_rowdot3</code>','链接输入中是否有提供该符号的库'],
+  ['查找文件','扩展只改文件名，后缀不匹配，报 <code>ModuleNotFoundError</code>','当前解释器的搜索目录与 <code>EXTENSION_SUFFIXES</code>'],
+  ['装载依赖','扩展文件名正确，旁边的点积动态库缺失，dyld 报 <code>Library not loaded</code>','用 <code>otool -L</code> 查看依赖名，再核对 <code>@rpath</code> 的搜索位置'],
+  ['查找初始化函数','文件和依赖都在，扩展却导出 <code>PyInit_other</code>','用 <code>nm -gU</code> 查导出。<code>import infra_rowdot</code> 要求 <code>PyInit_infra_rowdot</code>']
+ ])+
+ p('在这台 macOS arm64 机器上，CPython 3.12 通过 <code>sysconfig</code> 给出 <code>.cpython-312-darwin.so</code>。文件名改成 <code>infra_rowdot.foreign-fixture.so</code> 后，同样的二进制在搜索阶段就被略过。正确命名的文件被找到后，dyld 还要按依赖名找库。这里把 <code>@loader_path</code> 写进运行时搜索路径，展开后就是扩展所在目录。',
+ '补回同一动态库后，扩展的 SHA-256 没变。调用 <code>dot3</code>，前面 GEMM 例子的一项再次得到 (−1.25)×(−1.5)+0.5×1+(−0.5)×0＝2.375，另一组得到 5.0。两元素输入报 <code>TypeError</code>。每次导入都在新进程中测试，以便直接观察这次的文件搜索和装载。',
+ '在具备开发头文件和共享 Python 库的 macOS arm64 上解压后，运行 <code>python3.12 -B extension_loader.py &gt; replay.json</code>。结果记录编译器、链接器和导入器的实际诊断。实测范围为 CPython 扩展和 CPU 数值。')+
+ '<p class="practice-links"><a href="labs/python-extension-loader.zip" download>下载 C 源码与复跑脚本 ↓</a> · <a href="labs/python-extension-loader/README.md">查看运行说明 →</a> · <a href="labs/python-extension-loader/validation.json">查看原始故障与恢复记录 →</a></p>'+
+ '<p class="source-at"><a href="https://docs.python.org/3.12/extending/building.html">CPython 扩展的构建与初始化 ↗</a> · <a href="https://docs.python.org/3.12/library/importlib.html#importlib.machinery.EXTENSION_SUFFIXES">Python 识别的扩展后缀 ↗</a> · <a href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/RunpathDependentLibraries.html">Apple 动态库搜索路径 ↗</a></p>';
 })();
 
 
@@ -10649,6 +10666,18 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  }
 })();
 
+// Preserve the earlier workflow inventory while extending its native practice.
+(()=>{
+ const a=articleById('durable-workflows');
+ const p=text=>'<p>'+text+'</p>';
+ a.sections[8][1]+='<h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
+ p('沿用第 4 节的并行汇合。这次分支 A 和 B 都为 <code>report-A:publish</code> 生成同一份日报的候选。两支在同一个执行步返回。如果都写入普通状态字段，LangGraph 报 <code>InvalidUpdateError</code>，还未进入汇合节点。把字段改成列表并用 <code>operator.add</code>，两条金额 42 都能存下来。若把两项当作不同金额相加，会算成 84。')+
+ p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
+ trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
+ p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
+ '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>';
+})();
+
 
 ;
 // progressive-terraform-identity-reading.js
@@ -11909,6 +11938,19 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   ];
   finish(a,old,bodies,20);
  }
+})();
+
+// Live scraping follows the existing rules fixture and its published inventory checks.
+(()=>{
+ const a=articles.find(item=>item.id==='slo');
+ a.sections[7][1]+='<h3 id="live-prometheus-burn">让 Prometheus 实际抓取两条实例序列</h3>'+
+  '<p>把上一节的固定序列换成两个本机 HTTP 指标端点。Prometheus 每秒抓取一次并求值一次。规则使用 6 秒短窗、16 秒长窗和 4 秒持续条件，便于在一次运行中看清变化。两窗沿用 99.9% 目标下的 1.44% 坏率阈值。指标端点按实验脚本增加计数，分别记录好请求与坏请求。</p>'+
+  '<p>先让甲的计数器模拟重启后的归零。它的坏计数从 1000 变为 0，乙实例一直是 600。这一段没有新增坏请求。逐实例调用 <code>rate</code> 时，甲的计数器下降会按重启处理，乙的 600 留在原序列。先相加会得到 1600 → 600。再按整条序列重启补偿，就把乙留存的 600 算成新增坏请求。本次 6 秒窗的真实查询中，两种算法分别给出每秒 0 次和约 120 次坏请求。记录保存两次查询和四条抓取序列。</p>'+
+  trainingFigure('prometheus-live-burn','上半图手算重启前后的原始增量，下半图沿真实求值状态观察告警。')+
+  '<p>接下来，甲每批 100 个请求中有 40 个坏，乙每批 100 个全好，稳定坏率为 40÷200＝20%。随着故障样本进入两个窗口，Prometheus 先写出待确认状态 <code>pending</code>。规则持续成立 4 秒后，同一组标签进入触发状态 <code>firing</code>。可在原始 <code>ALERTS</code> 样本中对照求值时刻，区分窗口统计与状态等待。</p>'+
+  '<p>恢复阶段两个端点继续增加好计数。6 秒窗的坏率归零时，16 秒窗仍有约 13.33% 的坏率，快速告警已经解除。把两个坏率和告警状态一起读，才能知道是哪条条件改变。这个实验验证本机抓取、计数器重置和规则状态，生产流量、通知投递和当班响应分别验收。</p>'+
+  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>';
+ a.updated='2026.11.09';
 })();
 
 
@@ -13689,12 +13731,12 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
- 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -13710,8 +13752,8 @@ function learningGoalSelectorHTML(track){
 }
 function learningGoalHTML(profile){
  if(!profile)return '';
- const route=learningProfileRoute(profile);
- return '<section class="learning-goal" id="learning-goal"><h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a href="'+articleURL(id)+'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile)+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate" id="goal-gate" tabindex="-1"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
+ const route=learningProfileRoute(profile),goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
+ return '<section class="learning-goal" id="learning-goal"><h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a id="goal-chapter-'+id+'" href="'+articleURL(id)+'?goal='+goal+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate" id="goal-gate" tabindex="-1"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
 }
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
@@ -13729,8 +13771,17 @@ function learningContextHref(href){
  const queryAt=withoutHash.indexOf('?'),pathname=queryAt<0?withoutHash:withoutHash.slice(0,queryAt);
  const query=new URLSearchParams(queryAt<0?'':withoutHash.slice(queryAt+1));
  const articleId=pathname.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1],moduleId=pathname.match(/\/module\/([a-z0-9-]+)\/?$/)?.[1];
- if(!articleId&&!moduleId)return href;
- const profile=selectedLearningProfile(),explicitGoal=query.has('goal');let changed=false;
+ const position=/\/roadmap\/?$/.test(pathname)?fragment.match(/^#route-chapter-(cloud|ai|agent)-([a-z0-9-]+)$/):null;
+ if(!articleId&&!moduleId&&!position)return href;
+ const profile=selectedLearningProfile(),explicitGoal=query.has('goal');
+ if(position){
+  if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1]||!learningProfileRoute(profile).includes(position[2]))return href;
+  const goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
+  query.delete('track');
+  const rest=query.toString();
+  return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+'#goal-chapter-'+position[2];
+ }
+ let changed=false;
  if(moduleId==='practice'){
   const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
   const currentId=(typeof location==='undefined'?'':location.pathname||'').match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
@@ -14207,6 +14258,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'prometheus-live-burn':{folder:'prometheus-live-burn',title:'真实抓取、计数器归零与长短窗告警状态'},
+ 'python-extension-loader':{folder:'python-extension-loader',title:'CPython 扩展编译、链接、导入和动态依赖'},
+ 'langgraph-parallel-merge':{folder:'langgraph-parallel-merge',title:'并行提议的冲突归并、检查点重放与接收方回执'},
  'redis-client-tracking':{folder:'redis-client-tracking',title:'Redis 回复、失效推送与迟到的回填'},
  'native-amp-window':{folder:'native-amp-window',title:'两个微批的混合精度反向、跳步与恢复'},
  'qdrant-retrieval':{folder:'qdrant-retrieval',title:'真实向量候选、租户过滤与当前来源验收'},
@@ -14444,6 +14498,9 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mc
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
 );
 labLearningCatalog.push(
+ {id:'cloud-prometheus-live-burn',track:'cloud',stage:2,title:'一个实例计数器归零，长短窗口怎样改变告警状态',chapter:'slo',anchor:'live-prometheus-burn',pack:'prometheus-live-burn',files:['prometheus_live_burn.py','live-burn.rules.yaml'],env:'Linux amd64 · Python 3.12 · Prometheus 3.5.0',kind:'真实抓取、PromQL 与告警评估',observe:'对照两实例计数器归零前后的聚合，再核对 pending、firing 和恢复后的状态。',scope:'本机回环目标与缩短的教学窗口。'},
+ {id:'ai-native-python-extension',track:'ai',stage:1,title:'扩展文件已经生成，为什么 Python 还是导不进来',chapter:'operator-profiling',anchor:'native-python-extension',pack:'python-extension-loader',files:['extension_loader.py','rowdot.c','rowdot_module.c'],env:'macOS arm64 · CPython 3.12 · clang 17',kind:'真实 C 扩展、链接与动态装载',observe:'用一个行点积区分编译报错、链接符号、模块发现、初始化符号和动态库依赖。',scope:'本机 CPython 和 dyld，固定 CPU 输入。'},
+ {id:'agent-native-parallel-merge',track:'agent',stage:2,title:'两个分支同时给出发布提议，怎样保证只生效一次',chapter:'durable-workflows',anchor:'native-parallel-merge',pack:'langgraph-parallel-merge',files:['parallel_merge.py','fixture.json','requirements.txt'],env:'Python 3.12 · LangGraph 1.2.20 · SqliteSaver 3.1.3',kind:'真实同一步归并与 SQLite 检查点',observe:'比较默认同键冲突、同值归并、不同值转审核，以及重放后接收方效果数。',scope:'本机合成任务、持久检查点与独立接收库。'},
  {id:'cloud-redis-client-tracking',track:'cloud',stage:2,title:'收到 Redis 失效后，旧读回复还能填回本地吗',chapter:'cache-consistency',anchor:'native-redis-client-tracking',pack:'redis-client-tracking',files:['tracking_lab.py'],env:'Python 3.9+ · Redis 8.2.6 · 本机 Unix 套接字',kind:'真实 Redis 回复与推送',observe:'比较单连接顺序、双连接旧回复和断开通知连接，再核对当前读取编号。',scope:'单进程 Redis 和受控的客户端消费顺序。'},
  {id:'ai-native-amp-window',track:'ai',stage:2,title:'前向损失有限，为什么优化器跳过这次更新',chapter:'gpu-memory',anchor:'native-amp-window',pack:'native-amp-window',files:['amp_window.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU FP16 autocast',kind:'真实缩放反向、AdamW 与检查点',observe:'找出转回 FP32 前的非有限梯度，再对照跳步、重试以及只恢复模型和优化器的结果。',scope:'单进程 CPU 标量模型、两个微批与非融合 AdamW。'},
  {id:'agent-native-qdrant-retrieval',track:'agent',stage:2,title:'两个高分结果，为什么只能交付一条正文',chapter:'agent-retrieval',anchor:'native-qdrant-retrieval',pack:'qdrant-retrieval',files:['qdrant_retrieval.py','source.json'],env:'Python 3.12+ · Qdrant 1.19.1 · Linux amd64 CPU',kind:'真实向量查询与 SQLite 正文准入',observe:'比较全局截断与租户内筛选。撤销权限并更新源版本后，核对候选、实际正文读取和返回数量。',scope:'单节点精确向量检索、固定合成语料与本机权威来源。'},
@@ -14673,5 +14730,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="962e159bf33a308e68e6b298ee00e7fd6df1f5ae7a0b1909ce49eaabd0e604fb";
+const staticReadingVersion="c58b403c044f3fd04c17958cf625b8948c01359c93841bd4754b1e6364e226e7";
 

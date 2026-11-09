@@ -13,7 +13,7 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接进入第一章，侧栏直接进入正文。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。每张图下有一道判断题，可展开结果并查看原始记录，也能直达正文实战。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent 可独立学习。
+当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接进入第一章，侧栏直接进入正文。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。每张图下有一道判断题，可展开结果并查看原始记录，也能直达正文实战。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，正文的目录、上下章与路线定位都保留当前岗位。Agent 可独立学习。
 
 Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、目标右移、交叉注意力和实际的三轮生成。需要深入时，从同一例子进入掩码实验，再切换到独立的仅解码器算例。文章内搜索打开即显示推荐，查询时只下载可能含匹配项的索引分片。 [一句话走完 Transformer](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#translation-reading-path)
 
@@ -28,6 +28,8 @@ Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、�
 推理交付章用三个实际 CPU 模型服务分开检验探活、输出和已接入的流。MCP 章沿同一枚签名令牌核对 HTTP 入口与报告读取权限。Cloud 身份章在 Linux 上核对 SPIRE 签发、双向 TLS 和接收方授权。 [模型发布与回退](https://captaingreenskin.github.io/infra-guide/article/ai-lifecycle/#native-model-rollout) · [MCP HTTP 授权](https://captaingreenskin.github.io/infra-guide/article/mcp-protocol/#native-mcp-http-authorization) · [SPIRE 工作负载身份](https://captaingreenskin.github.io/infra-guide/article/iam-security/#native-spiffe-workload-identity)
 
 缓存章实跑 Redis 失效推送与迟到回包，训练章用两个微批追踪混合精度溢出、跳步和检查点恢复。Agent 检索章用 Qdrant 与 SQLite 分开检查候选、实时权限和正文读取。 [Redis 客户端缓存](https://captaingreenskin.github.io/infra-guide/article/cache-consistency/#native-redis-client-tracking) · [混合精度与检查点](https://captaingreenskin.github.io/infra-guide/article/gpu-memory/#native-amp-window) · [向量检索与来源授权](https://captaingreenskin.github.io/infra-guide/article/agent-retrieval/#native-qdrant-retrieval)
+
+算子章沿同一个 C 扩展实跑编译、链接和加载错误。Agent 工作流章沿同一个发布动作核对并行提议、冲突处理和检查点重放。SLO 章运行 Prometheus 抓取两个实例，并记录计数器归零和长短窗状态。 [CPython 扩展装载](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#native-python-extension) · [并行归并与重放](https://captaingreenskin.github.io/infra-guide/article/durable-workflows/#native-parallel-merge) · [真实抓取与告警](https://captaingreenskin.github.io/infra-guide/article/slo/#live-prometheus-burn)
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 

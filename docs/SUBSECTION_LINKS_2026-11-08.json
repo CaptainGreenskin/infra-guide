@@ -317,7 +317,8 @@
     {
       "id": "slo",
       "targets": [
-        "subsection-8-fgmzv3"
+        "subsection-8-fgmzv3",
+        "live-prometheus-burn"
       ]
     },
     {
@@ -477,11 +478,13 @@
         "operator-cpu-run",
         "operator-profile-run",
         "gemm-two-row-reuse",
-        "same-device-gemm"
+        "same-device-gemm",
+        "native-python-extension"
       ],
       "visible_targets": [
         "gemm-two-row-reuse",
-        "same-device-gemm"
+        "same-device-gemm",
+        "native-python-extension"
       ]
     },
     {
@@ -833,7 +836,8 @@
         "langgraph-workflow-wait",
         "langgraph-workflow-reentry",
         "mcp-commit-recovery",
-        "native-approval-reentry"
+        "native-approval-reentry",
+        "native-parallel-merge"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -855,7 +859,8 @@
         "subsection-9-62i94t",
         "langgraph-workflow-run",
         "mcp-commit-recovery",
-        "native-approval-reentry"
+        "native-approval-reentry",
+        "native-parallel-merge"
       ]
     },
     {

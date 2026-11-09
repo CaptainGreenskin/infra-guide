@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="454" height="490" viewBox="0 0 454 490" role="img" aria-labelledby="title desc">
+  <title id="title">计数器重启与双窗口告警</title>
+  <desc id="desc">甲实例坏计数从一千归零，乙实例保持六百。先分实例求变化再合并，坏增量为零。先合并会将乙的六百算作一次重启后的新增量。双窗持续高四秒，告警从待确认进入触发。恢复时短窗为零而长窗仍高，告警解除。</desc>
+  <metadata>{"reset":{"alpha":[1000,0],"beta":[600,600],"per_series_delta":0,"aggregate_first_delta":600},"windows_seconds":[6,16],"evaluation_seconds":1,"hold_seconds":4,"threshold":0.0144,"states":["inactive","pending","firing","inactive"]}</metadata>
+  <defs>
+    <style>
+      text{font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;fill:#23364c;font-size:16px}
+      .label{font-weight:650;fill:#254c77}.small{font-size:15px}.em{font-size:17px;font-weight:650}.warn{fill:#874800}.good{fill:#1b6249}
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 8 4 0 8Z" fill="#657a91"/></marker>
+  </defs>
+  <rect x="1" y="1" width="452" height="488" rx="12" fill="#fdfefe" stroke="#ced9e6"/>
+  <text x="21" y="32" class="label em">01　甲重启时，先拆开两条坏计数</text>
+  <rect x="20" y="50" width="414" height="101" rx="8" fill="#edf4fb"/>
+  <text x="36" y="76" class="small">原始计数</text><text x="195" y="76" text-anchor="middle" class="small">重启前</text><text x="372" y="76" text-anchor="middle" class="small">重启后</text>
+  <text x="36" y="109">甲</text><text x="195" y="109" text-anchor="middle" class="em">1000</text><path d="M232 103H329" stroke="#657a91" marker-end="url(#arrow)"/><text x="372" y="109" text-anchor="middle" class="em">0</text>
+  <text x="36" y="136">乙</text><text x="195" y="136" text-anchor="middle" class="em">600</text><path d="M232 130H329" stroke="#657a91" marker-end="url(#arrow)"/><text x="372" y="136" text-anchor="middle" class="em">600</text>
+  <text x="23" y="183" class="good">逐条修正重启后合并　0 ＋ 0 ＝ 0</text>
+  <text x="23" y="211" class="warn">先合并后修正　1600 → 600，误计 600</text>
+  <text x="23" y="239" class="small">图中是原始增量，查询还会按窗口估算速率。</text>
+  <path d="M20 258H434" stroke="#cdd9e5"/>
+  <text x="21" y="287" class="label em">02　长窗和短窗怎样驱动告警</text>
+  <rect x="20" y="305" width="414" height="43" rx="8" fill="#edf4fb"/>
+  <text x="33" y="332">16 秒窗、6 秒窗均超过 1.44%</text>
+  <path d="M227 349V363" stroke="#657a91" marker-end="url(#arrow)"/>
+  <rect x="20" y="369" width="137" height="42" rx="8" fill="#fff3de"/>
+  <text x="88" y="395" text-anchor="middle" class="warn">待确认</text>
+  <path d="M165 390H283" stroke="#657a91" marker-end="url(#arrow)"/>
+  <text x="224" y="381" text-anchor="middle" class="small">持续 4 秒</text>
+  <rect x="296" y="369" width="138" height="42" rx="8" fill="#e9eefb"/>
+  <text x="365" y="395" text-anchor="middle" class="label">触发</text>
+  <rect x="20" y="429" width="414" height="41" rx="8" fill="#e9f5ef"/>
+  <text x="32" y="455" class="good">短窗归零，长窗仍高　→　解除</text>
+</svg>

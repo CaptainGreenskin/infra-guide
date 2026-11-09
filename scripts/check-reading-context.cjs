@@ -3,11 +3,11 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const files=[...fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]).filter(f=>f!=='app.js');
 const gateTargets={
  'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity']],
- 'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking']],
+ 'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['slo','live-prometheus-burn'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking']],
  'ai-training':[['gpu-memory','native-amp-window'],['gpu-scheduling','native-kueue-admission'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run']],
  'ai-inference':[['model-serving','section-4'],['model-serving','native-inference-prefix'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
- 'ai-operators':[['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training']],
- 'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['agent-observability','native-tail-sampling-ledger']]
+ 'ai-operators':[['operator-profiling','native-python-extension'],['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9'],['flash-attention-io','ragged-ring-training']],
+ 'agent-platform':[['agent-sandbox','native-sandbox-container'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['agent-observability','native-tail-sampling-ledger']]
 };
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
@@ -28,6 +28,19 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(run('/article/'+id+'/?goal=#detail'),base+'article/'+id+'/?goal=#detail',key+': explicit reset wins');
   assert.equal(run('/module/'+mod+'/?concept=opaque#concept-relations'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#concept-relations',key+': field detour keeps context');
   const gate=vm.runInContext('learningGoalHTML(learningProfiles[profileKey])',c);
+ const staticRole=base==='/'?fs.readFileSync('dist/roadmap/'+key+'/index.html','utf8'):'';
+ for(const chapter of ids){
+  const path='/roadmap/?track='+p.track,legacy='#route-chapter-'+p.track+'-'+chapter;
+  const rolePath=base+'roadmap/'+key+'/',anchor='#goal-chapter-'+chapter;
+  assert.equal(run(path+legacy),rolePath+anchor,key+': exact position inside the chosen role');
+  assert.equal(run(path+'&source=chapter'+legacy),rolePath+'?source=chapter'+anchor,key+': retain context parameters');
+  assert.equal(run(path+'&goal='+legacy),base+path.slice(1)+'&goal='+legacy,key+': explicit full route wins');
+  const row='id="'+anchor.slice(1)+'" href="'+base+'article/'+chapter+'/?goal='+key+'"';
+  assert(gate.includes(row),key+': exact focusable role row');
+  if(staticRole)assert.equal(staticRole.split(row).length,2,key+': exact role row is unique in the static page');
+ }
+ const unrelatedPosition='/roadmap/?track='+p.track+'#route-chapter-'+p.track+'-'+other.id;
+ assert.equal(run(unrelatedPosition),base+unrelatedPosition.slice(1),key+': optional chapter retains full-course location');
   assert(gate.includes('id="goal-gate" tabindex="-1"'),key+': direct gate target');
   c.lastArticle=id;
   const lastNav=vm.runInContext('learningGoalChapterNav(articleById(lastArticle))',c);
@@ -100,4 +113,4 @@ for(const base of ['/','/infra-guide/']){
  c.fixture='<a href="/article/attention-mechanics/?source=map&amp;section=2#detail">Attention</a>';
  assert.equal(vm.runInContext('cleanInternalHTML(fixture)',c),'<a href="'+base+'article/attention-mechanics/?source=map&amp;section=2&amp;goal=ai-inference#detail">Attention</a>');
 }
-console.log('PASS: seven learning routes retain context through prose/search/field links at root and Pages paths; explicit choices, external URLs, fragments and HTML entities preserved; shared projects stay in the correct track.');
+console.log('PASS: seven learning routes retain context through prose/search/field links and exact chapter returns at root and Pages paths; explicit choices, external URLs, fragments and HTML entities preserved; shared projects stay in the correct track.');

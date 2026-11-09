@@ -1,0 +1,11 @@
+{
+  "operation_id": "report-A:publish",
+  "report": "ops-daily",
+  "cases": [
+    {"name": "default_channel", "channel": "default", "totals": {"draft_a": 42, "draft_b": 42}, "first": "draft_a"},
+    {"name": "append_only", "channel": "list", "totals": {"draft_a": 42, "draft_b": 42}, "first": "draft_a"},
+    {"name": "canonical_same", "channel": "merge", "totals": {"draft_a": 42, "draft_b": 42}, "first": "draft_a"},
+    {"name": "canonical_conflict", "channel": "merge", "totals": {"draft_a": 42, "draft_b": 41}, "first": "draft_a"},
+    {"name": "canonical_conflict_reverse", "channel": "merge", "totals": {"draft_a": 42, "draft_b": 41}, "first": "draft_b"}
+  ]
+}

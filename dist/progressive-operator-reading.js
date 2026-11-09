@@ -125,4 +125,21 @@
  p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
  '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
  '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>'+
+ p('前面的 CPU 实验用 ctypes 调用普通 C 动态库。本例把同一个三项点积包成可直接 import 的 CPython 扩展。C 源码先编译成目标文件 .o，再链接成扩展文件。扩展把两个三元素序列转成 double 数组，交给同目录的点积库计算，再把结果转回 Python 浮点数。')+
+ trainingFigure('python-extension-loader','从编译、链接、搜索扩展到装载依赖和查找入口。补回点积动态库后，同一扩展给出 2.375 和 5.0。')+
+ table(['停在哪一步','实验只改变这一项','先检查什么'],[
+  ['编译源码','省去 Python 头文件目录，编译器找不到 Python.h','编译命令中的 <code>-I</code> 和当前解释器的头文件目录'],
+  ['链接扩展','保留目标文件和 Python 库，省去点积库，链接器找不到 <code>_infraguide_rowdot3</code>','链接输入中是否有提供该符号的库'],
+  ['查找文件','扩展只改文件名，后缀不匹配，报 <code>ModuleNotFoundError</code>','当前解释器的搜索目录与 <code>EXTENSION_SUFFIXES</code>'],
+  ['装载依赖','扩展文件名正确，旁边的点积动态库缺失，dyld 报 <code>Library not loaded</code>','用 <code>otool -L</code> 查看依赖名，再核对 <code>@rpath</code> 的搜索位置'],
+  ['查找初始化函数','文件和依赖都在，扩展却导出 <code>PyInit_other</code>','用 <code>nm -gU</code> 查导出。<code>import infra_rowdot</code> 要求 <code>PyInit_infra_rowdot</code>']
+ ])+
+ p('在这台 macOS arm64 机器上，CPython 3.12 通过 <code>sysconfig</code> 给出 <code>.cpython-312-darwin.so</code>。文件名改成 <code>infra_rowdot.foreign-fixture.so</code> 后，同样的二进制在搜索阶段就被略过。正确命名的文件被找到后，dyld 还要按依赖名找库。这里把 <code>@loader_path</code> 写进运行时搜索路径，展开后就是扩展所在目录。',
+ '补回同一动态库后，扩展的 SHA-256 没变。调用 <code>dot3</code>，前面 GEMM 例子的一项再次得到 (−1.25)×(−1.5)+0.5×1+(−0.5)×0＝2.375，另一组得到 5.0。两元素输入报 <code>TypeError</code>。每次导入都在新进程中测试，以便直接观察这次的文件搜索和装载。',
+ '在具备开发头文件和共享 Python 库的 macOS arm64 上解压后，运行 <code>python3.12 -B extension_loader.py &gt; replay.json</code>。结果记录编译器、链接器和导入器的实际诊断。实测范围为 CPython 扩展和 CPU 数值。')+
+ '<p class="practice-links"><a href="labs/python-extension-loader.zip" download>下载 C 源码与复跑脚本 ↓</a> · <a href="labs/python-extension-loader/README.md">查看运行说明 →</a> · <a href="labs/python-extension-loader/validation.json">查看原始故障与恢复记录 →</a></p>'+
+ '<p class="source-at"><a href="https://docs.python.org/3.12/extending/building.html">CPython 扩展的构建与初始化 ↗</a> · <a href="https://docs.python.org/3.12/library/importlib.html#importlib.machinery.EXTENSION_SUFFIXES">Python 识别的扩展后缀 ↗</a> · <a href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/RunpathDependentLibraries.html">Apple 动态库搜索路径 ↗</a></p>';
 })();

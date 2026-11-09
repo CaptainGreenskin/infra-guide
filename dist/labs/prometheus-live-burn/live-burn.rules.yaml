@@ -1,0 +1,20 @@
+groups:
+  - name: live-reports-slo
+    interval: 1s
+    rules:
+      - record: job:lab_bad_ratio6s
+        expr: |
+          sum by (job) (rate(lab_requests_total{outcome="bad"}[6s]))
+          / sum by (job) (rate(lab_requests_total[6s]))
+      - record: job:lab_bad_ratio16s
+        expr: |
+          sum by (job) (rate(lab_requests_total{outcome="bad"}[16s]))
+          / sum by (job) (rate(lab_requests_total[16s]))
+      - alert: GuideLiveFastBurn
+        expr: |
+          (job:lab_bad_ratio16s{job="reports"} > 14.4 * 0.001)
+          and on (job) (job:lab_bad_ratio6s{job="reports"} > 14.4 * 0.001)
+          and on (job) (sum by (job) (rate(lab_requests_total[6s])) > 0)
+        for: 4s
+        labels:
+          severity: teaching

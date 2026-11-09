@@ -1,0 +1,266 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "794c0e674017d5afc7f3654c712a21454bd338f5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PRACTICE_RESULTS_NATIVE_2026-11-09.json": "6eceee7d9b4bc26a8ec5edca05a1e7f520a21a285deaae354731b95c0c79bda9"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "1065f84d6cf3e93c308e837a351119ab87e4214967cbb7ea3df5fd78c0e637c8",
+      "reviewed_sha256": "24d11be87d89e1cd20dc55b5d8663618503ff30c6685fa9f08af7885995b0792",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "c45c3105a4c5fda12799831c4b68aab4a59109d4cbf6d1da531cac7c8b696a81",
+      "reviewed_sha256": "f2cb06d4142d515699e203e1a587481a8bcd8358c6acb82d538309de5ec656c2",
+      "scope": "Keep legacy course positions while making every selected role chapter directly addressable and focused."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "9819afcc8e21b485b75a757d58de86d754d4653b0007f4d28f201b4710af2a0a",
+      "reviewed_sha256": "7f5ac0a9e2d8f35e3b79a9b0e8984c89786fbf86b67bbe616f34978f0b190391",
+      "scope": "Keep legacy course positions while making every selected role chapter directly addressable and focused."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "3f91ae0a61834304aee5756fe8d59856c28bec46fb682807fb435dc8bd975e82",
+      "reviewed_sha256": "7db50a0530e5544a7ed0fa48ed79dae823ed8c747f52477cde733218e26a2f19",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/python-extension-loader.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "392dcc003671f9d187455bbc273488d62c0167578d3c8ad2725c917f43bf278b",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/diagrams/langgraph-parallel-merge.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3879d8d18919a0dcb5ced36c58f25b9ef4bd86e2099b810866ce7f8ea18ab44d",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "995b5c92c9355485453381e4f42b7f703c9ace6a371234d98f6a4ab9512b33a1",
+      "reviewed_sha256": "b4c64a4dd9803bbcc56375bd28e044288a3227a51300b04eef6625fd30b7ea5d",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "74c5b7d2e37c06696da8616c8e690d16292db2513c28404e55afa4bc524741a4",
+      "reviewed_sha256": "580e45042c7627558e9d3d6b2afab5f22470739ec6378fad15ae44a349308fde",
+      "scope": "Keep legacy course positions while making every selected role chapter directly addressable and focused."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "f697be86d0a80861796eb126d029abad2989a45b546e303bacaee0134345204c",
+      "reviewed_sha256": "2eaaf0888e5a4ec27aafe5cf3f41bfd8960c304b738268e9278306e387ba4bca",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "f4e5a994e7daa6863155c6c6721c618e8b71d3f8c50b5f66f3e9a2cb2250d2f0",
+      "reviewed_sha256": "331d47735b77bbf5277ec186bce10dd0cb8628737063f97fe9f15d22baec9f0d",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "af209e3e129f42d7a0f2a990749e44eaf48d2d44435e10fd3faa3990160c58a6",
+      "reviewed_sha256": "e9ffd20421045ee89216169da21c5f0238e7ede037b91c171a00e466af27f2f7",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2588f2b0f0a80309a72992eb0c59bc63d68a81156bf43f2e15743f10e527d404",
+      "reviewed_sha256": "2004f7fab455f3de4c5debed1c8ec967547c8fe6eff40ebc82d8ce12e6a1f182",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "9e6577bf0a181526451ed22db837111c57ef1028bd96bdd72a6d773f53a73f2a",
+      "reviewed_sha256": "bacfde9ed0b364b4994953b8af3f8aa729eda6468aa73348fb272fc8bcd5c0f0",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-python-extension-loader.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c3aa9f37cbd503c107a7506be15d2177c32d7ee8b3c3613d4300838cafaf5c4d",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "scripts/check-langgraph-parallel-merge.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5935059de57546530059ad9d21d6e74a91af30ae7090ccac83c9ed46b954163a",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "23d2b4b8657c0d322b26fad06010cfc00d4aa716d0b83a36880abddd99fae05c",
+      "reviewed_sha256": "26854c4023c46e9b7ababf6e72b3288400d7f48592f7d7fbc0c3b42701e9ea74",
+      "scope": "Keep legacy course positions while making every selected role chapter directly addressable and focused."
+    },
+    "dist/diagrams/prometheus-live-burn.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "99c1e670a77a4342d4e426112de04922d6e23f3a2e7375e0faa0815846b17668",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "d4f0ceffb2d626f0632c2ebf7df396c2fd5b62cda7f1345572c1e31d73f6c469",
+      "reviewed_sha256": "9b5e481fa3b34d3983a8bedba4b0f6148358105875adb89f81226ab58b9232dc",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "scripts/check-prometheus-live-burn.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ce6d5b01a5f0988026ccad59233edadfff320800a4f42d3eb46f2cf4dbb4fae8",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/python-extension-loader.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a24f9cb852d8e540a4c67a3fca7175e8522f61261e342ffca867db3c5c896edc",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/python-extension-loader/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fd0287d37e1d1bd684550cee693a442e64e82dcbbaa1c08b0182ad78893a2983",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/python-extension-loader/extension_loader.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f782023edcd99685848dd95b2ff14392586c8760e6240c4759c4e217172673f2",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/python-extension-loader/rowdot.c": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cbe46f50b2b17fcaed6cfcb8bb34e2318ab41afcbf3ac166859cc4f85951fabb",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/python-extension-loader/rowdot_module.c": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f64d8dfebe7feda6af8944686829282ee4a34f06eee0b25cd6fb07a38da77983",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/python-extension-loader/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "652acc8de08355215a7519fa67e0e13fa52b8e585cb30fc1e5ab1593abe3e1da",
+      "scope": "Bind real compiler, linker and loader outcomes to the same CPU operation and source files."
+    },
+    "dist/labs/langgraph-parallel-merge.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a088af6bbd69c2bcaa013ce8f81e99758fd009d08221d205aed4994df852e14e",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8367e6f9411c5ccfa9ba994d25e54ee9948ead52229063aeadf2e4b607a6c3c5",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/checkpoints.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "258e270fb093d96749ebac948397150c04db6712e868744cf47a2f72c0cb75e1",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7ebd1ec4e88da3161bfa684fb897b25fc50d9c7123ad823462ee346421330adb",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/parallel_merge.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d37b36ab39776baa2a69d1b6f0c3ef45e092f0a0365eeb630c5d8db447a222be",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/receiver.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "342c79fed1cf4375b525425008a11c773384ba2e03494f726c47e09f1213aa23",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/langgraph-parallel-merge/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d8e1630bba75d83b8eb3ffeae4e0208440d80478bed89be16b94229f92d7cac2",
+      "scope": "Bind actual same-step branch writes, explicit decisions and replay to the checkpoint and receiver ledgers."
+    },
+    "dist/labs/prometheus-live-burn.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "02f794d07f3f71747d2859d0bd56c60883b58622eae23ef831c71075cad66c98",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/prometheus-live-burn/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d10008a7d6e3a2e18fa120dd09b83be726bae8e484d9f6a9c6df8d187e35904c",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/prometheus-live-burn/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4ec3dbb64482cbbe381d179dbf8a660dcc54c80772162081debb10486c7e9260",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/prometheus-live-burn/live-burn.rules.yaml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4b3c402f29a4a7fc2641b4593a62f3415250c0bdb5a954e72a09c31b6aa59d68",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/prometheus-live-burn/prometheus_live_burn.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a453c4dfcad39ece2c08ea8cb8b71e965619fa3da43b5efd56b501fa2a9d6785",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "dist/labs/prometheus-live-burn/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "558f3af703ff6315d4ae775d1e1ebd55066fcab9d999fa4b99121e4ac3a0e0bb",
+      "scope": "Bind real scrape samples, counter behavior and rule state to the same alerting exercise."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "f137c77fc65f96318c1c8085b729b099841acdeaf6b3acb84b34593d8f67955d",
+      "reviewed_sha256": "762fd47e914b796bf2653bc1b41518d4a30bd75f5282f0782f65797591d1f814",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "f20e90b86c9ed9043e5b8a001212f07e27f1ebd696d075bf247f6f92afa23190",
+      "reviewed_sha256": "0fad1e1da272655919b9f1bc4b6cd8fc48f2034737c353be30eb46cdd9a589a5",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_ROLE_POSITION_NATIVE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0d35d798a23559b30bc8a0da8bf125a68615d2a4ba4f1b46bc69868602a89ff6",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "6713c7613d7120732de5ef289b141fb596839c66c3db1036eef47e4b52732567",
+      "reviewed_sha256": "52884f9aa4ae3164e2ebc42940df4f287ba321c99a917a5d804a36a20d09e49c",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    }
+  },
+  "article_sections": {
+    "operator-profiling": {
+      "sections": [
+        8
+      ],
+      "scope": "Trace a fixed CPython extension through compiler, linker, module lookup, initialization symbol and dynamic dependency loading.",
+      "observation": "Real failures at each stage were distinct. Restoring the same library let the unchanged extension return the independent row-dot values."
+    },
+    "durable-workflows": {
+      "sections": [
+        9
+      ],
+      "scope": "Observe same-step branch writes, canonical conflict resolution and replay from one native checkpoint.",
+      "observation": "A conflicting value remained pending for review with zero effects. A new process replaying the publish step returned the original receipt and kept one effect."
+    },
+    "slo": {
+      "sections": [
+        8
+      ],
+      "scope": "Scrape actual counters and compare per-instance rates with aggregation before reset handling.",
+      "observation": "Real samples showed the aggregation error at one instance reset and an actual alert pending, firing, and returning inactive as the short window recovered."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "794c0e674017d5afc7f3654c712a21454bd338f5",
+    "chapters": 78,
+    "changed_bodies": [
+      "slo",
+      "operator-profiling",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "role_chapter_positions": 114,
+    "experiment_packs": 82,
+    "learning_tasks": 124
+  }
+}

@@ -243,3 +243,16 @@
   finish(a,old,bodies,20);
  }
 })();
+
+// Live scraping follows the existing rules fixture and its published inventory checks.
+(()=>{
+ const a=articles.find(item=>item.id==='slo');
+ a.sections[7][1]+='<h3 id="live-prometheus-burn">让 Prometheus 实际抓取两条实例序列</h3>'+
+  '<p>把上一节的固定序列换成两个本机 HTTP 指标端点。Prometheus 每秒抓取一次并求值一次。规则使用 6 秒短窗、16 秒长窗和 4 秒持续条件，便于在一次运行中看清变化。两窗沿用 99.9% 目标下的 1.44% 坏率阈值。指标端点按实验脚本增加计数，分别记录好请求与坏请求。</p>'+
+  '<p>先让甲的计数器模拟重启后的归零。它的坏计数从 1000 变为 0，乙实例一直是 600。这一段没有新增坏请求。逐实例调用 <code>rate</code> 时，甲的计数器下降会按重启处理，乙的 600 留在原序列。先相加会得到 1600 → 600。再按整条序列重启补偿，就把乙留存的 600 算成新增坏请求。本次 6 秒窗的真实查询中，两种算法分别给出每秒 0 次和约 120 次坏请求。记录保存两次查询和四条抓取序列。</p>'+
+  trainingFigure('prometheus-live-burn','上半图手算重启前后的原始增量，下半图沿真实求值状态观察告警。')+
+  '<p>接下来，甲每批 100 个请求中有 40 个坏，乙每批 100 个全好，稳定坏率为 40÷200＝20%。随着故障样本进入两个窗口，Prometheus 先写出待确认状态 <code>pending</code>。规则持续成立 4 秒后，同一组标签进入触发状态 <code>firing</code>。可在原始 <code>ALERTS</code> 样本中对照求值时刻，区分窗口统计与状态等待。</p>'+
+  '<p>恢复阶段两个端点继续增加好计数。6 秒窗的坏率归零时，16 秒窗仍有约 13.33% 的坏率，快速告警已经解除。把两个坏率和告警状态一起读，才能知道是哪条条件改变。这个实验验证本机抓取、计数器重置和规则状态，生产流量、通知投递和当班响应分别验收。</p>'+
+  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>';
+ a.updated='2026.11.09';
+})();
