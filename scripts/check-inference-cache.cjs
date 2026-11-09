@@ -158,9 +158,16 @@ if(!vm.runInContext('typeof inferenceCacheBridgeRevisions!=="undefined"',context
 const article=JSON.parse(vm.runInContext('JSON.stringify(articles.find(a=>a.id==="inference-performance"))',context));
 const contract=JSON.parse(fs.readFileSync(lab+'contracts.json'));
 assert.deepStrictEqual(article.sections.map(s=>s[0]),contract.titles);
+const queueSection=5,queueHeading='<h3 id="native-inference-queue">';
+const queueBody=article.sections[queueSection][1],queueStart=queueBody.indexOf(queueHeading);
+assert(queueStart>=0,'native inference queue has its own heading');
+const codeBlocks=html=>[...html.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
+const queueCode=codeBlocks(queueBody.slice(queueStart));
+assert.equal(queueCode.length,1,'native queue unit has one distinct run command');
+assert(queueCode[0].includes('concurrency_lab.py'),'native queue run command');
 let total=0;
 for(let i=0;i<article.sections.length;i++){
- const html=article.sections[i][1],pre=[...html.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
+ const html=article.sections[i][1],pre=codeBlocks(i===queueSection?html.slice(0,queueStart):html);
  const original=contract.original_pre_sha256[i];
  assert.deepStrictEqual(pre.map(digest).filter(hash=>original.includes(hash)),original,'all original full pre blocks in order: '+i);
  for(const id of contract.inner_ids[i])assert(html.includes('id="'+id+'"'),'existing internal ID '+id);

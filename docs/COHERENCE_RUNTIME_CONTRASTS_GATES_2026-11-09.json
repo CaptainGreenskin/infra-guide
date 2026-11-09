@@ -1,0 +1,31 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "619d3fdfcfec26d24cf3cce7df043f84c3f33f97",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_RUNTIME_CONTRASTS_2026-11-09.json": "ab86455b1f53eca60816654ac11cf92152e963a2b34f9095eee3559e74f23102"
+  },
+  "source_revisions": {
+    "scripts/check-agent-planning.cjs": {
+      "previous_sha256": "f8133bc4957c16e47d6a44a46b32407ae1584918bde3728491d081c21685e95e",
+      "reviewed_sha256": "36e90b29a0ca0d2a8068355b2c52ecfaac94bcfd72c055da022930b0c143dfcf",
+      "scope": "Preserve the original planning, LangGraph and MCP source evidence without conflating it with the later approval and receipt-lookup exercise."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "bc5d1202e447ee09574ce7d25d4a211414ee8b63f18a2da4533d7a9ec9ac58d8",
+      "reviewed_sha256": "90b88f364ba42880a52c7cfb067adca96246bde4c2341959923aa1237ad38673",
+      "scope": "Count the original inference-cache lesson through its own contract. Verify the separately anchored native HTTP queue exercise under its own executable evidence gate."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "619d3fdfcfec26d24cf3cce7df043f84c3f33f97",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 67,
+    "learning_tasks": 107
+  }
+}

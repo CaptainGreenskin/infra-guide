@@ -110,12 +110,16 @@ const proseRevisions=JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.j
 const latestProse=proseRevisions.at(-1);
 if(latestProse)assert.equal(latestProse.reviewed_content_sha256,sha(JSON.stringify({title:current.title,sections:current.sections})),'current workflow body must match its latest explicit review');
 assert.equal(current.updated,latestProse?latestProse.reviewed_at.slice(0,10).replaceAll('-','.'):'2026.11.08');assert.equal(current.minutes,55);
-const all=current.sections.map(s=>s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
+// The appended approval unit has its own source and evidence check.
+const approvalExercise=current.sections[8][1].split('<h3 id="native-approval-reentry">');
+assert.equal(approvalExercise.length,2);
+const legacyExercises=approvalExercise[0];
+const all=current.sections.map((s,i)=>i===8?legacyExercises:s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
 const pre=s=>[...s.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
 const oldPre=pre(before),newPre=pre(all);
 // The original planning stage added two blocks; the independently checked
 // native framework bridge added six, and the MCP recovery exercise adds one command.
-const mcpExercise=current.sections[8][1].split('<h3 id="mcp-commit-recovery">');
+const mcpExercise=legacyExercises.split('<h3 id="mcp-commit-recovery">');
 assert.equal(mcpExercise.length,2);
 assert.equal(pre(mcpExercise[1]).length,1);
 assert.equal(newPre.length,oldPre.length+2+6+1);
