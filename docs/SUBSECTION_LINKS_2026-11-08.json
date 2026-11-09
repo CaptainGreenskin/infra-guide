@@ -493,10 +493,12 @@
         "gemm-two-row-reuse",
         "same-device-gemm",
         "native-python-extension",
-        "triton-tail-mask-run"
+        "triton-tail-mask-run",
+        "torch-compile-graph-break"
       ],
       "visible_targets": [
         "gemm-two-row-reuse",
+        "torch-compile-graph-break",
         "same-device-gemm",
         "native-python-extension",
         "triton-tail-mask-run"
@@ -649,14 +651,16 @@
         "subsection-5-qvstci",
         "native-inference-request-path",
         "native-inference-engine-lab",
-        "native-inference-prefix"
+        "native-inference-prefix",
+        "rtx-pro-6000-cache-case"
       ],
       "visible_targets": [
         "native-inference-request-path",
         "sdpa-cache-path",
         "subsection-5-qvstci",
         "native-inference-engine-lab",
-        "native-inference-prefix"
+        "native-inference-prefix",
+        "rtx-pro-6000-cache-case"
       ]
     },
     {

@@ -411,6 +411,20 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '<p><a href="labs/native-inference-prefix.zip" download>下载完整前缀实验</a> · <a href="labs/native-inference-prefix/prefix_lab.py">完整 Python 源码</a> · <a href="labs/native-inference-prefix/validation.json">执行记录</a> · <a href="labs/native-inference-prefix/responses.json">原始响应与快照</a> · <a href="labs/native-inference-prefix/native-logs.json">原生批次日志</a> · <a href="labs/native-inference-prefix/README.md">复跑说明与自测</a></p>'+
   p('自测：不看结果表，写出暖 B 的三个输入批次，并解释为何 idle 与缓存为空不是同一判断。再提出“全部提示命中就不再前向”的反例：固定版本需要末位置分数，上一份重复请求仍处理最后一个提示位置。源码定位见 '+
   '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。');
+ const rtxCacheSource='https://github.com/CaptainGreenskin/one-gpu-lm/blob/6e96479924f90e4b0ccd22dba858c51b8516d3ce/experiments/009-training-to-serving/';
+ const rtxCacheResults=rtxCacheSource+'results/2026-11-05/';
+ serving.sections[6][1]+=
+  heading('rtx-pro-6000-cache-case','同一张 RTX PRO 6000 上，静态 KV 何时省时间')+
+  p('前面的 CPU 对照验证跨请求复用。这里沿同一条请求比较两种前向路径。全前缀重算每轮重新处理提示和已有词元；静态 KV 先为历史键和值预留张量，再把新词元写到下一个位置，读取已写入的历史。两种路径都只为最后一个位置算输出头。')+
+  p('配套实验把实际训练过的 85,596,576 参数模型导出成带权重和分词器摘要的模型包。GPU 是 RTX PRO 6000 Blackwell，模型用 BF16，12 层、每层 12 个头、头维 64。两条路径吃同一固定词元流，热身后交替顺序，各做 5 次，每次测 32 个解码步。另用 84 个位置核对最高分词元，GPU 上全部一致，候选分数最大绝对差为 0.125。')+
+  table(['批大小 / 提示词元数','全前缀重算','静态 KV','缓存 / 重算'],[
+   ['1 / 32','286 token/s','265 token/s','0.93×'],
+   ['32 / 320','4,354 token/s','8,366 token/s','1.92×']
+  ])+
+  trainingFigure('rtx-pro-6000-cache-crossover','同一模型与设备上的八组解码对照。竖线 1.00× 代表吞吐相同。右列给出两条路径各自的批量 token/s，均取五次实际测量的中位数。')+
+  p('八组中仅 32 / 320 的缓存解码更快。这一组同时把预填充中位数从 6.65 ms 提高到 7.77 ms，PyTorch 峰值分配从 457 MiB 提高到 803 MiB。用第 4 节的字节账复算，静态缓存为 2 × 12 × 32 × 352 × 768 × 2 字节，即 396 MiB。峰值还包括权重和执行中间量，需要和缓存张量预算分开读。')+
+  p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
+  '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.updated='2026.11.09';
  performance.updated='2026.11.09';

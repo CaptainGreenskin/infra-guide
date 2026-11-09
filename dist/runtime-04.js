@@ -44,7 +44,8 @@ infraKnowledgeDomains.push({module:'model-foundations',track:'ai',refs:['v16Atte
  para('线程块可以协作，把一个数据块（tile）加载到共享内存后同步；寄存器通常承载每线程局部值。更多寄存器或shared memory使用可能减少同一SM驻留的块/warp数量。占用率（occupancy）描述能同时驻留多少线程束，不能直接当作算力利用率：仍可能受数据依赖、访存、指令种类或同步等待限制。',
  '合并访存把邻近线程的地址访问组织为较少内存事务。矩阵布局、跨度（stride）、对齐和数据块形状决定能否有效搬运；转置是逻辑视图还是物理拷贝，要看随后算子的布局需求。非连续张量引起的隐式数据拷贝，可能抵消某个算子局部加速。',
  '核函数融合通过减少中间量写回、重复读取和launch次数提高效率，也可能增大寄存器压力、改变并行度。算子层先比较相同shape/dtype/布局与数值误差，再用设备事件或同步后的计时区分提交耗时和执行耗时；主机上的异步调用很快返回不等于kernel很快。')+
- table(['对象','先数什么','典型代价'],[['GEMM','M/N/K、dtype、布局','计算量、读写量、tile利用'],['归一化/激活','读写元素、归约轴','HBM流量、归约和launch'],['主机→设备','字节、固定页内存、依赖','拷贝与计算能否重叠']])},
+ table(['对象','先数什么','典型代价'],[['GEMM','M/N/K、dtype、布局','计算量、读写量、tile利用'],['归一化/激活','读写元素、归约轴','HBM流量、归约和launch'],['主机→设备','字节、固定页内存、依赖','拷贝与计算能否重叠']])+
+ para('算子交给编译器后，先看哪些运算进入同一张图，再看设备执行。用<a href="/article/operator-profiling/#torch-compile-graph-break">断图实验</a>核对 Python 标量、张量条件和输入形状各怎样影响图的捕获。')},
  {id:'mf-roofline',title:'Roofline、在线 Softmax 与算子优化',articles:['roofline-model','flash-attention-io','tensor-parallel-math'],lead:'优化先写工作量F和内存流量D。算术强度I=F/D；理想性能上界受峰值计算吞吐与内存带宽两者约束，实际时间还含调度、同步和未计入的流量。',body:
  knowledgeFormula('同一设备、同一工作负载的理想下界','T ≥ max(F / Pcompute, D / Bmemory)','GEMM [M,K]×[K,N] 常按2MNK计FLOP；D必须说明是HBM实际流量还是理想最低搬运量。')+
  para('FlashAttention通过分块和在线归一化避免在HBM物化完整S×S概率矩阵。对已经处理的分块保留最大值m、指数和l与未归一化输出o。新块最大值m′改变后，旧量用exp(m−m′)重缩放，再加新块贡献，最后o/l。分块softmax各自归一后简单平均，通常与全量softmax不同。',
@@ -669,7 +670,7 @@ function companyStudyGuide() {
   ['跨可用区容灾','byteSite',false,readLink('resilience','设计恢复演练'),'已有故障域和恢复目标练习，真实多可用区切换仍需演练。'],
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照'),'手算样本数不等时的正确更新，再与本机 DDP 对照。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
-  ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验'),'有测量方法，缺真实 GPU 算子剖析、代码优化及回归数据。'],
+  ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验')+'<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a>','已有 CPU 图捕获对照。GPU 算子剖析和性能回归仍需目标设备记录。'],
   ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
   ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
   ['沙箱隔离与性能','txSandbox',false,readLink('agent-security','定位执行边界'),'需要真实沙箱的冷启动、资源回收与并发隔离对照。']

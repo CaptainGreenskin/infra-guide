@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'torch-compile-graph':{folder:'torch-compile-graph',title:'TorchDynamo 断图、张量条件与输入守卫'},
  'pd-split':{folder:'pd-split',title:'预填充与解码分池、缓存交接和输出间隔'},
  'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
  'ddp-target-preflight':{folder:'ddp-target-preflight',title:'两机四卡上机前的设备身份与集合通信检查'},
@@ -303,6 +304,12 @@ labLearningCatalog.push({
  files:['pd_split.py'],env:'Python 3.9+ · Linux / macOS',kind:'实跑记录',
  observe:'对同一批输入比较单进程共置、双进程共置和分池，复算首项延迟和后续间隔，并核对交接字节与损坏后的拒绝。',
  scope:'真实本机进程与套接字，整数玩具核；目标推理引擎与跨机性能待验。'
+});
+labLearningCatalog.push({
+ id:'ai-torch-compile-graph',track:'ai',stage:2,title:'同一函数为什么被捕获成多张图',chapter:'operator-profiling',anchor:'torch-compile-graph-break',pack:'torch-compile-graph',
+ files:['compile_graph.py','requirements.txt'],env:'CPU · 按实验说明安装固定 PyTorch',kind:'实跑记录',
+ observe:'逐项核对正、负、零三种输入，再比较 Python 取标量、张量条件和输入形状变化时捕获的图。',
+ scope:'TorchDynamo 捕获与 CPU FX 执行，另有 TorchInductor CPU 产物实测；GPU 内核和性能另行验证。'
 });
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

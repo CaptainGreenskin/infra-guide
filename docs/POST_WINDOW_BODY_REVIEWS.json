@@ -5522,6 +5522,24 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "5fff12e7afff9d29bf998744e8f3dbc4f76a10c16aece3ae0749fe3456f392a0",
+      "reviewed_content_sha256": "ea46e1ce8dd80611414223530c6c4d3bc35ac065f840ab4d8910c0f71ff6c5f3",
+      "scope": "Connect the CPU cache mechanism to pinned, actual single-device GPU measurements from the same owner.",
+      "observation": "Compare all eight exact static-cache/full-prefix workloads, retain model and device provenance, and separate decode throughput from prefill and memory costs.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
     }
   ]
 }

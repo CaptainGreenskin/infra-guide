@@ -113,6 +113,32 @@
  a.baseline='CPU实验：Python 3.9+与C11；CUDA编译：Linux x86_64、CUDA12.9.1；GPU执行另需兼容设备与驱动';
  a.refs=[...new Set([...a.refs,'cudaCoreGuide','cudaCoreCompiler'])];a.updated='2026.11.08';
 
+ a.sections[6][1]+=
+ '<h3 id="torch-compile-graph-break">实战 · 一行 .item() 怎样切开计算图</h3>'+
+ p('直接执行 PyTorch 时，Python 按顺序发起张量运算。用 <code>torch.compile</code> 包住函数后，TorchDynamo 会在执行 Python 时把能跟踪的张量运算和依赖记录成一张图，再交给编译后端。图里有哪些运算、后端最终怎样执行、设备上发起多少内核，是三件事。先检查第一件，才知道哪里有机会一起优化。')+
+ trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
+ p('让每项输入先加 1，得到 <code>shifted</code>。若所有元素的和大于 0，就把每项乘 2，否则每项减 2。<code>shifted.sum()</code> 是零维张量。<code>.item()</code> 把它取成 Python 数值，Python 的 <code>if</code> 再用该数值决定执行哪一支。在实验的捕获配置下，编译器在取标量处遇到断图（graph break），可以先提交已经捕获的一段，回到 Python 做判断，再尝试捕获后续运算。')+
+ table(['输入','加 1 后求和','手算输出'],[
+  ['[−1,1,2]','5，乘 2','[0,4,6]'],
+  ['[−4,−2,0]','−3，减 2','[−5,−3,−1]'],
+  ['[−2,−1,0]','0，减 2','[−3,−2,−1]']
+ ])+
+ p('对这两个简单的张量表达式，可以让 <code>shifted.sum() &gt; 0</code> 继续是张量，再用 <code>torch.where</code> 在结果中选择。注意传入的两边都先求值。若原分支会写文件、更新状态，或未选分支对当前输入无效，就要保留条件执行的语义，不能直接换成 <code>where</code>。')+
+ code('保留张量条件的写法','PYTHON',
+ 'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
+ table(['PyTorch 2.5.1 本机记录','实际捕获','逐项核对'],[
+  ['Python 标量，允许断图','正、负、零、再测正例，各新增 2、1、1、0 张图','第一次先捕获 add 和 sum，判断后再捕获乘法。负与零走同一减法，仍各捕获一次。'],
+  ['Python 标量，要求完整图','在 Tensor.item 报错，后端未收到图','错误出现在转换标量处。'],
+  ['张量条件，要求完整图','同形状四次调用只在第一次捕获，图包含 add、sum、gt、mul、sub、where','三个不同输入的输出都与手算一致。'],
+  ['张量条件，固定形状模式','长度 3 与长度 4 各捕获一次，重复形状复用','每次调用都能捕获完整图，换长度仍会重新捕获。']
+ ])+
+ p('实验的后端记录 TorchDynamo 提交的 FX 图，再执行图的 <code>forward</code>。开启 <code>fullgraph=True</code> 会要求一次捕获完整图，适合把默默回到 Python 的问题变成可定位的错误。即便没有断图，编译器也会为已有图记录可复用条件，例如输入形状。在本实验的固定形状模式下，新的形状可能让条件失效并触发重新捕获。先区分“这一调用中间被切开”和“这次调用换了一张图”。')+
+ p('原始记录还保留了未满足的复用条件。负例的 Python 标量与正例的 5 不同，零例又与 −3 和 5 都不同。张量版换长度时，记录显示第 0 轴期望长度 3、实际为 4。先确认失败条件，再决定保留图内张量条件、允许形状变化，还是给常用形状分别预热。')+
+ p('下载后按包内说明安装锁定版本，运行 <code>python -B compile_graph.py --write-record replay.json</code>。在配有 C++ 编译器的环境加 <code>--inductor</code>，用 TorchInductor 将张量版降成 CPU 代码。保留实跑生成了一份 C++ 源文件和配套动态库，四次输出逐项通过，报告可核对二者的摘要。框架分别记录 2 个生成内核和 1 个生成的 C++ 向量化内核；这两个计数与前面提交的图数属于不同层级，设备发起次数和耗时需要另测。')+
+ '<p class="practice-links"><a href="/labs/torch-compile-graph.zip" download>下载源码与记录 ↓</a> · <a href="/labs/torch-compile-graph/validation.json">查看捕获的图和对照结果</a></p>'+
+ '<p class="source-at"><a href="https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/compile/programming_model.graph_breaks_index.html">PyTorch 断图与严格捕获 ↗</a></p>';
+ a.updated='2026.11.09';
+
  a.sections[3][1]+=
  '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+
  p('接着前面的分块乘法，固定行主序 FP32 输入和乘加顺序。朴素版每个线程直接读 A 的一行与 B 的一列，计算一个输出。分块版先把 A、B 的小块装入共享内存，块里的线程再各算一个输出。双行复用版保持 16×16 个线程，每个线程多算一行同一列。它读到一个 B 值后，分别乘两行对应的 A 值，累加到两个寄存器。')+

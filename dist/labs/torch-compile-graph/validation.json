@@ -1,0 +1,504 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": {
+    "compile_graph.py": "1452b354be42956ffa1319a25df840f96ed63b03522c4f401583950e35f07b86",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "torch_commit": "a8d6afb511a69687bbb2b7e88a3cf67917e1697e",
+    "system": "Darwin",
+    "machine": "arm64",
+    "device": "cpu",
+    "threads": 1,
+    "dtype": "float64",
+    "capture_scalar_outputs": false,
+    "dynamic": false
+  },
+  "report": {
+    "cases": [
+      {
+        "id": "positive",
+        "input": [
+          -1,
+          1,
+          2
+        ],
+        "shifted_sum": 5,
+        "output": [
+          0,
+          4,
+          6
+        ]
+      },
+      {
+        "id": "negative",
+        "input": [
+          -4,
+          -2,
+          0
+        ],
+        "shifted_sum": -3,
+        "output": [
+          -5,
+          -3,
+          -1
+        ]
+      },
+      {
+        "id": "zero",
+        "input": [
+          -2,
+          -1,
+          0
+        ],
+        "shifted_sum": 0,
+        "output": [
+          -3,
+          -2,
+          -1
+        ]
+      },
+      {
+        "id": "wide_positive",
+        "input": [
+          -2,
+          0,
+          1,
+          2
+        ],
+        "shifted_sum": 5,
+        "output": [
+          -2,
+          2,
+          4,
+          6
+        ]
+      },
+      {
+        "id": "wide_negative",
+        "input": [
+          -3,
+          -2,
+          -1,
+          0
+        ],
+        "shifted_sum": -2,
+        "output": [
+          -4,
+          -3,
+          -2,
+          -1
+        ]
+      }
+    ],
+    "python_partial": {
+      "fullgraph": false,
+      "dynamic": false,
+      "captures": [
+        {
+          "id": 1,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "add",
+            "sum"
+          ]
+        },
+        {
+          "id": 2,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "mul"
+          ]
+        },
+        {
+          "id": 3,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "sub"
+          ]
+        },
+        {
+          "id": 4,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "sub"
+          ]
+        }
+      ],
+      "calls": [
+        {
+          "case": "positive",
+          "new_graph_ids": [
+            1,
+            2
+          ],
+          "executed_graph_ids": [
+            1,
+            2
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "negative",
+          "new_graph_ids": [
+            3
+          ],
+          "executed_graph_ids": [
+            1,
+            3
+          ],
+          "output": [
+            -5.0,
+            -3.0,
+            -1.0
+          ],
+          "guard_failures": [
+            "L['___stack0'] == 5.0"
+          ]
+        },
+        {
+          "case": "zero",
+          "new_graph_ids": [
+            4
+          ],
+          "executed_graph_ids": [
+            1,
+            4
+          ],
+          "output": [
+            -3.0,
+            -2.0,
+            -1.0
+          ],
+          "guard_failures": [
+            "L['___stack0'] == -3.0",
+            "L['___stack0'] == 5.0"
+          ]
+        },
+        {
+          "case": "positive",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1,
+            2
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        }
+      ]
+    },
+    "python_fullgraph": {
+      "fullgraph": true,
+      "status": "rejected",
+      "error_type": "Unsupported",
+      "reason": "Tensor.item",
+      "captured_count": 0
+    },
+    "tensor_fullgraph": {
+      "fullgraph": true,
+      "dynamic": false,
+      "captures": [
+        {
+          "id": 1,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "add",
+            "sum",
+            "gt",
+            "mul",
+            "sub",
+            "where"
+          ]
+        }
+      ],
+      "calls": [
+        {
+          "case": "positive",
+          "new_graph_ids": [
+            1
+          ],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "negative",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            -5.0,
+            -3.0,
+            -1.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "zero",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            -3.0,
+            -2.0,
+            -1.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "positive",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        }
+      ]
+    },
+    "shape_control": {
+      "fullgraph": true,
+      "dynamic": false,
+      "captures": [
+        {
+          "id": 1,
+          "input_shapes": [
+            [
+              3
+            ]
+          ],
+          "operations": [
+            "add",
+            "sum",
+            "gt",
+            "mul",
+            "sub",
+            "where"
+          ]
+        },
+        {
+          "id": 2,
+          "input_shapes": [
+            [
+              4
+            ]
+          ],
+          "operations": [
+            "add",
+            "sum",
+            "gt",
+            "mul",
+            "sub",
+            "where"
+          ]
+        }
+      ],
+      "calls": [
+        {
+          "case": "positive",
+          "new_graph_ids": [
+            1
+          ],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "negative",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            -5.0,
+            -3.0,
+            -1.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "zero",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            -3.0,
+            -2.0,
+            -1.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "positive",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "wide_positive",
+          "new_graph_ids": [
+            2
+          ],
+          "executed_graph_ids": [
+            2
+          ],
+          "output": [
+            -2.0,
+            2.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": [
+            "tensor 'L['x']' size mismatch at index 0. expected 3, actual 4"
+          ]
+        },
+        {
+          "case": "wide_negative",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            2
+          ],
+          "output": [
+            -4.0,
+            -3.0,
+            -2.0,
+            -1.0
+          ],
+          "guard_failures": []
+        },
+        {
+          "case": "positive",
+          "new_graph_ids": [],
+          "executed_graph_ids": [
+            1
+          ],
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ],
+          "guard_failures": []
+        }
+      ]
+    },
+    "dynamo_explain": {
+      "python": {
+        "graph_count": 2,
+        "graph_break_count": 1,
+        "reasons": [
+          "Tensor.item"
+        ]
+      },
+      "tensor": {
+        "graph_count": 1,
+        "graph_break_count": 0,
+        "reasons": []
+      }
+    },
+    "inductor": {
+      "status": "passed",
+      "backend": "inductor",
+      "fullgraph": true,
+      "outputs": [
+        {
+          "case": "positive",
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ]
+        },
+        {
+          "case": "negative",
+          "output": [
+            -5.0,
+            -3.0,
+            -1.0
+          ]
+        },
+        {
+          "case": "zero",
+          "output": [
+            -3.0,
+            -2.0,
+            -1.0
+          ]
+        },
+        {
+          "case": "positive",
+          "output": [
+            0.0,
+            4.0,
+            6.0
+          ]
+        }
+      ],
+      "generated_kernel_count": 2,
+      "generated_cpp_vec_kernel_count": 1,
+      "native_artifacts": [
+        {
+          "cpp_sha256": "8e29b031c06f229fe5bf509c9f5390795b083f5fc36789833e7ce5afe7148d2d",
+          "library_sha256": "0815f07f242441dfea9cdc94592fbbd01f6592395d961d8dce3b8a728c4bdb78"
+        }
+      ]
+    }
+  }
+}

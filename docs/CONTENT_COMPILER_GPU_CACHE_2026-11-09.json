@@ -1,0 +1,49 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "ab9c799d909b43cc0fac892e0860b5a4695c3ae3",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PD_SPLIT_2026-11-09.json": "f8b4eb05117a65dde1d8e21261ced0b14d62c42f8c832f11df340b24c2099ab8"
+  },
+  "knowledge_revisions": [
+    {
+      "id": "mf-gpu",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "f101901d25136c1a11afe658f57636006d174c1bcc2ebe2956b2e6aed7505061",
+      "reviewed_content_sha256": "093ebdeca5aadfda4602a74b4f1818fd4367c35d31519e4a179957858e245137",
+      "scope": "Link the GPU execution and layout definition to exact framework graph-capture evidence.",
+      "observation": "Original operator links, body and semantics are preserved."
+    }
+  ],
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "11386fed3a04255ae05bc9bc9e9f15e876bf0f71ea6b69520dc5a4ad87954a60",
+      "reviewed_content_sha256": "2259a7a0790539ad2144283b835f42b5170c2536d72c331ceb260e7135f438e1",
+      "scope": "Add native TorchDynamo capture, scalar and shape controls, independent CPU outputs, and CPU Inductor code generation.",
+      "observation": "Distinguish captured FX segments, guard failures, and native backend artifacts with an exact PyTorch 2.5.1 run.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "operator-profiling",
+      "reviewed_at": "2026-11-09",
+      "scope": "Add native TorchDynamo capture, scalar and shape controls, independent CPU outputs, and CPU Inductor code generation.",
+      "observation": "Distinguish captured FX segments, guard failures, and native backend artifacts with an exact PyTorch 2.5.1 run.",
+      "reviewed_content_sha256": "2259a7a0790539ad2144283b835f42b5170c2536d72c331ceb260e7135f438e1",
+      "record": "dist/labs/torch-compile-graph/validation.json"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="936" height="750" viewBox="0 0 936 750" role="img" aria-labelledby="title desc">
+  <title id="title">同一个张量条件的两条计算图路径</title>
+  <desc id="desc">两条路径都先对输入加一，再根据张量总和是否大于零选择输出。Python 路径捕获加一与求和，item 取出 Python 标量并使图在这里断开，Python 选择分支后再捕获所执行的张量计算。总和为正的首次调用捕获两段图。张量路径把比较、两个候选值和 where 选择都留在同一张图。总和为正、负或零且形状相同的输入复用这张图。守卫负责检查后续输入是否能复用已捕获图。固定形状的对照先用长度三、再用长度四、最后回到长度三，依次捕获新图、捕获新图、复用旧图。计数对象是记录后端收到的 FX 图。</desc>
+  <metadata>{"record":"labs/torch-compile-graph/validation.json","positive_python_initial_capture_count":2,"tensor_initial_capture_count":1,"fixed_shape_capture_deltas":[1,0,0,0,1,0,0]}</metadata>
+  <defs>
+    <marker id="flow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#325eb3"/></marker>
+    <marker id="resume" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#a05924"/></marker>
+    <marker id="tensor" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="#197562"/></marker>
+  </defs>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="934" height="748" rx="16" fill="#f7f9fd" stroke="#cbd7e7"/>
+    <text x="34" y="51" font-size="34" font-weight="700">同一个条件，两条计算图路径</text>
+    <text x="34" y="92" font-size="24" fill="#435775">先算 shifted = x + 1，再按总和是否大于 0 选择输出。</text>
+
+    <rect x="34" y="115" width="868" height="219" rx="12" fill="#fff" stroke="#b8c8df"/>
+    <text x="54" y="152" font-size="28" font-weight="700">A　让 Python 选择分支</text>
+    <g fill="#eaf1ff" stroke="#a9bce5">
+      <rect x="54" y="175" width="223" height="107" rx="9"/>
+      <rect x="659" y="175" width="223" height="107" rx="9"/>
+    </g>
+    <rect x="333" y="175" width="270" height="107" rx="9" fill="#fff1df" stroke="#d9aa77"/>
+    <g fill="none" stroke-width="3">
+      <path d="M286 228h34" stroke="#325eb3" marker-end="url(#flow)"/>
+      <path d="M612 228h34" stroke="#a05924" stroke-dasharray="6 4" marker-end="url(#resume)"/>
+    </g>
+    <g text-anchor="middle">
+      <g font-size="22" font-weight="700">
+        <text x="165.5" y="205" fill="#2a53a1">前段 FX 图</text>
+        <text x="468" y="205" fill="#824116">断图后回到 Python</text>
+        <text x="770.5" y="205" fill="#2a53a1">所选分支的图</text>
+      </g>
+      <g font-size="24" font-weight="700">
+        <text x="165.5" y="239">加一、求和</text>
+        <text x="468" y="239">.item() 取出标量</text>
+        <text x="770.5" y="239">乘 2 或减 2</text>
+      </g>
+      <g font-size="20" fill="#435775">
+        <text x="165.5" y="269">张量总和</text>
+        <text x="468" y="269">由 if 判定方向</text>
+        <text x="770.5" y="269">只执行其中一支</text>
+      </g>
+    </g>
+    <text x="54" y="312" font-size="22" fill="#435775">总和为正的首次调用，后端收到前缀和乘 2 两段图。</text>
+
+    <rect x="34" y="354" width="868" height="225" rx="12" fill="#fff" stroke="#b8c8df"/>
+    <text x="54" y="391" font-size="28" font-weight="700">B　把选择保留在张量图内</text>
+    <rect x="54" y="413" width="828" height="107" rx="9" fill="#e8f4ee" stroke="#9bc8b7"/>
+    <g fill="none" stroke="#197562" stroke-width="3" marker-end="url(#tensor)">
+      <path d="M285 464h42"/><path d="M607 464h42"/>
+    </g>
+    <g text-anchor="middle">
+      <g font-size="24" font-weight="700" fill="#145d4e">
+        <text x="165.5" y="454">产生张量条件</text>
+        <text x="468" y="454">计算两个候选</text>
+        <text x="770.5" y="454">torch.where</text>
+      </g>
+      <g font-size="20" fill="#435775">
+        <text x="165.5" y="492">加一后求和、比较</text>
+        <text x="468" y="492">分别乘 2 和减 2</text>
+        <text x="770.5" y="492">按条件选输出</text>
+      </g>
+    </g>
+    <text x="54" y="554" font-size="22" fill="#435775">总和为正、负或零且形状相同的输入复用同一张 FX 图。</text>
+
+    <rect x="34" y="599" width="868" height="128" rx="12" fill="#e9eff9"/>
+    <text x="54" y="635" font-size="22"><tspan font-weight="700">断图</tspan><tspan>　一次捕获在哪里停下</tspan><tspan dx="32" font-weight="700">守卫</tspan><tspan>　后续调用能否复用已捕获图</tspan></text>
+    <text x="54" y="671" font-size="21"><tspan font-weight="700">固定形状</tspan><tspan>　长度 3 → 4 → 3，依次捕获新图、捕获新图、复用旧图。</tspan></text>
+    <text x="54" y="707" font-size="21" fill="#435775">本实验计数的是后端收到的 FX 图。融合与速度由实际后端测量。</text>
+  </g>
+</svg>
