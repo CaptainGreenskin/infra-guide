@@ -1,0 +1,26 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "4e9ce021db856e5a5c4e3355d42484ed3f8a7646",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_KUEUE_ADMISSION_2026-11-09.json": "04a220e90c594b898adf58cee4dcfe9ed2b6e94e90077a7d207b50592c9531d4"
+  },
+  "revised_teaching_units": [
+    {
+      "chapter": "durable-workflows",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow one approval through durable wait, current authorization, committed effects and native process recovery.",
+      "observation": "Six real LangGraph/MCP cases preserve reopened checkpoints, current permissions, both MCP result channels and receiver effects. A stale approval policy control produces one rejected effect.",
+      "reviewed_content_sha256": "40b2c29af991808f5f66a2edc8120338af8146750a5ba6b472c568f8f8793a1a",
+      "record": "dist/labs/approval-reentry/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "scope": "Separate observed server queue transitions from client timing for the same two requests.",
+      "observation": "Three pairs of real llama.cpp CPU runs use native task logs, measured metrics and 1,949 raw entries. The full token sequence and client timing can be recomputed.",
+      "reviewed_content_sha256": "d690e78e43fb23007ad8eb34ffbb3be1440e728018553d42c6583339399b98d4",
+      "record": "dist/labs/native-inference-queue/validation.json"
+    }
+  ]
+}

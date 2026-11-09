@@ -1,0 +1,2211 @@
+{
+  "schema": "approval-reentry-validation-v1",
+  "status": "passed",
+  "verified_at_utc": "2026-11-09T05:48:31.302295+00:00",
+  "environment": {
+    "graph_python": "3.12.13",
+    "mcp_python": "3.12.13",
+    "langgraph": "1.2.20",
+    "mcp": "2.3.0",
+    "langgraph_checkpoint_sqlite": "3.1.3",
+    "sqlite": "3.53.3"
+  },
+  "source_sha256": {
+    "workflow.py": "908af664524a0790f699d480c39f4902ff3ae0e4bd624e7e0f7c416dc064454f",
+    "mcp_bridge.py": "f4035e267ca21d498264f46a0919b61f0aa87177889d0ad1e4366dc7a6f47e8c",
+    "source.json": "32e2479902314a6d0e55060144726a4065ff0a8ff9428e020ef5c4240275f707"
+  },
+  "cases": {
+    "normal": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53559,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-594a-662e-8001-fc79a689a53b",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "57fbf261e87272789783805f7763d21c",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc012-594a-662e-8001-fc79a689a53b",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "57fbf261e87272789783805f7763d21c",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "resume": {
+        "worker_pid": 53562,
+        "checkpoint": {
+          "next": [],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "succeeded",
+            "observations": [
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "absent"
+                },
+                "text_content": "{\"status\":\"absent\"}",
+                "tool": "get_receipt"
+              },
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "receipt": {
+                    "amount": 42,
+                    "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                    "operation_id": "report-A:publish",
+                    "resource": "A/daily",
+                    "revision": 1,
+                    "source_version": "v3",
+                    "subject": "learner-A",
+                    "task_id": "report-A",
+                    "tenant": "A",
+                    "tool": "publish_report"
+                  },
+                  "status": "committed"
+                },
+                "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+                "tool": "publish_report"
+              }
+            ],
+            "receipt": {
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "operation_id": "report-A:publish",
+              "resource": "A/daily",
+              "revision": 1,
+              "source_version": "v3",
+              "subject": "learner-A",
+              "task_id": "report-A",
+              "tenant": "A",
+              "tool": "publish_report"
+            }
+          },
+          "checkpoint_id": "1f1dc012-6e80-64f8-8003-f98cc8856640",
+          "tasks": []
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "succeeded",
+          "observations": [
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "absent"
+              },
+              "text_content": "{\"status\":\"absent\"}",
+              "tool": "get_receipt"
+            },
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "receipt": {
+                  "amount": 42,
+                  "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                  "operation_id": "report-A:publish",
+                  "resource": "A/daily",
+                  "revision": 1,
+                  "source_version": "v3",
+                  "subject": "learner-A",
+                  "task_id": "report-A",
+                  "tenant": "A",
+                  "tool": "publish_report"
+                },
+                "status": "committed"
+              },
+              "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+              "tool": "publish_report"
+            }
+          ],
+          "receipt": {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        },
+        "checkpoint_id": "1f1dc012-6e80-64f8-8003-f98cc8856640",
+        "tasks": []
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": "report-A:publish"
+          }
+        ],
+        "reports": [
+          {
+            "revision": 1,
+            "operation_id": "report-A:publish",
+            "subject": "learner-A",
+            "tenant": "A",
+            "task_id": "report-A",
+            "resource": "A/daily",
+            "source_version": "v3",
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+          }
+        ],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53560,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53565,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "committed",
+            "server_pid": 53567,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          }
+        ],
+        "receipts": [
+          {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        ]
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": true,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 1,
+        "amounts": [
+          42
+        ]
+      },
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53565,
+          53567
+        ],
+        "all_exited": true
+      }
+    },
+    "revoked_before_resume": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53571,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-75c2-696e-8001-3e21c5754055",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "c2cacb3528df254fe61e40ae5d423e3d",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc012-75c2-696e-8001-3e21c5754055",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "c2cacb3528df254fe61e40ae5d423e3d",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "policy_change": {
+        "can_read": 1,
+        "can_write": 0,
+        "epoch": 2,
+        "id": 1
+      },
+      "resume": {
+        "worker_pid": 53576,
+        "checkpoint": {
+          "next": [],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "denied",
+            "observations": [
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "absent"
+                },
+                "text_content": "{\"status\":\"absent\"}",
+                "tool": "get_receipt"
+              },
+              {
+                "is_error": true,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "denied"
+                },
+                "text_content": "{\"status\":\"denied\"}",
+                "tool": "publish_report"
+              }
+            ]
+          },
+          "checkpoint_id": "1f1dc012-8db0-699a-8003-2e7ffdb1d1f4",
+          "tasks": []
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "denied",
+          "observations": [
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "absent"
+              },
+              "text_content": "{\"status\":\"absent\"}",
+              "tool": "get_receipt"
+            },
+            {
+              "is_error": true,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "denied"
+              },
+              "text_content": "{\"status\":\"denied\"}",
+              "tool": "publish_report"
+            }
+          ]
+        },
+        "checkpoint_id": "1f1dc012-8db0-699a-8003-2e7ffdb1d1f4",
+        "tasks": []
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 0,
+          "can_read": 1,
+          "epoch": 2
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": null
+          }
+        ],
+        "reports": [],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53573,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "policy_change",
+            "tool": "",
+            "operation_id": "",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "revoked",
+            "server_pid": 53575,
+            "rpc_request_id": "",
+            "arguments": "{}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53583,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 4,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "denied",
+            "server_pid": 53587,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          }
+        ],
+        "receipts": []
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": true,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 0,
+        "amounts": []
+      },
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53583,
+          53587
+        ],
+        "all_exited": true
+      }
+    },
+    "changed_arguments": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53591,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-94d3-670e-8001-efca242eaee7",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "00ff6316530a5d28bbf852edafc9bb58",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc012-94d3-670e-8001-efca242eaee7",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "00ff6316530a5d28bbf852edafc9bb58",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "resume": {
+        "worker_pid": 53597,
+        "checkpoint": {
+          "next": [],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "approval_mismatch",
+            "observations": [
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "absent"
+                },
+                "text_content": "{\"status\":\"absent\"}",
+                "tool": "get_receipt"
+              },
+              {
+                "is_error": true,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "approval_mismatch"
+                },
+                "text_content": "{\"status\":\"approval_mismatch\"}",
+                "tool": "publish_report"
+              }
+            ]
+          },
+          "checkpoint_id": "1f1dc012-a9ae-6106-8003-5f8d311b84d7",
+          "tasks": []
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "approval_mismatch",
+          "observations": [
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "absent"
+              },
+              "text_content": "{\"status\":\"absent\"}",
+              "tool": "get_receipt"
+            },
+            {
+              "is_error": true,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "approval_mismatch"
+              },
+              "text_content": "{\"status\":\"approval_mismatch\"}",
+              "tool": "publish_report"
+            }
+          ]
+        },
+        "checkpoint_id": "1f1dc012-a9ae-6106-8003-5f8d311b84d7",
+        "tasks": []
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": null
+          }
+        ],
+        "reports": [],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53596,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53600,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approval_mismatch",
+            "server_pid": 53604,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":41,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          }
+        ],
+        "receipts": []
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": true,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 0,
+        "amounts": []
+      },
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53600,
+          53604
+        ],
+        "all_exited": true
+      }
+    },
+    "committed_then_write_revoked": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53606,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-b0aa-6680-8001-e9c24dd896ec",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "81b3de5f08b1cbcd4e4cfe6298b38452",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc012-b0aa-6680-8001-e9c24dd896ec",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "81b3de5f08b1cbcd4e4cfe6298b38452",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "cut": {
+        "worker_pid": 53612,
+        "observations": [
+          {
+            "is_error": false,
+            "mcp_version": "2.3.0",
+            "python": "3.12.13",
+            "result": {
+              "status": "absent"
+            },
+            "text_content": "{\"status\":\"absent\"}",
+            "tool": "get_receipt"
+          },
+          {
+            "is_error": false,
+            "mcp_version": "2.3.0",
+            "python": "3.12.13",
+            "result": {
+              "receipt": {
+                "amount": 42,
+                "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                "operation_id": "report-A:publish",
+                "resource": "A/daily",
+                "revision": 1,
+                "source_version": "v3",
+                "subject": "learner-A",
+                "task_id": "report-A",
+                "tenant": "A",
+                "tool": "publish_report"
+              },
+              "status": "committed"
+            },
+            "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+            "tool": "publish_report"
+          }
+        ],
+        "checkpoint": {
+          "next": [
+            "execute"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "ready_to_attempt",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-b7e1-65f2-8002-8f0c554432fe",
+          "tasks": [
+            {
+              "name": "execute",
+              "interrupts": []
+            }
+          ]
+        },
+        "receiver": {
+          "policy": {
+            "id": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "epoch": 1
+          },
+          "approvals": [
+            {
+              "approval_id": "approval-A-1",
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "expires": 100,
+              "write_at_approval": 1,
+              "approval_epoch": 1,
+              "used_by": "report-A:publish"
+            }
+          ],
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish",
+              "subject": "learner-A",
+              "tenant": "A",
+              "task_id": "report-A",
+              "resource": "A/daily",
+              "source_version": "v3",
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+            }
+          ],
+          "events": [
+            {
+              "seq": 1,
+              "kind": "approval",
+              "tool": "",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "approved",
+              "server_pid": 53610,
+              "rpc_request_id": "",
+              "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "tool",
+              "tool": "get_receipt",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "absent",
+              "server_pid": 53617,
+              "rpc_request_id": "3",
+              "arguments": "{\"operation_id\":\"report-A:publish\"}"
+            },
+            {
+              "seq": 3,
+              "kind": "tool",
+              "tool": "publish_report",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "committed",
+              "server_pid": 53619,
+              "rpc_request_id": "3",
+              "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "operation_id": "report-A:publish",
+              "resource": "A/daily",
+              "revision": 1,
+              "source_version": "v3",
+              "subject": "learner-A",
+              "task_id": "report-A",
+              "tenant": "A",
+              "tool": "publish_report"
+            }
+          ]
+        },
+        "exit_signal": "SIGKILL"
+      },
+      "policy_change": {
+        "can_read": 1,
+        "can_write": 0,
+        "epoch": 2,
+        "id": 1
+      },
+      "recovery": {
+        "worker_pid": 53622,
+        "checkpoint": {
+          "next": [],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "succeeded",
+            "observations": [
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "receipt": {
+                    "amount": 42,
+                    "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                    "operation_id": "report-A:publish",
+                    "resource": "A/daily",
+                    "revision": 1,
+                    "source_version": "v3",
+                    "subject": "learner-A",
+                    "task_id": "report-A",
+                    "tenant": "A",
+                    "tool": "publish_report"
+                  },
+                  "status": "found"
+                },
+                "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"found\"}",
+                "tool": "get_receipt"
+              }
+            ],
+            "receipt": {
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "operation_id": "report-A:publish",
+              "resource": "A/daily",
+              "revision": 1,
+              "source_version": "v3",
+              "subject": "learner-A",
+              "task_id": "report-A",
+              "tenant": "A",
+              "tool": "publish_report"
+            }
+          },
+          "checkpoint_id": "1f1dc012-d348-6db8-8003-917216a5cf5a",
+          "tasks": []
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "succeeded",
+          "observations": [
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "receipt": {
+                  "amount": 42,
+                  "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                  "operation_id": "report-A:publish",
+                  "resource": "A/daily",
+                  "revision": 1,
+                  "source_version": "v3",
+                  "subject": "learner-A",
+                  "task_id": "report-A",
+                  "tenant": "A",
+                  "tool": "publish_report"
+                },
+                "status": "found"
+              },
+              "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"found\"}",
+              "tool": "get_receipt"
+            }
+          ],
+          "receipt": {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        },
+        "checkpoint_id": "1f1dc012-d348-6db8-8003-917216a5cf5a",
+        "tasks": []
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 0,
+          "can_read": 1,
+          "epoch": 2
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": "report-A:publish"
+          }
+        ],
+        "reports": [
+          {
+            "revision": 1,
+            "operation_id": "report-A:publish",
+            "subject": "learner-A",
+            "tenant": "A",
+            "task_id": "report-A",
+            "resource": "A/daily",
+            "source_version": "v3",
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+          }
+        ],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53610,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53617,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "committed",
+            "server_pid": 53619,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 4,
+            "kind": "policy_change",
+            "tool": "",
+            "operation_id": "",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "revoked",
+            "server_pid": 53620,
+            "rpc_request_id": "",
+            "arguments": "{}"
+          },
+          {
+            "seq": 5,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "found",
+            "server_pid": 53624,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          }
+        ],
+        "receipts": [
+          {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        ]
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": true,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 1,
+        "amounts": [
+          42
+        ]
+      },
+      "post_revoke_tools": [
+        "get_receipt"
+      ],
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53617,
+          53619,
+          53624
+        ],
+        "all_exited": true
+      }
+    },
+    "committed_then_all_revoked": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53627,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-d9f8-61ea-8001-c43a01c0990f",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "8657066cff81e61c8a66534bb714199d",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc012-d9f8-61ea-8001-c43a01c0990f",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "8657066cff81e61c8a66534bb714199d",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "cut": {
+        "worker_pid": 53631,
+        "observations": [
+          {
+            "is_error": false,
+            "mcp_version": "2.3.0",
+            "python": "3.12.13",
+            "result": {
+              "status": "absent"
+            },
+            "text_content": "{\"status\":\"absent\"}",
+            "tool": "get_receipt"
+          },
+          {
+            "is_error": false,
+            "mcp_version": "2.3.0",
+            "python": "3.12.13",
+            "result": {
+              "receipt": {
+                "amount": 42,
+                "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                "operation_id": "report-A:publish",
+                "resource": "A/daily",
+                "revision": 1,
+                "source_version": "v3",
+                "subject": "learner-A",
+                "task_id": "report-A",
+                "tenant": "A",
+                "tool": "publish_report"
+              },
+              "status": "committed"
+            },
+            "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+            "tool": "publish_report"
+          }
+        ],
+        "checkpoint": {
+          "next": [
+            "execute"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "ready_to_attempt",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc012-e09e-6f94-8002-b88fabd73b4e",
+          "tasks": [
+            {
+              "name": "execute",
+              "interrupts": []
+            }
+          ]
+        },
+        "receiver": {
+          "policy": {
+            "id": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "epoch": 1
+          },
+          "approvals": [
+            {
+              "approval_id": "approval-A-1",
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "expires": 100,
+              "write_at_approval": 1,
+              "approval_epoch": 1,
+              "used_by": "report-A:publish"
+            }
+          ],
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish",
+              "subject": "learner-A",
+              "tenant": "A",
+              "task_id": "report-A",
+              "resource": "A/daily",
+              "source_version": "v3",
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+            }
+          ],
+          "events": [
+            {
+              "seq": 1,
+              "kind": "approval",
+              "tool": "",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "approved",
+              "server_pid": 53630,
+              "rpc_request_id": "",
+              "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+            },
+            {
+              "seq": 2,
+              "kind": "tool",
+              "tool": "get_receipt",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "absent",
+              "server_pid": 53635,
+              "rpc_request_id": "3",
+              "arguments": "{\"operation_id\":\"report-A:publish\"}"
+            },
+            {
+              "seq": 3,
+              "kind": "tool",
+              "tool": "publish_report",
+              "operation_id": "report-A:publish",
+              "policy_epoch": 1,
+              "can_write": 1,
+              "can_read": 1,
+              "outcome": "committed",
+              "server_pid": 53647,
+              "rpc_request_id": "3",
+              "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "operation_id": "report-A:publish",
+              "resource": "A/daily",
+              "revision": 1,
+              "source_version": "v3",
+              "subject": "learner-A",
+              "task_id": "report-A",
+              "tenant": "A",
+              "tool": "publish_report"
+            }
+          ]
+        },
+        "exit_signal": "SIGKILL"
+      },
+      "policy_change": {
+        "can_read": 0,
+        "can_write": 0,
+        "epoch": 2,
+        "id": 1
+      },
+      "recovery": {
+        "worker_pid": 53650,
+        "checkpoint": {
+          "next": [
+            "confirmation_wait"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "pending_confirmation",
+            "observations": [
+              {
+                "is_error": true,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "denied"
+                },
+                "text_content": "{\"status\":\"denied\"}",
+                "tool": "get_receipt"
+              }
+            ]
+          },
+          "checkpoint_id": "1f1dc012-fcc0-640c-8003-2cb361b3fef5",
+          "tasks": [
+            {
+              "name": "confirmation_wait",
+              "interrupts": [
+                {
+                  "id": "9a8adbebf43e3ef196c7fce1e340e512",
+                  "value": {
+                    "kind": "receipt_access_required",
+                    "operation_id": "report-A:publish"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [
+          "confirmation_wait"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "pending_confirmation",
+          "observations": [
+            {
+              "is_error": true,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "denied"
+              },
+              "text_content": "{\"status\":\"denied\"}",
+              "tool": "get_receipt"
+            }
+          ]
+        },
+        "checkpoint_id": "1f1dc012-fcc0-640c-8003-2cb361b3fef5",
+        "tasks": [
+          {
+            "name": "confirmation_wait",
+            "interrupts": [
+              {
+                "id": "9a8adbebf43e3ef196c7fce1e340e512",
+                "value": {
+                  "kind": "receipt_access_required",
+                  "operation_id": "report-A:publish"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 0,
+          "can_read": 0,
+          "epoch": 2
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": "report-A:publish"
+          }
+        ],
+        "reports": [
+          {
+            "revision": 1,
+            "operation_id": "report-A:publish",
+            "subject": "learner-A",
+            "tenant": "A",
+            "task_id": "report-A",
+            "resource": "A/daily",
+            "source_version": "v3",
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+          }
+        ],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53630,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53635,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "committed",
+            "server_pid": 53647,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 4,
+            "kind": "policy_change",
+            "tool": "",
+            "operation_id": "",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 0,
+            "outcome": "revoked",
+            "server_pid": 53649,
+            "rpc_request_id": "",
+            "arguments": "{}"
+          },
+          {
+            "seq": 5,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 0,
+            "outcome": "denied",
+            "server_pid": 53653,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          }
+        ],
+        "receipts": [
+          {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        ]
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": true,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 1,
+        "amounts": [
+          42
+        ]
+      },
+      "post_revoke_tools": [
+        "get_receipt"
+      ],
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53635,
+          53647,
+          53653
+        ],
+        "all_exited": true
+      }
+    },
+    "unsafe_approval_snapshot": {
+      "thread_id": "report-A-history",
+      "waiting": {
+        "worker_pid": 53669,
+        "checkpoint": {
+          "next": [
+            "approval"
+          ],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "status": "waiting_approval",
+            "observations": []
+          },
+          "checkpoint_id": "1f1dc013-03a1-6be0-8001-889d50bf9285",
+          "tasks": [
+            {
+              "name": "approval",
+              "interrupts": [
+                {
+                  "id": "448b17a86b7954be1ee6d04f9b48da89",
+                  "value": {
+                    "kind": "approval_required",
+                    "intent": {
+                      "operation_id": "report-A:publish",
+                      "task_id": "report-A",
+                      "source_version": "v3",
+                      "resource": "A/daily",
+                      "amount": 42
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "waiting_reopened_checkpoint": {
+        "next": [
+          "approval"
+        ],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "status": "waiting_approval",
+          "observations": []
+        },
+        "checkpoint_id": "1f1dc013-03a1-6be0-8001-889d50bf9285",
+        "tasks": [
+          {
+            "name": "approval",
+            "interrupts": [
+              {
+                "id": "448b17a86b7954be1ee6d04f9b48da89",
+                "value": {
+                  "kind": "approval_required",
+                  "intent": {
+                    "operation_id": "report-A:publish",
+                    "task_id": "report-A",
+                    "source_version": "v3",
+                    "resource": "A/daily",
+                    "amount": 42
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "waiting_receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 1,
+          "can_read": 1,
+          "epoch": 1
+        },
+        "approvals": [],
+        "reports": [],
+        "events": [],
+        "receipts": []
+      },
+      "approval": {
+        "approval_id": "approval-A-1",
+        "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+      },
+      "policy_change": {
+        "can_read": 1,
+        "can_write": 0,
+        "epoch": 2,
+        "id": 1
+      },
+      "resume": {
+        "worker_pid": 53673,
+        "checkpoint": {
+          "next": [],
+          "values": {
+            "intent": {
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "v3",
+              "resource": "A/daily",
+              "amount": 42
+            },
+            "approval_id": "approval-A-1",
+            "status": "succeeded",
+            "observations": [
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "status": "absent"
+                },
+                "text_content": "{\"status\":\"absent\"}",
+                "tool": "get_receipt"
+              },
+              {
+                "is_error": false,
+                "mcp_version": "2.3.0",
+                "python": "3.12.13",
+                "result": {
+                  "receipt": {
+                    "amount": 42,
+                    "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                    "operation_id": "report-A:publish",
+                    "resource": "A/daily",
+                    "revision": 1,
+                    "source_version": "v3",
+                    "subject": "learner-A",
+                    "task_id": "report-A",
+                    "tenant": "A",
+                    "tool": "publish_report"
+                  },
+                  "status": "committed"
+                },
+                "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+                "tool": "publish_report"
+              }
+            ],
+            "receipt": {
+              "amount": 42,
+              "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+              "operation_id": "report-A:publish",
+              "resource": "A/daily",
+              "revision": 1,
+              "source_version": "v3",
+              "subject": "learner-A",
+              "task_id": "report-A",
+              "tenant": "A",
+              "tool": "publish_report"
+            }
+          },
+          "checkpoint_id": "1f1dc013-1ba4-6c38-8003-0e941e308085",
+          "tasks": []
+        }
+      },
+      "reopened_checkpoint": {
+        "next": [],
+        "values": {
+          "intent": {
+            "operation_id": "report-A:publish",
+            "task_id": "report-A",
+            "source_version": "v3",
+            "resource": "A/daily",
+            "amount": 42
+          },
+          "approval_id": "approval-A-1",
+          "status": "succeeded",
+          "observations": [
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "status": "absent"
+              },
+              "text_content": "{\"status\":\"absent\"}",
+              "tool": "get_receipt"
+            },
+            {
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "result": {
+                "receipt": {
+                  "amount": 42,
+                  "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+                  "operation_id": "report-A:publish",
+                  "resource": "A/daily",
+                  "revision": 1,
+                  "source_version": "v3",
+                  "subject": "learner-A",
+                  "task_id": "report-A",
+                  "tenant": "A",
+                  "tool": "publish_report"
+                },
+                "status": "committed"
+              },
+              "text_content": "{\"receipt\":{\"amount\":42,\"intent_digest\":\"24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"revision\":1,\"source_version\":\"v3\",\"subject\":\"learner-A\",\"task_id\":\"report-A\",\"tenant\":\"A\",\"tool\":\"publish_report\"},\"status\":\"committed\"}",
+              "tool": "publish_report"
+            }
+          ],
+          "receipt": {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        },
+        "checkpoint_id": "1f1dc013-1ba4-6c38-8003-0e941e308085",
+        "tasks": []
+      },
+      "receiver": {
+        "policy": {
+          "id": 1,
+          "can_write": 0,
+          "can_read": 1,
+          "epoch": 2
+        },
+        "approvals": [
+          {
+            "approval_id": "approval-A-1",
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "expires": 100,
+            "write_at_approval": 1,
+            "approval_epoch": 1,
+            "used_by": "report-A:publish"
+          }
+        ],
+        "reports": [
+          {
+            "revision": 1,
+            "operation_id": "report-A:publish",
+            "subject": "learner-A",
+            "tenant": "A",
+            "task_id": "report-A",
+            "resource": "A/daily",
+            "source_version": "v3",
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed"
+          }
+        ],
+        "events": [
+          {
+            "seq": 1,
+            "kind": "approval",
+            "tool": "",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 1,
+            "can_write": 1,
+            "can_read": 1,
+            "outcome": "approved",
+            "server_pid": 53670,
+            "rpc_request_id": "",
+            "arguments": "{\"amount\":42,\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          },
+          {
+            "seq": 2,
+            "kind": "policy_change",
+            "tool": "",
+            "operation_id": "",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "revoked",
+            "server_pid": 53671,
+            "rpc_request_id": "",
+            "arguments": "{}"
+          },
+          {
+            "seq": 3,
+            "kind": "tool",
+            "tool": "get_receipt",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "absent",
+            "server_pid": 53675,
+            "rpc_request_id": "3",
+            "arguments": "{\"operation_id\":\"report-A:publish\"}"
+          },
+          {
+            "seq": 4,
+            "kind": "tool",
+            "tool": "publish_report",
+            "operation_id": "report-A:publish",
+            "policy_epoch": 2,
+            "can_write": 0,
+            "can_read": 1,
+            "outcome": "committed",
+            "server_pid": 53677,
+            "rpc_request_id": "3",
+            "arguments": "{\"amount\":42,\"approval_id\":\"approval-A-1\",\"operation_id\":\"report-A:publish\",\"resource\":\"A/daily\",\"source_version\":\"v3\",\"task_id\":\"report-A\"}"
+          }
+        ],
+        "receipts": [
+          {
+            "amount": 42,
+            "intent_digest": "24b68f4acb79bbf422c599517874cecfbf3dce97199bb65d5320adc88889d6ed",
+            "operation_id": "report-A:publish",
+            "resource": "A/daily",
+            "revision": 1,
+            "source_version": "v3",
+            "subject": "learner-A",
+            "task_id": "report-A",
+            "tenant": "A",
+            "tool": "publish_report"
+          }
+        ]
+      },
+      "oracle": {
+        "accepted": false,
+        "conditions": {
+          "exact_reports": true,
+          "exact_receipts": true,
+          "current_permission_at_commit": false,
+          "one_approval_bound_to_intent": true,
+          "approval_consumption": true,
+          "commits_match_effects": true
+        },
+        "expected_amount": 42,
+        "effect_count": 1,
+        "amounts": [
+          42
+        ]
+      },
+      "cleanup": {
+        "observed_mcp_server_pids": [
+          53675,
+          53677
+        ],
+        "all_exited": true
+      }
+    }
+  },
+  "scope": "Local native SDKs, file checkpoints, synthetic trusted principal and logical time, receiver-local atomic authorization, owned processes. No OAuth, LLM, remote tool or Kairo."
+}

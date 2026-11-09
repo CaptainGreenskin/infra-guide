@@ -293,7 +293,7 @@
   p('容量实验要找在约定体验和质量门槛内可持续接收的负载。先固定模型与tokenizer版本、设备与副本数、服务版本、输入输出长度分布、停止规则及评价集；再声明TTFT、输出间隔、错误与质量的门槛。达标条件要在看结果前确定，避免只挑最快的一档。',
   '按开环到达率逐档增加，每档保留实际发送、排队、准入、未完成量、KV与重算、完成量及客户端事件。若窗口末未完成量持续增长，即使短期完成吞吐很高，也没有证明该到达率可稳定承受。预热后测稳定窗口，另外记录冷启动、空缓存与重启路径，因为用户也可能遇到这些状态。',
   '再观察少一个实例时的路由和重试：同一逻辑请求的重试尝试要可关联，既记录执行成本，也避免把重复交付当成额外成功任务。量化或新算子需要同时对照数值和任务评价。例如吞吐增加20%，坏事件率却从0.2%升至1.2%，应按预先门槛判断能否采用，并准备可观测的回退条件。',
-  '本章现有实验分别证明CPU缓存数值、块池所有权、离散调度与固定成本算术；真实设备内存峰值、kernel时延、服务负载和跨机交接仍需在目标环境执行。把对应的测量补齐，才能将教学轨迹转成部署容量结论。'),
+  '本章用本机实验分别核对 CPU 缓存数值、块池所有权、固定成本算术和两条真实流式请求的调度顺序。要做部署容量判断，还需在目标负载下测设备内存峰值、算子时延、排队与交接。'),
 
   p('甲只报告“51token，一秒完成”。先追问它已有事件的含义，再补发送、首项、末项、输出总数和流式映射。用本章0、0.4、1.4s轨迹，答案为TTFT400ms、TPOT20ms、总时长1.4s；若那一秒只指首项到末项，就不能当作端到端耗时。再构造49个10ms与1个510ms间隔，说明平均值为何漏掉停顿。',
   '乙平均两实例p95。给出1000条10ms与10条1000ms，让它先合并计数再求95%位置，得到10ms而非505ms。最后为“生成很顺却客户端停顿”设计对照：同时记录服务端逐项生成和客户端逐消息接收；前者平稳、后者成团时，继续查交付链，前者本身有空档时，再关联调度与执行。',
@@ -323,7 +323,18 @@
   p('脚本从原生响应和批次日志核对这些数字。把每批输入的编号抄到第 2 节图里，就能看出哪个输出进入了下一轮。流式响应还带有提示处理进度事件，脚本先按事件类型将它们分开，再数实际输出。')+
   trainingCode('解压后运行，指定已安装的 llama-server','SHELL','python3 engine_walkthrough.py --server /absolute/path/to/llama-server --output-dir ./replay')+
   '<p class="practice-links"><a href="labs/native-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-inference/README.md">环境与运行步骤</a> · <a href="labs/native-inference/engine_walkthrough.py">请求和校验源码</a> · <a href="labs/native-inference/validation.json">实际记录与源码摘要</a></p>'+
-  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。真实模型服务的多槽调度、GPU 表现与线上延迟需要各自的实验。');
+  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。接下来保持合成模型，改为两条真实请求，比较一个槽与两个槽怎样处理后一条。<a href="/article/inference-performance/#native-inference-queue">继续看排队与流式计时 →</a>');
+
+ performance.sections[5][1]+=
+  heading('native-inference-queue','同样两条请求，单槽与双槽怎样调度')+
+  p('沿用 A3.4 的合成模型和 llama.cpp b12110 CPU 引擎。槽位保存一条正在生成的序列及其推理状态。先发长请求 A，收到首个输出后再发短请求 B。两种配置都关闭提示缓存，固定同一对请求与每槽 128 个位置。A 生成 110 项，B 生成 32 项。')+
+  trainingFigure('native-inference-queue','引擎日志核对任务的进入、推迟与释放。图表示观测顺序，间距不代表耗时。')+
+  p('单槽时，原生任务日志显示 B 被推迟，实际指标样本读到 1 个处理中、1 个等待。等 A 释放槽后，B 获得槽 0。双槽时，A 和 B 分别占用槽 0 和槽 1，两个任务都开始后才有任一槽释放。实际指标样本读到 2 个处理中、0 个等待。客户端仍要分别跟踪两条请求。')+
+  p('客户端在发送前、收到首项、收到末项和收到结束事件时，使用同一个单调时钟记时间。首项减发送是首词元等待 TTFT。末项减首项，再除以相邻间隔数，是平均输出间隔 TPOT。A 有 109 个间隔，B 有 31 个间隔。生成结束帧单独记录。')+
+  p('复算第一轮单槽的 B。相对本轮时钟起点，发送、首项和末项分别在 5.714583、29.302750 和 35.956500 毫秒。TTFT 约为 23.588 毫秒，TPOT 为 6.653750÷31，约 0.215 毫秒。这两个数字来自一次请求。服务端另用日志和指标证明 B 等过槽，客户端时钟记录整个接收过程。每种配置各运行三次，实跑范围是固定合成权重与单机 CPU。')+
+  trainingCode('解压后生成固定模型并运行，替换引擎路径','SHELL',`python3 -B make_fixture.py fixture.gguf
+python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
+  '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';

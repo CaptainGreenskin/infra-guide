@@ -638,7 +638,8 @@
         "subsection-6-38l2a0",
         "subsection-6-1i98zxe",
         "subsection-6-1ajl0y9",
-        "vllm-v1-request-path"
+        "vllm-v1-request-path",
+        "native-inference-queue"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -655,7 +656,8 @@
         "subsection-6-10t5wk9",
         "subsection-6-38l2a0",
         "subsection-6-1i98zxe",
-        "subsection-6-1ajl0y9"
+        "subsection-6-1ajl0y9",
+        "native-inference-queue"
       ]
     },
     {
@@ -791,7 +793,8 @@
         "langgraph-workflow-run",
         "langgraph-workflow-wait",
         "langgraph-workflow-reentry",
-        "mcp-commit-recovery"
+        "mcp-commit-recovery",
+        "native-approval-reentry"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -812,7 +815,8 @@
         "agent-planning-run",
         "subsection-9-62i94t",
         "langgraph-workflow-run",
-        "mcp-commit-recovery"
+        "mcp-commit-recovery",
+        "native-approval-reentry"
       ]
     },
     {

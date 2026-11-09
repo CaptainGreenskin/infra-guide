@@ -4436,6 +4436,120 @@
         "将整组作业写成可观察的状态机",
         "交一份可核对的答案"
       ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "caf7afc855996cd76a30ed4b651806218ae6b71d07afefba583577be3a9e6878",
+      "reviewed_content_sha256": "ef5e6c7ca162e531dc95ee2418cebe5da1537ce554c4dc03507f11a5e4b35862",
+      "scope": "Hand off the same synthetic engine from sequential cache observations to an overlapping pair.",
+      "observation": "The prior real engine links directly to the new native queue and SSE timing record.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "372694922860688cb094135d0464cc23397324ade6b447b0b060e13837112a9c",
+      "reviewed_content_sha256": "d690e78e43fb23007ad8eb34ffbb3be1440e728018553d42c6583339399b98d4",
+      "scope": "Separate observed server queue transitions from client timing for the same two requests.",
+      "observation": "Three pairs of real llama.cpp CPU runs use native task logs, measured metrics and 1,949 raw entries. The full token sequence and client timing can be recomputed.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1a14dfa3cfead39a14c5f4e25cf64c850835cd2315e7426b64fe8c54328e9d88",
+      "reviewed_content_sha256": "3d42e05cd809f859daa1d8e0148cf1ed16acc6a43a986f4f8ae7315b423aaf0a",
+      "scope": "Connect current write authority and exact approval to a paused workflow.",
+      "observation": "Two independent requests change the policy or bound amount before resumption and leave zero effects.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "237c92398890b54f45dc9199f970255240d7ae50719eedfad9acbde9832b9fbd",
+      "reviewed_content_sha256": "624d88b228337e3f4506a020e1fa89f605d7c98dc4b0569223ee0618056f1965",
+      "scope": "Separate permission to retrieve a committed receipt from permission to create an effect.",
+      "observation": "Read permission alone resolves a lost graph receipt. A denied lookup preserves pending confirmation while the original effect remains.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "489220a0d606688ab7152a28936ee321662b70dbf24595a2c482d0939582e07d",
+      "reviewed_content_sha256": "40b2c29af991808f5f66a2edc8120338af8146750a5ba6b472c568f8f8793a1a",
+      "scope": "Follow one approval through durable wait, current authorization, committed effects and native process recovery.",
+      "observation": "Six real LangGraph/MCP cases preserve reopened checkpoints, current permissions, both MCP result channels and receiver effects. A stale approval policy control produces one rejected effect.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "44b979a8113dec333ae1c868e7fce1752afed0f798dc23d8c058ffdb1e999e05",
+      "reviewed_content_sha256": "6304d1e34d532069f369859f74c049beca101ccf0de99185d3d8c6107b45652f",
+      "scope": "Map the demonstrated cases into the target platform acceptance contract.",
+      "observation": "Preserve approval and policy provenance, a separate receipt lookup, and receiver evidence. Execution remains an acceptance criterion for the target.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

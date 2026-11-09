@@ -289,5 +289,49 @@
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
    '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
+
+  const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
+  a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
+  a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
+   p('把 10、27 和补录的 5 汇总为一份 42 报告。LangGraph 把原发布意图保存到文件检查点，调用 interrupt 等待批准。新进程沿同一条运行记录继续，Command(resume=…) 把外部给出的批准值交回节点。批准 ID 指向接收方保存的授权记录，记录绑定发布对象、操作身份和规范化参数。'+
+    '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
+    '发布工具在接收库的同一事务内核对当前写权限和这次批准，再保存报告与回执。批准以后、真正写入以前，策略可能被撤销。保留批准 ID 却把金额从 42 改成 41，参数摘要也会失配。两种请求都应在产生效果前被拒绝。')+
+   trainingFigure('approval-reentry','图进程保存意图与进度。接收库决定当前允许写入或查询，并保存实际效果。')+
+   fold('展开接收方事务入口',trainingCode('mcp_bridge.py 的实际事务入口','PYTHON',`def execute(db_path, tool, arguments, request_context, unsafe_snapshot):
+    with closing(connect(db_path)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        context = db.execute("SELECT * FROM trusted_context").fetchone()
+        policy = db.execute("SELECT * FROM policy").fetchone()
+        result = (lookup(db, arguments, context, policy) if tool == LOOKUP
+                  else publish(db, arguments, context, policy, unsafe_snapshot))
+        log_event(db, "tool", tool, arguments["operation_id"], policy, result["status"],
+                  arguments, request_context.request_id)
+        # Approval consumption, effect, receipt and audit commit together here.
+    return result`)+p('撤权也在这个接收库里通过写事务保存。接收方在实际写入时读取当前策略。批准消费、报告、回执和审计随同一次事务提交。图检查点另用一个库。'))+
+   p('再看提交后的崩溃。接收方已保存报告和回执，工作进程却在保存图状态前被终止。新进程按原操作身份调用 get_receipt。写权限已经撤销、读回执仍允许时，可以核对原回执并结束任务。读权限也已撤销时，图只能保留待确认状态。两次恢复都只调用查询工具，独立验收仍能从接收库看到已经提交的那一份报告。')+
+   '<div class="approval-outcomes">'+table(['改变的条件','图能确认什么','报告数'],[
+    ['批准仍有效','收到金额 42 的回执','1'],
+    ['等待期间撤掉写权限','本次发布被拒绝','0'],
+    ['批准对应 42，提交改为 41','参数摘要失配，发布被拒绝','0'],
+    ['提交后崩溃，只撤写权限','查询原回执，核对既有的 42','1'],
+    ['提交后崩溃，写入与查回执权限均撤销','查询被拒，保留待确认','1'],
+    ['故意信任等待前的权限','图收到回执，独立验收发现越权','1']
+   ])+'</div>'+
+   p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
+   trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
+  a.updated='2026.11.09';
+
+  const security=articleById('agent-security');
+  security.sections[4][1]+=p('把撤权放进一次等待批准的真实工作流。审批信号决定图何时继续，接收方在提交事务里再检查当前写权限和参数摘要。预测两种情况是否会留下报告：等待期间撤销权限，或沿用批准 ID 却把金额 42 改成 41。'+approvalLink);
+  security.updated='2026.11.09';
+
+  const recovery=articleById('agent-recovery');
+  recovery.sections[3][1]+=p('若写入已经可能提交，恢复方可以按原操作身份先查回执。查回执和发布各有自己的权限。查回执被拒时，恢复者对结果的认识仍停在待确认。接收方可能已有一份实际效果，这时也不能换新操作 ID 再发一遍。'+approvalLink);
+  recovery.updated='2026.11.09';
+
+  const kairo=articleById('kairo-practice');
+  kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
+  kairo.updated='2026.11.09';
  }
 })();

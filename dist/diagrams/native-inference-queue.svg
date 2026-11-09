@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="384" viewBox="0 0 440 384" role="img" aria-labelledby="inference-queue-title inference-queue-desc">
+  <title id="inference-queue-title">两个请求经过单槽与双槽</title>
+  <desc id="inference-queue-desc">先让请求 A 活跃，再发请求 B。单槽时，B 被推迟，采样读到一个处理、一个等待。A 释放槽位后，B 获得该槽。双槽时，A 与 B 在各自的槽同时处于活跃状态，采样读到两个处理、零等待。图表示观测顺序，不用长度表示时间。</desc>
+  <rect x="1" y="1" width="438" height="382" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#20314e" font-size="16">
+    <text x="19" y="35" font-size="24" font-weight="bold">两个请求经过单槽与双槽</text>
+    <text x="19" y="61" fill="#465a78">A 先活跃，再提交 B · 竖向表示观察顺序</text>
+    <g data-slots="1">
+      <rect x="18" y="80" width="196" height="247" rx="8" fill="#fff5e7" stroke="#cca96e"/>
+      <text x="34" y="111" font-size="19" font-weight="bold" fill="#865614">一个槽</text>
+      <path d="M40 143v138" stroke="#a97832" stroke-width="2"/>
+      <g fill="#865614">
+        <circle cx="40" cy="146" r="5"/><circle cx="40" cy="189" r="5"/>
+        <circle cx="40" cy="232" r="5"/><circle cx="40" cy="276" r="5"/>
+      </g>
+      <text x="56" y="151">A 占用槽 0</text>
+      <text x="56" y="194" font-weight="bold">B 进入等待</text>
+      <text x="56" y="237">A 释放槽 0</text>
+      <text x="56" y="281">B 开始使用槽 0</text>
+      <text x="34" y="310" fill="#865614">实测有 1 处理、1 等待</text>
+    </g>
+    <g data-slots="2">
+      <rect x="226" y="80" width="196" height="247" rx="8" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="242" y="111" font-size="19" font-weight="bold" fill="#31569e">两个槽</text>
+      <path d="M248 143v138" stroke="#6584bd" stroke-width="2"/>
+      <g fill="#31569e">
+        <circle cx="248" cy="146" r="5"/><circle cx="248" cy="189" r="5"/>
+        <circle cx="248" cy="232" r="5"/><circle cx="248" cy="276" r="5"/>
+      </g>
+      <text x="264" y="151">A 占用槽 0</text>
+      <text x="264" y="194" font-weight="bold">B 占用槽 1</text>
+      <text x="264" y="237">两请求同时活跃</text>
+      <text x="264" y="281">结束后分别归还槽</text>
+      <text x="242" y="310" fill="#31569e">实测有 2 处理、0 等待</text>
+    </g>
+    <text x="19" y="354" fill="#465a78">用引擎任务与槽日志判断状态，再算用户等待</text>
+  </g>
+</svg>

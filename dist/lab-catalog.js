@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
+ 'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
@@ -193,6 +195,12 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-vo
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-torch-checkpoint')+1,0,
  {id:'ai-fsdp-reshard',track:'ai',stage:2,title:'两个训练进程保存，三个新进程继续更新',chapter:'checkpoint-recovery',anchor:'fsdp-dcp-reshard',pack:'fsdp-reshard',files:['fsdp_reshard.py','fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实 FSDP、DCP 与 Adam 恢复',observe:'区分具名保存分片和展平训练分片，核对恢复后一步与连续路径，并用缺 Adam 和错游标验证拒绝条件。',scope:'本机 CPU、同步保存与完整更新边界。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-recovery')+1,0,
+ {id:'agent-approval-reentry',track:'agent',stage:2,title:'批准之后撤权，恢复时还能做什么',chapter:'durable-workflows',anchor:'native-approval-reentry',pack:'approval-reentry',files:['workflow.py','mcp_bridge.py','source.json'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、中断、进程崩溃与接收库事务',observe:'在等待与提交后分别撤权，按当前权限、原回执和接收库报告数判断零效果、既有效果和待确认。',scope:'本机 stdio、固定主体与 SQLite。目标平台身份与跨机事务另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
+ {id:'ai-native-inference-queue',track:'ai',stage:2,title:'两条真实请求怎样在单槽与双槽里推进',chapter:'inference-performance',anchor:'native-inference-queue',pack:'native-inference-queue',files:['concurrency_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实 HTTP 流、引擎任务日志与指标',observe:'从原生任务身份区分等待和同时活跃，再用客户端时钟复算 TTFT 与 TPOT。',scope:'两条固定请求，单槽和双槽各三次。生产容量与 GPU 需要对应环境。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

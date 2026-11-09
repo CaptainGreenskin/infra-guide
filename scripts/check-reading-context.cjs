@@ -5,9 +5,9 @@ const gateTargets={
  'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage']],
  'cloud-sre':[['observability','section-9'],['elasticity','section-7'],['resilience','section-9']],
  'ai-training':[['gpu-scheduling','native-kueue-admission'],['multinode-lab','multinode-launch-run']],
- 'ai-inference':[['model-serving','section-4'],['inference-performance','section-2'],['ai-lifecycle','section-8']],
+ 'ai-inference':[['model-serving','section-4'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['ai-lifecycle','section-8']],
  'ai-operators':[['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9']],
- 'agent-platform':[['agent-sandbox','native-sandbox-container'],['durable-workflows','mcp-commit-recovery']]
+ 'agent-platform':[['agent-sandbox','native-sandbox-container'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry']]
 };
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);

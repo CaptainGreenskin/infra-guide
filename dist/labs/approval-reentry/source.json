@@ -1,0 +1,11 @@
+{
+  "task_id": "report-A",
+  "source_version": "v3",
+  "resource": "A/daily",
+  "operation_id": "report-A:publish",
+  "approval_id": "approval-A-1",
+  "fixture_principal": {"subject": "learner-A", "tenant": "A"},
+  "logical_now": 50,
+  "approval_expires": 100,
+  "batches": {"base": [10, 27], "late": [5]}
+}

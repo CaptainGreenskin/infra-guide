@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="474" viewBox="0 0 440 474" role="img" aria-labelledby="approval-reentry-title approval-reentry-desc">
+  <title id="approval-reentry-title">批准、写入与回执查询</title>
+  <desc id="approval-reentry-desc">图先保存待批准的 42 报告意图，接收库独立保存当前权限、批准和效果。恢复后，接收方在事务内检查写权限与参数，才提交报告与回执。提交后若图进程被杀，新进程先查同一个操作的回执。查权允许时认领既有报告，拒绝时保留待确认，接收方仍只有原来的一份报告。</desc>
+  <defs>
+    <marker id="approval-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0L6 3L0 6Z" fill="#47648b"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="472" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#20314e" font-size="16">
+    <text x="18" y="34" font-size="24" font-weight="bold">批准、写入与回执查询</text>
+    <text x="18" y="59" fill="#465a78">同一份 42 报告 · 沿同一操作 ID 查证</text>
+    <rect x="17" y="77" width="196" height="35" rx="6" fill="#31569e"/>
+    <rect x="226" y="77" width="197" height="35" rx="6" fill="#26664e"/>
+    <g text-anchor="middle" font-weight="bold" fill="#fff">
+      <text x="115" y="100">工作流检查点</text>
+      <text x="324" y="100">MCP 接收库</text>
+    </g>
+    <g data-stage="approval_wait">
+      <rect x="17" y="123" width="196" height="65" rx="6" fill="#eaf1ff" stroke="#99b0d8"/>
+      <rect x="226" y="123" width="197" height="65" rx="6" fill="#e5f4ed" stroke="#96c2ae"/>
+      <text x="29" y="149" font-weight="bold">等待批准</text>
+      <text x="29" y="173">保存意图，暂停运行</text>
+      <text x="238" y="149" font-weight="bold">当前权限与批准记录</text>
+      <text x="238" y="173">可在等待期间变化</text>
+    </g>
+    <g data-stage="publish_check">
+      <rect x="17" y="205" width="196" height="74" rx="6" fill="#eaf1ff" stroke="#99b0d8"/>
+      <rect x="226" y="205" width="197" height="74" rx="6" fill="#e5f4ed" stroke="#96c2ae"/>
+      <text x="29" y="233" font-weight="bold">新进程带着批准继续</text>
+      <text x="29" y="257">提交原意图与批准 ID</text>
+      <text x="238" y="233" font-weight="bold">事务内检查，再发布</text>
+      <text x="238" y="257">权限与参数均匹配才写</text>
+      <path d="M207 244h22" stroke="#47648b" stroke-width="1.7" marker-end="url(#approval-arrow)"/>
+    </g>
+    <text x="18" y="306" fill="#865614" font-weight="bold">报告与回执已提交，图尚未保存回执时崩溃</text>
+    <g data-stage="receipt_lookup">
+      <rect x="17" y="319" width="196" height="74" rx="6" fill="#eaf1ff" stroke="#99b0d8"/>
+      <rect x="226" y="319" width="197" height="74" rx="6" fill="#e5f4ed" stroke="#96c2ae"/>
+      <text x="29" y="347" font-weight="bold">再次恢复</text>
+      <text x="29" y="371">沿原操作 ID 查询回执</text>
+      <text x="238" y="347" font-weight="bold">只检查本次查回执的权限</text>
+      <text x="238" y="371">允许才返回原回执</text>
+      <path d="M207 358h22" stroke="#47648b" stroke-width="1.7" marker-end="url(#approval-arrow)"/>
+    </g>
+    <text x="18" y="423" fill="#205b46">可查询 → 图核对原回执，任务完成</text>
+    <text x="18" y="449" fill="#865614">查询被拒 → 图保持待确认，接收库仍一份</text>
+  </g>
+</svg>

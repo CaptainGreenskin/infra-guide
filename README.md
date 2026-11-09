@@ -19,6 +19,8 @@ Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、�
 
 用同一个 Indexed Job 连接 Kubernetes 节点调度与 AI 作业准入。Kueue 实验依次解除额度占用和节点标签限制，再按索引核对两份实际 CPU 工作结果。Cloud 调度章、AI 作业平台和训练岗位路线都能直达这段实验。 [从排队到作业完成](https://captaingreenskin.github.io/infra-guide/article/gpu-scheduling/#native-kueue-admission)
 
+推理性能章对照两个真实请求的单槽排队与双槽活跃，再用客户端流事件复算首词元等待。Agent 工作流章沿同一份报告区分批准后发布、崩溃后查回执和撤权后的待确认状态。 [推理并发实验](https://captaingreenskin.github.io/infra-guide/article/inference-performance/#native-inference-queue) · [批准后恢复实验](https://captaingreenskin.github.io/infra-guide/article/durable-workflows/#native-approval-reentry)
+
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
 入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)

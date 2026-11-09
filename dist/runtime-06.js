@@ -7148,7 +7148,7 @@ const progressiveAgentSectionTitles={
   p('容量实验要找在约定体验和质量门槛内可持续接收的负载。先固定模型与tokenizer版本、设备与副本数、服务版本、输入输出长度分布、停止规则及评价集；再声明TTFT、输出间隔、错误与质量的门槛。达标条件要在看结果前确定，避免只挑最快的一档。',
   '按开环到达率逐档增加，每档保留实际发送、排队、准入、未完成量、KV与重算、完成量及客户端事件。若窗口末未完成量持续增长，即使短期完成吞吐很高，也没有证明该到达率可稳定承受。预热后测稳定窗口，另外记录冷启动、空缓存与重启路径，因为用户也可能遇到这些状态。',
   '再观察少一个实例时的路由和重试：同一逻辑请求的重试尝试要可关联，既记录执行成本，也避免把重复交付当成额外成功任务。量化或新算子需要同时对照数值和任务评价。例如吞吐增加20%，坏事件率却从0.2%升至1.2%，应按预先门槛判断能否采用，并准备可观测的回退条件。',
-  '本章现有实验分别证明CPU缓存数值、块池所有权、离散调度与固定成本算术；真实设备内存峰值、kernel时延、服务负载和跨机交接仍需在目标环境执行。把对应的测量补齐，才能将教学轨迹转成部署容量结论。'),
+  '本章用本机实验分别核对 CPU 缓存数值、块池所有权、固定成本算术和两条真实流式请求的调度顺序。要做部署容量判断，还需在目标负载下测设备内存峰值、算子时延、排队与交接。'),
 
   p('甲只报告“51token，一秒完成”。先追问它已有事件的含义，再补发送、首项、末项、输出总数和流式映射。用本章0、0.4、1.4s轨迹，答案为TTFT400ms、TPOT20ms、总时长1.4s；若那一秒只指首项到末项，就不能当作端到端耗时。再构造49个10ms与1个510ms间隔，说明平均值为何漏掉停顿。',
   '乙平均两实例p95。给出1000条10ms与10条1000ms，让它先合并计数再求95%位置，得到10ms而非505ms。最后为“生成很顺却客户端停顿”设计对照：同时记录服务端逐项生成和客户端逐消息接收；前者平稳、后者成团时，继续查交付链，前者本身有空档时，再关联调度与执行。',
@@ -7178,7 +7178,18 @@ const progressiveAgentSectionTitles={
   p('脚本从原生响应和批次日志核对这些数字。把每批输入的编号抄到第 2 节图里，就能看出哪个输出进入了下一轮。流式响应还带有提示处理进度事件，脚本先按事件类型将它们分开，再数实际输出。')+
   trainingCode('解压后运行，指定已安装的 llama-server','SHELL','python3 engine_walkthrough.py --server /absolute/path/to/llama-server --output-dir ./replay')+
   '<p class="practice-links"><a href="labs/native-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-inference/README.md">环境与运行步骤</a> · <a href="labs/native-inference/engine_walkthrough.py">请求和校验源码</a> · <a href="labs/native-inference/validation.json">实际记录与源码摘要</a></p>'+
-  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。真实模型服务的多槽调度、GPU 表现与线上延迟需要各自的实验。');
+  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。接下来保持合成模型，改为两条真实请求，比较一个槽与两个槽怎样处理后一条。<a href="/article/inference-performance/#native-inference-queue">继续看排队与流式计时 →</a>');
+
+ performance.sections[5][1]+=
+  heading('native-inference-queue','同样两条请求，单槽与双槽怎样调度')+
+  p('沿用 A3.4 的合成模型和 llama.cpp b12110 CPU 引擎。槽位保存一条正在生成的序列及其推理状态。先发长请求 A，收到首个输出后再发短请求 B。两种配置都关闭提示缓存，固定同一对请求与每槽 128 个位置。A 生成 110 项，B 生成 32 项。')+
+  trainingFigure('native-inference-queue','引擎日志核对任务的进入、推迟与释放。图表示观测顺序，间距不代表耗时。')+
+  p('单槽时，原生任务日志显示 B 被推迟，实际指标样本读到 1 个处理中、1 个等待。等 A 释放槽后，B 获得槽 0。双槽时，A 和 B 分别占用槽 0 和槽 1，两个任务都开始后才有任一槽释放。实际指标样本读到 2 个处理中、0 个等待。客户端仍要分别跟踪两条请求。')+
+  p('客户端在发送前、收到首项、收到末项和收到结束事件时，使用同一个单调时钟记时间。首项减发送是首词元等待 TTFT。末项减首项，再除以相邻间隔数，是平均输出间隔 TPOT。A 有 109 个间隔，B 有 31 个间隔。生成结束帧单独记录。')+
+  p('复算第一轮单槽的 B。相对本轮时钟起点，发送、首项和末项分别在 5.714583、29.302750 和 35.956500 毫秒。TTFT 约为 23.588 毫秒，TPOT 为 6.653750÷31，约 0.215 毫秒。这两个数字来自一次请求。服务端另用日志和指标证明 B 等过槽，客户端时钟记录整个接收过程。每种配置各运行三次，实跑范围是固定合成权重与单机 CPU。')+
+  trainingCode('解压后生成固定模型并运行，替换引擎路径','SHELL',`python3 -B make_fixture.py fixture.gguf
+python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
+  '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
@@ -10452,6 +10463,50 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
    '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
+
+  const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
+  a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
+  a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
+   p('把 10、27 和补录的 5 汇总为一份 42 报告。LangGraph 把原发布意图保存到文件检查点，调用 interrupt 等待批准。新进程沿同一条运行记录继续，Command(resume=…) 把外部给出的批准值交回节点。批准 ID 指向接收方保存的授权记录，记录绑定发布对象、操作身份和规范化参数。'+
+    '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
+    '发布工具在接收库的同一事务内核对当前写权限和这次批准，再保存报告与回执。批准以后、真正写入以前，策略可能被撤销。保留批准 ID 却把金额从 42 改成 41，参数摘要也会失配。两种请求都应在产生效果前被拒绝。')+
+   trainingFigure('approval-reentry','图进程保存意图与进度。接收库决定当前允许写入或查询，并保存实际效果。')+
+   fold('展开接收方事务入口',trainingCode('mcp_bridge.py 的实际事务入口','PYTHON',`def execute(db_path, tool, arguments, request_context, unsafe_snapshot):
+    with closing(connect(db_path)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        context = db.execute("SELECT * FROM trusted_context").fetchone()
+        policy = db.execute("SELECT * FROM policy").fetchone()
+        result = (lookup(db, arguments, context, policy) if tool == LOOKUP
+                  else publish(db, arguments, context, policy, unsafe_snapshot))
+        log_event(db, "tool", tool, arguments["operation_id"], policy, result["status"],
+                  arguments, request_context.request_id)
+        # Approval consumption, effect, receipt and audit commit together here.
+    return result`)+p('撤权也在这个接收库里通过写事务保存。接收方在实际写入时读取当前策略。批准消费、报告、回执和审计随同一次事务提交。图检查点另用一个库。'))+
+   p('再看提交后的崩溃。接收方已保存报告和回执，工作进程却在保存图状态前被终止。新进程按原操作身份调用 get_receipt。写权限已经撤销、读回执仍允许时，可以核对原回执并结束任务。读权限也已撤销时，图只能保留待确认状态。两次恢复都只调用查询工具，独立验收仍能从接收库看到已经提交的那一份报告。')+
+   '<div class="approval-outcomes">'+table(['改变的条件','图能确认什么','报告数'],[
+    ['批准仍有效','收到金额 42 的回执','1'],
+    ['等待期间撤掉写权限','本次发布被拒绝','0'],
+    ['批准对应 42，提交改为 41','参数摘要失配，发布被拒绝','0'],
+    ['提交后崩溃，只撤写权限','查询原回执，核对既有的 42','1'],
+    ['提交后崩溃，写入与查回执权限均撤销','查询被拒，保留待确认','1'],
+    ['故意信任等待前的权限','图收到回执，独立验收发现越权','1']
+   ])+'</div>'+
+   p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
+   trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
+  a.updated='2026.11.09';
+
+  const security=articleById('agent-security');
+  security.sections[4][1]+=p('把撤权放进一次等待批准的真实工作流。审批信号决定图何时继续，接收方在提交事务里再检查当前写权限和参数摘要。预测两种情况是否会留下报告：等待期间撤销权限，或沿用批准 ID 却把金额 42 改成 41。'+approvalLink);
+  security.updated='2026.11.09';
+
+  const recovery=articleById('agent-recovery');
+  recovery.sections[3][1]+=p('若写入已经可能提交，恢复方可以按原操作身份先查回执。查回执和发布各有自己的权限。查回执被拒时，恢复者对结果的认识仍停在待确认。接收方可能已有一份实际效果，这时也不能换新操作 ID 再发一遍。'+approvalLink);
+  recovery.updated='2026.11.09';
+
+  const kairo=articleById('kairo-practice');
+  kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
+  kairo.updated='2026.11.09';
  }
 })();
 
@@ -13433,10 +13488,10 @@ const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。三项实跑使用独立夹具。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算一个请求的缓存与并发容量。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>复算首词元等待，再用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，说明切换何时才算完成。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对只读输入和可写产物。再看<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>。工具已返回回执，图恢复同一任务时仍要重跑 publish。先预测沿用操作 ID 或按尝试生成 ID 各会留下几份报告，再用两份数据库的记录核对金额、回执和图的终态。目标平台另按适配器契约验收。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -13924,6 +13979,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
+ 'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
@@ -14117,6 +14174,12 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-vo
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-torch-checkpoint')+1,0,
  {id:'ai-fsdp-reshard',track:'ai',stage:2,title:'两个训练进程保存，三个新进程继续更新',chapter:'checkpoint-recovery',anchor:'fsdp-dcp-reshard',pack:'fsdp-reshard',files:['fsdp_reshard.py','fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实 FSDP、DCP 与 Adam 恢复',observe:'区分具名保存分片和展平训练分片，核对恢复后一步与连续路径，并用缺 Adam 和错游标验证拒绝条件。',scope:'本机 CPU、同步保存与完整更新边界。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-recovery')+1,0,
+ {id:'agent-approval-reentry',track:'agent',stage:2,title:'批准之后撤权，恢复时还能做什么',chapter:'durable-workflows',anchor:'native-approval-reentry',pack:'approval-reentry',files:['workflow.py','mcp_bridge.py','source.json'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、中断、进程崩溃与接收库事务',observe:'在等待与提交后分别撤权，按当前权限、原回执和接收库报告数判断零效果、既有效果和待确认。',scope:'本机 stdio、固定主体与 SQLite。目标平台身份与跨机事务另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
+ {id:'ai-native-inference-queue',track:'ai',stage:2,title:'两条真实请求怎样在单槽与双槽里推进',chapter:'inference-performance',anchor:'native-inference-queue',pack:'native-inference-queue',files:['concurrency_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实 HTTP 流、引擎任务日志与指标',observe:'从原生任务身份区分等待和同时活跃，再用客户端时钟复算 TTFT 与 TPOT。',scope:'两条固定请求，单槽和双槽各三次。生产容量与 GPU 需要对应环境。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14340,5 +14403,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="f70cd3ae8a55a16927efda6b753785c079efe8f39112b507fe29b2e0badbfad6";
+const staticReadingVersion="7452605378f4687b42872146c10f5e6f6cc917af1c8a17393e044771f7d9514e";
 

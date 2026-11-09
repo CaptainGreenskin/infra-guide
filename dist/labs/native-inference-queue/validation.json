@@ -1,0 +1,566 @@
+{
+  "clock": "SSE and metrics use client time.monotonic_ns relative to one origin per run. Native timestamps belong to the engine process.",
+  "engine_binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+  "fixture_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66",
+  "llama_cpp": "0.9.0-dev (build 12110, commit cd959bae9)",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "python": "3.9.6",
+  "records_sha256": {
+    "events.jsonl": "7f7b5b57322907242160e84907ed3ddadacf23426c35fcf07fb37086fb180b34"
+  },
+  "runs": [
+    {
+      "id": "1-slot-1",
+      "metric_counter_deltas": {
+        "n_decode_total": 142.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 1.0,
+        "requests_processing": 1.0
+      },
+      "metric_samples": 22,
+      "observed_two_active_gauge": false,
+      "per_slot_context": 128,
+      "record_range": [
+        1,
+        328
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 5696125,
+          "last_token_ns": 32713625,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 3293125,
+          "stop_ns": 33622416,
+          "tpot_ns": 247866.9724770642,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 454,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 2
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 7909,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 2403000
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 29302750,
+          "last_token_ns": 35956500,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 5714583,
+          "stop_ns": 36145791,
+          "tpot_ns": 214637.09677419355,
+          "trace": {
+            "defer_lines": [
+              1143
+            ],
+            "start": {
+              "line": 7932,
+              "prompt_tokens": 5,
+              "slot": 0,
+              "task": 15
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 10176,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 23588167
+        }
+      },
+      "slots": 1
+    },
+    {
+      "id": "2-slot-1",
+      "metric_counter_deltas": {
+        "n_decode_total": 110.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 0.0,
+        "requests_processing": 2.0
+      },
+      "metric_samples": 17,
+      "observed_two_active_gauge": true,
+      "per_slot_context": 128,
+      "record_range": [
+        329,
+        650
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 2734500,
+          "last_token_ns": 28543541,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 1746125,
+          "stop_ns": 28551333,
+          "tpot_ns": 236780.19266055047,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 446,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 2
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 8319,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 988375
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 4902291,
+          "last_token_ns": 11582333,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 2759708,
+          "stop_ns": 12986333,
+          "tpot_ns": 215485.2258064516,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 1222,
+              "prompt_tokens": 5,
+              "slot": 1,
+              "task": 15
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 3764,
+              "slot": 1
+            }
+          },
+          "ttft_ns": 2142583
+        }
+      },
+      "slots": 2
+    },
+    {
+      "id": "1-slot-2",
+      "metric_counter_deltas": {
+        "n_decode_total": 142.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 1.0,
+        "requests_processing": 1.0
+      },
+      "metric_samples": 21,
+      "observed_two_active_gauge": false,
+      "per_slot_context": 128,
+      "record_range": [
+        651,
+        977
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 3749916,
+          "last_token_ns": 29908541,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 2661750,
+          "stop_ns": 30051541,
+          "tpot_ns": 239987.3853211009,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 442,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 2
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 7903,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 1088166
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 26897291,
+          "last_token_ns": 33333250,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 3773000,
+          "stop_ns": 33464916,
+          "tpot_ns": 207611.5806451613,
+          "trace": {
+            "defer_lines": [
+              1335
+            ],
+            "start": {
+              "line": 7926,
+              "prompt_tokens": 5,
+              "slot": 0,
+              "task": 17
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 10170,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 23124291
+        }
+      },
+      "slots": 1
+    },
+    {
+      "id": "2-slot-2",
+      "metric_counter_deltas": {
+        "n_decode_total": 110.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 0.0,
+        "requests_processing": 2.0
+      },
+      "metric_samples": 17,
+      "observed_two_active_gauge": true,
+      "per_slot_context": 128,
+      "record_range": [
+        978,
+        1299
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 2348125,
+          "last_token_ns": 30312125,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 1654875,
+          "stop_ns": 30376250,
+          "tpot_ns": 256550.45871559632,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 446,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 2
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 8339,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 693250
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 4428375,
+          "last_token_ns": 11442959,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 2367500,
+          "stop_ns": 12336084,
+          "tpot_ns": 226276.90322580645,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 1228,
+              "prompt_tokens": 5,
+              "slot": 1,
+              "task": 15
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 3764,
+              "slot": 1
+            }
+          },
+          "ttft_ns": 2060875
+        }
+      },
+      "slots": 2
+    },
+    {
+      "id": "1-slot-3",
+      "metric_counter_deltas": {
+        "n_decode_total": 142.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 1.0,
+        "requests_processing": 1.0
+      },
+      "metric_samples": 21,
+      "observed_two_active_gauge": false,
+      "per_slot_context": 128,
+      "record_range": [
+        1300,
+        1626
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 2753041,
+          "last_token_ns": 29748291,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 2020375,
+          "stop_ns": 29922875,
+          "tpot_ns": 247662.84403669724,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 442,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 2
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 7906,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 732666
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 27327833,
+          "last_token_ns": 34690916,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 2796916,
+          "stop_ns": 34776375,
+          "tpot_ns": 237518.8064516129,
+          "trace": {
+            "defer_lines": [
+              1070
+            ],
+            "start": {
+              "line": 7929,
+              "prompt_tokens": 5,
+              "slot": 0,
+              "task": 13
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 10172,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 24530917
+        }
+      },
+      "slots": 1
+    },
+    {
+      "id": "2-slot-3",
+      "metric_counter_deltas": {
+        "n_decode_total": 110.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "metric_maxima": {
+        "requests_deferred": 0.0,
+        "requests_processing": 2.0
+      },
+      "metric_samples": 18,
+      "observed_two_active_gauge": true,
+      "per_slot_context": 128,
+      "record_range": [
+        1627,
+        1949
+      ],
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "first_token_ns": 24003041,
+          "last_token_ns": 53573291,
+          "output_count": 110,
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "sent_ns": 22098208,
+          "stop_ns": 53627000,
+          "tpot_ns": 271286.6972477064,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 458,
+              "prompt_tokens": 4,
+              "slot": 0,
+              "task": 3
+            },
+            "stop": {
+              "cached_tokens": 113,
+              "line": 8360,
+              "slot": 0
+            }
+          },
+          "ttft_ns": 1904833
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "first_token_ns": 25266750,
+          "last_token_ns": 35379416,
+          "output_count": 32,
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "sent_ns": 24047583,
+          "stop_ns": 35494583,
+          "tpot_ns": 326215.03225806454,
+          "trace": {
+            "defer_lines": [],
+            "start": {
+              "line": 894,
+              "prompt_tokens": 5,
+              "slot": 1,
+              "task": 9
+            },
+            "stop": {
+              "cached_tokens": 36,
+              "line": 3441,
+              "slot": 1
+            }
+          },
+          "ttft_ns": 1219167
+        }
+      },
+      "slots": 2
+    }
+  ],
+  "schema": 1,
+  "scope": "loopback native CPU, tiny synthetic model, fixed prompts, metrics and verbose logging enabled; no GPU, vLLM, or performance benchmark",
+  "source_sha256": {
+    "concurrency_lab.py": "0bd47ee5c16a4600f4edc1bf16f1b5cb4de9b2603901084aed84082fa9672975",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf"
+  },
+  "status": "passed"
+}

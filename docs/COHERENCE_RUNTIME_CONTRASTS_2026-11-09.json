@@ -1,0 +1,242 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "4e9ce021db856e5a5c4e3355d42484ed3f8a7646",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_KUEUE_ADMISSION_2026-11-09.json": "b38cf28bb57aab5826a0fa4c6b27b58be99ebdee7823f3f9bd9288ebf9b678ae"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "df65eea1f547a68a7c0b479139d0ffdb4a8ab91405052f46cf4c919bba3bcd16",
+      "reviewed_sha256": "508fb22f0469d48b5c5c32ee63b9983c597eb6698a3a3de6b5ba69183e93f794",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "2ebbbb8ebdc6eef6d18838464b4f7998011098e0a55918a877565bbcc448097d",
+      "reviewed_sha256": "a0fcda56bbc9942277b70df3a69b7d2dbefff6d2ea6f279f902b3dfdac83fc6e",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "5a76b9d0a79416c6af1fe11286a8463696d8c84dd0b2f9ebe5a6809b50e4b197",
+      "reviewed_sha256": "a382f8d6d237cc10e2294e1b5af94cb1415039f7e31ba0af65bc7f207a102e37",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/diagrams/approval-reentry.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f2b6719929a09b8a852a89892e69dd8684c6bc00c5e2e0f3874e09984589625d",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/diagrams/native-inference-queue.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f2718c59b8c17c38de8376211c6b71bee3eed56b116ac193a136e59b40c285f7",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "a60d9117871095e7848203ab35f51030d06d6bc039e67a1f64cb736997cc83d6",
+      "reviewed_sha256": "f1041cd6f7177f8dfbc0de62952eb6fe11d721eca39012e121d48697a315f8d0",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "c370816ca72e470c1b68e7cb47e09e8f2d5d03b17ed70c1752d449f45fa7fda8",
+      "reviewed_sha256": "f66174a08f3365dfa864e3e6978394cb48c05a7261a34e162e4b44fde53aee85",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "6770895c752f0a807117bb939c12aede7697c01429bfeb7b2ac769f29371b622",
+      "reviewed_sha256": "7ff5f46f1a4d89deafff5972c38591d59d3cde49f778a9ce3abe8451c3ae9ece",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "37a5a295a222184970c9a542b75f03a1ce60965905b36166d52ee05001ed7ce5",
+      "reviewed_sha256": "9cd194670b54f8505475b1c0e4dbc2871652751fb7bd5ceabc29d4b8636afa86",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "698625640f64ac212b2ff6148f4feee855ac0b635d0ea5b385650a1a4c44b65c",
+      "reviewed_sha256": "3aec1a0db7ca42190a8313ac5acd9e0855ce59197e12c5a95883b2a131aecd5c",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "ca522b5a5f33f551f5030c8239313ecc92629233e3b36e90f17c6020ffd5e09f",
+      "reviewed_sha256": "5b9de8794c071154ea71bfe86c88b2f867bdae22e78ef60277c47e9b7c755e4c",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "a7f276b1003424893683843f3d2c5441d412977645a27fb3317b53f25d0ceacc",
+      "reviewed_sha256": "4d2402f134abf3b84c24916f093ee849a772a5c7435291502aa6e9fa59feb106",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "scripts/check-approval-reentry.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "57c62e70688f2d8fc4758eca84f4f7938469f32300497679d053feaac130e479",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "scripts/check-inference-queue.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f8b530beb7b7a38c0da9ed697d78d1f28e25c3b25b2f9c93e5eb63ba59c45ddd",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "d646ac4613eec51dbf5c9cafe108cad714b0505b042ebc570d2c6b19b596c57e",
+      "reviewed_sha256": "585119513a5d39b311a46a56420b8f6a5a1ca67dcb017b149540a79056e5be94",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "dist/labs/approval-reentry.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7d506b3058eaf5d206faab4fabf5b5af996121d0c7ee7e3661d3d8aa98e3a93a",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c686ee3cc70ad46dfd926be15bf03b1d50a845697d8a8222f9614345002af2b5",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/mcp_bridge.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f4035e267ca21d498264f46a0919b61f0aa87177889d0ad1e4366dc7a6f47e8c",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/requirements-graph.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/requirements-mcp.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/source.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "32e2479902314a6d0e55060144726a4065ff0a8ff9428e020ef5c4240275f707",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "37fe5fc3891ee155901775a93ef5f012dee7ff33b9ec734c041c0cb32dd5bfd6",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/approval-reentry/workflow.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "908af664524a0790f699d480c39f4902ff3ae0e4bd624e7e0f7c416dc064454f",
+      "scope": "Follow the same intended report across current authorization, native workflow recovery, and an independently inspected receiver."
+    },
+    "dist/labs/native-inference-queue.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d0c700692e32ac017fea07776abe72ff6ab49bc4080bfdbe894875f90619ee17",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/labs/native-inference-queue/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b9e9cf4ba9649965fdd5d22f311897948f1721586dd5548bbeb364ef33c6bcdc",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/labs/native-inference-queue/concurrency_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0bd47ee5c16a4600f4edc1bf16f1b5cb4de9b2603901084aed84082fa9672975",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/labs/native-inference-queue/events.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7f7b5b57322907242160e84907ed3ddadacf23426c35fcf07fb37086fb180b34",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/labs/native-inference-queue/make_fixture.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "dist/labs/native-inference-queue/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0673b2b52a19e257df85d48d0825d6202a7822a8f18ed50eb89f0d5a11b7747b",
+      "scope": "Tie observed slot transitions to request events on the independent client clock."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "009cc1359a8d42ebec1e085a42313d873c5b29369f2939324d879f88bc81887f",
+      "reviewed_sha256": "ed4e00ef3defc0ba8119470e0a0cd7fd5b438dc4a430bff7672744f05d52da51",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "df7b4e1c69c410524ed9fac93f4afef5731a648ea893678465b63981631d674d",
+      "reviewed_sha256": "63b17c3bc35410a113b3a34962ecba44d5897847fc6336d78a6db5a46186ff03",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "docs/CONTENT_RUNTIME_CONTRASTS_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7f45b01419cd40dacf07dfae590ce7ed60abcaee8b9837ec2ff5e09ec5e98a17",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "96c8816569be5e7cd92bc1d9f21e00ef8d5ea1e2810a41f37c9bd7e1a7eb8e63",
+      "reviewed_sha256": "e5b8c213d713ec89f0b86b43a0fab2cfe8ab8a9a9d5b743a60b0b3fbc58bb93b",
+      "scope": "Publish both native experiments with exact role links and preserved original chapters, source and anchors."
+    }
+  },
+  "article_sections": {
+    "agent-security": {
+      "sections": [
+        5
+      ],
+      "scope": "Connect current write authority and exact approval to a paused workflow.",
+      "observation": "Two independent requests change the policy or bound amount before resumption and leave zero effects."
+    },
+    "agent-recovery": {
+      "sections": [
+        4
+      ],
+      "scope": "Separate permission to retrieve a committed receipt from permission to create an effect.",
+      "observation": "Read permission alone resolves a lost graph receipt. A denied lookup preserves pending confirmation while the original effect remains."
+    },
+    "durable-workflows": {
+      "sections": [
+        8,
+        9
+      ],
+      "scope": "Follow one approval through durable wait, current authorization, committed effects and native process recovery.",
+      "observation": "Six real LangGraph/MCP cases preserve reopened checkpoints, current permissions, both MCP result channels and receiver effects. A stale approval policy control produces one rejected effect."
+    },
+    "kairo-practice": {
+      "sections": [
+        6
+      ],
+      "scope": "Map the demonstrated cases into the target platform acceptance contract.",
+      "observation": "Preserve approval and policy provenance, a separate receipt lookup, and receiver evidence. Execution remains an acceptance criterion for the target."
+    },
+    "model-serving": {
+      "sections": [
+        7
+      ],
+      "scope": "Hand off the same synthetic engine from sequential cache observations to an overlapping pair.",
+      "observation": "The prior real engine links directly to the new native queue and SSE timing record."
+    },
+    "inference-performance": {
+      "sections": [
+        6,
+        7
+      ],
+      "scope": "Separate observed server queue transitions from client timing for the same two requests.",
+      "observation": "Three pairs of real llama.cpp CPU runs use native task logs, measured metrics and 1,949 raw entries. The full token sequence and client timing can be recomputed."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "4e9ce021db856e5a5c4e3355d42484ed3f8a7646",
+    "chapters": 78,
+    "changed_bodies": [
+      "model-serving",
+      "inference-performance",
+      "agent-security",
+      "agent-recovery",
+      "durable-workflows",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "inference-performance": 1,
+      "durable-workflows": 2
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 67,
+    "learning_tasks": 107
+  }
+}
