@@ -1,0 +1,41 @@
+name: Observe one CPU DDP Job across two kind workers
+on:
+  push:
+    branches: ['content/k8s-gloo-v97*']
+    paths:
+      - .github/workflows/kubernetes-gloo-job.yml
+      - dist/labs/kubernetes-gloo-job/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pinned official Kubernetes tools
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/guide-gloo-tools"
+          cd "$RUNNER_TEMP/guide-gloo-tools"
+          # Digests from the official kind release and dl.k8s.io checksums.
+          gh release download v0.33.0 --repo kubernetes-sigs/kind --pattern kind-linux-amd64
+          printf '%s  %s\n' 'aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d' kind-linux-amd64 | sha256sum --check --strict
+          mv kind-linux-amd64 kind
+          curl --fail --location --retry 2 https://dl.k8s.io/release/v1.35.8/bin/linux/amd64/kubectl -o kubectl ||
+            curl --fail --location --retry 2 https://dl.k8s.io/v1.35.8/bin/linux/amd64/kubectl -o kubectl
+          printf '%s  %s\n' '874d5e72dbb819f43cff16bcd1e4f8bac5b7f2361fe1e55049b0a6c676fb0cbf' kubectl | sha256sum --check --strict
+          chmod +x kind kubectl
+          echo "$RUNNER_TEMP/guide-gloo-tools" >> "$GITHUB_PATH"
+      - name: Observe scheduling, Gloo rendezvous and a shared update
+        run: python3 -B dist/labs/kubernetes-gloo-job/observe_job.py --output native-results/kubernetes-gloo-job.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-kubernetes-gloo-job
+          path: native-results/kubernetes-gloo-job.json
+          if-no-files-found: error
+          retention-days: 7
