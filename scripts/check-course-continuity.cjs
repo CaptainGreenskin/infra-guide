@@ -32,11 +32,15 @@ const old=require('./content-at-commit.cjs')('0ef6f2b7d91ba401577cabc9f997890f53
 const prePattern=/<pre\b[\s\S]*?<\/pre>/g;
 const figurePattern=/<figure\b[\s\S]*?<\/figure>/g;
 const hrefPattern=/\bhref=["'][^"']+["']/g;
+const flashLessons=section('flash-attention-io',7).split('<h3 id="ragged-ring-training">分片长度不等时，哪些位置还可以读</h3>');
+assert.equal(flashLessons.length,2,'the ragged ring lesson follows the historical attention lessons');
+assert(flashLessons[0].includes('<h3 id="ring-context-training">'));
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
  const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert.equal(a.updated,'2026.11.09');
  assert.notEqual(JSON.stringify(a.sections),JSON.stringify(before.sections));
  assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]));
- const body=a.sections.map(s=>s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
+ // check-ragged-ring.cjs covers the new suffix; keep the previous inventory exact.
+ const body=a.sections.map((s,i)=>id==='flash-attention-io'&&i===7?flashLessons[0]:s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
  for(const re of [prePattern,figurePattern,hrefPattern]){
   const current=body.match(re)||[],former=previous.match(re)||[];
   if(re===hrefPattern&&id==='tensor-parallel-math'){
@@ -95,7 +99,9 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
   assert.deepEqual(re===prePattern?current:current.sort(),re===prePattern?former:former.sort(),id+': original code, figure and URL inventory');
  }
 }
-assert(section('training-communication',5).includes('/article/flash-attention-io/#context-parallel-attention'));
+const trainingLessons=section('training-communication',5).split('<h3 id="ragged-ring-communication">不等长位置分片怎样约定收发形状</h3>');
+assert.equal(trainingLessons.length,2,'the ragged ring bridge follows the historical communication lesson');
+assert(trainingLessons[0].includes('/article/flash-attention-io/#context-parallel-attention'));
 assert(!training.includes('flash-attention-io'),'the context-parallel lesson remains an optional training extension');
 const context=JSON.parse(fs.readFileSync('dist/labs/context-parallel/validation.json','utf8'));
 assert.deepEqual([context.status,context.device,context.backend,context.world_size],['passed','cpu','gloo',2]);

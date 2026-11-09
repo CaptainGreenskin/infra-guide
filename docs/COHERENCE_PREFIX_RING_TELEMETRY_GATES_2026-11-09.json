@@ -1,0 +1,26 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "04ab1154405689de2fe4921afdaf1c1d5caff838",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PREFIX_RING_TELEMETRY_2026-11-09.json": "66cc22befb726d257b1dc8c732ddb6a8aefcebe1c0934ae4e40406ba124013c6"
+  },
+  "source_revisions": {
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "70954ded0dc8bffc6822150477bf8732cffa8bcaee11c00143e9ff12b81b9625",
+      "reviewed_sha256": "a50baa476eaf9bdc77ee4a92fef684e927cf9538d6aa49e912c51ace58cdb7c8",
+      "scope": "Keep the published original ring and full lesson inventories exact while verifying the separately anchored unequal-shard figure and links as a later exercise."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "04ab1154405689de2fe4921afdaf1c1d5caff838",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 70,
+    "learning_tasks": 111
+  }
+}
