@@ -1,0 +1,35 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "669edfef134d9225506adf4bc79e5f62126e7960",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_THREE_READING_LABS_2026-11-09.json": "68762394024dfdc17339a8f608f5eb24330305b904fd5d12b0e778a42f5b7dbd"
+  },
+  "source_revisions": {
+    "scripts/check-agent-planning.cjs": {
+      "previous_sha256": "c2a4e092807b113e10374f5ebfe12f1e62c3803b66849da57b160c3558c2a324",
+      "reviewed_sha256": "f8133bc4957c16e47d6a44a46b32407ae1584918bde3728491d081c21685e95e",
+      "scope": "Keep the original complete planning-source inventory and require exactly one command in the separately verified MCP recovery exercise."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "669b3084683953e7b2a35f0b52bfb6511c9ff21f",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-networking",
+      "transformer-model",
+      "agent-recovery",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "k8s-networking": 1,
+      "transformer-model": 2,
+      "durable-workflows": 1
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 55,
+    "learning_tasks": 95
+  }
+}

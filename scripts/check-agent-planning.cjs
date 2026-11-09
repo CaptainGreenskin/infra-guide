@@ -114,8 +114,11 @@ const all=current.sections.map(s=>s[1]).join(''),before=baseline.sections.map(s=
 const pre=s=>[...s.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
 const oldPre=pre(before),newPre=pre(all);
 // The original planning stage added two blocks; the independently checked
-// native framework bridge adds six while retaining every prior source block.
-assert.equal(newPre.length,oldPre.length+2+6);
+// native framework bridge added six, and the MCP recovery exercise adds one command.
+const mcpExercise=current.sections[8][1].split('<h3 id="mcp-commit-recovery">');
+assert.equal(mcpExercise.length,2);
+assert.equal(pre(mcpExercise[1]).length,1);
+assert.equal(newPre.length,oldPre.length+2+6+1);
 let cursor=-1;for(const original of oldPre){const at=newPre.indexOf(original,cursor+1);assert(at>cursor,'old complete pre bytes/order changed');cursor=at;}
 for(const[,id]of before.matchAll(/\bid="([^"]+)"/g))assert(all.includes('id="'+id+'"'),'missing old inner anchor '+id);
 const full=[...all.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>decode(m[1]));
