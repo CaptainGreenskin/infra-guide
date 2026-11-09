@@ -66,6 +66,11 @@
       "reviewed_sha256": "98b817b474e0a25c92da28cbea637d88f006bbd0a26efee69148ff574b900988",
       "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
     },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "4a1f646ae2431d516db571203459c0cc29a5e3a94b5423248118dddadb89f603",
+      "reviewed_sha256": "4dab5c9070e6bcaed0f001eb2047c54cbfc765b7274ecd716033d40f4257f798",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
     "dist/diagrams/bounded-worker-queue.svg": {
       "previous_sha256": null,
       "reviewed_sha256": "d7df1813ca2b4203bb0693e05d5b3beeef962ab35506a3ab59062ea1e305f1af",

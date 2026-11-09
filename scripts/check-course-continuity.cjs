@@ -38,12 +38,20 @@ assert(flashLessons[0].includes('<h3 id="ring-context-training">'));
 const cacheLessons=section('cache-consistency',6).split('<h3 id="native-redis-client-tracking">');
 assert.equal(cacheLessons.length,2,'native Redis follows the historical cache lesson');
 assert(cacheLessons[1].includes('labs/redis-client-tracking/validation.json'));
+const gpuLessons=section('gpu-execution',3).split('<h3 id="native-warp-memory-sectors">');
+assert.equal(gpuLessons.length,2,'native lane traces follow the historical stride lesson');
+assert(gpuLessons[1].includes('labs/warp-memory-sectors/validation.json'));
+const suffixBoundaries={
+ 'flash-attention-io':[7,flashLessons[0]],
+ 'cache-consistency':[6,cacheLessons[0]],
+ 'gpu-execution':[3,gpuLessons[0]]
+};
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
  const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert.equal(a.updated,'2026.11.09');
  assert.notEqual(JSON.stringify(a.sections),JSON.stringify(before.sections));
  assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]));
  // Dedicated lab checks cover the exact suffixes. Preserve the earlier inventory.
- const suffixBoundary=id==='flash-attention-io'?[7,flashLessons[0]]:id==='cache-consistency'?[6,cacheLessons[0]]:null;
+ const suffixBoundary=suffixBoundaries[id];
  const body=a.sections.map((s,i)=>i===suffixBoundary?.[0]?suffixBoundary[1]:s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
  for(const re of [prePattern,figurePattern,hrefPattern]){
   const current=body.match(re)||[],former=previous.match(re)||[];
