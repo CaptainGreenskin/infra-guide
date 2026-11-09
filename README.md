@@ -23,6 +23,8 @@ Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、�
 
 同一个推理槽保留的前缀可以复用，显式清除后同一提示会重新计算。训练章用真实 Gloo 收发核对不等长分片的有效行与反向梯度。Cloud 与 Agent 共用一套 Collector 实验，比较全量导出、错误采样和接收库任务账本。 [前缀复用与清除](https://captaingreenskin.github.io/infra-guide/article/model-serving/#native-inference-prefix) · [不等长环形注意力](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#ragged-ring-training) · [采样与业务对账](https://captaingreenskin.github.io/infra-guide/article/agent-observability/#native-tail-sampling-ledger)
 
+事件驱动章用 JetStream 观察同一消息被重投时仍活着的旧执行者。推理章运行固定 vLLM 提交的块池，跟踪引用归零和再分配。Agent 章在真实 MCP HTTP 响应流上分别于提交前后断流，再沿原操作查询回执。 [消息重投](https://captaingreenskin.github.io/infra-guide/article/serverless-execution/#native-jetstream-redelivery) · [vLLM 块生命周期](https://captaingreenskin.github.io/infra-guide/article/inference-performance/#vllm-block-lifecycle) · [MCP 断流](https://captaingreenskin.github.io/infra-guide/article/mcp-protocol/#mcp-http-cancellation-run)
+
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
 入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)

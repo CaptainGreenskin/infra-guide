@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="372" viewBox="0 0 440 372" role="img" aria-labelledby="jetstream-title jetstream-desc">
+  <title id="jetstream-title">同一条消息重投时，谁还能写业务库</title>
+  <desc id="jetstream-desc">A 第一次收到消息并保持连接，不确认。JetStream 等待确认超时后向 B 再投递同一条流序号。业务库把当前可写代际从一更新为二，再依次让 A 和 B 尝试写入。追加写留下两份效果。按业务 ID 去重只保留先写入的 A。检查代际则拒绝 A，只由 B 写入。三组实验均由 B 向 JetStream 确认。</desc>
+  <rect x="1" y="1" width="438" height="370" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" fill="#20314e">
+    <text x="21" y="35" font-size="24" font-weight="bold">重投之后，谁还能写入</text>
+    <text x="21" y="61" fill="#465a78">同一流序号 · 同一业务 ID · 金额 37</text>
+    <g id="jetstream-timeout" data-stage="timeout_redelivery">
+      <rect x="20" y="76" width="400" height="69" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <g text-anchor="middle">
+        <text x="83" y="103" font-weight="bold">A 首次接收</text>
+        <text x="220" y="103" font-weight="bold">AckWait 到期</text>
+        <text x="355" y="103" font-weight="bold">B 收到重投</text>
+        <text x="83" y="127">保持连接</text>
+        <text x="220" y="127">未收到 ACK</text>
+        <text x="355" y="127">投递次数 2</text>
+      </g>
+      <path d="M138 101h21m-5-4 5 4-5 4m138-4h21m-5-4 5 4-5 4" fill="none" stroke="#345cb7" stroke-width="1.8" stroke-linejoin="round"/>
+    </g>
+    <g id="jetstream-authority" data-stage="receiver_authority">
+      <text x="21" y="170" font-weight="bold">业务库代际 1 → 2，随后 A 先写、B 后写。</text>
+    </g>
+    <rect x="20" y="186" width="400" height="130" rx="6" fill="#fff"/>
+    <path d="M26 186H414Q420 186 420 192V220H20V192Q20 186 26 186Z" fill="#eaf1ff"/>
+    <rect x="20" y="284" width="400" height="32" fill="#e5f4ed"/>
+    <g fill="none" stroke="#a4b6d3">
+      <rect x="20" y="186" width="400" height="130" rx="6"/>
+      <path d="M165 186v130m84-130v130m84-130v130M20 220h400m-400 32h400m-400 32h400"/>
+    </g>
+    <g text-anchor="middle">
+      <g font-weight="bold">
+        <text x="92" y="209">写入规则</text><text x="207" y="209">A · 代际 1</text><text x="291" y="209">B · 代际 2</text><text x="376" y="209">效果数</text>
+      </g>
+      <g id="jetstream-append" data-mode="append_only">
+        <text x="92" y="242">直接追加</text><text x="207" y="242">提交</text><text x="291" y="242">提交</text><text x="376" y="242">2</text>
+      </g>
+      <g id="jetstream-dedup" data-mode="business_id">
+        <text x="92" y="274">业务 ID 去重</text><text x="207" y="274">提交</text><text x="291" y="274">复用</text><text x="376" y="274">1</text>
+      </g>
+      <g id="jetstream-fence" data-mode="receiver_fence">
+        <text x="92" y="306">校验代际并去重</text><text x="207" y="306">拒绝</text><text x="291" y="306">提交</text><text x="376" y="306">1</text>
+      </g>
+    </g>
+    <text x="21" y="343" fill="#465a78">三组都由 B 确认，业务结果仍需查账。</text>
+  </g>
+</svg>

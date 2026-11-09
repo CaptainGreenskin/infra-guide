@@ -1,0 +1,331 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "6e9ae82d76ab8d2e3ff0717a097e8c5794dd73e9",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PREFIX_RING_TELEMETRY_GATES_2026-11-09.json": "aa1525322933fa675ab4ed26df49c76de47a9f8cbb032c837b8ae5b0a75de2df"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "43f77083178eb15cb91876091417c4313db5dcc0f424e5433659cbbe027304d8",
+      "reviewed_sha256": "187754f8a06b4c1e5adae0b279e3d4d6afb36eab7618a2fb85c14da8288ed3da",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "src/page-shell.html": {
+      "previous_sha256": "d9e1248a17a0814e0f5885942374801545f97be5cfb36abdf78797e5547a0e46",
+      "reviewed_sha256": "1c564710e1736fd4031fa840f8d669af95b21b82a295e63228b73b1f06f2e2c7",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/AI_READING_BENCHMARK_2026-11-09.md": {
+      "previous_sha256": "bd81fcf8301f7c7b046f0f7337eedee826aadb2f0747c1ab80675bc162b7e047",
+      "reviewed_sha256": "2bd79ef83fa5d9a333d6ed2008eba690c15203183bcc1861d2890e2c5fa5fe86",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "4944e1a568d253cafc7bdfafb41b45fbce02001bd91769156540cbb672555ebb",
+      "reviewed_sha256": "9d6a813cc634547e7ebc92aa832d79786fcad5e129ecca0f653cb29fc9b624a2",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/jetstream-redelivery.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1977d6cabcbe80d33e105994311e593a3111586435973848ca7df9ab776f7eb6",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/diagrams/vllm-block-lifecycle.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1d713d5bec38210fdfdfbf5eeeecfdd6d880e3bd7c10d67c2324d48372b8f064",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/diagrams/mcp-http-cancellation.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ee30799709f024b14c6c95ec9a6212f74fd3bb0338b01250d95f69ac2bd2aa43",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "1d0d7a359125aeed4071f7c4415f70cdc7d09621c38d84382829a50649e9a78a",
+      "reviewed_sha256": "f9b5007c18633532ceb6ea5d7859967749c3aa8280c2ba88b82dd6b6562f9800",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "bf7a52b1d78eb867534c0357c0c3b5d4e816fcbfb4737b7b4e2ca10aaf2fb594",
+      "reviewed_sha256": "3884f677824d1b715bcfef8bd7a6b65856192c8f80d0b5aae38650e50d220afa",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "273cb28863365db7f9a7fe374d0a7f8b447d410a379154270d75b1032b876352",
+      "reviewed_sha256": "f52299647cefea87600f40da300cfbd3369d0f6181503e4f2510823b8aeccfdf",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "a3b97c2d332aab3094dcefd3b84f8793de39f08626b00d9f5be7a9ee88c0eb04",
+      "reviewed_sha256": "3101f6e10acbe3242fbce603eb37a0ebca4fbb614a1ad37c120a5a004e6de142",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/mcp-http-cancellation-reading.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c08d3a938fe297123a2975608bc2c07192a097ca14d93a27a0f45b3f7595b6bd",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/progressive-integrated-service-reading.js": {
+      "previous_sha256": "d868c92e6a343bdee1c8435c6163d85b27b5e7f2959d8cab78e97fd8f91460fe",
+      "reviewed_sha256": "8cff4e74dc8e6323e00c75156a910bd0a29ed4b20bcd4278fcfc0a21dd7dddd0",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "7ff5f46f1a4d89deafff5972c38591d59d3cde49f778a9ce3abe8451c3ae9ece",
+      "reviewed_sha256": "3db00a2b5edfc5299d91d99bb5c03d0301d2587264f708ef91140293ad300e78",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "2ef3930969ad4d22980fc5dc44dc3df0e0fe6016d63c3d1b6b1367c816513789",
+      "reviewed_sha256": "7c00fa670106f53db8598f45f07e22cd823e8b7e5111f1c7f8928d0afede05fa",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "cbd5a7831d00ad10b8d6a5906dfab25de8114bec64ffe167bee486129f79725e",
+      "reviewed_sha256": "e44815baf8b2d709dafba9c54a418afad9d766be41f889f1357b3d8559094da8",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "fdfdf4b241af2b15aa1bc9015acab34adbf9140ba79ebe47c82f736d9fbe17a4",
+      "reviewed_sha256": "64fbd06ff101f160c2049c4e2802d5e9ac4abe4b43909c128baa89f155effe7f",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-jetstream-redelivery.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e2a3a58bf51078818b3f8043156c82dedf7f53321ae923dcecf71bd9d3caa568",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "scripts/check-vllm-block-lifecycle.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0dfc8278e917108b11e9965a57651e2b7d2c98070a339bd01ffb9fd297a3b066",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "scripts/check-mcp-http-cancellation.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "97a206770df828553a0fe5100ed469b072dbe935467bbf8c91f94649e724e67f",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "367aa89ed00b45ce2d9fa21547003a121843e6c79a278c91cfcf8baf6e8b0a1c",
+      "reviewed_sha256": "aef350ce5eb48e91a2cac66e0ee6dccac0b67da2d4c71de84f04ead378025496",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/labs/jetstream-redelivery.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2e3025269b6f696bfaa1d3485aca4b466dc65630cb6de6899e4a2de915b96851",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/jetstream-redelivery/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "aa511dd9b7f3f848c8d12d0321cacfb0e94bdea05f3ee136955d20ff0c084bbd",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/jetstream-redelivery/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d9ac8e6bfad7f10724cae028c59fdc77776c67f6e93e8770432e18b6c6e546cc",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/jetstream-redelivery/jetstream_redelivery.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "05f027c71f2f7c92b28750bd2d2abed99862750dd6351307f8fd260ee9692373",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/jetstream-redelivery/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2bf828d84157ec131b42846b50a9b2cdbb23c6d607145fa884b6cb6e51da1d9a",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/jetstream-redelivery/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1560cc878de9f1dd58536477581c9c6daa15024c33bb4c0edea5ef899ac2a022",
+      "scope": "Bind broker redelivery and actual receiver effects to the same business identity."
+    },
+    "dist/labs/vllm-block-lifecycle.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d637cfe36e85185dd350a2c7f7eb9702d87f172683b1a132849eb69398899614",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/vllm-block-lifecycle/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cd0825eb2cab474fdb2ced10767e7ea5f0a06f2bb385751c990e17c5d5c87b38",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/vllm-block-lifecycle/block_lifecycle.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "91c972af5fb3fad27a1bed814412af2dcc4dcc01f35df87c3b0b94b4aac482aa",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/vllm-block-lifecycle/fetch_upstream.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9bdeb96e077759cd30d75b8f565312ef01a813666993e5c36f5ffd361c203560",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/vllm-block-lifecycle/source-manifest.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "160d025974f70f54e1c2a33284a17456685109fd46853433e9a9629042d8ddee",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/vllm-block-lifecycle/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "03b97115516dca06729ab16d42e29c27523e0c0204b3e5c0de41fd30633ba8bc",
+      "scope": "Preserve upstream allocator provenance, reference changes and cache eviction evidence."
+    },
+    "dist/labs/mcp-http-cancellation.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a48e11e198e9497c8dad4f3487e05ac1515a2861a3f5166b4e0b45315e4d710b",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a64396d32eaaf2a0695feca3e7019c0e54e1f17c219251ce2057e85d5fba6a64",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/after-client.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9f9ea45ad346ab48b479eb6379b12d6e9294c862eccf898f551c82c264e97a76",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/after-server.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bdaa0a3b9066c631a0b5042c9e4988c9a39974347b398530ebcc1f7041964325",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/after.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7202f46aa4ae23dec856fd52e83bd6120c81211d99633a38513068341d697134",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/before-client.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "52073e18df675fc1926882b5569113439f077acddd6596fa1337b09767b4e44f",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/before-server.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "14b84801564c6fec4806cc44dd0904cadac2f9068bc3b3d7cb68dbcb7c0f4315",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/before.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e5f0fbecab16259303df7ebb546835c0828f9b5728255749c686cfcb20bab4b7",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/cancellation_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e43c2d300c50f261f8a17d3d61ae0bbd3cf68664a468cea45b87f342519f4dfc",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/orders.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "dist/labs/mcp-http-cancellation/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1ab5934a4c5942f9557519d26906bd53244bfb7775948ff12376cf20bdfb001c",
+      "scope": "Connect the native request disconnect to tool cleanup and persistent receipt evidence."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "8a509ee9f0041d08b6ac4910f21ed74d27b4f44ce29f625744732b90e18a5a24",
+      "reviewed_sha256": "e4afd44075777b12dd2c83ee83aec7379e1759ce424998e772d116f8c0f1e82d",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "e14bb7f1dcbd1498842abdfd7334d984310254a2c079b1aac66787b2383a77c2",
+      "reviewed_sha256": "97ed849d9cc37409570e85c91f0fb3d5c2a11c179046fdf6c9aa367ad444f91a",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_DELIVERY_BLOCK_CANCELLATION_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0ddf0688305b483c08c6d0c620d4a20133b2efeb91896f68dd6bf8d40bc733e9",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "1f89f8997f769390fc1491faa89e28b3389c89df459155f1621f2f83a0f69cca",
+      "reviewed_sha256": "21349f622a405fe81283cb106c3c517e9147dac7e7382b5674a0fa1982f49884",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "a0fcda56bbc9942277b70df3a69b7d2dbefff6d2ea6f279f902b3dfdac83fc6e",
+      "reviewed_sha256": "b66f5645e64291e47ea8630c11a5ebdb949a0a9676ffe18ea0202c0d9c339608",
+      "scope": "Fit the vLLM reference and free-queue comparison on a narrow reading viewport."
+    }
+  },
+  "article_sections": {
+    "serverless-execution": {
+      "sections": [
+        5,
+        11
+      ],
+      "scope": "Explain timeout redelivery while an older handler still holds execution state.",
+      "observation": "The same stream sequence reached two live clients. Receiver-side rules produced different committed effect ledgers."
+    },
+    "message-delivery": {
+      "sections": [
+        8
+      ],
+      "scope": "Connect the existing exit-and-requeue example to an actual timeout redelivery.",
+      "observation": "The handoff points to the live-old-worker case and the separate receiver acceptance contract."
+    },
+    "inference-performance": {
+      "sections": [
+        3
+      ],
+      "scope": "Walk through the exact upstream vLLM block pool with explicit workload inputs.",
+      "observation": "The old hash remained after the last reference was released, then disappeared when the allocation consumed that block."
+    },
+    "mcp-protocol": {
+      "sections": [
+        7
+      ],
+      "scope": "Observe native Streamable HTTP cancellation and a follow-up query on the same client.",
+      "observation": "Two request streams closed and both tool invocations cleaned up. A previously committed operation still had its receipt."
+    },
+    "agent-recovery": {
+      "sections": [
+        5
+      ],
+      "scope": "Join the cancelled request and persisted effect by separate identities.",
+      "observation": "The bridge points from cancellation ordering to the actual HTTP disconnect and authoritative receipt."
+    },
+    "kairo-practice": {
+      "sections": [
+        6
+      ],
+      "scope": "Define target-environment checks for disconnect, cleanup and receipt lookup.",
+      "observation": "The exercise supplies two observations to check in a future compatible Kairo version."
+    },
+    "production-readiness": {
+      "sections": [
+        5
+      ],
+      "scope": "Identify the authoritative record for transport delivery, engine state and business effects.",
+      "observation": "Three independent exercises connect their control events to stream identity, cache identity and effect receipts."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "6e9ae82d76ab8d2e3ff0717a097e8c5794dd73e9",
+    "chapters": 78,
+    "changed_bodies": [
+      "serverless-execution",
+      "message-delivery",
+      "inference-performance",
+      "mcp-protocol",
+      "agent-recovery",
+      "kairo-practice",
+      "production-readiness"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 73,
+    "learning_tasks": 114
+  }
+}

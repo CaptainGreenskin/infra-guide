@@ -4678,6 +4678,103 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c1cbf1bba3b317efc7160f9a84ad0668d29904c3562d925b54c7c3ed58a211ca",
+      "reviewed_content_sha256": "446336a075739247f0fb7db46a4d5bef563ac9a1dfca6749229ac1b2211ff897",
+      "scope": "Explain timeout redelivery while an older handler still holds execution state.",
+      "observation": "The same stream sequence reached two live clients. Receiver-side rules produced different committed effect ledgers.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "a56566de5cf601dcb6cc3d5df44c2f036c00500bf9eb3d30d5ff57e346150f43",
+      "reviewed_content_sha256": "e510758174e22e999b660996b89ff10c09ac593d00f88f341f51a64ef01e13d0",
+      "scope": "Walk through the exact upstream vLLM block pool with explicit workload inputs.",
+      "observation": "The old hash remained after the last reference was released, then disappeared when the allocation consumed that block.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "624d88b228337e3f4506a020e1fa89f605d7c98dc4b0569223ee0618056f1965",
+      "reviewed_content_sha256": "1badcae2da9ed1620c0b70fef82c463ecd3d990348366b029512efd1bd835902",
+      "scope": "Join the cancelled request and persisted effect by separate identities.",
+      "observation": "The bridge points from cancellation ordering to the actual HTTP disconnect and authoritative receipt.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "6304d1e34d532069f369859f74c049beca101ccf0de99185d3d8c6107b45652f",
+      "reviewed_content_sha256": "a85311d25f9bbf1f22cc1d6220c6b4e0287219b1215c70a0c8e4d1befd56d8d1",
+      "scope": "Define target-environment checks for disconnect, cleanup and receipt lookup.",
+      "observation": "The exercise supplies two observations to check in a future compatible Kairo version.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "3091c33a284c39ca705df4aa795b7f5e425751474c9e6a3c8e8d5ec03abff737",
+      "reviewed_content_sha256": "153bf14b86cd6e5db2053d7116576bf873c38baaf4eb878cd1e8253ac5cdd372",
+      "scope": "Identify the authoritative record for transport delivery, engine state and business effects.",
+      "observation": "Three independent exercises connect their control events to stream identity, cache identity and effect receipts.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

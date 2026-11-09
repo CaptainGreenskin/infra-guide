@@ -1,0 +1,451 @@
+{
+  "status": "passed",
+  "scope": "exact upstream allocator AST; CPU metadata only",
+  "full_vllm_import": false,
+  "scheduler_execution": false,
+  "device_kv_tensors": false,
+  "engine_version": "v0.10.2",
+  "upstream_commit": "01efc7ef781391e744ed08c3292817a773d654e6",
+  "python": "3.12.13",
+  "system": "Darwin",
+  "machine": "arm64",
+  "source_sha256": {
+    "block_lifecycle.py": "91c972af5fb3fad27a1bed814412af2dcc4dcc01f35df87c3b0b94b4aac482aa",
+    "fetch_upstream.py": "9bdeb96e077759cd30d75b8f565312ef01a813666993e5c36f5ffd361c203560",
+    "source-manifest.json": "160d025974f70f54e1c2a33284a17456685109fd46853433e9a9629042d8ddee"
+  },
+  "upstream": [
+    {
+      "file": "kv_cache_utils.py",
+      "sha256": "c69ce881133c859f041d44ccdc8c1de1cc6b16a91f986f7da060d476719a13cf",
+      "slices": [
+        {
+          "name": "BlockHash",
+          "first_line": 25,
+          "last_line": 25,
+          "sha256": "94aa502f81ea7809f0a726168157f75549a835dca7eb1bb540475482acc1b277"
+        },
+        {
+          "name": "BlockHashWithGroupId",
+          "first_line": 30,
+          "last_line": 30,
+          "sha256": "3c4f16295da077c5197dfd01320fb7049366c27267d8404b9c1eac734cfd35d6"
+        },
+        {
+          "name": "ExternalBlockHash",
+          "first_line": 35,
+          "last_line": 35,
+          "sha256": "2baf38d750dfc2f31c639c1129bb630ff730939e23502c55054521f315a962d2"
+        },
+        {
+          "name": "make_block_hash_with_group_id",
+          "first_line": 38,
+          "last_line": 47,
+          "sha256": "b107e74bcb39d774a76b9fe476c4266427c6eb2add74f91878e493e80e61c10e"
+        },
+        {
+          "name": "get_block_hash",
+          "first_line": 50,
+          "last_line": 52,
+          "sha256": "8430c63ef598883d5cbef97176413ab70214dee98bbcee3f9f6c9e333cac108b"
+        },
+        {
+          "name": "get_group_id",
+          "first_line": 55,
+          "last_line": 57,
+          "sha256": "ac71371a8c8957d0ce1359408d4409479db75f7cc60d12dc31002c1b860ffee2"
+        },
+        {
+          "name": "KVCacheBlock",
+          "first_line": 158,
+          "last_line": 202,
+          "sha256": "8209731b4ac6a357dfaf71b5b2164f1ff76e8787cbaa91be21eb75a1e19c7b91"
+        },
+        {
+          "name": "FreeKVCacheBlockQueue",
+          "first_line": 205,
+          "last_line": 405,
+          "sha256": "2a3e944ad0eb47ce808f1e6e694c707f1c5ef1f3517c3bdfc4c97cab92c20aba"
+        }
+      ]
+    },
+    {
+      "file": "block_pool.py",
+      "sha256": "1122ed808606e1a266995113505417401baa5fa7c42afa372314462c38790876",
+      "slices": [
+        {
+          "name": "BlockPool",
+          "first_line": 22,
+          "last_line": 330,
+          "sha256": "6a2f371d0c69b1c4a70920077b3d63c76185eb4f06482a5aa5b3757d24d61b6f"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "pool_slots": 4,
+    "usable_blocks": 3,
+    "null_block_id": 0,
+    "block_size_positions": 4,
+    "key": "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de",
+    "group_id": 0,
+    "other_group_misses": true,
+    "events_enabled": false,
+    "trace": [
+      {
+        "stage": "initial",
+        "free_ids": [
+          1,
+          2,
+          3
+        ],
+        "free_count": 3,
+        "usage": 0.0,
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": null,
+        "hashes": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "A_cache_full_block",
+        "free_ids": [
+          2,
+          3
+        ],
+        "free_count": 2,
+        "usage": 0.33333333333333337,
+        "refcounts": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "B_touch_same_key",
+        "free_ids": [
+          2,
+          3
+        ],
+        "free_count": 2,
+        "usage": 0.33333333333333337,
+        "refcounts": [
+          0,
+          2,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "A_free",
+        "free_ids": [
+          2,
+          3
+        ],
+        "free_count": 2,
+        "usage": 0.33333333333333337,
+        "refcounts": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "B_free",
+        "free_ids": [
+          2,
+          3,
+          1
+        ],
+        "free_count": 3,
+        "usage": 0.0,
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "C_lookup_only",
+        "free_ids": [
+          2,
+          3,
+          1
+        ],
+        "free_count": 3,
+        "usage": 0.0,
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "C_touch_idle_block",
+        "free_ids": [
+          2,
+          3
+        ],
+        "free_count": 2,
+        "usage": 0.33333333333333337,
+        "refcounts": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "C_free",
+        "free_ids": [
+          2,
+          3,
+          1
+        ],
+        "free_count": 3,
+        "usage": 0.0,
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "allocate_preceding_free_ids",
+        "free_ids": [
+          1
+        ],
+        "free_count": 1,
+        "usage": 0.6666666666666667,
+        "refcounts": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": [
+          1
+        ],
+        "hashes": [
+          null,
+          "49834160c1a005b5829f1100287a28051a8e8ca09ab581bb663ae974ee6657de00000000",
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "reuse_cached_id_and_evict_hash",
+        "free_ids": [],
+        "free_count": 0,
+        "usage": 1.0,
+        "refcounts": [
+          0,
+          1,
+          1,
+          1
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": null,
+        "hashes": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "exhaustion_rejected",
+        "free_ids": [],
+        "free_count": 0,
+        "usage": 1.0,
+        "refcounts": [
+          0,
+          1,
+          1,
+          1
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": null,
+        "hashes": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "stage": "final_cleanup",
+        "free_ids": [
+          2,
+          3,
+          1
+        ],
+        "free_count": 3,
+        "usage": 0.0,
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "is_null": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "hit_ids": null,
+        "hashes": [
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ],
+    "exhaustion": {
+      "type": "ValueError",
+      "message": "Cannot get 1 free blocks from the pool"
+    }
+  }
+}

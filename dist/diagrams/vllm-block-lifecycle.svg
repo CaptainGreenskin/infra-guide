@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+<title id="title">vLLM 上游块池：空闲与驱逐是两个时刻</title>
+<desc id="desc">四个池槽位中零号为空块，三个可用块。A分配块1后B建立引用，引用数变二。A释放后为一，B释放后为零，队列为2、3、1，旧键仍能命中。C查找不改变状态，touch使块1移出空闲队列，释放后回到末尾。分配2、3后再分配1，才驱逐块1的旧哈希。最后耗尽申请失败且状态不变。CPU上执行上游元数据代码，未分配GPU张量。</desc>
+<metadata>{"pool_slots":4,"null_block":0,"usable_blocks":3,"shared_id":1,"refcounts":[1,2,1,0],"free_after_last_release":[2,3,1],"allocation_order":[2,3,1],"upstream_commit":"01efc7ef781391e744ed08c3292817a773d654e6","device_kv_tensors":false}</metadata>
+<rect width="960" height="720" rx="20" fill="#f3f8fc"/>
+<g font-family="system-ui, sans-serif" fill="#17304a" font-size="20">
+<text x="34" y="43" font-size="27" font-weight="700">引用归零之后，旧缓存仍可能命中</text>
+<text x="34" y="77">真实上游 BlockPool · vLLM v0.10.2 · CPU 元数据执行</text>
+<g text-anchor="middle"><rect x="34" y="102" width="192" height="58" rx="10" fill="#dbe3ed"/><text x="130" y="137">块 0：保留空块</text><rect x="247" y="102" width="211" height="58" rx="10" fill="#b8e6e3"/><text x="352" y="137">块 1：本例跟踪对象</text><rect x="479" y="102" width="211" height="58" rx="10" fill="#d4e4f8"/><text x="584" y="137">块 2：可用</text><rect x="711" y="102" width="211" height="58" rx="10" fill="#d4e4f8"/><text x="816" y="137">块 3：可用</text></g>
+<text x="34" y="198">A 分配并登记键</text><text x="286" y="198">B 命中后 touch</text><text x="545" y="198">A free</text><text x="771" y="198">B free</text>
+<path d="M118 240H815" stroke="#218995" stroke-width="4"/>
+<g text-anchor="middle" font-weight="700"><circle cx="118" cy="240" r="24" fill="#b8e6e3"/><text x="118" y="247">1</text><circle cx="370" cy="240" r="24" fill="#b8e6e3"/><text x="370" y="247">2</text><circle cx="585" cy="240" r="24" fill="#b8e6e3"/><text x="585" y="247">1</text><circle cx="815" cy="240" r="24" fill="#ffdab3"/><text x="815" y="247">0</text></g>
+<text x="34" y="287">圆内为块 1 的引用数</text><text x="512" y="287">最后一次释放：空闲队列 [2, 3, 1]</text>
+<rect x="34" y="309" width="888" height="105" rx="12" fill="#e2f1f1"/>
+<text x="53" y="342" font-weight="700">旧键仍命中 1；查到不等于已持有</text>
+<text x="53" y="374">C 只 lookup：引用 0，队列不变。C touch：引用 1，移出队列。</text>
+<text x="53" y="401">C 再 free：引用回到 0，队列恢复 [2, 3, 1]。</text>
+<text x="34" y="457" font-weight="700">新分配先取队头</text>
+<g text-anchor="middle"><rect x="282" y="430" width="85" height="48" rx="8" fill="#d4e4f8"/><text x="324" y="461">2</text><rect x="381" y="430" width="85" height="48" rx="8" fill="#d4e4f8"/><text x="423" y="461">3</text><rect x="480" y="430" width="85" height="48" rx="8" fill="#ffdab3"/><text x="522" y="461">1</text></g>
+<text x="596" y="457">前两块分配后，旧键仍命中 1</text>
+<path d="M522 487V518" stroke="#a76321" stroke-width="3"/><path d="M515 510L522 520L529 510" fill="none" stroke="#a76321" stroke-width="3"/>
+<rect x="34" y="530" width="888" height="72" rx="12" fill="#fff0df"/>
+<text x="53" y="559" font-weight="700">再取块 1 → 先删除旧哈希索引，再交给新用途</text>
+<text x="53" y="587">这一步才发生驱逐。池耗尽后继续申请，报错且队列、引用不变。</text>
+<text x="34" y="640">固定预计算测试键；没有运行 Request 词元哈希链、调度器或模型。</text>
+<text x="34" y="674">空闲块数量不是 GPU 空闲字节；本图没有显存或性能测量。</text>
+<text x="34" y="704" font-size="18">数据：vllm-block-lifecycle/validation.json · 真实执行上游完整类的原始 AST 节点</text>
+</g></svg>

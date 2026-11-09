@@ -1,0 +1,428 @@
+{
+  "schema": "jetstream-redelivery-v1",
+  "status": "passed",
+  "environment": {
+    "server": "2.15.2",
+    "nats_py": "2.16.0",
+    "python": "3.12.16",
+    "sqlite": "3.46.1",
+    "system": "Linux",
+    "machine": "x86_64",
+    "server_binary_sha256": "33f3fe3fed80b2b229bd9fe4b735257ad8583cd2349452a0c74f3d768b593e66"
+  },
+  "source_sha256": {
+    "jetstream_redelivery.py": "05f027c71f2f7c92b28750bd2d2abed99862750dd6351307f8fd260ee9692373",
+    "requirements.txt": "2bf828d84157ec131b42846b50a9b2cdbb23c6d607145fa884b6cb6e51da1d9a"
+  },
+  "fixture": {
+    "operation_id": "report-27:publish",
+    "amount": 37
+  },
+  "loopback_address": "127.0.0.1",
+  "cases": {
+    "append_only": {
+      "consumer": {
+        "name": "WORK",
+        "ack_policy": "explicit",
+        "ack_wait_seconds": 1.0,
+        "max_ack_pending": 1,
+        "max_deliver": 3
+      },
+      "publish_ack": {
+        "stream": "APPEND_ONLY",
+        "stream_seq": 1
+      },
+      "deliveries": [
+        {
+          "stream": "APPEND_ONLY",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 1,
+          "delivery_count": 1,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        },
+        {
+          "stream": "APPEND_ONLY",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 2,
+          "delivery_count": 2,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        }
+      ],
+      "client_ids": {
+        "A": 11,
+        "B": 12
+      },
+      "old_client_connected_after_redelivery": true,
+      "before_writes": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "initial_ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "after_transfer": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [
+          {
+            "revision": 1,
+            "operation_id": "report-27:publish",
+            "writer": "A",
+            "generation": 1,
+            "amount": 37
+          },
+          {
+            "revision": 2,
+            "operation_id": "report-27:publish",
+            "writer": "B",
+            "generation": 2,
+            "amount": 37
+          }
+        ],
+        "inbox": [],
+        "attempts": [
+          {
+            "seq": 1,
+            "writer": "A",
+            "generation": 1,
+            "authority": 2,
+            "outcome": "committed",
+            "revision": 1
+          },
+          {
+            "seq": 2,
+            "writer": "B",
+            "generation": 2,
+            "authority": 2,
+            "outcome": "committed",
+            "revision": 2
+          }
+        ]
+      },
+      "before_ack": {
+        "ack_pending": 1,
+        "pending": 0,
+        "ack_floor_stream_seq": 0,
+        "delivered_consumer_seq": 2
+      },
+      "after_ack": {
+        "ack_pending": 0,
+        "pending": 0,
+        "ack_floor_stream_seq": 1,
+        "delivered_consumer_seq": 2
+      },
+      "ack_confirmation": {
+        "writer": "B",
+        "returned": true
+      }
+    },
+    "business_id": {
+      "consumer": {
+        "name": "WORK",
+        "ack_policy": "explicit",
+        "ack_wait_seconds": 1.0,
+        "max_ack_pending": 1,
+        "max_deliver": 3
+      },
+      "publish_ack": {
+        "stream": "BUSINESS_ID",
+        "stream_seq": 1
+      },
+      "deliveries": [
+        {
+          "stream": "BUSINESS_ID",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 1,
+          "delivery_count": 1,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        },
+        {
+          "stream": "BUSINESS_ID",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 2,
+          "delivery_count": 2,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        }
+      ],
+      "client_ids": {
+        "A": 18,
+        "B": 19
+      },
+      "old_client_connected_after_redelivery": true,
+      "before_writes": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "initial_ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "after_transfer": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [
+          {
+            "revision": 1,
+            "operation_id": "report-27:publish",
+            "writer": "A",
+            "generation": 1,
+            "amount": 37
+          }
+        ],
+        "inbox": [
+          {
+            "operation_id": "report-27:publish",
+            "digest": "49e20727270eaaca6fbb46648d2ba7ca0eb34dfa18453316c3333f04e7e21646",
+            "revision": 1
+          }
+        ],
+        "attempts": [
+          {
+            "seq": 1,
+            "writer": "A",
+            "generation": 1,
+            "authority": 2,
+            "outcome": "committed",
+            "revision": 1
+          },
+          {
+            "seq": 2,
+            "writer": "B",
+            "generation": 2,
+            "authority": 2,
+            "outcome": "duplicate",
+            "revision": 1
+          }
+        ]
+      },
+      "before_ack": {
+        "ack_pending": 1,
+        "pending": 0,
+        "ack_floor_stream_seq": 0,
+        "delivered_consumer_seq": 2
+      },
+      "after_ack": {
+        "ack_pending": 0,
+        "pending": 0,
+        "ack_floor_stream_seq": 1,
+        "delivered_consumer_seq": 2
+      },
+      "ack_confirmation": {
+        "writer": "B",
+        "returned": true
+      }
+    },
+    "receiver_fence": {
+      "consumer": {
+        "name": "WORK",
+        "ack_policy": "explicit",
+        "ack_wait_seconds": 1.0,
+        "max_ack_pending": 1,
+        "max_deliver": 3
+      },
+      "publish_ack": {
+        "stream": "RECEIVER_FENCE",
+        "stream_seq": 1
+      },
+      "deliveries": [
+        {
+          "stream": "RECEIVER_FENCE",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 1,
+          "delivery_count": 1,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        },
+        {
+          "stream": "RECEIVER_FENCE",
+          "consumer": "WORK",
+          "stream_seq": 1,
+          "consumer_seq": 2,
+          "delivery_count": 2,
+          "event": {
+            "amount": 37,
+            "operation_id": "report-27:publish"
+          }
+        }
+      ],
+      "client_ids": {
+        "A": 25,
+        "B": 26
+      },
+      "old_client_connected_after_redelivery": true,
+      "before_writes": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "initial_ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 1
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "after_transfer": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [],
+        "inbox": [],
+        "attempts": []
+      },
+      "ledger": {
+        "authority": [
+          {
+            "operation_id": "report-27:publish",
+            "generation": 2
+          }
+        ],
+        "effects": [
+          {
+            "revision": 1,
+            "operation_id": "report-27:publish",
+            "writer": "B",
+            "generation": 2,
+            "amount": 37
+          }
+        ],
+        "inbox": [
+          {
+            "operation_id": "report-27:publish",
+            "digest": "49e20727270eaaca6fbb46648d2ba7ca0eb34dfa18453316c3333f04e7e21646",
+            "revision": 1
+          }
+        ],
+        "attempts": [
+          {
+            "seq": 1,
+            "writer": "A",
+            "generation": 1,
+            "authority": 2,
+            "outcome": "stale_writer",
+            "revision": null
+          },
+          {
+            "seq": 2,
+            "writer": "B",
+            "generation": 2,
+            "authority": 2,
+            "outcome": "committed",
+            "revision": 1
+          }
+        ]
+      },
+      "before_ack": {
+        "ack_pending": 1,
+        "pending": 0,
+        "ack_floor_stream_seq": 0,
+        "delivered_consumer_seq": 2
+      },
+      "after_ack": {
+        "ack_pending": 0,
+        "pending": 0,
+        "ack_floor_stream_seq": 1,
+        "delivered_consumer_seq": 2
+      },
+      "ack_confirmation": {
+        "writer": "B",
+        "returned": true
+      }
+    }
+  },
+  "cleanup": {
+    "broker_stopped": true,
+    "scratch_removed": true
+  }
+}

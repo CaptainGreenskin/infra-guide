@@ -6857,6 +6857,18 @@ const progressiveAgentSectionTitles={
  fold('完整 Dockerfile.mq-client：固定客户端依赖',mc8[3])
  ],['message-native-run']);
  delivery.desc=delivery.intro='先认识消息、代理、投递与业务效果，沿正常发布和确认理解状态，再用真实 RabbitMQ 核对重投、预取和持久重启。';
+
+ const jetstreamLink='<a href="/article/serverless-execution/#native-jetstream-redelivery">查看超时重投与写权限实战 →</a>';
+ serverless.sections[4][1]+=p('超时后重新投递，旧执行者未必已经停止。第 11 节用两条保持独立的真实 JetStream 客户端连接，分别核对同一条消息再次送达和旧执行者能否写业务库。'+jetstreamLink);
+ serverless.sections[10][1]+=h('native-jetstream-redelivery','真实 JetStream：重投之后，谁还能写入')+
+ p('JetStream 是 NATS 的消息存储和投递层。实验用一个持久拉取消费者保存进度，两条独立连接先后请求同一条金额 37 的消息。A 首次收到后保持连接，不确认。服务端的确认等待时限 AckWait 为 1 秒。B 收到同一流序号，投递次数变为 2，此时 A 仍然在线。')+
+ '<figure class="training-figure"><a href="diagrams/jetstream-redelivery.svg" target="_blank" rel="noopener" aria-label="放大：重投之后谁还能写入"><img src="diagrams/jetstream-redelivery.svg" width="440" height="372" alt="同一消息由 A 到 B 重投，业务库推进代际后比较追加写两份、去重留 A 一份、校验代际留 B 一份" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>代理按时限重投，业务库按自己的规则决定谁能写入。<a href="diagrams/jetstream-redelivery.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('B 收到以后，实验让业务库把当前可写代际从 1 改为 2，再让 A 先写、B 后写。只按业务 ID 去重时，先到的 A 仍能写入，B 只能复用原记录。若要让 A 失去写资格，接收方要在写入事务内比较它携带的代际和当前代际。这样 A 的代际 1 被拒，B 的代际 2 才提交。代际由业务方分配，与代理记录的投递次数各有用途。')+
+ p('三组都由 B 发出 <code>ack_sync</code> 并收到代理确认，待确认消息数都从 1 降到 0。直接追加的负例仍留下两份金额 37。JetStream 在某些情况下也可以接受迟到的 ACK。本实验只观测 B 的确认，前面的 SQLite 参考使用另一套句柄规则。<a href="https://docs.nats.io/learn/jetstream/acknowledgment">JetStream 确认与重投 ↗</a> · <a href="https://github.com/nats-io/nats-server/blob/v2.15.2/server/consumer.go">固定版本接收 ACK 的实现 ↗</a>')+
+ p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
+ '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
+ delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
+ serverless.updated=delivery.updated='2026.11.09';
 })();
 
 
@@ -7215,6 +7227,24 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
   '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
   ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+ performance.sections[2][1]+=
+  heading('vllm-block-lifecycle','执行上游块池：空闲之后，什么时候才驱逐？')+
+  p('上面的固定版本源码走读说到“引用归零的块可以成为分配候选”。现在直接执行同一提交的 BlockPool，把这句话拆成可检查的状态。实验在 CPU 上运行上游完整块池、块元数据和空闲队列类，保留原始方法体；没有运行完整 vLLM、调度器或模型，也没有分配 GPU KV 张量。',
+  '池大小设为 4，但块 0 是该版本保留的空块，只有 1、2、3 可用。A、B、C 是我们给持有者起的名字。实验提供一个固定预计算键给 group 0，隔离块池行为；没有执行完整 Request 的词元哈希链，不能用这份结果证明模型、词元、位置或适配器身份已经校验。')+
+  trainingFigure('vllm-block-lifecycle','同一块 1 从占用到空闲、再到驱逐。所有数字来自上游 CPU 元数据执行，未测设备显存。')+
+  table(['实际调用后','块 1 引用数','空闲队列（左端先分配）','旧键查询'],[
+   ['A 分配并登记满块','1','[2,3]','命中 1'],['B 命中后 touch','2','[2,3]','命中 1'],
+   ['A free','1','[2,3]','命中 1'],['B free','0','[2,3,1]','仍命中 1'],
+   ['C 只查询 / 再 touch','0 → 1','[2,3,1] → [2,3]','命中 1'],
+   ['C free，再分配两块','0','[1]','仍命中 1'],['再分配一块，取出 1','1','[]','旧键未命中']
+  ])+
+  p('沿着表手算：A 和 B 同时持有时引用为 2。A 结束只减到 1，不能把块交给新用途；B 也结束才减到 0，块 1 被放到空闲队列末尾。此时哈希索引还在，所以查询仍命中。空闲描述可分配状态，命中描述旧索引是否存在，两者可以同时成立。',
+  '再看 C。get_cached_block 只查询，不替调用者建立引用；touch 才把引用从 0 加到 1，并从空闲队列移除块 1。C 归还后，队列又是 [2,3,1]。接着申请两块先取 2、3，块 1 仍可命中；再申请一块才取到 1。get_new_blocks 发现它带有旧哈希，先驱逐旧索引，再把编号交给新用途。引用归零与驱逐因此不是同一步。',
+  '池耗尽后再申请 1 块会得到 ValueError；实验比较异常前后的全部队列、引用和哈希快照，状态不变。最后归还三块，完成一次有清理的生命周期。get_usage 用三个可用块作分母，只表示元数据分配比例；它不是 GPU 利用率，也没有证明进程或设备归还了多少字节。',
+  '复跑分两步：先用下载包里的 fetch_upstream.py 下载固定提交的两份文件并检查 SHA-256、Git blob ID 与字节数，再用 block_lifecycle.py 指向该目录。运行器抽取完整原始 AST 定义，只增加延后类型注解的设置；事件路径关闭，未运行依赖不加载。来源清单、选中定义的行范围、实际轨迹及原创源码哈希都随记录提供。包内不转载上游源文件。')+
+  '<p class="practice-links"><a href="labs/vllm-block-lifecycle.zip" download>下载原创运行器与证据 ↓</a> · <a href="labs/vllm-block-lifecycle/block_lifecycle.py">实验源码</a> · <a href="labs/vllm-block-lifecycle/fetch_upstream.py">固定来源下载器</a> · <a href="labs/vllm-block-lifecycle/source-manifest.json">来源与哈希清单</a> · <a href="labs/vllm-block-lifecycle/validation.json">实际12步状态</a> · <a href="labs/vllm-block-lifecycle/README.md">复跑说明与自测答案</a></p>'+
+  p('用 10 分自测：分别解释 A 结束、B 结束、C 查询与 touch、按队头重分配、耗尽拒绝这五步，每步 2 分。必须给出引用数或队列，不能只说“用了缓存”。追问：查到后却未建立引用，若允许其他分配穿插，为什么不能假设编号仍属于旧内容？本实验按顺序调用，未验证任意多线程访问的同步安全。'+
+  ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。');
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
@@ -10548,6 +10578,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
 
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
+  kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
   kairo.updated='2026.11.09';
  }
 })();
@@ -11108,6 +11139,14 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g))if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Integrated service lost published ID '+id);
  if(matches(old,/<pre\b/g).length!==0||!now.includes(trainingEscape(integratedServiceSource.trim())))throw Error('Integrated service full source binding changed');
  body.forEach((text,index)=>{if(text===before[index])throw Error('Integrated service section was not revised');a.sections[index][1]=text;});
+ a.sections[4][1]+='<h3 id="protocol-business-evidence">请求走到哪一步，去哪个系统查</h3>'+
+  p('接口返回的状态描述某一段协议。用户要的是报告，最终验收仍要回到报告和它的来源。排查时先圈出发生变化的一段，再找它和下一段共用的身份。')+
+  table(['看到的现象','继续查什么','实跑对照'],[
+   ['事件发生第二次投递','按消息序号对齐两次交付，再用业务键查报告和写入者代际','<a href="/article/serverless-execution/#native-jetstream-redelivery">同一消息交给两个仍活着的执行者</a>'],
+   ['两次推理可能复用同一前缀','按前缀缓存键找块，再查块的引用数与空闲顺序','<a href="/article/inference-performance/#vllm-block-lifecycle">最后一个引用释放后，原缓存键仍可命中</a>'],
+   ['工具的响应流断开','用请求号定位断流与清理，用原操作键另查报告回执','<a href="/article/mcp-protocol/#mcp-http-cancellation-run">提交前、提交后分别断开响应流</a>']
+  ])+
+  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
  a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
@@ -12512,6 +12551,27 @@ const firstReadingChanges=[];
 
 
 ;
+// mcp-http-cancellation-reading.js
+/* Append a native HTTP contrast to the original stdio and recovery lessons. */
+(()=>{
+ const protocol=articleById('mcp-protocol');
+ const recovery=articleById('agent-recovery');
+ protocol.sections[6][1]+=
+  '<h3 id="mcp-http-cancellation-run">在真实 Streamable HTTP 中取消一项调用</h3>'+
+  para('前面的 stdio 例子通过通知取消调用。2026-07-28 版 Streamable HTTP 给每次请求单独的响应流。客户端收到 1/2 进度后取消等待，SDK 关闭这一条 SSE 流。服务端能按请求 ID 对齐断开事件、处理器收到取消以及文件关闭。两组实际 HTTP 记录都只有发现、列举工具和工具调用的 POST。',
+  '沿用第 3 版订单的 10+27+5=42，两组独立接收库使用同一操作键。提交前取消时，两张表为空。提交后取消时，报告与回执已经共同提交。两次等待都没有拿到最终工具响应，原客户端仍可另发请求查回执，分别得到空值和 42。')+
+  trainingFigure('mcp-http-cancellation','同一 SDK 取消流程作用于请求流。查原操作回执可以区分提交前与提交后两种结果。')+
+  '<p>解压并安装固定依赖后，运行 <code>python3.12 -B cancellation_lab.py --output-dir replay</code>。<a href="labs/mcp-http-cancellation.zip" download>下载完整实验 →</a> · <a href="labs/mcp-http-cancellation/README.md">复现步骤</a> · <a href="labs/mcp-http-cancellation/validation.json">真实导出与账本记录</a></p>'+
+  '<p><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http#cancellation" target="_blank" rel="noopener">固定版本的 Streamable HTTP 取消规则 ↗</a> · <a class="inline-link" href="/article/agent-recovery/#mcp-http-cancellation-receipt">取消后按原操作核对效果 →</a></p>';
+ recovery.sections[4][1]+=
+  '<h3 id="mcp-http-cancellation-receipt">断流后沿原操作核对提交</h3>'+
+  para('关闭 SSE 流后，调用者能确认自己已停止等待，服务端处理器也能收到取消。接收方的持久记录仍需单独核对。同一份 42 报告使用两个独立 SQLite 库，分别在提交前和提交后关闭真实 MCP 响应流。处理器两次均关闭输入文件，提交后那组保留一份报告和一份回执。',
+  '恢复时先沿原操作键查回执。查询得到 42 时，可以确认本实验的接收方已有结果。查询为空时，结合服务端已停止和接收库直接读取，本次可以核对没有提交。真实远端查询失败时保留待确认状态，等能再次核对原操作再决定下一步。')+
+  '<p><a class="inline-link" href="/article/mcp-protocol/#mcp-http-cancellation-run">真实断流、处理器清理与原回执实验 →</a></p>';
+})();
+
+
+;
 // concept-paths-data.js
 /* Authored teaching sequences. These are prose introductions, not generated summaries. */
 const moduleConceptPaths={
@@ -13532,13 +13592,13 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 /* Learning goals are views over the same curriculum, never separate copies of lessons.
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
- 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。三项实跑使用独立夹具。'},
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14026,6 +14086,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'jetstream-redelivery':{folder:'jetstream-redelivery',title:'同一事件重投，仍存活的旧写入者与接收方代际'},
+ 'vllm-block-lifecycle':{folder:'vllm-block-lifecycle',title:'运行固定 vLLM 块池，观察引用、空闲与驱逐'},
+ 'mcp-http-cancellation':{folder:'mcp-http-cancellation',title:'MCP HTTP 断流、工具清理与提交回执'},
  'native-inference-prefix':{folder:'native-inference-prefix',title:'原生推理槽的前缀复用与清除'},
  'ragged-ring':{folder:'ragged-ring',title:'不等长环形注意力与填充负例'},
  'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
@@ -14242,6 +14305,15 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sr
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-observation')+1,0,
  {id:'agent-otel-tail-ledger',track:'agent',stage:2,title:'失败尝试、成功任务与提交效果怎样分开数',chapter:'agent-observability',anchor:'native-tail-sampling-ledger',pack:'otel-tail-ledger',files:['tail_ledger.py','collector.yaml','source.json'],env:'Python 3.12 · OTel SDK 1.44.0 · Collector Contrib 0.130.0',kind:'真实 HTTP、采样导出与 SQLite 对账',observe:'找出提交后 503 并重试成功的根跨度，再用任务与接收库分开核对次数。',scope:'单机采集与本地任务账本。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-message-native')+1,0,
+ {id:'cloud-jetstream-redelivery',track:'cloud',stage:2,title:'重投时旧消费者还能写吗',chapter:'serverless-execution',anchor:'native-jetstream-redelivery',pack:'jetstream-redelivery',files:['jetstream_redelivery.py'],env:'Python 3.12 · NATS Server 2.15.2 · nats-py 2.16.0',kind:'真实重投与接收方事务',observe:'跟踪同一条消息的两次投递。对照直接追加、按业务键去重和代际检查的结果。',scope:'单机真实消息代理，固定输入与接收库。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-queue')+1,0,
+ {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-protocol')+1,0,
+ {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14465,5 +14537,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="1fae3edcc48e5e10d91d5977dec13e9d1f8627856e3359da2d0fe6dec72f673b";
+const staticReadingVersion="5fd658a236765264d9912e403e9cd1f9b17e5fdaeda471c7e563b2ecc514c000";
 

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 526" role="img" aria-labelledby="title desc">
+  <title id="title">Streamable HTTP 取消与报告回执</title>
+  <desc id="desc">客户端收到 1/2 进度，取消等待并关闭这次请求的 SSE 流。服务端观察该请求的断开，处理器收到取消并关闭输入文件。提交前取消的接收库没有报告与回执。提交后取消的接收库保留一份报告与回执，查询原操作可取得金额 42。</desc>
+  <metadata>{"record":"labs/mcp-http-cancellation/validation.json","before_reports":0,"after_reports":1,"after_receipt_total":42}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#466181"/>
+    </marker>
+  </defs>
+  <style>
+    text {font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #192c45}
+    .title {font-size: 28px; font-weight: 750}
+    .label {font-size: 23px; font-weight: 710}
+    .body {font-size: 20px}
+    .muted {fill: #415874}
+    .arrow {fill: none; stroke: #466181; stroke-width: 3; marker-end: url(#arrow)}
+  </style>
+  <rect width="1120" height="526" rx="22" fill="#f7fafc"/>
+  <text x="40" y="51" class="title">一次断流，两种接收库结果</text>
+
+  <rect x="40" y="82" width="295" height="132" rx="15" fill="#eef4fc" stroke="#8faac6"/>
+  <text x="62" y="120" class="label">客户端</text>
+  <text x="62" y="157" class="body">收到 1/2 进度</text>
+  <text x="62" y="186" class="body muted">取消当前工具调用的等待</text>
+  <path d="M336 148H394" class="arrow"/>
+
+  <rect x="402" y="82" width="301" height="132" rx="15" fill="#fff2de" stroke="#c29859"/>
+  <text x="424" y="120" class="label">HTTP 传输</text>
+  <text x="424" y="157" class="body">关闭该请求的 SSE 流</text>
+  <text x="424" y="186" class="body muted">服务端观察到断开</text>
+  <path d="M704 148H762" class="arrow"/>
+
+  <rect x="770" y="82" width="310" height="132" rx="15" fill="#e9f3ed" stroke="#82a992"/>
+  <text x="792" y="120" class="label">工具处理器</text>
+  <text x="792" y="157" class="body">收到取消信号</text>
+  <text x="792" y="186" class="body muted">关闭输入文件</text>
+
+  <text x="40" y="266" class="label">沿同一操作键重新查回执</text>
+  <rect x="40" y="289" width="501" height="154" rx="15" fill="#eef4fc" stroke="#8faac6"/>
+  <text x="63" y="330" class="label">提交前取消</text>
+  <text x="63" y="368" class="body">报告 0 份，回执 0 份</text>
+  <text x="63" y="406" class="body muted">查询原操作得到空回执</text>
+
+  <rect x="579" y="289" width="501" height="154" rx="15" fill="#e9f3ed" stroke="#82a992"/>
+  <text x="602" y="330" class="label">提交后取消</text>
+  <text x="602" y="368" class="body">报告 1 份，回执 1 份</text>
+  <text x="602" y="406" class="body muted">查询原操作得到 42</text>
+
+  <text x="40" y="488" class="body muted">两组独立 SQLite 库处理同一固定报告与操作键。</text>
+</svg>

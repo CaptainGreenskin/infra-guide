@@ -82,3 +82,7 @@
 .resource-row .path-links{flex-wrap:wrap;gap:12px}.quality-section{scroll-margin-top:100px}
 .translation-reading-trace td{min-width:0}
 .approval-outcomes td{min-width:0}.approval-outcomes td:last-child{text-align:center}
+@media(max-width:650px){
+ #vllm-block-lifecycle ~ .table-wrap table{table-layout:fixed;width:100%}
+ #vllm-block-lifecycle ~ .table-wrap :is(th,td){min-width:0;padding-inline:8px;overflow-wrap:anywhere}
+}

@@ -1,0 +1,23 @@
+{
+  "repository": "vllm-project/vllm",
+  "version": "v0.10.2",
+  "commit": "01efc7ef781391e744ed08c3292817a773d654e6",
+  "license": "Apache-2.0",
+  "license_url": "https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/LICENSE",
+  "files": [
+    {
+      "name": "block_pool.py",
+      "path": "vllm/v1/core/block_pool.py",
+      "bytes": 13319,
+      "sha256": "1122ed808606e1a266995113505417401baa5fa7c42afa372314462c38790876",
+      "git_blob_sha1": "d1e1c1c8d038292c35718bb20b995f5e973dfe19"
+    },
+    {
+      "name": "kv_cache_utils.py",
+      "path": "vllm/v1/core/kv_cache_utils.py",
+      "bytes": 48703,
+      "sha256": "c69ce881133c859f041d44ccdc8c1de1cc6b16a91f986f7da060d476719a13cf",
+      "git_blob_sha1": "2c0eac3ddd79d9e0a4f1bb54a538e4bab052b6b0"
+    }
+  ]
+}

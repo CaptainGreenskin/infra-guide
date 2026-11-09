@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'jetstream-redelivery':{folder:'jetstream-redelivery',title:'同一事件重投，仍存活的旧写入者与接收方代际'},
+ 'vllm-block-lifecycle':{folder:'vllm-block-lifecycle',title:'运行固定 vLLM 块池，观察引用、空闲与驱逐'},
+ 'mcp-http-cancellation':{folder:'mcp-http-cancellation',title:'MCP HTTP 断流、工具清理与提交回执'},
  'native-inference-prefix':{folder:'native-inference-prefix',title:'原生推理槽的前缀复用与清除'},
  'ragged-ring':{folder:'ragged-ring',title:'不等长环形注意力与填充负例'},
  'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
@@ -216,6 +219,15 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sr
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-observation')+1,0,
  {id:'agent-otel-tail-ledger',track:'agent',stage:2,title:'失败尝试、成功任务与提交效果怎样分开数',chapter:'agent-observability',anchor:'native-tail-sampling-ledger',pack:'otel-tail-ledger',files:['tail_ledger.py','collector.yaml','source.json'],env:'Python 3.12 · OTel SDK 1.44.0 · Collector Contrib 0.130.0',kind:'真实 HTTP、采样导出与 SQLite 对账',observe:'找出提交后 503 并重试成功的根跨度，再用任务与接收库分开核对次数。',scope:'单机采集与本地任务账本。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-message-native')+1,0,
+ {id:'cloud-jetstream-redelivery',track:'cloud',stage:2,title:'重投时旧消费者还能写吗',chapter:'serverless-execution',anchor:'native-jetstream-redelivery',pack:'jetstream-redelivery',files:['jetstream_redelivery.py'],env:'Python 3.12 · NATS Server 2.15.2 · nats-py 2.16.0',kind:'真实重投与接收方事务',observe:'跟踪同一条消息的两次投递。对照直接追加、按业务键去重和代际检查的结果。',scope:'单机真实消息代理，固定输入与接收库。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-queue')+1,0,
+ {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-protocol')+1,0,
+ {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

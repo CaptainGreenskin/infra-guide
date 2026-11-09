@@ -1,0 +1,74 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "6e9ae82d76ab8d2e3ff0717a097e8c5794dd73e9",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PREFIX_RING_TELEMETRY_2026-11-09.json": "ce9cd56ccefae0f4b1361e9a7617a559970b0a6ba0f8660bea15125d9ea5395e"
+  },
+  "body_revisions": [
+    {
+      "id": "message-delivery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "52ee599c29b31479436e92c931f7f70ed705d75d5ae0e2fd5939967a85694829",
+      "reviewed_content_sha256": "1c52b300bfb8ff2f9a89442a752edf678244ce47ad4f0f49655b6a6e96f966fc",
+      "scope": "Connect the existing exit-and-requeue example to an actual timeout redelivery.",
+      "observation": "The handoff points to the live-old-worker case and the separate receiver acceptance contract.",
+      "headings": [
+        "先有业务动作，再有承载它的运输消息",
+        "生产者确认与消费者ACK，不是同一张回执",
+        "从待投递到待确认，状态怎样移动",
+        "业务提交后退出，重投为什么不能再记一次",
+        "先ACK再做业务，为什么队列空了仍可能丢工作",
+        "预取窗口限制在途消息，不自动增加处理能力",
+        "持久队列、持久消息和确认，各补哪一个条件",
+        "把这套对象带回Serverless事件源",
+        "运行完整代理实验，核对独立结果"
+      ]
+    },
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "87e02d2c4bf5f8f5ae1fdda47101aede522254fd2cf9b6c3e5f2947a03a58a0f",
+      "reviewed_content_sha256": "e48b0596abb28af4281d46dfa3afb24924aa2eee654048ec50b65958b9097500",
+      "scope": "Observe native Streamable HTTP cancellation and a follow-up query on the same client.",
+      "observation": "Two request streams closed and both tool invocations cleaned up. A previously committed operation still had its receipt.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "serverless-execution",
+      "reviewed_at": "2026-11-09",
+      "scope": "Explain timeout redelivery while an older handler still holds execution state.",
+      "observation": "The same stream sequence reached two live clients. Receiver-side rules produced different committed effect ledgers.",
+      "reviewed_content_sha256": "446336a075739247f0fb7db46a4d5bef563ac9a1dfca6749229ac1b2211ff897",
+      "record": "dist/labs/jetstream-redelivery/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "scope": "Walk through the exact upstream vLLM block pool with explicit workload inputs.",
+      "observation": "The old hash remained after the last reference was released, then disappeared when the allocation consumed that block.",
+      "reviewed_content_sha256": "e510758174e22e999b660996b89ff10c09ac593d00f88f341f51a64ef01e13d0",
+      "record": "dist/labs/vllm-block-lifecycle/validation.json"
+    },
+    {
+      "chapter": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "scope": "Observe native Streamable HTTP cancellation and a follow-up query on the same client.",
+      "observation": "Two request streams closed and both tool invocations cleaned up. A previously committed operation still had its receipt.",
+      "reviewed_content_sha256": "e48b0596abb28af4281d46dfa3afb24924aa2eee654048ec50b65958b9097500",
+      "record": "dist/labs/mcp-http-cancellation/validation.json"
+    }
+  ]
+}

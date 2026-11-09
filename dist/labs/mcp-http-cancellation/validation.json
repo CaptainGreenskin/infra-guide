@@ -1,0 +1,55 @@
+{
+  "schema": "mcp-http-cancellation-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "client_pid": 25193,
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "uvicorn": "0.54.0",
+    "httpx2": "2.16.0",
+    "anyio": "4.16.0"
+  },
+  "source": {
+    "task_id": "report-A",
+    "version": 3,
+    "op": "report-A/v3:publish",
+    "expected_total": 42
+  },
+  "cases": {
+    "before": {
+      "watch_request_id": 3,
+      "reports": 0,
+      "receipts": 0,
+      "receipt_total": null,
+      "file_closed": true,
+      "server_pid": 25195,
+      "server_exit": 0
+    },
+    "after": {
+      "watch_request_id": 3,
+      "reports": 1,
+      "receipts": 1,
+      "receipt_total": 42,
+      "file_closed": true,
+      "server_pid": 25201,
+      "server_exit": 0
+    }
+  },
+  "source_sha256": {
+    "cancellation_lab.py": "e43c2d300c50f261f8a17d3d61ae0bbd3cf68664a468cea45b87f342519f4dfc",
+    "orders.json": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "a64396d32eaaf2a0695feca3e7019c0e54e1f17c219251ce2057e85d5fba6a64"
+  },
+  "artifact_sha256": {
+    "before-server.jsonl": "14b84801564c6fec4806cc44dd0904cadac2f9068bc3b3d7cb68dbcb7c0f4315",
+    "before-client.jsonl": "52073e18df675fc1926882b5569113439f077acddd6596fa1337b09767b4e44f",
+    "before.sqlite": "e5f0fbecab16259303df7ebb546835c0828f9b5728255749c686cfcb20bab4b7",
+    "after-server.jsonl": "bdaa0a3b9066c631a0b5042c9e4988c9a39974347b398530ebcc1f7041964325",
+    "after-client.jsonl": "9f9ea45ad346ab48b479eb6379b12d6e9294c862eccf898f551c82c264e97a76",
+    "after.sqlite": "7202f46aa4ae23dec856fd52e83bd6120c81211d99633a38513068341d697134"
+  }
+}

@@ -290,4 +290,16 @@
  fold('完整 Dockerfile.mq-client：固定客户端依赖',mc8[3])
  ],['message-native-run']);
  delivery.desc=delivery.intro='先认识消息、代理、投递与业务效果，沿正常发布和确认理解状态，再用真实 RabbitMQ 核对重投、预取和持久重启。';
+
+ const jetstreamLink='<a href="/article/serverless-execution/#native-jetstream-redelivery">查看超时重投与写权限实战 →</a>';
+ serverless.sections[4][1]+=p('超时后重新投递，旧执行者未必已经停止。第 11 节用两条保持独立的真实 JetStream 客户端连接，分别核对同一条消息再次送达和旧执行者能否写业务库。'+jetstreamLink);
+ serverless.sections[10][1]+=h('native-jetstream-redelivery','真实 JetStream：重投之后，谁还能写入')+
+ p('JetStream 是 NATS 的消息存储和投递层。实验用一个持久拉取消费者保存进度，两条独立连接先后请求同一条金额 37 的消息。A 首次收到后保持连接，不确认。服务端的确认等待时限 AckWait 为 1 秒。B 收到同一流序号，投递次数变为 2，此时 A 仍然在线。')+
+ '<figure class="training-figure"><a href="diagrams/jetstream-redelivery.svg" target="_blank" rel="noopener" aria-label="放大：重投之后谁还能写入"><img src="diagrams/jetstream-redelivery.svg" width="440" height="372" alt="同一消息由 A 到 B 重投，业务库推进代际后比较追加写两份、去重留 A 一份、校验代际留 B 一份" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>代理按时限重投，业务库按自己的规则决定谁能写入。<a href="diagrams/jetstream-redelivery.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('B 收到以后，实验让业务库把当前可写代际从 1 改为 2，再让 A 先写、B 后写。只按业务 ID 去重时，先到的 A 仍能写入，B 只能复用原记录。若要让 A 失去写资格，接收方要在写入事务内比较它携带的代际和当前代际。这样 A 的代际 1 被拒，B 的代际 2 才提交。代际由业务方分配，与代理记录的投递次数各有用途。')+
+ p('三组都由 B 发出 <code>ack_sync</code> 并收到代理确认，待确认消息数都从 1 降到 0。直接追加的负例仍留下两份金额 37。JetStream 在某些情况下也可以接受迟到的 ACK。本实验只观测 B 的确认，前面的 SQLite 参考使用另一套句柄规则。<a href="https://docs.nats.io/learn/jetstream/acknowledgment">JetStream 确认与重投 ↗</a> · <a href="https://github.com/nats-io/nats-server/blob/v2.15.2/server/consumer.go">固定版本接收 ACK 的实现 ↗</a>')+
+ p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
+ '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
+ delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
+ serverless.updated=delivery.updated='2026.11.09';
 })();

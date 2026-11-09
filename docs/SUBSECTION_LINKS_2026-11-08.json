@@ -265,11 +265,13 @@
         "subsection-5-fv3seh",
         "subsection-7-1qditfg",
         "subsection-11-1bpbx18",
-        "subsection-11-13uy27q"
+        "subsection-11-13uy27q",
+        "native-jetstream-redelivery"
       ],
       "visible_targets": [
         "subsection-11-1bpbx18",
-        "subsection-11-13uy27q"
+        "subsection-11-13uy27q",
+        "native-jetstream-redelivery"
       ]
     },
     {
@@ -647,7 +649,8 @@
         "subsection-6-1i98zxe",
         "subsection-6-1ajl0y9",
         "vllm-v1-request-path",
-        "native-inference-queue"
+        "native-inference-queue",
+        "vllm-block-lifecycle"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -658,6 +661,7 @@
         "subsection-3-cwmlui",
         "subsection-3-nrn0x9",
         "vllm-v1-request-path",
+        "vllm-block-lifecycle",
         "subsection-6-lachm",
         "subsection-6-i6f5lp",
         "subsection-6-10lmpd4",
@@ -742,6 +746,13 @@
       "targets": [
         "subsection-5-kha210",
         "subsection-5-3vclab",
+        "agent-crash-windows-run",
+        "mcp-http-cancellation-receipt"
+      ],
+      "visible_targets": [
+        "subsection-5-kha210",
+        "subsection-5-3vclab",
+        "mcp-http-cancellation-receipt",
         "agent-crash-windows-run"
       ]
     },
@@ -874,7 +885,9 @@
     },
     {
       "id": "production-readiness",
-      "targets": []
+      "targets": [
+        "protocol-business-evidence"
+      ]
     },
     {
       "id": "control-plane-consensus",
@@ -897,6 +910,11 @@
     {
       "id": "mcp-protocol",
       "targets": [
+        "mcp-model-tool-observation",
+        "mcp-http-cancellation-run"
+      ],
+      "visible_targets": [
+        "mcp-http-cancellation-run",
         "mcp-model-tool-observation"
       ]
     }

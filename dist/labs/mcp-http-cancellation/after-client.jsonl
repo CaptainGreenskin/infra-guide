@@ -1,0 +1,4 @@
+{"event": "progress_received", "progress": 1.0, "total": 2.0, "message": "waiting with source open"}
+{"event": "cancel_requested"}
+{"event": "caller_cancelled"}
+{"event": "receipt_received", "result": {"_meta": {"io.modelcontextprotocol/serverInfo": {"name": "infra-guide-report", "version": ""}}, "content": [{"type": "text", "text": "{\"op\": \"report-A/v3:publish\", \"total\": 42}", "annotations": null, "_meta": null}], "structuredContent": {"op": "report-A/v3:publish", "total": 42}, "isError": false, "resultType": "complete"}}

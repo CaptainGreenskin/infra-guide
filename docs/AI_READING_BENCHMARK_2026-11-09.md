@@ -2,6 +2,14 @@
 
 2026-11-09 对照参考站的公开学习路线、四个课程目录、面试目录、更新日志和计划。遍历各目录的分组，选读 Transformer 入门、GPU 与 CUDA 算子、训练通信与排程、推理引擎及各类面经的代表正文。章节导读和有实现的正文按各自交付范围比较。 [学习路线](https://caomaolufei.github.io/AIInfraGuide/guides/ai-infra学习路线/) · [更新日志](https://caomaolufei.github.io/AIInfraGuide/blog/update-log/) · [更新计划](https://caomaolufei.github.io/AIInfraGuide/about/roadmap/)
 
+## 当前核验进展
+
+- **CUDA 算子**已有同卡 GEMM 的三种实现、Linux NVCC 编译记录、回读判据和 Nsight 步骤。设备上的输出、CUDA event 计时和性能计数仍待实测。[同卡 GEMM](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#same-device-gemm)
+- **长序列训练**已有等长和不等长的 CPU/Gloo 环形注意力实跑，核对前向、反向和一次权重更新。GPU/NCCL 和物理多机的数值与性能另验。[不等长分片实战](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#ragged-ring-training)
+- **推理引擎**已有真实 llama.cpp CPU 的排队、流式输出、前缀复用与清除。固定提交的 vLLM 块池已在 CPU 执行元数据分配、共享和驱逐。完整 vLLM 的 GPU 调度、设备执行和部署性能仍待目标环境核验。[实际双请求](https://captaingreenskin.github.io/infra-guide/article/inference-performance/#native-inference-queue) · [vLLM 块池](https://captaingreenskin.github.io/infra-guide/article/inference-performance/#vllm-block-lifecycle)
+
+## 初次对照记录
+
 | 板块 | 参考站怎样展开 | InfraGuide 的差距与落点 |
 | --- | --- | --- |
 | 前置知识 | 从编程、数学与模型走到框架、GPU 和集合通信。Transformer 入门集中讲架构变体、注意力、前馈、位置、归一化与生成 | 已有分专题的推导和真实 CPU 数值。A1.1 需要把部件与工程问题连成一篇。Python 扩展的构建、链接与加载仍可补一条故障定位链。 [前置目录](https://caomaolufei.github.io/AIInfraGuide/prerequisites/) |

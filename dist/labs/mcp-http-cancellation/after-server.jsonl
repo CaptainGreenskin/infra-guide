@@ -1,0 +1,27 @@
+{"event": "server_ready", "pid": 25201, "port": 49167}
+{"event": "http_started", "method": "POST", "endpoint": "/mcp"}
+{"event": "http_request", "request_id": 1, "request": {"jsonrpc": "2.0", "id": 1, "method": "server/discover", "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": {"name": "mcp", "version": "0.1.0"}, "io.modelcontextprotocol/clientCapabilities": {}}}}, "http_method": "POST", "protocol_header": "2026-07-28", "method_header": "server/discover"}
+{"event": "http_response", "request_id": 1, "status": 200, "content_type": "application/json", "session_header_present": false}
+{"event": "response_bytes", "request_id": 1, "body_base64": "eyJqc29ucnBjIjoiMi4wIiwiaWQiOjEsInJlc3VsdCI6eyJjYWNoZVNjb3BlIjoicHJpdmF0ZSIsImNhcGFiaWxpdGllcyI6eyJ0b29scyI6eyJsaXN0Q2hhbmdlZCI6ZmFsc2V9fSwicmVzdWx0VHlwZSI6ImNvbXBsZXRlIiwic3VwcG9ydGVkVmVyc2lvbnMiOlsiMjAyNi0wNy0yOCJdLCJ0dGxNcyI6MCwiX21ldGEiOnsiaW8ubW9kZWxjb250ZXh0cHJvdG9jb2wvc2VydmVySW5mbyI6eyJuYW1lIjoiaW5mcmEtZ3VpZGUtcmVwb3J0IiwidmVyc2lvbiI6IiJ9fX19"}
+{"event": "http_disconnect", "request_id": 1}
+{"event": "http_started", "method": "POST", "endpoint": "/mcp"}
+{"event": "http_request", "request_id": 2, "request": {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": {"name": "mcp", "version": "0.1.0"}, "io.modelcontextprotocol/clientCapabilities": {}}}}, "http_method": "POST", "protocol_header": "2026-07-28", "method_header": "tools/list"}
+{"event": "http_response", "request_id": 2, "status": 200, "content_type": "application/json", "session_header_present": false}
+{"event": "response_bytes", "request_id": 2, "body_base64": "eyJqc29ucnBjIjoiMi4wIiwiaWQiOjIsInJlc3VsdCI6eyJjYWNoZVNjb3BlIjoicHJpdmF0ZSIsInJlc3VsdFR5cGUiOiJjb21wbGV0ZSIsInRvb2xzIjpbeyJpbnB1dFNjaGVtYSI6eyJ0eXBlIjoib2JqZWN0IiwicHJvcGVydGllcyI6eyJ0YXNrX2lkIjp7ImNvbnN0IjoicmVwb3J0LUEifSwib3AiOnsiY29uc3QiOiJyZXBvcnQtQS92MzpwdWJsaXNoIn19LCJyZXF1aXJlZCI6WyJ0YXNrX2lkIiwib3AiXSwiYWRkaXRpb25hbFByb3BlcnRpZXMiOmZhbHNlfSwibmFtZSI6IndhdGNoX3B1Ymxpc2gifSx7ImlucHV0U2NoZW1hIjp7InR5cGUiOiJvYmplY3QiLCJwcm9wZXJ0aWVzIjp7InRhc2tfaWQiOnsiY29uc3QiOiJyZXBvcnQtQSJ9LCJvcCI6eyJjb25zdCI6InJlcG9ydC1BL3YzOnB1Ymxpc2gifX0sInJlcXVpcmVkIjpbInRhc2tfaWQiLCJvcCJdLCJhZGRpdGlvbmFsUHJvcGVydGllcyI6ZmFsc2V9LCJuYW1lIjoicmVhZF9yZWNlaXB0In1dLCJ0dGxNcyI6MCwiX21ldGEiOnsiaW8ubW9kZWxjb250ZXh0cHJvdG9jb2wvc2VydmVySW5mbyI6eyJuYW1lIjoiaW5mcmEtZ3VpZGUtcmVwb3J0IiwidmVyc2lvbiI6IiJ9fX19"}
+{"event": "http_disconnect", "request_id": 2}
+{"event": "http_started", "method": "POST", "endpoint": "/mcp"}
+{"event": "http_request", "request_id": 3, "request": {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "watch_publish", "arguments": {"task_id": "report-A", "op": "report-A/v3:publish"}, "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": {"name": "mcp", "version": "0.1.0"}, "io.modelcontextprotocol/clientCapabilities": {}, "progressToken": 3}}}, "http_method": "POST", "protocol_header": "2026-07-28", "method_header": "tools/call"}
+{"event": "source_opened", "request_id": 3, "op": "report-A/v3:publish"}
+{"event": "receiver_committed", "request_id": 3, "op": "report-A/v3:publish", "total": 42}
+{"event": "http_response", "request_id": 3, "status": 200, "content_type": "text/event-stream", "session_header_present": false}
+{"event": "response_bytes", "request_id": 3, "body_base64": "ZXZlbnQ6IG1lc3NhZ2UNCmRhdGE6IHsianNvbnJwYyI6IjIuMCIsIm1ldGhvZCI6Im5vdGlmaWNhdGlvbnMvcHJvZ3Jlc3MiLCJwYXJhbXMiOnsicHJvZ3Jlc3NUb2tlbiI6MywicHJvZ3Jlc3MiOjEsInRvdGFsIjoyLCJtZXNzYWdlIjoid2FpdGluZyB3aXRoIHNvdXJjZSBvcGVuIn19DQoNCg=="}
+{"event": "http_disconnect", "request_id": 3}
+{"event": "handler_cancelled", "request_id": 3}
+{"event": "handler_cleaned", "request_id": 3, "file_closed": true}
+{"event": "http_started", "method": "POST", "endpoint": "/mcp"}
+{"event": "http_request", "request_id": 4, "request": {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "read_receipt", "arguments": {"task_id": "report-A", "op": "report-A/v3:publish"}, "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": {"name": "mcp", "version": "0.1.0"}, "io.modelcontextprotocol/clientCapabilities": {}}}}, "http_method": "POST", "protocol_header": "2026-07-28", "method_header": "tools/call"}
+{"event": "receipt_read", "request_id": 4, "result": {"op": "report-A/v3:publish", "total": 42}}
+{"event": "http_response", "request_id": 4, "status": 200, "content_type": "application/json", "session_header_present": false}
+{"event": "response_bytes", "request_id": 4, "body_base64": "eyJqc29ucnBjIjoiMi4wIiwiaWQiOjQsInJlc3VsdCI6eyJjb250ZW50IjpbeyJ0ZXh0Ijoie1wib3BcIjogXCJyZXBvcnQtQS92MzpwdWJsaXNoXCIsIFwidG90YWxcIjogNDJ9IiwidHlwZSI6InRleHQifV0sImlzRXJyb3IiOmZhbHNlLCJyZXN1bHRUeXBlIjoiY29tcGxldGUiLCJzdHJ1Y3R1cmVkQ29udGVudCI6eyJvcCI6InJlcG9ydC1BL3YzOnB1Ymxpc2giLCJ0b3RhbCI6NDJ9LCJfbWV0YSI6eyJpby5tb2RlbGNvbnRleHRwcm90b2NvbC9zZXJ2ZXJJbmZvIjp7Im5hbWUiOiJpbmZyYS1ndWlkZS1yZXBvcnQiLCJ2ZXJzaW9uIjoiIn19fX0="}
+{"event": "http_disconnect", "request_id": 4}
+{"event": "server_stopped", "pid": 25201}

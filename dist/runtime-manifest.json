@@ -1,12 +1,12 @@
 {
   "format": 1,
-  "canonical_script_count": 226,
+  "canonical_script_count": 227,
   "public_script_count": 9,
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "c332c32398b037371df337d15951f32e9d94eaa15f12725187a23e6ae2f1acca",
-      "bytes": 386899,
+      "sha256": "809a2cdf141532e9d2a57fc363b0afc661263a01cb6202ea86045a7948e447ba",
+      "bytes": 387064,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "4944e1a568d253cafc7bdfafb41b45fbce02001bd91769156540cbb672555ebb",
-          "bytes": 14943
+          "sha256": "9d6a813cc634547e7ebc92aa832d79786fcad5e129ecca0f653cb29fc9b624a2",
+          "bytes": 15108
         },
         {
           "file": "manual-sharding-data.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "84ec81cad62fd0fd6a6301ec133f7118b61f4f647237e3eb7800c4d5e8193ab2",
-      "bytes": 3502587,
+      "sha256": "2e3d6431aac74042e78731f8c74e11fe6f408cd96f7ec488bb0f9beb45271d1e",
+      "bytes": 3517382,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -930,13 +930,13 @@
         },
         {
           "file": "progressive-events-reading.js",
-          "sha256": "273cb28863365db7f9a7fe374d0a7f8b447d410a379154270d75b1032b876352",
-          "bytes": 38790
+          "sha256": "f52299647cefea87600f40da300cfbd3369d0f6181503e4f2510823b8aeccfdf",
+          "bytes": 42206
         },
         {
           "file": "progressive-inference-reading.js",
-          "sha256": "a3b97c2d332aab3094dcefd3b84f8793de39f08626b00d9f5be7a9ee88c0eb04",
-          "bytes": 59444
+          "sha256": "3101f6e10acbe3242fbce603eb37a0ebca4fbb614a1ad37c120a5a004e6de142",
+          "bytes": 63612
         },
         {
           "file": "progressive-agent-quality-reading.js",
@@ -1020,8 +1020,8 @@
         },
         {
           "file": "progressive-agent-retrieval-workflow-reading.js",
-          "sha256": "7ff5f46f1a4d89deafff5972c38591d59d3cde49f778a9ce3abe8451c3ae9ece",
-          "bytes": 54232
+          "sha256": "3db00a2b5edfc5299d91d99bb5c03d0301d2587264f708ef91140293ad300e78",
+          "bytes": 54569
         },
         {
           "file": "progressive-terraform-identity-reading.js",
@@ -1040,8 +1040,8 @@
         },
         {
           "file": "progressive-integrated-service-reading.js",
-          "sha256": "d868c92e6a343bdee1c8435c6163d85b27b5e7f2959d8cab78e97fd8f91460fe",
-          "bytes": 19066
+          "sha256": "8cff4e74dc8e6323e00c75156a910bd0a29ed4b20bcd4278fcfc0a21dd7dddd0",
+          "bytes": 20462
         },
         {
           "file": "progressive-tcp-database-reading.js",
@@ -1084,6 +1084,11 @@
           "bytes": 6769
         },
         {
+          "file": "mcp-http-cancellation-reading.js",
+          "sha256": "c08d3a938fe297123a2975608bc2c07192a097ca14d93a27a0f45b3f7595b6bd",
+          "bytes": 2757
+        },
+        {
           "file": "concept-paths-data.js",
           "sha256": "2301c7c39f6498302f3df73ad4a093da1afd9cca0dd3b419ef5a2b6f57286e3f",
           "bytes": 74664
@@ -1120,8 +1125,8 @@
         },
         {
           "file": "learning-goals.js",
-          "sha256": "bf7a52b1d78eb867534c0357c0c3b5d4e816fcbfb4737b7b4e2ca10aaf2fb594",
-          "bytes": 12059
+          "sha256": "3884f677824d1b715bcfef8bd7a6b65856192c8f80d0b5aae38650e50d220afa",
+          "bytes": 12504
         },
         {
           "file": "state-protocol-connections.js",
@@ -1140,8 +1145,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "1d0d7a359125aeed4071f7c4415f70cdc7d09621c38d84382829a50649e9a78a",
-          "bytes": 71315
+          "sha256": "f9b5007c18633532ceb6ea5d7859967749c3aa8280c2ba88b82dd6b6562f9800",
+          "bytes": 73551
         },
         {
           "file": "concept-navigation.js",
@@ -1155,7 +1160,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "cbd5a7831d00ad10b8d6a5906dfab25de8114bec64ffe167bee486129f79725e",
+          "sha256": "e44815baf8b2d709dafba9c54a418afad9d766be41f889f1357b3d8559094da8",
           "bytes": 145
         }
       ]

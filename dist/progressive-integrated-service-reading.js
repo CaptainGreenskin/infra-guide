@@ -103,6 +103,14 @@
  for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g))if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Integrated service lost published ID '+id);
  if(matches(old,/<pre\b/g).length!==0||!now.includes(trainingEscape(integratedServiceSource.trim())))throw Error('Integrated service full source binding changed');
  body.forEach((text,index)=>{if(text===before[index])throw Error('Integrated service section was not revised');a.sections[index][1]=text;});
+ a.sections[4][1]+='<h3 id="protocol-business-evidence">请求走到哪一步，去哪个系统查</h3>'+
+  p('接口返回的状态描述某一段协议。用户要的是报告，最终验收仍要回到报告和它的来源。排查时先圈出发生变化的一段，再找它和下一段共用的身份。')+
+  table(['看到的现象','继续查什么','实跑对照'],[
+   ['事件发生第二次投递','按消息序号对齐两次交付，再用业务键查报告和写入者代际','<a href="/article/serverless-execution/#native-jetstream-redelivery">同一消息交给两个仍活着的执行者</a>'],
+   ['两次推理可能复用同一前缀','按前缀缓存键找块，再查块的引用数与空闲顺序','<a href="/article/inference-performance/#vllm-block-lifecycle">最后一个引用释放后，原缓存键仍可命中</a>'],
+   ['工具的响应流断开','用请求号定位断流与清理，用原操作键另查报告回执','<a href="/article/mcp-protocol/#mcp-http-cancellation-run">提交前、提交后分别断开响应流</a>']
+  ])+
+  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
  a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
