@@ -1,0 +1,32 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "d30899b4e6411291b0038ef932ce76a29d1e6c5f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PROXY_DATE_CHECK_2026-11-09.json": "917329e8588a82af2b2dfdcb56a6402261c34cbbbecc5f1960adaa28c0ab51c8"
+  },
+  "source_revisions": {
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "b856783c7558a30a3ab2b1dfff281425f671a61ef7ea307e30c6cf6bff803aaa",
+      "reviewed_sha256": "46cfdb1b6f715bc50839e058f1cdb7c0acb551f2ef09e8571c80d34d49b94565",
+      "scope": "Validate immutable Triton and MCP native output with their dedicated source and result oracles while retaining the status contract for every existing wrapped record."
+    }
+  },
+  "article_sections": {},
+  "review_scope": {
+    "body_baseline_commit": "d30899b4e6411291b0038ef932ce76a29d1e6c5f",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "role_chapter_positions": 114,
+    "experiment_packs": 85,
+    "learning_tasks": 127
+  }
+}

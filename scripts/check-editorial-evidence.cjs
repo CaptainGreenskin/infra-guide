@@ -86,6 +86,10 @@ for(const row of migration.new_chapter_reviews){
 for(const row of expansion.new_chapter_reviews){const a=data.articles.find(a=>a.id===row.id);assert(row.review==='new_teaching_unit'&&row.observation&&row.review_scope&&row.reviewed_at);let expected=row.reviewed_content_sha256;for(const revision of (expansion.body_revisions||[]).filter(x=>x.id===row.id)){assert.equal(revision.previous_content_sha256,expected);assert(revision.scope&&revision.observation&&revision.reviewed_at);expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:a.title,sections:a.sections}),row.id+': changed after new teaching-unit review');}
 // A revised unit is a signed historical body. Follow its later explicit revisions
 // instead of requiring a legitimately edited chapter to stay frozen at that unit.
+const nativeRecordChecks = {
+ 'dist/labs/triton-tail-mask/validation.json':'./check-triton-tail-mask.cjs',
+ 'dist/labs/mcp-trace-reentry/validation.json':'./check-mcp-trace-reentry.cjs'
+};
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);
  const chapterChain=reviewed.some(row=>row.id===unit.chapter)?later.revisions:expansion.body_revisions;
@@ -94,7 +98,8 @@ for(const unit of expansion.revised_teaching_units||[]){
  let expected=unit.reviewed_content_sha256;
  for(const revision of rows.slice(at+1)){assert.equal(revision.previous_content_sha256,expected,unit.chapter+': broken post-unit review chain');expected=revision.reviewed_content_sha256;}
  assert.equal(expected,signature({title:a.title,sections:a.sections}),unit.chapter+': changed after its latest explicit review');
- assert.equal(JSON.parse(read(unit.record)).status,'passed');
+ if(Object.hasOwn(nativeRecordChecks,unit.record))require(nativeRecordChecks[unit.record]);
+ else assert.equal(JSON.parse(read(unit.record)).status,'passed',unit.chapter+': missing passed record');
 }
 assert.equal(fresh.knowledge_reviews.length,currentPoints.length);
 console.log('PASS: historical63-chapter audit/20 repairs, independent1000-request arithmetic and optimizer-call provenance; preserved window66/95 review counts with '+later.revisions.length+' explicit post-window body revisions. Current signatures include separately reviewed new units and relocation, with explicit knowledge-link revisions; pending work is not counted as complete.');
