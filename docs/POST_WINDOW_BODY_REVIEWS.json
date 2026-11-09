@@ -3860,6 +3860,63 @@
         "实战：两个真实进程复核前向、梯度与更新",
         "练习：从矩阵到账本，而非只背并行名称"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ec187abb108594cb34773ab6101a314c81988858b41188fd280032737cfed55f",
+      "reviewed_content_sha256": "8b41c7dcb39e87f8ef4c255f6b2c739b29b7713e3440391cae14af535a0e73b1",
+      "scope": "Explain cross-attention as two target rows by three source columns and contrast real training input with generated input",
+      "observation": "Source/target row and column roles are defined in context. With the same two-item prompt, the next training input is the recorded dataset ID 2 and the next generation input is the selected ID 1. Original CPU evidence and vocabulary are preserved.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ceaed3c0d44d679b27321c3c8348fc60bf369cb4c6d1dc57857449e843c3e8c0",
+      "reviewed_content_sha256": "70dad3dae09d72a11ee961d84cc4a229ea23aaf0424a1ff8f399e90dc153f464",
+      "scope": "Explain that each query has its own normalized allocation",
+      "observation": "Compare the existing weight 1 and 1/4 for candidate zero in two different rows, keeping the original numerical example.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "61bcf82975eefd798f53c7ad4e735d530b71bfe230b9e6858d5014d98ab51cd8",
+      "reviewed_content_sha256": "d294ac944a9f3aeac3f36fa4b0361bb5694f0b12c50af8fef0b2d9d0bdc7059b",
+      "scope": "Teach the GPU physical layout before thread indexing and derive the resource decision from a model-specific limit",
+      "observation": "Add an original inline diagram for host, device memory, L2 and SM internals, then walk the existing 2500-element kernel and distinguish device memory, block and SM resource limits. Specify the shared-memory example and deployment topology as engineering checks rather than measurements.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
     }
   ]
 }

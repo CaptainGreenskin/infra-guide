@@ -17,6 +17,8 @@
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
+入门进一步用两个目标位置和三个源位置解释交叉注意力，并把训练的真实前缀与生成的回填输入逐格对照。GPU 章补上从主机、显存与 L2 到 SM 的硬件图，以及按型号核对资源上限和互联的方法。 [Transformer 入门](https://captaingreenskin.github.io/infra-guide/article/transformer-model/) · [GPU 执行与存储](https://captaingreenskin.github.io/infra-guide/article/gpu-execution/)
+
 <details>
 <summary>历次内容修订与执行记录</summary>
 
