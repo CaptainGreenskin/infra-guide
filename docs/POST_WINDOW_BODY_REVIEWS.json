@@ -4145,7 +4145,7 @@
       "id": "k8s-storage",
       "reviewed_at": "2026-11-09",
       "previous_content_sha256": "f7162bb33d8af07818cb6db6fe0b0c790ba28a0697cc8ff183cfb40978f02b55",
-      "reviewed_content_sha256": "2859bd83193750367eeac1b7e37c10e933bd52c038afbe32dc2ffb2099dc3fc3",
+      "reviewed_content_sha256": "fea9cf0b0741a4c693c06c8cfd810dfdf9db44c4d478731ac19d2ddaddaf697b",
       "scope": "Connect claim binding and mounted data through a native CSI lifecycle",
       "observation": "Observe waiting before a consumer, match PVC/PV and volume handle across two distinct Pods, verify the SQLite receipt after replacement, and observe deletion of the PV and backend.",
       "headings": [

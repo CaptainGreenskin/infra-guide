@@ -161,7 +161,7 @@
  p('将同样的验收条件用于集群时，还要给出恢复卷身份、目标 Pod 与实际业务输出。数据库程序结果、CSI 操作结果和业务切换结果在同一份记录中关联，才能回答数据从哪里来、到了哪个恢复点，以及消费者是否已继续工作。')
  ]);
 
- storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="#native-csi-storage">查看动态供应与挂载实战 →</a>');
+ storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="/article/k8s-storage/#native-csi-storage">查看动态供应与挂载实战 →</a>');
 
  storage.sections[6][1]+=h('native-csi-storage','原生 CSI 实战：等待绑定、替换 Pod 与回收')+
  p('这次在 Linux 上创建单节点 kind 集群，安装 Kubernetes CSI 社区的 Hostpath 示例驱动。驱动用 kind 节点内的目录保存数据。应用 Pod 引用 <code>app-data</code> PVC，由 kubelet 经驱动挂载到 <code>/data</code>。实战复用同一份 <code>volume_writer.py</code>，使用两个依次创建和删除的 Pod。')+

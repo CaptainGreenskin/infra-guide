@@ -11,7 +11,7 @@
       "reviewed_at": "2026-11-09",
       "scope": "Connect claim binding and mounted data through a native CSI lifecycle",
       "observation": "Observe waiting before a consumer, match PVC/PV and volume handle across two distinct Pods, verify the SQLite receipt after replacement, and observe deletion of the PV and backend.",
-      "reviewed_content_sha256": "2859bd83193750367eeac1b7e37c10e933bd52c038afbe32dc2ffb2099dc3fc3",
+      "reviewed_content_sha256": "fea9cf0b0741a4c693c06c8cfd810dfdf9db44c4d478731ac19d2ddaddaf697b",
       "record": "dist/labs/csi-storage/validation.json"
     },
     {
