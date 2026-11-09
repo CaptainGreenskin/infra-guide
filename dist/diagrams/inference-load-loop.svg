@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">闭环会等响应，开环会继续按计划发请求</title>
+  <desc id="desc">闭环客户端收到响应才发送下一条，因此响应慢会降低发送速率。开环算例中每秒到达 20 条，完成 18 条，若没有拒绝和取消，60 秒积压增加 120 条。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#315dce"/></marker>
+  </defs>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="958" height="478" rx="16" fill="#f7f9fd" stroke="#ccd8e8"/>
+    <text x="34" y="50" font-size="34" font-weight="700">闭环会等响应，开环会继续按计划发请求</text>
+    <rect x="34" y="80" width="892" height="177" rx="12" fill="#fff" stroke="#b8c8e0"/>
+    <text x="54" y="119" font-size="25" font-weight="700">闭环：单个客户端收到响应后才发下一条</text>
+    <g font-size="21">
+      <text x="54" y="169">响应快</text><text x="54" y="218">响应慢</text>
+      <text x="174" y="169">发送</text><text x="174" y="218">发送</text>
+      <text x="462" y="169">完成 → 再发送</text><text x="717" y="218">完成 → 再发送</text>
+    </g>
+    <g fill="none" stroke="#315dce" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M229 161h212"/><path d="M229 210h467"/>
+    </g>
+    <rect x="34" y="278" width="892" height="169" rx="12" fill="#fff" stroke="#b8c8e0"/>
+    <text x="54" y="314" font-size="25" font-weight="700">开环：若实际按计划到达，每秒的缺口会累加</text>
+    <g font-size="21">
+      <text x="54" y="354">到达 20 条/秒</text><text x="54" y="396">完成 18 条/秒</text>
+      <text x="52" y="432" fill="#4c5e78">60 秒窗口内没有拒绝或取消。</text>
+    </g>
+    <rect x="247" y="335" width="475" height="24" rx="6" fill="#315dce"/>
+    <rect x="247" y="377" width="427.5" height="24" rx="6" fill="#14755f"/>
+    <g font-size="23" font-weight="700">
+      <text x="740" y="355">1,200 条</text><text x="692" y="397">1,080 条</text>
+      <text x="583" y="434" fill="#95510e">未完成增加 120 条</text>
+    </g>
+  </g>
+</svg>

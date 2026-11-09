@@ -5277,6 +5277,233 @@
         "把模型账本接回资源量级",
         "用本地实验走通协议，再迁移到多机"
       ]
+    },
+    {
+      "id": "cloud-compute",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e0c95640f4a97535b003ff2366a013b245113db727089e17fa818ac237945ffd",
+      "reviewed_content_sha256": "21db0e3d5dcf400dacd9052e80e714e4a7f96c77f237b5873d4898e225d17f6d",
+      "scope": "Show light and heavy CPU work as stacked contributions under a fixed request rate.",
+      "observation": "The 10/20/30 percent mixes preserve the chapter values 1.92/3.04/4.16 cores.",
+      "headings": [
+        "计算形态：裸金属、虚拟机与容器",
+        "vCPU资源保证：核心、线程、超分与持续能力",
+        "内存与设备：地址转换、NUMA和I/O路径",
+        "突发性能：CPU积分与持续负载",
+        "规格问题先要有一份工作说明",
+        "CPU 秒、墙钟秒和利用率的单位",
+        "平均工作量会随输入分布移动",
+        "在途数量怎样转化成活动状态和内存",
+        "吞吐上界由最紧的资源决定",
+        "压测怎样避免“自己把流量降下来了”",
+        "实测：CPU时间、等待与线程",
+        "验收：把四核写成待验证的候选"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "38c7750e80878d7d4c445ed5995e08a147280b91bf22952934eaccdccecb8600",
+      "reviewed_content_sha256": "18c29dd18ced016e29c970a1d67711dadabacc0d7f09c89aa38eec6c16c4d645",
+      "scope": "Show the concrete request and return tuples, with control-plane rule inputs separate from actual packet movement.",
+      "observation": "The original NAT path and conditional SNAT scope remain explicit.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "446336a075739247f0fb7db46a4d5bef563ac9a1dfca6749229ac1b2211ff897",
+      "reviewed_content_sha256": "febda012d5db42e5dfe2fe8c6656c2532a90c5b288f2e7281b0607f8fc1b844f",
+      "scope": "Contrast initialization and reuse, then compare endpoint and handler measurement boundaries.",
+      "observation": "The figure has stage labels and no numerical time scale.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1877a1f5cd1bd43ac549865378ddb3d4956ed23a9811cf414d2e19c893de823e",
+      "reviewed_content_sha256": "6e04728ac536e6e0cabb6c9372c61bce3ae5645f2bb650a25969b30cd946b1b0",
+      "scope": "Separate credential issuance, expiry, and a new authorization decision on one timeline.",
+      "observation": "The new figure uses the existing teaching intervals and leaves the native Kubernetes identity results intact.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "06eb15f58d21dada9b064f89190bc1ee162a6d691bc60650173bd19cb593702a",
+      "reviewed_content_sha256": "cf19a54564c11a44738aa4f0d6b7fd76c22caa17ec720e30f051da52fcf09c11",
+      "scope": "Compare capacity retained after losing the largest zone.",
+      "observation": "At the same per-instance budget, the three layouts retain 80, 80, and 160 requests/s against the same peak 84.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "incident",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "58b636bb2526abfbd0bd90d2b3f06119f4d0f3fc448ce5c2d7641e90d77bddf4",
+      "reviewed_content_sha256": "214e8d81ec137cc427fc0e453f46bce8b64e42c8bb7a5019f205ccfed30af40c",
+      "scope": "Extend the integer-time model with a real SQLite lock, a gated HTTP response, and a one-connection pool.",
+      "observation": "Both failure fixtures block B. Returning the lease before HTTP lets B finish while A is still waiting, preserving both results and the receipt.",
+      "headings": [
+        "先规定分母、窗口和可接受结果",
+        "先看结果，保留两个竞争解释",
+        "选一项能改变判断的探测",
+        "沿第201个请求，把560毫秒逐段算清",
+        "把排队增长还原成容量算术",
+        "保留功能，只改变占用区间",
+        "用相同触发条件复测，并解释剩余差值",
+        "运行程序，交一页能追问的结论"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7434e3d5436b04a5dd10b2be7ea134066fca0df2e1553db8c5b51298a6b87e5c",
+      "reviewed_content_sha256": "bb045ef39b8fe41ce34375686385845c88b44bedf55664980e0b8337d50046ca",
+      "scope": "Show both residual connections and two existing numerical examples for normalization and SwiGLU.",
+      "observation": "Shapes and values match the authored examples, including the two residual additions, epsilon-zero comparison, and pairwise gate.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
+    },
+    {
+      "id": "position-encoding",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b7216e0078753c060c6fc7ddbc538f882d371681c7f38d40a55a03cbd7e437ce",
+      "reviewed_content_sha256": "2f6c90266fc0935c3ae05fe85e7e6fa141a33e5c55921956708d0ed6a199371f",
+      "scope": "Draw 2D rotation, relative phase under common translation, and logical-to-physical cache addressing.",
+      "observation": "The rotation and dot products reuse the exact original q/k vectors. The cache slot order is explicitly illustrative.",
+      "headings": [
+        "把位置打乱，再问模型能发现什么",
+        "先看两种绝对位置表示",
+        "从单位圆构造二维旋转",
+        "为什么留下的是 n−m，再平移一次验证",
+        "多频率怎样装进一个 attention head",
+        "缓存里有两种“位置”：逻辑序号与物理槽位",
+        "把长度调大之前，需要证明哪件事",
+        "用一份标准库脚本检查三个独立不变量",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e4bfb640c7a42f6ca86c2001d7333530abb4834d29925a4b54634d12c8bb8805",
+      "reviewed_content_sha256": "9a23a36291f1900bbf038942f9c167c72d878d4ec3aeefed166553c8cac3fe80",
+      "scope": "Use the existing eight-rank assignment to distinguish rank count, independent data replicas, and corresponding parallel groups.",
+      "observation": "The existing group labels, code, figures and links remain available.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "1938781c89066f4f10fcbabc247102afed884f2ef9202b4a7a970232138582f3",
+      "reviewed_content_sha256": "749c38b824b20a035924a3e3b0e3b818c1b0fbce0f802846831064ae8ea6a3bf",
+      "scope": "Show the existing bucket readiness and final exposed communication interval on one timeline.",
+      "observation": "The figure reuses the chapter ordering and boundaries.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "28289a4b4922861b5103438b816ba8e0298ffb102af522ec29a92ab0fcc7e78a",
+      "reviewed_content_sha256": "4340a8803be531688ea691a6cb2ef0f38f80fa8bc1270a6294979663ab9fe13c",
+      "scope": "Use an exact rank-to-device and collective preflight, with an independent Blackwell example.",
+      "observation": "Two local CPU/Gloo launchers ran four ranks and obtained gather [1,2,3,4] and sum 10; the target gate rejected those records. Physical GPU/NCCL is pending.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e510758174e22e999b660996b89ff10c09ac593d00f88f341f51a64ef01e13d0",
+      "reviewed_content_sha256": "6fb18269bc3461b8c7e8cd9f1a282c1d245090ea230f3274a75ae0a583c84a52",
+      "scope": "Contrast the independent arrival clock with a client that waits for completion before issuing the next request.",
+      "observation": "The diagram distinguishes request issuance from system throughput under backpressure.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

@@ -1,0 +1,378 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "incident_connection_lease.py": "e4134a2f84af690c9a941a8570f423b0001b9dbef1e1862b6cc6a7751b0869a8"
+  },
+  "environment": {
+    "os": "Darwin",
+    "python": "3.12.13",
+    "sqlite": "3.53.3"
+  },
+  "pool_capacity": 1,
+  "cases": {
+    "sqlite_lock": {
+      "sqlite_journal": "delete",
+      "snapshot": {
+        "free_connections": 0,
+        "b_waiting": true,
+        "b_complete": false,
+        "a_complete": false
+      },
+      "events": [
+        {
+          "task": null,
+          "event": "independent_lock_probe",
+          "at_ns": 10603584,
+          "message": "database is locked",
+          "sqlite_errorcode": 5
+        },
+        {
+          "task": "A",
+          "event": "arrival",
+          "at_ns": 10720834
+        },
+        {
+          "task": "A",
+          "event": "pool_acquired",
+          "at_ns": 10724500
+        },
+        {
+          "task": "A",
+          "event": "sql_begin",
+          "at_ns": 10725000
+        },
+        {
+          "task": "A",
+          "event": "sql_busy",
+          "at_ns": 10847000,
+          "message": "database is locked",
+          "sqlite_errorcode": 5
+        },
+        {
+          "task": "B",
+          "event": "arrival",
+          "at_ns": 10909084
+        },
+        {
+          "task": "B",
+          "event": "pool_wait",
+          "at_ns": 10912667
+        },
+        {
+          "task": null,
+          "event": "snapshot",
+          "at_ns": 10925209
+        },
+        {
+          "task": null,
+          "event": "release_gate",
+          "at_ns": 10939167
+        },
+        {
+          "task": "A",
+          "event": "sql_retry",
+          "at_ns": 10953459
+        },
+        {
+          "task": "A",
+          "event": "sql_end",
+          "at_ns": 10969375,
+          "total": 42
+        },
+        {
+          "task": "A",
+          "event": "pool_returned",
+          "at_ns": 10969875
+        },
+        {
+          "task": "A",
+          "event": "complete",
+          "at_ns": 10974084,
+          "result": {
+            "total": 42,
+            "receipt": null
+          }
+        },
+        {
+          "task": "B",
+          "event": "pool_acquired",
+          "at_ns": 10985375
+        },
+        {
+          "task": "B",
+          "event": "sql_begin",
+          "at_ns": 10985875
+        },
+        {
+          "task": "B",
+          "event": "sql_end",
+          "at_ns": 10996250,
+          "total": 37
+        },
+        {
+          "task": "B",
+          "event": "pool_returned",
+          "at_ns": 10996750
+        },
+        {
+          "task": "B",
+          "event": "complete",
+          "at_ns": 10998792,
+          "result": {
+            "total": 37,
+            "receipt": null
+          }
+        }
+      ],
+      "results": {
+        "A": {
+          "total": 42,
+          "receipt": null
+        },
+        "B": {
+          "total": 37,
+          "receipt": null
+        }
+      }
+    },
+    "external_inside": {
+      "sqlite_journal": "delete",
+      "snapshot": {
+        "free_connections": 0,
+        "b_waiting": true,
+        "b_complete": false,
+        "a_complete": false
+      },
+      "events": [
+        {
+          "task": "A",
+          "event": "arrival",
+          "at_ns": 2271917
+        },
+        {
+          "task": "A",
+          "event": "pool_acquired",
+          "at_ns": 2274084
+        },
+        {
+          "task": "A",
+          "event": "external_begin",
+          "at_ns": 2274792
+        },
+        {
+          "task": "A",
+          "event": "external_received",
+          "at_ns": 2815625
+        },
+        {
+          "task": "B",
+          "event": "arrival",
+          "at_ns": 2862667
+        },
+        {
+          "task": "B",
+          "event": "pool_wait",
+          "at_ns": 2865625
+        },
+        {
+          "task": null,
+          "event": "snapshot",
+          "at_ns": 2876459
+        },
+        {
+          "task": null,
+          "event": "release_gate",
+          "at_ns": 2877917
+        },
+        {
+          "task": "A",
+          "event": "external_end",
+          "at_ns": 3239459,
+          "receipt": "external-a"
+        },
+        {
+          "task": "A",
+          "event": "sql_begin",
+          "at_ns": 3241417
+        },
+        {
+          "task": "A",
+          "event": "sql_end",
+          "at_ns": 3270125,
+          "total": 42
+        },
+        {
+          "task": "A",
+          "event": "pool_returned",
+          "at_ns": 3270792
+        },
+        {
+          "task": "A",
+          "event": "complete",
+          "at_ns": 3274834,
+          "result": {
+            "total": 42,
+            "receipt": "external-a"
+          }
+        },
+        {
+          "task": "B",
+          "event": "pool_acquired",
+          "at_ns": 3285542
+        },
+        {
+          "task": "B",
+          "event": "sql_begin",
+          "at_ns": 3286167
+        },
+        {
+          "task": "B",
+          "event": "sql_end",
+          "at_ns": 3300209,
+          "total": 37
+        },
+        {
+          "task": "B",
+          "event": "pool_returned",
+          "at_ns": 3300667
+        },
+        {
+          "task": "B",
+          "event": "complete",
+          "at_ns": 3302709,
+          "result": {
+            "total": 37,
+            "receipt": null
+          }
+        }
+      ],
+      "results": {
+        "A": {
+          "total": 42,
+          "receipt": "external-a"
+        },
+        "B": {
+          "total": 37,
+          "receipt": null
+        }
+      }
+    },
+    "external_outside": {
+      "sqlite_journal": "delete",
+      "snapshot": {
+        "free_connections": 1,
+        "b_waiting": false,
+        "b_complete": true,
+        "a_complete": false
+      },
+      "events": [
+        {
+          "task": "A",
+          "event": "arrival",
+          "at_ns": 2637791
+        },
+        {
+          "task": "A",
+          "event": "pool_acquired",
+          "at_ns": 2639791
+        },
+        {
+          "task": "A",
+          "event": "sql_begin",
+          "at_ns": 2640291
+        },
+        {
+          "task": "A",
+          "event": "sql_end",
+          "at_ns": 2670875,
+          "total": 42
+        },
+        {
+          "task": "A",
+          "event": "pool_returned",
+          "at_ns": 2671875
+        },
+        {
+          "task": "A",
+          "event": "external_begin",
+          "at_ns": 2673625
+        },
+        {
+          "task": "A",
+          "event": "external_received",
+          "at_ns": 3337875
+        },
+        {
+          "task": "B",
+          "event": "arrival",
+          "at_ns": 3381208
+        },
+        {
+          "task": "B",
+          "event": "pool_acquired",
+          "at_ns": 3382708
+        },
+        {
+          "task": "B",
+          "event": "sql_begin",
+          "at_ns": 3383166
+        },
+        {
+          "task": "B",
+          "event": "sql_end",
+          "at_ns": 3394500,
+          "total": 37
+        },
+        {
+          "task": "B",
+          "event": "pool_returned",
+          "at_ns": 3395000
+        },
+        {
+          "task": "B",
+          "event": "complete",
+          "at_ns": 3396750,
+          "result": {
+            "total": 37,
+            "receipt": null
+          }
+        },
+        {
+          "task": null,
+          "event": "snapshot",
+          "at_ns": 3408375
+        },
+        {
+          "task": null,
+          "event": "release_gate",
+          "at_ns": 3409375
+        },
+        {
+          "task": "A",
+          "event": "external_end",
+          "at_ns": 3693666,
+          "receipt": "external-a"
+        },
+        {
+          "task": "A",
+          "event": "complete",
+          "at_ns": 3695166,
+          "result": {
+            "total": 42,
+            "receipt": "external-a"
+          }
+        }
+      ],
+      "results": {
+        "A": {
+          "total": 42,
+          "receipt": "external-a"
+        },
+        "B": {
+          "total": 37,
+          "receipt": null
+        }
+      }
+    }
+  }
+}

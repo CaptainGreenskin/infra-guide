@@ -387,4 +387,8 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.updated='2026.11.09';
  performance.updated='2026.11.09';
+
+ const loadModel = performance.sections[3];
+ loadModel[1] = loadModel[1].replace('窗口末未完成数。</p>', '$&' +
+  trainingFigure('inference-load-loop','闭环单个客户端等响应再发下一条。开环按每秒 20 条到达、完成 18 条，60 秒内未完成请求增加 120 条。'));
 })();

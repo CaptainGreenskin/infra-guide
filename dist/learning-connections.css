@@ -24,6 +24,12 @@
 .reading-sequence-label{grid-column:1/-1;font-size:13px;color:var(--muted);margin:0 0 4px}.chapter-connection>.chapter-map-link{display:block;font-size:14px;margin:14px 0 10px}
 .field-map-index{border-top:1px solid var(--line);padding-top:18px;margin-top:22px}.field-map-index>b{font-size:14px}.field-map-index>p{display:flex;gap:12px 22px;flex-wrap:wrap;line-height:1.8}.field-map-index a{font-size:14px;color:var(--blue)}
 .field-concept-map{border-top:2px solid var(--blue);border-bottom:1px solid var(--line);margin:35px 0;padding:20px 0;scroll-margin-top:150px}.field-concept-map>summary{font-size:20px;font-weight:650;line-height:1.7;color:var(--text);cursor:pointer}.field-map-note{color:var(--muted);font-size:14px!important;line-height:1.9!important}
+.field-map-main{margin:16px 0 22px;padding:10px 0;border-block:1px solid var(--line)}
+.field-map-main>p{margin:0 0 4px!important;font-size:14px!important;color:var(--text)}
+.field-map-main ul{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin:0;padding:0}
+.field-map-main li{display:flex;align-items:center;flex-wrap:wrap;gap:0 6px;margin:0;padding:0;font-size:14px;line-height:1.6}
+.field-map-main a{display:inline-flex;align-items:center;min-height:36px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;font-weight:550}
+@media(max-width:720px){.field-map-main ul{grid-template-columns:1fr}.field-map-main a{min-height:44px}}
 .field-map-controls{display:none;gap:8px;flex-wrap:wrap;margin:20px 0}.field-map-ready .field-map-controls{display:flex}.field-map-controls button{border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--text);font:inherit;font-size:13px;padding:8px 12px;cursor:pointer}.field-map-controls button[aria-pressed="true"]{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
 .field-map-definitions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;padding:16px 0 20px;border-bottom:1px solid var(--line)}.field-map-definition>p{font-size:14px!important;line-height:1.9!important;margin:0!important}.field-map-definitions a{font-size:13px;color:var(--blue)}.field-map-status{font-size:13px!important;color:var(--muted);margin-top:22px!important}.field-map-definition>.field-map-chapters{display:flex;gap:7px 18px;flex-wrap:wrap;margin-top:12px!important}.field-map-chapters b{font-size:13px}.field-map-chapters a{font-size:14px;line-height:1.9}
 .field-map-definition[id]{scroll-margin-top:calc(var(--reader-header,76px) + 88px)}

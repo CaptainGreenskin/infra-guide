@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="548" viewBox="0 0 1080 548" role="img" aria-labelledby="title desc">
+  <title id="title">Service 转发时改写目的，回包按同一连接恢复地址</title>
+  <desc id="desc">控制面把 Service 和 EndpointSlice 的信息同步为节点转发规则。客户端 10.42.1.7:53000 连 10.96.0.20:443，内核将目的改写为 10.42.2.8:8443。无 SNAT 时，后端回包目的仍是客户端，回包源地址按连接记录恢复为 Service 地址。SNAT 是否发生取决于具体路径。</desc>
+  <rect width="1080" height="548" rx="16" fill="#f7faff"/>
+  <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" fill="#172e4b">
+    <text x="32" y="46" font-size="27" font-weight="700">Service 如何改写请求，再还原回包</text>
+    <text x="32" y="76" font-size="17" fill="#435676">常见 kube-proxy / 内核 NAT 路径。下方演示客户端源地址保持不变的情况。</text>
+
+    <rect x="32" y="99" width="1016" height="105" rx="12" fill="#fff6e6" stroke="#e1c894"/>
+    <text x="52" y="130" font-size="17" fill="#755014" font-weight="700">控制信息</text>
+    <text x="52" y="162" font-size="16" fill="#755014">不传业务包</text>
+    <g fill="#fffdf7" stroke="#e1c894">
+      <rect x="182" y="119" width="254" height="62" rx="8"/>
+      <rect x="501" y="119" width="218" height="62" rx="8"/>
+      <rect x="784" y="119" width="242" height="62" rx="8"/>
+    </g>
+    <g font-size="17" text-anchor="middle">
+      <text x="309" y="146" font-weight="650">Service + EndpointSlice</text>
+      <text x="309" y="169" font-size="15">入口与当前后端</text>
+      <text x="610" y="146" font-weight="650">kube-proxy</text>
+      <text x="610" y="169" font-size="15">观察 API 对象</text>
+      <text x="905" y="146" font-weight="650">节点转发规则</text>
+      <text x="905" y="169" font-size="15">同步入口与后端映射</text>
+    </g>
+    <g fill="none" stroke="#866020" stroke-width="2.5" stroke-dasharray="5 5">
+      <path d="M443 150 H491"/>
+      <path d="M726 150 H774"/>
+    </g>
+    <path d="M482 146 L492 150 L482 154 Z M765 146 L775 150 L765 154 Z" fill="#866020"/>
+
+    <text x="32" y="237" font-size="17" font-weight="700">业务数据</text>
+    <g font-size="16" font-weight="650" text-anchor="middle">
+      <text x="204" y="266">客户端 Pod 侧</text>
+      <text x="555" y="266">节点数据面</text>
+      <text x="878" y="266">后端 Pod 侧</text>
+    </g>
+    <g fill="#e8f0ff" stroke="#adbee4">
+      <rect x="32" y="279" width="344" height="65" rx="8"/>
+      <rect x="449" y="279" width="212" height="65" rx="8"/>
+      <rect x="708" y="279" width="340" height="65" rx="8"/>
+    </g>
+    <g fill="#e7f5ef" stroke="#a5cfc1">
+      <rect x="32" y="372" width="344" height="65" rx="8"/>
+      <rect x="449" y="372" width="212" height="65" rx="8"/>
+      <rect x="708" y="372" width="340" height="65" rx="8"/>
+    </g>
+    <g font-family="SFMono-Regular,Menlo,Consolas,monospace" font-size="18" text-anchor="middle">
+      <text x="204" y="304">10.42.1.7:53000</text>
+      <text x="204" y="328">→ 10.96.0.20:443</text>
+      <text x="878" y="304">10.42.1.7:53000</text>
+      <text x="878" y="328">→ 10.42.2.8:8443</text>
+      <text x="204" y="397">10.96.0.20:443</text>
+      <text x="204" y="421">→ 10.42.1.7:53000</text>
+      <text x="878" y="397">10.42.2.8:8443</text>
+      <text x="878" y="421">→ 10.42.1.7:53000</text>
+    </g>
+    <g text-anchor="middle">
+      <text x="555" y="305" font-size="17" font-weight="700">DNAT</text>
+      <text x="555" y="328" font-size="15">改目的地址与端口</text>
+      <text x="555" y="398" font-size="17" font-weight="700">连接跟踪</text>
+      <text x="555" y="421" font-size="15">按原映射恢复回包源</text>
+    </g>
+    <g stroke="#2955a4" stroke-width="2.6" fill="none">
+      <path d="M385 313 H438"/>
+      <path d="M670 313 H697"/>
+    </g>
+    <g stroke="#116e65" stroke-width="2.6" fill="none">
+      <path d="M698 405 H672"/>
+      <path d="M439 405 H386"/>
+    </g>
+    <path d="M429 308 L439 313 L429 318 Z M688 308 L698 313 L688 318 Z" fill="#2955a4"/>
+    <path d="M681 400 L671 405 L681 410 Z M395 400 L385 405 L395 410 Z" fill="#116e65"/>
+    <text x="411" y="297" text-anchor="middle" font-size="13" fill="#2955a4" font-weight="650">请求</text>
+    <text x="411" y="389" text-anchor="middle" font-size="13" fill="#116e65" font-weight="650">回包</text>
+
+    <rect x="32" y="457" width="1016" height="62" rx="10" fill="#edf2fb"/>
+    <text x="50" y="483" font-size="17" font-weight="650">若实际路径还做 SNAT，后端看到的是改写后的客户端源地址。</text>
+    <text x="50" y="506" font-size="16" fill="#435676">回包同样依赖逆向映射。跨节点时，继续核对两端路由和策略。</text>
+  </g>
+</svg>

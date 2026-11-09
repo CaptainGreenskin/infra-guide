@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
+ 'ddp-target-preflight':{folder:'ddp-target-preflight',title:'两机四卡上机前的设备身份与集合通信检查'},
  'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
  'warp-memory-sectors':{folder:'warp-memory-sectors',title:'同一矩阵的 lane 地址与扇区归组'},
  'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
@@ -290,6 +292,10 @@ labLearningCatalog.push(
 labLearningCatalog.push(
  {id:'cloud-bounded-worker-queue',track:'cloud',stage:0,title:'加一个工作线程，任务改在哪等',chapter:'concurrency-pools',anchor:'bounded-worker-queue',pack:'bounded-worker-queue',files:['bounded_worker_queue.py'],env:'Python 3.9+ · 标准库',kind:'真实线程、队列与信号量',observe:'固定一个排队位置和一个下游许可，对照一线程与两线程时谁排队、谁占住线程等许可、谁被拒绝。',scope:'本机真实同步原语、固定四次提交和受控放行。'},
  {id:'ai-warp-memory-sectors',track:'ai',stage:1,title:'同一矩阵按行和按列读，地址会落在哪些扇区',chapter:'gpu-execution',anchor:'native-warp-memory-sectors',pack:'warp-memory-sectors',files:['address_trace.c','run_trace.py'],env:'Python 3.9+ · C17 编译器 · macOS arm64 实测',kind:'真实主机地址轨迹与 CUDA 编译对照',observe:'核对连续、偏移、跨行和尾部的 lane 地址。比较每组扇区数的累加与整块矩阵的去重覆盖，再读 PTX 的地址计算。',scope:'C17 本机读取与 32 字节地址归组模型。PTX 来自固定编译记录，设备事务和耗时待验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-incident-connection-lease',track:'cloud',stage:3,title:'同样拿不到连接，等待发生在哪',chapter:'incident',anchor:'incident-connection-lease',pack:'incident-connection-lease',files:['incident_connection_lease.py'],env:'Python 3.9+ · SQLite 与标准库 HTTP',kind:'真实 SQLite 锁、HTTP 与连接租借',observe:'保留 B 等连接的表象，分别核对 A 遇到 SQLITE_BUSY 或持连接等待 HTTP。移动 HTTP 调用后，检查 B 能否提前完成并保留原回执。',scope:'本机单连接租借、固定 SQLite 与 HTTP 夹具，观察事件顺序。'},
+ {id:'ai-ddp-target-preflight',track:'ai',stage:2,title:'四份日志怎样核对会合、归约和设备绑定',chapter:'multinode-lab',anchor:'native-ddp-target-preflight',pack:'ddp-target-preflight',files:['target_probe.py','run_local.py'],env:'本机 PyTorch CPU/Gloo · 目标为两台 Linux 与四张完整 GPU',kind:'真实本机四进程与目标验收门槛',observe:'两份 launcher 启动四个本机进程，核对每个 rank 的 [1,2,3,4] 与总和 10。用同一门槛拒绝 CPU 或同宿主记录，再按卡型准备真实环境。',scope:'本机四进程 Gloo 已运行。物理双机、GPU/NCCL 和硬件分配仍待目标环境验收。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

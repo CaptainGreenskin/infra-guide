@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 304" role="img" aria-labelledby="title desc">
+  <title id="title">同样每秒 100 次请求，查询组成怎样改变 CPU 需求</title>
+  <desc id="desc">复杂查询比例从 10% 升到 20% 和 30%，总 CPU 需求从 1.92 升到 3.04 和 4.16 核当量。最后一组越过四核参考线。条形左段为缓存命中，右段为复杂查询。</desc>
+  <metadata>{"rps":100,"cpu_ms":[8,120],"complex_percent":[10,20,30],"cached_cores":[0.72,0.64,0.56],"complex_cores":[1.2,2.4,3.6],"total_cores":[1.92,3.04,4.16],"candidate_cores":4,"measured":false}</metadata>
+  <rect width="720" height="304" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" fill="#203553">
+    <text x="24" y="35" font-size="22" font-weight="700">固定每秒 100 次查询</text>
+    <rect x="24" y="53" width="16" height="16" rx="3" fill="#147172"/>
+    <text x="47" y="67" font-size="17">缓存命中 · 每次 8 毫秒 CPU</text>
+    <rect x="320" y="53" width="16" height="16" rx="3" fill="#3156b2"/>
+    <text x="343" y="67" font-size="17">复杂过滤 · 每次 120 毫秒 CPU</text>
+    <g stroke="#d4deef" stroke-width="1">
+      <path d="M132 87V242 M240 87V242 M348 87V242 M456 87V242"/>
+    </g>
+    <g font-size="19">
+      <text x="24" y="115">复杂 10%</text>
+      <text x="24" y="170">复杂 20%</text>
+      <text x="24" y="225">复杂 30%</text>
+      <rect x="132" y="93" width="77.76" height="32" fill="#147172"/>
+      <rect x="209.76" y="93" width="129.6" height="32" fill="#3156b2"/>
+      <rect x="132" y="148" width="69.12" height="32" fill="#147172"/>
+      <rect x="201.12" y="148" width="259.2" height="32" fill="#3156b2"/>
+      <rect x="132" y="203" width="60.48" height="32" fill="#147172"/>
+      <rect x="192.48" y="203" width="388.8" height="32" fill="#3156b2"/>
+      <g text-anchor="middle" fill="#fff" font-size="17" font-weight="600">
+        <text x="170.88" y="115">0.72</text><text x="274.56" y="115">1.20</text>
+        <text x="166.56" y="170">0.64</text><text x="330.72" y="170">2.40</text>
+        <text x="162.24" y="225">0.56</text><text x="386.88" y="225">3.60</text>
+      </g>
+      <text x="352" y="115" font-weight="700">1.92</text>
+      <text x="473" y="170" font-weight="700">3.04</text>
+      <text x="595" y="225" font-weight="700" fill="#9b4c20">4.16</text>
+    </g>
+    <path d="M564 87V242" stroke="#a45326" stroke-width="2" stroke-dasharray="5 4"/>
+    <path d="M132 242H608" stroke="#b5c4dc"/>
+    <g text-anchor="middle" font-size="16">
+      <text x="132" y="264">0</text><text x="240" y="264">1</text><text x="348" y="264">2</text>
+      <text x="456" y="264">3</text><text x="564" y="264" fill="#93451e">4 核参考线</text>
+    </g>
+    <text x="24" y="287" font-size="16" fill="#475b79">横轴为平均 CPU 需求（核当量）。各类单次成本按题设固定。</text>
+  </g>
+</svg>

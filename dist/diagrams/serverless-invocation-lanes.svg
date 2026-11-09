@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="412" viewBox="0 0 1040 412" role="img" aria-labelledby="title desc">
+  <title id="title">冷启动与环境复用的调用顺序和计时边界</title>
+  <desc id="desc">新建环境和复用环境都经过入口、可能的等待、处理函数、返回或交接。新建环境增加运行时及应用初始化，复用可跳过本次初始化。端到端计时从入口到约定终点，handler 计时只覆盖处理函数。框的宽度和间距不表示耗时。</desc>
+  <rect width="1040" height="412" rx="16" fill="#f7faff"/>
+  <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" fill="#172e4b">
+    <text x="32" y="46" font-size="27" font-weight="700">冷启动多了哪一步，延迟从哪里算</text>
+    <text x="32" y="77" font-size="17" fill="#435676">按阶段排列。框宽与间距不表示耗时，排队是否出现取决于调用路径。</text>
+
+    <g fill="#e8f0ff" stroke="#b2c5e6">
+      <rect x="172" y="111" width="120" height="63" rx="8"/>
+      <rect x="326" y="111" width="127" height="63" rx="8"/>
+      <rect x="692" y="111" width="142" height="63" rx="8"/>
+      <rect x="868" y="111" width="140" height="63" rx="8"/>
+      <rect x="172" y="199" width="120" height="63" rx="8"/>
+      <rect x="326" y="199" width="127" height="63" rx="8"/>
+      <rect x="692" y="199" width="142" height="63" rx="8"/>
+      <rect x="868" y="199" width="140" height="63" rx="8"/>
+    </g>
+    <rect x="487" y="111" width="171" height="63" rx="8" fill="#fff3dc" stroke="#d5a65d"/>
+    <rect x="487" y="199" width="171" height="63" rx="8" fill="#e8f5ee" stroke="#9dc3ae" stroke-dasharray="5 4"/>
+    <g stroke="#607ea9" stroke-width="2.2" fill="none">
+      <path d="M299 142 H318 M312 137 L318 142 L312 147"/><path d="M460 142 H479 M473 137 L479 142 L473 147"/><path d="M665 142 H684 M678 137 L684 142 L678 147"/><path d="M841 142 H860 M854 137 L860 142 L854 147"/>
+      <path d="M299 230 H318 M312 225 L318 230 L312 235"/><path d="M460 230 H479 M473 225 L479 230 L473 235"/><path d="M665 230 H684 M678 225 L684 230 L678 235"/><path d="M841 230 H860 M854 225 L860 230 L854 235"/>
+    </g>
+    <g font-size="17" font-weight="700">
+      <text x="32" y="138">新建环境</text>
+      <text x="32" y="226">复用环境</text>
+    </g>
+    <g font-size="14" fill="#435676">
+      <text x="32" y="160">冷启动路径</text>
+      <text x="32" y="248">已有环境就绪</text>
+    </g>
+    <g font-size="17" text-anchor="middle">
+      <text x="232" y="149">入口</text>
+      <text x="389" y="149">排队（若有）</text>
+      <text x="572" y="139" font-weight="700">环境初始化</text>
+      <text x="572" y="160" font-size="14">运行时与应用代码</text>
+      <text x="763" y="149">handler 执行</text>
+      <text x="938" y="149">返回或交接</text>
+      <text x="232" y="237">入口</text>
+      <text x="389" y="237">排队（若有）</text>
+      <text x="572" y="227" font-weight="700">复用就绪环境</text>
+      <text x="572" y="248" font-size="14">跳过本次初始化</text>
+      <text x="763" y="237">handler 执行</text>
+      <text x="938" y="237">返回或交接</text>
+    </g>
+
+    <g stroke-width="2" fill="none">
+      <path d="M692 275 V284 H834 V275" stroke="#2955a4"/>
+      <path d="M172 323 V332 H1008 V323" stroke="#116e65"/>
+    </g>
+    <text x="763" y="308" text-anchor="middle" fill="#2955a4" font-size="16" font-weight="650">handler 内计时</text>
+    <text x="590" y="358" text-anchor="middle" fill="#116e65" font-size="17" font-weight="650">端到端计时从入口到约定的完成终点</text>
+    <text x="32" y="388" font-size="15" fill="#435676">异步受理与业务完成有不同终点，先说明这次统计的是哪一个。</text>
+  </g>
+</svg>

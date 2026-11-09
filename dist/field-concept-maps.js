@@ -345,8 +345,15 @@ function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concep
 function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
+ const reading=fieldConceptReadings[moduleId];
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ const focusLink=id=>'<a href="'+fieldMapURL(moduleId,id)+'">'+safe(names[id])+'</a>';
+ const mainRelations=reading.main.map(index=>{
+  const [from,verb,to]=graph.edges[index];
+  return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
+ }).join('');
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
+ '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div>'+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 314" role="img" aria-labelledby="title desc">
+  <title id="title">失去最大可用区以后，剩余能力能否覆盖峰值</title>
+  <desc id="desc">每副本 40 次每秒。三个区各一份和仅给 A 加一份，在失去 A 后均剩 80 次每秒，低于峰值 84。三个区各两份时失去 A 还剩 160 次每秒。</desc>
+  <metadata>{"replica_rate":40,"peak_rate":84,"layouts":[[1,1,1],[2,1,1],[2,2,2]],"normal_capacity":[120,160,240],"remaining_capacity":[80,80,160],"failed_zone":"A","measured":false}</metadata>
+  <defs>
+    <rect id="survivor" width="31" height="31" rx="5" fill="#3156b2"/>
+    <g id="lost">
+      <rect width="31" height="31" rx="5" fill="#f7e3d5" stroke="#ba784e"/>
+      <path d="M8 8L23 23 M23 8L8 23" stroke="#9b4c20" stroke-width="2"/>
+    </g>
+  </defs>
+  <rect width="720" height="314" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" fill="#203553">
+    <text x="20" y="33" font-size="22" font-weight="700">失去一个区后，仍需承接每秒 84 次请求</text>
+    <g text-anchor="middle" font-size="17" fill="#475b79">
+      <text x="216" y="67" fill="#91471d">A 区失效</text>
+      <text x="334" y="67">B 区保留</text>
+      <text x="451" y="67">C 区保留</text>
+      <text x="602" y="67">故障后剩余</text>
+    </g>
+    <g fill="#fff" stroke="#c1cce2">
+      <rect x="20" y="80" width="680" height="58" rx="8"/>
+      <rect x="20" y="147" width="680" height="58" rx="8"/>
+      <rect x="20" y="214" width="680" height="58" rx="8"/>
+    </g>
+    <g font-size="19" font-weight="600">
+      <text x="32" y="115">各 1 份</text>
+      <text x="32" y="182">只给 A 加 1 份</text>
+      <text x="32" y="249">各 2 份</text>
+    </g>
+    <use href="#lost" x="200" y="94"/><use href="#survivor" x="318" y="94"/><use href="#survivor" x="435" y="94"/>
+    <use href="#lost" x="181" y="161"/><use href="#lost" x="219" y="161"/>
+    <use href="#survivor" x="318" y="161"/><use href="#survivor" x="435" y="161"/>
+    <use href="#lost" x="181" y="228"/><use href="#lost" x="219" y="228"/>
+    <use href="#survivor" x="299" y="228"/><use href="#survivor" x="337" y="228"/>
+    <use href="#survivor" x="416" y="228"/><use href="#survivor" x="454" y="228"/>
+    <g text-anchor="middle" font-size="22" font-weight="700">
+      <text x="602" y="116" fill="#91471d">80 &lt; 84</text>
+      <text x="602" y="183" fill="#91471d">80 &lt; 84</text>
+      <text x="602" y="250" fill="#215da5">160 ≥ 84</text>
+    </g>
+    <text x="20" y="296" font-size="16" fill="#475b79">每块代表 1 个副本，每份容量 40 次/秒。各区副本数相同，任选 A 区示意。</text>
+  </g>
+</svg>

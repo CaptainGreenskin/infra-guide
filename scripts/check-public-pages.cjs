@@ -28,6 +28,13 @@ for(const url of urls){
 }
 checkPrimaryOrder(fs.readFileSync(path.join(dist,'start/index.html'),'utf8'),'/start/');
 const home=fs.readFileSync(path.join(dist,'index.html'),'utf8');
+assert(home.includes('<h1>基础设施学习指南</h1>')&&home.includes('AI Infra 与 Agent Infra 中文学习指南</title>'),'the homepage identifies the course in its heading and title');
+for(const [track,label,topic] of [['cloud','Cloud Infra','Kubernetes'],['ai','AI Infra','分布式训练'],['agent','Agent Infra','智能体运行时']]){
+ const html=fs.readFileSync(path.join(dist,'track',track,'index.html'),'utf8');
+ assert(html.includes('<title>'+label+' 中文学习路线 · InfraGuide</title>'),track+': distinguish the learning entry from its first article');
+ const description=html.match(/<meta name="description" content="([^"]+)"/)?.[1];
+ assert(description?.startsWith(label+' 中文学习路线。')&&description.includes(topic),track+': search description reflects the subject');
+}
 assert(home.includes('href="/about/#reader-trial"'),'home links directly to the public trial');
 const about=fs.readFileSync(path.join(dist,'about/index.html'),'utf8');
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];

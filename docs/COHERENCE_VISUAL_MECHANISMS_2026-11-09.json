@@ -1,0 +1,490 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "982e98433c65324a5d36e95662fcb48eecb221cf",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_READING_PRACTICE_2026-11-09.json": "298c8d5aa9b7fd7b70d8f2af6898a4413cde8c1008ae37509cd26c7e31ff786d"
+  },
+  "source_revisions": {
+    "dist/curriculum.css": {
+      "previous_sha256": "b4ea0ed8714a0fb148d7c795cddaac41e8952720c30212fc666f26fc936185ff",
+      "reviewed_sha256": "f872ed08292d9b73481f6c107cfc3622a812bb8f432e7df011577dd267a81612",
+      "scope": "Render the same 50 existing main edges as readable focus links under all 14 figures, and preserve inline heading numbers on small screens."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "ba51e04953f73cd7a872a2752a302d925deb9f582cd3f02b9abb97e825a40cb6",
+      "reviewed_sha256": "79ab17f3da430362ff9cb0846382c0ec61228bd99fd39aad4b8863691a15d427",
+      "scope": "Render the same 50 existing main edges as readable focus links under all 14 figures, and preserve inline heading numbers on small screens."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "381e7bad66fe88abe1205af40d1ed8b076ebc24a15f1f5f4ce0a35f88e462a55",
+      "reviewed_sha256": "38d01ef39b18ec4e15769482be768a3af1d65fa3f219e33f4d1f30f4564e4e95",
+      "scope": "Render the same 50 existing main edges as readable focus links under all 14 figures, and preserve inline heading numbers on small screens."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "250efc8fd07d35bd8adbdd1251a7974fbf83f3f02448e1ef688a7f42239f1af6",
+      "reviewed_sha256": "1cc4437c02ae267832211f0fefddb40471746407f2eb3e654082ed1ac69ca33d",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "ea09ec664ccaf72df0dc5c2c4189d954d9bd7d8d53dd55c5499314311816bab4",
+      "reviewed_sha256": "11136b34da46d9444ca70a792e21539f565ba990a22f9162f0a77571b945b442",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "a17a187a19cc1af00fcb56e443763de12627fc8a6869abc03ab720afb51a4fd7",
+      "reviewed_sha256": "82b46edba63b7785614ed87e0908b1666fb46a34ee0d6501e715f30ffa37918a",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/progressive-cloud-reading.js": {
+      "previous_sha256": "d71d226659d21ab96cc79dff43530a19520e4caf7cee77107ac8fac47c247cf1",
+      "reviewed_sha256": "34b94723df9fe241998a5c6ae1a6735a5a09663abfc5559986131db811a7fc66",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-terraform-identity-reading.js": {
+      "previous_sha256": "ea48736be228dfcf362798288a2aee48d6e15186ad44d8b7343e1237fd46251e",
+      "reviewed_sha256": "4fe67258e5ac0c1e5efbfba27ad8f247123096dfcc33203415060da530180654",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "201dcaada25e86a834b62de752e744bb6a7f006c70b8c1602373cc5e896caee1",
+      "reviewed_sha256": "29991f91437172d4cba10852cb3b4865e58a0f890e15602f9c0b6894e32574a7",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "7cdcb12e013de13658b4f7476afebcfa464b4afe55c5e9ab512799e671778a28",
+      "reviewed_sha256": "88fc7a2a72ed0a2184d3188f69962092e653e9af1eb3d8f4355c9aa5f6674641",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "f52299647cefea87600f40da300cfbd3369d0f6181503e4f2510823b8aeccfdf",
+      "reviewed_sha256": "a547fe9fe3e677f5a1b2f9429fdd6acda8ca6f9b0772b18185b25ad8d1306cf6",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "9b5e481fa3b34d3983a8bedba4b0f6148358105875adb89f81226ab58b9232dc",
+      "reviewed_sha256": "e629845596a1af768fda20c7a21f84adbcfd35fe80b053cebbd420ac199bb4d4",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "1ad21a9359417e2f8481caa3c5134af5cb9236063aa16b058b9fa8c3021afbb5",
+      "reviewed_sha256": "1f0ffaee1981365e29811488fa68061699f161c6b905ac92151acd9c6d46519d",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "c664a1e1575ec1770b2e54c9cae38530e260abdcadc5c38135c9ddd5181b9b57",
+      "reviewed_sha256": "015395ac3abeb47b4fe0078262f84f98586b6880b541525b70458c61a04fcbfc",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-training-io-reading.js": {
+      "previous_sha256": "7693bbc9ad17f0cc69e904468018daecf2de746c0f50c5d58085bff97bb90084",
+      "reviewed_sha256": "2bea97644befcb6efeb5f237b12c0e8a45eccfa79f65d69ce42500b48fb1aba9",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "3101f6e10acbe3242fbce603eb37a0ebca4fbb614a1ad37c120a5a004e6de142",
+      "reviewed_sha256": "2e80ae7dd4962993d23c182f02189b85685a2e5c07f00340ea64cbe261b03724",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "fdc675e143595e1b3872e1ae74aa9589a560769877dd66afb9ffaca7a8696120",
+      "reviewed_sha256": "5a6a429a3cfa1d171761fbe67561cfa7d3c8e52aed09b706c4c474eede528d54",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "f18b81260d2842209d2f644250de4d986a0cbe7d82e76aa421530e3ad6bdb576",
+      "reviewed_sha256": "5df3f2d21cd47b0e13983f42b4b4686a56f2aa2d0fa4435573ee7b8f27634703",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "e1fe06b0134cbc3869cc81975c7f43e50a6e716bfa45ea226bbd923400a559ba",
+      "reviewed_sha256": "2b2ff0c4effd8f5b4d2996fff56c4e6facb38b53750502699cbbe302ee07472c",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "c9be5cbecadf9a12653949ea8655b74e8c3be9de4393eac81b56e4230861c902",
+      "reviewed_sha256": "2de108ad544f3f909a8570787d60defbd2bc12221ceffc82fa2e546e5d344179",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "364ba3528830f2849f937e485e885b54a387a8feb4d2706993eb552a36f6a141",
+      "reviewed_sha256": "fcb1ecfdf93c9cdb0933fc20b7be5e63057454f2fa9d6976a621ec818f9402a1",
+      "scope": "Render the same 50 existing main edges as readable focus links under all 14 figures, and preserve inline heading numbers on small screens."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "4dab5c9070e6bcaed0f001eb2047c54cbfc765b7274ecd716033d40f4257f798",
+      "reviewed_sha256": "235ae8595ec765a7831581e05d2139501b8c49b1e7cb23ef0f90395c4f4837c0",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "ad535aeaec6dcf9e9f2c07d906c14a01d12a77a816a99e7d73c0d65fac356c58",
+      "reviewed_sha256": "48586144447f8f8f9fbbf3d8810c2825eab8fd0a1c632ccd7c96f0323eb98853",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/diagrams/cloud-compute-cpu-mix.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e6cc95f46ae5143fc9d8aa36c272a1e6ae567e42bdbc7368449830a3bd0abe90",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/iam-credential-window.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bd02f91542188d450750541cf78314188a1005aad78f23122615b7363545bb52",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/elasticity-zone-loss.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ea871915b4086eaae19806220652e33892972f1251fc854fcda22f170dad8228",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/kubernetes-packet-rewrite.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7383f9fe3fb1477303bddc6268189e7ade3cffd53e90cc139005f00ed174ac34",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/serverless-invocation-lanes.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ff5a250808ddaa0ab2fad8eae9e6c462f437dc537b82030f54b14d8c06abf663",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/incident-connection-lease.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "775ad2a0baa41d5f0ccb8a3a33948d1d717cee174f4612273dd7abd2e7df6db4",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/diagrams/rope-unit-circle.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c0ba1e4aec6281b948b4cfc610e614c5550ba92cd7a817fbe5433710ee99910c",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/rope-relative-shift.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d95138cd783b2749a0278d2c885bb9d04586cd17fec3347a2e358d1df7242977",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/rope-cache-coordinates.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8ef14c5238274aa8db041758accbf4e360f1e5e1511d95d4dc637b1c37a4ca08",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/decoder-prenorm-path.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "218da1e63adfeff570fcf626f71224c97c6046631ed24d1b593227a401b48466",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/norm-offset-contrast.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c7a4340430a895fdf1421b806db35e3cf7fec70aae06dbeef3a5cdb0938d4b97",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/swiglu-pairwise.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b1db9c16844d1490cfe63dbe804c0575c66035bbde6905a5cf8bddb9cea7a49d",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/parallel-data-replica-groups.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "88912fb18fc9991880206af4c5352fb976ff51f4fef01ddf724c59736caa0f1a",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/collective-overlap-tail.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5051592d94db98799845a974005e1c076177e98dcf55e9f5e9077de47ea06cd2",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/inference-load-loop.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f229b8db191327820de662651b99c53ae3717566c747030a113453c283b0ab54",
+      "scope": "Add a source-matched visual explanation at the exact authored mechanism while keeping the earlier content inventory."
+    },
+    "dist/diagrams/ddp-target-preflight.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "accf8e1b4a0844a0ed140226f5b9a3c808f9faa1107524b8842ae8b2a50b144e",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "scripts/check-incident-connection-lease.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0df92fd56dfa84e2de72a36095c3d21b5df129935ee0ec26cd9c56d9d691c97a",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "scripts/check-ddp-target-preflight.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2f5c216596b454f838bd977881272cb10d2794dc7d5ce171d50a0c7e332fee53",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/incident-connection-lease.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "08bdeae0f10752f80f8b1460bf7798fd24784c6dac0dab23fbcbd2e280a07ab6",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/labs/incident-connection-lease/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "21a7332c578bb2eab1da3bb284a8e389aab7059942f7a07408aa4c9a365d2a65",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/labs/incident-connection-lease/incident_connection_lease.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e4134a2f84af690c9a941a8570f423b0001b9dbef1e1862b6cc6a7751b0869a8",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/labs/incident-connection-lease/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "323cd107996c177e11ee646abe2e950041523957ea10bdb47fe0be9188673ea3",
+      "scope": "Bind actual SQLite lock, HTTP response gate and one-connection reuse, with preserved native output checks."
+    },
+    "dist/labs/ddp-target-preflight.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cdf9081acc50901271ff107cf0f18886bee60571ae4290888d0cf4b98d95ab4d",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/ddp-target-preflight/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "36acda84912280b02f9c8e37a261d135f84e96b48b1557c6b32a5b31899b8ae5",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/ddp-target-preflight/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/ddp-target-preflight/run_local.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6848cf6d91cbcfa2b12cd05297c2bcf43b46b5400993afa2506990386c5430d9",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/ddp-target-preflight/target_probe.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "dist/labs/ddp-target-preflight/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "60921ba5d1d0a6d69381b48865e1bd9d67c3315757dfd68d619e70d653e664be",
+      "scope": "Bind CPU/Gloo four-rank probe and rejection, distinct target status and Blackwell instructions."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "c2453ada4a30c265242bcc75d88d54b8f21c9c326ee45fb2269f50452e42b55c",
+      "reviewed_sha256": "f7e7fea0b3c884672eb3e969b28336a55a48ecb3608c161367035f0d025411de",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "0c3c831feb1046bc3fcb73568af385639a862b710d6f31068a6110227752aa17",
+      "reviewed_sha256": "443f8419c9cdb451e89d39b65994953f8ed80597be5d226a59e9ad8ed4566e52",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_VISUAL_MECHANISMS_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "759eb19f6ac0a50009151e95aa86c07622acd7dd0a0aec71c7bc6a3c81ba5c9b",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "37475890d157444b5f42a11a06c9e5a861b2a4da265cf64308262739f85b617b",
+      "reviewed_sha256": "29bde2af9a2801b37d52f2b7711f3560c09ab87668a6ec5270e83fafd0177a2f",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    }
+  },
+  "article_sections": {
+    "cloud-compute": {
+      "sections": [
+        7
+      ],
+      "scope": "Show light and heavy CPU work as stacked contributions under a fixed request rate.",
+      "observation": "The 10/20/30 percent mixes preserve the chapter values 1.92/3.04/4.16 cores."
+    },
+    "iam-security": {
+      "sections": [
+        6
+      ],
+      "scope": "Separate credential issuance, expiry, and a new authorization decision on one timeline.",
+      "observation": "The new figure uses the existing teaching intervals and leaves the native Kubernetes identity results intact."
+    },
+    "elasticity": {
+      "sections": [
+        4
+      ],
+      "scope": "Compare capacity retained after losing the largest zone.",
+      "observation": "At the same per-instance budget, the three layouts retain 80, 80, and 160 requests/s against the same peak 84."
+    },
+    "k8s-networking": {
+      "sections": [
+        3
+      ],
+      "scope": "Show the concrete request and return tuples, with control-plane rule inputs separate from actual packet movement.",
+      "observation": "The original NAT path and conditional SNAT scope remain explicit."
+    },
+    "serverless-execution": {
+      "sections": [
+        2
+      ],
+      "scope": "Contrast initialization and reuse, then compare endpoint and handler measurement boundaries.",
+      "observation": "The figure has stage labels and no numerical time scale."
+    },
+    "incident": {
+      "sections": [
+        8
+      ],
+      "scope": "Extend the integer-time model with a real SQLite lock, a gated HTTP response, and a one-connection pool.",
+      "observation": "Both failure fixtures block B. Returning the lease before HTTP lets B finish while A is still waiting, preserving both results and the receipt."
+    },
+    "position-encoding": {
+      "sections": [
+        3,
+        4,
+        6
+      ],
+      "scope": "Draw 2D rotation, relative phase under common translation, and logical-to-physical cache addressing.",
+      "observation": "The rotation and dot products reuse the exact original q/k vectors. The cache slot order is explicitly illustrative."
+    },
+    "transformer-block": {
+      "sections": [
+        1,
+        3,
+        5
+      ],
+      "scope": "Show both residual connections and two existing numerical examples for normalization and SwiGLU.",
+      "observation": "Shapes and values match the authored examples, including the two residual additions, epsilon-zero comparison, and pairwise gate."
+    },
+    "tensor-parallel-math": {
+      "sections": [
+        6
+      ],
+      "scope": "Use the existing eight-rank assignment to distinguish rank count, independent data replicas, and corresponding parallel groups.",
+      "observation": "The existing group labels, code, figures and links remain available."
+    },
+    "training-communication": {
+      "sections": [
+        5
+      ],
+      "scope": "Show the existing bucket readiness and final exposed communication interval on one timeline.",
+      "observation": "The figure reuses the chapter ordering and boundaries."
+    },
+    "inference-performance": {
+      "sections": [
+        4
+      ],
+      "scope": "Contrast the independent arrival clock with a client that waits for completion before issuing the next request.",
+      "observation": "The diagram distinguishes request issuance from system throughput under backpressure."
+    },
+    "multinode-lab": {
+      "sections": [
+        2,
+        4
+      ],
+      "scope": "Use an exact rank-to-device and collective preflight, with an independent Blackwell example.",
+      "observation": "Two local CPU/Gloo launchers ran four ranks and obtained gather [1,2,3,4] and sum 10; the target gate rejected those records. Physical GPU/NCCL is pending."
+    }
+  },
+  "illustration_sections": {
+    "cloud-compute": {
+      "7": [
+        "cloud-compute-cpu-mix"
+      ]
+    },
+    "iam-security": {
+      "6": [
+        "iam-credential-window"
+      ]
+    },
+    "elasticity": {
+      "4": [
+        "elasticity-zone-loss"
+      ]
+    },
+    "k8s-networking": {
+      "3": [
+        "kubernetes-packet-rewrite"
+      ]
+    },
+    "serverless-execution": {
+      "2": [
+        "serverless-invocation-lanes"
+      ]
+    },
+    "incident": {
+      "8": [
+        "incident-connection-lease"
+      ]
+    },
+    "position-encoding": {
+      "3": [
+        "rope-unit-circle"
+      ],
+      "4": [
+        "rope-relative-shift"
+      ],
+      "6": [
+        "rope-cache-coordinates"
+      ]
+    },
+    "transformer-block": {
+      "1": [
+        "decoder-prenorm-path"
+      ],
+      "3": [
+        "norm-offset-contrast"
+      ],
+      "5": [
+        "swiglu-pairwise"
+      ]
+    },
+    "tensor-parallel-math": {
+      "6": [
+        "parallel-data-replica-groups"
+      ]
+    },
+    "training-communication": {
+      "5": [
+        "collective-overlap-tail"
+      ]
+    },
+    "inference-performance": {
+      "4": [
+        "inference-load-loop"
+      ]
+    },
+    "multinode-lab": {
+      "4": [
+        "ddp-target-preflight"
+      ]
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "982e98433c65324a5d36e95662fcb48eecb221cf",
+    "chapters": 78,
+    "changed_bodies": [
+      "cloud-compute",
+      "k8s-networking",
+      "serverless-execution",
+      "iam-security",
+      "elasticity",
+      "incident",
+      "transformer-block",
+      "position-encoding",
+      "tensor-parallel-math",
+      "training-communication",
+      "multinode-lab",
+      "inference-performance"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "incident": 1,
+      "multinode-lab": 3
+    },
+    "field_maps": 14,
+    "field_primary_relationships": 50,
+    "added_chapter_diagrams": 16,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "outline_role_selectors": 0,
+    "reader_trial_entries": 3,
+    "actual_reader_sessions": 0,
+    "chapters_with_catalog_tasks": 76,
+    "role_chapter_positions": 114,
+    "experiment_packs": 98,
+    "learning_tasks": 143
+  }
+}

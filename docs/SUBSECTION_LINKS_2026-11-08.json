@@ -338,7 +338,9 @@
     },
     {
       "id": "incident",
-      "targets": []
+      "targets": [
+        "incident-connection-lease"
+      ]
     },
     {
       "id": "resilience",
@@ -589,7 +591,9 @@
     },
     {
       "id": "multinode-lab",
-      "targets": []
+      "targets": [
+        "native-ddp-target-preflight"
+      ]
     },
     {
       "id": "checkpoint-recovery",

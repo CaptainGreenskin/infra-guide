@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">计算和通信重叠，最后一桶决定完成时刻</title>
+  <desc id="desc">反向计算从 0 到 6 毫秒。第一桶从 2 到 5 毫秒通信，与计算重叠。第二桶从 6 到 8 毫秒通信。第一桶缩短到 3 毫秒完成时，整步仍在 8 毫秒结束。</desc>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="958" height="478" rx="16" fill="#f7f9fd" stroke="#ccd8e8"/>
+    <text x="34" y="51" font-size="34" font-weight="700">计算和通信重叠，最后一桶决定完成时刻</text>
+    <text x="34" y="87" font-size="22" fill="#4c5e78">反向计算不断产生梯度。桶就绪后才能发起同步。</text>
+    <rect x="420" y="130" width="240" height="138" fill="#e6f4ef"/>
+    <rect x="740" y="130" width="160" height="224" fill="#fff1db"/>
+    <g stroke="#b1bfd4" stroke-width="2">
+      <path d="M260 130v225m160-225v225m240-225v225m80-225v225m160-225v225" stroke-dasharray="5 6"/>
+      <path d="M260 355h640"/>
+    </g>
+    <g font-size="22" font-weight="600">
+      <text x="35" y="165">反向计算</text>
+      <text x="35" y="231">桶 1 就绪于 2 ms</text>
+      <text x="35" y="294">桶 2 就绪于 6 ms</text>
+      <text x="35" y="337">缩短桶 1 的通信</text>
+    </g>
+    <rect x="260" y="139" width="480" height="37" rx="7" fill="#315dce"/>
+    <text x="500" y="165" text-anchor="middle" font-size="21" fill="#fff">反向计算 0–6 ms</text>
+    <rect x="420" y="205" width="240" height="37" rx="7" fill="#14755f"/>
+    <text x="540" y="231" text-anchor="middle" font-size="21" fill="#fff">同步 2–5 ms</text>
+    <rect x="740" y="268" width="160" height="37" rx="7" fill="#95510e"/>
+    <text x="820" y="294" text-anchor="middle" font-size="21" fill="#fff">同步 6–8 ms</text>
+    <rect x="420" y="318" width="80" height="24" rx="6" fill="#b0decf" stroke="#14755f" stroke-width="2"/>
+    <text x="460" y="337" text-anchor="middle" font-size="17" font-weight="600">2–3 ms</text>
+    <path d="M740 330h160" stroke="#95510e" stroke-width="3" stroke-dasharray="6 5"/>
+    <g text-anchor="middle" font-size="19" fill="#4c5e78">
+      <text x="260" y="382">0</text><text x="420" y="382">2</text><text x="660" y="382">5</text>
+      <text x="740" y="382">6</text><text x="900" y="382">8 ms</text>
+    </g>
+    <text x="34" y="423" font-size="23" font-weight="700">2–5 ms 与反向重叠，6–8 ms 的通信仍在关键路径上。</text>
+    <text x="34" y="455" font-size="21" fill="#4c5e78">第一桶提早结束，第二桶仍等梯度到齐，整步依旧在 8 ms 完成。</text>
+  </g>
+</svg>

@@ -302,4 +302,9 @@
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
  serverless.updated=delivery.updated='2026.11.09';
+
+ const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
+ if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');
+ serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+environmentFold);
 })();

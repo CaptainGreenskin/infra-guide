@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="title desc">
+  <title id="title">同样借不到连接，A 分别在等什么</title>
+  <desc id="desc">SQLite 锁与持连接等 HTTP 两组都让 B 无法借连接。先归还连接再发 HTTP 时，B 在 A 的外部响应仍未放行时完成。</desc>
+  <metadata>{"sqlite_lock":{"free_connections":0,"b_waiting":true,"b_complete":false,"a_complete":false},"external_inside":{"free_connections":0,"b_waiting":true,"b_complete":false,"a_complete":false},"external_outside":{"free_connections":1,"b_waiting":false,"b_complete":true,"a_complete":false}}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#506f9f"/>
+    </marker>
+  </defs>
+  <rect width="720" height="320" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" font-size="19" fill="#203553">
+    <text x="22" y="33" font-weight="700" fill="#264fac">放行之前，分别观察 A 与 B</text>
+    <g fill="#fff" stroke="#c1cce2">
+      <rect x="116" y="55" width="158" height="60" rx="8"/>
+      <rect x="305" y="55" width="185" height="60" rx="8"/>
+      <rect x="521" y="55" width="176" height="60" rx="8"/>
+      <rect x="116" y="130" width="158" height="60" rx="8"/>
+      <rect x="305" y="130" width="185" height="60" rx="8"/>
+      <rect x="521" y="130" width="176" height="60" rx="8"/>
+      <rect x="116" y="205" width="158" height="60" rx="8"/>
+      <rect x="305" y="205" width="185" height="60" rx="8"/>
+      <rect x="521" y="205" width="176" height="60" rx="8"/>
+    </g>
+    <g fill="none" stroke="#506f9f" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M274 85 H299 M490 85 H515"/>
+      <path d="M274 160 H299 M490 160 H515"/>
+      <path d="M274 235 H299 M490 235 H515"/>
+    </g>
+    <g text-anchor="middle">
+      <text x="67" y="91" font-weight="700">SQL 锁</text>
+      <text x="67" y="166" font-weight="700">外部等待</text>
+      <text x="67" y="241" font-weight="700">移出等待</text>
+      <text x="195" y="91">A 持有连接</text>
+      <text x="195" y="166">A 持有连接</text>
+      <text x="195" y="241">A 已归还连接</text>
+      <text x="398" y="91">A 的查询遇锁</text>
+      <text x="398" y="166">A 等 HTTP 响应</text>
+      <text x="398" y="241">A 等 HTTP 响应</text>
+      <text x="609" y="91">B 等连接</text>
+      <text x="609" y="166">B 等连接</text>
+      <text x="609" y="241" fill="#264fac" font-weight="700">B 已查完</text>
+    </g>
+    <text x="22" y="295" font-size="17" fill="#475b79">后两组保留同一次外部查询，仅改变连接归还的位置。</text>
+  </g>
+</svg>

@@ -41,10 +41,14 @@ assert(cacheLessons[1].includes('labs/redis-client-tracking/validation.json'));
 const gpuLessons=section('gpu-execution',3).split('<h3 id="native-warp-memory-sectors">');
 assert.equal(gpuLessons.length,2,'native lane traces follow the historical stride lesson');
 assert(gpuLessons[1].includes('labs/warp-memory-sectors/validation.json'));
+const tensorGroups=section('tensor-parallel-math',5);
+const tensorGroupFigure=(tensorGroups.match(figurePattern)||[]).filter(figure=>figure.includes('src="diagrams/parallel-data-replica-groups.svg"'));
+assert.equal(tensorGroupFigure.length,1,'the existing tensor-parallel section has one additional rank-group diagram');
 const suffixBoundaries={
  'flash-attention-io':[7,flashLessons[0]],
  'cache-consistency':[6,cacheLessons[0]],
- 'gpu-execution':[3,gpuLessons[0]]
+ 'gpu-execution':[3,gpuLessons[0]],
+ 'tensor-parallel-math':[5,tensorGroups.replace(tensorGroupFigure[0],'')]
 };
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
  const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert.equal(a.updated,'2026.11.09');

@@ -82,12 +82,21 @@ const lastModified=route=>{
  return siteDate;
 };
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pageDescriptions={
+ '/':'面向初学者和面试准备者的中文基础设施指南。按 Cloud Infra、AI Infra、Agent Infra 三条路线学习云计算、模型训练与推理、智能体运行时，含图解、代码和实验。',
+ '/start/':'学习入口已合并到首页，旧链接继续提供首页、大纲与学习路线入口。',
+ '/outline/':'按领域展开 Cloud、AI、Agent Infra 的知识地图与完整大纲，按先修和学习重点选择章节。',
+ '/interview/':'用12个核心问题复习Cloud、AI和Agent Infra：结论、机制、例子、边界与追问，附深入章节和本地自评记录。',
+ '/track/cloud/':'Cloud Infra 中文学习路线。从云计算和网络入门，逐步学习存储、Kubernetes、Serverless、持续交付和 SRE 排障。',
+ '/track/ai/':'AI Infra 中文学习路线。从 Transformer 和 GPU 入门，逐步学习 CUDA 算子、分布式训练、检查点恢复和大模型推理。',
+ '/track/agent/':'Agent Infra 中文学习路线。沿一次工具调用理解智能体运行时、权限、检索和任务恢复，再用观测、评估和 Kairo 实践核对结果。'
+};
 for(const entry of routes){
  sink.innerHTML='';grid.innerHTML='';context.location.pathname=entry.route;
  vm.runInContext(entry.call,context);
  let body=sink.innerHTML.replace('<div class="module-grid" id="module-grid"></div>','<div class="module-grid" id="module-grid">'+grid.innerHTML+'</div>');
  const url=data.publicSiteOrigin+(entry.alias||entry.route);
- const description=entry.article?.desc||entry.description||({ '/':'面向中国初学者与面试准备者的 Cloud、AI、Agent Infra 指南。知识地图、分阶段路线、机制图解与可运行实验。','/start/':'学习入口已合并到首页，旧链接继续提供首页、大纲与学习路线入口。','/outline/':'按领域展开 Cloud、AI、Agent Infra 的知识地图与完整大纲，按先修和学习重点选择章节。','/interview/':'用12个核心问题复习Cloud、AI和Agent Infra：结论、机制、例子、边界与追问，附深入章节和本地自评记录。' }[entry.route])||'InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。';
+ const description=entry.article?.desc||entry.description||pageDescriptions[entry.route]||'InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。';
  const title=document.title;
  const schema=entry.article?{'@context':'https://schema.org','@type':'TechArticle',headline:entry.article.title,description,inLanguage:'zh-CN',url,mainEntityOfPage:url,dateModified:lastModified(entry.route),author:{'@type':'Organization',name:'InfraGuide'},isAccessibleForFree:true}:{'@context':'https://schema.org','@type':'WebPage',name:title,description,url,inLanguage:'zh-CN'};
  const staticArticle=entry.article?.id||(entry.route.startsWith('/track/')?data.trackDefinitions[entry.route.split('/')[2]]?.start:entry.route==='/module/practice/'?vm.runInContext('practiceArticleForContext().id',context):null);

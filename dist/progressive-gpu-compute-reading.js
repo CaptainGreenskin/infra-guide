@@ -378,4 +378,8 @@ float value = *address;
  '再读一次已编译的 CUDA 逐行求和。它把块号和线程号组合成 <code>row × cols + col</code>。对应 PTX 先取 <code>%tid.x</code>，把元素下标左移两位换成字节，再由 <code>ld.global.f32</code> 发出标量加载。同一指令上相邻活跃线程的地址差是 4 字节；一个线程的下一轮才跳 256 项，也就是 1,024 字节。判断一次读能怎样合并，要比较同一条指令的各 lane。这个 PTX 来自原有真实编译，设备加载与缓存行为仍需在 GPU 上观测。')+
  trainingCode('解压后编译并运行地址追踪','SHELL','python3 -B run_trace.py > replay.json')+
  '<p class="practice-links"><a href="labs/warp-memory-sectors.zip" download>下载可运行实验 ↓</a> · <a href="labs/warp-memory-sectors/address_trace.c">查看 C 源码 →</a> · <a href="labs/warp-memory-sectors/README.md">复跑说明 →</a> · <a href="labs/warp-memory-sectors/validation.json">核对各 lane 地址与扇区 →</a> · <a href="labs/cuda-core/cuda_lab.ptx">查看 CUDA 逐行求和 PTX →</a> · <a href="labs/cuda-core/compile-record.json">核对 PTX 编译记录 →</a></p>';
+
+ const replicas = articles.find(a=>a.id==='tensor-parallel-math').sections[5];
+ replicas[1] = replicas[1].replace('也不会把样本数翻倍。</p>', '$&' +
+  trainingFigure('parallel-data-replica-groups','左、右两份副本分别处理独立数据。每份内部两列切分同一层，两行接续计算；跨副本按相同位置组队同步梯度。'));
 })();

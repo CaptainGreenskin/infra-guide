@@ -1,0 +1,27 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "982e98433c65324a5d36e95662fcb48eecb221cf",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_READING_PRACTICE_2026-11-09.json": "76b29885a493798562fff713e0fbbfaa12032e3f6c62210ee9e6dd11c1650a60"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "incident",
+      "reviewed_at": "2026-11-09",
+      "scope": "Extend the integer-time model with a real SQLite lock, a gated HTTP response, and a one-connection pool.",
+      "observation": "Both failure fixtures block B. Returning the lease before HTTP lets B finish while A is still waiting, preserving both results and the receipt.",
+      "reviewed_content_sha256": "214e8d81ec137cc427fc0e453f46bce8b64e42c8bb7a5019f205ccfed30af40c",
+      "record": "dist/labs/incident-connection-lease/validation.json"
+    },
+    {
+      "chapter": "multinode-lab",
+      "reviewed_at": "2026-11-09",
+      "scope": "Use an exact rank-to-device and collective preflight, with an independent Blackwell example.",
+      "observation": "Two local CPU/Gloo launchers ran four ranks and obtained gather [1,2,3,4] and sum 10; the target gate rejected those records. Physical GPU/NCCL is pending.",
+      "reviewed_content_sha256": "4340a8803be531688ea691a6cb2ef0f38f80fa8bc1270a6294979663ab9fe13c",
+      "record": "dist/labs/ddp-target-preflight/validation.json"
+    }
+  ]
+}

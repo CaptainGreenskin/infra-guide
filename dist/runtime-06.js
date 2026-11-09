@@ -4200,7 +4200,8 @@ const progressiveCloudSectionTitles={
  p('CPU 秒是在一颗逻辑 CPU 上执行一秒所记的处理时间，同一进程中各线程的 CPU 时间可以相加。用 λ 表示每秒工作数、c 表示每项工作的平均 CPU 秒，则 λ×c 是每秒需要的 CPU 时间。本例 100×0.020=2 CPU 秒/秒，即平均两核当量。',
  '若本例规划利用率为 60%，候选分配量为 2÷0.6≈3.33，选四核进入测试。60%是这次规划的输入；尾延迟、突发和故障要求决定实际余量。每秒 100 次乘驻留 0.20 秒得到的是在途数量，下一节之后再用它计内存。',
  '测 c 时，在同一服务或容器范围内取窗口总 CPU 时间增量，除以可比较的工作数；同时记录后台任务和失败尝试消耗。两个线程各消耗 50ms CPU，合计为 100ms CPU；它们是否重叠执行，另由墙钟时间与运行条件回答。')+link('linux-resource','CPU 配额与节流决定这些时间怎样取得'),
- p('单位成本取决于查询混合。设缓存命中查询每次用 8ms CPU，复杂过滤每次用 120ms。对各类成本按占比加权，就得到同一业务流的平均 c：')+
+ p('单位成本取决于查询混合。设缓存命中查询每次用 8ms CPU，复杂过滤每次用 120ms。对各类成本按占比加权，就得到同一业务流的平均 c。')+
+ '<figure class="training-figure"><a href="diagrams/cloud-compute-cpu-mix.svg" target="_blank" rel="noopener" aria-label="放大查询组成与 CPU 需求图"><img src="diagrams/cloud-compute-cpu-mix.svg" width="720" height="304" loading="lazy" alt="每秒固定 100 次。复杂查询占比为 10%、20%、30% 时，缓存命中贡献 0.72、0.64、0.56 核，复杂查询贡献 1.20、2.40、3.60 核，总计 1.92、3.04、4.16 核。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同样每秒 100 次查询，第三组的平均 CPU 需求超过四核。条形长度按题设计算。<a href="diagrams/cloud-compute-cpu-mix.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  table(['复杂查询比例','平均 CPU 成本','100 次/秒的平均需求'],[['10%','0.9×8+0.1×120=19.2ms','1.92 核当量'],['20%','0.8×8+0.2×120=30.4ms','3.04 核当量'],['30%','0.7×8+0.3×120=41.6ms','4.16 核当量']])+p(
  '流量仍是 100 次/秒，复杂查询占比升高已经让四核候选承受不同压力。压测输入应保留代表性的查询范围、租户与冷暖缓存比例，避免只重放最便宜的路径。',
  '上表假定两类单位成本固定。实际占比增加还可能改变缓存命中和锁竞争，因此先用加权模型预测，再比较实测偏离；偏离明显时，检查成本发生变化的阶段，而不是仅修正一个全局 RPS 数字。'),
@@ -4220,6 +4221,8 @@ const progressiveCloudSectionTitles={
  '前三项为 80×0.025=2 核当量、2÷0.5=4 核候选、80×0.25=20 个平均在途。连接理想上界却只有 6÷0.1=60 次/秒；若每秒仍接纳 80 次而没有其他出口，积压将增加，原驻留稳态无法维持。可以保持其他条件，比较连接无效持有时间减少前后的完成量和等待；平均算式本身不提供 p99。',
  '至此得到的是单份查询工作的资源模型。接下来的网络章会把这里统称的远端等待拆成解析、连接、代理与传输；后续容量章再加入扩容何时生效、丢失故障域后剩多少能力。')+link('vpc-network','沿同一查询展开网络往返')+link('elasticity','把单副本容量放入扩容与故障预算')
  ]);
+
+ compute.updated='2026.11.09';
 
  const kube=select('kubernetes-basics',['声明三个副本之后，哪一步已经完成','调度完成与 kubelet 能运行是两道门','三个探针要分别回答不同的问题','EndpointSlice 表达的是后端条件','删除事件开始了，旧连接还有多久','应用信号、集群条件和真实流量分别验证','验收：从证据倒推下一次检查']);
  const k=kube.sections.map(s=>s[1]);
@@ -4766,6 +4769,19 @@ for label, actual, expected in (
   link('autograd-training','回到同一Decoder的损失与参数更新')
  ]);
  position.updated='2026.11.09';
+
+ const placeFigure=(article,index,after,name,caption)=>{
+  const section=article.sections[index],start=section[1].indexOf(after);
+  const end=section[1].indexOf('</p>',start);
+  if(start<0||end<0)throw Error('Missing illustrated paragraph: '+article.id+'/'+name);
+  section[1]=section[1].slice(0,end+4)+trainingFigure(name,caption)+section[1].slice(end+4);
+ };
+ placeFigure(position,2,'该例固定了输入、方向和位置','rope-unit-circle','同一组 q、k 的旋转前后方向。每个向量都在自己的等长圆上，角度由对应的逻辑位置决定。');
+ placeFigure(position,3,'相对位移已经改变','rope-relative-shift','固定内容向量和转角。共同平移仍得 −4，只重置查询得到 +4。');
+ placeFigure(position,5,'是先后两个动作','rope-cache-coordinates','逻辑位置决定旋转相位，可见性决定读取范围，映射表决定实际存放的位置。槽位编号为示意。');
+ placeFigure(decoder,0,'先把这条正常依赖走通','decoder-prenorm-path','主路径经过两次残差相加，分支分别由 X 和 H₁ 发起。两次回加前都恢复 [2, 4, 8]。');
+ placeFigure(decoder,2,'结果随之变化','norm-offset-contrast','只改一行输入的共同偏移，比较中心化与直接缩放；图中取手算条件 ε=0。');
+ placeFigure(decoder,4,'得到f(x)=[3ln3','swiglu-pairwise','门控与 up 的乘积保留两个坐标，再乘 Wdown 得到两个输出。');
 })();
 
 
@@ -6414,6 +6430,10 @@ const progressiveAgentSectionTitles={
  fold('展开完整 packing_boundaries.py：与下载源码一致',d6[3])+dl[1]+
  p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
  ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
+
+ const overlap = comm.sections[4];
+ overlap[1] = overlap[1].replace('才会缩短这一轮。</p>', '$&' +
+  trainingFigure('collective-overlap-tail','同一条时间轴上，第一桶同步藏在反向计算里。把它从 3 毫秒缩到 1 毫秒，最后一桶仍在 8 毫秒完成。'));
 })();
 
 
@@ -6912,6 +6932,11 @@ const progressiveAgentSectionTitles={
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
  serverless.updated=delivery.updated='2026.11.09';
+
+ const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
+ if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');
+ serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+environmentFold);
 })();
 
 
@@ -7306,6 +7331,10 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.updated='2026.11.09';
  performance.updated='2026.11.09';
+
+ const loadModel = performance.sections[3];
+ loadModel[1] = loadModel[1].replace('窗口末未完成数。</p>', '$&' +
+  trainingFigure('inference-load-loop','闭环单个客户端等响应再发下一条。开环按每秒 20 条到达、完成 18 条，60 秒内未完成请求增加 120 条。'));
 })();
 
 
@@ -9159,6 +9188,10 @@ float value = *address;
  '再读一次已编译的 CUDA 逐行求和。它把块号和线程号组合成 <code>row × cols + col</code>。对应 PTX 先取 <code>%tid.x</code>，把元素下标左移两位换成字节，再由 <code>ld.global.f32</code> 发出标量加载。同一指令上相邻活跃线程的地址差是 4 字节；一个线程的下一轮才跳 256 项，也就是 1,024 字节。判断一次读能怎样合并，要比较同一条指令的各 lane。这个 PTX 来自原有真实编译，设备加载与缓存行为仍需在 GPU 上观测。')+
  trainingCode('解压后编译并运行地址追踪','SHELL','python3 -B run_trace.py > replay.json')+
  '<p class="practice-links"><a href="labs/warp-memory-sectors.zip" download>下载可运行实验 ↓</a> · <a href="labs/warp-memory-sectors/address_trace.c">查看 C 源码 →</a> · <a href="labs/warp-memory-sectors/README.md">复跑说明 →</a> · <a href="labs/warp-memory-sectors/validation.json">核对各 lane 地址与扇区 →</a> · <a href="labs/cuda-core/cuda_lab.ptx">查看 CUDA 逐行求和 PTX →</a> · <a href="labs/cuda-core/compile-record.json">核对 PTX 编译记录 →</a></p>';
+
+ const replicas = articles.find(a=>a.id==='tensor-parallel-math').sections[5];
+ replicas[1] = replicas[1].replace('也不会把样本数翻倍。</p>', '$&' +
+  trainingFigure('parallel-data-replica-groups','左、右两份副本分别处理独立数据。每份内部两列切分同一层，两行接续计算；跨副本按相同位置组队同步梯度。'));
 })();
 
 
@@ -9921,6 +9954,10 @@ optimizer.step()
  p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。业务完成率需要前面定义的实际请求与队列观测。')+
  trainingCode('复跑原生 HPA 并离线核对随包记录','SHELL','python3 -B hpa_control_lab.py --output native-record.json\npython3 -B hpa_control_lab.py --check-record validation.json')+
  '<p class="practice-links"><a href="labs/kubernetes-hpa.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-hpa/validation.json">查看指标窗口、期望和 Pod UID →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561685247">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes 资源指标链 ↗</a></p>';
+
+ const packetFigure='<figure class="training-figure" id="service-packet-rewrite"><a href="diagrams/kubernetes-packet-rewrite.svg" target="_blank" rel="noopener" aria-label="放大 Service 的请求与回包路径"><img src="diagrams/kubernetes-packet-rewrite.svg" width="1080" height="548" loading="lazy" alt="控制信息同步到节点规则；客户端 10.42.1.7:53000 请求 Service 10.96.0.20:443，目的改为后端 10.42.2.8:8443；回包按连接记录恢复 Service 源地址。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>观察同一连接的两端地址。虚线表示规则同步，蓝色和绿色实线分别表示请求与回包。 <a href="diagrams/kubernetes-packet-rewrite.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ if(!network.sections[2][1].includes(n2[0]))throw Error('Service packet figure insertion point changed');
+ network.sections[2][1]=network.sections[2][1].replace(n2[0],packetFigure+n2[0]);
 })();
 
 
@@ -10557,6 +10594,42 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra multinode heading or duplicate anchor');
  bodies.forEach((body,i)=>a.sections[i][1]=body);
  a.desc='先把两个启动器、四个训练进程、会合与通信组连起来，再按同一输入核对启动、更新、共享检查点和恢复。';
+
+ a.sections[1][1]+=p('如果目标是 RTX PRO 6000 Blackwell，按实际计算能力另外选包。原 PyTorch 2.5.1 / CUDA 12.4 是历史基线。<a href="/article/multinode-lab/#native-ddp-target-preflight">查看 Blackwell 的独立安装与预检 →</a>');
+ a.sections[3][1]+=
+ '<h3 id="native-ddp-target-preflight">先用四个数验收节点、绑卡与通信</h3>'+
+ p('完整训练同时依赖数据、梯度同步和保存。排查时先运行一个只发四个整数的探针。四个 rank 各提交自己的全局编号加 1，AllGather 把每份值按 rank 顺序交给所有进程，AllReduce 把值求和并返回给所有进程。每个进程实际读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code> 后再写一份记录。')+
+ trainingFigure('ddp-target-preflight','集合通信读回相同的四个数，还要核对它们来自哪个内核、哪张卡和哪个后端。')+
+ table(['按顺序查','记录里应看到什么','可排除的常见误判'],[
+ ['谁在这一组','同一会话、同一脚本摘要，四个固定 rank','把上次或别的启动器的记录混进来'],
+ ['两个节点','各组内的两个 rank 共用同一内核启动标记，两组标记不同','把同一内核上的两个启动器当作两台机器'],
+ ['各用哪张卡','cuda 序号等于 LOCAL_RANK；四个不同的整卡 UUID 标记','把进程内的 cuda:0 当作整机或全局卡号；两个进程绑到一张卡'],
+ ['这组是否通信','同一套 PyTorch、CUDA、NCCL；每个进程实读 [1, 2, 3, 4] 和 10','把会合成功或一个端口能连接当作训练通信已完成']
+ ])+
+ p('设备编号先按进程可见列表解释，再核对设备身份。CUDA 报告的 UUID 要能在本机 nvidia-smi 的整卡列表找到。内核和 GPU 标识按会话处理后保存。同一个 Linux 内核通常给出同一启动标记，能拦下常见的同宿主伪双节点。两个不同的内核也可能是同一物理宿主上的两个虚拟机，物理节点仍由资源分配记录核对。')+
+ code('本机在现有 PyTorch 2.5.1 CPU 环境复跑','SHELL','python -B run_local.py > replay.json')+
+ p('本机实跑用了两个启动器、四个 CPU/Gloo 进程，四份读回全部正确。目标检查仍以退出码 2 拒绝，原因包括共用内核、后端不符与缺少 CUDA 绑定。用这个负例可区分“探针跑完”和“满足两机四卡检查”。')+
+ p('RTX PRO 6000 Blackwell 对应计算能力 12.0。若两端用这种卡，单独建环境选官方 PyTorch 2.7.1 / CUDA 12.8 包，核对驱动和设备能力后，再运行下面的实际探针。'+
+ ' <a href="https://developer.nvidia.com/cuda/gpus">NVIDIA 计算能力表 ↗</a> · <a href="https://pytorch.org/blog/pytorch-2-7/">PyTorch 2.7 的 Blackwell 支持 ↗</a> · <a href="https://pytorch.org/get-started/previous-versions/#v271">PyTorch 2.7.1 安装方式 ↗</a>')+
+ code('Blackwell 专用环境，在两端各安装一次','SHELL',`
+python3 -m venv .venv-blackwell
+. .venv-blackwell/bin/activate
+python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
+ `)+
+ p('在一端生成随机会话号，复制到两端。沿用前节的 NODE_RANK 和 MASTER_ADDR，显式选同一个空闲端口。两台分别执行，结束后收集四份记录和两端退出码。')+
+ code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
+# 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
+python -c 'import secrets; print(secrets.token_hex(16))'
+torchrun --nnodes=2 --nproc-per-node=2 --node-rank="$NODE_RANK" \
+  --master-addr="$MASTER_ADDR" --master-port="$MASTER_PORT" --max-restarts=0 \
+  target_probe.py worker --device=cuda --session="$PREFLIGHT_SESSION" \
+  --out-dir="target-$PREFLIGHT_SESSION-node-$NODE_RANK"
+
+# 四份 JSON 收到同一个空目录之后执行
+python -B target_probe.py check collected/rank-*.json
+ `)+
+ p('真机通过后再运行训练和恢复检查。这个小消息的结果用于证明本次集合操作确实完成。NCCL 具体走的网卡、是否使用 RDMA、真实带宽和训练质量要用相应日志和测量核对。本次记录保留为本机 CPU/Gloo 验收，物理两机 GPU/NCCL 步骤待目标环境执行。')+
+ '<p class="practice-links"><a href="labs/ddp-target-preflight.zip" download>下载预检与验收程序 ↓</a> · <a href="labs/ddp-target-preflight/target_probe.py">查看探针源码 →</a> · <a href="labs/ddp-target-preflight/README.md">完整步骤 →</a> · <a href="labs/ddp-target-preflight/validation.json">核对四进程实跑 →</a></p>';
  a.intro=a.desc;a.updated='2026.11.09';
 })();
 
@@ -11025,6 +11098,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  ],'沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。');
 
  const identityFigure='<figure class="training-figure"><a href="diagrams/v70-identity-models.svg" target="_blank" rel="noopener" aria-label="放大：AWS角色身份与Kubernetes权限规则的不同位置"><img src="diagrams/v70-identity-models.svg" width="1120" height="760" alt="AWS角色是可被代入的身份；Kubernetes ServiceAccount是主体，Role保存权限规则，RoleBinding关联主体与规则。两条请求都先认证再授权。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两套对象模型分别解释自己的请求。AWS示意没有实际云执行；Kubernetes具体观测来自独立原生API夹具。<a href="diagrams/v70-identity-models.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const credentialWindowFigure='<figure class="training-figure"><a href="diagrams/iam-credential-window.svg" target="_blank" rel="noopener" aria-label="放大凭据有效期图"><img src="diagrams/iam-credential-window.svg" width="720" height="264" loading="lazy" alt="10:00 签发，10:30 停止签发新凭据，原凭据到 10:45 才到期。接收方可按当前权限或撤销规则决定是否提前拒绝。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只停止签发的模型中，原凭据还有 15 分钟的时间有效期。是否允许请求还要查看接收方规则。<a href="diagrams/iam-credential-window.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const identity=select('iam-security',['门能打开，不代表屋里什么都能动','沿着身份链走一遍，找出每次委托','从一项具体任务推导最少的权限','允许、缺少允许、显式拒绝是三种判断','两次拒绝与一次更危险的成功','短期凭证要处理签发、续期和撤销三个时刻','把最小权限验收写成正例和负例','课堂验收：单次成功可以说明多少事','配套实战：真实HTTP授权与无副作用验收']);
  const i=identity.sections.map(s=>s[1]),i2=blocks(i[1]),i3=blocks(i[2]),i9=blocks(i[8]),i9links=links(i[8]);
  if(i2.length!==4||i3.length!==1||i9.length!==6||i9links.length!==7||pres(i.join('')).length!==11||figures(i.join('')).length!==2)throw Error('Identity original evidence extraction changed');
@@ -11068,7 +11142,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
 
  p('凭据生命周期至少涉及签发、续期和接收方是否接受当前请求。先用独立时间题：10:00签发，10:45到期；10:30停止签发新凭据。在只改变未来签发、既有权限不变的模型中，原凭据还有15分钟有效期。停止续签本身没有改写已签材料的到期时间。',
  '要阻断现有访问，还需按目标机制修改当前权限、撤销相应资格或改变受信密钥等，并观察它们何时在接收方生效。应用缓存和已经建立的会话也有各自退出方式。核对一次原来允许的请求从何时开始失败，比只记录控制台上的修改时刻更接近实际结果。')+
- anchor('kubernetes-identity-changes')+
+ credentialWindowFigure+anchor('kubernetes-identity-changes')+
  table(['原生API改变的条件','认证结果','同一读取请求'],[['reader-1不变，删除唯一业务RoleBinding','TokenReview仍为true','200→403'],['恢复该RoleBinding','同一主体仍通过认证','403→200，再读出37'],['换为reports-api.invalid受众的token','TokenReview为false','401'],['删除另一枚token所绑定的Pod UID','轮询后观察到认证失败','同token请求401']])+
  p('这些结果来自同一次Kubernetes夹具。前三次200→403→200使用完全相同的reader-1；改变的是当前RBAC允许。错误受众的token由同一来源签发，但并不适用于这个API。401在这条实验路径上表示凭据未被接受，403响应则明确带出已识别的report-reader主体。')+figures(i[5]).join('')+
  p('最后一组另用绑定Pod UID的token。UID标识具体对象，同名重建会是另一个UID。该Pod由一个不存在的调度器保持Pending，只提供API中真实存在的绑定对象，没有运行报表容器。删除命令完成后程序开始计时，经过19次TokenReview检查观察到失败，并用HTTP核对401；包含随后HTTP核对的记录耗时为9.959秒。',
@@ -11099,7 +11173,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('独立读数覆盖三个ConfigMap和一个教学Secret，检查拒绝路径是否修改了任何受保护对象；读到37则证明必要正例仍可用。固定执行来自隔离Linux CI，节点镜像有内容摘要，结束时确认本次集群已删除。--check-record只复核已有记录，不启动Docker；完整实验运行分支则会建立自己的集群。')+linkRow(i9links.slice(3,4))+
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
- ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure]);
+ ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure]);
  const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
  const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
  identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);
@@ -12215,6 +12289,21 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
    p('一页诊断结论应能沿证据被追问：输入与统计窗口是什么；H1/H2分别预测哪段不同；20ms SQL和30ms非SQL持有怎样改变判断；干预保留了什么功能；复测的用户时长与四类快照是否守恒。最后列出真实环境仍需核对的外部依赖与业务前提，而不是给模型附上生产唯一根因的结论。')+linkRow(l[7].slice(2))
   ];
   finish(a,old,bodies,20);
+  a.sections[7][1]+=
+   '<h3 id="incident-connection-lease">实测同样拿不到连接，等待发生在哪</h3>'+p(
+   '把上面的千次请求模型缩成 A 和 B 两次实际查询。连接池只提供一个 SQLite 连接，A 和 B 分别读取固定的订单总数 42 和 37。先让 A 在某个边界停住，再提交 B。第一、二组都能看到 B 借不到连接，但要看 A 的阶段记录才能区分原因。')+
+   trainingFigure('incident-connection-lease','SQL 遇锁和持连接等 HTTP 都使 B 等待。先归还连接再等 HTTP，B 在 A 收到回复前完成查询。')+
+   p('第一组中，另一个 SQLite 连接以独占模式打开事务，阻止查询读取。A 已借到池里的连接，执行 <code>SELECT</code> 时遇到锁。独立探测连接也返回同样的锁错误。为让冲突直接可见，程序把等锁时间设为零，收到错误后等测试放行，再执行一次相同查询。',
+   '第二组让 A 借到连接后发出 HTTP 请求，回环服务收到请求但暂缓回复，A 此时还没执行 <code>SELECT</code>。第三组把外部调用移到 <code>pool.put_nowait(connection)</code> 之后。HTTP 回复仍被暂缓，B 却已经借到连接并查完。')+
+   table(['放行之前','A 的事件','B 的状态','池里空闲连接'],[
+    ['SQL 遇锁','SELECT 已尝试并遇到锁','等连接','0'],
+    ['持连接等外部响应','HTTP 已到达，SELECT 未开始','等连接','0'],
+    ['归还连接后等外部响应','SELECT 已完成并归还，HTTP 已到达','已查询完成','1']
+   ])+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B incident_connection_lease.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/incident-connection-lease.zip" download>下载实验包 ↓</a><a href="labs/incident-connection-lease/incident_connection_lease.py" download>下载 Python 脚本 ↓</a><a href="labs/incident-connection-lease/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   p('复跑时，先在 <code>events</code> 里找 A 的借连接、SQL、外部响应与归还，再核对 B 的借连接和完成位置。后两组各有一次外部请求，A 都收到回执 <code>external-a</code>，订单结果仍为 42 和 37。记录用事件顺序检验连接占用，前面的数学模型继续负责推导容量与尾延迟。')+
+   '<p><a href="/article/concurrency-pools/#bounded-worker-queue">回看工作线程、排队与下游许可怎样分别占用 →</a></p>';
  }
 })();
 
@@ -12417,6 +12506,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' · ')+'</p>':'';
  const old=a.sections.map(s=>s[1]),c=old.map(codes),f=old.map(figures),l=old.map(links);
  same('source inventory',c.map(x=>x.length),[0,1,0,0,0,0,0,3]);
+ const zoneLossFigure='<figure class="training-figure"><a href="diagrams/elasticity-zone-loss.svg" target="_blank" rel="noopener" aria-label="放大故障后容量图"><img src="diagrams/elasticity-zone-loss.svg" width="720" height="314" loading="lazy" alt="每副本 40 次每秒。A/B/C 各一份、只给 A 加一份、各两份，失去 A 后分别剩 80、80、160 次每秒，只有最后一组覆盖峰值 84。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只给 A 区加副本会提高常态总容量。若最坏情况仍是失去 A，剩余能力依然只有每秒 80 次。<a href="diagrams/elasticity-zone-loss.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const bodies=[
   p('用户发起购票查询，入口接收请求，按规则接纳后交给应用副本；副本处理请求、访问依赖，再返回结果。副本是运行相同服务的一份实例。入口可以把不同查询分给多个副本，因此增加副本有机会增加可同时完成的工作。',
   '接纳是系统承诺继续处理这份工作：接纳以后，工作可能等待，也可能已经开始执行，最终需要完成、失败或按规则取消。到达但被入口拒绝的请求另计。把这些去向记录清楚，才能判断容量变化给用户带来了什么。')+
@@ -12448,7 +12538,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   p('控制信号应能解释新增能力：300个轻任务与300个重任务的件数相同，工作量不同，可结合代价与排队年龄；数据库等待时应用CPU可能低，增加前端又会加重依赖压力。依次记录建议规模、对象期望规模、已就绪且真正接流量的规模，再用完成量检查效果。控制算法和缺指标的细节可沿后续机制章核对：')+linkRow(l[2].slice(2)),
 
   p('扩容安排未来的新增能力，故障冗余则要求已有资源失去一部分后仍能服务。故障域是可能因共同依赖一起失效的一组资源，例如同一可用区。实例分散到不同域，才有机会在一个域故障时保留其他实例。还要检查数据库、身份和路由等依赖是否共享同一个失效点。',
-  '独立设定故障题的峰值输入84次/秒，每副本有效能力40次/秒，要求任意一个区失效后仍承接全部峰值。这里检查失去容量最多的那个域，保持84次/秒不变：')+
+  '独立设定故障题的峰值输入84次/秒，每副本有效能力40次/秒，要求任意一个区失效后仍承接全部峰值。这里检查失去容量最多的那个域，保持84次/秒不变。')+zoneLossFigure+
   table(['三个区的副本分布','常态总能力','失去最大域后','峰值84次/秒下的结果'],[
    ['A/B/C各1份','120次/秒','80次/秒','缺4次/秒，持续等待或拒绝'],
    ['A有2份，B/C各1份','160次/秒','失去A后80次/秒','最坏情况仍缺4次/秒'],
@@ -12497,8 +12587,9 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ];
  bodies.forEach((body,i)=>{
   same('section '+(i+1)+' code bytes/order',pres(old[i]),pres(body));
-  same('section '+(i+1)+' figure bytes/order',figures(old[i]),figures(body));
-  same('section '+(i+1)+' href multiset',hrefs(old[i]).sort(),hrefs(body).sort());
+  const addedFigure=i===3?zoneLossFigure:'';
+  same('section '+(i+1)+' figure bytes/order',[...figures(old[i]),...figures(addedFigure)],figures(body));
+  same('section '+(i+1)+' href multiset',[...hrefs(old[i]),...hrefs(addedFigure)].sort(),hrefs(body).sort());
   same('section '+(i+1)+' explicit IDs',ids(old[i]).sort(),ids(body).sort());
   if(body===old[i])throw Error('V72 elasticity section not revised: '+(i+1));
  });
@@ -14011,7 +14102,7 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
@@ -14474,8 +14565,15 @@ function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concep
 function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
+ const reading=fieldConceptReadings[moduleId];
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ const focusLink=id=>'<a href="'+fieldMapURL(moduleId,id)+'">'+safe(names[id])+'</a>';
+ const mainRelations=reading.main.map(index=>{
+  const [from,verb,to]=graph.edges[index];
+  return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
+ }).join('');
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
+ '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div>'+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
@@ -14554,6 +14652,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
+ 'ddp-target-preflight':{folder:'ddp-target-preflight',title:'两机四卡上机前的设备身份与集合通信检查'},
  'bounded-worker-queue':{folder:'bounded-worker-queue',title:'有界队列、工作线程与下游许可'},
  'warp-memory-sectors':{folder:'warp-memory-sectors',title:'同一矩阵的 lane 地址与扇区归组'},
  'http-operation-retry':{folder:'http-operation-retry',title:'真实 HTTP 超时、重试与数据库回执'},
@@ -14845,6 +14945,10 @@ labLearningCatalog.push(
  {id:'cloud-bounded-worker-queue',track:'cloud',stage:0,title:'加一个工作线程，任务改在哪等',chapter:'concurrency-pools',anchor:'bounded-worker-queue',pack:'bounded-worker-queue',files:['bounded_worker_queue.py'],env:'Python 3.9+ · 标准库',kind:'真实线程、队列与信号量',observe:'固定一个排队位置和一个下游许可，对照一线程与两线程时谁排队、谁占住线程等许可、谁被拒绝。',scope:'本机真实同步原语、固定四次提交和受控放行。'},
  {id:'ai-warp-memory-sectors',track:'ai',stage:1,title:'同一矩阵按行和按列读，地址会落在哪些扇区',chapter:'gpu-execution',anchor:'native-warp-memory-sectors',pack:'warp-memory-sectors',files:['address_trace.c','run_trace.py'],env:'Python 3.9+ · C17 编译器 · macOS arm64 实测',kind:'真实主机地址轨迹与 CUDA 编译对照',observe:'核对连续、偏移、跨行和尾部的 lane 地址。比较每组扇区数的累加与整块矩阵的去重覆盖，再读 PTX 的地址计算。',scope:'C17 本机读取与 32 字节地址归组模型。PTX 来自固定编译记录，设备事务和耗时待验。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-incident-connection-lease',track:'cloud',stage:3,title:'同样拿不到连接，等待发生在哪',chapter:'incident',anchor:'incident-connection-lease',pack:'incident-connection-lease',files:['incident_connection_lease.py'],env:'Python 3.9+ · SQLite 与标准库 HTTP',kind:'真实 SQLite 锁、HTTP 与连接租借',observe:'保留 B 等连接的表象，分别核对 A 遇到 SQLITE_BUSY 或持连接等待 HTTP。移动 HTTP 调用后，检查 B 能否提前完成并保留原回执。',scope:'本机单连接租借、固定 SQLite 与 HTTP 夹具，观察事件顺序。'},
+ {id:'ai-ddp-target-preflight',track:'ai',stage:2,title:'四份日志怎样核对会合、归约和设备绑定',chapter:'multinode-lab',anchor:'native-ddp-target-preflight',pack:'ddp-target-preflight',files:['target_probe.py','run_local.py'],env:'本机 PyTorch CPU/Gloo · 目标为两台 Linux 与四张完整 GPU',kind:'真实本机四进程与目标验收门槛',observe:'两份 launcher 启动四个本机进程，核对每个 rank 的 [1,2,3,4] 与总和 10。用同一门槛拒绝 CPU 或同宿主记录，再按卡型准备真实环境。',scope:'本机四进程 Gloo 已运行。物理双机、GPU/NCCL 和硬件分配仍待目标环境验收。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15084,5 +15188,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="94c10987dee42ea053f562b0e03a5c092afc1157a0033cfec0c4d11b0365626e";
+const staticReadingVersion="38785cfe8b420bb0f66a1144211e358416e0c89a5cd00103844ee4470bfce981";
 

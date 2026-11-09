@@ -1,0 +1,143 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "target_probe.py": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+    "run_local.py": "6848cf6d91cbcfa2b12cd05297c2bcf43b46b5400993afa2506990386c5430d9"
+  },
+  "target_execution": "not_run",
+  "local_environment": {
+    "launchers": 2,
+    "physical_hosts": 1,
+    "backend": "gloo",
+    "device": "cpu"
+  },
+  "launcher_exit_codes": [
+    0,
+    0
+  ],
+  "rank_records": [
+    {
+      "schema": 1,
+      "session": "552a63a46d6e5d59208e7d7e81fa1eee",
+      "source_sha256": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+      "rank": 0,
+      "local_rank": 0,
+      "group_rank": 0,
+      "world_size": 4,
+      "local_world_size": 2,
+      "system": "Darwin",
+      "boot_tag": "dd8bb2f35b082260a400f2ccf7a31eb53b4dafe37b30c58470b2404ff0f0fe69",
+      "backend": "gloo",
+      "device": "cpu",
+      "cuda_index": null,
+      "visible_cuda_devices": 0,
+      "full_gpu_tag": null,
+      "cuda_capability": null,
+      "torch": "2.5.1",
+      "cuda": null,
+      "nccl": null,
+      "gathered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sum": 10
+    },
+    {
+      "schema": 1,
+      "session": "552a63a46d6e5d59208e7d7e81fa1eee",
+      "source_sha256": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+      "rank": 1,
+      "local_rank": 1,
+      "group_rank": 0,
+      "world_size": 4,
+      "local_world_size": 2,
+      "system": "Darwin",
+      "boot_tag": "dd8bb2f35b082260a400f2ccf7a31eb53b4dafe37b30c58470b2404ff0f0fe69",
+      "backend": "gloo",
+      "device": "cpu",
+      "cuda_index": null,
+      "visible_cuda_devices": 0,
+      "full_gpu_tag": null,
+      "cuda_capability": null,
+      "torch": "2.5.1",
+      "cuda": null,
+      "nccl": null,
+      "gathered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sum": 10
+    },
+    {
+      "schema": 1,
+      "session": "552a63a46d6e5d59208e7d7e81fa1eee",
+      "source_sha256": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+      "rank": 2,
+      "local_rank": 0,
+      "group_rank": 1,
+      "world_size": 4,
+      "local_world_size": 2,
+      "system": "Darwin",
+      "boot_tag": "dd8bb2f35b082260a400f2ccf7a31eb53b4dafe37b30c58470b2404ff0f0fe69",
+      "backend": "gloo",
+      "device": "cpu",
+      "cuda_index": null,
+      "visible_cuda_devices": 0,
+      "full_gpu_tag": null,
+      "cuda_capability": null,
+      "torch": "2.5.1",
+      "cuda": null,
+      "nccl": null,
+      "gathered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sum": 10
+    },
+    {
+      "schema": 1,
+      "session": "552a63a46d6e5d59208e7d7e81fa1eee",
+      "source_sha256": "619014979d6e80c3e4b94e79a669e4985f217de1f1cf538cb95a5412779a7c68",
+      "rank": 3,
+      "local_rank": 1,
+      "group_rank": 1,
+      "world_size": 4,
+      "local_world_size": 2,
+      "system": "Darwin",
+      "boot_tag": "dd8bb2f35b082260a400f2ccf7a31eb53b4dafe37b30c58470b2404ff0f0fe69",
+      "backend": "gloo",
+      "device": "cpu",
+      "cuda_index": null,
+      "visible_cuda_devices": 0,
+      "full_gpu_tag": null,
+      "cuda_capability": null,
+      "torch": "2.5.1",
+      "cuda": null,
+      "nccl": null,
+      "gathered": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sum": 10
+    }
+  ],
+  "target_gate": {
+    "target_ready": false,
+    "blockers": [
+      "two_distinct_kernels",
+      "linux_cuda_nccl",
+      "cuda_binding",
+      "four_distinct_full_gpu_uuids",
+      "matching_target_runtime"
+    ]
+  },
+  "target_gate_exit_code": 2
+}

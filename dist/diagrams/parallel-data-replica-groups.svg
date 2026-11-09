@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">八张卡只形成两条独立的数据路径</title>
+  <desc id="desc">DP、PP、TP 都是 2。左侧副本用 0 到 3 号 rank，右侧用 4 到 7。每个副本内两列为 TP 分片、两行为 PP 阶段。同位置的两张卡跨副本构成 DP 组。有效批大小为 2 乘 8 乘 4 等于 64。</desc>
+  <defs>
+    <marker id="down" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#14755f"/></marker>
+  </defs>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="958" height="478" rx="16" fill="#f7f9fd" stroke="#ccd8e8"/>
+    <text x="34" y="50" font-size="35" font-weight="700">八张卡只形成两条独立的数据路径</text>
+    <text x="34" y="87" font-size="22" fill="#4c5e78">DP = 2，PP = 2，TP = 2。编号为全局 rank。</text>
+    <g fill="#fff" stroke="#b8c8e0" stroke-width="2">
+      <rect x="34" y="108" width="430" height="228" rx="12"/>
+      <rect x="496" y="108" width="430" height="228" rx="12"/>
+    </g>
+    <g font-size="22" font-weight="700">
+      <text x="55" y="143">DP 副本 0</text><text x="517" y="143">DP 副本 1</text>
+    </g>
+    <g font-size="19" fill="#4c5e78">
+      <text x="192" y="142">TP 分片 0</text><text x="321" y="142">TP 分片 1</text>
+      <text x="654" y="142">TP 分片 0</text><text x="783" y="142">TP 分片 1</text>
+      <text x="54" y="194">PP 阶段 0</text><text x="54" y="293">PP 阶段 1</text>
+      <text x="516" y="194">PP 阶段 0</text><text x="516" y="293">PP 阶段 1</text>
+    </g>
+    <g stroke="#315dce" stroke-width="3"><path d="M270 186h54m-54 99h54m408-99h54m-54 99h54"/></g>
+    <g stroke="#14755f" stroke-width="3" marker-end="url(#down)">
+      <path d="M229 208v50"/><path d="M365 208v50"/><path d="M691 208v50"/><path d="M827 208v50"/>
+    </g>
+    <g fill="#edf2ff" stroke="#315dce" stroke-width="2">
+      <rect x="187" y="166" width="84" height="40" rx="8"/><rect x="323" y="166" width="84" height="40" rx="8"/>
+      <rect x="187" y="265" width="84" height="40" rx="8"/><rect x="323" y="265" width="84" height="40" rx="8"/>
+      <rect x="649" y="166" width="84" height="40" rx="8"/><rect x="785" y="166" width="84" height="40" rx="8"/>
+      <rect x="649" y="265" width="84" height="40" rx="8"/><rect x="785" y="265" width="84" height="40" rx="8"/>
+    </g>
+    <g text-anchor="middle" font-size="23" font-weight="700">
+      <text x="229" y="194">0</text><text x="365" y="194">1</text><text x="229" y="293">2</text><text x="365" y="293">3</text>
+      <text x="691" y="194">4</text><text x="827" y="194">5</text><text x="691" y="293">6</text><text x="827" y="293">7</text>
+    </g>
+    <text x="35" y="372" font-size="22" fill="#4c5e78">横线为同一阶段的 TP 组，向下为前向经过的 PP 路径。</text>
+    <text x="35" y="409" font-size="22">跨副本的 DP 组按同一位置配对：[0,4]、[1,5]、[2,6]、[3,7]。</text>
+    <text x="35" y="451" font-size="26" font-weight="700" fill="#16469a">2 份独立数据 × 8 个样本 × 累积 4 次 = 64 个样本</text>
+  </g>
+</svg>

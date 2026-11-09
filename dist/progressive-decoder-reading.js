@@ -217,4 +217,17 @@ for label, actual, expected in (
   link('autograd-training','回到同一Decoder的损失与参数更新')
  ]);
  position.updated='2026.11.09';
+
+ const placeFigure=(article,index,after,name,caption)=>{
+  const section=article.sections[index],start=section[1].indexOf(after);
+  const end=section[1].indexOf('</p>',start);
+  if(start<0||end<0)throw Error('Missing illustrated paragraph: '+article.id+'/'+name);
+  section[1]=section[1].slice(0,end+4)+trainingFigure(name,caption)+section[1].slice(end+4);
+ };
+ placeFigure(position,2,'该例固定了输入、方向和位置','rope-unit-circle','同一组 q、k 的旋转前后方向。每个向量都在自己的等长圆上，角度由对应的逻辑位置决定。');
+ placeFigure(position,3,'相对位移已经改变','rope-relative-shift','固定内容向量和转角。共同平移仍得 −4，只重置查询得到 +4。');
+ placeFigure(position,5,'是先后两个动作','rope-cache-coordinates','逻辑位置决定旋转相位，可见性决定读取范围，映射表决定实际存放的位置。槽位编号为示意。');
+ placeFigure(decoder,0,'先把这条正常依赖走通','decoder-prenorm-path','主路径经过两次残差相加，分支分别由 X 和 H₁ 发起。两次回加前都恢复 [2, 4, 8]。');
+ placeFigure(decoder,2,'结果随之变化','norm-offset-contrast','只改一行输入的共同偏移，比较中心化与直接缩放；图中取手算条件 ε=0。');
+ placeFigure(decoder,4,'得到f(x)=[3ln3','swiglu-pairwise','门控与 up 的乘积保留两个坐标，再乘 Wdown 得到两个输出。');
 })();

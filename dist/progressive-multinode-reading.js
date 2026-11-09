@@ -129,5 +129,41 @@
  if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra multinode heading or duplicate anchor');
  bodies.forEach((body,i)=>a.sections[i][1]=body);
  a.desc='先把两个启动器、四个训练进程、会合与通信组连起来，再按同一输入核对启动、更新、共享检查点和恢复。';
+
+ a.sections[1][1]+=p('如果目标是 RTX PRO 6000 Blackwell，按实际计算能力另外选包。原 PyTorch 2.5.1 / CUDA 12.4 是历史基线。<a href="/article/multinode-lab/#native-ddp-target-preflight">查看 Blackwell 的独立安装与预检 →</a>');
+ a.sections[3][1]+=
+ '<h3 id="native-ddp-target-preflight">先用四个数验收节点、绑卡与通信</h3>'+
+ p('完整训练同时依赖数据、梯度同步和保存。排查时先运行一个只发四个整数的探针。四个 rank 各提交自己的全局编号加 1，AllGather 把每份值按 rank 顺序交给所有进程，AllReduce 把值求和并返回给所有进程。每个进程实际读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code> 后再写一份记录。')+
+ trainingFigure('ddp-target-preflight','集合通信读回相同的四个数，还要核对它们来自哪个内核、哪张卡和哪个后端。')+
+ table(['按顺序查','记录里应看到什么','可排除的常见误判'],[
+ ['谁在这一组','同一会话、同一脚本摘要，四个固定 rank','把上次或别的启动器的记录混进来'],
+ ['两个节点','各组内的两个 rank 共用同一内核启动标记，两组标记不同','把同一内核上的两个启动器当作两台机器'],
+ ['各用哪张卡','cuda 序号等于 LOCAL_RANK；四个不同的整卡 UUID 标记','把进程内的 cuda:0 当作整机或全局卡号；两个进程绑到一张卡'],
+ ['这组是否通信','同一套 PyTorch、CUDA、NCCL；每个进程实读 [1, 2, 3, 4] 和 10','把会合成功或一个端口能连接当作训练通信已完成']
+ ])+
+ p('设备编号先按进程可见列表解释，再核对设备身份。CUDA 报告的 UUID 要能在本机 nvidia-smi 的整卡列表找到。内核和 GPU 标识按会话处理后保存。同一个 Linux 内核通常给出同一启动标记，能拦下常见的同宿主伪双节点。两个不同的内核也可能是同一物理宿主上的两个虚拟机，物理节点仍由资源分配记录核对。')+
+ code('本机在现有 PyTorch 2.5.1 CPU 环境复跑','SHELL','python -B run_local.py > replay.json')+
+ p('本机实跑用了两个启动器、四个 CPU/Gloo 进程，四份读回全部正确。目标检查仍以退出码 2 拒绝，原因包括共用内核、后端不符与缺少 CUDA 绑定。用这个负例可区分“探针跑完”和“满足两机四卡检查”。')+
+ p('RTX PRO 6000 Blackwell 对应计算能力 12.0。若两端用这种卡，单独建环境选官方 PyTorch 2.7.1 / CUDA 12.8 包，核对驱动和设备能力后，再运行下面的实际探针。'+
+ ' <a href="https://developer.nvidia.com/cuda/gpus">NVIDIA 计算能力表 ↗</a> · <a href="https://pytorch.org/blog/pytorch-2-7/">PyTorch 2.7 的 Blackwell 支持 ↗</a> · <a href="https://pytorch.org/get-started/previous-versions/#v271">PyTorch 2.7.1 安装方式 ↗</a>')+
+ code('Blackwell 专用环境，在两端各安装一次','SHELL',`
+python3 -m venv .venv-blackwell
+. .venv-blackwell/bin/activate
+python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
+ `)+
+ p('在一端生成随机会话号，复制到两端。沿用前节的 NODE_RANK 和 MASTER_ADDR，显式选同一个空闲端口。两台分别执行，结束后收集四份记录和两端退出码。')+
+ code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
+# 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
+python -c 'import secrets; print(secrets.token_hex(16))'
+torchrun --nnodes=2 --nproc-per-node=2 --node-rank="$NODE_RANK" \
+  --master-addr="$MASTER_ADDR" --master-port="$MASTER_PORT" --max-restarts=0 \
+  target_probe.py worker --device=cuda --session="$PREFLIGHT_SESSION" \
+  --out-dir="target-$PREFLIGHT_SESSION-node-$NODE_RANK"
+
+# 四份 JSON 收到同一个空目录之后执行
+python -B target_probe.py check collected/rank-*.json
+ `)+
+ p('真机通过后再运行训练和恢复检查。这个小消息的结果用于证明本次集合操作确实完成。NCCL 具体走的网卡、是否使用 RDMA、真实带宽和训练质量要用相应日志和测量核对。本次记录保留为本机 CPU/Gloo 验收，物理两机 GPU/NCCL 步骤待目标环境执行。')+
+ '<p class="practice-links"><a href="labs/ddp-target-preflight.zip" download>下载预检与验收程序 ↓</a> · <a href="labs/ddp-target-preflight/target_probe.py">查看探针源码 →</a> · <a href="labs/ddp-target-preflight/README.md">完整步骤 →</a> · <a href="labs/ddp-target-preflight/validation.json">核对四进程实跑 →</a></p>';
  a.intro=a.desc;a.updated='2026.11.09';
 })();

@@ -20,6 +20,7 @@
  const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' · ')+'</p>':'';
  const old=a.sections.map(s=>s[1]),c=old.map(codes),f=old.map(figures),l=old.map(links);
  same('source inventory',c.map(x=>x.length),[0,1,0,0,0,0,0,3]);
+ const zoneLossFigure='<figure class="training-figure"><a href="diagrams/elasticity-zone-loss.svg" target="_blank" rel="noopener" aria-label="放大故障后容量图"><img src="diagrams/elasticity-zone-loss.svg" width="720" height="314" loading="lazy" alt="每副本 40 次每秒。A/B/C 各一份、只给 A 加一份、各两份，失去 A 后分别剩 80、80、160 次每秒，只有最后一组覆盖峰值 84。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只给 A 区加副本会提高常态总容量。若最坏情况仍是失去 A，剩余能力依然只有每秒 80 次。<a href="diagrams/elasticity-zone-loss.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const bodies=[
   p('用户发起购票查询，入口接收请求，按规则接纳后交给应用副本；副本处理请求、访问依赖，再返回结果。副本是运行相同服务的一份实例。入口可以把不同查询分给多个副本，因此增加副本有机会增加可同时完成的工作。',
   '接纳是系统承诺继续处理这份工作：接纳以后，工作可能等待，也可能已经开始执行，最终需要完成、失败或按规则取消。到达但被入口拒绝的请求另计。把这些去向记录清楚，才能判断容量变化给用户带来了什么。')+
@@ -51,7 +52,7 @@
   p('控制信号应能解释新增能力：300个轻任务与300个重任务的件数相同，工作量不同，可结合代价与排队年龄；数据库等待时应用CPU可能低，增加前端又会加重依赖压力。依次记录建议规模、对象期望规模、已就绪且真正接流量的规模，再用完成量检查效果。控制算法和缺指标的细节可沿后续机制章核对：')+linkRow(l[2].slice(2)),
 
   p('扩容安排未来的新增能力，故障冗余则要求已有资源失去一部分后仍能服务。故障域是可能因共同依赖一起失效的一组资源，例如同一可用区。实例分散到不同域，才有机会在一个域故障时保留其他实例。还要检查数据库、身份和路由等依赖是否共享同一个失效点。',
-  '独立设定故障题的峰值输入84次/秒，每副本有效能力40次/秒，要求任意一个区失效后仍承接全部峰值。这里检查失去容量最多的那个域，保持84次/秒不变：')+
+  '独立设定故障题的峰值输入84次/秒，每副本有效能力40次/秒，要求任意一个区失效后仍承接全部峰值。这里检查失去容量最多的那个域，保持84次/秒不变。')+zoneLossFigure+
   table(['三个区的副本分布','常态总能力','失去最大域后','峰值84次/秒下的结果'],[
    ['A/B/C各1份','120次/秒','80次/秒','缺4次/秒，持续等待或拒绝'],
    ['A有2份，B/C各1份','160次/秒','失去A后80次/秒','最坏情况仍缺4次/秒'],
@@ -100,8 +101,9 @@
  ];
  bodies.forEach((body,i)=>{
   same('section '+(i+1)+' code bytes/order',pres(old[i]),pres(body));
-  same('section '+(i+1)+' figure bytes/order',figures(old[i]),figures(body));
-  same('section '+(i+1)+' href multiset',hrefs(old[i]).sort(),hrefs(body).sort());
+  const addedFigure=i===3?zoneLossFigure:'';
+  same('section '+(i+1)+' figure bytes/order',[...figures(old[i]),...figures(addedFigure)],figures(body));
+  same('section '+(i+1)+' href multiset',[...hrefs(old[i]),...hrefs(addedFigure)].sort(),hrefs(body).sort());
   same('section '+(i+1)+' explicit IDs',ids(old[i]).sort(),ids(body).sort());
   if(body===old[i])throw Error('V72 elasticity section not revised: '+(i+1));
  });

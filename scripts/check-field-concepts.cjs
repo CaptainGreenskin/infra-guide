@@ -1,7 +1,7 @@
 /* Check actual concept relationships and continuous reading, not human mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),cp=require('child_process');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,practice:fieldPracticePaths,labs:labLearningCatalog,routes:courseReadingStages,log:readabilityRevisionLog})',c)));
+const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,labs:labLearningCatalog,routes:courseReadingStages,log:readabilityRevisionLog})',c)));
 assert.equal(Object.keys(d.maps).length,14);let nodes=0,edges=0;
 assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
 assert.equal(new Set(Object.values(d.practice).map(([,lab])=>lab)).size,14,'practice targets are distinct');
@@ -31,9 +31,18 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  const recordPath=vm.runInContext('labCatalogRecordPath(unit)',c);
  const record=JSON.parse(fs.readFileSync('dist/'+recordPath,'utf8'));
  assert(/^passed(?:_|$)/.test(record.status||'')||unit.files.every(file=>record.programs?.[file]?.exit_code===0),moduleId+': practice record status');
+ const main=html.match(/<div class="field-map-main">([\s\S]*?)<\/div>/);
+ assert(main&&html.indexOf(main[0])>html.indexOf('src="diagrams/field-'+moduleId+'.svg"'),moduleId+': text follows the front diagram');
+ const fromMap=id=>'/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
+ const labels=Object.fromEntries(graph.nodes.map(([id,label])=>[id,label]));
+ const expected=d.guides[moduleId].main.map(index=>{
+  const [from,verb,to]=graph.edges[index];
+  return '<a href="'+fromMap(from)+'">'+labels[from]+'</a><span class="field-map-verb">'+verb+' <span aria-hidden="true">→</span></span><a href="'+fromMap(to)+'">'+labels[to]+'</a>';
+ });
+ assert.deepEqual([...main[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m=>m[1]),expected,moduleId+': same authored main edges and focusable concepts');
  const practice=html.match(/<section class="field-map-practice"[\s\S]*?<\/section>/g)||[];
  assert.equal(practice.length,1,moduleId+': one visible practice after the diagram');
- assert(html.indexOf(practice[0])>html.indexOf('src="diagrams/field-'+moduleId+'.svg"')&&html.indexOf(practice[0])<html.indexOf('<details class="field-map-explorer"'),moduleId+': keep the exercise outside the optional explorer');
+ assert(html.indexOf(practice[0])>html.indexOf(main[0])&&html.indexOf(practice[0])<html.indexOf('<details class="field-map-explorer"'),moduleId+': keep the exercise outside the optional explorer');
  assert(practice[0].includes('data-field-practice="'+labId+'"')&&practice[0].includes('href="'+target+'"'),moduleId+': actual page links to the chosen practice');
  assert.equal((html.match(/id="field-map-practice"/g)||[]).length,1,moduleId+': unique practice heading target');
  const answers=practice[0].match(/<details class="field-map-practice-result">[\s\S]*?<\/details>/g)||[];

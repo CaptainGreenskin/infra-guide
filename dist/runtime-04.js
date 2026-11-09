@@ -309,10 +309,10 @@ function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="co
 function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
 function trackCard(key){const t=trackDefinitions[key],n=articles.filter(a=>t.modules.includes(a.module)).length;return `<a class="track-card ${key}" href="#/track/${key}"><span class="track-index">${{cloud:'01',ai:'02',agent:'03'}[key]} / ${n} 章</span><h2>${t.label}<span>↗</span></h2><h3>${t.subtitle}</h3><p>${t.story}</p><div class="track-steps">${{cloud:'请求 → 资源 → 交付 → 恢复',ai:'数据 → 训练 → 评估 → 推理',agent:'目标 → 工具 → 状态 → 验收'}[key]}</div></a>`}
 function homePage(){
- document.title='InfraGuide · Cloud / AI / Agent';
+ document.title='InfraGuide · 云计算、AI Infra 与 Agent Infra 中文学习指南';
  $('#app').innerHTML=`<main id="main" class="container home-reading" tabindex="-1">
  <section class="infra-hero"><div class="eyebrow"><span class="dot"></span> 给中国初学者与面试准备者的基础设施指南</div>
- <div class="hero-grid"><div><h1>先看懂全貌，<br>再把系统讲清楚。</h1><p>Cloud 管应用运行，AI Infra 管模型训练与推理，Agent Infra 管任务和工具执行。先认识对象与关系，再沿一条主线读机制、算例和代码。</p>
+ <div class="hero-grid"><div><h1>基础设施学习指南</h1><p>Cloud Infra 管应用运行，AI Infra 管模型训练与推理，Agent Infra 管任务和工具执行。先认识对象与关系，再沿一条主线读机制、算例和代码。</p>
  <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
  <p class="home-route-link"><a href="/roadmap/">已有基础？按学习路线继续 →</a></p></div>
  <aside class="home-reading-order" aria-label="一章的阅读顺序"><h2>一章，顺着四步读</h2><ol><li><b>认识对象</b><span>这个概念是什么？</span></li><li><b>弄清关系</b><span>它与前面的知识怎样连接？</span></li><li><b>跟算例子</b><span>每一步为什么得到这个结果？</span></li><li><b>运行验证</b><span>换一个条件，结论还成立吗？</span></li></ol></aside></div></section>
@@ -355,7 +355,11 @@ function trackEntryOverviewHTML(article){
 }
 
 // A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
-function trackPage(kind){articlePage(articleById(trackDefinitions[kind].start));}
+function trackPage(kind){
+ const track=trackDefinitions[kind];
+ articlePage(articleById(track.start));
+ document.title=track.label+' 中文学习路线 · InfraGuide';
+}
 
 function sidebarView(moduleId, current) {
  const track = current?chapterReadingContext(articleById(current)).track:moduleFor(moduleId).track;

@@ -87,6 +87,7 @@
  ],'沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。');
 
  const identityFigure='<figure class="training-figure"><a href="diagrams/v70-identity-models.svg" target="_blank" rel="noopener" aria-label="放大：AWS角色身份与Kubernetes权限规则的不同位置"><img src="diagrams/v70-identity-models.svg" width="1120" height="760" alt="AWS角色是可被代入的身份；Kubernetes ServiceAccount是主体，Role保存权限规则，RoleBinding关联主体与规则。两条请求都先认证再授权。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两套对象模型分别解释自己的请求。AWS示意没有实际云执行；Kubernetes具体观测来自独立原生API夹具。<a href="diagrams/v70-identity-models.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const credentialWindowFigure='<figure class="training-figure"><a href="diagrams/iam-credential-window.svg" target="_blank" rel="noopener" aria-label="放大凭据有效期图"><img src="diagrams/iam-credential-window.svg" width="720" height="264" loading="lazy" alt="10:00 签发，10:30 停止签发新凭据，原凭据到 10:45 才到期。接收方可按当前权限或撤销规则决定是否提前拒绝。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只停止签发的模型中，原凭据还有 15 分钟的时间有效期。是否允许请求还要查看接收方规则。<a href="diagrams/iam-credential-window.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const identity=select('iam-security',['门能打开，不代表屋里什么都能动','沿着身份链走一遍，找出每次委托','从一项具体任务推导最少的权限','允许、缺少允许、显式拒绝是三种判断','两次拒绝与一次更危险的成功','短期凭证要处理签发、续期和撤销三个时刻','把最小权限验收写成正例和负例','课堂验收：单次成功可以说明多少事','配套实战：真实HTTP授权与无副作用验收']);
  const i=identity.sections.map(s=>s[1]),i2=blocks(i[1]),i3=blocks(i[2]),i9=blocks(i[8]),i9links=links(i[8]);
  if(i2.length!==4||i3.length!==1||i9.length!==6||i9links.length!==7||pres(i.join('')).length!==11||figures(i.join('')).length!==2)throw Error('Identity original evidence extraction changed');
@@ -130,7 +131,7 @@
 
  p('凭据生命周期至少涉及签发、续期和接收方是否接受当前请求。先用独立时间题：10:00签发，10:45到期；10:30停止签发新凭据。在只改变未来签发、既有权限不变的模型中，原凭据还有15分钟有效期。停止续签本身没有改写已签材料的到期时间。',
  '要阻断现有访问，还需按目标机制修改当前权限、撤销相应资格或改变受信密钥等，并观察它们何时在接收方生效。应用缓存和已经建立的会话也有各自退出方式。核对一次原来允许的请求从何时开始失败，比只记录控制台上的修改时刻更接近实际结果。')+
- anchor('kubernetes-identity-changes')+
+ credentialWindowFigure+anchor('kubernetes-identity-changes')+
  table(['原生API改变的条件','认证结果','同一读取请求'],[['reader-1不变，删除唯一业务RoleBinding','TokenReview仍为true','200→403'],['恢复该RoleBinding','同一主体仍通过认证','403→200，再读出37'],['换为reports-api.invalid受众的token','TokenReview为false','401'],['删除另一枚token所绑定的Pod UID','轮询后观察到认证失败','同token请求401']])+
  p('这些结果来自同一次Kubernetes夹具。前三次200→403→200使用完全相同的reader-1；改变的是当前RBAC允许。错误受众的token由同一来源签发，但并不适用于这个API。401在这条实验路径上表示凭据未被接受，403响应则明确带出已识别的report-reader主体。')+figures(i[5]).join('')+
  p('最后一组另用绑定Pod UID的token。UID标识具体对象，同名重建会是另一个UID。该Pod由一个不存在的调度器保持Pending，只提供API中真实存在的绑定对象，没有运行报表容器。删除命令完成后程序开始计时，经过19次TokenReview检查观察到失败，并用HTTP核对401；包含随后HTTP核对的记录耗时为9.959秒。',
@@ -161,7 +162,7 @@
  p('独立读数覆盖三个ConfigMap和一个教学Secret，检查拒绝路径是否修改了任何受保护对象；读到37则证明必要正例仍可用。固定执行来自隔离Linux CI，节点镜像有内容摘要，结束时确认本次集群已删除。--check-record只复核已有记录，不启动Docker；完整实验运行分支则会建立自己的集群。')+linkRow(i9links.slice(3,4))+
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
- ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure]);
+ ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure]);
  const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
  const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
  identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);

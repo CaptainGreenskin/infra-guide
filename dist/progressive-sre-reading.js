@@ -241,6 +241,21 @@
    p('一页诊断结论应能沿证据被追问：输入与统计窗口是什么；H1/H2分别预测哪段不同；20ms SQL和30ms非SQL持有怎样改变判断；干预保留了什么功能；复测的用户时长与四类快照是否守恒。最后列出真实环境仍需核对的外部依赖与业务前提，而不是给模型附上生产唯一根因的结论。')+linkRow(l[7].slice(2))
   ];
   finish(a,old,bodies,20);
+  a.sections[7][1]+=
+   '<h3 id="incident-connection-lease">实测同样拿不到连接，等待发生在哪</h3>'+p(
+   '把上面的千次请求模型缩成 A 和 B 两次实际查询。连接池只提供一个 SQLite 连接，A 和 B 分别读取固定的订单总数 42 和 37。先让 A 在某个边界停住，再提交 B。第一、二组都能看到 B 借不到连接，但要看 A 的阶段记录才能区分原因。')+
+   trainingFigure('incident-connection-lease','SQL 遇锁和持连接等 HTTP 都使 B 等待。先归还连接再等 HTTP，B 在 A 收到回复前完成查询。')+
+   p('第一组中，另一个 SQLite 连接以独占模式打开事务，阻止查询读取。A 已借到池里的连接，执行 <code>SELECT</code> 时遇到锁。独立探测连接也返回同样的锁错误。为让冲突直接可见，程序把等锁时间设为零，收到错误后等测试放行，再执行一次相同查询。',
+   '第二组让 A 借到连接后发出 HTTP 请求，回环服务收到请求但暂缓回复，A 此时还没执行 <code>SELECT</code>。第三组把外部调用移到 <code>pool.put_nowait(connection)</code> 之后。HTTP 回复仍被暂缓，B 却已经借到连接并查完。')+
+   table(['放行之前','A 的事件','B 的状态','池里空闲连接'],[
+    ['SQL 遇锁','SELECT 已尝试并遇到锁','等连接','0'],
+    ['持连接等外部响应','HTTP 已到达，SELECT 未开始','等连接','0'],
+    ['归还连接后等外部响应','SELECT 已完成并归还，HTTP 已到达','已查询完成','1']
+   ])+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B incident_connection_lease.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/incident-connection-lease.zip" download>下载实验包 ↓</a><a href="labs/incident-connection-lease/incident_connection_lease.py" download>下载 Python 脚本 ↓</a><a href="labs/incident-connection-lease/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   p('复跑时，先在 <code>events</code> 里找 A 的借连接、SQL、外部响应与归还，再核对 B 的借连接和完成位置。后两组各有一次外部请求，A 都收到回执 <code>external-a</code>，订单结果仍为 42 和 37。记录用事件顺序检验连接占用，前面的数学模型继续负责推导容量与尾延迟。')+
+   '<p><a href="/article/concurrency-pools/#bounded-worker-queue">回看工作线程、排队与下游许可怎样分别占用 →</a></p>';
  }
 })();
 
