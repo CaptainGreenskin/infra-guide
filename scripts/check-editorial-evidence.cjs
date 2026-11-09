@@ -88,7 +88,8 @@ for(const row of expansion.new_chapter_reviews){const a=data.articles.find(a=>a.
 // instead of requiring a legitimately edited chapter to stay frozen at that unit.
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);
- const rows=later.revisions.filter(r=>r.id===unit.chapter),at=rows.findIndex(r=>r.reviewed_content_sha256===unit.reviewed_content_sha256);
+ const chapterChain=reviewed.some(row=>row.id===unit.chapter)?later.revisions:expansion.body_revisions;
+ const rows=chapterChain.filter(r=>r.id===unit.chapter),at=rows.findIndex(r=>r.reviewed_content_sha256===unit.reviewed_content_sha256);
  assert(at>=0,unit.chapter+': signed teaching-unit body missing from the preserved chain');
  let expected=unit.reviewed_content_sha256;
  for(const revision of rows.slice(at+1)){assert.equal(revision.previous_content_sha256,expected,unit.chapter+': broken post-unit review chain');expected=revision.reviewed_content_sha256;}
