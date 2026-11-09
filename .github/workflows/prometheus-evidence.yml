@@ -1,0 +1,43 @@
+name: Verify live Prometheus SLO evaluation
+on:
+  push:
+    branches: [evidence/prometheus-live-burn-20261109]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify the official Prometheus release archive
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          release=prometheus-3.5.0.linux-amd64
+          asset="$release.tar.gz"
+          archive="$RUNNER_TEMP/$asset"
+          if ! curl --fail --location --retry 2 --max-time 120 -o "$archive" "https://github.com/prometheus/prometheus/releases/download/v3.5.0/$asset"; then
+            gh release download v3.5.0 --repo prometheus/prometheus --pattern "$asset" --dir "$RUNNER_TEMP" --clobber
+          fi
+          printf '%s  %s\n' e811827af26d822afb09a4f28314f61b618b12cff5369835a67f674d8b46f39a "$archive" | sha256sum --check --strict
+          tar -xzf "$archive" -C "$RUNNER_TEMP" "$release/prometheus"
+          "$RUNNER_TEMP/$release/prometheus" --version
+      - name: Scrape counters and verify pending, firing, and recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir native-results
+          git rev-parse HEAD > native-results/source-commit.txt
+          python3 -B dist/labs/prometheus-live-burn/prometheus_live_burn.py \
+            --prometheus "$RUNNER_TEMP/prometheus-3.5.0.linux-amd64/prometheus" \
+            --output native-results/validation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-prometheus-live-burn
+          path: native-results/
+          retention-days: 7
