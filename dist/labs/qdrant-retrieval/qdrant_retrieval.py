@@ -11,7 +11,7 @@ import sqlite3
 import subprocess
 import tempfile
 import time
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import ProxyHandler, Request, build_opener
 
 VERSION = "1.19.1"
@@ -46,10 +46,13 @@ class Index:
             body_bytes = None
         req = Request(self.base + path, method=method, data=body_bytes,
                       headers={"Content-Type": "application/json"})
-        with OPENER.open(req, timeout=3) as response:
-            result = json.load(response)
-            self.exchanges.append({"label": label, "method": method, "path": path,
-                                   "request": body, "http_status": response.status, "response": result})
+        try:
+            with OPENER.open(req, timeout=3) as response:
+                result = json.load(response)
+                self.exchanges.append({"label": label, "method": method, "path": path,
+                                       "request": body, "http_status": response.status, "response": result})
+        except HTTPError as error:
+            raise RuntimeError(f"{method} {path}: HTTP {error.code} {error.read().decode()}") from error
         return result
 
     def wait_ready(self, process, log_path):
@@ -188,17 +191,22 @@ def main():
     with tempfile.TemporaryDirectory(prefix="qdrant-evidence-") as folder:
         temp = Path(folder)
         port = free_port()
-        config = temp / "config.json"
-        write_json(config, {"telemetry_disabled": True, "cluster": {"enabled": False},
-                            "service": {"host": "127.0.0.1", "http_port": port, "grpc_port": None},
-                            "storage": {"storage_path": str(temp / "storage"),
-                                        "snapshots_path": str(temp / "snapshots")}})
+        config = temp / "config.yaml"
+        config.write_text(
+            "cluster:\n  enabled: false\n"
+            "service:\n  host: 127.0.0.1\n"
+            f"  http_port: {port}\n  grpc_port: null\n  max_workers: 1\n"
+            f"storage:\n  storage_path: {json.dumps(str(temp / 'storage'))}\n"
+            f"  snapshots_path: {json.dumps(str(temp / 'snapshots'))}\n",
+            encoding="utf-8",
+        )
         log_path = temp / "engine.log"
-        # Do not inherit QDRANT__ overrides from unrelated services on the host.
+        # Keep the loopback listener and telemetry settings explicit at process startup.
         env = {k: v for k, v in os.environ.items() if not k.startswith("QDRANT__")}
+        env.update({"QDRANT__SERVICE__HOST": "127.0.0.1", "QDRANT__SERVICE__HTTP_PORT": str(port)})
         with log_path.open("wb") as log:
-            process = subprocess.Popen([binary, "--config-path", config], cwd=temp, env=env,
-                                       stdout=log, stderr=subprocess.STDOUT)
+            process = subprocess.Popen([binary, "--disable-telemetry", "--config-path", config],
+                                       cwd=temp, env=env, stdout=log, stderr=subprocess.STDOUT)
             try:
                 index = Index(port)
                 identity = index.wait_ready(process, log_path)
