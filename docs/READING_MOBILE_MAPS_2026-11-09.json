@@ -1,0 +1,576 @@
+{
+  "baseCommit": "669b3084683953e7b2a35f0b52bfb6511c9ff21f",
+  "viewport": 390,
+  "attempts": [
+    {
+      "field": "foundation",
+      "original": {
+        "edges": 5,
+        "front": true,
+        "map": "foundation",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 26,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "prerequisite-1"
+        ],
+        "edges": 2,
+        "label": "执行与资源",
+        "page": 390,
+        "selected": "prerequisite-1",
+        "status": "与“执行与资源”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 5
+      },
+      "passed": true
+    },
+    {
+      "field": "compute",
+      "original": {
+        "edges": 6,
+        "front": true,
+        "map": "compute",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 40,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "service-model"
+        ],
+        "edges": 1,
+        "label": "服务责任",
+        "page": 390,
+        "selected": "service-model",
+        "status": "与“服务责任”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 6
+      },
+      "passed": true
+    },
+    {
+      "field": "network",
+      "original": {
+        "edges": 7,
+        "front": true,
+        "map": "network",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 29,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "vpc-subnet"
+        ],
+        "edges": 1,
+        "label": "地址范围",
+        "page": 390,
+        "selected": "vpc-subnet",
+        "status": "与“地址范围”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 7
+      },
+      "passed": true
+    },
+    {
+      "field": "cloud-data",
+      "original": {
+        "edges": 7,
+        "front": true,
+        "map": "cloud-data",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 39.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "storage-model"
+        ],
+        "edges": 2,
+        "label": "访问单位",
+        "page": 390,
+        "selected": "storage-model",
+        "status": "与“访问单位”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 7
+      },
+      "passed": true
+    },
+    {
+      "field": "native",
+      "original": {
+        "edges": 8,
+        "front": true,
+        "map": "native",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 9.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "container-isolation"
+        ],
+        "edges": 3,
+        "label": "实际进程",
+        "page": 390,
+        "selected": "container-isolation",
+        "status": "与“实际进程”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 8
+      },
+      "passed": true
+    },
+    {
+      "field": "serverless",
+      "original": {
+        "edges": 4,
+        "front": true,
+        "map": "serverless",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 30.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "execution-environment"
+        ],
+        "edges": 2,
+        "label": "执行环境",
+        "page": 390,
+        "selected": "execution-environment",
+        "status": "与“执行环境”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 4
+      },
+      "passed": true
+    },
+    {
+      "field": "cloud-delivery",
+      "original": {
+        "edges": 6,
+        "front": true,
+        "map": "cloud-delivery",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 28,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "artifact-contract"
+        ],
+        "edges": 3,
+        "label": "完整版本",
+        "page": 390,
+        "selected": "artifact-contract",
+        "status": "与“完整版本”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 6
+      },
+      "passed": true
+    },
+    {
+      "field": "cloud-security",
+      "original": {
+        "edges": 5,
+        "front": true,
+        "map": "cloud-security",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 34,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "authentication-authorization"
+        ],
+        "edges": 3,
+        "label": "身份与授权",
+        "page": 390,
+        "selected": "authentication-authorization",
+        "status": "与“身份与授权”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 5
+      },
+      "passed": true
+    },
+    {
+      "field": "cloud-capacity",
+      "original": {
+        "edges": 4,
+        "front": true,
+        "map": "cloud-capacity",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 332,
+        "loaded": true,
+        "page": 390,
+        "pan": 0,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "capacity-units"
+        ],
+        "edges": 2,
+        "label": "工作量口径",
+        "page": 390,
+        "selected": "capacity-units",
+        "status": "与“工作量口径”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 4
+      },
+      "passed": false
+    },
+    {
+      "field": "sre",
+      "original": {
+        "edges": 6,
+        "front": true,
+        "map": "sre",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 24.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "sli-slo"
+        ],
+        "edges": 3,
+        "label": "用户结果与目标",
+        "page": 390,
+        "selected": "sli-slo",
+        "status": "与“用户结果与目标”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 6
+      },
+      "passed": true
+    },
+    {
+      "field": "model-foundations",
+      "original": {
+        "edges": 5,
+        "front": true,
+        "map": "model-foundations",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 32,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "mf-tensors"
+        ],
+        "edges": 2,
+        "label": "输入与形状",
+        "page": 390,
+        "selected": "mf-tensors",
+        "status": "与“输入与形状”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 5
+      },
+      "passed": true
+    },
+    {
+      "field": "training",
+      "original": {
+        "edges": 7,
+        "front": true,
+        "map": "training",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 31,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "tr-step"
+        ],
+        "edges": 4,
+        "label": "一次有效更新",
+        "page": 390,
+        "selected": "tr-step",
+        "status": "与“一次有效更新”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 7
+      },
+      "passed": true
+    },
+    {
+      "field": "platform",
+      "original": {
+        "edges": 8,
+        "front": true,
+        "map": "platform",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 22.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "sv-contract"
+        ],
+        "edges": 3,
+        "label": "作业与完整产物",
+        "page": 390,
+        "selected": "sv-contract",
+        "status": "与“作业与完整产物”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 8
+      },
+      "passed": true
+    },
+    {
+      "field": "agent",
+      "original": {
+        "edges": 9,
+        "front": true,
+        "map": "agent",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 18,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "ag-runtime"
+        ],
+        "edges": 2,
+        "label": "任务与执行",
+        "page": 390,
+        "selected": "ag-runtime",
+        "status": "与“任务与执行”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 9
+      },
+      "passed": true
+    },
+    {
+      "field": "cloud-capacity",
+      "original": {
+        "edges": 4,
+        "front": true,
+        "map": "cloud-capacity",
+        "pageWidth": 390,
+        "scrollWidth": 390,
+        "version": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58"
+      },
+      "panStart": 0,
+      "zoom": {
+        "image": 960,
+        "loaded": true,
+        "page": 390,
+        "pan": 24.5,
+        "stage": 332
+      },
+      "focus": true,
+      "filter": {
+        "correctEdges": true,
+        "definitions": [
+          "capacity-units"
+        ],
+        "edges": 2,
+        "label": "工作量口径",
+        "page": 390,
+        "selected": "capacity-units",
+        "status": "与“工作量口径”直接相关的关系"
+      },
+      "reset": {
+        "hiddenDefinitions": true,
+        "page": 390,
+        "selection": "true",
+        "visibleEdges": 4
+      },
+      "passed": true
+    }
+  ]
+}

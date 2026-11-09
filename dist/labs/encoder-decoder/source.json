@@ -1,0 +1,24 @@
+{
+  "lexicon": {
+    "红": "red",
+    "蓝": "blue",
+    "绿": "green",
+    "黄": "yellow",
+    "圆": "circle",
+    "方": "square",
+    "三角": "triangle",
+    "星": "star"
+  },
+  "train_pairs": [
+    ["红", "方"], ["红", "三角"], ["红", "星"],
+    ["蓝", "圆"], ["蓝", "三角"], ["蓝", "星"],
+    ["绿", "圆"], ["绿", "方"], ["绿", "星"],
+    ["黄", "圆"], ["黄", "方"], ["黄", "三角"]
+  ],
+  "held_out": [
+    {"source": ["红", "圆"], "expected": ["red", "circle"]},
+    {"source": ["蓝", "方"], "expected": ["blue", "square"]},
+    {"source": ["绿", "三角"], "expected": ["green", "triangle"]},
+    {"source": ["黄", "星"], "expected": ["yellow", "star"]}
+  ]
+}

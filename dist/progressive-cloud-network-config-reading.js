@@ -90,6 +90,26 @@
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
+ network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
+ network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
+ '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',
+ '先让 orders 的入口只接受 trusted，再用一条空出站规则隔离 trusted，最后另加一条只允许它访问 orders TCP 8080 的出站规则。同一方向的许可取并集。空规则本身没有放行项，端口许可加入后订单连接便能通过，解析器所需的出站路径仍未获许可。')+
+ trainingFigure('kubernetes-network-policy','DNS 与新建 TCP 连接分别探测。只改变策略，观察两条路径怎样分开。')+
+ p('先按下表预测，再从执行记录比较每阶段最后两轮。')+
+ table(['策略阶段','trusted：DNS / 直连','untrusted：DNS / 直连'],[
+  ['初始无策略','有答案 / 200','有答案 / 200'],
+  ['orders 只允许 trusted 入站','有答案 / 200','有答案 / TCP 超时'],
+  ['再隔离 trusted 出站','解析失败 / TCP 超时','有答案 / TCP 超时'],
+  ['仅补 trusted → orders:8080 出站许可','解析失败 / 200','有答案 / TCP 超时'],
+  ['删除 orders 出站许可','解析失败 / TCP 超时','有答案 / TCP 超时'],
+  ['删除 trusted 出站隔离','有答案 / 200','有答案 / TCP 超时'],
+  ['删除 orders 入站限制','有答案 / 200','有答案 / 200']
+ ])+
+ p('用 x86-64 Linux、Docker、kind 0.33.0、kubectl 1.35.8 和 Helm 运行。程序用临时 kubeconfig 创建自己的集群，安装固定版本 Cilium 1.20.4，每个阶段保存探测及收敛过程，最后删除该集群。')+
+ trainingCode('运行集群实验，再离线核对记录','SHELL','python3 -B network_policy_lab.py --json native-record.json\npython3 -B network_policy_lab.py --check-record native-record.json')+
+ p('Linux CI 实跑中，七个阶段各有连续两轮符合表中预期。先看第 4 阶段的分叉，再对照首尾的 Pod UID、重启数和 EndpointSlice。用固定客户端与固定后端观察策略变化，可以排除后端被替换。此实验验证同一台 Linux 主机上的两个容器节点，Service 转发用前文的独立实验验证。<a href="/article/cloud-service-lab/#kubernetes-service-normal">继续核对 ClusterIP 的真实请求与后端选择 →</a>')+
+ '<p class="practice-links"><a href="labs/kubernetes-network-policy.zip" download>下载源码、说明与记录 ↓</a> · <a href="labs/kubernetes-network-policy/validation.json">查看七阶段原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42553604497">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes 策略规范 ↗</a></p>';
+
  const config=select('config-secrets',['对象与版本：期望、文件、内存和认证','传播路径：环境变量、投射与subPath','一致快照：完整读取、校验和请求切换','全局约束：连接预算、截止时间与回退','Secret与身份：分发、存储和执行权限','凭据轮换：兼容窗口、撤销与旧会话','实战与变化题：文件、进程和真实HTTP']);
  const q=config.sections.map(s=>s[1]),q1=blocks(q[1]),q6=blocks(q[6]);
  if(q1.length!==1||q6.length!==4)throw Error('Configuration code layout changed');

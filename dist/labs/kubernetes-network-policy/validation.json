@@ -1,0 +1,1197 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "83d52e6ceec269f7acccd8666dafa518d4448bee7677dee1598ef141201402ef",
+  "chart_sha256": "505abff8385811df1a949776fc42e9f10697989a332acc86d6e8933efcb855ed",
+  "cilium_version_requested": "1.20.4",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "python_image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "stages": [
+    {
+      "name": "baseline",
+      "policies": {},
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "00f110f3de2b43f496e88364b609bfc7",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                45576
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "00f110f3de2b43f496e88364b609bfc7"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "6db489437bd84eb6aef680bc65c0309c",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.93",
+                55424
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "6db489437bd84eb6aef680bc65c0309c"
+              }
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "b345c02cd8a145f6a0778ef9559eb396",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                45580
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "b345c02cd8a145f6a0778ef9559eb396"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "189e8aa5138a4a3ea0c6123f54479cc7",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.93",
+                55432
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "189e8aa5138a4a3ea0c6123f54479cc7"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ingress_trusted",
+      "policies": {
+        "ingress-trusted": {
+          "uid": "216d6353-96dd-42b8-ba62-36e4d826ab6a",
+          "spec": {
+            "ingress": [
+              {
+                "from": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "access": "trusted",
+                        "app": "client"
+                      }
+                    }
+                  }
+                ],
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "app": "orders"
+              }
+            },
+            "policyTypes": [
+              "Ingress"
+            ]
+          }
+        }
+      },
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "0d48ba7d5cdb48939c57b6b128d85408",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                45592
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "0d48ba7d5cdb48939c57b6b128d85408"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "f668fcd8cc1945edb20a401438dc08de",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "8aa2e1a50b3543c591e1fcdc5b8d9784",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                45606
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "8aa2e1a50b3543c591e1fcdc5b8d9784"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "ac58c987be6f48e79c57c9d13fa3fe6f",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "trusted_egress_isolated",
+      "policies": {
+        "egress-isolate-trusted": {
+          "uid": "90010a04-579a-4c83-be90-9ce17a6aed27",
+          "spec": {
+            "podSelector": {
+              "matchLabels": {
+                "access": "trusted",
+                "app": "client"
+              }
+            },
+            "policyTypes": [
+              "Egress"
+            ]
+          }
+        },
+        "ingress-trusted": {
+          "uid": "216d6353-96dd-42b8-ba62-36e4d826ab6a",
+          "spec": {
+            "ingress": [
+              {
+                "from": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "access": "trusted",
+                        "app": "client"
+                      }
+                    }
+                  }
+                ],
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "app": "orders"
+              }
+            },
+            "policyTypes": [
+              "Ingress"
+            ]
+          }
+        }
+      },
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "71bc75a1003949c8b31954e4c8122c73",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          },
+          "untrusted": {
+            "request_id": "95bfd022a5734c9e91ae691a463c03c0",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "d69a37e180d64c6aa701a58ec2b68a2e",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          },
+          "untrusted": {
+            "request_id": "3ea88c2563494affbd52d9138b983420",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "trusted_orders_only",
+      "policies": {
+        "egress-isolate-trusted": {
+          "uid": "90010a04-579a-4c83-be90-9ce17a6aed27",
+          "spec": {
+            "podSelector": {
+              "matchLabels": {
+                "access": "trusted",
+                "app": "client"
+              }
+            },
+            "policyTypes": [
+              "Egress"
+            ]
+          }
+        },
+        "egress-orders-trusted": {
+          "uid": "15128240-d9ea-4e18-95b6-7b9ef56dbffa",
+          "spec": {
+            "egress": [
+              {
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
+                "to": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "app": "orders"
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "access": "trusted",
+                "app": "client"
+              }
+            },
+            "policyTypes": [
+              "Egress"
+            ]
+          }
+        },
+        "ingress-trusted": {
+          "uid": "216d6353-96dd-42b8-ba62-36e4d826ab6a",
+          "spec": {
+            "ingress": [
+              {
+                "from": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "access": "trusted",
+                        "app": "client"
+                      }
+                    }
+                  }
+                ],
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "app": "orders"
+              }
+            },
+            "policyTypes": [
+              "Ingress"
+            ]
+          }
+        }
+      },
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "e5214c5a0d73474b915d17439e596295",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                50490
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "e5214c5a0d73474b915d17439e596295"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "0ff82b1d87a043929e9a9852bf84f09c",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "5072297c34374529b431d25b707846bf",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                50492
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "5072297c34374529b431d25b707846bf"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "6038fe53ef2a423e887860716506d509",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "allow_removed",
+      "policies": {
+        "egress-isolate-trusted": {
+          "uid": "90010a04-579a-4c83-be90-9ce17a6aed27",
+          "spec": {
+            "podSelector": {
+              "matchLabels": {
+                "access": "trusted",
+                "app": "client"
+              }
+            },
+            "policyTypes": [
+              "Egress"
+            ]
+          }
+        },
+        "ingress-trusted": {
+          "uid": "216d6353-96dd-42b8-ba62-36e4d826ab6a",
+          "spec": {
+            "ingress": [
+              {
+                "from": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "access": "trusted",
+                        "app": "client"
+                      }
+                    }
+                  }
+                ],
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "app": "orders"
+              }
+            },
+            "policyTypes": [
+              "Ingress"
+            ]
+          }
+        }
+      },
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "b3f6fb9b940046edb24cdd6aa4f7089f",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          },
+          "untrusted": {
+            "request_id": "a3a5d11d4d3d4b6cbe824f03e1af8d3d",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "fba4d9a2e71d4f47a6f96b3f51054161",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "gaierror",
+              "ipv4": [],
+              "errno": -3,
+              "message": "[Errno -3] Try again"
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          },
+          "untrusted": {
+            "request_id": "04d412f561d247c79a3403a588a3761e",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "egress_isolation_removed",
+      "policies": {
+        "ingress-trusted": {
+          "uid": "216d6353-96dd-42b8-ba62-36e4d826ab6a",
+          "spec": {
+            "ingress": [
+              {
+                "from": [
+                  {
+                    "podSelector": {
+                      "matchLabels": {
+                        "access": "trusted",
+                        "app": "client"
+                      }
+                    }
+                  }
+                ],
+                "ports": [
+                  {
+                    "port": 8080,
+                    "protocol": "TCP"
+                  }
+                ]
+              }
+            ],
+            "podSelector": {
+              "matchLabels": {
+                "app": "orders"
+              }
+            },
+            "policyTypes": [
+              "Ingress"
+            ]
+          }
+        }
+      },
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "89089244754745c18836944b3feb34fc",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                34446
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "89089244754745c18836944b3feb34fc"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "d7a97b099faa464aba64fa3a01e382cc",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "5507c9000da9448dbfe9603d51205efc",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                34462
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "5507c9000da9448dbfe9603d51205efc"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "66c29a1aae4e440cbd4d61c03707ba4d",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "status": "tcp_timeout"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "all_policies_removed",
+      "policies": {},
+      "attempts": [
+        {
+          "trusted": {
+            "request_id": "077f7386d93847b098af939e6adeba48",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                50914
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "077f7386d93847b098af939e6adeba48"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "c4d3cf6b849e46daa6e1685e5bce7b13",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.93",
+                54524
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "c4d3cf6b849e46daa6e1685e5bce7b13"
+              }
+            }
+          }
+        },
+        {
+          "trusted": {
+            "request_id": "460394a8887549c0abbab76ef7bd98bb",
+            "client_uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.122",
+                50926
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "460394a8887549c0abbab76ef7bd98bb"
+              }
+            }
+          },
+          "untrusted": {
+            "request_id": "e2335ed46ec445048adbe838d7a0d364",
+            "client_uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+            "pod_ip_target": "10.244.1.79",
+            "dns": {
+              "name": "orders.policy-lab.svc.cluster.local.",
+              "resolv_conf": "search policy-lab.svc.cluster.local svc.cluster.local cluster.local faikq13oivwujel1gsq0mpkzog.bx.internal.cloudapp.net\nnameserver 10.96.0.10\noptions ndots:5\n",
+              "status": "answer",
+              "ipv4": [
+                "10.96.4.135"
+              ]
+            },
+            "http": {
+              "local": [
+                "10.244.0.93",
+                54532
+              ],
+              "peer": [
+                "10.244.1.79",
+                8080
+              ],
+              "status": "ok",
+              "code": 200,
+              "body": {
+                "order": "O-104",
+                "amount": 37,
+                "pod_name": "orders",
+                "pod_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+                "pod_ip": "10.244.1.79",
+                "request_id": "e2335ed46ec445048adbe838d7a0d364"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "two kind nodes on one local Linux Docker host; Cilium NetworkPolicy; fresh Pod-IP HTTP and separate Service DNS",
+  "cluster": "np-85515baa85e2",
+  "toolchain": {
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kubectl": "v1.35.8",
+    "helm": "v3.19.0+g3d8990f",
+    "docker_kernel": "linux x86_64 7.0.0-1017-azure"
+  },
+  "kubernetes_server": "v1.35.8",
+  "cilium_agents": [
+    {
+      "pod": "cilium-fqxl7",
+      "node": "np-85515baa85e2-worker",
+      "image": "sha256:1320017dd0b611d024c18a7e2f59a0378221a9bb840b16f35f159ecbb03d5c8a",
+      "image_id": "quay.io/cilium/cilium@sha256:20fe92e4c86641233a450098c158d2d29085f3419931ab6bf681d2485dedf16e",
+      "version": "Client: 1.20.4 beb276d2 2026-10-23T13:25:25Z go version go1.26.10 linux/amd64\nDaemon: 1.20.4 beb276d2 2026-10-23T13:25:25Z go version go1.26.10 linux/amd64"
+    },
+    {
+      "pod": "cilium-j7gpz",
+      "node": "np-85515baa85e2-control-plane",
+      "image": "sha256:1320017dd0b611d024c18a7e2f59a0378221a9bb840b16f35f159ecbb03d5c8a",
+      "image_id": "quay.io/cilium/cilium@sha256:20fe92e4c86641233a450098c158d2d29085f3419931ab6bf681d2485dedf16e",
+      "version": "Client: 1.20.4 beb276d2 2026-10-23T13:25:25Z go version go1.26.10 linux/amd64\nDaemon: 1.20.4 beb276d2 2026-10-23T13:25:25Z go version go1.26.10 linux/amd64"
+    }
+  ],
+  "inventory": {
+    "pods": {
+      "orders": {
+        "uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+        "node": "np-85515baa85e2-worker",
+        "ip": "10.244.1.79",
+        "labels": {
+          "app": "orders"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      },
+      "trusted": {
+        "uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+        "node": "np-85515baa85e2-control-plane",
+        "ip": "10.244.0.122",
+        "labels": {
+          "access": "trusted",
+          "app": "client"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      },
+      "untrusted": {
+        "uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+        "node": "np-85515baa85e2-control-plane",
+        "ip": "10.244.0.93",
+        "labels": {
+          "access": "untrusted",
+          "app": "client"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      }
+    },
+    "cilium_endpoints": {
+      "orders": {
+        "uid": "465b2447-8d9e-43b2-a67e-b4bd38ab73c9",
+        "identity": 3449,
+        "addresses": [
+          {
+            "ipv4": "10.244.1.79"
+          }
+        ]
+      },
+      "trusted": {
+        "uid": "27faefbd-53df-4660-ad0a-251ef88939bb",
+        "identity": 59158,
+        "addresses": [
+          {
+            "ipv4": "10.244.0.122"
+          }
+        ]
+      },
+      "untrusted": {
+        "uid": "7db01ec3-1d5a-488c-9386-4782a1ab8b8e",
+        "identity": 54181,
+        "addresses": [
+          {
+            "ipv4": "10.244.0.93"
+          }
+        ]
+      }
+    },
+    "service": {
+      "uid": "969fb04d-ae45-4686-b8e8-5aa59f236f42",
+      "cluster_ip": "10.96.4.135",
+      "backends": [
+        {
+          "addresses": [
+            "10.244.1.79"
+          ],
+          "target_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+          "ready": true
+        }
+      ]
+    }
+  },
+  "final_inventory": {
+    "pods": {
+      "orders": {
+        "uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+        "node": "np-85515baa85e2-worker",
+        "ip": "10.244.1.79",
+        "labels": {
+          "app": "orders"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      },
+      "trusted": {
+        "uid": "701379bc-f0d6-4d0b-a12a-009a077d3361",
+        "node": "np-85515baa85e2-control-plane",
+        "ip": "10.244.0.122",
+        "labels": {
+          "access": "trusted",
+          "app": "client"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      },
+      "untrusted": {
+        "uid": "0929f0d1-435c-4135-8f2a-bdaa7d0302c0",
+        "node": "np-85515baa85e2-control-plane",
+        "ip": "10.244.0.93",
+        "labels": {
+          "access": "untrusted",
+          "app": "client"
+        },
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0
+      }
+    },
+    "cilium_endpoints": {
+      "orders": {
+        "uid": "465b2447-8d9e-43b2-a67e-b4bd38ab73c9",
+        "identity": 3449,
+        "addresses": [
+          {
+            "ipv4": "10.244.1.79"
+          }
+        ]
+      },
+      "trusted": {
+        "uid": "27faefbd-53df-4660-ad0a-251ef88939bb",
+        "identity": 59158,
+        "addresses": [
+          {
+            "ipv4": "10.244.0.122"
+          }
+        ]
+      },
+      "untrusted": {
+        "uid": "7db01ec3-1d5a-488c-9386-4782a1ab8b8e",
+        "identity": 54181,
+        "addresses": [
+          {
+            "ipv4": "10.244.0.93"
+          }
+        ]
+      }
+    },
+    "service": {
+      "uid": "969fb04d-ae45-4686-b8e8-5aa59f236f42",
+      "cluster_ip": "10.96.4.135",
+      "backends": [
+        {
+          "addresses": [
+            "10.244.1.79"
+          ],
+          "target_uid": "94c614ff-490c-4501-9b35-f6b0db65fedc",
+          "ready": true
+        }
+      ]
+    }
+  },
+  "cleanup": {
+    "attempted": true,
+    "owned_nodes_removed": true
+  }
+}

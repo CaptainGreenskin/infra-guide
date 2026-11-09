@@ -1,0 +1,235 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "669b3084683953e7b2a35f0b52bfb6511c9ff21f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SINUSOIDAL_POSITION_2026-11-09.json": "82428f916e9200e7dba9b8cebb95959964e657d4b86f6d85758e84482cac63cb"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "41741012673075f6816d493b3fb92922cff27ebb07e74f7a109ef65d5ef2f0b1",
+      "reviewed_sha256": "6419da457c2ca388f518369502194c2554da4fcceea8dd6af63b0eb34151c05a",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "6eedcee8466b8f128983b0cf362a0083b0f5a88171fd3caf7f77d3ec1ca6ef6a",
+      "reviewed_sha256": "7cdb83f06e5f93c6a25b4f1888ee5088001aa07ae1cccfa27341ebb52a831d60",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "7514206777515964196ad4aa76d49cbf489d81d99b0890d448ed88ef6f64c2f3",
+      "reviewed_sha256": "7bd95f940433ee486a9c0331e43986d5622919c1f94cf2a860305c00473e0d07",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "efaed64570c1f5a9683458e0262cd76d8d5ea6483ded9ebbb10d4a0aa39ef8ba",
+      "reviewed_sha256": "6770895c752f0a807117bb939c12aede7697c01429bfeb7b2ac769f29371b622",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "da9037ec84f1808ff5e41a0d3d2dbd7d6f695df703a2c762dda15f9b96b6f8c3",
+      "reviewed_sha256": "01eb07298067930941619d45ef1a3d10da43e8db49dcd7a91aea4ae708adcd11",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9f9f949e78849cb494d793026f41dc0113f3a12e7a8da8b2058e1c0bfd267389",
+      "reviewed_sha256": "179fde78304586312c6c775880810d12de7b3ecfc3a78cfd0a45cf3a6bbfa368",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "62e518dfe7387eb767645aa7377137cd45c7e0d2c76fac4fb608d7841d11afd5",
+      "reviewed_sha256": "cb872d0b748d8616340b6f199d808af6bf9c09e5e3be943d2377d46d109d6305",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "97794d1cdc9632f6ca1881896f29ed30bc53bdb727bc06bf903dbaba5900406c",
+      "reviewed_sha256": "1ca254fbb7345bbf7d9a9d6173d66763833e1ea57be7654de8d9b5d99d3a3561",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2545420eec7eb989c7d5db03705c964c3b054618f5eccd9795133d13f27c7488",
+      "reviewed_sha256": "b17962d5fbf47ddb0a6f9ed15911ce6b8ccc9c01943a75ba4f28773fcc0c55ea",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "scripts/check-reading-lab-bridges.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8deeb1743c88c561a141659c964a6b0c06cc63d6021878bc5b8b08b9989389d0",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "ec2228e305b2e110b4c4d3266f4d05b873955c8ea9e57562afb26d0071727e29",
+      "reviewed_sha256": "307a0381c1d1352083ccad5292c885f450cdeba824277f86011b1c4ee5c0dc4d",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "docs/READING_MOBILE_MAPS_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dc9953e5dd144060d6e03f53144dc8a69caa5051fc4f532759ee64e34730ecb6",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "17cf6d9bc042b6ea5b27e244a56c0cd658b324ac3f06d836ee0296cf18626f91",
+      "reviewed_sha256": "fb14c2740bc996791ec67ec0dc580c056c033250047b789448b3ede8ea751538",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "e58b0137afc214fcba1f4dbc12b61ce2f1ba3345695d7feda35064e7f3eb669f",
+      "reviewed_sha256": "b6f2e8c999670c03f82f6bf13587d67bc4b4989f290faa910452be4fc868cafc",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/encoder-decoder.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "478992ca19814af25c7273dc4b0e7018efc95f86f5f29cf3131fb69d036df3c1",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/diagrams/encoder-decoder-translation.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "13d063a92f402b352ce9357b69e63807df0ecbd8dd0ee0e4f56f72141df4da66",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/encoder-decoder/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "96bf83c019f40d7e97b8bd4f7084b064abacf5f54d6090ea0146846efd62bcaf",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/encoder-decoder/encoder_decoder.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b92f39114fc338b59f801ab5763badc988740558fd828726e974f97bdfaca0aa",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/encoder-decoder/source.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a07f35b39d0e54206b0d293becd88dec3a1def7182b9553e92f56186ec736f40",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/encoder-decoder/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1cbcb02a23f0747d8920a782ac85335aa4e28f15cd4f06ba7d0208e78f628443",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/kubernetes-network-policy.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3f36b08ce87d6ae0015bfbdf82e7175b48022a886c79949da1945a6046f7d9d2",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/diagrams/kubernetes-network-policy.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a7526060b36a0cbcc2a1cc809c8b97b05c567675398fb6a09214ab9f5589746a",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/kubernetes-network-policy/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "997b54ae45038efeb18e1452ae4b068f37e52c793cdc4599536a100229b3edc0",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/kubernetes-network-policy/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ec4365ac98581f6b02c8daa51d6bc86be8ac72b7db10cceea776ef1c1208b74f",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/kubernetes-network-policy/network_policy_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "83d52e6ceec269f7acccd8666dafa518d4448bee7677dee1598ef141201402ef",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/kubernetes-network-policy/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e1b33ec0a640a24885bd86ae2d577ed4c52abe141dd86dec57b1a2524dbf6d06",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "35b849304d8db7b27b1be3c65c3ab169585eefee17da1fa2e982f9f325682f86",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/diagrams/mcp-commit-recovery.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "69ad9692336d61512ad6b03be0d0c6951b9af58e7fc086f564611166f9ff6c4f",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "30bc448073927cc4f64973c65222334dfaec979b16c00e241766c5ec4931e944",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery/mcp_bridge.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8114aab4901e62912e1a7f64a553847f379d613f944e6958b3281937088d5597",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery/source.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "93c05645523ae312f33b5f2b1ff484aafc0f71ff2c573265e2cb47a757ddc7bf",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b1a6a96b787442b9ae38928e869a8df8db81c92e60a7c3733d662919d0a172f8",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    },
+    "dist/labs/mcp-recovery/workflow.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c0c0cb35e99feb4eb5d3f8c1b5bb31e01deaf5dee19686cffce96bb5a30d41fb",
+      "scope": "Tie three continuous reading exercises to native execution, recorded scope, static navigation and exact source."
+    }
+  },
+  "article_sections": {
+    "k8s-networking": {
+      "sections": [
+        4,
+        7
+      ],
+      "scope": "Connect policy direction and selector concepts to native DNS and fresh Pod TCP probes",
+      "observation": "Retain the TLS exercise. Use Cilium in a two-node kind cluster on one Linux runner, seven policy stages, two converged samples, stable backend and endpoint identity and scoped cleanup."
+    },
+    "transformer-model": {
+      "sections": [
+        1,
+        9
+      ],
+      "scope": "Connect encoder–decoder architecture to a running translation lesson",
+      "observation": "Follow two source slots and three target slots from right shift to native masked attention and CPU training, then compare held-out greedy output with an independent reference."
+    },
+    "agent-recovery": {
+      "sections": [
+        9
+      ],
+      "scope": "Connect recovery mechanisms to a real MCP tool and persisted graph",
+      "observation": "Preserve the original six-window HTTP lab and add a direct link to the native stdio experiment."
+    },
+    "durable-workflows": {
+      "sections": [
+        9
+      ],
+      "scope": "Recover the graph after a committed MCP tool returns its receipt",
+      "observation": "Two actual worker processes and two actual SDK sessions. The cut leaves publish pending, then the stable operation returns the same receipt, while the attempt-derived control creates two reports."
+    }
+  },
+  "browser_baseline": {
+    "record": "docs/READING_MOBILE_MAPS_2026-11-09.json",
+    "viewport_width": 390,
+    "viewport_height": 844,
+    "field_maps_passed": 14,
+    "initial_unsuccessful_attempts": 1,
+    "scope": "All published V78 field maps checked for first placement, zoom, inner pan, focus restoration and filter/reset. Existing map runtime and SVGs retained."
+  },
+  "review_scope": {
+    "body_baseline_commit": "669b3084683953e7b2a35f0b52bfb6511c9ff21f",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-networking",
+      "transformer-model",
+      "agent-recovery",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "k8s-networking": 1,
+      "transformer-model": 2,
+      "durable-workflows": 1
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 55,
+    "learning_tasks": 95
+  }
+}

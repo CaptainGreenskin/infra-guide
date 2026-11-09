@@ -1,0 +1,367 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "Post-MCP-response, pre-LangGraph-node-return SIGKILL; native local stdio and two SQLite domains.",
+  "environment": {
+    "graph_python": "3.12.13",
+    "mcp_python": "3.12.13",
+    "langgraph": "1.2.20",
+    "mcp": "2.3.0",
+    "langgraph_checkpoint_sqlite": "3.1.3",
+    "sqlite": "3.53.3"
+  },
+  "source_sha256": {
+    "workflow.py": "c0c0cb35e99feb4eb5d3f8c1b5bb31e01deaf5dee19686cffce96bb5a30d41fb",
+    "mcp_bridge.py": "8114aab4901e62912e1a7f64a553847f379d613f944e6958b3281937088d5597",
+    "source.json": "93c05645523ae312f33b5f2b1ff484aafc0f71ff2c573265e2cb47a757ddc7bf",
+    "README.md": "30bc448073927cc4f64973c65222334dfaec979b16c00e241766c5ec4931e944"
+  },
+  "cases": {
+    "stable": {
+      "thread_id": "report-A-history",
+      "cut": {
+        "worker_pid": 31806,
+        "arguments": {
+          "task_id": "report-A",
+          "source_version": "report-A/v3",
+          "amount": 42,
+          "operation_id": "report-A:publish"
+        },
+        "observed_mcp": {
+          "advertised_tools": [
+            "publish_report"
+          ],
+          "is_error": false,
+          "mcp_version": "2.3.0",
+          "python": "3.12.13",
+          "receipt": {
+            "amount": 42,
+            "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+            "operation_id": "report-A:publish",
+            "revision": 1,
+            "source_version": "report-A/v3",
+            "task_id": "report-A"
+          }
+        },
+        "checkpoint": {
+          "next": [
+            "publish"
+          ],
+          "checkpoint_id": "1f1dbe73-d41e-6c56-8001-58354bcb0b40",
+          "values": {
+            "intent": {
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42,
+              "operation_id": "report-A:publish"
+            }
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish",
+              "revision": 1,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            }
+          ],
+          "attempts": [
+            {
+              "id": 1,
+              "operation_id": "report-A:publish",
+              "server_pid": 31810,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "committed"
+            }
+          ]
+        },
+        "exit_signal": "SIGKILL"
+      },
+      "resume": {
+        "worker_pid": 31811,
+        "checkpoint": {
+          "next": [],
+          "checkpoint_id": "1f1dbe73-e9b9-6890-8002-6f9efdd6a5de",
+          "values": {
+            "intent": {
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42,
+              "operation_id": "report-A:publish"
+            },
+            "receipt": {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish",
+              "revision": 1,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            },
+            "observed_mcp": {
+              "advertised_tools": [
+                "publish_report"
+              ],
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "receipt": {
+                "amount": 42,
+                "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+                "operation_id": "report-A:publish",
+                "revision": 1,
+                "source_version": "report-A/v3",
+                "task_id": "report-A"
+              }
+            }
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish",
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish",
+              "revision": 1,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            }
+          ],
+          "attempts": [
+            {
+              "id": 1,
+              "operation_id": "report-A:publish",
+              "server_pid": 31810,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "committed"
+            },
+            {
+              "id": 2,
+              "operation_id": "report-A:publish",
+              "server_pid": 31814,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "replayed"
+            }
+          ]
+        }
+      },
+      "oracle": {
+        "accepted": true,
+        "conditions": {
+          "one_report_and_receipt": true,
+          "correct_source_and_amount": true,
+          "receipt_matches_report": true
+        },
+        "expected_amount": 42,
+        "effect_count": 1,
+        "amounts": [
+          42
+        ]
+      }
+    },
+    "attempt_derived_id": {
+      "thread_id": "report-A-history",
+      "cut": {
+        "worker_pid": 31816,
+        "arguments": {
+          "task_id": "report-A",
+          "source_version": "report-A/v3",
+          "amount": 42,
+          "operation_id": "report-A:publish:attempt-1"
+        },
+        "observed_mcp": {
+          "advertised_tools": [
+            "publish_report"
+          ],
+          "is_error": false,
+          "mcp_version": "2.3.0",
+          "python": "3.12.13",
+          "receipt": {
+            "amount": 42,
+            "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+            "operation_id": "report-A:publish:attempt-1",
+            "revision": 1,
+            "source_version": "report-A/v3",
+            "task_id": "report-A"
+          }
+        },
+        "checkpoint": {
+          "next": [
+            "publish"
+          ],
+          "checkpoint_id": "1f1dbe73-ed83-6fde-8001-d5dad6d18bd3",
+          "values": {
+            "intent": {
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42,
+              "operation_id": "report-A:publish"
+            }
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish:attempt-1",
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish:attempt-1",
+              "revision": 1,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            }
+          ],
+          "attempts": [
+            {
+              "id": 1,
+              "operation_id": "report-A:publish:attempt-1",
+              "server_pid": 31818,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "committed"
+            }
+          ]
+        },
+        "exit_signal": "SIGKILL"
+      },
+      "resume": {
+        "worker_pid": 31819,
+        "checkpoint": {
+          "next": [],
+          "checkpoint_id": "1f1dbe74-0089-658e-8002-e04c33bd8ead",
+          "values": {
+            "intent": {
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42,
+              "operation_id": "report-A:publish"
+            },
+            "receipt": {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish:attempt-2",
+              "revision": 2,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            },
+            "observed_mcp": {
+              "advertised_tools": [
+                "publish_report"
+              ],
+              "is_error": false,
+              "mcp_version": "2.3.0",
+              "python": "3.12.13",
+              "receipt": {
+                "amount": 42,
+                "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+                "operation_id": "report-A:publish:attempt-2",
+                "revision": 2,
+                "source_version": "report-A/v3",
+                "task_id": "report-A"
+              }
+            }
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "revision": 1,
+              "operation_id": "report-A:publish:attempt-1",
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42
+            },
+            {
+              "revision": 2,
+              "operation_id": "report-A:publish:attempt-2",
+              "task_id": "report-A",
+              "source_version": "report-A/v3",
+              "amount": 42
+            }
+          ],
+          "receipts": [
+            {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish:attempt-1",
+              "revision": 1,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            },
+            {
+              "amount": 42,
+              "body_digest": "05554ff25a12eecf52c4629d4fb4ea467cd82cd24580218a81d7d596a73e7503",
+              "operation_id": "report-A:publish:attempt-2",
+              "revision": 2,
+              "source_version": "report-A/v3",
+              "task_id": "report-A"
+            }
+          ],
+          "attempts": [
+            {
+              "id": 1,
+              "operation_id": "report-A:publish:attempt-1",
+              "server_pid": 31818,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "committed"
+            },
+            {
+              "id": 2,
+              "operation_id": "report-A:publish:attempt-2",
+              "server_pid": 31821,
+              "rpc_request_id": "3",
+              "protocol": "2026-07-28",
+              "outcome": "committed"
+            }
+          ]
+        }
+      },
+      "oracle": {
+        "accepted": false,
+        "conditions": {
+          "one_report_and_receipt": false,
+          "correct_source_and_amount": true,
+          "receipt_matches_report": true
+        },
+        "expected_amount": 42,
+        "effect_count": 2,
+        "amounts": [
+          42,
+          42
+        ]
+      }
+    }
+  }
+}

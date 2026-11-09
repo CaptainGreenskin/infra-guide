@@ -181,9 +181,12 @@
         "subsection-4-1jc1u8z",
         "subsection-5-dj0iar",
         "subsection-6-1m57fcl",
-        "subsection-7-1njkucl"
+        "subsection-7-1njkucl",
+        "kubernetes-network-policy-run"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "kubernetes-network-policy-run"
+      ]
     },
     {
       "id": "k8s-storage",
@@ -321,7 +324,8 @@
         "decoder-ffn-position",
         "decoder-block-order",
         "training-versus-generation",
-        "model-compute-to-infra"
+        "model-compute-to-infra",
+        "encoder-decoder-translation"
       ]
     },
     {
@@ -722,7 +726,8 @@
         "subsection-9-62i94t",
         "langgraph-workflow-run",
         "langgraph-workflow-wait",
-        "langgraph-workflow-reentry"
+        "langgraph-workflow-reentry",
+        "mcp-commit-recovery"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -742,7 +747,8 @@
         "subsection-8-1ugi1r3",
         "agent-planning-run",
         "subsection-9-62i94t",
-        "langgraph-workflow-run"
+        "langgraph-workflow-run",
+        "mcp-commit-recovery"
       ]
     },
     {

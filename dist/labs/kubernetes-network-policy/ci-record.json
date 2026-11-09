@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42553604497",
+  "headSha": "25189fec51520066eefddd9e3700553f4e061623",
+  "conclusion": "success",
+  "record_sha256": "e1b33ec0a640a24885bd86ae2d577ed4c52abe141dd86dec57b1a2524dbf6d06",
+  "source_sha256": "83d52e6ceec269f7acccd8666dafa518d4448bee7677dee1598ef141201402ef",
+  "runner": "GitHub Actions ubuntu-24.04; two kind nodes on one Linux Docker host",
+  "first_attempt": {
+    "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42552970763",
+    "outcome": "Cilium ready; fixture image lookup returned not found; no policy probes; owned cluster removed."
+  }
+}

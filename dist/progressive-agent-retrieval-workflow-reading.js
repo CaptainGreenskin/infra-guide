@@ -276,5 +276,18 @@
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
+   '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
+   '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
+   trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
+   p('两次调用的 JSON-RPC 请求 ID 在各自会话中都是 3。接收方用业务操作 ID 查回执，并核对正文摘要。正常例沿原操作 ID 重试，收到完全相同的回执。对照例把尝试号拼进操作 ID，接收方把两次调用都当成新发布。')+
+   table(['恢复时提交的操作 ID','接收库中的实际结果','独立验收'],[
+    ['沿用发布意图中的 ID','提交、重放各一次，报告 42 一份','通过'],
+    ['按尝试派生不同 ID','提交两次，报告各为 42，共两份','拒绝']
+   ])+
+   p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
+   trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
+   p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
  }
 })();

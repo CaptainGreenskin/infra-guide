@@ -1,0 +1,376 @@
+{
+  "status": "passed",
+  "scope": "fixed CPU synthetic word mapping; four held-out compositions",
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "seed": 2026,
+    "threads": 1
+  },
+  "source_sha256": {
+    "encoder_decoder.py": "b92f39114fc338b59f801ab5763badc988740558fd828726e974f97bdfaca0aa",
+    "source.json": "a07f35b39d0e54206b0d293becd88dec3a1def7182b9553e92f56186ec736f40"
+  },
+  "model": {
+    "encoder_layers": 1,
+    "decoder_layers": 1,
+    "width": 32,
+    "heads": 4,
+    "parameters": 22379,
+    "positions": "fixed sinusoidal",
+    "normalization": "post-norm"
+  },
+  "vocab": {
+    "source": [
+      "<pad>",
+      "红",
+      "蓝",
+      "绿",
+      "黄",
+      "圆",
+      "方",
+      "三角",
+      "星"
+    ],
+    "target": [
+      "<pad>",
+      "<bos>",
+      "<eos>",
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "circle",
+      "square",
+      "triangle",
+      "star"
+    ]
+  },
+  "training": {
+    "optimizer": "Adam",
+    "learning_rate": 0.01,
+    "updates": 400,
+    "initial_loss": 2.6838472784700054,
+    "final_loss": 0.00012383504979607417,
+    "examples": 20,
+    "valid_labels": 52
+  },
+  "checks": {
+    "batch": {
+      "source": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "decoder_input": [
+        [
+          1,
+          3,
+          0
+        ],
+        [
+          1,
+          3,
+          8
+        ]
+      ],
+      "labels": [
+        [
+          3,
+          2,
+          0
+        ],
+        [
+          3,
+          8,
+          2
+        ]
+      ],
+      "source_padding": [
+        [
+          false,
+          true
+        ],
+        [
+          false,
+          false
+        ]
+      ],
+      "target_padding": [
+        [
+          false,
+          false,
+          true
+        ],
+        [
+          false,
+          false,
+          false
+        ]
+      ],
+      "valid_labels": 5
+    },
+    "cross_attention": {
+      "q_k_v_shapes": [
+        [
+          2,
+          4,
+          3,
+          8
+        ],
+        [
+          2,
+          4,
+          2,
+          8
+        ],
+        [
+          2,
+          4,
+          2,
+          8
+        ]
+      ],
+      "weight_shape": [
+        2,
+        4,
+        3,
+        2
+      ],
+      "short_source_head0": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ],
+      "manual_weight_max_abs_error": 9.71445146547012e-17,
+      "manual_output_max_abs_error": 8.881784197001252e-16
+    },
+    "encoder_source_padding": {
+      "masked_max_abs_delta": 0.0,
+      "without_mask_max_abs_delta": 0.18215036249717603
+    },
+    "cross_source_padding": {
+      "masked_max_abs_delta": 0.0,
+      "without_mask_max_abs_delta": 11.145542822793319
+    },
+    "decoder_causal": {
+      "masked_max_abs_delta": 0.0,
+      "without_mask_max_abs_delta": 1.0715232758744788
+    },
+    "decoder_target_key_padding": {
+      "masked_max_abs_delta": 0.0,
+      "without_mask_max_abs_delta": 0.5623297809414258
+    },
+    "loss_ignore_pad": {
+      "valid_only": 0.00012494416235141388,
+      "padded_logits_invariant": true,
+      "without_ignore_max_abs_delta": 2.1284305196095485
+    }
+  },
+  "held_out": [
+    {
+      "source": [
+        "红",
+        "圆"
+      ],
+      "expected": [
+        "red",
+        "circle"
+      ],
+      "source_ids": [
+        1,
+        5
+      ],
+      "decoded": [
+        "red",
+        "circle"
+      ],
+      "events": [
+        {
+          "decoder_input": [
+            1
+          ],
+          "selected": 3
+        },
+        {
+          "decoder_input": [
+            1,
+            3
+          ],
+          "selected": 7
+        },
+        {
+          "decoder_input": [
+            1,
+            3,
+            7
+          ],
+          "selected": 2
+        }
+      ]
+    },
+    {
+      "source": [
+        "蓝",
+        "方"
+      ],
+      "expected": [
+        "blue",
+        "square"
+      ],
+      "source_ids": [
+        2,
+        6
+      ],
+      "decoded": [
+        "blue",
+        "square"
+      ],
+      "events": [
+        {
+          "decoder_input": [
+            1
+          ],
+          "selected": 4
+        },
+        {
+          "decoder_input": [
+            1,
+            4
+          ],
+          "selected": 8
+        },
+        {
+          "decoder_input": [
+            1,
+            4,
+            8
+          ],
+          "selected": 2
+        }
+      ]
+    },
+    {
+      "source": [
+        "绿",
+        "三角"
+      ],
+      "expected": [
+        "green",
+        "triangle"
+      ],
+      "source_ids": [
+        3,
+        7
+      ],
+      "decoded": [
+        "green",
+        "triangle"
+      ],
+      "events": [
+        {
+          "decoder_input": [
+            1
+          ],
+          "selected": 5
+        },
+        {
+          "decoder_input": [
+            1,
+            5
+          ],
+          "selected": 9
+        },
+        {
+          "decoder_input": [
+            1,
+            5,
+            9
+          ],
+          "selected": 2
+        }
+      ]
+    },
+    {
+      "source": [
+        "黄",
+        "星"
+      ],
+      "expected": [
+        "yellow",
+        "star"
+      ],
+      "source_ids": [
+        4,
+        8
+      ],
+      "decoded": [
+        "yellow",
+        "star"
+      ],
+      "events": [
+        {
+          "decoder_input": [
+            1
+          ],
+          "selected": 6
+        },
+        {
+          "decoder_input": [
+            1,
+            6
+          ],
+          "selected": 10
+        },
+        {
+          "decoder_input": [
+            1,
+            6,
+            10
+          ],
+          "selected": 2
+        }
+      ]
+    }
+  ],
+  "same_target_prefix": {
+    "prefix": [
+      1,
+      3
+    ],
+    "source_ids": [
+      [
+        1,
+        5
+      ],
+      [
+        1,
+        6
+      ]
+    ],
+    "next_ids": [
+      7,
+      8
+    ],
+    "next_tokens": [
+      "circle",
+      "square"
+    ]
+  }
+}

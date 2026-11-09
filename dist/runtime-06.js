@@ -5145,6 +5145,7 @@ const progressiveAgentSectionTitles={
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
   finish(a,before);a.updated='2026.11.09';
+  a.sections[8][1]+=p('选读 <a href="/article/durable-workflows/#mcp-commit-recovery">LangGraph 与 MCP 的原生恢复实验</a>。换成发布报告的独立任务，在工具回执已收到、工作流节点尚未保存结果时杀进程，再用接收库核对恢复后发布了几份。');
  }
 })();
 
@@ -9222,6 +9223,26 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
+ network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
+ network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
+ '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',
+ '先让 orders 的入口只接受 trusted，再用一条空出站规则隔离 trusted，最后另加一条只允许它访问 orders TCP 8080 的出站规则。同一方向的许可取并集。空规则本身没有放行项，端口许可加入后订单连接便能通过，解析器所需的出站路径仍未获许可。')+
+ trainingFigure('kubernetes-network-policy','DNS 与新建 TCP 连接分别探测。只改变策略，观察两条路径怎样分开。')+
+ p('先按下表预测，再从执行记录比较每阶段最后两轮。')+
+ table(['策略阶段','trusted：DNS / 直连','untrusted：DNS / 直连'],[
+  ['初始无策略','有答案 / 200','有答案 / 200'],
+  ['orders 只允许 trusted 入站','有答案 / 200','有答案 / TCP 超时'],
+  ['再隔离 trusted 出站','解析失败 / TCP 超时','有答案 / TCP 超时'],
+  ['仅补 trusted → orders:8080 出站许可','解析失败 / 200','有答案 / TCP 超时'],
+  ['删除 orders 出站许可','解析失败 / TCP 超时','有答案 / TCP 超时'],
+  ['删除 trusted 出站隔离','有答案 / 200','有答案 / TCP 超时'],
+  ['删除 orders 入站限制','有答案 / 200','有答案 / 200']
+ ])+
+ p('用 x86-64 Linux、Docker、kind 0.33.0、kubectl 1.35.8 和 Helm 运行。程序用临时 kubeconfig 创建自己的集群，安装固定版本 Cilium 1.20.4，每个阶段保存探测及收敛过程，最后删除该集群。')+
+ trainingCode('运行集群实验，再离线核对记录','SHELL','python3 -B network_policy_lab.py --json native-record.json\npython3 -B network_policy_lab.py --check-record native-record.json')+
+ p('Linux CI 实跑中，七个阶段各有连续两轮符合表中预期。先看第 4 阶段的分叉，再对照首尾的 Pod UID、重启数和 EndpointSlice。用固定客户端与固定后端观察策略变化，可以排除后端被替换。此实验验证同一台 Linux 主机上的两个容器节点，Service 转发用前文的独立实验验证。<a href="/article/cloud-service-lab/#kubernetes-service-normal">继续核对 ClusterIP 的真实请求与后端选择 →</a>')+
+ '<p class="practice-links"><a href="labs/kubernetes-network-policy.zip" download>下载源码、说明与记录 ↓</a> · <a href="labs/kubernetes-network-policy/validation.json">查看七阶段原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42553604497">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes 策略规范 ↗</a></p>';
+
  const config=select('config-secrets',['对象与版本：期望、文件、内存和认证','传播路径：环境变量、投射与subPath','一致快照：完整读取、校验和请求切换','全局约束：连接预算、截止时间与回退','Secret与身份：分发、存储和执行权限','凭据轮换：兼容窗口、撤销与旧会话','实战与变化题：文件、进程和真实HTTP']);
  const q=config.sections.map(s=>s[1]),q1=blocks(q[1]),q6=blocks(q[6]);
  if(q1.length!==1||q6.length!==4)throw Error('Configuration code layout changed');
@@ -10214,6 +10235,19 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
+   '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
+   '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
+   trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
+   p('两次调用的 JSON-RPC 请求 ID 在各自会话中都是 3。接收方用业务操作 ID 查回执，并核对正文摘要。正常例沿原操作 ID 重试，收到完全相同的回执。对照例把尝试号拼进操作 ID，接收方把两次调用都当成新发布。')+
+   table(['恢复时提交的操作 ID','接收库中的实际结果','独立验收'],[
+    ['沿用发布意图中的 ID','提交、重放各一次，报告 42 一份','通过'],
+    ['按尝试派生不同 ID','提交两次，报告各为 42，共两份','拒绝']
+   ])+
+   p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
+   trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
+   p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
  }
 })();
 
@@ -11931,7 +11965,7 @@ const firstReadingChanges=[];
   ['编码器与解码器（Encoder–Decoder）','编码器先整理源句。解码器用自注意力读取目标前缀，再用得到的目标表示查询源句表示','先读完整中文，再逐步生成英文，如 <a href="https://arxiv.org/abs/1706.03762">原始 Transformer</a>'],
   ['仅解码器（Decoder-only）','指令、原文和已生成文本在一条序列里，每个位置只读自己及之前的位置','把“翻译成英文：关门”与译文放在一条序列里做续写，如 <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>']
  ])+
- para('用两个目标位置和三个源位置看交叉注意力。每个目标位置各自查询三个源位置，分数表有 2 行、3 列。对每一行单独分配权重，再混合对应的三个源向量，最终得到两个更新后的目标向量。行数由发起查询的一侧决定，列数由提供候选的一侧决定。',
+ para('用两个目标位置和三个源位置看交叉注意力。每个目标位置各自查询三个源位置，分数表有 2 行、3 列。对每一行单独分配权重，再混合对应的三个源向量，最终得到两个更新后的目标向量。行数由发起查询的一侧决定，列数由提供候选的一侧决定。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>',
  '下面沿仅解码器结构展开。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。限制位置只能读到已出现内容的规则叫因果约束。')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
  para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
@@ -11980,6 +12014,28 @@ const firstReadingChanges=[];
  `<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。');
+
+ a.sections[8][1]+='<h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
+ '接回第 1 节的编码器—解码器结构。这个小模型有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器先把源词变成一组带上下文的向量，代码记为 <code>memory</code>。解码器先读取已知的目标前缀，再向源向量查询本步需要的信息。',
+ '用“红”和“红 方”核对一个混合批。<code>BOS</code> 是开始，<code>EOS</code> 是结束，<code>PAD</code> 用来补齐批内长度。训练时将真实译词右移一格，最前面放 BOS。标签保留原顺序，最后放 EOS。长句输入是 [BOS, red, square]，标签是 [red, square, EOS]。因此预测 square 的那一行可以看见 red。')+
+ trainingFigure('encoder-decoder-translation','混合批的两条样本。交叉注意力矩阵的行来自目标，列来自源。')+
+ conceptReadingTable(['计算','读取范围','掩码从哪里来'],[
+  ['源端自注意力','每个源位置可读取全部有效源词','源端 PAD 挡住填充列'],
+  ['目标自注意力','每个目标位置读取自己与更早的有效目标词','上三角挡住未来，目标端 PAD 挡住填充列'],
+  ['交叉注意力','每个目标位置查询全部有效源词','源端 PAD 再挡一次源端填充列']
+ ])+
+ para('填充掩码屏蔽被读取的列。短句的第三个目标查询行仍有计算，但该行标签为 PAD，交叉熵会跳过它。这个批次有 2 条样本、4 个头、3 个目标位置、2 个源位置。交叉注意力权重形状为 [2,4,3,2]，每头每行沿最后一根源位置轴归一化。短句只有“红”一列有效，权重就是 [1,0]。')+
+ trainingCode('源码节选：目标前缀产生查询，源端提供键和值','PYTHON',`def decode(self, target, memory, source_padding, target_padding, causal=True):
+    x = self.target_context(target, target_padding, causal)
+    read, _ = self.cross_attention(
+        x, memory, memory, key_padding_mask=source_padding, need_weights=False
+    )
+    x = self.decoder_norm[1](x + read)
+    return self.to_logits(self.decoder_norm[2](x + self.decoder_ffn(x)))`)+
+ para('程序用 20 条合成样本做 400 次 Adam 参数更新。验收先换掉未来目标词、源端填充值，检查受保护的结果是否保持一致。要单独检查目标填充掩码，就把 PAD 放在 [BOS, PAD, square] 中间。最后一行的因果掩码允许读前面的 PAD，此时才看得出目标填充掩码的独立作用。程序也用投影和矩阵乘法独立重算交叉注意力，核对权重与输出。',
+ '生成时只先给 BOS，取最后一行分数最高的词作为下一项。训练中未出现的组合“红 圆”依次生成 red、circle、EOS。把目标前缀都固定为 [BOS, red]，源端换成“红 方”，下一个词改为 square。记录保留每步输入与所选词，以及四条留出组合的结果。实验验证固定词表上的数据流与读写范围。')+
+ trainingCode('解压后在实验目录运行，使用 Python 3.12 与 PyTorch 2.5.1','SHELL','python -B encoder_decoder.py > my-validation.json')+
+ '<p class="practice-links"><a href="labs/encoder-decoder.zip" download>下载源码、样本与记录 ↓</a> · <a href="labs/encoder-decoder/README.md">运行说明 →</a> · <a href="labs/encoder-decoder/validation.json">查看训练、掩码与生成记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/activation.py#L1072-L1122">PyTorch 掩码参数 ↗</a></p>';
 }
 {
  const a=articleById('cloud-overview'),section=a.sections[2],before=section[1];
@@ -13592,6 +13648,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
+ 'kubernetes-network-policy':{folder:'kubernetes-network-policy',title:'Cilium 实测入站、出站和 DNS'},
+ 'mcp-recovery':{folder:'mcp-recovery',title:'真实 MCP 提交与工作流崩溃恢复'},
  'context-parallel':{folder:'context-parallel',title:'两进程因果注意力与位置对照'},
  'native-inference':{folder:'native-inference',title:'真实推理引擎与前缀复用'},
  'ring-context-training':{folder:'ring-context-training',title:'环形注意力前向与梯度归还'},
@@ -13750,6 +13809,11 @@ labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子�
 labLearningCatalog.push({id:'ai-same-device-gemm',track:'ai',stage:2,title:'同卡比较朴素、分块和双行复用 GEMM',chapter:'operator-profiling',anchor:'same-device-gemm',pack:'gemm-variants',files:['gemm_variants.cu'],env:'Linux x86_64 · CUDA 12.9.1；执行需计算能力 8.0+ GPU 与兼容驱动',kind:'真实 CUDA 编译 · GPU 待验',observe:'同一输入逐项验尾块，再固定设备、流、数据与样本顺序，分开记录 CUDA event 和 Nsight。',scope:'Linux 编译和设备探测有记录。设备数值回读、计时和计数器均待实际 GPU。'});
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-multinode'),0,{id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
 labLearningCatalog.push({id:'shared-integrated-service',track:'agent',stage:3,title:'把任务、模型、报告与恢复接成真实服务',chapter:'production-readiness',anchor:'integrated-service-run',pack:'integrated-service',files:['integrated_service.py','source.json','model-contract.json','requirements.txt','README.md'],env:'Linux/macOS · Python3.10+ · PyTorch2.5.1 CPU',kind:'真实HTTP / CPU模型 / 独立SQLite域',observe:'输入10和27，实际模型输出37；提交后退出再用新进程恢复，分别核对效果份数、权重/版本、读取资格及独立产物验收。',scope:'固定计划、公开身份夹具、同宿主服务与串行worker；不运行语言模型、训练、GPU或Kairo，容量另为声明算例。'});
+labLearningCatalog.push(
+ {id:'ai-encoder-decoder',track:'ai',stage:1,title:'从源词、目标右移到逐词翻译',chapter:'transformer-model',anchor:'encoder-decoder-translation',pack:'encoder-decoder',files:['encoder_decoder.py','source.json'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实训练、掩码对照与逐词生成',observe:'核对源句和目标前缀各提供什么，分别改变未来目标和源端填充，再从起始词逐步生成。',scope:'固定小词表和合成组合，只验证本实验的结构、数值与输出。'},
+ {id:'cloud-network-policy',track:'cloud',stage:2,title:'为什么 DNS 失败而订单端口仍然可达',chapter:'k8s-networking',anchor:'kubernetes-network-policy-run',pack:'kubernetes-network-policy',files:['network_policy_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Cilium 1.20.4',kind:'真实 Kubernetes 策略与跨节点 Pod 连接',observe:'连续七个策略阶段分别发 DNS 和新建 TCP/HTTP 请求，独立核对源、目的 Pod、后端 UID 和清理结果。',scope:'两个 kind 节点同属一台 Linux 主机。观测直接访问 Pod IP 与单独的 Service 解析。'},
+ {id:'agent-mcp-recovery',track:'agent',stage:2,title:'图没保存回执，工具已经提交时怎样恢复',chapter:'durable-workflows',anchor:'mcp-commit-recovery',pack:'mcp-recovery',files:['workflow.py','mcp_bridge.py','source.json','README.md'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、进程崩溃与接收方事务',observe:'在回执到达后杀掉图进程，再启动新进程与新 MCP 会话。两次调用只留一份 42 报告，尝试号反例留下两份。',scope:'本机 stdio、独立 SQLite 提交与图检查点。Kairo 和远端恢复按目标环境验收。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -13972,5 +14036,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58";
+const staticReadingVersion="e2912aa821ad51b5f7e5ffd154e0d9156dc42e76d06c058a1f808254e5bc4b99";
 

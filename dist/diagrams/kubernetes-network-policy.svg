@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="602" viewBox="0 0 440 602" role="img" aria-labelledby="v79-policy-title v79-policy-desc">
+  <title id="v79-policy-title">NetworkPolicy 实验预期：分开测试 DNS 和 Pod HTTP</title>
+  <desc id="v79-policy-desc">两个客户端在 kind 控制面节点，orders Pod 在工作节点。DNS 独立查询 Service 的 ClusterIP。HTTP 每次新建 TCP 连接到 orders Pod IP 的 8080 端口。七步均为实验预期：无策略时双方两项均成功；入站只允许 trusted 后，仅 untrusted 的 TCP 超时；隔离 trusted 出站后，它的 DNS 和 TCP 都失败；再允许 trusted 出站访问订单端口，它的 HTTP 恢复而 DNS 仍失败；删除出站许可回到隔离状态；删除出站隔离后 trusted 两项成功；最后删除入站策略后双方两项成功。</desc>
+  <rect x="1" y="1" width="438" height="600" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" fill="#20314e" font-size="16">
+    <text x="22" y="35" font-size="23" font-weight="bold">DNS 与 Pod HTTP 分开测</text>
+    <text x="22" y="61" fill="#536783">实验预期 · kind 两节点 / Cilium</text>
+
+    <g id="probe-paths">
+      <rect x="20" y="76" width="400" height="101" rx="7" fill="#fff" stroke="#a4b6d3"/>
+      <text x="33" y="100" font-size="18" font-weight="bold">同一个客户端，两条独立观测</text>
+      <text x="33" y="129" fill="#244d9b" font-weight="bold">DNS</text>
+      <path d="M83 123h20m-5-4 5 4-5 4" fill="none" stroke="#345cb7" stroke-width="1.8"/>
+      <text x="115" y="129">按服务名查询 Service ClusterIP</text>
+      <text x="33" y="155" fill="#244d9b" font-weight="bold">HTTP</text>
+      <path d="M83 149h20m-5-4 5 4-5 4" fill="none" stroke="#345cb7" stroke-width="1.8"/>
+      <text x="115" y="155">新建 TCP 到 orders Pod IP:8080</text>
+    </g>
+    <text x="22" y="202" font-size="15" fill="#536783">客户端在控制面节点，orders 在工作节点。</text>
+
+    <g id="expected-stage-table">
+      <rect x="20" y="217" width="400" height="62" fill="#eaf1ff"/>
+      <rect x="20" y="279" width="400" height="238" fill="#fff"/>
+      <rect x="20" y="381" width="400" height="34" fill="#eaf1ff"/>
+      <g fill="none" stroke="#abb9cf" stroke-width="1">
+        <path d="M20 217H420V517H20ZM187 217v300m113-300v300M243 249v268m117-268v268"/>
+        <path d="M187 249h233M20 279h400m-400 34h400m-400 34h400m-400 34h400m-400 34h400m-400 34h400m-400 34h400"/>
+      </g>
+      <text x="29" y="254" font-weight="bold">策略阶段</text>
+      <g text-anchor="middle">
+        <text x="243.5" y="239" font-weight="bold">trusted</text>
+        <text x="360" y="239" font-weight="bold">untrusted</text>
+        <text x="215" y="269">DNS</text><text x="271.5" y="269">HTTP</text>
+        <text x="330" y="269">DNS</text><text x="390" y="269">HTTP</text>
+      </g>
+      <g id="baseline" data-dns-trusted="answer" data-http-trusted="ok" data-dns-untrusted="answer" data-http-untrusted="ok">
+        <text x="29" y="301">1 · 无策略</text>
+        <g text-anchor="middle" fill="#184dba" font-size="19"><text x="215" y="302">✓</text><text x="271.5" y="302">✓</text><text x="330" y="302">✓</text><text x="390" y="302">✓</text></g>
+      </g>
+      <g id="ingress_trusted" data-dns-trusted="answer" data-http-trusted="ok" data-dns-untrusted="answer" data-http-untrusted="tcp_timeout">
+        <text x="29" y="335">2 · 入站只许 trusted</text>
+        <g text-anchor="middle" fill="#184dba" font-size="19"><text x="215" y="336">✓</text><text x="271.5" y="336">✓</text><text x="330" y="336">✓</text><text x="390" y="336" fill="#596579">×</text></g>
+      </g>
+      <g id="trusted_egress_isolated" data-dns-trusted="gaierror" data-http-trusted="tcp_timeout" data-dns-untrusted="answer" data-http-untrusted="tcp_timeout">
+        <text x="29" y="369" font-size="15">3 · trusted 出站隔离</text>
+        <g text-anchor="middle" fill="#596579" font-size="19"><text x="215" y="370">×</text><text x="271.5" y="370">×</text><text x="330" y="370" fill="#184dba">✓</text><text x="390" y="370">×</text></g>
+      </g>
+      <g id="trusted_orders_only" data-dns-trusted="gaierror" data-http-trusted="ok" data-dns-untrusted="answer" data-http-untrusted="tcp_timeout">
+        <text x="29" y="403" font-weight="bold">4 · 加订单端口许可</text>
+        <g text-anchor="middle" fill="#184dba" font-size="19"><text x="215" y="404" fill="#596579">×</text><text x="271.5" y="404">✓</text><text x="330" y="404">✓</text><text x="390" y="404" fill="#596579">×</text></g>
+      </g>
+      <g id="allow_removed" data-dns-trusted="gaierror" data-http-trusted="tcp_timeout" data-dns-untrusted="answer" data-http-untrusted="tcp_timeout">
+        <text x="29" y="437">5 · 删订单端口许可</text>
+        <g text-anchor="middle" fill="#596579" font-size="19"><text x="215" y="438">×</text><text x="271.5" y="438">×</text><text x="330" y="438" fill="#184dba">✓</text><text x="390" y="438">×</text></g>
+      </g>
+      <g id="egress_isolation_removed" data-dns-trusted="answer" data-http-trusted="ok" data-dns-untrusted="answer" data-http-untrusted="tcp_timeout">
+        <text x="29" y="471">6 · 删出站隔离</text>
+        <g text-anchor="middle" fill="#184dba" font-size="19"><text x="215" y="472">✓</text><text x="271.5" y="472">✓</text><text x="330" y="472">✓</text><text x="390" y="472" fill="#596579">×</text></g>
+      </g>
+      <g id="all_policies_removed" data-dns-trusted="answer" data-http-trusted="ok" data-dns-untrusted="answer" data-http-untrusted="ok">
+        <text x="29" y="505">7 · 删入站策略</text>
+        <g text-anchor="middle" fill="#184dba" font-size="19"><text x="215" y="506">✓</text><text x="271.5" y="506">✓</text><text x="330" y="506">✓</text><text x="390" y="506">✓</text></g>
+      </g>
+    </g>
+    <text x="22" y="543"><tspan font-weight="bold">DNS</tspan><tspan x="85" fill="#184dba">✓ 有答案</tspan><tspan x="219" fill="#596579">× 解析失败</tspan></text>
+    <text x="22" y="566"><tspan font-weight="bold">HTTP</tspan><tspan x="85" fill="#184dba">✓ 200</tspan><tspan x="219" fill="#596579">× TCP 连接超时</tspan></text>
+    <text x="22" y="587" font-size="15" fill="#536783">表内为预期，实测以执行记录为准。</text>
+  </g>
+</svg>

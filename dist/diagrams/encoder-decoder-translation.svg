@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 560" role="img" aria-labelledby="title desc">
+  <title id="title">源端两格，目标端三格</title>
+  <desc id="desc">混合批里红只有一个有效源位置，红方有两个。训练目标左边加起始符作为解码输入，标签末尾保留结束符。目标查询对应交叉注意力的三行，源端键和值对应两列，短句第二列被屏蔽。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5 0 7Z" fill="#42688e"/></marker>
+  </defs>
+  <rect width="440" height="560" rx="18" fill="#f8fbff"/>
+  <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" fill="#17304d">
+    <text x="22" y="40" font-size="25" font-weight="700">两条样本，共用矩形批次</text>
+    <g font-size="17">
+      <rect x="22" y="58" width="396" height="124" rx="10" fill="#e8f3ff"/>
+      <text x="39" y="85" font-size="20" font-weight="650">编码器输入 · 两格 S=2</text>
+      <text x="39" y="117">短句 [红, PAD]</text>
+      <text x="39" y="148">长句 [红, 方]</text>
+      <text x="204" y="117" fill="#345e87">第 2 格屏蔽</text>
+      <text x="204" y="148" fill="#345e87">两格都可读取</text>
+
+      <rect x="22" y="198" width="396" height="142" rx="10" fill="#edf0ff"/>
+      <text x="39" y="226" font-size="20" font-weight="650">解码输入与标签 · 三格 T=3</text>
+      <text x="39" y="255">短句输入</text><text x="155" y="255">[BOS, red, PAD]</text>
+      <text x="39" y="279">短句标签</text><text x="155" y="279">[red, EOS, PAD]</text>
+      <text x="39" y="305">长句输入</text><text x="155" y="305">[BOS, red, square]</text>
+      <text x="39" y="328">长句标签</text><text x="155" y="328">[red, square, EOS]</text>
+
+      <rect x="22" y="356" width="396" height="169" rx="10" fill="#ecf7f4"/>
+      <text x="39" y="385" font-size="20" font-weight="650">短句 · 交叉注意力的一个头</text>
+      <text x="39" y="417">目标 Q → 行</text>
+      <text x="251" y="417">红</text><text x="320" y="417">PAD</text>
+      <text x="39" y="450">位置 0</text>
+      <text x="39" y="477">位置 1</text>
+      <text x="39" y="504">位置 2</text>
+      <path d="M115 471H225" fill="none" stroke="#42688e" stroke-width="2" marker-end="url(#arrow)"/>
+      <rect x="233" y="429" width="138" height="82" rx="6" fill="#fff" stroke="#b4d2cd"/>
+      <path d="M302 429V511M233 456H371M233 484H371" fill="none" stroke="#b4d2cd"/>
+      <text x="257" y="450">1</text><text x="329" y="450">0</text>
+      <text x="257" y="477">1</text><text x="329" y="477">0</text>
+      <text x="257" y="504">1</text><text x="329" y="504">0</text>
+      <text x="22" y="547" fill="#345e87">源 K/V 对应列。短句位置 2 不计入训练损失。</text>
+    </g>
+  </g>
+</svg>

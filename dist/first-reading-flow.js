@@ -28,7 +28,7 @@ const firstReadingChanges=[];
   ['编码器与解码器（Encoder–Decoder）','编码器先整理源句。解码器用自注意力读取目标前缀，再用得到的目标表示查询源句表示','先读完整中文，再逐步生成英文，如 <a href="https://arxiv.org/abs/1706.03762">原始 Transformer</a>'],
   ['仅解码器（Decoder-only）','指令、原文和已生成文本在一条序列里，每个位置只读自己及之前的位置','把“翻译成英文：关门”与译文放在一条序列里做续写，如 <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>']
  ])+
- para('用两个目标位置和三个源位置看交叉注意力。每个目标位置各自查询三个源位置，分数表有 2 行、3 列。对每一行单独分配权重，再混合对应的三个源向量，最终得到两个更新后的目标向量。行数由发起查询的一侧决定，列数由提供候选的一侧决定。',
+ para('用两个目标位置和三个源位置看交叉注意力。每个目标位置各自查询三个源位置，分数表有 2 行、3 列。对每一行单独分配权重，再混合对应的三个源向量，最终得到两个更新后的目标向量。行数由发起查询的一侧决定，列数由提供候选的一侧决定。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>',
  '下面沿仅解码器结构展开。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。限制位置只能读到已出现内容的规则叫因果约束。')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
  para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
@@ -77,6 +77,28 @@ const firstReadingChanges=[];
  `<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。');
+
+ a.sections[8][1]+='<h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
+ '接回第 1 节的编码器—解码器结构。这个小模型有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器先把源词变成一组带上下文的向量，代码记为 <code>memory</code>。解码器先读取已知的目标前缀，再向源向量查询本步需要的信息。',
+ '用“红”和“红 方”核对一个混合批。<code>BOS</code> 是开始，<code>EOS</code> 是结束，<code>PAD</code> 用来补齐批内长度。训练时将真实译词右移一格，最前面放 BOS。标签保留原顺序，最后放 EOS。长句输入是 [BOS, red, square]，标签是 [red, square, EOS]。因此预测 square 的那一行可以看见 red。')+
+ trainingFigure('encoder-decoder-translation','混合批的两条样本。交叉注意力矩阵的行来自目标，列来自源。')+
+ conceptReadingTable(['计算','读取范围','掩码从哪里来'],[
+  ['源端自注意力','每个源位置可读取全部有效源词','源端 PAD 挡住填充列'],
+  ['目标自注意力','每个目标位置读取自己与更早的有效目标词','上三角挡住未来，目标端 PAD 挡住填充列'],
+  ['交叉注意力','每个目标位置查询全部有效源词','源端 PAD 再挡一次源端填充列']
+ ])+
+ para('填充掩码屏蔽被读取的列。短句的第三个目标查询行仍有计算，但该行标签为 PAD，交叉熵会跳过它。这个批次有 2 条样本、4 个头、3 个目标位置、2 个源位置。交叉注意力权重形状为 [2,4,3,2]，每头每行沿最后一根源位置轴归一化。短句只有“红”一列有效，权重就是 [1,0]。')+
+ trainingCode('源码节选：目标前缀产生查询，源端提供键和值','PYTHON',`def decode(self, target, memory, source_padding, target_padding, causal=True):
+    x = self.target_context(target, target_padding, causal)
+    read, _ = self.cross_attention(
+        x, memory, memory, key_padding_mask=source_padding, need_weights=False
+    )
+    x = self.decoder_norm[1](x + read)
+    return self.to_logits(self.decoder_norm[2](x + self.decoder_ffn(x)))`)+
+ para('程序用 20 条合成样本做 400 次 Adam 参数更新。验收先换掉未来目标词、源端填充值，检查受保护的结果是否保持一致。要单独检查目标填充掩码，就把 PAD 放在 [BOS, PAD, square] 中间。最后一行的因果掩码允许读前面的 PAD，此时才看得出目标填充掩码的独立作用。程序也用投影和矩阵乘法独立重算交叉注意力，核对权重与输出。',
+ '生成时只先给 BOS，取最后一行分数最高的词作为下一项。训练中未出现的组合“红 圆”依次生成 red、circle、EOS。把目标前缀都固定为 [BOS, red]，源端换成“红 方”，下一个词改为 square。记录保留每步输入与所选词，以及四条留出组合的结果。实验验证固定词表上的数据流与读写范围。')+
+ trainingCode('解压后在实验目录运行，使用 Python 3.12 与 PyTorch 2.5.1','SHELL','python -B encoder_decoder.py > my-validation.json')+
+ '<p class="practice-links"><a href="labs/encoder-decoder.zip" download>下载源码、样本与记录 ↓</a> · <a href="labs/encoder-decoder/README.md">运行说明 →</a> · <a href="labs/encoder-decoder/validation.json">查看训练、掩码与生成记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/activation.py#L1072-L1122">PyTorch 掩码参数 ↗</a></p>';
 }
 {
  const a=articleById('cloud-overview'),section=a.sections[2],before=section[1];

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="551" viewBox="0 0 376 551" role="img" aria-labelledby="recovery-title recovery-desc">
+  <title id="recovery-title">工具已提交，工作流崩溃后怎样恢复</title>
+  <desc id="recovery-desc">首次执行通过 MCP stdio 会话调用发布工具，JSON-RPC 请求 ID 为 3。接收方将报告和回执一起写入 SQLite 并提交，再返回报告版号为 1 的回执。LangGraph 的 publish 节点在收到回执后、保存节点结果前被终止，图检查点仍记录 next 为 publish。新工作进程和新 MCP 服务在另一会话中重跑，JSON-RPC 请求 ID 也是 3。操作身份 report-A:publish 和载荷 report-A/v3、金额 42 保持一致，接收方返回原回执，图保存回执并结束。稳定操作身份产生一份报告，按尝试派生操作身份的对照产生两份报告。</desc>
+  <rect x="1" y="1" width="374" height="549" rx="12" fill="#f8fafc" stroke="#aebdd0"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#182b46" font-size="17">
+    <text x="20" y="34" font-size="23" font-weight="bold">回执已收到，图还没保存</text>
+    <text x="20" y="59" fill="#465a77" data-operation-id="report-A:publish">操作 ID　report-A:publish</text>
+    <text x="20" y="81" fill="#465a77">载荷　report-A/v3，金额 42</text>
+
+    <g data-stage="first-call" data-wire-id="3">
+      <rect x="20" y="95" width="336" height="110" rx="8" fill="#eff5ff" stroke="#a6bce1"/>
+      <text x="34" y="120" font-size="19" font-weight="bold" fill="#244c8a">首次执行 · MCP stdio 会话 1</text>
+      <text x="34" y="145">图 → 工具　JSON-RPC ID = 3</text>
+      <text x="34" y="168">接收库同时提交报告和回执</text>
+      <text x="34" y="191">工具 → 图　回执含报告版号 1</text>
+    </g>
+
+    <path d="M188 205v13m-4-4 4 4 4-4" fill="none" stroke="#526c91" stroke-width="1.8"/>
+    <g data-stage="cut" data-next="publish">
+      <rect x="20" y="222" width="336" height="87" rx="8" fill="#fff3e3" stroke="#d89f60"/>
+      <text x="34" y="247" font-size="19" font-weight="bold" fill="#803c11">SIGKILL · 工作进程终止</text>
+      <text x="34" y="272">已收到回执，publish 尚未保存结果</text>
+      <text x="34" y="295">图检查点　next = ["publish"]</text>
+    </g>
+
+    <path d="M188 309v13m-4-4 4 4 4-4" fill="none" stroke="#526c91" stroke-width="1.8"/>
+    <g data-stage="resume" data-wire-id="3" data-next="done">
+      <rect x="20" y="326" width="336" height="133" rx="8" fill="#eef8f5" stroke="#97c8b9"/>
+      <text x="34" y="351" font-size="19" font-weight="bold" fill="#245f51">恢复执行 · MCP stdio 会话 2</text>
+      <text x="34" y="376">新工作进程重跑 publish</text>
+      <text x="34" y="399">新 MCP 服务　JSON-RPC ID = 3</text>
+      <text x="34" y="422">同一操作 ID、同一载荷 → 原回执</text>
+      <text x="34" y="445">图保存回执　next = []</text>
+    </g>
+
+    <path d="M188 459v12m-4-4 4 4 4-4" fill="none" stroke="#526c91" stroke-width="1.8"/>
+    <g data-case="stable" data-effects="1">
+      <rect x="20" y="475" width="162" height="58" rx="8" fill="#e4f4ed" stroke="#99c7b2"/>
+      <text x="101" y="497" text-anchor="middle" fill="#245f51">稳定操作 ID</text>
+      <text x="101" y="521" text-anchor="middle" font-size="19" font-weight="bold" fill="#174f42">1 份报告</text>
+    </g>
+    <g data-case="attempt-derived" data-effects="2">
+      <rect x="194" y="475" width="162" height="58" rx="8" fill="#fceee9" stroke="#dba9a0"/>
+      <text x="275" y="497" text-anchor="middle" fill="#814137">按尝试生成 ID</text>
+      <text x="275" y="521" text-anchor="middle" font-size="19" font-weight="bold" fill="#79362e">2 份报告</text>
+    </g>
+  </g>
+</svg>

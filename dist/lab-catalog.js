@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
+ 'kubernetes-network-policy':{folder:'kubernetes-network-policy',title:'Cilium 实测入站、出站和 DNS'},
+ 'mcp-recovery':{folder:'mcp-recovery',title:'真实 MCP 提交与工作流崩溃恢复'},
  'context-parallel':{folder:'context-parallel',title:'两进程因果注意力与位置对照'},
  'native-inference':{folder:'native-inference',title:'真实推理引擎与前缀复用'},
  'ring-context-training':{folder:'ring-context-training',title:'环形注意力前向与梯度归还'},
@@ -158,6 +161,11 @@ labLearningCatalog.push({id:'ai-cuda-core',track:'ai',stage:2,title:'把算子�
 labLearningCatalog.push({id:'ai-same-device-gemm',track:'ai',stage:2,title:'同卡比较朴素、分块和双行复用 GEMM',chapter:'operator-profiling',anchor:'same-device-gemm',pack:'gemm-variants',files:['gemm_variants.cu'],env:'Linux x86_64 · CUDA 12.9.1；执行需计算能力 8.0+ GPU 与兼容驱动',kind:'真实 CUDA 编译 · GPU 待验',observe:'同一输入逐项验尾块，再固定设备、流、数据与样本顺序，分开记录 CUDA event 和 Nsight。',scope:'Linux 编译和设备探测有记录。设备数值回读、计时和计数器均待实际 GPU。'});
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-multinode'),0,{id:'ai-multinode-local',track:'ai',stage:3,title:'两个启动器怎样带起四个训练进程',chapter:'multinode-lab',anchor:'multinode-launch-run',pack:'multinode-launch',files:['verify_launch.py','launch_worker.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python3.10—3.12 · PyTorch2.5.1 CPU/Gloo',kind:'真实两启动器与四worker',observe:'核对全局/本地编号、8192样本每轮16次更新、连续2与1+1；配置、计数和四份随机状态逐项检查，浮点差异独立记录。',scope:'同宿主、FP32、轮末恢复。逐位对照未通过，声明的1e-6绝对误差契约通过；无物理两机/GPU、任意模型或性能保证。'});
 labLearningCatalog.push({id:'shared-integrated-service',track:'agent',stage:3,title:'把任务、模型、报告与恢复接成真实服务',chapter:'production-readiness',anchor:'integrated-service-run',pack:'integrated-service',files:['integrated_service.py','source.json','model-contract.json','requirements.txt','README.md'],env:'Linux/macOS · Python3.10+ · PyTorch2.5.1 CPU',kind:'真实HTTP / CPU模型 / 独立SQLite域',observe:'输入10和27，实际模型输出37；提交后退出再用新进程恢复，分别核对效果份数、权重/版本、读取资格及独立产物验收。',scope:'固定计划、公开身份夹具、同宿主服务与串行worker；不运行语言模型、训练、GPU或Kairo，容量另为声明算例。'});
+labLearningCatalog.push(
+ {id:'ai-encoder-decoder',track:'ai',stage:1,title:'从源词、目标右移到逐词翻译',chapter:'transformer-model',anchor:'encoder-decoder-translation',pack:'encoder-decoder',files:['encoder_decoder.py','source.json'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实训练、掩码对照与逐词生成',observe:'核对源句和目标前缀各提供什么，分别改变未来目标和源端填充，再从起始词逐步生成。',scope:'固定小词表和合成组合，只验证本实验的结构、数值与输出。'},
+ {id:'cloud-network-policy',track:'cloud',stage:2,title:'为什么 DNS 失败而订单端口仍然可达',chapter:'k8s-networking',anchor:'kubernetes-network-policy-run',pack:'kubernetes-network-policy',files:['network_policy_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Cilium 1.20.4',kind:'真实 Kubernetes 策略与跨节点 Pod 连接',observe:'连续七个策略阶段分别发 DNS 和新建 TCP/HTTP 请求，独立核对源、目的 Pod、后端 UID 和清理结果。',scope:'两个 kind 节点同属一台 Linux 主机。观测直接访问 Pod IP 与单独的 Service 解析。'},
+ {id:'agent-mcp-recovery',track:'agent',stage:2,title:'图没保存回执，工具已经提交时怎样恢复',chapter:'durable-workflows',anchor:'mcp-commit-recovery',pack:'mcp-recovery',files:['workflow.py','mcp_bridge.py','source.json','README.md'],env:'Python 3.12 · LangGraph 1.2.20 · MCP 2.3.0 · POSIX',kind:'真实 SDK、进程崩溃与接收方事务',observe:'在回执到达后杀掉图进程，再启动新进程与新 MCP 会话。两次调用只留一份 42 报告，尝试号反例留下两份。',scope:'本机 stdio、独立 SQLite 提交与图检查点。Kairo 和远端恢复按目标环境验收。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

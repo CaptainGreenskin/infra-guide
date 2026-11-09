@@ -4028,6 +4028,81 @@
         "用一份标准库脚本检查三个独立不变量",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c3a64de597564e170784676931aa137b3dc80ae28daca8a778e9405147b59845",
+      "reviewed_content_sha256": "38c7750e80878d7d4c445ed5995e08a147280b91bf22952934eaccdccecb8600",
+      "scope": "Connect policy direction and selector concepts to native DNS and fresh Pod TCP probes",
+      "observation": "Retain the TLS exercise. Use Cilium in a two-node kind cluster on one Linux runner, seven policy stages, two converged samples, stable backend and endpoint identity and scoped cleanup.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "8b41c7dcb39e87f8ef4c255f6b2c739b29b7713e3440391cae14af535a0e73b1",
+      "reviewed_content_sha256": "8e416255fd12b9fcc51ed0f04f2015a76f73fb0c3d892bb2cc555f3661a22b87",
+      "scope": "Connect encoder–decoder architecture to a running translation lesson",
+      "observation": "Follow two source slots and three target slots from right shift to native masked attention and CPU training, then compare held-out greedy output with an independent reference.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "20ae01135a60b84b62482e517f4122356cc87bfc7bdac0bdeffd303d2544d8bf",
+      "reviewed_content_sha256": "237c92398890b54f45dc9199f970255240d7ae50719eedfad9acbde9832b9fbd",
+      "scope": "Connect recovery mechanisms to a real MCP tool and persisted graph",
+      "observation": "Preserve the original six-window HTTP lab and add a direct link to the native stdio experiment.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9507dfd75a4796b680a92c2039d59a7432e55810d57fc680c7026ad259695339",
+      "reviewed_content_sha256": "489220a0d606688ab7152a28936ee321662b70dbf24595a2c482d0939582e07d",
+      "scope": "Recover the graph after a committed MCP tool returns its receipt",
+      "observation": "Two actual worker processes and two actual SDK sessions. The cut leaves publish pending, then the stable operation returns the same receipt, while the attempt-derived control creates two reports.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

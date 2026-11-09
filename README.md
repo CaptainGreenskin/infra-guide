@@ -13,7 +13,7 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前78章：Cloud 35、AI 29、Agent 11、综合实战3；52个完整实验包、92项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前78章：Cloud 35、AI 29、Agent 11、综合实战3；55个完整实验包、95项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
@@ -26,6 +26,8 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 长序列实验继续验证逐块环传、反向梯度归还和一次参数更新，两、三进程 CPU/Gloo 均已复跑。算子章给出同卡比较三个 GEMM 的源码、逐项校验、轮换计时和 Nsight 步骤，设备测量待实际 GPU。 [环形训练](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#ring-context-training) · [CUDA 同卡实验](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#same-device-gemm)
 
 位置编码章增加共享位置轴的波形与编码矩阵，可切换特征宽度、特征对和位置。按同一对分量手算固定偏移，再接到 RoPE 的旋转约定。 [正弦位置编码图](https://captaingreenskin.github.io/infra-guide/article/position-encoding/#sinusoidal-position-pairs)
+
+三条主线各补一段可复跑的连续实验。Cloud 分开观测 Cilium 策略下的 DNS 与 Pod IP 连接。AI 用同一组源词和目标词核对右移、掩码、交叉注意力及逐词译文。Agent 在工具回执已到而图尚未保存时结束进程，用接收库核对恢复是否重复发布。 [网络策略](https://captaingreenskin.github.io/infra-guide/article/k8s-networking/#kubernetes-network-policy-run) · [原版翻译结构](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#encoder-decoder-translation) · [MCP 提交与恢复](https://captaingreenskin.github.io/infra-guide/article/durable-workflows/#mcp-commit-recovery)
 
 <details>
 <summary>历次内容修订与执行记录</summary>
