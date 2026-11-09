@@ -184,7 +184,7 @@ def cpu_milli(text):
 
 
 def available(conditions, kind):
-    return any(c['type'] == kind and c['status'] == 'True' for c in conditions)
+    return any(c['type'] == kind and c['status'] == 'True' for c in (conditions or []))
 
 
 def pods(cluster):
@@ -192,7 +192,7 @@ def pods(cluster):
     result = []
     for item in value['items']:
         meta, spec, status = (item[k] for k in ('metadata', 'spec', 'status'))
-        container = next((c for c in status.get('containerStatuses', []) if c['name'] == 'worker'), {})
+        container = next((c for c in (status.get('containerStatuses') or []) if c['name'] == 'worker'), {})
         result.append({'name': meta['name'], 'uid': meta['uid'], 'node': spec.get('nodeName'),
                        'phase': status['phase'], 'ready': available(status.get('conditions', []), 'Ready'),
                        'deleting': 'deletionTimestamp' in meta,
@@ -211,11 +211,11 @@ def observe(cluster):
     hpa = cluster.get('hpa', APP)
     dep = cluster.get('deployment', APP)
     hs = hpa.get('status', {})
-    metric = next((m['resource']['current'] for m in hs.get('currentMetrics', [])
+    metric = next((m['resource']['current'] for m in (hs.get('currentMetrics') or [])
                    if m['type'] == 'Resource' and m['resource']['name'] == 'cpu'), {})
     return {'hpa': {'uid': hpa['metadata']['uid'], 'current': hs.get('currentReplicas'),
                     'desired': hs.get('desiredReplicas'), 'cpu_percent': metric.get('averageUtilization'),
-                    'cpu_average': metric.get('averageValue'), 'conditions': hs.get('conditions', [])},
+                    'cpu_average': metric.get('averageValue'), 'conditions': hs.get('conditions') or []},
             'deployment': {'uid': dep['metadata']['uid'], 'desired': dep['spec']['replicas'],
                            'available': dep.get('status', {}).get('availableReplicas', 0)},
             'pods': pods(cluster), 'metrics': metrics(cluster)}
