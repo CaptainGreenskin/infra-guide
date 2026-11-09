@@ -5,7 +5,104 @@
 <meta name="description" content="沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。">
 <meta name="theme-color" content="#315dce"><title>Terraform状态与漂移：配置、锁、刷新和资源归属 · InfraGuide</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23315dce'/%3E%3Cpath d='M13 31h22a7 7 0 0 0 0-14 11 11 0 0 0-21-1 8 8 0 0 0-1 15Z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=3ceea2620ec2"><template id="reader-full-runtime"><script defer src="runtime-01.js?v=54725794d1d2"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=a980f5cb139e"></script><script defer src="runtime-04.js?v=5b333b0bc951"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=26cfd813abe1"></script><script defer src="reading-comfort.js?v=09e487150eeb"></script><script defer src="site-search.js?v=9c4cf6231037"></script><script defer src="app.js?v=40a2d0499189"></script></template><script defer src="/reader-assets/reader-bootstrap.875c7758f419.js"></script>
+<link rel="stylesheet" href="style.css?v=5856ff0076b7"><link rel="stylesheet" href="course.css?v=ba25f47d4384"><link rel="stylesheet" href="curriculum.css?v=553fc054c750"><link rel="stylesheet" href="reading-comfort.css?v=3ceea2620ec2"><script data-early-reader-figures>/* A figure can open before the article runtime attaches. Keep its SVG link usable. */
+(()=>{
+ const figureSelector='#main .training-figure',svgLink='a[href*=".svg"]:not([download])';
+ let view,opener;
+
+ function createView(){
+  const dialog=document.createElement('dialog');
+  if(typeof dialog.showModal!=='function')return;
+  dialog.className='reader-dialog reader-figure-dialog';
+  dialog.setAttribute('aria-labelledby','reader-figure-title');
+  dialog.innerHTML='<div class="reader-dialog-head"><h2 id="reader-figure-title">图解</h2><div class="reader-zoom-controls"><button type="button" data-reader-fit>适合窗口</button><button type="button" data-reader-zoom aria-label="放大图解">放大 +</button><button type="button" data-reader-close aria-label="关闭图解">关闭 ×</button></div></div><p class="reader-pan-hint">放大后可横向和纵向滑动。</p><div class="reader-image-stage" tabindex="0" aria-label="图解，可滚动查看"><img alt=""></div><p class="reader-image-caption"></p>';
+  const stage=dialog.querySelector('.reader-image-stage'),expandedImage=stage.querySelector('img');
+  const caption=dialog.querySelector('.reader-image-caption');
+  let scale=1,fits=true,aspect=0;
+  function fit(){
+   fits=true;scale=1;
+   const frame=getComputedStyle(stage);
+   const limit=parseFloat(frame.maxHeight)-parseFloat(frame.borderTopWidth)-parseFloat(frame.borderBottomWidth)-parseFloat(frame.paddingTop)-parseFloat(frame.paddingBottom);
+   const ratio=aspect||expandedImage.naturalWidth/expandedImage.naturalHeight;
+   const width=Number.isFinite(limit)&&Number.isFinite(ratio)&&ratio>0?Math.min(stage.clientWidth,Math.max(1,limit)*ratio):stage.clientWidth;
+   expandedImage.style.width=width+'px';expandedImage.style.maxWidth='100%';
+   expandedImage.style.maxHeight=Number.isFinite(limit)?Math.max(1,limit)+'px':'none';
+   expandedImage.style.margin='0 auto';stage.scrollTo({top:0,left:0,behavior:'instant'});
+  }
+  dialog.querySelector('[data-reader-fit]').addEventListener('click',fit);
+  dialog.querySelector('[data-reader-zoom]').addEventListener('click',()=>{
+   const first=Math.max(1.5*expandedImage.getBoundingClientRect().width/stage.clientWidth,960/stage.clientWidth);
+   scale=Math.min(fits?first:scale+0.5,4);fits=false;
+   expandedImage.style.maxWidth='none';expandedImage.style.maxHeight='none';expandedImage.style.margin='0';expandedImage.style.width=(scale*100)+'%';
+  });
+  expandedImage.addEventListener('load',()=>{if(dialog.open&&fits)fit();});
+  window.addEventListener('resize',()=>{if(dialog.open&&fits)fit();});
+  dialog.querySelector('[data-reader-close]').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('click',event=>{
+   if(event.target!==dialog)return;
+   const box=dialog.getBoundingClientRect();
+   if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();
+  });
+  dialog.addEventListener('close',()=>{
+   if(dialog.open)return;
+   const previous=opener;opener=null;
+   if(document.querySelector('dialog.reader-dialog[open]'))return;
+   document.body.classList.remove('reader-modal-open');
+   if(previous?.isConnected)previous.focus({preventScroll:true});
+  });
+  document.body.appendChild(dialog);
+  return {dialog,fit,load(image,figure){
+   expandedImage.src=image.currentSrc||image.src;
+   expandedImage.alt=image.alt;
+   const width=Number(image.getAttribute('width'))||image.naturalWidth,height=Number(image.getAttribute('height'))||image.naturalHeight;
+   aspect=width>0&&height>0?width/height:0;
+   caption.textContent=figure.querySelector('figcaption')?.childNodes[0]?.textContent.trim()||image.alt;
+  }};
+ }
+
+ function activate(event){
+  if(event.defaultPrevented||event.button>0||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+  const target=event.target,figure=target?.closest?.(figureSelector);
+  if(!figure)return;
+  const link=target.closest('a');
+  if(link&&(!figure.contains(link)||!link.matches(svgLink)))return;
+  const image=link?link.querySelector('img'):target.closest('img');
+  if(!image||image.closest(figureSelector)!==figure)return;
+  view??=createView();
+  if(!view||view.dialog.open)return;
+  view.load(image,figure);
+  try{view.dialog.showModal();}catch{return;}
+  opener=link||image;
+  event.preventDefault();
+  document.body.classList.add('reader-modal-open');
+  view.fit();
+ }
+ document.addEventListener('click',activate);
+ document.addEventListener('keydown',event=>{
+  if(event.repeat||(event.key!=='Enter'&&event.key!==' '))return;
+  if(event.target?.matches?.(figureSelector+' img[role="button"]')&&!event.target.closest('a'))activate(event);
+ });
+
+ function enhanceOpeners(){
+  if(typeof HTMLDialogElement!=='function'||typeof HTMLDialogElement.prototype.showModal!=='function')return;
+  for(const image of document.querySelectorAll(figureSelector+' img')){
+   const link=image.closest('a');
+   if(link&&!link.matches(svgLink))continue;
+   const trigger=link||image;
+   trigger.setAttribute('aria-haspopup','dialog');
+   image.style.cursor='zoom-in';
+   if(!link){
+    image.tabIndex=0;
+    image.setAttribute('role','button');
+    image.setAttribute('aria-label','放大：'+image.alt);
+   }
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhanceOpeners,{once:true});
+ else enhanceOpeners();
+ window.addEventListener('infra-ready',enhanceOpeners);
+})();
+</script><template id="reader-full-runtime"><script defer src="runtime-01.js?v=8f8dfbaca7b6"></script><script defer src="runtime-02.js?v=09bc06b7a831"></script><script defer src="runtime-03.js?v=a980f5cb139e"></script><script defer src="runtime-04.js?v=5b333b0bc951"></script><script defer src="runtime-05.js?v=1b733e1c696e"></script><script defer src="runtime-06.js?v=872b071f7206"></script><script defer src="reading-comfort.js?v=d782573f1f29"></script><script defer src="site-search.js?v=9c4cf6231037"></script><script defer src="app.js?v=40a2d0499189"></script></template><script defer src="/reader-assets/reader-bootstrap.6be960dd57c6.js"></script>
 
 
 <link rel="stylesheet" href="learning-connections.css?v=eb69b57c739d"><link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/terraform-state/"><meta property="og:type" content="article"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="Terraform状态与漂移：配置、锁、刷新和资源归属 · InfraGuide"><meta property="og:description" content="沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。"><meta property="og:url" content="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/terraform-state/"><meta name="twitter:card" content="summary"><script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Terraform状态与漂移：配置、锁、刷新和资源归属","description":"沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。","inLanguage":"zh-CN","url":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/terraform-state/","mainEntityOfPage":"https://cloud-infra-guide-llh.tautagave4.chatgpt.site/article/terraform-state/","dateModified":"2026-11-09","author":{"@type":"Organization","name":"InfraGuide"},"isAccessibleForFree":true}</script></head>
@@ -16,7 +113,7 @@
 <nav class="top-nav" aria-label="主导航"><a href="/outline/">快速大纲</a><a href="/interview/">面试复习</a><a href="/track/cloud/">Cloud Infra</a><a class="ai-nav" href="/track/ai/">AI Infra</a><a href="/track/agent/">Agent Infra</a><a href="/labs/">实验室</a><a href="/resources/">资料与视频</a></nav>
 <div class="header-actions"><button id="search-open" class="search-open" aria-label="搜索知识库"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索文档</span><kbd>⌘ K</kbd></button><button id="theme" class="icon-btn" aria-label="切换深色模式"><svg viewBox="0 0 24 24"><path d="M20 15.6A8.5 8.5 0 0 1 8.4 4 8.5 8.5 0 1 0 20 15.6Z"/></svg></button><a class="github-link" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看公开源码">GitHub <span aria-hidden="true">↗</span></a><button id="mobile-menu" class="icon-btn mobile-only" aria-label="打开导航" aria-expanded="false">☰</button></div>
 </div></header>
-<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app" data-static-path="/article/terraform-state/" data-static-version="1390782a01a3c3ab2c035ca79d71ad4cced801385e7e2aec82fd522794df2a7d" data-static-article="terraform-state"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+<noscript><p class="container evidence-note">正文与目录可直接阅读；计算器、搜索和本地阅读记录需要启用JavaScript。</p></noscript><!-- APP_START --><div id="app" data-static-path="/article/terraform-state/" data-static-version="9f1f37d45cc2c9e564c8c228be71db92889c1cdf38bba29d713e065772e5c941" data-static-article="terraform-state"><main class="doc-layout" id="main" tabindex="-1"><aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>Cloud Infra · 目录</span><span>35 章 + 1 实战</span></div><details data-directory-module="foundation" ><summary><a href="/article/linux-resource/" ><span>P0</span>前置基础知识</a></summary><div class="side-links"><a href="/article/linux-resource/" title="进程、线程与资源：为什么机器空闲，程序仍然很慢" >P0.1 进程、线程与资源</a><a href="/article/virtual-memory-oom/" title="虚拟内存与 OOM：导出任务为什么被终止" >P0.2 虚拟内存与 OOM</a><a href="/article/concurrency-pools/" title="并发与线程池：锁、排队和容量" >P0.3 并发、锁与线程池</a><a href="/article/distributed-systems/" title="超时、重试与幂等：系统最难处理的是“结果未知”" >P0.4 超时、重试与幂等</a></div></details><details data-directory-module="compute" ><summary><a href="/article/cloud-overview/" ><span>C1</span>云计算与虚拟化</a></summary><div class="side-links"><a href="/article/cloud-overview/" title="云计算架构：服务模型、资源与责任边界" >C1.1 云计算架构与服务模型</a><a href="/article/cloud-compute/" title="计算资源：虚拟化、规格与容量预算" >C1.2 虚拟化与计算资源</a></div></details><details data-directory-module="network" ><summary><a href="/article/vpc-network/" ><span>C2</span>云网络与流量</a></summary><div class="side-links"><a href="/article/vpc-network/" title="云网络：DNS、路由、访问控制与返回路径" >C2.1 DNS、路由与网络边界</a><a href="/article/network-diagnosis/" title="网络诊断：连接、首字节与传输时序" >C2.2 网络诊断与请求时序</a><a href="/article/tcp-event-loop/" title="TCP与I/O：从连接、字节流到epoll事件循环" >C2.3 TCP、I/O 与 epoll</a></div></details><details data-directory-module="cloud-data" ><summary><a href="/article/training-storage/" ><span>C3</span>云存储与数据服务</a></summary><div class="side-links"><a href="/article/training-storage/" title="云存储：块、文件、对象与访问性能" >C3.1 块、文件与对象存储</a><a href="/article/database-index-locks/" title="数据库访问：索引、事务与锁等待" >C3.2 SQL 索引、事务与锁</a><a href="/article/cache-consistency/" title="缓存一致性与击穿：旧值为何重新出现" >C3.3 缓存一致性与击穿</a><a href="/article/storage-recovery/" title="存储发布与恢复：版本、提交点与校验" >C3.4 存储版本、发布与恢复</a><a href="/article/mysql-recovery/" title="MySQL日志与恢复：从提交、崩溃到按点重放" >C3.5 MySQL 日志与恢复</a><a href="/article/mysql-replication/" title="MySQL复制与切换：先解释旧读，再证明谁能写" >C3.6 MySQL 复制与切换</a></div></details><details data-directory-module="native" ><summary><a href="/article/container-runtime/" ><span>C4</span>容器与 Kubernetes 编排</a></summary><div class="side-links"><a href="/article/container-runtime/" title="容器运行原理：镜像、进程、隔离与资源" >C4.1 容器、镜像与隔离</a><a href="/article/kubernetes-basics/" title="Kubernetes 控制面：对象、调谐与生命周期" >C4.2 Kubernetes 对象与控制面</a><a href="/article/k8s-workloads/" title="Kubernetes 工作负载：从声明到可用与滚动更新" >C4.3 工作负载与滚动更新</a><a href="/article/scheduling-resources/" title="Kubernetes 调度：资源、亲和与拓扑约束" >C4.4 调度、亲和与拓扑</a><a href="/article/k8s-networking/" title="Kubernetes 网络：从 DNS、Service 到容器回包" >C4.5 Pod、Service 与容器网络</a><a href="/article/k8s-storage/" title="Kubernetes 存储：PVC、拓扑、挂载与数据恢复" >C4.6 PVC、持久卷与恢复</a><a href="/article/config-secrets/" title="配置与密钥：传播、重读与版本生效" >C4.7 配置、密钥与生效过程</a><a href="/article/k8s-autoscaling/" title="Kubernetes 弹性：HPA、节点容量与排队预算" >C4.8 HPA 与节点容量</a><a href="/article/control-plane-consensus/" title="控制面协调存储：从多数派提交到观察与恢复" >C4.9 etcd、多数派与恢复</a></div></details><details data-directory-module="serverless" ><summary><a href="/article/serverless-execution/" ><span>C5</span>Serverless 与事件驱动</a></summary><div class="side-links"><a href="/article/serverless-execution/" title="Serverless 与事件驱动：执行、重试、幂等与成本" >C5.1 Serverless 与事件驱动</a><a href="/article/message-delivery/" title="消息投递与确认：从入队、处理到业务完成" >C5.2 消息投递与确认</a></div></details><details data-directory-module="cloud-delivery" open><summary><a href="/article/delivery/" ><span>C6</span>平台工程、IaC 与 GitOps</a></summary><div class="side-links"><a href="/article/delivery/" title="平台交付：制品、配置、数据迁移与回退" >C6.1 制品、发布与回退</a><a href="/article/terraform-state/" title="Terraform状态与漂移：配置、锁、刷新和资源归属" class="current" aria-current="page">C6.2 Terraform 状态与漂移</a><a href="/article/gitops-reconciliation/" title="GitOps调谐：从Git期望到对象、进程与业务结果" >C6.3 GitOps 与持续调谐</a></div></details><details data-directory-module="cloud-security" ><summary><a href="/article/iam-security/" ><span>C7</span>身份、安全与多租户</a></summary><div class="side-links"><a href="/article/iam-security/" title="身份与最小权限：谁能让系统做什么" >C7.1 身份、授权与最小权限</a></div></details><details data-directory-module="cloud-capacity" ><summary><a href="/article/elasticity/" ><span>C8</span>容量、弹性与成本</a></summary><div class="side-links"><a href="/article/elasticity/" title="容量与弹性：故障域、扩容时序与排队" >C8.1 容量、排队与弹性</a></div></details><details data-directory-module="sre" ><summary><a href="/article/slo/" ><span>C9</span>SRE、可观测与故障恢复</a></summary><div class="side-links"><a href="/article/slo/" title="可靠性目标：SLI、SLO 与错误预算" >C9.1 SLI、SLO 与错误预算</a><a href="/article/observability/" title="可观测性：用指标定位范围，用日志和追踪解释路径" >C9.2 指标、日志与追踪</a><a href="/article/incident/" title="故障诊断：影响、时间线、假设与验证" >C9.3 故障诊断与时间线</a><a href="/article/resilience/" title="恢复工程：故障域、RPO、RTO 与演练" >C9.4 RPO、RTO 与恢复工程</a></div></details><details data-directory-module="practice" ><summary><a href="/article/cloud-service-lab/" ><span>S</span>综合设计与工程实战</a></summary><div class="side-links"><a href="/article/cloud-service-lab/" title="综合实战：一个服务的探针、版本发布与指标验证" >S2 云服务发布与观测实战</a></div></details>
   <div class="side-progress"><div><span>本主题阅读进度</span><b>0 / 36</b></div>
    <div class="progress-bar"><span style="width:0%"></span></div><span>仅保存在当前浏览器</span></div></aside><article class="article"><div class="breadcrumb"><a href="/">知识库</a><span>／</span><a href="/module/cloud-delivery/">平台工程、IaC 与 GitOps</a><span>／</span><span>C6.2</span></div><div class="article-meta"><span class="category">平台工程、IaC 与 GitOps</span><span>机制 + 真实CLI + 文件对照</span><span>·</span><span>IaC状态 · 2026.11.09</span></div><h1>C6.2 Terraform状态与漂移：配置、锁、刷新和资源归属</h1><div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div><p class="description">沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。</p><div class="tag-row"><span class="tag">IaC</span><span class="tag">状态锁</span><span class="tag">漂移</span><span class="tag">工作空间</span></div><details class="guided-contract"><summary>先修、学习目标与验证范围 · 约40分钟</summary><div class="learning-contract"><strong>读完这一章，你应该能</strong><ul><li>区分配置、状态、计划与实际对象</li><li>解释状态锁、刷新和修复的不同作用</li><li>核对两份状态是否争夺同一资源</li></ul><p><b>前置知识</b>先读交付章与文件/进程基础；本章逐步介绍IaC、提供程序、后端和工作空间，不要求已有Terraform项目。</p><ul class="prerequisite-links"><li><a href="/article/delivery/">C6.1 平台交付：制品、配置、数据迁移与回退</a>：可追溯变更继续连接配置、状态记录与实际对象。</li></ul><p class="evidence-note">约 40 分钟 · Terraform 1.13.0 + local 2.5.3；只操作自有临时文件 · <a href="/labs/">实验验证范围 ↗</a></p></div></details><details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="/module/cloud-delivery/">← 返回本模块目录</a><div class="chapter-toc-section"><a data-toc="section-1" href="/article/terraform-state/#section-1">1. 配置、状态与目标资源</a></div><div class="chapter-toc-section"><a data-toc="section-2" href="/article/terraform-state/#section-2">2. plan、apply 与刷新</a></div><div class="chapter-toc-section"><a data-toc="section-3" href="/article/terraform-state/#section-3">3. 状态锁与并发写者</a></div><div class="chapter-toc-section"><a data-toc="section-4" href="/article/terraform-state/#section-4">4. 跳过刷新与未见漂移</a></div><div class="chapter-toc-section"><a data-toc="section-5" href="/article/terraform-state/#section-5">5. 仅刷新与资源修复</a></div><div class="chapter-toc-section"><a data-toc="section-6" href="/article/terraform-state/#section-6">6. 工作空间与资源归属</a></div><div class="chapter-toc-section"><a data-toc="section-7" href="/article/terraform-state/#section-7">7. 计划审阅与交付衔接</a></div><div class="chapter-toc-section"><a data-toc="section-8" href="/article/terraform-state/#section-8">8. Terraform 状态与漂移实战</a></div><a data-toc="concept-path" href="/article/terraform-state/#concept-path">概念回顾</a></details><p class="article-context-link" id="core-knowledge"><a href="/module/cloud-delivery/">本领域系统知识：平台工程、IaC 与 GitOps →</a></p><section class="article-section" id="section-1"><h2><span class="section-index">01</span>配置、状态与目标资源</h2><p>交付要先明确将要改变什么。基础设施即代码（IaC）把资源期望写成可版本化的配置，再由工具读取目标系统、比较并执行变化。Terraform是这样的工具：它管理一组有名字的资源，通过状态记录把配置里的名字关联到实际对象。</p><p>正常路径是：加载配置与所选状态，借助提供程序读取实际对象，生成本次计划，审阅后执行，再保存新的状态并核对实物。配置描述想要什么，状态保存已经绑定了谁及上次记录的属性，实际资源存在于目标系统；一次外部修改可以只改变其中一份事实。</p><div class="table-wrap"><table><thead><tr><th>对象</th><th>本章的具体值</th><th>职责</th></tr></thead><tbody><tr><td>配置</td><td>local_file.managed，路径managed.txt，内容alpha</td><td>声明要管理的资源及期望属性</td></tr><tr><td>提供程序 provider</td><td>hashicorp/local 2.5.3</td><td>解释local_file类型，读取或修改文件</td></tr><tr><td>实际资源</td><td>文件系统中的managed.txt</td><td>保存此刻真正可读的字节</td></tr><tr><td>状态 state</td><td>资源绑定、标识与已知属性</td><td>让后续操作找回同一个受管对象</td></tr><tr><td>后端 backend</td><td>本次为local后端</td><td>存放状态，并提供相应状态锁</td></tr><tr><td>计划 plan</td><td>根据本次输入提出的变化</td><td>交给审阅者及后续apply执行</td></tr></tbody></table></div><p>local提供程序和local后端虽然同名，操作的对象不同：前者管理文件资源，后者保存Terraform自己的状态。本例配置地址local_file.managed也不是文件内容或云平台ID；它是配置内部的资源名字，实际对象的标识规则由提供程序定义。</p><p>图中alpha是配置要求，outside是随后人为写入的内容。沿配置、状态和实物分别读数，便能判断变化发生在哪一层。云实例通常由平台ID识别，不能把本例文件内容校验的规则直接用于所有云资源。</p><figure class="training-figure"><a href="diagrams/v49-tf-three-objects.svg" target="_blank" rel="noopener" aria-label="放大：同一条实验路径：配置希望alpha，状态原记alpha，人工把实际文件改成outside。是否刷新、是否应用，决定接下来改变哪一份事实。"><img src="diagrams/v49-tf-three-objects.svg" width="960" height="550" alt="同一条实验路径：配置希望alpha，状态原记alpha，人工把实际文件改成outside。是否刷新、是否应用，决定接下来改变哪一份事实。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一条实验路径：配置希望alpha，状态原记alpha，人工把实际文件改成outside。是否刷新、是否应用，决定接下来改变哪一份事实。<a href="diagrams/v49-tf-three-objects.svg" download>下载 SVG ↗</a></figcaption></figure></section><section class="article-section" id="section-2"><h2><span class="section-index">02</span>plan、apply 与刷新</h2><p>init准备后端和提供程序，validate检查配置，plan再为本次操作建立观察。普通计划先读所选state，经提供程序刷新资源事实，在内存中比较当前观察与配置，再列出所需动作。保存计划会把这次决定写入计划文件；这一步尚未兑现其中的资源修改。</p><p>apply执行计划中的动作，并保存相应state。显式传入保存计划时，执行的是那份计划；没有传计划文件时，apply会先生成新计划。refresh-only则选择另一种目的：仅计划如何把记录对齐到实际观察，不把资源改回配置；应用这份计划以后，新的认识才被持久保存。</p><div class="code-block"><div class="code-toolbar"><span>与实验等价的HCL核心；完整程序还固定版本与测试屏障 <small>HCL</small></span><button data-copy-code aria-label="复制 与实验等价的HCL核心；完整程序还固定版本与测试屏障">复制代码</button></div><pre tabindex="0"><code>variable &quot;content&quot; {

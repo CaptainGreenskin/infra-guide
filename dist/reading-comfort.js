@@ -11,7 +11,6 @@ function initReadingComfort(){
  root.classList.toggle('reading-focus',!!article&&preference.focus===true);
  if(!article){
   root.classList.remove('reading-controls-ready');
-  if(document.querySelector('.track-system-model')){comfortAbort=new AbortController();initReaderFigures(document.querySelector('#main'),comfortAbort.signal);}
   return;
  }
  comfortAbort=new AbortController();
@@ -82,16 +81,15 @@ function initReadingComfort(){
  document.body.appendChild(directory);
  toolbar.querySelector('[data-reader-contents]').addEventListener('click',()=>openModal(directory),{signal});
 
- initReaderFigures(article,signal);
-
  function openModal(dialog){document.body.classList.add('reader-modal-open');dialog.showModal();}
- function closeModal(dialog){dialog.close();document.body.classList.remove('reader-modal-open');}
+ function unlockModal(){if(!document.querySelector('dialog.reader-dialog[open]'))document.body.classList.remove('reader-modal-open');}
+ function closeModal(dialog){dialog.close();unlockModal();}
  for(const dialog of [directory]){
   dialog.querySelector('[data-reader-close]').addEventListener('click',()=>closeModal(dialog),{signal});
-  dialog.addEventListener('close',()=>document.body.classList.remove('reader-modal-open'),{signal});
+  dialog.addEventListener('close',unlockModal,{signal});
   dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeModal(dialog);}},{signal});
  }
- signal.addEventListener('abort',()=>{directory.close();directory.remove();document.body.classList.remove('reader-modal-open');},{once:true});
+ signal.addEventListener('abort',()=>{directory.close();directory.remove();unlockModal();},{once:true});
 
  const navLinks=[...document.querySelectorAll('.toc a')];
  function linkTarget(link){const url=new URL(link.href,location.href),section=url.searchParams.get('section'),id=url.hash?decodeURIComponent(url.hash.slice(1)):section?(/^\d+$/.test(section)?'section-'+section:section):'';if(url.pathname!==location.pathname&&!article.contains(document.getElementById(id)))return '';return id;}
@@ -111,53 +109,4 @@ function initReadingComfort(){
  window.addEventListener('scroll',schedule,{passive:true,signal});
  window.addEventListener('resize',schedule,{passive:true,signal});
  schedule();
-}
-
-// The same zoom/pan controls serve article figures and the whole-course maps.
-function initReaderFigures(container,signal){
- const figureDialog=document.createElement('dialog');
- figureDialog.className='reader-dialog reader-figure-dialog';
- figureDialog.setAttribute('aria-labelledby','reader-figure-title');
- figureDialog.innerHTML='<div class="reader-dialog-head"><h2 id="reader-figure-title">图解</h2><div class="reader-zoom-controls"><button type="button" data-reader-fit>适合窗口</button><button type="button" data-reader-zoom aria-label="放大图解">放大 +</button><button type="button" data-reader-close aria-label="关闭图解">关闭 ×</button></div></div><p class="reader-pan-hint">放大后可横向和纵向滑动。</p><div class="reader-image-stage" tabindex="0" aria-label="图解，可滚动查看"><img alt=""></div><p class="reader-image-caption"></p>';
- document.body.appendChild(figureDialog);
- const stage=figureDialog.querySelector('.reader-image-stage'),expandedImage=stage.querySelector('img');
- let imageScale=1,imageFits=true,imageAspect=0;
- function fitFigure(){
-  imageFits=true;imageScale=1;
-  const frame=getComputedStyle(stage),limit=parseFloat(frame.maxHeight)-parseFloat(frame.borderTopWidth)-parseFloat(frame.borderBottomWidth)-parseFloat(frame.paddingTop)-parseFloat(frame.paddingBottom);
-  const ratio=imageAspect||expandedImage.naturalWidth/expandedImage.naturalHeight;
-  const width=Number.isFinite(limit)&&Number.isFinite(ratio)&&ratio>0?Math.min(stage.clientWidth,Math.max(1,limit)*ratio):stage.clientWidth;
-  expandedImage.style.width=width+'px';expandedImage.style.maxWidth='100%';
-  expandedImage.style.maxHeight=Number.isFinite(limit)?Math.max(1,limit)+'px':'none';
-  expandedImage.style.margin='0 auto';stage.scrollTo({top:0,left:0,behavior:'instant'});
- }
- function setImageScale(scale){imageFits=false;imageScale=scale;expandedImage.style.maxWidth='none';expandedImage.style.maxHeight='none';expandedImage.style.margin='0';expandedImage.style.width=(scale*100)+'%';}
- figureDialog.querySelector('[data-reader-fit]').addEventListener('click',fitFigure,{signal});
- figureDialog.querySelector('[data-reader-zoom]').addEventListener('click',()=>{const first=Math.max(1.5*expandedImage.getBoundingClientRect().width/stage.clientWidth,960/stage.clientWidth);setImageScale(Math.min(imageFits?first:imageScale+0.5,4));},{signal});
- expandedImage.addEventListener('load',()=>{if(imageFits)fitFigure();},{signal});
- window.addEventListener('resize',()=>{if(figureDialog.open&&imageFits)fitFigure();},{signal});
- for(const figure of container.querySelectorAll('.training-figure')){
-  const image=figure.querySelector('img');if(!image)continue;
-  function showFigure(event){
-   event.preventDefault();
-   expandedImage.src=image.currentSrc||image.src;
-   expandedImage.alt=image.alt;
-   const sourceWidth=Number(image.getAttribute('width'))||image.naturalWidth,sourceHeight=Number(image.getAttribute('height'))||image.naturalHeight;
-   imageAspect=sourceWidth>0&&sourceHeight>0?sourceWidth/sourceHeight:0;
-   figureDialog.querySelector('.reader-image-caption').textContent=figure.querySelector('figcaption')?.childNodes[0]?.textContent.trim()||image.alt;
-   openModal(figureDialog);
-   fitFigure();
-  }
-  const opener=figure.querySelector('a[href*=".svg"]');
-  if(opener){opener.removeAttribute('target');opener.setAttribute('aria-haspopup','dialog');const hint=opener.querySelector('.figure-zoom-hint');if(hint)hint.textContent='点击图示放大';opener.addEventListener('click',showFigure,{signal});}
-  image.style.cursor='zoom-in';
-  if(!opener)image.addEventListener('click',showFigure,{signal});
- }
-
- function openModal(dialog){document.body.classList.add('reader-modal-open');dialog.showModal();}
- function closeModal(dialog){dialog.close();document.body.classList.remove('reader-modal-open');}
- figureDialog.querySelector('[data-reader-close]').addEventListener('click',()=>closeModal(figureDialog),{signal});
- figureDialog.addEventListener('close',()=>document.body.classList.remove('reader-modal-open'),{signal});
- figureDialog.addEventListener('click',event=>{if(event.target===figureDialog){const box=figureDialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)closeModal(figureDialog);}},{signal});
- signal.addEventListener('abort',()=>{figureDialog.close();figureDialog.remove();document.body.classList.remove('reader-modal-open');},{once:true});
 }

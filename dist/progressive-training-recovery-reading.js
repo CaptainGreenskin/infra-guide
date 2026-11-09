@@ -52,7 +52,7 @@
  '连续四轮共32次更新。另一条路径先两轮、16次更新，在轮末保存并正常结束，再由新进程恢复到总共四轮，继续剩余16次。下面--epochs表示目标总轮数；恢复命令的4表示做到第四轮。')+
  codes(old[2])[0]+
  p('固定相同初值、数据、设备、精度、world size和训练配置，两条路径应得到对应的最终状态。比较器递归检查模型、优化器、scaler、RNG、next_epoch和配置签名；张量的类型、形状与数值一起核对。序列化文件的字节、运行时间和目录大小可以不同，逻辑状态才是这里的比较对象。',
- '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本章沿固定配置继续。'),
+ '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本节的DDP对照沿固定配置继续。'),
 
  p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。',
  '先核对各rank载入同一版本的状态，next_epoch与恢复后首批输入对应，再观察数值和执行时间。CPU固定路径的精确相等为本实验提供基线；GPU上的舍入、算法选择和通信顺序另按目标确定性设置定义容差。若要求按位一致，需要验证相应算子与通信路径。',
@@ -106,8 +106,39 @@
  p('比较器递归遍历原基线的全部字段和每个张量，检查类型、形状与值；独立采样器检查实际消费的输入ID。清空Adam的反例实际完成训练，随后由比较器发现状态不同；缺.metadata的反例在加载阶段停止。两种结果分别检验状态延续与存储入口。')+
  fold('展开完整train_dcp.py：对象、训练循环与同步保存',codes(old[7])[3])+
  fold('展开完整run_lab.py：新进程恢复、逐项比较与反例',codes(old[7])[4])+
- p('复现环境固定PyTorch 2.5.1、同宿主两个CPU/Gloo进程、FP32和完整轮边界。现有记录覆盖同步DCP与正常进程退出后的恢复；FSDP/DTensor重分片、GPU/NCCL、异步保存、对象存储、跨机和掉电仍属于各自目标环境实验。')
+ p('上面这份旧记录固定PyTorch 2.5.1、同宿主两个CPU/Gloo进程、FP32和完整轮边界，验证同一进程数下的同步DCP保存和新进程恢复。下面换用独立的六参数FSDP模型，沿一次更新边界观察两个rank保存、三个rank恢复。')
  ]);
+
+ const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ recovery.sections[5][1]+=p('进程数变化时，恢复组先按自己的布局为每个参数名创建接收张量。DCP把保存值读入这些张量，框架再将具名状态装入新的训练分片。下一批读哪几项、游标与优化器是否在同一次更新边界，由训练程序核对。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">看两进程保存、三进程恢复的实际对照 →</a>');
+ recovery.sections[7][1]+='<h3 id="fsdp-dcp-reshard">两个进程保存，三个进程继续同一次训练</h3>'+p(
+ '沿用并行策略章的六参数线性层和同一批三个样本。每个样本有两个标量目标。两进程时分别读一行、两行，三进程时每个读一行。FSDP 会平均各进程的梯度，因此每个进程用 world size × 本地损失总和 ÷ 6 反向。两组算的是同一份全局目标。',
+ '第 1 次更新完成后，两个进程各持三项展平训练参数，Adam 的一阶、二阶历史也各有三项。写检查点时，先按原来的 weight、bias 参数名拆回各自的张量，再按各张量的第一轴分片。设备网格 DeviceMesh 描述参与分片的进程，这里是一维 CPU 组。本例使用封装式 FSDP 接口 FSDP1，具名状态以 DTensor 表示，每项带有全局形状和本地片。')+
+ trainingFigure('fsdp-dcp-reshard','从两个 rank 的展平参数到具名检查点，再装入三个 rank 的训练分片。')+
+ p('保存组把模型、Adam 历史和已完成更新数 1 一起写入 DCP。实际目录包含 .metadata 和两个 .distcp 文件，元数据标明各具名张量的块形状和起点。新组先建三进程的具名接收布局，再 load 并 set_state_dict。weight 只有两行，bias 只有两项，所以 rank 2 的具名接收片为空。装回展平训练布局后，rank 2 负责两项偏置及对应的 Adam 历史。代码中的 SHARDED 将 full_state_dict 设为 False，选择分片状态。')+
+ trainingCode('保存和装入具名状态的节选，省略记录与断言','PYTHON',`# 两个 rank 完成更新 1 后一起执行
+model_state, optimizer_state = get_state_dict(model, optimizer, options=SHARDED)
+dcp.save({"model": model_state, "optimizer": optimizer_state,
+          "completed_updates": torch.tensor(1)}, checkpoint_id=folder)
+
+# 三个新 rank 各自构造目标布局，再一起读取
+model_state, optimizer_state = get_state_dict(model, optimizer, options=SHARDED)
+state = {"model": model_state, "optimizer": optimizer_state,
+         "completed_updates": torch.tensor(-1)}
+dcp.load(state, checkpoint_id=folder)
+set_state_dict(model, optimizer, model_state_dict=state["model"],
+               optim_state_dict=state["optimizer"], options=SHARDED)`)+
+ p('新建 Adam 的接收槽位由此版本的接口以零学习率初始化，槽位中的零矩量随后由保存值覆盖。程序在装入后核对游标和 Adam 步数都为 1，才开始第 2 次更新。另一组两个 rank 不间断完成两次更新，普通线性层也独立在全批上核对梯度、参数和 Adam 历史。')+
+ table(['实际对照','观测结果'],[
+  ['保存边界、恢复边界与连续路径的第 1 次更新','完整模型与 Adam 的最大绝对差均为 0'],
+  ['三个 rank 完成第 2 次更新','与连续两 rank 的完整状态最大绝对差约 1.73e−18，满足绝对容差 1e−12'],
+  ['模型和 Adam 保持第 1 次更新，只把保存的游标改成 0','原生加载成功，应用看到 Adam 步数为 1 后拒绝继续'],
+  ['只加载模型与游标','应用拒绝缺失的 Adam。绕过检查更新一次后，参数最大差约 0.0005484']
+ ])+
+ fold('选读固定版本的空片反例',p('省略 DeviceMesh 时，本例的 FSDP1 采用 ShardedTensor 构造具名状态。第三个 rank 没有该具名张量的本地片，PyTorch 2.5.1 在 get_state_dict 阶段失败，程序尚未调用 dcp.load。正例用 DTensor 描述同一个空片，再完成实际加载。<a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_state_dict_utils.py#L738-L751">核对 DeviceMesh 的状态类型选择 ↗</a>'))+
+ trainingCode('在解压目录运行，使用 Python 3.12 和 PyTorch 2.5.1','SHELL','python -B fsdp_reshard.py > replay.json')+
+ p('这次实跑在同一台机器上使用 CPU/Gloo、双精度和同步保存，保存完成后另起进程组，恢复点位于完整更新边界。自动扩缩容、异步保存、物理多机和 CUDA/NCCL 仍需对应环境的运行证据。')+
+ '<p class="practice-links"><a href="labs/fsdp-reshard.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/fsdp-reshard/README.md">运行说明 →</a> · <a href="labs/fsdp-reshard/validation.json">核对各 rank 的布局和 Adam 历史 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/state_dict_loader.py#L49-L75">PyTorch 2.5.1 DCP 加载接口 ↗</a></p>';
 
  rewrite('training-performance',7,old=>[
  p('前章使训练能从一份明确状态继续，现在比较同一训练任务怎样更早、更省资源地完成。正常路径仍是读取输入→前向与反向→合并梯度→应用优化器更新→按周期保存状态。扩卡、改善输入或减少保存暂停，改变的是这条路径中的不同部分；先固定要完成的工作，再比较它的时间与成本。',

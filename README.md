@@ -31,6 +31,8 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 
 数据库章从执行树的扫描行数读到 InnoDB 的真实等待边和死锁回滚。分片章用原生 FSDP 两进程对照全批次梯度、两轮 Adam 更新和完整状态。Agent 平台路线把工具发现与调用派发分开，并用恢复后的一份或两份报告做自检。 [InnoDB 实验](https://captaingreenskin.github.io/infra-guide/article/database-index-locks/#native-innodb-lab) · [FSDP 实验](https://captaingreenskin.github.io/infra-guide/article/distributed-training/#native-fsdp-run) · [Agent 平台路线](https://captaingreenskin.github.io/infra-guide/roadmap/agent-platform/)
 
+存储章用单节点 kind 观察 CSI 延迟绑定、两个 Pod 接续读写和后端卷回收。检查点章用两个 CPU/Gloo rank 保存模型与 Adam，换成三个新进程加载并继续更新。正文图解在完整阅读器就绪前也能打开。 [CSI 实验](https://captaingreenskin.github.io/infra-guide/article/k8s-storage/#native-csi-storage) · [FSDP 检查点恢复](https://captaingreenskin.github.io/infra-guide/article/checkpoint-recovery/#fsdp-dcp-reshard)
+
 <details>
 <summary>历次内容修订与执行记录</summary>
 

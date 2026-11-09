@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="541" viewBox="0 0 440 541" role="img" aria-labelledby="v81-csi-title v81-csi-desc">
+  <title id="v81-csi-title">PVC 等待首个 Pod，替换 Pod 接着使用同一卷</title>
+  <desc id="v81-csi-desc">在单节点 kind 集群里，Hostpath CSI 的 StorageClass 使用 WaitForFirstConsumer 和 Delete。创建 PVC 后还没有绑定的 PV。创建首个 Pod 并选节点后，PVC 绑定 PV，PV 记录 CSI 卷句柄。首个 Pod 挂载到 /data，执行 write-1 将 SQLite 计数从零变为一。删除首个 Pod，再创建新 UID 的替换 Pod，挂载同一 PVC 和同一个 CSI 卷。替换 Pod 先读到计数一，复投 write-1 不增加计数，write-2 将计数推进为二。删除替换 Pod 和 PVC 后，分开检查 API 中的 PV 对象与 kind 节点内的后端目录是否消失。</desc>
+  <rect x="1" y="1" width="438" height="539" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" fill="#20314e">
+    <text x="24" y="36" font-size="24" font-weight="bold">两个 Pod 先后使用同一卷</text>
+    <text x="24" y="61" font-size="17" fill="#465a78">单节点 kind · Hostpath CSI</text>
+
+    <g id="v81-csi-pending" data-step="before_consumer">
+      <rect x="24" y="76" width="392" height="72" rx="7" fill="#fff" stroke="#9aaed0"/>
+      <text x="40" y="103" font-size="19" font-weight="bold">PVC app-data · Pending</text>
+      <text x="40" y="129">等待首个使用者，尚未绑定 PV</text>
+    </g>
+    <path data-edge="pending binding" d="M46 148v27m-4-5 4 5 4-5" fill="none" stroke="#345cb7" stroke-width="1.9" stroke-linejoin="round"/>
+    <text x="60" y="169" fill="#465a78">创建首个 Pod，调度器选节点</text>
+
+    <g id="v81-csi-binding" data-step="binding">
+      <rect x="24" y="178" width="392" height="69" rx="7" fill="#eaf1ff" stroke="#81a1e0"/>
+      <text x="40" y="204" font-size="19" font-weight="bold">PVC 绑定到 CSI 卷</text>
+      <text x="40" y="229" font-size="18">PVC UID → PV UID → volumeHandle</text>
+    </g>
+    <path data-edge="binding writer" d="M46 247v27m-4-5 4 5 4-5" fill="none" stroke="#345cb7" stroke-width="1.9" stroke-linejoin="round"/>
+    <text x="60" y="268" fill="#465a78">两个 Pod 先后挂载到 /data</text>
+
+    <g id="v81-csi-writer" data-step="writer">
+      <rect x="24" y="277" width="162" height="112" rx="7" fill="#fff" stroke="#9aaed0"/>
+      <text x="37" y="304" font-size="19" font-weight="bold">首个 Pod</text>
+      <text x="37" y="328">UID A</text>
+      <text x="37" y="360" font-weight="bold">write-1：0 → 1</text>
+    </g>
+    <text x="219" y="325" text-anchor="middle" fill="#465a78">删首个</text>
+    <path data-edge="writer replacement" d="M193 339h51m-5-4 5 4-5 4" fill="none" stroke="#345cb7" stroke-width="1.9" stroke-linejoin="round"/>
+    <g id="v81-csi-replacement" data-step="replacement">
+      <rect x="252" y="277" width="164" height="112" rx="7" fill="#fff" stroke="#9aaed0"/>
+      <text x="265" y="304" font-size="19" font-weight="bold">替换 Pod</text>
+      <text x="265" y="328">UID B</text>
+      <text x="265" y="352">读到 1，复投仍 1</text>
+      <text x="265" y="375" font-weight="bold">write-2：1 → 2</text>
+    </g>
+
+    <path data-edge="replacement reclaim" d="M273 389v29m-4-5 4 5 4-5" fill="none" stroke="#345cb7" stroke-width="1.9" stroke-linejoin="round"/>
+    <text x="261" y="410" text-anchor="end" fill="#465a78">删除替换 Pod，再删除 PVC</text>
+    <g id="v81-csi-reclaim" data-step="reclaim">
+      <rect x="24" y="421" width="392" height="78" rx="7" fill="#eef6f5" stroke="#86aaa6"/>
+      <text x="40" y="449" font-size="19" font-weight="bold">Delete 回收，分别检查两处</text>
+      <text x="40" y="478">API：PV 消失</text>
+      <text x="214" y="478">节点：后端目录消失</text>
+    </g>
+    <text x="24" y="524" fill="#465a78">后端目录位于这次实验的 kind 节点内。</text>
+  </g>
+</svg>

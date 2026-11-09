@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="552" viewBox="0 0 376 552" role="img" aria-labelledby="reshard-title reshard-desc">
+  <title id="reshard-title">FSDP 从两个 rank 保存，三个 rank 恢复</title>
+  <desc id="reshard-desc">第 1 次更新后，两个 rank 各持三个展平训练参数。get_state_dict 把参数及 Adam 历史还原为具名 DTensor，DCP 同步保存它们和已完成更新数 1。weight 的两行和 bias 的两项在两个 rank 下各按 1 加 1 分片，三个 rank 的读取布局是 1 加 1 加 0。dcp.load 读回具名状态，set_state_dict 将其装入三个 rank 的训练分片，每个 rank 有两项，rank 2 持两项偏置及对应 Adam 历史。核对游标与 Adam 步数均为 1 后，三个进程处理同一全局六项目标，继续完成第 2 次更新。图示对应本机 CPU 和 Gloo 实验。</desc>
+  <rect x="1" y="1" width="374" height="550" rx="12" fill="#f8fafc" stroke="#aebdd0"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#182b46" font-size="17">
+    <text x="20" y="34" font-size="23" font-weight="bold">FSDP 换进程数怎样接着训练</text>
+    <text x="20" y="58" fill="#465a77">沿同一层，从第 1 次更新走到第 2 次</text>
+
+    <g data-layout="training-flat" data-world-size="2" data-shard-sizes="3,3">
+      <rect x="20" y="74" width="336" height="106" rx="8" fill="#eff5ff" stroke="#a6bce1"/>
+      <text x="34" y="99" font-size="19" font-weight="bold" fill="#244c8a">2 rank · 更新 1 后的训练分片</text>
+      <rect x="34" y="111" width="148" height="55" rx="6" fill="#e1edff" stroke="#a6bce1"/>
+      <rect x="194" y="111" width="148" height="55" rx="6" fill="#e0f2ea" stroke="#9ac7b7"/>
+      <text x="108" y="132" text-anchor="middle" font-weight="bold" fill="#244c8a">rank 0 · 3 项</text>
+      <text x="268" y="132" text-anchor="middle" font-weight="bold" fill="#245f51">rank 1 · 3 项</text>
+      <text x="108" y="154" text-anchor="middle">w00　w01　w10</text>
+      <text x="268" y="154" text-anchor="middle">w11　b0　b1</text>
+    </g>
+
+    <path d="M35 180v26m-4-4 4 4 4-4" fill="none" stroke="#526c91" stroke-width="1.8"/>
+    <text x="49" y="199" fill="#465a77">get_state_dict → dcp.save</text>
+
+    <g data-layout="named-dtensor" data-save-shard-sizes="1,1" data-load-shard-sizes="1,1,0" data-completed-updates="1">
+      <rect x="20" y="210" width="336" height="143" rx="8" fill="#fff3e3" stroke="#d89f60"/>
+      <text x="34" y="236" font-size="19" font-weight="bold" fill="#803c11">DCP · 具名 DTensor 与进度</text>
+      <text x="34" y="260">weight 两行，bias 两项，分别切片</text>
+      <text x="34" y="283">两个 rank 写入</text>
+      <text x="326" y="283" text-anchor="end" font-size="18" font-weight="bold" fill="#803c11">1 + 1</text>
+      <text x="34" y="307">三个 rank 读回</text>
+      <text x="326" y="307" text-anchor="end" font-size="18" font-weight="bold" fill="#803c11">1 + 1 + 0</text>
+      <text x="34" y="333">一并保存 Adam 历史与游标 1</text>
+    </g>
+
+    <path d="M35 353v26m-4-4 4 4 4-4" fill="none" stroke="#526c91" stroke-width="1.8"/>
+    <text x="49" y="372" fill="#465a77">dcp.load → set_state_dict</text>
+
+    <g data-layout="training-flat" data-world-size="3" data-shard-sizes="2,2,2" data-next-update="2">
+      <rect x="20" y="383" width="336" height="151" rx="8" fill="#eef8f5" stroke="#97c8b9"/>
+      <text x="34" y="409" font-size="19" font-weight="bold" fill="#245f51">3 rank · 训练分片各 2 项</text>
+      <rect x="34" y="422" width="98" height="55" rx="6" fill="#e1edff" stroke="#a6bce1"/>
+      <rect x="139" y="422" width="98" height="55" rx="6" fill="#e0f2ea" stroke="#9ac7b7"/>
+      <rect x="244" y="422" width="98" height="55" rx="6" fill="#ede8f8" stroke="#b9aad5"/>
+      <text x="83" y="443" text-anchor="middle" font-weight="bold" fill="#244c8a">rank 0</text>
+      <text x="188" y="443" text-anchor="middle" font-weight="bold" fill="#245f51">rank 1</text>
+      <text x="293" y="443" text-anchor="middle" font-weight="bold" fill="#584079">rank 2</text>
+      <text x="83" y="465" text-anchor="middle">w00　w01</text>
+      <text x="188" y="465" text-anchor="middle">w10　w11</text>
+      <text x="293" y="465" text-anchor="middle">b0　b1</text>
+      <text x="34" y="500">核对游标 1、Adam 步数 1</text>
+      <text x="34" y="523" font-weight="bold" fill="#245f51">处理同一全局六项，完成更新 2</text>
+    </g>
+  </g>
+</svg>

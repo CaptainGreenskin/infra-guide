@@ -1,0 +1,1897 @@
+{
+  "checkpoint": {
+    "files": [
+      ".metadata",
+      "__0_0.distcp",
+      "__1_0.distcp"
+    ],
+    "tensor_chunks": {
+      "completed_updates": {
+        "chunks": [
+          {
+            "offset": [],
+            "shape": []
+          }
+        ],
+        "shape": []
+      },
+      "model.bias": {
+        "chunks": [
+          {
+            "offset": [
+              0
+            ],
+            "shape": [
+              1
+            ]
+          },
+          {
+            "offset": [
+              1
+            ],
+            "shape": [
+              1
+            ]
+          }
+        ],
+        "shape": [
+          2
+        ]
+      },
+      "model.weight": {
+        "chunks": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          },
+          {
+            "offset": [
+              1,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "optimizer.state.bias.exp_avg": {
+        "chunks": [
+          {
+            "offset": [
+              0
+            ],
+            "shape": [
+              1
+            ]
+          },
+          {
+            "offset": [
+              1
+            ],
+            "shape": [
+              1
+            ]
+          }
+        ],
+        "shape": [
+          2
+        ]
+      },
+      "optimizer.state.bias.exp_avg_sq": {
+        "chunks": [
+          {
+            "offset": [
+              0
+            ],
+            "shape": [
+              1
+            ]
+          },
+          {
+            "offset": [
+              1
+            ],
+            "shape": [
+              1
+            ]
+          }
+        ],
+        "shape": [
+          2
+        ]
+      },
+      "optimizer.state.bias.step": {
+        "chunks": [
+          {
+            "offset": [],
+            "shape": []
+          }
+        ],
+        "shape": []
+      },
+      "optimizer.state.weight.exp_avg": {
+        "chunks": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          },
+          {
+            "offset": [
+              1,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "optimizer.state.weight.exp_avg_sq": {
+        "chunks": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          },
+          {
+            "offset": [
+              1,
+              0
+            ],
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "shape": [
+          2,
+          2
+        ]
+      },
+      "optimizer.state.weight.step": {
+        "chunks": [
+          {
+            "offset": [],
+            "shape": []
+          }
+        ],
+        "shape": []
+      }
+    }
+  },
+  "continuous_world2": {
+    "ranks": [
+      {
+        "rank": 0,
+        "update_1": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.012499999999999997,
+                -0.0041666666666666675,
+                0.020833333333333325
+              ],
+              "exp_avg_sq": [
+                1.5625000000000014e-05,
+                1.7361111111111142e-06,
+                4.340277777777781e-05
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.23000000159999986,
+              -0.4800000047999988,
+              0.73000000096
+            ]
+          },
+          "runtime_flat_range": [
+            0,
+            3
+          ],
+          "update": {
+            "gradient": [
+              0.125,
+              -0.041666666666666685,
+              0.20833333333333331
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 2,
+            "rows": [
+              0
+            ]
+          }
+        },
+        "update_2": {
+          "completed_updates": 2,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.015166666866666616,
+                  0.013166666887999976
+                ],
+                "exp_avg_sq": [
+                  1.2815278084444384e-05,
+                  1.0148611361955544e-05
+                ],
+                "step": 2.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.024416666360000075,
+                    -0.006583333786666548
+                  ],
+                  [
+                    0.035583333639999964,
+                    0.019750000303999968
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    3.294548530355581e-05,
+                    2.5371530346666235e-06
+                  ],
+                  [
+                    7.169548714355554e-05,
+                    2.283437551679998e-05
+                  ]
+                ],
+                "step": 2.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 6.938893903907228e-18,
+            "parameters": {
+              "bias": [
+                0.039939249862869466,
+                -0.039451594822405275
+              ],
+              "weight": [
+                [
+                  0.20997967434954934,
+                  -0.4605484100394498
+                ],
+                [
+                  0.7102219499990146,
+                  0.08554840347490673
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.024416666360000075,
+                -0.006583333786666548,
+                0.035583333639999964
+              ],
+              "exp_avg_sq": [
+                3.294548530355581e-05,
+                2.5371530346666235e-06,
+                7.169548714355554e-05
+              ],
+              "step": 2.0
+            },
+            "parameters": [
+              0.20997967434954934,
+              -0.4605484100394498,
+              0.7102219499990146
+            ]
+          },
+          "runtime_flat_range": [
+            0,
+            3
+          ],
+          "update": {
+            "gradient": [
+              0.13166666360000082,
+              -0.028333337866665476,
+              0.16833333639999973
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 2,
+            "rows": [
+              0
+            ]
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "update_1": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.012499999999999995,
+                -0.008333333333333331,
+                0.008333333333333331
+              ],
+              "exp_avg_sq": [
+                1.5625000000000007e-05,
+                6.94444444444445e-06,
+                6.94444444444445e-06
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.10500000159999986,
+              0.019999997600000288,
+              -0.019999997600000288
+            ]
+          },
+          "runtime_flat_range": [
+            3,
+            6
+          ],
+          "update": {
+            "gradient": [
+              0.12499999999999999,
+              -0.08333333333333333,
+              0.08333333333333333
+            ],
+            "gradient_max_abs_error": 1.3877787807814457e-17,
+            "local_targets": 4,
+            "rows": [
+              1,
+              2
+            ]
+          }
+        },
+        "update_2": {
+          "completed_updates": 2,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.015166666866666616,
+                  0.013166666887999976
+                ],
+                "exp_avg_sq": [
+                  1.2815278084444384e-05,
+                  1.0148611361955544e-05
+                ],
+                "step": 2.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.024416666360000075,
+                    -0.006583333786666548
+                  ],
+                  [
+                    0.035583333639999964,
+                    0.019750000303999968
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    3.294548530355581e-05,
+                    2.5371530346666235e-06
+                  ],
+                  [
+                    7.169548714355554e-05,
+                    2.283437551679998e-05
+                  ]
+                ],
+                "step": 2.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 6.938893903907228e-18,
+            "parameters": {
+              "bias": [
+                0.039939249862869466,
+                -0.039451594822405275
+              ],
+              "weight": [
+                [
+                  0.20997967434954934,
+                  -0.4605484100394498
+                ],
+                [
+                  0.7102219499990146,
+                  0.08554840347490673
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.019750000303999968,
+                -0.015166666866666616,
+                0.013166666887999976
+              ],
+              "exp_avg_sq": [
+                2.283437551679998e-05,
+                1.2815278084444384e-05,
+                1.0148611361955544e-05
+              ],
+              "step": 2.0
+            },
+            "parameters": [
+              0.08554840347490673,
+              0.039939249862869466,
+              -0.039451594822405275
+            ]
+          },
+          "runtime_flat_range": [
+            3,
+            6
+          ],
+          "update": {
+            "gradient": [
+              0.08500000303999973,
+              -0.07666666866666619,
+              0.056666668879999785
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 4,
+            "rows": [
+              1,
+              2
+            ]
+          }
+        }
+      }
+    ],
+    "world_size": 2
+  },
+  "environment": {
+    "backend": "gloo",
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.13",
+    "torch": "2.5.1"
+  },
+  "fixture": {
+    "adam_lr": 0.02,
+    "targets_per_update": 6,
+    "x": [
+      [
+        1.0,
+        2.0
+      ],
+      [
+        0.0,
+        -1.0
+      ],
+      [
+        2.0,
+        1.0
+      ]
+    ],
+    "y": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        1.0,
+        0.0
+      ],
+      [
+        -0.75,
+        1.0
+      ]
+    ]
+  },
+  "independent_torchrun_groups": true,
+  "plain_fsdp1_template_negative": {
+    "failed_rank": 2,
+    "reason": "NotImplementedError: Only single local shard is supported.",
+    "rejected": true,
+    "stage": "get_state_dict, before dcp.load",
+    "world_size": 3
+  },
+  "resume_world3": {
+    "ranks": [
+      {
+        "loaded_boundary": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.012499999999999997,
+                -0.0041666666666666675
+              ],
+              "exp_avg_sq": [
+                1.5625000000000014e-05,
+                1.7361111111111142e-06
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.23000000159999986,
+              -0.4800000047999988
+            ]
+          },
+          "runtime_flat_range": [
+            0,
+            2
+          ],
+          "update": null
+        },
+        "loaded_named_layout": {
+          "adam": {
+            "bias": {
+              "exp_avg": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            },
+            "weight": {
+              "exp_avg": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            }
+          },
+          "model": {
+            "bias": {
+              "global_shape": [
+                2
+              ],
+              "local_shape": [
+                1
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            },
+            "weight": {
+              "global_shape": [
+                2,
+                2
+              ],
+              "local_shape": [
+                1,
+                2
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            }
+          }
+        },
+        "negative": {
+          "weights_only": {
+            "loaded_completed_updates": 1,
+            "parameter_max_abs_error_after_bypass": 0.0005483995219660587,
+            "reason": "missing Adam state",
+            "rejected": true,
+            "weight_max_abs_error_before_bypass": 3.469446951953614e-18
+          },
+          "wrong_cursor": {
+            "loaded_completed_updates": 0,
+            "model_and_adam_match_update_1": true,
+            "reason": "completed_updates=0 differs from Adam step=1",
+            "rejected": true
+          }
+        },
+        "rank": 0,
+        "template_adam_before_load": {
+          "exp_avg": [
+            0.0,
+            0.0
+          ],
+          "exp_avg_sq": [
+            0.0,
+            0.0
+          ],
+          "step": 1.0
+        },
+        "update_2": {
+          "completed_updates": 2,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.015166666866666617,
+                  0.013166666887999976
+                ],
+                "exp_avg_sq": [
+                  1.2815278084444388e-05,
+                  1.0148611361955545e-05
+                ],
+                "step": 2.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.024416666360000075,
+                    -0.006583333786666548
+                  ],
+                  [
+                    0.035583333639999964,
+                    0.019750000303999968
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    3.294548530355581e-05,
+                    2.5371530346666235e-06
+                  ],
+                  [
+                    7.169548714355554e-05,
+                    2.283437551679998e-05
+                  ]
+                ],
+                "step": 2.0
+              }
+            },
+            "adam_max_abs_error": 3.469446951953614e-18,
+            "parameter_max_abs_error": 6.938893903907228e-18,
+            "parameters": {
+              "bias": [
+                0.039939249862869466,
+                -0.039451594822405275
+              ],
+              "weight": [
+                [
+                  0.20997967434954934,
+                  -0.4605484100394498
+                ],
+                [
+                  0.7102219499990146,
+                  0.08554840347490673
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.024416666360000075,
+                -0.006583333786666548
+              ],
+              "exp_avg_sq": [
+                3.294548530355581e-05,
+                2.5371530346666235e-06
+              ],
+              "step": 2.0
+            },
+            "parameters": [
+              0.20997967434954934,
+              -0.4605484100394498
+            ]
+          },
+          "runtime_flat_range": [
+            0,
+            2
+          ],
+          "update": {
+            "gradient": [
+              0.13166666360000082,
+              -0.028333337866665476
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 2,
+            "rows": [
+              0
+            ]
+          }
+        }
+      },
+      {
+        "loaded_boundary": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.020833333333333325,
+                0.012499999999999995
+              ],
+              "exp_avg_sq": [
+                4.340277777777781e-05,
+                1.5625000000000007e-05
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.73000000096,
+              0.10500000159999986
+            ]
+          },
+          "runtime_flat_range": [
+            2,
+            4
+          ],
+          "update": null
+        },
+        "loaded_named_layout": {
+          "adam": {
+            "bias": {
+              "exp_avg": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            },
+            "weight": {
+              "exp_avg": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            }
+          },
+          "model": {
+            "bias": {
+              "global_shape": [
+                2
+              ],
+              "local_shape": [
+                1
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            },
+            "weight": {
+              "global_shape": [
+                2,
+                2
+              ],
+              "local_shape": [
+                1,
+                2
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            }
+          }
+        },
+        "negative": {
+          "weights_only": {
+            "loaded_completed_updates": 1,
+            "parameter_max_abs_error_after_bypass": 0.0005483995219660587,
+            "reason": "missing Adam state",
+            "rejected": true,
+            "weight_max_abs_error_before_bypass": 3.469446951953614e-18
+          },
+          "wrong_cursor": {
+            "loaded_completed_updates": 0,
+            "model_and_adam_match_update_1": true,
+            "reason": "completed_updates=0 differs from Adam step=1",
+            "rejected": true
+          }
+        },
+        "rank": 1,
+        "template_adam_before_load": {
+          "exp_avg": [
+            0.0,
+            0.0
+          ],
+          "exp_avg_sq": [
+            0.0,
+            0.0
+          ],
+          "step": 1.0
+        },
+        "update_2": {
+          "completed_updates": 2,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.015166666866666617,
+                  0.013166666887999976
+                ],
+                "exp_avg_sq": [
+                  1.2815278084444388e-05,
+                  1.0148611361955545e-05
+                ],
+                "step": 2.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.024416666360000075,
+                    -0.006583333786666548
+                  ],
+                  [
+                    0.035583333639999964,
+                    0.019750000303999968
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    3.294548530355581e-05,
+                    2.5371530346666235e-06
+                  ],
+                  [
+                    7.169548714355554e-05,
+                    2.283437551679998e-05
+                  ]
+                ],
+                "step": 2.0
+              }
+            },
+            "adam_max_abs_error": 3.469446951953614e-18,
+            "parameter_max_abs_error": 6.938893903907228e-18,
+            "parameters": {
+              "bias": [
+                0.039939249862869466,
+                -0.039451594822405275
+              ],
+              "weight": [
+                [
+                  0.20997967434954934,
+                  -0.4605484100394498
+                ],
+                [
+                  0.7102219499990146,
+                  0.08554840347490673
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.035583333639999964,
+                0.019750000303999968
+              ],
+              "exp_avg_sq": [
+                7.169548714355554e-05,
+                2.283437551679998e-05
+              ],
+              "step": 2.0
+            },
+            "parameters": [
+              0.7102219499990146,
+              0.08554840347490673
+            ]
+          },
+          "runtime_flat_range": [
+            2,
+            4
+          ],
+          "update": {
+            "gradient": [
+              0.16833333639999973,
+              0.08500000303999973
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 2,
+            "rows": [
+              1
+            ]
+          }
+        }
+      },
+      {
+        "loaded_boundary": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                -0.008333333333333331,
+                0.008333333333333331
+              ],
+              "exp_avg_sq": [
+                6.94444444444445e-06,
+                6.94444444444445e-06
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.019999997600000288,
+              -0.019999997600000288
+            ]
+          },
+          "runtime_flat_range": [
+            4,
+            6
+          ],
+          "update": null
+        },
+        "loaded_named_layout": {
+          "adam": {
+            "bias": {
+              "exp_avg": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  0
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  0
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            },
+            "weight": {
+              "exp_avg": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  0,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  0,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            }
+          },
+          "model": {
+            "bias": {
+              "global_shape": [
+                2
+              ],
+              "local_shape": [
+                0
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            },
+            "weight": {
+              "global_shape": [
+                2,
+                2
+              ],
+              "local_shape": [
+                0,
+                2
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            }
+          }
+        },
+        "negative": {
+          "weights_only": {
+            "loaded_completed_updates": 1,
+            "parameter_max_abs_error_after_bypass": 0.0005483995219660587,
+            "reason": "missing Adam state",
+            "rejected": true,
+            "weight_max_abs_error_before_bypass": 3.469446951953614e-18
+          },
+          "wrong_cursor": {
+            "loaded_completed_updates": 0,
+            "model_and_adam_match_update_1": true,
+            "reason": "completed_updates=0 differs from Adam step=1",
+            "rejected": true
+          }
+        },
+        "rank": 2,
+        "template_adam_before_load": {
+          "exp_avg": [
+            0.0,
+            0.0
+          ],
+          "exp_avg_sq": [
+            0.0,
+            0.0
+          ],
+          "step": 1.0
+        },
+        "update_2": {
+          "completed_updates": 2,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.015166666866666617,
+                  0.013166666887999976
+                ],
+                "exp_avg_sq": [
+                  1.2815278084444388e-05,
+                  1.0148611361955545e-05
+                ],
+                "step": 2.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.024416666360000075,
+                    -0.006583333786666548
+                  ],
+                  [
+                    0.035583333639999964,
+                    0.019750000303999968
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    3.294548530355581e-05,
+                    2.5371530346666235e-06
+                  ],
+                  [
+                    7.169548714355554e-05,
+                    2.283437551679998e-05
+                  ]
+                ],
+                "step": 2.0
+              }
+            },
+            "adam_max_abs_error": 3.469446951953614e-18,
+            "parameter_max_abs_error": 6.938893903907228e-18,
+            "parameters": {
+              "bias": [
+                0.039939249862869466,
+                -0.039451594822405275
+              ],
+              "weight": [
+                [
+                  0.20997967434954934,
+                  -0.4605484100394498
+                ],
+                [
+                  0.7102219499990146,
+                  0.08554840347490673
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                -0.015166666866666617,
+                0.013166666887999976
+              ],
+              "exp_avg_sq": [
+                1.2815278084444388e-05,
+                1.0148611361955545e-05
+              ],
+              "step": 2.0
+            },
+            "parameters": [
+              0.039939249862869466,
+              -0.039451594822405275
+            ]
+          },
+          "runtime_flat_range": [
+            4,
+            6
+          ],
+          "update": {
+            "gradient": [
+              -0.0766666686666662,
+              0.05666666887999979
+            ],
+            "gradient_max_abs_error": 1.3877787807814457e-17,
+            "local_targets": 2,
+            "rows": [
+              2
+            ]
+          }
+        }
+      }
+    ],
+    "world_size": 3
+  },
+  "save_world2": {
+    "ranks": [
+      {
+        "rank": 0,
+        "saved_named_layout": {
+          "adam": {
+            "bias": {
+              "exp_avg": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            },
+            "weight": {
+              "exp_avg": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            }
+          },
+          "model": {
+            "bias": {
+              "global_shape": [
+                2
+              ],
+              "local_shape": [
+                1
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            },
+            "weight": {
+              "global_shape": [
+                2,
+                2
+              ],
+              "local_shape": [
+                1,
+                2
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            }
+          }
+        },
+        "update_1": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.012499999999999997,
+                -0.0041666666666666675,
+                0.020833333333333325
+              ],
+              "exp_avg_sq": [
+                1.5625000000000014e-05,
+                1.7361111111111142e-06,
+                4.340277777777781e-05
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.23000000159999986,
+              -0.4800000047999988,
+              0.73000000096
+            ]
+          },
+          "runtime_flat_range": [
+            0,
+            3
+          ],
+          "update": {
+            "gradient": [
+              0.125,
+              -0.041666666666666685,
+              0.20833333333333331
+            ],
+            "gradient_max_abs_error": 0.0,
+            "local_targets": 2,
+            "rows": [
+              0
+            ]
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "saved_named_layout": {
+          "adam": {
+            "bias": {
+              "exp_avg": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2
+                ],
+                "local_shape": [
+                  1
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            },
+            "weight": {
+              "exp_avg": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              },
+              "exp_avg_sq": {
+                "global_shape": [
+                  2,
+                  2
+                ],
+                "local_shape": [
+                  1,
+                  2
+                ],
+                "placements": [
+                  "S(0)"
+                ],
+                "type": "DTensor"
+              }
+            }
+          },
+          "model": {
+            "bias": {
+              "global_shape": [
+                2
+              ],
+              "local_shape": [
+                1
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            },
+            "weight": {
+              "global_shape": [
+                2,
+                2
+              ],
+              "local_shape": [
+                1,
+                2
+              ],
+              "placements": [
+                "S(0)"
+              ],
+              "type": "DTensor"
+            }
+          }
+        },
+        "update_1": {
+          "completed_updates": 1,
+          "full": {
+            "adam": {
+              "bias": {
+                "exp_avg": [
+                  -0.008333333333333331,
+                  0.008333333333333331
+                ],
+                "exp_avg_sq": [
+                  6.94444444444445e-06,
+                  6.94444444444445e-06
+                ],
+                "step": 1.0
+              },
+              "weight": {
+                "exp_avg": [
+                  [
+                    0.012499999999999997,
+                    -0.0041666666666666675
+                  ],
+                  [
+                    0.020833333333333325,
+                    0.012499999999999995
+                  ]
+                ],
+                "exp_avg_sq": [
+                  [
+                    1.5625000000000014e-05,
+                    1.7361111111111142e-06
+                  ],
+                  [
+                    4.340277777777781e-05,
+                    1.5625000000000007e-05
+                  ]
+                ],
+                "step": 1.0
+              }
+            },
+            "adam_max_abs_error": 1.734723475976807e-18,
+            "parameter_max_abs_error": 3.469446951953614e-18,
+            "parameters": {
+              "bias": [
+                0.019999997600000288,
+                -0.019999997600000288
+              ],
+              "weight": [
+                [
+                  0.23000000159999986,
+                  -0.4800000047999988
+                ],
+                [
+                  0.73000000096,
+                  0.10500000159999986
+                ]
+              ]
+            }
+          },
+          "runtime": {
+            "adam": {
+              "exp_avg": [
+                0.012499999999999995,
+                -0.008333333333333331,
+                0.008333333333333331
+              ],
+              "exp_avg_sq": [
+                1.5625000000000007e-05,
+                6.94444444444445e-06,
+                6.94444444444445e-06
+              ],
+              "step": 1.0
+            },
+            "parameters": [
+              0.10500000159999986,
+              0.019999997600000288,
+              -0.019999997600000288
+            ]
+          },
+          "runtime_flat_range": [
+            3,
+            6
+          ],
+          "update": {
+            "gradient": [
+              0.12499999999999999,
+              -0.08333333333333333,
+              0.08333333333333333
+            ],
+            "gradient_max_abs_error": 1.3877787807814457e-17,
+            "local_targets": 4,
+            "rows": [
+              1,
+              2
+            ]
+          }
+        }
+      }
+    ],
+    "world_size": 2
+  },
+  "scope": "single-host CPU/Gloo, FSDP1, DCP update-boundary restart with a changed world size",
+  "source_sha256": {
+    "fsdp_lab.py": "3a60f365c68744c36fdc7b911712b9bceac5be5628705b35510226707d2acb72",
+    "fsdp_reshard.py": "91eb066ae99693bae169c3ee71f3e53fabada4ac11d8aa3bcfd9c0859953e832"
+  },
+  "status": "passed",
+  "tolerance": {
+    "atol": 1e-12,
+    "rtol": 0.0
+  },
+  "verification": {
+    "load_vs_uninterrupted_update1_max_abs_error": 0.0,
+    "resume_full_state_values_exactly_equal": false,
+    "resume_vs_uninterrupted_update2_max_abs_error": 1.734723475976807e-18,
+    "save_vs_uninterrupted_update1_max_abs_error": 0.0
+  }
+}

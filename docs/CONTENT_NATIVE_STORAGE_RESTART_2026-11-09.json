@@ -1,0 +1,26 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "274e16e9f00e1e3a0e06ce580e43b468a1290c1f",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_STATE_PATHS_2026-11-09.json": "368830972fc16b4e252584ba85c2a23bbc7d9aece03aec1c5075e2ac4719f659"
+  },
+  "revised_teaching_units": [
+    {
+      "chapter": "k8s-storage",
+      "reviewed_at": "2026-11-09",
+      "scope": "Connect claim binding and mounted data through a native CSI lifecycle",
+      "observation": "Observe waiting before a consumer, match PVC/PV and volume handle across two distinct Pods, verify the SQLite receipt after replacement, and observe deletion of the PV and backend.",
+      "reviewed_content_sha256": "2859bd83193750367eeac1b7e37c10e933bd52c038afbe32dc2ffb2099dc3fc3",
+      "record": "dist/labs/csi-storage/validation.json"
+    },
+    {
+      "chapter": "checkpoint-recovery",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow native DCP from saved named shards to a different training layout",
+      "observation": "Two CPU/Gloo ranks save a complete update. Three fresh ranks restore parameters, Adam and the cursor, match the uninterrupted second update within tolerance, and reject an inconsistent cursor or missing Adam state.",
+      "reviewed_content_sha256": "d72fb859ad80dd0a4533edc5fb475cd974dc12192f59e13101fb0bc6346e02f0",
+      "record": "dist/labs/fsdp-reshard/validation.json"
+    }
+  ]
+}

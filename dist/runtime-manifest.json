@@ -5,8 +5,8 @@
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "54725794d1d2ed2bff37293bb80e4cf7b39fd637de73be59fced487679a78e2c",
-      "bytes": 386126,
+      "sha256": "8f8dfbaca7b6704a6afd022ad62c068b9a0e1d52d7d9ab7efbf749c3a33ef2b0",
+      "bytes": 386228,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "25634254f744f8a01e1de5c9d44796205d06042a8f92d2472a0b77779b6dfb0c",
-          "bytes": 14170
+          "sha256": "3d418d923cb7a7499e01c7089b39736b73741d70131431b2b3081d2cf4f52d92",
+          "bytes": 14272
         },
         {
           "file": "manual-sharding-data.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "26cfd813abe11ef1f604844eb5286a61c5adeb3ca4f9438932e4621fcd994469",
-      "bytes": 3432858,
+      "sha256": "872b071f720652d0cab7910b8fa03a06c83552eaccac245734ec78590d1ea33d",
+      "bytes": 3443179,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -900,8 +900,8 @@
         },
         {
           "file": "progressive-storage-reading.js",
-          "sha256": "7ac7eb6f85bea366c9559905f141a7c9b001750224228ba94c054c26fd4403b1",
-          "bytes": 35010
+          "sha256": "b0c880aba3a7cab638f88542a7b3211843e5f8cba875e8fe2d56b5491fc9f0f6",
+          "bytes": 38553
         },
         {
           "file": "progressive-training-reading.js",
@@ -990,8 +990,8 @@
         },
         {
           "file": "progressive-training-recovery-reading.js",
-          "sha256": "c91ebba4f7ceee23122b177c6464fac795d603afced2f158ee432ca6e11c799e",
-          "bytes": 28886
+          "sha256": "36839d81149923a877283d02294518b7e8426d6f9d1146e98dc99945ba70d921",
+          "bytes": 33880
         },
         {
           "file": "progressive-cloud-network-config-reading.js",
@@ -1030,8 +1030,8 @@
         },
         {
           "file": "progressive-training-step-strategies-reading.js",
-          "sha256": "ae0ab665e40f6d6e6161e761c838e6f514a997ffd1827d0b757e3c72a79fd047",
-          "bytes": 36979
+          "sha256": "c3701fc82e3eb179e74c5f621369858a210e0fbc09792adc15fb12987fc5d53b",
+          "bytes": 37320
         },
         {
           "file": "integrated-service-data.js",
@@ -1140,8 +1140,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "a0496b181160767ca8b5ae2f340a31b8371d9e9a5ce3f4fc57635891f2ec4a6c",
-          "bytes": 61752
+          "sha256": "9b4834d6f3685400808fa7efb5a36216489341e552298298e9a55fd060a99a6f",
+          "bytes": 63195
         },
         {
           "file": "concept-navigation.js",
@@ -1155,7 +1155,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "e62245e695bf0cf71b0b9225cb8a62e03b1e192ad412173de697a03137b313cc",
+          "sha256": "62a128b1ff60b7ede140f4b9f81ccf4c1c65caa05edd2a8f6c6190399e31331b",
           "bytes": 145
         }
       ]
@@ -1164,8 +1164,8 @@
   "standalone": [
     {
       "file": "reading-comfort.js",
-      "sha256": "09e487150eeb06a031a3298b3b427a48384d0585d30f1cb21c9b4415305e10f0",
-      "bytes": 13248
+      "sha256": "d782573f1f29f7ef3cc679ff55cb0bb555a84afae2bf31835242c6c1ae8f1337",
+      "bytes": 8576
     },
     {
       "file": "site-search.js",

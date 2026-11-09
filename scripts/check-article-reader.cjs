@@ -40,14 +40,18 @@ function probeRuntime(reader){
  return new vm.Script(reader.runtime.replace(startup,startup.slice(0,preflight)+bridge),{filename:'reader-runtime-probe.js'});
 }
 
-function lightVM(script,base='/'){
+function lightVM(script,base='/',runtimeMode){
  const nodes={},state={fetches:0};
  const context={URLSearchParams,URL,AbortController,TextDecoder,crypto:crypto.webcrypto,setTimeout,clearTimeout,
   location:{pathname:base,search:'',hash:'',origin:'http://localhost'},localStorage:{getItem:()=>null,setItem(){}},
-  document:Object.assign(new EventTarget(),{querySelector:s=>s==='base'?{getAttribute:()=>base}:s==='link[rel=canonical]'?{href:'https://example.test'+base}:nodes[s]||null}),window:new EventTarget(),
+  document:Object.assign(new EventTarget(),{documentElement:{getAttribute:name=>name==='data-reader-runtime'?runtimeMode:null},querySelector:s=>s==='base'?{getAttribute:()=>base}:s==='link[rel=canonical]'?{href:'https://example.test'+base}:nodes[s]||null}),window:new EventTarget(),
   fetch(){state.fetches++;throw Error('unexpected eager search request');}};
  vm.createContext(context);script.runInContext(context);
  assert.equal(state.fetches,0,'initializing the light runtime does not fetch the search index');
+ if(runtimeMode==='full'){
+  assert.equal(context.__probe,undefined,'light startup arriving late leaves full runtime in charge');
+  return;
+ }
  assert.equal(context.__probe.getSearch().cache,null,'the light runtime starts without an eager index');
  return {context,p:context.__probe,nodes,state};
 }
@@ -76,8 +80,9 @@ function assertMetadata(metadata,canonical){
 }
 
 function checkManifest(reader,canonical){
- const expected={schema:1,staticReadingVersion:reader.version,articles:reader.metadata.articles.length,initialExecutableScripts:1,normalReaderScriptRequests:2,fullFallbackScripts:9,
-  initialReaderJSBytes:reader.initialReaderJSBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:hash(JSON.stringify(reader.metadata)),
+ const earlyFigureBytes=Buffer.byteLength(read('dist/reader-figures.js'));
+ const expected={schema:1,staticReadingVersion:reader.version,articles:reader.metadata.articles.length,initialExecutableScripts:2,normalReaderScriptRequests:2,fullFallbackScripts:9,
+  initialReaderJSBytes:reader.initialReaderJSBytes+earlyFigureBytes,initialInlineFigureBytes:earlyFigureBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:hash(JSON.stringify(reader.metadata)),
   assets:[reader.bootstrapAsset,reader.runtimeAsset,reader.searchAsset],reusedFunctions:reader.provenance,searchEntries:reader.index.length};
  const published=JSON.parse(read('dist/reader-runtime-manifest.json'));
  assert.deepStrictEqual(published,expected,'published reader manifest matches a fresh build from the final canonical VM');
@@ -277,6 +282,12 @@ async function checkExternalFallback(lightScript,indexBytes){
 function appFragment(html){const match=html.match(/<!-- APP_START -->([\s\S]*?)<!-- APP_END -->/);assert(match,'full initial APP fragment');return match[1];}
 const scriptTags=html=>[...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*><\/script>/g)];
 function withoutTemplates(html){return html.replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi,'');}
+function assertEarlyFigures(html,label){
+ const scripts=[...html.matchAll(/<script data-early-reader-figures>([\s\S]*?)<\/script>/g)];
+ assert.equal(scripts.length,1,label+': one independent early figure script');
+ assert.equal(scripts[0][1],read('dist/reader-figures.js'),label+': exact early figure source');
+ assert(scripts[0].index<html.indexOf('<script defer src='),label+': bind before any deferred runtime');
+}
 
 function checkPublishedHTML(reader,original){
  const plan=runtimePlan(shell,file=>sources.get(file));
@@ -285,10 +296,11 @@ function checkPublishedHTML(reader,original){
  let articles=0,anchors=0,otherPages=0;
  for(const a of reader.metadata.articles){
   const route='/article/'+a.id+'/',html=read('dist'+route+'index.html');
+  assertEarlyFigures(html,a.id);
   const template=[...html.matchAll(/<template\b[^>]*\bid="reader-full-runtime"[^>]*>([\s\S]*?)<\/template>/g)];
   assert.equal(template.length,1,a.id+': exactly one inert full-runtime template');
   assert.deepStrictEqual(scriptTags(template[0][1]).map(m=>m[1]),legacy,a.id+': nine fingerprinted fallback scripts in canonical order');
-  assert.deepStrictEqual(scriptTags(withoutTemplates(html)).map(m=>m[1]),[reader.bootstrapAsset.url],a.id+': only the bootstrap is initially executable');
+  assert.deepStrictEqual(scriptTags(withoutTemplates(html)).map(m=>m[1]),[reader.bootstrapAsset.url],a.id+': only one initial external reader script');
   // Undo only the runtime wrapper, then exercise the production patch API again.
   const bootstrapTag=scriptTags(withoutTemplates(html))[0][0];
   const unpatched=html.replace(template[0][0]+bootstrapTag,template[0][1]);
@@ -315,6 +327,7 @@ function checkPublishedHTML(reader,original){
  for(const file of indices){
   if(file.startsWith('article/'))continue;
   const html=read('dist/'+file),route=file==='index.html'?'/':'/'+file.slice(0,-10);
+  assertEarlyFigures(html,file);
   assert(!html.includes('id="reader-full-runtime"'),file+': non-article keeps the complete runtime');
   assert.deepStrictEqual(scriptTags(withoutTemplates(html)).map(m=>m[1]),legacy,file+': nine active complete scripts');
   assert.equal(reader.patchArticleHTML(html,route),html,file+': non-article HTML is unchanged by the reader patch');otherPages++;
@@ -390,6 +403,7 @@ async function main(){
   assertMetadata(reader.metadata,canonical);checkManifest(reader,canonical);
   for(const asset of [reader.bootstrapAsset,reader.runtimeAsset,reader.searchAsset])assert(fs.readFileSync(path.join(temp,'reader-assets',path.basename(asset.file))).equals(fs.readFileSync(path.join(dist,asset.file))),asset.file+': production and temporary assets are byte-identical');
   const lightScript=probeRuntime(reader);
+  lightVM(lightScript,'/infra-guide/','full');
   const navigation=checkNavigation(reader,lightScript,originals);
   const ranking=checkRankingAndMath(reader,lightScript,canonical);
   const lazy=await checkLazySearch(reader,lightScript,fs.readFileSync(path.join(temp,'reader-assets',path.basename(reader.searchAsset.file))));

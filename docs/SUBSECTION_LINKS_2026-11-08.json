@@ -203,6 +203,19 @@
         "subsection-6-98f1by",
         "subsection-7-1lng3cb",
         "subsection-7-1ip16iv",
+        "subsection-8-7y42a4",
+        "native-csi-storage"
+      ],
+      "visible_targets": [
+        "subsection-1-trt373",
+        "subsection-2-1ac2xpk",
+        "subsection-3-meie0t",
+        "subsection-4-zqe3e",
+        "subsection-5-11rv5av",
+        "subsection-6-98f1by",
+        "subsection-7-1lng3cb",
+        "subsection-7-1ip16iv",
+        "native-csi-storage",
         "subsection-8-7y42a4"
       ]
     },
@@ -508,9 +521,12 @@
       "targets": [
         "subsection-1-zredmh",
         "subsection-1-1mlk4h4",
-        "torch-checkpoint-path"
+        "torch-checkpoint-path",
+        "fsdp-dcp-reshard"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "fsdp-dcp-reshard"
+      ]
     },
     {
       "id": "training-performance",

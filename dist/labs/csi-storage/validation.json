@@ -1,0 +1,244 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "51e8781d24e19199a638b4b1f0dc477782e130fc65b45912f70b6aecdf56f8bf",
+  "writer_sha256": "a18f10c3cec6912174400bd09991ff37fe88e29dc84c89472d28c0ad5fe8bc9f",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "python_image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "csi_release": "v1.19.0",
+  "csi_commit": "6fab18ae4fc4f486193b618114eeb817d9929242",
+  "manifest_sha256": {
+    "attacher": "3a38b5198b0496927c0ce26c63e71d43e2263e2dbbb93a83acdec71d7c90a766",
+    "provisioner": "0ee8427b746a1d3b695705b74c2d7fb165121110b1a10c0b6e204918d93e814f",
+    "driver": "464307265464b77189bd4b339774cd2de69589458a62a740028b248f248c7e9a",
+    "plugin": "c3d075ee1dd17fa2b93d0ea216cd94d47b57f1f825210d0ca101607c58f9fdfa"
+  },
+  "cluster": "csi-46fc01874d1e",
+  "toolchain": {
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kubectl": "v1.35.8",
+    "docker_engine": "linux x86_64 7.0.0-1017-azure"
+  },
+  "kubernetes_server": "v1.35.8",
+  "node": {
+    "name": "csi-46fc01874d1e-control-plane",
+    "uid": "afab3e81-7a28-4159-869f-72a4dd0b1c94"
+  },
+  "csi": {
+    "driver": {
+      "name": "hostpath.csi.k8s.io",
+      "uid": "7705caa7-d12a-4d85-9401-443edb13e726"
+    },
+    "attach_required": true,
+    "registration": {
+      "name": "hostpath.csi.k8s.io",
+      "nodeID": "csi-46fc01874d1e-control-plane",
+      "topologyKeys": [
+        "topology.hostpath.csi/node"
+      ]
+    },
+    "pod": {
+      "name": "csi-hostpathplugin-0",
+      "uid": "61ad4533-77e2-45e3-b58e-e62334947f8a"
+    },
+    "images": {
+      "csi-attacher": "registry.k8s.io/sig-storage/csi-attacher@sha256:3998c70f02511068e879b2222d7d4943db86fe044dd311f7bbb90812f778ad82",
+      "csi-provisioner": "registry.k8s.io/sig-storage/csi-provisioner@sha256:7f4a41ea3d53b00331db3a7f04cffb4444ffba68008e8c15da33ecfb656288db",
+      "hostpath": "registry.k8s.io/sig-storage/hostpathplugin@sha256:9551271b5f9691832fead371f2930d56a7afc15ee76a05955624cf1c5e791768",
+      "liveness-probe": "registry.k8s.io/sig-storage/livenessprobe@sha256:c3dc967a4d8b18655e14bab5553017f850fda96221b8b0d2abfd9f6213c30f35",
+      "node-driver-registrar": "registry.k8s.io/sig-storage/csi-node-driver-registrar@sha256:692a30d9f27d32a25ea2784d01251b73e189e9d1156dd43c58f87ad2b70ec1e6"
+    }
+  },
+  "storage_class": {
+    "provisioner": "hostpath.csi.k8s.io",
+    "volumeBindingMode": "WaitForFirstConsumer",
+    "reclaimPolicy": "Delete"
+  },
+  "before_consumer": {
+    "pvc": {
+      "name": "app-data",
+      "uid": "a207dddd-f241-4e45-bbfe-c97d33fcded7"
+    },
+    "phase": "Pending",
+    "volume_name": null,
+    "claim_pvs": [],
+    "event": "WaitForFirstConsumer"
+  },
+  "consumers": [
+    {
+      "pod": {
+        "name": "writer",
+        "uid": "4e3e51ee-4001-43fb-a4a5-3f238360bb7f",
+        "node": "csi-46fc01874d1e-control-plane",
+        "phase": "Running",
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "claim": "app-data",
+        "mount_path": "/data"
+      },
+      "binding": {
+        "pvc": {
+          "name": "app-data",
+          "uid": "a207dddd-f241-4e45-bbfe-c97d33fcded7",
+          "phase": "Bound",
+          "pv": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7"
+        },
+        "pv": {
+          "name": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7",
+          "uid": "00dc0adb-922f-4236-a929-4e4dc043ee9b",
+          "phase": "Bound",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "app-data",
+            "namespace": "csi-lab",
+            "resourceVersion": "567",
+            "uid": "a207dddd-f241-4e45-bbfe-c97d33fcded7"
+          },
+          "driver": "hostpath.csi.k8s.io",
+          "handle": "0795aef7-dbf0-11f1-9ef9-bace475eb9a8",
+          "affinity": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "topology.hostpath.csi/node",
+                  "operator": "In",
+                  "values": [
+                    "csi-46fc01874d1e-control-plane"
+                  ]
+                }
+              ]
+            }
+          ],
+          "reclaim": "Delete",
+          "class": "csi-lab-wffc-delete",
+          "capacity": "1Gi"
+        }
+      },
+      "attachment": {
+        "name": "csi-b0b7d8717049dbc48aba0a48bd39c9948d151169ff0c7ea2a98b259c80f8acb4",
+        "uid": "38cd78a4-4249-410c-bcdb-7aedb2dfc79a",
+        "pv": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7",
+        "node": "csi-46fc01874d1e-control-plane",
+        "attacher": "hostpath.csi.k8s.io",
+        "attached": true
+      },
+      "data": {
+        "mount_path": "/data",
+        "existed": false,
+        "results": [
+          {
+            "op": "write-1",
+            "before": 0,
+            "after": 1,
+            "duplicate": false,
+            "current_counter": 1
+          }
+        ],
+        "sha_after": "f63c0c0052d886318afd21422cc5185ec6e7d968c7253444fc8ab6647e74df6e"
+      },
+      "node_file_sha256": "f63c0c0052d886318afd21422cc5185ec6e7d968c7253444fc8ab6647e74df6e",
+      "pod_deleted": true
+    },
+    {
+      "pod": {
+        "name": "replacement",
+        "uid": "315ee23a-dc8e-4bf5-a10a-12e17ee7c3c2",
+        "node": "csi-46fc01874d1e-control-plane",
+        "phase": "Running",
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "claim": "app-data",
+        "mount_path": "/data"
+      },
+      "binding": {
+        "pvc": {
+          "name": "app-data",
+          "uid": "a207dddd-f241-4e45-bbfe-c97d33fcded7",
+          "phase": "Bound",
+          "pv": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7"
+        },
+        "pv": {
+          "name": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7",
+          "uid": "00dc0adb-922f-4236-a929-4e4dc043ee9b",
+          "phase": "Bound",
+          "claim": {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "name": "app-data",
+            "namespace": "csi-lab",
+            "resourceVersion": "567",
+            "uid": "a207dddd-f241-4e45-bbfe-c97d33fcded7"
+          },
+          "driver": "hostpath.csi.k8s.io",
+          "handle": "0795aef7-dbf0-11f1-9ef9-bace475eb9a8",
+          "affinity": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "topology.hostpath.csi/node",
+                  "operator": "In",
+                  "values": [
+                    "csi-46fc01874d1e-control-plane"
+                  ]
+                }
+              ]
+            }
+          ],
+          "reclaim": "Delete",
+          "class": "csi-lab-wffc-delete",
+          "capacity": "1Gi"
+        }
+      },
+      "attachment": {
+        "name": "csi-b0b7d8717049dbc48aba0a48bd39c9948d151169ff0c7ea2a98b259c80f8acb4",
+        "uid": "38cd78a4-4249-410c-bcdb-7aedb2dfc79a",
+        "pv": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7",
+        "node": "csi-46fc01874d1e-control-plane",
+        "attacher": "hostpath.csi.k8s.io",
+        "attached": true
+      },
+      "data": {
+        "mount_path": "/data",
+        "existed": true,
+        "sha_before": "f63c0c0052d886318afd21422cc5185ec6e7d968c7253444fc8ab6647e74df6e",
+        "counter_before": 1,
+        "receipts_before": [
+          [
+            "write-1",
+            0,
+            1
+          ]
+        ],
+        "results": [
+          {
+            "op": "write-1",
+            "before": 0,
+            "after": 1,
+            "duplicate": true,
+            "current_counter": 1
+          },
+          {
+            "op": "write-2",
+            "before": 1,
+            "after": 2,
+            "duplicate": false,
+            "current_counter": 2
+          }
+        ],
+        "sha_after": "f27c2aa59a35de5210a7dbc9f241cfe35cc56b2c13b2e17cf1a736e30471b32a"
+      },
+      "node_file_sha256": "f27c2aa59a35de5210a7dbc9f241cfe35cc56b2c13b2e17cf1a736e30471b32a",
+      "pod_deleted": true
+    }
+  ],
+  "reclaim": {
+    "pvc_absent": true,
+    "pv_absent": true,
+    "pv_name": "pvc-a207dddd-f241-4e45-bbfe-c97d33fcded7",
+    "backend_path": "/var/lib/csi-hostpath-data/0795aef7-dbf0-11f1-9ef9-bace475eb9a8",
+    "backend_absent": true
+  },
+  "cleanup": {
+    "attempted": true,
+    "owned_nodes_removed": true
+  }
+}

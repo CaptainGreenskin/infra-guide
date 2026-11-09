@@ -1,0 +1,54 @@
+{
+  "baseCommit": "274e16e9f00e1e3a0e06ce580e43b468a1290c1f",
+  "oldFigureOpenedNativeSvgTab": true,
+  "viewport": [
+    390,
+    844
+  ],
+  "v81Pending": {
+    "controller": true,
+    "ready": false,
+    "url": "http://127.0.0.1:4349/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery",
+    "viewport": 390
+  },
+  "v81Early": {
+    "bodyLocked": true,
+    "dialogOpen": true,
+    "dialogs": 1,
+    "ready": false,
+    "url": "http://127.0.0.1:4349/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery"
+  },
+  "v81AfterLight": {
+    "dialogOpen": true,
+    "dialogs": 1,
+    "locked": true,
+    "ready": "true",
+    "runtime": "light"
+  },
+  "v81AfterEsc": {
+    "dialogOpen": false,
+    "focus": "放大：两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。",
+    "locked": false
+  },
+  "v81DuringFallback": {
+    "dialogOpen": true,
+    "dialogs": 1,
+    "locked": true,
+    "ready": false,
+    "reason": "light runtime asset failed",
+    "runtime": "full"
+  },
+  "v81AfterFallback": {
+    "dialogOpen": true,
+    "dialogs": 1,
+    "goal": "agent-platform",
+    "locked": true,
+    "ready": "true",
+    "runtime": "full"
+  },
+  "v81FallbackFocus": {
+    "closed": true,
+    "focus": "放大：两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。",
+    "locked": false
+  }
+}

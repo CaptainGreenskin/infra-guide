@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
+ 'fsdp-reshard':{folder:'fsdp-reshard',title:'原生 FSDP 检查点跨分片恢复'},
  'innodb':{folder:'innodb',title:'原生 InnoDB 执行树与事务锁'},
  'native-fsdp':{folder:'native-fsdp',title:'原生 FSDP 的参数片、梯度与 Adam 状态'},
  'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
@@ -173,6 +175,12 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sq
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-manual-sharding')+1,0,
  {id:'ai-native-fsdp',track:'ai',stage:2,title:'用原生 FSDP 跑两次正确的全局更新',chapter:'distributed-training',anchor:'native-fsdp-run',pack:'native-fsdp',files:['fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · 两个 CPU/Gloo 进程',kind:'真实 FULL_SHARD、Profiler 与 Adam 更新',observe:'每个 rank 三项参数和梯度，两份 Adam 历史各三项。重建完整状态，核对两次全批次参考及不等局部均值反例。',scope:'固定单机 CPU、模型与输入。完整状态在内存中提取。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-volume')+1,0,
+ {id:'cloud-native-csi-storage',track:'cloud',stage:2,title:'两个 Pod 如何接着写同一份数据',chapter:'k8s-storage',anchor:'native-csi-storage',pack:'csi-storage',files:['csi_storage_lab.py','volume_writer.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3',kind:'真实 CSI 动态供应与 SQLite 写入',observe:'先验证声明等待消费者，再核对两个 Pod 的同一卷句柄、重复写入回执和最终回收。',scope:'单节点 kind 与 Hostpath CSI 示例驱动，记录覆盖 Pod 替换和 Delete 回收。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-torch-checkpoint')+1,0,
+ {id:'ai-fsdp-reshard',track:'ai',stage:2,title:'两个训练进程保存，三个新进程继续更新',chapter:'checkpoint-recovery',anchor:'fsdp-dcp-reshard',pack:'fsdp-reshard',files:['fsdp_reshard.py','fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实 FSDP、DCP 与 Adam 恢复',observe:'区分具名保存分片和展平训练分片，核对恢复后一步与连续路径，并用缺 Adam 和错游标验证拒绝条件。',scope:'本机 CPU、同步保存与完整更新边界。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

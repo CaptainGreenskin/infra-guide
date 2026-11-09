@@ -36,4 +36,4 @@ for(const file of pages){
 }
 assert.equal(lightArticles,inventory.chapters);
 const compressed=files=>files.reduce((total,file)=>total+zlib.gzipSync(read(file)).length,0);
-console.log('PASS: '+canonical.length+' canonical scripts and '+plan.publicFiles.length+' complete-runtime files remain equivalent at root/Pages; '+lightArticles+' full-text article pages start with one bootstrap and retain nine inert fallback scripts. Legacy gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; reader assets checked separately, not a network timing claim.');
+console.log('PASS: '+canonical.length+' canonical scripts and '+plan.publicFiles.length+' complete-runtime files remain equivalent at root/Pages; '+lightArticles+' full-text article pages have one external bootstrap and retain nine inert fallback scripts. Legacy gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; inline figure startup and reader assets checked separately.');

@@ -3,6 +3,8 @@ function releaseReader(){
  for(const selector of ['#search-open','#search-close','#theme','#mobile-menu','.skip']){const node=$(selector);if(node)node.onclick=null;}
 }
 function requestFullRuntime(reason){releaseReader();window.dispatchEvent(new CustomEvent('reader-full-runtime',{detail:{reason}}));}
+// An explicit fallback can win while the browser is still fetching this script.
+if(document.documentElement?.getAttribute?.('data-reader-runtime')==='full')return;
 listen(window,'reader-full-runtime',releaseReader);
 try{
  if('scrollRestoration' in history)history.scrollRestoration='auto';

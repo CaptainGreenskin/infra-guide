@@ -4140,6 +4140,60 @@
         "用相同口径评价扩展",
         "真实两进程：从单步梯度走到状态更新"
       ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "f7162bb33d8af07818cb6db6fe0b0c790ba28a0697cc8ff183cfb40978f02b55",
+      "reviewed_content_sha256": "2859bd83193750367eeac1b7e37c10e933bd52c038afbe32dc2ffb2099dc3fc3",
+      "scope": "Connect claim binding and mounted data through a native CSI lifecycle",
+      "observation": "Observe waiting before a consumer, match PVC/PV and volume handle across two distinct Pods, verify the SQLite receipt after replacement, and observe deletion of the PV and backend.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7dfdcb537830a70c54d1ab28c4832b730f78caf010dd4c145d8b47fd6a5d61f1",
+      "reviewed_content_sha256": "30c3d87b948b29ad2d5722c02444cf1da58170df4581d1c01cf6982287f7c489",
+      "scope": "Carry the FSDP update into the matching native restart exercise",
+      "observation": "Link the existing six-parameter FSDP fixture directly to DCP save/load and compare the two layouts.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "8c89f07378bc1cc40cfcf9558449fd09f9651b949b13c606189648ceaf8fbd26",
+      "reviewed_content_sha256": "d72fb859ad80dd0a4533edc5fb475cd974dc12192f59e13101fb0bc6346e02f0",
+      "scope": "Follow native DCP from saved named shards to a different training layout",
+      "observation": "Two CPU/Gloo ranks save a complete update. Three fresh ranks restore parameters, Adam and the cursor, match the uninterrupted second update within tolerance, and reject an inconsistent cursor or missing Adam state.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
     }
   ]
 }

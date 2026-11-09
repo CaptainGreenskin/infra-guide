@@ -1,0 +1,229 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "274e16e9f00e1e3a0e06ce580e43b468a1290c1f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_STATE_PATHS_2026-11-09.json": "5110f21efa56fe6ead284dcad26fee7898031bfe7984477b809ce7a265f26946"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "210fed9fbe35a7f0ace3179e614aa5c1909d6cc386a91cb0d81a842d091dd3e8",
+      "reviewed_sha256": "215998c94ba9950a3fd69252d8f31f347d32bebdc2f0b7d108080aa1e7965abc",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "7ac7eb6f85bea366c9559905f141a7c9b001750224228ba94c054c26fd4403b1",
+      "reviewed_sha256": "b0c880aba3a7cab638f88542a7b3211843e5f8cba875e8fe2d56b5491fc9f0f6",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "c91ebba4f7ceee23122b177c6464fac795d603afced2f158ee432ca6e11c799e",
+      "reviewed_sha256": "36839d81149923a877283d02294518b7e8426d6f9d1146e98dc99945ba70d921",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "ae0ab665e40f6d6e6161e761c838e6f514a997ffd1827d0b757e3c72a79fd047",
+      "reviewed_sha256": "c3701fc82e3eb179e74c5f621369858a210e0fbc09792adc15fb12987fc5d53b",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "a0496b181160767ca8b5ae2f340a31b8371d9e9a5ce3f4fc57635891f2ec4a6c",
+      "reviewed_sha256": "9b4834d6f3685400808fa7efb5a36216489341e552298298e9a55fd060a99a6f",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "25634254f744f8a01e1de5c9d44796205d06042a8f92d2472a0b77779b6dfb0c",
+      "reviewed_sha256": "3d418d923cb7a7499e01c7089b39736b73741d70131431b2b3081d2cf4f52d92",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/reader-figures.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb63fe20322bd9eb553cf2dde86b6d111c140dc881d8593db7a0a37a3f17850f",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "09e487150eeb06a031a3298b3b427a48384d0585d30f1cb21c9b4415305e10f0",
+      "reviewed_sha256": "d782573f1f29f7ef3cc679ff55cb0bb555a84afae2bf31835242c6c1ae8f1337",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "4654239cf2e7bb198a73f11285c20ee9ac19c3ac1c7dfebeb8265575e2796f74",
+      "reviewed_sha256": "54c1e0cf044d46ad124edd161c5b7c0e531ed4a7ece1d3499b738330867d9494",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "e62245e695bf0cf71b0b9225cb8a62e03b1e192ad412173de697a03137b313cc",
+      "reviewed_sha256": "62a128b1ff60b7ede140f4b9f81ccf4c1c65caa05edd2a8f6c6190399e31331b",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/article-reader/reader-startup.js": {
+      "previous_sha256": "88455c8c48da9b05067d8600b200b168bc7e35fd53a8dabc1e35d91286db8628",
+      "reviewed_sha256": "c301d851454f9d2d6911ef85d9a9ea03de75d3b7efcc33eb4864a82d65a348f2",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "f0e6960951fc207c949a65220f83c7ad5611dd509498d8bd3dc6e96caf2613ed",
+      "reviewed_sha256": "73b44a9286b149708b930947626e3ac634b3105f751c31ab1d3012f9cc0b2b36",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "cacef1120b5066fb6d5ebd65293507628bfdd3fb87944f851fc451be24432c19",
+      "reviewed_sha256": "8825877fcaef8767fd34a567bd1ea02231f43425e46339062f3e4bd218f4d785",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "257eb78fd933a3eb03c79a19ebb4fdf4fe987c4475f736de6dc13aadaf265034",
+      "reviewed_sha256": "663c01d0e02202cb4ee67f42e40550ab31af3b282d1bc44130666ac22f97c2b6",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/check-runtime.cjs": {
+      "previous_sha256": "628b5f4bc5721eaaa7b3d42d40e1a88c71b019e3daf153debb9898c7dc290951",
+      "reviewed_sha256": "b767972742dc22ffb704cddf142aea5421470984436576467c672f656aaf86c7",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/check-reader-figures.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fb7c215034494620aecd84cfb696a3c1624c289304e607c30b7e77358ffdc1bd",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "scripts/check-native-csi-fsdp-reshard.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "25bf17cad9faeeef3b16dd079f4c7fe9d2ac1a24daae4733635a7bccf6fe0b79",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "docs/READING_FIGURE_STARTUP_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7220c2f3e5e224d3ed7194f217488a366199af9707a7712b5fb1048a8e67f720",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "b8b9797d5ece8c4418f4cb8ad901f88a3d0690f0970ddf3894afaba0161700e8",
+      "reviewed_sha256": "c4be1819049e5b98ccfd7977cf7f8964c262eadf39bb2e65f404e662d6e59e88",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "0efedf6e5eded389cb51ddaedf0377e657b51e4f2db173c6c8ed1597cd9849d0",
+      "reviewed_sha256": "a6aaf3407b08be4bdab79ef4d50de0260a115608669b110f1b911056630ba732",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "docs/CONTENT_NATIVE_STORAGE_RESTART_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "86843cb6edf40c554e9ab91132d1065775569daf447b9dc604fb18d1a246e9ef",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "c6cbe7239f0ba9f09b37991fafec75ca021ef41f0b37a97a9c18a8c16e0b12fe",
+      "reviewed_sha256": "96f4a4f0536c3634d1d37711e96309b47d66fe14f14228c52f8b0715900db321",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e9db4da52721730e0d6b60f2595a40e4b705ff33237746ebe5cb075fae514e82",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/diagrams/csi-storage-lifecycle.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "570ea0f09c47dbd6c8cbdb0f11ee5e99212d4bb3df1ab6ffa4eb84a634bae017",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "156835e5d49f94ea1af87e4c5c3395ba3cea6b591023e8155c329b09ad660ca6",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f34d462ec23c6d96f79fe52faf2dcfbe97c439cdabc2f3f839bc9463ca19b2e6",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage/csi_storage_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "51e8781d24e19199a638b4b1f0dc477782e130fc65b45912f70b6aecdf56f8bf",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "20a8673a9413451187ac7f3c4cd79df7036a3212f60c20535ccf212ee8c15ca5",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/csi-storage/volume_writer.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a18f10c3cec6912174400bd09991ff37fe88e29dc84c89472d28c0ad5fe8bc9f",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/fsdp-reshard.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ea6aef03d0c8c4071bac7d987da49f17da7638a6909b36e4094382f23c4524c2",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/diagrams/fsdp-dcp-reshard.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "95a203b557573782067e798e5898ef490859668e256d3df47eee587f32f6e7b8",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/fsdp-reshard/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "961656bfeb13904c666dcbc3d3cd15d2f5b20937248a3afbdafea162e5047605",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/fsdp-reshard/fsdp_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a60f365c68744c36fdc7b911712b9bceac5be5628705b35510226707d2acb72",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/fsdp-reshard/fsdp_reshard.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "91eb066ae99693bae169c3ee71f3e53fabada4ac11d8aa3bcfd9c0859953e832",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    },
+    "dist/labs/fsdp-reshard/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4cad1dd45b9ca6edfc153f4cbc71c174d050e570dd1fe9277bf72941ef61138e",
+      "scope": "Connect native CSI and DCP evidence and preserve the first figure action through deferred reader initialization."
+    }
+  },
+  "article_sections": {
+    "k8s-storage": {
+      "scope": "Connect claim binding and mounted data through a native CSI lifecycle",
+      "observation": "Observe waiting before a consumer, match PVC/PV and volume handle across two distinct Pods, verify the SQLite receipt after replacement, and observe deletion of the PV and backend.",
+      "sections": [
+        3,
+        7
+      ]
+    },
+    "checkpoint-recovery": {
+      "scope": "Follow native DCP from saved named shards to a different training layout",
+      "observation": "Two CPU/Gloo ranks save a complete update. Three fresh ranks restore parameters, Adam and the cursor, match the uninterrupted second update within tolerance, and reject an inconsistent cursor or missing Adam state.",
+      "sections": [
+        3,
+        6,
+        8
+      ]
+    },
+    "distributed-training": {
+      "scope": "Carry the FSDP update into the matching native restart exercise",
+      "observation": "Link the existing six-parameter FSDP fixture directly to DCP save/load and compare the two layouts.",
+      "sections": [
+        4
+      ]
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "274e16e9f00e1e3a0e06ce580e43b468a1290c1f",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-storage",
+      "distributed-training",
+      "checkpoint-recovery"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "k8s-storage": 1,
+      "checkpoint-recovery": 2
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 59,
+    "learning_tasks": 99
+  }
+}

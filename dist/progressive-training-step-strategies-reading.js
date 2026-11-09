@@ -263,6 +263,7 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
  p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
  trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
- p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值、通信耗时和跨规模恢复需各自实测。')+
+ p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',
+ '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
 })();

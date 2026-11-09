@@ -5314,6 +5314,19 @@ const progressiveAgentSectionTitles={
  fold('wal_backup.py 完整源码',k7[1]))+paragraphs(k[7],'practice-links')+
  p('将同样的验收条件用于集群时，还要给出恢复卷身份、目标 Pod 与实际业务输出。数据库程序结果、CSI 操作结果和业务切换结果在同一份记录中关联，才能回答数据从哪里来、到了哪个恢复点，以及消费者是否已继续工作。')
  ]);
+
+ storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="#native-csi-storage">查看动态供应与挂载实战 →</a>');
+
+ storage.sections[6][1]+=h('native-csi-storage','原生 CSI 实战：等待绑定、替换 Pod 与回收')+
+ p('这次在 Linux 上创建单节点 kind 集群，安装 Kubernetes CSI 社区的 Hostpath 示例驱动。驱动用 kind 节点内的目录保存数据。应用 Pod 引用 <code>app-data</code> PVC，由 kubelet 经驱动挂载到 <code>/data</code>。实战复用同一份 <code>volume_writer.py</code>，使用两个依次创建和删除的 Pod。')+
+ '<figure class="training-figure"><a href="diagrams/csi-storage-lifecycle.svg" target="_blank" rel="noopener" aria-label="放大：两个 Pod 先后使用同一 CSI 卷"><img src="diagrams/csi-storage-lifecycle.svg" width="440" height="541" alt="PVC 等待首个 Pod，替换 Pod 接着用同一卷，最后检查 API 中的 PV 和节点内的目录均被回收" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>从延迟绑定到同卷换 Pod，再分别核对 PV 与后端目录。<a href="diagrams/csi-storage-lifecycle.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('先创建 1Gi PVC。记录里有 <code>WaitForFirstConsumer</code> 事件，此时状态为 Pending，尚无 PV 引用这份声明。首个 Pod 就绪时，PVC 已绑定到 CSI PV。该 PV 的节点亲和性指向这个 kind 节点，<code>VolumeAttachment</code> 也显示驱动已将卷连接到该节点。')+
+ table(['需要区分的身份','两次挂载的实际记录'],[['运行实例','首个 Pod UID 为 4e3e51ee…，替换 Pod UID 为 315ee23a…'],['声明和绑定','PVC UID 与 PV UID 均相同，PV 的 claimRef.uid 指向这份 PVC'],['后端卷','两次的 volumeHandle 均为 0795aef7…'],['应用数据','首个 Pod 执行 write-1，计数 0→1。替换 Pod 先只读取得计数 1 和原回执；复投仍为 1，新操作 write-2 推进到 2']])+
+ p('两次写入后，容器文件和节点后端文件的 SHA-256 分别一致。替换 Pod 写入前读到的文件摘要也与首个 Pod 写入后的摘要相同。最后先删替换 Pod，再删 PVC。该 PV 的回收策略为 <code>Delete</code>。程序分别确认 PV 对象消失、同一个卷句柄对应的节点目录消失，再核对自建集群已清理。这里验证的是示例驱动在一个节点上的回收过程，数据仍以本地目录为后端。')+
+ p('解压后进入 <code>csi-storage</code> 目录。第一条命令在 Linux amd64 Docker 上复跑并保存新记录；第二条离线检查随包发布的 CI 原始记录。')+
+ trainingCode('复跑 CSI 实验并校验随包记录','SHELL','python3 -B csi_storage_lab.py --writer volume_writer.py \\\n  --output native-record.json\npython3 -B csi_storage_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>';
+ storage.updated='2026.11.09';
 })();
 
 
@@ -9041,7 +9054,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '连续四轮共32次更新。另一条路径先两轮、16次更新，在轮末保存并正常结束，再由新进程恢复到总共四轮，继续剩余16次。下面--epochs表示目标总轮数；恢复命令的4表示做到第四轮。')+
  codes(old[2])[0]+
  p('固定相同初值、数据、设备、精度、world size和训练配置，两条路径应得到对应的最终状态。比较器递归检查模型、优化器、scaler、RNG、next_epoch和配置签名；张量的类型、形状与数值一起核对。序列化文件的字节、运行时间和目录大小可以不同，逻辑状态才是这里的比较对象。',
- '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本章沿固定配置继续。'),
+ '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本节的DDP对照沿固定配置继续。'),
 
  p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。',
  '先核对各rank载入同一版本的状态，next_epoch与恢复后首批输入对应，再观察数值和执行时间。CPU固定路径的精确相等为本实验提供基线；GPU上的舍入、算法选择和通信顺序另按目标确定性设置定义容差。若要求按位一致，需要验证相应算子与通信路径。',
@@ -9095,8 +9108,39 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('比较器递归遍历原基线的全部字段和每个张量，检查类型、形状与值；独立采样器检查实际消费的输入ID。清空Adam的反例实际完成训练，随后由比较器发现状态不同；缺.metadata的反例在加载阶段停止。两种结果分别检验状态延续与存储入口。')+
  fold('展开完整train_dcp.py：对象、训练循环与同步保存',codes(old[7])[3])+
  fold('展开完整run_lab.py：新进程恢复、逐项比较与反例',codes(old[7])[4])+
- p('复现环境固定PyTorch 2.5.1、同宿主两个CPU/Gloo进程、FP32和完整轮边界。现有记录覆盖同步DCP与正常进程退出后的恢复；FSDP/DTensor重分片、GPU/NCCL、异步保存、对象存储、跨机和掉电仍属于各自目标环境实验。')
+ p('上面这份旧记录固定PyTorch 2.5.1、同宿主两个CPU/Gloo进程、FP32和完整轮边界，验证同一进程数下的同步DCP保存和新进程恢复。下面换用独立的六参数FSDP模型，沿一次更新边界观察两个rank保存、三个rank恢复。')
  ]);
+
+ const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ recovery.sections[5][1]+=p('进程数变化时，恢复组先按自己的布局为每个参数名创建接收张量。DCP把保存值读入这些张量，框架再将具名状态装入新的训练分片。下一批读哪几项、游标与优化器是否在同一次更新边界，由训练程序核对。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">看两进程保存、三进程恢复的实际对照 →</a>');
+ recovery.sections[7][1]+='<h3 id="fsdp-dcp-reshard">两个进程保存，三个进程继续同一次训练</h3>'+p(
+ '沿用并行策略章的六参数线性层和同一批三个样本。每个样本有两个标量目标。两进程时分别读一行、两行，三进程时每个读一行。FSDP 会平均各进程的梯度，因此每个进程用 world size × 本地损失总和 ÷ 6 反向。两组算的是同一份全局目标。',
+ '第 1 次更新完成后，两个进程各持三项展平训练参数，Adam 的一阶、二阶历史也各有三项。写检查点时，先按原来的 weight、bias 参数名拆回各自的张量，再按各张量的第一轴分片。设备网格 DeviceMesh 描述参与分片的进程，这里是一维 CPU 组。本例使用封装式 FSDP 接口 FSDP1，具名状态以 DTensor 表示，每项带有全局形状和本地片。')+
+ trainingFigure('fsdp-dcp-reshard','从两个 rank 的展平参数到具名检查点，再装入三个 rank 的训练分片。')+
+ p('保存组把模型、Adam 历史和已完成更新数 1 一起写入 DCP。实际目录包含 .metadata 和两个 .distcp 文件，元数据标明各具名张量的块形状和起点。新组先建三进程的具名接收布局，再 load 并 set_state_dict。weight 只有两行，bias 只有两项，所以 rank 2 的具名接收片为空。装回展平训练布局后，rank 2 负责两项偏置及对应的 Adam 历史。代码中的 SHARDED 将 full_state_dict 设为 False，选择分片状态。')+
+ trainingCode('保存和装入具名状态的节选，省略记录与断言','PYTHON',`# 两个 rank 完成更新 1 后一起执行
+model_state, optimizer_state = get_state_dict(model, optimizer, options=SHARDED)
+dcp.save({"model": model_state, "optimizer": optimizer_state,
+          "completed_updates": torch.tensor(1)}, checkpoint_id=folder)
+
+# 三个新 rank 各自构造目标布局，再一起读取
+model_state, optimizer_state = get_state_dict(model, optimizer, options=SHARDED)
+state = {"model": model_state, "optimizer": optimizer_state,
+         "completed_updates": torch.tensor(-1)}
+dcp.load(state, checkpoint_id=folder)
+set_state_dict(model, optimizer, model_state_dict=state["model"],
+               optim_state_dict=state["optimizer"], options=SHARDED)`)+
+ p('新建 Adam 的接收槽位由此版本的接口以零学习率初始化，槽位中的零矩量随后由保存值覆盖。程序在装入后核对游标和 Adam 步数都为 1，才开始第 2 次更新。另一组两个 rank 不间断完成两次更新，普通线性层也独立在全批上核对梯度、参数和 Adam 历史。')+
+ table(['实际对照','观测结果'],[
+  ['保存边界、恢复边界与连续路径的第 1 次更新','完整模型与 Adam 的最大绝对差均为 0'],
+  ['三个 rank 完成第 2 次更新','与连续两 rank 的完整状态最大绝对差约 1.73e−18，满足绝对容差 1e−12'],
+  ['模型和 Adam 保持第 1 次更新，只把保存的游标改成 0','原生加载成功，应用看到 Adam 步数为 1 后拒绝继续'],
+  ['只加载模型与游标','应用拒绝缺失的 Adam。绕过检查更新一次后，参数最大差约 0.0005484']
+ ])+
+ fold('选读固定版本的空片反例',p('省略 DeviceMesh 时，本例的 FSDP1 采用 ShardedTensor 构造具名状态。第三个 rank 没有该具名张量的本地片，PyTorch 2.5.1 在 get_state_dict 阶段失败，程序尚未调用 dcp.load。正例用 DTensor 描述同一个空片，再完成实际加载。<a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_state_dict_utils.py#L738-L751">核对 DeviceMesh 的状态类型选择 ↗</a>'))+
+ trainingCode('在解压目录运行，使用 Python 3.12 和 PyTorch 2.5.1','SHELL','python -B fsdp_reshard.py > replay.json')+
+ p('这次实跑在同一台机器上使用 CPU/Gloo、双精度和同步保存，保存完成后另起进程组，恢复点位于完整更新边界。自动扩缩容、异步保存、物理多机和 CUDA/NCCL 仍需对应环境的运行证据。')+
+ '<p class="practice-links"><a href="labs/fsdp-reshard.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/fsdp-reshard/README.md">运行说明 →</a> · <a href="labs/fsdp-reshard/validation.json">核对各 rank 的布局和 Adam 历史 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/state_dict_loader.py#L49-L75">PyTorch 2.5.1 DCP 加载接口 ↗</a></p>';
 
  rewrite('training-performance',7,old=>[
  p('前章使训练能从一份明确状态继续，现在比较同一训练任务怎样更早、更省资源地完成。正常路径仍是读取输入→前向与反向→合并梯度→应用优化器更新→按周期保存状态。扩卡、改善输入或减少保存暂停，改变的是这条路径中的不同部分；先固定要完成的工作，再比较它的时间与成本。',
@@ -10716,7 +10760,8 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
  p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
  trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
- p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值、通信耗时和跨规模恢复需各自实测。')+
+ p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',
+ '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
 })();
 
@@ -13703,6 +13748,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
+ 'fsdp-reshard':{folder:'fsdp-reshard',title:'原生 FSDP 检查点跨分片恢复'},
  'innodb':{folder:'innodb',title:'原生 InnoDB 执行树与事务锁'},
  'native-fsdp':{folder:'native-fsdp',title:'原生 FSDP 的参数片、梯度与 Adam 状态'},
  'encoder-decoder':{folder:'encoder-decoder',title:'从源句到目标译文的 Transformer'},
@@ -13876,6 +13923,12 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sq
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-manual-sharding')+1,0,
  {id:'ai-native-fsdp',track:'ai',stage:2,title:'用原生 FSDP 跑两次正确的全局更新',chapter:'distributed-training',anchor:'native-fsdp-run',pack:'native-fsdp',files:['fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · 两个 CPU/Gloo 进程',kind:'真实 FULL_SHARD、Profiler 与 Adam 更新',observe:'每个 rank 三项参数和梯度，两份 Adam 历史各三项。重建完整状态，核对两次全批次参考及不等局部均值反例。',scope:'固定单机 CPU、模型与输入。完整状态在内存中提取。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-volume')+1,0,
+ {id:'cloud-native-csi-storage',track:'cloud',stage:2,title:'两个 Pod 如何接着写同一份数据',chapter:'k8s-storage',anchor:'native-csi-storage',pack:'csi-storage',files:['csi_storage_lab.py','volume_writer.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3',kind:'真实 CSI 动态供应与 SQLite 写入',observe:'先验证声明等待消费者，再核对两个 Pod 的同一卷句柄、重复写入回执和最终回收。',scope:'单节点 kind 与 Hostpath CSI 示例驱动，记录覆盖 Pod 替换和 Delete 回收。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-torch-checkpoint')+1,0,
+ {id:'ai-fsdp-reshard',track:'ai',stage:2,title:'两个训练进程保存，三个新进程继续更新',chapter:'checkpoint-recovery',anchor:'fsdp-dcp-reshard',pack:'fsdp-reshard',files:['fsdp_reshard.py','fsdp_lab.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实 FSDP、DCP 与 Adam 恢复',observe:'区分具名保存分片和展平训练分片，核对恢复后一步与连续路径，并用缺 Adam 和错游标验证拒绝条件。',scope:'本机 CPU、同步保存与完整更新边界。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14099,5 +14152,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="1390782a01a3c3ab2c035ca79d71ad4cced801385e7e2aec82fd522794df2a7d";
+const staticReadingVersion="9f1f37d45cc2c9e564c8c228be71db92889c1cdf38bba29d713e065772e5c941";
 

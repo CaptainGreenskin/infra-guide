@@ -160,4 +160,17 @@
  fold('wal_backup.py 完整源码',k7[1]))+paragraphs(k[7],'practice-links')+
  p('将同样的验收条件用于集群时，还要给出恢复卷身份、目标 Pod 与实际业务输出。数据库程序结果、CSI 操作结果和业务切换结果在同一份记录中关联，才能回答数据从哪里来、到了哪个恢复点，以及消费者是否已继续工作。')
  ]);
+
+ storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="#native-csi-storage">查看动态供应与挂载实战 →</a>');
+
+ storage.sections[6][1]+=h('native-csi-storage','原生 CSI 实战：等待绑定、替换 Pod 与回收')+
+ p('这次在 Linux 上创建单节点 kind 集群，安装 Kubernetes CSI 社区的 Hostpath 示例驱动。驱动用 kind 节点内的目录保存数据。应用 Pod 引用 <code>app-data</code> PVC，由 kubelet 经驱动挂载到 <code>/data</code>。实战复用同一份 <code>volume_writer.py</code>，使用两个依次创建和删除的 Pod。')+
+ '<figure class="training-figure"><a href="diagrams/csi-storage-lifecycle.svg" target="_blank" rel="noopener" aria-label="放大：两个 Pod 先后使用同一 CSI 卷"><img src="diagrams/csi-storage-lifecycle.svg" width="440" height="541" alt="PVC 等待首个 Pod，替换 Pod 接着用同一卷，最后检查 API 中的 PV 和节点内的目录均被回收" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>从延迟绑定到同卷换 Pod，再分别核对 PV 与后端目录。<a href="diagrams/csi-storage-lifecycle.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('先创建 1Gi PVC。记录里有 <code>WaitForFirstConsumer</code> 事件，此时状态为 Pending，尚无 PV 引用这份声明。首个 Pod 就绪时，PVC 已绑定到 CSI PV。该 PV 的节点亲和性指向这个 kind 节点，<code>VolumeAttachment</code> 也显示驱动已将卷连接到该节点。')+
+ table(['需要区分的身份','两次挂载的实际记录'],[['运行实例','首个 Pod UID 为 4e3e51ee…，替换 Pod UID 为 315ee23a…'],['声明和绑定','PVC UID 与 PV UID 均相同，PV 的 claimRef.uid 指向这份 PVC'],['后端卷','两次的 volumeHandle 均为 0795aef7…'],['应用数据','首个 Pod 执行 write-1，计数 0→1。替换 Pod 先只读取得计数 1 和原回执；复投仍为 1，新操作 write-2 推进到 2']])+
+ p('两次写入后，容器文件和节点后端文件的 SHA-256 分别一致。替换 Pod 写入前读到的文件摘要也与首个 Pod 写入后的摘要相同。最后先删替换 Pod，再删 PVC。该 PV 的回收策略为 <code>Delete</code>。程序分别确认 PV 对象消失、同一个卷句柄对应的节点目录消失，再核对自建集群已清理。这里验证的是示例驱动在一个节点上的回收过程，数据仍以本地目录为后端。')+
+ p('解压后进入 <code>csi-storage</code> 目录。第一条命令在 Linux amd64 Docker 上复跑并保存新记录；第二条离线检查随包发布的 CI 原始记录。')+
+ trainingCode('复跑 CSI 实验并校验随包记录','SHELL','python3 -B csi_storage_lab.py --writer volume_writer.py \\\n  --output native-record.json\npython3 -B csi_storage_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>';
+ storage.updated='2026.11.09';
 })();
