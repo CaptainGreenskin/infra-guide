@@ -1,0 +1,55 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "bd7e37e8d9b059d7640026e6ae3c089b99f3496a",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_SEQUENCE_MASK_CONFIG_2026-11-09.json": "7b11e4332d7f9b0cadd51779a27734b36e024d1c6c40555a5bc23bdd1495709f"
+  },
+  "body_revisions": [
+    {
+      "id": "moe-routing",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9d3929af5556a181f3c5c6e003d2bfa5e54bf2f1ad7b48b115e6454c7c2ec7eb",
+      "reviewed_content_sha256": "f391d5c07f2ee4769d4aeaf94be7d764d46f655633815b4e50a179a3eb8d1f00",
+      "scope": "Follow local expert parameters, native two-way exchange and matching gradients",
+      "observation": "Two CPU/Gloo ranks dispatch and return fixed routes and preserve token identity. An independent serial oracle checks every output and gradient and rejects the wrong-order path.",
+      "headings": [
+        "从普通前馈层认识专家与路由器",
+        "总参数、激活参数与实际驻留是三笔账",
+        "Top-k选谁，门控权重怎样算",
+        "按专家分组计算，再按原token身份合并",
+        "容量限制：先数分配，再决定溢出怎么办",
+        "负载均衡：分别看分数、分配和真正执行",
+        "专家并行新增了哪些数据路径",
+        "运行两进程路由与容量反例",
+        "面试表达：从一层算到一组设备"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "k8s-autoscaling",
+      "reviewed_at": "2026-11-09",
+      "scope": "Trace actual resource metrics to desired, bound and available capacity",
+      "observation": "Observe an owned kind HPA react to CPU, show a new Pod held unready while desired is two, then observe readiness and scale-down.",
+      "reviewed_content_sha256": "01477f45520823cd7582aa9a6cdc1e7fbaf5a1afe744f26abad014eb5c804fe4",
+      "record": "dist/labs/kubernetes-hpa/validation.json"
+    },
+    {
+      "chapter": "moe-routing",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow local expert parameters, native two-way exchange and matching gradients",
+      "observation": "Two CPU/Gloo ranks dispatch and return fixed routes and preserve token identity. An independent serial oracle checks every output and gradient and rejects the wrong-order path.",
+      "reviewed_content_sha256": "f391d5c07f2ee4769d4aeaf94be7d764d46f655633815b4e50a179a3eb8d1f00",
+      "record": "dist/labs/native-expert-parallel/validation.json"
+    },
+    {
+      "chapter": "agent-sandbox",
+      "reviewed_at": "2026-11-09",
+      "scope": "Observe a real non-root container read and write boundary",
+      "observation": "Both local executions produce a valid 37 report. Only the writable input mount allows mutation; independent host evidence rejects it and checks owned cleanup.",
+      "reviewed_content_sha256": "b003841b9ab6d476c3517e93bd36722cbec623eda2d1b2be1d8b57bd46a65c65",
+      "record": "dist/labs/sandbox-container/validation.json"
+    }
+  ]
+}

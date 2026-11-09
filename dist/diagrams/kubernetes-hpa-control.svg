@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="379" viewBox="0 0 440 379" role="img" aria-labelledby="hpa-control-title hpa-control-desc">
+  <title id="hpa-control-title">CPU 指标、期望副本和可用副本</title>
+  <desc id="hpa-control-desc">一个节点上，metrics-server 从 kubelet 汇集 CPU 用量，通过 Metrics API 交给 HPA。容器请求 100m，HPA CPU 利用率目标 50%，副本范围 1 到 2。空闲时 HPA 期望 1，Deployment 可用 1。让原 Pod 忙循环后，期望变成 2，新增 Pod 已运行但就绪探针尚未通过，可用仍为 1。让同一个新增 Pod 通过探针后，可用变成 2。停止忙循环后，期望和可用都回到 1。</desc>
+  <rect x="1" y="1" width="438" height="377" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-size="17" fill="#20314e">
+    <text x="21" y="35" font-size="24" font-weight="bold">从 CPU 样本到可用副本</text>
+    <text x="21" y="62" fill="#465a78">请求 100m · 目标 50% · 副本 1–2</text>
+    <g id="hpa-metrics-path">
+      <rect x="20" y="76" width="400" height="68" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <g text-anchor="middle">
+        <text x="79" y="102" font-weight="bold">kubelet</text>
+        <text x="217" y="102" font-weight="bold">Metrics API</text>
+        <text x="361" y="102" font-weight="bold">HPA</text>
+        <text x="79" y="126">采样 CPU</text>
+        <text x="217" y="126">提供用量</text>
+        <text x="361" y="126">调整期望</text>
+      </g>
+      <path d="M129 101h18m-5-4 5 4-5 4m134-4h21m-5-4 5 4-5 4" fill="none" stroke="#345cb7" stroke-width="1.8" stroke-linejoin="round"/>
+    </g>
+
+    <rect x="20" y="160" width="400" height="181" rx="6" fill="#fff"/>
+    <path d="M25 160H415Q420 160 420 165V193H20V165Q20 160 25 160Z" fill="#eaf1ff"/>
+    <rect x="20" y="230" width="400" height="37" fill="#e5f4ed"/>
+    <g fill="none" stroke="#a4b6d3">
+      <rect x="20" y="160" width="400" height="181" rx="6"/>
+      <path d="M214 160v181m94-181v181M20 193h400m-400 37h400m-400 37h400m-400 37h400"/>
+    </g>
+    <text x="32" y="182" font-weight="bold">实验阶段</text>
+    <g text-anchor="middle" font-weight="bold">
+      <text x="261" y="182">HPA 期望</text>
+      <text x="364" y="182">部署可用</text>
+    </g>
+    <g id="hpa-idle" data-stage="idle">
+      <text x="32" y="217">空闲</text>
+      <g text-anchor="middle"><text x="261" y="217">1</text><text x="364" y="217">1</text></g>
+    </g>
+    <g id="hpa-readiness-held" data-stage="readiness_held">
+      <text x="32" y="254" font-weight="bold">加负载，新 Pod 未就绪</text>
+      <g text-anchor="middle" font-weight="bold" fill="#205d45"><text x="261" y="254">2</text><text x="364" y="254">1</text></g>
+    </g>
+    <g id="hpa-two-available" data-stage="two_available">
+      <text x="32" y="291">新 Pod 通过探针</text>
+      <g text-anchor="middle"><text x="261" y="291">2</text><text x="364" y="291">2</text></g>
+    </g>
+    <g id="hpa-cooldown" data-stage="cooldown">
+      <text x="32" y="328">撤掉负载</text>
+      <g text-anchor="middle"><text x="261" y="328">1</text><text x="364" y="328">1</text></g>
+    </g>
+    <text x="21" y="364" fill="#465a78">期望已经改变时，新增 Pod 仍可能未就绪。</text>
+  </g>
+</svg>

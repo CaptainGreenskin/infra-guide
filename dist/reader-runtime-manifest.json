@@ -1,32 +1,32 @@
 {
   "schema": 1,
-  "staticReadingVersion": "6cc1c52f59cac8fc9cb07091eb126d6489de9bf6edb08300b7da4468367e170d",
+  "staticReadingVersion": "08cfd29a70c5e10c86cccdd13dd07414f68dffc3d856429c97c871dbb1f3c1ef",
   "articles": 78,
   "initialExecutableScripts": 2,
   "normalReaderScriptRequests": 2,
   "fullFallbackScripts": 9,
-  "initialReaderJSBytes": 90050,
+  "initialReaderJSBytes": 91562,
   "initialInlineFigureBytes": 5399,
-  "metadataBytes": 26123,
-  "metadataSha256": "0e78c552e984b36cd5f11438020ac11a61745a058d78cf1751c40e192bfb6d60",
+  "metadataBytes": 27645,
+  "metadataSha256": "a337a4e6e443dfd14c00fdd40b465afe1233f60ab08b2fd2d35e45e4920b7772",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.889e6d6c90df.js",
-      "url": "/reader-assets/reader-bootstrap.889e6d6c90df.js",
+      "file": "reader-assets/reader-bootstrap.6e2f66e950c5.js",
+      "url": "/reader-assets/reader-bootstrap.6e2f66e950c5.js",
       "bytes": 4373,
-      "sha256": "889e6d6c90df5e4064ec295911da3027a76e9fa40e596b65b05d2071a4aa3bbd"
+      "sha256": "6e2f66e950c52bc80deb1da3f45957dcf579ad4fee0e45a677ac742d6a55a384"
     },
     {
-      "file": "reader-assets/reader-runtime.51a15c395bb0.js",
-      "url": "/reader-assets/reader-runtime.51a15c395bb0.js",
-      "bytes": 80278,
-      "sha256": "51a15c395bb081e88942f546e5ec978aa6b43f1b3edaec44b47edce621035c0b"
+      "file": "reader-assets/reader-runtime.726624ba83e9.js",
+      "url": "/reader-assets/reader-runtime.726624ba83e9.js",
+      "bytes": 81790,
+      "sha256": "726624ba83e989b0075ee907a0c6a8c2841450962b5ad6779c2b608c6e42c8d9"
     },
     {
-      "file": "reader-assets/search-index.b9c930bc50f5.json",
-      "url": "/reader-assets/search-index.b9c930bc50f5.json",
-      "bytes": 8900009,
-      "sha256": "b9c930bc50f521d1392fe858f8f585e76f7f858db7e18b9fcccc7999f2257ea5"
+      "file": "reader-assets/search-index.5450fbfa3171.json",
+      "url": "/reader-assets/search-index.5450fbfa3171.json",
+      "bytes": 8928799,
+      "sha256": "5450fbfa3171c0c165be5e4912c81eccb9f2c81a329960534dc27aa38c590195"
     }
   ],
   "reusedFunctions": [
@@ -96,7 +96,7 @@
     },
     {
       "name": "learningGoalChapterNav",
-      "sha256": "3e311c4141e14ce0fe885cb2634eeb88f59e2ed340afe539debb6db1718f2f5e"
+      "sha256": "38f426d382af1654f3f5fcdff750b2b7a7c1a4b870681c892ef10b6c253e4117"
     },
     {
       "name": "learningContextHref",

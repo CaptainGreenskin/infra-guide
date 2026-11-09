@@ -13,7 +13,7 @@
 | AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
 | Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
 
-当前78章：Cloud 35、AI 29、Agent 11、综合实战3；57个完整实验包、97项学习任务。三个方向入口直接进入第一章，侧栏直接进入正文；领域知识页用于查阅概念和关系，详细推导按需展开。14张领域关系图前置，图和文字共用100个节点、87条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和7条岗位路线：云平台、SRE、训练、推理、算子、Agent应用、Agent平台，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent不以完成Cloud或GPU训练课程为前提。
+当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接进入第一章，侧栏直接进入正文。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，本文目录和上下章继续保留该路线。Agent 可独立学习。
 
 本轮细化 [AI Infra 入门与课程全貌](docs/AI_READING_BENCHMARK_2026-11-09.md)。从文本、词元和三种 Transformer 架构接到 GPU 算子、分布式训练与推理。正文增加注意力和归一化手算、实际 CPU 生成缓存轨迹，以及两阶段流水线的前向、反向和激活寿命。桌面侧栏与手机目录都可直达全貌。
 
@@ -34,6 +34,8 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 存储章用单节点 kind 观察 CSI 延迟绑定、两个 Pod 接续读写和后端卷回收。检查点章用两个 CPU/Gloo rank 保存模型与 Adam，换成三个新进程加载并继续更新。正文图解在完整阅读器就绪前也能打开。 [CSI 实验](https://captaingreenskin.github.io/infra-guide/article/k8s-storage/#native-csi-storage) · [FSDP 检查点恢复](https://captaingreenskin.github.io/infra-guide/article/checkpoint-recovery/#fsdp-dcp-reshard)
 
 Transformer 入门用同一组四格输入比较循环、卷积与注意力，再沿可见矩阵和统计轴做两组 PyTorch 对照。Cloud 配置章用 kind 观察同一 Pod 在 ConfigMap 更新后从四个入口读到什么。Agent 应用路线的交付题可以直达本机报告实验。 [序列关系](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#sequence-models) · [前缀掩码](https://captaingreenskin.github.io/infra-guide/article/attention-mechanics/#prefix-attention-mask) · [归一化](https://captaingreenskin.github.io/infra-guide/article/transformer-block/#normalization-axes) · [ConfigMap 实验](https://captaingreenskin.github.io/infra-guide/article/config-secrets/#native-config-projection) · [Agent 应用路线](https://captaingreenskin.github.io/infra-guide/roadmap/agent-app/)
+
+本轮把三段机制接到真实执行。专家并行用两个 CPU/Gloo rank 核对非等长收发、回包顺序与梯度。HPA 实验区分期望副本、已创建 Pod 与可用副本。Agent 容器实验对照只读与可写输入，由宿主检查报告与输入完整性。七条岗位路线的交付题都已链接到相应练习或记录。 [专家并行](https://captaingreenskin.github.io/infra-guide/article/moe-routing/#native-expert-parallel) · [HPA 控制链](https://captaingreenskin.github.io/infra-guide/article/k8s-autoscaling/#native-hpa-control) · [容器边界](https://captaingreenskin.github.io/infra-guide/article/agent-sandbox/#native-sandbox-container)
 
 <details>
 <summary>历次内容修订与执行记录</summary>

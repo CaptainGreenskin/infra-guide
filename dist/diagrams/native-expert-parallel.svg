@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="500" viewBox="0 0 376 500" role="img" aria-labelledby="expert-title expert-desc">
+  <title id="expert-title">专家分发与回包如何找回词元</title>
+  <desc id="expert-desc">rank 0 原有词元 0、1、2，按专家分组后发出 1、2 和 0。rank 1 原有词元 3、4、5，发出 3、5 和 4。每个来源向两个专家分别发两行、一行。专家 0 在 rank 0 收到 1、2、3、5 共四行，专家 1 在 rank 1 收到 0、4 共两行。结果按交换后的收发划分回到来源。rank 0 回包为 1、2、0，复原为 0、1、2。rank 1 回包为 3、5、4，复原为 3、4、5。图中数字对应实跑的词元编号。</desc>
+  <metadata>{"source_token_ids":[[0,1,2],[3,4,5]],"dispatch_send_splits":[[2,1],[2,1]],"expert_token_ids":[[1,2,3,5],[0,4]],"dispatch_receive_splits":[[2,2],[1,1]],"returned_token_ids":[[1,2,0],[3,5,4]],"restored_token_ids":[[0,1,2],[3,4,5]]}</metadata>
+  <defs>
+    <marker id="expert-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#526d90"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="374" height="498" rx="12" fill="#f8fafc" stroke="#aebdd0"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#182b46" font-size="16">
+    <text x="20" y="35" font-size="22" font-weight="700">专家分发与回包如何找回词元</text>
+    <text x="20" y="59" fill="#465a77">每个 rank 持一份 2×2 专家权重</text>
+
+    <g>
+      <rect x="16" y="80" width="166" height="76" rx="8" fill="#e9f1ff" stroke="#a6bce1"/>
+      <text x="29" y="104" fill="#244c8a" font-size="17" font-weight="700">rank 0 · 源输入</text>
+      <text x="29" y="126">原序 0, 1, 2</text>
+      <text x="29" y="147">发出 1, 2 ｜ 0</text>
+      <rect x="194" y="80" width="166" height="76" rx="8" fill="#e6f5ee" stroke="#9ac7b7"/>
+      <text x="207" y="104" fill="#245f51" font-size="17" font-weight="700">rank 1 · 源输入</text>
+      <text x="207" y="126">原序 3, 4, 5</text>
+      <text x="207" y="147">发出 3, 5 ｜ 4</text>
+    </g>
+
+    <g stroke="#526d90" stroke-width="1.6" marker-end="url(#expert-arrow)">
+      <path d="M99 156V170"/><path d="M277 156V170"/>
+      <path d="M99 209V223"/><path d="M277 209V223"/>
+      <path d="M99 306V322"/><path d="M277 306V322"/>
+      <path d="M99 362V377"/><path d="M277 362V377"/>
+    </g>
+
+    <rect x="16" y="174" width="344" height="35" rx="7" fill="#eef2fa" stroke="#b2c1da"/>
+    <text x="188" y="197" text-anchor="middle" font-weight="700">分发 · 每个来源向两专家发 2、1 行</text>
+
+    <g>
+      <rect x="16" y="227" width="166" height="79" rx="8" fill="#e9f1ff" stroke="#a6bce1"/>
+      <text x="29" y="251" fill="#244c8a" font-size="17" font-weight="700">专家 0 · 收到 4 行</text>
+      <text x="29" y="275">1, 2 ｜ 3, 5</text>
+      <text x="29" y="296" fill="#465a77" font-size="14">按来源切成 2 + 2 行</text>
+      <rect x="194" y="227" width="166" height="79" rx="8" fill="#e6f5ee" stroke="#9ac7b7"/>
+      <text x="207" y="251" fill="#245f51" font-size="17" font-weight="700">专家 1 · 收到 2 行</text>
+      <text x="207" y="275">0 ｜ 4</text>
+      <text x="207" y="296" fill="#465a77" font-size="14">按来源切成 1 + 1 行</text>
+    </g>
+
+    <rect x="16" y="326" width="344" height="36" rx="7" fill="#eef2fa" stroke="#b2c1da"/>
+    <text x="188" y="350" text-anchor="middle" font-weight="700">交换收发划分 · 把结果送回来源</text>
+
+    <g>
+      <rect x="16" y="381" width="166" height="76" rx="8" fill="#e9f1ff" stroke="#a6bce1"/>
+      <text x="29" y="405" fill="#244c8a" font-size="17" font-weight="700">rank 0 · 收回结果</text>
+      <text x="29" y="427">回包 1, 2, 0</text>
+      <text x="29" y="448" font-weight="700">复原 0, 1, 2</text>
+      <rect x="194" y="381" width="166" height="76" rx="8" fill="#e6f5ee" stroke="#9ac7b7"/>
+      <text x="207" y="405" fill="#245f51" font-size="17" font-weight="700">rank 1 · 收回结果</text>
+      <text x="207" y="427">回包 3, 5, 4</text>
+      <text x="207" y="448" font-weight="700">复原 3, 4, 5</text>
+    </g>
+
+    <text x="188" y="482" text-anchor="middle" font-size="15.5" fill="#465a77">沿词元 0 看一圈 · rank 0 → 专家 1 → rank 0</text>
+  </g>
+</svg>

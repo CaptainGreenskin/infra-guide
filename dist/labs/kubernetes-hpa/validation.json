@@ -1,0 +1,331 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "7b6b4ef448c51feda85d206f4ea414ba3119033786281e798c9218151e128b29",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "python_image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "metrics_manifest_sha256": "3c7f57cdbee0f57fb0259a150e8f6d6cb4f29d72d1aa5dce8803151dd6d4c2a1",
+  "metrics_image": "registry.k8s.io/metrics-server/metrics-server:v0.9.1@sha256:4dbfba731a021437b4cab5ba2092569edbd898030c27d10c6ec85e03b63789f6",
+  "cluster": "hpa-2ec8a6338a30",
+  "toolchain": {
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kubectl": "v1.35.8",
+    "docker_engine": "linux x86_64 7.0.0-1017-azure"
+  },
+  "kubernetes_server": "v1.35.8",
+  "metrics_server": {
+    "apiservice": "v1beta1.metrics.k8s.io",
+    "available": true,
+    "pod_uid": "75b697a3-4dad-4cc4-9e97-7241b85125f3",
+    "image_id": "registry.k8s.io/metrics-server/metrics-server@sha256:4dbfba731a021437b4cab5ba2092569edbd898030c27d10c6ec85e03b63789f6",
+    "kind_kubelet_insecure_tls": true
+  },
+  "workload_resources": {
+    "limits": {
+      "cpu": "200m",
+      "memory": "64Mi"
+    },
+    "requests": {
+      "cpu": "100m",
+      "memory": "32Mi"
+    }
+  },
+  "hpa_spec": {
+    "scaleTargetRef": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "cpu-demo"
+    },
+    "minReplicas": 1,
+    "maxReplicas": 2,
+    "metrics": [
+      {
+        "resource": {
+          "name": "cpu",
+          "target": {
+            "averageUtilization": 50,
+            "type": "Utilization"
+          }
+        },
+        "type": "Resource"
+      }
+    ],
+    "behavior": {
+      "scaleDown": {
+        "policies": [
+          {
+            "periodSeconds": 15,
+            "type": "Percent",
+            "value": 100
+          }
+        ],
+        "selectPolicy": "Max",
+        "stabilizationWindowSeconds": 0
+      },
+      "scaleUp": {
+        "policies": [
+          {
+            "periodSeconds": 15,
+            "type": "Pods",
+            "value": 4
+          },
+          {
+            "periodSeconds": 15,
+            "type": "Percent",
+            "value": 100
+          }
+        ],
+        "selectPolicy": "Max",
+        "stabilizationWindowSeconds": 0
+      }
+    }
+  },
+  "idle": {
+    "hpa": {
+      "uid": "f5941d96-8d9d-40b9-b8ef-928a6e541e7f",
+      "current": 1,
+      "desired": 1,
+      "cpu_percent": 11,
+      "cpu_average": "11m",
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T04:26:22Z",
+          "message": "recommended size matches current size",
+          "reason": "ReadyForNewScale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:26:37Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:26:37Z",
+          "message": "the desired count is within the acceptable range",
+          "reason": "DesiredWithinRange",
+          "status": "False",
+          "type": "ScalingLimited"
+        }
+      ]
+    },
+    "deployment": {
+      "uid": "30bcfdaf-7cd3-4c7c-b904-3261075012b1",
+      "desired": 1,
+      "available": 1
+    },
+    "pods": [
+      {
+        "name": "cpu-demo-76fc485f55-jhxln",
+        "uid": "16d4289b-3290-4cdb-a566-a79defb75e31",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      }
+    ],
+    "metrics": {
+      "cpu-demo-76fc485f55-jhxln": {
+        "timestamp": "2026-11-09T04:26:24Z",
+        "window": "12.256s",
+        "cpu": "10140176n"
+      }
+    }
+  },
+  "readiness_held": {
+    "hpa": {
+      "uid": "f5941d96-8d9d-40b9-b8ef-928a6e541e7f",
+      "current": 1,
+      "desired": 2,
+      "cpu_percent": 195,
+      "cpu_average": "195m",
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T04:26:22Z",
+          "message": "the HPA controller was able to update the target scale to 2",
+          "reason": "SucceededRescale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:26:37Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:27:07Z",
+          "message": "the desired replica count is more than the maximum replica count",
+          "reason": "TooManyReplicas",
+          "status": "True",
+          "type": "ScalingLimited"
+        }
+      ]
+    },
+    "deployment": {
+      "uid": "30bcfdaf-7cd3-4c7c-b904-3261075012b1",
+      "desired": 2,
+      "available": 1
+    },
+    "pods": [
+      {
+        "name": "cpu-demo-76fc485f55-9s779",
+        "uid": "a813701c-a79b-4438-9bed-ef554c730a86",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": false,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      },
+      {
+        "name": "cpu-demo-76fc485f55-jhxln",
+        "uid": "16d4289b-3290-4cdb-a566-a79defb75e31",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      }
+    ],
+    "metrics": {
+      "cpu-demo-76fc485f55-jhxln": {
+        "timestamp": "2026-11-09T04:26:54Z",
+        "window": "16.823s",
+        "cpu": "194982345n"
+      }
+    }
+  },
+  "two_available": {
+    "hpa": {
+      "uid": "f5941d96-8d9d-40b9-b8ef-928a6e541e7f",
+      "current": 1,
+      "desired": 2,
+      "cpu_percent": 195,
+      "cpu_average": "195m",
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T04:26:22Z",
+          "message": "the HPA controller was able to update the target scale to 2",
+          "reason": "SucceededRescale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:26:37Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:27:07Z",
+          "message": "the desired replica count is more than the maximum replica count",
+          "reason": "TooManyReplicas",
+          "status": "True",
+          "type": "ScalingLimited"
+        }
+      ]
+    },
+    "deployment": {
+      "uid": "30bcfdaf-7cd3-4c7c-b904-3261075012b1",
+      "desired": 2,
+      "available": 2
+    },
+    "pods": [
+      {
+        "name": "cpu-demo-76fc485f55-9s779",
+        "uid": "a813701c-a79b-4438-9bed-ef554c730a86",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      },
+      {
+        "name": "cpu-demo-76fc485f55-jhxln",
+        "uid": "16d4289b-3290-4cdb-a566-a79defb75e31",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      }
+    ],
+    "metrics": {
+      "cpu-demo-76fc485f55-jhxln": {
+        "timestamp": "2026-11-09T04:27:05Z",
+        "window": "10.456s",
+        "cpu": "199820964n"
+      }
+    }
+  },
+  "cooldown": {
+    "hpa": {
+      "uid": "f5941d96-8d9d-40b9-b8ef-928a6e541e7f",
+      "current": 1,
+      "desired": 1,
+      "cpu_percent": 10,
+      "cpu_average": "10m",
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T04:26:22Z",
+          "message": "recommended size matches current size",
+          "reason": "ReadyForNewScale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:26:37Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T04:27:37Z",
+          "message": "the desired count is within the acceptable range",
+          "reason": "DesiredWithinRange",
+          "status": "False",
+          "type": "ScalingLimited"
+        }
+      ]
+    },
+    "deployment": {
+      "uid": "30bcfdaf-7cd3-4c7c-b904-3261075012b1",
+      "desired": 1,
+      "available": 1
+    },
+    "pods": [
+      {
+        "name": "cpu-demo-76fc485f55-jhxln",
+        "uid": "16d4289b-3290-4cdb-a566-a79defb75e31",
+        "node": "hpa-2ec8a6338a30-control-plane",
+        "phase": "Running",
+        "ready": true,
+        "deleting": false,
+        "restart_count": 0,
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431"
+      }
+    ],
+    "metrics": {
+      "cpu-demo-76fc485f55-jhxln": {
+        "timestamp": "2026-11-09T04:28:09Z",
+        "window": "17.497s",
+        "cpu": "9989483n"
+      }
+    }
+  },
+  "cleanup": {
+    "attempted": true,
+    "owned_nodes_removed": true
+  }
+}

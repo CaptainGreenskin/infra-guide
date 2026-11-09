@@ -1,0 +1,140 @@
+{
+  "cases": {
+    "readonly_input": {
+      "configuration": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "memory_bytes": 100663296,
+        "mounts": {
+          "/input": {
+            "rw": false,
+            "type": "bind"
+          },
+          "/output": {
+            "rw": true,
+            "type": "bind"
+          }
+        },
+        "nano_cpus": 500000000,
+        "network": "none",
+        "pids_limit": 16,
+        "read_only_rootfs": true,
+        "security_opt": [
+          "no-new-privileges=true"
+        ],
+        "user": "65534:65534"
+      },
+      "container_id": "d6ec3bb57a824b792255c296ee9e9c9503b7638c7612b879900e08516bae8ffa",
+      "exit_code": 0,
+      "host": {
+        "input_after": "{\"task_id\":\"R27-lab\",\"values\":[10,27]}\n",
+        "output_files": [
+          "report.json"
+        ],
+        "report": {
+          "amount": 37,
+          "source_sha256": "68022953a38b3469d8cb2ed47f445d96cc1fbc0b931f49cfd57a4effd0dcb45d",
+          "task_id": "R27-lab"
+        },
+        "unmounted_canary_sha256": "8a6c81905c5a22291c29be847d7b2391008d60d554b2384b81d777b3293a4d09"
+      },
+      "image_id": "sha256:47b1e26f6a39ecfb3baffceb4c34de12110b868c5a829030218e5237d4d9dcc6",
+      "removed": true,
+      "verdict": {
+        "accepted": true,
+        "input_unchanged": true,
+        "report_matches_source": true
+      },
+      "worker": {
+        "cap_effective": "0000000000000000",
+        "gid": 65534,
+        "input_write": "EROFS",
+        "interfaces": [
+          "lo"
+        ],
+        "no_new_privs": 1,
+        "pid": 1,
+        "python": "3.13.13",
+        "rootfs_write": "EROFS",
+        "uid": 65534,
+        "unmounted_read": "ENOENT"
+      }
+    },
+    "writable_input_control": {
+      "configuration": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "memory_bytes": 100663296,
+        "mounts": {
+          "/input": {
+            "rw": true,
+            "type": "bind"
+          },
+          "/output": {
+            "rw": true,
+            "type": "bind"
+          }
+        },
+        "nano_cpus": 500000000,
+        "network": "none",
+        "pids_limit": 16,
+        "read_only_rootfs": true,
+        "security_opt": [
+          "no-new-privileges=true"
+        ],
+        "user": "65534:65534"
+      },
+      "container_id": "c68d1911cfa8e0b59835ffb4cd0d873e290556cb342ab88ceb8d0916ae71dc9a",
+      "exit_code": 0,
+      "host": {
+        "input_after": "{\"task_id\":\"R27-lab\",\"values\":[10,27]}\nsandbox-input-modified\n",
+        "output_files": [
+          "report.json"
+        ],
+        "report": {
+          "amount": 37,
+          "source_sha256": "68022953a38b3469d8cb2ed47f445d96cc1fbc0b931f49cfd57a4effd0dcb45d",
+          "task_id": "R27-lab"
+        },
+        "unmounted_canary_sha256": "8a6c81905c5a22291c29be847d7b2391008d60d554b2384b81d777b3293a4d09"
+      },
+      "image_id": "sha256:47b1e26f6a39ecfb3baffceb4c34de12110b868c5a829030218e5237d4d9dcc6",
+      "removed": true,
+      "verdict": {
+        "accepted": false,
+        "input_unchanged": false,
+        "report_matches_source": true
+      },
+      "worker": {
+        "cap_effective": "0000000000000000",
+        "gid": 65534,
+        "input_write": "ok",
+        "interfaces": [
+          "lo"
+        ],
+        "no_new_privs": 1,
+        "pid": 1,
+        "python": "3.13.13",
+        "rootfs_write": "EROFS",
+        "uid": 65534,
+        "unmounted_read": "ENOENT"
+      }
+    }
+  },
+  "environment": {
+    "arch": "amd64",
+    "docker_server": "28.0.4",
+    "image_id": "sha256:47b1e26f6a39ecfb3baffceb4c34de12110b868c5a829030218e5237d4d9dcc6",
+    "os": "linux"
+  },
+  "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "schema": 1,
+  "scope": "Two fresh single-host Linux Docker containers; synthetic filesystem fixture and local interface observations.",
+  "source_sha256": {
+    "sandbox_container.py": "1dc58293f87b70ce7ab12d4d6ab01e07ce95612fac3f4b27c6df06c82cf8e490",
+    "source.json": "68022953a38b3469d8cb2ed47f445d96cc1fbc0b931f49cfd57a4effd0dcb45d"
+  },
+  "status": "passed"
+}

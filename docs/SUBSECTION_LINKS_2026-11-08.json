@@ -249,11 +249,13 @@
         "subsection-6-nhfr0o",
         "subsection-7-1cxb905",
         "subsection-8-1qdvyvu",
-        "subsection-8-cjjpw2"
+        "subsection-8-cjjpw2",
+        "native-hpa-control"
       ],
       "visible_targets": [
         "subsection-8-1qdvyvu",
-        "subsection-8-cjjpw2"
+        "subsection-8-cjjpw2",
+        "native-hpa-control"
       ]
     },
     {
@@ -668,9 +670,12 @@
     {
       "id": "moe-routing",
       "targets": [
-        "moe-routing-run"
+        "moe-routing-run",
+        "native-expert-parallel"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-expert-parallel"
+      ]
     },
     {
       "id": "speculative-decoding",
@@ -713,7 +718,8 @@
         "subsection-7-3sckdo",
         "subsection-8-1um1h4",
         "subsection-10-nb0s8",
-        "subsection-10-hi6ix7"
+        "subsection-10-hi6ix7",
+        "native-sandbox-container"
       ]
     },
     {

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="360" viewBox="0 0 400 360" role="img" aria-labelledby="sandbox-title sandbox-description">
+  <title id="sandbox-title">只改输入挂载，报告为何都能是 37</title>
+  <desc id="sandbox-description">同一合成输入 10 和 27 交给 UID 65534 的进程。进程读输入，在独立可写输出目录保存报告 37，再试图修改输入。只读挂载时内核返回 EROFS 且宿主文件不变。可写对照中追加成功，宿主文件改变，独立验收拒绝。</desc>
+  <metadata>{"ci_run":42561457636,"source":[10,27],"task_id":"R27-lab","uid":65534,"cases":[{"id":"readonly_input","input_rw":false,"report_amount":37,"input_write":"EROFS","input_unchanged":true,"accepted":true},{"id":"writable_input_control","input_rw":true,"report_amount":37,"input_write":"ok","input_unchanged":false,"accepted":false}]}</metadata>
+  <defs>
+    <marker id="sandbox-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#435973"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="398" height="358" rx="12" fill="#f8fafc" stroke="#aebdd0"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#182b46">
+    <text x="17" y="32" font-size="23" font-weight="bold">只改输入挂载，报告仍为 37</text>
+    <rect x="16" y="46" width="368" height="98" rx="8" fill="#eff5fd" stroke="#a9bcdb"/>
+    <text x="29" y="69" font-size="17" font-weight="bold">两例各写一份报告</text>
+    <g text-anchor="middle" font-size="16">
+      <text x="66" y="101">挂载输入</text>
+      <text x="66" y="124">10、27</text>
+      <text x="199" y="101">容器进程</text>
+      <text x="199" y="124">UID 65534</text>
+      <text x="334" y="101">可写输出</text>
+      <text x="334" y="124">报告 37</text>
+    </g>
+    <g fill="none" stroke="#435973" stroke-width="1.7" marker-end="url(#sandbox-arrow)">
+      <path d="M112 110H151"/>
+      <path d="M247 110H287"/>
+    </g>
+    <text x="17" y="175" font-size="18" font-weight="bold">随后尝试给输入追加标记</text>
+    <rect x="16" y="188" width="178" height="125" rx="8" fill="#eaf6f0" stroke="#9dbfae"/>
+    <rect x="206" y="188" width="178" height="125" rx="8" fill="#fcf0e9" stroke="#d7b49f"/>
+    <g font-size="16">
+      <text x="28" y="213" font-size="18" font-weight="bold" fill="#225d49">输入挂载只读</text>
+      <text x="28" y="239">写入被拒 EROFS</text>
+      <text x="28" y="265">宿主输入字节不变</text>
+      <text x="28" y="291" font-weight="bold" fill="#225d49">独立验收通过</text>
+      <text x="218" y="213" font-size="18" font-weight="bold" fill="#874525">输入挂载可写</text>
+      <text x="218" y="239">写入成功</text>
+      <text x="218" y="265">宿主输入追加标记</text>
+      <text x="218" y="291" font-weight="bold" fill="#874525">独立验收拒绝</text>
+    </g>
+    <text x="17" y="340" font-size="15" fill="#405775">两例的镜像根文件系统都保持只读。</text>
+  </g>
+</svg>

@@ -1,6 +1,14 @@
 /* Context must survive a prose/search/field detour, without changing explicit choices. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const files=[...fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1]).filter(f=>f!=='app.js');
+const gateTargets={
+ 'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage']],
+ 'cloud-sre':[['observability','section-9'],['elasticity','section-7'],['resilience','section-9']],
+ 'ai-training':[['multinode-lab','multinode-launch-run']],
+ 'ai-inference':[['model-serving','section-4'],['inference-performance','section-2'],['ai-lifecycle','section-8']],
+ 'ai-operators':[['operator-profiling','operator-profile-run'],['tensor-parallel-math','section-9']],
+ 'agent-platform':[['agent-sandbox','native-sandbox-container'],['durable-workflows','mcp-commit-recovery']]
+};
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
  for(const file of files)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
@@ -19,6 +27,23 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(run('/article/'+id+'/?goal=agent-app#detail'),base+'article/'+id+'/?goal=agent-app#detail',key+': explicit choice wins');
   assert.equal(run('/article/'+id+'/?goal=#detail'),base+'article/'+id+'/?goal=#detail',key+': explicit reset wins');
   assert.equal(run('/module/'+mod+'/?concept=opaque#concept-relations'),base+'module/'+mod+'/?concept=opaque&goal='+key+'#concept-relations',key+': field detour keeps context');
+  const gate=vm.runInContext('learningGoalHTML(learningProfiles[profileKey])',c);
+  assert(gate.includes('id="goal-gate" tabindex="-1"'),key+': direct gate target');
+  c.lastArticle=id;
+  const lastNav=vm.runInContext('learningGoalChapterNav(articleById(lastArticle))',c);
+  assert(lastNav.includes('href="/roadmap/'+key+'/#goal-gate"'),key+': last chapter can return directly to its gate');
+  if(gateTargets[key]){
+   const actual=[...p.gate.matchAll(/href="([^"]+)"/g)].map(m=>m[1]);
+   const expected=gateTargets[key].map(([id,fragment])=>{
+    const article=data.articles.find(a=>a.id===id),section=fragment.match(/^section-(\d+)$/);
+    assert(ids.includes(id),key+': gate remains on its course');
+    assert(section?article.sections[Number(section[1])-1]:article.sections.some(([,body])=>body.includes('id="'+fragment+'"')),key+': exact practice target');
+    const href='/article/'+id+'/?goal='+key+'#'+fragment;
+    assert(gate.includes('href="'+href+'"')&&run(href)===base+href.slice(1),key+': gate preserves role context');
+    return href;
+   });
+   assert.deepEqual(actual,expected);
+  }
   const capstone={cloud:'cloud-service-lab',ai:'training-lab',agent:'production-readiness'}[p.track];
   assert.equal(run('/module/practice/'),base+'module/practice/?track='+p.track+'&goal='+key,key+': correct shared project');
   c.location.pathname=base+'module/practice/';

@@ -84,7 +84,7 @@
 
  p('把不同专家参数放在不同设备上执行，叫专家并行（EP）。一个token若选中了别处的专家，就需发送隐藏向量，专家算完再把贡献送回；一组成员分别向多个目的地互换数据，通常用All-to-All类通信组织。张量并行（TP）则进一步拆分同一个算子或参数张量，两种划分可以组合。',
  '本章用逻辑编号说明路程：专家0、2的owner为rank0，专家1的owner为rank1；token原位置按编号奇偶标记origin_rank。八条分配中有五条origin与owner不同。若每向量2维、每元素按8字节表示，发出有效向量为5×2×8=80字节，结果同宽，往返合计160字节。',
- '这160字节是声明的数据量算式。当前程序由父进程通过Python队列给两个本地子进程发任务，token原rank只是元数据，队列还会序列化记录和Python对象；它没有执行组内All-to-All，也没有测出队列或网络实际字节。')+
+ '这160字节是声明的数据量算式。上述标准库实验由父进程通过Python队列给两个本地子进程发任务，token原rank只是元数据，队列还会序列化记录和Python对象。这个算式只数有效向量，队列与网络的实际传输量需另测。')+
  p('真实EP先交换或约定每个目的地的条数，据此打包、交换向量，再按相反方向返回和合并。两边的分割数量与顺序要一致。少量token可能形成低效率的小矩阵，偏斜又会把更多工作集中到少数设备；通信量、消息延迟、布局转换和最慢路径共同决定耗时。')+
  linkRow(links(m[6])),
 
@@ -97,7 +97,7 @@
  ['错误的相邻两项合并','形状仍[4,2]，数值不同','形状检查补不了身份检查'],
  ['非有限分数、错误宽度、重复回包','各自拒绝','对应路由或合并入口的条件']
  ])+
- p('这些结果覆盖固定线性变换、本地进程分发和身份合并。训练后的专家能力、权重驻留分片、GPU并行合并及NCCL时序，要在相应实现中另行提供证据。'),
+ p('这份队列实验覆盖固定线性变换、本地进程分发和身份合并。下面换一组输入，用两个真实 rank 验证专家参数分放、集合通信和反向。'),
 
  p('从一个token向外解释整层：同一向量先产生路由分数，选中的专家与门控写进分配记录；记录经过容量准入，按owner送去计算；每份结果带原身份返回，合并后才交给后续模型。参数量、缓冲量与通信量都能回到这条路径上找到来源。')+
  table(['改变条件时的追问','沿已有对象继续推导'],[
@@ -109,6 +109,35 @@
  ])+
  p('复习时先遮住结果，手算t0的两份专家输出，再预测把四行分数都改成t0后会丢哪两条分配。能把这一次改变解释清楚，再把同一判据带到真实模型与设备。')+linkRow(links(m[8]))
  ],'沿四个token、三份专家和两进程执行，走通路由概率、Top-2门控、容量准入与原身份合并，分清参数计算量和实际驻留。');
+
+ moe.sections[6][1]+=p('下一节的<a href="/article/moe-routing/#native-expert-parallel">原生 Gloo 实验</a>另用六个词元，每个进程只实例化自己的一份专家权重。沿同一个词元核对分发、回包和梯度怎样往返。');
+ moe.sections[7][1]+='<h3 id="native-expert-parallel">两个 rank 各持一份专家，完成收发和反向</h3>'+
+ p('在这个独立算例里，rank 0 持有词元 0、1、2 和专家 0，rank 1 持有词元 3、4、5 和专家 1。每份专家只有一张 2×2 权重，没有偏置。每个词元固定交给一个专家，权重取 1。两边先按目标专家对输入分组，同时保留原词元编号。')+
+ trainingFigure('native-expert-parallel','两个进程各发三行，两个专家实际收到四行和两行。结果回到来源后恢复词元顺序。')+
+ p('两个来源都向专家 0 发两行，向专家 1 发一行。先交换计数，专家 0 得到接收划分 [2,2]，专家 1 得到 [1,1]。这里的两个数字按来源 rank 排列。专家算完后互换收发划分，将结果送回来源。rank 0 收回的顺序仍是 [1,2,0]，因此要应用分组排列的逆，恢复 [0,1,2]，才能按行配对各自的目标。',
+ '下面是实际程序的收发节选。<code>exchange_rows</code> 分配接收张量并调用可求导的 <code>torch.distributed.nn.functional.all_to_all_single</code>。每条路线的整数词元编号也实际发送一次，用于核对向量的身份。')+
+ trainingCode('分组、专家计算与回包复原 · expert_parallel.py 节选','PYTHON',`pack_order = owners.argsort(stable=True)
+sent_ids = token_ids[pack_order]
+expert_ids = exchange_rows(sent_ids, receive_splits, send_splits)
+expert_inputs = exchange_rows(x[pack_order], receive_splits, send_splits)
+expert_outputs = expert(expert_inputs)
+
+returned_ids = exchange_rows(expert_ids, send_splits, receive_splits)
+returned = exchange_rows(expert_outputs, send_splits, receive_splits)
+restore_order = pack_order.argsort()
+restored_ids = returned_ids[restore_order]
+assert torch.equal(returned_ids, sent_ids)
+assert torch.equal(restored_ids, token_ids)
+output = returned[restore_order]`)+
+ p('两个来源各自累加本地每项误差的平方，再乘 1/2。反向时，输出梯度沿回包路径传回专家。以词元 0 为例，它带着 [1,2] 去专家 1，算得 [1,4]，回到 rank 0 后与目标 [−2,−1] 比较，得到输出梯度 [3,5]。专家 1 同时累加词元 0 和词元 4 对权重的贡献。词元 0 的输入梯度 [7,8] 沿分发路径的反方向回到 rank 0。',
+ '独立串行参考逐词元按原编号计算前向、损失和梯度。反例保留原来的通信结果，跳过顺序复原，将回包直接与目标配对。正反两次每个来源的输出张量都是 [3,2]。')+
+ table(['实跑对照','总损失','与串行参考的最大绝对差'],[
+  ['恢复原输入顺序','101.5','输出、输入梯度、专家权重梯度均为 0'],
+  ['按回包顺序直接配对目标','111.5','输出 6、输入梯度 4、专家权重梯度 6']
+ ])+
+ trainingCode('解压后用 Python 3.12 和 PyTorch 2.5.1 CPU 运行','SHELL','python -B -m torch.distributed.run --standalone --nproc-per-node=2 expert_parallel.py > replay.json')+
+ p('这份记录覆盖本机 CPU/Gloo、固定每词元一个专家，以及前向和反向的收发。路由器训练、容量策略、优化器更新、CUDA/NCCL 和物理跨机性能各需对应实验。')+
+ '<p class="practice-links"><a href="labs/native-expert-parallel.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/native-expert-parallel/README.md">运行说明 →</a> · <a href="labs/native-expert-parallel/validation.json">实际收发编号与梯度 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/nn/functional.py#L374-L403">PyTorch 2.5.1 反向收发 ↗</a></p>';
 
  const spec=select('speculative-decoding',['先分清谁提议，谁决定最终分布','先只提议一个词元：算清留下多少概率','拒绝以后，从哪里补回缺少的部分','多个候选怎样用一次目标调用核对','缓存回退，要删掉哪些位置','实际CPU模型怎样验证并行位置没有算错','接受率为什么不能直接换算成加速比','放进服务系统，还要处理哪些边界','把结果和能证明的范围对齐']);
  const s=spec.sections.map(s=>s[1]),s3=blocks(s[2]),s4=blocks(s[3]),s5=blocks(s[4]),s6=blocks(s[5]);

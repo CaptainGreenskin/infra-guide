@@ -133,6 +133,25 @@
    fold('原执行输出',code(old[11],1))+
    p('R27完成画图后，控制面有产物版本和回收记录。如果它还调用外部工具发布结果，就会多出工具端提交与本地确认两份事实。下一章沿一次独立写操作，说明响应丢失后新进程怎样认回原结果。');
   finish(a,before);
+  a.sections[6][1]+=p('根文件系统只读时，单独挂载的输入仍有自己的读写属性。<a href="/article/agent-sandbox/#native-sandbox-container">在真实容器里对照只读输入和可写输入 →</a>');
+  const oldScope='Pod片段说明配置关系，未运行容器验收。两类本地程序与片段均不构成生产沙箱或Kairo已验证的结论。';
+  if(!a.sections[8][1].includes(oldScope))throw Error('Missing sandbox evidence scope');
+  a.sections[8][1]=a.sections[8][1].replace(oldScope,'Pod 片段说明配置关系。第 10 节另用 Docker 实跑文件边界，生产沙箱与 Kairo 仍需在对应环境验收。');
+  a.sections[9][1]+=h('native-sandbox-container','在真实容器里读输入、写输出并检查越界写入')+
+   p('用独立任务 R27-lab 把文件边界缩成一份报告。启动器把合成的 10 和 27 放入 <code>/input</code>，提供独立的可写 <code>/output</code>。容器以非 root 身份运行，用户和组编号都为 65534。根文件系统只读，容器移除了额外的 Linux 特权能力，并禁止通过执行新程序取得额外权限。两例各自创建容器和夹具，只改变输入挂载的读写属性。',
+     '脚本先读输入并保存报告 37，再尝试向输入追加标记。两例的宿主输入文件都允许这个 UID 写入，因此只读组的 EROFS 来自挂载约束。EROFS 表示文件系统只读。另一处未挂载的合成标记文件在宿主仍存在，两次容器访问该路径都得到 ENOENT，表示路径不存在。')+
+   trainingFigure('sandbox-container-boundaries','只改变输入挂载的读写属性。报告相同，输入完整性和独立验收结果不同。')+
+   table(['实际观察','只读输入','可写输入对照'],[
+    ['从输入生成报告','写入 37','写入 37'],
+    ['在宿主核对输入字节','写入返回 EROFS，字节不变','写入成功，文件追加标记'],
+    ['写根文件系统中的 /tmp','EROFS','EROFS'],
+    ['独立验收','通过','输入被改动，拒绝']
+   ])+
+   p('两个进程都正常退出。容器外的校验器从原资料重算 37 和来源摘要，直接读取产物及宿主输入文件，最后核对两个容器 ID 都已从引擎列表消失。可写对照的报告也正确，输入完整性仍不合格。')+
+   p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
+   trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 
  {

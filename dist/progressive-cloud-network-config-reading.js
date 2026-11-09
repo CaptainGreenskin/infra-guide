@@ -237,4 +237,15 @@
  p('目标集群验收沿同一负载保存：指标时间与覆盖集合、HPA conditions、desiredReplicas、Pod 创建/绑定/Ready、新容量完成率、接纳、拒绝和积压。再将保存的控制配置与事件对应到下面的只读观察。')+s7[6]+
  p('CPU 下降可能来自更多副本，也可能来自请求被拒、下游阻塞或指标丢失。伸缩完成由用户目标定义：同一窗口内知道实际接纳与完成多少、还积压多少、容量何时可用，再看延迟和成本，才能把伸缩动作接回业务结果。')
  ],'沿指标、HPA 计算、期望副本和实际服务容量解释伸缩，再以整数比例、缺指标、队列空窗与下游预算核对结果。');
+
+ scaling.sections[0][1]+=p('第 8 节用真实 CPU 指标驱动 HPA，再让新增 Pod 暂缓通过就绪探针。沿同一个 Deployment 核对期望何时改变、可用副本何时增加。<a href="/article/k8s-autoscaling/#native-hpa-control">查看原生 HPA 实验 →</a>');
+
+ scaling.sections[7][1]+=h('native-hpa-control','原生 HPA 实战：期望副本先于就绪')+
+ p('在单节点 kind 中，Metrics Server v0.9.1 从 kubelet 读取 CPU 用量，经资源指标 API 提供给 HPA。每个工作容器请求 100m，CPU 上限为 200m。HPA 的目标是 request 的 50%，副本范围为 1 到 2。程序用 Pod 内的标记文件启停原 Pod 的忙循环。')+
+ '<figure class="training-figure"><a href="diagrams/kubernetes-hpa-control.svg" target="_blank" rel="noopener" aria-label="放大：CPU 指标、期望副本与可用副本"><img src="diagrams/kubernetes-hpa-control.svg" width="440" height="379" alt="空闲时期望和可用均为 1，负载增加后期望为 2 而可用仍为 1，新 Pod 就绪后可用达到 2，撤掉负载后两者回到 1" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一次扩容分别核对 HPA 期望、Deployment 可用副本和 Pod 就绪条件。<a href="diagrams/kubernetes-hpa-control.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('本次原 Pod 的资源指标样本从约 10.1m 升到 195.0m，越过目标对应的 50m。HPA 的 <code>desiredReplicas</code> 与 Deployment 的 <code>spec.replicas</code> 都变成 2。新增 Pod 已是 Running，但仍缺少通过探针的标记，Deployment 的 <code>availableReplicas</code> 保持 1。补上标记后，同一个新增 Pod UID 变为 Ready，可用副本升到 2。')+
+ p('可用副本已经是 2 的那次观察里，HPA 的 <code>currentReplicas</code> 仍显示 1。指标 API 和控制对象分别读取，各自有采样窗口或更新节奏。比较记录时先对齐时间和对象，不能把几个字段当作同一时刻的计数。')+
+ p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。业务完成率需要前面定义的实际请求与队列观测。')+
+ trainingCode('复跑原生 HPA 并离线核对随包记录','SHELL','python3 -B hpa_control_lab.py --output native-record.json\npython3 -B hpa_control_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/kubernetes-hpa.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-hpa/validation.json">查看指标窗口、期望和 Pod UID →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561685247">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes 资源指标链 ↗</a></p>';
 })();

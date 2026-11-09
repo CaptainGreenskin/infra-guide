@@ -108,6 +108,8 @@
  '现有记录验证了真实本机进程间 CPU 集合操作及指定对照，未执行 GPU、RDMA、多主机或吞吐测量。把同一输入输出关系搬到目标训练环境后，还要重新验证流依赖、目标规模和完整更新。')
  ],ci,'从进程和张量开始，手算集合通信，再沿成员到达、异步等待与计时理解一次训练同步。');
 
+ comm.sections[0][1]+=p('沿用上面的两份输入。All-to-All 让每个 rank 按目的地切块，接收方只拿发给自己的块。若每份输入的前两项发给 rank 0、后两项发给 rank 1，两个接收方分别得到 [1,2,10,20] 和 [3,4,30,40]。上表的 AllGather 则让两个 rank 各自收到全部八项。分块不等长时，要把每对发送方、接收方约定的条数对上。<a href="/article/moe-routing/#native-expert-parallel">选读专家并行的真实收发与梯度对照 →</a>');
+
  const data=select('data-pipeline',['数据对象：Dataset、Sampler、批次与worker','跨rank分片：补齐、两层丢尾与epoch','多worker流式输入：覆盖正确后还要核对步数','样本打包：注意力、位置与损失目标','供给能力：速率、缓冲、内存与流水重叠','恢复与长尾：消费进展、输入版本与慢rank','实战与变化题：实际分流和打包数值对照']);
  const d=data.sections.map(s=>s[1]),d1=blocks(d[1]),d2=blocks(d[2]),d3=blocks(d[3]),d6=blocks(d[6]),dl=downloads(d[6]);
  if(d1.length!==1||d2.length!==1||d3.length!==1||d6.length!==4||dl.length!==2)throw Error('Input source block layout changed');

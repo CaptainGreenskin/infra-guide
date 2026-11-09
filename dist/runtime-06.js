@@ -5108,6 +5108,25 @@ const progressiveAgentSectionTitles={
    fold('原执行输出',code(old[11],1))+
    p('R27完成画图后，控制面有产物版本和回收记录。如果它还调用外部工具发布结果，就会多出工具端提交与本地确认两份事实。下一章沿一次独立写操作，说明响应丢失后新进程怎样认回原结果。');
   finish(a,before);
+  a.sections[6][1]+=p('根文件系统只读时，单独挂载的输入仍有自己的读写属性。<a href="/article/agent-sandbox/#native-sandbox-container">在真实容器里对照只读输入和可写输入 →</a>');
+  const oldScope='Pod片段说明配置关系，未运行容器验收。两类本地程序与片段均不构成生产沙箱或Kairo已验证的结论。';
+  if(!a.sections[8][1].includes(oldScope))throw Error('Missing sandbox evidence scope');
+  a.sections[8][1]=a.sections[8][1].replace(oldScope,'Pod 片段说明配置关系。第 10 节另用 Docker 实跑文件边界，生产沙箱与 Kairo 仍需在对应环境验收。');
+  a.sections[9][1]+=h('native-sandbox-container','在真实容器里读输入、写输出并检查越界写入')+
+   p('用独立任务 R27-lab 把文件边界缩成一份报告。启动器把合成的 10 和 27 放入 <code>/input</code>，提供独立的可写 <code>/output</code>。容器以非 root 身份运行，用户和组编号都为 65534。根文件系统只读，容器移除了额外的 Linux 特权能力，并禁止通过执行新程序取得额外权限。两例各自创建容器和夹具，只改变输入挂载的读写属性。',
+     '脚本先读输入并保存报告 37，再尝试向输入追加标记。两例的宿主输入文件都允许这个 UID 写入，因此只读组的 EROFS 来自挂载约束。EROFS 表示文件系统只读。另一处未挂载的合成标记文件在宿主仍存在，两次容器访问该路径都得到 ENOENT，表示路径不存在。')+
+   trainingFigure('sandbox-container-boundaries','只改变输入挂载的读写属性。报告相同，输入完整性和独立验收结果不同。')+
+   table(['实际观察','只读输入','可写输入对照'],[
+    ['从输入生成报告','写入 37','写入 37'],
+    ['在宿主核对输入字节','写入返回 EROFS，字节不变','写入成功，文件追加标记'],
+    ['写根文件系统中的 /tmp','EROFS','EROFS'],
+    ['独立验收','通过','输入被改动，拒绝']
+   ])+
+   p('两个进程都正常退出。容器外的校验器从原资料重算 37 和来源摘要，直接读取产物及宿主输入文件，最后核对两个容器 ID 都已从引擎列表消失。可写对照的报告也正确，输入完整性仍不合格。')+
+   p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
+   trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 
  {
@@ -6285,6 +6304,8 @@ const progressiveAgentSectionTitles={
  p('变化练习可以让 rank 1 的变长输入为空，rank 0 仍为 [2,4,6]。此时全局 sum=12、count=3、均值=4；需要同时处理空输入的传输和本地统计，不再执行空均值归约，并更新固定断言。全组都为空时，再定义统一的 count=0 分支。先写清预期，再修改程序，才能解释新的结果。',
  '现有记录验证了真实本机进程间 CPU 集合操作及指定对照，未执行 GPU、RDMA、多主机或吞吐测量。把同一输入输出关系搬到目标训练环境后，还要重新验证流依赖、目标规模和完整更新。')
  ],ci,'从进程和张量开始，手算集合通信，再沿成员到达、异步等待与计时理解一次训练同步。');
+
+ comm.sections[0][1]+=p('沿用上面的两份输入。All-to-All 让每个 rank 按目的地切块，接收方只拿发给自己的块。若每份输入的前两项发给 rank 0、后两项发给 rank 1，两个接收方分别得到 [1,2,10,20] 和 [3,4,30,40]。上表的 AllGather 则让两个 rank 各自收到全部八项。分块不等长时，要把每对发送方、接收方约定的条数对上。<a href="/article/moe-routing/#native-expert-parallel">选读专家并行的真实收发与梯度对照 →</a>');
 
  const data=select('data-pipeline',['数据对象：Dataset、Sampler、批次与worker','跨rank分片：补齐、两层丢尾与epoch','多worker流式输入：覆盖正确后还要核对步数','样本打包：注意力、位置与损失目标','供给能力：速率、缓冲、内存与流水重叠','恢复与长尾：消费进展、输入版本与慢rank','实战与变化题：实际分流和打包数值对照']);
  const d=data.sections.map(s=>s[1]),d1=blocks(d[1]),d2=blocks(d[2]),d3=blocks(d[3]),d6=blocks(d[6]),dl=downloads(d[6]);
@@ -9508,6 +9529,17 @@ set_state_dict(model, optimizer, model_state_dict=state["model"],
  p('目标集群验收沿同一负载保存：指标时间与覆盖集合、HPA conditions、desiredReplicas、Pod 创建/绑定/Ready、新容量完成率、接纳、拒绝和积压。再将保存的控制配置与事件对应到下面的只读观察。')+s7[6]+
  p('CPU 下降可能来自更多副本，也可能来自请求被拒、下游阻塞或指标丢失。伸缩完成由用户目标定义：同一窗口内知道实际接纳与完成多少、还积压多少、容量何时可用，再看延迟和成本，才能把伸缩动作接回业务结果。')
  ],'沿指标、HPA 计算、期望副本和实际服务容量解释伸缩，再以整数比例、缺指标、队列空窗与下游预算核对结果。');
+
+ scaling.sections[0][1]+=p('第 8 节用真实 CPU 指标驱动 HPA，再让新增 Pod 暂缓通过就绪探针。沿同一个 Deployment 核对期望何时改变、可用副本何时增加。<a href="/article/k8s-autoscaling/#native-hpa-control">查看原生 HPA 实验 →</a>');
+
+ scaling.sections[7][1]+=h('native-hpa-control','原生 HPA 实战：期望副本先于就绪')+
+ p('在单节点 kind 中，Metrics Server v0.9.1 从 kubelet 读取 CPU 用量，经资源指标 API 提供给 HPA。每个工作容器请求 100m，CPU 上限为 200m。HPA 的目标是 request 的 50%，副本范围为 1 到 2。程序用 Pod 内的标记文件启停原 Pod 的忙循环。')+
+ '<figure class="training-figure"><a href="diagrams/kubernetes-hpa-control.svg" target="_blank" rel="noopener" aria-label="放大：CPU 指标、期望副本与可用副本"><img src="diagrams/kubernetes-hpa-control.svg" width="440" height="379" alt="空闲时期望和可用均为 1，负载增加后期望为 2 而可用仍为 1，新 Pod 就绪后可用达到 2，撤掉负载后两者回到 1" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一次扩容分别核对 HPA 期望、Deployment 可用副本和 Pod 就绪条件。<a href="diagrams/kubernetes-hpa-control.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('本次原 Pod 的资源指标样本从约 10.1m 升到 195.0m，越过目标对应的 50m。HPA 的 <code>desiredReplicas</code> 与 Deployment 的 <code>spec.replicas</code> 都变成 2。新增 Pod 已是 Running，但仍缺少通过探针的标记，Deployment 的 <code>availableReplicas</code> 保持 1。补上标记后，同一个新增 Pod UID 变为 Ready，可用副本升到 2。')+
+ p('可用副本已经是 2 的那次观察里，HPA 的 <code>currentReplicas</code> 仍显示 1。指标 API 和控制对象分别读取，各自有采样窗口或更新节奏。比较记录时先对齐时间和对象，不能把几个字段当作同一时刻的计数。')+
+ p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。业务完成率需要前面定义的实际请求与队列观测。')+
+ trainingCode('复跑原生 HPA 并离线核对随包记录','SHELL','python3 -B hpa_control_lab.py --output native-record.json\npython3 -B hpa_control_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/kubernetes-hpa.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-hpa/validation.json">查看指标窗口、期望和 Pod UID →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561685247">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes 资源指标链 ↗</a></p>';
 })();
 
 
@@ -12002,7 +12034,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
 
  p('把不同专家参数放在不同设备上执行，叫专家并行（EP）。一个token若选中了别处的专家，就需发送隐藏向量，专家算完再把贡献送回；一组成员分别向多个目的地互换数据，通常用All-to-All类通信组织。张量并行（TP）则进一步拆分同一个算子或参数张量，两种划分可以组合。',
  '本章用逻辑编号说明路程：专家0、2的owner为rank0，专家1的owner为rank1；token原位置按编号奇偶标记origin_rank。八条分配中有五条origin与owner不同。若每向量2维、每元素按8字节表示，发出有效向量为5×2×8=80字节，结果同宽，往返合计160字节。',
- '这160字节是声明的数据量算式。当前程序由父进程通过Python队列给两个本地子进程发任务，token原rank只是元数据，队列还会序列化记录和Python对象；它没有执行组内All-to-All，也没有测出队列或网络实际字节。')+
+ '这160字节是声明的数据量算式。上述标准库实验由父进程通过Python队列给两个本地子进程发任务，token原rank只是元数据，队列还会序列化记录和Python对象。这个算式只数有效向量，队列与网络的实际传输量需另测。')+
  p('真实EP先交换或约定每个目的地的条数，据此打包、交换向量，再按相反方向返回和合并。两边的分割数量与顺序要一致。少量token可能形成低效率的小矩阵，偏斜又会把更多工作集中到少数设备；通信量、消息延迟、布局转换和最慢路径共同决定耗时。')+
  linkRow(links(m[6])),
 
@@ -12015,7 +12047,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ['错误的相邻两项合并','形状仍[4,2]，数值不同','形状检查补不了身份检查'],
  ['非有限分数、错误宽度、重复回包','各自拒绝','对应路由或合并入口的条件']
  ])+
- p('这些结果覆盖固定线性变换、本地进程分发和身份合并。训练后的专家能力、权重驻留分片、GPU并行合并及NCCL时序，要在相应实现中另行提供证据。'),
+ p('这份队列实验覆盖固定线性变换、本地进程分发和身份合并。下面换一组输入，用两个真实 rank 验证专家参数分放、集合通信和反向。'),
 
  p('从一个token向外解释整层：同一向量先产生路由分数，选中的专家与门控写进分配记录；记录经过容量准入，按owner送去计算；每份结果带原身份返回，合并后才交给后续模型。参数量、缓冲量与通信量都能回到这条路径上找到来源。')+
  table(['改变条件时的追问','沿已有对象继续推导'],[
@@ -12027,6 +12059,35 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ])+
  p('复习时先遮住结果，手算t0的两份专家输出，再预测把四行分数都改成t0后会丢哪两条分配。能把这一次改变解释清楚，再把同一判据带到真实模型与设备。')+linkRow(links(m[8]))
  ],'沿四个token、三份专家和两进程执行，走通路由概率、Top-2门控、容量准入与原身份合并，分清参数计算量和实际驻留。');
+
+ moe.sections[6][1]+=p('下一节的<a href="/article/moe-routing/#native-expert-parallel">原生 Gloo 实验</a>另用六个词元，每个进程只实例化自己的一份专家权重。沿同一个词元核对分发、回包和梯度怎样往返。');
+ moe.sections[7][1]+='<h3 id="native-expert-parallel">两个 rank 各持一份专家，完成收发和反向</h3>'+
+ p('在这个独立算例里，rank 0 持有词元 0、1、2 和专家 0，rank 1 持有词元 3、4、5 和专家 1。每份专家只有一张 2×2 权重，没有偏置。每个词元固定交给一个专家，权重取 1。两边先按目标专家对输入分组，同时保留原词元编号。')+
+ trainingFigure('native-expert-parallel','两个进程各发三行，两个专家实际收到四行和两行。结果回到来源后恢复词元顺序。')+
+ p('两个来源都向专家 0 发两行，向专家 1 发一行。先交换计数，专家 0 得到接收划分 [2,2]，专家 1 得到 [1,1]。这里的两个数字按来源 rank 排列。专家算完后互换收发划分，将结果送回来源。rank 0 收回的顺序仍是 [1,2,0]，因此要应用分组排列的逆，恢复 [0,1,2]，才能按行配对各自的目标。',
+ '下面是实际程序的收发节选。<code>exchange_rows</code> 分配接收张量并调用可求导的 <code>torch.distributed.nn.functional.all_to_all_single</code>。每条路线的整数词元编号也实际发送一次，用于核对向量的身份。')+
+ trainingCode('分组、专家计算与回包复原 · expert_parallel.py 节选','PYTHON',`pack_order = owners.argsort(stable=True)
+sent_ids = token_ids[pack_order]
+expert_ids = exchange_rows(sent_ids, receive_splits, send_splits)
+expert_inputs = exchange_rows(x[pack_order], receive_splits, send_splits)
+expert_outputs = expert(expert_inputs)
+
+returned_ids = exchange_rows(expert_ids, send_splits, receive_splits)
+returned = exchange_rows(expert_outputs, send_splits, receive_splits)
+restore_order = pack_order.argsort()
+restored_ids = returned_ids[restore_order]
+assert torch.equal(returned_ids, sent_ids)
+assert torch.equal(restored_ids, token_ids)
+output = returned[restore_order]`)+
+ p('两个来源各自累加本地每项误差的平方，再乘 1/2。反向时，输出梯度沿回包路径传回专家。以词元 0 为例，它带着 [1,2] 去专家 1，算得 [1,4]，回到 rank 0 后与目标 [−2,−1] 比较，得到输出梯度 [3,5]。专家 1 同时累加词元 0 和词元 4 对权重的贡献。词元 0 的输入梯度 [7,8] 沿分发路径的反方向回到 rank 0。',
+ '独立串行参考逐词元按原编号计算前向、损失和梯度。反例保留原来的通信结果，跳过顺序复原，将回包直接与目标配对。正反两次每个来源的输出张量都是 [3,2]。')+
+ table(['实跑对照','总损失','与串行参考的最大绝对差'],[
+  ['恢复原输入顺序','101.5','输出、输入梯度、专家权重梯度均为 0'],
+  ['按回包顺序直接配对目标','111.5','输出 6、输入梯度 4、专家权重梯度 6']
+ ])+
+ trainingCode('解压后用 Python 3.12 和 PyTorch 2.5.1 CPU 运行','SHELL','python -B -m torch.distributed.run --standalone --nproc-per-node=2 expert_parallel.py > replay.json')+
+ p('这份记录覆盖本机 CPU/Gloo、固定每词元一个专家，以及前向和反向的收发。路由器训练、容量策略、优化器更新、CUDA/NCCL 和物理跨机性能各需对应实验。')+
+ '<p class="practice-links"><a href="labs/native-expert-parallel.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/native-expert-parallel/README.md">运行说明 →</a> · <a href="labs/native-expert-parallel/validation.json">实际收发编号与梯度 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/nn/functional.py#L374-L403">PyTorch 2.5.1 反向收发 ↗</a></p>';
 
  const spec=select('speculative-decoding',['先分清谁提议，谁决定最终分布','先只提议一个词元：算清留下多少概率','拒绝以后，从哪里补回缺少的部分','多个候选怎样用一次目标调用核对','缓存回退，要删掉哪些位置','实际CPU模型怎样验证并行位置没有算错','接受率为什么不能直接换算成加速比','放进服务系统，还要处理哪些边界','把结果和能证明的范围对齐']);
  const s=spec.sections.map(s=>s[1]),s3=blocks(s[2]),s4=blocks(s[3]),s5=blocks(s[4]),s6=blocks(s[5]);
@@ -13342,13 +13403,13 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 /* Learning goals are views over the same curriculum, never separate copies of lessons.
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
- 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'部署一个有持久数据的服务，说明请求怎样抵达、配置怎样生效，以及一次失败发布怎样回退。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'给出一条故障时间线、一个容量预算和一次恢复对照；每个判断都指向相应信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'用同一训练任务比较正常执行与恢复执行的更新结果，并说明扩到多机时新增哪些环境条件。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'估算一个请求的 KV 缓存和并发容量，复算首词元延迟，再解释一次版本切换的验收条件。'},
- 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，手算运算量与字节；比较参考实现的输出与梯度，再说明轨迹支持了哪个性能判断。'},
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。三项实跑使用独立夹具。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮。核对每个进程的样本数、更新次数和状态差异，解释逐位比较与容差比较的结果。再说明从本机 CPU 迁移到物理两机四卡时，会合、设备和共享检查点各要验什么。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算一个请求的缓存与并发容量。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>复算首词元等待，再用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，说明切换何时才算完成。'},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>自检。工具已返回回执，图恢复同一任务时仍要重跑 publish。先预测沿用操作 ID 或按尝试生成 ID 各会留下几份报告，再用两份数据库的记录核对金额、回执和图的终态。可只读记录，也可运行实验。目标平台另按适配器契约验收。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对只读输入和可写产物。再看<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>。工具已返回回执，图恢复同一任务时仍要重跑 publish。先预测沿用操作 ID 或按尝试生成 ID 各会留下几份报告，再用两份数据库的记录核对金额、回执和图的终态。目标平台另按适配器契约验收。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -13365,14 +13426,14 @@ function learningGoalSelectorHTML(track){
 function learningGoalHTML(profile){
  if(!profile)return '';
  const route=learningProfileRoute(profile);
- return '<section class="learning-goal" id="learning-goal"><h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a href="'+articleURL(id)+'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile)+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
+ return '<section class="learning-goal" id="learning-goal"><h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a href="'+articleURL(id)+'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile)+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate" id="goal-gate" tabindex="-1"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
 }
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
  if(index<0)return '';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
- return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<p>已到本路线最后一章。回到路线页，用交付任务检查理解。</p>')+'</nav>';
+ return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>')+'</nav>';
 }
 
 // Follow a selected learning route through prose, search and field references.
@@ -13836,6 +13897,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
+ 'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
+ 'sandbox-container':{folder:'sandbox-container',title:'非 root 容器的只读输入与报告验收'},
  'kubernetes-config':{folder:'kubernetes-config',title:'同一 ConfigMap 版本的四条应用读取路径'},
  'prefix-attention':{folder:'prefix-attention',title:'前缀、因果和错误平移掩码的 SDPA 对照'},
  'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
@@ -13921,6 +13985,7 @@ const labLearningCatalog=[
  {id:'cloud-sql-snapshot',track:'cloud',stage:2,title:'旧快照写失败后，重试 SQL 还是重做判断',chapter:'database-index-locks',anchor:'sql-snapshot-lab',pack:'sql-paths-snapshots',files:['snapshot_retry.py'],env:'Python 3.9+ · 标准库 / SQLite WAL',kind:'两个独立连接的实际交错事务',observe:'读到100、补货提交110后让旧快照写入失败；回滚后重新核对得105，照搬旧值虽可提交却只剩95。',scope:'一进程本地 WAL，不把单写者或517推广为 InnoDB 锁协议。'},
  {id:'cloud-cache',track:'cloud',stage:2,title:'缓存失效事件丢了或乱序，怎样补上',chapter:'cache-consistency',pack:'serving-consistency',files:['cache_outbox.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机事务与重投',observe:'源端提交后退出，恢复待发事件（outbox）；重复和乱序事件不能使新版本退回旧值。',scope:'固定缓存协议，不代表所有缓存与数据库间天然原子。'},
  {id:'cloud-hpa',track:'cloud',stage:2,title:'HPA 分母、指标缺失与扩容延迟',chapter:'k8s-autoscaling',pack:'scaling-collectives-traces',files:['scaling_reference.py','prometheus_cpu.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'计算模型 + 真实规则引擎',observe:'先手算不同资源请求量（request）的加权利用率，再核对缺指标和积压；真实 promtool 区分零值与无序列。',scope:'特定版本计算参考，不运行 metrics-server、HPA 或节点扩容。'},
+ {id:'cloud-native-hpa',track:'cloud',stage:2,title:'HPA 已要求两个副本，为什么仍只有一个可用',chapter:'k8s-autoscaling',anchor:'native-hpa-control',pack:'kubernetes-hpa',files:['hpa_control_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · metrics-server 0.9.1',kind:'原生指标 API、HPA 与 Pod 状态',observe:'追踪实际 CPU 负载、伸缩建议、Deployment 目标、Pod 就绪和卸载后的缩容。',scope:'单节点 kind、固定 CPU 负载与人为就绪门槛。'},
  {id:'cloud-identity',track:'cloud',stage:2,title:'认证通过后，还要按资源归属授权',chapter:'iam-security',pack:'cloud-operations',files:['authorization_http_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机 HTTP',observe:'核对 14 组允许、跨租户、过期、伪造和撤销用例，直接检查业务写入与审计。',scope:'受限 HMAC 能力凭据夹具，不是 JWT/OIDC 或生产认证库。'},
  {id:'cloud-sre',track:'cloud',stage:2,title:'容量守恒、用户结果与 SLO 告警',chapter:'slo',pack:'cloud-operations',files:['capacity_lab.py','telemetry_lab.py','promtool_lab.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'模型 + 本机 HTTP + 规则',observe:'分别算准入与积压、跟踪两服务请求，再用七组序列验证聚合、无流量和长短窗。',scope:'本机 HTTP 与真实规则求值；不是生产流量、抓取服务或告警通知。'},
  {id:'cloud-mysql-pitr',track:'cloud',stage:2,title:'金额125正确，恢复历史仍可能缺一笔',chapter:'mysql-recovery',anchor:'mysql-pitr-run',pack:'transport-recovery',files:['mysql_restore.py','Dockerfile.tools'],env:'Linux/macOS · 本地Docker引擎 · Python 3.9+',kind:'真实MySQL 8.4容器',observe:'核对基线、全量历史、缺首段、正确按点恢复与后续写入；另做进程崩溃对照。',scope:'公共Linux CI实测；未验证物理断电、主从切换或跨区域云服务。'},
@@ -13947,6 +14012,7 @@ const labLearningCatalog=[
  {id:'ai-operator-cpu',track:'ai',stage:2,title:'同一数学契约，核对布局、舍入与尾块',chapter:'operator-profiling',anchor:'operator-cpu-run',pack:'operators-routing',files:['cpu_ops.c','operator_lab.py'],env:'Python 3.9+ · 本地C11编译器',kind:'真实CPU编译与调用',observe:'验证稳定softmax、1/0/2求和反例、非整块GEMM，再记录有限计时样本。',scope:'float64连续数组；没有CUDA、GPU带宽或BLAS性能结论。'},
  {id:'ai-operator-profile',track:'ai',stage:2,title:'用CPU实际轨迹分清外层区间与内部算子',chapter:'operator-profiling',anchor:'operator-profile-run',pack:'operators-routing',files:['cpu_profile.py'],env:'Python 3.9+ · PyTorch；记录版本2.5.1 CPU',kind:'真实CPU Profiler',observe:'预热后5次线性、softmax与求和，核对15条命名区间和算子事件。',scope:'采集形状/内存有开销，不把包含子事件的时间重复相加，不作为GPU计时。'},
  {id:'ai-moe-routing',track:'ai',stage:2,title:'八条分配乱序返回，仍按原身份合并',chapter:'moe-routing',anchor:'moe-routing-run',pack:'operators-routing',files:['moe_routing.py'],env:'Python 3.9+ · 标准库',kind:'实际两执行进程与声明路由策略',observe:'四个输入按Top-2分发，比较正确/错误合并以及容量3下的保留6、丢2。',scope:'固定线性专家；逻辑rank与通信160B为声明算式，没有GPU/NCCL或模型训练。'},
+ {id:'ai-native-expert-parallel',track:'ai',stage:2,title:'专家算完，怎样把结果和梯度还给原位置',chapter:'moe-routing',anchor:'native-expert-parallel',pack:'native-expert-parallel',files:['expert_parallel.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo',kind:'真实非等长集合通信与自动求导',observe:'两个进程各持一份专家，按原身份核对输出、输入与专家梯度，再观察同形状的错序反例。',scope:'固定 Top-1 路由与线性专家，范围为本机 CPU。'},
  {id:'ai-serving',track:'ai',stage:2,title:'计算预算和 KV 预算要同时满足',chapter:'model-serving',pack:'serving-consistency',files:['serving_scheduler.py'],env:'Python 3.9+ · 标准库',kind:'确定性调度模型',observe:'逐轮记录预填充、解码与缓存占用，观察只检查一笔预算会遗漏什么。',scope:'教学调度器，没有真实模型、时延压测或服务框架。'},
  {id:'ai-native-inference',track:'ai',stage:2,title:'同一条提示，真实引擎还要前向几项',chapter:'model-serving',anchor:'native-inference-engine-lab',pack:'native-inference',files:['engine_walkthrough.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实引擎、回环 HTTP 与逐轮记录',observe:'核对输入词元、前缀命中、新算提示和实际输出，比较关闭复用的对照。',scope:'单 slot、合成小模型、CPU；vLLM 的多请求块池另作源码走读。'},
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},
@@ -13970,6 +14036,7 @@ const labLearningCatalog=[
  {id:'agent-statistics',track:'agent',stage:3,title:'80% 准确率和提高 8 个百分点说明了什么',chapter:'agent-evaluation',pack:'config-memory-evaluation',files:['evaluation_statistics.py','paired-example.csv'],env:'Python 3.9+ · 标准库',kind:'声明标签的统计计算',observe:'分别计算类别切片、评分器四格、Wilson 区间和同题成对比较；解释 p=0.6875。',scope:'输入是合成教学标签，不是模型能力实测或上线结论。'},
  {id:'agent-contract-record',track:'agent',stage:3,title:'按测试者契约，拒绝十种外表正常的记录',chapter:'kairo-practice',pack:'storage-parallel-acceptance',files:['acceptance_record.py','readonly-contract.example.json','readonly-evidence.example.json'],env:'Python 3.9+ · 标准库',kind:'通用记录校验夹具',observe:'分开权限/标准答案与观测记录，检查原任务、对应来源值、total=23及B快照；来源未核实保持false。',scope:'只验证声明记录的一致性，不调用模型/工具/Kairo，也不证明记录来源真实。'},
  {id:'agent-sandbox',track:'agent',stage:3,title:'CPU、墙钟、文件描述符与路径分别限',chapter:'agent-sandbox',pack:'leases-placement-sandbox',files:['subprocess_limits.py','descriptors_and_paths.py'],env:'POSIX · Python 3.9+ · 标准库',kind:'实际受信子进程',observe:'观察文件、FD、CPU 与墙钟限制，再用继承和路径替换反例检验启动边界。',scope:'只管理自己的受信进程；没有创建安全容器或隔离同 UID 文件系统。'},
+ {id:'agent-native-sandbox',track:'agent',stage:3,title:'报告写成了，原始输入有没有被改动',chapter:'agent-sandbox',anchor:'native-sandbox-container',pack:'sandbox-container',files:['sandbox_container.py','source.json'],env:'Linux amd64 · 本机 Docker · Python 3',kind:'真实非 root 容器与主机侧验收',observe:'比较只读与可写输入挂载，核对报告、源字节、权限和清理。',scope:'独立本机容器与合成文件，范围为实验设置和观测。'},
  {id:'agent-kairo',track:'agent',stage:3,title:'把本地不变量变成 Kairo 接入验收',chapter:'kairo-practice',files:[],env:'真实 Kairo 版本、接口与独立测试环境',kind:'目标环境手册',observe:'逐项映射任务身份、工具回执、状态、接管、撤权与独立结果验收，保留目标版本记录。',scope:'目前是映射和验收设计，未声明 Kairo 已接入或真实多 worker 验收通过。'}
 ];
 labLearningCatalog.push(
@@ -14244,5 +14311,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="6cc1c52f59cac8fc9cb07091eb126d6489de9bf6edb08300b7da4468367e170d";
+const staticReadingVersion="08cfd29a70c5e10c86cccdd13dd07414f68dffc3d856429c97c871dbb1f3c1ef";
 

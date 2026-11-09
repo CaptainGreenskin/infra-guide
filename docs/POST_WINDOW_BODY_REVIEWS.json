@@ -4268,6 +4268,64 @@
         "可以载入权重，还需要通过哪些对照",
         "用变体诊断一个外表正常的错误"
       ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c0f0782d1a4cf848fc714803ddbb2132aba3fad79e67bd9f38a5c487d8edb86c",
+      "reviewed_content_sha256": "01477f45520823cd7582aa9a6cdc1e7fbaf5a1afe744f26abad014eb5c804fe4",
+      "scope": "Trace actual resource metrics to desired, bound and available capacity",
+      "observation": "Observe an owned kind HPA react to CPU, show a new Pod held unready while desired is two, then observe readiness and scale-down.",
+      "headings": [
+        "控制链：建议、期望与实际可用容量",
+        "CPU口径：单位、request与匹配集合",
+        "保守计算：缺指标、容差与方向变化",
+        "指标选择：资源、容器、业务与外部信号",
+        "容量空窗：积压、净余量与有界接纳",
+        "伸缩行为：稳定窗口、速率与上下界",
+        "下游预算：副本、连接与实际完成率",
+        "实战与变化题：数学参考和真实规则引擎"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "f70ff9bd8bfe60f62039f83a95eefd16b03a4b610ff509a7296fab2134537eda",
+      "reviewed_content_sha256": "772ba254bbd1620e6de93a20eb7201447611708ee59b09fb5d2d38afe0aa214c",
+      "scope": "Compare destination-specific exchange with gathering every input",
+      "observation": "Reuse the same two vectors for an exact split calculation, then lead to real uneven expert traffic and the return gradient path.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b7741bfc5f31da1155956bc7bad564dcdcb13af9db01f38e51d549285c668718",
+      "reviewed_content_sha256": "b003841b9ab6d476c3517e93bd36722cbec623eda2d1b2be1d8b57bd46a65c65",
+      "scope": "Observe a real non-root container read and write boundary",
+      "observation": "Both local executions produce a valid 37 report. Only the writable input mount allows mutation; independent host evidence rejects it and checks owned cleanup.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }
