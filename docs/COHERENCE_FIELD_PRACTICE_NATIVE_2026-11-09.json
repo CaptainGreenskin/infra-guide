@@ -1,0 +1,299 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "bc48097f9d71b2a219d60da47fabe442376d8f02",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_DELIVERY_BLOCK_CANCELLATION_2026-11-09.json": "26906f6896d92167ad1608f172be4f0ee484161e429b628832ca107a4b4ec9e1"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "187754f8a06b4c1e5adae0b279e3d4d6afb36eab7618a2fb85c14da8288ed3da",
+      "reviewed_sha256": "13962df4e8ae5c4e94a12b2a4ac0741cd148217796477c1f1e511ad86cd86d31",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "ff040efabebe4bcf659b4e03a2d481f0757e46c160890cb38c7a5d79b15d3231",
+      "reviewed_sha256": "cae44bc0d1fca296d124df0127e11121c24f5247c05b5f194981c26160dca882",
+      "scope": "Connect all fourteen field diagrams to a same-field practical exercise with a verifiable outcome."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "eb69b57c739db0c8c59a8d6578111060cf3261c8cb022b7801c094006943f8fb",
+      "reviewed_sha256": "d27cf850f24672e086aa209076b183690594ba9103a24169e2d2b486f3b8762b",
+      "scope": "Connect all fourteen field diagrams to a same-field practical exercise with a verifiable outcome."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "07d8126e97c05f384c8625825ef18ba21ec9a0a544bb30b5f3e6415fd85702a0",
+      "reviewed_sha256": "7c53fc3bf260aa3b46f4a74e9dcc894554f6f97b8ef9723982821fbc0df3f38b",
+      "scope": "Connect all fourteen field diagrams to a same-field practical exercise with a verifiable outcome."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "9d6a813cc634547e7ebc92aa832d79786fcad5e129ecca0f653cb29fc9b624a2",
+      "reviewed_sha256": "95ef22d3e2bcadc130c49c5fcd9263e66a899417eebaa17f5782bc4ccc39631a",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/native-model-rollout.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1cbc4105824ff00e2383880dd90cf03cfe97cdd862dd6f57f4b3b21a9e0c198f",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/diagrams/mcp-http-authorization.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "18300f6443d6ea3d7d18314d392a472ed4d763f677030f18ed154391353ae061",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "f9b5007c18633532ceb6ea5d7859967749c3aa8280c2ba88b82dd6b6562f9800",
+      "reviewed_sha256": "a89de2902229f98990ddaad4558579df42b9b5688e03cdfbfa65cef93ae62287",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "3884f677824d1b715bcfef8bd7a6b65856192c8f80d0b5aae38650e50d220afa",
+      "reviewed_sha256": "5f9ae0a6b9edc45bd4d11cd2f08e6674a2dc5fbcfaf54d66815d02ca072b9d6d",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/progressive-quantization-delivery-reading.js": {
+      "previous_sha256": "a7974bfac96f459ca1fdd8ceca244b7edba6af699587f90c812988b9c5c5956b",
+      "reviewed_sha256": "fc39ba7345e7915d3095ea046368f47f12dbb3f52895a4db06b31796b90d8dfc",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/mcp-http-cancellation-reading.js": {
+      "previous_sha256": "c08d3a938fe297123a2975608bc2c07192a097ca14d93a27a0f45b3f7595b6bd",
+      "reviewed_sha256": "fbd3d84a856cb2b29c5828b495622cf363997dd723b99837144b49742e2cd63a",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "7c00fa670106f53db8598f45f07e22cd823e8b7e5111f1c7f8928d0afede05fa",
+      "reviewed_sha256": "acb00173ce87380994b9b791473268a279b013fe478345fb9335c05d0150a6d9",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "e44815baf8b2d709dafba9c54a418afad9d766be41f889f1357b3d8559094da8",
+      "reviewed_sha256": "935110bb01088480cc8a103fb6d725b7c82067bbe0913846020c3993650d1863",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "64fbd06ff101f160c2049c4e2802d5e9ac4abe4b43909c128baa89f155effe7f",
+      "reviewed_sha256": "b2c258e4b833000376a6cae7771ab9823d9357f03fb9091e6854071b2088af34",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "scripts/check-native-model-rollout.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "696b3fb27bb3873b9a9cf265b00adab56512657dea448f2bbc96eaad09fcd657",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "scripts/check-mcp-http-authorization.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2c366ec5aac9130ffbc351f9db89eb393e08938d939ff6cee43823f5aaa9093b",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "aef350ce5eb48e91a2cac66e0ee6dccac0b67da2d4c71de84f04ead378025496",
+      "reviewed_sha256": "01e3fd7594f4d297d5cc89703cbe87693f28ec85e54f8de708c879932ba96b06",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "dist/diagrams/spiffe-workload-identity.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5e8d5714d16cf957b698d422fdd8b795ce7e3041f3ad0320e50e0fc6481acc76",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/progressive-terraform-identity-reading.js": {
+      "previous_sha256": "2a58cc4bafa6d454ad17fc9b2eb34b814367268e4a4b6f71a58d92f8774fb33f",
+      "reviewed_sha256": "ea48736be228dfcf362798288a2aee48d6e15186ad44d8b7343e1237fd46251e",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "scripts/check-spiffe-workload-identity.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d1b578a355902d854ea1de7c1d9efe90989b304aead96b99dbe72693ac41db40",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/native-model-rollout.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "292f8b74bf3fcb0ea46d7816bbe7759bbd0ee5b20094d2a445ecb674fb45554e",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/native-model-rollout/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a43365dfade237010e3946ef33e2650311137abd704ebf5bc9ad7f6a93ebf540",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/native-model-rollout/make_fixture.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6b31aca8529410a5b7de12d58437b02a111d94ae544f4a77f28eaa902ce202c1",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/native-model-rollout/observations.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "63a0de2125492f8b415890676845e9902b7cc2e8fb11067addbe63e73aed34e3",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/native-model-rollout/rollout_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "09797937bb3f6724264f9dc5aa206da2d935deac92ce0f07406933170f7a471d",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/native-model-rollout/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f238bd3dae438a7bf7442068e66cafed936da05aa89ba13cab64eec3107938c1",
+      "scope": "Bind actual CPU engine readiness, semantic admission and pinned delivery to separate evidence."
+    },
+    "dist/labs/mcp-http-authorization.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "97593dd63965a935ab6a17ff744f8d10818a1c0617d19340ef12c3788a43b483",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "52394aa8ee741575c787d0815572ab86be3fd737ef9f38b2671d1dbc6c261443",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/authorization_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "749e10a4eaacfb514d52d2851b3c69208998fc0e10a5bb7f67be0851f88c99a1",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/client.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "271eaa38ac1823b808638d8b1519cff8c1618c26fff32af08cf5a4772738cdf9",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/orders.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/reports.sqlite": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a741b6aa85e50be4cd784de62161cfb5e827b998c3baaecdca40852392ff783b",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/server.jsonl": {
+      "previous_sha256": null,
+      "reviewed_sha256": "deb9a57e5d30cf86d5f308e745039d10d5ffeebb76ac8485c6469b8ebe1ddad9",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/mcp-http-authorization/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ab061f5df92d570317497271fe60ba5fa05d3665d66dbbeac20f83f3185607ed",
+      "scope": "Connect native HTTP admission, signed fixture claims and tool-side report authorization."
+    },
+    "dist/labs/spiffe-workload-identity.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a8abf6df1ef93036178d78da88c6bdca1d04ab14026cf3eea7f66be6aeda6f3e",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "de086effa11cc4770f8f7106c1048bf8261a50b0f8f8f749776ed3e3ecb06a8b",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fe1774f191f8fc4ddabf729af31cbdb4055a56008051104b62ac0a20aff36cad",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/go.mod": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a55db71547b257c5c174b5e745d365d7bbc8680e3a22377bd05b1feb326abfdb",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/go.sum": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e638595bdc94e5ddba6adc24a38dd7bf744b718b9adf423568a8e8ff5bec611d",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/receiver-ready.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ad0ba2602ae01b41bb63721f509839cbce105972c5b58f6ca36c0c7cc706edab",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/spire_identity_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "010bbc0c1e1b80ac7c984fd14319de23a933d8f753c664afd3ad1226183156d7",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "325edd989e5f21557dfec94ce47d8ee59c5f28e5042e90314b873747018aa259",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "dist/labs/spiffe-workload-identity/workload.go": {
+      "previous_sha256": null,
+      "reviewed_sha256": "aadcda432ffa1ef7cf59d4b370c204cdc71b11806aeb923a4c8c2c81805404bf",
+      "scope": "Bind workload identity and resource authorization to the Linux native SPIRE evidence."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e4afd44075777b12dd2c83ee83aec7379e1759ce424998e772d116f8c0f1e82d",
+      "reviewed_sha256": "42520752b67c4110a0f4944437fca6d5c46dc5c53e9faec5cc8de651e00838a5",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "97ed849d9cc37409570e85c91f0fb3d5c2a11c179046fdf6c9aa367ad444f91a",
+      "reviewed_sha256": "61dd6acb8fa0de37adebb64c14c971833b4a3317881267d42f4c22a42cd621c2",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_FIELD_PRACTICE_NATIVE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7e3ed8e31e8267b3977d426d685e1a7cbcf48cc1e8f70952f5e377b1537120da",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "21349f622a405fe81283cb106c3c517e9147dac7e7382b5674a0fa1982f49884",
+      "reviewed_sha256": "a59314915f52f9f9f4b5eae756bcdd3436b1fb42a1bc5a64d89bde2bef2bb2be",
+      "scope": "Connect the new measured contrasts to exact subsections and role routes with the existing reading path preserved."
+    }
+  },
+  "article_sections": {
+    "ai-lifecycle": {
+      "sections": [
+        8
+      ],
+      "scope": "Separate native engine readiness, fixed semantic admission, and old stream delivery during a rollout.",
+      "observation": "A healthy wrong-output candidate was rejected. Existing streams retained their admitted versions across release and rollback."
+    },
+    "mcp-protocol": {
+      "sections": [
+        9
+      ],
+      "scope": "Follow a signed fixture token through real HTTP middleware and report-specific authorization.",
+      "observation": "Unauthenticated, wrong-audience and insufficient-scope requests stopped at HTTP admission. Only the permitted report produced a body read."
+    },
+    "agent-security": {
+      "sections": [
+        2
+      ],
+      "scope": "Join token audience and scope checks to report-specific authorization.",
+      "observation": "The same learner credential reached the tool for both object requests. The trusted tenant and report ownership decided which read happened."
+    },
+    "iam-security": {
+      "sections": [
+        2,
+        6,
+        9
+      ],
+      "scope": "Follow local workload attestation through SPIRE identity, mTLS and report authorization.",
+      "observation": "The same user ran two independently attested workloads. The trusted client identity and report policy determined the observed response."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "bc48097f9d71b2a219d60da47fabe442376d8f02",
+    "chapters": 78,
+    "changed_bodies": [
+      "iam-security",
+      "ai-lifecycle",
+      "mcp-protocol",
+      "agent-security"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "field_practice_count": 14,
+    "role_routes": 7,
+    "experiment_packs": 76,
+    "learning_tasks": 118
+  }
+}

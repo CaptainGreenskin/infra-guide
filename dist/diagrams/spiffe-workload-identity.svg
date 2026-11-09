@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="414" viewBox="0 0 440 414" role="img" aria-labelledby="spire-title spire-desc">
+  <title id="spire-title">工作负载拿到身份以后，还要经过报表服务授权</title>
+  <desc id="spire-desc">SPIRE Agent 按进程路径发放证书，A 和 B 都能与报表服务建立双向 TLS。两者请求相同，HTTP 头都自称 A。服务按证书辨认 A 和 B，允许 A 发布 37，拒绝 B；未注册进程无证书。</desc>
+  <rect x="0" y="0" width="440" height="414" rx="16" fill="#f4f8fc"/>
+  <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" text-anchor="middle" fill="#162f4c">
+    <g data-stage="attestation">
+      <rect x="20" y="18" width="400" height="85" rx="10" fill="#e4edf8" stroke="#829cbb"/>
+      <text x="220" y="47" font-size="21" font-weight="700">SPIRE Agent 按路径发证</text>
+      <text x="220" y="76" font-size="16">A、B 和报表服务各有自己的证书</text>
+      <text x="220" y="130" font-size="16" fill="#526985">第四个进程未注册，无证书</text>
+    </g>
+    <g data-stage="mutual_tls">
+      <rect x="20" y="151" width="122" height="51" rx="8" fill="#fff" stroke="#829cbb"/>
+      <rect x="298" y="151" width="122" height="51" rx="8" fill="#fff" stroke="#829cbb"/>
+      <text x="81" y="182" font-size="18" font-weight="650">工作者 A</text>
+      <text x="359" y="182" font-size="18" font-weight="650">工作者 B</text>
+      <path d="M81 203v25h69v28 M359 203v25h-69v28" fill="none" stroke="#45617d" stroke-width="2"/>
+      <path d="M146 252h8l-4 8z M286 252h8l-4 8z" fill="#45617d"/>
+      <text x="220" y="225" font-size="16" font-weight="650">双方验明证书</text>
+      <text x="220" y="245" font-size="16">建立 mTLS</text>
+    </g>
+    <g data-stage="authorization">
+      <rect x="20" y="264" width="400" height="132" rx="10" fill="#fff" stroke="#829cbb"/>
+      <text x="220" y="293" font-size="20" font-weight="700">报表服务按证书身份授权</text>
+      <text x="220" y="322" font-size="16" fill="#526985">相同报文，HTTP 头都自称 A</text>
+      <g data-outcome="worker-a">
+        <rect x="39" y="341" width="174" height="39" rx="7" fill="#e0f2e8"/>
+        <text x="126" y="366" font-size="17" font-weight="650" fill="#176447">A · 发布 37</text>
+      </g>
+      <g data-outcome="worker-b">
+        <rect x="227" y="341" width="174" height="39" rx="7" fill="#f8e9e4"/>
+        <text x="314" y="366" font-size="17" font-weight="650" fill="#923c2c">B · 拒绝 403</text>
+      </g>
+    </g>
+  </g>
+</svg>

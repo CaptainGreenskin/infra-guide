@@ -4775,6 +4775,63 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "64bc80e85ad279e5a429f2a04356323ead1925d51858c2e9247e15d02cc11264",
+      "reviewed_content_sha256": "1877a1f5cd1bd43ac549865378ddb3d4956ed23a9811cf414d2e19c893de823e",
+      "scope": "Follow local workload attestation through SPIRE identity, mTLS and report authorization.",
+      "observation": "The same user ran two independently attested workloads. The trusted client identity and report policy determined the observed response.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e313c94707007783ae3bca23290fbf1d9a097e183c14c1932a6f232ef40617a6",
+      "reviewed_content_sha256": "19012506c6151d7354527f42a5a4aaa482946ac82216daa1d01ff1683d549ac8",
+      "scope": "Separate native engine readiness, fixed semantic admission, and old stream delivery during a rollout.",
+      "observation": "A healthy wrong-output candidate was rejected. Existing streams retained their admitted versions across release and rollback.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "3d42e05cd809f859daa1d8e0148cf1ed16acc6a43a986f4f8ae7315b423aaf0a",
+      "reviewed_content_sha256": "acd2e41e30ce2cd24a4ed8fd16bd48d58b0c40a3025b51491ed2a3a9652ea627",
+      "scope": "Join token audience and scope checks to report-specific authorization.",
+      "observation": "The same learner credential reached the tool for both object requests. The trusted tenant and report ownership decided which read happened.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
     }
   ]
 }

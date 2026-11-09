@@ -1,0 +1,37 @@
+{
+  "schema": "mcp-http-authorization-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "mcp": "2.3.0",
+    "uvicorn": "0.54.0",
+    "httpx2": "2.16.0",
+    "PyJWT": "2.15.1",
+    "cryptography": "50.0.2"
+  },
+  "client_pid": 9836,
+  "server_pid": 9840,
+  "server_exit": 0,
+  "summary": {
+    "metadata": 200,
+    "missing_token": 401,
+    "wrong_audience": 401,
+    "wrong_scope": 403,
+    "wrong_tenant": "tool_denied",
+    "allowed_total": 42,
+    "body_reads": 1
+  },
+  "source_sha256": {
+    "authorization_lab.py": "749e10a4eaacfb514d52d2851b3c69208998fc0e10a5bb7f67be0851f88c99a1",
+    "orders.json": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "52394aa8ee741575c787d0815572ab86be3fd737ef9f38b2671d1dbc6c261443"
+  },
+  "artifact_sha256": {
+    "server.jsonl": "deb9a57e5d30cf86d5f308e745039d10d5ffeebb76ac8485c6469b8ebe1ddad9",
+    "client.jsonl": "271eaa38ac1823b808638d8b1519cff8c1618c26fff32af08cf5a4772738cdf9",
+    "reports.sqlite": "a741b6aa85e50be4cd784de62161cfb5e827b998c3baaecdca40852392ff783b"
+  }
+}

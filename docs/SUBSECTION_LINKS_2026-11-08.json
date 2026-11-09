@@ -304,7 +304,8 @@
     {
       "id": "iam-security",
       "targets": [
-        "subsection-2-1dlazmr"
+        "subsection-2-1dlazmr",
+        "native-spiffe-workload-identity"
       ]
     },
     {
@@ -682,9 +683,12 @@
         "subsection-5-wrf9vk",
         "subsection-6-15mcx71",
         "subsection-7-1bdkyq8",
-        "subsection-8-1an19m4"
+        "subsection-8-1an19m4",
+        "native-model-rollout"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-model-rollout"
+      ]
     },
     {
       "id": "moe-routing",
@@ -724,9 +728,12 @@
       "id": "agent-security",
       "targets": [
         "subsection-1-1igz5hm",
-        "authorization-commit-run"
+        "authorization-commit-run",
+        "mcp-resource-scope"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "mcp-resource-scope"
+      ]
     },
     {
       "id": "agent-sandbox",
@@ -911,11 +918,13 @@
       "id": "mcp-protocol",
       "targets": [
         "mcp-model-tool-observation",
-        "mcp-http-cancellation-run"
+        "mcp-http-cancellation-run",
+        "native-mcp-http-authorization"
       ],
       "visible_targets": [
         "mcp-http-cancellation-run",
-        "mcp-model-tool-observation"
+        "mcp-model-tool-observation",
+        "native-mcp-http-authorization"
       ]
     }
   ]

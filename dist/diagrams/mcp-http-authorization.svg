@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 525" role="img" aria-labelledby="title desc">
+  <title id="title">MCP 入口凭据与报告对象授权</title>
+  <desc id="desc">签名和签发者验证后，MCP SDK 检查令牌受众是否为本服务以及读取范围是否满足要求。未携带令牌或受众错误返回 HTTP 401，范围不足返回 403。使用同一份合格的 A 令牌请求 B 时，工具拒绝且不读取正文。请求 A 时读取一次并返回第三版报告的总数 42。</desc>
+  <metadata>{"record":"labs/mcp-http-authorization/validation.json","missing_token":401,"wrong_audience":401,"wrong_scope":403,"wrong_tenant":"tool_denied","allowed_total":42,"body_reads":1}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#466181"/>
+    </marker>
+  </defs>
+  <style>
+    text {font-family: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #172e46}
+    .title {font-size: 30px; font-weight: 750}
+    .label {font-size: 25px; font-weight: 710}
+    .body {font-size: 21px}
+    .small {font-size: 19px}
+    .muted {fill: #415874}
+    .arrow {fill: none; stroke: #466181; stroke-width: 3; marker-end: url(#arrow)}
+  </style>
+  <rect width="1120" height="525" rx="24" fill="#f8fafc"/>
+  <text x="48" y="61" class="title">先通过 MCP 入口，再判断能读哪份报告</text>
+  <rect x="48" y="101" width="280" height="128" rx="16" fill="#e6effa" stroke="#b5cce2"/>
+  <text x="70" y="141" class="label">访问令牌</text>
+  <text x="70" y="176" class="body">核对签名、签发者</text>
+  <text x="70" y="204" class="body">以及有效期</text>
+  <path d="M331 165H385" class="arrow"/>
+  <rect x="390" y="101" width="320" height="128" rx="16" fill="#e3f0f3" stroke="#9fc3cd"/>
+  <text x="412" y="141" class="label">SDK 入口</text>
+  <text x="412" y="176" class="body">受众为当前 MCP 服务</text>
+  <text x="412" y="204" class="body">范围包含 report.read</text>
+  <path d="M713 165H767" class="arrow"/>
+  <rect x="772" y="101" width="300" height="128" rx="16" fill="#e7f0e8" stroke="#a8c7ac"/>
+  <text x="794" y="141" class="label">工具与资源</text>
+  <text x="794" y="176" class="body">用已验证主体取得租户</text>
+  <text x="794" y="204" class="body">核对请求报告的归属</text>
+  <rect x="48" y="269" width="510" height="185" rx="16" fill="#fff4e6" stroke="#dbc2a3"/>
+  <text x="72" y="309" class="label">入口拒绝</text>
+  <text x="72" y="350" class="body">无令牌或受众错误</text>
+  <text x="469" y="350" class="label">401</text>
+  <text x="72" y="395" class="body">受众正确，读取范围不足</text>
+  <text x="469" y="395" class="label">403</text>
+  <text x="72" y="432" class="small muted">工具未执行，正文读取 0 次</text>
+  <rect x="582" y="269" width="490" height="185" rx="16" fill="#eaf3ef" stroke="#b1cebd"/>
+  <text x="606" y="309" class="label">同一份合格令牌</text>
+  <text x="606" y="350" class="body">请求 B：工具拒绝，读取 0 次</text>
+  <text x="606" y="395" class="body">请求 A：读取 1 次，返回 v3 与 42</text>
+  <text x="606" y="432" class="small muted">两份报告的资源库保持原样</text>
+  <text x="48" y="492" class="small muted">回环 HTTP 实际记录 · MCP Python SDK 2.3.0 · 固定租户与订单夹具</text>
+</svg>

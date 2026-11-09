@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "backend": "CPU",
+  "engine_commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+  "engine_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+  "python": "3.9.6",
+  "system": "Darwin",
+  "machine": "arm64",
+  "source_sha256": {
+    "rollout_lab.py": "09797937bb3f6724264f9dc5aa206da2d935deac92ce0f07406933170f7a471d",
+    "make_fixture.py": "6b31aca8529410a5b7de12d58437b02a111d94ae544f4a77f28eaa902ce202c1"
+  },
+  "observations_sha256": "63a0de2125492f8b415890676845e9902b7cc2e8fb11067addbe63e73aed34e3",
+  "expected_probe_tokens": [
+    7,
+    8,
+    9
+  ],
+  "bad_candidate_tokens": [
+    8,
+    10,
+    12
+  ],
+  "route_generations": [
+    1,
+    2,
+    3
+  ],
+  "old_stream_tokens": 32,
+  "scope": "single-owner local route controller with actual native CPU HTTP/SSE; artificial reader barrier, not a production load balancer or GPU benchmark"
+}

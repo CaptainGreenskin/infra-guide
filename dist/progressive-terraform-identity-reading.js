@@ -162,4 +162,19 @@
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
  ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure]);
+ const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
+ const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
+ identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);
+ identity.sections[5][1]+=p('证书形式的凭据还需要对端验证。第 9 节的 SPIRE 实验只观察一次发证和随后的请求。'+spiffeLink);
+ identity.sections[8][1]+=h('native-spiffe-workload-identity','真实 SPIRE：证书可信，谁能发布报表')+
+ p('SPIFFE ID 是服务身份标识，例如 <code>spiffe://infraguide.test/worker-a</code>。其中 <code>infraguide.test</code> 是信任域，验证方用该域的信任包核验证书链。X.509-SVID 是携带 SPIFFE ID 的证书凭据，工作负载还持有对应私钥以证明自己有权使用它。')+
+ p('本地 SPIRE Server 建立信任包，Agent 用它验证 Server，再以一次性节点令牌注册。应用通过本地 Unix 套接字访问 Agent 的 Workload API。Agent 识别实际调用进程的可执行路径，与注册条目比较，给报表服务、A、B 发放各自的证书。第四个进程的路径没有注册，调用 API 时返回 <code>PermissionDenied</code>，证书数为 0。')+
+ '<figure class="training-figure"><a href="diagrams/spiffe-workload-identity.svg" target="_blank" rel="noopener" aria-label="放大：SPIRE 发证、双向 TLS 与报表授权"><img src="diagrams/spiffe-workload-identity.svg" width="440" height="414" alt="SPIRE Agent 按路径发放证书。A 和 B 都通过双向 TLS，报表服务按证书身份允许 A 发布 37、拒绝 B。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两次请求报文相同，报表服务从证书辨认实际调用者。<a href="diagrams/spiffe-workload-identity.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('双向 TLS（mTLS）要求客户端和服务端都验证对方证书。A、B 都核对服务端身份是 <code>report-api</code>，服务端都接受这两个同信任域的合法证书。两次发布都携带相同业务编号和金额 37，HTTP 头也都自称 A。报表服务从握手验证后的证书读取实际身份，再检查发布资格。')+
+ table(['实际调用者','HTTPS 响应','独立读取效果文件'],[['B 先发，同信任域证书，自称 A','403，服务端看到 B','0 笔'],['A 后发，同样的请求内容','201，服务端看到 A','1 笔，金额 37，归 A']])+
+ p('在 <code>workload.go</code> 中，<code>NewX509Source</code> 从 Workload API 获取凭据；<code>MTLSClientConfig</code> 固定服务端身份，<code>MTLSServerConfig</code> 验证客户端信任域。HTTP 处理器用证书里的 ID 决定是否写入，驱动在两次请求后分别读取效果文件。这三个进程身份用同一系统用户下的不同可执行路径区分，适合演示匹配。')+
+ '<p class="practice-links"><a href="/labs/spiffe-workload-identity.zip" download>下载完整实验包 ↓</a> · <a href="/labs/spiffe-workload-identity/README.md">查看运行说明</a> · <a href="/labs/spiffe-workload-identity/validation.json">查看签发、请求和效果记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780">查看 Linux CI 实跑 ↗</a></p>'+
+ '<p><a href="https://github.com/spiffe/spire/blob/v1.16.0/doc/plugin_agent_workloadattestor_unix.md">SPIRE 1.16.0 Unix 选择器 ↗</a> · <a href="https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/">SPIFFE Workload API 规范 ↗</a></p>';
+ identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
+ identity.updated='2026.11.09';
 })();

@@ -197,4 +197,23 @@
  fold('展开固定模型环境requirements-model.txt',codes(old[7])[2])+
  p('练习解释r17、r19各自通过，为何混装仍失败；再画出版本名回退而代际递增的三次指针状态。程序只处理自建临时文件与本地数据库，证明CPU张量包和固定语义的发布机制。真实语言模型质量、引擎/并行兼容、GPU加载峰值、在线灰度和在途排空，应在对应目标环境继续验证。')
  ],['subsection-1-1vzo0i0','subsection-2-1k3gdnf','subsection-3-opr7s5','subsection-4-4s93fv','subsection-5-wrf9vk','subsection-6-15mcx71','subsection-7-1bdkyq8','subsection-8-1an19m4']);
+
+ const lifecycle=articles.find(a=>a.id==='ai-lifecycle');
+ lifecycle.sections[7][1]+=
+  '<h3 id="native-model-rollout">把发布门禁接到真实原生服务与旧流</h3>'+
+  p('上一份实验验证张量包与本地指针。这次实际启动三个 llama.cpp b12110 CPU 服务，将加载、固定输出检查、发布和流式请求连起来。模型仍是本站构造的人工小模型，单个固定探针只验证声明的输出约定，不代表语言理解或真实任务质量。',
+  '三份模型保持词表、结构、提示 [1,4,5,6]、温度 0、seed 7 与输出上限 3。stable 的人工输出头按下一个编号构造；bad 将映射偏移改为 2；good 保留偏移 1、将输出头权重幅度从 2 改为 3。三个文件字节不同，都能被原生引擎加载，健康接口都返回 ok。')+
+  trainingFigure('native-model-rollout','健康、固定语义、请求绑定分别取证。旧读者的人工暂停不暂停引擎计算，横线表示事件顺序，不按耗时比例绘制。')+
+  table(['原生版本','健康状态','固定探针实际输出','是否可进入本地路由'],[
+   ['stable','ok','[7,8,9]','通过'],['bad','ok','[8,10,12]','拒绝'],['good','ok','[7,8,9]','通过']
+  ])+
+  p('先预测错误候选的影响。若把健康直接当发布门禁，bad 会带着错误约定输出进入服务。本实验先比较实际编号与预先写下的 [7,8,9]，因此拒绝 bad，路由保留 stable/1；随后发出的真实流请求也使用 stable 并返回正确编号。这把“没有切指针”和“后续实际请求仍正确”接成两份证据。',
+  '再观察旧流。单所有者控制器在接纳时保存版本、模型摘要、服务别名与代际；旧流捕获 stable/1。读到首个带词元的 SSE 事件后，测试端暂时停读，控制器发布已通过的 good/2，新请求实际命中 good。随后回退到 stable/3，并拒绝一个仍拿代际 1 的迟到发布。回退恢复旧业务版本，但发布代际继续递增。',
+  '恢复读取后，旧流继续读最初的 HTTP 连接，共收到 32 个输出编号，最终响应仍是 rollout-stable，绑定仍为代际 1；回退后的另一条新请求则绑定 stable/3。没有逐词元重新解析最新路由，因此流中途不会因本例控制器切换而串到另一版本。原始 SSE、模型摘要和三个原生进程的采样日志都保留，不能仅凭控制器自报状态或两个版本恰好相同的探针输出判断身份。',
+  '这里故意暂停的是客户端读取，引擎可能已经计算完成并缓冲了后续数据。记录证明请求目标固定与交付继续，不证明模型计算持续到切换以后，也不验证生产负载均衡器的摘流、连接迁移或强制退出。单所有者内存路由没有持久化或多控制器共识；前面的 SQLite 条件更新不能自动赋予它分布式保证。')+
+  '<p class="practice-links"><a href="labs/native-model-rollout.zip" download>下载原生发布实验 ↓</a> · <a href="labs/native-model-rollout/rollout_lab.py">完整运行源码</a> · <a href="labs/native-model-rollout/validation.json">执行记录</a> · <a href="labs/native-model-rollout/observations.json">原始探针、路由与 SSE</a> · <a href="labs/native-model-rollout/README.md">复跑与自测答案</a></p>'+
+  p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
+  '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。');
+ lifecycle.updated='2026.11.09';
 })();

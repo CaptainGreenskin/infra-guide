@@ -309,6 +309,30 @@ const chapterFieldPrimaryConcepts={
  'agent-evaluation':['agent','ag-evaluation']
 };
 
+// Each prompt follows one existing concept into a checkable experiment.
+const fieldPracticePaths={
+ foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。'],
+ compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。'],
+ network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。'],
+ 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。'],
+ native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。'],
+ serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。'],
+ 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。'],
+ 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。'],
+ 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。'],
+ sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。'],
+ 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。'],
+ training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。'],
+ platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。'],
+ agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。']
+};
+function fieldPracticeHTML(moduleId, names){
+ const [conceptId,labId,question]=fieldPracticePaths[moduleId];
+ const unit=labLearningCatalog.find(item=>item.id===labId);
+ const article=articleById(unit.chapter);
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a></section>';
+}
+
 function fieldPointRecords(moduleId){
  if(moduleId==='foundation')return cloudPrerequisites.map(([title,lead,chapters],i)=>({id:'prerequisite-'+(i+1),title,lead,articles:chapters}));
  const cloud=cloudKnowledgeDomains.find(d=>d.module===moduleId);
@@ -320,7 +344,7 @@ function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];

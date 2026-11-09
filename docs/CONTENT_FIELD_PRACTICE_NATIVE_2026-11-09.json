@@ -1,0 +1,55 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "bc48097f9d71b2a219d60da47fabe442376d8f02",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_DELIVERY_BLOCK_CANCELLATION_2026-11-09.json": "0ddf0688305b483c08c6d0c620d4a20133b2efeb91896f68dd6bf8d40bc733e9"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e48b0596abb28af4281d46dfa3afb24924aa2eee654048ec50b65958b9097500",
+      "reviewed_content_sha256": "ab0ca71159bbab77b01d626c502cef5b82d5def22573e920f5d371a8a75cf88f",
+      "scope": "Follow a signed fixture token through real HTTP middleware and report-specific authorization.",
+      "observation": "Unauthenticated, wrong-audience and insufficient-scope requests stopped at HTTP admission. Only the permitted report produced a body read.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "ai-lifecycle",
+      "reviewed_at": "2026-11-09",
+      "scope": "Separate native engine readiness, fixed semantic admission, and old stream delivery during a rollout.",
+      "observation": "A healthy wrong-output candidate was rejected. Existing streams retained their admitted versions across release and rollback.",
+      "reviewed_content_sha256": "19012506c6151d7354527f42a5a4aaa482946ac82216daa1d01ff1683d549ac8",
+      "record": "dist/labs/native-model-rollout/validation.json"
+    },
+    {
+      "chapter": "mcp-protocol",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow a signed fixture token through real HTTP middleware and report-specific authorization.",
+      "observation": "Unauthenticated, wrong-audience and insufficient-scope requests stopped at HTTP admission. Only the permitted report produced a body read.",
+      "reviewed_content_sha256": "ab0ca71159bbab77b01d626c502cef5b82d5def22573e920f5d371a8a75cf88f",
+      "record": "dist/labs/mcp-http-authorization/validation.json"
+    },
+    {
+      "chapter": "iam-security",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow local workload attestation through SPIRE identity, mTLS and report authorization.",
+      "observation": "The same user ran two independently attested workloads. The trusted client identity and report policy determined the observed response.",
+      "reviewed_content_sha256": "1877a1f5cd1bd43ac549865378ddb3d4956ed23a9811cf414d2e19c893de823e",
+      "record": "dist/labs/spiffe-workload-identity/validation.json"
+    }
+  ]
+}

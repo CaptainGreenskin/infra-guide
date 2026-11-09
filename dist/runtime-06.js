@@ -9847,6 +9847,25 @@ set_state_dict(model, optimizer, model_state_dict=state["model"],
  fold('展开固定模型环境requirements-model.txt',codes(old[7])[2])+
  p('练习解释r17、r19各自通过，为何混装仍失败；再画出版本名回退而代际递增的三次指针状态。程序只处理自建临时文件与本地数据库，证明CPU张量包和固定语义的发布机制。真实语言模型质量、引擎/并行兼容、GPU加载峰值、在线灰度和在途排空，应在对应目标环境继续验证。')
  ],['subsection-1-1vzo0i0','subsection-2-1k3gdnf','subsection-3-opr7s5','subsection-4-4s93fv','subsection-5-wrf9vk','subsection-6-15mcx71','subsection-7-1bdkyq8','subsection-8-1an19m4']);
+
+ const lifecycle=articles.find(a=>a.id==='ai-lifecycle');
+ lifecycle.sections[7][1]+=
+  '<h3 id="native-model-rollout">把发布门禁接到真实原生服务与旧流</h3>'+
+  p('上一份实验验证张量包与本地指针。这次实际启动三个 llama.cpp b12110 CPU 服务，将加载、固定输出检查、发布和流式请求连起来。模型仍是本站构造的人工小模型，单个固定探针只验证声明的输出约定，不代表语言理解或真实任务质量。',
+  '三份模型保持词表、结构、提示 [1,4,5,6]、温度 0、seed 7 与输出上限 3。stable 的人工输出头按下一个编号构造；bad 将映射偏移改为 2；good 保留偏移 1、将输出头权重幅度从 2 改为 3。三个文件字节不同，都能被原生引擎加载，健康接口都返回 ok。')+
+  trainingFigure('native-model-rollout','健康、固定语义、请求绑定分别取证。旧读者的人工暂停不暂停引擎计算，横线表示事件顺序，不按耗时比例绘制。')+
+  table(['原生版本','健康状态','固定探针实际输出','是否可进入本地路由'],[
+   ['stable','ok','[7,8,9]','通过'],['bad','ok','[8,10,12]','拒绝'],['good','ok','[7,8,9]','通过']
+  ])+
+  p('先预测错误候选的影响。若把健康直接当发布门禁，bad 会带着错误约定输出进入服务。本实验先比较实际编号与预先写下的 [7,8,9]，因此拒绝 bad，路由保留 stable/1；随后发出的真实流请求也使用 stable 并返回正确编号。这把“没有切指针”和“后续实际请求仍正确”接成两份证据。',
+  '再观察旧流。单所有者控制器在接纳时保存版本、模型摘要、服务别名与代际；旧流捕获 stable/1。读到首个带词元的 SSE 事件后，测试端暂时停读，控制器发布已通过的 good/2，新请求实际命中 good。随后回退到 stable/3，并拒绝一个仍拿代际 1 的迟到发布。回退恢复旧业务版本，但发布代际继续递增。',
+  '恢复读取后，旧流继续读最初的 HTTP 连接，共收到 32 个输出编号，最终响应仍是 rollout-stable，绑定仍为代际 1；回退后的另一条新请求则绑定 stable/3。没有逐词元重新解析最新路由，因此流中途不会因本例控制器切换而串到另一版本。原始 SSE、模型摘要和三个原生进程的采样日志都保留，不能仅凭控制器自报状态或两个版本恰好相同的探针输出判断身份。',
+  '这里故意暂停的是客户端读取，引擎可能已经计算完成并缓冲了后续数据。记录证明请求目标固定与交付继续，不证明模型计算持续到切换以后，也不验证生产负载均衡器的摘流、连接迁移或强制退出。单所有者内存路由没有持久化或多控制器共识；前面的 SQLite 条件更新不能自动赋予它分布式保证。')+
+  '<p class="practice-links"><a href="labs/native-model-rollout.zip" download>下载原生发布实验 ↓</a> · <a href="labs/native-model-rollout/rollout_lab.py">完整运行源码</a> · <a href="labs/native-model-rollout/validation.json">执行记录</a> · <a href="labs/native-model-rollout/observations.json">原始探针、路由与 SSE</a> · <a href="labs/native-model-rollout/README.md">复跑与自测答案</a></p>'+
+  p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
+  '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。');
+ lifecycle.updated='2026.11.09';
 })();
 
 
@@ -10750,6 +10769,21 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
  ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure]);
+ const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
+ const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
+ identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);
+ identity.sections[5][1]+=p('证书形式的凭据还需要对端验证。第 9 节的 SPIRE 实验只观察一次发证和随后的请求。'+spiffeLink);
+ identity.sections[8][1]+=h('native-spiffe-workload-identity','真实 SPIRE：证书可信，谁能发布报表')+
+ p('SPIFFE ID 是服务身份标识，例如 <code>spiffe://infraguide.test/worker-a</code>。其中 <code>infraguide.test</code> 是信任域，验证方用该域的信任包核验证书链。X.509-SVID 是携带 SPIFFE ID 的证书凭据，工作负载还持有对应私钥以证明自己有权使用它。')+
+ p('本地 SPIRE Server 建立信任包，Agent 用它验证 Server，再以一次性节点令牌注册。应用通过本地 Unix 套接字访问 Agent 的 Workload API。Agent 识别实际调用进程的可执行路径，与注册条目比较，给报表服务、A、B 发放各自的证书。第四个进程的路径没有注册，调用 API 时返回 <code>PermissionDenied</code>，证书数为 0。')+
+ '<figure class="training-figure"><a href="diagrams/spiffe-workload-identity.svg" target="_blank" rel="noopener" aria-label="放大：SPIRE 发证、双向 TLS 与报表授权"><img src="diagrams/spiffe-workload-identity.svg" width="440" height="414" alt="SPIRE Agent 按路径发放证书。A 和 B 都通过双向 TLS，报表服务按证书身份允许 A 发布 37、拒绝 B。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两次请求报文相同，报表服务从证书辨认实际调用者。<a href="diagrams/spiffe-workload-identity.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('双向 TLS（mTLS）要求客户端和服务端都验证对方证书。A、B 都核对服务端身份是 <code>report-api</code>，服务端都接受这两个同信任域的合法证书。两次发布都携带相同业务编号和金额 37，HTTP 头也都自称 A。报表服务从握手验证后的证书读取实际身份，再检查发布资格。')+
+ table(['实际调用者','HTTPS 响应','独立读取效果文件'],[['B 先发，同信任域证书，自称 A','403，服务端看到 B','0 笔'],['A 后发，同样的请求内容','201，服务端看到 A','1 笔，金额 37，归 A']])+
+ p('在 <code>workload.go</code> 中，<code>NewX509Source</code> 从 Workload API 获取凭据；<code>MTLSClientConfig</code> 固定服务端身份，<code>MTLSServerConfig</code> 验证客户端信任域。HTTP 处理器用证书里的 ID 决定是否写入，驱动在两次请求后分别读取效果文件。这三个进程身份用同一系统用户下的不同可执行路径区分，适合演示匹配。')+
+ '<p class="practice-links"><a href="/labs/spiffe-workload-identity.zip" download>下载完整实验包 ↓</a> · <a href="/labs/spiffe-workload-identity/README.md">查看运行说明</a> · <a href="/labs/spiffe-workload-identity/validation.json">查看签发、请求和效果记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780">查看 Linux CI 实跑 ↗</a></p>'+
+ '<p><a href="https://github.com/spiffe/spire/blob/v1.16.0/doc/plugin_agent_workloadattestor_unix.md">SPIRE 1.16.0 Unix 选择器 ↗</a> · <a href="https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/">SPIFFE Workload API 规范 ↗</a></p>';
+ identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
+ identity.updated='2026.11.09';
 })();
 
 
@@ -12569,6 +12603,21 @@ const firstReadingChanges=[];
   '恢复时先沿原操作键查回执。查询得到 42 时，可以确认本实验的接收方已有结果。查询为空时，结合服务端已停止和接收库直接读取，本次可以核对没有提交。真实远端查询失败时保留待确认状态，等能再次核对原操作再决定下一步。')+
   '<p><a class="inline-link" href="/article/mcp-protocol/#mcp-http-cancellation-run">真实断流、处理器清理与原回执实验 →</a></p>';
 })();
+(()=>{
+ const protocol=articleById('mcp-protocol');
+ const security=articleById('agent-security');
+ protocol.sections[8][1]+=
+  '<h3 id="native-mcp-http-authorization">受保护 HTTP 入口与报告读取</h3>'+
+  para('前面的 stdio 服务信任本地启动者。HTTP 实验给客户端一份短期访问令牌：受众指定能接收它的服务，范围描述能请求的动作。服务端先验证签名、签发者与有效期，MCP SDK 再核对受众和 <code>report.read</code>。无令牌时，401 响应中的地址指向公开资源元数据，客户端据此识别资源和签发者。',
+  '无令牌、受众不符、范围不足依次得到 401、401、403。通过入口后，工具按已验证主体和报告归属检查读取。用同一令牌请求 B 时，工具返回拒绝且没有读取正文；请求 A 时只读出 v3 并得到 10+27+5=42。')+
+  trainingFigure('mcp-http-authorization','沿 HTTP 入口与资源端两道检查，核对拒绝发生在哪一层、报告正文是否真正读取。')+
+  '<p>解压并安装固定依赖后运行 <code>python3.12 -B authorization_lab.py --output-dir replay</code>。<a href="labs/mcp-http-authorization.zip" download>下载完整实验 →</a> · <a href="labs/mcp-http-authorization/README.md">复现步骤</a> · <a href="labs/mcp-http-authorization/validation.json">运行记录索引</a></p>'+
+  '<p>令牌由测试夹具签发。浏览器授权、生产身份服务和 Kairo 接入分别验收。<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization" target="_blank" rel="noopener">固定版授权规则 ↗</a> · <a class="inline-link" href="/article/agent-security/#mcp-resource-scope">工具为什么还要核对对象 →</a></p>';
+ security.sections[1][1]+=
+  '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
+  para('MCP 的入口范围可以允许调用者请求读取报告。工具拿到已验证主体以后，再按本次允许的资源检查报告归属。实验中 A 的令牌具备 <code>report.read</code>，调用者只改请求里的报告名。指向 A 时读取一份报告，指向 B 时工具拒绝且不读正文。两个请求的 HTTP 响应都是 200，工具结果分别表示成功与失败。')+
+  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
+})();
 
 
 ;
@@ -13592,13 +13641,13 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 /* Learning goals are views over the same curriculum, never separate copies of lessons.
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
- 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。'},
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针。'},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14006,6 +14055,30 @@ const chapterFieldPrimaryConcepts={
  'agent-evaluation':['agent','ag-evaluation']
 };
 
+// Each prompt follows one existing concept into a checkable experiment.
+const fieldPracticePaths={
+ foundation:['prerequisite-1','cloud-foundations','基础占用 96 MiB，4 个并发任务各加 44 MiB。256 MiB 的预算够吗？算出峰值，再用模型核对错开执行会怎样。'],
+ compute:['cpu-memory-placement','cloud-cpu','两段工作用时相近，一段等待，一段计算。先猜哪段消耗更多 CPU，再比较进程的 CPU 时间和墙钟时间。'],
+ network:['io-model','cloud-native-epoll','应用收到一次边缘触发的读通知，只处理了本轮允许的字节。剩余数据由谁安排继续读？用实际就绪事件和应用队列核对。'],
+ 'cloud-data':['replication-failover','cloud-mysql-replication','副本收到事务但尚未应用时，查询能读到新金额吗？对照收到和已执行的事务位置，再查实际 SQL 结果。'],
+ native:['configuration','cloud-native-config-projection','同一 Pod 里，配置更新后重新打开文件与沿用旧文件句柄，各会读到哪一版？对照 ConfigMap 的资源版本（resourceVersion）和四条读取路径。'],
+ serverless:['event-idempotency','cloud-jetstream-redelivery','同一消息第二次投递给 B 后，让仍在线的旧执行者 A 先尝试写。只按业务键去重会留下谁的效果？再对照接收库校验执行代际后的结果。'],
+ 'cloud-delivery':['gitops','cloud-gitops-native','Git 中的配置已经更新，控制器显示同步。旧 Pod 会立即返回新版内容吗？把配置版本、Pod 身份和真实响应对起来。'],
+ 'cloud-security':['workload-identity','cloud-kubernetes-identity','同一枚服务账号令牌先允许读取，再移除角色绑定（RoleBinding）。身份和响应码各会怎样？用真实 API 请求和对象内容核对。'],
+ 'cloud-capacity':['queue-backpressure','cloud-capacity-flow','从空队列开始，每秒到达 100 份。前 10 秒的处理能力为每秒 80 份，随后为 120 份。分别按无限缓冲和积压上限 160 计算拒绝数与清空时刻，再对照模型记录。'],
+ sre:['observability-signals','cloud-collector-sampling','一次工具尝试失败，任务重试后成功。按错误采样会保留哪条追踪？再找覆盖全部任务的账本，核对业务成功率。'],
+ 'model-foundations':['mf-tensors','ai-encoder-decoder','保留目标前缀 red，只把源句从「红 圆」换成「红 方」。先预测下一词元，再核对源端、目标端的输入和实际生成。'],
+ training:['tr-recovery','ai-multinode-local','四个进程连续训练两轮，或在一轮后保存再恢复。哪些样本计数、更新次数和随机状态需要逐项核对？用两条 CPU 路径比一遍。'],
+ platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。'],
+ agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。']
+};
+function fieldPracticeHTML(moduleId, names){
+ const [conceptId,labId,question]=fieldPracticePaths[moduleId];
+ const unit=labLearningCatalog.find(item=>item.id===labId);
+ const article=articleById(unit.chapter);
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a></section>';
+}
+
 function fieldPointRecords(moduleId){
  if(moduleId==='foundation')return cloudPrerequisites.map(([title,lead,chapters],i)=>({id:'prerequisite-'+(i+1),title,lead,articles:chapters}));
  const cloud=cloudKnowledgeDomains.find(d=>d.module===moduleId);
@@ -14017,7 +14090,7 @@ function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(fieldConceptReadings[moduleId].lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
@@ -14086,6 +14159,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'spiffe-workload-identity':{folder:'spiffe-workload-identity',title:'SPIRE 工作负载证明、双向 TLS 与资源授权'},
+ 'native-model-rollout':{folder:'native-model-rollout',title:'真实模型输出门禁、流绑定与版本回退'},
+ 'mcp-http-authorization':{folder:'mcp-http-authorization',title:'MCP HTTP 令牌校验与工具资源授权'},
  'jetstream-redelivery':{folder:'jetstream-redelivery',title:'同一事件重投，仍存活的旧写入者与接收方代际'},
  'vllm-block-lifecycle':{folder:'vllm-block-lifecycle',title:'运行固定 vLLM 块池，观察引用、空闲与驱逐'},
  'mcp-http-cancellation':{folder:'mcp-http-cancellation',title:'MCP HTTP 断流、工具清理与提交回执'},
@@ -14185,6 +14261,7 @@ const labLearningCatalog=[
  {id:'cloud-hpa',track:'cloud',stage:2,title:'HPA 分母、指标缺失与扩容延迟',chapter:'k8s-autoscaling',pack:'scaling-collectives-traces',files:['scaling_reference.py','prometheus_cpu.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'计算模型 + 真实规则引擎',observe:'先手算不同资源请求量（request）的加权利用率，再核对缺指标和积压；真实 promtool 区分零值与无序列。',scope:'特定版本计算参考，不运行 metrics-server、HPA 或节点扩容。'},
  {id:'cloud-native-hpa',track:'cloud',stage:2,title:'HPA 已要求两个副本，为什么仍只有一个可用',chapter:'k8s-autoscaling',anchor:'native-hpa-control',pack:'kubernetes-hpa',files:['hpa_control_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · metrics-server 0.9.1',kind:'原生指标 API、HPA 与 Pod 状态',observe:'追踪实际 CPU 负载、伸缩建议、Deployment 目标、Pod 就绪和卸载后的缩容。',scope:'单节点 kind、固定 CPU 负载与人为就绪门槛。'},
  {id:'cloud-identity',track:'cloud',stage:2,title:'认证通过后，还要按资源归属授权',chapter:'iam-security',pack:'cloud-operations',files:['authorization_http_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机 HTTP',observe:'核对 14 组允许、跨租户、过期、伪造和撤销用例，直接检查业务写入与审计。',scope:'受限 HMAC 能力凭据夹具，不是 JWT/OIDC 或生产认证库。'},
+ {id:'cloud-capacity-flow',track:'cloud',stage:2,title:'扩容空窗、积压、拒绝与清空',chapter:'elasticity',anchor:'section-8',pack:'cloud-operations',files:['capacity_lab.py'],env:'Python 3.9+ · 标准库',kind:'可运行容量模型',observe:'分别核对无限缓冲和上限 160 时的积压、拒绝数与清空时刻。',scope:'固定到达与服务能力的连续时间模型。'},
  {id:'cloud-sre',track:'cloud',stage:2,title:'容量守恒、用户结果与 SLO 告警',chapter:'slo',pack:'cloud-operations',files:['capacity_lab.py','telemetry_lab.py','promtool_lab.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'模型 + 本机 HTTP + 规则',observe:'分别算准入与积压、跟踪两服务请求，再用七组序列验证聚合、无流量和长短窗。',scope:'本机 HTTP 与真实规则求值；不是生产流量、抓取服务或告警通知。'},
  {id:'cloud-mysql-pitr',track:'cloud',stage:2,title:'金额125正确，恢复历史仍可能缺一笔',chapter:'mysql-recovery',anchor:'mysql-pitr-run',pack:'transport-recovery',files:['mysql_restore.py','Dockerfile.tools'],env:'Linux/macOS · 本地Docker引擎 · Python 3.9+',kind:'真实MySQL 8.4容器',observe:'核对基线、全量历史、缺首段、正确按点恢复与后续写入；另做进程崩溃对照。',scope:'公共Linux CI实测；未验证物理断电、主从切换或跨区域云服务。'},
  {id:'cloud-delivery',track:'cloud',stage:3,title:'保存的 Terraform 计划与 GitOps 调谐',chapter:'delivery',pack:'cloud-deepening',files:['terraform_lab.py','gitops_model.py','main.tf'],env:'Python 3.9+ + Terraform 1.13.0',kind:'真实 CLI + 调谐模型',observe:'验证旧计划、状态推进后的陈旧计划拒绝；另用模型区分同步、健康、自愈和清理。',scope:'Terraform 本地 state 与内建 provider 实测；Argo CD 尚未同步集群。'},
@@ -14314,6 +14391,11 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-nativ
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-protocol')+1,0,
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-spiffe-workload-identity',track:'cloud',stage:2,title:'两个工作负载都通过双向 TLS，谁可以写报告',chapter:'iam-security',anchor:'native-spiffe-workload-identity',pack:'spiffe-workload-identity',files:['spire_identity_lab.py','workload.go','go.mod','go.sum'],env:'Linux amd64 · Python 3.11+ · Go 1.26.1 · SPIRE 1.16.0',kind:'原生工作负载证明与双向 TLS',observe:'对照同一系统用户下的三种身份结果。用证书主体与报告账本核对 403 和 201。',scope:'单 Linux 节点、固定执行文件选择器与本机回环请求。'},
+ {id:'ai-native-model-rollout',track:'ai',stage:2,title:'服务探活通过，模型输出还可能错吗',chapter:'ai-lifecycle',anchor:'native-model-rollout',pack:'native-model-rollout',files:['rollout_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'三个原生模型服务与流式输出',observe:'先按固定输出拒绝错误候选，再看已接收的流怎样跨过发布与回退。',scope:'固定合成模型、本机 CPU 和教学入口。入口固定交付版本，原生计算可能已经完成。'},
+ {id:'agent-mcp-http-authorization',track:'agent',stage:2,title:'通过 MCP 令牌校验后，能读哪个租户的报告',chapter:'mcp-protocol',anchor:'native-mcp-http-authorization',pack:'mcp-http-authorization',files:['authorization_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 授权与 SQLite 读取证据',observe:'沿同一签名令牌区分受众、通用权限和报告归属。用账本核对正文到底读了几次。',scope:'本机资源服务端和临时签发夹具。登录流程、生产身份服务与 Kairo 另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
@@ -14537,5 +14619,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="5fd658a236765264d9912e403e9cd1f9b17e5fdaeda471c7e563b2ecc514c000";
+const staticReadingVersion="2304943031d42a13afc0b0e33741360af7e5f0722f2f691e735afd9b833fcff6";
 

@@ -1,0 +1,14 @@
+{
+  "url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780",
+  "headSha": "7fc24ec53c00d76137fdefcc4e4d707b17093a89",
+  "conclusion": "success",
+  "record_sha256": "325edd989e5f21557dfec94ce47d8ee59c5f28e5042e90314b873747018aa259",
+  "source_sha256": {
+    "spire_identity_lab.py": "010bbc0c1e1b80ac7c984fd14319de23a933d8f753c664afd3ad1226183156d7",
+    "workload.go": "aadcda432ffa1ef7cf59d4b370c204cdc71b11806aeb923a4c8c2c81805404bf",
+    "go.mod": "a55db71547b257c5c174b5e745d365d7bbc8680e3a22377bd05b1feb326abfdb",
+    "go.sum": "e638595bdc94e5ddba6adc24a38dd7bf744b718b9adf423568a8e8ff5bec611d"
+  },
+  "archive_sha256": "7bcf5e167151a1fc58293768462b44e155ba8784214582aefa6adf18c633d1d5",
+  "receiver_ready_sha256": "ad0ba2602ae01b41bb63721f509839cbce105972c5b58f6ca36c0c7cc706edab"
+}

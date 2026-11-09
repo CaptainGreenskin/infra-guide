@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'spiffe-workload-identity':{folder:'spiffe-workload-identity',title:'SPIRE 工作负载证明、双向 TLS 与资源授权'},
+ 'native-model-rollout':{folder:'native-model-rollout',title:'真实模型输出门禁、流绑定与版本回退'},
+ 'mcp-http-authorization':{folder:'mcp-http-authorization',title:'MCP HTTP 令牌校验与工具资源授权'},
  'jetstream-redelivery':{folder:'jetstream-redelivery',title:'同一事件重投，仍存活的旧写入者与接收方代际'},
  'vllm-block-lifecycle':{folder:'vllm-block-lifecycle',title:'运行固定 vLLM 块池，观察引用、空闲与驱逐'},
  'mcp-http-cancellation':{folder:'mcp-http-cancellation',title:'MCP HTTP 断流、工具清理与提交回执'},
@@ -99,6 +102,7 @@ const labLearningCatalog=[
  {id:'cloud-hpa',track:'cloud',stage:2,title:'HPA 分母、指标缺失与扩容延迟',chapter:'k8s-autoscaling',pack:'scaling-collectives-traces',files:['scaling_reference.py','prometheus_cpu.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'计算模型 + 真实规则引擎',observe:'先手算不同资源请求量（request）的加权利用率，再核对缺指标和积压；真实 promtool 区分零值与无序列。',scope:'特定版本计算参考，不运行 metrics-server、HPA 或节点扩容。'},
  {id:'cloud-native-hpa',track:'cloud',stage:2,title:'HPA 已要求两个副本，为什么仍只有一个可用',chapter:'k8s-autoscaling',anchor:'native-hpa-control',pack:'kubernetes-hpa',files:['hpa_control_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · metrics-server 0.9.1',kind:'原生指标 API、HPA 与 Pod 状态',observe:'追踪实际 CPU 负载、伸缩建议、Deployment 目标、Pod 就绪和卸载后的缩容。',scope:'单节点 kind、固定 CPU 负载与人为就绪门槛。'},
  {id:'cloud-identity',track:'cloud',stage:2,title:'认证通过后，还要按资源归属授权',chapter:'iam-security',pack:'cloud-operations',files:['authorization_http_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机 HTTP',observe:'核对 14 组允许、跨租户、过期、伪造和撤销用例，直接检查业务写入与审计。',scope:'受限 HMAC 能力凭据夹具，不是 JWT/OIDC 或生产认证库。'},
+ {id:'cloud-capacity-flow',track:'cloud',stage:2,title:'扩容空窗、积压、拒绝与清空',chapter:'elasticity',anchor:'section-8',pack:'cloud-operations',files:['capacity_lab.py'],env:'Python 3.9+ · 标准库',kind:'可运行容量模型',observe:'分别核对无限缓冲和上限 160 时的积压、拒绝数与清空时刻。',scope:'固定到达与服务能力的连续时间模型。'},
  {id:'cloud-sre',track:'cloud',stage:2,title:'容量守恒、用户结果与 SLO 告警',chapter:'slo',pack:'cloud-operations',files:['capacity_lab.py','telemetry_lab.py','promtool_lab.py'],env:'Python 3.9+；规则另需 promtool 3.5.0',kind:'模型 + 本机 HTTP + 规则',observe:'分别算准入与积压、跟踪两服务请求，再用七组序列验证聚合、无流量和长短窗。',scope:'本机 HTTP 与真实规则求值；不是生产流量、抓取服务或告警通知。'},
  {id:'cloud-mysql-pitr',track:'cloud',stage:2,title:'金额125正确，恢复历史仍可能缺一笔',chapter:'mysql-recovery',anchor:'mysql-pitr-run',pack:'transport-recovery',files:['mysql_restore.py','Dockerfile.tools'],env:'Linux/macOS · 本地Docker引擎 · Python 3.9+',kind:'真实MySQL 8.4容器',observe:'核对基线、全量历史、缺首段、正确按点恢复与后续写入；另做进程崩溃对照。',scope:'公共Linux CI实测；未验证物理断电、主从切换或跨区域云服务。'},
  {id:'cloud-delivery',track:'cloud',stage:3,title:'保存的 Terraform 计划与 GitOps 调谐',chapter:'delivery',pack:'cloud-deepening',files:['terraform_lab.py','gitops_model.py','main.tf'],env:'Python 3.9+ + Terraform 1.13.0',kind:'真实 CLI + 调谐模型',observe:'验证旧计划、状态推进后的陈旧计划拒绝；另用模型区分同步、健康、自愈和清理。',scope:'Terraform 本地 state 与内建 provider 实测；Argo CD 尚未同步集群。'},
@@ -228,6 +232,11 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-nativ
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-protocol')+1,0,
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-spiffe-workload-identity',track:'cloud',stage:2,title:'两个工作负载都通过双向 TLS，谁可以写报告',chapter:'iam-security',anchor:'native-spiffe-workload-identity',pack:'spiffe-workload-identity',files:['spire_identity_lab.py','workload.go','go.mod','go.sum'],env:'Linux amd64 · Python 3.11+ · Go 1.26.1 · SPIRE 1.16.0',kind:'原生工作负载证明与双向 TLS',observe:'对照同一系统用户下的三种身份结果。用证书主体与报告账本核对 403 和 201。',scope:'单 Linux 节点、固定执行文件选择器与本机回环请求。'},
+ {id:'ai-native-model-rollout',track:'ai',stage:2,title:'服务探活通过，模型输出还可能错吗',chapter:'ai-lifecycle',anchor:'native-model-rollout',pack:'native-model-rollout',files:['rollout_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'三个原生模型服务与流式输出',observe:'先按固定输出拒绝错误候选，再看已接收的流怎样跨过发布与回退。',scope:'固定合成模型、本机 CPU 和教学入口。入口固定交付版本，原生计算可能已经完成。'},
+ {id:'agent-mcp-http-authorization',track:'agent',stage:2,title:'通过 MCP 令牌校验后，能读哪个租户的报告',chapter:'mcp-protocol',anchor:'native-mcp-http-authorization',pack:'mcp-http-authorization',files:['authorization_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 授权与 SQLite 读取证据',observe:'沿同一签名令牌区分受众、通用权限和报告归属。用账本核对正文到底读了几次。',scope:'本机资源服务端和临时签发夹具。登录流程、生产身份服务与 Kairo 另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

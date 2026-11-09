@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="740" viewBox="0 0 960 740" role="img" aria-labelledby="title desc">
+<title id="title">原生模型发布门禁、请求绑定与回退</title><desc id="desc">三个原生CPU模型均健康。stable和good固定探针输出7、8、9，bad输出8、10、12被拒绝。路由stable代际1切到good代际2，再回退stable代际3。旧流在代际1接纳，首项后人工暂停客户端读取，切换与回退后继续读取原连接，共32词元，始终属于stable代际1。没有证明引擎在暂停期间停止计算，也没有生产负载均衡或GPU性能结论。</desc>
+<metadata>{"stable_tokens":[7,8,9],"bad_tokens":[8,10,12],"good_tokens":[7,8,9],"all_healthy":true,"route_versions":["stable","good","stable"],"route_generations":[1,2,3],"old_stream_generation":1,"old_stream_tokens":32,"reader_barrier":true,"backend":"CPU"}</metadata>
+<rect width="960" height="740" rx="20" fill="#f3f8fc"/>
+<g font-family="system-ui, sans-serif" fill="#17304a" font-size="20">
+<text x="34" y="43" font-size="27" font-weight="700">加载成功后，还要验证“输出是否符合约定”</text>
+<text x="34" y="77">三份人工 GGUF · 同一原生 CPU 引擎 · 固定提示 [1,4,5,6]</text>
+<g text-anchor="middle"><rect x="34" y="104" width="278" height="110" rx="12" fill="#d6e8f9"/><text x="173" y="135" font-weight="700">stable：健康</text><text x="173" y="165">[7,8,9]</text><text x="173" y="196">固定语义通过</text><rect x="341" y="104" width="278" height="110" rx="12" fill="#ffe5cc"/><text x="480" y="135" font-weight="700">bad：也健康</text><text x="480" y="165">[8,10,12]</text><text x="480" y="196">拒绝发布，路由不变</text><rect x="648" y="104" width="278" height="110" rx="12" fill="#ccebe7"/><text x="787" y="135" font-weight="700">good：健康</text><text x="787" y="165">[7,8,9]</text><text x="787" y="196">固定语义通过</text></g>
+<text x="34" y="255" font-weight="700">新请求的路由</text><path d="M190 290H824" stroke="#2d8293" stroke-width="3"/>
+<g text-anchor="middle"><circle cx="210" cy="290" r="20" fill="#8bbce4"/><circle cx="480" cy="290" r="20" fill="#71c3b5"/><circle cx="810" cy="290" r="20" fill="#8bbce4"/><text x="210" y="297">1</text><text x="480" y="297">2</text><text x="810" y="297">3</text><text x="210" y="334">stable</text><text x="480" y="334">good</text><text x="810" y="334">stable（回退）</text></g>
+<text x="295" y="277">通过后切换</text><text x="605" y="277">回退仍增加代际</text>
+<text x="34" y="383" font-weight="700">已接纳旧流：始终绑定 stable / 代际 1</text>
+<path d="M100 429H860" stroke="#357dad" stroke-width="5"/>
+<circle cx="100" cy="429" r="8" fill="#357dad"/><circle cx="250" cy="429" r="8" fill="#357dad"/><circle cx="700" cy="429" r="8" fill="#357dad"/><circle cx="860" cy="429" r="8" fill="#357dad"/>
+<path d="M263 429H688" stroke="#f3f8fc" stroke-width="8"/><path d="M263 429H688" stroke="#b18240" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="54" y="465">接纳并发请求</text><text x="214" y="465">读到首项</text><text x="651" y="465">恢复读取</text><text x="814" y="465">32 项结束</text>
+<text x="333" y="416" fill="#8c591a">人工读者暂停；期间切换与回退</text>
+<rect x="34" y="500" width="892" height="101" rx="12" fill="#e3edf6"/>
+<text x="53" y="533" font-weight="700">固定的是请求目标，不是“最新路由”</text>
+<text x="53" y="564">新请求按当前代际接纳；旧流继续读原 HTTP 连接。</text>
+<text x="53" y="590">迟到的期望代际 1 发布请求被拒绝，不能覆盖回退后的代际 3。</text>
+<text x="34" y="644">暂停读取不暂停 native 计算；数据可能已进入网络缓冲区。</text>
+<text x="34" y="677">这是单所有者本地控制器，不是生产负载均衡器或 GPU 基准。</text>
+<text x="34" y="717" font-size="18">实际证据：native-model-rollout/observations.json · 探针、控制事件、原始 SSE 与原生日志</text>
+</g></svg>

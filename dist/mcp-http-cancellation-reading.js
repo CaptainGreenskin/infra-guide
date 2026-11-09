@@ -15,3 +15,18 @@
   '恢复时先沿原操作键查回执。查询得到 42 时，可以确认本实验的接收方已有结果。查询为空时，结合服务端已停止和接收库直接读取，本次可以核对没有提交。真实远端查询失败时保留待确认状态，等能再次核对原操作再决定下一步。')+
   '<p><a class="inline-link" href="/article/mcp-protocol/#mcp-http-cancellation-run">真实断流、处理器清理与原回执实验 →</a></p>';
 })();
+(()=>{
+ const protocol=articleById('mcp-protocol');
+ const security=articleById('agent-security');
+ protocol.sections[8][1]+=
+  '<h3 id="native-mcp-http-authorization">受保护 HTTP 入口与报告读取</h3>'+
+  para('前面的 stdio 服务信任本地启动者。HTTP 实验给客户端一份短期访问令牌：受众指定能接收它的服务，范围描述能请求的动作。服务端先验证签名、签发者与有效期，MCP SDK 再核对受众和 <code>report.read</code>。无令牌时，401 响应中的地址指向公开资源元数据，客户端据此识别资源和签发者。',
+  '无令牌、受众不符、范围不足依次得到 401、401、403。通过入口后，工具按已验证主体和报告归属检查读取。用同一令牌请求 B 时，工具返回拒绝且没有读取正文；请求 A 时只读出 v3 并得到 10+27+5=42。')+
+  trainingFigure('mcp-http-authorization','沿 HTTP 入口与资源端两道检查，核对拒绝发生在哪一层、报告正文是否真正读取。')+
+  '<p>解压并安装固定依赖后运行 <code>python3.12 -B authorization_lab.py --output-dir replay</code>。<a href="labs/mcp-http-authorization.zip" download>下载完整实验 →</a> · <a href="labs/mcp-http-authorization/README.md">复现步骤</a> · <a href="labs/mcp-http-authorization/validation.json">运行记录索引</a></p>'+
+  '<p>令牌由测试夹具签发。浏览器授权、生产身份服务和 Kairo 接入分别验收。<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization" target="_blank" rel="noopener">固定版授权规则 ↗</a> · <a class="inline-link" href="/article/agent-security/#mcp-resource-scope">工具为什么还要核对对象 →</a></p>';
+ security.sections[1][1]+=
+  '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
+  para('MCP 的入口范围可以允许调用者请求读取报告。工具拿到已验证主体以后，再按本次允许的资源检查报告归属。实验中 A 的令牌具备 <code>report.read</code>，调用者只改请求里的报告名。指向 A 时读取一份报告，指向 B 时工具拒绝且不读正文。两个请求的 HTTP 响应都是 200，工具结果分别表示成功与失败。')+
+  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
+})();

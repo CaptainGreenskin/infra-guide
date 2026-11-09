@@ -1,8 +1,10 @@
 /* Check actual concept relationships and continuous reading, not human mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),cp=require('child_process');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,routes:courseReadingStages,log:readabilityRevisionLog})',c)));
+const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,practice:fieldPracticePaths,labs:labLearningCatalog,routes:courseReadingStages,log:readabilityRevisionLog})',c)));
 assert.equal(Object.keys(d.maps).length,14);let nodes=0,edges=0;
+assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
+assert.equal(new Set(Object.values(d.practice).map(([,lab])=>lab)).size,14,'practice targets are distinct');
 for(const[moduleId,graph]of Object.entries(d.maps)){
  c.moduleId=moduleId;const points=JSON.parse(JSON.stringify(vm.runInContext('fieldPointRecords(moduleId)',c))),ids=graph.nodes.map(n=>n[0]);
  assert.deepEqual([...ids].sort(),points.map(p=>p.id).sort(),moduleId+': map must correspond to real knowledge points');assert.equal(new Set(ids).size,ids.length);
@@ -13,6 +15,20 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  assert(graph.question&&graph.answer);for(const[target,why]of graph.outlets)assert(d.maps[target]&&why.length>=15);
  const html=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8');assert.equal((html.match(/id="concept-relations"/g)||[]).length,1);assert(html.includes('role="status"'));assert(html.indexOf('id="concept-relations"')<html.indexOf('id="examples"'));
  for(const id of ids)assert(html.includes('id="knowledge-'+id+'"'),moduleId+': definition target missing '+id);
+ const [concept,labId,question]=d.practice[moduleId];
+ const unit=d.labs.find(lab=>lab.id===labId),chapter=d.articles.find(a=>a.id===unit?.chapter);
+ assert(chapter?.module===moduleId&&points.some(p=>p.id===concept&&p.articles.includes(chapter.id)),moduleId+': practice follows an existing concept into its own field');
+ assert(question.length>=25&&unit.files.length&&!(unit.pendingFiles||[]).length,moduleId+': checked practice requires evidence');
+ c.unit=unit;
+ const target=vm.runInContext('labCatalogRunPath(unit)',c);
+ const [path,anchor]=target.split('#');
+ assert(anchor&&fs.readFileSync('dist'+path+'index.html','utf8').includes('id="'+anchor+'"'),moduleId+': practice must land at the exact section');
+ const record=JSON.parse(fs.readFileSync('dist/'+vm.runInContext('labCatalogRecordPath(unit)',c),'utf8'));
+ assert(/^passed(?:_|$)/.test(record.status||'')||unit.files.every(file=>record.programs?.[file]?.exit_code===0),moduleId+': practice record status');
+ const practice=html.match(/<section class="field-map-practice"[\s\S]*?<\/section>/g)||[];
+ assert.equal(practice.length,1,moduleId+': one visible practice after the diagram');
+ assert(html.indexOf(practice[0])>html.indexOf('src="diagrams/field-'+moduleId+'.svg"')&&html.indexOf(practice[0])<html.indexOf('<details class="field-map-explorer"'),moduleId+': keep the exercise outside the optional explorer');
+ assert(practice[0].includes('data-field-practice="'+labId+'"')&&practice[0].includes('href="'+target+'"'),moduleId+': actual page links to the chosen practice');
  nodes+=ids.length;edges+=graph.edges.length;
 }
 assert.equal(nodes,100);assert.equal(edges,87); // 95 existing field points plus five prerequisite groups.
@@ -46,4 +62,4 @@ const {record,update,laterUpdates}=require('./coherence-review-records.cjs');ass
 const latestMaps=[...laterUpdates].reverse().find(stage=>stage.field_maps_snapshot)?.field_maps_snapshot||update.field_maps;
 assert.deepEqual(latestMaps,d.maps,'current maps must match the latest separate relationship review');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');for(const[file,expected]of Object.entries(record.source_sha256))assert.equal(sha(fs.readFileSync(file)),expected,file+': unreviewed source change');
-console.log('PASS: 14 connected field maps /95 existing points+5 prerequisite groups /87 authored relationships; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six reviewed prose revisions preserve every full code block. Human comprehension is not inferred.');
+console.log('PASS: 14 connected field maps /95 existing points+5 prerequisite groups /87 authored relationships /14 exact evidence handoffs; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six reviewed prose revisions preserve every full code block. Human comprehension is not inferred.');

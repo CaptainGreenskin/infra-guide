@@ -1,0 +1,109 @@
+{
+  "schema": "spiffe-workload-identity-v1",
+  "status": "passed",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.3",
+    "go": "go version go1.26.1 linux/amd64",
+    "go_spiffe": "v2.9.0",
+    "spire_server": "1.16.0",
+    "spire_agent": "1.16.0",
+    "archive_sha256": "7bcf5e167151a1fc58293768462b44e155ba8784214582aefa6adf18c633d1d5",
+    "server_sha256": "459983629a053f81901491425f465848f1894d678a4747e8906f6b4eada392d9",
+    "agent_sha256": "b5a35df17f4491c55e5f37d2e34e35bfa81f4199311c9932cd6b174145ced9ce"
+  },
+  "source_sha256": {
+    "spire_identity_lab.py": "010bbc0c1e1b80ac7c984fd14319de23a933d8f753c664afd3ad1226183156d7",
+    "workload.go": "aadcda432ffa1ef7cf59d4b370c204cdc71b11806aeb923a4c8c2c81805404bf",
+    "go.mod": "a55db71547b257c5c174b5e745d365d7bbc8680e3a22377bd05b1feb326abfdb",
+    "go.sum": "e638595bdc94e5ddba6adc24a38dd7bf744b718b9adf423568a8e8ff5bec611d"
+  },
+  "trust_domain": "infraguide.test",
+  "bootstrap_bundle_sha256": "8bb3791e26a0839c1eaefb5f6566442b73d69bd0a9e3f3bc8f05bea0364607ae",
+  "agent_id": "spiffe://infraguide.test/lab-agent",
+  "registrations": {
+    "report-api": {
+      "entry_id": "d87916c4-6e91-44e0-ac2f-1d5579fea6ac",
+      "spiffe_id": "spiffe://infraguide.test/report-api",
+      "selector": "unix:path:/tmp/ig-spire-mxtmt6gu/report-api"
+    },
+    "worker-a": {
+      "entry_id": "e41d52b1-82bb-410b-b22a-4a41c18f5c81",
+      "spiffe_id": "spiffe://infraguide.test/worker-a",
+      "selector": "unix:path:/tmp/ig-spire-mxtmt6gu/worker-a"
+    },
+    "worker-b": {
+      "entry_id": "b996c879-b942-4043-b057-dc3f6ef68757",
+      "spiffe_id": "spiffe://infraguide.test/worker-b",
+      "selector": "unix:path:/tmp/ig-spire-mxtmt6gu/worker-b"
+    }
+  },
+  "receiver": {
+    "address": "127.0.0.1:37607",
+    "server_id": "spiffe://infraguide.test/report-api"
+  },
+  "fixture": {
+    "operation_id": "report-27:publish",
+    "amount": 37
+  },
+  "unregistered": {
+    "grpc_code": "PermissionDenied",
+    "svid_count": 0
+  },
+  "worker_b": {
+    "client_id": "spiffe://infraguide.test/worker-b",
+    "http_status": 403,
+    "response": {
+      "status": "denied"
+    },
+    "server_id": "spiffe://infraguide.test/report-api"
+  },
+  "worker_a": {
+    "client_id": "spiffe://infraguide.test/worker-a",
+    "http_status": 201,
+    "response": {
+      "status": "published"
+    },
+    "server_id": "spiffe://infraguide.test/report-api"
+  },
+  "effects_before": [],
+  "effects_after_denial": [],
+  "effects": [
+    {
+      "peer_id": "spiffe://infraguide.test/worker-a",
+      "report": {
+        "operation_id": "report-27:publish",
+        "amount": 37
+      }
+    }
+  ],
+  "audit": [
+    {
+      "claimed_id": "spiffe://infraguide.test/worker-a",
+      "decision": "denied",
+      "peer_id": "spiffe://infraguide.test/worker-b",
+      "report": {
+        "operation_id": "report-27:publish",
+        "amount": 37
+      }
+    },
+    {
+      "claimed_id": "spiffe://infraguide.test/worker-a",
+      "decision": "published",
+      "peer_id": "spiffe://infraguide.test/worker-a",
+      "report": {
+        "operation_id": "report-27:publish",
+        "amount": 37
+      }
+    }
+  ],
+  "cleanup": {
+    "processes_stopped": {
+      "report-api": true,
+      "spire-agent": true,
+      "spire-server": true
+    },
+    "scratch_removed": true
+  }
+}
