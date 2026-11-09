@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "staticReadingVersion": "237fb6644d65ef1637909bcace472f53f42c27d3b5ff729b1f3804d37ff9a166",
+  "staticReadingVersion": "ecff56dde67c0f474e7f77f604a5018be9c16062e54f0235eac8e086e67a205c",
   "articles": 78,
   "initialExecutableScripts": 1,
   "normalReaderScriptRequests": 2,
@@ -10,22 +10,22 @@
   "metadataSha256": "b0cd0153360922b80939d5708386a8036f532c25e5a760ae58e18e05fccb2e6a",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.bf9cd3af4cf3.js",
-      "url": "/reader-assets/reader-bootstrap.bf9cd3af4cf3.js",
+      "file": "reader-assets/reader-bootstrap.0c093f84128d.js",
+      "url": "/reader-assets/reader-bootstrap.0c093f84128d.js",
       "bytes": 4373,
-      "sha256": "bf9cd3af4cf3fea557de408e9b37ba6f421ca3b90b0aba66ec83c40af9409bd4"
+      "sha256": "0c093f84128d3a41781ca22f978303f88369780e6fd61aeea53df1b5ae23b4aa"
     },
     {
-      "file": "reader-assets/reader-runtime.1d6e308ea3a0.js",
-      "url": "/reader-assets/reader-runtime.1d6e308ea3a0.js",
+      "file": "reader-assets/reader-runtime.eafb8a44a516.js",
+      "url": "/reader-assets/reader-runtime.eafb8a44a516.js",
       "bytes": 79719,
-      "sha256": "1d6e308ea3a00977565715e63f020f2923a65f5bb068e851361f2c7be87272d9"
+      "sha256": "eafb8a44a516c59eb2a8ab295f79f34fb61161d76553265e38633b25ce16e3d2"
     },
     {
-      "file": "reader-assets/search-index.ebaefbfc92f3.json",
-      "url": "/reader-assets/search-index.ebaefbfc92f3.json",
+      "file": "reader-assets/search-index.7b1981e4bc6e.json",
+      "url": "/reader-assets/search-index.7b1981e4bc6e.json",
       "bytes": 8736326,
-      "sha256": "ebaefbfc92f369e5ffbb13121159ecf38d1a8c62ead14b8f81fe770c236d0aef"
+      "sha256": "7b1981e4bc6e92bffb02e1bf352bafbf7a6faae3d662d24d8dbd1acd0803978e"
     }
   ],
   "reusedFunctions": [

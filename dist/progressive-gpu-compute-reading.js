@@ -303,7 +303,9 @@
  p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
  '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
 
- const collectiveVolume=articles.find(a=>a.id==='training-communication').sections[5];
+ const collective=articles.find(a=>a.id==='training-communication');
+ collective.updated='2026.11.09';
+ const collectiveVolume=collective.sections[5];
  collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
 
  const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
