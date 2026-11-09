@@ -1,0 +1,27 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "d9f3726b006561045cb3892e418586ccd3ce6ab8",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PRACTICE_TRIAL_2026-11-09.json": "f79a602cc227e31a23ce84ecc062d1470c2b339bf9081198728884df81076d9b"
+  },
+  "body_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "linux-resource",
+      "reviewed_at": "2026-11-09",
+      "scope": "Compare a real blocking pipe read and child reaping with reversed order, then attribute CPU clocks to the parent and child separately.",
+      "observation": "Both runs returned 42 and exit 0. Reversing order moved the waiting period from the read to child reaping, while parent CPU stayed low. Frozen evidence is macOS arm64.",
+      "reviewed_content_sha256": "d8d426613f1a02c308e22347645b45cb4e85459dbc2681200397e93e52c533fc",
+      "record": "dist/labs/process-wait-accounting/validation.json"
+    },
+    {
+      "chapter": "training-performance",
+      "reviewed_at": "2026-11-09",
+      "scope": "Execute the same single-threaded CPU token-classifier update over padded and compact inputs and keep the measurement denominator fixed.",
+      "observation": "Both paths used 352 targets and matched full gradients and weights. Dividing the same loss sum by 1024 reduced the gradient by 352/1024. Two CPU traces and paired windows exclude profiling from the performance comparison.",
+      "reviewed_content_sha256": "9fa6be95dd818d94f737bef75e3e7edeeba87178a09ec10d93798d6edd742a16",
+      "record": "dist/labs/training-useful-tokens/validation.json"
+    }
+  ]
+}

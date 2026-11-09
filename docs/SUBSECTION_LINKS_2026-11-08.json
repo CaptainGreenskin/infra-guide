@@ -4,7 +4,9 @@
   "chapters": [
     {
       "id": "linux-resource",
-      "targets": []
+      "targets": [
+        "process-wait-accounting"
+      ]
     },
     {
       "id": "virtual-memory-oom",
@@ -597,7 +599,9 @@
     },
     {
       "id": "training-performance",
-      "targets": []
+      "targets": [
+        "cpu-useful-token-throughput"
+      ]
     },
     {
       "id": "training-platform",

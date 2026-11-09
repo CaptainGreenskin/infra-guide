@@ -1,0 +1,368 @@
+{
+  "status": "passed",
+  "source_sha256": {
+    "useful_tokens.py": "9ebc7e5ca5ac8b5177055eee1d84a407a91f9297fa72771ab13606ea7d300297",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "system": "Darwin",
+    "machine": "arm64",
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "threads": 1,
+    "interop_threads": 1
+  },
+  "fixture": {
+    "lengths": [
+      128,
+      96,
+      64,
+      32,
+      16,
+      8,
+      4,
+      4
+    ],
+    "shape": [
+      8,
+      128,
+      32
+    ],
+    "classes": 4,
+    "useful_tokens": 352,
+    "padded_tokens": 672,
+    "learning_rate": 0.125
+  },
+  "cases": {
+    "padded": {
+      "forward_rows": 1024,
+      "denominator": 352,
+      "loss_sum": 492.3951721191406,
+      "mean_loss": 1.3988499641418457,
+      "gradient_0_0": -0.011801732704043388,
+      "weight_0_0_after": -0.15477478504180908
+    },
+    "packed": {
+      "forward_rows": 352,
+      "denominator": 352,
+      "loss_sum": 492.39520263671875,
+      "mean_loss": 1.3988499641418457,
+      "gradient_0_0": -0.011801732704043388,
+      "weight_0_0_after": -0.15477478504180908
+    },
+    "wrong_denominator": {
+      "forward_rows": 1024,
+      "denominator": 1024,
+      "loss_sum": 492.3951721191406,
+      "mean_loss": 0.48085466027259827,
+      "gradient_0_0": -0.004056847654283047,
+      "weight_0_0_after": -0.15574289858341217
+    }
+  },
+  "comparison": {
+    "gradient_max_abs_diff": 0.0,
+    "weight_max_abs_diff": 0.0,
+    "wrong_weight_max_abs_diff": 0.0016237273812294006
+  },
+  "timings": {
+    "warmup_updates_per_mode": 24,
+    "updates_per_sample": 24,
+    "samples": [
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2385750,
+          "packed": 3001375
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2786250,
+          "padded": 2611042
+        }
+      },
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2605334,
+          "packed": 2205167
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2223375,
+          "padded": 2709250
+        }
+      },
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2363625,
+          "packed": 2040625
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2026792,
+          "padded": 2643792
+        }
+      },
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2524834,
+          "packed": 2162500
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2167333,
+          "padded": 2513542
+        }
+      },
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2475709,
+          "packed": 2216417
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2137208,
+          "padded": 2734125
+        }
+      },
+      {
+        "order": [
+          "padded",
+          "packed"
+        ],
+        "duration_ns": {
+          "padded": 2625584,
+          "packed": 2637500
+        }
+      },
+      {
+        "order": [
+          "packed",
+          "padded"
+        ],
+        "duration_ns": {
+          "packed": 2077417,
+          "padded": 2525750
+        }
+      }
+    ],
+    "summary": {
+      "padded": {
+        "p50_us_per_update": 106.89758333333333,
+        "p90_us_per_update": 112.88541666666667,
+        "useful_tokens_per_s_at_p50": 3292871.4478266193
+      },
+      "packed": {
+        "p50_us_per_update": 91.09375,
+        "p90_us_per_update": 116.09375,
+        "useful_tokens_per_s_at_p50": 3864150.9433962265
+      }
+    }
+  },
+  "profiles": {
+    "padded": {
+      "phases": [
+        {
+          "name": "prepare",
+          "start_us": 706.853,
+          "end_us": 741.058
+        },
+        {
+          "name": "forward_loss",
+          "start_us": 743.765,
+          "end_us": 1302.235
+        },
+        {
+          "name": "backward",
+          "start_us": 1308.735,
+          "end_us": 2067.22
+        },
+        {
+          "name": "optimizer",
+          "start_us": 2071.219,
+          "end_us": 2098.133
+        }
+      ],
+      "operators": [
+        "DivBackward0",
+        "LogSoftmaxBackward0",
+        "MmBackward0",
+        "NllLossBackward0",
+        "Optimizer.step#SGD.step",
+        "Optimizer.zero_grad#SGD.zero_grad",
+        "TBackward0",
+        "UnsafeViewBackward0",
+        "ViewBackward0",
+        "aten::_log_softmax",
+        "aten::_log_softmax_backward_data",
+        "aten::_to_copy",
+        "aten::_unsafe_view",
+        "aten::add_",
+        "aten::as_strided",
+        "aten::copy_",
+        "aten::cross_entropy_loss",
+        "aten::detach",
+        "aten::div",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::linear",
+        "aten::log_softmax",
+        "aten::matmul",
+        "aten::mm",
+        "aten::nll_loss",
+        "aten::nll_loss_backward",
+        "aten::nll_loss_forward",
+        "aten::nll_loss_nd",
+        "aten::ones_like",
+        "aten::reshape",
+        "aten::resolve_conj",
+        "aten::t",
+        "aten::to",
+        "aten::transpose",
+        "aten::view",
+        "aten::zero_",
+        "autograd::engine::evaluate_function: DivBackward0",
+        "autograd::engine::evaluate_function: LogSoftmaxBackward0",
+        "autograd::engine::evaluate_function: MmBackward0",
+        "autograd::engine::evaluate_function: NllLossBackward0",
+        "autograd::engine::evaluate_function: TBackward0",
+        "autograd::engine::evaluate_function: UnsafeViewBackward0",
+        "autograd::engine::evaluate_function: ViewBackward0",
+        "autograd::engine::evaluate_function: torch::autograd::AccumulateGrad",
+        "detach",
+        "padded.backward",
+        "padded.forward_loss",
+        "padded.optimizer",
+        "padded.prepare",
+        "torch::autograd::AccumulateGrad"
+      ]
+    },
+    "packed": {
+      "phases": [
+        {
+          "name": "prepare",
+          "start_us": 73.959,
+          "end_us": 151.339
+        },
+        {
+          "name": "forward_loss",
+          "start_us": 153.924,
+          "end_us": 207.998
+        },
+        {
+          "name": "backward",
+          "start_us": 210.165,
+          "end_us": 278.54
+        },
+        {
+          "name": "optimizer",
+          "start_us": 280.499,
+          "end_us": 305.014
+        }
+      ],
+      "operators": [
+        "DivBackward0",
+        "LogSoftmaxBackward0",
+        "MmBackward0",
+        "NllLossBackward0",
+        "Optimizer.step#SGD.step",
+        "Optimizer.zero_grad#SGD.zero_grad",
+        "TBackward0",
+        "ViewBackward0",
+        "aten::_log_softmax",
+        "aten::_log_softmax_backward_data",
+        "aten::_to_copy",
+        "aten::add_",
+        "aten::as_strided",
+        "aten::as_strided_",
+        "aten::copy_",
+        "aten::cross_entropy_loss",
+        "aten::detach",
+        "aten::div",
+        "aten::empty",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::index",
+        "aten::linear",
+        "aten::log_softmax",
+        "aten::matmul",
+        "aten::mm",
+        "aten::ne",
+        "aten::nll_loss",
+        "aten::nll_loss_backward",
+        "aten::nll_loss_forward",
+        "aten::nll_loss_nd",
+        "aten::nonzero",
+        "aten::ones_like",
+        "aten::reshape",
+        "aten::resolve_conj",
+        "aten::select",
+        "aten::t",
+        "aten::to",
+        "aten::transpose",
+        "aten::view",
+        "aten::zero_",
+        "autograd::engine::evaluate_function: DivBackward0",
+        "autograd::engine::evaluate_function: LogSoftmaxBackward0",
+        "autograd::engine::evaluate_function: MmBackward0",
+        "autograd::engine::evaluate_function: NllLossBackward0",
+        "autograd::engine::evaluate_function: TBackward0",
+        "autograd::engine::evaluate_function: ViewBackward0",
+        "autograd::engine::evaluate_function: torch::autograd::AccumulateGrad",
+        "detach",
+        "packed.backward",
+        "packed.forward_loss",
+        "packed.optimizer",
+        "packed.prepare",
+        "torch::autograd::AccumulateGrad"
+      ]
+    }
+  }
+}

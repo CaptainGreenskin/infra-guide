@@ -40,11 +40,17 @@ assert.equal(feedback.searchParams.get('title'),'15 分钟试读反馈');
 assert(feedback.searchParams.get('body').includes('卡住的术语或原句'));
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
-assert(!outlineTree.includes('learning-goal-selector')&&!outlineTree.includes('aria-current="page"'),'the outline is a stable chapter directory');
+assert(!outline.includes('learning-goal-selector')&&!outlineTree.includes('aria-current="page"'),'the outline is a stable chapter directory');
 assert(outline.includes('href="/roadmap/">学习路线与岗位重点 →'),'a single link leads to the route selector');
 const roadmap=fs.readFileSync(path.join(dist,'roadmap/index.html'),'utf8');
 assert.equal((roadmap.match(/class="learning-goal-selector"/g)||[]).length,3,'the course and role selector stays on the roadmap');
-for(const role of ['cloud-platform','cloud-sre','ai-training','ai-inference','ai-operators','agent-app','agent-platform'])assert(roadmap.includes('/roadmap/'+role+'/#learning-goal'),role+': keep the exact role destination');
+for(const role of ['cloud-platform','cloud-sre','ai-training','ai-inference','ai-operators','agent-app','agent-platform']){
+ const href='/roadmap/'+role+'/#learning-goal';
+ assert(roadmap.includes(href),role+': keep the exact role destination');
+ const rolePage=fs.readFileSync(path.join(dist,'roadmap',role,'index.html'),'utf8');
+ const selector=rolePage.match(/id="learning-goal"><nav class="learning-goal-selector"[\s\S]*?<\/nav>/)?.[0];
+ assert(selector?.includes('href="'+href+'" aria-current="page"'),role+': opening a role lands on its visibly selected path');
+}
 const outlineChapterCount=new Set([...outlineTree.matchAll(/href="\/article\/([^"/]+)\//g)].map(m=>m[1])).size;
 assert.equal(outlineChapterCount,inventory.chapters);
 assert(outline.includes('Infra（基础设施）')&&outline.includes('计算、网络、数据和权限是共同底座。'),'define the three directions before their directory');

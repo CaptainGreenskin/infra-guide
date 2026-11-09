@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'process-wait-accounting':{folder:'process-wait-accounting',title:'管道读等待、子进程回收与 CPU 记账'},
+ 'training-useful-tokens':{folder:'training-useful-tokens',title:'有效 token、填充计算与实际 CPU 训练计时'},
  'int8-batch-quality':{folder:'int8-batch-quality',title:'动态 INT8 合批、分类门槛与前向计时'},
  'kubernetes-pdb-rollout':{folder:'kubernetes-pdb-rollout',title:'Kubernetes 驱逐、直接删除与滚动更新'},
  'ddp-uneven-join':{folder:'ddp-uneven-join',title:'DDP 输入耗尽、归约分母与动量恢复'},
@@ -269,6 +271,12 @@ labLearningCatalog.push(
 );
 labLearningCatalog.push({id:'cloud-storage-journal-recovery',track:'cloud',stage:2,title:'从备份恢复到 103，再处理下一笔事务',chapter:'storage-recovery',anchor:'section-8',pack:'cloud-deepening',files:['recovery_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实备份与事务回放',observe:'核对序号 102 缺失时的拒绝、重复 103 的结果，以及恢复后处理 104 的余额。',scope:'本机 SQLite 备份与教学日志，MySQL 日志另见 C3.4。'});
 labLearningCatalog.push({id:'ai-int8-batch-quality',track:'ai',stage:2,title:'同一个输入，为什么换个同批伙伴就改了分类',chapter:'quantization-serving',anchor:'native-int8-batch-quality',pack:'int8-batch-quality',files:['int8_batch_quality.py','requirements.txt'],env:'macOS arm64 · Python 3.12 · PyTorch 2.5.1 QNNPACK',kind:'真实动态 INT8 与分类门槛',observe:'固定目标行，改变同批输入范围。先核对类别与得分，再只对通过质量门槛的形状比较实际前向耗时。',scope:'本机单线程线性层与固定输入。服务负载与 GPU 另验。'});
+labLearningCatalog.push(
+ {id:'cloud-process-wait-accounting',track:'cloud',stage:0,title:'同样的 42，程序是在等数据还是等退出',chapter:'linux-resource',anchor:'process-wait-accounting',pack:'process-wait-accounting',files:['process_wait.py'],env:'Python 3.8+ · macOS/Linux',kind:'真实进程、管道和阻塞等待',observe:'交换写入与退出的顺序，看等待落在读管道还是回收子进程，再把父进程 CPU 时间和子进程 CPU 时间分开核对。',scope:'本机 POSIX 管道、单个子进程与本轮固定输入。'},
+ {id:'ai-useful-token-throughput',track:'ai',stage:2,title:'同样的 352 个目标，怎样比较训练吞吐',chapter:'training-performance',anchor:'cpu-useful-token-throughput',pack:'training-useful-tokens',files:['useful_tokens.py','requirements.txt'],env:'macOS arm64 · Python 3.12 · PyTorch 2.5.1 CPU',kind:'真实单线程训练更新与性能轨迹',observe:'核对两条路径的损失、梯度与更新结果，再看填充行数和同一有效分母下的吞吐。用错误分母重现不同更新。',scope:'本机固定 token 分类器、两条 CPU 路径与配对计时。'},
+ {id:'ai-rope-offset',track:'ai',stage:1,title:'位置整体平移后，什么量保持不变',chapter:'position-encoding',anchor:'section-9',pack:'textbook-examples',folder:'model-foundations',files:['rope.py'],env:'Python 3.9+ · 标准库',kind:'可运行二维数值对照',observe:'比较平移前后的查询与键点积，再故意用错查询位置，看点积如何变化。',scope:'固定二维向量与旋转角度。'},
+ {id:'ai-roofline-model',track:'ai',stage:1,title:'融合算子和矩阵分块分别省下哪些字节',chapter:'roofline-model',anchor:'section-8',pack:'textbook-examples',folder:'cloud-foundations',files:['roofline-model.py'],env:'Python 3.9+ · 标准库',kind:'可运行字节预算模型',observe:'计算融合前后的元素读写量，再用矩阵乘的运算量和输入输出字节推导算术强度。',scope:'理想化数据搬运账与模型上限，设备实测另见算子分析章。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

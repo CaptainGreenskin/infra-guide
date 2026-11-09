@@ -5063,6 +5063,39 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "linux-resource",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "a94f95cb6d0084d56115aa44456102e8dd542fc8e05a6c78b98cfcd51c035394",
+      "reviewed_content_sha256": "d8d426613f1a02c308e22347645b45cb4e85459dbc2681200397e93e52c533fc",
+      "scope": "Compare a real blocking pipe read and child reaping with reversed order, then attribute CPU clocks to the parent and child separately.",
+      "observation": "Both runs returned 42 and exit 0. Reversing order moved the waiting period from the read to child reaping, while parent CPU stayed low. Frozen evidence is macOS arm64.",
+      "headings": [
+        "先把“很慢”拆成执行与等待",
+        "从进程到容器：隔离视图与约束资源各做什么",
+        "把0.5核翻译成一笔CPU时间预算",
+        "把“低CPU”变成可以区分的假设",
+        "只读观测：先找范围，再比较变化",
+        "回到500毫秒：先解释等待，再讨论扩容"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ec9b8a273a193557b9cce86040b351ef7302124ecc7b7ee0e4ef632c750134bb",
+      "reviewed_content_sha256": "9fa6be95dd818d94f737bef75e3e7edeeba87178a09ec10d93798d6edd742a16",
+      "scope": "Execute the same single-threaded CPU token-classifier update over padded and compact inputs and keep the measurement denominator fixed.",
+      "observation": "Both paths used 352 targets and matched full gradients and weights. Dividing the same loss sum by 1024 reduced the gradient by 352/1024. Two CPU traces and paired windows exclude profiling from the performance comparison.",
+      "headings": [
+        "先决定实验问题",
+        "记录测量范围",
+        "用时间线检验假设",
+        "从现象选择下一次实验",
+        "把成本放回训练目标",
+        "从一次快照形成可复现实验",
+        "交一份可核对的答案"
+      ]
     }
   ]
 }

@@ -196,4 +196,37 @@ set_state_dict(model, optimizer, model_state_dict=state["model"],
  fold('展开推导：四项各1分，共4分',
  '<ol><li>训练段80秒与32秒，加速比2.5。</li><li>效率62.5%，128对80卡秒，设备用量比1.6。</li><li>B仍在56毫秒才就绪，原窗口继续为64毫秒；独立改善B输入后，A决定尾部，结果60毫秒。</li><li>固定长度分布、质量目标、有效token、batch/累积和测量窗口，另报告提交到完成的保存、恢复、重试与尾部成本。</li></ol>')
  ]);
+
+ const throughput=articles.find(a=>a.id==='training-performance');
+ throughput.sections[3][1]+=
+ '<h3 id="cpu-useful-token-throughput">实跑：同样 352 个目标，为什么每步耗时不同？</h3>'+
+ p('先分清两个数。为让八条长度不同的序列组成同一个张量，每条都补齐到 128 个位置，线性层一次收到 1,024 行。其中只有 352 行带真实分类目标，剩余 672 行是填充。计算位置数描述模型实际接收了多少行，有效目标数决定平均损失和有效吞吐的口径。',
+ '本实验每个位置独立分类。补齐路径先算全部 1,024 行分数，用掩码排除 672 个填充目标。紧凑路径在前向前按掩码筛出 352 行，做较小的矩阵计算。两个正例的损失都用同一批目标的损失和除以 352，然后反向计算梯度，执行一次随机梯度下降（SGD）。')+
+ trainingFigure('training-useful-tokens','先核对两路训练是否完成相同的工作，再沿整理输入、前向、反向和参数更新比较用时。')+
+ trainingCode('关键几行：先排除填充目标，再用有效数归一化','PYTHON',`
+if mode == "packed":
+    keep = labels != -100
+    features, labels = features[keep], labels[keep]
+
+scores = model(features).reshape(-1, CLASSES)
+loss_sum = F.cross_entropy(scores, labels.reshape(-1),
+                           ignore_index=-100, reduction="sum")
+loss = loss_sum / useful
+loss.backward()
+optimizer.step()
+ `)+
+ table(['同一初始权重的实跑','前向行数','损失分母','权重 [0, 0] 的梯度 → 更新后值'],[
+ ['补齐','1,024','352','−0.011802 → −0.154775'],
+ ['紧凑','352','352','−0.011802 → −0.154775'],
+ ['错用总位置数','1,024','1,024','−0.004057 → −0.155743']
+ ])+
+ p('两个正例对照完整梯度和更新后权重。负例的损失和没有变，平均损失却从约 1.399 降到 0.481，梯度也只剩原来的 352 ÷ 1,024。这个损失下降来自分母错误，参数更新已经变了。如果又用 1,024 当吞吐的分子，同一段用时会把有效速度夸大 2.91 倍。')+
+ table(['怎么测','包含什么','怎样读'],[
+ ['开启 Profiler，各抓一次更新','整理输入和清梯度 → 前向及损失 → 反向 → SGD 更新','先看四段发生顺序。紧凑路径的筛选也占时间，在整理输入里找。'],
+ ['关闭 Profiler，预热后交替跑 12 组','每组每条路径各更新 24 次，计时覆盖上述四段','每组总用时先除以 24，再对 12 个组均值取中位数和 P90。有效吞吐用 352 除以中位数步时。']
+ ])+
+ p('一次单线程 CPU 实跑中，补齐和紧凑路径的中位步时分别约 106.9、91.1 微秒，按 352 个目标折算约 329、386 万有效 token/秒。两路 P90 约为 112.9、116.1 微秒，这次紧凑路径的中位数更低，较慢组的平均步时反而略高。这里的 P90 反映组均值波动，单次更新的尾延迟需要逐步计时。复跑可核对工作量与更新是否一致，耗时随机器和负载变化。',
+ '实验只验证逐位置线性分类的 CPU 更新。迁移到有注意力的模型时，还要保证序列之间看不到彼此、位置编号正确、真实目标相同。到了多卡，再把输入筛选与各 rank 的计算、通信等待放进共同的更新窗口。')+
+ trainingCode('解压后运行，可选导出两条原始轨迹','SHELL','python -m pip install -r requirements.txt\npython -B useful_tokens.py --trace-dir traces > replay.json')+
+ '<p class="practice-links"><a href="labs/training-useful-tokens.zip" download>下载可运行实验 ↓</a> · <a href="labs/training-useful-tokens/useful_tokens.py">查看完整源码 →</a> · <a href="labs/training-useful-tokens/README.md">复跑与读轨迹 →</a> · <a href="labs/training-useful-tokens/validation.json">核对计数、步时与阶段 →</a> · <a href="https://docs.pytorch.org/docs/stable/profiler.html">PyTorch Profiler 接口 ↗</a></p>';
 })();

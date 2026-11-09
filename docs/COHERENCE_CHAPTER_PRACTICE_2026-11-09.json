@@ -1,0 +1,209 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "d9f3726b006561045cb3892e418586ccd3ce6ab8",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PRACTICE_TRIAL_2026-11-09.json": "60749bddef79c74fe0474161ae5b01f7bbbfe86385777b6c5e48e98d3827a3e2"
+  },
+  "source_revisions": {
+    "dist/site-pages.js": {
+      "previous_sha256": "3d51a26fd485b2a7628621049cfa9a418d183b399f0176b87257551c4b5693c6",
+      "reviewed_sha256": "d819d0dba17f5fff3c11aae6c3b1683688897651999388f2fc9ddafaa2700f8e",
+      "scope": "Separate role paths from the quick outline and keep the selected path visible at direct roadmap fragments."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "43f01f85b5952571e6687b52cce11d419449915de70c5fdf69ede99072f61173",
+      "reviewed_sha256": "d5762d2bb598573144bed03d15ebbe57fffed02a84d525bdd93e664051c4d8ce",
+      "scope": "Separate role paths from the quick outline and keep the selected path visible at direct roadmap fragments."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "c06dbe84e33b402eec98212662681b12113a9966e51c2cd3f537981e857ca1f5",
+      "reviewed_sha256": "ba51e04953f73cd7a872a2752a302d925deb9f582cd3f02b9abb97e825a40cb6",
+      "scope": "Separate role paths from the quick outline and keep the selected path visible at direct roadmap fragments."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "796dfc7753a0b0427e1f21ec8b8062d33d2ad1f404e608c07d36b67734741997",
+      "reviewed_sha256": "544f45599a8c1ced239394ea867c8d5d70abb17dd0942d9fc09cb2a0db8d5d3e",
+      "scope": "Link from both article directories to an exact chapter experiment list, only when a corresponding catalog task exists."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "d782573f1f29f7ef3cc679ff55cb0bb555a84afae2bf31835242c6c1ae8f1337",
+      "reviewed_sha256": "0c7e6452c3096636976c782bcd475f821e474cba821b4c14c76914da956833b7",
+      "scope": "Link from both article directories to an exact chapter experiment list, only when a corresponding catalog task exists."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "c0edc6ec616ea7ca11e386c45a5f3ac990e3202a1dbc2bf7bd294a908c4c6b0e",
+      "reviewed_sha256": "c84b906ba7ddf3d881c29bb12c8ca702f71bad553b3dd29a2350505e1c4af3ad",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9697e053a3157baefc9dbbbfcbadd213f76a83cf81109a388ed2a5c355f659ab",
+      "reviewed_sha256": "c160730935e5cb5b68ff9af4c2ffa83307e95e51219299866a12406043467417",
+      "scope": "Link from both article directories to an exact chapter experiment list, only when a corresponding catalog task exists."
+    },
+    "dist/progressive-prerequisites-reading.js": {
+      "previous_sha256": "d26282ce34c64534b25b8373e604648e189cfb30649c58367551e4bb436001fc",
+      "reviewed_sha256": "4893dfd4afb959a0fbf3da525b90e8a85f12330f03cb76d7e19a8a6eed4cfc73",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "36839d81149923a877283d02294518b7e8426d6f9d1146e98dc99945ba70d921",
+      "reviewed_sha256": "503b5c483bd900f3ce8b5c74ae4e53132f00aa2141830d1493a10c6ac544f524",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "8a5ab42064f8623a1ca11a8868deb3eaf7b2c855a27b4702c762b13ccba11a5e",
+      "reviewed_sha256": "1b42ec5829b36be253510fa14c0475aeceb6e44b243105016fb4095347f846f3",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "23e4b6d19c552f76481c1c06379dd1f22a7790007c9a3fce6532ed63e620185b",
+      "reviewed_sha256": "c94794b5a133288b259c33ae70fbf0009229928646fed29f4365d6a076b5fc75",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "0838781d21c93ec2e5a7d7e484b5b5ca50284b2b14608e2f1b6d90be6d366c51",
+      "reviewed_sha256": "2b2625b93c0bd262e215e4176219da0cad446a32bda9bb241b69dffbd6caf5f3",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "3a1b8a71ba2dce2217e37468ec8e8b105370187eee5e6d8bf280a8998a7a22e8",
+      "reviewed_sha256": "cd09293df2efa97e8938e80fe86f0f3723bea2973d382561276a1d17183dbe0b",
+      "scope": "Link from both article directories to an exact chapter experiment list, only when a corresponding catalog task exists."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "f12f6ea5d2348eb6d68e0a6510e39c5a1263215df7e9b6c1e3f39326c039d90f",
+      "reviewed_sha256": "00b68918cb11a95238d6137fb7a8e9586fd86613d2de44f7cd69e4ed19e71118",
+      "scope": "Separate role paths from the quick outline and keep the selected path visible at direct roadmap fragments."
+    },
+    "dist/diagrams/process-wait-accounting.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1f3d3f7d1ec1bda8893b5c7ce727821583d10819b66a74cc9530084554a173c6",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "scripts/check-process-wait-accounting.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ceb7f996af4bb0e00db1fce7ba60fd9495623468337c75c61eff25d77b8b4f1c",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/diagrams/training-useful-tokens.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "707809b06a44fc5e1618e06de9d82b0815a0d61e0b49c184aa420780372d6347",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "scripts/check-training-useful-tokens.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "93d09c74dcc3a37d1a7cceaae7d94dc8e5f1ceea201900ec3c56fb8c4f4a0b88",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/labs/process-wait-accounting.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5a3936ec51caafddfa77aff110dab57f2e95643a2037d3b76f11367329cfbc0c",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/labs/process-wait-accounting/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c3ebf79d989be2bfec9e55c008eb83e316ffff769a1cc160aa5a0a72c2a107f2",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/labs/process-wait-accounting/process_wait.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a977bd990194f075aeca4afaa619ed38b0975f16a7de03ede63badd10110f1d7",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/labs/process-wait-accounting/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4924d165ed636eaf7fcb73dc9a67d62760731034881acb3277c604c9fa5248a8",
+      "scope": "Bind a POSIX pipe, real child reaping, elapsed time and separate CPU clocks."
+    },
+    "dist/labs/training-useful-tokens.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "61cc59c53c37597336bbbaff49ca1baa0f3d44c5c94b42b502b54fa2c464e657",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/labs/training-useful-tokens/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ad1e81671e9aad2289591bf792520b9a25d59689417c5bf2480857f7d3df2930",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/labs/training-useful-tokens/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/labs/training-useful-tokens/useful_tokens.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9ebc7e5ca5ac8b5177055eee1d84a407a91f9297fa72771ab13606ea7d300297",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "dist/labs/training-useful-tokens/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b8189478787324eefecae59bf0bd9e9520ca28b9a7b436f2e68a4bed3d213391",
+      "scope": "Bind padded and compact CPU updates, full gradient and weight checks, a denominator counterexample and profiler observations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "03d538749a0183266d6da8fd04ec340e61cb385e97aa0a50d0390c7d1d2395da",
+      "reviewed_sha256": "8a9223d2e922d9cf91cbd657d880f2fbfcfd5c37da1fb876ee6e913f774ff063",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "29356eadc63a9a91a7d944ed97a3df4915d0ce19731170190cbaa4ab9812b529",
+      "reviewed_sha256": "bcc7a4938b0e33bf3941b7d5c10d755f12cb5b2ea9fffc405b635f4be05354b1",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_CHAPTER_PRACTICE_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "48a8bc38ff52434a7fb347db3241bbf7f53e43d051aff008632e2c212227b2fd",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "0156a2b763b7ef5892bd4796977f5b937d4840cac8a6072802d680dcfbe86f55",
+      "reviewed_sha256": "df1d6b77c26694c1efdcdcc5edaa15e8bc6da5dbe838651720a9a15581d5fd90",
+      "scope": "Verify the release while preserving historical content, fragment targets, files and evidence."
+    }
+  },
+  "article_sections": {
+    "linux-resource": {
+      "sections": [
+        6
+      ],
+      "scope": "Compare a real blocking pipe read and child reaping with reversed order, then attribute CPU clocks to the parent and child separately.",
+      "observation": "Both runs returned 42 and exit 0. Reversing order moved the waiting period from the read to child reaping, while parent CPU stayed low. Frozen evidence is macOS arm64."
+    },
+    "training-performance": {
+      "sections": [
+        4
+      ],
+      "scope": "Execute the same single-threaded CPU token-classifier update over padded and compact inputs and keep the measurement denominator fixed.",
+      "observation": "Both paths used 352 targets and matched full gradients and weights. Dividing the same loss sum by 1024 reduced the gradient by 352/1024. Two CPU traces and paired windows exclude profiling from the performance comparison."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "d9f3726b006561045cb3892e418586ccd3ce6ab8",
+    "chapters": 78,
+    "changed_bodies": [
+      "linux-resource",
+      "training-performance"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "linux-resource": 1,
+      "training-performance": 2
+    },
+    "field_maps": 14,
+    "track_entry_overviews": 3,
+    "track_entry_field_links": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "outline_role_selectors": 0,
+    "reader_trial_entries": 3,
+    "actual_reader_sessions": 0,
+    "chapters_with_catalog_tasks": 71,
+    "role_chapter_positions": 114,
+    "experiment_packs": 91,
+    "learning_tasks": 136
+  }
+}

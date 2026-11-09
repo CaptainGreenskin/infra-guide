@@ -17,7 +17,7 @@ const checks=[
  'check-inference-prefix.cjs','check-ragged-ring.cjs','check-otel-tail-ledger.cjs',
  'check-jetstream-redelivery.cjs','check-vllm-block-lifecycle.cjs','check-mcp-http-cancellation.cjs','check-native-model-rollout.cjs','check-mcp-http-authorization.cjs','check-spiffe-workload-identity.cjs','check-redis-client-tracking.cjs','check-native-amp-window.cjs','check-qdrant-retrieval.cjs','check-python-extension-loader.cjs','check-langgraph-parallel-merge.cjs','check-prometheus-live-burn.cjs',
  'check-tls-proxy-hops.cjs','check-triton-tail-mask.cjs','check-mcp-trace-reentry.cjs',
- 'check-kubernetes-pdb-rollout.cjs','check-ddp-uneven-join.cjs','check-mcp-catalog-refresh.cjs','check-int8-batch-quality.cjs'
+ 'check-kubernetes-pdb-rollout.cjs','check-ddp-uneven-join.cjs','check-mcp-catalog-refresh.cjs','check-int8-batch-quality.cjs','check-process-wait-accounting.cjs','check-training-useful-tokens.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
 run('render-pages.cjs');for(const file of checks)run(file);

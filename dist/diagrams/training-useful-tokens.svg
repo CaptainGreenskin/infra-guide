@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" role="img" aria-labelledby="title desc">
+  <title id="title">同一更新中，区分参与计算的位置、有效目标与计时窗口</title>
+  <desc id="desc">补齐路径对 1024 个位置做线性前向，损失只来自 352 个有效目标。紧凑路径先收集这 352 个位置。两条路径使用同一损失分母，计时都经过整理输入、前向及损失、反向和 SGD 更新。Profiler 解释阶段，关闭 Profiler 的墙钟窗口用于吞吐。</desc>
+  <metadata>{"record":"labs/training-useful-tokens/validation.json","slots":1024,"targets":352,"padding":672,"phases":["prepare","forward_loss","backward","optimizer"]}</metadata>
+  <rect width="900" height="380" rx="18" fill="#f7faff"/>
+  <g font-family="system-ui, sans-serif" fill="#162c4a">
+    <text x="36" y="46" font-size="24" font-weight="700">同一批目标，两条更新路径</text>
+    <text x="36" y="76" font-size="16" fill="#435676">8 条序列，补齐上限 128 个位置，共 352 个真实目标</text>
+    <text x="36" y="134" font-size="18" font-weight="650">补齐路径</text>
+    <rect x="165" y="107" width="176" height="39" rx="7" fill="#2353ac"/>
+    <rect x="341" y="107" width="336" height="39" rx="7" fill="#dce6f5"/>
+    <text x="186" y="132" fill="#fff" font-size="16">352 个有效位置</text>
+    <text x="440" y="132" font-size="16">672 个填充位置</text>
+    <text x="696" y="131" font-size="16">前向算 1,024 行</text>
+    <text x="36" y="191" font-size="18" font-weight="650">紧凑路径</text>
+    <rect x="165" y="164" width="176" height="39" rx="7" fill="#2353ac"/>
+    <text x="186" y="189" fill="#fff" font-size="16">352 个有效位置</text>
+    <text x="362" y="189" font-size="16">先筛选，前向算 352 行</text>
+    <text x="165" y="236" font-size="17" font-weight="650">两路损失都除以 352，逐项核对梯度和更新后的权重。</text>
+    <path d="M36 256 H864" stroke="#b3c5df"/>
+    <text x="36" y="289" font-size="17" font-weight="650">一次更新计时</text>
+    <g fill="#e4edfd" stroke="#a0b8df">
+      <rect x="181" y="266" width="143" height="39" rx="7"/>
+      <rect x="350" y="266" width="143" height="39" rx="7"/>
+      <rect x="519" y="266" width="143" height="39" rx="7"/>
+      <rect x="688" y="266" width="143" height="39" rx="7"/>
+    </g>
+    <g font-size="15" text-anchor="middle">
+      <text x="252" y="291">整理输入与梯度</text>
+      <text x="421" y="291">前向与损失</text>
+      <text x="590" y="291">反向</text>
+      <text x="759" y="291">SGD 更新</text>
+      <text x="337" y="291">→</text>
+      <text x="506" y="291">→</text>
+      <text x="675" y="291">→</text>
+    </g>
+    <text x="181" y="342" font-size="16" fill="#435676">阶段图不按时间比例绘制，吞吐以关闭 Profiler 的墙钟窗口为准。</text>
+  </g>
+</svg>

@@ -55,7 +55,10 @@ for(const [id,[chapter,anchor,section,file]] of Object.entries(correctedTargets)
 }
 for(const article of articles){
  const page=fs.readFileSync(path.join(dist,'article',article.id,'index.html'),'utf8');
- assert.equal(page.includes('class="chapter-lab-links"'),units.some(unit=>unit.chapter===article.id),article.id+': only show real catalog tasks');
+ const hasTasks=units.some(unit=>unit.chapter===article.id);
+ assert.equal(page.includes('class="chapter-lab-links"'),hasTasks,article.id+': only show real catalog tasks');
+ const toc=page.match(/<aside class="toc">([\s\S]*?)<\/aside>/)?.[1]||'';
+ assert.equal(toc.includes('data-toc="chapter-experiments" href="/article/'+article.id+'/#chapter-experiments"'),hasTasks,article.id+': the contents link to the exact practice disclosure');
 }
 // Independently read ZIP members rather than trusting the JavaScript file lists.
 const zipper=cp.spawnSync('python3',['-c',`import sys,json,zipfile,pathlib

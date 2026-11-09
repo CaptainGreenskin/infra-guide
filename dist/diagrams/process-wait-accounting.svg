@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 276" role="img" aria-labelledby="title desc">
+  <title id="title">先读管道与先等子进程退出</title>
+  <desc id="desc">先读时，父进程读到 42，核对子进程仍在运行，再回收子进程。先等时，父进程先回收子进程，再从可读管道取走 42。两轮执行相同计算，节点间距仅作示意。</desc>
+  <metadata>{"read_first":["read_result","child_still_alive","reap_child"],"wait_first":["reap_child","pipe_readable","read_result"],"total":42,"time_scale":false}</metadata>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7085ac"/>
+    </marker>
+  </defs>
+  <rect width="720" height="276" rx="12" fill="#f3f6fc"/>
+  <g font-family="system-ui, sans-serif" font-size="22" fill="#1e314e">
+    <text x="28" y="39" fill="#264fac" font-weight="700">父进程先读</text>
+    <text x="28" y="159" fill="#264fac" font-weight="700">父进程先等</text>
+    <g stroke="#7085ac" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M222 85 H258 M460 85 H496"/>
+      <path d="M222 205 H258 M460 205 H496"/>
+    </g>
+    <g fill="#fff" stroke="#c2cde3">
+      <rect x="28" y="57" width="194" height="56" rx="8"/>
+      <rect x="262" y="57" width="198" height="56" rx="8"/>
+      <rect x="500" y="57" width="192" height="56" rx="8"/>
+      <rect x="28" y="177" width="194" height="56" rx="8"/>
+      <rect x="262" y="177" width="198" height="56" rx="8"/>
+      <rect x="500" y="177" width="192" height="56" rx="8"/>
+    </g>
+    <g text-anchor="middle">
+      <text x="125" y="92">读到 42</text>
+      <text x="361" y="92">子进程尚未退出</text>
+      <text x="596" y="92">回收子进程</text>
+      <text x="125" y="212">回收子进程</text>
+      <text x="361" y="212">确认管道可读</text>
+      <text x="596" y="212">读到 42</text>
+    </g>
+    <text x="28" y="259" fill="#475b79" font-size="17">节点间距仅作示意，阶段用时见正文记录。</text>
+  </g>
+</svg>

@@ -41,7 +41,7 @@ function initReadingComfort(){
  buttons.large.addEventListener('click',()=>change('large'),{signal});
  buttons.focus.addEventListener('click',()=>change('focus'),{signal});
 
- const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id],.article-section h3[id],.article-section h4[id]')].filter(el=>el.matches('h3,h4')?!el.closest('details'):el.querySelector('h2'));
+ const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id],.chapter-lab-links[id],.article-section h3[id],.article-section h4[id]')].filter(el=>el.matches('h3,h4')?!el.closest('details'):el.querySelector('h2,summary'));
  const directory=document.createElement('dialog');
  directory.className='reader-dialog reader-directory';
  directory.setAttribute('aria-labelledby','reader-directory-title');
@@ -51,7 +51,8 @@ function initReadingComfort(){
   const link=document.createElement('a');
   const desktopTarget=document.querySelector('.toc a[data-toc="'+section.id+'"]');
   link.href=desktopTarget?.getAttribute('href')||location.pathname+location.search+'#'+section.id;
-  link.textContent=(section.id==='concept-path'&&desktopTarget?desktopTarget:(section.matches('h3,h4')?section:section.querySelector('h2'))).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
+  const heading=section.matches('h3,h4')?section:section.querySelector('h2,summary');
+  link.textContent=((section.id==='concept-path'||section.matches('.chapter-lab-links'))?desktopTarget||heading:heading).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
   link.dataset.readerTarget=section.id;
   if(section.matches('h3,h4'))link.classList.add('reader-subheading-'+section.tagName.slice(1));
   link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));

@@ -50,6 +50,22 @@
    p('回看 500 毫秒的请求：如果线程持续需要 CPU、目标组用满配额且节流同步增加，就进一步比较单位请求 CPU 成本与预算；如果大部分时间在借连接，就检查连接数和持有时长。记录同一个请求的阶段时间，才能把总延迟与这些资源证据连起来。',
     '调整资源后，用相同输入和到达模式重新测量完成量、请求延迟与相关等待。只增加副本，可能让更多进程争用同一个数据库。先知道工作在哪里停住，才能判断新增的资源能否推进它。')+supporting(s[5])
   ]);
+  a.sections[5][1]+=
+   '<h3 id="process-wait-accounting">实测读管道与等子进程</h3>'+p(
+   '父进程可以启动一个独立的子进程，把一段工作交给它。两个进程可以通过管道传递字节。管道的读端没有数据、写端仍打开时，阻塞读取会等待。父进程也可以等子进程退出，再读取退出状态与资源统计，这一步叫回收。结果写出和进程退出各有自己的条件。',
+   '实验让子进程先停 60 毫秒，再消耗约 50 毫秒 CPU，往管道写入结果 42。写完后，子进程还有一次 60 毫秒的暂停。两轮的子进程做同样的计算，父进程改变等待顺序。先读的一轮用一条额外管道发出退出指令，保证读到 42 时子进程还活着。')+
+   '<figure><img src="diagrams/process-wait-accounting.svg" alt="先读的一轮先取得 42，再确认子进程尚未退出并回收。先等的一轮先回收，再确认管道可读并取得 42。"><figcaption>管道里的结果与子进程的退出状态是两份证据。</figcaption></figure>'+
+   p('代码里的 <code>result_read</code> 是结果管道读端的编号，<code>pid</code> 是子进程编号。<code>os.read</code> 从读端取字节。带 <code>WNOHANG</code> 的 <code>os.wait4</code> 只检查现在能否回收，返回编号 0 表示还没有可回收的退出。下载实验包，解压后在 macOS 或 Linux 上运行：')+
+   '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 process_wait.py</code></pre></div>'+
+   '<p class="practice-links"><a href="labs/process-wait-accounting.zip" download>下载实验包 ↓</a><a href="labs/process-wait-accounting/process_wait.py" download>下载 Python 脚本 ↓</a><a href="labs/process-wait-accounting/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
+   table(['一次实测','读结果墙钟 / 父进程 CPU','等退出墙钟 / 父进程 CPU','子进程 CPU'],[
+    ['先读再等','110.80 / 0.044 毫秒','61.11 / 0.081 毫秒','50.75 毫秒'],
+    ['先等再读','0.014 / 0.014 毫秒','172.78 / 0.074 毫秒','50.68 毫秒']
+   ])+p(
+   '第一轮收到 42 后，非阻塞检查确认子进程尚未退出。第二轮回收时，结果已留在管道里，读取很快。复跑先核对这两个观测和结果值，再比较阶段耗时。需要发控制字节的计时段包含发送动作，子进程 CPU 则是回收时取得的整个子进程生命周期用量。',
+   '只看父进程的 CPU 曲线，两轮几乎一样。沿请求阶段看，耗时会落在不同位置。同样，看到服务进程 CPU 低，要先确认它在等哪一步，再检查完成那一步的进程或远端服务。组内是否节流，仍需回到上一节的控制组计数查证。')+
+   '<p class="source-at"><a href="https://docs.python.org/3/library/os.html#os.wait4" target="_blank" rel="noopener noreferrer">Python 文档中的 wait4 与资源统计 ↗</a></p>';
+  a.updated='2026.11.09';
  }
 
  {
