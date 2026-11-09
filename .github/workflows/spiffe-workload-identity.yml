@@ -1,0 +1,44 @@
+name: Verify native SPIRE workload identity
+on:
+  push:
+    branches: [evidence/spiffe-workload-identity-20261109]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  spiffe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.26.1'
+          cache: false
+      - name: Download and verify the official Linux SPIRE release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          asset=spire-1.16.0-linux-amd64-musl.tar.gz
+          archive="$RUNNER_TEMP/$asset"
+          if ! curl --fail --location --retry 2 --max-time 180 -o "$archive" "https://github.com/spiffe/spire/releases/download/v1.16.0/$asset"; then
+            gh release download v1.16.0 --repo spiffe/spire --pattern "$asset" --dir "$RUNNER_TEMP" --clobber
+          fi
+          printf '%s  %s\n' '7bcf5e167151a1fc58293768462b44e155ba8784214582aefa6adf18c633d1d5' "$archive" | sha256sum --check --strict
+      - name: Execute attestation, mTLS and independent report checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir native-results
+          git rev-parse HEAD > native-results/source-commit.txt
+          python3 -B dist/labs/spiffe-workload-identity/spire_identity_lab.py \
+            --archive "$RUNNER_TEMP/spire-1.16.0-linux-amd64-musl.tar.gz" \
+            --output native-results/validation.json --log-dir native-results/logs 2>&1 | tee native-results/run.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-spiffe-workload-identity
+          path: native-results/
+          retention-days: 7
