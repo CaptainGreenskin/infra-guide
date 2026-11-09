@@ -1,0 +1,18 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "e6bbea4a7652db4ba3094b4f71a20dfa835cb567",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_RUNTIME_PATHS_2026-11-09.json": "ed11c90a3d2f66b02b935640c5f1474c55492d6dc1d1ff731e8cbb5c7296146e"
+  },
+  "revised_teaching_units": [
+    {
+      "chapter": "gpu-scheduling",
+      "reviewed_at": "2026-11-09",
+      "scope": "Trace native Kueue reservation, actual node placement, and indexed application output through a single Job.",
+      "observation": "A 200m holder delays the target. After holder completion two 100m Pods remain unscheduled, then the same Pod UIDs bind following a node-label intervention and output 37 and 12.",
+      "reviewed_content_sha256": "eedc28d81506d2fc266621f89c6cff55b741304b7948d484b6fb84963fedfbfc",
+      "record": "dist/labs/kueue-admission/validation.json"
+    }
+  ]
+}

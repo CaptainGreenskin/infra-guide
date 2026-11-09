@@ -182,4 +182,22 @@
  fold('展开参考答案：位置、成员与恢复',t(['问题','答案'],[['当前阻塞','只有一台可容纳两卡 worker；份额许可已通过，第二 Pod 无可行节点'],['共同训练','保持同一会合协议和 world size=4，核对各 global rank'],['启动失败','负责整组生命周期的控制器按期限终止或重排，回收设备和预留'],['恢复与迟到事件','从已提交检查点建立新 attempt，旧 attempt 无权改写当前进度']]))+
  p('再问一个变化：将节点改为 [2,2,0]，两份资源形状可放，是否已证明一个四卡训练？还需观察容器准备、共同进程组、一次 512 样本口径的有效更新和恢复提交。用这条正常路径检查组件组合，才能分清“声明了四卡”和“完成了四卡协同训练”。')
  ],[],'从 Pod、Job 与控制组件的职责出发，将两卡单 Pod、多个完成单元和共同训练组逐步连接到作业生命周期。');
+
+ const kueueLab='<a href="/article/gpu-scheduling/#native-kueue-admission">沿同一个 Job 核对 Kueue 准入、节点绑定和两份输出 →</a>';
+ platform.sections[1][1]+=p('下面的作业实验先从真实 API 记录分辨两种等待。配额不够时，Job 已保存但尚未创建 Pod。获得配额后，Pod 可以存在并继续等待合适的节点。两段等待需要查不同的对象。'+kueueLab);
+ gpu.sections[0][1]+=p('第 10 节用同一个 Job 走过这几层。先让它等队列额度，再让已获准的两个 Pod 等节点。只改一个条件，观察实际状态怎样推进。'+kueueLab);
+ const kueueReading='<h3 id="native-kueue-admission">额度获准后，Pod 为什么仍在等节点</h3>'+
+ p('实验用两个 Job 区分两道门。作业用标签选择本命名空间的 LocalQueue，后者指向分配资源的 ClusterQueue。这个集群队列只给默认资源变体 200m CPU 额度。占位作业请求 200m，目标作业的两个 Pod 各请求 100m。只要占位作业还在运行，目标就得等。100m 是 CPU 请求单位，等于 0.1 CPU。')+
+ trainingFigure('kueue-admission-path','同一 Job 先等额度，再等匹配节点，最后由两个完成索引输出结果。')+
+ p('先看没有 Pod 的阶段。Kueue 为目标 Job 生成 Workload，记录资源请求与准入状态。实跑中，<code>QuotaReserved=False</code> 表示额度尚未预留，原因为 <code>WaitingForQuota</code>。目标 Job 仍暂停，控制器还没有创建它的 Pod。此时即使节点能提供空闲 CPU，调度器也没有目标 Pod 可处理。'+source('https://kueue.sigs.k8s.io/v0.20/docs/concepts/admission/','Kueue v0.20 的准入过程'),
+ '让占位作业正常退出，目标 Workload 获准使用 200m，目标 Job 解除暂停并创建两个 Pod。两个 Pod 的 nodeSelector 要求节点带指定标签。此时没有节点匹配，所以它们的 nodeName 都为空，PodScheduled 为 False。队列处理完了自己的账，节点过滤仍在等待。')+
+ p('只给实验的工作节点加标签，再看同一 Job 下的 Pod 绑定。这个 Job 指定 parallelism=2、completions=2 和 Indexed 完成模式。容器用 JOB_COMPLETION_INDEX 取得 0 或 1，各自处理一份固定输入。第 0 份计算 10+27=37，第 1 份计算 5+7=12。程序读取两份实际日志，按索引与输入独立核对总和 49，再检查 Job 完成。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Kubernetes：Job 完成模式'),
+ '排障时按顺序查。没有 Pod，先看 Job 是否暂停以及 Workload 为什么未获准。已有 Pod 却没有 nodeName，查看 PodScheduled、事件和节点标签。Pod 已绑定后，最后核对的是实际输出。两个完成索引在这里代表两项独立工作。共同训练还需要按约定建立通信组，并核对一次参数更新。')+
+ trainingCode('在实验目录核对记录或创建独立 kind 集群复跑','SHELL',`python3 -B kueue_admission.py --check-record validation.json
+python3 -B kueue_admission.py --output ./my-validation.json`)+
+ p('记录来自 Linux CI 的单宿主 kind 集群。Kueue 和 Kubernetes 调度器真实执行，两个 CPU 容器分别求和。记录核对了等待节点时和执行完成后的 Pod UID，证明是原来两个 Pod 继续执行。学习共同梯度更新时，再对照<a href="/article/distributed-training/#section-1">分布式训练的进程与全局目标</a>。')+
+ '<p class="practice-links"><a href="labs/kueue-admission.zip" download>下载完整实验 ↓</a> · <a href="labs/kueue-admission/validation.json">查看执行记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42567524901">核对 Linux CI ↗</a></p>';
+ gpu.sections[9][1]=kueueReading+gpu.sections[9][1];
+ kube.sections[2][1]+=p('可先运行真实 CPU 例子。两个 Indexed Pod 按各自的完成索引读取不同数据，输出 37 和 12。观察 Kueue 获准、Pod 绑定与 Job 完成，再对照本节的共同会合要求。'+kueueLab);
+ for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
 })();

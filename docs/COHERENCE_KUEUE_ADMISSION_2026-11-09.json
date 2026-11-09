@@ -1,0 +1,182 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "e6bbea4a7652db4ba3094b4f71a20dfa835cb567",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSLATION_SEARCH_2026-11-09.json": "25928c50f8a2dfaf6f9ca94ba73d77505789b0c5a80351559b23c7434fa9c347"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "4f61b7e33a7591a8de2e8d174ae73971d407538b92e078c378baa3e9060b4f06",
+      "reviewed_sha256": "df65eea1f547a68a7c0b479139d0ffdb4a8ab91405052f46cf4c919bba3bcd16",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "553fc054c750fa25258d6e853f0ad6b6699b38541d5301f48af143352ed35c81",
+      "reviewed_sha256": "2ebbbb8ebdc6eef6d18838464b4f7998011098e0a55918a877565bbcc448097d",
+      "scope": "Keep the held-out generation table readable on narrow screens."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "06d6515c80c1f5941cfea0f2ecd9a61eaeff35cc9096d89fbbfef3b5185712ac",
+      "reviewed_sha256": "5a76b9d0a79416c6af1fe11286a8463696d8c84dd0b2f9ebe5a6809b50e4b197",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/diagrams/kueue-admission-path.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5fc9bcfca43b71314ca3d937bfb8f4555f74be6a7620c0d79beac7aea4f56394",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "c7eb8890ae70a616faaeb7ac08164b27550c3840208fbb6a6befaf84000e367e",
+      "reviewed_sha256": "d67794ddc217f99505b94f72f2dee7cd32b1d23cfc12683426e184df96bd1a19",
+      "scope": "Keep the held-out generation table readable on narrow screens."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "4596439070276d115733338de77a31812ec5625240451694ab832704941a45af",
+      "reviewed_sha256": "a60d9117871095e7848203ab35f51030d06d6bc039e67a1f64cb736997cc83d6",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "ad5f853e5a5e865b14e612240405cb9a6f62986b5a7091662db8c756b964a7cf",
+      "reviewed_sha256": "c370816ca72e470c1b68e7cb47e09e8f2d5d03b17ed70c1752d449f45fa7fda8",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/progressive-cloud-orchestration-reading.js": {
+      "previous_sha256": "a3ed557bb1951523494681e1e255a6ca48c25e1914e36181e87a4dbf9ffae8f1",
+      "reviewed_sha256": "9dca5c0c573528470289a7d0ef9b7eccb7ecb7d5ef9602b75ed11bcb49f1e680",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/progressive-training-platform-reading.js": {
+      "previous_sha256": "b7c397a73a8cc4d2477d59d953ffcdc578309d56b96f10a8a0e54881b52bd7df",
+      "reviewed_sha256": "3de6bf901e3583e842bfedf7b798cb69bcf50e05508fe01cbf9bed147180b59c",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "960335b008f0b2c36c19584ca63499328cfb25ede6d49db8e79fa02591006d31",
+      "reviewed_sha256": "698625640f64ac212b2ff6148f4feee855ac0b635d0ea5b385650a1a4c44b65c",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "d242366c915e734bc2b5e6e48eb2ccf442ba15e0fc2bdf71bf5afc33b682941a",
+      "reviewed_sha256": "ca522b5a5f33f551f5030c8239313ecc92629233e3b36e90f17c6020ffd5e09f",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "scripts/check-native-runtime-paths.cjs": {
+      "previous_sha256": "a2067b0b655e01060ddaa4c1ece7b0bc742618533009bc69a2f8e8deaa43211b",
+      "reviewed_sha256": "0702f614c748ead449cdf517dcde5902ccdd2e3a3ec8743ae1e51546e23f3d78",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "a48c9b79495d8594ed6552bddc3c8efa49abf4750355a42b6397a33905e48d7c",
+      "reviewed_sha256": "d646ac4613eec51dbf5c9cafe108cad714b0505b042ebc570d2c6b19b596c57e",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    ".github/workflows/kueue-admission.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4a5a0ecccc00a70ecda61d3770d3f533b05e4b667b21a175ca48848975f7c9d8",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/labs/kueue-admission.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e88f381e8fecd9ba568db4f4ba700627bae0dc7094b30da3c873fb4ca1326375",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/labs/kueue-admission/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "515dc9d6ad8622e62ce5bbdfb78a3d1d16186a479760341d30e03e3993967ae3",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/labs/kueue-admission/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b2d2bb7db0c006ce208b638736f57a6d94278492fe4f49431537ed6c60fd7773",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/labs/kueue-admission/kueue_admission.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "03bab927f297466e1524c537b29bb587bd5fa2c40a5ca951dfd6794ca3a3bf65",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "dist/labs/kueue-admission/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6dcc94fd91d7414e3b2c6c5e36ddc319a183b3d42d96245c81117931ac42fac0",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "52897b7490ceee774534648379fc9f54a706f469518ce4fcf6d1cd0871d5a6d8",
+      "reviewed_sha256": "009cc1359a8d42ebec1e085a42313d873c5b29369f2939324d879f88bc81887f",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "09acdd71c7c7fb838eda6f4cae89570f1474d3abe5b8dc58ba2b62906238ed5f",
+      "reviewed_sha256": "df7b4e1c69c410524ed9fac93f4afef5731a648ea893678465b63981631d674d",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "docs/CONTENT_KUEUE_ADMISSION_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "04a220e90c594b898adf58cee4dcfe9ed2b6e94e90077a7d207b50592c9531d4",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "cde0cfe32dce7b3f40af8d4d18b40fb2684b809dcdc761b6d27c00d83dcd8273",
+      "reviewed_sha256": "96c8816569be5e7cd92bc1d9f21e00ef8d5ea1e2810a41f37c9bd7e1a7eb8e63",
+      "scope": "Keep one native Job trace across Cloud and AI, the training role gate, and independently verified source-bound evidence."
+    }
+  },
+  "article_sections": {
+    "scheduling-resources": {
+      "sections": [
+        8
+      ],
+      "scope": "Distinguish a Pod create rejection from a suspended queued Job and a submitted Pod with no binding.",
+      "observation": "Cloud reaches the same native queue experiment from its existing kind scheduling lab."
+    },
+    "training-platform": {
+      "sections": [
+        2
+      ],
+      "scope": "Attach queue and node waiting to separate objects of the same Job.",
+      "observation": "The lifecycle now links to native Kueue, Kubernetes binding and real indexed CPU outputs."
+    },
+    "gpu-scheduling": {
+      "sections": [
+        1,
+        10
+      ],
+      "scope": "Trace native Kueue reservation, actual node placement, and indexed application output through a single Job.",
+      "observation": "A 200m holder delays the target. After holder completion two 100m Pods remain unscheduled, then the same Pod UIDs bind following a node-label intervention and output 37 and 12."
+    },
+    "kubernetes-training": {
+      "sections": [
+        3
+      ],
+      "scope": "Connect Indexed Job completion identities to native results before training-process rendezvous.",
+      "observation": "Both completed CPU indices are verified, with fixed communication-group and physical-host boundaries remaining separate."
+    },
+    "transformer-model": {
+      "sections": [
+        1
+      ],
+      "scope": "Keep the held-out generation table readable on narrow screens.",
+      "observation": "The same three rows remain bound to the recorded output; the shorter labels and table width fit the mobile viewport."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "e6bbea4a7652db4ba3094b4f71a20dfa835cb567",
+    "chapters": 78,
+    "changed_bodies": [
+      "scheduling-resources",
+      "transformer-model",
+      "training-platform",
+      "gpu-scheduling",
+      "kubernetes-training"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "gpu-scheduling": 1
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 65,
+    "learning_tasks": 105
+  }
+}

@@ -7865,6 +7865,24 @@ const progressiveAgentSectionTitles={
  fold('展开参考答案：位置、成员与恢复',t(['问题','答案'],[['当前阻塞','只有一台可容纳两卡 worker；份额许可已通过，第二 Pod 无可行节点'],['共同训练','保持同一会合协议和 world size=4，核对各 global rank'],['启动失败','负责整组生命周期的控制器按期限终止或重排，回收设备和预留'],['恢复与迟到事件','从已提交检查点建立新 attempt，旧 attempt 无权改写当前进度']]))+
  p('再问一个变化：将节点改为 [2,2,0]，两份资源形状可放，是否已证明一个四卡训练？还需观察容器准备、共同进程组、一次 512 样本口径的有效更新和恢复提交。用这条正常路径检查组件组合，才能分清“声明了四卡”和“完成了四卡协同训练”。')
  ],[],'从 Pod、Job 与控制组件的职责出发，将两卡单 Pod、多个完成单元和共同训练组逐步连接到作业生命周期。');
+
+ const kueueLab='<a href="/article/gpu-scheduling/#native-kueue-admission">沿同一个 Job 核对 Kueue 准入、节点绑定和两份输出 →</a>';
+ platform.sections[1][1]+=p('下面的作业实验先从真实 API 记录分辨两种等待。配额不够时，Job 已保存但尚未创建 Pod。获得配额后，Pod 可以存在并继续等待合适的节点。两段等待需要查不同的对象。'+kueueLab);
+ gpu.sections[0][1]+=p('第 10 节用同一个 Job 走过这几层。先让它等队列额度，再让已获准的两个 Pod 等节点。只改一个条件，观察实际状态怎样推进。'+kueueLab);
+ const kueueReading='<h3 id="native-kueue-admission">额度获准后，Pod 为什么仍在等节点</h3>'+
+ p('实验用两个 Job 区分两道门。作业用标签选择本命名空间的 LocalQueue，后者指向分配资源的 ClusterQueue。这个集群队列只给默认资源变体 200m CPU 额度。占位作业请求 200m，目标作业的两个 Pod 各请求 100m。只要占位作业还在运行，目标就得等。100m 是 CPU 请求单位，等于 0.1 CPU。')+
+ trainingFigure('kueue-admission-path','同一 Job 先等额度，再等匹配节点，最后由两个完成索引输出结果。')+
+ p('先看没有 Pod 的阶段。Kueue 为目标 Job 生成 Workload，记录资源请求与准入状态。实跑中，<code>QuotaReserved=False</code> 表示额度尚未预留，原因为 <code>WaitingForQuota</code>。目标 Job 仍暂停，控制器还没有创建它的 Pod。此时即使节点能提供空闲 CPU，调度器也没有目标 Pod 可处理。'+source('https://kueue.sigs.k8s.io/v0.20/docs/concepts/admission/','Kueue v0.20 的准入过程'),
+ '让占位作业正常退出，目标 Workload 获准使用 200m，目标 Job 解除暂停并创建两个 Pod。两个 Pod 的 nodeSelector 要求节点带指定标签。此时没有节点匹配，所以它们的 nodeName 都为空，PodScheduled 为 False。队列处理完了自己的账，节点过滤仍在等待。')+
+ p('只给实验的工作节点加标签，再看同一 Job 下的 Pod 绑定。这个 Job 指定 parallelism=2、completions=2 和 Indexed 完成模式。容器用 JOB_COMPLETION_INDEX 取得 0 或 1，各自处理一份固定输入。第 0 份计算 10+27=37，第 1 份计算 5+7=12。程序读取两份实际日志，按索引与输入独立核对总和 49，再检查 Job 完成。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Kubernetes：Job 完成模式'),
+ '排障时按顺序查。没有 Pod，先看 Job 是否暂停以及 Workload 为什么未获准。已有 Pod 却没有 nodeName，查看 PodScheduled、事件和节点标签。Pod 已绑定后，最后核对的是实际输出。两个完成索引在这里代表两项独立工作。共同训练还需要按约定建立通信组，并核对一次参数更新。')+
+ trainingCode('在实验目录核对记录或创建独立 kind 集群复跑','SHELL',`python3 -B kueue_admission.py --check-record validation.json
+python3 -B kueue_admission.py --output ./my-validation.json`)+
+ p('记录来自 Linux CI 的单宿主 kind 集群。Kueue 和 Kubernetes 调度器真实执行，两个 CPU 容器分别求和。记录核对了等待节点时和执行完成后的 Pod UID，证明是原来两个 Pod 继续执行。学习共同梯度更新时，再对照<a href="/article/distributed-training/#section-1">分布式训练的进程与全局目标</a>。')+
+ '<p class="practice-links"><a href="labs/kueue-admission.zip" download>下载完整实验 ↓</a> · <a href="labs/kueue-admission/validation.json">查看执行记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42567524901">核对 Linux CI ↗</a></p>';
+ gpu.sections[9][1]=kueueReading+gpu.sections[9][1];
+ kube.sections[2][1]+=p('可先运行真实 CPU 例子。两个 Indexed Pod 按各自的完成索引读取不同数据，输出 37 和 12。观察 Kueue 获准、Pod 绑定与 Job 完成，再对照本节的共同会合要求。'+kueueLab);
+ for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
 })();
 
 
@@ -9082,6 +9100,8 @@ ANALYZE TABLE innodb_lab.orders;`)+
  table(['实验分支','核对结果'],[['配额：250m 后再加 100m，硬额度 300m','第二对象不存在，API 报配额拒绝'],['形状：请求 5 CPU 与另建 50m 小 Pod','前者不可调度、无绑定，后者运行'],['约束：反亲和、污点，再加容忍','同一第二 Pod 从等待到 B 就绪'],['继续添加第三 Pod','两主机域均被同类 Pod 占据，仍等待']])+
  p('这些条件解释真实调度行为，不把两个节点报告的 Allocatable 相加当宿主物理供给，也不提供跨主机通信、云 CNI/CSI、生产伸缩或性能结论。源码保留对象创建、条件轮询、UID 比较和清理顺序，可对照原始执行记录逐项复查。')+links(s[7])+fold('schedule_lab.py 完整源码',s7[1])
  ],'从副本创建接到 Pod 放置，按配额、节点资源、过滤与评分解释调度，再用真实 kind 对象与条件核对每一道边界。');
+ scheduling.sections[7][1]+=p('批作业还有一种常见的「没有 Pod」。本节的 ResourceQuota 会直接拒绝超额的 Pod 创建；另一项实验中，Kueue 接收并暂停一个 Job，等队列额度后才让 Job 创建 Pod。它获准后，两个 Pod 又因节点标签不匹配而等待。沿对象确认卡点，才能知道该改配额还是节点条件。<a href="/article/gpu-scheduling/#native-kueue-admission">走完批作业从排队到执行的原生实验 →</a>');
+ scheduling.updated='2026.11.09';
 })();
 
 
@@ -12216,9 +12236,9 @@ const firstReadingChanges=[];
  para('先看源端。实验把「红」和「圆」分别查成向量，加上各自的位置向量。编码器用自注意力让两个位置互相读取，得到两条带上下文的源表示。接下来，解码器每次都能查询这两条表示。',
  '再看训练输入怎样构造。BOS 标记开始，EOS 标记结束。若用 red circle 做训练样本，目标输入是 [BOS, red, circle]，预测标签是 [red, circle, EOS]。每行预测下一项。预测 circle 的那一行只能从目标侧读到 [BOS, red]。限制每个位置只能读自己与前文的规则叫因果约束。训练时把正确的前缀交给模型，叫教师强制（teacher forcing）。',
  '这一行再用交叉注意力从「红」「圆」两条源表示汇总信息。一套独立的匹配与汇总叫一个注意力头。对每个头，三个目标位置各产生一行分数，两个源位置各占一列。')+
- conceptReadingTable(['生成轮次','这轮已知的目标输入','这轮选出的词'],[
+ '<div class="translation-reading-trace">'+conceptReadingTable(['轮次','本轮目标输入','选出的词'],[
   ['1','[BOS]','red'],['2','[BOS, red]','circle'],['3','[BOS, red, circle]','EOS，结束']
- ])+
+ ])+'</div>'+
  para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
  para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
@@ -13412,7 +13432,7 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本，再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。三项实跑使用独立夹具。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。分别标清每个判断所依据的信号。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮。核对每个进程的样本数、更新次数和状态差异，解释逐位比较与容差比较的结果。再说明从本机 CPU 迁移到物理两机四卡时，会合、设备和共享检查点各要验什么。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，分别列出会合、设备和共享检查点的验收证据。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算一个请求的缓存与并发容量。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>复算首词元等待，再用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，说明切换何时才算完成。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作，用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
@@ -13904,6 +13924,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
  'sandbox-container':{folder:'sandbox-container',title:'非 root 容器的只读输入与报告验收'},
@@ -14016,6 +14037,7 @@ const labLearningCatalog=[
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
  {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
  {id:'ai-placement',track:'ai',stage:2,title:'总空闲够，为什么整组 GPU 仍放不下',chapter:'gpu-scheduling',pack:'leases-placement-sandbox',files:['placement_reservations.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'有限放置模型 + 两进程竞争',observe:'先算形状与机架约束，再注入半途失败和并发争抢，核对整组回滚与唯一准入。',scope:'GPU 槽位为题设；没有运行 Kueue 或实际 GPU 作业。'},
+ {id:'ai-kueue-admission',track:'ai',stage:2,title:'同一个 Job 先等额度，再等节点',chapter:'gpu-scheduling',anchor:'native-kueue-admission',pack:'kueue-admission',files:['kueue_admission.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Kueue 0.20.5',kind:'原生队列准入、节点绑定与 Job 完成',observe:'分别解除队列占用和节点标签约束，按两个 Pod 的索引检查实际输出 37 与 12。',scope:'单宿主 kind 上的独立 CPU 工作，GPU、跨主机通信与共同参数更新另验。'},
  {id:'ai-operator-cpu',track:'ai',stage:2,title:'同一数学契约，核对布局、舍入与尾块',chapter:'operator-profiling',anchor:'operator-cpu-run',pack:'operators-routing',files:['cpu_ops.c','operator_lab.py'],env:'Python 3.9+ · 本地C11编译器',kind:'真实CPU编译与调用',observe:'验证稳定softmax、1/0/2求和反例、非整块GEMM，再记录有限计时样本。',scope:'float64连续数组；没有CUDA、GPU带宽或BLAS性能结论。'},
  {id:'ai-operator-profile',track:'ai',stage:2,title:'用CPU实际轨迹分清外层区间与内部算子',chapter:'operator-profiling',anchor:'operator-profile-run',pack:'operators-routing',files:['cpu_profile.py'],env:'Python 3.9+ · PyTorch；记录版本2.5.1 CPU',kind:'真实CPU Profiler',observe:'预热后5次线性、softmax与求和，核对15条命名区间和算子事件。',scope:'采集形状/内存有开销，不把包含子事件的时间重复相加，不作为GPU计时。'},
  {id:'ai-moe-routing',track:'ai',stage:2,title:'八条分配乱序返回，仍按原身份合并',chapter:'moe-routing',anchor:'moe-routing-run',pack:'operators-routing',files:['moe_routing.py'],env:'Python 3.9+ · 标准库',kind:'实际两执行进程与声明路由策略',observe:'四个输入按Top-2分发，比较正确/错误合并以及容量3下的保留6、丢2。',scope:'固定线性专家；逻辑rank与通信160B为声明算式，没有GPU/NCCL或模型训练。'},
@@ -14318,5 +14340,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="94ab19c467f7971568c2035b8206f1cbd9b8cd26062476b53b84749a9d066b99";
+const staticReadingVersion="f70cd3ae8a55a16927efda6b753785c079efe8f39112b507fe29b2e0badbfad6";
 

@@ -1,0 +1,1211 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "03bab927f297466e1524c537b29bb587bd5fa2c40a5ca951dfd6794ca3a3bf65",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "python_image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "kueue_version": "v0.20.5",
+  "manifest_sha256": "c23f0a9001d2896f13d5592fe905a49bd276d26b84d16c762c474f0548ccff0d",
+  "controller_image": "registry.k8s.io/kueue/kueue:v0.20.5@sha256:d355deeef3168f440a225d44900999290bcd82e64af386c115edb504d9aba7dd",
+  "cluster": "kueue-7e91ead7c47d",
+  "toolchain": {
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kubectl": "v1.35.8",
+    "docker_engine": "linux x86_64 7.0.0-1017-azure"
+  },
+  "kubernetes_server": "v1.35.8",
+  "controller": {
+    "pod_uid": "71a2ee58-16aa-4d17-b242-74ced90747fc",
+    "image_id": "registry.k8s.io/kueue/kueue@sha256:d355deeef3168f440a225d44900999290bcd82e64af386c115edb504d9aba7dd",
+    "ready": true
+  },
+  "queues": {
+    "flavor": {},
+    "cluster": {
+      "flavorFungibility": {
+        "whenCanBorrow": "MayStopSearch",
+        "whenCanPreempt": "TryNextFlavor"
+      },
+      "namespaceSelector": {},
+      "preemption": {
+        "borrowWithinCohort": {
+          "policy": "Never"
+        },
+        "reclaimWithinCohort": "Never",
+        "withinClusterQueue": "Never"
+      },
+      "queueingStrategy": "BestEffortFIFO",
+      "resourceGroups": [
+        {
+          "coveredResources": [
+            "cpu"
+          ],
+          "flavors": [
+            {
+              "name": "cpu",
+              "resources": [
+                {
+                  "name": "cpu",
+                  "nominalQuota": "200m"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "stopPolicy": "None"
+    },
+    "local": {
+      "clusterQueue": "cpu-budget",
+      "stopPolicy": "None"
+    }
+  },
+  "node_labels_before": {
+    "kueue-7e91ead7c47d-control-plane": null,
+    "kueue-7e91ead7c47d-worker": null
+  },
+  "holder_running": {
+    "job": {
+      "name": "holder",
+      "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b",
+      "suspend": false,
+      "parallelism": 1,
+      "completions": 1,
+      "completion_mode": "NonIndexed",
+      "status": {
+        "active": 1,
+        "conditions": [
+          {
+            "lastProbeTime": "2026-11-09T05:29:43Z",
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "Job resumed",
+            "reason": "JobResumed",
+            "status": "False",
+            "type": "Suspended"
+          }
+        ],
+        "ready": 1,
+        "startTime": "2026-11-09T05:29:43Z",
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    "workload": {
+      "metadata": {
+        "name": "job-holder-f0c45",
+        "uid": "dd4efa8e-4a01-47be-a5a8-48897e809231",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "holder",
+            "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b"
+          }
+        ]
+      },
+      "spec": {
+        "queueName": "work",
+        "podSets": [
+          {
+            "count": 1,
+            "name": "main",
+            "template": {
+              "metadata": {
+                "labels": {
+                  "batch.kubernetes.io/job-name": "holder"
+                }
+              },
+              "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                  {
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "\nfrom pathlib import Path\nimport time\nrelease = Path('/tmp/release')\ndeadline = time.monotonic() + 480\nwhile not release.is_file():\n    if time.monotonic() >= deadline:\n        raise RuntimeError('holder release not received')\n    time.sleep(0.2)\nprint('holder released')\n"
+                    ],
+                    "env": [
+                      {
+                        "name": "POD_UID",
+                        "valueFrom": {
+                          "fieldRef": {
+                            "apiVersion": "v1",
+                            "fieldPath": "metadata.uid"
+                          }
+                        }
+                      }
+                    ],
+                    "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "worker",
+                    "resources": {
+                      "requests": {
+                        "cpu": "200m"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+              }
+            },
+            "topologyRequest": {
+              "podIndexLabel": "batch.kubernetes.io/job-completion-index"
+            }
+          }
+        ]
+      },
+      "status": {
+        "admission": {
+          "clusterQueue": "cpu-budget",
+          "podSetAssignments": [
+            {
+              "count": 1,
+              "flavors": {
+                "cpu": "cpu"
+              },
+              "name": "main",
+              "resourceUsage": {
+                "cpu": "200m"
+              }
+            }
+          ]
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "Quota reserved in ClusterQueue cpu-budget",
+            "observedGeneration": 1,
+            "reason": "QuotaReserved",
+            "status": "True",
+            "type": "QuotaReserved"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "The workload is admitted",
+            "observedGeneration": 1,
+            "reason": "Admitted",
+            "status": "True",
+            "type": "Admitted"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "All pods reached readiness and the workload is running",
+            "observedGeneration": 1,
+            "reason": "Started",
+            "status": "True",
+            "type": "PodsReady"
+          }
+        ]
+      }
+    },
+    "pods": [
+      {
+        "name": "holder-q595l",
+        "uid": "46f4c046-437f-40c0-b47e-2ef66a1e0a7e",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "holder",
+            "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b"
+          }
+        ],
+        "index": null,
+        "node": "kueue-7e91ead7c47d-worker",
+        "node_selector": null,
+        "phase": "Running",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:45Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:45Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:45Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0,
+        "exit_code": null
+      }
+    ]
+  },
+  "target_waiting_quota": {
+    "job": {
+      "name": "indexed-sum",
+      "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361",
+      "suspend": true,
+      "parallelism": 2,
+      "completions": 2,
+      "completion_mode": "Indexed",
+      "status": {
+        "conditions": [
+          {
+            "lastProbeTime": "2026-11-09T05:29:46Z",
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "Job suspended",
+            "reason": "JobSuspended",
+            "status": "True",
+            "type": "Suspended"
+          }
+        ],
+        "ready": 0,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    "workload": {
+      "metadata": {
+        "name": "job-indexed-sum-1678d",
+        "uid": "b52f8d30-c242-4f3a-9aa7-28a20179e2fd",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ]
+      },
+      "spec": {
+        "queueName": "work",
+        "podSets": [
+          {
+            "count": 2,
+            "name": "main",
+            "template": {
+              "metadata": {
+                "labels": {
+                  "batch.kubernetes.io/job-name": "indexed-sum"
+                }
+              },
+              "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                  {
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "\nimport json, os\nshards = ((10, 27), (5, 7))\nindex = int(os.environ['JOB_COMPLETION_INDEX'])\ndata = shards[index]\nprint(json.dumps({'index': index, 'input': data, 'partial': sum(data), 'pod_uid': os.environ['POD_UID']}))\n"
+                    ],
+                    "env": [
+                      {
+                        "name": "POD_UID",
+                        "valueFrom": {
+                          "fieldRef": {
+                            "apiVersion": "v1",
+                            "fieldPath": "metadata.uid"
+                          }
+                        }
+                      }
+                    ],
+                    "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "worker",
+                    "resources": {
+                      "requests": {
+                        "cpu": "100m"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                  "lab.example/eligible": "true"
+                },
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+              }
+            },
+            "topologyRequest": {
+              "podIndexLabel": "batch.kubernetes.io/job-completion-index"
+            }
+          }
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "Not all pods are ready or succeeded",
+            "observedGeneration": 1,
+            "reason": "WaitForStart",
+            "status": "False",
+            "type": "PodsReady"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "couldn't assign flavors to pod set main: insufficient unused quota for cpu in flavor cpu, 200m more needed",
+            "observedGeneration": 1,
+            "reason": "WaitingForQuota",
+            "status": "False",
+            "type": "QuotaReserved"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "The workload has no reservation",
+            "observedGeneration": 1,
+            "reason": "NoReservation",
+            "status": "False",
+            "type": "Admitted"
+          }
+        ],
+        "resourceRequests": [
+          {
+            "name": "main",
+            "resources": {
+              "cpu": "200m"
+            }
+          }
+        ]
+      }
+    },
+    "pods": []
+  },
+  "holder_finished": {
+    "job": {
+      "name": "holder",
+      "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b",
+      "suspend": false,
+      "parallelism": 1,
+      "completions": 1,
+      "completion_mode": "NonIndexed",
+      "status": {
+        "completionTime": "2026-11-09T05:29:51Z",
+        "conditions": [
+          {
+            "lastProbeTime": "2026-11-09T05:29:43Z",
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "Job resumed",
+            "reason": "JobResumed",
+            "status": "False",
+            "type": "Suspended"
+          },
+          {
+            "lastProbeTime": "2026-11-09T05:29:51Z",
+            "lastTransitionTime": "2026-11-09T05:29:51Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "SuccessCriteriaMet"
+          },
+          {
+            "lastProbeTime": "2026-11-09T05:29:51Z",
+            "lastTransitionTime": "2026-11-09T05:29:51Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "Complete"
+          }
+        ],
+        "ready": 0,
+        "startTime": "2026-11-09T05:29:43Z",
+        "succeeded": 1,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    "workload": {
+      "metadata": {
+        "name": "job-holder-f0c45",
+        "uid": "dd4efa8e-4a01-47be-a5a8-48897e809231",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "holder",
+            "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b"
+          }
+        ]
+      },
+      "spec": {
+        "queueName": "work",
+        "podSets": [
+          {
+            "count": 1,
+            "name": "main",
+            "template": {
+              "metadata": {
+                "labels": {
+                  "batch.kubernetes.io/job-name": "holder"
+                }
+              },
+              "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                  {
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "\nfrom pathlib import Path\nimport time\nrelease = Path('/tmp/release')\ndeadline = time.monotonic() + 480\nwhile not release.is_file():\n    if time.monotonic() >= deadline:\n        raise RuntimeError('holder release not received')\n    time.sleep(0.2)\nprint('holder released')\n"
+                    ],
+                    "env": [
+                      {
+                        "name": "POD_UID",
+                        "valueFrom": {
+                          "fieldRef": {
+                            "apiVersion": "v1",
+                            "fieldPath": "metadata.uid"
+                          }
+                        }
+                      }
+                    ],
+                    "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "worker",
+                    "resources": {
+                      "requests": {
+                        "cpu": "200m"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+              }
+            },
+            "topologyRequest": {
+              "podIndexLabel": "batch.kubernetes.io/job-completion-index"
+            }
+          }
+        ]
+      },
+      "status": {
+        "admission": {
+          "clusterQueue": "cpu-budget",
+          "podSetAssignments": [
+            {
+              "count": 1,
+              "flavors": {
+                "cpu": "cpu"
+              },
+              "name": "main",
+              "resourceUsage": {
+                "cpu": "200m"
+              }
+            }
+          ]
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "Quota reserved in ClusterQueue cpu-budget",
+            "observedGeneration": 1,
+            "reason": "QuotaReserved",
+            "status": "True",
+            "type": "QuotaReserved"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "message": "The workload is admitted",
+            "observedGeneration": 1,
+            "reason": "Admitted",
+            "status": "True",
+            "type": "Admitted"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:51Z",
+            "message": "Reached expected number of succeeded pods",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Finished"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:51Z",
+            "message": "All pods reached readiness and the workload is running",
+            "observedGeneration": 1,
+            "reason": "Recovered",
+            "status": "True",
+            "type": "PodsReady"
+          }
+        ]
+      }
+    },
+    "pods": [
+      {
+        "name": "holder-q595l",
+        "uid": "46f4c046-437f-40c0-b47e-2ef66a1e0a7e",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "holder",
+            "uid": "544984f5-dd94-4440-afaf-3b9210f41f0b"
+          }
+        ],
+        "index": null,
+        "node": "kueue-7e91ead7c47d-worker",
+        "node_selector": null,
+        "phase": "Succeeded",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:50Z",
+            "observedGeneration": 1,
+            "status": "False",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:49Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:49Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:43Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0,
+        "exit_code": 0
+      }
+    ]
+  },
+  "target_admitted_unplaced": {
+    "job": {
+      "name": "indexed-sum",
+      "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361",
+      "suspend": false,
+      "parallelism": 2,
+      "completions": 2,
+      "completion_mode": "Indexed",
+      "status": {
+        "active": 2,
+        "conditions": [
+          {
+            "lastProbeTime": "2026-11-09T05:29:52Z",
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "Job resumed",
+            "reason": "JobResumed",
+            "status": "False",
+            "type": "Suspended"
+          }
+        ],
+        "ready": 0,
+        "startTime": "2026-11-09T05:29:52Z",
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    "workload": {
+      "metadata": {
+        "name": "job-indexed-sum-1678d",
+        "uid": "b52f8d30-c242-4f3a-9aa7-28a20179e2fd",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ]
+      },
+      "spec": {
+        "queueName": "work",
+        "podSets": [
+          {
+            "count": 2,
+            "name": "main",
+            "template": {
+              "metadata": {
+                "labels": {
+                  "batch.kubernetes.io/job-name": "indexed-sum"
+                }
+              },
+              "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                  {
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "\nimport json, os\nshards = ((10, 27), (5, 7))\nindex = int(os.environ['JOB_COMPLETION_INDEX'])\ndata = shards[index]\nprint(json.dumps({'index': index, 'input': data, 'partial': sum(data), 'pod_uid': os.environ['POD_UID']}))\n"
+                    ],
+                    "env": [
+                      {
+                        "name": "POD_UID",
+                        "valueFrom": {
+                          "fieldRef": {
+                            "apiVersion": "v1",
+                            "fieldPath": "metadata.uid"
+                          }
+                        }
+                      }
+                    ],
+                    "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "worker",
+                    "resources": {
+                      "requests": {
+                        "cpu": "100m"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                  "lab.example/eligible": "true"
+                },
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+              }
+            },
+            "topologyRequest": {
+              "podIndexLabel": "batch.kubernetes.io/job-completion-index"
+            }
+          }
+        ]
+      },
+      "status": {
+        "admission": {
+          "clusterQueue": "cpu-budget",
+          "podSetAssignments": [
+            {
+              "count": 2,
+              "flavors": {
+                "cpu": "cpu"
+              },
+              "name": "main",
+              "resourceUsage": {
+                "cpu": "200m"
+              }
+            }
+          ]
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "Quota reserved in ClusterQueue cpu-budget",
+            "observedGeneration": 1,
+            "reason": "QuotaReserved",
+            "status": "True",
+            "type": "QuotaReserved"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "The workload is admitted",
+            "observedGeneration": 1,
+            "reason": "Admitted",
+            "status": "True",
+            "type": "Admitted"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:46Z",
+            "message": "Not all pods are ready or succeeded",
+            "observedGeneration": 1,
+            "reason": "WaitForStart",
+            "status": "False",
+            "type": "PodsReady"
+          }
+        ]
+      }
+    },
+    "pods": [
+      {
+        "name": "indexed-sum-0-9vjrf",
+        "uid": "c5b80842-86d4-4603-bdd7-fc14ac21b773",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ],
+        "index": "0",
+        "node": null,
+        "node_selector": {
+          "lab.example/eligible": "true"
+        },
+        "phase": "Pending",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "0/2 nodes are available: 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.",
+            "observedGeneration": 1,
+            "reason": "Unschedulable",
+            "status": "False",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": null,
+        "restart_count": null,
+        "exit_code": null
+      },
+      {
+        "name": "indexed-sum-1-r6zcx",
+        "uid": "62a9b7d5-24f4-441c-b844-4ae95176e5f7",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ],
+        "index": "1",
+        "node": null,
+        "node_selector": {
+          "lab.example/eligible": "true"
+        },
+        "phase": "Pending",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "0/2 nodes are available: 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.",
+            "observedGeneration": 1,
+            "reason": "Unschedulable",
+            "status": "False",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": null,
+        "restart_count": null,
+        "exit_code": null
+      }
+    ],
+    "failed_scheduling": {
+      "c5b80842-86d4-4603-bdd7-fc14ac21b773": [
+        {
+          "reason": "FailedScheduling",
+          "message": "0/2 nodes are available: 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.",
+          "object_uid": "c5b80842-86d4-4603-bdd7-fc14ac21b773"
+        }
+      ],
+      "62a9b7d5-24f4-441c-b844-4ae95176e5f7": [
+        {
+          "reason": "FailedScheduling",
+          "message": "0/2 nodes are available: 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.",
+          "object_uid": "62a9b7d5-24f4-441c-b844-4ae95176e5f7"
+        }
+      ]
+    }
+  },
+  "node_labels_after": {
+    "kueue-7e91ead7c47d-control-plane": null,
+    "kueue-7e91ead7c47d-worker": "true"
+  },
+  "target_finished": {
+    "job": {
+      "name": "indexed-sum",
+      "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361",
+      "suspend": false,
+      "parallelism": 2,
+      "completions": 2,
+      "completion_mode": "Indexed",
+      "status": {
+        "completedIndexes": "0,1",
+        "completionTime": "2026-11-09T05:29:56Z",
+        "conditions": [
+          {
+            "lastProbeTime": "2026-11-09T05:29:52Z",
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "Job resumed",
+            "reason": "JobResumed",
+            "status": "False",
+            "type": "Suspended"
+          },
+          {
+            "lastProbeTime": "2026-11-09T05:29:56Z",
+            "lastTransitionTime": "2026-11-09T05:29:56Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "SuccessCriteriaMet"
+          },
+          {
+            "lastProbeTime": "2026-11-09T05:29:56Z",
+            "lastTransitionTime": "2026-11-09T05:29:56Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "Complete"
+          }
+        ],
+        "ready": 0,
+        "startTime": "2026-11-09T05:29:52Z",
+        "succeeded": 2,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    "workload": {
+      "metadata": {
+        "name": "job-indexed-sum-1678d",
+        "uid": "b52f8d30-c242-4f3a-9aa7-28a20179e2fd",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ]
+      },
+      "spec": {
+        "queueName": "work",
+        "podSets": [
+          {
+            "count": 2,
+            "name": "main",
+            "template": {
+              "metadata": {
+                "labels": {
+                  "batch.kubernetes.io/job-name": "indexed-sum"
+                }
+              },
+              "spec": {
+                "automountServiceAccountToken": false,
+                "containers": [
+                  {
+                    "command": [
+                      "python",
+                      "-u",
+                      "-c",
+                      "\nimport json, os\nshards = ((10, 27), (5, 7))\nindex = int(os.environ['JOB_COMPLETION_INDEX'])\ndata = shards[index]\nprint(json.dumps({'index': index, 'input': data, 'partial': sum(data), 'pod_uid': os.environ['POD_UID']}))\n"
+                    ],
+                    "env": [
+                      {
+                        "name": "POD_UID",
+                        "valueFrom": {
+                          "fieldRef": {
+                            "apiVersion": "v1",
+                            "fieldPath": "metadata.uid"
+                          }
+                        }
+                      }
+                    ],
+                    "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "worker",
+                    "resources": {
+                      "requests": {
+                        "cpu": "100m"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                  "lab.example/eligible": "true"
+                },
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+              }
+            },
+            "topologyRequest": {
+              "podIndexLabel": "batch.kubernetes.io/job-completion-index"
+            }
+          }
+        ]
+      },
+      "status": {
+        "admission": {
+          "clusterQueue": "cpu-budget",
+          "podSetAssignments": [
+            {
+              "count": 2,
+              "flavors": {
+                "cpu": "cpu"
+              },
+              "name": "main",
+              "resourceUsage": {
+                "cpu": "200m"
+              }
+            }
+          ]
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "Quota reserved in ClusterQueue cpu-budget",
+            "observedGeneration": 1,
+            "reason": "QuotaReserved",
+            "status": "True",
+            "type": "QuotaReserved"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:52Z",
+            "message": "The workload is admitted",
+            "observedGeneration": 1,
+            "reason": "Admitted",
+            "status": "True",
+            "type": "Admitted"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:56Z",
+            "message": "Reached expected number of succeeded pods",
+            "observedGeneration": 1,
+            "reason": "Succeeded",
+            "status": "True",
+            "type": "Finished"
+          },
+          {
+            "lastTransitionTime": "2026-11-09T05:29:56Z",
+            "message": "All pods reached readiness and the workload is running",
+            "observedGeneration": 1,
+            "reason": "Started",
+            "status": "True",
+            "type": "PodsReady"
+          }
+        ],
+        "reclaimablePods": [
+          {
+            "count": 2,
+            "name": "main"
+          }
+        ]
+      }
+    },
+    "pods": [
+      {
+        "name": "indexed-sum-0-9vjrf",
+        "uid": "c5b80842-86d4-4603-bdd7-fc14ac21b773",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ],
+        "index": "0",
+        "node": "kueue-7e91ead7c47d-worker",
+        "node_selector": {
+          "lab.example/eligible": "true"
+        },
+        "phase": "Succeeded",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:55Z",
+            "observedGeneration": 1,
+            "status": "False",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0,
+        "exit_code": 0
+      },
+      {
+        "name": "indexed-sum-1-r6zcx",
+        "uid": "62a9b7d5-24f4-441c-b844-4ae95176e5f7",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Job",
+            "name": "indexed-sum",
+            "uid": "4223b25f-5ae5-4b30-a7f8-baea0aeab361"
+          }
+        ],
+        "index": "1",
+        "node": "kueue-7e91ead7c47d-worker",
+        "node_selector": {
+          "lab.example/eligible": "true"
+        },
+        "phase": "Succeeded",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:55Z",
+            "observedGeneration": 1,
+            "status": "False",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "reason": "PodCompleted",
+            "status": "False",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-09T05:29:53Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+        "restart_count": 0,
+        "exit_code": 0
+      }
+    ]
+  },
+  "worker_output": [
+    {
+      "index": 0,
+      "input": [
+        10,
+        27
+      ],
+      "partial": 37,
+      "pod_uid": "c5b80842-86d4-4603-bdd7-fc14ac21b773"
+    },
+    {
+      "index": 1,
+      "input": [
+        5,
+        7
+      ],
+      "partial": 12,
+      "pod_uid": "62a9b7d5-24f4-441c-b844-4ae95176e5f7"
+    }
+  ],
+  "total": 49,
+  "cleanup": {
+    "attempted": true,
+    "owned_nodes_removed": true
+  }
+}

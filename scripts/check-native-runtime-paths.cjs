@@ -1,5 +1,5 @@
 /* Native evidence from expert communication, Kubernetes scaling and isolated tool execution. */
-const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto'),cp=require('node:child_process');
+const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto'),cp=require('node:child_process'),os=require('node:os'),path=require('node:path');
 const read=file=>JSON.parse(fs.readFileSync(file,'utf8'));
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const expertFolder='dist/labs/native-expert-parallel';
@@ -80,10 +80,66 @@ for(const item of configs){
  cp.execFileSync('python3',['-B',runner,'--check-record',record]);
  checkPage(item.article,item.anchor,item.pack,item.diagram,[ci.url]);
 }
+
+const queueFolder='dist/labs/kueue-admission';
+const queueScript=queueFolder+'/kueue_admission.py',queueRecord=queueFolder+'/validation.json';
+const queueRun=read(queueRecord),queueCI=read(queueFolder+'/ci-record.json');
+assert.equal(queueCI.conclusion,'success');
+assert.equal(queueCI.event,'push');
+assert.match(queueCI.headSha,/^[a-f0-9]{40}$/);
+assert.equal(queueCI.url,'https://github.com/CaptainGreenskin/infra-guide/actions/runs/'+queueCI.run_id);
+assert.equal(queueCI.workflow,'.github/workflows/kueue-admission.yml');
+assert.equal(queueCI.workflow_sha256,sha(queueCI.workflow));
+assert.equal(queueCI.source_sha256,sha(queueScript));
+assert.equal(queueCI.record_sha256,sha(queueRecord));
+assert.equal(queueRun.source_sha256,queueCI.source_sha256);
+cp.execFileSync('python3',['-B',queueScript,'--check-record',queueRecord]);
+
+const {target_waiting_quota:quotaWait,target_admitted_unplaced:unplaced,target_finished:finished}=queueRun;
+const names=[quotaWait,unplaced,finished].map(row=>row.job.uid);
+assert.equal(new Set(names).size,1,'a single Job traverses all stages');
+assert.equal(quotaWait.job.suspend,true);
+assert.deepEqual(quotaWait.pods,[]);
+assert.equal(unplaced.job.suspend,false);
+assert.equal(unplaced.pods.length,2);
+assert(unplaced.pods.every(p=>!p.node&&p.phase==='Pending'),'actual unplaced pods');
+assert.deepEqual(finished.pods.map(p=>p.uid).sort(),unplaced.pods.map(p=>p.uid).sort(),'the same Pods are placed');
+const shards=[[10,27],[5,7]];
+assert.deepEqual(queueRun.worker_output,shards.map((input,index)=>({
+ index,input,partial:input.reduce((a,b)=>a+b),pod_uid:finished.pods.find(p=>Number(p.index)===index).uid
+})));
+assert.equal(queueRun.total,shards.flat().reduce((a,b)=>a+b));
+const rejected=[
+ ['invented early binding',r=>{r.target_admitted_unplaced.pods[0].node=r.cluster+'-worker';}],
+ ['changed Job identity',r=>{r.target_finished.job.uid=r.holder_running.job.uid;}],
+ ['plausible but wrong sum',r=>{r.worker_output[1].partial++;r.total++;}],
+];
+const invalidDir=fs.mkdtempSync(path.join(os.tmpdir(),'infraguide-queue-record-'));
+try{
+ for(const [label,mutate] of rejected){
+  const invalid=structuredClone(queueRun);
+  mutate(invalid);
+  const file=path.join(invalidDir,'invalid.json');
+  fs.writeFileSync(file,JSON.stringify(invalid));
+  const attempt=cp.spawnSync('python3',['-B',queueScript,'--check-record',file],{encoding:'utf8'});
+  assert.equal(attempt.status,1,label+' must fail in the offline replay');
+ }
+}finally{fs.rmSync(invalidDir,{recursive:true,force:true});}
+checkPage('gpu-scheduling','native-kueue-admission','kueue-admission','kueue-admission-path',[queueCI.url]);
+const queueAnchor='/article/gpu-scheduling/#native-kueue-admission';
+for(const name of ['scheduling-resources','training-platform','kubernetes-training']){
+ const html=fs.readFileSync('dist/article/'+name+'/index.html','utf8');
+ assert(html.includes('href="'+queueAnchor+'"'),name+' must link straight to the same native evidence');
+}
+const queueFigure=fs.readFileSync('dist/diagrams/kueue-admission-path.svg','utf8');
+for(const stage of ['target_waiting_quota','target_admitted_unplaced','target_finished']){
+ assert(queueFigure.includes('data-stage="'+stage+'"'),'diagram stage '+stage);
+}
 const archiveFiles={
  'native-expert-parallel':['README.md','expert_parallel.py','validation.json'],
  'kubernetes-hpa':['README.md','ci-record.json','hpa_control_lab.py','validation.json'],
  'sandbox-container':['README.md','ci-record.json','sandbox_container.py','source.json','validation.json'],
+ 'kueue-admission':['README.md','ci-record.json','kueue_admission.py','validation.json'],
 };
 cp.execFileSync('python3',['-B','-c',`
 import json, sys
@@ -97,4 +153,4 @@ for package, names in json.load(sys.stdin).items():
             member = package + "/" + name
             assert archive.read(member) == (root / member).read_bytes()
 `],{input:JSON.stringify(archiveFiles)});
-console.log('PASS: native expert outputs and gradients including wrong-order control, HPA and sandbox records with CI provenance, complete ZIPs and exact reading targets.');
+console.log('PASS: native expert gradients, HPA and sandbox evidence, and Kueue quota/binding/indexed output with CI provenance, three rejected record mutations, complete ZIPs and exact cross-chapter reading targets.');

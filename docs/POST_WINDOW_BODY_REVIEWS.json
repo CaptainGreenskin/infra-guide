@@ -4345,6 +4345,97 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "scheduling-resources",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "c97f4c9d8b61cda999a909647e86ed874b64e6511c179b58e02cb9a5f0f0733a",
+      "reviewed_content_sha256": "fd411fb18c379c9f2975c8473fb7304fd7599c50d13b10a1ff0827e71dbe50a7",
+      "scope": "Distinguish a Pod create rejection from a suspended queued Job and a submitted Pod with no binding.",
+      "observation": "Cloud reaches the same native queue experiment from its existing kind scheduling lab.",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "83684ef428463a635cfa628b1cab096c25689165d6c49304f38a94119fbbc74a",
+      "reviewed_content_sha256": "ad0b61ced6cb8698790433aafc2ad1fd46d1545d7ad9288379833ceeee7b345f",
+      "scope": "Keep the held-out generation table readable on narrow screens.",
+      "observation": "The same three rows remain bound to the recorded output; the shorter labels and table width fit the mobile viewport.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b5220af86eb40b1f7b3c4ce4d09c491a97e603730867af9df7cb914e71e2e7f4",
+      "reviewed_content_sha256": "558bc747a8de32cd3899b62ea13318bdb9ca8afebf68698a9ebe95966d1f8f5f",
+      "scope": "Attach queue and node waiting to separate objects of the same Job.",
+      "observation": "The lifecycle now links to native Kueue, Kubernetes binding and real indexed CPU outputs.",
+      "headings": [
+        "从一份训练脚本到一次可追踪运行",
+        "生命周期需要多个可解释的等待状态",
+        "先定义最小契约，再谈自动化",
+        "完成状态必须连接到产物",
+        "失败后的系统动作要可预测",
+        "交接给调度和发布时，协议要留下什么",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "fe98752f2cdcf528ab708022afeb729c5317c2e0e71e54125a75502d63034bc2",
+      "reviewed_content_sha256": "eedc28d81506d2fc266621f89c6cff55b741304b7948d484b6fb84963fedfbfc",
+      "scope": "Trace native Kueue reservation, actual node placement, and indexed application output through a single Job.",
+      "observation": "A 200m holder delays the target. After holder completion two 100m Pods remain unscheduled, then the same Pod UIDs bind following a node-label intervention and output 37 and 12.",
+      "headings": [
+        "状态与职责：额度、获准、放置、就绪与进展",
+        "配额与借用：名义份额、flavor和公平",
+        "资源形状：单节点、拓扑与可行解",
+        "并发预留：快照、整组与失败回滚",
+        "多租户隔离需要多层配合",
+        "启动与恢复：就绪期限、失效与回收",
+        "队列策略：回填、预留与抢占代价",
+        "用用户等待时间衡量调度效果",
+        "交一份可核对的答案",
+        "实战与变化题：穷举参考及真实两进程争抢"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "53b1686d39b938566f8a39d44299a31a260efc0738dd8e72cde76eb3abd55508",
+      "reviewed_content_sha256": "9ae4f8e655e3695347dd2f7f68e29505b858f2ac3d72fa7a7fbd8aeb52802383",
+      "scope": "Connect Indexed Job completion identities to native results before training-process rendezvous.",
+      "observation": "Both completed CPU indices are verified, with fixed communication-group and physical-host boundaries remaining separate.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
     }
   ]
 }

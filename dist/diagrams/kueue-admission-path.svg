@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="470" viewBox="0 0 440 470" role="img" aria-labelledby="kueue-title kueue-desc">
+  <title id="kueue-title">同一个 Job 从排队到两份结果</title>
+  <desc id="kueue-desc">队列只有 200m CPU 额度。占位 Job 使用全部额度时，目标 Job 已保存但暂停，尚无 Pod。占位作业完成后，Kueue 给目标 Job 两份 100m 额度，Job 控制器创建两个 Pod。因缺少所需节点标签，两个 Pod 都无法绑定。补上标签后，两 Pod 绑定并运行，按索引分别输出 37 和 12，独立校验合计 49。</desc>
+  <rect x="1" y="1" width="438" height="468" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#20314e">
+    <text x="20" y="36" font-size="24" font-weight="bold">同一个 Job 从排队到两份结果</text>
+    <text x="20" y="64" font-size="17" fill="#465a78">队列总额 200m · 目标作业 2 × 100m CPU</text>
+    <path d="M39 125V397" stroke="#8099b8" stroke-width="2.4"/>
+    <g id="kueue-waiting-quota" data-stage="target_waiting_quota">
+      <rect x="63" y="88" width="355" height="90" rx="8" fill="#fff5e7" stroke="#cca96e"/>
+      <circle cx="39" cy="126" r="15" fill="#865614"/>
+      <text x="39" y="132" text-anchor="middle" font-size="17" fill="#fff">1</text>
+      <text x="79" y="116" font-size="19" font-weight="bold">等待额度</text>
+      <text x="79" y="142" font-size="16">占位作业占用 200m</text>
+      <text x="79" y="164" font-size="16">目标 Job 暂停 · Pod 数为 0</text>
+    </g>
+    <g id="kueue-admitted-unplaced" data-stage="target_admitted_unplaced">
+      <rect x="63" y="203" width="355" height="90" rx="8" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <circle cx="39" cy="241" r="15" fill="#31569e"/>
+      <text x="39" y="247" text-anchor="middle" font-size="17" fill="#fff">2</text>
+      <text x="79" y="231" font-size="19" font-weight="bold">额度获准，仍在等节点</text>
+      <text x="79" y="257" font-size="16">占位作业完成 · 目标获准 200m</text>
+      <text x="79" y="279" font-size="16">已创建 2 个 Pod · 均无 nodeName</text>
+    </g>
+    <g id="kueue-target-finished" data-stage="target_finished">
+      <rect x="63" y="318" width="355" height="90" rx="8" fill="#e5f4ed" stroke="#84b7a1"/>
+      <circle cx="39" cy="357" r="15" fill="#26664e"/>
+      <text x="39" y="363" text-anchor="middle" font-size="17" fill="#fff">3</text>
+      <text x="79" y="346" font-size="19" font-weight="bold">加节点标签，两份工作完成</text>
+      <text x="79" y="372" font-size="16">两个 Pod 实际绑定 · 索引 0、1</text>
+      <text x="79" y="394" font-size="16">从日志读到 37、12 · 独立复算 49</text>
+    </g>
+    <text x="20" y="444" font-size="16" fill="#465a78">依次查看 Workload、Job、Pod 和容器输出</text>
+  </g>
+</svg>
