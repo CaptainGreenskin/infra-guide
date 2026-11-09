@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'context-parallel':{folder:'context-parallel',title:'两进程因果注意力与位置对照'},
  'integrated-service':{folder:'integrated-service',title:'HTTP任务、CPU模型与独立效果恢复'},
  'multinode-launch':{folder:'multinode-launch',title:'两启动器、四进程训练与恢复对照'},
  'cuda-core':{folder:'cuda-core',title:'CUDA线程、归约与分块实现'},
@@ -87,6 +88,7 @@ const labLearningCatalog=[
  {id:'ai-ddp-step',track:'ai',stage:2,title:'两个副本相同，不代表全局梯度算对了',chapter:'distributed-training',pack:'ddp-one-step',files:['ddp_step.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'等长、不等长和有效目标分母分别与独立单进程目标及手算核对。',scope:'float64 小规模单步基准，不含 GPU 性能。'},
  {id:'ai-updates',track:'ai',stage:2,title:'不等长、尾窗口、空窗口与梯度裁剪',chapter:'distributed-training',pack:'update-and-cancel',files:['update_windows.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank + 独立基准',observe:'使用 7、0、3 个有效目标的窗口，核对全局分母、裁剪顺序及空窗不推进动量。',scope:'固定模型与精度，不把窗口数当成任意优化器的实际更新数。'},
  {id:'ai-collectives',track:'ai',stage:2,title:'集合通信的数值、形状与调用顺序',chapter:'training-communication',pack:'scaling-collectives-traces',files:['collective_contracts.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两 rank',observe:'核对规约、变长收集、重排与归一化，再运行形状和操作不一致的独立失败对照。',scope:'通信确实发生在本机 CPU；不证明 NCCL、RDMA 或物理网络性能。'},
+ {id:'ai-context-parallel',track:'ai',stage:2,title:'长序列切开以后，哪一行还要读远端 KV',chapter:'flash-attention-io',anchor:'context-parallel-lab',pack:'context-parallel',files:['context_attention.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两进程与独立矩阵参考',observe:'收齐 KV 后按原位置分块计算，核对全部四行、远端统计和两种错误实现。',scope:'本机 CPU 单头因果前向。Ring 传递、目标设备性能和训练反向另验。'},
  {id:'ai-tp-gradients',track:'ai',stage:2,title:'张量并行：前向部分和与反向输入梯度',chapter:'tensor-parallel-math',pack:'storage-parallel-acceptance',files:['tp_forward_backward.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两成员 TP 组',observe:'求和后加一次偏置得到[12,5]；两份输入梯度合为[39,42]，局部参数梯度和更新对照完整基线。',scope:'局部自动求导加显式dY与归约，不是生产TP层；未运行GPU或真实多机。'},
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
  {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},

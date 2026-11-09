@@ -3917,6 +3917,43 @@
         "两个看似合理、实际会误判的结论",
         "练习：把GPU术语放回一次工作"
       ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ce80e8d6b39bfedf10d0d2f63815cdaff05d3ab927c435a4533c57a747ddeab2",
+      "reviewed_content_sha256": "690e971b54a10d9a539f4e21ba0cba92cc516161db737ac4c52e2964cbe9fece",
+      "scope": "Carry global positions and online normalization into two-rank context parallel attention",
+      "observation": "Preserve the original inference and single-process examples. Append an independently checked visibility diagram, a hand calculation for query 2, the AllGather versus ring resource accounting and a source-bound two-rank CPU/Gloo forward experiment. Two broken paths fail the independent complete matrix oracle.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "7b05419d9eebd0720c87958bd6505aadfc63e1737ac530d812eeb534ce6b85bb",
+      "reviewed_content_sha256": "f70ff9bd8bfe60f62039f83a95eefd16b03a4b610ff509a7296fab2134537eda",
+      "scope": "Make context parallel attention reachable as an optional extension to collective byte accounting",
+      "observation": "Keep the existing training route and prerequisites. The optional link opens the specific position, resource and experiment section.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
     }
   ]
 }

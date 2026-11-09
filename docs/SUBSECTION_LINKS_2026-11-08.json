@@ -388,7 +388,12 @@
     },
     {
       "id": "flash-attention-io",
-      "targets": []
+      "targets": [
+        "context-parallel-attention",
+        "context-parallel-merge",
+        "context-parallel-cost",
+        "context-parallel-lab"
+      ]
     },
     {
       "id": "tensor-parallel-math",

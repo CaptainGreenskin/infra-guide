@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="609" viewBox="0 0 420 609" role="img" aria-labelledby="context-parallel-title context-parallel-desc">
+  <title id="context-parallel-title">跨进程因果注意力：收齐 K/V，再按位置读</title>
+  <desc id="context-parallel-desc">两进程 CPU 实验。rank 0 持有位置 0、1，rank 1 持有位置 2、3。all_gather 后两边都收到位置 0 至 3 的 K/V，各自保留本地 Q。查询位置 0 只能读键位置 0，查询位置 1 可读 0、1，查询位置 2 可读 0、1、2，查询位置 3 可读全部。rank 0 已收到的远端块仍被因果掩码挡住。</desc>
+  <rect x="1" y="1" width="418" height="607" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" fill="#20314e" font-size="16">
+    <text x="24" y="34" font-size="22" font-weight="bold">跨进程因果注意力</text>
+    <text x="24" y="59" fill="#536783">两进程 CPU 实验</text>
+
+    <g id="actual-communication">
+      <text x="24" y="91" font-size="18" font-weight="bold">1 · 实际通信</text>
+      <g id="rank0-source" data-rank="0" data-positions="0 1">
+        <rect x="24" y="105" width="176" height="60" rx="6" fill="#fff" stroke="#9db6eb"/>
+        <text x="112" y="129" text-anchor="middle" font-weight="bold">rank 0</text>
+        <text x="112" y="152" text-anchor="middle">位置 0、1 的 Q/K/V</text>
+      </g>
+      <g id="rank1-source" data-rank="1" data-positions="2 3">
+        <rect x="220" y="105" width="176" height="60" rx="6" fill="#fff" stroke="#9db6eb"/>
+        <text x="308" y="129" text-anchor="middle" font-weight="bold">rank 1</text>
+        <text x="308" y="152" text-anchor="middle">位置 2、3 的 Q/K/V</text>
+      </g>
+      <path d="M112 165v20m-5-5 5 5 5-5M308 165v20m-5-5 5 5 5-5" fill="none" stroke="#315fe5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="210" y="182" text-anchor="middle" fill="#536783" font-size="14">收集 K/V</text>
+      <g id="all-gather-receipts" data-operation="all_gather" data-rank0-kv="0 1 2 3" data-rank1-kv="0 1 2 3">
+        <rect x="24" y="191" width="372" height="60" rx="6" fill="#eaf1ff" stroke="#9db6eb"/>
+        <text x="210" y="215" text-anchor="middle" font-size="17" font-weight="bold">all_gather 后两边都收到 K/V 0–3</text>
+        <text x="210" y="238" text-anchor="middle">Q 留在各自的 rank</text>
+      </g>
+    </g>
+
+    <g id="causal-mask" data-rule="k &lt;= q">
+      <text x="24" y="285" font-size="18" font-weight="bold">2 · 因果掩码只允许 k ≤ q</text>
+      <rect x="134" y="304" width="130" height="32" fill="#eaf1ff" stroke="#9db6eb"/>
+      <rect x="264" y="304" width="130" height="32" fill="#eaf1ff" stroke="#9db6eb"/>
+      <text x="199" y="325" text-anchor="middle">rank 0 的 K/V</text>
+      <text x="329" y="325" text-anchor="middle">rank 1 的 K/V</text>
+      <text x="24" y="357" font-weight="bold">查询 Q</text>
+      <g text-anchor="middle" fill="#536783">
+        <text x="166.5" y="357">k=0</text><text x="231.5" y="357">k=1</text>
+        <text x="296.5" y="357">k=2</text><text x="361.5" y="357">k=3</text>
+      </g>
+      <rect x="24" y="368" width="64" height="80" fill="#eaf1ff" stroke="#9db6eb"/>
+      <rect x="24" y="448" width="64" height="80" fill="#eaf1ff" stroke="#9db6eb"/>
+      <g text-anchor="middle">
+        <text x="56" y="414" font-weight="bold">rank 0</text>
+        <text x="56" y="494" font-weight="bold">rank 1</text>
+        <text x="110" y="394">q=0</text><text x="110" y="434">q=1</text>
+        <text x="110" y="474">q=2</text><text x="110" y="514">q=3</text>
+      </g>
+      <g text-anchor="middle" font-size="20" stroke="#b4c1d6" stroke-width="1">
+        <g id="query-0-mask" data-query="0">
+          <g data-key="0" data-read="allowed"><rect x="134" y="368" width="65" height="40" fill="#dce9ff"/><text x="166.5" y="395" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="1" data-read="blocked"><rect x="199" y="368" width="65" height="40" fill="#f2f4f7"/><text x="231.5" y="395" fill="#596579" stroke="none">×</text></g>
+          <g data-key="2" data-read="blocked"><rect x="264" y="368" width="65" height="40" fill="#f2f4f7"/><text x="296.5" y="395" fill="#596579" stroke="none">×</text></g>
+          <g data-key="3" data-read="blocked"><rect x="329" y="368" width="65" height="40" fill="#f2f4f7"/><text x="361.5" y="395" fill="#596579" stroke="none">×</text></g>
+        </g>
+        <g id="query-1-mask" data-query="1">
+          <g data-key="0" data-read="allowed"><rect x="134" y="408" width="65" height="40" fill="#dce9ff"/><text x="166.5" y="435" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="1" data-read="allowed"><rect x="199" y="408" width="65" height="40" fill="#dce9ff"/><text x="231.5" y="435" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="2" data-read="blocked"><rect x="264" y="408" width="65" height="40" fill="#f2f4f7"/><text x="296.5" y="435" fill="#596579" stroke="none">×</text></g>
+          <g data-key="3" data-read="blocked"><rect x="329" y="408" width="65" height="40" fill="#f2f4f7"/><text x="361.5" y="435" fill="#596579" stroke="none">×</text></g>
+        </g>
+        <g id="query-2-mask" data-query="2">
+          <g data-key="0" data-read="allowed"><rect x="134" y="448" width="65" height="40" fill="#dce9ff"/><text x="166.5" y="475" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="1" data-read="allowed"><rect x="199" y="448" width="65" height="40" fill="#dce9ff"/><text x="231.5" y="475" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="2" data-read="allowed"><rect x="264" y="448" width="65" height="40" fill="#dce9ff"/><text x="296.5" y="475" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="3" data-read="blocked"><rect x="329" y="448" width="65" height="40" fill="#f2f4f7"/><text x="361.5" y="475" fill="#596579" stroke="none">×</text></g>
+        </g>
+        <g id="query-3-mask" data-query="3">
+          <g data-key="0" data-read="allowed"><rect x="134" y="488" width="65" height="40" fill="#dce9ff"/><text x="166.5" y="515" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="1" data-read="allowed"><rect x="199" y="488" width="65" height="40" fill="#dce9ff"/><text x="231.5" y="515" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="2" data-read="allowed"><rect x="264" y="488" width="65" height="40" fill="#dce9ff"/><text x="296.5" y="515" fill="#184dba" stroke="none">✓</text></g>
+          <g data-key="3" data-read="allowed"><rect x="329" y="488" width="65" height="40" fill="#dce9ff"/><text x="361.5" y="515" fill="#184dba" stroke="none">✓</text></g>
+        </g>
+      </g>
+      <path d="M264 368v160M134 448h260" fill="none" stroke="#7286a4" stroke-width="2"/>
+      <text x="24" y="556"><tspan fill="#184dba">✓ 可读</tspan><tspan x="123" fill="#596579">× 被掩码挡住</tspan></text>
+      <text x="24" y="584" fill="#536783">rank 0 收到远端 K/V，但对应格全部不可见。</text>
+    </g>
+  </g>
+</svg>

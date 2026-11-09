@@ -271,6 +271,41 @@
  '参考为Y=[11,4]，加一次偏置[12,5]；局部1与−2先求和再ReLU得到0，先ReLU再求和得到1。有效batch为64，rank0的TP组[0,1]、DP组[0,4]。形状、数值、依赖、数据副本与组成员各核对一项，错在哪里就回到对应计算关系重做。')
  ]);
 
+ const contextAttention=articles.find(a=>a.id==='flash-attention-io').sections;
+ contextAttention[6][1]+='<h3 id="context-parallel-attention">同一序列怎样分给两个进程</h3>'+
+ p('上面的缓存例子用逻辑位置判断谁能读取谁。把同一条长序列沿位置轴分给多个进程，也要保留这个判断。这种切法叫上下文并行（Context Parallelism，CP）。数据并行分不同样本，张量并行可以分同一层的特征。这里分的是同一条样本的位置。',
+ '用四个位置做小题。rank 是进程在组里的编号。rank 0 持有位置 0、1，rank 1 持有位置 2、3，各自生成本地的 Q、K、V。每个进程只计算自己持有的 Q 行并保留对应输出。它的 Q 可能需要读取其他进程的 K、V，因为可见范围仍由原序列里的位置决定。')+
+ trainingFigure('v76-context-parallel','两个进程都收齐 K 和 V，再按原位置判断可见性。rank 0 只能读本地合法位置，rank 1 还要读 rank 0 的两个位置。')+
+ p('位置 2 的 Q 在 rank 1 上是本地第 0 行。它能读位置 0、1、2，其中 0、1 属于远端。若用本地第 0 行代替原位置 2，程序只允许它读位置 0。若完全省掉远端块，它又只剩位置 2。两种写法都能输出形状正确的向量，值已经变了。')+
+ '<h3 id="context-parallel-merge">远端块的分数怎样进入同一个分母</h3>'+
+ p('下面只看查询位置 2。Q₂=[√2,0]，本地 K₂=[ln 3,0]，点积除以 √2 就得到 ln 3。它对远端 K₀、K₁ 的缩放分数分别为 0 和 ln 2。三个合法位置的 V 为 [2,0]、[0,2]、[4,2]，位置 3 被挡住。先用 rank 0 的两项，再合入 rank 1 的合法项。沿用第 3 节的三个状态，m 是已见最高分，ℓ 是同一尺度的指数和，u 是该尺度下的加权值之和。')+
+ table(['处理到哪里','最高分 m','指数和 ℓ','加权值 u'],[
+  ['远端 0、1','ln 2','1/2 + 1 = 3/2','[1,2]'],
+  ['再合入本地 2','ln 3','(2/3) × (3/2) + 1 = 2','(2/3) × [1,2] + [4,2] = [14/3,10/3]']
+ ])+
+ p('最高分从 ln 2 变成 ln 3，旧分母和旧分子都要乘 exp(ln 2−ln 3)=2/3。最后才用 u/ℓ 得到 [7/3,5/3]。直接整行算时，未归一化权重为 1、2、3，把三个 V 按这三项相加再除以 6，也得到同一输出。')+
+ '<h3 id="context-parallel-cost">一次收齐和逐块传递各占哪些资源</h3>'+
+ p('本机实验做两次 AllGather，所有成员先一起收齐 K，再一起收齐 V。两个进程都收到全部四个位置，随后各自按因果条件选用。Ring Attention 让 K、V 块沿逻辑上的相邻进程依次传递，各进程收到一块就更新自己的行统计。对同一行，只要最终遍历同样的合法位置，两种路径就能计算同一注意力结果。',
+ '估算一层的 K、V。设一条序列长 8192，K、V 各有 8 个头，每头 128 项，每项 2 字节，两个成员等分位置。每份本地块为 2 × 4096 × 8 × 128 × 2 = 16 MiB，其中第一个 2 分别对应 K 和 V。一次收齐后，每个进程的完整 K、V 共 32 MiB。逐块传递时，同一个成员仍需接收远端那份 16 MiB，峰值还要数本地块、在用块和预收缓冲各自何时存活。',
+ '连续切分也会让工作不均衡。四位置例中，rank 0 处理 1+2=3 对合法匹配，rank 1 处理 3+4=7 对。真实实现会结合位置分配、通信和可重叠的计算处理这种差异。训练反向还要把各 Q 分片对同一个 K、V 产生的梯度贡献合回其归属进程。前向输出核对完成后，再独立验证梯度、显存和步时。')+
+ '<p class="practice-links"><a href="https://arxiv.org/html/2310.01889#S3">Ring Attention 原论文</a> · <a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html#context-parallel-overview">Megatron Core 的上下文并行</a></p>';
+
+ contextAttention[7][1]+='<h3 id="context-parallel-lab">双进程实战：核对位置、输出和两个错误版本</h3>'+
+ p('把上一节四位置题放到两个实际 CPU 进程中。每个进程只创建自己的两行 Q、K、V。两次收集完成后，程序按原位置屏蔽未来项，再逐块合并每行的 m、ℓ、u。独立参考另建原始四行输入，一次算出完整分数矩阵，对照手算和分片路径。')+
+ trainingCode('交换 K 与 V · 源码节选','PYTHON','dist.all_gather(keys, local_k)\ndist.all_gather(values, local_v)')+
+ p('解压实验包，在装有 PyTorch 2.5.1 的 Python 环境中运行。输出记录含每行实际读取的位置、每块统计和两种错误版本。')+
+ trainingCode('从实验目录启动两个进程','SHELL','python -m torch.distributed.run --standalone --nproc_per_node=2 context_attention.py > local-record.json')+
+ table(['核对项','本次 CPU/Gloo 执行结果'],[
+  ['分片路径与完整参考','四行依次为 [2,0]、[2/3,4/3]、[7/3,5/3]、[7/4,11/4]，最大绝对误差为 0'],
+  ['误用本地查询下标','rank 1 的第一行只读位置 0，得到 [2,0]，被独立参考拒绝'],
+  ['漏掉远端 K、V','rank 1 的第一行只读位置 2，得到 [4,2]，也被拒绝']
+ ])+
+ p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
+ '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
+
+ const collectiveVolume=articles.find(a=>a.id==='training-communication').sections[5];
+ collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
+
  const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
  pipelineSection[1]+='<h3 id="pipeline-training-schedules">完整训练的时序与激活峰值</h3>'+
  p('沿用两个阶段和编号0到3的四个微批。S0是前半模型，S1是后半模型。F0表示微批0的前向，B0表示微批0的反向，短横表示该阶段空闲。设每项前向和反向各占一槽，每阶段一槽只做一项，跨阶段传输耗时取0。同一微批须等S0的前向完成，S1才能前向。S1完成自己的前向才能反向，S0再接到S1的梯度做反向。四个微批使用同一版参数，两阶段都完成反向后统一更新一次，更新耗时另计。',

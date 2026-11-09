@@ -29,19 +29,62 @@ assert.equal(meta.podsets.reduce((total,p)=>total+p.count*p.gpu_per_pod,0),4);
 assert.deepEqual(meta.owner_reference_edges,[['W1','J1'],['P0','J1'],['P1','J1']]);assert.equal(meta.native_execution,false);assert.equal(meta.gpu_execution,false);
 const page=fs.readFileSync('dist/article/kubernetes-training/index.html','utf8');assert(page.includes('v65-training-object-chain.svg'));assert(page.includes('data-toc="training-object-chain"'));
 const old=require('./content-at-commit.cjs')('0ef6f2b7d91ba401577cabc9f997890f534d2988');
+const prePattern=/<pre\b[\s\S]*?<\/pre>/g;
+const figurePattern=/<figure\b[\s\S]*?<\/figure>/g;
 const hrefPattern=/\bhref=["'][^"']+["']/g;
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
  const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert.equal(a.updated,'2026.11.09');
  assert.notEqual(JSON.stringify(a.sections),JSON.stringify(before.sections));
  assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]));
  const body=a.sections.map(s=>s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
- for(const re of [/<pre\b[\s\S]*?<\/pre>/g,/<figure\b[\s\S]*?<\/figure>/g,hrefPattern]){
+ for(const re of [prePattern,figurePattern,hrefPattern]){
   const current=body.match(re)||[],former=previous.match(re)||[];
   if(re===hrefPattern&&id==='tensor-parallel-math'){
    // The added training timeline cites the two papers that define its schedules.
    former.push('href="https://arxiv.org/abs/1811.06965"','href="https://arxiv.org/abs/2104.04473"');
   }
-  assert.deepEqual(re.source.startsWith('<pre')?current:current.sort(),re.source.startsWith('<pre')?former:former.sort(),id+': original code, figure and URL inventory');
+  if(id==='flash-attention-io'){
+   if(re===prePattern){
+    former.push(
+     '<pre tabindex="0"><code>dist.all_gather(keys, local_k)\ndist.all_gather(values, local_v)</code></pre>',
+     '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=2 context_attention.py &gt; local-record.json</code></pre>');
+   }else if(re===figurePattern){
+    const contextFigure=current.filter(f=>f.includes('src="diagrams/v76-context-parallel.svg"'));
+    assert.equal(contextFigure.length,1);
+    former.push(contextFigure[0]);
+   }else{
+    former.push(...[
+     'diagrams/v76-context-parallel.svg','diagrams/v76-context-parallel.svg',
+     'https://arxiv.org/html/2310.01889#S3',
+     'https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html#context-parallel-overview',
+     'labs/context-parallel.zip','labs/context-parallel/context_attention.py','labs/context-parallel/validation.json'
+    ].map(url=>'href="'+url+'"'));
+   }
+  }
+  assert.deepEqual(re===prePattern?current:current.sort(),re===prePattern?former:former.sort(),id+': original code, figure and URL inventory');
  }
 }
+assert(section('training-communication',5).includes('/article/flash-attention-io/#context-parallel-attention'));
+assert(!training.includes('flash-attention-io'),'the context-parallel lesson remains an optional training extension');
+const context=JSON.parse(fs.readFileSync('dist/labs/context-parallel/validation.json','utf8'));
+assert.deepEqual([context.status,context.device,context.backend,context.world_size],['passed','cpu','gloo',2]);
+assert.equal(context.dtype,'torch.float64');
+assert.deepEqual(context.ranks.map(r=>r.positions),[[0,1],[2,3]]);
+const values=[[2,0],[0,2],[4,2],[2,4]], masses=[[1],[1,2],[1,2,3],[1,2,1,4]];
+const expected=masses.map(row=>[0,1].map(d=>row.reduce((sum,m,i)=>sum+m*values[i][d],0)/row.reduce((a,b)=>a+b)));
+const actual=context.ranks.flatMap(r=>r.output);
+assert.equal(actual.length,expected.length);
+for(const [i,row] of actual.entries()){
+ assert.equal(row.length,2);
+ for(const [d,n] of row.entries())assert(Math.abs(n-expected[i][d])<1e-12);
+}
+for(const rank of context.ranks)for(const [i,trace] of rank.trace.entries()){
+ const q=rank.positions[i];assert.equal(trace.query_position,q);
+ assert.deepEqual(trace.blocks.flatMap(b=>b.visible_keys),Array.from({length:q+1},(_,k)=>k));
+}
+for(const name of ['local_query_positions','omit_remote_kv']){
+ assert.equal(context.negative_cases[name].rejected_rank,1);
+ assert(context.negative_cases[name].max_abs_error>1);
+}
+assert.equal(context.max_abs_error,0);
 console.log('PASS: named chapter destinations across full and role-specific curricula, independent Agent sample identities and three receipt scopes, declared Workload/Job/Pod/rank ownership and 4-card arithmetic, seven complete bodies with original code/figures/URLs. No Kueue/GPU execution or reader mastery inferred.');

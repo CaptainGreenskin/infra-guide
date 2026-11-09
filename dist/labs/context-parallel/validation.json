@@ -1,0 +1,282 @@
+{
+  "status": "passed",
+  "torch": "2.5.1",
+  "backend": "gloo",
+  "device": "cpu",
+  "dtype": "torch.float64",
+  "world_size": 2,
+  "source_sha256": "a4d650c029ff9a57167dacfbfd35875f48d0c3b37a9647390a62488c019d48e8",
+  "attention_exchange": "two dist.all_gather calls, one for K and one for V",
+  "scope": "single-host CPU/Gloo, single-head causal forward only",
+  "tolerance": {
+    "atol": 1e-12,
+    "rtol": 0.0
+  },
+  "dense_reference": [
+    [
+      2.0,
+      0.0
+    ],
+    [
+      0.6666666666666666,
+      1.3333333333333333
+    ],
+    [
+      2.3333333333333335,
+      1.6666666666666665
+    ],
+    [
+      1.75,
+      2.75
+    ]
+  ],
+  "hand_result": [
+    [
+      2.0,
+      0.0
+    ],
+    [
+      0.6666666666666666,
+      1.3333333333333333
+    ],
+    [
+      2.3333333333333335,
+      1.6666666666666667
+    ],
+    [
+      1.75,
+      2.75
+    ]
+  ],
+  "max_abs_error": 0.0,
+  "negative_cases": {
+    "local_query_positions": {
+      "rejected_rank": 1,
+      "max_abs_error": 1.6666666666666665
+    },
+    "omit_remote_kv": {
+      "rejected_rank": 1,
+      "max_abs_error": 1.6666666666666665
+    }
+  },
+  "ranks": [
+    {
+      "rank": 0,
+      "positions": [
+        0,
+        1
+      ],
+      "output": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.6666666666666666,
+          1.3333333333333333
+        ]
+      ],
+      "trace": [
+        {
+          "query_position": 0,
+          "blocks": [
+            {
+              "owner": 0,
+              "visible_keys": [
+                0
+              ],
+              "block_max": 0.0,
+              "block_denominator": 1.0,
+              "block_weighted_values": [
+                2.0,
+                0.0
+              ],
+              "merged_max": 0.0,
+              "merged_denominator": 1.0,
+              "merged_weighted_values": [
+                2.0,
+                0.0
+              ]
+            },
+            {
+              "owner": 1,
+              "visible_keys": []
+            }
+          ]
+        },
+        {
+          "query_position": 1,
+          "blocks": [
+            {
+              "owner": 0,
+              "visible_keys": [
+                0,
+                1
+              ],
+              "block_max": 0.6931471805599453,
+              "block_denominator": 1.5,
+              "block_weighted_values": [
+                1.0,
+                2.0
+              ],
+              "merged_max": 0.6931471805599453,
+              "merged_denominator": 1.5,
+              "merged_weighted_values": [
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "owner": 1,
+              "visible_keys": []
+            }
+          ]
+        }
+      ],
+      "local_query_positions": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.6666666666666666,
+          1.3333333333333333
+        ]
+      ],
+      "omit_remote_kv": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.6666666666666666,
+          1.3333333333333333
+        ]
+      ]
+    },
+    {
+      "rank": 1,
+      "positions": [
+        2,
+        3
+      ],
+      "output": [
+        [
+          2.3333333333333335,
+          1.6666666666666665
+        ],
+        [
+          1.75,
+          2.75
+        ]
+      ],
+      "trace": [
+        {
+          "query_position": 2,
+          "blocks": [
+            {
+              "owner": 0,
+              "visible_keys": [
+                0,
+                1
+              ],
+              "block_max": 0.6931471805599453,
+              "block_denominator": 1.5,
+              "block_weighted_values": [
+                1.0,
+                2.0
+              ],
+              "merged_max": 0.6931471805599453,
+              "merged_denominator": 1.5,
+              "merged_weighted_values": [
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "owner": 1,
+              "visible_keys": [
+                2
+              ],
+              "block_max": 1.0986122886681098,
+              "block_denominator": 1.0,
+              "block_weighted_values": [
+                4.0,
+                2.0
+              ],
+              "merged_max": 1.0986122886681098,
+              "merged_denominator": 2.0,
+              "merged_weighted_values": [
+                4.666666666666667,
+                3.333333333333333
+              ]
+            }
+          ]
+        },
+        {
+          "query_position": 3,
+          "blocks": [
+            {
+              "owner": 0,
+              "visible_keys": [
+                0,
+                1
+              ],
+              "block_max": 0.6931471805599453,
+              "block_denominator": 1.5,
+              "block_weighted_values": [
+                1.0,
+                2.0
+              ],
+              "merged_max": 0.6931471805599453,
+              "merged_denominator": 1.5,
+              "merged_weighted_values": [
+                1.0,
+                2.0
+              ]
+            },
+            {
+              "owner": 1,
+              "visible_keys": [
+                2,
+                3
+              ],
+              "block_max": 1.3862943611198906,
+              "block_denominator": 1.25,
+              "block_weighted_values": [
+                3.0,
+                4.5
+              ],
+              "merged_max": 1.3862943611198906,
+              "merged_denominator": 2.0,
+              "merged_weighted_values": [
+                3.5,
+                5.5
+              ]
+            }
+          ]
+        }
+      ],
+      "local_query_positions": [
+        [
+          2.0,
+          0.0
+        ],
+        [
+          0.6666666666666666,
+          1.3333333333333333
+        ]
+      ],
+      "omit_remote_kv": [
+        [
+          4.0,
+          2.0
+        ],
+        [
+          2.4,
+          3.6
+        ]
+      ]
+    }
+  ]
+}

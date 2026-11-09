@@ -1,0 +1,89 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "5b8327d720f6b34262814207734c54ca981ec8ed",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_AI_INPUTS_GPU_HARDWARE_2026-11-09.json": "96e213b1e042477fba921f93afc84204c59f59a02528714da94a5fd3bab76755"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "5029b229690d8c4b9f73c6e243ebd6d8553162ccbd44fec9608f7dca1ad6a010",
+      "reviewed_sha256": "b2caf50b555859dbb796e3f7cc45d530a4188780722f69afe7af8753457c3653",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "92525a8f0c7c5a52a00e749a87f024e392849c5b1c7299a834db46e090f8728b",
+      "reviewed_sha256": "af1e4d8e501a33f9beb8a8b959e466953ff1dc1d6d12142d801c425f6f602d05",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "551c42a885c28c06b0718ecf6b9e831f7d90ce19920f1fff44a63abe6504dfa9",
+      "reviewed_sha256": "a532c2426543c15a6816b534d7e69770692ff7597e8037ed6ecbad287d0f9777",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "ea98a667e8da97f9ea341d7940c585386f22f032208fcd7788240d2852172dc0",
+      "reviewed_sha256": "05bf2fba73c04bd222200c4369ddffeb93527c9450e11970e2f5c3b1c2230f73",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "567449fe57861e3159ad2f1c2756891a8cf6cf43892c800e59c3fb05ef4c719c",
+      "reviewed_sha256": "eb95ff0edfbcb2b4104ff2b483e5665f50cec5d1c687b1a0923975d25d8cc16f",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "7c6049621de7850f2d6d0468da1f6eb70d20473985bf66d493ce3a161af2955e",
+      "reviewed_sha256": "d972d86726f7a9d3b564eace7d45d0babbf22d143289afe466487cab6a7cb556",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "708a46f171e21c64e8ea1174e3176150b58bbe1135202906567d29e90ea51e00",
+      "reviewed_sha256": "c519e233a465687373bbd387f0c1456b3b3a9c84fea9ee9340dc108b5278c644",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "fa98db41715ab1e2957707cf27dd6c9b5d70b1351615e36cdca236c888feab86",
+      "reviewed_sha256": "6710dd0c26ecca6eae528ce2c7124a259d083b157ee1bfb37c303d4743f1f4aa",
+      "scope": "Extend the existing attention and training pages with a source-bound two-rank context-parallel forward comparison and preserve the published material."
+    }
+  },
+  "article_sections": {
+    "flash-attention-io": {
+      "sections": [
+        7,
+        8
+      ],
+      "scope": "Carry global positions and online normalization into two-rank context parallel attention",
+      "observation": "Preserve the original inference and single-process examples. Append an independently checked visibility diagram, a hand calculation for query 2, the AllGather versus ring resource accounting and a source-bound two-rank CPU/Gloo forward experiment. Two broken paths fail the independent complete matrix oracle."
+    },
+    "training-communication": {
+      "sections": [
+        6
+      ],
+      "scope": "Make context parallel attention reachable as an optional extension to collective byte accounting",
+      "observation": "Keep the existing training route and prerequisites. The optional link opens the specific position, resource and experiment section."
+    }
+  },
+  "executed_asset_sha256": {
+    "dist/diagrams/v76-context-parallel.svg": "88483cc7e0d4812d0cf7a25e6ad48aab4873d65e899bb645a7bce853cc93a340",
+    "dist/labs/context-parallel.zip": "dee0e3014eca972191f3943616baa80acdec6693e136957371d74c96ef8c4e6f",
+    "dist/labs/context-parallel/context_attention.py": "a4d650c029ff9a57167dacfbfd35875f48d0c3b37a9647390a62488c019d48e8",
+    "dist/labs/context-parallel/validation.json": "a04b75a96a23d0f9d3da841ef65b967eacbe30e58d929449923e00acc6e7f7ce"
+  },
+  "review_scope": {
+    "body_baseline_commit": "5b8327d720f6b34262814207734c54ca981ec8ed",
+    "chapters": 78,
+    "changed_bodies": [
+      "flash-attention-io",
+      "training-communication"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "flash-attention-io": 2
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 49,
+    "learning_tasks": 89
+  }
+}
