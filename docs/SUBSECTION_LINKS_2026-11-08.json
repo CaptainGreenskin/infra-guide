@@ -312,7 +312,17 @@
     },
     {
       "id": "transformer-model",
-      "targets": []
+      "targets": [
+        "text-to-next-token",
+        "transformer-architecture-choices",
+        "ai-infra-map",
+        "tiny-decoder-input",
+        "decoder-attention-first-pass",
+        "decoder-ffn-position",
+        "decoder-block-order",
+        "training-versus-generation",
+        "model-compute-to-infra"
+      ]
     },
     {
       "id": "tokenization-embedding",
@@ -383,9 +393,12 @@
     {
       "id": "tensor-parallel-math",
       "targets": [
-        "subsection-4-z6hy9g"
+        "subsection-4-z6hy9g",
+        "pipeline-training-schedules"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "pipeline-training-schedules"
+      ]
     },
     {
       "id": "operator-profiling",

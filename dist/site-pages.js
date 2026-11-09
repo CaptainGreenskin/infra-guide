@@ -52,7 +52,8 @@ function sidebarView(moduleId, current) {
   const summaryHref=readingArticleURL(chapters[0].id);
   return `<details data-directory-module="${module.id}" ${active?'open':''}><summary><a href="${summaryHref}" ${active&&!current?'class="current" aria-current="page"':''}><span>${module.n}</span>${module.name}</a></summary><div class="side-links">${links}</div></details>`;
  }).join('');
- return `<aside class="sidebar" aria-label="章节导航"><a class="side-home" href="/outline/">← 全站大纲</a>
+ const overview=track==='ai'?`<a class="side-home" data-track-overview href="${readingArticleURL('transformer-model')}#ai-infra-map">AI Infra 全貌</a>`:'';
+ return `<aside class="sidebar" aria-label="章节导航">${overview}<a class="side-home" href="/outline/">← 全站大纲</a>
   <div class="side-heading"><span>${label} · 目录</span><span>${topicArticles.filter(a=>a.module!=='practice').length} 章${topicArticles.some(a=>a.module==='practice')?' + 1 实战':''}</span></div>${sections}
   <div class="side-progress"><div><span>本主题阅读进度</span><b>${read} / ${topicArticles.length}</b></div>
    <div class="progress-bar"><span style="width:${read/topicArticles.length*100}%"></span></div><span>仅保存在当前浏览器</span></div></aside>`;

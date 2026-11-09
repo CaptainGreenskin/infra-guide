@@ -1,31 +1,31 @@
 {
   "schema": 1,
-  "staticReadingVersion": "5ed11eebb24d43d90c9457bd03c0097083d8c89aaca6c28ffedd9c0719c7f3d7",
+  "staticReadingVersion": "03e0be6430d48019acbcf1b2c21531ec3a0d63cc2c97147c9652d1df90c28a0e",
   "articles": 78,
   "initialExecutableScripts": 1,
   "normalReaderScriptRequests": 2,
   "fullFallbackScripts": 9,
-  "initialReaderJSBytes": 83669,
+  "initialReaderJSBytes": 84092,
   "metadataBytes": 25457,
   "metadataSha256": "b0cd0153360922b80939d5708386a8036f532c25e5a760ae58e18e05fccb2e6a",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.553dc2da24d7.js",
-      "url": "/reader-assets/reader-bootstrap.553dc2da24d7.js",
+      "file": "reader-assets/reader-bootstrap.3f3d07c4dae7.js",
+      "url": "/reader-assets/reader-bootstrap.3f3d07c4dae7.js",
       "bytes": 4373,
-      "sha256": "553dc2da24d70973d64a886c3dfa2705e3fcabc02c8a21247d8d01ef5c020292"
+      "sha256": "3f3d07c4dae76921185f727347e21aff895dd6b4a1b97c1fd99ec776eaaa5302"
     },
     {
-      "file": "reader-assets/reader-runtime.c443d13240e3.js",
-      "url": "/reader-assets/reader-runtime.c443d13240e3.js",
-      "bytes": 79296,
-      "sha256": "c443d13240e3584e9a938d19035e9d80e5172ec57c01b4aa86ae2e0211313012"
+      "file": "reader-assets/reader-runtime.b179369fe2ae.js",
+      "url": "/reader-assets/reader-runtime.b179369fe2ae.js",
+      "bytes": 79719,
+      "sha256": "b179369fe2ae84e4a4461a74727b3a1de2477d6bfb85b1661bcbb79cd3122b42"
     },
     {
-      "file": "reader-assets/search-index.a577bb32d93e.json",
-      "url": "/reader-assets/search-index.a577bb32d93e.json",
-      "bytes": 8672827,
-      "sha256": "a577bb32d93ed7f2ea3722bff5bdad3cff55d026972c6bc302d2561b239d236a"
+      "file": "reader-assets/search-index.204a1316cb59.json",
+      "url": "/reader-assets/search-index.204a1316cb59.json",
+      "bytes": 8705949,
+      "sha256": "204a1316cb59301668f62c581c085aa43285ae991f686d9c72818849ddb24f9c"
     }
   ],
   "reusedFunctions": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "sidebarView",
-      "sha256": "5371848f313e0131fdd76529c6dfe72c8d45719c80ff556fe662b16829b8eac8"
+      "sha256": "4dd3c314e7446ee5ea5b1528899d1bd1badbca9a6a2f09d13e9e73fd56b58b2d"
     },
     {
       "name": "courseRedirectFor",

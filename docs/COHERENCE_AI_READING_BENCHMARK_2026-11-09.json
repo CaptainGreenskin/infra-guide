@@ -1,0 +1,106 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "3ba0bf918475a4a6d77e5b39a65a3f7235174214",
+  "status": "reviewed",
+  "reader_trials": 0,
+  "preserved_previous_records": {
+    "docs/COHERENCE_PREREQUISITE_READERS_2026-11-09.json": "c5466948c8aa96dbfd6a2ddb8322b0415cdc60b2c76a163b1ac0515f6b801308"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "7aeffba770c2f0f9065d8e579355d04e07fb3359f24ff8929c82fb7dc54efff6",
+      "reviewed_sha256": "610358f89664d04e437db4bdd50776d87a29d8dd650b31c3b9d51686a34226cf",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "43599c73ba518227f860206537b7a4cddeab413492fd65c1489e8a44ac2b2bef",
+      "reviewed_sha256": "e825e99d67224c0b7bd9816780971f8e50d86859120d20f1f31a27fe5eb1c5c7",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "eb6ac9c05f6ae6b01a33fada9a2fc7edb92bee575c2e6cfce27bf42822e8ad2f",
+      "reviewed_sha256": "0491a023cbef933d95f33c4de4cd5cba644bc92b44b3f25c455eb2e0ca9ae79c",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "8f3c8d554c82dc60b5e779f7d77999a015a8e23661e932f1f54f645ef1bfad87",
+      "reviewed_sha256": "497a895c01f30707665fd76625521ea71bff21f4294d7617554085b9fe7aebe0",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "ac134a98bbff6c26bf734f4a1964bf5363c23e7b569f9be8e2f2bcc0864941ec",
+      "reviewed_sha256": "09e487150eeb06a031a3298b3b427a48384d0585d30f1cb21c9b4415305e10f0",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "a811abbbb407d8e861179c543f9228d489483a3b1db4d74129aaaf4254342ca1",
+      "reviewed_sha256": "112e533a6a5db4cb1149f281b7b0af542dd17375a47f2fab7185fab8ecaeaf98",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "84407f3166b08ec8f7331224806f50405515edd71aa73e811bbebb6148f7a1cd",
+      "reviewed_sha256": "1fc08f4b1304f587a16395d56c53a669b6f8d3060eabe2d9b1a4dccc75637ece",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "0f4dce5ce242649889bfb7837253b92fbc0515d07ca0a90d7de621ae1f2652a6",
+      "reviewed_sha256": "5901ace8a574f6c3e0b47b72394fe39de67328560693624e83a73ccf4e5f5394",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "docs/AI_READING_BENCHMARK_2026-11-09.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bd81fcf8301f7c7b046f0f7337eedee826aadb2f0747c1ab80675bc162b7e047",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "39fae35045933c9f6a23ec491b0098f03bc77032d19dbd8066488578cfdcecd0",
+      "reviewed_sha256": "12c1257897319c5f2e624602200a5faff138d3ce0812866448bd84b5952d3d4d",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "fbb62c871bc354ef73b13ab546eb24c5a6506d9b7ba0da5c1a43adc4594e2f8d",
+      "reviewed_sha256": "fa98db41715ab1e2957707cf27dd6c9b5d70b1351615e36cdca236c888feab86",
+      "scope": "Whole-reference-site curriculum comparison, three AI article refinements, a direct AI overview link in the desktop/mobile directory, and retained proof/anchors."
+    }
+  },
+  "article_sections": {
+    "transformer-model": {
+      "sections": [
+        1,
+        2,
+        4,
+        7
+      ],
+      "scope": "Lead from text to architecture, components, course branches and actual generation",
+      "observation": "Preserve both original figures. Add three visibility patterns, a one-head calculation, block order and normalization, plus the existing TinyDecoder SDPA generation replay. Confirm 2/3/4 cache cells and 5-item final sequence."
+    },
+    "attention-mechanics": {
+      "sections": [
+        1,
+        5
+      ],
+      "scope": "Connect a Chinese context example to the existing QKV calculation and prove head projection layout",
+      "observation": "The example uses the existing position order and explicit artificial QKV. Verify each head sees all eight input features and the packed projection, axis order, readout and Wo agree with original TinyDecoder."
+    },
+    "tensor-parallel-math": {
+      "sections": [
+        8
+      ],
+      "scope": "Extend the same two stages and four microbatches to a complete training schedule",
+      "observation": "Check every forward/backward dependency and stage occupancy. Both tables have ten slots and eight occupied slots per stage. GPipe activation peaks are 4/4, and 1F1B peaks are 2/1 under the stated assumptions."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3ba0bf918475a4a6d77e5b39a65a3f7235174214",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "attention-mechanics",
+      "tensor-parallel-math"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7
+  }
+}

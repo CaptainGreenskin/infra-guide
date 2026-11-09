@@ -67,6 +67,12 @@ function initReadingComfort(){
  if(!sections.length){const link=document.createElement('a');link.href=location.pathname+location.search+'#main';link.textContent=article.querySelector('h1').textContent;link.onclick=()=>closeModal(directory);directoryNav.appendChild(link);}
  const sidebar=document.querySelector('.sidebar');
  if(sidebar){
+  const overview=sidebar.querySelector('[data-track-overview]')?.cloneNode(true);
+  if(overview){
+   overview.classList.remove('side-home');
+   overview.addEventListener('click',()=>closeModal(directory),{signal});
+   directoryNav.prepend(overview);
+  }
   const chapters=document.createElement('details');chapters.className='reader-chapters';
   const summary=document.createElement('summary');summary.textContent='切换本方向章节';chapters.appendChild(summary);
   const chapterList=document.createElement('div');chapterList.className='reader-chapter-list';

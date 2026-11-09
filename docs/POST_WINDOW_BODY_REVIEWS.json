@@ -3802,6 +3802,64 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "043b3a8f921bce4a86843bfea82d1e916db207e74732e551620516e6cc28ac5e",
+      "reviewed_content_sha256": "ec187abb108594cb34773ab6101a314c81988858b41188fd280032737cfed55f",
+      "scope": "Lead from text to architecture, components, course branches and actual generation",
+      "observation": "Preserve both original figures. Add three visibility patterns, a one-head calculation, block order and normalization, plus the existing TinyDecoder SDPA generation replay. Confirm 2/3/4 cache cells and 5-item final sequence.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "e2a9dc861f0a7efe2b0b83d20a829188c2d040b2f2fc785258976c31a31204d0",
+      "reviewed_content_sha256": "ceaed3c0d44d679b27321c3c8348fc60bf369cb4c6d1dc57857449e843c3e8c0",
+      "scope": "Connect a Chinese context example to the existing QKV calculation and prove head projection layout",
+      "observation": "The example uses the existing position order and explicit artificial QKV. Verify each head sees all eight input features and the packed projection, axis order, readout and Wo agree with original TinyDecoder.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "aa31d9be1f3d67eb4a9b86456bc00b38bd3a64751b6b2832c9b38316abf69f0d",
+      "reviewed_content_sha256": "e4bfb640c7a42f6ca86c2001d7333530abb4834d29925a4b54634d12c8bb8805",
+      "scope": "Extend the same two stages and four microbatches to a complete training schedule",
+      "observation": "Check every forward/backward dependency and stage occupancy. Both tables have ten slots and eight occupied slots per stage. GPipe activation peaks are 4/4, and 1F1B peaks are 2/1 under the stated assumptions.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
     }
   ]
 }
