@@ -170,3 +170,47 @@
 .tool-observation-steps>li:before{content:counter(tool-step,decimal-leading-zero);position:absolute;left:0;top:18px;color:var(--blue);font:13px/1.95 ui-monospace,monospace}
 .tool-observation-steps>li>strong{display:block;line-height:1.8}.tool-observation-steps>li>p{margin:9px 0!important}.tool-step-label{color:var(--muted);font-size:14px}
 @media(max-width:600px){.tool-observation-steps>li{padding-left:31px}.tool-observation-steps>li:before{font-size:12px}}
+
+/* Shared position axis for the wave traces and the integer-sampled matrix. */
+.position-lab{
+ --pe-sine:#2159bd;--pe-cosine:#087263;--pe-minus:#405dc1;--pe-plus:#c46025;--pe-zero:#e9edf2;
+ margin:20px 0 24px;padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--surface)
+}
+:root.dark .position-lab{--pe-sine:#95baff;--pe-cosine:#6de0c5;--pe-minus:#627bec;--pe-plus:#f69358;--pe-zero:#26364c}
+.pe-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.55fr);gap:12px;border:0;padding:0;margin:0 0 15px;min-width:0}
+.pe-controls label{display:grid;align-content:start;gap:5px;min-width:0;color:var(--text);font-size:14px;font-weight:650}
+.pe-controls select,.pe-controls input{min-width:0;max-width:100%;width:100%;height:38px;margin:0;accent-color:var(--blue)}
+.pe-controls select{padding:0 7px;border:1px solid var(--line);border-radius:5px;background:var(--soft);color:var(--text);font:inherit}
+.pe-controls :is(input,select):focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.pe-curve-key,.doc-layout .pe-matrix-key{display:flex;flex-wrap:wrap;align-items:center;gap:5px 15px;color:var(--muted);font-size:13px;line-height:1.5}
+.pe-curve-key span,.pe-matrix-key span{white-space:nowrap}
+.pe-curve-key span:first-child{color:var(--pe-sine)}
+.pe-curve-key span:nth-child(2){color:var(--pe-cosine)}
+.pe-key-sine:before,.pe-key-cosine:before{content:"";display:inline-block;width:16px;margin-right:5px;vertical-align:middle;border-top:2px solid currentColor}
+.pe-key-cosine:before{border-top-style:dashed}
+.pe-plot{display:block;width:100%;height:auto;margin:3px 0 0}
+.pe-plot text{font:15px var(--font-sans);fill:var(--muted)}
+.pe-plot-surface{fill:var(--soft)}
+.pe-grid{fill:none;stroke:var(--line);stroke-width:1}
+.pe-sine-line,.pe-cosine-line{fill:none;stroke-width:2.3;stroke-linejoin:round}
+.pe-sine-line{stroke:var(--pe-sine)}
+.pe-cosine-line{stroke:var(--pe-cosine);stroke-dasharray:5 3}
+.pe-sine-point,.pe-cosine-point{stroke:var(--surface);stroke-width:1.5}
+.pe-sine-point{fill:var(--pe-sine)}
+.pe-cosine-point{fill:var(--pe-cosine)}
+.pe-matrix-surface{fill:var(--pe-zero)}
+.pe-negative{fill:var(--pe-minus)}
+.pe-positive{fill:var(--pe-plus)}
+.pe-cell{stroke:var(--pe-zero);stroke-width:.3}
+.pe-position-line,.pe-pair-outline{fill:none;stroke:var(--text);stroke-width:1.3;stroke-dasharray:4 2}
+.doc-layout .pe-matrix-key{margin:4px 0 12px}
+.pe-key-negative:before,.pe-key-positive:before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:2px}
+.pe-key-negative:before{background:var(--pe-minus)}
+.pe-key-positive:before{background:var(--pe-plus)}
+.pe-reading{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;padding:11px 12px;border-left:2px solid var(--blue);background:var(--soft);font-size:14px;line-height:1.6;font-variant-numeric:tabular-nums}
+@media(max-width:650px){
+ .position-lab{padding:12px}
+ .pe-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}
+ .pe-controls label:last-child{grid-column:1/-1}
+ .pe-reading{grid-template-columns:minmax(0,1fr)}
+}

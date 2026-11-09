@@ -34,7 +34,7 @@ function probeRuntime(reader){
  const startup=read('scripts/article-reader/reader-startup.js');
  assert.equal(reader.runtime.split(startup).length,2,'replace exactly the real startup boundary');
  const preflight=startup.indexOf('try{');assert(preflight>0,'retain cleanup declarations and external-event registration before startup');
- const bridge=`globalThis.__probe={metadata:{${Object.keys(reader.metadata).join(',')}},sidebarView,learningGoalChapterNav,learningContextHref,readerInternalHref,cleanInternalHTML,chapterReadingContext,chapterReadingNav,readingArticleURL,practiceArticleForContext,learningProfileRoute,courseRedirectFor,legacySectionTarget,attentionExample,sloCalculation,kvCalculation,rankSiteSearch,siteSearchHighlight,search,loadSearchIndex,bindApplicationEvents,setComfortAbort:value=>comfortAbort=value,getAbortState:()=>({reader:readerAbort.signal.aborted,comfort:comfortAbort?.signal.aborted}),setIndex:value=>siteSearchCache=value,setProgress:value=>progress=value,getSearch:()=>({searchItems,searchIndex,latestSearchQuery,cache:siteSearchCache})};return;`;
+ const bridge=`globalThis.__probe={metadata:{${Object.keys(reader.metadata).join(',')}},sidebarView,learningGoalChapterNav,learningContextHref,readerInternalHref,cleanInternalHTML,chapterReadingContext,chapterReadingNav,readingArticleURL,practiceArticleForContext,learningProfileRoute,courseRedirectFor,legacySectionTarget,attentionExample,sloCalculation,kvCalculation,sinusoidalPositionPair,sinusoidalPositionGraphic,rankSiteSearch,siteSearchHighlight,search,loadSearchIndex,bindApplicationEvents,setComfortAbort:value=>comfortAbort=value,getAbortState:()=>({reader:readerAbort.signal.aborted,comfort:comfortAbort?.signal.aborted}),setIndex:value=>siteSearchCache=value,setProgress:value=>progress=value,getSearch:()=>({searchItems,searchIndex,latestSearchQuery,cache:siteSearchCache})};return;`;
  // Keep the production external-fallback subscription. Only hydration/startup
  // itself is replaced; its actual event cleanup can then be tested separately.
  return new vm.Script(reader.runtime.replace(startup,startup.slice(0,preflight)+bridge),{filename:'reader-runtime-probe.js'});
@@ -169,6 +169,22 @@ function checkRankingAndMath(reader,lightScript,original){
  for(const args of [[32,8,128,2,4096,16],[0,8,128,2,4096,16],[32,8,128,2,4096,1],[1000000,1000000,1000000,1000000,1000000,1000000],[32,8,128,2,1.5,16]]){
   original.args=args;assert.deepStrictEqual(plain(p.kvCalculation(...args)),json(original,'kvCalculation(...args)'));mathCases++;
  }
+ // Independent rates and fixed-offset transform, not just agreement between two bundles.
+ const rates={4:[1,0.01],8:[1,0.1,0.01,0.001]},close=(a,b)=>assert(Math.abs(a-b)<1e-12);
+ for(const width of [4,8])for(const [pair,rate]of rates[width].entries())for(const position of [0,1,16,32]){
+  const args=[width,pair,position],actual=p.sinusoidalPositionPair(...args);
+  original.args=args;assert.deepStrictEqual(plain(actual),json(original,'sinusoidalPositionPair(...args)'));
+  close(actual.frequency,rate);close(actual.angle,position*rate);
+  close(actual.sine,Math.sin(position*rate));close(actual.cosine,Math.cos(position*rate));
+  const next=p.sinusoidalPositionPair(width,pair,position+1);
+  close(next.sine,actual.sine*Math.cos(rate)+actual.cosine*Math.sin(rate));
+  close(next.cosine,-actual.sine*Math.sin(rate)+actual.cosine*Math.cos(rate));
+  const chart=p.sinusoidalPositionGraphic(...args);
+  assert.equal(chart,vm.runInContext('sinusoidalPositionGraphic(...args)',original));
+  assert.equal((chart.match(/class="pe-cell /g)||[]).length,width*33);
+  assert(chart.includes('M'+(45+position*12)+' 22V136'));
+  mathCases++;
+ }
  original.fixture='<img src="x"> & text';original.terms=['img'];
  assert.equal(p.siteSearchHighlight(original.fixture,original.terms),vm.runInContext('siteSearchHighlight(fixture,terms)',original));
  return {searchCases:queries.length,mathCases};
@@ -285,6 +301,13 @@ function checkPublishedHTML(reader,original){
   vm.runInContext('articlePage(articleById(probeId))',original.context);
   original.context.fragment='<div id="app" data-static-path="'+route+'" data-static-version="'+reader.version+'" data-static-article="'+a.id+'">'+original.sink.innerHTML+'</div>';
   assert.equal(appFragment(html),vm.runInContext('cleanInternalHTML(fragment)',original.context),a.id+': published reading surface equals the final canonical render');
+  if(a.id==='position-encoding'){
+   const fragment=appFragment(html);
+   assert(fragment.includes('id="sinusoidal-position-pairs"'));
+   assert(fragment.includes('<fieldset class="pe-controls" disabled>'));
+   assert(fragment.includes('[0.8415, 0.5403]'));
+   assert(fragment.includes(vm.runInContext('sinusoidalPositionGraphic(4,0,1)',original.context)));
+  }
   anchors+=[...appFragment(html).matchAll(/\bid="([^"]+)"/g)].length;articles++;
  }
  const indices=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));

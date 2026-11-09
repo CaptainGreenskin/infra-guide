@@ -370,7 +370,9 @@
     },
     {
       "id": "position-encoding",
-      "targets": []
+      "targets": [
+        "sinusoidal-position-pairs"
+      ]
     },
     {
       "id": "autograd-training",

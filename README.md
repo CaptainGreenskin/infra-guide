@@ -25,6 +25,8 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 
 长序列实验继续验证逐块环传、反向梯度归还和一次参数更新，两、三进程 CPU/Gloo 均已复跑。算子章给出同卡比较三个 GEMM 的源码、逐项校验、轮换计时和 Nsight 步骤，设备测量待实际 GPU。 [环形训练](https://captaingreenskin.github.io/infra-guide/article/flash-attention-io/#ring-context-training) · [CUDA 同卡实验](https://captaingreenskin.github.io/infra-guide/article/operator-profiling/#same-device-gemm)
 
+位置编码章增加共享位置轴的波形与编码矩阵，可切换特征宽度、特征对和位置。按同一对分量手算固定偏移，再接到 RoPE 的旋转约定。 [正弦位置编码图](https://captaingreenskin.github.io/infra-guide/article/position-encoding/#sinusoidal-position-pairs)
+
 <details>
 <summary>历次内容修订与执行记录</summary>
 

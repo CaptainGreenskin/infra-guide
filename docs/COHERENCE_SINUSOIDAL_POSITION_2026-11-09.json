@@ -1,0 +1,83 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "012658cd5f19b6a899ccdf4befd8a482190dd359",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_AI_ENGINE_RING_GEMM_2026-11-09.json": "d9e330a83b0fb8a38bf719ab7b0e5f6b413f83382822facb3efcb816eb5037d2"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "3f3ac8c709b445b577ffc9cc41959a9260017a8a5ea5573bd4aa8d007c603864",
+      "reviewed_sha256": "41741012673075f6816d493b3fb92922cff27ebb07e74f7a109ef65d5ef2f0b1",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "dist/system-interactive.js": {
+      "previous_sha256": "d29843f97ff13657a742328f090aa8bc98803f75021af0c4f0ae2c70b01cd8c5",
+      "reviewed_sha256": "22d922913a6a89677e8bfd7aa49e9f48a3151776782b86650b90cde95f7f215d",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "7b51ac945f94804518f6f8be98e7facecc04fc7764f7da37071c00f5b1a7a5d1",
+      "reviewed_sha256": "adda69bb5bc7bbdb66253e658f908dab185f96642a8e94020188bc9e9b6441e3",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "ce4f383087a2688533b709e3264c3e2a373884f4be354f7d5cb169dcafecc043",
+      "reviewed_sha256": "3ceea2620ec27a70b51039ba496a41e915493e98fc01102309b2c4f6309dedad",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "889356b4e39e78bf08063e83ca487c06c51db329ee0a560e7f1e04571843c90f",
+      "reviewed_sha256": "cd627fe7cc7d354a1e41eb87b9ca1099d17c469f9f4f85bd1e1d35b3a48f86ff",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "5f2160c96e6fabf2c5bdc15b963809cddb6e98499b2411c2074045447681604d",
+      "reviewed_sha256": "257eb78fd933a3eb03c79a19ebb4fdf4fe987c4475f736de6dc13aadaf265034",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "84e82eaeef0025020218eaab6986cb779cc70589a0ca0a2865d451b496077c61",
+      "reviewed_sha256": "97794d1cdc9632f6ca1881896f29ed30bc53bdb727bc06bf903dbaba5900406c",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "7e92162e00c7a4cbc6509dfadc042cd34fbf0d4b6c75569950c5705f94b695e1",
+      "reviewed_sha256": "2545420eec7eb989c7d5db03705c964c3b054618f5eccd9795133d13f27c7488",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "63543c40474457c40777976be0058cc6fb5c20f093c1fd7e3a67a4b93a3ec2e8",
+      "reviewed_sha256": "17cf6d9bc042b6ea5b27e244a56c0cd658b324ac3f06d836ee0296cf18626f91",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "37bd3475e56c88bcf2f7ab772c566fb55c150f73d2805672c88def6b9e765ee0",
+      "reviewed_sha256": "e58b0137afc214fcba1f4dbc12b61ce2f1ba3345695d7feda35064e7f3eb669f",
+      "scope": "Share one positional-encoding visualization and calculation across static HTML, the light reader and full-runtime fallback."
+    }
+  },
+  "article_sections": {
+    "position-encoding": {
+      "sections": [
+        2,
+        4
+      ],
+      "scope": "Make the original sinusoidal formula inspectable by position, dimension and frequency, then connect the fixed-offset matrix to RoPE",
+      "observation": "Add a static-first, keyboard-operable wave and matrix view with the same p cursor. Confirm explicit D=4 and D=8 frequencies and the fixed-offset transform against an independent oracle. Clarify why a symmetric cosine probe cannot reject a direction reversal. Preserve the original runnable RoPE source, nine H2s, anchors and old links."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "012658cd5f19b6a899ccdf4befd8a482190dd359",
+    "chapters": 78,
+    "changed_bodies": [
+      "position-encoding"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 52,
+    "learning_tasks": 92
+  }
+}

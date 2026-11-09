@@ -4009,6 +4009,25 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "position-encoding",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "ff4210bcd061c77e51045f9bc0f44ff8a3ee16d9865bddd4ec8d8966b8b7da88",
+      "reviewed_content_sha256": "b7216e0078753c060c6fc7ddbc538f882d371681c7f38d40a55a03cbd7e437ce",
+      "scope": "Make the original sinusoidal formula inspectable by position, dimension and frequency, then connect the fixed-offset matrix to RoPE",
+      "observation": "Add a static-first, keyboard-operable wave and matrix view with the same p cursor. Confirm explicit D=4 and D=8 frequencies and the fixed-offset transform against an independent oracle. Clarify why a symmetric cosine probe cannot reject a direction reversal. Preserve the original runnable RoPE source, nine H2s, anchors and old links.",
+      "headings": [
+        "把位置打乱，再问模型能发现什么",
+        "先看两种绝对位置表示",
+        "从单位圆构造二维旋转",
+        "为什么留下的是 n−m，再平移一次验证",
+        "多频率怎样装进一个 attention head",
+        "缓存里有两种“位置”：逻辑序号与物理槽位",
+        "把长度调大之前，需要证明哪件事",
+        "用一份标准库脚本检查三个独立不变量",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }

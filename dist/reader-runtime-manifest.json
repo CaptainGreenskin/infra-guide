@@ -1,31 +1,31 @@
 {
   "schema": 1,
-  "staticReadingVersion": "6612c7adfef8714a8fca7ba04a4726ae44d647f4faa0beb14d6ed665b5e1bbab",
+  "staticReadingVersion": "0b39d4e61a7f058558de36582b0d642cf493c7df02d7f3f5fad6e8b3d30d7a58",
   "articles": 78,
   "initialExecutableScripts": 1,
   "normalReaderScriptRequests": 2,
   "fullFallbackScripts": 9,
-  "initialReaderJSBytes": 84092,
+  "initialReaderJSBytes": 88492,
   "metadataBytes": 25457,
   "metadataSha256": "b0cd0153360922b80939d5708386a8036f532c25e5a760ae58e18e05fccb2e6a",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.1d8a01b837cb.js",
-      "url": "/reader-assets/reader-bootstrap.1d8a01b837cb.js",
+      "file": "reader-assets/reader-bootstrap.b5badc0352ce.js",
+      "url": "/reader-assets/reader-bootstrap.b5badc0352ce.js",
       "bytes": 4373,
-      "sha256": "1d8a01b837cb912bdf5e23c2d37c52deaf9b509e7f5ad516d13f9be17136ae7a"
+      "sha256": "b5badc0352ce3c61ba44939cb2737090d3676621f424e6993b74533b51a1a714"
     },
     {
-      "file": "reader-assets/reader-runtime.11ff85388bff.js",
-      "url": "/reader-assets/reader-runtime.11ff85388bff.js",
-      "bytes": 79719,
-      "sha256": "11ff85388bff59464a59ad76ea73bdbf1d12d50878084e6b4f080a69d0e9c051"
+      "file": "reader-assets/reader-runtime.dd79387170db.js",
+      "url": "/reader-assets/reader-runtime.dd79387170db.js",
+      "bytes": 84119,
+      "sha256": "dd79387170db2295090f2e8af4b9bde1a81040c3caa55e5c083ee9aaedb1260b"
     },
     {
-      "file": "reader-assets/search-index.a3eec0dd2b3a.json",
-      "url": "/reader-assets/search-index.a3eec0dd2b3a.json",
-      "bytes": 8772790,
-      "sha256": "a3eec0dd2b3a25fcf0cca92def0537b26d9dfac6bf1c983d929cb4b395e94afa"
+      "file": "reader-assets/search-index.e3613ec1544e.json",
+      "url": "/reader-assets/search-index.e3613ec1544e.json",
+      "bytes": 8778499,
+      "sha256": "e3613ec1544e035deaa3ad790767f16ae928c2dc09137db0f2124172a9826155"
     }
   ],
   "reusedFunctions": [
@@ -146,8 +146,28 @@
       "sha256": "41d40bbe66b126a3ec76bfe4c1f9ebaf26e11416b23a95143898be18de76fdde"
     },
     {
+      "name": "sinusoidalPositionPair",
+      "sha256": "571aeacf61049dcba5f9ab0aaae26596ad0ae43c37946941d9beef1a5e593799"
+    },
+    {
+      "name": "sinusoidalPositionGraphic",
+      "sha256": "a81261e05d6f9f8b674728b3e58a9253fc9d724c1cb66df2f9d0b665f7d48c96"
+    },
+    {
+      "name": "sinusoidalPositionReading",
+      "sha256": "d24bf51ab6733b2fb64ac89d9516a5559cfbbe062def4a237cd35376f7647103"
+    },
+    {
+      "name": "sinusoidalPositionOptions",
+      "sha256": "88c65dceb69b98d26e63aa9aa491cac2f19c179887468f4e25c04dcc2d8bb5f2"
+    },
+    {
+      "name": "initSinusoidalPositionDemo",
+      "sha256": "6c3eb1730912e13cc9518af749b76915b30a6bba195da81d7d68c32aca6d58cd"
+    },
+    {
       "name": "initSystemInteractive",
-      "sha256": "4e69b438cae1fce485c39c5e8e3820fa0622e806666693789d4f48de811a844d"
+      "sha256": "4bede0478f7b2b1e877fb7af98bbf6decd1791f2fcbd5ec72c718c088afb15cd"
     },
     {
       "name": "readStore",
