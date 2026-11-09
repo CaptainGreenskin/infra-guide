@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="632" viewBox="0 0 900 632" role="img" aria-labelledby="title desc">
+  <title id="title">同一份 PostgreSQL 备份，恢复到两个结果</title>
+  <desc id="desc">基准备份余额为 100。归档 WAL 依次记录 T101 加 10、T102 加 20、T103 减 5，然后记录命名点 after_t103，最后记录 T104 误清零。左侧副本在命名点停止，余额为 125，含 T101 到 T103，提升后写入 T105 加 5，余额变为 130。右侧副本回放到归档末端，余额为 0，含 T101 到 T104。两份副本拥有独立的数据目录，虽然都可以编号为时间线 2，但分叉位置不同。缺少包含命名点的 WAL 段时，恢复实例没有就绪。</desc>
+  <metadata>{"base":100,"committed":[["T101",10,110],["T102",20,130],["T103",-5,125],["T104","clear",0]],"target":"after_t103","target_balance":125,"archive_end_balance":0,"isolated_timeline":2,"target_branch_write":["T105",5,130],"missing_target_wal":"not-ready"}</metadata>
+  <defs>
+    <marker id="next" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#315dce"/></marker>
+    <marker id="target" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#16745e"/></marker>
+    <marker id="end" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#a65e34"/></marker>
+  </defs>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="898" height="630" rx="16" fill="#f7f9fd" stroke="#cbd7e7"/>
+    <text x="30" y="48" font-size="34" font-weight="700">同一份 PostgreSQL 备份，恢复到两个结果</text>
+    <text x="30" y="86" font-size="23" fill="#435775">基准备份给出起点，归档 WAL 决定哪些事务能回放。</text>
+
+    <rect x="30" y="109" width="840" height="172" rx="12" fill="#fff" stroke="#b8c8df"/>
+    <text x="51" y="145" font-size="24" font-weight="700">源实例 · 事务提交与余额</text>
+    <g fill="#eaf0fc" stroke="#a7bae1">
+      <rect x="52" y="165" width="130" height="72" rx="8"/>
+      <rect x="212" y="165" width="130" height="72" rx="8"/>
+      <rect x="372" y="165" width="130" height="72" rx="8"/>
+      <rect x="532" y="165" width="130" height="72" rx="8" fill="#e9f5ee" stroke="#a0caba"/>
+      <rect x="718" y="165" width="130" height="72" rx="8" fill="#fff0e5" stroke="#d9b39b"/>
+    </g>
+    <g stroke-width="2.5" fill="none" stroke="#315dce" marker-end="url(#next)">
+      <path d="M188 201h16"/><path d="M348 201h16"/><path d="M508 201h16"/>
+      <path d="M668 201h42" stroke="#a65e34" marker-end="url(#end)"/>
+    </g>
+    <path d="M687 165v77" stroke="#16745e" stroke-width="2" stroke-dasharray="5 4"/>
+    <g text-anchor="middle" font-size="21">
+      <text x="117" y="183">基准备份</text><text x="277" y="183">T101 +10</text><text x="437" y="183">T102 +20</text>
+      <text x="597" y="183">T103 −5</text><text x="783" y="183">T104 清零</text>
+    </g>
+    <g text-anchor="middle" font-size="28" font-weight="700">
+      <text x="117" y="226">100</text><text x="277" y="226">110</text><text x="437" y="226">130</text>
+      <text x="597" y="226" fill="#145d4d">125</text><text x="783" y="226" fill="#874624">0</text>
+    </g>
+    <text x="687" y="265" text-anchor="middle" font-size="20" font-weight="700" fill="#145d4d">命名点 after_t103</text>
+
+    <text x="450" y="318" text-anchor="middle" font-size="24" font-weight="700">同一基准备份 + 同一归档</text>
+    <path d="M450 329v16H238v15" fill="none" stroke="#16745e" stroke-width="3" marker-end="url(#target)"/>
+    <path d="M450 329v16h212v15" fill="none" stroke="#a65e34" stroke-width="3" marker-end="url(#end)"/>
+    <rect x="30" y="369" width="410" height="156" rx="12" fill="#e9f5ee" stroke="#a0caba"/>
+    <rect x="460" y="369" width="410" height="156" rx="12" fill="#fff0e5" stroke="#d9b39b"/>
+    <text x="51" y="404" font-size="25" font-weight="700" fill="#145d4d">到命名点停止 · 125</text>
+    <text x="481" y="404" font-size="25" font-weight="700" fill="#874624">到归档末端 · 0</text>
+    <g font-size="22">
+      <text x="51" y="439">回放 T101、T102、T103</text>
+      <text x="481" y="439">回放 T101 至 T104</text>
+      <text x="51" y="474">提升后写入 T105 +5 → 130</text>
+      <text x="481" y="474">误清零也被成功回放</text>
+    </g>
+    <g font-size="20" fill="#435775">
+      <text x="51" y="507">独立实例 · 在命名点分叉</text>
+      <text x="481" y="507">独立实例 · 在归档末端分叉</text>
+    </g>
+    <text x="30" y="563" font-size="22" fill="#435775">两份副本各自提升到时间线 2，分叉位置和数据目录各自独立。</text>
+    <text x="30" y="604" font-size="22" font-weight="700" fill="#874624">缺少含命名点的 WAL 段时，恢复实例没有就绪。</text>
+  </g>
+</svg>

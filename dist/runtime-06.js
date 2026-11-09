@@ -5144,6 +5144,23 @@ const progressiveAgentSectionTitles={
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.sections[5][1]+=
+   h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
+   p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
+   trainingFigure('sandbox-egress-boundary','网络层缩小可连接的目的地，应用层限制请求方法和业务资源。核对两层各自留下的证据。')+
+   p('先让代理从私有网直接探测同一个后端地址，确认服务确实在监听，再从工作进程直连该地址。前者返回 200，后者无法建立 TCP 连接。固定路径是为这个单任务配置的能力，多任务部署还要验证任务身份与资源的映射。')+
+   table(['工作进程的动作','实际观察','后端请求记录'],[
+    ['经代理读 A 的 R27','200，报告总额 37','收到一次获准的 GET'],
+    ['直连后端地址','TCP 连接失败','无 HTTP 请求'],
+    ['读 B、请求秘密路径或带查询参数','403','均未转发'],
+    ['改用 POST 或自己提交 Authorization','分别为 405、400','均未转发'],
+    ['再次读取 A 时，后端返回 302','代理返回 502，省去 Location','后端只收到原本获准的 GET']
+   ])+
+   p('把后端的访问记录按来源分开。代理一共发出两次同一路径的 GET，一次成功，一次收到 302。测试另从私有网直接请求 A、B 和秘密路径，三次均可读，证明拒绝来自隔离或代理规则。记录只保存秘密阳性对照是否成功。')+
+   p('用实验包中的说明指定本地 Docker Unix 套接字，再运行 <code>python3 -B sandbox_egress.py --docker-host unix:///var/run/docker.sock --output replay.json</code>。先看工作容器的网络与权限，再对比客户端响应和后端账本。这次运行覆盖单机 Docker 与固定 HTTP 路由。公网、生产身份服务与 Kubernetes 网络策略需要在各自环境验收。')+
+   '<p class="practice-links"><a href="/labs/sandbox-egress.zip" download>下载出口隔离实战包 ↓</a> · <a href="/labs/sandbox-egress/validation.json">查看网络与上游访问记录</a></p>'+
+   sources(['Docker：内部网络与连接配置','https://docs.docker.com/reference/cli/docker/network/create/#network-internal-mode']);
+  infraDomain('agent').points.find(point=>point.id==='ag-sandbox').body+=p('从工作进程、受控代理和后端三处观察同一份任务。<a href="/article/agent-sandbox/#native-sandbox-egress">运行沙箱出口对照 →</a>');
   a.updated='2026.11.09';
  }
 
@@ -5345,6 +5362,26 @@ const progressiveAgentSectionTitles={
  '<p><a href="labs/cloud-deepening/mysql-pitr.md" download>下载 MySQL 8.4 PITR 操作手册 ↓</a></p><p><a href="labs/transport-recovery/validation.json" target="_blank" rel="noopener">查看真实 MySQL 恢复记录 ↗</a></p>')+
  paragraphs(r[7],'practice-links')
  ]);
+
+ recovery.sections[7][1]+=
+ h('native-postgres-pitr','实战 · PostgreSQL 重放到误清零之前')+
+ p('沿用上面的账户。基线是 100，T101 加 10，T102 加 20，T103 减 5，余额为 125。T104 把余额误清为 0。把这份输入放到 PostgreSQL，业务序号只用来查账。数据库内部用预写日志（WAL）记录能够重做的变化，并用日志位置（LSN）定位记录。')+
+ trainingFigure('postgres-pitr-wal','同一份基础备份和归档日志可以恢复到不同位置。先选停在哪一条记录，再核对业务余额。')+
+ p('基础备份保存一份可以作为恢复起点的数据目录。归档把已完成的 WAL 段保存到独立位置。恢复实例从基础备份启动，按需取回 WAL 段，逐段重做。只要一段缺失，后面的段即使齐全也无法跨过缺口。')+
+ p('T103 提交后，在源库写下具名恢复点。它在 WAL 中占一个位置。恢复目录里的 <code>recovery.signal</code> 让 PostgreSQL 进入归档恢复，<code>restore_command</code> 从归档取所需文件，<code>recovery_target_name</code> 让实例在指定标记处结束重放。若沿源时间线重放到归档末端，则会把 T104 一起重做。')+
+ trainingCode('在隔离恢复目录指定停止位置','TEXT',"recovery_target_timeline = '1'\nrecovery_target_name = 'after_t103'\nrecovery_target_action = 'promote'")+
+ table(['核对对象','停在 T103 后','重放到归档末端'],[
+  ['SQL 读到的余额','125','0'],
+  ['确认历史','T101、T102、T103','还包括误清零的 T104'],
+  ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
+ ])+
+ p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
+ p('只从归档副本移除目标段，再要求恢复到同一标记。源材料保留完整。PostgreSQL 在到达目标前停止启动并报错，说明能读基础备份与能到达指定历史是两项检查。')+
+ p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
+ '<p class="practice-links"><a href="/labs/postgres-pitr.zip" download>下载 PostgreSQL 实战包 ↓</a> · <a href="/labs/postgres-pitr/validation.json">查看 WAL、恢复点和 SQL 验收记录</a></p>'+
+ '<p class="source-at"><a href="https://www.postgresql.org/docs/17/continuous-archiving.html">PostgreSQL 17 连续归档与时间点恢复 ↗</a></p>';
+ recovery.updated='2026.11.09';
+ cloudKnowledgeExplanations['backup-restore']+=p('从同一份基础备份分别恢复到具名标记和归档末端，观察账户为什么会得到两个结果。<a href="/article/storage-recovery/#native-postgres-pitr">运行 PostgreSQL WAL 对照 →</a>');
 
  const storage=select('k8s-storage',['文件放在哪里：容器、临时卷与持久卷','从PVC到应用路径：绑定只是中间一步','拓扑与延迟绑定：一起选择节点和卷','访问模式、并发写入与旧写者隔离','容量、IOPS、吞吐与扩容','快照与备份：一致性和恢复点分别验收','从Pending到文件内容的排查实战','恢复练习：让消费者继续完成工作']);
  const k=storage.sections.map(s=>s[1]),k6=blocks(k[6]),k7=blocks(k[7]);
@@ -8538,14 +8575,15 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
 
  a.sections[6][1]+=
  '<h3 id="torch-compile-graph-break">实战 · 一行 .item() 怎样切开计算图</h3>'+
- p('直接执行 PyTorch 时，Python 按顺序发起张量运算。用 <code>torch.compile</code> 包住函数后，TorchDynamo 会在执行 Python 时把能跟踪的张量运算和依赖记录成一张图，再交给编译后端。图里有哪些运算、后端最终怎样执行、设备上发起多少内核，是三件事。先检查第一件，才知道哪里有机会一起优化。')+
- trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
- p('让每项输入先加 1，得到 <code>shifted</code>。若所有元素的和大于 0，就把每项乘 2，否则每项减 2。<code>shifted.sum()</code> 是零维张量。<code>.item()</code> 把它取成 Python 数值，Python 的 <code>if</code> 再用该数值决定执行哪一支。在实验的捕获配置下，编译器在取标量处遇到断图（graph break），可以先提交已经捕获的一段，回到 Python 做判断，再尝试捕获后续运算。')+
+ p('先看一段普通的 PyTorch 代码要做什么。把每项输入加 1。新数组的和大于 0，就把每项乘 2，否则每项减 2。比如输入 [−1,1,2]，加 1 得到 [0,2,3]，和为 5，因此输出 [0,4,6]。')+
  table(['输入','加 1 后求和','手算输出'],[
   ['[−1,1,2]','5，乘 2','[0,4,6]'],
   ['[−4,−2,0]','−3，减 2','[−5,−3,−1]'],
   ['[−2,−1,0]','0，减 2','[−3,−2,−1]']
  ])+
+ p('现在用 <code>torch.compile</code> 包住这段函数。TorchDynamo 负责记录哪些张量运算可以一起交给后端处理。这份运算清单连同数据的传递关系，就是这里的计算图。先看它能不能把上述步骤放进同一张图。')+
+ p('<code>shifted.sum()</code> 的结果是一个只含单个数的张量。写 <code>if shifted.sum().item() &gt; 0</code> 时，<code>.item()</code> 先把它取成 Python 数值，再由 Python 决定乘 2 还是减 2。在本实验的配置下，记录到取数处就停了。先交出加法、求和那段图，回到 Python 判断，再记录选中的运算。这次停下来再继续，就是断图（graph break）。')+
+ trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
  p('对这两个简单的张量表达式，可以让 <code>shifted.sum() &gt; 0</code> 继续是张量，再用 <code>torch.where</code> 在结果中选择。注意传入的两边都先求值。若原分支会写文件、更新状态，或未选分支对当前输入无效，就要保留条件执行的语义，不能直接换成 <code>where</code>。')+
  code('保留张量条件的写法','PYTHON',
  'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
@@ -8555,7 +8593,7 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
   ['张量条件，要求完整图','同形状四次调用只在第一次捕获，图包含 add、sum、gt、mul、sub、where','三个不同输入的输出都与手算一致。'],
   ['张量条件，固定形状模式','长度 3 与长度 4 各捕获一次，重复形状复用','每次调用都能捕获完整图，换长度仍会重新捕获。']
  ])+
- p('实验的后端记录 TorchDynamo 提交的 FX 图，再执行图的 <code>forward</code>。开启 <code>fullgraph=True</code> 会要求一次捕获完整图，适合把默默回到 Python 的问题变成可定位的错误。即便没有断图，编译器也会为已有图记录可复用条件，例如输入形状。在本实验的固定形状模式下，新的形状可能让条件失效并触发重新捕获。先区分“这一调用中间被切开”和“这次调用换了一张图”。')+
+ p('表里的图数由记录后端统计。它收到一张 FX 图（PyTorch 表示运算的格式），就登记并执行其中的运算。设置 <code>fullgraph=True</code>，遇到必须回 Python 的位置就报错。长度从 3 改到 4 的实验则仍能记录完整的一张图，只是先前的图要求长度为 3，需要为新长度再记一张。这分别对应一次执行中间断开，以及下一次调用时旧图无法复用。')+
  p('原始记录还保留了未满足的复用条件。负例的 Python 标量与正例的 5 不同，零例又与 −3 和 5 都不同。张量版换长度时，记录显示第 0 轴期望长度 3、实际为 4。先确认失败条件，再决定保留图内张量条件、允许形状变化，还是给常用形状分别预热。')+
  p('下载后按包内说明安装锁定版本，运行 <code>python -B compile_graph.py --write-record replay.json</code>。在配有 C++ 编译器的环境加 <code>--inductor</code>，用 TorchInductor 将张量版降成 CPU 代码。保留实跑生成了一份 C++ 源文件和配套动态库，四次输出逐项通过，报告可核对二者的摘要。框架分别记录 2 个生成内核和 1 个生成的 C++ 向量化内核；这两个计数与前面提交的图数属于不同层级，设备发起次数和耗时需要另测。')+
  '<p class="practice-links"><a href="/labs/torch-compile-graph.zip" download>下载源码与记录 ↓</a> · <a href="/labs/torch-compile-graph/validation.json">查看捕获的图和对照结果</a></p>'+
@@ -14168,12 +14206,12 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。分别标清每个判断所依据的信号。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。用<a href="/article/storage-recovery/?goal=cloud-sre#native-postgres-pitr">PostgreSQL 恢复对照</a>核对实例可用和业务状态正确这两个判断。分别标清每个判断所依据的信号。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。用<a href="/article/model-serving/?goal=ai-inference#rtx-pro-6000-cache-case">单卡 KV 对照</a>比较解码吞吐、提示处理时间和峰值显存，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。用<a href="/article/inference-performance/?goal=ai-inference#native-pd-split">推理分池实验</a>复算交接字节和首项后的等待。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作。用<a href="/article/operator-profiling/?goal=ai-operators#torch-compile-graph-break">断图实战</a>区分 Python 边界与形状变化带来的重编译，再用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14719,6 +14757,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'postgres-pitr':{folder:'postgres-pitr',title:'同一份 PostgreSQL 基础备份与两种 WAL 恢复目标'},
+ 'sandbox-egress':{folder:'sandbox-egress',title:'工作进程、受控出口与私有对象服务'},
  'torch-compile-graph':{folder:'torch-compile-graph',title:'TorchDynamo 断图、张量条件与输入守卫'},
  'pd-split':{folder:'pd-split',title:'预填充与解码分池、缓存交接和输出间隔'},
  'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
@@ -15030,6 +15070,16 @@ labLearningCatalog.push({
  observe:'逐项核对正、负、零三种输入，再比较 Python 取标量、张量条件和输入形状变化时捕获的图。',
  scope:'TorchDynamo 捕获与 CPU FX 执行，另有 TorchInductor CPU 产物实测；GPU 内核和性能另行验证。'
 });
+labLearningCatalog.push(
+ {id:'cloud-postgres-pitr',track:'cloud',stage:2,title:'同一份备份为什么可以恢复出 125 或 0',chapter:'storage-recovery',anchor:'native-postgres-pitr',pack:'postgres-pitr',
+  files:['postgres_pitr.py','pitr.sh'],env:'本机 Linux Docker · PostgreSQL 17',kind:'实跑记录',
+  observe:'用同一基础备份和 WAL 在隔离实例核对具名恢复点、归档末端和恢复后写入。',
+  scope:'真实 PostgreSQL 17 归档恢复。生产对象存储、切流和 RTO 需在目标系统测量。'},
+ {id:'agent-sandbox-egress',track:'agent',stage:2,title:'工作进程能连接代理，为什么仍然读不到其他租户',chapter:'agent-sandbox',anchor:'native-sandbox-egress',pack:'sandbox-egress',
+  files:['sandbox_egress.py','fixture.json'],env:'本机 Linux Docker · Python 容器',kind:'实跑记录',
+  observe:'复跑沙箱直连拒绝、代理读取本租户和跨租户拒绝，对照后端实际访问。',
+  scope:'真实 Docker 网络和本机 HTTP 请求。生产网络插件与服务身份另行验收。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15269,5 +15319,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="6b4d6c76ad96b98da9d81c30b6f9799048fa7806001fc3603738a4388d11f94c";
+const staticReadingVersion="80647a64ccfa6e740321d52e0eb6b69af6af125857e9f49db21918f941d98318";
 

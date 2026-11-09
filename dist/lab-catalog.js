@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'postgres-pitr':{folder:'postgres-pitr',title:'同一份 PostgreSQL 基础备份与两种 WAL 恢复目标'},
+ 'sandbox-egress':{folder:'sandbox-egress',title:'工作进程、受控出口与私有对象服务'},
  'torch-compile-graph':{folder:'torch-compile-graph',title:'TorchDynamo 断图、张量条件与输入守卫'},
  'pd-split':{folder:'pd-split',title:'预填充与解码分池、缓存交接和输出间隔'},
  'incident-connection-lease':{folder:'incident-connection-lease',title:'连接等待、SQLite 锁与外部 HTTP'},
@@ -311,6 +313,16 @@ labLearningCatalog.push({
  observe:'逐项核对正、负、零三种输入，再比较 Python 取标量、张量条件和输入形状变化时捕获的图。',
  scope:'TorchDynamo 捕获与 CPU FX 执行，另有 TorchInductor CPU 产物实测；GPU 内核和性能另行验证。'
 });
+labLearningCatalog.push(
+ {id:'cloud-postgres-pitr',track:'cloud',stage:2,title:'同一份备份为什么可以恢复出 125 或 0',chapter:'storage-recovery',anchor:'native-postgres-pitr',pack:'postgres-pitr',
+  files:['postgres_pitr.py','pitr.sh'],env:'本机 Linux Docker · PostgreSQL 17',kind:'实跑记录',
+  observe:'用同一基础备份和 WAL 在隔离实例核对具名恢复点、归档末端和恢复后写入。',
+  scope:'真实 PostgreSQL 17 归档恢复。生产对象存储、切流和 RTO 需在目标系统测量。'},
+ {id:'agent-sandbox-egress',track:'agent',stage:2,title:'工作进程能连接代理，为什么仍然读不到其他租户',chapter:'agent-sandbox',anchor:'native-sandbox-egress',pack:'sandbox-egress',
+  files:['sandbox_egress.py','fixture.json'],env:'本机 Linux Docker · Python 容器',kind:'实跑记录',
+  observe:'复跑沙箱直连拒绝、代理读取本租户和跨租户拒绝，对照后端实际访问。',
+  scope:'真实 Docker 网络和本机 HTTP 请求。生产网络插件与服务身份另行验收。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}

@@ -89,6 +89,26 @@
  paragraphs(r[7],'practice-links')
  ]);
 
+ recovery.sections[7][1]+=
+ h('native-postgres-pitr','实战 · PostgreSQL 重放到误清零之前')+
+ p('沿用上面的账户。基线是 100，T101 加 10，T102 加 20，T103 减 5，余额为 125。T104 把余额误清为 0。把这份输入放到 PostgreSQL，业务序号只用来查账。数据库内部用预写日志（WAL）记录能够重做的变化，并用日志位置（LSN）定位记录。')+
+ trainingFigure('postgres-pitr-wal','同一份基础备份和归档日志可以恢复到不同位置。先选停在哪一条记录，再核对业务余额。')+
+ p('基础备份保存一份可以作为恢复起点的数据目录。归档把已完成的 WAL 段保存到独立位置。恢复实例从基础备份启动，按需取回 WAL 段，逐段重做。只要一段缺失，后面的段即使齐全也无法跨过缺口。')+
+ p('T103 提交后，在源库写下具名恢复点。它在 WAL 中占一个位置。恢复目录里的 <code>recovery.signal</code> 让 PostgreSQL 进入归档恢复，<code>restore_command</code> 从归档取所需文件，<code>recovery_target_name</code> 让实例在指定标记处结束重放。若沿源时间线重放到归档末端，则会把 T104 一起重做。')+
+ trainingCode('在隔离恢复目录指定停止位置','TEXT',"recovery_target_timeline = '1'\nrecovery_target_name = 'after_t103'\nrecovery_target_action = 'promote'")+
+ table(['核对对象','停在 T103 后','重放到归档末端'],[
+  ['SQL 读到的余额','125','0'],
+  ['确认历史','T101、T102、T103','还包括误清零的 T104'],
+  ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
+ ])+
+ p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
+ p('只从归档副本移除目标段，再要求恢复到同一标记。源材料保留完整。PostgreSQL 在到达目标前停止启动并报错，说明能读基础备份与能到达指定历史是两项检查。')+
+ p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
+ '<p class="practice-links"><a href="/labs/postgres-pitr.zip" download>下载 PostgreSQL 实战包 ↓</a> · <a href="/labs/postgres-pitr/validation.json">查看 WAL、恢复点和 SQL 验收记录</a></p>'+
+ '<p class="source-at"><a href="https://www.postgresql.org/docs/17/continuous-archiving.html">PostgreSQL 17 连续归档与时间点恢复 ↗</a></p>';
+ recovery.updated='2026.11.09';
+ cloudKnowledgeExplanations['backup-restore']+=p('从同一份基础备份分别恢复到具名标记和归档末端，观察账户为什么会得到两个结果。<a href="/article/storage-recovery/#native-postgres-pitr">运行 PostgreSQL WAL 对照 →</a>');
+
  const storage=select('k8s-storage',['文件放在哪里：容器、临时卷与持久卷','从PVC到应用路径：绑定只是中间一步','拓扑与延迟绑定：一起选择节点和卷','访问模式、并发写入与旧写者隔离','容量、IOPS、吞吐与扩容','快照与备份：一致性和恢复点分别验收','从Pending到文件内容的排查实战','恢复练习：让消费者继续完成工作']);
  const k=storage.sections.map(s=>s[1]),k6=blocks(k[6]),k7=blocks(k[7]);
  if(k6.length!==5||k7.length!==2)throw Error('Kubernetes storage code layout changed');

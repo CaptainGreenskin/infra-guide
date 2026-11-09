@@ -137,7 +137,14 @@
       "targets": [
         "subsection-5-1aqdkow",
         "subsection-5-98f1by",
-        "subsection-8-1oqqcgn"
+        "subsection-8-1oqqcgn",
+        "native-postgres-pitr"
+      ],
+      "visible_targets": [
+        "subsection-5-1aqdkow",
+        "subsection-5-98f1by",
+        "subsection-8-1oqqcgn",
+        "native-postgres-pitr"
       ]
     },
     {
@@ -791,6 +798,18 @@
         "subsection-3-1v63ba3",
         "subsection-4-cz65tx",
         "subsection-5-1d8xng1",
+        "subsection-7-3sckdo",
+        "subsection-8-1um1h4",
+        "subsection-10-nb0s8",
+        "subsection-10-hi6ix7",
+        "native-sandbox-container",
+        "native-sandbox-egress"
+      ],
+      "visible_targets": [
+        "subsection-3-1v63ba3",
+        "subsection-4-cz65tx",
+        "subsection-5-1d8xng1",
+        "native-sandbox-egress",
         "subsection-7-3sckdo",
         "subsection-8-1um1h4",
         "subsection-10-nb0s8",

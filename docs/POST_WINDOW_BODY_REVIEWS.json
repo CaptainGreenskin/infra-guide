@@ -5540,6 +5540,46 @@
         "GQA增量缓存、字节预算与指标实验",
         "量化专题已独立成章"
       ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "9ddb530e0ff4eed5c18f288dff5e98d5c52c62ca54a4833bfbc6d61c4aadb45a",
+      "reviewed_content_sha256": "381f95b89e33a7ab1ee3b5af2d914fe657d5b6ed281ec66cc60d180662210d98",
+      "scope": "Use real PostgreSQL base backup and archived WAL to recover the same account to a named point and the end of the archive.",
+      "observation": "SQL after promotion and a new transaction independently distinguish the requested balance, recovered history and usable restored instance.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "b003841b9ab6d476c3517e93bd36722cbec623eda2d1b2be1d8b57bd46a65c65",
+      "reviewed_content_sha256": "512f20daf106088dc71735afe38a12efcf956dea1885e5571ea903715e78138e",
+      "scope": "Run a network-isolated Docker worker, dual-attached broker, and isolated upstream service to exercise egress and resource checks.",
+      "observation": "Observe direct socket isolation, approved task output, and denied request paths independently of broker success.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }

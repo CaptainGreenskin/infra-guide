@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": {
+    "sandbox_egress.py": "f83ddc4e28d1789717b86626e87c16869af21a3e776e94dd8dcdb1d65bfa7035",
+    "fixture.json": "e683f34034691bff6d7daa45da4c71486e5ebe64b22cb51a41bdf1fba22fc9c7",
+    "README.md": "7763b5eccda0fabb0608a40f8afc29ac6b533eaabbc2b640c00e938fe63739ff"
+  },
+  "environment": {
+    "engine_version": "29.2.1",
+    "os": "linux",
+    "architecture": "arm64",
+    "image": "python:3.11-slim",
+    "image_id": "sha256:9a7765b36773a37061455b332f18e265e7f58f6fea9c419a550d2a8b0e9db834"
+  },
+  "report": {
+    "topology": {
+      "networks_internal": true,
+      "published_ports": 0,
+      "worker_networks": [
+        "sandbox"
+      ],
+      "broker_networks": [
+        "private",
+        "sandbox"
+      ],
+      "upstream_networks": [
+        "private"
+      ]
+    },
+    "worker_controls": {
+      "user": "65534:65534",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "no_new_privileges": true,
+      "has_broker_credential": false,
+      "mounts": 0
+    },
+    "cases": {
+      "direct": {
+        "connected": false,
+        "error_type": "OSError"
+      },
+      "allowed": {
+        "status": 200,
+        "body": {
+          "tenant": "A",
+          "report_id": "R27",
+          "total": 37
+        },
+        "location": null
+      },
+      "other_tenant": {
+        "status": 403,
+        "body": {
+          "error": "route_denied"
+        },
+        "location": null
+      },
+      "other_method": {
+        "status": 405,
+        "body": {
+          "error": "method_denied"
+        },
+        "location": null
+      },
+      "other_path": {
+        "status": 403,
+        "body": {
+          "error": "route_denied"
+        },
+        "location": null
+      },
+      "query": {
+        "status": 403,
+        "body": {
+          "error": "route_denied"
+        },
+        "location": null
+      },
+      "caller_authorization": {
+        "status": 400,
+        "body": {
+          "error": "caller_authorization_denied"
+        },
+        "location": null
+      },
+      "redirect": {
+        "status": 502,
+        "body": {
+          "error": "upstream_redirect"
+        },
+        "location": null
+      },
+      "upstream_control": {
+        "status": 200,
+        "body": {
+          "tenant": "A",
+          "report_id": "R27",
+          "total": 37
+        },
+        "location": null
+      },
+      "other_tenant_control": {
+        "status": 200,
+        "body": {
+          "tenant": "B",
+          "report_id": "R27",
+          "total": 99
+        },
+        "location": null
+      },
+      "secret_control": {
+        "status": 200,
+        "marker_present": true
+      }
+    },
+    "upstream_events": [
+      {
+        "method": "GET",
+        "path": "/v1/tenants/A/reports/R27",
+        "authenticated": true,
+        "case": "broker",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/v1/tenants/A/reports/R27",
+        "authenticated": true,
+        "case": "broker",
+        "status": 302
+      },
+      {
+        "method": "GET",
+        "path": "/v1/tenants/A/reports/R27",
+        "authenticated": true,
+        "case": "upstream-control",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/v1/tenants/B/reports/R27",
+        "authenticated": true,
+        "case": "upstream-control",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/v1/secrets",
+        "authenticated": true,
+        "case": "upstream-control",
+        "status": 200
+      }
+    ]
+  }
+}

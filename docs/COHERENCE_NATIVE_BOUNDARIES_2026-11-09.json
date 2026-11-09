@@ -1,0 +1,167 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "fcc5b2682e1244136dd875bb17c0296829d5c04e",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PAGES_RELEASE_VERIFICATION_2026-11-09.json": "a486f3382165fd19a1acd72bbc54e89a54538bb1c2cd558dd6f6850f22ef70fe"
+  },
+  "source_revisions": {
+    "dist/lab-catalog.js": {
+      "previous_sha256": "34831bcb41cf0d1c9ef35a09ebf37d917cf31545bf1d7662a9a9e365564b3671",
+      "reviewed_sha256": "1717f3a36f68ec53dff44e7ce0f02592b548fc7274ed6e5d130f81574d3ce705",
+      "scope": "Register the native experiments, downloadable artifacts and exact environment boundaries."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "219a0138e4ac5afe20f0fdc3c4e993109abd620fd8289ca4f7d7f0ab79356b23",
+      "reviewed_sha256": "0aa44bc74db1f496b0832cdf750d046101d79fe410191c8bfa94a2bba29ed4ed",
+      "scope": "Connect SRE and Agent runtime roles to the actual native cases."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "adc966f192a84dd10c70af58ba10e540c2e8cb1b1615e15040d7506f43b3e11e",
+      "reviewed_sha256": "d11142a15fb3ababb7538081380cf4d9131679bcaefa1b8032357143b9d24f9d",
+      "scope": "Start the graph-break lesson with a concrete hand calculation, then explain graph capture and the Python decision."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "41a5c59bb111ae8521d24bfd33a41d46fdcb63d413a0e204754e940c421b3b76",
+      "reviewed_sha256": "a4c7014c1ec17471ec454e0031c828df009c2a1802c59842f6ed39dd84bb4a9a",
+      "scope": "Use real PostgreSQL base backup and archived WAL to recover the same account to a named point and the end of the archive."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "74cc0b722fb150e3faa7e28876a3016ec96f6022962e3df15e699c5ad480420c",
+      "reviewed_sha256": "60200224047d2c8359baeb515708afbce8b40ec4add44054c004ac75d58a531b",
+      "scope": "Run a network-isolated Docker worker, dual-attached broker, and isolated upstream service to exercise egress and resource checks."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "40a9183c27771b74858064724c9352a2ce2f9d0866c900f844976dbd569f9e4f",
+      "reviewed_sha256": "87fc1e9341dd73f58b6d883fa7b980a01cfd7b558a0821320f06c0fbf192c7a6",
+      "scope": "Bind both new diagram native viewports."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "130050a0c024f1dc98000a6ba4f137e9dc7b4cd435e3f214f0f01427a7ed3ac0",
+      "reviewed_sha256": "5f92bf013b1f3c12014b2d7b2055d9869483c77526c93021ed0d58a30b79f82d",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "5566b38cd33e8d84edc45809e045c95e240b08769798d8060b8f74cb0d7afcd7",
+      "reviewed_sha256": "789dd07fec1d1ca11de77b71c87761731a0b038ddf4530614d4a1f59d8c8ae63",
+      "scope": "Fingerprint the current course rendering sources."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "c10972c40adc870faa9df298705e47b765401d0a23181ea4c896a24814fe0b6f",
+      "reviewed_sha256": "154cc11882347b22c5febd86e61583f0fdaf91a1bde3892b605b9cfba2352536",
+      "scope": "Include the native case validation in CI."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "58cc12fe2478b3253ff58ff770b736301a26fd79668f3f212da7651198afb955",
+      "reviewed_sha256": "aa0c0ca6b2d3af17c6c1923f88d1e4cc34580e3ab64e7ea838cb72777374e9dc",
+      "scope": "Require both exact role-gate links."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e80db9ee883a23e0b4dc6aceccf5bbc575ea4caf96acfddf94dd75347083c0cf",
+      "reviewed_sha256": "13da4cd26d35d479f2cbfb0f0330b2e61d1e9978802e0a699458df3380d4797b",
+      "scope": "Append reviewed chapter bodies without rewriting historical revisions."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "727c4aff4ad659f730f347c75636631057e584abac00016dfdf439a1bd59ca8f",
+      "reviewed_sha256": "861a49399ba57c36707bbfba1eed5c9bc32947bd8be33d52bbc062cea58c95f3",
+      "scope": "Add both exact fragments to chapter navigation."
+    },
+    "docs/CONTENT_NATIVE_BOUNDARIES_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1151de7afa7e59828f548bb40fd30aae467f77cf60ff5e64c78c9d2ea1e742b2",
+      "scope": "Record the exact reviewed knowledge points and evidence-backed bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "2d40a853475a235d78bc72c40ac267bbca74f249890d1ae4714190102983d092",
+      "reviewed_sha256": "8fe5b79507efeaf1f39380b97b262c1e6673810f232aceddb113e5e0e9c14386",
+      "scope": "Append the new content review."
+    },
+    "dist/diagrams/postgres-pitr-wal.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "550a45fb8844bcb43d69457bc64a7b07acd5015f7cd3d312049408750919b472",
+      "scope": "Use real PostgreSQL base backup and archived WAL to recover the same account to a named point and the end of the archive."
+    },
+    "dist/labs/postgres-pitr.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1369ea51423def693ac4348003eba7b0b28e09c7e68b3e242b5ebba3f55e94f8",
+      "scope": "Archive exact runnable code and actual recorded evidence."
+    },
+    "scripts/check-postgres-pitr.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "757e3d342463a8d6583dda26cd4ec247e37a5815926fd69d1cc8f52f76973c77",
+      "scope": "Independently validate native observations, evidence source and site links."
+    },
+    "dist/labs/postgres-pitr/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "df1400dd2d37f69f139667b70830e732499a5b659ebfb1c72978bbfa5813b953",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/postgres-pitr/pitr.sh": {
+      "previous_sha256": null,
+      "reviewed_sha256": "63ac326b9c5e3abca36f8726aa37fe651b18a6bdd6ae91c02f8492950e5212f1",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/postgres-pitr/postgres_pitr.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "83ee3ebf3932ae788f677ec0fb4796b7b48532cdfec43b1fdd0bf05633297d13",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/postgres-pitr/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b6ed8670870162f95984d8a09ca30a5c3f372398289d4846212ba9b437d7335f",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/diagrams/sandbox-egress-boundary.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6e298573fa4abc268aa01651fa2a073b4d46232eeb782d38a817601ea7ed0a06",
+      "scope": "Run a network-isolated Docker worker, dual-attached broker, and isolated upstream service to exercise egress and resource checks."
+    },
+    "dist/labs/sandbox-egress.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "13db57f4f5a1cb5e5a98e365bd1396ea7f5ec082dab4439a5b379e850bf95b9b",
+      "scope": "Archive exact runnable code and actual recorded evidence."
+    },
+    "scripts/check-sandbox-egress.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2b9f98058c1d5ddd0110d15a557db806f86d87d36c43d413a956147caa4ea814",
+      "scope": "Independently validate native observations, evidence source and site links."
+    },
+    "dist/labs/sandbox-egress/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7763b5eccda0fabb0608a40f8afc29ac6b533eaabbc2b640c00e938fe63739ff",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/sandbox-egress/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e683f34034691bff6d7daa45da4c71486e5ebe64b22cb51a41bdf1fba22fc9c7",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/sandbox-egress/sandbox_egress.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f83ddc4e28d1789717b86626e87c16869af21a3e776e94dd8dcdb1d65bfa7035",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/sandbox-egress/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "959518fecf136e407127d58880fcf69816bac902da545ce5c6baee2657761b79",
+      "scope": "Bind the exact source or real observation record."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "fcc5b2682e1244136dd875bb17c0296829d5c04e",
+    "chapters": 78,
+    "changed_bodies": [
+      "operator-profiling",
+      "storage-recovery",
+      "agent-sandbox"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "operator-profiling": 0,
+      "storage-recovery": 1,
+      "agent-sandbox": 0
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 2
+  }
+}

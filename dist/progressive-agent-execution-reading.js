@@ -151,6 +151,23 @@
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.sections[5][1]+=
+   h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
+   p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
+   trainingFigure('sandbox-egress-boundary','网络层缩小可连接的目的地，应用层限制请求方法和业务资源。核对两层各自留下的证据。')+
+   p('先让代理从私有网直接探测同一个后端地址，确认服务确实在监听，再从工作进程直连该地址。前者返回 200，后者无法建立 TCP 连接。固定路径是为这个单任务配置的能力，多任务部署还要验证任务身份与资源的映射。')+
+   table(['工作进程的动作','实际观察','后端请求记录'],[
+    ['经代理读 A 的 R27','200，报告总额 37','收到一次获准的 GET'],
+    ['直连后端地址','TCP 连接失败','无 HTTP 请求'],
+    ['读 B、请求秘密路径或带查询参数','403','均未转发'],
+    ['改用 POST 或自己提交 Authorization','分别为 405、400','均未转发'],
+    ['再次读取 A 时，后端返回 302','代理返回 502，省去 Location','后端只收到原本获准的 GET']
+   ])+
+   p('把后端的访问记录按来源分开。代理一共发出两次同一路径的 GET，一次成功，一次收到 302。测试另从私有网直接请求 A、B 和秘密路径，三次均可读，证明拒绝来自隔离或代理规则。记录只保存秘密阳性对照是否成功。')+
+   p('用实验包中的说明指定本地 Docker Unix 套接字，再运行 <code>python3 -B sandbox_egress.py --docker-host unix:///var/run/docker.sock --output replay.json</code>。先看工作容器的网络与权限，再对比客户端响应和后端账本。这次运行覆盖单机 Docker 与固定 HTTP 路由。公网、生产身份服务与 Kubernetes 网络策略需要在各自环境验收。')+
+   '<p class="practice-links"><a href="/labs/sandbox-egress.zip" download>下载出口隔离实战包 ↓</a> · <a href="/labs/sandbox-egress/validation.json">查看网络与上游访问记录</a></p>'+
+   sources(['Docker：内部网络与连接配置','https://docs.docker.com/reference/cli/docker/network/create/#network-internal-mode']);
+  infraDomain('agent').points.find(point=>point.id==='ag-sandbox').body+=p('从工作进程、受控代理和后端三处观察同一份任务。<a href="/article/agent-sandbox/#native-sandbox-egress">运行沙箱出口对照 →</a>');
   a.updated='2026.11.09';
  }
 

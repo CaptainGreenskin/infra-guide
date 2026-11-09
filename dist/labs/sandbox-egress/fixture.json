@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "capability": {
+    "method": "GET",
+    "path": "/v1/tenants/A/reports/R27",
+    "tenant": "A",
+    "report_id": "R27"
+  },
+  "reports": {
+    "/v1/tenants/A/reports/R27": {"tenant": "A", "report_id": "R27", "total": 37},
+    "/v1/tenants/B/reports/R27": {"tenant": "B", "report_id": "R27", "total": 99}
+  },
+  "redirect": {"on_visit": 2, "target": "/v1/secrets"},
+  "secret_path": "/v1/secrets"
+}

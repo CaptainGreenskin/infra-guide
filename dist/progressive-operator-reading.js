@@ -115,14 +115,15 @@
 
  a.sections[6][1]+=
  '<h3 id="torch-compile-graph-break">实战 · 一行 .item() 怎样切开计算图</h3>'+
- p('直接执行 PyTorch 时，Python 按顺序发起张量运算。用 <code>torch.compile</code> 包住函数后，TorchDynamo 会在执行 Python 时把能跟踪的张量运算和依赖记录成一张图，再交给编译后端。图里有哪些运算、后端最终怎样执行、设备上发起多少内核，是三件事。先检查第一件，才知道哪里有机会一起优化。')+
- trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
- p('让每项输入先加 1，得到 <code>shifted</code>。若所有元素的和大于 0，就把每项乘 2，否则每项减 2。<code>shifted.sum()</code> 是零维张量。<code>.item()</code> 把它取成 Python 数值，Python 的 <code>if</code> 再用该数值决定执行哪一支。在实验的捕获配置下，编译器在取标量处遇到断图（graph break），可以先提交已经捕获的一段，回到 Python 做判断，再尝试捕获后续运算。')+
+ p('先看一段普通的 PyTorch 代码要做什么。把每项输入加 1。新数组的和大于 0，就把每项乘 2，否则每项减 2。比如输入 [−1,1,2]，加 1 得到 [0,2,3]，和为 5，因此输出 [0,4,6]。')+
  table(['输入','加 1 后求和','手算输出'],[
   ['[−1,1,2]','5，乘 2','[0,4,6]'],
   ['[−4,−2,0]','−3，减 2','[−5,−3,−1]'],
   ['[−2,−1,0]','0，减 2','[−3,−2,−1]']
  ])+
+ p('现在用 <code>torch.compile</code> 包住这段函数。TorchDynamo 负责记录哪些张量运算可以一起交给后端处理。这份运算清单连同数据的传递关系，就是这里的计算图。先看它能不能把上述步骤放进同一张图。')+
+ p('<code>shifted.sum()</code> 的结果是一个只含单个数的张量。写 <code>if shifted.sum().item() &gt; 0</code> 时，<code>.item()</code> 先把它取成 Python 数值，再由 Python 决定乘 2 还是减 2。在本实验的配置下，记录到取数处就停了。先交出加法、求和那段图，回到 Python 判断，再记录选中的运算。这次停下来再继续，就是断图（graph break）。')+
+ trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
  p('对这两个简单的张量表达式，可以让 <code>shifted.sum() &gt; 0</code> 继续是张量，再用 <code>torch.where</code> 在结果中选择。注意传入的两边都先求值。若原分支会写文件、更新状态，或未选分支对当前输入无效，就要保留条件执行的语义，不能直接换成 <code>where</code>。')+
  code('保留张量条件的写法','PYTHON',
  'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
@@ -132,7 +133,7 @@
   ['张量条件，要求完整图','同形状四次调用只在第一次捕获，图包含 add、sum、gt、mul、sub、where','三个不同输入的输出都与手算一致。'],
   ['张量条件，固定形状模式','长度 3 与长度 4 各捕获一次，重复形状复用','每次调用都能捕获完整图，换长度仍会重新捕获。']
  ])+
- p('实验的后端记录 TorchDynamo 提交的 FX 图，再执行图的 <code>forward</code>。开启 <code>fullgraph=True</code> 会要求一次捕获完整图，适合把默默回到 Python 的问题变成可定位的错误。即便没有断图，编译器也会为已有图记录可复用条件，例如输入形状。在本实验的固定形状模式下，新的形状可能让条件失效并触发重新捕获。先区分“这一调用中间被切开”和“这次调用换了一张图”。')+
+ p('表里的图数由记录后端统计。它收到一张 FX 图（PyTorch 表示运算的格式），就登记并执行其中的运算。设置 <code>fullgraph=True</code>，遇到必须回 Python 的位置就报错。长度从 3 改到 4 的实验则仍能记录完整的一张图，只是先前的图要求长度为 3，需要为新长度再记一张。这分别对应一次执行中间断开，以及下一次调用时旧图无法复用。')+
  p('原始记录还保留了未满足的复用条件。负例的 Python 标量与正例的 5 不同，零例又与 −3 和 5 都不同。张量版换长度时，记录显示第 0 轴期望长度 3、实际为 4。先确认失败条件，再决定保留图内张量条件、允许形状变化，还是给常用形状分别预热。')+
  p('下载后按包内说明安装锁定版本，运行 <code>python -B compile_graph.py --write-record replay.json</code>。在配有 C++ 编译器的环境加 <code>--inductor</code>，用 TorchInductor 将张量版降成 CPU 代码。保留实跑生成了一份 C++ 源文件和配套动态库，四次输出逐项通过，报告可核对二者的摘要。框架分别记录 2 个生成内核和 1 个生成的 C++ 向量化内核；这两个计数与前面提交的图数属于不同层级，设备发起次数和耗时需要另测。')+
  '<p class="practice-links"><a href="/labs/torch-compile-graph.zip" download>下载源码与记录 ↓</a> · <a href="/labs/torch-compile-graph/validation.json">查看捕获的图和对照结果</a></p>'+

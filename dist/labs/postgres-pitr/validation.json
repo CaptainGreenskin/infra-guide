@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": {
+    "postgres_pitr.py": "83ee3ebf3932ae788f677ec0fb4796b7b48532cdfec43b1fdd0bf05633297d13",
+    "pitr.sh": "63ac326b9c5e3abca36f8726aa37fe651b18a6bdd6ae91c02f8492950e5212f1"
+  },
+  "environment": {
+    "engine": "Docker",
+    "image": "postgres:17-alpine",
+    "image_id": "sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193",
+    "repo_digests": [
+      "postgres@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193"
+    ],
+    "os": "linux",
+    "architecture": "arm64",
+    "postgres_version": "17.10",
+    "network": "none"
+  },
+  "report": {
+    "base": {
+      "balance": 100,
+      "ledger": [],
+      "deltas": [],
+      "in_recovery": false,
+      "timeline": 1,
+      "system_identifier": "7706162312820326413"
+    },
+    "backup_verified": true,
+    "primary": {
+      "balance": 0,
+      "ledger": [
+        101,
+        102,
+        103,
+        104
+      ],
+      "deltas": [
+        10,
+        20,
+        -5,
+        -125
+      ],
+      "in_recovery": false,
+      "timeline": 1,
+      "system_identifier": "7706162312820326413"
+    },
+    "primary_after": {
+      "balance": 0,
+      "ledger": [
+        101,
+        102,
+        103,
+        104
+      ],
+      "deltas": [
+        10,
+        20,
+        -5,
+        -125
+      ],
+      "in_recovery": false,
+      "timeline": 1,
+      "system_identifier": "7706162312820326413"
+    },
+    "archive": {
+      "restore_point": "after_t103",
+      "point_lsn": "0/800420",
+      "target_segment": "000000010000000000000008",
+      "target_segment_bytes": 1048576,
+      "target_segment_sha256": "3f39374da5e3782d1797931f6c48cf928843b3f946e4eb3187943a4103899db2",
+      "last_segment": "000000010000000000000008",
+      "last_segment_sha256": "3f39374da5e3782d1797931f6c48cf928843b3f946e4eb3187943a4103899db2"
+    },
+    "restores": {
+      "named": {
+        "balance": 125,
+        "ledger": [
+          101,
+          102,
+          103
+        ],
+        "deltas": [
+          10,
+          20,
+          -5
+        ],
+        "in_recovery": false,
+        "timeline": 2,
+        "system_identifier": "7706162312820326413",
+        "fork_lsn": "0/800420"
+      },
+      "latest": {
+        "balance": 0,
+        "ledger": [
+          101,
+          102,
+          103,
+          104
+        ],
+        "deltas": [
+          10,
+          20,
+          -5,
+          -125
+        ],
+        "in_recovery": false,
+        "timeline": 2,
+        "system_identifier": "7706162312820326413",
+        "fork_lsn": "0/900000"
+      }
+    },
+    "named_after_write": {
+      "balance": 130,
+      "ledger": [
+        101,
+        102,
+        103,
+        105
+      ],
+      "deltas": [
+        10,
+        20,
+        -5,
+        5
+      ],
+      "in_recovery": false,
+      "timeline": 2,
+      "system_identifier": "7706162312820326413"
+    },
+    "missing_wal": {
+      "started": false,
+      "omitted_segment": "000000010000000000000008",
+      "error": "recovery ended before configured recovery target was reached"
+    }
+  }
+}

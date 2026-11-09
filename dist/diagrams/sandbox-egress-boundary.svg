@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+  <title id="title">沙箱如何经固定出口读取一份报告</title>
+  <desc id="desc">本机 Docker 实验使用两张 internal 网络。非 root 执行器只在 sandbox 网，报告服务只在 private 网，固定 HTTP 代理同时连接两张网。执行器直连报告服务的私网地址和 TCP 端口 8080 失败。合法的 GET 请求经代理校验资源和方法后由代理添加上游凭证，返回 200 和报告 R27 的总额 37。读取其他租户或非许可路径返回 403，POST 返回 405。上游重定向 302 时，代理返回 502，保持原有出站边界。网络位置控制能否拨号，代理规则控制能调用什么。</desc>
+  <metadata>{"networks":["sandbox","private"],"worker_networks":["sandbox"],"broker_networks":["sandbox","private"],"upstream_networks":["private"],"direct_port":8080,"direct_tcp":"blocked","allowed":{"method":"GET","path":"/v1/tenants/A/reports/R27","status":200,"report_id":"R27","total":37},"other_tenant_status":403,"disallowed_path_status":403,"post_status":405,"redirect":{"upstream":302,"broker":502,"followed":false}}</metadata>
+  <defs>
+    <marker id="allow" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="#16745e"/></marker>
+  </defs>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#17263e">
+    <rect x="1" y="1" width="898" height="648" rx="16" fill="#f7f9fd" stroke="#cbd7e7"/>
+    <text x="30" y="48" font-size="34" font-weight="700">沙箱如何经固定出口读取一份报告</text>
+    <text x="30" y="86" font-size="23" fill="#435775">本机 Docker · 执行器与上游服务分属两张内部网络</text>
+
+    <rect x="30" y="109" width="420" height="260" rx="12" fill="#edf2fc" stroke="#a7bae1"/>
+    <rect x="450" y="109" width="420" height="260" rx="12" fill="#f0f5f2" stroke="#a0caba"/>
+    <text x="51" y="146" font-size="25" font-weight="700" fill="#315dce">sandbox 网</text>
+    <text x="848" y="146" text-anchor="end" font-size="25" font-weight="700" fill="#145d4d">private 网</text>
+    <rect x="57" y="177" width="202" height="94" rx="9" fill="#fff" stroke="#a7bae1"/>
+    <rect x="343" y="169" width="214" height="110" rx="9" fill="#fff" stroke="#a0caba" stroke-width="2"/>
+    <rect x="641" y="177" width="202" height="94" rx="9" fill="#fff" stroke="#a0caba"/>
+    <g fill="none" stroke="#16745e" stroke-width="3" marker-end="url(#allow)">
+      <path d="M271 227h60"/><path d="M569 227h60"/>
+    </g>
+    <g text-anchor="middle" font-size="20" fill="#145d4d">
+      <text x="301" y="211">请求</text><text x="599" y="211">固定</text><text x="599" y="254">上游</text>
+    </g>
+    <g text-anchor="middle" font-size="24" font-weight="700">
+      <text x="158" y="213">非 root 执行器</text>
+      <text x="450" y="201">固定 HTTP 代理</text>
+      <text x="742" y="213">报告服务</text>
+    </g>
+    <g text-anchor="middle" font-size="20" fill="#435775">
+      <text x="158" y="247">只接 sandbox</text>
+      <text x="450" y="233">校验路径和方法</text>
+      <text x="450" y="261">代理添加上游凭证</text>
+      <text x="742" y="247">只接 private</text>
+    </g>
+    <path d="M158 278v42h259M483 320h259v-42" fill="none" stroke="#a65e34" stroke-width="2.5" stroke-dasharray="7 5"/>
+    <circle cx="450" cy="320" r="16" fill="#fff0e5" stroke="#a65e34" stroke-width="2"/>
+    <path d="M443 313l14 14m0-14-14 14" stroke="#a65e34" stroke-width="2.5"/>
+    <text x="450" y="353" text-anchor="middle" font-size="22" font-weight="700" fill="#874624">执行器直连私网 IP 的 TCP 8080 失败</text>
+
+    <rect x="30" y="389" width="840" height="91" rx="12" fill="#e9f5ee" stroke="#a0caba"/>
+    <text x="51" y="424" font-size="23" font-weight="700" fill="#145d4d">允许 · GET /v1/tenants/A/reports/R27</text>
+    <text x="51" y="458" font-size="23" fill="#145d4d">200 · 只返回这份报告 · 总额 37</text>
+
+    <rect x="30" y="499" width="840" height="91" rx="12" fill="#fff0e5" stroke="#d9b39b"/>
+    <text x="51" y="534" font-size="22" fill="#874624">其他租户或非许可路径 → 403　　POST → 405</text>
+    <text x="51" y="568" font-size="22" fill="#874624">上游返回重定向 302 → 代理返回 502，拒绝跟随</text>
+
+    <text x="30" y="628" font-size="22" font-weight="700">网络位置控制能否拨号，代理规则控制能调用什么。</text>
+  </g>
+</svg>
