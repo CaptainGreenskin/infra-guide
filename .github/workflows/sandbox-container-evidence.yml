@@ -1,0 +1,27 @@
+name: Native Agent sandbox container evidence
+on:
+  push:
+    branches: ['evidence/sandbox-container-20261109']
+    paths:
+      - 'dist/labs/sandbox-container/**'
+      - '.github/workflows/sandbox-container-evidence.yml'
+permissions:
+  contents: read
+jobs:
+  sandbox:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v6
+      - name: Pull pinned official Linux fixture image
+        run: docker pull docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431
+      - name: Observe readonly input, writable output and isolated canary
+        run: |
+          python3 -B dist/labs/sandbox-container/sandbox_container.py --output native-records/sandbox-container.json
+          python3 -B dist/labs/sandbox-container/sandbox_container.py --check-record native-records/sandbox-container.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-agent-sandbox
+          path: native-records/sandbox-container.json
+          if-no-files-found: error
+          retention-days: 14
