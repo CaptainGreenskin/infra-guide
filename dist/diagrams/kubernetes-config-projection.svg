@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="348" viewBox="0 0 440 348" role="img" aria-labelledby="config-paths-title config-paths-desc">
+  <title id="config-paths-title">同一个 ConfigMap，四条读取路径</title>
+  <desc id="config-paths-desc">ConfigMap 的 UID 不变，API 值由 v1 更新到 v2。原 Pod 启动时，普通投射、已打开的文件描述符、subPath 文件、启动环境变量都读到 v1。普通投射更新后，原 Pod 重新打开路径读到 v2，原文件描述符、subPath 文件和启动环境变量仍读到 v1。删除原 Pod 并创建新 Pod 后，四条路径都读到 v2，包括新进程启动时打开的新文件描述符。</desc>
+  <rect x="1" y="1" width="438" height="346" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" fill="#20314e" font-size="17">
+    <text x="21" y="35" font-size="24" font-weight="bold">同一个配置，四条读取路径</text>
+    <g id="config-source" data-object="ConfigMap">
+      <rect x="20" y="53" width="400" height="42" rx="6" fill="#eaf1ff" stroke="#8ca9e2"/>
+      <text x="32" y="80" font-size="18" font-weight="bold">ConfigMap</text>
+      <text x="138" y="80">同一 UID，API 值 v1 → v2</text>
+    </g>
+
+    <rect x="20" y="110" width="400" height="180" rx="5" fill="#fff"/>
+    <path d="M25 110H415Q420 110 420 115V158H20V115Q20 110 25 110Z" fill="#eaf1ff"/>
+    <rect x="284" y="158" width="68" height="33" fill="#e5f4ed"/>
+    <g fill="none" stroke="#a4b6d3">
+      <rect x="20" y="110" width="400" height="180" rx="5"/>
+      <path d="M216 110v180m68-180v180m68-180v180M20 158h400m-400 33h400m-400 33h400m-400 33h400"/>
+    </g>
+    <text x="31" y="139" font-weight="bold">读取同一个配置键</text>
+    <g text-anchor="middle">
+      <text x="250" y="131" font-weight="bold">原 Pod</text><text x="250" y="150" font-size="15">更新前</text>
+      <text x="318" y="131" font-weight="bold">原 Pod</text><text x="318" y="150" font-size="15">投射更新</text>
+      <text x="386" y="131" font-weight="bold">新 Pod</text><text x="386" y="150" font-size="15">替换后</text>
+    </g>
+
+    <g id="config-projected-reopen" data-path="projected">
+      <text x="31" y="181">普通投射 · 重开路径</text>
+      <g text-anchor="middle" font-weight="bold">
+        <text x="250" y="181">v1</text><text x="318" y="181" fill="#205d45">v2</text><text x="386" y="181">v2</text>
+      </g>
+    </g>
+    <g id="config-held-fd" data-path="held_fd">
+      <text x="31" y="214">启动时打开的 FD</text>
+      <g text-anchor="middle" font-weight="bold">
+        <text x="250" y="214">v1</text><text x="318" y="214">v1</text><text x="386" y="214">v2</text>
+      </g>
+    </g>
+    <g id="config-subpath" data-path="sub_path">
+      <text x="31" y="247">subPath 文件</text>
+      <g text-anchor="middle" font-weight="bold">
+        <text x="250" y="247">v1</text><text x="318" y="247">v1</text><text x="386" y="247">v2</text>
+      </g>
+    </g>
+    <g id="config-startup-environment" data-path="startup_env">
+      <text x="31" y="280">启动环境变量</text>
+      <g text-anchor="middle" font-weight="bold">
+        <text x="250" y="280">v1</text><text x="318" y="280">v1</text><text x="386" y="280">v2</text>
+      </g>
+    </g>
+    <text x="21" y="315" fill="#465a78">原 Pod 的进程与容器均未重启。</text>
+    <text x="21" y="336" fill="#465a78">新 Pod 有新的 UID，启动时重新打开文件。</text>
+  </g>
+</svg>

@@ -1,0 +1,211 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "39c59aaa2df09d826fe9a18964973b9c6e0b3e6b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_STORAGE_RESTART_2026-11-09.json": "b0960c03eaf4c8b30c139b21373269f89faf3bced45ee91cbbb572ba5072bba9"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "215998c94ba9950a3fd69252d8f31f347d32bebdc2f0b7d108080aa1e7965abc",
+      "reviewed_sha256": "ba5e3d96ed281d89ddfc5851eba6b1a68d3be0032ae8dcab052a6794b5526f21",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "7cdb83f06e5f93c6a25b4f1888ee5088001aa07ae1cccfa27341ebb52a831d60",
+      "reviewed_sha256": "a8382d80990c0c5e1904ecfbc4db7345c2e5025482846d71240cec3c4542e037",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "81e53fe2268988a6e2a367bbaa818cdcee6390c203c1b1959ce82ad2945af5f0",
+      "reviewed_sha256": "95cf5e0814b7ce0c84a3971059ffc1756847768ef792a0f27c4ab040119dc3f7",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "adda69bb5bc7bbdb66253e658f908dab185f96642a8e94020188bc9e9b6441e3",
+      "reviewed_sha256": "1ad21a9359417e2f8481caa3c5134af5cb9236063aa16b058b9fa8c3021afbb5",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "01eb07298067930941619d45ef1a3d10da43e8db49dcd7a91aea4ae708adcd11",
+      "reviewed_sha256": "95091496bd214f3667b6ace8400549b52ae43c6cfd0443e6e6908c271eebe42e",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "65d55c4681fc579abd227ccfac95c3674c7de0b6db42cb3b83268299d0d6bfd9",
+      "reviewed_sha256": "0a494396b798e315b1af2c0bcb271acbf16ba03435ae134989a02b7c4288788a",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9b4834d6f3685400808fa7efb5a36216489341e552298298e9a55fd060a99a6f",
+      "reviewed_sha256": "b4050fcbb0598292667bce941a7fb2ac23774fa75c9868e6563297958fdda58e",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "3d418d923cb7a7499e01c7089b39736b73741d70131431b2b3081d2cf4f52d92",
+      "reviewed_sha256": "3f29e80967629074b3e45982c3fdd246aa8e3d9c55683eaaa68a9f5075a53633",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "5a107f6c0502afb3a017022a19732a98c3367ce7b3d5c584d20e2003206ad961",
+      "reviewed_sha256": "d78fb7b5807dc30109769682a2725494f14ae8d49cde9393471959f843765cb2",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "71e0969cead6ae1e87081689690aa85e289abcd3ce5c1d3b00bece06318ce040",
+      "reviewed_sha256": "87d64b5052da6f8b398fab3f795abaddc7f482a302ca26bbd8fc74550cab7944",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/diagrams/sequence-models.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f20fdfe930ddc1c5dad7832774df81fcdd0fed1ff858d40f6b7887b84a36ae53",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "8825877fcaef8767fd34a567bd1ea02231f43425e46339062f3e4bd218f4d785",
+      "reviewed_sha256": "ae29d7a91609790ffb472ccc35f05e3d31234b2b3d52d51c5f39dbbe5e1c9c11",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "scripts/check-prefix-attention.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0d9798e6991ed9dc5f22460d8e95583458aed446dd97f58e6605ad027f2723c4",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "scripts/check-config-projection.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "622366192a3a0bc865447de5a4ee08a856f9ae3cf94a5760dd9f6a5289bea64b",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "a36d45592cc9448017d37afb11916212573c6b6cfd039dc815edbf3750b78480",
+      "reviewed_sha256": "3394062095a6da8455fb526cfcbb241709199eee4f880a464233ca2ebcc5333b",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "0423b8d369520de5bdd8df2031648d990dd6b049bd467dc84d50fbdbbed6f95e",
+      "reviewed_sha256": "f30bb567d96d632135c8bd67585c40bf52e476d69fcc0968c019489757cab0a6",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "a6aaf3407b08be4bdab79ef4d50de0260a115608669b110f1b911056630ba732",
+      "reviewed_sha256": "0f74e95d538f5e578a47450711eafcf867d169c8b7c3ec38d9dcddadb4dfccb9",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "docs/CONTENT_SEQUENCE_MASK_CONFIG_2026-11-09.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7b11e4332d7f9b0cadd51779a27734b36e024d1c6c40555a5bc23bdd1495709f",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "96f4a4f0536c3634d1d37711e96309b47d66fe14f14228c52f8b0715900db321",
+      "reviewed_sha256": "fee1c74d8d5a313d7749ef966c3472a64c98b07f48dc8362b64253e078b2c693",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/prefix-attention.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1f729acfd87c70961d2e0f67aa0349124c75c52330e915145d27432582cc7fab",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/diagrams/prefix-attention-mask.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "738a52143851a623c38fe0df924e5bb125ea7873abea91bcfefcb66582f2d599",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/prefix-attention/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7f8c0d253adc1e598abe667d5d265377a3e769f457152a597de344ab1e65b0ed",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/prefix-attention/prefix_attention.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1308f8ab4b38efa9fc465a569c7834836b0395fd1c4938a6f23b29db4b132833",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/prefix-attention/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2d15707f2e6c3a067688284034b6e8fde1f3a37648332726a068797b8c28b67e",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/kubernetes-config.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dfaa4dc35c9171758c301964b63cd3520f8d3bbead4a8c1905d84c8ae7178642",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/diagrams/kubernetes-config-projection.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d47fa0881c8824a8ee3e56822f891619614c8c643ad206abecbb14627627faac",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/kubernetes-config/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c1e7e495e6e316e935bbf6d7441e661942a4744dbf7611bd53502df64e0b95f0",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/kubernetes-config/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5d95ff5c88390876c4b93f6552374226531cd0433b5c1ed2d2e8a2c721721a41",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/kubernetes-config/config_projection_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cd8f8f39ecf81a36b839db67b41c9d5b2ea727d6333902f05c29a9280bd54f23",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    },
+    "dist/labs/kubernetes-config/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3d0eee040b5d3d0b189bb72d96f37747bfc81955d8d1ff130363c1a21ca37f9c",
+      "scope": "Verify the connection from sequence models to mask and normalization results, ConfigMap API to application reads, and the Agent app gate to the report exercise."
+    }
+  },
+  "article_sections": {
+    "transformer-model": {
+      "sections": [
+        1
+      ],
+      "scope": "Give one four-position example of recurrence, convolution and content-dependent attention",
+      "observation": "Show the state chain, width-2 convolution reach and same-range weighted read before comparing architectures; connect directly to the next attention calculation."
+    },
+    "attention-mechanics": {
+      "sections": [
+        4
+      ],
+      "scope": "Separate prefix visibility, causal continuation, and supervised positions",
+      "observation": "Compute two exact four-row matrices and run native SDPA against two perturbations, a wrong diagonal shift and full-prefix versus segmented reads."
+    },
+    "transformer-block": {
+      "sections": [
+        3
+      ],
+      "scope": "Explain the statistics axis and causal behavior of two normalization operators",
+      "observation": "Hold position zero fixed, change a future token, compare the original and changed training batch and then verify frozen-statistics evaluation in PyTorch."
+    },
+    "config-secrets": {
+      "sections": [
+        2,
+        7
+      ],
+      "scope": "Follow one ConfigMap version through API, projected directory, old descriptor and Pod replacement",
+      "observation": "Record resource version and Pod identities, compare fresh pathname, held descriptor, subPath and env, and verify a replacement Pod reads the new value."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "39c59aaa2df09d826fe9a18964973b9c6e0b3e6b",
+    "chapters": 78,
+    "changed_bodies": [
+      "config-secrets",
+      "transformer-model",
+      "attention-mechanics",
+      "transformer-block"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "config-secrets": 1,
+      "attention-mechanics": 2,
+      "transformer-block": 1
+    },
+    "field_maps": 14,
+    "role_routes": 7,
+    "experiment_packs": 61,
+    "learning_tasks": 101
+  }
+}

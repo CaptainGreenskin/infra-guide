@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="390" viewBox="0 0 400 390" role="img" aria-labelledby="sequence-title sequence-description">
+  <title id="sequence-title">第 4 格怎样取得前文</title>
+  <desc id="sequence-description">四格输入是红牌、蓝牌、绿牌、找红。循环状态依次从 1 传到 4。一层宽度为二的因果卷积只读取 3、4。全范围因果注意力将四格内容直接传向第 4 格，图中权重依次为 0.6、0.1、0.1、0.2。箭头指向接收信息的位置。</desc>
+  <metadata>{"positions":["红牌","蓝牌","绿牌","找红"],"compared_position":4,"recurrent_state_edges":[[1,2],[2,3],[3,4]],"causal_convolution":{"width":2,"stride":1,"dilation":1,"layers":1,"visible":[3,4]},"causal_attention":{"visible":[1,2,3,4],"weights":[0.6,0.1,0.1,0.2],"alternate_last_input":"找蓝","alternate_weights":[0.1,0.6,0.1,0.2],"tracked_values":[1,0,0,0],"tracked_results":[0.6,0.1]}}</metadata>
+  <defs>
+    <marker id="sequence-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L8 4L0 8Z" fill="#405775"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="398" height="388" rx="12" fill="#f8fafc" stroke="#aebdd0"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#182b46">
+    <text x="18" y="34" font-size="25" font-weight="bold">第 4 格怎样取得前文</text>
+    <g fill="#e9eef5" stroke="#becbdb">
+      <rect x="15" y="49" width="80" height="28" rx="6"/>
+      <rect x="111" y="49" width="80" height="28" rx="6"/>
+      <rect x="207" y="49" width="80" height="28" rx="6"/>
+      <rect x="303" y="49" width="80" height="28" rx="6"/>
+    </g>
+    <g text-anchor="middle" font-size="16">
+      <text x="55" y="69">1 红牌</text>
+      <text x="151" y="69">2 蓝牌</text>
+      <text x="247" y="69">3 绿牌</text>
+      <text x="343" y="69">4 找红</text>
+    </g>
+    <g>
+      <rect x="13" y="87" width="374" height="73" rx="8" fill="#eef3fc" stroke="#a9bcdb"/>
+      <text x="23" y="111" font-size="18" font-weight="bold">循环：逐格传递状态</text>
+      <g fill="none" stroke="#405775" stroke-width="1.6" marker-end="url(#sequence-arrow)">
+        <path d="M86 137H117"/>
+        <path d="M182 137H213"/>
+        <path d="M278 137H309"/>
+      </g>
+      <g text-anchor="middle" font-size="16">
+        <text x="55" y="143">状态 1</text>
+        <text x="151" y="143">状态 2</text>
+        <text x="247" y="143">状态 3</text>
+        <text x="343" y="143">状态 4</text>
+      </g>
+    </g>
+    <g>
+      <rect x="13" y="170" width="374" height="93" rx="8" fill="#fff6e9" stroke="#d3b081"/>
+      <text x="23" y="194" font-size="18" font-weight="bold">卷积：一层只读固定窗口</text>
+      <text x="23" y="233" font-size="16" fill="#754820">第 4 格只读 3、4</text>
+      <g text-anchor="middle" font-size="16">
+        <text x="247" y="219">输入 3</text>
+        <text x="343" y="219">输入 4</text>
+      </g>
+      <g fill="none" stroke="#405775" stroke-width="1.6" marker-end="url(#sequence-arrow)">
+        <path d="M247 223C247 234 289 233 323 240"/>
+        <path d="M343 223V240"/>
+      </g>
+      <text x="344" y="255" text-anchor="middle" font-size="16">输出 4</text>
+    </g>
+    <g>
+      <rect x="13" y="273" width="374" height="104" rx="8" fill="#eaf6f0" stroke="#9fbeaf"/>
+      <text x="23" y="297" font-size="18" font-weight="bold">注意力：按匹配分配权重</text>
+      <g text-anchor="middle" font-size="16">
+        <text x="55" y="320" font-weight="bold" fill="#22604b">0.6</text>
+        <text x="151" y="320">0.1</text>
+        <text x="247" y="320">0.1</text>
+        <text x="343" y="320">0.2</text>
+      </g>
+      <g fill="none" stroke="#405775" stroke-width="1.6" marker-end="url(#sequence-arrow)">
+        <path d="M55 325C55 349 239 337 315 352" stroke="#22604b" stroke-width="2.5"/>
+        <path d="M151 325C151 341 277 338 329 352"/>
+        <path d="M247 325C247 336 316 339 343 352"/>
+        <path d="M343 325C343 335 357 340 357 352"/>
+      </g>
+      <text x="344" y="369" text-anchor="middle" font-size="16">输出 4</text>
+    </g>
+  </g>
+</svg>

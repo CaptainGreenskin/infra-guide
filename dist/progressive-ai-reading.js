@@ -134,7 +134,21 @@ const progressiveAiSectionTitles={
   '<h3 id="subsection-4-eh89y2">缓存查询的逻辑位置</h3>'+
   para('缓存续算时，当前query张量可以只有一行，却代表完整前缀中的位置2。三个key仍对应位置0、1、2，因此该行都能读，正确结果为[3.5,2]。本地行号0与逻辑位置2通过历史长度相连：新增第i行的逻辑位置为past+i，允许的key位置不大于它。')+
   figures(q[3]).join('')+blocks(q[3]).join('')+
-  para('已有PyTorch2.5.1 SDPA对照中，布尔True表示允许；非方阵is_causal采用左上对齐，若误把新query当作位置0，就只读第一个key并得到[2,0]。显式按历史长度构造可见矩阵可以表达这里的续算坐标。全无合法key时数学分母为0，需另定跳过等策略；已有参考函数直接拒绝这种输入。');
+  para('已有PyTorch2.5.1 SDPA对照中，布尔True表示允许；非方阵is_causal采用左上对齐，若误把新query当作位置0，就只读第一个key并得到[2,0]。显式按历史长度构造可见矩阵可以表达这里的续算坐标。全无合法key时数学分母为0，需另定跳过等策略；已有参考函数直接拒绝这种输入。')+
+  '<h3 id="prefix-attention-mask">前缀内部互相可见，续写仍按顺序读取</h3>'+
+  para('假设模型收到提示「红 方」，要续写「red square」。在整段训练对照中，把四个词元依次放在位置 0 到 3，前两格是预先给定的提示，也叫前缀。普通因果模型里，位置 0 只能读自己。一种前缀语言模型让提示内部双向可见，位置 0 也能读到位置 1，续写部分仍按因果条件读取。两种规则可以用相同的 Q、K、V 比较。')+
+  trainingFigure('prefix-attention-mask','前缀长度为 2 时，只有第 0 行第 1 列从禁止变为允许。')+
+  para('有两种情况会放行某一格。键的位置不晚于查询，或者键和查询都在前缀内。满足任一条件就允许读取。只移动下三角的对角线会给每一行多开一格，例如让位置 2 提前看到位置 3。')+
+  trainingCode('前缀掩码的实际构造，True 表示 SDPA 可以读取','PYTHON',`def visible_mask(query_positions, key_positions, prefix_length):
+    query = torch.tensor(query_positions)[:, None]
+    key = torch.tensor(key_positions)[None, :]
+    return (key <= query) | ((query < prefix_length) & (key < prefix_length))`)+
+  para('监督另记。若四行分别预测下一个词元，对应的目标是「方、red、square、结束」。前缀内部已经能看到「方」，因此第 0 行从损失中排除；第 1 行预测首个续写词 red，仍计入损失。普通因果模型也可以只训练续写部分，只需调整标签；是否让前缀互相可见则取决于实际掩码。',
+  '实跑让每格 Q 和 K 都为 0，Value 依次为 2、6、10、14，于是每行输出就是合法 Value 的平均值。原生 CPU SDPA 记录了下面的正反对照。')+
+  table(['操作','观测到的结果'],[['把前缀位置 1 的 Value 从 6 改成 14','普通因果的第 0 行仍为 2；前缀模型从 4 变为 8'],['把续写位置 3 的 Value 从 14 改成 30','正确掩码下第 2 行仍为 6；平移对角线的错误掩码从 8 变为 12'],['先处理两格前缀，再读位置 2、3','输出依次为 4、4、6、8，与整段一致；若只看位置 0 就定下第 0 行，它会给出 2']])+
+  para('工程上先取得完整前缀，再用覆盖整个前缀的规则计算这些行。分块也可以，但每行必须能访问所需的前缀键。续算用逻辑位置构造掩码。这里只验证一头、一维、无填充的注意力数值，完整训练和设备性能另有实验。')+
+  trainingCode('解压后在 PyTorch 2.5.1 CPU 环境运行','SHELL','python -B prefix_attention.py > replay.json')+
+  '<p class="practice-links"><a href="labs/prefix-attention.zip" download>下载源码、说明和结果 ↓</a> · <a href="labs/prefix-attention/validation.json">查看每格可见性和实跑数值 →</a> · <a href="https://arxiv.org/html/1910.10683#S3.SS2.SSS1">前缀语言模型结构 ↗</a></p>';
  attention.sections[4][1]=
   '<h3 id="subsection-5-4meaf4">多头的特征划分与时间范围</h3>'+
   para('从三位置单头手算回到贯穿模型。输入X的形状为[B,T,D]=[2,4,8]，即两条序列、每条四个位置、每个位置八项特征。这里有H=2个注意力头，一个头用一组Q、K、V独立完成匹配和汇总，组内向量宽度为d=D/H=4。',

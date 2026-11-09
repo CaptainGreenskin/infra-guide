@@ -33,6 +33,8 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 
 存储章用单节点 kind 观察 CSI 延迟绑定、两个 Pod 接续读写和后端卷回收。检查点章用两个 CPU/Gloo rank 保存模型与 Adam，换成三个新进程加载并继续更新。正文图解在完整阅读器就绪前也能打开。 [CSI 实验](https://captaingreenskin.github.io/infra-guide/article/k8s-storage/#native-csi-storage) · [FSDP 检查点恢复](https://captaingreenskin.github.io/infra-guide/article/checkpoint-recovery/#fsdp-dcp-reshard)
 
+Transformer 入门用同一组四格输入比较循环、卷积与注意力，再沿可见矩阵和统计轴做两组 PyTorch 对照。Cloud 配置章用 kind 观察同一 Pod 在 ConfigMap 更新后从四个入口读到什么。Agent 应用路线的交付题可以直达本机报告实验。 [序列关系](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#sequence-models) · [前缀掩码](https://captaingreenskin.github.io/infra-guide/article/attention-mechanics/#prefix-attention-mask) · [归一化](https://captaingreenskin.github.io/infra-guide/article/transformer-block/#normalization-axes) · [ConfigMap 实验](https://captaingreenskin.github.io/infra-guide/article/config-secrets/#native-config-projection) · [Agent 应用路线](https://captaingreenskin.github.io/infra-guide/roadmap/agent-app/)
+
 <details>
 <summary>历次内容修订与执行记录</summary>
 

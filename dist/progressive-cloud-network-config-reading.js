@@ -159,8 +159,22 @@
  p('credential_rotation.py 是另一份本机 HTTP 夹具。服务端决定接受哪些实验密钥，客户端只在新候选探测成功后改变 active；独立会话保存在服务端内存中。运行前分别预测撤密钥和撤会话的影响。')+q6[2]+
  table(['实际分支','结果'],[['启用 v2 并保留 v1','v2 探测 200，未重载客户端用 v1 也为 200'],['错误候选','401，active 保持 v2'],['撤销 v1 的新认证','v1 为 401，v2 为 200'],['早先创建的独立会话','撤密钥后仍 200，撤会话后 401'],['先撤 v1 的反例','旧客户端 401，重载 v2 后 200']])+
  fold('credential_rotation.py 完整源码',q6[3])+links(q[6])+
- p('两项程序证明本地文件/进程和固定认证协议的行为。目标集群再分别记录源保存、文件可见、候选加载、生效切换、新认证和撤销六个时刻，覆盖 env、普通投射与 subPath。应用加载了 v2，只说明其中一步；还要核对各副本、新认证、旧会话处理和真实请求质量，才完成这次变更。')
+ p('把凭据轮换用于目标服务时，分别记录各副本何时启用新凭据、新认证的结果、旧会话何时退出。用实际业务请求检查轮换后的权限和效果。')
  ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。');
+
+ config.sections[1][1]+=p('第 7 节在同一个 Pod 里比较普通投射、旧 FD、subPath 和启动环境变量，先观察更新后哪些读法仍拿到旧值，再核对替换 Pod 的读数。<a href="/article/config-secrets/#native-config-projection">查看原生投射实验 →</a>');
+
+ const credentialHeading='<h3 id="subsection-7-5pl5op">';
+ if(!config.sections[6][1].includes(credentialHeading))throw Error('Configuration lab position changed');
+ config.sections[6][1]=config.sections[6][1].replace(credentialHeading,
+ h('native-config-projection','原生 Kubernetes：同一配置的四条读取路径')+
+ p('在单节点 kind 上，一个 Pod 用三种方式读取 <code>app-config</code> 的 <code>version</code> 键。普通目录投射后读 <code>/projected/version</code>，用 <code>subPath</code> 则单独挂载其中一个文件，环境变量在启动时取值。长驻 Python 进程在启动时打开普通投射文件，并保留文件描述符（FD）。每次采样既重开路径，也用旧描述符从头读取，连同另外两个入口一起记录。')+
+ '<figure class="training-figure"><a href="diagrams/kubernetes-config-projection.svg" target="_blank" rel="noopener" aria-label="放大：ConfigMap 更新前后的四条读取路径"><img src="diagrams/kubernetes-config-projection.svg" width="440" height="348" alt="更新 ConfigMap 后，原 Pod 重开普通投射读到 v2，原 FD、subPath 和环境变量仍为 v1；新 Pod 四条路径都读到 v2" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>更新源对象后，比较原进程重开路径与继续使用启动时的输入。<a href="diagrams/kubernetes-config-projection.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('只更新 ConfigMap 的值 v1→v2，源 UID 保持不变，API 记录的 resourceVersion 从 442 变为 480。等普通投射读到 v2 后再取样，原 Pod UID 和容器 ID 都未变，重启数仍为 0。对照同一进程的文件编号 inode：重开路径读 v2，编号从 3 变成 7；原 FD 继续读编号 3 上的 v1。此时 subPath 和启动环境变量也仍是 v1。')+
+ p('删掉原 Pod，再创建不同 UID 的替换 Pod。新进程启动时取得的是同一份已更新的 ConfigMap，四项读数都是 v2，其中 FD 也是新进程打开的。实验只验到进程可以读出的字节。要判断业务是否生效，还需第 3 节的候选校验与快照切换；<a href="/article/gitops-reconciliation/#gitops-native-run">GitOps 实战</a>另用真实 HTTP 核对进程返回的版本。')+
+ trainingCode('复跑配置投射并离线核对随包记录','SHELL','python3 -B config_projection_lab.py --output native-record.json\npython3 -B config_projection_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/kubernetes-config.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-config/validation.json">查看四路值、对象身份与 inode →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42560029974">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes/kubernetes/blob/v1.35.8/pkg/volume/util/atomic_writer.go">kubelet 文件投射实现 ↗</a></p>'+
+ credentialHeading);
 
  const scaling=select('k8s-autoscaling',['控制链：建议、期望与实际可用容量','CPU口径：单位、request与匹配集合','保守计算：缺指标、容差与方向变化','指标选择：资源、容器、业务与外部信号','容量空窗：积压、净余量与有界接纳','伸缩行为：稳定窗口、速率与上下界','下游预算：副本、连接与实际完成率','实战与变化题：数学参考和真实规则引擎']);
  const s=scaling.sections.map(x=>x[1]),s5=blocks(s[5]),s7=blocks(s[7]);

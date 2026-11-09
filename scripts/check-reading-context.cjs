@@ -43,6 +43,19 @@ for(const base of ['/','/infra-guide/']){
  const platformRecovery=recoveryPath+'?goal=agent-platform'+recoveryAnchor;
  assert.equal(run(recoveryPath+recoveryAnchor),base+platformRecovery.slice(1));
  assert(vm.runInContext('learningGoalHTML(learningProfiles["agent-platform"])',c).includes('href="'+platformRecovery+'"'),'platform practice links to the experiment with its selected goal');
+ const servicePath='/article/production-readiness/',serviceAnchor='#integrated-service-run';
+ const applicationService=servicePath+'?goal=agent-app'+serviceAnchor;
+ const service=data.articles.find(a=>a.id==='production-readiness');
+ assert(service.sections.some(([,body])=>body.includes('id="'+serviceAnchor.slice(1)+'"')),'shared service keeps the exact experiment anchor');
+ assert(!applicationRoute.includes(service.id),'the shared experiment is optional on the application route');
+ c.location.pathname=base+'roadmap/agent-app/';
+ c.location.search='';
+ assert(vm.runInContext('learningGoalHTML(selectedLearningProfile())',c).includes('href="'+applicationService+'"'),'application gate links to the exact experiment');
+ assert.equal(run(applicationService),base+applicationService.slice(1),'shared experiment keeps the explicit application goal and fragment');
+ c.location.pathname=base+servicePath.slice(1);
+ c.location.search='?goal=agent-app';
+ assert.equal(vm.runInContext('learningGoalChapterNav(articleById("production-readiness"))',c),'','optional visit does not show an application-route position');
+ assert.equal(run('/module/practice/'),base+'module/practice/?track=agent&goal=agent-app','shared experiment keeps its Agent practice context');
  c.location.search='';
  for(const[track,id]of Object.entries({cloud:'cloud-service-lab',ai:'training-lab',agent:'production-readiness'})){
   c.location.pathname=base+'article/'+id+'/';

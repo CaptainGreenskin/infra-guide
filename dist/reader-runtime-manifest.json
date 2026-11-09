@@ -1,32 +1,32 @@
 {
   "schema": 1,
-  "staticReadingVersion": "32289b83b01222cdf9cb3594ba4f216a99279b5de6bdef6f4d5c3337cc5876e8",
+  "staticReadingVersion": "6cc1c52f59cac8fc9cb07091eb126d6489de9bf6edb08300b7da4468367e170d",
   "articles": 78,
   "initialExecutableScripts": 2,
   "normalReaderScriptRequests": 2,
   "fullFallbackScripts": 9,
-  "initialReaderJSBytes": 89673,
+  "initialReaderJSBytes": 90050,
   "initialInlineFigureBytes": 5399,
-  "metadataBytes": 25746,
-  "metadataSha256": "f5f259253ca782fe79f055a0b59317c1a728ce173bd1c57e15ed79bac7cefebd",
+  "metadataBytes": 26123,
+  "metadataSha256": "0e78c552e984b36cd5f11438020ac11a61745a058d78cf1751c40e192bfb6d60",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.cc06b8e464ba.js",
-      "url": "/reader-assets/reader-bootstrap.cc06b8e464ba.js",
+      "file": "reader-assets/reader-bootstrap.889e6d6c90df.js",
+      "url": "/reader-assets/reader-bootstrap.889e6d6c90df.js",
       "bytes": 4373,
-      "sha256": "cc06b8e464ba58d2dad1231852c66d383b3db9c0b110d38191c9dfadff747c6b"
+      "sha256": "889e6d6c90df5e4064ec295911da3027a76e9fa40e596b65b05d2071a4aa3bbd"
     },
     {
-      "file": "reader-assets/reader-runtime.1792a9b0b5a3.js",
-      "url": "/reader-assets/reader-runtime.1792a9b0b5a3.js",
-      "bytes": 79901,
-      "sha256": "1792a9b0b5a3cc2ca51bae670556aeecb4cd677788e0cc993bbe73621f71e89e"
+      "file": "reader-assets/reader-runtime.51a15c395bb0.js",
+      "url": "/reader-assets/reader-runtime.51a15c395bb0.js",
+      "bytes": 80278,
+      "sha256": "51a15c395bb081e88942f546e5ec978aa6b43f1b3edaec44b47edce621035c0b"
     },
     {
-      "file": "reader-assets/search-index.5d0b4acb9626.json",
-      "url": "/reader-assets/search-index.5d0b4acb9626.json",
-      "bytes": 8865306,
-      "sha256": "5d0b4acb96266dce7db6ca653a33b74ed6b57cc4c5dd044c33b46eae50934132"
+      "file": "reader-assets/search-index.b9c930bc50f5.json",
+      "url": "/reader-assets/search-index.b9c930bc50f5.json",
+      "bytes": 8900009,
+      "sha256": "b9c930bc50f521d1392fe858f8f585e76f7f858db7e18b9fcccc7999f2257ea5"
     }
   ],
   "reusedFunctions": [

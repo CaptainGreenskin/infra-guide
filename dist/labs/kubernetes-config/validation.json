@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": "cd8f8f39ecf81a36b839db67b41c9d5b2ea727d6333902f05c29a9280bd54f23",
+  "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+  "python_image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "cluster": "cfg-35340f2653a4",
+  "toolchain": {
+    "kind": "kind v0.33.0 go1.26.7 linux/amd64",
+    "kubectl": "v1.35.8",
+    "docker_engine": "linux x86_64 7.0.0-1017-azure"
+  },
+  "kubernetes_server": "v1.35.8",
+  "before": {
+    "source": {
+      "name": "app-config",
+      "uid": "ab1615df-8895-4f05-8874-4b7ef58449fc",
+      "resource_version": "442",
+      "version": "v1"
+    },
+    "pod": {
+      "name": "original",
+      "uid": "17716bab-4e33-4910-8d3f-58eade3a81a7",
+      "node": "cfg-35340f2653a4-control-plane",
+      "phase": "Running",
+      "container_id": "containerd://432f4dbed704665132a1b2f1e8c5ec71bf100954a78ebe5e7f4011180edd0a35",
+      "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+      "restart_count": 0
+    },
+    "probe": {
+      "pod_uid": "17716bab-4e33-4910-8d3f-58eade3a81a7",
+      "pid": 1,
+      "startup_env": "v1",
+      "projected": "v1",
+      "projected_inode": 3,
+      "held_fd": "v1",
+      "held_inode": 3,
+      "sub_path": "v1"
+    }
+  },
+  "source_after_patch": {
+    "name": "app-config",
+    "uid": "ab1615df-8895-4f05-8874-4b7ef58449fc",
+    "resource_version": "480",
+    "version": "v2"
+  },
+  "after_projection": {
+    "pod": {
+      "name": "original",
+      "uid": "17716bab-4e33-4910-8d3f-58eade3a81a7",
+      "node": "cfg-35340f2653a4-control-plane",
+      "phase": "Running",
+      "container_id": "containerd://432f4dbed704665132a1b2f1e8c5ec71bf100954a78ebe5e7f4011180edd0a35",
+      "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+      "restart_count": 0
+    },
+    "probe": {
+      "pod_uid": "17716bab-4e33-4910-8d3f-58eade3a81a7",
+      "pid": 1,
+      "startup_env": "v1",
+      "projected": "v2",
+      "projected_inode": 7,
+      "held_fd": "v1",
+      "held_inode": 3,
+      "sub_path": "v1"
+    }
+  },
+  "original_absent": true,
+  "replacement": {
+    "source": {
+      "name": "app-config",
+      "uid": "ab1615df-8895-4f05-8874-4b7ef58449fc",
+      "resource_version": "480",
+      "version": "v2"
+    },
+    "pod": {
+      "name": "replacement",
+      "uid": "c2f2b6c3-78ef-43bf-9d14-3b0531bad293",
+      "node": "cfg-35340f2653a4-control-plane",
+      "phase": "Running",
+      "container_id": "containerd://6be5e262bad500fdde4365f6687563f58ae9db6a2d1de0e7012049d1894a4938",
+      "image_id": "docker.io/library/python@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+      "restart_count": 0
+    },
+    "probe": {
+      "pod_uid": "c2f2b6c3-78ef-43bf-9d14-3b0531bad293",
+      "pid": 1,
+      "startup_env": "v2",
+      "projected": "v2",
+      "projected_inode": 3,
+      "held_fd": "v2",
+      "held_inode": 3,
+      "sub_path": "v2"
+    }
+  },
+  "cleanup": {
+    "attempted": true,
+    "owned_nodes_removed": true
+  }
+}

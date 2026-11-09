@@ -229,10 +229,12 @@
         "subsection-5-42cx9r",
         "subsection-6-dpipfj",
         "subsection-7-wkh4cz",
-        "subsection-7-5pl5op"
+        "subsection-7-5pl5op",
+        "native-config-projection"
       ],
       "visible_targets": [
         "subsection-7-wkh4cz",
+        "native-config-projection",
         "subsection-7-5pl5op"
       ]
     },
@@ -342,6 +344,20 @@
         "decoder-block-order",
         "training-versus-generation",
         "model-compute-to-infra",
+        "encoder-decoder-translation",
+        "sequence-models"
+      ],
+      "visible_targets": [
+        "text-to-next-token",
+        "sequence-models",
+        "transformer-architecture-choices",
+        "ai-infra-map",
+        "tiny-decoder-input",
+        "decoder-attention-first-pass",
+        "decoder-ffn-position",
+        "decoder-block-order",
+        "training-versus-generation",
+        "model-compute-to-infra",
         "encoder-decoder-translation"
       ]
     },
@@ -363,7 +379,8 @@
         "subsection-4-eh89y2",
         "subsection-5-4meaf4",
         "subsection-5-12z3xau",
-        "v43-attention-practice"
+        "v43-attention-practice",
+        "prefix-attention-mask"
       ],
       "visible_targets": [
         "subsection-1-bc8625",
@@ -371,6 +388,7 @@
         "subsection-4-jajsfp",
         "subsection-4-h4v7m8",
         "subsection-4-eh89y2",
+        "prefix-attention-mask",
         "subsection-5-4meaf4",
         "subsection-5-12z3xau",
         "v43-attention-practice"
@@ -384,6 +402,18 @@
         "subsection-2-1d5rzm2",
         "subsection-3-1k24ii2",
         "subsection-3-18nd8mm",
+        "subsection-5-14ftdh6",
+        "subsection-8-1e710zy",
+        "v43-decoder-practice",
+        "normalization-axes"
+      ],
+      "visible_targets": [
+        "subsection-2-1n65z1o",
+        "subsection-2-1n30oew",
+        "subsection-2-1d5rzm2",
+        "subsection-3-1k24ii2",
+        "subsection-3-18nd8mm",
+        "normalization-axes",
         "subsection-5-14ftdh6",
         "subsection-8-1e710zy",
         "v43-decoder-practice"

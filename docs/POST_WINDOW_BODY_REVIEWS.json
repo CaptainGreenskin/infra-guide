@@ -4194,6 +4194,80 @@
         "交一份可核对的答案",
         "实战：完整文件、一致状态与提交指针"
       ]
+    },
+    {
+      "id": "config-secrets",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "422b7d8284d746ef20d55dc02701e810cd56f8934c2c300d59881bdb2851ce78",
+      "reviewed_content_sha256": "fdbe3a328005e23e7752b17de18979f03c9af1d306e1972a84a7b1c8f0a2ed96",
+      "scope": "Follow one ConfigMap version through API, projected directory, old descriptor and Pod replacement",
+      "observation": "Record resource version and Pod identities, compare fresh pathname, held descriptor, subPath and env, and verify a replacement Pod reads the new value.",
+      "headings": [
+        "对象与版本：期望、文件、内存和认证",
+        "传播路径：环境变量、投射与subPath",
+        "一致快照：完整读取、校验和请求切换",
+        "全局约束：连接预算、截止时间与回退",
+        "Secret与身份：分发、存储和执行权限",
+        "凭据轮换：兼容窗口、撤销与旧会话",
+        "实战与变化题：文件、进程和真实HTTP"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "8e416255fd12b9fcc51ed0f04f2015a76f73fb0c3d892bb2cc555f3661a22b87",
+      "reviewed_content_sha256": "faa17046827ede680a96c523783ca914ba104e72e23de262403f5b3a793c197e",
+      "scope": "Give one four-position example of recurrence, convolution and content-dependent attention",
+      "observation": "Show the state chain, width-2 convolution reach and same-range weighted read before comparing architectures; connect directly to the next attention calculation.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "70dad3dae09d72a11ee961d84cc4a229ea23aaf0424a1ff8f399e90dc153f464",
+      "reviewed_content_sha256": "b5c758df3626313af90cb48012139a08e1eff8e23e4f3f4c606eb747a4812bce",
+      "scope": "Separate prefix visibility, causal continuation, and supervised positions",
+      "observation": "Compute two exact four-row matrices and run native SDPA against two perturbations, a wrong diagonal shift and full-prefix versus segmented reads.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-09",
+      "previous_content_sha256": "f3372f96b23e07ca1d8c7d57d8ff162e2a083ded7aef4234859a43ad679f5167",
+      "reviewed_content_sha256": "7434e3d5436b04a5dd10b2be7ea134066fca0df2e1553db8c5b51298a6b87e5c",
+      "scope": "Explain the statistics axis and causal behavior of two normalization operators",
+      "observation": "Hold position zero fixed, change a future token, compare the original and changed training batch and then verify frozen-statistics evaluation in PyTorch.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
     }
   ]
 }

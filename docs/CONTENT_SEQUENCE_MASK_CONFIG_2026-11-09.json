@@ -1,0 +1,26 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "39c59aaa2df09d826fe9a18964973b9c6e0b3e6b",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_STORAGE_RESTART_2026-11-09.json": "937acd3329441d7ed1095023e5f30aa71b0364aa1a6f87c7c2050a35522f726e"
+  },
+  "revised_teaching_units": [
+    {
+      "chapter": "config-secrets",
+      "reviewed_at": "2026-11-09",
+      "scope": "Follow one ConfigMap version through API, projected directory, old descriptor and Pod replacement",
+      "observation": "Record resource version and Pod identities, compare fresh pathname, held descriptor, subPath and env, and verify a replacement Pod reads the new value.",
+      "reviewed_content_sha256": "fdbe3a328005e23e7752b17de18979f03c9af1d306e1972a84a7b1c8f0a2ed96",
+      "record": "dist/labs/kubernetes-config/validation.json"
+    },
+    {
+      "chapter": "attention-mechanics",
+      "reviewed_at": "2026-11-09",
+      "scope": "Separate prefix visibility, causal continuation, and supervised positions",
+      "observation": "Compute two exact four-row matrices and run native SDPA against two perturbations, a wrong diagonal shift and full-prefix versus segmented reads.",
+      "reviewed_content_sha256": "b5c758df3626313af90cb48012139a08e1eff8e23e4f3f4c606eb747a4812bce",
+      "record": "dist/labs/prefix-attention/validation.json"
+    }
+  ]
+}

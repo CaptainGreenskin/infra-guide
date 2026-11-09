@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="316" viewBox="0 0 376 316" role="img" aria-labelledby="title description">
+<title id="title">普通因果掩码与两格双向前缀的可见矩阵</title>
+<desc id="description">行表示查询位置，列表示键位置。右图比左图多允许第零行读取第一列。后两行仍只读取当前位置及历史位置。</desc>
+<metadata>{"prefix_length":2,"causal":[[true,false,false,false],[true,true,false,false],[true,true,true,false],[true,true,true,true]],"prefix":[[true,true,false,false],[true,true,false,false],[true,true,true,false],[true,true,true,true]]}</metadata>
+<rect x="1" y="1" width="374" height="314" rx="17" fill="#f8fafc" stroke="#b7c9dc"/>
+<g font-family="system-ui, sans-serif" fill="#16293d">
+<text x="188" y="31" font-size="18" font-weight="700" text-anchor="middle">查询位置能读取哪些键</text>
+<text x="188" y="54" font-size="13.5" text-anchor="middle" fill="#405970">行是查询位置，列是键位置</text>
+<rect x="12" y="69" width="172" height="175" rx="11" fill="#fff" stroke="#c9d6e3"/>
+<text x="98" y="91" text-anchor="middle" font-weight="700" font-size="15">普通因果</text>
+<text x="55" y="112" text-anchor="middle" font-size="13">0</text>
+<text x="28" y="139" text-anchor="middle" font-size="13">0</text>
+<text x="86" y="112" text-anchor="middle" font-size="13">1</text>
+<text x="28" y="168" text-anchor="middle" font-size="13">1</text>
+<text x="117" y="112" text-anchor="middle" font-size="13">2</text>
+<text x="28" y="197" text-anchor="middle" font-size="13">2</text>
+<text x="148" y="112" text-anchor="middle" font-size="13">3</text>
+<text x="28" y="226" text-anchor="middle" font-size="13">3</text>
+<rect x="41" y="121" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="55" y="138" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="72" y="121" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="86" y="138" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="103" y="121" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="117" y="138" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="134" y="121" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="148" y="138" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="41" y="150" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="55" y="167" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="72" y="150" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="86" y="167" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="103" y="150" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="117" y="167" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="134" y="150" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="148" y="167" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="41" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="55" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="72" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="86" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="103" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="117" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="134" y="179" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="148" y="196" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="41" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="55" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="72" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="86" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="103" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="117" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="134" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="148" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="192" y="69" width="172" height="175" rx="11" fill="#fff" stroke="#c9d6e3"/>
+<text x="278" y="91" text-anchor="middle" font-weight="700" font-size="15">前两格双向</text>
+<text x="235" y="112" text-anchor="middle" font-size="13">0</text>
+<text x="208" y="139" text-anchor="middle" font-size="13">0</text>
+<text x="266" y="112" text-anchor="middle" font-size="13">1</text>
+<text x="208" y="168" text-anchor="middle" font-size="13">1</text>
+<text x="297" y="112" text-anchor="middle" font-size="13">2</text>
+<text x="208" y="197" text-anchor="middle" font-size="13">2</text>
+<text x="328" y="112" text-anchor="middle" font-size="13">3</text>
+<text x="208" y="226" text-anchor="middle" font-size="13">3</text>
+<rect x="221" y="121" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="235" y="138" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="252" y="121" width="28" height="25" rx="4" fill="#c9e8ff" stroke="#155ba5" stroke-width="2"/>
+<text x="266" y="138" text-anchor="middle" font-size="13" font-weight="700">读</text>
+<rect x="283" y="121" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="297" y="138" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="314" y="121" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="328" y="138" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="221" y="150" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="235" y="167" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="252" y="150" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="266" y="167" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="283" y="150" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="297" y="167" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="314" y="150" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="328" y="167" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="221" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="235" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="252" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="266" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="283" y="179" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="297" y="196" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="314" y="179" width="28" height="25" rx="4" fill="#f2f5f8" stroke="#c0cedb" stroke-width="1"/>
+<text x="328" y="196" text-anchor="middle" font-size="13" font-weight="500">·</text>
+<rect x="221" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="235" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="252" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="266" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="283" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="297" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="314" y="208" width="28" height="25" rx="4" fill="#dcefe8" stroke="#c0cedb" stroke-width="1"/>
+<text x="328" y="225" text-anchor="middle" font-size="13" font-weight="500">读</text>
+<rect x="12" y="256" width="352" height="48" rx="8" fill="#e3effb" stroke="#9eb8d6"/>
+<text x="25" y="275" font-size="14" font-weight="700">只新增一格，位置 0 可以读取位置 1。</text>
+<text x="25" y="294" font-size="13.5" fill="#405970">位置 2 仍看不到位置 3。</text>
+</g>
+</svg>

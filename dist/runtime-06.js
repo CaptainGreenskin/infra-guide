@@ -4492,7 +4492,21 @@ const progressiveAiSectionTitles={
   '<h3 id="subsection-4-eh89y2">缓存查询的逻辑位置</h3>'+
   para('缓存续算时，当前query张量可以只有一行，却代表完整前缀中的位置2。三个key仍对应位置0、1、2，因此该行都能读，正确结果为[3.5,2]。本地行号0与逻辑位置2通过历史长度相连：新增第i行的逻辑位置为past+i，允许的key位置不大于它。')+
   figures(q[3]).join('')+blocks(q[3]).join('')+
-  para('已有PyTorch2.5.1 SDPA对照中，布尔True表示允许；非方阵is_causal采用左上对齐，若误把新query当作位置0，就只读第一个key并得到[2,0]。显式按历史长度构造可见矩阵可以表达这里的续算坐标。全无合法key时数学分母为0，需另定跳过等策略；已有参考函数直接拒绝这种输入。');
+  para('已有PyTorch2.5.1 SDPA对照中，布尔True表示允许；非方阵is_causal采用左上对齐，若误把新query当作位置0，就只读第一个key并得到[2,0]。显式按历史长度构造可见矩阵可以表达这里的续算坐标。全无合法key时数学分母为0，需另定跳过等策略；已有参考函数直接拒绝这种输入。')+
+  '<h3 id="prefix-attention-mask">前缀内部互相可见，续写仍按顺序读取</h3>'+
+  para('假设模型收到提示「红 方」，要续写「red square」。在整段训练对照中，把四个词元依次放在位置 0 到 3，前两格是预先给定的提示，也叫前缀。普通因果模型里，位置 0 只能读自己。一种前缀语言模型让提示内部双向可见，位置 0 也能读到位置 1，续写部分仍按因果条件读取。两种规则可以用相同的 Q、K、V 比较。')+
+  trainingFigure('prefix-attention-mask','前缀长度为 2 时，只有第 0 行第 1 列从禁止变为允许。')+
+  para('有两种情况会放行某一格。键的位置不晚于查询，或者键和查询都在前缀内。满足任一条件就允许读取。只移动下三角的对角线会给每一行多开一格，例如让位置 2 提前看到位置 3。')+
+  trainingCode('前缀掩码的实际构造，True 表示 SDPA 可以读取','PYTHON',`def visible_mask(query_positions, key_positions, prefix_length):
+    query = torch.tensor(query_positions)[:, None]
+    key = torch.tensor(key_positions)[None, :]
+    return (key <= query) | ((query < prefix_length) & (key < prefix_length))`)+
+  para('监督另记。若四行分别预测下一个词元，对应的目标是「方、red、square、结束」。前缀内部已经能看到「方」，因此第 0 行从损失中排除；第 1 行预测首个续写词 red，仍计入损失。普通因果模型也可以只训练续写部分，只需调整标签；是否让前缀互相可见则取决于实际掩码。',
+  '实跑让每格 Q 和 K 都为 0，Value 依次为 2、6、10、14，于是每行输出就是合法 Value 的平均值。原生 CPU SDPA 记录了下面的正反对照。')+
+  table(['操作','观测到的结果'],[['把前缀位置 1 的 Value 从 6 改成 14','普通因果的第 0 行仍为 2；前缀模型从 4 变为 8'],['把续写位置 3 的 Value 从 14 改成 30','正确掩码下第 2 行仍为 6；平移对角线的错误掩码从 8 变为 12'],['先处理两格前缀，再读位置 2、3','输出依次为 4、4、6、8，与整段一致；若只看位置 0 就定下第 0 行，它会给出 2']])+
+  para('工程上先取得完整前缀，再用覆盖整个前缀的规则计算这些行。分块也可以，但每行必须能访问所需的前缀键。续算用逻辑位置构造掩码。这里只验证一头、一维、无填充的注意力数值，完整训练和设备性能另有实验。')+
+  trainingCode('解压后在 PyTorch 2.5.1 CPU 环境运行','SHELL','python -B prefix_attention.py > replay.json')+
+  '<p class="practice-links"><a href="labs/prefix-attention.zip" download>下载源码、说明和结果 ↓</a> · <a href="labs/prefix-attention/validation.json">查看每格可见性和实跑数值 →</a> · <a href="https://arxiv.org/html/1910.10683#S3.SS2.SSS1">前缀语言模型结构 ↗</a></p>';
  attention.sections[4][1]=
   '<h3 id="subsection-5-4meaf4">多头的特征划分与时间范围</h3>'+
   para('从三位置单头手算回到贯穿模型。输入X的形状为[B,T,D]=[2,4,8]，即两条序列、每条四个位置、每个位置八项特征。这里有H=2个注意力头，一个头用一组Q、K、V独立完成匹配和汇总，组内向量宽度为d=D/H=4。',
@@ -4572,7 +4586,59 @@ const progressiveAiSectionTitles={
   table(['输入行','LayerNorm（手算ε=0）','RMSNorm（手算ε=0）'],[['[1,3]','[−1,1]','[1/√5,3/√5]'],['[3,5]','[−1,1]','[3/√17,5/√17]']])+
   p('实际脚本取ε=10⁻⁶，故分母分别使用√(1+10⁻⁶)、√(5+10⁻⁶)等值；正ε也使全零输入的分母有定义。γ为每个特征保留可学习的缩放自由度。归一化的参数来自学习，当前均值或均方来自本次输入，这两类数字要区分。')+
   h('subsection-3-18nd8mm','统计轴怎样保持因果依赖')+
-  p('恢复[2,4,8]后，RMSNorm只沿最后的8维取均方。改变位置3的输入，只改变它自己的归一化分母；前面三个位置不会因这一步读到未来。若误沿长度T统计，位置0的分母就会包含位置3，即使注意力掩码正确，整层仍已经越过因果边界。已有CPU记录对此改变最后一项：正确路径前3个输出最大差为0，错误时间轴路径约为0.423。第8节保留产生这些记录的源码。'),
+  p('恢复[2,4,8]后，RMSNorm只沿最后的8维取均方。改变位置3的输入，只改变它自己的归一化分母；前面三个位置不会因这一步读到未来。若误沿长度T统计，位置0的分母就会包含位置3，即使注意力掩码正确，整层仍已经越过因果边界。已有CPU记录对此改变最后一项：正确路径前3个输出最大差为0，错误时间轴路径约为0.423。第8节保留产生这些记录的源码。')+
+  h('normalization-axes','选读 · LayerNorm 与 BatchNorm 的统计轴')+
+  p('对形状为[B,T,D]的词元表示，<code>LayerNorm(D)</code>用一个词元自己的D项特征求均值和方差。若把同一输入转为[B,D,T]交给<code>BatchNorm1d(D)</code>，训练时会为每项特征单独统计批内所有B×T个数。位置0的归一化就会读到同一序列的未来位置，也会受同批其他序列影响。注意力的因果掩码只限制注意力读哪些位置，管不到归一化这条依赖。')+
+  '<details class="progressive-detail"><summary>只改一个未来位置，比较训练与评估输出</summary>'+
+  p('把输入缩为B=2、T=2、D=2，观察第0条序列的位置0。只把同一序列的位置1从[1,3]换成[5,7]。两个算子都关闭可学习的缩放和偏置，取ε=10⁻⁵。')+
+  table(['序列','位置0','位置1（原输入 → 改动后）'],[['0','[1,3]','[1,3] → [5,7]'],['1','[3,5]','[3,5] → [3,5]']])+
+  p('LayerNorm两次都对位置0的[1,3]求均值2、方差1。BatchNorm训练时，特征0的四个数从[1,1,3,3]变为[1,5,3,3]，均值从2变为3，除以4的方差从1变为2。特征1的输入比特征0都大2，减去各自的均值后两项结果相同。',
+  'BatchNorm默认会保存随训练更新的均值和方差，评估模式使用这组已保存的统计量。代码特意设<code>momentum=1.0</code>，用原输入做一次训练前向就能写入这一批的统计量。这里保存的方差按无偏估计除以3，等于4/3，与训练前向计算输出时用的方差1有区别。接着切到评估模式，先后输入原批次和改动后的批次，两个位置0输出都按同一组统计量计算。LayerNorm在两种模式中都使用当前词元的统计量。')+
+  table(['第0条序列的位置0','原输入','只改未来位置'],[['LayerNorm · 训练与评估','[−0.999995, 0.999995]','[−0.999995, 0.999995]'],['BatchNorm · 训练','[−0.999995, −0.999995]','[−1.414210, −1.414210]'],['BatchNorm · 评估','[−0.866022, −0.866022]','[−0.866022, −0.866022]']])+
+  p('下面是同一输入在PyTorch 2.5.1、CPU float64上的复现。程序用上面手算的统计量核对输出，再实际切回训练模式检查改动后的批次。训练和评估的差异解释了为什么只用评估模式检查未来扰动，会漏掉这个训练时的依赖。')+
+  trainingCode('按统计轴验证位置0的输出 · PyTorch 2.5.1','PYTHON',`from math import sqrt
+import torch
+from torch import nn
+
+eps = 1e-5
+x = torch.tensor([[[1., 3.], [1., 3.]], [[3., 5.], [3., 5.]]],
+                 dtype=torch.float64)
+future = x.clone()
+future[0, 1] += 4
+ln = nn.LayerNorm(2, eps=eps, elementwise_affine=False).double()
+bn = nn.BatchNorm1d(2, eps=eps, affine=False, momentum=1.0).double()
+
+def bn_first(batch):
+    return bn(batch.transpose(1, 2)).transpose(1, 2)[0, 0]
+
+def check(actual, expected):
+    torch.testing.assert_close(actual, x.new_tensor(expected), atol=1e-12, rtol=0)
+
+ln_train = torch.stack((ln(x)[0, 0], ln(future)[0, 0]))
+ln.eval()
+ln_eval = torch.stack((ln(x)[0, 0], ln(future)[0, 0]))
+
+bn_original = bn_first(x)
+check(bn.running_mean, [2, 4])
+check(bn.running_var, [4 / 3, 4 / 3])
+bn.eval()
+bn_eval = torch.stack((bn_first(x), bn_first(future)))
+bn.train()
+bn_train = torch.stack((bn_original, bn_first(future)))
+
+u = 1 / sqrt(1 + eps)
+v = 2 / sqrt(2 + eps)
+frozen = 1 / sqrt(4 / 3 + eps)
+for label, actual, expected in (
+    ("LayerNorm train", ln_train, [[-u, u]] * 2),
+    ("LayerNorm eval", ln_eval, [[-u, u]] * 2),
+    ("BatchNorm train", bn_train, [[-u, -u], [-v, -v]]),
+    ("BatchNorm eval", bn_eval, [[-frozen, -frozen]] * 2),
+):
+    check(actual, expected)
+    print(label, actual.tolist())
+`)+
+  '<p>查看 PyTorch 2.5.1 源码中的 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/normalization.py#L96-L121">LayerNorm 统计轴</a>与 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/batchnorm.py#L260-L284">BatchNorm1d 训练和评估统计</a>。</p></details>',
 
   p('前馈网络（Feed-Forward Network，FFN）是在各位置重复应用同一个函数的特征变换。注意力已经把合法上下文汇入H₁，第二次归一化得到N₂(H₁)后，FFN再组合该位置的特征。它的权重在位置间共享，当前这一步没有沿时间轴读取其他行。',
   '先看普通两层FFN。把N₂(H₁)中某一位置写为行向量x，宽度D=8；第一张权重W₁形状[D,F]=[8,12]，偏置b₁宽12；第二张W₂形状[F,D]=[12,8]，偏置b₂宽8。φ表示逐元素非线性激活，例如ReLU把负数置零、保留非负数。')+
@@ -9364,8 +9430,22 @@ set_state_dict(model, optimizer, model_state_dict=state["model"],
  p('credential_rotation.py 是另一份本机 HTTP 夹具。服务端决定接受哪些实验密钥，客户端只在新候选探测成功后改变 active；独立会话保存在服务端内存中。运行前分别预测撤密钥和撤会话的影响。')+q6[2]+
  table(['实际分支','结果'],[['启用 v2 并保留 v1','v2 探测 200，未重载客户端用 v1 也为 200'],['错误候选','401，active 保持 v2'],['撤销 v1 的新认证','v1 为 401，v2 为 200'],['早先创建的独立会话','撤密钥后仍 200，撤会话后 401'],['先撤 v1 的反例','旧客户端 401，重载 v2 后 200']])+
  fold('credential_rotation.py 完整源码',q6[3])+links(q[6])+
- p('两项程序证明本地文件/进程和固定认证协议的行为。目标集群再分别记录源保存、文件可见、候选加载、生效切换、新认证和撤销六个时刻，覆盖 env、普通投射与 subPath。应用加载了 v2，只说明其中一步；还要核对各副本、新认证、旧会话处理和真实请求质量，才完成这次变更。')
+ p('把凭据轮换用于目标服务时，分别记录各副本何时启用新凭据、新认证的结果、旧会话何时退出。用实际业务请求检查轮换后的权限和效果。')
  ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。');
+
+ config.sections[1][1]+=p('第 7 节在同一个 Pod 里比较普通投射、旧 FD、subPath 和启动环境变量，先观察更新后哪些读法仍拿到旧值，再核对替换 Pod 的读数。<a href="/article/config-secrets/#native-config-projection">查看原生投射实验 →</a>');
+
+ const credentialHeading='<h3 id="subsection-7-5pl5op">';
+ if(!config.sections[6][1].includes(credentialHeading))throw Error('Configuration lab position changed');
+ config.sections[6][1]=config.sections[6][1].replace(credentialHeading,
+ h('native-config-projection','原生 Kubernetes：同一配置的四条读取路径')+
+ p('在单节点 kind 上，一个 Pod 用三种方式读取 <code>app-config</code> 的 <code>version</code> 键。普通目录投射后读 <code>/projected/version</code>，用 <code>subPath</code> 则单独挂载其中一个文件，环境变量在启动时取值。长驻 Python 进程在启动时打开普通投射文件，并保留文件描述符（FD）。每次采样既重开路径，也用旧描述符从头读取，连同另外两个入口一起记录。')+
+ '<figure class="training-figure"><a href="diagrams/kubernetes-config-projection.svg" target="_blank" rel="noopener" aria-label="放大：ConfigMap 更新前后的四条读取路径"><img src="diagrams/kubernetes-config-projection.svg" width="440" height="348" alt="更新 ConfigMap 后，原 Pod 重开普通投射读到 v2，原 FD、subPath 和环境变量仍为 v1；新 Pod 四条路径都读到 v2" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>更新源对象后，比较原进程重开路径与继续使用启动时的输入。<a href="diagrams/kubernetes-config-projection.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('只更新 ConfigMap 的值 v1→v2，源 UID 保持不变，API 记录的 resourceVersion 从 442 变为 480。等普通投射读到 v2 后再取样，原 Pod UID 和容器 ID 都未变，重启数仍为 0。对照同一进程的文件编号 inode：重开路径读 v2，编号从 3 变成 7；原 FD 继续读编号 3 上的 v1。此时 subPath 和启动环境变量也仍是 v1。')+
+ p('删掉原 Pod，再创建不同 UID 的替换 Pod。新进程启动时取得的是同一份已更新的 ConfigMap，四项读数都是 v2，其中 FD 也是新进程打开的。实验只验到进程可以读出的字节。要判断业务是否生效，还需第 3 节的候选校验与快照切换；<a href="/article/gitops-reconciliation/#gitops-native-run">GitOps 实战</a>另用真实 HTTP 核对进程返回的版本。')+
+ trainingCode('复跑配置投射并离线核对随包记录','SHELL','python3 -B config_projection_lab.py --output native-record.json\npython3 -B config_projection_lab.py --check-record validation.json')+
+ '<p class="practice-links"><a href="labs/kubernetes-config.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-config/validation.json">查看四路值、对象身份与 inode →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42560029974">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes/kubernetes/blob/v1.35.8/pkg/volume/util/atomic_writer.go">kubelet 文件投射实现 ↗</a></p>'+
+ credentialHeading);
 
  const scaling=select('k8s-autoscaling',['控制链：建议、期望与实际可用容量','CPU口径：单位、request与匹配集合','保守计算：缺指标、容差与方向变化','指标选择：资源、容器、业务与外部信号','容量空窗：积压、净余量与有界接纳','伸缩行为：稳定窗口、速率与上下界','下游预算：副本、连接与实际完成率','实战与变化题：数学参考和真实规则引擎']);
  const s=scaling.sections.map(x=>x[1]),s5=blocks(s[5]),s7=blocks(s[7]);
@@ -12056,6 +12136,14 @@ const firstReadingChanges=[];
   ['输出投影','为词表中的每个候选编号打分','分数用于计算训练损失或选择下一项']
  ])+
  para('图里的参数是模型反复使用、能通过学习调整的数字。训练时，先用参数计算预测，再与目标比较得到损失。梯度描述改变参数会怎样影响损失，优化器据此更新参数。推理时，参数固定，系统把输入变成预测结果。')+overview+
+ `<h3 id="sequence-models">循环、卷积和注意力怎样传递前文</h3>`+
+ para('把「红牌、蓝牌、绿牌、找红」当成四个示意词元。第 4 格要利用第 1 格的红牌。这里只允许每格读取自己和前文。前面的信息怎样到达第 4 格，取决于这一层连接了哪些位置。',
+ '循环神经网络（RNN）为每格计算一个状态，也就是要传给下一格的一组数字。普通单向 RNN 用本格输入和上一格状态算出新状态。红牌的信息可以从状态 1 依次传到状态 4，中间各格都要等前一格算完。',
+ '卷积神经网络（CNN）把同一组系数沿序列滑动。设每个窗口只取本格和前一格，系数按相对位置固定。第 4 格的一层输出只读第 3、4 格。叠两层时，第 2 格能经第 3 格的上一层输出传入。按同样规则叠三层，第 1 格的信息才传得到。',
+ '自注意力在同一条序列内汇总信息。第 4 格直接把自己的表示和第 1 至 4 格做匹配，按分数分配权重。下面两组权重是题设。末格是「找红」时取 [0.6, 0.1, 0.1, 0.2]，换成「找蓝」时取 [0.1, 0.6, 0.1, 0.2]。只跟踪红色标记这一项，四格供给 [1, 0, 0, 0]，汇总结果便从 0.6 变为 0.1。两次的可读范围一样，变的是分给各格的权重。')+
+ trainingFigure('sequence-models','同一四格输入传向第 4 格的三种路径。图中权重对应「找红」的示意算例。')+
+ para('输入已经给定时，卷积和自注意力可并行算同一层的多个位置。全范围注意力能在一层内连接相隔很远的合法位置，也要对更多位置打分。逐词生成时仍要等上一步选出词元，第 7、8 节会分别解释生成顺序与注意力的计算量。<a href="/article/attention-mechanics/#section-1">从一个查询开始手算注意力的权重 →</a>')+
+ '<p class="source-at"><a href="https://doi.org/10.1207/s15516709cog1402_1">循环状态原论文</a> · <a href="https://proceedings.mlr.press/v70/gehring17a.html">序列卷积原论文</a> · <a href="https://arxiv.org/html/1706.03762v7#S4">Transformer 原论文的路径对照</a></p>'+
  `<h3 id="transformer-architecture-choices">三种架构的区别在于谁能读取谁</h3>`+
  para('注意力让一个位置从一组允许读取的位置汇总信息。同一条序列内部读取叫自注意力，从另一条序列的表示中读取叫交叉注意力。用“关门”译成英文举例，中文是源序列，已生成的英文是目标前缀。下表比较每种结构能读取哪些输入。')+
  conceptReadingTable(['结构','位置能读取什么','任务例子'],[
@@ -13259,7 +13347,7 @@ const learningProfiles={
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'用同一训练任务比较正常执行与恢复执行的更新结果，并说明扩到多机时新增哪些环境条件。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'估算一个请求的 KV 缓存和并发容量，复算首词元延迟，再解释一次版本切换的验收条件。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，手算运算量与字节；比较参考实现的输出与梯度，再说明轨迹支持了哪个性能判断。'},
- 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务；分别验证产物、权限拒绝与重试后的效果。'},
+ 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。可以运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>自检。工具已返回回执，图恢复同一任务时仍要重跑 publish。先预测沿用操作 ID 或按尝试生成 ID 各会留下几份报告，再用两份数据库的记录核对金额、回执和图的终态。可只读记录，也可运行实验。目标平台另按适配器契约验收。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
@@ -13748,6 +13836,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'kubernetes-config':{folder:'kubernetes-config',title:'同一 ConfigMap 版本的四条应用读取路径'},
+ 'prefix-attention':{folder:'prefix-attention',title:'前缀、因果和错误平移掩码的 SDPA 对照'},
  'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
  'fsdp-reshard':{folder:'fsdp-reshard',title:'原生 FSDP 检查点跨分片恢复'},
  'innodb':{folder:'innodb',title:'原生 InnoDB 执行树与事务锁'},
@@ -13826,6 +13916,7 @@ const labLearningCatalog=[
  {id:'cloud-event',track:'cloud',stage:2,title:'提交后进程退出，重投是否多写一笔',chapter:'serverless-execution',pack:'cloud-native',files:['verify.py','event_worker.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'在业务与去重记录（inbox）同事务提交后退出，再重投相同业务事件，核对尝试数与效果数。',scope:'本机进程和数据库；没有调用真实云函数或队列。'},
  {id:'cloud-visibility',track:'cloud',stage:2,title:'消息可见性、旧回执与部分批响应',chapter:'serverless-execution',pack:'leases-placement-sandbox',files:['visibility_receipts.py','batch_response_reference.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'队列参考与策略模型',observe:'旧执行者在超时后仍可能写入；再比较正常部分响应、吞异常、整批失败与先进先出（FIFO）首错停止。',scope:'队列时钟和四种结果为声明输入；不是 SQS/Lambda 兼容实现。'},
  {id:'cloud-config',track:'cloud',stage:2,title:'完整配置快照与分阶段凭据轮换',chapter:'config-secrets',pack:'config-memory-evaluation',files:['config_snapshots.py','credential_rotation.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'文件、进程与 HTTP',observe:'复现混合字段和旧文件描述符；先双版本可用，再切客户端、撤旧凭据与旧会话。',scope:'本机配置与认证夹具；未模拟 kubelet 或真实身份平台传播。'},
+ {id:'cloud-native-config-projection',track:'cloud',stage:2,title:'同一个 Pod 里，为什么只有一个入口读到新配置',chapter:'config-secrets',anchor:'native-config-projection',pack:'kubernetes-config',files:['config_projection_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3',kind:'真实 ConfigMap 投影与 Pod 替换',observe:'关联 API 版本、容器身份和文件 inode，再核对重开路径、旧文件句柄、subPath 与启动环境。',scope:'单节点 kind 与一个 ConfigMap 键的实际观察。'},
  {id:'cloud-sql-paths',track:'cloud',stage:2,title:'相同五条结果，分别验证定位、排序与覆盖',chapter:'database-index-locks',anchor:'sql-plan-lab',pack:'sql-paths-snapshots',files:['query_paths.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实 SQL 与原始查询计划',observe:'比较四种索引与表达式排序；分开输入分布、返回行和 N=1 进度回调，不把它们当成同一个成本。',scope:'240 行固定夹具，不测磁盘 I/O、时延或 MySQL 性能。'},
  {id:'cloud-sql-snapshot',track:'cloud',stage:2,title:'旧快照写失败后，重试 SQL 还是重做判断',chapter:'database-index-locks',anchor:'sql-snapshot-lab',pack:'sql-paths-snapshots',files:['snapshot_retry.py'],env:'Python 3.9+ · 标准库 / SQLite WAL',kind:'两个独立连接的实际交错事务',observe:'读到100、补货提交110后让旧快照写入失败；回滚后重新核对得105，照搬旧值虽可提交却只剩95。',scope:'一进程本地 WAL，不把单写者或517推广为 InnoDB 锁协议。'},
  {id:'cloud-cache',track:'cloud',stage:2,title:'缓存失效事件丢了或乱序，怎样补上',chapter:'cache-consistency',pack:'serving-consistency',files:['cache_outbox.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机事务与重投',observe:'源端提交后退出，恢复待发事件（outbox）；重复和乱序事件不能使新版本退回旧值。',scope:'固定缓存协议，不代表所有缓存与数据库间天然原子。'},
@@ -13840,6 +13931,7 @@ const labLearningCatalog=[
  {id:'cloud-service',track:'cloud',stage:3,title:'把请求、探针与交付版本连起来',chapter:'cloud-service-lab',pack:'infra-systems',files:['infra_lab.py','probe_server.py'],pendingFiles:['probe_server.py'],env:'Python 3.9+ · 标准库',kind:'本机服务与目标手册',observe:'核对实际本机请求、完整文件版本和摘要，再进入探针、端点和回退的集群步骤。',scope:'infra_lab 本机部分已执行；probe_server 配合集群探针、EndpointSlice 与版本回退仍待目标环境验证。'},
  {id:'ai-supervision',track:'ai',stage:1,title:'标签对齐、共享梯度与不等长微批',chapter:'tokenization-embedding',pack:'supervision-gradients',files:['supervision_gradients.py'],env:'PyTorch 2.5.1 CPU；参考模式只需 Python 3.9+',kind:'实际自动求导与独立链式法则',observe:'分开查表和输出路径，验证 PAD 行仍可更新；逐项核对 16 个导数，再比较有效目标与微批的平均权重。',scope:'局部 H=E[id]/2，无注意力；六项交叉熵与另四项平方损失分别记账，不测 GPU。'},
  {id:'ai-attention',track:'ai',stage:1,title:'手算 Attention，再比较整段与逐词元计算',chapter:'attention-mechanics',pack:'attention-mechanics',files:['attention_lab.py'],env:'Python 3.9+ · 标准库',kind:'数值语义实验',observe:'改未来位置与可见位置，核对因果遮罩、键值缓存（KV Cache）等价和有效目标分母。',scope:'固定向量与独立手算，不调用模型或 GPU。'},
+ {id:'ai-prefix-attention',track:'ai',stage:1,title:'前两格互相可见，续写还能保持因果吗',chapter:'attention-mechanics',anchor:'prefix-attention-mask',pack:'prefix-attention',files:['prefix_attention.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU',kind:'真实 SDPA 与数值反例',observe:'单独改动提示内部和续写中的值，对照普通因果、双向前缀及错误平移掩码。',scope:'固定四位置、单头数学后端，比较输出和分段读取。'},
  {id:'ai-foundations',track:'ai',stage:1,title:'从词表、位置与 664 参数 Decoder 走一遍更新',chapter:'autograd-training',pack:'textbook-examples',folder:'model-foundations',files:['tokenization.py','rope.py','tiny_decoder.py','io_attention.py'],env:'Python 3.9+；Decoder 需 PyTorch 2.5.1',kind:'标准库数值 + CPU 自动求导',observe:'分别核对标签、相对位置、整批/微批更新及在线 softmax；每个程序有自己的输入。',scope:'小模型和数值参考，不是 FlashAttention 内核或大模型训练基准。'},
  {id:'ai-packing',track:'ai',stage:1,title:'拼接文档时，EOS 不能代替注意力边界',chapter:'data-pipeline',pack:'network-input-tools',files:['packing_boundaries.py'],env:'Python 3.9+ · 标准库',kind:'固定向量对照',observe:'正确文档内遮罩与位置和逐文档相同；仅插 EOS 或延续位置会改变本例输出。',scope:'位置向量为教学输入，不实现 RoPE 或 GPU packing。'},
  {id:'ai-sampler',track:'ai',stage:2,title:'训练进程与数据加载进程，会重复交付样本吗',chapter:'data-pipeline',pack:'network-input-tools',files:['sampler_coverage.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实多进程数据加载',observe:'两个训练进程（rank），每个进程两个加载进程（worker）。核对 11 条数据在补齐、丢尾和分流后的唯一 ID、交付数与批次数。',scope:'保存成文件运行；不执行训练步、GPU 拷贝或吞吐测试。'},
@@ -14152,5 +14244,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="32289b83b01222cdf9cb3594ba4f216a99279b5de6bdef6f4d5c3337cc5876e8";
+const staticReadingVersion="6cc1c52f59cac8fc9cb07091eb126d6489de9bf6edb08300b7da4468367e170d";
 

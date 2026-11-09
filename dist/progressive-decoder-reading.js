@@ -39,7 +39,59 @@
   table(['输入行','LayerNorm（手算ε=0）','RMSNorm（手算ε=0）'],[['[1,3]','[−1,1]','[1/√5,3/√5]'],['[3,5]','[−1,1]','[3/√17,5/√17]']])+
   p('实际脚本取ε=10⁻⁶，故分母分别使用√(1+10⁻⁶)、√(5+10⁻⁶)等值；正ε也使全零输入的分母有定义。γ为每个特征保留可学习的缩放自由度。归一化的参数来自学习，当前均值或均方来自本次输入，这两类数字要区分。')+
   h('subsection-3-18nd8mm','统计轴怎样保持因果依赖')+
-  p('恢复[2,4,8]后，RMSNorm只沿最后的8维取均方。改变位置3的输入，只改变它自己的归一化分母；前面三个位置不会因这一步读到未来。若误沿长度T统计，位置0的分母就会包含位置3，即使注意力掩码正确，整层仍已经越过因果边界。已有CPU记录对此改变最后一项：正确路径前3个输出最大差为0，错误时间轴路径约为0.423。第8节保留产生这些记录的源码。'),
+  p('恢复[2,4,8]后，RMSNorm只沿最后的8维取均方。改变位置3的输入，只改变它自己的归一化分母；前面三个位置不会因这一步读到未来。若误沿长度T统计，位置0的分母就会包含位置3，即使注意力掩码正确，整层仍已经越过因果边界。已有CPU记录对此改变最后一项：正确路径前3个输出最大差为0，错误时间轴路径约为0.423。第8节保留产生这些记录的源码。')+
+  h('normalization-axes','选读 · LayerNorm 与 BatchNorm 的统计轴')+
+  p('对形状为[B,T,D]的词元表示，<code>LayerNorm(D)</code>用一个词元自己的D项特征求均值和方差。若把同一输入转为[B,D,T]交给<code>BatchNorm1d(D)</code>，训练时会为每项特征单独统计批内所有B×T个数。位置0的归一化就会读到同一序列的未来位置，也会受同批其他序列影响。注意力的因果掩码只限制注意力读哪些位置，管不到归一化这条依赖。')+
+  '<details class="progressive-detail"><summary>只改一个未来位置，比较训练与评估输出</summary>'+
+  p('把输入缩为B=2、T=2、D=2，观察第0条序列的位置0。只把同一序列的位置1从[1,3]换成[5,7]。两个算子都关闭可学习的缩放和偏置，取ε=10⁻⁵。')+
+  table(['序列','位置0','位置1（原输入 → 改动后）'],[['0','[1,3]','[1,3] → [5,7]'],['1','[3,5]','[3,5] → [3,5]']])+
+  p('LayerNorm两次都对位置0的[1,3]求均值2、方差1。BatchNorm训练时，特征0的四个数从[1,1,3,3]变为[1,5,3,3]，均值从2变为3，除以4的方差从1变为2。特征1的输入比特征0都大2，减去各自的均值后两项结果相同。',
+  'BatchNorm默认会保存随训练更新的均值和方差，评估模式使用这组已保存的统计量。代码特意设<code>momentum=1.0</code>，用原输入做一次训练前向就能写入这一批的统计量。这里保存的方差按无偏估计除以3，等于4/3，与训练前向计算输出时用的方差1有区别。接着切到评估模式，先后输入原批次和改动后的批次，两个位置0输出都按同一组统计量计算。LayerNorm在两种模式中都使用当前词元的统计量。')+
+  table(['第0条序列的位置0','原输入','只改未来位置'],[['LayerNorm · 训练与评估','[−0.999995, 0.999995]','[−0.999995, 0.999995]'],['BatchNorm · 训练','[−0.999995, −0.999995]','[−1.414210, −1.414210]'],['BatchNorm · 评估','[−0.866022, −0.866022]','[−0.866022, −0.866022]']])+
+  p('下面是同一输入在PyTorch 2.5.1、CPU float64上的复现。程序用上面手算的统计量核对输出，再实际切回训练模式检查改动后的批次。训练和评估的差异解释了为什么只用评估模式检查未来扰动，会漏掉这个训练时的依赖。')+
+  trainingCode('按统计轴验证位置0的输出 · PyTorch 2.5.1','PYTHON',`from math import sqrt
+import torch
+from torch import nn
+
+eps = 1e-5
+x = torch.tensor([[[1., 3.], [1., 3.]], [[3., 5.], [3., 5.]]],
+                 dtype=torch.float64)
+future = x.clone()
+future[0, 1] += 4
+ln = nn.LayerNorm(2, eps=eps, elementwise_affine=False).double()
+bn = nn.BatchNorm1d(2, eps=eps, affine=False, momentum=1.0).double()
+
+def bn_first(batch):
+    return bn(batch.transpose(1, 2)).transpose(1, 2)[0, 0]
+
+def check(actual, expected):
+    torch.testing.assert_close(actual, x.new_tensor(expected), atol=1e-12, rtol=0)
+
+ln_train = torch.stack((ln(x)[0, 0], ln(future)[0, 0]))
+ln.eval()
+ln_eval = torch.stack((ln(x)[0, 0], ln(future)[0, 0]))
+
+bn_original = bn_first(x)
+check(bn.running_mean, [2, 4])
+check(bn.running_var, [4 / 3, 4 / 3])
+bn.eval()
+bn_eval = torch.stack((bn_first(x), bn_first(future)))
+bn.train()
+bn_train = torch.stack((bn_original, bn_first(future)))
+
+u = 1 / sqrt(1 + eps)
+v = 2 / sqrt(2 + eps)
+frozen = 1 / sqrt(4 / 3 + eps)
+for label, actual, expected in (
+    ("LayerNorm train", ln_train, [[-u, u]] * 2),
+    ("LayerNorm eval", ln_eval, [[-u, u]] * 2),
+    ("BatchNorm train", bn_train, [[-u, -u], [-v, -v]]),
+    ("BatchNorm eval", bn_eval, [[-frozen, -frozen]] * 2),
+):
+    check(actual, expected)
+    print(label, actual.tolist())
+`)+
+  '<p>查看 PyTorch 2.5.1 源码中的 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/normalization.py#L96-L121">LayerNorm 统计轴</a>与 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/batchnorm.py#L260-L284">BatchNorm1d 训练和评估统计</a>。</p></details>',
 
   p('前馈网络（Feed-Forward Network，FFN）是在各位置重复应用同一个函数的特征变换。注意力已经把合法上下文汇入H₁，第二次归一化得到N₂(H₁)后，FFN再组合该位置的特征。它的权重在位置间共享，当前这一步没有沿时间轴读取其他行。',
   '先看普通两层FFN。把N₂(H₁)中某一位置写为行向量x，宽度D=8；第一张权重W₁形状[D,F]=[8,12]，偏置b₁宽12；第二张W₂形状[F,D]=[12,8]，偏置b₂宽8。φ表示逐元素非线性激活，例如ReLU把负数置零、保留非负数。')+
