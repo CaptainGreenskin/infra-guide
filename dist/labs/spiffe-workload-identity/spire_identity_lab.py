@@ -48,6 +48,16 @@ def command(*args, cwd=None, env=None, timeout=15):
     return result.stdout.strip()
 
 
+def release_version(binary):
+    # SPIRE's CLI emits -version through its help writer, which may be stderr.
+    result = subprocess.run((binary, "-version"), stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, timeout=15, text=True, check=False)
+    reported = result.stdout.strip()
+    require(result.returncode == 0 and reported in (VERSION, f"v{VERSION}"),
+            f"unexpected {binary.name} release version: {reported!r} (exit {result.returncode})")
+    return reported.removeprefix("v")
+
+
 def wait_for(description, predicate, processes=(), seconds=40):
     deadline = time.monotonic() + seconds
     while time.monotonic() < deadline:
@@ -176,10 +186,7 @@ def verify_case(ready, denied, accepted, unregistered, before, after_denied, eff
 
 def execute(archive, scratch, stopped, redactions):
     spire_server, spire_agent = unpack_binaries(archive, scratch)
-    server_version = command(spire_server, "-version")
-    agent_version = command(spire_agent, "-version")
-    require(all(re.search(r"\b" + re.escape(VERSION) + r"\b", version) for version in (server_version, agent_version)),
-            "unexpected SPIRE executable version")
+    server_version, agent_version = map(release_version, (spire_server, spire_agent))
     binary = scratch / "workload"
     go_env = {**os.environ, "CGO_ENABLED": "0", "GOTOOLCHAIN": "local", "GOWORK": "off", "GOFLAGS": ""}
     command("go", "build", "-mod=readonly", "-trimpath", "-buildvcs=false", "-o", binary, ".",
