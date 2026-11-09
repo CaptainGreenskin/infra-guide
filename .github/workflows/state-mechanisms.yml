@@ -1,38 +1,29 @@
-name: Observe quorum and database replication mechanisms
+name: Observe native InnoDB plans, waits and deadlocks
 on:
   workflow_dispatch:
   push:
-    branches: ['content/coordinated-state-*']
+    branches: [evidence/innodb-20261109]
     paths:
-      - 'dist/labs/etcd-consensus/etcd_lab.py'
-      - 'dist/labs/mysql-replication/replication_lab.py'
-      - '.github/workflows/state-mechanisms.yml'
+      - dist/labs/innodb/innodb_lab.py
+      - .github/workflows/state-mechanisms.yml
 permissions:
   contents: read
 jobs:
-  quorum:
-    runs-on: ubuntu-latest
+  innodb:
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - name: Observe actual three-member quorum, partition and snapshot restore
-        run: python3 -B dist/labs/etcd-consensus/etcd_lab.py --output native-results/etcd.json
+      - name: Run the owned MySQL container and verify its result
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p native-results
+          python3 -B dist/labs/innodb/innodb_lab.py --json native-results/validation.json | tee native-results/run.log
+          python3 -B dist/labs/innodb/innodb_lab.py --check-record native-results/validation.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: state-etcd-results
+          name: native-innodb
           path: native-results/
-          retention-days: 1
-  replication:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v6
-      - name: Observe actual InnoDB read views, replication gap and planned switch
-        run: python3 -B dist/labs/mysql-replication/replication_lab.py --output native-results/mysql.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: state-mysql-results
-          path: native-results/
-          retention-days: 1
+          retention-days: 7
