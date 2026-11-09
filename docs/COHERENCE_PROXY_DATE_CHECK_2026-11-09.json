@@ -1,0 +1,32 @@
+{
+  "reviewed_on": "2026-11-09",
+  "base_source_commit": "a2695022aab4b30f3af87539e3feba09549c3c4b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FOCUSED_CONCEPT_NATIVE_2026-11-09.json": "008a31fac3973c327f01ca9d27fb8bd310a60c976e98c4801e83db680fbe1bcc"
+  },
+  "source_revisions": {
+    "scripts/check-cloud-proxy.cjs": {
+      "previous_sha256": "4ec697e2c3a6a307ee9510a6fd49e475bdc5230c81444061ce50663305129dfe",
+      "reviewed_sha256": "1898da44ca794f806ec2bafd5b6bc73b76108aff9ea4f4244bb64379d3f7ca9d",
+      "scope": "Validate the internal chapter date against its latest reviewed body revision while preserving every proxy experiment assertion."
+    }
+  },
+  "article_sections": {},
+  "review_scope": {
+    "body_baseline_commit": "a2695022aab4b30f3af87539e3feba09549c3c4b",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "focused_concept_targets": 100,
+    "chapter_concept_links": 78,
+    "field_practice_count": 14,
+    "field_practice_result_count": 14,
+    "role_routes": 7,
+    "role_chapter_positions": 114,
+    "experiment_packs": 85,
+    "learning_tasks": 127
+  }
+}

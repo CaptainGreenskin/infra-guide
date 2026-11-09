@@ -128,7 +128,10 @@ const article = JSON.parse(JSON.stringify(vm.runInContext('articleById("vpc-netw
 const baseline = require('./content-at-commit.cjs').evaluate('b06a0633d54a0ecfad39e6e3d55850a0caa0d36e', 'articleById("vpc-network")');
 assert.equal(article.sections.length, 7);
 assert.deepEqual(article.sections.map(s => s[0]), baseline.sections.map(s => s[0]));
-assert.equal(article.updated, '2026.11.08');
+const reviewedBodies = JSON.parse(read('docs/POST_WINDOW_BODY_REVIEWS.json')).revisions;
+const latestBodyReview = reviewedBodies.findLast(row => row.id === article.id && row.previous_content_sha256 !== row.reviewed_content_sha256);
+const publicationDate = (latestBodyReview?.reviewed_at || '2026-11-08').slice(0, 10).replaceAll('-', '.');
+assert.equal(article.updated, publicationDate, 'VPC date must match the reviewed body revision');
 assert.equal(article.minutes, 45);
 const oldBody = baseline.sections.map(s => s[1]).join('\n');
 const body = article.sections.map(s => s[1]).join('\n');
