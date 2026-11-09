@@ -132,16 +132,19 @@ class Cluster:
         return {'attempted': True, 'owned_nodes_removed': True}
 
 
-def pinned_manifest():
-    for attempt in range(3):
-        try:
-            with urlopen(MANIFEST_URL, timeout=45) as response:
-                raw = response.read(32 * 1024 * 1024)
-            break
-        except OSError:
-            if attempt == 2:
-                raise
-            time.sleep(2 ** attempt)
+def pinned_manifest(local_path):
+    if local_path:
+        raw = local_path.read_bytes()
+    else:
+        for attempt in range(3):
+            try:
+                with urlopen(MANIFEST_URL, timeout=45) as response:
+                    raw = response.read(32 * 1024 * 1024)
+                break
+            except OSError:
+                if attempt == 2:
+                    raise
+                time.sleep(2 ** attempt)
     require(hashlib.sha256(raw).hexdigest() == MANIFEST_SHA, 'upstream Kueue manifest SHA256 mismatch')
     manifest = raw.decode('utf-8')
     image = 'image: ' + CONTROLLER_IMAGE
@@ -424,9 +427,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, help='also save the native or failed run record')
     parser.add_argument('--check-record', type=Path, help='check a saved record without Docker or network')
+    parser.add_argument('--manifest', type=Path, help='use a downloaded release manifest with the same pinned SHA256')
     args = parser.parse_args()
     if args.check_record:
-        if args.output:
+        if args.output or args.manifest:
             parser.error('use --check-record alone')
         verify(json.loads(args.check_record.read_text(encoding='utf-8')))
         print('PASS native Kueue quota, Kubernetes placement, two indexed outputs and owned cleanup')
@@ -439,7 +443,7 @@ def main():
         report['cluster'] = cluster.name
         try:
             report['toolchain'] = toolchain()
-            run(cluster, report, pinned_manifest())
+            run(cluster, report, pinned_manifest(args.manifest))
             report['status'] = 'passed'
         except (Exception, KeyboardInterrupt) as exc:
             report['error'] = str(exc) or type(exc).__name__
