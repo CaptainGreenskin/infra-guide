@@ -1,0 +1,43 @@
+name: Verify native Qdrant retrieval
+on:
+  push:
+    branches: [evidence/qdrant-retrieval-20261109]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qdrant:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify the official Qdrant release archive
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          asset=qdrant-x86_64-unknown-linux-musl.tar.gz
+          archive="$RUNNER_TEMP/$asset"
+          if ! curl --fail --location --retry 2 --max-time 120 -o "$archive" "https://github.com/qdrant/qdrant/releases/download/v1.19.1/$asset"; then
+            gh release download v1.19.1 --repo qdrant/qdrant --pattern "$asset" --dir "$RUNNER_TEMP" --clobber
+          fi
+          printf '%s  %s\n' 70a40529e2ebe0a2787d574d3a2e28437cfe94f26f24fa419f6ac57b4ae817c9 "$archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/qdrant-native"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/qdrant-native"
+          test -x "$RUNNER_TEMP/qdrant-native/qdrant"
+          "$RUNNER_TEMP/qdrant-native/qdrant" --version
+      - name: Run native vector queries and source authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir native-results
+          git rev-parse HEAD > native-results/source-commit.txt
+          python3 -B dist/labs/qdrant-retrieval/qdrant_retrieval.py \
+            --qdrant "$RUNNER_TEMP/qdrant-native/qdrant" --output native-results/record
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-qdrant-retrieval
+          path: native-results/
+          retention-days: 7

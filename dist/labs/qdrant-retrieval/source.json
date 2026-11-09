@@ -1,0 +1,18 @@
+{
+  "query": [1, 0],
+  "tenant": "A",
+  "required_evidence": 2,
+  "sources": [
+    {"id": 701, "tenant": "B", "eligible": true, "version": 1, "amount": 70, "vector": [0.99, 0.1]},
+    {"id": 702, "tenant": "B", "eligible": true, "version": 1, "amount": 71, "vector": [0.97, 0.2]},
+    {"id": 105, "tenant": "A", "eligible": false, "version": 1, "amount": 50, "vector": [0.95, 0.3]},
+    {"id": 101, "tenant": "A", "eligible": true, "version": 1, "amount": 10, "vector": [0.9, 0.4]},
+    {"id": 102, "tenant": "A", "eligible": true, "version": 1, "amount": 27, "vector": [0.85, 0.5]},
+    {"id": 103, "tenant": "A", "eligible": true, "version": 1, "amount": 41, "vector": [0.8, 0.6]},
+    {"id": 104, "tenant": "A", "eligible": true, "version": 1, "amount": 7, "vector": [0.7, 0.7]}
+  ],
+  "authority_change": {
+    "revoke": 102,
+    "revise": {"id": 103, "version": 2, "amount": 42, "vector": [0.88, 0.6]}
+  }
+}
