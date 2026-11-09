@@ -1,16 +1,16 @@
-name: Native Kubernetes Service and rollout
+name: Native Kubernetes CSI provisioning, restart and reclaim
 on:
   push:
-    branches: [content/native-identity-20261108]
+    branches: [evidence/csi-storage-20261109]
     paths:
-      - dist/labs/kubernetes-service/service_lab.py
+      - dist/labs/csi-storage/csi_storage_lab.py
       - .github/workflows/kubernetes-service.yml
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  service:
-    runs-on: ubuntu-latest
+  csi:
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -29,11 +29,15 @@ jobs:
           python3 -c 'from pathlib import Path; import hashlib; assert hashlib.sha256(Path("kubectl").read_bytes()).hexdigest()==Path("kubectl.sha256").read_text().strip()'
           chmod +x kind kubectl
           echo "$RUNNER_TEMP/guide-service-tools" >> "$GITHUB_PATH"
-      - name: Run owned cluster probes, ClusterIP requests, rollout and undo
-        run: python3 -B dist/labs/kubernetes-service/service_lab.py --output native-results/service.json
+      - name: Observe CSI actions, read mounted data and verify owned cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p native-results
+          python3 -B dist/labs/csi-storage/csi_storage_lab.py --writer dist/labs/storage-quant-context/volume_writer.py --output native-results/csi-storage.json 2>&1 | tee native-results/run.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-kubernetes-service
-          path: native-results/service.json
-          retention-days: 1
+          name: native-csi-storage
+          path: native-results/
+          retention-days: 7
