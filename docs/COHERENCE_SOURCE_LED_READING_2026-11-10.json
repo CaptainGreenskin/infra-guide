@@ -1,0 +1,70 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "f38154a938ec1f02649a7989d9d4fe04a171072d",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NOTIFICATION_PIPELINE_2026-11-10.json": "227b5037090e6108ea68760a9653a8625419f9b42a752a5efc8e636932205503"
+  },
+  "source_revisions": {
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "d11142a15fb3ababb7538081380cf4d9131679bcaefa1b8032357143b9d24f9d",
+      "reviewed_sha256": "b1678f9240764088884188fa4e013d3bf0922b694652c1bca197aa9e2f9711de",
+      "scope": "Start with a two-row tensor, read a parent and child profiler event, then place the captured Python function beside the observed graph break."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "88fc7a2a72ed0a2184d3188f69962092e653e9af1eb3d8f4355c9aa5f6674641",
+      "reviewed_sha256": "5a8c44d098dfe3e3afb4ed33b9b490ea10a8f45c3f4ea952dec5927eeb9bd521",
+      "scope": "Trace one reports request through DNS, Service, Pod and TLS, then compare a separate native Service request across readiness changes."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "724c3e9b0ffc05bb0ec4a1a452771469af32e532c025dddc2e4609c57917ac44",
+      "reviewed_sha256": "236489ea518f466d02779ec75a4e381e4b9608fa8c0a0090498b337614cc7e71",
+      "scope": "Follow the persisted report of 42 into an interrupted approval, restart the same thread and inspect the receiver transaction."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "557e0d0a8d6cbb2109e5bb1bb87635004f0b00a853ea44dd4db3495defc1c090",
+      "reviewed_sha256": "5f57d0f01ca62037a47163f17e41a22c3fc24b85892b5d90a96e51b4cd2826b4",
+      "scope": "Fingerprint current article sources."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "38901c51fc3d98da4ea85bd477f216b7290d4d1e32d6d0257f79d4edb4f29e66",
+      "reviewed_sha256": "f5371163cee2ad45a5bfeaa842b3a5cdb82714cc898715d88c8ebe4dbb5a6af5",
+      "scope": "Bind the new article and search assets."
+    },
+    "scripts/check-torch-compile-graph.cjs": {
+      "previous_sha256": "43013abf6f33b10fa08e7f2d5e6a1e8a50b66f4f5d3f6c5a298abbedf7c8f81b",
+      "reviewed_sha256": "686d905e24454f07e2ed619fb2895a2b744255e955514168528e1c157a71207e",
+      "scope": "Check that the first code example matches the replayed failing function."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "7f23890f381b4cae4f34f64894c9bd45d8108f522d395c663a4aecfb76be0cb0",
+      "reviewed_sha256": "6b1a33ffdf7b0d50aa7d1e7e198d7505b609e08aa87ca17b84d23d6802f0a3af",
+      "scope": "Append the Cloud and Agent prose revisions."
+    },
+    "docs/CONTENT_SOURCE_LED_READING_2026-11-10.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ee4a4a2f66a0e056240967e94d881a19e0857a5c71ddeabb08d9919be10b87fc",
+      "scope": "Append the AI operator lesson prose revision."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "5918a64afa9d5d6a7d4906ab8fb4cf9056bed456bd516a4c7c556b48a91b9b71",
+      "reviewed_sha256": "498f0348519177212f8938f6c5375616db68099e173458054b6bd878ae9b0aa2",
+      "scope": "Register the operator lesson revision."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "f38154a938ec1f02649a7989d9d4fe04a171072d",
+    "chapters": 78,
+    "changed_bodies": [
+      "operator-profiling",
+      "k8s-networking",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "operator-profiling": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -17,9 +17,9 @@
   cudaCoreCompiler:['NVIDIA · CUDA 12.9.1 编译与链接','https://docs.nvidia.com/cuda/archive/12.9.1/cuda-compiler-driver-nvcc/index.html']
  });
  const body=[
- p('算子是对输入执行一种明确计算的操作，例如逐行求和、softmax 或矩阵乘法。内核（kernel）是执行该计算的一种底层实现。先写明输入、输出和边界，再检查程序是否算对，最后讨论速度。框架里的一行表达式可能调用多个内核。',
- '张量用形状描述各条轴的长度，用数据类型描述每个数如何表示。布局描述元素在内存里的排列；连续行主序把一行里的相邻列放在相邻地址。A 的形状为 [M,K] 时，A[i,t] 的元素偏移为 i×K+t。步长表示沿一条轴前进一步所跨的元素或字节数，必须注明单位。',
- 'CPU 是通用处理器；GPU 是适合大量并行计算的处理器；CUDA 是 NVIDIA 提供的 GPU 编程平台。本章先在 CPU 上运行用 C 语言写的 float64（每数 8 字节）程序，再把相同的计算规则写成 GPU 上的 float32（每数 4 字节）CUDA 内核。两组程序的数据类型和固定输入不同，各自对照独立参考；不把它们的时间放在一起排名。转置视图可能只改变步长，这里的接口只接收连续数组。')+
+ p('对一个 [2,3] 的张量逐行求和，会得到两个数。这个“逐行求和”是算子，负责规定怎么算。CPU 可以用一个循环求完一行，GPU 可以让几个线程分担同一行再合并。实际执行计算的底层程序叫内核（kernel）。框架中的一行表达式也可能调用多个内核。',
+ '形状 [2,3] 表示两行三列。若采用连续行主序，内存先放第一行三项，再放第二行三项。从 A[0,0] 到 A[1,0] 跨 3 个元素，行步长就是 3。若用每项 4 字节的 float32，这一步跨 12 字节。转置后的视图可以只改步长；本章的内核接收连续数组。',
+ '本章用 C 在 CPU 上算 float64（每项 8 字节），再用 NVIDIA 的 CUDA 在 GPU 上实现 float32 版（每项 4 字节）。各自用固定输入校验输出。后面比较时间时，要用同一设备、形状和类型。')+
  table(['算子','本章 CUDA 输入与输出','接口前提'],[
   ['逐行求和','[R,C] → [R]','R、C 为正；每行归约成一个数'],
   ['逐行 softmax','[R,C] → [R,C]','每行归一化，输入有限，不含掩码'],
@@ -65,8 +65,9 @@
   ['设备性能与轨迹','目标设备上实际内核与搬运指标','需正确性通过后单独采集']
  ]),
 
- p('Profiler 记录执行事件。原 PyTorch CPU 程序做 [32,64]×[64,32] 线性映射，再逐行 softmax 与求和；固定 1 个 CPU 线程，预热 3 次后记录 5 次。lesson_linear、lesson_softmax、lesson_reduce 三个命名区间共 15 条。')+keep(old[6])+
- p('inclusive_cpu_us 包含事件及嵌套工作，self_cpu_us 分开本事件自身与子事件，不能把父子总时间再次相加。区间之间还可能有 Python、验证与记录器工作；这条轨迹没有 GPU 活动。')+
+ p('代码用 <code>lesson_linear</code> 圈住 <code>x @ w</code>，相乘的张量形状是 [32,64] 和 [64,32]。在 CPU 轨迹里展开这个区间，可以看到里面的 <code>aten::matmul</code>。Profiler（性能分析器）把外层区间和内层算子都记了下来。')+keep(old[6])+
+ p('5 次 <code>lesson_linear</code> 一共是 365.626 µs（<code>inclusive_cpu_us</code>），其中 104.375 µs 已经算在它里面，是内层 <code>aten::matmul</code> 的总时间。扣掉内层事件，外层自身是 261.251 µs（<code>self_cpu_us</code>）。相加会把矩阵乘法多算一遍。',
+ '原程序用 1 个 CPU 线程，预热 3 次后记录 5 次。每次给矩阵乘法、逐行 softmax 和求和各加一个标签，轨迹里共 15 个这样的区间。这些数字含记录开销，适合练习读事件，单独计时请用上一节的方法。')+
  '<p><a href="/labs/operators-routing/cpu-trace.json" download>下载本次真实CPU Chrome Trace格式轨迹 ↓</a></p>'+
  fold('目标 GPU 选做：把一条真实内核接到 Nsight',
  p('先完成下一节全部正确性测试，再使用 --profile-gemm 选择单个 512×512×512 乘法。这个开关仅保留一个较大 GEMM，不是 13 组验收。Nsight Systems 用来看主机发起、拷贝与设备计算的时序；Nsight Compute 用于选定内核的访存、占用和指令等指标。采集可能回放工作并增加开销。')+
@@ -99,7 +100,6 @@
   ['尾块能直接 return 吗','需要屏障的块中不能这样退出；无效装载补零，输出再判界'],
   ['编译通过证明什么','语法、设备编译与主机链接；数值正确和性能仍要真实设备记录']
  ])+
- p('读完应能把一个输出映射到输入下标、参与线程和共享数据，解释每道屏障在保护哪次读写。先用小输入及独立参考抓错，再固定工作量做性能比较。可把这些复用与搬运方法接到注意力，再看专家路由怎样改变计算分发。')+
  '<p>'+linkTo('flash-attention-io','继续理解注意力怎样减少中间搬运')+linkTo('moe-routing','连接专家路由与计算分发')+'</p>'
  ];
  const before=old.join(''),after=body.join(''),now=blocks(after);let at=0;
@@ -114,31 +114,32 @@
  a.refs=[...new Set([...a.refs,'cudaCoreGuide','cudaCoreCompiler'])];a.updated='2026.11.08';
 
  a.sections[6][1]+=
- '<h3 id="torch-compile-graph-break">实战 · 一行 .item() 怎样切开计算图</h3>'+
- p('先看一段普通的 PyTorch 代码要做什么。把每项输入加 1。新数组的和大于 0，就把每项乘 2，否则每项减 2。比如输入 [−1,1,2]，加 1 得到 [0,2,3]，和为 5，因此输出 [0,4,6]。')+
- table(['输入','加 1 后求和','手算输出'],[
+ '<h3 id="torch-compile-graph-break">一行 .item() 怎样切开计算图</h3>'+
+ code('触发断图的函数','PYTHON',
+ 'def python_branch(x):\n    shifted = x + 1\n    if shifted.sum().item() > 0:\n        return shifted * 2\n    return shifted - 2')+
+ p('给它输入 <code>[-1, 1, 2]</code>，输出是 <code>[0, 4, 6]</code>。用 <code>torch.compile</code> 运行，输出一样，用来记录运算的后端却收到了两张图。第一张图只有加法和求和，第二张图只有乘法。分界就在第三行。')+
+ p('TorchDynamo 是 <code>torch.compile</code> 里负责记录运算的一层。它把张量运算和数据依赖记成计算图，交给后端。本次实验关闭了标量捕获。<code>shifted.sum()</code> 能记下来，<code>.item()</code> 把结果取成 Python 数值 <code>5.0</code> 时，记录停下。Python 接着判断 <code>5.0 &gt; 0</code>，Dynamo 再把选中的乘法记成第二张图。这种从函数中间切开、稍后再继续记录的情况叫断图（graph break）。')+
+ p('本实验的后端只记录收到的运算，再执行它们。设 <code>fullgraph=True</code>，要求整个函数放进一张图。同一个输入会在 <code>Tensor.item</code> 报错，后端一张图也收不到。')+
+ p('本例只需在两个张量结果里选一个。让比较留在张量里，用 <code>torch.where</code> 根据条件选择结果。')+
+ code('用两行张量运算替换函数体','PYTHON',
+ 'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
+ trainingFigure('torch-compile-graph-break','同一个正例，.item() 写法先记加法和求和，再记乘法。where 把这些运算和选择一起记进一张图。')+
+ p('传给 <code>where</code> 的两边会先求值。本例只是多算一条简单表达式。若分支要写文件、改状态，或只有在特定输入下才有效，得保留只执行一边的语义。')+
+ table(['输入','加 1 后求和','两种写法的输出'],[
   ['[−1,1,2]','5，乘 2','[0,4,6]'],
   ['[−4,−2,0]','−3，减 2','[−5,−3,−1]'],
   ['[−2,−1,0]','0，减 2','[−3,−2,−1]']
  ])+
- p('现在用 <code>torch.compile</code> 包住这段函数。TorchDynamo 负责记录哪些张量运算可以一起交给后端处理。这份运算清单连同数据的传递关系，就是这里的计算图。先看它能不能把上述步骤放进同一张图。')+
- p('<code>shifted.sum()</code> 的结果是一个只含单个数的张量。写 <code>if shifted.sum().item() &gt; 0</code> 时，<code>.item()</code> 先把它取成 Python 数值，再由 Python 决定乘 2 还是减 2。在本实验的配置下，记录到取数处就停了。先交出加法、求和那段图，回到 Python 判断，再记录选中的运算。这次停下来再继续，就是断图（graph break）。')+
- trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
- p('对这两个简单的张量表达式，可以让 <code>shifted.sum() &gt; 0</code> 继续是张量，再用 <code>torch.where</code> 在结果中选择。注意传入的两边都先求值。若原分支会写文件、更新状态，或未选分支对当前输入无效，就要保留条件执行的语义，不能直接换成 <code>where</code>。')+
- code('保留张量条件的写法','PYTHON',
- 'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
- table(['PyTorch 2.5.1 本机记录','实际捕获','逐项核对'],[
-  ['Python 标量，允许断图','正、负、零、再测正例，各新增 2、1、1、0 张图','第一次先捕获 add 和 sum，判断后再捕获乘法。负与零走同一减法，仍各捕获一次。'],
-  ['Python 标量，要求完整图','在 Tensor.item 报错，后端未收到图','错误出现在转换标量处。'],
-  ['张量条件，要求完整图','同形状四次调用只在第一次捕获，图包含 add、sum、gt、mul、sub、where','三个不同输入的输出都与手算一致。'],
-  ['张量条件，固定形状模式','长度 3 与长度 4 各捕获一次，重复形状复用','每次调用都能捕获完整图，换长度仍会重新捕获。']
- ])+
- p('表里的图数由记录后端统计。它收到一张 FX 图（PyTorch 表示运算的格式），就登记并执行其中的运算。设置 <code>fullgraph=True</code>，遇到必须回 Python 的位置就报错。长度从 3 改到 4 的实验则仍能记录完整的一张图，只是先前的图要求长度为 3，需要为新长度再记一张。这分别对应一次执行中间断开，以及下一次调用时旧图无法复用。')+
- p('原始记录还保留了未满足的复用条件。负例的 Python 标量与正例的 5 不同，零例又与 −3 和 5 都不同。张量版换长度时，记录显示第 0 轴期望长度 3、实际为 4。先确认失败条件，再决定保留图内张量条件、允许形状变化，还是给常用形状分别预热。')+
- p('下载后按包内说明安装锁定版本，运行 <code>python -B compile_graph.py --write-record replay.json</code>。在配有 C++ 编译器的环境加 <code>--inductor</code>，用 TorchInductor 将张量版降成 CPU 代码。保留实跑生成了一份 C++ 源文件和配套动态库，四次输出逐项通过，报告可核对二者的摘要。框架分别记录 2 个生成内核和 1 个生成的 C++ 向量化内核；这两个计数与前面提交的图数属于不同层级，设备发起次数和耗时需要另测。')+
+ p('按表中顺序跑三组，再跑一次正例。Python 写法各新增 2、1、1、0 张图。张量写法四次共用第一次捕获的图，里面依次有 add、sum、gt、mul、sub、where。两种写法的输出都和手算一致。')+
+ fold('换输入再跑：旧图为什么不能用？',
+ p('Dynamo 会检查旧图能否用于这次输入，检查的条件叫守卫（guard）。在 Python 写法里，和为 −3 的输入不满足正例留下的 <code>== 5.0</code>，零也不满足 <code>== −3.0</code>。负数和零都执行减法，但实验中各自捕获了一张新图。再输入正例时，原来的两张图都能用。',
+ '张量版固定 <code>dynamic=False</code> 后，输入从长度 3 换成 4，记录里写的是 <code>expected 3, actual 4</code>。这次仍可捕获一张完整图，只是为新长度编译了一次。再换回长度 3，就会用回原来的图。断图发生在一次调用中间，重编译发生在旧图的复用条件被打破时。'))+
  '<p class="practice-links"><a href="/labs/torch-compile-graph.zip" download>下载源码与记录 ↓</a> · <a href="/labs/torch-compile-graph/validation.json">查看捕获的图和对照结果</a></p>'+
+ p('按包内说明安装 PyTorch 2.5.1，再运行 <code>python -B compile_graph.py --write-record replay.json</code>。<code>new_graph_ids</code> 是本次新增的图，<code>executed_graph_ids</code> 是这次真正走过的图。再跑正例时，前者为空，后者仍是两张。')+
+ fold('选做：看看后端生成了什么',
+ p('有 C++ 编译器和 OpenMP 运行库时，可在命令后加 <code>--inductor</code>，让 TorchInductor 把张量图编译成 CPU 程序。本站的 CPU 记录包含一份 C++ 源文件及其动态库，四次输出均通过逐项比较。框架的两个计数分别是 2 个生成内核、1 个生成的 C++ 向量化内核。图数和内核数记的是不同对象。要判断提速多少，需另外计时。'))+
  '<p class="source-at"><a href="https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/compile/programming_model.graph_breaks_index.html">PyTorch 断图与严格捕获 ↗</a></p>';
- a.updated='2026.11.09';
+ a.updated='2026.11.10';
 
  a.sections[3][1]+=
  '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+

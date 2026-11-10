@@ -8541,9 +8541,9 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
   cudaCoreCompiler:['NVIDIA · CUDA 12.9.1 编译与链接','https://docs.nvidia.com/cuda/archive/12.9.1/cuda-compiler-driver-nvcc/index.html']
  });
  const body=[
- p('算子是对输入执行一种明确计算的操作，例如逐行求和、softmax 或矩阵乘法。内核（kernel）是执行该计算的一种底层实现。先写明输入、输出和边界，再检查程序是否算对，最后讨论速度。框架里的一行表达式可能调用多个内核。',
- '张量用形状描述各条轴的长度，用数据类型描述每个数如何表示。布局描述元素在内存里的排列；连续行主序把一行里的相邻列放在相邻地址。A 的形状为 [M,K] 时，A[i,t] 的元素偏移为 i×K+t。步长表示沿一条轴前进一步所跨的元素或字节数，必须注明单位。',
- 'CPU 是通用处理器；GPU 是适合大量并行计算的处理器；CUDA 是 NVIDIA 提供的 GPU 编程平台。本章先在 CPU 上运行用 C 语言写的 float64（每数 8 字节）程序，再把相同的计算规则写成 GPU 上的 float32（每数 4 字节）CUDA 内核。两组程序的数据类型和固定输入不同，各自对照独立参考；不把它们的时间放在一起排名。转置视图可能只改变步长，这里的接口只接收连续数组。')+
+ p('对一个 [2,3] 的张量逐行求和，会得到两个数。这个“逐行求和”是算子，负责规定怎么算。CPU 可以用一个循环求完一行，GPU 可以让几个线程分担同一行再合并。实际执行计算的底层程序叫内核（kernel）。框架中的一行表达式也可能调用多个内核。',
+ '形状 [2,3] 表示两行三列。若采用连续行主序，内存先放第一行三项，再放第二行三项。从 A[0,0] 到 A[1,0] 跨 3 个元素，行步长就是 3。若用每项 4 字节的 float32，这一步跨 12 字节。转置后的视图可以只改步长；本章的内核接收连续数组。',
+ '本章用 C 在 CPU 上算 float64（每项 8 字节），再用 NVIDIA 的 CUDA 在 GPU 上实现 float32 版（每项 4 字节）。各自用固定输入校验输出。后面比较时间时，要用同一设备、形状和类型。')+
  table(['算子','本章 CUDA 输入与输出','接口前提'],[
   ['逐行求和','[R,C] → [R]','R、C 为正；每行归约成一个数'],
   ['逐行 softmax','[R,C] → [R,C]','每行归一化，输入有限，不含掩码'],
@@ -8589,8 +8589,9 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
   ['设备性能与轨迹','目标设备上实际内核与搬运指标','需正确性通过后单独采集']
  ]),
 
- p('Profiler 记录执行事件。原 PyTorch CPU 程序做 [32,64]×[64,32] 线性映射，再逐行 softmax 与求和；固定 1 个 CPU 线程，预热 3 次后记录 5 次。lesson_linear、lesson_softmax、lesson_reduce 三个命名区间共 15 条。')+keep(old[6])+
- p('inclusive_cpu_us 包含事件及嵌套工作，self_cpu_us 分开本事件自身与子事件，不能把父子总时间再次相加。区间之间还可能有 Python、验证与记录器工作；这条轨迹没有 GPU 活动。')+
+ p('代码用 <code>lesson_linear</code> 圈住 <code>x @ w</code>，相乘的张量形状是 [32,64] 和 [64,32]。在 CPU 轨迹里展开这个区间，可以看到里面的 <code>aten::matmul</code>。Profiler（性能分析器）把外层区间和内层算子都记了下来。')+keep(old[6])+
+ p('5 次 <code>lesson_linear</code> 一共是 365.626 µs（<code>inclusive_cpu_us</code>），其中 104.375 µs 已经算在它里面，是内层 <code>aten::matmul</code> 的总时间。扣掉内层事件，外层自身是 261.251 µs（<code>self_cpu_us</code>）。相加会把矩阵乘法多算一遍。',
+ '原程序用 1 个 CPU 线程，预热 3 次后记录 5 次。每次给矩阵乘法、逐行 softmax 和求和各加一个标签，轨迹里共 15 个这样的区间。这些数字含记录开销，适合练习读事件，单独计时请用上一节的方法。')+
  '<p><a href="/labs/operators-routing/cpu-trace.json" download>下载本次真实CPU Chrome Trace格式轨迹 ↓</a></p>'+
  fold('目标 GPU 选做：把一条真实内核接到 Nsight',
  p('先完成下一节全部正确性测试，再使用 --profile-gemm 选择单个 512×512×512 乘法。这个开关仅保留一个较大 GEMM，不是 13 组验收。Nsight Systems 用来看主机发起、拷贝与设备计算的时序；Nsight Compute 用于选定内核的访存、占用和指令等指标。采集可能回放工作并增加开销。')+
@@ -8623,7 +8624,6 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
   ['尾块能直接 return 吗','需要屏障的块中不能这样退出；无效装载补零，输出再判界'],
   ['编译通过证明什么','语法、设备编译与主机链接；数值正确和性能仍要真实设备记录']
  ])+
- p('读完应能把一个输出映射到输入下标、参与线程和共享数据，解释每道屏障在保护哪次读写。先用小输入及独立参考抓错，再固定工作量做性能比较。可把这些复用与搬运方法接到注意力，再看专家路由怎样改变计算分发。')+
  '<p>'+linkTo('flash-attention-io','继续理解注意力怎样减少中间搬运')+linkTo('moe-routing','连接专家路由与计算分发')+'</p>'
  ];
  const before=old.join(''),after=body.join(''),now=blocks(after);let at=0;
@@ -8638,31 +8638,32 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  a.refs=[...new Set([...a.refs,'cudaCoreGuide','cudaCoreCompiler'])];a.updated='2026.11.08';
 
  a.sections[6][1]+=
- '<h3 id="torch-compile-graph-break">实战 · 一行 .item() 怎样切开计算图</h3>'+
- p('先看一段普通的 PyTorch 代码要做什么。把每项输入加 1。新数组的和大于 0，就把每项乘 2，否则每项减 2。比如输入 [−1,1,2]，加 1 得到 [0,2,3]，和为 5，因此输出 [0,4,6]。')+
- table(['输入','加 1 后求和','手算输出'],[
+ '<h3 id="torch-compile-graph-break">一行 .item() 怎样切开计算图</h3>'+
+ code('触发断图的函数','PYTHON',
+ 'def python_branch(x):\n    shifted = x + 1\n    if shifted.sum().item() > 0:\n        return shifted * 2\n    return shifted - 2')+
+ p('给它输入 <code>[-1, 1, 2]</code>，输出是 <code>[0, 4, 6]</code>。用 <code>torch.compile</code> 运行，输出一样，用来记录运算的后端却收到了两张图。第一张图只有加法和求和，第二张图只有乘法。分界就在第三行。')+
+ p('TorchDynamo 是 <code>torch.compile</code> 里负责记录运算的一层。它把张量运算和数据依赖记成计算图，交给后端。本次实验关闭了标量捕获。<code>shifted.sum()</code> 能记下来，<code>.item()</code> 把结果取成 Python 数值 <code>5.0</code> 时，记录停下。Python 接着判断 <code>5.0 &gt; 0</code>，Dynamo 再把选中的乘法记成第二张图。这种从函数中间切开、稍后再继续记录的情况叫断图（graph break）。')+
+ p('本实验的后端只记录收到的运算，再执行它们。设 <code>fullgraph=True</code>，要求整个函数放进一张图。同一个输入会在 <code>Tensor.item</code> 报错，后端一张图也收不到。')+
+ p('本例只需在两个张量结果里选一个。让比较留在张量里，用 <code>torch.where</code> 根据条件选择结果。')+
+ code('用两行张量运算替换函数体','PYTHON',
+ 'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
+ trainingFigure('torch-compile-graph-break','同一个正例，.item() 写法先记加法和求和，再记乘法。where 把这些运算和选择一起记进一张图。')+
+ p('传给 <code>where</code> 的两边会先求值。本例只是多算一条简单表达式。若分支要写文件、改状态，或只有在特定输入下才有效，得保留只执行一边的语义。')+
+ table(['输入','加 1 后求和','两种写法的输出'],[
   ['[−1,1,2]','5，乘 2','[0,4,6]'],
   ['[−4,−2,0]','−3，减 2','[−5,−3,−1]'],
   ['[−2,−1,0]','0，减 2','[−3,−2,−1]']
  ])+
- p('现在用 <code>torch.compile</code> 包住这段函数。TorchDynamo 负责记录哪些张量运算可以一起交给后端处理。这份运算清单连同数据的传递关系，就是这里的计算图。先看它能不能把上述步骤放进同一张图。')+
- p('<code>shifted.sum()</code> 的结果是一个只含单个数的张量。写 <code>if shifted.sum().item() &gt; 0</code> 时，<code>.item()</code> 先把它取成 Python 数值，再由 Python 决定乘 2 还是减 2。在本实验的配置下，记录到取数处就停了。先交出加法、求和那段图，回到 Python 判断，再记录选中的运算。这次停下来再继续，就是断图（graph break）。')+
- trainingFigure('torch-compile-graph-break','取出 Python 标量会改变可捕获的边界。张量条件可保留在图内；输入形状变化则可能另行触发重编译。')+
- p('对这两个简单的张量表达式，可以让 <code>shifted.sum() &gt; 0</code> 继续是张量，再用 <code>torch.where</code> 在结果中选择。注意传入的两边都先求值。若原分支会写文件、更新状态，或未选分支对当前输入无效，就要保留条件执行的语义，不能直接换成 <code>where</code>。')+
- code('保留张量条件的写法','PYTHON',
- 'shifted = x + 1\nreturn torch.where(shifted.sum() > 0, shifted * 2, shifted - 2)')+
- table(['PyTorch 2.5.1 本机记录','实际捕获','逐项核对'],[
-  ['Python 标量，允许断图','正、负、零、再测正例，各新增 2、1、1、0 张图','第一次先捕获 add 和 sum，判断后再捕获乘法。负与零走同一减法，仍各捕获一次。'],
-  ['Python 标量，要求完整图','在 Tensor.item 报错，后端未收到图','错误出现在转换标量处。'],
-  ['张量条件，要求完整图','同形状四次调用只在第一次捕获，图包含 add、sum、gt、mul、sub、where','三个不同输入的输出都与手算一致。'],
-  ['张量条件，固定形状模式','长度 3 与长度 4 各捕获一次，重复形状复用','每次调用都能捕获完整图，换长度仍会重新捕获。']
- ])+
- p('表里的图数由记录后端统计。它收到一张 FX 图（PyTorch 表示运算的格式），就登记并执行其中的运算。设置 <code>fullgraph=True</code>，遇到必须回 Python 的位置就报错。长度从 3 改到 4 的实验则仍能记录完整的一张图，只是先前的图要求长度为 3，需要为新长度再记一张。这分别对应一次执行中间断开，以及下一次调用时旧图无法复用。')+
- p('原始记录还保留了未满足的复用条件。负例的 Python 标量与正例的 5 不同，零例又与 −3 和 5 都不同。张量版换长度时，记录显示第 0 轴期望长度 3、实际为 4。先确认失败条件，再决定保留图内张量条件、允许形状变化，还是给常用形状分别预热。')+
- p('下载后按包内说明安装锁定版本，运行 <code>python -B compile_graph.py --write-record replay.json</code>。在配有 C++ 编译器的环境加 <code>--inductor</code>，用 TorchInductor 将张量版降成 CPU 代码。保留实跑生成了一份 C++ 源文件和配套动态库，四次输出逐项通过，报告可核对二者的摘要。框架分别记录 2 个生成内核和 1 个生成的 C++ 向量化内核；这两个计数与前面提交的图数属于不同层级，设备发起次数和耗时需要另测。')+
+ p('按表中顺序跑三组，再跑一次正例。Python 写法各新增 2、1、1、0 张图。张量写法四次共用第一次捕获的图，里面依次有 add、sum、gt、mul、sub、where。两种写法的输出都和手算一致。')+
+ fold('换输入再跑：旧图为什么不能用？',
+ p('Dynamo 会检查旧图能否用于这次输入，检查的条件叫守卫（guard）。在 Python 写法里，和为 −3 的输入不满足正例留下的 <code>== 5.0</code>，零也不满足 <code>== −3.0</code>。负数和零都执行减法，但实验中各自捕获了一张新图。再输入正例时，原来的两张图都能用。',
+ '张量版固定 <code>dynamic=False</code> 后，输入从长度 3 换成 4，记录里写的是 <code>expected 3, actual 4</code>。这次仍可捕获一张完整图，只是为新长度编译了一次。再换回长度 3，就会用回原来的图。断图发生在一次调用中间，重编译发生在旧图的复用条件被打破时。'))+
  '<p class="practice-links"><a href="/labs/torch-compile-graph.zip" download>下载源码与记录 ↓</a> · <a href="/labs/torch-compile-graph/validation.json">查看捕获的图和对照结果</a></p>'+
+ p('按包内说明安装 PyTorch 2.5.1，再运行 <code>python -B compile_graph.py --write-record replay.json</code>。<code>new_graph_ids</code> 是本次新增的图，<code>executed_graph_ids</code> 是这次真正走过的图。再跑正例时，前者为空，后者仍是两张。')+
+ fold('选做：看看后端生成了什么',
+ p('有 C++ 编译器和 OpenMP 运行库时，可在命令后加 <code>--inductor</code>，让 TorchInductor 把张量图编译成 CPU 程序。本站的 CPU 记录包含一份 C++ 源文件及其动态库，四次输出均通过逐项比较。框架的两个计数分别是 2 个生成内核、1 个生成的 C++ 向量化内核。图数和内核数记的是不同对象。要判断提速多少，需另外计时。'))+
  '<p class="source-at"><a href="https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/compile/programming_model.graph_breaks_index.html">PyTorch 断图与严格捕获 ↗</a></p>';
- a.updated='2026.11.09';
+ a.updated='2026.11.10';
 
  a.sections[3][1]+=
  '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+
@@ -9928,19 +9929,19 @@ optimizer.step()
  if(n1.length!==1||n2.length!==1||n3.length!==1||n5.length!==1||n6.length!==2)throw Error('Kubernetes network code layout changed');
  replace(network,[
  anchor('service-name-address-identity')+anchor('subsection-1-rccynd')+
- p('容器章解释进程怎样启动，工作负载与调度章使一组 Pod 出现并就绪。本章把客户端接到它们：Pod 是会被替换的实例，Service 按规则组织当前后端，提供稳定的访问入口，DNS 再让客户端通过名字发现入口。正常请求依次完成解析、连接、身份校验和应用处理，回包沿相应网络路径返回。',
- '先用 reports 服务作地址示意。DNS 名字帮助发现位置，IP 与端口定位传输目标，端点集合记录当前后端，TLS 身份用于确认对端是谁。四者通过配置关联：同一个稳定名字可以在不同时间对应不同后端，客户端仍应验证约定的服务身份。')+
+ p('集群里的客户端要取一份报表。在这组示意地址里，DNS 把 <code>reports.apps.svc.cluster.local</code> 解析为 <code>10.96.0.20</code>。这个虚拟 IP 是 Service 提供的固定入口。客户端向它的 443 端口建连，转发规则把连接送到运行应用的一个 Pod，本次选中的是 <code>10.42.2.8:8443</code>。',
+ 'Pod 被替换时，后端列表会更新。Service 仍提供原来的名字和入口，客户端也仍按约定的名字验证 TLS 身份。校验通过后，应用处理请求，响应再沿网络路径回到客户端。')+
  table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
  figures(n[0]).join('')+
- p('普通 ClusterIP Service 的 DNS 地址记录通常指向其虚拟 IP。无头服务 headless（clusterIP: None）可让名字解析到后端地址集合；ExternalName 则提供指向另一名字的 CNAME 别名。解析回答“这次获得了什么地址”，后续连接与业务仍沿各自路径执行，DNS 缓存和连接池也各有生命周期。',
- '证书 SAN 是证书声明的适用名字。TLS 客户端使用 server_hostname 指定校验名，适用时还在 SNI 中发送该名字，帮助服务端选择证书；HTTP Host 或 HTTP/2 的 :authority 决定应用路由。证书链可信、名字匹配和资源存在逐项成立，请求才到达目标服务。入口代理若终止 TLS，入口到后端便是另一段连接，使用自己的传输与信任配置。'),
+ p('普通 ClusterIP Service 像图中这样，DNS 地址记录通常指向它的虚拟 IP。无头服务（headless，<code>clusterIP: None</code>）可以直接返回后端地址，ExternalName 则返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
+ '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。'),
 
  anchor('subsection-2-8a7h3t')+
- p('Service 的 selector 是选择后端 Pod 的标签条件。控制器观察匹配 Pod，把地址、端口和端点条件写入 EndpointSlice；一个 Service 可以有多个切片。节点上的 Service 实现再观察这些 API 对象，将稳定入口连接到可用目标。控制面保存后端事实，数据面执行实际转发。',
- '下面 selector 选择 app=reports，客户端连接 port=443，命名 targetPort=https 在 Pod 端口声明中解析为 8443。containerPort 是端口信息，应用本身仍要监听可达地址，例如 0.0.0.0:8443；仅声明端口不会替程序执行 listen。')+n1[0]+
- p('端点条件中，ready 用于常规流量资格，terminating 标记正在终止，serving 可表达终止期仍能提供服务。常规 ready 与正在服务、未终止有关，publishNotReadyAddresses 等配置会改变相应行为。诊断时取该 Service 全部 EndpointSlice，合并并去重，再按端口和条件核对目标。',
- '已有原生 service_lab.py 使用独立的 guide-service：两个业务 Pod，ClusterIP:80 转到 Pod:8080。一次 readiness 失败后，相关 UID 的端点 ready=false，稳定的新连接样本仅收到另一 UID；恢复后同一 UID 再接流量，重启计数不变。这验证原生 Service 与就绪链，端口和身份都不同于上面的 443→8443 示意。API 更新到数据面采用新规则仍有传播过程。',
- '若 DNS 正常返回 Service IP，端点集合仍可为空。先核对 selector、标签、就绪与目标端口；只有解析证据指向 DNS，才进一步定位解析服务。'),
+ p('为什么入口的 443 会送到 Pod 的 8443？配置里的 <code>selector</code> 按标签 <code>app=reports</code> 选择 Pod。<code>port: 443</code> 是入口端口，<code>targetPort: https</code> 指向 Pod 声明的同名端口 8443。<code>containerPort</code> 只记录端口信息，应用还要在可达地址上监听，例如 <code>0.0.0.0:8443</code>。')+n1[0]+
+ p('控制器把匹配的 Pod 地址、端口和条件写入 EndpointSlice，节点上的转发组件再读取这些对象。<code>ready</code> 表示端点能否接常规流量，<code>terminating</code> 标记正在终止，<code>serving</code> 可用来判断终止中的端点能否继续服务。通常，正在服务且未终止的端点才为 <code>ready</code>，<code>publishNotReadyAddresses</code> 等配置会改变这个规则。一个 Service 可以有多个切片，排查时要合并去重，再核对地址、端口和条件。',
+ '看一次独立的实跑。<code>service_lab.py</code> 的客户端每次新建连接，请求 <code>http://10.96.63.29/work</code>。这里 Service 的 80 端口转到 Pod 的 8080。把 <code>10.244.0.5</code> 记作 A，<code>10.244.0.6</code> 记作 B，用 HTTP 响应里的 Pod UID（该 Pod 的唯一标识）确认由谁处理。')+
+ table(['阶段','A 的端点条件','稳定后 20 次新连接的响应'],[['两个 Pod 都就绪','ready=true','HTTP 200，来自 A 和 B'],['A 的就绪检查返回 503','地址仍在，ready=false','HTTP 200，只来自 B'],['A 恢复就绪','同一 UID，ready=true','HTTP 200，再次来自 A 和 B']])+
+ p('A 未就绪时，在 Pod 内直接探测 <code>/live</code> 和 <code>/work</code> 仍是 200，两个 Pod 的重启数也没有变化。表中是转发规则收敛后的样本。遇到 DNS 能解析却连不上时，先看 EndpointSlice 有没有可用后端，再查 selector、Pod 标签、就绪状态与目标端口。即使 DNS 返回了 Service IP，端点列表也可能为空。'),
 
  anchor('service-flow-return')+anchor('subsection-3-4aahv')+
  p('CNI 是容器网络接口，网络插件据此为 Pod 连接和配置所需网络；Service 实现负责稳定入口到后端的选择与转发，DNS 负责名字解析。常见 Linux 集群由 kube-proxy 观察 Service 与 EndpointSlice 并配置内核规则，业务报文随后在内核数据面转发。其他实现可以采用不同机制，报文不会逐包经过 API Server。',
@@ -9974,6 +9975,7 @@ optimizer.step()
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
+ network.updated='2026.11.10';
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
  network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
  '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',
@@ -11110,9 +11112,9 @@ python -B target_probe.py check collected/rank-*.json
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
   a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
-   p('把 10、27 和补录的 5 汇总为一份 42 报告。LangGraph 把原发布意图保存到文件检查点，调用 interrupt 等待批准。新进程沿同一条运行记录继续，Command(resume=…) 把外部给出的批准值交回节点。批准 ID 指向接收方保存的授权记录，记录绑定发布对象、操作身份和规范化参数。'+
+   p('把 10、27 和补录的 5 汇总为 42，准备发布到 <code>A/daily</code>。LangGraph 先把目标、金额和操作键 <code>report-A:publish</code> 存进检查点。审批节点走到 <code>interrupt()</code> 就停下，此时接收库还没有报告。新进程沿用同一个 <code>thread_id</code> 恢复，LangGraph 从审批节点开头重跑。再次走到 <code>interrupt()</code> 时，才拿到 <code>Command(resume=…)</code> 传进来的批准编号。'+
     '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
-    '发布工具在接收库的同一事务内核对当前写权限和这次批准，再保存报告与回执。批准以后、真正写入以前，策略可能被撤销。保留批准 ID 却把金额从 42 改成 41，参数摘要也会失配。两种请求都应在产生效果前被拒绝。')+
+    '批准编号指向接收方保存的记录。发布工具在同一个事务里读取当前写权限，再核对批准绑定的发布目标、操作键和参数。通过后才保存报告和回执。两次发布被拒。一次是在等待时撤掉写权限，另一次是拿着批准 42 的编号却提交 41，参数摘要对不上。两组接收库都还是 0 份报告。')+
    trainingFigure('approval-reentry','图进程保存意图与进度。接收库决定当前允许写入或查询，并保存实际效果。')+
    fold('展开接收方事务入口',trainingCode('mcp_bridge.py 的实际事务入口','PYTHON',`def execute(db_path, tool, arguments, request_context, unsafe_snapshot):
     with closing(connect(db_path)) as db, db:
@@ -15478,5 +15480,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="991e39f8f0ceb07ed69b0e4f6d5fa1d9f812c4342d01179eb8e870089880379b";
+const staticReadingVersion="1edf7b0e4e5696922f10dd059e6b6f06d21f0a1d29ca0b3cf2b9a13b5bab7599";
 

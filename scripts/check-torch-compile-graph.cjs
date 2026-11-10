@@ -116,6 +116,11 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
 const html=fs.readFileSync('dist/article/operator-profiling/index.html','utf8');
 for(const marker of ['id="torch-compile-graph-break"','diagrams/torch-compile-graph-break.svg','labs/torch-compile-graph.zip',
  'labs/torch-compile-graph/validation.json','compile_graph.py','2、1、1、0 张图','add、sum、gt、mul、sub、where'])assert(html.includes(marker),marker);
+const lesson=html.split('id="torch-compile-graph-break"')[1];
+const original=fs.readFileSync(folder+'/compile_graph.py','utf8').match(/^def python_branch\(x\):[\s\S]*?(?=\n\n\n)/m)[0];
+const firstCode=lesson.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1].replaceAll('&gt;','>');
+assert.equal(firstCode,original,'show the same failing function readers will replay');
+assert(lesson.indexOf('Tensor.item')<lesson.indexOf('diagrams/torch-compile-graph-break.svg'));
 assert(fs.readFileSync('dist/module/model-foundations/index.html','utf8').includes('/article/operator-profiling/#torch-compile-graph-break'));
 assert(fs.readFileSync('dist/roadmap/ai-operators/index.html','utf8').includes('?goal=ai-operators#torch-compile-graph-break'));
 assert(fs.readFileSync('dist/interview/companies/index.html','utf8').includes('/article/operator-profiling/#torch-compile-graph-break'));

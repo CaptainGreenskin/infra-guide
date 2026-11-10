@@ -294,9 +294,9 @@
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
   a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
-   p('把 10、27 和补录的 5 汇总为一份 42 报告。LangGraph 把原发布意图保存到文件检查点，调用 interrupt 等待批准。新进程沿同一条运行记录继续，Command(resume=…) 把外部给出的批准值交回节点。批准 ID 指向接收方保存的授权记录，记录绑定发布对象、操作身份和规范化参数。'+
+   p('把 10、27 和补录的 5 汇总为 42，准备发布到 <code>A/daily</code>。LangGraph 先把目标、金额和操作键 <code>report-A:publish</code> 存进检查点。审批节点走到 <code>interrupt()</code> 就停下，此时接收库还没有报告。新进程沿用同一个 <code>thread_id</code> 恢复，LangGraph 从审批节点开头重跑。再次走到 <code>interrupt()</code> 时，才拿到 <code>Command(resume=…)</code> 传进来的批准编号。'+
     '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
-    '发布工具在接收库的同一事务内核对当前写权限和这次批准，再保存报告与回执。批准以后、真正写入以前，策略可能被撤销。保留批准 ID 却把金额从 42 改成 41，参数摘要也会失配。两种请求都应在产生效果前被拒绝。')+
+    '批准编号指向接收方保存的记录。发布工具在同一个事务里读取当前写权限，再核对批准绑定的发布目标、操作键和参数。通过后才保存报告和回执。两次发布被拒。一次是在等待时撤掉写权限，另一次是拿着批准 42 的编号却提交 41，参数摘要对不上。两组接收库都还是 0 份报告。')+
    trainingFigure('approval-reentry','图进程保存意图与进度。接收库决定当前允许写入或查询，并保存实际效果。')+
    fold('展开接收方事务入口',trainingCode('mcp_bridge.py 的实际事务入口','PYTHON',`def execute(db_path, tool, arguments, request_context, unsafe_snapshot):
     with closing(connect(db_path)) as db, db:

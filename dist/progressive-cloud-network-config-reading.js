@@ -44,19 +44,19 @@
  if(n1.length!==1||n2.length!==1||n3.length!==1||n5.length!==1||n6.length!==2)throw Error('Kubernetes network code layout changed');
  replace(network,[
  anchor('service-name-address-identity')+anchor('subsection-1-rccynd')+
- p('容器章解释进程怎样启动，工作负载与调度章使一组 Pod 出现并就绪。本章把客户端接到它们：Pod 是会被替换的实例，Service 按规则组织当前后端，提供稳定的访问入口，DNS 再让客户端通过名字发现入口。正常请求依次完成解析、连接、身份校验和应用处理，回包沿相应网络路径返回。',
- '先用 reports 服务作地址示意。DNS 名字帮助发现位置，IP 与端口定位传输目标，端点集合记录当前后端，TLS 身份用于确认对端是谁。四者通过配置关联：同一个稳定名字可以在不同时间对应不同后端，客户端仍应验证约定的服务身份。')+
+ p('集群里的客户端要取一份报表。在这组示意地址里，DNS 把 <code>reports.apps.svc.cluster.local</code> 解析为 <code>10.96.0.20</code>。这个虚拟 IP 是 Service 提供的固定入口。客户端向它的 443 端口建连，转发规则把连接送到运行应用的一个 Pod，本次选中的是 <code>10.42.2.8:8443</code>。',
+ 'Pod 被替换时，后端列表会更新。Service 仍提供原来的名字和入口，客户端也仍按约定的名字验证 TLS 身份。校验通过后，应用处理请求，响应再沿网络路径回到客户端。')+
  table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
  figures(n[0]).join('')+
- p('普通 ClusterIP Service 的 DNS 地址记录通常指向其虚拟 IP。无头服务 headless（clusterIP: None）可让名字解析到后端地址集合；ExternalName 则提供指向另一名字的 CNAME 别名。解析回答“这次获得了什么地址”，后续连接与业务仍沿各自路径执行，DNS 缓存和连接池也各有生命周期。',
- '证书 SAN 是证书声明的适用名字。TLS 客户端使用 server_hostname 指定校验名，适用时还在 SNI 中发送该名字，帮助服务端选择证书；HTTP Host 或 HTTP/2 的 :authority 决定应用路由。证书链可信、名字匹配和资源存在逐项成立，请求才到达目标服务。入口代理若终止 TLS，入口到后端便是另一段连接，使用自己的传输与信任配置。'),
+ p('普通 ClusterIP Service 像图中这样，DNS 地址记录通常指向它的虚拟 IP。无头服务（headless，<code>clusterIP: None</code>）可以直接返回后端地址，ExternalName 则返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
+ '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。'),
 
  anchor('subsection-2-8a7h3t')+
- p('Service 的 selector 是选择后端 Pod 的标签条件。控制器观察匹配 Pod，把地址、端口和端点条件写入 EndpointSlice；一个 Service 可以有多个切片。节点上的 Service 实现再观察这些 API 对象，将稳定入口连接到可用目标。控制面保存后端事实，数据面执行实际转发。',
- '下面 selector 选择 app=reports，客户端连接 port=443，命名 targetPort=https 在 Pod 端口声明中解析为 8443。containerPort 是端口信息，应用本身仍要监听可达地址，例如 0.0.0.0:8443；仅声明端口不会替程序执行 listen。')+n1[0]+
- p('端点条件中，ready 用于常规流量资格，terminating 标记正在终止，serving 可表达终止期仍能提供服务。常规 ready 与正在服务、未终止有关，publishNotReadyAddresses 等配置会改变相应行为。诊断时取该 Service 全部 EndpointSlice，合并并去重，再按端口和条件核对目标。',
- '已有原生 service_lab.py 使用独立的 guide-service：两个业务 Pod，ClusterIP:80 转到 Pod:8080。一次 readiness 失败后，相关 UID 的端点 ready=false，稳定的新连接样本仅收到另一 UID；恢复后同一 UID 再接流量，重启计数不变。这验证原生 Service 与就绪链，端口和身份都不同于上面的 443→8443 示意。API 更新到数据面采用新规则仍有传播过程。',
- '若 DNS 正常返回 Service IP，端点集合仍可为空。先核对 selector、标签、就绪与目标端口；只有解析证据指向 DNS，才进一步定位解析服务。'),
+ p('为什么入口的 443 会送到 Pod 的 8443？配置里的 <code>selector</code> 按标签 <code>app=reports</code> 选择 Pod。<code>port: 443</code> 是入口端口，<code>targetPort: https</code> 指向 Pod 声明的同名端口 8443。<code>containerPort</code> 只记录端口信息，应用还要在可达地址上监听，例如 <code>0.0.0.0:8443</code>。')+n1[0]+
+ p('控制器把匹配的 Pod 地址、端口和条件写入 EndpointSlice，节点上的转发组件再读取这些对象。<code>ready</code> 表示端点能否接常规流量，<code>terminating</code> 标记正在终止，<code>serving</code> 可用来判断终止中的端点能否继续服务。通常，正在服务且未终止的端点才为 <code>ready</code>，<code>publishNotReadyAddresses</code> 等配置会改变这个规则。一个 Service 可以有多个切片，排查时要合并去重，再核对地址、端口和条件。',
+ '看一次独立的实跑。<code>service_lab.py</code> 的客户端每次新建连接，请求 <code>http://10.96.63.29/work</code>。这里 Service 的 80 端口转到 Pod 的 8080。把 <code>10.244.0.5</code> 记作 A，<code>10.244.0.6</code> 记作 B，用 HTTP 响应里的 Pod UID（该 Pod 的唯一标识）确认由谁处理。')+
+ table(['阶段','A 的端点条件','稳定后 20 次新连接的响应'],[['两个 Pod 都就绪','ready=true','HTTP 200，来自 A 和 B'],['A 的就绪检查返回 503','地址仍在，ready=false','HTTP 200，只来自 B'],['A 恢复就绪','同一 UID，ready=true','HTTP 200，再次来自 A 和 B']])+
+ p('A 未就绪时，在 Pod 内直接探测 <code>/live</code> 和 <code>/work</code> 仍是 200，两个 Pod 的重启数也没有变化。表中是转发规则收敛后的样本。遇到 DNS 能解析却连不上时，先看 EndpointSlice 有没有可用后端，再查 selector、Pod 标签、就绪状态与目标端口。即使 DNS 返回了 Service IP，端点列表也可能为空。'),
 
  anchor('service-flow-return')+anchor('subsection-3-4aahv')+
  p('CNI 是容器网络接口，网络插件据此为 Pod 连接和配置所需网络；Service 实现负责稳定入口到后端的选择与转发，DNS 负责名字解析。常见 Linux 集群由 kube-proxy 观察 Service 与 EndpointSlice 并配置内核规则，业务报文随后在内核数据面转发。其他实现可以采用不同机制，报文不会逐包经过 API Server。',
@@ -90,6 +90,7 @@
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
+ network.updated='2026.11.10';
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
  network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
  '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',

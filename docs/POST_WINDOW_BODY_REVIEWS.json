@@ -5934,6 +5934,43 @@
         "评分练习：两组流量和一次快速消耗",
         "配套实战：真实Prometheus规则求值"
       ]
+    },
+    {
+      "id": "k8s-networking",
+      "previous_content_sha256": "18c29dd18ced016e29c970a1d67711dadabacc0d7f09c89aa38eec6c16c4d645",
+      "reviewed_content_sha256": "ef93bc5f04323850dc775701f39d06c4bcb3cfaa2dddb22d8805b56dc332da69",
+      "reviewed_at": "2026-11-10",
+      "scope": "Trace one reports request through DNS, Service, Pod and TLS, then compare a separate native Service request across readiness changes.",
+      "observation": "Read each group of 20 HTTP samples from the existing native record, preserving the distinction between the diagram addresses and kind.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "previous_content_sha256": "5c148adbbd1e0e6dd45e54b22b4593ede53350afd457a072f45359d381934473",
+      "reviewed_content_sha256": "f7ad29d9755ef1f7250a30a45dbb52daa37e85c81809fc61b4602860c4532b74",
+      "reviewed_at": "2026-11-10",
+      "scope": "Follow the persisted report of 42 into an interrupted approval, restart the same thread and inspect the receiver transaction.",
+      "observation": "Read both denial cases against the original receiver report count. Keep the LangGraph and MCP evidence scope.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }
