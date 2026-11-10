@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="331" viewBox="0 0 520 331" role="img" aria-labelledby="title description">
+<title id="title">35×67×19 矩阵乘法的输出块与尾部</title>
+<desc id="description">A 为 35 行 19 列，B 为 19 行 67 列，输出 C 分为三行五列的线程组。右下输出块只有前三行三列有效。每个线程组先计算 K 轴的前 16 项，再计算 3 项并补 13 个零。每轮同步后读取两份组内共享的小块。</desc>
+<metadata>{"record":"labs/metal-gemm/validation.json","tail_shape":[35,67,19],"output_tiles":[3,5],"valid_k":[16,3],"threadgroup_bytes":{"naive":0,"tiled":2048}}</metadata>
+<rect x="1" y="1" width="518" height="329" rx="15" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#213451">
+<text x="24" y="35" font-size="21" font-weight="700">A[35,19] × B[19,67] → C[35,67]</text>
+<text x="24" y="70" font-size="18" font-weight="700">输出 C 分成 3 行 × 5 列块</text>
+<text x="269" y="70" font-size="18" font-weight="700">每个块累加 K 轴的 19 项</text>
+<rect x="24" y="92" width="210" height="126" fill="#eaf2fc" stroke="#7098c5" stroke-width="1.4"/>
+<path d="M66 92v126m42-126v126m42-126v126m42-126v126M24 134h210m-210 42h210" fill="none" stroke="#7098c5" stroke-width="1.4"/>
+<rect x="192" y="176" width="42" height="42" fill="#fff6e6" stroke="#a96113" stroke-width="2"/>
+<rect x="192" y="176" width="8" height="8" fill="#a96113"/>
+<path d="M213 220v14h-15" fill="none" stroke="#a96113" stroke-width="1.5"/>
+<text x="24" y="239" font-size="16" fill="#874806">右下块只写回 3×3 项</text>
+<rect x="269" y="92" width="226" height="53" rx="6" fill="#eaf2fc" stroke="#7098c5"/>
+<text x="285" y="116" font-size="17" font-weight="600">第一轮 · 前 16 项都有效</text>
+<path d="M285 131h194" stroke="#3a6da8" stroke-width="6" stroke-linecap="round"/>
+<rect x="269" y="158" width="226" height="60" rx="6" fill="#fff6e6" stroke="#bf843c"/>
+<text x="285" y="184" font-size="17" font-weight="600" fill="#874806">第二轮 · 3 项 + 13 个零</text>
+<rect x="285" y="197" width="194" height="7" rx="3.5" fill="#e7d6bc"/>
+<path d="M289 200.5h32" stroke="#a96113" stroke-width="7" stroke-linecap="round"/>
+<rect x="24" y="259" width="471" height="51" rx="7" fill="#edf4ef" stroke="#b5cdbb"/>
+<text x="39" y="281" font-size="16" font-weight="600" fill="#295039">每轮先装 A、B 各 16×16 项，共用 2048 字节</text>
+<text x="39" y="301" font-size="15" fill="#295039">装完再读，读完再覆盖。全部线程参加两次同步。</text>
+</g>
+</svg>

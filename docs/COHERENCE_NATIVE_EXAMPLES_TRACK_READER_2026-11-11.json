@@ -1,0 +1,258 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "b5ef15beab4596f92aeb77e28f469843b0aaedf2",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FIELD_ORDER_RESTART_RECONNECT_2026-11-10.json": "848bca2650289c9e939fdbeb610f3e8b9ec017a851b32c5c77052999c4c5cd66"
+  },
+  "source_revisions": {
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "f3cbcec8cf0540d8a8e47df11bfded73d192d689d5a58eabbf05c1fd98887a1b",
+      "reviewed_sha256": "eb458e643c3b42b4d8e3129f5e86b26bb1442f50202e781f84eba2b39d127166",
+      "scope": "Connect the C3 cache layer to the real replication and promotion control."
+    },
+    "dist/progressive-cloud-data-reading.js": {
+      "previous_sha256": "b65408dabb914cd5c6fc97161e8a431f54a9748645f60c0c715d471fa62fd064",
+      "reviewed_sha256": "881bb4ee3c42b3677e5450c2529bbdfc863c86c2e2d365a96f050bfd15eca896",
+      "scope": "Read a real replicated value, interrupt its replication path and read the promoted node, using the before/after observation pattern in Kubernetes StatefulSet Basics and the Redis replication contract."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "b1678f9240764088884188fa4e013d3bf0922b694652c1bca197aa9e2f9711de",
+      "reviewed_sha256": "6c70261efe999cea986eddd4807733fc0ab1896b32cc05e5c1855b2ed5cee1d5",
+      "scope": "Use the Triton matrix-multiplication tutorial sequence of tile geometry, independent numerical comparison and same-device measurement in an original Metal example."
+    },
+    "dist/ai-system-knowledge.js": {
+      "previous_sha256": "099e3c0d448f9b856f744846536544f605d43fc4f8334afd04e887b90113f20d",
+      "reviewed_sha256": "3c7d88306cc511d6ab8b32640db589012a3fe473434fe20433b5569efdc95ce5",
+      "scope": "Connect the GPU field to the measured same-device comparison and its boundary."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "b5aa2ad69d301e123bd0d866cc926a4cf7b44c9bdd4cb0698d152764648a68a8",
+      "reviewed_sha256": "ef3a2718621b98101ca28aaa86d867e3891d5dddc4d990029cae65b7feb251fb",
+      "scope": "Use the tool-call and observation loop of the LangGraph quickstart. Keep the model, host, MCP client and resource authorization independently visible. Connect the existing scripted MCP mapping to the separate model-generated proposal and resource authorization example."
+    },
+    "dist/state-protocol-course-links.js": {
+      "previous_sha256": "5a9f14200c80f98cb3cc5d5d6b14f7bc0ba8e2bba70d417bf516fd5556b73090",
+      "reviewed_sha256": "22f8bde9a47d3ac3806998b59246b69b9199b718a45c882b5666951e4cae6a91",
+      "scope": "Record the later review date for the revised MCP chapter."
+    },
+    "dist/tool-runtime-lessons.js": {
+      "previous_sha256": "78b47ada3fef6556ac0199360d642cf6d7e7788aeca0be4790eae1b89fa706f7",
+      "reviewed_sha256": "95b0d36bbe1b48e44d83fad4486d2f645f6468d224023b3e322e1f0647ee1eb0",
+      "scope": "Connect the Agent tools concept to the exact model-to-resource trace."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "e603231590e671ce3aa577ce7c6fb232aab5776fd08fdab884424358f51ac765",
+      "reviewed_sha256": "91d3edd26358c39ad633cc2c8457152b72a93085df6101eee0479d8940e5ed5f",
+      "scope": "Retain role context and add one direct evidence gate per track."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "543a44c46fc3e68ff202264372f1019930dc92bc0207df57c80a9aabc9be2bf9",
+      "reviewed_sha256": "98812b71770aeefcf66bac822da85e7350099d705c1f376f249dafcf2b5ba743",
+      "scope": "Register three replay scopes and their exact source and result paths."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "dc1cb388b5b042acf9de9d0a59016867c6b35a3448982fc8f3a4c40e6e5bdade",
+      "reviewed_sha256": "08d8de12a698fd1cd8c3c2e98108f11c4abed01cfe6f0bd330381657096430a4",
+      "scope": "Declare the exact viewports for the three new diagrams."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "e23f1aa7d1375af5c0571539938e69c1f060f2b39ebabfe83f02e94348e498fc",
+      "reviewed_sha256": "1a7c9f3a10f7836b5b6ced4e319ed01e9cd6ce5e208177494aeccc5432c5a016",
+      "scope": "Fingerprint the current light reader, track entry bootstrap and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "543abc834b8b58aad6a82fba81462c427c076256a5e7cc8c94844d9a988f9597",
+      "reviewed_sha256": "537128c1b6f88b022ed7729dc1d549c5fe4522c9643f7f87c923daa38021a85c",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "162bc8424632c3972020a1c1bc43c77308dbc94f384a64f966eceb6e60e41569",
+      "reviewed_sha256": "142aea71ffe975c2fecbd70b8d78c07e1266b041626da47d87399b86a7bb6456",
+      "scope": "Use the shared light reader for the three known static track starts and normalize canonical sharing prefixes."
+    },
+    "scripts/article-reader/reader-bootstrap.js": {
+      "previous_sha256": "98b25be6fc5e588f11ea593873b53bc3500a3dcd2878f6621819db681e051af6",
+      "reviewed_sha256": "b6560009050641bc6c563c2f53a51a9008dba668cc52de6b11eb0b802390bf29",
+      "scope": "Accept the known start article for each track when static path, article and version all match, with the original fallback."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "600d010ce2fa8064879fd7c87eedd059c0c384d7df1186625be14df3a8515753",
+      "reviewed_sha256": "fc55c6daea01d81d8fe3ad6483f35dfc55cc3a7b91f4a4836c0ff64549d816ee",
+      "scope": "Check parity of the light and full runtime for static track starts and preserve the runtime failure boundary."
+    },
+    "scripts/check-runtime.cjs": {
+      "previous_sha256": "b767972742dc22ffb704cddf142aea5421470984436576467c672f656aaf86c7",
+      "reviewed_sha256": "086571992e5c308781a4138f23f4c9f69bc65133586622cd2cc2a3f815115989",
+      "scope": "Require one active bootstrap and nine inert fallback scripts for each static track start."
+    },
+    "scripts/check-github-pages.cjs": {
+      "previous_sha256": "74147ec7cb2da2ed5ab519ba967488743d9f7d05933cb797d6c6f7ecf2c8ed63",
+      "reviewed_sha256": "2cd34665343962a91ebc12c18ce2616fd9ac47a01d5ce7a0c5723f70ee0a53c9",
+      "scope": "Validate track bootstrap and fallback in the exact project-site artifact."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "6e62914e8063004e16e39fad7d1f0e2a61c5dbf49c427b7b1aa3af5736d7e0d7",
+      "reviewed_sha256": "2c8a6043c0272f00d6ea10b11ac0c75ba940fdfb7620d6d329dd7ead7cd4d4ac",
+      "scope": "Require direct role gate links to all three exact execution anchors."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "46cfdb1b6f715bc50839e058f1cdb7c0acb551f2ef09e8571c80d34d49b94565",
+      "reviewed_sha256": "d649f1b4be4c47ffc7f3ad88658a0d56050f0ec50d52e3ef74a9ce9547edf93f",
+      "scope": "Use the independent Redis verifier for the existing native record schema, which has no status field."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "46039572d05cde3f43d0eeaf5df2c7bcd94a9c737b4e134f5f9b0ab0e60e02bc",
+      "reviewed_sha256": "b1ef091862cb328ed0fa6ca4de1dba6ae978360d58b0d10a8260b95828693ea8",
+      "scope": "Run the three independent source, result, link and artifact verifiers."
+    },
+    "scripts/check-redis-replica-promotion.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c4edbaa316f5c89bcb8149f69dbca92fe39ca6fbb2ce52afd57eb16dc152fe14",
+      "scope": "Check the actual disconnected and promoted branches, the controlled primary stop, and raw replies."
+    },
+    "scripts/check-metal-gemm.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "727514ade3849d54768d16fa3305d1d329cc22afec51193d1518390191a046f1",
+      "scope": "Recompute output probes and paired timing, and check the shape, bounds and linked artifacts."
+    },
+    "scripts/check-model-mcp-tool-choice.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a64b9433dc00e5e000a5ff18e450e1a889cd0a881da8c6c3f4bfda03ac9ad722",
+      "scope": "Check the actual model proposal, protocol response and independent read ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5b37fb05f1bb0208622bf16a127593bca436df3e6c6f2bac8f5bfd4374f7f815",
+      "reviewed_sha256": "55ca76a6055938c148fa4f77c1bb08df37fe68c95dbc878c8d30b9bd823be339",
+      "scope": "Add three exact subsection anchors and retain prior URLs."
+    },
+    "docs/CONTENT_NATIVE_EXAMPLES_TRACK_READER_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "91eeb99f72c4ab28f8d0301b0f27c0f74d0848e29d5cbf08f4cbfdd1598a5792",
+      "scope": "Append reviewed body and knowledge-point revisions with native evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "4a4e3c9eaeb4ee4cd9d81efe81b8a50976bd13ac50b4901e04a171e8c428ce76",
+      "reviewed_sha256": "ebcbdfaecc04f082092b71ee788a598fd2e2195571a8b291245c1bb94b79c3f6",
+      "scope": "Register the new body and evidence review."
+    },
+    "dist/diagrams/redis-replica-promotion.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "18daa20974d567ee93d86fb075d08b5df38e1fec6f22d1e389fe2fd866ff6ee4",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/redis-replica-promotion.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "da7dbf9c163fe47252e79f91346fa6de45bd91a9c4f975e316919d83f4ab58e3",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/redis-replica-promotion/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a69d564f625a1c5bdf78a8202e09d0ac91e464a632fd2899a2f8aab04c8b4eda",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/redis-replica-promotion/replica_promotion.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7a7ffe6f28ccdf16c1b98a1fa3dcc2d311f69051cd41fd86408824e8eefbac10",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/redis-replica-promotion/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c8376e664fa92827f94e6698b2b5c7ac146a232c1c7c810eebf0171b564c6a22",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/metal-gemm.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a145d00162ff8ded62bb1d360d72fe90a059538cd008058c05e1d413881ea50",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/metal-gemm.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb60e8a5474be9e70babee57cb8fd2c681f88ac2cbf38518c2d7074651805dcb",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/metal-gemm/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bd7b2ca2cba692896d5aaa51f384ec0abe0e6bfa4687b4cea7f2e8a291b5ebfd",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/metal-gemm/kernels.metal": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f593902d040011a9aa67d881fc1d2255efbe7118ce753a56d47e9f5de5ca90e2",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/metal-gemm/metal_gemm.swift": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7c4d49af21e3adcda5d1e3a1de4a7af8cfbfd5d6396e6ef9cff2aa3842559e5b",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/metal-gemm/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "32c234d88e9b6bf3e3fd6cfaa65ac59a58e60ae330186f730ab139f8e70f10e2",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/model-mcp-tool-choice.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "833aba354a2311ed1f022a010b6e9ec3dacb20614c58745e23105d5d075508d8",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/model-mcp-tool-choice.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a6ddaedb6136732208ffda6eafd3a69ddf8aea5a60bd6a302f0f60e91cfd5266",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/model-mcp-tool-choice/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e08cefa94a49daed46fd30d64d88776890d31a1997c9b47ac9e605a71015528b",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-mcp-tool-choice/assets.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bed077a9de71d9a01890c5adc14d7f4ca8882615227ab936a82ae4a2eb3fa79e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-mcp-tool-choice/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ca264de23b05d28816c68a1fe7b3e72958cea8b5d1bc858e6b2b7574438f298d",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-mcp-tool-choice/model_tool_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6d2316e1df62d98cb5797d2b59604b6bf3449a1929508d07e2c20533c076697b",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-mcp-tool-choice/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-mcp-tool-choice/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ffb4bd6e08145a137677ec8eeacd5f27a09fd072566739821da9050de5442ee2",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "cbac29d5f34086375fa880111078efcea115d7a39d7c81fd9d26ae96e34b6eb1",
+      "reviewed_sha256": "c0d90fe1669d46a39b96773aef1ef0ac4de1b69d46ad50b6b868821e1713d5e1",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "b5ef15beab4596f92aeb77e28f469843b0aaedf2",
+    "chapters": 78,
+    "changed_bodies": [
+      "cache-consistency",
+      "operator-profiling",
+      "agent-runtime",
+      "mcp-protocol"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "cache-consistency": 1,
+      "operator-profiling": 1,
+      "agent-runtime": 2
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}

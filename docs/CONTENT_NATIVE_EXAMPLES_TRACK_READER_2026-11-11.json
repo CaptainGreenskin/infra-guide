@@ -1,0 +1,100 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "b5ef15beab4596f92aeb77e28f469843b0aaedf2",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_FIELD_ORDER_RESTART_RECONNECT_2026-11-10.json": "c28e30d6e179ec891de529ce7bb6f63c943cd06d86cd07fcda3b52331e7e97c3"
+  },
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "0b42e0456bf3e8a06d829d6b1ad4f1611cfb289ebf313c711b46c8dbc6d8b4ee",
+      "reviewed_content_sha256": "84f1ba79fa3fe57b9e83cbf4627c1b2d9c8b8e6fa642327d090cf4f48643e541",
+      "scope": "Use the Triton matrix-multiplication tutorial sequence of tile geometry, independent numerical comparison and same-device measurement in an original Metal example.",
+      "observation": "Both kernels match a CPU oracle for 266860 cells each. The recorded paired GPU command-buffer ratio is 1.60 at 512 cubed. Apple Metal measurements leave CUDA and Nsight verification open.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    },
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "7c693a89a1749e28629d63b1d890721ec49d8eeceab9039aba1c078175060f2f",
+      "reviewed_content_sha256": "c6b764f578fe42c77db79343d4f0ab36db4b488a9053a538347f70c3c43e3a26",
+      "scope": "Connect the existing scripted MCP mapping to the separate model-generated proposal and resource authorization example.",
+      "observation": "The original protocol example is still driven by a script. The new link gives an independently scoped model execution.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "cache-layer",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "2fa7a47ae7f6512641b5d345aaf8f91005258b81810b69fde9b185f719378004",
+      "reviewed_content_sha256": "53f4915543fefd42377f1c744b2ce7972d5b4bb5a44cba2f4151ec3a1164971f",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "mf-gpu",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "093ebdeca5aadfda4602a74b4f1818fd4367c35d31519e4a179957858e245137",
+      "reviewed_content_sha256": "c8204d6856819d160c815baafb6eeb106593530a46e22d3515641c5418c9d159",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-tools",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "7ccad51301243354b0295487c66737c65ddb265bbfab5524049b21789e5f718b",
+      "reviewed_content_sha256": "729a173aa465ed02725199bbb7a0b42520f158e511ec970f4cf00d5072d3eae5",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "cache-consistency",
+      "reviewed_at": "2026-11-11",
+      "scope": "Read a real replicated value, interrupt its replication path and read the promoted node, using the before/after observation pattern in Kubernetes StatefulSet Basics and the Redis replication contract.",
+      "observation": "The same SET returns OK in both cases. WAIT returns 1 or 0 and the promoted replica reads v8 or v7 respectively. Local manual promotion with persistence disabled.",
+      "reviewed_content_sha256": "a61ecae225874bbd18493fa8b9b6bbed49d6c1c9572cc0a1f980de484e0ea8cf",
+      "record": "dist/labs/redis-replica-promotion/validation.json"
+    },
+    {
+      "chapter": "operator-profiling",
+      "reviewed_at": "2026-11-11",
+      "scope": "Use the Triton matrix-multiplication tutorial sequence of tile geometry, independent numerical comparison and same-device measurement in an original Metal example.",
+      "observation": "Both kernels match a CPU oracle for 266860 cells each. The recorded paired GPU command-buffer ratio is 1.60 at 512 cubed. Apple Metal measurements leave CUDA and Nsight verification open.",
+      "reviewed_content_sha256": "84f1ba79fa3fe57b9e83cbf4627c1b2d9c8b8e6fa642327d090cf4f48643e541",
+      "record": "dist/labs/metal-gemm/validation.json"
+    },
+    {
+      "chapter": "agent-runtime",
+      "reviewed_at": "2026-11-11",
+      "scope": "Use the tool-call and observation loop of the LangGraph quickstart. Keep the model, host, MCP client and resource authorization independently visible.",
+      "observation": "Real Qwen3 auto tool selection leads to two reads of A. The B call is denied with no resource-body read. The model and protocol use different IDs.",
+      "reviewed_content_sha256": "577e024527fc87d8ac26e9f6c4942a6dfae6691d9e956dad590376be382086bb",
+      "record": "dist/labs/model-mcp-tool-choice/validation.json"
+    }
+  ]
+}

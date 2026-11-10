@@ -22,7 +22,7 @@ function capture(files,base){
 for(const base of ['/','/infra-guide/'])assert.deepEqual(capture(plan.publicFiles,base),capture(canonical,base),base+': combined classic scripts change initialization or rendered content');
 const readerManifest=JSON.parse(read('reader-runtime-manifest.json')),bootstrap=readerManifest.assets.find(a=>a.file.includes('reader-bootstrap.'));
 const pages=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
-let lightArticles=0;
+let lightArticles=0,lightEntries=0;
 assert.equal(pages.length,inventory.html);
 for(const file of pages){
  const html=read(file),scripts=[...html.matchAll(/<script defer src="([^"?]+)\?v=([\da-f]+)"/g)];
@@ -30,10 +30,14 @@ for(const file of pages){
  for(const m of scripts)assert.equal(m[2],hash(read(m[1])).slice(0,12),file+': stale script fingerprint');
  const template=html.match(/<template id="reader-full-runtime">([\s\S]*?)<\/template>/),activeHTML=html.replace(/<template id="reader-full-runtime">[\s\S]*?<\/template>/g,'');
  const active=[...activeHTML.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(m=>m[1]);
- if(file.startsWith('article/')){assert(template,file+': explicit complete-runtime fallback');assert.deepEqual(active,['/'+bootstrap.file],file+': only one initial bootstrap');lightArticles++;}
- else{assert(!template,file+': nonarticle retains the complete runtime');assert.equal(active.length,plan.publicFiles.length);}
+ const entry=/^track\/(cloud|ai|agent)\/index\.html$/.test(file);
+ if(entry||file.startsWith('article/')){
+  assert(template,file+': explicit complete-runtime fallback');
+  assert.deepEqual(active,['/'+bootstrap.file],file+': only one initial bootstrap');
+  if(entry)lightEntries++;else lightArticles++;
+ }else{assert(!template,file+': collection retains the complete runtime');assert.equal(active.length,plan.publicFiles.length);}
  assert(html.includes('id="app"')&&html.includes('<main'),file+': initial full HTML missing');
 }
-assert.equal(lightArticles,inventory.chapters);
+assert.equal(lightArticles,inventory.chapters);assert.equal(lightEntries,3);
 const compressed=files=>files.reduce((total,file)=>total+zlib.gzipSync(read(file)).length,0);
-console.log('PASS: '+canonical.length+' canonical scripts and '+plan.publicFiles.length+' complete-runtime files remain equivalent at root/Pages; '+lightArticles+' full-text article pages have one external bootstrap and retain nine inert fallback scripts. Legacy gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; inline figure startup and reader assets checked separately.');
+console.log('PASS: '+canonical.length+' canonical scripts and '+plan.publicFiles.length+' complete-runtime files remain equivalent at root/Pages; '+lightArticles+' full-text article pages and '+lightEntries+' track starts have one external bootstrap and retain nine inert fallback scripts. Legacy gzip estimate '+compressed(canonical)+'→'+compressed(plan.publicFiles)+' bytes; inline figure startup and reader assets checked separately.');

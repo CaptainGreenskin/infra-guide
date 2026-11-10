@@ -253,4 +253,18 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('给每次加载分配唯一编号，收到失效时同时移除本地值和加载编号。回填前把回复携带的编号与当前编号比对，并在同一个串行处理步骤内写入。这样即使收到旧回复时已有一次新加载在途，旧编号 1 也不会覆盖编号 2。前面数据库算例中的版本水位依据业务版本判断新旧。这里的加载编号只在本进程区分两次读取。')+
  p('读到 EOF 表示通知连接已经关闭，下一次本地命中前先清空受该连接保护的副本和在途编号。重连后要重新登记 Tracking，并重新读取所需的键。生产客户端还要为长时间没有响应的连接设置探活和超时，在无法确认通知可达期间按业务承诺处理读取。实跑范围为单个 Redis 8.2.6 进程与本机私有套接字，应用主动安排消费顺序。')+
  '<p class="practice-links"><a href="labs/redis-client-tracking.zip" download>下载 Redis 实验与运行说明 ↓</a> · <a href="labs/redis-client-tracking/tracking_lab.py">查看完整程序</a> · <a href="labs/redis-client-tracking/validation.json">核对原始 RESP3 帧与结果</a> · <a href="https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions">Redis 客户端缓存规范 ↗</a></p>';
+
+ cache.sections[6][1]+=h('native-redis-replica-promotion','主节点写成功，切换后还读得到吗')+
+ p('应用刚把 Redis 里的订单改成已发货，主节点返回 <code>OK</code>。随后服务切到另一个节点，同一个订单却读成待发货。这次从 Redis 节点之间找原因。两组都让主节点和副本先读到 <code>order:104 = v7/pending</code>，再把主节点上的值改成 <code>v8/shipped</code>。')+
+ p('主节点负责执行写入，副本从它接收更新。Redis 默认异步复制，主节点可以先完成写入，副本稍后才跟上。紧接着在原连接执行 <code>WAIT 1 500</code>，主节点最多等 500 毫秒，返回有多少副本确认复制到了这次写入的位置。返回 0 时，先前执行的 <code>SET</code> 仍然有效。')+
+ '<figure class="training-figure"><a href="diagrams/redis-replica-promotion.svg" target="_blank" rel="noopener" aria-label="放大 Redis 断链与副本提升对照"><img src="diagrams/redis-replica-promotion.svg" width="460" height="450" alt="两组都收到 SET OK。链路在线时 WAIT 返回 1，副本提升后读到 v8。写入前断链时 WAIT 返回 0，副本提升后读到 v7。两组都先停止旧主。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>比较同一次写入在旧主和接管副本上的实际读值。<a href="diagrams/redis-replica-promotion.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['写入前的链路','同一连接的命令返回','停主前读旧主','提升后读新主'],[
+  ['复制在线，主节点看到 1 个副本','<code>SET → OK</code>，<code>WAIT → 1</code>','v8/shipped','v8/shipped'],
+  ['先切断复制，主节点看到 0 个副本','<code>SET → OK</code>，<code>WAIT → 0</code>','v8/shipped','v7/pending']
+ ])+
+ p('断链组先从两端的 <code>INFO replication</code> 核对链路已断，再发写入。两组都先从旧主读取 v8，然后停掉旧主。候选节点执行 <code>REPLICAOF NO ONE</code> 后成为新主，保留自己已复制到的值。最后的 <code>GET</code> 才回答切换后的应用能读到什么。')+
+ fold('看同一条连接上的写入和等待','<div class="code-block"><pre><code>with connect(primary) as writer:\n    client_id = writer("CLIENT", "ID")\n    write_reply = require(writer("SET", KEY, AFTER), "OK")\n    replicas = require(writer("WAIT", 1, WAIT_MS), 0 if disconnected else 1)\n    require(writer("CLIENT", "ID"), client_id)</code></pre></div>')+
+ p('这里关闭了磁盘持久化，并手动选择唯一副本。<code>WAIT</code> 返回的是复制确认数。要判断生产切换能否保住写入，还需知道数据何时落盘、实际由哪个副本接管。')+
+ '<p class="practice-links"><a href="labs/redis-replica-promotion.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/redis-replica-promotion/replica_promotion.py">查看完整程序</a> · <a href="labs/redis-replica-promotion/validation.json">核对两组实测记录</a> · <a href="https://redis.io/docs/latest/commands/wait/">Redis WAIT 语义 ↗</a></p>';
+ cache.updated='2026.11.11';
 })();

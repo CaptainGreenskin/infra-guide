@@ -139,7 +139,7 @@
  fold('选做：看看后端生成了什么',
  p('有 C++ 编译器和 OpenMP 运行库时，可在命令后加 <code>--inductor</code>，让 TorchInductor 把张量图编译成 CPU 程序。本站的 CPU 记录包含一份 C++ 源文件及其动态库，四次输出均通过逐项比较。框架的两个计数分别是 2 个生成内核、1 个生成的 C++ 向量化内核。图数和内核数记的是不同对象。要判断提速多少，需另外计时。'))+
  '<p class="source-at"><a href="https://docs.pytorch.org/docs/stable/user_guide/torch_compiler/compile/programming_model.graph_breaks_index.html">PyTorch 断图与严格捕获 ↗</a></p>';
- a.updated='2026.11.10';
+ a.updated='2026.11.11';
 
  a.sections[3][1]+=
  '<h3 id="gemm-two-row-reuse">每线程多算一行，少搬哪一块数据</h3>'+
@@ -153,6 +153,33 @@
  p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
  '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
  '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="native-metal-gemm">在 Apple GPU 上实测分块矩阵乘法</h3>'+
+ p('取 A[35,19] 和 B[19,67]。输出 C[35,67] 的每一项都把 A 的一行和 B 的一列做点积，要相乘再相加 19 项。朴素版每个线程自己去读这 19 对数。分块版让 16×16 个线程组成一组，合作把 A、B 的小块搬到组内共享的内存，每个线程仍只算一个输出。两个小块各有 256 个 FP32 元素，每项 4 字节，一共占 2048 字节。')+
+ trainingFigure('metal-gemm','输出分成 3 行 × 5 列块。右下角只有 3×3 个有效输出。K 轴最后一段只有 3 项，其余 13 项在组内补零。')+
+ p('同一组线程先装前 16 项，再装剩下 3 项。越界的输入位置填零，越界的输出位置跳过写回。即使某个线程负责的输出无效，它也要参加装载和同步。例如，右下角输出块里只有前三列有效，但 A 的小块还需要第 4 到第 16 列的线程搬入数据。')+
+ trainingCode('分块内核的装载、乘加与写回','METAL',[
+  'for (uint base = 0; base < shape.k; base += TILE) {',
+  '    const uint ak = base + lane.x, bk = base + lane.y;',
+  '    a_tile[lane.y][lane.x] = row < shape.m && ak < shape.k ? a[row * shape.k + ak] : 0.0f;',
+  '    b_tile[lane.y][lane.x] = bk < shape.k && col < shape.n ? b[bk * shape.n + col] : 0.0f;',
+  '    threadgroup_barrier(mem_flags::mem_threadgroup);',
+  '    for (uint k = 0; k < TILE; ++k) {',
+  '        sum += a_tile[lane.y][k] * b_tile[k][lane.x];',
+  '    }',
+  '    threadgroup_barrier(mem_flags::mem_threadgroup);',
+  '}',
+  'if (row < shape.m && col < shape.n) c[row * shape.n + col] = sum;'
+ ].join('\n'))+
+ p('第一道屏障等全组写完小块再读，第二道等全组读完再覆盖。如果用最后的写回条件让无效线程在循环前退出，有些输入就没人搬了，退出的线程也无法参加同步。')+
+ '<h4>先检查边界，再计时</h4>'+
+ p('在 Apple Silicon Mac 上解压，进入 <code>metal-gemm</code> 目录后运行 <code>swift -O metal_gemm.swift &gt; replay.json</code>。程序用 Metal 编译并提交两个内核，先用 CPU 双精度参考逐项验数值。每个版本核对六种形状的 266,860 项输出，每份输出末尾另放 8 个用来检查越界写的标记值 −777。两版输出都与参考完全相等，标记值都未被改写。')+
+ p('计时固定在同一张 Apple M4 Pro 上计算 512×512×512，每次只提交一个内核。两版各预热三次，正式跑九对样本，轮流谁先运行。每次取 GPU 命令缓冲区的结束时间减开始时间，分配、编译和校验都在计时外。')+
+ table(['实现','组内共享内存','GPU 时间中位数'],[['朴素版','0 字节','1892.083 μs'],['分块版','2048 字节','1170.667 μs']])+
+ p('逐对用朴素版时间除以分块版时间，九个比值的中位数约为 1.60。复跑时可对照自己的九对数据，绝对用时会波动。这组结果只对应这台设备和这个形状。分块改变了数据复用，也增加了同步，仅凭耗时无法推断实际显存流量。')+
+ '<p class="practice-links"><a href="labs/metal-gemm.zip" download>下载源码与复跑脚本 ↓</a> · <a href="labs/metal-gemm/kernels.metal">查看完整内核 →</a> · <a href="labs/metal-gemm/validation.json">查看逐项校验与九对原始计时 →</a></p>'+
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">Apple Metal 的 GPU 时间戳 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html">Triton 官方分块矩阵乘法教程 ↗</a></p>';
 
  a.sections[7][1]+=
  '<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>'+

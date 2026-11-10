@@ -32,4 +32,4 @@ for(const id of ['control-plane-consensus','mysql-replication','mcp-protocol']){
 }
 
 mcpToolPoint.body+=para('跑一遍<a href="/article/mcp-protocol/#native-mcp-result-receipt">提交后的坏回执</a>，区分输出结构、操作身份与接收方已经写入的结果。');
-articles.find(a=>a.id==='mcp-protocol').updated='2026.11.10';
+articles.find(a=>a.id==='mcp-protocol').updated='2026.11.11';

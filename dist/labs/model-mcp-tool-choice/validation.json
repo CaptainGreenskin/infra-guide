@@ -1,0 +1,1071 @@
+{
+  "schema": "model-mcp-tool-choice-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "httpx2": "2.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "assets": {
+    "engine": {
+      "release": "b12110",
+      "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+      "archive": "llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_url": "https://github.com/ggml-org/llama.cpp/releases/download/b12110/llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_sha256": "4f5b8de12e0b9516658ca6a5764c6ffb3d7c659c3dd538556b1413c7b4050662",
+      "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959"
+    },
+    "model": {
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "filename": "Qwen3-0.6B-Q8_0.gguf",
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+      "bytes": 639446688,
+      "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+    }
+  },
+  "engine_flags": [
+    "--n-gpu-layers",
+    "0",
+    "--threads",
+    "4",
+    "--ctx-size",
+    "2048",
+    "--parallel",
+    "1",
+    "--jinja",
+    "--reasoning-budget",
+    "0",
+    "--chat-template-kwargs",
+    "{\"enable_thinking\":false}",
+    "--alias",
+    "local-qwen"
+  ],
+  "driver_pid": 14350,
+  "resource_pid": 14352,
+  "engine_pid": 14353,
+  "reports_db_sha256": {
+    "before": "5966ea7e1f22d211b48baa169d6bf33630148f99211946ab0d8ff730bba2df70",
+    "after": "5966ea7e1f22d211b48baa169d6bf33630148f99211946ab0d8ff730bba2df70"
+  },
+  "receiver": {
+    "decisions": [
+      {
+        "seq": 1,
+        "rpc_id": 3,
+        "principal": "learner-A",
+        "tool": "read_sales_report",
+        "report_id": "A",
+        "outcome": "allowed"
+      },
+      {
+        "seq": 2,
+        "rpc_id": 4,
+        "principal": "learner-A",
+        "tool": "read_incident_report",
+        "report_id": "A",
+        "outcome": "allowed"
+      },
+      {
+        "seq": 3,
+        "rpc_id": 5,
+        "principal": "learner-A",
+        "tool": "read_sales_report",
+        "report_id": "B",
+        "outcome": "denied"
+      }
+    ],
+    "body_reads": [
+      {
+        "seq": 1,
+        "rpc_id": 3,
+        "tool": "read_sales_report",
+        "report_id": "A"
+      },
+      {
+        "seq": 2,
+        "rpc_id": 4,
+        "tool": "read_incident_report",
+        "report_id": "A"
+      }
+    ]
+  },
+  "mcp_discovery": [
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "server/discover",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "cacheScope": "private",
+          "capabilities": {
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "resultType": "complete",
+          "supportedVersions": [
+            "2026-07-28"
+          ],
+          "ttlMs": 0,
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-model-tools",
+              "version": ""
+            }
+          }
+        }
+      }
+    },
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/list",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "cacheScope": "private",
+          "resultType": "complete",
+          "tools": [
+            {
+              "description": "Look up a stored sales amount for a daily report.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The report ID to read."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              },
+              "name": "read_sales_report",
+              "outputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "integer"
+                  },
+                  "evidence_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value",
+                  "evidence_id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "description": "Look up a stored incident count for a daily report.",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The report ID to read."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              },
+              "name": "read_incident_report",
+              "outputSchema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "integer"
+                  },
+                  "evidence_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value",
+                  "evidence_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "ttlMs": 0,
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-model-tools",
+              "version": ""
+            }
+          }
+        }
+      }
+    }
+  ],
+  "cases": {
+    "sales-a": {
+      "first_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded sales total for report-A."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "read_sales_report",
+                      "arguments": "{\"report_id\": \"A\"}"
+                    },
+                    "id": "jwvK0AHhd8nmpzZrkDSultiRAb2S7zB3"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1794324793,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 22,
+            "prompt_tokens": 303,
+            "total_tokens": 325,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "id": "chatcmpl-HRW9WUBK0ZxPS3F2esKCRhLZyspOCuv0",
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 303,
+            "prompt_ms": 245.716,
+            "prompt_per_token_ms": 0.8109438943894389,
+            "prompt_per_second": 1233.130931644663,
+            "predicted_n": 22,
+            "predicted_ms": 118.489,
+            "predicted_per_token_ms": 5.642333333333333,
+            "predicted_per_second": 177.23164175577477
+          }
+        }
+      },
+      "mcp_call": {
+        "status": 200,
+        "protocol": "2026-07-28",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 3,
+          "method": "tools/call",
+          "params": {
+            "name": "read_sales_report",
+            "arguments": {
+              "report_id": "A"
+            },
+            "_meta": {
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+              "io.modelcontextprotocol/clientInfo": {
+                "name": "mcp",
+                "version": "0.1.0"
+              },
+              "io.modelcontextprotocol/clientCapabilities": {}
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 3,
+          "result": {
+            "content": [
+              {
+                "text": "{\"value\": 42, \"evidence_id\": \"sales-v3-9f6a\"}",
+                "type": "text"
+              }
+            ],
+            "isError": false,
+            "resultType": "complete",
+            "structuredContent": {
+              "value": 42,
+              "evidence_id": "sales-v3-9f6a"
+            },
+            "_meta": {
+              "io.modelcontextprotocol/serverInfo": {
+                "name": "infra-guide-model-tools",
+                "version": ""
+              }
+            }
+          }
+        }
+      },
+      "final_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded sales total for report-A."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_sales_report",
+                    "arguments": "{\"report_id\": \"A\"}"
+                  },
+                  "id": "jwvK0AHhd8nmpzZrkDSultiRAb2S7zB3"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "jwvK0AHhd8nmpzZrkDSultiRAb2S7zB3",
+              "content": "{\"value\": 42, \"evidence_id\": \"sales-v3-9f6a\"}"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The recorded sales total for report-A is 42. Evidence ID: sales-v3-9f6a."
+              }
+            }
+          ],
+          "created": 1794324793,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 25,
+            "prompt_tokens": 359,
+            "total_tokens": 384,
+            "prompt_tokens_details": {
+              "cached_tokens": 299
+            }
+          },
+          "id": "chatcmpl-Hj0Dwb0mGAiWG4ra7SR3kNnJ7b7d98C1",
+          "timings": {
+            "cache_n": 299,
+            "prompt_n": 60,
+            "prompt_ms": 95.843,
+            "prompt_per_token_ms": 1.5973833333333334,
+            "prompt_per_second": 626.0238097722317,
+            "predicted_n": 25,
+            "predicted_ms": 135.376,
+            "predicted_per_token_ms": 5.640666666666667,
+            "predicted_per_second": 177.2840089823898
+          }
+        }
+      }
+    },
+    "incident-a": {
+      "first_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded incident count for report-A."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "read_incident_report",
+                      "arguments": "{\"report_id\": \"A\"}"
+                    },
+                    "id": "dDXKW3vb4kM624EuLeQCYO55xs1CMv6q"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1794324793,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 23,
+            "prompt_tokens": 303,
+            "total_tokens": 326,
+            "prompt_tokens_details": {
+              "cached_tokens": 288
+            }
+          },
+          "id": "chatcmpl-4WYoPjXaI6ahW1hw7KnQVrJrGFjHgke7",
+          "timings": {
+            "cache_n": 288,
+            "prompt_n": 15,
+            "prompt_ms": 26.749,
+            "prompt_per_token_ms": 1.7832666666666666,
+            "prompt_per_second": 560.7686268645557,
+            "predicted_n": 23,
+            "predicted_ms": 123.111,
+            "predicted_per_token_ms": 5.595954545454545,
+            "predicted_per_second": 178.70052229289013
+          }
+        }
+      },
+      "mcp_call": {
+        "status": 200,
+        "protocol": "2026-07-28",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 4,
+          "method": "tools/call",
+          "params": {
+            "name": "read_incident_report",
+            "arguments": {
+              "report_id": "A"
+            },
+            "_meta": {
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+              "io.modelcontextprotocol/clientInfo": {
+                "name": "mcp",
+                "version": "0.1.0"
+              },
+              "io.modelcontextprotocol/clientCapabilities": {}
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 4,
+          "result": {
+            "content": [
+              {
+                "text": "{\"value\": 7, \"evidence_id\": \"incident-v1-2d1b\"}",
+                "type": "text"
+              }
+            ],
+            "isError": false,
+            "resultType": "complete",
+            "structuredContent": {
+              "value": 7,
+              "evidence_id": "incident-v1-2d1b"
+            },
+            "_meta": {
+              "io.modelcontextprotocol/serverInfo": {
+                "name": "infra-guide-model-tools",
+                "version": ""
+              }
+            }
+          }
+        }
+      },
+      "final_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded incident count for report-A."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_incident_report",
+                    "arguments": "{\"report_id\": \"A\"}"
+                  },
+                  "id": "dDXKW3vb4kM624EuLeQCYO55xs1CMv6q"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "dDXKW3vb4kM624EuLeQCYO55xs1CMv6q",
+              "content": "{\"value\": 7, \"evidence_id\": \"incident-v1-2d1b\"}"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The recorded incident count for report-A is 7. Evidence ID: incident-v1-2d1b."
+              }
+            }
+          ],
+          "created": 1794324793,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 24,
+            "prompt_tokens": 359,
+            "total_tokens": 383,
+            "prompt_tokens_details": {
+              "cached_tokens": 299
+            }
+          },
+          "id": "chatcmpl-5BZhbvh4Ri4WQ7Yv9MgY3U9XuRTzAg6E",
+          "timings": {
+            "cache_n": 299,
+            "prompt_n": 60,
+            "prompt_ms": 95.138,
+            "prompt_per_token_ms": 1.5856333333333335,
+            "prompt_per_second": 630.6628266307889,
+            "predicted_n": 24,
+            "predicted_ms": 130.453,
+            "predicted_per_token_ms": 5.671869565217391,
+            "predicted_per_second": 176.30870888365925
+          }
+        }
+      }
+    },
+    "sales-b": {
+      "first_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded sales total for report-B."
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "read_sales_report",
+                      "arguments": "{\"report_id\": \"B\"}"
+                    },
+                    "id": "sVt4XIrXzX6ycDwdc6YfqaV2jxDVBLf9"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1794324794,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 22,
+            "prompt_tokens": 303,
+            "total_tokens": 325,
+            "prompt_tokens_details": {
+              "cached_tokens": 288
+            }
+          },
+          "id": "chatcmpl-FeVfxrXWHhyTWRA5xLyz2WBxoAgC0Mik",
+          "timings": {
+            "cache_n": 288,
+            "prompt_n": 15,
+            "prompt_ms": 27.505,
+            "prompt_per_token_ms": 1.8336666666666666,
+            "prompt_per_second": 545.3553899291038,
+            "predicted_n": 22,
+            "predicted_ms": 119.587,
+            "predicted_per_token_ms": 5.694619047619048,
+            "predicted_per_second": 175.60437171264434
+          }
+        }
+      },
+      "mcp_call": {
+        "status": 200,
+        "protocol": "2026-07-28",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 5,
+          "method": "tools/call",
+          "params": {
+            "name": "read_sales_report",
+            "arguments": {
+              "report_id": "B"
+            },
+            "_meta": {
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+              "io.modelcontextprotocol/clientInfo": {
+                "name": "mcp",
+                "version": "0.1.0"
+              },
+              "io.modelcontextprotocol/clientCapabilities": {}
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 5,
+          "result": {
+            "content": [
+              {
+                "text": "{\"error\": \"Report unavailable.\"}",
+                "type": "text"
+              }
+            ],
+            "isError": true,
+            "resultType": "complete",
+            "_meta": {
+              "io.modelcontextprotocol/serverInfo": {
+                "name": "infra-guide-model-tools",
+                "version": ""
+              }
+            }
+          }
+        }
+      },
+      "final_model_turn": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "Use the appropriate tool for the user's request. The tool knows the record. After a tool returns, answer with the exact value and evidence_id it returned. If the tool rejects access, say unavailable."
+            },
+            {
+              "role": "user",
+              "content": "Find the recorded sales total for report-B."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_sales_report",
+                    "arguments": "{\"report_id\": \"B\"}"
+                  },
+                  "id": "sVt4XIrXzX6ycDwdc6YfqaV2jxDVBLf9"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "sVt4XIrXzX6ycDwdc6YfqaV2jxDVBLf9",
+              "content": "{\"error\": \"Report unavailable.\"}"
+            }
+          ],
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "read_sales_report",
+                "description": "Look up a stored sales amount for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "read_incident_report",
+                "description": "Look up a stored incident count for a daily report.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "report_id": {
+                      "type": "string",
+                      "description": "The report ID to read."
+                    }
+                  },
+                  "required": [
+                    "report_id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ],
+          "tool_choice": "auto",
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The tool rejected access for the request. unavailable."
+              }
+            }
+          ],
+          "created": 1794324794,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 11,
+            "prompt_tokens": 345,
+            "total_tokens": 356,
+            "prompt_tokens_details": {
+              "cached_tokens": 299
+            }
+          },
+          "id": "chatcmpl-iNkaHKM07L0mOfQ01diAjo16CVRMmXlT",
+          "timings": {
+            "cache_n": 299,
+            "prompt_n": 46,
+            "prompt_ms": 74.694,
+            "prompt_per_token_ms": 1.6237826086956522,
+            "prompt_per_second": 615.8459849519372,
+            "predicted_n": 11,
+            "predicted_ms": 55.614,
+            "predicted_per_token_ms": 5.5614,
+            "predicted_per_second": 179.8108389973748
+          }
+        }
+      }
+    }
+  },
+  "source_sha256": {
+    "model_tool_lab.py": "6d2316e1df62d98cb5797d2b59604b6bf3449a1929508d07e2c20533c076697b",
+    "fixture.json": "ca264de23b05d28816c68a1fe7b3e72958cea8b5d1bc858e6b2b7574438f298d",
+    "assets.json": "bed077a9de71d9a01890c5adc14d7f4ca8882615227ab936a82ae4a2eb3fa79e",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "e08cefa94a49daed46fd30d64d88776890d31a1997c9b47ac9e605a71015528b"
+  }
+}

@@ -505,9 +505,15 @@ function checkPublishedHTML(reader,original){
  const plan=runtimePlan(shell,file=>sources.get(file));
  const legacy=plan.publicFiles.map(file=>file+'?v='+hash(fs.readFileSync(path.join(dist,file))).slice(0,12));
  assert.equal(legacy.length,9);
- let articles=0,anchors=0,otherPages=0;
- for(const a of reader.metadata.articles){
-  const route='/article/'+a.id+'/',html=read('dist'+route+'index.html');
+ let articles=0,entries=0,anchors=0,otherPages=0;
+ const routes=[
+  ...reader.metadata.articles.map(a=>({a,route:'/article/'+a.id+'/'})),
+  ...Object.entries(reader.metadata.trackDefinitions).map(([track,{start}])=>({
+   a:reader.metadata.articles.find(a=>a.id===start),route:'/track/'+track+'/',track
+  }))
+ ];
+ for(const {a,route,track} of routes){
+  const html=read('dist'+route+'index.html');
   assertEarlyFigures(html,a.id);
   const template=[...html.matchAll(/<template\b[^>]*\bid="reader-full-runtime"[^>]*>([\s\S]*?)<\/template>/g)];
   assert.equal(template.length,1,a.id+': exactly one inert full-runtime template');
@@ -522,7 +528,8 @@ function checkPublishedHTML(reader,original){
   // Compare against a fresh canonical render too, rather than trusting two copies
   // of a potentially stale generated fragment.
   Object.assign(original.context.location,{pathname:route,search:'',hash:''});original.context.probeId=a.id;
-  vm.runInContext('articlePage(articleById(probeId))',original.context);
+  original.context.probeTrack=track;
+  vm.runInContext(track?'trackPage(probeTrack)':'articlePage(articleById(probeId))',original.context);
   original.context.fragment='<div id="app" data-static-path="'+route+'" data-static-version="'+reader.version+'" data-static-article="'+a.id+'">'+original.sink.innerHTML+'</div>';
   assert.equal(appFragment(html),vm.runInContext('cleanInternalHTML(fragment)',original.context),a.id+': published reading surface equals the final canonical render');
   if(a.id==='position-encoding'){
@@ -532,20 +539,23 @@ function checkPublishedHTML(reader,original){
    assert(fragment.includes('[0.8415, 0.5403]'));
    assert(fragment.includes(vm.runInContext('sinusoidalPositionGraphic(4,0,1)',original.context)));
   }
-  anchors+=[...appFragment(html).matchAll(/\bid="([^"]+)"/g)].length;articles++;
+  anchors+=[...appFragment(html).matchAll(/\bid="([^"]+)"/g)].length;
+  if(track)entries++;else articles++;
  }
  const indices=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
  assert.equal(indices.length,inventory.html,'reviewed root generated route inventory');
  for(const file of indices){
-  if(file.startsWith('article/'))continue;
-  const html=read('dist/'+file),route=file==='index.html'?'/':'/'+file.slice(0,-10);
+  const route=file==='index.html'?'/':'/'+file.slice(0,-10);
+  if(routes.some(readerPage=>readerPage.route===route))continue;
+  const html=read('dist/'+file);
   assertEarlyFigures(html,file);
   assert(!html.includes('id="reader-full-runtime"'),file+': non-article keeps the complete runtime');
   assert.deepStrictEqual(scriptTags(withoutTemplates(html)).map(m=>m[1]),legacy,file+': nine active complete scripts');
   assert.equal(reader.patchArticleHTML(html,route),html,file+': non-article HTML is unchanged by the reader patch');otherPages++;
  }
  assert.equal(articles,inventory.chapters);
- return {articles,anchors,otherPages,legacy};
+ assert.equal(entries,3);
+ return {articles,entries,anchors,otherPages,legacy};
 }
 
 async function checkBootstrap(reader,legacy){
@@ -568,7 +578,11 @@ async function checkBootstrap(reader,legacy){
  const tests=[
   {name:'canonical article',want:1},
   {name:'Pages article',base:'/infra-guide/',want:1},
-  {name:'track alias',route:'/track/agent/',want:9},
+  ...Object.entries(reader.metadata.trackDefinitions).flatMap(([track,{start}])=>
+   ['/','/infra-guide/'].map(base=>({name:base+track+' entry',route:'/track/'+track+'/',base,id:start,want:1}))),
+  {name:'track entry with wrong chapter',route:'/track/ai/',want:9},
+  {name:'unknown track',route:'/track/unknown/',want:9},
+  {name:'dynamic practice alias',route:'/module/practice/',want:9},
   {name:'ordinary route',route:'/outline/',want:9},
   {name:'unknown article',route:'/article/not-in-the-course/',want:9},
   {name:'noncanonical slash',route:'/article/agent-runtime',want:9},
@@ -591,7 +605,7 @@ async function checkBootstrap(reader,legacy){
   const f=await fixture(test);assert.equal(f.requested.length,test.want,test.name+': request decision');
   assert(!f.requested.some(url=>searchAssets(reader).some(([,asset])=>url.endsWith(asset.url))),test.name+': no eager search asset');
   if(test.want===1&&!test.failed){
-   assert.deepStrictEqual(f.requested,[(test.base?test.base.slice(0,-1):'')+reader.runtimeAsset.url],test.name+': light asset path');
+   assert.deepStrictEqual(f.requested,[(test.base||'/').slice(0,-1)+reader.runtimeAsset.url],test.name+': light asset path');
    assert.equal(f.banners.length,0);
   }else{
    assert.equal(f.attrs['data-reader-runtime'],'full',test.name+': full fallback mode');
@@ -624,7 +638,7 @@ async function main(){
   await checkExternalFallback(lightScript,assets);
   const html=checkPublishedHTML(reader,originals.get('/'));
   const bootstrapCases=await checkBootstrap(reader,html.legacy);
-  console.log('PASS: '+files.length+' final canonical sources; '+manifest.assets.length+' reader assets and manifest byte-identical; '+reader.index.length+' complete search entries / '+ranking.searchCases+' exact full rankings through the loader; '+navigation.navCases+' article/role/base navigation cases, '+navigation.contextCases+' context cases, '+navigation.redirectCases+' redirects; '+ranking.mathCases+' shared mathematical cases; '+html.articles+' unchanged full static articles / '+html.anchors+' anchors, '+html.otherPages+' complete-runtime routes; '+bootstrapCases+' bootstrap decisions, external fallback closes the dialog and releases listeners/pending search; zero-fetch suggestions, IME, latest query, '+lazy.retryCases+' retries. Cold gzip bytes from mock-fetched asset bodies: '+JSON.stringify(lazy.wire)+'. VM checks do not prove final browser fallback execution or UI state.');
+  console.log('PASS: '+files.length+' final canonical sources; '+manifest.assets.length+' reader assets and manifest byte-identical; '+reader.index.length+' complete search entries / '+ranking.searchCases+' exact full rankings through the loader; '+navigation.navCases+' article/role/base navigation cases, '+navigation.contextCases+' context cases, '+navigation.redirectCases+' redirects; '+ranking.mathCases+' shared mathematical cases; '+html.articles+' unchanged full static articles and '+html.entries+' track starts / '+html.anchors+' anchors, '+html.otherPages+' complete-runtime routes; '+bootstrapCases+' bootstrap decisions, external fallback closes the dialog and releases listeners/pending search; zero-fetch suggestions, IME, latest query, '+lazy.retryCases+' retries. Cold gzip bytes from mock-fetched asset bodies: '+JSON.stringify(lazy.wire)+'. VM checks do not prove final browser fallback execution or UI state.');
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

@@ -6100,6 +6100,44 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "cache-consistency",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "6170d8057130b894a7b73423ec24a48836a92df0f3a0aa2a687636a5ac4565f5",
+      "reviewed_content_sha256": "a61ecae225874bbd18493fa8b9b6bbed49d6c1c9572cc0a1f980de484e0ea8cf",
+      "scope": "Read a real replicated value, interrupt its replication path and read the promoted node, using the before/after observation pattern in Kubernetes StatefulSet Basics and the Redis replication contract.",
+      "observation": "The same SET returns OK in both cases. WAIT returns 1 or 0 and the promoted replica reads v8 or v7 respectively. Local manual promotion with persistence disabled.",
+      "headings": [
+        "先回答“谁有资格说订单已经发货”",
+        "读穿旁路缓存的三个步骤",
+        "一次旧读怎样穿过成功的失效",
+        "用版本水位挡回旧值，它需要哪些前提",
+        "热点击穿与集中到期，先算回源预算",
+        "领先请求失败后，谁负责唤醒等待者",
+        "从事件回放走到真实事务",
+        "验收：为不同读者分别签一份承诺",
+        "四事件短回放的源码与结果"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "2c178570316cb5dd0cab704513ff238eaa2454b6e2c38d80aee6f47cb10301ee",
+      "reviewed_content_sha256": "577e024527fc87d8ac26e9f6c4942a6dfae6691d9e956dad590376be382086bb",
+      "scope": "Use the tool-call and observation loop of the LangGraph quickstart. Keep the model, host, MCP client and resource authorization independently visible.",
+      "observation": "Real Qwen3 auto tool selection leads to two reads of A. The B call is denied with no resource-body read. The model and protocol use different IDs.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
     }
   ]
 }

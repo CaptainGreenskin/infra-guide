@@ -67,6 +67,27 @@
  const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
+ const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+
+  p('前面的 37 日报由脚本给出提议。这里另开一个只读实验，分别问 A 的销售额、A 的事故数和 B 的销售额。宿主先从 MCP 服务取得销售查询和事故查询，把两个工具的名称、用途和参数规则放进本机 Qwen3-0.6B 的请求。三条问题只写要查什么和报告对象。<code>tool_choice=auto</code> 让模型决定要不要调用以及选哪个工具。',
+   '问 A 的销售额时，模型给出 <code>read_sales_report</code> 和 <code>{"report_id":"A"}</code>。宿主检查名称和参数形状，把模型选出的名称与参数原样交给 MCP SDK。资源服务按实验预设的 A 主体核对报告归属，读到金额 42 和证据编号 <code>sales-v3-9f6a</code>。')+
+  trainingFigure('model-mcp-tool-choice','用销售查询跟踪一趟调用。图中 M 代指原始记录里的长模型调用号，MCP 请求和响应使用编号 3。')+
+  p('模型给出的调用号用来认回这次提议。MCP 客户端另用请求编号 3 对上自己的响应。宿主把实际工具响应填回下一轮消息，并用 <code>tool_call_id</code> 指向原模型调用。销售额 42 和证据编号在工具读出报告后才进入模型输入。下一轮模型答出了这两项。')+
+  trainingCode('从模型参数发出调用，再按原编号回填结果','PYTHON',`result = await client.call_tool(name, arguments)
+[block] = result.content
+assert block.type == "text"
+tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.text}`)+
+  '<div class="table-wrap"><table><thead><tr><th>用户问什么</th><th>模型提议</th><th>资源服务实际做了什么</th></tr></thead><tbody>'+
+  '<tr><td>A 的销售额</td><td><code>read_sales_report</code>，A</td><td>请求 3，读 A，返回 42</td></tr>'+
+  '<tr><td>A 的事故数</td><td><code>read_incident_report</code>，A</td><td>请求 4，读 A，返回 7</td></tr>'+
+  '<tr><td>B 的销售额</td><td><code>read_sales_report</code>，B</td><td>请求 5，工具拒绝，B 正文未读</td></tr></tbody></table></div>'+
+  p('第三次提议的参数也符合结构。资源服务按已配置的 A 主体拒绝读 B。HTTP 仍是 200，工具结果带 <code>isError=true</code>，只返回一条拒绝消息。独立打开资源端的读取日志，只能看到请求 3 和 4 读过 A。模型接着回答，这份报告不可用。')+
+  trainingCode('准备固定引擎和权重后，在解压目录运行','SHELL','python3.12 -B model_tool_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
+  p('先在 <code>first_model_turn</code> 找模型选出的名称和参数，再在 <code>mcp_call</code> 核对请求编号、响应和权限结果，最后到 <code>final_model_turn</code> 对上原模型调用号。这里固定 macOS arm64 CPU、模型权重、模板和三条问题。资料与主体都来自本机测试夹具。')+
+  '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>';
+ mcp.sections[8][1]+=p('上面的 <code>read_batch</code> 实验用脚本连接工具。运行时章另有一次真实模型对照，跟着工具目录看模型选中销售或事故查询，以及查 B 时由谁拒绝。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">从模型提议走到资源端 →</a>');
+ runtime.updated='2026.11.11';
+
  const multinode=articleById('multinode-lab');
  multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
  multinode.updated='2026.11.10';

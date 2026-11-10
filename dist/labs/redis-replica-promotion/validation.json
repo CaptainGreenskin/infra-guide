@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "scope": "local Redis asynchronous replication and manual promotion",
+  "runtime": {
+    "redis": "8.2.6",
+    "redis_version_output": "Redis server v=8.2.6 sha=00000000:1 malloc=libc bits=64 build=f0e94972b33e8fe6",
+    "binary_sha256": "880a3fbf21a2c76242e7d9ad7b19b4e1ede60b52f1514e72818d7328c1aa823f",
+    "source_archive_sha256": "78dd7326c5c959202c6c3849d3ea9c61896d78d647c20f6542b52c0917f96eac",
+    "platform": "Darwin",
+    "machine": "arm64",
+    "python": "3.9.6"
+  },
+  "source_sha256": {
+    "replica_promotion.py": "7a7ffe6f28ccdf16c1b98a1fa3dcc2d311f69051cd41fd86408824e8eefbac10"
+  },
+  "fixture": {
+    "key": "order:104",
+    "before": "v7/pending",
+    "after": "v8/shipped",
+    "wait_replicas": 1,
+    "wait_ms": 500
+  },
+  "branches": {
+    "healthy": {
+      "initial_replication": {
+        "primary_role": "master",
+        "connected_replicas": 1,
+        "replica_role": "slave",
+        "master_link_status": "up"
+      },
+      "initial_replica_value": "v7/pending",
+      "severed_links": 0,
+      "replication": {
+        "primary_role": "master",
+        "connected_replicas": 1,
+        "replica_role": "slave",
+        "master_link_status": "up"
+      },
+      "primary_write": {
+        "client_id": 11,
+        "value": "v8/shipped",
+        "set_reply": "OK",
+        "wait_replicas": 1
+      },
+      "replica_value_before_promotion": "v8/shipped",
+      "after_promotion": {
+        "reply": "OK",
+        "role": "master",
+        "old_primary_value": "v8/shipped",
+        "promoted_value": "v8/shipped"
+      },
+      "replica_log": [
+        "MASTER <-> REPLICA sync: Finished with success",
+        "Connection with master lost.",
+        "MASTER MODE enabled"
+      ],
+      "cleanup": {
+        "primary_exit": 0,
+        "replica_exit": 0,
+        "primary_stopped_before_promotion": true,
+        "unix_sockets_closed": true,
+        "relay_bind_host": "127.0.0.1",
+        "relay_closed": true
+      }
+    },
+    "disconnected": {
+      "initial_replication": {
+        "primary_role": "master",
+        "connected_replicas": 1,
+        "replica_role": "slave",
+        "master_link_status": "up"
+      },
+      "initial_replica_value": "v7/pending",
+      "severed_links": 1,
+      "replication": {
+        "primary_role": "master",
+        "connected_replicas": 0,
+        "replica_role": "slave",
+        "master_link_status": "down"
+      },
+      "primary_write": {
+        "client_id": 11,
+        "value": "v8/shipped",
+        "set_reply": "OK",
+        "wait_replicas": 0
+      },
+      "replica_value_before_promotion": "v7/pending",
+      "after_promotion": {
+        "reply": "OK",
+        "role": "master",
+        "old_primary_value": "v8/shipped",
+        "promoted_value": "v7/pending"
+      },
+      "replica_log": [
+        "MASTER <-> REPLICA sync: Finished with success",
+        "Connection with master lost.",
+        "MASTER MODE enabled"
+      ],
+      "cleanup": {
+        "primary_exit": 0,
+        "replica_exit": 0,
+        "primary_stopped_before_promotion": true,
+        "unix_sockets_closed": true,
+        "relay_bind_host": "127.0.0.1",
+        "relay_closed": true
+      }
+    }
+  }
+}

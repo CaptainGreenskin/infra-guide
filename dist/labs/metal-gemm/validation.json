@@ -1,0 +1,537 @@
+{
+  "benchmark" : {
+    "dispatches_per_command_buffer" : 1,
+    "median_gpu_us" : {
+      "naive" : 1892.0833244919777,
+      "tiled" : 1170.6666555255651
+    },
+    "median_paired_naive_over_tiled" : 1.5999161829178135,
+    "pairs" : [
+      {
+        "gpu_us" : {
+          "naive" : 1905.2916904911399,
+          "tiled" : 1197.1249477937818
+        },
+        "order" : [
+          "naive",
+          "tiled"
+        ],
+        "sample" : 1
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1892.0833244919777,
+          "tiled" : 1198.6249592155218
+        },
+        "order" : [
+          "tiled",
+          "naive"
+        ],
+        "sample" : 2
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1052.0417708903551,
+          "tiled" : 655.9999892488122
+        },
+        "order" : [
+          "naive",
+          "tiled"
+        ],
+        "sample" : 3
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1910.1665820926428,
+          "tiled" : 1193.9166579395533
+        },
+        "order" : [
+          "tiled",
+          "naive"
+        ],
+        "sample" : 4
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1919.1249739378691,
+          "tiled" : 750.25006663054228
+        },
+        "order" : [
+          "naive",
+          "tiled"
+        ],
+        "sample" : 5
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1381.7501021549106,
+          "tiled" : 654.99998163431883
+        },
+        "order" : [
+          "tiled",
+          "naive"
+        ],
+        "sample" : 6
+      },
+      {
+        "gpu_us" : {
+          "naive" : 2226.2915736064315,
+          "tiled" : 1336.7499923333526
+        },
+        "order" : [
+          "naive",
+          "tiled"
+        ],
+        "sample" : 7
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1048.1666540727019,
+          "tiled" : 1170.6666555255651
+        },
+        "order" : [
+          "tiled",
+          "naive"
+        ],
+        "sample" : 8
+      },
+      {
+        "gpu_us" : {
+          "naive" : 1047.1250861883163,
+          "tiled" : 654.74992152303457
+        },
+        "order" : [
+          "naive",
+          "tiled"
+        ],
+        "sample" : 9
+      }
+    ],
+    "range_gpu_us" : {
+      "naive" : {
+        "max" : 2226.2915736064315,
+        "min" : 1047.1250861883163
+      },
+      "tiled" : {
+        "max" : 1336.7499923333526,
+        "min" : 654.74992152303457
+      }
+    },
+    "shape" : {
+      "k" : 512,
+      "m" : 512,
+      "n" : 512
+    },
+    "warmups_per_kernel" : 3
+  },
+  "environment" : {
+    "device" : "Apple M4 Pro",
+    "float_math" : "precise",
+    "metal_language" : "3.0",
+    "os" : "Version 26.2 (Build 25C56)",
+    "unified_memory" : true
+  },
+  "fixture" : {
+    "dtype" : "float32",
+    "tail_guard_count" : 8,
+    "threadgroup" : [
+      16,
+      16
+    ]
+  },
+  "resources" : {
+    "naive" : {
+      "max_threads_per_threadgroup" : 1024,
+      "static_threadgroup_bytes" : 0,
+      "thread_execution_width" : 32
+    },
+    "tiled" : {
+      "max_threads_per_threadgroup" : 1024,
+      "static_threadgroup_bytes" : 2048,
+      "thread_execution_width" : 32
+    }
+  },
+  "scope" : "Same Apple Metal device and shared buffers, row-major synthetic FP32, exact Double oracle. Measured GPU command-buffer spans for one dispatch. End-to-end timing, CUDA and Nsight require separate measurements.",
+  "source_sha256" : {
+    "kernels.metal" : "f593902d040011a9aa67d881fc1d2255efbe7118ce753a56d47e9f5de5ca90e2",
+    "metal_gemm.swift" : "7c4d49af21e3adcda5d1e3a1de4a7af8cfbfd5d6396e6ef9cff2aa3842559e5b",
+    "README.md" : "bd7b2ca2cba692896d5aaa51f384ec0abe0e6bfa4687b4cea7f2e8a291b5ebfd"
+  },
+  "status" : "passed",
+  "validation" : {
+    "1x1x1" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 1,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.19140625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 1,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.19140625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 1,
+        "m" : 1,
+        "n" : 1
+      }
+    },
+    "17x19x13" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 323,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.40234375
+            },
+            {
+              "index" : 161,
+              "value" : 0.34765625
+            },
+            {
+              "index" : 322,
+              "value" : 0.43359375
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 323,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.40234375
+            },
+            {
+              "index" : 161,
+              "value" : 0.34765625
+            },
+            {
+              "index" : 322,
+              "value" : 0.43359375
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 13,
+        "m" : 17,
+        "n" : 19
+      }
+    },
+    "31x33x29" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 1023,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.453125
+            },
+            {
+              "index" : 511,
+              "value" : -0.921875
+            },
+            {
+              "index" : 1022,
+              "value" : 0.2578125
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 1023,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.453125
+            },
+            {
+              "index" : 511,
+              "value" : -0.921875
+            },
+            {
+              "index" : 1022,
+              "value" : 0.2578125
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 29,
+        "m" : 31,
+        "n" : 33
+      }
+    },
+    "32x32x32" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 1024,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.23828125
+            },
+            {
+              "index" : 512,
+              "value" : 0.49609375
+            },
+            {
+              "index" : 1023,
+              "value" : 0.20703125
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 1024,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.23828125
+            },
+            {
+              "index" : 512,
+              "value" : 0.49609375
+            },
+            {
+              "index" : 1023,
+              "value" : 0.20703125
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 32,
+        "m" : 32,
+        "n" : 32
+      }
+    },
+    "35x67x19" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 2345,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.57421875
+            },
+            {
+              "index" : 1172,
+              "value" : 0.1484375
+            },
+            {
+              "index" : 2344,
+              "value" : -0.3515625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 2345,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.57421875
+            },
+            {
+              "index" : 1172,
+              "value" : 0.1484375
+            },
+            {
+              "index" : 2344,
+              "value" : -0.3515625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 19,
+        "m" : 35,
+        "n" : 67
+      }
+    },
+    "512x512x512" : {
+      "kernels" : {
+        "naive" : {
+          "checked" : 262144,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 1.43359375
+            },
+            {
+              "index" : 131072,
+              "value" : 0.62109375
+            },
+            {
+              "index" : 262143,
+              "value" : -0.40625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "tiled" : {
+          "checked" : 262144,
+          "max_abs_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 1.43359375
+            },
+            {
+              "index" : 131072,
+              "value" : 0.62109375
+            },
+            {
+              "index" : 262143,
+              "value" : -0.40625
+            }
+          ],
+          "tail_guard_values" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "shape" : {
+        "k" : 512,
+        "m" : 512,
+        "n" : 512
+      }
+    }
+  }
+}

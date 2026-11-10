@@ -36,7 +36,7 @@ const cloudKnowledgeDomains = [
  ['durability-consistency','持久性、可用性与一致性','持久性讨论已确认数据的保存，可用性讨论能否处理请求，一致性约束不同观察之间的关系。复制增加冗余，不能自动替代备份，也不能仅凭副本数判断提交保证。','服务、区域、API 与配置的保证需逐项核对；不能把一种对象存储的语义扩展到所有存储产品。',['storage-recovery','distributed-systems']],
  ['database-service','托管数据库与事务边界','托管数据库减少部分部署运维，应用仍需设计索引、事务范围、连接池、隔离、幂等和迁移。MVCC、锁与日志服务于不同目标；提交确认和复制确认不能混称。','SQL 执行计划、锁等待、连接等待与存储 I/O 各有证据；SQLite 机制实验不能代替 MySQL/InnoDB 实机判断。',['database-index-locks','storage-recovery']],
  ['replication-failover','复制、主身份与故障切换','主从复制、仲裁和读写路由决定故障时谁可继续写、读到哪一版及可能丢多少已确认数据。提升副本还需处理旧主、客户端重连和结果未知的交易。','redo、binlog、复制日志和应用回执处在不同层；数据库内核与复制恢复是需要独立深入的专项。',['distributed-systems','storage-recovery','resilience']],
- ['cache-layer','缓存分层与一致性','缓存通过复用热点结果减轻源站压力，代价是失效、陈旧、击穿和容量管理。cache-aside、写穿、异步更新等策略有不同提交时序，TTL 不自动保证业务一致。','旧请求可在失效后回填旧值；需结合版本、权威读取、合并回源和源站承载能力讨论。',['cache-consistency']],
+ ['cache-layer','缓存分层与一致性','缓存通过复用热点结果减轻源站压力，代价是失效、陈旧、击穿和容量管理。cache-aside、写穿、异步更新等策略有不同提交时序，TTL 不自动保证业务一致。','旧请求可在失效后回填旧值。用版本防止回填倒退，必要时读源站，并按源站容量合并相同的回源请求。切换缓存节点时，也可能读到候选副本尚未更新的值。对照<a href="/article/cache-consistency/#native-redis-replica-promotion">Redis 断链与切换实战</a>，分别检查主节点回复、复制确认和新主读值。',['cache-consistency']],
  ['messaging','消息队列与流处理','队列组织待处理工作，流日志保存可顺序消费的记录；分区、消费组、确认点、重投和保留规则决定处理语义。至少一次投递要求接收方正确处理重复。','顺序通常有作用范围；消息确认、业务效果提交和消费位点提交必须分开，不能用“MQ”一词许诺恰好一次业务效果。',['serverless-execution','distributed-systems']],
  ['backup-restore','快照、备份与恢复目标','快照记录某时点的存储状态，备份提供可管理的恢复副本，复制服务于运行连续性。RPO 约束允许的数据丢失窗口，RTO 约束恢复时间，均须明确计时与确认口径。','真正的验收是隔离恢复后消费者可继续工作；保留卷、完成复制或备份任务成功并非同一证明。',['storage-recovery','resilience','k8s-storage']]
  ]},

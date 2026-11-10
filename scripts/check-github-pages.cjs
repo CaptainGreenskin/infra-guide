@@ -18,10 +18,13 @@ for(const asset of readerAssets){
  assert(source.equals(fs.readFileSync(path.join(root,file))),file+': keep earlier reader URLs byte-for-byte');
 }
 for(const asset of reader.assets){const data=fs.readFileSync(path.join(root,asset.file));assert.equal(digest(data),asset.sha256,asset.file+': Pages reader bytes must retain their hash');assert.equal(data.length,asset.bytes);assert(asset.file.includes('.'+asset.sha256.slice(0,12)+'.'));assert(data.equals(fs.readFileSync(path.join('dist',asset.file))),asset.file+': no reader JSON/JS origin drift');}
-for(const id of inventory.ids){
- const html=fs.readFileSync(path.join(root,'article',id,'index.html'),'utf8'),template=html.match(/<template id="reader-full-runtime">([\s\S]*?)<\/template>/);
+const readerPaths=[...inventory.ids.map(id=>'article/'+id),...['cloud','ai','agent'].map(track=>'track/'+track)];
+const bootstrap=reader.assets.find(asset=>asset.file.includes('reader-bootstrap.'));
+for(const id of readerPaths){
+ const html=fs.readFileSync(path.join(root,id,'index.html'),'utf8'),template=html.match(/<template id="reader-full-runtime">([\s\S]*?)<\/template>/);
  assert(template,id+': Pages fallback template');
- const active=html.replace(template[0],'');assert.equal([...active.matchAll(/<script\b[^>]*\bsrc="/g)].length,1,id+': one active Pages bootstrap');
+ const active=html.replace(template[0],'');
+ assert.deepEqual([...active.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)].map(match=>match[1]),[base+bootstrap.file],id+': one active Pages bootstrap');
  const fallbacks=[...template[1].matchAll(/src="([^"]+)"/g)];assert.equal(fallbacks.length,9);
  for(const[,src]of fallbacks){const url=new URL(src,'https://captaingreenskin.github.io'+base),file=path.join(root,url.pathname.slice(base.length));assert.equal(url.searchParams.get('v'),digest(fs.readFileSync(file)).slice(0,12),id+': fallback fingerprint survives Pages rewriting');}
 }

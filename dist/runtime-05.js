@@ -1247,7 +1247,8 @@ const runtimePractice=infraReadableHTML(
 }
 infraDomain('agent').points.find(p=>p.id==='ag-runtime').body=runtimeTask+runtimeLoop+runtimeState+runtimeCompletion+
  para('提交时连接中断，可以用原请求身份重新查询或提交。<a href="/article/kairo-practice/#native-agent-task-reconnect">从实际任务库核对同一份请求是否只受理一次</a>。');
-infraDomain('agent').points.find(p=>p.id==='ag-tools').body=runtimeContracts+runtimeErrors;
+infraDomain('agent').points.find(p=>p.id==='ag-tools').body=runtimeContracts+runtimeErrors+
+ para('模型可以在两个查询工具之间选择。宿主核对提议的名称和参数，资源服务再判断能读哪份报告。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">对照三次模型提议和资源端实际读取 →</a>');
 infraDomain('agent').refs=nitRefs([...infraDomain('agent').refs,'v23Tools']);
 const agentCasesBeforeNIT=infraFieldCases.agent;
 infraFieldCases.agent=()=>'<h3>工具成功后，还要独立验收任务</h3>'+nitLab('tool_runtime.py',false)+

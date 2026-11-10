@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'redis-replica-promotion':{folder:'redis-replica-promotion',title:'Redis 复制确认与手动提升'},
+ 'metal-gemm':{folder:'metal-gemm',title:'Apple GPU 上的逐元素与分块矩阵乘法'},
+ 'model-mcp-tool-choice':{folder:'model-mcp-tool-choice',title:'本地模型选择工具与 MCP 读取权限'},
  'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
  'workflow-version-resume':{folder:'workflow-version-resume',title:'工作流升级后旧审批的恢复'},
@@ -382,6 +385,20 @@ labLearningCatalog.push(
   files:['reconnect_lab.py','readonly-contract.json','resources.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · 本机 HTTP 与 SQLite',kind:'真实断线、任务续查与 MCP 读取',
   observe:'对照首次断线、原样重传和同编号改参数，再核对原会话的报告与资源侧读取。',
   scope:'公开本机参考实现、固定身份和工具步骤。Kairo 接入与模型决策由目标环境另验。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-redis-replica-promotion',track:'cloud',stage:2,title:'主库已经写成 v8，为什么新主库还停在 v7',chapter:'cache-consistency',anchor:'native-redis-replica-promotion',pack:'redis-replica-promotion',
+  files:['replica_promotion.py'],env:'Python 3.9+ · Redis 8.2.6 · 本机 Unix 套接字与回环 TCP',kind:'真实复制确认、断链与手动提升',
+  observe:'同一条写入走两遍。记录主库的 OK 和 WAIT 返回值，再从提升后的节点读取订单版本。',
+  scope:'两个本机 Redis 进程。实验关闭持久化，手动停止主库并提升副本。'},
+ {id:'ai-native-metal-gemm',track:'ai',stage:2,title:'同一块 GPU 上，分块矩阵乘法快多少',chapter:'operator-profiling',anchor:'native-metal-gemm',pack:'metal-gemm',
+  files:['metal_gemm.swift','kernels.metal'],env:'macOS · Apple GPU · Swift 工具链',kind:'真实 Metal 执行与 GPU 计时',
+  observe:'先用 CPU 参考逐元素核对六种形状，再比较两种实现的成对 GPU 命令缓冲区用时。',
+  scope:'Apple M4 Pro 上的 FP32 小实验。CUDA、Nsight 和生产库性能按目标设备另验。'},
+ {id:'agent-model-mcp-tool-choice',track:'agent',stage:2,title:'模型选中了工具，报告能直接读吗',chapter:'agent-runtime',anchor:'native-model-mcp-tool-choice',pack:'model-mcp-tool-choice',
+  files:['model_tool_lab.py','fixture.json','assets.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU',kind:'真实模型选工具、MCP 读取与拒绝',
+  observe:'从工具清单跟到模型选择、资源端授权和下一轮回答，再用读取记录核对越权分支。',
+  scope:'三条固定问题、合成报告与本机测试身份。模型泛化、生产鉴权和 Kairo 接入需另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

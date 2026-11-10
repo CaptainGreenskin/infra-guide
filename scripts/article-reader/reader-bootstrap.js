@@ -1,6 +1,6 @@
 (function(){
  'use strict';
- const version=__VERSION__,articleIds=__ARTICLE_IDS__,runtimeURL=__RUNTIME_URL__;
+ const version=__VERSION__,articleIds=__ARTICLE_IDS__,trackEntries=__TRACK_ENTRIES__,runtimeURL=__RUNTIME_URL__;
  const base=document.querySelector('base')?.getAttribute('href')||'/';
  const hosted=value=>base==='/'?value:base.replace(/\/$/,'')+value;
  const pathname=base==='/'?location.pathname:location.pathname.startsWith(base)?'/'+location.pathname.slice(base.length):location.pathname;
@@ -26,8 +26,9 @@
   });
  }
  window.addEventListener('reader-full-runtime',event=>full(event.detail?.reason||'explicit runtime fallback'));
- const app=document.querySelector('#app'),id=pathname.match(/^\/article\/([a-z0-9-]+)\/$/)?.[1];
- const reason=!id?'noncanonical article route or alias':!articleIds.includes(id)?'unknown article':app?.getAttribute('data-static-path')!==pathname?'static path mismatch':app.getAttribute('data-static-version')!==version?'static version mismatch':app.getAttribute('data-static-article')!==id?'static article mismatch':!document.querySelector('.doc-layout .article')?'missing static article':document.querySelector('[data-field-map]')?'unsupported article field map':null;
+ const app=document.querySelector('#app');
+ const id=pathname.match(/^\/article\/([a-z0-9-]+)\/$/)?.[1]||trackEntries[pathname];
+ const reason=!id?'unsupported reading route':!articleIds.includes(id)?'unknown article':app?.getAttribute('data-static-path')!==pathname?'static path mismatch':app.getAttribute('data-static-version')!==version?'static version mismatch':app.getAttribute('data-static-article')!==id?'static article mismatch':!document.querySelector('.doc-layout .article')?'missing static article':document.querySelector('[data-field-map]')?'unsupported article field map':null;
  if(reason){full(reason);return;}
  mode='light';
  const script=document.createElement('script');script.src=hosted(runtimeURL);script.onerror=()=>full('light runtime asset failed');document.head.appendChild(script);

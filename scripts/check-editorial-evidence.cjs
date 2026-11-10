@@ -88,7 +88,8 @@ for(const row of expansion.new_chapter_reviews){const a=data.articles.find(a=>a.
 // instead of requiring a legitimately edited chapter to stay frozen at that unit.
 const nativeRecordChecks = {
  'dist/labs/triton-tail-mask/validation.json':'./check-triton-tail-mask.cjs',
- 'dist/labs/mcp-trace-reentry/validation.json':'./check-mcp-trace-reentry.cjs'
+ 'dist/labs/mcp-trace-reentry/validation.json':'./check-mcp-trace-reentry.cjs',
+ 'dist/labs/redis-replica-promotion/validation.json':'./check-redis-replica-promotion.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);
