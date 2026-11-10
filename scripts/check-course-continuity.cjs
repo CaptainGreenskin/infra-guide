@@ -18,7 +18,7 @@ c.profile=data.profiles['ai-training'];const training=JSON.parse(vm.runInContext
 assert(!training.includes('position-encoding'));assert(training.includes('transformer-block')&&training.includes('autograd-training'));
 c.profile=data.profiles['agent-app'];const application=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(profile))',c));
 assert(!application.includes('agent-sandbox'));assert(application.includes('agent-security')&&application.includes('agent-recovery'));
-for(const[id,index,text]of [['mcp-protocol',0,'没有共享任务数据库'],['agent-memory',3,'该数据库独立于运行时章的日报 37'],['agent-observability',0,'不共享任务状态或操作回执']])assert(section(id,index).includes(text),id+': fixture boundary');
+for(const[id,index,text]of [['mcp-protocol',0,'运行时章的日报 37 来自另一份实验'],['agent-memory',3,'该数据库独立于运行时章的日报 37'],['agent-observability',0,'不共享任务状态或操作回执']])assert(section(id,index).includes(text),id+': fixture boundary');
 const input=section('agent-retrieval',14);for(const term of ['输入交付','业务效果','任务结果','/article/agent-evaluation/','/article/agent-recovery/'])assert(input.includes(term));
 const chain=section('kubernetes-training',2);for(const term of ['id="training-object-chain"','ownerReferences','WORLD_SIZE=4','平台策略','rank 用来标识当前通信组','metadata.ownerReferences','workloads.kueue.x-k8s.io'])assert(chain.includes(term));
 for(const id of ['training-platform','gpu-scheduling'])assert(section(id,0).includes('/article/kubernetes-training/#training-object-chain'));
@@ -51,7 +51,7 @@ const suffixBoundaries={
  'tensor-parallel-math':[5,tensorGroups.replace(tensorGroupFigure[0],'')]
 };
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
- const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert.equal(a.updated,'2026.11.09');
+ const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert(a.updated>='2026.11.09');
  assert.notEqual(JSON.stringify(a.sections),JSON.stringify(before.sections));
  assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]));
  // Dedicated lab checks cover the exact suffixes. Preserve the earlier inventory.

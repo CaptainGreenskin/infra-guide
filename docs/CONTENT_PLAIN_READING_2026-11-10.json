@@ -1,0 +1,39 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "fcd5db2ea4ae3635b8191f1d5531d3dc24cf96f4",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CAPACITY_PLACEMENT_RECEIPTS_2026-11-10.json": "9d3c4647198412eacd5ef18878b4fba5dc5061b9df00fe20727e7ec2fa6686c9"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "14f677a1dd5e65132047708df33fc46d6f404b70484ccb8e4b19c686c85350a3",
+      "reviewed_content_sha256": "ed5cbf98ea52919ca54da31302a8cdff9967dd9a87ec31730cf34472b96259f1",
+      "scope": "Introduce MCP by reading one batch and then scanning both batches for report-A.",
+      "observation": "Keep the script-based protocol experiment, total 42 and the distinction from the separate runtime experiment.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": [
+    {
+      "id": "ag-runtime",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "70cdf4ff045bdeac1ffc05ba09002036840fcaed4ac3c185478dea30fe292c91",
+      "reviewed_content_sha256": "b1d490b765ed6147597c194a574c70b56ec0a85558b465b59e50a821b06f2b20",
+      "scope": "Use the same concrete counting example in the Agent field explanation and the runtime chapter.",
+      "observation": "Only the shared prose changes. The executed program, figures and links stay byte-for-byte."
+    }
+  ]
+}

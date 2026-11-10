@@ -92,10 +92,10 @@
  const i=identity.sections.map(s=>s[1]),i2=blocks(i[1]),i3=blocks(i[2]),i9=blocks(i[8]),i9links=links(i[8]);
  if(i2.length!==4||i3.length!==1||i9.length!==6||i9links.length!==7||pres(i.join('')).length!==11||figures(i.join('')).length!==2)throw Error('Identity original evidence extraction changed');
  rewrite(identity,[
- p('程序向另一个系统发起动作时，接收方需要回答两件事：请求代表谁，以及这次动作是否被允许。主体是被识别的用户、服务或程序身份；凭据是用来证明身份或委托的材料。认证验证凭据并建立主体，授权再按主体、动作、资源和请求条件作决定，允许以后才进入受保护的业务操作。',
- '正常路径依次是：平台确认用户与任务归属，给工作负载安排获准身份，工作负载取得适用凭据，接收方认证，再评估具体请求，最后执行并记录效果。一次登录、一次凭据签发和一次对象读取，是这条链上的不同事件。')+
+ p('A 租户的用户提交导出任务 17。平台确认用户有权提交这项任务，再为后台程序安排获准的身份。程序取得证明身份或委托的材料，也就是凭据。它带上凭据，请求存储服务读取固定版本 v3 的输入，再把结果写到任务 17 的目录。',
+ '存储服务先验凭据，识别请求中的用户或程序身份，这一步叫认证。这个被识别的身份叫主体。接着，存储服务根据主体、动作、目标和请求条件，决定是否允许这次读写，这一步叫授权。实际写入后，再查产物和归属，确认导出结果落在指定目录。')+
  table(['决策位置','要确认的事实','本章导出设计题'],[['用户进入平台','用户属于哪个租户，能否提交任务','用户A获准提交任务17'],['平台安排执行者','任务能使用哪个工作负载身份和目标范围','固定输入版本v3与任务17输出位置'],['数据接收方','请求代表谁，当前动作与目标是否被允许','读取A输入，写入A任务17结果'],['业务完成后','实际效果及所属对象是否正确','结果存在、归属正确，拒绝请求没有先写数据']])+
- p('用A租户导出作设计例：后台工作者读固定输入v3，把结果写到任务17目录。若存储返回拒绝访问，应先沿身份、动作和目标定位这一跳。直接增加管理员权限会同时扩大其他资源和动作的可达范围，还可能让其他租户借平台发起越权操作。')+linkRow(links(i[0])),
+ p('存储拒绝访问时，先查请求实际用了谁的身份、执行了哪个动作、访问的是哪份资源。直接授予管理员权限也会放开其他动作和资源，可能让别的租户借平台越权访问。')+linkRow(links(i[0])),
 
  p('委托让一个程序以获准身份执行任务，平台仍需把原用户和任务约束落实到目标。人员可以有部署权限，运行中的工作负载则使用自己的主体；下游通常看到该工作负载的调用身份，不会自动取得最初用户的全部业务归属信息。',
  '在AWS中，IAM角色是一种可被代入的身份。信任策略说明谁可取得该角色会话及相应条件，权限策略说明这个角色可访问哪些动作和资源。STS的AssumeRole在规则满足后返回临时凭据：访问密钥ID、秘密访问密钥和会话token；调用者随后用这些材料按AWS API协议发起请求。会话策略可以进一步收窄本次会话的相应权限。',
@@ -177,5 +177,5 @@
  '<p class="practice-links"><a href="/labs/spiffe-workload-identity.zip" download>下载完整实验包 ↓</a> · <a href="/labs/spiffe-workload-identity/README.md">查看运行说明</a> · <a href="/labs/spiffe-workload-identity/validation.json">查看签发、请求和效果记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780">查看 Linux CI 实跑 ↗</a></p>'+
  '<p><a href="https://github.com/spiffe/spire/blob/v1.16.0/doc/plugin_agent_workloadattestor_unix.md">SPIRE 1.16.0 Unix 选择器 ↗</a> · <a href="https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/">SPIFFE Workload API 规范 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
- identity.updated='2026.11.09';
+ identity.updated='2026.11.10';
 })();

@@ -305,12 +305,13 @@ const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
 function learningContract(a,m,overview){
+ const baseline=a.baseline||(a.module==='training'?'训练代码基线 PyTorch 2.5.1':'');
  return `<details class="guided-contract"><summary>先修与实验条件</summary><div class="learning-contract">
   <p class="description">${a.desc}</p>
   <div class="article-meta"><span class="category">${m.name}</span><span>${a.level}</span><span>·</span><span>${a.edition||'训练专题'}</span></div>
   ${tags(a.tags)}
   <strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}
-  <p class="evidence-note">约 ${a.minutes} 分钟 · ${a.baseline||'训练代码基线 PyTorch 2.5.1'} · <a href="#/labs">实验验证范围 ↗</a></p>${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${overview}${guidedIntro(a)}
+  <p class="evidence-note">${baseline?baseline+' · ':''}<a href="#/labs">实验验证范围 ↗</a></p>${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${overview}${guidedIntro(a)}
  </div></details>`;
 }
 function mobileContents(a){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${chapterReadingContentsHTML(a)}</details>`}
@@ -322,10 +323,9 @@ function homePage(){
  document.title='InfraGuide · 云计算、AI Infra 与 Agent Infra 中文学习指南';
  $('#app').innerHTML=`<main id="main" class="container home-reading" tabindex="-1">
  <section class="infra-hero"><div class="eyebrow"><span class="dot"></span> 给中国初学者与面试准备者的基础设施指南</div>
- <div class="hero-grid"><div><h1>基础设施学习指南</h1><p>Cloud Infra 管应用运行，AI Infra 管模型训练与推理，Agent Infra 管任务和工具执行。先认识对象与关系，再沿一条主线读机制、算例和代码。</p>
+ <div class="hero-grid"><div><h1>基础设施学习指南</h1><p>Cloud Infra 讲服务如何上线和恢复。AI Infra 从模型计算讲到多卡训练和推理。Agent Infra 用一份订单报告讲工具调用、权限和任务恢复。</p>
  <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
- <p class="home-route-link"><a href="/roadmap/">已有基础？按学习路线继续 →</a></p></div>
- <aside class="home-reading-order" aria-label="一章的阅读顺序"><h2>一章，顺着四步读</h2><ol><li><b>认识对象</b><span>这个概念是什么？</span></li><li><b>弄清关系</b><span>它与前面的知识怎样连接？</span></li><li><b>跟算例子</b><span>每一步为什么得到这个结果？</span></li><li><b>运行验证</b><span>换一个条件，结论还成立吗？</span></li></ol></aside></div></section>
+ <p class="home-route-link"><a href="/roadmap/">已有基础？按学习路线继续 →</a></p></div></div></section>
  <section class="track-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
  <div class="shared-line"><b>共同的工程底座</b><span>计算与数据路径 · 身份与权限 · 可观测性 · 版本与恢复</span><a href="/article/cloud-overview/">建立系统地图 →</a></div>
  <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。 <a class="inline-link" href="/about/#reader-trial">参加 15 分钟试读 →</a></p></div></div>
@@ -339,17 +339,17 @@ function homePage(){
 }
 
 const trackEntryOverviews={
- cloud:{lead:'沿一次服务请求认识资源、网络和数据，再看怎样上线服务、限制操作和恢复故障。',rows:[
+ cloud:{lead:'查一次订单，请求先过网络，再由应用读数据库。服务上线后，还要管权限、容量和故障恢复。',rows:[
   ['请求怎样跑起来',[['compute','计算与虚拟化'],['network','云网络'],['cloud-data','存储与数据']]],
   ['应用怎样上线',[['native','容器与 Kubernetes'],['serverless','Serverless'],['cloud-delivery','IaC 与 GitOps']]],
   ['系统怎样长期运转',[['cloud-security','身份安全'],['cloud-capacity','容量与成本'],['sre','SRE 与恢复']]]
  ],extra:['foundation','按需补系统基础']},
- ai:{lead:'先认识模型怎样计算，再看多台设备怎样一起训练，以及训练产物怎样变成推理服务。',rows:[
+ ai:{lead:'从模型把「红 圆」译成 red circle 的计算讲起，再看多张卡怎样训练，以及怎样用训练得到的权重回答请求。',rows:[
   ['理解模型计算',[['model-foundations','Transformer、GPU 与算子']]],
   ['完成训练与恢复',[['training','并行、数据、通信与检查点']]],
   ['部署并验证服务',[['platform','作业调度、推理与交付']]]
  ]},
- agent:{lead:'沿一项委托理解模型怎样提出动作、运行时怎样执行，以及出错后怎样继续并验收结果。',rows:[
+ agent:{lead:'把订单汇总成报告并保存。模型提出下一步，运行时核对权限、调用工具，再检查报告是否真的写入。',rows:[
   ['安全执行工具',[['/article/mcp-protocol/','工具接口'],['/article/agent-security/','授权'],['/article/agent-sandbox/','隔离']]],
   ['处理状态与证据',[['/article/agent-recovery/','回执与恢复'],['/article/durable-workflows/','持久工作流'],['/article/agent-memory/','上下文'],['/article/agent-retrieval/','检索与证据']]],
   ['核对实际任务',[['/article/agent-observability/','追踪'],['/article/agent-evaluation/','评估'],['/article/kairo-practice/','Kairo 接入']]]
@@ -362,7 +362,7 @@ function trackEntryOverviewHTML(article,showTrackOverview){
  const link=([target,label])=>'<a href="'+(target.startsWith('/')?target:fieldMapURL(target))+'">'+label+'</a>';
  const heading='track-overview-'+track;
  const bodyPath=showTrackOverview?hostedPath('/track/'+track+'/')+location.search:readingArticleURL(article.id);
- return '<section class="track-entry-overview" aria-labelledby="'+heading+'"><div class="track-entry-head"><h2 id="'+heading+'">'+trackDefinitions[track].label+' 学习全貌</h2><a href="'+trainingEscape(bodyPath)+'#section-1">读正文 ↓</a></div><p>'+lead+'</p><ol>'+rows.map(([label,links])=>'<li><b>'+label+'</b><span>'+links.map(link).join('')+'</span></li>').join('')+'</ol><div class="track-entry-links">'+(extra?link(extra):'')+'<a href="/roadmap/?track='+track+'#route-'+track+'">完整学习顺序 →</a></div></section>';
+ return '<section class="track-entry-overview" aria-labelledby="'+heading+'"><div class="track-entry-head"><h2 id="'+heading+'">'+trackDefinitions[track].label+' 学习全貌</h2><a href="'+trainingEscape(bodyPath)+'#section-1">读正文 ↓</a></div><p>'+lead+'</p><ol>'+rows.map(([label,links])=>'<li><b>'+label+'</b><span>'+links.map(link).join('')+'</span></li>').join('')+'</ol><div class="track-entry-links">'+(extra?link(extra):'')+'<a href="/roadmap/?track='+track+'#route-'+track+'">学习路线 →</a></div></section>';
 }
 
 // A direction opens its first lesson. The sidebar is the curriculum, not another landing page.
@@ -399,7 +399,13 @@ function sidebarView(moduleId, current) {
    <div class="progress-bar"><span style="width:${read/topicArticles.length*100}%"></span></div><span>仅保存在当前浏览器</span></div></aside>`;
 }
 function moduleOverview(m,list){return `<div class="module-intro"><b>这一模块的学习出口</b><ul>${m.outcomes.map(t=>'<li>'+t+'</li>').join('')}</ul><span>${list.length}章 · 先理解机制，再用问题和实验检验理解</span></div>`}
-function relatedReading(a){if(!a.related?.length)return '';return `<section class="related-reading"><h2>把这一章连回系统</h2>${a.related.map(id=>`<a href="${articleURL(id)}"><span>${articleById(id).number}</span>${articleById(id).title}<b>↗</b></a>`).join('')}</section>`}
+function relatedReading(a){
+ if(!a.related?.length)return '';
+ const linked=chapterConnectionLinks(a).map(([,id])=>id);
+ const related=a.related.filter(id=>!linked.includes(id));
+ if(!related.length)return '';
+ return `<section class="related-reading"><h2>延伸章节</h2>${related.map(id=>`<a href="${articleURL(id)}"><span>${articleById(id).number}</span>${articleById(id).title}<b>↗</b></a>`).join('')}</section>`;
+}
 function roadmapPage(){
  const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),candidate=selectedLearningProfile(),selected=candidate?.track||(trackDefinitions[key]?key:'cloud');
  const enhanced=typeof document.createElement==='function',profile=candidate?.track===selected?candidate:null;
@@ -453,7 +459,7 @@ function editorialPage(){simplePage('内容与证据标准','EXPLAIN THE SYSTEM 
 
 function chapterPracticeHTML(a){
  const exercise=a.exercise?'<section class="article-section applied-exercise"><h2><span class="section-index">?</span>迁移练习</h2><p>'+a.exercise[0]+'</p><details class="full-code"><summary>展开参考答案与推理</summary><p>'+a.exercise[1]+'</p></details></section>':'';
- return `<details class="chapter-practice" id="chapter-practice"><summary>练习、复习与阅读反馈</summary>${optionalConceptReviews.has(a.id)?chapterConceptIntro(a):''}${guidedReview(a)}${exercise}<section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist">${a.check.map((c,i)=>`<label><input type="checkbox" data-check="${a.id}:${i}" ${checks[`${a.id}:${i}`]?'checked':''}>${c}</label>`).join('')}<small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section>${readerActionsHTML(a)}</details>`;
+ return `<details class="chapter-practice" id="chapter-practice"><summary>练习与反馈</summary>${optionalConceptReviews.has(a.id)?chapterConceptIntro(a):''}${guidedReview(a)}${exercise}<section class="article-section" id="self-check"><h2>自我检验</h2><div class="checklist">${a.check.map((c,i)=>`<label><input type="checkbox" data-check="${a.id}:${i}" ${checks[`${a.id}:${i}`]?'checked':''}>${c}</label>`).join('')}<small>勾选表示自我评估，记录仅保存在当前浏览器。</small></div></section>${readerActionsHTML(a)}</details>`;
 }
 function chapterReferencesHTML(a){
  const refs=a.refs.filter((r,i,all)=>all.findIndex(other=>sources[other][1]===sources[r][1])===i).map(r=>`<a href="${sources[r][1]}" target="_blank" rel="noopener noreferrer">${sources[r][0]} ↗</a>`).join('');

@@ -39,7 +39,8 @@ for(const id of first){
 }
 const model=data.articles.find(a=>a.id==='transformer-model');
 for(const term of ['Embedding','Attention','FFN','归一化','残差连接','输出投影'])assert(model.sections[0][1].includes(term),'model components precede matrix arithmetic: '+term);
-assert(model.sections[0][1].includes('每条取前四项作输入、后四项作目标'),'the first reading defines the label shift');
+const decoderExample=model.sections[0][1].split('id="tiny-decoder-input"')[1];
+assert(/前四项作输入[^<]*后四项作目标/.test(decoderExample),'the first reading defines the label shift in the decoder example');
 assert(model.sections[6][1].includes('将有效目标对应的行纳入损失'),'the training explanation specifies which targets count');
 assert(model.sections[6][1].includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));

@@ -20,7 +20,7 @@ for(const before of prior){
  assert.equal(historical.length-pre(all(before)).length,a.id==='agent-memory'?0:1,a.id+': unexpected new V51 code');
  let index=0;const current=pre(all(a));for(const original of historical){const at=current.indexOf(original,index);assert(at>=index,a.id+': published complete code removed, reordered or modified');index=at+1;}
  const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
- assert(html.includes('在领域图谱中看本章相关概念'));
+ assert(/class="chapter-map-link" href="\/module\/[a-z0-9-]+\/\?concept=([a-z0-9-]+)#map-concept-\1"/.test(html),a.id+': chapter links to its exact concept');
 }
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
 for(const[id,key]of [['slo','slo'],['gpu-execution','gpu']]){

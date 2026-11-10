@@ -8,8 +8,8 @@ const firstReadingChanges=[];
  if(!overview||!overview.includes('v42-ai-concepts.svg'))throw Error('Missing model overview figure');
  if(!blockFlow||!blockFlow.includes('v9-model-flow.svg'))throw Error('Missing decoder block flow figure');
  section[1]=`<h3 id="text-to-next-token">一句话怎样变成下一词元的预测</h3>`+para(
- '把「红 圆」译成英文时，模型怎样先选出 red，再选出 circle？每一步都要结合已有内容，为下一项的候选打分。Transformer 是组织这套序列计算的一种结构。可以先认清下面的部件，再<a href="/article/transformer-model/#translation-reading-path">跟同一句翻译走完三轮</a>。',
- '分词器先把文本切成词元（token），再按词表给每个词元查出编号。词元可以是字、词片段或字节片段。模型收到编号后，词嵌入表把每个编号换成向量，也就是一组参与计算的数字。向量经过多层处理，最后变成每个候选编号的得分，称为 logits。生成程序按规则选出一个编号，接到已有序列后面，再预测下一项。这种逐项续写叫自回归生成。')+
+ '给小模型一句「红 圆」，它先译出 red，再译出 circle。已经译出 red 时，把原文换成「红 方」，下一词就变成 square。Transformer 在每一轮用原文和已经译出的内容，给下一词的候选项打分。<a href="/article/transformer-model/#translation-reading-path">查看翻译的三轮输入与输出</a>。',
+ '程序先用分词器把文本切成词元（token）。词元可以是字、词片段或字节片段。它按词表找到「红」和「圆」的编号，再用词嵌入表把每个编号换成一组数字，这组数字叫向量。Transformer 处理这些向量，算出词表里各项的分数（logits）。每轮选出一项，接到已生成的内容后，再算下一轮。这种逐项续写叫自回归生成。')+
  conceptReadingTable(['组件','负责什么','在模型中的关系'],[
   ['分词器与词表','把文本片段转换为编号','为词嵌入提供查表编号'],
   ['词嵌入 <code>Embedding</code>','把编号查成向量','产生每个位置的初始表示'],
@@ -20,7 +20,7 @@ const firstReadingChanges=[];
   ['残差连接','把分支输出与原表示相加','保留直接路径，连接连续的计算层'],
   ['输出投影','为词表中的每个候选编号打分','分数用于计算训练损失或选择下一项']
  ])+
- para('图里的参数是模型反复使用、能通过学习调整的数字。训练时，先用参数计算预测，再与目标比较得到损失。梯度描述改变参数会怎样影响损失，优化器据此更新参数。推理时，参数固定，系统把输入变成预测结果。')+overview+
+ para('词嵌入表等部件里的数值是模型参数。训练时，如果正确答案是 circle，模型给它的概率越低，损失就越大。梯度描述微调参数会怎样改变损失，优化器据此更新参数。实际翻译时，参数固定下来，只用它们算分。')+overview+
  `<h3 id="sequence-models">循环、卷积和注意力怎样传递前文</h3>`+
  para('把「红牌、蓝牌、绿牌、找红」当成四个示意词元。第 4 格要利用第 1 格的红牌。这里只允许每格读取自己和前文。前面的信息怎样到达第 4 格，取决于这一层连接了哪些位置。',
  '循环神经网络（RNN）为每格计算一个状态，也就是要传给下一格的一组数字。普通单向 RNN 用本格输入和上一格状态算出新状态。红牌的信息可以从状态 1 依次传到状态 4，中间各格都要等前一格算完。',
@@ -45,7 +45,7 @@ const firstReadingChanges=[];
  ])+'</div>'+
  para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
- para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
+ para('翻译到第二轮时，模型要把已有内容变成新的候选分数。中间会反复做矩阵乘法，把一组特征变成另一组特征。执行一次这类运算的程序叫算子。写算子时要管数字怎么算、从哪取。训练时要管参数怎么更新。提供翻译服务时，还要让多个请求共用有限的显存。')+
  conceptReadingTable(['学习线','沿同一个模型追什么','从哪章继续'],[
   ['模型基础','编号怎样变成向量，向量怎样读取上下文，最后怎样得出候选分数','<a href="/article/tokenization-embedding/">词元与嵌入</a> → <a href="/article/attention-mechanics/">注意力</a> → <a href="/article/transformer-block/">完整解码器块</a>'],
   ['GPU 与算子','矩阵乘法和注意力怎样落到 GPU 的计算与存储。序列变长时，哪些数字值得留在芯片上继续用','<a href="/article/gpu-execution/">GPU 怎样执行算子</a> → <a href="/article/operator-profiling/">实现、测量与验证</a>'],
@@ -55,15 +55,15 @@ const firstReadingChanges=[];
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>')+
  `<h3 id="tiny-decoder-input">下面用哪组输入计算</h3>`+para(
  '上面的翻译实验有独立的源端和目标端。第 2 节起切换到另一份只用解码器的小模型，在一条编号序列里计算续写。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。',
- '本章用一组可手算的模型尺寸。词表 V=8，每个位置的特征宽度 D=8，每批样本 B=2，每条输入长度 T=4。两条原始编号序列为 [0,1,2,3,4] 和 [4,5,6,7,0]。编号在这里用于查表，所有编号都是普通词元。',
- '训练时每条取前四项作输入、后四项作目标。第一条的第 0 位看到 0，目标是 1。第 3 位看到 [0,1,2,3]，目标是 4。第 2、3 节先把这些位置和特征变成可以计算的形状，第 4 节再把各运算装回同一块。');
- a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
+ '小模型的词表有 8 项（V=8），每个位置用 8 个数字表示（D=8）。一个批次有两条样本（B=2），原始编号是 [0,1,2,3,4] 和 [4,5,6,7,0]。每个编号都对应词嵌入表中的一行。',
+ '每条取前四项作输入（T=4），后四项作目标。以第一条为例，第 0 位只看到 0，要猜 1。第 3 位能看到 [0,1,2,3]，要猜 4。');
+ a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
  const tensor=a.sections[1];
  tensor[1]=tensor[1].replace('同一块张量可以交换维度后以不同的步长读取；把 [B,T,D] 解释为 [B,T,H,d] 仅在 D=H×d 且布局兼容时简单。随后交换 head 与时间轴，再把头拼回模型轴，有时需要实际重排或复制。','交换张量的两根轴时，程序可以沿不同间隔读取同一份存储，这个间隔叫步长。第 4 节会把特征按多个注意力分支分组。分组后换轴，再合并回一根特征轴时，是否需要复制取决于实际存储布局。');
 
  a.sections[3][1]=`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('上一节的线性层只加工同一位置的特征。要把上下文带进来，就让位置之间交换信息。沿用第一条输入 [0,1,2,3]。位置 2 要预测编号 3，可读位置 0、1、2 的向量。位置 3 已经含有目标编号，必须挡住。')+
+ para('输入是 [0,1,2,3]，位置 2 要猜下一个编号。它可以读位置 0、1、2，位置 3 里是答案，要挡住。上一节的线性层只处理位置 2 自己的向量。注意力则会把前面两格的信息也算进来。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
@@ -127,7 +127,7 @@ const firstReadingChanges=[];
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
  a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
- a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];

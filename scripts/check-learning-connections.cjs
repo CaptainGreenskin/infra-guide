@@ -16,7 +16,13 @@ const agentReachable=new Set();function agentWalk(id){if(agentReachable.has(id))
 for(const id of agentReachable)assert(byId[id].module==='agent','Agent hard path must remain independent: '+id);
 assert(d.stages.ai[3][1].includes('training-lab'));assert(!d.stages.ai[4][1].includes('training-lab'),'training capstone belongs with training and recovery');
 assert.equal(d.stages.cloud[0][1][0],'cloud-overview');assert(!d.needs['config-secrets'].some(([id])=>['delivery','iam-security'].includes(id)));assert(!d.needs['kubernetes-training'].some(([id])=>id==='multinode-lab'));
-for(const a of d.articles){const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');assert.equal((html.match(/aria-label="章节之间的概念关系"/g)||[]).length,1);assert(html.includes('在学习路线中定位这一章'));for(const[dep]of d.needs[a.id])assert(html.includes('/article/'+dep+'/'));}
+for(const a of d.articles){
+ const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');
+ const track=Object.keys(d.stages).find(key=>d.stages[key].some(([,chapterIds])=>chapterIds.includes(a.id)));
+ assert.equal((html.match(/aria-label="章节之间的概念关系"/g)||[]).length,1);
+ assert(html.includes('href="/roadmap/?track='+track+'#route-chapter-'+track+'-'+a.id+'"'));
+ for(const[dep]of d.needs[a.id])assert(html.includes('/article/'+dep+'/'));
+}
 const roadmap=fs.readFileSync('dist/roadmap/index.html','utf8');for(const[track,stages]of Object.entries(d.stages)){for(const id of stages.flatMap(s=>s[1]))assert(roadmap.includes('id="route-chapter-'+track+'-'+id+'"'));assert(roadmap.includes('id="synthesis-'+track+'"'));assert(roadmap.includes(d.models[track].exercise));}
 const record=require('./coherence-review-records.cjs').record;assert.equal(record.reader_trials,0);assert.equal(record.chapter_relations.length,inventory.chapters);assert.equal(record.knowledge_targets.length,inventory.points);
 assert.deepEqual(record.system_models,d.models);assert.deepEqual(record.route_stages,d.stages);assert.deepEqual(record.knowledge_targets,d.points);

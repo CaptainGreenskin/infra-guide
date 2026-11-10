@@ -74,7 +74,7 @@ function verifyTeaching(proofUrl){
   if(file!=='app.js')vm.runInContext(read('dist/'+file),context,{filename:file});
  }
  const article=vm.runInContext('articles.find(a=>a.id==="iam-security")',context);
- assert.equal(article.updated,'2026.11.09');
+ assert(article.updated>='2026.11.09');
  const anchor='native-spiffe-workload-identity';
  const sections=article.sections;
  assert(sections[1][1].includes('href="/article/iam-security/#'+anchor+'"'));

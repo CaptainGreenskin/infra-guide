@@ -14,7 +14,8 @@ for(const a of d.articles){const old=before.find(x=>x.id===a.id);assert.equal(a.
  if(!ids.includes(a.id)){assert.deepEqual(a.sections,old.sections,a.id+': unreviewed body change');continue;}
  let index=0;const current=blocks(a);for(const block of blocks(old)){const at=current.indexOf(block,index);assert(at>=index,a.id+': complete executable block changed or removed');index=at+1;}
  assert.equal(current.length-blocks(old).length,a.id==='elasticity'?1:0,a.id+': undeclared new code');
- const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));assert(html.includes('在领域图谱中看本章相关概念'));
+ const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8');for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
+ assert(/class="chapter-map-link" href="\/module\/[a-z0-9-]+\/\?concept=([a-z0-9-]+)#map-concept-\1"/.test(html),a.id+': chapter links to its exact concept');
  for(let i=0;i<old.sections.length;i++)for(const[,anchor]of old.sections[i][1].matchAll(/\bid="([^"]+)"/g)){assert(a.sections[i][1].includes('id="'+anchor+'"'),a.id+': original deep anchor removed '+anchor);assert.equal(html.split('id="'+anchor+'"').length-1,1,a.id+': deep anchor must remain unique');}
 }
 const stdout=cp.execFileSync('python3',['-c',d.forecast],{encoding:'utf8',timeout:15000}).trim();assert.equal(stdout,'160 次/秒： 继续积压，每秒增加20\n180 次/秒： 只够追平输入，旧积压不减少\n200 次/秒： 再需360秒排空');

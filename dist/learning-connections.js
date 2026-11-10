@@ -135,16 +135,19 @@ function prerequisiteConnectionsHTML(a){
  const optional=chapterOptionalConnections[a.id]||[];
  return '<p><b>前置知识</b>'+a.prereq+'</p>'+(needs.length?'<ul class="prerequisite-links">'+list(needs)+'</ul>':'')+(optional.length?'<p><b>按需深入，不作整条课程先修</b></p><ul class="prerequisite-links">'+list(optional)+'</ul>':'');
 }
+function chapterConnectionLinks(a,context=chapterReadingContext(a)){
+ const incoming=chapterDependencies[a.id]?.[0];
+ const dependent=articles.find(other=>context.ids.includes(other.id)&&chapterDependencies[other.id]?.some(([id])=>id===a.id));
+ const optional=chapterOptionalConnections[a.id]?.[0];
+ const next=dependent?['接着读',dependent.id,chapterDependencies[dependent.id].find(([id])=>id===a.id)[1]]:optional&&['选读',...optional];
+ return [incoming&&['先读',...incoming],next].filter(Boolean);
+}
 function chapterConnectionHTML(a){
- const r=chapterReadingContext(a),track=r.track;
- const incoming=chapterDependencies[a.id]||[],outgoing=articles.filter(other=>r.ids.includes(other.id)).flatMap(other=>(chapterDependencies[other.id]||[]).filter(([id])=>id===a.id).map(([,why])=>[other.id,why]));
- const item=([id,why])=>'<a href="'+articleURL(id)+'">'+articleById(id).number+' '+articleById(id).title+'</a>：'+why;
- const optional=chapterOptionalConnections[a.id]||[];
- return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2>'+
- (incoming.length?'<p><b>承接：</b>'+item(incoming[0])+'</p>':'<p><b>起点：</b>'+a.objectives[0]+'。从这里建立当前主题的基本对象。</p>')+
- (outgoing.length?'<p><b>后续用途：</b>'+item(outgoing[0])+'</p>':optional.length?'<p><b>按需延伸：</b>'+item(optional[0])+'</p>':'')+
+ const context=chapterReadingContext(a),track=context.track;
+ const links=chapterConnectionLinks(a,context).map(([label,id,why])=>'<p><b>'+label+'：</b><a href="'+articleURL(id)+'">'+articleById(id).number+' '+articleById(id).title+'</a>：'+why+'</p>').join('');
+ return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>前后章节</h2>'+links+
  chapterFieldMapLink(a)+chapterLabLinksHTML(a)+
- '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">在学习路线中定位这一章 →</a></aside>';
+ '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">学习路线 →</a></aside>';
 }
 function stageConnectionHTML(track,index){const [from,chain,result]=courseStageConnections[track][index];return '<div class="stage-connection"><p><b>'+from+'</b></p><p class="concept-chain">'+chain+'</p><p>'+result+'</p></div>';}
 function trackModelHTML(track){const m=learningTrackModels[track];return '<section class="track-system-model"><h3>'+m.title+'</h3><p>'+m.relation+'</p>'+figure(m.diagram,m.caption)+'<p class="model-anchor-links">'+m.anchors.map(([id,label])=>'<a href="'+articleURL(id)+'">'+label+' →</a>').join('')+'</p>'+fieldMapIndexHTML(track)+'</section>';}

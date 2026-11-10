@@ -62,7 +62,7 @@
   for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g)){
    if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Execution continuity lost published destination '+article.id+' '+id);
   }
-  article.updated='2026.11.09';
+  article.updated=article.id==='agent-runtime'?'2026.11.10':'2026.11.09';
  }
  const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');

@@ -34,8 +34,9 @@
   const old=a.sections.map(section=>section[1]),c2=code(old[2]),c3=code(old[3]),c4=code(old[4]),c6=code(old[6]),c7=code(old[7]);
   if(c2.length!==2||c3.length!==1||c4.length!==1||c6.length!==1||c7.length!==3)throw Error('MCP integration reading code layout changed');
   const bodies=[
-   p('MCP（Model Context Protocol，模型上下文协议）约定应用怎样发现和调用外部能力。先看一个不需要模型的任务：读取订单 report-A 的基础批次 [10,27] 与补录批次 [5]，按来源版本 v3 得到总数 42。调用者提出读取要求，工具服务返回数据，调用者再判断这份数据是否满足目标。',
-   '宿主应用是组织任务与工具的程序；MCP 客户端是宿主内负责协议通信的部件；MCP 服务端接收消息并公开能力。工具是其中一项可调用操作，例如 read_batch 读取一个批次。JSON 是用字段名和值表示数据的文本格式；schema 是约束这些字段和类型的结构规则，本章用 JSON Schema 声明工具输入与输出。SDK 是把协议规则写成可调用函数的软件库。')+
+   p('要做一份报表 report-A，数据来自 v3 版订单。基础批次是 [10,27]，补录是 [5]。单查基础批次得到 37，扫描两批才得到 42。运行时章的日报 37 来自另一份实验。',
+   'MCP（Model Context Protocol，模型上下文协议）约定应用怎么找到工具、发送参数、接收结果。这里用脚本来调用工具，再拿原始订单核对返回值。',
+   '发起任务的脚本是宿主应用。它用 MCP 客户端发消息，服务端收到后调用工具。例如 <code>read_batch</code> 读取一个批次。参数和结果用 JSON 表示，JSON Schema 规定有哪些字段、各是什么类型。SDK 把协议里的步骤封装成可以直接调用的函数。')+
    table(['对象','本章对应物','它的范围'],[
     ['调用者与客户端','client_lab.py 与其中的 ClientSession','选择操作、发送消息、把响应交给等待者'],
     ['服务端与工具','独立 server.py；read_batch 等 3 个工具','校验参数、读取 orders.json、返回结果'],

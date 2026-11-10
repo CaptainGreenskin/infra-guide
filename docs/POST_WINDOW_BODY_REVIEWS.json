@@ -5671,6 +5671,117 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "08a17c100f743f69c9fe0bf7be2283434edd1bf341c5660a27afc65a80566efe",
+      "reviewed_content_sha256": "1291e9aac978923e35f15dd18b43402f1caf06ff68b66081cd11969f944bf2ce",
+      "scope": "Follow order O-104 through the entry point, process replacement, authorization and response.",
+      "observation": "Preserve the separate control plane and the actual local HTTP and readiness evidence.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "6e04728ac536e6e0cabb6c9372c61bce3ae5645f2bb650a25969b30cd946b1b0",
+      "reviewed_content_sha256": "42d5d26b56a52c49f27c4867172c81257542464cd65a7b3851cb4619f0410a7e",
+      "scope": "Introduce authentication and authorization where export task 17 first reads and writes.",
+      "observation": "Keep tenant A, source v3, scoped read and write access, and the original decisions.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "ad0b61ced6cb8698790433aafc2ad1fd46d1545d7ad9288379833ceeee7b345f",
+      "reviewed_content_sha256": "1e601ef3a602a89962a971ee9b21f4d0992b2632ecc141087a9b77a428d38d07",
+      "scope": "Open with the held-out red circle translation and show what changes when the source phrase changes.",
+      "observation": "Keep the CPU result, the separate decoder-only example, shapes, toy attention numbers and original inputs.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "f689b59d04d876da4306d95d08f71dbca1e5ec9f08e53478c099ea7517e0edb7",
+      "reviewed_content_sha256": "ecf31f226c18c930551cf8c6babccf81bcd45455612d516e581ce18f8ea42808",
+      "scope": "Follow 2500 independent additions from host submission to the last CUDA block.",
+      "observation": "Keep the original CUDA and CPU code, the 196 remaining elements, the 60 protected indices and the logical byte count.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "4bd05391b208fd2d323d98017b731be2b05f815d085bb0407a420f649a29a9ac",
+      "reviewed_content_sha256": "a9740d486a6a75d1306902edf24b1bb73513be3593b0789ddd7a41d39904fa7a",
+      "scope": "Explain three counts through a rejected proposal, a 503 retry and a write.",
+      "observation": "Keep the 4 proposal and 3 tool-attempt budgets, validation sequence and the runtime demonstration scope.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "550afc6d5a17ec80472f846a25ac7d4d2c320a58ec34e7d1eddfebc36fd46790",
+      "reviewed_content_sha256": "5c148adbbd1e0e6dd45e54b22b4593ede53350afd457a072f45359d381934473",
+      "scope": "Open with the report total and the reason to wait for the second source and approval.",
+      "observation": "Keep the two original source versions, the 42 total, approval requirement and single publication.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

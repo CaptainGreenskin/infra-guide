@@ -1,7 +1,7 @@
 /* Check actual concept relationships and continuous reading, not human mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),cp=require('child_process');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,labs:labLearningCatalog,routes:courseReadingStages,log:readabilityRevisionLog})',c)));
+const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,labs:labLearningCatalog,routes:courseReadingStages,dependencies:chapterDependencies,optional:chapterOptionalConnections,log:readabilityRevisionLog})',c)));
 assert.equal(Object.keys(d.maps).length,14);let nodes=0,edges=0;
 assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
 assert.equal(new Set(Object.values(d.practice).map(([,lab])=>lab)).size,14,'practice targets are distinct');
@@ -66,7 +66,16 @@ for(const a of d.articles){
  const [primaryModule,primaryId]=refs[0];
  const exactLink='class="chapter-map-link" href="/module/'+primaryModule+'/?concept='+primaryId+'#map-concept-'+primaryId+'"';
  assert(html.includes(exactLink),a.id+': go directly to the primary definition');
- assert(html.includes('在领域图谱中看本章相关概念'));if(a.module==='practice'){assert(html.includes('本方向')||nav.includes('学习路线'));const side=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];for(const other of d.articles.filter(x=>x.module==='practice'&&x.id!==a.id))assert(!side.includes('/article/'+other.id+'/'),a.id+': unrelated capstone in current sidebar');}
+ const connection=html.match(/<aside class="chapter-connection"[\s\S]*?<\/aside>/)?.[0];
+ assert(connection?.includes(exactLink)&&connection.includes('href="/roadmap/?track='+r.track+'#route-chapter-'+r.track+'-'+a.id+'"'),a.id+': chapter links retain concept and route targets');
+ const incoming=d.dependencies[a.id]?.[0];
+ const outgoing=d.articles.filter(other=>r.ids.includes(other.id)).flatMap(other=>(d.dependencies[other.id]||[]).filter(([id])=>id===a.id).map(([,why])=>[other.id,why]))[0];
+ const visible=[incoming,outgoing||d.optional[a.id]?.[0]].filter(Boolean);
+ for(const [id,why] of visible)assert(connection.includes('href="/article/'+id+'/"')&&connection.includes(why),a.id+': keeps the linked chapter and its authored reason');
+ const related=html.match(/<section class="related-reading"[\s\S]*?<\/section>/)?.[0]||'';
+ const relatedLinks=[...related.matchAll(/href="\/article\/([a-z0-9-]+)\/"/g)].map(m=>m[1]);
+ assert.deepEqual(relatedLinks,(a.related||[]).filter(id=>!visible.some(([shown])=>shown===id)),a.id+': every distinct related chapter remains');
+ if(a.module==='practice'){assert(html.includes('本方向')||nav.includes('学习路线'));const side=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];for(const other of d.articles.filter(x=>x.module==='practice'&&x.id!==a.id))assert(!side.includes('/article/'+other.id+'/'),a.id+': unrelated capstone in current sidebar');}
 }
 for(const[id,expected]of [['cloud-overview','linux-resource'],['training-lab','model-serving'],['kairo-practice','production-readiness']]){c.a=d.articles.find(a=>a.id===id);assert.equal(vm.runInContext('chapterReadingContext(a).next.id',c),expected);}
 c.a=d.articles.find(a=>a.id==='distributed-systems');assert.notEqual(vm.runInContext('chapterReadingContext(a).next.id',c),'cloud-overview','do not loop back from P0 to the overview');

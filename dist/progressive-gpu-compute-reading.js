@@ -25,9 +25,9 @@
   next.forEach((b,i)=>a.sections[i][1]=b);a.updated='2026.11.09';
  }
  rewrite('gpu-execution',9,old=>[
- p('CPU运行主机程序，处理控制逻辑和输入输出。GPU用多组运算单元并行处理数据，适合大量独立或可分块的运算。先看一个小算子：输入张量x有2500个数，输出y把每个数加1。张量是按形状组织的数值数组，本例用FP32，每个浮点数占4字节。',
- '在常见的独立GPU上，主机内存和设备显存通过互联（例如PCIe）交换数据。GPU芯片内有多个流式多处理器（SM），共用二级缓存L2。缓存暂存可能再次访问的数据。每个SM内有指令调度器、存放工作值的寄存器、靠近计算的一级缓存L1，以及协作时使用的共享内存。',
- 'SM里的通用运算单元负责逐项算术，其中负责FP32算术的单元常称CUDA Core。Tensor Core是专门执行矩阵乘加的单元。同一块GPU上，普通FP32逐项加1和使用Tensor Core的矩阵乘法走的是不同计算路径。')+
+ p('给 2500 个数各加 1。每一项只用自己的原值，可以分给很多线程同时做。把输入记为 x，输出记为 y。x 和 y 都是张量，也就是按形状排列的数值数组。本例每项用 32 位浮点数（FP32），占 4 字节。',
+ '如果 x 还在主机内存里，CPU 上的程序先安排把它送到 GPU 可访问的位置。独立显卡通常通过 PCIe 等互联传输数据。输入准备好后，主机启动内核（kernel），也就是交给 GPU 线程执行的函数。',
+ 'GPU 里的流式多处理器（SM）负责执行这些线程，各 SM 共用 L2 缓存。缓存暂存可能再次用到的数据。SM 有自己的指令调度器、寄存器和 L1 缓存，也有供线程协作的共享内存。逐项加 1 用通用算术单元，负责 FP32 算术的单元常称 CUDA Core。Tensor Core 专门做矩阵乘加，执行的是另一类运算。')+
  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 316" style="display:block;width:100%;max-width:460px;height:auto;margin:1em auto" role="img" aria-label="独立GPU硬件示意。主机通过互联连接GPU设备。显存与多个SM通过共享L2缓存交换数据。一个SM内有指令调度器、通用运算、Tensor Core、寄存器、L1缓存与共享内存。">'+
  '<rect x="1" y="1" width="458" height="314" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>'+
  '<rect x="20" y="16" width="420" height="46" rx="7" fill="#fff" stroke="#94a3b8"/>'+
@@ -35,16 +35,16 @@
  '<g fill="#fff" stroke="#9db6eb"><rect x="36" y="143" width="110" height="42" rx="6"/><rect x="175" y="143" width="110" height="42" rx="6"/><rect x="314" y="143" width="110" height="42" rx="6"/><rect x="36" y="211" width="388" height="74" rx="6"/></g>'+
  '<g fill="none" stroke="#315fe5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M230 68V94M226 72l4-4 4 4m-8 18 4 4 4-4"/><path d="M151 164h19m-15-4-4 4 4 4m11-8 4 4-4 4M290 164h19m-15-4-4 4 4 4m11-8 4 4-4 4"/><path d="M369 186v24" stroke-dasharray="3 4"/></g>'+
  '<g fill="#20314e" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="16"><text x="36" y="45">主机 · CPU 与主机内存</text><text x="243" y="86" font-size="14">互联传输</text><text x="36" y="128" font-weight="bold">GPU 设备</text><text x="91" y="170" text-anchor="middle">设备显存</text><text x="230" y="170" text-anchor="middle">共享 L2</text><text x="369" y="170" text-anchor="middle">多个 SM</text><text x="50" y="233" font-weight="bold">一个 SM</text><text x="50" y="254">指令调度 · 通用算术 · Tensor Core</text><text x="50" y="275">寄存器 · L1 缓存 · 共享内存</text></g></svg>'+
- p('CUDA是NVIDIA提供的GPU编程平台。主机侧称host，设备侧称device。主机准备输入，把数据放到设备可访问的存储，再启动一个内核（kernel）。内核是由GPU线程执行的函数。框架中的x+1会根据形状、类型和设备选择实现，普通CUDA启动返回时，设备工作可能还没结束。'),
+ p('CUDA 是 NVIDIA 的 GPU 编程平台。文档里，host 指主机，device 指 GPU 设备。框架执行 <code>x + 1</code> 时，会按 x 的形状、类型和所在设备选择实现。主机提交内核后就可以往下走，GPU 可能还在算。'),
 
  p('线程是执行内核的一份逻辑工作。同一线程块（block）组织一组能协作的线程，一次启动的所有块组成网格（grid）。本例让每个块有256个线程，块内编号为0到255；再用块编号确定它负责输入的哪一段。')+
  codes(old[1])[0]+
- p('blockIdx.x是块号，blockDim.x是每块线程数，threadIdx.x是块内线程号。第i项由i=块号×256+线程号定位。向上取整开10块，共2560个逻辑线程：第0到8块覆盖0到2303；第9块覆盖2304到2559，其中196项有效，最后60个编号由i&lt;n挡住。只开9块会漏掉196项。',
+ p('<code>blockIdx.x</code> 是块号，<code>blockDim.x</code> 是每块线程数，<code>threadIdx.x</code> 是块内线程号。代码用「块号 × 256 + 线程号」算出每个线程负责哪一项。9 块只能做到编号 2303，还剩 196 项。再开一块就有 2560 个线程编号，最后 60 个超出数组范围，由 <code>i &lt; n</code> 挡住。',
  '设备把一个块放到一个有足够资源的SM上。一个SM可以同时容纳多个块，完成的块会释放资源。块内线程按32个一组划成warp（线程束），由SM的调度器选择就绪的warp发出指令。本例每块8个warp，10个块共有80个warp的工作，实际同时留在芯片上的数量要看SM和各块的资源需求。同一warp内走不同分支时，只有当前路径上的线程参与对应指令。')+
  figures(old[1]).join('')+
- p('先用下面的CPU程序复算编号。它枚举块号和线程号，只验证每个输入是否恰好被覆盖；没有模拟硬件调度。')+
+ p('没有显卡也能检查下标。下面的 Python 程序按块号和线程号枚举，核对每个输入下标是否恰好出现一次。')+
  codes(old[1])[1]+
- p('输出为10块、2500个有效编号、60个保护编号和20000逻辑读写字节。改成2560项，保护数应为0；改成2561项，需要11块、保护255个编号。覆盖检查通过之后，才有理由继续分析数据从哪里来；它本身没有给出GPU速度。'),
+ p('输出应是 10 块、2500 个有效编号、60 个越界编号。每项读 4 字节、写 4 字节，共 20,000 字节。把长度改成 2560，最后一块刚好用满。改成 2561，就需要 11 块，最后一块只有 1 个线程要干活。'),
 
  p('输入输出通常放在设备全局内存。HBM是高带宽显存的一类，实际显存类型随产品而变。寄存器持有线程的工作值，共享内存（shared memory）供同一块的线程交换和复用临时数据。各块使用自己分到的共享内存区域。')+
  figures(old[2]).join('')+
@@ -354,6 +354,7 @@
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
+ warpMemory.updated='2026.11.10';
  warpMemory.sections[3][1]+=
  '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
  p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+

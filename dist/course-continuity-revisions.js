@@ -18,10 +18,6 @@
  edit('operator-profiling',8,'继续理解注意力怎样减少中间搬运','回看注意力怎样减少中间搬运');
 
  // Similar sample IDs in different programs must not imply one persistent task.
- const mcp=chapter('mcp-protocol');
- const firstParagraphEnd=mcp.sections[0][1].indexOf('</p>');
- if(firstParagraphEnd<0)throw Error('MCP first paragraph missing');
- mcp.sections[0][1]=mcp.sections[0][1].slice(0,firstParagraphEnd+4)+p('本章协议实验独立建立 report-A/v3 的数据与进程：基础批次 10+27，再读补录 5，合计 42。运行时章的日报 37 用来介绍执行循环；这里借用相近金额解释多次协议调用，两章没有共享任务数据库。')+mcp.sections[0][1].slice(firstParagraphEnd+4);changed.add('mcp-protocol');
  edit('agent-memory',3,'继续沿R17追踪保存身份。本节恢复夹具的业务结果与回执值为13，原操作R17:publish的效果计数为1，用原回执和效果次数判断是否重复执行；运行时章的37则用于核对日报内容。','本节另建一个内存与恢复的 SQLite 夹具：它的操作名为 R17:publish，业务结果与回执值为 13，效果计数为 1。该数据库独立于运行时章的日报 37，重复使用的 R17 只是本例标识，并没有把原操作的参数从 37 改成 13。这里按本例原回执和效果次数判断重复执行。');
  const obs=chapter('agent-observability');
  obs.sections[0][1]=p('本章使用独立的发布任务与数据库，例子标识为 R27、R27:publish，总数为 37。检索章的排障题 R27、沙箱章的画图题 R27各有自己的输入与运行环境；这些名称相同的夹具不共享任务状态或操作回执。')+obs.sections[0][1];changed.add('agent-observability');

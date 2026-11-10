@@ -126,10 +126,16 @@ const authorFile = 'dist/progressive-gpu-compute-reading.js';
 const author = read(authorFile);
 const previous = execFileSync('git', ['show', 'fcd0d183447ee904caef1c87d24b890267efcabc:' + authorFile],
  {cwd:root, encoding:'utf8'});
-const start = author.indexOf("\n const warpMemory=articles.find(a=>a.id==='gpu-execution');");
+const published = execFileSync('git', ['show', 'fcd5db2ea4ae3635b8191f1d5531d3dc24cf96f4:' + authorFile],
+ {cwd:root, encoding:'utf8'});
+const publishedStart = published.indexOf("\n const warpMemory=articles.find(a=>a.id==='gpu-execution');");
+assert(publishedStart > 0);
+assert.equal(published.slice(0, publishedStart) + '})();\n', previous);
+const lessonStart = '\n warpMemory.sections[3][1]+=';
+const start = author.indexOf(lessonStart);
 assert(start > 0 && author.endsWith('})();\n'));
-assert.equal(author.slice(0, start) + '})();\n', previous);
 const lesson = author.slice(start);
+assert.equal(lesson, published.slice(published.indexOf(lessonStart)), 'the published lab and its links are retained');
 assert.match(lesson, /warpMemory\.sections\[3\]\[1\]\+=/);
 assert.match(lesson, /id="native-warp-memory-sectors"/);
 assert.match(lesson, /trainingFigure\('warp-memory-sectors'/);

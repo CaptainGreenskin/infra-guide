@@ -165,8 +165,8 @@
   const old=a.sections.map(s=>s[1]),f=old.map(figures),c=old.map(codes),l=old.map(links);
   same('workflow code inventory',c.map(x=>x.length),[0,0,2,3,0,0,0,0,7,2]);
   const body=[
-   p('工作流是规定一项任务中步骤、依赖和推进条件的程序；一次运行是它为某个任务保存的状态与记录。工具恢复章关注一项外部动作的提交与回执，本章把多个动作连成能够等待、继续和验收的任务。模型可以提出计划，执行器负责接纳允许的步骤、保存结果并推进。',
-   '固定目标report-A：orders-A/v3包含[10,27]并引用late-A/v1；实际读取补录得到[5]，报告总数为42，来源清单应包含这两个版本。任务完成还要求内容检查、匹配批准和一份实际发布。')+
+   p('要发布一份 report-A。先读 orders-A/v3，里面有两笔金额 10 和 27，还指向补录 late-A/v1。补录是 5，最后应得到 42。报告要注明两份来源。内容核对后，等这份草稿获准，再向接收方发布一份。',
+   '工作流规定这些步骤怎么接。读完补录才能汇总。批准没到就先存下进度，换一个进程也能接着做。这些为本次任务保存的步骤和状态，就是一条运行记录。模型可以提议下一步，执行器检查能否执行，再记下实际结果。')+
    table(['正常推进','已经取得什么','可以继续的条件'],[
     ['读基础→读补录','基础37、补录引用，再取得补录5','引用解析到实际来源；两份读取结果都已保存'],
     ['汇总→检查','草稿42、完整来源清单','金额与来源检查均通过'],
@@ -321,7 +321,7 @@
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
-  a.updated='2026.11.09';
+  a.updated='2026.11.10';
 
   const security=articleById('agent-security');
   security.sections[4][1]+=p('把撤权放进一次等待批准的真实工作流。审批信号决定图何时继续，接收方在提交事务里再检查当前写权限和参数摘要。预测两种情况是否会留下报告：等待期间撤销权限，或沿用批准 ID 却把金额 42 改成 41。'+approvalLink);

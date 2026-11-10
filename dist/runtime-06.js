@@ -8268,8 +8268,9 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   const old=a.sections.map(section=>section[1]),c2=code(old[2]),c3=code(old[3]),c4=code(old[4]),c6=code(old[6]),c7=code(old[7]);
   if(c2.length!==2||c3.length!==1||c4.length!==1||c6.length!==1||c7.length!==3)throw Error('MCP integration reading code layout changed');
   const bodies=[
-   p('MCP（Model Context Protocol，模型上下文协议）约定应用怎样发现和调用外部能力。先看一个不需要模型的任务：读取订单 report-A 的基础批次 [10,27] 与补录批次 [5]，按来源版本 v3 得到总数 42。调用者提出读取要求，工具服务返回数据，调用者再判断这份数据是否满足目标。',
-   '宿主应用是组织任务与工具的程序；MCP 客户端是宿主内负责协议通信的部件；MCP 服务端接收消息并公开能力。工具是其中一项可调用操作，例如 read_batch 读取一个批次。JSON 是用字段名和值表示数据的文本格式；schema 是约束这些字段和类型的结构规则，本章用 JSON Schema 声明工具输入与输出。SDK 是把协议规则写成可调用函数的软件库。')+
+   p('要做一份报表 report-A，数据来自 v3 版订单。基础批次是 [10,27]，补录是 [5]。单查基础批次得到 37，扫描两批才得到 42。运行时章的日报 37 来自另一份实验。',
+   'MCP（Model Context Protocol，模型上下文协议）约定应用怎么找到工具、发送参数、接收结果。这里用脚本来调用工具，再拿原始订单核对返回值。',
+   '发起任务的脚本是宿主应用。它用 MCP 客户端发消息，服务端收到后调用工具。例如 <code>read_batch</code> 读取一个批次。参数和结果用 JSON 表示，JSON Schema 规定有哪些字段、各是什么类型。SDK 把协议里的步骤封装成可以直接调用的函数。')+
    table(['对象','本章对应物','它的范围'],[
     ['调用者与客户端','client_lab.py 与其中的 ClientSession','选择操作、发送消息、把响应交给等待者'],
     ['服务端与工具','独立 server.py；read_batch 等 3 个工具','校验参数、读取 orders.json、返回结果'],
@@ -8981,9 +8982,9 @@ ANALYZE TABLE innodb_lab.orders;`)+
   next.forEach((b,i)=>a.sections[i][1]=b);a.updated='2026.11.09';
  }
  rewrite('gpu-execution',9,old=>[
- p('CPU运行主机程序，处理控制逻辑和输入输出。GPU用多组运算单元并行处理数据，适合大量独立或可分块的运算。先看一个小算子：输入张量x有2500个数，输出y把每个数加1。张量是按形状组织的数值数组，本例用FP32，每个浮点数占4字节。',
- '在常见的独立GPU上，主机内存和设备显存通过互联（例如PCIe）交换数据。GPU芯片内有多个流式多处理器（SM），共用二级缓存L2。缓存暂存可能再次访问的数据。每个SM内有指令调度器、存放工作值的寄存器、靠近计算的一级缓存L1，以及协作时使用的共享内存。',
- 'SM里的通用运算单元负责逐项算术，其中负责FP32算术的单元常称CUDA Core。Tensor Core是专门执行矩阵乘加的单元。同一块GPU上，普通FP32逐项加1和使用Tensor Core的矩阵乘法走的是不同计算路径。')+
+ p('给 2500 个数各加 1。每一项只用自己的原值，可以分给很多线程同时做。把输入记为 x，输出记为 y。x 和 y 都是张量，也就是按形状排列的数值数组。本例每项用 32 位浮点数（FP32），占 4 字节。',
+ '如果 x 还在主机内存里，CPU 上的程序先安排把它送到 GPU 可访问的位置。独立显卡通常通过 PCIe 等互联传输数据。输入准备好后，主机启动内核（kernel），也就是交给 GPU 线程执行的函数。',
+ 'GPU 里的流式多处理器（SM）负责执行这些线程，各 SM 共用 L2 缓存。缓存暂存可能再次用到的数据。SM 有自己的指令调度器、寄存器和 L1 缓存，也有供线程协作的共享内存。逐项加 1 用通用算术单元，负责 FP32 算术的单元常称 CUDA Core。Tensor Core 专门做矩阵乘加，执行的是另一类运算。')+
  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 316" style="display:block;width:100%;max-width:460px;height:auto;margin:1em auto" role="img" aria-label="独立GPU硬件示意。主机通过互联连接GPU设备。显存与多个SM通过共享L2缓存交换数据。一个SM内有指令调度器、通用运算、Tensor Core、寄存器、L1缓存与共享内存。">'+
  '<rect x="1" y="1" width="458" height="314" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>'+
  '<rect x="20" y="16" width="420" height="46" rx="7" fill="#fff" stroke="#94a3b8"/>'+
@@ -8991,16 +8992,16 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '<g fill="#fff" stroke="#9db6eb"><rect x="36" y="143" width="110" height="42" rx="6"/><rect x="175" y="143" width="110" height="42" rx="6"/><rect x="314" y="143" width="110" height="42" rx="6"/><rect x="36" y="211" width="388" height="74" rx="6"/></g>'+
  '<g fill="none" stroke="#315fe5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M230 68V94M226 72l4-4 4 4m-8 18 4 4 4-4"/><path d="M151 164h19m-15-4-4 4 4 4m11-8 4 4-4 4M290 164h19m-15-4-4 4 4 4m11-8 4 4-4 4"/><path d="M369 186v24" stroke-dasharray="3 4"/></g>'+
  '<g fill="#20314e" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="16"><text x="36" y="45">主机 · CPU 与主机内存</text><text x="243" y="86" font-size="14">互联传输</text><text x="36" y="128" font-weight="bold">GPU 设备</text><text x="91" y="170" text-anchor="middle">设备显存</text><text x="230" y="170" text-anchor="middle">共享 L2</text><text x="369" y="170" text-anchor="middle">多个 SM</text><text x="50" y="233" font-weight="bold">一个 SM</text><text x="50" y="254">指令调度 · 通用算术 · Tensor Core</text><text x="50" y="275">寄存器 · L1 缓存 · 共享内存</text></g></svg>'+
- p('CUDA是NVIDIA提供的GPU编程平台。主机侧称host，设备侧称device。主机准备输入，把数据放到设备可访问的存储，再启动一个内核（kernel）。内核是由GPU线程执行的函数。框架中的x+1会根据形状、类型和设备选择实现，普通CUDA启动返回时，设备工作可能还没结束。'),
+ p('CUDA 是 NVIDIA 的 GPU 编程平台。文档里，host 指主机，device 指 GPU 设备。框架执行 <code>x + 1</code> 时，会按 x 的形状、类型和所在设备选择实现。主机提交内核后就可以往下走，GPU 可能还在算。'),
 
  p('线程是执行内核的一份逻辑工作。同一线程块（block）组织一组能协作的线程，一次启动的所有块组成网格（grid）。本例让每个块有256个线程，块内编号为0到255；再用块编号确定它负责输入的哪一段。')+
  codes(old[1])[0]+
- p('blockIdx.x是块号，blockDim.x是每块线程数，threadIdx.x是块内线程号。第i项由i=块号×256+线程号定位。向上取整开10块，共2560个逻辑线程：第0到8块覆盖0到2303；第9块覆盖2304到2559，其中196项有效，最后60个编号由i&lt;n挡住。只开9块会漏掉196项。',
+ p('<code>blockIdx.x</code> 是块号，<code>blockDim.x</code> 是每块线程数，<code>threadIdx.x</code> 是块内线程号。代码用「块号 × 256 + 线程号」算出每个线程负责哪一项。9 块只能做到编号 2303，还剩 196 项。再开一块就有 2560 个线程编号，最后 60 个超出数组范围，由 <code>i &lt; n</code> 挡住。',
  '设备把一个块放到一个有足够资源的SM上。一个SM可以同时容纳多个块，完成的块会释放资源。块内线程按32个一组划成warp（线程束），由SM的调度器选择就绪的warp发出指令。本例每块8个warp，10个块共有80个warp的工作，实际同时留在芯片上的数量要看SM和各块的资源需求。同一warp内走不同分支时，只有当前路径上的线程参与对应指令。')+
  figures(old[1]).join('')+
- p('先用下面的CPU程序复算编号。它枚举块号和线程号，只验证每个输入是否恰好被覆盖；没有模拟硬件调度。')+
+ p('没有显卡也能检查下标。下面的 Python 程序按块号和线程号枚举，核对每个输入下标是否恰好出现一次。')+
  codes(old[1])[1]+
- p('输出为10块、2500个有效编号、60个保护编号和20000逻辑读写字节。改成2560项，保护数应为0；改成2561项，需要11块、保护255个编号。覆盖检查通过之后，才有理由继续分析数据从哪里来；它本身没有给出GPU速度。'),
+ p('输出应是 10 块、2500 个有效编号、60 个越界编号。每项读 4 字节、写 4 字节，共 20,000 字节。把长度改成 2560，最后一块刚好用满。改成 2561，就需要 11 块，最后一块只有 1 个线程要干活。'),
 
  p('输入输出通常放在设备全局内存。HBM是高带宽显存的一类，实际显存类型随产品而变。寄存器持有线程的工作值，共享内存（shared memory）供同一块的线程交换和复用临时数据。各块使用自己分到的共享内存区域。')+
  figures(old[2]).join('')+
@@ -9310,6 +9311,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
+ warpMemory.updated='2026.11.10';
  warpMemory.sections[3][1]+=
  '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
  p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+
@@ -9363,10 +9365,6 @@ float value = *address;
  edit('operator-profiling',8,'继续理解注意力怎样减少中间搬运','回看注意力怎样减少中间搬运');
 
  // Similar sample IDs in different programs must not imply one persistent task.
- const mcp=chapter('mcp-protocol');
- const firstParagraphEnd=mcp.sections[0][1].indexOf('</p>');
- if(firstParagraphEnd<0)throw Error('MCP first paragraph missing');
- mcp.sections[0][1]=mcp.sections[0][1].slice(0,firstParagraphEnd+4)+p('本章协议实验独立建立 report-A/v3 的数据与进程：基础批次 10+27，再读补录 5，合计 42。运行时章的日报 37 用来介绍执行循环；这里借用相近金额解释多次协议调用，两章没有共享任务数据库。')+mcp.sections[0][1].slice(firstParagraphEnd+4);changed.add('mcp-protocol');
  edit('agent-memory',3,'继续沿R17追踪保存身份。本节恢复夹具的业务结果与回执值为13，原操作R17:publish的效果计数为1，用原回执和效果次数判断是否重复执行；运行时章的37则用于核对日报内容。','本节另建一个内存与恢复的 SQLite 夹具：它的操作名为 R17:publish，业务结果与回执值为 13，效果计数为 1。该数据库独立于运行时章的日报 37，重复使用的 R17 只是本例标识，并没有把原操作的参数从 37 改成 13。这里按本例原回执和效果次数判断重复执行。');
  const obs=chapter('agent-observability');
  obs.sections[0][1]=p('本章使用独立的发布任务与数据库，例子标识为 R27、R27:publish，总数为 37。检索章的排障题 R27、沙箱章的画图题 R27各有自己的输入与运行环境；这些名称相同的夹具不共享任务状态或操作回执。')+obs.sections[0][1];changed.add('agent-observability');
@@ -10949,8 +10947,8 @@ python -B target_probe.py check collected/rank-*.json
   const old=a.sections.map(s=>s[1]),f=old.map(figures),c=old.map(codes),l=old.map(links);
   same('workflow code inventory',c.map(x=>x.length),[0,0,2,3,0,0,0,0,7,2]);
   const body=[
-   p('工作流是规定一项任务中步骤、依赖和推进条件的程序；一次运行是它为某个任务保存的状态与记录。工具恢复章关注一项外部动作的提交与回执，本章把多个动作连成能够等待、继续和验收的任务。模型可以提出计划，执行器负责接纳允许的步骤、保存结果并推进。',
-   '固定目标report-A：orders-A/v3包含[10,27]并引用late-A/v1；实际读取补录得到[5]，报告总数为42，来源清单应包含这两个版本。任务完成还要求内容检查、匹配批准和一份实际发布。')+
+   p('要发布一份 report-A。先读 orders-A/v3，里面有两笔金额 10 和 27，还指向补录 late-A/v1。补录是 5，最后应得到 42。报告要注明两份来源。内容核对后，等这份草稿获准，再向接收方发布一份。',
+   '工作流规定这些步骤怎么接。读完补录才能汇总。批准没到就先存下进度，换一个进程也能接着做。这些为本次任务保存的步骤和状态，就是一条运行记录。模型可以提议下一步，执行器检查能否执行，再记下实际结果。')+
    table(['正常推进','已经取得什么','可以继续的条件'],[
     ['读基础→读补录','基础37、补录引用，再取得补录5','引用解析到实际来源；两份读取结果都已保存'],
     ['汇总→检查','草稿42、完整来源清单','金额与来源检查均通过'],
@@ -11105,7 +11103,7 @@ python -B target_probe.py check collected/rank-*.json
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
-  a.updated='2026.11.09';
+  a.updated='2026.11.10';
 
   const security=articleById('agent-security');
   security.sections[4][1]+=p('把撤权放进一次等待批准的真实工作流。审批信号决定图何时继续，接收方在提交事务里再检查当前写权限和参数摘要。预测两种情况是否会留下报告：等待期间撤销权限，或沿用批准 ID 却把金额 42 改成 41。'+approvalLink);
@@ -11249,10 +11247,10 @@ python -B target_probe.py check collected/rank-*.json
  const i=identity.sections.map(s=>s[1]),i2=blocks(i[1]),i3=blocks(i[2]),i9=blocks(i[8]),i9links=links(i[8]);
  if(i2.length!==4||i3.length!==1||i9.length!==6||i9links.length!==7||pres(i.join('')).length!==11||figures(i.join('')).length!==2)throw Error('Identity original evidence extraction changed');
  rewrite(identity,[
- p('程序向另一个系统发起动作时，接收方需要回答两件事：请求代表谁，以及这次动作是否被允许。主体是被识别的用户、服务或程序身份；凭据是用来证明身份或委托的材料。认证验证凭据并建立主体，授权再按主体、动作、资源和请求条件作决定，允许以后才进入受保护的业务操作。',
- '正常路径依次是：平台确认用户与任务归属，给工作负载安排获准身份，工作负载取得适用凭据，接收方认证，再评估具体请求，最后执行并记录效果。一次登录、一次凭据签发和一次对象读取，是这条链上的不同事件。')+
+ p('A 租户的用户提交导出任务 17。平台确认用户有权提交这项任务，再为后台程序安排获准的身份。程序取得证明身份或委托的材料，也就是凭据。它带上凭据，请求存储服务读取固定版本 v3 的输入，再把结果写到任务 17 的目录。',
+ '存储服务先验凭据，识别请求中的用户或程序身份，这一步叫认证。这个被识别的身份叫主体。接着，存储服务根据主体、动作、目标和请求条件，决定是否允许这次读写，这一步叫授权。实际写入后，再查产物和归属，确认导出结果落在指定目录。')+
  table(['决策位置','要确认的事实','本章导出设计题'],[['用户进入平台','用户属于哪个租户，能否提交任务','用户A获准提交任务17'],['平台安排执行者','任务能使用哪个工作负载身份和目标范围','固定输入版本v3与任务17输出位置'],['数据接收方','请求代表谁，当前动作与目标是否被允许','读取A输入，写入A任务17结果'],['业务完成后','实际效果及所属对象是否正确','结果存在、归属正确，拒绝请求没有先写数据']])+
- p('用A租户导出作设计例：后台工作者读固定输入v3，把结果写到任务17目录。若存储返回拒绝访问，应先沿身份、动作和目标定位这一跳。直接增加管理员权限会同时扩大其他资源和动作的可达范围，还可能让其他租户借平台发起越权操作。')+linkRow(links(i[0])),
+ p('存储拒绝访问时，先查请求实际用了谁的身份、执行了哪个动作、访问的是哪份资源。直接授予管理员权限也会放开其他动作和资源，可能让别的租户借平台越权访问。')+linkRow(links(i[0])),
 
  p('委托让一个程序以获准身份执行任务，平台仍需把原用户和任务约束落实到目标。人员可以有部署权限，运行中的工作负载则使用自己的主体；下游通常看到该工作负载的调用身份，不会自动取得最初用户的全部业务归属信息。',
  '在AWS中，IAM角色是一种可被代入的身份。信任策略说明谁可取得该角色会话及相应条件，权限策略说明这个角色可访问哪些动作和资源。STS的AssumeRole在规则满足后返回临时凭据：访问密钥ID、秘密访问密钥和会话token；调用者随后用这些材料按AWS API协议发起请求。会话策略可以进一步收窄本次会话的相应权限。',
@@ -11334,7 +11332,7 @@ python -B target_probe.py check collected/rank-*.json
  '<p class="practice-links"><a href="/labs/spiffe-workload-identity.zip" download>下载完整实验包 ↓</a> · <a href="/labs/spiffe-workload-identity/README.md">查看运行说明</a> · <a href="/labs/spiffe-workload-identity/validation.json">查看签发、请求和效果记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780">查看 Linux CI 实跑 ↗</a></p>'+
  '<p><a href="https://github.com/spiffe/spire/blob/v1.16.0/doc/plugin_agent_workloadattestor_unix.md">SPIRE 1.16.0 Unix 选择器 ↗</a> · <a href="https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/">SPIFFE Workload API 规范 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
- identity.updated='2026.11.09';
+ identity.updated='2026.11.10';
 })();
 
 
@@ -12998,8 +12996,8 @@ const firstReadingChanges=[];
  if(!overview||!overview.includes('v42-ai-concepts.svg'))throw Error('Missing model overview figure');
  if(!blockFlow||!blockFlow.includes('v9-model-flow.svg'))throw Error('Missing decoder block flow figure');
  section[1]=`<h3 id="text-to-next-token">一句话怎样变成下一词元的预测</h3>`+para(
- '把「红 圆」译成英文时，模型怎样先选出 red，再选出 circle？每一步都要结合已有内容，为下一项的候选打分。Transformer 是组织这套序列计算的一种结构。可以先认清下面的部件，再<a href="/article/transformer-model/#translation-reading-path">跟同一句翻译走完三轮</a>。',
- '分词器先把文本切成词元（token），再按词表给每个词元查出编号。词元可以是字、词片段或字节片段。模型收到编号后，词嵌入表把每个编号换成向量，也就是一组参与计算的数字。向量经过多层处理，最后变成每个候选编号的得分，称为 logits。生成程序按规则选出一个编号，接到已有序列后面，再预测下一项。这种逐项续写叫自回归生成。')+
+ '给小模型一句「红 圆」，它先译出 red，再译出 circle。已经译出 red 时，把原文换成「红 方」，下一词就变成 square。Transformer 在每一轮用原文和已经译出的内容，给下一词的候选项打分。<a href="/article/transformer-model/#translation-reading-path">查看翻译的三轮输入与输出</a>。',
+ '程序先用分词器把文本切成词元（token）。词元可以是字、词片段或字节片段。它按词表找到「红」和「圆」的编号，再用词嵌入表把每个编号换成一组数字，这组数字叫向量。Transformer 处理这些向量，算出词表里各项的分数（logits）。每轮选出一项，接到已生成的内容后，再算下一轮。这种逐项续写叫自回归生成。')+
  conceptReadingTable(['组件','负责什么','在模型中的关系'],[
   ['分词器与词表','把文本片段转换为编号','为词嵌入提供查表编号'],
   ['词嵌入 <code>Embedding</code>','把编号查成向量','产生每个位置的初始表示'],
@@ -13010,7 +13008,7 @@ const firstReadingChanges=[];
   ['残差连接','把分支输出与原表示相加','保留直接路径，连接连续的计算层'],
   ['输出投影','为词表中的每个候选编号打分','分数用于计算训练损失或选择下一项']
  ])+
- para('图里的参数是模型反复使用、能通过学习调整的数字。训练时，先用参数计算预测，再与目标比较得到损失。梯度描述改变参数会怎样影响损失，优化器据此更新参数。推理时，参数固定，系统把输入变成预测结果。')+overview+
+ para('词嵌入表等部件里的数值是模型参数。训练时，如果正确答案是 circle，模型给它的概率越低，损失就越大。梯度描述微调参数会怎样改变损失，优化器据此更新参数。实际翻译时，参数固定下来，只用它们算分。')+overview+
  `<h3 id="sequence-models">循环、卷积和注意力怎样传递前文</h3>`+
  para('把「红牌、蓝牌、绿牌、找红」当成四个示意词元。第 4 格要利用第 1 格的红牌。这里只允许每格读取自己和前文。前面的信息怎样到达第 4 格，取决于这一层连接了哪些位置。',
  '循环神经网络（RNN）为每格计算一个状态，也就是要传给下一格的一组数字。普通单向 RNN 用本格输入和上一格状态算出新状态。红牌的信息可以从状态 1 依次传到状态 4，中间各格都要等前一格算完。',
@@ -13035,7 +13033,7 @@ const firstReadingChanges=[];
  ])+'</div>'+
  para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>')+
  `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
- para('做 AI Infra 时，先沿一条数据路径辨认模型在算什么，再按工程问题分流。矩阵乘法是把一组特征转换成另一组特征的基本运算，算子是执行这类运算的程序单元。训练和推理都调用算子，但各自还要管理不同的状态。')+
+ para('翻译到第二轮时，模型要把已有内容变成新的候选分数。中间会反复做矩阵乘法，把一组特征变成另一组特征。执行一次这类运算的程序叫算子。写算子时要管数字怎么算、从哪取。训练时要管参数怎么更新。提供翻译服务时，还要让多个请求共用有限的显存。')+
  conceptReadingTable(['学习线','沿同一个模型追什么','从哪章继续'],[
   ['模型基础','编号怎样变成向量，向量怎样读取上下文，最后怎样得出候选分数','<a href="/article/tokenization-embedding/">词元与嵌入</a> → <a href="/article/attention-mechanics/">注意力</a> → <a href="/article/transformer-block/">完整解码器块</a>'],
   ['GPU 与算子','矩阵乘法和注意力怎样落到 GPU 的计算与存储。序列变长时，哪些数字值得留在芯片上继续用','<a href="/article/gpu-execution/">GPU 怎样执行算子</a> → <a href="/article/operator-profiling/">实现、测量与验证</a>'],
@@ -13045,15 +13043,15 @@ const firstReadingChanges=[];
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>')+
  `<h3 id="tiny-decoder-input">下面用哪组输入计算</h3>`+para(
  '上面的翻译实验有独立的源端和目标端。第 2 节起切换到另一份只用解码器的小模型，在一条编号序列里计算续写。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。',
- '本章用一组可手算的模型尺寸。词表 V=8，每个位置的特征宽度 D=8，每批样本 B=2，每条输入长度 T=4。两条原始编号序列为 [0,1,2,3,4] 和 [4,5,6,7,0]。编号在这里用于查表，所有编号都是普通词元。',
- '训练时每条取前四项作输入、后四项作目标。第一条的第 0 位看到 0，目标是 1。第 3 位看到 [0,1,2,3]，目标是 4。第 2、3 节先把这些位置和特征变成可以计算的形状，第 4 节再把各运算装回同一块。');
- a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
+ '小模型的词表有 8 项（V=8），每个位置用 8 个数字表示（D=8）。一个批次有两条样本（B=2），原始编号是 [0,1,2,3,4] 和 [4,5,6,7,0]。每个编号都对应词嵌入表中的一行。',
+ '每条取前四项作输入（T=4），后四项作目标。以第一条为例，第 0 位只看到 0，要猜 1。第 3 位能看到 [0,1,2,3]，要猜 4。');
+ a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
  const tensor=a.sections[1];
  tensor[1]=tensor[1].replace('同一块张量可以交换维度后以不同的步长读取；把 [B,T,D] 解释为 [B,T,H,d] 仅在 D=H×d 且布局兼容时简单。随后交换 head 与时间轴，再把头拼回模型轴，有时需要实际重排或复制。','交换张量的两根轴时，程序可以沿不同间隔读取同一份存储，这个间隔叫步长。第 4 节会把特征按多个注意力分支分组。分组后换轴，再合并回一根特征轴时，是否需要复制取决于实际存储布局。');
 
  a.sections[3][1]=`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('上一节的线性层只加工同一位置的特征。要把上下文带进来，就让位置之间交换信息。沿用第一条输入 [0,1,2,3]。位置 2 要预测编号 3，可读位置 0、1、2 的向量。位置 3 已经含有目标编号，必须挡住。')+
+ para('输入是 [0,1,2,3]，位置 2 要猜下一个编号。它可以读位置 0、1、2，位置 3 里是答案，要挡住。上一节的线性层只处理位置 2 自己的向量。注意力则会把前面两格的信息也算进来。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
@@ -13117,7 +13115,7 @@ const firstReadingChanges=[];
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
  a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
- a.updated='2026.11.09';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];
@@ -13200,7 +13198,7 @@ const firstReadingChanges=[];
   for(const[,id]of old.matchAll(/\bid=["']([^"']+)["']/g)){
    if(!now.includes('id="'+id+'"')&&!now.includes("id='"+id+"'"))throw Error('Execution continuity lost published destination '+article.id+' '+id);
   }
-  article.updated='2026.11.09';
+  article.updated=article.id==='agent-runtime'?'2026.11.10':'2026.11.09';
  }
  const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
@@ -14223,16 +14221,19 @@ function prerequisiteConnectionsHTML(a){
  const optional=chapterOptionalConnections[a.id]||[];
  return '<p><b>前置知识</b>'+a.prereq+'</p>'+(needs.length?'<ul class="prerequisite-links">'+list(needs)+'</ul>':'')+(optional.length?'<p><b>按需深入，不作整条课程先修</b></p><ul class="prerequisite-links">'+list(optional)+'</ul>':'');
 }
+function chapterConnectionLinks(a,context=chapterReadingContext(a)){
+ const incoming=chapterDependencies[a.id]?.[0];
+ const dependent=articles.find(other=>context.ids.includes(other.id)&&chapterDependencies[other.id]?.some(([id])=>id===a.id));
+ const optional=chapterOptionalConnections[a.id]?.[0];
+ const next=dependent?['接着读',dependent.id,chapterDependencies[dependent.id].find(([id])=>id===a.id)[1]]:optional&&['选读',...optional];
+ return [incoming&&['先读',...incoming],next].filter(Boolean);
+}
 function chapterConnectionHTML(a){
- const r=chapterReadingContext(a),track=r.track;
- const incoming=chapterDependencies[a.id]||[],outgoing=articles.filter(other=>r.ids.includes(other.id)).flatMap(other=>(chapterDependencies[other.id]||[]).filter(([id])=>id===a.id).map(([,why])=>[other.id,why]));
- const item=([id,why])=>'<a href="'+articleURL(id)+'">'+articleById(id).number+' '+articleById(id).title+'</a>：'+why;
- const optional=chapterOptionalConnections[a.id]||[];
- return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>把这一章接回整体</h2>'+
- (incoming.length?'<p><b>承接：</b>'+item(incoming[0])+'</p>':'<p><b>起点：</b>'+a.objectives[0]+'。从这里建立当前主题的基本对象。</p>')+
- (outgoing.length?'<p><b>后续用途：</b>'+item(outgoing[0])+'</p>':optional.length?'<p><b>按需延伸：</b>'+item(optional[0])+'</p>':'')+
+ const context=chapterReadingContext(a),track=context.track;
+ const links=chapterConnectionLinks(a,context).map(([label,id,why])=>'<p><b>'+label+'：</b><a href="'+articleURL(id)+'">'+articleById(id).number+' '+articleById(id).title+'</a>：'+why+'</p>').join('');
+ return '<aside class="chapter-connection" aria-label="章节之间的概念关系"><h2>前后章节</h2>'+links+
  chapterFieldMapLink(a)+chapterLabLinksHTML(a)+
- '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">在学习路线中定位这一章 →</a></aside>';
+ '<a class="inline-link" href="/roadmap/'+(learningTrackModels[track]?'?track='+track+'#route-chapter-'+track+'-'+a.id:'')+'">学习路线 →</a></aside>';
 }
 function stageConnectionHTML(track,index){const [from,chain,result]=courseStageConnections[track][index];return '<div class="stage-connection"><p><b>'+from+'</b></p><p class="concept-chain">'+chain+'</p><p>'+result+'</p></div>';}
 function trackModelHTML(track){const m=learningTrackModels[track];return '<section class="track-system-model"><h3>'+m.title+'</h3><p>'+m.relation+'</p>'+figure(m.diagram,m.caption)+'<p class="model-anchor-links">'+m.anchors.map(([id,label])=>'<a href="'+articleURL(id)+'">'+label+' →</a>').join('')+'</p>'+fieldMapIndexHTML(track)+'</section>';}
@@ -14746,7 +14747,7 @@ function fieldConceptMapHTML(moduleId){
   return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
- '<div class="field-map-exercise"><h3>合上页面，串起这些关系</h3><p>'+safe(graph.question)+'</p><details><summary>对照推理</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>连到其他领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
+ '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
 }
 function fieldMapIndexHTML(track){return '<div class="field-map-index"><b>按领域看核心关系</b><p>'+modules.filter(m=>m.track===track&&fieldConceptMaps[m.id]).map(m=>'<a href="'+fieldMapURL(m.id)+'">'+m.n+' '+trainingEscape(m.name)+' →</a>').join('')+'</p></div>';}
 function chapterFieldConcepts(a){
@@ -14765,7 +14766,7 @@ function chapterFieldMapLink(a){
  const [moduleId,id]=chapterFieldConcepts(a)[0]||[];
  if(!moduleId)return '';
  const [,label]=fieldConceptMaps[moduleId].nodes.find(node=>node[0]===id);
- return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">在领域图谱中看本章相关概念 · '+trainingEscape(label)+' →</a>';
+ return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">概念图 · '+trainingEscape(label)+' →</a>';
 }
 function initFieldConceptMaps(){
  const hash=location.hash||'',fragment=hash.match(/^#map-concept-([a-z0-9-]+)$/)?.[1];
@@ -15397,5 +15398,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="34456a50face65a834d5e2456c887f39aa447bf214540e72be2663fa1e5e1ef5";
+const staticReadingVersion="30c16b80f49072ae6e2810baa674a96ef611e865631973a90f3b3567521c269a";
 
