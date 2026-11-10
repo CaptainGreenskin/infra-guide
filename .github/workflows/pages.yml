@@ -25,10 +25,21 @@ jobs:
           node-version: '22'
       - name: Render and check content
         run: node scripts/check-all.cjs
-      - name: Build project-site paths
-        run: node scripts/build-github-pages.cjs --base-path "/${{ github.event.repository.name }}/" --origin "https://${{ github.repository_owner }}.github.io"
-      - name: Check project-site links
-        run: node scripts/check-github-pages.cjs
+      - name: Build and check project-site paths
+        env:
+          PAGES_ORIGIN: https://${{ github.repository_owner }}.github.io
+          PAGES_BASE: /${{ github.event.repository.name }}/
+        run: |
+          manifest="$(mktemp)"
+          trap 'rm -f "$manifest"' EXIT
+          if curl -fsSL --compressed --connect-timeout 5 --max-time 10 --retry 2 --retry-all-errors \
+            "${PAGES_ORIGIN}${PAGES_BASE}reader-runtime-manifest.json?before=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" -o "$manifest"; then
+            export PAGES_LIVE_READER_MANIFEST="$manifest"
+          else
+            echo 'Live reader manifest unavailable. Keeping the full reader archive.'
+          fi
+          node scripts/build-github-pages.cjs --base-path "$PAGES_BASE" --origin "$PAGES_ORIGIN"
+          node scripts/check-github-pages.cjs
       - name: Fingerprint the checked Pages build
         id: fingerprint
         if: github.event_name != 'pull_request'

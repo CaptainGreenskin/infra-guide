@@ -1,0 +1,47 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "fcc9a79bc43699d9f5b7eb5b8f52ffee457152c1",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ROLE_CHECKPOINT_NATIVE_LABS_2026-11-11.json": "5482a7a8d79d4e6735b85e77bbd8fe69f3a26b302c3f4c6cabffb24664cb6431"
+  },
+  "source_revisions": {
+    ".github/workflows/pages.yml": {
+      "previous_sha256": "e351f21bd3b58dd4f15062eee4bd46e46cb69596ddd4646bb1320ec74c06800f",
+      "reviewed_sha256": "fd0ed922d43b98a6dcb2cac527e3b5ed1bbb2d2508047dc5d8f40622bb8c1e90",
+      "scope": "Obtain the exact currently served manifest with bounded retries, then verify the same artifact that is uploaded. Use the full archive when the live manifest is unavailable."
+    },
+    "scripts/build-github-pages.cjs": {
+      "previous_sha256": "8800d128fa0a5b2ee82e130f4cb9d02e64a235a337b6780830b015b307351c9f",
+      "reviewed_sha256": "d4f725bdc8eff29103359d1aa41aa70aaa1bccb966e073a35c53f0a64d81f818",
+      "scope": "Keep all content files byte-identical and apply reader retention only in the project-site deployment copy."
+    },
+    "scripts/check-github-pages.cjs": {
+      "previous_sha256": "2cd34665343962a91ebc12c18ce2616fd9ac47a01d5ce7a0c5723f70ee0a53c9",
+      "reviewed_sha256": "4163ec5bc18a23cfe170e4a1b663e37f60da9806d8c9011e98d0a2edb482b6f6",
+      "scope": "Verify exact deployed and archived asset inventories and byte hashes, the live reader closure, all legacy bootstraps and every existing public local link."
+    },
+    "scripts/pages-reader-retention.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "efbb2faa1d5da41214ed5f95de2fcd13d0954514906d3f8a355cbb4f687ef523",
+      "scope": "Retain the current and three recent distinct complete dependency sets, the exact known live dependency set, and all historical fallback bootstraps. Unknown live manifests select the full archive."
+    },
+    "README.md": {
+      "previous_sha256": "9398331bfc2fad8a054fbe42a571abf2d5b16595b867b3a4f68365c8d8675ba1",
+      "reviewed_sha256": "61a0edd43075f00a338a7361853b8f499b34bb0ef33ce92bfbb2ec429b1d3602",
+      "scope": "State the compact deployment policy and how older open tabs get the current search index."
+    }
+  },
+  "deployment_checks": {
+    "full_artifact_bytes": 351295792,
+    "compact_artifact_bytes": 59845310,
+    "archived_reader_assets": 2176,
+    "deployed_reader_assets": 371,
+    "unchanged_non_reader_files": 1476,
+    "unchanged_public_html_files": 120,
+    "checked_local_links": 18418,
+    "predecessor": "858dbcffa41d16a8431e0b3c38f8f1b9e90f68ca",
+    "desktop_mobile": "Exact live predecessor HTML hydrated its original lightweight reader and searched. An older cached article whose runtime was not retained entered full fallback and searched.",
+    "provider_cause_confirmed": false
+  }
+}
