@@ -1,0 +1,23 @@
+{
+  "format": "readonly-contract-v1",
+  "case_id": "readonly-A",
+  "request": {
+    "request_id": "R1",
+    "tenant": "A",
+    "action": "read_summary",
+    "resource": "reports-A",
+    "delivery": "session-17",
+    "source_version": "A-v1"
+  },
+  "principal": "fixture-A",
+  "events": {
+    "A-e1": 5,
+    "A-e2": 7,
+    "A-e3": 11
+  },
+  "minimum_citations": 2,
+  "B_before": {
+    "version": 7,
+    "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+  }
+}

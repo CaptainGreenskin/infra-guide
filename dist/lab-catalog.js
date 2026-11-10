@@ -4,6 +4,8 @@ const labArchiveCatalog={
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
  'workflow-version-resume':{folder:'workflow-version-resume',title:'工作流升级后旧审批的恢复'},
  'controller-reconcile':{folder:'controller-reconcile',title:'Kubernetes 自定义控制器的重试与删除'},
+ 'elastic-restart-step':{folder:'elastic-restart-step',title:'torchrun 自动重启与未提交训练步'},
+ 'agent-task-reconnect':{folder:'agent-task-reconnect',title:'提交响应丢失后认回原任务'},
  'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
@@ -370,6 +372,16 @@ labLearningCatalog.push(
   files:['controller.go','main.go','go.mod','go.sum'],env:'Go 1.25+ · client-go 0.35.8 · Kubernetes 1.35.0 envtest',kind:'真实 API 对象、进程退出与回环 HTTP',
   observe:'核对进程退出前后的 UID、PUT 次数、已处理代际和删除期间的 GET 状态。',
   scope:'隔离的本机 API Server、etcd 与文件接收方。多副本、集群权限和真实云资源另验。'}
+);
+labLearningCatalog.push(
+ {id:'ai-elastic-restart-step',track:'ai',stage:2,title:'第 2 步已经算完，为什么重启还要重算',chapter:'checkpoint-recovery',anchor:'native-elastic-restart-step',pack:'elastic-restart-step',
+  files:['elastic_restart.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实 torchrun 进程退出与整组重启',
+  observe:'比较两组进程号、已提交游标、重做的样本和恢复后的动量。',
+  scope:'本机进程故障、同步文件检查点与固定输入。GPU、多机共享存储和断电需另验。'},
+ {id:'agent-task-reconnect',track:'agent',stage:2,title:'受理响应丢了，重传之后还是原任务吗',chapter:'kairo-practice',anchor:'native-agent-task-reconnect',pack:'agent-task-reconnect',
+  files:['reconnect_lab.py','readonly-contract.json','resources.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · 本机 HTTP 与 SQLite',kind:'真实断线、任务续查与 MCP 读取',
+  observe:'对照首次断线、原样重传和同编号改参数，再核对原会话的报告与资源侧读取。',
+  scope:'公开本机参考实现、固定身份和工具步骤。Kairo 接入与模型决策由目标环境另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

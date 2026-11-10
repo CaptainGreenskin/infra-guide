@@ -229,4 +229,21 @@ optimizer.step()
  '实验只验证逐位置线性分类的 CPU 更新。迁移到有注意力的模型时，还要保证序列之间看不到彼此、位置编号正确、真实目标相同。到了多卡，再把输入筛选与各 rank 的计算、通信等待放进共同的更新窗口。')+
  trainingCode('解压后运行，可选导出两条原始轨迹','SHELL','python -m pip install -r requirements.txt\npython -B useful_tokens.py --trace-dir traces > replay.json')+
  '<p class="practice-links"><a href="labs/training-useful-tokens.zip" download>下载可运行实验 ↓</a> · <a href="labs/training-useful-tokens/useful_tokens.py">查看完整源码 →</a> · <a href="labs/training-useful-tokens/README.md">复跑与读轨迹 →</a> · <a href="labs/training-useful-tokens/validation.json">核对计数、步时与阶段 →</a> · <a href="https://docs.pytorch.org/docs/stable/profiler.html">PyTorch Profiler 接口 ↗</a></p>';
+
+ recovery.sections[7][1]+='<h3 id="native-elastic-restart-step">第 2 步已经算完，为什么重启还要重算</h3>'+
+ p('两个 worker 每步各处理一个目标，三步的目标依次是 [1,3]、[2,4]、[3,5]。输入始终是 1，初始权重为 0。损失用平方误差。带动量的 SGD 每步先更新缓冲 m = 0.5 × m + g，再用 w = w − 0.125 × m 更新权重，g 是 DDP 平均后的梯度。第 1 步梯度为 −4，得到 m = −4、w = 0.5，保存时也记下已完成的步数 1。')+
+ p('第 2 步两边都更新到 w = 1.375。故障放在这次更新之后、检查点发布之前。rank 1 以退出码 73 结束。<code>torchrun</code> 看到失败后，向仍在等待的 rank 0 发送 SIGTERM，启动两个新进程。原来的两个进程号都变了，<code>TORCHELASTIC_RESTART_COUNT</code> 从 0 变成 1。')+
+ trainingFigure('elastic-restart-step','旧组在第 2 步只改变了内存。新组读回已经提交的第 1 步，再消费原来的第 2 批输入。')+
+ p('启动器知道该重新启动进程，检查点决定接下来从哪读数据。新组恢复权重 0.5、动量 −4 和游标 1，再读 [2,4]。这次第 2 步才发布检查点。<code>attempts</code> 能看到两次第 2 步计算，最终 <code>checkpoint.history</code> 里只有 1、2、3 各一次。')+
+ table(['对照','第 3 步后的权重','第 3 步后的动量'],[
+  ['连续三步','2.46875','−8.75'],
+  ['重启，恢复权重、动量和游标','2.46875','−8.75'],
+  ['重启，只恢复权重和游标','2.15625','−8.25']
+ ])+
+ p('只恢复权重的进程仍从正确的批次开始，但动量缓冲为空。第 2 步本应把梯度 −5 与旧动量的一半相加得到 −7，少了这段历史，后续权重也会偏。')+
+ trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
+ p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
+ '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
+ recovery.updated='2026.11.10';
+
 })();

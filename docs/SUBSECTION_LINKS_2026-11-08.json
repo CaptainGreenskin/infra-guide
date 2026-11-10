@@ -642,10 +642,12 @@
         "subsection-1-zredmh",
         "subsection-1-1mlk4h4",
         "torch-checkpoint-path",
-        "fsdp-dcp-reshard"
+        "fsdp-dcp-reshard",
+        "native-elastic-restart-step"
       ],
       "visible_targets": [
-        "fsdp-dcp-reshard"
+        "fsdp-dcp-reshard",
+        "native-elastic-restart-step"
       ]
     },
     {
@@ -984,10 +986,12 @@
     {
       "id": "kairo-practice",
       "targets": [
-        "kairo-read-evidence"
+        "kairo-read-evidence",
+        "native-agent-task-reconnect"
       ],
       "visible_targets": [
-        "kairo-read-evidence"
+        "kairo-read-evidence",
+        "native-agent-task-reconnect"
       ]
     },
     {

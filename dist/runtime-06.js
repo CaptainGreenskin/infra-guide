@@ -8508,6 +8508,24 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    p('选做<a href="/article/production-readiness/#integrated-service-run">从本机服务查回 37 报告的验收证据</a>。那份实战用 10、27 生成并写入 report-A，能从接收库查回报告和回执。本章的 23 日报是只读练习，校验器检查给定记录。接入 Kairo 时，由测试者从目标环境取得原任务的读取、交付和效果记录，再按只读契约验收。')
   ];
   finish(a,old,bodies,'从只读日报的任务、会话、工具与回执出发，写清 Kairo 待接入接口，再用独立契约校验一份正例和十个反例。');
+
+  a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
+  p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+
+  trainingFigure('agent-task-reconnect','客户端没收到响应时，任务库已有 T1。原样重传和修改参数，在服务端走两条不同分支。')+
+  p('服务将请求内容算成摘要，与 R1 一起保存。重连原样提交，HTTP 202 返回同一个 T1。把来源从 A-v1 改成 A-v2，仍用 R1 提交，返回 HTTP 409。三次提交有三条记录，但只有一行任务。这里的摘要用于判断请求是否仍是原来的那份内容。')+
+  p('接下来按固定步骤执行 T1。通过官方 MCP SDK 的 Streamable HTTP 读取 <code>reports-A</code>，得到 A-v1 的 5、7、11。另一条请求试读 <code>reports-B</code>。两次传输的 HTTP 状态都是 200，B 的工具结果带 <code>isError=true</code>。资源侧审计只记录到 A 的正文读取，没有 B 的正文或业务写入。')+
+  table(['到哪核对','这次实际看到什么'],[
+   ['客户端提交记录','首次断开，原样重传 202，改来源 409'],
+   ['独立任务与交付库','一个 T1 结束为 SUCCEEDED，原会话收到 23，引用 A-e1、A-e2、A-e3'],
+   ['换会话请求同一结果','HTTP 404'],
+   ['资源服务的读取与效果记录','工具只读 A，B 拒绝且未读正文，前后资源版本和文件摘要相同']
+  ])+
+  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。')+
+  trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
+  p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
+  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>';
+  a.updated='2026.11.10';
+
  }
  }
 })();
@@ -9906,6 +9924,23 @@ optimizer.step()
  '实验只验证逐位置线性分类的 CPU 更新。迁移到有注意力的模型时，还要保证序列之间看不到彼此、位置编号正确、真实目标相同。到了多卡，再把输入筛选与各 rank 的计算、通信等待放进共同的更新窗口。')+
  trainingCode('解压后运行，可选导出两条原始轨迹','SHELL','python -m pip install -r requirements.txt\npython -B useful_tokens.py --trace-dir traces > replay.json')+
  '<p class="practice-links"><a href="labs/training-useful-tokens.zip" download>下载可运行实验 ↓</a> · <a href="labs/training-useful-tokens/useful_tokens.py">查看完整源码 →</a> · <a href="labs/training-useful-tokens/README.md">复跑与读轨迹 →</a> · <a href="labs/training-useful-tokens/validation.json">核对计数、步时与阶段 →</a> · <a href="https://docs.pytorch.org/docs/stable/profiler.html">PyTorch Profiler 接口 ↗</a></p>';
+
+ recovery.sections[7][1]+='<h3 id="native-elastic-restart-step">第 2 步已经算完，为什么重启还要重算</h3>'+
+ p('两个 worker 每步各处理一个目标，三步的目标依次是 [1,3]、[2,4]、[3,5]。输入始终是 1，初始权重为 0。损失用平方误差。带动量的 SGD 每步先更新缓冲 m = 0.5 × m + g，再用 w = w − 0.125 × m 更新权重，g 是 DDP 平均后的梯度。第 1 步梯度为 −4，得到 m = −4、w = 0.5，保存时也记下已完成的步数 1。')+
+ p('第 2 步两边都更新到 w = 1.375。故障放在这次更新之后、检查点发布之前。rank 1 以退出码 73 结束。<code>torchrun</code> 看到失败后，向仍在等待的 rank 0 发送 SIGTERM，启动两个新进程。原来的两个进程号都变了，<code>TORCHELASTIC_RESTART_COUNT</code> 从 0 变成 1。')+
+ trainingFigure('elastic-restart-step','旧组在第 2 步只改变了内存。新组读回已经提交的第 1 步，再消费原来的第 2 批输入。')+
+ p('启动器知道该重新启动进程，检查点决定接下来从哪读数据。新组恢复权重 0.5、动量 −4 和游标 1，再读 [2,4]。这次第 2 步才发布检查点。<code>attempts</code> 能看到两次第 2 步计算，最终 <code>checkpoint.history</code> 里只有 1、2、3 各一次。')+
+ table(['对照','第 3 步后的权重','第 3 步后的动量'],[
+  ['连续三步','2.46875','−8.75'],
+  ['重启，恢复权重、动量和游标','2.46875','−8.75'],
+  ['重启，只恢复权重和游标','2.15625','−8.25']
+ ])+
+ p('只恢复权重的进程仍从正确的批次开始，但动量缓冲为空。第 2 步本应把梯度 −5 与旧动量的一半相加得到 −7，少了这段历史，后续权重也会偏。')+
+ trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
+ p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
+ '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
+ recovery.updated='2026.11.10';
+
 })();
 
 
@@ -13332,6 +13367,10 @@ const firstReadingChanges=[];
  }
  const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
+
+ const multinode=articleById('multinode-lab');
+ multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
+ multinode.updated='2026.11.10';
 })();
 
 
@@ -14394,11 +14433,11 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。再用<a href="/article/delivery/?goal=cloud-platform#native-controller-reconcile">控制器重启与删除实验</a>核对外部记录和 API 状态何时对齐。'},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。再用<a href="/article/slo/?goal=cloud-sre#native-alert-notification">收件对照</a>分清规则触发、静默和实际送达。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。用<a href="/article/storage-recovery/?goal=cloud-sre#native-postgres-pitr">PostgreSQL 恢复对照</a>核对实例可用和业务状态正确这两个判断。用<a href="/article/elasticity/?goal=cloud-sre#native-cpu-quota-http">CPU 配额对照</a>说明成功延迟和入口拒绝为什么要分开看。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。'},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。用<a href="/article/checkpoint-recovery/?goal=ai-training#native-elastic-restart-step">自动重启实战</a>核对新进程加载的游标和优化器状态。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。用<a href="/article/model-serving/?goal=ai-inference#rtx-pro-6000-cache-case">单卡 KV 对照</a>比较解码吞吐、提示处理时间和峰值显存，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。用<a href="/article/inference-performance/?goal=ai-inference#native-pd-split">推理分池实验</a>复算交接字节和首项后的等待。用<a href="/article/inference-performance/?goal=ai-inference#tp-placement">八卡部署账本</a>判断单个副本能否接单，再设计真机比较。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作。用<a href="/article/operator-profiling/?goal=ai-operators#torch-compile-graph-break">断图实战</a>区分 Python 边界与形状变化带来的重编译，再用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。再用<a href="/article/tensor-parallel-math/?goal=ai-operators#native-dp-tp-mesh">四进程分组实验</a>核对同片梯度和样本数。用<a href="/article/tensor-parallel-math/?goal=ai-operators#native-pipeline-schedules">流水线排程实战</a>数清待反向的微批，验证两种排程的参数更新。再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-result-receipt">坏回执对照</a>定位拒绝响应的一层，并按原操作查接收方。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。用<a href="/article/durable-workflows/?goal=agent-platform#native-workflow-version-resume">工作流升级对照</a>检查旧批准会交给哪个动作。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。最后用<a href="/article/kairo-practice/?goal=agent-platform#kairo-read-evidence">只读验收练习</a>对上两次 HTTP 200 与资源端的实际读取。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-result-receipt">坏回执对照</a>定位拒绝响应的一层，并按原操作查接收方。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。用<a href="/article/durable-workflows/?goal=agent-platform#native-workflow-version-resume">工作流升级对照</a>检查旧批准会交给哪个动作。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。最后用<a href="/article/kairo-practice/?goal=agent-platform#kairo-read-evidence">只读验收练习</a>对上两次 HTTP 200 与资源端的实际读取。用<a href="/article/kairo-practice/?goal=agent-platform#native-agent-task-reconnect">本机重连对照</a>核对任务受理、原会话和资源侧读取，再按同一契约验收目标环境。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14858,10 +14897,11 @@ function fieldPracticeUnitHTML([,labId,question,result],resultClass){
   '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
   '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
 }
-function fieldPracticeHTML(moduleId,names){
+function fieldPracticeHTML(moduleId){
  const primary=fieldPracticePaths[moduleId],[conceptId,labId]=primary;
+ const [,name]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===conceptId);
  const next=fieldPracticeFollowups[moduleId];
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3>'+
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h2 id="field-map-practice">从图到实战 <span>'+trainingEscape(name)+'</span></h2>'+
   fieldPracticeUnitHTML(primary,'field-map-practice-result')+
   (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
 }
@@ -14884,14 +14924,15 @@ function fieldConceptMapHTML(moduleId){
   return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
  }).join('');
  return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
- '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div>'+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div><details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
   return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
- '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
+ '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>'+
+ '<p class="field-practice-actions"><a href="/module/'+moduleId+'/#field-map-practice">跳到本领域练习 ↓</a></p></section>';
 }
 function fieldMapIndexHTML(track){return '<div class="field-map-index"><b>按领域看核心关系</b><p>'+modules.filter(m=>m.track===track&&fieldConceptMaps[m.id]).map(m=>'<a href="'+fieldMapURL(m.id)+'">'+m.n+' '+trainingEscape(m.name)+' →</a>').join('')+'</p></div>';}
 function chapterFieldConcepts(a){
@@ -14967,6 +15008,8 @@ const labArchiveCatalog={
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
  'workflow-version-resume':{folder:'workflow-version-resume',title:'工作流升级后旧审批的恢复'},
  'controller-reconcile':{folder:'controller-reconcile',title:'Kubernetes 自定义控制器的重试与删除'},
+ 'elastic-restart-step':{folder:'elastic-restart-step',title:'torchrun 自动重启与未提交训练步'},
+ 'agent-task-reconnect':{folder:'agent-task-reconnect',title:'提交响应丢失后认回原任务'},
  'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
@@ -15334,6 +15377,16 @@ labLearningCatalog.push(
   observe:'核对进程退出前后的 UID、PUT 次数、已处理代际和删除期间的 GET 状态。',
   scope:'隔离的本机 API Server、etcd 与文件接收方。多副本、集群权限和真实云资源另验。'}
 );
+labLearningCatalog.push(
+ {id:'ai-elastic-restart-step',track:'ai',stage:2,title:'第 2 步已经算完，为什么重启还要重算',chapter:'checkpoint-recovery',anchor:'native-elastic-restart-step',pack:'elastic-restart-step',
+  files:['elastic_restart.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实 torchrun 进程退出与整组重启',
+  observe:'比较两组进程号、已提交游标、重做的样本和恢复后的动量。',
+  scope:'本机进程故障、同步文件检查点与固定输入。GPU、多机共享存储和断电需另验。'},
+ {id:'agent-task-reconnect',track:'agent',stage:2,title:'受理响应丢了，重传之后还是原任务吗',chapter:'kairo-practice',anchor:'native-agent-task-reconnect',pack:'agent-task-reconnect',
+  files:['reconnect_lab.py','readonly-contract.json','resources.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · 本机 HTTP 与 SQLite',kind:'真实断线、任务续查与 MCP 读取',
+  observe:'对照首次断线、原样重传和同编号改参数，再核对原会话的报告与资源侧读取。',
+  scope:'公开本机参考实现、固定身份和工具步骤。Kairo 接入与模型决策由目标环境另验。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15576,5 +15629,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="51a526d0cdd26c07d1cb3ed8c21f344bad20b517cc3b218d7300213e4aa2e525";
+const staticReadingVersion="a8fa8e903e7021c9ed86adaf91dee0fc896d22aa568fd6019b698101ace410f4";
 

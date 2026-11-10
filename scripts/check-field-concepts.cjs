@@ -55,8 +55,14 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  });
  assert.deepEqual([...main[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m=>m[1]),expected,moduleId+': same authored main edges and focusable concepts');
  const practice=html.match(/<section class="field-map-practice"[\s\S]*?<\/section>/g)||[];
- assert.equal(practice.length,1,moduleId+': one visible practice after the diagram');
- assert(html.indexOf(practice[0])>html.indexOf(main[0])&&html.indexOf(practice[0])<html.indexOf('<details class="field-map-explorer"'),moduleId+': keep the exercise outside the optional explorer');
+ assert.equal(practice.length,1,moduleId+': one visible field practice');
+ const explorer=html.indexOf('<details class="field-map-explorer"');
+ const firstKnowledge=html.indexOf('class="knowledge-point"');
+ const lastKnowledge=html.lastIndexOf('class="knowledge-point"');
+ const practiceAt=html.indexOf(practice[0]);
+ assert(explorer>html.indexOf(main[0])&&firstKnowledge>explorer,moduleId+': concept map and its definitions come first');
+ assert(practiceAt>lastKnowledge&&practiceAt<html.indexOf('id="examples"'),moduleId+': teach the field before its practice and related chapters');
+ assert(html.includes('href="/module/'+moduleId+'/#field-map-practice">跳到本领域练习'),moduleId+': the front map retains an exact practice shortcut');
  assert(practice[0].includes('data-field-practice="'+d.practice[moduleId][1]+'"'),moduleId+': keep the primary practice');
  assert.equal((html.match(/id="field-map-practice"/g)||[]).length,1,moduleId+': unique practice heading target');
  const [primary,followup]=practice[0].split('<details class="field-map-practice-next"');

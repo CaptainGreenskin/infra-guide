@@ -6047,6 +6047,59 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "d72fb859ad80dd0a4533edc5fb475cd974dc12192f59e13101fb0bc6346e02f0",
+      "reviewed_content_sha256": "dff5e79b1cbfa1ea84118ce8f84a8cb9240d11560e83780f87cdd6cca42b06df",
+      "scope": "Compare native torchrun whole-group restart to a three-step continuous run and explain committed progress.",
+      "observation": "Both PIDs change after rank 1 exits. The second update is recomputed from the first checkpoint and committed once. A weights-only restore fails the momentum and weight comparisons.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "4340a8803be531688ea691a6cb2ef0f38f80fa8bc1270a6294979663ab9fe13c",
+      "reviewed_content_sha256": "78af83b5b5075e9b4da3d3ea240ee64c9c189df7d454ecff4cf15d3d96b14213",
+      "scope": "Connect the launcher and rank explanation to an actual worker-group restart.",
+      "observation": "This exact experiment is local Gloo. The separate physical-node and CUDA/NCCL gates remain unchanged.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "065c49d50a1d464b1a14051911e82f60e57e0b8675550c4db0331e776b62cf3e",
+      "reviewed_content_sha256": "cd923d6420482f633d1800aa480f92f8af01da9b800d95ad3e0b47309959f948",
+      "scope": "Follow a local durable task through missing acceptance response, deduplicated retry, MCP authorization and same-session delivery.",
+      "observation": "Actual HTTP and SQLite records join one task to 23 and the A sources. The local reference version remains separate from Kairo and model-driven decisions.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

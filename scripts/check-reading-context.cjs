@@ -4,10 +4,10 @@ const files=[...fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script 
 const gateTargets={
  'cloud-platform':[['cloud-service-lab','kubernetes-service-run'],['k8s-workloads','native-pdb-eviction-rollout'],['config-secrets','native-config-projection'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],['iam-security','native-spiffe-workload-identity'],['vpc-network','native-tls-proxy'],['delivery','native-controller-reconcile']],
  'cloud-sre':[['observability','section-9'],['observability','collector-sampling-check'],['slo','live-prometheus-burn'],['slo','native-alert-notification'],['elasticity','section-7'],['resilience','section-9'],['cache-consistency','native-redis-client-tracking'],['storage-recovery','native-postgres-pitr'],['elasticity','native-cpu-quota-http']],
- 'ai-training':[['gpu-memory','native-amp-window'],['ddp-code','native-ddp-join'],['training-platform','native-training-submission-preflight'],['gpu-scheduling','native-kueue-admission'],['kubernetes-training','native-kubernetes-gloo-job'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run'],['multinode-lab','native-ddp-target-preflight']],
+ 'ai-training':[['gpu-memory','native-amp-window'],['ddp-code','native-ddp-join'],['training-platform','native-training-submission-preflight'],['gpu-scheduling','native-kueue-admission'],['kubernetes-training','native-kubernetes-gloo-job'],['training-communication','ragged-ring-communication'],['multinode-lab','multinode-launch-run'],['multinode-lab','native-ddp-target-preflight'],['checkpoint-recovery','native-elastic-restart-step']],
  'ai-inference':[['model-serving','section-4'],['quantization-serving','native-int8-batch-quality'],['model-serving','native-inference-prefix'],['model-serving','rtx-pro-6000-cache-case'],['inference-performance','vllm-block-lifecycle'],['inference-performance','section-2'],['inference-performance','native-inference-queue'],['inference-performance','native-pd-split'],['inference-performance','tp-placement'],['ai-lifecycle','section-8'],['ai-lifecycle','native-model-rollout']],
  'ai-operators':[['operator-profiling','native-python-extension'],['operator-profiling','operator-profile-run'],['operator-profiling','torch-compile-graph-break'],['tensor-parallel-math','section-9'],['tensor-parallel-math','native-dp-tp-mesh'],['tensor-parallel-math','native-pipeline-schedules'],['flash-attention-io','ragged-ring-training'],['operator-profiling','triton-tail-mask-run']],
- 'agent-platform':[['agent-sandbox','native-sandbox-container'],['agent-sandbox','native-sandbox-egress'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['mcp-protocol','native-mcp-catalog-refresh'],['mcp-protocol','native-mcp-result-receipt'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['durable-workflows','native-workflow-version-resume'],['agent-observability','native-tail-sampling-ledger'],['agent-observability','native-mcp-trace-reentry'],['kairo-practice','kairo-read-evidence']]
+ 'agent-platform':[['agent-sandbox','native-sandbox-container'],['agent-sandbox','native-sandbox-egress'],['mcp-protocol','mcp-http-cancellation-run'],['mcp-protocol','native-mcp-http-authorization'],['mcp-protocol','native-mcp-catalog-refresh'],['mcp-protocol','native-mcp-result-receipt'],['durable-workflows','mcp-commit-recovery'],['durable-workflows','native-approval-reentry'],['durable-workflows','native-parallel-merge'],['durable-workflows','native-workflow-version-resume'],['agent-observability','native-tail-sampling-ledger'],['agent-observability','native-mcp-trace-reentry'],['kairo-practice','kairo-read-evidence'],['kairo-practice','native-agent-task-reconnect']]
 };
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
@@ -78,12 +78,12 @@ for(const base of ['/','/infra-guide/']){
   c.location.pathname=base+'article/tokenization-embedding/';
  }
  c.location.pathname=base+'module/training/';c.location.search='?goal=ai-inference';
- c.trainingPractice=vm.runInContext('fieldPracticeHTML("training",{"tr-recovery":"检查点恢复"})',c);
+ c.trainingPractice=vm.runInContext('fieldPracticeHTML("training")',c);
  assert(c.trainingPractice.includes('岗位选读'),'the inference role sees the training field exercise as optional');
  const trainingExercise=c.trainingPractice.match(/href="([^"]+)"/)[1];
  assert.equal(run(trainingExercise),base+trainingExercise.slice(1),'optional field exercises do not take over the role route');
  c.location.search='?goal=ai-training';
- assert(!vm.runInContext('fieldPracticeHTML("training",{"tr-recovery":"检查点恢复"})',c).includes('岗位选读'),'the training role owns its core exercise');
+ assert(!vm.runInContext('fieldPracticeHTML("training")',c).includes('岗位选读'),'the training role owns its core exercise');
  c.location.pathname=base+'article/tokenization-embedding/';
  c.profileKey='agent-app';
  const applicationRoute=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(learningProfiles[profileKey]))',c));

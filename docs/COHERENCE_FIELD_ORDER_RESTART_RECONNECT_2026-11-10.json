@@ -1,0 +1,216 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "1305046ab640513691da4cce46ff42d736dc81c8",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_RECONCILE_MESH_RESUME_2026-11-10.json": "a9f701089b4f639cfee67b3ef56c9ebdb65abcb37b9b3364ceb77a38b53a6430"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "cc735c8afe3d79efe5f04f0e8657de9bcc802392e24f44f10792cfa73e724a9d",
+      "reviewed_sha256": "9398331bfc2fad8a054fbe42a571abf2d5b16595b867b3a4f68365c8d8675ba1",
+      "scope": "Place the three starting chapters before the existing collapsed project and evidence history."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "2c4eaa579a8146967a7afe521ada126aabc536e1ee1b0583ee802db605b2b7fe",
+      "reviewed_sha256": "f3cbcec8cf0540d8a8e47df11bfded73d192d689d5a58eabbf05c1fd98887a1b",
+      "scope": "Place Cloud and prerequisite field exercises after the authored knowledge points."
+    },
+    "dist/infra-knowledge.js": {
+      "previous_sha256": "9a1e7a7285c109182fd860553fc0dbaa964bb1c76e2595ccfde245b3402a5929",
+      "reviewed_sha256": "7b74a8de42a8df348e69517b8ba589eba8d920c8efc833f1146de60f9bea6008",
+      "scope": "Place AI and Agent exercises after field knowledge and before cases."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "ac95f5eeddc851375fefc910080996615db641045a8c39ba3d0ea29de39e580d",
+      "reviewed_sha256": "f697f2f2321f621d492463bcc2992dd00567708d9661742d57934c68e025b5e1",
+      "scope": "Keep the relationship maps at the top, retain existing exercise and catalog targets and add the same-field shortcut."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "49542d3942ba1a59d9aa55b032f0daeab9b1adab9ec8d1e533951fb875428908",
+      "reviewed_sha256": "9f7ae55d2de42cab07499f7f165612a24e09ac5c643ce84cb6ce08283a4ec7aa",
+      "scope": "Keep the independent practice heading readable in the existing layout."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "503b5c483bd900f3ce8b5c74ae4e53132f00aa2141830d1493a10c6ac544f524",
+      "reviewed_sha256": "c1053768a2fa9333e5087cec5971d1d860cfea40b43c169a014146be34d69dc1",
+      "scope": "Compare native torchrun whole-group restart to a three-step continuous run and explain committed progress."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "9791fa2beb3eaa6ce787e3b099f9553998a8e5d44f1533ab468769522f5d2b85",
+      "reviewed_sha256": "b5aa2ad69d301e123bd0d866cc926a4cf7b44c9bdd4cb0698d152764648a68a8",
+      "scope": "Connect the launcher and rank explanation to an actual worker-group restart."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "9e2c053cfa7050a95658b476e3dd5c01921b957d9149c8297bb911793092d2ff",
+      "reviewed_sha256": "5e7ebabf51e174a45612e17d33c46fef7281094d98ada9dc7362194530f5aba6",
+      "scope": "Follow a local durable task through missing acceptance response, deduplicated retry, MCP authorization and same-session delivery."
+    },
+    "dist/ai-system-knowledge.js": {
+      "previous_sha256": "7a93f9352ee5b7e8449b5227807bdc53b7219bd342d18374349773cd6091b38b",
+      "reviewed_sha256": "099e3c0d448f9b856f744846536544f605d43fc4f8334afd04e887b90113f20d",
+      "scope": "Connect a saved training step to the local process-group restart record."
+    },
+    "dist/tool-runtime-lessons.js": {
+      "previous_sha256": "09a91b2a2088a777f15bd3cb26ca17cd73a4c70126e0694f5424a3f72850cf2c",
+      "reviewed_sha256": "78b47ada3fef6556ac0199360d642cf6d7e7788aeca0be4790eae1b89fa706f7",
+      "scope": "Connect request identity and repeated submission to the observed task ledger."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "eff8956db765b05ebcfbf705e5488cd752afa386c3544c97a48d77b4d362b7bf",
+      "reviewed_sha256": "e603231590e671ce3aa577ce7c6fb232aab5776fd08fdab884424358f51ac765",
+      "scope": "Use the exact restart and reconnect lesson fragments from the corresponding roles."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "0487bc8cf97d727c005460625cfda07a04fdc3f22ad765a85b0d8ba8143cb3dc",
+      "reviewed_sha256": "543a44c46fc3e68ff202264372f1019930dc92bc0207df57c80a9aabc9be2bf9",
+      "scope": "Register both replay scopes and their exact source and result paths."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "ec6f42d3b2abf3bb6b8c6f5521240b0858025671c8655ec5a99407d4f40a8acd",
+      "reviewed_sha256": "dc1cb388b5b042acf9de9d0a59016867c6b35a3448982fc8f3a4c40e6e5bdade",
+      "scope": "Declare the exact viewports for the two new diagrams."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "67bf61d4ec618323254e7d5189dece2e89272a19549343f67858cc11faf8bd27",
+      "reviewed_sha256": "e23f1aa7d1375af5c0571539938e69c1f060f2b39ebabfe83f02e94348e498fc",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "911af9187a661892a5fd1d20735d3bad79a8146551a753538d6d9f46f14d2646",
+      "reviewed_sha256": "543abc834b8b58aad6a82fba81462c427c076256a5e7cc8c94844d9a988f9597",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "bd216339eb13172879267ab88991ad21a579724115157e22ee1e3ae6e8bb8235",
+      "reviewed_sha256": "c959a140a7f12e34cdc5f7f04b99b0c41e9c938aa8abe88457370ce9cbeec339",
+      "scope": "Verify the reading order in each of the fourteen static field pages and retain exact exercise anchors."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "c10854cc3acda1ef81bc63a880fe77b30926391bb5dada46c35c88cf1ee6476b",
+      "reviewed_sha256": "6e62914e8063004e16e39fad7d1f0e2a61c5dbf49c427b7b1aa3af5736d7e0d7",
+      "scope": "Require exact practice gate links and the preserved role context."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "66b2cb1d6a30de4bde1e675f592053c204f61dbb5a1c572b7668d0105558a388",
+      "reviewed_sha256": "46039572d05cde3f43d0eeaf5df2c7bcd94a9c737b4e134f5f9b0ab0e60e02bc",
+      "scope": "Run both new native evidence verifiers."
+    },
+    "scripts/check-elastic-restart-step.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "eaa5f77448b83542b04d7b48f92cc36cd910616a91f038112a6f7abb95c7ccef",
+      "scope": "Recompute full updates and verify actual launcher exits, signals and worker replacement."
+    },
+    "scripts/check-agent-task-reconnect.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "96095d4dbf610965baf924a0daa3399615e63e0947286e6dfb1f0be87f02fa79",
+      "scope": "Verify durable task identity, raw MCP and SQLite outcomes, and original delivery."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "3b21996252e815d3e7d70e0507cc244b41afdd1a0da46873e01f4ec6f129b02b",
+      "reviewed_sha256": "5b37fb05f1bb0208622bf16a127593bca436df3e6c6f2bac8f5bfd4374f7f815",
+      "scope": "Add both exact subsection anchors and retain prior URLs."
+    },
+    "docs/CONTENT_FIELD_ORDER_RESTART_RECONNECT_2026-11-10.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c28e30d6e179ec891de529ce7bb6f63c943cd06d86cd07fcda3b52331e7e97c3",
+      "scope": "Append the three body and two knowledge-point revisions."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "d13c715fd23ca7e6c866ddee7d473cb9450b9c85bf94eefce432333e425384b0",
+      "reviewed_sha256": "4a4e3c9eaeb4ee4cd9d81efe81b8a50976bd13ac50b4901e04a171e8c428ce76",
+      "scope": "Register the new body and evidence review."
+    },
+    "dist/diagrams/elastic-restart-step.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3019771c5af9dfd470aedc2d0600b8103053e8165e5ed4f475605910dfb57552",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/elastic-restart-step.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "124fae15fea52ad47fe00827df3733f80f51a55c04965a43eb76c43f04e700b3",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/elastic-restart-step/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "327c0d9cf2226fd7341d93c63eaed23ddceac93225e06b2d9dae6e6d247e2127",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/elastic-restart-step/elastic_restart.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "61f95df4697a6179b7ff20eaa557e6080094ef14f69aba673c0247c47ebc3e40",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/elastic-restart-step/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/elastic-restart-step/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "db6d98c606bdaff12906d00406fde1360ffe42d68f27743272c94f929f22989d",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/agent-task-reconnect.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c154ff5d80175acfc5fbe42e646e2f2fe225c550ecb7b277d44bbe3ae5aacf28",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/agent-task-reconnect.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0d187ea825dc73ffc506be78fde9c2bd2c29174a6057133b99003aed71da8a9c",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/agent-task-reconnect/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ca861e417f6673f76bcf775373b6bd2043490e3a84774cba5ca8ab906de5784b",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/agent-task-reconnect/readonly-contract.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d4c4a7693b3c897f4395d051f98c8d0a18d2caa6ff6bd9cd24451aba1150c84f",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/agent-task-reconnect/reconnect_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "31707e01e348ac67d8b93bb4256ece373803d0aa4320b014b65d4f4d2ef0c877",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/agent-task-reconnect/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/agent-task-reconnect/resources.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "09cc6e2921290d4140acdf1dc3471e8b0eadce9919922911ee4bf4d39f9f96a9",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/agent-task-reconnect/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b181402aade6d1cb454a1d475cd2ed2da30430110e6827c716ebcca48deff1bb",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "a5c4e590e198484b27b9fd0faddd65392fb9ea515604f3ef61a6f17078ab009f",
+      "reviewed_sha256": "cbac29d5f34086375fa880111078efcea115d7a39d7c81fd9d26ae96e34b6eb1",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "1305046ab640513691da4cce46ff42d736dc81c8",
+    "chapters": 78,
+    "changed_bodies": [
+      "checkpoint-recovery",
+      "multinode-lab",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "checkpoint-recovery": 1,
+      "kairo-practice": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 2
+  }
+}

@@ -1,0 +1,572 @@
+{
+  "schema": "agent-task-reconnect-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "httpx2": "2.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "resource_pid": 86243,
+  "fixture": {
+    "request_id": "R1",
+    "channel": "session-17",
+    "task_label": "T1",
+    "total": 23
+  },
+  "client": [
+    {
+      "method": "POST",
+      "path": "/tasks",
+      "transport_id": "q0",
+      "request": {
+        "request_id": "R1",
+        "tenant": "A",
+        "action": "read_summary",
+        "resource": "reports-A",
+        "delivery": "session-17",
+        "source_version": "A-v1"
+      },
+      "status": null,
+      "error": "RemoteDisconnected"
+    },
+    {
+      "method": "POST",
+      "path": "/tasks",
+      "transport_id": "q1",
+      "request": {
+        "request_id": "R1",
+        "tenant": "A",
+        "action": "read_summary",
+        "resource": "reports-A",
+        "delivery": "session-17",
+        "source_version": "A-v1"
+      },
+      "status": 202,
+      "response": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "status": "ACCEPTED"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/tasks",
+      "transport_id": "q2",
+      "request": {
+        "request_id": "R1",
+        "tenant": "A",
+        "action": "read_summary",
+        "resource": "reports-A",
+        "delivery": "session-17",
+        "source_version": "A-v2"
+      },
+      "status": 409,
+      "response": {
+        "error": "request_digest_conflict"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/tasks/c47fa6c04cee46df8a94f7a16b6a6ea2/run",
+      "transport_id": null,
+      "request": null,
+      "status": 200,
+      "response": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "status": "SUCCEEDED"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/tasks/c47fa6c04cee46df8a94f7a16b6a6ea2",
+      "transport_id": null,
+      "request": null,
+      "status": 200,
+      "response": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "status": "SUCCEEDED"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/session-17/c47fa6c04cee46df8a94f7a16b6a6ea2",
+      "transport_id": null,
+      "request": null,
+      "status": 200,
+      "response": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "channel": "session-17",
+        "total": 23,
+        "citations": [
+          "A-e1",
+          "A-e2",
+          "A-e3"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/other-session/c47fa6c04cee46df8a94f7a16b6a6ea2",
+      "transport_id": null,
+      "request": null,
+      "status": 404,
+      "response": {}
+    }
+  ],
+  "task_after_lost": {
+    "tasks": [
+      {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "request_id": "R1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+        "request": {
+          "request_id": "R1",
+          "tenant": "A",
+          "action": "read_summary",
+          "resource": "reports-A",
+          "delivery": "session-17",
+          "source_version": "A-v1"
+        },
+        "principal": "fixture-A",
+        "status": "ACCEPTED"
+      }
+    ],
+    "submissions": [
+      {
+        "seq": 1,
+        "transport_id": "q0",
+        "request_id": "R1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "outcome": "created"
+      }
+    ],
+    "deliveries": []
+  },
+  "task_final": {
+    "tasks": [
+      {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "request_id": "R1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+        "request": {
+          "request_id": "R1",
+          "tenant": "A",
+          "action": "read_summary",
+          "resource": "reports-A",
+          "delivery": "session-17",
+          "source_version": "A-v1"
+        },
+        "principal": "fixture-A",
+        "status": "SUCCEEDED"
+      }
+    ],
+    "submissions": [
+      {
+        "seq": 1,
+        "transport_id": "q0",
+        "request_id": "R1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "outcome": "created"
+      },
+      {
+        "seq": 2,
+        "transport_id": "q1",
+        "request_id": "R1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "outcome": "reused"
+      },
+      {
+        "seq": 3,
+        "transport_id": "q2",
+        "request_id": "R1",
+        "args_sha256": "25e9ce837eec8d33749d8f8faf35df185fd71bf1158099163caba02933ede64a",
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "outcome": "conflict"
+      }
+    ],
+    "deliveries": [
+      {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "channel": "session-17",
+        "total": 23,
+        "citations": [
+          "A-e1",
+          "A-e2",
+          "A-e3"
+        ]
+      }
+    ]
+  },
+  "mcp": [
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "server/discover",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "cacheScope": "private",
+          "capabilities": {
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "resultType": "complete",
+          "supportedVersions": [
+            "2026-07-28"
+          ],
+          "ttlMs": 0,
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-read-reports",
+              "version": ""
+            }
+          }
+        }
+      }
+    },
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/list",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "cacheScope": "private",
+          "resultType": "complete",
+          "tools": [
+            {
+              "inputSchema": {
+                "type": "object",
+                "required": [
+                  "task_id",
+                  "attempt_id",
+                  "resource"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "task_id": {
+                    "type": "string"
+                  },
+                  "attempt_id": {
+                    "type": "string"
+                  },
+                  "resource": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "read_report"
+            }
+          ],
+          "ttlMs": 0,
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-read-reports",
+              "version": ""
+            }
+          }
+        }
+      }
+    },
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "read_report",
+          "arguments": {
+            "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+            "attempt_id": "a0",
+            "resource": "reports-A"
+          },
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "content": [
+            {
+              "text": "{\"resource\": \"reports-A\", \"source_version\": \"A-v1\", \"events\": {\"A-e1\": 5, \"A-e2\": 7, \"A-e3\": 11}}",
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "resultType": "complete",
+          "structuredContent": {
+            "resource": "reports-A",
+            "source_version": "A-v1",
+            "events": {
+              "A-e1": 5,
+              "A-e2": 7,
+              "A-e3": 11
+            }
+          },
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-read-reports",
+              "version": ""
+            }
+          }
+        }
+      }
+    },
+    {
+      "status": 200,
+      "protocol": "2026-07-28",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 4,
+        "method": "tools/call",
+        "params": {
+          "name": "read_report",
+          "arguments": {
+            "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+            "attempt_id": "a1",
+            "resource": "reports-B"
+          },
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 4,
+        "result": {
+          "content": [
+            {
+              "text": "Report unavailable.",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "resultType": "complete",
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-read-reports",
+              "version": ""
+            }
+          }
+        }
+      }
+    }
+  ],
+  "resource": {
+    "before": {
+      "reports": {
+        "reports-A": {
+          "version": "A-v1",
+          "sha256": "d2ab1a4d0466b7482a06b9f12cf4f2f402fb49e67b2f7a885bdd0b330cf62582"
+        },
+        "reports-B": {
+          "version": 7,
+          "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+        }
+      },
+      "business_writes": [],
+      "file_sha256": "23f2016aa93501084eb1707c9aadd870a03f5e77d3658047ca6b3092471f9485"
+    },
+    "after": {
+      "reports": {
+        "reports-A": {
+          "version": "A-v1",
+          "sha256": "d2ab1a4d0466b7482a06b9f12cf4f2f402fb49e67b2f7a885bdd0b330cf62582"
+        },
+        "reports-B": {
+          "version": 7,
+          "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+        }
+      },
+      "business_writes": [],
+      "file_sha256": "23f2016aa93501084eb1707c9aadd870a03f5e77d3658047ca6b3092471f9485"
+    },
+    "decisions": [
+      {
+        "seq": 1,
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "attempt_id": "a0",
+        "rpc_id": 3,
+        "principal": "fixture-A",
+        "tenant": "A",
+        "action": "read",
+        "resource": "reports-A",
+        "status": "success",
+        "source_version": "A-v1",
+        "events": {
+          "A-e1": 5,
+          "A-e2": 7,
+          "A-e3": 11
+        }
+      },
+      {
+        "seq": 2,
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "attempt_id": "a1",
+        "rpc_id": 4,
+        "principal": "fixture-A",
+        "tenant": "B",
+        "action": "read",
+        "resource": "reports-B",
+        "status": "denied",
+        "source_version": null,
+        "events": {}
+      }
+    ],
+    "body_reads": [
+      {
+        "seq": 1,
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "attempt_id": "a0",
+        "resource": "reports-A"
+      }
+    ]
+  },
+  "source_sha256": {
+    "reconnect_lab.py": "31707e01e348ac67d8b93bb4256ece373803d0aa4320b014b65d4f4d2ef0c877",
+    "readonly-contract.json": "d4c4a7693b3c897f4395d051f98c8d0a18d2caa6ff6bd9cd24451aba1150c84f",
+    "resources.json": "09cc6e2921290d4140acdf1dc3471e8b0eadce9919922911ee4bf4d39f9f96a9",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "ca861e417f6673f76bcf775373b6bd2043490e3a84774cba5ca8ab906de5784b"
+  },
+  "g10": {
+    "evidence": {
+      "format": "readonly-evidence-v1",
+      "case_id": "readonly-A",
+      "source": "target_export",
+      "target_version": "infra-guide-local-reference/1",
+      "submissions": [
+        {
+          "transport_id": "q0",
+          "request_id": "R1",
+          "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+          "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+          "ack": "lost"
+        },
+        {
+          "transport_id": "q1",
+          "request_id": "R1",
+          "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749",
+          "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+          "ack": "received"
+        }
+      ],
+      "authoritative_task": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "status": "SUCCEEDED"
+      },
+      "tool_receipts": [
+        {
+          "seq": 1,
+          "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+          "attempt_id": "a0",
+          "rpc_id": 3,
+          "principal": "fixture-A",
+          "tenant": "A",
+          "action": "read",
+          "resource": "reports-A",
+          "status": "success",
+          "source_version": "A-v1",
+          "events": {
+            "A-e1": 5,
+            "A-e2": 7,
+            "A-e3": 11
+          }
+        },
+        {
+          "seq": 2,
+          "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+          "attempt_id": "a1",
+          "rpc_id": 4,
+          "principal": "fixture-A",
+          "tenant": "B",
+          "action": "read",
+          "resource": "reports-B",
+          "status": "denied",
+          "source_version": null,
+          "events": {}
+        }
+      ],
+      "B_before": {
+        "version": 7,
+        "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+      },
+      "B_after": {
+        "version": 7,
+        "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+      },
+      "business_writes": [],
+      "delivery": {
+        "task_id": "c47fa6c04cee46df8a94f7a16b6a6ea2",
+        "channel": "session-17",
+        "total": 23,
+        "citations": [
+          "A-e1",
+          "A-e2",
+          "A-e3"
+        ]
+      }
+    },
+    "checker": {
+      "status": "record_consistent",
+      "errors": [],
+      "provenance_verified": false,
+      "source": "target_export"
+    },
+    "checker_sha256": "81848b9d090dd4df8148ab0f81cf80e563f5e235102a182c0e1a38a1334ad01b"
+  }
+}

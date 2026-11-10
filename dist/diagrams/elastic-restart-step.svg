@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="310" viewBox="0 0 520 310" role="img" aria-labelledby="title description">
+<title id="title">第二步已经计算，检查点仍停在第一步</title>
+<desc id="description">两个旧进程都算出第二步但未保存。进程一退出，启动器终止进程零并替换两者。新组读取第一步的权重、动量和游标，用原样本重算并提交第二步和第三步。</desc>
+<metadata>{"record":"labs/elastic-restart-step/validation.json","fault_step":2,"worker_exit":73,"restart_cursor":1,"final_weights":{"uninterrupted":2.46875,"restarted":2.46875,"weights_only":2.15625}}</metadata>
+<rect x="1" y="1" width="518" height="308" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="20" y="29" font-size="19" font-weight="700">第一次跑到第 2 步时，保存还没发生</text>
+<text x="21" y="75" font-size="15" font-weight="650">旧进程组</text>
+<rect x="115" y="46" width="115" height="49" rx="6" fill="#e4f4e9" stroke="#83b496"/>
+<text x="172" y="66" font-size="15" text-anchor="middle">提交第 1 步</text>
+<text x="172" y="85" font-size="14" text-anchor="middle">w = 0.5</text>
+<path d="M232 70H251M246 64L252 70L246 76" stroke="#536786" fill="none" stroke-width="2"/>
+<rect x="255" y="46" width="241" height="49" rx="6" fill="#fff0dc" stroke="#d29c65"/>
+<text x="267" y="66" font-size="15">第 2 步算到 w = 1.375</text>
+<text x="267" y="85" font-size="14" fill="#814b16">rank 1 退出 73，这一步没提交</text>
+<rect x="20" y="113" width="476" height="40" rx="6" fill="#eef2f9"/>
+<text x="33" y="138" font-size="15">启动器终止旧 rank 0，再启动两个新 worker</text>
+<text x="21" y="196" font-size="15" font-weight="650">新进程组</text>
+<rect x="115" y="167" width="156" height="49" rx="6" fill="#e4f4e9" stroke="#83b496"/>
+<text x="193" y="187" font-size="15" text-anchor="middle">读回第 1 步</text>
+<text x="193" y="206" font-size="14" text-anchor="middle">w = 0.5，动量 −4</text>
+<path d="M273 191H291M286 185L292 191L286 197" stroke="#536786" fill="none" stroke-width="2"/>
+<rect x="295" y="167" width="201" height="49" rx="6" fill="#e6f1ff" stroke="#83a9d4"/>
+<text x="395" y="187" font-size="15" text-anchor="middle">重算并提交第 2 步</text>
+<text x="395" y="206" font-size="14" text-anchor="middle">第 3 步后 w = 2.46875</text>
+<path d="M20 237H496" stroke="#d5deec"/>
+<text x="20" y="263" font-size="15">内存里算过两次，检查点里只提交一次。</text>
+<text x="20" y="286" font-size="15" fill="#6b4d37">只装回权重而漏掉动量，最终 w = 2.15625。</text>
+</g>
+</svg>

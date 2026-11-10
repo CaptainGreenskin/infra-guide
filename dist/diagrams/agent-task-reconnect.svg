@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="296" viewBox="0 0 520 296" role="img" aria-labelledby="title description">
+<title id="title">首次响应丢失，重连后找回原任务</title>
+<desc id="description">首次提交 R1 在任务库写入 T1 后断开连接。原请求重传返回同一 T1，修改来源再用 R1 返回 409。运行器读 A，B 被拒且未读正文。原会话收到 23 和 A 的引用。</desc>
+<metadata>{"record":"labs/agent-task-reconnect/validation.json","submit_statuses":[null,202,409],"total":23,"resource_body_reads":["reports-A"],"other_session_status":404}</metadata>
+<rect x="1" y="1" width="518" height="294" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="20" y="30" font-size="19" font-weight="700">R1 提交了三次，任务库只认一条 T1</text>
+<rect x="18" y="46" width="484" height="33" rx="6" fill="#e7eef8"/>
+<g font-size="15" font-weight="650">
+<text x="29" y="68">请求</text><text x="201" y="68">客户端看到</text><text x="367" y="68">任务库</text>
+</g>
+<g font-size="15">
+<text x="29" y="106">首次 R1</text><text x="201" y="106">连接断开</text><text x="367" y="106">已受理 T1</text>
+<path d="M22 119H498" stroke="#d9e1ee"/>
+<text x="29" y="145">原样重传 R1</text><text x="201" y="145">HTTP 202</text><text x="367" y="145">仍是 T1</text>
+<path d="M22 158H498" stroke="#d9e1ee"/>
+<text x="29" y="185">改来源，仍用 R1</text><text x="201" y="185">HTTP 409</text><text x="367" y="185">未创建新任务</text>
+</g>
+<rect x="18" y="206" width="484" height="70" rx="6" fill="#e4f4e9"/>
+<text x="30" y="232" font-size="15" fill="#275946">运行 T1：A 读到 5、7、11，B 在读取正文前被拒。</text>
+<text x="30" y="258" font-size="15" fill="#275946">原会话拿到总数 23 和 A 的三条引用。</text>
+</g>
+</svg>

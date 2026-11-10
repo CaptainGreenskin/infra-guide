@@ -45,8 +45,8 @@
 @media(max-width:720px){.route-selector{top:66px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.route-selector a{padding:9px 6px;font-size:12px;text-align:center;white-space:nowrap}.route-block{scroll-margin-top:140px}.track-system-model h3{font-size:21px}.stage-connection p,.chapter-connection p{font-size:16px}.roadmap-step a[id^="route-chapter-"]{scroll-margin-top:140px}.model-anchor-links{gap:12px 18px}.route-block .roadmap-step>div>a{font-size:16px;padding:8px 0;margin-top:0}}
 
 .field-map-practice{margin:22px 0;padding:4px 0 4px 16px;border-left:2px solid var(--blue)}
-.doc-layout .article .field-map-practice > h3{margin:0 0 8px;font-size:17px;line-height:1.6;scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
-.field-map-practice h3 span{font-weight:500;font-size:13px;color:var(--muted);margin-inline-start:8px}
+.doc-layout .article .field-map-practice > h2{margin:0 0 8px;font-size:17px;line-height:1.6;scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
+.field-map-practice h2 span{font-weight:500;font-size:13px;color:var(--muted);margin-inline-start:8px}
 .field-map-practice p{margin:0 0 6px;font-size:15px;line-height:1.9}
 .field-map-practice a{display:inline-flex;align-items:center;min-height:36px;color:var(--blue);font-weight:600}
 .field-practice-actions{display:flex;flex-wrap:wrap;align-items:center;gap:0 16px}

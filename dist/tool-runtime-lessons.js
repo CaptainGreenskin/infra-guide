@@ -104,7 +104,8 @@ const runtimePractice=infraReadableHTML(
  ];
  a.refs=nitRefs([...a.refs,'v23Tools','v22Transaction']);a.minutes=55;a.updated='2026.11.04';
 }
-infraDomain('agent').points.find(p=>p.id==='ag-runtime').body=runtimeTask+runtimeLoop+runtimeState+runtimeCompletion;
+infraDomain('agent').points.find(p=>p.id==='ag-runtime').body=runtimeTask+runtimeLoop+runtimeState+runtimeCompletion+
+ para('提交时连接中断，可以用原请求身份重新查询或提交。<a href="/article/kairo-practice/#native-agent-task-reconnect">从实际任务库核对同一份请求是否只受理一次</a>。');
 infraDomain('agent').points.find(p=>p.id==='ag-tools').body=runtimeContracts+runtimeErrors;
 infraDomain('agent').refs=nitRefs([...infraDomain('agent').refs,'v23Tools']);
 const agentCasesBeforeNIT=infraFieldCases.agent;

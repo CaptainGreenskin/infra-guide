@@ -1,0 +1,676 @@
+{
+  "status": "passed",
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "system": "Darwin",
+    "arch": "arm64",
+    "launcher": "torch.distributed.run",
+    "backend": "gloo",
+    "device": "cpu"
+  },
+  "fixture": {
+    "input": 1,
+    "targets": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "lr": 0.125,
+    "momentum": 0.5,
+    "fail_step": 2,
+    "fail_rank": 1,
+    "world_size": 2
+  },
+  "reference": [
+    {
+      "step": 1,
+      "gradient": -4,
+      "weight": 0.5,
+      "momentum": -4.0
+    },
+    {
+      "step": 2,
+      "gradient": -5.0,
+      "weight": 1.375,
+      "momentum": -7.0
+    },
+    {
+      "step": 3,
+      "gradient": -5.25,
+      "weight": 2.46875,
+      "momentum": -8.75
+    }
+  ],
+  "cases": {
+    "uninterrupted": {
+      "launcher": {
+        "exit_code": 0,
+        "max_restarts": 0,
+        "worker_failures": [],
+        "stopped_peers": []
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "pid": 86004,
+              "rank": 0,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 0,
+              "target": 1,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 2,
+              "target": 2,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "commit",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 4,
+              "target": 3,
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            },
+            {
+              "event": "commit",
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "pid": 86005,
+              "rank": 1,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 1,
+              "target": 3,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 3,
+              "target": 4,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 5,
+              "target": 5,
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            }
+          ]
+        ]
+      ],
+      "checkpoint": {
+        "cursor": 3,
+        "history": [
+          {
+            "step": 1,
+            "gradient": -4.0,
+            "weight": 0.5,
+            "momentum": -4.0
+          },
+          {
+            "step": 2,
+            "gradient": -5.0,
+            "weight": 1.375,
+            "momentum": -7.0
+          },
+          {
+            "step": 3,
+            "gradient": -5.25,
+            "weight": 2.46875,
+            "momentum": -8.75
+          }
+        ],
+        "weight": 2.46875,
+        "momentum": -8.75
+      }
+    },
+    "restarted": {
+      "launcher": {
+        "exit_code": 0,
+        "max_restarts": 1,
+        "worker_failures": [
+          {
+            "exit_code": 73,
+            "local_rank": 1,
+            "pid": 86013
+          }
+        ],
+        "stopped_peers": [
+          {
+            "pid": 86012,
+            "signal": "SIGTERM"
+          }
+        ]
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "pid": 86012,
+              "rank": 0,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 0,
+              "target": 1,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 2,
+              "target": 2,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "cut",
+              "checkpoint": {
+                "cursor": 1,
+                "history": [
+                  {
+                    "step": 1,
+                    "gradient": -4.0,
+                    "weight": 0.5,
+                    "momentum": -4.0
+                  }
+                ],
+                "weight": 0.5,
+                "momentum": -4.0
+              },
+              "action": "wait_for_launcher",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "pid": 86013,
+              "rank": 1,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 1,
+              "target": 3,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 3,
+              "target": 4,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "cut",
+              "checkpoint": {
+                "cursor": 1,
+                "history": [
+                  {
+                    "step": 1,
+                    "gradient": -4.0,
+                    "weight": 0.5,
+                    "momentum": -4.0
+                  }
+                ],
+                "weight": 0.5,
+                "momentum": -4.0
+              },
+              "action": "exit",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "event": "start",
+              "pid": 86018,
+              "rank": 0,
+              "restart_count": 1,
+              "cursor": 1,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 2,
+              "target": 2,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "commit",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 4,
+              "target": 3,
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            },
+            {
+              "event": "commit",
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "pid": 86019,
+              "rank": 1,
+              "restart_count": 1,
+              "cursor": 1,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 3,
+              "target": 4,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 5,
+              "target": 5,
+              "step": 3,
+              "gradient": -5.25,
+              "weight": 2.46875,
+              "momentum": -8.75
+            }
+          ]
+        ]
+      ],
+      "checkpoint": {
+        "cursor": 3,
+        "history": [
+          {
+            "step": 1,
+            "gradient": -4.0,
+            "weight": 0.5,
+            "momentum": -4.0
+          },
+          {
+            "step": 2,
+            "gradient": -5.0,
+            "weight": 1.375,
+            "momentum": -7.0
+          },
+          {
+            "step": 3,
+            "gradient": -5.25,
+            "weight": 2.46875,
+            "momentum": -8.75
+          }
+        ],
+        "weight": 2.46875,
+        "momentum": -8.75
+      }
+    },
+    "weights_only": {
+      "launcher": {
+        "exit_code": 0,
+        "max_restarts": 1,
+        "worker_failures": [
+          {
+            "exit_code": 73,
+            "local_rank": 1,
+            "pid": 86034
+          }
+        ],
+        "stopped_peers": [
+          {
+            "pid": 86033,
+            "signal": "SIGTERM"
+          }
+        ]
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "pid": 86033,
+              "rank": 0,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 0,
+              "target": 1,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 2,
+              "target": 2,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "cut",
+              "checkpoint": {
+                "cursor": 1,
+                "history": [
+                  {
+                    "step": 1,
+                    "gradient": -4.0,
+                    "weight": 0.5,
+                    "momentum": -4.0
+                  }
+                ],
+                "weight": 0.5,
+                "momentum": -4.0
+              },
+              "action": "wait_for_launcher",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "pid": 86034,
+              "rank": 1,
+              "restart_count": 0,
+              "cursor": 0,
+              "weight": 0.0,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 0,
+              "sample_id": 1,
+              "target": 3,
+              "step": 1,
+              "gradient": -4.0,
+              "weight": 0.5,
+              "momentum": -4.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 3,
+              "target": 4,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            },
+            {
+              "event": "cut",
+              "checkpoint": {
+                "cursor": 1,
+                "history": [
+                  {
+                    "step": 1,
+                    "gradient": -4.0,
+                    "weight": 0.5,
+                    "momentum": -4.0
+                  }
+                ],
+                "weight": 0.5,
+                "momentum": -4.0
+              },
+              "action": "exit",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.375,
+              "momentum": -7.0
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "event": "start",
+              "pid": 86045,
+              "rank": 0,
+              "restart_count": 1,
+              "cursor": 1,
+              "weight": 0.5,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 2,
+              "target": 2,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.125,
+              "momentum": -5.0
+            },
+            {
+              "event": "commit",
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.125,
+              "momentum": -5.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 4,
+              "target": 3,
+              "step": 3,
+              "gradient": -5.75,
+              "weight": 2.15625,
+              "momentum": -8.25
+            },
+            {
+              "event": "commit",
+              "step": 3,
+              "gradient": -5.75,
+              "weight": 2.15625,
+              "momentum": -8.25
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "pid": 86046,
+              "rank": 1,
+              "restart_count": 1,
+              "cursor": 1,
+              "weight": 0.5,
+              "momentum": null
+            },
+            {
+              "event": "update",
+              "cursor_before": 1,
+              "sample_id": 3,
+              "target": 4,
+              "step": 2,
+              "gradient": -5.0,
+              "weight": 1.125,
+              "momentum": -5.0
+            },
+            {
+              "event": "update",
+              "cursor_before": 2,
+              "sample_id": 5,
+              "target": 5,
+              "step": 3,
+              "gradient": -5.75,
+              "weight": 2.15625,
+              "momentum": -8.25
+            }
+          ]
+        ]
+      ],
+      "checkpoint": {
+        "cursor": 3,
+        "history": [
+          {
+            "step": 1,
+            "gradient": -4.0,
+            "weight": 0.5,
+            "momentum": -4.0
+          },
+          {
+            "step": 2,
+            "gradient": -5.0,
+            "weight": 1.125,
+            "momentum": -5.0
+          },
+          {
+            "step": 3,
+            "gradient": -5.75,
+            "weight": 2.15625,
+            "momentum": -8.25
+          }
+        ],
+        "weight": 2.15625,
+        "momentum": -8.25
+      }
+    }
+  },
+  "scope": "Single host, two CPU ranks, fixed inputs, one real worker exit and group restart per fault case. Only the checkpoint after the completed update is authoritative.",
+  "source_sha256": {
+    "elastic_restart.py": "61f95df4697a6179b7ff20eaa557e6080094ef14f69aba673c0247c47ebc3e40",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+    "README.md": "327c0d9cf2226fd7341d93c63eaed23ddceac93225e06b2d9dae6e6d247e2127"
+  }
+}

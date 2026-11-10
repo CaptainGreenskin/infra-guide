@@ -1,19 +1,21 @@
 # InfraGuide
 
-给中文初学者和面试准备者的基础设施学习站：**Cloud Infra、AI Infra、Agent Infra**。
-先定义概念和关系，再讲系统机制，用图、手算、代码和故障实验把它走通。
+面向中文初学者和面试准备者的基础设施课程。全站 78 章，包含 Cloud、AI、Agent 三条主线与 3 章综合实战。
 
-[在线阅读](https://captaingreenskin.github.io/infra-guide/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [复习路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
+[在线阅读](https://captaingreenskin.github.io/infra-guide/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [岗位路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
 
 ## 学什么
 
-| 方向 | 内容 |
-| --- | --- |
-| Cloud Infra | 系统基础、虚拟化、网络、存储与数据库、Kubernetes、Serverless、IaC/GitOps、安全、容量与SRE |
-| AI Infra | Transformer与GPU基础、分布式训练、数据/通信/检查点、作业调度、KV缓存、模型量化、推理与发布 |
-| Agent Infra | 运行时、工具契约、幂等与恢复、多worker接管、权限、上下文、检索、评估与沙箱；结合Kairo设计接入验收 |
+| 方向 | 从哪读起 | 接着学什么 |
+| --- | --- | --- |
+| Cloud Infra | [从一次订单请求读起](https://captaingreenskin.github.io/infra-guide/track/cloud/) | 虚拟化、网络、存储与数据库、Kubernetes、Serverless、IaC/GitOps、安全、容量与 SRE |
+| AI Infra | [从一句话怎样变成模型输入读起](https://captaingreenskin.github.io/infra-guide/track/ai/) | Transformer、GPU 与算子、分布式训练、作业调度、推理与发布 |
+| Agent Infra | [从一次工具调用怎样完成任务读起](https://captaingreenskin.github.io/infra-guide/track/agent/) | 工具契约、权限、状态与恢复、上下文、检索、评估、沙箱与 Kairo 接入验收 |
 
-当前 78 章，覆盖 Cloud 35 章、AI 29 章、Agent 11 章与综合实战 3 章。[实验室](https://captaingreenskin.github.io/infra-guide/labs/)按方向列出实跑记录、下载包和目标环境手册。三个方向入口直接打开第一章。正文前的学习全貌连到本方向的领域图谱和学习顺序。领域知识页前置 14 张关系图，图和文字共用 100 个节点、87 条关系。每张图下有一道判断题，可展开结果并查看原始记录，也能直达正文实战。正文可以直接跳到对应概念，从定义返回整张图或继续读相关章节。[学习路线](https://captaingreenskin.github.io/infra-guide/roadmap/)提供完整课程和 7 条岗位路线，自动补齐必要先修。选择岗位后，正文的目录、上下章与路线定位都保留当前岗位。Agent 可独立学习。
+方向入口直接打开第一章。想看全貌，先沿 14 张领域关系图认清对象，再读知识点和实验。每份实验标明运行环境、预期结果和已有证据。准备面试可以从 7 条岗位路线中选一条，按先修顺序读到对应实战。
+
+<details>
+<summary>历次内容修订与执行记录</summary>
 
 Transformer 首章沿「红 圆 → red circle」连接查表、源端编码、目标右移、交叉注意力和实际的三轮生成。需要深入时，从同一例子进入掩码实验，再切换到独立的仅解码器算例。文章内搜索打开即显示推荐，查询时只下载可能含匹配项的索引分片。 [一句话走完 Transformer](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#translation-reading-path)
 
@@ -58,9 +60,6 @@ FlashAttention 章沿在线归一化接入上下文并行。先画两个进程�
 Transformer 入门用同一组四格输入比较循环、卷积与注意力，再沿可见矩阵和统计轴做两组 PyTorch 对照。Cloud 配置章用 kind 观察同一 Pod 在 ConfigMap 更新后从四个入口读到什么。Agent 应用路线的交付题可以直达本机报告实验。 [序列关系](https://captaingreenskin.github.io/infra-guide/article/transformer-model/#sequence-models) · [前缀掩码](https://captaingreenskin.github.io/infra-guide/article/attention-mechanics/#prefix-attention-mask) · [归一化](https://captaingreenskin.github.io/infra-guide/article/transformer-block/#normalization-axes) · [ConfigMap 实验](https://captaingreenskin.github.io/infra-guide/article/config-secrets/#native-config-projection) · [Agent 应用路线](https://captaingreenskin.github.io/infra-guide/roadmap/agent-app/)
 
 本轮把三段机制接到真实执行。专家并行用两个 CPU/Gloo rank 核对非等长收发、回包顺序与梯度。HPA 实验区分期望副本、已创建 Pod 与可用副本。Agent 容器实验对照只读与可写输入，由宿主检查报告与输入完整性。七条岗位路线的交付题都已链接到相应练习或记录。 [专家并行](https://captaingreenskin.github.io/infra-guide/article/moe-routing/#native-expert-parallel) · [HPA 控制链](https://captaingreenskin.github.io/infra-guide/article/k8s-autoscaling/#native-hpa-control) · [容器边界](https://captaingreenskin.github.io/infra-guide/article/agent-sandbox/#native-sandbox-container)
-
-<details>
-<summary>历次内容修订与执行记录</summary>
 
 本轮[先修说明与试读范围](docs/ITERATION_2026-11-09_PREREQUISITE_READERS.md)对齐七处页头准备说明和岗位路线，把位置编码、训练恢复、沙箱等按需专题与必要先修分开；Agent观测例子就地解释CPU单位。14张领域图加大加深关系文字，连线避开其他标签。[15分钟试读](docs/reader-trial/brief.md)改为连续小节，题目只使用指定范围内的概念。78章已完成逐章正文修订，修订覆盖率不代表读者掌握率。
 

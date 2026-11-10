@@ -263,6 +263,24 @@
    p('选做<a href="/article/production-readiness/#integrated-service-run">从本机服务查回 37 报告的验收证据</a>。那份实战用 10、27 生成并写入 report-A，能从接收库查回报告和回执。本章的 23 日报是只读练习，校验器检查给定记录。接入 Kairo 时，由测试者从目标环境取得原任务的读取、交付和效果记录，再按只读契约验收。')
   ];
   finish(a,old,bodies,'从只读日报的任务、会话、工具与回执出发，写清 Kairo 待接入接口，再用独立契约校验一份正例和十个反例。');
+
+  a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
+  p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+
+  trainingFigure('agent-task-reconnect','客户端没收到响应时，任务库已有 T1。原样重传和修改参数，在服务端走两条不同分支。')+
+  p('服务将请求内容算成摘要，与 R1 一起保存。重连原样提交，HTTP 202 返回同一个 T1。把来源从 A-v1 改成 A-v2，仍用 R1 提交，返回 HTTP 409。三次提交有三条记录，但只有一行任务。这里的摘要用于判断请求是否仍是原来的那份内容。')+
+  p('接下来按固定步骤执行 T1。通过官方 MCP SDK 的 Streamable HTTP 读取 <code>reports-A</code>，得到 A-v1 的 5、7、11。另一条请求试读 <code>reports-B</code>。两次传输的 HTTP 状态都是 200，B 的工具结果带 <code>isError=true</code>。资源侧审计只记录到 A 的正文读取，没有 B 的正文或业务写入。')+
+  table(['到哪核对','这次实际看到什么'],[
+   ['客户端提交记录','首次断开，原样重传 202，改来源 409'],
+   ['独立任务与交付库','一个 T1 结束为 SUCCEEDED，原会话收到 23，引用 A-e1、A-e2、A-e3'],
+   ['换会话请求同一结果','HTTP 404'],
+   ['资源服务的读取与效果记录','工具只读 A，B 拒绝且未读正文，前后资源版本和文件摘要相同']
+  ])+
+  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。')+
+  trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
+  p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
+  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>';
+  a.updated='2026.11.10';
+
  }
  }
 })();

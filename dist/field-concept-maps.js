@@ -346,10 +346,11 @@ function fieldPracticeUnitHTML([,labId,question,result],resultClass){
   '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
   '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
 }
-function fieldPracticeHTML(moduleId,names){
+function fieldPracticeHTML(moduleId){
  const primary=fieldPracticePaths[moduleId],[conceptId,labId]=primary;
+ const [,name]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===conceptId);
  const next=fieldPracticeFollowups[moduleId];
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3>'+
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h2 id="field-map-practice">从图到实战 <span>'+trainingEscape(name)+'</span></h2>'+
   fieldPracticeUnitHTML(primary,'field-map-practice-result')+
   (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
 }
@@ -372,14 +373,15 @@ function fieldConceptMapHTML(moduleId){
   return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
  }).join('');
  return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
- '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div>'+fieldPracticeHTML(moduleId,names)+'<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div><details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
   return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
- '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details></section>';
+ '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>'+
+ '<p class="field-practice-actions"><a href="/module/'+moduleId+'/#field-map-practice">跳到本领域练习 ↓</a></p></section>';
 }
 function fieldMapIndexHTML(track){return '<div class="field-map-index"><b>按领域看核心关系</b><p>'+modules.filter(m=>m.track===track&&fieldConceptMaps[m.id]).map(m=>'<a href="'+fieldMapURL(m.id)+'">'+m.n+' '+trainingEscape(m.name)+' →</a>').join('')+'</p></div>';}
 function chapterFieldConcepts(a){

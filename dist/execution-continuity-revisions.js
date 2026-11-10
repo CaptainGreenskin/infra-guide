@@ -66,4 +66,8 @@
  }
  const mcp=chapters.find(({article})=>article.id==='mcp-protocol').article;
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
+
+ const multinode=articleById('multinode-lab');
+ multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
+ multinode.updated='2026.11.10';
 })();

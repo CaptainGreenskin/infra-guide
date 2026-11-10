@@ -1,0 +1,45 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "1305046ab640513691da4cce46ff42d736dc81c8",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_RECONCILE_MESH_RESUME_2026-11-10.json": "3084425445b478f5ee4294abce9f450282dc5654506d48698a5639c24ffc442a"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "tr-recovery",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "0a89d070fbe342494f2639892eccceed3c6f47eabdf2852e93073ec3ff7c0302",
+      "reviewed_content_sha256": "799c818579c8358c0df79ea70938819c69b195eb10951d002cb4c3ee23addb25",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-runtime",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "b1d490b765ed6147597c194a574c70b56ec0a85558b465b59e50a821b06f2b20",
+      "reviewed_content_sha256": "cb6b5f3cd35457516031f3f5c35f7a0087a20059ed964b7788313eb5021fced9",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "checkpoint-recovery",
+      "reviewed_at": "2026-11-10",
+      "scope": "Compare native torchrun whole-group restart to a three-step continuous run and explain committed progress.",
+      "observation": "Both PIDs change after rank 1 exits. The second update is recomputed from the first checkpoint and committed once. A weights-only restore fails the momentum and weight comparisons.",
+      "reviewed_content_sha256": "dff5e79b1cbfa1ea84118ce8f84a8cb9240d11560e83780f87cdd6cca42b06df",
+      "record": "dist/labs/elastic-restart-step/validation.json"
+    },
+    {
+      "chapter": "kairo-practice",
+      "reviewed_at": "2026-11-10",
+      "scope": "Follow a local durable task through missing acceptance response, deduplicated retry, MCP authorization and same-session delivery.",
+      "observation": "Actual HTTP and SQLite records join one task to 23 and the A sources. The local reference version remains separate from Kairo and model-driven decisions.",
+      "reviewed_content_sha256": "cd923d6420482f633d1800aa480f92f8af01da9b800d95ad3e0b47309959f948",
+      "record": "dist/labs/agent-task-reconnect/validation.json"
+    }
+  ]
+}
