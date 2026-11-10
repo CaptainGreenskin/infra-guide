@@ -333,7 +333,8 @@
  p('同一序列有 1025 个位置时，两个进程可以分别负责 512、513 行查询。这里的通信协议把 K/V 包统一成 513 行。接收方按固定形状分配缓冲，再读另一个三个 int64 的包头，知道原拥有者、全局起点和有效行数。每跳先约定头和数据的收发顺序，程序等本次收发完成后再计算。')+
  p('按实验的 16 项特征和 float64 计算，包头固定 24 字节。补的一行在前向多传 K 和 V 共 2×16×8=256 字节。反向还带 dK、dV，同一填充行多传 4×16×8=512 字节。这是每次发送的应用数据账。有效行掩码影响数值，填充在内存和链路上仍然占空间。<a href="/article/flash-attention-io/#ragged-ring-training">核对实际包头、梯度归还和去掉掩码的失败对照</a>。');
 
- const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
+ const tensorParallel=articles.find(a=>a.id==='tensor-parallel-math');
+ const pipelineSection=tensorParallel.sections[7];
  pipelineSection[1]+='<h3 id="pipeline-training-schedules">完整训练的时序与激活峰值</h3>'+
  p('沿用两个阶段和编号0到3的四个微批。S0是前半模型，S1是后半模型。F0表示微批0的前向，B0表示微批0的反向，短横表示该阶段空闲。设每项前向和反向各占一槽，每阶段一槽只做一项，跨阶段传输耗时取0。同一微批须等S0的前向完成，S1才能前向。S1完成自己的前向才能反向，S0再接到S1的梯度做反向。四个微批使用同一版参数，两阶段都完成反向后统一更新一次，更新耗时另计。',
  'GPipe的排法先做完全部前向，再排反向。1F1B表示流水线进入稳定阶段后交替做一次前向、一次反向，使先到的微批可以提早完成反向。两种排法如下。')+
@@ -352,6 +353,14 @@
  p('例如1F1B的微批0在S0第1槽前向，S1在第2槽前向、第3槽反向，S0到第4槽才拿到梯度做反向。两种排法的前反向都在第10槽完成，每个阶段各做8项，按这段窗口计算的忙碌比例均为8/10。',
  '再数为反向保存的激活。每个微批在本阶段完成前向后增加一份，直到本阶段反向结束才释放。GPipe在反向开始前两阶段都各有4份，峰值是4/4。1F1B的S0在第2槽后同时保存微批0和1，第4槽结束释放微批0，再在第5槽纳入微批2，峰值是2份。S1每次前向紧接同一微批的反向，峰值是1份。本题的收益是降低激活峰值，实际显存还要按每份大小、缓冲与重算策略计算。')+
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
+ pipelineSection[1]+='<h3 id="native-pipeline-schedules">两进程实跑：调度变了，梯度该不该变</h3>'+
+ p('把四条样本拆成四个微批，每个微批只有一条样本。进程 0 用线性层和 ReLU 算出两个隐藏值，再发给进程 1。进程 1 算预测和损失，反向时把这两个隐藏值的梯度发回去。两边用同一版参数处理完四条样本，再各更新一次自己持有的层。')+
+ trainingFigure('pipeline-schedules','每行是一个进程实际完成的本地事件顺序。横向同一列没有跨进程同时发生的含义。')+
+ p('图里的 F0、B0 分别是微批 0 的前向和反向。数一数有几条微批已经前向、尚未反向。GPipe 两个阶段的峰值都是 4，1F1B 分别是 2 和 1。上面的时隙算例从最后一个微批倒排 GPipe 反向，这个版本的实现按 0 到 3 处理。只要反向对应各自的输入，所有梯度都在更新前加齐，顺序可以不同。')+
+ p('两种排程都得到预测 [1, −1.75, 0.75, −1]。目标是 [0.5, −1.25, 1, 0]，平均平方误差为 (0.25 + 0.25 + 0.0625 + 1) ÷ 4 = 0.390625。实验用未切分的模型做对照，逐项比较梯度和更新后的参数。把损失改成每个微批各除以自己的样本数，再累加四份梯度，预测没变，梯度却成了参考值的 4 倍。')+
+ p('复跑时装好 PyTorch 2.5.1，运行 <code>python pipeline_schedules.py &gt; report.json</code>。先按事件顺序重算待反向的微批数，再从 <code>wrong_local_mean</code> 查梯度与参数偏差。这次用本机 CPU/Gloo 跑 PyTorch 的两种调度。1F1B 在这个环境下保留并等待成批收发的全部工作句柄，详见程序。图只计待反向的微批，设备显存、跨机通信与吞吐需要另测。')+
+ '<p class="practice-links"><a href="/labs/pipeline-schedules.zip" download>下载程序与记录 ↓</a> · <a href="/labs/pipeline-schedules/README.md">复跑步骤 →</a> · <a href="/labs/pipeline-schedules/validation.json">查看事件、梯度和参数 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/pipelining/schedules.py">PyTorch 2.5.1 调度源码 ↗</a></p>';
+ tensorParallel.updated='2026.11.10';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
  warpMemory.updated='2026.11.10';

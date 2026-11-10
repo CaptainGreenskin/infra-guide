@@ -1,0 +1,495 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "environment": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "tools": {
+      "prometheus": {
+        "version": "prometheus, version 3.5.0 (branch: HEAD, revision: 8be3a9560fbdd18a94dedec4b747c35178177202)",
+        "binary_sha256": "98c310ed859c9137c1fea3d9d341c4154e51561e2c86f72b50bb963a616c48e5"
+      },
+      "alertmanager": {
+        "version": "alertmanager, version 0.34.2 (branch: HEAD, revision: e8349048265ccc0871c3d0d668b05eacc68baf50)",
+        "binary_sha256": "a78d66eeb2bfd01cf0f647890c1e01b193c0d9961654585f0b2ad2d89f7d6c44"
+      }
+    },
+    "transport": "loopback HTTP"
+  },
+  "source_sha256": {
+    "alert_notification.py": "148ccc491b051a1b223c41e4422ef71293fb334fba90fa5f79455a765dc60080",
+    "README.md": "1041315d355be7187c8a79fbcc83993d8f57abe4b828e26b43e55bd0043acc3f",
+    "release-provenance.json": "4f0e8735433d91d8e5bdc735a648740a45aba14d1167736a4033d85971e27f73"
+  },
+  "configuration": {
+    "rules": {
+      "groups": [
+        {
+          "name": "delivery",
+          "rules": [
+            {
+              "alert": "GuideNotificationDelivery",
+              "expr": "lab_notification_active == 1",
+              "for": "1s",
+              "labels": {
+                "severity": "teaching"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "prometheus": {
+      "global": {
+        "scrape_interval": "250ms",
+        "evaluation_interval": "250ms"
+      },
+      "rule_files": [
+        "rules.json"
+      ],
+      "scrape_configs": [
+        {
+          "job_name": "reports",
+          "static_configs": [
+            {
+              "targets": [
+                "127.0.0.1:61093"
+              ]
+            }
+          ]
+        }
+      ],
+      "alerting": {
+        "alertmanagers": [
+          {
+            "static_configs": [
+              {
+                "targets": [
+                  "127.0.0.1:61095"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "alertmanager": {
+      "route": {
+        "receiver": "fallback",
+        "group_by": [
+          "alertname",
+          "case"
+        ],
+        "group_wait": "5s",
+        "group_interval": "2s",
+        "repeat_interval": "60s",
+        "routes": [
+          {
+            "receiver": "reports",
+            "matchers": [
+              "severity=\"teaching\""
+            ]
+          }
+        ]
+      },
+      "receivers": [
+        {
+          "name": "fallback",
+          "webhook_configs": [
+            {
+              "url": "http://127.0.0.1:61093/fallback",
+              "send_resolved": true
+            }
+          ]
+        },
+        {
+          "name": "reports",
+          "webhook_configs": [
+            {
+              "url": "http://127.0.0.1:61093/reports",
+              "send_resolved": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "active_target": {
+    "activeAlertmanagers": [
+      {
+        "url": "http://127.0.0.1:61095/api/v2/alerts"
+      }
+    ],
+    "droppedAlertmanagers": []
+  },
+  "silence_id": "7b6f6e4d-7266-45c2-8778-a968cca8bfed",
+  "inputs": [
+    {
+      "at_ms": 6182,
+      "case": "short",
+      "value": 1
+    },
+    {
+      "at_ms": 6182,
+      "case": "long",
+      "value": 1
+    },
+    {
+      "at_ms": 6182,
+      "case": "silenced",
+      "value": 1
+    },
+    {
+      "at_ms": 8478,
+      "case": "short",
+      "value": 0
+    },
+    {
+      "at_ms": 14559,
+      "case": "long",
+      "value": 0
+    },
+    {
+      "at_ms": 14559,
+      "case": "silenced",
+      "value": 0
+    }
+  ],
+  "prometheus_firing": {
+    "at_ms": 8476,
+    "alerts": {
+      "short": {
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "short",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        },
+        "annotations": {},
+        "state": "firing",
+        "activeAt": "2026-11-10T08:46:05.066441703Z",
+        "value": "1e+00"
+      },
+      "long": {
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        },
+        "annotations": {},
+        "state": "firing",
+        "activeAt": "2026-11-10T08:46:05.066441703Z",
+        "value": "1e+00"
+      },
+      "silenced": {
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "silenced",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        },
+        "annotations": {},
+        "state": "firing",
+        "activeAt": "2026-11-10T08:46:05.066441703Z",
+        "value": "1e+00"
+      }
+    }
+  },
+  "alertmanager_ingress": {
+    "at_ms": 8478,
+    "alerts": {
+      "short": {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "8c6c97f1f07760ac",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [],
+          "state": "active"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "short",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      },
+      "silenced": {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "8d8def0b7fa46127",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [
+            "7b6f6e4d-7266-45c2-8778-a968cca8bfed"
+          ],
+          "state": "suppressed"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "silenced",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      },
+      "long": {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "cc24d8205f9e2aa8",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [],
+          "state": "active"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      }
+    }
+  },
+  "short_cleared": {
+    "at_ms": 9011,
+    "alerts": [
+      {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "8d8def0b7fa46127",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [
+            "7b6f6e4d-7266-45c2-8778-a968cca8bfed"
+          ],
+          "state": "suppressed"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "silenced",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      },
+      {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "cc24d8205f9e2aa8",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [],
+          "state": "active"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      }
+    ]
+  },
+  "after_group_wait": {
+    "at_ms": 14558,
+    "alerts": [
+      {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "8d8def0b7fa46127",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [
+            "7b6f6e4d-7266-45c2-8778-a968cca8bfed"
+          ],
+          "state": "suppressed"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "silenced",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      },
+      {
+        "annotations": {},
+        "endsAt": "2026-11-10T08:50:06.066Z",
+        "fingerprint": "cc24d8205f9e2aa8",
+        "receivers": [
+          {
+            "name": "reports"
+          }
+        ],
+        "startsAt": "2026-11-10T08:46:06.066Z",
+        "status": {
+          "inhibitedBy": [],
+          "mutedBy": [],
+          "silencedBy": [],
+          "state": "active"
+        },
+        "updatedAt": "2026-11-10T16:46:06.070+08:00",
+        "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+        "labels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        }
+      }
+    ]
+  },
+  "receiver_events": [
+    {
+      "at_ms": 13455,
+      "path": "/reports",
+      "payload": {
+        "receiver": "reports",
+        "status": "firing",
+        "alerts": [
+          {
+            "status": "firing",
+            "labels": {
+              "alertname": "GuideNotificationDelivery",
+              "case": "long",
+              "instance": "127.0.0.1:61093",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "annotations": {},
+            "startsAt": "2026-11-10T08:46:06.066Z",
+            "endsAt": "0001-01-01T00:00:00Z",
+            "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+            "fingerprint": "cc24d8205f9e2aa8"
+          }
+        ],
+        "notification_reason": "first notification",
+        "groupLabels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long"
+        },
+        "commonLabels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        },
+        "commonAnnotations": {},
+        "routeLabels": {},
+        "externalURL": "http://127.0.0.1:61095",
+        "version": "4",
+        "groupKey": "{}/{severity=\"teaching\"}:{alertname=\"GuideNotificationDelivery\", case=\"long\"}",
+        "truncatedAlerts": 0
+      }
+    },
+    {
+      "at_ms": 15455,
+      "path": "/reports",
+      "payload": {
+        "receiver": "reports",
+        "status": "resolved",
+        "alerts": [
+          {
+            "status": "resolved",
+            "labels": {
+              "alertname": "GuideNotificationDelivery",
+              "case": "long",
+              "instance": "127.0.0.1:61093",
+              "job": "reports",
+              "severity": "teaching"
+            },
+            "annotations": {},
+            "startsAt": "2026-11-10T08:46:06.066Z",
+            "endsAt": "2026-11-10T08:46:12.566Z",
+            "generatorURL": "http://127.0.0.1:61094/graph?g0.expr=lab_notification_active+%3D%3D+1&g0.tab=1",
+            "fingerprint": "cc24d8205f9e2aa8"
+          }
+        ],
+        "notification_reason": "all alerts resolved",
+        "groupLabels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long"
+        },
+        "commonLabels": {
+          "alertname": "GuideNotificationDelivery",
+          "case": "long",
+          "instance": "127.0.0.1:61093",
+          "job": "reports",
+          "severity": "teaching"
+        },
+        "commonAnnotations": {},
+        "routeLabels": {},
+        "externalURL": "http://127.0.0.1:61095",
+        "version": "4",
+        "groupKey": "{}/{severity=\"teaching\"}:{alertname=\"GuideNotificationDelivery\", case=\"long\"}",
+        "truncatedAlerts": 0
+      }
+    }
+  ],
+  "observed_until_ms": 15489
+}

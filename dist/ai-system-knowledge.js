@@ -75,6 +75,7 @@ infraKnowledgeDomains.push({module:'training',track:'ai',refs:['v16DDP','v16AMP'
  figure('v16-ai-parallel-matrix','并行策略矩阵：分别追踪状态驻留、计算对象和关键通信，不把所有“多卡”归为同一种机制。')+
  para('列并行将W=[W0,W1]，两rank分别计算XW0和XW1，得到输出特征的两片；后续算子若可直接消费分片，可暂不拼接。行并行将X=[X0,X1]、W按输入维切片，完整输出Y=X0W0+X1W1，需要相应归约。切分位置决定通信在哪里发生。',
  '流水线并行把连续层分到不同阶段（stage），小批次依次传递激活，再反向传递梯度。等长单向填排空的简化模型利用率为m/(m+p−1)，m=8、p=4时约72.7%；真实训练还有前反向调度、激活保存、各阶段耗时不均衡和通信。增大m可能减少气泡，也会改变内存、延迟和组批约束。',
+ '用<a href="/article/tensor-parallel-math/#native-pipeline-schedules">四个微批的实跑记录</a>，比较同一阶段有几条微批还等着反向。再检查排程改变后，两阶段的梯度是否仍等于整批参考。',
  'MoE的路由器（router）为每个词元选择专家。专家参数总量、每token激活参数量和实际算量不是同一个数；分发词元和收回输出常需要各进程互相交换数据（AllToAll）。热点专家、容量限制、丢弃/补算和跨节点带宽会改变效率。先查看每个专家收到多少词元、分发花多少时间，再判断增加专家是否能提高有效吞吐。')},
  {id:'tr-collectives',title:'集合通信：数据量、顺序与重叠',articles:['training-communication','training-performance'],lead:'AllReduce先把各进程的数值合并（例如求和），再让每个进程得到结果；ReduceScatter合并后只留下各自负责的一片；AllGather则让每个进程收齐所有片。正确调用要求成员、顺序、dtype与张量规模符合协议。',body:
  knowledgeFormula('理想ring AllReduce，W个rank、每rank输入S字节','T ≈ 2(W−1)α + [2(W−1)/W]×S/β','α为每轮延迟，β为同口径有效带宽；这是单链路等速简化模型，不是NCCL性能承诺。')+

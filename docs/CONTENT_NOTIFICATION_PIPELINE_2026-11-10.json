@@ -1,0 +1,45 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "41fe1456045db23fa13976efb7dd9c8d23b339c5",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_FIELD_PRACTICE_HANDOFFS_2026-11-10.json": "aced4c9d656a218560267062ca6b4e72c8704e9d163b89c258a85a62547901f3"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "alert-burn",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "f08475ff27c11ab0f5651244aac94740b98d38c92a3b973b20a83ab76698a4ae",
+      "reviewed_content_sha256": "22661c3673816defa88db00076529fd351e93512fb9a7e1c2ba95a245d413f51",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "tr-parallel",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "9f9382ae8820488b9ef14234e9947131cbebeb5f311c0e86eb7b67d07e249b3d",
+      "reviewed_content_sha256": "592b9f469a954ade1ac237f6783dfc32a79ccfbc8b1ee1b13a3a4a68e388dcd9",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "tensor-parallel-math",
+      "reviewed_at": "2026-11-10",
+      "scope": "Compare GPipe and 1F1B event order, local activation lifetimes, full gradients and one SGD step.",
+      "observation": "Two CPU/Gloo processes, equal microbatches and adapted 1F1B work-handle retention. The bad loss denominator multiplies the gradient by four. No measured device memory or throughput.",
+      "reviewed_content_sha256": "5196606bb70d5924239d8578381d50a5c61130267443c40aff1fc3be2beb295f",
+      "record": "dist/labs/pipeline-schedules/validation.json"
+    },
+    {
+      "chapter": "slo",
+      "reviewed_at": "2026-11-10",
+      "scope": "Follow three firing labels through discovery, Alertmanager reception and the actual HTTP recipient.",
+      "observation": "Short resolves before the first wait, the silence remains observable after that wait, and only the long group reaches the local webhook. External notification providers and HA are separate.",
+      "reviewed_content_sha256": "5f87c49e961d09e04674fcf44daf23a3af6246790912db8b0ec414e038193164",
+      "record": "dist/labs/alert-notification/validation.json"
+    }
+  ]
+}

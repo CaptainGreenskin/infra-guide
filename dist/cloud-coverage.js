@@ -7,7 +7,7 @@ const cloudRoleSources = [
 const cloudCoverageRows=[
  ['前置','语言、算法与并发','有依赖图、最大栈与并发机制练习。','主力语言的运行时、网络编程及更多限时编码仍需专项训练。',['concurrency-pools'],'coding'],
  ['前置','Linux 与系统机制','有进程资源、虚拟内存、cgroup 与锁的详解和本地程序。','内核 tracing、调度器源码和生产内存故障不由这些实验覆盖。',['linux-resource','virtual-memory-oom']],
- ['C1','计算、虚拟化与故障域','有系统知识、规格与容量推导。','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
+ ['C1','计算、虚拟化与故障域','有系统知识、规格与容量推导。<br><a href="/article/cloud-compute/#vm-vcpu-diagnosis">Linux 虚拟机排查示例 →</a>','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
  ['C2','云网络与协议','讲 VPC、DNS、路由、NAT 和 TCP。Linux 上实测边缘触发通知与应用队列。本机 HTTP 代理实测上游连接复用、后端排空和重试后的写入结果。<br><a href="/article/tcp-event-loop/#native-epoll-run">读通知与队列 →</a> · <a href="/article/vpc-network/#cloud-proxy-run">代理请求实跑 →</a>','实跑使用受控管道、套接字和本机代理。云转发、BGP/IPv6、MTU/conntrack 与生产网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
  ['C3','存储、数据库与缓存','讲事务日志、复制和恢复点。MySQL 实测崩溃恢复、复制应用与两实例计划切换，并对照 RR、RC 两种隔离级别读到的数据版本。PostgreSQL 17 用同一份基础备份恢复到具名点或归档末尾，并验证缺少目标日志段时恢复失败。另有 SQLite 和附件恢复。<br><a href="/article/storage-recovery/#native-postgres-pitr">PostgreSQL 实跑与 SQL 结果 →</a>','数据库实跑限于本地隔离实例与本地文件归档。远端归档、生产自动故障切换、物理断电和跨区恢复需要另行验收。',['database-index-locks','cache-consistency','storage-recovery','mysql-recovery','mysql-replication']],
  ['跨域','分布式协调与消息','讲超时、幂等与事件确认；真实etcd三成员实验验证多数派与历史观察，RabbitMQ单节点验证提交后重投、过早ACK和业务效果。','Raft算法实现、Kafka/RocketMQ与再均衡仍需专项；同宿主etcd及单节点RabbitMQ不代表跨物理故障域高可用已验收。',['distributed-systems','message-delivery']],
@@ -16,7 +16,7 @@ const cloudCoverageRows=[
  ['C6','平台 API、IaC 与 GitOps','讲兼容发布、状态和调谐。Terraform local_file 实测状态锁、刷新和工作空间争用。Argo CD 在 kind 中验证自愈、清理与实际 HTTP 版本。','云提供程序、远端状态后端、生产规模的 Argo CD 或 Flux、多物理节点和 client-go/Operator 实现仍需专项。',['delivery','terraform-state','gitops-reconciliation']],
  ['C7','身份、安全与多租户','在 kind 中用同一 ServiceAccount 凭据验证授权变化，实际请求返回 200 → 403 → 200。SPIRE 实测两份可信证书都能完成双向 TLS，报表服务只允许 A 写入。另有 HTTP 授权与 SQLite 写入对照。<br><a href="/article/iam-security/#native-spiffe-workload-identity">SPIRE 发证、请求与报表写入记录 →</a>','ServiceAccount 与 RBAC 实跑使用单机 kind。SPIRE 实跑使用单 Linux 节点和固定进程路径。云 IAM、准入策略、凭据投射与刷新、生产隔离需要另行验收。',['iam-security','agent-security','agent-sandbox']],
  ['C8','容量、性能与成本','用模型推算扩容空窗、积压和排空，并计算单位成本。在本地 Linux 以同一到达节奏发起 HTTP 请求，比较两档 CPU 配额的完成、拒绝、成功请求尾延迟与内核限流计数。<br><a href="/article/elasticity/#native-cpu-quota-http">两档 CPU 配额与逐请求记录 →</a>','HTTP 实跑限于同机回环、固定工作量和两档配额。生产负载、账单归因和跨可用区故障后的容量需要实测。',['elasticity','k8s-autoscaling','cloud-compute']],
- ['C9','SRE 与恢复','从请求级 SLI、多窗告警、日志与追踪讲到诊断和恢复。Prometheus 实测两路 HTTP 抓取、计数器归零和告警状态，OpenTelemetry Collector 实测全量导出与错误采样，并用任务账本核对业务结果。<br><a href="/article/slo/#live-prometheus-burn">抓取与告警状态 →</a> · <a href="/article/observability/#collector-sampling-check">采样与业务账本 →</a>','采集实跑使用本机受控输入。生产采集覆盖、Alertmanager 投递、值班响应和跨区恢复需要各自验收。',['slo','observability','incident','resilience']]
+ ['C9','SRE 与恢复','从请求级 SLI、多窗告警、日志与追踪讲到诊断和恢复。Prometheus 实测两路 HTTP 抓取、计数器归零和告警状态，Alertmanager 实测分组等待、静默和回环 HTTP 收件。OpenTelemetry Collector 实测全量导出与错误采样，并用任务账本核对业务结果。<br><a href="/article/slo/#live-prometheus-burn">抓取与告警状态 →</a> · <a href="/article/slo/#native-alert-notification">实际收件 →</a> · <a href="/article/observability/#collector-sampling-check">采样与业务账本 →</a>','采集实跑使用本机受控输入。生产采集覆盖、外部通知渠道、高可用、值班响应和跨区恢复需要各自验收。',['slo','observability','incident','resilience']]
 ];
 function cloudCoverageGuide(){
  const path=(ids)=>ids.map(id=>'<a href="/module/'+id+'/">'+moduleFor(id).n+' '+moduleFor(id).name+' →</a>').join('');

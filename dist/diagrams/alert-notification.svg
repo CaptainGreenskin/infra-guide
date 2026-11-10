@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="228" viewBox="0 0 520 228" role="img" aria-labelledby="title description">
+<title id="title">触发、分组和收件是三个观察点</title>
+<desc id="description">三条告警在 Prometheus 均触发并进入 Alertmanager。提前恢复和静默的告警无入站通知，持续的告警送达触发和恢复两条。</desc>
+<metadata>{"firing_cases":["long","short","silenced"],"early_clear":["short"],"silenced":["silenced"],"delivered":[["long","firing"],["long","resolved"]],"group_wait_seconds":5}</metadata>
+<rect x="1" y="1" width="518" height="226" rx="14" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="15" fill="#22324d">
+ <text x="18" y="31" font-weight="700" font-size="18">三个都触发，接收端收到几条？</text>
+ <text x="16" y="63" font-weight="650">告警</text><text x="105" y="63" font-weight="650">Prometheus</text>
+ <text x="232" y="63" font-weight="650">Alertmanager</text><text x="412" y="63" font-weight="650">接收端</text>
+ <rect x="12" y="76" width="496" height="39" rx="7" fill="#e9eff8"/>
+ <text x="20" y="101">short</text><text x="105" y="101">firing</text>
+ <text x="232" y="101">等满 5 秒前恢复</text><text x="412" y="101">0 条</text>
+ <rect x="12" y="120" width="496" height="39" rx="7" fill="#e9eff8"/>
+ <text x="20" y="145">silenced</text><text x="105" y="145">firing</text>
+ <text x="232" y="145">留在列表，匹配静默</text><text x="412" y="145">0 条</text>
+ <rect x="12" y="164" width="496" height="50" rx="7" fill="#ddf6e9"/>
+ <text x="20" y="194">long</text><text x="105" y="194">firing</text>
+ <text x="232" y="194">等到首发，随后恢复</text>
+ <text x="412" y="186">firing</text><text x="412" y="205">resolved</text>
+</g>
+</svg>

@@ -147,7 +147,9 @@ for(const[,file]of readFileSync('src/page-shell.html','utf8').matchAll(/<script 
 const lesson=vm.runInContext("articleById('slo')",context), start='<h3 id="'+anchor+'">';
 const section=lesson.sections[7][1];
 assert(section.includes(start));
-const suffix=section.slice(section.indexOf(start));
+const handoff=section.indexOf('<h3 id="alert-notification-handoff">');
+assert(handoff>section.indexOf(start),'the notification lesson follows the original rule evaluation');
+const suffix=section.slice(section.indexOf(start),handoff);
 assert(!suffix.includes('<pre'));
 assert.equal((suffix.match(/<figure\b/g)||[]).length,1);
 for(const path of ['diagrams/'+lab+'.svg','labs/'+lab+'.zip','labs/'+lab+'/README.md','labs/'+lab+'/validation.json'])assert(suffix.includes('href="'+path+'"'),path);

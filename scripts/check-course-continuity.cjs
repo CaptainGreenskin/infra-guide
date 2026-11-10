@@ -44,19 +44,22 @@ assert(gpuLessons[1].includes('labs/warp-memory-sectors/validation.json'));
 const tensorGroups=section('tensor-parallel-math',5);
 const tensorGroupFigure=(tensorGroups.match(figurePattern)||[]).filter(figure=>figure.includes('src="diagrams/parallel-data-replica-groups.svg"'));
 assert.equal(tensorGroupFigure.length,1,'the existing tensor-parallel section has one additional rank-group diagram');
+const pipelineLessons=section('tensor-parallel-math',7).split('<h3 id="native-pipeline-schedules">');
+assert.equal(pipelineLessons.length,2,'the two-rank experiment follows the historical schedule comparison');
+assert(pipelineLessons[0].includes('<h3 id="pipeline-training-schedules">'));
+assert(pipelineLessons[1].includes('labs/pipeline-schedules/validation.json'));
 const suffixBoundaries={
- 'flash-attention-io':[7,flashLessons[0]],
- 'cache-consistency':[6,cacheLessons[0]],
- 'gpu-execution':[3,gpuLessons[0]],
- 'tensor-parallel-math':[5,tensorGroups.replace(tensorGroupFigure[0],'')]
+ 'flash-attention-io':{7:flashLessons[0]},
+ 'cache-consistency':{6:cacheLessons[0]},
+ 'gpu-execution':{3:gpuLessons[0]},
+ 'tensor-parallel-math':{5:tensorGroups.replace(tensorGroupFigure[0],''),7:pipelineLessons[0]}
 };
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){
  const a=article(id),before=old.find(a=>a.id===id);assert(data.standalone.includes(id));assert(a.updated>='2026.11.09');
  assert.notEqual(JSON.stringify(a.sections),JSON.stringify(before.sections));
  assert.deepEqual(a.sections.map(s=>s[0]),before.sections.map(s=>s[0]));
  // Dedicated lab checks cover the exact suffixes. Preserve the earlier inventory.
- const suffixBoundary=suffixBoundaries[id];
- const body=a.sections.map((s,i)=>i===suffixBoundary?.[0]?suffixBoundary[1]:s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
+ const body=a.sections.map((s,i)=>suffixBoundaries[id]?.[i]??s[1]).join(''),previous=before.sections.map(s=>s[1]).join('');
  for(const re of [prePattern,figurePattern,hrefPattern]){
   const current=body.match(re)||[],former=previous.match(re)||[];
   if(re===hrefPattern&&id==='tensor-parallel-math'){

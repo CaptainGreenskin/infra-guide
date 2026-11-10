@@ -35,6 +35,15 @@
         "subsection-2-zwfnk1",
         "subsection-3-15h236x",
         "subsection-4-1cchfaj",
+        "subsection-11-ebzonr",
+        "vm-vcpu-diagnosis"
+      ],
+      "visible_targets": [
+        "subsection-1-5c7zcq",
+        "subsection-2-zwfnk1",
+        "vm-vcpu-diagnosis",
+        "subsection-3-15h236x",
+        "subsection-4-1cchfaj",
         "subsection-11-ebzonr"
       ]
     },
@@ -340,12 +349,14 @@
       "targets": [
         "subsection-8-fgmzv3",
         "live-prometheus-burn",
-        "alert-notification-handoff"
+        "alert-notification-handoff",
+        "native-alert-notification"
       ],
       "visible_targets": [
         "subsection-8-fgmzv3",
         "live-prometheus-burn",
-        "alert-notification-handoff"
+        "alert-notification-handoff",
+        "native-alert-notification"
       ]
     },
     {
@@ -497,10 +508,12 @@
       "id": "tensor-parallel-math",
       "targets": [
         "subsection-4-z6hy9g",
-        "pipeline-training-schedules"
+        "pipeline-training-schedules",
+        "native-pipeline-schedules"
       ],
       "visible_targets": [
-        "pipeline-training-schedules"
+        "pipeline-training-schedules",
+        "native-pipeline-schedules"
       ]
     },
     {
@@ -960,7 +973,12 @@
     },
     {
       "id": "kairo-practice",
-      "targets": []
+      "targets": [
+        "kairo-read-evidence"
+      ],
+      "visible_targets": [
+        "kairo-read-evidence"
+      ]
     },
     {
       "id": "training-lab",

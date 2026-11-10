@@ -272,4 +272,7 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',
  '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
+ const strategy=articleById('distributed-training');
+ strategy.sections[4][1]+=p('模型按层切开以后，前一个阶段要等后一个阶段传回梯度，才能完成这个微批的反向。<a href="/article/tensor-parallel-math/#native-pipeline-schedules">选读两进程流水线实验</a>，用四个微批比较等待反向的数量，并核对两种排程更新的是同一个整批目标。');
+ strategy.updated='2026.11.10';
 })();

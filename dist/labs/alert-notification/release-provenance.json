@@ -1,0 +1,13 @@
+{
+  "platform": "darwin-arm64",
+  "prometheus": {
+    "url": "https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.darwin-arm64.tar.gz",
+    "asset_id": 272785890,
+    "archive_sha256": "c17bc2c992f0b5515eebe2b4ccd626214f8e309a0fe6ec40ed13c42ec13d05fb"
+  },
+  "alertmanager": {
+    "url": "https://github.com/prometheus/alertmanager/releases/download/v0.34.2/alertmanager-0.34.2.darwin-arm64.tar.gz",
+    "asset_id": 688092041,
+    "archive_sha256": "dc1fcd4ad3e8bef111683eaf385aa5b2b02493277bca9126c129e0a39fc68a4f"
+  }
+}

@@ -25,9 +25,9 @@ assert.equal((page.match(/class="experience-source"/g)||[]).length,15);
 const coverage=fs.readFileSync('dist/interview/cloud/index.html','utf8').match(/<section class="coverage-matrix">([\s\S]*?)<\/section>/)?.[1];
 assert(coverage);
 for(const [id,anchor] of [
- ['tcp-event-loop','native-epoll-run'],['vpc-network','cloud-proxy-run'],['storage-recovery','native-postgres-pitr'],
+ ['cloud-compute','vm-vcpu-diagnosis'],['tcp-event-loop','native-epoll-run'],['vpc-network','cloud-proxy-run'],['storage-recovery','native-postgres-pitr'],
  ['k8s-networking','kubernetes-network-policy-run'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],
- ['iam-security','native-spiffe-workload-identity'],['elasticity','native-cpu-quota-http'],['slo','live-prometheus-burn'],['observability','collector-sampling-check']
+ ['iam-security','native-spiffe-workload-identity'],['elasticity','native-cpu-quota-http'],['slo','live-prometheus-burn'],['slo','native-alert-notification'],['observability','collector-sampling-check']
 ]){
  const href='/article/'+id+'/#'+anchor;
  assert.equal(coverage.split('href="'+href+'"').length,2,href+': one direct evidence link in the coverage matrix');

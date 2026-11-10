@@ -79,12 +79,23 @@ const progressiveCloudSectionTitles={
  'vCPU 是客户机可见的处理单元。应用的软件线程由客户机内核调度到 vCPU，vCPU 的执行还受宿主资源安排影响。物理核心执行指令；支持 SMT 的核心可以提供多个硬件线程，部分执行资源由它们共享。EC2 的 CPU 选项以核心数乘每核线程数表示相应 vCPU 数，含义还需结合所选架构与规格。',
  '由此分出三笔账：分配了几个逻辑处理单元、每段时间能消费多少 CPU 时间、这些时间能完成多少业务。容器的 cpu.max 管理组内时间预算；绑核配置限定可以在哪些 CPU 上运行；实例产品约定独占、共享或持续能力。它们约束的是不同环节。')+
  table(['层次','控制或观察什么','本例需要的证据'],[['应用线程','计算、锁等待与 I/O 等待','线程 CPU 时间与请求阶段'],['容器及父 cgroup','组内 CPU 带宽','cpu.max、cpu.stat 增量与祖先限制'],['VM 与宿主','vCPU 调度及资源保证','规格模式与同负载对照'],['物理执行','架构、频率、缓存和带宽','每请求 CPU 成本与有效完成量']])+p(
- '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。'),
+ '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。')+
+ h('vm-vcpu-diagnosis','虚拟机变慢，先查 vCPU 在哪等')+p(
+ '同样的订单查询突然变慢。先看请求是在算，还是在等锁或数据库。如果应用有工作要算，就在 Linux 客户机对照两个等长窗口的 <code>steal</code> 增量，一个是正常期，一个是变慢时。支持这项记账的虚拟化环境用它记录 vCPU 未获得宿主执行时间的情况。变慢时的增量明显变大，就继续查宿主。读数一直为零时，先确认平台是否提供这项统计。',
+ '在有权限的 Linux 宿主上，用 QEMU 管理协议 QMP 查询 <code>query-cpus-fast</code>。假设一条结果的 <code>cpu-index</code> 是 2，顶层 <code>thread-id</code> 是 18240，就到宿主查线程 18240。这里的 2 是 QEMU 的 vCPU 编号。要与客户机 Linux 的 <code>cpuN</code> 逐核对齐，还要按实际虚拟拓扑核对。',
+ '对同一个宿主线程读两次 <code>schedstat</code>。前两列分别累计 CPU 执行时间和运行队列等待时间，单位都是纳秒。队列等待指线程已经可以运行，却仍在等 CPU。下面是间隔约一秒的演算，宿主内核需启用对应的调度统计。')+
+ table(['计数','第一次','第二次','增量'],[['CPU 执行','8,000,000,000 ns','8,350,000,000 ns','350 ms'],['运行队列等待','120,000,000 ns','670,000,000 ns','550 ms']])+p(
+ '接着从这个线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级的 CPU 时间配额发生了限流。沿目录向上查父组，父组耗尽配额也会影响该线程。若各级都没出现配额限流，但运行队列等待明显增加，就查该线程允许使用哪些宿主 CPU，以及这些 CPU 上还有谁在争用。')+
+ '<details><summary>有宿主权限时的只读命令</summary><p>在客户机读 <code>cat /proc/stat</code>。行首的 CPU 名称后，第八个数是 <code>steal</code>，比较同一行两次读数的增量。</p><p>宿主已有 libvirt 时，把 <code>VM</code> 设为目标虚拟机名，运行 <code>virsh qemu-monitor-command "$VM" query-cpus-fast</code>。用实际 QEMU 进程号和返回的顶层线程号填写 <code>PID</code>、<code>TID</code>。</p><p>读 <code>cat /proc/$PID/task/$TID/cgroup</code>，取 cgroup v2 的 <code>0::</code> 后面的路径，接到宿主的 cgroup v2 挂载点上，设为 <code>CG</code>。在同一观察窗口的开始和结束，分别执行 <code>cat /proc/$PID/task/$TID/schedstat</code> 与 <code>cat "$CG/cpu.max" "$CG/cpu.stat"</code>。核对父组时按同样的间隔取样。</p></details>'+
+ '<p>这段是虚拟机的排查示例。C8 的 Linux 容器实跑可用来练习读配额记录，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
+ '<p class="source-at"><a href="https://qemu.readthedocs.io/en/master/interop/qemu-qmp-ref.html#:~:text=query-cpus-fast">QEMU vCPU 查询 ↗</a> · <a href="https://libvirt.org/manpages/virsh.html#qemu-monitor-command">libvirt 查询命令 ↗</a> · <a href="https://docs.kernel.org/scheduler/sched-stats.html#proc-pid-schedstat">Linux 调度计数 ↗</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">cgroup v2 的 CPU 接口 ↗</a></p>',
  h('subsection-3-15h236x','虚拟地址、内存位置与设备队列')+p(
  '应用用虚拟地址访问内存。VM 内先由客户机页表关联到客户机物理地址，虚拟化层再将它关联到宿主物理页面。x86 的 EPT/NPT 等二阶段分页承担相应映射；TLB 这类地址转换缓存使常用映射可以复用，实际成本还受页大小和硬件路径影响。',
- '内存规格中的 GiB 描述容量，访问代价还包括带宽、延迟与页面位置。NUMA 表示处理器访问不同内存位置的代价可能不同。客户机可见拓扑与宿主放置需要分别观察；改变线程位置后，已分配页面是否迁移仍由实际内存策略决定。',
+ '内存规格中的 GiB 描述容量，访问代价还包括带宽、延迟与页面位置。NUMA（非一致内存访问）按节点组织 CPU 和内存，处理器访问不同节点的内存时，代价可能不同。客户机可见拓扑与宿主放置需要分别观察。线程换了位置，已分配的页面是否迁移仍由内存策略决定。',
+ '如果宿主线程的排队和配额读数没有解释变慢，而相同输入的内存密集阶段耗时增加，再查 NUMA。先确认 vCPU 线程实际在哪些宿主 CPU 上运行，以及这些 CPU 属于哪些节点。然后读宿主的 <code>/proc/$PID/numa_maps</code>，按内存映射看 <code>N0</code>、<code>N1</code> 等字段，数的是当前各节点上的页面。先从 QEMU 的内存后端配置和进程映射确认哪一段用于客户机内存。页面位置只能帮助提出跨节点访问的假设，还要用同负载的耗时或带宽对照验证。',
  '设备有另一条路径。virtio 用约定的设备接口和共享队列传递缓冲描述符，让客户机驱动与后端协作；设备模拟与直通采用不同路径。直通还涉及设备访问内存的映射与隔离，例如 IOMMU，以及设备迁移能力。无论经过哪条路径，物理带宽、队列和后端服务预算都会约束完成量。',
- '所以比较两种“8 vCPU、32 GiB”规格，应同时固定程序、输入、CPU 架构和持续时间，并记录网络、磁盘与驱动条件。CPU、页面和设备三条路径分别提供解释，下一节再给持续 CPU 能力加入时间维度。'),
+ '所以比较两种“8 vCPU、32 GiB”规格，应同时固定程序、输入、CPU 架构和持续时间，并记录网络、磁盘与驱动条件。CPU、页面和设备三条路径分别提供解释，下一节再给持续 CPU 能力加入时间维度。')+
+ '<p class="source-at"><a href="https://docs.kernel.org/filesystems/proc.html">Linux 进程内存映射与节点页数 ↗</a></p>',
  h('subsection-4-1cchfaj','CPU 积分的收入、支出与余额')+p(
  '积分型实例把基线之上的 CPU 使用与一份时间余额关联。按本节题设，1 积分对应 1 vCPU 满用 1 分钟。2 vCPU、每个基线 20%，每分钟积累 2×0.2=0.4 积分；两个 vCPU 持续满用时，每分钟消费 2 积分，净消耗 1.6。初始 48 积分可支持这份负载约 48÷1.6=30 分钟。')+figures(c[3]).join('')+p(
  '余额到零后的行为由产品模式决定。Standard 模式按产品规则回到基线能力，Unlimited 等模式可使用额外积分并产生相应费用。这里的数字是一份容量账本；具体上限、生命周期、计费窗口和限速过程按所用产品核对。',
@@ -117,7 +128,7 @@ const progressiveCloudSectionTitles={
  '至此得到的是单份查询工作的资源模型。接下来的网络章会把这里统称的远端等待拆成解析、连接、代理与传输；后续容量章再加入扩容何时生效、丢失故障域后剩多少能力。')+link('vpc-network','沿同一查询展开网络往返')+link('elasticity','把单副本容量放入扩容与故障预算')
  ]);
 
- compute.updated='2026.11.09';
+ compute.updated='2026.11.10';
 
  const kube=select('kubernetes-basics',['声明三个副本之后，哪一步已经完成','调度完成与 kubelet 能运行是两道门','三个探针要分别回答不同的问题','EndpointSlice 表达的是后端条件','删除事件开始了，旧连接还有多久','应用信号、集群条件和真实流量分别验证','验收：从证据倒推下一次检查']);
  const k=kube.sections.map(s=>s[1]);

@@ -4183,12 +4183,23 @@ const progressiveCloudSectionTitles={
  'vCPU 是客户机可见的处理单元。应用的软件线程由客户机内核调度到 vCPU，vCPU 的执行还受宿主资源安排影响。物理核心执行指令；支持 SMT 的核心可以提供多个硬件线程，部分执行资源由它们共享。EC2 的 CPU 选项以核心数乘每核线程数表示相应 vCPU 数，含义还需结合所选架构与规格。',
  '由此分出三笔账：分配了几个逻辑处理单元、每段时间能消费多少 CPU 时间、这些时间能完成多少业务。容器的 cpu.max 管理组内时间预算；绑核配置限定可以在哪些 CPU 上运行；实例产品约定独占、共享或持续能力。它们约束的是不同环节。')+
  table(['层次','控制或观察什么','本例需要的证据'],[['应用线程','计算、锁等待与 I/O 等待','线程 CPU 时间与请求阶段'],['容器及父 cgroup','组内 CPU 带宽','cpu.max、cpu.stat 增量与祖先限制'],['VM 与宿主','vCPU 调度及资源保证','规格模式与同负载对照'],['物理执行','架构、频率、缓存和带宽','每请求 CPU 成本与有效完成量']])+p(
- '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。'),
+ '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。')+
+ h('vm-vcpu-diagnosis','虚拟机变慢，先查 vCPU 在哪等')+p(
+ '同样的订单查询突然变慢。先看请求是在算，还是在等锁或数据库。如果应用有工作要算，就在 Linux 客户机对照两个等长窗口的 <code>steal</code> 增量，一个是正常期，一个是变慢时。支持这项记账的虚拟化环境用它记录 vCPU 未获得宿主执行时间的情况。变慢时的增量明显变大，就继续查宿主。读数一直为零时，先确认平台是否提供这项统计。',
+ '在有权限的 Linux 宿主上，用 QEMU 管理协议 QMP 查询 <code>query-cpus-fast</code>。假设一条结果的 <code>cpu-index</code> 是 2，顶层 <code>thread-id</code> 是 18240，就到宿主查线程 18240。这里的 2 是 QEMU 的 vCPU 编号。要与客户机 Linux 的 <code>cpuN</code> 逐核对齐，还要按实际虚拟拓扑核对。',
+ '对同一个宿主线程读两次 <code>schedstat</code>。前两列分别累计 CPU 执行时间和运行队列等待时间，单位都是纳秒。队列等待指线程已经可以运行，却仍在等 CPU。下面是间隔约一秒的演算，宿主内核需启用对应的调度统计。')+
+ table(['计数','第一次','第二次','增量'],[['CPU 执行','8,000,000,000 ns','8,350,000,000 ns','350 ms'],['运行队列等待','120,000,000 ns','670,000,000 ns','550 ms']])+p(
+ '接着从这个线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级的 CPU 时间配额发生了限流。沿目录向上查父组，父组耗尽配额也会影响该线程。若各级都没出现配额限流，但运行队列等待明显增加，就查该线程允许使用哪些宿主 CPU，以及这些 CPU 上还有谁在争用。')+
+ '<details><summary>有宿主权限时的只读命令</summary><p>在客户机读 <code>cat /proc/stat</code>。行首的 CPU 名称后，第八个数是 <code>steal</code>，比较同一行两次读数的增量。</p><p>宿主已有 libvirt 时，把 <code>VM</code> 设为目标虚拟机名，运行 <code>virsh qemu-monitor-command "$VM" query-cpus-fast</code>。用实际 QEMU 进程号和返回的顶层线程号填写 <code>PID</code>、<code>TID</code>。</p><p>读 <code>cat /proc/$PID/task/$TID/cgroup</code>，取 cgroup v2 的 <code>0::</code> 后面的路径，接到宿主的 cgroup v2 挂载点上，设为 <code>CG</code>。在同一观察窗口的开始和结束，分别执行 <code>cat /proc/$PID/task/$TID/schedstat</code> 与 <code>cat "$CG/cpu.max" "$CG/cpu.stat"</code>。核对父组时按同样的间隔取样。</p></details>'+
+ '<p>这段是虚拟机的排查示例。C8 的 Linux 容器实跑可用来练习读配额记录，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
+ '<p class="source-at"><a href="https://qemu.readthedocs.io/en/master/interop/qemu-qmp-ref.html#:~:text=query-cpus-fast">QEMU vCPU 查询 ↗</a> · <a href="https://libvirt.org/manpages/virsh.html#qemu-monitor-command">libvirt 查询命令 ↗</a> · <a href="https://docs.kernel.org/scheduler/sched-stats.html#proc-pid-schedstat">Linux 调度计数 ↗</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">cgroup v2 的 CPU 接口 ↗</a></p>',
  h('subsection-3-15h236x','虚拟地址、内存位置与设备队列')+p(
  '应用用虚拟地址访问内存。VM 内先由客户机页表关联到客户机物理地址，虚拟化层再将它关联到宿主物理页面。x86 的 EPT/NPT 等二阶段分页承担相应映射；TLB 这类地址转换缓存使常用映射可以复用，实际成本还受页大小和硬件路径影响。',
- '内存规格中的 GiB 描述容量，访问代价还包括带宽、延迟与页面位置。NUMA 表示处理器访问不同内存位置的代价可能不同。客户机可见拓扑与宿主放置需要分别观察；改变线程位置后，已分配页面是否迁移仍由实际内存策略决定。',
+ '内存规格中的 GiB 描述容量，访问代价还包括带宽、延迟与页面位置。NUMA（非一致内存访问）按节点组织 CPU 和内存，处理器访问不同节点的内存时，代价可能不同。客户机可见拓扑与宿主放置需要分别观察。线程换了位置，已分配的页面是否迁移仍由内存策略决定。',
+ '如果宿主线程的排队和配额读数没有解释变慢，而相同输入的内存密集阶段耗时增加，再查 NUMA。先确认 vCPU 线程实际在哪些宿主 CPU 上运行，以及这些 CPU 属于哪些节点。然后读宿主的 <code>/proc/$PID/numa_maps</code>，按内存映射看 <code>N0</code>、<code>N1</code> 等字段，数的是当前各节点上的页面。先从 QEMU 的内存后端配置和进程映射确认哪一段用于客户机内存。页面位置只能帮助提出跨节点访问的假设，还要用同负载的耗时或带宽对照验证。',
  '设备有另一条路径。virtio 用约定的设备接口和共享队列传递缓冲描述符，让客户机驱动与后端协作；设备模拟与直通采用不同路径。直通还涉及设备访问内存的映射与隔离，例如 IOMMU，以及设备迁移能力。无论经过哪条路径，物理带宽、队列和后端服务预算都会约束完成量。',
- '所以比较两种“8 vCPU、32 GiB”规格，应同时固定程序、输入、CPU 架构和持续时间，并记录网络、磁盘与驱动条件。CPU、页面和设备三条路径分别提供解释，下一节再给持续 CPU 能力加入时间维度。'),
+ '所以比较两种“8 vCPU、32 GiB”规格，应同时固定程序、输入、CPU 架构和持续时间，并记录网络、磁盘与驱动条件。CPU、页面和设备三条路径分别提供解释，下一节再给持续 CPU 能力加入时间维度。')+
+ '<p class="source-at"><a href="https://docs.kernel.org/filesystems/proc.html">Linux 进程内存映射与节点页数 ↗</a></p>',
  h('subsection-4-1cchfaj','CPU 积分的收入、支出与余额')+p(
  '积分型实例把基线之上的 CPU 使用与一份时间余额关联。按本节题设，1 积分对应 1 vCPU 满用 1 分钟。2 vCPU、每个基线 20%，每分钟积累 2×0.2=0.4 积分；两个 vCPU 持续满用时，每分钟消费 2 积分，净消耗 1.6。初始 48 积分可支持这份负载约 48÷1.6=30 分钟。')+figures(c[3]).join('')+p(
  '余额到零后的行为由产品模式决定。Standard 模式按产品规则回到基线能力，Unlimited 等模式可使用额外积分并产生相应费用。这里的数字是一份容量账本；具体上限、生命周期、计费窗口和限速过程按所用产品核对。',
@@ -4221,7 +4232,7 @@ const progressiveCloudSectionTitles={
  '至此得到的是单份查询工作的资源模型。接下来的网络章会把这里统称的远端等待拆成解析、连接、代理与传输；后续容量章再加入扩容何时生效、丢失故障域后剩多少能力。')+link('vpc-network','沿同一查询展开网络往返')+link('elasticity','把单副本容量放入扩容与故障预算')
  ]);
 
- compute.updated='2026.11.09';
+ compute.updated='2026.11.10';
 
  const kube=select('kubernetes-basics',['声明三个副本之后，哪一步已经完成','调度完成与 kubelet 能运行是两道门','三个探针要分别回答不同的问题','EndpointSlice 表达的是后端条件','删除事件开始了，旧连接还有多久','应用信号、集群条件和真实流量分别验证','验收：从证据倒推下一次检查']);
  const k=kube.sections.map(s=>s[1]);
@@ -8464,7 +8475,16 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['结果交付','将 T1 的总数与引用送回 session-17，记录交付事实','待接入'],
     ['独立数据与效果导出','按测试者夹具读取来源、初末快照与完整写入记录','待接入']
    ])+
-   p('目标验收记录还应固定平台、适配器、模型和工具版本、策略、预算、初始数据与停止条件。每份运行把断线前任务、重连后标识、产物和失败项放在一起；由另一位检查者按相同条件复查。不能只让执行器导出它愿意展示的成功记录：独立来源和效果审计决定 evidence 是否可信。'),
+   p('先记下平台、适配器、模型和工具版本，再保存本次用的策略、预算、初始数据与停止条件。断线测试要把断线前的任务、重连后查到的任务标识和实际交付放在一起。另一位检查者应能用这些记录复核同一项结果。')+
+   '<h3 id="kairo-read-evidence">一条拒绝记录怎样验收</h3>'+
+   p('先用本机 MCP 授权实验练习。客户端用同一份有效令牌查 report-A 和 report-B，两次 HTTP 都是 200。请在客户端记录找出哪次请求被工具拒绝，再到服务端核对哪份正文实际被读了。<a href="/labs/mcp-http-authorization/client.jsonl">客户端记录 ↗</a> · <a href="/labs/mcp-http-authorization/server.jsonl">服务端记录 ↗</a>')+
+   fold('核对两次调用',
+    table(['请求','客户端看到什么','资源服务记录了什么'],[
+     ['wrong_tenant，查 report-B','isError=true，只有通用的拒绝文本','object_denied，没有读取 B 正文'],
+     ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
+    ])+
+    p('两次调用各自建立了 SDK 客户端，JSON-RPC 请求编号都是 3。先用实验标签 case 找到各自的 tools/call，再拿报告名和请求编号去对服务端的处理记录。case 是客户端为这次实验加的标签。服务端验证令牌后，才把实际主体映射到 A 租户。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
+   p('本章要验收的是另一份只读日报，正确总数为 23。接入目标时，为每次尝试保留任务标识、受信主体和报告名，再由测试者从资源服务侧核对实际读取。正文可能已经被读走，版本仍保持原样。若缺少覆盖本次尝试的读取记录，就把“B 的正文未被读取”留作待核对。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+
@@ -9292,7 +9312,8 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('同一序列有 1025 个位置时，两个进程可以分别负责 512、513 行查询。这里的通信协议把 K/V 包统一成 513 行。接收方按固定形状分配缓冲，再读另一个三个 int64 的包头，知道原拥有者、全局起点和有效行数。每跳先约定头和数据的收发顺序，程序等本次收发完成后再计算。')+
  p('按实验的 16 项特征和 float64 计算，包头固定 24 字节。补的一行在前向多传 K 和 V 共 2×16×8=256 字节。反向还带 dK、dV，同一填充行多传 4×16×8=512 字节。这是每次发送的应用数据账。有效行掩码影响数值，填充在内存和链路上仍然占空间。<a href="/article/flash-attention-io/#ragged-ring-training">核对实际包头、梯度归还和去掉掩码的失败对照</a>。');
 
- const pipelineSection=articles.find(a=>a.id==='tensor-parallel-math').sections[7];
+ const tensorParallel=articles.find(a=>a.id==='tensor-parallel-math');
+ const pipelineSection=tensorParallel.sections[7];
  pipelineSection[1]+='<h3 id="pipeline-training-schedules">完整训练的时序与激活峰值</h3>'+
  p('沿用两个阶段和编号0到3的四个微批。S0是前半模型，S1是后半模型。F0表示微批0的前向，B0表示微批0的反向，短横表示该阶段空闲。设每项前向和反向各占一槽，每阶段一槽只做一项，跨阶段传输耗时取0。同一微批须等S0的前向完成，S1才能前向。S1完成自己的前向才能反向，S0再接到S1的梯度做反向。四个微批使用同一版参数，两阶段都完成反向后统一更新一次，更新耗时另计。',
  'GPipe的排法先做完全部前向，再排反向。1F1B表示流水线进入稳定阶段后交替做一次前向、一次反向，使先到的微批可以提早完成反向。两种排法如下。')+
@@ -9311,6 +9332,14 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('例如1F1B的微批0在S0第1槽前向，S1在第2槽前向、第3槽反向，S0到第4槽才拿到梯度做反向。两种排法的前反向都在第10槽完成，每个阶段各做8项，按这段窗口计算的忙碌比例均为8/10。',
  '再数为反向保存的激活。每个微批在本阶段完成前向后增加一份，直到本阶段反向结束才释放。GPipe在反向开始前两阶段都各有4份，峰值是4/4。1F1B的S0在第2槽后同时保存微批0和1，第4槽结束释放微批0，再在第5槽纳入微批2，峰值是2份。S1每次前向紧接同一微批的反向，峰值是1份。本题的收益是降低激活峰值，实际显存还要按每份大小、缓冲与重算策略计算。')+
  '<p class="practice-links"><a href="https://arxiv.org/abs/1811.06965" target="_blank" rel="noopener">GPipe 原论文 ↗</a> · <a href="https://arxiv.org/abs/2104.04473" target="_blank" rel="noopener">Megatron-LM 流水线调度原论文 ↗</a></p>';
+ pipelineSection[1]+='<h3 id="native-pipeline-schedules">两进程实跑：调度变了，梯度该不该变</h3>'+
+ p('把四条样本拆成四个微批，每个微批只有一条样本。进程 0 用线性层和 ReLU 算出两个隐藏值，再发给进程 1。进程 1 算预测和损失，反向时把这两个隐藏值的梯度发回去。两边用同一版参数处理完四条样本，再各更新一次自己持有的层。')+
+ trainingFigure('pipeline-schedules','每行是一个进程实际完成的本地事件顺序。横向同一列没有跨进程同时发生的含义。')+
+ p('图里的 F0、B0 分别是微批 0 的前向和反向。数一数有几条微批已经前向、尚未反向。GPipe 两个阶段的峰值都是 4，1F1B 分别是 2 和 1。上面的时隙算例从最后一个微批倒排 GPipe 反向，这个版本的实现按 0 到 3 处理。只要反向对应各自的输入，所有梯度都在更新前加齐，顺序可以不同。')+
+ p('两种排程都得到预测 [1, −1.75, 0.75, −1]。目标是 [0.5, −1.25, 1, 0]，平均平方误差为 (0.25 + 0.25 + 0.0625 + 1) ÷ 4 = 0.390625。实验用未切分的模型做对照，逐项比较梯度和更新后的参数。把损失改成每个微批各除以自己的样本数，再累加四份梯度，预测没变，梯度却成了参考值的 4 倍。')+
+ p('复跑时装好 PyTorch 2.5.1，运行 <code>python pipeline_schedules.py &gt; report.json</code>。先按事件顺序重算待反向的微批数，再从 <code>wrong_local_mean</code> 查梯度与参数偏差。这次用本机 CPU/Gloo 跑 PyTorch 的两种调度。1F1B 在这个环境下保留并等待成批收发的全部工作句柄，详见程序。图只计待反向的微批，设备显存、跨机通信与吞吐需要另测。')+
+ '<p class="practice-links"><a href="/labs/pipeline-schedules.zip" download>下载程序与记录 ↓</a> · <a href="/labs/pipeline-schedules/README.md">复跑步骤 →</a> · <a href="/labs/pipeline-schedules/validation.json">查看事件、梯度和参数 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/pipelining/schedules.py">PyTorch 2.5.1 调度源码 ↗</a></p>';
+ tensorParallel.updated='2026.11.10';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
  warpMemory.updated='2026.11.10';
@@ -11121,7 +11150,7 @@ python -B target_probe.py check collected/rank-*.json
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
   kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
-  kairo.updated='2026.11.09';
+  kairo.updated='2026.11.10';
  }
  {
   const a=articleById('agent-retrieval');
@@ -11617,6 +11646,9 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',
  '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
+ const strategy=articleById('distributed-training');
+ strategy.sections[4][1]+=p('模型按层切开以后，前一个阶段要等后一个阶段传回梯度，才能完成这个微批的反向。<a href="/article/tensor-parallel-math/#native-pipeline-schedules">选读两进程流水线实验</a>，用四个微批比较等待反向的数量，并核对两种排程更新的是同一个整批目标。');
+ strategy.updated='2026.11.10';
 })();
 
 
@@ -12467,13 +12499,21 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   '<p>恢复阶段两个端点继续增加好计数。6 秒窗的坏率归零时，16 秒窗仍有约 13.33% 的坏率，快速告警已经解除。把两个坏率和告警状态一起读，才能知道是哪条条件改变。这个实验验证本机抓取、计数器重置和规则状态，生产流量、通知投递和当班响应分别验收。</p>'+
   '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>'+
   '<h3 id="alert-notification-handoff">规则已经触发，为什么还没收到通知</h3>'+
-  '<p>上面的实跑记录里，<code>GuideLiveFastBurn</code> 对 <code>job="reports"</code>、<code>severity="teaching"</code> 进入过 <code>firing</code>。通知还要经过 Alertmanager。它接收 Prometheus 发来的告警，按标签分组、匹配路由，再发送到相应的接收方。实验实测到规则求值为止，以下是接入 Alertmanager 的测试环境中可做的检查。</p>'+
+  '<p>双窗口实验里的 <code>GuideLiveFastBurn</code> 已进入 <code>firing</code>。从规则触发到收件，中间还有 Alertmanager。它接收告警，按标签分组并选择接收方。排查时分别查看规则、Alertmanager 和接收端。</p>'+
   '<ol><li>告警活跃时，在 Prometheus 查询 <code>/api/v1/alerts</code>，确认告警名、标签和 <code>state</code>。<code>firing</code> 表示这组标签的规则条件已持续满足。</li>'+
   '<li>在同一台 Prometheus 查询 <code>/api/v1/alertmanagers</code>。<code>activeAlertmanagers</code> 列出当前发现并保留的目标地址。找不到预期地址，先查配置和服务发现。地址在列表中时，继续检查是否发到了那里。</li>'+
   '<li>在对应的 Alertmanager 查询 <code>/api/v2/alerts</code>，对照告警名、标签和时段。发送前若改写了标签，就按发出的标签查。找不到活跃告警时，回到 Prometheus 查发送错误。找到后，先查 <code>silencedBy</code>（人为静默）和 <code>inhibitedBy</code>（因另一条告警而抑制），再看匹配的路由和接收方。最后查测试接收端的入站请求或值班平台的事件记录，确认是否送达。</li></ol>'+
-  '<p>假设教学告警进入新的分组，路由的 <code>group_wait</code> 设为 30 秒，也就是首条通知先等 30 秒。若 Alertmanager 在第 10 秒就收到这条告警的恢复，它就不会为这条告警发出首条通知。10 秒是推演输入。规则里的 <code>for: 4s</code> 在 Prometheus 端判断何时进入触发状态，和通知等待分开计时。</p>'+
+  '<p>Prometheus 的 <code>for</code> 决定条件持续多久才触发。Alertmanager 的 <code>group_wait</code> 决定新分组的首条通知等多久。两段等待从不同事件开始计时。</p>'+
   '<details><summary>在测试环境用 curl 读取三个接口</summary><p>将 <code>PROM</code> 和 <code>AM</code> 设为测试环境中两个服务的基址。</p><p><code>curl -fsS "$PROM/api/v1/alerts"</code><br><code>curl -fsS "$PROM/api/v1/alertmanagers"</code><br><code>curl -fsS "$AM/api/v2/alerts"</code></p></details>'+
-  '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>';
+  '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>'+
+  '<h3 id="native-alert-notification">实跑：三条告警都触发，收件端收到了什么</h3>'+
+  '<p>另起一次本机实验，把双窗口表达式换成一个可以控制的 0 或 1。三条序列用 <code>case</code> 区分，都先变成 1。规则的 <code>for</code> 设为 1 秒，Prometheus 实际抓取并向 Alertmanager 发送三条告警。Alertmanager 按 <code>severity="teaching"</code> 匹配到 <code>/reports</code>，每个分组等 5 秒再发送首条通知。</p>'+
+  trainingFigure('alert-notification','三条都进了 Alertmanager。提前恢复和静默分别留下不同的记录，接收端只收到 long 的触发与恢复。')+
+  '<p>先看 <code>short</code>。Alertmanager 收到以后，程序就把输入恢复成 0。它在首发等待结束前从活跃列表消失，接收端没有这组请求。再看 <code>silenced</code>。程序提前建好静默，首发等待过去后，这条告警仍在列表中，<code>silencedBy</code> 仍能查到静默 ID。</p>'+
+  '<p>最后看 <code>long</code>。收到触发通知后才把输入恢复成 0，接收端随后又收到恢复通知。原始 HTTP 请求体里的两条状态依次是 <code>firing</code> 和 <code>resolved</code>，都进入 <code>/reports</code>。默认路由 <code>/fallback</code> 没收到请求。先核对实际入站，再判断通知送达。</p>'+
+  trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
+  '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
+  '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
  a.updated='2026.11.10';
 })();
 
@@ -14276,12 +14316,12 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
  'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。用<a href="/article/storage-recovery/?goal=cloud-sre#native-postgres-pitr">PostgreSQL 恢复对照</a>核对实例可用和业务状态正确这两个判断。用<a href="/article/elasticity/?goal=cloud-sre#native-cpu-quota-http">CPU 配额对照</a>说明成功延迟和入口拒绝为什么要分开看。'},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。再用<a href="/article/slo/?goal=cloud-sre#native-alert-notification">收件对照</a>分清规则触发、静默和实际送达。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。用<a href="/article/storage-recovery/?goal=cloud-sre#native-postgres-pitr">PostgreSQL 恢复对照</a>核对实例可用和业务状态正确这两个判断。用<a href="/article/elasticity/?goal=cloud-sre#native-cpu-quota-http">CPU 配额对照</a>说明成功延迟和入口拒绝为什么要分开看。'},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。'},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。用<a href="/article/model-serving/?goal=ai-inference#rtx-pro-6000-cache-case">单卡 KV 对照</a>比较解码吞吐、提示处理时间和峰值显存，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。用<a href="/article/inference-performance/?goal=ai-inference#native-pd-split">推理分池实验</a>复算交接字节和首项后的等待。用<a href="/article/inference-performance/?goal=ai-inference#tp-placement">八卡部署账本</a>判断单个副本能否接单，再设计真机比较。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。'},
- 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作。用<a href="/article/operator-profiling/?goal=ai-operators#torch-compile-graph-break">断图实战</a>区分 Python 边界与形状变化带来的重编译，再用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度，再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作。用<a href="/article/operator-profiling/?goal=ai-operators#torch-compile-graph-break">断图实战</a>区分 Python 边界与形状变化带来的重编译，再用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。用<a href="/article/tensor-parallel-math/?goal=ai-operators#native-pipeline-schedules">流水线排程实战</a>数清待反向的微批，验证两种排程的参数更新。再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。最后指出实际 GPU 仍要采集哪些计时和内存证据。'},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-result-receipt">坏回执对照</a>定位拒绝响应的一层，并按原操作查接收方。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。'}
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-result-receipt">坏回执对照</a>定位拒绝响应的一层，并按原操作查接收方。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。最后用<a href="/article/kairo-practice/?goal=agent-platform#kairo-read-evidence">只读验收练习</a>对上两次 HTTP 200 与资源端的实际读取。'}
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14846,6 +14886,8 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
+ 'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
  'mcp-result-receipt':{folder:'mcp-result-receipt',title:'写入已提交，按原操作查询 MCP 回执'},
@@ -15173,6 +15215,14 @@ labLearningCatalog.push(
   scope:'真实 Docker 网络和本机 HTTP 请求。生产网络插件与服务身份另行验收。'}
 );
 labLearningCatalog.push(
+ {id:'cloud-alert-notification',track:'cloud',stage:2,title:'三条告警都触发，哪条送到接收端',chapter:'slo',anchor:'native-alert-notification',pack:'alert-notification',
+  files:['alert_notification.py','release-provenance.json'],env:'Python 3 · Prometheus 3.5.0 · Alertmanager 0.34.2 · macOS arm64 实测',kind:'真实规则、分组与回环 HTTP',
+  observe:'对照提前恢复、持续触发和静默，分别看规则状态、Alertmanager 入站和接收端请求。',
+  scope:'固定三条序列、本机两个进程及回环 HTTP 接收端。外部通知渠道与高可用集群另行验收。'},
+ {id:'ai-pipeline-schedules',track:'ai',stage:2,title:'改成 1F1B 后，哪些微批还在等反向',chapter:'tensor-parallel-math',anchor:'native-pipeline-schedules',pack:'pipeline-schedules',
+  files:['pipeline_schedules.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实流水线调度与梯度对照',
+  observe:'比较两种调度的前向、反向和待反向微批数，再与整批参考核对梯度与参数更新。',
+  scope:'本机双精度、四个等长微批。1F1B 保留成批收发的全部工作句柄。峰值只计微批，不计设备显存或吞吐。'},
  {id:'cloud-cpu-quota-http',track:'cloud',stage:2,title:'CPU 配额收紧后，100 次请求去了哪里',chapter:'elasticity',anchor:'native-cpu-quota-http',pack:'cpu-quota-http',
   files:['cpu_quota_http.py','workload.py'],env:'本机 Linux Docker · cgroup v2 · 已缓存 Python 镜像',kind:'真实 HTTP 与 CPU 限额计数',
   observe:'同一发送计划，对照实际 CPU 配额、HTTP 完成和拒绝以及成功请求的排队时长。',
@@ -15428,5 +15478,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2d3864387317182a74dc4b660e38f695bac7a567ab009b1c6c07d273fb16d20f";
+const staticReadingVersion="991e39f8f0ceb07ed69b0e4f6d5fa1d9f812c4342d01179eb8e870089880379b";
 

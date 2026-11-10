@@ -1,5 +1,7 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
+ 'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
  'mcp-result-receipt':{folder:'mcp-result-receipt',title:'写入已提交，按原操作查询 MCP 回执'},
@@ -327,6 +329,14 @@ labLearningCatalog.push(
   scope:'真实 Docker 网络和本机 HTTP 请求。生产网络插件与服务身份另行验收。'}
 );
 labLearningCatalog.push(
+ {id:'cloud-alert-notification',track:'cloud',stage:2,title:'三条告警都触发，哪条送到接收端',chapter:'slo',anchor:'native-alert-notification',pack:'alert-notification',
+  files:['alert_notification.py','release-provenance.json'],env:'Python 3 · Prometheus 3.5.0 · Alertmanager 0.34.2 · macOS arm64 实测',kind:'真实规则、分组与回环 HTTP',
+  observe:'对照提前恢复、持续触发和静默，分别看规则状态、Alertmanager 入站和接收端请求。',
+  scope:'固定三条序列、本机两个进程及回环 HTTP 接收端。外部通知渠道与高可用集群另行验收。'},
+ {id:'ai-pipeline-schedules',track:'ai',stage:2,title:'改成 1F1B 后，哪些微批还在等反向',chapter:'tensor-parallel-math',anchor:'native-pipeline-schedules',pack:'pipeline-schedules',
+  files:['pipeline_schedules.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实流水线调度与梯度对照',
+  observe:'比较两种调度的前向、反向和待反向微批数，再与整批参考核对梯度与参数更新。',
+  scope:'本机双精度、四个等长微批。1F1B 保留成批收发的全部工作句柄。峰值只计微批，不计设备显存或吞吐。'},
  {id:'cloud-cpu-quota-http',track:'cloud',stage:2,title:'CPU 配额收紧后，100 次请求去了哪里',chapter:'elasticity',anchor:'native-cpu-quota-http',pack:'cpu-quota-http',
   files:['cpu_quota_http.py','workload.py'],env:'本机 Linux Docker · cgroup v2 · 已缓存 Python 镜像',kind:'真实 HTTP 与 CPU 限额计数',
   observe:'同一发送计划，对照实际 CPU 配额、HTTP 完成和拒绝以及成功请求的排队时长。',

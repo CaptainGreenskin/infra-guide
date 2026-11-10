@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="241" viewBox="0 0 520 241" role="img" aria-labelledby="title description">
+<title id="title">两种流水线排程各进程的本地事件顺序</title>
+<desc id="description">GPipe 先前向再反向，两个阶段都积四个待反向微批。1F1B 交错前向反向，分别积两个和一个。</desc>
+<metadata>{"gpipe":{"events":[["F0","F1","F2","F3","B0","B1","B2","B3"],["F0","F1","F2","F3","B0","B1","B2","B3"]],"peaks":[4,4]},"1f1b":{"events":[["F0","F1","B0","F2","B1","F3","B2","B3"],["F0","B0","F1","B1","F2","B2","F3","B3"]],"peaks":[2,1]}}</metadata>
+<rect x="1" y="1" width="518" height="239" rx="14" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="14" fill="#22324d">
+<text x="18" y="28" font-size="17" font-weight="700">四个微批怎样走过两个阶段</text>
+<text x="18" y="55">阶段</text><text x="118" y="55">本地事件顺序</text><text x="438" y="55">待反向峰值</text>
+<text x="18" y="88">GPipe · 0</text>
+<rect x="116" y="69" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="132" y="88" text-anchor="middle" fill="#164e91">F0</text>
+<rect x="154" y="69" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="170" y="88" text-anchor="middle" fill="#164e91">F1</text>
+<rect x="192" y="69" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="208" y="88" text-anchor="middle" fill="#164e91">F2</text>
+<rect x="230" y="69" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="246" y="88" text-anchor="middle" fill="#164e91">F3</text>
+<rect x="268" y="69" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="284" y="88" text-anchor="middle" fill="#7e2678">B0</text>
+<rect x="306" y="69" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="322" y="88" text-anchor="middle" fill="#7e2678">B1</text>
+<rect x="344" y="69" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="360" y="88" text-anchor="middle" fill="#7e2678">B2</text>
+<rect x="382" y="69" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="398" y="88" text-anchor="middle" fill="#7e2678">B3</text>
+<text x="474" y="88" text-anchor="middle" font-weight="700">4</text>
+<text x="18" y="122">GPipe · 1</text>
+<rect x="116" y="103" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="132" y="122" text-anchor="middle" fill="#164e91">F0</text>
+<rect x="154" y="103" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="170" y="122" text-anchor="middle" fill="#164e91">F1</text>
+<rect x="192" y="103" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="208" y="122" text-anchor="middle" fill="#164e91">F2</text>
+<rect x="230" y="103" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="246" y="122" text-anchor="middle" fill="#164e91">F3</text>
+<rect x="268" y="103" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="284" y="122" text-anchor="middle" fill="#7e2678">B0</text>
+<rect x="306" y="103" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="322" y="122" text-anchor="middle" fill="#7e2678">B1</text>
+<rect x="344" y="103" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="360" y="122" text-anchor="middle" fill="#7e2678">B2</text>
+<rect x="382" y="103" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="398" y="122" text-anchor="middle" fill="#7e2678">B3</text>
+<text x="474" y="122" text-anchor="middle" font-weight="700">4</text>
+<text x="18" y="166">1F1B · 0</text>
+<rect x="116" y="147" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="132" y="166" text-anchor="middle" fill="#164e91">F0</text>
+<rect x="154" y="147" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="170" y="166" text-anchor="middle" fill="#164e91">F1</text>
+<rect x="192" y="147" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="208" y="166" text-anchor="middle" fill="#7e2678">B0</text>
+<rect x="230" y="147" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="246" y="166" text-anchor="middle" fill="#164e91">F2</text>
+<rect x="268" y="147" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="284" y="166" text-anchor="middle" fill="#7e2678">B1</text>
+<rect x="306" y="147" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="322" y="166" text-anchor="middle" fill="#164e91">F3</text>
+<rect x="344" y="147" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="360" y="166" text-anchor="middle" fill="#7e2678">B2</text>
+<rect x="382" y="147" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="398" y="166" text-anchor="middle" fill="#7e2678">B3</text>
+<text x="474" y="166" text-anchor="middle" font-weight="700">2</text>
+<text x="18" y="200">1F1B · 1</text>
+<rect x="116" y="181" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="132" y="200" text-anchor="middle" fill="#164e91">F0</text>
+<rect x="154" y="181" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="170" y="200" text-anchor="middle" fill="#7e2678">B0</text>
+<rect x="192" y="181" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="208" y="200" text-anchor="middle" fill="#164e91">F1</text>
+<rect x="230" y="181" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="246" y="200" text-anchor="middle" fill="#7e2678">B1</text>
+<rect x="268" y="181" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="284" y="200" text-anchor="middle" fill="#164e91">F2</text>
+<rect x="306" y="181" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="322" y="200" text-anchor="middle" fill="#7e2678">B2</text>
+<rect x="344" y="181" width="32" height="28" rx="5" fill="#dbeafe"/>
+<text x="360" y="200" text-anchor="middle" fill="#164e91">F3</text>
+<rect x="382" y="181" width="32" height="28" rx="5" fill="#fae8ff"/>
+<text x="398" y="200" text-anchor="middle" fill="#7e2678">B3</text>
+<text x="474" y="200" text-anchor="middle" font-weight="700">1</text>
+<text x="18" y="222" font-size="13">F 前向 · B 反向 · 每行单独计数</text>
+</g></svg>

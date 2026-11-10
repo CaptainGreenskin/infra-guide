@@ -1,0 +1,519 @@
+{
+  "status": "passed",
+  "environment": {
+    "device": "cpu",
+    "backend": "gloo",
+    "world_size": 2,
+    "system": "Darwin",
+    "arch": "arm64",
+    "python": "3.12.13",
+    "torch": "2.5.1"
+  },
+  "inputs": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      -1
+    ],
+    [
+      -1,
+      3
+    ],
+    [
+      3,
+      1
+    ]
+  ],
+  "targets": [
+    [
+      0.5
+    ],
+    [
+      -1.25
+    ],
+    [
+      1.0
+    ],
+    [
+      0.0
+    ]
+  ],
+  "microbatches": 4,
+  "lr": 0.125,
+  "atol": 1e-12,
+  "reference": {
+    "predictions": [
+      [
+        1.0
+      ],
+      [
+        -1.75
+      ],
+      [
+        0.75
+      ],
+      [
+        -1.0
+      ]
+    ],
+    "mean_loss": 0.390625,
+    "ranks": [
+      {
+        "gradients": {
+          "0.weight": [
+            [
+              -0.40625,
+              -0.03125
+            ],
+            [
+              1.0,
+              0.125
+            ]
+          ],
+          "0.bias": [
+            -0.15625,
+            0.375
+          ]
+        },
+        "updated": {
+          "0.weight": [
+            [
+              1.05078125,
+              1.00390625
+            ],
+            [
+              1.875,
+              -1.015625
+            ]
+          ],
+          "0.bias": [
+            0.51953125,
+            -0.546875
+          ]
+        }
+      },
+      {
+        "gradients": {
+          "weight": [
+            [
+              -2.0625,
+              -3.375
+            ]
+          ],
+          "bias": [
+            -0.625
+          ]
+        },
+        "updated": {
+          "weight": [
+            [
+              0.5078125,
+              -0.078125
+            ]
+          ],
+          "bias": [
+            0.203125
+          ]
+        }
+      }
+    ]
+  },
+  "schedules": {
+    "gpipe": {
+      "ranks": [
+        {
+          "events": [
+            "F0",
+            "F1",
+            "F2",
+            "F3",
+            "B0",
+            "B1",
+            "B2",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            2,
+            3,
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "max_pending": 4,
+          "gradients": {
+            "0.weight": [
+              [
+                -0.40625,
+                -0.03125
+              ],
+              [
+                1.0,
+                0.125
+              ]
+            ],
+            "0.bias": [
+              -0.15625,
+              0.375
+            ]
+          },
+          "updated": {
+            "0.weight": [
+              [
+                1.05078125,
+                1.00390625
+              ],
+              [
+                1.875,
+                -1.015625
+              ]
+            ],
+            "0.bias": [
+              0.51953125,
+              -0.546875
+            ]
+          }
+        },
+        {
+          "events": [
+            "F0",
+            "F1",
+            "F2",
+            "F3",
+            "B0",
+            "B1",
+            "B2",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            2,
+            3,
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "max_pending": 4,
+          "gradients": {
+            "weight": [
+              [
+                -2.0625,
+                -3.375
+              ]
+            ],
+            "bias": [
+              -0.625
+            ]
+          },
+          "updated": {
+            "weight": [
+              [
+                0.5078125,
+                -0.078125
+              ]
+            ],
+            "bias": [
+              0.203125
+            ]
+          },
+          "predictions": [
+            [
+              1.0
+            ],
+            [
+              -1.75
+            ],
+            [
+              0.75
+            ],
+            [
+              -1.0
+            ]
+          ],
+          "losses": [
+            0.0625,
+            0.0625,
+            0.015625,
+            0.25
+          ]
+        }
+      ],
+      "gradient_scale_vs_dense": 1.0,
+      "p2p_work_policy": "upstream_default",
+      "max_prediction_error": 0.0,
+      "max_gradient_error": 0.0,
+      "max_step_error": 0.0
+    },
+    "1f1b": {
+      "ranks": [
+        {
+          "events": [
+            "F0",
+            "F1",
+            "B0",
+            "F2",
+            "B1",
+            "F3",
+            "B2",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            2,
+            1,
+            0
+          ],
+          "max_pending": 2,
+          "gradients": {
+            "0.weight": [
+              [
+                -0.40625,
+                -0.03125
+              ],
+              [
+                1.0,
+                0.125
+              ]
+            ],
+            "0.bias": [
+              -0.15625,
+              0.375
+            ]
+          },
+          "updated": {
+            "0.weight": [
+              [
+                1.05078125,
+                1.00390625
+              ],
+              [
+                1.875,
+                -1.015625
+              ]
+            ],
+            "0.bias": [
+              0.51953125,
+              -0.546875
+            ]
+          }
+        },
+        {
+          "events": [
+            "F0",
+            "B0",
+            "F1",
+            "B1",
+            "F2",
+            "B2",
+            "F3",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0
+          ],
+          "max_pending": 1,
+          "gradients": {
+            "weight": [
+              [
+                -2.0625,
+                -3.375
+              ]
+            ],
+            "bias": [
+              -0.625
+            ]
+          },
+          "updated": {
+            "weight": [
+              [
+                0.5078125,
+                -0.078125
+              ]
+            ],
+            "bias": [
+              0.203125
+            ]
+          },
+          "predictions": [
+            [
+              1.0
+            ],
+            [
+              -1.75
+            ],
+            [
+              0.75
+            ],
+            [
+              -1.0
+            ]
+          ],
+          "losses": [
+            0.0625,
+            0.0625,
+            0.015625,
+            0.25
+          ]
+        }
+      ],
+      "gradient_scale_vs_dense": 1.0,
+      "p2p_work_policy": "retain_all_handles",
+      "max_prediction_error": 0.0,
+      "max_gradient_error": 0.0,
+      "max_step_error": 0.0
+    },
+    "wrong_local_mean": {
+      "ranks": [
+        {
+          "events": [
+            "F0",
+            "F1",
+            "F2",
+            "F3",
+            "B0",
+            "B1",
+            "B2",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            2,
+            3,
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "max_pending": 4,
+          "gradients": {
+            "0.weight": [
+              [
+                -1.625,
+                -0.125
+              ],
+              [
+                4.0,
+                0.5
+              ]
+            ],
+            "0.bias": [
+              -0.625,
+              1.5
+            ]
+          },
+          "updated": {
+            "0.weight": [
+              [
+                1.203125,
+                1.015625
+              ],
+              [
+                1.5,
+                -1.0625
+              ]
+            ],
+            "0.bias": [
+              0.578125,
+              -0.6875
+            ]
+          }
+        },
+        {
+          "events": [
+            "F0",
+            "F1",
+            "F2",
+            "F3",
+            "B0",
+            "B1",
+            "B2",
+            "B3"
+          ],
+          "pending_after_each_event": [
+            1,
+            2,
+            3,
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "max_pending": 4,
+          "gradients": {
+            "weight": [
+              [
+                -8.25,
+                -13.5
+              ]
+            ],
+            "bias": [
+              -2.5
+            ]
+          },
+          "updated": {
+            "weight": [
+              [
+                1.28125,
+                1.1875
+              ]
+            ],
+            "bias": [
+              0.4375
+            ]
+          },
+          "predictions": [
+            [
+              1.0
+            ],
+            [
+              -1.75
+            ],
+            [
+              0.75
+            ],
+            [
+              -1.0
+            ]
+          ],
+          "losses": [
+            0.25,
+            0.25,
+            0.0625,
+            1.0
+          ]
+        }
+      ],
+      "gradient_scale_vs_dense": 4.0,
+      "p2p_work_policy": "upstream_default",
+      "max_prediction_error": 0.0,
+      "max_gradient_error": 10.125,
+      "max_step_error": 1.265625
+    }
+  },
+  "scope": "Local float64 two-stage training, four equal microbatches and one SGD update. The 1F1B run retains every P2P work handle. Pending forwards count logical microbatches, not bytes or device memory.",
+  "source_sha256": {
+    "pipeline_schedules.py": "0cc6bd87df11c477f5d879b32d1f24fd652adf90aa70fef443b322b62425bf00",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+    "README.md": "bf96f2389b745003f7a740beb39af69e6e6848da728e6acc1e1721799f4198d9"
+  }
+}

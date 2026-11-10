@@ -5837,6 +5837,103 @@
         "评分练习：两组流量和一次快速消耗",
         "配套实战：真实Prometheus规则求值"
       ]
+    },
+    {
+      "id": "cloud-compute",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "21db0e3d5dcf400dacd9052e80e714e4a7f96c77f237b5873d4898e225d17f6d",
+      "reviewed_content_sha256": "ad2c7aecaec91882f2eab55028475f61f6026481f18cdc48ba44f3fbd105c939",
+      "scope": "Explain how guest steal leads to a specific host vCPU thread, CPU queue counters and cgroup ancestors.",
+      "observation": "The VM values are a worked example; the CPU throttle and rejection counters come from the separate Linux cgroup lab.",
+      "headings": [
+        "计算形态：裸金属、虚拟机与容器",
+        "vCPU资源保证：核心、线程、超分与持续能力",
+        "内存与设备：地址转换、NUMA和I/O路径",
+        "突发性能：CPU积分与持续负载",
+        "规格问题先要有一份工作说明",
+        "CPU 秒、墙钟秒和利用率的单位",
+        "平均工作量会随输入分布移动",
+        "在途数量怎样转化成活动状态和内存",
+        "吞吐上界由最紧的资源决定",
+        "压测怎样避免“自己把流量降下来了”",
+        "实测：CPU时间、等待与线程",
+        "验收：把四核写成待验证的候选"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "4dc9fdced17cc3f7c91387d9b568a07ab61ee29a7daabac71f1deeeb7e4ea44d",
+      "reviewed_content_sha256": "1abb067701494e4891fae3c7f1672264f635ad5d1f7dbca35b47e8d605751f75",
+      "scope": "Connect the model-parallel mechanism to an actual two-stage schedule and full-batch update.",
+      "observation": "The pipeline exercise is an optional detour from the training chapter.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "9a23a36291f1900bbf038942f9c167c72d878d4ec3aeefed166553c8cac3fe80",
+      "reviewed_content_sha256": "5196606bb70d5924239d8578381d50a5c61130267443c40aff1fc3be2beb295f",
+      "scope": "Compare GPipe and 1F1B event order, local activation lifetimes, full gradients and one SGD step.",
+      "observation": "Two CPU/Gloo processes, equal microbatches and adapted 1F1B work-handle retention. The bad loss denominator multiplies the gradient by four. No measured device memory or throughput.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "34a37fe7f5b390f31f7c4f804caa845359b65fee660572b98aea9061cec574d3",
+      "reviewed_content_sha256": "065c49d50a1d464b1a14051911e82f60e57e0b8675550c4db0331e776b62cf3e",
+      "scope": "Teach one read-only acceptance check from raw client and resource-side MCP logs.",
+      "observation": "Two independent HTTP 200 calls with the same request number are joined by case and object. The 42 report is separate from the Kairo 23 fixture. No target Kairo runtime is claimed.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "a79eaf5568bcc1f5d799b7969b3ce434c0b578c1c3c098fa421e19b6d3c6315a",
+      "reviewed_content_sha256": "5f87c49e961d09e04674fcf44daf23a3af6246790912db8b0ec414e038193164",
+      "scope": "Follow three firing labels through discovery, Alertmanager reception and the actual HTTP recipient.",
+      "observation": "Short resolves before the first wait, the silence remains observable after that wait, and only the long group reaches the local webhook. External notification providers and HA are separate.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
     }
   ]
 }
