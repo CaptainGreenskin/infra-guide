@@ -6200,6 +6200,58 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1ff48e8729584a0e286abf67b2cda8f3979d0eec8b4c5606d787545b2c298603",
+      "reviewed_content_sha256": "f63ce129a446ac2e90456b1844f50a6b8bb172c28f8ca4699fe84b03635b4f52",
+      "scope": "Follow a versioned release manifest through native Git SSH signature validation, exact file hashing and independent activation readback.",
+      "observation": "A trusted old signature remains valid when a local alias moves, but the changed bytes fail the manifest digest. A separately valid but untrusted signing key also fails, and active bytes remain v1.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "5465a58f03f8da80688d4c22d25e7e00a5007115fd9fc7acf01aa09bb8f75f4d",
+      "reviewed_content_sha256": "9bebabfca5975d1823915798a71416c61c066d6f9a4592f9e8a15829f50ae0af",
+      "scope": "Separate two native DataLoader worker preparation records from the trainer checkpoint and compare resumed SGD with uninterrupted execution.",
+      "observation": "Workers prepare batches 0 through 4 while the trainer commits only batch 0. A new trainer resumes at batch 1 with the same updates. Cursor 5 skips four uncommitted batches.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "fcc63f294697e1b1a3217bd03d675893a1622497678bc96566bda4484abf9840",
+      "reviewed_content_sha256": "d64797650d49058b545868c6b7c6b0e029844614195050512a5bb32bdbfd7575",
+      "scope": "Trace a withdrawn preference through the live LangGraph Store, an older task checkpoint, resumption and an independent HTTP receiver.",
+      "observation": "The old task sends the short format when it reuses state, and the standard format after a current read. Deleting old task checkpoints does not change the two already captured receipts.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
     }
   ]
 }

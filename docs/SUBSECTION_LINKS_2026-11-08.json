@@ -315,9 +315,11 @@
       "targets": [
         "subsection-8-1mpi7nq",
         "subsection-8-lctfpe",
-        "native-controller-reconcile"
+        "native-controller-reconcile",
+        "native-release-artifact-trust"
       ],
       "visible_targets": [
+        "native-release-artifact-trust",
         "subsection-8-1mpi7nq",
         "subsection-8-lctfpe",
         "native-controller-reconcile"
@@ -635,9 +637,11 @@
         "subsection-5-pn7hyb",
         "subsection-6-101j0v8",
         "subsection-7-1jzf8j8",
-        "subsection-7-1v4jgvi"
+        "subsection-7-1v4jgvi",
+        "native-prefetch-resume"
       ],
       "visible_targets": [
+        "native-prefetch-resume",
         "subsection-7-1jzf8j8",
         "subsection-7-1v4jgvi"
       ]
@@ -909,7 +913,8 @@
         "subsection-5-15nbv4g",
         "subsection-6-4asmho",
         "subsection-7-1iwapob",
-        "subsection-7-9i1in"
+        "subsection-7-9i1in",
+        "native-memory-withdrawal"
       ],
       "visible_targets": [
         "subsection-2-1u8gjho",
@@ -919,7 +924,8 @@
         "subsection-3-c0vptt",
         "subsection-4-17hu0bc",
         "subsection-5-15nbv4g",
-        "subsection-6-4asmho"
+        "subsection-6-4asmho",
+        "native-memory-withdrawal"
       ]
     },
     {

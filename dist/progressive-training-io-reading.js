@@ -187,6 +187,24 @@
  p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
  ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
 
+ data.sections[5][1]+=
+  h('native-prefetch-resume','实战：worker 已备好五批，训练只提交了一批')+
+  p('用 PyTorch 的 DataLoader 取 12 条固定样本，每批 2 条，从批号 0 开始。两个 worker 各预取 2 批，加载器起初分派批号 0–3，训练进程取走第 0 批后，又安排了第 4 批。每个 worker 整理完一批就报告批号和进程编号。这条报告只证明组批已经完成。')+
+  trainingFigure('prefetch-resume-step','保存时 0–4 已组批，只有 0 完成参数更新。恢复应从 1 重新取样。')+
+  p('第 0 批样本 [4,1] 的训练目标是 [4.5,1.25]。令模型只输出一个权重 w，初始 w=0。每条样本的损失是 (w−y)²/2，取两项均值后梯度为 w−mean(y)=−2.875。首步用这个梯度初始化动量缓冲，学习率 0.25 使 w 变为 0.71875。保存这一步时，下一批编号是 1。')+
+  trainingCode('同一次保存写入权重、优化器与下一批编号','PYTHON',`next_batch = updates[-1]["batch"] + 1
+torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict(),
+            "data_identity": DATA_IDENTITY, "next_batch": next_batch}, checkpoint)`)+
+  p('源训练进程退出。新进程从检查点读回权重和动量，按原顺序取批号 1–5。第 1 批原先由 worker 1 准备，重启后换成 worker 0。两次目标仍是 [8.75,3.75]，因为这里用固定轮次和样本 ID 重建变换。')+
+  t(['输入恢复方式','重启后用于更新的批号','最终 w'],[
+   ['不中断的基线','从 0 到 5 连续更新','7.361175537109375'],
+   ['从检查点保存的 1 开始','1、2、3、4、5','7.361175537109375'],
+   ['从 worker 进度推出来的 5 开始','只做 5，漏掉 1–4','2.9296875']
+  ])+
+  p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
+  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
+ data.updated='2026.11.11';
+
  const overlap = comm.sections[4];
  overlap[1] = overlap[1].replace('才会缩短这一轮。</p>', '$&' +
   trainingFigure('collective-overlap-tail','同一条时间轴上，第一桶同步藏在反向计算里。把它从 3 毫秒缩到 1 毫秒，最后一桶仍在 8 毫秒完成。'));

@@ -334,10 +334,12 @@ const fieldPracticeFollowups={
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
  'cloud-data':{'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
+ training:{'tr-input':['ai-prefetch-resume-step']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
- agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-retrieval':['agent-rag-citation-oracle']}
+ agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)

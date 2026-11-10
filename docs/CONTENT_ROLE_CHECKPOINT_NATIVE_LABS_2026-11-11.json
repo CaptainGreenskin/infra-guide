@@ -1,0 +1,61 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "858dbcffa41d16a8431e0b3c38f8f1b9e90f68ca",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CONCEPT_EVIDENCE_HISTORY_2026-11-11.json": "29e0f54cd012c2646c0fd0c2347600a77c374fe2e77b8d88d9643dbd2cb9311c"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "artifact-contract",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "9ecd85da50cc221dbb2a9fb781b70436ceafbbec10b21fa1d69cb0c2d3f2a782",
+      "reviewed_content_sha256": "62b81ff220d33bb839fa62a37ab25f8df44f44faa93ecd1f13885ad116eb1b0c",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "tr-input",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "6841f4d7ee581070ad48f9cafe6f29ba71a65157182a276c6f7af400c251da14",
+      "reviewed_content_sha256": "3230560d822cbfe1b62451d2d25d8faa5981eba7dec9fede32930ec0db255074",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-context",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "a3129e2abc50ce2d5434fe965ead811901cc4e6b7b696df3ef29a92fa64e5ddb",
+      "reviewed_content_sha256": "0e07a0467ea0b36af77a2c10a7f2bd6f743628d885f55fd268da44a0d7efff7c",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "delivery",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow a versioned release manifest through native Git SSH signature validation, exact file hashing and independent activation readback.",
+      "observation": "A trusted old signature remains valid when a local alias moves, but the changed bytes fail the manifest digest. A separately valid but untrusted signing key also fails, and active bytes remain v1.",
+      "reviewed_content_sha256": "f63ce129a446ac2e90456b1844f50a6b8bb172c28f8ca4699fe84b03635b4f52",
+      "record": "dist/labs/release-artifact-trust/validation.json"
+    },
+    {
+      "chapter": "data-pipeline",
+      "reviewed_at": "2026-11-11",
+      "scope": "Separate two native DataLoader worker preparation records from the trainer checkpoint and compare resumed SGD with uninterrupted execution.",
+      "observation": "Workers prepare batches 0 through 4 while the trainer commits only batch 0. A new trainer resumes at batch 1 with the same updates. Cursor 5 skips four uncommitted batches.",
+      "reviewed_content_sha256": "9bebabfca5975d1823915798a71416c61c066d6f9a4592f9e8a15829f50ae0af",
+      "record": "dist/labs/prefetch-resume-step/validation.json"
+    },
+    {
+      "chapter": "agent-memory",
+      "reviewed_at": "2026-11-11",
+      "scope": "Trace a withdrawn preference through the live LangGraph Store, an older task checkpoint, resumption and an independent HTTP receiver.",
+      "observation": "The old task sends the short format when it reuses state, and the standard format after a current read. Deleting old task checkpoints does not change the two already captured receipts.",
+      "reviewed_content_sha256": "d64797650d49058b545868c6b7c6b0e029844614195050512a5bb32bdbfd7575",
+      "record": "dist/labs/memory-withdrawal/validation.json"
+    }
+  ]
+}

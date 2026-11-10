@@ -6,7 +6,20 @@
 .learning-goal-options a{display:inline-flex;align-items:center;min-height:44px;padding:6px 12px;border-radius:4px;color:var(--text);font-size:14px;line-height:1.5;text-decoration:none}
 .learning-goal-options a:hover,.learning-goal-options a:focus-visible{color:var(--blue);background:var(--soft)}
 .learning-goal-options a[aria-current="page"]{color:var(--blue);background:var(--blue-soft);box-shadow:inset 0 -2px var(--blue);font-weight:650}
-.learning-goal{margin:10px 0 36px;scroll-margin-top:150px}.learning-goal h2{font-size:25px}.learning-goal>p{font-size:16px;line-height:1.95}.goal-chapters{padding-left:24px}.goal-chapters li{padding:8px 0;border-bottom:1px solid var(--line)}.goal-chapters a{display:flex;gap:12px;line-height:1.8;color:var(--text)}.goal-chapters small{flex:0 0 65px;color:var(--muted);font-size:12px;padding-top:2px}.goal-gate{border-left:3px solid var(--blue);padding:12px 18px;background:var(--blue-soft)}.goal-gate b{display:block;margin-bottom:6px}.goal-reading-nav{display:flex;flex-direction:column;gap:10px;border-top:2px solid var(--blue);padding:20px 0;margin:30px 0}.goal-reading-nav span{font-size:13px;color:var(--muted)}.goal-reading-nav a{color:var(--blue);font-size:15px;line-height:1.8}.complete-course{margin:24px 0}.complete-course>summary{font-weight:600}.field-map-edges{list-style:none}
+.learning-goal{margin:10px 0 36px;scroll-margin-top:150px}.learning-goal h2{font-size:25px}.learning-goal>p{font-size:16px;line-height:1.95}.goal-chapters{padding-left:24px}.goal-chapters li{padding:8px 0;border-bottom:1px solid var(--line)}.goal-chapters a{display:flex;gap:12px;line-height:1.8;color:var(--text)}.goal-chapters small{flex:0 0 65px;color:var(--muted);font-size:12px;padding-top:2px}.goal-reading-nav{display:flex;flex-direction:column;gap:10px;border-top:2px solid var(--blue);padding:20px 0;margin:30px 0}.goal-reading-nav span{font-size:13px;color:var(--muted)}.goal-reading-nav a{color:var(--blue);font-size:15px;line-height:1.8}.complete-course{margin:24px 0}.complete-course>summary{font-weight:600}.field-map-edges{list-style:none}
+.goal-actions{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 14px}
+.goal-actions a{display:inline-flex;align-items:center;min-height:44px;color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+.goal-gate{margin-top:28px;padding:18px 0 8px;border-block:1px solid var(--line);scroll-margin-top:72px}
+.goal-gate h3{margin:0 0 10px;font-size:21px;line-height:1.4}.goal-gate>p{margin:0 0 16px;font-size:16px}
+.goal-gate-checks{margin:0;padding-inline-start:24px}
+.goal-gate-checks>li{padding:14px 0;border-top:1px solid var(--line)}
+.goal-gate-checks h4{margin:0 0 6px;font-size:16px;line-height:1.5}
+.goal-gate-checks p{margin:0 0 7px;font-size:15px;line-height:1.8}
+.goal-gate a,.goal-gate-more summary{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+.goal-gate-primary a,.goal-gate-more summary,.goal-gate-more a{min-height:44px;padding:8px 0}
+.goal-gate-primary a,.goal-gate-more a{display:inline-flex;align-items:center}
+.goal-gate-more summary{cursor:pointer;width:fit-content}
+.goal-gate-more ul{margin:0;padding-inline-start:20px}
 @media(max-width:720px){.learning-goal-selector{display:block}.learning-goal-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:4px}.learning-goal-options a{padding-inline:8px}.goal-chapters a{flex-direction:column;gap:3px}.goal-chapters small{flex-basis:auto}.goal-reading-nav a,.knowledge-point>.path-links a{font-size:16px}.field-map-explorer>summary,.knowledge-detail>summary,.complete-course>summary{font-size:16px;min-height:44px}.field-concept-map>h2{font-size:21px}}
 @media(max-width:720px){.field-concept-map>.training-figure>a:first-child{display:block;overflow-x:auto;overscroll-behavior-x:contain}.field-concept-map>.training-figure img{min-width:760px;max-width:none}.field-concept-map>.field-map-note:after{content:'小屏可左右滑动看图，或点击放大。';display:block;color:var(--blue);margin-bottom:8px}}
 @media(max-width:720px){.training-figure:has(img[src$="sharding-lifetimes.svg"])>a:first-child{display:block;overflow-x:auto;overscroll-behavior-x:contain}.training-figure img[src$="sharding-lifetimes.svg"]{min-width:850px;max-width:none}}

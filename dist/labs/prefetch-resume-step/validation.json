@@ -1,0 +1,541 @@
+{
+  "platform": {
+    "system": "Darwin",
+    "arch": "arm64",
+    "python": "3.12.13",
+    "torch": "2.5.1"
+  },
+  "config": {
+    "order": [
+      4,
+      1,
+      8,
+      3,
+      0,
+      11,
+      7,
+      2,
+      9,
+      6,
+      5,
+      10
+    ],
+    "epoch": 3,
+    "batch_size": 2,
+    "transform": "sha256-byte-mod4-v1",
+    "workers": 2,
+    "prefetch_factor": 2
+  },
+  "source_sha256": {
+    "prefetch_resume.py": "d3290a3ae1bf97edc8a61dbb260136df470b201facf7c002d42c500d3bb2c290",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "baseline": {
+    "trainer_pid": 57865,
+    "start_batch": 0,
+    "prepared": [
+      {
+        "batch": 0,
+        "sample_ids": [
+          4,
+          1
+        ],
+        "targets": [
+          4.5,
+          1.25
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868
+      },
+      {
+        "batch": 1,
+        "sample_ids": [
+          8,
+          3
+        ],
+        "targets": [
+          8.75,
+          3.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869
+      },
+      {
+        "batch": 2,
+        "sample_ids": [
+          0,
+          11
+        ],
+        "targets": [
+          0.5,
+          11.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868
+      },
+      {
+        "batch": 3,
+        "sample_ids": [
+          7,
+          2
+        ],
+        "targets": [
+          7.25,
+          2.0
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869
+      },
+      {
+        "batch": 4,
+        "sample_ids": [
+          9,
+          6
+        ],
+        "targets": [
+          9.0,
+          6.5
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868
+      },
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869
+      }
+    ],
+    "updates": [
+      {
+        "batch": 0,
+        "sample_ids": [
+          4,
+          1
+        ],
+        "targets": [
+          4.5,
+          1.25
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868,
+        "loss": 5.453125,
+        "weight_before": 0.0,
+        "gradient": -2.875,
+        "momentum_after": -2.875,
+        "weight_after": 0.71875
+      },
+      {
+        "batch": 1,
+        "sample_ids": [
+          8,
+          3
+        ],
+        "targets": [
+          8.75,
+          3.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869,
+        "loss": 18.42236328125,
+        "weight_before": 0.71875,
+        "gradient": -5.53125,
+        "momentum_after": -6.96875,
+        "weight_after": 2.4609375
+      },
+      {
+        "batch": 2,
+        "sample_ids": [
+          0,
+          11
+        ],
+        "targets": [
+          0.5,
+          11.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868,
+        "loss": 22.532989501953125,
+        "weight_before": 2.4609375,
+        "gradient": -3.6640625,
+        "momentum_after": -7.1484375,
+        "weight_after": 4.248046875
+      },
+      {
+        "batch": 3,
+        "sample_ids": [
+          7,
+          2
+        ],
+        "targets": [
+          7.25,
+          2.0
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869,
+        "loss": 3.516359329223633,
+        "weight_before": 4.248046875,
+        "gradient": -0.376953125,
+        "momentum_after": -3.951171875,
+        "weight_after": 5.23583984375
+      },
+      {
+        "batch": 4,
+        "sample_ids": [
+          9,
+          6
+        ],
+        "targets": [
+          9.0,
+          6.5
+        ],
+        "worker_id": 0,
+        "worker_pid": 57868,
+        "loss": 3.941750645637512,
+        "weight_before": 5.23583984375,
+        "gradient": -2.51416015625,
+        "momentum_after": -4.48974609375,
+        "weight_after": 6.3582763671875
+      },
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57869,
+        "loss": 5.005968697369099,
+        "weight_before": 6.3582763671875,
+        "gradient": -1.7667236328125,
+        "momentum_after": -4.0115966796875,
+        "weight_after": 7.361175537109375
+      }
+    ],
+    "loaded": null,
+    "checkpoint": null
+  },
+  "stopped": {
+    "trainer_pid": 57873,
+    "start_batch": 0,
+    "prepared": [
+      {
+        "batch": 0,
+        "sample_ids": [
+          4,
+          1
+        ],
+        "targets": [
+          4.5,
+          1.25
+        ],
+        "worker_id": 0,
+        "worker_pid": 57875
+      },
+      {
+        "batch": 1,
+        "sample_ids": [
+          8,
+          3
+        ],
+        "targets": [
+          8.75,
+          3.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57876
+      },
+      {
+        "batch": 2,
+        "sample_ids": [
+          0,
+          11
+        ],
+        "targets": [
+          0.5,
+          11.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57875
+      },
+      {
+        "batch": 3,
+        "sample_ids": [
+          7,
+          2
+        ],
+        "targets": [
+          7.25,
+          2.0
+        ],
+        "worker_id": 1,
+        "worker_pid": 57876
+      },
+      {
+        "batch": 4,
+        "sample_ids": [
+          9,
+          6
+        ],
+        "targets": [
+          9.0,
+          6.5
+        ],
+        "worker_id": 0,
+        "worker_pid": 57875
+      }
+    ],
+    "updates": [
+      {
+        "batch": 0,
+        "sample_ids": [
+          4,
+          1
+        ],
+        "targets": [
+          4.5,
+          1.25
+        ],
+        "worker_id": 0,
+        "worker_pid": 57875,
+        "loss": 5.453125,
+        "weight_before": 0.0,
+        "gradient": -2.875,
+        "momentum_after": -2.875,
+        "weight_after": 0.71875
+      }
+    ],
+    "loaded": null,
+    "checkpoint": {
+      "sha256": "426e8f66f1b6ec60899c773b5cb503b7c74f5f87096e8e041fe88541c0dc283b",
+      "next_batch": 1
+    }
+  },
+  "resumed": {
+    "trainer_pid": 57878,
+    "start_batch": 1,
+    "prepared": [
+      {
+        "batch": 1,
+        "sample_ids": [
+          8,
+          3
+        ],
+        "targets": [
+          8.75,
+          3.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880
+      },
+      {
+        "batch": 2,
+        "sample_ids": [
+          0,
+          11
+        ],
+        "targets": [
+          0.5,
+          11.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57881
+      },
+      {
+        "batch": 3,
+        "sample_ids": [
+          7,
+          2
+        ],
+        "targets": [
+          7.25,
+          2.0
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880
+      },
+      {
+        "batch": 4,
+        "sample_ids": [
+          9,
+          6
+        ],
+        "targets": [
+          9.0,
+          6.5
+        ],
+        "worker_id": 1,
+        "worker_pid": 57881
+      },
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880
+      }
+    ],
+    "updates": [
+      {
+        "batch": 1,
+        "sample_ids": [
+          8,
+          3
+        ],
+        "targets": [
+          8.75,
+          3.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880,
+        "loss": 18.42236328125,
+        "weight_before": 0.71875,
+        "gradient": -5.53125,
+        "momentum_after": -6.96875,
+        "weight_after": 2.4609375
+      },
+      {
+        "batch": 2,
+        "sample_ids": [
+          0,
+          11
+        ],
+        "targets": [
+          0.5,
+          11.75
+        ],
+        "worker_id": 1,
+        "worker_pid": 57881,
+        "loss": 22.532989501953125,
+        "weight_before": 2.4609375,
+        "gradient": -3.6640625,
+        "momentum_after": -7.1484375,
+        "weight_after": 4.248046875
+      },
+      {
+        "batch": 3,
+        "sample_ids": [
+          7,
+          2
+        ],
+        "targets": [
+          7.25,
+          2.0
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880,
+        "loss": 3.516359329223633,
+        "weight_before": 4.248046875,
+        "gradient": -0.376953125,
+        "momentum_after": -3.951171875,
+        "weight_after": 5.23583984375
+      },
+      {
+        "batch": 4,
+        "sample_ids": [
+          9,
+          6
+        ],
+        "targets": [
+          9.0,
+          6.5
+        ],
+        "worker_id": 1,
+        "worker_pid": 57881,
+        "loss": 3.941750645637512,
+        "weight_before": 5.23583984375,
+        "gradient": -2.51416015625,
+        "momentum_after": -4.48974609375,
+        "weight_after": 6.3582763671875
+      },
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57880,
+        "loss": 5.005968697369099,
+        "weight_before": 6.3582763671875,
+        "gradient": -1.7667236328125,
+        "momentum_after": -4.0115966796875,
+        "weight_after": 7.361175537109375
+      }
+    ],
+    "loaded": {
+      "checkpoint_sha256": "426e8f66f1b6ec60899c773b5cb503b7c74f5f87096e8e041fe88541c0dc283b",
+      "checkpoint_next_batch": 1,
+      "weight": 0.71875,
+      "momentum": -2.875
+    },
+    "checkpoint": null
+  },
+  "worker_cursor": {
+    "trainer_pid": 57882,
+    "start_batch": 5,
+    "prepared": [
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57885
+      }
+    ],
+    "updates": [
+      {
+        "batch": 5,
+        "sample_ids": [
+          5,
+          10
+        ],
+        "targets": [
+          5.5,
+          10.75
+        ],
+        "worker_id": 0,
+        "worker_pid": 57885,
+        "loss": 30.87158203125,
+        "weight_before": 0.71875,
+        "gradient": -7.40625,
+        "momentum_after": -8.84375,
+        "weight_after": 2.9296875
+      }
+    ],
+    "loaded": {
+      "checkpoint_sha256": "426e8f66f1b6ec60899c773b5cb503b7c74f5f87096e8e041fe88541c0dc283b",
+      "checkpoint_next_batch": 1,
+      "weight": 0.71875,
+      "momentum": -2.875
+    },
+    "checkpoint": null
+  }
+}

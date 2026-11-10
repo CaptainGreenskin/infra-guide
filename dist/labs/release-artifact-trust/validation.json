@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "source_sha256": {
+    "release_artifact_trust.py": "18ba8c9f2855640003694ac07165ec269a208de34e0eb9c34d53c939c08324eb"
+  },
+  "environment": {
+    "platform": "Darwin",
+    "machine": "arm64",
+    "python": "3.9.6",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "openssh": "OpenSSH_10.0p2, LibreSSL 3.3.6"
+  },
+  "observations": {
+    "trusted_principal": "release-ci@infraguide.test",
+    "other_principal": "other-ci@infraguide.test",
+    "other_signer_check": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Good \"git\" signature for other-ci@infraguide.test with ED25519 key SHA256:jM6syCJTLy087wfMB3Ab2Qjx/2KLR5ljBS8c2GJ6qu4\n"
+    },
+    "cases": {
+      "trusted_match": {
+        "revision": "ea571876ab3d001fba41aa1c8c9af71441ef3230",
+        "manifest": {
+          "artifact_sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "service": "reports",
+          "version": "report-v1"
+        },
+        "signature": {
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "Good \"git\" signature for release-ci@infraguide.test with ED25519 key SHA256:P1oS6eykAADOBbERy1OxQbEKxHTzR+tZacjsRcnXE2k\n"
+        },
+        "candidate_sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+        "candidate_version": "report-v1",
+        "content_matches": true,
+        "approved": true,
+        "active_readback": {
+          "sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "version": "report-v1"
+        }
+      },
+      "alias_moved": {
+        "revision": "ea571876ab3d001fba41aa1c8c9af71441ef3230",
+        "manifest": {
+          "artifact_sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "service": "reports",
+          "version": "report-v1"
+        },
+        "signature": {
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "Good \"git\" signature for release-ci@infraguide.test with ED25519 key SHA256:P1oS6eykAADOBbERy1OxQbEKxHTzR+tZacjsRcnXE2k\n"
+        },
+        "candidate_sha256": "7781f3e1b5a8d2742c6f25736cf3bbf3ff6a27fb783243bd4b7614d16e5db011",
+        "candidate_version": "report-v2",
+        "content_matches": false,
+        "approved": false,
+        "active_readback": {
+          "sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "version": "report-v1"
+        }
+      },
+      "other_signer": {
+        "revision": "3e53fd0626c30de9e8989ec7a7017305ae5f681e",
+        "manifest": {
+          "artifact_sha256": "7781f3e1b5a8d2742c6f25736cf3bbf3ff6a27fb783243bd4b7614d16e5db011",
+          "service": "reports",
+          "version": "report-v2"
+        },
+        "signature": {
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "Good \"git\" signature with ED25519 key SHA256:jM6syCJTLy087wfMB3Ab2Qjx/2KLR5ljBS8c2GJ6qu4\nNo principal matched.\n"
+        },
+        "candidate_sha256": "7781f3e1b5a8d2742c6f25736cf3bbf3ff6a27fb783243bd4b7614d16e5db011",
+        "candidate_version": "report-v2",
+        "content_matches": true,
+        "approved": false,
+        "active_readback": {
+          "sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "version": "report-v1"
+        }
+      },
+      "pinned_match": {
+        "revision": "ea571876ab3d001fba41aa1c8c9af71441ef3230",
+        "manifest": {
+          "artifact_sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "service": "reports",
+          "version": "report-v1"
+        },
+        "signature": {
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "Good \"git\" signature for release-ci@infraguide.test with ED25519 key SHA256:P1oS6eykAADOBbERy1OxQbEKxHTzR+tZacjsRcnXE2k\n"
+        },
+        "candidate_sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+        "candidate_version": "report-v1",
+        "content_matches": true,
+        "approved": true,
+        "active_readback": {
+          "sha256": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+          "version": "report-v1"
+        }
+      }
+    },
+    "artifact_digests": {
+      "report-v1": "bb159caa99aac2f5ae700777d6447a5693464fc02188418ab40f1eae5aa72a20",
+      "report-v2": "7781f3e1b5a8d2742c6f25736cf3bbf3ff6a27fb783243bd4b7614d16e5db011"
+    },
+    "no_git_remotes": true
+  },
+  "temporary_workspace_removed": true
+}

@@ -1,0 +1,524 @@
+{
+  "schema": "memory-withdrawal-v1",
+  "status": "passed",
+  "environment": {
+    "python": "3.12.13",
+    "sqlite": "3.53.3",
+    "langgraph": "1.2.20",
+    "langgraph-checkpoint-sqlite": "3.1.3"
+  },
+  "source_sha256": {
+    "memory_lab.py": "f8ea6ea411bfe8d5a1ee51bb42ef3f67e37ed095341165978a5e1802d5af930e",
+    "fixture.json": "65fd1ba2dedaf0b12ca3d59da913a45cb2324febe71cca8973c0c2c129e1f079",
+    "requirements.txt": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+    "README.md": "293c2398a81f31156bac87b0f5e4f7943cd410abb45fcde084651f66af66f58c"
+  },
+  "fixture": {
+    "namespace": [
+      "tenant-A",
+      "learner-A",
+      "preferences"
+    ],
+    "other_namespace": [
+      "tenant-B",
+      "learner-B",
+      "preferences"
+    ],
+    "key": "report-style",
+    "preference": {
+      "format": "short",
+      "version": 1
+    },
+    "other_preference": {
+      "format": "bullet",
+      "version": 1
+    },
+    "fallback": "standard",
+    "old_thread": "old-task",
+    "new_thread": "new-task"
+  },
+  "cases": {
+    "unchecked": {
+      "stage_old": {
+        "pid": 58643,
+        "paused": {
+          "checkpoint_id": "1f1dd37c-773d-6744-8001-32412fb49003",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": {
+              "format": "short",
+              "version": 1
+            }
+          }
+        }
+      },
+      "store": {
+        "before": {
+          "format": "short",
+          "version": 1
+        },
+        "after": null,
+        "other_after": {
+          "format": "bullet",
+          "version": 1
+        }
+      },
+      "resume_old": {
+        "pid": 58644,
+        "before": {
+          "checkpoint_id": "1f1dd37c-773d-6744-8001-32412fb49003",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": {
+              "format": "short",
+              "version": 1
+            }
+          }
+        },
+        "after": {
+          "checkpoint_id": "1f1dd37c-7b14-6d5e-8002-2a3cbb3d6128",
+          "next": [],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": {
+              "format": "short",
+              "version": 1
+            },
+            "delivery": {
+              "seq": 1,
+              "payload": {
+                "thread_id": "old-task",
+                "format": "short",
+                "memory_version": 1
+              }
+            }
+          }
+        },
+        "history": [
+          {
+            "checkpoint_id": "1f1dd37c-7b14-6d5e-8002-2a3cbb3d6128",
+            "next": [],
+            "values": {
+              "thread_id": "old-task",
+              "snapshot": {
+                "format": "short",
+                "version": 1
+              },
+              "delivery": {
+                "seq": 1,
+                "payload": {
+                  "thread_id": "old-task",
+                  "format": "short",
+                  "memory_version": 1
+                }
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-773d-6744-8001-32412fb49003",
+            "next": [
+              "send"
+            ],
+            "values": {
+              "thread_id": "old-task",
+              "snapshot": {
+                "format": "short",
+                "version": 1
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-773b-66ce-8000-86909fc41cf8",
+            "next": [
+              "stage"
+            ],
+            "values": {
+              "thread_id": "old-task"
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-7739-6dce-bfff-dc101c8319ed",
+            "next": [
+              "__start__"
+            ],
+            "values": {}
+          }
+        ]
+      },
+      "stage_new": {
+        "pid": 58645,
+        "paused": {
+          "checkpoint_id": "1f1dd37c-7f04-6a7c-8001-716a9c00c41f",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null
+          }
+        }
+      },
+      "resume_new": {
+        "pid": 58647,
+        "before": {
+          "checkpoint_id": "1f1dd37c-7f04-6a7c-8001-716a9c00c41f",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null
+          }
+        },
+        "after": {
+          "checkpoint_id": "1f1dd37c-8281-6632-8002-456a7b5785c4",
+          "next": [],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null,
+            "delivery": {
+              "seq": 2,
+              "payload": {
+                "thread_id": "new-task",
+                "format": "standard",
+                "memory_version": null
+              }
+            }
+          }
+        },
+        "history": [
+          {
+            "checkpoint_id": "1f1dd37c-8281-6632-8002-456a7b5785c4",
+            "next": [],
+            "values": {
+              "thread_id": "new-task",
+              "snapshot": null,
+              "delivery": {
+                "seq": 2,
+                "payload": {
+                  "thread_id": "new-task",
+                  "format": "standard",
+                  "memory_version": null
+                }
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-7f04-6a7c-8001-716a9c00c41f",
+            "next": [
+              "send"
+            ],
+            "values": {
+              "thread_id": "new-task",
+              "snapshot": null
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-7f02-6736-8000-1509a2a4a92d",
+            "next": [
+              "stage"
+            ],
+            "values": {
+              "thread_id": "new-task"
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-7f01-648a-bfff-b250e6072103",
+            "next": [
+              "__start__"
+            ],
+            "values": {}
+          }
+        ]
+      },
+      "history_purge": {
+        "old_count_before": 4,
+        "old_count_after": 0,
+        "new_checkpoint_id_after": "1f1dd37c-8281-6632-8002-456a7b5785c4"
+      },
+      "collector": {
+        "while_paused": [],
+        "before_purge": [
+          {
+            "seq": 1,
+            "payload": {
+              "thread_id": "old-task",
+              "format": "short",
+              "memory_version": 1
+            }
+          },
+          {
+            "seq": 2,
+            "payload": {
+              "thread_id": "new-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          }
+        ],
+        "after_purge": [
+          {
+            "seq": 1,
+            "payload": {
+              "thread_id": "old-task",
+              "format": "short",
+              "memory_version": 1
+            }
+          },
+          {
+            "seq": 2,
+            "payload": {
+              "thread_id": "new-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          }
+        ]
+      }
+    },
+    "rechecked": {
+      "stage_old": {
+        "pid": 58649,
+        "paused": {
+          "checkpoint_id": "1f1dd37c-8a7d-6f70-8001-ba446cc87c1b",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": {
+              "format": "short",
+              "version": 1
+            }
+          }
+        }
+      },
+      "store": {
+        "before": {
+          "format": "short",
+          "version": 1
+        },
+        "after": null,
+        "other_after": {
+          "format": "bullet",
+          "version": 1
+        }
+      },
+      "resume_old": {
+        "pid": 58650,
+        "before": {
+          "checkpoint_id": "1f1dd37c-8a7d-6f70-8001-ba446cc87c1b",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": {
+              "format": "short",
+              "version": 1
+            }
+          }
+        },
+        "after": {
+          "checkpoint_id": "1f1dd37c-8e22-60c2-8002-dfca10eb0807",
+          "next": [],
+          "values": {
+            "thread_id": "old-task",
+            "snapshot": null,
+            "delivery": {
+              "seq": 1,
+              "payload": {
+                "thread_id": "old-task",
+                "format": "standard",
+                "memory_version": null
+              }
+            }
+          }
+        },
+        "history": [
+          {
+            "checkpoint_id": "1f1dd37c-8e22-60c2-8002-dfca10eb0807",
+            "next": [],
+            "values": {
+              "thread_id": "old-task",
+              "snapshot": null,
+              "delivery": {
+                "seq": 1,
+                "payload": {
+                  "thread_id": "old-task",
+                  "format": "standard",
+                  "memory_version": null
+                }
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-8a7d-6f70-8001-ba446cc87c1b",
+            "next": [
+              "send"
+            ],
+            "values": {
+              "thread_id": "old-task",
+              "snapshot": {
+                "format": "short",
+                "version": 1
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-8a7b-6e6e-8000-efd2c110ea27",
+            "next": [
+              "stage"
+            ],
+            "values": {
+              "thread_id": "old-task"
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-8a7a-6de8-bfff-55885191c11c",
+            "next": [
+              "__start__"
+            ],
+            "values": {}
+          }
+        ]
+      },
+      "stage_new": {
+        "pid": 58656,
+        "paused": {
+          "checkpoint_id": "1f1dd37c-91b8-62d6-8001-397a1f1adc56",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null
+          }
+        }
+      },
+      "resume_new": {
+        "pid": 58657,
+        "before": {
+          "checkpoint_id": "1f1dd37c-91b8-62d6-8001-397a1f1adc56",
+          "next": [
+            "send"
+          ],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null
+          }
+        },
+        "after": {
+          "checkpoint_id": "1f1dd37c-957e-6aaa-8002-ef84a2e1f4ba",
+          "next": [],
+          "values": {
+            "thread_id": "new-task",
+            "snapshot": null,
+            "delivery": {
+              "seq": 2,
+              "payload": {
+                "thread_id": "new-task",
+                "format": "standard",
+                "memory_version": null
+              }
+            }
+          }
+        },
+        "history": [
+          {
+            "checkpoint_id": "1f1dd37c-957e-6aaa-8002-ef84a2e1f4ba",
+            "next": [],
+            "values": {
+              "thread_id": "new-task",
+              "snapshot": null,
+              "delivery": {
+                "seq": 2,
+                "payload": {
+                  "thread_id": "new-task",
+                  "format": "standard",
+                  "memory_version": null
+                }
+              }
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-91b8-62d6-8001-397a1f1adc56",
+            "next": [
+              "send"
+            ],
+            "values": {
+              "thread_id": "new-task",
+              "snapshot": null
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-91b6-609e-8000-027e1067011d",
+            "next": [
+              "stage"
+            ],
+            "values": {
+              "thread_id": "new-task"
+            }
+          },
+          {
+            "checkpoint_id": "1f1dd37c-91b4-6e9c-bfff-4d145bb51456",
+            "next": [
+              "__start__"
+            ],
+            "values": {}
+          }
+        ]
+      },
+      "history_purge": {
+        "old_count_before": 4,
+        "old_count_after": 0,
+        "new_checkpoint_id_after": "1f1dd37c-957e-6aaa-8002-ef84a2e1f4ba"
+      },
+      "collector": {
+        "while_paused": [],
+        "before_purge": [
+          {
+            "seq": 1,
+            "payload": {
+              "thread_id": "old-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          },
+          {
+            "seq": 2,
+            "payload": {
+              "thread_id": "new-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          }
+        ],
+        "after_purge": [
+          {
+            "seq": 1,
+            "payload": {
+              "thread_id": "old-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          },
+          {
+            "seq": 2,
+            "payload": {
+              "thread_id": "new-task",
+              "format": "standard",
+              "memory_version": null
+            }
+          }
+        ]
+      }
+    }
+  }
+}

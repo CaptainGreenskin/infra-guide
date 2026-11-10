@@ -83,7 +83,8 @@ const inputPractice=infraReadableHTML(
  ];
  a.refs=[...new Set([...a.refs,'v23Data'])];a.minutes=55;a.updated='2026.11.04';
 }
-infraDomain('training').points.find(p=>p.id==='tr-input').body=inputObjects+inputSampler+inputWorkers+inputPacking+inputSupply+inputRecovery;
+infraDomain('training').points.find(p=>p.id==='tr-input').body=inputObjects+inputSampler+inputWorkers+inputPacking+inputSupply+inputRecovery+
+ para('用<a href="/article/data-pipeline/#native-prefetch-resume">两个 DataLoader worker 的恢复实验</a>核对组批记录和优化器更新记录。把 worker 的进度拿去恢复，会跳过已准备、还没训练的四批样本。');
 infraDomain('training').refs=[...new Set([...infraDomain('training').refs,'v23Data'])];
 const trainingCasesBeforeNIT=infraFieldCases.training;
 infraFieldCases.training=()=>'<h3>先证明输入：样本覆盖、worker与批次数</h3>'+nitLab('sampler_coverage.py',false)+

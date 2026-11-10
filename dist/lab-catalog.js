@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'release-artifact-trust':{folder:'release-artifact-trust',title:'同一签名记录和不同制品字节'},
+ 'prefetch-resume-step':{folder:'prefetch-resume-step',title:'数据预取和已提交训练步'},
+ 'memory-withdrawal':{folder:'memory-withdrawal',title:'偏好撤回、任务快照与实际发送'},
  'kubernetes-admission':{folder:'kubernetes-admission',title:'Kubernetes 授权与对象准入'},
  'native-slot-handoff':{folder:'native-slot-handoff',title:'两个推理进程之间交接历史缓存'},
  'rag-citation-oracle':{folder:'rag-citation-oracle',title:'答案金额相同，如何核对引用版本'},
@@ -416,6 +419,20 @@ labLearningCatalog.push(
   files:['rag_lab.py','assets.json','fixture.json'],env:'Python 3.12 · SQLite FTS5 · Qwen3-0.6B · 本机 CPU',kind:'真实检索、生成与引用核对',
   observe:'对比当前资料、旧版索引和提前过滤三条路径，从资料版本和回答分别验收。',
   scope:'固定合成资料、同一条问题与本机小模型。证据只覆盖这三条路径。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-release-artifact-trust',track:'cloud',stage:2,title:'签名仍有效，为什么部署应停下来',chapter:'delivery',anchor:'native-release-artifact-trust',pack:'release-artifact-trust',
+  files:['release_artifact_trust.py'],env:'Python 3 · Git 2.50.1 · OpenSSH 10.0p2 · 本机',kind:'真实签名验证、摘要和独立回读',
+  observe:'对照已签记录和实际文件，分别制造别名变化与签名者不受信任，回读当前版本。',
+  scope:'隔离的本机 Git、临时签名密钥与 tar 文件。未使用镜像仓库或部署服务。'},
+ {id:'ai-prefetch-resume-step',track:'ai',stage:2,title:'数据已经准备好，重启后从哪一批继续',chapter:'data-pipeline',anchor:'native-prefetch-resume',pack:'prefetch-resume-step',
+  files:['prefetch_resume.py','requirements.txt'],env:'Python 3 · PyTorch 2.5.1 · 本机 CPU 与两个加载进程',kind:'真实预取、动量更新和重启',
+  observe:'分别按已提交批次和已准备批次恢复，核对首批身份、动量和最后权重。',
+  scope:'固定小模型、本机 CPU 和有序加载。跨主机存储与 GPU 性能另验。'},
+ {id:'agent-memory-withdrawal',track:'agent',stage:2,title:'偏好已经撤回，暂停的任务还会用吗',chapter:'agent-memory',anchor:'native-memory-withdrawal',pack:'memory-withdrawal',
+  files:['memory_lab.py','fixture.json','requirements.txt'],env:'Python 3.12 · LangGraph 1.2.20 · SQLite · 本机 HTTP',kind:'真实持久快照、撤回、恢复和清理',
+  observe:'分别读取当前偏好、旧任务快照和接收方记录。比较复用旧快照和发送前重查的实际输入。',
+  scope:'固定合成偏好与本机接收服务。观察范围到发送内容与快照删除。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

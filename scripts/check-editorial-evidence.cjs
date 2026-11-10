@@ -91,7 +91,9 @@ const nativeRecordChecks = {
  'dist/labs/mcp-trace-reentry/validation.json':'./check-mcp-trace-reentry.cjs',
  'dist/labs/redis-replica-promotion/validation.json':'./check-redis-replica-promotion.cjs',
  'dist/labs/kubernetes-admission/validation.json':'./check-kubernetes-admission.cjs',
- 'dist/labs/native-slot-handoff/validation.json':'./check-native-slot-handoff.cjs'
+ 'dist/labs/native-slot-handoff/validation.json':'./check-native-slot-handoff.cjs',
+ 'dist/labs/release-artifact-trust/validation.json':'./check-release-artifact-trust.cjs',
+ 'dist/labs/prefetch-resume-step/validation.json':'./check-prefetch-resume-step.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);

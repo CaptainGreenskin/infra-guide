@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="284" viewBox="0 0 520 284" role="img" aria-labelledby="title description">
+<title id="title">已经组批的五批数据中，只有第零批参与了更新</title>
+<desc id="description">编号 0 至 5 的六批中，保存时 worker 已准备 0 至 4，优化器只提交第 0 批。正确恢复处理 1 至 5，与连续训练最终权重相同。误用 worker 整理位置则跳过 1 至 4，恢复后只做第 5 批。</desc>
+<metadata>{"record":"labs/prefetch-resume-step/validation.json","prepared":[0,1,2,3,4],"committed":[0],"correct_cursor":1,"worker_cursor":5,"final_weight":{"baseline":7.361175537109375,"resumed":7.361175537109375,"worker_cursor":2.9296875}}</metadata>
+<rect x="1" y="1" width="518" height="282" rx="15" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="24" y="35" font-size="20" font-weight="700">从哪里重新取样，要看哪批做完了更新</text>
+<text x="24" y="65" font-size="16" font-weight="700">保存时</text>
+<text x="24" y="103" font-size="15">已组批</text>
+<text x="24" y="145" font-size="15">已更新</text>
+<g stroke="#a0b9d4" fill="#e8f1fc">
+<rect x="116" y="82" width="52" height="29" rx="5"/><rect x="179" y="82" width="52" height="29" rx="5"/>
+<rect x="242" y="82" width="52" height="29" rx="5"/><rect x="305" y="82" width="52" height="29" rx="5"/>
+<rect x="368" y="82" width="52" height="29" rx="5"/>
+</g>
+<rect x="431" y="82" width="52" height="29" rx="5" fill="#f7fafc" stroke="#a7b5c5" stroke-dasharray="4 3"/>
+<rect x="116" y="124" width="52" height="29" rx="5" fill="#e3f2e7" stroke="#7ca889"/>
+<g font-size="16" font-weight="600" text-anchor="middle">
+<text x="142" y="103">0</text><text x="205" y="103">1</text><text x="268" y="103">2</text>
+<text x="331" y="103">3</text><text x="394" y="103">4</text><text x="457" y="103">5</text>
+<text x="142" y="145" fill="#315d41">0</text>
+</g>
+<path d="M205 113v47m-5-5 5 5 5-5" fill="none" stroke="#3c7750" stroke-width="2"/>
+<path d="M457 113v103m-5-5 5 5 5-5" fill="none" stroke="#a76222" stroke-width="2" stroke-dasharray="4 3"/>
+<rect x="24" y="167" width="390" height="38" rx="6" fill="#e7f2e9" stroke="#a7c3ae"/>
+<text x="39" y="192" font-size="16" fill="#315d41">按更新进度恢复：再做第 1–5 批</text>
+<rect x="24" y="223" width="459" height="38" rx="6" fill="#fff0e0" stroke="#d4a36e"/>
+<text x="39" y="248" font-size="16" fill="#834c17">误用组批进度：只做第 5 批，漏掉第 1–4 批</text>
+</g>
+</svg>

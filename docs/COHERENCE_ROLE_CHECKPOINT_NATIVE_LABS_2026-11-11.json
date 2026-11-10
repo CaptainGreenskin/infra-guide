@@ -1,0 +1,237 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "858dbcffa41d16a8431e0b3c38f8f1b9e90f68ca",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONCEPT_EVIDENCE_HISTORY_2026-11-11.json": "2b0e4b56b1611bf604b1c99c7900856ee84e9c93ea17d79cc5ff6c6d64e378af"
+  },
+  "source_revisions": {
+    "dist/learning-goals.js": {
+      "previous_sha256": "56e568e5bc7b82afbe97f1b6ec809d0690bbf1daec84eb28b3da63e0deb63e41",
+      "reviewed_sha256": "03451290d90d4c370ccc9fcd113e8e3ae0a4d39a7d1b9b9dabb11e7cc4590a16",
+      "scope": "Present one deliverable and three focused checks per role, preserving every old practice destination and adding exact links to the new native examples."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "e22cdbb60b0317b263586913c23dbc9c7749c5adc31ce2915b7ccf0581b577e8",
+      "reviewed_sha256": "32f2c55bac18e9bb4a5090b68bf508cd26816bfdb779a1c77077a8c79c18beeb",
+      "scope": "Use a short route navigation and an ordered, collapsible criteria list on desktop and phone."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "ef5da1458b66a47c9ae679e4821bfd47a939951baa1b3ea9fefab4461a2b9d2f",
+      "reviewed_sha256": "e70b297a956b974e82d3fa8e19efce6bce411a6c309a3332fcf05c8b121e1ca9",
+      "scope": "Connect three more field concepts directly to their matching native lab and catalog."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "3daba74f0c0c3a7f17a4df7ac79d6a2c4ca31177ac4c98c01f0cff58b3339843",
+      "reviewed_sha256": "abd61233755bea0e884d9ed84b5831cdceabfbd1beed05dfeab34246ced9027e",
+      "scope": "Connect an immutable artifact to the signed manifest and readback example."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "517b38f8c77a8dbd134f170c6d3976ea4639f6b699337ec9e0742b24f8a59de2",
+      "reviewed_sha256": "f7c2a84be926f42f621efbee32e1c5e7a0625641d4eba4b8a97660b0d3db5251",
+      "scope": "Follow a versioned release manifest through native Git SSH signature validation, exact file hashing and independent activation readback."
+    },
+    "dist/input-pipeline-lessons.js": {
+      "previous_sha256": "8a149e1bc313894782d2afcc759a0546784098d06adb44e2f59791de3501ecaa",
+      "reviewed_sha256": "37d51bb044f775ead5b0812ae04e9ee8b8eb37cdbf8f3f2c4d02b5008360b15a",
+      "scope": "Connect the input pipeline concept to the actual data preparation and checkpoint evidence."
+    },
+    "dist/progressive-training-io-reading.js": {
+      "previous_sha256": "2bea97644befcb6efeb5f237b12c0e8a45eccfa79f65d69ce42500b48fb1aba9",
+      "reviewed_sha256": "e68277bcbd9008a7110c1591ec153c47ae22665c6aba9255274ab50dd2a01e3f",
+      "scope": "Separate two native DataLoader worker preparation records from the trainer checkpoint and compare resumed SGD with uninterrupted execution."
+    },
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": "f329d1166544a08e6d29da5521c33d6b0691d36ce99d4c2ad04151a9331a87ae",
+      "reviewed_sha256": "e8270ad376d20e988a840b19d9554ebfa3c5edc39c05625175291a4cdd09c77f",
+      "scope": "Trace a withdrawn preference through the live LangGraph Store, an older task checkpoint, resumption and an independent HTTP receiver."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "7b5f33f738e9ee5a58730bd94658a523f824353ac8161710aaec0a1d9a3e8c33",
+      "reviewed_sha256": "bf7a747b8c97e3cc467992f969c95891cede76b2fcf6c05aceeb5e30ee2e8707",
+      "scope": "Register the three new examples and exact sources, environment and evidence scope."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "f653d40ddef773426d5e357ad95f9480e3828f767cc55427bf2ad1cd61a68ca9",
+      "reviewed_sha256": "3020f1f875a3965383c1b665bffe6970cac1bdf1566b85db1b609b903e9b0825",
+      "scope": "Reserve the three new evidence figures at their exact viewport dimensions."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "b3cfd59bd6a97be43f4c300f8200e43892bcad5971f660b844bb62b789e61b08",
+      "reviewed_sha256": "075ba7246fa4ce30a1f75ff89193b7b746e3b84794b4c71b1b186de3befb7028",
+      "scope": "Fingerprint the current light reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "fb8fca03c133f84a44b36ba6ad1a8048539a2aec955912b5c63b55b315d4a735",
+      "reviewed_sha256": "e678825a7c1ab6022b0f8d332f772da9fe8c60131db54943e56d37dfd3bf6db2",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "142aea71ffe975c2fecbd70b8d78c07e1266b041626da47d87399b86a7bb6456",
+      "reviewed_sha256": "ced8edf56f5c09efd9a4919873f9063adb259963f63e7eccc9a44281a5663a99",
+      "scope": "Serialize only the role identity and route needed by the reader. Detailed role prose remains on the roadmap."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "fc55c6daea01d81d8fe3ad6483f35dfc55cc3a7b91f4a4836c0ff64549d816ee",
+      "reviewed_sha256": "1baa85bdd76e788f9149ac1a6e6534b3ea0e47b7e6c87eb1192b57217d438c68",
+      "scope": "Enforce the limited role metadata schema in the lightweight reader."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "afbfc63465fd73ae099bd244ce9bb077f30d2c4d9d5c3e01ef78280a5cec9da9",
+      "reviewed_sha256": "3ec9363bdc00818bbb18d3509dfc87b62d919c0a54b0cd88235327c4be2d3676",
+      "scope": "Check the three visible criteria, collapsed contrast links and exact role, chapter and evidence routes."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "fa973d4ed5f9807f690c4a147b8f89f7c4afa52ea35bf87c16bd9165de0dc152",
+      "reviewed_sha256": "74cd4424791d505341cc5edb354c2e6b2f7b98c2320743ed5e75662eb7cd3d2a",
+      "scope": "Read the native Git and PyTorch evidence through their independent record verifiers."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "85f0dccb93c81ed5364143b6c19d174093a92af97681663d45ec4d1fb2fa801b",
+      "reviewed_sha256": "894c8c873b567101201e67bf7ca9dd33941ab84f68fdefb4c7178b221c0e0ff9",
+      "scope": "Run the three independent record, source and navigation verifiers."
+    },
+    "scripts/check-release-artifact-trust.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f6be8492c81eafd2c527e80898cbd6c4c1fb7feda1c506b95af5b678e5483a17",
+      "scope": "Check signature trust, digest comparison, the readback and exact source and archive."
+    },
+    "scripts/check-prefetch-resume-step.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3c318a4ab6143976323ea3b1f2de6f0300012c8b8fc1781af0f18253e16d5925",
+      "scope": "Check real worker preparation and restored steps against an independent ordered numerical baseline."
+    },
+    "scripts/check-memory-withdrawal.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "413f933a349891859c629ad89e2f2471982e290f79bbbaf2e66b8ff7b24da2d4",
+      "scope": "Check current memory, checkpoint contents, live receiver outcomes and scoped history deletion."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "50faf70edfa81ae7ad81f2d2a6a57fe17d3ea8d8a469803c960a1e03ab023636",
+      "reviewed_sha256": "ad551780af2f8e08272c11cff411b27adb4c583feeda633b7dbae11c3e6f5d2a",
+      "scope": "Add the three native lab anchors to the chapter contents while retaining the old ones."
+    },
+    "docs/CONTENT_ROLE_CHECKPOINT_NATIVE_LABS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "776253a0f7b19ad667f851279b3fdd8a7c869c75ff8dfe6a0f18a23e4f66fe46",
+      "scope": "Record the three local teaching changes and evidence paths."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "0dc0c6f1c02beb7105834b6eaf9c5e091d89e74bf6276eadbeb4ab47be271080",
+      "reviewed_sha256": "4344230b87aab97579d54c42f3e9d52def295e6537d9ef0bcbef22231bd30aa9",
+      "scope": "Register the new body and evidence review."
+    },
+    "dist/diagrams/release-artifact-trust.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b9fc7cf9380680f81ff2f89c23208f19f43f0c33e6f8948d67c1019c2d3a6fa2",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/release-artifact-trust.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7adb54982f3bdaf295f6a054ee58f36f380f34698dc7299c54c21d90f98ddc6b",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/release-artifact-trust/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4fd1239fa2b72b36107a58f1de29d37492687c90de1941873d9150644e304751",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/release-artifact-trust/release_artifact_trust.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "18ba8c9f2855640003694ac07165ec269a208de34e0eb9c34d53c939c08324eb",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/release-artifact-trust/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ef934544d7c406fcd43b93fabc658d19200c888a37c77a7a4d0269cb08c29dd1",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/prefetch-resume-step.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f948bb1e9e8be9275a8aace0ba8829274bf5fe7a963be51f6a3ac97140b38734",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/prefetch-resume-step.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "768e68569ed35b22c046f4711e57ceca23e6a91b3fde296ea2a51f7dd3193424",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/prefetch-resume-step/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f0b0acfafb1586e64c6861fd6957e308f94037979a41b8c4cd485c980a1596f1",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/prefetch-resume-step/prefetch_resume.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d3290a3ae1bf97edc8a61dbb260136df470b201facf7c002d42c500d3bb2c290",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/prefetch-resume-step/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/prefetch-resume-step/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "be7c5d00eae8f41a64fe992f60fb2fd026e5d174d04b985efbe36b82ed74aa84",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/memory-withdrawal.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fb34328343ffa0b8a1b9a1abc074d4b3b389828094c7bab224e157b15244007d",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/memory-withdrawal.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4038a573713ed239cebc0467712cd4268ef64ebabfd8d211952f42169ffce10f",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/memory-withdrawal/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "293c2398a81f31156bac87b0f5e4f7943cd410abb45fcde084651f66af66f58c",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/memory-withdrawal/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "65fd1ba2dedaf0b12ca3d59da913a45cb2324febe71cca8973c0c2c129e1f079",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/memory-withdrawal/memory_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f8ea6ea411bfe8d5a1ee51bb42ef3f67e37ed095341165978a5e1802d5af930e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/memory-withdrawal/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/memory-withdrawal/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f3f149c24ba132fd77700b6070ce5a84afd9297d4062bdcd33a9ccd6c243160c",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "41ae56d8d563fb016e84ae7658e5380c0db6b48d6c00442984364fd60869c4af",
+      "reviewed_sha256": "a6cdeafdfc300aa7daf60b0e3508a9aa9c93e3685237aed34b07089e7b7b244e",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "858dbcffa41d16a8431e0b3c38f8f1b9e90f68ca",
+    "chapters": 78,
+    "changed_bodies": [
+      "delivery",
+      "data-pipeline",
+      "agent-memory"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "delivery": 1,
+      "data-pipeline": 1,
+      "agent-memory": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}

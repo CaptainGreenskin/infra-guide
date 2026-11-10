@@ -173,6 +173,30 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
  ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
 
+ delivery.sections[0][1]+=h('native-release-artifact-trust','提交验签通过，制品还是原来那份吗')+
+ p('报表服务审批的是 v1。部署时再按同一个候选名称取文件，却拿到了 v2。审批没有被改动，变的是名称指向的内容。容器镜像的可变标签也有这类问题。固定内容摘要，可以让发布端知道自己应当取到哪份内容。')+
+ p('发布清单记录版本和制品的 SHA-256 摘要，也就是用制品字节计算出的固定长度值。签名绑定保存清单的 Git 提交。发布端先用预先信任的公钥验签，确认提交由获准的密钥签署，再计算实际取得的制品摘要，与清单比较。这两步分别回答谁批准了发布、现场拿到的是哪份制品。')+
+ '<figure class="training-figure"><a href="diagrams/release-artifact-trust.svg" target="_blank" rel="noopener" aria-label="放大发布清单签名与制品字节对照"><img src="diagrams/release-artifact-trust.svg" width="460" height="440" alt="四次发布分别通过、因摘要不匹配拒绝、因发布者未获准拒绝、按固定摘要再次通过。每次实际读到的发布版本都是 v1。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>Git 验签和实际制品校验都通过后，才替换运行方要读取的发布文件。<a href="diagrams/release-artifact-trust.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['这次取的制品','可信签名','实际摘要匹配','尝试后读到'],[
+  ['可信清单，候选名最初指向 v1','通过','是','v1'],
+  ['同一份清单，候选名改指 v2','通过','否','保持 v1'],
+  ['另一把密钥签署 v2 清单，候选是 v2','未获准','是','保持 v1'],
+  ['可信清单，按摘要取回 v1','通过','是','v1']
+ ])+
+ p('第三次的 Git 输出先说签名有效，随后提示 <code>No principal matched.</code>，命令返回 1。另一份名单可以识别这把密钥，但发布端只信任原来的名单。排查时看退出码和实际用的信任名单，单凭第一行的 <code>Good "git" signature</code> 容易误判。')+
+ fold('沿程序检查实际读入的制品字节',code('release_artifact_trust.py · 发布门禁',`verification = execute(git + ["-c", "gpg.ssh.allowedSignersFile=" + str(signer_file),
+                              "verify-commit", revision], env)
+received = artifact_path.read_bytes()
+received_digest = sha(received)
+content_matches = received_digest == manifest["artifact_sha256"]
+approved = verification["returncode"] == 0 and content_matches
+if approved:
+    staged = active_path.with_suffix(".verified")
+    staged.write_bytes(received)
+    staged.replace(active_path)`))+
+ p('程序校验和发布使用同一次读取的字节。两次拒绝后都独立重读当前发布文件，值仍为 v1。本地实验用符号链接模拟可变名称，用 tar 包模拟制品。实际镜像发布还需核对目标仓库、镜像摘要和平台架构。')+
+ '<p class="practice-links"><a href="labs/release-artifact-trust.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/release-artifact-trust/release_artifact_trust.py">查看完整程序</a> · <a href="labs/release-artifact-trust/validation.json">核对 Git 输出与实测结果</a> · <a href="https://git-scm.com/docs/git-config#Documentation/git-config.txt-gpgsshallowedSignersFile">Git SSH 信任名单文档 ↗</a></p>';
+
 
  delivery.sections[7][1]+=h('native-controller-reconcile','外部已创建，控制器退出后会不会再建一份')+
  p('向 Kubernetes 提交一份 <code>ReportSink</code>，指定 <code>spec.target</code> 为 <code>weekly-report</code>。这是用自定义资源定义（CRD）加到 API 上的对象。API 保存期望，控制器负责让外部服务拥有对应的接收位置。外部服务按对象的 UID 保存一份文件。同名对象删掉再建会获得新 UID。')+
@@ -198,7 +222,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  trainingCode('解压后用独立 API Server 和 etcd 复跑','SHELL','go run . --assets /path/to/controller-tools/envtest --output replay.json')+
  p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
  '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
- delivery.updated='2026.11.10';
+ delivery.updated='2026.11.11';
 
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);

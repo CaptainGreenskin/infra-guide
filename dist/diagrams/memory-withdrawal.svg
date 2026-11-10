@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="316" viewBox="0 0 600 316" role="img" aria-labelledby="title description">
+<title id="title">撤回记忆后，旧任务从哪份记录继续？</title>
+<desc id="description">发送前撤回 A 的短版偏好，长期记忆库已查不到该条目，任务检查点还留着短版快照。直接使用快照会发短版，发送前重查会发标准版。清除旧检查点后，接收方回执原样保留。</desc>
+<metadata>{"record":"labs/memory-withdrawal/validation.json","old_delivery":["short","standard"],"fresh_delivery":["standard","standard"],"old_history_after_purge":0}</metadata>
+<rect x="1" y="1" width="598" height="314" rx="15" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="23" y="33" font-size="20" font-weight="700">旧任务停在发送前，随后 A 撤回偏好</text>
+<rect x="23" y="53" width="226" height="66" rx="9" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="39" y="79" font-size="16" font-weight="700">长期记忆库</text>
+<text x="39" y="103" font-size="15">撤回后：A 查不到，B 保留</text>
+<path d="M251 87H345M338 81L345 87L338 93" stroke="#4b6486" stroke-width="2" fill="none"/>
+<text x="299" y="75" text-anchor="middle" font-size="13">撤回前复制</text>
+<rect x="349" y="53" width="228" height="66" rx="9" fill="#fff0dc" stroke="#ce9e65"/>
+<text x="365" y="79" font-size="16" font-weight="700">旧任务的检查点</text>
+<text x="365" y="103" font-size="15">保存的偏好仍是短版 v1</text>
+<text x="23" y="162" font-size="17" font-weight="700">恢复后，本地接收方实际收到</text>
+<path d="M463 120V137H569V175M563 169L569 175L575 169" stroke="#986638" stroke-width="2" fill="none"/>
+<path d="M134 120V143M128 137L134 143L140 137" stroke="#457399" stroke-width="2" fill="none"/>
+<rect x="23" y="178" width="265" height="71" rx="9" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="39" y="204" font-size="16" font-weight="700">发送前重查记忆库</text>
+<text x="39" y="229" font-size="16">旧任务：标准版</text>
+<rect x="312" y="178" width="265" height="71" rx="9" fill="#fff0dc" stroke="#ce9e65"/>
+<text x="328" y="204" font-size="16" font-weight="700">直接沿用检查点</text>
+<text x="328" y="229" font-size="16">旧任务：短版 v1</text>
+<text x="23" y="284" font-size="15">两组新任务均发标准版。删除旧历史后，接收方回执仍在。</text>
+</g>
+</svg>

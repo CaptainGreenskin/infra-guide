@@ -196,5 +196,26 @@ const progressiveAgentSectionTitles={
    p('完整实验把三类检查串起来：assemble核对预算，context_state.py用真实SQLite恢复执行事实并筛选记忆，preserves_slots检查固定摘要字段。先预测旧摘要与成功v2冲突时的效果数、旧版本写回行数、以及未过期旧资料的当前适用性，再运行同一份程序。')+
    fold('运行context_state.py：恢复、旧版本、撤回与预算变化题',old[6]);
   preserveCode(a,before);
+
+  a.updated='2026.11.11';
+  a.sections[6][1]+=
+   h('native-memory-withdrawal','撤回记忆后，暂停的任务还会发出什么？')+
+   p('A 原来喜欢短版日报。旧任务把这项偏好读进自己的状态，保存后停在发送前。A 随后撤回偏好。新任务已经改用标准版，但恢复旧任务仍可能发出短版，因为它从保存的状态继续。')+
+   p('LangGraph 的长期记忆库（Store）供不同任务按用户和条目名读写。任务检查点（checkpoint）则保存单个任务当时的状态，方便进程退出后接着做。本例把偏好复制进了检查点。删除记忆库条目后，库里已经查不到 A 的偏好，任务的旧快照仍在。')+
+   trainingFigure('memory-withdrawal','两组使用同一条撤回顺序。区别在于发送时读哪份数据。')+
+   p('实验用 LangGraph 的 SQLite 记忆库和检查点各保存一份。恢复进程用原任务号读到同一个检查点。下面是发送节点的重查分支。当前条目与快照不一致时，去掉旧偏好，后面的代码按默认格式发送。')+
+   '<div class="code-block"><pre><code class="language-python">snapshot = state["snapshot"]\nif case == "rechecked" and store_value(runtime.store, FIXTURE["namespace"]) != snapshot:\n    snapshot = None</code></pre></div>'+
+   table(['查哪里','沿用检查点','发送前重查'],[
+    ['撤回后的记忆库','A 查不到，B 保留','A 查不到，B 保留'],
+    ['本地 HTTP 接收方的旧任务回执','短版 v1','标准版'],
+    ['接收方的新任务回执','标准版','标准版'],
+    ['清除旧任务检查点后','旧历史 0 条，回执仍是 2 条','旧历史 0 条，回执仍是 2 条']
+   ])+
+   p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
+   '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
+   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>';
+  infraDomain('agent').points.find(point=>point.id==='ag-context').body+=
+   p('撤回用户偏好时，分别查长期记忆、已保存的任务状态和接收方回执。暂停前复制进去的偏好，恢复时仍可能被沿用。')+
+   '<p><a href="/article/agent-memory/#native-memory-withdrawal">用同一个暂停任务核对撤回后的三份记录 →</a></p>';
  }
 })();

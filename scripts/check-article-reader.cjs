@@ -89,6 +89,7 @@ function assertMetadata(metadata,canonical){
  walk(metadata);
  assert(!/<(?:p|pre|figure)\b/i.test(JSON.stringify(metadata)),'metadata does not embed authored HTML');
  for(const [key,p]of Object.entries(metadata.learningProfiles)){
+  assert.deepStrictEqual(Object.keys(p).sort(),['label','route','targets','track'],key+': role prose stays on its own page');
   canonical.profileKey=key;
   assert.deepStrictEqual(p.route,json(canonical,'learningProfileRoute(learningProfiles[profileKey])'),key+': preserve the prerequisite closure and order');
  }

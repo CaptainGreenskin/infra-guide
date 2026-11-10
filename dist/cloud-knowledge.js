@@ -55,7 +55,7 @@ const cloudKnowledgeDomains = [
  ['serverless-cost','函数成本与选型边界','费用按供应商的请求、资源、计费时长、预置容量及关联服务规则计算。按调用适合间歇或事件型负载，长期运行消费者可适合稳定或长连接负载。','免费课程不表示云调用免费；执行 GB·s、预置 GB·s 与 FC 的 CU 等口径需分别计量。',['serverless-execution','elasticity']]
  ]},
  {module:'cloud-delivery',refs:['deploy','v9Rollback','v9RestoreTest'],points:[
- ['artifact-contract','不可变产物与完整版本','交付版本由镜像摘要、平台架构、配置、依赖接口、身份和数据契约共同构成。构建可重复与部署可追溯是两个相关但不同的要求。','可变标签应解析到实际内容；同一镜像在不同配置或数据结构下可能产生不同结果。',['delivery']],
+ ['artifact-contract','不可变产物与完整版本','交付版本由镜像摘要、平台架构、配置、依赖接口、身份和数据契约共同构成。构建可重复与部署可追溯是两个相关但不同的要求。','可变标签可能改指另一份内容。同一镜像在不同配置或数据结构下也可能产生不同结果。<a href="/article/delivery/#native-release-artifact-trust">跟一次制品发布</a>，分别核对签名者和实际取得的文件摘要。',['delivery']],
  ['ci-cd','持续集成与交付流水线','CI 验证提交可集成与测试，交付流程管理构建、制品、部署、验证与回退。质量门禁应关注正确性、兼容性、安全边界和用户行为。','流水线通过不证明生产所有依赖健康；应固定环境、版本、验证输入与发布权限。',['delivery','production-readiness']],
  ['iac','IaC、状态与漂移','Infrastructure as Code 以版本化声明描述资源，工具比较期望、记录状态和实际资源，再执行变更。状态文件连接资源身份，漂移表示实际环境偏离管理基线。','计划需要审查依赖和破坏性变化；状态应访问受控、加锁和备份，计划不是所有运行效果的保证。',['delivery','cloud-compute']],
  ['controller-api','平台 API、控制器与 Operator','平台 API 定义资源身份、状态、权限和幂等请求；控制器按可重试调谐驱动外部效果。CRD 扩展 Kubernetes API，Operator 将领域运行知识编码进控制逻辑。','本机单控制器实跑重复调谐和删除清理。并发控制器、云资源接口和旧执行者需要各自核对。',['kubernetes-basics','distributed-systems','training-platform']],

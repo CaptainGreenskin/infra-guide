@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="440" viewBox="0 0 460 440" role="img" aria-labelledby="release-trust-title release-trust-desc">
+  <title id="release-trust-title">发布前核对批准人和实际制品</title>
+  <desc id="release-trust-desc">可信清单与 v1 制品匹配时发布。候选名称改指 v2 时签名仍通过但摘要不匹配。另一把密钥签了 v2 清单时摘要匹配但签名者不在可信名单。按固定摘要重新选 v1 又通过。四次尝试后均独立读到 v1。</desc>
+  <metadata>{"record":"labs/release-artifact-trust/validation.json","case_order":["trusted_match","alias_moved","other_signer","pinned_match"],"signature_status":[0,0,1,0],"content_matches":[true,false,true,true],"activated":[true,false,false,true],"active":["report-v1","report-v1","report-v1","report-v1"]}</metadata>
+  <rect width="460" height="440" rx="14" fill="#f2f6fb"/>
+  <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#132b46">
+    <text x="23" y="38" font-size="24" font-weight="700">发布前核对两件事</text>
+    <text x="23" y="65" font-size="16" fill="#405976">谁签了清单，实际取到的是哪份文件</text>
+    <g font-size="16" font-weight="650" text-anchor="middle">
+      <rect x="20" y="85" width="124" height="37" rx="8" fill="#e1ebfb"/>
+      <text x="82" y="109">验证签名者</text>
+      <rect x="168" y="85" width="124" height="37" rx="8" fill="#f9e9dc"/>
+      <text x="230" y="109">比对制品摘要</text>
+      <rect x="315" y="85" width="125" height="37" rx="8" fill="#ddf0e7"/>
+      <text x="377" y="109">通过才发布</text>
+    </g>
+    <path d="M147 104h15m-5-5 5 5-5 5M295 104h15m-5-5 5 5-5 5" stroke="#657f9c" stroke-width="2" fill="none"/>
+    <rect x="20" y="146" width="420" height="231" rx="10" fill="#fff" stroke="#a1b5cc"/>
+    <g stroke="#d4dfeb" fill="none"><path d="M20 187h420M20 234h420M20 281h420M20 328h420"/></g>
+    <g font-size="15" font-weight="650">
+      <text x="32" y="173">发布尝试</text>
+      <text x="173" y="173">签名者</text><text x="263" y="173">摘要</text><text x="348" y="173">读到版本</text>
+    </g>
+    <g font-size="17">
+      <text x="32" y="215">先按名称取 v1</text><text x="173" y="215" fill="#146348">可信</text><text x="263" y="215" fill="#146348">匹配</text><text x="348" y="215">v1</text>
+      <text x="32" y="262">名称改指 v2</text><text x="173" y="262" fill="#146348">可信</text><text x="263" y="262" fill="#96491a">不符</text><text x="348" y="262">仍为 v1</text>
+      <text x="32" y="309">换密钥签 v2</text><text x="173" y="309" fill="#96491a">未获准</text><text x="263" y="309" fill="#146348">匹配</text><text x="348" y="309">仍为 v1</text>
+      <text x="32" y="356">按摘要取回 v1</text><text x="173" y="356" fill="#146348">可信</text><text x="263" y="356" fill="#146348">匹配</text><text x="348" y="356">v1</text>
+    </g>
+    <text x="23" y="413" font-size="16" fill="#405976">两次拒绝都重新读取当前制品，核对它仍为 v1</text>
+  </g>
+</svg>

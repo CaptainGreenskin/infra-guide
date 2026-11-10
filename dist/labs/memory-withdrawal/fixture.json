@@ -1,0 +1,10 @@
+{
+  "namespace": ["tenant-A", "learner-A", "preferences"],
+  "other_namespace": ["tenant-B", "learner-B", "preferences"],
+  "key": "report-style",
+  "preference": {"format": "short", "version": 1},
+  "other_preference": {"format": "bullet", "version": 1},
+  "fallback": "standard",
+  "old_thread": "old-task",
+  "new_thread": "new-task"
+}

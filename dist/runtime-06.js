@@ -4995,6 +4995,27 @@ const progressiveAgentSectionTitles={
    p('完整实验把三类检查串起来：assemble核对预算，context_state.py用真实SQLite恢复执行事实并筛选记忆，preserves_slots检查固定摘要字段。先预测旧摘要与成功v2冲突时的效果数、旧版本写回行数、以及未过期旧资料的当前适用性，再运行同一份程序。')+
    fold('运行context_state.py：恢复、旧版本、撤回与预算变化题',old[6]);
   preserveCode(a,before);
+
+  a.updated='2026.11.11';
+  a.sections[6][1]+=
+   h('native-memory-withdrawal','撤回记忆后，暂停的任务还会发出什么？')+
+   p('A 原来喜欢短版日报。旧任务把这项偏好读进自己的状态，保存后停在发送前。A 随后撤回偏好。新任务已经改用标准版，但恢复旧任务仍可能发出短版，因为它从保存的状态继续。')+
+   p('LangGraph 的长期记忆库（Store）供不同任务按用户和条目名读写。任务检查点（checkpoint）则保存单个任务当时的状态，方便进程退出后接着做。本例把偏好复制进了检查点。删除记忆库条目后，库里已经查不到 A 的偏好，任务的旧快照仍在。')+
+   trainingFigure('memory-withdrawal','两组使用同一条撤回顺序。区别在于发送时读哪份数据。')+
+   p('实验用 LangGraph 的 SQLite 记忆库和检查点各保存一份。恢复进程用原任务号读到同一个检查点。下面是发送节点的重查分支。当前条目与快照不一致时，去掉旧偏好，后面的代码按默认格式发送。')+
+   '<div class="code-block"><pre><code class="language-python">snapshot = state["snapshot"]\nif case == "rechecked" and store_value(runtime.store, FIXTURE["namespace"]) != snapshot:\n    snapshot = None</code></pre></div>'+
+   table(['查哪里','沿用检查点','发送前重查'],[
+    ['撤回后的记忆库','A 查不到，B 保留','A 查不到，B 保留'],
+    ['本地 HTTP 接收方的旧任务回执','短版 v1','标准版'],
+    ['接收方的新任务回执','标准版','标准版'],
+    ['清除旧任务检查点后','旧历史 0 条，回执仍是 2 条','旧历史 0 条，回执仍是 2 条']
+   ])+
+   p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
+   '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
+   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>';
+  infraDomain('agent').points.find(point=>point.id==='ag-context').body+=
+   p('撤回用户偏好时，分别查长期记忆、已保存的任务状态和接收方回执。暂停前复制进去的偏好，恢复时仍可能被沿用。')+
+   '<p><a href="/article/agent-memory/#native-memory-withdrawal">用同一个暂停任务核对撤回后的三份记录 →</a></p>';
  }
 })();
 
@@ -6477,6 +6498,24 @@ const progressiveAgentSectionTitles={
  fold('展开完整 packing_boundaries.py：与下载源码一致',d6[3])+dl[1]+
  p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
  ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
+
+ data.sections[5][1]+=
+  h('native-prefetch-resume','实战：worker 已备好五批，训练只提交了一批')+
+  p('用 PyTorch 的 DataLoader 取 12 条固定样本，每批 2 条，从批号 0 开始。两个 worker 各预取 2 批，加载器起初分派批号 0–3，训练进程取走第 0 批后，又安排了第 4 批。每个 worker 整理完一批就报告批号和进程编号。这条报告只证明组批已经完成。')+
+  trainingFigure('prefetch-resume-step','保存时 0–4 已组批，只有 0 完成参数更新。恢复应从 1 重新取样。')+
+  p('第 0 批样本 [4,1] 的训练目标是 [4.5,1.25]。令模型只输出一个权重 w，初始 w=0。每条样本的损失是 (w−y)²/2，取两项均值后梯度为 w−mean(y)=−2.875。首步用这个梯度初始化动量缓冲，学习率 0.25 使 w 变为 0.71875。保存这一步时，下一批编号是 1。')+
+  trainingCode('同一次保存写入权重、优化器与下一批编号','PYTHON',`next_batch = updates[-1]["batch"] + 1
+torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict(),
+            "data_identity": DATA_IDENTITY, "next_batch": next_batch}, checkpoint)`)+
+  p('源训练进程退出。新进程从检查点读回权重和动量，按原顺序取批号 1–5。第 1 批原先由 worker 1 准备，重启后换成 worker 0。两次目标仍是 [8.75,3.75]，因为这里用固定轮次和样本 ID 重建变换。')+
+  t(['输入恢复方式','重启后用于更新的批号','最终 w'],[
+   ['不中断的基线','从 0 到 5 连续更新','7.361175537109375'],
+   ['从检查点保存的 1 开始','1、2、3、4、5','7.361175537109375'],
+   ['从 worker 进度推出来的 5 开始','只做 5，漏掉 1–4','2.9296875']
+  ])+
+  p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
+  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
+ data.updated='2026.11.11';
 
  const overlap = comm.sections[4];
  overlap[1] = overlap[1].replace('才会缩短这一轮。</p>', '$&' +
@@ -10688,6 +10727,30 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
  ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
 
+ delivery.sections[0][1]+=h('native-release-artifact-trust','提交验签通过，制品还是原来那份吗')+
+ p('报表服务审批的是 v1。部署时再按同一个候选名称取文件，却拿到了 v2。审批没有被改动，变的是名称指向的内容。容器镜像的可变标签也有这类问题。固定内容摘要，可以让发布端知道自己应当取到哪份内容。')+
+ p('发布清单记录版本和制品的 SHA-256 摘要，也就是用制品字节计算出的固定长度值。签名绑定保存清单的 Git 提交。发布端先用预先信任的公钥验签，确认提交由获准的密钥签署，再计算实际取得的制品摘要，与清单比较。这两步分别回答谁批准了发布、现场拿到的是哪份制品。')+
+ '<figure class="training-figure"><a href="diagrams/release-artifact-trust.svg" target="_blank" rel="noopener" aria-label="放大发布清单签名与制品字节对照"><img src="diagrams/release-artifact-trust.svg" width="460" height="440" alt="四次发布分别通过、因摘要不匹配拒绝、因发布者未获准拒绝、按固定摘要再次通过。每次实际读到的发布版本都是 v1。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>Git 验签和实际制品校验都通过后，才替换运行方要读取的发布文件。<a href="diagrams/release-artifact-trust.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['这次取的制品','可信签名','实际摘要匹配','尝试后读到'],[
+  ['可信清单，候选名最初指向 v1','通过','是','v1'],
+  ['同一份清单，候选名改指 v2','通过','否','保持 v1'],
+  ['另一把密钥签署 v2 清单，候选是 v2','未获准','是','保持 v1'],
+  ['可信清单，按摘要取回 v1','通过','是','v1']
+ ])+
+ p('第三次的 Git 输出先说签名有效，随后提示 <code>No principal matched.</code>，命令返回 1。另一份名单可以识别这把密钥，但发布端只信任原来的名单。排查时看退出码和实际用的信任名单，单凭第一行的 <code>Good "git" signature</code> 容易误判。')+
+ fold('沿程序检查实际读入的制品字节',code('release_artifact_trust.py · 发布门禁',`verification = execute(git + ["-c", "gpg.ssh.allowedSignersFile=" + str(signer_file),
+                              "verify-commit", revision], env)
+received = artifact_path.read_bytes()
+received_digest = sha(received)
+content_matches = received_digest == manifest["artifact_sha256"]
+approved = verification["returncode"] == 0 and content_matches
+if approved:
+    staged = active_path.with_suffix(".verified")
+    staged.write_bytes(received)
+    staged.replace(active_path)`))+
+ p('程序校验和发布使用同一次读取的字节。两次拒绝后都独立重读当前发布文件，值仍为 v1。本地实验用符号链接模拟可变名称，用 tar 包模拟制品。实际镜像发布还需核对目标仓库、镜像摘要和平台架构。')+
+ '<p class="practice-links"><a href="labs/release-artifact-trust.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/release-artifact-trust/release_artifact_trust.py">查看完整程序</a> · <a href="labs/release-artifact-trust/validation.json">核对 Git 输出与实测结果</a> · <a href="https://git-scm.com/docs/git-config#Documentation/git-config.txt-gpgsshallowedSignersFile">Git SSH 信任名单文档 ↗</a></p>';
+
 
  delivery.sections[7][1]+=h('native-controller-reconcile','外部已创建，控制器退出后会不会再建一份')+
  p('向 Kubernetes 提交一份 <code>ReportSink</code>，指定 <code>spec.target</code> 为 <code>weekly-report</code>。这是用自定义资源定义（CRD）加到 API 上的对象。API 保存期望，控制器负责让外部服务拥有对应的接收位置。外部服务按对象的 UID 保存一份文件。同名对象删掉再建会获得新 UID。')+
@@ -10713,7 +10776,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  trainingCode('解压后用独立 API Server 和 etcd 复跑','SHELL','go run . --assets /path/to/controller-tools/envtest --output replay.json')+
  p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
  '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
- delivery.updated='2026.11.10';
+ delivery.updated='2026.11.11';
 
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);
@@ -14542,13 +14605,104 @@ for(const id of ['kubernetes-basics','serverless-execution','autograd-training',
 /* Learning goals are views over the same curriculum, never separate copies of lessons.
    Each route adds its real prerequisite closure before offering a next lesson. */
 const learningProfiles={
- 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:'为一个有持久数据的服务写部署与回退方案。用<a href="/article/cloud-service-lab/?goal=cloud-platform#kubernetes-service-run">服务实战</a>核对同一入口的实际后端和回退版本。用<a href="/article/k8s-workloads/?goal=cloud-platform#native-pdb-eviction-rollout">驱逐与发布实验</a>区分预算拒绝驱逐与发布控制器减少副本。再分别用<a href="/article/config-secrets/?goal=cloud-platform#native-config-projection">配置实验</a>与<a href="/article/k8s-storage/?goal=cloud-platform#native-csi-storage">卷实验</a>说明更新配置与换 Pod 后该看哪些证据。再用<a href="/article/serverless-execution/?goal=cloud-platform#native-jetstream-redelivery">事件重投实战</a>判断旧执行者仍活着时，哪一层可以拒绝它的写入。最后用<a href="/article/iam-security/?goal=cloud-platform#native-spiffe-workload-identity">工作负载身份实验</a>解释为什么两次双向 TLS 握手成功后，写报告分别得到 403 和 201。用<a href="/article/vpc-network/?goal=cloud-platform#native-tls-proxy">双段 TLS 对照</a>判断入口已握手时，如何确认 502 是上游证书校验失败。再用<a href="/article/delivery/?goal=cloud-platform#native-controller-reconcile">控制器重启与删除实验</a>核对外部记录和 API 状态何时对齐。用 Kubernetes 的<a href="/article/iam-security/?goal=cloud-platform#native-kubernetes-admission">授权和准入对照</a>，解释为什么同一账号能创建 Pod，某份配置却被拒绝。'},
- 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:'从<a href="/article/observability/?goal=cloud-sre#section-9">两段 HTTP 追踪</a>取出同一请求的时间线。用<a href="/article/observability/?goal=cloud-sre#collector-sampling-check">采集管道对账</a>判断哪份记录能回答业务成功率。用<a href="/article/slo/?goal=cloud-sre#live-prometheus-burn">真实告警实战</a>解释单实例计数器归零和长短窗怎样影响规则状态。再用<a href="/article/slo/?goal=cloud-sre#native-alert-notification">收件对照</a>分清规则触发、静默和实际送达。用<a href="/article/elasticity/?goal=cloud-sre#section-7">容量算例</a>写出积压与清空时间，再用<a href="/article/resilience/?goal=cloud-sre#section-9">恢复实验</a>核对恢复点和外部效果。再用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-client-tracking">Redis 失效对照</a>说明为什么旧回复还能回填，以及断线后从哪一层重新读取。用<a href="/article/cache-consistency/?goal=cloud-sre#native-redis-replica-promotion">Redis 提升对照</a>区分主库写入、复制确认和新主库读到的版本。用<a href="/article/storage-recovery/?goal=cloud-sre#native-postgres-pitr">PostgreSQL 恢复对照</a>核对实例可用和业务状态正确这两个判断。用<a href="/article/elasticity/?goal=cloud-sre#native-cpu-quota-http">CPU 配额对照</a>说明成功延迟和入口拒绝为什么要分开看。'},
- 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:'先用<a href="/article/gpu-memory/?goal=ai-training#native-amp-window">混合精度实战</a>区分前向损失和实际更新。用<a href="/article/ddp-code/?goal=ai-training#native-ddp-join">不等长 DDP 实验</a>说明归约分母和续训时的优化器状态。进平台时，先用<a href="/article/training-platform/?goal=ai-training#native-training-submission-preflight">提交校验实验</a>核对版本与实际输入，再用<a href="/article/gpu-scheduling/?goal=ai-training#native-kueue-admission">Kueue 作业实验</a>区分等待额度、等待节点和工作完成。沿<a href="/article/kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job">两节点 kind 实战</a>，用同一批 Pod 的身份、会合地址和权重核对一次共同更新。用<a href="/article/training-communication/?goal=ai-training#ragged-ring-communication">不等长切分对照</a>解释如何识别真实位置和通信填充。再用<a href="/article/multinode-lab/?goal=ai-training#multinode-launch-run">双启动器四进程实战</a>比较连续两轮与保存后恢复的一加一轮，核对各进程的样本数、更新次数和状态差异。迁移到物理两机四卡时，先用<a href="/article/multinode-lab/?goal=ai-training#native-ddp-target-preflight">上机预检</a>核对四个 rank、设备绑定与集合通信，再单独核对真实节点分配和共享检查点。用<a href="/article/checkpoint-recovery/?goal=ai-training#native-elastic-restart-step">自动重启实战</a>核对新进程加载的游标和优化器状态。'},
- 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:'用<a href="/article/model-serving/?goal=ai-inference#section-4">KV 字节算例</a>估算缓存。用<a href="/article/quantization-serving/?goal=ai-inference#native-int8-batch-quality">动态 INT8 合批对照</a>解释为何计时前需要核对输出。用<a href="/article/model-serving/?goal=ai-inference#native-inference-prefix">前缀复用实验</a>区分槽空闲与缓存清除。用<a href="/article/model-serving/?goal=ai-inference#rtx-pro-6000-cache-case">单卡 KV 对照</a>比较解码吞吐、提示处理时间和峰值显存，再用<a href="/article/inference-performance/?goal=ai-inference#vllm-block-lifecycle">vLLM 块池实验</a>解释块引用归零后何时仍能命中。沿<a href="/article/inference-performance/?goal=ai-inference#section-2">逐词元时间线</a>练习计时，再用<a href="/article/inference-performance/?goal=ai-inference#native-inference-queue">真实双请求实验</a>区分服务端排队与客户端首词元等待。用<a href="/article/inference-performance/?goal=ai-inference#native-pd-split">推理分池实验</a>复算交接字节和首项后的等待。用<a href="/article/inference-performance/?goal=ai-inference#tp-placement">八卡部署账本</a>判断单个副本能否接单，再设计真机比较。最后用<a href="/article/ai-lifecycle/?goal=ai-inference#section-8">CPU 模型发布实验</a>核对实际输出和版本指针，再用<a href="/article/ai-lifecycle/?goal=ai-inference#native-model-rollout">真实模型切换</a>检查健康探测漏掉的问题和旧流归属。用<a href="/article/inference-performance/?goal=ai-inference#native-slot-handoff">两进程的缓存交接对照</a>，核对成功恢复时复用的位置，以及坏文件清空缓存后的重算。'},
- 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:'给定形状，先手算运算量与字节。用<a href="/article/operator-profiling/?goal=ai-operators#native-python-extension">扩展装载实战</a>定位构建与导入的失败阶段，再用<a href="/article/operator-profiling/?goal=ai-operators#operator-profile-run">CPU 算子轨迹</a>定位操作。用<a href="/article/operator-profiling/?goal=ai-operators#torch-compile-graph-break">断图实战</a>区分 Python 边界与形状变化带来的重编译，再用<a href="/article/tensor-parallel-math/?goal=ai-operators#section-9">两进程实战</a>核对输出和梯度。再用<a href="/article/tensor-parallel-math/?goal=ai-operators#native-dp-tp-mesh">四进程分组实验</a>核对同片梯度和样本数。用<a href="/article/tensor-parallel-math/?goal=ai-operators#native-pipeline-schedules">流水线排程实战</a>数清待反向的微批，验证两种排程的参数更新。再用<a href="/article/flash-attention-io/?goal=ai-operators#ragged-ring-training">环形注意力对照</a>查出填充位置为什么会改变归一化。用<a href="/article/operator-profiling/?goal=ai-operators#triton-tail-mask-run">Triton 尾块实战</a>核对加载、归约和写回掩码。用<a href="/article/operator-profiling/?goal=ai-operators#native-metal-gemm">同设备 Metal 对照</a>核对尾块和计时口径。换到目标 GPU 时，指出还需采集哪些内存与耗时数据。'},
- 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:'完成一个读资料、生成报告并保存的任务。先看<a href="/article/agent-runtime/?goal=agent-app#native-model-mcp-tool-choice">模型选工具与资源授权</a>，沿调用编号查出报告是在哪一步读到或拦下的。用<a href="/article/agent-retrieval/?goal=agent-app#native-qdrant-retrieval">向量检索对照</a>核对高分候选何时能进入模型输入。再运行<a href="/article/production-readiness/?goal=agent-app#integrated-service-run">S3 本机综合实验</a>，也可以直接用实验记录自检。核对正常报告金额为 37，跨租户读取与撤权后的新请求均返回 403。再看提交后恢复的对照。沿用原操作 ID，两次工具尝试只留一份效果。换新 ID 则留下两份。实验按固定步骤执行，用本机 CPU 线性模型求和。用<a href="/article/agent-retrieval/?goal=agent-app#native-rag-citation-oracle">引用版本对照</a>，找出同样的金额为什么只通过了一条路径。'},
- 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:'先用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-container">容器边界实验</a>核对输入和产物权限，再用<a href="/article/agent-sandbox/?goal=agent-platform#native-sandbox-egress">出口隔离实验</a>区分网络拒绝和资源授权。用<a href="/article/mcp-protocol/?goal=agent-platform#mcp-http-cancellation-run">HTTP 断流对照</a>区分工具清理与业务提交。再用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-http-authorization">HTTP 授权对照</a>判断令牌检查通过后，谁仍可以拒绝读报告。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-catalog-refresh">工具目录变更实验</a>说明什么情况下要重新批准。用<a href="/article/mcp-protocol/?goal=agent-platform#native-mcp-result-receipt">坏回执对照</a>定位拒绝响应的一层，并按原操作查接收方。用<a href="/article/durable-workflows/?goal=agent-platform#mcp-commit-recovery">本地恢复实验</a>解释为什么操作身份不能随尝试变化。再跑<a href="/article/durable-workflows/?goal=agent-platform#native-approval-reentry">批准后恢复实验</a>，分别预测发布前撤权与提交后撤权的效果数。指出什么时候能查原回执，什么时候只能保留待确认。用<a href="/article/durable-workflows/?goal=agent-platform#native-parallel-merge">并行归并实战</a>判断分支冲突何时要转审核，并核对重放后的实际写入次数。用<a href="/article/durable-workflows/?goal=agent-platform#native-workflow-version-resume">工作流升级对照</a>检查旧批准会交给哪个动作。再用<a href="/article/agent-observability/?goal=agent-platform#native-tail-sampling-ledger">采样与账本实战</a>分开统计错误尝试、完成任务和实际效果。再用<a href="/article/agent-observability/?goal=agent-platform#native-mcp-trace-reentry">MCP 进程恢复实验</a>区分 HTTP 父子跨度、跨追踪链接和业务回执。最后用<a href="/article/kairo-practice/?goal=agent-platform#kairo-read-evidence">只读验收练习</a>对上两次 HTTP 200 与资源端的实际读取。用<a href="/article/kairo-practice/?goal=agent-platform#native-agent-task-reconnect">本机重连对照</a>核对任务受理、原会话和资源侧读取，再按同一契约验收目标环境。'}
+ 'cloud-platform':{track:'cloud',label:'云平台与云原生',aim:'能解释应用从资源申请到上线的完整路径，写出部署、配置与交付方案。',targets:['cloud-compute','iam-security','k8s-workloads','scheduling-resources','k8s-networking','k8s-storage','config-secrets','k8s-autoscaling','serverless-execution','terraform-state','gitops-reconciliation','cloud-service-lab'],gate:{
+  task:"为一个带持久数据的服务写出发布和回退方案，标明用哪项观察决定继续或停止。",
+  checks:[
+   {title:"确认用户真的能访问",
+    result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
+   {title:"定位请求被哪一层拦下",
+    result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
+    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","native-jetstream-redelivery","消息重投后拒绝旧执行者"]]},
+   {title:"确认实际部署的制品",
+    result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
+    primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"]]},
+  ]
+ }},
+ 'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:{
+  task:"为一次用户请求变慢或失败写排障记录，标明证据、处置动作和恢复后的用户结果。",
+  checks:[
+   {title:"找到请求在哪一段变慢",
+    result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+   {title:"算清积压何时消失",
+    result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"]]},
+   {title:"恢复后回读业务结果",
+    result:"标明恢复目标和最后一笔应该存在的业务记录。恢复后独立读取，确认数据位置和外部效果符合预期。",
+    primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"]]},
+  ]
+ }},
+ 'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
+  task:"交一份训练运行记录。能指出这一步算了哪些样本、哪一步已提交，以及进程失败后从哪里重来。",
+  checks:[
+   {title:"核对一次参数更新",
+    result:"按样本数写出梯度分母，对照单进程结果。进程先后耗尽输入时，说明哪些样本参加了这次更新。",
+    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
+   {title:"按已提交的批次恢复",
+    result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"]]},
+   {title:"查齐进程和作业状态",
+    result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+  ]
+ }},
+ 'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
+  task:"交一份推理服务验收表，写清给定输入下的缓存占用、等待时间和发布判定。",
+  checks:[
+   {title:"算出缓存能容纳多少请求",
+    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。",
+    primary:["model-serving","section-4","KV 缓存字节算例"],more:[["model-serving","native-inference-prefix","前缀复用与清除"],["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],["inference-performance","vllm-block-lifecycle","vLLM 缓存块的引用与逐出"],["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
+   {title:"分开计时和看吞吐",
+    result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
+   {title:"以实际输出验收版本",
+    result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
+    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
+  ]
+ }},
+ 'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:{
+  task:"交一份可复查的算子对照，固定输入和输出判据，再解释性能变化来自哪里。",
+  checks:[
+   {title:"从调用找到实际执行",
+    result:"给定输入形状，先算运算量和读写字节。用一次轨迹定位真正执行的操作，再判断代价来自算子还是构建、导入或重编译。",
+    primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
+   {title:"覆盖完整块和尾块",
+    result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
+    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ragged-ring-training","环形注意力与填充"]]},
+   {title:"给计时写明设备和范围",
+    result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
+    primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[]},
+  ]
+ }},
+ 'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:{
+  task:"交一份可回读的订单报告，给出实际来源、授权结果和报告金额。",
+  checks:[
+   {title:"跟踪模型提议怎样变成读取",
+    result:"从工具清单和模型提议一路查到资源服务，解释哪两次读到了数据，以及跨租户请求在哪一步被拦下。",
+    primary:["agent-runtime","native-model-mcp-tool-choice","模型选工具与资源授权"],more:[]},
+   {title:"证明回答用了当前资料",
+    result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
+    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
+   {title:"用回执和产物验收任务",
+    result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[]},
+  ]
+ }},
+ 'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
+  task:"为一个会暂停、重试和接管的任务写出运行记录，能用资源端证据回答发生了几次实际效果。",
+  checks:[
+   {title:"把执行权限分到正确位置",
+    result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
+    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
+   {title:"中断后认回原任务",
+    result:"先找任务编号和原操作身份，再独立读接收方回执。比较响应丢失、权限撤销和工作流升级时哪些操作还能继续。",
+    primary:["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],more:[["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
+   {title:"把链路记录和效果对上",
+    result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},
+  ]
+ }},
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
 function learningProfileRoute(profile){
@@ -14562,10 +14716,26 @@ function learningGoalSelectorHTML(track){
  const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
  return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><span class="learning-goal-label" aria-hidden="true">学习路径</span><div class="learning-goal-options"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</div></nav>';
 }
+function learningGoalGateHTML(gate,goal){
+ const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'">'+trainingEscape(label)+' →</a>';
+ const rows=gate.checks.map(({title,result,primary,more})=>
+  '<li><h4>'+trainingEscape(title)+'</h4><p>'+trainingEscape(result)+'</p><p class="goal-gate-primary">'+link(primary)+'</p>'+
+  (more.length?'<details class="goal-gate-more"><summary>展开其他对照（'+more.length+'）</summary><ul>'+more.map(item=>'<li>'+link(item)+'</li>').join('')+'</ul></details>':'')+
+  '</li>').join('');
+ return '<section class="goal-gate" id="goal-gate" tabindex="-1" aria-labelledby="goal-gate-title"><h3 id="goal-gate-title">学完要交出的结果</h3><p>'+trainingEscape(gate.task)+'</p><ol class="goal-gate-checks">'+rows+'</ol></section>';
+}
 function learningGoalHTML(profile){
  if(!profile)return '';
  const route=learningProfileRoute(profile),goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
- return '<section class="learning-goal" id="learning-goal">'+learningGoalSelectorHTML(profile.track)+'<h2>'+profile.label+'</h2><p>'+profile.aim+'</p><p class="evidence-note">'+route.length+' 章，已把需要的先修排在前面。会做本章练习的内容可跳过；没有要求先学完整的其他方向。</p><ol class="goal-chapters">'+route.map(id=>{const a=articleById(id);return '<li><a id="goal-chapter-'+id+'" href="'+articleURL(id)+'?goal='+goal+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';}).join('')+'</ol><p class="goal-gate" id="goal-gate" tabindex="-1"><b>学完要交出的结果</b>'+profile.gate+'</p></section>';
+ const start=articleURL(route[0])+'?goal='+goal;
+ const actions='<nav class="goal-actions" aria-label="这条路线的入口"><a href="'+start+'">开始第一章 →</a><a href="/roadmap/'+goal+'/#goal-gate">查看三项验收 ↓</a></nav>';
+ const chapters=route.map(id=>{
+  const a=articleById(id);
+  return '<li><a id="goal-chapter-'+id+'" href="'+articleURL(id)+'?goal='+goal+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';
+ }).join('');
+ return '<section class="learning-goal" id="learning-goal">'+learningGoalSelectorHTML(profile.track)+'<h2>'+profile.label+'</h2><p>'+profile.aim+'</p>'+
+  actions+'<p class="evidence-note">'+route.length+' 章。先补需要的基础，再读标为岗位重点的章节。</p><ol class="goal-chapters">'+chapters+'</ol>'+
+  learningGoalGateHTML(profile.gate,goal)+'</section>';
 }
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
@@ -14996,10 +15166,12 @@ const fieldPracticeFollowups={
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
  'cloud-data':{'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
+ training:{'tr-input':['ai-prefetch-resume-step']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
- agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-retrieval':['agent-rag-citation-oracle']}
+ agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
@@ -15156,6 +15328,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'release-artifact-trust':{folder:'release-artifact-trust',title:'同一签名记录和不同制品字节'},
+ 'prefetch-resume-step':{folder:'prefetch-resume-step',title:'数据预取和已提交训练步'},
+ 'memory-withdrawal':{folder:'memory-withdrawal',title:'偏好撤回、任务快照与实际发送'},
  'kubernetes-admission':{folder:'kubernetes-admission',title:'Kubernetes 授权与对象准入'},
  'native-slot-handoff':{folder:'native-slot-handoff',title:'两个推理进程之间交接历史缓存'},
  'rag-citation-oracle':{folder:'rag-citation-oracle',title:'答案金额相同，如何核对引用版本'},
@@ -15573,6 +15748,20 @@ labLearningCatalog.push(
   observe:'对比当前资料、旧版索引和提前过滤三条路径，从资料版本和回答分别验收。',
   scope:'固定合成资料、同一条问题与本机小模型。证据只覆盖这三条路径。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-release-artifact-trust',track:'cloud',stage:2,title:'签名仍有效，为什么部署应停下来',chapter:'delivery',anchor:'native-release-artifact-trust',pack:'release-artifact-trust',
+  files:['release_artifact_trust.py'],env:'Python 3 · Git 2.50.1 · OpenSSH 10.0p2 · 本机',kind:'真实签名验证、摘要和独立回读',
+  observe:'对照已签记录和实际文件，分别制造别名变化与签名者不受信任，回读当前版本。',
+  scope:'隔离的本机 Git、临时签名密钥与 tar 文件。未使用镜像仓库或部署服务。'},
+ {id:'ai-prefetch-resume-step',track:'ai',stage:2,title:'数据已经准备好，重启后从哪一批继续',chapter:'data-pipeline',anchor:'native-prefetch-resume',pack:'prefetch-resume-step',
+  files:['prefetch_resume.py','requirements.txt'],env:'Python 3 · PyTorch 2.5.1 · 本机 CPU 与两个加载进程',kind:'真实预取、动量更新和重启',
+  observe:'分别按已提交批次和已准备批次恢复，核对首批身份、动量和最后权重。',
+  scope:'固定小模型、本机 CPU 和有序加载。跨主机存储与 GPU 性能另验。'},
+ {id:'agent-memory-withdrawal',track:'agent',stage:2,title:'偏好已经撤回，暂停的任务还会用吗',chapter:'agent-memory',anchor:'native-memory-withdrawal',pack:'memory-withdrawal',
+  files:['memory_lab.py','fixture.json','requirements.txt'],env:'Python 3.12 · LangGraph 1.2.20 · SQLite · 本机 HTTP',kind:'真实持久快照、撤回、恢复和清理',
+  observe:'分别读取当前偏好、旧任务快照和接收方记录。比较复用旧快照和发送前重查的实际输入。',
+  scope:'固定合成偏好与本机接收服务。观察范围到发送内容与快照删除。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -15815,5 +16004,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="f6941af26b479b684d17956371047d21cfbab9276cb73e2eaf9f6ffd6c05f3f7";
+const staticReadingVersion="42c159e76bafca7884fa3c13c761674c21dc9b374cb8a2bd04bc38ef6774c5da";
 
