@@ -74,6 +74,7 @@ infraKnowledgeDomains.push({module:'training',track:'ai',refs:['v16DDP','v16AMP'
  {id:'tr-parallel',title:'张量并行、流水线并行与混合专家',articles:['distributed-training','tensor-parallel-math'],lead:'数据并行切输入与副本，张量并行（TP）切层内张量，流水线并行（PP）切层。混合专家模型（MoE）再通过路由，把词元分派给不同专家。组合策略先说明每一组rank承担哪种切分。',body:
  figure('v16-ai-parallel-matrix','并行策略矩阵：分别追踪状态驻留、计算对象和关键通信，不把所有“多卡”归为同一种机制。')+
  para('列并行将W=[W0,W1]，两rank分别计算XW0和XW1，得到输出特征的两片；后续算子若可直接消费分片，可暂不拼接。行并行将X=[X0,X1]、W按输入维切片，完整输出Y=X0W0+X1W1，需要相应归约。切分位置决定通信在哪里发生。',
+ '当两个数据副本又各自切成两个 TP 进程，沿行合并前向部分和，沿列同步同一参数片的梯度。<a href="/article/tensor-parallel-math/#native-dp-tp-mesh">在四进程记录里核对这两种分组</a>。',
  '流水线并行把连续层分到不同阶段（stage），小批次依次传递激活，再反向传递梯度。等长单向填排空的简化模型利用率为m/(m+p−1)，m=8、p=4时约72.7%；真实训练还有前反向调度、激活保存、各阶段耗时不均衡和通信。增大m可能减少气泡，也会改变内存、延迟和组批约束。',
  '用<a href="/article/tensor-parallel-math/#native-pipeline-schedules">四个微批的实跑记录</a>，比较同一阶段有几条微批还等着反向。再检查排程改变后，两阶段的梯度是否仍等于整批参考。',
  'MoE的路由器（router）为每个词元选择专家。专家参数总量、每token激活参数量和实际算量不是同一个数；分发词元和收回输出常需要各进程互相交换数据（AllToAll）。热点专家、容量限制、丢弃/补算和跨节点带宽会改变效率。先查看每个专家收到多少词元、分发花多少时间，再判断增加专家是否能提高有效吞吐。')},

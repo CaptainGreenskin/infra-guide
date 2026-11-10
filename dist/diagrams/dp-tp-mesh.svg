@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="294" viewBox="0 0 520 294" role="img" aria-labelledby="title description">
+<title id="title">四个进程，两份数据，四个通信组</title>
+<desc id="description">上排 rank 0、1 共同处理样本 0，下排 rank 2、3 共同处理样本 1、2。横向 TP 合并同一副本的层内计算，纵向 DP 同步相同参数分片的梯度。正确分母和分组使各进程的梯度等于单进程整批参考。</desc>
+<metadata>{"mesh":[[0,1],[2,3]],"mesh_axes":["dp","tp"],"tp_groups":[[0,1],[2,3]],"dp_groups":[[0,2],[1,3]],"sample_ids":[[0],[1,2]],"record":"labs/dp-tp-mesh/validation.json"}</metadata>
+<rect x="1" y="1" width="518" height="292" rx="15" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="22" y="32" font-size="19" font-weight="700">两份数据，各用两个进程算同一层</text>
+<text x="230" y="64" font-size="15" fill="#356548" text-anchor="middle">参数片 0</text>
+<text x="417" y="64" font-size="15" fill="#356548" text-anchor="middle">参数片 1</text>
+<rect x="20" y="80" width="480" height="61" rx="8" fill="#ebf3ff"/>
+<rect x="20" y="162" width="480" height="61" rx="8" fill="#ebf3ff"/>
+<text x="32" y="105" font-size="15">副本 A</text><text x="32" y="126" font-size="14">样本 0</text>
+<text x="32" y="187" font-size="15">副本 B</text><text x="32" y="208" font-size="14">样本 1、2</text>
+<path d="M230 125V178 M417 125V178" stroke="#46835e" stroke-width="2.4" stroke-dasharray="5 4"/>
+<path d="M277 111H371 M277 193H371" stroke="#285da5" stroke-width="2.4"/>
+<g fill="#fff" stroke="#86a9d3">
+<rect x="181" y="95" width="98" height="32" rx="5"/><rect x="368" y="95" width="98" height="32" rx="5"/>
+<rect x="181" y="177" width="98" height="32" rx="5"/><rect x="368" y="177" width="98" height="32" rx="5"/>
+</g>
+<g font-size="16" font-weight="600" text-anchor="middle">
+<text x="230" y="117">rank 0</text><text x="417" y="117">rank 1</text>
+<text x="230" y="199">rank 2</text><text x="417" y="199">rank 3</text>
+</g>
+<path d="M23 247H54" stroke="#285da5" stroke-width="2.4"/>
+<text x="63" y="252" font-size="15">横向 TP：同一批输入，合并层内计算</text>
+<path d="M23 272H54" stroke="#46835e" stroke-width="2.4" stroke-dasharray="5 4"/>
+<text x="63" y="277" font-size="15">纵向 DP：不同输入，同步相同参数片</text>
+</g>
+</svg>

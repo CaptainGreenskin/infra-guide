@@ -1,0 +1,253 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "9183271f8f400a2736f1518c4bd065c73a9bb1ed",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SOURCE_LED_READING_2026-11-10.json": "4b449080ffc2af1c0c524defe9fcab5f5b916ded79bde36d9bff5494be5a7cda"
+  },
+  "source_revisions": {
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "7e6b6bf8516efe1c25431cfe8bc2046121ce748ea11d2266c9291885257b4484",
+      "reviewed_sha256": "517b38f8c77a8dbd134f170c6d3976ea4639f6b699337ec9e0742b24f8a59de2",
+      "scope": "Follow a real custom Kubernetes resource through finalizer installation, external creation, process exit, reconciliation and deletion."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "236489ea518f466d02779ec75a4e381e4b9608fa8c0a0090498b337614cc7e71",
+      "reviewed_sha256": "5492cd9dec0368725090b6ad3fdc1de870f67872c67032ddafc587d6da13bf77",
+      "scope": "Show how inserting a first interrupt changes the action that consumes an old approval."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "4b07b1145784e93bb56adcf034947ffcb0239436d2fe541604b11e8a7df1e9b1",
+      "reviewed_sha256": "6832432e2533a790f225cab138f5f5c13108611313e64c757c2a33ca4e06222b",
+      "scope": "Explain replica rows, parameter-shard columns and uneven sample weighting from the same three inputs and native PyTorch run."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "60ee3eb1125c8df28c987558ca1a372f96dad4a0ea7446e37ff43fe14659fcac",
+      "reviewed_sha256": "14734d0a84729b943a3f3f66c3716f8b2de5febd82f683cf1402a6ddc49fd8dd",
+      "scope": "Connect the training strategy explanation to an actual four-rank DP and TP example."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "2818dae80b6e270c64c976fb3a2f367979eee9cb0226d9ae443ce24686698571",
+      "reviewed_sha256": "2c4eaa579a8146967a7afe521ada126aabc536e1ee1b0583ee802db605b2b7fe",
+      "scope": "State the scope of the native controller exercise and the separate production checks."
+    },
+    "dist/cloud-delivery-mechanics.js": {
+      "previous_sha256": "6d5660688be225767e0a80d41805875ea89f6f90d29ab42614c06675b9b2d224",
+      "reviewed_sha256": "4eeb9b8f7cd83d5b8ef10123086a61191c4c24203aa6988539508367b8e0ab35",
+      "scope": "Connect the control protocol to actual object snapshots and receiver records."
+    },
+    "dist/ai-system-knowledge.js": {
+      "previous_sha256": "2a726170c98e1135058aa9bde289022e9b4e0e98295c271d009b74dbc9515f4f",
+      "reviewed_sha256": "7a93f9352ee5b7e8449b5227807bdc53b7219bd342d18374349773cd6091b38b",
+      "scope": "Link the combined training layouts to real rank memberships and one update."
+    },
+    "dist/agent-system-knowledge.js": {
+      "previous_sha256": "1760af491656e0abf3a34f010170db5da6fabba76917f7c77dc3f1c4e586e550",
+      "reviewed_sha256": "5cf1ee926fc31696bfe06d7294349ea38ad692ffc3b2226fbd36616f1ec4b44e",
+      "scope": "Connect durable state to an actual stored-version dispatch and upgrade counterexample."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "7377c30ae43ff6288775a34593894dc823d06b748635c5c75c4dcfe1a20da4c1",
+      "reviewed_sha256": "eff8956db765b05ebcfbf705e5488cd752afa386c3544c97a48d77b4d362b7bf",
+      "scope": "Keep direct Cloud, AI operator and Agent platform practice destinations."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "6e01022611ad90872d3751c116bb2accc23b50cc07aa3b14c97bca79b98ec32b",
+      "reviewed_sha256": "0487bc8cf97d727c005460625cfda07a04fdc3f22ad765a85b0d8ba8143cb3dc",
+      "scope": "Register replay commands and exact source/evidence for each exercise."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "df4944b5b7b87b4a0dcadcb94de08a1f54292f0648320910eaa4d211269f29b6",
+      "reviewed_sha256": "ec6f42d3b2abf3bb6b8c6f5521240b0858025671c8655ec5a99407d4f40a8acd",
+      "scope": "Declare the exact viewports of the three new diagrams."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "f5371163cee2ad45a5bfeaa842b3a5cdb82714cc898715d88c8ebe4dbb5a6af5",
+      "reviewed_sha256": "67bf61d4ec618323254e7d5189dece2e89272a19549343f67858cc11faf8bd27",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "5f57d0f01ca62037a47163f17e41a22c3fc24b85892b5d90a96e51b4cd2826b4",
+      "reviewed_sha256": "911af9187a661892a5fd1d20735d3bad79a8146551a753538d6d9f46f14d2646",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "f41c5254ae920cffc5811b180e4fcc442f49161978b8aae02c0a7fa214a0d201",
+      "reviewed_sha256": "5746c5d472d5eb9a102a8970a70fdba55affc74ab988568623de73019650b920",
+      "scope": "Preserve the original rank-map inventory and verify the new lesson independently."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "3a990558a79e04cfdc872990b8cb5d97c2a95efe037b2dfc428d6d9d0d13a344",
+      "reviewed_sha256": "c10854cc3acda1ef81bc63a880fe77b30926391bb5dada46c35c88cf1ee6476b",
+      "scope": "Require each exact new practice gate with its prerequisite route."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "0fb19db9514b73e89e9384c10f9a7cc8d3ceef21a5927789c435262486501cd2",
+      "reviewed_sha256": "66b2cb1d6a30de4bde1e675f592053c204f61dbb5a1c572b7668d0105558a388",
+      "scope": "Include all three evidence verifiers."
+    },
+    "scripts/check-dp-tp-mesh.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0cffad79a07ff4ea55286c8d1a2a909bec8c99ece39bebcb42635a63bd29a9ca",
+      "scope": "Independently derive the full step and compare every process under three cases."
+    },
+    "scripts/check-agent-planning.cjs": {
+      "previous_sha256": "36e90b29a0ca0d2a8068355b2c52ecfaac94bcfd72c055da022930b0c143dfcf",
+      "reviewed_sha256": "13fa43150eac295ed65258456ae2ffdd454288201e372f93b48271107d9cbc91",
+      "scope": "Preserve the original planning inventory separately from the new workflow-upgrade lab."
+    },
+    "scripts/check-workflow-version-resume.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6ceb24e15303ce885fc62d51dfa3fd801ca4e0c5c7d4788b3990b16444380b22",
+      "scope": "Verify actual checkpoint, independent receiver data and version selection."
+    },
+    "scripts/check-controller-reconcile.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dfe590e00c592272f0642054b3613a386f69d8635602393c673e50c5683c0e64",
+      "scope": "Verify external requests, object history, process exit and actual file cleanup."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "c216bd4b420834c49b050219e52474d473352ecb6beea90e7e02c3dab1222df4",
+      "reviewed_sha256": "3b21996252e815d3e7d70e0507cc244b41afdd1a0da46873e01f4ec6f129b02b",
+      "scope": "Add the three exact subsection anchors and retain prior URLs."
+    },
+    "docs/CONTENT_NATIVE_RECONCILE_MESH_RESUME_2026-11-10.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3084425445b478f5ee4294abce9f450282dc5654506d48698a5639c24ffc442a",
+      "scope": "Append the four chapter and three knowledge-point revisions."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "498f0348519177212f8938f6c5375616db68099e173458054b6bd878ae9b0aa2",
+      "reviewed_sha256": "d13c715fd23ca7e6c866ddee7d473cb9450b9c85bf94eefce432333e425384b0",
+      "scope": "Register the new body and evidence review."
+    },
+    "dist/diagrams/controller-reconcile.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c10105f688af751da961b49d1b3bb71d93809f703de3dd7fed605c35e43428dc",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/controller-reconcile.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "de13e81cc0d9adcc024c08e1eed8dd4d8f4a48d95a0f30dd6049d2ac65badf4e",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/controller-reconcile/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8fb63aaf07b3f1208ab6e33f1b19636fb4a7f9a22d5ec3232c287904995626dc",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/controller-reconcile/controller.go": {
+      "previous_sha256": null,
+      "reviewed_sha256": "68f0f12c62c8b7803c42022373d1fbbd6e5b14bb1dfc633bf422d3a68eda1462",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/controller-reconcile/go.mod": {
+      "previous_sha256": null,
+      "reviewed_sha256": "73048731a94dfd75b1f0e8fce9ad32073a865a635d08fcfed43e6deb6f8c42a7",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/controller-reconcile/go.sum": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2839d0a681843d9ef93b754d31b84b13397eaea715ce25feb0e9f205073d4184",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/controller-reconcile/main.go": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d47d33eec03619c1354f962f7cd011390f17f6015eb4f13802e5757ddde34d85",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/controller-reconcile/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6322635235d52fc2947e3842e46387884625d437d101580d1e52060a49e6c28d",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/dp-tp-mesh.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a776482389c98805b6b72de092a32d25263230ea04a540fbcca84005d278c5a2",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/dp-tp-mesh.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "10c00a9a79d15d72b70bc127fb3e0c38e5ef0e91ead138f30bf9217cab27858f",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/dp-tp-mesh/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b62ea1eadfd418c0432c4f784ee1592167aa1a2afbac1dd8079f6ce7c1261aae",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/dp-tp-mesh/dp_tp_mesh.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b798feacd5c0d2ab18600bc99a7b396eb0ee97e94c70dd84bd3aaf10c590541f",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/dp-tp-mesh/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/dp-tp-mesh/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "09b9f35c061324e1b0f71ab89e104e9c6b353c111ef9cdff7eb86ffdaff8097c",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/workflow-version-resume.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8f06beea5180c4c1fc9c54740fb947a0776cdb7615c00a0fd4929b51addf88a0",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/workflow-version-resume.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "fde6cd530c64afdf5c228fefa2ee4d2be57faa3f118e0ea8e5d54f9ee5a243b9",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/workflow-version-resume/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2a1e882237a45ff2691a3867f87bdcc2960ca66b36a324a0f32829f329504d90",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/workflow-version-resume/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "18c281fc08f364b9561fb0f549d44113bb46b0a16826f5ec13a27c2dbcd5e4b3",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/workflow-version-resume/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6a1a3e8c62c4a6f8fcef0ea603c0faf77becab2865920f608f49fd2e90ba5d75",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/workflow-version-resume/resume_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e852e01a52baa7c0cd3f02028d35fb88b16c6cd05fb3479c17bc3b1cc3275fba",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/workflow-version-resume/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9dfe2b4a81fc9c306822231170d9ff1e7215e06fb4a18713461f690ebdc769b2",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "6b1a33ffdf7b0d50aa7d1e7e198d7505b609e08aa87ca17b84d23d6802f0a3af",
+      "reviewed_sha256": "a5c4e590e198484b27b9fd0faddd65392fb9ea515604f3ef61a6f17078ab009f",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "9183271f8f400a2736f1518c4bd065c73a9bb1ed",
+    "chapters": 78,
+    "changed_bodies": [
+      "delivery",
+      "distributed-training",
+      "tensor-parallel-math",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "delivery": 2,
+      "tensor-parallel-math": 2,
+      "durable-workflows": 2
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}

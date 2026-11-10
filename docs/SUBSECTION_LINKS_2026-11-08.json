@@ -312,7 +312,13 @@
       "id": "delivery",
       "targets": [
         "subsection-8-1mpi7nq",
-        "subsection-8-lctfpe"
+        "subsection-8-lctfpe",
+        "native-controller-reconcile"
+      ],
+      "visible_targets": [
+        "subsection-8-1mpi7nq",
+        "subsection-8-lctfpe",
+        "native-controller-reconcile"
       ]
     },
     {
@@ -509,9 +515,11 @@
       "targets": [
         "subsection-4-z6hy9g",
         "pipeline-training-schedules",
-        "native-pipeline-schedules"
+        "native-pipeline-schedules",
+        "native-dp-tp-mesh"
       ],
       "visible_targets": [
+        "native-dp-tp-mesh",
         "pipeline-training-schedules",
         "native-pipeline-schedules"
       ]
@@ -916,7 +924,8 @@
         "langgraph-workflow-reentry",
         "mcp-commit-recovery",
         "native-approval-reentry",
-        "native-parallel-merge"
+        "native-parallel-merge",
+        "native-workflow-version-resume"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -939,7 +948,8 @@
         "langgraph-workflow-run",
         "mcp-commit-recovery",
         "native-approval-reentry",
-        "native-parallel-merge"
+        "native-parallel-merge",
+        "native-workflow-version-resume"
       ]
     },
     {

@@ -362,6 +362,34 @@
  '<p class="practice-links"><a href="/labs/pipeline-schedules.zip" download>下载程序与记录 ↓</a> · <a href="/labs/pipeline-schedules/README.md">复跑步骤 →</a> · <a href="/labs/pipeline-schedules/validation.json">查看事件、梯度和参数 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/pipelining/schedules.py">PyTorch 2.5.1 调度源码 ↗</a></p>';
  tensorParallel.updated='2026.11.10';
 
+
+ tensorParallel.sections[5][1]+='<h3 id="native-dp-tp-mesh">四个进程，为什么只有三条样本</h3>'+
+ p('把第 3 节的小网络装进四个进程。rank 0 和 1 都收到样本 0，各算一半隐藏特征。rank 2 和 3 都收到样本 1、2，也各算一半。第一层切输出列，第二层切输入行。每一排的两个进程在第二层合并部分和，得到同一份预测。整个批次只有三条样本。')+
+ trainingFigure('dp-tp-mesh','横向是 TP 组 [0,1]、[2,3]，纵向是 DP 组 [0,2]、[1,3]。例如 rank 0 前向和 rank 1 合并部分和，反向的同片梯度要与 rank 2 同步。')+
+ p('PyTorch 的 <code>DeviceMesh</code> 用一张编号表建立进程组。给两条轴命名后，<code>mesh["tp"]</code> 取当前进程所在的横排，<code>mesh["dp"]</code> 取纵列。这里 <code>nn.Linear</code> 按“输出在前、输入在后”存权重，数学里的 W 输出列在 <code>w.weight</code> 中表现为行。')+
+ trainingCode('同一个进程分别加入 TP 和 DP','PYTHON',`mesh = DeviceMesh("cpu", [[0, 1], [2, 3]], mesh_dim_names=("dp", "tp"))
+model = parallelize_module(Model(), mesh["tp"], {
+    "w": ColwiseParallel(),
+    "u": RowwiseParallel(),
+})
+ddp = nn.parallel.DistributedDataParallel(model, device_mesh=mesh["dp"])`)+
+ table(['样本','输入','预测','目标','平方误差和'],[
+  ['0','[1,2]','[12,5]','[3,−1]','117'],
+  ['1','[2,1]','[11,6]','[8,9]','18'],
+  ['2','[−1,3]','[13,4]','[7,4]','36']
+ ])+
+ p('六个输出参与损失，整批均方误差是 (117 + 18 + 36) ÷ 6 = 28.5。DDP 会对两个副本的同片梯度取平均，本地先反传“平方误差和 × 2 ÷ 6”，所以两排分别反传 39 和 18。梯度取平均时再除以 2，正好得到整批六项均值的梯度。')+
+ p('只算 rank 0 的第一行权重梯度。样本 0 的第一个输出误差是 9，对这一行的梯度贡献为 (2×9÷6)×[1,2] = [3,6]。样本 1 贡献 [2,1]。样本 2 在这个隐藏分量上被 ReLU 截成 0，贡献 [0,0]。相加得 [5,7]。')+
+ table(['只改这一项','rank 0 第一行梯度','该行更新后的权重'],[
+  ['按六项归一化，沿 DP 组平均','[5,7]','[0.375,−0.875]'],
+  ['各副本先算自己的均值','[6,9.75]','[0.25,−1.21875]'],
+  ['保留分母，误把梯度发到 TP 组','[8,16]','[0,−2]']
+ ])+
+ p('第一种错误给一条样本和两条样本的两个副本同样权重。第二种错误在实验里真的发起了归约，两张同形状的梯度却来自不同参数。三组预测完全相同。只有正确组的梯度和学习率为 0.125 的 SGD 更新与整批单进程基准逐项一致。')+
+ trainingCode('解压后安装 PyTorch 2.5.1，在本机启动四个 CPU 进程','SHELL','python -m pip install -r requirements.txt\npython dp_tp_mesh.py > report.json')+
+ p('在报告里先查各 rank 的 <code>tp_group</code>、<code>gradient_group</code> 和 <code>sample_ids</code>，再比较 <code>gradients</code> 与 <code>updated</code>。这次在同一台机器用 CPU/Gloo 跑 PyTorch 的原生 TP 与 DDP，验证一次双精度更新。GPU/NCCL 和跨机性能需要到目标设备测量。')+
+ '<p class="practice-links"><a href="/labs/dp-tp-mesh.zip" download>下载程序与记录 ↓</a> · <a href="/labs/dp-tp-mesh/README.md">复跑步骤 →</a> · <a href="/labs/dp-tp-mesh/validation.json">查看各进程的分组、梯度和参数 →</a> · <a href="https://docs.pytorch.org/tutorials/recipes/distributed_device_mesh.html">PyTorch DeviceMesh 指南 ↗</a></p>';
+
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
  warpMemory.updated='2026.11.10';
  warpMemory.sections[3][1]+=

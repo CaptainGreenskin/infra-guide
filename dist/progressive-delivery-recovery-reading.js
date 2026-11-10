@@ -173,6 +173,33 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
  ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
 
+
+ delivery.sections[7][1]+=h('native-controller-reconcile','外部已创建，控制器退出后会不会再建一份')+
+ p('向 Kubernetes 提交一份 <code>ReportSink</code>，指定 <code>spec.target</code> 为 <code>weekly-report</code>。这是用自定义资源定义（CRD）加到 API 上的对象。API 保存期望，控制器负责让外部服务拥有对应的接收位置。外部服务按对象的 UID 保存一份文件。同名对象删掉再建会获得新 UID。')+
+ p('控制器用 client-go 的 informer 先列出当前对象，再监听变化。事件只把“命名空间/名字”放进队列。处理时重新读取对象，取得 UID、代际和删除标记。<code>generation</code> 是 API 维护的期望代际，<code>status.observedGeneration</code> 表示控制器已处理到哪一代。对象更新时用来检查并发冲突的是另一个字段 <code>resourceVersion</code>。')+
+ trainingFigure('controller-reconcile','控制器退出时，外部文件和 Kubernetes 的状态处在不同阶段。跟着同一个 UID 查看 PUT、DELETE 和 API GET。')+
+ p('没有清理标记时，控制器先保存自己的 <code>finalizer</code>，然后结束这轮处理。等下一轮读到标记已保存，才发外部 PUT。这样对象进入删除流程后，控制器仍有机会根据原 UID 清理。外部成功后才回写 <code>status</code>。')+
+ trainingCode('外部成功以后、回写状态以前的故障点','GO',`if err := c.changeSink(ctx, http.MethodPut, uid, target); err != nil {
+    return err
+}
+if c.crashAfterCreate {
+    os.Exit(crashExitCode)
+}
+obj.Object["status"] = map[string]any{"observedGeneration": obj.GetGeneration(), "sinkUID": uid}
+_, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
+ table(['检查时刻','从 API 读到的结果','外部服务实际记录'],[
+  ['正常对象处理完','已处理代际 1','PUT 201，创建 1 份'],
+  ['replay 对象写入后退出 73','GET 200，状态尚未回写','PUT 201，创建 1 份'],
+  ['用正常配置重启','同一个 UID，已处理代际 1','同 UID 的第二次 PUT 返回 200，仍只创建 1 份'],
+  ['停下控制器，再提交删除','GET 200，删除时间和 finalizer 仍在','尚未收到 DELETE，文件仍在'],
+  ['重启并完成清理','移除 finalizer 后，GET 404','DELETE 204，文件已清理']
+ ])+
+ p('第一次 PUT 已经成功，所以光看 <code>status</code> 为空会判断错。重启后，informer 的初始列表会再次看到该对象。控制器用原 UID 重试，外部服务识别到同一个对象。删除请求到达时，API 先标出删除时间。控制器看到它，就先执行外部 DELETE，再移除自己的 finalizer。')+
+ trainingCode('解压后用独立 API Server 和 etcd 复跑','SHELL','go run . --assets /path/to/controller-tools/envtest --output replay.json')+
+ p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
+ '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
+ delivery.updated='2026.11.10';
+
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);
  if(r9.length!==4||r9links.length!==6||figures(r.join('')).length!==2)throw Error('Recovery original evidence extraction changed');

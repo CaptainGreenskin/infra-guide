@@ -78,6 +78,7 @@ infraKnowledgeDomains.push({module:'training',track:'ai',refs:['v16DDP','v16AMP'
  {id:'tr-parallel',title:'张量并行、流水线并行与混合专家',articles:['distributed-training','tensor-parallel-math'],lead:'数据并行切输入与副本，张量并行（TP）切层内张量，流水线并行（PP）切层。混合专家模型（MoE）再通过路由，把词元分派给不同专家。组合策略先说明每一组rank承担哪种切分。',body:
  figure('v16-ai-parallel-matrix','并行策略矩阵：分别追踪状态驻留、计算对象和关键通信，不把所有“多卡”归为同一种机制。')+
  para('列并行将W=[W0,W1]，两rank分别计算XW0和XW1，得到输出特征的两片；后续算子若可直接消费分片，可暂不拼接。行并行将X=[X0,X1]、W按输入维切片，完整输出Y=X0W0+X1W1，需要相应归约。切分位置决定通信在哪里发生。',
+ '当两个数据副本又各自切成两个 TP 进程，沿行合并前向部分和，沿列同步同一参数片的梯度。<a href="/article/tensor-parallel-math/#native-dp-tp-mesh">在四进程记录里核对这两种分组</a>。',
  '流水线并行把连续层分到不同阶段（stage），小批次依次传递激活，再反向传递梯度。等长单向填排空的简化模型利用率为m/(m+p−1)，m=8、p=4时约72.7%；真实训练还有前反向调度、激活保存、各阶段耗时不均衡和通信。增大m可能减少气泡，也会改变内存、延迟和组批约束。',
  '用<a href="/article/tensor-parallel-math/#native-pipeline-schedules">四个微批的实跑记录</a>，比较同一阶段有几条微批还等着反向。再检查排程改变后，两阶段的梯度是否仍等于整批参考。',
  'MoE的路由器（router）为每个词元选择专家。专家参数总量、每token激活参数量和实际算量不是同一个数；分发词元和收回输出常需要各进程互相交换数据（AllToAll）。热点专家、容量限制、丢弃/补算和跨节点带宽会改变效率。先查看每个专家收到多少词元、分发花多少时间，再判断增加专家是否能提高有效吞吐。')},
@@ -185,7 +186,8 @@ infraKnowledgeDomains.push({module:'agent',track:'agent',refs:['v16MCPTools','v1
  para('三个时点决定故障语义：本地记录意图I，工具提交效果E，本地记录回执R。E发生后R之前退出，恢复者只看本地状态会看到“未完成”，但外部效果可能已经存在。把I和R放进一个本地事务，仍跨不过另一个工具数据库的E。',
  '解决方式之一是持久保存稳定op_id，接收方将效果与回执在同一事务中提交；恢复者以相同op_id重试或查询。接收方查到相同参数就返回原回执，查到异参则拒绝。调用次数可为2，效果只为1；这是特定接收方协议的性质，不是所有工具的默认能力。',
  '工作流重放要把会变化的输入保存下来：时间、随机选择、模型响应和外部读取都可能变化。升级代码后仍要能够解释历史事件；可用版本分支、迁移或已完成步骤兼容策略。若外部接口既无幂等键又无法查询，超时应进入对账、人工确认或有定义的补偿，而不是无条件再做一次。')+
- code('恢复器的关键分支 · 结果未知与失败分开','PYTHON','intent = load_persisted_intent(op_id)\nreceipt = receiver.lookup(op_id)\nif receipt is not None:\n    verify_arguments_and_record(receipt)\nelse:\n    retry_same_intent_or_enter_reconciliation(intent)')},
+ code('恢复器的关键分支 · 结果未知与失败分开','PYTHON','intent = load_persisted_intent(op_id)\nreceipt = receiver.lookup(op_id)\nif receipt is not None:\n    verify_arguments_and_record(receipt)\nelse:\n    retry_same_intent_or_enter_reconciliation(intent)')+
+ para('发布新版后，待批准的动作还要保留原含义。<a href="/article/durable-workflows/#native-workflow-version-resume">看一次旧批准恢复到新节点的实跑</a>，再比较接收方拦截与按旧版本恢复。')},
  {id:'ag-fencing',title:'多 worker：租约、代际与接收方 fencing',articles:['agent-recovery','durable-workflows','kairo-practice'],lead:'租约超时允许新的工作进程（worker）接管，但不会停止旧进程。隔离旧写者的机制称为fencing：它使用只增不减的代际号（epoch），让产生效果的接收方拒绝旧执行者；校验与效果必须在同一受保护边界内。',body:
  figure('v16-agent-fencing','A持有epoch1并暂停；B接管epoch2并安装接收方fence。A仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing负责旧执行者。')+
  para('只在runner启动前检查lease存在时间窗：A检查通过后暂停，租约过期，B接管，A恢复后仍可能写。旧A使用一个全新op_id时，去重表不会救场。接收方必须在处理新效果前，与当前资源代际比较并串行化校验和提交。',

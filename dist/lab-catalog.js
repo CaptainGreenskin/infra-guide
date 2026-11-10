@@ -1,6 +1,9 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
  'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
+ 'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
+ 'workflow-version-resume':{folder:'workflow-version-resume',title:'工作流升级后旧审批的恢复'},
+ 'controller-reconcile':{folder:'controller-reconcile',title:'Kubernetes 自定义控制器的重试与删除'},
  'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
@@ -349,6 +352,24 @@ labLearningCatalog.push(
   files:['receipt_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · SQLite',kind:'真实本机 HTTP 与提交后核对',
   observe:'比较类型错误、操作键错误与正常回执，再按原操作键只读查询。',
   scope:'本机 Streamable HTTP、固定批次和两个 SQLite 库。远端服务权限与查询可用性需另行验收。'}
+);
+labLearningCatalog.push(
+ {id:'ai-dp-tp-mesh',track:'ai',stage:2,title:'四个进程为什么只有三条样本',chapter:'tensor-parallel-math',anchor:'native-dp-tp-mesh',pack:'dp-tp-mesh',
+  files:['dp_tp_mesh.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 四进程 CPU/Gloo',kind:'真实 TP、DDP 和梯度对照',
+  observe:'比较横向 TP、纵向 DP 的组成员。用相同预测下的三组梯度，找出错分母和错分组。',
+  scope:'本机四进程，固定输入与一次 SGD 更新。设备拓扑、通信耗时与 GPU 训练另行验证。'}
+);
+labLearningCatalog.push(
+ {id:'agent-workflow-version-resume',track:'agent',stage:2,title:'新版多问一个问题，旧批准交给谁',chapter:'durable-workflows',anchor:'native-workflow-version-resume',pack:'workflow-version-resume',
+  files:['resume_lab.py','fixture.json','requirements.txt'],env:'Python 3.12 · LangGraph 1.2.20 · SQLite',kind:'真实检查点与跨进程恢复',
+  observe:'用同一个旧中断编号恢复三次，检查实际写入的目标和份数。',
+  scope:'本机两进程、固定审批与独立 SQLite 接收库。Kairo 的版本调度另行验收。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-controller-reconcile',track:'cloud',stage:2,title:'外部已经创建，重启后为什么只有一份',chapter:'delivery',anchor:'native-controller-reconcile',pack:'controller-reconcile',
+  files:['controller.go','main.go','go.mod','go.sum'],env:'Go 1.25+ · client-go 0.35.8 · Kubernetes 1.35.0 envtest',kind:'真实 API 对象、进程退出与回环 HTTP',
+  observe:'核对进程退出前后的 UID、PUT 次数、已处理代际和删除期间的 GET 状态。',
+  scope:'隔离的本机 API Server、etcd 与文件接收方。多副本、集群权限和真实云资源另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

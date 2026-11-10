@@ -5971,6 +5971,82 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "0488be609eb4f4dda004e6d2ead0d3bfc3096a91bf09daa840bb1c5f99e44503",
+      "reviewed_content_sha256": "1ff48e8729584a0e286abf67b2cda8f3979d0eec8b4c5606d787545b2c298603",
+      "scope": "Follow a real custom Kubernetes resource through finalizer installation, external creation, process exit, reconciliation and deletion.",
+      "observation": "A loopback API Server, etcd, and file-backed HTTP receiver show two PUTs with one effect. After finalizer cleanup the actual GET returns 404.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "1abb067701494e4891fae3c7f1672264f635ad5d1f7dbca35b47e8d605751f75",
+      "reviewed_content_sha256": "6dfc240260f69c37c833ac7ffb3a02900b36f556ab50558041b46528b27dd98d",
+      "scope": "Connect the training strategy explanation to an actual four-rank DP and TP example.",
+      "observation": "The named experiment is an optional detour from the training role.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "5196606bb70d5924239d8578381d50a5c61130267443c40aff1fc3be2beb295f",
+      "reviewed_content_sha256": "16fdb9a58c1acf5fdc723b5fb98d512460ec5885fdf5591c07fae4d634e48259",
+      "scope": "Explain replica rows, parameter-shard columns and uneven sample weighting from the same three inputs and native PyTorch run.",
+      "observation": "Correct DP group and global loss match the dense output, gradients and update. Wrong denominator and TP gradient group keep correct predictions but fail the update.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "f7ad29d9755ef1f7250a30a45dbb52daa37e85c81809fc61b4602860c4532b74",
+      "reviewed_content_sha256": "6d84af9c89e2df3c99c7ace501ebf44c6051ec46873bb08fe8f07ebdba3681c4",
+      "scope": "Show how inserting a first interrupt changes the action that consumes an old approval.",
+      "observation": "Independent SQLite checks distinguish one B write, zero effects after intent rejection, and one A write with saved-version routing. Kairo runtime is a separate target.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

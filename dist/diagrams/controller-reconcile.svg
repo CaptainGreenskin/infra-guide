@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="349" viewBox="0 0 520 349" role="img" aria-labelledby="title description">
+<title id="title">外部写入、控制器进程和 Kubernetes 状态各自推进</title>
+<desc id="description">外部首次 PUT 返回 201，控制器退出 73 时 Kubernetes 对象没有状态回写。重启按同一个 UID 再次 PUT 得到 200，状态随后更新。删除时 GET 仍为 200，直到外部 DELETE 成功并移除 finalizer，GET 才变为 404。</desc>
+<metadata>{"record":"labs/controller-reconcile/validation.json","provider_statuses":[201,201,200,204],"worker_exit":73,"replay_get":[200,200,200,404]}</metadata>
+<rect x="1" y="1" width="518" height="347" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="20" y="30" font-size="19" font-weight="700">跟着同一个 ReportSink UID 看五步</text>
+<rect x="17" y="49" width="486" height="33" rx="7" fill="#e7eef8"/>
+<g font-size="15" font-weight="650">
+<text x="28" y="71">时刻</text><text x="178" y="71">Kubernetes API</text><text x="358" y="71">外部 HTTP</text>
+</g>
+<g font-size="14">
+<text x="28" y="111">1. 初次处理</text><text x="178" y="111">写入 finalizer</text><text x="358" y="111">PUT 201，创建 1 份</text>
+<path d="M22 127H498" stroke="#d9e1ee"/>
+<text x="28" y="153">2. 进程退出 73</text><text x="178" y="153">GET 200，尚无 status</text><text x="358" y="153">仍有 1 份</text>
+<path d="M22 169H498" stroke="#d9e1ee"/>
+<text x="28" y="195">3. 重启</text><text x="178" y="195">记录已处理代际 1</text><text x="358" y="195">PUT 200，仍有 1 份</text>
+<path d="M22 211H498" stroke="#d9e1ee"/>
+<text x="28" y="237">4. 停机时删除</text><text x="178" y="237">GET 200，等待清理</text><text x="358" y="237">仍有 1 份</text>
+<path d="M22 253H498" stroke="#d9e1ee"/>
+<text x="28" y="279">5. 重启清理</text><text x="178" y="279">移除 finalizer → 404</text><text x="358" y="279">DELETE 204，已清理</text>
+</g>
+<rect x="17" y="301" width="486" height="31" rx="6" fill="#e5f4ec"/>
+<text x="28" y="321" font-size="14" fill="#276043">先记清理责任，再写外部资源。确认清理后才移除标记。</text>
+</g>
+</svg>

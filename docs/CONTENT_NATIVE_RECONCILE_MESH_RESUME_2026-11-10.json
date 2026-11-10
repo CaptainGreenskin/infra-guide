@@ -1,0 +1,61 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "9183271f8f400a2736f1518c4bd065c73a9bb1ed",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_SOURCE_LED_READING_2026-11-10.json": "ee4a4a2f66a0e056240967e94d881a19e0857a5c71ddeabb08d9919be10b87fc"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "controller-api",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "6a2516dd58f434b9eea9c63c767adb1c5e60df3e7ff4acb1132a8f0957380af8",
+      "reviewed_content_sha256": "74db5bcf3bf3505fb998fea4b6faab7c187d7bfeb0df9c608d2edeae0fd0bbc9",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "tr-parallel",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "592b9f469a954ade1ac237f6783dfc32a79ccfbc8b1ee1b13a3a4a68e388dcd9",
+      "reviewed_content_sha256": "7e543fc2d2ee83dbbcc37c6716be1d3881cfce5c8eaa5112d052f63049562940",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-recovery",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "4a27a1db062ca13e1f45683e07f8edd83879102919e389102e4574fd6f90377c",
+      "reviewed_content_sha256": "7ba161f81fe5bd36bdf7a84262e99329a04b551d587e40c3296e487be24f27c8",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "delivery",
+      "reviewed_at": "2026-11-10",
+      "scope": "Follow a real custom Kubernetes resource through finalizer installation, external creation, process exit, reconciliation and deletion.",
+      "observation": "A loopback API Server, etcd, and file-backed HTTP receiver show two PUTs with one effect. After finalizer cleanup the actual GET returns 404.",
+      "reviewed_content_sha256": "1ff48e8729584a0e286abf67b2cda8f3979d0eec8b4c5606d787545b2c298603",
+      "record": "dist/labs/controller-reconcile/validation.json"
+    },
+    {
+      "chapter": "tensor-parallel-math",
+      "reviewed_at": "2026-11-10",
+      "scope": "Explain replica rows, parameter-shard columns and uneven sample weighting from the same three inputs and native PyTorch run.",
+      "observation": "Correct DP group and global loss match the dense output, gradients and update. Wrong denominator and TP gradient group keep correct predictions but fail the update.",
+      "reviewed_content_sha256": "16fdb9a58c1acf5fdc723b5fb98d512460ec5885fdf5591c07fae4d634e48259",
+      "record": "dist/labs/dp-tp-mesh/validation.json"
+    },
+    {
+      "chapter": "durable-workflows",
+      "reviewed_at": "2026-11-10",
+      "scope": "Show how inserting a first interrupt changes the action that consumes an old approval.",
+      "observation": "Independent SQLite checks distinguish one B write, zero effects after intent rejection, and one A write with saved-version routing. Kairo runtime is a separate target.",
+      "reviewed_content_sha256": "6d84af9c89e2df3c99c7ace501ebf44c6051ec46873bb08fe8f07ebdba3681c4",
+      "record": "dist/labs/workflow-version-resume/validation.json"
+    }
+  ]
+}

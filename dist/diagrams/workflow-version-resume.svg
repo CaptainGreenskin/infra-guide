@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="286" viewBox="0 0 520 286" role="img" aria-labelledby="title description">
+<title id="title">同一个审批节点，升级前后第一个问题变了</title>
+<desc id="description">旧图的第零个中断请求发布到 A/daily。新版在第零个位置插入共享到 B/daily，原来的问题移到位置一。用旧中断编号恢复新版时，原批准仍在第零个位置被消费。</desc>
+<metadata>{"record":"labs/workflow-version-resume/validation.json","old_first":"A/daily","new_first":"B/daily","outcomes":{"unsafe":[0,1],"bound":[0,0],"version-routed":[1,0]}}</metadata>
+<rect x="1" y="1" width="518" height="284" rx="15" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="22" y="32" font-size="19" font-weight="700">重跑审批节点时，先走哪一问？</text>
+<text x="219" y="64" font-size="15" text-anchor="middle">第 0 个中断</text>
+<text x="407" y="64" font-size="15" text-anchor="middle">第 1 个中断</text>
+<text x="22" y="115" font-size="15" font-weight="700">旧图 v1</text>
+<rect x="140" y="81" width="158" height="57" rx="7" fill="#e6f2ff" stroke="#88afd7"/>
+<text x="219" y="104" text-anchor="middle" font-size="15">发布到 A/daily</text>
+<text x="219" y="125" text-anchor="middle" font-size="14" fill="#315e95">旧批准在这里等待</text>
+<path d="M219 139V167" stroke="#b26b28" stroke-width="2.5"/>
+<path d="M213 161L219 168L225 161" fill="none" stroke="#b26b28" stroke-width="2.5"/>
+<text x="234" y="158" font-size="14" fill="#8a4d17">用旧编号恢复新版</text>
+<text x="22" y="207" font-size="15" font-weight="700">新图 v2</text>
+<rect x="140" y="172" width="158" height="58" rx="7" fill="#fff0dc" stroke="#d49d66"/>
+<text x="219" y="195" text-anchor="middle" font-size="15">共享到 B/daily</text>
+<text x="219" y="216" text-anchor="middle" font-size="14" fill="#8a4d17">插在前面的问题</text>
+<path d="M300 200H326M320 194L326 200L320 206" stroke="#64748b" stroke-width="2" fill="none"/>
+<rect x="329" y="172" width="158" height="58" rx="7" fill="#e6f2ff" stroke="#88afd7"/>
+<text x="408" y="195" text-anchor="middle" font-size="15">发布到 A/daily</text>
+<text x="408" y="216" text-anchor="middle" font-size="14" fill="#315e95">原问题后移一位</text>
+<text x="22" y="264" font-size="15">接收方仍要核对这份批准是否适用于所请求的动作。</text>
+</g>
+</svg>

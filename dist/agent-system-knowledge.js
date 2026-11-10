@@ -27,7 +27,8 @@ infraKnowledgeDomains.push({module:'agent',track:'agent',refs:['v16MCPTools','v1
  para('三个时点决定故障语义：本地记录意图I，工具提交效果E，本地记录回执R。E发生后R之前退出，恢复者只看本地状态会看到“未完成”，但外部效果可能已经存在。把I和R放进一个本地事务，仍跨不过另一个工具数据库的E。',
  '解决方式之一是持久保存稳定op_id，接收方将效果与回执在同一事务中提交；恢复者以相同op_id重试或查询。接收方查到相同参数就返回原回执，查到异参则拒绝。调用次数可为2，效果只为1；这是特定接收方协议的性质，不是所有工具的默认能力。',
  '工作流重放要把会变化的输入保存下来：时间、随机选择、模型响应和外部读取都可能变化。升级代码后仍要能够解释历史事件；可用版本分支、迁移或已完成步骤兼容策略。若外部接口既无幂等键又无法查询，超时应进入对账、人工确认或有定义的补偿，而不是无条件再做一次。')+
- code('恢复器的关键分支 · 结果未知与失败分开','PYTHON','intent = load_persisted_intent(op_id)\nreceipt = receiver.lookup(op_id)\nif receipt is not None:\n    verify_arguments_and_record(receipt)\nelse:\n    retry_same_intent_or_enter_reconciliation(intent)')},
+ code('恢复器的关键分支 · 结果未知与失败分开','PYTHON','intent = load_persisted_intent(op_id)\nreceipt = receiver.lookup(op_id)\nif receipt is not None:\n    verify_arguments_and_record(receipt)\nelse:\n    retry_same_intent_or_enter_reconciliation(intent)')+
+ para('发布新版后，待批准的动作还要保留原含义。<a href="/article/durable-workflows/#native-workflow-version-resume">看一次旧批准恢复到新节点的实跑</a>，再比较接收方拦截与按旧版本恢复。')},
  {id:'ag-fencing',title:'多 worker：租约、代际与接收方 fencing',articles:['agent-recovery','durable-workflows','kairo-practice'],lead:'租约超时允许新的工作进程（worker）接管，但不会停止旧进程。隔离旧写者的机制称为fencing：它使用只增不减的代际号（epoch），让产生效果的接收方拒绝旧执行者；校验与效果必须在同一受保护边界内。',body:
  figure('v16-agent-fencing','A持有epoch1并暂停；B接管epoch2并安装接收方fence。A仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing负责旧执行者。')+
  para('只在runner启动前检查lease存在时间窗：A检查通过后暂停，租约过期，B接管，A恢复后仍可能写。旧A使用一个全新op_id时，去重表不会救场。接收方必须在处理新效果前，与当前资源代际比较并串行化校验和提交。',

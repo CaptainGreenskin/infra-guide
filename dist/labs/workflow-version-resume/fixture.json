@@ -1,0 +1,16 @@
+{
+  "thread_id": "report-A-history",
+  "source_version": "v3",
+  "batches": {"base": [10, 27], "late": [5]},
+  "approval_id": "approval-A-1",
+  "original_gate": {
+    "operation": "publish",
+    "operation_id": "report-A:publish",
+    "target": "A/daily"
+  },
+  "inserted_gate": {
+    "operation": "share",
+    "operation_id": "report-A:share:B",
+    "target": "B/daily"
+  }
+}

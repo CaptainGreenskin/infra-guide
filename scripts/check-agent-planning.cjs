@@ -110,11 +110,14 @@ const proseRevisions=JSON.parse(fs.readFileSync('docs/POST_WINDOW_BODY_REVIEWS.j
 const latestProse=proseRevisions.at(-1);
 if(latestProse)assert.equal(latestProse.reviewed_content_sha256,sha(JSON.stringify({title:current.title,sections:current.sections})),'current workflow body must match its latest explicit review');
 assert.equal(current.updated,latestProse?latestProse.reviewed_at.slice(0,10).replaceAll('-','.'):'2026.11.08');assert.equal(current.minutes,55);
-// The appended approval unit has its own source and evidence check.
+// Appended exercises have separate source and evidence checks.
 const approvalExercise=current.sections[8][1].split('<h3 id="native-approval-reentry">');
 assert.equal(approvalExercise.length,2);
+const versionExercise=current.sections[9][1].split('<h3 id="native-workflow-version-resume">');
+assert.equal(versionExercise.length,2);
+assert(versionExercise[1].includes('labs/workflow-version-resume/validation.json'));
 const legacyExercises=approvalExercise[0];
-const all=current.sections.map((s,i)=>i===8?legacyExercises:s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
+const all=current.sections.map((s,i)=>i===8?legacyExercises:i===9?versionExercise[0]:s[1]).join(''),before=baseline.sections.map(s=>s[1]).join('');
 const pre=s=>[...s.matchAll(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)].map(m=>m[0]);
 const oldPre=pre(before),newPre=pre(all);
 // The original planning stage added two blocks; the independently checked

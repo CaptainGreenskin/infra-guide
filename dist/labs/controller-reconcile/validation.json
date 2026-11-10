@@ -1,0 +1,162 @@
+{
+  "environment": {
+    "architecture": "arm64",
+    "client_go": "v0.35.8",
+    "envtest": "v0.23.3",
+    "etcd": {
+      "sha256": "fbf8d62a174f75d6ae6c95418c933100540e42b89551a8dad35035af0b376f76",
+      "version": "etcd Version: 3.6.6\nGit SHA: d2809cf\nGo Version: go1.24.10\nGo OS/Arch: darwin/arm64"
+    },
+    "go": "go1.26.1",
+    "kube-apiserver": {
+      "sha256": "42d2da3c95ea1136d8768c4cfb7903218e36f45bd2a567dab1f4e1a075c221ad",
+      "version": "Kubernetes v1.35.0"
+    },
+    "os": "darwin",
+    "scope": "one loopback kube-apiserver and etcd, separate loopback file provider"
+  },
+  "report": {
+    "deletion": {
+      "after_cleanup": {
+        "api_status": 404,
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "generation": 0,
+        "observed_generation": 0,
+        "status_reported": false,
+        "deleting": false,
+        "provider": {
+          "put_attempts": 2,
+          "delete_attempts": 1,
+          "created": 1,
+          "effect_present": false
+        }
+      },
+      "other_provider_after_cleanup": {
+        "put_attempts": 1,
+        "delete_attempts": 0,
+        "created": 1,
+        "effect_present": true,
+        "target": "daily-report"
+      },
+      "other_sink_uid": "f43a9b62-25f2-486f-a548-4ca9e1807940",
+      "retained": {
+        "api_status": 200,
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "generation": 2,
+        "observed_generation": 1,
+        "status_reported": true,
+        "sink_uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "finalizers": [
+          "reports.infraguide.test/remove-sink"
+        ],
+        "deleting": true,
+        "deletion_timestamp": "2026-11-10T13:22:42Z",
+        "provider": {
+          "put_attempts": 2,
+          "delete_attempts": 0,
+          "created": 1,
+          "effect_present": true,
+          "target": "weekly-report"
+        }
+      }
+    },
+    "isolation": {
+      "hosts": {
+        "etcd": "127.0.0.1",
+        "kube_apiserver": "127.0.0.1",
+        "provider": "127.0.0.1"
+      },
+      "listeners_closed": true,
+      "used_existing_cluster": false
+    },
+    "normal": {
+      "api_status": 200,
+      "uid": "f43a9b62-25f2-486f-a548-4ca9e1807940",
+      "generation": 1,
+      "observed_generation": 1,
+      "status_reported": true,
+      "sink_uid": "f43a9b62-25f2-486f-a548-4ca9e1807940",
+      "finalizers": [
+        "reports.infraguide.test/remove-sink"
+      ],
+      "deleting": false,
+      "provider": {
+        "put_attempts": 1,
+        "delete_attempts": 0,
+        "created": 1,
+        "effect_present": true,
+        "target": "daily-report"
+      }
+    },
+    "provider_events": [
+      {
+        "method": "PUT",
+        "uid": "f43a9b62-25f2-486f-a548-4ca9e1807940",
+        "status": 201
+      },
+      {
+        "method": "PUT",
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "status": 201
+      },
+      {
+        "method": "PUT",
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "status": 200
+      },
+      {
+        "method": "DELETE",
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "status": 204
+      }
+    ],
+    "replay": {
+      "after_exit": {
+        "api_status": 200,
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "generation": 1,
+        "observed_generation": 0,
+        "status_reported": false,
+        "finalizers": [
+          "reports.infraguide.test/remove-sink"
+        ],
+        "deleting": false,
+        "provider": {
+          "put_attempts": 1,
+          "delete_attempts": 0,
+          "created": 1,
+          "effect_present": true,
+          "target": "weekly-report"
+        }
+      },
+      "after_restart": {
+        "api_status": 200,
+        "uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "generation": 1,
+        "observed_generation": 1,
+        "status_reported": true,
+        "sink_uid": "b70e4f01-51ed-41c3-a0e2-5867092c0d21",
+        "finalizers": [
+          "reports.infraguide.test/remove-sink"
+        ],
+        "deleting": false,
+        "provider": {
+          "put_attempts": 2,
+          "delete_attempts": 0,
+          "created": 1,
+          "effect_present": true,
+          "target": "weekly-report"
+        }
+      },
+      "worker_exit_code": 73
+    }
+  },
+  "schema": 1,
+  "source_sha256": {
+    "controller.go": "68f0f12c62c8b7803c42022373d1fbbd6e5b14bb1dfc633bf422d3a68eda1462",
+    "go.mod": "73048731a94dfd75b1f0e8fce9ad32073a865a635d08fcfed43e6deb6f8c42a7",
+    "go.sum": "2839d0a681843d9ef93b754d31b84b13397eaea715ce25feb0e9f205073d4184",
+    "main.go": "d47d33eec03619c1354f962f7cd011390f17f6015eb4f13802e5757ddde34d85"
+  },
+  "status": "passed"
+}

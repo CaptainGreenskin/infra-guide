@@ -366,4 +366,23 @@
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
  '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>';
+
+ a.sections[9][1]+='<h3 id="native-workflow-version-resume">旧任务等着发布 A，新版却先问要不要共享给 B</h3>'+
+ p('第 1 版把 10、27 和 5 加成 42，停在“发布到 <code>A/daily</code>”的审批上。随后原进程退出。第 2 版还叫这个节点 <code>approval</code>，却在发布前插入“共享到 <code>B/daily</code>”这一步。两版的第一个问题已经不同。')+
+ trainingCode('新版多了第一个审批','PYTHON',`if graph_version == 2:
+    outcome = visit_gate("inserted_gate")
+    if outcome != "committed":
+        return {"status": outcome}
+return {"status": visit_gate("original_gate")}`)+
+ trainingFigure('workflow-version-resume','旧图位置 0 等 A 的批准。新版把 B 放在位置 0，原来 A 的问题移到位置 1。')+
+ p('新进程用原 <code>thread_id</code> 打开同一份 SQLite 检查点，提交时还带上了原中断编号。LangGraph 恢复会从节点开头重跑，节点内按顺序使用保存的回答。旧回答被交给新版的第一问，所以代码拿着 A 的批准去请求 B。表里的两份计数来自接收库实际写入的行。')+
+ table(['恢复时怎么选图、怎么验批准','接收方看到什么','A、B 各写几份'],[
+  ['跑新版，只认批准编号','请求 B，批准记录指向 A，仍错误写入 B。图又停在 A 的审批上','0、1'],
+  ['跑新版，核对批准绑定的操作','请求 B，和批准的目标及操作不符，拒绝写入','0、0'],
+  ['从检查点读出版本 1，交回旧图','请求与原批准都指向 A，发布完成','1、0']
+ ])+
+ p('绑定批准能挡住错误写入，但第二组的旧任务也没完成。第三组由应用读取检查点中的 <code>workflow_version</code> 选择图。部署新版时可让新任务用 v2，仍在等待的 v1 任务继续用旧定义。若要迁移等待中的任务，要先确定未回答的问题、批准指向的动作和已有写入怎样对应。')+
+ trainingCode('解压后在新目录保存三组记录','SHELL','python -m pip install -r requirements.txt\npython -B resume_lab.py --output-dir replay')+
+ p('先对照 <code>waiting_v1.interrupts</code> 和 <code>resume.fresh_v2_pause.interrupts</code>，确认两版第一问。再看 <code>receiver_final.writes</code>，验证哪份报告真的入库。实验使用 LangGraph 1.2.20，批准和接收库均为本机夹具。')+
+ '<p class="practice-links"><a href="/labs/workflow-version-resume.zip" download>下载程序与记录 ↓</a> · <a href="/labs/workflow-version-resume/README.md">复跑步骤 →</a> · <a href="/labs/workflow-version-resume/validation.json">核对中断、决定和实际写入 →</a> · <a href="https://docs.langchain.com/oss/python/langgraph/interrupts#do-not-reorder-interrupt-calls-within-a-node">LangGraph 的中断顺序 ↗</a></p>';
 })();
