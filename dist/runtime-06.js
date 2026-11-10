@@ -1364,7 +1364,9 @@ Object.assign(sources,{
    ['调用前出现无效 UTF-8','0 次','解码失败；调用仍未完成'],
    ['调用完成后再出现无效 UTF-8','仍为 1 次','保留执行观察，同时记录流错误']])+
   para('Python 默认的 JSON 对象解析遇到重复名字会保留最后一项。若只检查解析后的字典，就看不见前面出现过另一个 tenant。程序用 object_pairs_hook 拒绝重复键，再做字段集合与类型检查；这些检查仍不能替代真实工具端的身份认证、授权和业务验证。',
-   '最后一行特意让 done 先在一次读取中处理，再送来无效字节。它说明调用事实与随后流错误可同时成立，不是在承诺任意缓冲尺寸下都出现同样时序。本程序只保留当前进程观察；重启后的去重、接收方持久回执与任务完成仍按相应章节实现。')+
+   '最后一行先处理 done，再送来无效字节。工具已经读过一次，流随后出错，两项都要记下来。这个先后顺序由本次读取边界安排，记录只保留在当前进程。')+
+  '<p>这里的 <code>call_id</code> 用来拼齐同一项提议的参数。接入 MCP 时，宿主把完整且通过检查的参数交给客户端，客户端用 JSON-RPC 的请求编号认回响应。<a href="/article/mcp-protocol/#mcp-model-tool-observation">看另一份订单实验怎样接上提议和工具结果 →</a></p>'+
+  '<p>参数收齐后还要看权限。上表只把租户改成 B，参数仍能通过结构检查，但工具没有被调用。<a href="/article/agent-security/#section-3">看权限章的独立任务 R17 为什么可以读 A/daily，却不能写 B/daily →</a></p>'+
   '<p class="evidence-note">协议范围：严格 UTF-8、LF/CRLF 的 data 字段子集；EOF 不补发最后一个未终结事件。未实现独立 CR 行尾、自动重连或 Last-Event-ID，不作为完整 EventSource 客户端。当前可信主体、最多 4 次调用、512 字节参数和 64 KiB 流上限都是本例契约。</p>'+
   streamedToolLinks+'<details class="full-code"><summary>展开完整 streamed_tool_calls.py：与下载文件一致</summary>'+code('streamed_tool_calls.py','PYTHON',streamedToolFiles['streamed_tool_calls.py'])+'</details>'+
   linkTo('durable-workflows','继续推导跨进程恢复与接收方回执')]);
@@ -2302,9 +2304,6 @@ schedulingDepth.sections=[
  depthRun('runtime-scheduling','schedule_lab.py','scheduler-native-run','python3 -B schedule_lab.py --output runs/scheduling-record.json')]
 ];
 Object.assign(schedulingDepth,{textbook:true,minutes:45,updated:'2026.11.08',refs:['rtResources','rtQuota','rtAssign','rtTaint','rtKind','kueue']});
-const c4Coverage=cloudCoverageRows.find(r=>r[0]==='C4');
-c4Coverage[2]='覆盖运行时、控制面、工作负载、调度、网络、存储、配置与HPA；Linux Docker与kind验证执行约束和放置，etcd三成员实验继续核对提交、观察及恢复。';
-c4Coverage[3]='kind是单机节点容器实验；真实多物理节点、云CNI/CSI、生产伸缩与Operator实现仍待专项验证。';
 
 
 ;
@@ -7391,7 +7390,8 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '复跑下载包中的 <code>python3 -B prefix_lab.py --engine /path/to/llama-server --output prefix-results</code>。脚本校验固定 macOS ARM64 b12110 二进制，使用标准库生成模型并完成三轮请求。完整请求体、槽位快照、原生批次行和源码哈希都随包提供。完全匹配提示仍重算末位置的边界，已由上一份四请求实验验证；本次 B 为部分命中，二者要分开读。')+
   '<p><a href="labs/native-inference-prefix.zip" download>下载完整前缀实验</a> · <a href="labs/native-inference-prefix/prefix_lab.py">完整 Python 源码</a> · <a href="labs/native-inference-prefix/validation.json">执行记录</a> · <a href="labs/native-inference-prefix/responses.json">原始响应与快照</a> · <a href="labs/native-inference-prefix/native-logs.json">原生批次日志</a> · <a href="labs/native-inference-prefix/README.md">复跑说明与自测</a></p>'+
   p('自测：不看结果表，写出暖 B 的三个输入批次，并解释为何 idle 与缓存为空不是同一判断。再提出“全部提示命中就不再前向”的反例：固定版本需要末位置分数，上一份重复请求仍处理最后一个提示位置。源码定位见 '+
-  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。');
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。')+
+  p('暖 B 和冷 B 都指定同一个槽位。换成两个能独立接单的副本，一个留有前缀，一个没有，同一请求在两边需要新分配的缓存块就不同。<a href="/article/inference-performance/#tp-placement">用两个副本的空闲块算这次请求交给谁 →</a>');
  const rtxCacheSource='https://github.com/CaptainGreenskin/one-gpu-lm/blob/6e96479924f90e4b0ccd22dba858c51b8516d3ce/experiments/009-training-to-serving/';
  const rtxCacheResults=rtxCacheSource+'results/2026-11-05/';
  serving.sections[6][1]+=
@@ -7407,7 +7407,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
- serving.updated='2026.11.09';
+ serving.updated='2026.11.10';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=
@@ -8398,7 +8398,9 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['结构化金额为整数 42，操作键却指向 v2','SDK 接收，宿主核对身份后拒绝','原操作已提交，宿主仍待确认']
    ])+
    p('检查 <code>after_publish</code>。两个异常场景里，宿主都还没有接纳回执，但接收库已经有原操作的记录。重新提交可能再次产生效果，所以这次只调用 <code>lookup_receipt</code>，查宿主先前保存的操作键。拿到查询结果后，再按原始批次核对版本、操作和金额，把原回执记到宿主库。对照 <code>final</code>，接收库前后相同，每个场景只发过一次发布调用。')+
-   p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。能按键查询并信任其结果，是这个恢复方法的前提。接收方没有可查询回执，或查询本身失败时，应继续保持待确认并走对账。')+
+   p('查回执也要有权限。工作流章另开一份 42 报告实验，操作键记作 <code>report-A:publish</code>。提交后只撤销写权限，仍能查到原回执。连读回执的权限也撤销时，任务保持待确认，接收库里仍有一份报告。接收方没有查询接口，或查询本身失败，也先保留待确认，再和接收方的记录核对。<a href="/article/durable-workflows/#native-approval-reentry">看撤权后的两次查询 →</a>',
+   '考虑重试写入前，先确认当前权限允许，并确认接收方会用原操作键和正文识别重试、返回原回执。工作流章用同名操作键在另一份账本上对照，重试沿原键留下 1 份报告，换键留下 2 份。<a href="/article/durable-workflows/#mcp-commit-recovery">看同键与换键重试的账本 →</a>')+
+   p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。')+
    '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>';
   a.updated='2026.11.09';
  }
@@ -9403,7 +9405,10 @@ float value = *address;
   v65ObjectOwners:['Kubernetes · 对象拥有者与依赖','https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/']
  });
  for(const id of ['gpu-scheduling','kubernetes-training'])chapter(id).refs=[...new Set([...chapter(id).refs,'v65KueueJobs','v65KueueWorkload','v65ObjectOwners'])];
- for(const id of changed)chapter(id).updated='2026.11.09';
+ for(const id of changed){
+  const a=chapter(id);
+  if(!a.updated||a.updated<'2026.11.09')a.updated='2026.11.09';
+ }
 })();
 
 
@@ -12460,8 +12465,16 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   trainingFigure('prometheus-live-burn','上半图手算重启前后的原始增量，下半图沿真实求值状态观察告警。')+
   '<p>接下来，甲每批 100 个请求中有 40 个坏，乙每批 100 个全好，稳定坏率为 40÷200＝20%。随着故障样本进入两个窗口，Prometheus 先写出待确认状态 <code>pending</code>。规则持续成立 4 秒后，同一组标签进入触发状态 <code>firing</code>。可在原始 <code>ALERTS</code> 样本中对照求值时刻，区分窗口统计与状态等待。</p>'+
   '<p>恢复阶段两个端点继续增加好计数。6 秒窗的坏率归零时，16 秒窗仍有约 13.33% 的坏率，快速告警已经解除。把两个坏率和告警状态一起读，才能知道是哪条条件改变。这个实验验证本机抓取、计数器重置和规则状态，生产流量、通知投递和当班响应分别验收。</p>'+
-  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>';
- a.updated='2026.11.09';
+  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>'+
+  '<h3 id="alert-notification-handoff">规则已经触发，为什么还没收到通知</h3>'+
+  '<p>上面的实跑记录里，<code>GuideLiveFastBurn</code> 对 <code>job="reports"</code>、<code>severity="teaching"</code> 进入过 <code>firing</code>。通知还要经过 Alertmanager。它接收 Prometheus 发来的告警，按标签分组、匹配路由，再发送到相应的接收方。实验实测到规则求值为止，以下是接入 Alertmanager 的测试环境中可做的检查。</p>'+
+  '<ol><li>告警活跃时，在 Prometheus 查询 <code>/api/v1/alerts</code>，确认告警名、标签和 <code>state</code>。<code>firing</code> 表示这组标签的规则条件已持续满足。</li>'+
+  '<li>在同一台 Prometheus 查询 <code>/api/v1/alertmanagers</code>。<code>activeAlertmanagers</code> 列出当前发现并保留的目标地址。找不到预期地址，先查配置和服务发现。地址在列表中时，继续检查是否发到了那里。</li>'+
+  '<li>在对应的 Alertmanager 查询 <code>/api/v2/alerts</code>，对照告警名、标签和时段。发送前若改写了标签，就按发出的标签查。找不到活跃告警时，回到 Prometheus 查发送错误。找到后，先查 <code>silencedBy</code>（人为静默）和 <code>inhibitedBy</code>（因另一条告警而抑制），再看匹配的路由和接收方。最后查测试接收端的入站请求或值班平台的事件记录，确认是否送达。</li></ol>'+
+  '<p>假设教学告警进入新的分组，路由的 <code>group_wait</code> 设为 30 秒，也就是首条通知先等 30 秒。若 Alertmanager 在第 10 秒就收到这条告警的恢复，它就不会为这条告警发出首条通知。10 秒是推演输入。规则里的 <code>for: 4s</code> 在 Prometheus 端判断何时进入触发状态，和通知等待分开计时。</p>'+
+  '<details><summary>在测试环境用 curl 读取三个接口</summary><p>将 <code>PROM</code> 和 <code>AM</code> 设为测试环境中两个服务的基址。</p><p><code>curl -fsS "$PROM/api/v1/alerts"</code><br><code>curl -fsS "$PROM/api/v1/alertmanagers"</code><br><code>curl -fsS "$AM/api/v2/alerts"</code></p></details>'+
+  '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>';
+ a.updated='2026.11.10';
 })();
 
 
@@ -13634,11 +13647,6 @@ cloudKnowledgeExplanations['event-idempotency']+=para('真实代理重投与重�
 cloudKnowledgeExplanations['iac']=cloudKnowledgeExplanations['iac'].replace(/远端对象 ID/g,'目标对象 ID').replace(/读取远端对象/g,'读取目标对象');
 cloudKnowledgeExplanations['iac']+=para('实际local_file实验再把三份事实分开：关闭刷新时，文件已被改成outside但计划仍退出0；只刷新移除旧状态绑定而保留文件，正常修复才恢复alpha。两个工作空间也可以指向同一路径，状态隔离不自动带来资源隔离。');
 cloudKnowledgeExplanations['gitops']+=para('真实Argo CD在kind中验证：只改ConfigMap后，应用已Synced/Healthy，原Pod仍返回v1；修改模板并替换Pod后才返回v2。自愈和清理分别核对，未受管对象不因本应用prune而被删除。');
-for(const id of ['C5','C6']){
- const row=cloudCoverageRows.find(r=>r[0]===id);
- if(id==='C5')row[2]='展开函数环境、触发、重投、批次、并发与成本；新增真实RabbitMQ的发布确认、运输ACK、进程崩溃重投、预取接口差异和持久重启，独立核对业务效果。';
- else {row[2]='展开兼容发布、状态与调谐；真实Terraform local_file验证状态锁、刷新和工作空间争用，kind内Argo CD验证自愈、清理与实际HTTP版本。';row[3]='尚未验证云provider/remote backend、生产规模Argo/Flux、物理多节点或client-go/Operator实现；kind与临时文件的范围分别标注。';}
-}
 
 
 ;
@@ -14713,13 +14721,32 @@ const fieldPracticePaths={
  platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。','暖槽复用 3 项，B 只需新算 2 项。显式清除后，B 的 5 项提示都要重新计算。两次输出的词元编号一致。'],
  agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。','提交前断流，回执查询没有找到报告，接收库是 0 份。提交后断流，查询能找回原回执，接收库保留 1 份金额 42 的报告。两次工具处理器都完成清理。']
 };
-function fieldPracticeHTML(moduleId, names){
- const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
+const fieldPracticeFollowups={
+ 'cloud-capacity':['queue-backpressure','cloud-cpu-quota-http','换成本机 HTTP 服务。发送计划、每次请求的工作量和 4 个等待位置都一样，只把配额从 1 CPU 改成 0.25 CPU。看 100 次请求各有多少完成、多少被拒绝，再查 CPU 被限速的次数。','这次实跑中，1 CPU 完成 100 次，拒绝 0 次。0.25 CPU 完成 35 次，拒绝 65 次，cgroup 的限速计数增加 70。两档完成量加拒绝量都是 100。复跑时，线程实际何时得到 CPU 会影响这个分配。','配额收紧后，100 次请求去了哪里'],
+ platform:['sv-batching','ai-inference-placement','上面的例子里，处理请求的槽位留着前缀缓存。现在有 A、B 两个推理副本，各剩 100、500 个缓存块。同一请求放到两边分别需要新分配 128、512 个块。能接单吗？如果剩余量改成 96、640 呢？','第一组剩余量加起来有 600 块，但任何一边都装不下这份请求。第二组只有 B 装得下。块数来自八卡部署的预算题。实验另用本机四进程核对分片计算。','两个副本该由谁接单'],
+ agent:['ag-tools','agent-mcp-result-receipt','上面靠断流制造一次结果未知。再看另一次独立实验。工具已经写入，HTTP 也返回 200，金额却是字符串 “42”。如果类型正确但操作键错了呢？判断宿主何时应该承认成功。','宿主拒绝两份坏回执，暂时不能确认写入。它用原操作键 report-A/v3:publish 只读查询，找回金额为数值 42 的有效回执。接收库各只有一份报告，不需要再发布。','写入成功，回执却有错']
+};
+function fieldPracticeLocation(labId){
+ for(const [moduleId,[,primary]] of Object.entries(fieldPracticePaths)){
+  if(labId===primary)return '/module/'+moduleId+'/#field-map-practice';
+  if(labId===fieldPracticeFollowups[moduleId]?.[1])return '/module/'+moduleId+'/#field-practice-'+labId;
+ }
+ return '';
+}
+function fieldPracticeUnitHTML([,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter),profile=selectedLearningProfile();
  const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+
-  '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
+ return '<p>'+trainingEscape(question)+'</p><p class="field-practice-environment">'+trainingEscape(unit.kind+' · '+unit.env)+'</p>'+
+  '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
+  '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
+}
+function fieldPracticeHTML(moduleId,names){
+ const primary=fieldPracticePaths[moduleId],[conceptId,labId]=primary;
+ const next=fieldPracticeFollowups[moduleId];
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3>'+
+  fieldPracticeUnitHTML(primary,'field-map-practice-result')+
+  (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
 }
 
 function fieldPointRecords(moduleId){
@@ -15162,6 +15189,7 @@ labLearningCatalog.push(
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
+function labCatalogTaskPath(unit){return '/labs/?track='+unit.track+'#lab-'+unit.id;}
 function labCatalogRunPath(unit){
  if(unit.anchor)return '/article/'+unit.chapter+'/#'+unit.anchor;
  const article=articles.find(a=>a.id===unit.chapter);
@@ -15172,7 +15200,7 @@ function chapterLabLinksHTML(article){
  const units=labLearningCatalog.filter(unit=>unit.chapter===article.id);
  if(!units.length)return '';
  const rows=units.map(unit=>{
-  const title=escapeHTML(unit.title),catalogHref='/labs/?track='+unit.track+'#lab-'+unit.id;
+  const title=escapeHTML(unit.title),catalogHref=labCatalogTaskPath(unit);
   const boundary=unit.kind==='目标环境手册'?'目标环境待验':unit.pendingFiles?.length?'含目标环境待验项':'';
   return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'" aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
  }).join('');
@@ -15181,8 +15209,10 @@ function chapterLabLinksHTML(article){
 function labCatalogUnitHTML(unit,index,roleReturn=""){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
+ const fieldPractice=fieldPracticeLocation(unit.id);
+ const fieldReturn=fieldPractice?'<a class="lab-field-practice-return" href="'+fieldPractice+'">回到图中练习 →</a>':'';
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }
 function renderLabCatalog(){
  const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
@@ -15398,5 +15428,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="30c16b80f49072ae6e2810baa674a96ef611e865631973a90f3b3567521c269a";
+const staticReadingVersion="2d3864387317182a74dc4b660e38f695bac7a567ab009b1c6c07d273fb16d20f";
 

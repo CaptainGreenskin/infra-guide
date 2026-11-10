@@ -410,7 +410,8 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '复跑下载包中的 <code>python3 -B prefix_lab.py --engine /path/to/llama-server --output prefix-results</code>。脚本校验固定 macOS ARM64 b12110 二进制，使用标准库生成模型并完成三轮请求。完整请求体、槽位快照、原生批次行和源码哈希都随包提供。完全匹配提示仍重算末位置的边界，已由上一份四请求实验验证；本次 B 为部分命中，二者要分开读。')+
   '<p><a href="labs/native-inference-prefix.zip" download>下载完整前缀实验</a> · <a href="labs/native-inference-prefix/prefix_lab.py">完整 Python 源码</a> · <a href="labs/native-inference-prefix/validation.json">执行记录</a> · <a href="labs/native-inference-prefix/responses.json">原始响应与快照</a> · <a href="labs/native-inference-prefix/native-logs.json">原生批次日志</a> · <a href="labs/native-inference-prefix/README.md">复跑说明与自测</a></p>'+
   p('自测：不看结果表，写出暖 B 的三个输入批次，并解释为何 idle 与缓存为空不是同一判断。再提出“全部提示命中就不再前向”的反例：固定版本需要末位置分数，上一份重复请求仍处理最后一个提示位置。源码定位见 '+
-  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。');
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp" target="_blank" rel="noopener">cache_prompt、TAG_PROMPT_LOGITS、SERVER_TASK_TYPE_SLOT_ERASE 与 prompt_clear</a>。')+
+  p('暖 B 和冷 B 都指定同一个槽位。换成两个能独立接单的副本，一个留有前缀，一个没有，同一请求在两边需要新分配的缓存块就不同。<a href="/article/inference-performance/#tp-placement">用两个副本的空闲块算这次请求交给谁 →</a>');
  const rtxCacheSource='https://github.com/CaptainGreenskin/one-gpu-lm/blob/6e96479924f90e4b0ccd22dba858c51b8516d3ce/experiments/009-training-to-serving/';
  const rtxCacheResults=rtxCacheSource+'results/2026-11-05/';
  serving.sections[6][1]+=
@@ -426,7 +427,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
- serving.updated='2026.11.09';
+ serving.updated='2026.11.10';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=

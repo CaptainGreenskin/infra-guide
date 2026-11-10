@@ -326,13 +326,32 @@ const fieldPracticePaths={
  platform:['sv-kv','ai-native-inference-prefix','提示 A 跑完后，发送与 A 共用前三个词元的 B。清除槽位缓存后再发一次 B。先预测两次各要计算几项，再核对缓存和生成记录。','暖槽复用 3 项，B 只需新算 2 项。显式清除后，B 的 5 项提示都要重新计算。两次输出的词元编号一致。'],
  agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。','提交前断流，回执查询没有找到报告，接收库是 0 份。提交后断流，查询能找回原回执，接收库保留 1 份金额 42 的报告。两次工具处理器都完成清理。']
 };
-function fieldPracticeHTML(moduleId, names){
- const [conceptId,labId,question,result]=fieldPracticePaths[moduleId];
+const fieldPracticeFollowups={
+ 'cloud-capacity':['queue-backpressure','cloud-cpu-quota-http','换成本机 HTTP 服务。发送计划、每次请求的工作量和 4 个等待位置都一样，只把配额从 1 CPU 改成 0.25 CPU。看 100 次请求各有多少完成、多少被拒绝，再查 CPU 被限速的次数。','这次实跑中，1 CPU 完成 100 次，拒绝 0 次。0.25 CPU 完成 35 次，拒绝 65 次，cgroup 的限速计数增加 70。两档完成量加拒绝量都是 100。复跑时，线程实际何时得到 CPU 会影响这个分配。','配额收紧后，100 次请求去了哪里'],
+ platform:['sv-batching','ai-inference-placement','上面的例子里，处理请求的槽位留着前缀缓存。现在有 A、B 两个推理副本，各剩 100、500 个缓存块。同一请求放到两边分别需要新分配 128、512 个块。能接单吗？如果剩余量改成 96、640 呢？','第一组剩余量加起来有 600 块，但任何一边都装不下这份请求。第二组只有 B 装得下。块数来自八卡部署的预算题。实验另用本机四进程核对分片计算。','两个副本该由谁接单'],
+ agent:['ag-tools','agent-mcp-result-receipt','上面靠断流制造一次结果未知。再看另一次独立实验。工具已经写入，HTTP 也返回 200，金额却是字符串 “42”。如果类型正确但操作键错了呢？判断宿主何时应该承认成功。','宿主拒绝两份坏回执，暂时不能确认写入。它用原操作键 report-A/v3:publish 只读查询，找回金额为数值 42 的有效回执。接收库各只有一份报告，不需要再发布。','写入成功，回执却有错']
+};
+function fieldPracticeLocation(labId){
+ for(const [moduleId,[,primary]] of Object.entries(fieldPracticePaths)){
+  if(labId===primary)return '/module/'+moduleId+'/#field-map-practice';
+  if(labId===fieldPracticeFollowups[moduleId]?.[1])return '/module/'+moduleId+'/#field-practice-'+labId;
+ }
+ return '';
+}
+function fieldPracticeUnitHTML([,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter),profile=selectedLearningProfile();
  const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
- return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3><p>'+trainingEscape(question)+'</p><a href="'+labCatalogRunPath(unit)+'">进入 '+trainingEscape(article.number)+' 的练习 →</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+
-  '<details class="field-map-practice-result"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details></section>';
+ return '<p>'+trainingEscape(question)+'</p><p class="field-practice-environment">'+trainingEscape(unit.kind+' · '+unit.env)+'</p>'+
+  '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
+  '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
+}
+function fieldPracticeHTML(moduleId,names){
+ const primary=fieldPracticePaths[moduleId],[conceptId,labId]=primary;
+ const next=fieldPracticeFollowups[moduleId];
+ return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h3 id="field-map-practice">从图到实战 <span>'+trainingEscape(names[conceptId])+'</span></h3>'+
+  fieldPracticeUnitHTML(primary,'field-map-practice-result')+
+  (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
 }
 
 function fieldPointRecords(moduleId){

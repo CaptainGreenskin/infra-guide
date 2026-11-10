@@ -343,6 +343,7 @@ labLearningCatalog.push(
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
+function labCatalogTaskPath(unit){return '/labs/?track='+unit.track+'#lab-'+unit.id;}
 function labCatalogRunPath(unit){
  if(unit.anchor)return '/article/'+unit.chapter+'/#'+unit.anchor;
  const article=articles.find(a=>a.id===unit.chapter);
@@ -353,7 +354,7 @@ function chapterLabLinksHTML(article){
  const units=labLearningCatalog.filter(unit=>unit.chapter===article.id);
  if(!units.length)return '';
  const rows=units.map(unit=>{
-  const title=escapeHTML(unit.title),catalogHref='/labs/?track='+unit.track+'#lab-'+unit.id;
+  const title=escapeHTML(unit.title),catalogHref=labCatalogTaskPath(unit);
   const boundary=unit.kind==='目标环境手册'?'目标环境待验':unit.pendingFiles?.length?'含目标环境待验项':'';
   return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'" aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
  }).join('');
@@ -362,8 +363,10 @@ function chapterLabLinksHTML(article){
 function labCatalogUnitHTML(unit,index,roleReturn=""){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
+ const fieldPractice=fieldPracticeLocation(unit.id);
+ const fieldReturn=fieldPractice?'<a class="lab-field-practice-return" href="'+fieldPractice+'">回到图中练习 →</a>':'';
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }
 function renderLabCatalog(){
  const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';

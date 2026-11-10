@@ -5782,6 +5782,61 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "a9740d486a6a75d1306902edf24b1bb73513be3593b0789ddd7a41d39904fa7a",
+      "reviewed_content_sha256": "2c178570316cb5dd0cab704513ff238eaa2454b6e2c38d80aee6f47cb10301ee",
+      "scope": "Connect assembled streaming parameters to the exact MCP call and authorization examples.",
+      "observation": "Keep the observed local read callback, the separate protocol and permission inputs, and the distinction between a streamed call ID and a protocol request ID.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "ea46e1ce8dd80611414223530c6c4d3bc35ac065f840ab4d8910c0f71ff6c5f3",
+      "reviewed_content_sha256": "01964f857647b9b3aae7c52021e1ee65e5f1589952c7e4338707caba23fe6398",
+      "scope": "Use the measured difference between warm and cold prompt work to introduce per-replica cache admission.",
+      "observation": "The llama.cpp record uses one CPU slot. The separate placement exercise models an eight-card layout and checks a smaller layer with four CPU processes.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "2960be6d05a095c68773abbde6197d8dacd21d069bb513711698c9011e6fac12",
+      "reviewed_content_sha256": "a79eaf5568bcc1f5d799b7969b3ce434c0b578c1c3c098fa421e19b6d3c6315a",
+      "scope": "Start from the observed firing rule and teach the next checks for an alert that never reaches the recipient.",
+      "observation": "Prometheus scrape and rule evaluation were observed. Alertmanager API calls, the 30-second wait example and notification delivery are test-environment instructions, not claimed measurements.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
     }
   ]
 }

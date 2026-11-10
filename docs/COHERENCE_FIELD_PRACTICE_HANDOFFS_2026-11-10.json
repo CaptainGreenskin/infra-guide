@@ -1,0 +1,129 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "2aff0ca76e4621cc7ef74eb3d91c0eae1b365bff",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PLAIN_READING_2026-11-10.json": "185fe3c475d8ff36c987b2abbe9615a0e05fbbc031e69ef510b95e64171492c1"
+  },
+  "source_revisions": {
+    "dist/course-continuity-revisions.js": {
+      "previous_sha256": "aa2f002fec20177646ecf1b07f417c7f3e7a429ec81e63d3b3227d4ada8d8541",
+      "reviewed_sha256": "f6b0d048ff071b3442103db8448e2ee955f62d7203144946191ed247e5af30c2",
+      "scope": "An earlier editorial pass must preserve a newer publication date."
+    },
+    "dist/runtime-scheduling-lessons.js": {
+      "previous_sha256": "4125c44d35dede6ae443c0d75ae643d1711d7af762bad0d8488ec395b6c83315",
+      "reviewed_sha256": "24426ba41989b0442c5763588723b4baacb089ed1087c3fabcecfcf7b3244803",
+      "scope": "Keep C4 interview coverage in the single Cloud coverage source."
+    },
+    "dist/delivery-course-links.js": {
+      "previous_sha256": "1734498cdb7f3add4f258c5f577e8fdde67602fd604e9632894fb2b917941072",
+      "reviewed_sha256": "14683797eda95a2f8a1832dfa9a344709e6a335c4548f20bb3c2802a591cd3eb",
+      "scope": "Keep C5 and C6 interview coverage in the single Cloud coverage source."
+    },
+    "scripts/check-cloud-course.cjs": {
+      "previous_sha256": "03939b6ecbbb20b18f13c5932b62aa2ef0c8d04e9b929e3b249382208c2880ab",
+      "reviewed_sha256": "649164ad1cb66c34ec46363006087ae4c0367ae09d6d5630ab730208a40b06eb",
+      "scope": "Require the ten exact evidence links in the rendered Cloud coverage matrix."
+    },
+    "dist/cloud-coverage.js": {
+      "previous_sha256": "b1420d9aca3b541bb41742f96349c5f16db2bb8976ae6e5a402431563e3bee80",
+      "reviewed_sha256": "8391e7c22fa8bb9a54dd28994ff2b5bd487b0ebd2f4a3374502e7751357e4f89",
+      "scope": "Align eight Cloud coverage rows with the exact native evidence and preserve the target environment gaps."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "f834f99efaa44ae3633fed244bab42f23c571c1cae675f512c38c23effab5b45",
+      "reviewed_sha256": "ac95f5eeddc851375fefc910080996615db641045a8c39ba3d0ea29de39e580d",
+      "scope": "Keep all existing field questions and connect their environments, results and exact catalog locations. Extend three concepts through their existing follow-up experiments."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "fa1405376d14aa545f4b1472b7f3079cb6e5a162fcc32597b50c52603b578e51",
+      "reviewed_sha256": "8083a7761cbb8f5e0927cd77822602cd6425b32ba34ba4f231326ea16325979b",
+      "scope": "Use one canonical task path and connect featured lab records to their original graph exercises."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "29a040083519419afdd9c034ad02390c13c1ac2a24f57a2dae3efae90c982aad",
+      "reviewed_sha256": "49542d3942ba1a59d9aa55b032f0daeab9b1adab9ec8d1e533951fb875428908",
+      "scope": "Keep exercise links and disclosures comfortable to tap and the deep anchor below sticky controls."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "e629845596a1af768fda20c7a21f84adbcfd35fe80b053cebbd420ac199bb4d4",
+      "reviewed_sha256": "65758e02f309b73bb2b75f3ba1e759b21af9ae81c548e1f287b2f66f8e551998",
+      "scope": "Start from the observed firing rule and teach the next checks for an alert that never reaches the recipient."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "f5d510b172e54d7281dde4038ab2e703a9ba61540f6ebd7315c1863aab357752",
+      "reviewed_sha256": "666aabdee6c7800d30c900cda3be3608b9183e19d41f410baa4c17d835d60f3b",
+      "scope": "Use the measured difference between warm and cold prompt work to introduce per-replica cache admission."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "51d2b5b90b42fbbc3cf7c11d6702a1a831272ef243d3bd4b822bd2340b63fc1b",
+      "reviewed_sha256": "a7c9b778e0f98307c1b07f51838d7c846e19dc3667b30845cf9a360277b943e6",
+      "scope": "Connect a rejected receipt to readback after revocation and safe same-key replay."
+    },
+    "dist/streamed-tool-lessons.js": {
+      "previous_sha256": "ec7d9ddf73a4b383127ae93c42ed370d3cba5e4643c99e4caa4041f4b595a3da",
+      "reviewed_sha256": "337794f6bca8ed16cec8318fb3b70c27eacf7c680bf1eba71c041ac35ac96186",
+      "scope": "Connect assembled streaming parameters to the exact MCP call and authorization examples."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "343e0c1f65103743568b6005bd415a3008a23c6a0e13e44ccd6bd3b2d6f664e6",
+      "reviewed_sha256": "b1020f6d6152112bb3f436f0ff779925ffdd86fb98970cbf9b69e0b42efc0b63",
+      "scope": "Keep in-track exercise and catalog links on their selected role before the main script loads."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "b7ef613a81bee8242f5f878a4be52da85fd334380edc8bc5acc61c9d44ffbf72",
+      "reviewed_sha256": "7ac8a6d68651f606a11b2ab90149fbb736621801153d50b96ca1325a9af4ee53",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "b87d0ca11408287f577e88731cd000e0b1076a2da1662f27b542d6f678af189b",
+      "reviewed_sha256": "f534b89e78bc636598f59d57153abd0d6b4b621bc00b9d83c4a9a1c87b668722",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "bfd39203f7d867ec1f60bb53c26f701f41032a176b86c1bc97a9d404212ea16f",
+      "reviewed_sha256": "bd216339eb13172879267ab88991ad21a579724115157e22ee1e3ae6e8bb8235",
+      "scope": "Check all seventeen exact lesson links, original records, stated environments, safe boundaries and catalog returns."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "78bcb9a2307bb451ba0842dca30ed90da42ae602af319e730e293b4df56b596e",
+      "reviewed_sha256": "adeb922eca483118ae7c4c135d5a993a33e495b579fac34a7998ad240366e604",
+      "scope": "Verify initial role parameters for exercises, optional chapters, catalog rows and field returns at both base paths."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "6cb754ce196d68669f1dca45e04a1a0978f526e77723f294473f074022a0fd2e",
+      "reviewed_sha256": "847d9ec42d9e5bb920abc3f41ac8764221ff6f8d9774ea560b69e548f3aa98f5",
+      "scope": "Add the notification diagnostic to the visible subsection index."
+    },
+    "docs/CONTENT_FIELD_PRACTICE_HANDOFFS_2026-11-10.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "aced4c9d656a218560267062ca6b4e72c8704e9d163b89c258a85a62547901f3",
+      "scope": "Append exact body revisions while preserving original artifacts and evidence boundaries."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "31f214c1ebb7ed8395a7c022762c4acae0d82d1032e3a4c6686ef7800fa70751",
+      "reviewed_sha256": "cccbe42795fd38fca4980c375e98ef96503dbb344b880a8b3788f21a9df23ed5",
+      "scope": "Register the new chapter review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "baa5cc093df5c7a49dc848bc0b28424119b163b2c2f00bf9d3ac215574d60edf",
+      "reviewed_sha256": "af7f09e741b5dfa7429a45d61ece912cfe99fef4bf535f5f074ee1c7f2cf0c10",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "2aff0ca76e4621cc7ef74eb3d91c0eae1b365bff",
+    "chapters": 78,
+    "changed_bodies": [
+      "agent-runtime",
+      "mcp-protocol",
+      "model-serving",
+      "slo"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

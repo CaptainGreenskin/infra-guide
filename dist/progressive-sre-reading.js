@@ -268,6 +268,14 @@
   trainingFigure('prometheus-live-burn','上半图手算重启前后的原始增量，下半图沿真实求值状态观察告警。')+
   '<p>接下来，甲每批 100 个请求中有 40 个坏，乙每批 100 个全好，稳定坏率为 40÷200＝20%。随着故障样本进入两个窗口，Prometheus 先写出待确认状态 <code>pending</code>。规则持续成立 4 秒后，同一组标签进入触发状态 <code>firing</code>。可在原始 <code>ALERTS</code> 样本中对照求值时刻，区分窗口统计与状态等待。</p>'+
   '<p>恢复阶段两个端点继续增加好计数。6 秒窗的坏率归零时，16 秒窗仍有约 13.33% 的坏率，快速告警已经解除。把两个坏率和告警状态一起读，才能知道是哪条条件改变。这个实验验证本机抓取、计数器重置和规则状态，生产流量、通知投递和当班响应分别验收。</p>'+
-  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>';
- a.updated='2026.11.09';
+  '<p class="practice-links"><a href="labs/prometheus-live-burn.zip" download>下载实跑包 ↓</a> · <a href="labs/prometheus-live-burn/README.md">运行步骤</a> · <a href="labs/prometheus-live-burn/validation.json">查看抓取样本与告警原始记录 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate">Prometheus 计数器函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">告警状态规则 ↗</a></p>'+
+  '<h3 id="alert-notification-handoff">规则已经触发，为什么还没收到通知</h3>'+
+  '<p>上面的实跑记录里，<code>GuideLiveFastBurn</code> 对 <code>job="reports"</code>、<code>severity="teaching"</code> 进入过 <code>firing</code>。通知还要经过 Alertmanager。它接收 Prometheus 发来的告警，按标签分组、匹配路由，再发送到相应的接收方。实验实测到规则求值为止，以下是接入 Alertmanager 的测试环境中可做的检查。</p>'+
+  '<ol><li>告警活跃时，在 Prometheus 查询 <code>/api/v1/alerts</code>，确认告警名、标签和 <code>state</code>。<code>firing</code> 表示这组标签的规则条件已持续满足。</li>'+
+  '<li>在同一台 Prometheus 查询 <code>/api/v1/alertmanagers</code>。<code>activeAlertmanagers</code> 列出当前发现并保留的目标地址。找不到预期地址，先查配置和服务发现。地址在列表中时，继续检查是否发到了那里。</li>'+
+  '<li>在对应的 Alertmanager 查询 <code>/api/v2/alerts</code>，对照告警名、标签和时段。发送前若改写了标签，就按发出的标签查。找不到活跃告警时，回到 Prometheus 查发送错误。找到后，先查 <code>silencedBy</code>（人为静默）和 <code>inhibitedBy</code>（因另一条告警而抑制），再看匹配的路由和接收方。最后查测试接收端的入站请求或值班平台的事件记录，确认是否送达。</li></ol>'+
+  '<p>假设教学告警进入新的分组，路由的 <code>group_wait</code> 设为 30 秒，也就是首条通知先等 30 秒。若 Alertmanager 在第 10 秒就收到这条告警的恢复，它就不会为这条告警发出首条通知。10 秒是推演输入。规则里的 <code>for: 4s</code> 在 Prometheus 端判断何时进入触发状态，和通知等待分开计时。</p>'+
+  '<details><summary>在测试环境用 curl 读取三个接口</summary><p>将 <code>PROM</code> 和 <code>AM</code> 设为测试环境中两个服务的基址。</p><p><code>curl -fsS "$PROM/api/v1/alerts"</code><br><code>curl -fsS "$PROM/api/v1/alertmanagers"</code><br><code>curl -fsS "$AM/api/v2/alerts"</code></p></details>'+
+  '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>';
+ a.updated='2026.11.10';
 })();

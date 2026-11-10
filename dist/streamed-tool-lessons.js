@@ -40,7 +40,9 @@ Object.assign(sources,{
    ['调用前出现无效 UTF-8','0 次','解码失败；调用仍未完成'],
    ['调用完成后再出现无效 UTF-8','仍为 1 次','保留执行观察，同时记录流错误']])+
   para('Python 默认的 JSON 对象解析遇到重复名字会保留最后一项。若只检查解析后的字典，就看不见前面出现过另一个 tenant。程序用 object_pairs_hook 拒绝重复键，再做字段集合与类型检查；这些检查仍不能替代真实工具端的身份认证、授权和业务验证。',
-   '最后一行特意让 done 先在一次读取中处理，再送来无效字节。它说明调用事实与随后流错误可同时成立，不是在承诺任意缓冲尺寸下都出现同样时序。本程序只保留当前进程观察；重启后的去重、接收方持久回执与任务完成仍按相应章节实现。')+
+   '最后一行先处理 done，再送来无效字节。工具已经读过一次，流随后出错，两项都要记下来。这个先后顺序由本次读取边界安排，记录只保留在当前进程。')+
+  '<p>这里的 <code>call_id</code> 用来拼齐同一项提议的参数。接入 MCP 时，宿主把完整且通过检查的参数交给客户端，客户端用 JSON-RPC 的请求编号认回响应。<a href="/article/mcp-protocol/#mcp-model-tool-observation">看另一份订单实验怎样接上提议和工具结果 →</a></p>'+
+  '<p>参数收齐后还要看权限。上表只把租户改成 B，参数仍能通过结构检查，但工具没有被调用。<a href="/article/agent-security/#section-3">看权限章的独立任务 R17 为什么可以读 A/daily，却不能写 B/daily →</a></p>'+
   '<p class="evidence-note">协议范围：严格 UTF-8、LF/CRLF 的 data 字段子集；EOF 不补发最后一个未终结事件。未实现独立 CR 行尾、自动重连或 Last-Event-ID，不作为完整 EventSource 客户端。当前可信主体、最多 4 次调用、512 字节参数和 64 KiB 流上限都是本例契约。</p>'+
   streamedToolLinks+'<details class="full-code"><summary>展开完整 streamed_tool_calls.py：与下载文件一致</summary>'+code('streamed_tool_calls.py','PYTHON',streamedToolFiles['streamed_tool_calls.py'])+'</details>'+
   linkTo('durable-workflows','继续推导跨进程恢复与接收方回执')]);

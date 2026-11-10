@@ -89,6 +89,9 @@ const staticPage=fs.readFileSync(path.join(dist,'labs/index.html'),'utf8');
 const earlyRoleScripts=[...staticPage.matchAll(/<script data-early-lab-role>([\s\S]*?)<\/script>/g)];
 assert.equal(earlyRoleScripts.length,1,'lab links preserve a selected role before application startup');
 const earlyRoleScript=earlyRoleScripts[0][1];
+const fieldPage=fs.readFileSync(path.join(dist,'module/platform/index.html'),'utf8');
+const earlyFieldRoleScript=fieldPage.match(/<script data-early-field-role>([\s\S]*?)<\/script>/)?.[1];
+assert(earlyFieldRoleScript,'field practice links preserve a selected role before application startup');
 const aiRoute=JSON.parse(vm.runInContext("JSON.stringify(learningProfileRoute(learningProfiles['ai-training']))",c));
 assert(aiRoute.includes('kubernetes-training')&&!aiRoute.includes('quantization-serving'));
 for(const base of ['/','/infra-guide/']){
@@ -96,20 +99,27 @@ for(const base of ['/','/infra-guide/']){
  const hrefs=[article+'kubernetes-training/#native-kubernetes-gloo-job',
   article+'kubernetes-training/?source=lab#section-6',article+'kubernetes-training/?goal=#section-6',
   article+'quantization-serving/',base+'labs/kubernetes-gloo-job/validation.json',
-  'https://elsewhere.example/article/kubernetes-training/'];
+  'https://elsewhere.example/article/kubernetes-training/',
+  base+'module/training/#field-map-practice',base+'module/network/#field-map-practice',
+  base+'labs/?track=ai#lab-ai-inference-placement',base+'labs/?track=agent#lab-agent-mcp-result-receipt',
+  base+'labs/?track=ai&goal=#lab-ai-inference-placement',base+'labs/?track=ai#labs-ai'];
  for(const goal of ['ai-training','toString','']){
-  const links=hrefs.map(href=>({href:new URL(href,origin).href,result:href,setAttribute(name,value){
-   assert.equal(name,'href');
-   this.result=value;
-  }}));
-  vm.runInNewContext(earlyRoleScript,{URL,URLSearchParams,location:{origin,search:'?goal='+goal},
-   document:{querySelectorAll:()=>links}});
   const expected=hrefs.slice();
   if(goal==='ai-training'){
    expected[0]=article+'kubernetes-training/?goal=ai-training#native-kubernetes-gloo-job';
    expected[1]=article+'kubernetes-training/?source=lab&goal=ai-training#section-6';
+   expected[6]=base+'module/training/?goal=ai-training#field-map-practice';
+   expected[8]=base+'labs/?track=ai&goal=ai-training#lab-ai-inference-placement';
   }
-  assert.deepEqual(links.map(link=>link.result),expected,base+goal+': early lab role matches application semantics');
+  for(const script of [earlyRoleScript,earlyFieldRoleScript]){
+   const links=hrefs.map(href=>({href:new URL(href,origin).href,result:href,setAttribute(name,value){
+    assert.equal(name,'href');
+    this.result=value;
+   }}));
+   vm.runInNewContext(script,{URL,URLSearchParams,location:{origin,search:'?goal='+goal},
+    document:{querySelectorAll:()=>links}});
+   assert.deepEqual(links.map(link=>link.result),expected,base+goal+': early practice role matches application semantics');
+  }
  }
 }
 for(const unit of units)assert(staticPage.includes('id="lab-'+unit.id+'"'),'static full catalog omitted '+unit.id);

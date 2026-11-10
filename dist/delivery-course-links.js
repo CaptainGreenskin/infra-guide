@@ -30,8 +30,3 @@ cloudKnowledgeExplanations['event-idempotency']+=para('真实代理重投与重�
 cloudKnowledgeExplanations['iac']=cloudKnowledgeExplanations['iac'].replace(/远端对象 ID/g,'目标对象 ID').replace(/读取远端对象/g,'读取目标对象');
 cloudKnowledgeExplanations['iac']+=para('实际local_file实验再把三份事实分开：关闭刷新时，文件已被改成outside但计划仍退出0；只刷新移除旧状态绑定而保留文件，正常修复才恢复alpha。两个工作空间也可以指向同一路径，状态隔离不自动带来资源隔离。');
 cloudKnowledgeExplanations['gitops']+=para('真实Argo CD在kind中验证：只改ConfigMap后，应用已Synced/Healthy，原Pod仍返回v1；修改模板并替换Pod后才返回v2。自愈和清理分别核对，未受管对象不因本应用prune而被删除。');
-for(const id of ['C5','C6']){
- const row=cloudCoverageRows.find(r=>r[0]===id);
- if(id==='C5')row[2]='展开函数环境、触发、重投、批次、并发与成本；新增真实RabbitMQ的发布确认、运输ACK、进程崩溃重投、预取接口差异和持久重启，独立核对业务效果。';
- else {row[2]='展开兼容发布、状态与调谐；真实Terraform local_file验证状态锁、刷新和工作空间争用，kind内Argo CD验证自愈、清理与实际HTTP版本。';row[3]='尚未验证云provider/remote backend、生产规模Argo/Flux、物理多节点或client-go/Operator实现；kind与临时文件的范围分别标注。';}
-}

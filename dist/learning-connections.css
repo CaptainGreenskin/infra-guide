@@ -49,9 +49,13 @@
 .field-map-practice h3 span{font-weight:500;font-size:13px;color:var(--muted);margin-inline-start:8px}
 .field-map-practice p{margin:0 0 6px;font-size:15px;line-height:1.9}
 .field-map-practice a{display:inline-flex;align-items:center;min-height:36px;color:var(--blue);font-weight:600}
-.field-map-practice-result{margin-top:5px;border-top:1px solid var(--line)}
-.field-map-practice-result summary{padding:9px 0;cursor:pointer;color:var(--muted);font-size:14px;font-weight:550}
-@media(max-width:720px){.field-map-practice a,.field-map-practice-result summary{min-height:44px}.field-map-practice p{font-size:16px}}
+.field-practice-actions{display:flex;flex-wrap:wrap;align-items:center;gap:0 16px}
+.field-map-practice .field-practice-environment,.field-map-practice .field-practice-scope{color:var(--muted);font-size:14px;line-height:1.65}
+.field-map-practice-result,.field-map-practice-next,.field-map-practice-next-result{margin-top:5px;border-top:1px solid var(--line)}
+.field-map-practice summary{padding:9px 0;cursor:pointer;color:var(--muted);font-size:14px;font-weight:550}
+.field-map-practice-next{scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
+.field-map-practice-next>summary{color:var(--text);font-weight:650}
+@media(max-width:720px){.field-map-practice a,.field-map-practice summary{min-height:44px}.field-map-practice p{font-size:16px}}
 
 .track-entry-overview{margin:12px 0;padding:10px 0;border-bottom:1px solid var(--line)}
 .track-entry-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
@@ -69,7 +73,8 @@
 .chapter-lab-links summary{color:var(--blue);cursor:pointer;font-size:14px;padding:8px 0}
 .chapter-lab-links ul{margin:0;padding-inline-start:18px}
 .chapter-lab-links li{margin:6px 0;font-size:14px;line-height:1.85}
-.chapter-lab-evidence,.chapter-lab-links li span,.field-practice-optional{margin-inline-start:12px;font-size:13px}
+.chapter-lab-evidence,.chapter-lab-links li span{margin-inline-start:12px;font-size:13px}
+.field-practice-optional{font-size:13px}
 .chapter-lab-links li span,.field-practice-optional{color:var(--muted)}
 .article-section details.progressive-detail[id]{scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
 @media(max-width:720px){.chapter-lab-links summary{min-height:44px}.chapter-lab-links li a{display:inline-flex;align-items:center;min-height:32px}}

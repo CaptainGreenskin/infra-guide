@@ -56,5 +56,8 @@
   v65ObjectOwners:['Kubernetes · 对象拥有者与依赖','https://kubernetes.io/docs/concepts/overview/working-with-objects/owners-dependents/']
  });
  for(const id of ['gpu-scheduling','kubernetes-training'])chapter(id).refs=[...new Set([...chapter(id).refs,'v65KueueJobs','v65KueueWorkload','v65ObjectOwners'])];
- for(const id of changed)chapter(id).updated='2026.11.09';
+ for(const id of changed){
+  const a=chapter(id);
+  if(!a.updated||a.updated<'2026.11.09')a.updated='2026.11.09';
+ }
 })();

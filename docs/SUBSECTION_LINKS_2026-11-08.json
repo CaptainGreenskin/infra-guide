@@ -339,7 +339,13 @@
       "id": "slo",
       "targets": [
         "subsection-8-fgmzv3",
-        "live-prometheus-burn"
+        "live-prometheus-burn",
+        "alert-notification-handoff"
+      ],
+      "visible_targets": [
+        "subsection-8-fgmzv3",
+        "live-prometheus-burn",
+        "alert-notification-handoff"
       ]
     },
     {

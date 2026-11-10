@@ -22,6 +22,17 @@ assert.equal(schema.objects.length,7);assert.equal(schema.status,'passed');
 const page=fs.readFileSync('dist/interview/experiences/index.html','utf8');
 assert.equal((page.match(/class="experience-question"/g)||[]).length,29);
 assert.equal((page.match(/class="experience-source"/g)||[]).length,15);
+const coverage=fs.readFileSync('dist/interview/cloud/index.html','utf8').match(/<section class="coverage-matrix">([\s\S]*?)<\/section>/)?.[1];
+assert(coverage);
+for(const [id,anchor] of [
+ ['tcp-event-loop','native-epoll-run'],['vpc-network','cloud-proxy-run'],['storage-recovery','native-postgres-pitr'],
+ ['k8s-networking','kubernetes-network-policy-run'],['k8s-storage','native-csi-storage'],['serverless-execution','native-jetstream-redelivery'],
+ ['iam-security','native-spiffe-workload-identity'],['elasticity','native-cpu-quota-http'],['slo','live-prometheus-burn'],['observability','collector-sampling-check']
+]){
+ const href='/article/'+id+'/#'+anchor;
+ assert.equal(coverage.split('href="'+href+'"').length,2,href+': one direct evidence link in the coverage matrix');
+ assert(fs.readFileSync('dist/article/'+id+'/index.html','utf8').includes('id="'+anchor+'"'),href+': link to the actual evidence');
+}
 for(const id of ['container-runtime','k8s-workloads','k8s-networking','k8s-storage','k8s-autoscaling','serverless-execution']){
  const a=articles.find(a=>a.id===id);assert(a.sections.length>=7&&a.refs.length>=3);assert(a.textbook);
  const iso=String(a.updated).replaceAll('.','-'),date=new Date(iso+'T00:00:00Z');

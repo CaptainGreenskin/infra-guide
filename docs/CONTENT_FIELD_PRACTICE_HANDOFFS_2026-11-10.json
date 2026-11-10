@@ -1,0 +1,29 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "2aff0ca76e4621cc7ef74eb3d91c0eae1b365bff",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PLAIN_READING_2026-11-10.json": "145745956e2c0e1e82c0c9c5e0964578cb9b8a68222c4759f1ec0bb00132151c"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "ed5cbf98ea52919ca54da31302a8cdff9967dd9a87ec31730cf34472b96259f1",
+      "reviewed_content_sha256": "7c693a89a1749e28629d63b1d890721ec49d8eeceab9039aba1c078175060f2f",
+      "scope": "Connect a rejected receipt to readback after revocation and safe same-key replay.",
+      "observation": "The two workflow records use independent databases and an operation key distinct from the report-A/v3:publish fixture. Preserve the original HTTP responses, SQLite results and replay command.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ]
+}
