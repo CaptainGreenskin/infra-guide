@@ -1,0 +1,15 @@
+{
+  "tenant": "A",
+  "question": "本月费用的基础项和调整项合计多少？",
+  "system_prompt": "根据本次提供的两条资料回答。基础和调整都齐全时，将金额相加，status 填 ok，并在 citations 中逐字复制用到的两条 reference。资料不足则 status 填 insufficient_evidence，total 填 null，citations 填空列表。只返回 JSON。",
+  "required_categories": ["基础", "调整"],
+  "query": "费用 AND 汇总",
+  "documents": [
+    {"source_id": "a-base", "version": "v1", "tenant": "A", "category": "基础", "amount": 10, "search_text": "费用 汇总 本月 支持 基础"},
+    {"source_id": "a-adjust", "version": "v2", "tenant": "A", "category": "调整", "amount": 27, "search_text": "费用 汇总 本月 支持 调整"},
+    {"source_id": "a-adjust", "version": "v3", "tenant": "A", "category": "调整", "amount": 27, "search_text": "费用 汇总 本月 支持 调整"},
+    {"source_id": "b-private", "version": "v5", "tenant": "B", "category": "基础", "amount": 999, "search_text": "费用 汇总"}
+  ],
+  "initial_current": {"a-base": "v1", "a-adjust": "v2", "b-private": "v5"},
+  "source_update": {"source_id": "a-adjust", "version": "v3"}
+}

@@ -71,7 +71,7 @@ const cloudKnowledgeDomains = [
  ['workload-identity','工作负载身份与短期凭证','人、服务和任务应使用可区分的身份；工作负载身份连接运行实例与可审计的服务权限。短期凭证减少长期泄露窗口，但仍需限制受众、用途与权限。','凭证不应由不可信输入指定；轮换、撤销、过期、缓存和授权失败都需要可观察的行为。',['iam-security','agent-security']],
  ['secret-lifecycle','密钥、加密与轮换','传输加密、静态加密和业务授权保护不同边界。密钥管理包含生成、保管、使用、轮换、撤销与审计；Secret 编码不等于密文保护。','配置源更新后，挂载、环境变量和进程是否重读具有不同传播路径，应验证当前真正生效的版本。',['config-secrets','iam-security']],
  ['tenant-isolation','多租户与资源隔离','租户边界同时涉及身份、网络、数据、计算、调度和管理权限。namespace 是组织边界之一，资源配额控制消费范围，运行时隔离限制执行能力。','单一 namespace 或容器不能自动保证对抗性隔离；越权、共享依赖与 noisy neighbor 应分别评估。',['iam-security','scheduling-resources','agent-sandbox']],
- ['execution-security','容器权限、准入与沙箱','能力集、非 root、只读挂载、系统调用过滤、准入策略和沙箱运行时限制不同攻击面。普通容器、用户态内核和虚拟机有不同兼容性与隔离边界。','隔离不替代数据端授权；应按实际威胁、宿主接口、凭证和网络出口验证，不能仅凭产品名称判断安全。',['container-runtime','agent-sandbox']],
+ ['execution-security','容器权限、准入与沙箱','授权决定谁能提交，准入检查提交的对象能否写入。容器启动后，能力集、非 root、只读挂载和系统调用过滤进一步限制进程。普通容器、用户态内核和虚拟机有不同兼容性与隔离边界。','运行时隔离和数据端授权分别检查。应按实际威胁验证宿主接口、凭证和网络出口。<a href="/article/iam-security/#native-kubernetes-admission">用同一账号提交四份 Pod</a>，对照授权、准入和实际写入。',['container-runtime','iam-security','agent-sandbox']],
  ['audit-accountability','审计、最小权限与可追责','审计应关联主体、授权依据、动作、资源、参数摘要、结果与时间。最小权限需要限制动作和作用域，并持续清理失效委托与长期权限。','告警与审计不能只保留成功日志；拒绝后还应核对相应业务效果是否确实未发生。',['iam-security','observability','agent-security']]
  ]},
  {module:'cloud-capacity',refs:['v9load','cnHPA','v9warm','cnPrice'],points:[

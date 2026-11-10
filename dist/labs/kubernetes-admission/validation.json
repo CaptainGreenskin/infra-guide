@@ -1,0 +1,534 @@
+{
+  "environment": {
+    "arch": "arm64",
+    "client_go": "v0.35.8",
+    "envtest": "v0.23.3",
+    "etcd": {
+      "sha256": "fbf8d62a174f75d6ae6c95418c933100540e42b89551a8dad35035af0b376f76",
+      "version": "etcd Version: 3.6.6"
+    },
+    "go": "go1.26.1",
+    "kube-apiserver": {
+      "sha256": "42d2da3c95ea1136d8768c4cfb7903218e36f45bd2a567dab1f4e1a075c221ad",
+      "version": "Kubernetes v1.35.0"
+    },
+    "os": "darwin"
+  },
+  "observations": {
+    "cases": [
+      {
+        "request": {
+          "name": "safe",
+          "namespace": "report-a",
+          "privileged": false
+        },
+        "authorization": {
+          "allowed": true,
+          "reason": "RBAC: allowed by RoleBinding \"pod-submit/report-a\" of Role \"pod-submit\" to User \"report-writer\""
+        },
+        "create": {
+          "code": 201,
+          "body": {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "safe",
+              "namespace": "report-a",
+              "uid": "6eab692b-25bd-4cad-b84c-72d7bc1405cc",
+              "resourceVersion": "214",
+              "generation": 1,
+              "creationTimestamp": "2026-11-10T17:32:31Z",
+              "managedFields": [
+                {
+                  "manager": "Go-http-client",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-10T17:32:31Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:spec": {
+                      "f:automountServiceAccountToken": {},
+                      "f:containers": {
+                        "k:{\"name\":\"report\"}": {
+                          ".": {},
+                          "f:image": {},
+                          "f:imagePullPolicy": {},
+                          "f:name": {},
+                          "f:resources": {},
+                          "f:securityContext": {
+                            ".": {},
+                            "f:privileged": {}
+                          },
+                          "f:terminationMessagePath": {},
+                          "f:terminationMessagePolicy": {}
+                        }
+                      },
+                      "f:dnsPolicy": {},
+                      "f:enableServiceLinks": {},
+                      "f:restartPolicy": {},
+                      "f:schedulerName": {},
+                      "f:securityContext": {},
+                      "f:terminationGracePeriodSeconds": {}
+                    }
+                  }
+                }
+              ]
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "report",
+                  "image": "example.invalid/report:v1",
+                  "resources": {},
+                  "terminationMessagePath": "/dev/termination-log",
+                  "terminationMessagePolicy": "File",
+                  "imagePullPolicy": "IfNotPresent",
+                  "securityContext": {
+                    "privileged": false
+                  }
+                }
+              ],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "automountServiceAccountToken": false,
+              "securityContext": {},
+              "schedulerName": "unavailable-teaching-scheduler",
+              "tolerations": [
+                {
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                },
+                {
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                }
+              ],
+              "priority": 0,
+              "enableServiceLinks": true,
+              "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          }
+        },
+        "admin_get": {
+          "code": 200,
+          "body": {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "safe",
+              "namespace": "report-a",
+              "uid": "6eab692b-25bd-4cad-b84c-72d7bc1405cc",
+              "resourceVersion": "214",
+              "generation": 1,
+              "creationTimestamp": "2026-11-10T17:32:31Z",
+              "managedFields": [
+                {
+                  "manager": "Go-http-client",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-10T17:32:31Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:spec": {
+                      "f:automountServiceAccountToken": {},
+                      "f:containers": {
+                        "k:{\"name\":\"report\"}": {
+                          ".": {},
+                          "f:image": {},
+                          "f:imagePullPolicy": {},
+                          "f:name": {},
+                          "f:resources": {},
+                          "f:securityContext": {
+                            ".": {},
+                            "f:privileged": {}
+                          },
+                          "f:terminationMessagePath": {},
+                          "f:terminationMessagePolicy": {}
+                        }
+                      },
+                      "f:dnsPolicy": {},
+                      "f:enableServiceLinks": {},
+                      "f:restartPolicy": {},
+                      "f:schedulerName": {},
+                      "f:securityContext": {},
+                      "f:terminationGracePeriodSeconds": {}
+                    }
+                  }
+                }
+              ]
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "report",
+                  "image": "example.invalid/report:v1",
+                  "resources": {},
+                  "terminationMessagePath": "/dev/termination-log",
+                  "terminationMessagePolicy": "File",
+                  "imagePullPolicy": "IfNotPresent",
+                  "securityContext": {
+                    "privileged": false
+                  }
+                }
+              ],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "automountServiceAccountToken": false,
+              "securityContext": {},
+              "schedulerName": "unavailable-teaching-scheduler",
+              "tolerations": [
+                {
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                },
+                {
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                }
+              ],
+              "priority": 0,
+              "enableServiceLinks": true,
+              "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          }
+        }
+      },
+      {
+        "request": {
+          "name": "privileged",
+          "namespace": "report-a",
+          "privileged": true
+        },
+        "authorization": {
+          "allowed": true,
+          "reason": "RBAC: allowed by RoleBinding \"pod-submit/report-a\" of Role \"pod-submit\" to User \"report-writer\""
+        },
+        "create": {
+          "code": 422,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "pods \"privileged\" is forbidden: ValidatingAdmissionPolicy 'reports-no-privileged' with binding 'reports-no-privileged' denied request: report containers must not run privileged",
+            "reason": "Invalid",
+            "details": {
+              "name": "privileged",
+              "kind": "pods",
+              "causes": [
+                {
+                  "message": "ValidatingAdmissionPolicy 'reports-no-privileged' with binding 'reports-no-privileged' denied request: report containers must not run privileged"
+                }
+              ]
+            },
+            "code": 422
+          }
+        },
+        "admin_get": {
+          "code": 404,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "pods \"privileged\" not found",
+            "reason": "NotFound",
+            "details": {
+              "name": "privileged",
+              "kind": "pods"
+            },
+            "code": 404
+          }
+        }
+      },
+      {
+        "request": {
+          "name": "privileged",
+          "namespace": "report-b",
+          "privileged": true
+        },
+        "authorization": {
+          "allowed": true,
+          "reason": "RBAC: allowed by RoleBinding \"pod-submit/report-b\" of Role \"pod-submit\" to User \"report-writer\""
+        },
+        "create": {
+          "code": 201,
+          "body": {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "privileged",
+              "namespace": "report-b",
+              "uid": "4211da37-af06-44ba-b4ca-dc008abd1748",
+              "resourceVersion": "215",
+              "generation": 1,
+              "creationTimestamp": "2026-11-10T17:32:31Z",
+              "managedFields": [
+                {
+                  "manager": "Go-http-client",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-10T17:32:31Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:spec": {
+                      "f:automountServiceAccountToken": {},
+                      "f:containers": {
+                        "k:{\"name\":\"report\"}": {
+                          ".": {},
+                          "f:image": {},
+                          "f:imagePullPolicy": {},
+                          "f:name": {},
+                          "f:resources": {},
+                          "f:securityContext": {
+                            ".": {},
+                            "f:privileged": {}
+                          },
+                          "f:terminationMessagePath": {},
+                          "f:terminationMessagePolicy": {}
+                        }
+                      },
+                      "f:dnsPolicy": {},
+                      "f:enableServiceLinks": {},
+                      "f:restartPolicy": {},
+                      "f:schedulerName": {},
+                      "f:securityContext": {},
+                      "f:terminationGracePeriodSeconds": {}
+                    }
+                  }
+                }
+              ]
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "report",
+                  "image": "example.invalid/report:v1",
+                  "resources": {},
+                  "terminationMessagePath": "/dev/termination-log",
+                  "terminationMessagePolicy": "File",
+                  "imagePullPolicy": "IfNotPresent",
+                  "securityContext": {
+                    "privileged": true
+                  }
+                }
+              ],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "automountServiceAccountToken": false,
+              "securityContext": {},
+              "schedulerName": "unavailable-teaching-scheduler",
+              "tolerations": [
+                {
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                },
+                {
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                }
+              ],
+              "priority": 0,
+              "enableServiceLinks": true,
+              "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          }
+        },
+        "admin_get": {
+          "code": 200,
+          "body": {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+              "name": "privileged",
+              "namespace": "report-b",
+              "uid": "4211da37-af06-44ba-b4ca-dc008abd1748",
+              "resourceVersion": "215",
+              "generation": 1,
+              "creationTimestamp": "2026-11-10T17:32:31Z",
+              "managedFields": [
+                {
+                  "manager": "Go-http-client",
+                  "operation": "Update",
+                  "apiVersion": "v1",
+                  "time": "2026-11-10T17:32:31Z",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                    "f:spec": {
+                      "f:automountServiceAccountToken": {},
+                      "f:containers": {
+                        "k:{\"name\":\"report\"}": {
+                          ".": {},
+                          "f:image": {},
+                          "f:imagePullPolicy": {},
+                          "f:name": {},
+                          "f:resources": {},
+                          "f:securityContext": {
+                            ".": {},
+                            "f:privileged": {}
+                          },
+                          "f:terminationMessagePath": {},
+                          "f:terminationMessagePolicy": {}
+                        }
+                      },
+                      "f:dnsPolicy": {},
+                      "f:enableServiceLinks": {},
+                      "f:restartPolicy": {},
+                      "f:schedulerName": {},
+                      "f:securityContext": {},
+                      "f:terminationGracePeriodSeconds": {}
+                    }
+                  }
+                }
+              ]
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "report",
+                  "image": "example.invalid/report:v1",
+                  "resources": {},
+                  "terminationMessagePath": "/dev/termination-log",
+                  "terminationMessagePolicy": "File",
+                  "imagePullPolicy": "IfNotPresent",
+                  "securityContext": {
+                    "privileged": true
+                  }
+                }
+              ],
+              "restartPolicy": "Always",
+              "terminationGracePeriodSeconds": 30,
+              "dnsPolicy": "ClusterFirst",
+              "automountServiceAccountToken": false,
+              "securityContext": {},
+              "schedulerName": "unavailable-teaching-scheduler",
+              "tolerations": [
+                {
+                  "key": "node.kubernetes.io/not-ready",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                },
+                {
+                  "key": "node.kubernetes.io/unreachable",
+                  "operator": "Exists",
+                  "effect": "NoExecute",
+                  "tolerationSeconds": 300
+                }
+              ],
+              "priority": 0,
+              "enableServiceLinks": true,
+              "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+              "phase": "Pending",
+              "qosClass": "BestEffort"
+            }
+          }
+        }
+      },
+      {
+        "request": {
+          "name": "privileged",
+          "namespace": "report-c",
+          "privileged": true
+        },
+        "authorization": {
+          "allowed": false
+        },
+        "create": {
+          "code": 403,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "pods is forbidden: User \"report-writer\" cannot create resource \"pods\" in API group \"\" in the namespace \"report-c\"",
+            "reason": "Forbidden",
+            "details": {
+              "kind": "pods"
+            },
+            "code": 403
+          }
+        },
+        "admin_get": {
+          "code": 404,
+          "body": {
+            "kind": "Status",
+            "apiVersion": "v1",
+            "metadata": {},
+            "status": "Failure",
+            "message": "pods \"privileged\" not found",
+            "reason": "NotFound",
+            "details": {
+              "name": "privileged",
+              "kind": "pods"
+            },
+            "code": 404
+          }
+        }
+      }
+    ],
+    "identity": {
+      "groups": [
+        "system:authenticated"
+      ],
+      "username": "report-writer"
+    },
+    "isolation": {
+      "hosts": {
+        "etcd": "127.0.0.1",
+        "kube_apiserver": "127.0.0.1"
+      },
+      "listeners_closed": true,
+      "used_existing_cluster": false
+    },
+    "policy": {
+      "actions": [
+        "Deny"
+      ],
+      "expression": "object.spec.containers.all(c, !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged)",
+      "message": "report containers must not run privileged",
+      "name": "reports-no-privileged",
+      "namespace_selector": {
+        "report-admission": "enforced"
+      },
+      "operations": [
+        "CREATE"
+      ]
+    }
+  },
+  "schema": 1,
+  "source_sha256": {
+    "go.mod": "e111ced71c6e0e26e621ec6a8938e20b5b5173b8a6a67a284d78ace3e0242ebf",
+    "go.sum": "2839d0a681843d9ef93b754d31b84b13397eaea715ce25feb0e9f205073d4184",
+    "main.go": "497b48113435a93347d3d752ee0a4ad79b559fc744d739856a87bc2149f0b8b6"
+  }
+}

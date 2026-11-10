@@ -1,0 +1,442 @@
+{
+  "schema": "rag-citation-oracle-v1",
+  "status": "passed",
+  "assets": {
+    "engine": {
+      "release": "b12110",
+      "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+      "archive": "llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_url": "https://github.com/ggml-org/llama.cpp/releases/download/b12110/llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_sha256": "4f5b8de12e0b9516658ca6a5764c6ffb3d7c659c3dd538556b1413c7b4050662",
+      "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959"
+    },
+    "model": {
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "filename": "Qwen3-0.6B-Q8_0.gguf",
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+      "bytes": 639446688,
+      "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+    }
+  },
+  "engine_flags": [
+    "--n-gpu-layers",
+    "0",
+    "--threads",
+    "4",
+    "--ctx-size",
+    "2048",
+    "--parallel",
+    "1",
+    "--jinja",
+    "--reasoning-budget",
+    "0",
+    "--chat-template-kwargs",
+    "{\"enable_thinking\":false}",
+    "--alias",
+    "local-qwen"
+  ],
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "sqlite": "3.53.3"
+  },
+  "engine_pid": 84239,
+  "versions": {
+    "before": {
+      "a-adjust": "v2",
+      "a-base": "v1",
+      "b-private": "v5"
+    },
+    "after": {
+      "a-adjust": "v3",
+      "a-base": "v1",
+      "b-private": "v5"
+    }
+  },
+  "unscoped_candidates": {
+    "stale": [
+      {
+        "rowid": 3,
+        "source_id": "b-private",
+        "version": "v5",
+        "tenant": "B",
+        "score": -2.5142857142857147e-06
+      },
+      {
+        "rowid": 1,
+        "source_id": "a-adjust",
+        "version": "v2",
+        "tenant": "A",
+        "score": -1.8144329896907218e-06
+      },
+      {
+        "rowid": 2,
+        "source_id": "a-base",
+        "version": "v1",
+        "tenant": "A",
+        "score": -1.8144329896907218e-06
+      }
+    ],
+    "fresh": [
+      {
+        "rowid": 6,
+        "source_id": "b-private",
+        "version": "v5",
+        "tenant": "B",
+        "score": -2.5142857142857147e-06
+      },
+      {
+        "rowid": 4,
+        "source_id": "a-adjust",
+        "version": "v3",
+        "tenant": "A",
+        "score": -1.8144329896907218e-06
+      },
+      {
+        "rowid": 5,
+        "source_id": "a-base",
+        "version": "v1",
+        "tenant": "A",
+        "score": -1.8144329896907218e-06
+      }
+    ]
+  },
+  "authority": {
+    "total": 37,
+    "citations": [
+      "a-adjust/v3",
+      "a-base/v1"
+    ]
+  },
+  "cases": {
+    "fresh": {
+      "snapshot": "fresh",
+      "checked_source": true,
+      "candidates": [
+        {
+          "rowid": 4,
+          "source_id": "a-adjust",
+          "version": "v3",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        },
+        {
+          "rowid": 5,
+          "source_id": "a-base",
+          "version": "v1",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        }
+      ],
+      "supplied": [
+        {
+          "reference": "a-base/v1",
+          "category": "基础",
+          "amount": 10
+        },
+        {
+          "reference": "a-adjust/v3",
+          "category": "调整",
+          "amount": 27
+        }
+      ],
+      "excluded": [],
+      "model_http": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "根据本次提供的两条资料回答。基础和调整都齐全时，将金额相加，status 填 ok，并在 citations 中逐字复制用到的两条 reference。资料不足则 status 填 insufficient_evidence，total 填 null，citations 填空列表。只返回 JSON。"
+            },
+            {
+              "role": "user",
+              "content": "本月费用的基础项和调整项合计多少？\n资料：\n[{\"reference\":\"a-base/v1\",\"category\":\"基础\",\"amount\":10},{\"reference\":\"a-adjust/v3\",\"category\":\"调整\",\"amount\":27}]"
+            }
+          ],
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96,
+          "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+              "name": "report_answer",
+              "strict": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "insufficient_evidence"
+                    ]
+                  },
+                  "total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "total",
+                  "citations"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\n  \"status\": \"ok\",\n  \"total\": 37,\n  \"citations\": [\n    \"a-base/v1\",\n    \"a-adjust/v3\"\n  ]\n}"
+              }
+            }
+          ],
+          "created": 1794331339,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 44,
+            "prompt_tokens": 129,
+            "total_tokens": 173,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "id": "chatcmpl-qbbi9qZjptpAqwH3QqK7M1pgY3QHusGY",
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 129,
+            "prompt_ms": 119.787,
+            "prompt_per_token_ms": 0.9285813953488372,
+            "prompt_per_second": 1076.911517944351,
+            "predicted_n": 44,
+            "predicted_ms": 229.861,
+            "predicted_per_token_ms": 5.34560465116279,
+            "predicted_per_second": 187.0695768312154
+          }
+        }
+      },
+      "answer": {
+        "status": "ok",
+        "total": 37,
+        "citations": [
+          "a-base/v1",
+          "a-adjust/v3"
+        ]
+      },
+      "oracle": {
+        "status": "accepted",
+        "errors": []
+      }
+    },
+    "stale-unchecked": {
+      "snapshot": "stale",
+      "checked_source": false,
+      "candidates": [
+        {
+          "rowid": 1,
+          "source_id": "a-adjust",
+          "version": "v2",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        },
+        {
+          "rowid": 2,
+          "source_id": "a-base",
+          "version": "v1",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        }
+      ],
+      "supplied": [
+        {
+          "reference": "a-base/v1",
+          "category": "基础",
+          "amount": 10
+        },
+        {
+          "reference": "a-adjust/v2",
+          "category": "调整",
+          "amount": 27
+        }
+      ],
+      "excluded": [],
+      "model_http": {
+        "request": {
+          "model": "local-qwen",
+          "messages": [
+            {
+              "role": "system",
+              "content": "根据本次提供的两条资料回答。基础和调整都齐全时，将金额相加，status 填 ok，并在 citations 中逐字复制用到的两条 reference。资料不足则 status 填 insufficient_evidence，total 填 null，citations 填空列表。只返回 JSON。"
+            },
+            {
+              "role": "user",
+              "content": "本月费用的基础项和调整项合计多少？\n资料：\n[{\"reference\":\"a-base/v1\",\"category\":\"基础\",\"amount\":10},{\"reference\":\"a-adjust/v2\",\"category\":\"调整\",\"amount\":27}]"
+            }
+          ],
+          "temperature": 0,
+          "seed": 17,
+          "max_tokens": 96,
+          "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+              "name": "report_answer",
+              "strict": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "insufficient_evidence"
+                    ]
+                  },
+                  "total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "total",
+                  "citations"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "status": 200,
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\n  \"status\": \"ok\",\n  \"total\": 37,\n  \"citations\": [\n    \"a-base/v1\",\n    \"a-adjust/v2\"\n  ]\n}"
+              }
+            }
+          ],
+          "created": 1794331339,
+          "model": "local-qwen",
+          "system_fingerprint": "b12110-cd959bae9",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 44,
+            "prompt_tokens": 129,
+            "total_tokens": 173,
+            "prompt_tokens_details": {
+              "cached_tokens": 109
+            }
+          },
+          "id": "chatcmpl-Isne98ajMffqrhcCsRbhRw5hnzDKvm7Z",
+          "timings": {
+            "cache_n": 109,
+            "prompt_n": 20,
+            "prompt_ms": 24.151,
+            "prompt_per_token_ms": 1.20755,
+            "prompt_per_second": 828.1230590865803,
+            "predicted_n": 44,
+            "predicted_ms": 213.076,
+            "predicted_per_token_ms": 4.955255813953488,
+            "predicted_per_second": 201.80592840113385
+          }
+        }
+      },
+      "answer": {
+        "status": "ok",
+        "total": 37,
+        "citations": [
+          "a-base/v1",
+          "a-adjust/v2"
+        ]
+      },
+      "oracle": {
+        "status": "rejected",
+        "errors": [
+          "citation_not_current"
+        ]
+      }
+    },
+    "stale-guarded": {
+      "snapshot": "stale",
+      "checked_source": true,
+      "candidates": [
+        {
+          "rowid": 1,
+          "source_id": "a-adjust",
+          "version": "v2",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        },
+        {
+          "rowid": 2,
+          "source_id": "a-base",
+          "version": "v1",
+          "tenant": "A",
+          "score": -1.8144329896907218e-06
+        }
+      ],
+      "supplied": [
+        {
+          "reference": "a-base/v1",
+          "category": "基础",
+          "amount": 10
+        }
+      ],
+      "excluded": [
+        {
+          "reference": "a-adjust/v2",
+          "reason": "source_version_changed",
+          "current_version": "v3"
+        }
+      ],
+      "model_http": null,
+      "answer": {
+        "status": "insufficient_evidence",
+        "total": null,
+        "citations": []
+      },
+      "oracle": {
+        "status": "withheld",
+        "errors": []
+      }
+    }
+  },
+  "model_request_count": 2,
+  "source_sha256": {
+    "rag_lab.py": "18995eec468955eefca0241e7eb9d1f63d595e213f896ce82dcd5391970a680b",
+    "fixture.json": "a75ca8ddc487c0d087104e2180b31c07e1bfb97e69313d3f9ab69022ebbdc0d1",
+    "assets.json": "bed077a9de71d9a01890c5adc14d7f4ca8882615227ab936a82ae4a2eb3fa79e",
+    "README.md": "9826d08a6e17cb025173bd6a8d7b4434395a6cbd34d69349d4fb061ca7580fd1"
+  }
+}

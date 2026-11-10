@@ -152,6 +152,26 @@
    fold('完整context_budget.py',c[14][1])+p('这份回执确认哪份输入交给了收集器；工具效果回执确认外部动作提交了什么；任务验收检查实际答案及引用。三类记录分别保存输入交付、业务效果和任务结果，各自保留对象与身份。实验运行了FTS5、固定编码器和本地HTTP，没有调用生成模型；预发送复检与远端交付之间的在途规则仍需另定。')+linkRow(l[14].slice(3))
   ];
   finish(a,old,body);
+  a.sections[14][1]+=h('native-rag-citation-oracle','两个答案都是 37，为什么有一个不合格')+
+   p('前一段核对材料有没有送达。这里另开一份费用实验，让本机 Qwen3 根据检索结果作答。基础项 <code>a-base/v1</code> 是 10。调整项从 <code>a-adjust/v2</code> 更新到 <code>a-adjust/v3</code>，两版金额都为 27。题目要按当前版本算，所以答案既要是 37，也要能指出当前的两份来源。',
+    '先在 SQLite 中建立两个索引快照。旧索引仍指向 v2，新索引已经指向 v3。查询同样的“费用”和“汇总”时，真实 FTS5 可以找到 A 和 B 的候选。组装材料只取 A，接着选择是否对照来源库的当前版本。')+
+   trainingFigure('rag-citation-oracle','金额不变，调整项的来源版本变了。两次模型生成保留原始回答，第三条路径在宿主侧提前停下。')+
+   table(['怎么处理候选','实际送进模型','实际结果'],[
+    ['新索引，核对来源版本','基础 v1、调整 v3','模型答 37，引用 v3，验收通过'],
+    ['旧索引，直接使用其中的正文','基础 v1、调整 v2','模型也答 37，引用 v2，验收拒绝'],
+    ['旧索引，核对来源版本','排除 v2，只剩基础 v1','宿主返回证据不足，本分支模型请求 0 次']
+   ])+
+   p('第二行的 JSON 格式正确，金额也对。验收器另读权威来源库，算出当前的金额和引用，再检查引用确实来自本次材料。下方两条判断分别查“是不是当前来源”和“这次有没有提供这份来源”。')+
+   trainingCode('检查当前引用和本次提供的引用','PYTHON',`if sorted(answer["citations"]) != authority["citations"]:
+    errors.append("citation_not_current")
+if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
+    errors.append("citation_not_supplied")`)+
+   p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a>')+
+   trainingCode('已有固定引擎和权重时，在解压目录运行','SHELL','python3.12 -B rag_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
+   '<p class="practice-links"><a href="/labs/rag-citation-oracle.zip" download>下载程序与记录 ↓</a> · <a href="/labs/rag-citation-oracle/README.md">环境与复跑步骤 →</a> · <a href="/labs/rag-citation-oracle/validation.json">原始检索、模型与验收记录 →</a></p>';
+  a.updated='2026.11.11';
+  infraDomain('agent').points.find(point=>point.id==='ag-retrieval').body+=
+   p('检索命中后，还要验收实际生成的回答。<a href="/article/agent-retrieval/#native-rag-citation-oracle">对照两份总数都是 37 的回答，核对引用的版本 →</a>');
  }
 
  // The isolated native-bridge check deliberately omits its prerequisite, then

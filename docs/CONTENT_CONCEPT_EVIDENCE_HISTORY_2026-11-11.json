@@ -1,0 +1,61 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "ed0a7956e66b71140526f13702e46c7746e9c85e",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_EXAMPLES_TRACK_READER_2026-11-11.json": "91eeb99f72c4ab28f8d0301b0f27c0f74d0848e29d5cbf08f4cbfdd1598a5792"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "execution-security",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1536c85d91d841adf1f04fdef10b18125dbfa855657da3e651f09d37b1f6b251",
+      "reviewed_content_sha256": "7f469c9258fe8bea90a2e1ace72f85b1bf69d6860096315949adc221d7bee777",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "sv-prefill",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "ccc2f18c21095bfde800b5af402113f8fc0c210e107569b5519398d6984f3944",
+      "reviewed_content_sha256": "d7ddd39065a709604a30f221def53e588c48f0ccf0d8c773aa05353d4640c714",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-retrieval",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "d851d9ec447ada5e71223c3b4dafbd94503a8725903804376fc61055142890e1",
+      "reviewed_content_sha256": "0ef7e1d013cd76b08e245b95ef451eff77243b9db3b3078b409b2ecaab3f5206",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "iam-security",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow the same authenticated Pod creator through authorization, admission selection, validation and independent API readback.",
+      "observation": "The four actual requests return 201, 422, 201 and 403. Readback is 200, 404, 200 and 404. A real API Server and etcd ran locally; no workloads were started.",
+      "reviewed_content_sha256": "672442d90ef8d21f764602718f46a794c43700552a2221338b6817638587c3f7",
+      "record": "dist/labs/kubernetes-admission/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow a saved prefix through two separate native engine processes, comparing restored reuse with a corrupted-file cold path.",
+      "observation": "A 396-byte file restores four positions. Greedy continuation matches the cold path while warm prompt work is one position rather than five. Same binary, synthetic model and CPU only.",
+      "reviewed_content_sha256": "a5c6ff23b2bf0bafed4da437668a5ab14bb2455beb10bcaa9192de871b2b48e6",
+      "record": "dist/labs/native-slot-handoff/validation.json"
+    },
+    {
+      "chapter": "agent-retrieval",
+      "reviewed_at": "2026-11-11",
+      "scope": "Trace current and stale SQLite FTS5 candidates through model input, actual generation and authoritative citation checks.",
+      "observation": "Two model responses both total 37. Only the current citation passes. Filtering the stale index reference before generation leaves insufficient evidence and zero model calls.",
+      "reviewed_content_sha256": "59d6357d22d6da8edc5aaddf4aef2b9b36261520fafabc5e1b9023a73f9c3ad0",
+      "record": "dist/labs/rag-citation-oracle/validation.json"
+    }
+  ]
+}

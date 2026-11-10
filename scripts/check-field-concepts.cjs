@@ -1,7 +1,7 @@
 /* Check actual concept relationships and continuous reading, not human mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),cp=require('child_process');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,followups:fieldPracticeFollowups,labs:labLearningCatalog,routes:courseReadingStages,dependencies:chapterDependencies,optional:chapterOptionalConnections,log:readabilityRevisionLog})',c)));
+const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,followups:fieldPracticeFollowups,evidence:fieldConceptEvidence,labs:labLearningCatalog,routes:courseReadingStages,dependencies:chapterDependencies,optional:chapterOptionalConnections,log:readabilityRevisionLog})',c)));
 assert.equal(Object.keys(d.maps).length,14);let nodes=0,edges=0;
 assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
 assert.deepEqual(Object.keys(d.followups).sort(),['agent','cloud-capacity','platform'],'the three follow-up exercises extend the existing concept');
@@ -43,7 +43,27 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
   assert(/^[a-z0-9-]+$/.test(id),moduleId+': stable concept fragment');
   assert(html.includes('id="knowledge-'+id+'"'),moduleId+': definition target missing '+id);
   assert.equal(html.split('id="map-concept-'+id+'" tabindex="-1"').length,2,moduleId+': unique focusable concept target '+id);
-  assert(html.includes('href="/module/'+moduleId+'/#concept-relations">查看整张图 →'),moduleId+': return link resolves with the site base element');
+  assert(html.includes('data-map-focus="all" href="/module/'+moduleId+'/#concept-relations">查看整张图 →'),moduleId+': return link works before enhancement');
+  const authored=[d.practice[moduleId],d.followups[moduleId]].filter(row=>row?.[0]===id).map(([,lab])=>lab);
+  const evidence=[...authored,...(d.evidence[moduleId]?.[id]||[])];
+  const definitionAt=html.indexOf('id="map-concept-'+id+'"');
+  const definitionEnd=html.indexOf('id="map-concept-',definitionAt+1);
+  const definition=html.slice(definitionAt,definitionEnd<0?html.indexOf('field-map-status',definitionAt):definitionEnd);
+  const list=definition.match(/<div class="field-map-labs">([\s\S]*?)<\/div>/)?.[1];
+  assert.equal(Boolean(list),Boolean(evidence.length),id+': show only concept-specific practice links');
+  for(const labId of evidence){
+   c.unit=d.labs.find(unit=>unit.id===labId);
+   assert(c.unit&&!c.unit.pendingFiles?.length&&c.unit.files.length,id+': practice needs a recorded result');
+   assert.equal(d.articles.find(a=>a.id===c.unit.chapter)?.module,moduleId,id+': evidence stays in its field');
+   const destination=vm.runInContext('labCatalogRunPath(unit)',c);
+   const catalog=vm.runInContext('labCatalogTaskPath(unit)',c);
+   assert(list.includes('href="'+destination+'"')&&list.includes('href="'+catalog+'"'),id+': exact chapter and lab handoff');
+   if(!authored.includes(labId)){
+    const task=labPage.match(new RegExp('<li class="lab-learning-unit" id="lab-'+labId+'">([\\s\\S]*?)(?=<li class="lab-learning-unit"|$)'))?.[1];
+    const href='/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
+    assert(task?.includes('class="lab-field-practice-return" href="'+href+'">回到概念图'),labId+': catalog returns to the exact concept');
+   }
+  }
  }
  const main=html.match(/<div class="field-map-main">([\s\S]*?)<\/div>/);
  assert(main&&html.indexOf(main[0])>html.indexOf('src="diagrams/field-'+moduleId+'.svg"'),moduleId+': text follows the front diagram');
@@ -51,7 +71,7 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  const labels=Object.fromEntries(graph.nodes.map(([id,label])=>[id,label]));
  const expected=d.guides[moduleId].main.map(index=>{
   const [from,verb,to]=graph.edges[index];
-  return '<a href="'+fromMap(from)+'">'+labels[from]+'</a><span class="field-map-verb">'+verb+' <span aria-hidden="true">→</span></span><a href="'+fromMap(to)+'">'+labels[to]+'</a>';
+  return '<a data-map-focus="'+from+'" href="'+fromMap(from)+'">'+labels[from]+'</a><span class="field-map-verb">'+verb+' <span aria-hidden="true">→</span></span><a data-map-focus="'+to+'" href="'+fromMap(to)+'">'+labels[to]+'</a>';
  });
  assert.deepEqual([...main[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m=>m[1]),expected,moduleId+': same authored main edges and focusable concepts');
  const practice=html.match(/<section class="field-map-practice"[\s\S]*?<\/section>/g)||[];

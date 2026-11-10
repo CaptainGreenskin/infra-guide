@@ -167,9 +167,10 @@ assert.equal(queueCode.length,1,'native queue unit has one distinct run command'
 assert(queueCode[0].includes('concurrency_lab.py'),'native queue run command');
 const disaggregationBody=article.sections[2][1];
 const disaggregationStart=disaggregationBody.indexOf('<div class="mechanism-core" data-practice="pd-split">');
+const handoffStart=disaggregationBody.indexOf('<h3 id="native-slot-handoff">',disaggregationStart);
 const disaggregationEnd=disaggregationBody.indexOf('<h3 id="vllm-v1-request-path">',disaggregationStart);
-assert(disaggregationStart>=0&&disaggregationEnd>disaggregationStart,'isolate the later disaggregation experiment');
-const disaggregationCode=codeBlocks(disaggregationBody.slice(disaggregationStart,disaggregationEnd));
+assert(disaggregationStart>=0&&handoffStart>disaggregationStart&&disaggregationEnd>handoffStart,'isolate the disaggregation and native cache handoff experiments');
+const disaggregationCode=codeBlocks(disaggregationBody.slice(disaggregationStart,handoffStart));
 assert.equal(disaggregationCode.length,1);
 assert(disaggregationCode[0].includes('pd_split.py'),'disaggregation experiment has its own run command');
 let total=0;

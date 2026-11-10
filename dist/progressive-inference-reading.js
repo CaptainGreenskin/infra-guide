@@ -363,6 +363,20 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   ' <a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe 论文中的设备预算与达标请求率 ↗</a>')+
   '<p class="practice-links"><a href="/labs/pd-split.zip" download>下载源码与记录 ↓</a> · <a href="/labs/pd-split/validation.json">查看原始时间线和验收结果</a></p></div>';
 
+ performance.sections[2][1]+=
+  heading('native-slot-handoff','用原生引擎保存缓存，交给新进程续写')+
+  p('在 llama.cpp 中，槽位（slot）是服务进程给一条序列保存历史的地方。源进程处理词元 [1,4,5,6] 后选出 7，槽位只有四个已处理位置。要得到 7 自己的 K/V，仍要把它送回模型。这是交接时容易错一位的地方。')+
+  trainingFigure('native-slot-handoff','源进程保存四个位置并退出。接收侧先恢复这四个位置，再把词元 7 从位置 4 送入模型。')+
+  p('实验用两个实际的 llama.cpp b12110 服务进程。它们加载同一份合成模型，使用各自的槽位目录。源进程把缓存写成 396 字节的文件并退出。运行器复制文件、核对摘要，接收进程再读入。源端报告保存 4 个位置，接收端报告恢复 4 个位置。之后提交新的请求，提示仍需带齐 [1,4,5,6,7]。')+
+  trainingCode('保存和恢复的两个管理请求，分别发给源端和接收端','HTTP','POST /slots/0?action=save\n{"filename":"prefix.bin"}\n\nPOST /slots/0?action=restore\n{"filename":"prefix.bin"}')+
+  table(['接收侧','复用 / 新算的提示位置','实际送入模型的批次','新输出'],[
+   ['恢复完整文件后','4 / 1','7 在位置 4，随后 8 在位置 5','8、9'],
+   ['恢复损坏文件失败后','0 / 5','[1,4,5,6,7] 在位置 0–4，随后 8 在位置 5','8、9']
+  ])+
+  p('把缓存文件截到 12 字节后，这个版本返回 HTTP 400，并清掉此前的六个位置。随后同一请求从头算五个提示位置，仍得到 8、9。恢复后还没接过请求的新槽位，状态接口不会展示提示长度。核对是否真的省掉计算，要对照恢复回执、完成响应的 <code>cache_n</code> 和实际批次。')+
+  p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
+  '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p>';
+
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
@@ -455,7 +469,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('先运行 <code>python3 placement_budget.py</code>。用 32 GiB 卡重算 TP4 的反例，会发现连权重和预留都放不下。最后把提示从 7,168 改成 6,500，重新核对块尾空位和 A 能否接单。实际路由拿到的是某一时刻的队列与缓存视图，副本接单时还需要再次核对并占用空间。')+
   p('包内另有四进程 CPU/Gloo 实验。用一层小注意力分别运行一组 TP4 和两组 TP2，核对每组拥有的键值头，以及各卡的输出投影局部和能否合成同一结果。八卡 70B 账本和这个四进程实验分别验证容量算术和分片机制。真机选型要固定模型、拓扑、到达率、输入输出长度和缓存冷热，再记录每组显存、准入、首词元延迟、输出间隔与达标完成率。')+
   '<p class="practice-links"><a href="/labs/inference-placement.zip" download>下载代码和记录 ↓</a> · <a href="/labs/inference-placement/README.md">复跑和目标环境对照 →</a> · <a href="/labs/inference-placement/validation.json">查看核对结果 →</a> · <a href="https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/model_executor/models/llama.py#L119-L166">vLLM 键值头分片与复制 ↗</a> · <a href="https://docs.vllm.ai/en/stable/serving/data_parallel_deployment/">vLLM 多副本部署 ↗</a></p>';
- performance.updated='2026.11.10';
+ performance.updated='2026.11.11';
  infraDomain('platform').points.find(point=>point.id==='sv-batching').body+=
   p('用<a href="/article/inference-performance/#tp-placement">八张卡的推理部署练习</a>算每副本可用的块数，再看前缀命中怎样改变接单选择。');
 

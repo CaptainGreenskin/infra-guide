@@ -176,6 +176,21 @@
  p('在 <code>workload.go</code> 中，<code>NewX509Source</code> 从 Workload API 获取凭据；<code>MTLSClientConfig</code> 固定服务端身份，<code>MTLSServerConfig</code> 验证客户端信任域。HTTP 处理器用证书里的 ID 决定是否写入，驱动在两次请求后分别读取效果文件。这三个进程身份用同一系统用户下的不同可执行路径区分，适合演示匹配。')+
  '<p class="practice-links"><a href="/labs/spiffe-workload-identity.zip" download>下载完整实验包 ↓</a> · <a href="/labs/spiffe-workload-identity/README.md">查看运行说明</a> · <a href="/labs/spiffe-workload-identity/validation.json">查看签发、请求和效果记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42579127780">查看 Linux CI 实跑 ↗</a></p>'+
  '<p><a href="https://github.com/spiffe/spire/blob/v1.16.0/doc/plugin_agent_workloadattestor_unix.md">SPIRE 1.16.0 Unix 选择器 ↗</a> · <a href="https://spiffe.io/docs/latest/spiffe-specs/spiffe_workload_api/">SPIFFE Workload API 规范 ↗</a></p>';
+ identity.sections[6][1]+=h('native-kubernetes-admission','有权限创建 Pod，为什么还是提交失败')+
+ p('报表发布账号 <code>report-writer</code> 在 <code>report-a</code> 有创建 Pod 的权限。它先提交普通报表 Pod，成功了。再提交一份带 <code>privileged: true</code> 的配置，也就是请求以特权模式运行容器，API 却拒绝写入。')+
+ p('授权检查的是这名用户能否在指定命名空间执行 <code>create pods</code>。通过授权后，准入还会在写入前检查这次提交的对象。这里用 <code>ValidatingAdmissionPolicy</code> 定义规则，用 <code>ValidatingAdmissionPolicyBinding</code> 指定规则在哪些命名空间生效，以及校验失败时怎么处理。')+
+ '<figure class="training-figure"><a href="diagrams/kubernetes-admission.svg" target="_blank" rel="noopener" aria-label="放大 Kubernetes 授权、准入与写入对照"><img src="diagrams/kubernetes-admission.svg" width="460" height="432" alt="同一报表账号提交四份 Pod。授权、创建、管理员读取依次是允许 201 200、允许 422 404、允许 201 200、拒绝 403 404。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>授权自查、提交响应与管理员读取各回答一个问题。<a href="diagrams/kubernetes-admission.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ p('CEL 是用来写真假判断的表达式语言。实验用它逐个检查 Pod 的普通容器。只要有一个容器显式设置 <code>privileged: true</code>，校验就失败。规则只匹配 Pod 的 <code>CREATE</code> 操作，绑定再选中带 <code>report-admission=enforced</code> 标签的命名空间。')+
+ fold('看策略表达式和绑定选中的标签','<div class="code-block"><pre><code># ValidatingAdmissionPolicy.spec 的校验片段\nvalidations:\n- expression: &gt;-\n    object.spec.containers.all(c, !has(c.securityContext) ||\n    !has(c.securityContext.privileged) || !c.securityContext.privileged)\n  message: report containers must not run privileged\n  reason: Invalid\n\n# ValidatingAdmissionPolicyBinding.spec 的匹配片段\npolicyName: reports-no-privileged\nvalidationActions: [Deny]\nmatchResources:\n  namespaceSelector:\n    matchLabels:\n      report-admission: enforced</code></pre></div>')+
+ table(['提交对象','授权自查','API 写入响应','管理员独立读取'],[
+  ['report-a/safe，普通容器','允许','201','200，privileged=false'],
+  ['report-a/privileged，特权容器','允许','422，Invalid','404'],
+  ['report-b/privileged，命名空间无标签','允许','201','200，privileged=true'],
+  ['report-c/privileged，账号没有绑定角色','拒绝','403，Forbidden','404']
+ ])+
+ p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的消息里也有 <code>forbidden</code>，但 <code>reason</code> 是 <code>Invalid</code>，并带有准入策略名。其他准入规则也可能配置成 403，要结合这两项定位。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
+ p('本地实验启动真实 API Server 与 etcd。成功响应里的对象 UID 与管理员读取一致，记录只覆盖对象的 API 写入，环境中没有调度器和工作节点。')+
+ '<p class="practice-links"><a href="labs/kubernetes-admission.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/kubernetes-admission/main.go">查看实验程序</a> · <a href="labs/kubernetes-admission/validation.json">核对四组 API 响应</a> · <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/">Kubernetes 准入策略文档 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
- identity.updated='2026.11.10';
+ identity.updated='2026.11.11';
 })();

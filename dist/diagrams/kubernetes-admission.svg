@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="432" viewBox="0 0 460 432" role="img" aria-labelledby="admission-title admission-desc">
+  <title id="admission-title">同一账号的 Kubernetes 授权与准入</title>
+  <desc id="admission-desc">report-writer 在报表 A 和 B 有创建 Pod 的权限。A 的普通 Pod 和 B 的特权 Pod 创建成功。A 的特权 Pod 被准入规则拒绝。C 未授予创建权限。管理员只能读到两个创建成功的对象。</desc>
+  <metadata>{"record":"labs/kubernetes-admission/validation.json","identity":"report-writer","namespaces":["report-a","report-a","report-b","report-c"],"authorized":[true,true,true,false],"create":[201,422,201,403],"admin_get":[200,404,200,404]}</metadata>
+  <rect width="460" height="432" rx="14" fill="#f2f6fb"/>
+  <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#132b46">
+    <text x="23" y="38" font-size="24" font-weight="700">有权限提交，仍可能被拒绝</text>
+    <text x="23" y="65" font-size="16" fill="#405976">四次提交使用同一账号 report-writer</text>
+    <g font-size="16" font-weight="650" text-anchor="middle">
+      <rect x="20" y="85" width="126" height="37" rx="8" fill="#e1ebfb"/>
+      <text x="83" y="109">授权 · 查动作</text>
+      <rect x="168" y="85" width="124" height="37" rx="8" fill="#f9e9dc"/>
+      <text x="230" y="109">准入 · 查内容</text>
+      <rect x="315" y="85" width="125" height="37" rx="8" fill="#ddf0e7"/>
+      <text x="377" y="109">写入 API 对象</text>
+    </g>
+    <path d="M148 104h15m-5-5 5 5-5 5M294 104h15m-5-5 5 5-5 5" stroke="#657f9c" stroke-width="2" fill="none"/>
+    <rect x="20" y="146" width="420" height="231" rx="10" fill="#fff" stroke="#a1b5cc"/>
+    <g stroke="#d4dfeb" fill="none"><path d="M20 187h420M20 234h420M20 281h420M20 328h420"/></g>
+    <g font-size="15" font-weight="650">
+      <text x="32" y="173">命名空间 / 配置</text>
+      <text x="203" y="173">授权</text><text x="269" y="173">提交</text><text x="349" y="173">管理员读</text>
+    </g>
+    <g font-size="17">
+      <text x="32" y="215">report-a · 普通</text><text x="203" y="215">允许</text><text x="269" y="215" fill="#146348">201</text><text x="349" y="215" fill="#146348">200</text>
+      <text x="32" y="262">report-a · 特权</text><text x="203" y="262">允许</text><text x="269" y="262" fill="#96491a">422</text><text x="349" y="262" fill="#96491a">404</text>
+      <text x="32" y="309">report-b · 特权</text><text x="203" y="309">允许</text><text x="269" y="309" fill="#146348">201</text><text x="349" y="309" fill="#146348">200</text>
+      <text x="32" y="356">report-c · 特权</text><text x="203" y="356">拒绝</text><text x="269" y="356" fill="#96491a">403</text><text x="349" y="356" fill="#96491a">404</text>
+    </g>
+    <text x="23" y="407" font-size="16" fill="#405976">准入规则匹配 report-a、report-c，B 未加标签</text>
+  </g>
+</svg>

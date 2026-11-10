@@ -331,10 +331,25 @@ const fieldPracticeFollowups={
  platform:['sv-batching','ai-inference-placement','上面的例子里，处理请求的槽位留着前缀缓存。现在有 A、B 两个推理副本，各剩 100、500 个缓存块。同一请求放到两边分别需要新分配 128、512 个块。能接单吗？如果剩余量改成 96、640 呢？','第一组剩余量加起来有 600 块，但任何一边都装不下这份请求。第二组只有 B 装得下。块数来自八卡部署的预算题。实验另用本机四进程核对分片计算。','两个副本该由谁接单'],
  agent:['ag-tools','agent-mcp-result-receipt','上面靠断流制造一次结果未知。再看另一次独立实验。工具已经写入，HTTP 也返回 200，金额却是字符串 “42”。如果类型正确但操作键错了呢？判断宿主何时应该承认成功。','宿主拒绝两份坏回执，暂时不能确认写入。它用原操作键 report-A/v3:publish 只读查询，找回金额为数值 42 的有效回执。接收库各只有一份报告，不需要再发布。','写入成功，回执却有错']
 };
+// These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
+const fieldConceptEvidence={
+ 'cloud-data':{'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
+ 'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
+ platform:{'sv-prefill':['ai-native-slot-handoff']},
+ agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-retrieval':['agent-rag-citation-oracle']}
+};
+function fieldConceptLabIds(moduleId,concept){
+ return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
+  .map(([,labId])=>labId).concat(fieldConceptEvidence[moduleId]?.[concept]||[]);
+}
 function fieldPracticeLocation(labId){
  for(const [moduleId,[,primary]] of Object.entries(fieldPracticePaths)){
   if(labId===primary)return '/module/'+moduleId+'/#field-map-practice';
   if(labId===fieldPracticeFollowups[moduleId]?.[1])return '/module/'+moduleId+'/#field-practice-'+labId;
+ }
+ for(const [moduleId,concepts] of Object.entries(fieldConceptEvidence)){
+  for(const [concept,ids] of Object.entries(concepts))if(ids.includes(labId))return fieldMapURL(moduleId,concept);
  }
  return '';
 }
@@ -362,22 +377,29 @@ function fieldPointRecords(moduleId){
  return infraKnowledgeDomains.find(d=>d.module===moduleId)?.points||[];
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
+function fieldConceptEvidenceHTML(moduleId,concept){
+ const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
+  const unit=labLearningCatalog.find(item=>item.id===id);
+  return '<li><a href="'+labCatalogRunPath(unit)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
+ });
+ return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
+}
 function fieldConceptMapHTML(moduleId){
  const graph=fieldConceptMaps[moduleId];if(!graph)return '';
  const names=Object.fromEntries(graph.nodes.map(n=>[n[0],n[1]])),safe=trainingEscape,points=fieldPointRecords(moduleId);
  const reading=fieldConceptReadings[moduleId];
  const link=id=>'<a href="/module/'+moduleId+'/#knowledge-'+id+'">'+safe(names[id])+'</a>';
- const focusLink=id=>'<a href="'+fieldMapURL(moduleId,id)+'">'+safe(names[id])+'</a>';
+ const focusLink=id=>'<a data-map-focus="'+id+'" href="'+fieldMapURL(moduleId,id)+'">'+safe(names[id])+'</a>';
  const mainRelations=reading.main.map(index=>{
   const [from,verb,to]=graph.edges[index];
   return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
  }).join('');
- return '<section class="field-concept-map" id="concept-relations" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
+ return '<section class="field-concept-map" id="concept-relations" tabindex="-1" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
  '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div><details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
-  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+'</div>';
+  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
  '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>'+
@@ -407,7 +429,7 @@ function initFieldConceptMaps(){
  for(const map of document.querySelectorAll('[data-field-map]')){
   const graph=fieldConceptMaps[map.dataset.fieldMap],buttons=[...map.querySelectorAll('[data-concept-focus]')];
   const frame=map.querySelector('.training-figure > a');
-  if(frame&&frame.scrollWidth>frame.clientWidth)frame.scrollLeft=(frame.scrollWidth-frame.clientWidth)/2;
+  if(!map.classList.contains('field-map-ready')&&frame&&frame.scrollWidth>frame.clientWidth)frame.scrollLeft=(frame.scrollWidth-frame.clientWidth)/2;
   const select=(id,keepPosition=false)=>{
    const controls=map.querySelector('.field-map-controls'),before=keepPosition?controls.getBoundingClientRect().top:0;
    const node=graph.nodes.find(n=>n[0]===id),active=node?id:'all';
@@ -418,7 +440,26 @@ function initFieldConceptMaps(){
    map.querySelector('.field-map-status').textContent=node?'与“'+node[1]+'”直接相关的关系':'全部核心关系';
    if(keepPosition){const delta=controls.getBoundingClientRect().top-before;if(delta)window.scrollTo({top:window.scrollY+delta,behavior:'instant'});}
   };
-  for(const button of buttons)button.onclick=()=>select(button.dataset.conceptFocus,true);
+  function navigate(id,keepPosition){
+   const url=new URL(location.href);
+   if(id==='all')url.searchParams.delete('concept');else url.searchParams.set('concept',id);
+   url.hash=id==='all'?'concept-relations':'map-concept-'+id;
+   if(url.href!==location.href)history.pushState(null,'',url);
+   select(id,keepPosition);
+   if(!keepPosition){
+    const target=document.getElementById(url.hash.slice(1));
+    target?.focus({preventScroll:true});
+    target?.scrollIntoView({behavior:'instant'});
+   }
+  }
+  for(const button of buttons)button.onclick=()=>navigate(button.dataset.conceptFocus,true);
+  for(const link of map.querySelectorAll('a[data-map-focus]'))link.onclick=event=>{
+   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+   event.preventDefault();
+   const id=link.dataset.mapFocus;
+   if(id!=='all')map.querySelector('.field-map-explorer').open=true;
+   navigate(id,false);
+  };
   const anchored=graph.nodes.some(node=>node[0]===fragment);
   const requested=anchored?fragment:new URLSearchParams(location.search).get('concept');
   if(graph.nodes.some(node=>node[0]===requested))map.querySelector('.field-map-explorer').open=true;

@@ -340,6 +340,12 @@
       "id": "iam-security",
       "targets": [
         "subsection-2-1dlazmr",
+        "native-spiffe-workload-identity",
+        "native-kubernetes-admission"
+      ],
+      "visible_targets": [
+        "subsection-2-1dlazmr",
+        "native-kubernetes-admission",
         "native-spiffe-workload-identity"
       ]
     },
@@ -748,7 +754,8 @@
         "native-inference-queue",
         "vllm-block-lifecycle",
         "native-pd-split",
-        "tp-placement"
+        "tp-placement",
+        "native-slot-handoff"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -759,6 +766,7 @@
         "subsection-3-cwmlui",
         "subsection-3-nrn0x9",
         "native-pd-split",
+        "native-slot-handoff",
         "vllm-v1-request-path",
         "vllm-block-lifecycle",
         "subsection-6-lachm",
@@ -983,10 +991,12 @@
         "subsection-8-1fb7qa2",
         "subsection-12-1p2vzym",
         "context-budget-run",
-        "native-qdrant-retrieval"
+        "native-qdrant-retrieval",
+        "native-rag-citation-oracle"
       ],
       "visible_targets": [
-        "native-qdrant-retrieval"
+        "native-qdrant-retrieval",
+        "native-rag-citation-oracle"
       ]
     },
     {

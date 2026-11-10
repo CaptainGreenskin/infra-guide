@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="303" viewBox="0 0 520 303" role="img" aria-labelledby="title description">
+<title id="title">答案都是 37，引用的版本不同</title>
+<desc id="description">权威来源将调整项从 v2 更新到 v3，金额仍是 27。新索引提供 v3，模型回答 37，验收通过。旧索引未经检查提供 v2，模型同样回答 37，旧引用被拒。核对旧索引后只剩基础项，宿主停止发送。</desc>
+<metadata>{"record":"labs/rag-citation-oracle/validation.json","current_adjustment":"v3","model_requests":[1,1,0],"totals":[37,37,null],"outcomes":["accepted","rejected","withheld"]}</metadata>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#677994"/></marker></defs>
+<rect x="1" y="1" width="518" height="301" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="20" y="30" font-size="19" font-weight="700">调整项升到 v3，金额仍是 27</text>
+<g font-size="14" font-weight="650" text-anchor="middle">
+<text x="87" y="64">选用哪份材料</text><text x="259" y="64">生成或停下</text><text x="430" y="64">验收结果</text>
+</g>
+<g stroke="#677994" stroke-width="1.8" marker-end="url(#arrow)">
+<path d="M158 110H186"/><path d="M331 110H359"/>
+<path d="M158 173H186"/><path d="M331 173H359"/>
+<path d="M158 236H186"/><path d="M331 236H359"/>
+</g>
+<g font-size="14" text-anchor="middle">
+<rect x="17" y="83" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="87" y="105">新索引，核对版本</text><text x="87" y="125">基础 v1 · 调整 v3</text>
+<rect x="190" y="83" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="260" y="105">模型答 37</text><text x="260" y="125">引用调整 v3</text>
+<rect x="363" y="83" width="140" height="54" rx="7" fill="#e4f3eb"/>
+<text x="433" y="115" fill="#2d644f">当前引用通过</text>
+<rect x="17" y="146" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="87" y="168">旧索引，直接使用</text><text x="87" y="188">基础 v1 · 调整 v2</text>
+<rect x="190" y="146" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="260" y="168">模型也答 37</text><text x="260" y="188">引用调整 v2</text>
+<rect x="363" y="146" width="140" height="54" rx="7" fill="#fff0dc"/>
+<text x="433" y="178" fill="#8a4d17">旧引用被拒绝</text>
+<rect x="17" y="209" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="87" y="231">旧索引，核对版本</text><text x="87" y="251">排除调整 v2</text>
+<rect x="190" y="209" width="140" height="54" rx="7" fill="#e7eefb"/>
+<text x="260" y="231">只剩基础 10</text><text x="260" y="251">模型请求 0 次</text>
+<rect x="363" y="209" width="140" height="54" rx="7" fill="#eef2f7"/>
+<text x="433" y="241" fill="#425370">宿主报告证据不足</text>
+</g>
+<text x="18" y="284" font-size="13" fill="#52637d">验收器直接读来源库，当前调整项是 v3。</text>
+</g>
+</svg>

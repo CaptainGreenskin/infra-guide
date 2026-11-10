@@ -18,7 +18,8 @@ const checks=[
  'check-jetstream-redelivery.cjs','check-vllm-block-lifecycle.cjs','check-mcp-http-cancellation.cjs','check-native-model-rollout.cjs','check-mcp-http-authorization.cjs','check-spiffe-workload-identity.cjs','check-redis-client-tracking.cjs','check-native-amp-window.cjs','check-qdrant-retrieval.cjs','check-python-extension-loader.cjs','check-langgraph-parallel-merge.cjs','check-prometheus-live-burn.cjs',
  'check-tls-proxy-hops.cjs','check-triton-tail-mask.cjs','check-mcp-trace-reentry.cjs',
  'check-kubernetes-pdb-rollout.cjs','check-ddp-uneven-join.cjs','check-mcp-catalog-refresh.cjs','check-int8-batch-quality.cjs','check-process-wait-accounting.cjs','check-training-useful-tokens.cjs','check-http-operation-retry.cjs','check-training-submission-preflight.cjs','check-kubernetes-gloo-job.cjs','check-bounded-worker-queue.cjs','check-warp-memory-sectors.cjs','check-incident-connection-lease.cjs','check-ddp-target-preflight.cjs','check-pd-split.cjs','check-torch-compile-graph.cjs','check-rtx-cache-case.cjs','check-postgres-pitr.cjs','check-sandbox-egress.cjs','check-capacity-placement-receipts.cjs','check-pipeline-schedules.cjs','check-alert-notification.cjs','check-dp-tp-mesh.cjs','check-workflow-version-resume.cjs','check-controller-reconcile.cjs','check-elastic-restart-step.cjs','check-agent-task-reconnect.cjs',
- 'check-redis-replica-promotion.cjs','check-metal-gemm.cjs','check-model-mcp-tool-choice.cjs'
+ 'check-redis-replica-promotion.cjs','check-metal-gemm.cjs','check-model-mcp-tool-choice.cjs',
+ 'check-kubernetes-admission.cjs','check-native-slot-handoff.cjs','check-rag-citation-oracle.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
 run('render-pages.cjs');for(const file of checks)run(file);

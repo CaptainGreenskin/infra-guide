@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'kubernetes-admission':{folder:'kubernetes-admission',title:'Kubernetes 授权与对象准入'},
+ 'native-slot-handoff':{folder:'native-slot-handoff',title:'两个推理进程之间交接历史缓存'},
+ 'rag-citation-oracle':{folder:'rag-citation-oracle',title:'答案金额相同，如何核对引用版本'},
  'redis-replica-promotion':{folder:'redis-replica-promotion',title:'Redis 复制确认与手动提升'},
  'metal-gemm':{folder:'metal-gemm',title:'Apple GPU 上的逐元素与分块矩阵乘法'},
  'model-mcp-tool-choice':{folder:'model-mcp-tool-choice',title:'本地模型选择工具与 MCP 读取权限'},
@@ -400,6 +403,20 @@ labLearningCatalog.push(
   observe:'从工具清单跟到模型选择、资源端授权和下一轮回答，再用读取记录核对越权分支。',
   scope:'三条固定问题、合成报告与本机测试身份。模型泛化、生产鉴权和 Kairo 接入需另验。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-kubernetes-admission',track:'cloud',stage:2,title:'账号能创建 Pod，为什么这份配置仍被拒绝',chapter:'iam-security',anchor:'native-kubernetes-admission',pack:'kubernetes-admission',
+  files:['main.go','go.mod','go.sum'],env:'Go · Kubernetes 1.35.0 envtest · 本机 API Server 与 etcd',kind:'真实 RBAC、CEL 准入与回读',
+  observe:'同一身份发送四份创建请求，逐项对照授权结果、准入状态与对象是否写入。',
+  scope:'本机 API Server 和 etcd。验证对象是否写入，未启动工作节点或容器。'},
+ {id:'ai-native-slot-handoff',track:'ai',stage:2,title:'换了推理进程，还能从原前缀继续算吗',chapter:'inference-performance',anchor:'native-slot-handoff',pack:'native-slot-handoff',
+  files:['slot_handoff.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'真实推理缓存保存、恢复与坏文件对照',
+  observe:'对照两个进程的保存和恢复，逐个核对续写位置，并在缓存文件损坏后走一遍冷启动。',
+  scope:'两个本机 CPU 进程、同一小模型与同一二进制。计数描述前缀复用，GPU 缓存传输与流式接续另验。'},
+ {id:'agent-rag-citation-oracle',track:'agent',stage:2,title:'金额一样，引用旧资料也算答对吗',chapter:'agent-retrieval',anchor:'native-rag-citation-oracle',pack:'rag-citation-oracle',
+  files:['rag_lab.py','assets.json','fixture.json'],env:'Python 3.12 · SQLite FTS5 · Qwen3-0.6B · 本机 CPU',kind:'真实检索、生成与引用核对',
+  observe:'对比当前资料、旧版索引和提前过滤三条路径，从资料版本和回答分别验收。',
+  scope:'固定合成资料、同一条问题与本机小模型。证据只覆盖这三条路径。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -424,7 +441,7 @@ function labCatalogUnitHTML(unit,index,roleReturn=""){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
  const fieldPractice=fieldPracticeLocation(unit.id);
- const fieldReturn=fieldPractice?'<a class="lab-field-practice-return" href="'+fieldPractice+'">回到图中练习 →</a>':'';
+ const fieldReturn=fieldPractice?'<a class="lab-field-practice-return" href="'+fieldPractice+'">'+(fieldPractice.includes('#map-concept-')?'回到概念图 →':'回到图中练习 →')+'</a>':'';
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
  return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+labCatalogRunPath(unit)+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }

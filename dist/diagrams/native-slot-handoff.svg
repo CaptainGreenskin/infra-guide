@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="310" viewBox="0 0 520 310" role="img" aria-labelledby="title description">
+<title id="title">交接四个已处理位置，词元 7 从位置 4 开始</title>
+<desc id="description">源进程处理位置 0 到 3，选出词元 7，保存 396 字节并退出。新进程恢复四个位置，以 7 为位置 4 的输入，继续得到 8 和 9。截断文件返回 400 并清空六个位置。同样输入不再复用，输出仍为 8 和 9。</desc>
+<metadata>{"record":"labs/native-slot-handoff/validation.json","snapshot_bytes":396,"source_prompt":[1,4,5,6],"first_output":7,"warm_cache_n":4,"warm_prompt_n":1,"cold_prompt_n":5,"continuation":[8,9],"truncated_bytes":12,"restore_error":400,"positions_after_error":0}</metadata>
+<rect x="1" y="1" width="518" height="308" rx="15" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#213451">
+<text x="24" y="35" font-size="20" font-weight="700">保存已算过的位置，继续计算下一项</text>
+<rect x="24" y="55" width="472" height="63" rx="8" fill="#eaf2fc" stroke="#a5c0dc"/>
+<text x="40" y="80" font-size="16" font-weight="700">源进程</text>
+<text x="116" y="80" font-size="16">算位置 0–3：[1,4,5,6]，选出 7</text>
+<text x="116" y="102" font-size="15" fill="#425b7b">保存 4 个位置后退出</text>
+<path d="M62 120v31m-5-5 5 5 5-5" fill="none" stroke="#38689b" stroke-width="2"/>
+<text x="81" y="140" font-size="15" fill="#315d89">复制 396 字节，核对摘要</text>
+<rect x="24" y="156" width="472" height="65" rx="8" fill="#eaf4ed" stroke="#a8c7af"/>
+<text x="40" y="181" font-size="16" font-weight="700">接收侧</text>
+<text x="116" y="181" font-size="16">复用 0–3，从位置 4 输入 7</text>
+<text x="116" y="204" font-size="15" fill="#305d42">新算 1 个提示位置，继续输出 8、9</text>
+<rect x="24" y="240" width="472" height="49" rx="8" fill="#fff2e2" stroke="#d4a46b"/>
+<text x="40" y="261" font-size="15" font-weight="700" fill="#874806">截到 12 字节 → HTTP 400 → 槽位清空</text>
+<text x="40" y="280" font-size="15" fill="#874806">重算 5 个提示位置，仍输出 8、9</text>
+</g>
+</svg>
