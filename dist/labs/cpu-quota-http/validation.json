@@ -1,0 +1,2726 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": {
+    "cpu_quota_http.py": "073a3be0fc83e24c9affe48f0d58f10b97a0f59537160edcd0a00634d264822a",
+    "workload.py": "df9852f38e7ec896bd4c1ec94da2eab1e153943a9f2b5c1c0b594211321158d1"
+  },
+  "environment": {
+    "engine": "Docker",
+    "image": "python:3.11-slim",
+    "image_id": "sha256:9a7765b36773a37061455b332f18e265e7f58f6fea9c419a550d2a8b0e9db834",
+    "repo_digests": [
+      "python@sha256:9a7765b36773a37061455b332f18e265e7f58f6fea9c419a550d2a8b0e9db834"
+    ],
+    "os": "linux",
+    "architecture": "arm64",
+    "network": "none",
+    "linux_kernel": "6.8.0-100-generic",
+    "python_version": "3.11.15"
+  },
+  "report": {
+    "inputs": {
+      "arrivals": 100,
+      "arrival_interval_ms": 60,
+      "queue_capacity": 4,
+      "iterations": 400000,
+      "workers": 1
+    },
+    "demonstrated": {
+      "send_slip_below_one_interval": true,
+      "tight_rejects_more": true,
+      "tight_completes_some": true,
+      "tight_records_throttling": true
+    },
+    "runs": {
+      "wide": {
+        "cpu_max": "100000 100000",
+        "cpu_stat_before": {
+          "usage_usec": 161893,
+          "user_usec": 147548,
+          "system_usec": 14345,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 3,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "cpu_stat_after": {
+          "usage_usec": 3877066,
+          "user_usec": 3848993,
+          "system_usec": 28072,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 64,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "cpu_stat_delta": {
+          "usage_usec": 3715173,
+          "user_usec": 3701445,
+          "system_usec": 13727,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 61,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "counts": {
+          "offered": 100,
+          "admitted": 100,
+          "completed": 100,
+          "rejected": 0
+        },
+        "server_counts": {
+          "offered": 100,
+          "admitted": 100,
+          "completed": 100,
+          "rejected": 0
+        },
+        "success_latency_ms": {
+          "p50": 36.999,
+          "p95": 39.351,
+          "max": 44.838
+        },
+        "success_queue_wait_ms": {
+          "p50": 0.031,
+          "p95": 0.058,
+          "max": 0.068
+        },
+        "success_work_cpu_ms": {
+          "p50": 36.28,
+          "p95": 38.616,
+          "max": 43.871
+        },
+        "send_slip_ms": {
+          "p50": 3.725,
+          "p95": 10.22,
+          "max": 10.511
+        },
+        "load_generator_cpu_max": "max 100000",
+        "arrivals": [
+          {
+            "id": 1,
+            "status": 200,
+            "target_ns": 0,
+            "sent_ns": 10511486,
+            "received_ns": 55349779,
+            "receipt": {
+              "id": 1,
+              "digest": "35d9fa6ca155fa198cd5b00f15656e961136d21e5258de246a5d65d520568d93",
+              "queue_wait_ns": 45363,
+              "work_wall_ns": 43944896,
+              "work_cpu_ns": 43871083
+            }
+          },
+          {
+            "id": 2,
+            "status": 200,
+            "target_ns": 60000000,
+            "sent_ns": 60554497,
+            "received_ns": 99769585,
+            "receipt": {
+              "id": 2,
+              "digest": "f9929d5f880ae6fdf0e929fc4aa4d45cb68c484612aa2796aa254b97cf0fc536",
+              "queue_wait_ns": 31257,
+              "work_wall_ns": 38422431,
+              "work_cpu_ns": 38357542
+            }
+          },
+          {
+            "id": 3,
+            "status": 200,
+            "target_ns": 120000000,
+            "sent_ns": 129968329,
+            "received_ns": 168569206,
+            "receipt": {
+              "id": 3,
+              "digest": "40680e96f037fdebff216b28372e84087a4cf29d2677a5fd017c324686870e88",
+              "queue_wait_ns": 25039,
+              "work_wall_ns": 37808264,
+              "work_cpu_ns": 37743791
+            }
+          },
+          {
+            "id": 4,
+            "status": 200,
+            "target_ns": 180000000,
+            "sent_ns": 186107411,
+            "received_ns": 221902277,
+            "receipt": {
+              "id": 4,
+              "digest": "6eb77561b35bb82fe3ea44142b396966bef666496a6e34dd87c6c162d73504fa",
+              "queue_wait_ns": 23787,
+              "work_wall_ns": 35078747,
+              "work_cpu_ns": 35019458
+            }
+          },
+          {
+            "id": 5,
+            "status": 200,
+            "target_ns": 240000000,
+            "sent_ns": 241453710,
+            "received_ns": 279065736,
+            "receipt": {
+              "id": 5,
+              "digest": "75e36bbac868258567b6b86a99615550470968d8853da45f43c0e5967f927323",
+              "queue_wait_ns": 39227,
+              "work_wall_ns": 36757042,
+              "work_cpu_ns": 36695709
+            }
+          },
+          {
+            "id": 6,
+            "status": 200,
+            "target_ns": 300000000,
+            "sent_ns": 308639170,
+            "received_ns": 348740823,
+            "receipt": {
+              "id": 6,
+              "digest": "5eef9e579319706bbd074ffed318bfd9a58c1880b583e02ab047814ca4480c11",
+              "queue_wait_ns": 57505,
+              "work_wall_ns": 39109750,
+              "work_cpu_ns": 39044791
+            }
+          },
+          {
+            "id": 7,
+            "status": 200,
+            "target_ns": 360000000,
+            "sent_ns": 360460461,
+            "received_ns": 402894666,
+            "receipt": {
+              "id": 7,
+              "digest": "798e379f444e087c6a7513448c0b4dfbaf8de827519f8e111e92dc9b9caf5ce7",
+              "queue_wait_ns": 34261,
+              "work_wall_ns": 41609977,
+              "work_cpu_ns": 41540458
+            }
+          },
+          {
+            "id": 8,
+            "status": 200,
+            "target_ns": 420000000,
+            "sent_ns": 425364406,
+            "received_ns": 461972469,
+            "receipt": {
+              "id": 8,
+              "digest": "fef4c2527dd02f7b47dbdc2dda5cb4fec2d72eb4501b8a553852e0d88ab6b3ef",
+              "queue_wait_ns": 33760,
+              "work_wall_ns": 35836708,
+              "work_cpu_ns": 35776500
+            }
+          },
+          {
+            "id": 9,
+            "status": 200,
+            "target_ns": 480000000,
+            "sent_ns": 480167958,
+            "received_ns": 522666971,
+            "receipt": {
+              "id": 9,
+              "digest": "bff68035e1b6e58567249fe3e79b917371cfbd7b3d2b410ea9bd9a11afbef844",
+              "queue_wait_ns": 44945,
+              "work_wall_ns": 41718852,
+              "work_cpu_ns": 41643457
+            }
+          },
+          {
+            "id": 10,
+            "status": 200,
+            "target_ns": 540000000,
+            "sent_ns": 540120734,
+            "received_ns": 578371953,
+            "receipt": {
+              "id": 10,
+              "digest": "d0e039642a83357695c9f3dc0299f901e4e03cd39348b663c3a9ce6fe710dff8",
+              "queue_wait_ns": 32884,
+              "work_wall_ns": 37383173,
+              "work_cpu_ns": 37229999
+            }
+          },
+          {
+            "id": 11,
+            "status": 200,
+            "target_ns": 600000000,
+            "sent_ns": 600207967,
+            "received_ns": 640222904,
+            "receipt": {
+              "id": 11,
+              "digest": "c04a4f1b957ef1649e44d0c92bf7022a3de7081003ad485042ab62226372f3e9",
+              "queue_wait_ns": 44735,
+              "work_wall_ns": 39158242,
+              "work_cpu_ns": 39092791
+            }
+          },
+          {
+            "id": 12,
+            "status": 200,
+            "target_ns": 660000000,
+            "sent_ns": 660832236,
+            "received_ns": 698947871,
+            "receipt": {
+              "id": 12,
+              "digest": "ee7c13fd3ee249ed5786cfb60caf110d2c31a89caa0aa369950ade49787f8616",
+              "queue_wait_ns": 28335,
+              "work_wall_ns": 37416976,
+              "work_cpu_ns": 37354958
+            }
+          },
+          {
+            "id": 13,
+            "status": 200,
+            "target_ns": 720000000,
+            "sent_ns": 724548644,
+            "received_ns": 761912537,
+            "receipt": {
+              "id": 13,
+              "digest": "36b1407669ea63d557865554253c26f099b56ad0487048e24cf53174d64e2d80",
+              "queue_wait_ns": 26582,
+              "work_wall_ns": 36680842,
+              "work_cpu_ns": 36619499
+            }
+          },
+          {
+            "id": 14,
+            "status": 200,
+            "target_ns": 780000000,
+            "sent_ns": 783414787,
+            "received_ns": 819988088,
+            "receipt": {
+              "id": 14,
+              "digest": "e7620ec92d9968f6c332cfa43ca816f4491b5f95c9753358335f6d564a037a50",
+              "queue_wait_ns": 32759,
+              "work_wall_ns": 35935652,
+              "work_cpu_ns": 35876125
+            }
+          },
+          {
+            "id": 15,
+            "status": 200,
+            "target_ns": 840000000,
+            "sent_ns": 844811830,
+            "received_ns": 881260105,
+            "receipt": {
+              "id": 15,
+              "digest": "61e35729da7fb905346f516d69a3511e4c2f7e101569d06d8ff4df5687aee4dc",
+              "queue_wait_ns": 25498,
+              "work_wall_ns": 35738849,
+              "work_cpu_ns": 35679542
+            }
+          },
+          {
+            "id": 16,
+            "status": 200,
+            "target_ns": 900000000,
+            "sent_ns": 900935123,
+            "received_ns": 937734523,
+            "receipt": {
+              "id": 16,
+              "digest": "f948daafe589f23a560ca25f209b71e221ed84b77cd379361ce80e9e0f60ba7f",
+              "queue_wait_ns": 27584,
+              "work_wall_ns": 36220591,
+              "work_cpu_ns": 36161291
+            }
+          },
+          {
+            "id": 17,
+            "status": 200,
+            "target_ns": 960000000,
+            "sent_ns": 966357409,
+            "received_ns": 1004108274,
+            "receipt": {
+              "id": 17,
+              "digest": "b3fa8fa542d88ed517f7c2ce6b5cb7cab7318dd3e095c71e80cf24fb0b8968d4",
+              "queue_wait_ns": 30171,
+              "work_wall_ns": 37140842,
+              "work_cpu_ns": 37079625
+            }
+          },
+          {
+            "id": 18,
+            "status": 200,
+            "target_ns": 1020000000,
+            "sent_ns": 1026244417,
+            "received_ns": 1063770185,
+            "receipt": {
+              "id": 18,
+              "digest": "a6900707813cc2819e7ca4a6b0eb77b1b6a50c4752b22cc03483a474ba8aa465",
+              "queue_wait_ns": 30088,
+              "work_wall_ns": 36806368,
+              "work_cpu_ns": 36745500
+            }
+          },
+          {
+            "id": 19,
+            "status": 200,
+            "target_ns": 1080000000,
+            "sent_ns": 1082942304,
+            "received_ns": 1119152337,
+            "receipt": {
+              "id": 19,
+              "digest": "195e330268c64b3fcde85d37f5871b59fa3a4b01dbee5a3dc2fc5add6f7c42a7",
+              "queue_wait_ns": 28544,
+              "work_wall_ns": 35524518,
+              "work_cpu_ns": 35465625
+            }
+          },
+          {
+            "id": 20,
+            "status": 200,
+            "target_ns": 1140000000,
+            "sent_ns": 1142999783,
+            "received_ns": 1179417886,
+            "receipt": {
+              "id": 20,
+              "digest": "770e26e256f562e3e01131519a7a346b717bb4d87a04845b48782e76e768483a",
+              "queue_wait_ns": 42482,
+              "work_wall_ns": 35781957,
+              "work_cpu_ns": 35723625
+            }
+          },
+          {
+            "id": 21,
+            "status": 200,
+            "target_ns": 1200000000,
+            "sent_ns": 1209100613,
+            "received_ns": 1246569024,
+            "receipt": {
+              "id": 21,
+              "digest": "e1a18d2642af15802cf2a1963761886f273f4cc09a3bbb70f9d13d948dff9b38",
+              "queue_wait_ns": 29837,
+              "work_wall_ns": 36819585,
+              "work_cpu_ns": 36759500
+            }
+          },
+          {
+            "id": 22,
+            "status": 200,
+            "target_ns": 1260000000,
+            "sent_ns": 1260860182,
+            "received_ns": 1296832426,
+            "receipt": {
+              "id": 22,
+              "digest": "3e94dcee18907561ac365c3e7bc0ee13fd90fe14c261bc9d9c74945717df6822",
+              "queue_wait_ns": 29545,
+              "work_wall_ns": 35356768,
+              "work_cpu_ns": 35300124
+            }
+          },
+          {
+            "id": 23,
+            "status": 200,
+            "target_ns": 1320000000,
+            "sent_ns": 1324534696,
+            "received_ns": 1362009555,
+            "receipt": {
+              "id": 23,
+              "digest": "dbb869a586df34329551eda80d2cc67b5adb6f637ed81fc0b558e3b778cce069",
+              "queue_wait_ns": 29712,
+              "work_wall_ns": 36798040,
+              "work_cpu_ns": 36737708
+            }
+          },
+          {
+            "id": 24,
+            "status": 200,
+            "target_ns": 1380000000,
+            "sent_ns": 1383403289,
+            "received_ns": 1420164647,
+            "receipt": {
+              "id": 24,
+              "digest": "9eaa59ba9f8228e704e63a4c546d072c0afdc1b0985e9339c11f20d4f93e9383",
+              "queue_wait_ns": 29503,
+              "work_wall_ns": 36099104,
+              "work_cpu_ns": 36039708
+            }
+          },
+          {
+            "id": 25,
+            "status": 200,
+            "target_ns": 1440000000,
+            "sent_ns": 1443448084,
+            "received_ns": 1479470195,
+            "receipt": {
+              "id": 25,
+              "digest": "eee9ad36114494dfd9b1a0e1cff8476e3418ec003d90fbc27598aeed6548bab5",
+              "queue_wait_ns": 29587,
+              "work_wall_ns": 35351968,
+              "work_cpu_ns": 35293708
+            }
+          },
+          {
+            "id": 26,
+            "status": 200,
+            "target_ns": 1500000000,
+            "sent_ns": 1510079755,
+            "received_ns": 1547898594,
+            "receipt": {
+              "id": 26,
+              "digest": "02e75682f1fedd765514116988967d850c93887ad54e6132b2ec6af1763a2ffe",
+              "queue_wait_ns": 30797,
+              "work_wall_ns": 37170605,
+              "work_cpu_ns": 37110833
+            }
+          },
+          {
+            "id": 27,
+            "status": 200,
+            "target_ns": 1560000000,
+            "sent_ns": 1560324670,
+            "received_ns": 1597265301,
+            "receipt": {
+              "id": 27,
+              "digest": "e1e50855482be90aac910aa6a3ef0bce3dba49bc7cdbbc9652e05c8def69ac96",
+              "queue_wait_ns": 27208,
+              "work_wall_ns": 36352488,
+              "work_cpu_ns": 36290125
+            }
+          },
+          {
+            "id": 28,
+            "status": 200,
+            "target_ns": 1620000000,
+            "sent_ns": 1626402291,
+            "received_ns": 1664497717,
+            "receipt": {
+              "id": 28,
+              "digest": "38256a8f32840253cd1dba759191842942e7a5dbe63e74a31e99f089fc714578",
+              "queue_wait_ns": 39142,
+              "work_wall_ns": 37253189,
+              "work_cpu_ns": 37191334
+            }
+          },
+          {
+            "id": 29,
+            "status": 200,
+            "target_ns": 1680000000,
+            "sent_ns": 1683775112,
+            "received_ns": 1720912375,
+            "receipt": {
+              "id": 29,
+              "digest": "949ddf8174627c072448c7278c058d1c9454262625f70c4567804c6aaa21317a",
+              "queue_wait_ns": 60717,
+              "work_wall_ns": 36238899,
+              "work_cpu_ns": 36179249
+            }
+          },
+          {
+            "id": 30,
+            "status": 200,
+            "target_ns": 1740000000,
+            "sent_ns": 1741886847,
+            "received_ns": 1778875176,
+            "receipt": {
+              "id": 30,
+              "digest": "e34666ef9bff3c057e73f8f2b5105a89949a86d72558b61229ab96f5ecf9c578",
+              "queue_wait_ns": 28377,
+              "work_wall_ns": 36346395,
+              "work_cpu_ns": 36279917
+            }
+          },
+          {
+            "id": 31,
+            "status": 200,
+            "target_ns": 1800000000,
+            "sent_ns": 1802473715,
+            "received_ns": 1839359972,
+            "receipt": {
+              "id": 31,
+              "digest": "bf187a0bf4c93c691ff93a1921f04b390a1f31261c328ae53641e89f1fe6e497",
+              "queue_wait_ns": 28836,
+              "work_wall_ns": 36263895,
+              "work_cpu_ns": 36204125
+            }
+          },
+          {
+            "id": 32,
+            "status": 200,
+            "target_ns": 1860000000,
+            "sent_ns": 1860821475,
+            "received_ns": 1897406232,
+            "receipt": {
+              "id": 32,
+              "digest": "f849d68f5ba18b13847cc2d51133bfb6ab21054bdc48980f114544ca05917190",
+              "queue_wait_ns": 29920,
+              "work_wall_ns": 35886489,
+              "work_cpu_ns": 35827125
+            }
+          },
+          {
+            "id": 33,
+            "status": 200,
+            "target_ns": 1920000000,
+            "sent_ns": 1926141404,
+            "received_ns": 1963819697,
+            "receipt": {
+              "id": 33,
+              "digest": "06ab8679219558fe5b1109b8670724bc4091dcbf4f2dbd91c91df5a943863ae9",
+              "queue_wait_ns": 27124,
+              "work_wall_ns": 37030017,
+              "work_cpu_ns": 36970250
+            }
+          },
+          {
+            "id": 34,
+            "status": 200,
+            "target_ns": 1980000000,
+            "sent_ns": 1982698111,
+            "received_ns": 2019390115,
+            "receipt": {
+              "id": 34,
+              "digest": "657166cfa24dd3115ca361b5bfd9a561c21449b9db14244c9b88f1990f9523d2",
+              "queue_wait_ns": 30129,
+              "work_wall_ns": 35997699,
+              "work_cpu_ns": 35939167
+            }
+          },
+          {
+            "id": 35,
+            "status": 200,
+            "target_ns": 2040000000,
+            "sent_ns": 2042401638,
+            "received_ns": 2079235273,
+            "receipt": {
+              "id": 35,
+              "digest": "8c1a5b3ebee2fc8813c4525b990bd3d37b4004e102d327e0895f24c70a4d1068",
+              "queue_wait_ns": 31256,
+              "work_wall_ns": 36263603,
+              "work_cpu_ns": 36205083
+            }
+          },
+          {
+            "id": 36,
+            "status": 200,
+            "target_ns": 2100000000,
+            "sent_ns": 2107379089,
+            "received_ns": 2145656374,
+            "receipt": {
+              "id": 36,
+              "digest": "b4bb3474c037e7632f9621925ba827d25d8bd4918e410f6e57944acc9fff6bc8",
+              "queue_wait_ns": 30713,
+              "work_wall_ns": 37575721,
+              "work_cpu_ns": 37515291
+            }
+          },
+          {
+            "id": 37,
+            "status": 200,
+            "target_ns": 2160000000,
+            "sent_ns": 2161292032,
+            "received_ns": 2197712999,
+            "receipt": {
+              "id": 37,
+              "digest": "3ef0a3c3776c539d08faeada3ff0e0dd532329432c493a676bcd84c8741f9bff",
+              "queue_wait_ns": 27708,
+              "work_wall_ns": 35770772,
+              "work_cpu_ns": 35711833
+            }
+          },
+          {
+            "id": 38,
+            "status": 200,
+            "target_ns": 2220000000,
+            "sent_ns": 2228075600,
+            "received_ns": 2265208663,
+            "receipt": {
+              "id": 38,
+              "digest": "b2f5c5ef64830898a547e99915c211aff2c97025323b6733ab9133fecc24bcc2",
+              "queue_wait_ns": 30213,
+              "work_wall_ns": 36502402,
+              "work_cpu_ns": 36442750
+            }
+          },
+          {
+            "id": 39,
+            "status": 200,
+            "target_ns": 2280000000,
+            "sent_ns": 2282075029,
+            "received_ns": 2318972831,
+            "receipt": {
+              "id": 39,
+              "digest": "cea6cbe16b9cdc6b89d62e94383716b170df91631ad039ce737f734486b3916e",
+              "queue_wait_ns": 31964,
+              "work_wall_ns": 36045736,
+              "work_cpu_ns": 35988416
+            }
+          },
+          {
+            "id": 40,
+            "status": 200,
+            "target_ns": 2340000000,
+            "sent_ns": 2345612699,
+            "received_ns": 2383462634,
+            "receipt": {
+              "id": 40,
+              "digest": "5c5f9a219e1725429bc517b85942a80b01d78f99ed5fe6c7e2dd7b5aa2cfa352",
+              "queue_wait_ns": 33633,
+              "work_wall_ns": 37123974,
+              "work_cpu_ns": 37063833
+            }
+          },
+          {
+            "id": 41,
+            "status": 200,
+            "target_ns": 2400000000,
+            "sent_ns": 2403274325,
+            "received_ns": 2439710019,
+            "receipt": {
+              "id": 41,
+              "digest": "2605528598a0e391b29d04a1601407155a1fb3e92d427e8385cec78008eda2b9",
+              "queue_wait_ns": 29169,
+              "work_wall_ns": 35827492,
+              "work_cpu_ns": 35768999
+            }
+          },
+          {
+            "id": 42,
+            "status": 200,
+            "target_ns": 2460000000,
+            "sent_ns": 2460985233,
+            "received_ns": 2498532883,
+            "receipt": {
+              "id": 42,
+              "digest": "1865daac8e048ec4489ef0b97d7053d80ee86339b794074e032e3d99e88c86bf",
+              "queue_wait_ns": 31255,
+              "work_wall_ns": 36842261,
+              "work_cpu_ns": 36778042
+            }
+          },
+          {
+            "id": 43,
+            "status": 200,
+            "target_ns": 2520000000,
+            "sent_ns": 2527910806,
+            "received_ns": 2565103717,
+            "receipt": {
+              "id": 43,
+              "digest": "660ba8be91656a5800157c6f0f604d92270724c776060fb26bf4c838f9d791ea",
+              "queue_wait_ns": 45025,
+              "work_wall_ns": 36510014,
+              "work_cpu_ns": 36451708
+            }
+          },
+          {
+            "id": 44,
+            "status": 200,
+            "target_ns": 2580000000,
+            "sent_ns": 2582581081,
+            "received_ns": 2618386623,
+            "receipt": {
+              "id": 44,
+              "digest": "135727ee83095d075cda5535e4b723aa711f75be199d9efe243030b9d92d77cb",
+              "queue_wait_ns": 28543,
+              "work_wall_ns": 35213448,
+              "work_cpu_ns": 35155333
+            }
+          },
+          {
+            "id": 45,
+            "status": 200,
+            "target_ns": 2640000000,
+            "sent_ns": 2645861115,
+            "received_ns": 2684528315,
+            "receipt": {
+              "id": 45,
+              "digest": "11c790e213c21b1382dd208bd34ebe4f6718780d7ba9e50cbb574ac20595d252",
+              "queue_wait_ns": 30129,
+              "work_wall_ns": 38017561,
+              "work_cpu_ns": 37957167
+            }
+          },
+          {
+            "id": 46,
+            "status": 200,
+            "target_ns": 2700000000,
+            "sent_ns": 2703739607,
+            "received_ns": 2740691699,
+            "receipt": {
+              "id": 46,
+              "digest": "5529ed04dfc6612808f1fbec18d0bd6c2c3487508a3bc6f0107bc8070091dc9c",
+              "queue_wait_ns": 30921,
+              "work_wall_ns": 36290310,
+              "work_cpu_ns": 36231667
+            }
+          },
+          {
+            "id": 47,
+            "status": 200,
+            "target_ns": 2760000000,
+            "sent_ns": 2762482810,
+            "received_ns": 2798828036,
+            "receipt": {
+              "id": 47,
+              "digest": "cb6a3e015b4e432ceac51e78cf10a1e9a6408b23ba5d1bf2238c177032075950",
+              "queue_wait_ns": 28459,
+              "work_wall_ns": 35717119,
+              "work_cpu_ns": 35659750
+            }
+          },
+          {
+            "id": 48,
+            "status": 200,
+            "target_ns": 2820000000,
+            "sent_ns": 2820571200,
+            "received_ns": 2857224720,
+            "receipt": {
+              "id": 48,
+              "digest": "76a709f2c340bc29c7975d4e12245a751638b405ac499310ae9542bbf37312a3",
+              "queue_wait_ns": 29627,
+              "work_wall_ns": 36023995,
+              "work_cpu_ns": 35965583
+            }
+          },
+          {
+            "id": 49,
+            "status": 200,
+            "target_ns": 2880000000,
+            "sent_ns": 2887426168,
+            "received_ns": 2925046051,
+            "receipt": {
+              "id": 49,
+              "digest": "b30777c8bc2be9f3406d21fb9aeb781d1669709f2d95726dacec8a647d38c846",
+              "queue_wait_ns": 30588,
+              "work_wall_ns": 36963901,
+              "work_cpu_ns": 36904250
+            }
+          },
+          {
+            "id": 50,
+            "status": 200,
+            "target_ns": 2940000000,
+            "sent_ns": 2942593811,
+            "received_ns": 2979139086,
+            "receipt": {
+              "id": 50,
+              "digest": "f95d36a7923c531c83650700ff52f86d527beab7d01c53baa138173f396fffaa",
+              "queue_wait_ns": 27500,
+              "work_wall_ns": 35952429,
+              "work_cpu_ns": 35894208
+            }
+          },
+          {
+            "id": 51,
+            "status": 200,
+            "target_ns": 3000000000,
+            "sent_ns": 3006524277,
+            "received_ns": 3043670952,
+            "receipt": {
+              "id": 51,
+              "digest": "6b343f144f82adb9e5c677441dcdc2411dba8b8e0b12ed09fba8179eea76969c",
+              "queue_wait_ns": 25371,
+              "work_wall_ns": 36597603,
+              "work_cpu_ns": 36539583
+            }
+          },
+          {
+            "id": 52,
+            "status": 200,
+            "target_ns": 3060000000,
+            "sent_ns": 3062562933,
+            "received_ns": 3098960153,
+            "receipt": {
+              "id": 52,
+              "digest": "89bf4c215485412299510d2323e2b46c8c72201e816f9d164f807bb6b7febd03",
+              "queue_wait_ns": 28668,
+              "work_wall_ns": 35771408,
+              "work_cpu_ns": 35712666
+            }
+          },
+          {
+            "id": 53,
+            "status": 200,
+            "target_ns": 3120000000,
+            "sent_ns": 3127426337,
+            "received_ns": 3165421198,
+            "receipt": {
+              "id": 53,
+              "digest": "86446b83f837f22b06a1e5aacff9c10ca90a0d328fa5e225b2932d42834d46ea",
+              "queue_wait_ns": 25037,
+              "work_wall_ns": 37358367,
+              "work_cpu_ns": 37298375
+            }
+          },
+          {
+            "id": 54,
+            "status": 200,
+            "target_ns": 3180000000,
+            "sent_ns": 3182067067,
+            "received_ns": 3218953352,
+            "receipt": {
+              "id": 54,
+              "digest": "8ad919feebf87d19c44734df470cfae8b00f3b8adcfedf97b138ac3a46907ec2",
+              "queue_wait_ns": 29711,
+              "work_wall_ns": 36282215,
+              "work_cpu_ns": 36223833
+            }
+          },
+          {
+            "id": 55,
+            "status": 200,
+            "target_ns": 3240000000,
+            "sent_ns": 3240242877,
+            "received_ns": 3276992459,
+            "receipt": {
+              "id": 55,
+              "digest": "92486f5b4cd584ff92b41fafdddcf05eb9719248410e4d093e5b7066d57fbec8",
+              "queue_wait_ns": 27332,
+              "work_wall_ns": 36126497,
+              "work_cpu_ns": 36069875
+            }
+          },
+          {
+            "id": 56,
+            "status": 200,
+            "target_ns": 3300000000,
+            "sent_ns": 3303697726,
+            "received_ns": 3340190304,
+            "receipt": {
+              "id": 56,
+              "digest": "c2a8ca880a102fcf7c49ed78ed59bb16be6160f2e3baacfa95198b6be56479b8",
+              "queue_wait_ns": 31797,
+              "work_wall_ns": 35807526,
+              "work_cpu_ns": 35749583
+            }
+          },
+          {
+            "id": 57,
+            "status": 200,
+            "target_ns": 3360000000,
+            "sent_ns": 3362971908,
+            "received_ns": 3400941248,
+            "receipt": {
+              "id": 57,
+              "digest": "df6ded850338a32439f691f4f382861f28b8480b4c220e034074cad647073e73",
+              "queue_wait_ns": 49907,
+              "work_wall_ns": 37193738,
+              "work_cpu_ns": 37134042
+            }
+          },
+          {
+            "id": 58,
+            "status": 200,
+            "target_ns": 3420000000,
+            "sent_ns": 3421505832,
+            "received_ns": 3458528108,
+            "receipt": {
+              "id": 58,
+              "digest": "80e6aa92ddde4e72812b4cd2d2fbc464e4a328af1c07c7fb390c1c015eaa21ae",
+              "queue_wait_ns": 34634,
+              "work_wall_ns": 36368646,
+              "work_cpu_ns": 36310625
+            }
+          },
+          {
+            "id": 59,
+            "status": 200,
+            "target_ns": 3480000000,
+            "sent_ns": 3487746040,
+            "received_ns": 3525422406,
+            "receipt": {
+              "id": 59,
+              "digest": "90520f6a2d5539ff0c832dfc03124df9c7d4a2377a1290126cb6b1c9b71932da",
+              "queue_wait_ns": 51159,
+              "work_wall_ns": 36942826,
+              "work_cpu_ns": 36882750
+            }
+          },
+          {
+            "id": 60,
+            "status": 200,
+            "target_ns": 3540000000,
+            "sent_ns": 3540731613,
+            "received_ns": 3577108354,
+            "receipt": {
+              "id": 60,
+              "digest": "251c28f419b1235aed389d45f2c6128df31c920f8624068d851d0b7fd0aa7fa0",
+              "queue_wait_ns": 39934,
+              "work_wall_ns": 35730120,
+              "work_cpu_ns": 35666041
+            }
+          },
+          {
+            "id": 61,
+            "status": 200,
+            "target_ns": 3600000000,
+            "sent_ns": 3606566806,
+            "received_ns": 3644137058,
+            "receipt": {
+              "id": 61,
+              "digest": "77ee20b1221688ee98a3285adc013462fb8577fa9e9c651acef367aefd9d728e",
+              "queue_wait_ns": 46193,
+              "work_wall_ns": 36898427,
+              "work_cpu_ns": 36840125
+            }
+          },
+          {
+            "id": 62,
+            "status": 200,
+            "target_ns": 3660000000,
+            "sent_ns": 3663148392,
+            "received_ns": 3699141025,
+            "receipt": {
+              "id": 62,
+              "digest": "a1e06d63ecb76ed06d88713121dc8ac61ac57a4d8b2a1a0dd3164ce96ad92c0b",
+              "queue_wait_ns": 60089,
+              "work_wall_ns": 35306329,
+              "work_cpu_ns": 35251333
+            }
+          },
+          {
+            "id": 63,
+            "status": 200,
+            "target_ns": 3720000000,
+            "sent_ns": 3725555112,
+            "received_ns": 3762680665,
+            "receipt": {
+              "id": 63,
+              "digest": "3d546a57ba13c0349046ab77dcdcd03821a9abb990e4c64e78817e37e2423927",
+              "queue_wait_ns": 35219,
+              "work_wall_ns": 36518575,
+              "work_cpu_ns": 36460625
+            }
+          },
+          {
+            "id": 64,
+            "status": 200,
+            "target_ns": 3780000000,
+            "sent_ns": 3780381859,
+            "received_ns": 3816838885,
+            "receipt": {
+              "id": 64,
+              "digest": "425e9f866c36e948b576e2bc50c4a718c4e21234a6ce66438892f71989bd38cf",
+              "queue_wait_ns": 29585,
+              "work_wall_ns": 35904461,
+              "work_cpu_ns": 35848250
+            }
+          },
+          {
+            "id": 65,
+            "status": 200,
+            "target_ns": 3840000000,
+            "sent_ns": 3843410705,
+            "received_ns": 3880309215,
+            "receipt": {
+              "id": 65,
+              "digest": "05febac1b818a6b7b2047f4910a0c61abae99aa7d7ffa6bf85cb7daf3e2330f1",
+              "queue_wait_ns": 31880,
+              "work_wall_ns": 36234155,
+              "work_cpu_ns": 36176875
+            }
+          },
+          {
+            "id": 66,
+            "status": 200,
+            "target_ns": 3900000000,
+            "sent_ns": 3905431522,
+            "received_ns": 3943401070,
+            "receipt": {
+              "id": 66,
+              "digest": "55493d4eee017906203282fe9ec5bdb71fa4199b6e4b23db43788debe8bb5546",
+              "queue_wait_ns": 34259,
+              "work_wall_ns": 37270726,
+              "work_cpu_ns": 37210167
+            }
+          },
+          {
+            "id": 67,
+            "status": 200,
+            "target_ns": 3960000000,
+            "sent_ns": 3963916039,
+            "received_ns": 4000739356,
+            "receipt": {
+              "id": 67,
+              "digest": "e4ffceaab3bd66e64adfbd1212b274e25979e875901bc84f599937a064d43e30",
+              "queue_wait_ns": 68309,
+              "work_wall_ns": 36160589,
+              "work_cpu_ns": 36103375
+            }
+          },
+          {
+            "id": 68,
+            "status": 200,
+            "target_ns": 4020000000,
+            "sent_ns": 4021811772,
+            "received_ns": 4058567071,
+            "receipt": {
+              "id": 68,
+              "digest": "72dbfedea82b84b80f65c580b37ad1c57313b9ccedf272b0f7f59bbc3c1ee608",
+              "queue_wait_ns": 32256,
+              "work_wall_ns": 36105424,
+              "work_cpu_ns": 36047916
+            }
+          },
+          {
+            "id": 69,
+            "status": 200,
+            "target_ns": 4080000000,
+            "sent_ns": 4086531695,
+            "received_ns": 4124366086,
+            "receipt": {
+              "id": 69,
+              "digest": "b7cb59aba62e4dfe531f32fa58c3b0cd404734494101ab1eee5ff62331c83253",
+              "queue_wait_ns": 37556,
+              "work_wall_ns": 37111575,
+              "work_cpu_ns": 37053125
+            }
+          },
+          {
+            "id": 70,
+            "status": 200,
+            "target_ns": 4140000000,
+            "sent_ns": 4147557295,
+            "received_ns": 4184835740,
+            "receipt": {
+              "id": 70,
+              "digest": "9f48ec17fe18b00accd62ccf749cfe90448ec02e52443daae78d62359546b9b2",
+              "queue_wait_ns": 31213,
+              "work_wall_ns": 36691079,
+              "work_cpu_ns": 36632875
+            }
+          },
+          {
+            "id": 71,
+            "status": 200,
+            "target_ns": 4200000000,
+            "sent_ns": 4205897349,
+            "received_ns": 4242685333,
+            "receipt": {
+              "id": 71,
+              "digest": "14b86f3d56c84bcf3f8b1d9c8b020aef9e44014de36a345a3b3e99d0b6cb54d1",
+              "queue_wait_ns": 29585,
+              "work_wall_ns": 36194405,
+              "work_cpu_ns": 36137417
+            }
+          },
+          {
+            "id": 72,
+            "status": 200,
+            "target_ns": 4260000000,
+            "sent_ns": 4270343253,
+            "received_ns": 4308245025,
+            "receipt": {
+              "id": 72,
+              "digest": "10805998286728217ec616c5eefbf4d12a8dfec620240c121c3cb3a7929b5f7a",
+              "queue_wait_ns": 32672,
+              "work_wall_ns": 37267600,
+              "work_cpu_ns": 37209166
+            }
+          },
+          {
+            "id": 73,
+            "status": 200,
+            "target_ns": 4320000000,
+            "sent_ns": 4323431020,
+            "received_ns": 4359940768,
+            "receipt": {
+              "id": 73,
+              "digest": "d4d124fddebb93d172f34c3aec1fa149c7ca04ac363793e006d9ed4694fad20f",
+              "queue_wait_ns": 34175,
+              "work_wall_ns": 35813152,
+              "work_cpu_ns": 35749500
+            }
+          },
+          {
+            "id": 74,
+            "status": 200,
+            "target_ns": 4380000000,
+            "sent_ns": 4381216451,
+            "received_ns": 4420567330,
+            "receipt": {
+              "id": 74,
+              "digest": "67205bd3493f6fbbe681116a51c19a84f59387d99a548b9de539a55e7206060f",
+              "queue_wait_ns": 30544,
+              "work_wall_ns": 38677191,
+              "work_cpu_ns": 38616417
+            }
+          },
+          {
+            "id": 75,
+            "status": 200,
+            "target_ns": 4440000000,
+            "sent_ns": 4444396809,
+            "received_ns": 4481293077,
+            "receipt": {
+              "id": 75,
+              "digest": "9b8c485c98a49ec9807ce352c13686ca4ba7ce8623227229ea9defb270d1150e",
+              "queue_wait_ns": 33215,
+              "work_wall_ns": 36215111,
+              "work_cpu_ns": 36157250
+            }
+          },
+          {
+            "id": 76,
+            "status": 200,
+            "target_ns": 4500000000,
+            "sent_ns": 4503951187,
+            "received_ns": 4541165084,
+            "receipt": {
+              "id": 76,
+              "digest": "c7a5cb83c24237703d84e27f4e82d3200377dfa64723f0fd4d6fd883178108b3",
+              "queue_wait_ns": 32715,
+              "work_wall_ns": 36534993,
+              "work_cpu_ns": 36462834
+            }
+          },
+          {
+            "id": 77,
+            "status": 200,
+            "target_ns": 4560000000,
+            "sent_ns": 4570280456,
+            "received_ns": 4607279165,
+            "receipt": {
+              "id": 77,
+              "digest": "fe315b6fa6bb2c9f3bf885a0077e32169265f96568f00831c382d4ab85de2ffd",
+              "queue_wait_ns": 61423,
+              "work_wall_ns": 36320848,
+              "work_cpu_ns": 36263583
+            }
+          },
+          {
+            "id": 78,
+            "status": 200,
+            "target_ns": 4620000000,
+            "sent_ns": 4627066475,
+            "received_ns": 4663609647,
+            "receipt": {
+              "id": 78,
+              "digest": "40d36d1370d53b47c291fa6060bcb361cba8c03285feadc1234c4b5d8548648a",
+              "queue_wait_ns": 32339,
+              "work_wall_ns": 35830678,
+              "work_cpu_ns": 35775083
+            }
+          },
+          {
+            "id": 79,
+            "status": 200,
+            "target_ns": 4680000000,
+            "sent_ns": 4690219752,
+            "received_ns": 4728244745,
+            "receipt": {
+              "id": 79,
+              "digest": "46996056d48cb4801a43ad3fd92400f532c889f848ec6aa2e89e3a88ad0848bd",
+              "queue_wait_ns": 28374,
+              "work_wall_ns": 37412895,
+              "work_cpu_ns": 37353917
+            }
+          },
+          {
+            "id": 80,
+            "status": 200,
+            "target_ns": 4740000000,
+            "sent_ns": 4748429550,
+            "received_ns": 4787060674,
+            "receipt": {
+              "id": 80,
+              "digest": "618a094290138a74216ad05a695abaa01006a80278f05763976ad9d54326e134",
+              "queue_wait_ns": 31629,
+              "work_wall_ns": 37917545,
+              "work_cpu_ns": 37855791
+            }
+          },
+          {
+            "id": 81,
+            "status": 200,
+            "target_ns": 4800000000,
+            "sent_ns": 4810216257,
+            "received_ns": 4846775410,
+            "receipt": {
+              "id": 81,
+              "digest": "767621400cd62e88fe11684ff94e38f7418b1a1b8db57a169cd20d4ed485d05d",
+              "queue_wait_ns": 32339,
+              "work_wall_ns": 35877329,
+              "work_cpu_ns": 35821042
+            }
+          },
+          {
+            "id": 82,
+            "status": 200,
+            "target_ns": 4860000000,
+            "sent_ns": 4870250290,
+            "received_ns": 4906749064,
+            "receipt": {
+              "id": 82,
+              "digest": "b21e11ca2ed3c5919e472ecc9c7b909f83b3d4309574010cb0af82222160bc6f",
+              "queue_wait_ns": 32381,
+              "work_wall_ns": 35803471,
+              "work_cpu_ns": 35746833
+            }
+          },
+          {
+            "id": 83,
+            "status": 200,
+            "target_ns": 4920000000,
+            "sent_ns": 4923725246,
+            "received_ns": 4959690911,
+            "receipt": {
+              "id": 83,
+              "digest": "119269f39a899fee80514b863a0a6106ee9859c1984262ced79150aebddfcbb1",
+              "queue_wait_ns": 34466,
+              "work_wall_ns": 35294148,
+              "work_cpu_ns": 35238166
+            }
+          },
+          {
+            "id": 84,
+            "status": 200,
+            "target_ns": 4980000000,
+            "sent_ns": 4982022879,
+            "received_ns": 5017935468,
+            "receipt": {
+              "id": 84,
+              "digest": "1ca1f892c43bdb1a102b30072b32ebecce7b31593c2fa9e87307a7c0b6a2855a",
+              "queue_wait_ns": 33966,
+              "work_wall_ns": 35278624,
+              "work_cpu_ns": 35223625
+            }
+          },
+          {
+            "id": 85,
+            "status": 200,
+            "target_ns": 5040000000,
+            "sent_ns": 5042388687,
+            "received_ns": 5078567370,
+            "receipt": {
+              "id": 85,
+              "digest": "5e372d8ead276d70977aec58c0ebff64ada22c386f05644084cd673e4f444c0e",
+              "queue_wait_ns": 31379,
+              "work_wall_ns": 35609022,
+              "work_cpu_ns": 35554125
+            }
+          },
+          {
+            "id": 86,
+            "status": 200,
+            "target_ns": 5100000000,
+            "sent_ns": 5105372300,
+            "received_ns": 5143036644,
+            "receipt": {
+              "id": 86,
+              "digest": "01d0205f86998654f3e77944dafc3edbf9e1a692f0c10f82ec25400fbec3e581",
+              "queue_wait_ns": 32631,
+              "work_wall_ns": 37010643,
+              "work_cpu_ns": 36951875
+            }
+          },
+          {
+            "id": 87,
+            "status": 200,
+            "target_ns": 5160000000,
+            "sent_ns": 5165429242,
+            "received_ns": 5201818440,
+            "receipt": {
+              "id": 87,
+              "digest": "7986932093057b43c8318dc54e5f0192af4567975e71eeae9bc72a47a6a270f7",
+              "queue_wait_ns": 34466,
+              "work_wall_ns": 35686343,
+              "work_cpu_ns": 35629833
+            }
+          },
+          {
+            "id": 88,
+            "status": 200,
+            "target_ns": 5220000000,
+            "sent_ns": 5226718851,
+            "received_ns": 5263622687,
+            "receipt": {
+              "id": 88,
+              "digest": "c726b18b94d8b62d68b09712ca564c064feb3562a949755b3406e57ae6b27972",
+              "queue_wait_ns": 32547,
+              "work_wall_ns": 36224103,
+              "work_cpu_ns": 36167125
+            }
+          },
+          {
+            "id": 89,
+            "status": 200,
+            "target_ns": 5280000000,
+            "sent_ns": 5287307045,
+            "received_ns": 5324441261,
+            "receipt": {
+              "id": 89,
+              "digest": "96a670d6c2bcddf27c5daec5c810435fa11c4227d0cf55343eff984655b3f95f",
+              "queue_wait_ns": 37512,
+              "work_wall_ns": 36449860,
+              "work_cpu_ns": 36392500
+            }
+          },
+          {
+            "id": 90,
+            "status": 200,
+            "target_ns": 5340000000,
+            "sent_ns": 5340959683,
+            "received_ns": 5377253570,
+            "receipt": {
+              "id": 90,
+              "digest": "4b5136176e887bc8cfca11e7431048938e6fd23c1d9cc84556828db16aef5885",
+              "queue_wait_ns": 28541,
+              "work_wall_ns": 35704291,
+              "work_cpu_ns": 35648750
+            }
+          },
+          {
+            "id": 91,
+            "status": 200,
+            "target_ns": 5400000000,
+            "sent_ns": 5406023049,
+            "received_ns": 5442215708,
+            "receipt": {
+              "id": 91,
+              "digest": "2d379fec5822b3bf32b607c57ea6d28a98266dfdefaa496bf0861052ac7203d6",
+              "queue_wait_ns": 28415,
+              "work_wall_ns": 35532212,
+              "work_cpu_ns": 35477875
+            }
+          },
+          {
+            "id": 92,
+            "status": 200,
+            "target_ns": 5460000000,
+            "sent_ns": 5460791161,
+            "received_ns": 5497636588,
+            "receipt": {
+              "id": 92,
+              "digest": "feb982a3c5642fdb7bcb3afa9ca41258b89a9c4878e96b61b52357f37f32a6f7",
+              "queue_wait_ns": 29000,
+              "work_wall_ns": 36166913,
+              "work_cpu_ns": 36104333
+            }
+          },
+          {
+            "id": 93,
+            "status": 200,
+            "target_ns": 5520000000,
+            "sent_ns": 5522015943,
+            "received_ns": 5559457432,
+            "receipt": {
+              "id": 93,
+              "digest": "e3f98c1643e830f36ef805053c54f30d3d6bbf0ee78092e3bbfd1e66cf76c4dc",
+              "queue_wait_ns": 35885,
+              "work_wall_ns": 36722960,
+              "work_cpu_ns": 36660792
+            }
+          },
+          {
+            "id": 94,
+            "status": 200,
+            "target_ns": 5580000000,
+            "sent_ns": 5590377618,
+            "received_ns": 5628948477,
+            "receipt": {
+              "id": 94,
+              "digest": "9dc6e96f17cd49782584387605a53ffa998eac7fd87ae6f7f8c5242dbfd6a48e",
+              "queue_wait_ns": 36260,
+              "work_wall_ns": 37833051,
+              "work_cpu_ns": 37772792
+            }
+          },
+          {
+            "id": 95,
+            "status": 200,
+            "target_ns": 5640000000,
+            "sent_ns": 5648808604,
+            "received_ns": 5686181997,
+            "receipt": {
+              "id": 95,
+              "digest": "e2d7846dd56805ed13eb01e4877c403dfed65c1a298574a3201a63ccdf3953b4",
+              "queue_wait_ns": 35468,
+              "work_wall_ns": 36611425,
+              "work_cpu_ns": 36553250
+            }
+          },
+          {
+            "id": 96,
+            "status": 200,
+            "target_ns": 5700000000,
+            "sent_ns": 5700132823,
+            "received_ns": 5737617583,
+            "receipt": {
+              "id": 96,
+              "digest": "84a78e23c6c9e38de3becd4fc625e3823f2142dffbf1620ae5e8c953341e25f0",
+              "queue_wait_ns": 34340,
+              "work_wall_ns": 36808166,
+              "work_cpu_ns": 36750792
+            }
+          },
+          {
+            "id": 97,
+            "status": 200,
+            "target_ns": 5760000000,
+            "sent_ns": 5763247646,
+            "received_ns": 5801672003,
+            "receipt": {
+              "id": 97,
+              "digest": "f287fa4c86b9db1012ca53b8645c582495e7014756903dd96d77e85bc76fa072",
+              "queue_wait_ns": 44063,
+              "work_wall_ns": 37663391,
+              "work_cpu_ns": 37596043
+            }
+          },
+          {
+            "id": 98,
+            "status": 200,
+            "target_ns": 5820000000,
+            "sent_ns": 5820134711,
+            "received_ns": 5856303961,
+            "receipt": {
+              "id": 98,
+              "digest": "58b877446b771563a03325512b1d612074cd52456f66d4e7e53e3a85372f6d58",
+              "queue_wait_ns": 68431,
+              "work_wall_ns": 35404821,
+              "work_cpu_ns": 35341416
+            }
+          },
+          {
+            "id": 99,
+            "status": 200,
+            "target_ns": 5880000000,
+            "sent_ns": 5887306432,
+            "received_ns": 5925012259,
+            "receipt": {
+              "id": 99,
+              "digest": "3ffb3c6b7cd0b957589bd49a85b6cadaf24cad67454fbdfefb8e8e82006b1171",
+              "queue_wait_ns": 30335,
+              "work_wall_ns": 37061236,
+              "work_cpu_ns": 37004792
+            }
+          },
+          {
+            "id": 100,
+            "status": 200,
+            "target_ns": 5940000000,
+            "sent_ns": 5950155541,
+            "received_ns": 5987741321,
+            "receipt": {
+              "id": 100,
+              "digest": "18157368c016c4c1402da434ebece267ffb2a1dca1d508fbaadf1095dc36422e",
+              "queue_wait_ns": 30377,
+              "work_wall_ns": 36920494,
+              "work_cpu_ns": 36862375
+            }
+          }
+        ],
+        "linux_kernel": "6.8.0-100-generic",
+        "python_version": "3.11.15",
+        "requested_cpus": 1.0
+      },
+      "tight": {
+        "cpu_max": "25000 100000",
+        "cpu_stat_before": {
+          "usage_usec": 163069,
+          "user_usec": 150298,
+          "system_usec": 12770,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 6,
+          "nr_throttled": 6,
+          "throttled_usec": 451481,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "cpu_stat_after": {
+          "usage_usec": 1916928,
+          "user_usec": 1891330,
+          "system_usec": 25598,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 77,
+          "nr_throttled": 76,
+          "throttled_usec": 6506771,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "cpu_stat_delta": {
+          "usage_usec": 1753859,
+          "user_usec": 1741032,
+          "system_usec": 12828,
+          "core_sched.force_idle_usec": 0,
+          "nr_periods": 71,
+          "nr_throttled": 70,
+          "throttled_usec": 6055290,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "counts": {
+          "offered": 100,
+          "admitted": 35,
+          "completed": 35,
+          "rejected": 65
+        },
+        "server_counts": {
+          "offered": 100,
+          "admitted": 35,
+          "completed": 35,
+          "rejected": 65
+        },
+        "success_latency_ms": {
+          "p50": 952.773,
+          "p95": 1171.512,
+          "max": 1174.115
+        },
+        "success_queue_wait_ms": {
+          "p50": 749.984,
+          "p95": 890.325,
+          "max": 974.126
+        },
+        "success_work_cpu_ms": {
+          "p50": 49.714,
+          "p95": 56.474,
+          "max": 57.041
+        },
+        "send_slip_ms": {
+          "p50": 4.025,
+          "p95": 10.36,
+          "max": 11.095
+        },
+        "load_generator_cpu_max": "max 100000",
+        "arrivals": [
+          {
+            "id": 1,
+            "status": 200,
+            "target_ns": 0,
+            "sent_ns": 3314085,
+            "received_ns": 83642889,
+            "receipt": {
+              "id": 1,
+              "digest": "35d9fa6ca155fa198cd5b00f15656e961136d21e5258de246a5d65d520568d93",
+              "queue_wait_ns": 94668,
+              "work_wall_ns": 79395226,
+              "work_cpu_ns": 44186417
+            }
+          },
+          {
+            "id": 2,
+            "status": 200,
+            "target_ns": 60000000,
+            "sent_ns": 61358793,
+            "received_ns": 273429681,
+            "receipt": {
+              "id": 2,
+              "digest": "f9929d5f880ae6fdf0e929fc4aa4d45cb68c484612aa2796aa254b97cf0fc536",
+              "queue_wait_ns": 18946185,
+              "work_wall_ns": 189743359,
+              "work_cpu_ns": 39163958
+            }
+          },
+          {
+            "id": 3,
+            "status": 200,
+            "target_ns": 120000000,
+            "sent_ns": 130260940,
+            "received_ns": 394000490,
+            "receipt": {
+              "id": 3,
+              "digest": "40680e96f037fdebff216b28372e84087a4cf29d2677a5fd017c324686870e88",
+              "queue_wait_ns": 142373638,
+              "work_wall_ns": 120538475,
+              "work_cpu_ns": 38387625
+            }
+          },
+          {
+            "id": 4,
+            "status": 200,
+            "target_ns": 180000000,
+            "sent_ns": 180262003,
+            "received_ns": 592238459,
+            "receipt": {
+              "id": 4,
+              "digest": "6eb77561b35bb82fe3ea44142b396966bef666496a6e34dd87c6c162d73504fa",
+              "queue_wait_ns": 213081735,
+              "work_wall_ns": 198226377,
+              "work_cpu_ns": 47864834
+            }
+          },
+          {
+            "id": 5,
+            "status": 200,
+            "target_ns": 240000000,
+            "sent_ns": 248004562,
+            "received_ns": 875140540,
+            "receipt": {
+              "id": 5,
+              "digest": "75e36bbac868258567b6b86a99615550470968d8853da45f43c0e5967f927323",
+              "queue_wait_ns": 343417188,
+              "work_wall_ns": 282822267,
+              "work_cpu_ns": 54015293
+            }
+          },
+          {
+            "id": 6,
+            "status": 200,
+            "target_ns": 300000000,
+            "sent_ns": 303281412,
+            "received_ns": 1080776281,
+            "receipt": {
+              "id": 6,
+              "digest": "5eef9e579319706bbd074ffed318bfd9a58c1880b583e02ab047814ca4480c11",
+              "queue_wait_ns": 503642359,
+              "work_wall_ns": 205646548,
+              "work_cpu_ns": 54910667
+            }
+          },
+          {
+            "id": 7,
+            "status": 200,
+            "target_ns": 360000000,
+            "sent_ns": 371094606,
+            "received_ns": 1282263610,
+            "receipt": {
+              "id": 7,
+              "digest": "798e379f444e087c6a7513448c0b4dfbaf8de827519f8e111e92dc9b9caf5ce7",
+              "queue_wait_ns": 709147008,
+              "work_wall_ns": 201530428,
+              "work_cpu_ns": 55091999
+            }
+          },
+          {
+            "id": 8,
+            "status": 200,
+            "target_ns": 420000000,
+            "sent_ns": 420708268,
+            "received_ns": 1575760176,
+            "receipt": {
+              "id": 8,
+              "digest": "fef4c2527dd02f7b47dbdc2dda5cb4fec2d72eb4501b8a553852e0d88ab6b3ef",
+              "queue_wait_ns": 861017760,
+              "work_wall_ns": 293471496,
+              "work_cpu_ns": 56474333
+            }
+          },
+          {
+            "id": 9,
+            "status": 503,
+            "target_ns": 480000000,
+            "sent_ns": 486824571,
+            "received_ns": 487434165,
+            "receipt": {
+              "id": 9
+            }
+          },
+          {
+            "id": 10,
+            "status": 503,
+            "target_ns": 540000000,
+            "sent_ns": 542171799,
+            "received_ns": 542832001,
+            "receipt": {
+              "id": 10
+            }
+          },
+          {
+            "id": 11,
+            "status": 200,
+            "target_ns": 600000000,
+            "sent_ns": 601104575,
+            "received_ns": 1772616703,
+            "receipt": {
+              "id": 11,
+              "digest": "c04a4f1b957ef1649e44d0c92bf7022a3de7081003ad485042ab62226372f3e9",
+              "queue_wait_ns": 974126410,
+              "work_wall_ns": 196752183,
+              "work_cpu_ns": 48077376
+            }
+          },
+          {
+            "id": 12,
+            "status": 503,
+            "target_ns": 660000000,
+            "sent_ns": 663878693,
+            "received_ns": 664519493,
+            "receipt": {
+              "id": 12
+            }
+          },
+          {
+            "id": 13,
+            "status": 503,
+            "target_ns": 720000000,
+            "sent_ns": 720498260,
+            "received_ns": 721175859,
+            "receipt": {
+              "id": 13
+            }
+          },
+          {
+            "id": 14,
+            "status": 503,
+            "target_ns": 780000000,
+            "sent_ns": 782236516,
+            "received_ns": 782772345,
+            "receipt": {
+              "id": 14
+            }
+          },
+          {
+            "id": 15,
+            "status": 503,
+            "target_ns": 840000000,
+            "sent_ns": 850359708,
+            "received_ns": 851058210,
+            "receipt": {
+              "id": 15
+            }
+          },
+          {
+            "id": 16,
+            "status": 200,
+            "target_ns": 900000000,
+            "sent_ns": 904025225,
+            "received_ns": 1889256341,
+            "receipt": {
+              "id": 16,
+              "digest": "f948daafe589f23a560ca25f209b71e221ed84b77cd379361ce80e9e0f60ba7f",
+              "queue_wait_ns": 867923771,
+              "work_wall_ns": 116606220,
+              "work_cpu_ns": 42191750
+            }
+          },
+          {
+            "id": 17,
+            "status": 503,
+            "target_ns": 960000000,
+            "sent_ns": 962505948,
+            "received_ns": 970674813,
+            "receipt": {
+              "id": 17
+            }
+          },
+          {
+            "id": 18,
+            "status": 503,
+            "target_ns": 1020000000,
+            "sent_ns": 1027545294,
+            "received_ns": 1028145291,
+            "receipt": {
+              "id": 18
+            }
+          },
+          {
+            "id": 19,
+            "status": 200,
+            "target_ns": 1080000000,
+            "sent_ns": 1081010881,
+            "received_ns": 2087355478,
+            "receipt": {
+              "id": 19,
+              "digest": "195e330268c64b3fcde85d37f5871b59fa3a4b01dbee5a3dc2fc5add6f7c42a7",
+              "queue_wait_ns": 807603079,
+              "work_wall_ns": 198096091,
+              "work_cpu_ns": 53085916
+            }
+          },
+          {
+            "id": 20,
+            "status": 503,
+            "target_ns": 1140000000,
+            "sent_ns": 1148505539,
+            "received_ns": 1149113547,
+            "receipt": {
+              "id": 20
+            }
+          },
+          {
+            "id": 21,
+            "status": 503,
+            "target_ns": 1200000000,
+            "sent_ns": 1206932900,
+            "received_ns": 1207496391,
+            "receipt": {
+              "id": 21
+            }
+          },
+          {
+            "id": 22,
+            "status": 503,
+            "target_ns": 1260000000,
+            "sent_ns": 1261142006,
+            "received_ns": 1261968802,
+            "receipt": {
+              "id": 22
+            }
+          },
+          {
+            "id": 23,
+            "status": 200,
+            "target_ns": 1320000000,
+            "sent_ns": 1321250244,
+            "received_ns": 2285244259,
+            "receipt": {
+              "id": 23,
+              "digest": "dbb869a586df34329551eda80d2cc67b5adb6f637ed81fc0b558e3b778cce069",
+              "queue_wait_ns": 765395347,
+              "work_wall_ns": 197985365,
+              "work_cpu_ns": 42988250
+            }
+          },
+          {
+            "id": 24,
+            "status": 503,
+            "target_ns": 1380000000,
+            "sent_ns": 1382864921,
+            "received_ns": 1383389986,
+            "receipt": {
+              "id": 24
+            }
+          },
+          {
+            "id": 25,
+            "status": 503,
+            "target_ns": 1440000000,
+            "sent_ns": 1449465648,
+            "received_ns": 1467897539,
+            "receipt": {
+              "id": 25
+            }
+          },
+          {
+            "id": 26,
+            "status": 503,
+            "target_ns": 1500000000,
+            "sent_ns": 1504916812,
+            "received_ns": 1505500652,
+            "receipt": {
+              "id": 26
+            }
+          },
+          {
+            "id": 27,
+            "status": 503,
+            "target_ns": 1560000000,
+            "sent_ns": 1566994898,
+            "received_ns": 1567691134,
+            "receipt": {
+              "id": 27
+            }
+          },
+          {
+            "id": 28,
+            "status": 200,
+            "target_ns": 1620000000,
+            "sent_ns": 1630276753,
+            "received_ns": 2476361502,
+            "receipt": {
+              "id": 28,
+              "digest": "38256a8f32840253cd1dba759191842942e7a5dbe63e74a31e99f089fc714578",
+              "queue_wait_ns": 654399145,
+              "work_wall_ns": 190922121,
+              "work_cpu_ns": 42577666
+            }
+          },
+          {
+            "id": 29,
+            "status": 503,
+            "target_ns": 1680000000,
+            "sent_ns": 1684318548,
+            "received_ns": 1684964928,
+            "receipt": {
+              "id": 29
+            }
+          },
+          {
+            "id": 30,
+            "status": 503,
+            "target_ns": 1740000000,
+            "sent_ns": 1750214667,
+            "received_ns": 1750685151,
+            "receipt": {
+              "id": 30
+            }
+          },
+          {
+            "id": 31,
+            "status": 200,
+            "target_ns": 1800000000,
+            "sent_ns": 1808353063,
+            "received_ns": 2678720361,
+            "receipt": {
+              "id": 31,
+              "digest": "bf187a0bf4c93c691ff93a1921f04b390a1f31261c328ae53641e89f1fe6e497",
+              "queue_wait_ns": 605564885,
+              "work_wall_ns": 202374712,
+              "work_cpu_ns": 42696708
+            }
+          },
+          {
+            "id": 32,
+            "status": 503,
+            "target_ns": 1860000000,
+            "sent_ns": 1870291760,
+            "received_ns": 1870883194,
+            "receipt": {
+              "id": 32
+            }
+          },
+          {
+            "id": 33,
+            "status": 200,
+            "target_ns": 1920000000,
+            "sent_ns": 1922337009,
+            "received_ns": 2793535610,
+            "receipt": {
+              "id": 33,
+              "digest": "06ab8679219558fe5b1109b8670724bc4091dcbf4f2dbd91c91df5a943863ae9",
+              "queue_wait_ns": 755559789,
+              "work_wall_ns": 114784752,
+              "work_cpu_ns": 39374874
+            }
+          },
+          {
+            "id": 34,
+            "status": 503,
+            "target_ns": 1980000000,
+            "sent_ns": 1980396888,
+            "received_ns": 1981144482,
+            "receipt": {
+              "id": 34
+            }
+          },
+          {
+            "id": 35,
+            "status": 503,
+            "target_ns": 2040000000,
+            "sent_ns": 2045659977,
+            "received_ns": 2046368020,
+            "receipt": {
+              "id": 35
+            }
+          },
+          {
+            "id": 36,
+            "status": 200,
+            "target_ns": 2100000000,
+            "sent_ns": 2110252197,
+            "received_ns": 2992562295,
+            "receipt": {
+              "id": 36,
+              "digest": "b4bb3474c037e7632f9621925ba827d25d8bd4918e410f6e57944acc9fff6bc8",
+              "queue_wait_ns": 621256273,
+              "work_wall_ns": 199104242,
+              "work_cpu_ns": 48365167
+            }
+          },
+          {
+            "id": 37,
+            "status": 503,
+            "target_ns": 2160000000,
+            "sent_ns": 2163085259,
+            "received_ns": 2172424489,
+            "receipt": {
+              "id": 37
+            }
+          },
+          {
+            "id": 38,
+            "status": 503,
+            "target_ns": 2220000000,
+            "sent_ns": 2221187859,
+            "received_ns": 2221753884,
+            "receipt": {
+              "id": 38
+            }
+          },
+          {
+            "id": 39,
+            "status": 503,
+            "target_ns": 2280000000,
+            "sent_ns": 2281235981,
+            "received_ns": 2281728619,
+            "receipt": {
+              "id": 39
+            }
+          },
+          {
+            "id": 40,
+            "status": 200,
+            "target_ns": 2340000000,
+            "sent_ns": 2347427315,
+            "received_ns": 3195745999,
+            "receipt": {
+              "id": 40,
+              "digest": "5c5f9a219e1725429bc517b85942a80b01d78f99ed5fe6c7e2dd7b5aa2cfa352",
+              "queue_wait_ns": 644588107,
+              "work_wall_ns": 203120290,
+              "work_cpu_ns": 48790375
+            }
+          },
+          {
+            "id": 41,
+            "status": 503,
+            "target_ns": 2400000000,
+            "sent_ns": 2407778661,
+            "received_ns": 2408377801,
+            "receipt": {
+              "id": 41
+            }
+          },
+          {
+            "id": 42,
+            "status": 503,
+            "target_ns": 2460000000,
+            "sent_ns": 2460965413,
+            "received_ns": 2461576610,
+            "receipt": {
+              "id": 42
+            }
+          },
+          {
+            "id": 43,
+            "status": 200,
+            "target_ns": 2520000000,
+            "sent_ns": 2520228095,
+            "received_ns": 3394843024,
+            "receipt": {
+              "id": 43,
+              "digest": "660ba8be91656a5800157c6f0f604d92270724c776060fb26bf4c838f9d791ea",
+              "queue_wait_ns": 623138601,
+              "work_wall_ns": 199072451,
+              "work_cpu_ns": 46166541
+            }
+          },
+          {
+            "id": 44,
+            "status": 503,
+            "target_ns": 2580000000,
+            "sent_ns": 2580548754,
+            "received_ns": 2581061910,
+            "receipt": {
+              "id": 44
+            }
+          },
+          {
+            "id": 45,
+            "status": 503,
+            "target_ns": 2640000000,
+            "sent_ns": 2642880942,
+            "received_ns": 2643476995,
+            "receipt": {
+              "id": 45
+            }
+          },
+          {
+            "id": 46,
+            "status": 200,
+            "target_ns": 2700000000,
+            "sent_ns": 2700484170,
+            "received_ns": 3578246091,
+            "receipt": {
+              "id": 46,
+              "digest": "5529ed04dfc6612808f1fbec18d0bd6c2c3487508a3bc6f0107bc8070091dc9c",
+              "queue_wait_ns": 693675355,
+              "work_wall_ns": 183339575,
+              "work_cpu_ns": 40072124
+            }
+          },
+          {
+            "id": 47,
+            "status": 503,
+            "target_ns": 2760000000,
+            "sent_ns": 2764743195,
+            "received_ns": 2765293857,
+            "receipt": {
+              "id": 47
+            }
+          },
+          {
+            "id": 48,
+            "status": 200,
+            "target_ns": 2820000000,
+            "sent_ns": 2827617409,
+            "received_ns": 3788934619,
+            "receipt": {
+              "id": 48,
+              "digest": "76a709f2c340bc29c7975d4e12245a751638b405ac499310ae9542bbf37312a3",
+              "queue_wait_ns": 749984240,
+              "work_wall_ns": 210769963,
+              "work_cpu_ns": 49714374
+            }
+          },
+          {
+            "id": 49,
+            "status": 503,
+            "target_ns": 2880000000,
+            "sent_ns": 2881489244,
+            "received_ns": 2882034649,
+            "receipt": {
+              "id": 49
+            }
+          },
+          {
+            "id": 50,
+            "status": 503,
+            "target_ns": 2940000000,
+            "sent_ns": 2940874208,
+            "received_ns": 2970999117,
+            "receipt": {
+              "id": 50
+            }
+          },
+          {
+            "id": 51,
+            "status": 200,
+            "target_ns": 3000000000,
+            "sent_ns": 3000325881,
+            "received_ns": 3983671510,
+            "receipt": {
+              "id": 51,
+              "digest": "6b343f144f82adb9e5c677441dcdc2411dba8b8e0b12ed09fba8179eea76969c",
+              "queue_wait_ns": 788015608,
+              "work_wall_ns": 194760087,
+              "work_cpu_ns": 52810042
+            }
+          },
+          {
+            "id": 52,
+            "status": 503,
+            "target_ns": 3060000000,
+            "sent_ns": 3068099438,
+            "received_ns": 3068627822,
+            "receipt": {
+              "id": 52
+            }
+          },
+          {
+            "id": 53,
+            "status": 503,
+            "target_ns": 3120000000,
+            "sent_ns": 3123611870,
+            "received_ns": 3124322779,
+            "receipt": {
+              "id": 53
+            }
+          },
+          {
+            "id": 54,
+            "status": 503,
+            "target_ns": 3180000000,
+            "sent_ns": 3190231244,
+            "received_ns": 3190911238,
+            "receipt": {
+              "id": 54
+            }
+          },
+          {
+            "id": 55,
+            "status": 200,
+            "target_ns": 3240000000,
+            "sent_ns": 3240657636,
+            "received_ns": 4189428951,
+            "receipt": {
+              "id": 55,
+              "digest": "92486f5b4cd584ff92b41fafdddcf05eb9719248410e4d093e5b7066d57fbec8",
+              "queue_wait_ns": 719505505,
+              "work_wall_ns": 205630405,
+              "work_cpu_ns": 54408374
+            }
+          },
+          {
+            "id": 56,
+            "status": 503,
+            "target_ns": 3300000000,
+            "sent_ns": 3307131699,
+            "received_ns": 3374069480,
+            "receipt": {
+              "id": 56
+            }
+          },
+          {
+            "id": 57,
+            "status": 503,
+            "target_ns": 3360000000,
+            "sent_ns": 3370426242,
+            "received_ns": 3374255009,
+            "receipt": {
+              "id": 57
+            }
+          },
+          {
+            "id": 58,
+            "status": 200,
+            "target_ns": 3420000000,
+            "sent_ns": 3429541270,
+            "received_ns": 4473408207,
+            "receipt": {
+              "id": 58,
+              "digest": "80e6aa92ddde4e72812b4cd2d2fbc464e4a328af1c07c7fb390c1c015eaa21ae",
+              "queue_wait_ns": 759217920,
+              "work_wall_ns": 283946679,
+              "work_cpu_ns": 55509959
+            }
+          },
+          {
+            "id": 59,
+            "status": 503,
+            "target_ns": 3480000000,
+            "sent_ns": 3483369201,
+            "received_ns": 3483989023,
+            "receipt": {
+              "id": 59
+            }
+          },
+          {
+            "id": 60,
+            "status": 503,
+            "target_ns": 3540000000,
+            "sent_ns": 3550296425,
+            "received_ns": 3550972235,
+            "receipt": {
+              "id": 60
+            }
+          },
+          {
+            "id": 61,
+            "status": 200,
+            "target_ns": 3600000000,
+            "sent_ns": 3608139289,
+            "received_ns": 4681483615,
+            "receipt": {
+              "id": 61,
+              "digest": "77ee20b1221688ee98a3285adc013462fb8577fa9e9c651acef367aefd9d728e",
+              "queue_wait_ns": 807754972,
+              "work_wall_ns": 207952296,
+              "work_cpu_ns": 51840042
+            }
+          },
+          {
+            "id": 62,
+            "status": 503,
+            "target_ns": 3660000000,
+            "sent_ns": 3665058698,
+            "received_ns": 3665872140,
+            "receipt": {
+              "id": 62
+            }
+          },
+          {
+            "id": 63,
+            "status": 503,
+            "target_ns": 3720000000,
+            "sent_ns": 3723699359,
+            "received_ns": 3724544549,
+            "receipt": {
+              "id": 63
+            }
+          },
+          {
+            "id": 64,
+            "status": 503,
+            "target_ns": 3780000000,
+            "sent_ns": 3780193941,
+            "received_ns": 3780932580,
+            "receipt": {
+              "id": 64
+            }
+          },
+          {
+            "id": 65,
+            "status": 200,
+            "target_ns": 3840000000,
+            "sent_ns": 3850344977,
+            "received_ns": 4886794297,
+            "receipt": {
+              "id": 65,
+              "digest": "05febac1b818a6b7b2047f4910a0c61abae99aa7d7ffa6bf85cb7daf3e2330f1",
+              "queue_wait_ns": 816527947,
+              "work_wall_ns": 205476347,
+              "work_cpu_ns": 53836083
+            }
+          },
+          {
+            "id": 66,
+            "status": 503,
+            "target_ns": 3900000000,
+            "sent_ns": 3908922683,
+            "received_ns": 3909567454,
+            "receipt": {
+              "id": 66
+            }
+          },
+          {
+            "id": 67,
+            "status": 503,
+            "target_ns": 3960000000,
+            "sent_ns": 3965961159,
+            "received_ns": 3966620323,
+            "receipt": {
+              "id": 67
+            }
+          },
+          {
+            "id": 68,
+            "status": 200,
+            "target_ns": 4020000000,
+            "sent_ns": 4027780073,
+            "received_ns": 5091178579,
+            "receipt": {
+              "id": 68,
+              "digest": "72dbfedea82b84b80f65c580b37ad1c57313b9ccedf272b0f7f59bbc3c1ee608",
+              "queue_wait_ns": 858502707,
+              "work_wall_ns": 204291500,
+              "work_cpu_ns": 52425833
+            }
+          },
+          {
+            "id": 69,
+            "status": 503,
+            "target_ns": 4080000000,
+            "sent_ns": 4081975760,
+            "received_ns": 4082653029,
+            "receipt": {
+              "id": 69
+            }
+          },
+          {
+            "id": 70,
+            "status": 503,
+            "target_ns": 4140000000,
+            "sent_ns": 4150362406,
+            "received_ns": 4151130790,
+            "receipt": {
+              "id": 70
+            }
+          },
+          {
+            "id": 71,
+            "status": 200,
+            "target_ns": 4200000000,
+            "sent_ns": 4200262139,
+            "received_ns": 5374376698,
+            "receipt": {
+              "id": 71,
+              "digest": "14b86f3d56c84bcf3f8b1d9c8b020aef9e44014de36a345a3b3e99d0b6cb54d1",
+              "queue_wait_ns": 890324699,
+              "work_wall_ns": 283067374,
+              "work_cpu_ns": 57040833
+            }
+          },
+          {
+            "id": 72,
+            "status": 503,
+            "target_ns": 4260000000,
+            "sent_ns": 4270215842,
+            "received_ns": 4270808589,
+            "receipt": {
+              "id": 72
+            }
+          },
+          {
+            "id": 73,
+            "status": 503,
+            "target_ns": 4320000000,
+            "sent_ns": 4330293438,
+            "received_ns": 4330837331,
+            "receipt": {
+              "id": 73
+            }
+          },
+          {
+            "id": 74,
+            "status": 503,
+            "target_ns": 4380000000,
+            "sent_ns": 4383296706,
+            "received_ns": 4383935719,
+            "receipt": {
+              "id": 74
+            }
+          },
+          {
+            "id": 75,
+            "status": 503,
+            "target_ns": 4440000000,
+            "sent_ns": 4450232342,
+            "received_ns": 4450914731,
+            "receipt": {
+              "id": 75
+            }
+          },
+          {
+            "id": 76,
+            "status": 200,
+            "target_ns": 4500000000,
+            "sent_ns": 4502796496,
+            "received_ns": 5564535953,
+            "receipt": {
+              "id": 76,
+              "digest": "c7a5cb83c24237703d84e27f4e82d3200377dfa64723f0fd4d6fd883178108b3",
+              "queue_wait_ns": 870812291,
+              "work_wall_ns": 190159677,
+              "work_cpu_ns": 44963666
+            }
+          },
+          {
+            "id": 77,
+            "status": 503,
+            "target_ns": 4560000000,
+            "sent_ns": 4567043826,
+            "received_ns": 4567551665,
+            "receipt": {
+              "id": 77
+            }
+          },
+          {
+            "id": 78,
+            "status": 503,
+            "target_ns": 4620000000,
+            "sent_ns": 4625441141,
+            "received_ns": 4626066042,
+            "receipt": {
+              "id": 78
+            }
+          },
+          {
+            "id": 79,
+            "status": 200,
+            "target_ns": 4680000000,
+            "sent_ns": 4681250367,
+            "received_ns": 5683322851,
+            "receipt": {
+              "id": 79,
+              "digest": "46996056d48cb4801a43ad3fd92400f532c889f848ec6aa2e89e3a88ad0848bd",
+              "queue_wait_ns": 882669159,
+              "work_wall_ns": 118853730,
+              "work_cpu_ns": 39166416
+            }
+          },
+          {
+            "id": 80,
+            "status": 503,
+            "target_ns": 4740000000,
+            "sent_ns": 4750333953,
+            "received_ns": 4767427515,
+            "receipt": {
+              "id": 80
+            }
+          },
+          {
+            "id": 81,
+            "status": 503,
+            "target_ns": 4800000000,
+            "sent_ns": 4810361668,
+            "received_ns": 4810945142,
+            "receipt": {
+              "id": 81
+            }
+          },
+          {
+            "id": 82,
+            "status": 503,
+            "target_ns": 4860000000,
+            "sent_ns": 4870232312,
+            "received_ns": 4870732767,
+            "receipt": {
+              "id": 82
+            }
+          },
+          {
+            "id": 83,
+            "status": 200,
+            "target_ns": 4920000000,
+            "sent_ns": 4927640023,
+            "received_ns": 5880413206,
+            "receipt": {
+              "id": 83,
+              "digest": "119269f39a899fee80514b863a0a6106ee9859c1984262ced79150aebddfcbb1",
+              "queue_wait_ns": 718419054,
+              "work_wall_ns": 196942048,
+              "work_cpu_ns": 43868083
+            }
+          },
+          {
+            "id": 84,
+            "status": 503,
+            "target_ns": 4980000000,
+            "sent_ns": 4984599052,
+            "received_ns": 4985098631,
+            "receipt": {
+              "id": 84
+            }
+          },
+          {
+            "id": 85,
+            "status": 503,
+            "target_ns": 5040000000,
+            "sent_ns": 5042644555,
+            "received_ns": 5043315180,
+            "receipt": {
+              "id": 85
+            }
+          },
+          {
+            "id": 86,
+            "status": 200,
+            "target_ns": 5100000000,
+            "sent_ns": 5101587631,
+            "received_ns": 6092184702,
+            "receipt": {
+              "id": 86,
+              "digest": "01d0205f86998654f3e77944dafc3edbf9e1a692f0c10f82ec25400fbec3e581",
+              "queue_wait_ns": 778079195,
+              "work_wall_ns": 211792731,
+              "work_cpu_ns": 54371541
+            }
+          },
+          {
+            "id": 87,
+            "status": 503,
+            "target_ns": 5160000000,
+            "sent_ns": 5170366172,
+            "received_ns": 5171090864,
+            "receipt": {
+              "id": 87
+            }
+          },
+          {
+            "id": 88,
+            "status": 503,
+            "target_ns": 5220000000,
+            "sent_ns": 5230228598,
+            "received_ns": 5264991729,
+            "receipt": {
+              "id": 88
+            }
+          },
+          {
+            "id": 89,
+            "status": 503,
+            "target_ns": 5280000000,
+            "sent_ns": 5282147993,
+            "received_ns": 5282643901,
+            "receipt": {
+              "id": 89
+            }
+          },
+          {
+            "id": 90,
+            "status": 503,
+            "target_ns": 5340000000,
+            "sent_ns": 5343058888,
+            "received_ns": 5343719333,
+            "receipt": {
+              "id": 90
+            }
+          },
+          {
+            "id": 91,
+            "status": 200,
+            "target_ns": 5400000000,
+            "sent_ns": 5401287909,
+            "received_ns": 6286547008,
+            "receipt": {
+              "id": 91,
+              "digest": "2d379fec5822b3bf32b607c57ea6d28a98266dfdefaa496bf0861052ac7203d6",
+              "queue_wait_ns": 690190053,
+              "work_wall_ns": 194312453,
+              "work_cpu_ns": 51273832
+            }
+          },
+          {
+            "id": 92,
+            "status": 503,
+            "target_ns": 5460000000,
+            "sent_ns": 5468846501,
+            "received_ns": 5469421831,
+            "receipt": {
+              "id": 92
+            }
+          },
+          {
+            "id": 93,
+            "status": 503,
+            "target_ns": 5520000000,
+            "sent_ns": 5520807413,
+            "received_ns": 5521366806,
+            "receipt": {
+              "id": 93
+            }
+          },
+          {
+            "id": 94,
+            "status": 200,
+            "target_ns": 5580000000,
+            "sent_ns": 5582400618,
+            "received_ns": 6487615328,
+            "receipt": {
+              "id": 94,
+              "digest": "9dc6e96f17cd49782584387605a53ffa998eac7fd87ae6f7f8c5242dbfd6a48e",
+              "queue_wait_ns": 703493549,
+              "work_wall_ns": 201056185,
+              "work_cpu_ns": 54117958
+            }
+          },
+          {
+            "id": 95,
+            "status": 503,
+            "target_ns": 5640000000,
+            "sent_ns": 5640286242,
+            "received_ns": 5667650913,
+            "receipt": {
+              "id": 95
+            }
+          },
+          {
+            "id": 96,
+            "status": 200,
+            "target_ns": 5700000000,
+            "sent_ns": 5704038215,
+            "received_ns": 6692593514,
+            "receipt": {
+              "id": 96,
+              "digest": "84a78e23c6c9e38de3becd4fc625e3823f2142dffbf1620ae5e8c953341e25f0",
+              "queue_wait_ns": 782890402,
+              "work_wall_ns": 204940391,
+              "work_cpu_ns": 50307459
+            }
+          },
+          {
+            "id": 97,
+            "status": 503,
+            "target_ns": 5760000000,
+            "sent_ns": 5760379781,
+            "received_ns": 5761034416,
+            "receipt": {
+              "id": 97
+            }
+          },
+          {
+            "id": 98,
+            "status": 503,
+            "target_ns": 5820000000,
+            "sent_ns": 5825979934,
+            "received_ns": 5826585884,
+            "receipt": {
+              "id": 98
+            }
+          },
+          {
+            "id": 99,
+            "status": 200,
+            "target_ns": 5880000000,
+            "sent_ns": 5880200237,
+            "received_ns": 6975693962,
+            "receipt": {
+              "id": 99,
+              "digest": "3ffb3c6b7cd0b957589bd49a85b6cadaf24cad67454fbdfefb8e8e82006b1171",
+              "queue_wait_ns": 811655712,
+              "work_wall_ns": 282951102,
+              "work_cpu_ns": 52501542
+            }
+          },
+          {
+            "id": 100,
+            "status": 503,
+            "target_ns": 5940000000,
+            "sent_ns": 5942496344,
+            "received_ns": 5943125030,
+            "receipt": {
+              "id": 100
+            }
+          }
+        ],
+        "linux_kernel": "6.8.0-100-generic",
+        "python_version": "3.11.15",
+        "requested_cpus": 0.25
+      }
+    }
+  }
+}

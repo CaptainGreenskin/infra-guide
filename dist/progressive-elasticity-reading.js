@@ -109,5 +109,20 @@
  });
  same('global code bytes/order',pres(old.join('')),pres(bodies.join('')));
  bodies.forEach((body,i)=>a.sections[i][1]=body);
- a.updated='2026.11.09';a.minutes=22;
+ a.sections[7][1]+=
+  '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
+  p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+
+  trainingFigure('cpu-quota-http','同一到达计划下的两次观察。服务端配额降低后，有 65 次在入口被拒，接纳的 35 次随后全部完成。')+
+  p('两个容器通过隔离网络里的回环地址通信，客户端在自己的 cgroup 中计时。cgroup 是 Linux 给一组进程计量和限制资源的机制。服务端的 <code>cpu.max</code> 从 <code>100000 100000</code> 改为 <code>25000 100000</code>，周期都是 100,000 微秒，每周期可用的 CPU 时间从 100,000 降到 25,000 微秒。两个设置分别相当于 1 核和 0.25 核的 CPU 时间预算。')+
+  table(['本次记录','1 CPU','0.25 CPU'],[
+   ['发出 / 完成 / 拒绝','100 / 100 / 0','100 / 35 / 65'],
+   ['成功请求 p95 总耗时','39.4 ms','1,171.5 ms'],
+   ['成功请求 p95 排队时间','约 0.06 ms','890.3 ms'],
+   ['服务端限额触发的周期数变化','0','70']
+  ])+
+  p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
+  p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
+  '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
+ a.updated='2026.11.10';a.minutes=22;
+
 })();

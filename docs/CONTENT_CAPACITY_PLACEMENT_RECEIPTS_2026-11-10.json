@@ -1,0 +1,81 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "6b871167c55bf91e3324ac1f3260b137d932c0ad",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_READABLE_ENTRY_2026-11-09.json": "be7043b1615c219e04c1b4ff13155ac7242f819a51895e6b5023169c6a8c0102"
+  },
+  "knowledge_revisions": [
+    {
+      "id": "queue-backpressure",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "46ef381b72233b554af13ca8ef987aa1a4700078f6cdd02cca66960f92f8edd5",
+      "reviewed_content_sha256": "18e28abf4adbd344dcc7cbcf22d5112cda417df029ac026aa94a22c06337debc",
+      "scope": "Connect the existing field definition to its exact native case.",
+      "observation": "The existing explanation, related chapters and graph relationships are preserved."
+    },
+    {
+      "id": "sv-batching",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "b594a10d7d4377117c71ab975814de1a723fc89a29ec5cc19e67ab3ae07edc50",
+      "reviewed_content_sha256": "5b3c631cc81179ae31a6c6ebe35a01aae31e1febda79ecb5022df352ada77890",
+      "scope": "Connect the existing field definition to its exact native case.",
+      "observation": "The existing explanation, related chapters and graph relationships are preserved."
+    },
+    {
+      "id": "ag-tools",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "165105086b61084d993b53ccd00cc74ecef4e5ac279c2f6bd2d71970206686ac",
+      "reviewed_content_sha256": "7ccad51301243354b0295487c66737c65ddb265bbfab5524049b21789e5f718b",
+      "scope": "Connect the existing field definition to its exact native case.",
+      "observation": "The existing explanation, related chapters and graph relationships are preserved."
+    }
+  ],
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "f8706a19b8fe3a83093a78a1ce8a7c53eb99a6b1b09100b67e7fa2ddc4846d87",
+      "reviewed_content_sha256": "14f677a1dd5e65132047708df33fc46d6f404b70484ccb8e4b19c686c85350a3",
+      "scope": "Follow a durable report through post-commit output validation and recovery by the original operation key.",
+      "observation": "Actual HTTP 200 responses are independently compared with the host acceptance state and the receiver databases, which contain one effect per run.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "elasticity",
+      "reviewed_at": "2026-11-10",
+      "scope": "Connect queue conservation to isolated HTTP requests under two native Linux CPU quotas.",
+      "observation": "The archived run observed 100 and 35 completions, 0 and 65 refusals, and separately recomputed client percentiles and cgroup counter deltas.",
+      "reviewed_content_sha256": "71d893a1d6d3379149da74e25a0dea46da27d661ac03a92c06a719a8339dec5c",
+      "record": "dist/labs/cpu-quota-http/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-10",
+      "scope": "Compare TP8 with two TP4 replicas using a per-rank byte ledger and per-replica admission, then run a small grouped attention layer on four CPU ranks.",
+      "observation": "The budget and actual Gloo partitions are verified independently. Eight-GPU serving speed remains a target-device comparison.",
+      "reviewed_content_sha256": "5375c7f0d23be89f802ffd10e33cb7725930d7ff86a841d7535769b4cebf6af4",
+      "record": "dist/labs/inference-placement/validation.json"
+    },
+    {
+      "chapter": "mcp-protocol",
+      "reviewed_at": "2026-11-10",
+      "scope": "Follow a durable report through post-commit output validation and recovery by the original operation key.",
+      "observation": "Actual HTTP 200 responses are independently compared with the host acceptance state and the receiver databases, which contain one effect per run.",
+      "reviewed_content_sha256": "14f677a1dd5e65132047708df33fc46d6f404b70484ccb8e4b19c686c85350a3",
+      "record": "dist/labs/mcp-result-receipt/validation.json"
+    }
+  ]
+}

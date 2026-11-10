@@ -328,7 +328,12 @@
     },
     {
       "id": "elasticity",
-      "targets": []
+      "targets": [
+        "native-cpu-quota-http"
+      ],
+      "visible_targets": [
+        "native-cpu-quota-http"
+      ]
     },
     {
       "id": "slo",
@@ -707,7 +712,8 @@
         "vllm-v1-request-path",
         "native-inference-queue",
         "vllm-block-lifecycle",
-        "native-pd-split"
+        "native-pd-split",
+        "tp-placement"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -727,7 +733,8 @@
         "subsection-6-38l2a0",
         "subsection-6-1i98zxe",
         "subsection-6-1ajl0y9",
-        "native-inference-queue"
+        "native-inference-queue",
+        "tp-placement"
       ]
     },
     {
@@ -996,10 +1003,12 @@
         "mcp-model-tool-observation",
         "mcp-http-cancellation-run",
         "native-mcp-http-authorization",
-        "native-mcp-catalog-refresh"
+        "native-mcp-catalog-refresh",
+        "native-mcp-result-receipt"
       ],
       "visible_targets": [
         "native-mcp-catalog-refresh",
+        "native-mcp-result-receipt",
         "mcp-http-cancellation-run",
         "mcp-model-tool-observation",
         "native-mcp-http-authorization"

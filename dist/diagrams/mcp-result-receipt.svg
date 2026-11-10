@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 504" role="img" aria-labelledby="title desc">
+  <title id="title">接收方先提交，宿主拒绝响应后按原操作查回执</title>
+  <desc id="desc">同一发布目标 report-A/v3 总额 42。接收方先提交一份报告和回执，两种坏响应都为 HTTP 200。字符串金额在 SDK 被拒，合法但属于 v2 的回执在宿主被拒。两路均只读查询原操作，最后仍一份报告。</desc>
+  <metadata>{"record":"labs/mcp-result-receipt/validation.json","operation_id":"report-A/v3:publish","total":42,"publish_http":200,"recovery_calls":["lookup_receipt"]}</metadata>
+  <rect width="720" height="504" rx="16" fill="#f6f8fc"/>
+  <g font-family="system-ui, sans-serif" fill="#162b44" font-size="22">
+    <text x="24" y="41" font-weight="700">报告已写入，响应却不能接纳</text>
+    <rect x="24" y="60" width="672" height="87" rx="10" fill="#e2f4ec" stroke="#8ebfb3"/>
+    <text x="46" y="94" font-weight="700">接收方提交 report-A/v3</text>
+    <text x="46" y="126">合计 42，事务内各写一份报告和回执</text>
+    <path d="M360 147v24m0 0H184v26m176-26h176v26" fill="none" stroke="#637e9f" stroke-width="3"/>
+    <text x="360" y="193" text-anchor="middle" font-size="18" fill="#456080">两种 HTTP 200</text>
+    <rect x="24" y="207" width="320" height="108" rx="10" fill="#ffefe3" stroke="#d6a481"/>
+    <text x="44" y="241" font-weight="700">金额给成字符串 “42”</text>
+    <text x="44" y="275">SDK 拒绝结构化结果</text>
+    <text x="44" y="300" font-size="18" fill="#5b5261">宿主仍待确认</text>
+    <rect x="376" y="207" width="320" height="108" rx="10" fill="#ffefe3" stroke="#d6a481"/>
+    <text x="396" y="241" font-weight="700">金额为整数，操作是 v2</text>
+    <text x="396" y="275">宿主拒绝错误操作键</text>
+    <text x="396" y="300" font-size="18" fill="#5b5261">宿主仍待确认</text>
+    <path d="M184 315v20h176m176-20v20H360m0 0v27m-7-8 7 8 7-8" fill="none" stroke="#637e9f" stroke-width="3"/>
+    <rect x="24" y="362" width="672" height="115" rx="10" fill="#e2edff" stroke="#9bb9e3"/>
+    <text x="46" y="400" font-weight="700">只读查询原操作 report-A/v3:publish</text>
+    <text x="46" y="433">核对身份与合计，接纳原回执</text>
+    <text x="46" y="462">接收方仍然只有一份报告和一份回执</text>
+  </g>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 374" role="img" aria-labelledby="title desc">
+  <title id="title">相同 HTTP 请求计划下，两档 CPU 配额的完成和拒绝</title>
+  <desc id="desc">客户端每 60 毫秒发一次，共 100 次。服务端有四个等待位置和一个工作线程。1 CPU 完成 100 次、拒绝 0 次，0.25 CPU 完成 35 次、拒绝 65 次。两档的服务端限额触发周期为 0 和 70。</desc>
+  <metadata>{"record":"labs/cpu-quota-http/validation.json","offered":100,"completed":[100,35],"rejected":[0,65]}</metadata>
+  <rect width="720" height="374" rx="16" fill="#f6f8fc"/>
+  <g font-family="system-ui, sans-serif" fill="#182d45" font-size="22">
+    <text x="24" y="40" font-weight="700">相同到达计划，只调整服务端 CPU 配额</text>
+    <rect x="24" y="60" width="672" height="57" rx="9" fill="#e5eeff" stroke="#abbee0"/>
+    <text x="360" y="96" text-anchor="middle">每 60 ms 发一次 → 最多等 4 个 → 1 个执行中</text>
+    <text x="24" y="156" font-weight="700">1 CPU</text>
+    <text x="696" y="156" text-anchor="end">限额触发 0 个周期</text>
+    <rect x="24" y="172" width="672" height="45" rx="7" fill="#d9efe8"/>
+    <text x="42" y="202" font-weight="700">完成 100 次</text>
+    <text x="678" y="202" text-anchor="end">拒绝 0 次</text>
+    <text x="24" y="263" font-weight="700">0.25 CPU</text>
+    <text x="696" y="263" text-anchor="end">限额触发 70 个周期</text>
+    <rect x="24" y="279" width="235.2" height="45" rx="7" fill="#d9efe8"/>
+    <rect x="259.2" y="279" width="436.8" height="45" rx="7" fill="#ffe6d6"/>
+    <text x="42" y="309" font-weight="700">完成 35 次</text>
+    <text x="279" y="309" font-weight="700">拒绝 65 次</text>
+    <text x="24" y="352" font-size="20" fill="#485e78">每档 100 次请求。图中数值来自本机这一次记录。</text>
+  </g>
+</svg>

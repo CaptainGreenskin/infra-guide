@@ -1,0 +1,706 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "source_sha256": {
+    "README.md": "6ba635568b912e85ced20b0a16a36791da1f436472d19a9bddf66c07470f1638",
+    "placement_budget.py": "104319adf4254a2ac76bd651738ffbcfee1746e0ae6bf58435ff21512742191c",
+    "replica_gloo.py": "46acdcb697879a8ca82522ca636fd8028d4912df61d6d7f8aa10329ccc0e5e14",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "report": {
+    "budget": {
+      "fixture": {
+        "cards": 8,
+        "card_gib": 48,
+        "parameters": 70000000000,
+        "layers": 80,
+        "kv_heads": 8,
+        "head_width": 128,
+        "weight_bytes_per_element": 2,
+        "kv_bytes_per_element": 2,
+        "reserve_gib_per_rank": 4,
+        "block_tokens": 16,
+        "prompt_positions": 7168,
+        "max_output_tokens": 1024,
+        "reserved_positions": 8191,
+        "cold_request_blocks": 512,
+        "prefix_positions_on_a": 6144
+      },
+      "placements": {
+        "tp8": {
+          "tp": 8,
+          "replicas": 1,
+          "weight_bytes_per_rank": 17500000000,
+          "kv_heads_per_rank": 1,
+          "kv_bytes_per_position": 40960,
+          "kv_bytes_per_block": 655360,
+          "remaining_bytes_per_rank": 29744640256,
+          "weights_and_reserve_fit": true,
+          "kv_blocks_per_rank": 45386,
+          "cold_requests_per_replica": 88,
+          "cold_requests_total": 88
+        },
+        "tp4_x2": {
+          "tp": 4,
+          "replicas": 2,
+          "weight_bytes_per_rank": 35000000000,
+          "kv_heads_per_rank": 2,
+          "kv_bytes_per_position": 81920,
+          "kv_bytes_per_block": 1310720,
+          "remaining_bytes_per_rank": 12244640256,
+          "weights_and_reserve_fit": true,
+          "kv_blocks_per_rank": 9341,
+          "cold_requests_per_replica": 18,
+          "cold_requests_total": 36
+        }
+      },
+      "smaller_card_control": {
+        "tp": 4,
+        "replicas": 2,
+        "weight_bytes_per_rank": 35000000000,
+        "kv_heads_per_rank": 2,
+        "kv_bytes_per_position": 81920,
+        "kv_bytes_per_block": 1310720,
+        "remaining_bytes_per_rank": -4935228928,
+        "weights_and_reserve_fit": false,
+        "kv_blocks_per_rank": 0,
+        "cold_requests_per_replica": 0,
+        "cold_requests_total": 0
+      },
+      "routing": {
+        "cold_only": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 96,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            },
+            {
+              "replica": "B",
+              "free_blocks": 640,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": true
+            }
+          ],
+          "action": "route",
+          "selected": "B"
+        },
+        "warm_only": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 160,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 0,
+              "eligible": true
+            },
+            {
+              "replica": "B",
+              "free_blocks": 480,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            }
+          ],
+          "action": "route",
+          "selected": "A"
+        },
+        "neither_fits": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 100,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            },
+            {
+              "replica": "B",
+              "free_blocks": 500,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            }
+          ],
+          "action": "wait",
+          "selected": null
+        },
+        "deadline_exceeded": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 100,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            },
+            {
+              "replica": "B",
+              "free_blocks": 500,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": false
+            }
+          ],
+          "action": "reject",
+          "selected": null
+        },
+        "prefer_warm": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 160,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 0,
+              "eligible": true
+            },
+            {
+              "replica": "B",
+              "free_blocks": 640,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": true
+            }
+          ],
+          "action": "route",
+          "selected": "A"
+        },
+        "warm_queue_longer": {
+          "replicas": [
+            {
+              "replica": "A",
+              "free_blocks": 160,
+              "shared_blocks": 384,
+              "new_blocks": 128,
+              "new_prefill_positions": 1024,
+              "queued_prefill_positions": 8192,
+              "eligible": true
+            },
+            {
+              "replica": "B",
+              "free_blocks": 640,
+              "shared_blocks": 0,
+              "new_blocks": 512,
+              "new_prefill_positions": 7168,
+              "queued_prefill_positions": 0,
+              "eligible": true
+            }
+          ],
+          "action": "route",
+          "selected": "B"
+        }
+      }
+    },
+    "cpu_gloo": {
+      "backend": "gloo",
+      "device": "cpu",
+      "world_size": 4,
+      "python": "3.12.13",
+      "torch": "2.5.1",
+      "atol": 1e-12,
+      "cases": {
+        "one_tp4": {
+          "groups": [
+            {
+              "ranks": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "requests": [
+                "A1",
+                "B1",
+                "A2"
+              ]
+            }
+          ],
+          "ranks": [
+            {
+              "rank": 0,
+              "kv_heads": [
+                0
+              ],
+              "query_heads": [
+                0,
+                1
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    1,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.15633253381649587,
+                      -1.4133497857255823,
+                      2.083350862807529,
+                      0.1471785122535368,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    1,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777684,
+                      -0.04812892147256354,
+                      -0.06520250771892593,
+                      0.13721296518838208,
+                      0.24761348914679174,
+                      -0.21325561563287507
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221497,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062745
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 1,
+              "kv_heads": [
+                1
+              ],
+              "query_heads": [
+                2,
+                3
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    1,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.15633253381649587,
+                      -1.4133497857255823,
+                      2.083350862807529,
+                      0.1471785122535368,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    1,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777684,
+                      -0.04812892147256354,
+                      -0.06520250771892593,
+                      0.13721296518838208,
+                      0.24761348914679174,
+                      -0.21325561563287507
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221497,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062745
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 2,
+              "kv_heads": [
+                2
+              ],
+              "query_heads": [
+                4,
+                5
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    1,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.15633253381649587,
+                      -1.4133497857255823,
+                      2.083350862807529,
+                      0.1471785122535368,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    1,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777684,
+                      -0.04812892147256354,
+                      -0.06520250771892593,
+                      0.13721296518838208,
+                      0.24761348914679174,
+                      -0.21325561563287507
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221497,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062745
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 3,
+              "kv_heads": [
+                3
+              ],
+              "query_heads": [
+                6,
+                7
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    1,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.15633253381649587,
+                      -1.4133497857255823,
+                      2.083350862807529,
+                      0.1471785122535368,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    1,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777684,
+                      -0.04812892147256354,
+                      -0.06520250771892593,
+                      0.13721296518838208,
+                      0.24761348914679174,
+                      -0.21325561563287507
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    1,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221497,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062745
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "max_abs_error": 8.881784197001252e-16
+        },
+        "two_tp2": {
+          "groups": [
+            {
+              "ranks": [
+                0,
+                1
+              ],
+              "requests": [
+                "A1",
+                "A2"
+              ]
+            },
+            {
+              "ranks": [
+                2,
+                3
+              ],
+              "requests": [
+                "B1"
+              ]
+            }
+          ],
+          "ranks": [
+            {
+              "rank": 0,
+              "kv_heads": [
+                0,
+                1
+              ],
+              "query_heads": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    2,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.1563325338164959,
+                      -1.4133497857255823,
+                      2.0833508628075292,
+                      0.1471785122535369,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    2,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221495,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062747
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 1,
+              "kv_heads": [
+                2,
+                3
+              ],
+              "query_heads": [
+                4,
+                5,
+                6,
+                7
+              ],
+              "calls": [
+                {
+                  "request": "A1",
+                  "kv_shape_each": [
+                    2,
+                    3,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.1563325338164959,
+                      -1.4133497857255823,
+                      2.0833508628075292,
+                      0.1471785122535369,
+                      -2.0335316046644074,
+                      1.3661248127319947
+                    ]
+                  ]
+                },
+                {
+                  "request": "A2",
+                  "kv_shape_each": [
+                    2,
+                    4,
+                    2
+                  ],
+                  "output": [
+                    [
+                      -0.748004760420038,
+                      -1.1043514422835696,
+                      1.8760616962221495,
+                      -0.4349369180769822,
+                      -1.0747917576869033,
+                      1.2361389338062747
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 2,
+              "kv_heads": [
+                0,
+                1
+              ],
+              "query_heads": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "calls": [
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    2,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777682,
+                      -0.04812892147256356,
+                      -0.06520250771892591,
+                      0.13721296518838208,
+                      0.24761348914679177,
+                      -0.21325561563287504
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "rank": 3,
+              "kv_heads": [
+                2,
+                3
+              ],
+              "query_heads": [
+                4,
+                5,
+                6,
+                7
+              ],
+              "calls": [
+                {
+                  "request": "B1",
+                  "kv_shape_each": [
+                    2,
+                    5,
+                    2
+                  ],
+                  "output": [
+                    [
+                      0.14878223262777682,
+                      -0.04812892147256356,
+                      -0.06520250771892591,
+                      0.13721296518838208,
+                      0.24761348914679177,
+                      -0.21325561563287504
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "max_abs_error": 6.661338147750939e-16
+        }
+      }
+    }
+  }
+}

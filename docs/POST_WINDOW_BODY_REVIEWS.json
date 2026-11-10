@@ -5635,6 +5635,42 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "0ad7b08098b41f9edb39821a44898b5d4991a084cc48dd1cdf3a94005b2f4372",
+      "reviewed_content_sha256": "71d893a1d6d3379149da74e25a0dea46da27d661ac03a92c06a719a8339dec5c",
+      "scope": "Connect queue conservation to isolated HTTP requests under two native Linux CPU quotas.",
+      "observation": "The archived run observed 100 and 35 completions, 0 and 65 refusals, and separately recomputed client percentiles and cgroup counter deltas.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-10",
+      "previous_content_sha256": "cd037042016326dcca0b8ddad0047e2dfd2579e394833df68cd9a39de37053f6",
+      "reviewed_content_sha256": "5375c7f0d23be89f802ffd10e33cb7725930d7ff86a841d7535769b4cebf6af4",
+      "scope": "Compare TP8 with two TP4 replicas using a per-rank byte ledger and per-replica admission, then run a small grouped attention layer on four CPU ranks.",
+      "observation": "The budget and actual Gloo partitions are verified independently. Eight-GPU serving speed remains a target-device comparison.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

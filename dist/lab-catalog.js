@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
+ 'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
+ 'mcp-result-receipt':{folder:'mcp-result-receipt',title:'写入已提交，按原操作查询 MCP 回执'},
  'postgres-pitr':{folder:'postgres-pitr',title:'同一份 PostgreSQL 基础备份与两种 WAL 恢复目标'},
  'sandbox-egress':{folder:'sandbox-egress',title:'工作进程、受控出口与私有对象服务'},
  'torch-compile-graph':{folder:'torch-compile-graph',title:'TorchDynamo 断图、张量条件与输入守卫'},
@@ -322,6 +325,20 @@ labLearningCatalog.push(
   files:['sandbox_egress.py','fixture.json'],env:'本机 Linux Docker · Python 容器',kind:'实跑记录',
   observe:'复跑沙箱直连拒绝、代理读取本租户和跨租户拒绝，对照后端实际访问。',
   scope:'真实 Docker 网络和本机 HTTP 请求。生产网络插件与服务身份另行验收。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-cpu-quota-http',track:'cloud',stage:2,title:'CPU 配额收紧后，100 次请求去了哪里',chapter:'elasticity',anchor:'native-cpu-quota-http',pack:'cpu-quota-http',
+  files:['cpu_quota_http.py','workload.py'],env:'本机 Linux Docker · cgroup v2 · 已缓存 Python 镜像',kind:'真实 HTTP 与 CPU 限额计数',
+  observe:'同一发送计划，对照实际 CPU 配额、HTTP 完成和拒绝以及成功请求的排队时长。',
+  scope:'一个工作线程、四个等待位置、固定 CPU 工作量。云实例容量、节点扩容和账单另行验证。'},
+ {id:'ai-inference-placement',track:'ai',stage:2,title:'八张卡配一组 TP8，还是两组 TP4',chapter:'inference-performance',anchor:'tp-placement',pack:'inference-placement',
+  files:['placement_budget.py','replica_gloo.py','requirements.txt'],env:'Python 3.12 · 预算用标准库，分片需 PyTorch 2.5.1 CPU/Gloo',kind:'八卡账本与真实四进程分片',
+  observe:'核对每组权重和 KV 空间、请求能否进入某个副本，以及组内归约的数值。',
+  scope:'70B 账本使用声明的设备与形状。真实运行是本机一层小注意力，GPU 显存和 vLLM 性能另验。'},
+ {id:'agent-mcp-result-receipt',track:'agent',stage:2,title:'工具写入已提交，为什么宿主仍要拒绝回执',chapter:'mcp-protocol',anchor:'native-mcp-result-receipt',pack:'mcp-result-receipt',
+  files:['receipt_lab.py','orders.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · SQLite',kind:'真实本机 HTTP 与提交后核对',
+  observe:'比较类型错误、操作键错误与正常回执，再按原操作键只读查询。',
+  scope:'本机 Streamable HTTP、固定批次和两个 SQLite 库。远端服务权限与查询可用性需另行验收。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

@@ -429,6 +429,35 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  serving.updated='2026.11.09';
  performance.updated='2026.11.09';
 
+ performance.sections[6][1]+=
+  heading('tp-placement','八张卡怎样分给推理服务')+
+  p('同样八张卡，可以让八张卡一起算一条请求，也可以分成两组，每组四张卡，各自接单。张量并行（TP）把一次模型前向的计算分给多张卡。一个副本则是一套能独立接单的模型。在这里，TP8 只有一个副本，两组 TP4 各存一整套分片权重，各自管理队列和缓存。')+
+  trainingFigure('inference-placement','同一条请求只能由一个副本接下。即使 A 已有前缀，它当前剩余的块也不够，路由选择冷副本 B。')+
+  p('用一个 70B 稠密模型算账。参数固定为 700 亿，BF16 每个参数 2 字节，合计 140 GB。每卡按 48 GiB 计，先留 4 GiB 给工作区、通信等额外开销。理想均分权重后，TP8 每卡是 17.5 GB，约 16.30 GiB，TP4 每卡是 35 GB，约 32.60 GiB。GB 按十进制换算，GiB 按 2³⁰ 字节换算。')+
+  p('模型有 80 层，每层 8 个键值头，头维 128。每个历史位置的键和值分别存一份，每元素占 2 字节。TP8 每卡分到一个键值头，所以每个位置每卡占 2 × 80 × 1 × 128 × 2 = 40 KiB。TP4 每卡分到两个头，每位置是 80 KiB。这个题设能把 8 个头整除，实际头数不足时可能复制同一头。')+
+  p('每个块存 16 个位置。提示 7,168 词元，最多输出 1,024 词元。最后一个输出无需再送进模型，这份预算按 8,191 个位置预留，向上取整为 512 块。先用单卡剩余字节除以单块大小，再用该卡的块数除以 512。组内各卡共同服务同一条请求，得出的条数按副本计。')+
+  table(['每卡与副本的账','一组 TP8','两组 TP4'],[
+   ['每卡权重','约 16.30 GiB','约 32.60 GiB'],
+   ['每卡一个缓存块','640 KiB','1,280 KiB'],
+   ['每卡可放缓存块','45,386','9,341'],
+   ['每副本可预留的冷请求','88','18'],
+   ['整机可预留的冷请求','88','36']
+  ])+
+  p('两组 TP4 复制了一份权重，合起来仍只有 36 条冷请求的预留空间。两套独立执行队列也能分开接流量。哪种布局每秒能完成更多请求、首词元更快，取决于每组算子、卡间通信、批大小和排队，得在同负载下测。')+
+  p('路由再算一次。A 已有 6,144 个匹配提示位置，占 384 个完整块，空闲数已经扣掉它们。这个请求送给 A 只需新增 128 块，并重算 1,024 个提示位置。送给冷副本 B 则需要 512 块，重算 7,168 个提示位置。复用前先核对模型版本、位置与租户共享规则。')+
+  table(['A / B 空闲块','结果','依据'],[
+   ['96 / 640','去 B','A 的前缀省了空间，仍凑不够新增的 128 块。'],
+   ['160 / 480','去 A','只有 A 满足空间条件。'],
+   ['100 / 500','等待或到期拒绝','两边合计 600 块，任何一组都无法单独接下。'],
+   ['160 / 640','看各自队列','两边都能接。练习按排队中待算位置数加本次待算位置数比较，暖副本积压过大时会选 B。']
+  ])+
+  p('先运行 <code>python3 placement_budget.py</code>。用 32 GiB 卡重算 TP4 的反例，会发现连权重和预留都放不下。最后把提示从 7,168 改成 6,500，重新核对块尾空位和 A 能否接单。实际路由拿到的是某一时刻的队列与缓存视图，副本接单时还需要再次核对并占用空间。')+
+  p('包内另有四进程 CPU/Gloo 实验。用一层小注意力分别运行一组 TP4 和两组 TP2，核对每组拥有的键值头，以及各卡的输出投影局部和能否合成同一结果。八卡 70B 账本和这个四进程实验分别验证容量算术和分片机制。真机选型要固定模型、拓扑、到达率、输入输出长度和缓存冷热，再记录每组显存、准入、首词元延迟、输出间隔与达标完成率。')+
+  '<p class="practice-links"><a href="/labs/inference-placement.zip" download>下载代码和记录 ↓</a> · <a href="/labs/inference-placement/README.md">复跑和目标环境对照 →</a> · <a href="/labs/inference-placement/validation.json">查看核对结果 →</a> · <a href="https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/model_executor/models/llama.py#L119-L166">vLLM 键值头分片与复制 ↗</a> · <a href="https://docs.vllm.ai/en/stable/serving/data_parallel_deployment/">vLLM 多副本部署 ↗</a></p>';
+ performance.updated='2026.11.10';
+ infraDomain('platform').points.find(point=>point.id==='sv-batching').body+=
+  p('用<a href="/article/inference-performance/#tp-placement">八张卡的推理部署练习</a>算每副本可用的块数，再看前缀命中怎样改变接单选择。');
+
  const loadModel = performance.sections[3];
  loadModel[1] = loadModel[1].replace('窗口末未完成数。</p>', '$&' +
   trainingFigure('inference-load-loop','闭环单个客户端等响应再发下一条。开环按每秒 20 条到达、完成 18 条，60 秒内未完成请求增加 120 条。'));

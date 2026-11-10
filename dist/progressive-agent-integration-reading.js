@@ -153,6 +153,18 @@
    p('摘要是把工具名、说明与输入输出规则按固定格式整理后算出的短标识。沿 <code>contract</code>、<code>dispatch_approved</code> 和 <code>call_tool</code> 读代码。宿主比较新旧摘要，接收端在实际写入前再次比较，以应对目录读取后又发生变化。本例把预期摘要放进自定义的 <code>_meta</code> 字段。业务身份、权限和去重各自需要检查。')+
    p('解压后按运行说明执行 <code>python -B catalog_refresh.py --output-dir replay &gt; replay.json</code>。查看通知、第二次 <code>tools/list</code> 和两份 SQLite 账本。实验使用 MCP SDK 2.3.0 的真实 stdio 通信，批准由固定测试夹具提供。')+
    '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>';
+  a.sections[4][1]+=
+   '<h3 id="native-mcp-result-receipt">回执被拒绝后，先查原操作</h3>'+
+   p('还是前面的 report-A/v3，基础批次 10、27，补录 5，合计 42。现在再走一步，把报告实际写入接收方。宿主先保存待确认操作 <code>report-A/v3:publish</code>。接收方把报告和回执一起提交到 SQLite 后，才构造 MCP 响应。回执记录哪次操作完成、交付到哪个版本、金额是多少。')+
+   trainingFigure('mcp-result-receipt','两个反例都在数据库提交之后故意改坏响应。拒绝响应之后，宿主按原操作键只读查询。')+
+   table(['HTTP 200 返回的结果','第一次接纳','接收方实际状态'],[
+    ['原操作键，结构化金额为整数 42','宿主直接接纳','已提交一份报告和一份回执'],
+    ['结构化金额为字符串 “42”，展示文本写整数 42','SDK 按 outputSchema 拒绝','原操作已提交，宿主仍待确认'],
+    ['结构化金额为整数 42，操作键却指向 v2','SDK 接收，宿主核对身份后拒绝','原操作已提交，宿主仍待确认']
+   ])+
+   p('检查 <code>after_publish</code>。两个异常场景里，宿主都还没有接纳回执，但接收库已经有原操作的记录。重新提交可能再次产生效果，所以这次只调用 <code>lookup_receipt</code>，查宿主先前保存的操作键。拿到查询结果后，再按原始批次核对版本、操作和金额，把原回执记到宿主库。对照 <code>final</code>，接收库前后相同，每个场景只发过一次发布调用。')+
+   p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。能按键查询并信任其结果，是这个恢复方法的前提。接收方没有可查询回执，或查询本身失败时，应继续保持待确认并走对账。')+
+   '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>';
   a.updated='2026.11.09';
  }
  }

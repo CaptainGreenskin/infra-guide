@@ -1,0 +1,957 @@
+{
+  "schema": "mcp-result-receipt-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "host_pid": 14114,
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Darwin",
+    "architecture": "arm64",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "httpx2": "2.16.0",
+    "uvicorn": "0.54.0",
+    "jsonschema": "4.26.0"
+  },
+  "fixture": {
+    "operation_id": "report-A/v3:publish",
+    "report_id": "report-A",
+    "version": 3,
+    "total": 42
+  },
+  "cases": {
+    "valid": {
+      "http": [
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "server/discover",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "cacheScope": "private",
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "resultType": "complete",
+              "supportedVersions": [
+                "2026-07-28"
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "cacheScope": "private",
+              "resultType": "complete",
+              "tools": [
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "publish_report",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "lookup_receipt",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "publish_report",
+              "arguments": {
+                "operation_id": "report-A/v3:publish"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"operation_id\": \"report-A/v3:publish\", \"report_id\": \"report-A\", \"version\": 3, \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "operation_id": "report-A/v3:publish",
+                "report_id": "report-A",
+                "version": 3,
+                "total": 42
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        }
+      ],
+      "after_publish": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "accepted",
+          "receipt": {
+            "operation_id": "report-A/v3:publish",
+            "report_id": "report-A",
+            "version": 3,
+            "total": 42
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "publish_outcome": {
+        "status": "accepted",
+        "detail": "receipt matches the original intent"
+      },
+      "accepted_via": "publish_report",
+      "final": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "accepted",
+          "receipt": {
+            "operation_id": "report-A/v3:publish",
+            "report_id": "report-A",
+            "version": 3,
+            "total": 42
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "receiver_pid": 14116,
+      "receiver_exit": 0
+    },
+    "malformed": {
+      "http": [
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "server/discover",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "cacheScope": "private",
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "resultType": "complete",
+              "supportedVersions": [
+                "2026-07-28"
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "cacheScope": "private",
+              "resultType": "complete",
+              "tools": [
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "publish_report",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "lookup_receipt",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "publish_report",
+              "arguments": {
+                "operation_id": "report-A/v3:publish"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"operation_id\": \"report-A/v3:publish\", \"report_id\": \"report-A\", \"version\": 3, \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "operation_id": "report-A/v3:publish",
+                "report_id": "report-A",
+                "version": 3,
+                "total": "42"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {
+              "name": "lookup_receipt",
+              "arguments": {
+                "operation_id": "report-A/v3:publish"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"operation_id\": \"report-A/v3:publish\", \"report_id\": \"report-A\", \"version\": 3, \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "operation_id": "report-A/v3:publish",
+                "report_id": "report-A",
+                "version": 3,
+                "total": 42
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        }
+      ],
+      "after_publish": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "pending",
+          "receipt": null
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "publish_outcome": {
+        "status": "sdk_rejected",
+        "detail": "Invalid structured content returned by tool publish_report: '42' is not of type 'integer'\n\nFailed validating 'type' in schema['properties']['total']:\n    {'type': 'integer'}\n\nOn instance['total']:\n    '42'"
+      },
+      "accepted_via": "lookup_receipt",
+      "final": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "accepted",
+          "receipt": {
+            "operation_id": "report-A/v3:publish",
+            "report_id": "report-A",
+            "version": 3,
+            "total": 42
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "receiver_pid": 14123,
+      "receiver_exit": 0
+    },
+    "wrong-operation": {
+      "http": [
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "server/discover",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+              "cacheScope": "private",
+              "capabilities": {
+                "tools": {
+                  "listChanged": false
+                }
+              },
+              "resultType": "complete",
+              "supportedVersions": [
+                "2026-07-28"
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/list",
+            "params": {
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "result": {
+              "cacheScope": "private",
+              "resultType": "complete",
+              "tools": [
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "publish_report",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "const": "report-A/v3:publish"
+                      }
+                    },
+                    "required": [
+                      "operation_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "name": "lookup_receipt",
+                  "outputSchema": {
+                    "type": "object",
+                    "properties": {
+                      "operation_id": {
+                        "type": "string"
+                      },
+                      "report_id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "total": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "operation_id",
+                      "report_id",
+                      "version",
+                      "total"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              ],
+              "ttlMs": 0,
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+              "name": "publish_report",
+              "arguments": {
+                "operation_id": "report-A/v3:publish"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 3,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"operation_id\": \"report-A/v2:publish\", \"report_id\": \"report-A\", \"version\": 3, \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "operation_id": "report-A/v2:publish",
+                "report_id": "report-A",
+                "version": 3,
+                "total": 42
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "status": 200,
+          "content_type": "application/json",
+          "protocol": "2026-07-28",
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "method": "tools/call",
+            "params": {
+              "name": "lookup_receipt",
+              "arguments": {
+                "operation_id": "report-A/v3:publish"
+              },
+              "_meta": {
+                "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                "io.modelcontextprotocol/clientInfo": {
+                  "name": "mcp",
+                  "version": "0.1.0"
+                },
+                "io.modelcontextprotocol/clientCapabilities": {}
+              }
+            }
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "result": {
+              "content": [
+                {
+                  "text": "{\"operation_id\": \"report-A/v3:publish\", \"report_id\": \"report-A\", \"version\": 3, \"total\": 42}",
+                  "type": "text"
+                }
+              ],
+              "isError": false,
+              "resultType": "complete",
+              "structuredContent": {
+                "operation_id": "report-A/v3:publish",
+                "report_id": "report-A",
+                "version": 3,
+                "total": 42
+              },
+              "_meta": {
+                "io.modelcontextprotocol/serverInfo": {
+                  "name": "infra-guide-receipt",
+                  "version": ""
+                }
+              }
+            }
+          }
+        }
+      ],
+      "after_publish": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "pending",
+          "receipt": null
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "publish_outcome": {
+        "status": "host_rejected",
+        "detail": "receipt operation does not match the original intent"
+      },
+      "accepted_via": "lookup_receipt",
+      "final": {
+        "host": {
+          "operation_id": "report-A/v3:publish",
+          "state": "accepted",
+          "receipt": {
+            "operation_id": "report-A/v3:publish",
+            "report_id": "report-A",
+            "version": 3,
+            "total": 42
+          }
+        },
+        "receiver": {
+          "reports": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ],
+          "receipts": [
+            {
+              "operation_id": "report-A/v3:publish",
+              "report_id": "report-A",
+              "version": 3,
+              "total": 42
+            }
+          ]
+        }
+      },
+      "receiver_pid": 14130,
+      "receiver_exit": 0
+    }
+  },
+  "source_sha256": {
+    "receipt_lab.py": "efa89006e7c5ee271fcd78402de7e7a0795caaf2f7f4eb296b978ca06360b60c",
+    "orders.json": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "cb649d5ea6acc2ad2908cb6a41da5c47e37b859d06b5768dca6f1c3fd46099be"
+  }
+}

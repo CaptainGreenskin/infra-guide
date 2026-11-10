@@ -1,0 +1,212 @@
+{
+  "reviewed_on": "2026-11-10",
+  "base_source_commit": "6b871167c55bf91e3324ac1f3260b137d932c0ad",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_READABLE_ENTRY_2026-11-09.json": "749da8953259f4fc98fdad8734d5ff61a0e83b2c4a2a2863e2af1ac9b60cd81b"
+  },
+  "source_revisions": {
+    "dist/lab-catalog.js": {
+      "previous_sha256": "1717f3a36f68ec53dff44e7ce0f02592b548fc7274ed6e5d130f81574d3ce705",
+      "reviewed_sha256": "fa1405376d14aa545f4b1472b7f3079cb6e5a162fcc32597b50c52603b578e51",
+      "scope": "Register the native experiments, downloadable artifacts and exact environment boundaries."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "0aa44bc74db1f496b0832cdf750d046101d79fe410191c8bfa94a2bba29ed4ed",
+      "reviewed_sha256": "c133151b72123d0392c3724fec7aabadbd2f18cda793d66a662aa851c46a506a",
+      "scope": "Connect SRE and Agent runtime roles to the actual native cases."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "f6cfdcc737e69dd32cbf6a1db137d374b486101ce97dd4960fb0bc296007b16b",
+      "reviewed_sha256": "19fba61036f4d4fa4273d08282172d6c3c3b40fc3cae7760e0b0b5a3994fe884",
+      "scope": "Connect queue conservation to isolated HTTP requests under two native Linux CPU quotas."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "ad3af274ed19f431accc5baa1abda86d053955b51a3c7b5e4948526b52550935",
+      "reviewed_sha256": "f5d510b172e54d7281dde4038ab2e703a9ba61540f6ebd7315c1863aab357752",
+      "scope": "Compare TP8 with two TP4 replicas using a per-rank byte ledger and per-replica admission, then run a small grouped attention layer on four CPU ranks."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "afe822dba511fa9a95252762784d094851727f38acb6cec0dbc4554cc88e6e20",
+      "reviewed_sha256": "47ac83bee38cd4e6bfacc96699382fbb87e7eaefc5d31bdecabd22d7139d4e94",
+      "scope": "Follow a durable report through post-commit output validation and recovery by the original operation key."
+    },
+    "dist/cloud-capacity-mechanics.js": {
+      "previous_sha256": "4d31e681462a00c6bdb4c9813d381321129be0d21f097a0dfcf032253ba0a609",
+      "reviewed_sha256": "4a4de2854230baed9e75d6604b0e1ebfe32ab6ef382c2bf0584b1695e6afd3dc",
+      "scope": "Connect the field queue mechanism to the exact observed HTTP and CPU lab."
+    },
+    "dist/state-protocol-course-links.js": {
+      "previous_sha256": "9c39ed07079ff6b651fdfd98233dba3d00d699f65225fc0a53923bcea946d67a",
+      "reviewed_sha256": "5a9f14200c80f98cb3cc5d5d6b14f7bc0ba8e2bba70d417bf516fd5556b73090",
+      "scope": "Connect the tool contract to the actual wire and receiver readback, and record its publication date after older prose passes."
+    },
+    "scripts/check-capacity-placement-receipts.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3af5d3cb7da5c236971e74590319523a52051a6d5bd28fee24e1e265afafe887",
+      "scope": "Validate raw HTTP, CPU counters, Gloo output, and MCP acceptance with independent calculations."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "87fc1e9341dd73f58b6d883fa7b980a01cfd7b558a0821320f06c0fbf192c7a6",
+      "reviewed_sha256": "2cf9463381a1403d81a3bed54f4cacce6e64351544843c24c1c4d5c837d260d5",
+      "scope": "Bind the three new experiment diagram viewports."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "0fc17286d7e508fb23bd7ea99fb142d8f8e6e79c95406f265cfb960867f2a700",
+      "reviewed_sha256": "4fe3685d8cba244d78d626c016f7d41e0c08cee22309addd093c2a2d5d7b65d5",
+      "scope": "Fingerprint the current reading and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "496bd5127ceeb4df971e130d7e09448ec9f931094281a7aa16b21dfc6375fd1d",
+      "reviewed_sha256": "ce0847ba62f022a975732ea8cf5508fa4c0118304c300e5786992e77e3a6dcd4",
+      "scope": "Fingerprint the current course rendering sources."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "154cc11882347b22c5febd86e61583f0fdaf91a1bde3892b605b9cfba2352536",
+      "reviewed_sha256": "506409064d2a11bdcde5cbde091105b9b233f3e0fd0a172758959dc7060b0bab",
+      "scope": "Include the native case validation in CI."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "aa0c0ca6b2d3af17c6c1923f88d1e4cc34580e3ab64e7ea838cb72777374e9dc",
+      "reviewed_sha256": "63a2b58052ebfab3296ff1362bd17ed43616a25be9f64a463dfc3ee79e469d58",
+      "scope": "Require the three exact role-gate links."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "f0272d4f1933a594f18ba0f159ec9cb4b4a2ad60d48574b9b3e85a7f911a3a27",
+      "reviewed_sha256": "635c2cee58e42891c91d95b786bcf99b167c287b79da41cc2b3d94c0fdd9287f",
+      "scope": "Append reviewed chapter bodies without rewriting historical revisions."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "861a49399ba57c36707bbfba1eed5c9bc32947bd8be33d52bbc062cea58c95f3",
+      "reviewed_sha256": "6cb754ce196d68669f1dca45e04a1a0978f526e77723f294473f074022a0fd2e",
+      "scope": "Add the three exact fragments to chapter navigation."
+    },
+    "docs/CONTENT_CAPACITY_PLACEMENT_RECEIPTS_2026-11-10.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9d3c4647198412eacd5ef18878b4fba5dc5061b9df00fe20727e7ec2fa6686c9",
+      "scope": "Record the exact reviewed knowledge points and evidence-backed bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "67b4717e6729bbbba335ce6de26ae26fc386a79c93e706a5baf875222276ec30",
+      "reviewed_sha256": "c98ec49c14fc914d79df123d97ff1f272f9f57251dafa957bdbd14268ad8748f",
+      "scope": "Append the new content review."
+    },
+    "dist/diagrams/cpu-quota-http.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "33b9d86020426bccc1b9d8c831d803eb09de9757a8bf8c782aef2088c03e340e",
+      "scope": "Connect queue conservation to isolated HTTP requests under two native Linux CPU quotas."
+    },
+    "dist/labs/cpu-quota-http.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1b1938200facf9755314e5ec1905f71303d89318a972783eca47263599c10434",
+      "scope": "Archive exact runnable code and actual recorded evidence."
+    },
+    "dist/labs/cpu-quota-http/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3e404585acc633b1fd6755700a18295d7f6cd786468ff73ddc34feb48685fe76",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/cpu-quota-http/cpu_quota_http.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "073a3be0fc83e24c9affe48f0d58f10b97a0f59537160edcd0a00634d264822a",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/cpu-quota-http/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ee2fc720fe28fbeb4079150ec00e05c99cb1c03c483635ca6a982d9786161eac",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/cpu-quota-http/workload.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "df9852f38e7ec896bd4c1ec94da2eab1e153943a9f2b5c1c0b594211321158d1",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/diagrams/inference-placement.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "966771c72512e7be303aa3d273ecffb585b8ebbe77fcfc96c8e234a5fb60ee86",
+      "scope": "Compare TP8 with two TP4 replicas using a per-rank byte ledger and per-replica admission, then run a small grouped attention layer on four CPU ranks."
+    },
+    "dist/labs/inference-placement.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "39d853203a258417cd6be507134d227d94427b94fdabbf681267cc2a2cdaa435",
+      "scope": "Archive exact runnable code and actual recorded evidence."
+    },
+    "dist/labs/inference-placement/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6ba635568b912e85ced20b0a16a36791da1f436472d19a9bddf66c07470f1638",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/inference-placement/placement_budget.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "104319adf4254a2ac76bd651738ffbcfee1746e0ae6bf58435ff21512742191c",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/inference-placement/replica_gloo.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "46acdcb697879a8ca82522ca636fd8028d4912df61d6d7f8aa10329ccc0e5e14",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/inference-placement/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/inference-placement/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cb870bb951b7f5317750394a2a90e4ed2859e01946878269913fa8db8b9e109f",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/diagrams/mcp-result-receipt.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dffc4bb966461dc6731257ebeb99537646cdab9bf1167ae5620ae3efac044680",
+      "scope": "Follow a durable report through post-commit output validation and recovery by the original operation key."
+    },
+    "dist/labs/mcp-result-receipt.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d069ecad5b55599e45a182e8a92f6ae792c154f75f52864d381fd07e9cb57320",
+      "scope": "Archive exact runnable code and actual recorded evidence."
+    },
+    "dist/labs/mcp-result-receipt/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cb649d5ea6acc2ad2908cb6a41da5c47e37b859d06b5768dca6f1c3fd46099be",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/mcp-result-receipt/orders.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a67bf68f5507399832fcce6ca683f4dd085a174d51dcece7b0455c85aee6ca73",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/mcp-result-receipt/receipt_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "efa89006e7c5ee271fcd78402de7e7a0795caaf2f7f4eb296b978ca06360b60c",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/mcp-result-receipt/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Bind the exact source or real observation record."
+    },
+    "dist/labs/mcp-result-receipt/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9a4dd20a8264c9623b6c579c32065ce6d62a5f40d073240fc971e9382f4ccaf4",
+      "scope": "Bind the exact source or real observation record."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "6b871167c55bf91e3324ac1f3260b137d932c0ad",
+    "chapters": 78,
+    "changed_bodies": [
+      "elasticity",
+      "inference-performance",
+      "mcp-protocol"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "elasticity": 0,
+      "inference-performance": 0,
+      "mcp-protocol": 0
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}
