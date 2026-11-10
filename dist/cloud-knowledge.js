@@ -30,7 +30,7 @@ const cloudKnowledgeDomains = [
  ['storage-model','块、文件与对象存储','块存储暴露块设备，文件系统提供目录和文件语义，对象存储以键和对象 API 组织内容。访问粒度、延迟、共享方式、容量扩展与一致性保证决定适用范围。','对象接口不等于 POSIX 文件系统；顺序吞吐、小随机 I/O、元数据操作和请求数应分别评估。',['training-storage']],
  ['storage-performance','IOPS、吞吐与尾延迟','IOPS 衡量每秒操作数，吞吐衡量每秒字节，延迟描述单次操作耗时。块大小、队列深度、并发、读写比例、缓存和持久化方式共同影响结果。','单次热缓存测试不能代表冷读或持久写；比较时固定数据量、访问模式、并发和错误口径。',['training-storage','cloud-compute']],
  ['durability-consistency','持久性、可用性与一致性','持久性讨论已确认数据的保存，可用性讨论能否处理请求，一致性约束不同观察之间的关系。复制增加冗余，不能自动替代备份，也不能仅凭副本数判断提交保证。','服务、区域、API 与配置的保证需逐项核对；不能把一种对象存储的语义扩展到所有存储产品。',['storage-recovery','distributed-systems']],
- ['database-service','托管数据库与事务边界','托管数据库减少部分部署运维，应用仍需设计索引、事务范围、连接池、隔离、幂等和迁移。MVCC、锁与日志服务于不同目标；提交确认和复制确认不能混称。','SQL 执行计划、锁等待、连接等待与存储 I/O 各有证据；SQLite 机制实验不能代替 MySQL/InnoDB 实机判断。',['database-index-locks','storage-recovery']],
+ ['database-service','托管数据库与事务边界','托管数据库减少部分部署运维，应用仍需设计索引、事务范围、连接池、隔离、幂等和迁移。MVCC、锁与日志服务于不同目标；提交确认和复制确认不能混称。','先看请求去了哪片，再看执行计划、锁等待、连接等待和存储 I/O。<a href="/article/database-index-locks/#native-sqlite-shard-routing">用两个 SQLite 文件对照分片路由</a>。MySQL/InnoDB 的执行和锁行为按其实际记录判断。',['database-index-locks','storage-recovery']],
  ['replication-failover','复制、主身份与故障切换','主从复制、仲裁和读写路由决定故障时谁可继续写、读到哪一版及可能丢多少已确认数据。提升副本还需处理旧主、客户端重连和结果未知的交易。','redo、binlog、复制日志和应用回执处在不同层；数据库内核与复制恢复是需要独立深入的专项。',['distributed-systems','storage-recovery','resilience']],
  ['cache-layer','缓存分层与一致性','缓存通过复用热点结果减轻源站压力，代价是失效、陈旧、击穿和容量管理。cache-aside、写穿、异步更新等策略有不同提交时序，TTL 不自动保证业务一致。','旧请求可在失效后回填旧值。用版本防止回填倒退，必要时读源站，并按源站容量合并相同的回源请求。切换缓存节点时，也可能读到候选副本尚未更新的值。对照<a href="/article/cache-consistency/#native-redis-replica-promotion">Redis 断链与切换实战</a>，分别检查主节点回复、复制确认和新主读值。',['cache-consistency']],
  ['messaging','消息队列与流处理','队列组织待处理工作，流日志保存可顺序消费的记录；分区、消费组、确认点、重投和保留规则决定处理语义。至少一次投递要求接收方正确处理重复。','顺序通常有作用范围；消息确认、业务效果提交和消费位点提交必须分开，不能用“MQ”一词许诺恰好一次业务效果。',['serverless-execution','distributed-systems']],
@@ -74,7 +74,7 @@ const cloudKnowledgeDomains = [
  ['capacity-units','工作量、服务时间与容量单位','请求率、CPU 时间、墙钟耗时、在途数量和吞吐具有不同单位。稳定窗口中平均在途量约为到达率乘平均逗留时间，前提是系统与计量口径满足相应条件。','平均值不是峰值或 p99 的上界；业务操作、重试尝试、批次和有效完成量应分开统计。',['cloud-compute','elasticity']],
  ['queue-backpressure','排队、背压与准入','当到达量长期超过有效完成能力，积压会持续增长。有限队列、并发限制、优先级、拒绝和降级将资源上限转化为可控行为。','扩容到恰好等于到达率只停止新增积压，清理已有工作需要净处理余量；重试也消耗预算。',['elasticity','concurrency-pools']],
  ['scaling-delay','伸缩时序与预留容量','有效扩容经过信号、控制决策、资源供应、放置、初始化和就绪。零到一、节点加入、镜像与卷准备会扩大容量空窗。','余量应同时覆盖突发、故障域丢失和扩容延迟；扩容受云配额、库存、调度约束与下游能力限制。',['elasticity','k8s-autoscaling']],
- ['performance-budget','性能预算与瓶颈归因','端到端延迟由计算、锁、排队、网络与数据依赖组成；吞吐提升需要定位限制有效产出的环节。利用率高低本身不是性能结论。','压测固定输入、并发、数据规模、错误、时长和质量口径；避免把局部优化或热缓存结果扩展为整体收益。',['cloud-compute','network-diagnosis','observability']],
+ ['performance-budget','性能预算与瓶颈归因','端到端延迟由计算、锁、排队、网络与数据依赖组成；吞吐提升需要定位限制有效产出的环节。利用率高低本身不是性能结论。','压测固定输入、并发、数据规模、错误、时长和质量口径，分别检查局部优化与整体收益。<a href="/article/elasticity/#shard-load-not-average">按分片算积压</a>，观察总体容量仍有富余时哪个键已经开始排队。',['cloud-compute','network-diagnosis','observability']],
  ['cost-efficiency','资源计费、TCO 与单位产出成本','成本应按资源用量、使用时段、冗余、网络、存储、请求、运维与恢复开销核算。单位有效产出成本连接支出与实际完成的用户工作。','低单价不保证低总成本；预留、按量和可中断资源要同时评估利用率、承诺期限、中断恢复与风险。',['cloud-compute','elasticity','serverless-execution']]
  ]},
  {module:'sre',refs:['slopractice','sloalert','monitor','v9RecoveryTarget','v9RestoreTest'],points:[

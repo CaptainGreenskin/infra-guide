@@ -5,8 +5,8 @@
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "5010ee50d2884d00de67c29f24414605ec7671e3dd1cff697017f2a1da896dc8",
-      "bytes": 389135,
+      "sha256": "ea2d8a9f80fbc137a6bb717b734525b9645bdd588175f12c65e60a6657535479",
+      "bytes": 389287,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "3020f1f875a3965383c1b665bffe6970cac1bdf1566b85db1b609b903e9b0825",
-          "bytes": 18515
+          "sha256": "cde9c4a30b903bd71daa4d8beb57627a32c3e510d2394be37e7a3b771545643b",
+          "bytes": 18667
         },
         {
           "file": "manual-sharding-data.js",
@@ -229,13 +229,13 @@
     },
     {
       "file": "runtime-03.js",
-      "sha256": "b450ec9d87c8ad47d6af616c6b5a87fc992b54f56b9ea15c231a5ef01093f7ae",
-      "bytes": 271108,
+      "sha256": "32c22824c9297ffcb0abc8f526709c4c48c603078912a07e6a41e955ba8ba32b",
+      "bytes": 271363,
       "sources": [
         {
           "file": "cloud-knowledge.js",
-          "sha256": "abd61233755bea0e884d9ed84b5831cdceabfbd1beed05dfeab34246ced9027e",
-          "bytes": 33348
+          "sha256": "4ddb6a4be5e10e5d87ddd2fb1413095365c553b22b2e92b6c6f400f96c4d1426",
+          "bytes": 33603
         },
         {
           "file": "cloud-mechanics-interactive.js",
@@ -336,13 +336,13 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "2dcc52d881fc359509add1670236dba543204b64d4c4e68c05b234cb7d6c722a",
-      "bytes": 346363,
+      "sha256": "e26c1cd07e84372b2fae41a3a43b041fd8ebedaf487a4c0f7103a81e126043f1",
+      "bytes": 347987,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
-          "sha256": "3c7d88306cc511d6ab8b32640db589012a3fe473434fe20433b5569efdc95ce5",
-          "bytes": 26972
+          "sha256": "c7fe82157bbf41b0e832b3baf4bba9937d3ef5c53c3669c7ca9c28a074f892f7",
+          "bytes": 27198
         },
         {
           "file": "ai-serving-knowledge.js",
@@ -351,8 +351,8 @@
         },
         {
           "file": "agent-system-knowledge.js",
-          "sha256": "5cf1ee926fc31696bfe06d7294349ea38ad692ffc3b2226fbd36616f1ec4b44e",
-          "bytes": 19419
+          "sha256": "8234cdc0e8f8b5215dda8c8520fb6399f9fc37bd739d573ff7cc753e99cf23cb",
+          "bytes": 20817
         },
         {
           "file": "ai-agent-lab-files.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "3df9f452a4beee33895f20248bc514ca7c1b98bab299ec98a31de2db091d692a",
-      "bytes": 3756393,
+      "sha256": "6da2cd127bdab535d13b50352e6a415174e83130fd789ca159e8e511647801e6",
+      "bytes": 3771367,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -970,8 +970,8 @@
         },
         {
           "file": "progressive-cloud-data-reading.js",
-          "sha256": "881bb4ee3c42b3677e5450c2529bbdfc863c86c2e2d365a96f050bfd15eca896",
-          "bytes": 54824
+          "sha256": "04a8231eb3854a4a4ac0b0870ed16731ede4e821d83769423407ad917df06f0f",
+          "bytes": 58209
         },
         {
           "file": "progressive-gpu-compute-reading.js",
@@ -990,8 +990,8 @@
         },
         {
           "file": "progressive-training-recovery-reading.js",
-          "sha256": "c1053768a2fa9333e5087cec5971d1d860cfea40b43c169a014146be34d69dc1",
-          "bytes": 40590
+          "sha256": "87e07d028d0adb68a671ae62fd4dbfc72500292abaa94107274da92653e68401",
+          "bytes": 44256
         },
         {
           "file": "progressive-cloud-network-config-reading.js",
@@ -1020,8 +1020,8 @@
         },
         {
           "file": "progressive-agent-retrieval-workflow-reading.js",
-          "sha256": "41f41edc397b51cba94ee5c4cb714508cd91ff459a8d0794991a380f2b45735c",
-          "bytes": 66464
+          "sha256": "b5c578e4e476faac4c049cf7a91297a87c664c20942124d1d164be3377228190",
+          "bytes": 69872
         },
         {
           "file": "progressive-terraform-identity-reading.js",
@@ -1065,8 +1065,8 @@
         },
         {
           "file": "progressive-elasticity-reading.js",
-          "sha256": "19fba61036f4d4fa4273d08282172d6c3c3b40fc3cae7760e0b0b5a3994fe884",
-          "bytes": 21690
+          "sha256": "15d1e4d4d0c2d63d6d1e5ca00a4961dba1a9073454ef5107fd073e372ec93a23",
+          "bytes": 22722
         },
         {
           "file": "progressive-moe-speculative-reading.js",
@@ -1125,8 +1125,8 @@
         },
         {
           "file": "learning-goals.js",
-          "sha256": "03451290d90d4c370ccc9fcd113e8e3ae0a4d39a7d1b9b9dabb11e7cc4590a16",
-          "bytes": 20917
+          "sha256": "ebccb1f18d89296d7e0f221a04feab558b95f4c137446e2588ab618644b11ca8",
+          "bytes": 21223
         },
         {
           "file": "state-protocol-connections.js",
@@ -1135,8 +1135,8 @@
         },
         {
           "file": "field-concept-maps.js",
-          "sha256": "e70b297a956b974e82d3fa8e19efce6bce411a6c309a3332fcf05c8b121e1ca9",
-          "bytes": 59307
+          "sha256": "188f9f8a4ea0a0c6420ef9060104857044267cbdda952343b42679949d405955",
+          "bytes": 60297
         },
         {
           "file": "reading-flow.js",
@@ -1145,8 +1145,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "bf7a747b8c97e3cc467992f969c95891cede76b2fcf6c05aceeb5e30ee2e8707",
-          "bytes": 110440
+          "sha256": "cded730977e4a5048bcedc47f281c49f4ecb07d1ce90a6030e7ed98e4ddfe909",
+          "bytes": 112627
         },
         {
           "file": "concept-navigation.js",
@@ -1160,7 +1160,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "e678825a7c1ab6022b0f8d332f772da9fe8c60131db54943e56d37dfd3bf6db2",
+          "sha256": "21f16e56fba46566f65699c698389ae8a7ae87364f9decbe3490f6fb4900cc2c",
           "bytes": 145
         }
       ]

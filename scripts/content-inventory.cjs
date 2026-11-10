@@ -10,4 +10,6 @@ for(const row of additions){assert(Object.hasOwn(tracks,row.track));tracks[row.t
 const routeViews=read('CONTENT_READING_2026-11-08.json').route_views;
 assert(Array.isArray(routeViews)&&new Set(routeViews).size===routeViews.length);
 const canonical=100+additions.length+routeViews.length;
-module.exports={ids,chapters:ids.length,tracks,points:base.knowledge_reviews.length,search:ids.length+base.knowledge_reviews.length,canonical,html:canonical+1,pages:canonical+2,additions};
+const knowledge=[...base.knowledge_reviews,...expansion.new_knowledge_reviews].map(row=>row.id);
+assert.equal(new Set(knowledge).size,knowledge.length,'reviewed knowledge point ids must be unique');
+module.exports={ids,chapters:ids.length,tracks,points:knowledge.length,search:ids.length+knowledge.length,canonical,html:canonical+1,pages:canonical+2,additions};

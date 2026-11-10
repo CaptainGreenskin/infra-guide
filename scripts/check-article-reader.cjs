@@ -115,7 +115,7 @@ function checkManifest(reader,canonical){
  assert.deepStrictEqual(reader.index,json(canonical,'buildSiteSearchIndex()'),'the full reference uses all canonical search entries and fields');
  assert.equal(reader.index.length,inventory.search);
  assert.equal(new Set(reader.index.map(e=>e.id)).size,inventory.search);
- assert.equal(reader.searchKnowledgeCount,95);
+ assert.equal(reader.searchKnowledgeCount,inventory.points);
  assert.equal(reader.searchKnowledgeCount,reader.index.filter(e=>e.type==='knowledge').length);
  assert.deepStrictEqual(reader.searchSuggestions,json(canonical,'rankSiteSearch("").map(({id,type,titleText,desc,module,number,path,anchor})=>({id,type,titleText,desc,module,number,path,anchor}))'),'the six in-runtime suggestions keep their canonical presentation');
  const catalog=JSON.parse(read('dist/'+reader.searchCatalogAsset.file));
@@ -335,7 +335,7 @@ async function checkLazySearch(reader,lightScript,assets){
  for(const q of ['', '  ']){
   const pending=typeSearch(lazy,input,q);
   assert.deepStrictEqual(Array.from(lazy.p.getSearch().searchItems,resultProjection),Array.from(lazy.p.rankSiteSearch(q,reader.index).slice(0,24),resultProjection),'blank suggestions render synchronously');
-  assert(status.textContent.includes('95个知识点'),'suggestions use the global knowledge count');
+  assert(status.textContent.includes(inventory.points+'个知识点'),'suggestions use the global knowledge count');
   await pending;
  }
  await typeSearch(lazy,input,'<>');

@@ -33,7 +33,7 @@ ROWS = {
  'model-foundations': [['mf-tensors'],['mf-attention','mf-gpu'],['mf-decoder','mf-roofline'],['mf-autograd']],
  'training': [['tr-input'],['tr-step','tr-ddp','tr-parallel'],['tr-memory','tr-collectives','tr-sharding'],['tr-recovery']],
  'platform': [['sv-contract','sv-release'],['sv-admission','sv-prefill'],['sv-optimizations','sv-kv','sv-batching'],['sv-quantization','sv-metrics']],
- 'agent': [['ag-retrieval','ag-authorization','ag-sandbox'],['ag-context','ag-runtime','ag-tools'],['ag-fencing','ag-recovery','ag-evaluation'],['ag-observability']],
+ 'agent': [['ag-retrieval','ag-sandbox'],['ag-context','ag-runtime','ag-tools'],['ag-authorization','ag-planning'],['ag-fencing','ag-recovery'],['ag-observability','ag-evaluation']],
 }
 
 def escape(value):
@@ -255,4 +255,6 @@ def render(key, graph):
 drawings = {key: render(key,graph) for key,graph in DATA['maps'].items()}
 for key, svg in drawings.items():
     (ROOT/'dist'/'diagrams'/f'field-{key}.svg').write_text(svg)
-print(f'Drew {len(DATA["maps"])} field maps from 100 nodes and 87 authored relationships.')
+nodes = sum(len(graph['nodes']) for graph in DATA['maps'].values())
+edges = sum(len(graph['edges']) for graph in DATA['maps'].values())
+print(f'Drew {len(DATA["maps"])} field maps from {nodes} nodes and {edges} authored relationships.')

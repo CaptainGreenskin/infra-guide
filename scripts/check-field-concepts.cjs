@@ -98,7 +98,8 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  }
  nodes+=ids.length;edges+=graph.edges.length;
 }
-assert.equal(nodes,100);assert.equal(edges,87); // 95 existing field points plus five prerequisite groups.
+assert.equal(nodes,require('./content-inventory.cjs').points+5); // Five prerequisite groups are outside the knowledge index.
+assert.equal(edges,90);
 const routeIds=Object.values(d.routes).flatMap(stages=>stages.flatMap(s=>s[1]));assert.equal(new Set(routeIds).size,d.articles.length);assert.equal(routeIds.length,d.articles.length);
 assert.equal(vm.runInContext('chapterReadingContext(undefined).track',c),'shared','missing article routes must retain the not-found page without crashing');
 for(const a of d.articles){
@@ -141,4 +142,4 @@ const {record,update,laterUpdates}=require('./coherence-review-records.cjs');ass
 const latestMaps=[...laterUpdates].reverse().find(stage=>stage.field_maps_snapshot)?.field_maps_snapshot||update.field_maps;
 assert.deepEqual(latestMaps,d.maps,'current maps must match the latest separate relationship review');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');for(const[file,expected]of Object.entries(record.source_sha256))assert.equal(sha(fs.readFileSync(file)),expected,file+': unreviewed source change');
-console.log('PASS: 14 connected field maps /95 existing points+5 prerequisite groups /87 authored relationships /17 exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');
+console.log('PASS: 14 connected field maps / '+nodes+' nodes / '+edges+' authored relationships /17 exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');

@@ -156,6 +156,27 @@
  links(d[8])+fold('基础程序的原运行输出',d8[0])
  ],'从订单查询认识索引的定位、排序与覆盖，再以事务、快照和写者竞争解释读写正确性与等待。');
 
+ database.sections[2][1]+=h('native-sqlite-shard-routing','分片键决定去哪查，索引决定进库后怎么查')+
+ p('查租户 A 的 104 号订单。程序先选 0 号数据库文件，再用主键查到金额 4。两个文件各保存一部分订单，每一份叫一个分片。选分片这一步叫路由，用来计算分片号的字段叫分片键。路由决定打开哪个文件，索引决定打开后怎样找到这一行。')+
+ p('实验只有 16 笔订单。A 有 101 到 112 共 12 笔，金额为 1 到 12，B 和 C 各两笔。每片都是独立 SQLite 文件，使用同样的 <code>(tenant, order_id)</code> 主键。只按租户时，A 去 0 号片，B 和 C 去 1 号片。改用租户和订单号时，将租户编号加订单号，对 2 取余。A 的偶数单和奇数单于是分开。')+
+ '<figure class="training-figure"><a href="diagrams/sqlite-shard-routing.svg" target="_blank" rel="noopener" aria-label="放大数据库分片与热键对照"><img src="diagrams/sqlite-shard-routing.svg" width="460" height="452" alt="租户布局两片行数 12 和 4，租户加订单布局为 8 和 8。查 12 笔不同订单可分到两片，连续查 A104 在两种布局都集中于 0 号片。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两种布局执行同样的查询。反复查 A104 的 12 次都去了 0 号片。<a href="diagrams/sqlite-shard-routing.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['从两个文件实测','只按租户','按租户与订单号'],[
+  ['文件内的订单行数','12 / 4','8 / 8'],
+  ['A 的 12 笔不同订单各查一次','12 / 0 次','6 / 6 次'],
+  ['重复查询 A104 共 12 次','12 / 0 次','12 / 0 次'],
+  ['汇总 A 的笔数和金额','一片得到 12 笔、78','两片各得 6 笔，金额 42 和 36']
+ ])+
+ p('查 A104 时，两个布局都只选 0 号片，读到金额 4。SQLite 的计划是 <code>SEARCH orders USING PRIMARY KEY (tenant=? AND order_id=?)</code>。这条计划描述分片内部的查找，分片号则来自程序的路由。反过来，汇总 A 时只有租户，组合规则无法确定订单号，因此要查两片。只查 0 号片也能返回一份合法的 SQL 结果，却漏掉 6 笔、36。合并两片后才与独立完整库的 12 笔、78 一致。')+
+ fold('看路由如何选文件，SQLite 如何查主键',trainingCode('shard_routing.py 中的实际选片和查询','PYTHON',`def tenant_order(tenant, order_id):
+    return (TENANT_BUCKET[tenant] + order_id) % 2
+
+key = ("A", order_id)
+index = route(*key)
+actual = shards[index].execute(POINT, key).fetchone()`))+
+ p('A104 是热键，因为请求反复打到同一个键。数据均分以后，它仍只在一片，因而这一片收到全部 12 次查询。要估计系统何时排队，还要看每片承担多少请求、各自能完成多少。 <a href="/article/elasticity/#shard-load-not-average">用相同分布算一次容量 →</a>')+
+ '<p class="practice-links"><a href="labs/sqlite-shard-routing.zip" download>下载代码与复跑说明 ↓</a> · <a href="labs/sqlite-shard-routing/shard_routing.py">查看完整程序</a> · <a href="labs/sqlite-shard-routing/validation.json">核对文件行数、SQL 和执行计划</a> · <a href="https://www.sqlite.org/eqp.html">SQLite 执行计划文档 ↗</a></p>';
+ database.updated='2026.11.11';
+
  database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
  database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
  '在 InnoDB 里，用完整主键等值命中一条已有记录时，修改通常锁住该主键记录。按范围扫描时，还要看隔离级别、实际访问的索引范围与约束检查。在可重复读下，范围锁可包含索引记录和它前面的间隙。读已提交下，普通搜索和扫描通常省去间隙锁，外键与重复键检查另有规则。先核对本次语句和实际锁对象，再决定要缩短事务、调整访问范围还是统一访问顺序。',

@@ -1,49 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1120" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1476" role="img" aria-labelledby="title desc">
 <title id="title">Agent 运行时与 Kairo 实践：核心概念关系</title>
 <desc id="desc">箭头直接标明概念间的关系；粗线突出主干，细线补充其他依赖。数字对应正文说明，方向不表示所有概念串行执行。</desc>
 <defs><marker id="arrow-main" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#315fe5"/></marker><marker id="arrow-other" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b9bb3"/></marker></defs>
-<rect width="1120" height="1120" rx="12" fill="#f8fafc"/>
+<rect width="1120" height="1476" rx="12" fill="#f8fafc"/>
 <g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif">
 <text x="560" y="48" text-anchor="middle" font-size="26" font-weight="650" fill="#20314e">Agent 运行时与 Kairo 实践</text>
 <text x="560" y="81" text-anchor="middle" font-size="18" fill="#536783">粗线：主干关系　细线：补充关系　箭头直接标明含义</text>
-<metadata>{&quot;module&quot;: &quot;agent&quot;, &quot;main_edges&quot;: [0, 3, 6, 8], &quot;rows&quot;: [[&quot;ag-retrieval&quot;, &quot;ag-authorization&quot;, &quot;ag-sandbox&quot;], [&quot;ag-context&quot;, &quot;ag-runtime&quot;, &quot;ag-tools&quot;], [&quot;ag-fencing&quot;, &quot;ag-recovery&quot;, &quot;ag-evaluation&quot;], [&quot;ag-observability&quot;]]}</metadata>
-<path data-edge="ag-runtime ag-tools" data-emphasis="main" d="M676.0 500 V462.0 H858.0 V496" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="ag-authorization ag-tools" data-emphasis="other" d="M560.0 228 C560.0 364.0 742.0 364.0 742.0 496" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="ag-sandbox ag-tools" data-emphasis="other" d="M858.0 228 C858.0 364.0 974.0 364.0 974.0 496" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="ag-tools ag-recovery" data-emphasis="main" d="M858.0 584 C858.0 680.0 560.0 680.0 560.0 772" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="ag-fencing ag-recovery" data-emphasis="other" d="M262.0 776 V680.0 H444.0 V772" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="ag-retrieval ag-context" data-emphasis="other" d="M262.0 228 C262.0 364.0 146.0 364.0 146.0 496" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="ag-context ag-runtime" data-emphasis="main" d="M378.0 500 V404.0 H444.0 V496" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<path data-edge="ag-observability ag-evaluation" data-emphasis="other" d="M560.0 952 V914.0 H26 V622.0 H974.0 V772" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
-<path data-edge="ag-recovery ag-evaluation" data-emphasis="main" d="M676.0 776 V738.0 H742.0 V772" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
-<g data-relation-label="1"><rect x="753.21" y="442.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="853.45" y="470.0" text-anchor="middle" fill="#315fe5" font-size="22">1 · 安排受控调用</text></g>
-<g data-relation-label="2"><rect x="561.76" y="343.5" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="651.0" y="371.5" text-anchor="middle" fill="#536783" font-size="22">2 · 允许或拒绝</text></g>
-<g data-relation-label="3"><rect x="815.76" y="343.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="916.0" y="371.5" text-anchor="middle" fill="#536783" font-size="22">3 · 限制程序能力</text></g>
-<g data-relation-label="4"><rect x="608.76" y="659.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="709.0" y="687.5" text-anchor="middle" fill="#315fe5" font-size="22">4 · 交付执行结果</text></g>
-<g data-relation-label="5"><rect x="252.76" y="660.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="353.0" y="688.0" text-anchor="middle" fill="#536783" font-size="22">5 · 保护接管后的</text></g>
-<g data-relation-label="6"><rect x="131.928" y="323.072" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="221.168" y="351.072" text-anchor="middle" fill="#536783" font-size="22">6 · 提供材料给</text></g>
-<g data-relation-label="7"><rect x="288.76" y="384.0" width="244.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="411.0" y="412.0" text-anchor="middle" fill="#315fe5" font-size="22">7 · 组织本次提议输入</text></g>
-<g data-relation-label="8"><rect x="181.76" y="894.0" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="293.0" y="922.0" text-anchor="middle" fill="#536783" font-size="22">8 · 提供过程证据给</text></g>
-<g data-relation-label="9"><rect x="630.76" y="718.0" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="742.0" y="746.0" text-anchor="middle" fill="#315fe5" font-size="22">9 · 保留提交事实供</text></g>
-<g data-concept="ag-runtime"><rect x="428.0" y="500" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="551" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">任务与执行</text></g>
-<g data-concept="ag-tools"><rect x="726.0" y="500" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="551" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">工具契约</text></g>
-<g data-concept="ag-recovery"><rect x="428.0" y="776" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="827" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">效果与恢复</text></g>
-<g data-concept="ag-fencing"><rect x="130.0" y="776" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="827" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行者接管</text></g>
-<g data-concept="ag-authorization"><rect x="428.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可信委托</text></g>
-<g data-concept="ag-context"><rect x="130.0" y="500" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="551" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">模型可见信息</text></g>
-<g data-concept="ag-retrieval"><rect x="130.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="262.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">获准证据</text></g>
-<g data-concept="ag-observability"><rect x="428.0" y="952" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="560.0" y="1003" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">轨迹与消耗</text></g>
-<g data-concept="ag-evaluation"><rect x="726.0" y="776" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="827" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">真实任务结果</text></g>
-<g data-concept="ag-sandbox"><rect x="726.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
-<text x="858.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">程序能力边界</text></g>
-<text x="560" y="1098" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
+<metadata>{&quot;module&quot;: &quot;agent&quot;, &quot;main_edges&quot;: [0, 5, 6, 8, 9, 11], &quot;rows&quot;: [[&quot;ag-retrieval&quot;, &quot;ag-sandbox&quot;], [&quot;ag-context&quot;, &quot;ag-runtime&quot;, &quot;ag-tools&quot;], [&quot;ag-authorization&quot;, &quot;ag-planning&quot;], [&quot;ag-fencing&quot;, &quot;ag-recovery&quot;], [&quot;ag-observability&quot;, &quot;ag-evaluation&quot;]]}</metadata>
+<path data-edge="ag-runtime ag-tools" data-emphasis="main" d="M676.0 600 V562.0 H858.0 V596" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="ag-authorization ag-tools" data-emphasis="other" d="M527.0 876 V780.0 H26 V446.0 H742.0 V596" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-sandbox ag-tools" data-emphasis="other" d="M709.0 228 C709.0 414.0 974.0 414.0 974.0 596" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-tools ag-recovery" data-emphasis="other" d="M974.0 684 V722.0 H1094 V1036.0 H825.0 V1128" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-fencing ag-recovery" data-emphasis="other" d="M411.0 1132 V1094.0 H593.0 V1128" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-retrieval ag-context" data-emphasis="main" d="M411.0 228 C411.0 414.0 146.0 414.0 146.0 596" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="ag-context ag-runtime" data-emphasis="main" d="M378.0 600 V504.0 H444.0 V596" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="ag-observability ag-evaluation" data-emphasis="other" d="M411.0 1308 V1270.0 H593.0 V1304" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-recovery ag-evaluation" data-emphasis="main" d="M709.0 1216 C709.0 1262.0 825.0 1262.0 825.0 1304" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="ag-tools ag-planning" data-emphasis="main" d="M742.0 684 C742.0 780.0 825.0 780.0 825.0 872" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<path data-edge="ag-authorization ag-planning" data-emphasis="other" d="M295.0 876 V838.0 H593.0 V872" fill="none" stroke="#8b9bb3" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow-other)"/>
+<path data-edge="ag-planning ag-recovery" data-emphasis="main" d="M709.0 960 C709.0 1046.0 709.0 1046.0 709.0 1128" fill="none" stroke="#315fe5" stroke-width="3.8" marker-end="url(#arrow-main)"/>
+<g data-relation-label="1"><rect x="753.21" y="542.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="853.45" y="570.0" text-anchor="middle" fill="#315fe5" font-size="22">1 · 安排受控调用</text></g>
+<g data-relation-label="2"><rect x="187.26" y="760.0" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="276.5" y="788.0" text-anchor="middle" fill="#536783" font-size="22">2 · 允许或拒绝</text></g>
+<g data-relation-label="3"><rect x="741.26" y="393.5" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="841.5" y="421.5" text-anchor="middle" fill="#536783" font-size="22">3 · 限制程序能力</text></g>
+<g data-relation-label="4"><rect x="911.52" y="702.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="1011.76" y="730.0" text-anchor="middle" fill="#536783" font-size="22">4 · 交付执行结果</text></g>
+<g data-relation-label="5"><rect x="401.76" y="1074.0" width="200.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="502.0" y="1102.0" text-anchor="middle" fill="#536783" font-size="22">5 · 保护接管后的</text></g>
+<g data-relation-label="6"><rect x="189.26" y="393.5" width="178.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="278.5" y="421.5" text-anchor="middle" fill="#315fe5" font-size="22">6 · 提供材料给</text></g>
+<g data-relation-label="7"><rect x="288.76" y="484.0" width="244.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="411.0" y="512.0" text-anchor="middle" fill="#315fe5" font-size="22">7 · 组织本次提议输入</text></g>
+<g data-relation-label="8"><rect x="390.76" y="1250.0" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="502.0" y="1278.0" text-anchor="middle" fill="#536783" font-size="22">8 · 提供过程证据给</text></g>
+<g data-relation-label="9"><rect x="655.76" y="1241.5" width="222.48000000000002" height="40" rx="6" fill="#f8fafc"/><text x="767.0" y="1269.5" text-anchor="middle" fill="#315fe5" font-size="22">9 · 保留提交事实供</text></g>
+<g data-relation-label="10"><rect x="646.32990625" y="763.0241874999999" width="280.56" height="40" rx="6" fill="#f8fafc"/><text x="786.60990625" y="791.0241874999999" text-anchor="middle" fill="#315fe5" font-size="22">10 · 暴露缺项，触发修订</text></g>
+<g data-relation-label="11"><rect x="281.02" y="818.0" width="236.56" height="40" rx="6" fill="#f8fafc"/><text x="399.29999999999995" y="846.0" text-anchor="middle" fill="#536783" font-size="22">11 · 限定待审批动作</text></g>
+<g data-relation-label="12"><rect x="590.72" y="986.9023750000001" width="236.56" height="40" rx="6" fill="#f8fafc"/><text x="709.0" y="1014.9023750000001" text-anchor="middle" fill="#315fe5" font-size="22">12 · 保存进度供恢复</text></g>
+<g data-concept="ag-runtime"><rect x="428.0" y="600" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="560.0" y="651" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">任务与执行</text></g>
+<g data-concept="ag-tools"><rect x="726.0" y="600" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="858.0" y="651" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">工具契约</text></g>
+<g data-concept="ag-planning"><rect x="577.0" y="876" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="927" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">计划与审批</text></g>
+<g data-concept="ag-recovery"><rect x="577.0" y="1132" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="1183" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">效果与恢复</text></g>
+<g data-concept="ag-fencing"><rect x="279.0" y="1132" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="1183" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">执行者接管</text></g>
+<g data-concept="ag-authorization"><rect x="279.0" y="876" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="927" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">可信委托</text></g>
+<g data-concept="ag-context"><rect x="130.0" y="600" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="262.0" y="651" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">模型可见信息</text></g>
+<g data-concept="ag-retrieval"><rect x="279.0" y="144" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">获准证据</text></g>
+<g data-concept="ag-observability"><rect x="279.0" y="1308" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="411.0" y="1359" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">轨迹与消耗</text></g>
+<g data-concept="ag-evaluation"><rect x="577.0" y="1308" width="264" height="84" rx="9" fill="#edf3ff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="1359" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">真实任务结果</text></g>
+<g data-concept="ag-sandbox"><rect x="577.0" y="144" width="264" height="84" rx="9" fill="#fff" stroke="#b9ccef" stroke-width="1.5"/>
+<text x="709.0" y="195" text-anchor="middle" fill="#234d9f" font-size="26" font-weight="600">程序能力边界</text></g>
+<text x="560" y="1454" text-anchor="middle" fill="#536783" font-size="17">先理解主干，再补充约束与反馈 · 点图放大</text>
 </g></svg>

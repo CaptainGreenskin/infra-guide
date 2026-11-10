@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="318" viewBox="0 0 600 318" role="img" aria-labelledby="title description">
+<title id="title">模型看到补录，宿主更新计划并等待批准</title>
+<desc id="description">模型提出读主清单、加入补录、读补录和生成草稿四次调用。宿主保留主清单 37，计划 1 加入 late-A/v1 变为计划 2，补录 5 生成 42 草稿。之后新进程只在批准匹配 42 草稿时发布。</desc>
+<metadata>{"record":"labs/model-plan-revision/validation.json","tools":["read_order_manifest","revise_plan","read_extra_batch","request_draft"],"revisions":[1,2],"totals":[37,42],"publish_counts":[0,0,1,1]}</metadata>
+<rect x="1" y="1" width="598" height="316" rx="15" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="22" y="33" font-size="19" font-weight="700">补录编号出现后，报告任务怎样继续？</text>
+<text x="23" y="69" font-size="14" font-weight="700">模型提议</text>
+<text x="23" y="110" font-size="14" font-weight="700">宿主保存</text>
+<g text-anchor="middle">
+<rect x="96" y="49" width="111" height="79" rx="7" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="151" y="73" font-size="15">读主清单</text>
+<text x="151" y="105" font-size="14">37，发现补录</text>
+<path d="M210 88H216M213 84L217 88L213 92" fill="none" stroke="#536e90"/>
+<rect x="220" y="49" width="112" height="79" rx="7" fill="#fff0dc" stroke="#ce9e65"/>
+<text x="276" y="73" font-size="15">计划加入补录</text>
+<text x="276" y="105" font-size="14">计划 1 → 2</text>
+<path d="M335 88H341M338 84L342 88L338 92" fill="none" stroke="#536e90"/>
+<rect x="345" y="49" width="108" height="79" rx="7" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="399" y="73" font-size="15">读补录</text>
+<text x="399" y="105" font-size="14">late-A/v1 = 5</text>
+<path d="M456 88H462M459 84L463 88L459 92" fill="none" stroke="#536e90"/>
+<rect x="466" y="49" width="112" height="79" rx="7" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="522" y="73" font-size="15">生成草稿</text>
+<text x="522" y="105" font-size="14">42，等待批准</text>
+</g>
+<path d="M22 152H579" stroke="#8da1b9" stroke-dasharray="5 4"/>
+<text x="23" y="180" font-size="16" font-weight="700">原进程退出，新进程读回同一份 42 草稿</text>
+<g text-anchor="middle">
+<rect x="23" y="199" width="173" height="69" rx="7" fill="#f2f5f9" stroke="#a2b3c8"/>
+<text x="109" y="223" font-size="15">无批准或旧批准</text>
+<text x="109" y="248" font-size="14">报告 0 份</text>
+<rect x="214" y="199" width="173" height="69" rx="7" fill="#e3f3e9" stroke="#8bb79d"/>
+<text x="300" y="223" font-size="15">批准当前 42 草稿</text>
+<text x="300" y="248" font-size="14">报告 1 份</text>
+<rect x="404" y="199" width="173" height="69" rx="7" fill="#f2f5f9" stroke="#a2b3c8"/>
+<text x="490" y="223" font-size="15">完成后再次恢复</text>
+<text x="490" y="248" font-size="14">报告仍是 1 份</text>
+</g>
+<text x="23" y="295" font-size="14">读回报告：总数 42，来源为主清单和补录。</text>
+</g>
+</svg>

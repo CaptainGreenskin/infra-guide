@@ -394,7 +394,8 @@ def main():
         raw=baseline if args.mode=='baseline' else (args.repo/name).read_text()
         rows.append(check(Path(name).stem.removeprefix('field-'),raw,parse_svg(baseline) if baseline is not None else None,args))
     inventory={'fields':len(rows),'nodes':sum(x['nodes'] for x in rows),'edges':sum(x['edges'] for x in rows)}
-    inventory_ok=inventory=={'fields':14,'nodes':100,'edges':87}
+    expected={'fields':14,'nodes':101,'edges':90} if args.geometry_only else {'fields':14,'nodes':100,'edges':87}
+    inventory_ok=inventory==expected
     result={'schema':1,'method':'independent actual-SVG geometry; stdlib, no generator import/self-report',
             'mode':args.mode,'historical_semantics_compared':not args.geometry_only,
             'baseline_ref':None if args.geometry_only else args.baseline_ref,'inventory':inventory,'inventory_ok':inventory_ok,

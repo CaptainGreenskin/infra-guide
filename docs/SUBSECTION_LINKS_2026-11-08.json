@@ -117,9 +117,11 @@
         "sql-plan-lab",
         "sql-snapshot-lab",
         "innodb-wait-graph",
-        "native-innodb-lab"
+        "native-innodb-lab",
+        "native-sqlite-shard-routing"
       ],
       "visible_targets": [
+        "native-sqlite-shard-routing",
         "innodb-wait-graph",
         "sql-plan-lab",
         "sql-snapshot-lab",
@@ -354,9 +356,11 @@
     {
       "id": "elasticity",
       "targets": [
-        "native-cpu-quota-http"
+        "native-cpu-quota-http",
+        "shard-load-not-average"
       ],
       "visible_targets": [
+        "shard-load-not-average",
         "native-cpu-quota-http"
       ]
     },
@@ -659,11 +663,13 @@
         "subsection-1-1mlk4h4",
         "torch-checkpoint-path",
         "fsdp-dcp-reshard",
-        "native-elastic-restart-step"
+        "native-elastic-restart-step",
+        "native-async-dcp-commit"
       ],
       "visible_targets": [
         "fsdp-dcp-reshard",
-        "native-elastic-restart-step"
+        "native-elastic-restart-step",
+        "native-async-dcp-commit"
       ]
     },
     {
@@ -962,7 +968,8 @@
         "mcp-commit-recovery",
         "native-approval-reentry",
         "native-parallel-merge",
-        "native-workflow-version-resume"
+        "native-workflow-version-resume",
+        "native-model-plan-revision"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -982,6 +989,7 @@
         "subsection-8-1ugi1r3",
         "agent-planning-run",
         "subsection-9-62i94t",
+        "native-model-plan-revision",
         "langgraph-workflow-run",
         "mcp-commit-recovery",
         "native-approval-reentry",

@@ -244,6 +244,28 @@ optimizer.step()
  trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
  p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
  '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
- recovery.updated='2026.11.10';
+ recovery.sections[7][1]+=
+ '<h3 id="native-async-dcp-commit">异步保存时，旧检查点会写进哪一步的权重？</h3>'+
+ p('异步保存让后台写检查点，训练可以继续。两张状态表却可能指向同一块内存。训练刚改完第 2 步的权重，后台可能正要把那块内存写进第 1 步的目录。<a href="/article/data-pipeline/#native-prefetch-resume">数据管道的恢复实验</a>确认下一批从哪里读，这里再确认从哪一步的参数接着算。')+
+ p('用一个权重 w 来看。两个训练进程在 CPU 上用 Gloo 交换数据，各进程编号叫 rank。输入为 1，预测值就是 w，目标值为 y，损失是 (w−y)²/2。两个进程平均梯度 g 后，用动量 m ← 0.5m + g，再做 w ← w − 0.25m。第 1 步的目标是 2 和 4，从 w=0、m=0 算出 w=0.75、m=−3。第 2 步的目标换成 6 和 10，平均梯度变成 0.75−8=−7.25，得到 w=2.9375、m=−8.75。')+
+ trainingFigure('async-dcp-commit','先取第 1 步的状态，后台写入暂缓，前台继续第 2 步。复制与共享存储两条路径都写成功，恢复结果不同。')+
+ p('这段代码使用 PyTorch 2.5.1 的分布式检查点（DCP）。先在第 1 步复制一份独立状态，再交给 <code>async_save</code>。返回的 <code>Future</code> 用来等后台写完。最后由训练程序确认保存目录的元数据文件 <code>.metadata</code>，再更新恢复入口 <code>CURRENT</code>。实验故意让后台等到第 2 步做完才开始写。')+
+ trainingCode('保存第 1 步的独立副本，等待后台写完再发布','PYTHON',`payload = state(model, optimizer, 1)
+argument = copy.deepcopy(payload)
+future = dcp.async_save(argument, storage_writer=writer, process_group=pg)
+# 实验让前台完成第 2 步，再放行后台 writer
+future.result(timeout=35)
+# rank 0 确认 .metadata 后替换 CURRENT`)+
+ table(['实际读回的路径','已完成步数 / 权重 / 动量','读回后再做第 2 步'],[
+  ['复制状态，再异步写入','1 / 0.75 / −3','2.9375'],
+  ['共享训练存储，异步写入仍成功','1 / 2.9375 / −8.75','5.296875'],
+  ['rank 1 写失败，读取原已发布目录','1 / 0.75 / −3','2.9375']
+ ])+
+ p('在本实验的 PyTorch 2.5.1 默认 CPU 暂存路径，转到 CPU 的两个张量仍与训练共享地址。第 2 步更新后，后台写入的权重和动量已经变了，独立保存的步数却仍是 1。显式复制后，前台更新不会改到后台要写的副本。第三组让 rank 1 写失败，只有 rank 0 的分片文件留下，没有 <code>.metadata</code>，<code>CURRENT</code> 继续指向上一份已发布目录。')+
+ '<details class="progressive-detail"><summary>手算一下。只复制权重，动量仍共享，恢复后会怎样？</summary>'+
+ p('会从 w=0.75、m=−8.75 接着算。第 2 步的梯度仍为 −7.25，动量更新为 −11.625，权重变成 3.65625。这是按同一公式推导的变体。')+'</details>'+
+ p('解压后按包内命令跑两个本机进程。核对阶段标记、保存完成后的目录和实际读回值，再用一次更新区分两份检查点。本实验固定版本和 CPU 默认写入器，保存后的状态通过新建的模型和优化器加载。复制所需的额外内存和目标环境的吞吐另测。')+
+ '<p class="practice-links"><a href="/labs/async-dcp-commit.zip" download>下载源码与复跑命令 ↓</a> · <a href="/labs/async-dcp-commit/validation.json">查看两个 rank 的状态与文件 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/staging.py#L91-L100">固定版暂存路径 ↗</a></p>';
+ recovery.updated='2026.11.11';
 
 })();

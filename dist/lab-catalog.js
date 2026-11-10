@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
+ 'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
+ 'model-plan-revision':{folder:'model-plan-revision',title:'模型发现缺项后的计划、审批和恢复'},
  'release-artifact-trust':{folder:'release-artifact-trust',title:'同一签名记录和不同制品字节'},
  'prefetch-resume-step':{folder:'prefetch-resume-step',title:'数据预取和已提交训练步'},
  'memory-withdrawal':{folder:'memory-withdrawal',title:'偏好撤回、任务快照与实际发送'},
@@ -433,6 +436,20 @@ labLearningCatalog.push(
   files:['memory_lab.py','fixture.json','requirements.txt'],env:'Python 3.12 · LangGraph 1.2.20 · SQLite · 本机 HTTP',kind:'真实持久快照、撤回、恢复和清理',
   observe:'分别读取当前偏好、旧任务快照和接收方记录。比较复用旧快照和发送前重查的实际输入。',
   scope:'固定合成偏好与本机接收服务。观察范围到发送内容与快照删除。'}
+);
+labLearningCatalog.push(
+ {id:'cloud-sqlite-shard-routing',track:'cloud',stage:2,title:'两片数据一样多，为什么一个键仍打满一片',chapter:'database-index-locks',anchor:'native-sqlite-shard-routing',pack:'sqlite-shard-routing',
+  files:['shard_routing.py'],env:'Python 3 · SQLite 3.51 · 本机文件',kind:'实际分片文件、查询计划和独立聚合对照',
+  observe:'固定一组订单，比对两种分片键、实际查询位置和跨片合计，再把热键读次数接到容量计算。',
+  scope:'本机 SQLite 文件与教学路由。容量题使用声明的速率，未测生产吞吐。'},
+ {id:'ai-async-dcp-commit',track:'ai',stage:2,title:'异步保存成功，文件里是哪一步的参数',chapter:'checkpoint-recovery',anchor:'native-async-dcp-commit',pack:'async-dcp-commit',
+  files:['async_dcp.py','requirements.txt'],env:'Python 3 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'实际异步写入、恢复与故障对照',
+  observe:'在后台写入尚未完成时推进训练，对照共享内存和独立快照，核对加载、下一步更新和失败后的提交指针。',
+  scope:'固定版本和本机 CPU。不同设备、版本与异步保存后端需要各自验证。'},
+ {id:'agent-model-plan-revision',track:'agent',stage:2,title:'模型读到缺项后，旧批准还能用吗',chapter:'durable-workflows',anchor:'native-model-plan-revision',pack:'model-plan-revision',
+  files:['model_plan_lab.py','fixture.json','assets.json'],env:'Python 3.12 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU 与 SQLite',kind:'实际模型工具提议、计划修订和跨进程恢复',
+  observe:'跟同一任务从基础 37 到补录后的 42，核对旧批准拒绝、匹配批准发布和重复恢复后的报告数。',
+  scope:'固定合成来源、受控动作和本机审批夹具。模型泛化及 Kairo 接入另验。'}
 );
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}

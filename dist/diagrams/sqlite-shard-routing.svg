@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="452" viewBox="0 0 460 452" role="img" aria-labelledby="shards-title shards-desc">
+  <title id="shards-title">均分订单后，热键的请求仍集中</title>
+  <desc id="shards-desc">只按租户放置时，两个分片有 12 与 4 行，不同订单与热键查询都为 12 比 0。按租户和订单号放置时，行数是 8 比 8，不同订单查询是 6 比 6，反复查询 A104 仍是 12 比 0。</desc>
+  <metadata>{"record":"labs/sqlite-shard-routing/validation.json","tenant_only":{"rows":[12,4],"distinct":[12,0],"hot":[12,0],"total":[12,78]},"tenant_order":{"rows":[8,8],"distinct":[6,6],"hot":[12,0],"total":[12,78]}}</metadata>
+  <rect width="460" height="452" rx="14" fill="#f2f6fb"/>
+  <g font-family="system-ui, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#132b46">
+    <text x="23" y="38" font-size="24" font-weight="700">行数均分后，热键还在一片</text>
+    <text x="23" y="67" font-size="16" fill="#405976">真实 SQLite 文件行数与 SQL 执行次数</text>
+    <g data-placement="tenant-only">
+      <rect x="19" y="89" width="422" height="139" rx="11" fill="#fff" stroke="#a1b5cc"/>
+      <text x="33" y="124" font-size="20" font-weight="700">只按租户</text>
+      <g font-size="15" fill="#405976">
+        <text x="33" y="155">文件行数</text><text x="173" y="155">不同订单点查</text><text x="313" y="155">重复查询 A104</text>
+      </g>
+      <g font-size="22" font-weight="700">
+        <text x="33" y="185">12 / 4</text><text x="173" y="185">12 / 0</text><text x="313" y="185">12 / 0</text>
+      </g>
+      <g fill="#355da9">
+        <rect x="33" y="197" width="78" height="8" rx="2"/><rect x="173" y="197" width="104" height="8" rx="2"/><rect x="313" y="197" width="104" height="8" rx="2"/>
+      </g>
+      <rect x="111" y="197" width="26" height="8" rx="2" fill="#168577"/>
+    </g>
+    <g data-placement="tenant-order">
+      <rect x="19" y="247" width="422" height="139" rx="11" fill="#fff" stroke="#a1b5cc"/>
+      <text x="33" y="282" font-size="20" font-weight="700">按租户与订单号</text>
+      <g font-size="15" fill="#405976">
+        <text x="33" y="313">文件行数</text><text x="173" y="313">不同订单点查</text><text x="313" y="313">重复查询 A104</text>
+      </g>
+      <g font-size="22" font-weight="700">
+        <text x="33" y="343">8 / 8</text><text x="173" y="343">6 / 6</text><text x="313" y="343">12 / 0</text>
+      </g>
+      <g fill="#355da9">
+        <rect x="33" y="355" width="52" height="8" rx="2"/><rect x="173" y="355" width="52" height="8" rx="2"/><rect x="313" y="355" width="104" height="8" rx="2"/>
+      </g>
+      <g fill="#168577">
+        <rect x="85" y="355" width="52" height="8" rx="2"/><rect x="225" y="355" width="52" height="8" rx="2"/>
+      </g>
+    </g>
+    <rect x="24" y="414" width="16" height="10" rx="2" fill="#355da9"/><text x="48" y="424" font-size="16">0 号片</text>
+    <rect x="130" y="414" width="16" height="10" rx="2" fill="#168577"/><text x="154" y="424" font-size="16">1 号片</text>
+    <text x="249" y="424" font-size="15" fill="#405976">柱长表示同列两片的比例</text>
+  </g>
+</svg>

@@ -1,0 +1,3740 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "3e6136b6edd1649c97651ae8fc6ae1d2b7bb18a3",
+  "status": "reviewed",
+  "relationship_snapshot": {
+    "chapter_relations": [
+      {
+        "id": "linux-resource",
+        "required": [
+          [
+            "cloud-overview",
+            "服务最终由进程执行，资源读数要回到执行与等待。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1，理解进程在主机上运行。"
+      },
+      {
+        "id": "virtual-memory-oom",
+        "required": [
+          [
+            "linux-resource",
+            "进程持有地址空间；内存记账与限制解释它为什么会被终止。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.1 进程、线程与资源，认识进程、容器和 cgroup。"
+      },
+      {
+        "id": "concurrency-pools",
+        "required": [
+          [
+            "linux-resource",
+            "线程执行与等待进一步形成锁、队列和容量约束。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.1 的 CPU 与等待时间，理解线程共享进程资源。"
+      },
+      {
+        "id": "distributed-systems",
+        "required": [],
+        "optional": [],
+        "prereq": "知道请求有发起方和接收方即可；本章介绍超时与结果未知，不要求先完成Cloud课程。"
+      },
+      {
+        "id": "cloud-overview",
+        "required": [],
+        "optional": [],
+        "prereq": "能运行一个简单程序，了解客户端与服务端。"
+      },
+      {
+        "id": "cloud-compute",
+        "required": [
+          [
+            "linux-resource",
+            "实际CPU时间和工作集决定怎样比较云规格。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成P0.1，理解CPU时间与内存压力。"
+      },
+      {
+        "id": "vpc-network",
+        "required": [
+          [
+            "cloud-overview",
+            "请求必须经过地址、入口和返回路径才能触达服务。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1；知道IP地址与端口的用途。"
+      },
+      {
+        "id": "network-diagnosis",
+        "required": [
+          [
+            "vpc-network",
+            "先有往返路径，时间戳才能定位连接和传输卡在哪里。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C2.1；会在终端发起HTTP请求。"
+      },
+      {
+        "id": "tcp-event-loop",
+        "required": [
+          [
+            "network-diagnosis",
+            "请求时间边界继续下钻到字节流、缓冲和就绪事件。"
+          ],
+          [
+            "linux-resource",
+            "套接字由进程持有，I/O等待需要与CPU执行分开。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "了解进程与文件描述符的基本作用；先读云网络中的IP、端口与请求路径，不要求已有epoll编程经验。"
+      },
+      {
+        "id": "training-storage",
+        "required": [
+          [
+            "vpc-network",
+            "远程数据读取同时依赖访问单位与网络路径。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读云网络与请求路径，了解文件读取。配套程序使用 Python 3.9+ 标准库。"
+      },
+      {
+        "id": "database-index-locks",
+        "required": [
+          [
+            "concurrency-pools",
+            "查询除了读数据，还会等待连接与事务锁。"
+          ],
+          [
+            "training-storage",
+            "数据库把持久数据组织成可查询、可事务更新的结构。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 P0.3 的等待队列及 C2.2 的请求时间边界，认识关系表的一行和查询条件。"
+      },
+      {
+        "id": "cache-consistency",
+        "required": [
+          [
+            "database-index-locks",
+            "事务提交和可见性决定缓存何时可能读旧或回填旧值。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 C3.2 的事务提交与可见性、P0.3 的共享状态与排队。"
+      },
+      {
+        "id": "storage-recovery",
+        "required": [
+          [
+            "training-storage",
+            "先规定数据的读取单位与版本，再定义一致发布和恢复材料。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C3.1；理解摘要可以检查内容是否变化。"
+      },
+      {
+        "id": "mysql-recovery",
+        "required": [
+          [
+            "database-index-locks",
+            "事务提交与回滚是解释各类数据库日志的起点。"
+          ],
+          [
+            "storage-recovery",
+            "基线、连续变化和恢复目标需要在同一历史上对齐。"
+          ]
+        ],
+        "optional": [
+          [
+            "mysql-replication",
+            "恢复日志之后，继续验证另一实例应用到哪一项提交，以及谁有资格接新写。"
+          ]
+        ],
+        "prereq": "了解事务提交与回滚、主键和基本SQL；先读数据库访问与通用存储恢复，尚不了解redo/binlog也可以从本章第一节开始。"
+      },
+      {
+        "id": "mysql-replication",
+        "required": [
+          [
+            "mysql-recovery",
+            "提交日志、恢复坐标与连续变化记录，继续连接副本应用和新写资格。"
+          ],
+          [
+            "database-index-locks",
+            "普通一致读与事务提交先确定，才能分开行版本旧读和副本落后。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读索引与事务、存储恢复和MySQL日志恢复；会区分事务提交、binlog与业务回执。"
+      },
+      {
+        "id": "container-runtime",
+        "required": [
+          [
+            "linux-resource",
+            "容器运行的仍是进程，隔离视图和资源限制分别作用。"
+          ],
+          [
+            "virtual-memory-oom",
+            "内存上限与进程地址空间不同，OOM要沿实际记账判断。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "知道进程、文件描述符和 CPU / 内存；内存基础可先读 P0 的虚拟内存章节。"
+      },
+      {
+        "id": "kubernetes-basics",
+        "required": [
+          [
+            "container-runtime",
+            "知道实际执行对象后，再理解声明如何被控制器推进。"
+          ]
+        ],
+        "optional": [
+          [
+            "control-plane-consensus",
+            "继续沿已保存的API对象，核对多数派提交、读取、变更监听与快照恢复。"
+          ]
+        ],
+        "prereq": "先认识进程、容器与资源限制；本章从API对象与控制器讲起。IP和端口可按需复习，VPC路由在容器网络章继续深入。"
+      },
+      {
+        "id": "k8s-workloads",
+        "required": [
+          [
+            "kubernetes-basics",
+            "控制循环具体组织副本、完成型任务和有身份的工作负载。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读容器运行原理与 Kubernetes 控制面；知道 Pod、Service 和期望状态。"
+      },
+      {
+        "id": "scheduling-resources",
+        "required": [
+          [
+            "kubernetes-basics",
+            "声明被接受之后，还需要为Pod找到满足约束的节点。"
+          ],
+          [
+            "cloud-compute",
+            "资源承诺与单节点形状共同决定放置可行性。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成P0.1、C4.2。"
+      },
+      {
+        "id": "k8s-networking",
+        "required": [
+          [
+            "k8s-workloads",
+            "副本先有身份与就绪条件，Service才能选择实际后端。"
+          ],
+          [
+            "vpc-network",
+            "Pod与Service路径仍要满足路由、端口和回程。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 VPC 的路由与回程；认识 Pod、网络命名空间、端口与 TCP 连接。"
+      },
+      {
+        "id": "k8s-storage",
+        "required": [
+          [
+            "scheduling-resources",
+            "卷的拓扑与挂载条件会反过来限制Pod能放在哪里。"
+          ],
+          [
+            "training-storage",
+            "卷提供的是存储访问能力，仍需解释底层数据语义。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先知道文件、块与对象存储的差别，认识 Pod 调度和故障域。"
+      },
+      {
+        "id": "config-secrets",
+        "required": [
+          [
+            "k8s-workloads",
+            "配置怎样进入容器，取决于Pod声明、进程启动和读取时机。"
+          ]
+        ],
+        "optional": [
+          [
+            "iam-security",
+            "继续深入凭据读取与间接授权。"
+          ],
+          [
+            "delivery",
+            "继续深入配置与代码的兼容发布。"
+          ]
+        ],
+        "prereq": "先认识Pod、容器和工作负载；授权与发布兼容可在相关章节继续深入，不作本章硬性先修。"
+      },
+      {
+        "id": "k8s-autoscaling",
+        "required": [
+          [
+            "scheduling-resources",
+            "伸缩建议只有在节点能放下新副本时才可能兑现。"
+          ],
+          [
+            "cloud-compute",
+            "资源预算与有效容量把指标变化连接到所需副本。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读计算资源、Pod工作负载与调度；本章解释伸缩反馈，容量与弹性章再展开故障域和完整时间预算。"
+      },
+      {
+        "id": "control-plane-consensus",
+        "required": [
+          [
+            "kubernetes-basics",
+            "先认识API对象与控制循环，再下钻其期望状态怎样持久提交和被观察。"
+          ],
+          [
+            "distributed-systems",
+            "部分失败与结果未知是理解多数派、隔离成员和重试边界的前提。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Kubernetes对象与调谐；理解客户端、服务端、进程和基本网络路径即可。"
+      },
+      {
+        "id": "serverless-execution",
+        "required": [
+          [
+            "distributed-systems",
+            "托管执行仍会遇到超时、重复和未知结果。"
+          ],
+          [
+            "container-runtime",
+            "执行环境的创建、复用和状态寿命决定函数能依赖什么。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先认识容器运行环境、超时与重复执行；消息投递和事务回执在本章逐层介绍，数据库机制可按需深入。"
+      },
+      {
+        "id": "message-delivery",
+        "required": [
+          [
+            "serverless-execution",
+            "事件触发继续下钻到谁确认发送、谁确认处理及谁记录效果。"
+          ],
+          [
+            "database-index-locks",
+            "接收方事务把一次业务效果与稳定回执共同提交。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Serverless全景、超时与幂等、数据库事务；本章从消息代理、通道与确认对象开始，不要求已有RabbitMQ项目。"
+      },
+      {
+        "id": "delivery",
+        "required": [
+          [
+            "k8s-workloads",
+            "发布改变模板与副本，用户结果还取决于数据和配置兼容。"
+          ],
+          [
+            "storage-recovery",
+            "可回退交付需要可核对版本与明确恢复目标。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C4.2；理解不可变版本与提交点。"
+      },
+      {
+        "id": "terraform-state",
+        "required": [
+          [
+            "delivery",
+            "可追溯变更继续连接配置、状态记录与实际对象。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读交付章与文件/进程基础；本章逐步介绍IaC、提供程序、后端和工作空间，不要求已有Terraform项目。"
+      },
+      {
+        "id": "gitops-reconciliation",
+        "required": [
+          [
+            "delivery",
+            "一次交付继续发展成持续观察、比较和调谐。"
+          ],
+          [
+            "config-secrets",
+            "声明同步以后，配置仍需真正进入进程才改变业务结果。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Kubernetes控制面、工作负载和配置注入；本章先介绍GitOps、Application与同步关系，再进入实测。"
+      },
+      {
+        "id": "iam-security",
+        "required": [
+          [
+            "cloud-overview",
+            "服务访问资源之前，先区分谁调用、允许什么和范围在哪里。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.1，了解服务会访问其他资源。"
+      },
+      {
+        "id": "elasticity",
+        "required": [
+          [
+            "cloud-compute",
+            "单实例能力要乘上有效副本，并考虑故障域和扩容时序。"
+          ],
+          [
+            "concurrency-pools",
+            "输入超过完成能力时，差额表现为排队或拒绝。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C1.2，能解释容量基线。"
+      },
+      {
+        "id": "slo",
+        "required": [],
+        "optional": [],
+        "prereq": "会计算比例；理解请求成功与业务成功的区别。"
+      },
+      {
+        "id": "observability",
+        "required": [
+          [
+            "slo",
+            "先定义用户相关的好坏事件，再决定指标与追踪要回答什么。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C9.1，理解有效事件的分母与基本请求路径。"
+      },
+      {
+        "id": "incident",
+        "required": [
+          [
+            "observability",
+            "信号只有放回请求路径和时间线，才能支持或排除原因。"
+          ],
+          [
+            "concurrency-pools",
+            "低CPU与高延迟可以由队列、连接池或锁等待连接起来。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C9.1与C9.2，理解请求分母、时间区间与连接池。"
+      },
+      {
+        "id": "resilience",
+        "required": [
+          [
+            "incident",
+            "先确定故障范围和恢复条件，再设计演练与切换。"
+          ],
+          [
+            "storage-recovery",
+            "恢复能力要由版本、材料和消费者结果证明。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成C3.4、C9.1、C9.3。"
+      },
+      {
+        "id": "transformer-model",
+        "required": [],
+        "optional": [],
+        "prereq": "了解向量与乘法即可；文中从张量形状和逐项乘加开始。"
+      },
+      {
+        "id": "tokenization-embedding",
+        "required": [
+          [
+            "transformer-model",
+            "模型骨架里的输入、隐藏向量和输出分数需要具体编号与形状。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架，知道隐藏维度、词表和 logits 的位置。"
+      },
+      {
+        "id": "attention-mechanics",
+        "required": [
+          [
+            "tokenization-embedding",
+            "词元向量构成Q/K/V的输入，形状决定矩阵计算是否成立。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架与 token 到张量的路径；能检查矩阵乘法形状。"
+      },
+      {
+        "id": "transformer-block",
+        "required": [
+          [
+            "attention-mechanics",
+            "注意力输出还要经过前馈、残差与归一化，才构成完整层。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Attention 与 token 到张量的路径；知道分头、拼头与输出投影。"
+      },
+      {
+        "id": "position-encoding",
+        "required": [
+          [
+            "attention-mechanics",
+            "位置关系需要进入Q/K点积，而不是只给文本附一个序号。"
+          ],
+          [
+            "transformer-block",
+            "位置处理必须放回每层实际计算与缓存路径。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Attention 与 Decoder 结构；知道 Q、K 点积和因果可见性。"
+      },
+      {
+        "id": "autograd-training",
+        "required": [
+          [
+            "transformer-block",
+            "前向输出与目标形成损失，梯度再沿同一计算图更新参数。"
+          ],
+          [
+            "tokenization-embedding",
+            "有效标签、移位和掩码决定究竟在优化哪些预测。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先理解词元向量、注意力与Decoder块的前向计算；本章再定义损失、梯度和优化器。位置编码专题可按需深入。"
+      },
+      {
+        "id": "gpu-execution",
+        "required": [
+          [
+            "transformer-model",
+            "张量计算被映射到执行单元与多层存储，才有GPU工作量。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读模型骨架；能解释张量形状和每元素字节数。"
+      },
+      {
+        "id": "roofline-model",
+        "required": [
+          [
+            "gpu-execution",
+            "算术吞吐与数据搬运共同限制算子的可达性能。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读GPU执行与存储；知道矩阵形状、FLOP与字节的含义。"
+      },
+      {
+        "id": "flash-attention-io",
+        "required": [
+          [
+            "attention-mechanics",
+            "分块必须保留注意力的同一归一化结果。"
+          ],
+          [
+            "roofline-model",
+            "减少中间数据搬运需要先有计算量与字节账。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Attention与Roofline；能解释softmax分母和HBM流量。"
+      },
+      {
+        "id": "tensor-parallel-math",
+        "required": [
+          [
+            "autograd-training",
+            "切开矩阵以后，前向数值和反向梯度都要重新对应。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读矩阵乘法、非线性与自动求导。实战基线 Python 3.12、PyTorch 2.5.1、CPU/Gloo。"
+      },
+      {
+        "id": "operator-profiling",
+        "required": [
+          [
+            "roofline-model",
+            "先算工作与字节，再用实际实现和轨迹验证瓶颈。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读向量矩阵、GPU执行与Roofline；不会写CUDA也能先完成本章CPU实验。"
+      },
+      {
+        "id": "gpu-cluster",
+        "required": [
+          [
+            "autograd-training",
+            "一项训练作业最终要推进有效目标、梯度与参数更新。"
+          ],
+          [
+            "gpu-execution",
+            "模型计算需要被放到有算力、内存和通信的执行环境。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先认识前向预测、损失、反向梯度、优化器更新与GPU执行；可沿自动求导和GPU执行章补齐，位置编码专题按需深入。"
+      },
+      {
+        "id": "distributed-training",
+        "required": [
+          [
+            "gpu-cluster",
+            "资源分布后，要决定状态、计算与通信怎样划分。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.1，理解参数、梯度和优化器状态。"
+      },
+      {
+        "id": "gpu-memory",
+        "required": [
+          [
+            "distributed-training",
+            "副本或分片规则决定参数、梯度、优化器和激活怎样记账。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "理解前向、反向与优化器更新；先读A2.1—A2.2，能区分参数元素、张量与数据并行副本。"
+      },
+      {
+        "id": "ddp-code",
+        "required": [
+          [
+            "distributed-training",
+            "并行策略需要落实为参与进程、同步梯度和一致更新。"
+          ],
+          [
+            "gpu-memory",
+            "精度、累积与状态寿命决定程序能否在预算内执行。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成A2.1—A2.3；使用Python 3.10—3.12与PyTorch 2.5.1。先运行CPU/Gloo、FP32路径。"
+      },
+      {
+        "id": "training-communication",
+        "required": [
+          [
+            "ddp-code",
+            "具体同步点和参与者先确定，才能定位集合通信等待。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.4，理解 rank 和一次优化器更新。"
+      },
+      {
+        "id": "data-pipeline",
+        "required": [
+          [
+            "ddp-code",
+            "各进程必须持续得到有效且权重正确的输入，算力才有意义。"
+          ]
+        ],
+        "optional": [
+          [
+            "training-storage",
+            "继续深入对象、文件与块存储的读取粒度和访问成本。"
+          ]
+        ],
+        "prereq": "先读A2.4，理解每个进程如何取得训练输入；本章解释分片、读取与预处理，存储访问单位可按链接补读C3.1。"
+      },
+      {
+        "id": "multinode-lab",
+        "required": [
+          [
+            "training-communication",
+            "跨主机执行需要会合、参与者和数据通信共同成立。"
+          ],
+          [
+            "data-pipeline",
+            "多机验收还要确认输入覆盖与实际训练进度。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读A2.4—A2.6，再阅读拓扑、启动与验收步骤；实际两机四卡实验另需两台Linux节点、每台至少两张NVIDIA GPU。"
+      },
+      {
+        "id": "checkpoint-recovery",
+        "required": [
+          [
+            "ddp-code",
+            "恢复目标是继续同一更新过程，需要对齐参数、优化器与数据位置。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.4；本章 CPU 两进程即可验证。"
+      },
+      {
+        "id": "training-performance",
+        "required": [
+          [
+            "training-communication",
+            "吞吐测量必须包含计算之外的同步等待。"
+          ],
+          [
+            "checkpoint-recovery",
+            "完成时间和成本还要包含失败与恢复带来的工作。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A2.5—A2.8；性能数据需要真实目标硬件。"
+      },
+      {
+        "id": "training-platform",
+        "required": [
+          [
+            "gpu-cluster",
+            "平台把用户训练意图组织成可调度、可观察的作业。"
+          ],
+          [
+            "checkpoint-recovery",
+            "产物和恢复点给平台提供可核对的进度与完成依据。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "理解训练作业、容器与检查点；建议先读A2.1和A2.8。"
+      },
+      {
+        "id": "gpu-scheduling",
+        "required": [
+          [
+            "training-platform",
+            "作业提交以后，队列准入与整组放置决定何时能执行。"
+          ],
+          [
+            "distributed-training",
+            "进程组与并行布局决定资源形状和通信要求。"
+          ]
+        ],
+        "optional": [
+          [
+            "scheduling-resources",
+            "补充普通Pod的节点可行性，再比较整组作业准入。"
+          ]
+        ],
+        "prereq": "先读A3.1与A2.2，理解作业、进程组与并行布局；普通Pod的资源放置可按链接补读C4.4。"
+      },
+      {
+        "id": "kubernetes-training",
+        "required": [
+          [
+            "gpu-scheduling",
+            "资源准入继续落实为工作Pod、会合和共同生命周期。"
+          ],
+          [
+            "ddp-code",
+            "平台管理的是一份有明确启动与恢复契约的训练程序。"
+          ]
+        ],
+        "optional": [
+          [
+            "k8s-workloads",
+            "补充Job与Pod怎样组织任务和执行进程。"
+          ],
+          [
+            "k8s-storage",
+            "补充持久卷、节点拓扑与放置约束之间的关系。"
+          ]
+        ],
+        "prereq": "先理解训练作业、分布式程序与资源准入；Pod/Job/卷可按链接补齐。真实GPU实战另需目标环境，不把完成物理多机实验当作阅读前提。"
+      },
+      {
+        "id": "model-serving",
+        "required": [
+          [
+            "transformer-block",
+            "推理使用已有参数，沿前缀计算下一词元，并维护中间缓存。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "知道模型根据输入生成输出即可；正文解释必要术语。计算容量前可补读A2.3。"
+      },
+      {
+        "id": "quantization-serving",
+        "required": [
+          [
+            "model-serving",
+            "权重和KV的字节账是解释精度、打包与容量变化的起点。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 A3.4 的 Prefill、Decode 与 KV 容量推导；能按张量形状计算字节数。"
+      },
+      {
+        "id": "inference-performance",
+        "required": [
+          [
+            "model-serving",
+            "输入处理、逐词生成和缓存共同决定延迟与吞吐口径。"
+          ]
+        ],
+        "optional": [
+          [
+            "observability",
+            "补充跨实例指标、直方图和追踪的聚合规则。"
+          ]
+        ],
+        "prereq": "先读A3.4，理解输入处理与持续生成；本章解释计时边界和聚合，通用指标与追踪可按链接延伸。"
+      },
+      {
+        "id": "ai-lifecycle",
+        "required": [
+          [
+            "model-serving",
+            "服务使用的是完整模型版本，发布还需验证语义与回退。"
+          ]
+        ],
+        "optional": [
+          [
+            "checkpoint-recovery",
+            "负责继续训练的检查点时，再补齐优化器、数据进度与恢复验证。"
+          ],
+          [
+            "delivery",
+            "补充发布兼容和数据回退边界。"
+          ]
+        ],
+        "prereq": "先理解模型推理、服务版本与请求结果；训练检查点与恢复可按需补读，不作为推理路线的先修。"
+      },
+      {
+        "id": "moe-routing",
+        "required": [
+          [
+            "transformer-block",
+            "普通前馈层扩展成多专家后，新增选择、分发和原位置合并。"
+          ],
+          [
+            "tensor-parallel-math",
+            "设备上的参数与计算布局决定分发和通信代价。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。"
+      },
+      {
+        "id": "speculative-decoding",
+        "required": [
+          [
+            "model-serving",
+            "条件前缀和KV缓存把普通解码连接到批量验证与回退。"
+          ],
+          [
+            "attention-mechanics",
+            "因果可见性决定每个验证位置能读取哪些历史。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读Transformer、Attention、模型推理服务；知道概率之和为1，以及KV缓存保存过去位置的键和值。"
+      },
+      {
+        "id": "agent-runtime",
+        "required": [],
+        "optional": [
+          [
+            "distributed-systems",
+            "按需深入超时、重试和未知结果；本章先建立任务与执行对象。"
+          ],
+          [
+            "mcp-protocol",
+            "把工具契约连接到真实MCP客户端与服务端，同时区分协议版本和业务结果。"
+          ]
+        ],
+        "prereq": "能理解HTTP请求与数据库写入；建议先读P0.4。无需先学GPU训练。"
+      },
+      {
+        "id": "mcp-protocol",
+        "required": [
+          [
+            "agent-runtime",
+            "先区分任务、模型提议和工具执行，再把一项受控调用落实为真实协议交换。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先理解Agent任务、工具提议、执行结果与完成判据；本章直接用脚本发起调用，不要求GPU训练知识。"
+      },
+      {
+        "id": "agent-security",
+        "required": [
+          [
+            "agent-runtime",
+            "模型提议要通过可信身份、任务委托与资源端授权才能执行。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读G1，认识任务、工具与运行时。认证、授权与提交边界在本章说明；需要云IAM时再补C7.1。"
+      },
+      {
+        "id": "agent-sandbox",
+        "required": [
+          [
+            "agent-security",
+            "业务允许的动作还要落到程序可访问的文件、网络与资源范围。"
+          ]
+        ],
+        "optional": [
+          [
+            "linux-resource",
+            "需要深入进程资源时再补这章；不要求完成Cloud课程。"
+          ]
+        ],
+        "prereq": "先读G1与G2，认识任务、工具和授权；本章解释执行资源边界，不要求完成Cloud或GPU课程。"
+      },
+      {
+        "id": "agent-recovery",
+        "required": [
+          [
+            "agent-runtime",
+            "工具效果和本地进度属于不同提交域，需要用稳定身份认回。"
+          ]
+        ],
+        "optional": [
+          [
+            "distributed-systems",
+            "把本章恢复窗口推广到通用跨服务失败语义。"
+          ]
+        ],
+        "prereq": "先读G1，了解数据库事务；超时与未知结果在本章就地解释，可按需补P0.4，不要求完成Cloud课程。"
+      },
+      {
+        "id": "agent-memory",
+        "required": [
+          [
+            "agent-recovery",
+            "持久执行状态、模型可见上下文和长期知识有不同用途与寿命。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成G1、G4；理解持久化与版本。"
+      },
+      {
+        "id": "agent-evaluation",
+        "required": [
+          [
+            "agent-security",
+            "任务验收要同时检查完成和越权拒绝。"
+          ],
+          [
+            "agent-memory",
+            "模型看到什么材料，需要与实际产物和任务目标分别核对。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。"
+      },
+      {
+        "id": "durable-workflows",
+        "required": [
+          [
+            "agent-recovery",
+            "单动作恢复进一步连接持久历史、重放和多执行者接管。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 G1、G4，能解释一次工具调用中的提交窗口。"
+      },
+      {
+        "id": "agent-retrieval",
+        "required": [
+          [
+            "agent-memory",
+            "长期资料经过检索和预算选择，才进入模型本次上下文。"
+          ],
+          [
+            "agent-security",
+            "索引命中不代替当前来源读取权限与版本检查。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "完成 G2、G5，理解授权、上下文和持久状态的区别。"
+      },
+      {
+        "id": "agent-observability",
+        "required": [
+          [
+            "agent-recovery",
+            "轨迹要区分任务、逻辑动作和具体尝试，才能解释重试成本。"
+          ],
+          [
+            "agent-evaluation",
+            "观察到的运行过程最终要与任务结果和拒绝行为对齐。"
+          ]
+        ],
+        "optional": [
+          [
+            "observability",
+            "需要通用指标和追踪机制时再深入；Agent主线可独立学习。"
+          ]
+        ],
+        "prereq": "先读G4和G6，区分步骤、尝试与任务结果；通用指标和追踪可按需延伸，不作为整条Cloud先修。"
+      },
+      {
+        "id": "kairo-practice",
+        "required": [
+          [
+            "agent-evaluation",
+            "接入平台前先固定真实任务和独立验收判据。"
+          ],
+          [
+            "durable-workflows",
+            "适配器要兑现恢复和效果身份，而不是只返回一个成功字段。"
+          ],
+          [
+            "agent-retrieval",
+            "实际接入还需核对来源、授权与上下文交付。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读 Agent 运行时、权限与评估。通用校验只需 Python 3.9+；真实接入需要目标版本与接口。"
+      },
+      {
+        "id": "training-lab",
+        "required": [
+          [
+            "checkpoint-recovery",
+            "综合训练把中断、重启与继续更新放到一条可复查时间线。"
+          ],
+          [
+            "training-performance",
+            "同一工作量与恢复边界才能解释完整训练成本。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先读A2.2、A2.4与A2.8。Linux/macOS，Python 3.10—3.12、PyTorch 2.5.1；CPU/Gloo即可完成本章。"
+      },
+      {
+        "id": "cloud-service-lab",
+        "required": [
+          [
+            "delivery",
+            "综合服务实验要证明配置和版本真正改变用户结果。"
+          ],
+          [
+            "slo",
+            "完成与可靠性要以同口径用户事件验收。"
+          ]
+        ],
+        "optional": [],
+        "prereq": "先了解容器与 HTTP；本地实验需 Python，原生实战需 Linux、本机 Docker、固定版本 kind/kubectl。"
+      },
+      {
+        "id": "production-readiness",
+        "required": [],
+        "optional": [
+          [
+            "resilience",
+            "Cloud选择恢复演练验收。"
+          ],
+          [
+            "ai-lifecycle",
+            "AI选择产物与发布验收。"
+          ],
+          [
+            "kairo-practice",
+            "Agent选择适配器与真实任务验收。"
+          ]
+        ],
+        "prereq": "选择一条已学主线及自己的实验或项目进行验收，不要求同时完成Cloud、AI和Agent全部课程。"
+      }
+    ],
+    "knowledge_targets": [
+      {
+        "id": "service-model",
+        "module": "compute",
+        "articles": [
+          "cloud-overview"
+        ]
+      },
+      {
+        "id": "control-data-plane",
+        "module": "compute",
+        "articles": [
+          "cloud-overview",
+          "kubernetes-basics"
+        ]
+      },
+      {
+        "id": "fault-domain",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "resilience"
+        ]
+      },
+      {
+        "id": "vm-runtime",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "cpu-memory-placement",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "linux-resource"
+        ]
+      },
+      {
+        "id": "instance-lifecycle",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "delivery"
+        ]
+      },
+      {
+        "id": "resource-contract",
+        "module": "compute",
+        "articles": [
+          "cloud-compute",
+          "scheduling-resources"
+        ]
+      },
+      {
+        "id": "vpc-subnet",
+        "module": "network",
+        "articles": [
+          "vpc-network"
+        ]
+      },
+      {
+        "id": "route-overlay",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "dns-discovery",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "nat-conntrack",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "network-diagnosis"
+        ]
+      },
+      {
+        "id": "lb-tls",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "transport-timeout",
+        "module": "network",
+        "articles": [
+          "network-diagnosis",
+          "distributed-systems",
+          "tcp-event-loop"
+        ]
+      },
+      {
+        "id": "io-model",
+        "module": "network",
+        "articles": [
+          "network-diagnosis",
+          "concurrency-pools",
+          "tcp-event-loop"
+        ]
+      },
+      {
+        "id": "network-boundary",
+        "module": "network",
+        "articles": [
+          "vpc-network",
+          "k8s-networking",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "storage-model",
+        "module": "cloud-data",
+        "articles": [
+          "training-storage"
+        ]
+      },
+      {
+        "id": "storage-performance",
+        "module": "cloud-data",
+        "articles": [
+          "training-storage",
+          "cloud-compute"
+        ]
+      },
+      {
+        "id": "durability-consistency",
+        "module": "cloud-data",
+        "articles": [
+          "storage-recovery",
+          "distributed-systems"
+        ]
+      },
+      {
+        "id": "database-service",
+        "module": "cloud-data",
+        "articles": [
+          "database-index-locks",
+          "storage-recovery",
+          "mysql-recovery",
+          "mysql-replication"
+        ]
+      },
+      {
+        "id": "replication-failover",
+        "module": "cloud-data",
+        "articles": [
+          "distributed-systems",
+          "storage-recovery",
+          "mysql-replication",
+          "resilience"
+        ]
+      },
+      {
+        "id": "cache-layer",
+        "module": "cloud-data",
+        "articles": [
+          "cache-consistency"
+        ]
+      },
+      {
+        "id": "messaging",
+        "module": "cloud-data",
+        "articles": [
+          "serverless-execution",
+          "distributed-systems",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "backup-restore",
+        "module": "cloud-data",
+        "articles": [
+          "storage-recovery",
+          "resilience",
+          "k8s-storage",
+          "mysql-recovery"
+        ]
+      },
+      {
+        "id": "container-isolation",
+        "module": "native",
+        "articles": [
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "reconciliation",
+        "module": "native",
+        "articles": [
+          "kubernetes-basics",
+          "k8s-workloads",
+          "control-plane-consensus"
+        ]
+      },
+      {
+        "id": "workload-type",
+        "module": "native",
+        "articles": [
+          "k8s-workloads"
+        ]
+      },
+      {
+        "id": "placement",
+        "module": "native",
+        "articles": [
+          "scheduling-resources",
+          "container-runtime"
+        ]
+      },
+      {
+        "id": "service-network",
+        "module": "native",
+        "articles": [
+          "k8s-networking"
+        ]
+      },
+      {
+        "id": "persistent-volume",
+        "module": "native",
+        "articles": [
+          "k8s-storage"
+        ]
+      },
+      {
+        "id": "health-rollout",
+        "module": "native",
+        "articles": [
+          "k8s-workloads",
+          "delivery"
+        ]
+      },
+      {
+        "id": "configuration",
+        "module": "native",
+        "articles": [
+          "config-secrets",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "autoscaling",
+        "module": "native",
+        "articles": [
+          "k8s-autoscaling",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "execution-environment",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution"
+        ]
+      },
+      {
+        "id": "trigger-delivery",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "event-idempotency",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "distributed-systems",
+          "message-delivery"
+        ]
+      },
+      {
+        "id": "concurrency-instances",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "k8s-autoscaling"
+        ]
+      },
+      {
+        "id": "serverless-cost",
+        "module": "serverless",
+        "articles": [
+          "serverless-execution",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "artifact-contract",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery"
+        ]
+      },
+      {
+        "id": "ci-cd",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "production-readiness"
+        ]
+      },
+      {
+        "id": "iac",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "cloud-compute",
+          "terraform-state"
+        ]
+      },
+      {
+        "id": "controller-api",
+        "module": "cloud-delivery",
+        "articles": [
+          "kubernetes-basics",
+          "distributed-systems",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "gitops",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "kubernetes-basics",
+          "config-secrets",
+          "gitops-reconciliation"
+        ]
+      },
+      {
+        "id": "release-strategy",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "k8s-workloads"
+        ]
+      },
+      {
+        "id": "rollback-compatibility",
+        "module": "cloud-delivery",
+        "articles": [
+          "delivery",
+          "ai-lifecycle"
+        ]
+      },
+      {
+        "id": "authentication-authorization",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security"
+        ]
+      },
+      {
+        "id": "workload-identity",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "agent-security"
+        ]
+      },
+      {
+        "id": "secret-lifecycle",
+        "module": "cloud-security",
+        "articles": [
+          "config-secrets",
+          "iam-security"
+        ]
+      },
+      {
+        "id": "tenant-isolation",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "scheduling-resources",
+          "agent-sandbox"
+        ]
+      },
+      {
+        "id": "execution-security",
+        "module": "cloud-security",
+        "articles": [
+          "container-runtime",
+          "iam-security",
+          "agent-sandbox"
+        ]
+      },
+      {
+        "id": "audit-accountability",
+        "module": "cloud-security",
+        "articles": [
+          "iam-security",
+          "observability",
+          "agent-security"
+        ]
+      },
+      {
+        "id": "capacity-units",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "elasticity"
+        ]
+      },
+      {
+        "id": "queue-backpressure",
+        "module": "cloud-capacity",
+        "articles": [
+          "elasticity",
+          "concurrency-pools"
+        ]
+      },
+      {
+        "id": "scaling-delay",
+        "module": "cloud-capacity",
+        "articles": [
+          "elasticity",
+          "k8s-autoscaling"
+        ]
+      },
+      {
+        "id": "performance-budget",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "network-diagnosis",
+          "observability"
+        ]
+      },
+      {
+        "id": "cost-efficiency",
+        "module": "cloud-capacity",
+        "articles": [
+          "cloud-compute",
+          "elasticity",
+          "serverless-execution"
+        ]
+      },
+      {
+        "id": "sli-slo",
+        "module": "sre",
+        "articles": [
+          "slo"
+        ]
+      },
+      {
+        "id": "observability-signals",
+        "module": "sre",
+        "articles": [
+          "observability"
+        ]
+      },
+      {
+        "id": "alert-burn",
+        "module": "sre",
+        "articles": [
+          "slo",
+          "observability"
+        ]
+      },
+      {
+        "id": "diagnosis-method",
+        "module": "sre",
+        "articles": [
+          "incident",
+          "network-diagnosis"
+        ]
+      },
+      {
+        "id": "incident-change",
+        "module": "sre",
+        "articles": [
+          "incident",
+          "delivery"
+        ]
+      },
+      {
+        "id": "resilience-patterns",
+        "module": "sre",
+        "articles": [
+          "resilience",
+          "distributed-systems"
+        ]
+      },
+      {
+        "id": "recovery-evidence",
+        "module": "sre",
+        "articles": [
+          "resilience",
+          "storage-recovery"
+        ]
+      },
+      {
+        "id": "mf-tensors",
+        "module": "model-foundations",
+        "articles": [
+          "transformer-model",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-attention",
+        "module": "model-foundations",
+        "articles": [
+          "attention-mechanics",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-decoder",
+        "module": "model-foundations",
+        "articles": [
+          "transformer-block",
+          "position-encoding",
+          "moe-routing"
+        ]
+      },
+      {
+        "id": "mf-autograd",
+        "module": "model-foundations",
+        "articles": [
+          "autograd-training",
+          "tokenization-embedding"
+        ]
+      },
+      {
+        "id": "mf-gpu",
+        "module": "model-foundations",
+        "articles": [
+          "gpu-execution",
+          "roofline-model",
+          "operator-profiling"
+        ]
+      },
+      {
+        "id": "mf-roofline",
+        "module": "model-foundations",
+        "articles": [
+          "roofline-model",
+          "flash-attention-io",
+          "tensor-parallel-math",
+          "operator-profiling"
+        ]
+      },
+      {
+        "id": "tr-step",
+        "module": "training",
+        "articles": [
+          "gpu-cluster",
+          "ddp-code"
+        ]
+      },
+      {
+        "id": "tr-memory",
+        "module": "training",
+        "articles": [
+          "gpu-memory",
+          "gpu-cluster"
+        ]
+      },
+      {
+        "id": "tr-ddp",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "ddp-code"
+        ]
+      },
+      {
+        "id": "tr-sharding",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "gpu-memory"
+        ]
+      },
+      {
+        "id": "tr-parallel",
+        "module": "training",
+        "articles": [
+          "distributed-training",
+          "tensor-parallel-math",
+          "moe-routing"
+        ]
+      },
+      {
+        "id": "tr-collectives",
+        "module": "training",
+        "articles": [
+          "training-communication",
+          "training-performance"
+        ]
+      },
+      {
+        "id": "tr-input",
+        "module": "training",
+        "articles": [
+          "data-pipeline",
+          "gpu-cluster"
+        ]
+      },
+      {
+        "id": "tr-recovery",
+        "module": "training",
+        "articles": [
+          "checkpoint-recovery",
+          "multinode-lab",
+          "kubernetes-training",
+          "training-performance"
+        ]
+      },
+      {
+        "id": "sv-contract",
+        "module": "platform",
+        "articles": [
+          "training-platform",
+          "ai-lifecycle",
+          "kubernetes-training"
+        ]
+      },
+      {
+        "id": "sv-admission",
+        "module": "platform",
+        "articles": [
+          "gpu-scheduling",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "sv-prefill",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "inference-performance"
+        ]
+      },
+      {
+        "id": "sv-kv",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "gpu-scheduling"
+        ]
+      },
+      {
+        "id": "sv-batching",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "gpu-scheduling",
+          "inference-performance"
+        ]
+      },
+      {
+        "id": "sv-metrics",
+        "module": "platform",
+        "articles": [
+          "inference-performance",
+          "model-serving"
+        ]
+      },
+      {
+        "id": "sv-quantization",
+        "module": "platform",
+        "articles": [
+          "quantization-serving",
+          "gpu-memory"
+        ]
+      },
+      {
+        "id": "sv-optimizations",
+        "module": "platform",
+        "articles": [
+          "model-serving",
+          "inference-performance",
+          "ai-lifecycle",
+          "speculative-decoding"
+        ]
+      },
+      {
+        "id": "sv-release",
+        "module": "platform",
+        "articles": [
+          "ai-lifecycle",
+          "training-platform"
+        ]
+      },
+      {
+        "id": "ag-runtime",
+        "module": "agent",
+        "articles": [
+          "agent-runtime",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-tools",
+        "module": "agent",
+        "articles": [
+          "agent-runtime",
+          "mcp-protocol",
+          "agent-security",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-planning",
+        "module": "agent",
+        "articles": [
+          "durable-workflows"
+        ]
+      },
+      {
+        "id": "ag-recovery",
+        "module": "agent",
+        "articles": [
+          "agent-recovery",
+          "durable-workflows"
+        ]
+      },
+      {
+        "id": "ag-fencing",
+        "module": "agent",
+        "articles": [
+          "agent-recovery",
+          "durable-workflows",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-authorization",
+        "module": "agent",
+        "articles": [
+          "agent-security",
+          "agent-runtime",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-context",
+        "module": "agent",
+        "articles": [
+          "agent-memory",
+          "agent-runtime"
+        ]
+      },
+      {
+        "id": "ag-retrieval",
+        "module": "agent",
+        "articles": [
+          "agent-retrieval",
+          "agent-memory",
+          "agent-evaluation"
+        ]
+      },
+      {
+        "id": "ag-observability",
+        "module": "agent",
+        "articles": [
+          "agent-observability",
+          "agent-evaluation",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-evaluation",
+        "module": "agent",
+        "articles": [
+          "agent-evaluation",
+          "agent-retrieval",
+          "kairo-practice"
+        ]
+      },
+      {
+        "id": "ag-sandbox",
+        "module": "agent",
+        "articles": [
+          "agent-sandbox",
+          "agent-security",
+          "kairo-practice"
+        ]
+      }
+    ],
+    "system_models": {
+      "cloud": {
+        "title": "一条请求怎样在受控资源上可靠完成",
+        "diagram": "v49-map-cloud",
+        "caption": "沿请求从左向右读；底部是管理请求执行的控制与观测，不是另一条串行请求。",
+        "relation": "请求通过网络到达计算进程，再读写数据；编排按声明安排这些进程，身份限定可执行的动作。容量与可靠性根据真实用户结果调整执行，并规定故障后的恢复目标。",
+        "anchors": [
+          [
+            "cloud-overview",
+            "请求与资源"
+          ],
+          [
+            "kubernetes-basics",
+            "声明与执行"
+          ],
+          [
+            "database-index-locks",
+            "数据与提交"
+          ],
+          [
+            "resilience",
+            "故障与恢复"
+          ],
+          [
+            "control-plane-consensus",
+            "控制状态与观察"
+          ],
+          [
+            "mysql-replication",
+            "副本应用与写资格"
+          ]
+        ],
+        "exercise": "教学组合题：Git配置已是v2，控制器显示健康，HTTP仍v1；消费者提交37后退出，消息又被投递；同时用户延迟升高但CPU不忙。画出请求、控制与数据三条关系，分别提出下一项证据。",
+        "answer": "配置对象、进程环境和HTTP响应分开：检查模板与Pod身份，不能凭同步状态判新版生效。消息重投按原业务身份查询接收方回执，核对是否只有一次37。低CPU不排除连接池、锁或下游等待，应在同一时间窗定位请求区间。再说明权限在哪里执行、有效容量如何估计，以及恢复后用哪些用户断言验收。这是跨章推理题，各实验分别取证，不冒充一个已运行的生产系统。"
+      },
+      "ai": {
+        "title": "模型计算怎样变成可训练、可恢复、可服务的系统",
+        "diagram": "v49-map-ai",
+        "caption": "上方是训练更新闭环；检查点用于继续训练，转换并验证后的模型产物才进入推理服务。",
+        "relation": "模型把词元编号变成向量计算。训练将输出与目标比较，计算梯度并更新参数；推理使用已确定参数继续生成。GPU、数据与通信承载计算，检查点保存继续执行所需状态，平台负责资源、版本与完成验收。",
+        "anchors": [
+          [
+            "transformer-model",
+            "模型计算"
+          ],
+          [
+            "autograd-training",
+            "学习目标与更新"
+          ],
+          [
+            "checkpoint-recovery",
+            "训练状态与恢复"
+          ],
+          [
+            "model-serving",
+            "推理与缓存"
+          ]
+        ],
+        "exercise": "同一模型能加载，训练loss下降；两进程结果却与单进程目标不同，恢复后轨迹又变化，服务首词元延迟也变慢。画出训练与推理两条路径，指出这三个问题应分别核对哪一组对象。",
+        "answer": "先对齐有效标签、各进程样本权重、梯度同步与优化器更新，副本一致不等于全局目标正确。恢复要按保存边界核对模型、优化器、随机状态和数据位置；若在累积中间保存，还要定义窗口如何继续或重做。推理则另拆排队、输入处理、缓存与逐词生成，不能用训练吞吐解释首词元延迟。最后区分数值、任务质量与目标硬件性能三种证据。"
+      },
+      "agent": {
+        "title": "一项委托怎样变成有权限、能恢复、可验收的结果",
+        "diagram": "v49-map-agent",
+        "caption": "模型提议经过运行时检查再到工具；工具观察先形成事实与上下文，才进入下一次提议。",
+        "relation": "任务给出目标、范围与完成条件，模型只提出下一步。运行时检查参数和权限，再安排工具执行；效果接收方记录实际事实，历史支持恢复。检索提供获准且足够的证据进入上下文，观测与评估核对过程和最终结果。",
+        "anchors": [
+          [
+            "agent-runtime",
+            "任务与执行"
+          ],
+          [
+            "mcp-protocol",
+            "协议与工具连接"
+          ],
+          [
+            "agent-security",
+            "授权与效果"
+          ],
+          [
+            "agent-recovery",
+            "回执与恢复"
+          ],
+          [
+            "agent-retrieval",
+            "证据与上下文"
+          ]
+        ],
+        "exercise": "模型说工具成功，但本地进度仍在执行中；检索找到了两份资料，预算只放入一份；恢复时又发现旧写权限已撤销。画出控制边界，说明哪些是未知，哪些可以继续，最终用什么验收。",
+        "answer": "执行器声明不替代接收方回执，先按原操作身份查询，不能换新身份再写。旧效果与新写权限分别判断，查询本身也要有当前读取权。检索命中不等于上下文证据齐备；预算缺关键来源时应报告不足或按规则调整输入。最终以真实产物、来源与拒绝行为验收。Agent使用模型服务即可，不以GPU训练课程为先修。"
+      }
+    },
+    "route_stages": {
+      "cloud": [
+        [
+          "先看全貌，再按需补系统前置",
+          [
+            "cloud-overview",
+            "linux-resource",
+            "virtual-memory-oom",
+            "concurrency-pools",
+            "distributed-systems"
+          ]
+        ],
+        [
+          "云资源、网络与数据主干",
+          [
+            "cloud-compute",
+            "vpc-network",
+            "network-diagnosis",
+            "tcp-event-loop",
+            "training-storage",
+            "database-index-locks",
+            "cache-consistency",
+            "storage-recovery",
+            "mysql-recovery",
+            "mysql-replication"
+          ]
+        ],
+        [
+          "从容器到 Kubernetes 运行路径",
+          [
+            "container-runtime",
+            "kubernetes-basics",
+            "k8s-workloads",
+            "scheduling-resources",
+            "k8s-networking",
+            "k8s-storage",
+            "config-secrets",
+            "k8s-autoscaling",
+            "control-plane-consensus"
+          ]
+        ],
+        [
+          "事件平台与可追溯交付",
+          [
+            "serverless-execution",
+            "message-delivery",
+            "delivery",
+            "terraform-state",
+            "gitops-reconciliation"
+          ]
+        ],
+        [
+          "身份隔离、容量与成本",
+          [
+            "iam-security",
+            "elasticity"
+          ]
+        ],
+        [
+          "可靠性与完整验收",
+          [
+            "slo",
+            "observability",
+            "incident",
+            "resilience",
+            "cloud-service-lab"
+          ]
+        ]
+      ],
+      "ai": [
+        [
+          "模型与计算原理",
+          [
+            "transformer-model",
+            "tokenization-embedding",
+            "attention-mechanics",
+            "transformer-block",
+            "position-encoding",
+            "autograd-training"
+          ]
+        ],
+        [
+          "GPU 执行、IO 与层内并行",
+          [
+            "gpu-execution",
+            "roofline-model",
+            "flash-attention-io",
+            "tensor-parallel-math",
+            "operator-profiling"
+          ]
+        ],
+        [
+          "训练系统与资源模型",
+          [
+            "gpu-cluster",
+            "distributed-training",
+            "gpu-memory"
+          ]
+        ],
+        [
+          "执行、恢复与作业平台",
+          [
+            "ddp-code",
+            "training-communication",
+            "data-pipeline",
+            "multinode-lab",
+            "checkpoint-recovery",
+            "training-performance",
+            "training-platform",
+            "gpu-scheduling",
+            "kubernetes-training",
+            "training-lab"
+          ]
+        ],
+        [
+          "推理、量化与模型发布",
+          [
+            "model-serving",
+            "quantization-serving",
+            "inference-performance",
+            "ai-lifecycle",
+            "moe-routing",
+            "speculative-decoding"
+          ]
+        ]
+      ],
+      "agent": [
+        [
+          "任务与执行边界",
+          [
+            "agent-runtime",
+            "mcp-protocol",
+            "agent-security",
+            "agent-sandbox"
+          ]
+        ],
+        [
+          "恢复、上下文与评估",
+          [
+            "agent-recovery",
+            "agent-memory",
+            "agent-evaluation"
+          ]
+        ],
+        [
+          "持久工作流与知识检索",
+          [
+            "durable-workflows",
+            "agent-retrieval"
+          ]
+        ],
+        [
+          "观测、接入与综合验收",
+          [
+            "agent-observability",
+            "kairo-practice",
+            "production-readiness"
+          ]
+        ]
+      ]
+    }
+  },
+  "field_maps_snapshot": {
+    "foundation": {
+      "nodes": [
+        [
+          "prerequisite-1",
+          "执行与资源",
+          "进程运行程序，线程推进执行；CPU、内存和I/O分别记账。"
+        ],
+        [
+          "prerequisite-2",
+          "并发与程序",
+          "多个执行者共享数据时，需要明确互斥、排队、取消和容量规则。"
+        ],
+        [
+          "prerequisite-3",
+          "通信与协议",
+          "网络传字节，应用协议再约定如何解释请求、响应和错误。"
+        ],
+        [
+          "prerequisite-4",
+          "数据与失败",
+          "事务约束数据提交；跨机器调用还可能出现超时后的未知结果。"
+        ],
+        [
+          "prerequisite-5",
+          "工程工具",
+          "命令、日志和测试帮助读取事实，不能替代对机制的解释。"
+        ]
+      ],
+      "edges": [
+        [
+          "prerequisite-1",
+          "承载",
+          "prerequisite-2",
+          "线程要使用CPU，也可能等待共享数据。并发数增加，可能增加吞吐，也可能只增加锁等待。"
+        ],
+        [
+          "prerequisite-2",
+          "延伸到",
+          "prerequisite-3",
+          "本地线程可以共享内存；远端程序要通过消息协作，连接和等待因此成为新的边界。"
+        ],
+        [
+          "prerequisite-3",
+          "承载远程读写",
+          "prerequisite-4",
+          "协议把请求交给远程程序，事务与业务规则决定何时提交。调用超时后，还需按操作身份核对接收方结果。"
+        ],
+        [
+          "prerequisite-5",
+          "核对",
+          "prerequisite-1",
+          "将CPU时间、内存记账和I/O等待分别取证，才能判断程序到底在哪里消耗或等待。"
+        ],
+        [
+          "prerequisite-5",
+          "验证",
+          "prerequisite-4",
+          "在提交前后制造可控失败，再读取实际数据和回执，比只看退出码更能说明恢复行为。"
+        ]
+      ],
+      "question": "CPU很低，线程都在等连接；一次写入超时，查询却找到了回执。分别画出等待对象和提交边界，哪些结论已经成立？",
+      "answer": "低CPU只说明执行消耗不高，连接等待仍可拉长请求。超时描述调用方没有按时拿到结果；接收方回执支持相应写入已经提交。下一步核对等待队列与业务身份，不能把低CPU和超时直接解释成“机器没问题、操作没发生”。",
+      "outlets": [
+        [
+          "compute",
+          "把执行与等待的证据带入云规格和资源预算。"
+        ],
+        [
+          "network",
+          "把本地读写扩展为跨机器的请求往返。"
+        ]
+      ]
+    },
+    "compute": {
+      "nodes": [
+        [
+          "service-model",
+          "服务责任",
+          "服务模型划分平台管理到哪一层，以及应用方还要负责什么。"
+        ],
+        [
+          "control-data-plane",
+          "请求与控制",
+          "数据面处理用户工作，控制面安排资源及其期望状态。"
+        ],
+        [
+          "fault-domain",
+          "故障范围",
+          "机架、可用区或区域等共同依赖，决定哪些副本可能一起失败。"
+        ],
+        [
+          "vm-runtime",
+          "运行环境",
+          "虚拟机提供虚拟硬件；容器组织受约束的进程，两者隔离边界不同。"
+        ],
+        [
+          "cpu-memory-placement",
+          "执行与内存位置",
+          "CPU执行预算和内存访问位置，共同影响单个实例能完成多少工作。"
+        ],
+        [
+          "instance-lifecycle",
+          "创建与替换",
+          "镜像提供启动内容，实例经历创建、运行、停止和替换等阶段。"
+        ],
+        [
+          "resource-contract",
+          "资源承诺",
+          "配额限制可申请总量，预留与实际分配还需按具体资源契约判断。"
+        ]
+      ],
+      "edges": [
+        [
+          "service-model",
+          "划分管理边界",
+          "control-data-plane",
+          "平台可以接管更多控制工作，用户请求仍要经过具体执行与数据路径。责任变少不等于业务条件自动满足。"
+        ],
+        [
+          "control-data-plane",
+          "创建并管理",
+          "instance-lifecycle",
+          "申请或替换实例是控制动作；实例启动后是否能处理用户请求，需要另外核对。"
+        ],
+        [
+          "instance-lifecycle",
+          "建立",
+          "vm-runtime",
+          "同一镜像可以创建不同实例，实例又承载实际运行环境；不能把镜像文件当作运行中的服务。"
+        ],
+        [
+          "vm-runtime",
+          "使用",
+          "cpu-memory-placement",
+          "程序最终仍在消耗CPU时间并访问内存。虚拟CPU数量不自动等于独占物理核心。"
+        ],
+        [
+          "resource-contract",
+          "限制供给",
+          "instance-lifecycle",
+          "总量配额允许申请，不保证库存、单实例形状或启动时机都能兑现。"
+        ],
+        [
+          "fault-domain",
+          "约束副本分布",
+          "instance-lifecycle",
+          "多个实例若共享同一故障依赖，数量增加也可能没有增加所需的故障承受能力。"
+        ]
+      ],
+      "question": "控制台已接受申请、实例已运行、两个副本都在同一可用区。这三份事实分别能证明什么，还缺哪些服务与故障证据？",
+      "answer": "申请被接受只证明控制请求进入相应流程；实例运行证明执行环境存在；两个副本证明数量，却未证明跨故障域。还要验证请求可达、数据与权限正确、资源预算充足，以及失去该可用区后的剩余能力。",
+      "outlets": [
+        [
+          "network",
+          "实例存在以后，继续解释请求如何抵达并返回。"
+        ],
+        [
+          "native",
+          "将受控进程组织成可持续维护的工作负载。"
+        ]
+      ]
+    },
+    "network": {
+      "nodes": [
+        [
+          "vpc-subnet",
+          "地址范围",
+          "VPC和子网组织逻辑网络及地址范围，不自动给出完整往返路径。"
+        ],
+        [
+          "route-overlay",
+          "下一跳",
+          "路由决定下一跳，封装网络还需要底层路径和相应传输条件。"
+        ],
+        [
+          "dns-discovery",
+          "名称与后端",
+          "名称解析和服务发现帮助选择访问地址或后端。"
+        ],
+        [
+          "nat-conntrack",
+          "地址转换",
+          "转换与连接跟踪关联两侧地址、端口及其状态。"
+        ],
+        [
+          "lb-tls",
+          "入口与身份",
+          "负载均衡选择后端；TLS校验通信身份并保护相应链路。"
+        ],
+        [
+          "transport-timeout",
+          "字节与请求",
+          "TCP提供字节流；HTTP解释请求与响应，超时有自己的计时边界。"
+        ],
+        [
+          "io-model",
+          "就绪与处理",
+          "就绪事件提示程序可以尝试读写，消息解析和业务仍由应用完成。"
+        ],
+        [
+          "network-boundary",
+          "流量允许规则",
+          "访问策略判断相应流量是否放行，不能替代资源级业务授权。"
+        ]
+      ],
+      "edges": [
+        [
+          "dns-discovery",
+          "提供访问位置",
+          "lb-tls",
+          "解析得到地址以后，客户端仍须建立连接、校验身份并发送请求；解析成功不是请求已经抵达。"
+        ],
+        [
+          "vpc-subnet",
+          "为路径提供地址",
+          "route-overlay",
+          "先知道两端处于哪个地址范围，才能解释路由匹配、下一跳和回程。"
+        ],
+        [
+          "route-overlay",
+          "可能经过",
+          "nat-conntrack",
+          "经过地址转换后，要沿转换记录核对返回流量，而不是只看转换前的源地址。"
+        ],
+        [
+          "network-boundary",
+          "约束路径",
+          "route-overlay",
+          "有路由不等于允许访问；源出站、目的入站和沿途策略需要分别核对。"
+        ],
+        [
+          "route-overlay",
+          "连接入口所在网络",
+          "lb-tls",
+          "入口位于哪段网络、下一跳和回程是否成立，决定连接能否建立；TLS身份校验与路径可达分别判断。"
+        ],
+        [
+          "lb-tls",
+          "交付应用请求",
+          "transport-timeout",
+          "入口可以接通并返回HTTP 503，此时已经得到应用层响应；不能据此判断业务已成功。"
+        ],
+        [
+          "transport-timeout",
+          "提供字节",
+          "io-model",
+          "TCP交出连续字节，不提供业务消息边界。事件循环还需解析、管理输出缓冲和执行背压。"
+        ]
+      ],
+      "question": "DNS、TCP和TLS均成功，最终收到HTTP 503。最晚成功到了哪一层？接下来应重查路由，还是核对响应来源与后端处理能力？",
+      "answer": "已经与某个响应方完成HTTP交换。先确定503来自入口还是后端，再核对后端健康、容量及依赖；保留相同请求条件。它不同于连接被拒绝或写入后断连，也不能单凭状态码证明业务从未发生。",
+      "outlets": [
+        [
+          "native",
+          "把地址、就绪与回程带入Pod、Service和端点路径。"
+        ],
+        [
+          "cloud-data",
+          "远程读写同时依赖网络路径和数据接口语义。"
+        ]
+      ]
+    },
+    "cloud-data": {
+      "nodes": [
+        [
+          "storage-model",
+          "访问单位",
+          "块、文件和对象接口提供不同的读写单位与共享语义。"
+        ],
+        [
+          "storage-performance",
+          "完成代价",
+          "操作数、字节数和耗时分别衡量存储工作，不能只比较一个吞吐数字。"
+        ],
+        [
+          "durability-consistency",
+          "确认与观察",
+          "持久性约束已确认数据的保留，一致性约束不同读取能看到什么。"
+        ],
+        [
+          "database-service",
+          "事务提交",
+          "数据库按事务规则组织查询与更新，应用仍要设计索引、连接和提交范围。"
+        ],
+        [
+          "replication-failover",
+          "复制与写入资格",
+          "副本及切换规则决定故障后谁能写、读取哪一版。"
+        ],
+        [
+          "cache-layer",
+          "中间副本",
+          "缓存复用热点结果，失效与回填需要处理陈旧和并发。"
+        ],
+        [
+          "messaging",
+          "异步工作",
+          "消息与日志组织待处理或可重放的工作，运输确认与业务提交分开。"
+        ],
+        [
+          "backup-restore",
+          "恢复材料",
+          "基线、变化记录和校验帮助重建目标状态，恢复要由消费者结果验收。"
+        ]
+      ],
+      "edges": [
+        [
+          "storage-model",
+          "决定测量单位",
+          "storage-performance",
+          "先固定每次操作读写多大、是否持久化，再比较每秒操作数、吞吐和尾延迟。"
+        ],
+        [
+          "storage-model",
+          "承载持久读写",
+          "database-service",
+          "数据库事务最终要通过相应存储路径保存变化；文件系统语义不能直接套到对象API上。"
+        ],
+        [
+          "database-service",
+          "落实提交规则",
+          "durability-consistency",
+          "事务返回成功以后，仍要说明哪些故障下保留数据，以及其他读取按何种规则看见它。"
+        ],
+        [
+          "replication-failover",
+          "与历史恢复互补",
+          "backup-restore",
+          "复制延续当前变化，备份与连续日志用于重建历史目标。误删也会被复制，两者共同组成恢复方案。"
+        ],
+        [
+          "cache-layer",
+          "复用并可能落后于",
+          "database-service",
+          "数据库已提交新值，旧读取仍可能稍后回填缓存。提交点与回填版本要放在同一时间线上。"
+        ],
+        [
+          "messaging",
+          "触发处理但不代替",
+          "database-service",
+          "消费者收到消息或发出ACK，不自动证明事务已经提交；重复投递要沿稳定业务身份处理。"
+        ],
+        [
+          "backup-restore",
+          "验证恢复后的",
+          "durability-consistency",
+          "恢复完成还要核对已确认记录、版本和实际查询，备份任务成功本身不提供这些结论。"
+        ]
+      ],
+      "question": "副本正常、备份任务成功、队列已经清空，能否证明故障后用户的一笔已确认操作仍完整存在？列出还要核对的记录。",
+      "answer": "分别核对业务身份与提交回执、数据库恢复历史、消息确认顺序和实际消费者查询。副本可能同步错误，备份可能缺少连续日志，队列清空也可能发生在业务提交之前；三个绿灯不能合成同一笔业务的完整证明。",
+      "outlets": [
+        [
+          "serverless",
+          "把异步工作连接到触发、重复执行与业务完成。"
+        ],
+        [
+          "sre",
+          "用恢复目标、用户断言和故障范围验收数据恢复。"
+        ]
+      ]
+    },
+    "native": {
+      "nodes": [
+        [
+          "container-isolation",
+          "实际进程",
+          "容器运行时启动受相应隔离和资源约束的应用进程。"
+        ],
+        [
+          "reconciliation",
+          "声明与控制循环",
+          "API对象保存期望，控制器不断比较现场并推进差异收敛。"
+        ],
+        [
+          "workload-type",
+          "工作负载",
+          "Pod承载容器，工作负载对象组织副本、完成型任务或稳定身份。"
+        ],
+        [
+          "placement",
+          "节点放置",
+          "调度器按资源与位置约束寻找可行节点。"
+        ],
+        [
+          "service-network",
+          "服务入口",
+          "网络实现与Service端点一起决定流量怎样到达可用后端。"
+        ],
+        [
+          "persistent-volume",
+          "持久卷",
+          "卷声明、供给与挂载提供存储能力，还受拓扑及使用规则约束。"
+        ],
+        [
+          "health-rollout",
+          "就绪与替换",
+          "探针表达启动、存活或接流量资格，发布组织旧新副本的替换。"
+        ],
+        [
+          "configuration",
+          "配置生效",
+          "配置要经过注入和进程读取才影响业务，来源更新并非最终生效。"
+        ],
+        [
+          "autoscaling",
+          "伸缩反馈",
+          "控制器按指标建议副本或资源变化，真正生效还要有可放置容量。"
+        ]
+      ],
+      "edges": [
+        [
+          "reconciliation",
+          "维护",
+          "workload-type",
+          "期望副本数进入API对象以后，控制器创建或补齐Pod，不直接保证用户请求可用。"
+        ],
+        [
+          "workload-type",
+          "等待",
+          "placement",
+          "Pod存在以后，还需要选到满足资源、亲和和拓扑条件的节点。"
+        ],
+        [
+          "placement",
+          "安排执行位置",
+          "container-isolation",
+          "节点确定后，节点代理与运行时才继续准备镜像并启动进程；已绑定不等于已运行。"
+        ],
+        [
+          "persistent-volume",
+          "反向约束",
+          "placement",
+          "卷能在哪些节点挂载，会限制Pod的可行位置。调度和存储不是互不相干的两步。"
+        ],
+        [
+          "configuration",
+          "被启动进程读取",
+          "container-isolation",
+          "环境变量来自启动环境；只改配置对象，旧进程可能仍使用旧值。"
+        ],
+        [
+          "container-isolation",
+          "接受不同健康检查",
+          "health-rollout",
+          "进程启动以后，探针再按规则检查初始化、存活或接流量资格；Running不能替代这些条件。"
+        ],
+        [
+          "health-rollout",
+          "决定接流量资格",
+          "service-network",
+          "副本存活与端点就绪分开。就绪条件决定相应流量资格，真实响应还要另外验证。"
+        ],
+        [
+          "autoscaling",
+          "增加放置需求",
+          "placement",
+          "建议副本增加以后，节点仍须放得下。指标、声明、放置、启动和就绪之间存在时间差。"
+        ]
+      ],
+      "question": "Pod已创建但Pending、另一个Pod已Running却不接流量、配置v2而HTTP仍v1。这三个问题分别卡在什么对象关系？",
+      "answer": "先按阶段取证：Pending核对是否尚未绑定及调度约束；Running不接流量检查就绪与端点；配置v2但旧响应检查注入、进程读取与模板替换。三者不能都用“重启Pod”作为解释。",
+      "outlets": [
+        [
+          "cloud-delivery",
+          "把对象变化连接到源版本、持续调谐和发布验收。"
+        ],
+        [
+          "platform",
+          "训练进程进入编排以后，还需整组准入、会合与共同恢复。"
+        ]
+      ]
+    },
+    "serverless": {
+      "nodes": [
+        [
+          "execution-environment",
+          "执行环境",
+          "函数在平台安排的环境中运行，环境创建、复用和寿命有明确边界。"
+        ],
+        [
+          "trigger-delivery",
+          "触发与投递",
+          "事件源把工作交给执行环境，受理、调用和删除各有协议。"
+        ],
+        [
+          "event-idempotency",
+          "业务身份",
+          "稳定身份把多次运输与尝试关联为同一逻辑动作。"
+        ],
+        [
+          "concurrency-instances",
+          "并发与实例",
+          "同时处理多少调用、需要多少环境，取决于运行模型和下游容量。"
+        ],
+        [
+          "serverless-cost",
+          "成本与适用范围",
+          "账单用量、冷启动、重试和有效产出共同决定总体成本。"
+        ]
+      ],
+      "edges": [
+        [
+          "trigger-delivery",
+          "安排调用",
+          "execution-environment",
+          "平台接受事件以后，还可能经历排队和环境准备；受理成功不等于处理函数已经执行。"
+        ],
+        [
+          "trigger-delivery",
+          "要求处理重复",
+          "event-idempotency",
+          "删除或确认之前退出，可能造成重新投递。接收方仍需沿原业务身份记录效果。"
+        ],
+        [
+          "concurrency-instances",
+          "受环境模型约束",
+          "execution-environment",
+          "实例与调用不是固定一比一关系；要先明确一个环境能同时处理多少工作。"
+        ],
+        [
+          "concurrency-instances",
+          "改变",
+          "serverless-cost",
+          "增加并发可能降低等待，也可能放大数据库压力和重试；成本要对齐唯一成功结果。"
+        ]
+      ],
+      "question": "队列为0、函数调用都有计费记录，但业务效果为0，能否宣布任务完成？增加并发能解决这个问题吗？",
+      "answer": "不能。需要核对确认是否早于业务提交、失败是否进入留存路径。并发改变执行容量，不会修复错误的提交顺序；先定义业务完成与稳定身份，再调整吞吐和成本。",
+      "outlets": [
+        [
+          "cloud-data",
+          "回到消息确认与数据库事务之间的提交间隙。"
+        ],
+        [
+          "cloud-capacity",
+          "用到达量、净完成量和扩容空窗解释积压。"
+        ]
+      ]
+    },
+    "cloud-delivery": {
+      "nodes": [
+        [
+          "artifact-contract",
+          "完整版本",
+          "可追溯制品、配置和数据兼容条件共同定义可交付版本。"
+        ],
+        [
+          "ci-cd",
+          "交付流水线",
+          "流水线组织构建、检查、审阅和部署动作。"
+        ],
+        [
+          "iac",
+          "配置与状态",
+          "IaC工具比较期望、受管记录和实际对象，再计划和执行变化。"
+        ],
+        [
+          "controller-api",
+          "持续控制",
+          "平台API描述意图，控制器反复观察并推进实际状态。"
+        ],
+        [
+          "gitops",
+          "版本化期望",
+          "Git中的确定修订提供期望，控制器据此同步相应受管对象。"
+        ],
+        [
+          "release-strategy",
+          "用户流量切换",
+          "滚动、蓝绿或灰度改变版本如何获得工作及何时退出。"
+        ],
+        [
+          "rollback-compatibility",
+          "回退条件",
+          "旧版本要能读取现有数据并使用依赖，源代码回退不能撤销所有外部效果。"
+        ]
+      ],
+      "edges": [
+        [
+          "ci-cd",
+          "产出并检查",
+          "artifact-contract",
+          "流水线通过应对应一份确定制品及其输入，不能只保留某次任务的绿灯。"
+        ],
+        [
+          "iac",
+          "建立受管关系",
+          "controller-api",
+          "配置地址、状态和现场对象需要明确归属；多套自动化争改同一对象可能互相覆盖。"
+        ],
+        [
+          "gitops",
+          "提供版本化期望给",
+          "controller-api",
+          "源修订确定以后，控制器继续比较和调整；同步完成仍需核对进程与业务。"
+        ],
+        [
+          "artifact-contract",
+          "由源修订引用",
+          "gitops",
+          "版本化声明应引用确定的制品与配置，避免相同声明在不同时间解析成不同运行内容。"
+        ],
+        [
+          "artifact-contract",
+          "进入",
+          "release-strategy",
+          "完整版本具备条件以后，才讨论先切多少流量、观察多久以及何时停止旧写者。"
+        ],
+        [
+          "rollback-compatibility",
+          "限制",
+          "release-strategy",
+          "旧代码若已不兼容当前数据，回切流量也不能恢复服务；回退条件要在发布前确定。"
+        ]
+      ],
+      "question": "Git是v2、同步健康，但HTTP仍v1。若改回旧Git修订，是否连数据库和已发出的消息也一起回到了过去？",
+      "answer": "先核对配置如何进入进程以及当前服务后端。Git回退只是改变期望，并不撤销数据库写入或消息效果；需要独立检查数据兼容、外部产物与用户断言。",
+      "outlets": [
+        [
+          "native",
+          "回到配置、Pod模板、进程与Service的实际生效路径。"
+        ],
+        [
+          "sre",
+          "把发布观察窗口、止损与恢复验收连起来。"
+        ]
+      ]
+    },
+    "cloud-security": {
+      "nodes": [
+        [
+          "authentication-authorization",
+          "身份与授权",
+          "认证确认调用主体，授权再判断这个主体能对哪些资源做什么。"
+        ],
+        [
+          "workload-identity",
+          "程序身份",
+          "运行中的服务或任务需要可区分、可限制、可撤销的身份凭据。"
+        ],
+        [
+          "secret-lifecycle",
+          "凭据寿命",
+          "秘密的分发、读取、轮换与撤销，决定哪些进程仍能继续使用它。"
+        ],
+        [
+          "tenant-isolation",
+          "租户边界",
+          "不同租户的数据、资源与管理范围需要在多个层次执行隔离。"
+        ],
+        [
+          "execution-security",
+          "执行限制",
+          "容器权限与沙箱限制程序能访问的文件、网络及系统能力。"
+        ],
+        [
+          "audit-accountability",
+          "审计与结果",
+          "审计关联主体、授权、动作和结果；拒绝也要核对没有造成目标效果。"
+        ]
+      ],
+      "edges": [
+        [
+          "workload-identity",
+          "提供调用主体",
+          "authentication-authorization",
+          "凭据证明身份之后，还要按当前任务、动作和资源判断允许范围；令牌格式合法不等于有权限。"
+        ],
+        [
+          "secret-lifecycle",
+          "改变身份可用性",
+          "workload-identity",
+          "来源中的秘密更新以后，旧进程可能仍持有旧值；撤销与读取缓存要按实际路径检查。"
+        ],
+        [
+          "authentication-authorization",
+          "执行业务范围",
+          "tenant-isolation",
+          "即便网络相通，也不能跨租户读写；资源端需要校验可信租户与对象范围。"
+        ],
+        [
+          "execution-security",
+          "补充程序约束",
+          "tenant-isolation",
+          "业务授权允许某个动作，不代表程序应当能读取宿主全部文件或访问任意网络。"
+        ],
+        [
+          "audit-accountability",
+          "核对判定与效果",
+          "authentication-authorization",
+          "记录拒绝之后还要看接收方是否真的没有提交；日志声明本身不是资源端的效果证明。"
+        ]
+      ],
+      "question": "工具文本要求使用管理员身份，执行器又运行在沙箱中。哪一方能授予权限？沙箱是否自动阻止跨租户业务写入？",
+      "answer": "权限来自可信身份与有效委托，并由受保护资源端执行。工具文本不能扩权；沙箱限制程序能力，不能替代业务资源对租户、动作与对象的授权。",
+      "outlets": [
+        [
+          "agent",
+          "把可信委托、工具文本和资源端效果分别放到任务链路。"
+        ],
+        [
+          "native",
+          "核对秘密怎样注入、何时重读，以及容器实际拥有的权限。"
+        ]
+      ]
+    },
+    "cloud-capacity": {
+      "nodes": [
+        [
+          "capacity-units",
+          "工作量口径",
+          "到达率、服务时间、在途量和有效吞吐分别描述同一工作过程的不同量。"
+        ],
+        [
+          "queue-backpressure",
+          "积压与准入",
+          "输入超过完成能力会积压；有限队列、拒绝与背压让资源上限可控。"
+        ],
+        [
+          "scaling-delay",
+          "扩容空窗",
+          "从信号到新资源真正就绪需要时间，已有余量要承担这段输入。"
+        ],
+        [
+          "performance-budget",
+          "端到端瓶颈",
+          "排队、执行与依赖共同组成耗时，局部利用率不能单独解释整体性能。"
+        ],
+        [
+          "cost-efficiency",
+          "有效产出成本",
+          "总支出要与唯一成功产出及质量对应，重试和恢复也消耗资源。"
+        ]
+      ],
+      "edges": [
+        [
+          "capacity-units",
+          "给出差额",
+          "queue-backpressure",
+          "同口径到达量减有效完成量，决定积压增长；尝试次数不能冒充唯一完成数。"
+        ],
+        [
+          "scaling-delay",
+          "扩大暂时积压",
+          "queue-backpressure",
+          "建议扩容到新副本就绪之间仍会进来工作；扩容恰好追平输入只停止增长，不能排空旧积压。"
+        ],
+        [
+          "performance-budget",
+          "定位提升方向",
+          "capacity-units",
+          "先判断CPU执行、锁、网络还是下游等待限制完成，再决定增加哪类资源。"
+        ],
+        [
+          "cost-efficiency",
+          "约束扩容选择",
+          "scaling-delay",
+          "预留资源增加支出，但可能缩短容量空窗；需要按目标质量和有效产出比较。"
+        ]
+      ],
+      "question": "每秒到达120项、有效完成100项，已有300项积压。扩容后恰好完成120项/秒，多久能排空？要在30秒排完至少需多少净余量？",
+      "answer": "扩容后净余量为0，原积压不会自然减少。忽略扩容耗时及波动时，30秒排300项至少要10项/秒净余量，即完成能力至少130项/秒；实际还需计入空窗新增积压、失败和下游上限。",
+      "outlets": [
+        [
+          "native",
+          "把建议副本数连接到节点放置、启动和就绪。"
+        ],
+        [
+          "sre",
+          "用用户质量目标判断性能与成本变化是否可接受。"
+        ]
+      ]
+    },
+    "sre": {
+      "nodes": [
+        [
+          "sli-slo",
+          "用户结果与目标",
+          "先定义什么事件算好，再给统计窗口和允许失败量。"
+        ],
+        [
+          "observability-signals",
+          "证据信号",
+          "指标定位范围，日志和追踪帮助解释具体路径，采样与聚合有边界。"
+        ],
+        [
+          "alert-burn",
+          "行动触发",
+          "告警应连接预算消耗、影响与可执行行动。"
+        ],
+        [
+          "diagnosis-method",
+          "可证伪的解释",
+          "按时间线与请求路径提出假设，再取能支持或排除它的证据。"
+        ],
+        [
+          "incident-change",
+          "事故与变更",
+          "止损、恢复、变更记录与复盘组织协作和后续改进。"
+        ],
+        [
+          "resilience-patterns",
+          "故障保护",
+          "冗余、限流、超时和切换处理不同失败条件，也可能改变容量与一致性。"
+        ],
+        [
+          "recovery-evidence",
+          "恢复验收",
+          "明确数据确认点、允许丢失、恢复时刻和用户可继续工作的条件。"
+        ]
+      ],
+      "edges": [
+        [
+          "sli-slo",
+          "定义测量问题",
+          "observability-signals",
+          "先规定有效请求、好坏事件与时间窗，再收集同口径数据，避免用资源利用率代替用户质量。"
+        ],
+        [
+          "sli-slo",
+          "给出允许失败量",
+          "alert-burn",
+          "错误预算来自目标与分母；消耗速度帮助判断是否需要行动，不等于简单数告警次数。"
+        ],
+        [
+          "observability-signals",
+          "支持或排除",
+          "diagnosis-method",
+          "同一时间窗中的请求区间、锁等待和依赖记录，才可能解释低CPU与高延迟。"
+        ],
+        [
+          "diagnosis-method",
+          "指导止损",
+          "incident-change",
+          "相关变更只是线索。动作前说明预期影响，动作后用用户断言验证是否改善。"
+        ],
+        [
+          "resilience-patterns",
+          "接受故障验证",
+          "recovery-evidence",
+          "有副本和切换脚本，不等于目标故障下能恢复；还要核对剩余容量、数据和用户请求。"
+        ],
+        [
+          "recovery-evidence",
+          "闭合",
+          "sli-slo",
+          "恢复结束点应回到约定的用户结果，不能只以进程重启或监控转绿作为结束。"
+        ]
+      ],
+      "question": "资源监控恢复正常，HTTP成功率也上升，但订单查询仍缺一笔已确认记录。事故能结束吗？还需要哪类恢复证据？",
+      "answer": "不能只按资源和运输成功结束。沿原业务身份核对数据确认点、恢复历史与消费者查询，再按约定质量窗口验证。恢复时间和丢失窗口要采用事先约定的起止条件。",
+      "outlets": [
+        [
+          "cloud-data",
+          "读取实际恢复材料、日志连续性和消费者结果。"
+        ],
+        [
+          "cloud-delivery",
+          "用完整版本与数据兼容条件解释发布和回退。"
+        ]
+      ]
+    },
+    "model-foundations": {
+      "nodes": [
+        [
+          "mf-tensors",
+          "输入与形状",
+          "词元编号进入向量，张量的每根轴说明样本、位置或特征。"
+        ],
+        [
+          "mf-attention",
+          "跨位置读取",
+          "注意力按匹配权重汇总允许看到的位置，因果规则限制未来信息。"
+        ],
+        [
+          "mf-decoder",
+          "完整模型层",
+          "前馈、残差、归一化和位置机制把注意力接成可重复堆叠的层。"
+        ],
+        [
+          "mf-autograd",
+          "目标与更新",
+          "损失衡量预测与目标的差异，梯度和优化器推动参数更新。"
+        ],
+        [
+          "mf-gpu",
+          "执行与搬运",
+          "张量运算映射到执行单元和多层存储，数据搬运会产生代价。"
+        ],
+        [
+          "mf-roofline",
+          "性能上界",
+          "计算量与字节量帮助判断受计算还是带宽约束，再用实现和轨迹核对。"
+        ]
+      ],
+      "edges": [
+        [
+          "mf-tensors",
+          "规定运算轴",
+          "mf-attention",
+          "先写清哪些轴对应位置和特征，才能检查点积、掩码与汇总的方向。"
+        ],
+        [
+          "mf-attention",
+          "组成",
+          "mf-decoder",
+          "跨位置汇总之后，仍需逐位置特征变换与残差连接；完整层保持主路径形状兼容。"
+        ],
+        [
+          "mf-decoder",
+          "产生预测供",
+          "mf-autograd",
+          "模型输出候选分数，目标和有效位置决定损失；同一计算图再传播梯度。"
+        ],
+        [
+          "mf-tensors",
+          "提供工作量给",
+          "mf-gpu",
+          "形状和元素类型确定主要运算与字节，设备数量本身不说明计算了什么。"
+        ],
+        [
+          "mf-gpu",
+          "接受上界分析",
+          "mf-roofline",
+          "先算工作和搬运，再检查分块、复用与同步。减少函数调用不自动等于更快。"
+        ]
+      ],
+      "question": "B=2、H=2、D=8不变，T从4变8。隐藏元素与密集注意力分数各增长多少？这能否直接给出GPU耗时？",
+      "answer": "隐藏元素B×T×D从64变128，密集分数B×H×T²从64变256。计数分别翻倍与四倍，但实现可能不物化完整分数，设备执行、搬运与利用率还需另测，不能把数学规模直接当耗时。",
+      "outlets": [
+        [
+          "training",
+          "把一次数值正确的更新扩展到并行、状态与恢复。"
+        ],
+        [
+          "platform",
+          "固定参数用于推理时，再区分输入处理、逐词生成与缓存。"
+        ]
+      ]
+    },
+    "training": {
+      "nodes": [
+        [
+          "tr-step",
+          "一次有效更新",
+          "输入、前向、损失、反向、同步和优化器共同形成一次更新过程。"
+        ],
+        [
+          "tr-memory",
+          "状态与峰值",
+          "参数、梯度、优化器、激活和缓冲在不同阶段占据显存。"
+        ],
+        [
+          "tr-ddp",
+          "副本与全局目标",
+          "数据并行同步副本梯度，还要核对各进程样本权重和监督目标。"
+        ],
+        [
+          "tr-sharding",
+          "训练状态分片",
+          "分片减少重复保存，但会增加相应状态收齐、通信和临时峰值。"
+        ],
+        [
+          "tr-parallel",
+          "计算与专家布局",
+          "层内、层间或专家分配切开不同计算，通信由布局和依赖决定。"
+        ],
+        [
+          "tr-collectives",
+          "参与者与通信",
+          "集合操作要求相应参与者、顺序和数值布局匹配。"
+        ],
+        [
+          "tr-input",
+          "有效数据供给",
+          "读取、预处理、分片和组批决定各进程实际学到哪些有效位置。"
+        ],
+        [
+          "tr-recovery",
+          "可继续的状态",
+          "检查点需对齐模型、优化器和数据进度，才能按定义继续训练。"
+        ]
+      ],
+      "edges": [
+        [
+          "tr-input",
+          "提供监督输入",
+          "tr-step",
+          "不同进程的有效标签数会改变目标分母，不能只看每个进程都在执行。"
+        ],
+        [
+          "tr-ddp",
+          "通过通信同步",
+          "tr-collectives",
+          "同步让副本更新一致，但局部平均再平均仍可能采用错误样本权重。"
+        ],
+        [
+          "tr-ddp",
+          "组织多副本的",
+          "tr-step",
+          "每个副本执行相应更新步骤；同步方式、有效样本权重和更新时机一起决定是否对应同一全局目标。"
+        ],
+        [
+          "tr-sharding",
+          "改变驻留峰值",
+          "tr-memory",
+          "状态分散以后，计算前仍可能临时收齐；不能只用总量除设备数估算峰值。"
+        ],
+        [
+          "tr-parallel",
+          "决定交换什么",
+          "tr-collectives",
+          "切输入、输出、层或专家，会改变通信数据与发生位置，不能只统称“同步模型”。"
+        ],
+        [
+          "tr-step",
+          "消耗并产生状态",
+          "tr-memory",
+          "前向留下反向需要的中间量，更新还会维护优化器状态；这些对象寿命不同。"
+        ],
+        [
+          "tr-recovery",
+          "恢复同一过程",
+          "tr-step",
+          "恢复要说明保存边界与未完成窗口怎样处理，并把数据位置一起对齐。"
+        ]
+      ],
+      "question": "各副本参数相等，loss也下降，但与单进程目标不同；恢复后轨迹又变化。分别应该核对哪些关系？",
+      "answer": "副本一致不证明全局目标正确，先查有效位置、样本权重和梯度缩放。轨迹变化另查模型、优化器、随机状态、数据位置与保存边界；不能把同步成功和文件加载成功合成一次训练正确的结论。",
+      "outlets": [
+        [
+          "platform",
+          "把训练程序和恢复契约交给作业准入与资源平台。"
+        ],
+        [
+          "cloud-data",
+          "按实际访问模式检查存储供给与恢复材料。"
+        ]
+      ]
+    },
+    "platform": {
+      "nodes": [
+        [
+          "sv-contract",
+          "作业与完整产物",
+          "作业声明运行意图、输入和完成条件；推理要加载完整且一致的模型版本。"
+        ],
+        [
+          "sv-admission",
+          "资源准入",
+          "配额、单节点形状、拓扑与整组可行性决定作业能否执行。"
+        ],
+        [
+          "sv-prefill",
+          "输入与生成",
+          "预填充处理已有输入，解码依赖前一步选定的新词元。"
+        ],
+        [
+          "sv-kv",
+          "历史键值状态",
+          "缓存复用历史位置的键和值，容量随保留位置、头数和并发增长。"
+        ],
+        [
+          "sv-batching",
+          "请求调度",
+          "批处理与准入安排何时计算哪个请求，并分配缓存等资源。"
+        ],
+        [
+          "sv-metrics",
+          "用户计时口径",
+          "首词元延迟、后续间隔、吞吐和达标吞吐回答不同服务问题。"
+        ],
+        [
+          "sv-quantization",
+          "数值与字节",
+          "量化改变表示和存储，执行内核与校准质量仍需单独验证。"
+        ],
+        [
+          "sv-optimizations",
+          "候选与验证",
+          "推测解码用便宜提议和目标验证减少相应串行工作，仍有额外开销。"
+        ],
+        [
+          "sv-release",
+          "版本与验收",
+          "产物、分词、配置和评估共同确定可发布版本，回退还需验证依赖。"
+        ]
+      ],
+      "edges": [
+        [
+          "sv-contract",
+          "提出资源需要",
+          "sv-admission",
+          "提交成功不等于可放置；训练规模和布局要能在实际资源形状中同时成立。"
+        ],
+        [
+          "sv-contract",
+          "交付完整模型给",
+          "sv-prefill",
+          "推理服务需要一致的参数、分词规则和配置，才能在约定模型版本上处理输入并继续生成。"
+        ],
+        [
+          "sv-prefill",
+          "产生并读取",
+          "sv-kv",
+          "缓存对应已处理位置，不总等于屏幕上已显示的输出数；停止时最后输出可能尚未再次送入模型。"
+        ],
+        [
+          "sv-batching",
+          "受容量限制",
+          "sv-kv",
+          "每个请求都占相应状态，权重放得下不代表任意并发都能进入。"
+        ],
+        [
+          "sv-batching",
+          "改变等待分布",
+          "sv-metrics",
+          "批次更大可能提高吞吐，也可能增加首词元等待；比较要固定输入和质量口径。"
+        ],
+        [
+          "sv-quantization",
+          "影响资源与时延",
+          "sv-metrics",
+          "量化改变数值表示与字节布局，具体内核负责计算。按同一负载比较质量、排队和执行耗时，才能判断有效服务能力。"
+        ],
+        [
+          "sv-optimizations",
+          "利用条件前缀",
+          "sv-prefill",
+          "候选并行核对仍要保持因果位置、正确概率与缓存回退；目标调用减少不等于加速倍数。"
+        ],
+        [
+          "sv-release",
+          "验收产物与行为",
+          "sv-contract",
+          "能加载只是起点，分词规则、任务质量、服务表现与可回退性要分别核对。"
+        ]
+      ],
+      "question": "权重成功加载，量化后字节减少，目标模型调用数也少了，为什么首词元延迟仍可能变差？",
+      "answer": "三份证据分别支持可加载、存储变化和调用计数，尚未说明调度等待、缓存容量、草稿开销和实际内核耗时。先固定并发、长度、质量与计时起点，再拆分排队、输入计算和持续生成。",
+      "outlets": [
+        [
+          "agent",
+          "模型服务提供提议，任务运行时另负责工具执行与真实结果验收。"
+        ],
+        [
+          "native",
+          "自建作业平台时，再核对Pod、卷与网络的实际生命周期。"
+        ]
+      ]
+    },
+    "agent": {
+      "nodes": [
+        [
+          "ag-runtime",
+          "任务与执行",
+          "任务给出目标和停止条件，运行时检查提议并安排实际动作。"
+        ],
+        [
+          "ag-tools",
+          "工具契约",
+          "名字、类型和结果语义规定怎样调用，结构正确不等于事实正确。"
+        ],
+        [
+          "ag-planning",
+          "计划与审批",
+          "计划安排还要做的工作。工具提供新事实时修订计划，审批只覆盖指定草稿和目标。"
+        ],
+        [
+          "ag-recovery",
+          "效果与恢复",
+          "接收方回执记录实际提交，持久历史帮助在未知结果后继续。"
+        ],
+        [
+          "ag-fencing",
+          "执行者接管",
+          "租约过期不使旧进程消失，接收方需要拒绝不再有效的执行资格。"
+        ],
+        [
+          "ag-authorization",
+          "可信委托",
+          "身份、任务范围与当前资源策略共同决定允许的动作。"
+        ],
+        [
+          "ag-context",
+          "模型可见信息",
+          "上下文组织当前输入，执行状态保存已确认事实，长期记忆保存可复用知识。"
+        ],
+        [
+          "ag-retrieval",
+          "获准证据",
+          "资料经过检索、权限与版本检查，再在预算中交给模型。"
+        ],
+        [
+          "ag-observability",
+          "轨迹与消耗",
+          "分别记录任务、逻辑动作和尝试，才能解释重试、等待与成本。"
+        ],
+        [
+          "ag-evaluation",
+          "真实任务结果",
+          "按真实产物、来源和正确拒绝判断完成，不由模型自报成功。"
+        ],
+        [
+          "ag-sandbox",
+          "程序能力边界",
+          "沙箱限制文件、网络和资源等执行能力，不替代业务授权。"
+        ]
+      ],
+      "edges": [
+        [
+          "ag-runtime",
+          "安排受控调用",
+          "ag-tools",
+          "模型只提出工具名和参数，运行时还要检查契约、范围和预算，才产生实际尝试。"
+        ],
+        [
+          "ag-authorization",
+          "允许或拒绝",
+          "ag-tools",
+          "工具文本和检索材料不是授权来源；真正造成效果的接收方仍要执行当前权限。"
+        ],
+        [
+          "ag-sandbox",
+          "限制程序能力",
+          "ag-tools",
+          "即便动作被业务允许，执行程序也应只取得所需文件、网络与资源。"
+        ],
+        [
+          "ag-tools",
+          "交付执行结果",
+          "ag-recovery",
+          "运行时保存工具结果；产生外部写入时，还要关联接收方回执。恢复沿原操作身份核对已完成与待继续的工作。"
+        ],
+        [
+          "ag-fencing",
+          "保护接管后的",
+          "ag-recovery",
+          "旧执行者暂停后复活，仍可能继续写；接收方要按有效资格拒绝过期写入。"
+        ],
+        [
+          "ag-retrieval",
+          "提供材料给",
+          "ag-context",
+          "找到资料不等于本次模型真的看到了它，还要核对权限、版本、完整性和预算。"
+        ],
+        [
+          "ag-context",
+          "组织本次提议输入",
+          "ag-runtime",
+          "运行时从可信状态和获准资料组织模型输入；模型可见的旧摘要不能反向覆盖接收方的新回执。"
+        ],
+        [
+          "ag-observability",
+          "提供过程证据给",
+          "ag-evaluation",
+          "轨迹解释动作怎样发生，最终仍要独立核对产物与目标，不能只统计成功状态码。"
+        ],
+        [
+          "ag-recovery",
+          "保留提交事实供",
+          "ag-evaluation",
+          "任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。"
+        ],
+        [
+          "ag-tools",
+          "暴露缺项，触发修订",
+          "ag-planning",
+          "基础订单只合计 37，工具返回的补录引用提醒宿主还缺一项。先把读取补录加到计划，再生成完整草稿。"
+        ],
+        [
+          "ag-authorization",
+          "限定待审批动作",
+          "ag-planning",
+          "批准绑定草稿、目标与来源。草稿或来源改变后，要核对旧批准是否仍匹配，模型的提议不授予权限。"
+        ],
+        [
+          "ag-planning",
+          "保存进度供恢复",
+          "ag-recovery",
+          "进程退出前保存计划和等待审批的状态。恢复后重读已确认事实，再按原操作身份核对是否已提交。"
+        ]
+      ],
+      "question": "旧草稿金额是 37，已经批准。后来读到补录 5，程序保存新版草稿后退出。恢复时能直接发布 42 吗？如果已写入但没收到响应，又该先查什么？",
+      "answer": "原批准只覆盖旧草稿。恢复后应核对当前草稿、来源版本和发布目标，等待匹配的批准。若提交结果未知，先按原操作身份查接收方回执和实际产物，再决定是否重试。",
+      "outlets": [
+        [
+          "platform",
+          "需要自建模型服务时，再深入生成、缓存与服务性能；训练不是Agent先修。"
+        ],
+        [
+          "cloud-security",
+          "继续深入程序身份、秘密轮换和资源端授权。"
+        ]
+      ]
+    }
+  },
+  "preserved_previous_records": {
+    "docs/COHERENCE_PAGES_READER_RETENTION_2026-11-11.json": "88ba3f5ee364ca2089eac7ce4f0d54983dc4efdf5d3055dc1c968e8bb756cfb6"
+  },
+  "source_revisions": {
+    "dist/agent-system-knowledge.js": {
+      "previous_sha256": "5cf1ee926fc31696bfe06d7294349ea38ad692ffc3b2226fbd36616f1ec4b44e",
+      "reviewed_sha256": "8234cdc0e8f8b5215dda8c8520fb6399f9fc37bd739d573ff7cc753e99cf23cb",
+      "scope": "Introduce one independently reviewed plan/approval concept with explicit prior terms and one continuous report example."
+    },
+    "dist/ai-system-knowledge.js": {
+      "previous_sha256": "3c7d88306cc511d6ab8b32640db589012a3fe473434fe20433b5569efdc95ce5",
+      "reviewed_sha256": "c7fe82157bbf41b0e832b3baf4bba9937d3ef5c53c3669c7ca9c28a074f892f7",
+      "scope": "Connect recovery to the exact asynchronous snapshot evidence."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "abd61233755bea0e884d9ed84b5831cdceabfbd1beed05dfeab34246ced9027e",
+      "reviewed_sha256": "4ddb6a4be5e10e5d87ddd2fb1413095365c553b22b2e92b6c6f400f96c4d1426",
+      "scope": "Connect shard routing to per-shard capacity arithmetic."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "e70b297a956b974e82d3fa8e19efce6bce411a6c309a3332fcf05c8b121e1ca9",
+      "reviewed_sha256": "188f9f8a4ea0a0c6420ef9060104857044267cbdda952343b42679949d405955",
+      "scope": "Add plan and approval to the Agent causal graph and wire all three concept-specific evidence paths."
+    },
+    "dist/diagrams/field-agent.svg": {
+      "previous_sha256": "6afce6a7d4d80492678964cde516dcd40a5ec53dfe6761e842f17d391136aa82",
+      "reviewed_sha256": "70c11a320b12cbbcf35ed5d15c42b30eb21b35bf8e73c5744f40ae6bc10a0f96",
+      "scope": "Draw the reviewed 11-node Agent graph with all 12 relationships, retaining prior nodes and edges."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "bf7a747b8c97e3cc467992f969c95891cede76b2fcf6c05aceeb5e30ee2e8707",
+      "reviewed_sha256": "cded730977e4a5048bcedc47f281c49f4ecb07d1ce90a6030e7ed98e4ddfe909",
+      "scope": "Register three native examples and their precise sources, environment and evidence scope."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "03451290d90d4c370ccc9fcd113e8e3ae0a4d39a7d1b9b9dabb11e7cc4590a16",
+      "reviewed_sha256": "ebccb1f18d89296d7e0f221a04feab558b95f4c137446e2588ab618644b11ca8",
+      "scope": "Place each experiment in the matching existing role, keeping prior practice destinations available."
+    },
+    "dist/progressive-cloud-data-reading.js": {
+      "previous_sha256": "881bb4ee3c42b3677e5450c2529bbdfc863c86c2e2d365a96f050bfd15eca896",
+      "reviewed_sha256": "04a8231eb3854a4a4ac0b0870ed16731ede4e821d83769423407ad917df06f0f",
+      "scope": "Follow a concrete order through the shard router and native primary-key lookup, then compare exact per-shard reads and fanout against an independent full database."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "19fba61036f4d4fa4273d08282172d6c3c3b40fc3cae7760e0b0b5a3994fe884",
+      "reviewed_sha256": "15d1e4d4d0c2d63d6d1e5ca00a4961dba1a9073454ef5107fd073e372ec93a23",
+      "scope": "Use the same shard request distribution to derive queue growth, separating measured SQLite counts from explicitly assumed per-second service capacity."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "c1053768a2fa9333e5087cec5971d1d860cfea40b43c169a014146be34d69dc1",
+      "reviewed_sha256": "87e07d028d0adb68a671ae62fd4dbfc72500292abaa94107274da92653e68401",
+      "scope": "Define a one-weight two-rank model before the diagram, derive two updates, then compare native asynchronous saves, aliasing and failed publication."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "41f41edc397b51cba94ee5c4cb714508cd91ff459a8d0794991a380f2b45735c",
+      "reviewed_sha256": "b5c578e4e476faac4c049cf7a91297a87c664c20942124d1d164be3377228190",
+      "scope": "Trace four actual model tool proposals into one persisted task, a revised plan, approval-bound draft and fresh-process readback."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "3020f1f875a3965383c1b665bffe6970cac1bdf1566b85db1b609b903e9b0825",
+      "reviewed_sha256": "cde9c4a30b903bd71daa4d8beb57627a32c3e510d2394be37e7a3b771545643b",
+      "scope": "Reserve the three new evidence figures at their exact viewport dimensions."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "075ba7246fa4ce30a1f75ff89193b7b746e3b84794b4c71b1b186de3befb7028",
+      "reviewed_sha256": "91981348e29cf025497e3f208846809deca6feda965076dff45e1e182e365190",
+      "scope": "Fingerprint the current light reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "e678825a7c1ab6022b0f8d332f772da9fe8c60131db54943e56d37dfd3bf6db2",
+      "reviewed_sha256": "21f16e56fba46566f65699c698389ae8a7ae87364f9decbe3490f6fb4900cc2c",
+      "scope": "Fingerprint the exact shared renderer and lesson sources."
+    },
+    "scripts/content-inventory.cjs": {
+      "previous_sha256": "4f89e8b70784ed328696623440431b8be678faedf2d3919a237ebb11250f3e9c",
+      "reviewed_sha256": "d1a85fd7044207df93d28010e167e525d2c7c0b2eea0a8f19c00499e262982c7",
+      "scope": "Count separately reviewed new knowledge points without changing the historical window."
+    },
+    "scripts/content-review-records.cjs": {
+      "previous_sha256": "20ed465bb9a006164115913f63dec75f128d32fa7f787ccb54041e2b6eb032e1",
+      "reviewed_sha256": "74613b336679b1947f7870716585b886f06e6e87c15b40fcf0a3df09422f093a",
+      "scope": "Aggregate the separately appended initial knowledge-point reviews."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "74cd4424791d505341cc5edb354c2e6b2f7b98c2320743ed5e75662eb7cd3d2a",
+      "reviewed_sha256": "7c8109767582f47730a5583658950d90b19442add281f59b173c423f8085a67f",
+      "scope": "Validate the new point inventory and independent native-record schemas."
+    },
+    "scripts/check-site-search.cjs": {
+      "previous_sha256": "55615fc2374fdaedcdf3d28154784ec22717f185c02d15ae262d38c8ccf042e8",
+      "reviewed_sha256": "107ba858fb0ec2a63e5e661519fc564824d874c951a7dd2013269a923796da15",
+      "scope": "Use the reviewed current inventory and search for plan and approval at its exact field destination."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "1baa85bdd76e788f9149ac1a6e6534b3ea0e47b7e6c87eb1192b57217d438c68",
+      "reviewed_sha256": "9cfbb5d0a82b0941ad2df0bc0b41843270c50653c2cd8de6273e632f358d644f",
+      "scope": "Use the current point inventory in lightweight metadata and search assertions."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "129c20ba94659786d890fd3fbe63ce5bfb4004fac08daa0a10ec2c09b5a85997",
+      "reviewed_sha256": "73e0c9c9fb70138921f351b6d6893f30aba19b7261169f93ba8b13d9906c04c9",
+      "scope": "Check the new current node and edge counts against the separate map snapshot."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "6520f9ac095045a3ee50928e1ab816219b68cf3f0728b84ec52a524aa8527795",
+      "reviewed_sha256": "70c5429b4dad3f98c034a8a58cac0f3da8078931452f6c51a15818ed14a8d86e",
+      "scope": "Validate all 90 visible authored concept relationships."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "9503c17a2f0c3447cdbc67286e9928fc282a76851f58f55136f838182bd4109f",
+      "reviewed_sha256": "34b0d239cabb2405f20716cfd518b8cd01289c45008b2efa527caf2dcc0c7afb",
+      "scope": "Report the current chapter and knowledge inventory."
+    },
+    "scripts/draw-field-maps.py": {
+      "previous_sha256": "a5f73911c0e4f781e29d5fbbe7964020ca3cb93e9b8569d9e678a803eaddd176",
+      "reviewed_sha256": "c81ecd5819e4ac743f2ae389c0ee28c01d12ad7b7c958f8b70577e4a5417ec98",
+      "scope": "Lay out the enlarged Agent graph and derive totals from authored data."
+    },
+    "scripts/field-map-layout.py": {
+      "previous_sha256": "111e104a697eae78b99187ae312cb163704c68fe28d29c78b00cd938922c3046",
+      "reviewed_sha256": "bb21865f5c9e22bda3f0b6ecd943b4d8dfd710d1e775782de04fd7c876962e0a",
+      "scope": "Keep historical graph checks while validating the enlarged current graph."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "3ec9363bdc00818bbb18d3509dfc87b62d919c0a54b0cd88235327c4be2d3676",
+      "reviewed_sha256": "346a102cb89ed5a85f7f6edcfffbf035ee5033d635ac982d6674d8077d3dd0a2",
+      "scope": "Check exact new role-to-experiment links while preserving legacy destinations."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "894c8c873b567101201e67bf7ca9dd33941ab84f68fdefb4c7178b221c0e0ff9",
+      "reviewed_sha256": "bc42b125c45885aefb35be53ecba31a4c051782478f987f8844fa649c4f8b653",
+      "scope": "Run all three new independent evidence verifiers."
+    },
+    "scripts/check-ai-agent-systems.cjs": {
+      "previous_sha256": "149050c39adce52b94bac4f206efb95d2b2e5ec4527da6cbd9845da3b267d000",
+      "reviewed_sha256": "4045482186a947f540ecfb7f08c4d6270f0fd0e5b4884f1e19c63eef754ed30e",
+      "scope": "Compare exact independently reviewed AI and Agent point identities instead of a historical fixed count."
+    },
+    "scripts/check-model-plan-revision.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4a417d69c9067002692bdbb21f6bcc66ce2289a230554ff122116bb5ed5199f4",
+      "scope": "Check raw tool proposals, approval content, source and actual SQLite readback."
+    },
+    "scripts/check-async-dcp-commit.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bd5a803ed825decdd0fcacdeccb77f5c7bef97fb59ed0f09b541ffebd5c831ec",
+      "scope": "Derive both SGD updates independently, validate native DCP write/read paths and reject corrupted evidence."
+    },
+    "scripts/check-sqlite-shard-routing.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8b334a786d1a377234eb266eec74c6bb4f423eb4278144b85f3b647e9db9d26a",
+      "scope": "Check raw SQL traces, shard placement, fanout totals and archive binding."
+    },
+    "scripts/check-agent-planning.cjs": {
+      "previous_sha256": "13fa43150eac295ed65258456ae2ffdd454288201e372f93b48271107d9cbc91",
+      "reviewed_sha256": "e799e9616b127c011d1f7c19af4e87bfdc36294f615194d2dde9f68993f38768",
+      "scope": "Preserve the original exercise inventory separately from the new source-bound native model example."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "5746c5d472d5eb9a102a8970a70fdba55affc74ab988568623de73019650b920",
+      "reviewed_sha256": "9d8bb3d5c5910a5f7b7b18fb40362ec3be72cfc640f47af525d8cd6fb93750c6",
+      "scope": "Preserve the original SQLite teaching inventory separately from the new native shard suffix."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "ad551780af2f8e08272c11cff411b27adb4c583feeda633b7dbae11c3e6f5d2a",
+      "reviewed_sha256": "5d1b3a27b6336f66aef52ecae49f638b0f28dd2e7d7cef87085eb94347444c89",
+      "scope": "Add exact new subsection anchors while retaining all earlier targets."
+    },
+    "docs/CONTENT_NATIVE_PLAN_SNAPSHOT_SHARDS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "db6cbb4c319c93b4c7a61840bf546fd271b63406fd4c9fb101921e1f89d92187",
+      "scope": "Append body revisions, the new knowledge point and three native teaching evidence paths."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "4344230b87aab97579d54c42f3e9d52def295e6537d9ef0bcbef22231bd30aa9",
+      "reviewed_sha256": "2a77e85b9ea4859c2fd706f0ea7b77954133f2736dd2082d9d3df8e8d398632d",
+      "scope": "Register the new explicit content review."
+    },
+    "dist/diagrams/sqlite-shard-routing.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cee8d6937a1f85a5ca6582fee22aadf94919fa6b2f3fced1d8b52cadcbfc31e3",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/sqlite-shard-routing.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4cf76a9a2bb43476780b0e5b1d343caf903f960a6297e6bf5d06b19a278745b9",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/sqlite-shard-routing/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b6e3a4d93068578f9bedf437f8e636602ed61c369b8d84ad0b105e720c0a32e3",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/sqlite-shard-routing/shard_routing.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8d59bfea8d7bf62607c25decc54632d21486b05c08a60951879bbab03825bc08",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/sqlite-shard-routing/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7117da2930c0e6910b26f375a69951f5701e882d599bacc2abab1731b4159114",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/async-dcp-commit.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "90179e620c5f1423c12af271eb3e0732a4d12aee7c026197faa7e0482d9d22ab",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/async-dcp-commit.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "86bdfc7072856b55b7d9c5defd5313221b09b6a180b0d4a95baa15e8937b37e3",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/async-dcp-commit/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "83738524e7f44b75a2470263ca0065efa784c134ba628f03b4836b0186662e3d",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/async-dcp-commit/async_dcp.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dfbad5b5b087c4d1a3a1b2f6f6b04b238d46c37a4e60ed0ba05a0cec9e6f411b",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/async-dcp-commit/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/async-dcp-commit/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2ec88040c18891e61a9f411c33ab4f41d431101c77d876fdfb1aa75152a00bd5",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/diagrams/model-plan-revision.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c7fe88a47b146ec7e17808c4f79dfe98bd0645baa5b65cfae98b141cec71b55d",
+      "scope": "Show the actual execution relationships in a readable standalone figure."
+    },
+    "dist/labs/model-plan-revision.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2bbfd9a5636610520c6b09c97dcab7d38c28ee1eb606e563c0804edd549059ab",
+      "scope": "Bind the runnable archive to the exact source and evidence."
+    },
+    "dist/labs/model-plan-revision/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6a76aa691fc8927ea2e5e644f3b6c3c300df9a8bff3e50351993b1f705c58e24",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-plan-revision/assets.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bed077a9de71d9a01890c5adc14d7f4ca8882615227ab936a82ae4a2eb3fa79e",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-plan-revision/fixture.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7c26a41a55193eb24e5e0166753cc9d16500ec8ac6ec77839a23ee0a28f82fab",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-plan-revision/model_plan_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "976e38c4013db65dad83bf66f134691b20aacb2c2ab4260c6be0ec9a2c873d6d",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "dist/labs/model-plan-revision/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "efa4fe07a434ec8c756f4b747753e338d81034075c4b2fcb2009abbbe178a435",
+      "scope": "Preserve the runnable source, version boundary or observed result."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "a6cdeafdfc300aa7daf60b0e3508a9aa9c93e3685237aed34b07089e7b7b244e",
+      "reviewed_sha256": "7f7a79734873964e806bcd37649e471a3bb3b2149f273f82d8dc7cf1c9a17881",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3e6136b6edd1649c97651ae8fc6ae1d2b7bb18a3",
+    "chapters": 78,
+    "changed_bodies": [
+      "database-index-locks",
+      "elasticity",
+      "checkpoint-recovery",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "new_knowledge_points": [
+      "ag-planning"
+    ],
+    "added_code_blocks": {
+      "database-index-locks": 1,
+      "checkpoint-recovery": 1,
+      "durable-workflows": 2
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3,
+    "editorial_reference_readings": [
+      {
+        "url": "https://cs.ossu.dev/#curriculum",
+        "adopted": "Explicit prerequisite and optional boundaries preserve one coherent main route."
+      },
+      {
+        "url": "https://zh.d2l.ai/chapter_linear-networks/linear-regression-scratch.html",
+        "adopted": "Keep one numerical model through definitions, updates, code and a single-variable prediction exercise."
+      },
+      {
+        "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/scale/scale-intro/",
+        "adopted": "Carry one concrete object across adjacent chapters and compare its before/after observations."
+      },
+      {
+        "url": "https://docs.pytorch.org/tutorials/recipes/distributed_async_checkpoint_recipe.html",
+        "adopted": "Explain waiting points beside the state transition, with an explicit pinned-version boundary."
+      },
+      {
+        "url": "https://huggingface.co/learn/agents-course/unit2/langgraph/building_blocks",
+        "adopted": "Carry the same state from input and decision to actual persistence and output."
+      },
+      {
+        "url": "https://docs.langchain.com/oss/python/langgraph/interrupts#resuming-interrupts",
+        "adopted": "Link pause payload, task identity and a fresh-process resume directly."
+      }
+    ]
+  }
+}

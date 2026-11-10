@@ -4,7 +4,7 @@ const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const query=value=>{c.query=value;return JSON.parse(JSON.stringify(vm.runInContext('rankSiteSearch(query).map(r=>({id:r.id,path:r.path,anchor:r.anchor,tier:r.tier,label:r.matchLabel}))',c)));};
 const index=JSON.parse(JSON.stringify(vm.runInContext('buildSiteSearchIndex().map(e=>({id:e.id,type:e.type,path:e.path,anchor:e.anchor}))',c)));
-assert.equal(index.length,inventory.search);assert.equal(new Set(index.map(e=>e.id)).size,inventory.search);assert.equal(index.filter(e=>e.type==='knowledge').length,95);
+assert.equal(index.length,inventory.search);assert.equal(new Set(index.map(e=>e.id)).size,inventory.search);assert.equal(index.filter(e=>e.type==='knowledge').length,inventory.points);
 for(const entry of index){const file=path.join('dist',entry.path,'index.html');assert(fs.existsSync(file),entry.id+': destination');if(entry.anchor)assert(fs.readFileSync(file,'utf8').includes('id="'+entry.anchor+'"'),entry.id+': point anchor');}
 const propagation=query('traceparent');
 assert.deepEqual(propagation.slice(0,2).map(r=>[r.id,r.anchor,r.tier]),[['article:observability','section-9',5],['article:agent-observability','section-2',5]],'both independently explained propagation paths should match their actual prose');
@@ -13,6 +13,14 @@ assert(query('traceparent').every(r=>!['article:gpu-cluster','article:agent-runt
 assert.equal(query('SQL 索引')[0].id,'article:database-index-locks');
 assert.equal(query('cpu.max')[0].id,'article:linux-resource');assert.equal(query('cpu.max')[0].anchor,'section-3');
 assert.equal(query('KV Cache')[0].id,'knowledge:sv-kv');
+const planning=query('计划修订与审批状态')[0];
+assert.equal(planning.id,'knowledge:ag-planning');
+assert.equal(planning.path,'/module/agent/');
+assert.equal(planning.anchor,'knowledge-ag-planning');
+const planRelation=query('计划与审批')[0];
+assert.equal(planRelation.id,'knowledge:ag-planning');
+assert.equal(planRelation.path,'/module/agent/?concept=ag-planning');
+assert.equal(planRelation.anchor,'concept-relations');
 const placement=query('节点放置')[0];assert.equal(placement.id,'knowledge:placement');assert.equal(placement.path,'/module/native/?concept=placement');assert.equal(placement.anchor,'concept-relations');
 assert.deepEqual(query('ＴＣＰ'),query('tcp'));assert.deepEqual(query('  KV   Cache  '),query('kv cache'));
 assert.deepEqual(query('完全不存在的条目xyz'),[]);assert.deepEqual(query('<>'),[]);

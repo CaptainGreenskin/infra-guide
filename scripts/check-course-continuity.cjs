@@ -49,9 +49,13 @@ const pipelineLessons=section('tensor-parallel-math',7).split('<h3 id="native-pi
 assert.equal(pipelineLessons.length,2,'the two-rank experiment follows the historical schedule comparison');
 assert(pipelineLessons[0].includes('<h3 id="pipeline-training-schedules">'));
 assert(pipelineLessons[1].includes('labs/pipeline-schedules/validation.json'));
+const shardLessons=section('database-index-locks',2).split('<h3 id="native-sqlite-shard-routing">');
+assert.equal(shardLessons.length,2,'the native sharding exercise follows the historical SQLite lesson');
+assert(shardLessons[1].includes('labs/sqlite-shard-routing/validation.json'));
 const suffixBoundaries={
  'flash-attention-io':{7:flashLessons[0]},
  'cache-consistency':{6:cacheLessons[0]},
+ 'database-index-locks':{2:shardLessons[0]},
  'gpu-execution':{3:gpuLessons[0]},
  'tensor-parallel-math':{5:tensorGroups.replace(tensorGroupFigure[0],''),7:pipelineLessons[0]}
 };

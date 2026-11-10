@@ -1,0 +1,71 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "3e6136b6edd1649c97651ae8fc6ae1d2b7bb18a3",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_ROLE_CHECKPOINT_NATIVE_LABS_2026-11-11.json": "776253a0f7b19ad667f851279b3fdd8a7c869c75ff8dfe6a0f18a23e4f66fe46"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "database-service",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "d63dd688790ee2317383bd03eaf22ef145a746d5f78936e6a26ad0a0a89462a0",
+      "reviewed_content_sha256": "a46c8a9adba0ac845e0aea4cb5b269e592cda56a1eb57a3d93d84c13aa4cdf14",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "performance-budget",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "2ea36221627197bed96ae6735a4392b187f510682d9a4ca7504dde59128923c8",
+      "reviewed_content_sha256": "02fe959a50539c2aa773d3052df4f589f92d896feb9bc78901959e969ba52920",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "tr-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "799c818579c8358c0df79ea70938819c69b195eb10951d002cb4c3ee23addb25",
+      "reviewed_content_sha256": "7b44570c2b999656463ab61cc6f473d970e8dbe6ef7130aa5db17ab1f773b901",
+      "scope": "Link the mechanism in its own field to the exact execution record.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "new_knowledge_reviews": [
+    {
+      "id": "ag-planning",
+      "review": "new_knowledge_point",
+      "reviewed_at": "2026-11-11",
+      "reviewed_content_sha256": "e6c66548a606a02a559aee502f0b4eb918516f2810e1ff547939fc05a51f338e",
+      "scope": "Define plan changes and approval-bound state independently, before carrying the same report into recovery.",
+      "observation": "The concept separates a proposed plan revision, current draft approval and previously confirmed external effect."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "database-index-locks",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow a concrete order through the shard router and native primary-key lookup, then compare exact per-shard reads and fanout against an independent full database.",
+      "observation": "The rows become 8/8 while 12 reads of A104 still visit only shard 0. A tenant summary must merge [6,42] and [6,36] to reproduce [12,78].",
+      "reviewed_content_sha256": "e57b485f56053bd0714811948a048b7940e5d906aa1b9096585925be8f33183b",
+      "record": "dist/labs/sqlite-shard-routing/validation.json"
+    },
+    {
+      "chapter": "checkpoint-recovery",
+      "reviewed_at": "2026-11-11",
+      "scope": "Define a one-weight two-rank model before the diagram, derive two updates, then compare native asynchronous saves, aliasing and failed publication.",
+      "observation": "PyTorch 2.5.1 CPU snapshots that alias live state can complete successfully but restore cursor 1 with step 2 weights. Explicit copies resume to 2.9375; rank-1 write failure leaves the previous published checkpoint readable.",
+      "reviewed_content_sha256": "f65a0dcab51cd637bdf0d4c80c2ac3b307f37060c43c34b8ad10475c25679cf2",
+      "record": "dist/labs/async-dcp-commit/validation.json"
+    },
+    {
+      "chapter": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "scope": "Trace four actual model tool proposals into one persisted task, a revised plan, approval-bound draft and fresh-process readback.",
+      "observation": "The model learns late-A/v1 from its first tool result. Revision 2 includes 37+5=42. Absent, stale, current and repeated approvals leave 0,0,1,1 reports in SQLite.",
+      "reviewed_content_sha256": "b1143a29a23b320b5fb84c205608888afc0819aa93d6c8cb42a9e61718508a19",
+      "record": "dist/labs/model-plan-revision/validation.json"
+    }
+  ]
+}

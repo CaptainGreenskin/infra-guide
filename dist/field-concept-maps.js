@@ -250,6 +250,7 @@ const fieldConceptMaps={
   nodes:[
    ['ag-runtime','任务与执行','任务给出目标和停止条件，运行时检查提议并安排实际动作。'],
    ['ag-tools','工具契约','名字、类型和结果语义规定怎样调用，结构正确不等于事实正确。'],
+   ['ag-planning','计划与审批','计划安排还要做的工作。工具提供新事实时修订计划，审批只覆盖指定草稿和目标。'],
    ['ag-recovery','效果与恢复','接收方回执记录实际提交，持久历史帮助在未知结果后继续。'],
    ['ag-fencing','执行者接管','租约过期不使旧进程消失，接收方需要拒绝不再有效的执行资格。'],
    ['ag-authorization','可信委托','身份、任务范围与当前资源策略共同决定允许的动作。'],
@@ -267,9 +268,12 @@ const fieldConceptMaps={
    ['ag-retrieval','提供材料给','ag-context','找到资料不等于本次模型真的看到了它，还要核对权限、版本、完整性和预算。'],
    ['ag-context','组织本次提议输入','ag-runtime','运行时从可信状态和获准资料组织模型输入；模型可见的旧摘要不能反向覆盖接收方的新回执。'],
    ['ag-observability','提供过程证据给','ag-evaluation','轨迹解释动作怎样发生，最终仍要独立核对产物与目标，不能只统计成功状态码。'],
-   ['ag-recovery','保留提交事实供','ag-evaluation','任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。']],
-  question:'模型说成功、工具回执存在，但交付上下文少一份必要来源，且旧写权限已撤销。哪些事实可以保留，哪些动作不能继续？',
-  answer:'保留已确认效果并核对原回执，不能因进度未更新而重复写。新动作按当前权限判断，查询本身也需要当前读取资格；证据不足时不能把模型回答判为完成，应按规则补充获准资料或明确报告不足。',
+   ['ag-recovery','保留提交事实供','ag-evaluation','任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。'],
+   ['ag-tools','暴露缺项，触发修订','ag-planning','基础订单只合计 37，工具返回的补录引用提醒宿主还缺一项。先把读取补录加到计划，再生成完整草稿。'],
+   ['ag-authorization','限定待审批动作','ag-planning','批准绑定草稿、目标与来源。草稿或来源改变后，要核对旧批准是否仍匹配，模型的提议不授予权限。'],
+   ['ag-planning','保存进度供恢复','ag-recovery','进程退出前保存计划和等待审批的状态。恢复后重读已确认事实，再按原操作身份核对是否已提交。']],
+  question:'旧草稿金额是 37，已经批准。后来读到补录 5，程序保存新版草稿后退出。恢复时能直接发布 42 吗？如果已写入但没收到响应，又该先查什么？',
+  answer:'原批准只覆盖旧草稿。恢复后应核对当前草稿、来源版本和发布目标，等待匹配的批准。若提交结果未知，先按原操作身份查接收方回执和实际产物，再决定是否重试。',
   outlets:[['platform','需要自建模型服务时，再深入生成、缓存与服务性能；训练不是Agent先修。'],['cloud-security','继续深入程序身份、秘密轮换和资源端授权。']]}
 };
 // Reading emphasis changes the presentation, never the meaning/direction of an edge.
@@ -287,7 +291,7 @@ const fieldConceptReadings={
  'model-foundations':{main:[0,1,2],lead:'先看输入经过注意力和模型层产生预测，再接训练更新。GPU执行与Roofline是实现和性能分析分支。'},
  training:{main:[0,5,6],lead:'沿数据进入一次更新，再观察状态占用与保存恢复。副本、分片和计算布局通过集合通信扩展这个过程。'},
  platform:{main:[0,1,2,3,4],lead:'先区分作业申请资源与模型进入推理两条路径，再把生成、缓存、调度和计时连起来。优化与发布围绕这两条路径展开。'},
- agent:{main:[0,3,6,8],lead:'先沿上下文、动作提议、受控工具、持久事实与结果验收理解任务。检索补充输入，权限和沙箱限制动作，观测记录过程。'}
+ agent:{main:[5,6,0,9,11,8],lead:'沿一份订单报告看完整过程。资料进入上下文，运行时调用工具。发现缺项就修订计划，保存审批和进度，最后读回实际报告。权限、沙箱和追踪约束这条主线。'}
 };
 const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation'],'mysql-replication':['cloud-data','replication-failover']};
 
@@ -306,7 +310,8 @@ const chapterFieldPrimaryConcepts={
  'inference-performance':['platform','sv-metrics'],
  'ai-lifecycle':['platform','sv-release'],
  'agent-security':['agent','ag-authorization'],
- 'agent-evaluation':['agent','ag-evaluation']
+ 'agent-evaluation':['agent','ag-evaluation'],
+ 'durable-workflows':['agent','ag-planning']
 };
 
 // Each prompt follows one existing concept into a checkable experiment.
@@ -333,13 +338,14 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- 'cloud-data':{'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
- training:{'tr-input':['ai-prefetch-resume-step']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
- agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
+ agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
+  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)

@@ -4,7 +4,10 @@ const c={};vm.createContext(c);
 for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const d=vm.runInContext('({articles,infraKnowledgeDomains,infraStudyGates,aiAgentLabFiles,aiAgentValidation,sources,chapterReadingEdits})',c);
 assert.equal(d.infraKnowledgeDomains.length,4);
-assert.equal(d.infraKnowledgeDomains.flatMap(x=>x.points).length,33);
+const initialPoints=JSON.parse(fs.readFileSync('docs/QUALITY_AUDIT_2026-11-04.json')).knowledge_reviews;
+const laterPoints=require('./content-review-records.cjs').new_knowledge_reviews;
+const expectedPoints=[...initialPoints,...laterPoints].filter(p=>/^(mf-|tr-|sv-|ag-)/.test(p.id)).map(p=>p.id);
+assert.deepEqual(d.infraKnowledgeDomains.flatMap(x=>x.points.map(p=>p.id)).sort(),expectedPoints.sort());
 assert.equal(d.articles.length,inventory.chapters);
 assert.equal(d.chapterReadingEdits.length,35);assert.equal(new Set(d.chapterReadingEdits.map(x=>x.id)).size,35);
 assert.deepEqual(JSON.parse(fs.readFileSync('docs/CHAPTER_REVIEW_2026-11-04.json')).chapters,JSON.parse(JSON.stringify(d.chapterReadingEdits)));
@@ -73,4 +76,4 @@ assert(decodedAgentCode.includes(fs.readFileSync('dist/labs/ai-agent-systems/age
 const labCatalogHTML=html('labs');
 for(const name of ['gqa_serving.py','token_ddp.py','worker_fencing.py','agent_evaluation.py'])assert(labCatalogHTML.includes('href="labs/ai-agent-systems/'+name+'"'),name+': lab source entry missing');
 assert(labCatalogHTML.includes('labs/ai-agent-systems.zip')&&labCatalogHTML.includes('labs/ai-agent-systems/validation.json'),'lab archive or evidence entry missing');
-console.log('PASS: 33 systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');
+console.log('PASS: '+expectedPoints.length+' reviewed systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');

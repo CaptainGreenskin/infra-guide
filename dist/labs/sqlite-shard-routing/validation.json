@@ -1,0 +1,736 @@
+{
+  "schema": 1,
+  "source_sha256": {
+    "shard_routing.py": "8d59bfea8d7bf62607c25decc54632d21486b05c08a60951879bbab03825bc08"
+  },
+  "environment": {
+    "sqlite": "3.51.0",
+    "python": "3.9.6",
+    "platform": "Darwin",
+    "machine": "arm64"
+  },
+  "observations": {
+    "tenant_buckets": {
+      "A": 0,
+      "B": 1,
+      "C": 1
+    },
+    "fixture_rows": [
+      [
+        "A",
+        101,
+        1
+      ],
+      [
+        "A",
+        102,
+        2
+      ],
+      [
+        "A",
+        103,
+        3
+      ],
+      [
+        "A",
+        104,
+        4
+      ],
+      [
+        "A",
+        105,
+        5
+      ],
+      [
+        "A",
+        106,
+        6
+      ],
+      [
+        "A",
+        107,
+        7
+      ],
+      [
+        "A",
+        108,
+        8
+      ],
+      [
+        "A",
+        109,
+        9
+      ],
+      [
+        "A",
+        110,
+        10
+      ],
+      [
+        "A",
+        111,
+        11
+      ],
+      [
+        "A",
+        112,
+        12
+      ],
+      [
+        "B",
+        201,
+        1
+      ],
+      [
+        "B",
+        202,
+        2
+      ],
+      [
+        "C",
+        301,
+        1
+      ],
+      [
+        "C",
+        302,
+        2
+      ]
+    ],
+    "oracle": {
+      "tenant_a_count_sum": [
+        12,
+        78
+      ],
+      "order_a104_amount": 4
+    },
+    "cases": {
+      "tenant_only": {
+        "files": [
+          "tenant-only-0.sqlite",
+          "tenant-only-1.sqlite"
+        ],
+        "rows_by_shard": [
+          12,
+          4
+        ],
+        "placement_rows": [
+          [
+            [
+              "A",
+              101,
+              1
+            ],
+            [
+              "A",
+              102,
+              2
+            ],
+            [
+              "A",
+              103,
+              3
+            ],
+            [
+              "A",
+              104,
+              4
+            ],
+            [
+              "A",
+              105,
+              5
+            ],
+            [
+              "A",
+              106,
+              6
+            ],
+            [
+              "A",
+              107,
+              7
+            ],
+            [
+              "A",
+              108,
+              8
+            ],
+            [
+              "A",
+              109,
+              9
+            ],
+            [
+              "A",
+              110,
+              10
+            ],
+            [
+              "A",
+              111,
+              11
+            ],
+            [
+              "A",
+              112,
+              12
+            ]
+          ],
+          [
+            [
+              "B",
+              201,
+              1
+            ],
+            [
+              "B",
+              202,
+              2
+            ],
+            [
+              "C",
+              301,
+              1
+            ],
+            [
+              "C",
+              302,
+              2
+            ]
+          ]
+        ],
+        "distinct_orders": {
+          "orders": [
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112
+          ],
+          "amounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "sql_trace": [
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 101"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 102"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 103"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 105"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 106"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 107"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 108"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 109"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 110"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 111"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 112"
+            }
+          ],
+          "queries_by_shard": [
+            12,
+            0
+          ]
+        },
+        "hot_order": {
+          "orders": [
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104
+          ],
+          "amounts": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "sql_trace": [
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            }
+          ],
+          "queries_by_shard": [
+            12,
+            0
+          ]
+        },
+        "query_plans": {
+          "point": [
+            [
+              2,
+              0,
+              39,
+              "SEARCH orders USING PRIMARY KEY (tenant=? AND order_id=?)"
+            ]
+          ],
+          "tenant_summary": [
+            [
+              3,
+              0,
+              56,
+              "SEARCH orders USING PRIMARY KEY (tenant=?)"
+            ]
+          ]
+        },
+        "tenant_summary": {
+          "partials": [
+            {
+              "shard": 0,
+              "count_sum": [
+                12,
+                78
+              ]
+            }
+          ],
+          "merged": [
+            12,
+            78
+          ],
+          "sql_trace": [
+            {
+              "shard": 0,
+              "sql": "SELECT COUNT(*), COALESCE(SUM(amount), 0) FROM orders WHERE tenant = 'A'"
+            }
+          ],
+          "shard_zero_only": [
+            12,
+            78
+          ]
+        }
+      },
+      "tenant_order": {
+        "files": [
+          "tenant-order-0.sqlite",
+          "tenant-order-1.sqlite"
+        ],
+        "rows_by_shard": [
+          8,
+          8
+        ],
+        "placement_rows": [
+          [
+            [
+              "A",
+              102,
+              2
+            ],
+            [
+              "A",
+              104,
+              4
+            ],
+            [
+              "A",
+              106,
+              6
+            ],
+            [
+              "A",
+              108,
+              8
+            ],
+            [
+              "A",
+              110,
+              10
+            ],
+            [
+              "A",
+              112,
+              12
+            ],
+            [
+              "B",
+              201,
+              1
+            ],
+            [
+              "C",
+              301,
+              1
+            ]
+          ],
+          [
+            [
+              "A",
+              101,
+              1
+            ],
+            [
+              "A",
+              103,
+              3
+            ],
+            [
+              "A",
+              105,
+              5
+            ],
+            [
+              "A",
+              107,
+              7
+            ],
+            [
+              "A",
+              109,
+              9
+            ],
+            [
+              "A",
+              111,
+              11
+            ],
+            [
+              "B",
+              202,
+              2
+            ],
+            [
+              "C",
+              302,
+              2
+            ]
+          ]
+        ],
+        "distinct_orders": {
+          "orders": [
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112
+          ],
+          "amounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "sql_trace": [
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 101"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 102"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 103"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 105"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 106"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 107"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 108"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 109"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 110"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 111"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 112"
+            }
+          ],
+          "queries_by_shard": [
+            6,
+            6
+          ]
+        },
+        "hot_order": {
+          "orders": [
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104,
+            104
+          ],
+          "amounts": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "sql_trace": [
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            },
+            {
+              "shard": 0,
+              "sql": "SELECT amount FROM orders WHERE tenant = 'A' AND order_id = 104"
+            }
+          ],
+          "queries_by_shard": [
+            12,
+            0
+          ]
+        },
+        "query_plans": {
+          "point": [
+            [
+              2,
+              0,
+              39,
+              "SEARCH orders USING PRIMARY KEY (tenant=? AND order_id=?)"
+            ]
+          ],
+          "tenant_summary": [
+            [
+              3,
+              0,
+              56,
+              "SEARCH orders USING PRIMARY KEY (tenant=?)"
+            ]
+          ]
+        },
+        "tenant_summary": {
+          "partials": [
+            {
+              "shard": 0,
+              "count_sum": [
+                6,
+                42
+              ]
+            },
+            {
+              "shard": 1,
+              "count_sum": [
+                6,
+                36
+              ]
+            }
+          ],
+          "merged": [
+            12,
+            78
+          ],
+          "sql_trace": [
+            {
+              "shard": 0,
+              "sql": "SELECT COUNT(*), COALESCE(SUM(amount), 0) FROM orders WHERE tenant = 'A'"
+            },
+            {
+              "shard": 1,
+              "sql": "SELECT COUNT(*), COALESCE(SUM(amount), 0) FROM orders WHERE tenant = 'A'"
+            }
+          ],
+          "shard_zero_only": [
+            6,
+            42
+          ]
+        }
+      }
+    }
+  },
+  "temporary_workspace_removed": true
+}

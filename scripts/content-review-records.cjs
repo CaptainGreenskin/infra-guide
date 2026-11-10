@@ -11,5 +11,5 @@ for(const stage of stages){
  assert(stage.historical_eight_hour_counts_unchanged);
  for(const[file,sha]of Object.entries(stage.preserved_previous_records||{}))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),sha,file+': completed stage record changed');
 }
-module.exports=Object.fromEntries(['new_chapter_reviews','knowledge_revisions','body_revisions','revised_teaching_units','new_concept_reviews'].map(key=>[key,stages.flatMap(s=>s[key]||[])]));
+module.exports=Object.fromEntries(['new_chapter_reviews','new_knowledge_reviews','knowledge_revisions','body_revisions','revised_teaching_units','new_concept_reviews'].map(key=>[key,stages.flatMap(s=>s[key]||[])]));
 module.exports.historical_eight_hour_counts_unchanged=true;

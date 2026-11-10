@@ -1,0 +1,278 @@
+{
+  "torch": "2.5.1",
+  "python": "3.12.13",
+  "platform": "Darwin/arm64",
+  "backend": "gloo",
+  "device": "cpu",
+  "world_size": 2,
+  "source_sha256": {
+    "async_dcp.py": "dfbad5b5b087c4d1a3a1b2f6f6b04b238d46c37a4e60ed0ba05a0cec9e6f411b",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "files": {
+    "previous": {
+      ".metadata": 2982,
+      "__0_0.distcp": 6680,
+      "__1_0.distcp": 5500
+    },
+    "frozen": {
+      ".metadata": 2980,
+      "__0_0.distcp": 6680,
+      "__1_0.distcp": 5500
+    },
+    "alias": {
+      ".metadata": 2979,
+      "__0_0.distcp": 6680,
+      "__1_0.distcp": 5500
+    },
+    "failed": {
+      "__0_0.distcp": 6680
+    }
+  },
+  "cases": {
+    "frozen": [
+      {
+        "rank": 0,
+        "pid": 3289,
+        "first": {
+          "target": 2,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 6,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": false,
+          "momentum": false
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": true,
+        "pointer_before": "previous",
+        "pointer_after": "frozen",
+        "failed_ranks": [],
+        "read_directory": "frozen",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "next_update": {
+          "target": 6,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        }
+      },
+      {
+        "rank": 1,
+        "pid": 3290,
+        "first": {
+          "target": 4,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 10,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": false,
+          "momentum": false
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": true,
+        "pointer_before": "previous",
+        "pointer_after": "frozen",
+        "failed_ranks": [],
+        "read_directory": "frozen",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "next_update": {
+          "target": 10,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        }
+      }
+    ],
+    "alias": [
+      {
+        "rank": 0,
+        "pid": 3289,
+        "first": {
+          "target": 2,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 6,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": true,
+          "momentum": true
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": true,
+        "pointer_before": "frozen",
+        "pointer_after": "frozen",
+        "failed_ranks": [],
+        "read_directory": "alias",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "next_update": {
+          "target": 6,
+          "gradient": -5.0625,
+          "weight": 5.296875,
+          "momentum": -9.4375
+        }
+      },
+      {
+        "rank": 1,
+        "pid": 3290,
+        "first": {
+          "target": 4,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 10,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": true,
+          "momentum": true
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": true,
+        "pointer_before": "frozen",
+        "pointer_after": "frozen",
+        "failed_ranks": [],
+        "read_directory": "alias",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "next_update": {
+          "target": 10,
+          "gradient": -5.0625,
+          "weight": 5.296875,
+          "momentum": -9.4375
+        }
+      }
+    ],
+    "failed": [
+      {
+        "rank": 0,
+        "pid": 3289,
+        "first": {
+          "target": 2,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 6,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": false,
+          "momentum": false
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": false,
+        "pointer_before": "frozen",
+        "pointer_after": "frozen",
+        "failed_ranks": [
+          1
+        ],
+        "read_directory": "frozen",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "next_update": {
+          "target": 6,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        }
+      },
+      {
+        "rank": 1,
+        "pid": 3290,
+        "first": {
+          "target": 4,
+          "gradient": -3.0,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "continued_during_write": {
+          "target": 10,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        },
+        "staged_shares_live": {
+          "weight": false,
+          "momentum": false
+        },
+        "background_thread": true,
+        "future_pending": true,
+        "metadata_before": false,
+        "metadata_after": false,
+        "pointer_before": "frozen",
+        "pointer_after": "frozen",
+        "failed_ranks": [
+          1
+        ],
+        "read_directory": "frozen",
+        "restored": {
+          "completed_updates": 1,
+          "weight": 0.75,
+          "momentum": -3.0
+        },
+        "next_update": {
+          "target": 10,
+          "gradient": -7.25,
+          "weight": 2.9375,
+          "momentum": -8.75
+        }
+      }
+    ]
+  }
+}

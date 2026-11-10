@@ -6252,6 +6252,81 @@
         "外部资料与记忆的信任边界",
         "实战与变化题：清空聊天还能恢复吗"
       ]
+    },
+    {
+      "id": "database-index-locks",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "dfccbc262f800351b5e43fdadf481b8b697bf57da0abcb04f2416bb77735973b",
+      "reviewed_content_sha256": "e57b485f56053bd0714811948a048b7940e5d906aa1b9096585925be8f33183b",
+      "scope": "Follow a concrete order through the shard router and native primary-key lookup, then compare exact per-shard reads and fanout against an independent full database.",
+      "observation": "The rows become 8/8 while 12 reads of A104 still visit only shard 0. A tenant summary must merge [6,42] and [6,36] to reproduce [12,78].",
+      "headings": [
+        "入口说数据库用了 700 毫秒，先确定它测了什么",
+        "索引先按键排列，再指向数据所在的位置",
+        "用两种数据分布推导候选工作量",
+        "索引也有价格，要让写和读一起验收",
+        "事务把多步写入变成一个可判定的结果",
+        "索引命中了，为什么写请求还是要等",
+        "用两个连接区分访问路径和写者竞争",
+        "验收：两起同名告警需要不同的修复",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "71d893a1d6d3379149da74e25a0dea46da27d661ac03a92c06a719a8339dec5c",
+      "reviewed_content_sha256": "1c28eb8d23ecdef2986a8036afba543bceb222fecedb50a86050be31921cfeb3",
+      "scope": "Use the same shard request distribution to derive queue growth, separating measured SQLite counts from explicitly assumed per-second service capacity.",
+      "observation": "At an assumed 1200 arrivals/s and 800 completions/s per shard, balanced 600/600 has no growth, while hot 1200/0 adds 400/s on shard 0.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "dff5e79b1cbfa1ea84118ce8f84a8cb9240d11560e83780f87cdd6cca42b06df",
+      "reviewed_content_sha256": "f65a0dcab51cd637bdf0d4c80c2ac3b307f37060c43c34b8ad10475c25679cf2",
+      "scope": "Define a one-weight two-rank model before the diagram, derive two updates, then compare native asynchronous saves, aliasing and failed publication.",
+      "observation": "PyTorch 2.5.1 CPU snapshots that alias live state can complete successfully but restore cursor 1 with step 2 weights. Explicit copies resume to 2.9375; rank-1 write failure leaves the previous published checkpoint readable.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "6d84af9c89e2df3c99c7ace501ebf44c6051ec46873bb08fe8f07ebdba3681c4",
+      "reviewed_content_sha256": "b1143a29a23b320b5fb84c205608888afc0819aa93d6c8cb42a9e61718508a19",
+      "scope": "Trace four actual model tool proposals into one persisted task, a revised plan, approval-bound draft and fresh-process readback.",
+      "observation": "The model learns late-A/v1 from its first tool result. Revision 2 includes 37+5=42. Absent, stale, current and repeated approvals leave 0,0,1,1 reports in SQLite.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

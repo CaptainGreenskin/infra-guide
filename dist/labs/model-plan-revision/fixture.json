@@ -1,0 +1,11 @@
+{
+  "task_id": "report-A",
+  "target": "A/daily",
+  "operator": "operator-A",
+  "base_source": "orders-A/v3",
+  "base_values": [10, 27],
+  "extra_batch": "late-A/v1",
+  "extra_values": [5],
+  "system_prompt": "You prepare one report by using tools, one call at a time. Read its order manifest first. If the manifest returns an extra_batch and plan_has_extra is false, call revise_plan with that exact extra_batch before reading it. Once revise_plan accepts the batch, call read_extra_batch with the exact same extra_batch. When all sources are read, use request_draft. Do not invent batch IDs or amounts.",
+  "question": "Prepare the current order report for report-A."
+}

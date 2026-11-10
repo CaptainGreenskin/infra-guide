@@ -109,6 +109,13 @@
  });
  same('global code bytes/order',pres(old.join('')),pres(bodies.join('')));
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[0][1]+='<h3 id="shard-load-not-average">每片能做 800 次/秒，为什么总请求 1,200 次/秒还会排队</h3>'+
+ p('数据库实验里，两片文件各有 8 行，12 次不同订单查询分到两片各 6 次。换成反复查询 A104，12 次都去了 0 号片。现在只借用这个请求比例，假设总到达率是每秒 1,200 次，两片各能完成每秒 800 次。')+
+ table(['同样的 1,200 次/秒','0 号片 / 1 号片','每秒新增积压'],[
+  ['均匀查询不同订单','600 / 600','0'],
+  ['全都查询 A104','1,200 / 0','400，留在 0 号片']
+ ])+
+ p('假设查询都已接纳，且没有取消。热键场景下，0 号片每秒只能完成 800 次，余下 400 次继续等。1 号片虽有空闲，却没有 A104 这行。排查时按分片和键看请求率、完成率、排队长度，再判断是整个租户偏热，还是单个键需要缓存或合并读取。<a href="/article/database-index-locks/#native-sqlite-shard-routing">回看两种布局的实际 SQL 记录 →</a>');
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+
@@ -123,6 +130,6 @@
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.updated='2026.11.10';a.minutes=22;
+ a.updated='2026.11.11';a.minutes=22;
 
 })();

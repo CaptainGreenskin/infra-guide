@@ -72,8 +72,11 @@ assert.equal(later.base_audit,'QUALITY_AUDIT_2026-11-04.json');assert(later.hist
 for(const revision of later.revisions){assert(reviewed.some(row=>row.id===revision.id),revision.id+': unknown post-window chapter');assert(revision.observation&&revision.scope&&revision.reviewed_at,'missing post-window review');}
 for(const row of reviewed){const a=data.articles.find(a=>a.id===row.id);let expected=row.reviewed_content_sha256;for(const revision of later.revisions.filter(r=>r.id===row.id)){assert.equal(revision.previous_content_sha256,expected,row.id+': broken review continuity');expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:a.title,sections:a.sections}),row.id+': changed after latest recorded review');}
 const reviewedPoints=(fresh.knowledge_reviews||[]).filter(x=>/^fresh_review_v\d+$/.test(x.review));
-for(const revision of pointRevisions)assert(reviewedPoints.some(row=>row.id===revision.id),revision.id+': unknown knowledge review');
-for(const row of reviewedPoints){const p=currentPoints.find(p=>p.id===row.id);let expected=row.reviewed_content_sha256;for(const revision of pointRevisions.filter(r=>r.id===row.id)){assert.equal(revision.previous_content_sha256,expected,row.id+': broken knowledge review continuity');assert(revision.scope&&revision.observation&&revision.reviewed_at);expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:p.title,lead:p.lead,body:p.body,boundary:p.boundary||'',articles:p.articles}),row.id+': changed after latest recorded review');}
+const pointReviews=[...reviewedPoints,...expansion.new_knowledge_reviews];
+for(const row of expansion.new_knowledge_reviews)assert(row.review==='new_knowledge_point'&&row.scope&&row.observation&&row.reviewed_at,row.id+': missing initial review');
+assert.deepEqual(currentPoints.map(p=>p.id).sort(),pointReviews.map(p=>p.id).sort(),'complete current knowledge inventory');
+for(const revision of pointRevisions)assert(pointReviews.some(row=>row.id===revision.id),revision.id+': unknown knowledge review');
+for(const row of pointReviews){const p=currentPoints.find(p=>p.id===row.id);let expected=row.reviewed_content_sha256;for(const revision of pointRevisions.filter(r=>r.id===row.id)){assert.equal(revision.previous_content_sha256,expected,row.id+': broken knowledge review continuity');assert(revision.scope&&revision.observation&&revision.reviewed_at);expected=revision.reviewed_content_sha256;}assert.equal(expected,signature({title:p.title,lead:p.lead,body:p.body,boundary:p.boundary||'',articles:p.articles}),row.id+': changed after latest recorded review');}
 assert.equal(fresh.eight_hour_progress.reviewed_chapters,reviewed.length);assert.equal(fresh.eight_hour_progress.reviewed_knowledge_points,reviewedPoints.length);
 assert.equal(fresh.chapters.length,66);
 assert.deepEqual([...fresh.chapters,...migration.new_chapter_reviews,...expansion.new_chapter_reviews].map(a=>a.id).sort(),data.articles.map(a=>a.id).sort());
@@ -93,7 +96,9 @@ const nativeRecordChecks = {
  'dist/labs/kubernetes-admission/validation.json':'./check-kubernetes-admission.cjs',
  'dist/labs/native-slot-handoff/validation.json':'./check-native-slot-handoff.cjs',
  'dist/labs/release-artifact-trust/validation.json':'./check-release-artifact-trust.cjs',
- 'dist/labs/prefetch-resume-step/validation.json':'./check-prefetch-resume-step.cjs'
+ 'dist/labs/prefetch-resume-step/validation.json':'./check-prefetch-resume-step.cjs',
+ 'dist/labs/sqlite-shard-routing/validation.json':'./check-sqlite-shard-routing.cjs',
+ 'dist/labs/async-dcp-commit/validation.json':'./check-async-dcp-commit.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);
@@ -106,5 +111,4 @@ for(const unit of expansion.revised_teaching_units||[]){
  if(Object.hasOwn(nativeRecordChecks,unit.record))require(nativeRecordChecks[unit.record]);
  else assert.equal(JSON.parse(read(unit.record)).status,'passed',unit.chapter+': missing passed record');
 }
-assert.equal(fresh.knowledge_reviews.length,currentPoints.length);
 console.log('PASS: historical63-chapter audit/20 repairs, independent1000-request arithmetic and optimizer-call provenance; preserved window66/95 review counts with '+later.revisions.length+' explicit post-window body revisions. Current signatures include separately reviewed new units and relocation, with explicit knowledge-link revisions; pending work is not counted as complete.');

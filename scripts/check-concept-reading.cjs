@@ -86,8 +86,8 @@ for(const[id,graph]of Object.entries(data.maps)){
  assert.equal(decode(note.replace(/<[^>]+>/g,'')).replace(/\s+/g,''),guide.lead.replace(/\s+/g,''),id+': reading path changed');
  edgeCount+=badges.length;
 }
-assert.equal(edgeCount,87);
-console.log('PASS: 78 complete concept-based chapter outlines and matching search headings, '+first.length+' standalone bodies with closing optional reviews, preserved anchors/full titles, and87 visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');
+assert.equal(edgeCount,90);
+console.log('PASS: 78 complete concept-based chapter outlines and matching search headings, '+first.length+' standalone bodies with closing optional reviews, preserved anchors/full titles, and '+edgeCount+' visible relation words across14 maps with no node/label overlap. Reader comprehension still requires trials.');
 
 // Author-defined full names and code identifiers must not receive unrelated word senses.
 c.example='<p>旋转位置编码（<dfn>Rotary Position Embedding</dfn>，RoPE）；前向跟读函数<code>trace</code>返回中间量。</p>';

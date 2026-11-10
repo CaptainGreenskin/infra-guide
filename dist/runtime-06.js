@@ -8974,6 +8974,27 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  links(d[8])+fold('基础程序的原运行输出',d8[0])
  ],'从订单查询认识索引的定位、排序与覆盖，再以事务、快照和写者竞争解释读写正确性与等待。');
 
+ database.sections[2][1]+=h('native-sqlite-shard-routing','分片键决定去哪查，索引决定进库后怎么查')+
+ p('查租户 A 的 104 号订单。程序先选 0 号数据库文件，再用主键查到金额 4。两个文件各保存一部分订单，每一份叫一个分片。选分片这一步叫路由，用来计算分片号的字段叫分片键。路由决定打开哪个文件，索引决定打开后怎样找到这一行。')+
+ p('实验只有 16 笔订单。A 有 101 到 112 共 12 笔，金额为 1 到 12，B 和 C 各两笔。每片都是独立 SQLite 文件，使用同样的 <code>(tenant, order_id)</code> 主键。只按租户时，A 去 0 号片，B 和 C 去 1 号片。改用租户和订单号时，将租户编号加订单号，对 2 取余。A 的偶数单和奇数单于是分开。')+
+ '<figure class="training-figure"><a href="diagrams/sqlite-shard-routing.svg" target="_blank" rel="noopener" aria-label="放大数据库分片与热键对照"><img src="diagrams/sqlite-shard-routing.svg" width="460" height="452" alt="租户布局两片行数 12 和 4，租户加订单布局为 8 和 8。查 12 笔不同订单可分到两片，连续查 A104 在两种布局都集中于 0 号片。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两种布局执行同样的查询。反复查 A104 的 12 次都去了 0 号片。<a href="diagrams/sqlite-shard-routing.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+ table(['从两个文件实测','只按租户','按租户与订单号'],[
+  ['文件内的订单行数','12 / 4','8 / 8'],
+  ['A 的 12 笔不同订单各查一次','12 / 0 次','6 / 6 次'],
+  ['重复查询 A104 共 12 次','12 / 0 次','12 / 0 次'],
+  ['汇总 A 的笔数和金额','一片得到 12 笔、78','两片各得 6 笔，金额 42 和 36']
+ ])+
+ p('查 A104 时，两个布局都只选 0 号片，读到金额 4。SQLite 的计划是 <code>SEARCH orders USING PRIMARY KEY (tenant=? AND order_id=?)</code>。这条计划描述分片内部的查找，分片号则来自程序的路由。反过来，汇总 A 时只有租户，组合规则无法确定订单号，因此要查两片。只查 0 号片也能返回一份合法的 SQL 结果，却漏掉 6 笔、36。合并两片后才与独立完整库的 12 笔、78 一致。')+
+ fold('看路由如何选文件，SQLite 如何查主键',trainingCode('shard_routing.py 中的实际选片和查询','PYTHON',`def tenant_order(tenant, order_id):
+    return (TENANT_BUCKET[tenant] + order_id) % 2
+
+key = ("A", order_id)
+index = route(*key)
+actual = shards[index].execute(POINT, key).fetchone()`))+
+ p('A104 是热键，因为请求反复打到同一个键。数据均分以后，它仍只在一片，因而这一片收到全部 12 次查询。要估计系统何时排队，还要看每片承担多少请求、各自能完成多少。 <a href="/article/elasticity/#shard-load-not-average">用相同分布算一次容量 →</a>')+
+ '<p class="practice-links"><a href="labs/sqlite-shard-routing.zip" download>下载代码与复跑说明 ↓</a> · <a href="labs/sqlite-shard-routing/shard_routing.py">查看完整程序</a> · <a href="labs/sqlite-shard-routing/validation.json">核对文件行数、SQL 和执行计划</a> · <a href="https://www.sqlite.org/eqp.html">SQLite 执行计划文档 ↗</a></p>';
+ database.updated='2026.11.11';
+
  database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
  database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
  '在 InnoDB 里，用完整主键等值命中一条已有记录时，修改通常锁住该主键记录。按范围扫描时，还要看隔离级别、实际访问的索引范围与约束检查。在可重复读下，范围锁可包含索引记录和它前面的间隙。读已提交下，普通搜索和扫描通常省去间隙锁，外键与重复键检查另有规则。先核对本次语句和实际锁对象，再决定要缩短事务、调整访问范围还是统一访问顺序。',
@@ -10033,7 +10054,29 @@ optimizer.step()
  trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
  p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
  '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
- recovery.updated='2026.11.10';
+ recovery.sections[7][1]+=
+ '<h3 id="native-async-dcp-commit">异步保存时，旧检查点会写进哪一步的权重？</h3>'+
+ p('异步保存让后台写检查点，训练可以继续。两张状态表却可能指向同一块内存。训练刚改完第 2 步的权重，后台可能正要把那块内存写进第 1 步的目录。<a href="/article/data-pipeline/#native-prefetch-resume">数据管道的恢复实验</a>确认下一批从哪里读，这里再确认从哪一步的参数接着算。')+
+ p('用一个权重 w 来看。两个训练进程在 CPU 上用 Gloo 交换数据，各进程编号叫 rank。输入为 1，预测值就是 w，目标值为 y，损失是 (w−y)²/2。两个进程平均梯度 g 后，用动量 m ← 0.5m + g，再做 w ← w − 0.25m。第 1 步的目标是 2 和 4，从 w=0、m=0 算出 w=0.75、m=−3。第 2 步的目标换成 6 和 10，平均梯度变成 0.75−8=−7.25，得到 w=2.9375、m=−8.75。')+
+ trainingFigure('async-dcp-commit','先取第 1 步的状态，后台写入暂缓，前台继续第 2 步。复制与共享存储两条路径都写成功，恢复结果不同。')+
+ p('这段代码使用 PyTorch 2.5.1 的分布式检查点（DCP）。先在第 1 步复制一份独立状态，再交给 <code>async_save</code>。返回的 <code>Future</code> 用来等后台写完。最后由训练程序确认保存目录的元数据文件 <code>.metadata</code>，再更新恢复入口 <code>CURRENT</code>。实验故意让后台等到第 2 步做完才开始写。')+
+ trainingCode('保存第 1 步的独立副本，等待后台写完再发布','PYTHON',`payload = state(model, optimizer, 1)
+argument = copy.deepcopy(payload)
+future = dcp.async_save(argument, storage_writer=writer, process_group=pg)
+# 实验让前台完成第 2 步，再放行后台 writer
+future.result(timeout=35)
+# rank 0 确认 .metadata 后替换 CURRENT`)+
+ table(['实际读回的路径','已完成步数 / 权重 / 动量','读回后再做第 2 步'],[
+  ['复制状态，再异步写入','1 / 0.75 / −3','2.9375'],
+  ['共享训练存储，异步写入仍成功','1 / 2.9375 / −8.75','5.296875'],
+  ['rank 1 写失败，读取原已发布目录','1 / 0.75 / −3','2.9375']
+ ])+
+ p('在本实验的 PyTorch 2.5.1 默认 CPU 暂存路径，转到 CPU 的两个张量仍与训练共享地址。第 2 步更新后，后台写入的权重和动量已经变了，独立保存的步数却仍是 1。显式复制后，前台更新不会改到后台要写的副本。第三组让 rank 1 写失败，只有 rank 0 的分片文件留下，没有 <code>.metadata</code>，<code>CURRENT</code> 继续指向上一份已发布目录。')+
+ '<details class="progressive-detail"><summary>手算一下。只复制权重，动量仍共享，恢复后会怎样？</summary>'+
+ p('会从 w=0.75、m=−8.75 接着算。第 2 步的梯度仍为 −7.25，动量更新为 −11.625，权重变成 3.65625。这是按同一公式推导的变体。')+'</details>'+
+ p('解压后按包内命令跑两个本机进程。核对阶段标记、保存完成后的目录和实际读回值，再用一次更新区分两份检查点。本实验固定版本和 CPU 默认写入器，保存后的状态通过新建的模型和优化器加载。复制所需的额外内存和目标环境的吞吐另测。')+
+ '<p class="practice-links"><a href="/labs/async-dcp-commit.zip" download>下载源码与复跑命令 ↓</a> · <a href="/labs/async-dcp-commit/validation.json">查看两个 rank 的状态与文件 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/staging.py#L91-L100">固定版暂存路径 ↗</a></p>';
+ recovery.updated='2026.11.11';
 
 })();
 
@@ -11323,6 +11366,23 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
   ];
   finish(a,old,body);
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
+  const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
+   p('用户要求生成 <code>report-A</code>。运行程序，也就是宿主，起初只安排读取主清单和生成草稿。本机模型读到金额 10、27，还看见清单里新出现的补录编号 <code>late-A/v1</code>，于是建议先读补录。宿主核对编号来自刚读到的清单，保存第 2 版计划。已经读到的 10、27 继续使用。')+
+   trainingFigure('model-plan-revision','四次工具提议来自同一个模型。计划、草稿和批准由宿主核对并保存。')+
+   p('四轮都提供相同的四个工具。<code>tool_choice=auto</code> 让模型按提示里的使用条件选工具。第 1 轮返回 <code>extra_batch=late-A/v1</code>，第 2 轮模型提出 <code>revise_plan</code>。下方第一行把工具名和参数交给宿主核对并执行。第二行的 <code>tool_call_id</code> 让模型知道结果对应哪一次调用。')+
+   trainingCode('宿主执行通过检查的工具，并把结果交回模型','PYTHON',`result = perform_tool(directory, name, args)
+messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "content": compact(result)}]`)+
+   p('第 3 轮读到补录的 5，第 4 轮请求生成草稿。宿主按两条来源记录算出 10+27+5=42，把第 2 版计划、草稿和等待批准的状态留在同一个任务库，然后退出。新进程重开原库。发布批准要匹配操作者、任务、目标 <code>A/daily</code>、计划第 2 版和草稿摘要。摘要是从草稿内容算出的指纹，来源版本也在草稿里。')+
+   table(['恢复时给什么','宿主实际决定','数据库中有几份报告'],[
+    ['没有批准','继续等待','0'],['只批准第 1 版的 37','批准与当前草稿不符','0'],['批准当前第 2 版的 42','发布并保存完成状态','1'],['完成后再带同一批准恢复','认回已完成的任务','1']
+   ])+
+   p('先在四条模型响应里找工具名称与参数，确认 <code>late-A/v1</code> 是从哪一轮进入对话。再查计划表、事实表和报告表。实际发布的唯一一份报告是 42，带主清单和补录两个来源。固定提示只开放这里的一种计划变更，批准由测试入口提供。报告和完成状态共用一个 SQLite 事务。')+
+   trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
+   '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
+   p('这里由程序自己读回任务库。<a href="/article/durable-workflows/#langgraph-workflow-run">下一节</a>用同一个任务 ID 重开框架的检查点，再观察它从哪里重新执行。');
+  const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
+  if(!a.sections[8][1].includes(nativeWorkflow))throw Error('Missing workflow practice after model plan revision');
+  a.sections[8][1]=a.sections[8][1].replace(nativeWorkflow,modelPlan+nativeWorkflow);
   a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
@@ -11431,6 +11491,7 @@ return {"status": visit_gate("original_gate")}`)+
  trainingCode('解压后在新目录保存三组记录','SHELL','python -m pip install -r requirements.txt\npython -B resume_lab.py --output-dir replay')+
  p('先对照 <code>waiting_v1.interrupts</code> 和 <code>resume.fresh_v2_pause.interrupts</code>，确认两版第一问。再看 <code>receiver_final.writes</code>，验证哪份报告真的入库。实验使用 LangGraph 1.2.20，批准和接收库均为本机夹具。')+
  '<p class="practice-links"><a href="/labs/workflow-version-resume.zip" download>下载程序与记录 ↓</a> · <a href="/labs/workflow-version-resume/README.md">复跑步骤 →</a> · <a href="/labs/workflow-version-resume/validation.json">核对中断、决定和实际写入 →</a> · <a href="https://docs.langchain.com/oss/python/langgraph/interrupts#do-not-reorder-interrupt-calls-within-a-node">LangGraph 的中断顺序 ↗</a></p>';
+ a.updated='2026.11.11';
 })();
 
 
@@ -13057,6 +13118,13 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  });
  same('global code bytes/order',pres(old.join('')),pres(bodies.join('')));
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[0][1]+='<h3 id="shard-load-not-average">每片能做 800 次/秒，为什么总请求 1,200 次/秒还会排队</h3>'+
+ p('数据库实验里，两片文件各有 8 行，12 次不同订单查询分到两片各 6 次。换成反复查询 A104，12 次都去了 0 号片。现在只借用这个请求比例，假设总到达率是每秒 1,200 次，两片各能完成每秒 800 次。')+
+ table(['同样的 1,200 次/秒','0 号片 / 1 号片','每秒新增积压'],[
+  ['均匀查询不同订单','600 / 600','0'],
+  ['全都查询 A104','1,200 / 0','400，留在 0 号片']
+ ])+
+ p('假设查询都已接纳，且没有取消。热键场景下，0 号片每秒只能完成 800 次，余下 400 次继续等。1 号片虽有空闲，却没有 A104 这行。排查时按分片和键看请求率、完成率、排队长度，再判断是整个租户偏热，还是单个键需要缓存或合并读取。<a href="/article/database-index-locks/#native-sqlite-shard-routing">回看两种布局的实际 SQL 记录 →</a>');
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+
@@ -13071,7 +13139,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.updated='2026.11.10';a.minutes=22;
+ a.updated='2026.11.11';a.minutes=22;
 
 })();
 
@@ -14627,7 +14695,7 @@ const learningProfiles={
     primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
-    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"]]},
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"标明恢复目标和最后一笔应该存在的业务记录。恢复后独立读取，确认数据位置和外部效果符合预期。",
     primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"]]},
@@ -14641,7 +14709,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -14695,9 +14763,9 @@ const learningProfiles={
    {title:"把执行权限分到正确位置",
     result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
-   {title:"中断后认回原任务",
-    result:"先找任务编号和原操作身份，再独立读接收方回执。比较响应丢失、权限撤销和工作流升级时哪些操作还能继续。",
-    primary:["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],more:[["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
+   {title:"从补录、审批恢复到发布",
+    result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
+    primary:["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],more:[["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},
@@ -15082,6 +15150,7 @@ const fieldConceptMaps={
   nodes:[
    ['ag-runtime','任务与执行','任务给出目标和停止条件，运行时检查提议并安排实际动作。'],
    ['ag-tools','工具契约','名字、类型和结果语义规定怎样调用，结构正确不等于事实正确。'],
+   ['ag-planning','计划与审批','计划安排还要做的工作。工具提供新事实时修订计划，审批只覆盖指定草稿和目标。'],
    ['ag-recovery','效果与恢复','接收方回执记录实际提交，持久历史帮助在未知结果后继续。'],
    ['ag-fencing','执行者接管','租约过期不使旧进程消失，接收方需要拒绝不再有效的执行资格。'],
    ['ag-authorization','可信委托','身份、任务范围与当前资源策略共同决定允许的动作。'],
@@ -15099,9 +15168,12 @@ const fieldConceptMaps={
    ['ag-retrieval','提供材料给','ag-context','找到资料不等于本次模型真的看到了它，还要核对权限、版本、完整性和预算。'],
    ['ag-context','组织本次提议输入','ag-runtime','运行时从可信状态和获准资料组织模型输入；模型可见的旧摘要不能反向覆盖接收方的新回执。'],
    ['ag-observability','提供过程证据给','ag-evaluation','轨迹解释动作怎样发生，最终仍要独立核对产物与目标，不能只统计成功状态码。'],
-   ['ag-recovery','保留提交事实供','ag-evaluation','任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。']],
-  question:'模型说成功、工具回执存在，但交付上下文少一份必要来源，且旧写权限已撤销。哪些事实可以保留，哪些动作不能继续？',
-  answer:'保留已确认效果并核对原回执，不能因进度未更新而重复写。新动作按当前权限判断，查询本身也需要当前读取资格；证据不足时不能把模型回答判为完成，应按规则补充获准资料或明确报告不足。',
+   ['ag-recovery','保留提交事实供','ag-evaluation','任务进度可能尚未完成而效果已存在；评价与恢复都不能抹掉这份已发生的事实。'],
+   ['ag-tools','暴露缺项，触发修订','ag-planning','基础订单只合计 37，工具返回的补录引用提醒宿主还缺一项。先把读取补录加到计划，再生成完整草稿。'],
+   ['ag-authorization','限定待审批动作','ag-planning','批准绑定草稿、目标与来源。草稿或来源改变后，要核对旧批准是否仍匹配，模型的提议不授予权限。'],
+   ['ag-planning','保存进度供恢复','ag-recovery','进程退出前保存计划和等待审批的状态。恢复后重读已确认事实，再按原操作身份核对是否已提交。']],
+  question:'旧草稿金额是 37，已经批准。后来读到补录 5，程序保存新版草稿后退出。恢复时能直接发布 42 吗？如果已写入但没收到响应，又该先查什么？',
+  answer:'原批准只覆盖旧草稿。恢复后应核对当前草稿、来源版本和发布目标，等待匹配的批准。若提交结果未知，先按原操作身份查接收方回执和实际产物，再决定是否重试。',
   outlets:[['platform','需要自建模型服务时，再深入生成、缓存与服务性能；训练不是Agent先修。'],['cloud-security','继续深入程序身份、秘密轮换和资源端授权。']]}
 };
 // Reading emphasis changes the presentation, never the meaning/direction of an edge.
@@ -15119,7 +15191,7 @@ const fieldConceptReadings={
  'model-foundations':{main:[0,1,2],lead:'先看输入经过注意力和模型层产生预测，再接训练更新。GPU执行与Roofline是实现和性能分析分支。'},
  training:{main:[0,5,6],lead:'沿数据进入一次更新，再观察状态占用与保存恢复。副本、分片和计算布局通过集合通信扩展这个过程。'},
  platform:{main:[0,1,2,3,4],lead:'先区分作业申请资源与模型进入推理两条路径，再把生成、缓存、调度和计时连起来。优化与发布围绕这两条路径展开。'},
- agent:{main:[0,3,6,8],lead:'先沿上下文、动作提议、受控工具、持久事实与结果验收理解任务。检索补充输入，权限和沙箱限制动作，观测记录过程。'}
+ agent:{main:[5,6,0,9,11,8],lead:'沿一份订单报告看完整过程。资料进入上下文，运行时调用工具。发现缺项就修订计划，保存审批和进度，最后读回实际报告。权限、沙箱和追踪约束这条主线。'}
 };
 const chapterConceptSupplements={'virtual-memory-oom':['foundation','prerequisite-1'],'training-lab':['training','tr-recovery'],'cloud-service-lab':['native','health-rollout'],'production-readiness':['agent','ag-evaluation'],'mysql-replication':['cloud-data','replication-failover']};
 
@@ -15138,7 +15210,8 @@ const chapterFieldPrimaryConcepts={
  'inference-performance':['platform','sv-metrics'],
  'ai-lifecycle':['platform','sv-release'],
  'agent-security':['agent','ag-authorization'],
- 'agent-evaluation':['agent','ag-evaluation']
+ 'agent-evaluation':['agent','ag-evaluation'],
+ 'durable-workflows':['agent','ag-planning']
 };
 
 // Each prompt follows one existing concept into a checkable experiment.
@@ -15165,13 +15238,14 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- 'cloud-data':{'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
- training:{'tr-input':['ai-prefetch-resume-step']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
- agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
+ agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
+  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
@@ -15328,6 +15402,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
+ 'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
+ 'model-plan-revision':{folder:'model-plan-revision',title:'模型发现缺项后的计划、审批和恢复'},
  'release-artifact-trust':{folder:'release-artifact-trust',title:'同一签名记录和不同制品字节'},
  'prefetch-resume-step':{folder:'prefetch-resume-step',title:'数据预取和已提交训练步'},
  'memory-withdrawal':{folder:'memory-withdrawal',title:'偏好撤回、任务快照与实际发送'},
@@ -15762,6 +15839,20 @@ labLearningCatalog.push(
   observe:'分别读取当前偏好、旧任务快照和接收方记录。比较复用旧快照和发送前重查的实际输入。',
   scope:'固定合成偏好与本机接收服务。观察范围到发送内容与快照删除。'}
 );
+labLearningCatalog.push(
+ {id:'cloud-sqlite-shard-routing',track:'cloud',stage:2,title:'两片数据一样多，为什么一个键仍打满一片',chapter:'database-index-locks',anchor:'native-sqlite-shard-routing',pack:'sqlite-shard-routing',
+  files:['shard_routing.py'],env:'Python 3 · SQLite 3.51 · 本机文件',kind:'实际分片文件、查询计划和独立聚合对照',
+  observe:'固定一组订单，比对两种分片键、实际查询位置和跨片合计，再把热键读次数接到容量计算。',
+  scope:'本机 SQLite 文件与教学路由。容量题使用声明的速率，未测生产吞吐。'},
+ {id:'ai-async-dcp-commit',track:'ai',stage:2,title:'异步保存成功，文件里是哪一步的参数',chapter:'checkpoint-recovery',anchor:'native-async-dcp-commit',pack:'async-dcp-commit',
+  files:['async_dcp.py','requirements.txt'],env:'Python 3 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'实际异步写入、恢复与故障对照',
+  observe:'在后台写入尚未完成时推进训练，对照共享内存和独立快照，核对加载、下一步更新和失败后的提交指针。',
+  scope:'固定版本和本机 CPU。不同设备、版本与异步保存后端需要各自验证。'},
+ {id:'agent-model-plan-revision',track:'agent',stage:2,title:'模型读到缺项后，旧批准还能用吗',chapter:'durable-workflows',anchor:'native-model-plan-revision',pack:'model-plan-revision',
+  files:['model_plan_lab.py','fixture.json','assets.json'],env:'Python 3.12 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU 与 SQLite',kind:'实际模型工具提议、计划修订和跨进程恢复',
+  observe:'跟同一任务从基础 37 到补录后的 42，核对旧批准拒绝、匹配批准发布和重复恢复后的报告数。',
+  scope:'固定合成来源、受控动作和本机审批夹具。模型泛化及 Kairo 接入另验。'}
+);
 labLearningCatalog.sort((a,b)=>['cloud','ai','agent'].indexOf(a.track)-['cloud','ai','agent'].indexOf(b.track)||a.stage-b.stage);
 function labCatalogRecordPath(unit){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(pack?.folder||unit.folder)+'/'+(pack?.record||'validation.json');}
 function labCatalogSourcePath(unit,file){const pack=labArchiveCatalog[unit.pack];return 'labs/'+(unit.folder||pack.folder)+'/'+file;}
@@ -16004,5 +16095,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="42c159e76bafca7884fa3c13c761674c21dc9b374cb8a2bd04bc38ef6774c5da";
+const staticReadingVersion="84acdc625416f7137eba64f24a92bb1c8ebd35c90d25f97099f5b82127b2da7c";
 

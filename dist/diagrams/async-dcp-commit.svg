@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="337" viewBox="0 0 520 337" role="img" aria-labelledby="title description">
+<title id="title">同一次异步保存，可能写入不同训练步的状态</title>
+<desc id="description">第 1 步完成后调用保存，后台暂停写入。前台第 2 步改动权重和动量，随后后台继续写。复制路径恢复步数 1、权重 0.75，直接交给后台的 CPU 张量路径恢复步数 1、权重 2.9375。rank 1 写入失败时发布指针不动。</desc>
+<metadata>{"record":"labs/async-dcp-commit/validation.json","completed_updates":1,"restored_weight":{"frozen":0.75,"alias":2.9375,"failed":0.75},"next_weight":{"frozen":2.9375,"alias":5.296875,"failed":2.9375},"write_failure_rank":1}</metadata>
+<rect x="1" y="1" width="518" height="335" rx="15" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="24" y="36" font-size="21" font-weight="700">后台还没落盘，前台已经做完下一步</text>
+<rect x="24" y="57" width="220" height="61" rx="7" fill="#e8f1fc" stroke="#9cb8d4"/>
+<rect x="276" y="57" width="220" height="61" rx="7" fill="#e8f1fc" stroke="#9cb8d4"/>
+<text x="39" y="82" font-size="17" font-weight="700">第 1 步 · 发起保存</text>
+<text x="39" y="103" font-size="15">w = 0.75，动量 = −3</text>
+<text x="291" y="82" font-size="17" font-weight="700">第 2 步 · 继续训练</text>
+<text x="291" y="103" font-size="15">w = 2.9375，动量 = −8.75</text>
+<path d="M247 87h25m-5-5 5 5-5 5" fill="none" stroke="#3c6493" stroke-width="2"/>
+<path d="M36 143h449m-5-5 5 5-5 5" fill="none" stroke="#637991" stroke-width="1.8" stroke-dasharray="6 4"/>
+<text x="39" y="165" font-size="15" fill="#4a6281">后台写入等待</text>
+<text x="378" y="165" font-size="15" fill="#4a6281">再放行写盘</text>
+<rect x="24" y="179" width="472" height="37" rx="6" fill="#e7f2e9" stroke="#a7c3ae"/>
+<rect x="24" y="226" width="472" height="37" rx="6" fill="#fff0e0" stroke="#d4a36e"/>
+<rect x="24" y="273" width="472" height="37" rx="6" fill="#f1f4f9" stroke="#c0cada"/>
+<text x="38" y="203" font-size="16" fill="#315d41">复制后保存：步数 1 和 w = 0.75 一致</text>
+<text x="38" y="250" font-size="16" fill="#824b19">共享训练存储：步数 1 却配上 w = 2.9375</text>
+<text x="38" y="297" font-size="16">rank 1 写入失败：发布指针仍指向旧目录</text>
+</g>
+</svg>

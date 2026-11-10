@@ -135,4 +135,4 @@ assert(vm.runInContext('chapterPriority("ddp-code")',c).includes('选学专题')
 assert(vm.runInContext('learningGoalChapterNav(articleById("model-serving"))',c).includes('?goal=ai-inference'));
 for(const text of ['GPU 内核负责计算。','操作系统内核负责管理进程。']){c.text='<p>'+text+'</p>';assert(!vm.runInContext('explainFirstConceptTerms(text)',c).includes('data-concept-term="内核"'),'ambiguous kernel must be defined in context');}
 c.text='<p>操作系统内核。</p>';assert(vm.runInContext('explainFirstConceptTerms(text)',c).includes('data-concept-term="操作系统内核"'),'the explicit operating-system term retains its useful definition');
-console.log('PASS: three direct lesson entries, 14 visible graphs with 100 nodes /87 edges, original track concept links, seven prerequisite-complete role routes and context-specific priority/continuation; GPU kernel is never mislabeled as OS kernel.');
+console.log('PASS: three direct lesson entries, 14 visible graphs with 101 nodes /90 edges, original track concept links, seven prerequisite-complete role routes and context-specific priority/continuation; GPU kernel is never mislabeled as OS kernel.');

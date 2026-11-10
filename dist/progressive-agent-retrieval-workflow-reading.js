@@ -297,6 +297,23 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
   ];
   finish(a,old,body);
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
+  const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
+   p('用户要求生成 <code>report-A</code>。运行程序，也就是宿主，起初只安排读取主清单和生成草稿。本机模型读到金额 10、27，还看见清单里新出现的补录编号 <code>late-A/v1</code>，于是建议先读补录。宿主核对编号来自刚读到的清单，保存第 2 版计划。已经读到的 10、27 继续使用。')+
+   trainingFigure('model-plan-revision','四次工具提议来自同一个模型。计划、草稿和批准由宿主核对并保存。')+
+   p('四轮都提供相同的四个工具。<code>tool_choice=auto</code> 让模型按提示里的使用条件选工具。第 1 轮返回 <code>extra_batch=late-A/v1</code>，第 2 轮模型提出 <code>revise_plan</code>。下方第一行把工具名和参数交给宿主核对并执行。第二行的 <code>tool_call_id</code> 让模型知道结果对应哪一次调用。')+
+   trainingCode('宿主执行通过检查的工具，并把结果交回模型','PYTHON',`result = perform_tool(directory, name, args)
+messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "content": compact(result)}]`)+
+   p('第 3 轮读到补录的 5，第 4 轮请求生成草稿。宿主按两条来源记录算出 10+27+5=42，把第 2 版计划、草稿和等待批准的状态留在同一个任务库，然后退出。新进程重开原库。发布批准要匹配操作者、任务、目标 <code>A/daily</code>、计划第 2 版和草稿摘要。摘要是从草稿内容算出的指纹，来源版本也在草稿里。')+
+   table(['恢复时给什么','宿主实际决定','数据库中有几份报告'],[
+    ['没有批准','继续等待','0'],['只批准第 1 版的 37','批准与当前草稿不符','0'],['批准当前第 2 版的 42','发布并保存完成状态','1'],['完成后再带同一批准恢复','认回已完成的任务','1']
+   ])+
+   p('先在四条模型响应里找工具名称与参数，确认 <code>late-A/v1</code> 是从哪一轮进入对话。再查计划表、事实表和报告表。实际发布的唯一一份报告是 42，带主清单和补录两个来源。固定提示只开放这里的一种计划变更，批准由测试入口提供。报告和完成状态共用一个 SQLite 事务。')+
+   trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
+   '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
+   p('这里由程序自己读回任务库。<a href="/article/durable-workflows/#langgraph-workflow-run">下一节</a>用同一个任务 ID 重开框架的检查点，再观察它从哪里重新执行。');
+  const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
+  if(!a.sections[8][1].includes(nativeWorkflow))throw Error('Missing workflow practice after model plan revision');
+  a.sections[8][1]=a.sections[8][1].replace(nativeWorkflow,modelPlan+nativeWorkflow);
   a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
@@ -405,4 +422,5 @@ return {"status": visit_gate("original_gate")}`)+
  trainingCode('解压后在新目录保存三组记录','SHELL','python -m pip install -r requirements.txt\npython -B resume_lab.py --output-dir replay')+
  p('先对照 <code>waiting_v1.interrupts</code> 和 <code>resume.fresh_v2_pause.interrupts</code>，确认两版第一问。再看 <code>receiver_final.writes</code>，验证哪份报告真的入库。实验使用 LangGraph 1.2.20，批准和接收库均为本机夹具。')+
  '<p class="practice-links"><a href="/labs/workflow-version-resume.zip" download>下载程序与记录 ↓</a> · <a href="/labs/workflow-version-resume/README.md">复跑步骤 →</a> · <a href="/labs/workflow-version-resume/validation.json">核对中断、决定和实际写入 →</a> · <a href="https://docs.langchain.com/oss/python/langgraph/interrupts#do-not-reorder-interrupt-calls-within-a-node">LangGraph 的中断顺序 ↗</a></p>';
+ a.updated='2026.11.11';
 })();
