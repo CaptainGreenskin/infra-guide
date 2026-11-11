@@ -1,0 +1,30 @@
+name: Native HAProxy report failover
+on:
+  push:
+    branches: ['evidence/haproxy-report-failover-20261112']
+    paths:
+      - 'dist/labs/haproxy-report-failover/**'
+      - '.github/workflows/haproxy-report-failover-evidence.yml'
+permissions:
+  contents: read
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compile pinned HAProxy from the official source archive
+        run: |
+          curl -fLsS --proto '=https' --max-time 75 'https://www.haproxy.org/download/3.2/src/haproxy-3.2.26.tar.gz' -o haproxy.tar.gz
+          printf '%s  %s\n' 760ef35fafc1e05844e73ad07e138e9e96fddbf5de02f606249c027f754827da haproxy.tar.gz | sha256sum -c -
+          tar -xzf haproxy.tar.gz
+          make -C haproxy-3.2.26 -j 2 TARGET=linux-glibc
+      - name: Observe actual HAProxy failover and attachment readback
+        run: |
+          python3 -B dist/labs/haproxy-report-failover/failover_lab.py --haproxy "$PWD/haproxy-3.2.26/haproxy" --output native-records/haproxy-failover.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: haproxy-report-failover
+          path: native-records/haproxy-failover.json
+          if-no-files-found: error
+          retention-days: 14
