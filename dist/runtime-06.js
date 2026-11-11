@@ -6727,6 +6727,8 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
  p('文档 B 的第一个词元在物理位置 3。如果只有普通因果 mask，它可以读取 A 的三个位置和自己；文档内因果 mask 则只允许它读取自己。这是可见范围的区别。把跨文档 label 忽略，仅改变该预测位置是否计入损失，并不会自动阻止 B 的其他预测读取 A；两层机制都要与训练目标一致。',
  '位置编号是第三层。本数值参考给 token 向量加上与绝对位置有关的固定向量，因此 B 的位置从 0、1 开始，才能与逐文档独立计算相同。若改为 3、4，输入向量本身已经变化。这个结论针对程序定义的数学；真实 RoPE 或其他位置机制，应根据其平移性质、缩放方式、内核实现和模型契约核对，不能仅用“是否归零”作通用判据。',
  '跨文档连续训练也可以是有意定义的任务，此时应按那份目标设置边界。比较 packing 前后时，先固定语义，再核对模型输出、有效 label 与损失分母。只看到 padding 比例下降，还不能推出训练质量等价或真实速度按同样比例提升。')+
+ p('用一份独立的 CPU 实跑核对组批之后的变化。它逐位置分类，每个位置有 32 项输入。补齐时，<code>aten::linear</code> 收到 [8,128,32]，即 1,024 个位置。忽略填充标签后，只有 352 个目标进入损失。另一条路径在前向之前用 <code>aten::index</code> 筛出有效行，线性层收到 [352,32]。两条路径都除以 352，记录里的完整梯度与更新后权重逐项相同。',
+ '复跑时，在导出的两份轨迹里找 <code>aten::linear</code> 事件，查看 <code>Input Dims</code> 的第一项。再对照结果里的 <code>forward_rows</code> 和 <code>denominator</code>，分别核对算子处理的行数与损失采用的分母。<a href="/article/training-performance/#cpu-useful-token-throughput">查看完整更新和分母错误的反例 →</a>')+
  fold('数据提前结束时怎样处理',p('文档结束、固定长度块结束和整个数据源结束是三种边界。数据中提前出现 EOS 是否结束当前文档，由数据构建规则决定；普通 DataLoader 不会按这个词元编号自动停止读取。源提前读完时，当前未满块可以按任务选择交付变长输入、填充并遮罩、丢弃，或暂存残余与后续文档继续打包；选择会改变覆盖、有效目标数和恢复所需状态。若填入 EOS 或 padding，也要明确其位置究竟是实际训练目标还是纯占位。',
  '某个 rank 的源先结束，还要回到上一节的批次与同步协议。若打包器缓存了半篇文档、部分词元或未交付的残余，这些内容属于输入进度的一部分，后面保存消费游标时不能只记录文件名。')),
 
@@ -6780,7 +6782,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
   '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
- data.updated='2026.11.11';
+ data.updated='2026.11.12';
 
  const overlap = comm.sections[4];
  overlap[1] = overlap[1].replace('才会缩短这一轮。</p>', '$&' +
@@ -10932,11 +10934,13 @@ future.result(timeout=35)
  p('在单节点 kind 上，一个 Pod 用三种方式读取 <code>app-config</code> 的 <code>version</code> 键。普通目录投射后读 <code>/projected/version</code>，用 <code>subPath</code> 则单独挂载其中一个文件，环境变量在启动时取值。长驻 Python 进程在启动时打开普通投射文件，并保留文件描述符（FD）。每次采样既重开路径，也用旧描述符从头读取，连同另外两个入口一起记录。')+
  '<figure class="training-figure"><a href="diagrams/kubernetes-config-projection.svg" target="_blank" rel="noopener" aria-label="放大：ConfigMap 更新前后的四条读取路径"><img src="diagrams/kubernetes-config-projection.svg" width="440" height="348" alt="更新 ConfigMap 后，原 Pod 重开普通投射读到 v2，原 FD、subPath 和环境变量仍为 v1；新 Pod 四条路径都读到 v2" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>更新源对象后，比较原进程重开路径与继续使用启动时的输入。<a href="diagrams/kubernetes-config-projection.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('只更新 ConfigMap 的值 v1→v2，源 UID 保持不变，API 记录的 resourceVersion 从 442 变为 480。等普通投射读到 v2 后再取样，原 Pod UID 和容器 ID 都未变，重启数仍为 0。对照同一进程的文件编号 inode：重开路径读 v2，编号从 3 变成 7；原 FD 继续读编号 3 上的 v1。此时 subPath 和启动环境变量也仍是 v1。')+
+ p('如果服务用启动环境变量生成响应，同一配置更新后就要查请求实际到达哪个 Pod、它读到哪一版。<a href="/article/gitops-reconciliation/#gitops-config-input-path">沿启动环境这一路核对真实 Argo 发布 →</a>')+
  p('删掉原 Pod，再创建不同 UID 的替换 Pod。新进程启动时取得的是同一份已更新的 ConfigMap，四项读数都是 v2，其中 FD 也是新进程打开的。实验只验到进程可以读出的字节。要判断业务是否生效，还需第 3 节的候选校验与快照切换；<a href="/article/gitops-reconciliation/#gitops-native-run">GitOps 实战</a>另用真实 HTTP 核对进程返回的版本。')+
  trainingCode('复跑配置投射并离线核对随包记录','SHELL','python3 -B config_projection_lab.py --output native-record.json\npython3 -B config_projection_lab.py --check-record validation.json')+
  '<p class="practice-links"><a href="labs/kubernetes-config.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-config/validation.json">查看四路值、对象身份与 inode →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42560029974">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes/kubernetes/blob/v1.35.8/pkg/volume/util/atomic_writer.go">kubelet 文件投射实现 ↗</a></p>'+
  credentialHeading);
 
+ config.updated='2026.11.12';
  const scaling=select('k8s-autoscaling',['控制链：建议、期望与实际可用容量','CPU口径：单位、request与匹配集合','保守计算：缺指标、容差与方向变化','指标选择：资源、容器、业务与外部信号','容量空窗：积压、净余量与有界接纳','伸缩行为：稳定窗口、速率与上下界','下游预算：副本、连接与实际完成率','实战与变化题：数学参考和真实规则引擎']);
  const s=scaling.sections.map(x=>x[1]),s5=blocks(s[5]),s7=blocks(s[7]);
  if(s5.length!==1||s7.length!==7)throw Error('Autoscaling code layout changed');
@@ -13768,6 +13772,11 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  p('随包JSON清单对应第三份703f38b提交，guide-version已为v2，Pod模板注解也为v2；前两份内容从各自固定提交读取，不能将这份清单当作初次v1源。已有执行记录及源码摘要可离线核对：期望副本1、漂移现场2、自愈回1；旧受管配置被清理而unmanaged保留；配置v2/旧UID/HTTP v1拒绝，模板换版后新UID/HTTP v2通过，最后回到v1。',
  '这些记录覆盖单宿主kind中的真实Argo Git读取、Kubernetes调谐和HTTP结果。它们没有运行生产数据迁移、跨主机网络或云高可用控制面；进入这些环境时，沿同一源→对象→进程→用户路径补足对应验收。')
  ],'沿Git修订、清单、API对象、Pod启动与Service响应走通调谐，再用自愈、清理和三个固定提交区分同步、健康与业务生效。');
+ gitops.sections[4][1]+=
+ h('gitops-config-input-path','配置已经更新，进程从哪里读')+
+ p('打开 <code>v2_synced_but_old_business</code> 这条记录。<code>desired_config</code> 是脚本通过 API 读到的 <code>guide-version</code> 的值，这时已经是 v2。用 <code>http.pod</code> 对上 <code>pod.name</code>，再比较这次的 <code>pod.uid</code> 和较早的 <code>self_heal_on</code>。两者是同一个 Pod，<code>http.version</code> 仍为 v1。上面的清单负责注入 <code>BUSINESS_VERSION</code>，第 9 节的服务代码从 <code>os.environ</code> 读取它来构造响应。')+
+ p('另一个独立的 kind 实验也把配置从 v1 改到 v2。原进程重新打开普通投射路径读到 v2，保留的旧文件描述符、只挂载单个文件的 <code>subPath</code> 和启动环境仍读到 v1。改成从文件加载后，要验证应用确实重开文件、校验新内容，再检查请求用的是哪一版。<a href="/article/config-secrets/#native-config-projection">查看同一个 Pod 的四种读数 →</a>')+
+ '<p class="practice-links"><a href="/labs/delivery-systems/validation.json">查看 Argo 的 API 与响应记录 →</a> · <a href="/article/gitops-reconciliation/#gitops-response-evidence">用替换后的 UID 和响应复判发布 →</a></p>';
  gitops.sections[5][1]+=
  h('gitops-response-evidence','用运行记录核对实际发布版本')+
  p('按<a href="/article/delivery/#section-6">C6.1 的发布观测顺序</a>，先找 Git 声明的版本，再看集群配置、应用实例和响应。这个程序从同一次 Argo CD 实验的 JSON 复判初次发布、只改配置、换模板和回退四条记录。')+
@@ -13807,7 +13816,7 @@ for stage, source in stages:
           "通过" if passed else "拒绝")`)+
  p('这四条记录的状态都是 Synced、Healthy、Succeeded。加上响应核对，四行依次是通过、拒绝、通过、通过。第二行现场配置已经是 v2，原 Pod 仍用 v1 的启动配置，HTTP 返回 v1。最后一行回到原提交，启动的是另一份 v1 Pod。程序用响应里的 Pod 名字对应 API 记录，再从 API 取得 UID。')+
  p('要生成自己的原生记录，按<a href="/article/gitops-reconciliation/#gitops-native-run">第 9 节运行 kind 实验</a>。本节的离线命令只读取已发布的实验输出。');
- gitops.updated='2026.11.11';
+ gitops.updated='2026.11.12';
 })();
 
 
@@ -14252,9 +14261,9 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
  section[1]=`<h3 id="text-to-next-token">一次续写怎样发生</h3>`+para(
-  '「明天可能会下」后面接「雨」还是「雪」？加上「冷空气已经来了」，判断可能会变。文本模型先把文字切成词元（token），例如一个字或一段词，再把每项换成词表里的编号。本章的 CPU 小模型从 8 个合成编号起步，用来观察前文怎样影响续写。',
-  '模型保存下来供计算使用的数字叫参数。固定这组参数做两次预测，得到 [0,1] → 1，[4,1] → 7。箭头右侧是模型选出的下一项。输入的末位都是 1，第一项从 0 改为 4，结果便从 1 变为 7。<a href="/article/attention-mechanics/#same-position-different-prefix">查看两次预测的实际记录 →</a>')+
- '<ol><li>查表。每个编号从词嵌入表（Embedding）取一行数字。这一行叫向量。</li><li>读取前文。解码器块先汇总当前位置与前文的信息，再加工当前行。</li><li>选下一项。每行给出 8 个候选分数（logits）。续写只看最后一行，本实验选分数最高的编号。</li></ol>'+
+  '「明天可能会下」后面接「雨」还是「雪」？如果前面多一句「冷空气已经来了」，判断可能会变。文本模型先把文字切成词元（token），每项可以是一个字、一个词或词的一部分，再查词表换成编号。下面用一个只有 8 个编号的小模型看前文怎样改变预测。这些编号是实验输入。',
+  '训练能调整的数字叫参数。保持参数不变，在 CPU 上做两次预测，得到 [0,1] → 1，[4,1] → 7。两次输入最后一项都是 1，只换了前一项，选出的下一项就变了。<a href="/article/attention-mechanics/#same-position-different-prefix">查看两次预测的实际记录 →</a>')+
+ '<ol><li>查表。每个编号从词嵌入表（Embedding）取一行数字。这一行叫向量。</li><li>读取前文。模型有一层专门更新这些向量，叫解码器块。它让每行先读取自己和前文，再加工读回的信息。</li><li>选下一项。每行给出 8 个候选分数（logits）。续写只看最后一行，本实验选分数最高的编号。</li></ol>'+
  trainingFigure('transformer-first-forward','沿 [0,1] 这一路走一遍。末位的向量读过前文后，用它的八个候选分数选出编号 1。')+
  para('对 [0,1] 来说，第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。续写整段输入要看第二行。将分数最高的 1 接到末尾，下一轮输入就是 [0,1,1]。把每次选出的词元接回去再预测，叫自回归生成。<a href="/article/transformer-model/#repeat-next-token">看同一模型的三轮生成 →</a>',
   '词嵌入表和各层权重都可以通过训练调整。从输入算到分数叫前向计算。用固定的参数对新输入做预测，称为推理。下一节先看 [0,1] 的两个编号各查到哪一行。')+
@@ -14275,12 +14284,12 @@ const firstReadingChanges=[];
  if(!tensorDetail||!linearDetail)throw Error('Missing decoder tensor and linear details');
  a.sections[1][1]=para(
   '先给开头的 [0,1] 查表。位置从 0 数。位置 0 放着编号 0，取词嵌入表第 0 行。位置 1 放着编号 1，取第 1 行。每行有 8 项特征，取出的两行形状就是 [2,8]。换成 [4,1] 时，只改查第 4 行，末位仍取第 1 行。',
-  '把数字按一个或多个方向排列得到张量，每个方向叫一根轴，形状记录各轴长度。词嵌入表 E 有 8 个词表项，每项 8 个特征，形状为 [V,D]=[8,8]。将两次输入并排看，编号的形状是 [B,T]=[2,2]，分别数样本和位置。查表后多一根特征轴，得到 [B,T,D]=[2,2,8]。E 的 64 个参数可供所有位置重复使用。')+
+  '把数字按一个或多个方向排列得到张量，每个方向叫一根轴。形状 [2,8] 就是在数两个位置、每个位置八项特征。词嵌入表 E 有 8 行，每行 8 项，64 个参数可供所有位置重复使用。如果把这两条输入放在同一批，就有 B=2 条样本，每条有 T=2 个位置。查表后每个位置多出 D=8 项特征，形状就是 [B,T,D]=[2,2,8]。')+
  '<details class="progressive-detail"><summary>展开 · 两条四项训练输入的形状</summary>'+para(
-  '训练用 [0,1,2,3] 与 [4,5,6,7]，第二条的位置 1 放的是编号 5，查 E 的第 5 行。批大小 B=2，每条长度 T=4，编号的形状为 [2,4]。查表得到 [2,4,8]，这批产生 2×4×8=64 个特征值。输入变长会增加每次查出的特征数，词嵌入表大小仍由 V 和 D 决定。')+'</details>'+tensorDetail;
+  '训练用 [0,1,2,3] 与 [4,5,6,7]，第二条的位置 1 放的是编号 5，查 E 的第 5 行。批大小 B=2，每条长度 T=4，编号的形状为 [2,4]。查表得到 [2,4,8]，这批产生 2×4×8=64 个特征值。输入变长会增加查表次数，表本身的行数和每行的特征数照旧。')+'</details>'+tensorDetail;
 
  a.sections[2][1]=para(
-  '继续看 [0,1] 查出的两行。线性层用同一组可学习的系数逐行计算新特征。拿解码器里的一个 8→8 变换来说，第一行的八项只由第一行计算，第二行的八项只由第二行计算。输入 [2,8]，输出仍为 [2,8]。若一次处理上一节的两条四项训练输入，输入和输出都为 [2,4,8]。',
+  '继续看 [0,1] 查出的两行。线性层用同一组可学习的系数逐行计算新特征。以解码器里的一个 8→8 变换为例，先把一行的八项分别乘上系数，再加起来，得到新行的第一项。换一组系数就能算下一项。两行各算各的，输入是 [2,8]，输出也是 [2,8]。',
   '因此，[0,1] 换成 [4,1] 后，只要输入到线性层的末行相同，这一步就给出同样的末行结果。下一节会让末行读前一行，看看差别在哪里产生。')+
  '<details class="progressive-detail"><summary>独立手算 · 每行怎样从 3 项变成 2 项</summary>'+para(
   '这里另取便于手算的数字，跟开头实验的八项特征无关。两行输入为 x₀=[1,2,1]、x₁=[0,1,2]。系数排成矩阵 W，三行依次为 [2,0]、[1,−1]、[0,3]，形状为 [3,2]。',
@@ -14288,56 +14297,59 @@ const firstReadingChanges=[];
   '偏置是在每行结果上再加的一组可学习数。两行都加 [1,−1]，得到 [5,0] 和 [2,4]。')+linearDetail+'</details>';
 
  a.sections[3][1]=para(
-  '把 [0,1] 和 [4,1] 各自查到的词向量加上位置向量，得到解码器块的输入 X，每条都是 [2,8]。两条末位的词元编号与位置都相同，词向量首项 0.923456 加上位置向量首项 −0.880069，结果都是 0.043387。',
-  '接下来，注意力从允许读取的位置汇总信息，加回当前格。前馈网络再加工这一格，加回加工前的表示。两步都保留两格和每格的八项特征。')+
+  '[0,1] 和 [4,1] 的最后一格都放着编号 1，所以查到同一行词向量。小模型还给每个位置查一行位置向量，与词向量相加，帮助模型分辨先后。两条输入的最后一格连位置也相同，相加结果一样。加完得到块的输入 X，每条都是 [2,8]。',
+  '注意力让最后一格读到前一格的信息。接着，前馈网络逐格加工已经汇总的信息。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('只读自己和前文的规则叫因果约束。两次预测的末位都能读位置 0 和 1。每格先从自己的表示计算三组数字。查询 Q 用来发起匹配，键 K 用来匹配，内容向量 V 用来汇总。末位的 Q 相同，前一格换成 4 后，提供的 K 和 V 都变了。',
-  '把末位的 Q 分别与两格的 K 对应相乘再相加，得到匹配分数。缩放后用 softmax 把分数换成总和为 1 的读取比例。比例随输入计算，模型参数保持固定。注意力按比例乘各格的 V，再把结果逐项相加。一套独立的匹配与汇总叫一个注意力头。')+
- para('沿第 0 个头看汇总结果的第一项。下面两项乘积分别来自位置 0、1，显示的是四舍五入后的数值。')+
- '<ul><li>[0,1] 汇总得到 0.5546051×0.8440784 + 0.4453949×0.2123563 ≈ 0.562713。</li><li>[4,1] 汇总得到 0.4659462×0.3079029 + 0.5340538×0.2123563 ≈ 0.256876。</li></ul>'+
- para('末位提供的内容 0.2123563 没变，前一格提供的内容和两格的读取比例都变了。小模型有两个头，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ para('生成时，每格只读自己和前文。这条规则叫因果约束。两次预测的最后一格都能读前一格和自己。每格都算出三组数字。查询 Q 用来找信息，键 K 用来算匹配分数，值 V 是可读回的内容。最后一格用自己的 Q 和某格的 K，把对应的数字相乘再相加，得到对那一格的分数。把两处的分数除以同一个数来控制大小，再用 softmax 换成加起来等于 1 的读取比例。',
+  '单独手算一项。假设前一格提供 4，最后一格自己提供 2，读取比例分别是 3/4 和 1/4，读回的结果就是 4×3/4 + 2×1/4 = 3.5。再假设另一组匹配给出 1/4 和 3/4，前一格提供的值为 0，结果就是 0×1/4 + 2×3/4 = 1.5。这里的数字只用来说明怎样按比例汇总。',
+  '回到两次实际预测。最后一格的 Q 一样，换掉前一项却改变了前一格提供的 K 和 V。因此最后一格既会重新分配读取比例，也会拿到不同的内容。一套独立的匹配和汇总叫一个注意力头。小模型用了两个头，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+'</details>'+
  '<details class="progressive-detail"><summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'+para(
- '另取一组便于计算的数字。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重，被遮住的位置分不到权重。这里的 V 表示内容向量，词表大小也记作 V。',
+ '另取一组便于计算的数字。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重，被遮住的位置分不到权重。',
  '取位置 2 的 Q 为 [2,0,0,0]，位置 1 的 K 为 [ln 2,0,0,0]，ln 表示自然对数。两个向量的点积是 2×ln 2，再除以 √4=2，得到位置 1 的分数 ln 2。在常见的初始化假设下，这个除法能让特征变多时的分数波动小一些。',
  '同样取位置 0、2 的 K 为 [0,0,0,0] 和 [ln 3,0,0,0]，缩放后的三个分数是 [0, ln 2, ln 3]。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。拿这三个数乘前面给出的内容，就能核对结果 2。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
   '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('注意力把前文的信息送到当前格，前馈网络（FFN）接着变换这一格已有的特征。每格各自计算，权重在各格之间共享。本例先在内部扩宽，再投影回八项特征。')+
+ para('注意力把前文的信息送到当前格，前馈网络（FFN）接着变换这一格已有的特征。每格各自计算，共用同一组参数。本例把八项扩到十二项，中间让各项的调整幅度随输入变化，再用线性层变回八项。中间这一步让前馈网络能做单个线性层做不到的变换。')+
  '<details class="progressive-detail"><summary>选读 · 8 项特征怎样经过 SwiGLU</summary>'+para(
   '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
  para('本例每次进入分支之前，先用归一化调整当前向量的数值尺度。注意力读取归一化后的 X，结果加回原来的 X，得到 H₁。前馈读取归一化后的 H₁，结果加回原来的 H₁，得到 H₂。沿原表示直接相加的路径叫残差连接。分支输出为零时，原表示沿这条路径保留下来。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
- para('再看末行的候选分数。两次预测都经过同一个解码器块，完整的末位向量用于给词表里的八项打分。')+
+ para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
+ '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
+ para('两条输入最后一格的词向量首项都是 0.923456，位置向量首项都是 −0.880069，相加得到 0.043387。再看第 0 个注意力头，追踪汇总结果的第一项。每行的两项乘积分别来自前一格和自己，数值已四舍五入。')+
+ '<ul><li>[0,1] 汇总得到 0.5546051×0.8440784 + 0.4453949×0.2123563 ≈ 0.562713。</li><li>[4,1] 汇总得到 0.4659462×0.3079029 + 0.5340538×0.2123563 ≈ 0.256876。</li></ul>'+
+ para('自己提供的内容 0.2123563 相同，前一格提供的内容和两格的读取比例都变了。下面是经过完整解码器块和词表投影后，最后一行的两个候选分数。')+
  '<ul><li>[0,1] 给编号 1 打 3.780366 分，给编号 7 打 3.465295 分，最高是 1。</li><li>[4,1] 给编号 1 打 3.582167 分，给编号 7 打 3.594005 分，最高是 7。</li></ul>'+
- para('<a href="labs/tiny-decoder-forward/validation.json">核对同一次 CPU 实验的两个前向记录 →</a>')+
- '<details class="progressive-detail"><summary>选读 · 两条四项训练输入的整层形状</summary>'+blockFlow+'</details>'+
+ para('<a href="labs/tiny-decoder-forward/validation.json">核对同一次 CPU 实验的两个前向记录 →</a>')+'</details>'+
+ '<details class="progressive-detail"><summary>选读 · 两条四项训练输入的整层形状</summary>'+
+ para('图中输出框的 V 指词表大小。左下角 Q、K、V 的 V 指注意力读回的值。')+blockFlow+'</details>'+
  '<details class="progressive-detail"><summary>手算 RMSNorm 与 LayerNorm</summary>'+para(
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
  '<h3 id="repeat-next-token">沿最后一行完成三轮生成</h3>'+
- para('沿 [0,1] 继续生成。每轮取当前最后一行的最高分，把选出的编号接到末尾。下面的 CPU 缓存实验复用相同的模型配置和参数初始化、训练步骤，从同一输入开始，第一轮同样选出 1。')+
- conceptReadingTable(['本轮已有序列','用哪一行分数','接到末尾的编号'],[
+ para('沿 [0,1] 继续生成。每轮用已有的序列算分，取最后一行的最高分，把选出的编号接到末尾。然后用更长的序列继续下一轮。')+
+ conceptReadingTable(['本轮已有序列','整段重算取哪行','接到末尾的编号'],[
   ['[0,1]','第 2 行','1'],['[0,1,1]','第 3 行','1'],['[0,1,1,1]','第 4 行','1']
  ])+
- para('三轮过后得到 [0,1,1,1,1]。实验在此停止，位置表只有四行，最后选出的 1 已经输出，还没送回模型。接下来可以看<a href="/article/transformer-model/#generation-cache-steps">缓存怎样避免重算前文</a>，也可以看<a href="/article/transformer-model/#training-versus-generation">同一个模型怎样利用已知答案训练</a>。第 5、6 节的形状和计算量都可以按需展开。');
+ para('三轮后，完整序列 [0,1,1,1,1] 已有 5 项。第三轮实际处理到 [0,1,1,1]，最后一个 1 刚被选出，还没送回模型。缓存保存的是已处理位置的 K 和 V，所以只有 4 格。前文看不到未来，第 2、3 轮已经复用了先前算好的 K 和 V。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
- a.sections[4][1]=para('把模型各处的形状放在一起，就能数出长期保存的参数和一次前向产生的中间结果。')+
+ a.sections[4][1]=para('从两项输入加到四项，只要仍在位置表允许的长度内，同一层就能继续使用原有的参数。多出来的是这次计算产生的中间结果，例如查出的词向量和注意力分数。算显存时要把这两笔账分开。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('序列变长时，逐位置投影多算几行，注意力的分数表则同时增加行和列。')+
+ a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
- para('第 4 节每轮都可以把当前序列从头算一遍。缓存路径保留已处理位置的键和内容向量，也就是注意力里的 K 和 V。两条路径都选出了三个 1。连同最初的提示，现在已有 5 项，缓存里只有 4 格。最后选出的 1 还没送回模型。')+
+ para('整段重算每轮都送入完整序列。用 KV 缓存时，第一轮送入 [0,1] 并保留两格的键 K 和值 V，后两轮各只送入上轮选出的 1，缓存依次增至 3 格、4 格。CPU 实验逐轮核对最后一行的候选分数，两条路径都选出了三个 1。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
  '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
@@ -14351,7 +14363,7 @@ const firstReadingChanges=[];
  '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
- para('三轮生成的下一项都由模型选择。训练时，[0,1] 的预测要和样本给出的答案 2 比较。损失衡量这次预测离正确答案有多远，训练据此调整参数。')+
+ para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。模型给正确答案的概率越低，这一项的损失越大。训练据此调整参数。')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
  para('生成时，[0,1] 接下来由模型选，这次选出了 1。训练用的是已知样本 [0,1,2,3,4]，前四项作输入，后四项作目标。第二行预测 [0,1] 后面接什么，样本给的答案是 2。训练把样本里的正确前文直接交给模型，这叫教师强制。',
  '以位置 2 为例，输入前文是 [0,1,2]，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
@@ -14493,6 +14505,14 @@ const firstReadingChanges=[];
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ const loopStop='<p>“没有新增信息”也需要可解释的停止策略';
+ replace('agent-runtime',2,loopStop,
+  p('刚才的读取重试多派发了一次工具请求。准备把资料交给模型时，还要数整份输入有多长。分词器把文字切成模型处理的小单位，每个单位叫词元。独立的费用检索实验中，两段正文合计 36 个词元，算上系统说明、任务、来源和分隔符，完整提示有 237 个词元。输入和输出的总上限降到 259 时，163 个输入词元加 96 个输出预留刚好放得下，却缺基础费用资料，程序没有发出请求。<a href="/article/agent-retrieval/#context-budget-run">用实际提示和接收记录核对这两道检查 →</a>')+loopStop);
+ const retrievalBudget=articleById('agent-retrieval').sections[14];
+ const budgetRun='<p>context_budget.py沿费用任务执行完整输入交付。';
+ if(!retrievalBudget[1].includes(budgetRun))throw Error('Missing retrieval budget handoff');
+ retrievalBudget[1]=retrievalBudget[1].replace(budgetRun,
+  p('这份费用检索实验独立运行。<a href="/article/agent-runtime/#tool-finite-loop">运行时章的订单实验</a>数实际派发的工具请求。这里先数一份完整提示的词元，再检查基础费用和调整费用两份资料是否齐全，之后才会发送。')+budgetRun);
  replace('agent-runtime',0,
   '下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。',
   '这份日报的工具提议来自脚本。<a href="/article/agent-runtime/#section-8">查看写入和回读的实验</a>，也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');
@@ -17309,5 +17329,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="6947e05ac418094e46e82c645031a2c9e34ba58e7d01916b1d491d5705fa855a";
+const staticReadingVersion="80323a8b533b11363df3697abe973571a0b06409b2b6c95ae3c294ed2e97cc9e";
 

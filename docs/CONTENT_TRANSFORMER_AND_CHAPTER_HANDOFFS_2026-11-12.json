@@ -1,0 +1,31 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "ffe6abd97f59d03881b1f5532d12c282b6806a4d",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NETWORK_RING_AND_DELEGATION_2026-11-12.json": "9514c7490566736802c17ba4147cd23f0fdf97cc0607cf96bad049d8477ae294"
+  },
+  "body_revisions": [
+    {
+      "id": "gitops-reconciliation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b3c8924e11474f0a77f444531854343b3cf943f7edecc21dced4254abac38972",
+      "reviewed_content_sha256": "d3c21b37755f3c87ccfbbcbc1b79864414cffcd8736d63f4d40c2cd55bed16b9",
+      "scope": "Tie a ConfigMap read, an unchanged Pod UID and the old HTTP version to a concrete process input.",
+      "observation": "The independent projection experiment explains why reopening an ordinary projected file behaves differently from a startup environment variable.",
+      "headings": [
+        "先画出Git、控制器、集群和业务四层关系",
+        "Synced、Healthy与业务正确，分别证明什么",
+        "自动同步、自愈和清理，是三个不同开关",
+        "清理依据受管关系，不是删除所有多余对象",
+        "环境变量为什么不会随ConfigMap自动改值",
+        "三个固定提交，把控制面绿灯与用户结果对上",
+        "回退要改变期望，再验证旧版本还能工作",
+        "从源到响应，按最后成功阶段排障",
+        "在独立kind集群重放，再读完整源码"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

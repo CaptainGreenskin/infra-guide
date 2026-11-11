@@ -69,6 +69,14 @@
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ const loopStop='<p>“没有新增信息”也需要可解释的停止策略';
+ replace('agent-runtime',2,loopStop,
+  p('刚才的读取重试多派发了一次工具请求。准备把资料交给模型时，还要数整份输入有多长。分词器把文字切成模型处理的小单位，每个单位叫词元。独立的费用检索实验中，两段正文合计 36 个词元，算上系统说明、任务、来源和分隔符，完整提示有 237 个词元。输入和输出的总上限降到 259 时，163 个输入词元加 96 个输出预留刚好放得下，却缺基础费用资料，程序没有发出请求。<a href="/article/agent-retrieval/#context-budget-run">用实际提示和接收记录核对这两道检查 →</a>')+loopStop);
+ const retrievalBudget=articleById('agent-retrieval').sections[14];
+ const budgetRun='<p>context_budget.py沿费用任务执行完整输入交付。';
+ if(!retrievalBudget[1].includes(budgetRun))throw Error('Missing retrieval budget handoff');
+ retrievalBudget[1]=retrievalBudget[1].replace(budgetRun,
+  p('这份费用检索实验独立运行。<a href="/article/agent-runtime/#tool-finite-loop">运行时章的订单实验</a>数实际派发的工具请求。这里先数一份完整提示的词元，再检查基础费用和调整费用两份资料是否齐全，之后才会发送。')+budgetRun);
  replace('agent-runtime',0,
   '下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。',
   '这份日报的工具提议来自脚本。<a href="/article/agent-runtime/#section-8">查看写入和回读的实验</a>，也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');

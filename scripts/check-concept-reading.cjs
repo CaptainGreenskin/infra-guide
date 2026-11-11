@@ -55,11 +55,19 @@ const embedding=model.sections[1][1].split('<details')[0],linear=model.sections[
 assert(embedding.startsWith('<p>先给开头的 [0,1] 查表')&&embedding.indexOf('[2,8]')<embedding.indexOf('叫一根轴'),
  'explain the actual two looked-up rows before introducing axes');
 assert(linear.includes('继续看 [0,1] 查出的两行')&&linear.includes('8→8')&&!linear.includes('x₀='));
+assert(!linear.includes('四项训练输入'),'the default text only relies on the two inputs readers have already seen');
+assert(!embedding.includes('[V,D]')&&!model.sections[4][1].includes('[B,T,V]'));
+assert(model.exercise[0].includes('将词表从 8 项扩大到 16 项'),'the recap avoids reusing the attention symbol V for vocabulary');
 assert(model.sections[2][1].includes('<summary>独立手算 · 每行怎样从 3 项变成 2 项</summary>'));
 const block=model.sections[3][1],score=block.indexOf('点积是 2×ln 2'),weights=block.indexOf('得权重 [1/6,1/3,1/2]'),sum=block.indexOf('6/6+0/3+2/2=2');
 assert(sum>=0&&sum<score&&score<weights,'show a weighted read before deriving the weights from the same numbers');
 assert(block.includes('<summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'),'keep the exact weight derivation available');
 const visibleRead=block.slice(block.indexOf('id="decoder-attention-first-pass"')).split('<details')[0];
+const measuredRead=block.split('<summary>实测 · 核对输入、注意力和候选分数</summary>')[1]?.split('</details>')[0];
+assert(measuredRead,'the raw forward run is available as a separate verification step');
+assert(visibleRead.includes('单独手算一项')&&visibleRead.includes('4×3/4 + 2×1/4 = 3.5')&&visibleRead.includes('0×1/4 + 2×3/4 = 1.5'));
+assert(!/\d\.\d{6}/.test(block.replace(/<details\b[\s\S]*?<\/details>/g,'')),'recorded decimals do not interrupt the first reading');
+assert(block.includes('[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7'),'the real prediction closes the opening question');
 assert.deepEqual(contextPair[0].layers.x[1],contextPair[1].layers.x[1],'same token and position give identical decoder input');
 assert.deepEqual(contextPair[0].reference.q[0][1],contextPair[1].reference.q[0][1]);
 assert.deepEqual(contextPair[0].reference.k[0][1],contextPair[1].reference.k[0][1]);
@@ -73,12 +81,12 @@ for(const result of contextPair){
  const prompt=JSON.stringify(result.prompt),format=value=>value.toFixed(7);
  const factors=[first,firstValue,self,selfValue].map(format);
  assert.equal((Number(factors[0])*Number(factors[1])+Number(factors[2])*Number(factors[3])).toFixed(6),joined.toFixed(6));
- assert(visibleRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));
+ assert(measuredRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));
  const finalScores=result.logits[1];
  assert.equal(finalScores.indexOf(Math.max(...finalScores)),result.selected_id);
- assert(block.includes(`${prompt} 给编号 1 打 ${finalScores[1].toFixed(6)} 分，给编号 7 打 ${finalScores[7].toFixed(6)} 分，最高是 ${result.selected_id}`));
+ assert(measuredRead.includes(`${prompt} 给编号 1 打 ${finalScores[1].toFixed(6)} 分，给编号 7 打 ${finalScores[7].toFixed(6)} 分，最高是 ${result.selected_id}`));
 }
-assert(block.includes('href="labs/tiny-decoder-forward/validation.json"'),'both score lines link the original forward record');
+assert(measuredRead.includes('href="labs/tiny-decoder-forward/validation.json"'),'both score lines link the original forward record');
 const diagram=fs.readFileSync('dist/diagrams/transformer-first-forward.svg','utf8');
 const preview=JSON.parse(diagram.match(/<metadata>([^<]+)<\/metadata>/)[1]);
 const run=JSON.parse(fs.readFileSync('dist/'+preview.record,'utf8')).program;
@@ -113,11 +121,14 @@ assert(/前四项送进去[^<]*后四项就是各位置的目标/.test(decoderEx
 const training=model.sections[6][1],fixture=JSON.parse(fs.readFileSync('dist/labs/tiny-decoder-handoff/validation.json','utf8')).fixture;
 const cache=training.split('id="generation-cache-steps"')[1].split('<details')[0];
 const lastStep=run.generation.trace.at(-1);
-assert(cache.includes(`已有 ${prefix.length} 项，缓存里只有 ${lastStep.cache_length} 格`),
- 'show the final output and cache counts before the optional explanation');
+assert(continuation.includes(`完整序列 ${JSON.stringify(prefix)} 已有 ${prefix.length} 项`)&&continuation.includes(`所以只有 ${lastStep.cache_length} 格`),
+ 'explain the final output and cache counts immediately after the visible generation');
+assert(cache.includes('后两轮各只送入上轮选出的 1')&&cache.includes(`缓存依次增至 ${run.generation.trace[1].cache_length} 格、${lastStep.cache_length} 格`));
+assert(cache.includes('/article/transformer-model/#repeat-next-token'),'the implementation explanation links back to the same sequence');
 const target=training.split('id="training-versus-generation"')[1].split('<details')[0];
-assert(target.includes(`[0,1] 的预测要和样本给出的答案 ${fixture.rows[0][2]} 比较`),
- 'keep the training comparison visible without opening the full loss calculation');
+const labels=fixture.rows[0];
+assert(target.includes(`训练样本 ${JSON.stringify(labels)}`)&&target.includes(`拿 ${JSON.stringify(labels.slice(0,-1))} 当输入，拿 ${JSON.stringify(labels.slice(1))} 当逐行的预测目标`)&&target.includes(`[0,1] 对应的目标是 ${labels[2]}`),
+ 'the default training text shows how the real sample defines a different next target');
 assert(training.includes('将有效目标对应的行纳入损失')&&training.includes('样本里的目标 2 没有参与这次更新'),'explain valid training targets in the experiment that uses them');
 assert(training.includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');

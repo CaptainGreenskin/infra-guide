@@ -8463,6 +8463,103 @@
         "从真实报告与来源版本验收任务",
         "统计实战与变化题：完整标签和独立计算"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1fc94a604653cacfd8afcfe066c6a163d8287e1a81f13c100a92bce6e7d2aa40",
+      "reviewed_content_sha256": "c172bc4b172ecddeb4e60f0aea78fec5f3917ab10fb40b17d010487a81bc03e9",
+      "scope": "Keep one prediction, attention, and generation example visible from start to finish before opening measured detail.",
+      "observation": "The default path distinguishes local transforms from cross-position reads, shows a hand calculation before measured scores, explains why five output positions correspond to four processed positions, and carries the same sample into label alignment.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9bebabfca5975d1823915798a71416c61c066d6f9a4592f9e8a15829f50ae0af",
+      "reviewed_content_sha256": "c19f5e582280f7a1139b96288f6238a53eceb7092c361f9ee62b8061625d6d37",
+      "scope": "Connect padding masks and compact batch layout to native training operator shapes.",
+      "observation": "Both correct paths count 352 valid targets. The compact CPU path gives the linear layer 352 rows, versus 1,024 with the padded layout.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "fdbe3a328005e23e7752b17de18979f03c9af1d306e1972a84a7b1c8f0a2ed96",
+      "reviewed_content_sha256": "0ee4f3e4bb5914adc8dd612b1b47a59ea9544d8c90429130fec7c3fe73e205ca",
+      "scope": "Trace an unchanged application response back to the start-time environment path.",
+      "observation": "The raw projection test identifies which paths stay on v1, and readers can connect those observations to an Argo release.",
+      "headings": [
+        "对象与版本：期望、文件、内存和认证",
+        "传播路径：环境变量、投射与subPath",
+        "一致快照：完整读取、校验和请求切换",
+        "全局约束：连接预算、截止时间与回退",
+        "Secret与身份：分发、存储和执行权限",
+        "凭据轮换：兼容窗口、撤销与旧会话",
+        "实战与变化题：文件、进程和真实HTTP"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d9c5d45e51ed3750cbe24fedf7330538716a672f8c8aedfdd7e7a87b2cef1f79",
+      "reviewed_content_sha256": "0bd08546602ab1d8becaad29fa7b2f4d3240f96f1e093683238ff1426b7c165c",
+      "scope": "Separate tool attempts from a later model input budget and completeness checks.",
+      "observation": "The recorded retrieval example fits exactly within its combined limit in one case but still withholds the request because a required source is missing.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "27eec2846c67765dc6da5cf84d3c718b9b1fe467b29f4c1433d3c2f2685c2062",
+      "reviewed_content_sha256": "5c1fa5c43735598d4ee57418ad4946b88135f5fedf4772e45d35a07ae5d21951",
+      "scope": "Identify which budget the complete prompt fixture checks, with an exact return to the separate tool attempt experiment.",
+      "observation": "The tool counter and tokenizer records represent two independently executed tasks.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
     }
   ]
 }

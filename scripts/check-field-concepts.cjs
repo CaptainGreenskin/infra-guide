@@ -180,6 +180,12 @@ assert(!runtime.sections[3][1].includes('v23-tool-error-layers'),'canonical figu
 const appSource=fs.readFileSync('dist/app.js','utf8'),fragmentStart=appSource.indexOf('function restoreDocumentFragment'),fragmentEnd=appSource.indexOf('\nconst $',fragmentStart),fragmentCode=appSource.slice(fragmentStart,fragmentEnd);
 let scrolled=false;const parent={tagName:'DETAILS',open:false,parentElement:null},target={tagName:'DETAILS',open:false,parentElement:parent,scrollIntoView(){scrolled=true;}};
 vm.runInNewContext(fragmentCode+';restoreDocumentFragment()', {location:{hash:'#concept-relations'},requestAnimationFrame:fn=>fn(),document:{getElementById:()=>target}});assert(target.open&&parent.open&&scrolled,'a fragment targeting details itself must open it');
+const focusSteps=[];
+const searchTarget={tagName:'SECTION',parentElement:parent,hasAttribute:()=>false,setAttribute:(key,value)=>focusSteps.push([key,value]),
+ focus:({preventScroll})=>focusSteps.push(['focus',preventScroll,parent.open]),scrollIntoView:()=>focusSteps.push(['scroll'])};
+parent.open=false;
+vm.runInNewContext(fragmentCode+';restoreDocumentFragment(true)', {location:{hash:'#section-2'},requestAnimationFrame:fn=>fn(),document:{getElementById:()=>searchTarget}});
+assert.deepEqual(focusSteps,[['tabindex','-1'],['focus',true,true],['scroll']],'same-page search reveals and focuses its result before scrolling');
 for(const[id,bad]of [['transformer-model','第 0.3 章'],['transformer-block','这是0.6节'],['training-lab','先用 6.2']])assert(!d.articles.find(a=>a.id===id).sections.some(s=>s[1].includes(bad)));
 // Independent arithmetic for the two synthesis questions.
 assert.equal((120*30+300)/30,130);assert.equal(2*4*8,64);assert.equal(2*2*4*4,64);assert.equal(2*8*8,128);assert.equal(2*2*8*8,256);

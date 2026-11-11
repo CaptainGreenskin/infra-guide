@@ -5,6 +5,7 @@ const {createHash} = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const pack = 'dist/labs/training-useful-tokens';
@@ -177,6 +178,21 @@ for (const item of Object.values(record.cases)) {
  }
 }
 
+const context = vm.createContext({});
+for (const [, file] of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)) {
+ if (file !== 'app.js') vm.runInContext(read('dist/' + file), context, {filename:file});
+}
+const dataBatching = vm.runInContext('articleById("data-pipeline").sections[3][1]', context);
+const compactInputShape = [useful, featureSize];
+assert(dataBatching.includes(`收到 ${JSON.stringify(record.fixture.shape)}，即 ${slots.toLocaleString('en-US')} 个位置`));
+assert(dataBatching.includes(`线性层收到 ${JSON.stringify(compactInputShape)}。两条路径都除以 ${useful}`));
+assert(dataBatching.includes('href="/article/training-performance/#cpu-useful-token-throughput"'));
+for (const field of ['aten::linear', 'aten::index', 'Input Dims', 'forward_rows', 'denominator']) {
+ assert(dataBatching.includes(`<code>${field}</code>`), field);
+}
+assert.equal(record.comparison.gradient_max_abs_diff, 0);
+assert.equal(record.comparison.weight_max_abs_diff, 0);
+
 if (process.env.USEFUL_TOKENS_PYTHON) {
  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'training-useful-tokens-'));
  try {
@@ -191,6 +207,16 @@ if (process.env.USEFUL_TOKENS_PYTHON) {
    for (const [i, event] of events.entries()) {
     const phase = replay.profiles[mode].phases[i];
     near(event.dur, phase.end_us - phase.start_us, 0.1);
+   }
+   const linear = trace.traceEvents.filter(event => event.ph === 'X' && event.name === 'aten::linear');
+   assert.equal(linear.length, 1);
+   assert.deepEqual(linear[0].args['Input Dims'][0], mode === 'padded' ? record.fixture.shape : compactInputShape);
+   const selectFeatures = trace.traceEvents.find(event => event.ph === 'X' && event.name === 'aten::index' &&
+    JSON.stringify(event.args['Input Dims'][0]) === JSON.stringify(record.fixture.shape));
+   if (mode === 'packed') {
+    assert(selectFeatures && selectFeatures.ts >= events[0].ts && selectFeatures.ts < linear[0].ts);
+   } else {
+    assert.equal(selectFeatures, undefined);
    }
   }
  } finally {

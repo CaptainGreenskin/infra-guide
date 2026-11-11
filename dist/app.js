@@ -1,7 +1,25 @@
 // Rendering replaces the initial HTML; restore ordinary document fragments afterwards.
 function legacySectionTarget(articleId,section){return articleId==='network-diagnosis'&&section==='7'?'network-timing-lab':section}
 function stableArticleAnchor(article,section){for(const[id,file,anchor]of [['network-diagnosis','labs/network-timing/timing_lab.py','network-timing-lab'],['agent-security','labs/permissions/policy_lab.py','agent-permission-lab']])if(article.id===id&&section[1].includes(file))return ' id="'+anchor+'"';return ''}
-function restoreDocumentFragment(){const hash=location.hash;if(!hash||hash.startsWith('#/'))return;let id;try{id=decodeURIComponent(hash.slice(1))}catch{return}requestAnimationFrame(()=>{if(location.hash!==hash)return;const target=document.getElementById(id);for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;const child=target?.querySelector?.(':scope > details.article-case');if(child)child.open=true;target?.scrollIntoView({behavior:'instant'})})}
+function restoreDocumentFragment(focusTarget=false){
+ const hash=location.hash;
+ if(!hash||hash.startsWith('#/'))return;
+ let id;
+ try{id=decodeURIComponent(hash.slice(1))}catch{return}
+ requestAnimationFrame(()=>{
+  if(location.hash!==hash)return;
+  const target=document.getElementById(id);
+  if(!target)return;
+  for(let node=target;node;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
+  const child=target.querySelector?.(':scope > details.article-case');
+  if(child)child.open=true;
+  if(focusTarget){
+   if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');
+   target.focus({preventScroll:true});
+  }
+  target.scrollIntoView({behavior:'instant'});
+ });
+}
 const $ = s => document.querySelector(s);
 if ('scrollRestoration' in history) history.scrollRestoration='auto';
 const icons={terminal:'<path d="m5 7 5 5-5 5m8 0h6"/><rect x="2" y="3" width="20" height="18" rx="3"/>',server:'<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.1M7 17.5h.1M12 6.5h5M12 17.5h5"/>',network:'<rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4M5 16v-4h14v4"/>',cube:'<path d="m12 2 9 5v10l-9 5-9-5V7Zm0 10 9-5M12 12 3 7m9 5v10M7.5 4.5l9 5v5"/>',pulse:'<path d="M2 12h5l3-8 4 16 3-8h5"/>',chip:'<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4M18 9h4m-4 6h4"/>',layers:'<path d="m12 2 10 5-10 5L2 7Zm-10 10 10 5 10-5M2 17l10 5 10-5"/>',flask:'<path d="M9 2h6M10 2v7L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3L14 9V2M7 15h10"/>',book:'<path d="M12 5c-3-2-6-2-10-1v16c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v16"/>',check:'<path d="m5 12 4 4L19 6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};
@@ -142,10 +160,22 @@ function openSearch(){$('#search-dialog').showModal();$('#search-input').setAttr
 $('#search-open').onclick=startSearch;$('#search-close').onclick=()=>$('#search-dialog').close();
 let searchComposing=false;
 function startSearch(){searchComposing=false;openSearch()}
+function focusLocalSearchResult(href){
+ const target=new URL(href,location.href);
+ if(target.origin!==location.origin||target.pathname!==location.pathname||target.search!==location.search||!target.hash||target.hash.startsWith('#/'))return false;
+ $('#search-dialog').close();
+ if(location.hash!==target.hash)location.hash=target.hash;
+ restoreDocumentFragment(true);
+ return true;
+}
 $('#search-input').addEventListener('compositionstart',()=>{if($('#search-dialog').open){searchComposing=true;suspendSearch()}});
 $('#search-input').addEventListener('compositionend',e=>{if(searchComposing&&$('#search-dialog').open){searchComposing=false;search(e.target.value)}});
 $('#search-input').addEventListener('input',e=>{if($('#search-dialog').open&&!searchComposing&&!e.isComposing)search(e.target.value)});
-$('#search-dialog').addEventListener('click',e=>{if(e.target===$('#search-dialog'))$('#search-dialog').close();if(e.target.closest('.search-result'))$('#search-dialog').close()});
+$('#search-dialog').addEventListener('click',e=>{
+ const dialog=$('#search-dialog'),result=e.target.closest('.search-result');
+ if(result&&!e.defaultPrevented&&e.button===0&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey&&focusLocalSearchResult(result.href))e.preventDefault();
+ else if(result||e.target===dialog)dialog.close();
+});
 $('#search-dialog').addEventListener('close',()=>{
  if($('#search-dialog').open)return;
  searchComposing=false;
@@ -159,7 +189,9 @@ $('#search-input').addEventListener('keydown',e=>{
   $('#search-input').setAttribute('aria-activedescendant','site-search-'+searchIndex);
   document.querySelectorAll('.search-result').forEach((a,i)=>{a.classList.toggle('selected',i===searchIndex);a.setAttribute('aria-selected',String(i===searchIndex));if(i===searchIndex)a.scrollIntoView({block:'nearest'})});
  }else if(e.key==='Enter'&&searchItems.length){
-  e.preventDefault();const result=searchItems[Math.max(0,searchIndex)];location.assign(learningContextHref(hostedPath(result.path)+(result.anchor?'#'+result.anchor:'')));$('#search-dialog').close();
+  e.preventDefault();
+  const result=searchItems[Math.max(0,searchIndex)],href=learningContextHref(hostedPath(result.path)+(result.anchor?'#'+result.anchor:''));
+  if(!focusLocalSearchResult(href)){location.assign(href);$('#search-dialog').close();}
  }
 });
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();if($('#search-dialog').open)$('#search-dialog').close();else startSearch()}});

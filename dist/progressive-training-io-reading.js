@@ -162,6 +162,8 @@
  p('文档 B 的第一个词元在物理位置 3。如果只有普通因果 mask，它可以读取 A 的三个位置和自己；文档内因果 mask 则只允许它读取自己。这是可见范围的区别。把跨文档 label 忽略，仅改变该预测位置是否计入损失，并不会自动阻止 B 的其他预测读取 A；两层机制都要与训练目标一致。',
  '位置编号是第三层。本数值参考给 token 向量加上与绝对位置有关的固定向量，因此 B 的位置从 0、1 开始，才能与逐文档独立计算相同。若改为 3、4，输入向量本身已经变化。这个结论针对程序定义的数学；真实 RoPE 或其他位置机制，应根据其平移性质、缩放方式、内核实现和模型契约核对，不能仅用“是否归零”作通用判据。',
  '跨文档连续训练也可以是有意定义的任务，此时应按那份目标设置边界。比较 packing 前后时，先固定语义，再核对模型输出、有效 label 与损失分母。只看到 padding 比例下降，还不能推出训练质量等价或真实速度按同样比例提升。')+
+ p('用一份独立的 CPU 实跑核对组批之后的变化。它逐位置分类，每个位置有 32 项输入。补齐时，<code>aten::linear</code> 收到 [8,128,32]，即 1,024 个位置。忽略填充标签后，只有 352 个目标进入损失。另一条路径在前向之前用 <code>aten::index</code> 筛出有效行，线性层收到 [352,32]。两条路径都除以 352，记录里的完整梯度与更新后权重逐项相同。',
+ '复跑时，在导出的两份轨迹里找 <code>aten::linear</code> 事件，查看 <code>Input Dims</code> 的第一项。再对照结果里的 <code>forward_rows</code> 和 <code>denominator</code>，分别核对算子处理的行数与损失采用的分母。<a href="/article/training-performance/#cpu-useful-token-throughput">查看完整更新和分母错误的反例 →</a>')+
  fold('数据提前结束时怎样处理',p('文档结束、固定长度块结束和整个数据源结束是三种边界。数据中提前出现 EOS 是否结束当前文档，由数据构建规则决定；普通 DataLoader 不会按这个词元编号自动停止读取。源提前读完时，当前未满块可以按任务选择交付变长输入、填充并遮罩、丢弃，或暂存残余与后续文档继续打包；选择会改变覆盖、有效目标数和恢复所需状态。若填入 EOS 或 padding，也要明确其位置究竟是实际训练目标还是纯占位。',
  '某个 rank 的源先结束，还要回到上一节的批次与同步协议。若打包器缓存了半篇文档、部分词元或未交付的残余，这些内容属于输入进度的一部分，后面保存消费游标时不能只记录文件名。')),
 
@@ -215,7 +217,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
   '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
- data.updated='2026.11.11';
+ data.updated='2026.11.12';
 
  const overlap = comm.sections[4];
  overlap[1] = overlap[1].replace('才会缩短这一轮。</p>', '$&' +

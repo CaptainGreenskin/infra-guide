@@ -409,9 +409,11 @@
       "id": "gitops-reconciliation",
       "targets": [
         "gitops-native-run",
-        "gitops-response-evidence"
+        "gitops-response-evidence",
+        "gitops-config-input-path"
       ],
       "visible_targets": [
+        "gitops-config-input-path",
         "gitops-response-evidence",
         "gitops-native-run"
       ]
