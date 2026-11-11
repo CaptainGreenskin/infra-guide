@@ -1007,7 +1007,7 @@ const cloudRoleSources = [
 const cloudCoverageRows=[
  ['前置','语言、算法与并发','有依赖图、最大栈与并发机制练习。','主力语言的运行时、网络编程及更多限时编码仍需专项训练。',['concurrency-pools'],'coding'],
  ['前置','Linux 与系统机制','有进程资源、虚拟内存、cgroup 与锁的详解和本地程序。','内核 tracing、调度器源码和生产内存故障不由这些实验覆盖。',['linux-resource','virtual-memory-oom']],
- ['C1','计算、虚拟化与故障域','有系统知识、规格与容量推导。<br><a href="/article/cloud-compute/#vm-vcpu-diagnosis">Linux 虚拟机排查示例 →</a>','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
+ ['C1','计算、虚拟化与故障域','从 vCPU 规格推导容量，再实跑 QEMU 查询宿主线程，对照 Linux 上有无 CPU 竞争的排队。<br><a href="/article/cloud-compute/#vm-vcpu-diagnosis">Linux 虚拟机排查步骤 →</a> · <a href="/article/cloud-compute/#native-qemu-vcpu">QMP 与 schedstat 实跑 →</a>','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
  ['C2','云网络与协议','讲 VPC、DNS、路由、NAT 和 TCP。Linux 上实测边缘触发通知与应用队列。本机 HTTP 代理实测上游连接复用、后端排空和重试后的写入结果。<br><a href="/article/tcp-event-loop/#native-epoll-run">读通知与队列 →</a> · <a href="/article/vpc-network/#cloud-proxy-run">代理请求实跑 →</a>','实跑使用受控管道、套接字和本机代理。云转发、BGP/IPv6、MTU/conntrack 与生产网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
  ['C3','存储、数据库与缓存','讲事务日志、复制和恢复点。MySQL 实测崩溃恢复、复制应用与两实例计划切换，并对照 RR、RC 两种隔离级别读到的数据版本。PostgreSQL 17 用同一份基础备份恢复到具名点或归档末尾，并验证缺少目标日志段时恢复失败。另有 SQLite 和附件恢复。<br><a href="/article/storage-recovery/#native-postgres-pitr">PostgreSQL 实跑与 SQL 结果 →</a>','数据库实跑限于本地隔离实例与本地文件归档。远端归档、生产自动故障切换、物理断电和跨区恢复需要另行验收。',['database-index-locks','cache-consistency','storage-recovery','mysql-recovery','mysql-replication']],
  ['跨域','分布式协调与消息','讲超时、幂等与事件确认；真实etcd三成员实验验证多数派与历史观察，RabbitMQ单节点验证提交后重投、过早ACK和业务效果。','Raft算法实现、Kafka/RocketMQ与再均衡仍需专项；同宿主etcd及单节点RabbitMQ不代表跨物理故障域高可用已验收。',['distributed-systems','message-delivery']],

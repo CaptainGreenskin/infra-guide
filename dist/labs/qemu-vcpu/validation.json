@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "experiment": "QEMU vCPU and Linux run-queue observation",
+  "origin": {
+    "linux_run_url": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/42966772719",
+    "linux_source_commit": "8d1be31eb5dd7cea17477ec366f08eb0301ce896",
+    "linux_artifact": "native-qemu-vcpu/linux.json",
+    "darwin": "Local QEMU 11.0.0 on macOS ARM64"
+  },
+  "scope": {
+    "accelerator": "tcg,thread=multi",
+    "guest_os": false,
+    "kvm": false,
+    "production_workload": false
+  },
+  "source_sha256": {
+    "README.md": "a6a3c6a0c13bbcbafccba81e44bc70e19af48dd303316d13fcc97efa27e4f65e",
+    "vcpu_probe.py": "0ebd36007baa5a5036221dab0f971732a437b046bdfa829770f3e3726270aafc",
+    "linux-observation.json": "c61aa42b14af6267c0031d985f2f5442604796e2545a6371c3a2acfa45d03494",
+    "darwin-observation.json": "4694b2165876eeaa0dc07c12bb7c59852d8078061d57a1d3d638953e51d5e669"
+  }
+}

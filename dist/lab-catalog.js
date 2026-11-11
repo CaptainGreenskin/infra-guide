@@ -1,5 +1,6 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
  'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
  'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
  'model-plan-revision':{folder:'model-plan-revision',title:'模型发现缺项后的计划、审批和恢复'},
@@ -133,6 +134,7 @@ const labTrackCatalog={
 };
 const labLearningCatalog=[
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
+ {id:'cloud-qemu-vcpu',track:'cloud',stage:2,title:'vCPU 运行得慢，时间花在执行还是排队',chapter:'cloud-compute',anchor:'native-qemu-vcpu',pack:'qemu-vcpu',files:['vcpu_probe.py'],env:'Python 3.8+ · QEMU · Linux schedstats',kind:'真实 QEMU 和 Linux 宿主线程记录',observe:'从 QMP 的顶层 thread-id 找到 Linux schedstat，算出加入竞争前后的执行与排队增量。',scope:'Linux TCG 测量与 macOS QMP 对照。KVM、客户机和业务吞吐另验。'},
  {id:'cloud-foundations',track:'cloud',stage:0,title:'按需补：内存、锁、SQL 与缓存',chapter:'virtual-memory-oom',pack:'textbook-examples',folder:'cloud-foundations',files:['virtual-memory-oom.py','concurrency-pools.py','database-index-locks.py','cache-consistency.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'基础模型与 SQL',observe:'分别对照内存事件、锁排队、查询计划和旧缓存回填；不要把四个小程序当成同一个系统。',scope:'SQL 真实执行；内存与排队等使用明确的教学模型。'},
  {id:'cloud-framing',track:'cloud',stage:1,title:'一次 recv 不等于一条消息',chapter:'network-diagnosis',pack:'learning-mechanisms',files:['tcp_framing.py'],env:'Python 3.9+ · 标准库',kind:'本机 TCP',observe:'实际分段发送中文消息，再按长度解帧；半关闭后仍能收到响应。',scope:'回环连接，不测物理链路、丢包或拥塞窗口。'},
  {id:'cloud-backpressure',track:'cloud',stage:1,title:'发送缓冲满后，谁在等待',chapter:'network-diagnosis',pack:'compute-and-transport',files:['socket_backpressure.py'],env:'Python 3.9+ · 标准库',kind:'本机 TCP',observe:'暂停接收、观察短写与阻塞，再排空并核对全量字节摘要。',scope:'应用与套接字背压实测；不把发送成功解释为对端已处理。'},

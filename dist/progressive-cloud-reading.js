@@ -82,12 +82,23 @@ const progressiveCloudSectionTitles={
  '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。')+
  h('vm-vcpu-diagnosis','虚拟机变慢，先查 vCPU 在哪等')+p(
  '同样的订单查询突然变慢。先看请求是在算，还是在等锁或数据库。如果应用有工作要算，就在 Linux 客户机对照两个等长窗口的 <code>steal</code> 增量，一个是正常期，一个是变慢时。支持这项记账的虚拟化环境用它记录 vCPU 未获得宿主执行时间的情况。变慢时的增量明显变大，就继续查宿主。读数一直为零时，先确认平台是否提供这项统计。',
- '在有权限的 Linux 宿主上，用 QEMU 管理协议 QMP 查询 <code>query-cpus-fast</code>。假设一条结果的 <code>cpu-index</code> 是 2，顶层 <code>thread-id</code> 是 18240，就到宿主查线程 18240。这里的 2 是 QEMU 的 vCPU 编号。要与客户机 Linux 的 <code>cpuN</code> 逐核对齐，还要按实际虚拟拓扑核对。',
- '对同一个宿主线程读两次 <code>schedstat</code>。前两列分别累计 CPU 执行时间和运行队列等待时间，单位都是纳秒。队列等待指线程已经可以运行，却仍在等 CPU。下面是间隔约一秒的演算，宿主内核需启用对应的调度统计。')+
- table(['计数','第一次','第二次','增量'],[['CPU 执行','8,000,000,000 ns','8,350,000,000 ns','350 ms'],['运行队列等待','120,000,000 ns','670,000,000 ns','550 ms']])+p(
- '接着从这个线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级的 CPU 时间配额发生了限流。沿目录向上查父组，父组耗尽配额也会影响该线程。若各级都没出现配额限流，但运行队列等待明显增加，就查该线程允许使用哪些宿主 CPU，以及这些 CPU 上还有谁在争用。')+
+ '有 Linux 宿主权限时，通过 QEMU 的管理协议 QMP 执行 <code>query-cpus-fast</code>。结果里的 <code>cpu-index</code> 给出虚拟机中的 vCPU 编号，顶层 <code>thread-id</code> 用来定位宿主线程。嵌在 <code>props</code> 里的同名字段属于虚拟拓扑。要与客户机 Linux 的 <code>cpuN</code> 逐核对应，还需核对虚拟拓扑。')+
+ h('native-qemu-vcpu','实跑：vCPU 0 为什么多等了约 750 毫秒')+p(
+ '实验启动一个双 vCPU 的 QEMU 实例。Linux 上，QMP 将 vCPU 0 指到线程 3008，将 vCPU 1 指到线程 3009。两者在 <code>/proc/3005/task/</code> 下都能找到，<code>Tgid</code> 均为 3005，也就是 QEMU 的进程号。接着只追 vCPU 0，将线程 3008 限定在宿主 CPU 3。',
+ '让 vCPU 0 持续执行一条跳回自身的指令。两轮都用相同指令，第二轮只增加一个同样绑定到 CPU 3 的运算进程。每轮在起止时读取线程 3008 的 <code>schedstat</code>，前两列依次累计执行时间和运行队列等待时间，单位是纳秒。后者表示线程已经可以运行，却还在等 CPU。')+
+ trainingFigure('qemu-vcpu-scheduling','同一个 Linux vCPU 线程的两轮实测。加入同一逻辑 CPU 的竞争进程后，一部分执行时间变成了运行队列等待时间。')+
+ table(['约 1.5 秒的窗口','vCPU 线程执行','vCPU 线程排队'],[
+  ['未加竞争进程','1,499.795 ms','0.200 ms'],
+  ['加入同一逻辑 CPU 的竞争进程','750.397 ms','749.599 ms']
+ ])+p(
+ '第二轮的等待累计值从 127,161,643 增至 876,760,540 纳秒，差值是 749,598,897 纳秒，约 749.599 毫秒。竞争进程这段时间自身执行了约 749.484 毫秒。只看墙钟，两轮一样长。查到同一个线程，才看得出时间花在执行还是排队。',
+ '实际诊断还要从线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级发生了配额限流，父组耗尽配额也会影响该线程。若各级都没出现限流，但运行队列等待明显增加，就核对该线程的 CPU 亲和性，以及同一颗 CPU 上有哪些竞争者。')+
+ '<details><summary>复跑 QMP 查询和两轮采样</summary>'+p(
+ 'Ubuntu 24.04 的 <code>qemu-system-arm</code> 包提供所需的 QEMU。先用 <code>sysctl kernel.sched_schedstats</code> 确认值为 1。将实验包解压，运行 <code>python3 -B vcpu_probe.py &gt; local-observation.json</code>，再比较记录中的 <code>alone</code> 与 <code>same_cpu_contender</code>。脚本只调整它启动的线程与竞争进程的 CPU 亲和性。',
+ '这份 Linux 记录来自 QEMU 8.2.2 的 TCG 软件模拟。另一次 macOS 上的 QEMU 11.0.0 观察，两颗 vCPU 的顶层 <code>thread-id</code> 都返回 QEMU 进程号。该版本在 Darwin 上用 <code>getpid()</code> 填值，因此两值相等无法说明两个 vCPU 共用线程。实验用一条指令观察宿主调度，KVM、客户机 <code>steal</code> 和业务吞吐需另测。')+
+ '<p class="practice-links"><a href="/labs/qemu-vcpu.zip" download>下载源码与两份记录 ↓</a> · <a href="/labs/qemu-vcpu/linux-observation.json">Linux 原始读数 →</a> · <a href="/labs/qemu-vcpu/darwin-observation.json">macOS QMP 记录 →</a> · <a href="/labs/qemu-vcpu/README.md">复跑说明 →</a></p></details>'+
  '<details><summary>有宿主权限时的只读命令</summary><p>在客户机读 <code>cat /proc/stat</code>。行首的 CPU 名称后，第八个数是 <code>steal</code>，比较同一行两次读数的增量。</p><p>宿主已有 libvirt 时，把 <code>VM</code> 设为目标虚拟机名，运行 <code>virsh qemu-monitor-command "$VM" query-cpus-fast</code>。用实际 QEMU 进程号和返回的顶层线程号填写 <code>PID</code>、<code>TID</code>。</p><p>读 <code>cat /proc/$PID/task/$TID/cgroup</code>，取 cgroup v2 的 <code>0::</code> 后面的路径，接到宿主的 cgroup v2 挂载点上，设为 <code>CG</code>。在同一观察窗口的开始和结束，分别执行 <code>cat /proc/$PID/task/$TID/schedstat</code> 与 <code>cat "$CG/cpu.max" "$CG/cpu.stat"</code>。核对父组时按同样的间隔取样。</p></details>'+
- '<p>这段是虚拟机的排查示例。C8 的 Linux 容器实跑可用来练习读配额记录，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
+ '<p>上面的对照增加了同一逻辑 CPU 上的竞争。C8 另用 Linux 容器改变 CPU 配额，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
  '<p class="source-at"><a href="https://qemu.readthedocs.io/en/master/interop/qemu-qmp-ref.html#:~:text=query-cpus-fast">QEMU vCPU 查询 ↗</a> · <a href="https://libvirt.org/manpages/virsh.html#qemu-monitor-command">libvirt 查询命令 ↗</a> · <a href="https://docs.kernel.org/scheduler/sched-stats.html#proc-pid-schedstat">Linux 调度计数 ↗</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">cgroup v2 的 CPU 接口 ↗</a></p>',
  h('subsection-3-15h236x','虚拟地址、内存位置与设备队列')+p(
  '应用用虚拟地址访问内存。VM 内先由客户机页表关联到客户机物理地址，虚拟化层再将它关联到宿主物理页面。x86 的 EPT/NPT 等二阶段分页承担相应映射；TLB 这类地址转换缓存使常用映射可以复用，实际成本还受页大小和硬件路径影响。',
@@ -128,7 +139,7 @@ const progressiveCloudSectionTitles={
  '至此得到的是单份查询工作的资源模型。接下来的网络章会把这里统称的远端等待拆成解析、连接、代理与传输；后续容量章再加入扩容何时生效、丢失故障域后剩多少能力。')+link('vpc-network','沿同一查询展开网络往返')+link('elasticity','把单副本容量放入扩容与故障预算')
  ]);
 
- compute.updated='2026.11.10';
+ compute.updated='2026.11.11';
 
  const kube=select('kubernetes-basics',['声明三个副本之后，哪一步已经完成','调度完成与 kubelet 能运行是两道门','三个探针要分别回答不同的问题','EndpointSlice 表达的是后端条件','删除事件开始了，旧连接还有多久','应用信号、集群条件和真实流量分别验证','验收：从证据倒推下一次检查']);
  const k=kube.sections.map(s=>s[1]);

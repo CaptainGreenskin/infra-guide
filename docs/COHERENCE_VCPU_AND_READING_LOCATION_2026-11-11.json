@@ -1,0 +1,142 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "c0bd253c23ffc9a5274fe5dd2a630176224a229b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_EXECUTION_HANDOFFS_2026-11-11.json": "3b8bd6ba560a79a8aebd88b524e62af07540f9219cb789370b0246c80f05e5ed"
+  },
+  "source_revisions": {
+    "dist/progressive-cloud-reading.js": {
+      "previous_sha256": "3fef67caba719baf8c2ca5def2d89b89265afe01fa6f8c3b2db5be3d87118e25",
+      "reviewed_sha256": "8798cd6fff238d9dcd3474c27c86b6abd4a9ebefb44bba7036664789bbf644cd",
+      "scope": "Replace hypothetical vCPU scheduling counts with actual QMP/procfs thread mapping and two controlled Linux windows."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "87e07d028d0adb68a671ae62fd4dbfc72500292abaa94107274da92653e68401",
+      "reviewed_sha256": "31620ea05fe9ef2464825c7f92eba70cfc5b60170aabad73d0e6921e409a9428",
+      "scope": "Connect exact resume checks to the archived single-card RTX process recovery."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "0c7e6452c3096636976c782bcd475f821e474cba821b4c14c76914da956833b7",
+      "reviewed_sha256": "bc1c12fcba99871cc03ff9dbec23e995ce619c84d51faaef20a52ef1dc92f73f",
+      "scope": "Resolve the reading position inside open optional experiments in the existing desktop and mobile tables of contents."
+    },
+    "dist/cloud-coverage.js": {
+      "previous_sha256": "418d71d4521fa1a3e60a42ba661fcc50f508bb69e747c5172b458329b8da8cbd",
+      "reviewed_sha256": "0afca9d43de5dbd349db15648f3858493052d2d805214b4c9991997e4b385da0",
+      "scope": "Link compute coverage to the real host thread observation."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "1c062127b0f80f7d0440d6723b66cfcb0da57008051444f33d563e40b8ef8b44",
+      "reviewed_sha256": "576b5b71abe7c4be06317df5535bcc15ffec82ed9f9db38dc6ad648823f1aca5",
+      "scope": "Connect role criteria to the exact QMP and single-card recovery sections."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9889c1c1c48215fcba4a7b1ddaf6c0a0532db2e68ff5cde7620bcaaa5fb2743f",
+      "reviewed_sha256": "0c2190570ef0d5473faa0f2f710172198af1338a8b12d267938f988df84f07d5",
+      "scope": "Connect the QMP experiment package and source to its rendered lesson."
+    },
+    "dist/diagrams/qemu-vcpu-scheduling.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "458a50e1492196445b155ef01b8e6f16ca52e04da416a5eb5fcf4330103e04d3",
+      "scope": "Draw the two CPU execution and queue-wait windows from the recorded deltas."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "882c10092cc03f7371f8baf6abdd12f413730a82d4413bd1aea191edb4d9c0da",
+      "reviewed_sha256": "44dfe9d70ac0cbd8c123d9c9196841e94df685bb09da3cb461e78a220c204c81",
+      "scope": "Record intrinsic dimensions for the QMP teaching figure."
+    },
+    "dist/labs/qemu-vcpu.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "646ee2b9b50f51dcc1b36c90f8c0a93ff9f5128c489d74f8bfc007d1aca5a580",
+      "scope": "Package the original program, instructions and raw Linux and Darwin observations."
+    },
+    "dist/labs/qemu-vcpu/vcpu_probe.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0ebd36007baa5a5036221dab0f971732a437b046bdfa829770f3e3726270aafc",
+      "scope": "Observe QMP and Linux thread scheduling using a local, owned QEMU process."
+    },
+    "dist/labs/qemu-vcpu/linux-observation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c61aa42b14af6267c0031d985f2f5442604796e2545a6371c3a2acfa45d03494",
+      "scope": "Keep the byte-exact CI Linux observation."
+    },
+    "dist/labs/qemu-vcpu/darwin-observation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4694b2165876eeaa0dc07c12bb7c59852d8078061d57a1d3d638953e51d5e669",
+      "scope": "Keep the byte-exact QEMU 11.0 Darwin observation."
+    },
+    "dist/labs/qemu-vcpu/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6d8844958e0334642af68a95ca9b11887b63c62df52e06821756b7f44f8e96ea",
+      "scope": "Bind the immutable workflow origin, source and raw records."
+    },
+    "dist/labs/qemu-vcpu/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a6a3c6a0c13bbcbafccba81e44bc70e19af48dd303316d13fcc97efa27e4f65e",
+      "scope": "Describe the supported conditions and procedure for reproducing the experiment."
+    },
+    ".github/workflows/qemu-vcpu.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0a51ecba384a96c5a48d781a6de73e736838ce36763d3dfb522f150cc18bd1e9",
+      "scope": "Run the source on isolated Ubuntu 24.04 with real QEMU and Linux scheduling statistics."
+    },
+    "scripts/check-qemu-vcpu.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f1a41d2eb0e185c05e1e4a69d059b438706566c1ec980cb90a594095bf102651",
+      "scope": "Recompute identity, elapsed-time and scheduler counters, bind the diagram and verify the original ZIP."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "4e4483bbc3055f03257eb36409466a4195c43bc3fc8477cbb305cd5f97676331",
+      "reviewed_sha256": "ceb537c385e88209b6c90c15e384547bb69bdd661f74691ef6faf996a68f6ec9",
+      "scope": "Run the QMP record check during normal site verification."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "a6e3455041dc9f3a85b30267b0df4515be6accac1924dfbf075b9d226a2ebd68",
+      "reviewed_sha256": "d85985f0e05e26ba90c61eb8aac58391e04f8204b45fb2e0dcbca65ca4487c28",
+      "scope": "Check the new SRE and training links in both root and project paths."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "7d7bbbc23981d95985e8b3e165e72d6b7900405be40c432f704507119fcf3950",
+      "reviewed_sha256": "14bf09f22fe658a7a6e55461bba78870265ed0e8800d0ea8350ed90598da5219",
+      "scope": "Fingerprint the lightweight reader and search data for the exact revised pages."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "9b67a39949c414535bdac092d3528e32806680f49d2b54624551e2bb8c4a3a4b",
+      "reviewed_sha256": "50c39a433f2ff035894a8149f82c0f6d15405f39d50a6d180f897c954059f071",
+      "scope": "Fingerprint the shared renderer and reviewed chapter sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "95aadbc5c421bd5d654f88e046e9d80c2e3225fc60d44827ec07657424e2129d",
+      "reviewed_sha256": "685ae682079f05f5ce8a2082b57ddaa3364e4b27d9ba216addfa88870480f922",
+      "scope": "Record the new visible QMP and optional single-card anchors."
+    },
+    "docs/CONTENT_VCPU_AND_READING_LOCATION_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2b01221ee9c6d79b314488475f97e59fdb774e7f38ecf1678c49ebd2eb3efe15",
+      "scope": "Record the two reviewed chapters and QMP evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "884986dd0a7fac4a0f5d8226cb2b12885d2da21ff6e7df54fc91f365f2beb6db",
+      "reviewed_sha256": "1a5e2eae8aee9c57d664a302b2a7a38eaed65f3fc539f54660da1f124e645de1",
+      "scope": "Append the body reviews."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "8e36d0530f07a076c32e87c902b86089d7169f6818df9c125e62db07e888e3da",
+      "reviewed_sha256": "5a1459cca8a8d25895b535fbe6167ba638bd60b23a8580f7a14e624d98237106",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "c0bd253c23ffc9a5274fe5dd2a630176224a229b",
+    "chapters": 78,
+    "changed_bodies": [
+      "cloud-compute",
+      "checkpoint-recovery"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

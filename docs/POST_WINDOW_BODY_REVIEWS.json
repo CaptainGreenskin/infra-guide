@@ -6579,6 +6579,46 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "cloud-compute",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "ad2c7aecaec91882f2eab55028475f61f6026481f18cdc48ba44f3fbd105c939",
+      "reviewed_content_sha256": "3baa6826718ea46e56a55374c1e0d7956bfe74ff82fbac784ab89ce78ab2b148",
+      "scope": "Replace hypothetical vCPU scheduling counts with actual QMP/procfs thread mapping and two controlled Linux windows.",
+      "observation": "Same CPU contention changes run-queue wait from 0.200 to 749.599 ms; Darwin uses a separate QMP PID observation. No KVM or guest OS execution is measured.",
+      "headings": [
+        "计算形态：裸金属、虚拟机与容器",
+        "vCPU资源保证：核心、线程、超分与持续能力",
+        "内存与设备：地址转换、NUMA和I/O路径",
+        "突发性能：CPU积分与持续负载",
+        "规格问题先要有一份工作说明",
+        "CPU 秒、墙钟秒和利用率的单位",
+        "平均工作量会随输入分布移动",
+        "在途数量怎样转化成活动状态和内存",
+        "吞吐上界由最紧的资源决定",
+        "压测怎样避免“自己把流量降下来了”",
+        "实测：CPU时间、等待与线程",
+        "验收：把四核写成待验证的候选"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "f65a0dcab51cd637bdf0d4c80c2ac3b307f37060c43c34b8ad10475c25679cf2",
+      "reviewed_content_sha256": "50dc2c9ac3ac3a75723bc3a462d6df05fce4ef13b9483b097366b5b1ee21759e",
+      "scope": "Connect exact resume checks to the archived single-card RTX process recovery.",
+      "observation": "The first pair diverged before stopping; a combined deterministic rerun then matched adapter, optimizer, loss and RNG. Original immutable evidence is linked.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
     }
   ]
 }

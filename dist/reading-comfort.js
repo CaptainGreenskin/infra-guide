@@ -41,20 +41,32 @@ function initReadingComfort(){
  buttons.large.addEventListener('click',()=>change('large'),{signal});
  buttons.focus.addEventListener('click',()=>change('focus'),{signal});
 
- const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id],.chapter-lab-links[id],.article-section h3[id],.article-section h4[id]')].filter(el=>el.matches('h3,h4')?!el.closest('details'):el.querySelector('h2,summary'));
+ const navLinks=[...document.querySelectorAll('.toc a')];
+ const desktopTargets=new Map(navLinks.filter(link=>link.dataset.toc).map(link=>[link.dataset.toc,link]));
+ const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id],.chapter-lab-links[id],.article-section h3[id],.article-section h4[id]')].filter(el=>el.matches('h3,h4')?desktopTargets.has(el.id)||!el.closest('details'):el.querySelector('h2,summary'));
+ // Authored details can have public fragments without adding entries to the outline.
+ const optionalDetails=[...article.querySelectorAll('.article-section[id] details:not(.article-case)')]
+  .filter(detail=>detail.id||detail.querySelector('h3,h4,[id]'))
+  .map(detail=>({detail,section:detail.closest('.article-section[id]'),summary:detail.querySelector(':scope > summary')}));
  const directory=document.createElement('dialog');
  directory.className='reader-dialog reader-directory';
  directory.setAttribute('aria-labelledby','reader-directory-title');
  directory.innerHTML='<div class="reader-dialog-head"><h2 id="reader-directory-title">本页目录</h2><button type="button" data-reader-close aria-label="关闭目录">关闭 <span aria-hidden="true">×</span></button></div><nav class="reader-directory-links" aria-label="本页知识点"></nav>';
  const directoryNav=directory.querySelector('nav');
+ const directoryCaseLinks=[];
  for(const section of sections){
   const link=document.createElement('a');
-  const desktopTarget=document.querySelector('.toc a[data-toc="'+section.id+'"]');
+  const desktopTarget=desktopTargets.get(section.id);
   link.href=desktopTarget?.getAttribute('href')||location.pathname+location.search+'#'+section.id;
   const heading=section.matches('h3,h4')?section:section.querySelector('h2,summary');
   link.textContent=((section.id==='concept-path'||section.matches('.chapter-lab-links'))?desktopTarget||heading:heading).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
   link.dataset.readerTarget=section.id;
   if(section.matches('h3,h4'))link.classList.add('reader-subheading-'+section.tagName.slice(1));
+  const caseBody=section.closest('details.article-case');
+  if(caseBody){
+   link.hidden=!caseBody.open;
+   directoryCaseLinks.push({link,caseBody});
+  }
   link.addEventListener('click',event=>{event.preventDefault();closeModal(directory);history.pushState(null,'',link.getAttribute('href'));
    // A directory target may live inside the optional practice/further-reading block.
    // pushState does not fire hashchange, so reveal it before attempting to scroll.
@@ -92,7 +104,6 @@ function initReadingComfort(){
  }
  signal.addEventListener('abort',()=>{directory.close();directory.remove();unlockModal();},{once:true});
 
- const navLinks=[...document.querySelectorAll('.toc a')];
  function linkTarget(link){const url=new URL(link.href,location.href),section=url.searchParams.get('section'),id=url.hash?decodeURIComponent(url.hash.slice(1)):section?(/^\d+$/.test(section)?'section-'+section:section):'';if(url.pathname!==location.pathname&&!article.contains(document.getElementById(id)))return '';return id;}
  const targets=new Map(navLinks.map(link=>[link,linkTarget(link)]));
  const directoryLinks=[...directoryNav.querySelectorAll('[data-reader-target]')];
@@ -101,13 +112,30 @@ function initReadingComfort(){
   queued=false;
   const edge=toolbar.getBoundingClientRect().bottom+48;
   let active=sections[0]?.id||'';
-  for(const section of sections){if(!section.getClientRects().length)continue;if(section.getBoundingClientRect().top<=edge)active=section.id;else break;}
+  for(const section of sections){if(section.closest('details:not([open])')||!section.getClientRects().length)continue;if(section.getBoundingClientRect().top<=edge)active=section.id;else break;}
+  const optional=optionalDetails.find(({detail,summary})=>!detail.closest('details:not([open])')&&detail.getClientRects().length&&
+   (summary||detail).getBoundingClientRect().bottom<=edge&&detail.getBoundingClientRect().bottom>edge);
+  if(optional)active=optional.section.id;
+  for(const {link,caseBody} of directoryCaseLinks)link.hidden=!caseBody.open;
   if(active===lastActive)return;lastActive=active;
-  for(const link of navLinks){const current=targets.get(link)===active;link.classList.toggle('active',current);if(current)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
+  for(const link of navLinks){
+   const current=targets.get(link)===active;
+   link.classList.toggle('active',current);
+   if(!current){link.removeAttribute('aria-current');continue;}
+   link.setAttribute('aria-current','location');
+   const caseGroup=link.closest('.chapter-toc-case-details');
+   if(caseGroup){
+    caseGroup.open=true;
+    const toc=caseGroup.closest('.toc'),frame=toc.getBoundingClientRect(),item=link.getBoundingClientRect();
+    if(item.top<frame.top)toc.scrollTop+=item.top-frame.top;
+    else if(item.bottom>frame.bottom)toc.scrollTop+=item.bottom-frame.bottom;
+   }
+  }
   for(const link of directoryLinks){if(link.dataset.readerTarget===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
  }
  function schedule(){if(!queued){queued=true;requestAnimationFrame(updateCurrent);}}
  window.addEventListener('scroll',schedule,{passive:true,signal});
  window.addEventListener('resize',schedule,{passive:true,signal});
+ article.addEventListener('toggle',schedule,{capture:true,signal});
  schedule();
 }

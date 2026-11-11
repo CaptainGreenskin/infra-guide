@@ -36,12 +36,14 @@
         "subsection-3-15h236x",
         "subsection-4-1cchfaj",
         "subsection-11-ebzonr",
-        "vm-vcpu-diagnosis"
+        "vm-vcpu-diagnosis",
+        "native-qemu-vcpu"
       ],
       "visible_targets": [
         "subsection-1-5c7zcq",
         "subsection-2-zwfnk1",
         "vm-vcpu-diagnosis",
+        "native-qemu-vcpu",
         "subsection-3-15h236x",
         "subsection-4-1cchfaj",
         "subsection-11-ebzonr"
@@ -665,7 +667,8 @@
         "torch-checkpoint-path",
         "fsdp-dcp-reshard",
         "native-elastic-restart-step",
-        "native-async-dcp-commit"
+        "native-async-dcp-commit",
+        "single-gpu-recovery-contrast"
       ],
       "visible_targets": [
         "fsdp-dcp-reshard",

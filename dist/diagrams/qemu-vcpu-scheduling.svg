@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="430" viewBox="0 0 780 430" role="img" aria-labelledby="title desc">
+  <title id="title">vCPU 对应宿主线程，两轮对比线程执行和排队</title>
+  <desc id="desc">Linux QEMU 进程 3005 有两个 vCPU。QMP 报告 vCPU 0 对应宿主线程 3008，vCPU 1 对应 3009。把线程 3008 固定在宿主逻辑 CPU 3。未增加竞争时约执行 1499.795 毫秒，排队 0.200 毫秒。加入同一逻辑 CPU 的竞争进程后，执行 750.397 毫秒，排队 749.599 毫秒。</desc>
+  <metadata>{"record":"labs/qemu-vcpu/linux-observation.json","qemu_pid":3005,"vcpu_threads":[3008,3009],"observed_vcpu":0,"host_cpu":3,"execute_ns":[1499794834,750397173],"wait_ns":[200184,749598897],"elapsed_ns":[1500404313,1500234716]}</metadata>
+  <rect width="780" height="430" rx="18" fill="#f3f8fc"/>
+  <g font-family="system-ui,sans-serif" fill="#17304a">
+    <text x="30" y="45" font-size="26" font-weight="700">vCPU 0 的 1.5 秒花在哪里？</text>
+    <rect x="30" y="66" width="720" height="73" rx="12" fill="#e0ebf9"/>
+    <text x="48" y="97" font-size="21" font-weight="700">QMP 将 vCPU 0 对应到 Linux 宿主线程 3008</text>
+    <text x="48" y="123" font-size="19">两轮都让这个线程只在宿主逻辑 CPU 3 上运行。</text>
+    <text x="30" y="176" font-size="21" font-weight="700">未加竞争进程</text>
+    <rect x="30" y="190" width="719.90" height="32" rx="5" fill="#278277"/>
+    <text x="30" y="248" font-size="20">执行 1,499.795 ms</text>
+    <text x="406" y="248" font-size="20">排队 0.200 ms</text>
+    <text x="30" y="291" font-size="21" font-weight="700">加入同一逻辑 CPU 的竞争进程</text>
+    <rect x="30" y="306" width="360.19" height="32" rx="5" fill="#278277"/>
+    <rect x="390.19" y="306" width="359.81" height="32" rx="5" fill="#bf732f"/>
+    <text x="30" y="365" font-size="20">执行 750.397 ms</text>
+    <text x="406" y="365" font-size="20">排队 749.599 ms</text>
+    <text x="30" y="406" font-size="18">色块按 schedstat 增量绘制，0.200 ms 在图中不足 1 像素。</text>
+  </g>
+</svg>

@@ -4186,12 +4186,23 @@ const progressiveCloudSectionTitles={
  '超分是在共享资源上安排超过某一物理供给量的虚拟分配，利用不同客户机不同时繁忙的特点。持续竞争时，完成能力仍受物理供给约束；具体产品是否超分以及怎样保障资源，应读取其约定。同样 1 CPU 秒在不同架构上可能完成不同工作，因此后文估算使用目标环境中的单位请求成本。')+
  h('vm-vcpu-diagnosis','虚拟机变慢，先查 vCPU 在哪等')+p(
  '同样的订单查询突然变慢。先看请求是在算，还是在等锁或数据库。如果应用有工作要算，就在 Linux 客户机对照两个等长窗口的 <code>steal</code> 增量，一个是正常期，一个是变慢时。支持这项记账的虚拟化环境用它记录 vCPU 未获得宿主执行时间的情况。变慢时的增量明显变大，就继续查宿主。读数一直为零时，先确认平台是否提供这项统计。',
- '在有权限的 Linux 宿主上，用 QEMU 管理协议 QMP 查询 <code>query-cpus-fast</code>。假设一条结果的 <code>cpu-index</code> 是 2，顶层 <code>thread-id</code> 是 18240，就到宿主查线程 18240。这里的 2 是 QEMU 的 vCPU 编号。要与客户机 Linux 的 <code>cpuN</code> 逐核对齐，还要按实际虚拟拓扑核对。',
- '对同一个宿主线程读两次 <code>schedstat</code>。前两列分别累计 CPU 执行时间和运行队列等待时间，单位都是纳秒。队列等待指线程已经可以运行，却仍在等 CPU。下面是间隔约一秒的演算，宿主内核需启用对应的调度统计。')+
- table(['计数','第一次','第二次','增量'],[['CPU 执行','8,000,000,000 ns','8,350,000,000 ns','350 ms'],['运行队列等待','120,000,000 ns','670,000,000 ns','550 ms']])+p(
- '接着从这个线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级的 CPU 时间配额发生了限流。沿目录向上查父组，父组耗尽配额也会影响该线程。若各级都没出现配额限流，但运行队列等待明显增加，就查该线程允许使用哪些宿主 CPU，以及这些 CPU 上还有谁在争用。')+
+ '有 Linux 宿主权限时，通过 QEMU 的管理协议 QMP 执行 <code>query-cpus-fast</code>。结果里的 <code>cpu-index</code> 给出虚拟机中的 vCPU 编号，顶层 <code>thread-id</code> 用来定位宿主线程。嵌在 <code>props</code> 里的同名字段属于虚拟拓扑。要与客户机 Linux 的 <code>cpuN</code> 逐核对应，还需核对虚拟拓扑。')+
+ h('native-qemu-vcpu','实跑：vCPU 0 为什么多等了约 750 毫秒')+p(
+ '实验启动一个双 vCPU 的 QEMU 实例。Linux 上，QMP 将 vCPU 0 指到线程 3008，将 vCPU 1 指到线程 3009。两者在 <code>/proc/3005/task/</code> 下都能找到，<code>Tgid</code> 均为 3005，也就是 QEMU 的进程号。接着只追 vCPU 0，将线程 3008 限定在宿主 CPU 3。',
+ '让 vCPU 0 持续执行一条跳回自身的指令。两轮都用相同指令，第二轮只增加一个同样绑定到 CPU 3 的运算进程。每轮在起止时读取线程 3008 的 <code>schedstat</code>，前两列依次累计执行时间和运行队列等待时间，单位是纳秒。后者表示线程已经可以运行，却还在等 CPU。')+
+ trainingFigure('qemu-vcpu-scheduling','同一个 Linux vCPU 线程的两轮实测。加入同一逻辑 CPU 的竞争进程后，一部分执行时间变成了运行队列等待时间。')+
+ table(['约 1.5 秒的窗口','vCPU 线程执行','vCPU 线程排队'],[
+  ['未加竞争进程','1,499.795 ms','0.200 ms'],
+  ['加入同一逻辑 CPU 的竞争进程','750.397 ms','749.599 ms']
+ ])+p(
+ '第二轮的等待累计值从 127,161,643 增至 876,760,540 纳秒，差值是 749,598,897 纳秒，约 749.599 毫秒。竞争进程这段时间自身执行了约 749.484 毫秒。只看墙钟，两轮一样长。查到同一个线程，才看得出时间花在执行还是排队。',
+ '实际诊断还要从线程所属的 cgroup 读 <code>cpu.max</code> 和两次 <code>cpu.stat</code>。<code>nr_throttled</code> 增加说明这一级发生了配额限流，父组耗尽配额也会影响该线程。若各级都没出现限流，但运行队列等待明显增加，就核对该线程的 CPU 亲和性，以及同一颗 CPU 上有哪些竞争者。')+
+ '<details><summary>复跑 QMP 查询和两轮采样</summary>'+p(
+ 'Ubuntu 24.04 的 <code>qemu-system-arm</code> 包提供所需的 QEMU。先用 <code>sysctl kernel.sched_schedstats</code> 确认值为 1。将实验包解压，运行 <code>python3 -B vcpu_probe.py &gt; local-observation.json</code>，再比较记录中的 <code>alone</code> 与 <code>same_cpu_contender</code>。脚本只调整它启动的线程与竞争进程的 CPU 亲和性。',
+ '这份 Linux 记录来自 QEMU 8.2.2 的 TCG 软件模拟。另一次 macOS 上的 QEMU 11.0.0 观察，两颗 vCPU 的顶层 <code>thread-id</code> 都返回 QEMU 进程号。该版本在 Darwin 上用 <code>getpid()</code> 填值，因此两值相等无法说明两个 vCPU 共用线程。实验用一条指令观察宿主调度，KVM、客户机 <code>steal</code> 和业务吞吐需另测。')+
+ '<p class="practice-links"><a href="/labs/qemu-vcpu.zip" download>下载源码与两份记录 ↓</a> · <a href="/labs/qemu-vcpu/linux-observation.json">Linux 原始读数 →</a> · <a href="/labs/qemu-vcpu/darwin-observation.json">macOS QMP 记录 →</a> · <a href="/labs/qemu-vcpu/README.md">复跑说明 →</a></p></details>'+
  '<details><summary>有宿主权限时的只读命令</summary><p>在客户机读 <code>cat /proc/stat</code>。行首的 CPU 名称后，第八个数是 <code>steal</code>，比较同一行两次读数的增量。</p><p>宿主已有 libvirt 时，把 <code>VM</code> 设为目标虚拟机名，运行 <code>virsh qemu-monitor-command "$VM" query-cpus-fast</code>。用实际 QEMU 进程号和返回的顶层线程号填写 <code>PID</code>、<code>TID</code>。</p><p>读 <code>cat /proc/$PID/task/$TID/cgroup</code>，取 cgroup v2 的 <code>0::</code> 后面的路径，接到宿主的 cgroup v2 挂载点上，设为 <code>CG</code>。在同一观察窗口的开始和结束，分别执行 <code>cat /proc/$PID/task/$TID/schedstat</code> 与 <code>cat "$CG/cpu.max" "$CG/cpu.stat"</code>。核对父组时按同样的间隔取样。</p></details>'+
- '<p>这段是虚拟机的排查示例。C8 的 Linux 容器实跑可用来练习读配额记录，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
+ '<p>上面的对照增加了同一逻辑 CPU 上的竞争。C8 另用 Linux 容器改变 CPU 配额，窄配额组的限流计数增加 70，100 个请求中拒绝了 65 个。 <a href="/article/elasticity/#native-cpu-quota-http">对照 CPU 配额与逐请求记录 →</a></p>'+
  '<p class="source-at"><a href="https://qemu.readthedocs.io/en/master/interop/qemu-qmp-ref.html#:~:text=query-cpus-fast">QEMU vCPU 查询 ↗</a> · <a href="https://libvirt.org/manpages/virsh.html#qemu-monitor-command">libvirt 查询命令 ↗</a> · <a href="https://docs.kernel.org/scheduler/sched-stats.html#proc-pid-schedstat">Linux 调度计数 ↗</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">cgroup v2 的 CPU 接口 ↗</a></p>',
  h('subsection-3-15h236x','虚拟地址、内存位置与设备队列')+p(
  '应用用虚拟地址访问内存。VM 内先由客户机页表关联到客户机物理地址，虚拟化层再将它关联到宿主物理页面。x86 的 EPT/NPT 等二阶段分页承担相应映射；TLB 这类地址转换缓存使常用映射可以复用，实际成本还受页大小和硬件路径影响。',
@@ -4232,7 +4243,7 @@ const progressiveCloudSectionTitles={
  '至此得到的是单份查询工作的资源模型。接下来的网络章会把这里统称的远端等待拆成解析、连接、代理与传输；后续容量章再加入扩容何时生效、丢失故障域后剩多少能力。')+link('vpc-network','沿同一查询展开网络往返')+link('elasticity','把单副本容量放入扩容与故障预算')
  ]);
 
- compute.updated='2026.11.10';
+ compute.updated='2026.11.11';
 
  const kube=select('kubernetes-basics',['声明三个副本之后，哪一步已经完成','调度完成与 kubelet 能运行是两道门','三个探针要分别回答不同的问题','EndpointSlice 表达的是后端条件','删除事件开始了，旧连接还有多久','应用信号、集群条件和真实流量分别验证','验收：从证据倒推下一次检查']);
  const k=kube.sections.map(s=>s[1]);
@@ -10155,6 +10166,13 @@ future.result(timeout=35)
  p('会从 w=0.75、m=−8.75 接着算。第 2 步的梯度仍为 −7.25，动量更新为 −11.625，权重变成 3.65625。这是按同一公式推导的变体。')+'</details>'+
  p('解压后按包内命令跑两个本机进程。核对阶段标记、保存完成后的目录和实际读回值，再用一次更新区分两份检查点。本实验固定版本和 CPU 默认写入器，保存后的状态通过新建的模型和优化器加载。复制所需的额外内存和目标环境的吞吐另测。')+
  '<p class="practice-links"><a href="/labs/async-dcp-commit.zip" download>下载源码与复跑命令 ↓</a> · <a href="/labs/async-dcp-commit/validation.json">查看两个 rank 的状态与文件 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/staging.py#L91-L100">固定版暂存路径 ↗</a></p>';
+ const singleGpuResults='https://github.com/CaptainGreenskin/one-gpu-lm/blob/14dca34170e02832a2f36f04be471a0210bcb891/experiments/013-training-infrastructure/results/2026-11-09/';
+ recovery.sections[2][1]+=fold('单卡实测 · 第 4 步退出，恢复到第 12 步',
+  '<h3 id="single-gpu-recovery-contrast">从哪一步开始出现差异？</h3>'+
+  p('同一张 RTX PRO 6000 Blackwell 上，两组按同一顺序处理 12 条样本，底座权重固定，只训练附加的 LoRA 小矩阵。第一组连续更新 12 步，第二组在第 4 步完整保存后退出，新进程读回参数、优化器和随机状态，继续完成第 5–12 步。',
+  '首次配对读回的三项状态指纹都匹配。往前查日志，首步损失相同，梯度范数（衡量整组梯度的大小）已经不同，第 2 步的损失也开始分叉。差异出现得比第 4 步退出更早。遇到这种情况，先核对退出前的两条训练轨迹，再检查加载过程。')+
+  p('重跑沿用原样本和比较阈值，同时启用确定性算法，固定 GPU 矩阵计算库 cuBLAS 的临时内存设置，并关闭 TF32 这种降低乘法精度的计算模式。第 12 步后，两组 LoRA 参数的最大绝对差为 0，参数、优化器状态及逐步损失均逐位一致，最终随机状态也一致。记录验证了这一组配置在完整更新边界的单卡进程恢复。')+
+  '<p class="practice-links"><a href="'+singleGpuResults+'README.md">实验条件与诊断过程 ↗</a> · <a href="'+singleGpuResults+'failed-pairs/recovery-v3/comparison.json">首次配对记录 ↗</a> · <a href="'+singleGpuResults+'comparison.json">重跑对照结果 ↗</a></p>');
  recovery.updated='2026.11.11';
 
 })();
@@ -14796,7 +14814,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段变慢",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -14813,7 +14831,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -15515,6 +15533,7 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
  'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
  'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
  'model-plan-revision':{folder:'model-plan-revision',title:'模型发现缺项后的计划、审批和恢复'},
@@ -15648,6 +15667,7 @@ const labTrackCatalog={
 };
 const labLearningCatalog=[
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
+ {id:'cloud-qemu-vcpu',track:'cloud',stage:2,title:'vCPU 运行得慢，时间花在执行还是排队',chapter:'cloud-compute',anchor:'native-qemu-vcpu',pack:'qemu-vcpu',files:['vcpu_probe.py'],env:'Python 3.8+ · QEMU · Linux schedstats',kind:'真实 QEMU 和 Linux 宿主线程记录',observe:'从 QMP 的顶层 thread-id 找到 Linux schedstat，算出加入竞争前后的执行与排队增量。',scope:'Linux TCG 测量与 macOS QMP 对照。KVM、客户机和业务吞吐另验。'},
  {id:'cloud-foundations',track:'cloud',stage:0,title:'按需补：内存、锁、SQL 与缓存',chapter:'virtual-memory-oom',pack:'textbook-examples',folder:'cloud-foundations',files:['virtual-memory-oom.py','concurrency-pools.py','database-index-locks.py','cache-consistency.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'基础模型与 SQL',observe:'分别对照内存事件、锁排队、查询计划和旧缓存回填；不要把四个小程序当成同一个系统。',scope:'SQL 真实执行；内存与排队等使用明确的教学模型。'},
  {id:'cloud-framing',track:'cloud',stage:1,title:'一次 recv 不等于一条消息',chapter:'network-diagnosis',pack:'learning-mechanisms',files:['tcp_framing.py'],env:'Python 3.9+ · 标准库',kind:'本机 TCP',observe:'实际分段发送中文消息，再按长度解帧；半关闭后仍能收到响应。',scope:'回环连接，不测物理链路、丢包或拥塞窗口。'},
  {id:'cloud-backpressure',track:'cloud',stage:1,title:'发送缓冲满后，谁在等待',chapter:'network-diagnosis',pack:'compute-and-transport',files:['socket_backpressure.py'],env:'Python 3.9+ · 标准库',kind:'本机 TCP',observe:'暂停接收、观察短写与阻塞，再排空并核对全量字节摘要。',scope:'应用与套接字背压实测；不把发送成功解释为对端已处理。'},
@@ -16210,5 +16230,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="eacda1e7298d0cc82a162a633e52554bee9032490fc1e9a9c4c71f7cd692c690";
+const staticReadingVersion="14c479b5aa11da623e1c8839c9caf89f447f2cf539af4626c790a6d2d0733502";
 

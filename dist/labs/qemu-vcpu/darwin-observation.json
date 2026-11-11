@@ -1,0 +1,48 @@
+{
+  "host": {
+    "system": "Darwin",
+    "arch": "arm64",
+    "kernel": "25.2.0"
+  },
+  "qemu_version": "QEMU emulator version 11.0.0",
+  "accelerator": "tcg,thread=multi",
+  "guest_payload_hex": "00000014",
+  "source_sha256": "0ebd36007baa5a5036221dab0f971732a437b046bdfa829770f3e3726270aafc",
+  "qemu_pid": 54043,
+  "cpus": [
+    {
+      "thread-id": 54043,
+      "qom-type": "cortex-a57-arm-cpu",
+      "props": {
+        "core-id": 0,
+        "thread-id": 0,
+        "socket-id": 0,
+        "cluster-id": 0
+      },
+      "qom-path": "/machine/unattached/device[0]",
+      "cpu-index": 0,
+      "target": "aarch64"
+    },
+    {
+      "thread-id": 54043,
+      "qom-type": "cortex-a57-arm-cpu",
+      "props": {
+        "core-id": 1,
+        "thread-id": 0,
+        "socket-id": 0,
+        "cluster-id": 0
+      },
+      "qom-path": "/machine/unattached/device[1]",
+      "cpu-index": 1,
+      "target": "aarch64"
+    }
+  ],
+  "prelaunch": {
+    "status": "prelaunch",
+    "running": false
+  },
+  "linux": null,
+  "qmp_events": [
+    "SHUTDOWN"
+  ]
+}

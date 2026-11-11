@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "c0bd253c23ffc9a5274fe5dd2a630176224a229b",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EXECUTION_HANDOFFS_2026-11-11.json": "5ed311baf2146e88ca125eff6160c59ac02be75a088dc59a6e636b2048173513"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "cloud-compute",
+      "reviewed_at": "2026-11-11",
+      "scope": "Replace hypothetical vCPU scheduling counts with actual QMP/procfs thread mapping and two controlled Linux windows.",
+      "observation": "Same CPU contention changes run-queue wait from 0.200 to 749.599 ms; Darwin uses a separate QMP PID observation. No KVM or guest OS execution is measured.",
+      "reviewed_content_sha256": "3baa6826718ea46e56a55374c1e0d7956bfe74ff82fbac784ab89ce78ab2b148",
+      "record": "dist/labs/qemu-vcpu/validation.json"
+    }
+  ]
+}

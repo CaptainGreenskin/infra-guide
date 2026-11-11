@@ -1,0 +1,122 @@
+{
+  "host": {
+    "system": "Linux",
+    "arch": "x86_64",
+    "kernel": "7.0.0-1017-azure"
+  },
+  "qemu_version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "accelerator": "tcg,thread=multi",
+  "guest_payload_hex": "00000014",
+  "source_sha256": "0ebd36007baa5a5036221dab0f971732a437b046bdfa829770f3e3726270aafc",
+  "qemu_pid": 3005,
+  "cpus": [
+    {
+      "thread-id": 3008,
+      "props": {
+        "core-id": 0,
+        "thread-id": 0,
+        "socket-id": 0,
+        "cluster-id": 0
+      },
+      "qom-path": "/machine/unattached/device[0]",
+      "cpu-index": 0,
+      "target": "aarch64"
+    },
+    {
+      "thread-id": 3009,
+      "props": {
+        "core-id": 1,
+        "thread-id": 0,
+        "socket-id": 0,
+        "cluster-id": 0
+      },
+      "qom-path": "/machine/unattached/device[1]",
+      "cpu-index": 1,
+      "target": "aarch64"
+    }
+  ],
+  "prelaunch": {
+    "status": "prelaunch",
+    "singlestep": false,
+    "running": false
+  },
+  "linux": {
+    "observed_vcpu": 0,
+    "proc_threads": [
+      {
+        "cpu_index": 0,
+        "pid": 3008,
+        "tgid": 3005,
+        "comm": "qemu-system-aar",
+        "schedstat": "/proc/3005/task/3008/schedstat"
+      },
+      {
+        "cpu_index": 1,
+        "pid": 3009,
+        "tgid": 3005,
+        "comm": "qemu-system-aar",
+        "schedstat": "/proc/3005/task/3009/schedstat"
+      }
+    ],
+    "allowed_host_cpus": [
+      3
+    ],
+    "contender_pid": 3010,
+    "contender_affinity": [
+      3
+    ],
+    "contender_runtime_ns": 749483923,
+    "running": {
+      "status": "running",
+      "singlestep": false,
+      "running": true
+    },
+    "stopped": {
+      "status": "paused",
+      "singlestep": false,
+      "running": false
+    },
+    "alone": {
+      "elapsed_ns": 1500404313,
+      "before": [
+        250056061,
+        1945427,
+        10
+      ],
+      "after": [
+        1749850895,
+        2145611,
+        20
+      ],
+      "delta": [
+        1499794834,
+        200184,
+        10
+      ]
+    },
+    "same_cpu_contender": {
+      "elapsed_ns": 1500234716,
+      "before": [
+        1889839740,
+        127161643,
+        64
+      ],
+      "after": [
+        2640236913,
+        876760540,
+        315
+      ],
+      "delta": [
+        750397173,
+        749598897,
+        251
+      ]
+    },
+    "schedstats_setting": "1"
+  },
+  "qmp_events": [
+    "RESUME",
+    "STOP",
+    "SHUTDOWN"
+  ]
+}
