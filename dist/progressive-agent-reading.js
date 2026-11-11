@@ -213,7 +213,8 @@ const progressiveAgentSectionTitles={
    ])+
    p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
    '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
-   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>';
+   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>'+
+   p('两组都查不到 A 的偏好。要判定撤回后的交付是否合格，还要在接收方找出 <code>old-task</code> 实际收到的格式。<a href="/article/agent-evaluation/#memory-delivery-verdict">用同一份实测记录在评估章判分 →</a>');
   infraDomain('agent').points.find(point=>point.id==='ag-context').body+=
    p('撤回用户偏好时，分别查长期记忆、已保存的任务状态和接收方回执。暂停前复制进去的偏好，恢复时仍可能被沿用。')+
    '<p><a href="/article/agent-memory/#native-memory-withdrawal">用同一个暂停任务核对撤回后的三份记录 →</a></p>';

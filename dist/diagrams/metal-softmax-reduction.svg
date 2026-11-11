@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 330" role="img" aria-labelledby="title desc">
+  <title id="title">65 列怎样分给 64 个 Metal 线程</title>
+  <desc id="desc">线程 0 读取第 0、64 列，线程 1 读取第 1 列，线程 63 读取第 63 列。先在 maxima 合并最大值，再在 sums 合并指数和。每个线程写回自己负责的列。</desc>
+  <metadata>{"record":"labs/metal-softmax/validation.json","rows":7,"width":65,"threads":64,"columns":{"0":[0,64],"1":[1],"63":[63]},"maxima_bytes":256,"sums_bytes":256}</metadata>
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0L7 3.5L0 7Z" fill="#315dce"/>
+    </marker>
+  </defs>
+  <style>
+    text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;text-anchor:middle;fill:#1c2b45}
+    .title{font-weight:700;font-size:20px}.body{font-size:16px}.minor{font-size:14px;fill:#435570}
+    .edge{fill:none;stroke:#315dce;stroke-width:1.75;marker-end:url(#arrow)}
+  </style>
+  <rect width="460" height="330" rx="14" fill="#f6f8fc"/>
+  <text x="230" y="35" class="title">一行 65 列，64 个线程合作</text>
+  <rect x="22" y="56" width="132" height="65" rx="8" fill="#e8effe" stroke="#9eb6ec"/>
+  <rect x="164" y="56" width="132" height="65" rx="8" fill="#fff" stroke="#c4d0e5"/>
+  <rect x="306" y="56" width="132" height="65" rx="8" fill="#fff" stroke="#c4d0e5"/>
+  <text x="88" y="82" class="body">线程 0</text><text x="88" y="104" class="minor">第 0、64 列</text>
+  <text x="230" y="82" class="body">线程 1</text><text x="230" y="104" class="minor">第 1 列</text>
+  <text x="372" y="82" class="body">线程 63</text><text x="372" y="104" class="minor">第 63 列</text>
+  <path class="edge" d="M88 121V139"/>
+  <path class="edge" d="M230 121V139"/>
+  <path class="edge" d="M372 121V139"/>
+  <rect x="22" y="144" width="416" height="50" rx="8" fill="#e8effe" stroke="#9eb6ec"/>
+  <text x="230" y="167" class="body">先合并全行最大值 m</text>
+  <text x="230" y="185" class="minor">maxima · 64 个数 · 256 字节</text>
+  <path class="edge" d="M230 194V211"/>
+  <rect x="22" y="216" width="416" height="50" rx="8" fill="#e6f4ef" stroke="#b3d7c9"/>
+  <text x="230" y="239" class="body">再合并各列 exp(x−m) 的和</text>
+  <text x="230" y="257" class="minor">sums · 64 个数 · 256 字节</text>
+  <path class="edge" d="M230 266V283"/>
+  <text x="230" y="307" class="body">各线程用同一分母写回自己负责的列</text>
+</svg>

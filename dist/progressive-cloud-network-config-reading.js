@@ -251,11 +251,12 @@
  '<figure class="training-figure"><a href="diagrams/kubernetes-hpa-control.svg" target="_blank" rel="noopener" aria-label="放大：CPU 指标、期望副本与可用副本"><img src="diagrams/kubernetes-hpa-control.svg" width="440" height="379" alt="空闲时期望和可用均为 1，负载增加后期望为 2 而可用仍为 1，新 Pod 就绪后可用达到 2，撤掉负载后两者回到 1" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一次扩容分别核对 HPA 期望、Deployment 可用副本和 Pod 就绪条件。<a href="diagrams/kubernetes-hpa-control.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('本次原 Pod 的资源指标样本从约 10.1m 升到 195.0m，越过目标对应的 50m。HPA 的 <code>desiredReplicas</code> 与 Deployment 的 <code>spec.replicas</code> 都变成 2。新增 Pod 已是 Running，但仍缺少通过探针的标记，Deployment 的 <code>availableReplicas</code> 保持 1。补上标记后，同一个新增 Pod UID 变为 Ready，可用副本升到 2。')+
  p('可用副本已经是 2 的那次观察里，HPA 的 <code>currentReplicas</code> 仍显示 1。指标 API 和控制对象分别读取，各自有采样窗口或更新节奏。比较记录时先对齐时间和对象，不能把几个字段当作同一时刻的计数。')+
- p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。业务完成率需要前面定义的实际请求与队列观测。')+
+ p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。到<a href="/article/elasticity/#hpa-capacity-observations">C8.1 对照两次快照，再看怎样查业务完成量</a>。')+
  trainingCode('复跑原生 HPA 并离线核对随包记录','SHELL','python3 -B hpa_control_lab.py --output native-record.json\npython3 -B hpa_control_lab.py --check-record validation.json')+
  '<p class="practice-links"><a href="labs/kubernetes-hpa.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-hpa/validation.json">查看指标窗口、期望和 Pod UID →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561685247">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes 资源指标链 ↗</a></p>';
 
  const packetFigure='<figure class="training-figure" id="service-packet-rewrite"><a href="diagrams/kubernetes-packet-rewrite.svg" target="_blank" rel="noopener" aria-label="放大 Service 的请求与回包路径"><img src="diagrams/kubernetes-packet-rewrite.svg" width="1080" height="548" loading="lazy" alt="控制信息同步到节点规则；客户端 10.42.1.7:53000 请求 Service 10.96.0.20:443，目的改为后端 10.42.2.8:8443；回包按连接记录恢复 Service 源地址。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>观察同一连接的两端地址。虚线表示规则同步，蓝色和绿色实线分别表示请求与回包。 <a href="diagrams/kubernetes-packet-rewrite.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ scaling.updated='2026.11.11';
  if(!network.sections[2][1].includes(n2[0]))throw Error('Service packet figure insertion point changed');
  network.sections[2][1]=network.sections[2][1].replace(n2[0],packetFigure+n2[0]);
 })();

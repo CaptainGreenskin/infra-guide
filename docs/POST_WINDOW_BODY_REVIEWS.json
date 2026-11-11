@@ -7117,6 +7117,156 @@
         "实战与变化题：十组实际HTTP对照",
         "流式实战：十三组完成边界与准入对照"
       ]
+    },
+    {
+      "id": "resilience",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "656b2c51557a6238c777d31bffa659aed3f20aa2c5bdc3eedadccbf917325bde",
+      "reviewed_content_sha256": "e9056fae09e235e4dc75c90870fc038c224633f57501d6af17c4ee30ac134e26",
+      "scope": "Connect database recovery positions and user recovery objectives to the actual PostgreSQL branches.",
+      "observation": "The same base yields 125 at after_t103, zero at the archive end and startup failure when the target WAL is missing. The observed database evidence lacks the two time and service boundaries needed for minute-based objectives.",
+      "headings": [
+        "恢复条件：材料、业务、权威与消费者",
+        "先说明这次恢复究竟要救什么",
+        "故障域要画到最后一个共享依赖",
+        "RPO 衡量缺失的时间边界，RTO 衡量恢复时长",
+        "共同恢复点：连续提交与对象版本",
+        "恢复关键路径：阶段预算与数据规模",
+        "写入接管与效果：旧写者、回执和重新消费",
+        "演练如何证明备份真的可用",
+        "实战：完整前缀与恢复后的外部效果",
+        "评分练习：恢复点合格是否意味着服务已恢复"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "381f95b89e33a7ab1ee3b5af2d914fe657d5b6ed281ec66cc60d180662210d98",
+      "reviewed_content_sha256": "40b7a3b9c82c7dfc813c0ef330b0106d3d853a94043e62685175499fdf7e5a6e",
+      "scope": "Hand off an observed PostgreSQL recovery point to the SRE acceptance lesson.",
+      "observation": "The reciprocal link opens the exact RPO and service verification exercise based on the same frozen native record.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1c28eb8d23ecdef2986a8036afba543bceb222fecedb50a86050be31921cfeb3",
+      "reviewed_content_sha256": "1766f872853c9eb23640a7a56d8f1a322bb5d3b85e81ef793443cf09856097bc",
+      "scope": "Relate HPA desired replicas, observed readiness and user-visible completions without mixing records.",
+      "observation": "A real native trace shows two desired while one is available, then the same additional Pod becomes ready. An independent Service exercise supplies the request and responding Pod fields used to demonstrate how to verify capacity.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "01477f45520823cd7582aa9a6cdc1e7fbaf5a1afe744f26abad014eb5c804fe4",
+      "reviewed_content_sha256": "5d36f49c7fbd15132e0f5e8ca2de7be167dcca48659d5cb738ba6ee74b3338d8",
+      "scope": "Hand off native HPA evidence to the exact capacity observation worksheet.",
+      "observation": "Observed readiness is linked to the business acceptance measurement that would be needed beyond object state.",
+      "headings": [
+        "控制链：建议、期望与实际可用容量",
+        "CPU口径：单位、request与匹配集合",
+        "保守计算：缺指标、容差与方向变化",
+        "指标选择：资源、容器、业务与外部信号",
+        "容量空窗：积压、净余量与有界接纳",
+        "伸缩行为：稳定窗口、速率与上下界",
+        "下游预算：副本、连接与实际完成率",
+        "实战与变化题：数学参考和真实规则引擎"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "d64797650d49058b545868c6b7c6b0e029844614195050512a5bb32bdbfd7575",
+      "reviewed_content_sha256": "b6c5cab7f4ad2704fc7232655ea261f8c38c9009a0110ac91eb16824d7ba0b01",
+      "scope": "Use the original receiver receipts as the evaluation handoff after memory withdrawal.",
+      "observation": "Both branches withdraw the same memory and preserve their original read, snapshot and delivery records.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "9797546fbf407e737b35117861a09d171bf0c0e2dffacb020cfbf954215ea6b1",
+      "reviewed_content_sha256": "e8f25da7e6ecdc408351768b5809641aed9ad42530a1ff061c78e99e7165d04e",
+      "scope": "Judge withdrawn preference delivery against the receiver result, local snapshot and current memory.",
+      "observation": "The observed short version 1 fails the stipulated delivery and standard with null version passes. Both published receiver ledgers remain unchanged after local history removal.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "cd923d6420482f633d1800aa480f92f8af01da9b800d95ad3e0b47309959f948",
+      "reviewed_content_sha256": "2dc9cfa7993fa7dacbffc3db88a2528d03118978506689b8bc51093cf0c0a74e",
+      "scope": "Identify the raw resource audit needed to verify the read scope and hand the acceptance-window evidence to the tool-commit comparison.",
+      "observation": "The original denial export is paired with the actual A-only receiver read. The published experiment remains a local reference implementation.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "153bf14b86cd6e5db2053d7116576bf873c38baaf4eb878cd1e8253ac5cdd372",
+      "reviewed_content_sha256": "d6700706fb4191f1fd65213052325d4a7fb9d7479575f0f6be916f309d1a2bee",
+      "scope": "Compare loss of the acceptance response with loss of the local tool receipt.",
+      "observation": "The two independent fixtures use the original submission key and original operation key respectively. Their raw links establish a single admitted task and a single actual write despite retried communication.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

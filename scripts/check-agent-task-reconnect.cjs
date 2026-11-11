@@ -150,6 +150,14 @@ function checkPage() {
  assert.equal(article.split(marker).length, 2);
  assert.equal(data.chapter.sections.filter(([, html]) => html.includes(marker)).length, 1);
  const section = article.slice(article.indexOf(marker));
+ const synthesis = vm.runInContext('articleById("production-readiness").sections[4][1]', context);
+ assert(section.includes('/article/production-readiness/#admission-vs-tool-commit') && section.includes('resource.body_reads'));
+ const comparison = synthesis.slice(synthesis.indexOf('id="admission-vs-tool-commit"'));
+ assert(comparison.includes('/article/kairo-practice/#' + anchor));
+ assert(comparison.includes('/labs/' + pack + '/validation.json') && comparison.includes('/labs/integrated-service/validation.json'));
+ const commit = json(path.join(root, 'dist/labs/integrated-service/validation.json')).program.cases.recover_same_operation.commit_gap;
+ assert.equal(commit.local_receipt, null);
+ assert(comparison.includes('任务库回执为空，接收方已有 ' + commit.receiver_effects + ' 份效果'));
  for (const target of ['/labs/' + pack + '.zip', '/labs/' + pack + '/README.md', '/labs/' + pack + '/validation.json', 'diagrams/' + pack + '.svg']) {
   assert(section.includes('href="' + target + '"'), anchor + ' missing ' + target);
  }

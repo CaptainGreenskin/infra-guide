@@ -116,6 +116,15 @@
   ['全都查询 A104','1,200 / 0','400，留在 0 号片']
  ])+
  p('假设查询都已接纳，且没有取消。热键场景下，0 号片每秒只能完成 800 次，余下 400 次继续等。1 号片虽有空闲，却没有 A104 这行。排查时按分片和键看请求率、完成率、排队长度，再判断是整个租户偏热，还是单个键需要缓存或合并读取。<a href="/article/database-index-locks/#native-sqlite-shard-routing">回看两种布局的实际 SQL 记录 →</a>');
+ a.sections[2][1]+=
+  '<h3 id="hpa-capacity-observations">期望已经是 2，为什么可用还是 1</h3>'+
+  p('取 C4.8 的同一次原生扩容记录。<code>cpu-demo</code> 的每个应用容器声明 CPU 请求 100m（0.1 核），HPA 目标是这项请求量的 50%，副本上限是 2。原 Pod 忙起来后，HPA 状态里记下平均用量 195m，也就是请求量的 195%。')+
+  table(['记录中的两次读取','HPA 期望副本','新增 Pod 的就绪条件','Deployment 可用副本'],[
+   ['<code>readiness_held</code>','2','Running，Ready=false','1'],
+   ['<code>two_available</code>','2','同一个 Pod，Ready=true','2']
+  ])+
+  p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
+  p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+

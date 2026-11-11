@@ -1,0 +1,207 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "8c3d176f5de2a708fc7cc3dead7bc389abebf96f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_OPENING_CASE_CONTINUITY_2026-11-11.json": "4895e9fd6afb8c310d1e9f8dd2696aa0ce5ac50d3e4c1069a61d9b0e80fc0842"
+  },
+  "source_revisions": {
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "6c70261efe999cea986eddd4807733fc0ab1896b32cc05e5c1855b2ed5cee1d5",
+      "reviewed_sha256": "dda983581570722fb6efb696aab7f21216fccd3c9fc48906310fce1c532bb1c0",
+      "scope": "Implement, execute and explain two stable Apple GPU softmax variants on the same continuous finite FP32 input."
+    },
+    "dist/diagrams/metal-softmax-reduction.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a351dfef4ba2d94dc026192a2493e99d19bed99cce954ba9ce4268dc510b35b1",
+      "scope": "Show the measured 65-column fixture and exact two shared array allocations."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "45f90a6d555c8c827cdf19fa0da8f35da85bd49869b78ffe95064548a97e9bfb",
+      "reviewed_sha256": "7c26e9b39d04227a4184a69dfc10f0aa651984bef9da97eefafe0b475e63a1e0",
+      "scope": "Register the new accessible diagram dimensions."
+    },
+    "dist/ai-agent-cases.js": {
+      "previous_sha256": "10b88af8beb17498ba5d6c574c9c2aa7f18b3c355b651fa787f4b41f47205eb2",
+      "reviewed_sha256": "363870bc9654d8cc444c0e346fd6b905415b67f67809fb141e092e035d567ac0",
+      "scope": "Connect the full operator stage to GEMM and the new measured row reduction."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "dab95b01020819869220f0d8bd33f15471af0c226d9e1fc22ed1a0b97a6822c9",
+      "reviewed_sha256": "937982248f64c0a60ab0c5d74d5755582d2119551837e695881a075bcb006f48",
+      "scope": "Attach the new execution evidence to the exact GPU knowledge point."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "b14eb024736656f2df18f0d36601b792597ca9009606c474bc3689ce239feded",
+      "reviewed_sha256": "95e77a0846d340f5d5cc3e94498c461ce640fbf903d4fa688f7e034471bb97a3",
+      "scope": "Register the archive, scope, files and exercise."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "c68d2844fe2e9ee14d77f8997dc1a318bbfdafc99b3962db6bad276bbd25fa4c",
+      "reviewed_sha256": "6455641c64448feee847e3037328128a27e1b4458c2d4950a1011deded478e61",
+      "scope": "Attach the new same-device evidence to the operator role gate."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "f7c2a84be926f42f621efbee32e1c5e7a0625641d4eba4b8a97660b0d3db5251",
+      "reviewed_sha256": "6928c148242306e3201e37c99f8788eea8b341b24d99ca593bb0bf6240814cce",
+      "scope": "Connect database recovery positions and user recovery objectives to the actual PostgreSQL branches."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "a4c7014c1ec17471ec454e0031c828df009c2a1802c59842f6ed39dd84bb4a9a",
+      "reviewed_sha256": "97c9e873c726d0c2433e50124c9118533d62685733b4d961109acc18924d43f3",
+      "scope": "Hand off an observed PostgreSQL recovery point to the SRE acceptance lesson."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "15d1e4d4d0c2d63d6d1e5ca00a4961dba1a9073454ef5107fd073e372ec93a23",
+      "reviewed_sha256": "01519ec94018baf2d45e3fd9f6b19b639e6ef083648d208c64ae6811200a2f1d",
+      "scope": "Relate HPA desired replicas, observed readiness and user-visible completions without mixing records."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "b18bb5c66512bc1b500df66621237a41211e464de3b1512314047a6a01c011d8",
+      "reviewed_sha256": "a75e383c65d44cc40b7e5c9333f50e7f7dfb9249dec7d452a7fab4e8318a7c05",
+      "scope": "Hand off native HPA evidence to the exact capacity observation worksheet."
+    },
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": "e8270ad376d20e988a840b19d9554ebfa3c5edc39c05625175291a4cdd09c77f",
+      "reviewed_sha256": "6ea6d9b15b51260d938eac9ae957b5bec55a113bf1688bee4c7accfa6f21d48d",
+      "scope": "Use the original receiver receipts as the evaluation handoff after memory withdrawal."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "c6c126ce758b43c5c648eeaaef306529b39ee9b7ba61cd42666408c7cb951f81",
+      "reviewed_sha256": "204bcf66175de7253485a54cf5affa6b545296b1ab1a122a24bbaac6aa77816b",
+      "scope": "Judge withdrawn preference delivery against the receiver result, local snapshot and current memory."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "074f657cdfaaa7b0aece65fc2fd929843062ddabcbe0fa37a1c699866047e08f",
+      "reviewed_sha256": "10735fa65bcc9d6e161e9a5f2f41073bbd3ecb55186f8b8e892307b08cf7533e",
+      "scope": "Identify the raw resource audit needed to verify the read scope and hand the acceptance-window evidence to the tool-commit comparison."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "2b0bcb62d35739bfd206a63a687363bd0ca2b51d5f0f3a1ae43bee95fa59c545",
+      "reviewed_sha256": "6ac40730c6c0ec11450c5e47f990ced1a82f766ac639fedf5d3e669dc9504911",
+      "scope": "Refresh the last published date for the changed Kairo reading path."
+    },
+    "dist/progressive-integrated-service-reading.js": {
+      "previous_sha256": "8cff4e74dc8e6323e00c75156a910bd0a29ed4b20bcd4278fcfc0a21dd7dddd0",
+      "reviewed_sha256": "77dba666accc347839f107178bd3891ac8efc1f84f380856aee04ef72987c35a",
+      "scope": "Compare loss of the acceptance response with loss of the local tool receipt."
+    },
+    "scripts/check-agent-task-reconnect.cjs": {
+      "previous_sha256": "96095d4dbf610965baf924a0daa3399615e63e0947286e6dfb1f0be87f02fa79",
+      "reviewed_sha256": "6e459b023d76b25ba613a2699796866669785cc60428e84c3ba0c68b9f0b03a5",
+      "scope": "Bind the cross-lesson comparison to the exact native records, original operation and raw access audit."
+    },
+    "scripts/check-memory-withdrawal.cjs": {
+      "previous_sha256": "413f933a349891859c629ad89e2f2471982e290f79bbbaf2e66b8ff7b24da2d4",
+      "reviewed_sha256": "7643026a123c3137f312895ac1d3893805ed23630f382b4c3596a89043dc6cbe",
+      "scope": "Verify both observed old-task receipts are shown at the evaluation handoff."
+    },
+    "scripts/check-native-runtime-paths.cjs": {
+      "previous_sha256": "0702f614c748ead449cdf517dcde5902ccdd2e3a3ec8743ae1e51546e23f3d78",
+      "reviewed_sha256": "b370effcd8f774ebdf30b4af695bdb914a7b498a13d059dbb05ff0cd031871c4",
+      "scope": "Verify HPA readiness and capacity handoff against recorded native data."
+    },
+    "scripts/check-postgres-pitr.cjs": {
+      "previous_sha256": "757e3d342463a8d6583dda26cd4ec247e37a5815926fd69d1cc8f52f76973c77",
+      "reviewed_sha256": "a63fe7ce1dcfa7a9c3058efb510aa33aa4a2c8148d553382ee4e12259eb11059",
+      "scope": "Verify restore-point links and results against the actual database fixtures."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "f44c374d04e99f3bf4021753ebbe8535771234700d27f037b27c17cda8077838",
+      "reviewed_sha256": "edf99d1c12d846a6a8227fc8e07927985a95e8d6f497009c84476a28d4486f61",
+      "scope": "Retain all original operator role evidence with the added exact GPU exercise."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "a282ff8963548ee87d10a58007487545e4f62d507922d2767ed6d90936bd724f",
+      "reviewed_sha256": "1c2b2df423152e6bb635cd17ee5d52fa130309e4d5df9c2d7bd82a912b3835af",
+      "scope": "Register the native GPU record verifier."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "1c9024d9dde58742580fec00a5037ce315e3a94566a465dc699b92cfc3c2efff",
+      "reviewed_sha256": "086aa37d27f96a7f5bb7699933b2038d00b02ab56754d830803ef69aeb371430",
+      "scope": "Bind the reviewed GPU section to the exact record verifier."
+    },
+    "scripts/check-metal-softmax.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "60d0ac44c788c283194d04ff26dd2ee296a87903e564bbcd3c51deec48f7d056",
+      "scope": "Independently verify published probabilities, negative control, exact source and archive, figure mapping, and raw timings."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "213a9aa8c039f0c7944f891d9308b273874e4be641f90846cb9fddb8f0758e07",
+      "reviewed_sha256": "dcd823aae98a5eb451c86702217cbe1c4354aa231fc4ca2b55017aa2d5ee9295",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2f4c6940a75fdb77429bb1bea40a18eab43b560c013f94ac2e6e6e2325867563",
+      "reviewed_sha256": "4716931dfad3b792d9744649de74a0cbf7dae21b41f7eb1e24cca4e3be5bff1f",
+      "scope": "Fingerprint the renderer and edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "c23efc45b29e9ddf7962bac6821795fbbad71b9d17d50ff1bd37757569abfb03",
+      "reviewed_sha256": "1d94cd568536d3ba80e9c9251510073036762b6041d08e06a896ad08a0d100fa",
+      "scope": "Record new exact anchors and preserve the published subsection inventory."
+    },
+    "docs/CONTENT_NATIVE_SOFTMAX_AND_RECOVERY_CONNECTIONS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9cf683c1e710bb9af112906c109acfbdd9b1d7f8493f0c90ece860d5dd548e66",
+      "scope": "Record nine chapter revisions and the actual GPU evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "95681ce4842f20e8e3d2b6c37b7b04c0c6ecf1b981fc2e3c9043a4cb0bda0662",
+      "reviewed_sha256": "18ca16f2399b5afba2d025bda3916b10df07c8aa0afe5ec14b708569b2846805",
+      "scope": "Append the current body review."
+    },
+    "dist/labs/metal-softmax.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "74da07394b07402117e319c3c4891646274fabd14192b7f9b4f3c5f863b561a8",
+      "scope": "Bind the exact four-file downloadable archive."
+    },
+    "dist/labs/metal-softmax/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "92c3f8d05ef7ad3872d315232f4393e7e09aac0199a22b2b66a51f1c34a6a6bd",
+      "scope": "Bind the native runner, kernels, reproduction and device observations."
+    },
+    "dist/labs/metal-softmax/kernels.metal": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b3a6d3f6a13f466f46b34f6ba96006f968d1b05cb3730ffc70aa4f4063b2b99d",
+      "scope": "Bind the native runner, kernels, reproduction and device observations."
+    },
+    "dist/labs/metal-softmax/metal_softmax.swift": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b65b1d10924e2a4b30b30067d1f2013f99616bbaab749ee2c7ce319ef35a2f05",
+      "scope": "Bind the native runner, kernels, reproduction and device observations."
+    },
+    "dist/labs/metal-softmax/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cdc636af4244e9be534568d57816b591550ea75d7a2772c5b3113c04256b5e06",
+      "scope": "Bind the native runner, kernels, reproduction and device observations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "146ac43fc06a0b833f59816bcab25b0db2f325a920c7ca458b1fc1ebdf45a76e",
+      "reviewed_sha256": "3fcdaf6173afef023678d693eed5980509529069909d7d9af81b1d0f46effca4",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "8c3d176f5de2a708fc7cc3dead7bc389abebf96f",
+    "chapters": 78,
+    "changed_bodies": [
+      "operator-profiling",
+      "resilience",
+      "storage-recovery",
+      "elasticity",
+      "k8s-autoscaling",
+      "agent-memory",
+      "agent-evaluation",
+      "kairo-practice",
+      "production-readiness"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "operator-profiling": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

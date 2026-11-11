@@ -394,10 +394,12 @@
       "id": "elasticity",
       "targets": [
         "native-cpu-quota-http",
-        "shard-load-not-average"
+        "shard-load-not-average",
+        "hpa-capacity-observations"
       ],
       "visible_targets": [
         "shard-load-not-average",
+        "hpa-capacity-observations",
         "native-cpu-quota-http"
       ]
     },
@@ -441,7 +443,17 @@
         "subsection-6-vxh3b7",
         "subsection-7-1bgmbh8",
         "subsection-9-xbrzl7",
-        "subsection-9-qtm6c2"
+        "subsection-9-qtm6c2",
+        "recovery-postgres-native-checkpoints"
+      ],
+      "visible_targets": [
+        "subsection-1-1ww2dsc",
+        "subsection-5-1dwp2yh",
+        "subsection-6-vxh3b7",
+        "subsection-7-1bgmbh8",
+        "subsection-9-xbrzl7",
+        "subsection-9-qtm6c2",
+        "recovery-postgres-native-checkpoints"
       ]
     },
     {
@@ -588,7 +600,8 @@
         "triton-tail-mask-run",
         "torch-compile-graph-break",
         "native-metal-gemm",
-        "subsection-8-5amzql"
+        "subsection-8-5amzql",
+        "native-metal-softmax"
       ],
       "visible_targets": [
         "gemm-two-row-reuse",
@@ -597,7 +610,8 @@
         "native-metal-gemm",
         "subsection-8-5amzql",
         "native-python-extension",
-        "triton-tail-mask-run"
+        "triton-tail-mask-run",
+        "native-metal-softmax"
       ]
     },
     {
@@ -981,9 +995,11 @@
         "subsection-9-dpvytn",
         "subsection-12-bgbi93",
         "native-model-evaluation-bridge",
-        "native-model-mcp-recovery-verdict"
+        "native-model-mcp-recovery-verdict",
+        "memory-delivery-verdict"
       ],
       "visible_targets": [
+        "memory-delivery-verdict",
         "native-model-evaluation-bridge"
       ]
     },
@@ -1107,7 +1123,12 @@
     {
       "id": "production-readiness",
       "targets": [
-        "protocol-business-evidence"
+        "protocol-business-evidence",
+        "admission-vs-tool-commit"
+      ],
+      "visible_targets": [
+        "protocol-business-evidence",
+        "admission-vs-tool-commit"
       ]
     },
     {

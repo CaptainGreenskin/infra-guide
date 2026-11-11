@@ -5067,7 +5067,8 @@ const progressiveAgentSectionTitles={
    ])+
    p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
    '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
-   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>';
+   '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>'+
+   p('两组都查不到 A 的偏好。要判定撤回后的交付是否合格，还要在接收方找出 <code>old-task</code> 实际收到的格式。<a href="/article/agent-evaluation/#memory-delivery-verdict">用同一份实测记录在评估章判分 →</a>');
   infraDomain('agent').points.find(point=>point.id==='ag-context').body+=
    p('撤回用户偏好时，分别查长期记忆、已保存的任务状态和接收方回执。暂停前复制进去的偏好，恢复时仍可能被沿用。')+
    '<p><a href="/article/agent-memory/#native-memory-withdrawal">用同一个暂停任务核对撤回后的三份记录 →</a></p>';
@@ -5464,9 +5465,10 @@ const progressiveAgentSectionTitles={
  p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
  p('只从归档副本移除目标段，再要求恢复到同一标记。源材料保留完整。PostgreSQL 在到达目标前停止启动并报错，说明能读基础备份与能到达指定历史是两项检查。')+
  p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
+ p('带着这三组恢复结果到<a href="/article/resilience/#recovery-postgres-native-checkpoints">C9.4 填恢复验收记录</a>。先核对 T103 是不是允许的业务恢复点，再查哪些数据还需要从应用和用户侧取得。')+
  '<p class="practice-links"><a href="/labs/postgres-pitr.zip" download>下载 PostgreSQL 实战包 ↓</a> · <a href="/labs/postgres-pitr/validation.json">查看 WAL、恢复点和 SQL 验收记录</a></p>'+
  '<p class="source-at"><a href="https://www.postgresql.org/docs/17/continuous-archiving.html">PostgreSQL 17 连续归档与时间点恢复 ↗</a></p>';
- recovery.updated='2026.11.09';
+ recovery.updated='2026.11.11';
  cloudKnowledgeExplanations['backup-restore']+=p('从同一份基础备份分别恢复到具名标记和归档末端，观察账户为什么会得到两个结果。<a href="/article/storage-recovery/#native-postgres-pitr">运行 PostgreSQL WAL 对照 →</a>');
 
  const storage=select('k8s-storage',['文件放在哪里：容器、临时卷与持久卷','从PVC到应用路径：绑定只是中间一步','拓扑与延迟绑定：一起选择节点和卷','访问模式、并发写入与旧写者隔离','容量、IOPS、吞吐与扩容','快照与备份：一致性和恢复点分别验收','从Pending到文件内容的排查实战','恢复练习：让消费者继续完成工作']);
@@ -7784,7 +7786,15 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
 
  p('评估一个试次既要看交付，也要看必需或禁止的过程。正常报告先读获准资料，再写入正确目标；若要求写前审批，审批应在写入之前有效。判分器检查这些依赖条件，允许先查手册或先查事实、串行或并行等合理路径。硬编码唯一工具顺序，会误拒绝有效方案。',
  '现在故意改变这条路径：先把资料写到 B，随后删除副本，最后在 A 会话返回正确摘要。最终目录可能干净，期间的披露已经发生。第 11 节的实际程序采用更小的反例：先越权读取 B，再写出正确的 A 报告。报告和 success 都正确，但读取集合不合格，这道正向任务仍失败。',
- '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。'),
+ '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。')+
+ '<h3 id="memory-delivery-verdict">用接收回执判定撤回后的交付</h3>'+
+ p('沿用<a href="/article/agent-memory/#native-memory-withdrawal">记忆章的暂停任务</a>。本题约定先撤回偏好，再恢复发送，接收方应收到标准版。打开<a href="/labs/memory-withdrawal/validation.json">同一份实测记录</a>，比较 <code>cases.unchecked</code> 和 <code>cases.rechecked</code>。各组按 <code>stage_old.paused.checkpoint_id</code> 与 <code>resume_old.before.checkpoint_id</code> 核对恢复使用了原检查点，再按任务号找接收回执。')+
+ table(['查哪里','沿用快照 unchecked','发送前重查 rechecked'],[
+  ['当前偏好 <code>store.after</code>','A 的条目为 null','A 的条目为 null'],
+  ['恢复前 <code>resume_old.before.values.snapshot</code>','短版 v1','短版 v1'],
+  ['在 <code>collector.before_purge</code> 找 <code>old-task</code>','收到 short，memory_version=1，交付不合格','收到 standard，memory_version=null，交付合格']
+ ])+
+ p('随后两组的 <code>history_purge.old_count_after</code> 都是 0。比较接收方的 <code>before_purge</code> 和 <code>after_purge</code>，各自仍是原来的两条回执，旧任务的判定不变。这份实跑检查固定撤回顺序下的格式交付，第 11 节另用实际模型回答检查来源引用。'),
 
  p('切片是按任务属性分组查看结果，例如工具、权限类别、输入长度、是否需要恢复。先保留每题每试次的明细，再对每组计算题数、通过数和代价。设 10 个短问题通过 9 个，2 个长问题均失败，总体为 9/12=75%；两组分别为 9/10与0/2，后者提示应继续检查资料截断、证据位置或输出预算。',
  '一个任务可以同时属于长输入和跨租户场景，所以不同维度的题数不能直接相加。小组样本少时先报告原始计数，再补充有代表性的任务或重复试次。应预先确定关键类别的门槛，避免总体提升掩盖重要类别退化。',
@@ -8807,10 +8817,12 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    ['换会话请求同一结果','HTTP 404'],
    ['资源服务的读取与效果记录','工具只读 A，B 拒绝且未读正文，前后资源版本和文件摘要相同']
   ])+
-  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。')+
+  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。',
+   '在<a href="/labs/agent-task-reconnect/validation.json">同一份实测记录</a>中，<code>g10.evidence.tool_receipts</code> 的 <code>a1</code> 表示 B 的请求被拒绝，返回的事件为空。验证正文访问还要查独立的 <code>resource.body_reads</code>，其中只有 <code>a0</code> 对 <code>reports-A</code> 的一条读取。若另有一条 <code>a1</code> 读取 B 的审计行，公开校验器的输入仍可能原样通过，因为导出契约没有收录正文读取审计。')+
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
-  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>';
+  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
+  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。');
   a.updated='2026.11.10';
 
  }
@@ -8859,7 +8871,8 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  knowledgeFormula('稳定 softmax','m=maxⱼ xⱼ；pⱼ=exp(xⱼ−m) / Σₜ exp(xₜ−m)','分子分母共同乘 exp(−m)；有限输入的最大指数变成 1。')+keep(old[1])+
  p('CPU 例子的 [1000,1001,1002] 减后为 [−2,−1,0]，结果约为 [0.090031,0.244728,0.665241]。三个全零分数则各占 1/3。很小的指数仍可能下溢成 0；仅检查行和为 1 还不够，错放位置也可能通过行和检查，必须逐项比较参考值。',
  '原 C 实现先检查输入，再计算最大值、指数和分母，最后归一化。它拒绝 NaN、无穷和零列；不支持注意力中的 −∞ 掩码。下面保留这段核心代码，完整输入检查在第 8 节：')+
- (old[1].match(/<div class="code-block">[\s\S]*?<\/pre><\/div>/)?.[0]||''),
+ (old[1].match(/<div class="code-block">[\s\S]*?<\/pre><\/div>/)?.[0]||'')+
+ p('把这条公式放到设备上，先让一个线程算一行，再让一组线程合算。<a href="/article/operator-profiling/#native-metal-softmax">看 Apple GPU 怎样验证两版 softmax →</a>'),
 
  p('归约把多项合成一项，例如求和、最大值。CPU 顺序求和沿一条累加链推进；GPU 可先让多个线程各算一部分，再合并。线程是执行同一内核的一份工作；线程块把一组线程组织起来；网格由本次启动的所有块组成。本例一个块负责一整行。',
  'CUDA 的 blockIdx.x 标识行，threadIdx.x 标识块内位置。求和块固定 256 个线程：线程 0 处理第 0、256、512…列，线程 1 处理第 1、257、513…列。列数 257 时，线程 0 读两项，其余线程读一项；列数只有 5 时，未读到数据的线程以 0 参与合并。',
@@ -8902,7 +8915,7 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('先完成下一节全部正确性测试，再使用 --profile-gemm 选择单个 512×512×512 乘法。这个开关仅保留一个较大 GEMM，不是 13 组验收。Nsight Systems 用来看主机发起、拷贝与设备计算的时序；Nsight Compute 用于选定内核的访存、占用和指令等指标。采集可能回放工作并增加开销。')+
  code('在具备兼容 GPU、驱动和 Nsight 工具的 Linux 环境执行','BASH',
  'nsys profile --trace=cuda --output=gemm-timeline ./build/cuda_lab --profile-gemm\nncu --kernel-name-base function --kernel-name tiled_matmul_kernel \\\n  --set basic --export gemm-kernel ./build/cuda_lab --profile-gemm')+
- p('先解释轨迹里的分配、拷贝和计算边界，再读具体指标。上述命令是待执行方法，本站没有 Nsight 结果或 GPU 加速比。')),
+ p('先解释轨迹里的分配、拷贝和计算边界，再读具体指标。上述 CUDA 命令是待执行方法，设备加速比与 Nsight 结果需实测后记录。')),
 
  p('CPU 路径先解压原实验包。operator_lab.py 只需 Python 标准库和 C11 编译器，会编译临时动态库；cpu_profile.py 另需 PyTorch。两组固定输入独立，原始完整程序与命令如下。')+
  fold('展开原 CPU 运行命令与全部源码',old[7])+
@@ -9045,6 +9058,30 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  '<p class="practice-links"><a href="labs/triton-tail-mask.zip" download>下载 Triton 实验包 ↓</a> · <a href="labs/triton-tail-mask/triton_tail_mask.py" download>查看完整内核和对照脚本 ↓</a> · <a href="labs/triton-tail-mask/README.md">安装与复跑说明 →</a> · <a href="labs/triton-tail-mask/validation.json">查看逐项执行记录 →</a></p>'+
  p('执行记录来自 Triton 3.3.1 官方 CPU 解释器。它顺序运行各实例，核对掩码、填充和归约语义。编译、GPU 访存安全和计时需要目标设备上的证据。理解这个分母后，可接着看 '+linkTo('flash-attention-io','分块注意力怎样跨块合并最大值与指数和')+'。')+
  '<p class="source-at"><a href="https://triton-lang.org/main/programming-guide/chapter-3/debugging.html">Triton 解释器 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/02-fused-softmax.html">Triton 官方 softmax 教程 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="native-metal-softmax">一行 Softmax，怎样由 64 个 GPU 线程合算</h3>'+
+ p('回到第 2 节的稳定公式。两版都要找一行的最大值，再求指数和，最后逐列写出概率。第一版一个线程包办一整行。第二版 64 个线程组成一组，按列号分工。宽度 65 时，线程 0 读第 0 和第 64 列，其他线程各读一列。宽度 31 时，剩余线程仍参加同步，求最大值用负无穷作初值，求和用 0。')+
+ trainingFigure('metal-softmax-reduction','同一行的最大值和指数和分别保存在两个共享数组，写回时每个线程仍处理原来的列。')+
+ trainingCode('Metal 内核节选 · 在同一组里合并最大值','METAL',[
+  'maxima[lane] = local_max;',
+  'threadgroup_barrier(mem_flags::mem_threadgroup);',
+  'for (uint step = lanes / 2; step > 0; step /= 2) {',
+  '    if (lane < step) maxima[lane] = max(maxima[lane], maxima[lane + step]);',
+  '    threadgroup_barrier(mem_flags::mem_threadgroup);',
+  '}',
+  'const float maximum = maxima[0];'
+ ].join('\n'))+
+ p('第一轮由前 32 个线程各合并两项，随后减半，直到 <code>maxima[0]</code> 保存全行最大值。屏障等全组完成这一轮写入。指数和也逐轮合并，使用另一个数组 <code>sums</code>，这样读最大值时不会被下一阶段覆盖。两个数组各占 64×4 字节。')+
+ p('两版在 Apple M4 Pro 上各逐项核对 1,118,062 个概率，并用 CPU 双精度结果独立验证。最大逐项误差小于 7×10⁻⁸，输出后的八个 −777 均未改变。另用同一 GPU 对 [512,512,512] 直接取指数而不减最大值，得到 3 个非有限输出。稳定版在同样的平坦行上得到约 1/3。')+
+ table(['相同输入形状','每线程一行 · μs','每组一行 · μs'],[
+  ['1024×64','76.42（76.00–77.46）','32.54（32.38–241.79）'],
+  ['1024×1025','578.75（538.50–2322.25）','29.04（28.75–124.46）']
+ ])+
+ p('每格是九次设备时间的中位数，括号内是最小值和最大值。两版共用输入和队列，预热后轮换先后。每个 Metal 命令缓冲区只派发一次，完成后才读 GPU 时间戳。短行的两个用时范围有重叠，长行在这批样本中分开。比较时在同一行内对照。同步、调度和实际内存流量需要不同的测量来区分。')+
+ p('解压后进入 <code>metal-softmax</code> 目录，运行 <code>swift -O metal_softmax.swift &gt; replay.json</code>。先看 <code>validation</code> 与溢出对照，再用 <code>benchmarks</code> 的原始样本复算中位数。实验覆盖 Apple Metal 上的连续有限 FP32 数据。注意力掩码、CUDA 与端到端时延各有单独的验证条件。')+
+ '<p class="practice-links"><a href="labs/metal-softmax.zip" download>下载实验包 ↓</a> · <a href="labs/metal-softmax/kernels.metal">完整内核 →</a> · <a href="labs/metal-softmax/validation.json">GPU 回读与原始计时 →</a></p>'+
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/creating-threads-and-threadgroups">Apple Metal 线程组 ↗</a> · <a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">GPU 时间戳 ↗</a></p>';
 })();
 
 
@@ -10594,11 +10631,12 @@ future.result(timeout=35)
  '<figure class="training-figure"><a href="diagrams/kubernetes-hpa-control.svg" target="_blank" rel="noopener" aria-label="放大：CPU 指标、期望副本与可用副本"><img src="diagrams/kubernetes-hpa-control.svg" width="440" height="379" alt="空闲时期望和可用均为 1，负载增加后期望为 2 而可用仍为 1，新 Pod 就绪后可用达到 2，撤掉负载后两者回到 1" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一次扩容分别核对 HPA 期望、Deployment 可用副本和 Pod 就绪条件。<a href="diagrams/kubernetes-hpa-control.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('本次原 Pod 的资源指标样本从约 10.1m 升到 195.0m，越过目标对应的 50m。HPA 的 <code>desiredReplicas</code> 与 Deployment 的 <code>spec.replicas</code> 都变成 2。新增 Pod 已是 Running，但仍缺少通过探针的标记，Deployment 的 <code>availableReplicas</code> 保持 1。补上标记后，同一个新增 Pod UID 变为 Ready，可用副本升到 2。')+
  p('可用副本已经是 2 的那次观察里，HPA 的 <code>currentReplicas</code> 仍显示 1。指标 API 和控制对象分别读取，各自有采样窗口或更新节奏。比较记录时先对齐时间和对象，不能把几个字段当作同一时刻的计数。')+
- p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。业务完成率需要前面定义的实际请求与队列观测。')+
+ p('停止忙循环后，HPA 状态记录 CPU 利用率降至 10%，期望与可用副本回到 1。实验把缩容稳定窗口显式设为 0 秒，仍需等待新样本与控制循环。这次验收覆盖副本变化和 Ready 条件。到<a href="/article/elasticity/#hpa-capacity-observations">C8.1 对照两次快照，再看怎样查业务完成量</a>。')+
  trainingCode('复跑原生 HPA 并离线核对随包记录','SHELL','python3 -B hpa_control_lab.py --output native-record.json\npython3 -B hpa_control_lab.py --check-record validation.json')+
  '<p class="practice-links"><a href="labs/kubernetes-hpa.zip" download>下载源码、说明和记录 ↓</a> · <a href="labs/kubernetes-hpa/validation.json">查看指标窗口、期望和 Pod UID →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561685247">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/">Kubernetes 资源指标链 ↗</a></p>';
 
  const packetFigure='<figure class="training-figure" id="service-packet-rewrite"><a href="diagrams/kubernetes-packet-rewrite.svg" target="_blank" rel="noopener" aria-label="放大 Service 的请求与回包路径"><img src="diagrams/kubernetes-packet-rewrite.svg" width="1080" height="548" loading="lazy" alt="控制信息同步到节点规则；客户端 10.42.1.7:53000 请求 Service 10.96.0.20:443，目的改为后端 10.42.2.8:8443；回包按连接记录恢复 Service 源地址。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>观察同一连接的两端地址。虚线表示规则同步，蓝色和绿色实线分别表示请求与回包。 <a href="diagrams/kubernetes-packet-rewrite.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ scaling.updated='2026.11.11';
  if(!network.sections[2][1].includes(n2[0]))throw Error('Service packet figure insertion point changed');
  network.sections[2][1]=network.sections[2][1].replace(n2[0],packetFigure+n2[0]);
 })();
@@ -11152,6 +11190,17 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  '解释这份结论时，给出证明13:52业务完整的提交清单、附件与权限结果，再沿恢复阶段找出超出的时间。随后提出能影响该路径的改进，例如预置大数据、提前验证恢复身份或缩短串行校验，并在同一故障范围下复测。',
  '再判断两个变化：若数据库位置仍到13:52却缺一份必要附件，应先修正业务恢复点结论；若查询已恢复而旧执行者仍能写入，完整写服务尚未通过接管条件。这样每个目标都落到具体状态与观察，而不是归结为副本更多或备份更频繁。')+linkRow(links(r[9]))
  ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。');
+ resilience.sections[8][1]+=
+ h('recovery-postgres-native-checkpoints','用真实 PostgreSQL 记录核对恢复点')+
+ p('换到 C3.4 的 PostgreSQL 17.10 账户实验。三个分支都从同一份基础备份开始，余额是 100。只改变停止位置或归档材料，再看恢复出来的账户和交易账本。')+
+ table(['恢复操作','日志位置或归档文件','实际结果'],[
+  ['停在具名点 <code>after_t103</code>','<code>0/800420</code>','余额 125，账本含 T101、T102、T103'],
+  ['重放到归档末尾','分叉位置 <code>0/900000</code>','余额 0，账本多了误清零的 T104'],
+  ['仍指定具名点，移走目标段','归档文件 <code>000000010000000000000008</code>','恢复未到目标，实例启动失败']
+ ])+
+ p('在具名分支提交新事务 T105 后，余额从 125 变成 130。这个检查证明该恢复实例可以继续写。<a href="/article/storage-recovery/#native-postgres-pitr">到 C3.4 核对恢复命令、WAL 文件和账户查询</a>。')+
+ p('计算恢复点落后多久，还要取得 T103 的业务提交时刻和事故参考时刻。计算服务恢复耗时，要记录中断何时开始、授权用户何时能查到符合要求的账户结果。这份记录保留了数据库位置和 SQL 结果，缺少这些时刻和应用侧验收。按<a href="/article/resilience/#section-4">第 4 节的起止条件</a>填演练记录时，两条时间线要分别记。');
+ resilience.updated='2026.11.11';
 })();
 
 
@@ -11721,7 +11770,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
   kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
-  kairo.updated='2026.11.10';
+  kairo.updated='2026.11.11';
  }
  {
   const a=articleById('agent-retrieval');
@@ -12379,9 +12428,16 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
    ['两次推理可能复用同一前缀','按前缀缓存键找块，再查块的引用数与空闲顺序','<a href="/article/inference-performance/#vllm-block-lifecycle">最后一个引用释放后，原缓存键仍可命中</a>'],
    ['工具的响应流断开','用请求号定位断流与清理，用原操作键另查报告回执','<a href="/article/mcp-protocol/#mcp-http-cancellation-run">提交前、提交后分别断开响应流</a>']
   ])+
-  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。');
+  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。')+
+  '<h3 id="admission-vs-tool-commit">受理响应丢失与工具回执未保存</h3>'+
+  p('先问哪一步的确认没有留下。<a href="/article/kairo-practice/#native-agent-task-reconnect">G10 的本机只读日报</a>在入口保存任务后断开，客户端没收到 HTTP 状态。S3 的数值日报在接收方写入后退出，工作进程尚未保存本地回执。两次各用独立实验和数据库。')+
+  table(['故障位置','先查哪份记录','保留哪个键，怎么判断'],[
+   ['G10：任务已受理，客户端没收到响应','<a href="/labs/agent-task-reconnect/validation.json">G10 实测记录</a>的 <code>client</code> 与 <code>task_after_lost.tasks</code>。入口已经保存一行 ACCEPTED','原样重传 <code>R1</code> 得到 HTTP 202 和同一个 <code>T1</code>。同键改来源版本得到 409，任务仍只有一行。'],
+   ['S3：接收方已提交，本地未确认','<a href="/labs/integrated-service/validation.json">S3 实测记录</a>的 <code>program.cases.recover_same_operation.commit_gap</code>。任务库回执为空，接收方已有 1 份效果','用原 <code>task-A:save</code> 重试，工具尝试共 2 次、效果仍 1 份。换键对照产生 2 份效果，验收拒绝。']
+  ])+
+  p('入口用提交键归并同一份任务，工具接收方用操作键归并同一笔写入。验收时先沿各自的键查权威记录，再分别数任务行和实际效果。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
- a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
+ a.updated='2026.11.11';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();
 
@@ -13417,6 +13473,15 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   ['全都查询 A104','1,200 / 0','400，留在 0 号片']
  ])+
  p('假设查询都已接纳，且没有取消。热键场景下，0 号片每秒只能完成 800 次，余下 400 次继续等。1 号片虽有空闲，却没有 A104 这行。排查时按分片和键看请求率、完成率、排队长度，再判断是整个租户偏热，还是单个键需要缓存或合并读取。<a href="/article/database-index-locks/#native-sqlite-shard-routing">回看两种布局的实际 SQL 记录 →</a>');
+ a.sections[2][1]+=
+  '<h3 id="hpa-capacity-observations">期望已经是 2，为什么可用还是 1</h3>'+
+  p('取 C4.8 的同一次原生扩容记录。<code>cpu-demo</code> 的每个应用容器声明 CPU 请求 100m（0.1 核），HPA 目标是这项请求量的 50%，副本上限是 2。原 Pod 忙起来后，HPA 状态里记下平均用量 195m，也就是请求量的 195%。')+
+  table(['记录中的两次读取','HPA 期望副本','新增 Pod 的就绪条件','Deployment 可用副本'],[
+   ['<code>readiness_held</code>','2','Running，Ready=false','1'],
+   ['<code>two_available</code>','2','同一个 Pod，Ready=true','2']
+  ])+
+  p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
+  p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+
@@ -15070,7 +15135,7 @@ const learningProfiles={
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
-     ["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
+     ["operator-profiling","native-metal-softmax","Apple GPU 逐行 Softmax"],["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
   ]
  }},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:{
@@ -15612,7 +15677,7 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
- 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
@@ -15954,6 +16019,7 @@ const labArchiveCatalog={
  'rag-citation-oracle':{folder:'rag-citation-oracle',title:'答案金额相同，如何核对引用版本'},
  'redis-replica-promotion':{folder:'redis-replica-promotion',title:'Redis 复制确认与手动提升'},
  'metal-gemm':{folder:'metal-gemm',title:'Apple GPU 上的逐元素与分块矩阵乘法'},
+ 'metal-softmax':{folder:'metal-softmax',title:'Apple GPU 上的逐行 Softmax 与线程组归约'},
  'model-mcp-tool-choice':{folder:'model-mcp-tool-choice',title:'本地模型选择工具与 MCP 读取权限'},
  'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
@@ -16357,6 +16423,10 @@ labLearningCatalog.push(
   files:['metal_gemm.swift','kernels.metal'],env:'macOS · Apple GPU · Swift 工具链',kind:'真实 Metal 执行与 GPU 计时',
   observe:'先用 CPU 参考逐元素核对六种形状，再比较两种实现的成对 GPU 命令缓冲区用时。',
   scope:'Apple M4 Pro 上的 FP32 小实验。CUDA、Nsight 和生产库性能按目标设备另验。'},
+ {id:'ai-native-metal-softmax',track:'ai',stage:2,title:'一行 Softmax 怎样由 64 个 GPU 线程合作',chapter:'operator-profiling',anchor:'native-metal-softmax',pack:'metal-softmax',
+  files:['metal_softmax.swift','kernels.metal'],env:'macOS · Apple GPU · Swift 工具链',kind:'真实 Metal 归约、溢出对照与 GPU 计时',
+  observe:'核对 65 列怎样分给 64 个线程，再比较同形状下逐行处理与组内归约的九对用时。',
+  scope:'Apple M4 Pro 上的连续有限 FP32 数据，计时区间为单个命令缓冲区。CUDA、注意力掩码和端到端时延分别验证。'},
  {id:'agent-model-mcp-tool-choice',track:'agent',stage:2,title:'模型选中了工具，报告能直接读吗',chapter:'agent-runtime',anchor:'native-model-mcp-tool-choice',pack:'model-mcp-tool-choice',
   files:['model_tool_lab.py','fixture.json','assets.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU',kind:'真实模型选工具、MCP 读取与拒绝',
   observe:'从工具清单跟到模型选择、资源端授权和下一轮回答，再用读取记录核对越权分支。',
@@ -16653,5 +16723,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="a0b04bd4c298f177c327cf4cb55b6fa88002ccca79513478e2cdfca6be999691";
+const staticReadingVersion="c254bb6432d48b9e4907dc81a5d6ea6f10a4e1e55072e05ddbb0fd567040a86f";
 

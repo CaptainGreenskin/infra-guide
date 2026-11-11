@@ -110,8 +110,15 @@
    ['两次推理可能复用同一前缀','按前缀缓存键找块，再查块的引用数与空闲顺序','<a href="/article/inference-performance/#vllm-block-lifecycle">最后一个引用释放后，原缓存键仍可命中</a>'],
    ['工具的响应流断开','用请求号定位断流与清理，用原操作键另查报告回执','<a href="/article/mcp-protocol/#mcp-http-cancellation-run">提交前、提交后分别断开响应流</a>']
   ])+
-  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。');
+  p('这些是三份独立实验，分别检验事件交付、推理状态与工具效果。回到本章报告任务，先从 <code>task-A:save</code> 找接收方的回执和发布指针，再核对输入、模型版本与正文。队列或工具的事件帮助解释路径，验收结论由接收方和实际产物给出。')+
+  '<h3 id="admission-vs-tool-commit">受理响应丢失与工具回执未保存</h3>'+
+  p('先问哪一步的确认没有留下。<a href="/article/kairo-practice/#native-agent-task-reconnect">G10 的本机只读日报</a>在入口保存任务后断开，客户端没收到 HTTP 状态。S3 的数值日报在接收方写入后退出，工作进程尚未保存本地回执。两次各用独立实验和数据库。')+
+  table(['故障位置','先查哪份记录','保留哪个键，怎么判断'],[
+   ['G10：任务已受理，客户端没收到响应','<a href="/labs/agent-task-reconnect/validation.json">G10 实测记录</a>的 <code>client</code> 与 <code>task_after_lost.tasks</code>。入口已经保存一行 ACCEPTED','原样重传 <code>R1</code> 得到 HTTP 202 和同一个 <code>T1</code>。同键改来源版本得到 409，任务仍只有一行。'],
+   ['S3：接收方已提交，本地未确认','<a href="/labs/integrated-service/validation.json">S3 实测记录</a>的 <code>program.cases.recover_same_operation.commit_gap</code>。任务库回执为空，接收方已有 1 份效果','用原 <code>task-A:save</code> 重试，工具尝试共 2 次、效果仍 1 份。换键对照产生 2 份效果，验收拒绝。']
+  ])+
+  p('入口用提交键归并同一份任务，工具接收方用操作键归并同一笔写入。验收时先沿各自的键查权威记录，再分别数任务行和实际效果。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
- a.updated='2026.11.09';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
+ a.updated='2026.11.11';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();

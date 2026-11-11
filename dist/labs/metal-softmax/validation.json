@@ -1,0 +1,773 @@
+{
+  "benchmarks" : [
+    {
+      "dispatches_per_command_buffer" : 1,
+      "median_gpu_us" : {
+        "group" : 32.541666769247968,
+        "serial" : 76.416667070589028
+      },
+      "pairs" : [
+        {
+          "gpu_us" : {
+            "group" : 33.583332879061345,
+            "serial" : 77.458334089897107
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.666666811564937,
+            "serial" : 76.625000474450644
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.541666769247968,
+            "serial" : 76.000000262865797
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.416666726930998,
+            "serial" : 76.416667070589028
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.500000088475645,
+            "serial" : 76.374999480322003
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.500000088475645,
+            "serial" : 76.500000432133675
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 241.79166666726815,
+            "serial" : 76.208332757232711
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 62.000000070838723,
+            "serial" : 76.416667070589028
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 32.375000046158675,
+            "serial" : 76.000000262865797
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        }
+      ],
+      "range_gpu_us" : {
+        "group" : {
+          "max" : 241.79166666726815,
+          "min" : 32.375000046158675
+        },
+        "serial" : {
+          "max" : 77.458334089897107,
+          "min" : 76.000000262865797
+        }
+      },
+      "rows" : 1024,
+      "warmups_per_kernel" : 3,
+      "width" : 64
+    },
+    {
+      "dispatches_per_command_buffer" : 1,
+      "median_gpu_us" : {
+        "group" : 29.041667403362226,
+        "serial" : 578.74999947671313
+      },
+      "pairs" : [
+        {
+          "gpu_us" : {
+            "group" : 124.458333630173,
+            "serial" : 2322.2500003612367
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 123.12499984545866,
+            "serial" : 2074.2083333971095
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 29.416666620818432,
+            "serial" : 579.04166715161409
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 28.874999770778231,
+            "serial" : 557.87500059523154
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 29.125000764906872,
+            "serial" : 578.74999947671313
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 28.83333399950061,
+            "serial" : 551.45833266578848
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 29.041667403362226,
+            "serial" : 548.04166666144738
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 28.749999728461262,
+            "serial" : 702.12500031630043
+          },
+          "order" : [
+            "group",
+            "serial"
+          ]
+        },
+        {
+          "gpu_us" : {
+            "group" : 29.000000722589903,
+            "serial" : 538.49999949306948
+          },
+          "order" : [
+            "serial",
+            "group"
+          ]
+        }
+      ],
+      "range_gpu_us" : {
+        "group" : {
+          "max" : 124.458333630173,
+          "min" : 28.749999728461262
+        },
+        "serial" : {
+          "max" : 2322.2500003612367,
+          "min" : 538.49999949306948
+        }
+      },
+      "rows" : 1024,
+      "warmups_per_kernel" : 3,
+      "width" : 1025
+    }
+  ],
+  "environment" : {
+    "device" : "Apple M4 Pro",
+    "float_math" : "precise",
+    "metal_language" : "3.0",
+    "os" : "Version 26.2 (Build 25C56)",
+    "unified_memory" : true
+  },
+  "fixture" : {
+    "dtype" : "float32",
+    "tail_guard_count" : 8,
+    "threads" : 64
+  },
+  "negative" : {
+    "input" : [
+      512,
+      512,
+      512
+    ],
+    "non_finite" : 3
+  },
+  "resources" : {
+    "group" : {
+      "max_threads_per_threadgroup" : 1024,
+      "static_threadgroup_bytes" : 512,
+      "thread_execution_width" : 32
+    },
+    "serial" : {
+      "max_threads_per_threadgroup" : 1024,
+      "static_threadgroup_bytes" : 0,
+      "thread_execution_width" : 32
+    }
+  },
+  "schema" : "infra-metal-softmax-v1",
+  "source_sha256" : {
+    "kernels.metal" : "b3a6d3f6a13f466f46b34f6ba96006f968d1b05cb3730ffc70aa4f4063b2b99d",
+    "metal_softmax.swift" : "b65b1d10924e2a4b30b30067d1f2013f99616bbaab749ee2c7ce319ef35a2f05",
+    "README.md" : "92c3f8d05ef7ad3872d315232f4393e7e09aac0199a22b2b66a51f1c34a6a6bd"
+  },
+  "status" : "passed",
+  "validation" : [
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 3,
+          "max_abs_error" : 0,
+          "max_row_sum_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 1
+            },
+            {
+              "index" : 1,
+              "value" : 1
+            },
+            {
+              "index" : 2,
+              "value" : 1
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 3,
+          "max_abs_error" : 0,
+          "max_row_sum_error" : 0,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 1
+            },
+            {
+              "index" : 1,
+              "value" : 1
+            },
+            {
+              "index" : 2,
+              "value" : 1
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 3,
+      "width" : 1
+    },
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 155,
+          "max_abs_error" : 2.6703359301549767e-08,
+          "max_row_sum_error" : 7.1099819365372241e-08,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.032258063554763794
+            },
+            {
+              "index" : 30,
+              "value" : 0.032258063554763794
+            },
+            {
+              "index" : 31,
+              "value" : 7.8400053098448552e-06
+            },
+            {
+              "index" : 46,
+              "value" : 0.00015747071302030236
+            },
+            {
+              "index" : 61,
+              "value" : 0.0031628839205950499
+            },
+            {
+              "index" : 154,
+              "value" : 0.00035388945252634585
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 155,
+          "max_abs_error" : 2.6703359301549767e-08,
+          "max_row_sum_error" : 6.5827208572954987e-08,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.032258063554763794
+            },
+            {
+              "index" : 30,
+              "value" : 0.032258063554763794
+            },
+            {
+              "index" : 31,
+              "value" : 7.8400053098448552e-06
+            },
+            {
+              "index" : 46,
+              "value" : 0.00015747071302030236
+            },
+            {
+              "index" : 61,
+              "value" : 0.0031628839205950499
+            },
+            {
+              "index" : 154,
+              "value" : 0.00035388945252634585
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 5,
+      "width" : 31
+    },
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 455,
+          "max_abs_error" : 2.2657189596708704e-08,
+          "max_row_sum_error" : 5.260982050003804e-08,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.015384615398943424
+            },
+            {
+              "index" : 64,
+              "value" : 0.015384615398943424
+            },
+            {
+              "index" : 65,
+              "value" : 4.3734639803005848e-06
+            },
+            {
+              "index" : 97,
+              "value" : 2.795862030779972e-07
+            },
+            {
+              "index" : 129,
+              "value" : 0.075023405253887177
+            },
+            {
+              "index" : 454,
+              "value" : 7.439566616085358e-06
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 455,
+          "max_abs_error" : 4.2210746342696837e-08,
+          "max_row_sum_error" : 2.0747522455621947e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.015384615398943424
+            },
+            {
+              "index" : 64,
+              "value" : 0.015384615398943424
+            },
+            {
+              "index" : 65,
+              "value" : 4.3734635255532339e-06
+            },
+            {
+              "index" : 97,
+              "value" : 2.7958617465628777e-07
+            },
+            {
+              "index" : 129,
+              "value" : 0.07502339780330658
+            },
+            {
+              "index" : 454,
+              "value" : 7.4395657065906562e-06
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 7,
+      "width" : 65
+    },
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 2313,
+          "max_abs_error" : 4.5240230173160256e-09,
+          "max_row_sum_error" : 1.043241155684882e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.0038910505827516317
+            },
+            {
+              "index" : 256,
+              "value" : 0.0038910505827516317
+            },
+            {
+              "index" : 257,
+              "value" : 1.0932639042948722e-06
+            },
+            {
+              "index" : 385,
+              "value" : 7.6643715146929026e-05
+            },
+            {
+              "index" : 513,
+              "value" : 0.0053731398656964302
+            },
+            {
+              "index" : 2312,
+              "value" : 0.0026472283061593771
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 2313,
+          "max_abs_error" : 8.2493133157779397e-09,
+          "max_row_sum_error" : 1.8820772140770714e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.0038910505827516317
+            },
+            {
+              "index" : 256,
+              "value" : 0.0038910505827516317
+            },
+            {
+              "index" : 257,
+              "value" : 1.0932637906080345e-06
+            },
+            {
+              "index" : 385,
+              "value" : 7.6643700595013797e-05
+            },
+            {
+              "index" : 513,
+              "value" : 0.0053731389343738556
+            },
+            {
+              "index" : 2312,
+              "value" : 0.0026472285389900208
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 9,
+      "width" : 257
+    },
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 65536,
+          "max_abs_error" : 3.9271249946404296e-08,
+          "max_row_sum_error" : 1.3649169261498173e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.015625
+            },
+            {
+              "index" : 63,
+              "value" : 0.015625
+            },
+            {
+              "index" : 64,
+              "value" : 4.7281891966122203e-06
+            },
+            {
+              "index" : 96,
+              "value" : 3.0226303238123364e-07
+            },
+            {
+              "index" : 127,
+              "value" : 0.0031449156813323498
+            },
+            {
+              "index" : 65535,
+              "value" : 0.00020166531612630934
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 65536,
+          "max_abs_error" : 6.6055665964848131e-08,
+          "max_row_sum_error" : 2.734446553631642e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.015625
+            },
+            {
+              "index" : 63,
+              "value" : 0.015625
+            },
+            {
+              "index" : 64,
+              "value" : 4.7281882871175185e-06
+            },
+            {
+              "index" : 96,
+              "value" : 3.0226297553781478e-07
+            },
+            {
+              "index" : 127,
+              "value" : 0.0031449149828404188
+            },
+            {
+              "index" : 65535,
+              "value" : 0.00020166527247056365
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 1024,
+      "width" : 64
+    },
+    {
+      "kernels" : {
+        "group" : {
+          "checked" : 1049600,
+          "max_abs_error" : 1.8913542260134975e-09,
+          "max_row_sum_error" : 1.2777988489531822e-07,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.00097560975700616837
+            },
+            {
+              "index" : 1024,
+              "value" : 0.00097560975700616837
+            },
+            {
+              "index" : 1025,
+              "value" : 2.815447999182652e-07
+            },
+            {
+              "index" : 1537,
+              "value" : 1.6201786365854787e-06
+            },
+            {
+              "index" : 2049,
+              "value" : 9.3234830274013802e-06
+            },
+            {
+              "index" : 1049599,
+              "value" : 5.9952833453280618e-07
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        },
+        "serial" : {
+          "checked" : 1049600,
+          "max_abs_error" : 1.9238819745637237e-08,
+          "max_row_sum_error" : 1.4946459523379474e-06,
+          "probes" : [
+            {
+              "index" : 0,
+              "value" : 0.00097560975700616837
+            },
+            {
+              "index" : 1024,
+              "value" : 0.00097560975700616837
+            },
+            {
+              "index" : 1025,
+              "value" : 2.8154516940048779e-07
+            },
+            {
+              "index" : 1537,
+              "value" : 1.6201806829485577e-06
+            },
+            {
+              "index" : 2049,
+              "value" : 9.3234948508325033e-06
+            },
+            {
+              "index" : 1049599,
+              "value" : 5.9952913034067024e-07
+            }
+          ],
+          "tail_guards" : [
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777,
+            -777
+          ]
+        }
+      },
+      "rows" : 1024,
+      "width" : 1025
+    }
+  ]
+}

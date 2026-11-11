@@ -88,7 +88,15 @@
 
  p('评估一个试次既要看交付，也要看必需或禁止的过程。正常报告先读获准资料，再写入正确目标；若要求写前审批，审批应在写入之前有效。判分器检查这些依赖条件，允许先查手册或先查事实、串行或并行等合理路径。硬编码唯一工具顺序，会误拒绝有效方案。',
  '现在故意改变这条路径：先把资料写到 B，随后删除副本，最后在 A 会话返回正确摘要。最终目录可能干净，期间的披露已经发生。第 11 节的实际程序采用更小的反例：先越权读取 B，再写出正确的 A 报告。报告和 success 都正确，但读取集合不合格，这道正向任务仍失败。',
- '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。'),
+ '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。')+
+ '<h3 id="memory-delivery-verdict">用接收回执判定撤回后的交付</h3>'+
+ p('沿用<a href="/article/agent-memory/#native-memory-withdrawal">记忆章的暂停任务</a>。本题约定先撤回偏好，再恢复发送，接收方应收到标准版。打开<a href="/labs/memory-withdrawal/validation.json">同一份实测记录</a>，比较 <code>cases.unchecked</code> 和 <code>cases.rechecked</code>。各组按 <code>stage_old.paused.checkpoint_id</code> 与 <code>resume_old.before.checkpoint_id</code> 核对恢复使用了原检查点，再按任务号找接收回执。')+
+ table(['查哪里','沿用快照 unchecked','发送前重查 rechecked'],[
+  ['当前偏好 <code>store.after</code>','A 的条目为 null','A 的条目为 null'],
+  ['恢复前 <code>resume_old.before.values.snapshot</code>','短版 v1','短版 v1'],
+  ['在 <code>collector.before_purge</code> 找 <code>old-task</code>','收到 short，memory_version=1，交付不合格','收到 standard，memory_version=null，交付合格']
+ ])+
+ p('随后两组的 <code>history_purge.old_count_after</code> 都是 0。比较接收方的 <code>before_purge</code> 和 <code>after_purge</code>，各自仍是原来的两条回执，旧任务的判定不变。这份实跑检查固定撤回顺序下的格式交付，第 11 节另用实际模型回答检查来源引用。'),
 
  p('切片是按任务属性分组查看结果，例如工具、权限类别、输入长度、是否需要恢复。先保留每题每试次的明细，再对每组计算题数、通过数和代价。设 10 个短问题通过 9 个，2 个长问题均失败，总体为 9/12=75%；两组分别为 9/10与0/2，后者提示应继续检查资料截断、证据位置或输出预算。',
  '一个任务可以同时属于长输入和跨租户场景，所以不同维度的题数不能直接相加。小组样本少时先报告原始计数，再补充有代表性的任务或重复试次。应预先确定关键类别的门槛，避免总体提升掩盖重要类别退化。',

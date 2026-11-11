@@ -30,7 +30,8 @@
  knowledgeFormula('稳定 softmax','m=maxⱼ xⱼ；pⱼ=exp(xⱼ−m) / Σₜ exp(xₜ−m)','分子分母共同乘 exp(−m)；有限输入的最大指数变成 1。')+keep(old[1])+
  p('CPU 例子的 [1000,1001,1002] 减后为 [−2,−1,0]，结果约为 [0.090031,0.244728,0.665241]。三个全零分数则各占 1/3。很小的指数仍可能下溢成 0；仅检查行和为 1 还不够，错放位置也可能通过行和检查，必须逐项比较参考值。',
  '原 C 实现先检查输入，再计算最大值、指数和分母，最后归一化。它拒绝 NaN、无穷和零列；不支持注意力中的 −∞ 掩码。下面保留这段核心代码，完整输入检查在第 8 节：')+
- (old[1].match(/<div class="code-block">[\s\S]*?<\/pre><\/div>/)?.[0]||''),
+ (old[1].match(/<div class="code-block">[\s\S]*?<\/pre><\/div>/)?.[0]||'')+
+ p('把这条公式放到设备上，先让一个线程算一行，再让一组线程合算。<a href="/article/operator-profiling/#native-metal-softmax">看 Apple GPU 怎样验证两版 softmax →</a>'),
 
  p('归约把多项合成一项，例如求和、最大值。CPU 顺序求和沿一条累加链推进；GPU 可先让多个线程各算一部分，再合并。线程是执行同一内核的一份工作；线程块把一组线程组织起来；网格由本次启动的所有块组成。本例一个块负责一整行。',
  'CUDA 的 blockIdx.x 标识行，threadIdx.x 标识块内位置。求和块固定 256 个线程：线程 0 处理第 0、256、512…列，线程 1 处理第 1、257、513…列。列数 257 时，线程 0 读两项，其余线程读一项；列数只有 5 时，未读到数据的线程以 0 参与合并。',
@@ -73,7 +74,7 @@
  p('先完成下一节全部正确性测试，再使用 --profile-gemm 选择单个 512×512×512 乘法。这个开关仅保留一个较大 GEMM，不是 13 组验收。Nsight Systems 用来看主机发起、拷贝与设备计算的时序；Nsight Compute 用于选定内核的访存、占用和指令等指标。采集可能回放工作并增加开销。')+
  code('在具备兼容 GPU、驱动和 Nsight 工具的 Linux 环境执行','BASH',
  'nsys profile --trace=cuda --output=gemm-timeline ./build/cuda_lab --profile-gemm\nncu --kernel-name-base function --kernel-name tiled_matmul_kernel \\\n  --set basic --export gemm-kernel ./build/cuda_lab --profile-gemm')+
- p('先解释轨迹里的分配、拷贝和计算边界，再读具体指标。上述命令是待执行方法，本站没有 Nsight 结果或 GPU 加速比。')),
+ p('先解释轨迹里的分配、拷贝和计算边界，再读具体指标。上述 CUDA 命令是待执行方法，设备加速比与 Nsight 结果需实测后记录。')),
 
  p('CPU 路径先解压原实验包。operator_lab.py 只需 Python 标准库和 C11 编译器，会编译临时动态库；cpu_profile.py 另需 PyTorch。两组固定输入独立，原始完整程序与命令如下。')+
  fold('展开原 CPU 运行命令与全部源码',old[7])+
@@ -216,4 +217,28 @@
  '<p class="practice-links"><a href="labs/triton-tail-mask.zip" download>下载 Triton 实验包 ↓</a> · <a href="labs/triton-tail-mask/triton_tail_mask.py" download>查看完整内核和对照脚本 ↓</a> · <a href="labs/triton-tail-mask/README.md">安装与复跑说明 →</a> · <a href="labs/triton-tail-mask/validation.json">查看逐项执行记录 →</a></p>'+
  p('执行记录来自 Triton 3.3.1 官方 CPU 解释器。它顺序运行各实例，核对掩码、填充和归约语义。编译、GPU 访存安全和计时需要目标设备上的证据。理解这个分母后，可接着看 '+linkTo('flash-attention-io','分块注意力怎样跨块合并最大值与指数和')+'。')+
  '<p class="source-at"><a href="https://triton-lang.org/main/programming-guide/chapter-3/debugging.html">Triton 解释器 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/02-fused-softmax.html">Triton 官方 softmax 教程 ↗</a></p>';
+
+ a.sections[7][1]+=
+ '<h3 id="native-metal-softmax">一行 Softmax，怎样由 64 个 GPU 线程合算</h3>'+
+ p('回到第 2 节的稳定公式。两版都要找一行的最大值，再求指数和，最后逐列写出概率。第一版一个线程包办一整行。第二版 64 个线程组成一组，按列号分工。宽度 65 时，线程 0 读第 0 和第 64 列，其他线程各读一列。宽度 31 时，剩余线程仍参加同步，求最大值用负无穷作初值，求和用 0。')+
+ trainingFigure('metal-softmax-reduction','同一行的最大值和指数和分别保存在两个共享数组，写回时每个线程仍处理原来的列。')+
+ trainingCode('Metal 内核节选 · 在同一组里合并最大值','METAL',[
+  'maxima[lane] = local_max;',
+  'threadgroup_barrier(mem_flags::mem_threadgroup);',
+  'for (uint step = lanes / 2; step > 0; step /= 2) {',
+  '    if (lane < step) maxima[lane] = max(maxima[lane], maxima[lane + step]);',
+  '    threadgroup_barrier(mem_flags::mem_threadgroup);',
+  '}',
+  'const float maximum = maxima[0];'
+ ].join('\n'))+
+ p('第一轮由前 32 个线程各合并两项，随后减半，直到 <code>maxima[0]</code> 保存全行最大值。屏障等全组完成这一轮写入。指数和也逐轮合并，使用另一个数组 <code>sums</code>，这样读最大值时不会被下一阶段覆盖。两个数组各占 64×4 字节。')+
+ p('两版在 Apple M4 Pro 上各逐项核对 1,118,062 个概率，并用 CPU 双精度结果独立验证。最大逐项误差小于 7×10⁻⁸，输出后的八个 −777 均未改变。另用同一 GPU 对 [512,512,512] 直接取指数而不减最大值，得到 3 个非有限输出。稳定版在同样的平坦行上得到约 1/3。')+
+ table(['相同输入形状','每线程一行 · μs','每组一行 · μs'],[
+  ['1024×64','76.42（76.00–77.46）','32.54（32.38–241.79）'],
+  ['1024×1025','578.75（538.50–2322.25）','29.04（28.75–124.46）']
+ ])+
+ p('每格是九次设备时间的中位数，括号内是最小值和最大值。两版共用输入和队列，预热后轮换先后。每个 Metal 命令缓冲区只派发一次，完成后才读 GPU 时间戳。短行的两个用时范围有重叠，长行在这批样本中分开。比较时在同一行内对照。同步、调度和实际内存流量需要不同的测量来区分。')+
+ p('解压后进入 <code>metal-softmax</code> 目录，运行 <code>swift -O metal_softmax.swift &gt; replay.json</code>。先看 <code>validation</code> 与溢出对照，再用 <code>benchmarks</code> 的原始样本复算中位数。实验覆盖 Apple Metal 上的连续有限 FP32 数据。注意力掩码、CUDA 与端到端时延各有单独的验证条件。')+
+ '<p class="practice-links"><a href="labs/metal-softmax.zip" download>下载实验包 ↓</a> · <a href="labs/metal-softmax/kernels.metal">完整内核 →</a> · <a href="labs/metal-softmax/validation.json">GPU 回读与原始计时 →</a></p>'+
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/creating-threads-and-threadgroups">Apple Metal 线程组 ↗</a> · <a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">GPU 时间戳 ↗</a></p>';
 })();

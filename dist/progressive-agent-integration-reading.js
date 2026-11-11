@@ -276,10 +276,12 @@
    ['换会话请求同一结果','HTTP 404'],
    ['资源服务的读取与效果记录','工具只读 A，B 拒绝且未读正文，前后资源版本和文件摘要相同']
   ])+
-  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。')+
+  p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。',
+   '在<a href="/labs/agent-task-reconnect/validation.json">同一份实测记录</a>中，<code>g10.evidence.tool_receipts</code> 的 <code>a1</code> 表示 B 的请求被拒绝，返回的事件为空。验证正文访问还要查独立的 <code>resource.body_reads</code>，其中只有 <code>a0</code> 对 <code>reports-A</code> 的一条读取。若另有一条 <code>a1</code> 读取 B 的审计行，公开校验器的输入仍可能原样通过，因为导出契约没有收录正文读取审计。')+
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
-  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>';
+  '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
+  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。');
   a.updated='2026.11.10';
 
  }

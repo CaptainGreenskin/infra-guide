@@ -62,6 +62,18 @@ if(process.argv[2])verify(JSON.parse(fs.readFileSync(process.argv[2],'utf8')));
 assert(execFileSync('unzip',['-p',folder+'.zip',pack+'/validation.json']).equals(frozen));
 const html=fs.readFileSync('dist/article/storage-recovery/index.html','utf8');
 for(const marker of ['id="native-postgres-pitr"','diagrams/postgres-pitr-wal.svg','labs/postgres-pitr.zip','labs/postgres-pitr/validation.json'])assert(html.includes(marker),marker);
+const recoveryBridge='recovery-postgres-native-checkpoints';
+assert(html.includes('/article/resilience/#'+recoveryBridge),'Storage lab links to the recovery acceptance example');
+const resilience=fs.readFileSync('dist/article/resilience/index.html','utf8');
+const bridge=resilience.split('id="'+recoveryBridge+'"')[1]?.split('</section>')[0];
+assert(bridge?.includes('/article/storage-recovery/#native-postgres-pitr'),'Recovery chapter links back to the native procedure');
+const {archive,base,restores,named_after_write:namedAfter,missing_wal:missing}=data.report;
+for(const field of [archive.restore_point,archive.point_lsn,restores.latest.fork_lsn,missing.omitted_segment])
+ assert(bridge.includes('<code>'+field+'</code>'),field+': recovery location or missing archive must match the record');
+assert(bridge.includes('余额是 '+base.balance),'Show the common baseline balance');
+for(const amount of [restores.named.balance,restores.latest.balance])
+ assert(bridge.includes('余额 '+amount),amount+': recovered balance must match the record');
+assert(bridge.includes('变成 '+namedAfter.balance)&&bridge.includes('缺少这些时刻和应用侧验收'),'Account writes and timing scope remain explicit');
 assert(fs.readFileSync('dist/module/cloud-data/index.html','utf8').includes('/article/storage-recovery/#native-postgres-pitr'));
 assert(fs.readFileSync('dist/roadmap/cloud-sre/index.html','utf8').includes('?goal=cloud-sre#native-postgres-pitr'));
 assert(fs.readFileSync('dist/labs/index.html','utf8').includes('id="lab-cloud-postgres-pitr"'));

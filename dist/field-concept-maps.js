@@ -355,7 +355,7 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
- 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],

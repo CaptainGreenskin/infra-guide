@@ -109,6 +109,14 @@ function checkPage() {
  assert.equal(section.split(marker).length, 2);
  assert.equal(data.chapter.sections.filter(([, html]) => html.includes(marker)).length, 1);
  const lesson = section.slice(section.indexOf(marker));
+ const evaluation = vm.runInContext('articleById("agent-evaluation").sections[6][1]', context);
+ assert(lesson.includes('/article/agent-evaluation/#memory-delivery-verdict'));
+ const verdict = evaluation.slice(evaluation.indexOf('id="memory-delivery-verdict"'));
+ assert(verdict.includes('/article/agent-memory/#' + anchor) && verdict.includes('/labs/' + pack + '/validation.json'));
+ for (const {collector} of Object.values(record.cases)) {
+  const {format, memory_version} = collector.before_purge.find(row => row.payload.thread_id === 'old-task').payload;
+  assert(verdict.includes(format + '，memory_version=' + memory_version), 'evaluation uses the observed receipt');
+ }
  for (const target of ['/labs/' + pack + '.zip', '/labs/' + pack + '/README.md', '/labs/' + pack + '/validation.json',
   'diagrams/' + pack + '.svg']) assert(lesson.includes('href="' + target + '"'), 'missing lesson link ' + target);
  const source = fs.readFileSync(path.join(folder, 'memory_lab.py'), 'utf8');

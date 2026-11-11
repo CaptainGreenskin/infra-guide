@@ -80,6 +80,31 @@ for(const item of configs){
  cp.execFileSync('python3',['-B',runner,'--check-record',record]);
  checkPage(item.article,item.anchor,item.pack,item.diagram,[ci.url]);
 }
+const hpa=read('dist/labs/kubernetes-hpa/validation.json');
+const held=hpa.readiness_held,available=hpa.two_available;
+const unreadyPod=held.pods.find(pod=>!pod.ready);
+assert(unreadyPod,'The first snapshot includes the new unready Pod');
+const newPod=available.pods.find(pod=>pod.uid===unreadyPod.uid);
+assert(newPod?.ready,'Compare the same new Pod before and after readiness');
+const capacityAnchor='hpa-capacity-observations';
+const capacity=fs.readFileSync('dist/article/elasticity/index.html','utf8');
+const hpaBridge=capacity.split('id="'+capacityAnchor+'"')[1]?.split('</section>')[0];
+assert(hpaBridge?.includes('/article/k8s-autoscaling/#native-hpa-control'));
+assert(hpaBridge.includes('/article/cloud-service-lab/#kubernetes-service-first-response'));
+assert(hpaBridge.includes('CPU 请求 '+hpa.workload_resources.requests.cpu));
+assert(hpaBridge.includes('平均用量 '+held.hpa.cpu_average)&&hpaBridge.includes('请求量的 '+held.hpa.cpu_percent+'%'));
+for(const [label,snapshot,podState] of [
+ ['readiness_held',held,unreadyPod.phase+'，Ready='+unreadyPod.ready],
+ ['two_available',available,'同一个 Pod，Ready='+newPod.ready],
+]){
+ const row=['<code>'+label+'</code>',snapshot.hpa.desired,podState,snapshot.deployment.available]
+  .map(value=>'<td>'+value+'</td>').join('');
+ assert(hpaBridge.includes(row),label+': actual HPA, Pod and Deployment fields');
+}
+assert(hpaBridge.includes('当前副本字段仍是 '+available.hpa.current));
+assert(hpaBridge.includes('第 2 节的 120 秒和每副本 40 次/秒是算例输入'));
+const scaling=fs.readFileSync('dist/article/k8s-autoscaling/index.html','utf8');
+assert(scaling.split('id="native-hpa-control"')[1]?.split('</section>')[0].includes('/article/elasticity/#'+capacityAnchor));
 
 const queueFolder='dist/labs/kueue-admission';
 const queueScript=queueFolder+'/kueue_admission.py',queueRecord=queueFolder+'/validation.json';
