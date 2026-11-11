@@ -384,6 +384,11 @@
     {
       "id": "observability",
       "targets": [
+        "collector-sampling-check",
+        "slo-event-to-trace"
+      ],
+      "visible_targets": [
+        "slo-event-to-trace",
         "collector-sampling-check"
       ]
     },
@@ -763,7 +768,8 @@
         "vllm-block-lifecycle",
         "native-pd-split",
         "tp-placement",
-        "native-slot-handoff"
+        "native-slot-handoff",
+        "native-vllm-scheduler"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",

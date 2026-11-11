@@ -310,7 +310,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('复核时，先从模型响应找提议的工具和参数，再到计划表、事实表和报告表查实际结果。库里只有一份 42 的报告，记录主清单和补录两个来源。实验使用固定提示和测试批准，只支持这次计划修订。报告与完成状态在同一个 SQLite 事务中提交。')+
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
-   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>');
+   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>')+
+   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');

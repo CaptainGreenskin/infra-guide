@@ -6485,6 +6485,100 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "5f87c49e961d09e04674fcf44daf23a3af6246790912db8b0ec414e038193164",
+      "reviewed_content_sha256": "72be7d07879fdc5dcecd2e5bc721480d7b219a9a45ce6816bf4017abfbbd2861",
+      "scope": "Hand off one classified report task to the actual trace in the next lesson.",
+      "observation": "The visible link leads to the exact report event and its 503/200 retry evidence.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "observability",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "9d8a389ebb8f3e829fbcdc9bac59efaebd18db29b439b92367ebebc53de01695",
+      "reviewed_content_sha256": "d0bd0ae6ff6d929c523078881863b32da9efde29b09304ccd447b0593e1334f8",
+      "scope": "Classify one real report event and join it to its exact root, attempts and receiver spans.",
+      "observation": "The result and 6.525 ms trace come from the published ledger; the next SQLite diagnosis uses separate inputs.",
+      "headings": [
+        "从一个能复述的用户现象开始",
+        "RED 看用户请求，USE 查资源上的排队",
+        "为什么局部 p99 不能拼成全局 p99",
+        "直方图让“超过目标的有几次”比 p99 更直接",
+        "让指标可定位，同时控制标签组合",
+        "还原一次慢请求的因果路径",
+        "观测链也有失败模式，用已知输入校核它",
+        "课堂验收：查出故障，也查出图表的问题",
+        "配套实战：两段HTTP与父子trace关联"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "daf34c7d7de88c44f85ecba8cfee1ea7eb053ee05e1cea42508f193118cabcf6",
+      "reviewed_content_sha256": "8d785c0d7909fbdd0d05963a8f355fd2f9bc47865bd599b90d2398a365b791b6",
+      "scope": "Replay actual pinned vLLM scheduling with an explicit model-output fixture.",
+      "observation": "Cold and warm paths, temporary block pressure, completion and late output all bind to the same CPU metadata record.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "577e024527fc87d8ac26e9f6c4942a6dfae6691d9e956dad590376be382086bb",
+      "reviewed_content_sha256": "9cba7f25cc4f97b660cfd0e30a771b2ef8f8d131886fadee0e49f1edd890fce4",
+      "scope": "Connect the first Agent lesson to actual model tool selection and then to a distinct plan revision case.",
+      "observation": "The first model reads existing sales data; the next experiment builds an order report.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "7d3fd59045d82d2f01409084749a95c0d6d18a8c9d7df1bfcaf772f781fddfef",
+      "reviewed_content_sha256": "a05c2e361124144f0449f95e8d36f46bdf39f08cbf391686b05b69660e65a648",
+      "scope": "Follow the durable workflow into an independent receiver and its actual trace.",
+      "observation": "The distinct HTTP experiment shows three calls and one report, with its own receipt.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

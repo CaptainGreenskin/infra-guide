@@ -7448,7 +7448,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
-  p('沿 vLLM V1 的请求编号，从入队读到归还。调度和模型执行见固定版本源码，块引用和逐出可用上游块池做 CPU 对照。')+
+  p('沿 vLLM V1 的请求编号，从入队读到归还。下面既可以看固定版本的源码，也可以在 CPU 上复跑这段调度与分块。')+
   '<details class="progressive-detail"><summary>vLLM V1 · 请求源码与块池实跑</summary>'+
   heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
   p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
@@ -7461,7 +7461,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('输出处理器把新编号逐步转回文本，组装请求结果。客户端的接收时刻还要经过传输。 '+vllmLink('engine/output_processor.py','L408-L434','逐步解码与组装输出'))+
   p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
   '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
-  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a> <a href="/article/inference-performance/#native-vllm-scheduler">用真实调度器核对同一组位置 →</a>');
  performance.sections[2][1]+=
   heading('vllm-block-lifecycle','执行上游块池：空闲之后，什么时候才驱逐？')+
   p('上面的固定版本源码走读说到“引用归零的块可以成为分配候选”。现在直接执行同一提交的 BlockPool，把这句话拆成可检查的状态。实验在 CPU 上运行上游完整块池、块元数据和空闲队列类，保留原始方法体；没有运行完整 vLLM、调度器或模型，也没有分配 GPU KV 张量。',
@@ -7480,6 +7480,25 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '<p class="practice-links"><a href="labs/vllm-block-lifecycle.zip" download>下载原创运行器与证据 ↓</a> · <a href="labs/vllm-block-lifecycle/block_lifecycle.py">实验源码</a> · <a href="labs/vllm-block-lifecycle/fetch_upstream.py">固定来源下载器</a> · <a href="labs/vllm-block-lifecycle/source-manifest.json">来源与哈希清单</a> · <a href="labs/vllm-block-lifecycle/validation.json">实际12步状态</a> · <a href="labs/vllm-block-lifecycle/README.md">复跑说明与自测答案</a></p>'+
   p('用 10 分自测：分别解释 A 结束、B 结束、C 查询与 touch、按队头重分配、耗尽拒绝这五步，每步 2 分。必须给出引用数或队列，不能只说“用了缓存”。追问：查到后却未建立引用，若允许其他分配穿插，为什么不能假设编号仍属于旧内容？本实验按顺序调用，未验证任意多线程访问的同步安全。'+
   ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。')+'</details>';
+ performance.sections[2][1]+=
+  '<details class="progressive-detail"><summary>vLLM V1 实战 · 还有计算额度，为什么仍要等？</summary>'+
+  heading('native-vllm-scheduler','运行 vLLM 调度器，追踪三条请求')+
+  p('一轮最多计算 4 个词元位置。缓存池另有 3 个可用块，每块 4 格。前一个数字决定这轮还能算多少，后一个决定新结果有没有地方放。A 和 B 的提示都是 [1,2,3,4,5,6,7,8]，C 的提示是 [9,2,3,4]。先处理完 A，再送 B；B 选出首项后送 C。')+
+  trainingFigure('vllm-scheduler','同一调度器的实际排程。A 分两轮算完，B 命中一个整块，C 等到 B 归还块后才获准执行。')+
+  table(['轮次','实际安排的位置','块或输出怎样变化'],[
+   ['1–2 · 冷 A','A 先算 0–3，再算 4–7','没有旧块可用。A 输出 90 后结束'],
+   ['3 · 暖 B','B 只算 4–7','复用 A 的首块。B 输出 90，仍在运行'],
+   ['4 · B 与 C','B 算位置 8；C 等待','B 持有 [1,3,2]，空闲块为 0，计算额度还剩 3 格。B 输出 91 后释放三块'],
+   ['5 · C 入场','C 算 0–3','首块从第一个词元起就不同，无复用。C 输出 99 后结束']
+  ])+
+  p('第 3 轮的 B 和 A 完全同前缀。固定版本仍要计算末位置来选首项，所以可命中的上限是 7。整块大小是 4，实际复用 4 个位置。第 4 轮把 B 已选出的 90 送回位置 8，占去第三个块。此时 C 虽然排在等待队列里，首块却无处存放。先检查空闲块数，再看计算额度，才能解释为什么这一轮只算了一个位置。')+
+  p('看记录时先对照 <code>scheduled.positions</code> 和 <code>after_schedule</code>，确认 C 此时仍等待。再看 <code>after_reply</code>，B 达到输出上限后块已归还。把一个迟到的 B 输出 92 再交给调度器，结果没有新的输出，请求和块状态也没有变化。下一轮开始时，C 才得到自己的块。')+
+  trainingCode('解压后在实验目录复跑','SHELL',`python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -B upstream.py --dest upstream-cache
+PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cache --output replay.json`)+
+  p('实验在 CPU 上调用 vLLM v0.10.2 的原始请求、调度与块管理方法。90、91、99 和迟到的 92 是测试程序提供的固定模型返回值。记录回答的是哪轮计算哪些位置、占用哪些块，以及结束后怎样清理。设备显存、生成质量和延迟要用完整推理服务测量。')+
+  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p></details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
@@ -11439,7 +11458,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('复核时，先从模型响应找提议的工具和参数，再到计划表、事实表和报告表查实际结果。库里只有一份 42 的报告，记录主清单和补录两个来源。实验使用固定提示和测试批准，只支持这次计划修订。报告与完成状态在同一个 SQLite 事务中提交。')+
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
-   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>');
+   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>')+
+   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
@@ -12700,7 +12720,8 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
 
    p('独立练习固定同一窗口：甲990次查询、4坏，乙10次、1坏，目标99.8%。先合并得到1000次、5坏；坏率5/1000=0.5%。允许坏数1000×0.2%=2，剩余预算2−5=−3，燃烧率0.5%/0.2%=2.5倍。乙的10%以10次为分母，既应被看到，也不能与甲坏率等权平均当成总体。',
    '再改变一个条件：下一段5分钟入口计数器没有增长，而独立客户端持续超时。这里不能报告100%成功。应保留用户指标无样本状态，对照客户端发出量、上游到达量与采集心跳，判断请求在哪里消失。',
-   '核对解答时分别检查全量分母、允许坏数、燃烧率和低样本解释，各占一分。发布决定还应写明：什么结果会暂停扩大，什么证据支持恢复；不能只用“预算还有”代替业务条件。')+linkRow(l[6]),
+   '核对解答时分别检查全量分母、允许坏数、燃烧率和低样本解释，各占一分。发布决定还应写明：什么结果会暂停扩大，什么证据支持恢复；不能只用“预算还有”代替业务条件。')+linkRow(l[6])+
+   p('一次报表发布收到过 HTTP 503，接收方最后只保存了一份正确的报表。<a href="/article/observability/#slo-event-to-trace">到下一章按实际结果计数，再沿追踪找出哪次调用失败 →</a>'),
 
    '<h3 id="subsection-8-fgmzv3">在真实规则引擎中检验聚合与告警</h3>'+p('Prometheus按时间保存指标样本。计数器是随事件累加、进程重启时可能重置的数值；标签区分同名指标的实例、结果类别等序列。实验先把业务事件分类成good/bad，再输入http_requests_total；规则引擎不会替业务判断版本正确或用户是否拿到了日报。记录规则将定期计算的值存为新指标，告警规则再比较这些值并维护每组标签的告警状态。',
    '此处固定30天、99.9%的目标，读取1小时和5分钟坏率，两个都严格大于14.4×0.001=0.0144且5分钟有流量时，先进入待确认pending。规则每分钟求值一次；条件持续满足1分钟后变为触发firing。1分钟是告警状态的等待条件，不是额外的统计窗，也不是收集够1分钟就能忽略1小时输入。')+
@@ -12744,7 +12765,16 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
     ['日志 log','某个时点发生的离散事件及上下文字段','该请求为何重试、返回哪一版资料、哪次租借失败'],
     ['追踪 trace','相关操作组成的一次执行路径','入口查询触发了哪些内部调用'],
     ['跨度 span','追踪中一次有起止时刻的操作及其身份、父关系','库存调用持续多久，是否挡住响应返回']
-   ])+p('可观测性是用系统留下的这些信号解释内部行为的能力。指标先缩小影响范围，再沿同一请求身份找到日志与追踪；trace-id关联整条路径，span-id区分其中一次操作。光有一条错误日志无法计算影响面，光有延迟曲线又无法说明在等哪个步骤。用户事件与好坏分类仍按同一口径对账。')+linkRow(l[0]),
+   ])+p('可观测性是用系统留下的这些信号解释内部行为的能力。指标先缩小影响范围，再沿同一请求身份找到日志与追踪；trace-id关联整条路径，span-id区分其中一次操作。光有一条错误日志无法计算影响面，光有延迟曲线又无法说明在等哪个步骤。用户事件与好坏分类仍按同一口径对账。')+linkRow(l[0])+
+   '<h3 id="slo-event-to-trace">一次报表发布里，哪一步返回了 503</h3>'+
+   p('沿用上一章的分类方法，把事件换成一次报表发布。本练习要求程序在 500 毫秒内核对完接收方返回的保存回执。接收方必须只保存一份报表，报表总数为 37。实际记录中的 <code>R27-retry</code> 从开始执行到完成核对用了 6.525 毫秒。账本标为已核对成功，接收方也只存了一份总数为 37 的报表，所以计一次好事件。',
+   '用账本上的追踪编号查到这次任务。记录整项工作的跨度叫根跨度。它下面有两次 HTTP 调用，每次又有一条接收端跨度，其父编号就是相应调用的跨度编号。')+
+   table(['调用','接收端做了什么','调用方收到什么'],[
+    ['第一次','保存报表，总数 37','HTTP 503'],
+    ['第二次','找到原有报表，复用回执','HTTP 200']
+   ])+p('这次 503 出现在写入之后。第二次调用取得回执，程序才核对任务完成。两次内部调用仍只对应一次任务。下一章换用两次真实的 SQLite 查询。后来的查询借不到连接时，用同样的方法查清<a href="/article/incident/#incident-connection-lease">占着连接的请求正在等什么 →</a>')+
+   fold('核对实际追踪编号和起止时刻',p('账本中 <code>R27-retry</code> 的追踪编号是 <code>a881e26b5aad26904c03d43be64547ad</code>，根跨度是 <code>8048db061ee16091</code>。起止时刻为 <code>1794205272194587000</code> 与 <code>1794205272201112000</code> 纳秒，相减得 6525000 纳秒。两次调用跨度是 <code>3df97674fe31c7d2</code> 与 <code>8c5d1c5f37af2c1e</code>；在接收端记录的 <code>parentSpanId</code> 分别能找到它们。')+
+   '<p class="practice-links"><a href="/labs/otel-tail-ledger/ledger.sqlite">任务、调用与报表账本 ↗</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">原始跨度 ↗</a> · <a href="/labs/otel-tail-ledger/validation.json">运行与验证记录 ↗</a></p>'),
 
    p('RED围绕对外请求观察Rate请求速率、Errors失败和Duration持续时间。先数固定窗口内的请求，再按业务结果分类，最后保留时长分布。本章统计例固定5分钟：A实例990次、1失败，B实例10次、5失败。总体1000次，速率1000/300≈3.33次/秒，失败率6/1000=0.6%。',
    'A失败率约0.101%，B为50%，等权平均约25.05%。这个值错误地让B的10次占一半权重。总体0.6%用于描述全部请求，B的50%用于识别影响集中在哪个实例、区域或版本，两种视图应同时保留。HTTP 200若内容不正确也可以是业务失败，不能只按协议状态上色。',
@@ -12797,6 +12827,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
    p('这里的等待和处理均以sleep注入，是墙钟延迟，未测CPU计算。程序直接实现最小version-00 traceparent解析与父子字段断言，不使用OpenTelemetry SDK，没有验证完整标准兼容性、采样导出或生产负载。历史结果保留原始实测值，重新运行时毫秒数会变化；请求数、失败数和身份关系才是固定验收项。')+linkRow(l[8])
   ];
   finish(a,old,bodies,24);
+  a.updated='2026.11.11';
   a.sections[6][1]+='<h3 id="collector-sampling-check">同一批追踪，经过两条采集管道</h3>'+
    p('OpenTelemetry Collector 是独立运行的采集程序。接收器读取应用发来的记录，处理器可筛选记录，导出器将剩余记录写到目标。实验把同一个接收器接到两条管道。一条直接写出，另一条等一段时间，把同一追踪的跨度聚在一起，再按错误状态选择整条追踪。',
    '判断观测链有无漏报时，先对比同一批输入的全量导出与采样导出，再对照业务账本。全量导出说明本次接收器看到了什么。账本回答用户任务是否完成、接收方到底写了几次。若任务最后成功、某次尝试却失败，采样可能保留这条轨迹，失败尝试与失败任务必须分开计数。'+
@@ -12902,7 +12933,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
   '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
   '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
- a.updated='2026.11.10';
+ a.updated='2026.11.11';
 })();
 
 
@@ -13659,6 +13690,9 @@ const firstReadingChanges=[];
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ replace('agent-runtime',0,
+  '下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。',
+  '下文先用脚本给出工具提议，跑通这份日报。也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');
  runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+
   p('前面的 37 日报由脚本给出提议。这里另开一个只读实验，分别问 A 的销售额、A 的事故数和 B 的销售额。宿主先从 MCP 服务取得销售查询和事故查询，把两个工具的名称、用途和参数规则放进本机 Qwen3-0.6B 的请求。三条问题只写要查什么和报告对象。<code>tool_choice=auto</code> 让模型决定要不要调用以及选哪个工具。',
    '问 A 的销售额时，模型给出 <code>read_sales_report</code> 和 <code>{"report_id":"A"}</code>。宿主检查名称和参数形状，把模型选出的名称与参数原样交给 MCP SDK。资源服务按实验预设的 A 主体核对报告归属，读到金额 42 和证据编号 <code>sales-v3-9f6a</code>。')+
@@ -13675,7 +13709,8 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
   p('第三次提议的参数也符合结构。资源服务按已配置的 A 主体拒绝读 B。HTTP 仍是 200，工具结果带 <code>isError=true</code>，只返回一条拒绝消息。独立打开资源端的读取日志，只能看到请求 3 和 4 读过 A。模型接着回答，这份报告不可用。')+
   trainingCode('准备固定引擎和权重后，在解压目录运行','SHELL','python3.12 -B model_tool_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
   p('先在 <code>first_model_turn</code> 找模型选出的名称和参数，再在 <code>mcp_call</code> 核对请求编号、响应和权限结果，最后到 <code>final_model_turn</code> 对上原模型调用号。这里固定 macOS arm64 CPU、模型权重、模板和三条问题。资料与主体都来自本机测试夹具。')+
-  '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>';
+  '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>'+
+  p('这次的 42 来自一份已经保存的销售报告。持久工作流章另做一份订单日报：先读到 10 和 27，补读一笔 5 才算出 42。<a href="/article/durable-workflows/#native-model-plan-revision">看模型发现补录后，运行时怎样改计划并恢复任务 →</a>');
  mcp.sections[8][1]+=p('上面的 <code>read_batch</code> 实验用脚本连接工具。运行时章另有一次真实模型对照，跟着工具目录看模型选中销售或事故查询，以及查 B 时由谁拒绝。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">从模型提议走到资源端 →</a>');
  runtime.updated='2026.11.11';
 
@@ -14761,7 +14796,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段变慢",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -14794,6 +14829,7 @@ const learningProfiles={
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
      ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
+     ["inference-performance","native-vllm-scheduler","vLLM 调度、等待与归还实跑"],
      ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
@@ -15532,6 +15568,7 @@ const labArchiveCatalog={
  'mcp-http-authorization':{folder:'mcp-http-authorization',title:'MCP HTTP 令牌校验与工具资源授权'},
  'jetstream-redelivery':{folder:'jetstream-redelivery',title:'同一事件重投，仍存活的旧写入者与接收方代际'},
  'vllm-block-lifecycle':{folder:'vllm-block-lifecycle',title:'运行固定 vLLM 块池，观察引用、空闲与驱逐'},
+ 'vllm-scheduler':{folder:'vllm-scheduler',title:'运行固定 vLLM 调度器，跟踪命中、等待与归还'},
  'mcp-http-cancellation':{folder:'mcp-http-cancellation',title:'MCP HTTP 断流、工具清理与提交回执'},
  'native-inference-prefix':{folder:'native-inference-prefix',title:'原生推理槽的前缀复用与清除'},
  'ragged-ring':{folder:'ragged-ring',title:'不等长环形注意力与填充负例'},
@@ -15755,7 +15792,8 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-me
  {id:'cloud-jetstream-redelivery',track:'cloud',stage:2,title:'重投时旧消费者还能写吗',chapter:'serverless-execution',anchor:'native-jetstream-redelivery',pack:'jetstream-redelivery',files:['jetstream_redelivery.py'],env:'Python 3.12 · NATS Server 2.15.2 · nats-py 2.16.0',kind:'真实重投与接收方事务',observe:'跟踪同一条消息的两次投递。对照直接追加、按业务键去重和代际检查的结果。',scope:'单机真实消息代理，固定输入与接收库。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-queue')+1,0,
- {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'}
+ {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'},
+ {id:'ai-vllm-scheduler',track:'ai',stage:2,title:'还有计算额度，新请求为什么要等',chapter:'inference-performance',anchor:'native-vllm-scheduler',pack:'vllm-scheduler',files:['scheduler_lab.py','upstream.py'],env:'Python 3.12 · msgspec 0.19.0 · vLLM v0.10.2 固定源码',kind:'上游调度与块管理的 CPU 实跑',observe:'逐轮核对 A 和 B 计算的实际位置，找出 C 等待时的空闲块数，再看 B 结束后何时入场。',scope:'真实请求、调度和缓存元数据。固定模型回复，无设备张量或计时。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='agent-mcp-protocol')+1,0,
  {id:'agent-mcp-http-cancellation',track:'agent',stage:2,title:'断流以后，怎样确认报告有没有提交',chapter:'mcp-protocol',anchor:'mcp-http-cancellation-run',pack:'mcp-http-cancellation',files:['cancellation_lab.py'],env:'Python 3.12 · MCP SDK 2.3.0 · Uvicorn',kind:'真实 HTTP 断流、工具清理与 SQLite 回执',observe:'在工具提交前后各关闭一次响应流，查看同一客户端的查询结果与接收库。',scope:'本机 HTTP 与固定报告任务。远程身份和 Kairo 接入另验。'}
@@ -16172,5 +16210,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="c65eb4e7d361220722c9d6b10ca3f614908e6c530103c78d4dca1976e29806f1";
+const staticReadingVersion="eacda1e7298d0cc82a162a633e52554bee9032490fc1e9a9c4c71f7cd692c690";
 

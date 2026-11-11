@@ -68,6 +68,9 @@
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ replace('agent-runtime',0,
+  '下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。',
+  '下文先用脚本给出工具提议，跑通这份日报。也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');
  runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+
   p('前面的 37 日报由脚本给出提议。这里另开一个只读实验，分别问 A 的销售额、A 的事故数和 B 的销售额。宿主先从 MCP 服务取得销售查询和事故查询，把两个工具的名称、用途和参数规则放进本机 Qwen3-0.6B 的请求。三条问题只写要查什么和报告对象。<code>tool_choice=auto</code> 让模型决定要不要调用以及选哪个工具。',
    '问 A 的销售额时，模型给出 <code>read_sales_report</code> 和 <code>{"report_id":"A"}</code>。宿主检查名称和参数形状，把模型选出的名称与参数原样交给 MCP SDK。资源服务按实验预设的 A 主体核对报告归属，读到金额 42 和证据编号 <code>sales-v3-9f6a</code>。')+
@@ -84,7 +87,8 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
   p('第三次提议的参数也符合结构。资源服务按已配置的 A 主体拒绝读 B。HTTP 仍是 200，工具结果带 <code>isError=true</code>，只返回一条拒绝消息。独立打开资源端的读取日志，只能看到请求 3 和 4 读过 A。模型接着回答，这份报告不可用。')+
   trainingCode('准备固定引擎和权重后，在解压目录运行','SHELL','python3.12 -B model_tool_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
   p('先在 <code>first_model_turn</code> 找模型选出的名称和参数，再在 <code>mcp_call</code> 核对请求编号、响应和权限结果，最后到 <code>final_model_turn</code> 对上原模型调用号。这里固定 macOS arm64 CPU、模型权重、模板和三条问题。资料与主体都来自本机测试夹具。')+
-  '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>';
+  '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>'+
+  p('这次的 42 来自一份已经保存的销售报告。持久工作流章另做一份订单日报：先读到 10 和 27，补读一笔 5 才算出 42。<a href="/article/durable-workflows/#native-model-plan-revision">看模型发现补录后，运行时怎样改计划并恢复任务 →</a>');
  mcp.sections[8][1]+=p('上面的 <code>read_batch</code> 实验用脚本连接工具。运行时章另有一次真实模型对照，跟着工具目录看模型选中销售或事故查询，以及查 B 时由谁拒绝。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">从模型提议走到资源端 →</a>');
  runtime.updated='2026.11.11';
 

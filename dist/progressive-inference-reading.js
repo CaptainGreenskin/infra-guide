@@ -402,7 +402,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
-  p('沿 vLLM V1 的请求编号，从入队读到归还。调度和模型执行见固定版本源码，块引用和逐出可用上游块池做 CPU 对照。')+
+  p('沿 vLLM V1 的请求编号，从入队读到归还。下面既可以看固定版本的源码，也可以在 CPU 上复跑这段调度与分块。')+
   '<details class="progressive-detail"><summary>vLLM V1 · 请求源码与块池实跑</summary>'+
   heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
   p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
@@ -415,7 +415,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('输出处理器把新编号逐步转回文本，组装请求结果。客户端的接收时刻还要经过传输。 '+vllmLink('engine/output_processor.py','L408-L434','逐步解码与组装输出'))+
   p('用一个整块边界算例核对源码。设每块 4 个位置，8 个提示位置全部与旧请求相同，两块也仍可命中。该版本为最后位置留出重算机会，命中上限先从 8 减为 7。可复用单位是完整块，所以实际命中 4 个位置。若本轮预算与可用块都足够，就重算位置 4–7，由位置 7 的分数选出首个输出。再继续一轮时，才把这个输出作为位置 8 的输入，需要第三个逻辑块。',
   '可以顺着问三个问题。刚入队的新请求已经写入自己的 K/V 了吗？收到首个输出后，哪个位置还未前向？请求结束后，归零的块还可能命中吗？用这四步分别定位答案。这里的 4 格块用于手算，块命中、排程和回收是固定版本源码走读。'+
-  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a>');
+  ' <a href="article/model-serving/#native-inference-engine-lab">返回单 slot 实跑对照 →</a> <a href="/article/inference-performance/#native-vllm-scheduler">用真实调度器核对同一组位置 →</a>');
  performance.sections[2][1]+=
   heading('vllm-block-lifecycle','执行上游块池：空闲之后，什么时候才驱逐？')+
   p('上面的固定版本源码走读说到“引用归零的块可以成为分配候选”。现在直接执行同一提交的 BlockPool，把这句话拆成可检查的状态。实验在 CPU 上运行上游完整块池、块元数据和空闲队列类，保留原始方法体；没有运行完整 vLLM、调度器或模型，也没有分配 GPU KV 张量。',
@@ -434,6 +434,25 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '<p class="practice-links"><a href="labs/vllm-block-lifecycle.zip" download>下载原创运行器与证据 ↓</a> · <a href="labs/vllm-block-lifecycle/block_lifecycle.py">实验源码</a> · <a href="labs/vllm-block-lifecycle/fetch_upstream.py">固定来源下载器</a> · <a href="labs/vllm-block-lifecycle/source-manifest.json">来源与哈希清单</a> · <a href="labs/vllm-block-lifecycle/validation.json">实际12步状态</a> · <a href="labs/vllm-block-lifecycle/README.md">复跑说明与自测答案</a></p>'+
   p('用 10 分自测：分别解释 A 结束、B 结束、C 查询与 touch、按队头重分配、耗尽拒绝这五步，每步 2 分。必须给出引用数或队列，不能只说“用了缓存”。追问：查到后却未建立引用，若允许其他分配穿插，为什么不能假设编号仍属于旧内容？本实验按顺序调用，未验证任意多线程访问的同步安全。'+
   ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。')+'</details>';
+ performance.sections[2][1]+=
+  '<details class="progressive-detail"><summary>vLLM V1 实战 · 还有计算额度，为什么仍要等？</summary>'+
+  heading('native-vllm-scheduler','运行 vLLM 调度器，追踪三条请求')+
+  p('一轮最多计算 4 个词元位置。缓存池另有 3 个可用块，每块 4 格。前一个数字决定这轮还能算多少，后一个决定新结果有没有地方放。A 和 B 的提示都是 [1,2,3,4,5,6,7,8]，C 的提示是 [9,2,3,4]。先处理完 A，再送 B；B 选出首项后送 C。')+
+  trainingFigure('vllm-scheduler','同一调度器的实际排程。A 分两轮算完，B 命中一个整块，C 等到 B 归还块后才获准执行。')+
+  table(['轮次','实际安排的位置','块或输出怎样变化'],[
+   ['1–2 · 冷 A','A 先算 0–3，再算 4–7','没有旧块可用。A 输出 90 后结束'],
+   ['3 · 暖 B','B 只算 4–7','复用 A 的首块。B 输出 90，仍在运行'],
+   ['4 · B 与 C','B 算位置 8；C 等待','B 持有 [1,3,2]，空闲块为 0，计算额度还剩 3 格。B 输出 91 后释放三块'],
+   ['5 · C 入场','C 算 0–3','首块从第一个词元起就不同，无复用。C 输出 99 后结束']
+  ])+
+  p('第 3 轮的 B 和 A 完全同前缀。固定版本仍要计算末位置来选首项，所以可命中的上限是 7。整块大小是 4，实际复用 4 个位置。第 4 轮把 B 已选出的 90 送回位置 8，占去第三个块。此时 C 虽然排在等待队列里，首块却无处存放。先检查空闲块数，再看计算额度，才能解释为什么这一轮只算了一个位置。')+
+  p('看记录时先对照 <code>scheduled.positions</code> 和 <code>after_schedule</code>，确认 C 此时仍等待。再看 <code>after_reply</code>，B 达到输出上限后块已归还。把一个迟到的 B 输出 92 再交给调度器，结果没有新的输出，请求和块状态也没有变化。下一轮开始时，C 才得到自己的块。')+
+  trainingCode('解压后在实验目录复跑','SHELL',`python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -B upstream.py --dest upstream-cache
+PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cache --output replay.json`)+
+  p('实验在 CPU 上调用 vLLM v0.10.2 的原始请求、调度与块管理方法。90、91、99 和迟到的 92 是测试程序提供的固定模型返回值。记录回答的是哪轮计算哪些位置、占用哪些块，以及结束后怎样清理。设备显存、生成质量和延迟要用完整推理服务测量。')+
+  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p></details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+

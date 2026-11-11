@@ -83,7 +83,9 @@ for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<scri
 }
 const lesson=vm.runInContext('articles.find(a=>a.id==="inference-performance")',context);assert.equal(lesson.sections.length,8);
 const html=lesson.sections[2][1],at=html.indexOf('<h3 id="vllm-block-lifecycle">');assert(at>html.indexOf('id="vllm-v1-request-path"'));
-const bridge=html.slice(at);
+const scheduler=html.indexOf('<h3 id="native-vllm-scheduler">',at);
+assert(scheduler>at,'the scheduler follows the isolated block pool exercise');
+const bridge=html.slice(at,scheduler);
 for(const marker of ['diagrams/vllm-block-lifecycle.svg','labs/vllm-block-lifecycle.zip','labs/vllm-block-lifecycle/validation.json','labs/vllm-block-lifecycle/source-manifest.json'])assert(bridge.includes(marker),marker);
 assert(!bridge.includes('<pre'),'new bridge adds no full source code blocks');
 const files=['README.md','block_lifecycle.py','fetch_upstream.py','source-manifest.json','validation.json'];

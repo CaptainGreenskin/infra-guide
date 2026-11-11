@@ -170,13 +170,18 @@ const disaggregationStart=disaggregationBody.indexOf('<div class="mechanism-core
 const handoffStart=disaggregationBody.indexOf('<h3 id="native-slot-handoff">',disaggregationStart);
 const disaggregationEnd=disaggregationBody.indexOf('<h3 id="vllm-v1-request-path">',disaggregationStart);
 assert(disaggregationStart>=0&&handoffStart>disaggregationStart&&disaggregationEnd>handoffStart,'isolate the disaggregation and native cache handoff experiments');
+const schedulerStart=disaggregationBody.indexOf('<h3 id="native-vllm-scheduler">',disaggregationEnd);
+assert(schedulerStart>disaggregationEnd,'the actual scheduler exercise follows the source walk');
+const schedulerCode=codeBlocks(disaggregationBody.slice(schedulerStart));
+assert.equal(schedulerCode.length,1,'the scheduler exercise has one distinct command block');
+assert(schedulerCode[0].includes('scheduler_lab.py'),'scheduler replay command');
 const disaggregationCode=codeBlocks(disaggregationBody.slice(disaggregationStart,handoffStart));
 assert.equal(disaggregationCode.length,1);
 assert(disaggregationCode[0].includes('pd_split.py'),'disaggregation experiment has its own run command');
 let total=0;
 for(let i=0;i<article.sections.length;i++){
  const html=article.sections[i][1];
- const historical=i===2?html.slice(0,disaggregationStart)+html.slice(disaggregationEnd):i===queueSection?html.slice(0,queueStart):html;
+ const historical=i===2?html.slice(0,disaggregationStart)+html.slice(disaggregationEnd,schedulerStart):i===queueSection?html.slice(0,queueStart):html;
  const pre=codeBlocks(historical);
  const original=contract.original_pre_sha256[i];
  assert.deepStrictEqual(pre.map(digest).filter(hash=>original.includes(hash)),original,'all original full pre blocks in order: '+i);

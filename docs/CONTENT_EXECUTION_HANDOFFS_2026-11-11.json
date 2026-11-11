@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "646eb1b26530ce4fdeac11616b8e7822b6fdb8b4",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_MOBILE_RELATIONSHIPS_AND_READING_2026-11-11.json": "293840583961f9543428beeca45849f2b4c2d3daad0d1859bfe11ce64d0fdc0d"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "scope": "Replay actual pinned vLLM scheduling with an explicit model-output fixture.",
+      "observation": "Cold and warm paths, temporary block pressure, completion and late output all bind to the same CPU metadata record.",
+      "reviewed_content_sha256": "8d785c0d7909fbdd0d05963a8f355fd2f9bc47865bd599b90d2398a365b791b6",
+      "record": "dist/labs/vllm-scheduler/validation.json"
+    }
+  ]
+}

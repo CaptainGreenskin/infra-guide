@@ -1,0 +1,162 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "646eb1b26530ce4fdeac11616b8e7822b6fdb8b4",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_MOBILE_RELATIONSHIPS_AND_READING_2026-11-11.json": "222bedb1662014400106422b205e2bd0399107973f6c63c7910e661efcf9340c"
+  },
+  "source_revisions": {
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "99df0eda95868d87d7967ce65ce8c5a314f4ed53e7fb90c3bc8cbb30524d8684",
+      "reviewed_sha256": "d417e4df513bccf6cc414c15fa44e2aafa14f014d68fa09db352e36554056192",
+      "scope": "Join one report event, its independent receiver and its span trace; hand off to an isolated connection experiment."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "09882e25cb97de2984b130e032e40b21053a2676830745d5d2de724bfec5f8ea",
+      "reviewed_sha256": "fb81079395c9d53487a7d2f988aeca5ee15465062d4b6033665de51a92840ec8",
+      "scope": "Replay actual pinned vLLM scheduling with an explicit model-output fixture."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "ef3a2718621b98101ca28aaa86d867e3891d5dddc4d990029cae65b7feb251fb",
+      "reviewed_sha256": "4ccc5112d6fd0ff754bb5654ee3805932d59c9fa41c6335cc13d10468227e4d3",
+      "scope": "Connect the first Agent lesson to actual model tool selection and then to a distinct plan revision case."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "c38c40556d81bd94645539460050e3c8f8ded8879e315d17ed29e8edffbbdd77",
+      "reviewed_sha256": "e5ce8429a0e5d17ac08b7723a7cfe6fb4895b070409b624f589622b083d4bf38",
+      "scope": "Follow the durable workflow into an independent receiver and its actual trace."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "90a3ff498448be20c8c1bc31d6eac5349e93e10cc73000a3623de48d3599d785",
+      "reviewed_sha256": "1c062127b0f80f7d0440d6723b66cfcb0da57008051444f33d563e40b8ef8b44",
+      "scope": "Link the SRE and inference role views to the exact lesson evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "cded730977e4a5048bcedc47f281c49f4ecb07d1ce90a6030e7ed98e4ddfe909",
+      "reviewed_sha256": "9889c1c1c48215fcba4a7b1ddaf6c0a0532db2e68ff5cde7620bcaaa5fb2743f",
+      "scope": "Connect the scheduler experiment package and source to its rendered lesson."
+    },
+    "dist/diagrams/vllm-scheduler.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b17f1a1bed3e0183da2451bcfe3a341d7af109fa0bce2c9f6493f89dd50f1dd6",
+      "scope": "Draw the same cold, warm and blocked request positions as the execution record."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "df36eaf5c1988ee61ce0d50c442cbb9966604e94610585e042ce2645cea0a796",
+      "reviewed_sha256": "882c10092cc03f7371f8baf6abdd12f413730a82d4413bd1aea191edb4d9c0da",
+      "scope": "Record the intrinsic dimensions for the new teaching figure."
+    },
+    "dist/labs/vllm-scheduler.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "86c1c9fae5eb5e08ce17ff838fdf47f49cf5a9564318b756d341cc4d5eebbc1b",
+      "scope": "Package only the original harness, reproducible instructions and bound record."
+    },
+    "dist/labs/vllm-scheduler/scheduler_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9cc9e16c9a27a49f57d8c4324e7c45e1c04cf206ee2f4cb1a874e6a30cca5232",
+      "scope": "Exercise actual pinned scheduling and cache ownership with controlled model replies."
+    },
+    "dist/labs/vllm-scheduler/upstream.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "23e59417b1af2fb871826f9cf14ad4773eaa30bde8d5310d79ae79ee746e811b",
+      "scope": "Fetch, verify and load only the named fixed-source definitions."
+    },
+    "dist/labs/vllm-scheduler/source-manifest.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b481dadd67779b7435817c2b519f9d0ae877811f851782d5a04a753f75696c2a",
+      "scope": "Pin full definition ranges and source identity."
+    },
+    "dist/labs/vllm-scheduler/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e55a96a133b05411e0882e8d607bc4191dd8f5250b992e1a12f97a2bf123e27a",
+      "scope": "Pin the dependency used for the actual upstream output envelopes."
+    },
+    "dist/labs/vllm-scheduler/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c7343473945dd2066e62ec3d3e6c8659403089f03b5c8f05824ad75a14d13ed2",
+      "scope": "Retain actual scheduled positions, cache state, outputs and source fingerprints."
+    },
+    "dist/labs/vllm-scheduler/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f15b2a78e12f61626c583ea80acf15ad903b56c199bfc36e0f16dcfb9bb23f5c",
+      "scope": "Describe reproducible steps, assumptions, records and validated boundary."
+    },
+    "scripts/check-vllm-scheduler.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4e4b01804152126e87885102bc2288a2ca9777f4277ea07238df62be0a96cd15",
+      "scope": "Independently reconstruct queue, ownership, hashes, outputs, figure and archive."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "bc42b125c45885aefb35be53ecba31a4c051782478f987f8844fa649c4f8b653",
+      "reviewed_sha256": "4e4483bbc3055f03257eb36409466a4195c43bc3fc8477cbb305cd5f97676331",
+      "scope": "Run the scheduler result check as part of the normal site verification."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "9c93963b3106b79ed30cd3995be1cb6c1657dafd72c7221a1e31fef0ebba656a",
+      "reviewed_sha256": "77efa8f1d245a9b92a8e2d8c23e498f5d73612ffb00afcd32ce9fc404723dd6a",
+      "scope": "Preserve and distinguish the original cache and later scheduler command blocks."
+    },
+    "scripts/check-vllm-block-lifecycle.cjs": {
+      "previous_sha256": "0dfc8278e917108b11e9965a57651e2b7d2c98070a339bd01ffb9fd297a3b066",
+      "reviewed_sha256": "a71c803893f0f21d6294450d5d53b94edd12c8b777d8868936cb34dc0178f9c8",
+      "scope": "Keep the original allocation exercise distinct from the full scheduler replay."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "7c8109767582f47730a5583658950d90b19442add281f59b173c423f8085a67f",
+      "reviewed_sha256": "61f6f7f74a98cfc19cade91cd250b5dd524dedcceab42adf3634bc546a11df23",
+      "scope": "Associate the reviewed native teaching unit with its independent verifier."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "cb6fa890a4e20a57ae209ab96b6ec94d24c16a216025dc49490ae2a16970877e",
+      "reviewed_sha256": "a6e3455041dc9f3a85b30267b0df4515be6accac1924dfbf075b9d226a2ebd68",
+      "scope": "Check the SRE and inference evidence targets at the root and project-site paths."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "da06b4a0c85af2ab4c69d7afaf02f2ae8cdc2fa65907143aa5386f000b6ad079",
+      "reviewed_sha256": "7d7bbbc23981d95985e8b3e165e72d6b7900405be40c432f704507119fcf3950",
+      "scope": "Fingerprint the lightweight reader and search data for the exact revised pages."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "600850abf48f9c66f9f76fc328056c596f96e25ea5625e444b63a810c0e50471",
+      "reviewed_sha256": "9b67a39949c414535bdac092d3528e32806680f49d2b54624551e2bb8c4a3a4b",
+      "scope": "Fingerprint the shared renderer and reviewed chapter sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "bdc45e5e20e7de9d321018bdaf426e3739976a03c734df3813e21eba45e32449",
+      "reviewed_sha256": "95aadbc5c421bd5d654f88e046e9d80c2e3225fc60d44827ec07657424e2129d",
+      "scope": "Record the visible subsection list and preserve direct links to the examples in disclosures."
+    },
+    "docs/CONTENT_EXECUTION_HANDOFFS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5ed311baf2146e88ca125eff6160c59ac02be75a088dc59a6e636b2048173513",
+      "scope": "Record all reviewed changes and the scope of the CPU scheduler exercise."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "1938147d96ed200524c326b05b692b898d737d125e6aaee41d2571d281c75023",
+      "reviewed_sha256": "884986dd0a7fac4a0f5d8226cb2b12885d2da21ff6e7df54fc91f365f2beb6db",
+      "scope": "Append the body reviews."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "9d6026841f6f2103744d80b789cdb7a22feb1857b601b10ab0b8f55da46fe9a5",
+      "reviewed_sha256": "8e36d0530f07a076c32e87c902b86089d7169f6818df9c125e62db07e888e3da",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "646eb1b26530ce4fdeac11616b8e7822b6fdb8b4",
+    "chapters": 78,
+    "changed_bodies": [
+      "slo",
+      "observability",
+      "inference-performance",
+      "agent-runtime",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "inference-performance": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

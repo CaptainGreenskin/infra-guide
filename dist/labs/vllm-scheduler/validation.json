@@ -1,0 +1,1232 @@
+{
+  "scope": "vLLM V1 upstream scheduler and KV metadata execution on local CPU",
+  "engine_version": "v0.10.2",
+  "upstream_commit": "01efc7ef781391e744ed08c3292817a773d654e6",
+  "scheduler_execution": true,
+  "actual_model_runner": false,
+  "device_kv_tensors": false,
+  "python": "3.12.13",
+  "msgspec": "0.19.0",
+  "system": "Darwin",
+  "machine": "arm64",
+  "source_sha256": {
+    "scheduler_lab.py": "9cc9e16c9a27a49f57d8c4324e7c45e1c04cf206ee2f4cb1a874e6a30cca5232",
+    "upstream.py": "23e59417b1af2fb871826f9cf14ad4773eaa30bde8d5310d79ae79ee746e811b",
+    "source-manifest.json": "b481dadd67779b7435817c2b519f9d0ae877811f851782d5a04a753f75696c2a",
+    "requirements.txt": "e55a96a133b05411e0882e8d607bc4191dd8f5250b992e1a12f97a2bf123e27a",
+    "README.md": "f15b2a78e12f61626c583ea80acf15ad903b56c199bfc36e0f16dcfb9bb23f5c"
+  },
+  "loaded": [
+    {
+      "file": "vllm_utils.py",
+      "sha256": "797f69de8105db3a5fefe6fb4dfd89b337758b0a28654afea2df9e0dcf096d86",
+      "definitions": [
+        "cdiv",
+        "sha256",
+        "sha256_cbor"
+      ]
+    },
+    {
+      "file": "v1_utils.py",
+      "sha256": "eeb5c2f570b4e3341549a0e50c7737e7ff6abcfdfdb45e486fa481e4370ae909",
+      "definitions": [
+        "T",
+        "ConstantList"
+      ]
+    },
+    {
+      "file": "engine_init.py",
+      "sha256": "079595427fdbb03e3ae32969b0b00a5e590dfd11e6511f5d9db83e5652de8ea8",
+      "definitions": [
+        "FINISH_REASON_STRINGS",
+        "FinishReason",
+        "EngineCoreRequest",
+        "EngineCoreEventType",
+        "EngineCoreEvent",
+        "EngineCoreOutput",
+        "EngineCoreOutputs"
+      ]
+    },
+    {
+      "file": "structured_output_request.py",
+      "sha256": "a8478a4ddd2f2f6ec127870fbe7945f0ef5b5737c02e8c5e906f9f340dd2afca",
+      "definitions": [
+        "StructuredOutputRequest"
+      ]
+    },
+    {
+      "file": "request.py",
+      "sha256": "a54996f706806dc255e73a7b4997de3dcc4f01a3503f327f6a2ff6e2a769ed08",
+      "definitions": [
+        "Request",
+        "RequestStatus",
+        "_FINISHED_REASON_MAP"
+      ]
+    },
+    {
+      "file": "kv_cache_interface.py",
+      "sha256": "274ec01d921ef3776ef1fca2dcf0d84634750633d96e4780db7236fcb84e25c0",
+      "definitions": [
+        "KVCacheSpec",
+        "AttentionSpec",
+        "FullAttentionSpec",
+        "ChunkedLocalAttentionSpec",
+        "SlidingWindowSpec",
+        "MambaSpec",
+        "CrossAttentionSpec",
+        "KVCacheGroupSpec",
+        "KVCacheConfig"
+      ]
+    },
+    {
+      "file": "kv_cache_utils.py",
+      "sha256": "c69ce881133c859f041d44ccdc8c1de1cc6b16a91f986f7da060d476719a13cf",
+      "definitions": [
+        "BlockHash",
+        "BlockHashWithGroupId",
+        "ExternalBlockHash",
+        "make_block_hash_with_group_id",
+        "get_block_hash",
+        "get_group_id",
+        "maybe_convert_block_hash",
+        "init_none_hash",
+        "KVCacheBlock",
+        "FreeKVCacheBlockQueue",
+        "need_extra_keys",
+        "_gen_mm_extra_hash_keys",
+        "_gen_lora_extra_hash_keys",
+        "generate_block_hash_extra_keys",
+        "hash_block_tokens",
+        "get_request_block_hasher"
+      ]
+    },
+    {
+      "file": "block_pool.py",
+      "sha256": "1122ed808606e1a266995113505417401baa5fa7c42afa372314462c38790876",
+      "definitions": [
+        "BlockPool"
+      ]
+    },
+    {
+      "file": "single_type_kv_cache_manager.py",
+      "sha256": "5a6f45fc2d01ce01d43038eae1a329b8f97f56224a44e48e9838aefeb1719c6e",
+      "definitions": [
+        "SingleTypeKVCacheManager",
+        "FullAttentionManager",
+        "SlidingWindowManager",
+        "ChunkedLocalAttentionManager",
+        "MambaManager",
+        "CrossAttentionManager",
+        "spec_manager_map",
+        "get_manager_for_kv_cache_spec"
+      ]
+    },
+    {
+      "file": "kv_cache_coordinator.py",
+      "sha256": "19285af400c0525b0855388a7a635111ec01bf728acaba9b72fbd793ed38b2dc",
+      "definitions": [
+        "KVCacheCoordinator",
+        "KVCacheCoordinatorNoPrefixCache",
+        "UnitaryKVCacheCoordinator",
+        "HybridKVCacheCoordinator",
+        "get_kv_cache_coordinator"
+      ]
+    },
+    {
+      "file": "kv_cache_manager.py",
+      "sha256": "2e4c15158d569eefd521700de220cf986ce25ec4e2971846ea2977f4496a7c83",
+      "definitions": [
+        "KVCacheBlocks",
+        "KVCacheManager"
+      ]
+    },
+    {
+      "file": "encoder_cache_manager.py",
+      "sha256": "af2d21aecef226e30f2e940586a35d8b57a033f692f71bc03532d23d71e86ebc",
+      "definitions": [
+        "EncoderCacheManager",
+        "compute_encoder_budget",
+        "compute_text_encoder_budget",
+        "compute_mm_encoder_budget"
+      ]
+    },
+    {
+      "file": "interface.py",
+      "sha256": "8a08b3e19049864a36919b63d2265a3f0bcdaaab68c5a9a64d358b07147890c7",
+      "definitions": [
+        "SchedulerInterface"
+      ]
+    },
+    {
+      "file": "output.py",
+      "sha256": "c0c2a2ecd775836fd3c84b807038524af4661abfd67c616928bb86409d5fbd62",
+      "definitions": [
+        "NewRequestData",
+        "CachedRequestData",
+        "SchedulerOutput"
+      ]
+    },
+    {
+      "file": "request_queue.py",
+      "sha256": "73f7e18902fea1e38f540a11fe8289a691364e3311a2c69b5030506607db6c8e",
+      "definitions": [
+        "SchedulingPolicy",
+        "RequestQueue",
+        "FCFSRequestQueue",
+        "PriorityRequestQueue",
+        "create_request_queue"
+      ]
+    },
+    {
+      "file": "sched_utils.py",
+      "sha256": "cacac44d7447f4f9776436fdfb77e3b5cbbadffbc0fbc2d507e25d6e0e030c71",
+      "definitions": [
+        "remove_all",
+        "check_stop"
+      ]
+    },
+    {
+      "file": "outputs.py",
+      "sha256": "796ae0543f5e82a335c121447cb2224f4e26f1e425370544c2ae93323f26d39b",
+      "definitions": [
+        "ModelRunnerOutput"
+      ]
+    },
+    {
+      "file": "kv_events.py",
+      "sha256": "232ccb502d7c8ed3b6e55b7dc0dd6d82b4c6baa8637e10862b71d260dc8f04f2",
+      "definitions": [
+        "EventPublisher",
+        "NullEventPublisher",
+        "ZmqEventPublisher",
+        "EventPublisherFactory"
+      ]
+    },
+    {
+      "file": "scheduler.py",
+      "sha256": "2bd28fc32cea71370298bb8da0d9a0bbd163ab315b2c6428540131e3999a255f",
+      "definitions": [
+        "Scheduler"
+      ]
+    }
+  ],
+  "result": {
+    "block_size": 4,
+    "blocks_including_null": 4,
+    "usable_blocks": 3,
+    "token_budget": 4,
+    "prefix_seed": "0",
+    "null_block_id": 0,
+    "settings": {
+      "policy": "fcfs",
+      "max_num_seqs": 2,
+      "max_model_len": 12,
+      "prefix_caching": true,
+      "chunked_prefill": true,
+      "kv_groups": 1
+    },
+    "requests": {
+      "A": {
+        "prompt": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "max_output": 1,
+        "prefix_hashes": [
+          "762b2e7e1520febd3a0aedb7358e8602facf3924440e18538fce057e23bae91d",
+          "9e62b5a7ec298f33cb4c7d9e00b659874bb2432d23ad6879ad1746592a2b036b"
+        ]
+      },
+      "B": {
+        "prompt": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "max_output": 2,
+        "prefix_hashes": [
+          "762b2e7e1520febd3a0aedb7358e8602facf3924440e18538fce057e23bae91d",
+          "9e62b5a7ec298f33cb4c7d9e00b659874bb2432d23ad6879ad1746592a2b036b"
+        ]
+      },
+      "C": {
+        "prompt": [
+          9,
+          2,
+          3,
+          4
+        ],
+        "max_output": 1,
+        "prefix_hashes": [
+          "4c425fa6fdcbf21c02e28cf0fac354190356c3fce8cd797daad51c18779e042d"
+        ]
+      }
+    },
+    "rounds": [
+      {
+        "round": "cold_first_half",
+        "before": {
+          "waiting": [
+            "A"
+          ],
+          "running": [],
+          "request_ids": [
+            "A"
+          ],
+          "free": [
+            1,
+            2,
+            3
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {
+            "A": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              null,
+              null
+            ],
+            "B": [
+              null,
+              null
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {
+            "A": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "counts": {
+            "A": 4
+          },
+          "new": [
+            "A"
+          ],
+          "continued": [],
+          "computed_after_schedule": {
+            "A": 4
+          },
+          "finished_notices": [],
+          "unused_positions": 0
+        },
+        "after_schedule": {
+          "waiting": [],
+          "running": [
+            "A"
+          ],
+          "request_ids": [
+            "A"
+          ],
+          "free": [
+            2,
+            3
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "blocks": {
+            "A": [
+              1
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              null
+            ],
+            "B": [
+              1,
+              null
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [
+            "A"
+          ],
+          "sampled_token_ids": [
+            []
+          ],
+          "engine_outputs": []
+        },
+        "after_reply": {
+          "waiting": [],
+          "running": [
+            "A"
+          ],
+          "request_ids": [
+            "A"
+          ],
+          "free": [
+            2,
+            3
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "blocks": {
+            "A": [
+              1
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              null
+            ],
+            "B": [
+              1,
+              null
+            ],
+            "C": [
+              null
+            ]
+          }
+        }
+      },
+      {
+        "round": "cold_finish",
+        "before": {
+          "waiting": [],
+          "running": [
+            "A"
+          ],
+          "request_ids": [
+            "A"
+          ],
+          "free": [
+            2,
+            3
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "blocks": {
+            "A": [
+              1
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              null
+            ],
+            "B": [
+              1,
+              null
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {
+            "A": [
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          "counts": {
+            "A": 4
+          },
+          "new": [],
+          "continued": [
+            "A"
+          ],
+          "computed_after_schedule": {
+            "A": 8
+          },
+          "finished_notices": [],
+          "unused_positions": 0
+        },
+        "after_schedule": {
+          "waiting": [],
+          "running": [
+            "A"
+          ],
+          "request_ids": [
+            "A"
+          ],
+          "free": [
+            3
+          ],
+          "refcounts": [
+            0,
+            1,
+            1,
+            0
+          ],
+          "blocks": {
+            "A": [
+              1,
+              2
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [
+            "A"
+          ],
+          "sampled_token_ids": [
+            [
+              90
+            ]
+          ],
+          "engine_outputs": [
+            {
+              "request": "A",
+              "tokens": [
+                90
+              ],
+              "cached_tokens": 0,
+              "finish": "length"
+            }
+          ]
+        },
+        "after_reply": {
+          "waiting": [],
+          "running": [],
+          "request_ids": [],
+          "free": [
+            3,
+            2,
+            1
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {},
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        }
+      },
+      {
+        "round": "warm_first_output",
+        "before": {
+          "waiting": [
+            "B"
+          ],
+          "running": [],
+          "request_ids": [
+            "B"
+          ],
+          "free": [
+            3,
+            2,
+            1
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {
+            "B": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {
+            "B": [
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          "counts": {
+            "B": 4
+          },
+          "new": [
+            "B"
+          ],
+          "continued": [],
+          "computed_after_schedule": {
+            "B": 8
+          },
+          "finished_notices": [
+            "A"
+          ],
+          "unused_positions": 0
+        },
+        "after_schedule": {
+          "waiting": [],
+          "running": [
+            "B"
+          ],
+          "request_ids": [
+            "B"
+          ],
+          "free": [
+            2
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "blocks": {
+            "B": [
+              1,
+              3
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [
+            "B"
+          ],
+          "sampled_token_ids": [
+            [
+              90
+            ]
+          ],
+          "engine_outputs": [
+            {
+              "request": "B",
+              "tokens": [
+                90
+              ],
+              "cached_tokens": 4,
+              "finish": null
+            }
+          ]
+        },
+        "after_reply": {
+          "waiting": [],
+          "running": [
+            "B"
+          ],
+          "request_ids": [
+            "B"
+          ],
+          "free": [
+            2
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "blocks": {
+            "B": [
+              1,
+              3
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        }
+      },
+      {
+        "round": "cache_pressure",
+        "before": {
+          "waiting": [
+            "C"
+          ],
+          "running": [
+            "B"
+          ],
+          "request_ids": [
+            "B",
+            "C"
+          ],
+          "free": [
+            2
+          ],
+          "refcounts": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "blocks": {
+            "B": [
+              1,
+              3
+            ],
+            "C": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              2
+            ],
+            "B": [
+              1,
+              2
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {
+            "B": [
+              8
+            ]
+          },
+          "counts": {
+            "B": 1
+          },
+          "new": [],
+          "continued": [
+            "B"
+          ],
+          "computed_after_schedule": {
+            "B": 9
+          },
+          "finished_notices": [],
+          "unused_positions": 3
+        },
+        "after_schedule": {
+          "waiting": [
+            "C"
+          ],
+          "running": [
+            "B"
+          ],
+          "request_ids": [
+            "B",
+            "C"
+          ],
+          "free": [],
+          "refcounts": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "blocks": {
+            "B": [
+              1,
+              3,
+              2
+            ],
+            "C": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [
+            "B"
+          ],
+          "sampled_token_ids": [
+            [
+              91
+            ]
+          ],
+          "engine_outputs": [
+            {
+              "request": "B",
+              "tokens": [
+                91
+              ],
+              "cached_tokens": 4,
+              "finish": "length"
+            }
+          ]
+        },
+        "after_reply": {
+          "waiting": [
+            "C"
+          ],
+          "running": [],
+          "request_ids": [
+            "C"
+          ],
+          "free": [
+            2,
+            3,
+            1
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {
+            "C": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              null
+            ]
+          }
+        }
+      },
+      {
+        "round": "admit_after_free",
+        "before": {
+          "waiting": [
+            "C"
+          ],
+          "running": [],
+          "request_ids": [
+            "C"
+          ],
+          "free": [
+            2,
+            3,
+            1
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {
+            "C": []
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              null
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {
+            "C": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "counts": {
+            "C": 4
+          },
+          "new": [
+            "C"
+          ],
+          "continued": [],
+          "computed_after_schedule": {
+            "C": 4
+          },
+          "finished_notices": [
+            "B"
+          ],
+          "unused_positions": 0
+        },
+        "after_schedule": {
+          "waiting": [],
+          "running": [
+            "C"
+          ],
+          "request_ids": [
+            "C"
+          ],
+          "free": [
+            3,
+            1
+          ],
+          "refcounts": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "blocks": {
+            "C": [
+              2
+            ]
+          },
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              2
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [
+            "C"
+          ],
+          "sampled_token_ids": [
+            [
+              99
+            ]
+          ],
+          "engine_outputs": [
+            {
+              "request": "C",
+              "tokens": [
+                99
+              ],
+              "cached_tokens": 0,
+              "finish": "length"
+            }
+          ]
+        },
+        "after_reply": {
+          "waiting": [],
+          "running": [],
+          "request_ids": [],
+          "free": [
+            3,
+            1,
+            2
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {},
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              2
+            ]
+          }
+        }
+      },
+      {
+        "round": "final_notice",
+        "before": {
+          "waiting": [],
+          "running": [],
+          "request_ids": [],
+          "free": [
+            3,
+            1,
+            2
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {},
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              2
+            ]
+          }
+        },
+        "scheduled": {
+          "positions": {},
+          "counts": {},
+          "new": [],
+          "continued": [],
+          "computed_after_schedule": {},
+          "finished_notices": [
+            "C"
+          ],
+          "unused_positions": 4
+        },
+        "after_schedule": {
+          "waiting": [],
+          "running": [],
+          "request_ids": [],
+          "free": [
+            3,
+            1,
+            2
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {},
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              2
+            ]
+          }
+        },
+        "reply": {
+          "model_runner_ids": [],
+          "sampled_token_ids": [],
+          "engine_outputs": []
+        },
+        "after_reply": {
+          "waiting": [],
+          "running": [],
+          "request_ids": [],
+          "free": [
+            3,
+            1,
+            2
+          ],
+          "refcounts": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "blocks": {},
+          "cached_prefix_blocks": {
+            "A": [
+              1,
+              3
+            ],
+            "B": [
+              1,
+              3
+            ],
+            "C": [
+              2
+            ]
+          }
+        }
+      }
+    ],
+    "late_reply": {
+      "before": {
+        "waiting": [
+          "C"
+        ],
+        "running": [],
+        "request_ids": [
+          "C"
+        ],
+        "free": [
+          2,
+          3,
+          1
+        ],
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blocks": {
+          "C": []
+        },
+        "cached_prefix_blocks": {
+          "A": [
+            1,
+            3
+          ],
+          "B": [
+            1,
+            3
+          ],
+          "C": [
+            null
+          ]
+        }
+      },
+      "reply": {
+        "model_runner_ids": [
+          "B"
+        ],
+        "sampled_token_ids": [
+          [
+            92
+          ]
+        ],
+        "engine_outputs": []
+      },
+      "after": {
+        "waiting": [
+          "C"
+        ],
+        "running": [],
+        "request_ids": [
+          "C"
+        ],
+        "free": [
+          2,
+          3,
+          1
+        ],
+        "refcounts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "blocks": {
+          "C": []
+        },
+        "cached_prefix_blocks": {
+          "A": [
+            1,
+            3
+          ],
+          "B": [
+            1,
+            3
+          ],
+          "C": [
+            null
+          ]
+        }
+      }
+    }
+  }
+}

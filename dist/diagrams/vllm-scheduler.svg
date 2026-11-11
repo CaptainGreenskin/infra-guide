@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="520" viewBox="0 0 780 520" role="img" aria-labelledby="title desc">
+  <title id="title">请求 C 有计算额度，却要等请求 B 归还缓存块</title>
+  <desc id="desc">一轮最多算四个位置，缓存池有三个可用块。冷 A 两轮算八格。暖 B 复用四格，先算四格选出 90，再将 90 送入位置八占用第三个块。计算额度余三、缓存空闲为零，C 等待。B 输出 91 后归还三块，C 在下一轮算四格。</desc>
+  <metadata>{"record":"labs/vllm-scheduler/validation.json","upstream_commit":"01efc7ef781391e744ed08c3292817a773d654e6","positions_per_round":4,"usable_blocks":3,"block_size":4,"cold_positions":[[0,1,2,3],[4,5,6,7]],"warm_cached_positions":4,"pressure":{"running":"B","waiting":"C","blocks":[1,3,2],"unused_positions":3,"free_blocks":0},"device_kv_tensors":false}</metadata>
+  <rect width="780" height="520" rx="18" fill="#f3f8fc"/>
+  <g fill="#17304a" font-family="system-ui,sans-serif">
+    <text x="30" y="46" font-size="27" font-weight="700">还有计算额度，C 为什么仍要等？</text>
+    <text x="30" y="82" font-size="22">每轮可算 4 个位置 · 全池可用 3 块，每块 4 格</text>
+    <rect x="30" y="110" width="720" height="95" rx="12" fill="#dfebfa"/>
+    <text x="50" y="148" font-size="22" font-weight="700">第 1–2 轮　冷 A</text>
+    <text x="50" y="181" font-size="21">先算位置 0–3，再算 4–7，输出 90 后归还块。</text>
+    <rect x="30" y="218" width="720" height="95" rx="12" fill="#dbefeb"/>
+    <text x="50" y="256" font-size="22" font-weight="700">第 3 轮　暖 B</text>
+    <text x="50" y="289" font-size="21">复用位置 0–3，计算 4–7，选出 90。</text>
+    <rect x="30" y="326" width="720" height="120" rx="12" fill="#fce9d5"/>
+    <text x="50" y="364" font-size="22" font-weight="700">第 4 轮　B 占满三块，C 等待</text>
+    <text x="50" y="397" font-size="21">90 进入位置 8。还可算 3 格，空闲块数为 0。</text>
+    <text x="50" y="426" font-size="21">B 输出 91，三块归还。第 5 轮 C 才能算 0–3。</text>
+    <text x="30" y="488" font-size="20">vLLM v0.10.2 · CPU 调度记录 · 固定模型输出</text>
+  </g>
+</svg>

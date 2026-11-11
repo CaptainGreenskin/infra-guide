@@ -20,7 +20,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段变慢",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -53,6 +53,7 @@ const learningProfiles={
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
      ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
+     ["inference-performance","native-vllm-scheduler","vLLM 调度、等待与归还实跑"],
      ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
