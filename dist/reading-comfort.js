@@ -11,8 +11,9 @@ function initReadingConceptReturn(article,toolbar){
  const choices=JSON.parse(footer.dataset.conceptReturns);
  if(!Object.hasOwn(choices,source))return;
  const [path,label,track]=choices[source],role=params.get('returnGoal');
+ const optionalRole=!params.has('goal')&&learningProfiles[role]?.track===track?role:null;
  const [before,fragment]=path.split('#');
- const href=readerInternalHref(before+(!params.has('goal')&&learningProfiles[role]?.track===track?'&goal='+role:'')+'#'+fragment);
+ const href=readerInternalHref(before+(optionalRole?'&goal='+optionalRole:'')+'#'+fragment);
  footer.setAttribute('href',href);
  footer.textContent='返回概念图 · '+label+' →';
  let shortcut=toolbar.querySelector('.reader-concept-return');
@@ -24,6 +25,16 @@ function initReadingConceptReturn(article,toolbar){
  }
  shortcut.setAttribute('href',href);
  shortcut.setAttribute('aria-label','返回概念图 · '+label);
+ if(params.has('returnGoal')&&!optionalRole)return;
+ const goal=params.get('goal');
+ for(const link of article.querySelectorAll('.chapter-lab-evidence[data-lab-concepts]')){
+  if(!link.dataset.labConcepts.split(' ').includes(source))continue;
+  const lab=new URL(link.href);
+  if(lab.searchParams.get('track')!==track||(params.has('goal')&&lab.searchParams.get('goal')!==goal))continue;
+  lab.searchParams.set('fromConcept',source);
+  if(optionalRole)lab.searchParams.set('returnGoal',optionalRole);
+  link.setAttribute('href',lab.pathname+lab.search+lab.hash);
+ }
 }
 function initReadingComfort(){
  if(typeof document.createElement!=='function')return; // Static rendering has no browser DOM.

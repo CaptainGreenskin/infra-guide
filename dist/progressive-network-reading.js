@@ -164,6 +164,12 @@
  'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
  ]);
 
+ vpc.sections[0][1]+='<div class="mechanism-core">'+h('vpc-first-tls-request','一次查询怎样沿两条连接返回')+
+  p('上面的 <code>api.example.test</code> 和 <code>10.20.4.7:443</code> 用于说明网址和端口。下图来自本机 HTTPS 实验。程序发送 <code>GET /order</code>，入口 P 与应用 A 分别监听 <code>127.0.0.1</code> 上不同的临时端口。程序按监听地址直接连接，没有经过 DNS。')+
+  '<figure class="training-figure"><a href="diagrams/vpc-first-tls-request.svg" target="_blank" rel="noopener" aria-label="放大：一次 HTTPS 查询的两段连接"><img src="diagrams/vpc-first-tls-request.svg" width="360" height="244" alt="客户端经 P-1 向入口 P 查询，P 经 A-1 转交给应用 A，客户端收到 HTTP 200、订单 O-104 和金额 37。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>客户端和入口 P 分别发起一条连接。应用的订单结果经 P 返回客户端。<a href="diagrams/vpc-first-tls-request.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+  p('在<a href="/labs/tls-proxy-hops/validation.json">原始记录</a>的 <code>listeners.P.http_requests</code> 和 <code>listeners.A.http_requests</code> 中找同一个 <code>a1</code>，再到 <code>responses</code> 核对状态和金额。<a href="/article/vpc-network/#native-tls-proxy">到 TLS 实验，核对两段连接各自怎样验证对端 →</a>')+'</div>';
+ vpc.updated='2026.11.12';
+
  const addressMapping=h('subsection-2-o5xitb','地址映射与服务名称');
  if(vpc.sections[1][1].split(addressMapping).length!==2)throw Error('Missing DNS practice insertion point');
  const dnsCache=h('native-dns-cache','实跑：旧地址和“不存在”何时过期')+
@@ -206,7 +212,6 @@
   '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
   '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
- vpc.updated='2026.11.12';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+

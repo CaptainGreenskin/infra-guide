@@ -523,7 +523,9 @@ function chapterLabLinksHTML(article){
  const rows=units.map(unit=>{
   const title=escapeHTML(unit.title),catalogHref=labCatalogTaskPath(unit);
   const boundary=unit.kind==='目标环境手册'?'目标环境待验':unit.pendingFiles?.length?'含目标环境待验项':'';
-  return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'" aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
+  const concepts=fieldPracticeLocations(unit.id).map(([, ,source])=>source).filter(Boolean);
+  const origin=concepts.length?' data-lab-concepts="'+escapeHTML(concepts.join(' '))+'"':'';
+  return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'"'+origin+' aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
  }).join('');
  return '<details class="chapter-lab-links" id="chapter-experiments"><summary>本章实战与验收（'+units.length+'）</summary><ul>'+rows+'</ul></details>';
 }
@@ -531,15 +533,47 @@ function labCatalogUnitHTML(unit,index,roleReturn,runHref){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
  const fieldLocations=fieldPracticeLocations(unit.id);
- const fieldReturn=fieldLocations.map(([href,concept])=>{
+ const fieldReturn=fieldLocations.map(([href,concept,origin])=>{
   const label=concept?'回到概念图'+(fieldLocations.length>1?' · '+escapeHTML(concept):''):'回到图中练习';
-  return '<a class="lab-field-practice-return" href="'+href+'">'+label+' →</a>';
+  const context=origin?' data-lab-concept="'+escapeHTML(origin)+'"':'';
+  return '<a class="lab-field-practice-return" href="'+href+'"'+context+'>'+label+' →</a>';
  }).join('');
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+}
+function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
+ const params=new URLSearchParams(location.search);
+ const goal=params.get('goal'),returnGoal=params.get('returnGoal'),role=goal??returnGoal;
+ const profile=Object.hasOwn(roles,role)?roles[role]:null;
+ const source=params.get('fromConcept'),field=source?.match(/^([a-z0-9-]+)\.[a-z0-9-]+$/)?.[1];
+ const hash=location.hash||'',track=params.get('track');
+ if(!field||!/^#lab-[a-z0-9-]+$/.test(hash)||fieldTracks[field]!==track)return;
+ if((goal!==null&&returnGoal!==null)||(role!==null&&profile?.track!==track))return;
+ const card=document.getElementById(hash.slice(1));
+ if(!card?.closest('#labs-'+track))return;
+ const run=card.querySelector('[data-lab-run]'),concept=card.querySelector('a[data-lab-concept="'+source+'"]');
+ if(!run||!concept)return;
+ const runURL=new URL(run.href),conceptURL=new URL(concept.href);
+ const chapter=runURL.pathname.match(/\/article\/([a-z0-9-]+)\/$/)?.[1];
+ if(runURL.origin!==location.origin||conceptURL.origin!==location.origin||!chapter||!runURL.hash)return;
+ const runGoal=runURL.searchParams.get('goal'),conceptGoal=conceptURL.searchParams.get('goal');
+ if((runGoal!==null&&runGoal!==goal)||(conceptGoal!==null&&conceptGoal!==role))return;
+ const inRoute=profile?.chapters.includes(chapter);
+ const gateRun=goal&&gateRunsByRole[goal]?.includes('/article/'+chapter+'/'+runURL.hash);
+ if((goal&&!inRoute&&!gateRun)||(returnGoal&&inRoute))return;
+ if(goal)runURL.searchParams.delete('goal');
+ runURL.searchParams.set('fromConcept',source);
+ if(goal)runURL.searchParams.set('goal',goal);
+ if(returnGoal)runURL.searchParams.set('returnGoal',returnGoal);
+ run.setAttribute('href',runURL.pathname+runURL.search+runURL.hash);
+ if(role){
+  conceptURL.searchParams.set('goal',role);
+  concept.setAttribute('href',conceptURL.pathname+conceptURL.search+conceptURL.hash);
+ }
 }
 function renderLabCatalog(){
- const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
+ const params=new URLSearchParams(location.search||'');
+ const requested=params.get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
  const profile=selectedLearningProfile();
  const role=profile&&(selected==='all'||selected===profile.track)?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
  const gateRuns=new Set(role?labCatalogGateRuns(profile):[]);
@@ -563,4 +597,11 @@ function renderLabCatalog(){
  }).join('');
  const intro='<div class="lab-catalog-intro" id="labs-all"><p>先选方向，按编号读机制、运行代码，再核对输出。带“按需先修”的任务只用于补缺口；遇到需要额外环境的实验，可先继续阅读机制。</p><p>每项都写明要观察什么、所需环境和验证范围。下载包可能包含不同方向的独立程序，请按本任务文件名运行。目标环境手册保留待验状态。</p></div>';
  simplePage('实战实验室','LEARN · RUN · CHECK','按 Cloud、AI、Agent 的学习顺序找实验。先讲清机制，再用代码、反例和真实记录核对理解。',intro+nav+'<div class="lab-catalog-page">'+groups+'</div><p class="evidence-note lab-catalog-note">本机执行记录对应固定源码与当时的软件版本。真实云、GPU、Kubernetes/CSI、生产模型及 Kairo 的证据，以各任务列出的目标环境验收为准。'+returnLink+'</p>');
+ if(params.has('fromConcept')){
+  const conceptRole=params.get('goal')??params.get('returnGoal');
+  const contextProfile=Object.hasOwn(learningProfiles,conceptRole)?learningProfiles[conceptRole]:null;
+  const roles=contextProfile?{[conceptRole]:{track:contextProfile.track,chapters:learningProfileRoute(contextProfile)}}:{};
+  const fieldTracks=Object.fromEntries(Object.keys(fieldConceptMaps).map(id=>[id,moduleFor(id).track]));
+  restoreLabConceptReturn(roles,fieldTracks,role?{[role]:[...gateRuns]}:{});
+ }
 }

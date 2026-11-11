@@ -25,6 +25,14 @@ assert(cpu.cpu_stat_delta.usage_usec>0&&cpu.cpu_stat_delta.nr_throttled>0);asser
 assert.equal(pids.pids_max,16);assert.equal(pids.pids_current,pids.created_threads+1);assert.equal(pids.pids_current,16);assert(pids.refusal&&pids.pids_max_events_delta>0);
 assert.equal(oom.exit_code,137);assert.equal(oom.oom_killed,true);
 for(const key of ['pid','mnt','net'])assert.notEqual(native.concurrent_namespaces[0][key],native.concurrent_namespaces[1][key]);
+const containerArticle=d.articles.find(a=>a.id==='container-runtime');
+const containerOpening=containerArticle.sections[0][1],instanceFigure=containerOpening.indexOf('<figure');
+assert(instanceFigure>0&&containerOpening.slice(0,instanceFigure).includes('命名空间（namespace）')&&containerOpening.slice(0,instanceFigure).includes('控制组（cgroup）'));
+const instanceLink=containerOpening.slice(instanceFigure);
+assert(instanceLink.includes('/article/container-runtime/#container-native-run')&&containerArticle.sections[7][1].includes('id="container-native-run"'));
+assert(instanceLink.includes(native.image.split('@sha256:')[1].slice(0,8)));
+for(const observation of native.concurrent_namespaces)assert(instanceLink.includes(observation.pid.match(/\d+/)[0]));
+assert(containerArticle.sections[1][1].includes('/article/delivery/#native-release-artifact-trust'));
 const o=scheduler.observations;
 assert.equal(o.quota_rejection.object_exists,false);assert.equal(o.quota_rejection.quota.hard['requests.cpu'],'300m');assert.equal(o.quota_rejection.quota.used['requests.cpu'],'250m');assert(250+100>300);
 const toMilli=s=>s.endsWith('m')?+s.slice(0,-1):+s*1000;

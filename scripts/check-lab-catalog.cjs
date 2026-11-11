@@ -111,6 +111,8 @@ const staticPage=fs.readFileSync(path.join(dist,'labs/index.html'),'utf8');
 const earlyRoleScripts=[...staticPage.matchAll(/<script data-early-lab-role>([\s\S]*?)<\/script>/g)];
 assert.equal(earlyRoleScripts.length,1,'lab links preserve a selected role before application startup');
 const earlyRoleScript=earlyRoleScripts[0][1];
+const prefetchArticle=fs.readFileSync(path.join(dist,'article/data-pipeline/index.html'),'utf8');
+assert(prefetchArticle.includes('href="/labs/?track=ai#lab-ai-prefetch-resume-step" data-lab-concepts="training.tr-input"'),'the article exposes only the authored origin on the prefetch evidence link');
 const fieldPage=fs.readFileSync(path.join(dist,'module/platform/index.html'),'utf8');
 const earlyFieldRoleScript=fieldPage.match(/<script data-early-field-role>([\s\S]*?)<\/script>/)?.[1];
 assert(earlyFieldRoleScript,'field practice links preserve a selected role before application startup');
@@ -156,6 +158,39 @@ for(const base of ['/','/infra-guide/']){
   if(apply)expected[0]=shared+'?goal=agent-app#integrated-service-run';
   assert.deepEqual(links.map(link=>link.result),expected,base+': only the exact shared gate link in the catalog keeps the early role');
  }
+ function verifyConcept(script,search,hash,{id,track,source,runHref,conceptHref},expectedRun=runHref,expectedConcept=conceptHref){
+  const link=href=>({href:new URL(href,origin).href,result:href,setAttribute(name,value){assert.equal(name,'href');this.result=value;}});
+  const run=link(runHref),back=link(conceptHref);
+  const card={closest:selector=>selector==='#labs-'+track?true:null,querySelector:selector=>({
+   '[data-lab-run]':run,['a[data-lab-concept="'+source+'"]']:back
+  })[selector]};
+  vm.runInNewContext(script,{URL,URLSearchParams,location:{origin,search,hash},
+   document:{getElementById:target=>target===id?card:null,querySelectorAll:()=>[]}});
+  assert.equal(run.result,expectedRun,base+search+hash);
+  assert.equal(back.result,expectedConcept,base+search+hash);
+ }
+ const prefetch={id:'lab-ai-prefetch-resume-step',track:'ai',source:'training.tr-input',
+  runHref:article+'data-pipeline/#native-prefetch-resume',conceptHref:base+'module/training/?concept=tr-input#map-concept-tr-input'};
+ const hash='#'+prefetch.id,params='?track=ai&fromConcept=training.tr-input';
+ const optional=params+'&returnGoal=ai-inference';
+ const runWith=(fixture,query)=>fixture.runHref.replace('#','?'+query+'#');
+ const mapWith=(fixture,goal)=>fixture.conceptHref.replace('#','&goal='+goal+'#');
+ verifyConcept(earlyRoleScript,params,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input'));
+ verifyConcept(earlyRoleScript,optional,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&returnGoal=ai-inference'),mapWith(prefetch,'ai-inference'));
+ verifyConcept(earlyRoleScript,params+'&goal=ai-training',hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&goal=ai-training'),mapWith(prefetch,'ai-training'));
+ verifyConcept(earlyFieldRoleScript,optional,hash,prefetch);
+ verifyConcept(earlyRoleScript,optional,'#lab-ai-async-dcp-commit',prefetch);
+ for(const search of [optional.replace('tr-input','tr-recovery'),optional.replace('track=ai','track=agent'),
+  optional.replace('ai-inference','agent-app'),optional.replace('ai-inference','ai-training'),optional+'&goal=',
+  params+'&goal=ai-inference',params+'&goal=toString',params.replace('training.tr-input','training')]){
+  verifyConcept(earlyRoleScript,search,hash,prefetch);
+ }
+ // Synthetic concept binding exercises admission for a chapter outside this role.
+ const gate={id:'lab-shared-integrated-service',track:'agent',source:'agent.ag-evaluation',
+  runHref:article+'production-readiness/#integrated-service-run',conceptHref:base+'module/agent/?concept=ag-evaluation#map-concept-ag-evaluation'};
+ const sharedParams='?track=agent&fromConcept=agent.ag-evaluation&goal=agent-app';
+ verifyConcept(earlyRoleScript,sharedParams,'#'+gate.id,gate,runWith(gate,'fromConcept=agent.ag-evaluation&goal=agent-app'),mapWith(gate,'agent-app'));
+ verifyConcept(earlyRoleScript,sharedParams,'#'+gate.id,{...gate,runHref:gate.runHref.replace('#integrated-service-run','#section-1')});
 }
 for(const unit of units)assert(staticPage.includes('id="lab-'+unit.id+'"'),'static full catalog omitted '+unit.id);
 assert(staticPage.includes('目标环境待验')&&staticPage.includes('已有本地记录'));

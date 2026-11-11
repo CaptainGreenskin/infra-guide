@@ -131,5 +131,5 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
 
  const multinode=articleById('multinode-lab');
  multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
- multinode.updated='2026.11.10';
+ multinode.updated='2026.11.12';
 })();

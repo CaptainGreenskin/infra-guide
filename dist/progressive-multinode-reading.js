@@ -130,7 +130,13 @@
  bodies.forEach((body,i)=>a.sections[i][1]=body);
  a.desc='先把两个启动器、四个训练进程、会合与通信组连起来，再按同一输入核对启动、更新、共享检查点和恢复。';
 
- a.sections[1][1]+=p('如果目标是 RTX PRO 6000 Blackwell，按实际计算能力另外选包。原 PyTorch 2.5.1 / CUDA 12.4 是历史基线。<a href="/article/multinode-lab/#native-ddp-target-preflight">查看 Blackwell 的独立安装与预检 →</a>');
+ const targetSetup='目标环境是两台 Linux 节点、每台至少两张可见 NVIDIA GPU，Python 3.10—3.12、PyTorch 2.5.1、相同代码与训练配置。';
+ const legacySetup='GPU 驱动管理硬件，PyTorch 包携带相应 CUDA 运行时；下面安装基线选择 CUDA 12.4 包，主机驱动需支持它。';
+ if(!a.sections[0][1].includes(targetSetup)||!a.sections[1][1].includes(legacySetup))throw Error('Missing multinode environment handoff');
+ a.sections[0][1]=p('先按手头的机器选择验收范围。只有一台机器时，用 PyTorch 2.5.1 的 CPU/Gloo 探针检查四个进程。已有实跑中，四个进程都读回 [1,2,3,4] 与 10，真机验收返回 <code>target_ready=false</code>（退出码 2）。有两台目标节点时，先按实际 GPU 选择 PyTorch 包，再检查四个进程的绑卡与通信。<a href="/article/multinode-lab/#native-ddp-target-preflight">打开四进程记录与两种运行步骤 →</a>')+
+  a.sections[0][1].replace(targetSetup,'真机步骤要求两台 Linux 节点、每台至少两张可见 NVIDIA GPU、Python 3.10—3.12，以及两端相同的代码与训练配置。PyTorch 包按设备型号选择。');
+ a.sections[1][1]=a.sections[1][1].replace(legacySetup,
+  'GPU 驱动管理硬件，PyTorch 包携带相应 CUDA 运行时。先按 GPU 型号选安装路径。RTX PRO 6000 Blackwell（计算能力 12.0）用 <a href="/article/multinode-lab/#native-ddp-target-preflight">PyTorch 2.7.1 / CUDA 12.8 的独立安装与预检</a>，跳过下面的历史安装命令。下方 PyTorch 2.5.1 / CUDA 12.4 基线用于兼容这组版本的设备。两条路径都在解压的 DDP 包中执行 <code>python -B check_env.py</code>。<a href="/article/operator-profiling/#cuda-core-run">算子章的 CUDA 12.9.1 编译记录</a>使用独立工具链，训练端以本次检查报告的 CUDA 运行时为准。');
  a.sections[3][1]+=
  '<h3 id="native-ddp-target-preflight">先用四个数验收节点、绑卡与通信</h3>'+
  p('完整训练同时依赖数据、梯度同步和保存。排查时先运行一个只发四个整数的探针。四个 rank 各提交自己的全局编号加 1，AllGather 把每份值按 rank 顺序交给所有进程，AllReduce 把值求和并返回给所有进程。每个进程实际读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code> 后再写一份记录。')+
@@ -151,7 +157,8 @@ python3 -m venv .venv-blackwell
 . .venv-blackwell/bin/activate
 python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
  `)+
- p('在一端生成随机会话号，复制到两端。沿用前节的 NODE_RANK 和 MASTER_ADDR，显式选同一个空闲端口。两台分别执行，结束后收集四份记录和两端退出码。')+
+ p('两端各自激活选定的 PyTorch 环境，进入解压的预检实验目录。在 A 执行下面生成会话号的 <code>python</code> 命令，把同一个号设为两端的 <code>PREFLIGHT_SESSION</code>。在当前 shell 中设置 <code>NODE_RANK</code>（A 为 0，B 为 1），<code>MASTER_ADDR</code>（两端都填 A 的真实内网地址）与 <code>MASTER_PORT</code>（两端填同一空闲端口）。',
+ 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。前节写在 <code>bash launch_2nodes.sh</code> 前的临时赋值仅用于那条命令。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
  code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
 # 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
 python -c 'import secrets; print(secrets.token_hex(16))'

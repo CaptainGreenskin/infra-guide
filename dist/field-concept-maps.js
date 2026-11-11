@@ -378,7 +378,7 @@ function fieldPracticeLocations(labId){
   for(const [concept,ids] of Object.entries(concepts)){
    if(!ids.includes(labId))continue;
    const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
-   locations.push([fieldMapURL(moduleId,concept),label]);
+   locations.push([fieldMapURL(moduleId,concept),label,moduleId+'.'+concept]);
   }
  }
  return locations;

@@ -240,7 +240,7 @@
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
     p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。'),
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+
@@ -288,8 +288,41 @@
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
-  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。');
-  a.updated='2026.11.10';
+  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
+  '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
+  p('同一个任务里，<code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先从工具回执取出获准的任务、尝试和对象，再与资源服务的正文读取记录按这三项对齐。验收时要确认审计覆盖了这次任务。下面分别检查实际记录、人为添加一条 B 读取的副本和缺少正文审计的副本。')+
+  '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
+  p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
+  trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
+from collections import Counter
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+task_id = record["task_final"]["tasks"][0]["task_id"]
+receipts = record["g10"]["evidence"]["tool_receipts"]
+reads = record["resource"]["body_reads"]
+fields = ("task_id", "attempt_id", "resource")
+
+def key(row):
+    return tuple(row[field] for field in fields)
+
+allowed = Counter(key(row) for row in receipts
+                  if row["task_id"] == task_id and row["status"] == "success")
+
+def check_body_reads(audit):
+    if audit is None:
+        return "pending"
+    observed = Counter(key(row) for row in audit if row["task_id"] == task_id)
+    return "pass" if observed == allowed else "fail"
+
+denied = next(row for row in receipts
+              if row["task_id"] == task_id and row["status"] == "denied")
+extra_read = {field: denied[field] for field in fields}
+for name, audit in [("recorded", reads), ("extra-read", reads + [extra_read]),
+                    ("no-audit", None)]:
+    print(name, record["g10"]["checker"]["status"], check_body_reads(audit))`)+
+  p('<code>recorded record_consistent pass</code> 表示实际只读了 A。加入 B 的读取后，原导出仍是同一份，独立核对变为 <code>extra-read record_consistent fail</code>。缺少正文审计时，得到 <code>no-audit record_consistent pending</code>，要等资源端补齐本次记录再下结论。')+'</details>';
+  a.updated='2026.11.12';
 
  }
  }

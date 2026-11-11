@@ -8736,6 +8736,113 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c172bc4b172ecddeb4e60f0aea78fec5f3917ab10fb40b17d010487a81bc03e9",
+      "reviewed_content_sha256": "3c96a463c8d24a46559111a9d987cf3facdd3ebb0b8b0a69f4276386a8ce0a8f",
+      "scope": "Explain the decoder diagram before its first use, separate whole-prefix generation from cached execution, and make one measured loss visible before the exercise.",
+      "observation": "The CPU paths both select 1 three times. The full-prefix path reads 2, 3, 4 positions and the cached path reads 2, 1, 1. Replaying the post-update model gives a one-target loss of about 10.84.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "2f0e6c02800f4d5a22ebf9414b8f08c21aaf09edb65bc23c26c85aa649dd6143",
+      "reviewed_content_sha256": "d662daf0ac09a751e391600d4dfc5d574ffc12528e815616b5c0f37e0b1b7ef9",
+      "scope": "Introduce the diagram’s isolation and resource objects before the figure, and carry image identity into two independently observed lessons.",
+      "observation": "Two concurrent containers use the same pinned image and have different PID namespace identities. The release lab separately rejects a moved archive alias.",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3e063540740c4c586277889dffeb25116c77b1c65b1c316caa0ddf2c4e083bd7",
+      "reviewed_content_sha256": "ca4989044d466d342cab6cb93e6a4f4a59f71d0bbc71a59366889456b0bc6bc3",
+      "scope": "Follow one recorded HTTPS request across both proxy connections before branching into DNS, routing and TLS details.",
+      "observation": "Request a1 uses client connection P-1 and application connection A-1. The recorded response is HTTP 200, order O-104, total 37, on separate loopback listeners.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "fea9cf0b0741a4c693c06c8cfd810dfdf9db44c4d478731ac19d2ddaddaf697b",
+      "reviewed_content_sha256": "8d6a0636a17ae9b8890b5e8432271a66d13fca747a887c4ea8eccc445088a584",
+      "scope": "Lead from delayed binding to the same volume on a replacement Pod, then inspect target node eligibility.",
+      "observation": "The original Pod identities differ while the node and volume do not. The read-only queries check candidate topology and driver registration before attempting target failover.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "78af83b5b5075e9b4da3d3ea240ee64c9c189df7d454ecff4cf15d3d96b14213",
+      "reviewed_content_sha256": "50e2f0e0ce22efcb1cc7dd97b072485680153ce85598cba160e2cddf870f0112",
+      "scope": "Separate the frozen CPU/Gloo preflight from the target Blackwell installation and keep launch variables in the shell running each probe.",
+      "observation": "Four local workers verify the numerical reference. The distinct target preflight also checks hardware, wheel, node and collective acceptance.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "040da45a71e530ef815aeb651940b8a90bb273bd85461a90735f40224a722fd6",
+      "reviewed_content_sha256": "9891334d29d14ebf2e7ca2bb9709fb009798835b08742e0d4141ef8c057b9e84",
+      "scope": "Cross-check a denied tool receipt with an independent record of resource body reads.",
+      "observation": "The reference run reads A once. An added B read fails independently of the unchanged export verdict, while an absent resource audit leaves the outcome pending.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

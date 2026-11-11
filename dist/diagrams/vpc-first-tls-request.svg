@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 244" role="img" aria-labelledby="title desc">
+  <title id="title">一次 HTTPS 查询的两段连接</title>
+  <desc id="desc">在本机实验中，客户端经 P-1 发送 a1，入口 P 经 A-1 向应用 A 转交查询。应用把订单结果返回给入口，客户端最终收到 HTTP 200、订单 O-104 和金额 37。</desc>
+  <metadata>{"request":"a1","front":"P-1","origin":"A-1","status":200,"order":"O-104","total":37}</metadata>
+  <defs>
+    <marker id="send" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0L7 3.5L0 7Z" fill="#315dce"/>
+    </marker>
+    <marker id="return" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0 0L7 3.5L0 7Z" fill="#16745d"/>
+    </marker>
+  </defs>
+  <style>
+    text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;fill:#1c2b45;text-anchor:middle;font-size:16px}
+    .title{font-size:18px;font-weight:700}.actor{font-weight:700}.lane{stroke:#a0b1cc;stroke-width:1.2;stroke-dasharray:4 4}
+    .send{stroke:#315dce;stroke-width:2;marker-end:url(#send)}.return{stroke:#16745d;stroke-width:2;marker-end:url(#return)}
+  </style>
+  <rect width="360" height="244" rx="12" fill="#f6f8fc"/>
+  <text x="180" y="26" class="title">请求 a1 · GET /order</text>
+  <rect x="16" y="40" width="82" height="32" rx="6" fill="#fff" stroke="#c5d3e9"/>
+  <rect x="139" y="40" width="82" height="32" rx="6" fill="#e9efff" stroke="#9eb6ec"/>
+  <rect x="262" y="40" width="82" height="32" rx="6" fill="#fff" stroke="#c5d3e9"/>
+  <text x="57" y="61" class="actor">客户端</text>
+  <text x="180" y="61" class="actor">入口 P</text>
+  <text x="303" y="61" class="actor">应用 A</text>
+  <path class="lane" d="M57 72V198M180 72V198M303 72V198"/>
+  <text x="118" y="92">经 P-1 查询</text>
+  <path class="send" d="M57 101H177"/>
+  <text x="241" y="121">经 A-1 转交</text>
+  <path class="send" d="M180 130H300"/>
+  <text x="241" y="150">返回订单</text>
+  <path class="return" d="M303 159H183"/>
+  <text x="118" y="179">HTTP 200</text>
+  <path class="return" d="M180 188H60"/>
+  <rect x="16" y="206" width="328" height="27" rx="6" fill="#e6f4ef" stroke="#b3d7c9"/>
+  <text x="180" y="225">订单 O-104 · 金额 37</text>
+</svg>

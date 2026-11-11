@@ -5678,7 +5678,8 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
  p('将同样的验收条件用于集群时，还要给出恢复卷身份、目标 Pod 与实际业务输出。数据库程序结果、CSI 操作结果和业务切换结果在同一份记录中关联，才能回答数据从哪里来、到了哪个恢复点，以及消费者是否已继续工作。')
  ]);
 
- storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="/article/k8s-storage/#native-csi-storage">查看动态供应与挂载实战 →</a>');
+ storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="/article/k8s-storage/#native-csi-storage">查看动态供应与挂载实战 →</a>',
+ '首个 Pod 确定卷的位置后，替换 Pod 仍要满足这个卷的节点条件。<a href="/article/k8s-storage/#csi-node-placement-evidence">对照原始记录，判断能否换节点 →</a>');
 
  storage.sections[6][1]+=h('native-csi-storage','原生 CSI 实战：等待绑定、替换 Pod 与回收')+
  p('这次在 Linux 上创建单节点 kind 集群，安装 Kubernetes CSI 社区的 Hostpath 示例驱动。驱动用 kind 节点内的目录保存数据。应用 Pod 引用 <code>app-data</code> PVC，由 kubelet 经驱动挂载到 <code>/data</code>。实战复用同一份 <code>volume_writer.py</code>，使用两个依次创建和删除的 Pod。')+
@@ -5688,8 +5689,22 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
  p('两次写入后，容器文件和节点后端文件的 SHA-256 分别一致。替换 Pod 写入前读到的文件摘要也与首个 Pod 写入后的摘要相同。最后先删替换 Pod，再删 PVC。该 PV 的回收策略为 <code>Delete</code>。程序分别确认 PV 对象消失、同一个卷句柄对应的节点目录消失，再核对自建集群已清理。这里验证的是示例驱动在一个节点上的回收过程，数据仍以本地目录为后端。')+
  p('解压后进入 <code>csi-storage</code> 目录。第一条命令在 Linux amd64 Docker 上复跑并保存新记录；第二条离线检查随包发布的 CI 原始记录。')+
  trainingCode('复跑 CSI 实验并校验随包记录','SHELL','python3 -B csi_storage_lab.py --writer volume_writer.py \\\n  --output native-record.json\npython3 -B csi_storage_lab.py --check-record validation.json')+
- '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>';
- storage.updated='2026.11.09';
+ '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>'+
+ h('csi-node-placement-evidence','替换 Pod 前，查这块卷能去哪些节点')+
+ p('打开上面的原始记录，对照 <code>consumers[].pod.node</code> 与 <code>consumers[].binding.pv.affinity</code>。PV 只接受 <code>topology.hostpath.csi/node</code> 标签值为 <code>csi-46fc01874d1e-control-plane</code> 的节点。两次挂载的 Pod UID 不同，节点和卷句柄相同。替换 Pod 从原卷读到计数 1 与 <code>write-1</code> 回执。这份证据覆盖同节点换 Pod。')+
+ p('在目标测试集群先取已绑定的 PV，再看候选节点的标签和 <code>CSINode</code>。<code>CSINode</code> 记录该节点注册的 CSI 驱动，以及驱动声明的拓扑标签键。把命令中的命名空间、声明和候选节点换成实际名字。')+
+ trainingCode('只读检查候选节点、驱动和卷条件','SHELL',`NS=your-test-namespace
+CLAIM=app-data
+CANDIDATE=your-test-node
+PV=$(kubectl -n "$NS" get pvc "$CLAIM" -o jsonpath='{.spec.volumeName}') || exit 1
+[ -n "$PV" ] || { echo 'PVC 尚未绑定'; exit 1; }
+kubectl get pv "$PV" -o yaml
+kubectl describe node "$CANDIDATE"
+kubectl get csinode "$CANDIDATE" -o yaml`)+
+ p('从 PV 取 <code>spec.csi.driver</code> 和 <code>spec.nodeAffinity.required</code>。在候选节点核对同名驱动已注册，再匹配 PV 的节点条件。若有多组条件，节点满足其中一组即可，每组内的条件须同时成立。实际云盘的标签键和值取决于驱动和这个卷。满足卷条件后，还要检查 Pod 所需资源和放置条件。',
+ '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。')+
+ '<p class="source-at"><a href="https://v1-35.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/#node-affinity">PV 节点亲和性 ↗</a></p>';
+ storage.updated='2026.11.12';
 })();
 
 
@@ -6359,6 +6374,12 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
  'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
  ]);
 
+ vpc.sections[0][1]+='<div class="mechanism-core">'+h('vpc-first-tls-request','一次查询怎样沿两条连接返回')+
+  p('上面的 <code>api.example.test</code> 和 <code>10.20.4.7:443</code> 用于说明网址和端口。下图来自本机 HTTPS 实验。程序发送 <code>GET /order</code>，入口 P 与应用 A 分别监听 <code>127.0.0.1</code> 上不同的临时端口。程序按监听地址直接连接，没有经过 DNS。')+
+  '<figure class="training-figure"><a href="diagrams/vpc-first-tls-request.svg" target="_blank" rel="noopener" aria-label="放大：一次 HTTPS 查询的两段连接"><img src="diagrams/vpc-first-tls-request.svg" width="360" height="244" alt="客户端经 P-1 向入口 P 查询，P 经 A-1 转交给应用 A，客户端收到 HTTP 200、订单 O-104 和金额 37。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>客户端和入口 P 分别发起一条连接。应用的订单结果经 P 返回客户端。<a href="diagrams/vpc-first-tls-request.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+  p('在<a href="/labs/tls-proxy-hops/validation.json">原始记录</a>的 <code>listeners.P.http_requests</code> 和 <code>listeners.A.http_requests</code> 中找同一个 <code>a1</code>，再到 <code>responses</code> 核对状态和金额。<a href="/article/vpc-network/#native-tls-proxy">到 TLS 实验，核对两段连接各自怎样验证对端 →</a>')+'</div>';
+ vpc.updated='2026.11.12';
+
  const addressMapping=h('subsection-2-o5xitb','地址映射与服务名称');
  if(vpc.sections[1][1].split(addressMapping).length!==2)throw Error('Missing DNS practice insertion point');
  const dnsCache=h('native-dns-cache','实跑：旧地址和“不存在”何时过期')+
@@ -6401,7 +6422,6 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
   '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
   '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
- vpc.updated='2026.11.12';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+
@@ -9159,7 +9179,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
     p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。'),
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+
@@ -9207,8 +9227,41 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
-  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。');
-  a.updated='2026.11.10';
+  p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
+  '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
+  p('同一个任务里，<code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先从工具回执取出获准的任务、尝试和对象，再与资源服务的正文读取记录按这三项对齐。验收时要确认审计覆盖了这次任务。下面分别检查实际记录、人为添加一条 B 读取的副本和缺少正文审计的副本。')+
+  '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
+  p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
+  trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
+from collections import Counter
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+task_id = record["task_final"]["tasks"][0]["task_id"]
+receipts = record["g10"]["evidence"]["tool_receipts"]
+reads = record["resource"]["body_reads"]
+fields = ("task_id", "attempt_id", "resource")
+
+def key(row):
+    return tuple(row[field] for field in fields)
+
+allowed = Counter(key(row) for row in receipts
+                  if row["task_id"] == task_id and row["status"] == "success")
+
+def check_body_reads(audit):
+    if audit is None:
+        return "pending"
+    observed = Counter(key(row) for row in audit if row["task_id"] == task_id)
+    return "pass" if observed == allowed else "fail"
+
+denied = next(row for row in receipts
+              if row["task_id"] == task_id and row["status"] == "denied")
+extra_read = {field: denied[field] for field in fields}
+for name, audit in [("recorded", reads), ("extra-read", reads + [extra_read]),
+                    ("no-audit", None)]:
+    print(name, record["g10"]["checker"]["status"], check_body_reads(audit))`)+
+  p('<code>recorded record_consistent pass</code> 表示实际只读了 A。加入 B 的读取后，原导出仍是同一份，独立核对变为 <code>extra-read record_consistent fail</code>。缺少正文审计时，得到 <code>no-audit record_consistent pending</code>，要等资源端补齐本次记录再下结论。')+'</details>';
+  a.updated='2026.11.12';
 
  }
  }
@@ -10349,7 +10402,8 @@ float value = *address;
  if(r1.length!==1||r3.length!==1||r4.length!==1||r7.length!==3)throw Error('Container code layout changed');
  replace(runtime,[
  p('前面的云计算章说明应用可以运行在虚拟机或容器中。本章沿一个查询服务走到实际进程：先用镜像交付程序，再由容器运行时准备文件、隔离视图与资源配置，最后启动服务进程。容器运行时是执行这些创建、启动、停止操作的软件；内核仍负责调度线程、管理内存并访问设备。',
- '镜像是可用于创建容器的文件系统变更集合与启动配置，例如应用文件、依赖库、入口命令和默认环境。容器是基于它创建的运行实例，带有自己的实例身份和运行状态。进程是已启动的程序及其状态，线程是其中被调度执行的单位。同一镜像可以创建两个容器，产生两组独立进程。')+
+ '镜像是可用于创建容器的文件系统变更集合与启动配置，例如应用文件、依赖库、入口命令和默认环境。容器是基于它创建的运行实例，带有自己的实例身份和运行状态。进程是已启动的程序及其状态，线程是其中被调度执行的单位。同一镜像可以创建两个容器，产生两组独立进程。',
+ '图中的命名空间（namespace）决定进程能看到哪些进程、挂载和网络接口。控制组（cgroup）记录一组进程用掉多少资源，也能限制它们的用量。')+
  figures(r[0]).join('')+
  table(['对象','正常运行时负责什么','怎样认出它'],[['镜像','提供程序文件与默认启动配置','镜像引用、内容摘要与平台架构'],['容器实例','组织本次文件视图、挂载和运行配置','运行时实例 ID 与容器状态'],['进程与线程','执行程序，维护地址空间和打开的文件','宿主上的进程身份与所在命名空间'],['宿主内核','调度、系统调用、内存和设备管理','所在 Linux 环境与内核版本']])+
  p('普通 Linux 容器共享所在宿主的内核；镜像中的发行版文件提供用户态程序与库。容器也可运行在 Linux 虚拟机中，此时共享的是虚拟机内的 Linux 内核。Kubernetes 再用 Pod 组织一个或多个容器，约定共同放置、网络与卷等资源，后面的工作负载章会继续管理这些 Pod。'),
@@ -10391,6 +10445,12 @@ float value = *address;
  p('执行前先按上节预测：CPU 预算与节流计数对应；内存分支联合检查退出码和 OOM 原因；pids 分支核对线程数及事件。具体耗时和计数可随机器变化，程序检查机制条件。下面保留与下载文件一致的完整源码，便于看清负载、等待线程和实例清理。')+
  links(r[7])+fold('container_limits.py 完整源码',r7[1])+fold('container_probe.py 完整源码',r7[2])
  ],'从镜像创建实际进程，沿文件视图、内核隔离、资源预算与停止流程理解容器，再用真实 Linux 记录核对运行事实。');
+ const instanceFigure=figures(r[0])[0];
+ runtime.sections[0][1]=runtime.sections[0][1].replace(instanceFigure,instanceFigure+p(
+  '用实验把图里的两个实例对上号。<code>image</code> 只记录一份镜像引用，摘要以 <code>e064671c</code> 开头。两条同时采集的 <code>concurrent_namespaces</code> 则给出不同的进程命名空间编号 <code>4026532266</code> 和 <code>4026532326</code>。<a href="/article/container-runtime/#container-native-run">运行实验并核对原始记录 →</a>'));
+ runtime.sections[1][1]=runtime.sections[1][1].replace(r1[0],r1[0]+p(
+  '审批通过后，部署程序怎样确认拿到的还是同一份内容？镜像仓库用镜像摘要锁定引用。<a href="/article/delivery/#native-release-artifact-trust">发布章用一份独立的实验检查同类问题</a>。签过名的清单锁定了 v1 报表归档的文件摘要，但按可变名称读取却拿到了 v2，按摘要校验就能发现这次变化。'));
+ runtime.updated='2026.11.12';
 
  const workloads=select('k8s-workloads',['apply 成功，只完成了哪一步','先选工作负载，再写副本数','三副本滚动更新，先算允许范围','三种探针：动作、连续阈值与故障放大','四种失败，四个取证入口','PDB、滚动更新和节点故障分别约束什么','排空与退出：逐条核对完成证据','一份清单，三次单变量练习']);
  const w=workloads.sections.map(s=>s[1]),w2=blocks(w[2]),w3=blocks(w[3]),w6=blocks(w[6]);
@@ -11790,7 +11850,13 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  bodies.forEach((body,i)=>a.sections[i][1]=body);
  a.desc='先把两个启动器、四个训练进程、会合与通信组连起来，再按同一输入核对启动、更新、共享检查点和恢复。';
 
- a.sections[1][1]+=p('如果目标是 RTX PRO 6000 Blackwell，按实际计算能力另外选包。原 PyTorch 2.5.1 / CUDA 12.4 是历史基线。<a href="/article/multinode-lab/#native-ddp-target-preflight">查看 Blackwell 的独立安装与预检 →</a>');
+ const targetSetup='目标环境是两台 Linux 节点、每台至少两张可见 NVIDIA GPU，Python 3.10—3.12、PyTorch 2.5.1、相同代码与训练配置。';
+ const legacySetup='GPU 驱动管理硬件，PyTorch 包携带相应 CUDA 运行时；下面安装基线选择 CUDA 12.4 包，主机驱动需支持它。';
+ if(!a.sections[0][1].includes(targetSetup)||!a.sections[1][1].includes(legacySetup))throw Error('Missing multinode environment handoff');
+ a.sections[0][1]=p('先按手头的机器选择验收范围。只有一台机器时，用 PyTorch 2.5.1 的 CPU/Gloo 探针检查四个进程。已有实跑中，四个进程都读回 [1,2,3,4] 与 10，真机验收返回 <code>target_ready=false</code>（退出码 2）。有两台目标节点时，先按实际 GPU 选择 PyTorch 包，再检查四个进程的绑卡与通信。<a href="/article/multinode-lab/#native-ddp-target-preflight">打开四进程记录与两种运行步骤 →</a>')+
+  a.sections[0][1].replace(targetSetup,'真机步骤要求两台 Linux 节点、每台至少两张可见 NVIDIA GPU、Python 3.10—3.12，以及两端相同的代码与训练配置。PyTorch 包按设备型号选择。');
+ a.sections[1][1]=a.sections[1][1].replace(legacySetup,
+  'GPU 驱动管理硬件，PyTorch 包携带相应 CUDA 运行时。先按 GPU 型号选安装路径。RTX PRO 6000 Blackwell（计算能力 12.0）用 <a href="/article/multinode-lab/#native-ddp-target-preflight">PyTorch 2.7.1 / CUDA 12.8 的独立安装与预检</a>，跳过下面的历史安装命令。下方 PyTorch 2.5.1 / CUDA 12.4 基线用于兼容这组版本的设备。两条路径都在解压的 DDP 包中执行 <code>python -B check_env.py</code>。<a href="/article/operator-profiling/#cuda-core-run">算子章的 CUDA 12.9.1 编译记录</a>使用独立工具链，训练端以本次检查报告的 CUDA 运行时为准。');
  a.sections[3][1]+=
  '<h3 id="native-ddp-target-preflight">先用四个数验收节点、绑卡与通信</h3>'+
  p('完整训练同时依赖数据、梯度同步和保存。排查时先运行一个只发四个整数的探针。四个 rank 各提交自己的全局编号加 1，AllGather 把每份值按 rank 顺序交给所有进程，AllReduce 把值求和并返回给所有进程。每个进程实际读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code> 后再写一份记录。')+
@@ -11811,7 +11877,8 @@ python3 -m venv .venv-blackwell
 . .venv-blackwell/bin/activate
 python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
  `)+
- p('在一端生成随机会话号，复制到两端。沿用前节的 NODE_RANK 和 MASTER_ADDR，显式选同一个空闲端口。两台分别执行，结束后收集四份记录和两端退出码。')+
+ p('两端各自激活选定的 PyTorch 环境，进入解压的预检实验目录。在 A 执行下面生成会话号的 <code>python</code> 命令，把同一个号设为两端的 <code>PREFLIGHT_SESSION</code>。在当前 shell 中设置 <code>NODE_RANK</code>（A 为 0，B 为 1），<code>MASTER_ADDR</code>（两端都填 A 的真实内网地址）与 <code>MASTER_PORT</code>（两端填同一空闲端口）。',
+ 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。前节写在 <code>bash launch_2nodes.sh</code> 前的临时赋值仅用于那条命令。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
  code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
 # 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
 python -c 'import secrets; print(secrets.token_hex(16))'
@@ -14418,7 +14485,7 @@ const firstReadingChanges=[];
 
  a.sections[3][1]=para(
   '[0,1] 和 [4,1] 的最后一格都放着编号 1，所以查到同一行词向量。小模型还给每个位置查一行位置向量，与词向量相加，帮助模型分辨先后。两条输入的最后一格连位置也相同，相加结果一样。加完得到块的输入 X，每条都是 [2,8]。',
-  '注意力让最后一格读到前一格的信息。接着，前馈网络逐格加工已经汇总的信息。整个块从两行八项开始，算完仍是两行八项。')+
+  '注意力让最后一格读到前一格的信息。把注意力分支的结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('生成时，每格只读自己和前文。这条规则叫因果约束。两次预测的最后一格都能读前一格和自己。每格都算出三组数字。查询 Q 用来找信息，键 K 用来算匹配分数，值 V 是可读回的内容。最后一格用自己的 Q 和某格的 K，把对应的数字相乘再相加，得到对那一格的分数。把两处的分数除以同一个数来控制大小，再用 softmax 换成加起来等于 1 的读取比例。',
@@ -14440,7 +14507,7 @@ const firstReadingChanges=[];
   '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('本例每次进入分支之前，先用归一化调整当前向量的数值尺度。注意力读取归一化后的 X，结果加回原来的 X，得到 H₁。前馈读取归一化后的 H₁，结果加回原来的 H₁，得到 H₂。沿原表示直接相加的路径叫残差连接。分支输出为零时，原表示沿这条路径保留下来。',
+ para('图中的两条回加路径叫残差连接。每个分支先用归一化调整输入的数值尺度，直接送去相加的 X 和 H₁ 则保持原样。分支输出为零时，原表示沿这条路径保留下来。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
  para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
  '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
@@ -14455,21 +14522,22 @@ const firstReadingChanges=[];
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
  '<h3 id="repeat-next-token">沿最后一行完成三轮生成</h3>'+
- para('沿 [0,1] 继续生成。每轮用已有的序列算分，取最后一行的最高分，把选出的编号接到末尾。然后用更长的序列继续下一轮。')+
+ para('沿 [0,1] 继续生成。每轮把已有的完整序列送进模型重新算分，取最后一行的最高分，把选出的编号接到末尾。然后用更长的序列继续下一轮。')+
  conceptReadingTable(['本轮已有序列','整段重算取哪行','接到末尾的编号'],[
   ['[0,1]','第 2 行','1'],['[0,1,1]','第 3 行','1'],['[0,1,1,1]','第 4 行','1']
  ])+
- para('三轮后，完整序列 [0,1,1,1,1] 已有 5 项。第三轮实际处理到 [0,1,1,1]，最后一个 1 刚被选出，还没送回模型。缓存保存的是已处理位置的 K 和 V，所以只有 4 格。前文看不到未来，第 2、3 轮已经复用了先前算好的 K 和 V。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
+ para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para('从两项输入加到四项，只要仍在位置表允许的长度内，同一层就能继续使用原有的参数。多出来的是这次计算产生的中间结果，例如查出的词向量和注意力分数。算显存时要把这两笔账分开。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。')+
+ a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
- para('整段重算每轮都送入完整序列。用 KV 缓存时，第一轮送入 [0,1] 并保留两格的键 K 和值 V，后两轮各只送入上轮选出的 1，缓存依次增至 3 格、4 格。CPU 实验逐轮核对最后一行的候选分数，两条路径都选出了三个 1。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
+ para('还是从 [0,1] 开始。整段重算三轮送入 2、3、4 项。KV 缓存把算过的键 K 和值 V 留给下一轮，三轮实际只送入 2、1、1 项。第一轮送入 [0,1]，后两轮各只送入上轮选出的 1。缓存格数依次为 2、3、4。',
+  'CPU 实验逐轮核对最后一行的候选分数，分数只差浮点舍入，两条路径都选出了 [1,1,1]。完整序列长 5，缓存里有 4 格，因为最后选出的 1 要到下一轮才会送进模型。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
  '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
@@ -14483,13 +14551,36 @@ const firstReadingChanges=[];
  '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
- para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。模型给正确答案的概率越低，这一项的损失越大。训练据此调整参数。')+
+ para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
+  '再看第 3 行（从 0 数是位置 2）。它读到 [0,1,2]，目标是 3。用同一 CPU 模型更新一次后的参数复算，编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
+  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。这一行只用于演示，原 CPU 更新跳过了目标 3。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
- para('生成时，[0,1] 接下来由模型选，这次选出了 1。训练用的是已知样本 [0,1,2,3,4]，前四项作输入，后四项作目标。第二行预测 [0,1] 后面接什么，样本给的答案是 2。训练把样本里的正确前文直接交给模型，这叫教师强制。',
- '以位置 2 为例，输入前文是 [0,1,2]，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
+ para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
  '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
  '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。')+
+ '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。',
+ '在上面的缓存实验目录用 PyTorch 2.5.1 执行下方命令。沿用<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>的模型和一次参数更新，取第一条样本的 <code>reference(ids)[0,2]</code>。输出依次是编号 0 到 7 的分数，以及单独计算的交叉熵 10.843026769187。')+
+ trainingCode('复算位置 2 对目标 3 的单项损失','SHELL',`python -B - <<'PY'
+import torch
+from torch.nn.functional import cross_entropy
+from torch.nn.attention import SDPBackend, sdpa_kernel
+from cache_lab import TinyDecoder, update
+
+torch.manual_seed(7)
+torch.set_num_threads(1)
+reference = TinyDecoder().double()
+rows = torch.tensor([[0, 1, 2, 3, 4], [4, 5, 6, 7, 0]])
+ids, labels = rows[:, :-1], rows[:, 1:].clone()
+labels[0, 1:] = -100
+labels[1, 3:] = -100
+with sdpa_kernel(SDPBackend.MATH):
+    update(reference, ids, labels, micro_size=2)
+    reference.eval()
+    with torch.inference_mode():
+        scores = reference(ids)[0, 2]
+        print(scores.tolist())
+        print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
+PY`)+
  '</details>'+
  '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
  para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
@@ -14501,6 +14592,9 @@ const firstReadingChanges=[];
  a.sections[7][1]=para('同样八个输入位置，四条各长 2 时，两个头合计有 32 个注意力分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对，因此分组会改变工作量。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
+ const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
+ if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
+ a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
  '以下是第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
@@ -14687,7 +14781,7 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
 
  const multinode=articleById('multinode-lab');
  multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
- multinode.updated='2026.11.10';
+ multinode.updated='2026.11.12';
 })();
 
 
@@ -16397,7 +16491,7 @@ function fieldPracticeLocations(labId){
   for(const [concept,ids] of Object.entries(concepts)){
    if(!ids.includes(labId))continue;
    const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
-   locations.push([fieldMapURL(moduleId,concept),label]);
+   locations.push([fieldMapURL(moduleId,concept),label,moduleId+'.'+concept]);
   }
  }
  return locations;
@@ -17227,7 +17321,9 @@ function chapterLabLinksHTML(article){
  const rows=units.map(unit=>{
   const title=escapeHTML(unit.title),catalogHref=labCatalogTaskPath(unit);
   const boundary=unit.kind==='目标环境手册'?'目标环境待验':unit.pendingFiles?.length?'含目标环境待验项':'';
-  return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'" aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
+  const concepts=fieldPracticeLocations(unit.id).map(([, ,source])=>source).filter(Boolean);
+  const origin=concepts.length?' data-lab-concepts="'+escapeHTML(concepts.join(' '))+'"':'';
+  return '<li><a href="'+labCatalogRunPath(unit)+'">'+title+' →</a>'+(boundary?'<span>'+boundary+'</span>':'')+'<a class="chapter-lab-evidence" href="'+catalogHref+'"'+origin+' aria-label="'+title+'的环境与记录">环境与记录 ↗</a></li>';
  }).join('');
  return '<details class="chapter-lab-links" id="chapter-experiments"><summary>本章实战与验收（'+units.length+'）</summary><ul>'+rows+'</ul></details>';
 }
@@ -17235,15 +17331,47 @@ function labCatalogUnitHTML(unit,index,roleReturn,runHref){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
  const fieldLocations=fieldPracticeLocations(unit.id);
- const fieldReturn=fieldLocations.map(([href,concept])=>{
+ const fieldReturn=fieldLocations.map(([href,concept,origin])=>{
   const label=concept?'回到概念图'+(fieldLocations.length>1?' · '+escapeHTML(concept):''):'回到图中练习';
-  return '<a class="lab-field-practice-return" href="'+href+'">'+label+' →</a>';
+  const context=origin?' data-lab-concept="'+escapeHTML(origin)+'"':'';
+  return '<a class="lab-field-practice-return" href="'+href+'"'+context+'>'+label+' →</a>';
  }).join('');
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+}
+function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
+ const params=new URLSearchParams(location.search);
+ const goal=params.get('goal'),returnGoal=params.get('returnGoal'),role=goal??returnGoal;
+ const profile=Object.hasOwn(roles,role)?roles[role]:null;
+ const source=params.get('fromConcept'),field=source?.match(/^([a-z0-9-]+)\.[a-z0-9-]+$/)?.[1];
+ const hash=location.hash||'',track=params.get('track');
+ if(!field||!/^#lab-[a-z0-9-]+$/.test(hash)||fieldTracks[field]!==track)return;
+ if((goal!==null&&returnGoal!==null)||(role!==null&&profile?.track!==track))return;
+ const card=document.getElementById(hash.slice(1));
+ if(!card?.closest('#labs-'+track))return;
+ const run=card.querySelector('[data-lab-run]'),concept=card.querySelector('a[data-lab-concept="'+source+'"]');
+ if(!run||!concept)return;
+ const runURL=new URL(run.href),conceptURL=new URL(concept.href);
+ const chapter=runURL.pathname.match(/\/article\/([a-z0-9-]+)\/$/)?.[1];
+ if(runURL.origin!==location.origin||conceptURL.origin!==location.origin||!chapter||!runURL.hash)return;
+ const runGoal=runURL.searchParams.get('goal'),conceptGoal=conceptURL.searchParams.get('goal');
+ if((runGoal!==null&&runGoal!==goal)||(conceptGoal!==null&&conceptGoal!==role))return;
+ const inRoute=profile?.chapters.includes(chapter);
+ const gateRun=goal&&gateRunsByRole[goal]?.includes('/article/'+chapter+'/'+runURL.hash);
+ if((goal&&!inRoute&&!gateRun)||(returnGoal&&inRoute))return;
+ if(goal)runURL.searchParams.delete('goal');
+ runURL.searchParams.set('fromConcept',source);
+ if(goal)runURL.searchParams.set('goal',goal);
+ if(returnGoal)runURL.searchParams.set('returnGoal',returnGoal);
+ run.setAttribute('href',runURL.pathname+runURL.search+runURL.hash);
+ if(role){
+  conceptURL.searchParams.set('goal',role);
+  concept.setAttribute('href',conceptURL.pathname+conceptURL.search+conceptURL.hash);
+ }
 }
 function renderLabCatalog(){
- const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
+ const params=new URLSearchParams(location.search||'');
+ const requested=params.get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
  const profile=selectedLearningProfile();
  const role=profile&&(selected==='all'||selected===profile.track)?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
  const gateRuns=new Set(role?labCatalogGateRuns(profile):[]);
@@ -17267,6 +17395,13 @@ function renderLabCatalog(){
  }).join('');
  const intro='<div class="lab-catalog-intro" id="labs-all"><p>先选方向，按编号读机制、运行代码，再核对输出。带“按需先修”的任务只用于补缺口；遇到需要额外环境的实验，可先继续阅读机制。</p><p>每项都写明要观察什么、所需环境和验证范围。下载包可能包含不同方向的独立程序，请按本任务文件名运行。目标环境手册保留待验状态。</p></div>';
  simplePage('实战实验室','LEARN · RUN · CHECK','按 Cloud、AI、Agent 的学习顺序找实验。先讲清机制，再用代码、反例和真实记录核对理解。',intro+nav+'<div class="lab-catalog-page">'+groups+'</div><p class="evidence-note lab-catalog-note">本机执行记录对应固定源码与当时的软件版本。真实云、GPU、Kubernetes/CSI、生产模型及 Kairo 的证据，以各任务列出的目标环境验收为准。'+returnLink+'</p>');
+ if(params.has('fromConcept')){
+  const conceptRole=params.get('goal')??params.get('returnGoal');
+  const contextProfile=Object.hasOwn(learningProfiles,conceptRole)?learningProfiles[conceptRole]:null;
+  const roles=contextProfile?{[conceptRole]:{track:contextProfile.track,chapters:learningProfileRoute(contextProfile)}}:{};
+  const fieldTracks=Object.fromEntries(Object.keys(fieldConceptMaps).map(id=>[id,moduleFor(id).track]));
+  restoreLabConceptReturn(roles,fieldTracks,role?{[role]:[...gateRuns]}:{});
+ }
 }
 
 
@@ -17470,5 +17605,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="cef837e9424b99392a2d2ad66655598942b029461e8e48e67ecb4e5d759b2532";
+const staticReadingVersion="88ff90b71a22180d3188e29619577efa175818db341b374d2407cc7b9e93ae59";
 

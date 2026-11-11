@@ -83,6 +83,30 @@ assert.deepEqual(JSON.parse(diagram.match(/<metadata>(.*?)<\/metadata>/s)[1]), {
  failed_sni:record.listeners.B.sni_attempts.at(-1),
 });
 
+const openingFigure = 'diagrams/vpc-first-tls-request.svg';
+const openingDiagram = read('dist/' + openingFigure);
+const openingResponse = record.responses[0];
+const openingFront = record.listeners.P.http_requests[0];
+const openingOrigin = record.listeners.A.http_requests[0];
+assert.equal(openingFront.request, openingResponse.request);
+assert.equal(openingOrigin.request, openingResponse.request);
+assert.equal(openingOrigin.connection, openingResponse.result.connection);
+assert.match(openingDiagram, /role="img" aria-labelledby="title desc"/);
+assert.match(openingDiagram, /<title id="title">[^<]+<\/title>/);
+assert.match(openingDiagram, /<desc id="desc">[^<]+<\/desc>/);
+assert.deepEqual(JSON.parse(openingDiagram.match(/<metadata>(.*?)<\/metadata>/s)[1]), {
+ request:openingResponse.request, front:openingFront.connection, origin:openingOrigin.connection,
+ status:openingResponse.status, order:openingResponse.result.order, total:openingResponse.result.total,
+});
+const openingLabels = [...openingDiagram.matchAll(/<text\b[^>]*>([^<]+)<\/text>/g)].map(([, label]) => label);
+for (const datum of [openingResponse.request, openingFront.connection, openingOrigin.connection,
+ openingResponse.status, openingResponse.result.order, openingResponse.result.total]) {
+ assert(openingLabels.some(label => label.includes(String(datum))), datum);
+}
+const source = read(pack + '/' + script);
+assert.match(source, /super\(\).__init__\(\("127\.0\.0\.1", 0\), handler\)/);
+assert.match(source, /request\(proxy\.server_address, edge_context, "a1", "orders\.lab\.test", "\/order"\)/);
+
 execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
 from zipfile import ZipFile
@@ -106,6 +130,15 @@ const boundary = '<h3 id="native-tls-proxy">';
 const [retained, added] = sections[6][1].split(boundary);
 assert(added && !added.includes(boundary));
 const earlier = sections.slice(0, 6);
+const [openingTitle, openingBody] = earlier[0];
+const openingAnchor = 'vpc-first-tls-request';
+const openingBoundary = '<div class="mechanism-core"><h3 id="' + openingAnchor + '">';
+const [originalOpening, trace] = openingBody.split(openingBoundary);
+assert(trace && trace.endsWith('</div>'));
+for (const marker of [openingFigure,'10.20.4.7:443','GET /order','127.0.0.1','没有经过 DNS',
+ 'listeners.P.http_requests','listeners.A.http_requests','/labs/tls-proxy-hops/validation.json',
+ '/article/vpc-network/#native-tls-proxy']) assert(trace.includes(marker), marker);
+earlier[0] = [openingTitle, originalOpening];
 const [title, dnsBody] = earlier[1];
 const dnsStart = dnsBody.indexOf('<h3 id="native-dns-cache">');
 const dnsEnd = dnsBody.indexOf('<h3 id="subsection-2-o5xitb">', dnsStart);
@@ -122,6 +155,9 @@ for (const asset of [
 const responseAnchor='proxy-502-origin-evidence';
 assert(added.includes('/article/network-diagnosis/#'+responseAnchor),'Link to diagnosis from the original TLS lab');
 const tlsPage=read('dist/article/vpc-network/index.html');
+const firstSection=tlsPage.split('id="section-1"')[1]?.split('</section>')[0];
+assert(firstSection?.includes('id="'+openingAnchor+'"') && firstSection.includes(openingFigure));
+assert.match(firstSection, /href="[^"]*\/article\/vpc-network\/#native-tls-proxy"/);
 assert(tlsPage.split('id="native-tls-proxy"')[1]?.split('</section>')[0].includes('/article/network-diagnosis/#'+responseAnchor));
 const diagnosisPage=read('dist/article/network-diagnosis/index.html');
 const originEvidence=diagnosisPage.split('id="section-6"')[1]?.split('</section>')[0].split('id="'+responseAnchor+'"')[1];

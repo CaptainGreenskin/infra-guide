@@ -1,0 +1,166 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "6e2eb0242e4f1a56f21b32a83dff6a4331a4022c",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_OPERATOR_ALERT_AND_TRACE_PRACTICE_2026-11-12.json": "1831491f73156c9ea525f4893a0d09ea638f138f9d85aed228919f128f024bd5"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "7f15fc7303ad8bce2f10b2e7fa68a4a0fb30ab644edde733cc924558b6831f0a",
+      "reviewed_sha256": "f0139ea79c74b32e4e57121989631f9f09e0c69d36a5f54f1bef8649e1632123",
+      "scope": "Explain the decoder diagram before its first use, separate whole-prefix generation from cached execution, and make one measured loss visible before the exercise."
+    },
+    "dist/progressive-cloud-orchestration-reading.js": {
+      "previous_sha256": "063046f48cd873b7c01b30c85ca7768ea43c19ac69bf2f6547a5dea14792fd1b",
+      "reviewed_sha256": "324e8bc4f46b02bd5518884263d7a713db30485188ef94a57b7307d64a5731d2",
+      "scope": "Introduce the diagram’s isolation and resource objects before the figure, and carry image identity into two independently observed lessons."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "4708c48ee8b6d3c40facf8308a0acecca243cc32ba0f512225bb7b0e013f59ef",
+      "reviewed_sha256": "6f632af71d404ca1a5478e8f7b9bc60cfa688c6494d196a22934aa226377e590",
+      "scope": "Follow one recorded HTTPS request across both proxy connections before branching into DNS, routing and TLS details."
+    },
+    "dist/diagrams/vpc-first-tls-request.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "47311ed522f22461da45dadc607747108143ad06a1452a23da864b16719eeec0",
+      "scope": "Show the connection IDs and result of one recorded order request."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "6d3d9d4342e9131daea9c857ef2f4c566ae67e4cc570ae28573e5d21430988cb",
+      "reviewed_sha256": "f86700bfacf0846c1b1469715ad60d0b0a0285656c3d283c2313091aaa22d57f",
+      "scope": "Record intrinsic dimensions for the new network figure."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "22546132c7e113e2636fdc074b1588d3ab6adaa770c37bc0067f99d1b3d93af8",
+      "reviewed_sha256": "b565f7f7643e349a515d3b7caa4409aba80971b078bf9f127d9a2c3a9a12aea5",
+      "scope": "Lead from delayed binding to the same volume on a replacement Pod, then inspect target node eligibility."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "5a6a429a3cfa1d171761fbe67561cfa7d3c8e52aed09b706c4c474eede528d54",
+      "reviewed_sha256": "9950686a47259cb5a2a298578f53e3226984c7f83e49e8276c0893e97968f707",
+      "scope": "Separate the frozen CPU/Gloo preflight from the target Blackwell installation and keep launch variables in the shell running each probe."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "0214e9636940b9eaf08eb15f7a51e12a747d3a458ca012533667e73230de6398",
+      "reviewed_sha256": "e9d08c5c8fcecc760953b9f50e670a193747ae90a0bdf7a2c0420b48cea22cf4",
+      "scope": "Update the internal publication date of the revised multi-node guide."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "2642989475107e887b363dc9aa4036f8169d774af8f6527338877a894a3213f1",
+      "reviewed_sha256": "8b4729857c2bae029fa9b9ee97ad1a3068437e0991ea43e986ddf641475ca3ce",
+      "scope": "Cross-check a denied tool receipt with an independent record of resource body reads."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "fd73942efe7f299873f41f53e15afd549a428e51126f66ffb421add46e286275",
+      "reviewed_sha256": "f310efc67cca2e8f083eb41d49c2be39f8ee44d77fbc61dda90e642a1655fdfc",
+      "scope": "Make each concept return identify its existing authored source."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "75187afcdd54b664cdb281969fb86f0fbe57b9b72a73c2db7b85379f18b0f3c5",
+      "reviewed_sha256": "5f1aaacc9b9d0011c27bc59edb035d08af3dbdb4a09aedf0740eb753303452db",
+      "scope": "Carry validated field origin and active or optional role through the matching lab card and exact run link."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "5bdbcda92a30c7c3d2732e7d9796c51edb45451bee4a83e0d936949e8e70254c",
+      "reviewed_sha256": "38db5b0f486e82ed9354bb7870d509bae82fdb45e14bedba30e77030be6516c7",
+      "scope": "Carry the current validated origin into the chapter experiment link for its authored lab."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "b957a8928ff86255a86d501a7e9740e2b88de9e7c28b6d3f6855e298f6e2a92e",
+      "reviewed_sha256": "f1f8be5778f49780d8d7a6d6fa1fc9163f0a08c29386539182120354efc676f6",
+      "scope": "Restore the selected card context before full runtime hydration as well as after render."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "ec3da61ce8027924b64f2a124038abcb7aa4e26349eeba233219462a2cd755f2",
+      "reviewed_sha256": "a45a894fcd361abc461eed7eaee40cb9f5de6dcf111009e97066e87121a20018",
+      "scope": "Verify that each catalog return carries the exact authored source."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "c1dcb56d4533d6d3e0933cafc828b9b36e3ecbb3ff9e2b35010b4bc8763b4a38",
+      "reviewed_sha256": "aa74edbb03625d1136cc508e95474558f5f8b9dfba870ff71573314eea69eb34",
+      "scope": "Exercise ordinary, role and optional experiment contexts without cross-card leakage."
+    },
+    "scripts/check-native-csi-fsdp-reshard.cjs": {
+      "previous_sha256": "3987648fcf84ff80a16bf925446d85f55851dd41ff7a18452591e965d3a1148e",
+      "reviewed_sha256": "8fbcdabe930abd72dd3897e084634d896d7ad031a3e4a20f5a569c7eb2c79a08",
+      "scope": "Compare CSI placement and the old business receipt with the original isolated fixture."
+    },
+    "scripts/check-runtime-speculative-crashes.cjs": {
+      "previous_sha256": "ac80da266d06553a44d24a7824cf1c8b8591b9061eaf38f007d6ff775d6b747e",
+      "reviewed_sha256": "735c74f812f79e151dce324a32e4da1c3fa35403a557da6de98f2127fce3a5ae",
+      "scope": "Check the diagram definition order and both namespace IDs against the exact native record."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "bf94532de246d1affb485d11cb3927a894b2afcf11bb72344a670357f93f82ad",
+      "reviewed_sha256": "206c58418c1c7d70efc724e20a783701c9298ba2dd8aab5a75852eb6fcd0bf66",
+      "scope": "Assert default-visible decoder, generation and loss order with exact CPU reproduction available."
+    },
+    "scripts/check-tls-proxy-hops.cjs": {
+      "previous_sha256": "c58374a5285749a7e31762491d234c723d481bdcf39d830b3138507b36ab7d47",
+      "reviewed_sha256": "d0e34b0077099c8dd1a78c700cdf920595b64fae33252b2702bf448aca83b6c7",
+      "scope": "Compare the chapter-entry diagram and labels to the a1 proxy and upstream observations."
+    },
+    "scripts/check-ddp-target-preflight.cjs": {
+      "previous_sha256": "2f5c216596b454f838bd977881272cb10d2794dc7d5ce171d50a0c7e332fee53",
+      "reviewed_sha256": "f401d55758d1878cc2fde1f402df480b0db6f8aa17bdcd30b0bd949c4a386dee",
+      "scope": "Check the target setup order and preserved local versus physical evidence boundaries."
+    },
+    "scripts/check-agent-task-reconnect.cjs": {
+      "previous_sha256": "fbc16db678b0bec3d9f0e20a3b52770ea344cffe568c455771e360f4bddae613",
+      "reviewed_sha256": "9b770fc1f16939d66356beb03f82a1699bb261f8f1c46252138231acd1d05d51",
+      "scope": "Run the rendered resource audit exercise on stored and fresh reference-adapter records."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "08d261ce503ceba98bf93a28100d68a3e4349dcd16240eba7e80cda64779e751",
+      "reviewed_sha256": "5da9d10214ba1ee2d5ccdce5769ce8555051840fbf8025b97ebf94d5493de6de",
+      "scope": "Fingerprint the revised chapter, search and lab navigation assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "3aa251477c2075e0e06592cbd9dce73fc837fa8b523abf0a79e5c8ccbb3005cc",
+      "reviewed_sha256": "df2322f710170a854ff90f3af801d78e99f95ef3b6d86c31db5f52c815c88452",
+      "scope": "Fingerprint the revised lesson and practice locations."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "0d81dd5d8541a1d71e5e55403228825b7bc16077b1bab32d39def06f4e479cfe",
+      "reviewed_sha256": "12455773433b6f3e881e46d5cadeb92fe00fa3be962106b6a76cb332b9ff5e21",
+      "scope": "Record the VPC request, CSI placement and Agent audit destinations."
+    },
+    "docs/CONTENT_TARGET_ENVIRONMENT_AND_LAB_RETURN_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a87a0e54e06507efa6ddbebf60ce32b12d350201243a1b407e788a9ab32d1bca",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "5ef3cc0d26676bb00a482a0a154bc260cdb06e1a11853a6cf445cec41ba0006a",
+      "reviewed_sha256": "dc4476c19309e7764405f7159cac8b6901d62cf8226851fe6a3ac793681be2ff",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "76fe3e9147d3f7fa94e7a0c420a4dd49a2c1f5da886016bcfbffb9e5a16edc7c",
+      "reviewed_sha256": "7aeddaad0e3976034736d4ce2b0f32128aab0eb7cddefa08fd24b366a1389d56",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "6e2eb0242e4f1a56f21b32a83dff6a4331a4022c",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "container-runtime",
+      "vpc-network",
+      "k8s-storage",
+      "multinode-lab",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "transformer-model": 1,
+      "k8s-storage": 1,
+      "kairo-practice": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

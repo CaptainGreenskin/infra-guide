@@ -125,7 +125,7 @@ const authorFile = 'dist/progressive-multinode-reading.js';
 const author = read(authorFile);
 const previous = execFileSync('git', ['show', '982e98433c65324a5d36e95662fcb48eecb221cf:' + authorFile],
  {cwd:root, encoding:'utf8'});
-const start = author.indexOf('\n a.sections[1][1]+=p(\'如果目标是 RTX PRO 6000 Blackwell');
+const start = author.indexOf('\n const targetSetup=');
 const end = author.indexOf(" a.intro=a.desc;a.updated='2026.11.09';", start);
 assert(start > 0 && end > start);
 assert.equal(author.slice(0, start) + author.slice(end), previous);
@@ -136,6 +136,26 @@ assert.match(lesson, /trainingFigure\('ddp-target-preflight'/);
 assert(lesson.includes('torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128'));
 for (const link of ['.zip', '/target_probe.py', '/README.md', '/validation.json']) {
  assert(lesson.includes('href="labs/ddp-target-preflight' + link + '"'));
+}
+const page = read('dist/article/multinode-lab/index.html');
+const section = number => page.split(`id="section-${number}"`)[1].split(`id="section-${number+1}"`)[0];
+const intro = section(1);
+assert(intro.includes(`四个进程都读回 ${JSON.stringify(gathered)} 与 ${sum}`));
+assert(intro.includes(`<code>target_ready=${record.target_gate.target_ready}</code>（退出码 ${record.target_gate_exit_code}）`));
+assert(intro.includes('/article/multinode-lab/#native-ddp-target-preflight'));
+const install = section(2);
+const hardwareChoice = install.indexOf('RTX PRO 6000 Blackwell（计算能力 12.0）');
+const historicalCommand = install.indexOf('pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu124');
+assert(hardwareChoice >= 0 && historicalCommand > hardwareChoice);
+assert(install.includes('PyTorch 2.7.1 / CUDA 12.8 的独立安装与预检'));
+assert(install.includes('<code>python -B check_env.py</code>'));
+assert(install.includes('/article/operator-profiling/#cuda-core-run'));
+const target = section(4).split('id="native-ddp-target-preflight"')[1];
+const launch = target.indexOf('torchrun --nnodes=2');
+assert(launch >= 0);
+for (const command of ['export NODE_RANK=0', 'export NODE_RANK=1', 'export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500',
+ 'export PREFLIGHT_SESSION=实际会话号']) {
+ assert(target.slice(0, launch).includes(`<code>${command}</code>`));
 }
 
 console.log('DDP target preflight: local 4-rank collectives, offline target gates, Blackwell pin and ZIP verified.');

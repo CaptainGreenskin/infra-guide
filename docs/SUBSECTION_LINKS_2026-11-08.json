@@ -81,12 +81,14 @@
         "native-tls-proxy",
         "native-dns-cache",
         "native-dns-connection-handoff",
-        "native-dual-stack-connect"
+        "native-dual-stack-connect",
+        "vpc-first-tls-request"
       ],
       "visible_targets": [
         "subsection-1-1mbleem",
         "subsection-1-r9coc9",
         "subsection-1-1u49a9r",
+        "vpc-first-tls-request",
         "subsection-2-1ra10dq",
         "native-dns-cache",
         "subsection-2-o5xitb",
@@ -300,7 +302,8 @@
         "subsection-7-1lng3cb",
         "subsection-7-1ip16iv",
         "subsection-8-7y42a4",
-        "native-csi-storage"
+        "native-csi-storage",
+        "csi-node-placement-evidence"
       ],
       "visible_targets": [
         "subsection-1-trt373",
@@ -312,6 +315,7 @@
         "subsection-7-1lng3cb",
         "subsection-7-1ip16iv",
         "native-csi-storage",
+        "csi-node-placement-evidence",
         "subsection-8-7y42a4"
       ]
     },
@@ -1205,12 +1209,14 @@
       "targets": [
         "kairo-read-evidence",
         "native-agent-task-reconnect",
-        "kairo-resume-evidence"
+        "kairo-resume-evidence",
+        "kairo-audit-coverage-check"
       ],
       "visible_targets": [
         "kairo-resume-evidence",
         "kairo-read-evidence",
-        "native-agent-task-reconnect"
+        "native-agent-task-reconnect",
+        "kairo-audit-coverage-check"
       ]
     },
     {

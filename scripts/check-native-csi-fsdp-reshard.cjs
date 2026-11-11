@@ -50,6 +50,9 @@ assert.deepEqual([pvc.name,pvc.uid,pvc.pv],[pending.pvc.name,pending.pvc.uid,pv.
 assert.equal(pv.claim.uid,pvc.uid);
 assert.equal(pv.driver,driver.driver.name);
 assert.equal(driver.registration.nodeID,node.name);
+const [topologyKey]=driver.registration.topologyKeys;
+assert.equal(topologyKey,'topology.hostpath.csi/node');
+assert.deepEqual(pv.affinity,[{matchExpressions:[{key:topologyKey,operator:'In',values:[node.name]}]}]);
 assert.deepEqual(replacement.binding,first.binding);
 assert.notEqual(first.pod.uid,replacement.pod.uid);
 for(const {pod,attachment,data,node_file_sha256,pod_deleted} of [first,replacement]){
@@ -72,6 +75,17 @@ assert.deepEqual(reclaim,{pvc_absent:true,pv_absent:true,pv_name:pv.name,backend
 assert.deepEqual(cleanup,{attempted:true,owned_nodes_removed:true});
 checkZip('csi-storage',['README.md','ci-record.json','csi_storage_lab.py','validation.json','volume_writer.py']);
 checkPage('k8s-storage','native-csi-storage','csi-storage',['diagrams/csi-storage-lifecycle.svg',proof.url]);
+const csiPage=readFileSync('dist/article/k8s-storage/index.html','utf8');
+const bindingSection=csiPage.split('id="subsection-3-meie0t"')[1].split('</section>')[0];
+assert.match(bindingSection,/href="[^"]*\/article\/k8s-storage\/#csi-node-placement-evidence"/);
+const placement=csiPage.split('id="csi-node-placement-evidence"')[1].split('</section>')[0];
+for(const fragment of [topologyKey,node.name,'同节点换 Pod','spec.nodeAffinity.required','kubernetes.io/hostname',
+ 'kubectl get pv','kubectl describe node','kubectl get csinode','旧写者退出或已隔离'])assert(placement.includes(fragment),fragment);
+const snippet=placement.match(/<pre\b[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(snippet,'rendered CSI placement commands');
+const shellEntities={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};
+const commands=snippet.replace(/&(?:amp|lt|gt|quot|#39);/g,entity=>shellEntities[entity]);
+execFileSync('sh',['-n'],{input:commands,timeout:10000});
 
 const fsdp=lab('fsdp-reshard'),record=json(fsdp+'validation.json');
 assert.equal(record.status,'passed');

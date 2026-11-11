@@ -105,7 +105,7 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
    if(extra.includes(labId)){
     const task=labPage.match(new RegExp('<li class="lab-learning-unit" id="lab-'+labId+'">([\\s\\S]*?)(?=<li class="lab-learning-unit"|$)'))?.[1];
     const href='/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
-    assert(task?.includes('class="lab-field-practice-return" href="'+href+'">回到概念图'),labId+': catalog returns to the exact concept');
+    assert(task?.includes('class="lab-field-practice-return" href="'+href+'" data-lab-concept="'+moduleId+'.'+id+'">回到概念图'),labId+': catalog returns to the exact concept and records the authored origin');
    }
   }
  }

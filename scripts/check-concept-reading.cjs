@@ -1,5 +1,6 @@
 /* Check the actual hierarchy and diagram geometry, not a claim of reader mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const decode=s=>s.replace(/&quot;/g,'"').replace(/&apos;|&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 const c={};vm.createContext(c);
 for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const data=JSON.parse(vm.runInContext('JSON.stringify({articles,maps:fieldConceptMaps,guides:fieldConceptReadings,titles:conceptDirectoryTitles,sections:conceptSectionTitles,standalone:[...optionalConceptReviews]})',c));
@@ -97,12 +98,16 @@ assert.deepEqual(preview.next_prefix,[...run.generation.prompt,run.generation.tr
 const blockOverview=block.indexOf('diagrams/tiny-decoder-two-branches.svg');
 assert(blockOverview>=0&&blockOverview<block.indexOf('id="decoder-attention-first-pass"'),
  'show the two decoder branches and their bypasses before the attention walk-through');
+const beforeBlockFigure=block.slice(0,block.lastIndexOf('<figure',blockOverview));
+assert(beforeBlockFigure.includes('块的输入 X')&&beforeBlockFigure.includes('加回 X，得到 H₁')&&beforeBlockFigure.includes('加回 H₁，得到 H₂'),
+ 'introduce all three symbols before readers see the decoder figure');
 assert(block.includes('位置 2 读到编号 2，要预测下一项 3'));
-assert(block.includes('注意力读取归一化后的 X，结果加回原来的 X'));
-assert(block.includes('前馈读取归一化后的 H₁，结果加回原来的 H₁'));
+assert(block.includes('直接送去相加的 X 和 H₁ 则保持原样'),'the bypass carries the original, unnormalized values');
 const continuation=block.slice(block.indexOf('id="repeat-next-token"'));
 const prefix=[...run.generation.prompt];
+const fullInputLengths=[];
 for(const step of run.generation.trace){
+ fullInputLengths.push(prefix.length);
  assert(continuation.includes(`<tr><td>${JSON.stringify(prefix)}</td><td>第 ${prefix.length} 行</td><td>${step.selected_id}</td></tr>`),
   'the visible generation table matches each CPU round');
  prefix.push(step.selected_id);
@@ -121,20 +126,53 @@ assert(/前四项送进去[^<]*后四项就是各位置的目标/.test(decoderEx
 const training=model.sections[6][1],fixture=JSON.parse(fs.readFileSync('dist/labs/tiny-decoder-handoff/validation.json','utf8')).fixture;
 const cache=training.split('id="generation-cache-steps"')[1].split('<details')[0];
 const lastStep=run.generation.trace.at(-1);
-assert(continuation.includes(`完整序列 ${JSON.stringify(prefix)} 已有 ${prefix.length} 项`)&&continuation.includes(`所以只有 ${lastStep.cache_length} 格`),
- 'explain the final output and cache counts immediately after the visible generation');
-assert(cache.includes('后两轮各只送入上轮选出的 1')&&cache.includes(`缓存依次增至 ${run.generation.trace[1].cache_length} 格、${lastStep.cache_length} 格`));
+assert(continuation.includes(`完整序列 ${JSON.stringify(prefix)} 已有 ${prefix.length} 项`)&&continuation.includes(`整段重算三轮分别送入 ${fullInputLengths.join('、')} 项`),
+ 'finish the first walkthrough using only full-prefix recomputation');
+assert(!/缓存|复用/.test(continuation.replace(/<a\b[^>]*>[\s\S]*?<\/a>/g,'')),'introduce cache mechanics at its own section');
+const cachedInputLengths=run.generation.trace.map(step=>step.input_ids.length);
+assert(cache.includes(`整段重算三轮送入 ${fullInputLengths.join('、')} 项`)&&cache.includes(`三轮实际只送入 ${cachedInputLengths.join('、')} 项`));
+assert(cache.includes(`缓存格数依次为 ${run.generation.trace.map(step=>step.cache_length).join('、')}`));
+assert(cache.includes(`都选出了 ${JSON.stringify(run.generation.generated_ids)}`)&&cache.includes(`完整序列长 ${prefix.length}，缓存里有 ${lastStep.cache_length} 格`));
 assert(cache.includes('/article/transformer-model/#repeat-next-token'),'the implementation explanation links back to the same sequence');
 const target=training.split('id="training-versus-generation"')[1].split('<details')[0];
 const labels=fixture.rows[0];
 assert(target.includes(`训练样本 ${JSON.stringify(labels)}`)&&target.includes(`拿 ${JSON.stringify(labels.slice(0,-1))} 当输入，拿 ${JSON.stringify(labels.slice(1))} 当逐行的预测目标`)&&target.includes(`[0,1] 对应的目标是 ${labels[2]}`),
  'the default training text shows how the real sample defines a different next target');
+const lossTarget=labels[3];
+assert(target.includes(`它读到 ${JSON.stringify(labels.slice(0,3))}，目标是 ${lossTarget}`));
+assert(target.includes(`原 CPU 更新跳过了目标 ${lossTarget}`)&&fixture.labels[0][0][2]===-100);
+// Full-precision CPU output from the optional command in the lesson.
+const lossScores=[1.4657852413678996,-2.9185050599653573,6.645484889199837,-3.9739954335607424,-0.6178341348679973,5.229123914568767,0.11623921864330786,-4.022945092513323];
+const maxLossScore=Math.max(...lossScores);
+const exponents=lossScores.map(score=>Math.exp(score-maxLossScore));
+const exponentSum=exponents.reduce((sum,value)=>sum+value,0);
+const probability=exponents[lossTarget]/exponentSum,loss=-Math.log(probability);
+assert(target.includes(`编号 ${lossTarget} 的分数约 ${lossScores[lossTarget].toFixed(3).replace('-','−')}，八个候选的最高分约 ${maxLossScore.toFixed(3)}`));
+assert(target.includes(`${exponents[lossTarget].toFixed(8)} ÷ ${exponentSum.toFixed(5)} ≈ ${probability.toFixed(8)}，单项损失 −ln p ≈ ${loss.toFixed(2)}`),
+ 'show the calculated probability and single-target loss in the default reading');
+const lossCommand=training.match(/<code>(python -B - &lt;&lt;[\s\S]+?\nPY)<\/code>/)?.[1];
+assert(lossCommand&&training.includes('href="labs/sdpa-cache/cache_lab.py"')&&training.includes(loss.toFixed(12)),
+ 'provide the exact rerun command, source and expected cross entropy');
+if(process.env.TRANSFORMER_TORCH_PYTHON){
+ const {execFileSync}=require('child_process');
+ const script=decode(lossCommand).match(/^python -B - <<'PY'\n([\s\S]+)\nPY$/)?.[1];
+ assert(script);
+ const [outputScores,outputLoss]=execFileSync(process.env.TRANSFORMER_TORCH_PYTHON,['-B','-'],{
+  cwd:'dist/labs/sdpa-cache',input:script,encoding:'utf8',timeout:30000
+ }).trim().split('\n').map(line=>JSON.parse(line));
+ assert.equal(outputScores.length,lossScores.length);
+ assert(outputScores.every((value,index)=>Math.abs(value-lossScores[index])<1e-12));
+ assert(Math.abs(outputLoss-loss)<1e-12);
+}
 assert(training.includes('将有效目标对应的行纳入损失')&&training.includes('样本里的目标 2 没有参与这次更新'),'explain valid training targets in the experiment that uses them');
 assert(training.includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');
 assert(model.sections[7][1].includes('href="/article/transformer-model/#section-9"')&&model.sections[7][1].includes('<summary>算例 · 同样八个位置'));
 const end=model.sections[8][1],next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
 assert(next>=0&&next<advanced,'the first lesson link in the conclusion follows the sequential chapter order');
+assert(model.sections[5][1].split('<details')[0].includes('href="/article/transformer-model/#section-8"'));
+assert(target.includes('href="/article/transformer-model/#section-9"')&&end.split('<details')[0].includes('href="/article/transformer-model/#training-versus-generation"'),
+ 'let readers move directly between the calculated loss and the acceptance exercise');
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));
 const agent=data.articles.find(a=>a.id==='agent-runtime');
 let taskPosition=-1;
@@ -162,7 +200,6 @@ const identityNormal=identityPage.slice(identityPage.indexOf('id="kubernetes-ide
 assert(identityNormal.includes('命名空间（namespace）'),'native namespace has a local Kubernetes definition');
 assert(!identityNormal.includes('Linux中划分一组进程所见系统对象'),'Kubernetes namespace must not receive a Linux namespace definition');
 
-const decode=s=>s.replace(/&quot;/g,'"').replace(/&apos;|&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 const rectangle=html=>{
  const r=html.match(/<rect\b([^>]+)>/);assert(r);
  return ['x','y','width','height'].map(name=>{const value=r[1].match(new RegExp('\\b'+name+'="([^"]+)"'));assert(value);return Number(value[1]);});

@@ -50,7 +50,8 @@ for(const file of scripts)vm.runInContext(fs.readFileSync(path.join(dist,file),'
 const data=vm.runInContext('({articles,modules,sources,trackDefinitions,publicSiteOrigin,interviewUnits,learningProfiles})',context);
 const reader=require('./article-reader/build.cjs').buildReader({context,staticReadingVersion,root,assetDirectory:path.join(dist,'reader-assets'),assetPublicPath:'/reader-assets/'});
 // Keep practice links in the selected course before the full runtime loads.
-function restoreInitialPracticeRole(roles,fieldTracks,gateRunsByRole){
+function restoreInitialPracticeRole(roles,fieldTracks,gateRunsByRole,restoreConceptReturn){
+ if(restoreConceptReturn)restoreConceptReturn(roles,fieldTracks,gateRunsByRole);
  const goal=new URLSearchParams(location.search).get('goal');
  if(!Object.hasOwn(roles,goal))return;
  const {track,chapters}=roles[goal];
@@ -70,10 +71,12 @@ function restoreInitialPracticeRole(roles,fieldTracks,gateRunsByRole){
 const practiceRoles=vm.runInContext('Object.fromEntries(Object.entries(learningProfiles).map(([id,profile])=>[id,{track:profile.track,chapters:learningProfileRoute(profile)}]))',context);
 const practiceRoleGates=vm.runInContext('Object.fromEntries(Object.entries(learningProfiles).map(([id,profile])=>[id,labCatalogGateRuns(profile)]))',context);
 const fieldTracks=vm.runInContext('Object.fromEntries(Object.keys(fieldConceptMaps).map(id=>[id,moduleFor(id).track]))',context);
+const earlyLabConceptReturn=vm.runInContext('restoreLabConceptReturn.toString()',context);
 function practiceRoleScript(surface,track){
  const roles=track?Object.fromEntries(Object.entries(practiceRoles).filter(([,role])=>role.track===track)):practiceRoles;
  const gateRuns=surface==='lab'?practiceRoleGates:{};
- return '<script data-early-'+surface+'-role>('+restoreInitialPracticeRole.toString()+')('+JSON.stringify(roles)+','+JSON.stringify(fieldTracks)+','+JSON.stringify(gateRuns)+');</script>';
+ const conceptReturn=surface==='lab'?earlyLabConceptReturn:'null';
+ return '<script data-early-'+surface+'-role>('+restoreInitialPracticeRole.toString()+')('+JSON.stringify(roles)+','+JSON.stringify(fieldTracks)+','+JSON.stringify(gateRuns)+','+conceptReturn+');</script>';
 }
 const earlyFigureBytes=Buffer.byteLength(earlyFigures);
 const readerManifest={schema:1,staticReadingVersion,articles:data.articles.length,initialExecutableScripts:2,normalReaderScriptRequests:2,fullFallbackScripts:9,initialReaderJSBytes:reader.initialReaderJSBytes+earlyFigureBytes,initialInlineFigureBytes:earlyFigureBytes,metadataBytes:Buffer.byteLength(JSON.stringify(reader.metadata)),metadataSha256:require('crypto').createHash('sha256').update(JSON.stringify(reader.metadata)).digest('hex'),assets:[reader.bootstrapAsset,reader.runtimeAsset,reader.searchCatalogAsset,...reader.searchRouteAssets,...reader.searchShardAssets],reusedFunctions:reader.provenance,searchEntries:reader.index.length,searchLayout:{schema:2,catalog:reader.searchCatalogAsset.file,routes:reader.searchRouteAssets.length,shards:reader.searchShardAssets.length}};

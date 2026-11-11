@@ -184,7 +184,8 @@
  p('将同样的验收条件用于集群时，还要给出恢复卷身份、目标 Pod 与实际业务输出。数据库程序结果、CSI 操作结果和业务切换结果在同一份记录中关联，才能回答数据从哪里来、到了哪个恢复点，以及消费者是否已继续工作。')
  ]);
 
- storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="/article/k8s-storage/#native-csi-storage">查看动态供应与挂载实战 →</a>');
+ storage.sections[2][1]+=p('第 7 节用一个节点实测从等待到绑定。先看 PVC 为 Pending 且没有绑定的 PV，再创建 Pod，核对新卷指向调度选中的节点。<a href="/article/k8s-storage/#native-csi-storage">查看动态供应与挂载实战 →</a>',
+ '首个 Pod 确定卷的位置后，替换 Pod 仍要满足这个卷的节点条件。<a href="/article/k8s-storage/#csi-node-placement-evidence">对照原始记录，判断能否换节点 →</a>');
 
  storage.sections[6][1]+=h('native-csi-storage','原生 CSI 实战：等待绑定、替换 Pod 与回收')+
  p('这次在 Linux 上创建单节点 kind 集群，安装 Kubernetes CSI 社区的 Hostpath 示例驱动。驱动用 kind 节点内的目录保存数据。应用 Pod 引用 <code>app-data</code> PVC，由 kubelet 经驱动挂载到 <code>/data</code>。实战复用同一份 <code>volume_writer.py</code>，使用两个依次创建和删除的 Pod。')+
@@ -194,6 +195,20 @@
  p('两次写入后，容器文件和节点后端文件的 SHA-256 分别一致。替换 Pod 写入前读到的文件摘要也与首个 Pod 写入后的摘要相同。最后先删替换 Pod，再删 PVC。该 PV 的回收策略为 <code>Delete</code>。程序分别确认 PV 对象消失、同一个卷句柄对应的节点目录消失，再核对自建集群已清理。这里验证的是示例驱动在一个节点上的回收过程，数据仍以本地目录为后端。')+
  p('解压后进入 <code>csi-storage</code> 目录。第一条命令在 Linux amd64 Docker 上复跑并保存新记录；第二条离线检查随包发布的 CI 原始记录。')+
  trainingCode('复跑 CSI 实验并校验随包记录','SHELL','python3 -B csi_storage_lab.py --writer volume_writer.py \\\n  --output native-record.json\npython3 -B csi_storage_lab.py --check-record validation.json')+
- '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>';
- storage.updated='2026.11.09';
+ '<p class="practice-links"><a href="labs/csi-storage.zip" download>下载完整源码、说明和记录 ↓</a> · <a href="labs/csi-storage/validation.json">查看对象身份与回执 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42558047546">Linux CI 执行 ↗</a> · <a href="https://github.com/kubernetes-csi/csi-driver-host-path/blob/6fab18ae4fc4f486193b618114eeb817d9929242/deploy/kubernetes-1.35/hostpath/csi-hostpath-plugin.yaml">上游 CSI 驱动清单 ↗</a></p>'+
+ h('csi-node-placement-evidence','替换 Pod 前，查这块卷能去哪些节点')+
+ p('打开上面的原始记录，对照 <code>consumers[].pod.node</code> 与 <code>consumers[].binding.pv.affinity</code>。PV 只接受 <code>topology.hostpath.csi/node</code> 标签值为 <code>csi-46fc01874d1e-control-plane</code> 的节点。两次挂载的 Pod UID 不同，节点和卷句柄相同。替换 Pod 从原卷读到计数 1 与 <code>write-1</code> 回执。这份证据覆盖同节点换 Pod。')+
+ p('在目标测试集群先取已绑定的 PV，再看候选节点的标签和 <code>CSINode</code>。<code>CSINode</code> 记录该节点注册的 CSI 驱动，以及驱动声明的拓扑标签键。把命令中的命名空间、声明和候选节点换成实际名字。')+
+ trainingCode('只读检查候选节点、驱动和卷条件','SHELL',`NS=your-test-namespace
+CLAIM=app-data
+CANDIDATE=your-test-node
+PV=$(kubectl -n "$NS" get pvc "$CLAIM" -o jsonpath='{.spec.volumeName}') || exit 1
+[ -n "$PV" ] || { echo 'PVC 尚未绑定'; exit 1; }
+kubectl get pv "$PV" -o yaml
+kubectl describe node "$CANDIDATE"
+kubectl get csinode "$CANDIDATE" -o yaml`)+
+ p('从 PV 取 <code>spec.csi.driver</code> 和 <code>spec.nodeAffinity.required</code>。在候选节点核对同名驱动已注册，再匹配 PV 的节点条件。若有多组条件，节点满足其中一组即可，每组内的条件须同时成立。实际云盘的标签键和值取决于驱动和这个卷。满足卷条件后，还要检查 Pod 所需资源和放置条件。',
+ '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。')+
+ '<p class="source-at"><a href="https://v1-35.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/#node-affinity">PV 节点亲和性 ↗</a></p>';
+ storage.updated='2026.11.12';
 })();

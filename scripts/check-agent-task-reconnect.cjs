@@ -230,6 +230,18 @@ const record = json(path.join(folder, 'validation.json'));
 checkEvidence(record);
 checkArchive();
 checkPage();
+const lesson = read('dist/article/kairo-practice/index.html').split('id="kairo-audit-coverage-check"')[1];
+assert(lesson, 'the resource audit comparison is directly reachable');
+const readerCode = lesson.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]
+ .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+function checkReaderAudit(directory) {
+ const lines = execFileSync('python3', ['-B', '-c', readerCode], {
+  cwd: directory, encoding: 'utf8', timeout: 10000,
+ }).trim().split('\n');
+ assert.deepEqual(lines, ['recorded record_consistent pass',
+  'extra-read record_consistent fail', 'no-audit record_consistent pending']);
+}
+checkReaderAudit(folder);
 
 if (process.env.INFRA_AGENT_TASK_RECONNECT_PYTHON) {
  const temp = fs.mkdtempSync(path.join(os.tmpdir(), pack + '-'));
@@ -240,6 +252,7 @@ if (process.env.INFRA_AGENT_TASK_RECONNECT_PYTHON) {
   const replay = json(path.join(dir, 'validation.json'));
   checkEvidence(replay);
   checkRawDatabases(dir, replay);
+  checkReaderAudit(dir);
   const normalize = item => {
    const taskId = item.task_final.tasks[0].task_id;
    const volatile = new Set(['resource_pid', 'environment', 'file_sha256']);

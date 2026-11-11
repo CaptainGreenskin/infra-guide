@@ -77,7 +77,7 @@ const firstReadingChanges=[];
 
  a.sections[3][1]=para(
   '[0,1] 和 [4,1] 的最后一格都放着编号 1，所以查到同一行词向量。小模型还给每个位置查一行位置向量，与词向量相加，帮助模型分辨先后。两条输入的最后一格连位置也相同，相加结果一样。加完得到块的输入 X，每条都是 [2,8]。',
-  '注意力让最后一格读到前一格的信息。接着，前馈网络逐格加工已经汇总的信息。整个块从两行八项开始，算完仍是两行八项。')+
+  '注意力让最后一格读到前一格的信息。把注意力分支的结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('生成时，每格只读自己和前文。这条规则叫因果约束。两次预测的最后一格都能读前一格和自己。每格都算出三组数字。查询 Q 用来找信息，键 K 用来算匹配分数，值 V 是可读回的内容。最后一格用自己的 Q 和某格的 K，把对应的数字相乘再相加，得到对那一格的分数。把两处的分数除以同一个数来控制大小，再用 softmax 换成加起来等于 1 的读取比例。',
@@ -99,7 +99,7 @@ const firstReadingChanges=[];
   '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('本例每次进入分支之前，先用归一化调整当前向量的数值尺度。注意力读取归一化后的 X，结果加回原来的 X，得到 H₁。前馈读取归一化后的 H₁，结果加回原来的 H₁，得到 H₂。沿原表示直接相加的路径叫残差连接。分支输出为零时，原表示沿这条路径保留下来。',
+ para('图中的两条回加路径叫残差连接。每个分支先用归一化调整输入的数值尺度，直接送去相加的 X 和 H₁ 则保持原样。分支输出为零时，原表示沿这条路径保留下来。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
  para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
  '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
@@ -114,21 +114,22 @@ const firstReadingChanges=[];
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
  '<h3 id="repeat-next-token">沿最后一行完成三轮生成</h3>'+
- para('沿 [0,1] 继续生成。每轮用已有的序列算分，取最后一行的最高分，把选出的编号接到末尾。然后用更长的序列继续下一轮。')+
+ para('沿 [0,1] 继续生成。每轮把已有的完整序列送进模型重新算分，取最后一行的最高分，把选出的编号接到末尾。然后用更长的序列继续下一轮。')+
  conceptReadingTable(['本轮已有序列','整段重算取哪行','接到末尾的编号'],[
   ['[0,1]','第 2 行','1'],['[0,1,1]','第 3 行','1'],['[0,1,1,1]','第 4 行','1']
  ])+
- para('三轮后，完整序列 [0,1,1,1,1] 已有 5 项。第三轮实际处理到 [0,1,1,1]，最后一个 1 刚被选出，还没送回模型。缓存保存的是已处理位置的 K 和 V，所以只有 4 格。前文看不到未来，第 2、3 轮已经复用了先前算好的 K 和 V。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
+ para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para('从两项输入加到四项，只要仍在位置表允许的长度内，同一层就能继续使用原有的参数。多出来的是这次计算产生的中间结果，例如查出的词向量和注意力分数。算显存时要把这两笔账分开。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。')+
+ a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
- para('整段重算每轮都送入完整序列。用 KV 缓存时，第一轮送入 [0,1] 并保留两格的键 K 和值 V，后两轮各只送入上轮选出的 1，缓存依次增至 3 格、4 格。CPU 实验逐轮核对最后一行的候选分数，两条路径都选出了三个 1。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
+ para('还是从 [0,1] 开始。整段重算三轮送入 2、3、4 项。KV 缓存把算过的键 K 和值 V 留给下一轮，三轮实际只送入 2、1、1 项。第一轮送入 [0,1]，后两轮各只送入上轮选出的 1。缓存格数依次为 2、3、4。',
+  'CPU 实验逐轮核对最后一行的候选分数，分数只差浮点舍入，两条路径都选出了 [1,1,1]。完整序列长 5，缓存里有 4 格，因为最后选出的 1 要到下一轮才会送进模型。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
  '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
@@ -142,13 +143,36 @@ const firstReadingChanges=[];
  '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
- para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。模型给正确答案的概率越低，这一项的损失越大。训练据此调整参数。')+
+ para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
+  '再看第 3 行（从 0 数是位置 2）。它读到 [0,1,2]，目标是 3。用同一 CPU 模型更新一次后的参数复算，编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
+  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。这一行只用于演示，原 CPU 更新跳过了目标 3。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
- para('生成时，[0,1] 接下来由模型选，这次选出了 1。训练用的是已知样本 [0,1,2,3,4]，前四项作输入，后四项作目标。第二行预测 [0,1] 后面接什么，样本给的答案是 2。训练把样本里的正确前文直接交给模型，这叫教师强制。',
- '以位置 2 为例，输入前文是 [0,1,2]，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
+ para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
  '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
  '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。')+
+ '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。',
+ '在上面的缓存实验目录用 PyTorch 2.5.1 执行下方命令。沿用<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>的模型和一次参数更新，取第一条样本的 <code>reference(ids)[0,2]</code>。输出依次是编号 0 到 7 的分数，以及单独计算的交叉熵 10.843026769187。')+
+ trainingCode('复算位置 2 对目标 3 的单项损失','SHELL',`python -B - <<'PY'
+import torch
+from torch.nn.functional import cross_entropy
+from torch.nn.attention import SDPBackend, sdpa_kernel
+from cache_lab import TinyDecoder, update
+
+torch.manual_seed(7)
+torch.set_num_threads(1)
+reference = TinyDecoder().double()
+rows = torch.tensor([[0, 1, 2, 3, 4], [4, 5, 6, 7, 0]])
+ids, labels = rows[:, :-1], rows[:, 1:].clone()
+labels[0, 1:] = -100
+labels[1, 3:] = -100
+with sdpa_kernel(SDPBackend.MATH):
+    update(reference, ids, labels, micro_size=2)
+    reference.eval()
+    with torch.inference_mode():
+        scores = reference(ids)[0, 2]
+        print(scores.tolist())
+        print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
+PY`)+
  '</details>'+
  '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
  para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
@@ -160,6 +184,9 @@ const firstReadingChanges=[];
  a.sections[7][1]=para('同样八个输入位置，四条各长 2 时，两个头合计有 32 个注意力分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对，因此分组会改变工作量。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
+ const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
+ if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
+ a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
  '以下是第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
