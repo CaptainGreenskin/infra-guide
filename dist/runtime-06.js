@@ -4361,6 +4361,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  code('对象核心字段 · 完整可运行对象见本节源码','yaml',kubernetesServiceSnippets.objects)+
  p('当 /ready 失败而 /live、/work 仍成功时，应用进程仍有处理能力，但不再适合接新工作。探针只提供信号；是否减少新流量，要继续看平台如何更新端点和转发规则。下面以同一个 /work 请求验证这条因果链。')+'</div>'+legacy(1),
  '<div class="mechanism-core" id="kubernetes-service-probes"><h3>应用能响应，不等于 Service 仍会选择它</h3>'+p(
+ '在 <a href="/article/cloud-overview/#section-4">C1.1 的本机直连实验</a>中，改变就绪开关后，应用的 /ready 返回 503，/live 和 /work 仍返回 200。这里用新建的 Kubernetes 集群复现这三个读数，再核对 Service 实际把请求发给了谁。',
  '独立客户端 Pod 持续向 '+esc(o.client.service_url)+' 发请求。每次使用新连接和唯一请求 ID，响应回显这个 ID、实际 APP_VERSION 与 Pod UID。管理端另读 API；因此“应用返回了什么”和“平台把谁标为就绪”可以相互核对。')+
  code('同一正常请求的核心 API · 在客户端 Pod 内执行','python',kubernetesServiceSnippets.request)+p(
  '只在一个业务容器创建 /tmp/not-ready 后，该 Pod 的 /ready=503，/live=200、/work=200。API 观察到 Pod Ready=false、对应 EndpointSlice ready=false；其地址仍可留在对象中。对象收敛后，连续 20 条 Service 响应只来自另一 Pod，两个 Pod 的重启次数均未增加。删除标记后，同一 UID 恢复就绪，响应再次覆盖两个后端。',
@@ -4399,7 +4400,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   kubernetesServiceRollout:['Kubernetes · Deployment 模板与回退','https://kubernetes.io/docs/concepts/workloads/controllers/deployment/']
  });
  a.refs=[...new Set([...a.refs,'kubernetesServiceNative','kubernetesServiceProbes','kubernetesServiceEndpoints','kubernetesServiceRollout'])];
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();
 
 
@@ -6370,7 +6371,7 @@ const progressiveAgentSectionTitles={
   '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
   '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
- vpc.updated='2026.11.11';
+ vpc.updated='2026.11.12';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+
@@ -6382,6 +6383,7 @@ const progressiveAgentSectionTitles={
  trainingFigure('tls-proxy-hops','用客户端状态、入口连接编号和后端握手记录分别确认哪一段成功，哪一段失败。')+
  p('为什么故障请求没借到已经验证过的 B-1？<code>Route</code> 用后端地址、校验名称与上游 Host 等配置区分连接，本实验的池固定使用同一份上游信任配置。改了预期证书名称，原池条目就不能用于这条路由。按 <code>OriginPool.query</code> → <code>TLSListener.get_request</code> → <code>record_request</code> 跟读，可以看到新建、握手和 HTTP 接收分别在哪里记账。',
  '解压后运行 <code>python3 -B tls_proxy_hops.py &gt; replay.json</code>。先在 <code>responses</code> 找到 bad 的入口证书和 502，再在 <code>listeners.B</code> 核对两次 SNI、一次成功握手、一次 HTTP 请求。<a href="labs/tls-proxy-hops.zip" download>下载实验包 ↓</a> · <a href="labs/tls-proxy-hops/README.md">运行与源码跟读</a> · <a href="labs/tls-proxy-hops/tls_proxy_hops.py">完整 Python 源码</a> · <a href="labs/tls-proxy-hops/validation.json">实际运行记录</a>');
+ vpc.sections[6][1]+=p('保留同一组 <code>b1</code> 和 <code>bad</code> 记录，到<a href="/article/network-diagnosis/#proxy-502-origin-evidence">C2.2 逐跳核对 502 由谁生成</a>，从入口收到请求一直查到上游校验停止的位置。');
 
  const diagnosis=select('network-diagnosis',['TCP连接：序号、确认与握手','传输能力：窗口、RTT与应用背压','结束与探测：半关闭、状态与超时','先固定同一个查询，再比较快慢','在一只秒表上读出六个时刻','先确认谁生成了错误','看到什么证据，决定下一次探测什么','修复后验证的是原始现象','课堂练习：用两个反例检验判断','本地实验：同样多等 150 毫秒，慢在哪一段','实战：按长度解帧，再验证TCP半关闭','实战：非阻塞发送、接收读取与应用回执']);
  const n=diagnosis.sections.map(s=>s[1]);
@@ -6509,6 +6511,17 @@ const progressiveAgentSectionTitles={
  ],'把 TCP 字节交付、协议消息和业务结果分层理解，再用同一请求的阶段计时定位等待，通过真实 HTTP、长度解帧与非阻塞发送实验核对判断。',[
  'subsection-1-peucok','subsection-2-1mjk258','subsection-3-1mjn4i8','subsection-4-15zyt9a','subsection-4-1xtsiga','subsection-12-1kp22io'
  ]);
+ diagnosis.sections[5][1]+=
+ h('proxy-502-origin-evidence','用三处记录确定 502 是谁返回的')+
+ p('取 C2.1 双段 TLS 实验里查询 O-104 的两个请求 <code>b1</code> 和 <code>bad</code>。两次的 HTTP Host 都是 <code>audit.lab.test</code>，客户端两次都验证了入口 P 的证书名称 <code>edge.lab.test</code>。P 随后各自新建到后端 B 的连接，只改变上游证书校验名称。')+
+ table(['查哪份记录','b1','bad'],[
+  ['入口 P 收到的 HTTP 请求与客户端响应','<code>P-3</code> 收到 b1，客户端收到 200','<code>P-4</code> 收到 bad，客户端收到 502'],
+  ['B 记录的握手尝试','名称 <code>b.origin.test</code>，握手成功','名称 <code>a.origin.test</code>，证书名称校验失败'],
+  ['B 的 HTTP 请求','<code>B-1</code> 收到 b1，查询 O-104','没有 bad 的请求记录']
+ ])+
+ p('这次故障停在 P 到 B 的 TLS 握手。代理的 <code>OriginPool.query</code> 先调用 <code>connection.connect()</code>。证书名称校验抛出 <code>SSLCertVerificationError</code> 后，代理走异常分支构造 502，还没执行发送上游 HTTP 的 <code>connection.request()</code>。所以 B 能在握手尝试中看到这个名称，HTTP 账本仍只有 b1。')+
+ p('在<a href="/labs/tls-proxy-hops/validation.json">原始记录</a>中，把 <code>responses</code> 的客户端结果与 <code>listeners.P.http_requests</code> 对齐，再看 <code>listeners.B</code> 的握手与 HTTP 两组读数。<a href="/article/vpc-network/#native-tls-proxy">到 C2.1 查看完整代理、证书与复跑方法</a>。');
+ diagnosis.updated='2026.11.12';
 })();
 
 
@@ -6625,6 +6638,17 @@ const progressiveAgentSectionTitles={
  ],ci,'从进程和张量开始，手算集合通信，再沿成员到达、异步等待与计时理解一次训练同步。');
 
  comm.sections[0][1]+=p('沿用上面的两份输入。All-to-All 让每个 rank 按目的地切块，接收方只拿发给自己的块。若每份输入的前两项发给 rank 0、后两项发给 rank 1，两个接收方分别得到 [1,2,10,20] 和 [3,4,30,40]。上表的 AllGather 则让两个 rank 各自收到全部八项。分块不等长时，要把每对发送方、接收方约定的条数对上。<a href="/article/moe-routing/#native-expert-parallel">选读专家并行的真实收发与梯度对照 →</a>');
+
+ comm.sections[6][1]+='<h3 id="native-job-collective-update">沿两份进程日志核对一次更新</h3>'+
+  p('接回<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">两个 Pod 的训练 Job</a>。两份进程日志的 <code>rank</code> 分别是 0、1，<code>world_size</code> 都是 2，会合地址都解析到 rank 0 的 Pod IP。接着核对样本数与梯度分别怎样汇总。',
+  '先用 <code>all_reduce(SUM)</code> 合计样本数。两个 rank 的 <code>global_samples</code> 都是 4。反向传播前，各自的损失和乘以 2/4，再由 DDP 平均两个 rank 的梯度。每个样本因此都占 1/4。')+
+  t(['进程','本地样本数','逐样本梯度','内存中的新权重'],[
+   ['rank 0','1','1','1.125'],
+   ['rank 1','3','−2、−2、−2','1.125'],
+  ])+
+  p('对四条样本取平均，得到 (1−2−2−2)/4 = −1.25。两份日志的 <code>gradient</code> 都是 −1.25，权重从 1 更新为 1 − 0.1 × (−1.25) = 1.125。<a href="/labs/kubernetes-gloo-job/validation.json">查看两份进程日志 →</a>',
+  'Job 的日志证实两个 CPU/Gloo 进程完成了一次参数更新。重启能从哪一步继续，要再查检查点。另一个本机实跑中，两个进程已在内存算出第 2 步的权重 1.375，进程退出时最新检查点仍是第 1 步的权重 0.5。新进程从第 1 步的检查点读回状态，用同一批输入重算第 2 步。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">沿恢复记录核对已保存的步数 →</a>');
+ comm.updated='2026.11.12';
 
  const data=select('data-pipeline',['数据对象：Dataset、Sampler、批次与worker','跨rank分片：补齐、两层丢尾与epoch','多worker流式输入：覆盖正确后还要核对步数','样本打包：注意力、位置与损失目标','供给能力：速率、缓冲、内存与流水重叠','恢复与长尾：消费进展、输入版本与慢rank','实战与变化题：实际分流和打包数值对照']);
  const d=data.sections.map(s=>s[1]),d1=blocks(d[1]),d2=blocks(d[2]),d3=blocks(d[3]),d6=blocks(d[6]),dl=downloads(d[6]);
@@ -6782,7 +6806,15 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  p('业务 task_id 与 op_id 独立于追踪编号：长任务恢复后可以进入另一条 trace，仍关联原任务与操作。')+fold('多服务与共享批处理的额外关联',p('service.name 标明遥测由哪个服务产生，跨度属性描述这次操作。若共享批处理与多个任务有关，可通过 span link 记录额外关联；一个跨度的父节点仍只有一个。第 8 节再介绍创建与导出这些记录的 SDK 对象。')),
 
  '<div class="mechanism-core" id="agent-trace-effect-boundary">'+
- p('正常传播走通后，再加入第 8 节程序中的一次故障。工具在 SQLite 中以 op 为主键保存效果：第一次看到 R27:publish 时插入总数 37 并提交；以后遇到相同操作先查询既有记录，核对 total 一致后返回原回执。去重发生在持有效果的工具端，观测系统记录这一过程。',
+ h('runtime-attempts-and-effects','从一次读取 503 数到一份报告')+
+ p('回到<a href="/article/agent-runtime/#tool-finite-loop">运行时章的重试实测</a>。在<a href="/labs/network-input-tools/validation.json">同一份原始记录</a>中找 <code>programs["tool_runtime.py"].result.cases.transient_read</code>。第一次读取返回 503，重试读到第 3 版的订单，随后的写入保存了总数 37。')+
+ table(['数什么','从哪份记录数','本次结果'],[
+  ['工具尝试','只数 <code>trace</code> 中带 <code>attempt</code> 的行','3 次，其中 1 次返回 503'],
+  ['完成的任务','看任务终态及 <code>artifact_checked</code> 的验收结果','1 个任务，最终验收通过'],
+  ['实际写出的报告','核对接收方产物 <code>artifact</code> 和提交数 <code>effects</code>','1 份报告，金额 37，来源第 3 版']
+ ])+
+ p('最后的验收行有提议编号，没有 <code>attempt</code>，所以工具分母还是 3。记录里还有 4 次 RPC 请求，因为获取工具清单也发了一次 HTTP 请求。统计前先决定要回答工具失败、用户目标交付，还是实际提交数。')+
+ p('下面用本章独立的 R27 实验观察另一种 503，这次错误出现在发布已提交之后。工具在 SQLite 中以 op 为主键保存效果：第一次看到 R27:publish 时插入总数 37 并提交；以后遇到相同操作先查询既有记录，核对 total 一致后返回原回执。去重发生在持有效果的工具端，观测系统记录这一过程。',
  '程序故意在第一次提交完成后返回 HTTP 503。执行器确实收到了错误 HTTP 回应，却没有取得能够确认发布结果的成功回执，于是把本次业务结果记为待查证。它仍用 R27:publish 发起第二次尝试，工具找到已提交记录，返回 receipt-1 与 duplicate=true；执行器独立读取报告，确认只有一行且总数为 37，才把根任务标为验收成功。')+
  figures(old[2]).join('')+
  table(['发生顺序','效果接收方事实','对应观测'],[
@@ -6922,7 +6954,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('运行 <code>python -B trace_reentry.py replay</code> 后，先在追踪记录里核对 B 的链接指向 A，再核对每次接收的父号等于本次发送的跨度号。最后直接查 SQLite 的 <code>reports</code> 和 <code>attempts</code>，应分别为 1 行和 3 行。这里观测丢了链接时仍可按操作号找业务记录，正好能与<a href="/article/durable-workflows/">持久工作流</a>一章的恢复条件对照。')+
   '<p class="practice-links"><a href="/labs/mcp-trace-reentry/trace_reentry.py">查看完整源码</a> · <a href="/labs/mcp-trace-reentry.zip" download>下载实验 ↓</a> · <a href="/labs/mcp-trace-reentry/README.md">分步复跑</a> · <a href="/labs/mcp-trace-reentry/trace-record.json">真实跨度和 HTTP 请求头</a> · <a href="/labs/mcp-trace-reentry/validation.json">查看验收结果</a></p>';
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
- a.intro=a.desc;a.updated='2026.11.11';
+ a.intro=a.desc;a.updated='2026.11.12';
 })();
 
 
@@ -8693,9 +8725,11 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
  trainingCode('解压后创建独立 kind 集群并复跑','SHELL','python3 -B observe_job.py --output ./my-validation.json')+
  p('复跑需要 Docker、kind 和 kubectl。实验发生在同一 Linux 宿主上的两个 kind 节点，使用 CPU/Gloo。训练结束后清理临时集群。GPU 设备、NCCL、物理机间网络和整组恢复需要各自的目标环境证据。')+
  '<p class="practice-links"><a href="labs/kubernetes-gloo-job.zip" download>下载完整实验 ↓</a> · <a href="labs/kubernetes-gloo-job/job.json">查看 Job 与 Service →</a> · <a href="labs/kubernetes-gloo-job/validation.json">核对 Pod 与训练日志 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42599803867">核对 Linux CI ↗</a></p>';
- kube.sections[5][1]+=nativeJobReading;
+ kube.sections[5][1]+=nativeJobReading+
+  p('两个索引完成后，再核对进程实际算出的结果。<a href="/article/training-communication/#native-job-collective-update">沿两份进程日志检查样本归约和权重更新 →</a>');
  gpu.sections[9][1]+=p('本节两份容器输出验证了独立任务的完成。下一步沿<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">同一个 Job 的两节点共同更新</a>，用 Pod UID、会合地址、全局样本数和新权重依次核对放置与训练。');
- for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
+ for(const chapter of [platform,gpu])chapter.updated='2026.11.09';
+ kube.updated='2026.11.12';
 })();
 
 
@@ -9901,7 +9935,7 @@ maximum = next_maximum;`)+
  contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
- collective.updated='2026.11.09';
+ collective.updated='2026.11.12';
  const collectiveVolume=collective.sections[5];
  collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
  collectiveVolume[1]+='<h3 id="ragged-ring-communication">不等长位置分片怎样约定收发形状</h3>'+
@@ -14176,7 +14210,7 @@ const firstReadingChanges=[];
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
  a.sections[3][1]+=para('学到容器编排时，可以先看<a href="/article/k8s-networking/#section-1">Kubernetes 怎样把应用副本接到统一入口</a>。Kubernetes 用 Pod 承载应用，用 Service 给一组应用提供稳定入口。综合实战只改一个副本的 <code>/ready</code>，分别直连这个应用、通过 Service 发请求，检查<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。');
- a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.updated='2026.11.12';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];
@@ -14304,7 +14338,7 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
   '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>'+
   p('这次的 42 来自一份已经保存的销售报告。持久工作流章另做一份订单日报：先读到 10 和 27，补读一笔 5 才算出 42。<a href="/article/durable-workflows/#native-model-plan-revision">看模型发现补录后，运行时怎样改计划并恢复任务 →</a>');
  mcp.sections[8][1]+=p('上面的 <code>read_batch</code> 实验用脚本连接工具。运行时章另有一次真实模型对照，跟着工具目录看模型选中销售或事故查询，以及查 B 时由谁拒绝。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">从模型提议走到资源端 →</a>');
- runtime.updated='2026.11.11';
+ runtime.updated='2026.11.12';
 
  const multinode=articleById('multinode-lab');
  multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');
@@ -15390,9 +15424,9 @@ const learningProfiles={
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:{
   task:"为一次用户请求变慢或失败写排障记录，标明证据、处置动作和恢复后的用户结果。",
   checks:[
-   {title:"找到请求在哪一段变慢",
-    result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"]]},
+   {title:"找到请求在哪一段等待或失败",
+    result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -15412,7 +15446,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -15466,7 +15500,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"]]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -17071,5 +17105,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="6e682a4cb7c2815b078303fe2e6ce7b13b92f43fa4536a0b80cca700f6571ecc";
+const staticReadingVersion="71930b223e2327044fe3d895f9cec18c440eec7ae1e497a4b16cc5d126526d0e";
 

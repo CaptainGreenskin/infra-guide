@@ -49,6 +49,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  code('对象核心字段 · 完整可运行对象见本节源码','yaml',kubernetesServiceSnippets.objects)+
  p('当 /ready 失败而 /live、/work 仍成功时，应用进程仍有处理能力，但不再适合接新工作。探针只提供信号；是否减少新流量，要继续看平台如何更新端点和转发规则。下面以同一个 /work 请求验证这条因果链。')+'</div>'+legacy(1),
  '<div class="mechanism-core" id="kubernetes-service-probes"><h3>应用能响应，不等于 Service 仍会选择它</h3>'+p(
+ '在 <a href="/article/cloud-overview/#section-4">C1.1 的本机直连实验</a>中，改变就绪开关后，应用的 /ready 返回 503，/live 和 /work 仍返回 200。这里用新建的 Kubernetes 集群复现这三个读数，再核对 Service 实际把请求发给了谁。',
  '独立客户端 Pod 持续向 '+esc(o.client.service_url)+' 发请求。每次使用新连接和唯一请求 ID，响应回显这个 ID、实际 APP_VERSION 与 Pod UID。管理端另读 API；因此“应用返回了什么”和“平台把谁标为就绪”可以相互核对。')+
  code('同一正常请求的核心 API · 在客户端 Pod 内执行','python',kubernetesServiceSnippets.request)+p(
  '只在一个业务容器创建 /tmp/not-ready 后，该 Pod 的 /ready=503，/live=200、/work=200。API 观察到 Pod Ready=false、对应 EndpointSlice ready=false；其地址仍可留在对象中。对象收敛后，连续 20 条 Service 响应只来自另一 Pod，两个 Pod 的重启次数均未增加。删除标记后，同一 UID 恢复就绪，响应再次覆盖两个后端。',
@@ -87,5 +88,5 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   kubernetesServiceRollout:['Kubernetes · Deployment 模板与回退','https://kubernetes.io/docs/concepts/workloads/controllers/deployment/']
  });
  a.refs=[...new Set([...a.refs,'kubernetesServiceNative','kubernetesServiceProbes','kubernetesServiceEndpoints','kubernetesServiceRollout'])];
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();

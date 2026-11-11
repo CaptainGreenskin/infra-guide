@@ -352,7 +352,7 @@ maximum = next_maximum;`)+
  contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
- collective.updated='2026.11.09';
+ collective.updated='2026.11.12';
  const collectiveVolume=collective.sections[5];
  collectiveVolume[1]+=p('分布式训练也会交换前向需要的输入。长序列按位置切开后，每个 rank 仍要读取其他 rank 持有的合法 K、V。<a href="/article/flash-attention-io/#context-parallel-attention">选读上下文并行：从可见位置算到通信字节，再做两进程对照</a>。');
  collectiveVolume[1]+='<h3 id="ragged-ring-communication">不等长位置分片怎样约定收发形状</h3>'+

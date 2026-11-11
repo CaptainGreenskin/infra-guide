@@ -7739,6 +7739,147 @@
         "一份容量实验怎样决定能否上线",
         "练习：为两份性能报告补上缺失边界"
       ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "dc767e03535137ea286e31c8a4bdcc4917f68212c240bacd59fb2237fd3ced93",
+      "reviewed_content_sha256": "ebd4e6647c788ebf5549fe5f9dad43988972b96a4647ea866ebd72b0b2e5d768",
+      "scope": "Introduce direct application probes before commands and distinguish the application response from an entrance failure.",
+      "observation": "The local source and frozen seven-request run expose three independent paths. Readiness changes to 503 while liveness and direct work stay at 200. The chapter leads to the actual Kubernetes traffic observation.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6746cf091c5702f4d1dc204855fffb239d161ad07cc5c1ab5fcb8aadf5bdb6e7",
+      "reviewed_content_sha256": "7c05af3049617540169ed8626d53bcca6b82a931d22bbe8a78dd21f27c0518d1",
+      "scope": "Connect the native TLS experiment to a hop-by-hop diagnosis.",
+      "observation": "The same b1 and bad records distinguish the successful entrance connection from a failed origin hostname verification.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "410c6cd4b63db10d9f2b6d03619b069059fd5ece55f6907b583a460d78cf10e7",
+      "reviewed_content_sha256": "7d5f1a49978570fcf9226c0cd8a2710dcf9f6e2740d95e09f66f43a67698ce65",
+      "scope": "Locate the actual owner of a 502 using entrance, TLS and origin HTTP records.",
+      "observation": "P receives both requests; only b1 enters the origin HTTP handler. The bad connection reaches B as a TLS attempt, is rejected before the HTTP request, and the proxy constructs the response.",
+      "headings": [
+        "TCP连接：序号、确认与握手",
+        "传输能力：窗口、RTT与应用背压",
+        "结束与探测：半关闭、状态与超时",
+        "先固定同一个查询，再比较快慢",
+        "在一只秒表上读出六个时刻",
+        "先确认谁生成了错误",
+        "看到什么证据，决定下一次探测什么",
+        "修复后验证的是原始现象",
+        "课堂练习：用两个反例检验判断",
+        "本地实验：同样多等 150 毫秒，慢在哪一段",
+        "实战：按长度解帧，再验证TCP半关闭",
+        "实战：非阻塞发送、接收读取与应用回执"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "2e6a878ca43aad36cd6105ce3c7c362cab1283e94aa3f81b5be4a5a6eed617c2",
+      "reviewed_content_sha256": "39f862eeec69276fc98585c536bc23d26689f5b09ac8688836558a7b13ca4914",
+      "scope": "Compare the application probes with what a Service actually routes.",
+      "observation": "The direct application status triplet matches the local teaching run. The separate kind record adds a stable 20-request window with no target on the unready Pod.",
+      "headings": [
+        "实验分为已执行本地部分与待验集群部分",
+        "先运行，再解释输出",
+        "把本地信号交给Kubernetes",
+        "观察版本，再回退版本",
+        "读源码，把结果连接到机制"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "8a445ce2ed1cbfadcabe7e3156dbb6b52b2fd9e44e787d9e8b34f9cd610f5035",
+      "reviewed_content_sha256": "d9c5d45e51ed3750cbe24fedf7330538716a672f8c8aedfdd7e7a87b2cef1f79",
+      "scope": "Separate the observed read retry from a distinct rejected write proposal.",
+      "observation": "One observed task uses 3 proposals and 3 attempts to publish one verified report. The separate invalid-boolean run uses 4 proposals and 2 attempts, with rejection before dispatch.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "10e72a69817b845ed20006e6ce750d36c446773d314eab5f55a0fb51c8993074",
+      "reviewed_content_sha256": "ed7b25eb843131d9242542d10a9fab9ed113533a7962d421f539a345014346c5",
+      "scope": "Start metric counting with the same runtime read retry before introducing the separate post-commit failure trace.",
+      "observation": "A first read gets 503; three actual tool attempts, one successful task and one report coexist. The verifier reconstructs attempts and effects from the same original record.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "749c38b824b20a035924a3e3b0e3b818c1b0fbce0f802846831064ae8ea6a3bf",
+      "reviewed_content_sha256": "cf4e06829c20859ec7bc65c4d67f828f1a5716ad52abdc7066b8b6372f6e52c2",
+      "scope": "Read actual job membership, sample reduction and the gradient update, then distinguish saved progress.",
+      "observation": "One and three samples contribute to a global batch of four. Both Gloo ranks agree on −1.25 and 1.125. A separate interruption shows why a computed 1.375 does not replace the last committed 0.5.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7b7816ed6c26de03c615c092ffdcf8bfce3a43a48d3c5bbc0cabd1dd82005b6c",
+      "reviewed_content_sha256": "845e5d255710abb7f969d0080b373636f0dacff7fb9caa044749f604f185d8ca",
+      "scope": "Connect actual job completion with the process-level evidence for an update.",
+      "observation": "Readers can jump directly from the two Pod observations to the same source record and then follow the different checkpoint recovery example.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
     }
   ]
 }

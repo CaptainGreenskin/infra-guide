@@ -1,0 +1,139 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "a7c96833c054ad95ad51e09533932dec2efa6936",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SPECULATION_AND_RUNTIME_EVIDENCE_2026-11-12.json": "3572b7e339178b8deddc9eb54f6c0c26c620e85d111b2567c06028a874273a1a"
+  },
+  "source_revisions": {
+    "dist/guided-lessons.js": {
+      "previous_sha256": "dc6e73cf898f93cc6327e3af472746fd91164b3f1f1db2ee16bd27a8cad8c00c",
+      "reviewed_sha256": "9b32deba08e1a026518981dbd7c48dcd0d8cc4098fe50fda6abdaa42edd33269",
+      "scope": "Introduce direct application probes before commands and distinguish the application response from an entrance failure."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "e5228bffa30d2db8b62f2db7fead6eb9787abf34b9a9fdc9f98f234197dabed6",
+      "reviewed_sha256": "7b322d39cc4541c0aacac9fff72626bd356d6a86b46a5fdbeeb2a95e0770bcd5",
+      "scope": "Record the current introductory Cloud chapter review date."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "7d2a688350d4caf4c11224b24ee99c9be042231c67d4dcefc555a0ea1c8f6b88",
+      "reviewed_sha256": "2c625bc00d95e9ab53e9e1d0fd568c77b05db683eb877f8bd787f03635ef83d1",
+      "scope": "Locate the actual owner of a 502 using entrance, TLS and origin HTTP records."
+    },
+    "dist/kubernetes-service-bridge.js": {
+      "previous_sha256": "ac7f30bc0fc9384d444d9d3a8cc5dfe243ad549be036a33cd5a4f5524571d790",
+      "reviewed_sha256": "021bcc42062a6c45ebbd487c944a584365befe7be625236ca9c779ca1adaba62",
+      "scope": "Compare the application probes with what a Service actually routes."
+    },
+    "dist/tool-runtime-lessons.js": {
+      "previous_sha256": "95b0d36bbe1b48e44d83fad4486d2f645f6468d224023b3e322e1f0647ee1eb0",
+      "reviewed_sha256": "8b29b4a503fd220815fff11a62762b414a0fa7866b894cf724778fc08098e917",
+      "scope": "Separate the observed read retry from a distinct rejected write proposal."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "cc9bc57783cf87e126f9bedb7c47f30d5d553e65117cfbf1b6510f6eb78bbc4a",
+      "reviewed_sha256": "3dcc4a64b7ede4e95457b4ba2a0be92b12cc7e8fc3ba4cb9553d1725d1945dce",
+      "scope": "Keep the Agent introduction publication date aligned with the executed lesson correction."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "51e8c586394fd60fa1a217465d97982399ba64b9d19d2d4b7c25b158d606e93c",
+      "reviewed_sha256": "817158230f51e7533e9481517e0cb4ec5061d2c2b38c6ce6a70ea26b11dfe7eb",
+      "scope": "Start metric counting with the same runtime read retry before introducing the separate post-commit failure trace."
+    },
+    "dist/progressive-training-io-reading.js": {
+      "previous_sha256": "e68277bcbd9008a7110c1591ec153c47ae22665c6aba9255274ab50dd2a01e3f",
+      "reviewed_sha256": "20c092dde8af5ded3f76458a74082a36116517f34148811c7c90d49dcc0d0c6b",
+      "scope": "Read actual job membership, sample reduction and the gradient update, then distinguish saved progress."
+    },
+    "dist/progressive-training-platform-reading.js": {
+      "previous_sha256": "42014a91511895ddffec00b06bd5ddcc8c2e1d7588f78659d2295e439904d3c6",
+      "reviewed_sha256": "ab83c1972c1f24a2119818b054197d62bb9d184fa24596c6381b40c346fe5797",
+      "scope": "Connect actual job completion with the process-level evidence for an update."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "257e372df6f0ad5a90707f20da92da744c5d2cccb0b68865289a520e5842dde1",
+      "reviewed_sha256": "b27beb26626ef06a437a9b13bc8932a6d7b6fcbba451537075008fa722a02d20",
+      "scope": "Keep the published communication chapter review date after native ragged-ring additions."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "b13e146924b0313a67551d1f395692f67844cb0cb00290377d05bbfd33484e51",
+      "reviewed_sha256": "f820b5ccba07494759ec4f5194c84b5c3359ee02811c08175028f765ab921739",
+      "scope": "Connect role-based diagnosis, training and execution to their exact case anchors."
+    },
+    "scripts/check-tls-proxy-hops.cjs": {
+      "previous_sha256": "ef5a466ce10b25d70775b63ba8c6f63ba18ae22dbfa60151f3ee05de9213ef95",
+      "reviewed_sha256": "c58374a5285749a7e31762491d234c723d481bdcf39d830b3138507b36ab7d47",
+      "scope": "Check source execution, upstream TLS failure boundary and reciprocal episode links."
+    },
+    "scripts/check-kubernetes-service.cjs": {
+      "previous_sha256": "1cdcac54c5dd412f3cd26466e9bcc013c9cff9b72f7fa099ac9c50dce56f5d31",
+      "reviewed_sha256": "97dade2c55bd43468662e8e50c7463d6b754b928238521ccce6d583a97bac938",
+      "scope": "Verify the direct status triplet across the two existing environments and exact reading links."
+    },
+    "scripts/check-network-input-tools.cjs": {
+      "previous_sha256": "4094870ec96a825009dd162b968ecf04468b5bcd1633871659e3ef4d4c2b4907",
+      "reviewed_sha256": "703415cf03a365941356c831b5201cecd58a7a064348eb4a37907a305b7d7a25",
+      "scope": "Replay and verify the proposal/attempt traces and connect their counts to the two lessons."
+    },
+    "scripts/check-kubernetes-gloo-job.cjs": {
+      "previous_sha256": "2921d1a5c6eb9fd1a9450428adaa31a364556a7a2ef834bad9b34190914305cf",
+      "reviewed_sha256": "de827b3b084aaffae3a052b3c7af81aa79ae99bdda4b7f740eeacebe10573d07",
+      "scope": "Verify per-rank teaching rows, actual update and a distinct saved-step comparison."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "147115968044c39b9db66ab5230e820b9138b750dec257b08a238a57ff7bdb36",
+      "reviewed_sha256": "037de434eed1ebafb7536ec0c8d6465fe0e7095fbe6ef30b1afa5c1d66902be6",
+      "scope": "Cover exact role links for the three traces."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "9d2dc8fe1ddf587c6df18d42ec9a7ba2c0389ca91024ba5f7689fd6d68b12f0b",
+      "reviewed_sha256": "2882491e80e267ede35fd884a34e7936991e9b11bafa649ee1a1466fcdc6404f",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "d55671a2a8ee58e43171842eecf001561d887fb6eeb441bb69a58f041858b2b5",
+      "reviewed_sha256": "451701782297516a18d43423356f0b83f9999d09d32aeeb6fe7eda6cfd738753",
+      "scope": "Fingerprint the edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5f971c85b804acb58800178af87bc64455d2a9cf2ab676cd2f600d0891991aff",
+      "reviewed_sha256": "394da8f09c9fb4d764a500c285abe3f3b6265ce500033fd3681b7fea547e6db5",
+      "scope": "Record the three new exact subsection anchors."
+    },
+    "docs/CONTENT_REQUEST_AND_UPDATE_BOUNDARIES_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3a21460fb05379500446710b3f4aa1a45cd453dc93e7d6adee00734f7784a0c4",
+      "scope": "Record changes across eight chapters and preserve earlier evidence scope."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "76a101908c02dcc9e0dd5dcf328b01f0a7942e90c23763711ac73b5c21517b62",
+      "reviewed_sha256": "9ab2180cfbb61ceb154d1de23abb50bc4af3dbb6c2aaf520e607145edae2ace5",
+      "scope": "Append the current content review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "aecd7f5261ed32b083c3f0d694b8ef1656f20d7ae48065f9c63e323e93cd440a",
+      "reviewed_sha256": "aad2f48fccaedf4410f7bb4777d3ef4c56c5279e01913f83d7af8062146987d8",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "a7c96833c054ad95ad51e09533932dec2efa6936",
+    "chapters": 78,
+    "changed_bodies": [
+      "cloud-overview",
+      "vpc-network",
+      "network-diagnosis",
+      "cloud-service-lab",
+      "agent-runtime",
+      "agent-observability",
+      "training-communication",
+      "kubernetes-training"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

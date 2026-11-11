@@ -51,7 +51,15 @@
  p('业务 task_id 与 op_id 独立于追踪编号：长任务恢复后可以进入另一条 trace，仍关联原任务与操作。')+fold('多服务与共享批处理的额外关联',p('service.name 标明遥测由哪个服务产生，跨度属性描述这次操作。若共享批处理与多个任务有关，可通过 span link 记录额外关联；一个跨度的父节点仍只有一个。第 8 节再介绍创建与导出这些记录的 SDK 对象。')),
 
  '<div class="mechanism-core" id="agent-trace-effect-boundary">'+
- p('正常传播走通后，再加入第 8 节程序中的一次故障。工具在 SQLite 中以 op 为主键保存效果：第一次看到 R27:publish 时插入总数 37 并提交；以后遇到相同操作先查询既有记录，核对 total 一致后返回原回执。去重发生在持有效果的工具端，观测系统记录这一过程。',
+ h('runtime-attempts-and-effects','从一次读取 503 数到一份报告')+
+ p('回到<a href="/article/agent-runtime/#tool-finite-loop">运行时章的重试实测</a>。在<a href="/labs/network-input-tools/validation.json">同一份原始记录</a>中找 <code>programs["tool_runtime.py"].result.cases.transient_read</code>。第一次读取返回 503，重试读到第 3 版的订单，随后的写入保存了总数 37。')+
+ table(['数什么','从哪份记录数','本次结果'],[
+  ['工具尝试','只数 <code>trace</code> 中带 <code>attempt</code> 的行','3 次，其中 1 次返回 503'],
+  ['完成的任务','看任务终态及 <code>artifact_checked</code> 的验收结果','1 个任务，最终验收通过'],
+  ['实际写出的报告','核对接收方产物 <code>artifact</code> 和提交数 <code>effects</code>','1 份报告，金额 37，来源第 3 版']
+ ])+
+ p('最后的验收行有提议编号，没有 <code>attempt</code>，所以工具分母还是 3。记录里还有 4 次 RPC 请求，因为获取工具清单也发了一次 HTTP 请求。统计前先决定要回答工具失败、用户目标交付，还是实际提交数。')+
+ p('下面用本章独立的 R27 实验观察另一种 503，这次错误出现在发布已提交之后。工具在 SQLite 中以 op 为主键保存效果：第一次看到 R27:publish 时插入总数 37 并提交；以后遇到相同操作先查询既有记录，核对 total 一致后返回原回执。去重发生在持有效果的工具端，观测系统记录这一过程。',
  '程序故意在第一次提交完成后返回 HTTP 503。执行器确实收到了错误 HTTP 回应，却没有取得能够确认发布结果的成功回执，于是把本次业务结果记为待查证。它仍用 R27:publish 发起第二次尝试，工具找到已提交记录，返回 receipt-1 与 duplicate=true；执行器独立读取报告，确认只有一行且总数为 37，才把根任务标为验收成功。')+
  figures(old[2]).join('')+
  table(['发生顺序','效果接收方事实','对应观测'],[
@@ -191,5 +199,5 @@
   p('运行 <code>python -B trace_reentry.py replay</code> 后，先在追踪记录里核对 B 的链接指向 A，再核对每次接收的父号等于本次发送的跨度号。最后直接查 SQLite 的 <code>reports</code> 和 <code>attempts</code>，应分别为 1 行和 3 行。这里观测丢了链接时仍可按操作号找业务记录，正好能与<a href="/article/durable-workflows/">持久工作流</a>一章的恢复条件对照。')+
   '<p class="practice-links"><a href="/labs/mcp-trace-reentry/trace_reentry.py">查看完整源码</a> · <a href="/labs/mcp-trace-reentry.zip" download>下载实验 ↓</a> · <a href="/labs/mcp-trace-reentry/README.md">分步复跑</a> · <a href="/labs/mcp-trace-reentry/trace-record.json">真实跨度和 HTTP 请求头</a> · <a href="/labs/mcp-trace-reentry/validation.json">查看验收结果</a></p>';
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
- a.intro=a.desc;a.updated='2026.11.11';
+ a.intro=a.desc;a.updated='2026.11.12';
 })();

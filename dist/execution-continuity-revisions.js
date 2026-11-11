@@ -107,7 +107,7 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
   '<p class="practice-links"><a href="/labs/model-mcp-tool-choice.zip" download>下载程序与记录 ↓</a> · <a href="/labs/model-mcp-tool-choice/README.md">环境与复跑步骤 →</a> · <a href="/labs/model-mcp-tool-choice/validation.json">两轮模型、MCP 与资源记录 →</a></p>'+
   p('这次的 42 来自一份已经保存的销售报告。持久工作流章另做一份订单日报：先读到 10 和 27，补读一笔 5 才算出 42。<a href="/article/durable-workflows/#native-model-plan-revision">看模型发现补录后，运行时怎样改计划并恢复任务 →</a>');
  mcp.sections[8][1]+=p('上面的 <code>read_batch</code> 实验用脚本连接工具。运行时章另有一次真实模型对照，跟着工具目录看模型选中销售或事故查询，以及查 B 时由谁拒绝。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">从模型提议走到资源端 →</a>');
- runtime.updated='2026.11.11';
+ runtime.updated='2026.11.12';
 
  const multinode=articleById('multinode-lab');
  multinode.sections[3][1]+=p('启动器也能在 worker 退出后重新拉起整组。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">先用本机两进程核对自动重启</a>，再把同样的检查带到目标集群。重点看新进程读回了哪一步。');

@@ -119,6 +119,36 @@ function verify(record) {
 
 const frozen = JSON.parse(read('validation.json'));
 verify(frozen);
+
+const dist = path.join(__dirname, '..', 'dist');
+const page = id => readFileSync(path.join(dist, 'article', id, 'index.html'), 'utf8');
+const collectiveAnchor = 'native-job-collective-update';
+const jobAnchor = 'native-kubernetes-gloo-job';
+const restartAnchor = 'native-elastic-restart-step';
+const jobLesson = page('kubernetes-training').split('id="' + jobAnchor + '"')[1].split('id="section-7"')[0];
+const lesson = page('training-communication').split('id="' + collectiveAnchor + '"')[1].split('id="section-8"')[0];
+assert(jobLesson.includes('/article/training-communication/#' + collectiveAnchor));
+assert(lesson.includes('/article/kubernetes-training/#' + jobAnchor));
+assert(lesson.includes('/article/checkpoint-recovery/#' + restartAnchor));
+assert(lesson.includes('/labs/' + name + '/validation.json'));
+for (const rank of frozen.rank_logs) {
+  const gradients = rank.targets.map(target => String(initial - target).replace('-', '−')).join('、');
+  assert(lesson.includes('<tr><td>rank ' + rank.rank + '</td><td>' + rank.targets.length +
+    '</td><td>' + gradients + '</td><td>' + rank.updated_weight + '</td></tr>'));
+}
+const restart = JSON.parse(readFileSync(path.join(dist, 'labs', 'elastic-restart-step', 'validation.json')));
+const crashed = restart.cases.restarted.attempts[0].map(events => events.at(-1));
+const replayed = restart.cases.restarted.attempts[1].map(events => events[1]);
+for (const [rank, cut] of crashed.entries()) {
+  assert.equal(cut.event, 'cut');
+  assert.equal(cut.checkpoint.cursor, cut.checkpoint.history.at(-1).step);
+  assert(cut.checkpoint.cursor < cut.step, 'in-memory progress cannot be read as a committed checkpoint');
+  assert.equal(cut.step, replayed[rank].step);
+  assert.equal(cut.weight, replayed[rank].weight);
+}
+assert(lesson.includes('第 ' + crashed[0].step + ' 步的权重 ' + crashed[0].weight));
+assert(lesson.includes('第 ' + crashed[0].checkpoint.cursor + ' 步的权重 ' + crashed[0].checkpoint.weight));
+assert(page('checkpoint-recovery').includes('id="' + restartAnchor + '"'));
 for (const tamper of [
   result => result.after[0].uid += '-replacement',
   result => result.after[0].owner_uid += '-other-job',

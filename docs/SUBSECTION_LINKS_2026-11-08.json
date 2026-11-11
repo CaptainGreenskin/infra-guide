@@ -119,11 +119,13 @@
         "subsection-3-1mjn4i8",
         "subsection-4-15zyt9a",
         "subsection-4-1xtsiga",
-        "subsection-12-1kp22io"
+        "subsection-12-1kp22io",
+        "proxy-502-origin-evidence"
       ],
       "visible_targets": [
         "subsection-4-15zyt9a",
-        "subsection-4-1xtsiga"
+        "subsection-4-1xtsiga",
+        "proxy-502-origin-evidence"
       ]
     },
     {
@@ -727,10 +729,12 @@
         "subsection-6-pn22ky",
         "subsection-7-1apl07f",
         "subsection-8-g1wiy8",
-        "ragged-ring-communication"
+        "ragged-ring-communication",
+        "native-job-collective-update"
       ],
       "visible_targets": [
-        "ragged-ring-communication"
+        "ragged-ring-communication",
+        "native-job-collective-update"
       ]
     },
     {
@@ -1138,9 +1142,11 @@
         "subsection-8-323gx5",
         "native-tail-sampling-ledger",
         "native-mcp-trace-reentry",
-        "native-model-mcp-recovery-observation"
+        "native-model-mcp-recovery-observation",
+        "runtime-attempts-and-effects"
       ],
       "visible_targets": [
+        "runtime-attempts-and-effects",
         "native-tail-sampling-ledger",
         "native-model-mcp-recovery-observation",
         "native-mcp-trace-reentry"

@@ -119,6 +119,29 @@ for (const asset of [
  'labs/tls-proxy-hops/README.md', 'labs/tls-proxy-hops/tls_proxy_hops.py',
  'labs/tls-proxy-hops/validation.json',
 ]) assert(added.includes(asset), asset);
+const responseAnchor='proxy-502-origin-evidence';
+assert(added.includes('/article/network-diagnosis/#'+responseAnchor),'Link to diagnosis from the original TLS lab');
+const tlsPage=read('dist/article/vpc-network/index.html');
+assert(tlsPage.split('id="native-tls-proxy"')[1]?.split('</section>')[0].includes('/article/network-diagnosis/#'+responseAnchor));
+const diagnosisPage=read('dist/article/network-diagnosis/index.html');
+const originEvidence=diagnosisPage.split('id="section-6"')[1]?.split('</section>')[0].split('id="'+responseAnchor+'"')[1];
+assert(originEvidence?.includes('/article/vpc-network/#native-tls-proxy'));
+assert(originEvidence.includes('/labs/tls-proxy-hops/validation.json'));
+const [normal,failure]=record.responses.slice(-2);
+const [normalFront,failureFront]=record.listeners.P.http_requests.slice(-2);
+const [originRequest]=record.listeners.B.http_requests;
+for(const response of [normal,failure]){
+ assert(originEvidence.includes('<code>'+response.host+'</code>')&&originEvidence.includes('<code>'+response.edge_peer.verified_name+'</code>'));
+ assert(originEvidence.includes('<code>'+response.upstream.tls_name+'</code>'));
+}
+for(const [received,response] of [[normalFront,normal],[failureFront,failure]]){
+ assert.equal(received.request,response.request);
+ assert(originEvidence.includes('<code>'+received.connection+'</code> 收到 '+received.request+'，客户端收到 '+response.status));
+}
+assert(originEvidence.includes('<code>'+originRequest.connection+'</code> 收到 '+originRequest.request+'，查询 '+normal.result.order));
+assert(originEvidence.includes('没有 '+failure.request+' 的请求记录'));
+for(const symbol of ['OriginPool.query','connection.connect()','SSLCertVerificationError','connection.request()'])
+ assert(originEvidence.includes('<code>'+symbol+'</code>'),'Show the step before origin HTTP: '+symbol);
 
 if (process.env.TLS_PROXY_PYTHON) {
  const arguments = ['-B', path.join(root, pack, script)];

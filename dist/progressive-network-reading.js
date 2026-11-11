@@ -205,7 +205,7 @@
   '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
   '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
- vpc.updated='2026.11.11';
+ vpc.updated='2026.11.12';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+
@@ -217,6 +217,7 @@
  trainingFigure('tls-proxy-hops','用客户端状态、入口连接编号和后端握手记录分别确认哪一段成功，哪一段失败。')+
  p('为什么故障请求没借到已经验证过的 B-1？<code>Route</code> 用后端地址、校验名称与上游 Host 等配置区分连接，本实验的池固定使用同一份上游信任配置。改了预期证书名称，原池条目就不能用于这条路由。按 <code>OriginPool.query</code> → <code>TLSListener.get_request</code> → <code>record_request</code> 跟读，可以看到新建、握手和 HTTP 接收分别在哪里记账。',
  '解压后运行 <code>python3 -B tls_proxy_hops.py &gt; replay.json</code>。先在 <code>responses</code> 找到 bad 的入口证书和 502，再在 <code>listeners.B</code> 核对两次 SNI、一次成功握手、一次 HTTP 请求。<a href="labs/tls-proxy-hops.zip" download>下载实验包 ↓</a> · <a href="labs/tls-proxy-hops/README.md">运行与源码跟读</a> · <a href="labs/tls-proxy-hops/tls_proxy_hops.py">完整 Python 源码</a> · <a href="labs/tls-proxy-hops/validation.json">实际运行记录</a>');
+ vpc.sections[6][1]+=p('保留同一组 <code>b1</code> 和 <code>bad</code> 记录，到<a href="/article/network-diagnosis/#proxy-502-origin-evidence">C2.2 逐跳核对 502 由谁生成</a>，从入口收到请求一直查到上游校验停止的位置。');
 
  const diagnosis=select('network-diagnosis',['TCP连接：序号、确认与握手','传输能力：窗口、RTT与应用背压','结束与探测：半关闭、状态与超时','先固定同一个查询，再比较快慢','在一只秒表上读出六个时刻','先确认谁生成了错误','看到什么证据，决定下一次探测什么','修复后验证的是原始现象','课堂练习：用两个反例检验判断','本地实验：同样多等 150 毫秒，慢在哪一段','实战：按长度解帧，再验证TCP半关闭','实战：非阻塞发送、接收读取与应用回执']);
  const n=diagnosis.sections.map(s=>s[1]);
@@ -344,4 +345,15 @@
  ],'把 TCP 字节交付、协议消息和业务结果分层理解，再用同一请求的阶段计时定位等待，通过真实 HTTP、长度解帧与非阻塞发送实验核对判断。',[
  'subsection-1-peucok','subsection-2-1mjk258','subsection-3-1mjn4i8','subsection-4-15zyt9a','subsection-4-1xtsiga','subsection-12-1kp22io'
  ]);
+ diagnosis.sections[5][1]+=
+ h('proxy-502-origin-evidence','用三处记录确定 502 是谁返回的')+
+ p('取 C2.1 双段 TLS 实验里查询 O-104 的两个请求 <code>b1</code> 和 <code>bad</code>。两次的 HTTP Host 都是 <code>audit.lab.test</code>，客户端两次都验证了入口 P 的证书名称 <code>edge.lab.test</code>。P 随后各自新建到后端 B 的连接，只改变上游证书校验名称。')+
+ table(['查哪份记录','b1','bad'],[
+  ['入口 P 收到的 HTTP 请求与客户端响应','<code>P-3</code> 收到 b1，客户端收到 200','<code>P-4</code> 收到 bad，客户端收到 502'],
+  ['B 记录的握手尝试','名称 <code>b.origin.test</code>，握手成功','名称 <code>a.origin.test</code>，证书名称校验失败'],
+  ['B 的 HTTP 请求','<code>B-1</code> 收到 b1，查询 O-104','没有 bad 的请求记录']
+ ])+
+ p('这次故障停在 P 到 B 的 TLS 握手。代理的 <code>OriginPool.query</code> 先调用 <code>connection.connect()</code>。证书名称校验抛出 <code>SSLCertVerificationError</code> 后，代理走异常分支构造 502，还没执行发送上游 HTTP 的 <code>connection.request()</code>。所以 B 能在握手尝试中看到这个名称，HTTP 账本仍只有 b1。')+
+ p('在<a href="/labs/tls-proxy-hops/validation.json">原始记录</a>中，把 <code>responses</code> 的客户端结果与 <code>listeners.P.http_requests</code> 对齐，再看 <code>listeners.B</code> 的握手与 HTTP 两组读数。<a href="/article/vpc-network/#native-tls-proxy">到 C2.1 查看完整代理、证书与复跑方法</a>。');
+ diagnosis.updated='2026.11.12';
 })();

@@ -1172,9 +1172,14 @@ const runtimeContracts=infraReadableHTML(
 const runtimeLoop=infraReadableHTML(
  '<div class="mechanism-core" id="tool-finite-loop">'+knowledgeSubhead('一次提议不等于一次调用，更不等于一次效果')+
  figure('v23-tool-control-loop','模型提议、运行时准入、工具提交和任务验收有不同责任。本地实验只用固定脚本代替提议来源，其余HTTP、事务与验收实际执行。')+
- para('模型提议读日报，参数有误，运行时当场拒绝。提议次数加 1，工具调用次数还是 0。下一份提议通过检查。第一次读取时，服务暂时无法处理，返回 HTTP 503。重试后才拿到数据，这一份提议用了两次工具尝试。碰到写操作，还要数最终写出了几份报告。同一笔写入尝试两次，也可能只留下一个结果。',
- '运行时按当前任务核对工具名、参数、权限和剩余次数。收到响应后，先检查并记录结果，再带着这次观察进入下一轮。',
- '本例最多允许 4 次提议和 3 次工具尝试，发现工具列表另算。被拒的参数用掉一次提议，重试用掉一次工具尝试。第三次工具尝试成功后，只要还有提议额度，运行时仍可接受 <code>finish</code>，直接检查报告是否合格。这个检查不占工具尝试次数。')+
+ para('沿用第 1 节的订单和报告目标。固定脚本依次提议读取、写入和结束。这次读取遇到一次 503，运行时重试后记录读到的订单。')+
+ table(['第几次提议','工具尝试','实际结果'],[
+ ['1 · 读取订单','第 1 次返回 HTTP 503，第 2 次重试成功','读到第 3 版的 [10, 27]'],
+ ['2 · 写入报告','第 3 次尝试提交','保存一份总数为 37 的报告'],
+ ['3 · 结束（finish）','无需调用工具','验收器回读报告，确认任务完成']])+
+ para('本轮共 3 次提议、3 次工具尝试和 1 份报告。上限是 4 次提议、3 次工具尝试，发现工具列表另算。工具次数已经用完，仍可用剩余的提议额度申请结束。',
+ '另一轮实验中，脚本先读订单，再提议写入 <code>total=true</code>。运行时在派发前拒绝这次写入，只计一次提议。修正参数后再写入并申请结束，整轮共 4 次提议和 2 次工具尝试。<a href="/labs/network-input-tools/validation.json">查看两组原始执行记录 →</a>',
+ '把第一轮的失败尝试、任务结果和报告分开记账。<a href="/article/agent-observability/#runtime-attempts-and-effects">用同一份记录核对三种计数 →</a>')+
  code('控制顺序示意 · 完整程序包含实际HTTP和结果处理','PYTHON',
  'for proposal in proposals:\n    consume_proposal_budget()\n    if proposal.kind == "finish":\n        return verify_actual_artifact(task)\n    validate_tool_and_arguments(proposal)\n    authorize_task_scope(task, proposal)\n    consume_tool_attempt_budget()\n    result = dispatch(proposal)\n    observation = validate_and_classify(result)\n    record_observation(observation)\n# 预算、超时、取消及结果未知都有明确分支；不是只等模型输出finish')+
  para('真实服务还要控制墙钟截止时间、token、费用、并发和效果范围，在调用前预留或核对，返回后对账实际消耗。不能只在循环结束才检查总成本。当前程序只验证两种次数预算和有限HTTP超时，没有实现完整的deadline传播、费用预留或取消协议；这些控制需要分别测试。',

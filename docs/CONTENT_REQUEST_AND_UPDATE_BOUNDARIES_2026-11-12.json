@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "a7c96833c054ad95ad51e09533932dec2efa6936",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_SPECULATION_AND_RUNTIME_EVIDENCE_2026-11-12.json": "2ce317f7b6b9f0badfc32d152f1bc865409bfc15ad0fdf04125cb76e4fbfa630"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "ag-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "cb6b5f3cd35457516031f3f5c35f7a0087a20059ed964b7788313eb5021fced9",
+      "reviewed_content_sha256": "46c898a667c079ce24768633cbb933e991748532ff99159451789a1cf6a258e4",
+      "scope": "Align the Agent runtime knowledge explanation with the real proposal and attempt counts in the chapter.",
+      "observation": "The shared finite-loop text distinguishes the read retry from the separate invalid boolean write. The raw run and the matching observation lesson are reachable from the concept."
+    }
+  ],
+  "revised_teaching_units": []
+}

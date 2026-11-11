@@ -182,6 +182,13 @@ const body=after.sections.map(s=>s[1]).join('');
 for(const id of ['kubernetes-service-normal','kubernetes-service-objects','kubernetes-service-probes','kubernetes-service-rollout','kubernetes-service-run'])assert(body.includes('id="'+id+'"'));
 assert(body.includes(validation.origin.run_url));assert(body.includes('完整序列请求数')&&body.includes('非 200 / 传输失败'));
 const published=read('dist/article/cloud-service-lab/index.html');
+const cloud=read('dist/article/cloud-overview/index.html').split('id="section-4"')[1].split('id="section-5"')[0];
+assert(cloud.includes('/article/cloud-service-lab/#kubernetes-service-probes'));
+assert(cloud.includes('/labs/systems/validation.json'));
+const localRecord=JSON.parse(read('dist/labs/systems/validation.json'));
+assert.equal(sha(read('dist/labs/systems/infra_lab.py')),localRecord.source_sha256['infra_lab.py']);
+const localProbes=localRecord.core.results.http.observations.slice(-3).map(row=>[row.path,row.status]);
+assert.deepEqual(localProbes,['ready','live','work'].map(name=>['/'+name,o.readiness.direct_probe[name].status]));
 const response=published.match(/<div class="mechanism-core" id="kubernetes-service-first-response">([\s\S]*?)<\/table>/)?.[1];
 assert(response,'The initial native response belongs in the visible article');
 const first=o.requests[0],initial=o.cases.normal_v1.api_before;
@@ -196,7 +203,7 @@ assert(successes<recovery.length,'This fixture must show why 20/20 does not cove
 assert(published.includes(successes+'/'+recovery.length+'（'+(100*successes/recovery.length).toFixed(2)+'%）'),'Show the full phase denominator beside the stable window');
 for(const [index,id,anchor] of [
  [0,'cloud-overview','section-4'],[0,'k8s-networking','section-2'],[1,'k8s-workloads','section-4'],
- [2,'slo','section-2'],[3,'delivery','section-5']
+ [2,'slo','section-2'],[2,'cloud-overview','section-4'],[3,'delivery','section-5']
 ]){
  const href='/article/'+id+'/#'+anchor;
  const visible=after.sections[index][1].split('<details class="full-code service-legacy">')[0];

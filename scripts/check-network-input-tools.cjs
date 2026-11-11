@@ -110,6 +110,30 @@ for(const[name,state,effects,calls]of [
 assert.equal(runtime.cases.valid_schema_wrong_total.artifact.total,38);
 assert.equal(runtime.cases.invalid_bool_then_repair.validation_errors,1);
 assert.equal(runtime.cases.transient_read.transport_errors,1);
+const retried=runtime.cases.transient_read;
+assert.deepEqual(retried.trace,[
+ {proposal:1,attempt:1,event:'http_error',status:503},
+ {proposal:1,attempt:2,event:'accepted',tool:'read_values',duplicate:false},
+ {proposal:2,attempt:3,event:'accepted',tool:'write_report',duplicate:false},
+ {proposal:3,event:'artifact_checked',valid:true},
+]);
+assert.deepEqual(retried.observations[0],{resource:'orders-A',version:3,values:[10,27]});
+const repaired=runtime.cases.invalid_bool_then_repair;
+assert.deepEqual(repaired.trace[1],{proposal:2,event:'rejected_before_dispatch'});
+assert.equal(repaired.proposals,4);
+const runtimePage=fs.readFileSync('dist/article/agent-runtime/index.html','utf8');
+const loop=runtimePage.split('id="tool-finite-loop"')[1].split('id="section-4"')[0];
+assert(loop.includes('本轮共 '+retried.proposals+' 次提议、'+retried.tool_attempts+' 次工具尝试和 '+retried.effects+' 份报告'));
+assert(loop.includes('整轮共 '+repaired.proposals+' 次提议和 '+repaired.tool_attempts+' 次工具尝试'));
+const observationPage=fs.readFileSync('dist/article/agent-observability/index.html','utf8');
+const observation=observationPage.split('id="runtime-attempts-and-effects"')[1].split('id="section-4"')[0];
+assert(loop.includes('/article/agent-observability/#runtime-attempts-and-effects'));
+assert(observation.includes('/article/agent-runtime/#tool-finite-loop'));
+assert(observation.includes('/labs/network-input-tools/validation.json'));
+const attempts=retried.trace.filter(event=>event.attempt);
+const failures=attempts.filter(event=>event.event==='http_error');
+assert(observation.includes('<td>'+attempts.length+' 次，其中 '+failures.length+' 次返回 '+failures[0].status+'</td>'));
+assert(observation.includes('<td>'+retried.effects+' 份报告，金额 '+retried.artifact.total+'，来源第 '+retried.artifact.source_version+' 版</td>'));
 assert.deepEqual(runtime.cases.broken_output.observations,[]);
 assert(runtime.cases.duplicate_same_operation.observations.at(-1).duplicate);
 assert.deepEqual(runtime,d.networkInputToolsValidation.programs['tool_runtime.py'].result);

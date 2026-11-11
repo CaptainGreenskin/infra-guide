@@ -244,7 +244,9 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
  trainingCode('解压后创建独立 kind 集群并复跑','SHELL','python3 -B observe_job.py --output ./my-validation.json')+
  p('复跑需要 Docker、kind 和 kubectl。实验发生在同一 Linux 宿主上的两个 kind 节点，使用 CPU/Gloo。训练结束后清理临时集群。GPU 设备、NCCL、物理机间网络和整组恢复需要各自的目标环境证据。')+
  '<p class="practice-links"><a href="labs/kubernetes-gloo-job.zip" download>下载完整实验 ↓</a> · <a href="labs/kubernetes-gloo-job/job.json">查看 Job 与 Service →</a> · <a href="labs/kubernetes-gloo-job/validation.json">核对 Pod 与训练日志 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42599803867">核对 Linux CI ↗</a></p>';
- kube.sections[5][1]+=nativeJobReading;
+ kube.sections[5][1]+=nativeJobReading+
+  p('两个索引完成后，再核对进程实际算出的结果。<a href="/article/training-communication/#native-job-collective-update">沿两份进程日志检查样本归约和权重更新 →</a>');
  gpu.sections[9][1]+=p('本节两份容器输出验证了独立任务的完成。下一步沿<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">同一个 Job 的两节点共同更新</a>，用 Pod UID、会合地址、全局样本数和新权重依次核对放置与训练。');
- for(const chapter of [platform,gpu,kube])chapter.updated='2026.11.09';
+ for(const chapter of [platform,gpu])chapter.updated='2026.11.09';
+ kube.updated='2026.11.12';
 })();

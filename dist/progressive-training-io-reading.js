@@ -110,6 +110,17 @@
 
  comm.sections[0][1]+=p('沿用上面的两份输入。All-to-All 让每个 rank 按目的地切块，接收方只拿发给自己的块。若每份输入的前两项发给 rank 0、后两项发给 rank 1，两个接收方分别得到 [1,2,10,20] 和 [3,4,30,40]。上表的 AllGather 则让两个 rank 各自收到全部八项。分块不等长时，要把每对发送方、接收方约定的条数对上。<a href="/article/moe-routing/#native-expert-parallel">选读专家并行的真实收发与梯度对照 →</a>');
 
+ comm.sections[6][1]+='<h3 id="native-job-collective-update">沿两份进程日志核对一次更新</h3>'+
+  p('接回<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">两个 Pod 的训练 Job</a>。两份进程日志的 <code>rank</code> 分别是 0、1，<code>world_size</code> 都是 2，会合地址都解析到 rank 0 的 Pod IP。接着核对样本数与梯度分别怎样汇总。',
+  '先用 <code>all_reduce(SUM)</code> 合计样本数。两个 rank 的 <code>global_samples</code> 都是 4。反向传播前，各自的损失和乘以 2/4，再由 DDP 平均两个 rank 的梯度。每个样本因此都占 1/4。')+
+  t(['进程','本地样本数','逐样本梯度','内存中的新权重'],[
+   ['rank 0','1','1','1.125'],
+   ['rank 1','3','−2、−2、−2','1.125'],
+  ])+
+  p('对四条样本取平均，得到 (1−2−2−2)/4 = −1.25。两份日志的 <code>gradient</code> 都是 −1.25，权重从 1 更新为 1 − 0.1 × (−1.25) = 1.125。<a href="/labs/kubernetes-gloo-job/validation.json">查看两份进程日志 →</a>',
+  'Job 的日志证实两个 CPU/Gloo 进程完成了一次参数更新。重启能从哪一步继续，要再查检查点。另一个本机实跑中，两个进程已在内存算出第 2 步的权重 1.375，进程退出时最新检查点仍是第 1 步的权重 0.5。新进程从第 1 步的检查点读回状态，用同一批输入重算第 2 步。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">沿恢复记录核对已保存的步数 →</a>');
+ comm.updated='2026.11.12';
+
  const data=select('data-pipeline',['数据对象：Dataset、Sampler、批次与worker','跨rank分片：补齐、两层丢尾与epoch','多worker流式输入：覆盖正确后还要核对步数','样本打包：注意力、位置与损失目标','供给能力：速率、缓冲、内存与流水重叠','恢复与长尾：消费进展、输入版本与慢rank','实战与变化题：实际分流和打包数值对照']);
  const d=data.sections.map(s=>s[1]),d1=blocks(d[1]),d2=blocks(d[2]),d3=blocks(d[3]),d6=blocks(d[6]),dl=downloads(d[6]);
  if(d1.length!==1||d2.length!==1||d3.length!==1||d6.length!==4||dl.length!==2)throw Error('Input source block layout changed');
