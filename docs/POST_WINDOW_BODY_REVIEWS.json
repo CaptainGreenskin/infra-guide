@@ -7495,6 +7495,135 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "position-encoding",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "2f6c90266fc0935c3ae05fe85e7e6fa141a33e5c55921956708d0ed6a199371f",
+      "reviewed_content_sha256": "34e85693985cbe5c4c0e25c34e835b7a73447229e03e207e6d01a1a723657ee6",
+      "scope": "Run native SDPA on a fixed nine-position row and compare two physical slot maps and two failures.",
+      "observation": "Both maps preserve the full sliding-window results. Using the physical slot for the phase first changes query 4; overwriting the old slot before computing the entire chunk first changes query 3. The chapter publishes the real traces and a scalar oracle.",
+      "headings": [
+        "把位置打乱，再问模型能发现什么",
+        "先看两种绝对位置表示",
+        "从单位圆构造二维旋转",
+        "为什么留下的是 n−m，再平移一次验证",
+        "多频率怎样装进一个 attention head",
+        "缓存里有两种“位置”：逻辑序号与物理槽位",
+        "把长度调大之前，需要证明哪件事",
+        "用一份标准库脚本检查三个独立不变量",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f48513c8accb6a48b6c0b748449b7e94a504c5e132c9bc732b70fce21233bdb8",
+      "reviewed_content_sha256": "f439b241504e94a59678ac495327ad32cbcc501493d015d612d939e3f314860d",
+      "scope": "Follow logical phase and actual visible keys from the same four-slot execution into the serving chapter.",
+      "observation": "This reading distinguishes the existing absolute-position TinyDecoder run from the native RoPE/SDPA lab and names the earliest affected row for each error.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9ea6be0bc53613217b6d9ad83d7ec0067595b3b0601dd08bd589d44eb82e5d71",
+      "reviewed_content_sha256": "6c16ccbd9f2aa005298c576e00ec7330c4884964bb6823adca1a5910aa660f32",
+      "scope": "Execute block-local and cross-block normalization and weighted V aggregation on a real Apple GPU.",
+      "observation": "Four FP32 device cases match a dense CPU double-precision oracle within 5.11e-9. The later peak triggers a missing-old-scale fault that is invisible in the shorter prefix. The claim is numerical and scoped to the given scores.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "16f0626506ba8902fd98d767ceb1090dbeab0245954d64eb4307ded9b8e59303",
+      "reviewed_content_sha256": "14f84eaa98333b56c248cb59c49ab28d273b367c195fc098c63b948de4fdc387",
+      "scope": "Separate EndpointSlice readiness, DNS, and actual reachability using one Cilium run.",
+      "observation": "Two clients see the same ready endpoint. One resolves the Service IP but cannot connect to the Pod; the other cannot resolve the name and succeeds on a direct Pod request. The evidence distinguishes Pod IP traffic from the Service address.",
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "96bffaba25f44f537285cfd8ea2dce87164700bb6a96814873aec30c669440ae",
+      "reviewed_content_sha256": "b4656ddd27940ae78bfc85aacb2ab462ff77bfd8ea0b4f463dde6829ea6a028d",
+      "scope": "Return from the actual network-policy exercise to the ready-endpoint comparison.",
+      "observation": "The shared inventory, policy round and Pod UID make the same native evidence traceable in both lessons.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1badcae2da9ed1620c0b70fef82c463ecd3d990348366b029512efd1bd835902",
+      "reviewed_content_sha256": "0b230bd1cd6ee6cdf2e9f351cb790373f270c4c5b452c7f29be5f183e7f95e74",
+      "scope": "Read the receiver and the graph checkpoint at the same real process interruption.",
+      "observation": "The receiver already committed one report and returned 42, while the checkpoint still says publish is next. The chapter links the exact counterpart that verifies the later replay.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c234e4fc0ec36a6ca33829209261218495cff8e53ba1a3e5724098fe300efbf0",
+      "reviewed_content_sha256": "6fcb0c6652232a96ff44c830854286dd8e9c58bdffe5a3ee27989a4918420df3",
+      "scope": "Reconcile pre-exit and resumed receipts through the real MCP and LangGraph evidence.",
+      "observation": "Keeping the business operation ID returns the original receipt and one actual write, while changing it writes two copies despite identical amount and body digest.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

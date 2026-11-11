@@ -21,6 +21,8 @@ const amount=Object.values(source.batches).flat().reduce((sum,n)=>sum+n,0);
 const body={amount,source_version:source.source_version,task_id:source.task_id};
 const intent={...body,operation_id:source.task_id+':publish'};
 const bodyDigest=sha(JSON.stringify(body));
+assert.equal(amount,42);
+assert.equal(intent.operation_id,'report-A:publish');
 for(const [name,caseRecord] of Object.entries(agentRecord.cases)){
  const stable=name==='stable',count=stable?1:2;
  const {cut,resume,oracle}=caseRecord;
@@ -53,13 +55,35 @@ for(const [name,caseRecord] of Object.entries(agentRecord.cases)){
   assert.deepEqual(receipts[i],{...row,body_digest:bodyDigest});
  }
  assert.deepEqual(resume.checkpoint.values.receipt,receipts.at(-1));
+ assert.equal(resume.checkpoint.values.observed_mcp.is_error,false);
+ assert.deepEqual(resume.checkpoint.values.observed_mcp.receipt,resume.checkpoint.values.receipt);
+ assert.deepEqual(cut.observed_mcp.receipt,receipts[0]);
  assert.equal(oracle.accepted,stable);
  assert.equal(oracle.effect_count,count);
  assert.equal(oracle.expected_amount,amount);
+ assert.equal(oracle.conditions.correct_source_and_amount,true);
+ assert.equal(oracle.conditions.one_report_and_receipt,stable);
 }
 assert.deepEqual(Object.keys(agentRecord.cases).sort(),['attempt_derived_id','stable']);
 page('durable-workflows',['id="mcp-commit-recovery"','diagrams/mcp-commit-recovery.svg','labs/mcp-recovery.zip']);
-page('agent-recovery',['article/durable-workflows/#mcp-commit-recovery']);
+const cutRoute='/article/agent-recovery/#mcp-receipt-before-checkpoint';
+const resumeRoute='/article/durable-workflows/#mcp-commit-recovery';
+for(const [route,otherRoute,fields] of [
+ [cutRoute,resumeRoute,['cases.stable.cut','observed_mcp.receipt','receiver.receipts[0]','checkpoint.next']],
+ [resumeRoute,cutRoute,['cases.stable.resume','receiver.attempts','resume.checkpoint.values.receipt','cases.attempt_derived_id','body_digest','one_report_and_receipt']],
+]){
+ const [path,anchor]=route.split('#');
+ const html=readFileSync('dist'+path+'index.html','utf8');
+ const heading='<h3 id="'+anchor+'">';
+ const [,practice,...duplicates]=html.split(heading);
+ assert(practice&&duplicates.length===0,route+' must have one practice heading');
+ const section=html.match(/<section class="article-section" id="section-9">[\s\S]*?<\/section>/)?.[0];
+ assert(section?.includes(heading),route+' must be in section 9');
+ const block=practice.split(/<h3\b|<\/(?:details|section)>/)[0];
+ for(const fragment of ['href="/labs/mcp-recovery/validation.json"','href="'+otherRoute+'"',...fields.map(field=>'<code>'+field+'</code>')]){
+  assert(block.includes(fragment),route+' missing '+fragment);
+ }
+}
 
 const ai=lab('encoder-decoder'),aiRecord=json(ai+'validation.json'),aiSource=json(ai+'source.json');
 assert.equal(aiRecord.status,'passed');
@@ -131,6 +155,33 @@ assert.match(provenance.headSha,/^[a-f0-9]{40}$/);
 assert.match(provenance.url,/^https:\/\/github\.com\/CaptainGreenskin\/infra-guide\/actions\/runs\/\d+$/);
 assert.equal(provenance.record_sha256,sha(readFileSync(cloud+'validation.json')));
 assert.equal(cloudRecord.source_sha256,sha(readFileSync(cloud+'network_policy_lab.py')));
+const service=cloudRecord.inventory.service;
+assert.deepEqual(cloudRecord.final_inventory.service,service,'Start and end snapshots preserve the Service backend');
+const [backend]=service.backends;
+assert.equal(service.backends.length,1);
+assert.equal(backend.ready,true);
+const stage=cloudRecord.stages.find(row=>row.name==='trusted_orders_only');
+const {trusted,untrusted}=stage.attempts[0];
+assert.equal(trusted.dns.status,'gaierror');
+assert.deepEqual(untrusted.dns.ipv4,[service.cluster_ip]);
+assert.equal(untrusted.http.status,'tcp_timeout');
+assert.equal(untrusted.pod_ip_target,backend.addresses[0]);
+assert.deepEqual(trusted.http.peer,[backend.addresses[0],8080],'The HTTP probe connects to the Pod IP');
+assert.equal(trusted.http.body.pod_uid,backend.target_uid);
+assert.equal(trusted.http.body.request_id,trusted.request_id);
+const basicsHtml=readFileSync('dist/article/kubernetes-basics/index.html','utf8');
+const reachabilityAnchor='service-ready-and-reachability';
+const reachability=basicsHtml.split('id="section-4"')[1]?.split('</section>')[0].split('id="'+reachabilityAnchor+'"')[1];
+assert(reachability,'The real probe comparison belongs with the Service and EndpointSlice discussion');
+for(const marker of [
+ '<code>'+stage.name+'</code>','<code>'+backend.addresses[0]+':8080</code>','<code>ready='+backend.ready+'</code>',
+ '<td>untrusted</td><td>返回 <code>'+service.cluster_ip+'</code></td><td>TCP 连接超时</td>',
+ '<td>trusted</td><td>查询失败</td><td>HTTP '+trusted.http.code+'，订单 '+trusted.http.body.order+'，金额 '+trusted.http.body.amount+'</td>',
+ '/article/k8s-networking/#kubernetes-network-policy-run','/labs/kubernetes-network-policy/validation.json',
+ 'HTTP 走的是 Pod IP'
+])assert(reachability.includes(marker),marker+': reconcile the walkthrough with the native record');
+const networkHtml=readFileSync('dist/article/k8s-networking/index.html','utf8');
+assert(networkHtml.split('id="kubernetes-network-policy-run"')[1]?.split('</section>')[0].includes('/article/kubernetes-basics/#'+reachabilityAnchor));
 execFileSync('python3',['-B',cloud+'network_policy_lab.py','--check-record',cloud+'validation.json']);
 page('k8s-networking',['id="kubernetes-network-policy-run"','article/k8s-networking/#kubernetes-network-policy-run','diagrams/kubernetes-network-policy.svg','labs/kubernetes-network-policy.zip']);
 

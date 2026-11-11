@@ -190,4 +190,13 @@ const progressiveCloudSectionTitles={
  '模型声明了规则，用于核对状态推导；它不替代 kube-apiserver、调度器或真实转发。对目标集群按同样字段读取对象，把 UID、版本、期望代次与所有权对应起来：')+codeBlocks(k[6])[3]+p(
  '相邻的工作负载章将用 Deployment、StatefulSet、Job 等类型表达不同执行语义，并在滚动更新中计算允许多少副本同时变化。本章的对象身份、就绪与终止链，就是这些发布预算能够落到实际进程的基础。平台交付章再把它们与配置、数据兼容和回退条件放到一起。')+link('k8s-workloads','工作负载类型与滚动更新预算')+link('delivery','发布兼容与版本回退')
  ]);
+ kube.sections[3][1]+=
+ h('service-ready-and-reachability','后端已就绪，接下来验证哪条路径')+
+ p('在一次用 Cilium 网络插件执行策略的测试集群里，<code>orders</code> 的 Service 地址是 <code>10.96.4.135</code>。实验首尾的 EndpointSlice 都指向 <code>10.244.1.79</code>，后端 UID 相同，条件都是 <code>ready=true</code>。这组对象告诉我们服务登记了哪一个后端。')+
+ p('看原始记录的 <code>trusted_orders_only</code> 阶段。orders 的入站策略只允许 trusted 客户端。出站限制只选中 trusted，允许它连订单 Pod 的 8080 端口，DNS 请求未获放行。untrusted 的 DNS 查询不受这条出站策略约束。两个客户端分别查同一个域名，再用固定的 Pod 地址 <code>10.244.1.79:8080</code> 发起新连接。')+
+ table(['客户端','查询 Service 域名','直连订单 Pod'],[
+  ['untrusted','返回 <code>10.96.4.135</code>','TCP 连接超时'],
+  ['trusted','查询失败','HTTP 200，订单 O-104，金额 37']
+ ])+
+ p('在该阶段第一轮的 trusted 记录里，响应的 <code>request_id</code> 与客户端记录相同，<code>pod_uid</code> 与端点登记的 <code>target_uid</code> 相符。这样能核对结果来自哪个应用实例。本轮 HTTP 走的是 Pod IP，Service 地址只用来核对解析结果。<a href="/article/k8s-networking/#kubernetes-network-policy-run">到 C4.5 看两端策略和完整复跑</a>，也可以直接打开<a href="/labs/kubernetes-network-policy/validation.json">原始记录</a>。');
 })();

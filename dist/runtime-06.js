@@ -4296,6 +4296,15 @@ const progressiveCloudSectionTitles={
  '模型声明了规则，用于核对状态推导；它不替代 kube-apiserver、调度器或真实转发。对目标集群按同样字段读取对象，把 UID、版本、期望代次与所有权对应起来：')+codeBlocks(k[6])[3]+p(
  '相邻的工作负载章将用 Deployment、StatefulSet、Job 等类型表达不同执行语义，并在滚动更新中计算允许多少副本同时变化。本章的对象身份、就绪与终止链，就是这些发布预算能够落到实际进程的基础。平台交付章再把它们与配置、数据兼容和回退条件放到一起。')+link('k8s-workloads','工作负载类型与滚动更新预算')+link('delivery','发布兼容与版本回退')
  ]);
+ kube.sections[3][1]+=
+ h('service-ready-and-reachability','后端已就绪，接下来验证哪条路径')+
+ p('在一次用 Cilium 网络插件执行策略的测试集群里，<code>orders</code> 的 Service 地址是 <code>10.96.4.135</code>。实验首尾的 EndpointSlice 都指向 <code>10.244.1.79</code>，后端 UID 相同，条件都是 <code>ready=true</code>。这组对象告诉我们服务登记了哪一个后端。')+
+ p('看原始记录的 <code>trusted_orders_only</code> 阶段。orders 的入站策略只允许 trusted 客户端。出站限制只选中 trusted，允许它连订单 Pod 的 8080 端口，DNS 请求未获放行。untrusted 的 DNS 查询不受这条出站策略约束。两个客户端分别查同一个域名，再用固定的 Pod 地址 <code>10.244.1.79:8080</code> 发起新连接。')+
+ table(['客户端','查询 Service 域名','直连订单 Pod'],[
+  ['untrusted','返回 <code>10.96.4.135</code>','TCP 连接超时'],
+  ['trusted','查询失败','HTTP 200，订单 O-104，金额 37']
+ ])+
+ p('在该阶段第一轮的 trusted 记录里，响应的 <code>request_id</code> 与客户端记录相同，<code>pod_uid</code> 与端点登记的 <code>target_uid</code> 相符。这样能核对结果来自哪个应用实例。本轮 HTTP 走的是 Pod IP，Service 地址只用来核对解析结果。<a href="/article/k8s-networking/#kubernetes-network-policy-run">到 C4.5 看两端策略和完整复跑</a>，也可以直接打开<a href="/labs/kubernetes-network-policy/validation.json">原始记录</a>。');
 })();
 
 
@@ -4900,13 +4909,12 @@ print("只改未来一格，位置 0 的八个分数不变")`)+
   link('model-serving','跟踪实际生成请求的KV状态'),
 
   p('本章从纯内容匹配的重排性质出发，比较了相加位置与旋转位置，再用二维旋转推导固定q/k点积如何留下相对位移。恢复多维时，每对频率和布局都要对应投影坐标；进入缓存时，逻辑位置、可见集合与物理映射继续各自保持含义。',
-  '下面保留原先执行rope.py的输出，未新增模型或设备执行记录。original与translated接近−4，差别来自浮点舍入；只重置query得到4；四维原布局与转换后的布局都是−15，未转换直接换配对则为−20。可对照源码中的同名检查，再查看原验证记录中的环境与摘要。')+
+  '这里是固定向量脚本 rope.py 的输出。original 与 translated 接近 −4，差别来自浮点舍入。只重置 query 得到 4。四维原布局与转换后的布局都是 −15，直接换配对则为 −20。第 6 节另外用原生 CPU 注意力核对分段续算。')+
   '<p class="practice-links"><a href="labs/model-foundations/rope.py" download>下载 rope.py ↓</a><a href="labs/textbooks/validation.json" target="_blank" rel="noopener">验证记录 ↗</a></p>'+
   details(r[8])[0]+
   p('训练章将回到实际采用可学习绝对位置的TinyDecoder。位置表A会像其他参数一样接收梯度；本章RoPE脚本使用的固定频率和手工向量则不属于那份模型。接下来保持结构与输入对象一致，把候选得分接到训练目标。')+
   link('autograd-training','回到同一Decoder的损失与参数更新')
  ]);
- position.updated='2026.11.09';
 
  const placeFigure=(article,index,after,name,caption)=>{
   const section=article.sections[index],start=section[1].indexOf(after);
@@ -4917,6 +4925,23 @@ print("只改未来一格，位置 0 的八个分数不变")`)+
  placeFigure(position,2,'该例固定了输入、方向和位置','rope-unit-circle','同一组 q、k 的旋转前后方向。每个向量都在自己的等长圆上，角度由对应的逻辑位置决定。');
  placeFigure(position,3,'相对位移已经改变','rope-relative-shift','固定内容向量和转角。共同平移仍得 −4，只重置查询得到 +4。');
  placeFigure(position,5,'是先后两个动作','rope-cache-coordinates','逻辑位置决定旋转相位，可见性决定读取范围，映射表决定实际存放的位置。槽位编号为示意。');
+ position.sections[5][1]+=
+  h('native-rope-window-cache','用四个槽续算九个位置')+
+  p('现在让每次查询最多读四个位置，包含自己。这种读取范围叫滑动窗口。程序把九个位置分成 3、2、1、3 项四批，并循环复用四个槽。为单独验证位置与可见性，直接给两头各四项特征的 Q、K、V，使用 PyTorch 2.5.1 的原生 CPU 注意力。')+
+  trainingFigure('rope-window-wrap','同一批的查询 3 和查询 4 需要不同历史。正确路径计算完这批才覆盖槽 0。')+
+  p('第一批后，槽 0、1、2 保存逻辑位置 0、1、2。第二批同时处理位置 3 和 4。查询 3 要读 0 到 3，查询 4 要读 1 到 4。把旧槽和本批新 K/V 一起交给注意力，按每一行的逻辑位置决定可读范围。算完才把位置 4 写进槽 0。')+
+  trainingCode('原生 SDPA 接收的布尔掩码，True 表示允许读取','PYTHON',
+   'distance = torch.tensor(query_positions)[:, None] - torch.tensor(key_positions)\nvisible = (distance >= 0) & (distance < WINDOW)')+
+  table(['四种执行方式','首次与整段计算有差异的位置','所有输出的最大绝对差'],[
+   ['按逻辑位置旋转，算完再写槽','无','约 1.11×10⁻¹⁶'],
+   ['换一套槽位映射，仍按逻辑位置旋转','无','约 1.11×10⁻¹⁶'],
+   ['用槽号计算旋转角度','4','约 1.96227'],
+   ['先写整批，再从槽里读','3','约 1.98413']
+  ])+
+  p('两个错误发生在不同的行。位置 4 放进槽 0，若拿槽号旋转，角度会用 0，虽然它读取的位置集合仍正确。若先覆盖槽 0，角度保持正确，查询 3 却少读了位置 0。定位时先查 <code>phase_positions</code>，再按每个查询查 <code>visible_keys</code>。')+
+  p('解压后按说明安装固定版本，运行 <code>python -B rope_window_cache.py &gt; replay.json</code>。本实验比较固定向量、CPU 双精度的真实 SDPA 输出，生产引擎的分页分配和设备性能各自另验。<a href="/article/model-serving/#serving-rope-window-handoff">到服务章继续区分逻辑位置、可读范围和缓存槽 →</a>')+
+  '<p class="practice-links"><a href="/labs/rope-window-cache.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/rope-window-cache/README.md">复跑说明</a> · <a href="/labs/rope-window-cache/validation.json">查看各批位置和实际数值</a></p>';
+ position.updated='2026.11.12';
  placeFigure(decoder,0,'先把这条正常依赖走通','decoder-prenorm-path','主路径经过两次残差相加，分支分别由 X 和 H₁ 发起。两次回加前都恢复 [2, 4, 8]。');
  placeFigure(decoder,2,'结果随之变化','norm-offset-contrast','只改一行输入的共同偏移，比较中心化与直接缩放；图中取手算条件 ε=0。');
  placeFigure(decoder,4,'得到f(x)=[3ln3','swiglu-pairwise','门控与 up 的乘积保留两个坐标，再乘 Wdown 得到两个输出。');
@@ -5425,7 +5450,15 @@ const progressiveAgentSectionTitles={
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
   finish(a,before);a.updated='2026.11.09';
-  a.sections[8][1]+=p('选读 <a href="/article/durable-workflows/#mcp-commit-recovery">LangGraph 与 MCP 的原生恢复实验</a>。换成发布报告的独立任务，在工具回执已收到、工作流节点尚未保存结果时杀进程，再用接收库核对恢复后发布了几份。');
+  a.sections[8][1]+=
+   h('mcp-receipt-before-checkpoint','回执已收到，检查点写到哪一步')+
+   p('再做一次独立的发布报告实验。前面的分库 HTTP 实验用操作 <code>logical-add-1</code> 给账户增加了 37。这次用本机 MCP 工具发布 <code>report-A/v3</code>，金额是 42。打开<a href="/labs/mcp-recovery/validation.json">本次发布的原始记录</a>，先只读 <code>cases.stable.cut</code>，看工作进程被终止前的状态。')+
+   table(['在 cut 中查找','核对什么'],[
+    ['<code>observed_mcp.receipt</code>','工具已经返回 <code>report-A:publish</code> 的回执，<code>amount</code> 是 42，<code>revision</code> 是 1。'],
+    ['<code>receiver.receipts[0]</code>','接收库里的回执与刚收到的回执逐字段相同，<code>receiver.reports</code> 里有一份报告。'],
+    ['<code>checkpoint.values</code> 与 <code>checkpoint.next</code>','检查点只保存了 <code>intent</code>，没有 <code>receipt</code>，下一步仍是 <code>["publish"]</code>。']
+   ])+
+   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>');
  }
 })();
 
@@ -7598,7 +7631,10 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   trainingCode('解压后在 Apple Silicon 上运行，替换 llama-server 路径','SHELL','python3 -B metal_inference.py --server /absolute/path/to/llama-server --output-dir ./replay')+
   '<p class="practice-links"><a href="labs/native-metal-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-metal-inference/README.md">环境与复跑步骤</a> · <a href="labs/native-metal-inference/native-responses.json">原始 HTTP 事件</a> · <a href="labs/native-metal-inference/native-stderr.log">引擎批次与节点日志</a> · <a href="labs/native-metal-inference/validation.json">核对结果</a></p>'+
   p('这次复跑覆盖本机单槽、合成模型和四条固定请求。GPU 节点日志用来确认执行路径。端到端时延、生产模型容量和 CUDA 行为需要各自的测量。<a href="/article/operator-profiling/#native-metal-softmax">回看单个 GPU Softmax 内核怎样做归约 →</a>');
- serving.updated='2026.11.11';
+ serving.sections[2][1]+=
+  heading('serving-rope-window-handoff','槽位复用以后，哪个位置还该读得到')+
+  p('上面的 TinyDecoder 按绝对位置查表，保留连续历史。换成旋转位置编码（RoPE）和固定容量的滑动窗口后，新增位置还要决定什么时候覆盖旧槽。四槽的原生 CPU 对照中，位置 3 和 4 同批计算，位置 4 最后会写进槽 0，位置 3 此时仍需要读逻辑位置 0。')+
+  p('沿同一份记录分别核对两件事。<code>phase_positions</code> 告诉你用什么序号旋转，<code>visible_keys</code> 告诉你每个查询实际读到什么。用槽 0 代替逻辑位置 4，最早影响位置 4。先覆盖槽 0，再计算这一批，最早影响位置 3。<a href="/article/position-encoding/#native-rope-window-cache">复跑四槽的完整对照</a>，再看<a href="/article/model-serving/#section-4">如何从各层形状计算缓存字节</a>。');
 
  performance.sections[5][1]+=
   heading('native-inference-queue','同样两条请求，单槽与双槽怎样调度')+
@@ -7757,7 +7793,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.sections[6][1]+=p('在本章的 TinyDecoder 对照里，可以先观察缓存怎样改变前向路径。还可以用同一个模型，从双进程训练恢复后导出权重，由新进程加载，再逐项比较缓存与完整前缀的分数。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">查看推理加载的参数来自哪次训练更新 →</a>');
- serving.updated='2026.11.11';
+ serving.updated='2026.11.12';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=
@@ -9183,7 +9219,9 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('解压后进入 <code>metal-softmax</code> 目录，运行 <code>swift -O metal_softmax.swift &gt; replay.json</code>。先看 <code>validation</code> 与溢出对照，再用 <code>benchmarks</code> 的原始样本复算中位数。实验覆盖 Apple Metal 上的连续有限 FP32 数据。注意力掩码、CUDA 与端到端时延各有单独的验证条件。')+
  '<p class="practice-links"><a href="labs/metal-softmax.zip" download>下载实验包 ↓</a> · <a href="labs/metal-softmax/kernels.metal">完整内核 →</a> · <a href="labs/metal-softmax/validation.json">GPU 回读与原始计时 →</a></p>'+
  '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/creating-threads-and-threadgroups">Apple Metal 线程组 ↗</a> · <a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">GPU 时间戳 ↗</a></p>'+
- p('下一步用真实推理请求定位同类运算。llama.cpp 使用自己的 Metal 内核，注意力中的 Softmax 节点叫 <code>kq_soft_max-0</code>。沿一条请求看它出现在哪几轮，再核对最终输出。<a href="/article/model-serving/#native-metal-inference">从 GPU 算子走到真实推理请求 →</a>');
+ p('下一步用真实推理请求定位同类运算。llama.cpp 使用自己的 Metal 内核，注意力中的 Softmax 节点叫 <code>kq_soft_max-0</code>。沿一条请求看它出现在哪几轮，再核对最终输出。<a href="/article/model-serving/#native-metal-inference">从 GPU 算子走到真实推理请求 →</a>')+
+ p('一行分到多个块以后，每块会先得到自己的最大值。<a href="/article/flash-attention-io/#native-metal-online-attention">用同一块 Apple GPU 核对跨块缩放和 V 汇总 →</a>');
+ a.updated='2026.11.12';
 })();
 
 
@@ -9761,7 +9799,8 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '参考为Y=[11,4]，加一次偏置[12,5]；局部1与−2先求和再ReLU得到0，先ReLU再求和得到1。有效batch为64，rank0的TP组[0,1]、DP组[0,4]。形状、数值、依赖、数据副本与组成员各核对一项，错在哪里就回到对应计算关系重做。')
  ]);
 
- const contextAttention=articles.find(a=>a.id==='flash-attention-io').sections;
+ const contextLesson=articles.find(a=>a.id==='flash-attention-io');
+ const contextAttention=contextLesson.sections;
  contextAttention[6][1]+='<h3 id="context-parallel-attention">同一序列怎样分给两个进程</h3>'+
  p('上面的缓存例子用逻辑位置判断谁能读取谁。把同一条长序列沿位置轴分给多个进程，也要保留这个判断。这种切法叫上下文并行（Context Parallelism，CP）。数据并行分不同样本，张量并行可以分同一层的特征。这里分的是同一条样本的位置。',
  '用四个位置做小题。rank 是进程在组里的编号。rank 0 持有位置 0、1，rank 1 持有位置 2、3，各自生成本地的 Q、K、V。每个进程只计算自己持有的 Q 行并保留对应输出。它的 Q 可能需要读取其他进程的 K、V，因为可见范围仍由原序列里的位置决定。')+
@@ -9814,6 +9853,27 @@ ANALYZE TABLE innodb_lab.orders;`)+
  ])+
  p('在实验目录运行 <code>python3 -B record.py --output replay.json</code>，依次复跑两组正例和一组拒绝对照。查看前向收到的包头、反向返回的包头、输出误差和填充梯度。这个对照验证本机 CPU/Gloo 的数值与收发关系。完整参照仍在每个进程里建立，设备显存与并行效率另需测量。')+
  '<p class="practice-links"><a href="/labs/ragged-ring.zip" download>下载不等长分片实验 ↓</a> · <a href="/labs/ragged-ring/README.md">复跑步骤</a> · <a href="/labs/ragged-ring/validation.json">实际记录与源码摘要</a> · <a href="/article/training-communication/#ragged-ring-communication">从包形状计算通信字节</a></p>';
+
+ contextAttention[7][1]+=
+ '<details class="progressive-detail"><summary>实跑 · Apple GPU 怎样合并各块的统计</summary>'+
+ '<h3 id="native-metal-online-attention">大分数出现在后面的块，旧块统计怎样改写</h3>'+
+ p('把前面的一行 Softmax 扩到 2053 个预先给定的分数，每项对应一条两维的 V。用两种块宽 128 和 257，再分别开放前 1025 项和全部 2053 项。索引 1537 的分数是 36，V 是 [7,−3]。短前缀看不到它，行最大值仍为 2.25。长前缀能读到它，最大值升到 36。')+
+ trainingFigure('metal-attention-late-peak','块宽 128 的实际输出。只有可见范围包含高分项时，省略旧尺度的反例才会暴露。')+
+ p('Metal 第一段内核分别算每块的最大值 m、指数和 z、以及指数加权的两维 V 和 u。第二段从左到右合并块。每次最大值变化，先把旧的 z、u 乘 exp(旧最大值−新最大值)，把新块统计也换到同一个基准，再相加。最后用 u 除以 z。这里旧块缩放是 exp(2.25−36)，约为 2.20×10⁻¹⁵。')+
+ trainingCode('合并块时，分母和加权和一起改尺度','METAL',`const float next_maximum = max(maximum, part.x);
+const float old_scale = shape.omit_old_scale ? 1.0f : exp(maximum - next_maximum);
+const float new_scale = exp(part.x - next_maximum);
+denominator = denominator * old_scale + part.y * new_scale;
+weighted = weighted * old_scale + part.zw * new_scale;
+maximum = next_maximum;`)+
+ table(['可见范围','宽 128 / 257 的可见块数','两种块宽对 CPU 参考的最大误差'],[
+  ['前 1025 项','9 / 4','约 5.11×10⁻⁹'],
+  ['全部 2053 项','17 / 8','约 7.44×10⁻¹²']
+ ])+
+ p('长前缀下，两种块宽都得到 [7,−3]。只把旧缩放改为 1，宽 128 的输出变为约 [0.0205,−0.0152]，宽 257 也偏离。短前缀的第一块已经取得整行最大值，省去旧缩放仍会通过。写验收时要让较大的分数出现在后面的可见块，才能抓住这种错误。')+
+ p('解压后执行 <code>swift -O online_attention.swift &gt; replay.json</code>。从 <code>tile_probes</code> 对照尾块和高分块，再比较 <code>output</code> 与 <code>no_old_rescale_output</code>。本次在 Apple M4 Pro 上执行 FP32 分块归一化与 V 汇总。QK 乘法、融合内核、反向和性能各有单独的验证条件。')+
+ '<p class="practice-links"><a href="/labs/metal-online-attention.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/metal-online-attention/kernels.metal">两个 Metal 内核</a> · <a href="/labs/metal-online-attention/validation.json">各块统计与实际输出</a> · <a href="/article/operator-profiling/#native-metal-softmax">回看一整行的 GPU Softmax</a></p></details>';
+ contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';
@@ -10590,7 +10650,7 @@ future.result(timeout=35)
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
- network.updated='2026.11.11';
+ network.updated='2026.11.12';
  network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');
  network.sections[1][1]+=p('<a href="/article/cloud-service-lab/#kubernetes-service-probes">复现同一组就绪变化 →</a>');
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
@@ -10611,6 +10671,7 @@ future.result(timeout=35)
  p('用 x86-64 Linux、Docker、kind 0.33.0、kubectl 1.35.8 和 Helm 运行。程序用临时 kubeconfig 创建自己的集群，安装固定版本 Cilium 1.20.4，每个阶段保存探测及收敛过程，最后删除该集群。')+
  trainingCode('运行集群实验，再离线核对记录','SHELL','python3 -B network_policy_lab.py --json native-record.json\npython3 -B network_policy_lab.py --check-record native-record.json')+
  p('Linux CI 实跑中，七个阶段各有连续两轮符合表中预期。先看第 4 阶段的分叉，再对照首尾的 Pod UID、重启数和 EndpointSlice。用固定客户端与固定后端观察策略变化，可以排除后端被替换。此实验验证同一台 Linux 主机上的两个容器节点，Service 转发用前文的独立实验验证。<a href="/article/cloud-service-lab/#kubernetes-service-normal">继续核对 ClusterIP 的真实请求与后端选择 →</a>')+
+ p('如果先拿到了 Service 和 EndpointSlice 的快照，回到<a href="/article/kubernetes-basics/#service-ready-and-reachability">C4.2 对照同一轮的两条客户端探测</a>，看看已就绪的后端如何对应到实际响应。')+
  '<p class="practice-links"><a href="labs/kubernetes-network-policy.zip" download>下载源码、说明与记录 ↓</a> · <a href="labs/kubernetes-network-policy/validation.json">查看七阶段原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42553604497">Linux CI 执行 ↗</a> · <a href="https://v1-35.docs.kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes 策略规范 ↗</a></p>';
 
  const config=select('config-secrets',['对象与版本：期望、文件、内存和认证','传播路径：环境变量、投射与subPath','一致快照：完整读取、校验和请求切换','全局约束：连接预算、截止时间与回退','Secret与身份：分发、存储和执行权限','凭据轮换：兼容窗口、撤销与旧会话','实战与变化题：文件、进程和真实HTTP']);
@@ -11835,15 +11896,17 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
    trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
-   p('两次调用的 JSON-RPC 请求 ID 在各自会话中都是 3。接收方用业务操作 ID 查回执，并核对正文摘要。正常例沿原操作 ID 重试，收到完全相同的回执。对照例把尝试号拼进操作 ID，接收方把两次调用都当成新发布。')+
+   p('接着读<a href="/labs/mcp-recovery/validation.json">同一份执行记录</a>的 <code>cases.stable.resume</code>。在 <code>receiver.attempts</code> 里找两条 <code>publish_report</code> 的调用。两条记录的 <code>server_pid</code> 不同，各自会话的 JSON-RPC 请求编号 <code>rpc_request_id</code> 都记为 <code>"3"</code>。跨会话的业务操作 ID <code>operation_id</code> 都是 <code>report-A:publish</code>。第一条的 <code>outcome</code> 是 <code>committed</code>，第二条是 <code>replayed</code>。工具按操作 ID 找到原回执，核对正文摘要后返回它。',
+    '再把 <code>resume.checkpoint.values.receipt</code> 与 <code>cut.observed_mcp.receipt</code> 逐字段对齐。操作 ID、正文摘要和 <code>revision=1</code> 等字段全相同。此时 <code>resume.checkpoint.next</code> 是 <code>[]</code>，接收库仍只有一份报告和一份回执。<a href="/article/agent-recovery/#mcp-receipt-before-checkpoint">回到崩溃恢复章核对退出前的两份记录 →</a>')+
    table(['恢复时提交的操作 ID','接收库中的实际结果','独立验收'],[
     ['沿用发布意图中的 ID','提交、重放各一次，报告 42 一份','通过'],
     ['按尝试派生不同 ID','提交两次，报告各为 42，共两份','拒绝']
    ])+
-   p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
+   p('打开对照 <code>cases.attempt_derived_id</code>，比较 <code>resume.receiver.receipts</code> 中的两份回执。金额都是 42，由任务、来源版本和金额算出的正文摘要 <code>body_digest</code> 也相同。两个操作 ID 分别是 <code>report-A:publish:attempt-1</code> 和 <code>report-A:publish:attempt-2</code>，接收方按 ID 查旧记录，各提交了一次。图的 <code>next</code> 同样变成 <code>[]</code>。查看独立验收的 <code>oracle.conditions</code>，来源和金额核对 <code>correct_source_and_amount</code> 为 <code>true</code>，只发布一份的核对 <code>one_report_and_receipt</code> 为 <code>false</code>。',
+    '运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
-   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>');
+   p('这里的 MCP 工具走本机标准输入输出，发布动作和输入固定。两次工作进程各有自己的 PID，实验观察的是工具回执已收到之后的退出与重入。')+
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a></p>');
 
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
@@ -11883,7 +11946,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
 
   const recovery=articleById('agent-recovery');
   recovery.sections[3][1]+=p('若写入已经可能提交，恢复方可以按原操作身份先查回执。查回执和发布各有自己的权限。查回执被拒时，恢复者对结果的认识仍停在待确认。接收方可能已有一份实际效果，这时也不能换新操作 ID 再发一遍。'+approvalLink);
-  recovery.updated='2026.11.09';
+  recovery.updated='2026.11.12';
 
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
@@ -11939,7 +12002,7 @@ return {"status": visit_gate("original_gate")}`)+
  trainingCode('解压后在新目录保存三组记录','SHELL','python -m pip install -r requirements.txt\npython -B resume_lab.py --output-dir replay')+
  p('先对照 <code>waiting_v1.interrupts</code> 和 <code>resume.fresh_v2_pause.interrupts</code>，确认两版第一问。再看 <code>receiver_final.writes</code>，验证哪份报告真的入库。实验使用 LangGraph 1.2.20，批准和接收库均为本机夹具。')+
  '<p class="practice-links"><a href="/labs/workflow-version-resume.zip" download>下载程序与记录 ↓</a> · <a href="/labs/workflow-version-resume/README.md">复跑步骤 →</a> · <a href="/labs/workflow-version-resume/validation.json">核对中断、决定和实际写入 →</a> · <a href="https://docs.langchain.com/oss/python/langgraph/interrupts#do-not-reorder-interrupt-calls-within-a-node">LangGraph 的中断顺序 ↗</a></p>';
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();
 
 
@@ -15224,7 +15287,8 @@ articles.find(a=>a.id==='autograd-training').prereq='先理解词元向量、注
 articles.find(a=>a.id==='gpu-cluster').prereq='先认识前向预测、损失、反向梯度、优化器更新与GPU执行；可沿自动求导和GPU执行章补齐，位置编码专题按需深入。';
 articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。';
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
-for(const id of ['kubernetes-basics','autograd-training','gpu-cluster','ai-lifecycle','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+articles.find(a=>a.id==='kubernetes-basics').updated='2026.11.12';
+for(const id of ['autograd-training','gpu-cluster','ai-lifecycle','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
 
 
 ;
@@ -15283,6 +15347,7 @@ const learningProfiles={
      ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
+     ["position-encoding","native-rope-window-cache","滑窗续算的旋转位置和覆盖顺序"],
      ["model-serving","native-metal-inference","同一请求的 CPU 与 Apple GPU 运算"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
      ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
@@ -15306,7 +15371,7 @@ const learningProfiles={
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
    {title:"覆盖完整块和尾块",
     result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
-    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ragged-ring-training","环形注意力与填充"]]},
+    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
@@ -15852,7 +15917,7 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
- 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
@@ -16002,7 +16067,7 @@ const fieldConceptSectionTargets={
   "sv-contract":["training-platform","section-4","区分训练检查点和交付模型包"],
   "sv-admission":["gpu-scheduling","native-kueue-admission","额度通过后，作业为什么还在等"],
   "sv-prefill":["model-serving","native-inference-request-path","沿真实引擎看三轮生成"],
-  "sv-kv":["model-serving","section-4","按层数和 KV 头数算缓存字节"],
+  "sv-kv":["model-serving","serving-rope-window-handoff","区分历史位置、可读范围和存放位置"],
   "sv-batching":["inference-performance","native-vllm-scheduler","还有计算额度，请求为什么要等"],
   "sv-metrics":["inference-performance","native-inference-queue","从实际输出重算首词元等待与后续间隔"],
   "sv-quantization":["quantization-serving","native-int8-batch-quality","换一个同批输入，为什么分类变了"],
@@ -16180,6 +16245,7 @@ const labArchiveCatalog={
  'dual-stack-connect':{folder:'dual-stack-connect',title:'IPv6 建连、IPv4 回退与 HTTP 响应等待'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
  'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
+ 'rope-window-cache':{folder:'rope-window-cache',title:'RoPE 滑窗续算与四槽循环覆盖'},
  'mps-checkpoint-resume':{folder:'mps-checkpoint-resume',title:'Apple GPU 训练的动量与设备随机状态恢复'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
@@ -16196,6 +16262,7 @@ const labArchiveCatalog={
  'redis-replica-promotion':{folder:'redis-replica-promotion',title:'Redis 复制确认与手动提升'},
  'metal-gemm':{folder:'metal-gemm',title:'Apple GPU 上的逐元素与分块矩阵乘法'},
  'metal-softmax':{folder:'metal-softmax',title:'Apple GPU 上的逐行 Softmax 与线程组归约'},
+ 'metal-online-attention':{folder:'metal-online-attention',title:'Apple GPU 上的分块归一化与加权汇总'},
  'model-mcp-tool-choice':{folder:'model-mcp-tool-choice',title:'本地模型选择工具与 MCP 读取权限'},
  'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
@@ -16463,6 +16530,11 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-nativ
  {id:'ai-native-inference-prefix',track:'ai',stage:2,title:'同槽空闲后怎样复用提示，清除后重算几项',chapter:'model-serving',anchor:'native-inference-prefix',pack:'native-inference-prefix',files:['prefix_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际 HTTP、槽状态与缓存操作',observe:'对比同一个提示复用三项与清除后全部重算，核对保留位置和相同输出。',scope:'固定合成模型和单槽。记录逻辑缓存状态。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-prefix')+1,0,
+ {id:'ai-rope-window-cache',track:'ai',stage:2,title:'一批跨过槽位边界，哪一行会先算错',chapter:'position-encoding',anchor:'native-rope-window-cache',pack:'rope-window-cache',
+  files:['rope_window_cache.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · CPU 双精度',
+  kind:'原生注意力与两种缓存错误对照',
+  observe:'比较整段与四批续算，找出把槽号当旋转位置和提前覆盖旧槽各自影响的第一行。',
+  scope:'固定投影向量、四槽与滑动窗口。生产块池和设备性能需要各自验证。'},
  {id:'ai-native-metal-inference',track:'ai',stage:2,title:'同一个请求的注意力在哪个设备上算',chapter:'model-serving',anchor:'native-metal-inference',pack:'native-metal-inference',
   files:['metal_inference.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · Apple M4 Pro',kind:'真实回环 HTTP、CPU 与 Metal 节点对照',
   observe:'在每个实际批次定位 Q/K/V 投影、注意力 Softmax 和输出投影，再核对两个设备的词元与缓存计数。',
@@ -16611,6 +16683,10 @@ labLearningCatalog.push(
   files:['metal_softmax.swift','kernels.metal'],env:'macOS · Apple GPU · Swift 工具链',kind:'真实 Metal 归约、溢出对照与 GPU 计时',
   observe:'核对 65 列怎样分给 64 个线程，再比较同形状下逐行处理与组内归约的九对用时。',
   scope:'Apple M4 Pro 上的连续有限 FP32 数据，计时区间为单个命令缓冲区。CUDA、注意力掩码和端到端时延分别验证。'},
+ {id:'ai-native-metal-online-attention',track:'ai',stage:2,title:'更大的分数出现在新块，怎样合并旧块',chapter:'flash-attention-io',anchor:'native-metal-online-attention',pack:'metal-online-attention',
+  files:['online_attention.swift','kernels.metal'],env:'macOS · Apple M4 Pro · Swift 工具链',kind:'真实 Metal 分块归一化与加权汇总',
+  observe:'比较两种块宽和可见范围，找到最高分所在的块，复判只省去旧缩放时的输出。',
+  scope:'固定分数和两维 V、FP32。融合 QK、反向、CUDA 与性能需要各自验证。'},
  {id:'agent-model-mcp-tool-choice',track:'agent',stage:2,title:'模型选中了工具，报告能直接读吗',chapter:'agent-runtime',anchor:'native-model-mcp-tool-choice',pack:'model-mcp-tool-choice',
   files:['model_tool_lab.py','fixture.json','assets.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU',kind:'真实模型选工具、MCP 读取与拒绝',
   observe:'从工具清单跟到模型选择、资源端授权和下一轮回答，再用读取记录核对越权分支。',
@@ -16907,5 +16983,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="c6293570b4d4bcce19c439c7addcfba2ba8295cf7505bd9b17e6300280af8f1b";
+const staticReadingVersion="240b60b2ea880f1e395dc417465882c77cbeedec2ec3e0eff527382b6b174f69";
 

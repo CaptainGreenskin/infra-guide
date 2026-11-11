@@ -336,15 +336,17 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
    trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
-   p('两次调用的 JSON-RPC 请求 ID 在各自会话中都是 3。接收方用业务操作 ID 查回执，并核对正文摘要。正常例沿原操作 ID 重试，收到完全相同的回执。对照例把尝试号拼进操作 ID，接收方把两次调用都当成新发布。')+
+   p('接着读<a href="/labs/mcp-recovery/validation.json">同一份执行记录</a>的 <code>cases.stable.resume</code>。在 <code>receiver.attempts</code> 里找两条 <code>publish_report</code> 的调用。两条记录的 <code>server_pid</code> 不同，各自会话的 JSON-RPC 请求编号 <code>rpc_request_id</code> 都记为 <code>"3"</code>。跨会话的业务操作 ID <code>operation_id</code> 都是 <code>report-A:publish</code>。第一条的 <code>outcome</code> 是 <code>committed</code>，第二条是 <code>replayed</code>。工具按操作 ID 找到原回执，核对正文摘要后返回它。',
+    '再把 <code>resume.checkpoint.values.receipt</code> 与 <code>cut.observed_mcp.receipt</code> 逐字段对齐。操作 ID、正文摘要和 <code>revision=1</code> 等字段全相同。此时 <code>resume.checkpoint.next</code> 是 <code>[]</code>，接收库仍只有一份报告和一份回执。<a href="/article/agent-recovery/#mcp-receipt-before-checkpoint">回到崩溃恢复章核对退出前的两份记录 →</a>')+
    table(['恢复时提交的操作 ID','接收库中的实际结果','独立验收'],[
     ['沿用发布意图中的 ID','提交、重放各一次，报告 42 一份','通过'],
     ['按尝试派生不同 ID','提交两次，报告各为 42，共两份','拒绝']
    ])+
-   p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
+   p('打开对照 <code>cases.attempt_derived_id</code>，比较 <code>resume.receiver.receipts</code> 中的两份回执。金额都是 42，由任务、来源版本和金额算出的正文摘要 <code>body_digest</code> 也相同。两个操作 ID 分别是 <code>report-A:publish:attempt-1</code> 和 <code>report-A:publish:attempt-2</code>，接收方按 ID 查旧记录，各提交了一次。图的 <code>next</code> 同样变成 <code>[]</code>。查看独立验收的 <code>oracle.conditions</code>，来源和金额核对 <code>correct_source_and_amount</code> 为 <code>true</code>，只发布一份的核对 <code>one_report_and_receipt</code> 为 <code>false</code>。',
+    '运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
-   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>');
+   p('这里的 MCP 工具走本机标准输入输出，发布动作和输入固定。两次工作进程各有自己的 PID，实验观察的是工具回执已收到之后的退出与重入。')+
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a></p>');
 
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
@@ -384,7 +386,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
 
   const recovery=articleById('agent-recovery');
   recovery.sections[3][1]+=p('若写入已经可能提交，恢复方可以按原操作身份先查回执。查回执和发布各有自己的权限。查回执被拒时，恢复者对结果的认识仍停在待确认。接收方可能已有一份实际效果，这时也不能换新操作 ID 再发一遍。'+approvalLink);
-  recovery.updated='2026.11.09';
+  recovery.updated='2026.11.12';
 
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
@@ -440,5 +442,5 @@ return {"status": visit_gate("original_gate")}`)+
  trainingCode('解压后在新目录保存三组记录','SHELL','python -m pip install -r requirements.txt\npython -B resume_lab.py --output-dir replay')+
  p('先对照 <code>waiting_v1.interrupts</code> 和 <code>resume.fresh_v2_pause.interrupts</code>，确认两版第一问。再看 <code>receiver_final.writes</code>，验证哪份报告真的入库。实验使用 LangGraph 1.2.20，批准和接收库均为本机夹具。')+
  '<p class="practice-links"><a href="/labs/workflow-version-resume.zip" download>下载程序与记录 ↓</a> · <a href="/labs/workflow-version-resume/README.md">复跑步骤 →</a> · <a href="/labs/workflow-version-resume/validation.json">核对中断、决定和实际写入 →</a> · <a href="https://docs.langchain.com/oss/python/langgraph/interrupts#do-not-reorder-interrupt-calls-within-a-node">LangGraph 的中断顺序 ↗</a></p>';
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();

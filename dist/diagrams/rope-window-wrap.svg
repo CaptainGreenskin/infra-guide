@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 394" role="img" aria-labelledby="title desc">
+<title id="title">一批跨过四个 KV 槽的边界</title>
+<desc id="desc">第二批是逻辑位置 3 和 4。查询 3 可读 0、1、2、3，查询 4 可读 1、2、3、4。算完才把位置 4 写进槽 0。若先写再算，查询 3 就读不到位置 0。位置 4 的 RoPE 仍使用逻辑序号 4。</desc>
+<metadata>{"record":"labs/rope-window-cache/validation.json","step":1,"queries":[3,4],"slots_before":[0,1,2,null],"visible_keys":[[0,1,2,3],[1,2,3,4]],"slots_after":[4,1,2,3],"early_visible":[1,2,3]}</metadata>
+<rect width="460" height="394" rx="12" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" fill="#23314b">
+ <text x="230" y="31" text-anchor="middle" font-size="19" font-weight="650">第二批收到位置 3 和 4</text>
+ <g text-anchor="middle" font-size="13" fill="#566581">
+  <text x="168" y="64">槽 0</text><text x="243" y="64">槽 1</text>
+  <text x="318" y="64">槽 2</text><text x="393" y="64">槽 3</text>
+ </g>
+ <g fill="#fff" stroke="#b9c9ed">
+  <rect x="136" y="74" width="64" height="37" rx="6"/><rect x="211" y="74" width="64" height="37" rx="6"/>
+  <rect x="286" y="74" width="64" height="37" rx="6"/><rect x="361" y="74" width="64" height="37" rx="6"/>
+  <rect x="211" y="252" width="64" height="37" rx="6"/><rect x="286" y="252" width="64" height="37" rx="6"/>
+  <rect x="361" y="252" width="64" height="37" rx="6"/>
+ </g>
+ <rect x="136" y="252" width="64" height="37" rx="6" fill="#eaf0ff" stroke="#5371ce"/>
+ <text x="32" y="97" font-size="15" font-weight="650">计算前</text>
+ <text x="32" y="275" font-size="15" font-weight="650">计算后</text>
+ <g text-anchor="middle" font-size="15">
+  <text x="168" y="97">位置 0</text><text x="243" y="97">位置 1</text><text x="318" y="97">位置 2</text><text x="393" y="97">空</text>
+  <text x="168" y="275" font-weight="650">位置 4</text><text x="243" y="275">位置 1</text><text x="318" y="275">位置 2</text><text x="393" y="275">位置 3</text>
+ </g>
+ <rect x="30" y="133" width="400" height="97" rx="8" fill="#edf2ff" stroke="#b9c9ed"/>
+ <text x="49" y="159" font-size="15" font-weight="650">计算时同时保留旧槽和本批新 K/V</text>
+ <text x="49" y="184" font-size="15">查询 3 读取 0、1、2、3</text>
+ <text x="49" y="208" font-size="15">查询 4 读取 1、2、3、4</text>
+ <path d="M230 112v15m0 105v15" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <path d="m225 123 5 6 5-6m-10 120 5 6 5-6" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <rect x="30" y="311" width="400" height="58" rx="7" fill="#fff7ee" stroke="#dabda0"/>
+ <text x="49" y="334" font-size="15" font-weight="650">提前覆盖槽 0，查询 3 就少读位置 0</text>
+ <text x="49" y="355" font-size="14">位置 4 写入槽 0，旋转仍用逻辑位置 4</text>
+</g>
+</svg>

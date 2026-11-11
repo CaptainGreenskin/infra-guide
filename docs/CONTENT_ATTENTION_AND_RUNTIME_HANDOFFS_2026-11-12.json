@@ -1,0 +1,48 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "79acc6a6f3af0f51d2053677c1f614743bbbe2aa",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_MODEL_PATH_AND_RECOVERY_EVIDENCE_2026-11-12.json": "87f5b49cabd17b93c408f6fce0d33cf638e279791a480b23a61924e0aa6de609"
+  },
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "673200e18b2f390a1bf16f75ad07d59c18bcffe775bd17e7acc91ac7ccd41098",
+      "reviewed_content_sha256": "3f383f036c73d3929b0d5d452e336434ed22612c87f34222ce28a9b31049aa9a",
+      "scope": "Link the measured whole-row Softmax to the separate, real block-merge numerical exercise.",
+      "observation": "The handoff opens the precise late-peak experiment and names the new cross-block relationship.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "position-encoding",
+      "reviewed_at": "2026-11-12",
+      "scope": "Run native SDPA on a fixed nine-position row and compare two physical slot maps and two failures.",
+      "observation": "Both maps preserve the full sliding-window results. Using the physical slot for the phase first changes query 4; overwriting the old slot before computing the entire chunk first changes query 3. The chapter publishes the real traces and a scalar oracle.",
+      "reviewed_content_sha256": "34e85693985cbe5c4c0e25c34e835b7a73447229e03e207e6d01a1a723657ee6",
+      "record": "dist/labs/rope-window-cache/validation.json"
+    },
+    {
+      "chapter": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "scope": "Execute block-local and cross-block normalization and weighted V aggregation on a real Apple GPU.",
+      "observation": "Four FP32 device cases match a dense CPU double-precision oracle within 5.11e-9. The later peak triggers a missing-old-scale fault that is invisible in the shorter prefix. The claim is numerical and scoped to the given scores.",
+      "reviewed_content_sha256": "6c16ccbd9f2aa005298c576e00ec7330c4884964bb6823adca1a5910aa660f32",
+      "record": "dist/labs/metal-online-attention/validation.json"
+    }
+  ]
+}

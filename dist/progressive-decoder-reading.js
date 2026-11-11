@@ -289,13 +289,12 @@ print("只改未来一格，位置 0 的八个分数不变")`)+
   link('model-serving','跟踪实际生成请求的KV状态'),
 
   p('本章从纯内容匹配的重排性质出发，比较了相加位置与旋转位置，再用二维旋转推导固定q/k点积如何留下相对位移。恢复多维时，每对频率和布局都要对应投影坐标；进入缓存时，逻辑位置、可见集合与物理映射继续各自保持含义。',
-  '下面保留原先执行rope.py的输出，未新增模型或设备执行记录。original与translated接近−4，差别来自浮点舍入；只重置query得到4；四维原布局与转换后的布局都是−15，未转换直接换配对则为−20。可对照源码中的同名检查，再查看原验证记录中的环境与摘要。')+
+  '这里是固定向量脚本 rope.py 的输出。original 与 translated 接近 −4，差别来自浮点舍入。只重置 query 得到 4。四维原布局与转换后的布局都是 −15，直接换配对则为 −20。第 6 节另外用原生 CPU 注意力核对分段续算。')+
   '<p class="practice-links"><a href="labs/model-foundations/rope.py" download>下载 rope.py ↓</a><a href="labs/textbooks/validation.json" target="_blank" rel="noopener">验证记录 ↗</a></p>'+
   details(r[8])[0]+
   p('训练章将回到实际采用可学习绝对位置的TinyDecoder。位置表A会像其他参数一样接收梯度；本章RoPE脚本使用的固定频率和手工向量则不属于那份模型。接下来保持结构与输入对象一致，把候选得分接到训练目标。')+
   link('autograd-training','回到同一Decoder的损失与参数更新')
  ]);
- position.updated='2026.11.09';
 
  const placeFigure=(article,index,after,name,caption)=>{
   const section=article.sections[index],start=section[1].indexOf(after);
@@ -306,6 +305,23 @@ print("只改未来一格，位置 0 的八个分数不变")`)+
  placeFigure(position,2,'该例固定了输入、方向和位置','rope-unit-circle','同一组 q、k 的旋转前后方向。每个向量都在自己的等长圆上，角度由对应的逻辑位置决定。');
  placeFigure(position,3,'相对位移已经改变','rope-relative-shift','固定内容向量和转角。共同平移仍得 −4，只重置查询得到 +4。');
  placeFigure(position,5,'是先后两个动作','rope-cache-coordinates','逻辑位置决定旋转相位，可见性决定读取范围，映射表决定实际存放的位置。槽位编号为示意。');
+ position.sections[5][1]+=
+  h('native-rope-window-cache','用四个槽续算九个位置')+
+  p('现在让每次查询最多读四个位置，包含自己。这种读取范围叫滑动窗口。程序把九个位置分成 3、2、1、3 项四批，并循环复用四个槽。为单独验证位置与可见性，直接给两头各四项特征的 Q、K、V，使用 PyTorch 2.5.1 的原生 CPU 注意力。')+
+  trainingFigure('rope-window-wrap','同一批的查询 3 和查询 4 需要不同历史。正确路径计算完这批才覆盖槽 0。')+
+  p('第一批后，槽 0、1、2 保存逻辑位置 0、1、2。第二批同时处理位置 3 和 4。查询 3 要读 0 到 3，查询 4 要读 1 到 4。把旧槽和本批新 K/V 一起交给注意力，按每一行的逻辑位置决定可读范围。算完才把位置 4 写进槽 0。')+
+  trainingCode('原生 SDPA 接收的布尔掩码，True 表示允许读取','PYTHON',
+   'distance = torch.tensor(query_positions)[:, None] - torch.tensor(key_positions)\nvisible = (distance >= 0) & (distance < WINDOW)')+
+  table(['四种执行方式','首次与整段计算有差异的位置','所有输出的最大绝对差'],[
+   ['按逻辑位置旋转，算完再写槽','无','约 1.11×10⁻¹⁶'],
+   ['换一套槽位映射，仍按逻辑位置旋转','无','约 1.11×10⁻¹⁶'],
+   ['用槽号计算旋转角度','4','约 1.96227'],
+   ['先写整批，再从槽里读','3','约 1.98413']
+  ])+
+  p('两个错误发生在不同的行。位置 4 放进槽 0，若拿槽号旋转，角度会用 0，虽然它读取的位置集合仍正确。若先覆盖槽 0，角度保持正确，查询 3 却少读了位置 0。定位时先查 <code>phase_positions</code>，再按每个查询查 <code>visible_keys</code>。')+
+  p('解压后按说明安装固定版本，运行 <code>python -B rope_window_cache.py &gt; replay.json</code>。本实验比较固定向量、CPU 双精度的真实 SDPA 输出，生产引擎的分页分配和设备性能各自另验。<a href="/article/model-serving/#serving-rope-window-handoff">到服务章继续区分逻辑位置、可读范围和缓存槽 →</a>')+
+  '<p class="practice-links"><a href="/labs/rope-window-cache.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/rope-window-cache/README.md">复跑说明</a> · <a href="/labs/rope-window-cache/validation.json">查看各批位置和实际数值</a></p>';
+ position.updated='2026.11.12';
  placeFigure(decoder,0,'先把这条正常依赖走通','decoder-prenorm-path','主路径经过两次残差相加，分支分别由 X 和 H₁ 发起。两次回加前都恢复 [2, 4, 8]。');
  placeFigure(decoder,2,'结果随之变化','norm-offset-contrast','只改一行输入的共同偏移，比较中心化与直接缩放；图中取手算条件 ε=0。');
  placeFigure(decoder,4,'得到f(x)=[3ln3','swiglu-pairwise','门控与 up 的乘积保留两个坐标，再乘 Wdown 得到两个输出。');

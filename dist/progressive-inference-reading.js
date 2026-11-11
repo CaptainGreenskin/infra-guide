@@ -358,7 +358,10 @@
   trainingCode('解压后在 Apple Silicon 上运行，替换 llama-server 路径','SHELL','python3 -B metal_inference.py --server /absolute/path/to/llama-server --output-dir ./replay')+
   '<p class="practice-links"><a href="labs/native-metal-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-metal-inference/README.md">环境与复跑步骤</a> · <a href="labs/native-metal-inference/native-responses.json">原始 HTTP 事件</a> · <a href="labs/native-metal-inference/native-stderr.log">引擎批次与节点日志</a> · <a href="labs/native-metal-inference/validation.json">核对结果</a></p>'+
   p('这次复跑覆盖本机单槽、合成模型和四条固定请求。GPU 节点日志用来确认执行路径。端到端时延、生产模型容量和 CUDA 行为需要各自的测量。<a href="/article/operator-profiling/#native-metal-softmax">回看单个 GPU Softmax 内核怎样做归约 →</a>');
- serving.updated='2026.11.11';
+ serving.sections[2][1]+=
+  heading('serving-rope-window-handoff','槽位复用以后，哪个位置还该读得到')+
+  p('上面的 TinyDecoder 按绝对位置查表，保留连续历史。换成旋转位置编码（RoPE）和固定容量的滑动窗口后，新增位置还要决定什么时候覆盖旧槽。四槽的原生 CPU 对照中，位置 3 和 4 同批计算，位置 4 最后会写进槽 0，位置 3 此时仍需要读逻辑位置 0。')+
+  p('沿同一份记录分别核对两件事。<code>phase_positions</code> 告诉你用什么序号旋转，<code>visible_keys</code> 告诉你每个查询实际读到什么。用槽 0 代替逻辑位置 4，最早影响位置 4。先覆盖槽 0，再计算这一批，最早影响位置 3。<a href="/article/position-encoding/#native-rope-window-cache">复跑四槽的完整对照</a>，再看<a href="/article/model-serving/#section-4">如何从各层形状计算缓存字节</a>。');
 
  performance.sections[5][1]+=
   heading('native-inference-queue','同样两条请求，单槽与双槽怎样调度')+
@@ -517,7 +520,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.sections[6][1]+=p('在本章的 TinyDecoder 对照里，可以先观察缓存怎样改变前向路径。还可以用同一个模型，从双进程训练恢复后导出权重，由新进程加载，再逐项比较缓存与完整前缀的分数。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">查看推理加载的参数来自哪次训练更新 →</a>');
- serving.updated='2026.11.11';
+ serving.updated='2026.11.12';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=

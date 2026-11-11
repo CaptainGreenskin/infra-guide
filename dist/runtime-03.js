@@ -868,7 +868,7 @@ const cloudStageGates=[
 const cloudStagePractices=[
  [['virtual-memory-oom','section-9','跑并发内存对照'],['distributed-systems','http-operation-retry','核对超时后的同一操作']],
  [['vpc-network','cloud-proxy-run','追踪代理请求与回包'],['storage-recovery','native-postgres-pitr','恢复到误操作之前']],
- [['scheduling-resources','scheduler-native-run','核对 Pod 调度结果'],['k8s-storage','native-csi-storage','核对卷绑定和回收']],
+ [['scheduling-resources','scheduler-native-run','核对 Pod 调度结果'],['k8s-storage','native-csi-storage','核对卷绑定和回收'],['kubernetes-basics','service-ready-and-reachability','区分端点就绪与请求可达']],
  [['serverless-execution','native-jetstream-redelivery','核对消息重投与效果'],['serverless-execution','serverless-ack-evidence','用 RabbitMQ 记录判断何时确认'],['terraform-state','terraform-state-run','复现 Terraform 状态漂移']],
  [['iam-security','section-9','核对允许、拒绝与写入'],['elasticity','section-8','算积压和单位成本']],
  [['slo','live-prometheus-burn','验证 Prometheus 聚合与告警'],['resilience','section-9','核对实际恢复点']]

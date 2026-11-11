@@ -1,0 +1,222 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "79acc6a6f3af0f51d2053677c1f614743bbbe2aa",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_MODEL_PATH_AND_RECOVERY_EVIDENCE_2026-11-12.json": "4af034f9a5ed2a70c6dc9a192eae1d6877bf26427fd286a63bba249f774b45fc"
+  },
+  "source_revisions": {
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "0d507243c309dd65059204d9ce925452cab1d679c379122075b291b8251cd64e",
+      "reviewed_sha256": "2c651a689a33e3ac3f4e43c9f37cc06eb731aff5c0e3598097840875a5e2b8e2",
+      "scope": "Run native SDPA on a fixed nine-position row and compare two physical slot maps and two failures."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "bde405612dcb85bb4a6b42e099e540d933825237bebda89f08c62222680e1cb2",
+      "reviewed_sha256": "e94723abcf364e86719bef35c1105de76e4d66df3a53efe139e45c04d7b1985e",
+      "scope": "Follow logical phase and actual visible keys from the same four-slot execution into the serving chapter."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "12034e50725f02a756834822445f30a1f1613c1369225e1354f0c164ae67dc24",
+      "reviewed_sha256": "257e372df6f0ad5a90707f20da92da744c5d2cccb0b68865289a520e5842dde1",
+      "scope": "Execute block-local and cross-block normalization and weighted V aggregation on a real Apple GPU."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "1396351b44179473b82725d446fcb516a0eea5ad089f8872b8a2d803de2e6ce5",
+      "reviewed_sha256": "da619c377dd1f73884b87f74ec91aec188a705c29af3ac72c138131c86e1ed30",
+      "scope": "Link the measured whole-row Softmax to the separate, real block-merge numerical exercise."
+    },
+    "dist/diagrams/rope-window-wrap.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4997ef64ca1f44af1e434eddfc5df761a77e0e3f1d5a5f9340105d577a329c6e",
+      "scope": "Show the actual four-slot wrap, read window and premature overwrite."
+    },
+    "dist/diagrams/metal-attention-late-peak.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0a4de7efdebe67ea4960466e37e79f03d427da07b1277b196be13357d316996b",
+      "scope": "Show the actual maximum change, scale transition and negative device result."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "1e6a80fdca450c3cecba2da180c0594ac2c50cfdbe277e89d34c49f126aa254c",
+      "reviewed_sha256": "d4f8ac035cfe83c086c6fe1ad358fb7d098c11d51493565dc996e732107df9b1",
+      "scope": "Register the exact new teaching diagram dimensions."
+    },
+    "dist/progressive-cloud-reading.js": {
+      "previous_sha256": "8798cd6fff238d9dcd3474c27c86b6abd4a9ebefb44bba7036664789bbf644cd",
+      "reviewed_sha256": "fbdf5131fe6fa937baabcf3591d6638015b93f638b0fdacc833ac1c65eff0be0",
+      "scope": "Separate EndpointSlice readiness, DNS, and actual reachability using one Cilium run."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "a75e383c65d44cc40b7e5c9333f50e7f7dfb9249dec7d452a7fab4e8318a7c05",
+      "reviewed_sha256": "3b0ab27ec7edad4d0d477beac2a50f43efd17c7556866ac25c5c4d1d28e07a9f",
+      "scope": "Return from the actual network-policy exercise to the ready-endpoint comparison."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "60200224047d2c8359baeb515708afbce8b40ec4add44054c004ac75d58a531b",
+      "reviewed_sha256": "b50a601c539a8afa2551949fd4e97fd606008da670399e9653e2f7f749a2ac52",
+      "scope": "Read the receiver and the graph checkpoint at the same real process interruption."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "9da91ee8ed810b81a29e9ceefe68fcc00d8cc379363320685ba3f0ca502bda5f",
+      "reviewed_sha256": "e9d063115ba6931b78105a6a205aff5849b0339fd9ecfc7b5717c93b36b774cd",
+      "scope": "Reconcile pre-exit and resumed receipts through the real MCP and LangGraph evidence."
+    },
+    "dist/cloud-operations-cases.js": {
+      "previous_sha256": "0ad0e016291ab76c6618fcdaa88a4c403c10dae72ad87c8cfd22947604a50c0a",
+      "reviewed_sha256": "b23677b7c62a98c3b23246da2500a647d8d069147ceb57b356378bf3e8a7cfcb",
+      "scope": "Offer the actual reachability comparison as part of the container learning stage."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "dbb78e0185f4f4a15349977ed4e68a4fd73a4d5d5dbf22dd37f4956b7f278f91",
+      "reviewed_sha256": "e0ac315abad5e7f66eb2cc96eba111520247acf5a05f48d784af2c00534b0c29",
+      "scope": "Register both attention experiments and their evidence scope."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "33d20a169f881698d47913007fb88e743d08b878232e1fefd2804af5a9045188",
+      "reviewed_sha256": "450351e75d4324c929357ea662a861665b98c568ca94c4a453ee6c12b3a30ad4",
+      "scope": "Attach the precise numerical experiments to the attention and cache concepts."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "bdca5325426dbf31d6c6130b83fa4077db712fae8a046dbedaea82bc715fc460",
+      "reviewed_sha256": "1b3ba50e9a230c0ee70dbc5540ba14446c04645fb1c69a6708665aad1f1a509f",
+      "scope": "Update the effective publication date for the Kubernetes body review."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "204e9850b876ecd880e7a7e52174de066fc5cfd22c24edc46007b921734b8323",
+      "reviewed_sha256": "248abdbfae4440aeca309739d25e2807be916ed9663edbe2551af727b0b7b56d",
+      "scope": "Connect the cache and operator roles to exact numeric evidence."
+    },
+    "scripts/check-reading-lab-bridges.cjs": {
+      "previous_sha256": "512b011a1ad7c52b7e4055c2917e82a0b3bdd996b1ca825f03fa6a52d853464f",
+      "reviewed_sha256": "675c06445d6aaefb91f523ac71f989c4f804a6769de4366f9ea58c569fc5854b",
+      "scope": "Verify Cloud and Agent cross-lesson observations against their existing native records."
+    },
+    "scripts/check-rope-window-cache.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4ec9c7255a147356d8d0169ddf7d07673eb89aadf20e8043f486bdae6832ccc0",
+      "scope": "Check the native CPU record with an independent scalar oracle, mutation controls, teaching content and exact archive."
+    },
+    "scripts/check-metal-online-attention.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4d0e2498b4113f358d59d9b8dc477da454b42c7f8f3acc104ef8a3c52d4ffd71",
+      "scope": "Verify native GPU results with independent scalar calculations, mutation controls, exact lesson figures and archive."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "337df63ed0a20bd51c5991819334a7ebf0577fbe57860486e1ac361f563d96a7",
+      "reviewed_sha256": "848956c87ca67e53316529b8f208ecd4ee3b27fd5ff3a88a44e03156beca05a9",
+      "scope": "Check exact role evidence links for both new experiments."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "f15acd10cce9fe8a112d9d3ec5ce582e6eabe76135a9c3ee0ff7247af68a113b",
+      "reviewed_sha256": "1a28abaed999f4d1d014b4f1d3816d019f10662193c8a77c437e18df34fac4e8",
+      "scope": "Run both attention verifiers in the maintained full suite."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "209c78e4eb6d5ecb92336da82004a7d8927a9667425ff3223e6e0d6ec60af355",
+      "reviewed_sha256": "15e4248acf02070c3724143714a8a73843d1540bc1ce530612f219072c0edccd",
+      "scope": "Bind the new signed lessons to their respective record verifiers."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "c67767b0292e2321214eb665bc3f114b4b1192fd50fac6eb65c3b7e99d76cca1",
+      "reviewed_sha256": "26bb6ffd59776abd47aeff4878699d9e8b9da24eaccfb6984b47a5ece84a1c80",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "42b066ba867bce0f186ba850d2def92aa300d7693e2ed5d92abd2636a4009e0b",
+      "reviewed_sha256": "b41a490723a2ab5ed9022b37d91e48bfb57056488542bdcae1ec0eaffdf67dd0",
+      "scope": "Fingerprint the renderer and edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "e6e7a29b4eb712df0404ce7bf203147962318df2ef521c80e494056e47af5247",
+      "reviewed_sha256": "c5a7e2a01f9d99296187e0a070194cb722f9aaa85c018655e8f3af4c7f45eecc",
+      "scope": "Record new exact anchors and preserve the published subsection inventory."
+    },
+    "docs/CONTENT_ATTENTION_AND_RUNTIME_HANDOFFS_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2c340fa32e0b590ec76c99a2f1b31079c329bfe52c4ee6b27cf45d367d194c29",
+      "scope": "Record eight chapter revisions and two actual attention experiments."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "f73ee377df0c32b0e6f6db269ad34c62ae60083dc255efd7e2c4568952378c7d",
+      "reviewed_sha256": "19e3dac2f3b4721c5d7457232bb85f2711a01af6fad9191d6e2e231874f9b17d",
+      "scope": "Append the current body review."
+    },
+    "dist/labs/rope-window-cache.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5ea1aab413fe6423615cd736c0793c8d1df43fda028b9f02248681a8810754ad",
+      "scope": "Bind the exact downloadable source and evidence archive."
+    },
+    "dist/labs/rope-window-cache/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a4cb5a055035997dff9e06142fd5a58c4055f4685b0a1dbcb0c624c0aa92b311",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/rope-window-cache/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/rope-window-cache/rope_window_cache.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "754c980df530acd42d55d041fe2ca06cdf086aeb805a6825d2f462af94db4615",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/rope-window-cache/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3b4ba3846173a2ad8a9ede45036e02c218f0eebfa8fd02458cbc576352b36243",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/metal-online-attention.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2b76a79ef0969f260fb7610a1e278abfaae57f20f7a18bd7a7d18f67f1c41858",
+      "scope": "Bind the exact downloadable source and evidence archive."
+    },
+    "dist/labs/metal-online-attention/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "914428042ebe80f706f137bef53227b5e0f6c8f090b6b2a8b26783a7096ba898",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/metal-online-attention/kernels.metal": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3d99be69b943a9235686a5d498135e6c01220e4c9c44eb5c84f76aa5747ea849",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/metal-online-attention/online_attention.swift": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7ed0cf2fb8c675ad0dbd3745ebe2928fc3830f2d00b54b9c038f414ac54670b1",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/metal-online-attention/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e92361ecf20f0e0a063801913c17b1ec88eaf45ae4b4dd26a7fc0ac67a2f7285",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "8562ba297e65259dae6066d404702f375f61f1b0948c596e0cbcbc0becdaae39",
+      "reviewed_sha256": "85d9f75271e6f093b059dc1536368b2c31e7e4c9d2f0ab193950239ecbb5fe83",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "79acc6a6f3af0f51d2053677c1f614743bbbe2aa",
+    "chapters": 78,
+    "changed_bodies": [
+      "position-encoding",
+      "model-serving",
+      "flash-attention-io",
+      "operator-profiling",
+      "kubernetes-basics",
+      "k8s-networking",
+      "agent-recovery",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "position-encoding": 1,
+      "flash-attention-io": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 2
+  }
+}

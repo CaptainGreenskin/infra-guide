@@ -219,6 +219,20 @@
         "subsection-4-vn5ish",
         "subsection-4-1sq7dwq",
         "subsection-5-aclmrr",
+        "v43-reconcile-practice",
+        "service-ready-and-reachability"
+      ],
+      "visible_targets": [
+        "subsection-1-1pjwlk",
+        "subsection-1-x1lrv6",
+        "subsection-2-lznes3",
+        "subsection-2-p1xcgh",
+        "subsection-2-1asu4xb",
+        "subsection-3-4ww5rs",
+        "subsection-4-vn5ish",
+        "subsection-4-1sq7dwq",
+        "service-ready-and-reachability",
+        "subsection-5-aclmrr",
         "v43-reconcile-practice"
       ]
     },
@@ -564,7 +578,12 @@
     {
       "id": "position-encoding",
       "targets": [
-        "sinusoidal-position-pairs"
+        "sinusoidal-position-pairs",
+        "native-rope-window-cache"
+      ],
+      "visible_targets": [
+        "sinusoidal-position-pairs",
+        "native-rope-window-cache"
       ]
     },
     {
@@ -586,6 +605,15 @@
     {
       "id": "flash-attention-io",
       "targets": [
+        "context-parallel-attention",
+        "context-parallel-merge",
+        "context-parallel-cost",
+        "context-parallel-lab",
+        "ring-context-training",
+        "ragged-ring-training",
+        "native-metal-online-attention"
+      ],
+      "visible_targets": [
         "context-parallel-attention",
         "context-parallel-merge",
         "context-parallel-cost",
@@ -792,11 +820,13 @@
         "native-inference-prefix",
         "rtx-pro-6000-cache-case",
         "serving-rows-and-history",
-        "native-metal-inference"
+        "native-metal-inference",
+        "serving-rope-window-handoff"
       ],
       "visible_targets": [
         "native-inference-request-path",
         "sdpa-cache-path",
+        "serving-rope-window-handoff",
         "serving-rows-and-history",
         "subsection-5-qvstci",
         "native-inference-engine-lab",
@@ -973,13 +1003,15 @@
         "subsection-5-kha210",
         "subsection-5-3vclab",
         "agent-crash-windows-run",
-        "mcp-http-cancellation-receipt"
+        "mcp-http-cancellation-receipt",
+        "mcp-receipt-before-checkpoint"
       ],
       "visible_targets": [
         "subsection-5-kha210",
         "subsection-5-3vclab",
         "mcp-http-cancellation-receipt",
-        "agent-crash-windows-run"
+        "agent-crash-windows-run",
+        "mcp-receipt-before-checkpoint"
       ]
     },
     {

@@ -275,7 +275,8 @@
  '参考为Y=[11,4]，加一次偏置[12,5]；局部1与−2先求和再ReLU得到0，先ReLU再求和得到1。有效batch为64，rank0的TP组[0,1]、DP组[0,4]。形状、数值、依赖、数据副本与组成员各核对一项，错在哪里就回到对应计算关系重做。')
  ]);
 
- const contextAttention=articles.find(a=>a.id==='flash-attention-io').sections;
+ const contextLesson=articles.find(a=>a.id==='flash-attention-io');
+ const contextAttention=contextLesson.sections;
  contextAttention[6][1]+='<h3 id="context-parallel-attention">同一序列怎样分给两个进程</h3>'+
  p('上面的缓存例子用逻辑位置判断谁能读取谁。把同一条长序列沿位置轴分给多个进程，也要保留这个判断。这种切法叫上下文并行（Context Parallelism，CP）。数据并行分不同样本，张量并行可以分同一层的特征。这里分的是同一条样本的位置。',
  '用四个位置做小题。rank 是进程在组里的编号。rank 0 持有位置 0、1，rank 1 持有位置 2、3，各自生成本地的 Q、K、V。每个进程只计算自己持有的 Q 行并保留对应输出。它的 Q 可能需要读取其他进程的 K、V，因为可见范围仍由原序列里的位置决定。')+
@@ -328,6 +329,27 @@
  ])+
  p('在实验目录运行 <code>python3 -B record.py --output replay.json</code>，依次复跑两组正例和一组拒绝对照。查看前向收到的包头、反向返回的包头、输出误差和填充梯度。这个对照验证本机 CPU/Gloo 的数值与收发关系。完整参照仍在每个进程里建立，设备显存与并行效率另需测量。')+
  '<p class="practice-links"><a href="/labs/ragged-ring.zip" download>下载不等长分片实验 ↓</a> · <a href="/labs/ragged-ring/README.md">复跑步骤</a> · <a href="/labs/ragged-ring/validation.json">实际记录与源码摘要</a> · <a href="/article/training-communication/#ragged-ring-communication">从包形状计算通信字节</a></p>';
+
+ contextAttention[7][1]+=
+ '<details class="progressive-detail"><summary>实跑 · Apple GPU 怎样合并各块的统计</summary>'+
+ '<h3 id="native-metal-online-attention">大分数出现在后面的块，旧块统计怎样改写</h3>'+
+ p('把前面的一行 Softmax 扩到 2053 个预先给定的分数，每项对应一条两维的 V。用两种块宽 128 和 257，再分别开放前 1025 项和全部 2053 项。索引 1537 的分数是 36，V 是 [7,−3]。短前缀看不到它，行最大值仍为 2.25。长前缀能读到它，最大值升到 36。')+
+ trainingFigure('metal-attention-late-peak','块宽 128 的实际输出。只有可见范围包含高分项时，省略旧尺度的反例才会暴露。')+
+ p('Metal 第一段内核分别算每块的最大值 m、指数和 z、以及指数加权的两维 V 和 u。第二段从左到右合并块。每次最大值变化，先把旧的 z、u 乘 exp(旧最大值−新最大值)，把新块统计也换到同一个基准，再相加。最后用 u 除以 z。这里旧块缩放是 exp(2.25−36)，约为 2.20×10⁻¹⁵。')+
+ trainingCode('合并块时，分母和加权和一起改尺度','METAL',`const float next_maximum = max(maximum, part.x);
+const float old_scale = shape.omit_old_scale ? 1.0f : exp(maximum - next_maximum);
+const float new_scale = exp(part.x - next_maximum);
+denominator = denominator * old_scale + part.y * new_scale;
+weighted = weighted * old_scale + part.zw * new_scale;
+maximum = next_maximum;`)+
+ table(['可见范围','宽 128 / 257 的可见块数','两种块宽对 CPU 参考的最大误差'],[
+  ['前 1025 项','9 / 4','约 5.11×10⁻⁹'],
+  ['全部 2053 项','17 / 8','约 7.44×10⁻¹²']
+ ])+
+ p('长前缀下，两种块宽都得到 [7,−3]。只把旧缩放改为 1，宽 128 的输出变为约 [0.0205,−0.0152]，宽 257 也偏离。短前缀的第一块已经取得整行最大值，省去旧缩放仍会通过。写验收时要让较大的分数出现在后面的可见块，才能抓住这种错误。')+
+ p('解压后执行 <code>swift -O online_attention.swift &gt; replay.json</code>。从 <code>tile_probes</code> 对照尾块和高分块，再比较 <code>output</code> 与 <code>no_old_rescale_output</code>。本次在 Apple M4 Pro 上执行 FP32 分块归一化与 V 汇总。QK 乘法、融合内核、反向和性能各有单独的验证条件。')+
+ '<p class="practice-links"><a href="/labs/metal-online-attention.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/metal-online-attention/kernels.metal">两个 Metal 内核</a> · <a href="/labs/metal-online-attention/validation.json">各块统计与实际输出</a> · <a href="/article/operator-profiling/#native-metal-softmax">回看一整行的 GPU Softmax</a></p></details>';
+ contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
  collective.updated='2026.11.09';

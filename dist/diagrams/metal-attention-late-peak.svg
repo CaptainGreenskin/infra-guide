@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 351" role="img" aria-labelledby="title desc">
+<title id="title">新块出现大分数时，旧块统计怎样合并</title>
+<desc id="desc">可见长度 1025 时看不到索引 1537 的分数 36，最大值为 2.25。可见长度 2053 时，最大值升到 36。先把旧指数和与加权和乘 exp(2.25 减 36)，再加新块。正确输出约为 7、负 3，省去旧尺度后约为 0.0205、负 0.0152。</desc>
+<metadata>{"record":"labs/metal-online-attention/validation.json","tile_width":128,"prefixes":[1025,2053],"maxima":[2.25,36],"peak_index":1537,"outputs":[["-0.0003","-0.0038"],["7.0000","-3.0000"]],"no_old_rescale":["0.0205","-0.0152"]}</metadata>
+<rect width="460" height="351" rx="12" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" fill="#23314b" text-anchor="middle">
+ <text x="230" y="32" font-size="19" font-weight="650">可见范围扩大，行最大值变了</text>
+ <rect x="24" y="51" width="412" height="58" rx="7" fill="#fff" stroke="#b9c9ed"/>
+ <text x="230" y="75" font-size="15" font-weight="650">可见前 1025 项 · 最大值 2.25</text>
+ <text x="230" y="96" font-size="14">输出约 [−0.0003, −0.0038]</text>
+ <path d="M230 110v22m-5-5 5 5 5-5" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <rect x="24" y="137" width="412" height="71" rx="7" fill="#edf2ff" stroke="#a1b5eb"/>
+ <text x="230" y="161" font-size="15" font-weight="650">可见 2053 项 · 位置 1537 的分数 36 入场</text>
+ <text x="230" y="184" font-size="14">旧指数和与加权和乘 exp(2.25 − 36)</text>
+ <path d="M124 209v32m-5-5 5 5 5-5m207-27v32m-5-5 5 5 5-5" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <rect x="24" y="245" width="200" height="72" rx="7" fill="#fff" stroke="#b9c9ed"/>
+ <rect x="236" y="245" width="200" height="72" rx="7" fill="#fff7ee" stroke="#dabda0"/>
+ <text x="124" y="272" font-size="15" font-weight="650">统一尺度后再相加</text>
+ <text x="124" y="297" font-size="16">输出 [7, −3]</text>
+ <text x="336" y="272" font-size="15" font-weight="650">省去旧块的缩放</text>
+ <text x="336" y="297" font-size="15">约 [0.0205, −0.0152]</text>
+ <text x="230" y="337" font-size="13" fill="#566581">Apple M4 Pro · 每块 128 项的实际记录</text>
+</g>
+</svg>

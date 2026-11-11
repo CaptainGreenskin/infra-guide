@@ -1,0 +1,273 @@
+{
+  "cases" : [
+    {
+      "negative_tail_guards" : [
+        -777,
+        -777,
+        -777,
+        -777
+      ],
+      "positive_tail_guards" : [
+        -777,
+        -777,
+        -777,
+        -777
+      ],
+      "queries" : [
+        {
+          "active_tiles" : 9,
+          "denominator" : 241.96205139160156,
+          "dense_reference" : [
+            -0.00031158595055174497,
+            -0.0037669176367895567
+          ],
+          "masked_tiles" : 8,
+          "max_abs_error" : 2.2334309336311496e-09,
+          "maximum" : 2.25,
+          "no_old_rescale_max_abs_error" : 2.2334309336311496e-09,
+          "no_old_rescale_output" : [
+            -0.00031158371712081134,
+            -0.0037669192533940077
+          ],
+          "output" : [
+            -0.00031158371712081134,
+            -0.0037669192533940077
+          ],
+          "prefix" : 1025,
+          "tile_probes" : [
+            {
+              "denominator" : 29.886436462402344,
+              "maximum" : 2.25,
+              "positions" : 128,
+              "tile" : 0,
+              "weighted_sum" : [
+                0.59426218271255493,
+                -0.58585596084594727
+              ]
+            },
+            {
+              "denominator" : 1,
+              "maximum" : 0.75,
+              "positions" : 1,
+              "tile" : 8,
+              "weighted_sum" : [
+                0.375,
+                -1.125
+              ]
+            }
+          ],
+          "weighted_sum" : [
+            -0.075391434133052826,
+            -0.91145151853561401
+          ]
+        },
+        {
+          "active_tiles" : 17,
+          "denominator" : 1,
+          "dense_reference" : [
+            6.9999999999925651,
+            -2.9999999999968128
+          ],
+          "masked_tiles" : 0,
+          "max_abs_error" : 7.4349415513097483e-12,
+          "maximum" : 36,
+          "no_old_rescale_max_abs_error" : 6.9795051589533843,
+          "no_old_rescale_output" : [
+            0.020494841039180756,
+            -0.015158277004957199
+          ],
+          "output" : [
+            7,
+            -3
+          ],
+          "prefix" : 2053,
+          "tile_probes" : [
+            {
+              "denominator" : 29.886436462402344,
+              "maximum" : 2.25,
+              "positions" : 128,
+              "tile" : 0,
+              "weighted_sum" : [
+                0.59426218271255493,
+                -0.58585596084594727
+              ]
+            },
+            {
+              "denominator" : 1,
+              "maximum" : 36,
+              "positions" : 128,
+              "tile" : 12,
+              "weighted_sum" : [
+                7,
+                -3
+              ]
+            },
+            {
+              "denominator" : 1.3228005170822144,
+              "maximum" : 2.25,
+              "positions" : 5,
+              "tile" : 16,
+              "weighted_sum" : [
+                0.00099725241307169199,
+                0.55290186405181885
+              ]
+            }
+          ],
+          "weighted_sum" : [
+            7,
+            -3
+          ]
+        }
+      ],
+      "scratch_bytes" : 544,
+      "tile_width" : 128,
+      "tiles_per_query" : 17
+    },
+    {
+      "negative_tail_guards" : [
+        -777,
+        -777,
+        -777,
+        -777
+      ],
+      "positive_tail_guards" : [
+        -777,
+        -777,
+        -777,
+        -777
+      ],
+      "queries" : [
+        {
+          "active_tiles" : 4,
+          "denominator" : 241.96177673339844,
+          "dense_reference" : [
+            -0.00031158595055174497,
+            -0.0037669176367895567
+          ],
+          "masked_tiles" : 4,
+          "max_abs_error" : 5.1090641058071373e-09,
+          "maximum" : 2.25,
+          "no_old_rescale_max_abs_error" : 5.1090641058071373e-09,
+          "no_old_rescale_output" : [
+            -0.00031158089404925704,
+            -0.0037669227458536625
+          ],
+          "output" : [
+            -0.00031158089404925704,
+            -0.0037669227458536625
+          ],
+          "prefix" : 1025,
+          "tile_probes" : [
+            {
+              "denominator" : 59.707408905029297,
+              "maximum" : 2.25,
+              "positions" : 257,
+              "tile" : 0,
+              "weighted_sum" : [
+                0.24501800537109375,
+                0.68481487035751343
+              ]
+            },
+            {
+              "denominator" : 60.642055511474609,
+              "maximum" : 2.25,
+              "positions" : 254,
+              "tile" : 3,
+              "weighted_sum" : [
+                -0.30339702963829041,
+                -1.5546448230743408
+              ]
+            }
+          ],
+          "weighted_sum" : [
+            -0.075390666723251343,
+            -0.91145133972167969
+          ]
+        },
+        {
+          "active_tiles" : 8,
+          "denominator" : 1,
+          "dense_reference" : [
+            6.9999999999925651,
+            -2.9999999999968128
+          ],
+          "masked_tiles" : 0,
+          "max_abs_error" : 7.4349415513097483e-12,
+          "maximum" : 36,
+          "no_old_rescale_max_abs_error" : 6.97381410747023,
+          "no_old_rescale_output" : [
+            0.026185892522335052,
+            -0.002970418892800808
+          ],
+          "output" : [
+            7,
+            -3
+          ],
+          "prefix" : 2053,
+          "tile_probes" : [
+            {
+              "denominator" : 59.707408905029297,
+              "maximum" : 2.25,
+              "positions" : 257,
+              "tile" : 0,
+              "weighted_sum" : [
+                0.24501800537109375,
+                0.68481487035751343
+              ]
+            },
+            {
+              "denominator" : 1,
+              "maximum" : 36,
+              "positions" : 257,
+              "tile" : 5,
+              "weighted_sum" : [
+                7,
+                -3
+              ]
+            },
+            {
+              "denominator" : 60.53741455078125,
+              "maximum" : 2.25,
+              "positions" : 254,
+              "tile" : 7,
+              "weighted_sum" : [
+                -2.2307660579681396,
+                1.0498718023300171
+              ]
+            }
+          ],
+          "weighted_sum" : [
+            7,
+            -3
+          ]
+        }
+      ],
+      "scratch_bytes" : 256,
+      "tile_width" : 257,
+      "tiles_per_query" : 8
+    }
+  ],
+  "environment" : {
+    "device" : "Apple M4 Pro",
+    "float_math" : "precise",
+    "metal_language" : "3.0",
+    "os" : "Version 26.2 (Build 25C56)"
+  },
+  "fixture" : {
+    "length" : 2053,
+    "peak_index" : 1537,
+    "prefixes" : [
+      1025,
+      2053
+    ],
+    "threads" : 32,
+    "value_width" : 2
+  },
+  "schema" : "infra-metal-online-attention-v1",
+  "source_sha256" : {
+    "kernels.metal" : "3d99be69b943a9235686a5d498135e6c01220e4c9c44eb5c84f76aa5747ea849",
+    "online_attention.swift" : "7ed0cf2fb8c675ad0dbd3745ebe2928fc3830f2d00b54b9c038f414ac54670b1",
+    "README.md" : "914428042ebe80f706f137bef53227b5e0f6c8f090b6b2a8b26783a7096ba898"
+  },
+  "status" : "passed"
+}

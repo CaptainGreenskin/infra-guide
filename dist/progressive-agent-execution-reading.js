@@ -272,6 +272,14 @@
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
   finish(a,before);a.updated='2026.11.09';
-  a.sections[8][1]+=p('选读 <a href="/article/durable-workflows/#mcp-commit-recovery">LangGraph 与 MCP 的原生恢复实验</a>。换成发布报告的独立任务，在工具回执已收到、工作流节点尚未保存结果时杀进程，再用接收库核对恢复后发布了几份。');
+  a.sections[8][1]+=
+   h('mcp-receipt-before-checkpoint','回执已收到，检查点写到哪一步')+
+   p('再做一次独立的发布报告实验。前面的分库 HTTP 实验用操作 <code>logical-add-1</code> 给账户增加了 37。这次用本机 MCP 工具发布 <code>report-A/v3</code>，金额是 42。打开<a href="/labs/mcp-recovery/validation.json">本次发布的原始记录</a>，先只读 <code>cases.stable.cut</code>，看工作进程被终止前的状态。')+
+   table(['在 cut 中查找','核对什么'],[
+    ['<code>observed_mcp.receipt</code>','工具已经返回 <code>report-A:publish</code> 的回执，<code>amount</code> 是 42，<code>revision</code> 是 1。'],
+    ['<code>receiver.receipts[0]</code>','接收库里的回执与刚收到的回执逐字段相同，<code>receiver.reports</code> 里有一份报告。'],
+    ['<code>checkpoint.values</code> 与 <code>checkpoint.next</code>','检查点只保存了 <code>intent</code>，没有 <code>receipt</code>，下一步仍是 <code>["publish"]</code>。']
+   ])+
+   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>');
  }
 })();
