@@ -1,0 +1,103 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "2cdd2adc9938e3bafcfafc8f147ab760482784fc",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_READING_LOCATION_AND_FIELD_EVIDENCE_2026-11-12.json": "7a09acfe0554e28759485b5b9b245f32c334cdb60834fa67d924ccdcf7cb42bf"
+  },
+  "source_revisions": {
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "97289c6ce1eac0be950752c0ca083000e5edffc81b917acc79449eb03f656e4f",
+      "reviewed_sha256": "83546fae8b872bfc4eef32580f79db45155e1227171ee9c8663ffba0b3308c3f",
+      "scope": "Compare rule state, route matching, and actual receiver deliveries from the same native alerts."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "71569d775bc591e17c4a358b2aff67477405403cc895c578760069ea396e46eb",
+      "reviewed_sha256": "43f22878f5df74ab08b8b3c86ccaf364f687244a161c7d00ef0fe3af3cf7f4d9",
+      "scope": "Follow workgroup synchronization into an actual kernel with fewer elements than lanes."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "33efd5e4718077c0a5dc7142a1d604eb67a6de1bdc2ff0ff380295ba5db5bf03",
+      "reviewed_sha256": "bddbd3d2fd5302d6b01370b0adbb5264884df9f804d613d4eefe73adf7bded80",
+      "scope": "Use a simple uniform row to verify the exact partial-group result on Metal."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "817158230f51e7533e9481517e0cb4ec5061d2c2b38c6ce6a70ea26b11dfe7eb",
+      "reviewed_sha256": "ab29923e4efd8afc4138c6d8f5d1a28c52556c50de7a99493e0dbb19eddc021a",
+      "scope": "Follow a trace without an inter-process link to the canonical operation in the receiver ledger."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "773e9bfaea152d6c2c2e2826f58c17daa29da2957d7afa6ab132a14a22d2c39e",
+      "reviewed_sha256": "3bc729ab7acdf99f9e307e6fa61a85d57df8ae429b9c4811130c9271200954ca",
+      "scope": "Add the exact trace-to-receipt exercise to the Agent platform role gate."
+    },
+    "scripts/check-alert-notification.cjs": {
+      "previous_sha256": "53d28eabbce3201328d1d035ad836fb95dd25a7ae0e11926bd469a1b79df1fe0",
+      "reviewed_sha256": "8ff17fb0c25029e0fd8772d910f7de7d81a766d1cc1dc428f8bfcfe378f535c5",
+      "scope": "Run the chapter program on the native Prometheus and Alertmanager record."
+    },
+    "scripts/check-metal-softmax.cjs": {
+      "previous_sha256": "60d0ac44c788c283194d04ff26dd2ee296a87903e564bbcd3c51deec48f7d056",
+      "reviewed_sha256": "60d6a1d54b327f3a673ead2bd913f796ae4c16dda51261fe5134d1aa6bef92c3",
+      "scope": "Check the exact short-row and tail-guard numbers against the verified GPU execution."
+    },
+    "scripts/check-mcp-trace-reentry.cjs": {
+      "previous_sha256": "4a9559b5300db9540f67cc63071ed65d25ccdb1e6d13ef6e829d7cd245216cc1",
+      "reviewed_sha256": "d573c9a1a307bfb290d94f2e2d0556db4cae54531ffce6cb07df51dac84cef9f",
+      "scope": "Run the rendered read-only exercise against recorded and freshly replayed MCP/OTel results."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "3bd0af9b24b0ec66131a85611b96ab41196c9cdf44cbfb41eb2e5c4fbe886c36",
+      "reviewed_sha256": "f5ef83fc79432ba1ac6007d91c2885bbce7b342bb80dc67e9aaa88d541009c48",
+      "scope": "Verify the exact trace exercise entry and its role context."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "9b2f57bdbbd216b1ff7ba4affbfbff331b65a9380cf7be4781043ccd80a47e1a",
+      "reviewed_sha256": "08d261ce503ceba98bf93a28100d68a3e4349dcd16240eba7e80cda64779e751",
+      "scope": "Fingerprint the revised lessons and their search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "8c929df8c23466ed497f4a573681889b07f22db3bec075f9744f2863c1ef6343",
+      "reviewed_sha256": "3aa251477c2075e0e06592cbd9dce73fc837fa8b523abf0a79e5c8ccbb3005cc",
+      "scope": "Fingerprint the revised role gate and reading anchors."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "d535eea07d97939a81d36b59d8e179168317dbb0ab6f2c6304e8ef0391580941",
+      "reviewed_sha256": "0d81dd5d8541a1d71e5e55403228825b7bc16077b1bab32d39def06f4e479cfe",
+      "scope": "Record the exact native alert and trace exercises."
+    },
+    "docs/CONTENT_OPERATOR_ALERT_AND_TRACE_PRACTICE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "64258cbb88baa298ff7b2bc91c2c01ba5deced277aeca9857f391eef2c3d7b33",
+      "scope": "Record the four revised chapter bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "f2bad5e7cac8c4249dfbdcbfc382bf91db346e4f3666180bc6756930590a6ff1",
+      "reviewed_sha256": "5ef3cc0d26676bb00a482a0a154bc260cdb06e1a11853a6cf445cec41ba0006a",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e61c98cf51edc16980c1ba04faf92bc94d867db434c73da7410480e3e7136de4",
+      "reviewed_sha256": "76fe3e9147d3f7fa94e7a0c420a4dd49a2c1f5da886016bcfbffb9e5a16edc7c",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "2cdd2adc9938e3bafcfafc8f147ab760482784fc",
+    "chapters": 78,
+    "changed_bodies": [
+      "slo",
+      "gpu-execution",
+      "operator-profiling",
+      "agent-observability"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "slo": 1,
+      "agent-observability": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

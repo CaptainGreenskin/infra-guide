@@ -6842,7 +6842,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  p('先沿一次正常调用走通传播。执行器在根跨度 s0 内创建 CLIENT 跨度 c1，并把 c1 设为当前跨度；inject 读取当前上下文，把它编码进 HTTP 的 traceparent 头。工具服务收到请求后 extract 提取远端上下文，以它为父创建 SERVER 跨度 s1。s1 继续使用原 trace_id，同时生成自己的 span_id，其 parent_id 等于 c1 的 span_id。s0、c1、s1 是教学占位名，真实编号由 SDK 生成。',
  '工具按正文中的 op_id 和 total 处理发布，执行器取得回执后读取产物，再记录验收结果。一次业务尝试于是有两端视角：CLIENT 覆盖调用方看到的往返，SERVER 覆盖服务端处理区间。后者通常包含在前者的等待中，二者的持续时间不能直接相加当作用户时延。')+
  fold('传播核心片段：先注入，再提取并建立子跨度',c1[0]+p('这是传播机制的简写，其中 execute_authorized_operation 是说明性占位函数；第 8 节完整程序直接在 Handler.do_POST 中执行 SQLite 操作。HTTP 正文携带 op_id 与 total，traceparent 携带追踪关联，资源服务仍使用自己的业务身份和授权规则。'))+
- p('业务 task_id 与 op_id 独立于追踪编号：长任务恢复后可以进入另一条 trace，仍关联原任务与操作。')+fold('多服务与共享批处理的额外关联',p('service.name 标明遥测由哪个服务产生，跨度属性描述这次操作。若共享批处理与多个任务有关，可通过 span link 记录额外关联；一个跨度的父节点仍只有一个。第 8 节再介绍创建与导出这些记录的 SDK 对象。')),
+ p('业务 task_id 与 op_id 独立于追踪编号：长任务恢复后可以进入另一条 trace，仍关联原任务与操作。<a href="/article/agent-observability/#trace-reentry-ledger-lookup">拿恢复进程的追踪号查账</a>，可以从接收方记录找回此前的尝试与实际报告。')+fold('多服务与共享批处理的额外关联',p('service.name 标明遥测由哪个服务产生，跨度属性描述这次操作。若共享批处理与多个任务有关，可通过 span link 记录额外关联；一个跨度的父节点仍只有一个。第 8 节再介绍创建与导出这些记录的 SDK 对象。')),
 
  '<div class="mechanism-core" id="agent-trace-effect-boundary">'+
  h('runtime-attempts-and-effects','从一次读取 503 数到一份报告')+
@@ -6991,7 +6991,31 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('顺着源码读三处。<code>run_client()</code> 从检查点读出旧跨度，用 <code>Context()</code> 启动新根并传入 <code>links</code>。HTTP 请求钩子给实际的 <code>tools/call</code> 填入当前发送跨度的请求头，服务端在 <code>asgi()</code> 提取这个父节点。<code>publish()</code> 以 <code>op</code> 为主键，同一个 SQLite 事务里读取原回执并写入尝试。三次实际请求都有接收跨度，数据库只留下一个报告。')+
   p('运行 <code>python -B trace_reentry.py replay</code> 后，先在追踪记录里核对 B 的链接指向 A，再核对每次接收的父号等于本次发送的跨度号。最后直接查 SQLite 的 <code>reports</code> 和 <code>attempts</code>，应分别为 1 行和 3 行。这里观测丢了链接时仍可按操作号找业务记录，正好能与<a href="/article/durable-workflows/">持久工作流</a>一章的恢复条件对照。')+
-  '<p class="practice-links"><a href="/labs/mcp-trace-reentry/trace_reentry.py">查看完整源码</a> · <a href="/labs/mcp-trace-reentry.zip" download>下载实验 ↓</a> · <a href="/labs/mcp-trace-reentry/README.md">分步复跑</a> · <a href="/labs/mcp-trace-reentry/trace-record.json">真实跨度和 HTTP 请求头</a> · <a href="/labs/mcp-trace-reentry/validation.json">查看验收结果</a></p>';
+  '<p class="practice-links"><a href="/labs/mcp-trace-reentry/trace_reentry.py">查看完整源码</a> · <a href="/labs/mcp-trace-reentry.zip" download>下载实验 ↓</a> · <a href="/labs/mcp-trace-reentry/README.md">分步复跑</a> · <a href="/labs/mcp-trace-reentry/trace-record.json">真实跨度和 HTTP 请求头</a> · <a href="/labs/mcp-trace-reentry/validation.json">查看验收结果</a></p>'+
+  h('trace-reentry-ledger-lookup','只拿到最后一条追踪，怎样查回第一次写入')+
+  p('第三轮故意关闭跨度链接。只打开这条追踪时，先用它的追踪号在接收方的尝试表 <code>attempts</code> 找到原操作号，再沿原操作号查全部尝试和报告表 <code>reports</code>。这条路能找回提交事实。缺失的跨度链接仍需按追踪记录排查。')+
+  fold('展开只读查账程序',p('解压上面的实验包，将代码存为 <code>check_receipt.py</code>。在 <code>trace-record.json</code> 与 <code>ledger.sqlite</code> 所在目录运行 <code>python3 check_receipt.py</code>。也可以进入自己复跑生成的 <code>replay</code> 目录执行。')+
+   trainingCode('从最后一次运行的追踪号查到原回执','PYTHON',`import json
+import sqlite3
+from contextlib import closing
+from pathlib import Path
+
+record = json.loads(Path("trace-record.json").read_text(encoding="utf-8"))
+last_run = next(span for span in record["clients"]["resume-unlinked"]["spans"]
+                if span["name"] == "agent.report.run")
+trace_id = last_run["context"]["trace_id"][2:]  # 账本省略 0x
+
+with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
+    op, = db.execute("SELECT op FROM attempts WHERE trace_id = ?", (trace_id,)).fetchone()
+    print(op)
+    attempts = db.execute(
+        "SELECT number, outcome FROM attempts WHERE op = ? ORDER BY number", (op,))
+    for number, outcome in attempts:
+        print(number, outcome)
+    total, receipt = db.execute(
+        "SELECT total, receipt FROM reports WHERE op = ?", (op,)).fetchone()
+    print(total, receipt)`)+
+   p('实际输出依次是 <code>report-A/v3:publish</code>、<code>1 committed</code>、<code>2 reused</code>、<code>3 reused</code> 和 <code>42 receipt-report-A-v3</code>。第一笔写入和两次复用各留一条尝试，报告表只留一份。本例每条追踪只有一次工具调用。有多个调用时，再用跨度号或尝试编号定位。'));
  a.desc='从任务、步骤和尝试认识观测对象，沿正常调用理解追踪传播，再计算等待、总体、成本与采样偏差。';
  a.intro=a.desc;a.updated='2026.11.12';
 })();
@@ -9435,6 +9459,7 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
   'const float maximum = maxima[0];'
  ].join('\n'))+
  p('第一轮由前 32 个线程各合并两项，随后减半，直到 <code>maxima[0]</code> 保存全行最大值。屏障等全组完成这一轮写入。指数和也逐轮合并，使用另一个数组 <code>sums</code>，这样读最大值时不会被下一阶段覆盖。两个数组各占 64×4 字节。')+
+ p('看 <code>validation</code> 中宽度为 31 的五行。第一行的 31 个分数相等，减最大值后，每个有效位置的指数都是 1。没有列可处理的线程只给指数和贡献 0，所以分母仍为 31。GPU 回读的第一项约为 0.0322581，与 1/31 相符。这一形状检查了 155 个输出，结果缓冲区尾部的八个 −777 哨兵也保持原值。<a href="/article/gpu-execution/#section-5">回到块内同步与线程资源 →</a>')+
  p('两版在 Apple M4 Pro 上各逐项核对 1,118,062 个概率，并用 CPU 双精度结果独立验证。最大逐项误差小于 7×10⁻⁸，输出后的八个 −777 均未改变。另用同一 GPU 对 [512,512,512] 直接取指数而不减最大值，得到 3 个非有限输出。稳定版在同样的平坦行上得到约 1/3。')+
  table(['相同输入形状','每线程一行 · μs','每组一行 · μs'],[
   ['1024×64','76.42（76.00–77.46）','32.54（32.38–241.79）'],
@@ -9839,6 +9864,12 @@ ANALYZE TABLE innodb_lab.orders;`)+
  '参考为20块、5,120个逻辑线程、119个受保护编号，最低逻辑读写40,008字节。覆盖与边界、字节单位、执行层次、失败机制和计时边界各1分。再把输出改成原地更新，检查每项是否仍只依赖自己的旧值，以及是否有别的工作同时读写这份输入。')
  ]);
 
+ const execution=articles.find(a=>a.id==='gpu-execution');
+ const resourceStart='<p>复用也占资源。';
+ if(!execution.sections[4][1].includes(resourceStart))throw Error('Missing threadgroup synchronization handoff');
+ execution.sections[4][1]=execution.sections[4][1].replace(resourceStart,
+  p('逐项加法可以跳过越界线程的读写。若一组线程要把局部结果合成一个值，还得安排没有数据的线程怎样参加同步。Apple M4 Pro 的 Softmax 实跑用 64 个线程处理一行 31 列，33 个线程没有列可处理。它们跳过输入输出，仍把负无穷和 0 分别写进组内的最大值和指数和数组，并与其余线程一起经过屏障。<a href="/article/operator-profiling/#native-metal-softmax">沿内核与 GPU 回读检查这 31 列 →</a>')+resourceStart);
+
  rewrite('roofline-model',9,old=>[
  p('执行需要做计算，也需要取得数据。Roofline（屋顶线）用这两种需求和设备供给估计性能上限：先数本次浮点工作，再列要跨某个存储边界搬运的字节，最后分别除以匹配的处理速度。它提供一份能被实际测量检查的预算。',
  '本章只看无偏置线性变换Y=XW。输入X为[M,K]，权重W为[K,N]，输出Y为[M,N]；M是输入行数，K是每行输入特征数，N是输出特征数。一个Y中的数由K对输入与权重相乘后累加得到。按一次乘法加一次加法计2次浮点操作，工作量F=2MKN，单位FLOP；每秒做多少FLOP才是速率FLOP/s。',
@@ -10171,7 +10202,7 @@ ddp = nn.parallel.DistributedDataParallel(model, device_mesh=mesh["dp"])`)+
  '<p class="practice-links"><a href="/labs/dp-tp-mesh.zip" download>下载程序与记录 ↓</a> · <a href="/labs/dp-tp-mesh/README.md">复跑步骤 →</a> · <a href="/labs/dp-tp-mesh/validation.json">查看各进程的分组、梯度和参数 →</a> · <a href="https://docs.pytorch.org/tutorials/recipes/distributed_device_mesh.html">PyTorch DeviceMesh 指南 ↗</a></p>';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
- warpMemory.updated='2026.11.10';
+ warpMemory.updated='2026.11.12';
  warpMemory.sections[3][1]+=
  '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
  p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+
@@ -13641,7 +13672,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   '<ol><li>告警活跃时，在 Prometheus 查询 <code>/api/v1/alerts</code>，确认告警名、标签和 <code>state</code>。<code>firing</code> 表示这组标签的规则条件已持续满足。</li>'+
   '<li>在同一台 Prometheus 查询 <code>/api/v1/alertmanagers</code>。<code>activeAlertmanagers</code> 列出当前发现并保留的目标地址。找不到预期地址，先查配置和服务发现。地址在列表中时，继续检查是否发到了那里。</li>'+
   '<li>在对应的 Alertmanager 查询 <code>/api/v2/alerts</code>，对照告警名、标签和时段。发送前若改写了标签，就按发出的标签查。找不到活跃告警时，回到 Prometheus 查发送错误。找到后，先查 <code>silencedBy</code>（人为静默）和 <code>inhibitedBy</code>（因另一条告警而抑制），再看匹配的路由和接收方。最后查测试接收端的入站请求或值班平台的事件记录，确认是否送达。</li></ol>'+
-  '<p>Prometheus 的 <code>for</code> 决定条件持续多久才触发。Alertmanager 的 <code>group_wait</code> 决定新分组的首条通知等多久。两段等待从不同事件开始计时。</p>'+
+  '<p>Prometheus 的 <code>for</code> 决定条件持续多久才触发。Alertmanager 的 <code>group_wait</code> 决定新分组的首条通知等多久。两段等待从不同事件开始计时。<a href="/article/slo/#alert-notification-record-check">用原始 API 响应和入站记录核对这条路径 →</a></p>'+
   '<details><summary>在测试环境用 curl 读取三个接口</summary><p>将 <code>PROM</code> 和 <code>AM</code> 设为测试环境中两个服务的基址。</p><p><code>curl -fsS "$PROM/api/v1/alerts"</code><br><code>curl -fsS "$PROM/api/v1/alertmanagers"</code><br><code>curl -fsS "$AM/api/v2/alerts"</code></p></details>'+
   '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>'+
   '<h3 id="native-alert-notification">实跑：三条告警都触发，收件端收到了什么</h3>'+
@@ -13651,7 +13682,45 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   '<p>最后看 <code>long</code>。收到触发通知后才把输入恢复成 0，接收端随后又收到恢复通知。原始 HTTP 请求体里的两条状态依次是 <code>firing</code> 和 <code>resolved</code>，都进入 <code>/reports</code>。默认路由 <code>/fallback</code> 没收到请求。先核对实际入站，再判断通知送达。</p>'+
   trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
   '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
-  '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
+  '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>'+
+  '<h3 id="alert-notification-record-check">按 case 把触发、路由和收件对起来</h3>'+
+  '<p>看原始记录的相对时间。程序在 8478 ms 查询到 Alertmanager 已有三条告警，首条通知在 13455 ms 到达接收端，两次观测相差 4977 ms。<code>group_wait</code> 从分组收到第一条告警开始，而 <code>alertmanager_ingress.at_ms</code> 是查询时刻。读数可以用来排序，测首发等待还需要分组开始时的记录。</p>'+
+  '<p>把下面的代码保存为 <code>check_notification.py</code>，和实验包中的 <code>validation.json</code> 放在一起，运行 <code>python3 -B check_notification.py validation.json</code>。程序先用 <code>case</code> 对齐规则和 Alertmanager 的标签，再从接收端请求体找每条告警，分开核对匹配的接收方与实际送达。</p>'+
+  trainingCode('用标准库核对三条告警最后到哪一步','PYTHON',`import json
+import sys
+from pathlib import Path
+
+record = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+firing = record["prometheus_firing"]["alerts"]
+ingress = record["alertmanager_ingress"]["alerts"]
+after_wait = {row["labels"]["case"]: row for row in record["after_group_wait"]["alerts"]}
+assert "short" not in {row["labels"]["case"] for row in record["short_cleared"]["alerts"]}
+
+received = {}
+for event in record["receiver_events"]:
+    for alert in event["payload"]["alerts"]:
+        case = alert["labels"]["case"]
+        assert alert["labels"] == ingress[case]["labels"]
+        received.setdefault(case, []).append((event["path"], alert["status"]))
+
+expected = {
+    "short": ("absent", []),
+    "silenced": ("suppressed", []),
+    "long": ("active", [("/reports", "firing"), ("/reports", "resolved")]),
+}
+assert set(firing) == set(ingress) == set(expected)
+for case, (expected_state, expected_receipts) in expected.items():
+    assert firing[case]["state"] == "firing"
+    assert firing[case]["labels"] == ingress[case]["labels"]
+    assert ingress[case]["receivers"] == [{"name": "reports"}]
+    status = after_wait.get(case, {}).get("status", {})
+    state = status.get("state", "absent")
+    if case == "silenced":
+        assert record["silence_id"] in status["silencedBy"]
+    receipts = received.get(case, [])
+    assert (state, receipts) == (expected_state, expected_receipts)
+    print(case, state, receipts)`)+
+  '<p>同一规则的三条告警都进入 <code>firing</code>，Alertmanager 都选了 <code>reports</code>。首发等待后的快照里，<code>short</code> 已离开活跃列表，<code>silenced</code> 仍带本次静默 ID。只有 <code>long</code> 在收件记录里有触发与恢复两次入站。</p>';
  a.updated='2026.11.12';
 })();
 
@@ -15791,7 +15860,7 @@ const learningProfiles={
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
-    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
@@ -17401,5 +17470,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="0b73d06060deec45f029a93d5e48fcc6a51f57102f2dfa33059786d6250f3333";
+const staticReadingVersion="cef837e9424b99392a2d2ad66655598942b029461e8e48e67ecb4e5d759b2532";
 

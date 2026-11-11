@@ -193,6 +193,16 @@ for (const {rows, width, median_gpu_us, range_gpu_us} of record.benchmarks) {
  assert(practice.includes('<tr><td>' + [rows + '×' + width, ...cells].join('</td><td>') + '</td></tr>'),
   'display the recorded median and range for each fixed input');
 }
+const narrow = record.validation.find(item => item.width === 31);
+const narrowGroup = narrow.kernels.group;
+const execution = page('article/gpu-execution').split('id="section-5"')[1].split('id="section-6"')[0];
+assert(execution.includes(`${threads} 个线程处理一行 ${narrow.width} 列，${threads - narrow.width} 个线程没有列可处理`));
+assert(execution.includes('负无穷和 0 分别写进组内的最大值和指数和数组'));
+assert(execution.includes('/article/operator-profiling/#' + anchor));
+const first = narrowGroup.probes.find(probe => probe.index === 0);
+assert(practice.includes(`GPU 回读的第一项约为 ${first.value.toFixed(7)}，与 1/${narrow.width} 相符`));
+assert(practice.includes(`这一形状检查了 ${narrowGroup.checked} 个输出`));
+assert(practice.includes('/article/gpu-execution/#section-5'));
 const task = page('labs').match(/<li class="lab-learning-unit" id="lab-ai-native-metal-softmax">([\s\S]*?)<\/li>/)?.[1];
 assert(task?.includes('/article/operator-profiling/#' + anchor), 'lab catalog anchor');
 assert(page('roadmap/ai-operators').includes('/article/operator-profiling/?goal=ai-operators#' + anchor), 'operator roadmap anchor');

@@ -124,6 +124,19 @@ function checkRun(directory) {
 }
 
 const result = checkRun(lab);
+const page = fs.readFileSync(path.join(root, 'dist/article/agent-observability/index.html'), 'utf8');
+const lesson = page.split('id="trace-reentry-ledger-lookup"')[1];
+assert(lesson, 'the original receipt lookup has a direct reading destination');
+const readerCode = lesson.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+function checkReaderLookup(directory) {
+  const output = execFileSync('python3', ['-B', '-c', readerCode], {
+    cwd: directory, encoding: 'utf8', timeout: 10000,
+  }).trim().split('\n');
+  assert.deepEqual(output, [op, '1 committed', '2 reused', '3 reused', total + ' ' + receipt]);
+}
+checkReaderLookup(lab);
+
 const metadata = JSON.parse(python(`
 import pathlib, sys, zipfile, xml.etree.ElementTree as ET
 root, lab = map(pathlib.Path, sys.argv[1:])
@@ -147,6 +160,7 @@ if (interpreter) {
     const replay = path.join(temporary, 'replay');
     execFileSync(interpreter, ['-B', path.join(lab, 'trace_reentry.py'), replay], {timeout: 75000});
     assert.deepEqual(checkRun(replay), result);
+    checkReaderLookup(replay);
   } finally {
     fs.rmSync(temporary, {recursive: true, force: true});
   }

@@ -8681,6 +8681,61 @@
         "从真实报告与来源版本验收任务",
         "统计实战与变化题：完整标签和独立计算"
       ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f95f80cd893835bb0d4b86b86e090cdee8acf71aa69779255fc12371389f5ae8",
+      "reviewed_content_sha256": "150f7e4b41ee845a22d6f9b5805f613df29f63e3d74745e99e3e05dfe462a8b4",
+      "scope": "Compare rule state, route matching, and actual receiver deliveries from the same native alerts.",
+      "observation": "The short alert resolves before notification, the silenced case matches its silence, and the long report emits both firing and resolved. API snapshot time cannot replace Alertmanager group creation time.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "ecf31f226c18c930551cf8c6babccf81bcd45455612d516e581ce18f8ea42808",
+      "reviewed_content_sha256": "487c8755bcfeaf88c05dc1c571d4bc05f82c08fbd80ef03bac8c555e6232eaeb",
+      "scope": "Follow workgroup synchronization into an actual kernel with fewer elements than lanes.",
+      "observation": "All 64 threads participate in synchronization for a row of 31 elements, while 33 contribute neutral values.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "ed7b25eb843131d9242542d10a9fab9ed113533a7962d421f539a345014346c5",
+      "reviewed_content_sha256": "bf985df1ae31c7f4f7a1817ab50f31503cea919299529ef2af607675b0d38d9a",
+      "scope": "Follow a trace without an inter-process link to the canonical operation in the receiver ledger.",
+      "observation": "The new trace resolves to one operation, three attempts, and a single report/receipt. The rendered code was tested against fresh native records with different IDs.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

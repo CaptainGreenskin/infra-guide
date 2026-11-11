@@ -90,6 +90,12 @@
  '参考为20块、5,120个逻辑线程、119个受保护编号，最低逻辑读写40,008字节。覆盖与边界、字节单位、执行层次、失败机制和计时边界各1分。再把输出改成原地更新，检查每项是否仍只依赖自己的旧值，以及是否有别的工作同时读写这份输入。')
  ]);
 
+ const execution=articles.find(a=>a.id==='gpu-execution');
+ const resourceStart='<p>复用也占资源。';
+ if(!execution.sections[4][1].includes(resourceStart))throw Error('Missing threadgroup synchronization handoff');
+ execution.sections[4][1]=execution.sections[4][1].replace(resourceStart,
+  p('逐项加法可以跳过越界线程的读写。若一组线程要把局部结果合成一个值，还得安排没有数据的线程怎样参加同步。Apple M4 Pro 的 Softmax 实跑用 64 个线程处理一行 31 列，33 个线程没有列可处理。它们跳过输入输出，仍把负无穷和 0 分别写进组内的最大值和指数和数组，并与其余线程一起经过屏障。<a href="/article/operator-profiling/#native-metal-softmax">沿内核与 GPU 回读检查这 31 列 →</a>')+resourceStart);
+
  rewrite('roofline-model',9,old=>[
  p('执行需要做计算，也需要取得数据。Roofline（屋顶线）用这两种需求和设备供给估计性能上限：先数本次浮点工作，再列要跨某个存储边界搬运的字节，最后分别除以匹配的处理速度。它提供一份能被实际测量检查的预算。',
  '本章只看无偏置线性变换Y=XW。输入X为[M,K]，权重W为[K,N]，输出Y为[M,N]；M是输入行数，K是每行输入特征数，N是输出特征数。一个Y中的数由K对输入与权重相乘后累加得到。按一次乘法加一次加法计2次浮点操作，工作量F=2MKN，单位FLOP；每秒做多少FLOP才是速率FLOP/s。',
@@ -422,7 +428,7 @@ ddp = nn.parallel.DistributedDataParallel(model, device_mesh=mesh["dp"])`)+
  '<p class="practice-links"><a href="/labs/dp-tp-mesh.zip" download>下载程序与记录 ↓</a> · <a href="/labs/dp-tp-mesh/README.md">复跑步骤 →</a> · <a href="/labs/dp-tp-mesh/validation.json">查看各进程的分组、梯度和参数 →</a> · <a href="https://docs.pytorch.org/tutorials/recipes/distributed_device_mesh.html">PyTorch DeviceMesh 指南 ↗</a></p>';
 
  const warpMemory=articles.find(a=>a.id==='gpu-execution');
- warpMemory.updated='2026.11.10';
+ warpMemory.updated='2026.11.12';
  warpMemory.sections[3][1]+=
  '<h3 id="native-warp-memory-sectors">实跑：同样读 128 字节，为什么要碰 4、5 或 32 个扇区？</h3>'+
  p('把同一线程束里每个线程的位置称为 lane，编号 0 到 31。看一条读取指令时，只记这次实际参与的 lane。这里把按 32 字节对齐的地址段称为扇区（sector）。一个 FP32 值占 4 字节，对每个活跃 lane 的地址除以 32 并向下取整，就能找到它落在哪个扇区。NVIDIA 的计算能力 6.0 及以上设备可用这份分组分析标量全局访问。'+

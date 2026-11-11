@@ -2,6 +2,8 @@ const assert=require('node:assert/strict');
 const {createHash}=require('node:crypto');
 const {execFileSync}=require('node:child_process');
 const fs=require('node:fs');
+const {tmpdir}=require('node:os');
+const {join}=require('node:path');
 const name='alert-notification',folder='dist/labs/'+name+'/',archive='dist/labs/'+name+'.zip';
 const read=file=>fs.readFileSync(folder+file);
 const record=JSON.parse(read('validation.json'));
@@ -101,5 +103,36 @@ for(const file of files)assert.deepEqual(execFileSync('unzip',['-p',archive,name
 const svg=fs.readFileSync('dist/diagrams/alert-notification.svg','utf8');
 assert.deepEqual(JSON.parse(svg.match(/<metadata>([^<]+)<\/metadata>/)[1]),trace);
 const page=fs.readFileSync('dist/article/slo/index.html','utf8');
-for(const marker of ['id="alert-notification-handoff"','id="native-alert-notification"','diagrams/alert-notification.svg','labs/alert-notification.zip','labs/alert-notification/validation.json'])assert(page.includes(marker),marker);
+for(const marker of ['id="alert-notification-handoff"','id="native-alert-notification"','id="alert-notification-record-check"','diagrams/alert-notification.svg','labs/alert-notification.zip','labs/alert-notification/validation.json'])assert(page.includes(marker),marker);
+const handoff=page.split('id="alert-notification-handoff"')[1].split('id="native-alert-notification"')[0];
+assert.match(handoff,/href="[^"]*\/article\/slo\/#alert-notification-record-check"/);
+const example=page.split('id="alert-notification-record-check"')[1].split('</section>')[0];
+const ingressTime=record.alertmanager_ingress.at_ms,firstReceiptTime=record.receiver_events[0].at_ms;
+for(const time of [ingressTime,firstReceiptTime,firstReceiptTime-ingressTime])assert(example.includes(time+' ms'),time);
+const encoded=example.match(/<pre\b[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(encoded,'rendered alert record checker');
+const entities={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};
+const program=encoded.replace(/&(?:amp|lt|gt|quot|#39);/g,entity=>entities[entity]);
+const runExample=file=>execFileSync('python3',['-B','-c',program,file],{
+ encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:10000,
+}).trim().split('\n');
+assert.deepEqual(runExample(folder+'validation.json'),[
+ 'short absent []',
+ 'silenced suppressed []',
+ "long active [('/reports', 'firing'), ('/reports', 'resolved')]",
+]);
+const temp=fs.mkdtempSync(join(tmpdir(),'infra-alert-reading-'));
+try{
+ const changedPath=join(temp,'validation.json');
+ for(const mutate of [
+  r=>{r.receiver_events.pop();},
+  r=>{r.after_group_wait.alerts.find(alert=>alert.labels.case==='silenced').status.silencedBy=[];},
+ ]){
+  const changed=structuredClone(record);mutate(changed);
+  fs.writeFileSync(changedPath,JSON.stringify(changed));
+  assert.throws(()=>runExample(changedPath),error=>error.status===1&&error.stderr.includes('AssertionError'));
+ }
+}finally{
+ fs.rmSync(temp,{recursive:true,force:true});
+}
 console.log('PASS: real Prometheus and Alertmanager API observations, early recovery and persistent silence, raw firing/resolved webhook, source, figure and ZIP.');

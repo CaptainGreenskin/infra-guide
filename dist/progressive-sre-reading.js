@@ -294,7 +294,7 @@
   '<ol><li>告警活跃时，在 Prometheus 查询 <code>/api/v1/alerts</code>，确认告警名、标签和 <code>state</code>。<code>firing</code> 表示这组标签的规则条件已持续满足。</li>'+
   '<li>在同一台 Prometheus 查询 <code>/api/v1/alertmanagers</code>。<code>activeAlertmanagers</code> 列出当前发现并保留的目标地址。找不到预期地址，先查配置和服务发现。地址在列表中时，继续检查是否发到了那里。</li>'+
   '<li>在对应的 Alertmanager 查询 <code>/api/v2/alerts</code>，对照告警名、标签和时段。发送前若改写了标签，就按发出的标签查。找不到活跃告警时，回到 Prometheus 查发送错误。找到后，先查 <code>silencedBy</code>（人为静默）和 <code>inhibitedBy</code>（因另一条告警而抑制），再看匹配的路由和接收方。最后查测试接收端的入站请求或值班平台的事件记录，确认是否送达。</li></ol>'+
-  '<p>Prometheus 的 <code>for</code> 决定条件持续多久才触发。Alertmanager 的 <code>group_wait</code> 决定新分组的首条通知等多久。两段等待从不同事件开始计时。</p>'+
+  '<p>Prometheus 的 <code>for</code> 决定条件持续多久才触发。Alertmanager 的 <code>group_wait</code> 决定新分组的首条通知等多久。两段等待从不同事件开始计时。<a href="/article/slo/#alert-notification-record-check">用原始 API 响应和入站记录核对这条路径 →</a></p>'+
   '<details><summary>在测试环境用 curl 读取三个接口</summary><p>将 <code>PROM</code> 和 <code>AM</code> 设为测试环境中两个服务的基址。</p><p><code>curl -fsS "$PROM/api/v1/alerts"</code><br><code>curl -fsS "$PROM/api/v1/alertmanagers"</code><br><code>curl -fsS "$AM/api/v2/alerts"</code></p></details>'+
   '<p class="source-at"><a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alerts">Prometheus 告警查询 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/querying/api/#alertmanagers">Alertmanager 目标发现 ↗</a> · <a href="https://github.com/prometheus/alertmanager/blob/main/api/v2/openapi.yaml">Alertmanager 查询接口 ↗</a> · <a href="https://prometheus.io/docs/alerting/latest/configuration/#route">路由与分组等待 ↗</a></p>'+
   '<h3 id="native-alert-notification">实跑：三条告警都触发，收件端收到了什么</h3>'+
@@ -304,6 +304,44 @@
   '<p>最后看 <code>long</code>。收到触发通知后才把输入恢复成 0，接收端随后又收到恢复通知。原始 HTTP 请求体里的两条状态依次是 <code>firing</code> 和 <code>resolved</code>，都进入 <code>/reports</code>。默认路由 <code>/fallback</code> 没收到请求。先核对实际入站，再判断通知送达。</p>'+
   trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
   '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
-  '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
+  '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>'+
+  '<h3 id="alert-notification-record-check">按 case 把触发、路由和收件对起来</h3>'+
+  '<p>看原始记录的相对时间。程序在 8478 ms 查询到 Alertmanager 已有三条告警，首条通知在 13455 ms 到达接收端，两次观测相差 4977 ms。<code>group_wait</code> 从分组收到第一条告警开始，而 <code>alertmanager_ingress.at_ms</code> 是查询时刻。读数可以用来排序，测首发等待还需要分组开始时的记录。</p>'+
+  '<p>把下面的代码保存为 <code>check_notification.py</code>，和实验包中的 <code>validation.json</code> 放在一起，运行 <code>python3 -B check_notification.py validation.json</code>。程序先用 <code>case</code> 对齐规则和 Alertmanager 的标签，再从接收端请求体找每条告警，分开核对匹配的接收方与实际送达。</p>'+
+  trainingCode('用标准库核对三条告警最后到哪一步','PYTHON',`import json
+import sys
+from pathlib import Path
+
+record = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+firing = record["prometheus_firing"]["alerts"]
+ingress = record["alertmanager_ingress"]["alerts"]
+after_wait = {row["labels"]["case"]: row for row in record["after_group_wait"]["alerts"]}
+assert "short" not in {row["labels"]["case"] for row in record["short_cleared"]["alerts"]}
+
+received = {}
+for event in record["receiver_events"]:
+    for alert in event["payload"]["alerts"]:
+        case = alert["labels"]["case"]
+        assert alert["labels"] == ingress[case]["labels"]
+        received.setdefault(case, []).append((event["path"], alert["status"]))
+
+expected = {
+    "short": ("absent", []),
+    "silenced": ("suppressed", []),
+    "long": ("active", [("/reports", "firing"), ("/reports", "resolved")]),
+}
+assert set(firing) == set(ingress) == set(expected)
+for case, (expected_state, expected_receipts) in expected.items():
+    assert firing[case]["state"] == "firing"
+    assert firing[case]["labels"] == ingress[case]["labels"]
+    assert ingress[case]["receivers"] == [{"name": "reports"}]
+    status = after_wait.get(case, {}).get("status", {})
+    state = status.get("state", "absent")
+    if case == "silenced":
+        assert record["silence_id"] in status["silencedBy"]
+    receipts = received.get(case, [])
+    assert (state, receipts) == (expected_state, expected_receipts)
+    print(case, state, receipts)`)+
+  '<p>同一规则的三条告警都进入 <code>firing</code>，Alertmanager 都选了 <code>reports</code>。首发等待后的快照里，<code>short</code> 已离开活跃列表，<code>silenced</code> 仍带本次静默 ID。只有 <code>long</code> 在收件记录里有触发与恢复两次入站。</p>';
  a.updated='2026.11.12';
 })();
