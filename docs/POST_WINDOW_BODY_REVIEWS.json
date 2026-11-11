@@ -7880,6 +7880,24 @@
         "将整组作业写成可观察的状态机",
         "交一份可核对的答案"
       ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "cf4e06829c20859ec7bc65c4d67f828f1a5716ad52abdc7066b8b6372f6e52c2",
+      "reviewed_content_sha256": "5f11d92cdad929ced10f371e277d3d763dd8106648ed74faa68e0fbb0c504a87",
+      "scope": "Fit both ranks and their actual new weights together on the narrow reading viewport.",
+      "observation": "The observed rank, sample count, gradient and weight stay visible in three columns, with existing source and checkpoint links.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
     }
   ]
 }

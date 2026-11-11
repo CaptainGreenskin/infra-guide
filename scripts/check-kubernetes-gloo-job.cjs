@@ -133,8 +133,8 @@ assert(lesson.includes('/article/checkpoint-recovery/#' + restartAnchor));
 assert(lesson.includes('/labs/' + name + '/validation.json'));
 for (const rank of frozen.rank_logs) {
   const gradients = rank.targets.map(target => String(initial - target).replace('-', '−')).join('、');
-  assert(lesson.includes('<tr><td>rank ' + rank.rank + '</td><td>' + rank.targets.length +
-    '</td><td>' + gradients + '</td><td>' + rank.updated_weight + '</td></tr>'));
+  assert(lesson.includes('<tr><td>rank ' + rank.rank + ' · ' + rank.targets.length +
+    ' 条</td><td>' + gradients + '</td><td>' + rank.updated_weight + '</td></tr>'));
 }
 const restart = JSON.parse(readFileSync(path.join(dist, 'labs', 'elastic-restart-step', 'validation.json')));
 const crashed = restart.cases.restarted.attempts[0].map(events => events.at(-1));

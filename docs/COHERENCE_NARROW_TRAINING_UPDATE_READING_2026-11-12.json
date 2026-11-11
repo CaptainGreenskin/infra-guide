@@ -1,0 +1,67 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "443af45e5abf7f31032601618acd72f83b714cfd",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_REQUEST_AND_UPDATE_BOUNDARIES_2026-11-12.json": "265a73a830e0f6eafd68befc3ee5910aab83a0701a384e4a22f7cfcd70e6bb4e"
+  },
+  "source_revisions": {
+    "dist/progressive-training-io-reading.js": {
+      "previous_sha256": "20c092dde8af5ded3f76458a74082a36116517f34148811c7c90d49dcc0d0c6b",
+      "reviewed_sha256": "8841f5bb97a5bc43f1ce1fb60a69379ad24d4ef5fd8704622f9080aad7e5bd34",
+      "scope": "Fit both ranks and their actual new weights together on the narrow reading viewport."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "f872ed08292d9b73481f6c107cfc3622a812bb8f432e7df011577dd267a81612",
+      "reviewed_sha256": "2fe0f574f5e3de457ce1c958e879ca59d2945f56976d615035d8e5198b08db72",
+      "scope": "Keep the training comparison fully visible on a narrow phone."
+    },
+    "scripts/check-kubernetes-gloo-job.cjs": {
+      "previous_sha256": "de827b3b084aaffae3a052b3c7af81aa79ae99bdda4b7f740eeacebe10573d07",
+      "reviewed_sha256": "3388affd099812d9d3082317ed744078356e021278785613651cfa0c38d24d13",
+      "scope": "Verify the same per-rank data in the three-column presentation."
+    },
+    "scripts/check-training-submission-preflight.cjs": {
+      "previous_sha256": "f06e40cc19ea67b84af0c9bb9ce168fb029a7019d51725f338bab34237edca31",
+      "reviewed_sha256": "27230b2d649b7934ca11d9e91e5ddf5da66098b823708eb51d5fa1c91f795b26",
+      "scope": "Preserve the old exact publication proof and scope the current-text comparison to its own exercise."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "2882491e80e267ede35fd884a34e7936991e9b11bafa649ee1a1466fcdc6404f",
+      "reviewed_sha256": "e8b00445fe8c154527116bb9503c8f86d28a6678e59812659099569535ed3970",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "451701782297516a18d43423356f0b83f9999d09d32aeeb6fe7eda6cfd738753",
+      "reviewed_sha256": "2b025e9f9f9ceb81580bdf4667170e0fe9dc68a7d2aba5934cde2bff863eb7b8",
+      "scope": "Fingerprint the edited teaching and styles."
+    },
+    "docs/CONTENT_NARROW_TRAINING_UPDATE_READING_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "af7e15fd0d7106a0b96ebbdf7a1cfe6ffc53bab6c11e30984f15e14956627b60",
+      "scope": "Record the targeted improvement to the new training comparison."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "9ab2180cfbb61ceb154d1de23abb50bc4af3dbb6c2aaf520e607145edae2ace5",
+      "reviewed_sha256": "c119d74877c6e0dfcf5b3e86a67b6a6a9ac3e48c40ec70e05ff246eea009eeba",
+      "scope": "Append the current content review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "aad2f48fccaedf4410f7bb4777d3ef4c56c5279e01913f83d7af8062146987d8",
+      "reviewed_sha256": "cee5da7efabe340e4a20d579f41e226c45dbea7e76347d72111a8df4a4ee5aed",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "443af45e5abf7f31032601618acd72f83b714cfd",
+    "chapters": 78,
+    "changed_bodies": [
+      "training-communication"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

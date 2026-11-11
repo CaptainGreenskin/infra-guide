@@ -80,7 +80,9 @@
 .article-context-link{margin:18px 0 26px;padding:10px 0;border-top:1px solid var(--line);font-size:13px;color:var(--blue);line-height:1.8}
 
 .resource-row .path-links{flex-wrap:wrap;gap:12px}.quality-section{scroll-margin-top:100px}
-.translation-reading-trace td{min-width:0}
+.translation-reading-trace td,.job-collective-results :is(th,td){min-width:0}
+.job-collective-results th{white-space:normal}
+@media(max-width:640px){.job-collective-results :is(th,td){padding-inline:8px}}
 .approval-outcomes td{min-width:0}.approval-outcomes td:last-child{text-align:center}
 @media(max-width:650px){
  #vllm-block-lifecycle ~ .table-wrap table{table-layout:fixed;width:100%}

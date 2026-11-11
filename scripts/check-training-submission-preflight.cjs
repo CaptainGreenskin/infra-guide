@@ -128,14 +128,25 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
 `, folder], {timeout:10000});
 
 const authorFile = 'dist/progressive-training-platform-reading.js';
-const author = read(authorFile);
-const previous = execFileSync('git', ['show', '28dbe43bc2852f192874fbe705d0973998fd39c6:' + authorFile],
- {cwd:root, encoding:'utf8'});
-const start = author.indexOf('\n platform.sections[2][1]+=\n');
-const end = author.indexOf(' for(const chapter of [platform,gpu,kube])', start);
-assert(start > 0 && end > start);
-assert.equal(author.slice(0, start) + author.slice(end), previous);
-const lesson = author.slice(start, end);
+const authorAt = commit => execFileSync('git', ['show', commit + ':' + authorFile], {cwd:root, encoding:'utf8'});
+const previous = authorAt('28dbe43bc2852f192874fbe705d0973998fd39c6');
+const published = authorAt('fcd0d183447ee904caef1c87d24b890267efcabc');
+const preflightMarker = '\n platform.sections[2][1]+=\n';
+
+// Keep the original revision boundary on its published source. Current lessons can
+// evolve independently; the preflight experiment still has to match its signed text.
+const publicationStart = published.indexOf(preflightMarker);
+const publicationEnd = published.indexOf(' for(const chapter of [platform,gpu,kube])', publicationStart);
+assert(publicationStart > 0 && publicationEnd > publicationStart);
+assert.equal(published.slice(0, publicationStart) + published.slice(publicationEnd), previous);
+const preflightLesson = author => {
+ const start = author.indexOf(preflightMarker);
+ const end = author.indexOf('\n const nativeJobReading=', start);
+ assert(start > 0 && end > start);
+ return author.slice(start, end);
+};
+const lesson = preflightLesson(read(authorFile));
+assert.equal(lesson, preflightLesson(published), 'the published preflight evidence remains unchanged');
 assert.match(lesson, /id="native-training-submission-preflight"/);
 assert.match(lesson, /trainingFigure\('training-submission-preflight'/);
 for (const link of ['.zip', '/' + source, '/README.md', '/validation.json']) {
