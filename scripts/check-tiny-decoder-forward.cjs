@@ -3,6 +3,8 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const { createHash } = require('node:crypto');
 const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 
 const name = 'tiny-decoder-forward';
 const pack = 'dist/labs/' + name;
@@ -106,6 +108,7 @@ assert.deepEqual(drawn, {
 });
 const attentionPage = read('dist/article/attention-mechanics/index.html').toString();
 const decoderPage = read('dist/article/transformer-block/index.html').toString();
+const tokenPage = read('dist/article/tokenization-embedding/index.html').toString();
 const observation = 'id="same-position-different-prefix"';
 const followThrough = 'id="native-tiny-decoder-context"';
 assert(attentionPage.includes(observation) && decoderPage.includes(followThrough));
@@ -126,8 +129,50 @@ for (const [label, layer] of [['输出投影后的第一项（图中分支输出
   assert(decoderReading.includes(tableRow([label, ...runs.map(run => component(run, layer))])),
     'decoder trace agrees with the recorded node: '+layer);
 }
+const lookup = 'id="same-token-lookup"', weightReading = 'id="same-prefix-attention-weights"';
+const lookupFigure = read('dist/diagrams/tiny-decoder-lookup-and-score.svg').toString();
+const lookupMeta = JSON.parse(lookupFigure.match(/<metadata>([^<]+)<\/metadata>/)[1]);
+const baseline = runs[0];
+assert.deepEqual(lookupMeta, {
+  record:'labs/tiny-decoder-forward/validation.json',run:'base',position:1,token_id:baseline.prompt[1],
+  lookup_first:['token','position','x'].map(layer => baseline.layers[layer][1][0].toFixed(6)),
+  candidate_ids:[1,7],scores:[1,7].map(id => baseline.logits[1][id].toFixed(4)),
+});
+for (const value of [...lookupMeta.lookup_first, ...lookupMeta.scores])
+  assert(lookupFigure.includes('>'+value.replace('-', '−')+'</text>') || lookupFigure.includes(' '+value.replace('-', '−')+'</text>'), value);
+assert(tokenPage.includes(lookup) && tokenPage.includes('diagrams/tiny-decoder-lookup-and-score.svg'));
+assert(tokenPage.split(lookup)[1].includes('/article/attention-mechanics/#same-position-different-prefix'));
+assert(attentionReading.includes('/article/tokenization-embedding/#same-token-lookup'));
+const weightsSection = attentionPage.split(weightReading)[1].split('id="section-4"')[0];
+const round = row => row.map(n => n.toFixed(4).replace('-', '−')).join('、');
+for (const run of runs) {
+  assert(weightsSection.includes(tableRow([JSON.stringify(run.prompt), round(run.reference.raw_scores[0][1]),
+    round(run.reference.weights[0][1])])));
+}
+assert(weightsSection.includes('/article/transformer-block/#native-tiny-decoder-context'));
+const replay = decoderReading.split('id="decoder-record-recompute"')[1];
+assert(replay.includes('/article/attention-mechanics/#same-prefix-attention-weights'));
+assert(replay.includes('/article/tokenization-embedding/#same-token-lookup'));
+const decode = source => source.replace(/&(?:amp|lt|gt|quot|#39);/g, entity =>
+  ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"})[entity]);
+const program = decode(replay.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]);
+const execute = file => execFileSync('python3', ['-B', '-c', program, file], {encoding:'utf8', stdio:['ignore','pipe','pipe']});
+const results = execute(pack + '/validation.json').trim().split('\n');
+assert.deepEqual(results, [...runs.map(run =>
+  '['+run.prompt.join(', ')+'] 1: '+run.logits[1][1].toFixed(4)+', 7: '+run.logits[1][7].toFixed(4)+' 选出 '+run.selected_id),
+  '只改未来一格，位置 0 的八个分数不变']);
+const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'decoder-reading-'));
+try {
+  const altered = structuredClone(record);
+  altered.runs.base.layers.joined[1][0] += 0.1;
+  const bad = path.join(temp, 'bad.json');
+  fs.writeFileSync(bad, JSON.stringify(altered));
+  assert.throws(() => execute(bad), err => err.status !== 0 && err.stderr.includes('AssertionError'));
+} finally {
+  fs.rmSync(temp, {recursive:true, force:true});
+}
 const archive = pack + '.zip';
 const members = execFileSync('unzip',['-Z1',archive],{encoding:'utf8'}).trim().split('\n').sort();
 assert.deepEqual(members, files.map(file => name + '/' + file).sort());
 for (const file of files) assert.deepEqual(execFileSync('unzip',['-p',archive,name + '/' + file]),read(pack + '/' + file));
-console.log('PASS: three native TinyDecoder forwards, independent mask/weight/logit replay, context changes, exact diagram and archive.');
+console.log('PASS: three native TinyDecoder forwards, real lookup and weight walkthrough, rendered standard-library replay and negative control, exact figures and archive.');

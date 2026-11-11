@@ -106,6 +106,7 @@ const nativeRecordChecks = {
  'dist/labs/dns-connection-handoff/validation.json':'./check-dns-connection-handoff.cjs',
  'dist/labs/tiny-decoder-handoff/validation.json':'./check-tiny-decoder-handoff.cjs',
  'dist/labs/tiny-decoder-forward/validation.json':'./check-tiny-decoder-forward.cjs',
+ 'dist/labs/mps-checkpoint-resume/validation.json':'./check-mps-checkpoint-resume.cjs',
  'dist/labs/dual-stack-connect/validation.json':'./check-dual-stack-connect.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){

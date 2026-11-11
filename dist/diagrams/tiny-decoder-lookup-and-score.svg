@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 392" role="img" aria-labelledby="title desc">
+<title id="title">词元编号与位置编号分别查哪张表</title>
+<desc id="desc">输入是 0、1，观察位置 1 的词元 1。词嵌入表第 1 行的首项约为 0.923456，位置表第 1 行约为负 0.880069，合成解码器块输入约 0.043387。计算后的隐藏向量再与原词嵌入表各行做点积，候选 1 与 7 的分数约为 3.7804 与 3.4653。</desc>
+<metadata>{"record":"labs/tiny-decoder-forward/validation.json","run":"base","position":1,"token_id":1,"lookup_first":["0.923456","-0.880069","0.043387"],"candidate_ids":[1,7],"scores":["3.7804","3.4653"]}</metadata>
+<defs>
+ <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#4662b6"/></marker>
+</defs>
+<rect width="460" height="392" rx="12" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" text-anchor="middle" fill="#23314b">
+ <text x="230" y="33" font-size="20" font-weight="650">输入 [0,1]，只看第二格</text>
+ <g fill="#fff" stroke="#b9c9ed">
+  <rect x="24" y="57" width="196" height="78" rx="7"/>
+  <rect x="240" y="57" width="196" height="78" rx="7"/>
+  <rect x="24" y="280" width="412" height="88" rx="7"/>
+ </g>
+ <text x="122" y="82" font-size="16" font-weight="650">词元编号 1</text>
+ <text x="122" y="104" font-size="14">查词嵌入表 E[1]</text>
+ <text x="122" y="124" font-size="14">首项 0.923456</text>
+ <text x="338" y="82" font-size="16" font-weight="650">位置编号 1</text>
+ <text x="338" y="104" font-size="14">查位置表 P[1]</text>
+ <text x="338" y="124" font-size="14">首项 −0.880069</text>
+ <g fill="none" stroke="#4662b6" stroke-width="2" marker-end="url(#arr)">
+  <path d="M122 138v18"/><path d="M338 138v18"/>
+  <path d="M230 211v19"/><path d="M230 254v20"/>
+ </g>
+ <rect x="24" y="160" width="412" height="48" rx="7" fill="#eaf0ff" stroke="#a1b5eb"/>
+ <text x="230" y="190" font-size="16" font-weight="650">两行逐项相加，首项约 0.043387</text>
+ <text x="230" y="248" font-size="15">解码器块更新表示，输出前再归一化</text>
+ <text x="230" y="305" font-size="16" font-weight="650">新向量与同一张 E 的各行分别做点积</text>
+ <text x="122" y="334" font-size="15">E[1] → 候选 1 得 3.7804</text>
+ <text x="338" y="334" font-size="15">E[7] → 候选 7 得 3.4653</text>
+ <text x="230" y="355" font-size="13" fill="#566581">图中只列两个候选，实际比较词表的全部八项</text>
+</g>
+</svg>

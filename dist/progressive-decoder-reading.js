@@ -19,6 +19,7 @@
   '记进入一层的隐藏表示为X，形状[B,T,D]=[2,4,8]，三根轴依次是样本、位置、特征。本例第一层的X来自词嵌入与可学习位置向量之和。N₁、N₂是两次各自带参数的逐位置归一化；Attn包含Q/K/V投影、因果读取、拼头和输出投影；FFN表示前馈分支。它们的输入与返回值都保持[2,4,8]，因此可接到下面两次逐元素相加。')+
   formula('本例的pre-norm计算顺序','H₁ = X + Attn(N₁(X))<br>H₂ = H₁ + FFN(N₂(H₁))','pre-norm意为“先归一化，再进入分支”。第一次加法产生H₁，第二条分支必须在H₁形成后才能计算。')+
   p('主路径沿X→H₁→H₂传递表示。两条分支分别提供上下文修正与特征修正；归一化只整理交给分支的数值，残差加号仍接收未被这次归一化替换的主路径。先把这条正常依赖走通，后面再分别计算加法、归一化和前馈内部的数值。')+
+  p('想沿上一章的实际输入继续算，可以直接到<a href="/article/transformer-block/#native-tiny-decoder-context">第 8 节的两次回加</a>。仍看 [0,1] 和 [4,1] 的位置 1，核对哪一步让两个候选的名次互换。')+
   link('attention-mechanics','回看分头、拼头与输出投影'),
 
   h('subsection-2-1n65z1o','残差怎样保留输入并加入修正')+
@@ -158,8 +159,68 @@ for label, actual, expected in (
   ])+
   p('位置 1 自己的查询向量没有变化。位置 0 换了词元，匹配向量和内容向量一起改变。两头拼回后还要做输出投影，图中展示的是投影后的值。把它加回 X 就得到 H₁，例如输入 [0,1] 时，第一项约为 0.0434 + 0.3166 = 0.3600。前馈从 H₁ 取输入，第二次回加的结果再送去计算候选分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
   p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
-  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
- decoder.updated='2026.11.11';
+  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p>'+
+  h('decoder-record-recompute','用标准库复算查表、两次回加和最后一行')+
+  p('先下载<a href="/labs/tiny-decoder-forward/validation.json" download>前向记录 validation.json</a>。把下面代码保存为 <code>check_decoder.py</code>，与记录放在同一目录，运行 <code>python3 check_decoder.py validation.json</code>。这里读取原模型记录的中间向量，复算位置相加、因果读取、残差与词表打分。')+
+  trainingCode('用记录里的向量逐项核对三次前向','PYTHON',`import json
+import math
+import sys
+from pathlib import Path
+
+
+def dot(a, b):
+    return math.fsum(x * y for x, y in zip(a, b))
+
+
+def add(a, b):
+    return [x + y for x, y in zip(a, b)]
+
+
+def check(actual, saved):
+    assert len(actual) == len(saved)
+    assert all(math.isclose(x, y, rel_tol=0, abs_tol=1e-12)
+               for x, y in zip(actual, saved))
+
+
+def scores_at(run, position, embedding):
+    layers, reference = run["layers"], run["reference"]
+    token_id = run["prompt"][position]
+    x = add(embedding[token_id], layers["position"][position])
+    check(x, layers["x"][position])
+
+    joined = []
+    for q, k, v in zip(reference["q"], reference["k"], reference["v"]):
+        scores = [dot(q[position], key) / math.sqrt(len(key))
+                  for key in k[:position + 1]]
+        peak = max(scores)
+        weights = [math.exp(score - peak) for score in scores]
+        total = math.fsum(weights)
+        joined.extend(dot(weights, values) / total
+                      for values in zip(*v[:position + 1]))
+    check(joined, layers["joined"][position])
+
+    h1 = add(x, layers["attention"][position])
+    h2 = add(h1, layers["feed_forward"][position])
+    check(h1, layers["after_attention"][position])
+    check(h2, layers["after_ffn"][position])
+    logits = [dot(layers["normalized"][position], row) for row in embedding]
+    check(logits, run["logits"][position])
+    return logits
+
+
+record = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+runs, embedding = record["runs"], record["token_weight"]
+for name in ("base", "change_prefix"):
+    logits = scores_at(runs[name], 1, embedding)
+    print(runs[name]["prompt"], f"1: {logits[1]:.4f}, 7: {logits[7]:.4f}",
+          "选出", max(range(len(logits)), key=logits.__getitem__))
+check(scores_at(runs["base"], 0, embedding),
+      scores_at(runs["change_future"], 0, embedding))
+print("只改未来一格，位置 0 的八个分数不变")`)+
+  p('两行应分别选出 1 和 7。最后一行检查反方向的变化，把 [0,1] 的末位换成 7，前一格的分数逐项相同。<a href="/article/attention-mechanics/#same-prefix-attention-weights">回看产生这些读取权重的分数</a> · <a href="/article/tokenization-embedding/#same-token-lookup">回看词嵌入表怎样同时用在两端</a>')+
+  p('换到训练时，模型还要不断更新这些参数。<a href="/article/checkpoint-recovery/#native-mps-checkpoint-resume">继续看同一个模型怎样在 GPU 上换进程恢复训练 →</a>')+
+  '</details>';
+ decoder.updated='2026.11.12';
 
  const position=select('position-encoding',9),r=position.sections.map(s=>s[1]);
  replace(position,[

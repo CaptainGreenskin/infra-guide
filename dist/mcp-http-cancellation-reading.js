@@ -25,8 +25,11 @@
   trainingFigure('mcp-http-authorization','沿 HTTP 入口与资源端两道检查，核对拒绝发生在哪一层、报告正文是否真正读取。')+
   '<p>解压并安装固定依赖后运行 <code>python3.12 -B authorization_lab.py --output-dir replay</code>。<a href="labs/mcp-http-authorization.zip" download>下载完整实验 →</a> · <a href="labs/mcp-http-authorization/README.md">复现步骤</a> · <a href="labs/mcp-http-authorization/validation.json">运行记录索引</a></p>'+
   '<p>令牌由测试夹具签发。浏览器授权、生产身份服务和 Kairo 接入分别验收。<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization" target="_blank" rel="noopener">固定版授权规则 ↗</a> · <a class="inline-link" href="/article/agent-security/#mcp-resource-scope">工具为什么还要核对对象 →</a></p>';
+ security.updated='2026.11.12';
  security.sections[1][1]+=
+
   '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
-  para('MCP 的入口范围可以允许调用者请求读取报告。工具拿到已验证主体以后，再按本次允许的资源检查报告归属。实验中 A 的令牌具备 <code>report.read</code>，调用者只改请求里的报告名。指向 A 时读取一份报告，指向 B 时工具拒绝且不读正文。两个请求的 HTTP 响应都是 200，工具结果分别表示成功与失败。')+
+  para('MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用已验证主体 <code>learner-A</code> 判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
+   '继续确认实际读取。服务端审计中，A 有一条 <code>body_read</code>，B 有 <code>object_denied</code> 且无正文读取。两次工具请求的 JSON-RPC 编号恰好都为 3。<a href="/article/kairo-practice/#kairo-read-evidence">沿同一份本机记录，到接入章对齐两次请求和正文审计 →</a>')+
   '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
 })();

@@ -233,14 +233,14 @@
    ])+
    p('先记下平台、适配器、模型和工具版本，再保存本次用的策略、预算、初始数据与停止条件。断线测试要把断线前的任务、重连后查到的任务标识和实际交付放在一起。另一位检查者应能用这些记录复核同一项结果。')+
    '<h3 id="kairo-read-evidence">一条拒绝记录怎样验收</h3>'+
-   p('先用本机 MCP 授权实验练习。客户端用同一份有效令牌查 report-A 和 report-B，两次 HTTP 都是 200。请在客户端记录找出哪次请求被工具拒绝，再到服务端核对哪份正文实际被读了。<a href="/labs/mcp-http-authorization/client.jsonl">客户端记录 ↗</a> · <a href="/labs/mcp-http-authorization/server.jsonl">服务端记录 ↗</a>')+
+   p('沿用<a href="/article/agent-security/#mcp-resource-scope">权限章的本机 MCP 授权实验</a>。客户端用同一份有效令牌查 report-A 和 report-B，两次 HTTP 都是 200。先在客户端记录中找两条 <code>tool_result</code>，记下各自的 <code>case</code>、<code>report_id</code> 和 <code>isError</code>，再到服务端核对实际正文读取。<a href="/labs/mcp-http-authorization/client.jsonl">客户端记录 ↗</a> · <a href="/labs/mcp-http-authorization/server.jsonl">服务端记录 ↗</a>')+
    fold('核对两次调用',
     table(['请求','客户端看到什么','资源服务记录了什么'],[
      ['wrong_tenant，查 report-B','isError=true，只有通用的拒绝文本','object_denied，没有读取 B 正文'],
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
-    p('两次调用各自建立了 SDK 客户端，JSON-RPC 请求编号都是 3。先用实验标签 case 找到各自的 tools/call，再拿报告名和请求编号去对服务端的处理记录。case 是客户端为这次实验加的标签。服务端验证令牌后，才把实际主体映射到 A 租户。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('本章要验收的是另一份只读日报，正确总数为 23。接入目标时，为每次尝试保留任务标识、受信主体和报告名，再由测试者从资源服务侧核对实际读取。正文可能已经被读走，版本仍保持原样。若缺少覆盖本次尝试的读取记录，就把“B 的正文未被读取”留作待核对。'),
+    p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+

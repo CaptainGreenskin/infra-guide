@@ -1,0 +1,383 @@
+{
+  "comparisons_with_continuous": {
+    "omit_momentum": {
+      "max_momentum_abs_diff": 0.31488466262817383,
+      "max_weight_abs_diff": 0.13231104612350464
+    },
+    "omit_rng": {
+      "max_momentum_abs_diff": 1.4166786670684814,
+      "max_weight_abs_diff": 0.04246962070465088
+    },
+    "resume": {
+      "max_momentum_abs_diff": 0.0,
+      "max_weight_abs_diff": 0.0
+    }
+  },
+  "environment": {
+    "gpu": "Apple M4 Pro",
+    "macos": "26.2",
+    "platform": "Darwin arm64",
+    "python": "3.12.13",
+    "pytorch_enable_mps_fallback": "0",
+    "torch": "2.5.1"
+  },
+  "fixture": {
+    "checkpoint_next_step": 3,
+    "mps_seed": 33,
+    "optimizer": {
+      "lr": 0.05,
+      "momentum": 0.5,
+      "type": "SGD"
+    },
+    "parameters": 664,
+    "rows": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        4,
+        5,
+        6,
+        7,
+        0
+      ]
+    ],
+    "steps": 6,
+    "targets": [
+      [
+        [
+          1,
+          -100,
+          -100,
+          -100
+        ],
+        [
+          5,
+          6,
+          7,
+          -100
+        ]
+      ],
+      [
+        [
+          1,
+          2,
+          3,
+          -100
+        ],
+        [
+          -100,
+          -100,
+          -100,
+          0
+        ]
+      ]
+    ]
+  },
+  "runs": {
+    "continuous": {
+      "checkpoint_sha256": null,
+      "device_allocated_bytes": 12800,
+      "final": {
+        "model_sha256": "619c59abca7adc04c038b1f61afddced33d782908779308c11d3aa612325fe45",
+        "momentum_sha256": "b40d96eb2bf1a00aa535fcdcce8f60d84153222391e4e64c4c8b36e8384843fa",
+        "momentum_values": 664,
+        "mps_rng_sha256": "85b3d56feafff5984e153dce407854a5651b479d3d81046717d4577b2033642f",
+        "token_momentum_1_0": 0.37794405221939087,
+        "token_weight_1_0": 0.8245658278465271
+      },
+      "initial": {
+        "model_sha256": "8b94d3a12fc99d70b5531eef838c84a6d926900b46dea4d30200f8b619ebf200",
+        "momentum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "momentum_values": 0,
+        "mps_rng_sha256": "c940fb3110e5e81c845ea8a42aac3ff9dabeef31cb072178c001408fb0f5b6f7",
+        "token_momentum_1_0": null,
+        "token_weight_1_0": 0.9265430569648743
+      },
+      "mode": "continuous",
+      "next_step": 6,
+      "pid": 32017,
+      "start": 0,
+      "steps": [
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 9.74665641784668,
+          "plan": 1,
+          "step": 0,
+          "token_grad_1_0": 0.6282263994216919,
+          "token_weight_1_0": 0.8951317071914673
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 8.076753616333008,
+          "plan": 0,
+          "step": 1,
+          "token_grad_1_0": 0.0519600473344326,
+          "token_weight_1_0": 0.8768280744552612
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 6.899549961090088,
+          "plan": 0,
+          "step": 2,
+          "token_grad_1_0": 0.029195154085755348,
+          "token_weight_1_0": 0.8662164807319641
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.640379905700684,
+          "plan": 0,
+          "step": 3,
+          "token_grad_1_0": 0.005833144299685955,
+          "token_weight_1_0": 0.8606190085411072
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.931027412414551,
+          "plan": 1,
+          "step": 4,
+          "token_grad_1_0": 0.28714504837989807,
+          "token_weight_1_0": 0.8434630036354065
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.0181965827941895,
+          "plan": 1,
+          "step": 5,
+          "token_grad_1_0": 0.20638427138328552,
+          "token_weight_1_0": 0.8245658278465271
+        }
+      ]
+    },
+    "omit_momentum": {
+      "checkpoint_sha256": "adccb0d5d9f295aa56247732b8fa16e4d568329a5ca91c43c142f534da4c9672",
+      "device_allocated_bytes": 12800,
+      "final": {
+        "model_sha256": "529ec5a8d85aa34582cf39b39c5d2f6a8a10a2fe25bbce2847426a2361c5b34e",
+        "momentum_sha256": "3046424770e3caec96dce9c1c13133f850da15caf5f189dee9389dc63d734809",
+        "momentum_values": 664,
+        "mps_rng_sha256": "85b3d56feafff5984e153dce407854a5651b479d3d81046717d4577b2033642f",
+        "token_momentum_1_0": 0.4306820333003998,
+        "token_weight_1_0": 0.8277077674865723
+      },
+      "initial": {
+        "model_sha256": "0fc1604db8a16c1a29d68064e924098cf6415b06149423dd461fac1663c21b05",
+        "momentum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "momentum_values": 0,
+        "mps_rng_sha256": "cdc99dfc522deae026384256b2e805b0cba4eaa200da9b441548a4365bc3795f",
+        "token_momentum_1_0": null,
+        "token_weight_1_0": 0.8662164807319641
+      },
+      "mode": "omit_momentum",
+      "next_step": 6,
+      "pid": 32053,
+      "start": 3,
+      "steps": [
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.640379905700684,
+          "plan": 0,
+          "step": 3,
+          "token_grad_1_0": 0.005833144299685955,
+          "token_weight_1_0": 0.8659248352050781
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 6.292282581329346,
+          "plan": 1,
+          "step": 4,
+          "token_grad_1_0": 0.3307434320449829,
+          "token_weight_1_0": 0.8492418527603149
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.465767860412598,
+          "plan": 1,
+          "step": 5,
+          "token_grad_1_0": 0.2638520300388336,
+          "token_weight_1_0": 0.8277077674865723
+        }
+      ]
+    },
+    "omit_rng": {
+      "checkpoint_sha256": "adccb0d5d9f295aa56247732b8fa16e4d568329a5ca91c43c142f534da4c9672",
+      "device_allocated_bytes": 12800,
+      "final": {
+        "model_sha256": "85e8b8fbb111751dfc8de93f56a0888c4e2171b21bd21b24e6541d5896b47d51",
+        "momentum_sha256": "1e84513591827c3d46ed625055c805b5cf94f2a7ed9f56453e75910fee45bb1e",
+        "momentum_values": 664,
+        "mps_rng_sha256": "cdc99dfc522deae026384256b2e805b0cba4eaa200da9b441548a4365bc3795f",
+        "token_momentum_1_0": 0.10293205827474594,
+        "token_weight_1_0": 0.8247231841087341
+      },
+      "initial": {
+        "model_sha256": "0fc1604db8a16c1a29d68064e924098cf6415b06149423dd461fac1663c21b05",
+        "momentum_sha256": "7e8be7ff9d397b383b27b1058ac778facb8b73074419b8ca1c856b496ddf8466",
+        "momentum_values": 664,
+        "mps_rng_sha256": "c940fb3110e5e81c845ea8a42aac3ff9dabeef31cb072178c001408fb0f5b6f7",
+        "token_momentum_1_0": 0.21223178505897522,
+        "token_weight_1_0": 0.8662164807319641
+      },
+      "mode": "omit_rng",
+      "next_step": 6,
+      "pid": 32061,
+      "start": 3,
+      "steps": [
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 6.594771385192871,
+          "plan": 1,
+          "step": 3,
+          "token_grad_1_0": 0.3830874562263489,
+          "token_weight_1_0": 0.8417563438415527
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 4.800980567932129,
+          "plan": 0,
+          "step": 4,
+          "token_grad_1_0": -0.006870514713227749,
+          "token_weight_1_0": 0.82986980676651
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 3.9804935455322266,
+          "plan": 0,
+          "step": 5,
+          "token_grad_1_0": -0.015933522954583168,
+          "token_weight_1_0": 0.8247231841087341
+        }
+      ]
+    },
+    "resume": {
+      "checkpoint_sha256": "adccb0d5d9f295aa56247732b8fa16e4d568329a5ca91c43c142f534da4c9672",
+      "device_allocated_bytes": 12800,
+      "final": {
+        "model_sha256": "619c59abca7adc04c038b1f61afddced33d782908779308c11d3aa612325fe45",
+        "momentum_sha256": "b40d96eb2bf1a00aa535fcdcce8f60d84153222391e4e64c4c8b36e8384843fa",
+        "momentum_values": 664,
+        "mps_rng_sha256": "85b3d56feafff5984e153dce407854a5651b479d3d81046717d4577b2033642f",
+        "token_momentum_1_0": 0.37794405221939087,
+        "token_weight_1_0": 0.8245658278465271
+      },
+      "initial": {
+        "model_sha256": "0fc1604db8a16c1a29d68064e924098cf6415b06149423dd461fac1663c21b05",
+        "momentum_sha256": "7e8be7ff9d397b383b27b1058ac778facb8b73074419b8ca1c856b496ddf8466",
+        "momentum_values": 664,
+        "mps_rng_sha256": "cdc99dfc522deae026384256b2e805b0cba4eaa200da9b441548a4365bc3795f",
+        "token_momentum_1_0": 0.21223178505897522,
+        "token_weight_1_0": 0.8662164807319641
+      },
+      "mode": "resume",
+      "next_step": 6,
+      "pid": 32049,
+      "start": 3,
+      "steps": [
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.640379905700684,
+          "plan": 0,
+          "step": 3,
+          "token_grad_1_0": 0.005833144299685955,
+          "token_weight_1_0": 0.8606190085411072
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.931027412414551,
+          "plan": 1,
+          "step": 4,
+          "token_grad_1_0": 0.28714504837989807,
+          "token_weight_1_0": 0.8434630036354065
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 5.0181965827941895,
+          "plan": 1,
+          "step": 5,
+          "token_grad_1_0": 0.20638427138328552,
+          "token_weight_1_0": 0.8245658278465271
+        }
+      ]
+    },
+    "save": {
+      "checkpoint_sha256": "adccb0d5d9f295aa56247732b8fa16e4d568329a5ca91c43c142f534da4c9672",
+      "device_allocated_bytes": 12800,
+      "final": {
+        "model_sha256": "0fc1604db8a16c1a29d68064e924098cf6415b06149423dd461fac1663c21b05",
+        "momentum_sha256": "7e8be7ff9d397b383b27b1058ac778facb8b73074419b8ca1c856b496ddf8466",
+        "momentum_values": 664,
+        "mps_rng_sha256": "cdc99dfc522deae026384256b2e805b0cba4eaa200da9b441548a4365bc3795f",
+        "token_momentum_1_0": 0.21223178505897522,
+        "token_weight_1_0": 0.8662164807319641
+      },
+      "initial": {
+        "model_sha256": "8b94d3a12fc99d70b5531eef838c84a6d926900b46dea4d30200f8b619ebf200",
+        "momentum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "momentum_values": 0,
+        "mps_rng_sha256": "c940fb3110e5e81c845ea8a42aac3ff9dabeef31cb072178c001408fb0f5b6f7",
+        "token_momentum_1_0": null,
+        "token_weight_1_0": 0.9265430569648743
+      },
+      "mode": "save",
+      "next_step": 3,
+      "pid": 32038,
+      "start": 0,
+      "steps": [
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 9.74665641784668,
+          "plan": 1,
+          "step": 0,
+          "token_grad_1_0": 0.6282263994216919,
+          "token_weight_1_0": 0.8951317071914673
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 8.076753616333008,
+          "plan": 0,
+          "step": 1,
+          "token_grad_1_0": 0.0519600473344326,
+          "token_weight_1_0": 0.8768280744552612
+        },
+        {
+          "gradient_device": "mps:0",
+          "logits_device": "mps:0",
+          "loss": 6.899549961090088,
+          "plan": 0,
+          "step": 2,
+          "token_grad_1_0": 0.029195154085755348,
+          "token_weight_1_0": 0.8662164807319641
+        }
+      ]
+    }
+  },
+  "schema": "infra-mps-checkpoint-resume-v1",
+  "source_sha256": {
+    "README.md": "a8b75f0974c860badb5631727b440b8c7fa88406a504ee549a050b0d02ef868f",
+    "mps_resume.py": "ba7137ddbfcc72118a8084431f53be4c0c0dc28246e8b903323a7dab8492c0b4",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+    "tiny_decoder.py": "724963cf4a04ac76f6b7d125876d0be1947b1b29a6b0a159a5bb347477dc3e6f"
+  },
+  "status": "passed"
+}

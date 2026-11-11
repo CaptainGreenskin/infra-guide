@@ -5,6 +5,7 @@ const {createHash} = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const lab = path.join(root, 'dist/labs/mcp-http-authorization');
@@ -126,6 +127,7 @@ function checkTrace(folder, record) {
  assert.deepEqual(client[1], {event: 'metadata_result', status: 200, body: metadataResult.body});
  report.metadata = exchanges[1].at(-2).status;
 
+ const toolRequests = [];
  for (const [firstIndex, clientIndex, target] of [[4, 4, reportB], [7, 5, reportA]]) {
   const denied = target === reportB;
   const caseName = denied ? 'wrong_tenant' : 'allowed';
@@ -153,6 +155,7 @@ function checkTrace(folder, record) {
     assert.deepEqual(result.tools[0].inputSchema.required, ['report_id']);
    }
    if (j !== 2) continue;
+   toolRequests.push(request);
    assert.equal(request.params.name, tool);
    assert.deepEqual(request.params.arguments, {report_id: target});
    assert.equal(result.isError, denied);
@@ -176,6 +179,10 @@ function checkTrace(folder, record) {
    }
   }
  }
+ assert.deepEqual(toolRequests.map(request => request.id), [3, 3], 'request IDs repeat across the two SDK clients');
+ const [deniedRequest, allowedRequest] = toolRequests;
+ assert.deepEqual(deniedRequest, {...allowedRequest, params: {...allowedRequest.params, arguments: {report_id: reportB}}},
+  'the body of the denied request differs only in the target report');
  report.body_reads = server.filter(row => row.event === 'body_read').length;
  assert.equal(report.body_reads, 1);
  assert.deepEqual(record.summary, report);
@@ -221,6 +228,27 @@ print(svg.find("s:metadata", ns).text)
 const {metadata: _status, ...drawn} = summary;
 assert.deepEqual(metadata, {record: 'labs/mcp-http-authorization/validation.json', ...drawn});
 
+const context = vm.createContext({});
+for (const [, file] of read(root, 'src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)) {
+ if (file !== 'app.js') vm.runInContext(read(path.join(root, 'dist'), file), context, {filename: file});
+}
+const security = vm.runInContext('articleById("agent-security").sections[1][1]', context);
+const kairo = vm.runInContext('articleById("kairo-practice").sections[6][1]', context);
+function checkBridge(html, anchor, href) {
+ const parts = html.split(`id="${anchor}"`);
+ assert.equal(parts.length, 2, `${anchor}: one exercise destination`);
+ assert(parts[1].includes(href), `${anchor}: link to the matching exercise`);
+}
+const resourceScope = 'mcp-resource-scope';
+const readEvidence = 'kairo-read-evidence';
+for (const html of [security, read(root, 'dist/article/agent-security/index.html')]) {
+ checkBridge(html, resourceScope, '/article/kairo-practice/#' + readEvidence);
+}
+for (const html of [kairo, read(root, 'dist/article/kairo-practice/index.html')]) {
+ checkBridge(html, readEvidence, '/article/agent-security/#' + resourceScope);
+}
+assert(kairo.includes('/labs/mcp-http-authorization/client.jsonl') && kairo.includes('/labs/mcp-http-authorization/server.jsonl'));
+
 if (process.env.MCP_HTTP_AUTH_PYTHON) {
  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'mcp-http-authorization-'));
  try {
@@ -232,4 +260,4 @@ if (process.env.MCP_HTTP_AUTH_PYTHON) {
   fs.rmSync(temporary, {recursive: true, force: true});
  }
 }
-console.log('MCP HTTP authorization: metadata, 401/401/403, object refusal, 42 and sole A read verified.');
+console.log('MCP HTTP authorization: metadata, 401/401/403, repeated request ID, object refusal, 42 and sole A read, and reciprocal lesson anchors verified.');

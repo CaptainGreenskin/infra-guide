@@ -4444,7 +4444,7 @@ const progressiveAiSectionTitles={
  const token=byId('tokenization-embedding'),t=token.sections.map(s=>s[1]);
  token.sections[0][1]=para(
   '上一章从整体看过“输入编号→隐藏表示→候选得分”。本章展开输入和输出两端。词元（token）是分词器处理文本时使用的离散单位，可以是一个字、一个词片段或字节片段；词表是词元与编号的对应表。分词器按固定规则切分文本并查词表，输出整数序列。模型收到的是这些编号。词嵌入（Embedding）把每个编号查成向量（按固定顺序排列的一组数），作为该位置的初始表示。',
-  '本章另设八项玩具词表，让“云端云端算”和“云”走过同一条路径。保留上一章词表大小V=8、批大小B=2和四个输入位置T=4；为方便手算，把表示宽度从D=8缩为2，并改用下表的编号含义。这里0代表PAD，上一章的0是普通编号，两套输入不能直接混用。')+
+  '这里换一张能读懂编号含义的八项词表，用「云端云端算」和「云」看清分词、查表与标签对齐。每个词元用两个数表示。本章的编号 0 是填充，编号 1 是开始标记。上一章的 [0,1] 来自另一张词表，两项都只是普通编号。')+
   table(['编号','词表项','用途'],[['0','PAD','把短序列补到统一长度'],['1 / 2','BOS / EOS','标记序列开始与结束'],['3 / 4 / 5 / 6','云 / 端 / 云端 / 算','可被编码的正文词元'],['7','UNK','代替本玩具编码器不能识别的字符']])+
   para('这份人工分词器从左往右扫描，优先把“云端”作为整体，否则取一个字符，找不到就用UNK；最后在两端加BOS、EOS。因此“云端云端算”得到[1,5,5,6,2]，“云”得到[1,3,2]。编号只指向词表项：5比3大，不表示两个词元的含义更近。后面的查表、目标与输出分数都使用这张表。')+
   linkTo('transformer-model','回看整体模型的输入、表示与输出');
@@ -4459,7 +4459,7 @@ const progressiveAiSectionTitles={
   '这批有两条序列，每条取四个位置，因此B=2、T=4。每格查出两个数，输出形状为[B,T,D]=[2,4,2]。词表本身有8×2=16个参数，本批查出的特征也恰好有16项。增加输入位置只增加这次查出的特征数量。')+
   table(['词表行','本章固定向量'],[['PAD / BOS / EOS','(0,0) / (0,1) / (0,−1)'],['云 / 端 / 云端 / 算','(1,0) / (−1,0) / (2,0) / (0,2)'],['UNK','(0,0)']])+
   para('第一条输入查成[(0,1),(2,0),(2,0),(0,2)]。两处5重复使用E[5]，仍是两个不同位置，没有新建第二份参数。也可以用“只有编号所在项为1、其余为0”的独热向量乘E，得到同一行；实际Embedding直接查表，省去构造这张大独热输入。',
-  '为了算到输出，本章把中间模型暂时简化为H=E[ids]/2，即各输入向量逐项除以2。H称为隐藏表示，仍为[2,4,2]。这份局部变换只用本位置的词元。<a href="/article/attention-mechanics/#same-position-different-prefix">下一章换回入门的 8 维小模型</a>，把位置和末位编号固定，只改前一项，直接观察候选分数的变化。');
+  '为了算到输出，本章把中间模型暂时简化为 H=E[ids]/2，即各输入向量逐项除以 2。H 称为隐藏表示，仍是 [2,4,2]。这里可以单独检查查表和候选打分。<a href="/article/attention-mechanics/#same-position-different-prefix">下一章换回入门的 8 维小模型</a>，看模型怎样让前文影响打分。');
  token.sections[3][1]=para(
   '输出头把一个位置的隐藏向量h换成词表各候选的得分。设输出权重W有V行、每行D项，本章不加偏置：候选j的分数zⱼ是h与W[j]的点积。所有位置一起计算时，H的[ B,T,D ]变成得分的[B,T,V]=[2,4,8]。这些实数称为logits，尚不是概率；训练直接使用整行得分，生成时再按规则选择候选。',
   '本章令输出表W与输入表E引用同一份参数，称为权重共享。继续看第一条样本位置1：输入5查得(2,0)，除以2后h=(1,0)。与八行W分别点积，得到z=[0,0,0,1,−1,2,0,0]。八项依次对应编号0到7。编号5对应从左数第六列，分数是2。',
@@ -4492,6 +4492,10 @@ const progressiveAiSectionTitles={
   '复习时仍用同一张词表：把“云端云”写成完整编号[1,5,3,2]，再列出1→5、5→3、3→2。保持V=8而把D从2改成4，两份独立输入/输出表共64个参数，共享时32个；一次输入出现两次5只增加使用次数。对第二条右补齐样本，再分别写出key有效标记和目标忽略位，检查是否保留真实EOS。',
   '这些配对用于定位具体差异。编号含义不同，就回到词表与模板；预测位置错开，就检查移位负责方；有效数量不符，就检查填充位置与损失分母；共享PAD行变化，则沿输入和输出两条参数路径核对。换分词器即使V不变，也要重新核对编号到词元的对应关系及解码结果。',
   '本章已把文本接到每个位置的向量和目标。下一章补上本章简化掉的跨位置计算：从隐藏表示产生Q、K、V，让相同词元在不同合法前缀中读取不同内容。之后在自动求导章，再把完整Decoder的损失传回参数。')+
+  '<h3 id="same-token-lookup">回到 [0,1]，分清词元编号和位置编号</h3>'+
+  para('换回 A1.1 的 664 参数模型。先看 [0,1] 的第二格。它放着词元编号 1，所以查词嵌入表的第 1 行。它也刚好在位置 1，所以查位置表的第 1 行。两个 1 指向两张不同的表。各取首项相加，0.923456 + (−0.880069) ≈ 0.043387，就是这格送入解码器块的第一项。')+
+  trainingFigure('tiny-decoder-lookup-and-score','从同一次前向取数。输入用编号 1 选一行，输出用同一张词表的各行分别给候选打分。')+
+  para('将 [0,1] 换成 [4,1]，第二格的编号和位置都保留，这格查出的两行和相加结果也完全一样。最后给候选打分时，还是用隐藏向量分别与词表每行做点积。中间多出的计算怎样让同一个词元读到不同的前文？<a href="/article/attention-mechanics/#same-position-different-prefix">用同一份记录接着看 →</a>')+
   linkTo('attention-mechanics','继续注意力中的表示、匹配与读取')+linkTo('autograd-training','后续学习完整损失的反向更新');
  token.sections[8][1]=para('两份现有程序沿用本章同一词表、两条文本、D=2和H=E[id]/2：标准库程序检查编码与前向，PyTorch程序检查共享参数的导数及一次更新。先按正文预测编号、六项有效目标与梯度相加关系，再展开已有运行方法和逐项结果。')+
   heading(t[8].slice(t[8].indexOf('</p>')+4),'继续实测：共享参数的三路梯度','共享参数的三路梯度实验','subsection-9-nwftkb');
@@ -4500,7 +4504,7 @@ const progressiveAiSectionTitles={
  attention.sections[0][1]=
   '<span id="subsection-1-1ptyn5t"></span>'+
   '<h3 id="same-position-different-prefix">同一个词元，前文怎样改变预测</h3>'+
-  para('回到入门的 664 参数模型。两次计算用同一份更新过一次的参数，只把输入的第一项从 0 换成 4。末位仍是编号 1、位置 1，所以它的词嵌入和位置向量都相同。先看这格的实际记录，数值保留四位小数。')+
+  para('把 [0,1] 的第一项换成 4，第二格还是编号 1，也还在位置 1。按<a href="/article/tokenization-embedding/#same-token-lookup">上一章的查表结果</a>，它送入解码器块的向量完全一样。那最后一行会选出同一个编号吗？下面用入门的 664 参数模型比较。先训练一步，之后两次计算固定使用同一份参数。')+
   table(['输入','位置 1 输入向量首项','注意力分支输出首项','选出的编号'],[
    ['[0,1]','0.0434','0.3166','1'],
    ['[4,1]','0.0434','0.2672','7']
@@ -4508,7 +4512,7 @@ const progressiveAiSectionTitles={
   para('这里的分支输出是注意力读完前文、把结果转回原特征宽度后，准备加回输入的向量。只换前文，差异就从这条分支传到最后的候选得分。<a href="/labs/tiny-decoder-forward/validation.json">查看实际计算记录</a> · <a href="/article/transformer-block/#native-tiny-decoder-context">沿两次回加跟到最后一行得分 →</a>',
   '再做相反的改动。只把 [0,1] 的后一项换成 7，第一行的八个分数都保持原值。第一行只能读位置 0，第二行能读位置 0 和 1，这条读取规则叫因果注意力。',
   '放到语言里，可以把“发布会上，苹果推出新机”分成三个示意位置。位置 1 的“苹果”可以用前面的“发布会上”来更新自己的表示。到了位置 2，模型才把“推出新机”纳入当前这一行的计算。',
-  '上一章把词元编号查成向量，再用局部变换H=E[id]/2演示输出。现在让一个位置的向量也能汇入其他位置的信息。把进入本层的表示记为X，T个位置各有D项特征，按行排成[T,D]。X可以来自词嵌入与位置处理，也可以来自前一层。',
+  '要让上一格影响这次预测，模型需要把不同行的信息汇到一起。把进入本层的表示记为 X，T 个位置各有 D 项特征，按行排成 [T,D]。第一层的 X 来自词嵌入和位置表，之后可以来自上一层。',
   '以位置1为例，它用自己的Q（Query，查询向量）逐一匹配位置0和1的K（Key，匹配向量），再按匹配得到的权重汇入两个位置的V（Value，内容向量）。每个位置都能提供K和V，也能用自己的Q发起查询。自注意力中的“自”指这三组向量来自同一份X。模型用三张可学习矩阵做线性变换，这一步称为投影，得到Q=XWq、K=XWk、V=XWv。')+
   table(['对象','形状','每行与每列的含义'],[['Q / K','[T,d]','行是位置；d个特征用于匹配'],['V','[T,dᵥ]','行仍是候选位置；dᵥ个特征是读回内容'],['输出O','[T,dᵥ]','每个查询位置读回的一行内容']])+
   '<h3 id="subsection-1-bc8625">匹配分数、读取权重与输出</h3>'+
@@ -4532,7 +4536,15 @@ const progressiveAiSectionTitles={
   '回看同一个候选位置0。查询0只允许读取它，给它的权重是1。查询1还允许读取位置1，给位置0的权重变成1/4。注意力权重回答的是当前查询把多少份额分给这个候选，每一行各自计算。',
   '稳定Softmax从每个合法分数减去本行最大值m，再计算exp(Sᵢⱼ−m)并归一化。分子分母共同乘exp(−m)，比例保持，指数的正向溢出风险降低。禁止项直接排除，或等价地在Softmax前设为负无穷；将其分数乘0会留下exp(0)=1，反而让它进入分母。',
   '一次汇总中，非负且和为1的权重使每个输出分量落在合法Value相应分量的范围内。输出随后还会经过投影、残差和前馈，这个范围性质只属于当前加权步骤。完整Decoder的内容流在下一章继续展开。')+
-  figures(q[2]).join('');
+  figures(q[2]).join('')+
+  '<h3 id="same-prefix-attention-weights">用刚才的公式复算两条实际输入</h3>'+
+  para('回到 [0,1] 和 [4,1]，只看头 0 对位置 1 的读取。两条输入的查询向量完全相同。它和位置 1 的键做点积，缩放后的分数都约为 −0.0180。只有位置 0 的键变了，下面对比它怎样改变这一整行的权重。')+
+  table(['输入','位置 0、1 的缩放分数','位置 0、1 的读取权重'],[
+   ['[0,1]','0.2013、−0.0180','0.5546、0.4454'],
+   ['[4,1]','−0.1544、−0.0180','0.4659、0.5341']
+  ])+
+  para('再沿内容向量读第一个数。位置 1 提供的值都约为 0.2124。位置 0 提供的值从 0.8441 变为 0.3079。用第一行的权重算，0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。用第二行算，约为 0.2569。只换一个前文，既改变了从位置 0 读多少，也改变了位置 0 提供什么。')+
+  para('这个数是头 0 读回结果的第一项。拼上头 1，再做一次线性变换，才得到章首表里的分支输出 0.3166 或 0.2672。<a href="/article/transformer-block/#native-tiny-decoder-context">带着这两个数看完整前向，并用代码复算 →</a>');
  attention.sections[3][1]=
   '<h3 id="subsection-4-jajsfp">可见集合与因果约束</h3>'+
   para('掩码是允许集合Aᵢ的程序表示。因果条件检查key是否晚于query，key填充条件检查它是否是真实输入，两者共同决定谁能参与本行Softmax。上一章的标签忽略位则选择哪些输出计算损失；一处输入可以被后续查询作为历史读取，而其对应预测位置不贡献监督。',
@@ -4591,7 +4603,7 @@ const progressiveAiSectionTitles={
   '接下来的Decoder Block章会把注意力输出放回残差与前馈路径；位置编码章再说明位置怎样影响匹配。注意力权重只是一次内容汇总的系数，最终得分还要经过这些后续计算。')+
   linkTo('transformer-block','继续Decoder的残差、归一化与前馈')+
   q[8].slice(practiceStart).replace('>运行并检查中间结果</h3>','>注意力中间结果与原生SDPA对照</h3>');
- token.updated='2026.11.11';attention.updated='2026.11.11';
+ token.updated='2026.11.12';attention.updated='2026.11.12';
 })();
 
 
@@ -4618,6 +4630,7 @@ const progressiveAiSectionTitles={
   '记进入一层的隐藏表示为X，形状[B,T,D]=[2,4,8]，三根轴依次是样本、位置、特征。本例第一层的X来自词嵌入与可学习位置向量之和。N₁、N₂是两次各自带参数的逐位置归一化；Attn包含Q/K/V投影、因果读取、拼头和输出投影；FFN表示前馈分支。它们的输入与返回值都保持[2,4,8]，因此可接到下面两次逐元素相加。')+
   formula('本例的pre-norm计算顺序','H₁ = X + Attn(N₁(X))<br>H₂ = H₁ + FFN(N₂(H₁))','pre-norm意为“先归一化，再进入分支”。第一次加法产生H₁，第二条分支必须在H₁形成后才能计算。')+
   p('主路径沿X→H₁→H₂传递表示。两条分支分别提供上下文修正与特征修正；归一化只整理交给分支的数值，残差加号仍接收未被这次归一化替换的主路径。先把这条正常依赖走通，后面再分别计算加法、归一化和前馈内部的数值。')+
+  p('想沿上一章的实际输入继续算，可以直接到<a href="/article/transformer-block/#native-tiny-decoder-context">第 8 节的两次回加</a>。仍看 [0,1] 和 [4,1] 的位置 1，核对哪一步让两个候选的名次互换。')+
   link('attention-mechanics','回看分头、拼头与输出投影'),
 
   h('subsection-2-1n65z1o','残差怎样保留输入并加入修正')+
@@ -4757,8 +4770,68 @@ for label, actual, expected in (
   ])+
   p('位置 1 自己的查询向量没有变化。位置 0 换了词元，匹配向量和内容向量一起改变。两头拼回后还要做输出投影，图中展示的是投影后的值。把它加回 X 就得到 H₁，例如输入 [0,1] 时，第一项约为 0.0434 + 0.3166 = 0.3600。前馈从 H₁ 取输入，第二次回加的结果再送去计算候选分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
   p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
-  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
- decoder.updated='2026.11.11';
+  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p>'+
+  h('decoder-record-recompute','用标准库复算查表、两次回加和最后一行')+
+  p('先下载<a href="/labs/tiny-decoder-forward/validation.json" download>前向记录 validation.json</a>。把下面代码保存为 <code>check_decoder.py</code>，与记录放在同一目录，运行 <code>python3 check_decoder.py validation.json</code>。这里读取原模型记录的中间向量，复算位置相加、因果读取、残差与词表打分。')+
+  trainingCode('用记录里的向量逐项核对三次前向','PYTHON',`import json
+import math
+import sys
+from pathlib import Path
+
+
+def dot(a, b):
+    return math.fsum(x * y for x, y in zip(a, b))
+
+
+def add(a, b):
+    return [x + y for x, y in zip(a, b)]
+
+
+def check(actual, saved):
+    assert len(actual) == len(saved)
+    assert all(math.isclose(x, y, rel_tol=0, abs_tol=1e-12)
+               for x, y in zip(actual, saved))
+
+
+def scores_at(run, position, embedding):
+    layers, reference = run["layers"], run["reference"]
+    token_id = run["prompt"][position]
+    x = add(embedding[token_id], layers["position"][position])
+    check(x, layers["x"][position])
+
+    joined = []
+    for q, k, v in zip(reference["q"], reference["k"], reference["v"]):
+        scores = [dot(q[position], key) / math.sqrt(len(key))
+                  for key in k[:position + 1]]
+        peak = max(scores)
+        weights = [math.exp(score - peak) for score in scores]
+        total = math.fsum(weights)
+        joined.extend(dot(weights, values) / total
+                      for values in zip(*v[:position + 1]))
+    check(joined, layers["joined"][position])
+
+    h1 = add(x, layers["attention"][position])
+    h2 = add(h1, layers["feed_forward"][position])
+    check(h1, layers["after_attention"][position])
+    check(h2, layers["after_ffn"][position])
+    logits = [dot(layers["normalized"][position], row) for row in embedding]
+    check(logits, run["logits"][position])
+    return logits
+
+
+record = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+runs, embedding = record["runs"], record["token_weight"]
+for name in ("base", "change_prefix"):
+    logits = scores_at(runs[name], 1, embedding)
+    print(runs[name]["prompt"], f"1: {logits[1]:.4f}, 7: {logits[7]:.4f}",
+          "选出", max(range(len(logits)), key=logits.__getitem__))
+check(scores_at(runs["base"], 0, embedding),
+      scores_at(runs["change_future"], 0, embedding))
+print("只改未来一格，位置 0 的八个分数不变")`)+
+  p('两行应分别选出 1 和 7。最后一行检查反方向的变化，把 [0,1] 的末位换成 7，前一格的分数逐项相同。<a href="/article/attention-mechanics/#same-prefix-attention-weights">回看产生这些读取权重的分数</a> · <a href="/article/tokenization-embedding/#same-token-lookup">回看词嵌入表怎样同时用在两端</a>')+
+  p('换到训练时，模型还要不断更新这些参数。<a href="/article/checkpoint-recovery/#native-mps-checkpoint-resume">继续看同一个模型怎样在 GPU 上换进程恢复训练 →</a>')+
+  '</details>';
+ decoder.updated='2026.11.12';
 
  const position=select('position-encoding',9),r=position.sections.map(s=>s[1]);
  replace(position,[
@@ -7125,7 +7198,20 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
- serverless.updated=delivery.updated='2026.11.09';
+ const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
+ const [reportId,reportTotal]=afterCommit.recovered.operations[0];
+ serverless.sections[5][1]+=
+ h('serverless-ack-evidence','用实际投递和账本核对消息确认')+
+ p('把 <code>'+trainingEscape(reportId)+'</code> 的日报放进真实 RabbitMQ 实验。消费者在 SQLite 提交一行，记录业务动作编号、总数 '+reportTotal+' 和参数摘要。这行既保存效果，也让重试能查到原结果。程序随后让消费者退出，它还没发 ACK，也就是还没告诉消息代理这次投递已处理。')+
+ table(['实验动作','队列侧的记录','业务库实际留下什么'],[
+  ['提交后退出，再次接收','<code>'+trainingEscape(afterCommit.redelivery.message_id)+'</code> 再次送达','查到原记录，共 '+afterCommit.recovered.effects+' 笔，总数 '+afterCommit.recovered.total],
+  ['同一业务动作换消息再发','新消息 ID <code>'+trainingEscape(afterCommit.republished_message_id)+'</code>','仍查到原记录，只有 '+afterCommit.after_republish.effects+' 笔，总数 '+afterCommit.after_republish.total],
+  ['另一条消息先 ACK，再在提交前退出','可供投递的消息数 <code>ready='+earlyAck.ready_messages+'</code>','账本 <code>effects='+earlyAck.business.effects+'</code>，业务未完成']
+ ])+
+ p('排查函数重试时也要分别查这两处。队列读数回答还有几条消息可供接收，业务库里的回执回答报告是否已经保存。发布端为同一动作重新发消息时，即使运输 ID 变了，也用原业务动作编号查回执。表中是 RabbitMQ 与 SQLite 的原生记录，SQS/Lambda 的删除和批响应沿前面的平台规则判断。')+
+ '<p class="practice-links"><a href="/article/message-delivery/#message-native-run">到 C5.2 看如何复跑代理、退出和重投 →</a> · <a href="/labs/delivery-systems/validation.json">查看队列与业务原始记录 →</a></p>';
+ delivery.sections[8][1]+=p('沿同一份队列和账本记录回到<a href="/article/serverless-execution/#serverless-ack-evidence">C5.1 的函数提交与消息确认</a>。函数成功返回之前，先确保效果已经提交，重试时能按原动作编号查到结果。');
+ serverless.updated=delivery.updated='2026.11.12';
 
  const firstActorIntro=p('函数是一段由平台接收输入并执行的应用程序；处理这次输入的入口称为处理函数（handler）。先用报告服务区分输入、执行和产物：用户请求生成日报，服务记录任务并发送消息，平台取出消息调用处理函数，处理函数保存报告，用户随后读取报告。');
  if(!serverless.sections[0][1].includes(firstActorIntro))throw Error('Serverless actor introduction changed');
@@ -7141,7 +7227,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('Lambda 的轮询器从 SQS 接收消息，队列把消息暂时隐藏。轮询器把消息作为输入同步调用 handler，并等待它返回。handler 在业务库提交报告和回执，再返回成功；Lambda 随后删除这批已成功处理的消息。这里用户收到受理结果和 handler 返回成功，是两次不同的返回。')+
   '<figure class="training-figure"><a href="diagrams/serverless-queue-actors.svg" target="_blank" rel="noopener" aria-label="放大日报的队列、轮询器与处理函数时序"><img src="diagrams/serverless-queue-actors.svg" width="460" height="660" alt="用户提交日报，服务写消息并返回受理。Lambda 轮询器接收消息并同步调用处理函数。函数提交报告 37 和回执，成功返回后，平台删除队列消息。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>业务提交、函数返回和删除消息依次推进。删除前函数仍可能已经保存了报告。<a href="diagrams/serverless-queue-actors.svg" download>下载 SVG ↗</a></figcaption></figure>'+
   p('如果 handler 提交后、返回前退出，报告已经存在，消息还可能重投。后面的重试、接收句柄和批次响应都沿这次交接展开。<a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#sqs-polling-behavior">AWS 的 SQS 轮询、同步调用与删除顺序 ↗</a>'));
- serverless.updated='2026.11.11';
+ serverless.updated='2026.11.12';
 
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
@@ -8789,14 +8875,14 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    ])+
    p('先记下平台、适配器、模型和工具版本，再保存本次用的策略、预算、初始数据与停止条件。断线测试要把断线前的任务、重连后查到的任务标识和实际交付放在一起。另一位检查者应能用这些记录复核同一项结果。')+
    '<h3 id="kairo-read-evidence">一条拒绝记录怎样验收</h3>'+
-   p('先用本机 MCP 授权实验练习。客户端用同一份有效令牌查 report-A 和 report-B，两次 HTTP 都是 200。请在客户端记录找出哪次请求被工具拒绝，再到服务端核对哪份正文实际被读了。<a href="/labs/mcp-http-authorization/client.jsonl">客户端记录 ↗</a> · <a href="/labs/mcp-http-authorization/server.jsonl">服务端记录 ↗</a>')+
+   p('沿用<a href="/article/agent-security/#mcp-resource-scope">权限章的本机 MCP 授权实验</a>。客户端用同一份有效令牌查 report-A 和 report-B，两次 HTTP 都是 200。先在客户端记录中找两条 <code>tool_result</code>，记下各自的 <code>case</code>、<code>report_id</code> 和 <code>isError</code>，再到服务端核对实际正文读取。<a href="/labs/mcp-http-authorization/client.jsonl">客户端记录 ↗</a> · <a href="/labs/mcp-http-authorization/server.jsonl">服务端记录 ↗</a>')+
    fold('核对两次调用',
     table(['请求','客户端看到什么','资源服务记录了什么'],[
      ['wrong_tenant，查 report-B','isError=true，只有通用的拒绝文本','object_denied，没有读取 B 正文'],
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
-    p('两次调用各自建立了 SDK 客户端，JSON-RPC 请求编号都是 3。先用实验标签 case 找到各自的 tools/call，再拿报告名和请求编号去对服务端的处理记录。case 是客户端为这次实验加的标签。服务端验证令牌后，才把实际主体映射到 A 租户。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('本章要验收的是另一份只读日报，正确总数为 23。接入目标时，为每次尝试保留任务标识、受信主体和报告名，再由测试者从资源服务侧核对实际读取。正文可能已经被读走，版本仍保持原样。若缺少覆盖本次尝试的读取记录，就把“B 的正文未被读取”留作待核对。'),
+    p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+
@@ -10387,7 +10473,22 @@ future.result(timeout=35)
   p('输出编号恰好相同，两个权重版本的首轮候选分数最大相差约 1.04839。新推理进程先核对制品摘要，再加载导出的权重。把第一步的权重放进声称来自第二步的制品，程序在推理前拒绝。对于正确的第二步权重，完整前缀与增量缓存的候选分数最大误差约为 4.44×10⁻¹⁶。<a href="/article/model-serving/#sdpa-cache-run">回到推理章看逐位置的缓存校验 →</a>')+
   p('解压本实验及<a href="/labs/sdpa-cache.zip">原 SDPA 实验包</a>，按包内说明启动。记录可用来核对本机 CPU/Gloo 的目标数、检查点和推理读回。')+
   '<p class="practice-links"><a href="/labs/tiny-decoder-handoff.zip" download>下载程序与记录 ↓</a> · <a href="/labs/tiny-decoder-handoff/validation.json">查看训练与推理实际记录 →</a> · <a href="/labs/tiny-decoder-handoff/README.md">复跑步骤 →</a></p>');
- recovery.updated='2026.11.11';
+ recovery.sections[7][1]+=fold('实跑 · 同一小模型换进程后在 Apple GPU 上续训',
+  '<h3 id="native-mps-checkpoint-resume">恢复时分别核对动量与设备随机状态</h3>'+
+  p('沿用 <a href="/article/transformer-block/#decoder-record-recompute">同一个 664 参数模型</a>、两条输入和两组有效目标。这里让每一步在 GPU 上随机抽取一组目标。Apple 平台的 PyTorch GPU 后端叫 MPS。实验固定 PyTorch 2.5.1、FP32、同一块 Apple M4 Pro，关闭不支持的运算回退到 CPU 的选项。每步记录候选分数与梯度都在 <code>mps:0</code>。')+
+  p('连续运行六步，抽到的目标组依次是 [1,0,0,0,1,1]。另一条路径在第 3 步结束时保存，再换进程。检查点带上参数、优化器动量、已完成步数与随机状态。动量保存先前梯度的累积值，随机状态决定后续会抽到哪一组目标。')+
+  table(['从第 3 步恢复时带回什么','后 3 步抽到的目标组','最终权重与连续训练的最大绝对差'],[
+   ['全部状态','[0,1,1]','0'],
+   ['只省去动量','[0,1,1]','约 0.13231'],
+   ['只省去 MPS 随机状态','[1,0,0]','约 0.04247']
+  ])+
+  p('完整恢复在续训前读回相同的参数、动量和设备随机状态，最终动量也逐项相同。只省去动量时，仍会抽到相同目标，更新却已经不同。只省去设备随机状态时，加载出的动量保持原值，目标组从恢复后的第一步就变了。三组恢复初始权重都相同，所以只对比加载出的权重会漏掉两个问题。')+
+  trainingCode('解压后进入实验目录，使用 Apple Silicon 与 Python 3.12','SHELL',`python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -B mps_resume.py > replay.json`)+
+  p('查看原始记录的 <code>runs</code>。先把 <code>save.final</code> 对到 <code>resume.initial</code>，再比较每步的 <code>plan</code>，最后看 <code>comparisons_with_continuous</code>。这次验证覆盖同一设备上的完整更新边界。设备随机状态用于抽目标组，原模型的注意力不使用 dropout。CUDA、NCCL、跨机恢复和吞吐另有验收条件。')+
+  '<p class="practice-links"><a href="/labs/mps-checkpoint-resume.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mps-checkpoint-resume/README.md">复跑说明</a> · <a href="/labs/mps-checkpoint-resume/validation.json">查看进程、随机状态与权重差异</a></p>');
+ recovery.updated='2026.11.12';
 
 })();
 
@@ -11787,7 +11888,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
   const kairo=articleById('kairo-practice');
   kairo.sections[5][1]+=p('目标环境验收可沿用一组对照：暂停后撤权，确认零新效果。再从提交后退出恢复，分别撤销写权限与查回执权限，对照一份既有效果和图的完成或待确认状态。把目标版本、批准绑定、权限来源、接收方回执和实际产物分别保存。'+approvalLink);
   kairo.sections[5][1]+=p('目标版本若使用 MCP Streamable HTTP，可在同一个操作上分别于提交前、提交后关闭响应流。分别记录断流、执行清理和原操作回执，接收方实际产物决定结果。<a href="/article/mcp-protocol/#mcp-http-cancellation-run">本机协议对照与复跑步骤 →</a>');
-  kairo.updated='2026.11.11';
+  kairo.updated='2026.11.12';
  }
  {
   const a=articleById('agent-retrieval');
@@ -14100,9 +14201,12 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
   trainingFigure('mcp-http-authorization','沿 HTTP 入口与资源端两道检查，核对拒绝发生在哪一层、报告正文是否真正读取。')+
   '<p>解压并安装固定依赖后运行 <code>python3.12 -B authorization_lab.py --output-dir replay</code>。<a href="labs/mcp-http-authorization.zip" download>下载完整实验 →</a> · <a href="labs/mcp-http-authorization/README.md">复现步骤</a> · <a href="labs/mcp-http-authorization/validation.json">运行记录索引</a></p>'+
   '<p>令牌由测试夹具签发。浏览器授权、生产身份服务和 Kairo 接入分别验收。<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization" target="_blank" rel="noopener">固定版授权规则 ↗</a> · <a class="inline-link" href="/article/agent-security/#mcp-resource-scope">工具为什么还要核对对象 →</a></p>';
+ security.updated='2026.11.12';
  security.sections[1][1]+=
+
   '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
-  para('MCP 的入口范围可以允许调用者请求读取报告。工具拿到已验证主体以后，再按本次允许的资源检查报告归属。实验中 A 的令牌具备 <code>report.read</code>，调用者只改请求里的报告名。指向 A 时读取一份报告，指向 B 时工具拒绝且不读正文。两个请求的 HTTP 响应都是 200，工具结果分别表示成功与失败。')+
+  para('MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用已验证主体 <code>learner-A</code> 判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
+   '继续确认实际读取。服务端审计中，A 有一条 <code>body_read</code>，B 有 <code>object_denied</code> 且无正文读取。两次工具请求的 JSON-RPC 编号恰好都为 3。<a href="/article/kairo-practice/#kairo-read-evidence">沿同一份本机记录，到接入章对齐两次请求和正文审计 →</a>')+
   '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
 })();
 
@@ -15164,7 +15268,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -15749,7 +15853,7 @@ const fieldConceptEvidence={
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
@@ -16076,6 +16180,7 @@ const labArchiveCatalog={
  'dual-stack-connect':{folder:'dual-stack-connect',title:'IPv6 建连、IPv4 回退与 HTTP 响应等待'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
  'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
+ 'mps-checkpoint-resume':{folder:'mps-checkpoint-resume',title:'Apple GPU 训练的动量与设备随机状态恢复'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
@@ -16272,6 +16377,7 @@ const labLearningCatalog=[
  {id:'ai-artifacts',track:'ai',stage:3,title:'文件和形状都正确，词表仍可能装错',chapter:'ai-lifecycle',pack:'recovery-artifacts-retrieval',files:['artifact_bundle.py'],env:'Python 3.12 + PyTorch 2.5.1 + Safetensors 0.8.0',kind:'CPU 产物保存与加载',observe:'交换词表 ID 后让语义门禁拒绝；固定完整版本束，再验证条件发布与回退代际。',scope:'三条固定语义与本地生产指针，不是 LLM 质量或线上灰度测试。'},
  {id:'ai-recovery',track:'ai',stage:3,title:'一条命令比较连续四轮和保存后的 2+2 轮',chapter:'training-lab',pack:'training-capstone',files:['verify_run.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python 3.10—3.12 + PyTorch 2.5.1',kind:'真实两 rank 完整恢复',observe:'两条路径各有 32 次实际调用；模型、优化器、随机状态和配置逐项相等，三个负例必须被拒绝。',scope:'轮末正常保存后重启；没有任意微批崩溃、掉电或 GPU 证据。'},
  {id:'ai-tiny-decoder-handoff',track:'ai',stage:3,title:'同一个小模型怎样从训练进程交给推理进程',chapter:'checkpoint-recovery',anchor:'native-tiny-decoder-handoff',pack:'tiny-decoder-handoff',files:['handoff.py','README.md'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo · 需下载同站 SDPA 实验包',kind:'双进程训练、检查点恢复与独立推理',observe:'核对两步的有效目标与动量，再比较独立进程加载两个版本后的候选分数。将旧权重放到新清单旁，确认加载会拒绝。',scope:'664 参数教学模型，本机 CPU 双精度，在完整更新后保存。'},
+ {id:'ai-mps-checkpoint-resume',track:'ai',stage:3,title:'换进程续训时，权重相同为什么更新会不同',chapter:'checkpoint-recovery',anchor:'native-mps-checkpoint-resume',pack:'mps-checkpoint-resume',files:['mps_resume.py','tiny_decoder.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · Apple M4 Pro MPS',kind:'真实 GPU 训练与跨进程恢复',observe:'比较六步连续训练与第 3 步保存后恢复，再分别只丢动量、只丢 MPS 随机状态，核对目标组与权重。',scope:'单台 Apple Silicon、单设备、FP32 和 664 参数小模型；CUDA、跨机与性能另验。'},
  {id:'ai-multinode',track:'ai',stage:3,title:'从单机 CPU 走向真实两机四卡',chapter:'multinode-lab',pack:'cloud-training-ddp',files:['check_env.py','launch_2nodes.sh','train_ddp.py'],pendingFiles:['check_env.py','launch_2nodes.sh'],env:'两台 GPU 机器 · 共同网络与匹配运行时',kind:'目标环境手册',observe:'按设备、会合、小集合通信、训练、恢复与性能的顺序验收；逐层保留记录。',scope:'CPU/Gloo 和同主机代理有本地记录；真实 CUDA/NCCL、物理两节点仍待执行。'},
  {id:'agent-permission',track:'agent',stage:1,title:'先验证拒绝是否真的阻止了业务效果',chapter:'agent-security',anchor:'agent-permission-lab',folder:'permissions',files:['policy_lab.py'],env:'Python 3 · 标准库',kind:'本地策略夹具',observe:'用两个虚拟租户、只读任务和获批写入，对照八组决定与实际业务结果。',scope:'固定授权协议，不调用模型、真实身份服务或 Kairo。'},
  {id:'agent-effects',track:'agent',stage:1,title:'两次尝试，为什么只有一次工具效果',chapter:'agent-recovery',pack:'infra-systems',files:['agent_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'工具提交后让执行者退出，恢复沿同一操作 ID 查询回执，得到 attempts=2、effects=1。',scope:'单 worker 的原始恢复实验；多 worker 接管见后续任务。'},
@@ -16801,5 +16907,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2990e2b2d33d11baf4e7b5c7c1a754bd45b9e0e8bfe51b3c8bbdcc32afd705bf";
+const staticReadingVersion="c6293570b4d4bcce19c439c7addcfba2ba8295cf7505bd9b17e6300280af8f1b";
 

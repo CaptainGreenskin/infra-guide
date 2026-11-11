@@ -22,6 +22,25 @@ const crash=mc.effect_before_ack_crash;assert.equal(crash.kill_exit,-9);assert(c
 for(const x of [crash.at_crash,crash.recovered,crash.after_republish]){assert.equal(x.effects,x.operations.length);assert.equal(x.total,x.operations.reduce((sum,p)=>sum+p[1],0));assert.deepEqual(x.operations,[['report-27',37]]);}
 assert(crash.recovered.duplicate&&crash.after_republish.duplicate);
 const lost=mc.ack_before_effect_negative;assert.equal(lost.ready_messages,0);assert.equal(lost.business.effects,0);assert.equal(lost.business.total,0);assert.equal(lost.business_oracle_passed,false);
+const serverlessAckAnchor='serverless-ack-evidence';
+const functionPage=fs.readFileSync('dist/article/serverless-execution/index.html','utf8');
+const functionSection=functionPage.split('id="section-6"')[1]?.split('</section>')[0];
+const ackBridge=functionSection?.split('id="'+serverlessAckAnchor+'"')[1];
+assert(ackBridge,'Show the actual ACK and commit comparison in the function transaction section');
+assert(ackBridge.includes('/article/message-delivery/#message-native-run')&&ackBridge.includes('/labs/delivery-systems/validation.json'));
+const nativeQueuePage=fs.readFileSync('dist/article/message-delivery/index.html','utf8');
+assert(nativeQueuePage.split('id="message-native-run"')[1]?.split('</section>')[0].includes('/article/serverless-execution/#'+serverlessAckAnchor));
+const ackRows=ackBridge.match(/<tbody>([\s\S]*?)<\/tbody>/)?.[1].split('</tr>').filter(Boolean);
+assert.equal(ackRows?.length,3);
+for(const [row,token,effects] of [
+ [ackRows[0],crash.redelivery.message_id,crash.recovered],
+ [ackRows[1],crash.republished_message_id,crash.after_republish]
+]){
+ assert(row.includes('<code>'+token+'</code>'));
+ assert(row.includes(effects.effects+' 笔，总数 '+effects.total),'Broker delivery and committed effects must describe the same recorded case');
+}
+assert(ackRows[2].includes('<code>ready='+lost.ready_messages+'</code>')&&ackRows[2].includes('<code>effects='+lost.business.effects+'</code>'));
+assert(ackBridge.includes('<code>'+crash.recovered.operations[0][0]+'</code>'),'Keep the stable business identity explicit');
 assert.deepEqual(mc.prefetch_push,{prefetch:1,delivered_before_ack:1,ready_before_ack:1,delivered_after_ack:2,ready_after_all_ack:0});
 assert.equal(mc.prefetch_get_exception.unacked_get_deliveries,2);assert.equal(mc.prefetch_get_exception.prefetch,1);assert.equal(mc.prefetch_get_exception.ready_before_ack,0);
 assert.equal(mc.wrong_channel_ack.reply_code,406);assert(mc.wrong_channel_ack.wrong_channel_closed&&mc.wrong_channel_ack.right_channel_open);

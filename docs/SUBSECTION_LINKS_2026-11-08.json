@@ -333,10 +333,12 @@
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
         "native-jetstream-redelivery",
-        "serverless-queue-actors"
+        "serverless-queue-actors",
+        "serverless-ack-evidence"
       ],
       "visible_targets": [
         "serverless-queue-actors",
+        "serverless-ack-evidence",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
         "native-jetstream-redelivery"
@@ -493,6 +495,12 @@
       "id": "tokenization-embedding",
       "targets": [
         "subsection-7-rumyzr",
+        "subsection-9-nwftkb",
+        "same-token-lookup"
+      ],
+      "visible_targets": [
+        "subsection-7-rumyzr",
+        "same-token-lookup",
         "subsection-9-nwftkb"
       ]
     },
@@ -509,12 +517,14 @@
         "subsection-5-12z3xau",
         "v43-attention-practice",
         "prefix-attention-mask",
-        "same-position-different-prefix"
+        "same-position-different-prefix",
+        "same-prefix-attention-weights"
       ],
       "visible_targets": [
         "same-position-different-prefix",
         "subsection-1-bc8625",
         "subsection-2-sawdtb",
+        "same-prefix-attention-weights",
         "subsection-4-jajsfp",
         "subsection-4-h4v7m8",
         "subsection-4-eh89y2",
@@ -536,7 +546,8 @@
         "subsection-8-1e710zy",
         "v43-decoder-practice",
         "normalization-axes",
-        "native-tiny-decoder-context"
+        "native-tiny-decoder-context",
+        "decoder-record-recompute"
       ],
       "visible_targets": [
         "subsection-2-1n65z1o",
@@ -727,7 +738,8 @@
         "native-elastic-restart-step",
         "native-async-dcp-commit",
         "single-gpu-recovery-contrast",
-        "native-tiny-decoder-handoff"
+        "native-tiny-decoder-handoff",
+        "native-mps-checkpoint-resume"
       ],
       "visible_targets": [
         "fsdp-dcp-reshard",

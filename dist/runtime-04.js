@@ -299,8 +299,8 @@ for(const [id,title,build]of [['distributed-training','真实双进程：全局t
 const infraStudyGates={
  ai:[
   {fields:[['model-foundations','mf-tensors','张量、输入与标签']],
-   task:'画出输入、标签和每个位置能看到的内容。手算一次注意力输出，再核对最小 Decoder 的梯度与更新。',
-   exercises:[['autograd-training','section-6','对照整批与微批更新']]},
+   task:'标出每个位置能读取的前文。用同一模型的原始记录复算两次预测，再核对最小 Decoder 的梯度与更新。',
+   exercises:[['transformer-block','decoder-record-recompute','复算查表、注意力与候选分数'],['autograd-training','section-6','对照整批与微批更新']]},
   {fields:[['model-foundations','mf-gpu','GPU 执行与数据搬运']],
    task:'从矩阵形状算出乘加次数与搬运字节，再用同一块 Apple GPU 的两组对照，检查矩阵乘法和逐行归约怎样验尾部、怎样计时。',
    exercises:[['operator-profiling','native-metal-gemm','核对矩阵乘法实测'],['operator-profiling','native-metal-softmax','核对 Softmax 归约实测']]},
@@ -309,7 +309,7 @@ const infraStudyGates={
    exercises:[['gpu-memory','section-11','核对状态账与重计算'],['distributed-training','section-8','核对双进程梯度']]},
   {fields:[['training','tr-input','数据供给与有效目标'],['platform','sv-admission','作业准入与放置']],
    task:'对照连续训练与中断恢复的结果，再沿作业、Pod 和训练进程核对 kind 集群的两个 CPU 节点是否完成了同一次更新。',
-   exercises:[['training-lab','section-3','跑两进程恢复对照'],['kubernetes-training','native-kubernetes-gloo-job','核对两节点 CPU 作业']]},
+   exercises:[['training-lab','section-3','跑两进程恢复对照'],['checkpoint-recovery','native-mps-checkpoint-resume','核对单 GPU 恢复状态'],['kubernetes-training','native-kubernetes-gloo-job','核对两节点 CPU 作业']]},
   {fields:[['platform','sv-prefill','推理阶段与缓存'],['platform','sv-release','模型版本与发布验收']],
    task:'复算分组查询注意力的缓存用量与取整开销，从请求记录计算首个词元时延，再用质量和版本检查验收发布。',
    exercises:[['model-serving','section-7','核对增量缓存与延迟'],['ai-lifecycle','native-model-rollout','检查灰度发布与回退']]}
@@ -326,7 +326,7 @@ const infraStudyGates={
    exercises:[['durable-workflows','worker-fencing-run','验证旧执行者被拒绝'],['agent-retrieval','native-qdrant-retrieval','核对候选与实际引用']]},
   {fields:[['agent','ag-observability','运行轨迹与业务结果']],
    task:'用同一任务的记录核对工具调用、恢复与业务结果，再按 Kairo 接入契约检查交付记录。',
-   exercises:[['agent-observability','native-model-mcp-recovery-observation','对齐任务记录与实际结果'],['kairo-practice','section-8','运行接入记录校验器']]}
+   exercises:[['agent-observability','native-model-mcp-recovery-observation','对齐任务记录与实际结果'],['kairo-practice','kairo-read-evidence','对齐请求、授权决定与正文读取'],['kairo-practice','section-8','运行接入记录校验器']]}
  ]
 };
 function infraStageStudyHTML(track,index){

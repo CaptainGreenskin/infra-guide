@@ -301,7 +301,20 @@
  p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
- serverless.updated=delivery.updated='2026.11.09';
+ const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
+ const [reportId,reportTotal]=afterCommit.recovered.operations[0];
+ serverless.sections[5][1]+=
+ h('serverless-ack-evidence','用实际投递和账本核对消息确认')+
+ p('把 <code>'+trainingEscape(reportId)+'</code> 的日报放进真实 RabbitMQ 实验。消费者在 SQLite 提交一行，记录业务动作编号、总数 '+reportTotal+' 和参数摘要。这行既保存效果，也让重试能查到原结果。程序随后让消费者退出，它还没发 ACK，也就是还没告诉消息代理这次投递已处理。')+
+ table(['实验动作','队列侧的记录','业务库实际留下什么'],[
+  ['提交后退出，再次接收','<code>'+trainingEscape(afterCommit.redelivery.message_id)+'</code> 再次送达','查到原记录，共 '+afterCommit.recovered.effects+' 笔，总数 '+afterCommit.recovered.total],
+  ['同一业务动作换消息再发','新消息 ID <code>'+trainingEscape(afterCommit.republished_message_id)+'</code>','仍查到原记录，只有 '+afterCommit.after_republish.effects+' 笔，总数 '+afterCommit.after_republish.total],
+  ['另一条消息先 ACK，再在提交前退出','可供投递的消息数 <code>ready='+earlyAck.ready_messages+'</code>','账本 <code>effects='+earlyAck.business.effects+'</code>，业务未完成']
+ ])+
+ p('排查函数重试时也要分别查这两处。队列读数回答还有几条消息可供接收，业务库里的回执回答报告是否已经保存。发布端为同一动作重新发消息时，即使运输 ID 变了，也用原业务动作编号查回执。表中是 RabbitMQ 与 SQLite 的原生记录，SQS/Lambda 的删除和批响应沿前面的平台规则判断。')+
+ '<p class="practice-links"><a href="/article/message-delivery/#message-native-run">到 C5.2 看如何复跑代理、退出和重投 →</a> · <a href="/labs/delivery-systems/validation.json">查看队列与业务原始记录 →</a></p>';
+ delivery.sections[8][1]+=p('沿同一份队列和账本记录回到<a href="/article/serverless-execution/#serverless-ack-evidence">C5.1 的函数提交与消息确认</a>。函数成功返回之前，先确保效果已经提交，重试时能按原动作编号查到结果。');
+ serverless.updated=delivery.updated='2026.11.12';
 
  const firstActorIntro=p('函数是一段由平台接收输入并执行的应用程序；处理这次输入的入口称为处理函数（handler）。先用报告服务区分输入、执行和产物：用户请求生成日报，服务记录任务并发送消息，平台取出消息调用处理函数，处理函数保存报告，用户随后读取报告。');
  if(!serverless.sections[0][1].includes(firstActorIntro))throw Error('Serverless actor introduction changed');
@@ -317,7 +330,7 @@
   p('Lambda 的轮询器从 SQS 接收消息，队列把消息暂时隐藏。轮询器把消息作为输入同步调用 handler，并等待它返回。handler 在业务库提交报告和回执，再返回成功；Lambda 随后删除这批已成功处理的消息。这里用户收到受理结果和 handler 返回成功，是两次不同的返回。')+
   '<figure class="training-figure"><a href="diagrams/serverless-queue-actors.svg" target="_blank" rel="noopener" aria-label="放大日报的队列、轮询器与处理函数时序"><img src="diagrams/serverless-queue-actors.svg" width="460" height="660" alt="用户提交日报，服务写消息并返回受理。Lambda 轮询器接收消息并同步调用处理函数。函数提交报告 37 和回执，成功返回后，平台删除队列消息。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>业务提交、函数返回和删除消息依次推进。删除前函数仍可能已经保存了报告。<a href="diagrams/serverless-queue-actors.svg" download>下载 SVG ↗</a></figcaption></figure>'+
   p('如果 handler 提交后、返回前退出，报告已经存在，消息还可能重投。后面的重试、接收句柄和批次响应都沿这次交接展开。<a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#sqs-polling-behavior">AWS 的 SQS 轮询、同步调用与删除顺序 ↗</a>'));
- serverless.updated='2026.11.11';
+ serverless.updated='2026.11.12';
 
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';

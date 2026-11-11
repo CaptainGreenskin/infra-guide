@@ -1,0 +1,197 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "dd2faed647b3cc5c8eee7bfa0bd1acffccaed41a",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSFORMER_AND_RUNTIME_EVIDENCE_2026-11-11.json": "85c016f1b04d40895f6353692bc48601b60984e758171518b94f9048e172403e"
+  },
+  "source_revisions": {
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "5c0fa6b3853dfba01b9fd0b077f3e9595665eb466ade1eb8de9241760145a9ce",
+      "reviewed_sha256": "6475a13df64eccd99fe9ceddad794dc410274a49f87ff407764b4a23471ec031",
+      "scope": "Maintain the same example across token lookup and the real attention trace, with explicit toy inputs."
+    },
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "58b0e86f27af55da4ca0515de14ab4667480d77c66b40413a2ca9f863d97c629",
+      "reviewed_sha256": "0d507243c309dd65059204d9ce925452cab1d679c379122075b291b8251cd64e",
+      "scope": "Let the reader independently recompute causal attention, the two residual additions and tied-vocabulary logits from the same recorded forward."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "8ba49f8a2ed09185bf4a1a3794a78bcc1e9ed16ab4972b4702adacb8865c3017",
+      "reviewed_sha256": "1ec6936e7eee64e58be0c5b15e486b7f7a4f931427086d3e5d9fb410c470cc29",
+      "scope": "Compare continuous six-step TinyDecoder training to resume after step three on a real Apple M4 Pro GPU."
+    },
+    "dist/diagrams/tiny-decoder-lookup-and-score.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7f4345d90b438d68909855e9f4f557cf7b45c13f37dc747d5722fea8acc0204b",
+      "scope": "Show separately indexed input tables and recorded tied output scores."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "76522d8cf18e9ee0e6c68ceb2d4ee88234c60d05bb9375e5f89bc83f77c2a4a3",
+      "reviewed_sha256": "1e6a80fdca450c3cecba2da180c0594ac2c50cfdbe277e89d34c49f126aa254c",
+      "scope": "Register the exact new teaching diagram dimensions."
+    },
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "e0cada1e2c870a845c7319aaebacbc31b3134dbcb9cad3f784be62b3c2df8e06",
+      "reviewed_sha256": "28f98db7bbebc5b34720fcc9d5fd928eaf90382772dfd93bedaada4d1e5ae472",
+      "scope": "Use one RabbitMQ/SQLite record across both Serverless chapters."
+    },
+    "dist/mcp-http-cancellation-reading.js": {
+      "previous_sha256": "fbd3d84a856cb2b29c5828b495622cf363997dd723b99837144b49742e2cd63a",
+      "reviewed_sha256": "4f8148cd367bd3274e9010ac9038fbeee01bb4ae55d46d7b202be83a9b85fad3",
+      "scope": "Connect verified subject and scope to the exact tool and resource decisions in the native MCP records."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "10735fa65bcc9d6e161e9a5f2f41073bbd3ecb55186f8b8e892307b08cf7533e",
+      "reviewed_sha256": "3c87d6ec2b3425c410b52fb92af593e72564e95c839263ddaac1155a4e577899",
+      "scope": "Reconcile the known MCP tool response and body access audit, then identify evidence required of an actual Kairo adapter."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "6ac40730c6c0ec11450c5e47f990ced1a82f766ac639fedf5d3e669dc9504911",
+      "reviewed_sha256": "9da91ee8ed810b81a29e9ceefe68fcc00d8cc379363320685ba3f0ca502bda5f",
+      "scope": "Update the effective date for the Kairo chapter body review."
+    },
+    "dist/cloud-operations-cases.js": {
+      "previous_sha256": "b9d0fc234d5a7086174e5aafabe32111ef29a8bd7ecb61be3398775d2119042a",
+      "reviewed_sha256": "0ad0e016291ab76c6618fcdaa88a4c403c10dae72ad87c8cfd22947604a50c0a",
+      "scope": "Offer the explicit RabbitMQ acknowledgment task in the Cloud reading stage."
+    },
+    "dist/ai-agent-cases.js": {
+      "previous_sha256": "363870bc9654d8cc444c0e346fd6b905415b67f67809fb141e092e035d567ac0",
+      "reviewed_sha256": "f7f062cb7f7be5ae7c5b0e648576cc31ca2c806aed69b5b12154d3ac3eb5cb76",
+      "scope": "Connect the foundation replay, MPS recovery and MCP authorization comparison to course stages."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "c950968c4a41cc3ff8b64db837a938cb46398a3623f227a0f9fd022df127b3fc",
+      "reviewed_sha256": "dbb78e0185f4f4a15349977ed4e68a4fd73a4d5d5dbf22dd37f4956b7f278f91",
+      "scope": "Register the reproducible Apple GPU checkpoint comparison."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "be6440a233dcbf56ace49b69f1483a32a484373cd6a90895da6cda6f8681d469",
+      "reviewed_sha256": "33d20a169f881698d47913007fb88e743d08b878232e1fefd2804af5a9045188",
+      "scope": "Attach the device recovery evidence to the checkpoint concept."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "2a3203bd7b75121bcb2ffe49605d4800d470bbb02165fe2c474e46cbe46fe20e",
+      "reviewed_sha256": "204e9850b876ecd880e7a7e52174de066fc5cfd22c24edc46007b921734b8323",
+      "scope": "Connect the Apple GPU controls to the training role acceptance."
+    },
+    "scripts/check-tiny-decoder-forward.cjs": {
+      "previous_sha256": "b54292239c0b255a7fe123dc28cd1b19a0889b5a4e1707825a5946664aaec146",
+      "reviewed_sha256": "64bcbfa1d4ce4fab17788326065cc5abab39d72ab4fcbbf20b492d58d3f1258f",
+      "scope": "Verify the original record against the three lessons and execute the actual published offline code with a negative control."
+    },
+    "scripts/check-mcp-http-authorization.cjs": {
+      "previous_sha256": "2c366ec5aac9130ffbc351f9db89eb393e08938d939ff6cee43823f5aaa9093b",
+      "reviewed_sha256": "d85f6253e6b5a20e9c5fcad0338966d50389fb3984f34aba5da5a90d7f7788ef",
+      "scope": "Verify exact request bodies, repeated RPC identity, business resource audit and both deep links."
+    },
+    "scripts/check-delivery-systems.cjs": {
+      "previous_sha256": "23b39c051836d39cfed2ed6104e1753179d7814e7d606e2816f94869ef3b3886",
+      "reviewed_sha256": "4ba36ff9483057bd4fb0d18c79c9fbe284b9be207da38a58f0d1280289fb1f85",
+      "scope": "Verify the three chapter rows against the original native broker evidence."
+    },
+    "scripts/check-mps-checkpoint-resume.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4f0cb16b543872de14e70f0fface65bfa98d77a3f8a3f3cc10388e99f42ed9f1",
+      "scope": "Verify source, checkpoint boundary, real device execution, independent traces and negative controls."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "15835bfff32f999e81d40eb367e0e78d19cf68858e16f62b6abd3c5cd555c17e",
+      "reviewed_sha256": "337df63ed0a20bd51c5991819334a7ebf0577fbe57860486e1ac361f563d96a7",
+      "scope": "Preserve training role context for the new exact recovery evidence."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "e4e35228d063c63406fd46959ed354ab6e7b4eeda85328676e1c8e32708620f4",
+      "reviewed_sha256": "f15acd10cce9fe8a112d9d3ec5ce582e6eabe76135a9c3ee0ff7247af68a113b",
+      "scope": "Run the MPS comparison verifier in the maintained full suite."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "9d3da9d54d3bac4793fcb53f2bb48cc2e3ae11089397a4c3da349b039395309c",
+      "reviewed_sha256": "209c78e4eb6d5ecb92336da82004a7d8927a9667425ff3223e6e0d6ec60af355",
+      "scope": "Bind the new signed recovery section to its specific recorded verifier."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "348be5dc59f3554739fdf3dab8524c39621b4997adeba6d77346f6213d4b337e",
+      "reviewed_sha256": "c67767b0292e2321214eb665bc3f114b4b1192fd50fac6eb65c3b7e99d76cca1",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "0c108b2bad442c2564715a19cb86cf4ba25d9ebfc9e228d03b3b51962608702d",
+      "reviewed_sha256": "42b066ba867bce0f186ba850d2def92aa300d7693e2ed5d92abd2636a4009e0b",
+      "scope": "Fingerprint the renderer and edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "0e9e4a1aa5262e9db8f4b0eb25b3d0773b3195d9a5dc8549e946577dc79a296e",
+      "reviewed_sha256": "e6e7a29b4eb712df0404ce7bf203147962318df2ef521c80e494056e47af5247",
+      "scope": "Record new exact anchors and preserve the published subsection inventory."
+    },
+    "docs/CONTENT_MODEL_PATH_AND_RECOVERY_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "87f5b49cabd17b93c408f6fce0d33cf638e279791a480b23a61924e0aa6de609",
+      "scope": "Record eight chapter revisions and the actual Apple GPU checkpoint evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "3c0ea8f1de244387c3103a0da7d362654dfb9050f5d39e21cd33f38dfcb649c0",
+      "reviewed_sha256": "f73ee377df0c32b0e6f6db269ad34c62ae60083dc255efd7e2c4568952378c7d",
+      "scope": "Append the current body review."
+    },
+    "dist/labs/mps-checkpoint-resume.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "556a3d0bb626a450c6461e1140ed06ebc06a7ccd6507d13bf9bd03ff59037414",
+      "scope": "Bind the exact downloadable source and evidence archive."
+    },
+    "dist/labs/mps-checkpoint-resume/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a8b75f0974c860badb5631727b440b8c7fa88406a504ee549a050b0d02ef868f",
+      "scope": "Bind the exact runner, fixture, raw HTTP and backend log evidence or reproduction directions."
+    },
+    "dist/labs/mps-checkpoint-resume/mps_resume.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ba7137ddbfcc72118a8084431f53be4c0c0dc28246e8b903323a7dab8492c0b4",
+      "scope": "Bind the exact runner, fixture, raw HTTP and backend log evidence or reproduction directions."
+    },
+    "dist/labs/mps-checkpoint-resume/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e",
+      "scope": "Bind the exact runner, fixture, raw HTTP and backend log evidence or reproduction directions."
+    },
+    "dist/labs/mps-checkpoint-resume/tiny_decoder.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "724963cf4a04ac76f6b7d125876d0be1947b1b29a6b0a159a5bb347477dc3e6f",
+      "scope": "Bind the exact runner, fixture, raw HTTP and backend log evidence or reproduction directions."
+    },
+    "dist/labs/mps-checkpoint-resume/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3c5e4c963df08c081f3b34c54bf9006376dc11fa531d9f3940fb94ed9ac1d534",
+      "scope": "Bind the exact runner, fixture, raw HTTP and backend log evidence or reproduction directions."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "34592a28f603a1564927bfe1698dae9ea9b1ce44242e9cd8673de6d9a796793b",
+      "reviewed_sha256": "8562ba297e65259dae6066d404702f375f61f1b0948c596e0cbcbc0becdaae39",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "dd2faed647b3cc5c8eee7bfa0bd1acffccaed41a",
+    "chapters": 78,
+    "changed_bodies": [
+      "tokenization-embedding",
+      "attention-mechanics",
+      "transformer-block",
+      "checkpoint-recovery",
+      "serverless-execution",
+      "message-delivery",
+      "agent-security",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "transformer-block": 1,
+      "checkpoint-recovery": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

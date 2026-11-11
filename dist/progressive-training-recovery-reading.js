@@ -286,6 +286,21 @@ future.result(timeout=35)
   p('输出编号恰好相同，两个权重版本的首轮候选分数最大相差约 1.04839。新推理进程先核对制品摘要，再加载导出的权重。把第一步的权重放进声称来自第二步的制品，程序在推理前拒绝。对于正确的第二步权重，完整前缀与增量缓存的候选分数最大误差约为 4.44×10⁻¹⁶。<a href="/article/model-serving/#sdpa-cache-run">回到推理章看逐位置的缓存校验 →</a>')+
   p('解压本实验及<a href="/labs/sdpa-cache.zip">原 SDPA 实验包</a>，按包内说明启动。记录可用来核对本机 CPU/Gloo 的目标数、检查点和推理读回。')+
   '<p class="practice-links"><a href="/labs/tiny-decoder-handoff.zip" download>下载程序与记录 ↓</a> · <a href="/labs/tiny-decoder-handoff/validation.json">查看训练与推理实际记录 →</a> · <a href="/labs/tiny-decoder-handoff/README.md">复跑步骤 →</a></p>');
- recovery.updated='2026.11.11';
+ recovery.sections[7][1]+=fold('实跑 · 同一小模型换进程后在 Apple GPU 上续训',
+  '<h3 id="native-mps-checkpoint-resume">恢复时分别核对动量与设备随机状态</h3>'+
+  p('沿用 <a href="/article/transformer-block/#decoder-record-recompute">同一个 664 参数模型</a>、两条输入和两组有效目标。这里让每一步在 GPU 上随机抽取一组目标。Apple 平台的 PyTorch GPU 后端叫 MPS。实验固定 PyTorch 2.5.1、FP32、同一块 Apple M4 Pro，关闭不支持的运算回退到 CPU 的选项。每步记录候选分数与梯度都在 <code>mps:0</code>。')+
+  p('连续运行六步，抽到的目标组依次是 [1,0,0,0,1,1]。另一条路径在第 3 步结束时保存，再换进程。检查点带上参数、优化器动量、已完成步数与随机状态。动量保存先前梯度的累积值，随机状态决定后续会抽到哪一组目标。')+
+  table(['从第 3 步恢复时带回什么','后 3 步抽到的目标组','最终权重与连续训练的最大绝对差'],[
+   ['全部状态','[0,1,1]','0'],
+   ['只省去动量','[0,1,1]','约 0.13231'],
+   ['只省去 MPS 随机状态','[1,0,0]','约 0.04247']
+  ])+
+  p('完整恢复在续训前读回相同的参数、动量和设备随机状态，最终动量也逐项相同。只省去动量时，仍会抽到相同目标，更新却已经不同。只省去设备随机状态时，加载出的动量保持原值，目标组从恢复后的第一步就变了。三组恢复初始权重都相同，所以只对比加载出的权重会漏掉两个问题。')+
+  trainingCode('解压后进入实验目录，使用 Apple Silicon 与 Python 3.12','SHELL',`python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -B mps_resume.py > replay.json`)+
+  p('查看原始记录的 <code>runs</code>。先把 <code>save.final</code> 对到 <code>resume.initial</code>，再比较每步的 <code>plan</code>，最后看 <code>comparisons_with_continuous</code>。这次验证覆盖同一设备上的完整更新边界。设备随机状态用于抽目标组，原模型的注意力不使用 dropout。CUDA、NCCL、跨机恢复和吞吐另有验收条件。')+
+  '<p class="practice-links"><a href="/labs/mps-checkpoint-resume.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mps-checkpoint-resume/README.md">复跑说明</a> · <a href="/labs/mps-checkpoint-resume/validation.json">查看进程、随机状态与权重差异</a></p>');
+ recovery.updated='2026.11.12';
 
 })();
