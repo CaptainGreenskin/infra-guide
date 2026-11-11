@@ -101,6 +101,8 @@ for(const[goal,profile]of Object.entries(profiles)){
 }
 const optionalGate=focusedLabActions('agent','agent-app','shared-integrated-service');
 assert(optionalGate?.includes('href="/roadmap/agent-app/#goal-gate"'),'shared gate evidence returns to the handoff when it has no chapter row');
+assert(optionalGate.includes('href="/article/production-readiness/?goal=agent-app#integrated-service-run"'),'opening the shared experiment again retains its exact gate and role');
+assert(optionalGate.includes('href="/article/production-readiness/">先读机制</a>'),'the general mechanism link keeps the full-course chapter');
 const optional=focusedLabActions('cloud','cloud-platform','cloud-incident-connection-lease');
 assert(optional?.includes('href="/roadmap/cloud-platform/#learning-goal"'),'other optional labs return to the role overview');
 c.location.search='?track=agent&goal=ai-training';vm.runInContext('labsPage()',c);
@@ -140,6 +142,19 @@ for(const base of ['/','/infra-guide/']){
     document:{querySelectorAll:()=>links}});
    assert.deepEqual(links.map(link=>link.result),expected,base+goal+': early practice role matches application semantics');
   }
+ }
+ const shared=article+'production-readiness/';
+ const cases=[shared+'#integrated-service-run',shared+'#section-1',shared+'?goal=#integrated-service-run',shared];
+ for(const [script,apply] of [[earlyRoleScript,true],[earlyFieldRoleScript,false]]){
+  const links=cases.map(href=>({href:new URL(href,origin).href,result:href,setAttribute(name,value){
+   assert.equal(name,'href');
+   this.result=value;
+  }}));
+  vm.runInNewContext(script,{URL,URLSearchParams,location:{origin,search:'?track=agent&goal=agent-app'},
+   document:{querySelectorAll:()=>links}});
+  const expected=cases.slice();
+  if(apply)expected[0]=shared+'?goal=agent-app#integrated-service-run';
+  assert.deepEqual(links.map(link=>link.result),expected,base+': only the exact shared gate link in the catalog keeps the early role');
  }
 }
 for(const unit of units)assert(staticPage.includes('id="lab-'+unit.id+'"'),'static full catalog omitted '+unit.id);

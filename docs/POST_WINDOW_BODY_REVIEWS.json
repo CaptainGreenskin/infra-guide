@@ -8343,6 +8343,126 @@
         "两个失败对照：身份改了，或只信本地完成",
         "运行完整实验，再回看最小提交间隙"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7c05af3049617540169ed8626d53bcca6b82a931d22bbe8a78dd21f27c0518d1",
+      "reviewed_content_sha256": "3e063540740c4c586277889dffeb25116c77b1c65b1c316caa0ddf2c4e083bd7",
+      "scope": "Return from the native dual-stack observations to the exact explanation of absent curl milestones.",
+      "observation": "Readers can distinguish connection refusal, successful fallback, and an accepted request still waiting for a response.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7d5f1a49978570fcf9226c0cd8a2710dcf9f6e2740d95e09f66f43a67698ce65",
+      "reviewed_content_sha256": "59016ec2cf800bccebc8f330889c4b45e9841da6f7fdebd03c0529d0051f36a7",
+      "scope": "Use both curl timing and listener evidence to locate the last completed stage.",
+      "observation": "The IPv6-only refused request exits 7 with no connection; the accepted IPv6 GET exits 28 without response bytes.",
+      "headings": [
+        "TCP连接：序号、确认与握手",
+        "传输能力：窗口、RTT与应用背压",
+        "结束与探测：半关闭、状态与超时",
+        "先固定同一个查询，再比较快慢",
+        "在一只秒表上读出六个时刻",
+        "先确认谁生成了错误",
+        "看到什么证据，决定下一次探测什么",
+        "修复后验证的是原始现象",
+        "课堂练习：用两个反例检验判断",
+        "本地实验：同样多等 150 毫秒，慢在哪一段",
+        "实战：按长度解帧，再验证TCP半关闭",
+        "实战：非阻塞发送、接收读取与应用回执"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "8a3eb91fa00c0319788baab8bb427227c8bc7164dda1f83c2d7b690dbef7fbb3",
+      "reviewed_content_sha256": "cc5ddd93b7df2f043f16ecff02f4212957d9f1eafd6f6cb4fbc9b924dcb21ed1",
+      "scope": "Carry the chain-rule contribution from shared local inputs into the cross-process K and V example.",
+      "observation": "Each remote query contributes to the gradient of the original K and V positions.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6c16ccbd9f2aa005298c576e00ec7330c4884964bb6823adca1a5910aa660f32",
+      "reviewed_content_sha256": "5cb503e6b85f2d5af2c7c60cb5807f34b66d3520278f3389623884d05f8a4ecf",
+      "scope": "Follow one block through a complete CPU/Gloo gradient ring and distinguish it from the final shared-parameter sum.",
+      "observation": "Three process forward and backward agree with dense autograd. Dropping remote K/V contributions leaves a measurable weight-gradient difference even after AllReduce.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f32de34a1617abcc313ee86d0e2a987f93096cb475e0ed2eabe9f15ff08f93c9",
+      "reviewed_content_sha256": "1be5b15808728642910f6a978dd860275eacc5cda6c76b9350508a4c2c9370fd",
+      "scope": "Distinguish dependent subtask assignment from duplicate candidate review, then trace the actual join and receiver.",
+      "observation": "The example joins equal outputs and holds conflicting outputs for review before any publication.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "cf1a6219479bfd9fe2263084b5f680aebd0ca07b42ac74f015c8681eb3c800e8",
+      "reviewed_content_sha256": "69ae28454bf06e928b9fa5e32e7c567d801f283f5cb27d11abf4e0872a41601e",
+      "scope": "Compare single and redundant branches under the same fixture and receiver, then count proposals, requests and actual effects.",
+      "observation": "The runnable first-pass example observes 1/1/1 versus 2/1/1. The original history-replay record separately demonstrates two requests with one committed effect.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
     }
   ]
 }

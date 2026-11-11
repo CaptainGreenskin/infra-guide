@@ -120,11 +120,13 @@
         "subsection-4-15zyt9a",
         "subsection-4-1xtsiga",
         "subsection-12-1kp22io",
-        "proxy-502-origin-evidence"
+        "proxy-502-origin-evidence",
+        "curl-no-first-byte"
       ],
       "visible_targets": [
         "subsection-4-15zyt9a",
         "subsection-4-1xtsiga",
+        "curl-no-first-byte",
         "proxy-502-origin-evidence"
       ]
     },
@@ -1089,10 +1091,12 @@
         "native-model-evaluation-bridge",
         "native-model-mcp-recovery-verdict",
         "memory-delivery-verdict",
-        "approval-at-commit-verdict"
+        "approval-at-commit-verdict",
+        "delegation-run-comparison"
       ],
       "visible_targets": [
         "memory-delivery-verdict",
+        "delegation-run-comparison",
         "native-model-evaluation-bridge"
       ]
     },
@@ -1123,7 +1127,8 @@
         "native-workflow-version-resume",
         "native-model-plan-revision",
         "native-model-mcp-recovery",
-        "receiver-writer-after-takeover"
+        "receiver-writer-after-takeover",
+        "delegated-results-boundary"
       ],
       "visible_targets": [
         "subsection-1-3htvho",
@@ -1137,6 +1142,7 @@
         "langgraph-workflow-objects",
         "langgraph-workflow-wait",
         "langgraph-workflow-reentry",
+        "delegated-results-boundary",
         "subsection-8-mctg3k",
         "subsection-8-19qsp4l",
         "subsection-8-1hxbx9c",

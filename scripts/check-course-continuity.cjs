@@ -123,7 +123,8 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
      'https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/context_parallel.html#context-parallel-overview',
      'labs/context-parallel.zip','labs/context-parallel/context_attention.py','labs/context-parallel/validation.json',
      'diagrams/v77-ring-training.svg','diagrams/v77-ring-training.svg',
-     'labs/ring-context-training.zip','labs/ring-context-training/ring_training.py','labs/ring-context-training/validation.json'
+     'labs/ring-context-training.zip','labs/ring-context-training/ring_training.py','labs/ring-context-training/validation.json',
+     '/article/autograd-training/#section-3'
     ].map(url=>'href="'+url+'"'));
    }
   }

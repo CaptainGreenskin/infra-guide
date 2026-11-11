@@ -60,10 +60,11 @@ assert(nativeCases[1].includes('n_past was set to 3'));
 const ring='labs/ring-context-training/';
 const ringFigure=read('diagrams/v77-ring-training.svg');
 const ringMap=JSON.parse(ringFigure.match(/<metadata[^>]*>([\s\S]*?)<\/metadata>/)[1]);
+const ringSource=read(ring+'ring_training.py');
 for(const [ranks,positions,recordFile]of [[2,1024,'two-ranks.json'],[3,1536,'validation.json']]){
  const record=json(ring+recordFile);
  assert.deepEqual([record.status,record.device,record.backend,record.world_size,record.positions],['passed','cpu','gloo',ranks,positions]);
- assert.equal(record.source_sha256,digest(read(ring+'ring_training.py')));
+ assert.equal(record.source_sha256,digest(ringSource));
  assert.equal(record.ranks.length,ranks);
  for(const [i,row]of record.ranks.entries()){
   assert.equal(row.rank,i);
@@ -79,6 +80,25 @@ for(const [ranks,positions,recordFile]of [[2,1024,'two-ranks.json'],[3,1536,'val
   assert.deepEqual(ringMap.position_ranges_half_open,record.ranks.map(row=>row.positions));
   assert.deepEqual(ringMap.send_edges,[[0,1],[1,2],[2,0]]);
   assert.deepEqual([ringMap.forward_hops,ringMap.backward_hops],[2,3]);
+  const html=read('article/flash-attention-io/index.html');
+  const lesson=html.slice(html.indexOf('<h3 id="ring-context-training">'),html.indexOf('<h3 id="ragged-ring-training">'));
+  const [first,limit]=record.ranks[0].positions;
+  const route=[...ringMap.send_edges.map(([sender])=>sender),record.ranks[0].returned_owner];
+  assert(lesson.includes(`位置 ${first}–${limit-1}`) && lesson.includes(route.join(' → ')));
+  const displayedErrors=[
+   [Math.max(...record.ranks.map(row=>row.output_and_gradient_max_abs_errors.weight_gradients)), '1.17e-17', '1.17×10⁻¹⁷'],
+   [Math.max(...record.ranks.map(row=>row.drop_remote_dkv_max_abs_error)), '4.07e-4', '4.07×10⁻⁴'],
+  ];
+  for(const [actual,rounded,shown]of displayedErrors){
+   assert.equal(actual.toExponential(2),rounded);
+   assert(lesson.includes(shown),shown);
+  }
+  assert(ringSource.includes('dist.all_reduce(weight_grads)\n    dist.all_reduce(dropped)'));
+  assert(lesson.includes('反例保留相同前向，也做最后的 AllReduce'));
+  assert(lesson.includes('/article/autograd-training/#section-3'));
+  const autograd=read('article/autograd-training/index.html');
+  const chainRule=autograd.slice(autograd.indexOf('id="section-3">'),autograd.indexOf('id="section-4">'));
+  assert(chainRule.includes('/article/flash-attention-io/#ring-context-training'));
  }
 }
 

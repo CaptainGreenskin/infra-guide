@@ -136,12 +136,45 @@ for(const term of ['a.sections[8][1]','langgraph-parallel-merge.zip','langgraph-
  assert(authored.includes(term),term);
 }
 
+const delegationPath='/article/durable-workflows/#delegated-results-boundary';
+const parallelPath='/article/durable-workflows/#native-parallel-merge';
+const evaluationPath='/article/agent-evaluation/#delegation-run-comparison';
+const sectionBody=(article,id)=>fs.readFileSync('dist/article/'+article+'/index.html','utf8')
+ .split('id="'+id+'"')[1]?.split('</section>')[0];
+const delegation=sectionBody('durable-workflows','delegated-results-boundary');
+const nativeLesson=sectionBody('durable-workflows','native-parallel-merge');
+const evaluation=sectionBody('agent-evaluation','delegation-run-comparison');
+assert(delegation?.includes(parallelPath)&&delegation.includes(evaluationPath));
+assert(nativeLesson?.includes(evaluationPath));
+assert(evaluation?.includes(parallelPath)&&evaluation.includes('/labs/langgraph-parallel-merge/validation.json'));
+const countEmissions=caseId=>raw.visits.filter(row=>row.case_id===caseId&&row.stage==='emitted').length;
+const countEffects=(caseId,kind)=>raw[kind].filter(row=>row.case_id===caseId).length;
+assert.equal(countEmissions('canonical_same'),2);
+assert.equal(countEmissions('canonical_conflict'),2);
+assert.deepEqual(['canonical_same','canonical_conflict'].map(caseId=>[
+ countEffects(caseId,'requests'),countEffects(caseId,'effects')
+]),[[2,1],[0,0]]);
+assert(evaluation.includes('接收方收到两次请求，只提交一次'));
+assert(evaluation.includes('接收方收到 0 次发布请求，提交 0 次'));
+const baselineCode=evaluation.match(/<pre\b[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(baselineCode?.includes('build_graph(pair, fixture, receiver, saver)'));
+const displayedBaseline=['single 1 1 1','canonical_same 2 1 1'];
+for(const line of displayedBaseline)assert(evaluation.includes('<code>'+line+'</code>'));
+const route=fs.readFileSync('dist/roadmap/agent-platform/index.html','utf8');
+assert(route.includes(delegationPath.replace('/#','/?goal=agent-platform#')));
+
 if(process.env.NATIVE_LANGGRAPH_MERGE_PYTHON){
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'parallel-merge-replay-'));
  const output=path.join(temp,'observed');
  try{
   execFileSync(process.env.NATIVE_LANGGRAPH_MERGE_PYTHON,['-B',path.join(folder,'parallel_merge.py'),'--output',output],{timeout:60000});
   verifyEvidence(JSON.parse(read(output,'validation.json')),readDatabases(output));
+  const entities={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'",'&#x27;':"'"};
+  const source=baselineCode.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g,entity=>entities[entity]);
+  const compared=execFileSync(process.env.NATIVE_LANGGRAPH_MERGE_PYTHON,['-B','-'],{
+   cwd:folder,input:source,encoding:'utf8',timeout:30000,
+  });
+  assert.deepEqual(compared.trim().split('\n'),displayedBaseline);
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
 console.log('PASS: real LangGraph parallel channel conflict, canonical candidate merge, pre-publish checkpoint fork and one native SQLite receiver effect; raw stores, four tamper cases and exact ZIP/teaching source.');

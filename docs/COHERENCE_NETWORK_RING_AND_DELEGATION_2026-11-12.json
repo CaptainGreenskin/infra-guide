@@ -1,0 +1,134 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e827288b5978277d2a7c57e358591917a5452416",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PRACTICE_AND_RUNTIME_EVIDENCE_2026-11-12.json": "b06acf767294c583d095ff09ee353c606ff80b2694786c3abd572fa7d7f182ae"
+  },
+  "source_revisions": {
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "2c625bc00d95e9ab53e9e1d0fd568c77b05db683eb877f8bd787f03635ef83d1",
+      "reviewed_sha256": "4708c48ee8b6d3c40facf8308a0acecca243cc32ba0f512225bb7b0e013f59ef",
+      "scope": "Use both curl timing and listener evidence to locate the last completed stage."
+    },
+    "dist/progressive-training-reading.js": {
+      "previous_sha256": "b0bfee85cbced0adc258db8ad40d31935be4f7f80633328413356acc14fa23d2",
+      "reviewed_sha256": "6e2c21fa29f4d4100205a7d44613353351d0e9374cd74a80bbfaa5f6026970d6",
+      "scope": "Carry the chain-rule contribution from shared local inputs into the cross-process K and V example."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "f24b0ba1bf03c74fb77d8af78473076f784fcd4ea107c0a73e4fd52b827ea245",
+      "reviewed_sha256": "71569d775bc591e17c4a358b2aff67477405403cc895c578760069ea396e46eb",
+      "scope": "Follow one block through a complete CPU/Gloo gradient ring and distinguish it from the final shared-parameter sum."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "a8e52273bc9eb91096d1e263b49ecc94b67ac2de4f1f100b5dc5c262bbb14bdf",
+      "reviewed_sha256": "1fa472662e3dea5a3b1625585ab8e183d1f59c38a27beee360759201bbb0bf6a",
+      "scope": "Compare single and redundant branches under the same fixture and receiver, then count proposals, requests and actual effects."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "de4a47f538a227f43f0b1ef7727be97ca5dd36756188d839f8ed9705036336b8",
+      "reviewed_sha256": "833e8a97706787e9ed7d18c2f33c9d545e6b0c3c8abec41678b4934c28bcc056",
+      "scope": "Distinguish dependent subtask assignment from duplicate candidate review, then trace the actual join and receiver."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "2a36a1d8309cbee53f73b2b67120f0fae695799079d1fdb1abd568b9bd9448ed",
+      "reviewed_sha256": "62d72d270c8d81264df347b178dfdb85d30a58715fae75a04055e4f1dacf080f",
+      "scope": "Update the internal publication date of the revised autograd lesson."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "8b247638878824f5041b2621ac62faa0c122878e551edf1510e11a70d00524d9",
+      "reviewed_sha256": "1c00c25e3bd5bfad4652fb3eb4490d11fa2cf9df41dab21f29b92d38a5499ce4",
+      "scope": "Bind the network, ring gradient and branch evaluation lessons to their role-specific practice gates."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9e81581c3a245bb76c723bfd0e1a9dcc533d5694462e3f01eb69d8bfe2670a8a",
+      "reviewed_sha256": "d363a8df671dc895536bed16d9b0f8f0be7f7dc1ac67e93bdb486c1570b19404",
+      "scope": "Keep the selected role on the exact shared experiment return without changing unrelated links."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "b4c6e25291094b5691cf779b4091543508cf8fa1dc8fc01eda37e0408c9382b4",
+      "reviewed_sha256": "b957a8928ff86255a86d501a7e9740e2b88de9e7c28b6d3f6855e298f6e2a92e",
+      "scope": "Apply the shared gate identity before the experiment catalog hydrates."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "36322232ccac84de0cdebe6f16239cd56bad38563049da243ae5217c3acb6c15",
+      "reviewed_sha256": "c1dcb56d4533d6d3e0933cafc828b9b36e3ecbb3ff9e2b35010b4bc8763b4a38",
+      "scope": "Verify the exact shared role return and leave ordinary unrelated links generic."
+    },
+    "scripts/check-langgraph-parallel-merge.cjs": {
+      "previous_sha256": "5935059de57546530059ad9d21d6e74a91af30ae7090ccac83c9ed46b954163a",
+      "reviewed_sha256": "b5ce52bba23c399e09d23111ec3811703252faf5d2beb811320c5d73bae3240e",
+      "scope": "Check the native raw merge and receiver counts, and rerun the displayed single versus redundant branch code in the pinned environment."
+    },
+    "scripts/check-ai-engine-ring-gemm.cjs": {
+      "previous_sha256": "0ed33250ca262f73f6c602fa677a890af96931f48e4e0f90caacd9d4359d9baa",
+      "reviewed_sha256": "30a9e69f52635ee21dc549957d99dce5f5a227ba3027047c3987874e074f933c",
+      "scope": "Check the recorded gradient error and both causal bridges against the native ring records."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "c43289fb8b8cdd2cfd7dfa599479ff858b97e1215179b94167bd0312ce99e9df",
+      "reviewed_sha256": "bb000304dd16f3e37ce3637602ce32f0d5ccf4b7301ffa21f18942ef90fb1c12",
+      "scope": "Retain the existing ring lesson inventory and add the exact chain-rule return link."
+    },
+    "scripts/check-dual-stack-connect.cjs": {
+      "previous_sha256": "f9cd80d4d8d9e219be387c4da87e843486a76117cae82c0832a0110001384c75",
+      "reviewed_sha256": "adf5c364bc5581674a7bd170719b168e1d4c03186de36afc9dd537db65a12eb0",
+      "scope": "Connect the visible stage diagnosis to actual curl exit codes, milestones and listener observations."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "1ccef78fed6770fbcaf6544379783c04c17f01b1eca568e2b118073bebe87657",
+      "reviewed_sha256": "6da5249baf9fbab5df739f96b936239cf678d99be558f190ca5d6a73f68a195e",
+      "scope": "Verify that the new role practice points preserve the chosen route."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "8d926df07b1493949f2ddcd27fa1c45761ecfd9a4db7d48df52a3f24865b1088",
+      "reviewed_sha256": "05a75fdfefd97264d99ba656ddf183a5fc25d43c3cd2de0902228ecae66c949e",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "6f913ebfe96c5402a20a1d99deb8c75f179ab3986cb7801c4196dd51be1ad106",
+      "reviewed_sha256": "5afeb3d5aca282e2f508387e9a6251d342e2e2902d8633cbd99fee5120d841df",
+      "scope": "Fingerprint the edited lessons and experiment navigation."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "976ff0ed8e88878179f83b46ba85a8206b3908717f6942c652c9a3e71f184766",
+      "reviewed_sha256": "6713d7676ae96ae2e4eea74e2edcd2c679680b059850c3ace30d39cf7c64b2ad",
+      "scope": "Record three exact new subsections."
+    },
+    "docs/CONTENT_NETWORK_RING_AND_DELEGATION_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9514c7490566736802c17ba4147cd23f0fdf97cc0607cf96bad049d8477ae294",
+      "scope": "Record updated lessons across all three tracks."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "ba620682bd74e3fc8c8f19b9a28751413b132e0f05bdd842675004c49326cae6",
+      "reviewed_sha256": "f2d6dd67e8041aa9685e64259970bff20a2a35d27f0d0c7af996384db7dbc9a0",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "a713b4bd628694b8707ebd90989f053f57fa3a295fdca6ef1e15d3ae4d598869",
+      "reviewed_sha256": "b06866a219a8d97c02759a255a6bb73e75e1ef65f46b0200ba629e79607afe19",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "e827288b5978277d2a7c57e358591917a5452416",
+    "chapters": 78,
+    "changed_bodies": [
+      "vpc-network",
+      "network-diagnosis",
+      "autograd-training",
+      "flash-attention-io",
+      "durable-workflows",
+      "agent-evaluation"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "agent-evaluation": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -162,6 +162,67 @@
  ];
  finish(a,old,bodies,['subsection-4-ymmfe2','subsection-5-cnfnmm','subsection-9-dpvytn','subsection-12-bgbi93'],'先定义任务、试次、尝试与独立验收，走通四用例执行，再分别计算类别、预算、区间和同题比较。');
  a.sections[0][1]+=p('如果刚读完检索章，可以先到<a href="/article/agent-evaluation/#native-model-evaluation-bridge">第 11 节</a>，沿那两份真实模型回答核对判分依据，再看四任务实验怎样检查保存的报告和实际读取。');
+ a.sections[8][1]+='<h3 id="delegation-run-comparison">同一任务跑两条分支，要记录哪些代价</h3>'+
+  p('准备比较单 Agent 和多 Agent 时，先固定同一批任务、资料版本、总预算和评分规则。独立验收按任务数统计合格交付。执行成本要记录所有分支的模型用量、工具调用和汇合等待，包括最后没有采用的候选。')+
+  p('用<a href="/article/durable-workflows/#native-parallel-merge">并行汇合实战</a>的<a href="/labs/langgraph-parallel-merge/validation.json">同一份记录</a>练习数三类事件。在 <code>visits</code> 数 <code>emitted</code>，在 <code>requests</code> 数发布请求，在 <code>effects</code> 数实际提交。')+
+  '<ul><li>候选相同，两个分支各输出一次，汇合保留一版。发布节点经历史检查点回放，接收方收到两次请求，只提交一次。</li>'+
+  '<li>候选冲突，仍有两条分支输出。汇合保留两个版本并停在待复核，接收方收到 0 次发布请求，提交 0 次。</li></ul>'+
+  p('现在只比较首次运行。解压实验包并按说明安装依赖，把下面的代码存成 <code>compare_branches.py</code>，与 <code>parallel_merge.py</code> 放在一起运行。单分支与双分支都使用同一份 42 日报和同一个接收方实现。')+
+  fold('展开对照程序',trainingCode('用相同输入比较一条分支和两条分支','PYTHON',`from contextlib import closing
+import json
+from pathlib import Path
+import sqlite3
+from tempfile import TemporaryDirectory
+
+from parallel_merge import (
+    END, HERE, START, MergeState, SqliteSaver, StateGraph,
+    build_graph, canonical, receive, setup_receiver, visit,
+)
+
+fixture = json.loads((HERE / "fixture.json").read_text())
+pair = next(case for case in fixture["cases"] if case["name"] == "canonical_same")
+operation = fixture["operation_id"]
+payload = canonical({"report": fixture["report"], "total": pair["totals"]["draft_a"]})
+
+with TemporaryDirectory() as directory:
+    receiver = Path(directory) / "receiver.sqlite"
+    setup_receiver(receiver)
+
+    def draft(state):
+        visit(receiver, "single", "draft_a", "emitted")
+        return {"proposals": {state["operation_id"]: {payload: ["draft_a"]}}}
+
+    def publish(state):
+        body, = state["proposals"][state["operation_id"]]
+        _, receipt = receive(receiver, "single", operation, body)
+        return {"receipt": receipt}
+
+    with SqliteSaver.from_conn_string(":memory:") as saver:
+        graph = StateGraph(MergeState)
+        graph.add_node("draft", draft)
+        graph.add_node("publish", publish)
+        graph.add_edge(START, "draft")
+        graph.add_edge("draft", "publish")
+        graph.add_edge("publish", END)
+        for name, app in (
+            ("single", graph.compile(checkpointer=saver)),
+            ("canonical_same", build_graph(pair, fixture, receiver, saver)),
+        ):
+            app.invoke({"operation_id": operation},
+                       {"configurable": {"thread_id": name}}, durability="sync")
+
+    with closing(sqlite3.connect(receiver)) as db:
+        for name in ("single", "canonical_same"):
+            emissions, = db.execute(
+                "SELECT count(*) FROM visits WHERE case_id=? AND stage='emitted'", (name,)
+            ).fetchone()
+            requests, = db.execute(
+                "SELECT count(*) FROM requests WHERE case_id=?", (name,)
+            ).fetchone()
+            saved = db.execute("SELECT payload FROM effects WHERE case_id=?", (name,)).fetchall()
+            assert saved == [(payload,)]
+            print(name, emissions, requests, len(saved))`))+
+  p('输出 <code>single 1 1 1</code> 和 <code>canonical_same 2 1 1</code>，依次表示候选数、发布请求数和实际提交数。这次对照固定候选，测出一次额外产出和汇合工作的存在。要判断多 Agent 有没有收益，还要让模型在相同任务和验收规则下运行，比较合格率、总调用量与等待时间。');
  a.sections[10][1]=
   '<h3 id="native-model-evaluation-bridge">用检索章的两份回答检验引用</h3>'+
   p('检索章让本机模型回答“本月费用合计多少”。当前来源是基础 <code>a-base/v1</code> 的 10 和调整 <code>a-adjust/v3</code> 的 27。旧调整项 <code>a-adjust/v2</code> 也是 27，所以两份回答虽然都写 37，引用的版本却不同。先按这项任务的要求判断它们。')+

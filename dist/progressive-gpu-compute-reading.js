@@ -314,10 +314,12 @@
  '<h3 id="ring-context-training">让 K/V 沿环传递，再完成一次参数更新</h3>'+
  p('上一题先收齐 K/V，再检查四行前向。这次把同样的因果注意力放到三个进程。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
  trainingFigure('v77-ring-training','三进程前向每人查看三个来源。反向多送最后一跳，把各自的 dK、dV 还给原拥有者。')+
- p('反向时，每个本地 Q 可能对多个进程的 K、V 产生梯度。程序把 K、V 和两个累加量 dK、dV 一起送上环。每个进程用自己的 Q 重新算该块的注意力权重，再把梯度贡献加到包里。最后多送一次，原拥有者才收回已经合并的梯度。得到本地 dQ、dK、dV 后，各进程求本地三个投影矩阵的梯度，再求和更新同一份权重。')+
- p('用完整因果注意力和 PyTorch 自动求导独立核对。三进程实测的最大输出误差约 3.33×10⁻¹⁶，更新后权重的最大误差约 1.39×10⁻¹⁷。若只保留各进程自己的 dK、dV 贡献，权重梯度误差约 4.07×10⁻⁴，判据会拒绝。两进程 1024 位置的对照也已执行。')+
+ p('反向时，跟住 rank 0 的 K、V。它们对应位置 0–511。rank 1、2 的查询来自更靠后的位置，都可以读取这块。包先加上 rank 0 的本地贡献，再沿 0 → 1 → 2 → 0 传递。rank 1、2 各自重算本地 Q 对这块的注意力权重，把梯度加进包里的 dK、dV。第三跳把已经合并的 dK、dV 还给 rank 0。<a href="/article/autograd-training/#section-3">回看同一输入被多处使用时的梯度相加 →</a>',
+ '各进程取得本地 dQ、dK、dV 后，用自己的输入行计算三个投影矩阵的局部权重梯度，再用 AllReduce 求和，让各进程用同一份梯度更新权重。前一次相加对应同一位置的 K、V，后一次对应各位置共用的投影参数。')+
+ p('用完整因果注意力和 PyTorch 自动求导独立核对。三进程实测的最大输出误差约 3.33×10⁻¹⁶，权重梯度误差约 1.17×10⁻¹⁷，更新后权重的最大误差约 1.39×10⁻¹⁷。反例保留相同前向，也做最后的 AllReduce，只漏掉远端查询对 K、V 的梯度贡献。投影权重梯度仍偏离约 4.07×10⁻⁴。两进程 1024 位置的对照也已执行。')+
+ p('复跑环境为 Python 3.12、PyTorch 2.5.1 和 NumPy 2.1.3。程序用 <code>gather_object</code> 汇总各进程的记录，这一步需要 NumPy。')+
  trainingCode('从解压目录运行三进程实战','SHELL','python -m torch.distributed.run --standalone --nproc_per_node=3 ring_training.py --positions 1536')+
- p('本次实测为 CPU/Gloo。每次点对点收发都等待完成，以便按步核对。包内也给出 CUDA/NCCL 启动参数，供两卡及多机环境复验。完整矩阵参照仅用于数值核对，不能拿这个程序测训练显存或通信重叠。')+
+ p('这份同机 CPU/Gloo 双精度记录用来核对数值和梯度归属。每跳收发都等待完成，每个进程也另算一份完整注意力作为参考。包内的 CUDA/NCCL 启动参数供目标环境复验。GPU 数值容差、峰值显存、物理多机通信和计算重叠要在对应设备和拓扑上分别测量。')+
  '<p class="practice-links"><a href="labs/ring-context-training.zip" download>下载环形实战 ↓</a> · <a href="labs/ring-context-training/ring_training.py">点对点源码</a> · <a href="labs/ring-context-training/validation.json">三进程记录</a></p>';
 
  contextAttention[7][1]+='<h3 id="ragged-ring-training">分片长度不等时，哪些位置还可以读</h3>'+

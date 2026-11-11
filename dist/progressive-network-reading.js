@@ -201,7 +201,8 @@
    ['IPv6 没有监听，指定 --ipv6','::1 被拒绝','退出码 7，未尝试 IPv4'],
    ['IPv6 已接收请求，暂不响应','连上 ::1，IPv4 无接入事件','退出码 28，未收到 HTTP 状态']
   ])+
-  p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。继续读<a href="/article/network-diagnosis/#section-5">一次 curl 请求的分段计时 →</a>。',
+  p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。<a href="/article/network-diagnosis/#curl-no-first-byte">对照两组没有收到 HTTP 状态的计时 →</a>',
+  '收到完整响应时，还可以按前后事件计算区间。<a href="/article/network-diagnosis/#section-5">看一次成功请求的分段计时 →</a>',
   '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
   '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
@@ -345,6 +346,12 @@
  ],'把 TCP 字节交付、协议消息和业务结果分层理解，再用同一请求的阶段计时定位等待，通过真实 HTTP、长度解帧与非阻塞发送实验核对判断。',[
  'subsection-1-peucok','subsection-2-1mjk258','subsection-3-1mjn4i8','subsection-4-15zyt9a','subsection-4-1xtsiga','subsection-12-1kp22io'
  ]);
+ diagnosis.sections[4][1]+=
+ h('curl-no-first-byte','同样是 000，请求在哪一步停住')+
+ p('先确认两个事件都发生，再用累计计时相减。下面三条来自 Linux 上的同一个 O-104 双栈实验。用 <code>--resolve</code> 给域名指定回环地址，直接发 HTTP 请求。')+
+ '<ul><li>IPv6 建连被拒，随后连上 IPv4。退出码 0，HTTP 200。<code>num_connects=1</code> 记录建成的一条连接，详细输出里有两次地址尝试。</li><li>限定只连 IPv6，建连被拒。退出码 7，<code>time_connect=0.000000</code>，两边监听端都无接入记录。</li><li>连上 IPv6 后等不到响应。退出码 28，<code>time_connect=0.000087</code> 秒，<code>time_starttransfer=0.000000</code>。IPv6 服务端已读到 GET，IPv4 没有接入事件。</li></ul>'+
+ p('后两条的 <code>http_code</code> 都是 <code>000</code>，表示 curl 没有收到 HTTP 状态码。最后一条的首字节还没到，不能拿零减建连时刻。对照客户端的连接日志和服务端的接入、读取记录，就能把建连被拒和发送后等待响应分开。<a href="/article/vpc-network/#native-dual-stack-connect">回到双栈实验查看各监听端的记录与复跑方法 →</a>')+
+ '<p class="practice-links"><a href="/labs/dual-stack-connect/linux-observation.json">查看 Linux 的 curl 输出与监听端事件 →</a> · <a href="/labs/dual-stack-connect/validation.json">对照 macOS 的同样三种结果 →</a></p>';
  diagnosis.sections[5][1]+=
  h('proxy-502-origin-evidence','用三处记录确定 502 是谁返回的')+
  p('取 C2.1 双段 TLS 实验里查询 O-104 的两个请求 <code>b1</code> 和 <code>bad</code>。两次的 HTTP Host 都是 <code>audit.lab.test</code>，客户端两次都验证了入口 P 的证书名称 <code>edge.lab.test</code>。P 随后各自新建到后端 B 的连接，只改变上游证书校验名称。')+

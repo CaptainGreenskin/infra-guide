@@ -131,6 +131,25 @@ if (!suppliedRecord) {
   for (const token of ["h('native-dual-stack-connect'", '/labs/dual-stack-connect.zip',
     '/labs/dual-stack-connect/README.md', '/labs/dual-stack-connect/validation.json',
     '/labs/dual-stack-connect/linux-observation.json']) assert(lesson.includes(token), token);
+  const article = slug => readFileSync(path.join(dist, 'article', slug, 'index.html'), 'utf8');
+  const curlSection = article('network-diagnosis').split('id="curl-no-first-byte"')[1]?.split('</section>')[0];
+  const dualStack = article('vpc-network').split('id="native-dual-stack-connect"')[1]?.split('</details>')[0];
+  assert(curlSection?.includes('/article/vpc-network/#native-dual-stack-connect'));
+  assert(dualStack?.includes('/article/network-diagnosis/#curl-no-first-byte'));
+  for (const raw of ['linux-observation.json', 'validation.json']) assert(curlSection.includes('/labs/dual-stack-connect/' + raw));
+  const rows = [...curlSection.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(([, row]) => row);
+  assert.equal(rows.length, 3);
+  const result = ['ipv6_refused', 'ipv6_only_refused', 'ipv6_http_wait'].map(key => {
+    const { curl } = linuxRecord.cases[key];
+    const [, , , , status, count, connect, first] = curl.stdout.split(delimiter)[1].trim().split('|');
+    return { code: curl.exit_code, status, count, connect, first };
+  });
+  for (const [i, row] of rows.entries()) assert(row.includes('退出码 ' + result[i].code), row);
+  assert(rows[0].includes('HTTP ' + result[0].status) && rows[0].includes('num_connects=' + result[0].count));
+  assert(rows[1].includes('time_connect=' + result[1].connect));
+  assert(rows[2].includes('time_connect=' + result[2].connect) && rows[2].includes('time_starttransfer=' + result[2].first));
+  assert.equal(result[1].status, result[2].status);
+  assert(curlSection.includes('<code>' + result[2].status + '</code>，表示 curl 没有收到 HTTP 状态码'));
   execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
 from zipfile import ZipFile

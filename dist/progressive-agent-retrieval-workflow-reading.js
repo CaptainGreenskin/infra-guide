@@ -299,6 +299,10 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[3][1]+=h('delegated-results-boundary','拆任务和复核同一份结果，有什么区别')+
+   p('一个 Agent 可以按顺序完成日报。需要分工时，主 Agent 给每个子执行者一个范围明确的小任务，规定它能读哪些资料、要交回哪些字段、最多用多少次调用。主 Agent 等待依赖的结果，核对来源与版本，再决定是否发布。最终发布沿原任务的操作号提交。')+
+   p('先看能不能并行。日报的补录编号来自主清单，这两个读取有前后依赖。主清单与补录都拿到后，金额检查和来源检查可以同时做。如果让两条分支各算一次完整日报，那是复核同一个结果。两条都给出 42，应保留两条来源记录和一版正文；一条给 42、一条给 41，应停在待复核。')+
+   p('可以把这个分工用于多个模型执行者。发布权限仍留在主流程，分支只交候选。<a href="/article/durable-workflows/#native-parallel-merge">用两条实际 LangGraph 分支检查汇合</a>，再<a href="/article/agent-evaluation/#delegation-run-comparison">用同一份记录核对执行量和提交数</a>。该实验的候选是预设输入。');
   a.sections[8][1]+=p('用 LangGraph 的实跑结果编写平台接入验收时，分别核对进程身份、原任务的草稿和接收方报告。<a href="/article/kairo-practice/#kairo-resume-evidence">沿原始记录走一遍三项检查 →</a>');
   a.sections[5][1]+=fold('选读 · 接管后的写入者',h('receiver-writer-after-takeover','同一笔 37 来自哪个执行者')+p(
    '另一个实跑把同一条消息重投给 B，此时旧执行者 A 仍在线。两组都把接收方的代际推进到 2，再让 A 先写。仅按业务 ID 去重，账本留下一笔金额 37，写入者是 A/1。提交前再核对代际，账本仍留下一笔金额 37，写入者是 B/2。',
@@ -432,7 +436,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
  p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
- '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p></details>';
+ '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>'+
+ p('汇合后还要知道实际多跑了多少工作。<a href="/article/agent-evaluation/#delegation-run-comparison">用这份记录逐项数候选、调用和提交 →</a>')+'</details>';
 
  a.sections[9][1]+='<h3 id="native-workflow-version-resume">旧任务等着发布 A，新版却先问要不要共享给 B</h3>'+
  p('第 1 版把 10、27 和 5 加成 42，停在“发布到 <code>A/daily</code>”的审批上。随后原进程退出。第 2 版还叫这个节点 <code>approval</code>，却在发布前插入“共享到 <code>B/daily</code>”这一步。两版的第一个问题已经不同。')+
