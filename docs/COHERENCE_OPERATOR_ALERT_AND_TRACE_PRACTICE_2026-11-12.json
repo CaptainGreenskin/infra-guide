@@ -41,6 +41,11 @@
       "reviewed_sha256": "60d6a1d54b327f3a673ead2bd913f796ae4c16dda51261fe5134d1aa6bef92c3",
       "scope": "Check the exact short-row and tail-guard numbers against the verified GPU execution."
     },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "bb000304dd16f3e37ce3637602ce32f0d5ccf4b7301ffa21f18942ef90fb1c12",
+      "reviewed_sha256": "68f6f9353506f8d3c824ca666d4935a6a0df4b7f36cb6a605da9bfa04bc9196a",
+      "scope": "Record the exact new Metal handoff while preserving the previous GPU lesson inventory."
+    },
     "scripts/check-mcp-trace-reentry.cjs": {
       "previous_sha256": "4a9559b5300db9540f67cc63071ed65d25ccdb1e6d13ef6e829d7cd245216cc1",
       "reviewed_sha256": "d573c9a1a307bfb290d94f2e2d0556db4cae54531ffce6cb07df51dac84cef9f",

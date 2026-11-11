@@ -78,6 +78,11 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
   if(re===hrefPattern&&id==='roofline-model'){
    former.push('href="/article/model-serving/#serving-rows-and-history"');
   }
+  if(re===hrefPattern&&id==='gpu-execution'){
+   const handoff='href="/article/operator-profiling/#native-metal-softmax"';
+   assert(section(id,4).includes(handoff),'the block synchronization lesson links to the recorded Metal run');
+   former.push(handoff);
+  }
   if(id==='database-index-locks'){
    if(re===prePattern){
     const addition=section(id,6).split('<h3 id="native-innodb-lab">');
