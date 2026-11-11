@@ -144,6 +144,22 @@
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
 
+ const servingBlockBoundary='<h3 id="subsection-5-qvstci">';
+ const servingRows=heading('serving-rows-and-history','这一轮算几行，要留下多少历史？')+
+  p('把刚才的 8 个位置接到模型里。第 i 条请求已有 Tᵢ 个已处理位置，本轮再处理 qᵢ 个新位置。本轮进入逐位置线性层的总行数是 M=Σqᵢ。三条解码请求各取 1 个位置，长提示取 5 个，就是 M=1+1+1+5=8；队列中还没轮到的请求没有计入这 8 行。')+
+  trainingFigure('serving-rows-and-history','本轮的 8 行决定线性层的工作量；各请求已有的历史继续占用 KV，处理完后再追加这 8 个位置。')+
+  p('沿用 <a href="/article/roofline-model/#section-4">Roofline 的 4096×4096 线性层</a>，本轮计算是 X[M,4096]×W[4096,4096]。M 变大，同一份权重可以服务更多行。注意力还要让各请求的新查询读取各自允许看到的历史。即使 M 相同，Tᵢ 不同，注意力要处理的上下文和缓存容量也会不同。')+
+  p('再接回第 4 节的模型预算，每个位置在全部层的 KV 合计为 128KiB。先按各请求独立保存、处理后保留全部历史计算，新增逻辑 KV=M×128KiB，轮后逻辑 KV=Σ(Tᵢ+qᵢ)×128KiB。上面的混合批新增 8×128KiB=1MiB，原来的历史仍要保存。')+
+  table(['本轮安排','线性层行数 M','轮后逻辑 KV'],[
+   ['一条新提示，一次处理 256 位置','256','256×128KiB=32MiB'],
+   ['16 条各有 4096 位置的请求，各解码一次','16','16×4097×128KiB=8GiB+2MiB'],
+   ['256 条各有 4096 位置的请求，各解码一次','256','256×4097×128KiB=128GiB+32MiB']
+  ])+
+  p('第一行和第三行的线性层同为 M=256，第三行光逻辑 KV 就超过题设的 10GiB 预算。能给线性层凑出多少行，要受请求历史与可用空间约束。调度器分配本轮位置、执行器计算这些行、缓存管理器保存和回收历史，这三项工作由此接在一起。上述是形状与容量的算术，分页尾部和工作区在后面的分配账中另计，实际时延再按请求事件测量。')+
+  '<p class="source-at"><a href="https://huggingface.co/docs/transformers/main/en/cache_explanation#cache-class">Transformers 的新输入与历史缓存形状 ↗</a> · <a href="https://docs.vllm.ai/en/v0.10.2/configuration/optimization.html#chunked-prefill">vLLM 0.10.2 的混合批与位置预算 ↗</a></p>';
+ if(serving.sections[4][1].split(servingBlockBoundary).length!==2)throw Error('Serving rows bridge insertion point changed');
+ serving.sections[4][1]=serving.sections[4][1].replace(servingBlockBoundary,servingRows+servingBlockBoundary);
+
  const performance=select('inference-performance'),q=performance.sections.map(x=>x[1]);
  const qc=q.map(codes),qf=q.map(figures);
  const hasPool=q[2].includes('id="inference-cache-mechanism"')&&q[5].includes('id="inference-cache-run"');
@@ -441,7 +457,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
- serving.updated='2026.11.10';
+ serving.updated='2026.11.11';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=

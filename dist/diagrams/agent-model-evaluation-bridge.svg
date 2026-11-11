@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="330" viewBox="0 0 460 330" role="img" aria-labelledby="title description">
+<title id="title">两份回答都是37，再核对当前引用</title>
+<desc id="description">当前来源为基础a-base/v1的10和调整a-adjust/v3的27。提供新版或旧版调整项，模型都回答37。验收器接受引用v3的回答，拒绝引用v2的回答。提前排除旧资料后，宿主发现缺调整项，未调用模型。</desc>
+<metadata>{"record":"labs/rag-citation-oracle/validation.json","authority":{"total":37,"citations":["a-adjust/v3","a-base/v1"]},"cases":{"fresh":"accepted","stale-unchecked":"rejected","stale-guarded":"withheld"},"model_request_count":2}</metadata>
+<rect x="1" y="1" width="458" height="328" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="20" y="29" font-size="18" font-weight="700">回答是 37，还要核对哪两份来源？</text>
+<rect x="20" y="44" width="420" height="43" rx="7" fill="#e5f1fc" stroke="#8bb4d8"/>
+<text x="230" y="70" text-anchor="middle" font-size="15">来源库的当前版本：基础 v1、调整 v3</text>
+<g text-anchor="middle">
+<rect x="20" y="106" width="199" height="49" rx="7" fill="#f0f5fc" stroke="#a6bbd4"/>
+<text x="119" y="127" font-size="15">提供基础 v1、调整 v3</text>
+<text x="119" y="146" font-size="13">模型答 37，引用 v1、v3</text>
+<rect x="241" y="106" width="199" height="49" rx="7" fill="#fff0dc" stroke="#ce9e65"/>
+<text x="340" y="127" font-size="15">提供基础 v1、调整 v2</text>
+<text x="340" y="146" font-size="13">模型答 37，引用 v1、v2</text>
+<path d="M119 157V176M114 170L119 177L124 170" fill="none" stroke="#457399" stroke-width="2"/>
+<path d="M340 157V176M335 170L340 177L345 170" fill="none" stroke="#996638" stroke-width="2"/>
+<rect x="20" y="182" width="199" height="52" rx="7" fill="#e3f3e9" stroke="#8bb79d"/>
+<text x="119" y="204" font-size="15" font-weight="700">验收接受</text>
+<text x="119" y="224" font-size="13">金额与当前引用一致</text>
+<rect x="241" y="182" width="199" height="52" rx="7" fill="#fff0dc" stroke="#ce9e65"/>
+<text x="340" y="204" font-size="15" font-weight="700">验收拒绝</text>
+<text x="340" y="224" font-size="13">调整项仍引用旧 v2</text>
+</g>
+<path d="M20 251H440" stroke="#a2b2c7" stroke-dasharray="5 4"/>
+<text x="20" y="276" font-size="15" font-weight="700">若发送前已排除旧调整项</text>
+<text x="20" y="301" font-size="14">只剩基础项 → 宿主返回证据不足，模型请求 0 次</text>
+</g>
+</svg>

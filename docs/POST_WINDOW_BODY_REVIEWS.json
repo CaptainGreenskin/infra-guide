@@ -6327,6 +6327,107 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "febda012d5db42e5dfe2fe8c6656c2532a90c5b288f2e7281b0607f8fc1b844f",
+      "reviewed_content_sha256": "2adfe7167d4e870468d59227d10e9a6a9cd6f781be0395b5cd1d2135258f5f10",
+      "scope": "Define the producer, queue, platform poller and function before retry semantics, then trace one normal asynchronous task across the synchronous function invocation.",
+      "observation": "The report and receipt are committed before function success and the subsequent SQS deletion. The figure is a documented normal sequence, not a new cloud measurement.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "roofline-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "bae7e4b33acf62d4480cac2da8bb0de6d7f995789742e4737a185396a1b81a56",
+      "reviewed_content_sha256": "55efb42d3789de061da21a461e21f5b8a96b1c365580135cd93671ada9b062e7",
+      "scope": "Connect matrix input rows to current serving work and retained context.",
+      "observation": "The same linear shape has rows M from new positions; old KV positions consume memory separately.",
+      "headings": [
+        "先问一次执行做了多少工作",
+        "先写数据账本，再算算术强度",
+        "两条上限怎样合成一条屋顶",
+        "批次改变的是权重复用，不只是显存占用",
+        "从瓶颈判断到可证伪的优化方案",
+        "局部快一倍，整体能快多少",
+        "为什么同一算子会有两种算术强度",
+        "把预算与计时写成一份可复查记录",
+        "练习：为一项优化写出收益边界"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "01964f857647b9b3aae7c52021e1ee65e5f1589952c7e4338707caba23fe6398",
+      "reviewed_content_sha256": "6a76126caac03616c46b7c1c437687df52bc810e30c60c34fe60094f116501d1",
+      "scope": "Reuse the existing8-position scheduling example to connect current matrix rows, prefill, decode and retained KV capacity.",
+      "observation": "M=256 prefill adds32MiB of logical KV; sixteen4096-history decodes have M16 and8GiB old KV. Matching M with256such decodes would retain128GiB, exceeding the named10GiB budget. These are derived counts.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "12d4350fad5491cd5aeecd7343275854c7815e332b13c46d6fcfc3ed998041dc",
+      "reviewed_content_sha256": "baba50c5ee7df30bd1d03f2855063c76a2e20e801ee2c53a43866efa3fb6f8fe",
+      "scope": "Finish judging the preceding real RAG model outputs before switching to the independent fixed four-task receiver experiment.",
+      "observation": "The fresh37 cites currentv3, stale37 citesv2 and fails current-source checking; guarded insufficient evidence makes no model request. The native RAG record has no saved business report and is not described as one.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1e601ef3a602a89962a971ee9b21f4d0992b2632ecc141087a9b77a428d38d07",
+      "reviewed_content_sha256": "03f7bcbca984cb574cccd21bf4dfced66a875de53e20c09fa377a9d72355908c",
+      "scope": "Rebuild the first reading around one decoder fixture, introducing each object and axis before calculation and keeping architecture comparisons and translation in optional disclosures.",
+      "observation": "The visible path is IDs, embedding/position, per-position projection, causal attention, gated FFN/residuals, output, training and generation. All original code and figures remain, the first input anchor moves before optional examples, and variant details no longer interrupt the main reading.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
     }
   ]
 }

@@ -71,6 +71,9 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
    // The added training timeline cites the two papers that define its schedules.
    former.push('href="https://arxiv.org/abs/1811.06965"','href="https://arxiv.org/abs/2104.04473"');
   }
+  if(re===hrefPattern&&id==='roofline-model'){
+   former.push('href="/article/model-serving/#serving-rows-and-history"');
+  }
   if(id==='database-index-locks'){
    if(re===prePattern){
     const addition=section(id,6).split('<h3 id="native-innodb-lab">');

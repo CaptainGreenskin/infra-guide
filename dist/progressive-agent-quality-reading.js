@@ -144,6 +144,22 @@
  p('变化题：在原 CSV 外增加 4 道“仅 B 通过”的新题，题数会变成 29，A 仍通过18题、B通过24题，变化四格也变了；应重新计算全部比例和 p。另一个变化是总体增加8个百分点却出现关键越权退化，此时应按事先约定的类别门槛验收，不能只看总体。')
  ];
  finish(a,old,bodies,['subsection-4-ymmfe2','subsection-5-cnfnmm','subsection-9-dpvytn','subsection-12-bgbi93'],'先定义任务、试次、尝试与独立验收，走通四用例执行，再分别计算类别、预算、区间和同题比较。');
+ a.sections[0][1]+=p('如果刚读完检索章，可以先到<a href="/article/agent-evaluation/#native-model-evaluation-bridge">第 11 节</a>，沿那两份真实模型回答核对判分依据，再看四任务实验怎样检查保存的报告和实际读取。');
+ a.sections[10][1]=
+  '<h3 id="native-model-evaluation-bridge">沿上一章的模型回答完成一次验收</h3>'+
+  p('检索章让本机模型回答“本月费用合计多少”。当前来源是基础 <code>a-base/v1</code> 的 10 和调整 <code>a-adjust/v3</code> 的 27。旧调整项 <code>a-adjust/v2</code> 也是 27，所以两份回答虽然都写 37，引用的版本却不同。先按这项任务的要求判断它们。')+
+  '<figure class="training-figure"><a href="diagrams/agent-model-evaluation-bridge.svg" target="_blank" rel="noopener" aria-label="放大：沿实际输入与模型回答核对当前来源"><img src="diagrams/agent-model-evaluation-bridge.svg" loading="lazy" width="460" height="330" alt="新旧资料都能让模型回答37，但当前来源要求调整项v3。验收接受引用v3的回答，拒绝引用v2的回答；提前排除旧资料后，宿主因缺少调整项停止调用模型。"></a><figcaption>来源库决定本题的当前版本。模型根据实际收到的资料生成回答，验收器再核对二者。</figcaption></figure>'+
+  p('打开运行记录，<code>supplied</code> 保存本分支提供的材料，<code>model_http</code> 保存真正发出的请求和收到的模型响应。判分器另读来源库的当前版本，算出标准金额及引用，记在 <code>authority</code>；<code>oracle</code> 保存这次判定。沿这些字段，可以查清模型收到什么、答了什么，以及程序依据什么接收或拒绝。')+
+  table(['实际路径','模型或宿主给出的结果','验收依据'],[
+   ['fresh：提供基础 v1、调整 v3','模型答 37，引用这两版','accepted：金额与当前来源都匹配'],
+   ['stale-unchecked：提供基础 v1、调整 v2','模型也答 37，引用旧调整项','rejected：citation_not_current，引用未匹配当前 v3'],
+   ['stale-guarded：排除旧调整项，只剩基础 v1','宿主返回证据不足，本分支模型请求 0 次','withheld：材料缺项，停止交付答案']
+  ])+
+  p('第二条路径中，模型按收到的材料引用了 v2。查输入就能定位旧版本由哪一步进入，修复时先检查索引与正文版本复检。第三条路径提前发现缺项，由宿主停下。判断这三条路径时，应分别查看模型响应和宿主决定。')+
+  '<p class="practice-links"><a href="/article/agent-retrieval/#native-rag-citation-oracle">回看检索、模型请求与版本检查 →</a> · <a href="/labs/rag-citation-oracle/validation.json">核对三条路径的原始记录 →</a></p>'+
+  p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
+  a.sections[10][1];
+ a.updated='2026.11.11';
  }
  }
  {

@@ -1,0 +1,130 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "2a734c153731d931fc58569c62bb39807135794b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_PLAN_SNAPSHOT_SHARDS_2026-11-11.json": "ca39fb5eefcbf1c5675f46b7239806de260a69cb9a84f0c6f6c6119b95003485"
+  },
+  "source_revisions": {
+    "scripts/check-jetstream-redelivery.cjs": {
+      "previous_sha256": "e2a3a58bf51078818b3f8043156c82dedf7f53321ae923dcecf71bd9d3caa568",
+      "reviewed_sha256": "9bfac5f7ed0749ab7c24ae79ac6c0a1a72a8e54be33887fc17b8372a13d4e5ea",
+      "scope": "Keep the historical lesson date as a lower bound when the chapter receives a later reviewed revision."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "9d8bb3d5c5910a5f7b7b18fb40362ec3be72cfc640f47af525d8cd6fb93750c6",
+      "reviewed_sha256": "2d19d216103e2dcddca5fb03c9e588ff76441309596d072af894773101e21439",
+      "scope": "Preserve the complete historical Roofline inventory and declare its one new exact serving-workload bridge."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "32f2c55bac18e9bb4a5090b68bf508cd26816bfdb779a1c77077a8c79c18beeb",
+      "reviewed_sha256": "6130d66ce361ab23a4f9f9a157dba6edf38852c50f46573e39eedab5b902af8d",
+      "scope": "Keep the opening forward-flow diagram at its authored width on desktop while allowing it to shrink on phones."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "f41351113276b4c16c38b0efaeb34b8bc42265ca20b09ae19476702cd8c33e39",
+      "reviewed_sha256": "97dbd3bac686f3e5b5a6c5ff0ab0752267e6bd9a46ff4d65c8688ae85ac2ab63",
+      "scope": "Rebuild the first reading around one decoder fixture, introducing each object and axis before calculation and keeping architecture comparisons and translation in optional disclosures."
+    },
+    "dist/model-lessons.js": {
+      "previous_sha256": "c483f12ae48e9483d82702c1c577bc3af2e75c7a351ae964bc49323ffbd4a817",
+      "reviewed_sha256": "2ab3023a5daa632029caceb9e4c5a905aeee7da58f9de82d3f0951a6ea5300d9",
+      "scope": "Rewrite six Transformer sections around their existing numerical fixture and move implementation detours to optional details."
+    },
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "a547fe9fe3e677f5a1b2f9429fdd6acda8ca6f9b0772b18185b25ad8d1306cf6",
+      "reviewed_sha256": "e0cada1e2c870a845c7319aaebacbc31b3134dbcb9cad3f784be62b3c2df8e06",
+      "scope": "Define the producer, queue, platform poller and function before retry semantics, then trace one normal asynchronous task across the synchronous function invocation."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "6832432e2533a790f225cab138f5f5c13108611313e64c757c2a33ca4e06222b",
+      "reviewed_sha256": "12034e50725f02a756834822445f30a1f1613c1369225e1354f0c164ae67dc24",
+      "scope": "Connect matrix input rows to current serving work and retained context."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "7c9b1de4fcc40b1390b2b91cdef7f07941938fd05a3f68ed3c9be387bd50f0b8",
+      "reviewed_sha256": "ae1f45b1abe201323e35fae39508fc576a010cea5e7573358d456bea5893a42e",
+      "scope": "Reuse the existing8-position scheduling example to connect current matrix rows, prefill, decode and retained KV capacity."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "b36d96d898866b74b5feb037a5d997193e1b0aed29e32d22b8f2292151f63c4a",
+      "reviewed_sha256": "d0ff48ec21b35ee0deff0e918286a7ecadaf4332e100e05dcbf88602666b1304",
+      "scope": "Finish judging the preceding real RAG model outputs before switching to the independent fixed four-task receiver experiment."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "b2bda0ca67719e0a8bfe0f001288d35d5cf78947e4cb7bffd96af6e6d6dc10aa",
+      "reviewed_sha256": "bdca5325426dbf31d6c6130b83fa4077db712fae8a046dbedaea82bc715fc460",
+      "scope": "Let the two newly edited chapter dates follow their actual final body writers."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "cde9c4a30b903bd71daa4d8beb57627a32c3e510d2394be37e7a3b771545643b",
+      "reviewed_sha256": "df36eaf5c1988ee61ce0d50c442cbb9966604e94610585e042ce2645cea0a796",
+      "scope": "Reserve the four new explanatory diagrams at their actual viewports."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "91981348e29cf025497e3f208846809deca6feda965076dff45e1e182e365190",
+      "reviewed_sha256": "20d0f30d9410afe48f6ac3d8c229264468247281379cb6d6b6da3669060512de",
+      "scope": "Fingerprint the exact light reader and search data for the revised lessons."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "21f16e56fba46566f65699c698389ae8a7ae87364f9decbe3490f6fb4900cc2c",
+      "reviewed_sha256": "10bb738d1617daf0bed9c2262151dcdb0c4bab0e18e06a3025ea26f0ad2cd542",
+      "scope": "Fingerprint the shared canonical renderer and lesson sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5d1b3a27b6336f66aef52ecae49f638b0f28dd2e7d7cef87085eb94347444c89",
+      "reviewed_sha256": "71f7bca78f5490ccca376c13fe6463a11250500ccf0736663d3c61c57b63a963",
+      "scope": "Register three new cross-chapter subsections and the revised Transformer subsection order while preserving every old anchor."
+    },
+    "docs/CONTENT_READING_PATH_BRIDGES_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8b6d6d0693131e6dbc0edb2fd2c73fb78aa85b64d9294518d3fe8c25c22c7df2",
+      "scope": "Record five intentional body revisions and the derived arithmetic and teaching scope."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "2a77e85b9ea4859c2fd706f0ea7b77954133f2736dd2082d9d3df8e8d398632d",
+      "reviewed_sha256": "e256ae22cbcf252db813c74605d05bea1be13603cba311fd703fd22b44e51ab9",
+      "scope": "Append this separate reading-path review."
+    },
+    "dist/diagrams/serverless-queue-actors.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "984b778b94b4225f8293d5f08d8b50b6351658fbf2018f10d91c965d8d9bd5cc",
+      "scope": "Explain the same objects and inputs as its accompanying prose, without a new execution claim."
+    },
+    "dist/diagrams/serving-rows-and-history.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0f9705da411294b147cd5187cfef1aae0b7724b699937951de6e075e33ed50bb",
+      "scope": "Explain the same objects and inputs as its accompanying prose, without a new execution claim."
+    },
+    "dist/diagrams/agent-model-evaluation-bridge.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e5a85cd03d645c1f11c6e0cd148011662e9690313459018d291b29391c7ccaae",
+      "scope": "Explain the same objects and inputs as its accompanying prose, without a new execution claim."
+    },
+    "dist/diagrams/transformer-first-forward.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "50d31fce95e570d81e5ce75054a2649178fe6c2d14e0079d1fd51c6110f102d3",
+      "scope": "Explain the same objects and inputs as its accompanying prose, without a new execution claim."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "7f7a79734873964e806bcd37649e471a3bb3b2149f273f82d8dc7cf1c9a17881",
+      "reviewed_sha256": "26cf988907038c6a91c4940c4b8d9b31544967dd771f43df4191daae49e7898d",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "2a734c153731d931fc58569c62bb39807135794b",
+    "chapters": 78,
+    "changed_bodies": [
+      "serverless-execution",
+      "roofline-model",
+      "model-serving",
+      "agent-evaluation",
+      "transformer-model"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 4
+  }
+}

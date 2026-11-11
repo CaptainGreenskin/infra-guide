@@ -303,6 +303,22 @@
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
  serverless.updated=delivery.updated='2026.11.09';
 
+ const firstActorIntro=p('函数是一段由平台接收输入并执行的应用程序；处理这次输入的入口称为处理函数（handler）。先用报告服务区分输入、执行和产物：用户请求生成日报，服务记录任务并发送消息，平台取出消息调用处理函数，处理函数保存报告，用户随后读取报告。');
+ if(!serverless.sections[0][1].includes(firstActorIntro))throw Error('Serverless actor introduction changed');
+ serverless.sections[0][1]=serverless.sections[0][1].replace(firstActorIntro,firstActorIntro+
+  p('发送消息的程序叫生产者，保存并投递消息的服务叫消息代理，取得消息并处理的程序叫消费者。'));
+
+ const triggerIntro=p('触发器决定输入怎样到达函数。同步调用由调用方等待返回；异步调用先受理输入、再安排执行；队列事件源映射则是平台维护的一段连接配置，由它轮询队列、组成批次并调用函数。先明确正常路径，才能把失败交还给正确的一方。');
+ if(!serverless.sections[2][1].includes(triggerIntro))throw Error('Serverless trigger introduction changed');
+ serverless.sections[2][1]=serverless.sections[2][1].replace(triggerIntro,
+  p('触发器决定输入怎样到达函数。同步调用由调用方等待返回；异步调用先受理输入、再安排执行。队列事件源映射是一份把队列连接到函数的配置，平台据此安排轮询器。轮询器反复向队列请求消息，取得消息后调用处理函数。')+
+  h('serverless-queue-actors','跟着一份日报，看谁取消息、谁确认完成')+
+  p('用 Amazon SQS 队列接收前面的 <code>report-27</code>，处理结果仍是总数 37。用户先请求生成日报，日报服务把任务消息送进队列，随后返回任务已受理。接下来的处理由平台推进，用户可以稍后查询报告。')+
+  p('Lambda 的轮询器从 SQS 接收消息，队列把消息暂时隐藏。轮询器把消息作为输入同步调用 handler，并等待它返回。handler 在业务库提交报告和回执，再返回成功；Lambda 随后删除这批已成功处理的消息。这里用户收到受理结果和 handler 返回成功，是两次不同的返回。')+
+  '<figure class="training-figure"><a href="diagrams/serverless-queue-actors.svg" target="_blank" rel="noopener" aria-label="放大日报的队列、轮询器与处理函数时序"><img src="diagrams/serverless-queue-actors.svg" width="460" height="660" alt="用户提交日报，服务写消息并返回受理。Lambda 轮询器接收消息并同步调用处理函数。函数提交报告 37 和回执，成功返回后，平台删除队列消息。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>业务提交、函数返回和删除消息依次推进。删除前函数仍可能已经保存了报告。<a href="diagrams/serverless-queue-actors.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+  p('如果 handler 提交后、返回前退出，报告已经存在，消息还可能重投。后面的重试、接收句柄和批次响应都沿这次交接展开。<a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#sqs-polling-behavior">AWS 的 SQS 轮询、同步调用与删除顺序 ↗</a>'));
+ serverless.updated='2026.11.11';
+
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
  if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');

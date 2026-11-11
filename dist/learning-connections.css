@@ -105,3 +105,5 @@
 #reader-trial>section h3{margin:0 0 6px}
 #reader-trial summary{color:var(--blue);cursor:pointer;padding:8px 0}
 @media(max-width:720px){#reader-trial summary{min-height:44px}}
+
+.training-figure img[src$="transformer-first-forward.svg"]{display:block;width:100%;max-width:440px;margin-inline:auto}

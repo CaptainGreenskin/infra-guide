@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="350" viewBox="0 0 460 350" role="img" aria-labelledby="title description">
+<title id="title">同一批请求的新输入行数与保留的历史</title>
+<desc id="description">三个解码请求 A、B、C 各处理一个新位置，长提示 P 处理五个，共八行进入 4096 维线性层。四个请求各自已有的历史长度为 T，计算后仍要保存这些历史，并追加八个新位置的 KV。每位置在全部层合计 128 KiB，所以新增一 MiB。</desc>
+<metadata>{"kind":"arithmetic","new_rows":[1,1,1,5],"M":8,"linear_shape":[8,4096,4096],"kv_bytes_per_position":131072,"kv_added_bytes":1048576,"comparison":[{"M":256,"old_positions_per_request":0,"requests":1,"kv_after_bytes":33554432},{"M":16,"old_positions_per_request":4096,"requests":16,"kv_after_bytes":8592031744},{"M":256,"old_positions_per_request":4096,"requests":256,"kv_after_bytes":137472507904}],"kv_budget_bytes":10737418240}</metadata>
+<rect x="1" y="1" width="458" height="348" rx="14" fill="#f7fafc" stroke="#cbd5e1"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#22324d">
+<text x="22" y="34" font-size="20" font-weight="700">这一轮新算的行，加到各自的历史之后</text>
+<text x="22" y="70" font-size="17" font-weight="700">本轮输入</text>
+<text x="22" y="94" font-size="17">A、B、C 各 1 行，长提示 P 取 5 行</text>
+<g fill="#e5effb" stroke="#7ea1c7">
+<rect x="22" y="108" width="44" height="34" rx="5"/><rect x="75" y="108" width="44" height="34" rx="5"/>
+<rect x="128" y="108" width="44" height="34" rx="5"/><rect x="181" y="108" width="44" height="34" rx="5"/>
+<rect x="234" y="108" width="44" height="34" rx="5"/><rect x="287" y="108" width="44" height="34" rx="5"/>
+<rect x="340" y="108" width="44" height="34" rx="5"/><rect x="393" y="108" width="44" height="34" rx="5"/>
+</g>
+<g font-size="18" font-weight="600" text-anchor="middle">
+<text x="44" y="132">A</text><text x="97" y="132">B</text><text x="150" y="132">C</text>
+<text x="203" y="132">P</text><text x="256" y="132">P</text><text x="309" y="132">P</text>
+<text x="362" y="132">P</text><text x="415" y="132">P</text>
+</g>
+<path d="M230 146v22m-5-5 5 5 5-5" fill="none" stroke="#4675a5" stroke-width="2"/>
+<text x="230" y="190" font-size="18" font-weight="700" text-anchor="middle">X[8,4096] × W[4096,4096]</text>
+<text x="230" y="214" font-size="17" fill="#3f6288" text-anchor="middle">线性层收到 M = 1+1+1+5 = 8 行</text>
+<rect x="22" y="235" width="415" height="91" rx="7" fill="#eaf3ed" stroke="#abc5b3"/>
+<text x="37" y="261" font-size="17" font-weight="700" fill="#315b40">轮后保存</text>
+<text x="37" y="287" font-size="18" fill="#315b40">各请求原历史 ΣTᵢ + 新增 8 个位置</text>
+<text x="37" y="312" font-size="17" fill="#315b40">新增 KV = 8 × 128KiB = 1MiB</text>
+</g>
+</svg>

@@ -68,7 +68,7 @@ function checkChapterAndFigure(cases,proofUrl){
  }
  const articles=vm.runInContext('articles',context);
  const article=id=>articles.find(a=>a.id===id),serverless=article('serverless-execution'),delivery=article('message-delivery');
- assert.deepEqual([serverless.updated,delivery.updated],['2026.11.09','2026.11.09']);
+ for(const chapter of [serverless,delivery])assert(chapter.updated>='2026.11.09',chapter.id+': includes the reviewed JetStream lesson');
  const anchor='native-jetstream-redelivery',body=serverless.sections[10][1],target='/article/serverless-execution/#'+anchor;
  const native=body.split('<h3 id="'+anchor+'">');
  assert.equal(native.length,2,'native unit has exactly one anchor');

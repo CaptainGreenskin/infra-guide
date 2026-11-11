@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 640" role="img" aria-labelledby="title desc">
+<title id="title">同一条输入怎样经过 Transformer 得到下一词元</title>
+<desc id="desc">四个词元编号变成四行向量，经过解码器块与词表投影，生成时从最后一行选词，再接回输入。</desc>
+<metadata>{&quot;kind&quot;: &quot;teaching-structure&quot;, &quot;vocabulary&quot;: 8, &quot;positions&quot;: 4, &quot;width&quot;: 8, &quot;batch_illustrated&quot;: 1, &quot;execution&quot;: false}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#3159d7"/></marker></defs>
+<rect width="440" height="640" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" text-anchor="middle" fill="#23314b">
+<text x="220" y="30" font-size="18" font-weight="650">一条输入，沿同一条计算路径向下读</text>
+<rect x="20" y="64" width="400" height="76" rx="6" fill="white" stroke="#b9c9ed"/>
+<text x="220" y="88" font-size="17" font-weight="650">词元编号</text>
+<text x="220" y="110" font-size="14">[0, 1, 2, 3]</text>
+<text x="220" y="130" font-size="13" fill="#576885">一条样本的 4 个输入位置</text>
+<path d="M220 144V161" fill="none" stroke="#3159d7" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="168" width="400" height="76" rx="6" fill="white" stroke="#b9c9ed"/>
+<text x="220" y="192" font-size="17" font-weight="650">词嵌入 + 位置向量</text>
+<text x="220" y="214" font-size="14">4 个位置 × 每格 8 项特征</text>
+<text x="220" y="234" font-size="13" fill="#576885">查同一张参数表，再加入各自的位置</text>
+<path d="M220 248V265" fill="none" stroke="#3159d7" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="272" width="400" height="128" rx="6" fill="white" stroke="#b9c9ed"/>
+<text x="220" y="296" font-size="17" font-weight="650">解码器块</text>
+<text x="220" y="318" font-size="14">注意力汇总合法前文，前馈加工每格特征</text>
+<text x="220" y="338" font-size="13" fill="#576885">归一化调整尺度，残差把分支结果加回输入</text>
+<text x="220" y="368" font-size="14">块输出仍是 4 × 8，可以再接下一块</text>
+<path d="M220 404V421" fill="none" stroke="#3159d7" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="428" width="400" height="76" rx="6" fill="white" stroke="#b9c9ed"/>
+<text x="220" y="452" font-size="17" font-weight="650">输出投影</text>
+<text x="220" y="474" font-size="14">4 行 × 每行 8 个候选分数</text>
+<text x="220" y="494" font-size="13" fill="#576885">每一行用于预测该位置的下一项</text>
+<path d="M220 508V525" fill="none" stroke="#3159d7" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="20" y="532" width="400" height="76" rx="6" fill="white" stroke="#b9c9ed"/>
+<text x="220" y="556" font-size="17" font-weight="650">生成时选择下一项</text>
+<text x="220" y="578" font-size="14">从最后一行分数选出一个编号</text>
+<text x="220" y="598" font-size="13" fill="#576885">接回已有编号，再进行下一轮计算</text>
+<text x="220" y="630" font-size="12" fill="#576885">图中只画一条样本，批内另一条走相同的计算</text>
+</g></svg>

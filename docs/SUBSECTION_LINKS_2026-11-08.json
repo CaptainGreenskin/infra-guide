@@ -297,9 +297,11 @@
         "subsection-7-1qditfg",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
-        "native-jetstream-redelivery"
+        "native-jetstream-redelivery",
+        "serverless-queue-actors"
       ],
       "visible_targets": [
+        "serverless-queue-actors",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
         "native-jetstream-redelivery"
@@ -420,17 +422,11 @@
       ],
       "visible_targets": [
         "text-to-next-token",
-        "sequence-models",
-        "transformer-architecture-choices",
-        "translation-reading-path",
-        "ai-infra-map",
         "tiny-decoder-input",
         "decoder-attention-first-pass",
         "decoder-ffn-position",
         "decoder-block-order",
-        "training-versus-generation",
-        "model-compute-to-infra",
-        "encoder-decoder-translation"
+        "training-versus-generation"
       ]
     },
     {
@@ -715,11 +711,13 @@
         "native-inference-request-path",
         "native-inference-engine-lab",
         "native-inference-prefix",
-        "rtx-pro-6000-cache-case"
+        "rtx-pro-6000-cache-case",
+        "serving-rows-and-history"
       ],
       "visible_targets": [
         "native-inference-request-path",
         "sdpa-cache-path",
+        "serving-rows-and-history",
         "subsection-5-qvstci",
         "native-inference-engine-lab",
         "native-inference-prefix",
@@ -940,9 +938,12 @@
         "subsection-4-ymmfe2",
         "subsection-5-cnfnmm",
         "subsection-9-dpvytn",
-        "subsection-12-bgbi93"
+        "subsection-12-bgbi93",
+        "native-model-evaluation-bridge"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-model-evaluation-bridge"
+      ]
     },
     {
       "id": "durable-workflows",

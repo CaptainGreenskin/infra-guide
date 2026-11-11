@@ -149,6 +149,10 @@
  '新D=8,404,992字节，带宽下界约4.2025微秒。整请求新时间比例是0.8+0.2/4=0.85，加速约1.176。转换、缓存、启动和质量等变化需另验。单位、局部预算、整体边界、失败条件与验证方法各检查一项。')
  ]);
 
+ const rooflineServing=articles.find(a=>a.id==='roofline-model');
+ rooflineServing.sections[3][1]+=p('把 M 放回生成请求中看：一条新提示一次处理 256 个位置，或 256 条请求各处理一个新位置，都能给这个线性层提供 256 行。后者还保留各自的历史 KV。<a href="/article/model-serving/#serving-rows-and-history">模型服务章用同一形状继续算缓存和调度</a>，把本轮新算的行数与仍需保存的上下文接在一起。');
+ rooflineServing.updated='2026.11.11';
+
  rewrite('flash-attention-io',9,old=>[
  p('注意力让一个位置读取允许看到的其他位置。query（查询向量）表示当前要匹配什么，key（键向量）用于计算匹配分数，value（值向量）是按权重汇总的内容。把各位置向量排成Q、K、V后，输出为O=softmax(QKᵀ/√d+mask)V；d是每头的查询/键维度，转置K让每个query和各key做点积。',
  'mask表示可见性约束，softmax把同一query的合法分数变为非负、和为1的权重。普通分步实现先把分数矩阵S写到HBM，再读S得到概率矩阵P，最后读P与V相乘。HBM是高带宽显存，IO在本章指它与片上存储之间的数据读写。FlashAttention保留同一注意力目标，主要改变中间结果的保存和搬运方式。',

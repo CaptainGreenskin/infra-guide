@@ -7019,6 +7019,22 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
  serverless.updated=delivery.updated='2026.11.09';
 
+ const firstActorIntro=p('函数是一段由平台接收输入并执行的应用程序；处理这次输入的入口称为处理函数（handler）。先用报告服务区分输入、执行和产物：用户请求生成日报，服务记录任务并发送消息，平台取出消息调用处理函数，处理函数保存报告，用户随后读取报告。');
+ if(!serverless.sections[0][1].includes(firstActorIntro))throw Error('Serverless actor introduction changed');
+ serverless.sections[0][1]=serverless.sections[0][1].replace(firstActorIntro,firstActorIntro+
+  p('发送消息的程序叫生产者，保存并投递消息的服务叫消息代理，取得消息并处理的程序叫消费者。'));
+
+ const triggerIntro=p('触发器决定输入怎样到达函数。同步调用由调用方等待返回；异步调用先受理输入、再安排执行；队列事件源映射则是平台维护的一段连接配置，由它轮询队列、组成批次并调用函数。先明确正常路径，才能把失败交还给正确的一方。');
+ if(!serverless.sections[2][1].includes(triggerIntro))throw Error('Serverless trigger introduction changed');
+ serverless.sections[2][1]=serverless.sections[2][1].replace(triggerIntro,
+  p('触发器决定输入怎样到达函数。同步调用由调用方等待返回；异步调用先受理输入、再安排执行。队列事件源映射是一份把队列连接到函数的配置，平台据此安排轮询器。轮询器反复向队列请求消息，取得消息后调用处理函数。')+
+  h('serverless-queue-actors','跟着一份日报，看谁取消息、谁确认完成')+
+  p('用 Amazon SQS 队列接收前面的 <code>report-27</code>，处理结果仍是总数 37。用户先请求生成日报，日报服务把任务消息送进队列，随后返回任务已受理。接下来的处理由平台推进，用户可以稍后查询报告。')+
+  p('Lambda 的轮询器从 SQS 接收消息，队列把消息暂时隐藏。轮询器把消息作为输入同步调用 handler，并等待它返回。handler 在业务库提交报告和回执，再返回成功；Lambda 随后删除这批已成功处理的消息。这里用户收到受理结果和 handler 返回成功，是两次不同的返回。')+
+  '<figure class="training-figure"><a href="diagrams/serverless-queue-actors.svg" target="_blank" rel="noopener" aria-label="放大日报的队列、轮询器与处理函数时序"><img src="diagrams/serverless-queue-actors.svg" width="460" height="660" alt="用户提交日报，服务写消息并返回受理。Lambda 轮询器接收消息并同步调用处理函数。函数提交报告 37 和回执，成功返回后，平台删除队列消息。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>业务提交、函数返回和删除消息依次推进。删除前函数仍可能已经保存了报告。<a href="diagrams/serverless-queue-actors.svg" download>下载 SVG ↗</a></figcaption></figure>'+
+  p('如果 handler 提交后、返回前退出，报告已经存在，消息还可能重投。后面的重试、接收句柄和批次响应都沿这次交接展开。<a href="https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#sqs-polling-behavior">AWS 的 SQS 轮询、同步调用与删除顺序 ↗</a>'));
+ serverless.updated='2026.11.11';
+
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
  if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');
@@ -7173,6 +7189,22 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   '独立量化章保留整数与比例尺、分组打包、字节与执行账本、校准，以及INT4打包和CPU INT8实验。阅读时把每项压缩明确对应到本章权重、KV或临时结果，才能推导它实际影响哪份容量与执行。')+
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
+
+ const servingBlockBoundary='<h3 id="subsection-5-qvstci">';
+ const servingRows=heading('serving-rows-and-history','这一轮算几行，要留下多少历史？')+
+  p('把刚才的 8 个位置接到模型里。第 i 条请求已有 Tᵢ 个已处理位置，本轮再处理 qᵢ 个新位置。本轮进入逐位置线性层的总行数是 M=Σqᵢ。三条解码请求各取 1 个位置，长提示取 5 个，就是 M=1+1+1+5=8；队列中还没轮到的请求没有计入这 8 行。')+
+  trainingFigure('serving-rows-and-history','本轮的 8 行决定线性层的工作量；各请求已有的历史继续占用 KV，处理完后再追加这 8 个位置。')+
+  p('沿用 <a href="/article/roofline-model/#section-4">Roofline 的 4096×4096 线性层</a>，本轮计算是 X[M,4096]×W[4096,4096]。M 变大，同一份权重可以服务更多行。注意力还要让各请求的新查询读取各自允许看到的历史。即使 M 相同，Tᵢ 不同，注意力要处理的上下文和缓存容量也会不同。')+
+  p('再接回第 4 节的模型预算，每个位置在全部层的 KV 合计为 128KiB。先按各请求独立保存、处理后保留全部历史计算，新增逻辑 KV=M×128KiB，轮后逻辑 KV=Σ(Tᵢ+qᵢ)×128KiB。上面的混合批新增 8×128KiB=1MiB，原来的历史仍要保存。')+
+  table(['本轮安排','线性层行数 M','轮后逻辑 KV'],[
+   ['一条新提示，一次处理 256 位置','256','256×128KiB=32MiB'],
+   ['16 条各有 4096 位置的请求，各解码一次','16','16×4097×128KiB=8GiB+2MiB'],
+   ['256 条各有 4096 位置的请求，各解码一次','256','256×4097×128KiB=128GiB+32MiB']
+  ])+
+  p('第一行和第三行的线性层同为 M=256，第三行光逻辑 KV 就超过题设的 10GiB 预算。能给线性层凑出多少行，要受请求历史与可用空间约束。调度器分配本轮位置、执行器计算这些行、缓存管理器保存和回收历史，这三项工作由此接在一起。上述是形状与容量的算术，分页尾部和工作区在后面的分配账中另计，实际时延再按请求事件测量。')+
+  '<p class="source-at"><a href="https://huggingface.co/docs/transformers/main/en/cache_explanation#cache-class">Transformers 的新输入与历史缓存形状 ↗</a> · <a href="https://docs.vllm.ai/en/v0.10.2/configuration/optimization.html#chunked-prefill">vLLM 0.10.2 的混合批与位置预算 ↗</a></p>';
+ if(serving.sections[4][1].split(servingBlockBoundary).length!==2)throw Error('Serving rows bridge insertion point changed');
+ serving.sections[4][1]=serving.sections[4][1].replace(servingBlockBoundary,servingRows+servingBlockBoundary);
 
  const performance=select('inference-performance'),q=performance.sections.map(x=>x[1]);
  const qc=q.map(codes),qf=q.map(figures);
@@ -7471,7 +7503,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
- serving.updated='2026.11.10';
+ serving.updated='2026.11.11';
  performance.updated='2026.11.09';
 
  performance.sections[6][1]+=
@@ -7657,6 +7689,22 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
  p('变化题：在原 CSV 外增加 4 道“仅 B 通过”的新题，题数会变成 29，A 仍通过18题、B通过24题，变化四格也变了；应重新计算全部比例和 p。另一个变化是总体增加8个百分点却出现关键越权退化，此时应按事先约定的类别门槛验收，不能只看总体。')
  ];
  finish(a,old,bodies,['subsection-4-ymmfe2','subsection-5-cnfnmm','subsection-9-dpvytn','subsection-12-bgbi93'],'先定义任务、试次、尝试与独立验收，走通四用例执行，再分别计算类别、预算、区间和同题比较。');
+ a.sections[0][1]+=p('如果刚读完检索章，可以先到<a href="/article/agent-evaluation/#native-model-evaluation-bridge">第 11 节</a>，沿那两份真实模型回答核对判分依据，再看四任务实验怎样检查保存的报告和实际读取。');
+ a.sections[10][1]=
+  '<h3 id="native-model-evaluation-bridge">沿上一章的模型回答完成一次验收</h3>'+
+  p('检索章让本机模型回答“本月费用合计多少”。当前来源是基础 <code>a-base/v1</code> 的 10 和调整 <code>a-adjust/v3</code> 的 27。旧调整项 <code>a-adjust/v2</code> 也是 27，所以两份回答虽然都写 37，引用的版本却不同。先按这项任务的要求判断它们。')+
+  '<figure class="training-figure"><a href="diagrams/agent-model-evaluation-bridge.svg" target="_blank" rel="noopener" aria-label="放大：沿实际输入与模型回答核对当前来源"><img src="diagrams/agent-model-evaluation-bridge.svg" loading="lazy" width="460" height="330" alt="新旧资料都能让模型回答37，但当前来源要求调整项v3。验收接受引用v3的回答，拒绝引用v2的回答；提前排除旧资料后，宿主因缺少调整项停止调用模型。"></a><figcaption>来源库决定本题的当前版本。模型根据实际收到的资料生成回答，验收器再核对二者。</figcaption></figure>'+
+  p('打开运行记录，<code>supplied</code> 保存本分支提供的材料，<code>model_http</code> 保存真正发出的请求和收到的模型响应。判分器另读来源库的当前版本，算出标准金额及引用，记在 <code>authority</code>；<code>oracle</code> 保存这次判定。沿这些字段，可以查清模型收到什么、答了什么，以及程序依据什么接收或拒绝。')+
+  table(['实际路径','模型或宿主给出的结果','验收依据'],[
+   ['fresh：提供基础 v1、调整 v3','模型答 37，引用这两版','accepted：金额与当前来源都匹配'],
+   ['stale-unchecked：提供基础 v1、调整 v2','模型也答 37，引用旧调整项','rejected：citation_not_current，引用未匹配当前 v3'],
+   ['stale-guarded：排除旧调整项，只剩基础 v1','宿主返回证据不足，本分支模型请求 0 次','withheld：材料缺项，停止交付答案']
+  ])+
+  p('第二条路径中，模型按收到的材料引用了 v2。查输入就能定位旧版本由哪一步进入，修复时先检查索引与正文版本复检。第三条路径提前发现缺项，由宿主停下。判断这三条路径时，应分别查看模型响应和宿主决定。')+
+  '<p class="practice-links"><a href="/article/agent-retrieval/#native-rag-citation-oracle">回看检索、模型请求与版本检查 →</a> · <a href="/labs/rag-citation-oracle/validation.json">核对三条路径的原始记录 →</a></p>'+
+  p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
+  a.sections[10][1];
+ a.updated='2026.11.11';
  }
  }
  {
@@ -9261,6 +9309,10 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('保留M=1，假设只有权重存储降为原来的四分之一，输入输出字节不变，其余工作暂不计。先重算总字节与带宽下界，再列三项可能阻止实际四倍加速的条件。最后设该层只占整请求20%时间，求它快四倍时整个请求的理想加速。',
  '新D=8,404,992字节，带宽下界约4.2025微秒。整请求新时间比例是0.8+0.2/4=0.85，加速约1.176。转换、缓存、启动和质量等变化需另验。单位、局部预算、整体边界、失败条件与验证方法各检查一项。')
  ]);
+
+ const rooflineServing=articles.find(a=>a.id==='roofline-model');
+ rooflineServing.sections[3][1]+=p('把 M 放回生成请求中看：一条新提示一次处理 256 个位置，或 256 条请求各处理一个新位置，都能给这个线性层提供 256 行。后者还保留各自的历史 KV。<a href="/article/model-serving/#serving-rows-and-history">模型服务章用同一形状继续算缓存和调度</a>，把本轮新算的行数与仍需保存的上下文接在一起。');
+ rooflineServing.updated='2026.11.11';
 
  rewrite('flash-attention-io',9,old=>[
  p('注意力让一个位置读取允许看到的其他位置。query（查询向量）表示当前要匹配什么，key（键向量）用于计算匹配分数，value（值向量）是按权重汇总的内容。把各位置向量排成Q、K、V后，输出为O=softmax(QKᵀ/√d+mask)V；d是每头的查询/键维度，转置K让每个query和各key做点积。',
@@ -13381,94 +13433,100 @@ const firstReadingChanges=[];
  const blockFlow=a.sections[3][1].match(/<figure\b[\s\S]*?<\/figure>/)?.[0];
  if(!overview||!overview.includes('v42-ai-concepts.svg'))throw Error('Missing model overview figure');
  if(!blockFlow||!blockFlow.includes('v9-model-flow.svg'))throw Error('Missing decoder block flow figure');
- section[1]=`<h3 id="text-to-next-token">一句话怎样变成下一词元的预测</h3>`+para(
- '给小模型一句「红 圆」，它先译出 red，再译出 circle。已经译出 red 时，把原文换成「红 方」，下一词就变成 square。Transformer 在每一轮用原文和已经译出的内容，给下一词的候选项打分。<a href="/article/transformer-model/#translation-reading-path">查看翻译的三轮输入与输出</a>。',
- '程序先用分词器把文本切成词元（token）。词元可以是字、词片段或字节片段。它按词表找到「红」和「圆」的编号，再用词嵌入表把每个编号换成一组数字，这组数字叫向量。Transformer 处理这些向量，算出词表里各项的分数（logits）。每轮选出一项，接到已生成的内容后，再算下一轮。这种逐项续写叫自回归生成。')+
- conceptReadingTable(['组件','负责什么','在模型中的关系'],[
-  ['分词器与词表','把文本片段转换为编号','为词嵌入提供查表编号'],
-  ['词嵌入 <code>Embedding</code>','把编号查成向量','产生每个位置的初始表示'],
-  ['位置机制','让表示包含先后位置信息','本例把位置向量加到词嵌入上'],
-  ['注意力 <code>Attention</code>','从允许看到的位置汇总信息','让不同位置之间交换信息'],
-  ['前馈网络 <code>FFN</code>','分别变换每个位置的特征','接着加工注意力汇总后的表示'],
-  ['归一化','按规则调整特征的数值尺度','用于注意力和前馈等变换附近'],
-  ['残差连接','把分支输出与原表示相加','保留直接路径，连接连续的计算层'],
-  ['输出投影','为词表中的每个候选编号打分','分数用于计算训练损失或选择下一项']
- ])+
- para('词嵌入表等部件里的数值是模型参数。训练时，如果正确答案是 circle，模型给它的概率越低，损失就越大。梯度描述微调参数会怎样改变损失，优化器据此更新参数。实际翻译时，参数固定下来，只用它们算分。')+overview+
- `<h3 id="sequence-models">循环、卷积和注意力怎样传递前文</h3>`+
+ const sequenceReading=`<h3 id="sequence-models">循环、卷积和注意力怎样传递前文</h3>`+
  para('把「红牌、蓝牌、绿牌、找红」当成四个示意词元。第 4 格要利用第 1 格的红牌。这里只允许每格读取自己和前文。前面的信息怎样到达第 4 格，取决于这一层连接了哪些位置。',
  '循环神经网络（RNN）为每格计算一个状态，也就是要传给下一格的一组数字。普通单向 RNN 用本格输入和上一格状态算出新状态。红牌的信息可以从状态 1 依次传到状态 4，中间各格都要等前一格算完。',
  '卷积神经网络（CNN）把同一组系数沿序列滑动。设每个窗口只取本格和前一格，系数按相对位置固定。第 4 格的一层输出只读第 3、4 格。叠两层时，第 2 格能经第 3 格的上一层输出传入。按同样规则叠三层，第 1 格的信息才传得到。',
  '自注意力在同一条序列内汇总信息。第 4 格直接把自己的表示和第 1 至 4 格做匹配，按分数分配权重。下面两组权重是题设。末格是「找红」时取 [0.6, 0.1, 0.1, 0.2]，换成「找蓝」时取 [0.1, 0.6, 0.1, 0.2]。只跟踪红色标记这一项，四格供给 [1, 0, 0, 0]，汇总结果便从 0.6 变为 0.1。两次的可读范围一样，变的是分给各格的权重。')+
  trainingFigure('sequence-models','同一四格输入传向第 4 格的三种路径。图中权重对应「找红」的示意算例。')+
  para('输入已经给定时，卷积和自注意力可并行算同一层的多个位置。全范围注意力能在一层内连接相隔很远的合法位置，也要对更多位置打分。逐词生成时仍要等上一步选出词元，第 7、8 节会分别解释生成顺序与注意力的计算量。<a href="/article/attention-mechanics/#section-1">从一个查询开始手算注意力的权重 →</a>')+
- '<p class="source-at"><a href="https://doi.org/10.1207/s15516709cog1402_1">循环状态原论文</a> · <a href="https://proceedings.mlr.press/v70/gehring17a.html">序列卷积原论文</a> · <a href="https://arxiv.org/html/1706.03762v7#S4">Transformer 原论文的路径对照</a></p>'+
- `<h3 id="transformer-architecture-choices">三种架构的区别在于谁能读取谁</h3>`+
+ '<p class="source-at"><a href="https://doi.org/10.1207/s15516709cog1402_1">循环状态原论文</a> · <a href="https://proceedings.mlr.press/v70/gehring17a.html">序列卷积原论文</a> · <a href="https://arxiv.org/html/1706.03762v7#S4">Transformer 原论文的路径对照</a></p>';
+ const architectureReading=`<h3 id="transformer-architecture-choices">三种架构的区别在于谁能读取谁</h3>`+
  para('注意力让一个位置从一组允许读取的位置汇总信息。同一条序列内部读取叫自注意力，从另一条序列的表示中读取叫交叉注意力。翻译时，中文是源序列，已经有的英文是目标前缀。三种结构对输入的组织方式不同。')+
  conceptReadingTable(['结构','位置能读取什么','任务例子'],[
   ['仅编码器（Encoder-only）','同一输入内的左右上下文都可参与计算，填充位置可被屏蔽','用整句表示做分类，如 <a href="https://arxiv.org/abs/1810.04805">BERT</a>'],
   ['编码器与解码器（Encoder–Decoder）','编码器先整理源句。解码器用自注意力读取目标前缀，再用得到的目标表示查询源句表示','先读完整中文，再逐步生成英文，如 <a href="https://arxiv.org/abs/1706.03762">原始 Transformer</a>'],
   ['仅解码器（Decoder-only）','指令、原文和已生成文本在一条序列里，每个位置只读自己及之前的位置','接在「把红 圆翻译成英文」后续写，如 <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>']
- ])+
- `<h3 id="translation-reading-path">沿一句「红 圆」走完 Transformer</h3>`+
+ ]);
+ const translationReading=`<h3 id="translation-reading-path">沿一句「红 圆」走完 Transformer</h3>`+
  para('先看源端。实验把「红」和「圆」分别查成向量，加上各自的位置向量。编码器用自注意力让两个位置互相读取，得到两条带上下文的源表示。接下来，解码器每次都能查询这两条表示。',
  '再看训练输入怎样构造。BOS 标记开始，EOS 标记结束。若用 red circle 做训练样本，目标输入是 [BOS, red, circle]，预测标签是 [red, circle, EOS]。每行预测下一项。预测 circle 的那一行只能从目标侧读到 [BOS, red]。限制每个位置只能读自己与前文的规则叫因果约束。训练时把正确的前缀交给模型，叫教师强制（teacher forcing）。',
  '这一行再用交叉注意力从「红」「圆」两条源表示汇总信息。一套独立的匹配与汇总叫一个注意力头。对每个头，三个目标位置各产生一行分数，两个源位置各占一列。')+
  '<div class="translation-reading-trace">'+conceptReadingTable(['轮次','本轮目标输入','选出的词'],[
   ['1','[BOS]','red'],['2','[BOS, red]','circle'],['3','[BOS, red, circle]','EOS，结束']
  ])+'</div>'+
- para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>')+
- `<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
- para('翻译到第二轮时，模型要把已有内容变成新的候选分数。中间会反复做矩阵乘法，把一组特征变成另一组特征。执行一次这类运算的程序叫算子。写算子时要管数字怎么算、从哪取。训练时要管参数怎么更新。提供翻译服务时，还要让多个请求共用有限的显存。')+
+ para('「红 圆」实际留作测试。表里的词由 CPU 实验逐轮选出。生成时只给源句和 BOS，解码器每轮把自己选出的词接回目标输入。固定第二轮的 [BOS, red]，把源句改成「红 方」，下一词就从 circle 变为 square。圆和方的差别来自源端，交叉注意力负责把源端信息传给当前预测。<a href="/article/transformer-model/#encoder-decoder-translation">用可运行的翻译小模型检查两侧输入与掩码 →</a>');
+ const infraReading=`<h3 id="ai-infra-map">AI Infra 全貌与四条学习线</h3>`+
+ para('模型把已有内容变成新的候选分数。中间会反复做矩阵乘法，把一组特征变成另一组特征。执行一次这类运算的程序叫算子。写算子时要管数字怎么算、从哪取。训练时要管参数怎么更新。提供翻译服务时，还要让多个请求共用有限的显存。')+
  conceptReadingTable(['学习线','沿同一个模型追什么','从哪章继续'],[
   ['模型基础','编号怎样变成向量，向量怎样读取上下文，最后怎样得出候选分数','<a href="/article/tokenization-embedding/">词元与嵌入</a> → <a href="/article/attention-mechanics/">注意力</a> → <a href="/article/transformer-block/">完整解码器块</a>'],
   ['GPU 与算子','矩阵乘法和注意力怎样落到 GPU 的计算与存储。序列变长时，哪些数字值得留在芯片上继续用','<a href="/article/gpu-execution/">GPU 怎样执行算子</a> → <a href="/article/operator-profiling/">实现、测量与验证</a>'],
   ['分布式训练与作业平台','样本怎样分给各个进程，多个设备怎样合成同一次更新，作业如何启动及从保存的状态继续','<a href="/article/gpu-cluster/">一次训练的全过程</a> → <a href="/article/training-platform/">训练作业与平台</a>'],
   ['推理与交付','已有参数怎样服务请求，逐词生成时哪些历史结果能复用，系统怎样用有限显存接更多请求','<a href="/article/model-serving/">生成与缓存</a> → <a href="/article/inference-performance/">服务性能</a> → <a href="/article/ai-lifecycle/">模型交付</a>']
  ])+
- para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>')+
- `<h3 id="tiny-decoder-input">下面用哪组输入计算</h3>`+para(
- '上面的翻译实验有独立的源端和目标端。第 2 节起切换到另一份只用解码器的小模型，在一条编号序列里计算续写。反复堆叠的单元叫解码器块（Decoder Block）。每一块先在合法范围内汇总上下文，再逐位置加工特征。',
- '小模型的词表有 8 项（V=8），每个位置用 8 个数字表示（D=8）。一个批次有两条样本（B=2），原始编号是 [0,1,2,3,4] 和 [4,5,6,7,0]。每个编号都对应词嵌入表中的一行。',
- '每条取前四项作输入（T=4），后四项作目标。以第一条为例，第 0 位只看到 0，要猜 1。第 3 位能看到 [0,1,2,3]，要猜 4。');
- a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
+ para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
+ section[1]=`<h3 id="text-to-next-token">Transformer 怎样预测下一个词元</h3>`+para(
+ '语言模型读入一段前文，为接下来可能出现的内容打分。程序选出一项，接回前文，再算下一项。Transformer 用多层计算完成这件事。本章采用仅解码器（Decoder-only）结构，沿同一个小模型看输入怎样变成预测。',
+ '文本先由分词器切成词元（token）。词元可以是字、词片段或字节片段，词表给每项一个编号。模型把编号查成一组数字，叫向量。向量经过多层加工，最后得到词表中各项的候选分数，称为 logits。选词程序据此得到下一个编号，这种逐项续写叫自回归生成。')+
+ trainingFigure('transformer-first-forward','图中画一条样本。四个输入位置分别产生一行分数，生成时用最后一行选择下一项。')+
+ conceptReadingTable(['组件','对输入做什么'],[
+  ['词嵌入 Embedding','按编号查出向量，作为每个位置的初始表示'],
+  ['位置向量','加到词嵌入上，让模型区分先后位置'],
+  ['注意力 Attention','从允许读取的前文位置汇总信息'],
+  ['前馈网络 FFN','独立加工每个位置已有的特征'],
+  ['归一化','调整每个位置的数值尺度'],
+  ['残差连接','把分支结果加回原输入'],
+  ['输出投影','把每个位置的特征变成词表候选分数']
+ ])+
+ para('注意力、前馈网络、归一化和残差连接组成一个解码器块。多个块可以依次连接。词嵌入表、各层权重等参与计算的可学习数字，合起来叫模型参数。一次生成使用固定参数，输入和中间向量则随前文变化。')+
+ `<h3 id="tiny-decoder-input">本章固定使用哪组输入</h3>`+para(
+ '小模型的词表有 8 项，记作 V=8，每个位置用 8 个数字表示，记作 D=8。一批有两条样本，批大小 B=2。原始编号序列是 [0,1,2,3,4] 和 [4,5,6,7,0]。这些编号用来检查计算过程，每个编号对应词嵌入表的一行。',
+ '每条取前四项作输入（T=4），后四项作目标。以第一条为例，模型要完成下面四次预测。')+
+ conceptReadingTable(['输入位置','允许使用的前文','要预测的目标'],[
+  ['0','[0]','1'],['1','[0,1]','2'],['2','[0,1,2]','3'],['3','[0,1,2,3]','4']
+ ])+
+ para('每个位置只读取自己和前文，这叫因果约束。先在第 2、3 节看编号怎样变成向量、向量怎样做投影，再在第 4 节把注意力和前馈接起来。')+
+ '<details class="progressive-detail"><summary>选读 · 训练怎样调整这些参数</summary>'+para('训练已知每个位置的目标，用损失衡量预测与目标的差异。梯度描述参数变化对损失的影响，优化器据此更新参数。下面这张图把目标、损失和参数更新接回前向计算。<a href="/article/transformer-model/#translation-reading-path">编码器与解码器的翻译对照</a>使用另一组输入。')+overview+'</details>'+
+ '<details class="progressive-detail"><summary>选读 · 循环、卷积与注意力的连接方式</summary>'+sequenceReading+'</details>'+
+ '<details class="progressive-detail"><summary>选读 · 三种架构与中英翻译对照</summary>'+architectureReading+translationReading+'</details>'+
+ '<details class="progressive-detail"><summary>学完本章后 · 模型计算怎样连接 AI Infra</summary>'+infraReading+'</details>';
+ a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
- const tensor=a.sections[1];
- tensor[1]=tensor[1].replace('同一块张量可以交换维度后以不同的步长读取；把 [B,T,D] 解释为 [B,T,H,d] 仅在 D=H×d 且布局兼容时简单。随后交换 head 与时间轴，再把头拼回模型轴，有时需要实际重排或复制。','交换张量的两根轴时，程序可以沿不同间隔读取同一份存储，这个间隔叫步长。第 4 节会把特征按多个注意力分支分组。分组后换轴，再合并回一根特征轴时，是否需要复制取决于实际存储布局。');
-
- a.sections[3][1]=`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
+ a.sections[3][1]=para('输入编号先查成词向量，再加上各位置自己的位置向量，得到这一块的输入 X，形状是 [2,4,8]。相同的词出现在不同位置时，进块前的表示也会不同。本例先对每格特征做归一化，再送入注意力。')+`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('输入是 [0,1,2,3]，位置 2 要猜下一个编号。它可以读位置 0、1、2，位置 3 里是答案，要挡住。上一节的线性层只处理位置 2 自己的向量。注意力则会把前面两格的信息也算进来。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
- para('一个注意力头是一套独立的匹配与汇总。小模型有 2 个头。每个头将同一个输入向量分别变成查询 Q、匹配键 K 和待汇总内容 V 三个向量，各有 4 项。位置 2 的 Q 与每个允许位置的 K 都做一次点积，也就是对应项相乘再相加。每个点积除以 √4=2，得到缩放后的分数。',
+ para('一个注意力头是一套独立的匹配与汇总。小模型有 2 个头。每个头将归一化后的同一个位置分别投影成查询 Q、匹配键 K 和待汇总内容 V 三个向量，各有 4 项。位置 2 的 Q 与每个允许位置的 K 都做一次点积，也就是对应项相乘再相加。每个点积除以 √4=2，得到缩放后的分数。',
  '设三个合法位置的缩放分数是 [0, ln 2, ln 3]，ln 表示自然对数。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。如果三个内容向量的某个分量分别是 6、0、2，汇总后的这一项就是 6/6+0/3+2/2=2。其余特征同理，禁止读取的位置权重为零。',
- '各头汇总结果拼回 8 项，再经输出投影。第 6 节把分数记作 [B,H,T,T]，H=2 是头数，两根 T 轴分别是查询位置和候选位置。这里的 V 表示内容向量，V=8 表示词表大小。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
- `<h3 id="decoder-ffn-position">位置说明先后，前馈加工汇总后的特征</h3>`+
- para('两个相同编号会查到同一条词嵌入。为了让模型还能区分“同一个词出现在第几格”，本例在进块前加上位置向量。另一种方法是旋转位置编码（RoPE），它在注意力里按位置旋转 Q、K，使匹配分数能随相对位置改变。掩码确定可见范围，位置机制给合法的匹配加入顺序信息。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>',
- '前馈网络（FFN）在每个位置独立使用同一组权重。普通 FFN 把 8 项特征扩到 12 项，再用激活函数改变中间值，例如把负数置零，最后压回 8 项。去掉非线性激活后，两次投影可以合成一次，偏置也可以合并。小模型的实际代码用 SwiGLU，在中间引入另一组由输入计算的系数来调节各项特征。这里的 12 是本实验的宽度，实际模型按配置选择。')+
+ '各头汇总结果拼回 8 项，再经输出投影。第 5 节把分数记作 [B,H,T,T]，H=2 是头数，两根 T 轴分别是查询位置和候选位置。这里的 V 表示内容向量，V=8 表示词表大小。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
+ para('前馈网络（FFN）在每个位置独立使用同一组权重。它在投影之间加入逐项的非线性变换，让模型能够表达单次线性投影做不到的关系。本例先把 8 项特征分别投影成两组 12 项的中间值。一组提供内容，另一组经过非线性变换后作为调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+
+ '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('进入这一块的表示记为 X，形状是 [2,4,8]。归一化按一个位置自己的特征调整数值尺度。LayerNorm 先减去特征均值，再除以方差加小常数后的平方根。本例用 RMSNorm，分母换成各项平方的均值加小常数后的平方根，也省去减均值。两种操作都保持特征数，并用可学习的系数缩放。LayerNorm 还可以学习一项偏置。')+
- para('例如用 [1,3] 代表同一个位置的两项特征，暂取缩放系数为 1、偏置和小常数为 0。LayerNorm 减去均值 2，除以标准差 1，得到 [−1,1]。RMSNorm 保留原分子，除以 √((1²+3²)/2)=√5，得到 [1/√5,3/√5]。',
+ para('本例用 RMSNorm 对每个位置的 8 项特征做归一化。它把各项平方求平均，加上一个防止除零的小常数，再开平方。原来每一项除以这个数，最后乘上可学习的缩放系数。特征数仍为 8。')+
+ para('用 [1,3] 手算，暂取小常数为 0、缩放系数为 1。分母是 √((1²+3²)/2)=√5，结果就是 [1/√5,3/√5]。',
  '本例在分支之前归一化。先把 X 归一化交给注意力，结果加回 X 得到 H₁。再把 H₁ 归一化交给前馈，结果加回 H₁ 得到 H₂。这两次把分支结果加回输入的动作叫残差连接。一个分支输出全零时，对应加法保留原表示。前馈分支的来源是第一次相加后的 H₁，所以它加工的是已经包含上下文的表示。',
- '两个分支内部可以分头或扩宽，回加前要恢复同一 [B,T,D] 坐标。H₂ 可以直接接下一块。各层可拥有各自的参数，最后一块的输出经过归一化与词表投影，得到每位置 V 个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow;
+ '两个分支内部可以分头或扩宽，回加前要恢复同一 [B,T,D] 坐标。H₂ 可以直接接下一块。各层可拥有各自的参数，最后一块的输出经过归一化与词表投影，得到每位置 V 个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow+
+ '<details class="progressive-detail"><summary>选读 · LayerNorm 与 RMSNorm 的区别</summary>'+para('LayerNorm 先减去均值，再除以标准差，并可学习缩放和偏置。对同一组 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。本例的 RMSNorm 保留原分子，使用均方根作为分母。')+'</details>';
 
  a.sections[6][1]=`<h3 id="training-versus-generation">同一次前向在训练和生成里有什么用</h3>`+
- para('训练时，输入 [0,1,2,3] 和目标 [1,2,3,4] 已经给定。模型可以一次算出四行分数，每行遵守第 4 节的可见范围。将有效目标对应的行纳入损失，梯度沿运算路径返回参数，优化器完成更新。',
- '生成只给提示，下一项要从当前最后一行的分数中选。生成程序得到一个编号后，才知道下一次前向需要处理什么。CPU 对照实验让同一小模型从固定初值完成一次更新，其中两条序列分别保留 1 项和 3 项有效目标。冻结参数后，给定提示 [0,1]，每轮取分数最大的编号。')+
+ para('训练时，输入 [0,1,2,3] 和目标 [1,2,3,4] 已经给定。模型可以一次算出四行分数，每行遵守第 4 节的可见范围。损失函数比较每行预测与目标，衡量这次预测的偏差。将有效目标对应的行纳入损失后，反向计算得到各参数的梯度，优化器据此更新参数。',
+ '生成只给提示，下一项要从当前最后一行的分数中选。生成程序得到一个编号后，才知道下一次前向需要处理什么。CPU 对照实验让同一小模型从固定初值完成一次更新，实验忽略部分标签，只对参与损失计算的有效目标训练，其中两条序列分别保留 1 项和 3 项有效目标。冻结参数后，给定提示 [0,1]，每轮取分数最大的编号。')+
+ para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
   ['读提示（prefill）','[0,1]','1','2'],['逐词生成（decode）','上一轮选出的 1','1','3'],['逐词生成（decode）','上一轮选出的 1','1','4']
  ])+
- para('第 1 节在翻译里看到的教师强制，同样适用于这里只用解码器的模型。训练序列是 [0,1,2,3]，第 3 个输入读到数据给出的 2。生成从 [0,1] 起步，第一轮选出了 1，第 3 个输入因此是 1。提示之后新增的部分来自模型自己的输出。')+
- para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。因为过去位置读不到未来，追加词元后，旧位置在固定参数和相同可见规则下的 K、V 可以复用。新位置仍要计算自己的 Q、K、V，再用自己的 Q 匹配包括历史在内的合法位置。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
+ para('训练直接提供样本中的正确前缀，这叫教师强制。训练序列是 [0,1,2,3]，第 3 个输入读到数据给出的 2。生成从 [0,1] 起步，第一轮选出了 1，第 3 个输入因此是 1。提示之后新增的部分来自模型自己的输出。')+
+ para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
- `<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
+ '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+`<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
- '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。');
+ '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
 
- a.sections[8][1]+='<h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
- '回到第 1 节的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
+ a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
+ '以下是第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
  trainingFigure('encoder-decoder-translation','混合批的两条样本。交叉注意力矩阵的行来自目标，列来自源。')+
  conceptReadingTable(['计算','读取范围','掩码从哪里来'],[
@@ -13487,7 +13545,7 @@ const firstReadingChanges=[];
  para('程序用 20 条合成样本做 400 次 Adam 参数更新。验收先换掉未来目标词、源端填充值，检查受保护的结果是否保持一致。要单独检查目标填充掩码，就把 PAD 放在 [BOS, PAD, square] 中间。最后一行的因果掩码允许读前面的 PAD，此时才看得出目标填充掩码的独立作用。程序也用投影和矩阵乘法独立重算交叉注意力，核对权重与输出。',
  '生成时只先给 BOS，取最后一行分数最高的词作为下一项。训练中未出现的组合“红 圆”依次生成 red、circle、EOS。把目标前缀都固定为 [BOS, red]，源端换成“红 方”，下一个词改为 square。记录保留每步输入与所选词，以及四条留出组合的结果。实验验证固定词表上的数据流与读写范围。')+
  trainingCode('解压后在实验目录运行，使用 Python 3.12 与 PyTorch 2.5.1','SHELL','python -B encoder_decoder.py > my-validation.json')+
- '<p class="practice-links"><a href="labs/encoder-decoder.zip" download>下载源码、样本与记录 ↓</a> · <a href="labs/encoder-decoder/README.md">运行说明 →</a> · <a href="labs/encoder-decoder/validation.json">查看训练、掩码与生成记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/activation.py#L1072-L1122">PyTorch 掩码参数 ↗</a></p>';
+ '<p class="practice-links"><a href="labs/encoder-decoder.zip" download>下载源码、样本与记录 ↓</a> · <a href="labs/encoder-decoder/README.md">运行说明 →</a> · <a href="labs/encoder-decoder/validation.json">查看训练、掩码与生成记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/nn/modules/activation.py#L1072-L1122">PyTorch 掩码参数 ↗</a></p></details>';
 }
 {
  const a=articleById('cloud-overview'),section=a.sections[2],before=section[1];
@@ -14665,7 +14723,7 @@ articles.find(a=>a.id==='autograd-training').prereq='先理解词元向量、注
 articles.find(a=>a.id==='gpu-cluster').prereq='先认识前向预测、损失、反向梯度、优化器更新与GPU执行；可沿自动求导和GPU执行章补齐，位置编码专题按需深入。';
 articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。';
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
-for(const id of ['kubernetes-basics','serverless-execution','autograd-training','gpu-cluster','ai-lifecycle','agent-evaluation','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+for(const id of ['kubernetes-basics','autograd-training','gpu-cluster','ai-lifecycle','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
 
 
 ;
@@ -16095,5 +16153,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="84acdc625416f7137eba64f24a92bb1c8ebd35c90d25f97099f5b82127b2da7c";
+const staticReadingVersion="cc2f748cff390e5ffa757e5c35f3bd45f04f6f1b6e024c1882a784416181bdc6";
 
