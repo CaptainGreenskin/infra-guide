@@ -42,7 +42,8 @@ infraKnowledgeDomains.push({module:'model-foundations',track:'ai',refs:['v16Atte
  '核函数融合通过减少中间量写回、重复读取和launch次数提高效率，也可能增大寄存器压力、改变并行度。算子层先比较相同shape/dtype/布局与数值误差，再用设备事件或同步后的计时区分提交耗时和执行耗时；主机上的异步调用很快返回不等于kernel很快。')+
  table(['对象','先数什么','典型代价'],[['GEMM','M/N/K、dtype、布局','计算量、读写量、tile利用'],['归一化/激活','读写元素、归约轴','HBM流量、归约和launch'],['主机→设备','字节、固定页内存、依赖','拷贝与计算能否重叠']])+
  para('算子交给编译器后，先看哪些运算进入同一张图，再看设备执行。用<a href="/article/operator-profiling/#torch-compile-graph-break">断图实验</a>核对 Python 标量、张量条件和输入形状各怎样影响图的捕获。',
- '同一份矩阵怎样由一组线程合作计算？<a href="/article/operator-profiling/#native-metal-gemm">Apple GPU 分块实验</a>用一个不整除的形状核对边界，再用同卡计时比较朴素版和分块版。')},
+ '同一份矩阵怎样由一组线程合作计算？<a href="/article/operator-profiling/#native-metal-gemm">Apple GPU 分块实验</a>用一个不整除的形状核对边界，再用同卡计时比较朴素版和分块版。',
+ '<a href="/article/operator-profiling/#same-device-gemm">CUDA 三版同卡验收</a>给出目标 NVIDIA 卡上的顺序，从设备探测、尾块数值验收到事件计时和剖析。已有 Linux 编译和失败的设备探测记录，目标卡数据待采集。')},
  {id:'mf-roofline',title:'Roofline、在线 Softmax 与算子优化',articles:['roofline-model','flash-attention-io','tensor-parallel-math'],lead:'优化先写工作量F和内存流量D。算术强度I=F/D；理想性能上界受峰值计算吞吐与内存带宽两者约束，实际时间还含调度、同步和未计入的流量。',body:
  knowledgeFormula('同一设备、同一工作负载的理想下界','T ≥ max(F / Pcompute, D / Bmemory)','GEMM [M,K]×[K,N] 常按2MNK计FLOP；D必须说明是HBM实际流量还是理想最低搬运量。')+
  para('FlashAttention通过分块和在线归一化避免在HBM物化完整S×S概率矩阵。对已经处理的分块保留最大值m、指数和l与未归一化输出o。新块最大值m′改变后，旧量用exp(m−m′)重缩放，再加新块贡献，最后o/l。分块softmax各自归一后简单平均，通常与全量softmax不同。',

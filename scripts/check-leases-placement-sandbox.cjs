@@ -82,6 +82,33 @@ assert.deepEqual(paths.launch.explicit_unsafe_inheritance,{fixture_environment_p
 assert.deepEqual(paths.launch.minimal_launch,{fixture_environment_present:false,inherited_descriptor_readable:false,same_uid_fixture_still_readable_by_path:true});
 assert.deepEqual(paths.single_leaf_path,{prefix_check_passed:true,after_check_symlink_read:'fixture-B',no_follow_rejected_symlink:true,normal_leaf_read:'fixture-A'});
 assert.equal(8*12/60,1.6);assert.equal(4*(6+3)/60,.6);
+const groupDir='dist/labs/sandbox-process-group/',groupFile=groupDir+'sandbox_process_group.py';
+const groupRecord=JSON.parse(fs.readFileSync(groupDir+'validation.json','utf8'));
+const groupReplay=JSON.parse(execFileSync(python,['-B',groupFile],{encoding:'utf8',timeout:22000}));
+for(const observation of [groupRecord,groupReplay]){
+ assert.equal(observation.source_sha256,hash(fs.readFileSync(groupFile)));
+ assert.equal(observation.scope,'owned_posix_groups_in_one_host');
+ assert.equal(observation.status,'passed');assert.equal(observation.term_grace_seconds,0.2);
+ assert.deepEqual(observation.input_values,[10,27]);
+ const {A,B}=observation;
+ for(const {identity} of [A,B]){
+  assert.equal(identity.pgid,identity.parent_pid);
+  assert.notEqual(identity.pid,identity.pgid);
+ }
+ assert.equal(new Set([A.identity.pgid,A.identity.pid,B.identity.pgid,B.identity.pid]).size,4);
+ assert.deepEqual([A.term_grace_expired,A.exit,A.pipe_eof_after_kill,A.report_written],[true,-9,true,false]);
+ assert.deepEqual([B.running_after_a_stop,B.exit,B.pipe_eof_after_finish,B.report],[true,0,true,{task:'B',total:37}]);
+}
+const sandboxPage=fs.readFileSync('dist/article/agent-sandbox/index.html','utf8');
+const groupLesson=sandboxPage.split('id="native-sandbox-process-group"')[1]?.split('</section>')[0];
+assert(groupLesson?.includes('python3 -B sandbox_process_group.py &gt; my-record.json'));
+assert(groupLesson.includes('容器复用、生产隔离和资源清理要用目标运行时自己的证据'));
+assert(groupLesson.includes('/labs/sandbox-process-group/validation.json'));
+for(const [page,destination] of [
+ ['roadmap/agent-platform','?goal=agent-platform#native-sandbox-process-group'],
+ ['module/agent','?fromConcept=agent.ag-sandbox#native-sandbox-process-group'],
+ ['interview/companies','/article/agent-sandbox/#native-sandbox-process-group']
+])assert(fs.readFileSync('dist/'+page+'/index.html','utf8').includes(destination),destination);
 execFileSync(python,['-B','-c',`from pathlib import Path
 import zipfile,xml.etree.ElementTree as ET
 with zipfile.ZipFile('dist/labs/leases-placement-sandbox.zip') as z:
@@ -95,4 +122,4 @@ assert(d.diagramWidths['v26-process-budgets']>0&&d.diagramHeights['v26-process-b
 for(const[route,anchor]of [['serverless','serverless-delivery-identities'],['platform','gpu-placement-stages'],['agent','sandbox-authority-boundary']]){
  const page=fs.readFileSync('dist/module/'+route+'/index.html','utf8');assert(page.indexOf('id="'+anchor+'"')>=0&&page.indexOf('id="'+anchor+'"')<page.indexOf('id="examples"'));
 }
-console.log('PASS: real queue DB/identity replay, four batch policies, independent finite placement oracle, actual two-process complete reservation/rollback, actual POSIX CPU/FD/file/wall limits, inheritance/path counterexamples, exact static code/ZIP/SVG and knowledge before cases. No cloud/GPU/container execution claimed.');
+console.log('PASS: real queue DB/identity replay, four batch policies, independent finite placement oracle, actual two-process complete reservation/rollback, actual POSIX limits and concurrent group teardown with separate report, inheritance/path counterexamples, exact static code/ZIP/SVG and knowledge before cases. No cloud/GPU/container execution claimed.');

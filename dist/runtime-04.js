@@ -46,7 +46,8 @@ infraKnowledgeDomains.push({module:'model-foundations',track:'ai',refs:['v16Atte
  '核函数融合通过减少中间量写回、重复读取和launch次数提高效率，也可能增大寄存器压力、改变并行度。算子层先比较相同shape/dtype/布局与数值误差，再用设备事件或同步后的计时区分提交耗时和执行耗时；主机上的异步调用很快返回不等于kernel很快。')+
  table(['对象','先数什么','典型代价'],[['GEMM','M/N/K、dtype、布局','计算量、读写量、tile利用'],['归一化/激活','读写元素、归约轴','HBM流量、归约和launch'],['主机→设备','字节、固定页内存、依赖','拷贝与计算能否重叠']])+
  para('算子交给编译器后，先看哪些运算进入同一张图，再看设备执行。用<a href="/article/operator-profiling/#torch-compile-graph-break">断图实验</a>核对 Python 标量、张量条件和输入形状各怎样影响图的捕获。',
- '同一份矩阵怎样由一组线程合作计算？<a href="/article/operator-profiling/#native-metal-gemm">Apple GPU 分块实验</a>用一个不整除的形状核对边界，再用同卡计时比较朴素版和分块版。')},
+ '同一份矩阵怎样由一组线程合作计算？<a href="/article/operator-profiling/#native-metal-gemm">Apple GPU 分块实验</a>用一个不整除的形状核对边界，再用同卡计时比较朴素版和分块版。',
+ '<a href="/article/operator-profiling/#same-device-gemm">CUDA 三版同卡验收</a>给出目标 NVIDIA 卡上的顺序，从设备探测、尾块数值验收到事件计时和剖析。已有 Linux 编译和失败的设备探测记录，目标卡数据待采集。')},
  {id:'mf-roofline',title:'Roofline、在线 Softmax 与算子优化',articles:['roofline-model','flash-attention-io','tensor-parallel-math'],lead:'优化先写工作量F和内存流量D。算术强度I=F/D；理想性能上界受峰值计算吞吐与内存带宽两者约束，实际时间还含调度、同步和未计入的流量。',body:
  knowledgeFormula('同一设备、同一工作负载的理想下界','T ≥ max(F / Pcompute, D / Bmemory)','GEMM [M,K]×[K,N] 常按2MNK计FLOP；D必须说明是HBM实际流量还是理想最低搬运量。')+
  para('FlashAttention通过分块和在线归一化避免在HBM物化完整S×S概率矩阵。对已经处理的分块保留最大值m、指数和l与未归一化输出o。新块最大值m′改变后，旧量用exp(m−m′)重缩放，再加新块贡献，最后o/l。分块softmax各自归一后简单平均，通常与全量softmax不同。',
@@ -735,19 +736,22 @@ function companyStudyGuide() {
   ['网络路径与诊断','byteSite',true,readLink('network-diagnosis','定位额外的等待'),'从累计时刻算出慢在哪段，选一项能区分入口和应用的探测。'],
   ['数据库访问与可见性','txSre',true,unitLink('database','比较三份查询计划'),'返回行一致，能解释临时排序与旧快照。目标数据库另行实测。'],
   ['可观测与事故处置','txSre',true,readLink('incident','写出故障时间线'),'写出用户影响、可证伪的假设、回滚条件和恢复证据。'],
-  ['跨可用区容灾','byteSite',false,readLink('resilience','设计恢复演练'),'已有故障域和恢复目标练习，真实多可用区切换仍需演练。'],
+  ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a>','本机对照先查报告和附件能否一起读回。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照'),'手算样本数不等时的正确更新，再与本机 DDP 对照。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
-  ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验')+'<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a>','已有 CPU 图捕获对照。GPU 算子剖析和性能回归仍需目标设备记录。'],
+  ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验')+
+    '<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a> '+
+    '<a href="'+articleURL('operator-profiling')+'#same-device-gemm">CUDA 同卡验收步骤 →</a>',
+    '已有 CPU 图捕获对照和 Apple GPU 同卡 GEMM 计时。CUDA 三版已在 Linux 编译。到目标 NVIDIA 卡先运行 <code>./gemm_variants --probe-only</code>，探测通过后留存数值回读、CUDA event 计时和 Nsight 指标。'],
   ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
   ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
-  ['沙箱隔离与性能','txSandbox',false,readLink('agent-security','定位执行边界'),'需要真实沙箱的冷启动、资源回收与并发隔离对照。']
+  ['沙箱隔离与性能','txSandbox',false,'<a href="'+articleURL('agent-sandbox')+'#native-sandbox-container">核对容器文件边界 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-egress">核对网络出口 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-process-group">核对进程组回收 →</a>','文件和出口有独立 Docker 记录，停止一组任务后另一组完成交付有本机 POSIX 记录。冷启动与复用、容器级并发隔离和资源回收仍需在目标环境验证。']
  ];
  const practiced = groups.filter(group => group[2]).length;
  return `<section class="company-sample"><h2>先找与你要投的岗位相近的一行</h2><p class="path-links"><a href="/interview/experiences/">看候选人公开面经与题目转述 →</a></p>
  <p>本次选取腾讯、阿里、字节的 ${Object.keys(employerSources).length} 份公开岗位说明，按三条 Infra 主线归纳为 ${groups.length} 组能力。其中 ${practiced} 组已有独立作答任务和可检查的过关条件，其余 ${groups.length-practiced} 组有学习材料，仍需目标环境验证。统计单位是下表的能力组；实际考题、出现频率和面试通过率不在这个统计中。核对日期为 2026 年 11 月 4 日。</p>
  <section class="role-row"><span>01 / 腾讯</span><h3>先分清 SRE、推理框架和沙箱方向</h3><p>SRE 先练 Linux、SQL 和故障恢复；推理框架先读模型时序与并行，再做性能归因；沙箱岗位要从控制面指标定位数据面的资源问题。</p>
- <div class="path-links">${unitLink('database','SRE 首题')}${readLink('model-serving','推理首章')}${readLink('agent-security','沙箱权限边界')}</div><p class="evidence-note">${roleSource('txSre')} · ${roleSource('txInference')} · ${roleSource('txSandbox')}</p></section>
+ <div class="path-links">${unitLink('database','SRE 首题')}${readLink('model-serving','推理首章')}<a href="${articleURL('agent-sandbox')}#native-sandbox-container">沙箱文件边界 →</a></div><p class="evidence-note">${roleSource('txSre')} · ${roleSource('txInference')} · ${roleSource('txSandbox')}</p></section>
  <section class="role-row"><span>02 / 阿里</span><h3>从 AI SRE、AI Infra、Agent Infra 选一个校招方向</h3><p>AI SRE 岗要求编程、分布式或云原生基础，并涉及可观测诊断与安全发布；AI Infra 岗涉及训练通信、推理加速或资源调度；Agent Infra 岗涉及工具执行、身份和状态恢复。先巩固共用基础，再按对应职责做题。这里列的是集团招聘样本，具体部门以岗位页为准。</p>
  <div class="path-links">${unitLink('coding','共同编码题')}${readLink('distributed-training','训练机制')}${readLink('agent-runtime','运行时')}</div><p class="evidence-note">${roleSource('aliSre')} · ${roleSource('aliInfra')} · ${roleSource('aliAgent')}</p></section>
  <section class="role-row"><span>03 / 字节</span><h3>实习训推优化，与社招站点架构分别准备</h3><p>训推实习从实现、调试和性能对照入手；站点架构岗位强调跨 Region、AZ 的网络路径、高可用和已经交付的设计。后者面向有经验的候选人。按自己的目标选择一条。</p>

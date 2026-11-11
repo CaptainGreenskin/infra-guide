@@ -149,10 +149,12 @@
  p('只看 K 轴上 16 项的完整一段。两个普通线程块分别装入 16×16 的 A 和 B，共请求 1024 个 FP32 值。双行复用的一个线程块装入 32×16 的 A 和 16×16 的 B，共请求 768 个值，少 256 个值，即 1024 字节。这是从源码数出的装载量，缓存命中会改变实际显存流量。共享内存和寄存器也会变动，所以速度需要在同一设备上测。');
  a.sections[7][1]+=
  '<h3 id="same-device-gemm">同卡对照三种 GEMM</h3>'+
- p('先用同一参考逐项检查三个版本。设备验收程序会对五种形状的 8430 个结果逐项回读，其中 35×67×19 同时触发行、列和 K 轴的尾块。越界装载补零，屏障仍由整块线程到达，只有有效位置写回。')+
+ p('在同一张卡、同一组输入上对照朴素、分块和<a href="/article/operator-profiling/#gemm-two-row-reuse">双行复用</a>三版。双行版让一个线程用右矩阵 B 的同一个值，算同列两行各一个结果。',
+ '先探测目标卡。按实验说明编译后，运行 <code>./gemm_variants --probe-only</code>。探测成功显示 <code>device-detected</code>，此时还未执行内核。若退出码为 2，保留 <code>reason</code> 排查。本站 Linux 编译后的探测记录为 <code>device_count=0</code>、退出码 2，提示驱动版本不足以支持 CUDA 运行时。设备结果、时间和计数器仍待在目标卡采集。',
+ '探测成功后验数值。<code>--validate</code> 用同一份 CPU 参考逐项检查三个版本的五组形状，共 8430 个结果。<code>shape_mkn</code> 按行数、乘加项数、列数记录。35×67×19 的三轴都有不满的尾块。越界装载补零，整块线程仍需同步，只有有效位置写回。程序先把输出填成 NaN，回读后每项都须为有限数并通过误差门限。<code>max_abs_error</code> 是该组中单个输出与参考值的最大绝对差。看到 <code>passed</code> 后再计时。')+
  trainingCode('按实验说明编译后，在同一张卡上验数值并计时','SHELL','./gemm_variants --validate > validate.json\n./gemm_variants --benchmark > benchmark.json')+
- p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
- '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
+ p('计时固定 512×512×512、同一张卡、同一个 CUDA 流和同一组设备输入。三个版本先各预热 3 次，再轮换顺序采 9 组。起止 CUDA 事件记录同一流上 20 次启动的时间间隔，毫秒数除以 20，得到该版本在这一组的单次平均耗时 <code>event_ms_per_launch</code>。分配、拷贝和校验在区间外。比较 9 个组均值的波动和中位数 <code>median_event_ms_per_launch</code>，计时后程序还会核对最后一次输出。',
+ '最后用 Nsight Compute 单独剖析。按实验说明用 <code>ncu</code> 采集各版的 <code>--profile</code>，先看显存读写字节，也就是实际经过显存接口的数据量。再看每线程寄存器数、每块共享内存量和实际驻留率。前两项是资源用量，实际驻留率是每个 SM 的平均活跃线程束数占上限的比例。把计数与刚才的时间样本对照，检查双行复用省下的装载是否降低了显存流量，以及资源变化是否影响驻留。采集可能回放内核，所以计时单独保留。')+
  '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
 
  a.sections[7][1]+=

@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "source_sha256": "99a15acb08e69cdcd4cd72b55f4d55983e8b708e61dbc1f19488890e37283041",
+  "system": "Darwin",
+  "machine": "arm64",
+  "scope": "owned_posix_groups_in_one_host",
+  "term_grace_seconds": 0.2,
+  "input_values": [
+    10,
+    27
+  ],
+  "A": {
+    "identity": {
+      "pid": 97046,
+      "parent_pid": 97045,
+      "pgid": 97045
+    },
+    "term_grace_expired": true,
+    "exit": -9,
+    "pipe_eof_after_kill": true,
+    "report_written": false
+  },
+  "B": {
+    "identity": {
+      "pid": 97048,
+      "parent_pid": 97047,
+      "pgid": 97047
+    },
+    "running_after_a_stop": true,
+    "exit": 0,
+    "pipe_eof_after_finish": true,
+    "report": {
+      "task": "B",
+      "total": 37
+    }
+  }
+}

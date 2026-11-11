@@ -5281,7 +5281,7 @@ const progressiveAgentSectionTitles={
      '设整个任务期限90秒，排队与准备已用18秒，核验和清理预留12秒，则脚本可用60秒。第一次执行45秒后失败，只剩15秒执行预算。重试继续使用剩余预算；不足时进入明确终态，或按任务规则等待延长期限，不能再无条件重置为60秒。')+
    h('subsection-8-1um1h4','停止确认、资源回收与外部效果')+
    p('用户取消时，控制面先停止新增授权与工具派发，再请求运行时停止工作负载，经过宽限后按规则强制终止。停止请求表示要求已经发出，进程退出表示对应进程已停止，回收确认表示约定资源已释放。主进程退出之后，控制面还要检查受管子进程、卷、连接、任务凭据和配额。',
-     '本地监督程序为自己创建的子进程建立独立进程组。等待任务就绪后计250ms，先TERM、宽限200ms，故意忽略TERM的夹具随后被KILL，父进程wait确认直接子进程已回收。任意不可信子进程可能改变会话或进程组，真实运行时还需覆盖整组工作负载；本地进程组实验的结论限定到它实际管理的夹具。',
+     '本地监督程序可为自己启动的任务建立独立进程组，也就是一组可以一起接收信号的进程。第 10 节的第一个实验用 <code>wait</code> 确认直接子进程退出。<a href="/article/agent-sandbox/#native-sandbox-process-group">再用 A、B 两组检查并发回收</a>，分别看 A 的子进程是否一起退出、B 能否继续交付。真实运行时还要处理改变会话或进程组的程序。',
      '清理器使用任务标识、不可混淆的运行实例ID和代际编号记录待清资源。代际表示同一逻辑位置的第几次实例：旧清理请求只删除它原来负责的那一代。产物进入独立受控位置后，生成它的临时区才能释放。清理器重启后仍可按记录继续确认，达到条件才归还相应额度。',
      '外部效果另走工具协议。停止脚本不能撤回已经发给服务的写请求；已经提交的动作沿原操作身份查询回执，需要撤销时再按授权发起补偿。恢复章将从这条边界展开。')+
    '<p><a class="inline-link" href="#/article/agent-recovery">复习提交后响应丢失与结果未知 →</a> <a class="inline-link" href="#/article/config-secrets">区分凭据撤销与既有会话退出 →</a></p>';
@@ -5336,6 +5336,16 @@ const progressiveAgentSectionTitles={
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.sections[9][1]+=h('native-sandbox-process-group','停止 A 后，B 能否继续完成任务')+
+   p('另用两个本机任务 A、B。每个任务有一个父进程和一个子进程。启动器为它们分别新建进程组，组编号（PGID）取组长的进程编号。子进程先通过管道报告自己的编号、父进程编号和组编号，两组都就绪才开始停止 A。TERM 请求结束，KILL 强制结束。')+
+   table(['操作','在任务外核对什么'],[
+    ['向 A 组发 TERM，等 0.2 秒','A 的父子进程都故意忽略 TERM。到期时父进程仍未退出，管道仍开放。'],
+    ['向 A 组发 KILL','父进程以 −9 退出，管道读到结束（EOF），A 没有生成报告。两个进程都持有写端，所有写端关闭后才会收到 EOF。'],
+    ['此时向 B 发完成请求','B 仍在运行。随后它以 0 退出，监督程序从独立目录读回 B 的报告，总额是 37。']
+   ])+
+   p('源码用 <code>start_new_session=True</code> 启动两组，用 <code>os.killpg</code> 向 A 的组编号发信号。记录分别保留 A 的退出状态和管道结果、B 在停止后生成的报告。这个实验实跑了本机进程组。容器复用、生产隔离和资源清理要用目标运行时自己的证据。')+
+   trainingCode('在解压后的目录运行','SHELL','python3 -B sandbox_process_group.py > my-record.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-process-group.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-process-group/sandbox_process_group.py">查看完整源码 →</a> · <a href="/labs/sandbox-process-group/validation.json">查看本机进程记录 →</a></p>';
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
@@ -5353,7 +5363,7 @@ const progressiveAgentSectionTitles={
    '<p class="practice-links"><a href="/labs/sandbox-egress.zip" download>下载出口隔离实战包 ↓</a> · <a href="/labs/sandbox-egress/validation.json">查看网络与上游访问记录</a></p>'+
    sources(['Docker：内部网络与连接配置','https://docs.docker.com/reference/cli/docker/network/create/#network-internal-mode']);
   infraDomain('agent').points.find(point=>point.id==='ag-sandbox').body+=p('从工作进程、受控代理和后端三处观察同一份任务。<a href="/article/agent-sandbox/#native-sandbox-egress">运行沙箱出口对照 →</a>');
-  a.updated='2026.11.09';
+  a.updated='2026.11.12';
  }
 
  {
@@ -9445,10 +9455,12 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('只看 K 轴上 16 项的完整一段。两个普通线程块分别装入 16×16 的 A 和 B，共请求 1024 个 FP32 值。双行复用的一个线程块装入 32×16 的 A 和 16×16 的 B，共请求 768 个值，少 256 个值，即 1024 字节。这是从源码数出的装载量，缓存命中会改变实际显存流量。共享内存和寄存器也会变动，所以速度需要在同一设备上测。');
  a.sections[7][1]+=
  '<h3 id="same-device-gemm">同卡对照三种 GEMM</h3>'+
- p('先用同一参考逐项检查三个版本。设备验收程序会对五种形状的 8430 个结果逐项回读，其中 35×67×19 同时触发行、列和 K 轴的尾块。越界装载补零，屏障仍由整块线程到达，只有有效位置写回。')+
+ p('在同一张卡、同一组输入上对照朴素、分块和<a href="/article/operator-profiling/#gemm-two-row-reuse">双行复用</a>三版。双行版让一个线程用右矩阵 B 的同一个值，算同列两行各一个结果。',
+ '先探测目标卡。按实验说明编译后，运行 <code>./gemm_variants --probe-only</code>。探测成功显示 <code>device-detected</code>，此时还未执行内核。若退出码为 2，保留 <code>reason</code> 排查。本站 Linux 编译后的探测记录为 <code>device_count=0</code>、退出码 2，提示驱动版本不足以支持 CUDA 运行时。设备结果、时间和计数器仍待在目标卡采集。',
+ '探测成功后验数值。<code>--validate</code> 用同一份 CPU 参考逐项检查三个版本的五组形状，共 8430 个结果。<code>shape_mkn</code> 按行数、乘加项数、列数记录。35×67×19 的三轴都有不满的尾块。越界装载补零，整块线程仍需同步，只有有效位置写回。程序先把输出填成 NaN，回读后每项都须为有限数并通过误差门限。<code>max_abs_error</code> 是该组中单个输出与参考值的最大绝对差。看到 <code>passed</code> 后再计时。')+
  trainingCode('按实验说明编译后，在同一张卡上验数值并计时','SHELL','./gemm_variants --validate > validate.json\n./gemm_variants --benchmark > benchmark.json')+
- p('计时固定 512×512×512、同一张卡、同一个流和同一组设备输入。三个版本分别预热，九组采样轮换先后顺序。每组用同流的两个 CUDA 事件圈住 20 次启动，除以 20 得到每次样本。分配、拷贝和校验放在计时外。用各组样本比较中位数和波动，再单独用 Nsight Compute 查访存与驻留。采集指标可能回放内核，所以它与计时分开运行。',
- '实验包保留实际编译与设备探测记录。设备数值回读、计时与计数器需在可用 NVIDIA GPU 上执行后填写。')+
+ p('计时固定 512×512×512、同一张卡、同一个 CUDA 流和同一组设备输入。三个版本先各预热 3 次，再轮换顺序采 9 组。起止 CUDA 事件记录同一流上 20 次启动的时间间隔，毫秒数除以 20，得到该版本在这一组的单次平均耗时 <code>event_ms_per_launch</code>。分配、拷贝和校验在区间外。比较 9 个组均值的波动和中位数 <code>median_event_ms_per_launch</code>，计时后程序还会核对最后一次输出。',
+ '最后用 Nsight Compute 单独剖析。按实验说明用 <code>ncu</code> 采集各版的 <code>--profile</code>，先看显存读写字节，也就是实际经过显存接口的数据量。再看每线程寄存器数、每块共享内存量和实际驻留率。前两项是资源用量，实际驻留率是每个 SM 的平均活跃线程束数占上限的比例。把计数与刚才的时间样本对照，检查双行复用省下的装载是否降低了显存流量，以及资源变化是否影响驻留。采集可能回放内核，所以计时单独保留。')+
  '<p class="practice-links"><a href="labs/gemm-variants.zip" download>下载三版本实验 ↓</a> · <a href="labs/gemm-variants/README.md">编译、复跑与 Nsight 步骤</a> · <a href="labs/gemm-variants/validation.json">编译与探测记录</a> · <a href="https://docs.nvidia.com/cuda/archive/12.9.1/cuda-runtime-api/group__CUDART__EVENT.html">CUDA 事件接口 ↗</a></p>';
 
  a.sections[7][1]+=
@@ -11476,14 +11488,14 @@ const multinodeLaunchValidation={"verified_at_utc":"2026-11-08T18:46:50.130065+0
   if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Delivery/recovery source layout changed: '+id);
   return a;
  }
- function rewrite(a,bodies,desc,addedFigures=[],addedPres=[]){
+ function rewrite(a,bodies,desc,addedFigures=[],addedPres=[],addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Delivery/recovery H2 layout changed: '+a.id);
   const remaining=pres(after).slice();
   for(const block of addedPres){const at=remaining.indexOf(block);if(at<0||remaining.lastIndexOf(block)!==at)throw Error('New projection source missing or duplicated');remaining.splice(at,1);}
   if(JSON.stringify(pres(before))!==JSON.stringify(remaining))throw Error('Original delivery/recovery pre bytes or order changed: '+a.id);
   if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original delivery/recovery figure changed: '+a.id);
-  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Delivery/recovery href multiset changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs),...addedHrefs]))throw Error('Delivery/recovery href multiset changed: '+a.id);
   const nextIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Delivery/recovery anchor lost: '+a.id+'/'+id);
   if(new Set(nextIds).size!==nextIds.length)throw Error('Delivery/recovery duplicate explicit anchor: '+a.id);
@@ -11680,6 +11692,30 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);
  if(r9.length!==4||r9links.length!==6||figures(r.join('')).length!==2)throw Error('Recovery original evidence extraction changed');
+ const localReadback=trainingCode('复跑并核对 R3','SHELL',String.raw`python3 -B consistent_recovery_cut.py > r3-readback.json &&
+python3 - r3-readback.json <<'PY'
+import json
+import sys
+from pathlib import Path
+
+run = json.loads(Path(sys.argv[1]).read_text())
+r3 = next(row for row in run["commits"] if row["report"] == "R3")
+assert (r3["seq"], r3["object"]) == (102, "object-v3")
+latest = run["naive_latest_database"]
+assert (latest["seq"], latest["physical_integrity"]) == (103, "ok")
+assert "R3" in latest["A_report_rows"]
+assert "R3" not in latest["A_readable_reports"]
+assert latest["business_problems"] == [
+    {"report": "R3", "object": "object-v3", "reason": "missing_object_version"}
+]
+prefix = run["last_complete_business_prefix"]
+assert (prefix["seq"], prefix["stopped"]["at_seq"]) == (101, 102)
+complete = run["all_materials_present"]
+assert complete["seq"] == 103
+assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
+print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
+PY`);
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json'];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -11702,12 +11738,17 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  p('连续是指基线之后所需的变化能按对应恢复协议衔接，不能跳过未知段直接套后面的事件。业务完整还包括附件、索引和授权读取：数据库到11:54而必要附件缺失，不能据数据库位置单独宣布通过。选择哪个共同恢复点，下一节用实际对象夹具计算。'),
 
  h('subsection-5-1dwp2yh','用报告引用求最后完整前缀')+
- p('下面切到独立的 consistent_recovery_cut.py。它用真实SQLite Backup API生成基线，并由应用逻辑日志增加报告；不是前面错误迁移的真实现场。基线seq100位于11:30，A租户已有R1→object-v1，另外保留B租户的一份报告。后续三个事件按序号连续添加R2、R3、R4，各自记录附件名、内容摘要和题设分钟。')+
+ p('租户 A 想找回报告 R3 和它的附件。用独立的本机实验复现：11:30 的 SQLite 备份记录到提交 100，A 已有 R1 和它的附件，备份还保留租户 B 的一份报告。此后每条应用日志新增一份报告，记下提交号、附件版本和内容摘要。摘要由附件字节算出，用来核对恢复后读到的内容。')+
  table(['提交','题设时刻','新增报告的依赖'],[['100基线','11:30','R1→object-v1'],['101','11:42','R2→object-v2'],['102','11:54','R3→object-v3'],['103','11:57','R4→object-v4']])+
- p('故障设在12:00，只从恢复材料中移除object-v3。若只重放数据库到103，integrity_check仍为ok，表里有R1至R4，名义位置距故障3分钟；实际可读的却只有R1、R2、R4。物理结构正确、数据库位置接近和业务依赖完整，是三次不同的检查。')+figures(r[4]).join('')+
+ p('故障设在 12:00，只从恢复材料中移除 <code>object-v3</code>。<code>R3</code> 是提交 102 加入的报告，103 是重放到 <code>R4</code> 后的整库位置。只重放数据库时，<code>integrity_check</code> 返回 <code>ok</code>，表里有 R1 至 R4，数据库位置距故障 3 分钟，应用能完整读回的只有 R1、R2 和 R4。')+figures(r[4]).join('')+
  p('按完整提交前缀恢复时，每次插入报告和推进进度后，在同一事务中检查所有必要引用。102发现缺v3，回滚这一步并停止，最后完整状态为101/11:42，可读R1、R2。12:00−11:42=18分钟，超过15分钟目标。18分钟表示恢复点的年龄，不表示恰好少了18分钟里每一笔业务，也不是报告数量。',
- '补齐v3后可到103，缺口3分钟；日志缺102时不能跳到103，只能到101；v2内容摘要不符时101也不能接受，剩100基线。v4存在不能替代v3。本题要求保留前缀里全部报告，若业务允许跳过、重建或补偿某笔提交，必须另外定义可验证的协议。',
- '真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
+ '补齐v3后可到103，缺口3分钟；日志缺102时不能跳到103，只能到101；v2内容摘要不符时101也不能接受，剩100基线。v4存在不能替代v3。本题要求保留前缀里全部报告，若业务允许跳过、重建或补偿某笔提交，必须另外定义可验证的协议。')+
+ p('从<a href="'+readbackLinks[0]+'">第 9 节下载实验包</a>，解压后在脚本所在目录运行。程序实际复制 SQLite、重放日志，再读取附件文件并核对内容摘要。下面的断言用同一份输出对照三条恢复路径。也可先看<a href="'+readbackLinks[1]+'">保存的运行记录</a>。')+
+ fold('展开本机复跑命令与读回断言',localReadback,'recovery-r3-local-readback')+
+ h('recovery-report-readback-gate','怎样从实际入口验收同一份报告')+
+ p('目标演练若承诺恢复到提交 103，先记下租户 A 的报告 ID <code>R3</code>、附件版本 <code>object-v3</code> 和原始内容摘要。故障后用外部客户端从正常入口按该租户身份查询报告，再下载它引用的附件，保存请求 ID 和返回字节的摘要。报告、版本和内容都对得上，才记为一次合格读回。若最后完整状态停在 101，把 R3 记入数据缺口。只用这一份报告做探针时，完整恢复点仍须核对整份提交清单。',
+ '跨可用区演练要用同一时间基准，记录约定的中断起点（如故障注入）和最低服务恢复时刻。若本轮要求只读，在事先约定的连续读回探针全部合格时停止计时。开放写入另用测试写请求和独立读回验收。比较有效吞吐时，固定负载和观察窗，按请求 ID 去重，数清发起数、截止前合格数和失败或超时数，再用合格数除以窗口秒数。本机记录的 11:42 和 11:57 是题设提交时刻，跨区恢复耗时与有效吞吐要到目标环境采集。')+
+ p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
  p('另给一组串行演练预算：12:00中断，目标是在45分钟内恢复授权只读查询。恢复点选在哪里决定可接受的数据历史；下面各阶段耗时决定服务何时回来，两条时间轴分别计算。')+
@@ -11744,7 +11785,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  p('最后换一组独立时间题：14:00发生中断，可验证业务状态完整到13:52，14:48授权只读查询恢复。目标RPO为10分钟、RTO为45分钟。恢复点年龄是8分钟，符合目标；服务恢复历时48分钟，超出3分钟。14:20完成数据装载只代表中间阶段，不能替换用户恢复时刻。',
  '解释这份结论时，给出证明13:52业务完整的提交清单、附件与权限结果，再沿恢复阶段找出超出的时间。随后提出能影响该路径的改进，例如预置大数据、提前验证恢复身份或缩短串行校验，并在同一故障范围下复测。',
  '再判断两个变化：若数据库位置仍到13:52却缺一份必要附件，应先修正业务恢复点结论；若查询已恢复而旧执行者仍能写入，完整写服务尚未通过接管条件。这样每个目标都落到具体状态与观察，而不是归结为副本更多或备份更频繁。')+linkRow(links(r[9]))
- ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。');
+ ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。',[],pres(localReadback),readbackLinks);
  resilience.sections[8][1]+=
  h('recovery-postgres-native-checkpoints','用真实 PostgreSQL 记录核对恢复点')+
  p('换到 C3.4 的 PostgreSQL 17.10 账户实验。三个分支都从同一份基础备份开始，余额是 100。只改变停止位置或归档材料，再看恢复出来的账户和交易账本。')+
@@ -11755,7 +11796,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  ])+
  p('在具名分支提交新事务 T105 后，余额从 125 变成 130。这个检查证明该恢复实例可以继续写。<a href="/article/storage-recovery/#native-postgres-pitr">到 C3.4 核对恢复命令、WAL 文件和账户查询</a>。')+
  p('计算恢复点落后多久，还要取得 T103 的业务提交时刻和事故参考时刻。计算服务恢复耗时，要记录中断何时开始、授权用户何时能查到符合要求的账户结果。这份记录保留了数据库位置和 SQL 结果，缺少这些时刻和应用侧验收。按<a href="/article/resilience/#section-4">第 4 节的起止条件</a>填演练记录时，两条时间线要分别记。');
- resilience.updated='2026.11.11';
+ resilience.updated='2026.11.12';
 })();
 
 
@@ -15948,8 +15989,8 @@ const learningProfiles={
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。处理速度追平到达速度时，原有积压仍需要额外容量。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
-    result:"标明恢复目标和最后一笔应该存在的业务记录。恢复后独立读取，确认数据位置和外部效果符合预期。",
-    primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
+    result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
+    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -16025,7 +16066,7 @@ const learningProfiles={
   checks:[
    {title:"把执行权限分到正确位置",
     result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
-    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
+    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
@@ -16545,14 +16586,15 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
- sre:{'alert-burn':['cloud-prometheus-live-burn']},
+ sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
-  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger']}
+  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
+  'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
@@ -16678,7 +16720,7 @@ const fieldConceptSectionTargets={
   "diagnosis-method":["incident","section-2","用同样的延迟检验两种解释"],
   "incident-change":["delivery","section-6","将变更版本和实际响应对上"],
   "resilience-patterns":["distributed-systems","section-5","计算退避和重试何时恢复"],
-  "recovery-evidence":["resilience","section-4","分别验证恢复点与恢复耗时"],
+  "recovery-evidence":["resilience","subsection-5-1dwp2yh","恢复数据库后，哪份报告仍读不全"],
  },
  "model-foundations":{
   "mf-tensors":["transformer-model","section-2","跟着词元编号查一次表"],
@@ -16953,6 +16995,7 @@ const labArchiveCatalog={
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
  'sandbox-container':{folder:'sandbox-container',title:'非 root 容器的只读输入与报告验收'},
+ 'sandbox-process-group':{folder:'sandbox-process-group',title:'两组并行任务的停止与独立回读'},
  'kubernetes-config':{folder:'kubernetes-config',title:'同一 ConfigMap 版本的四条应用读取路径'},
  'prefix-attention':{folder:'prefix-attention',title:'前缀、因果和错误平移掩码的 SDPA 对照'},
  'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
@@ -17260,6 +17303,8 @@ labLearningCatalog.push(
   files:['postgres_pitr.py','pitr.sh'],env:'本机 Linux Docker · PostgreSQL 17',kind:'实跑记录',
   observe:'用同一基础备份和 WAL 在隔离实例核对具名恢复点、归档末端和恢复后写入。',
   scope:'真实 PostgreSQL 17 归档恢复。生产对象存储、切流和 RTO 需在目标系统测量。'},
+ {id:'agent-sandbox-process-group',track:'agent',stage:2,title:'停止 A 后，核对 B 仍能交付报告',chapter:'agent-sandbox',anchor:'native-sandbox-process-group',pack:'sandbox-process-group',
+  files:['sandbox_process_group.py'],env:'macOS / Linux · Python 3.9+ 标准库',kind:'真实本机 POSIX 进程组',observe:'两组就绪后只停止 A，核对 A 的退出码和 EOF，再提交 B 的完成请求并读回报告 37。',scope:'自建父子进程和独立临时目录。容器复用与生产运行时另验。'},
  {id:'agent-sandbox-egress',track:'agent',stage:2,title:'工作进程能连接代理，为什么仍然读不到其他租户',chapter:'agent-sandbox',anchor:'native-sandbox-egress',pack:'sandbox-egress',
   files:['sandbox_egress.py','fixture.json'],env:'本机 Linux Docker · Python 容器',kind:'实跑记录',
   observe:'复跑沙箱直连拒绝、代理读取本租户和跨租户拒绝，对照后端实际访问。',
@@ -17682,5 +17727,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="a38a0514516893a5e011cf0fd4f7992ca318bf4b4fbb0eeedc0badce2b0ec314";
+const staticReadingVersion="14573e3f65f58b95acf702e1c0c49f1896c9a9f940151883877ba097d9be3f90";
 

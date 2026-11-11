@@ -51,7 +51,23 @@ const capacity=fs.readFileSync('dist/article/elasticity/index.html','utf8')
 const completeAnchor='subsection-5-1dwp2yh';
 assert(capacity?.includes('/article/resilience/#'+completeAnchor));
 assert(capacity.includes('/labs/recovery-artifacts-retrieval/validation.json'));
-assert(fs.readFileSync('dist/article/resilience/index.html','utf8').includes('id="'+completeAnchor+'"'));
+const recoveryPage=fs.readFileSync('dist/article/resilience/index.html','utf8');
+const readbackSection=recoveryPage.split('id="'+completeAnchor+'"')[1]?.split('</section>')[0];
+assert(readbackSection?.includes('/article/resilience/#subsection-9-xbrzl7'));
+assert(readbackSection.includes('/labs/recovery-artifacts-retrieval/validation.json'));
+assert(readbackSection.includes('id="recovery-report-readback-gate"'));
+assert(readbackSection.includes('在事先约定的连续读回探针全部合格时停止计时'));
+assert(readbackSection.includes('再用合格数除以窗口秒数'));
+const readbackCommand=readbackSection.match(/<details class="full-code" id="recovery-r3-local-readback">[\s\S]*?<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(readbackCommand,'the displayed local readback command must be executable');
+const readbackDir=fs.mkdtempSync(require('path').join(require('os').tmpdir(),'infra-r3-readback-'));
+try{
+ fs.copyFileSync(root+'consistent_recovery_cut.py',readbackDir+'/consistent_recovery_cut.py');
+ const output=execFileSync('sh',['-s'],{cwd:readbackDir,input:decode(readbackCommand),encoding:'utf8',timeout:15000});
+ assert.equal(output.trim(),'数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103');
+ const localRun=JSON.parse(fs.readFileSync(readbackDir+'/r3-readback.json','utf8'));
+ equivalent(localRun,replay['consistent_recovery_cut.py']);
+}finally{fs.rmSync(readbackDir,{recursive:true,force:true});}
 const [missingObject]=naive.business_problems;
 assert(naive.A_report_rows.includes(missingObject.report)&&!naive.A_readable_reports.includes(missingObject.report));
 assert(recovery.all_materials_present.A_readable_reports.includes(missingObject.report));

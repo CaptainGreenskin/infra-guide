@@ -118,9 +118,44 @@ const entries=[...ptx.matchAll(/\.entry\s+(gemm_\w+_kernel)\s*\(/g)].map(m=>m[1]
 assert.deepEqual(entries,['gemm_naive_kernel','gemm_reuse_kernel','gemm_tiled_kernel']);
 assert.deepEqual(compile.entries,entries);
 assert(!Object.hasOwn(compile,'benchmark'));
+const companyGemm=read('interview/companies/index.html').match(/<tr><td>训练\/推理底层性能<br>[\s\S]*?<\/tr>/)?.[0];
+assert(companyGemm&&companyGemm.includes('需目标环境'));
+const jobLessons=[...companyGemm.matchAll(/href="(\/article\/[^\"]+)"/g)].map(match=>match[1]);
+assert.deepEqual(jobLessons,['/article/training-performance/','/article/operator-profiling/#torch-compile-graph-break','/article/operator-profiling/#same-device-gemm']);
+assert.equal(json('labs/torch-compile-graph/validation.json').environment.device,'cpu');
+const metal=json('labs/metal-gemm/validation.json');
+assert.match(metal.environment.device,/^Apple /);
+assert(metal.benchmark.median_gpu_us.naive>0&&metal.benchmark.median_gpu_us.tiled>0);
+assert(companyGemm.includes('CPU 图捕获对照和 Apple GPU 同卡 GEMM 计时。CUDA 三版已在 Linux 编译'));
+assert(companyGemm.includes('<code>./gemm_variants --probe-only</code>，探测通过后留存数值回读、CUDA event 计时和 Nsight 指标'));
 const gemmFigure=read('diagrams/v77-gemm-reuse.svg');
 assert(gemmFigure.includes('data-source-fp32-loads="'+2*(16*16+16*16)+'"'));
 assert(gemmFigure.includes('data-source-fp32-loads="'+(32*16+16*16)+'"'));
+const gemmSource=read(gemm+'gemm_variants.cu');
+const operator=read('article/operator-profiling/index.html');
+const gemmLesson=operator.slice(operator.indexOf('id="same-device-gemm"'),operator.indexOf('id="native-metal-gemm"'));
+assert(gemmLesson.includes('/article/operator-profiling/#gemm-two-row-reuse'));
+const sourceFixtures=gemmSource.match(/FIXTURES\{\{([\s\S]*?)\}\};/)[1];
+const shapes=[...sourceFixtures.matchAll(/\{(\d+), (\d+), (\d+)\}/g)].map(match=>match.slice(1).map(Number));
+const outputs=entries.length*shapes.reduce((total,[m,,n])=>total+m*n,0);
+const [groups,launches]=['GROUPS','REPEATS'].map(name=>Number(gemmSource.match(new RegExp(name+' = (\\d+)'))[1]));
+const expectedPath=[
+ './gemm_variants --probe-only','device-detected','reason',
+ 'device_count='+compile.probe.device_count,'退出码 '+compile.probe_exit_code,'驱动版本不足以支持 CUDA 运行时',
+ '--validate','共 '+outputs+' 个结果',shapes.at(-1).join('×'),'max_abs_error',
+ '--benchmark','采 '+groups+' 组',launches+' 次启动','event_ms_per_launch','median_event_ms_per_launch','Nsight Compute','显存读写字节','实际驻留率'
+];
+let lastPosition=-1;
+for(const step of expectedPath){
+ const position=gemmLesson.indexOf(step,lastPosition+1);
+ assert(position>lastPosition,step);
+ lastPosition=position;
+}
+assert.equal(compile.probe.reason,'CUDA driver version is insufficient for CUDA runtime version');
+assert(gemmLesson.includes('设备结果、时间和计数器仍待在目标卡采集'));
+const modelField=read('module/model-foundations/index.html');
+const gpuConcept=modelField.slice(modelField.indexOf('id="knowledge-mf-gpu"'),modelField.indexOf('id="knowledge-mf-roofline"'));
+assert(gpuConcept.includes('/article/operator-profiling/#same-device-gemm')&&gpuConcept.includes('目标卡数据待采集'));
 
 const targets=[
  ['model-serving','native-inference-engine-lab',native,'v77-engine-path'],

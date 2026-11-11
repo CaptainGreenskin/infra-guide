@@ -497,11 +497,14 @@
         "subsection-7-1bgmbh8",
         "subsection-9-xbrzl7",
         "subsection-9-qtm6c2",
-        "recovery-postgres-native-checkpoints"
+        "recovery-postgres-native-checkpoints",
+        "recovery-report-readback-gate",
+        "recovery-r3-local-readback"
       ],
       "visible_targets": [
         "subsection-1-1ww2dsc",
         "subsection-5-1dwp2yh",
+        "recovery-report-readback-gate",
         "subsection-6-vxh3b7",
         "subsection-7-1bgmbh8",
         "subsection-9-xbrzl7",
@@ -1035,7 +1038,8 @@
         "subsection-10-nb0s8",
         "subsection-10-hi6ix7",
         "native-sandbox-container",
-        "native-sandbox-egress"
+        "native-sandbox-egress",
+        "native-sandbox-process-group"
       ],
       "visible_targets": [
         "subsection-3-1v63ba3",
@@ -1046,7 +1050,8 @@
         "subsection-8-1um1h4",
         "subsection-10-nb0s8",
         "subsection-10-hi6ix7",
-        "native-sandbox-container"
+        "native-sandbox-container",
+        "native-sandbox-process-group"
       ]
     },
     {

@@ -9246,6 +9246,48 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "resilience",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e9056fae09e235e4dc75c90870fc038c224633f57501d6af17c4ee30ac134e26",
+      "reviewed_content_sha256": "5e4f7c0845628fb4d651693557b7fe481ea2d9eeb7679d1aac79f70626796885",
+      "scope": "Let readers rerun the report and attachment proof, then define a client readback gate for a cross-zone exercise.",
+      "observation": "R3 belongs to commit 102. Database integrity passes at 103 while the object version is absent. The complete prefix is 101, and all four reports are readable at 103 with the complete materials.",
+      "headings": [
+        "恢复条件：材料、业务、权威与消费者",
+        "先说明这次恢复究竟要救什么",
+        "故障域要画到最后一个共享依赖",
+        "RPO 衡量缺失的时间边界，RTO 衡量恢复时长",
+        "共同恢复点：连续提交与对象版本",
+        "恢复关键路径：阶段预算与数据规模",
+        "写入接管与效果：旧写者、回执和重新消费",
+        "演练如何证明备份真的可用",
+        "实战：完整前缀与恢复后的外部效果",
+        "评分练习：恢复点合格是否意味着服务已恢复"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "512f20daf106088dc71735afe38a12efcf956dea1885e5571ea903715e78138e",
+      "reviewed_content_sha256": "662fd03c6518263208f54c7d0ab655f44618e5c5c0b80a0e5abdaff89c7b78d7",
+      "scope": "Run two independently owned local process groups and separately verify that A stops and B can still produce its report.",
+      "observation": "A ignores TERM through the grace period, exits with signal 9 after group KILL and its pipe closes. B remains running and then produces amount 37. Container lifecycle and production isolation need target validation.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
     }
   ]
 }

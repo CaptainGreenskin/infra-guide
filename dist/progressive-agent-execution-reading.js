@@ -96,7 +96,7 @@
      '设整个任务期限90秒，排队与准备已用18秒，核验和清理预留12秒，则脚本可用60秒。第一次执行45秒后失败，只剩15秒执行预算。重试继续使用剩余预算；不足时进入明确终态，或按任务规则等待延长期限，不能再无条件重置为60秒。')+
    h('subsection-8-1um1h4','停止确认、资源回收与外部效果')+
    p('用户取消时，控制面先停止新增授权与工具派发，再请求运行时停止工作负载，经过宽限后按规则强制终止。停止请求表示要求已经发出，进程退出表示对应进程已停止，回收确认表示约定资源已释放。主进程退出之后，控制面还要检查受管子进程、卷、连接、任务凭据和配额。',
-     '本地监督程序为自己创建的子进程建立独立进程组。等待任务就绪后计250ms，先TERM、宽限200ms，故意忽略TERM的夹具随后被KILL，父进程wait确认直接子进程已回收。任意不可信子进程可能改变会话或进程组，真实运行时还需覆盖整组工作负载；本地进程组实验的结论限定到它实际管理的夹具。',
+     '本地监督程序可为自己启动的任务建立独立进程组，也就是一组可以一起接收信号的进程。第 10 节的第一个实验用 <code>wait</code> 确认直接子进程退出。<a href="/article/agent-sandbox/#native-sandbox-process-group">再用 A、B 两组检查并发回收</a>，分别看 A 的子进程是否一起退出、B 能否继续交付。真实运行时还要处理改变会话或进程组的程序。',
      '清理器使用任务标识、不可混淆的运行实例ID和代际编号记录待清资源。代际表示同一逻辑位置的第几次实例：旧清理请求只删除它原来负责的那一代。产物进入独立受控位置后，生成它的临时区才能释放。清理器重启后仍可按记录继续确认，达到条件才归还相应额度。',
      '外部效果另走工具协议。停止脚本不能撤回已经发给服务的写请求；已经提交的动作沿原操作身份查询回执，需要撤销时再按授权发起补偿。恢复章将从这条边界展开。')+
    '<p><a class="inline-link" href="#/article/agent-recovery">复习提交后响应丢失与结果未知 →</a> <a class="inline-link" href="#/article/config-secrets">区分凭据撤销与既有会话退出 →</a></p>';
@@ -151,6 +151,16 @@
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
+  a.sections[9][1]+=h('native-sandbox-process-group','停止 A 后，B 能否继续完成任务')+
+   p('另用两个本机任务 A、B。每个任务有一个父进程和一个子进程。启动器为它们分别新建进程组，组编号（PGID）取组长的进程编号。子进程先通过管道报告自己的编号、父进程编号和组编号，两组都就绪才开始停止 A。TERM 请求结束，KILL 强制结束。')+
+   table(['操作','在任务外核对什么'],[
+    ['向 A 组发 TERM，等 0.2 秒','A 的父子进程都故意忽略 TERM。到期时父进程仍未退出，管道仍开放。'],
+    ['向 A 组发 KILL','父进程以 −9 退出，管道读到结束（EOF），A 没有生成报告。两个进程都持有写端，所有写端关闭后才会收到 EOF。'],
+    ['此时向 B 发完成请求','B 仍在运行。随后它以 0 退出，监督程序从独立目录读回 B 的报告，总额是 37。']
+   ])+
+   p('源码用 <code>start_new_session=True</code> 启动两组，用 <code>os.killpg</code> 向 A 的组编号发信号。记录分别保留 A 的退出状态和管道结果、B 在停止后生成的报告。这个实验实跑了本机进程组。容器复用、生产隔离和资源清理要用目标运行时自己的证据。')+
+   trainingCode('在解压后的目录运行','SHELL','python3 -B sandbox_process_group.py > my-record.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-process-group.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-process-group/sandbox_process_group.py">查看完整源码 →</a> · <a href="/labs/sandbox-process-group/validation.json">查看本机进程记录 →</a></p>';
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
@@ -168,7 +178,7 @@
    '<p class="practice-links"><a href="/labs/sandbox-egress.zip" download>下载出口隔离实战包 ↓</a> · <a href="/labs/sandbox-egress/validation.json">查看网络与上游访问记录</a></p>'+
    sources(['Docker：内部网络与连接配置','https://docs.docker.com/reference/cli/docker/network/create/#network-internal-mode']);
   infraDomain('agent').points.find(point=>point.id==='ag-sandbox').body+=p('从工作进程、受控代理和后端三处观察同一份任务。<a href="/article/agent-sandbox/#native-sandbox-egress">运行沙箱出口对照 →</a>');
-  a.updated='2026.11.09';
+  a.updated='2026.11.12';
  }
 
  {

@@ -145,6 +145,15 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
 }
 assert.equal(nodes,require('./content-inventory.cjs').points+5); // Five prerequisite groups are outside the knowledge index.
 assert.equal(edges,90);assert.equal(sectionLinks,nodes);
+const recoveryFragment='#subsection-5-1dwp2yh',recoveryArticle='/article/resilience/';
+assert.deepEqual(d.targets.sre['recovery-evidence'].slice(0,2),['resilience',recoveryFragment.slice(1)]);
+assert(d.evidence.sre['recovery-evidence'].includes('cloud-recovery'));
+const sreRole=fs.readFileSync('dist/roadmap/cloud-sre/index.html','utf8');
+assert(sreRole.includes('class="goal-gate-primary"><a href="'+recoveryArticle+'?goal=cloud-sre'+recoveryFragment+'"'));
+assert(sreRole.includes('R3 的附件仍缺失'));
+const cloudDisasterRow=fs.readFileSync('dist/interview/companies/index.html','utf8').match(/<tr><td>跨可用区容灾[\s\S]*?<\/tr>/)?.[0];
+assert(cloudDisasterRow?.includes('href="'+recoveryArticle+recoveryFragment+'"'));
+assert(cloudDisasterRow.includes('需目标环境')&&cloudDisasterRow.includes('目标环境再测跨区切换'));
 const routeIds=Object.values(d.routes).flatMap(stages=>stages.flatMap(s=>s[1]));assert.equal(new Set(routeIds).size,d.articles.length);assert.equal(routeIds.length,d.articles.length);
 assert.equal(vm.runInContext('chapterReadingContext(undefined).track',c),'shared','missing article routes must retain the not-found page without crashing');
 for(const a of d.articles){

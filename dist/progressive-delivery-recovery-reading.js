@@ -24,14 +24,14 @@
   if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Delivery/recovery source layout changed: '+id);
   return a;
  }
- function rewrite(a,bodies,desc,addedFigures=[],addedPres=[]){
+ function rewrite(a,bodies,desc,addedFigures=[],addedPres=[],addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Delivery/recovery H2 layout changed: '+a.id);
   const remaining=pres(after).slice();
   for(const block of addedPres){const at=remaining.indexOf(block);if(at<0||remaining.lastIndexOf(block)!==at)throw Error('New projection source missing or duplicated');remaining.splice(at,1);}
   if(JSON.stringify(pres(before))!==JSON.stringify(remaining))throw Error('Original delivery/recovery pre bytes or order changed: '+a.id);
   if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original delivery/recovery figure changed: '+a.id);
-  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Delivery/recovery href multiset changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs),...addedHrefs]))throw Error('Delivery/recovery href multiset changed: '+a.id);
   const nextIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Delivery/recovery anchor lost: '+a.id+'/'+id);
   if(new Set(nextIds).size!==nextIds.length)throw Error('Delivery/recovery duplicate explicit anchor: '+a.id);
@@ -228,6 +228,30 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);
  if(r9.length!==4||r9links.length!==6||figures(r.join('')).length!==2)throw Error('Recovery original evidence extraction changed');
+ const localReadback=trainingCode('复跑并核对 R3','SHELL',String.raw`python3 -B consistent_recovery_cut.py > r3-readback.json &&
+python3 - r3-readback.json <<'PY'
+import json
+import sys
+from pathlib import Path
+
+run = json.loads(Path(sys.argv[1]).read_text())
+r3 = next(row for row in run["commits"] if row["report"] == "R3")
+assert (r3["seq"], r3["object"]) == (102, "object-v3")
+latest = run["naive_latest_database"]
+assert (latest["seq"], latest["physical_integrity"]) == (103, "ok")
+assert "R3" in latest["A_report_rows"]
+assert "R3" not in latest["A_readable_reports"]
+assert latest["business_problems"] == [
+    {"report": "R3", "object": "object-v3", "reason": "missing_object_version"}
+]
+prefix = run["last_complete_business_prefix"]
+assert (prefix["seq"], prefix["stopped"]["at_seq"]) == (101, 102)
+complete = run["all_materials_present"]
+assert complete["seq"] == 103
+assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
+print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
+PY`);
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json'];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -250,12 +274,17 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  p('连续是指基线之后所需的变化能按对应恢复协议衔接，不能跳过未知段直接套后面的事件。业务完整还包括附件、索引和授权读取：数据库到11:54而必要附件缺失，不能据数据库位置单独宣布通过。选择哪个共同恢复点，下一节用实际对象夹具计算。'),
 
  h('subsection-5-1dwp2yh','用报告引用求最后完整前缀')+
- p('下面切到独立的 consistent_recovery_cut.py。它用真实SQLite Backup API生成基线，并由应用逻辑日志增加报告；不是前面错误迁移的真实现场。基线seq100位于11:30，A租户已有R1→object-v1，另外保留B租户的一份报告。后续三个事件按序号连续添加R2、R3、R4，各自记录附件名、内容摘要和题设分钟。')+
+ p('租户 A 想找回报告 R3 和它的附件。用独立的本机实验复现：11:30 的 SQLite 备份记录到提交 100，A 已有 R1 和它的附件，备份还保留租户 B 的一份报告。此后每条应用日志新增一份报告，记下提交号、附件版本和内容摘要。摘要由附件字节算出，用来核对恢复后读到的内容。')+
  table(['提交','题设时刻','新增报告的依赖'],[['100基线','11:30','R1→object-v1'],['101','11:42','R2→object-v2'],['102','11:54','R3→object-v3'],['103','11:57','R4→object-v4']])+
- p('故障设在12:00，只从恢复材料中移除object-v3。若只重放数据库到103，integrity_check仍为ok，表里有R1至R4，名义位置距故障3分钟；实际可读的却只有R1、R2、R4。物理结构正确、数据库位置接近和业务依赖完整，是三次不同的检查。')+figures(r[4]).join('')+
+ p('故障设在 12:00，只从恢复材料中移除 <code>object-v3</code>。<code>R3</code> 是提交 102 加入的报告，103 是重放到 <code>R4</code> 后的整库位置。只重放数据库时，<code>integrity_check</code> 返回 <code>ok</code>，表里有 R1 至 R4，数据库位置距故障 3 分钟，应用能完整读回的只有 R1、R2 和 R4。')+figures(r[4]).join('')+
  p('按完整提交前缀恢复时，每次插入报告和推进进度后，在同一事务中检查所有必要引用。102发现缺v3，回滚这一步并停止，最后完整状态为101/11:42，可读R1、R2。12:00−11:42=18分钟，超过15分钟目标。18分钟表示恢复点的年龄，不表示恰好少了18分钟里每一笔业务，也不是报告数量。',
- '补齐v3后可到103，缺口3分钟；日志缺102时不能跳到103，只能到101；v2内容摘要不符时101也不能接受，剩100基线。v4存在不能替代v3。本题要求保留前缀里全部报告，若业务允许跳过、重建或补偿某笔提交，必须另外定义可验证的协议。',
- '真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
+ '补齐v3后可到103，缺口3分钟；日志缺102时不能跳到103，只能到101；v2内容摘要不符时101也不能接受，剩100基线。v4存在不能替代v3。本题要求保留前缀里全部报告，若业务允许跳过、重建或补偿某笔提交，必须另外定义可验证的协议。')+
+ p('从<a href="'+readbackLinks[0]+'">第 9 节下载实验包</a>，解压后在脚本所在目录运行。程序实际复制 SQLite、重放日志，再读取附件文件并核对内容摘要。下面的断言用同一份输出对照三条恢复路径。也可先看<a href="'+readbackLinks[1]+'">保存的运行记录</a>。')+
+ fold('展开本机复跑命令与读回断言',localReadback,'recovery-r3-local-readback')+
+ h('recovery-report-readback-gate','怎样从实际入口验收同一份报告')+
+ p('目标演练若承诺恢复到提交 103，先记下租户 A 的报告 ID <code>R3</code>、附件版本 <code>object-v3</code> 和原始内容摘要。故障后用外部客户端从正常入口按该租户身份查询报告，再下载它引用的附件，保存请求 ID 和返回字节的摘要。报告、版本和内容都对得上，才记为一次合格读回。若最后完整状态停在 101，把 R3 记入数据缺口。只用这一份报告做探针时，完整恢复点仍须核对整份提交清单。',
+ '跨可用区演练要用同一时间基准，记录约定的中断起点（如故障注入）和最低服务恢复时刻。若本轮要求只读，在事先约定的连续读回探针全部合格时停止计时。开放写入另用测试写请求和独立读回验收。比较有效吞吐时，固定负载和观察窗，按请求 ID 去重，数清发起数、截止前合格数和失败或超时数，再用合格数除以窗口秒数。本机记录的 11:42 和 11:57 是题设提交时刻，跨区恢复耗时与有效吞吐要到目标环境采集。')+
+ p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
  p('另给一组串行演练预算：12:00中断，目标是在45分钟内恢复授权只读查询。恢复点选在哪里决定可接受的数据历史；下面各阶段耗时决定服务何时回来，两条时间轴分别计算。')+
@@ -292,7 +321,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  p('最后换一组独立时间题：14:00发生中断，可验证业务状态完整到13:52，14:48授权只读查询恢复。目标RPO为10分钟、RTO为45分钟。恢复点年龄是8分钟，符合目标；服务恢复历时48分钟，超出3分钟。14:20完成数据装载只代表中间阶段，不能替换用户恢复时刻。',
  '解释这份结论时，给出证明13:52业务完整的提交清单、附件与权限结果，再沿恢复阶段找出超出的时间。随后提出能影响该路径的改进，例如预置大数据、提前验证恢复身份或缩短串行校验，并在同一故障范围下复测。',
  '再判断两个变化：若数据库位置仍到13:52却缺一份必要附件，应先修正业务恢复点结论；若查询已恢复而旧执行者仍能写入，完整写服务尚未通过接管条件。这样每个目标都落到具体状态与观察，而不是归结为副本更多或备份更频繁。')+linkRow(links(r[9]))
- ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。');
+ ],'从正常业务依赖定义恢复对象，分别计算恢复点与恢复时间，再用真实SQLite和HTTP核对完整前缀、旧写拒绝与外部回执。',[],pres(localReadback),readbackLinks);
  resilience.sections[8][1]+=
  h('recovery-postgres-native-checkpoints','用真实 PostgreSQL 记录核对恢复点')+
  p('换到 C3.4 的 PostgreSQL 17.10 账户实验。三个分支都从同一份基础备份开始，余额是 100。只改变停止位置或归档材料，再看恢复出来的账户和交易账本。')+
@@ -303,5 +332,5 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  ])+
  p('在具名分支提交新事务 T105 后，余额从 125 变成 130。这个检查证明该恢复实例可以继续写。<a href="/article/storage-recovery/#native-postgres-pitr">到 C3.4 核对恢复命令、WAL 文件和账户查询</a>。')+
  p('计算恢复点落后多久，还要取得 T103 的业务提交时刻和事故参考时刻。计算服务恢复耗时，要记录中断何时开始、授权用户何时能查到符合要求的账户结果。这份记录保留了数据库位置和 SQL 结果，缺少这些时刻和应用侧验收。按<a href="/article/resilience/#section-4">第 4 节的起止条件</a>填演练记录时，两条时间线要分别记。');
- resilience.updated='2026.11.11';
+ resilience.updated='2026.11.12';
 })();
