@@ -112,7 +112,8 @@
  ['服务名改成 wrong.internal.test','证书校验失败','握手结束前被拒绝，未发送 HTTP'],
  ['客户端未信任临时 CA','证书校验失败','信任链校验'],
  ['TLS 名称正确，Host 改成 other.internal.test','TLS 通过，HTTP 421','HTTP 站点选择']])+p(
- '服务端 SNI 回调记录握手名称，HTTP 处理器单独记录请求；两次失败握手没有进入 HTTP，请求记录恰好两条。可到 <a href="#/article/k8s-networking?section=7">TLS、证书名称和 HTTP Host 实验</a>运行并核对 <a href="labs/network-input-tools/tls_identity.py">源码</a>。本章 P/A/B 程序使用明文 HTTP，前端 Host 为 orders.lab.test，上游改成 orders.internal.test；这两个名称由请求头直接传入。')+
+ '服务端 SNI 回调记录握手名称，HTTP 处理器单独记录请求；两次失败握手没有进入 HTTP，请求记录恰好两条。可到 <a href="#/article/k8s-networking?section=7">TLS、证书名称和 HTTP Host 实验</a>运行并核对 <a href="labs/network-input-tools/tls_identity.py">源码</a>。第 7 节的 <code>proxy_lab.py</code> 则用明文 HTTP 观察连接复用，前端 Host 为 orders.lab.test，上游改成 orders.internal.test；这两个名称由请求头直接传入。',
+ '开头的 <code>a1</code> 来自另一份 <code>tls_proxy_hops.py</code> 实验，客户端到入口 P、P 到后端都建立 TLS 连接。接着看同一记录的两个请求：<code>b1</code> 访问 <code>/order</code>，<code>bad</code> 访问 <code>/bad-cert</code>。两条路由都选后端 B，配置的上游证书校验名称不同。入口握手都成功，<code>bad</code> 在第二段校验失败，客户端收到 502。<a href="/article/network-diagnosis/#proxy-502-origin-evidence">到 C2.2 核对 502 由谁返回、失败在哪一段 →</a>')+
  h('subsection-6-pe1x30','后端资格与连接池')+p(
  '每次分配先从当前允许接新工作的后端中选择，再为选中的后端借连接。就绪状态表达分配资格，连接池保存已经连好的可复用连接。本例每个后端只有一条 HTTP/1.1 连接，锁覆盖发送请求和完整读取响应，因此同一后端的请求串行使用它。',
  '客户端在 P-c1 查询两次，再换 P-c2 查询一次，三个响应均来自 A-c1。前端连接变化不会强迫代理放弃仍可用的上游连接；读取完整响应使后续请求能从清楚的消息边界开始。允许的在途工作数、忙连接数和空闲连接缓存数是不同量，例如 NGINX upstream keepalive 约束每个 worker 保留的空闲连接数量。')+

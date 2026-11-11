@@ -145,6 +145,17 @@ for(const target of ['diagrams/native-amp-window.svg','labs/native-amp-window.zi
  assert(suffix.includes('href="'+target+'"'),target);
 }
 assert(!suffix.includes('<pre'), 'the new subsection reuses the original code inventory');
+const trainingOverview=vm.runInContext("articleById('gpu-cluster')",context).sections[4][1];
+const {overflow,retry}=result.windows;
+const counter=trainingOverview.indexOf('applied_optimizer_steps');
+const device=result.environment.device.toUpperCase();
+const evidence=trainingOverview.indexOf(`另一个本机 ${device} 实验用了 FP16 混合精度`);
+assert(counter>=0&&evidence>counter&&trainingOverview.includes('本章用固定FP32输入走通正常更新'));
+assert(trainingOverview.includes(`平均损失是有限的 ${overflow.mean_loss}`));
+assert(trainingOverview.includes(`权重梯度已溢出为 ${overflow.microbatches[1].weight_gradient_before_widening.value}`));
+assert(trainingOverview.includes(`调用 AdamW ${overflow.optimizer_calls} 次，步数停在 ${overflow.after.optimizer.step.value}`));
+assert(trainingOverview.includes(`实验显式重送相同输入，调用 AdamW ${retry.optimizer_calls} 次，步数增到 ${retry.after.optimizer.step.value}`));
+assert(trainingOverview.indexOf('href="/article/gpu-memory/#native-amp-window"')>evidence);
 const recovery=vm.runInContext("articleById('checkpoint-recovery')",context);
 assert(recovery.sections.some(s=>s[1].includes('id="checkpoint-consistent-state"')));
 if(process.env.NATIVE_AMP_PYTHON){

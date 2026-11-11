@@ -8919,6 +8919,80 @@
         "实战：改参被拒、提交后退出与原键取回执",
         "实战：提交时重查，抓住旧授权快照"
       ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3ee8805a39aa9f3a487cf011ff37b19d996821301e9cfa39e3c8ee997811a03f",
+      "reviewed_content_sha256": "777c6f8570c02611dc51d9b014aa34c5ccb097eb31bd9c68a70b40d3442383d7",
+      "scope": "Carry the same K1 through the write-grant and receipt-grant changes before linking to recovery.",
+      "observation": "The prior write persists with version 8 and amount 37, while the read revocation prevents the caller from inspecting its receipt.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9d928920aff20721b1c6d8e2d6e669b2146f334c46663c1da3d1a20e8a1fbb51",
+      "reviewed_content_sha256": "f95b832d800b49a3e0a22408d9207a3ae5fadd556f453d861cad4e1167b50cf0",
+      "scope": "Compare the forbidden K1 lookup with the successful but empty response for a separate in-flight operation.",
+      "observation": "The authorized lookup for logical-add-1 is empty before the old request commits. Recovery returns its original receipt and one effect.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "ca4989044d466d342cab6cb93e6a4f4a59f71d0bbc71a59366889456b0bc6bc3",
+      "reviewed_content_sha256": "e13982f054c0bfd4d490abb66a14cbb734fb1e209c052694c0a97d6e7d002c5b",
+      "scope": "Distinguish the three HTTP and TLS examples and follow the original two-hop record to the network diagnosis lesson.",
+      "observation": "The entry accepts b1 and bad for the same backend B. The upstream certificate name differs, so only b1 reaches the backend HTTP handler.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "cb73bdc0814e244f72cc69fc358478deba0353b49e017ae64963c556ed783a99",
+      "reviewed_content_sha256": "c6162fbed772cf41e7552e365d14e89928a2b9a5a3a30ad8caa2a8aa4b3e0423",
+      "scope": "Keep the same TinyDecoder update while introducing two CPU workers, and connect applied step accounting to the separate CPU FP16 overflow record.",
+      "observation": "Weighting the 1 and 3 target sums preserves the original single-process update. In the FP16 experiment, the finite loss and non-finite gradient coexist, and the optimizer only advances after a separate replay.",
+      "headings": [
+        "先固定一份任务契约",
+        "三种职责，串成一条依赖链",
+        "获得额度，还不等于整组能放下",
+        "分到资源后，先把输入送到每个成员",
+        "两批凑成一次更新，更新后再谈保存",
+        "读一条时间线，找第一个断点",
+        "把模型账本接回资源量级",
+        "用本地实验走通协议，再迁移到多机"
+      ]
     }
   ]
 }

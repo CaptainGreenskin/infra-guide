@@ -114,6 +114,7 @@ const progressiveAgentSectionTitles={
    fold('运行approval_receipt.py：声明、实际提交与原操作恢复',old[8]);
   a.sections[9][1]=
    p('最后把授权放进真实回环HTTP请求：每个请求使用独立SQLite连接，提交事务重读当前策略、批准与对象。正常K1写入与重复回执先成立，再注入准备后撤权，比较当前策略检查与旧快照分支。固定夹具提供身份，未运行登录或令牌认证。')+
+   p('只看已提交的 K1。撤掉写权限后，林仍能查到版本 8、金额 37。再撤掉回执读取权限，查询返回 <code>read_denied</code>。在<a href="/labs/agent-boundaries/validation.json">原始记录</a>的 <code>programs</code> 下找到 <code>authorization_commit.py</code>，其中 <code>states.normal.effects</code> 仍是 1。遇到这种拒绝，保留原操作号，等待有权的一方核对。<a href="/article/agent-recovery/#section-6">到 G4 对照查询成功但回执为空的情形 →</a>')+
    fold('运行authorization_commit.py：提交时重查与撤权交错',old[9]);
   preserveCode(a,before);
  }

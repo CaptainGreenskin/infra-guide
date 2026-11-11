@@ -185,6 +185,24 @@ if (executable) {
   assert.deepEqual(rerun.sdpa_dependency_sha256, record.sdpa_dependency_sha256);
 }
 if (!process.argv.includes('--record-only')) {
+  const page = read('dist/article/gpu-cluster', 'index.html').toString();
+  const opening = page.match(/<section class="article-section" id="section-1">([\s\S]*?)<\/section>/)?.[1];
+  assert(opening);
+  const {first, dense} = record.result.training;
+  const globalTargets = first.reduce((sum, rank) => sum + rank.valid_targets, 0);
+  assert(opening.includes(`${first[0].before.parameter_count} 参数 TinyDecoder`));
+  assert(opening.includes('本机 CPU 进程用 Gloo 通信'));
+  for (const rank of first) {
+    assert(opening.includes(`rank ${rank.rank} 处理 ${JSON.stringify(rank.input_ids)}，有 ${rank.valid_targets} 个`));
+  }
+  assert(opening.includes(`乘 ${first.length}/${globalTargets} 再反向`) && opening.includes(`各占 1/${globalTargets}`));
+  const loss = first.reduce((sum, rank) => sum + rank.local_loss_sum, 0) / globalTargets;
+  const stepDifference = dense.original_a1_step1_weights_max_abs_error.toExponential(2).replace('e-17', '×10⁻¹⁷');
+  assert(opening.includes(`平均损失约 ${loss.toFixed(5)}`) && opening.includes(`最大绝对差约 ${stepDifference}`));
+  const experiment = 'href="/article/checkpoint-recovery/#native-tiny-decoder-handoff"';
+  const classifier = opening.indexOf('下面换用 1,024 条合成样本的分类任务');
+  assert(classifier > opening.indexOf(experiment) && opening.includes(experiment));
+  assert(read('dist/article/checkpoint-recovery', 'index.html').includes('id="native-tiny-decoder-handoff"'));
   execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
 from zipfile import ZipFile

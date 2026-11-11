@@ -234,7 +234,8 @@
 
   a.sections[5][1]=
    p('这次只给 demo 账户加一次 37，操作编号是 <code>logical-add-1</code>。运行器发出写请求后，工具服务已经收到请求，但被实验暂停在提交前。此时只结束发请求的运行器，工具服务继续活着。这样的请求仍在途，也就是接收方还有可能把它做完。',
-     '先查原操作的回执，结果为空，账户仍是 0。再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
+     '先查原操作的回执，结果为空，账户仍是 0。服务返回的正文是 <code>{"receipt":null}</code>。<a href="/article/agent-security/#section-10">G2 的 K1 查询</a>遇到的是 <code>read_denied</code>。那次查询因权限被拒绝，单凭这条响应无法判断接收方有没有回执。',
+     '再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
    figures(old[5])[0]+
    p('空回执只说明查询时还没有提交记录。旧请求与重试使用同一个操作编号时，接收方可以按第 3 节的事务规则合为一次效果。若服务无法按原操作查询，也没有可核对的重复处理规则，就保留待确认，等接收方或业务方核实。',
      '在<a href="/labs/agent-crash-windows/validation.json">原始记录</a>里找 <code>before_commit</code>，对照 <code>at_crash</code>、<code>after_old_request</code> 和 <code>recovered</code>。三项分别记录运行器刚退出、旧请求提交后、恢复完成时的两个库。<a href="/article/agent-runtime/#runtime-report-error-cases">回到日报案例，区分已收到的错误与仍未知的结果</a>。');

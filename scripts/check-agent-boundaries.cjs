@@ -62,6 +62,13 @@ with zipfile.ZipFile('dist/labs/agent-boundaries.zip') as z:
 `],{encoding:'utf8'});
 const retrievalPage=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
 const securityPage=fs.readFileSync('dist/article/agent-security/index.html','utf8');
+const receiptLesson=d.articles.find(a=>a.id==='agent-security').sections[9][1];
+const recoveryLesson=d.articles.find(a=>a.id==='agent-recovery').sections[5][1];
+const rejectedLookup=r.programs['authorization_commit.py'].results.receipt_read_revoked;
+const beforeCommit=JSON.parse(fs.readFileSync('dist/labs/agent-crash-windows/validation.json')).execution.cases.find(x=>x.window==='before_commit');
+assert(receiptLesson.includes('<code>'+rejectedLookup.reason+'</code>')&&receiptLesson.includes('/article/agent-recovery/#section-6'));
+assert(beforeCommit.receipt_absent_while_old_request_lives&&beforeCommit.recovered.effects===1);
+assert(recoveryLesson.includes('<code>'+beforeCommit.at_crash.operation+'</code>')&&recoveryLesson.includes('<code>{"receipt":null}</code>')&&recoveryLesson.includes('/article/agent-security/#section-10'));
 const accessSection=securityPage.split('id="section-2"')[1].split('id="section-3"')[0];
 assert(accessSection.includes('/article/agent-retrieval/#retrieval-revocation-boundaries'));
 const revocation=retrievalPage.split('id="retrieval-revocation-boundaries"')[1].split('id="section-10"')[0];

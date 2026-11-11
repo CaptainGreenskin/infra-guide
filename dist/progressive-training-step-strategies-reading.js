@@ -81,7 +81,7 @@
  ['checkpoint与next_epoch','一组训练状态已提交，标记下一轮位置'],
  ['连续与恢复对照','重新启动后，按指定比较协议核对接续结果']
  ])+
- p('FP16的梯度缩放可能因非有限数跳过优化器调用，所以尝试数与实际数分别保留；实际调用也不保证每个参数都变化或任务质量改善。本章先用固定FP32输入走通正常更新，精度机制在后续显存与混合精度章说明。'),
+ p('FP16的梯度缩放可能因非有限数跳过优化器调用，所以尝试数与实际数分别保留。参数变化和任务质量也需要各自核对。本章用固定FP32输入走通正常更新。'),
 
  p('正常链条建立后，再只改变一个条件：让rank1在读取分片时被拒绝。下面0至7秒属于同一次A1的声明输入，用来追因果；修正后则先结束旧A1，再为同一任务R1启动新执行A2。表中的秒数不是跨机器实测的单向网络耗时。')+
  table(['时刻：教学输入','rank0','rank1','沿依赖判断'],[
@@ -114,6 +114,15 @@
  '读完时沿同一窗口复述：谁提供128条样本，梯度何时同步，实际step由哪里计数，故障后能从哪个提交点继续。把每个问题对应到下面完整程序中的位置，再进入下一章改变数据与状态的分配方式。')+
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
+
+ overview.sections[4][1]+=p('另一个本机 CPU 实验用了 FP16 混合精度。窗口的平均损失是有限的 1.9140625，第二个微批的权重梯度已溢出为 Inf。这个窗口调用 AdamW 0 次，步数停在 1。缩放因子减半后，实验显式重送相同输入，调用 AdamW 1 次，步数增到 2。<a href="/article/gpu-memory/#native-amp-window">核对溢出和重试的原生记录 →</a>');
+
+ const classifierIntro='本章沿同一个小型分类任务，从提交走到第一次实际优化器调用，再走到可恢复的轮末状态。</p>';
+ if(!overview.sections[0][1].includes(classifierIntro))throw Error('Training overview introduction changed');
+ overview.sections[0][1]=overview.sections[0][1].replace(classifierIntro,'</p>'+p(
+  '先沿用自动求导章的 664 参数 TinyDecoder。两个本机 CPU 进程用 Gloo 通信，进程编号叫 rank。rank 0 处理 [0,1,2,3]，有 1 个有效目标。rank 1 处理 [4,5,6,7]，有 3 个。各进程把本地损失求和，乘 2/4 再反向。分布式数据并行（DDP）在反向中平均梯度，四项损失在全局目标里各占 1/4。',
+  '这一步的平均损失约 8.62794。与原单进程实验相比，更新后的参数最大绝对差约 5.55×10⁻¹⁷。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">核对同一个小模型的两进程更新 →</a>。下面换用 1,024 条合成样本的分类任务，跟踪平台怎样安排进程、交付数据，以及训练怎样保存可恢复的轮末状态。'));
+ overview.updated='2026.11.12';
 
  overview.sections[7][1]+=p('解压<a href="labs/training-capstone.zip" download>训练恢复实验包</a>后，上面的命令只运行连续四轮。要验证恢复的一致性，跟着<a href="/article/training-lab/#section-3">综合实战的三次运行</a>，用同样的 1,024 样本、32 批大小和累积 2 步，比较连续四轮与保存后两轮加两轮。分别核对模型、优化器状态和实际更新次数。','再读<a href="https://github.com/CaptainGreenskin/one-gpu-lm/blob/8399be36fa8467b8e9323172756dc656757c6fb3/experiments/002-first-train/results/pro6000-first/summary.json">一次中文小模型单卡记录</a>，练习把设备、工作量和显存放在同一份账上。该次 RTX PRO 6000 训练完成 100 步，共处理 409,600 个 token，峰值已分配显存约 2.57 GiB。CPU 实验使用不同模型和配置；要比较设备速度，先固定模型、数据和统计窗口。');
 

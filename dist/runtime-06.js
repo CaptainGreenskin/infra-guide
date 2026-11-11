@@ -5068,6 +5068,7 @@ const progressiveAgentSectionTitles={
    fold('运行approval_receipt.py：声明、实际提交与原操作恢复',old[8]);
   a.sections[9][1]=
    p('最后把授权放进真实回环HTTP请求：每个请求使用独立SQLite连接，提交事务重读当前策略、批准与对象。正常K1写入与重复回执先成立，再注入准备后撤权，比较当前策略检查与旧快照分支。固定夹具提供身份，未运行登录或令牌认证。')+
+   p('只看已提交的 K1。撤掉写权限后，林仍能查到版本 8、金额 37。再撤掉回执读取权限，查询返回 <code>read_denied</code>。在<a href="/labs/agent-boundaries/validation.json">原始记录</a>的 <code>programs</code> 下找到 <code>authorization_commit.py</code>，其中 <code>states.normal.effects</code> 仍是 1。遇到这种拒绝，保留原操作号，等待有权的一方核对。<a href="/article/agent-recovery/#section-6">到 G4 对照查询成功但回执为空的情形 →</a>')+
    fold('运行authorization_commit.py：提交时重查与撤权交错',old[9]);
   preserveCode(a,before);
  }
@@ -5415,7 +5416,8 @@ const progressiveAgentSectionTitles={
 
   a.sections[5][1]=
    p('这次只给 demo 账户加一次 37，操作编号是 <code>logical-add-1</code>。运行器发出写请求后，工具服务已经收到请求，但被实验暂停在提交前。此时只结束发请求的运行器，工具服务继续活着。这样的请求仍在途，也就是接收方还有可能把它做完。',
-     '先查原操作的回执，结果为空，账户仍是 0。再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
+     '先查原操作的回执，结果为空，账户仍是 0。服务返回的正文是 <code>{"receipt":null}</code>。<a href="/article/agent-security/#section-10">G2 的 K1 查询</a>遇到的是 <code>read_denied</code>。那次查询因权限被拒绝，单凭这条响应无法判断接收方有没有回执。',
+     '再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
    figures(old[5])[0]+
    p('空回执只说明查询时还没有提交记录。旧请求与重试使用同一个操作编号时，接收方可以按第 3 节的事务规则合为一次效果。若服务无法按原操作查询，也没有可核对的重复处理规则，就保留待确认，等接收方或业务方核实。',
      '在<a href="/labs/agent-crash-windows/validation.json">原始记录</a>里找 <code>before_commit</code>，对照 <code>at_crash</code>、<code>after_old_request</code> 和 <code>recovered</code>。三项分别记录运行器刚退出、旧请求提交后、恢复完成时的两个库。<a href="/article/agent-runtime/#runtime-report-error-cases">回到日报案例，区分已收到的错误与仍未知的结果</a>。');
@@ -6323,7 +6325,8 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
  ['服务名改成 wrong.internal.test','证书校验失败','握手结束前被拒绝，未发送 HTTP'],
  ['客户端未信任临时 CA','证书校验失败','信任链校验'],
  ['TLS 名称正确，Host 改成 other.internal.test','TLS 通过，HTTP 421','HTTP 站点选择']])+p(
- '服务端 SNI 回调记录握手名称，HTTP 处理器单独记录请求；两次失败握手没有进入 HTTP，请求记录恰好两条。可到 <a href="#/article/k8s-networking?section=7">TLS、证书名称和 HTTP Host 实验</a>运行并核对 <a href="labs/network-input-tools/tls_identity.py">源码</a>。本章 P/A/B 程序使用明文 HTTP，前端 Host 为 orders.lab.test，上游改成 orders.internal.test；这两个名称由请求头直接传入。')+
+ '服务端 SNI 回调记录握手名称，HTTP 处理器单独记录请求；两次失败握手没有进入 HTTP，请求记录恰好两条。可到 <a href="#/article/k8s-networking?section=7">TLS、证书名称和 HTTP Host 实验</a>运行并核对 <a href="labs/network-input-tools/tls_identity.py">源码</a>。第 7 节的 <code>proxy_lab.py</code> 则用明文 HTTP 观察连接复用，前端 Host 为 orders.lab.test，上游改成 orders.internal.test；这两个名称由请求头直接传入。',
+ '开头的 <code>a1</code> 来自另一份 <code>tls_proxy_hops.py</code> 实验，客户端到入口 P、P 到后端都建立 TLS 连接。接着看同一记录的两个请求：<code>b1</code> 访问 <code>/order</code>，<code>bad</code> 访问 <code>/bad-cert</code>。两条路由都选后端 B，配置的上游证书校验名称不同。入口握手都成功，<code>bad</code> 在第二段校验失败，客户端收到 502。<a href="/article/network-diagnosis/#proxy-502-origin-evidence">到 C2.2 核对 502 由谁返回、失败在哪一段 →</a>')+
  h('subsection-6-pe1x30','后端资格与连接池')+p(
  '每次分配先从当前允许接新工作的后端中选择，再为选中的后端借连接。就绪状态表达分配资格，连接池保存已经连好的可复用连接。本例每个后端只有一条 HTTP/1.1 连接，锁覆盖发送请求和完整读取响应，因此同一后端的请求串行使用它。',
  '客户端在 P-c1 查询两次，再换 P-c2 查询一次，三个响应均来自 A-c1。前端连接变化不会强迫代理放弃仍可用的上游连接；读取完整响应使后续请求能从清楚的消息边界开始。允许的在途工作数、忙连接数和空闲连接缓存数是不同量，例如 NGINX upstream keepalive 约束每个 worker 保留的空闲连接数量。')+
@@ -12651,7 +12654,7 @@ return {"status": visit_gate("original_gate")}`)+
  ['checkpoint与next_epoch','一组训练状态已提交，标记下一轮位置'],
  ['连续与恢复对照','重新启动后，按指定比较协议核对接续结果']
  ])+
- p('FP16的梯度缩放可能因非有限数跳过优化器调用，所以尝试数与实际数分别保留；实际调用也不保证每个参数都变化或任务质量改善。本章先用固定FP32输入走通正常更新，精度机制在后续显存与混合精度章说明。'),
+ p('FP16的梯度缩放可能因非有限数跳过优化器调用，所以尝试数与实际数分别保留。参数变化和任务质量也需要各自核对。本章用固定FP32输入走通正常更新。'),
 
  p('正常链条建立后，再只改变一个条件：让rank1在读取分片时被拒绝。下面0至7秒属于同一次A1的声明输入，用来追因果；修正后则先结束旧A1，再为同一任务R1启动新执行A2。表中的秒数不是跨机器实测的单向网络耗时。')+
  table(['时刻：教学输入','rank0','rank1','沿依赖判断'],[
@@ -12684,6 +12687,15 @@ return {"status": visit_gate("original_gate")}`)+
  '读完时沿同一窗口复述：谁提供128条样本，梯度何时同步，实际step由哪里计数，故障后能从哪个提交点继续。把每个问题对应到下面完整程序中的位置，再进入下一章改变数据与状态的分配方式。')+
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
+
+ overview.sections[4][1]+=p('另一个本机 CPU 实验用了 FP16 混合精度。窗口的平均损失是有限的 1.9140625，第二个微批的权重梯度已溢出为 Inf。这个窗口调用 AdamW 0 次，步数停在 1。缩放因子减半后，实验显式重送相同输入，调用 AdamW 1 次，步数增到 2。<a href="/article/gpu-memory/#native-amp-window">核对溢出和重试的原生记录 →</a>');
+
+ const classifierIntro='本章沿同一个小型分类任务，从提交走到第一次实际优化器调用，再走到可恢复的轮末状态。</p>';
+ if(!overview.sections[0][1].includes(classifierIntro))throw Error('Training overview introduction changed');
+ overview.sections[0][1]=overview.sections[0][1].replace(classifierIntro,'</p>'+p(
+  '先沿用自动求导章的 664 参数 TinyDecoder。两个本机 CPU 进程用 Gloo 通信，进程编号叫 rank。rank 0 处理 [0,1,2,3]，有 1 个有效目标。rank 1 处理 [4,5,6,7]，有 3 个。各进程把本地损失求和，乘 2/4 再反向。分布式数据并行（DDP）在反向中平均梯度，四项损失在全局目标里各占 1/4。',
+  '这一步的平均损失约 8.62794。与原单进程实验相比，更新后的参数最大绝对差约 5.55×10⁻¹⁷。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">核对同一个小模型的两进程更新 →</a>。下面换用 1,024 条合成样本的分类任务，跟踪平台怎样安排进程、交付数据，以及训练怎样保存可恢复的轮末状态。'));
+ overview.updated='2026.11.12';
 
  overview.sections[7][1]+=p('解压<a href="labs/training-capstone.zip" download>训练恢复实验包</a>后，上面的命令只运行连续四轮。要验证恢复的一致性，跟着<a href="/article/training-lab/#section-3">综合实战的三次运行</a>，用同样的 1,024 样本、32 批大小和累积 2 步，比较连续四轮与保存后两轮加两轮。分别核对模型、优化器状态和实际更新次数。','再读<a href="https://github.com/CaptainGreenskin/one-gpu-lm/blob/8399be36fa8467b8e9323172756dc656757c6fb3/experiments/002-first-train/results/pro6000-first/summary.json">一次中文小模型单卡记录</a>，练习把设备、工作量和显存放在同一份账上。该次 RTX PRO 6000 训练完成 100 步，共处理 409,600 个 token，峰值已分配显存约 2.57 GiB。CPU 实验使用不同模型和配置；要比较设备速度，先固定模型、数据和统计窗口。');
 
@@ -15845,7 +15857,7 @@ articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模�
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
 articles.find(a=>a.id==='kubernetes-basics').updated='2026.11.12';
 articles.find(a=>a.id==='autograd-training').updated='2026.11.12';
-for(const id of ['gpu-cluster','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+articles.find(a=>a.id==='moe-routing').updated='2026.11.09';
 
 
 ;
@@ -17611,5 +17623,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="1f34309310c659edb4250182bc4e0db8dbdfb5b29e7d281db12dc731299b0979";
+const staticReadingVersion="bfab63a301fbfdd32380b945fdc8641a351c77752eeaacc528710a67074e9aa1";
 

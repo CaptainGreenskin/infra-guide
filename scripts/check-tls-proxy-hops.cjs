@@ -106,6 +106,8 @@ for (const datum of [openingResponse.request, openingFront.connection, openingOr
 const source = read(pack + '/' + script);
 assert.match(source, /super\(\).__init__\(\("127\.0\.0\.1", 0\), handler\)/);
 assert.match(source, /request\(proxy\.server_address, edge_context, "a1", "orders\.lab\.test", "\/order"\)/);
+assert.match(source, /\("audit\.lab\.test", "\/order"\): Route\("B", b\.server_address, B_NAME, audit_host\)/);
+assert.match(source, /\("audit\.lab\.test", "\/bad-cert"\): Route\("B", b\.server_address, A_NAME, audit_host\)/);
 
 execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
@@ -144,6 +146,16 @@ const dnsStart = dnsBody.indexOf('<h3 id="native-dns-cache">');
 const dnsEnd = dnsBody.indexOf('<h3 id="subsection-2-o5xitb">', dnsStart);
 assert(dnsStart >= 0 && dnsEnd > dnsStart, 'isolate the later DNS exercise');
 earlier[1] = [title, dnsBody.slice(0, dnsStart) + dnsBody.slice(dnsEnd)];
+const responseAnchor='proxy-502-origin-evidence';
+const diagnosisHref='/article/network-diagnosis/#'+responseAnchor;
+const [proxyTitle,proxyBody]=earlier[5];
+const plainHttp='第 7 节的 <code>proxy_lab.py</code> 则用明文 HTTP 观察连接复用';
+const proxyHandoff=proxyBody.match(/<p>开头的 <code>a1<\/code> 来自另一份[\s\S]*?<\/p>/)?.[0];
+assert(proxyHandoff && proxyBody.includes(plainHttp));
+for(const marker of ['<code>tls_proxy_hops.py</code>','<code>b1</code> 访问 <code>/order</code>',
+ '<code>bad</code> 访问 <code>/bad-cert</code>','两条路由都选后端 B','客户端收到 '+record.responses.at(-1).status,diagnosisHref])
+ assert(proxyHandoff.includes(marker),marker);
+earlier[5]=[proxyTitle,proxyBody.replace(plainHttp,'本章 P/A/B 程序使用明文 HTTP').replace(proxyHandoff,'')];
 assert.deepEqual(earlier, baseline.slice(0, 6));
 assert.equal(sections[6][0], baseline[6][0]);
 assert.equal(retained, baseline[6][1]);
@@ -152,9 +164,10 @@ for (const asset of [
  'labs/tls-proxy-hops/README.md', 'labs/tls-proxy-hops/tls_proxy_hops.py',
  'labs/tls-proxy-hops/validation.json',
 ]) assert(added.includes(asset), asset);
-const responseAnchor='proxy-502-origin-evidence';
 assert(added.includes('/article/network-diagnosis/#'+responseAnchor),'Link to diagnosis from the original TLS lab');
 const tlsPage=read('dist/article/vpc-network/index.html');
+const tlsMechanism=tlsPage.split('id="subsection-6-hfdnxr"')[1]?.split('id="subsection-6-pe1x30"')[0];
+assert(tlsMechanism?.includes(plainHttp) && tlsMechanism.includes(diagnosisHref));
 const firstSection=tlsPage.split('id="section-1"')[1]?.split('</section>')[0];
 assert(firstSection?.includes('id="'+openingAnchor+'"') && firstSection.includes(openingFigure));
 assert.match(firstSection, /href="[^"]*\/article\/vpc-network\/#native-tls-proxy"/);

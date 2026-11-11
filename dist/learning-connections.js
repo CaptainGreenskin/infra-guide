@@ -175,4 +175,4 @@ articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模�
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
 articles.find(a=>a.id==='kubernetes-basics').updated='2026.11.12';
 articles.find(a=>a.id==='autograd-training').updated='2026.11.12';
-for(const id of ['gpu-cluster','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+articles.find(a=>a.id==='moe-routing').updated='2026.11.09';

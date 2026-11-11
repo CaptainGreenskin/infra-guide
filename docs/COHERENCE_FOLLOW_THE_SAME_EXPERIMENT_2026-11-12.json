@@ -1,0 +1,95 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "3e9b0a45a822e3fcb84603870d57b3c47e0c83b5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_BEGINNER_IDENTITY_AND_HANDOFFS_2026-11-12.json": "86666584faac3fe99c52bec7aff5f44d7766b6bac4ccceb70b52e18f0421ced6"
+  },
+  "source_revisions": {
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": "a2b0e9a8c95b84d5cc00764dc577f5e040b5faa98b78984f2349cab735e36a23",
+      "reviewed_sha256": "4b3f1b21ee02c51042ade71ba3fa6355431fb530285dfbc6e948e55a1f61cb55",
+      "scope": "Carry the same K1 through the write-grant and receipt-grant changes before linking to recovery."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "6dcd88b813ae7749a5ca74ba0d0dcb9142b9952050d366d633d907ad478a60b0",
+      "reviewed_sha256": "07ddebb39627bfa5d49786c5a4ea51ba7908bbd38ed02f2e8fbbf71508c57f13",
+      "scope": "Compare the forbidden K1 lookup with the successful but empty response for a separate in-flight operation."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "6f632af71d404ca1a5478e8f7b9bc60cfa688c6494d196a22934aa226377e590",
+      "reviewed_sha256": "bf43a1d45ebc57c9009eb1418c153d2518cd38107189b89017806a5b0320b055",
+      "scope": "Distinguish the three HTTP and TLS examples and follow the original two-hop record to the network diagnosis lesson."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "bdc218f499d62f50e6592bdf0907bebed1a3ef3e520b76b65411773397c79216",
+      "reviewed_sha256": "11bd21d179329a971e0c5aae54145a33b7b0f8f8995271c0f7f640c34c3cd20d",
+      "scope": "Keep the same TinyDecoder update while introducing two CPU workers, and connect applied step accounting to the separate CPU FP16 overflow record."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "62d72d270c8d81264df347b178dfdb85d30a58715fae75a04055e4f1dacf080f",
+      "reviewed_sha256": "0a5799fef337fed9a26df6084eb16ddc4a156b3709336691c1fa0e4b60deb229",
+      "scope": "Let the revised training overview supply its own publication metadata."
+    },
+    "scripts/check-tiny-decoder-handoff.cjs": {
+      "previous_sha256": "ca1b1f3677c03d0ad76e642e32a6c3950d10b05a551e70bf7ecacde1774e0c07",
+      "reviewed_sha256": "37b99d248a296a805f0d085fba4c158af20af5cb468ba3b35711abb6797af91b",
+      "scope": "Check exact worker inputs, weighting and the frozen single-step comparison in the rendered lesson."
+    },
+    "scripts/check-native-amp-window.cjs": {
+      "previous_sha256": "4a9428d1b129746534d58d6c200aea04b6e5c698c4ab2f70e0fd4c4f915a4a49",
+      "reviewed_sha256": "1ba7529f3cbfc4c8da6357449e627de2cc433013fab665f84a6a7d3619263a18",
+      "scope": "Bind applied-step accounting to the native overflow and explicit retry observations."
+    },
+    "scripts/check-agent-boundaries.cjs": {
+      "previous_sha256": "e177eedd59ff36c6ae0c630c048f54e8321b228817ee157e139f8959052c8e1f",
+      "reviewed_sha256": "948137ca0af761ed9a62c60eeb26583d0787188dd57956ba9831702ac3e43b04",
+      "scope": "Bind the forbidden and successful empty lookups to separate operations and verify both lesson links."
+    },
+    "scripts/check-tls-proxy-hops.cjs": {
+      "previous_sha256": "d0e34b0077099c8dd1a78c700cdf920595b64fae33252b2702bf448aca83b6c7",
+      "reviewed_sha256": "6c306c153fd98c4e169b75a5dbaa8978a87a037cc62b4403e2029997656f4d8a",
+      "scope": "Tie the exact network diagnosis link and distinct examples to the source and real TLS observations."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "0b7be39ac8147bbc8d24562edb5621c1486f0fd7cf46b621b878a33b7d92d0cd",
+      "reviewed_sha256": "dff10a69d3597611427878ae90a4d6b2c0180c81f1ede0843a04460408a3630a",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "5cda0911f4f9c9b83e337506f63103c07fb20ce28d7ae20ae8c2cb4595df3b50",
+      "reviewed_sha256": "16fe60ed64db60ab6a7ea744983e3ccd2876cd7f1881b53dc8a5126ae2e4418a",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_FOLLOW_THE_SAME_EXPERIMENT_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3d6a342d3f32163bde5d8acafb03373584ca7961fc15bcdd057572c18e040dda",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "ccaf68b800822621083bf8e9f4b8c60e93742b356015d55ffcdae9328e2964a9",
+      "reviewed_sha256": "3e25876daef1f42a7b468b0e52d90e058b5667716049f98ee672717bc43d8e7e",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "6e6a7de1f43cfa23121b65a6c9699df96b6a40b44df13b3da652de51b9260bfc",
+      "reviewed_sha256": "e172d2ab24781cfd2575881352f61dc4e36ae2242c36e2a75611cc32adb8e18c",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3e9b0a45a822e3fcb84603870d57b3c47e0c83b5",
+    "chapters": 78,
+    "changed_bodies": [
+      "agent-security",
+      "agent-recovery",
+      "vpc-network",
+      "gpu-cluster"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}
