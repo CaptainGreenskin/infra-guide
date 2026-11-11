@@ -235,6 +235,42 @@ with TemporaryDirectory() as directory:
   ])+
   p('第二条路径中，模型按收到的材料引用了 v2。查输入就能定位旧版本由哪一步进入，修复时先检查索引与正文版本复检。第三条路径提前发现缺项，由宿主停下。判断这三条路径时，应分别查看模型响应和宿主决定。')+
   '<p class="practice-links"><a href="/article/agent-retrieval/#native-rag-citation-oracle">回看检索、模型请求与版本检查 →</a> · <a href="/labs/rag-citation-oracle/validation.json">核对三条路径的原始记录 →</a></p>'+
+  '<h3 id="citation-version-check">动手核对引用版本与实际输入</h3>'+
+  p('先从<a href="/labs/rag-citation-oracle/fixture.json">原始资料和更新记录</a>算出当前答案，再从实际发出的模型请求里取出资料清单。分别核对引用是否指向当前版本、是否真的在请求里。旧版回答的金额对、引用也确实发过，但引用已经过期。若模型碰巧填对当前版本，却没有收到这份材料，第二项就会失败。')+
+  fold('展开 Python 核对程序',
+   p('把上面的 <code>validation.json</code> 和 <code>fixture.json</code> 保存到同一个目录。将代码存为 <code>check_citations.py</code>，在该目录执行 <code>python3 check_citations.py</code>。程序只读取两份文件。')+
+   trainingCode('从独立资料重算，再核对模型实际收到和答出的内容','PYTHON',`import json
+from pathlib import Path
+
+def read_json(name):
+    return json.loads(Path(name).read_text(encoding="utf-8"))
+
+fixture = read_json("fixture.json")
+update = fixture["source_update"]
+current = dict(fixture["initial_current"])
+current[update["source_id"]] = update["version"]
+required = set(fixture["required_categories"])
+docs = [row for row in fixture["documents"]
+        if row["tenant"] == fixture["tenant"]
+        and row["category"] in required
+        and current[row["source_id"]] == row["version"]]
+expected_total = sum(row["amount"] for row in docs)
+expected_refs = sorted(row["source_id"] + "/" + row["version"] for row in docs)
+
+for name, run in read_json("validation.json")["cases"].items():
+    exchange = run["model_http"]
+    if exchange is None:
+        assert required - {row["category"] for row in run["supplied"]}
+        print(name, "withheld")
+        continue
+    prompt = exchange["request"]["messages"][1]["content"]
+    sent = json.loads(prompt.split("\\n资料：\\n", 1)[1])
+    sent_refs = {row["reference"] for row in sent}
+    answer = json.loads(exchange["response"]["choices"][0]["message"]["content"])
+    refs = answer["citations"]
+    print(name, answer["total"], answer["total"] == expected_total,
+          sorted(refs) == expected_refs, set(refs) <= sent_refs)`)+
+   p('三列判断依次是金额、当前版本、实际送达。<code>fresh 37 True True True</code> 三项通过。<code>stale-unchecked 37 True False True</code> 只在当前版本这项失败。<code>stale-guarded withheld</code> 表示缺少调整项，宿主没有发模型请求。'))+
   p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
   a.sections[10][1]+
   fold('选读 · 验收 G7 追回的 42 日报',

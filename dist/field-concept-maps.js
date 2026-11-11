@@ -354,6 +354,7 @@ const fieldConceptEvidence={
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
+ 'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
@@ -367,15 +368,20 @@ function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
   .map(([,labId])=>labId).concat(fieldConceptEvidence[moduleId]?.[concept]||[]);
 }
-function fieldPracticeLocation(labId){
+function fieldPracticeLocations(labId){
+ const locations=[];
  for(const [moduleId,[,primary]] of Object.entries(fieldPracticePaths)){
-  if(labId===primary)return '/module/'+moduleId+'/#field-map-practice';
-  if(labId===fieldPracticeFollowups[moduleId]?.[1])return '/module/'+moduleId+'/#field-practice-'+labId;
+  if(labId===primary)locations.push(['/module/'+moduleId+'/#field-map-practice','']);
+  if(labId===fieldPracticeFollowups[moduleId]?.[1])locations.push(['/module/'+moduleId+'/#field-practice-'+labId,'']);
  }
  for(const [moduleId,concepts] of Object.entries(fieldConceptEvidence)){
-  for(const [concept,ids] of Object.entries(concepts))if(ids.includes(labId))return fieldMapURL(moduleId,concept);
+  for(const [concept,ids] of Object.entries(concepts)){
+   if(!ids.includes(labId))continue;
+   const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
+   locations.push([fieldMapURL(moduleId,concept),label]);
+  }
  }
- return '';
+ return locations;
 }
 function fieldPracticeUnitHTML([,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);

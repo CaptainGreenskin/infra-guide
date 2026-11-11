@@ -8616,6 +8616,71 @@
         "两个失败对照：身份改了，或只信本地完成",
         "运行完整实验，再回看最小提交间隙"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c6f8d1784e5f18273713e799ecd3eb69a3701a7516af331319a0950a4d577a8d",
+      "reviewed_content_sha256": "3cbb37675051e95c12d8eb22f11730d66f046acd4eb3be502b0c8f758c669eed",
+      "scope": "Follow the same HTTP request across quota configurations and separate queue wait, work elapsed time, and CPU time.",
+      "observation": "The two 200 responses have the same digest; a 503 rejection has no completed work receipt. Throttling counters describe the whole window.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "5c1fa5c43735598d4ee57418ad4946b88135f5fedf4772e45d35a07ae5d21951",
+      "reviewed_content_sha256": "79a04552047f3cde5744946b96051b0ca318e2a1935522240c3fb4acb5e65bde",
+      "scope": "Take readers directly from the native RAG run to the independent citation verification exercise.",
+      "observation": "Both examples use the same frozen fixture and wire record.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "69ae28454bf06e928b9fa5e32e7c567d801f283f5cb27d11abf4e0872a41601e",
+      "reviewed_content_sha256": "f2b3c6f9bb9a9fc965918ced422441ec58c23141741bcb84408a099415044ff6",
+      "scope": "Reconstruct current sources from the fixture and independently check the exact HTTP model prompt and response.",
+      "observation": "The stored old answer passes amount and supplied-reference checks only. A counterexample quoting the current reference without receiving it fails the supplied check.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
     }
   ]
 }

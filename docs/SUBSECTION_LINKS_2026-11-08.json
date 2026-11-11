@@ -437,13 +437,15 @@
         "native-cpu-quota-http",
         "shard-load-not-average",
         "hpa-capacity-observations",
-        "bounded-queue-downstream-wait"
+        "bounded-queue-downstream-wait",
+        "cpu-quota-request-records"
       ],
       "visible_targets": [
         "shard-load-not-average",
         "hpa-capacity-observations",
         "bounded-queue-downstream-wait",
-        "native-cpu-quota-http"
+        "native-cpu-quota-http",
+        "cpu-quota-request-records"
       ]
     },
     {
@@ -1096,12 +1098,14 @@
         "native-model-mcp-recovery-verdict",
         "memory-delivery-verdict",
         "approval-at-commit-verdict",
-        "delegation-run-comparison"
+        "delegation-run-comparison",
+        "citation-version-check"
       ],
       "visible_targets": [
         "memory-delivery-verdict",
         "delegation-run-comparison",
-        "native-model-evaluation-bridge"
+        "native-model-evaluation-bridge",
+        "citation-version-check"
       ]
     },
     {

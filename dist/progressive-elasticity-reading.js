@@ -143,6 +143,15 @@
    ['服务端限额触发的周期数变化','0','70']
   ])+
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
+  '<h3 id="cpu-quota-request-records">同一个请求，时间花在排队还是执行</h3>'+
+  p('在记录的 <code>report.runs</code> 下，从 <code>wide.arrivals</code> 和 <code>tight.arrivals</code> 各找请求 6。两档都返回 200，回执的计算摘要 <code>digest</code> 相同。客户端用收到响应的时刻减发送时刻得到总耗时。服务端另记任务等到被线程取走用了多久、取走后到算完经过多久，以及线程实际占用 CPU 的时间。')+
+  table(['请求 6 的耗时','1 核 → 0.25 核'],[
+   ['客户端总耗时','40.102 → 777.495 ms'],
+   ['等待工作线程','0.058 → 503.642 ms'],
+   ['工作阶段的墙钟时间','39.110 → 205.647 ms'],
+   ['工作线程的 CPU 时间','39.045 → 54.911 ms']
+  ])+
+  p('窄配额下，工作阶段经过 205.647 ms，实际使用 CPU 54.911 ms，两者相差约 150.736 ms。<code>nr_throttled</code> 增加 70 是整个窗口的读数，无法从中分出请求 6 自己被节流了多久。再看窄档请求 9，它在队列满时收到 503，响应体只有请求编号，没有工作阶段的时长。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
  a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');

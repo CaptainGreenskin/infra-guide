@@ -152,6 +152,8 @@ function checkPage() {
  assert(data.lab.files.includes('rag_lab.py'));
  const goal = vm.runInContext('learningGoalHTML(learningProfiles["agent-app"])', context);
  assert(goal.includes('/article/agent-retrieval/?goal=agent-app#' + anchor), 'Agent application gate is missing');
+ assert(goal.includes('/article/agent-evaluation/?goal=agent-app#citation-version-check'));
+ assert(section.includes('/article/agent-evaluation/#citation-version-check'));
  const metadata = execFileSync('python3', ['-B', '-c', `
 import json, sys, xml.etree.ElementTree as ET
 root = ET.parse(sys.argv[1]).getroot()
@@ -159,6 +161,28 @@ print(json.dumps(json.loads(root.find('{http://www.w3.org/2000/svg}metadata').te
 `, path.join(root, 'dist', 'diagrams', pack + '.svg')], {encoding: 'utf8'});
  assert.deepEqual(JSON.parse(metadata), {record: 'labs/' + pack + '/validation.json', current_adjustment: 'v3',
   model_requests: requestCounts, totals, outcomes});
+}
+
+function checkReaderProgram(record) {
+ const section = read('dist/article/agent-evaluation/index.html').split('id="citation-version-check"')[1];
+ assert(section.includes('/labs/' + pack + '/fixture.json'));
+ const code = section.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+ const temp = fs.mkdtempSync(path.join(os.tmpdir(), pack + '-reader-'));
+ try {
+  fs.copyFileSync(path.join(folder, 'fixture.json'), path.join(temp, 'fixture.json'));
+  const evidence = path.join(temp, 'validation.json');
+  const run = () => execFileSync('python3', ['-B', '-c', code], {cwd: temp, encoding: 'utf8'}).trim().split('\n');
+  fs.writeFileSync(evidence, JSON.stringify(record));
+  assert.deepEqual(run(), ['fresh 37 True True True', 'stale-unchecked 37 True False True', 'stale-guarded withheld']);
+  const altered = JSON.parse(JSON.stringify(record));
+  const message = altered.cases['stale-unchecked'].model_http.response.choices[0].message;
+  message.content = message.content.replace('a-adjust/v2', 'a-adjust/v3');
+  fs.writeFileSync(evidence, JSON.stringify(altered));
+  assert.equal(run()[1], 'stale-unchecked 37 True True False', 'a current reference absent from the request must still fail');
+ } finally {
+  fs.rmSync(temp, {recursive: true, force: true});
+ }
 }
 
 function checkRaw(dir, record, python) {
@@ -189,6 +213,7 @@ const record = json(path.join(folder, 'validation.json'));
 checkEvidence(record);
 checkArchive();
 checkPage();
+checkReaderProgram(record);
 
 const {INFRA_RAG_ORACLE_PYTHON: python, INFRA_RAG_ORACLE_SERVER: server, INFRA_RAG_ORACLE_MODEL: model} = process.env;
 if (python || server || model) {

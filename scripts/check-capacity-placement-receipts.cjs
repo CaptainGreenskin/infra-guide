@@ -104,6 +104,32 @@ const capacityPage=fs.readFileSync('dist/article/elasticity/index.html','utf8');
 assert(capacityPage.split('id="native-cpu-quota-http"')[1]?.split('</section>')[0].includes('/article/slo/#'+sliAnchor));
 const threshold=500_000_000;
 const duration=row=>row.received_ns-row.sent_ns;
+const requestTrace=capacityPage.split('id="cpu-quota-request-records"')[1]?.split('</section>')[0];
+const {wide,tight}=cloud.report.runs;
+const sameRequest=[wide,tight].map(run=>run.arrivals.find(row=>row.id===6));
+assert(sameRequest.every(row=>row.status===200&&row.receipt.id===row.id));
+assert.equal(sameRequest[0].receipt.digest,sameRequest[1].receipt.digest);
+const milliseconds=ns=>(ns/1e6).toFixed(3);
+for(const [label,value] of [
+ ['客户端总耗时',duration],
+ ['等待工作线程',row=>row.receipt.queue_wait_ns],
+ ['工作阶段的墙钟时间',row=>row.receipt.work_wall_ns],
+ ['工作线程的 CPU 时间',row=>row.receipt.work_cpu_ns]
+]){
+ const values=sameRequest.map(row=>milliseconds(value(row))).join(' → ');
+ assert(requestTrace?.includes('<tr><td>'+label+'</td><td>'+values+' ms</td></tr>'),label);
+}
+const [,tightReply]=sameRequest;
+assert(requestTrace.includes('相差约 '+milliseconds(tightReply.receipt.work_wall_ns-tightReply.receipt.work_cpu_ns)+' ms'));
+assert(requestTrace.includes('增加 '+tight.cpu_stat_delta.nr_throttled+' 是整个窗口的读数'));
+const rejected=tight.arrivals.find(row=>row.id===9);
+assert.deepEqual(rejected.receipt,{id:rejected.id});
+assert(requestTrace.includes('窄档请求 '+rejected.id+'，它在队列满时收到 '+rejected.status));
+assert(requestTrace.includes('/labs/cpu-quota-http/validation.json'));
+const capacityField=fs.readFileSync('dist/module/cloud-capacity/index.html','utf8');
+const performance=capacityField.split('id="map-concept-performance-budget"')[1]?.split('</div>')[0];
+assert(performance?.includes('/article/cloud-compute/?fromConcept=cloud-capacity.performance-budget#section-10'));
+assert(performance.includes('/article/elasticity/?fromConcept=cloud-capacity.performance-budget#native-cpu-quota-http'));
 for(const run of Object.values(cloud.report.runs)){
  const responses=run.arrivals.filter(row=>row.status===200);
  const timely=responses.filter(row=>row.receipt.id===row.id&&duration(row)<=threshold).length;

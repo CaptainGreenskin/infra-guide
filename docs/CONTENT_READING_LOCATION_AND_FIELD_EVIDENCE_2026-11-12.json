@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e633932d866f04519fe5f1ebdc720a3383ef3640",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_MYSQL_METAL_AND_AGENT_RESPONSE_2026-11-12.json": "f31ded85c9671989193528b4e2c377de95d76fe5d34f69c24172a7101b9b4c1d"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "tr-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7b44570c2b999656463ab61cc6f473d970e8dbe6ef7130aa5db17ab1f773b901",
+      "reviewed_content_sha256": "c31e29cc99fee9b0deeace17dc9a700186d6f18279c0ead98f3048b9f3a4fa73",
+      "scope": "Carry the field-level recovery explanation into the exact native FSDP/DCP change-of-layout lesson.",
+      "observation": "The saved two-rank model loads in three ranks. The third rank obtains an empty named fragment but owns two bias values and the corresponding Adam state in the execution layout."
+    }
+  ],
+  "revised_teaching_units": []
+}

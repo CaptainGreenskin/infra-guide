@@ -98,6 +98,8 @@ infraKnowledgeDomains.push({module:'training',track:'ai',refs:['v16DDP','v16AMP'
  '多机手册的验收顺序是设备/运行时→名称与网络→会合→小集合通信→短训练→保存/终止/恢复→同工作量性能对照。Kubernetes中再核对Job重试、GPU资源形状、卷与故障成员处理。配额准入、资源实际放置和所有rank协同运行分别留下状态，不以Pod Running代替训练完成。')+
  para('启动器可以替换失败的进程组，恢复点仍由程序读出的检查点决定。<a href="/article/checkpoint-recovery/#native-elastic-restart-step">观察两个新进程怎样重算未提交的第 2 步</a>。',
  '异步保存还要确认后台使用的是哪一步的参数。<a href="/article/checkpoint-recovery/#native-async-dcp-commit">对照写入成功、状态错步与写入失败</a>，再看恢复后下一步是否正确。')+
+ para('换进程数时，先对照两种分片。用同一个六参数线性层和三条样本，两个本机 CPU/Gloo 进程在第 1 次更新后保存，三个新进程用原生 DCP 恢复。第三个进程的具名 <code>weight</code> 和 <code>bias</code> 接收片都是空的，装回训练布局后，它持有两项偏置和对应的 Adam 历史。',
+ '先在 <code>loaded_named_layout</code> 核对空片，再用 <code>loaded_boundary</code> 核对训练分片、已完成更新数和 Adam 步数。两种步数都是 1，继续第 2 次更新后，与两进程连续运行的完整状态最大绝对差约为 1.73×10⁻¹⁸。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">跟进检查点如何装回三个进程 →</a> · <a href="/labs/fsdp-reshard/validation.json">打开原始布局与更新记录 →</a>')+
  knowledgeCheck('换world size恢复，只要权重加载成功就能继续对照原训练吗？','还要重分片optimizer与状态、定义全局batch和学习率、恢复正确的数据进度与随机性。不同框架和保存格式的能力不同，需要专门对照实验。')}
 ]});
 

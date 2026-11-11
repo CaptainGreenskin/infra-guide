@@ -122,9 +122,21 @@ function initReadingComfort(){
   chapters.appendChild(chapterList);directory.appendChild(chapters);
  }
  document.body.appendChild(directory);
- toolbar.querySelector('[data-reader-contents]').addEventListener('click',()=>openModal(directory),{signal});
+ toolbar.querySelector('[data-reader-contents]').addEventListener('click',openDirectory,{signal});
 
- function openModal(dialog){document.body.classList.add('reader-modal-open');dialog.showModal();}
+ function openDirectory(){
+  updateCurrent();
+  document.body.classList.add('reader-modal-open');
+  directory.showModal();
+  const current=directoryNav.querySelector('[aria-current="location"]:not([hidden])');
+  if(!current)return;
+  const item=current.getBoundingClientRect();
+  const header=directory.querySelector('.reader-dialog-head').getBoundingClientRect();
+  if(item.top<header.bottom||item.bottom>directory.getBoundingClientRect().bottom){
+   current.scrollIntoView({behavior:'instant',block:'center'});
+  }
+  current.focus({preventScroll:true});
+ }
  function unlockModal(){if(!document.querySelector('dialog.reader-dialog[open]'))document.body.classList.remove('reader-modal-open');}
  function closeModal(dialog){dialog.close();unlockModal();}
  for(const dialog of [directory]){

@@ -214,4 +214,18 @@ for(const [name,shape] of Object.entries(shapes)){
 assert.deepEqual(record.checkpoint,{files:['.metadata','__0_0.distcp','__1_0.distcp'],tensor_chunks:expectedChunks});
 checkZip('fsdp-reshard',['README.md','fsdp_lab.py','fsdp_reshard.py','validation.json']);
 checkPage('checkpoint-recovery','fsdp-dcp-reshard','fsdp-reshard',['diagrams/fsdp-dcp-reshard.svg']);
+const training=readFileSync('dist/module/training/index.html','utf8');
+const recoveryPoint=training.match(/<section class="knowledge-point" id="knowledge-tr-recovery">([\s\S]*?)<\/section>/)?.[1];
+const thirdRank=record.resume_world3.ranks[2];
+const boundary=thirdRank.loaded_boundary;
+assert(recoveryPoint?.includes('href="/article/checkpoint-recovery/#fsdp-dcp-reshard"'));
+assert(recoveryPoint.includes('href="/labs/fsdp-reshard/validation.json"'));
+assert(recoveryPoint.includes('<code>loaded_named_layout</code>') && recoveryPoint.includes('<code>loaded_boundary</code>'));
+assert.deepEqual(Object.values(thirdRank.loaded_named_layout.model).map(item=>item.local_shape[0]),[0,0]);
+assert.equal(boundary.runtime.parameters.length,2);
+assert(recoveryPoint.includes('接收片都是空的，装回训练布局后，它持有两项偏置'));
+assert.equal(boundary.completed_updates,boundary.runtime.adam.step);
+assert(recoveryPoint.includes(`两种步数都是 ${boundary.completed_updates}`));
+assert.equal(resumeDelta.toExponential(2),'1.73e-18');
+assert(recoveryPoint.includes('1.73×10⁻¹⁸'));
 console.log('PASS: frozen CSI CI provenance, volume identity, durable receipts and reclaim; native DCP 2→3 state and Adam updates independently checked, with exact source ZIPs.');

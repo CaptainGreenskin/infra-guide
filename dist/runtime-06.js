@@ -8179,6 +8179,42 @@ with TemporaryDirectory() as directory:
   ])+
   p('第二条路径中，模型按收到的材料引用了 v2。查输入就能定位旧版本由哪一步进入，修复时先检查索引与正文版本复检。第三条路径提前发现缺项，由宿主停下。判断这三条路径时，应分别查看模型响应和宿主决定。')+
   '<p class="practice-links"><a href="/article/agent-retrieval/#native-rag-citation-oracle">回看检索、模型请求与版本检查 →</a> · <a href="/labs/rag-citation-oracle/validation.json">核对三条路径的原始记录 →</a></p>'+
+  '<h3 id="citation-version-check">动手核对引用版本与实际输入</h3>'+
+  p('先从<a href="/labs/rag-citation-oracle/fixture.json">原始资料和更新记录</a>算出当前答案，再从实际发出的模型请求里取出资料清单。分别核对引用是否指向当前版本、是否真的在请求里。旧版回答的金额对、引用也确实发过，但引用已经过期。若模型碰巧填对当前版本，却没有收到这份材料，第二项就会失败。')+
+  fold('展开 Python 核对程序',
+   p('把上面的 <code>validation.json</code> 和 <code>fixture.json</code> 保存到同一个目录。将代码存为 <code>check_citations.py</code>，在该目录执行 <code>python3 check_citations.py</code>。程序只读取两份文件。')+
+   trainingCode('从独立资料重算，再核对模型实际收到和答出的内容','PYTHON',`import json
+from pathlib import Path
+
+def read_json(name):
+    return json.loads(Path(name).read_text(encoding="utf-8"))
+
+fixture = read_json("fixture.json")
+update = fixture["source_update"]
+current = dict(fixture["initial_current"])
+current[update["source_id"]] = update["version"]
+required = set(fixture["required_categories"])
+docs = [row for row in fixture["documents"]
+        if row["tenant"] == fixture["tenant"]
+        and row["category"] in required
+        and current[row["source_id"]] == row["version"]]
+expected_total = sum(row["amount"] for row in docs)
+expected_refs = sorted(row["source_id"] + "/" + row["version"] for row in docs)
+
+for name, run in read_json("validation.json")["cases"].items():
+    exchange = run["model_http"]
+    if exchange is None:
+        assert required - {row["category"] for row in run["supplied"]}
+        print(name, "withheld")
+        continue
+    prompt = exchange["request"]["messages"][1]["content"]
+    sent = json.loads(prompt.split("\\n资料：\\n", 1)[1])
+    sent_refs = {row["reference"] for row in sent}
+    answer = json.loads(exchange["response"]["choices"][0]["message"]["content"])
+    refs = answer["citations"]
+    print(name, answer["total"], answer["total"] == expected_total,
+          sorted(refs) == expected_refs, set(refs) <= sent_refs)`)+
+   p('三列判断依次是金额、当前版本、实际送达。<code>fresh 37 True True True</code> 三项通过。<code>stale-unchecked 37 True False True</code> 只在当前版本这项失败。<code>stale-guarded withheld</code> 表示缺少调整项，宿主没有发模型请求。'))+
   p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
   a.sections[10][1]+
   fold('选读 · 验收 G7 追回的 42 日报',
@@ -11935,7 +11971,7 @@ python -B target_probe.py check collected/rank-*.json
     errors.append("citation_not_current")
 if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
     errors.append("citation_not_supplied")`)+
-   p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a>')+
+   p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a> · <a href="/article/agent-evaluation/#citation-version-check">直接用两份记录运行引用核对</a>')+
    trainingCode('已有固定引擎和权重时，在解压目录运行','SHELL','python3.12 -B rag_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/rag-citation-oracle.zip" download>下载程序与记录 ↓</a> · <a href="/labs/rag-citation-oracle/README.md">环境与复跑步骤 →</a> · <a href="/labs/rag-citation-oracle/validation.json">原始检索、模型与验收记录 →</a></p>';
   a.updated='2026.11.12';
@@ -13973,6 +14009,15 @@ for stage, source in stages:
    ['服务端限额触发的周期数变化','0','70']
   ])+
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
+  '<h3 id="cpu-quota-request-records">同一个请求，时间花在排队还是执行</h3>'+
+  p('在记录的 <code>report.runs</code> 下，从 <code>wide.arrivals</code> 和 <code>tight.arrivals</code> 各找请求 6。两档都返回 200，回执的计算摘要 <code>digest</code> 相同。客户端用收到响应的时刻减发送时刻得到总耗时。服务端另记任务等到被线程取走用了多久、取走后到算完经过多久，以及线程实际占用 CPU 的时间。')+
+  table(['请求 6 的耗时','1 核 → 0.25 核'],[
+   ['客户端总耗时','40.102 → 777.495 ms'],
+   ['等待工作线程','0.058 → 503.642 ms'],
+   ['工作阶段的墙钟时间','39.110 → 205.647 ms'],
+   ['工作线程的 CPU 时间','39.045 → 54.911 ms']
+  ])+
+  p('窄配额下，工作阶段经过 205.647 ms，实际使用 CPU 54.911 ms，两者相差约 150.736 ms。<code>nr_throttled</code> 增加 70 是整个窗口的读数，无法从中分出请求 6 自己被节流了多久。再看窄档请求 9，它在队列满时收到 503，响应体只有请求编号，没有工作阶段的时长。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
  a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');
@@ -15729,7 +15774,7 @@ const learningProfiles={
     primary:["agent-runtime","native-model-mcp-tool-choice","模型选工具与资源授权"],more:[]},
    {title:"证明回答用了当前资料",
     result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
-    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
+    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
     primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
@@ -16259,6 +16304,7 @@ const fieldConceptEvidence={
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
+ 'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
@@ -16272,15 +16318,20 @@ function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
   .map(([,labId])=>labId).concat(fieldConceptEvidence[moduleId]?.[concept]||[]);
 }
-function fieldPracticeLocation(labId){
+function fieldPracticeLocations(labId){
+ const locations=[];
  for(const [moduleId,[,primary]] of Object.entries(fieldPracticePaths)){
-  if(labId===primary)return '/module/'+moduleId+'/#field-map-practice';
-  if(labId===fieldPracticeFollowups[moduleId]?.[1])return '/module/'+moduleId+'/#field-practice-'+labId;
+  if(labId===primary)locations.push(['/module/'+moduleId+'/#field-map-practice','']);
+  if(labId===fieldPracticeFollowups[moduleId]?.[1])locations.push(['/module/'+moduleId+'/#field-practice-'+labId,'']);
  }
  for(const [moduleId,concepts] of Object.entries(fieldConceptEvidence)){
-  for(const [concept,ids] of Object.entries(concepts))if(ids.includes(labId))return fieldMapURL(moduleId,concept);
+  for(const [concept,ids] of Object.entries(concepts)){
+   if(!ids.includes(labId))continue;
+   const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
+   locations.push([fieldMapURL(moduleId,concept),label]);
+  }
  }
- return '';
+ return locations;
 }
 function fieldPracticeUnitHTML([,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);
@@ -17114,8 +17165,11 @@ function chapterLabLinksHTML(article){
 function labCatalogUnitHTML(unit,index,roleReturn,runHref){
  const pack=labArchiveCatalog[unit.pack],stage={0:'按需先修',1:'基础机制',2:'状态与失败',3:'综合验收'}[unit.stage];
  const order=index===null?'选读':String(index+1).padStart(2,'0'),orderLabel=index===null?'按需先修':'第'+(index+1)+'项';
- const fieldPractice=fieldPracticeLocation(unit.id);
- const fieldReturn=fieldPractice?'<a class="lab-field-practice-return" href="'+fieldPractice+'">'+(fieldPractice.includes('#map-concept-')?'回到概念图 →':'回到图中练习 →')+'</a>':'';
+ const fieldLocations=fieldPracticeLocations(unit.id);
+ const fieldReturn=fieldLocations.map(([href,concept])=>{
+  const label=concept?'回到概念图'+(fieldLocations.length>1?' · '+escapeHTML(concept):''):'回到图中练习';
+  return '<a class="lab-field-practice-return" href="'+href+'">'+label+' →</a>';
+ }).join('');
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
  return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }
@@ -17347,5 +17401,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="c294074aed78f31fbc98c477e4999f7eafd29805d0fba0a875b3264ce735cad9";
+const staticReadingVersion="0b73d06060deec45f029a93d5e48fcc6a51f57102f2dfa33059786d6250f3333";
 
