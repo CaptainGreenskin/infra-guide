@@ -117,6 +117,9 @@ function learningProfileRoute(profile){
  profile.targets.forEach(visit);return result;
 }
 function learningProfilePriority(id,profile){const ids=learningProfileRoute(profile);return profile.targets.includes(id)?'岗位重点':ids.includes(id)?'先修基础':'选学专题';}
+function learningProfileGateChapters(profile){
+ return profile.gateChapters||[...new Set(profile.gate.checks.flatMap(check=>[check.primary,...check.more].map(([id])=>id)))];
+}
 function readingArticleURL(id){const profile=selectedLearningProfile();return articleURL(id)+(profile&&learningProfileRoute(profile).includes(id)?'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):'');}
 function learningGoalSelectorHTML(track){
  const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
@@ -146,7 +149,8 @@ function learningGoalHTML(profile){
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
- if(index<0)return '';
+ if(index<0)return learningProfileGateChapters(profile).includes(a.id)?
+  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span><a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a></nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>')+'</nav>';
 }
@@ -163,30 +167,44 @@ function learningContextHref(href){
  const labTask=/\/labs\/?$/.test(pathname)&&/^#lab-[a-z0-9-]+$/.test(fragment);
  if(!articleId&&!moduleId&&!position&&!labTask)return href;
  const profile=selectedLearningProfile(),explicitGoal=query.has('goal');
+ const currentPath=typeof location==='undefined'?'':location.pathname||'';
+ const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
+ const currentId=currentPath.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
+ const currentGate=profile&&currentId&&learningProfileGateChapters(profile).includes(currentId);
  if(labTask){
   if(explicitGoal||!profile||query.get('track')!==profile.track)return href;
   query.set('goal',Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile));
   return pathname+'?'+query.toString()+fragment;
  }
  if(position){
-  if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1]||!learningProfileRoute(profile).includes(position[2]))return href;
+  if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1])return href;
+  const inRoute=learningProfileRoute(profile).includes(position[2]);
+  if(!inRoute&&!(currentGate&&currentId===position[2]))return href;
   const goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
   query.delete('track');
   const rest=query.toString();
-  return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+'#goal-chapter-'+position[2];
+  return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+(inRoute?'#goal-chapter-'+position[2]:'#goal-gate');
  }
  let changed=false;
+ if(articleId&&articleId===currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
+  query.set('fromConcept',currentParams.get('fromConcept'));
+  if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
+  changed=true;
+ }
  if(moduleId==='practice'){
-  const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
-  const currentId=(typeof location==='undefined'?'':location.pathname||'').match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
   const current=articles.find(a=>a.id===currentId);
   const explicitProfile=explicitGoal?learningProfiles[query.get('goal')]:null;
   const track=query.get('track')||explicitProfile?.track||profile?.track||currentParams.get('track')||(current?chapterReadingContext(current).track:null);
   if(track&&Object.hasOwn(trackDefinitions,track)&&!query.has('track')){query.set('track',track);changed=true;}
   if(!explicitGoal&&profile&&profile.track===track){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
  }else if(!explicitGoal&&profile){
-  const matches=articleId?learningProfileRoute(profile).includes(articleId):modules.some(m=>m.id===moduleId&&m.track===profile.track);
-  if(matches){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
+  const matches=articleId?learningProfileRoute(profile).includes(articleId)||(currentGate&&currentId===articleId):modules.some(m=>m.id===moduleId&&m.track===profile.track);
+  const goal=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+  if(matches){query.set('goal',goal);changed=true;}
+  else if(articleId&&query.has('fromConcept')&&!query.has('returnGoal')){
+   const fromField=query.get('fromConcept').split('.')[0],activeField=currentPath.match(/\/module\/([a-z0-9-]+)\/?$/)?.[1];
+   if(fromField===activeField&&modules.some(m=>m.id===fromField&&m.track===profile.track)){query.set('returnGoal',goal);changed=true;}
+  }
  }
  return changed?pathname+'?'+query.toString()+fragment:href;
 }

@@ -1,0 +1,141 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "9d39e00896f2c98ce7c49044654ced705f0a9d3a",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FIELD_PRACTICE_PAIRS_2026-11-11.json": "6b42871168e9af17d79030095339c44081679de1abc62031f030b98b87cd8364"
+  },
+  "source_revisions": {
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "b50f79717093de15dda3a215e021a6000ac4f358316a4f1cd025ec6c7e64c82f",
+      "reviewed_sha256": "dab95b01020819869220f0d8bd33f15471af0c226d9e1fc22ed1a0b97a6822c9",
+      "scope": "Carry the originating field concept into every related chapter and lab, and embed a chapter-scoped allowlist of valid return destinations."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "bc1c12fcba99871cc03ff9dbec23e995ce619c84d51faaef20a52ef1dc92f73f",
+      "reviewed_sha256": "dec134d8a169d01fe732e7ae9232ba95bdfe1b0d246729a4beb60b8ac329b46b",
+      "scope": "Resolve the allowed concept origin on the article, update the existing return and expose it in the sticky toolbar only for a valid origin."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "969643e3b202a93cb660b0eb906247d889b485b760eaed858b102a290ff70a5c",
+      "reviewed_sha256": "0624c7e72c1b1032961772f464e9293ee799a164c9410eec6abf91db8c4b3088",
+      "scope": "Keep the contextual return reachable in the sticky mobile reading toolbar."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "0a060d366630db9d674559f190bc44aaba614c7e4735ccbbb64eb0f6489deebf",
+      "reviewed_sha256": "6167560d828b2fcb52cc59f3576ff53daa58d1c5c2cdd26e1e427b1ee8f498f7",
+      "scope": "Preserve concept provenance on same-article links and a return-only role for optional field detours. Keep named optional evidence attached to its role gate."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "70ae291998de7496e10fce84d53728e6dff1ff4675e379f142719e99f51cac8f",
+      "reviewed_sha256": "e008e8f2b0df7c5c9fde897bcd536fb923d666ed29b6af399668bb93374276af",
+      "scope": "Return from focused experiments to the exact role row or gate, and register the actual dual-stack trace."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "e1a2d45964958e84a5b20d9874267ab00357817fb34222712f99de5509c43603",
+      "reviewed_sha256": "bc45a9d5730001b5e2ef04bbc73b1409d03ec16adc236e9a9253d50303442389",
+      "scope": "Distinguish a refused IPv6 TCP connection with IPv4 fallback from a request that reaches the IPv6 application but receives no HTTP response."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "ced8edf56f5c09efd9a4919873f9063adb259963f63e7eccc9a44281a5663a99",
+      "reviewed_sha256": "44c96470b3b7f025692109a40b7230d8bfdd71bb9563c2e2cb06dabf37adca5f",
+      "scope": "Keep the light runtime independent of full course bodies while retaining exact role-gate chapter identities."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "9cfbb5d0a82b0941ad2df0bc0b41843270c50653c2cd8de6273e632f358d644f",
+      "reviewed_sha256": "f023e4444249cb3f0b9415dd269bebd384087087120317cf167f57c4b76c5edf",
+      "scope": "Compare light and full role metadata and route behavior."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "8eed5d46c6155846276505a516242abf5f6a70876c0b29d18a2a6460f2b51312",
+      "reviewed_sha256": "7b377d4d9b99e7909c7f0ea4a5ee7f972a7228f58bb35eb44e196f0365963b23",
+      "scope": "Verify all field-sourced concept links and valid return choices alongside previous static fallbacks."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "adeb922eca483118ae7c4c135d5a993a33e495b579fac34a7998ad240366e604",
+      "reviewed_sha256": "36322232ccac84de0cdebe6f16239cd56bad38563049da243ae5217c3acb6c15",
+      "scope": "Verify exact role returns for all role routes and two optional evidence branches."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "856b9f5ebe800e8488ef0f2b10dc8f04ef9e86bc71cd1f9c0d3080a5247f73ce",
+      "reviewed_sha256": "359a30f78fc5559a59d771857724d513d949cdab1278785791c43c78f7622848",
+      "scope": "Verify context-only optional detours, same-article links and the named shared gate return."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "22ef361cc4a35afc076eca7c3f39c3a79596d3419d1fcc938c9f6a71e8dd32d6",
+      "reviewed_sha256": "a282ff8963548ee87d10a58007487545e4f62d507922d2767ed6d90936bd724f",
+      "scope": "Register the dual-stack evidence check."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "0cc3cda3fcdd1a222be0b2cedefad0903ec7ccbb77eb8971d904f25b5bc12f56",
+      "reviewed_sha256": "1c9024d9dde58742580fec00a5037ce315e3a94566a465dc699b92cfc3c2efff",
+      "scope": "Select the independent native verifier for the signed network teaching unit."
+    },
+    "scripts/check-dual-stack-connect.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "66d6b69cb97b6ece81c33fe4b777968c50a8425aa8ec1c7c6944252a1ff4e7ac",
+      "scope": "Independently validate four raw native cases, listener records, mutations and exact ZIP."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "e35d5ca8f6986c832e1c3baf1601749c30df2402e108c1e0d258b2b84233a63a",
+      "reviewed_sha256": "d1296370d75ff1d29bb31f9e1a704a4c15da5bf1846ff0c9510c28f68170c322",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "6ac68d767b8430273172858ef6eed4704088d6793f0481c874d3ca9a0f7f72e0",
+      "reviewed_sha256": "191b26ef47ebc8838e046f6fd942a11400f188e15f121646dd81de747778a864",
+      "scope": "Fingerprint the renderer and edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "365def45f4074ecb7f6cb60e55ef4c714154e134499d3473921c187fd4054340",
+      "reviewed_sha256": "c5df6d386861c6dfc7a9932c077a815db19aad5670f36a636c077413a30982d8",
+      "scope": "Keep the new optional native anchor in the chapter link inventory."
+    },
+    "docs/CONTENT_CONCEPT_RETURN_AND_DUAL_STACK_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6304a0858112d1d678161eb950e14f5a0f93dcb23beb7655d97b1f1caae2b8be",
+      "scope": "Record the one network chapter revision and actual native exercise."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "0d792e0b22ac055bbc74ba11be18607c960ea749d43341e045f41ca0ce0b6672",
+      "reviewed_sha256": "13f331305e4e287f7f3303e794fc291f666cdfd344e934bbb46088c0f3697983",
+      "scope": "Append the verified body review."
+    },
+    "dist/labs/dual-stack-connect.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c0769d8a5299b11a611a16c0c536ed5c9165c359885a5afb443e23a6f651c5e6",
+      "scope": "Bind the exact reproducible archive."
+    },
+    "dist/labs/dual-stack-connect/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2c6a186d2d026c2381ffe08ac699fc017d1ec67119b7d9e21a00b83c988c4898",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "dist/labs/dual-stack-connect/dual_stack_connect.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a11844cab0bd1d9cb15b30117447118f12b57d4866129b25df7c73210ed6fef7",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "dist/labs/dual-stack-connect/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d52f4793671e8607b783a9f21dc579bfb2c981cd85e72de37604bacefc0abdf7",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "847c396fb085de16e567f6f2c01bdd40530edd005c449175ab37029617811c02",
+      "reviewed_sha256": "a0fcd6f15294357a2406918298d2cb38bccc1464615486cf07ec92be1832f3a4",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "9d39e00896f2c98ce7c49044654ced705f0a9d3a",
+    "chapters": 78,
+    "changed_bodies": [
+      "vpc-network"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

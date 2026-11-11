@@ -6224,7 +6224,19 @@ const progressiveAgentSectionTitles={
   p('三次都返回 HTTP 200、订单 O-104、金额 37。只看状态码、订单号和金额，会漏掉 r2 仍在访问 A。已有 TCP 连接的对端在建连时就确定了。若切流后还有旧流量，可以先对照 DNS 答案，再检查实际连接的对端、建立时刻和服务端记录。<a href="/article/vpc-network/#cloud-proxy-run">接着观察入口代理复用与排空后端连接 →</a>',
   'Linux 实跑使用本机回环上的两个 Unbound 实例和两份 HTTP/1.1 服务。脚本用 <code>dig</code> 取得指定解析器的答案，仅在新建连接时使用它。解压后进入 <code>dns-connection-handoff</code>，运行 <code>python3 -B dns_connection_handoff.py --unbound /path/to/unbound --output local-observation.json</code>，按 <code>dns</code>、<code>requests</code>、<code>origins</code> 三组记录核对。')+
   '<p class="practice-links"><a href="/labs/dns-connection-handoff.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dns-connection-handoff/README.md">运行说明 →</a> · <a href="/labs/dns-connection-handoff/validation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43026912329">实验运行记录 ↗</a></p></details>';
- vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+addressMapping);
+ const dualStack='<details class="progressive-detail"><summary>实跑 · IPv6 建连失败和响应超时</summary>'+
+  h('native-dual-stack-connect','双栈连接在哪里回退')+
+  p('新连接可能同时拿到 IPv4 与 IPv6 两个候选地址。这里用本机 curl 的 <code>--resolve</code> 为同一个名称直接提供 <code>::1</code> 和 <code>127.0.0.1</code>，不发 DNS 查询。每组都查订单 O-104，IPv4 服务始终正常，只改变 IPv6 监听状态或客户端的地址选择。')+
+  table(['条件','实际建连过程','客户端结果'],[
+   ['两份服务都能响应','连上 ::1','IPv6 返回 HTTP 200、金额 37'],
+   ['IPv6 没有监听','::1 被拒绝，再连 127.0.0.1','IPv4 返回 HTTP 200、金额 37'],
+   ['IPv6 没有监听，指定 --ipv6','::1 被拒绝','退出码 7，未尝试 IPv4'],
+   ['IPv6 已接收请求，暂不响应','连上 ::1，IPv4 无接入事件','退出码 28，未收到 HTTP 状态']
+  ])+
+  p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。继续读<a href="/article/network-diagnosis/#section-5">一次 curl 请求的分段计时 →</a>。',
+  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，把客户端原始输出中的对端、状态和退出码与两份监听记录对上。发布记录来自 macOS 回环，计时字段用于区分阶段。公网 DNS、链路和浏览器行为要分别验证。')+
+  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">四组原始结果 →</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
+ vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
  vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
@@ -15064,6 +15076,9 @@ function learningProfileRoute(profile){
  profile.targets.forEach(visit);return result;
 }
 function learningProfilePriority(id,profile){const ids=learningProfileRoute(profile);return profile.targets.includes(id)?'岗位重点':ids.includes(id)?'先修基础':'选学专题';}
+function learningProfileGateChapters(profile){
+ return profile.gateChapters||[...new Set(profile.gate.checks.flatMap(check=>[check.primary,...check.more].map(([id])=>id)))];
+}
 function readingArticleURL(id){const profile=selectedLearningProfile();return articleURL(id)+(profile&&learningProfileRoute(profile).includes(id)?'?goal='+Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):'');}
 function learningGoalSelectorHTML(track){
  const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
@@ -15093,7 +15108,8 @@ function learningGoalHTML(profile){
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
- if(index<0)return '';
+ if(index<0)return learningProfileGateChapters(profile).includes(a.id)?
+  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span><a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a></nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>')+'</nav>';
 }
@@ -15110,30 +15126,44 @@ function learningContextHref(href){
  const labTask=/\/labs\/?$/.test(pathname)&&/^#lab-[a-z0-9-]+$/.test(fragment);
  if(!articleId&&!moduleId&&!position&&!labTask)return href;
  const profile=selectedLearningProfile(),explicitGoal=query.has('goal');
+ const currentPath=typeof location==='undefined'?'':location.pathname||'';
+ const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
+ const currentId=currentPath.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
+ const currentGate=profile&&currentId&&learningProfileGateChapters(profile).includes(currentId);
  if(labTask){
   if(explicitGoal||!profile||query.get('track')!==profile.track)return href;
   query.set('goal',Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile));
   return pathname+'?'+query.toString()+fragment;
  }
  if(position){
-  if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1]||!learningProfileRoute(profile).includes(position[2]))return href;
+  if(explicitGoal||profile?.track!==position[1]||query.get('track')!==position[1])return href;
+  const inRoute=learningProfileRoute(profile).includes(position[2]);
+  if(!inRoute&&!(currentGate&&currentId===position[2]))return href;
   const goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
   query.delete('track');
   const rest=query.toString();
-  return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+'#goal-chapter-'+position[2];
+  return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+(inRoute?'#goal-chapter-'+position[2]:'#goal-gate');
  }
  let changed=false;
+ if(articleId&&articleId===currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
+  query.set('fromConcept',currentParams.get('fromConcept'));
+  if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
+  changed=true;
+ }
  if(moduleId==='practice'){
-  const currentParams=new URLSearchParams(typeof location==='undefined'?'':location.search);
-  const currentId=(typeof location==='undefined'?'':location.pathname||'').match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
   const current=articles.find(a=>a.id===currentId);
   const explicitProfile=explicitGoal?learningProfiles[query.get('goal')]:null;
   const track=query.get('track')||explicitProfile?.track||profile?.track||currentParams.get('track')||(current?chapterReadingContext(current).track:null);
   if(track&&Object.hasOwn(trackDefinitions,track)&&!query.has('track')){query.set('track',track);changed=true;}
   if(!explicitGoal&&profile&&profile.track===track){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
  }else if(!explicitGoal&&profile){
-  const matches=articleId?learningProfileRoute(profile).includes(articleId):modules.some(m=>m.id===moduleId&&m.track===profile.track);
-  if(matches){query.set('goal',Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile));changed=true;}
+  const matches=articleId?learningProfileRoute(profile).includes(articleId)||(currentGate&&currentId===articleId):modules.some(m=>m.id===moduleId&&m.track===profile.track);
+  const goal=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+  if(matches){query.set('goal',goal);changed=true;}
+  else if(articleId&&query.has('fromConcept')&&!query.has('returnGoal')){
+   const fromField=query.get('fromConcept').split('.')[0],activeField=currentPath.match(/\/module\/([a-z0-9-]+)\/?$/)?.[1];
+   if(fromField===activeField&&modules.some(m=>m.id===fromField&&m.track===profile.track)){query.set('returnGoal',goal);changed=true;}
+  }
  }
  return changed?pathname+'?'+query.toString()+fragment:href;
 }
@@ -15534,7 +15564,7 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- network:{'dns-discovery':['cloud-dns-connection-handoff']},
+ network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
  'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
@@ -15717,20 +15747,29 @@ function fieldPointRecords(moduleId){
  if(cloud)return cloud.points.map(p=>({id:p[0],title:p[1],lead:p[2],articles:p[4]}));
  return infraKnowledgeDomains.find(d=>d.module===moduleId)?.points||[];
 }
+function fieldConceptRelatedChapters(moduleId,point){
+ const supplements=Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===point.id).map(([chapter])=>chapter);
+ return [...new Set([...(point.articles||[]),...supplements])];
+}
+function fieldConceptArticleHref(href,moduleId,concept){
+ const at=href.indexOf('#'),path=at<0?href:href.slice(0,at),fragment=at<0?'':href.slice(at);
+ return path+'?fromConcept='+moduleId+'.'+concept+fragment;
+}
 function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  const [primary,fragment,label]=fieldConceptSectionTargets[moduleId]?.[concept]||[];
  const ordered=chapterIds.includes(primary)?[primary,...chapterIds.filter(id=>id!==primary)]:chapterIds;
  return ordered.map(id=>{
-  const a=articleById(id),url=articleURL(id),title=trainingEscape(a.title);
+  const a=articleById(id),url=fieldConceptArticleHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
   if(id===primary)return '<a class="field-section-link" href="'+url+'#'+fragment+'" title="'+title+'">'+a.number+' '+trainingEscape(label)+' →</a>';
-  return compact?'<a href="'+url+'" title="'+title+'">'+a.number+' '+trainingEscape(a.title.split(/[：:]/)[0])+' →</a>':readLink(id,a.title);
+  const text=compact?a.number+' '+trainingEscape(a.title.split(/[：:]/)[0]):title;
+  return '<a href="'+url+'" title="'+title+'">'+text+' →</a>';
  }).join('');
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptEvidenceHTML(moduleId,concept){
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
-  return '<li><a href="'+labCatalogRunPath(unit)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
+  return '<li><a href="'+fieldConceptArticleHref(labCatalogRunPath(unit),moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
 }
@@ -15751,7 +15790,7 @@ function fieldConceptMapHTML(moduleId){
  '<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
-  const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
+  const associated=fieldConceptRelatedChapters(moduleId,points.find(p=>p.id===id));
   return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">回到关系图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关正文：</b>'+fieldConceptChapterLinks(moduleId,id,associated,true)+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
@@ -15775,7 +15814,16 @@ function chapterFieldMapLink(a){
  const [moduleId,id]=chapterFieldConcepts(a)[0]||[];
  if(!moduleId)return '';
  const [,label]=fieldConceptMaps[moduleId].nodes.find(node=>node[0]===id);
- return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">概念图 · '+trainingEscape(label)+' →</a>';
+ const chapterLabs=new Set(labLearningCatalog.filter(unit=>unit.chapter===a.id).map(unit=>unit.id));
+ const sources={};
+ for(const [field,graph] of Object.entries(fieldConceptMaps)){
+  for(const point of fieldPointRecords(field)){
+   if(!fieldConceptRelatedChapters(field,point).includes(a.id)&&!fieldConceptLabIds(field,point.id).some(lab=>chapterLabs.has(lab)))continue;
+   const [,name]=graph.nodes.find(node=>node[0]===point.id);
+   sources[field+'.'+point.id]=[fieldMapURL(field,point.id),name,moduleFor(field).track];
+  }
+ }
+ return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'" data-concept-returns="'+trainingEscape(JSON.stringify(sources))+'">概念图 · '+trainingEscape(label)+' →</a>';
 }
 function initFieldConceptMaps(){
  const hash=location.hash||'',fragment=hash.match(/^#map-concept-([a-z0-9-]+)$/)?.[1];
@@ -15847,6 +15895,7 @@ function chapterReadingNav(a){
 const labArchiveCatalog={
  'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
  'dns-connection-handoff':{folder:'dns-connection-handoff',title:'DNS 更新后的 HTTP 旧连接与新连接'},
+ 'dual-stack-connect':{folder:'dual-stack-connect',title:'IPv6 建连、IPv4 回退与 HTTP 响应等待'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
  'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
@@ -15986,6 +16035,7 @@ const labTrackCatalog={
 const labLearningCatalog=[
  {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
  {id:'cloud-dns-connection-handoff',track:'cloud',stage:2,title:'DNS 已返回新地址，旧连接还把请求送给谁',chapter:'vpc-network',anchor:'native-dns-connection-handoff',pack:'dns-connection-handoff',files:['dns_connection_handoff.py'],env:'Python 3.9+ · Unbound · dig · Linux 回环',kind:'实际 DNS 回答与 HTTP/1.1 连接',observe:'等解析器返回新地址，再比较旧连接与新建连接的实际对端，按请求编号和连接编号核对服务端记录。',scope:'两个本机 DNS 进程和两个回环 HTTP 服务，由程序按解析结果选择新连接的地址。'},
+ {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · curl 8.7.1 · macOS 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
  {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
  {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
@@ -16344,9 +16394,16 @@ function renderLabCatalog(){
  const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
  const profile=selectedLearningProfile();
  const role=profile&&(selected==='all'||selected===profile.track)?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
- const returnLink=role?'<a href="/roadmap/'+role+'/#learning-goal">返回'+escapeHTML(profile.label)+'学习路线 →</a>':'<a href="/roadmap/">回到系统学习路线 →</a>';
+ const roleReturn=anchor=>'<a href="/roadmap/'+role+'/#'+anchor+'">返回'+escapeHTML(profile.label)+'学习路线 →</a>';
+ const returnLink=role?roleReturn('learning-goal'):'<a href="/roadmap/">回到系统学习路线 →</a>';
  const nav='<nav class="lab-track-nav" aria-label="选择实验方向">'+[['all','全部'],...Object.entries(labTrackCatalog).map(([id,t])=>[id,t.name])].map(([id,name])=>'<a href="/labs/'+(id==='all'?'':('?track='+id))+'#labs-'+(id==='all'?'all':id)+'"'+(id===selected?' aria-current="page"':'')+'>'+name+' <span>'+labLearningCatalog.filter(u=>id==='all'||u.track===id).length+'</span></a>').join('')+'</nav>';
- const taskReturn=unit=>role&&location.hash==='#lab-'+unit.id?returnLink:'';
+ const taskReturn=unit=>{
+  if(!role||location.hash!=='#lab-'+unit.id)return '';
+  if(learningProfileRoute(profile).includes(unit.chapter))return roleReturn('goal-chapter-'+unit.chapter);
+  const fragment=labCatalogRunPath(unit).split('#')[1];
+  const gateEvidence=profile.gate.checks.some(({primary,more})=>[primary,...more].some(([chapter,anchor])=>chapter===unit.chapter&&anchor===fragment));
+  return roleReturn(gateEvidence?'goal-gate':'learning-goal');
+ };
  const groups=Object.entries(labTrackCatalog).filter(([id])=>selected==='all'||selected===id).map(([id,track])=>{
   const units=labLearningCatalog.filter(u=>u.track===id),optional=units.filter(u=>u.stage===0);
   const prerequisites=optional.length?'<details class="lab-optional"><summary>按需补系统前置：内存、并发、SQL 与缓存</summary><ul class="lab-learning-sequence">'+optional.map(u=>labCatalogUnitHTML(u,null,taskReturn(u))).join('')+'</ul></details>':'';
@@ -16554,5 +16611,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="c019acb131c64b405c8cd386118df5ba253e0ad9e0450644f5c6a02fa08fe66f";
+const staticReadingVersion="c70dc6eaafe5619e87797afe11b0f9dcf2ec182f1113fd65d8714cd9a58e9bb3";
 

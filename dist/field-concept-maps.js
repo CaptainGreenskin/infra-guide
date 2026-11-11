@@ -349,7 +349,7 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- network:{'dns-discovery':['cloud-dns-connection-handoff']},
+ network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
  'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
@@ -532,20 +532,29 @@ function fieldPointRecords(moduleId){
  if(cloud)return cloud.points.map(p=>({id:p[0],title:p[1],lead:p[2],articles:p[4]}));
  return infraKnowledgeDomains.find(d=>d.module===moduleId)?.points||[];
 }
+function fieldConceptRelatedChapters(moduleId,point){
+ const supplements=Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===point.id).map(([chapter])=>chapter);
+ return [...new Set([...(point.articles||[]),...supplements])];
+}
+function fieldConceptArticleHref(href,moduleId,concept){
+ const at=href.indexOf('#'),path=at<0?href:href.slice(0,at),fragment=at<0?'':href.slice(at);
+ return path+'?fromConcept='+moduleId+'.'+concept+fragment;
+}
 function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  const [primary,fragment,label]=fieldConceptSectionTargets[moduleId]?.[concept]||[];
  const ordered=chapterIds.includes(primary)?[primary,...chapterIds.filter(id=>id!==primary)]:chapterIds;
  return ordered.map(id=>{
-  const a=articleById(id),url=articleURL(id),title=trainingEscape(a.title);
+  const a=articleById(id),url=fieldConceptArticleHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
   if(id===primary)return '<a class="field-section-link" href="'+url+'#'+fragment+'" title="'+title+'">'+a.number+' '+trainingEscape(label)+' →</a>';
-  return compact?'<a href="'+url+'" title="'+title+'">'+a.number+' '+trainingEscape(a.title.split(/[：:]/)[0])+' →</a>':readLink(id,a.title);
+  const text=compact?a.number+' '+trainingEscape(a.title.split(/[：:]/)[0]):title;
+  return '<a href="'+url+'" title="'+title+'">'+text+' →</a>';
  }).join('');
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptEvidenceHTML(moduleId,concept){
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
-  return '<li><a href="'+labCatalogRunPath(unit)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
+  return '<li><a href="'+fieldConceptArticleHref(labCatalogRunPath(unit),moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
 }
@@ -566,7 +575,7 @@ function fieldConceptMapHTML(moduleId){
  '<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
-  const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
+  const associated=fieldConceptRelatedChapters(moduleId,points.find(p=>p.id===id));
   return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">回到关系图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关正文：</b>'+fieldConceptChapterLinks(moduleId,id,associated,true)+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
@@ -590,7 +599,16 @@ function chapterFieldMapLink(a){
  const [moduleId,id]=chapterFieldConcepts(a)[0]||[];
  if(!moduleId)return '';
  const [,label]=fieldConceptMaps[moduleId].nodes.find(node=>node[0]===id);
- return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'">概念图 · '+trainingEscape(label)+' →</a>';
+ const chapterLabs=new Set(labLearningCatalog.filter(unit=>unit.chapter===a.id).map(unit=>unit.id));
+ const sources={};
+ for(const [field,graph] of Object.entries(fieldConceptMaps)){
+  for(const point of fieldPointRecords(field)){
+   if(!fieldConceptRelatedChapters(field,point).includes(a.id)&&!fieldConceptLabIds(field,point.id).some(lab=>chapterLabs.has(lab)))continue;
+   const [,name]=graph.nodes.find(node=>node[0]===point.id);
+   sources[field+'.'+point.id]=[fieldMapURL(field,point.id),name,moduleFor(field).track];
+  }
+ }
+ return '<a class="chapter-map-link" href="'+fieldMapURL(moduleId,id)+'" data-concept-returns="'+trainingEscape(JSON.stringify(sources))+'">概念图 · '+trainingEscape(label)+' →</a>';
 }
 function initFieldConceptMaps(){
  const hash=location.hash||'',fragment=hash.match(/^#map-concept-([a-z0-9-]+)$/)?.[1];

@@ -2,6 +2,7 @@
 const labArchiveCatalog={
  'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
  'dns-connection-handoff':{folder:'dns-connection-handoff',title:'DNS 更新后的 HTTP 旧连接与新连接'},
+ 'dual-stack-connect':{folder:'dual-stack-connect',title:'IPv6 建连、IPv4 回退与 HTTP 响应等待'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
  'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
@@ -141,6 +142,7 @@ const labTrackCatalog={
 const labLearningCatalog=[
  {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
  {id:'cloud-dns-connection-handoff',track:'cloud',stage:2,title:'DNS 已返回新地址，旧连接还把请求送给谁',chapter:'vpc-network',anchor:'native-dns-connection-handoff',pack:'dns-connection-handoff',files:['dns_connection_handoff.py'],env:'Python 3.9+ · Unbound · dig · Linux 回环',kind:'实际 DNS 回答与 HTTP/1.1 连接',observe:'等解析器返回新地址，再比较旧连接与新建连接的实际对端，按请求编号和连接编号核对服务端记录。',scope:'两个本机 DNS 进程和两个回环 HTTP 服务，由程序按解析结果选择新连接的地址。'},
+ {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · curl 8.7.1 · macOS 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
  {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
  {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
@@ -499,9 +501,16 @@ function renderLabCatalog(){
  const requested=new URLSearchParams(location.search||'').get('track'),selected=Object.hasOwn(labTrackCatalog,requested)?requested:'all';
  const profile=selectedLearningProfile();
  const role=profile&&(selected==='all'||selected===profile.track)?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
- const returnLink=role?'<a href="/roadmap/'+role+'/#learning-goal">返回'+escapeHTML(profile.label)+'学习路线 →</a>':'<a href="/roadmap/">回到系统学习路线 →</a>';
+ const roleReturn=anchor=>'<a href="/roadmap/'+role+'/#'+anchor+'">返回'+escapeHTML(profile.label)+'学习路线 →</a>';
+ const returnLink=role?roleReturn('learning-goal'):'<a href="/roadmap/">回到系统学习路线 →</a>';
  const nav='<nav class="lab-track-nav" aria-label="选择实验方向">'+[['all','全部'],...Object.entries(labTrackCatalog).map(([id,t])=>[id,t.name])].map(([id,name])=>'<a href="/labs/'+(id==='all'?'':('?track='+id))+'#labs-'+(id==='all'?'all':id)+'"'+(id===selected?' aria-current="page"':'')+'>'+name+' <span>'+labLearningCatalog.filter(u=>id==='all'||u.track===id).length+'</span></a>').join('')+'</nav>';
- const taskReturn=unit=>role&&location.hash==='#lab-'+unit.id?returnLink:'';
+ const taskReturn=unit=>{
+  if(!role||location.hash!=='#lab-'+unit.id)return '';
+  if(learningProfileRoute(profile).includes(unit.chapter))return roleReturn('goal-chapter-'+unit.chapter);
+  const fragment=labCatalogRunPath(unit).split('#')[1];
+  const gateEvidence=profile.gate.checks.some(({primary,more})=>[primary,...more].some(([chapter,anchor])=>chapter===unit.chapter&&anchor===fragment));
+  return roleReturn(gateEvidence?'goal-gate':'learning-goal');
+ };
  const groups=Object.entries(labTrackCatalog).filter(([id])=>selected==='all'||selected===id).map(([id,track])=>{
   const units=labLearningCatalog.filter(u=>u.track===id),optional=units.filter(u=>u.stage===0);
   const prerequisites=optional.length?'<details class="lab-optional"><summary>按需补系统前置：内存、并发、SQL 与缓存</summary><ul class="lab-learning-sequence">'+optional.map(u=>labCatalogUnitHTML(u,null,taskReturn(u))).join('')+'</ul></details>':'';

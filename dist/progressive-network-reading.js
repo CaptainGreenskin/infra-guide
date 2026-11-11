@@ -192,7 +192,19 @@
   p('三次都返回 HTTP 200、订单 O-104、金额 37。只看状态码、订单号和金额，会漏掉 r2 仍在访问 A。已有 TCP 连接的对端在建连时就确定了。若切流后还有旧流量，可以先对照 DNS 答案，再检查实际连接的对端、建立时刻和服务端记录。<a href="/article/vpc-network/#cloud-proxy-run">接着观察入口代理复用与排空后端连接 →</a>',
   'Linux 实跑使用本机回环上的两个 Unbound 实例和两份 HTTP/1.1 服务。脚本用 <code>dig</code> 取得指定解析器的答案，仅在新建连接时使用它。解压后进入 <code>dns-connection-handoff</code>，运行 <code>python3 -B dns_connection_handoff.py --unbound /path/to/unbound --output local-observation.json</code>，按 <code>dns</code>、<code>requests</code>、<code>origins</code> 三组记录核对。')+
   '<p class="practice-links"><a href="/labs/dns-connection-handoff.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dns-connection-handoff/README.md">运行说明 →</a> · <a href="/labs/dns-connection-handoff/validation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43026912329">实验运行记录 ↗</a></p></details>';
- vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+addressMapping);
+ const dualStack='<details class="progressive-detail"><summary>实跑 · IPv6 建连失败和响应超时</summary>'+
+  h('native-dual-stack-connect','双栈连接在哪里回退')+
+  p('新连接可能同时拿到 IPv4 与 IPv6 两个候选地址。这里用本机 curl 的 <code>--resolve</code> 为同一个名称直接提供 <code>::1</code> 和 <code>127.0.0.1</code>，不发 DNS 查询。每组都查订单 O-104，IPv4 服务始终正常，只改变 IPv6 监听状态或客户端的地址选择。')+
+  table(['条件','实际建连过程','客户端结果'],[
+   ['两份服务都能响应','连上 ::1','IPv6 返回 HTTP 200、金额 37'],
+   ['IPv6 没有监听','::1 被拒绝，再连 127.0.0.1','IPv4 返回 HTTP 200、金额 37'],
+   ['IPv6 没有监听，指定 --ipv6','::1 被拒绝','退出码 7，未尝试 IPv4'],
+   ['IPv6 已接收请求，暂不响应','连上 ::1，IPv4 无接入事件','退出码 28，未收到 HTTP 状态']
+  ])+
+  p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。继续读<a href="/article/network-diagnosis/#section-5">一次 curl 请求的分段计时 →</a>。',
+  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，把客户端原始输出中的对端、状态和退出码与两份监听记录对上。发布记录来自 macOS 回环，计时字段用于区分阶段。公网 DNS、链路和浏览器行为要分别验证。')+
+  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">四组原始结果 →</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
+ vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
  vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(

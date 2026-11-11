@@ -6936,6 +6936,23 @@
         "可以载入权重，还需要通过哪些对照",
         "用变体诊断一个外表正常的错误"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "5cd4b31cfd0237b6b4d17d434ecceceb970e7e0f94135ed0840c8c55eea73695",
+      "reviewed_content_sha256": "7a6c0c0c6a68ab2bae227f3ba4dbb2ed568bdd9118743d004750395ce76e7bd1",
+      "scope": "Distinguish a refused IPv6 TCP connection with IPv4 fallback from a request that reaches the IPv6 application but receives no HTTP response.",
+      "observation": "Four macOS loopback curl runs use the same explicit address candidates and reconcile their outputs with actual listener logs. The supplied DNS candidates and environment boundary are stated.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
     }
   ]
 }

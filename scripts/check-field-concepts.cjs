@@ -12,6 +12,15 @@ assert.equal(new Set([...Object.values(d.practice),...Object.values(d.followups)
 const labPage=fs.readFileSync('dist/labs/index.html','utf8');
 const safe=value=>{c.value=value;return vm.runInContext('trainingEscape(value)',c);};
 const copy=value=>value.replace(/\s+/g,'');
+const decode=value=>value.replaceAll('&quot;','"').replaceAll('&#39;',"'").replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&');
+function checkConceptReturn(chapterHTML,moduleId,concept){
+ const attr=chapterHTML.match(/class="chapter-map-link" [^>]*data-concept-returns="([^"]+)"/)?.[1];
+ assert(attr,concept+': related article carries validated return choices');
+ const [,label]=d.maps[moduleId].nodes.find(node=>node[0]===concept);
+ const track=d.modules.find(module=>module.id===moduleId).track;
+ assert.deepEqual(JSON.parse(decode(attr))[moduleId+'.'+concept],['/module/'+moduleId+'/?concept='+concept+'#map-concept-'+concept,label,track]);
+}
+
 function checkPractice(moduleId,points,block,[concept,labId,question,result],answerClass,returnAnchor){
  const unit=d.labs.find(lab=>lab.id===labId),chapter=d.articles.find(a=>a.id===unit?.chapter);
  assert(chapter?.module===moduleId&&points.some(p=>p.id===concept&&p.articles.includes(chapter.id)),labId+': practice follows an existing concept into its own field');
@@ -69,14 +78,16 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
    assert(pointHTML.includes('O=P·V'),id+': show the matrix product unambiguously');
    assert(!pointHTML.includes('data-concept-term="PV"')&&!pointHTML.includes('持久卷'),id+': the attention formula does not contain a storage term');
   }
-  const directHref='/article/'+chapterId+'/#'+fragment;
+  const from='?fromConcept='+moduleId+'.'+id;
+  const directHref='/article/'+chapterId+'/'+from+'#'+fragment;
+  checkConceptReturn(chapterHTML,moduleId,id);
   for(const view of [definition.match(/<p class="field-map-chapters">([\s\S]*?)<\/p>/)?.[1],pointHTML?.match(/<p class="path-links">([\s\S]*?)<\/p>/)?.[1]]){
    assert(view,id+': concept and knowledge both render related chapters');
    const first=view.match(/<a\b([^>]*)>([\s\S]*?)<\/a>/);
    assert(first?.[1].includes('class="field-section-link" href="'+directHref+'"'),id+': exact subsection is the first chapter destination in both places');
    assert(copy(first[2].replace(/<[^>]+>/g,'')).includes(copy(chapter.number+' '+safe(label))),id+': label describes the target');
    assert.equal((view.match(/class="field-section-link"/g)||[]).length,1,id+': a single primary destination');
-   assert(!view.includes('href="/article/'+chapterId+'/"'),id+': avoid a duplicate generic link for the same chapter');
+   assert(!view.includes('href="/article/'+chapterId+'/'+from+'"'),id+': avoid a duplicate generic link for the same chapter');
   }
   sectionLinks++;
   const list=definition.match(/<div class="field-map-labs">([\s\S]*?)<\/div>/)?.[1];
@@ -86,7 +97,9 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
    c.unit=d.labs.find(unit=>unit.id===labId);
    assert(c.unit&&!c.unit.pendingFiles?.length&&c.unit.files.length,id+': practice needs a recorded result');
    assert.equal(d.articles.find(a=>a.id===c.unit.chapter)?.module,moduleId,id+': evidence stays in its field');
-   const destination=vm.runInContext('labCatalogRunPath(unit)',c);
+   const [runPath,runAnchor]=vm.runInContext('labCatalogRunPath(unit)',c).split('#');
+   const destination=runPath+from+(runAnchor?'#'+runAnchor:'');
+   checkConceptReturn(fs.readFileSync('dist'+runPath+'index.html','utf8'),moduleId,id);
    const catalog=vm.runInContext('labCatalogTaskPath(unit)',c);
    assert(list.includes('href="'+destination+'"')&&list.includes('href="'+catalog+'"'),id+': exact chapter and lab handoff');
    if(extra.includes(labId)){
@@ -136,7 +149,7 @@ const routeIds=Object.values(d.routes).flatMap(stages=>stages.flatMap(s=>s[1]));
 assert.equal(vm.runInContext('chapterReadingContext(undefined).track',c),'shared','missing article routes must retain the not-found page without crashing');
 for(const a of d.articles){
  c.a=a;const r=JSON.parse(JSON.stringify(vm.runInContext('chapterReadingContext(a)',c))),refs=JSON.parse(JSON.stringify(vm.runInContext('chapterFieldConcepts(a)',c)));
- assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];const [primary,fragment]=d.targets[moduleId][id],href='/article/'+a.id+'/'+(a.id===primary?'#'+fragment:'');assert(definition?.includes('href="'+href+'"'),a.id+': concept must link back to this chapter');}
+ assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];const [primary,fragment]=d.targets[moduleId][id],href='/article/'+a.id+'/?fromConcept='+moduleId+'.'+id+(a.id===primary?'#'+fragment:'');assert(definition?.includes('href="'+href+'"'),a.id+': concept must link back to this chapter');}
  assert(r.ids.includes(a.id));const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),nav=html.match(/<nav class="article-nav"[\s\S]*?<\/nav>/)[0];
  const capstone=r.ids.find(id=>d.articles.find(a=>a.id===id).module==='practice'),sidebar=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];assert(sidebar.includes('<summary><a href="/article/'+capstone+'/"'),a.id+': practice group must stay in the current route');
  if(r.previous)assert(nav.includes('href="/article/'+r.previous.id+'/"'));if(r.next)assert(nav.includes('href="/article/'+r.next.id+'/"'));

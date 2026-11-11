@@ -103,6 +103,18 @@ for(const base of ['/','/infra-guide/']){
  assert.equal(run(trainingExercise),base+trainingExercise.slice(1),'optional field exercises do not take over the role route');
  c.location.search='?goal=ai-training';
  assert(!vm.runInContext('fieldPracticeHTML("training")',c).includes('岗位选读'),'the training role owns its core exercise');
+ const fieldLink='/article/data-pipeline/?fromConcept=training.tr-input#section-4';
+ assert.equal(run(fieldLink),base+'article/data-pipeline/?fromConcept=training.tr-input&goal=ai-training#section-4');
+ c.location.search='?goal=ai-inference';
+ assert.equal(run(fieldLink),base+'article/data-pipeline/?fromConcept=training.tr-input&returnGoal=ai-inference#section-4','optional lesson preserves a return role without changing its course');
+ assert.equal(run(fieldLink.replace('training.tr-input','agent.ag-runtime')),base+'article/data-pipeline/?fromConcept=agent.ag-runtime#section-4','unrelated field does not inherit the return role');
+ assert.equal(run(fieldLink.replace('#','&goal=#')),base+'article/data-pipeline/?fromConcept=training.tr-input&goal=#section-4','explicit reset still wins');
+ c.location.pathname=base+'article/data-pipeline/';c.location.search='?fromConcept=training.tr-input&returnGoal=ai-inference';
+ assert.equal(run('/article/data-pipeline/#section-5'),base+'article/data-pipeline/?fromConcept=training.tr-input&returnGoal=ai-inference#section-5','same-chapter navigation keeps the source concept');
+ assert.equal(run('/article/checkpoint-recovery/'),base+'article/checkpoint-recovery/','source concept does not propagate to other chapters');
+ c.location.pathname=base+'article/production-readiness/';c.location.search='?goal=agent-app';
+ assert.equal(run('/article/production-readiness/#integrated-service-run'),base+'article/production-readiness/?goal=agent-app#integrated-service-run','explicit shared gate evidence keeps its role within the chapter');
+ assert.equal(run('/roadmap/?track=agent#route-chapter-agent-production-readiness'),base+'roadmap/agent-app/#goal-gate','shared evidence returns to the role gate');
  c.location.pathname=base+'article/tokenization-embedding/';
  c.profileKey='agent-app';
  const applicationRoute=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(learningProfiles[profileKey]))',c));
@@ -138,7 +150,8 @@ for(const base of ['/','/infra-guide/']){
  assert.equal(run(applicationService),base+applicationService.slice(1),'shared experiment keeps the explicit application goal and fragment');
  c.location.pathname=base+servicePath.slice(1);
  c.location.search='?goal=agent-app';
- assert.equal(vm.runInContext('learningGoalChapterNav(articleById("production-readiness"))',c),'','optional visit does not show an application-route position');
+ const sharedNav=vm.runInContext('learningGoalChapterNav(articleById("production-readiness"))',c);
+ assert(sharedNav.includes('aria-label="当前岗位验收"')&&sharedNav.includes('/roadmap/agent-app/#goal-gate')&&!sharedNav.includes(' / '),'optional evidence returns to the gate without displaying a chapter position');
  assert.equal(run('/module/practice/'),base+'module/practice/?track=agent&goal=agent-app','shared experiment keeps its Agent practice context');
  c.location.search='';
  for(const[track,id]of Object.entries({cloud:'cloud-service-lab',ai:'training-lab',agent:'production-readiness'})){

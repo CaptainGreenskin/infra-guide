@@ -7,7 +7,7 @@ const c={document,window:{addEventListener:noop,scrollTo:noop},location:{pathnam
 vm.createContext(c);
 const shell=fs.readFileSync('src/page-shell.html','utf8');
 for(const [,file] of shell.matchAll(/<script defer src="([^"]+)"/g))vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),c,{filename:file});
-const {units,packs,articles}=vm.runInContext('({units:labLearningCatalog,packs:labArchiveCatalog,articles})',c);
+const {units,packs,articles,profiles}=vm.runInContext('({units:labLearningCatalog,packs:labArchiveCatalog,articles,profiles:learningProfiles})',c);
 assert.equal(new Set(units.map(u=>u.id)).size,units.length,'duplicate task anchor');
 assert.deepEqual([...new Set(units.map(u=>u.pack).filter(Boolean))].sort(),Object.keys(packs).sort(),'orphan archive or undefined bundle');
 const localLaunchAt=units.findIndex(u=>u.id==='ai-multinode-local'),physicalLaunchAt=units.findIndex(u=>u.id==='ai-multinode');
@@ -80,9 +80,29 @@ for(const selected of ['','cloud','ai','agent','unknown']){
  }
  assert.equal((sink.innerHTML.match(/aria-current="page"/g)||[]).length,1,'direction selection semantics');
 }
-c.location.search='?track=ai&goal=ai-training';c.location.hash='#lab-ai-ddp-uneven-join';vm.runInContext('labsPage()',c);
-const targeted=sink.innerHTML.match(/id="lab-ai-ddp-uneven-join"[\s\S]*?<li class="lab-learning-unit"/)?.[0];
-assert(targeted?.includes('href="/roadmap/ai-training/#learning-goal"'),'the focused experiment exposes a return to the current role');
+function focusedLabActions(track,goal,id){
+ c.location.search='?track='+track+'&goal='+goal;
+ c.location.hash='#lab-'+id;
+ vm.runInContext('labsPage()',c);
+ const at=sink.innerHTML.indexOf('id="lab-'+id+'"');
+ assert(at>=0,id+': focused experiment is present in the catalog');
+ return sink.innerHTML.slice(at).match(/<div class="lab-unit-actions">([\s\S]*?)<\/div>/)?.[1];
+}
+for(const[goal,profile]of Object.entries(profiles)){
+ c.profileKey=goal;
+ const route=vm.runInContext('learningProfileRoute(learningProfiles[profileKey])',c);
+ const unit=units.find(unit=>unit.track===profile.track&&route.includes(unit.chapter));
+ const actions=focusedLabActions(profile.track,goal,unit.id);
+ assert(actions?.includes('href="/roadmap/'+goal+'/#goal-chapter-'+unit.chapter+'"'),goal+': focused experiment returns to its exact chapter in this role');
+ assert(!actions.includes('href="/roadmap/'+goal+'/#learning-goal"'),goal+': do not send the focused experiment to the overview');
+ const rolePage=fs.readFileSync(path.join(dist,'roadmap',goal,'index.html'),'utf8');
+ assert(rolePage.includes('id="goal-chapter-'+unit.chapter+'"'),goal+': the exact return is an existing static row');
+ assert(sink.innerHTML.match(/<p class="evidence-note lab-catalog-note">[\s\S]*?<\/p>/)?.[0].includes('href="/roadmap/'+goal+'/#learning-goal"'),goal+': the page-level return still opens the role overview');
+}
+const optionalGate=focusedLabActions('agent','agent-app','shared-integrated-service');
+assert(optionalGate?.includes('href="/roadmap/agent-app/#goal-gate"'),'shared gate evidence returns to the handoff when it has no chapter row');
+const optional=focusedLabActions('cloud','cloud-platform','cloud-incident-connection-lease');
+assert(optional?.includes('href="/roadmap/cloud-platform/#learning-goal"'),'other optional labs return to the role overview');
 c.location.search='?track=agent&goal=ai-training';vm.runInContext('labsPage()',c);
 assert(!sink.innerHTML.includes('/roadmap/ai-training/'),'a different direction does not present a mismatched role return');
 const staticPage=fs.readFileSync(path.join(dist,'labs/index.html'),'utf8');

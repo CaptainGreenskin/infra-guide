@@ -2,6 +2,29 @@
 function readingToolbarHTML(){return '<div class="reading-toolbar" role="group" aria-label="阅读工具"><button type="button" data-reader-contents aria-haspopup="dialog">本页目录 <span aria-hidden="true">≡</span></button><div class="reading-display"><button type="button" data-reader-large aria-pressed="false" title="切换大字阅读">大字</button><button type="button" data-reader-focus aria-pressed="false">专注阅读</button></div></div>';}
 
 let comfortAbort;
+function initReadingConceptReturn(article,toolbar){
+ const params=new URLSearchParams(location.search);
+ const source=params.get('fromConcept');
+ if(!source||!toolbar)return;
+ const footer=article.querySelector('.chapter-map-link[data-concept-returns]');
+ if(!footer)return;
+ const choices=JSON.parse(footer.dataset.conceptReturns);
+ if(!Object.hasOwn(choices,source))return;
+ const [path,label,track]=choices[source],role=params.get('returnGoal');
+ const [before,fragment]=path.split('#');
+ const href=readerInternalHref(before+(!params.has('goal')&&learningProfiles[role]?.track===track?'&goal='+role:'')+'#'+fragment);
+ footer.setAttribute('href',href);
+ footer.textContent='返回概念图 · '+label+' →';
+ let shortcut=toolbar.querySelector('.reader-concept-return');
+ if(!shortcut){
+  shortcut=document.createElement('a');
+  shortcut.className='reader-concept-return';
+  shortcut.textContent='返回概念图';
+  toolbar.querySelector('.reading-display').before(shortcut);
+ }
+ shortcut.setAttribute('href',href);
+ shortcut.setAttribute('aria-label','返回概念图 · '+label);
+}
 function initReadingComfort(){
  if(typeof document.createElement!=='function')return; // Static rendering has no browser DOM.
  comfortAbort?.abort();
@@ -18,6 +41,7 @@ function initReadingComfort(){
  // The sticky toolbar replaces the repeated inline mobile contents only when it works.
  root.classList.add('reading-controls-ready');
  const toolbar=article.querySelector('.reading-toolbar');
+ initReadingConceptReturn(article,toolbar);
  const buttons={large:toolbar.querySelector('[data-reader-large]'),focus:toolbar.querySelector('[data-reader-focus]')};
  function sync(){
   buttons.large.setAttribute('aria-pressed',root.classList.contains('reading-large'));

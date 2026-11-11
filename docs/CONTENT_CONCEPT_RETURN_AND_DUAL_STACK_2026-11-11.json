@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "9d39e00896f2c98ce7c49044654ced705f0a9d3a",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_FIELD_SECTION_LINKS_2026-11-11.json": "a142f6e783cbb974f7d931f7f717be2f3c2cb17e8d48ae33f8b693cc0f585bd2"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "scope": "Distinguish a refused IPv6 TCP connection with IPv4 fallback from a request that reaches the IPv6 application but receives no HTTP response.",
+      "observation": "Four macOS loopback curl runs use the same explicit address candidates and reconcile their outputs with actual listener logs. The supplied DNS candidates and environment boundary are stated.",
+      "reviewed_content_sha256": "7a6c0c0c6a68ab2bae227f3ba4dbb2ed568bdd9118743d004750395ce76e7bd1",
+      "record": "dist/labs/dual-stack-connect/validation.json"
+    }
+  ]
+}

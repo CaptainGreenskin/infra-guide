@@ -103,7 +103,8 @@ const nativeRecordChecks = {
  'dist/labs/async-dcp-commit/validation.json':'./check-async-dcp-commit.cjs',
  'dist/labs/dns-connection-handoff/validation.json':'./check-dns-connection-handoff.cjs',
  'dist/labs/tiny-decoder-handoff/validation.json':'./check-tiny-decoder-handoff.cjs',
- 'dist/labs/tiny-decoder-forward/validation.json':'./check-tiny-decoder-forward.cjs'
+ 'dist/labs/tiny-decoder-forward/validation.json':'./check-tiny-decoder-forward.cjs',
+ 'dist/labs/dual-stack-connect/validation.json':'./check-dual-stack-connect.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);
