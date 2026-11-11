@@ -125,6 +125,12 @@
   ])+
   p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
   p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
+ a.sections[4][1]+=
+  '<h3 id="bounded-queue-downstream-wait">入口都只排一项，额外的任务在哪里等</h3>'+
+  p('实验限制入口只排 1 项，下游同时只接 1 项。先让 A 占住下游，再按顺序提交 B、C、D。两轮都在 A 归还之前读快照，只把可用的工作线程数从 1 调到 2。')+
+  '<ul><li>1 个线程：A 占着下游，B 留在入口，C、D 到达时被拒绝。</li><li>2 个线程：A 仍占着下游，第二个线程取走 B。B 等下游位置，C 进了入口，D 到达时被拒绝。</li></ul>'+
+  p('两轮的 <code>queue_depth</code> 都是 1。第二轮的 <code>waiting_for_downstream</code> 多了 B，已受理未完成的任务从 2 项变成 3 项。排查实际服务时，按任务 ID 记录入队、取走、借到连接和归还的时刻，区分入口排队、借连接等待和连接持有时间。再用可比的输入窗口核对按时完成量。')+
+  '<p class="practice-links"><a href="/labs/bounded-worker-queue/validation.json">查看四个任务的原始快照 →</a> · <a href="/article/concurrency-pools/#bounded-worker-queue">查看线程怎样取走 B 并复跑实验 →</a></p>';
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+

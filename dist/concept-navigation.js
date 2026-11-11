@@ -138,10 +138,13 @@ function chapterSectionBody(article,index,html){
 function chapterReadingContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
  const topics=chapterContentsHTML(article,navigation,url);
  const concept=conceptTOCLink(url,optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
+ const link=(id,label)=>'<a data-toc="'+id+'" href="'+url+'#'+id+'">'+label+'</a>';
  const practice=labLearningCatalog.some(unit=>unit.chapter===article.id)
-  ?'<a data-toc="chapter-experiments" href="'+url+'#chapter-experiments">本章实战与验收</a>'
+  ?link('chapter-experiments','本章实战与验收')
   :'';
- return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice;
+ const transfer=article.exercise?link('transfer-practice','迁移练习'):'';
+ return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice+transfer+
+  link('self-check','自我检验')+link('references','参考资料');
 }
 
 // These standalone chapters define their objects in authored prose. Do not

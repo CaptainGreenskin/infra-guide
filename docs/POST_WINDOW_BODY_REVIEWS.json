@@ -8231,6 +8231,118 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "concurrency-pools",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9bea56fbb23e30fa4a3d31b280040ddbde12b6b631b19e3c58f931be95b8dbb9",
+      "reviewed_content_sha256": "265b67673778f75e1301a6eb7093b116b1d75b1f76634a2766a20ff0c4176178",
+      "scope": "Carry the observed downstream permit and same-task timestamps from the original worker experiment into overload diagnosis.",
+      "observation": "The application opens the exact capacity subsection without losing the source experiment or its original archive.",
+      "headings": [
+        "八份订单同时到达，忙的是谁",
+        "读、改、写三个动作构成一次竞态",
+        "什么该在锁内，什么应该移到锁外",
+        "从数据库占用时间算出线程池之外的瓶颈",
+        "排队、取消和背压如何形成一套协议",
+        "一次不会随机碰运气的竞态实验",
+        "让指标对应到位置，再做一次受控调整",
+        "验收：从三张队列里找出该改的那一张",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7131755a1ffaae4cdfb6f908f5cc74ecc0e9664879ba5a638567b91ff1c98551",
+      "reviewed_content_sha256": "c6f8d1784e5f18273713e799ecd3eb69a3701a7516af331319a0950a4d577a8d",
+      "scope": "Distinguish queue depth, admitted work and downstream waiting in the original two native runs.",
+      "observation": "With one more worker, B moves downstream, C is admitted and entry depth stays one while unfinished work rises from two to three.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c80a2a785c13f0a8818106ce87f8136ae7dd76babb3b175cb6feb2d6d88cd970",
+      "reviewed_content_sha256": "803558118fe4682a94b6c1643bd82237aa897c8247181eb241a34fa714e7146d",
+      "scope": "Carry the exact emitted and not-yet-cached token into a cross-process cache restore.",
+      "observation": "A reader can follow the same model prompt and first newly processed position across the two chapter surfaces.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3176f2aa0bf4fd062867f2c08abedeeb5035d90aff3cf46f6d50d4771ba4b038",
+      "reviewed_content_sha256": "52c193b96b37d4d7c332b77f922387867c436b4259fff5dafb994cea0fc725d6",
+      "scope": "Explain both successful and failed native restore with HTTP replies, cache metadata and real execution batches.",
+      "observation": "Successful import reuses four positions. A damaged import reports 400, clears old history and forces five prompt positions to be recomputed.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "bcee882a70bacba28ed284016ad667c27a3c17b0527afb28f0f04320f15f090d",
+      "reviewed_content_sha256": "f32de34a1617abcc313ee86d0e2a987f93096cb475e0ed2eabe9f15ff08f93c9",
+      "scope": "Let the reader independently reconstruct the response-missing recovery verdict from the original host and receiver states.",
+      "observation": "The follow-up uses the original operation and its draft digest rather than a second write.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "0b230bd1cd6ee6cdf2e9f351cb790373f270c4c5b452c7f29be5f183e7f95e74",
+      "reviewed_content_sha256": "82ef327493a4458426a5fc7ead88b1758291b1fe0e0eebf904d2760f71e143d7",
+      "scope": "Add a runnable check of the original operation key, receipt digest and single receiver effect after an interrupted reply.",
+      "observation": "The published code prints lookup_receipt 1 DONE and rejects a record whose receipt draft digest changes.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
     }
   ]
 }

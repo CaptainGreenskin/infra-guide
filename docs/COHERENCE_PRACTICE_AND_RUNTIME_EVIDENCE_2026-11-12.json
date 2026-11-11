@@ -1,0 +1,134 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "fb0d1dae6b6e41ada061eeb8d64d8b481859e20d",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ADMISSION_AND_RESUME_2026-11-12.json": "9abcbaaeb88d72cbc5a87d8a31501fa2405f08be25007c647ec010a4a9383e59"
+  },
+  "source_revisions": {
+    "dist/progressive-prerequisites-reading.js": {
+      "previous_sha256": "8c73ff8e2d12a3697c4341723e91eb3f43485402c18c0f20d0837c164c0dddc1",
+      "reviewed_sha256": "95da5e9c2acccebd0d1c56a1525debee0e6ba6e50ba5cb3deef54ca72ba93934",
+      "scope": "Carry the observed downstream permit and same-task timestamps from the original worker experiment into overload diagnosis."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "ff0c48c7c02748ffc955d3ac93522a8239fa9bcfcdd05edd3f10bbe1e5ef3f75",
+      "reviewed_sha256": "935bcd170b451d48557f1b50514276bbc1fd97f6a6e5cc24196a12e91181abb7",
+      "scope": "Distinguish queue depth, admitted work and downstream waiting in the original two native runs."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "c87a5ba40613f5c69fe483e33a6a14e4801f07958b4ee0f5833fedfc385194c4",
+      "reviewed_sha256": "fbaba0eed2675b26e20dd19c03ea1a1ad2b217d7532c3cec4d7580546c038be0",
+      "scope": "Explain both successful and failed native restore with HTTP replies, cache metadata and real execution batches."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "b50a601c539a8afa2551949fd4e97fd606008da670399e9653e2f7f749a2ac52",
+      "reviewed_sha256": "6e55b519b630c42bad9fde7cfb19d469b8c35bdf80333f7630ecdf3710d4f361",
+      "scope": "Add a runnable check of the original operation key, receipt digest and single receiver effect after an interrupted reply."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "877746f7e10b7cb7187629d7f518f9cc0f197d7f11184dd84531c73ffc2a50f0",
+      "reviewed_sha256": "de4a47f538a227f43f0b1ef7727be97ca5dd36756188d839f8ed9705036336b8",
+      "scope": "Let the reader independently reconstruct the response-missing recovery verdict from the original host and receiver states."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "7eeb79d36f09a9f5fba97d2b00d5dcddba79558e88802dc9d07a23a6d772f53f",
+      "reviewed_sha256": "8b247638878824f5041b2621ac62faa0c122878e551edf1510e11a70d00524d9",
+      "scope": "Give Cloud SRE and Agent platform readers exact places to verify the underlying experiment."
+    },
+    "dist/app.js": {
+      "previous_sha256": "3862a6a59d686edd25e7e0ffebc79760f60a988a09fe2d7e1ea399652841c4b0",
+      "reviewed_sha256": "8d703db8f442fc8d90f87788a3fe8a5ddfa1f8780e02dc13a97e5965891af45a",
+      "scope": "Consume the single shared reading outline in the desktop sidebar."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "f5dce7ca7fad63d3f946eddf716cb7bd6092bbb1af666b1b84ba77eeaccf9e55",
+      "reviewed_sha256": "8f6855ef8141155399404cdfba64c141e9a5ea94cb529880e2b5d58e7602e9d5",
+      "scope": "Include the actionable exercises and reference links in the shared article outline."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "a22d4d0d05131097472412942a302cb1c6df11ba5b8cd8f3493592398ba9fb60",
+      "reviewed_sha256": "b3db0c6219cd067c0368591215b8c395f4ec072ae82db34ad466314d069debac",
+      "scope": "Preserve readable titles in the compact outline."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "370002020c2bfd1fe129185e2f8f59ac38a91624f280e11cdd0fe931ec283eb5",
+      "reviewed_sha256": "fcdabe9cb00a8d23549b5c6549ee24313dc4bf4340bcd0560ccf593156bf9f20",
+      "scope": "Make practice and reference destinations focusable through native hash links."
+    },
+    "scripts/check-model-mcp-recovery.cjs": {
+      "previous_sha256": "3cfbf061e5a1be3ea4b4f753ce37bd567f29869c2fed66e3d7139ab7a79d6348",
+      "reviewed_sha256": "cad130101a6004e570266aadd71417b267f0b258601440191f96b3deb390aa6a",
+      "scope": "Run the exact Python example exposed by the final HTML and check rejection of a different draft digest."
+    },
+    "scripts/check-native-slot-handoff.cjs": {
+      "previous_sha256": "e8d8d27c62686e496ad55c0ea3a69bf09ffd3384022ba70085db17b169aef568",
+      "reviewed_sha256": "e84543f533afbf7d78384ef6b32a068234bcc0f1c699cd11bdef98065fc83b84",
+      "scope": "Recompute the displayed restore and next input observations from the independent native engine traces."
+    },
+    "scripts/check-bounded-worker-queue.cjs": {
+      "previous_sha256": "3a0cc185a16efbcdb688844ad6a4355fb82c1fb936456f95b06f370bdcb2714c",
+      "reviewed_sha256": "e45e46e5dffc9259f961b23ca262d9f92dc399f7962d7ea9db778c3525bdf02e",
+      "scope": "Bind visible queue and waiting differences to task IDs and the independent experiment."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "f1960e2ce5aad38a34bbfe0b891e668b76aa6b05cea45bbf81108f5f4e129864",
+      "reviewed_sha256": "1ccef78fed6770fbcaf6544379783c04c17f01b1eca568e2b118073bebe87657",
+      "scope": "Confirm the new practice routes maintain the selected role."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "347487ccb7ad00c97bb5d7155c33ccc6e79d2b744995557e5d5cacef611ef6f7",
+      "reviewed_sha256": "0068db86a5c037dacca9e9613c15661311e896a6dbd3a15973df6c5ed7dade33",
+      "scope": "Verify the unified outline and unique practice targets."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "462db9b93441143c85ffd6d9c7f73aff707733e286c347cb8744924e13fca5c7",
+      "reviewed_sha256": "8d926df07b1493949f2ddcd27fa1c45761ecfd9a4db7d48df52a3f24865b1088",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "3b4d0e752edad879883a3f091409e03e2e757ce0f082795d79cf04fc832aa045",
+      "reviewed_sha256": "6f913ebfe96c5402a20a1d99deb8c75f179ab3986cb7801c4196dd51be1ad106",
+      "scope": "Fingerprint the edited lessons and public reader navigation."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "adb6201671443dd9045c128754330316765d6f9aefcdfe7529d988e33ecf6491",
+      "reviewed_sha256": "976ff0ed8e88878179f83b46ba85a8206b3908717f6942c652c9a3e71f184766",
+      "scope": "Record two exact new subsections."
+    },
+    "docs/CONTENT_PRACTICE_AND_RUNTIME_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8ac7ac2726686d0bcf4067ed08cdb50e90560e1c0c02343a735e74950e23e6eb",
+      "scope": "Record updated lessons across all three tracks."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "8786d20cb5b0545f51e79deea07b553fe397adeace2844099bdc93c2a3129233",
+      "reviewed_sha256": "ba620682bd74e3fc8c8f19b9a28751413b132e0f05bdd842675004c49326cae6",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "a3a6ee6f111cb005fc4f945ccc7508c4b8e04f8d3dc264736f9c22d048b7f45d",
+      "reviewed_sha256": "a713b4bd628694b8707ebd90989f053f57fa3a295fdca6ef1e15d3ae4d598869",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "fb0d1dae6b6e41ada061eeb8d64d8b481859e20d",
+    "chapters": 78,
+    "changed_bodies": [
+      "concurrency-pools",
+      "elasticity",
+      "model-serving",
+      "inference-performance",
+      "durable-workflows",
+      "agent-recovery"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "agent-recovery": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

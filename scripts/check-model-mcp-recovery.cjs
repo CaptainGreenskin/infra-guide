@@ -146,6 +146,31 @@ const recordFile = path.join(lab, 'validation.json');
 assert(!/\/(?:Users|private|var\/folders|tmp)\//.test(fs.readFileSync(recordFile, 'utf8')));
 const published = read(recordFile);
 check(published);
+const lessonPath = path.join(root, 'dist/article/agent-recovery/index.html');
+const lessonAnchor = 'recovery-lookup-after-commit';
+const lesson = fs.readFileSync(lessonPath, 'utf8').split('id="' + lessonAnchor + '"')[1]?.split('</section>')[0];
+assert(lesson?.includes('/article/durable-workflows/#native-model-mcp-recovery'));
+assert(lesson.includes('/labs/model-mcp-recovery/validation.json'));
+const workflow = fs.readFileSync(path.join(root, 'dist/article/durable-workflows/index.html'), 'utf8');
+assert(workflow.split('id="native-model-mcp-recovery"')[1]?.includes('/article/agent-recovery/#' + lessonAnchor));
+const renderedCode = lesson.match(/<pre\b[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(renderedCode, 'The beginner exercise must be available in the published lesson');
+const htmlEntities = {'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'",'&#x27;':"'"};
+const exercise = renderedCode.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, entity => htmlEntities[entity]);
+const runExercise = file => execFileSync('python3', ['-B', '-', file], {
+ input: exercise, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 10000
+});
+assert.equal(runExercise(recordFile).trim(), 'lookup_receipt 1 DONE');
+const exerciseTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'model-mcp-reading-'));
+try {
+ const altered = structuredClone(published);
+ altered.recovery.after.receipt.draft_sha256 = '0'.repeat(64);
+ const file = path.join(exerciseTmp, 'wrong-draft.json');
+ fs.writeFileSync(file, JSON.stringify(altered));
+ assert.throws(() => runExercise(file), error => error.status === 1 && error.stderr.includes('AssertionError'));
+} finally {
+ fs.rmSync(exerciseTmp, {recursive: true, force: true});
+}
 const figure = fs.readFileSync(path.join(root, 'dist/diagrams/model-mcp-recovery.svg'), 'utf8');
 assert.deepEqual(JSON.parse(figure.match(/<metadata>([^<]+)<\/metadata>/)[1]), {
  record: 'labs/model-mcp-recovery/validation.json',

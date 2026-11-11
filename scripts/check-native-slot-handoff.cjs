@@ -189,7 +189,24 @@ if (!process.argv.includes('--record-only')) {
  for (const target of ['diagrams/' + pack + '.svg', 'labs/' + pack + '.zip', 'labs/' + pack + '/validation.json']) {
   assert(subsection.includes(target), target);
  }
+ const {source, destination} = report.run;
+ const warm = destination.warm.response.body, cold = destination.cold.response.body;
+ const restored = destination.restore.body.n_restored;
+ for (const field of [`n_restored=${restored}`, '快照没有 <code>n_prompt_tokens</code> 字段',
+  `timings.cache_n=${warm.timings.cache_n}`, `timings.prompt_n=${warm.timings.prompt_n}`,
+  `HTTP ${destination.bad_restore.status}`, `从 ${positionCount(destination.before_bad_restore)} 变为 ${positionCount(destination.after_bad_restore)}`,
+  `timings.cache_n=${cold.timings.cache_n}`, `timings.prompt_n=${cold.timings.prompt_n}`,
+  `<code>tokens_cached</code> 都是 ${cold.tokens_cached}`]) {
+  assert(subsection.includes(field), field);
+ }
  const articleLink = '/article/inference-performance/#' + pack;
+ const serving = page('article/model-serving');
+ const flow = serving.slice(serving.indexOf('<h3 id="native-inference-request-path">'), serving.indexOf('<h3 id="request-version-binding">'));
+ const output = source.completion.response.body.tokens[0];
+ assert(flow.includes(`${JSON.stringify(source.completion.request.prompt)} 后输出 ${output}`));
+ assert(flow.includes(`${JSON.stringify(destination.warm.request.prompt)} 发起新请求`));
+ assert(flow.includes(`第一个新算位置是 ${restored}，送入的是词元 ${output}`));
+ assert(flow.includes(articleLink), 'request lifecycle links to the same cache handoff');
  const point = page('module/platform').match(/<section class="knowledge-point" id="knowledge-sv-prefill">([\s\S]*?)<\/section>/)?.[1];
  assert(point?.includes(articleLink), 'domain point');
  const catalog = page('labs').match(/<li class="lab-learning-unit" id="lab-ai-native-slot-handoff">([\s\S]*?)<\/li>/)?.[1];

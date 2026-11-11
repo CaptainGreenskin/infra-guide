@@ -280,6 +280,31 @@
     ['<code>receiver.receipts[0]</code>','接收库里的回执与刚收到的回执逐字段相同，<code>receiver.reports</code> 里有一份报告。'],
     ['<code>checkpoint.values</code> 与 <code>checkpoint.next</code>','检查点只保存了 <code>intent</code>，没有 <code>receipt</code>，下一步仍是 <code>["publish"]</code>。']
    ])+
-   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>');
+   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>')+
+   h('recovery-lookup-after-commit','本地回执为空，怎么确认发布已经发生')+
+   p('上面的进程收到回执后才退出。<a href="/article/durable-workflows/#native-model-mcp-recovery">另一份本机 MCP 实验</a>把退出点提前到接收方提交后、发送响应前。打开<a href="/labs/model-mcp-recovery/validation.json">原始记录</a>的 <code>cut</code>。任务库还在等待确认，回执为空。接收库已经有一份 42 的报告和一份回执。')+
+   p('把下面的代码存成 <code>check_gap.py</code>，在原始记录旁运行 <code>python3 check_gap.py validation.json</code>。先查新进程发出的工具名，再核对查询、原任务和回执里的操作号。草稿摘要相同，接收库前后相同，才把这次查询算作对原发布的确认。')+
+   trainingCode('从原始记录核对一次只读恢复','PYTHON',`import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as file:
+    record = json.load(file)
+
+cut = record["cut"]
+recovery = record["recovery"]
+query = recovery["wire"]["request"]["params"]
+receipt = recovery["after"]["receipt"]
+
+assert cut["host"]["receipt"] is None
+assert query["name"] == "lookup_receipt"
+assert query["arguments"]["operation_id"] == cut["host"]["operation_id"]
+assert receipt["operation_id"] == cut["host"]["operation_id"]
+assert receipt["draft_sha256"] == cut["host"]["draft_sha256"]
+assert len(cut["receiver"]["reports"]) == 1
+assert record["receiver_final"] == cut["receiver"]
+
+print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"])`)+
+   p('这次输出 <code>lookup_receipt 1 DONE</code>。换成相同金额但不同草稿摘要，核对会停在摘要那一行。遇到查询失败时先保留待确认状态，避免用新的操作号再写一次。');
+  a.updated='2026.11.12';
  }
 })();

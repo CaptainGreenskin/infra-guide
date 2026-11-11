@@ -149,6 +149,26 @@ for (const token of [
 ]) {
   assert(chapter.includes(token), token);
 }
+const capacityAnchor = 'bounded-queue-downstream-wait';
+const capacity = readFileSync(path.join(root, 'dist/article/elasticity/index.html'), 'utf8')
+  .split('id="' + capacityAnchor + '"')[1]?.split('</section>')[0];
+const renderedExperiment = readFileSync(path.join(root, 'dist/article/concurrency-pools/index.html'), 'utf8')
+  .split('id="bounded-worker-queue"')[1]?.split('</section>')[0];
+assert(renderedExperiment?.includes('/article/elasticity/#' + capacityAnchor));
+assert(capacity?.includes('/article/concurrency-pools/#bounded-worker-queue'));
+assert(capacity.includes('/labs/' + name + '/validation.json'));
+const first = frozen.cases.workers_1.snapshot;
+const second = frozen.cases.workers_2.snapshot;
+const unfinished = state => state.queued.length + state.waiting_for_downstream.length + state.holding_downstream.length;
+assert.equal(first.queue_depth, second.queue_depth);
+assert(capacity.includes('都是 ' + first.queue_depth));
+assert(capacity.includes('从 ' + unfinished(first) + ' 项变成 ' + unfinished(second) + ' 项'));
+const snapshots = [...capacity.matchAll(/<li>([^<]+)<\/li>/g)].map(([, row]) => row);
+assert.deepEqual(snapshots, [
+  '1 个线程：' + first.holding_downstream[0] + ' 占着下游，' + first.queued[0] + ' 留在入口，' + first.rejected.join('、') + ' 到达时被拒绝。',
+  '2 个线程：' + second.holding_downstream[0] + ' 仍占着下游，第二个线程取走 ' + second.waiting_for_downstream[0] + '。' +
+    second.waiting_for_downstream[0] + ' 等下游位置，' + second.queued[0] + ' 进了入口，' + second.rejected[0] + ' 到达时被拒绝。',
+]);
 
 execFileSync('python3', ['-B', '-c', `
 from pathlib import Path

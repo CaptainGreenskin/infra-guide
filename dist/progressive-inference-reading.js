@@ -327,6 +327,7 @@
   trainingFigure('v77-engine-path','提示的末位置产生首个输出。若继续生成，上一轮选出的词元才进入模型，写入自己的 K/V。')+
   p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
   '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
+  p('换进程时，先数清输出与缓存各到了哪里。两个本机 llama.cpp 进程加载同一份合成模型。源进程处理 [1,4,5,6] 后输出 7，保存的历史只有四个位置。接收方恢复这四格，再用 [1,4,5,6,7] 发起新请求。第一个新算位置是 4，送入的是词元 7。<a href="/article/inference-performance/#native-slot-handoff">核对恢复回执和真正送入模型的批次 →</a>')+
   '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
  serving.sections[1][1]+=
   heading('request-version-binding','发布切换时，流式请求用哪个模型')+
@@ -437,7 +438,8 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
    ['恢复完整文件后','4 / 1','7 在位置 4，随后 8 在位置 5','8、9'],
    ['恢复损坏文件失败后','0 / 5','[1,4,5,6,7] 在位置 0–4，随后 8 在位置 5','8、9']
   ])+
-  p('把缓存文件截到 12 字节后，这个版本返回 HTTP 400，并清掉此前的六个位置。随后同一请求从头算五个提示位置，仍得到 8、9。恢复后还没接过请求的新槽位，状态接口不会展示提示长度。核对是否真的省掉计算，要对照恢复回执、完成响应的 <code>cache_n</code> 和实际批次。')+
+  p('先读管理请求的回执。恢复成功时 <code>n_restored=4</code>，此时新槽位还没接过请求，<code>/slots</code> 快照没有 <code>n_prompt_tokens</code> 字段。再看新请求的完成响应，<code>timings.cache_n=4</code> 表示本次复用四格，<code>timings.prompt_n=1</code> 表示只新算一格。原生批次把这格定位为词元 7、位置 4。',
+  '缓存文件截到 12 字节后，恢复返回 HTTP 400。此时 <code>/slots</code> 的 <code>n_prompt_tokens</code> 从 6 变为 0，说明旧历史也被清掉了。再发同一请求，<code>timings.cache_n=0</code>、<code>timings.prompt_n=5</code>，原生批次从位置 0 处理完整提示。两条路径都输出 8、9，完成响应的 <code>tokens_cached</code> 都是 6，它计数的是结束时保留的位置。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
   '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 

@@ -5460,7 +5460,32 @@ const progressiveAgentSectionTitles={
     ['<code>receiver.receipts[0]</code>','接收库里的回执与刚收到的回执逐字段相同，<code>receiver.reports</code> 里有一份报告。'],
     ['<code>checkpoint.values</code> 与 <code>checkpoint.next</code>','检查点只保存了 <code>intent</code>，没有 <code>receipt</code>，下一步仍是 <code>["publish"]</code>。']
    ])+
-   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>');
+   p('先根据检查点预测新进程会跑哪个节点，再根据接收库判断发布是否已经发生。<a href="/article/durable-workflows/#mcp-commit-recovery">继续核对同一份记录里恢复后的工具尝试和报告数 →</a>')+
+   h('recovery-lookup-after-commit','本地回执为空，怎么确认发布已经发生')+
+   p('上面的进程收到回执后才退出。<a href="/article/durable-workflows/#native-model-mcp-recovery">另一份本机 MCP 实验</a>把退出点提前到接收方提交后、发送响应前。打开<a href="/labs/model-mcp-recovery/validation.json">原始记录</a>的 <code>cut</code>。任务库还在等待确认，回执为空。接收库已经有一份 42 的报告和一份回执。')+
+   p('把下面的代码存成 <code>check_gap.py</code>，在原始记录旁运行 <code>python3 check_gap.py validation.json</code>。先查新进程发出的工具名，再核对查询、原任务和回执里的操作号。草稿摘要相同，接收库前后相同，才把这次查询算作对原发布的确认。')+
+   trainingCode('从原始记录核对一次只读恢复','PYTHON',`import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as file:
+    record = json.load(file)
+
+cut = record["cut"]
+recovery = record["recovery"]
+query = recovery["wire"]["request"]["params"]
+receipt = recovery["after"]["receipt"]
+
+assert cut["host"]["receipt"] is None
+assert query["name"] == "lookup_receipt"
+assert query["arguments"]["operation_id"] == cut["host"]["operation_id"]
+assert receipt["operation_id"] == cut["host"]["operation_id"]
+assert receipt["draft_sha256"] == cut["host"]["draft_sha256"]
+assert len(cut["receiver"]["reports"]) == 1
+assert record["receiver_final"] == cut["receiver"]
+
+print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"])`)+
+   p('这次输出 <code>lookup_receipt 1 DONE</code>。换成相同金额但不同草稿摘要，核对会停在摘要那一行。遇到查询失败时先保留待确认状态，避免用新的操作号再写一次。');
+  a.updated='2026.11.12';
  }
 })();
 
@@ -7646,6 +7671,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   trainingFigure('v77-engine-path','提示的末位置产生首个输出。若继续生成，上一轮选出的词元才进入模型，写入自己的 K/V。')+
   p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
   '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
+  p('换进程时，先数清输出与缓存各到了哪里。两个本机 llama.cpp 进程加载同一份合成模型。源进程处理 [1,4,5,6] 后输出 7，保存的历史只有四个位置。接收方恢复这四格，再用 [1,4,5,6,7] 发起新请求。第一个新算位置是 4，送入的是词元 7。<a href="/article/inference-performance/#native-slot-handoff">核对恢复回执和真正送入模型的批次 →</a>')+
   '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
  serving.sections[1][1]+=
   heading('request-version-binding','发布切换时，流式请求用哪个模型')+
@@ -7756,7 +7782,8 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
    ['恢复完整文件后','4 / 1','7 在位置 4，随后 8 在位置 5','8、9'],
    ['恢复损坏文件失败后','0 / 5','[1,4,5,6,7] 在位置 0–4，随后 8 在位置 5','8、9']
   ])+
-  p('把缓存文件截到 12 字节后，这个版本返回 HTTP 400，并清掉此前的六个位置。随后同一请求从头算五个提示位置，仍得到 8、9。恢复后还没接过请求的新槽位，状态接口不会展示提示长度。核对是否真的省掉计算，要对照恢复回执、完成响应的 <code>cache_n</code> 和实际批次。')+
+  p('先读管理请求的回执。恢复成功时 <code>n_restored=4</code>，此时新槽位还没接过请求，<code>/slots</code> 快照没有 <code>n_prompt_tokens</code> 字段。再看新请求的完成响应，<code>timings.cache_n=4</code> 表示本次复用四格，<code>timings.prompt_n=1</code> 表示只新算一格。原生批次把这格定位为词元 7、位置 4。',
+  '缓存文件截到 12 字节后，恢复返回 HTTP 400。此时 <code>/slots</code> 的 <code>n_prompt_tokens</code> 从 6 变为 0，说明旧历史也被清掉了。再发同一请求，<code>timings.cache_n=0</code>、<code>timings.prompt_n=5</code>，原生批次从位置 0 处理完整提示。两条路径都输出 8、9，完成响应的 <code>tokens_cached</code> 都是 6，它计数的是结束时保留的位置。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
   '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 
@@ -8441,9 +8468,9 @@ print(accepts([stale], [receipt]))  # False`)+
    ])+p(
    '在运行记录中跟同一个任务比较时刻。用“线程开始”减“受理”得到排队时间，用“拿到许可”减“线程开始”得到申请下游位置的耗时。第二个线程让 C 也被接收，但两轮同时持有许可的任务最多仍为一。所有受理项最终各返回 42，被拒的项没有进入线程。',
    '队列按入队先后分派任务。任务离开队列后，还要竞争其他资源。冻结记录中 C 虽然后入队，却先于 B 拿到许可并完成；复跑时，许可竞争的顺序可以不同。若业务要求严格按顺序处理，要在业务生效处定义顺序，不能只依赖入口队列。',
-   '本机实验用信号量控制单个位置。实际服务可按同样的阶段标记线程池受理、借到数据库连接、查完归还和拒绝，分别判断要增加的是排队空间、工作线程，还是下游承载能力。')+
+   '本机实验用信号量控制单个位置。实际服务可按同样的阶段标记线程池受理、借到数据库连接、查完归还和拒绝，分别判断要增加的是排队空间、工作线程，还是下游承载能力。<a href="/article/elasticity/#bounded-queue-downstream-wait">用这两份快照核对过载时的等待位置 →</a>')+
    '<p class="source-at"><a href="https://docs.python.org/3/library/queue.html#queue.Queue" target="_blank" rel="noopener noreferrer">Python 的有界队列与满队列行为 ↗</a></p>';
-  a.updated='2026.11.09';
+  a.updated='2026.11.12';
  }
 
  {
@@ -11993,7 +12020,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('新进程建立新会话，调用 <code>lookup_receipt</code> 查询原操作。记录中两条 MCP 会话的 JSON-RPC 请求编号都是 3，真正贯穿发布与恢复的是持久化的操作号。新进程核对回执中的操作号、草稿摘要和来源版本，再保存完成状态。整条记录只有一次发布和一次回执查询。')+
    p('复跑需同时解压本实验和<a href="/labs/model-plan-revision.zip">原模型规划包</a>，按说明准备固定版本的模型和运行时。程序使用本机独立进程、两个数据库和预设的批准输入。可以对照两份数据库及 HTTP 事件顺序，核实工作进程退出时究竟写到了哪一步。')+
    '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>'+
-   p('任务库已经标为完成。<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">从原订单重算 42，再查接收库里的报告和回执 →</a>'));
+   p('任务库已经标为完成。<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">从原订单重算 42，再查接收库里的报告和回执 →</a>')+
+   p('可以先暂停在退出点，<a href="/article/agent-recovery/#recovery-lookup-after-commit">用这份记录自己核对原操作和草稿摘要</a>，再看任务库为什么可以标为完成。'));
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
@@ -13836,6 +13864,12 @@ for stage, source in stages:
   ])+
   p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
   p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
+ a.sections[4][1]+=
+  '<h3 id="bounded-queue-downstream-wait">入口都只排一项，额外的任务在哪里等</h3>'+
+  p('实验限制入口只排 1 项，下游同时只接 1 项。先让 A 占住下游，再按顺序提交 B、C、D。两轮都在 A 归还之前读快照，只把可用的工作线程数从 1 调到 2。')+
+  '<ul><li>1 个线程：A 占着下游，B 留在入口，C、D 到达时被拒绝。</li><li>2 个线程：A 仍占着下游，第二个线程取走 B。B 等下游位置，C 进了入口，D 到达时被拒绝。</li></ul>'+
+  p('两轮的 <code>queue_depth</code> 都是 1。第二轮的 <code>waiting_for_downstream</code> 多了 B，已受理未完成的任务从 2 项变成 3 项。排查实际服务时，按任务 ID 记录入队、取走、借到连接和归还的时刻，区分入口排队、借连接等待和连接持有时间。再用可比的输入窗口核对按时完成量。')+
+  '<p class="practice-links"><a href="/labs/bounded-worker-queue/validation.json">查看四个任务的原始快照 →</a> · <a href="/article/concurrency-pools/#bounded-worker-queue">查看线程怎样取走 B 并复跑实验 →</a></p>';
  a.sections[7][1]+=
   '<h3 id="native-cpu-quota-http">同样 100 次请求，配额变小后去了哪里</h3>'+
   p('前面的售票算例用接纳、完成与积压解释过载。现在用两个本地 Linux 容器测同一条路径。客户端每隔 60 ms 发一个 HTTP 请求，共发 100 个，不等上一个返回。服务端一次执行一个请求，最多让四个等待，队满就回 HTTP 503。每个成功执行的请求都做 40 万轮固定的 PBKDF2 计算，用来产生可比较的 CPU 工作量。')+
@@ -15511,8 +15545,8 @@ const learningProfiles={
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
     primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"]]},
    {title:"算清积压何时消失",
-    result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
-    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
+    result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。处理速度追平到达速度时，原有积压仍需要额外容量。",
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"标明恢复目标和最后一笔应该存在的业务记录。恢复后独立读取，确认数据位置和外部效果符合预期。",
     primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
@@ -15594,7 +15628,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -17133,10 +17167,13 @@ function chapterSectionBody(article,index,html){
 function chapterReadingContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
  const topics=chapterContentsHTML(article,navigation,url);
  const concept=conceptTOCLink(url,optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
+ const link=(id,label)=>'<a data-toc="'+id+'" href="'+url+'#'+id+'">'+label+'</a>';
  const practice=labLearningCatalog.some(unit=>unit.chapter===article.id)
-  ?'<a data-toc="chapter-experiments" href="'+url+'#chapter-experiments">本章实战与验收</a>'
+  ?link('chapter-experiments','本章实战与验收')
   :'';
- return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice;
+ const transfer=article.exercise?link('transfer-practice','迁移练习'):'';
+ return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice+transfer+
+  link('self-check','自我检验')+link('references','参考资料');
 }
 
 // These standalone chapters define their objects in authored prose. Do not
@@ -17188,5 +17225,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="4f67b8270a313348fc62c9092564282aa2c21d63d9ab724002dcfadd7e1cddfe";
+const staticReadingVersion="24cd77882680c27979ab3a34499247b2ee881b1ebeed74f1460bc35fcd32c6f7";
 

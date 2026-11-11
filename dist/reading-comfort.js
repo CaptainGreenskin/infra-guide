@@ -88,7 +88,8 @@ function initReadingComfort(){
   const desktopTarget=desktopTargets.get(section.id);
   link.href=desktopTarget?.getAttribute('href')||location.pathname+location.search+'#'+section.id;
   const heading=section.matches('h3,h4')?section:section.querySelector('h2,summary');
-  link.textContent=((section.id==='concept-path'||section.matches('.chapter-lab-links'))?desktopTarget||heading:heading).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
+  const outlineLabel=section.id==='concept-path'||section.matches('.chapter-lab-links,.applied-exercise,.references');
+  link.textContent=(outlineLabel?desktopTarget||heading:heading).textContent.trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
   link.dataset.readerTarget=section.id;
   if(section.matches('h3,h4'))link.classList.add('reader-subheading-'+section.tagName.slice(1));
   const caseBody=section.closest('details.article-case');

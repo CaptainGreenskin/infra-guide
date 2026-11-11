@@ -432,11 +432,13 @@
       "targets": [
         "native-cpu-quota-http",
         "shard-load-not-average",
-        "hpa-capacity-observations"
+        "hpa-capacity-observations",
+        "bounded-queue-downstream-wait"
       ],
       "visible_targets": [
         "shard-load-not-average",
         "hpa-capacity-observations",
+        "bounded-queue-downstream-wait",
         "native-cpu-quota-http"
       ]
     },
@@ -1038,14 +1040,16 @@
         "subsection-5-3vclab",
         "agent-crash-windows-run",
         "mcp-http-cancellation-receipt",
-        "mcp-receipt-before-checkpoint"
+        "mcp-receipt-before-checkpoint",
+        "recovery-lookup-after-commit"
       ],
       "visible_targets": [
         "subsection-5-kha210",
         "subsection-5-3vclab",
         "mcp-http-cancellation-receipt",
         "agent-crash-windows-run",
-        "mcp-receipt-before-checkpoint"
+        "mcp-receipt-before-checkpoint",
+        "recovery-lookup-after-commit"
       ]
     },
     {

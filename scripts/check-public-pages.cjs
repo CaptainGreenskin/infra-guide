@@ -25,6 +25,13 @@ for(const url of urls){
  assert(!/href="#\//.test(html),url.pathname+': fragment route remains');
  const ld=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);assert.equal(ld.url,url.href);
  if(url.pathname.startsWith('/article/')){assert.equal(ld['@type'],'TechArticle');assert((html.match(/class="article-section(?:\s|")/g)||[]).length>=8);assert(html.includes('迁移练习'));assert(html.includes('data-download-note'))}
+ if(/^\/(article|track)\//.test(url.pathname)){
+  for(const [id,label] of [['transfer-practice','迁移练习'],['self-check','自我检验'],['references','参考资料']]){
+   const link='<a data-toc="'+id+'" href="'+url.pathname+'#'+id+'">'+label+'</a>';
+   assert.equal(html.split(link).length-1,2,url.pathname+': both outlines link to '+label);
+   assert.equal(html.split('id="'+id+'" tabindex="-1"').length-1,1,url.pathname+': one focusable target for '+label);
+  }
+ }
  for(const [,id] of html.matchAll(/href="\/about\/#reader-trial-questions-([^"]+)"/g))trialReturns.push([url.pathname,id]);
  for(const [,href] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
    if(/^(https?:|data:|#)/.test(href))continue;

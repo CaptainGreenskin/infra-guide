@@ -43,9 +43,7 @@ function articlePage(a,anchor,showTrackOverview=false){
    <div class="completion"><button class="read-btn ${read?'done':''}" data-read="${a.id}">${read?'✓ 已读 · 点击取消':'标记为已读'}</button></div>
    ${learningGoalChapterNav(a)||chapterReadingNav(a)}
   </article>
-  <aside class="toc"><div class="toc-title">本文目录</div>${contents}
-   <a data-toc="self-check" href="${href}#self-check">自我检验</a><a data-toc="references" href="${href}#references">参考资料</a>
-  </aside></main>${footer()}`;
+  <aside class="toc"><div class="toc-title">本文目录</div>${contents}</aside></main>${footer()}`;
  initInteractive();
  if(anchor)requestAnimationFrame(()=>{
   const target=document.getElementById(/^\d+$/.test(anchor)?`section-${anchor}`:anchor);
