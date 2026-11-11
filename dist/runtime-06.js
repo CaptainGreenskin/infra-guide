@@ -10947,11 +10947,20 @@ future.result(timeout=35)
  p('解压后按包内命令跑两个本机进程。核对阶段标记、保存完成后的目录和实际读回值，再用一次更新区分两份检查点。本实验固定版本和 CPU 默认写入器，保存后的状态通过新建的模型和优化器加载。复制所需的额外内存和目标环境的吞吐另测。')+
  '<p class="practice-links"><a href="/labs/async-dcp-commit.zip" download>下载源码与复跑命令 ↓</a> · <a href="/labs/async-dcp-commit/validation.json">查看两个 rank 的状态与文件 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/staging.py#L91-L100">固定版暂存路径 ↗</a></p>';
  const singleGpuResults='https://github.com/CaptainGreenskin/one-gpu-lm/blob/14dca34170e02832a2f36f04be471a0210bcb891/experiments/013-training-infrastructure/results/2026-11-09/';
+ throughput.sections[4][1]+='<h3 id="single-gpu-recovery-timing">单卡恢复的两种计时</h3>'+
+  p('<a href="/article/checkpoint-recovery/#single-gpu-recovery-contrast">前章的 RTX 单卡对照</a>中，连续组和第 4 步保存后重启的组都完成了 12 次更新，样本顺序相同，各有 559 个词元参与损失计算。打开<a href="'+singleGpuResults+'summary.json">原始记录</a>，对照 <code>continuous</code> 和 <code>resumed</code>。')+
+  table(['计时范围','连续训练','中途重启'],[
+   ['累计更新用时','24.88 秒','26.64 秒'],
+   ['从首次启动到结束的总时间','188.33 秒','338.57 秒']
+  ])+
+  p('更新用时读 <code>result.training_update_seconds</code>，整段用时读 <code>elapsed_including_restart_seconds</code>。恢复组按更新用时算约 20.99 个有效词元/秒，按整段用时算是 559 ÷ 338.57 ≈ 1.65 个/秒。整段还计入加载、保存、验证与重启。要知道重启本身耗时多少，需要单独记那一段的起止。估算费用时，再核对设备实际占用的时间。');
+ throughput.updated='2026.11.12';
  recovery.sections[2][1]+=fold('单卡实测 · 第 4 步退出，恢复到第 12 步',
   '<h3 id="single-gpu-recovery-contrast">从哪一步开始出现差异？</h3>'+
   p('同一张 RTX PRO 6000 Blackwell 上，两组按同一顺序处理 12 条样本，底座权重固定，只训练附加的 LoRA 小矩阵。第一组连续更新 12 步，第二组在第 4 步完整保存后退出，新进程读回参数、优化器和随机状态，继续完成第 5–12 步。',
   '首次配对读回的三项状态指纹都匹配。往前查日志，首步损失相同，梯度范数（衡量整组梯度的大小）已经不同，第 2 步的损失也开始分叉。差异出现得比第 4 步退出更早。遇到这种情况，先核对退出前的两条训练轨迹，再检查加载过程。')+
   p('重跑沿用原样本和比较阈值，同时启用确定性算法，固定 GPU 矩阵计算库 cuBLAS 的临时内存设置，并关闭 TF32 这种降低乘法精度的计算模式。第 12 步后，两组 LoRA 参数的最大绝对差为 0，参数、优化器状态及逐步损失均逐位一致，最终随机状态也一致。记录验证了这一组配置在完整更新边界的单卡进程恢复。')+
+  p('<a href="/article/training-performance/#single-gpu-recovery-timing">沿这次对照核对更新用时与整段墙钟 →</a>')+
   '<p class="practice-links"><a href="'+singleGpuResults+'README.md">实验条件与诊断过程 ↗</a> · <a href="'+singleGpuResults+'failed-pairs/recovery-v3/comparison.json">首次配对记录 ↗</a> · <a href="'+singleGpuResults+'comparison.json">重跑对照结果 ↗</a></p>');
  recovery.sections[7][1]+=fold('实跑 · 同一小模型从双进程训练走到推理',
   '<h3 id="native-tiny-decoder-handoff">训练恢复后，推理加载的是哪一步权重？</h3>'+
@@ -11480,6 +11489,8 @@ future.result(timeout=35)
  ],['subsection-1-1vzo0i0','subsection-2-1k3gdnf','subsection-3-opr7s5','subsection-4-4s93fv','subsection-5-wrf9vk','subsection-6-15mcx71','subsection-7-1bdkyq8','subsection-8-1an19m4']);
 
  const lifecycle=articles.find(a=>a.id==='ai-lifecycle');
+ lifecycle.sections[4][1]+='<h3 id="int8-batch-release-gate">同一条请求换个同批伙伴，还能通过发布门槛吗</h3>'+
+  p('<a href="/article/quantization-serving/#native-int8-batch-quality">量化章的 QNNPACK 实跑</a>里，目标行单独运行时，动态 INT8 预测类别 1。与 <code>[0,1024,…]</code> 合批后，FP32 得到 <code>[1,2]</code>，动态 INT8 得到 <code>[0,2]</code>。<a href="/labs/int8-batch-quality/validation.json">原始记录</a>按逐行正确的要求拒绝这组 INT8 合批，因此未采集这一组的速度样本。线上若允许这种合批，验收时就要单独跑一组含极值伙伴的请求。若改成分开执行，再按实际执行方式核对质量和用时。');
  lifecycle.sections[7][1]+=
   '<h3 id="native-model-rollout">把发布门禁接到真实原生服务与旧流</h3>'+
   p('上一份实验验证张量包与本地指针。这次实际启动三个 llama.cpp b12110 CPU 服务，将加载、固定输出检查、发布和流式请求连起来。模型仍是本站构造的人工小模型，单个固定探针只验证声明的输出约定，不代表语言理解或真实任务质量。',
@@ -11498,6 +11509,8 @@ future.result(timeout=35)
   '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
   p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
  lifecycle.updated='2026.11.12';
+ batchQuality.sections[4][1]+=p('<a href="/article/ai-lifecycle/#int8-batch-release-gate">把同一批输入带到发布门禁 →</a>');
+ batchQuality.updated='2026.11.12';
 })();
 
 
@@ -11712,7 +11725,7 @@ if approved:
 
  delivery.sections[7][1]+=h('native-controller-reconcile','外部已创建，控制器退出后会不会再建一份')+
  p('向 Kubernetes 提交一份 <code>ReportSink</code>，指定 <code>spec.target</code> 为 <code>weekly-report</code>。这是用自定义资源定义（CRD）加到 API 上的对象。API 保存期望，控制器负责让外部服务拥有对应的接收位置。外部服务按对象的 UID 保存一份文件。同名对象删掉再建会获得新 UID。')+
- p('控制器用 client-go 的 informer 先列出当前对象，再监听变化。事件只把“命名空间/名字”放进队列。处理时重新读取对象，取得 UID、代际和删除标记。<code>generation</code> 是 API 维护的期望代际，<code>status.observedGeneration</code> 表示控制器已处理到哪一代。对象更新时用来检查并发冲突的是另一个字段 <code>resourceVersion</code>。')+
+ p('控制器用 client-go 的 informer 先列出当前对象，再监听变化。事件只把“命名空间/名字”放进队列。程序通过 <code>WaitForCacheSync</code> 等初始同步完成，再从队列取任务。处理时重新向 API 读取对象，取得 UID、代际和删除标记。<code>generation</code> 是 API 维护的期望代际，<code>status.observedGeneration</code> 表示控制器已处理到哪一代。对象更新时用来检查并发冲突的是另一个字段 <code>resourceVersion</code>。')+
  trainingFigure('controller-reconcile','控制器退出时，外部文件和 Kubernetes 的状态处在不同阶段。跟着同一个 UID 查看 PUT、DELETE 和 API GET。')+
  p('没有清理标记时，控制器先保存自己的 <code>finalizer</code>，然后结束这轮处理。等下一轮读到标记已保存，才发外部 PUT。这样对象进入删除流程后，控制器仍有机会根据原 UID 清理。外部成功后才回写 <code>status</code>。')+
  trainingCode('外部成功以后、回写状态以前的故障点','GO',`if err := c.changeSink(ctx, http.MethodPut, uid, target); err != nil {
@@ -11731,10 +11744,11 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
   ['重启并完成清理','移除 finalizer 后，GET 404','DELETE 204，文件已清理']
  ])+
  p('第一次 PUT 已经成功，所以光看 <code>status</code> 为空会判断错。重启后，informer 的初始列表会再次看到该对象。控制器用原 UID 重试，外部服务识别到同一个对象。删除请求到达时，API 先标出删除时间。控制器看到它，就先执行外部 DELETE，再移除自己的 finalizer。')+
+ p('这次重启的是控制器，API 和外部接收方一直运行。<a href="/article/control-plane-consensus/#section-7">C4.9 的独立快照恢复实验</a>里，旧观察因历史压缩而取消，重列举从 revision 1006 读到 37，接续观察才收到后来写入的 47。')+
  trainingCode('解压后用独立 API Server 和 etcd 复跑','SHELL','go run . --assets /path/to/controller-tools/envtest --output replay.json')+
  p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
  '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
- delivery.updated='2026.11.11';
+ delivery.updated='2026.11.12';
  delivery.sections[5][1]+=p('要把这三层观察放进同一份真实记录，可以<a href="/article/gitops-reconciliation/#gitops-response-evidence">复判 C6.3 的 Argo CD 发布</a>。控制器同步到目标 Git 修订、现场配置更新后，继续用 Pod 身份和 HTTP 响应核对实际收到的版本。');
 
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
@@ -12105,7 +12119,7 @@ python -B target_probe.py check collected/rank-*.json
     ['读取并选择证据','10、27及其月份、单位和来源','两类费用都齐备，才能计算本月总额'],
     ['装配并发送','任务要求、来源身份、正文与输出约定','整份输入满足窗口，接收端取得对应内容'],
     ['形成并验收主张','37与两个可定位的引用','核对算式、适用范围、来源和实际保存结果']
-   ])+f[0][0]+p('这条路径区分了“找到相关项”“取得适用正文”“完整送入输入”和“回答获得支持”。本章本地HTTP实验实际验证到输入送达：接收端是提示收集器，37是从来源独立算出的参考值。模型生成与回答正确率需要另行执行和验收。'),
+   ])+f[0][0]+p('这条路径区分找到候选、取得适用正文、把材料送达和核对回答。开头这组费用资料只送给本机的 HTTP 提示收集器，37 是从来源独立算出的参考值。'),
 
    p('同一份资料会更新，因此候选需要携带文档ID、版本和片段位置。文档ID回答是哪份资料，版本回答是哪次内容，位置回答支持结论的原文在哪里。a-2/v1=99与a-2/v2=27属于同一文档的不同版本；本任务要求当前本月资料，二者不能互换。',
    '切分要保留一项事实成立所需的条件。“本月调整费用27元”包含项目、时间、金额与单位；只留下27，后续即使算术正确，也无法说明它能否用于本月总额。否定、例外和适用对象同样随事实保留。相邻片段可以重叠，但两段重复文字仍属于同一个来源。')+
@@ -12209,13 +12223,14 @@ python -B target_probe.py check collected/rank-*.json
    fold('完整context_budget.py',c[14][1])+p('这份回执确认哪份输入交给了收集器；工具效果回执确认外部动作提交了什么；任务验收检查实际答案及引用。三类记录分别保存输入交付、业务效果和任务结果，各自保留对象与身份。实验运行了FTS5、固定编码器和本地HTTP，没有调用生成模型；预发送复检与远端交付之间的在途规则仍需另定。')+linkRow(l[14].slice(3))
   ];
   finish(a,old,body);
+  a.sections[0][1]+=p('第 15 节换一组费用资料，<a href="/article/agent-retrieval/#native-rag-citation-oracle">让本机模型作答并核对引用 →</a>。');
   a.sections[8][1]+=h('retrieval-revocation-boundaries','撤权发生在读正文前，还是发送前')+
    p('两份独立实验分别在取正文前和发输入前撤权。',
    '<b>候选已返回，正文还没读。</b> 实验先取得候选 101、102，再撤销 102 的读取资格。装配器沿用这批编号，SQLite 的正文读取表 <code>body_reads</code> 本次只记录 101/v1。<a href="/article/agent-retrieval/#native-qdrant-retrieval">对照 Qdrant 的候选与实际读取记录 →</a>',
    '<b>正文已读，输入还没发。</b> 另一组费用实验已经取得 a-1/v1、a-2/v2。撤回 a-2 资格后，发送前复检返回 <code>authorization_changed</code>，本地 HTTP 收集器收到 0 条新请求。<a href="/article/agent-retrieval/#context-budget-run">复跑并核对实际发送次数 →</a>',
    '发送前复检与 HTTP 发送分两步。若撤权发生在复检之后，接收端的授权与在途规则决定请求能否继续。已交付的内容按接收端的数据保留与撤回规则处理。<a href="/article/agent-security/#section-2">回到权限章核对执行点 →</a>');
   a.sections[14][1]+=h('native-rag-citation-oracle','两个答案都是 37，为什么有一个不合格')+
-   p('前一段核对材料有没有送达。这里另开一份费用实验，让本机 Qwen3 根据检索结果作答。基础项 <code>a-base/v1</code> 是 10。调整项从 <code>a-adjust/v2</code> 更新到 <code>a-adjust/v3</code>，两版金额都为 27。题目要按当前版本算，所以答案既要是 37，也要能指出当前的两份来源。',
+   p('前面的提示交付实验把 <code>a-2/v2</code> 的 27 送给收集器，核对实际收到的材料。这里另建来源库，让本机 Qwen3 回答同样的费用问题。基础项 <code>a-base/v1</code> 是 10，调整项的旧版 <code>a-adjust/v2</code> 和当前 <code>a-adjust/v3</code> 都是 27。两次都可能算出 37，合格的回答还要引用本次收到的当前资料。',
     '先在 SQLite 中建立两个索引快照。旧索引仍指向 v2，新索引已经指向 v3。查询同样的“费用”和“汇总”时，真实 FTS5 可以找到 A 和 B 的候选。组装材料只取 A，接着选择是否对照来源库的当前版本。')+
    trainingFigure('rag-citation-oracle','金额不变，调整项的来源版本变了。两次模型生成保留原始回答，第三条路径在宿主侧提前停下。')+
    table(['怎么处理候选','实际送进模型','实际结果'],[
@@ -12228,7 +12243,7 @@ python -B target_probe.py check collected/rank-*.json
     errors.append("citation_not_current")
 if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
     errors.append("citation_not_supplied")`)+
-   p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a> · <a href="/article/agent-evaluation/#citation-version-check">直接用两份记录运行引用核对</a>')+
+   p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#native-model-evaluation-bridge">到评估章看这两份回答怎样判分 →</a>。<a href="/article/agent-evaluation/#section-11">评估章第 11 节</a>还有<a href="/article/agent-evaluation/#citation-version-check">用记录复算引用判定的练习</a>。')+
    trainingCode('已有固定引擎和权重时，在解压目录运行','SHELL','python3.12 -B rag_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/rag-citation-oracle.zip" download>下载程序与记录 ↓</a> · <a href="/labs/rag-citation-oracle/README.md">环境与复跑步骤 →</a> · <a href="/labs/rag-citation-oracle/validation.json">原始检索、模型与验收记录 →</a></p>';
   a.updated='2026.11.12';
@@ -14064,6 +14079,9 @@ for case, (expected_state, expected_receipts) in expected.items():
  fold('完整etcd_lab.py：原生CLI、阶段记录与独立状态检查',e8[1])+
  p('已发布执行记录来自Linux CI。本页源码与图绑定同一记录；离线验收可以核对读数、事件、身份、快照和缓存关系，原生重跑则需要相同工具环境。记录覆盖这一组单宿主控制存储场景，没有执行Kubernetes恢复、生产权限配置或业务持久卷恢复。')
  ],'沿同一配额的37→42读写理解多数提交、日志位置与键值版本，再从列举观察、租约和分区走到快照恢复及缓存重建47。');
+
+ consensus.sections[6][1]+=p('重列举之后，还要确定外部动作是否做过。C6.1 的独立实验重启了控制器，它重新列举 Kubernetes 对象，用原 UID 再发 PUT。<a href="/article/delivery/#native-controller-reconcile">沿同一个 ReportSink UID 核对两次 PUT</a>，可以看到接收端先返回 201，重试返回 200，始终只有一份文件。');
+ consensus.updated='2026.11.12';
 
  const gitops=select('gitops-reconciliation',['先画出Git、控制器、集群和业务四层关系','Synced、Healthy与业务正确，分别证明什么','自动同步、自愈和清理，是三个不同开关','清理依据受管关系，不是删除所有多余对象','环境变量为什么不会随ConfigMap自动改值','三个固定提交，把控制面绿灯与用户结果对上','回退要改变期望，再验证旧版本还能工作','从源到响应，按最后成功阶段排障','在独立kind集群重放，再读完整源码'],[8,3,11]);
  const g=gitops.sections.map(s=>s[1]),g3=blocks(g[2]),g5=blocks(g[4]),g9=blocks(g[8]);
@@ -16055,7 +16073,7 @@ const learningProfiles={
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
    {title:"确认实际部署的制品",
     result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
-    primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"]]},
+    primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"],["control-plane-consensus","section-7","重列举与接续观察"]]},
   ]
  }},
  'cloud-sre':{track:'cloud',label:'SRE 与稳定性',aim:'能从用户结果定位瓶颈，算清容量与恢复目标，再验证故障保护。',targets:['cloud-compute','iam-security','tcp-event-loop','database-index-locks','cache-consistency','mysql-recovery','k8s-networking','elasticity','observability','resilience','cloud-service-lab'],gate:{
@@ -16080,7 +16098,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -16108,7 +16126,7 @@ const learningProfiles={
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
-    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
+    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
   ]
  }},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:{
@@ -16134,7 +16152,7 @@ const learningProfiles={
     primary:["agent-runtime","native-model-mcp-tool-choice","模型选工具与资源授权"],more:[]},
    {title:"证明回答用了当前资料",
     result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
-    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
+    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
     primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
@@ -17835,5 +17853,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="b083ee7a919891d40d0d634bf4e04a6ad4a98d520c3d8547ce5f1865c11c175c";
+const staticReadingVersion="19cfee3c430a63f5e3f9f67cf6be391b2d480cf9fdaa3b227fcc56b91b224bec";
 

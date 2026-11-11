@@ -1,0 +1,98 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "bb27bfd97a35c4b83b6ee933c1bc6d4ecb7307ac",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_KAIRO_NODE_LOSS_AND_READER_TRIAL_2026-11-12.json": "83f11f76b9908ddbbdf11a60456c87af7bfe5662725e70f891c552c6dc46ad47"
+  },
+  "source_revisions": {
+    "dist/progressive-consensus-gitops-reading.js": {
+      "previous_sha256": "cf3ff1b719c8566790df803a723fc53a9cda4eccbbeac65607e6e69a536a1c6c",
+      "reviewed_sha256": "9e66ef42242e77e4c17cd36fa4e44d3503083bae769e3392b91e6d7483143060",
+      "scope": "Connect snapshot relist and watch continuity to an independent controller process restart."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "3f98ed75831ecc86f96b5c85893bfce351dad8e93d6034c4e038b5eddc2435e7",
+      "reviewed_sha256": "fe63a4482aca9d6a1bb7272d2f167f2cb30751ec95b74102b4409c55395a5ffa",
+      "scope": "Read the informer cache sync and the actual API get before comparing a replayed HTTP effect with storage recovery."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "ebc50a3f4808d0f89abb931b0d80c1268973baff42d1f62aad3b482b80eb1b64",
+      "reviewed_sha256": "6612a62e67a3c58d98b86ec2d53922ba1237da1dc15fa77e69087228139cf549",
+      "scope": "Use the same 559 loss-bearing tokens to contrast the training-only and end-to-end denominators."
+    },
+    "dist/progressive-quantization-delivery-reading.js": {
+      "previous_sha256": "1799f75a77be3904a75794991d38aee238b4a110b92db625f54bd190c87ce28b",
+      "reviewed_sha256": "2044449a32c03c131b5cc9dfc6958d4b4307b3e8b2f3f56843da993f99fb2f4d",
+      "scope": "Connect the candidate quality gate to a real batch layout and the observed classification outcome."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "15280afe9b6f3106d7b247b04f821d63b664242d4e56de6676c2da598bb7e698",
+      "reviewed_sha256": "fea0535c865055ab5041ca871a31633c839281fc6277f4c1470f4264e97e250f",
+      "scope": "Distinguish prompt delivery from model inference, then follow the latter record to the acceptance decision."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "5b9e8442269ce2093494b9bb92234e76d7f7a40f3e7c5ffa7450290b94b6c9bb",
+      "reviewed_sha256": "ae56ddf18d489a1302404e01b05c41ba86e7bab1fbc233c485934489110821f8",
+      "scope": "Carry the four actual chapter handoffs into their existing role gates."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "14af6dab93fd14e97375d0b93ce3141c1c77fd0a02209643bd1b898fc9927491",
+      "reviewed_sha256": "6e964209d201224ba032ae4f655d251bf2519ebe6d1260a6b9dd27f76a980446",
+      "scope": "Retain all prior role routes and validate the four new exact destinations."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "9782bac648638527f52529c2f94823fa76bfb5ac128fc99c894e481d8ddce769",
+      "reviewed_sha256": "24d4b600b75c716736fa555107e0c492d6cfe61fa37dd65f105def728db60d98",
+      "scope": "Validate paired paths and prevent the old timing, candidate and fixture interpretations from resurfacing."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "c8139113085305e52c34fbe3915daafb3bb45694c31e1549ca5bebb084f957b3",
+      "reviewed_sha256": "0d09a8c94f429cc752676a555d6b2d55a49b975c29ee992b65cab231aa552cf7",
+      "scope": "Fingerprint the revised bodies, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "797aee83a51b14ceeb4fda87b8e64883525b68c27754dc9a8f034d37e73b377d",
+      "reviewed_sha256": "3a7ba95197bbe96d3f7834b1f14bcd66c79192859f7fd79f0036e641247f5d5a",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_CROSS_CHAPTER_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cfd54579655af7f9bae4f59951381a688bd9c074379ab6ba9f4f4475d746a6ab",
+      "scope": "Record the revised teaching bodies and their exact previous signatures."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "ef5e14d2bdb212d29887262a8282bccfa0940e619cddaa52ba26a3740b23127e",
+      "reviewed_sha256": "6542d9732c9798ed774fa6a9080af40ca8239f61d521ffeb4174044032bdcfb2",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "ee4410d977bc022dad2e03d60e1296377454fa57c11473a57a164c3dcd2aaddb",
+      "reviewed_sha256": "47b656dc10e66bb53d4899568792de8e46b9087e75482d54bba20ede841201de",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "ee8c7e361cdbfcac10110e58b89273eba72c1681eb9815a03d50fa591f67e3c8",
+      "reviewed_sha256": "6691e668d3c3eb897ab930b99b5dd935377693d9ff12aa3e06839e567ee725cd",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "bb27bfd97a35c4b83b6ee933c1bc6d4ecb7307ac",
+    "chapters": 78,
+    "changed_bodies": [
+      "control-plane-consensus",
+      "delivery",
+      "checkpoint-recovery",
+      "training-performance",
+      "quantization-serving",
+      "ai-lifecycle",
+      "agent-retrieval"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

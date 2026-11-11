@@ -9462,6 +9462,102 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "df1a01b6f39b9d1e0ebea2cd5666e34ae7df45a8f561ed38d8d453901de1de1c",
+      "reviewed_content_sha256": "e085888cc7227ebd96518cf3d7f07e3ebda7bbae759db977ea0069f813cf4d83",
+      "scope": "Read the informer cache sync and the actual API get before comparing a replayed HTTP effect with storage recovery.",
+      "observation": "Client-go waits for initial cache sync; after restart the existing ReportSink retains its UID. HTTP PUT returns 201 then 200, and exactly one file exists.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "885350750007d29cc013b5ed5fe9f3be90de08a9ff666627bcbeb4a7f0ed359d",
+      "reviewed_content_sha256": "96847459ae6073eefc40f3a3d788dd80c4c1075f170f8c5e70c58df6e23240c9",
+      "scope": "Carry the same deterministic restart comparison into update time and elapsed time.",
+      "observation": "The two runs have equal sample order and 12 completed steps after a step-4 recovery, so the existing measurements can use the same unit of work.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9fa6be95dd818d94f737bef75e3e7edeeba87178a09ec10d93798d6edd742a16",
+      "reviewed_content_sha256": "01e47f7e232562b1743ffad7207023f51cad9f5ffc81a470cc179df152b9866d",
+      "scope": "Use the same 559 loss-bearing tokens to contrast the training-only and end-to-end denominators.",
+      "observation": "The pinned RTX record gives 24.88/26.64 seconds of updates and 188.33/338.57 seconds elapsed. In the resumed run the two rates are 20.99 and 1.65 tokens/s.",
+      "headings": [
+        "先决定实验问题",
+        "记录测量范围",
+        "用时间线检验假设",
+        "从现象选择下一次实验",
+        "把成本放回训练目标",
+        "从一次快照形成可复现实验",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "fa2acc909ad0aeade78e50304b191cf0fb2c32e060fdd8dff622bdbb30db5d88",
+      "reviewed_content_sha256": "a2db4c9fc0c4ea28ae4b3ec8240e892847c4737c0896a03efcb3f4b8abd2ed18",
+      "scope": "Connect the candidate quality gate to a real batch layout and the observed classification outcome.",
+      "observation": "With the outlier partner, FP32 predicts [1,2] and QNNPACK dynamic INT8 predicts [0,2]. The previously published experiment rejected this row before timing.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "79a04552047f3cde5744946b96051b0ca318e2a1935522240c3fb4acb5e65bde",
+      "reviewed_content_sha256": "6d7ce9b5c18fc83a8612e22573b17dea64247c51cb56e3d11b61bd9f44f8c6eb",
+      "scope": "Distinguish prompt delivery from model inference, then follow the latter record to the acceptance decision.",
+      "observation": "The delivery fixture supplies a-2/v2=27. The separate model fixture supplies a-adjust/v2 or v3, both 27, but only v3 passes the current-citation check.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
     }
   ]
 }

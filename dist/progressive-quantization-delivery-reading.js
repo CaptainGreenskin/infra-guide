@@ -221,6 +221,8 @@
  ],['subsection-1-1vzo0i0','subsection-2-1k3gdnf','subsection-3-opr7s5','subsection-4-4s93fv','subsection-5-wrf9vk','subsection-6-15mcx71','subsection-7-1bdkyq8','subsection-8-1an19m4']);
 
  const lifecycle=articles.find(a=>a.id==='ai-lifecycle');
+ lifecycle.sections[4][1]+='<h3 id="int8-batch-release-gate">同一条请求换个同批伙伴，还能通过发布门槛吗</h3>'+
+  p('<a href="/article/quantization-serving/#native-int8-batch-quality">量化章的 QNNPACK 实跑</a>里，目标行单独运行时，动态 INT8 预测类别 1。与 <code>[0,1024,…]</code> 合批后，FP32 得到 <code>[1,2]</code>，动态 INT8 得到 <code>[0,2]</code>。<a href="/labs/int8-batch-quality/validation.json">原始记录</a>按逐行正确的要求拒绝这组 INT8 合批，因此未采集这一组的速度样本。线上若允许这种合批，验收时就要单独跑一组含极值伙伴的请求。若改成分开执行，再按实际执行方式核对质量和用时。');
  lifecycle.sections[7][1]+=
   '<h3 id="native-model-rollout">把发布门禁接到真实原生服务与旧流</h3>'+
   p('上一份实验验证张量包与本地指针。这次实际启动三个 llama.cpp b12110 CPU 服务，将加载、固定输出检查、发布和流式请求连起来。模型仍是本站构造的人工小模型，单个固定探针只验证声明的输出约定，不代表语言理解或真实任务质量。',
@@ -239,4 +241,6 @@
   '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
   p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
  lifecycle.updated='2026.11.12';
+ batchQuality.sections[4][1]+=p('<a href="/article/ai-lifecycle/#int8-batch-release-gate">把同一批输入带到发布门禁 →</a>');
+ batchQuality.updated='2026.11.12';
 })();

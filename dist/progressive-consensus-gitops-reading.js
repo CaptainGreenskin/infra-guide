@@ -94,6 +94,9 @@
  p('已发布执行记录来自Linux CI。本页源码与图绑定同一记录；离线验收可以核对读数、事件、身份、快照和缓存关系，原生重跑则需要相同工具环境。记录覆盖这一组单宿主控制存储场景，没有执行Kubernetes恢复、生产权限配置或业务持久卷恢复。')
  ],'沿同一配额的37→42读写理解多数提交、日志位置与键值版本，再从列举观察、租约和分区走到快照恢复及缓存重建47。');
 
+ consensus.sections[6][1]+=p('重列举之后，还要确定外部动作是否做过。C6.1 的独立实验重启了控制器，它重新列举 Kubernetes 对象，用原 UID 再发 PUT。<a href="/article/delivery/#native-controller-reconcile">沿同一个 ReportSink UID 核对两次 PUT</a>，可以看到接收端先返回 201，重试返回 200，始终只有一份文件。');
+ consensus.updated='2026.11.12';
+
  const gitops=select('gitops-reconciliation',['先画出Git、控制器、集群和业务四层关系','Synced、Healthy与业务正确，分别证明什么','自动同步、自愈和清理，是三个不同开关','清理依据受管关系，不是删除所有多余对象','环境变量为什么不会随ConfigMap自动改值','三个固定提交，把控制面绿灯与用户结果对上','回退要改变期望，再验证旧版本还能工作','从源到响应，按最后成功阶段排障','在独立kind集群重放，再读完整源码'],[8,3,11]);
  const g=gitops.sections.map(s=>s[1]),g3=blocks(g[2]),g5=blocks(g[4]),g9=blocks(g[8]);
  if(g3.length!==1||g5.length!==1||g9.length!==6)throw Error('GitOps original code extraction changed');

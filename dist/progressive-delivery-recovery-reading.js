@@ -200,7 +200,7 @@ if approved:
 
  delivery.sections[7][1]+=h('native-controller-reconcile','外部已创建，控制器退出后会不会再建一份')+
  p('向 Kubernetes 提交一份 <code>ReportSink</code>，指定 <code>spec.target</code> 为 <code>weekly-report</code>。这是用自定义资源定义（CRD）加到 API 上的对象。API 保存期望，控制器负责让外部服务拥有对应的接收位置。外部服务按对象的 UID 保存一份文件。同名对象删掉再建会获得新 UID。')+
- p('控制器用 client-go 的 informer 先列出当前对象，再监听变化。事件只把“命名空间/名字”放进队列。处理时重新读取对象，取得 UID、代际和删除标记。<code>generation</code> 是 API 维护的期望代际，<code>status.observedGeneration</code> 表示控制器已处理到哪一代。对象更新时用来检查并发冲突的是另一个字段 <code>resourceVersion</code>。')+
+ p('控制器用 client-go 的 informer 先列出当前对象，再监听变化。事件只把“命名空间/名字”放进队列。程序通过 <code>WaitForCacheSync</code> 等初始同步完成，再从队列取任务。处理时重新向 API 读取对象，取得 UID、代际和删除标记。<code>generation</code> 是 API 维护的期望代际，<code>status.observedGeneration</code> 表示控制器已处理到哪一代。对象更新时用来检查并发冲突的是另一个字段 <code>resourceVersion</code>。')+
  trainingFigure('controller-reconcile','控制器退出时，外部文件和 Kubernetes 的状态处在不同阶段。跟着同一个 UID 查看 PUT、DELETE 和 API GET。')+
  p('没有清理标记时，控制器先保存自己的 <code>finalizer</code>，然后结束这轮处理。等下一轮读到标记已保存，才发外部 PUT。这样对象进入删除流程后，控制器仍有机会根据原 UID 清理。外部成功后才回写 <code>status</code>。')+
  trainingCode('外部成功以后、回写状态以前的故障点','GO',`if err := c.changeSink(ctx, http.MethodPut, uid, target); err != nil {
@@ -219,10 +219,11 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
   ['重启并完成清理','移除 finalizer 后，GET 404','DELETE 204，文件已清理']
  ])+
  p('第一次 PUT 已经成功，所以光看 <code>status</code> 为空会判断错。重启后，informer 的初始列表会再次看到该对象。控制器用原 UID 重试，外部服务识别到同一个对象。删除请求到达时，API 先标出删除时间。控制器看到它，就先执行外部 DELETE，再移除自己的 finalizer。')+
+ p('这次重启的是控制器，API 和外部接收方一直运行。<a href="/article/control-plane-consensus/#section-7">C4.9 的独立快照恢复实验</a>里，旧观察因历史压缩而取消，重列举从 revision 1006 读到 37，接续观察才收到后来写入的 47。')+
  trainingCode('解压后用独立 API Server 和 etcd 复跑','SHELL','go run . --assets /path/to/controller-tools/envtest --output replay.json')+
  p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
  '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
- delivery.updated='2026.11.11';
+ delivery.updated='2026.11.12';
  delivery.sections[5][1]+=p('要把这三层观察放进同一份真实记录，可以<a href="/article/gitops-reconciliation/#gitops-response-evidence">复判 C6.3 的 Argo CD 发布</a>。控制器同步到目标 Git 修订、现场配置更新后，继续用 Pod 身份和 HTTP 响应核对实际收到的版本。');
 
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);

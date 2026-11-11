@@ -27,6 +27,36 @@ assert(contextHandoff.includes('先核对当前读取权限，再返回获准查
 assert(contextHandoff.includes('<code>read_denied</code> 时，本轮只说明回执无法读取，保留原操作号'));
 assert(contextHandoff.includes('/article/agent-security/#section-10'));
 const input=section('agent-retrieval',14);for(const term of ['输入交付','业务效果','任务结果','/article/agent-evaluation/','/article/agent-recovery/'])assert(input.includes(term));
+// The chapter that consumes a result should point to the exact experiment,
+// and the experiment should lead directly to the decision it informs.
+for(const [source,index,target,anchor] of [
+ ['control-plane-consensus',6,'delivery','native-controller-reconcile'],
+ ['delivery',7,'control-plane-consensus','section-7'],
+ ['checkpoint-recovery',2,'training-performance','single-gpu-recovery-timing'],
+ ['training-performance',4,'checkpoint-recovery','single-gpu-recovery-contrast'],
+ ['quantization-serving',4,'ai-lifecycle','int8-batch-release-gate'],
+ ['ai-lifecycle',4,'quantization-serving','native-int8-batch-quality'],
+ ['agent-retrieval',0,'agent-retrieval','native-rag-citation-oracle'],
+ ['agent-retrieval',14,'agent-evaluation','native-model-evaluation-bridge'],
+ ['agent-evaluation',10,'agent-retrieval','native-rag-citation-oracle'],
+]){
+ const href='/article/'+target+'/#'+anchor;
+ assert(section(source,index).includes('href="'+href+'"'),source+' must lead to '+href);
+}
+const recoveryTiming=section('training-performance',4).split('id="single-gpu-recovery-timing"')[1];
+for(const term of ['559','24.88','26.64','188.33','338.57','1.65','result.training_update_seconds','elapsed_including_restart_seconds'])
+ assert(recoveryTiming.includes(term),'timing scope and value: '+term);
+const int8Gate=section('ai-lifecycle',4).split('id="int8-batch-release-gate"')[1];
+const batchProof=JSON.parse(fs.readFileSync('dist/labs/int8-batch-quality/validation.json','utf8'));
+const outlier=batchProof.cases.outlier_batch;
+assert(int8Gate.includes(JSON.stringify(outlier.fp32.labels)));
+assert(int8Gate.includes(JSON.stringify(outlier.int8.labels)));
+assert(!outlier.int8.passed&&batchProof.timings.outlier_batch===null&&int8Gate.includes('未采集'));
+const retrievalStart=section('agent-retrieval',0);
+assert(retrievalStart.includes('提示收集器')&&retrievalStart.includes('独立算出的参考值'));
+const retrievalRun=input.split('id="native-rag-citation-oracle"')[1];
+for(const term of ['a-2/v2','另建来源库','a-base/v1','a-adjust/v2','a-adjust/v3'])
+ assert(retrievalRun.includes(term),'separate retrieval fixtures: '+term);
 const chain=section('kubernetes-training',2);for(const term of ['id="training-object-chain"','ownerReferences','WORLD_SIZE=4','平台策略','rank 用来标识当前通信组','metadata.ownerReferences','workloads.kueue.x-k8s.io'])assert(chain.includes(term));
 for(const id of ['training-platform','gpu-scheduling'])assert(section(id,0).includes('/article/kubernetes-training/#training-object-chain'));
 const decode=x=>x.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#x27;|&#39;|&apos;/g,"'").replace(/&amp;/g,'&');

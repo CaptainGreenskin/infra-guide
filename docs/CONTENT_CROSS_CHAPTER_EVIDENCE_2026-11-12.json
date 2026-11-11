@@ -1,0 +1,45 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "bb27bfd97a35c4b83b6ee933c1bc6d4ecb7307ac",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_KAIRO_NODE_LOSS_AND_READER_TRIAL_2026-11-12.json": "248a7bd1b562923530c147e146a75babcecb6255c9d95575ee907a436e3b97c2"
+  },
+  "body_revisions": [
+    {
+      "id": "control-plane-consensus",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c3f3def8da952380b849f63c29a9470eeb7b6da5c565ca19913fe640819c2666",
+      "reviewed_content_sha256": "63e9cd6d96fbf1d85dfc4dc045e0bc28eeefee4d9dc94bf6137d77e90c83f748",
+      "scope": "Connect snapshot relist and watch continuity to an independent controller process restart.",
+      "observation": "The etcd watch cancels at 1006, relisting reads 37, and the restarted watch receives 47. The linked controller case uses an unchanged UID and separately checks one external file.",
+      "headings": [
+        "先定位：控制面究竟要共同保存什么",
+        "三成员怎样把一次修改变成共同承诺",
+        "用revision解释读、事务与并发条件",
+        "先列举，再从同一版本继续观察",
+        "租约管理期限，不替你停止外部执行",
+        "网络分区与成员停机，分开验证",
+        "从快照恢复：数据基线、集群身份与缓存要一起处理",
+        "完整实战：从命令与状态读到独立验收"
+      ]
+    },
+    {
+      "id": "quantization-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "caaf65fdfcddeb24d58accc0daddea50e228773a86d02efc203c26425e0156cb",
+      "reviewed_content_sha256": "ccda8027da2e109f3f04ab1b66bad7fded7b1b13747612c83450426fef0060b5",
+      "scope": "Carry the actual QNNPACK batch-dependent classification failure into release validation.",
+      "observation": "The tested target row changes from class 1 to class 0 with an outlier partner. The failing batch has no performance sample.",
+      "headings": [
+        "量化基础：整数、比例尺与零点",
+        "分组：谁共享同一把比例尺",
+        "量化的字节与执行账本",
+        "校准与质量：先解释误差，再比较性能",
+        "量化实战：INT4打包与CPU INT8执行"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

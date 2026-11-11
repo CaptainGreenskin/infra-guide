@@ -301,11 +301,20 @@ future.result(timeout=35)
  p('解压后按包内命令跑两个本机进程。核对阶段标记、保存完成后的目录和实际读回值，再用一次更新区分两份检查点。本实验固定版本和 CPU 默认写入器，保存后的状态通过新建的模型和优化器加载。复制所需的额外内存和目标环境的吞吐另测。')+
  '<p class="practice-links"><a href="/labs/async-dcp-commit.zip" download>下载源码与复跑命令 ↓</a> · <a href="/labs/async-dcp-commit/validation.json">查看两个 rank 的状态与文件 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/checkpoint/staging.py#L91-L100">固定版暂存路径 ↗</a></p>';
  const singleGpuResults='https://github.com/CaptainGreenskin/one-gpu-lm/blob/14dca34170e02832a2f36f04be471a0210bcb891/experiments/013-training-infrastructure/results/2026-11-09/';
+ throughput.sections[4][1]+='<h3 id="single-gpu-recovery-timing">单卡恢复的两种计时</h3>'+
+  p('<a href="/article/checkpoint-recovery/#single-gpu-recovery-contrast">前章的 RTX 单卡对照</a>中，连续组和第 4 步保存后重启的组都完成了 12 次更新，样本顺序相同，各有 559 个词元参与损失计算。打开<a href="'+singleGpuResults+'summary.json">原始记录</a>，对照 <code>continuous</code> 和 <code>resumed</code>。')+
+  table(['计时范围','连续训练','中途重启'],[
+   ['累计更新用时','24.88 秒','26.64 秒'],
+   ['从首次启动到结束的总时间','188.33 秒','338.57 秒']
+  ])+
+  p('更新用时读 <code>result.training_update_seconds</code>，整段用时读 <code>elapsed_including_restart_seconds</code>。恢复组按更新用时算约 20.99 个有效词元/秒，按整段用时算是 559 ÷ 338.57 ≈ 1.65 个/秒。整段还计入加载、保存、验证与重启。要知道重启本身耗时多少，需要单独记那一段的起止。估算费用时，再核对设备实际占用的时间。');
+ throughput.updated='2026.11.12';
  recovery.sections[2][1]+=fold('单卡实测 · 第 4 步退出，恢复到第 12 步',
   '<h3 id="single-gpu-recovery-contrast">从哪一步开始出现差异？</h3>'+
   p('同一张 RTX PRO 6000 Blackwell 上，两组按同一顺序处理 12 条样本，底座权重固定，只训练附加的 LoRA 小矩阵。第一组连续更新 12 步，第二组在第 4 步完整保存后退出，新进程读回参数、优化器和随机状态，继续完成第 5–12 步。',
   '首次配对读回的三项状态指纹都匹配。往前查日志，首步损失相同，梯度范数（衡量整组梯度的大小）已经不同，第 2 步的损失也开始分叉。差异出现得比第 4 步退出更早。遇到这种情况，先核对退出前的两条训练轨迹，再检查加载过程。')+
   p('重跑沿用原样本和比较阈值，同时启用确定性算法，固定 GPU 矩阵计算库 cuBLAS 的临时内存设置，并关闭 TF32 这种降低乘法精度的计算模式。第 12 步后，两组 LoRA 参数的最大绝对差为 0，参数、优化器状态及逐步损失均逐位一致，最终随机状态也一致。记录验证了这一组配置在完整更新边界的单卡进程恢复。')+
+  p('<a href="/article/training-performance/#single-gpu-recovery-timing">沿这次对照核对更新用时与整段墙钟 →</a>')+
   '<p class="practice-links"><a href="'+singleGpuResults+'README.md">实验条件与诊断过程 ↗</a> · <a href="'+singleGpuResults+'failed-pairs/recovery-v3/comparison.json">首次配对记录 ↗</a> · <a href="'+singleGpuResults+'comparison.json">重跑对照结果 ↗</a></p>');
  recovery.sections[7][1]+=fold('实跑 · 同一小模型从双进程训练走到推理',
   '<h3 id="native-tiny-decoder-handoff">训练恢复后，推理加载的是哪一步权重？</h3>'+

@@ -832,7 +832,12 @@
     {
       "id": "training-performance",
       "targets": [
-        "cpu-useful-token-throughput"
+        "cpu-useful-token-throughput",
+        "single-gpu-recovery-timing"
+      ],
+      "visible_targets": [
+        "cpu-useful-token-throughput",
+        "single-gpu-recovery-timing"
       ]
     },
     {
@@ -965,9 +970,11 @@
         "subsection-6-15mcx71",
         "subsection-7-1bdkyq8",
         "subsection-8-1an19m4",
-        "native-model-rollout"
+        "native-model-rollout",
+        "int8-batch-release-gate"
       ],
       "visible_targets": [
+        "int8-batch-release-gate",
         "native-model-rollout"
       ]
     },
