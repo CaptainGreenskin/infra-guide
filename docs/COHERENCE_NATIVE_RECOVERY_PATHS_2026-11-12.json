@@ -66,6 +66,11 @@
       "reviewed_sha256": "294fbbd9538e0884dd3a2bc8d640480c61c1164427bfd7e51583a4fa6fd9786e",
       "scope": "Require the new exact role gate entries while preserving the earlier destinations."
     },
+    "scripts/check-training-useful-tokens.cjs": {
+      "previous_sha256": "95c23c17fc4157f70b88696dbc5a25fea6fec62ca8f1a2a91db26531673c58e4",
+      "reviewed_sha256": "0849d0062c135e4d22b246f596d55d48c84a36c9ab50fb2fa0192914935d4855",
+      "scope": "Compare the actual throughput teaching unit exactly without treating subsequent recovery lessons as part of that unit."
+    },
     "scripts/check-sandbox-docker-lifecycle.cjs": {
       "previous_sha256": null,
       "reviewed_sha256": "9d569e3076fb16b7b2c07a5a17b097e79b3ff9f7dc9e0c2e0f39b9fe410694a3",
