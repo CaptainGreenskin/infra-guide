@@ -21,6 +21,7 @@ jobs:
           make -C haproxy-3.2.26 -j 2 TARGET=linux-glibc
       - name: Observe actual HAProxy failover and attachment readback
         run: |
+          mkdir -p native-records
           python3 -B dist/labs/haproxy-report-failover/failover_lab.py --haproxy "$PWD/haproxy-3.2.26/haproxy" --output native-records/haproxy-failover.json
       - uses: actions/upload-artifact@v4
         with:
