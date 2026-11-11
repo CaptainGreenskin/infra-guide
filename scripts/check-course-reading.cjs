@@ -1,6 +1,7 @@
 /* Whole-course contracts: one main reading path, real concept graphs and role prerequisites.
    UI checks describe organization, not a measured claim of human comprehension. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const {createHash}=require('node:crypto');
 const c={URLSearchParams,location:{search:''},articleURL:id=>'/article/'+id+'/'};vm.createContext(c);
 for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
 const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions,stages:courseReadingStages})',c)));
@@ -16,6 +17,9 @@ const courseReview=reviews.findLast(({review_scope})=>review_scope?.body_baselin
 assert(courseReview,'a whole-course body review must precede metadata-only reviews');
 const previous=require('./content-at-commit.cjs')(courseReview.body_baseline_commit);
 const changed=[],added=[],changedTitles={};
+const revisedBlocks=courseReview.revised_code_blocks||{};
+for(const id of Object.keys(revisedBlocks))assert(courseReview.changed_bodies.includes(id),id+': reviewed code change needs a reviewed body');
+const blockHash=block=>createHash('sha256').update(block).digest('hex');
 for(const a of data.articles){
  const old=previous.find(x=>x.id===a.id);
  if(!old){assert((courseReview.new_chapters||[]).includes(a.id),a.id+': undeclared new chapter');added.push(a.id);continue;}
@@ -25,7 +29,21 @@ for(const a of data.articles){
  if(JSON.stringify(a.sections)!==JSON.stringify(old.sections))changed.push(a.id);
  const oldBody=old.sections.map(s=>s[1]).join(''),body=a.sections.map(s=>s[1]).join('');
  const blocks=body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[],oldBlocks=oldBody.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[];
- let index=0;for(const block of oldBlocks){const at=blocks.indexOf(block,index);assert(at>=index,a.id+': original complete code removed or reordered');index=at+1;}
+ const priorHashes=oldBlocks.map(blockHash),currentHashes=blocks.map(blockHash);
+ const replacements=new Map();
+ for(const {previous_sha256,reviewed_sha256} of revisedBlocks[a.id]||[]){
+  assert(previous_sha256!==reviewed_sha256&&!replacements.has(previous_sha256),a.id+': distinct reviewed code revision');
+  assert.equal(priorHashes.filter(hash=>hash===previous_sha256).length,1,a.id+': exact previous code block');
+  assert.equal(currentHashes.filter(hash=>hash===reviewed_sha256).length,1,a.id+': exact revised code block');
+  assert(!currentHashes.includes(previous_sha256)&&!priorHashes.includes(reviewed_sha256),a.id+': replace the block exactly once');
+  replacements.set(previous_sha256,reviewed_sha256);
+ }
+ let index=0;
+ for(const hash of priorHashes){
+  const at=currentHashes.indexOf(replacements.get(hash)??hash,index);
+  assert(at>=index,a.id+': original or precisely reviewed complete code removed or reordered');
+  index=at+1;
+ }
  assert.equal(blocks.length-oldBlocks.length,courseReview.added_code_blocks?.[a.id]||0,a.id+': undeclared added source');
  for(const[,id]of oldBody.matchAll(/\bid="([^"]+)"/g))assert(body.includes('id="'+id+'"'),a.id+': original inner anchor '+id);
 }

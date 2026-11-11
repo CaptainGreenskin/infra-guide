@@ -100,6 +100,11 @@
       "previous_sha256": "12455773433b6f3e881e46d5cadeb92fe00fa3be962106b6a76cb332b9ff5e21",
       "reviewed_sha256": "5cc6329664c05f2001b1453462c2ad242f888b51112166f77d1534cf1675e160",
       "scope": "Record the exact revised lesson destinations."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "1929429431988284f0681b2fe6ee06cc1b733d01f1120c47cafc197c1a899fee",
+      "reviewed_sha256": "fe62b460b87b36ca1743a436cbdfc71a1ecb5961422f33e272394336e4a4294c",
+      "scope": "Protect the full original code inventory and identify the single approved Kairo audit exercise revision by both exact hashes."
     }
   },
   "review_scope": {
@@ -121,6 +126,14 @@
       "checkpoint-recovery": 1
     },
     "field_maps": 14,
-    "added_chapter_diagrams": 0
+    "added_chapter_diagrams": 0,
+    "revised_code_blocks": {
+      "kairo-practice": [
+        {
+          "previous_sha256": "155f1b3d9a058c01f4e74489a18550140011383e59e0715cce876c58ffd7f3e9",
+          "reviewed_sha256": "5edf62172b925381cb1ffaacc6f02eabda8898941266a23a80da52b4f22fe0c2"
+        }
+      ]
+    }
   }
 }
