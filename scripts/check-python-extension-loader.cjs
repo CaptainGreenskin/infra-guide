@@ -115,12 +115,13 @@ for(const [,file]of read('src/page-shell.html').toString().matchAll(/<script def
 const lesson=vm.runInContext("articleById('operator-profiling')",context);
 const section=lesson.sections[7][1],anchor='<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>';
 assert(section.includes(anchor));
-const suffix=section.slice(section.indexOf(anchor));
+const start=section.indexOf(anchor)+anchor.length,nextHeading=section.indexOf('<h3',start);
+const example=section.slice(start,nextHeading<0?undefined:nextHeading);
 for(const target of ['diagrams/python-extension-loader.svg','labs/python-extension-loader.zip',
  'labs/python-extension-loader/README.md','labs/python-extension-loader/validation.json']){
- assert(suffix.includes('href="'+target+'"'),target);
+ assert(example.includes('href="'+target+'"'),target);
 }
-assert(!suffix.includes('<pre'));
+assert(!example.includes('<pre'));
 if(process.env.PYTHON_EXTENSION_REPLAY){
  const replay=JSON.parse(execFileSync(process.env.PYTHON_EXTENSION_REPLAY,['-B',dir+'/extension_loader.py'],{encoding:'utf8'}));
  verify(replay);

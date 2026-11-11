@@ -1,0 +1,15 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "fd40bbe814122b38b4cecb5617b868d6cd688fca",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_SOFTMAX_AND_RECOVERY_CONNECTIONS_2026-11-11.json": "4bde6d4939ba9a418a651351f9aa89669b38cf54de0503df7ba7b9268ce59b17"
+  },
+  "source_revisions": {
+    "scripts/check-python-extension-loader.cjs": {
+      "previous_sha256": "c3aa9f37cbd503c107a7506be15d2177c32d7ee8b3c3613d4300838cafaf5c4d",
+      "reviewed_sha256": "180beabb69efa4e3eb73ae1a810cf8538200b19a0afbd2354f56c1391404e855",
+      "scope": "Verify source links and the absence of inline code within the CPython extension example. Stop at the next h3 so a later independent GPU experiment can show source code."
+    }
+  }
+}
