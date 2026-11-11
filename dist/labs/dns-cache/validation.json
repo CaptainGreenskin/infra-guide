@@ -1,0 +1,489 @@
+{
+  "schema": "dns-cache-v1",
+  "status": "passed",
+  "environment": {
+    "system": "Darwin",
+    "arch": "arm64",
+    "tools": {
+      "unbound": {
+        "version": "Version 1.24.2",
+        "sha256": "c285b524a0c209665da995279c117f726eda24d8b5856f7f725aab9a25bc05f3"
+      },
+      "dig": {
+        "version": "DiG 9.10.6",
+        "sha256": "cf483bcc1588deb9f24083912f681cfb7f88c4f137a2269f3cb614826072d5ea"
+      }
+    }
+  },
+  "fixture": {
+    "api": "api.example.test.",
+    "preview": "preview.example.test.",
+    "positive_ttl_seconds": 8,
+    "negative_ttl_seconds": 5,
+    "authority_serials": [
+      1,
+      2
+    ]
+  },
+  "processes": {
+    "authority": {
+      "pid": 90398,
+      "port": 49796
+    },
+    "resolver": {
+      "pid": 90399,
+      "port": 49797
+    }
+  },
+  "phases": {
+    "before": {
+      "authority": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49796",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 43.328,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.10"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49796 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +norecurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 59635\n;; flags: qr aa ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t8\tIN\tA\t192.0.2.10\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49796",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 66.672,
+          "status": "NXDOMAIN",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [],
+          "authority": [
+            {
+              "name": "example.test.",
+              "ttl": 5,
+              "type": "SOA",
+              "data": "ns.example.test. hostmaster.example.test. 1 60 60 60 5"
+            }
+          ],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49796 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +norecurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 33808\n;; flags: qr aa ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; AUTHORITY SECTION:\nexample.test.\t\t5\tIN\tSOA\tns.example.test. hostmaster.example.test. 1 60 60 60 5\n\n"
+        }
+      },
+      "resolver": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 90.996,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.10"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25938\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t8\tIN\tA\t192.0.2.10\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 116.463,
+          "status": "NXDOMAIN",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [],
+          "authority": [
+            {
+              "name": "example.test.",
+              "ttl": 5,
+              "type": "SOA",
+              "data": "ns.example.test. hostmaster.example.test. 1 60 60 60 5"
+            }
+          ],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 20646\n;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; AUTHORITY SECTION:\nexample.test.\t\t5\tIN\tSOA\tns.example.test. hostmaster.example.test. 1 60 60 60 5\n\n"
+        }
+      }
+    },
+    "changed_authority": {
+      "authority": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49796",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 148.035,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.20"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49796 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +norecurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 3129\n;; flags: qr aa ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t8\tIN\tA\t192.0.2.20\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49796",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 163.393,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "preview.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.30"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49796 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +norecurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 27206\n;; flags: qr aa ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\npreview.example.test.\t8\tIN\tA\t192.0.2.30\n\n"
+        }
+      },
+      "resolver": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 178.857,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.10"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 22819\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t8\tIN\tA\t192.0.2.10\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 202.735,
+          "status": "NXDOMAIN",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [],
+          "authority": [
+            {
+              "name": "example.test.",
+              "ttl": 5,
+              "type": "SOA",
+              "data": "ns.example.test. hostmaster.example.test. 1 60 60 60 5"
+            }
+          ],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 56401\n;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; AUTHORITY SECTION:\nexample.test.\t\t5\tIN\tSOA\tns.example.test. hostmaster.example.test. 1 60 60 60 5\n\n"
+        }
+      }
+    },
+    "negative_expired": {
+      "resolver": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 5508.931,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 2,
+              "type": "A",
+              "data": "192.0.2.10"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 23954\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t2\tIN\tA\t192.0.2.10\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 5532.837,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "preview.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.30"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 8370\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\npreview.example.test.\t8\tIN\tA\t192.0.2.30\n\n"
+        }
+      }
+    },
+    "both_expired": {
+      "resolver": {
+        "api": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 8398.657,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 8,
+              "type": "A",
+              "data": "192.0.2.20"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 api.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 7559\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t8\tIN\tA\t192.0.2.20\n\n"
+        },
+        "preview": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "49797",
+            "preview.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 8432.009,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "preview.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "192.0.2.30"
+            }
+          ],
+          "authority": [],
+          "raw": "\n; <<>> DiG 9.10.6 <<>> -4 @127.0.0.1 -p 49797 preview.example.test. A +nosearch +time=1 +tries=1 +noall +comments +answer +authority +recurse\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 24591\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\npreview.example.test.\t5\tIN\tA\t192.0.2.30\n\n"
+        }
+      }
+    }
+  },
+  "configs": {
+    "authority_before": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 49796\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-cache-xxj6awox\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\n    access-control: 127.0.0.0/8 refuse_non_local\n    local-zone: \"example.test.\" static\n    local-data: \"example.test. 5 IN SOA ns.example.test. hostmaster.example.test. 1 60 60 60 5\"\n    local-data: \"example.test. 8 IN NS ns.example.test.\"\n    local-data: \"ns.example.test. 8 IN A 192.0.2.53\"\n    local-data: \"api.example.test. 8 IN A 192.0.2.10\"\n",
+    "authority_after": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 49796\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-cache-xxj6awox\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\n    access-control: 127.0.0.0/8 refuse_non_local\n    local-zone: \"example.test.\" static\n    local-data: \"example.test. 5 IN SOA ns.example.test. hostmaster.example.test. 2 60 60 60 5\"\n    local-data: \"example.test. 8 IN NS ns.example.test.\"\n    local-data: \"ns.example.test. 8 IN A 192.0.2.53\"\n    local-data: \"api.example.test. 8 IN A 192.0.2.20\"\n    local-data: \"preview.example.test. 8 IN A 192.0.2.30\"\n",
+    "resolver": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 49797\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-cache-xxj6awox\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\nstub-zone:\n    name: \"example.test.\"\n    stub-addr: 127.0.0.1@49796\n    stub-first: no\n    stub-prime: no\nforward-zone:\n    name: \".\"\n    forward-addr: 127.0.0.1@49796\n    forward-first: no\n"
+  },
+  "source_sha256": {
+    "dns_cache.py": "89e3a377c22a6a8c29d2032cf233896a66a60d194c5eed579c865311271a07db"
+  },
+  "scope": "Two isolated loopback Unbound processes with no external upstream; dig bypasses the OS resolver. No DNSSEC, OS or browser cache, public propagation or connection reuse measurement."
+}

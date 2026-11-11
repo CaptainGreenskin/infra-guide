@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="516" viewBox="0 0 780 516" role="img" aria-labelledby="title desc">
+  <title id="title">接收方已提交，任务进程重启后按原操作查询回执</title>
+  <desc id="desc">模型提出补录后，任务库保存第二版计划和金额 42 的草稿。对金额 37 的旧批准不发送发布请求。收到匹配批准后，任务库先保存待确认的操作，接收库再通过 MCP HTTP 保存一份报告和一份回执。在回复发出前终止原工作进程。新进程按原操作查询回执，任务库确认完成，接收库仍是一份报告和一份回执。</desc>
+  <metadata>{"record":"labs/model-mcp-recovery/validation.json","operation":"report-A/v3:publish","report_total":42,"old_approval_total":37,"worker_exit":-9,"resume_tool":"lookup_receipt","reports":1,"receipts":1}</metadata>
+  <rect width="780" height="516" rx="18" fill="#f4f8fc"/>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#506b82"/></marker></defs>
+  <g fill="#17304a" font-family="system-ui,sans-serif">
+    <text x="28" y="43" font-size="25" font-weight="700">发布已提交，任务为什么还在等？</text>
+    <text x="28" y="85" font-size="21" font-weight="700">工作进程与任务库</text>
+    <text x="430" y="85" font-size="21" font-weight="700">独立接收服务与接收库</text>
+    <rect x="28" y="108" width="322" height="81" rx="9" fill="#dceafb"/>
+    <text x="46" y="138" font-size="19">按第 2 版批准金额 42</text>
+    <text x="46" y="167" font-size="19">写入待确认的发布操作</text>
+    <path d="M360 150H416" fill="none" stroke="#506b82" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="430" y="108" width="322" height="81" rx="9" fill="#dceedf"/>
+    <text x="448" y="138" font-size="19">收到 MCP HTTP 发布</text>
+    <text x="448" y="167" font-size="19">同一事务提交报告和回执</text>
+    <rect x="28" y="208" width="724" height="75" rx="9" fill="#fae8d5"/>
+    <text x="46" y="237" font-size="19" font-weight="700">回复尚未发送时，监督进程终止原工作进程</text>
+    <text x="46" y="264" font-size="19">任务库仍是待确认，接收库已有 1 份报告、1 份回执。</text>
+    <rect x="28" y="305" width="322" height="112" rx="9" fill="#dceafb"/>
+    <text x="46" y="335" font-size="19">新进程按原操作查询回执</text>
+    <text x="46" y="365" font-size="19">核对操作号、摘要和来源</text>
+    <text x="46" y="395" font-size="19">任务标为完成</text>
+    <path d="M360 336H416" fill="none" stroke="#506b82" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path d="M416 381H360" fill="none" stroke="#506b82" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="430" y="305" width="322" height="112" rx="9" fill="#dceedf"/>
+    <text x="448" y="335" font-size="19">查询原回执，返回金额 42</text>
+    <text x="448" y="365" font-size="19">仍保留 1 份报告和 1 份回执</text>
+    <text x="448" y="395" font-size="19">没有第二次发布</text>
+    <text x="28" y="465" font-size="19">同一个操作号 report-A/v3:publish 贯穿发布和恢复。</text>
+  </g>
+</svg>

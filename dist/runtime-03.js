@@ -235,7 +235,8 @@ Object.assign(cloudKnowledgeExplanations,{
  '解析：客户端 → DNS → Service 地址或端点记录',
  '数据：客户端 → 当前服务入口/转发 → Pod 监听端口 → 回包'
  ].join('\n'))+
- para('因此解析到 ClusterIP，只能先证明得到了一份名称结果；仍需核对 Service 类型、selector、targetPort、全部切片与实际监听。无 selector、headless、ExternalName 及终止期端点各有例外，不能把普通 ClusterIP 的解释直接扩展到所有服务。'),
+ para('因此解析到 ClusterIP，只能先证明得到了一份名称结果；仍需核对 Service 类型、selector、targetPort、全部切片与实际监听。无 selector、headless、ExternalName 及终止期端点各有例外，不能把普通 ClusterIP 的解释直接扩展到所有服务。',
+ '权威记录更新后，旧地址和 NXDOMAIN 都可能留在解析器里。<a href="/article/vpc-network/#native-dns-cache">用两份原始 DNS 回应看各自怎样过期 →</a>'),
  'nat-conntrack':knowledgeSubhead('沿同一个连接，逐笔核对地址重写')+
  para('图中实例 10.20.4.7:51000 连接 198.51.100.9:443。NAT 在连接状态中关联原始端点与翻译后端点；对 AWS 图示的公网出站路径，NAT 网关先使用其私网地址，随后互联网网关把该地址映射到关联 EIP。目的服务地址保持不变。其他云或网络方案应按实际路径分析，不能默认同样分工。',
  '回包的目的先是 EIP 与翻译端口，再沿既有状态还原到 NAT 私网端点和实例端点。这说明为什么必须画回程：如果绕过相应状态、连接已超时或路由返回了另一条不兼容路径，仅验证去程并不够。允许一条已发起连接的响应，也不同于允许外部任意建立一条新连接。',

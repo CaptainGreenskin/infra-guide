@@ -96,6 +96,7 @@ const nativeRecordChecks = {
  'dist/labs/kubernetes-admission/validation.json':'./check-kubernetes-admission.cjs',
  'dist/labs/native-slot-handoff/validation.json':'./check-native-slot-handoff.cjs',
  'dist/labs/vllm-scheduler/validation.json':'./check-vllm-scheduler.cjs',
+ 'dist/labs/vllm-cache-scope/validation.json':'./check-vllm-cache-scope.cjs',
  'dist/labs/release-artifact-trust/validation.json':'./check-release-artifact-trust.cjs',
  'dist/labs/prefetch-resume-step/validation.json':'./check-prefetch-resume-step.cjs',
  'dist/labs/sqlite-shard-routing/validation.json':'./check-sqlite-shard-routing.cjs',

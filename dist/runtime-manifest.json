@@ -5,8 +5,8 @@
   "bundles": [
     {
       "file": "runtime-01.js",
-      "sha256": "9c8d20878ce762338684ac234497722f1d2f93c4fe30b369388d8a4fe827cc04",
-      "bytes": 389641,
+      "sha256": "cde272c7bf6457161987619e5326f49dc001c4aa99934a760f7e8921cb21e5d1",
+      "bytes": 389783,
       "sources": [
         {
           "file": "site-recovery.js",
@@ -30,8 +30,8 @@
         },
         {
           "file": "diagram-sizes.js",
-          "sha256": "44dfe9d70ac0cbd8c123d9c9196841e94df685bb09da3cb461e78a220c204c81",
-          "bytes": 19021
+          "sha256": "c83a32b5997c6e422f664c29185bde9ba36f8be2905a6e41709186688e2778c4",
+          "bytes": 19163
         },
         {
           "file": "manual-sharding-data.js",
@@ -229,8 +229,8 @@
     },
     {
       "file": "runtime-03.js",
-      "sha256": "32c22824c9297ffcb0abc8f526709c4c48c603078912a07e6a41e955ba8ba32b",
-      "bytes": 271363,
+      "sha256": "8d0e64dcd981cff7585de3e7df090b250e200541186bad3cce590d70da04dc93",
+      "bytes": 271548,
       "sources": [
         {
           "file": "cloud-knowledge.js",
@@ -249,8 +249,8 @@
         },
         {
           "file": "cloud-network-mechanics.js",
-          "sha256": "f9ffb0af37db83bd116f560847feeee14e03bb71837bdbb9de978f81d5653dc9",
-          "bytes": 11433
+          "sha256": "cfcca4e21a89bb518b54a19fe0f61e6a03f77e0cb06d8dcca578ea17ebdcf44a",
+          "bytes": 11618
         },
         {
           "file": "cloud-k8s-mechanics.js",
@@ -336,8 +336,8 @@
     },
     {
       "file": "runtime-04.js",
-      "sha256": "21f8c48cb01ccf05035db6dd3659abbcbbab85bc59d0212706b1b28500069b00",
-      "bytes": 348911,
+      "sha256": "6887135a77c80492f186fe4c16815950700b157928b5607165b3efa48e2bcef3",
+      "bytes": 349453,
       "sources": [
         {
           "file": "ai-system-knowledge.js",
@@ -346,13 +346,13 @@
         },
         {
           "file": "ai-serving-knowledge.js",
-          "sha256": "c027f3136af2c07ebb2c93b4cf68b73509b4e88b61ceca03742962b88a81fcbd",
-          "bytes": 13715
+          "sha256": "c8ab0c186824370a9578c71f20950697686491e053c463f880793dc2cad3691d",
+          "bytes": 13929
         },
         {
           "file": "agent-system-knowledge.js",
-          "sha256": "8234cdc0e8f8b5215dda8c8520fb6399f9fc37bd739d573ff7cc753e99cf23cb",
-          "bytes": 20817
+          "sha256": "9c1cda4f27b6ef3a68fa4702eaf8e2d677fe4639c6f996836a443833d8dddb48",
+          "bytes": 21005
         },
         {
           "file": "ai-agent-lab-files.js",
@@ -416,8 +416,8 @@
         },
         {
           "file": "cloud-coverage.js",
-          "sha256": "0afca9d43de5dbd349db15648f3858493052d2d805214b4c9991997e4b385da0",
-          "bytes": 11981
+          "sha256": "ac77eab67cd0d9285270067ae96eb8f71842354a1e02640c3e70cd1f722ce674",
+          "bytes": 12121
         },
         {
           "file": "reading-revisions.js",
@@ -550,8 +550,8 @@
     },
     {
       "file": "runtime-06.js",
-      "sha256": "62174d75781fd684f6bded5819cb8ed44afa9ee564453c80f288cee6ecd495e6",
-      "bytes": 3795266,
+      "sha256": "37d49c5d64fe9a6945f8104d55a6d32a30e32c01f987d7b2bc0c282283c9e290",
+      "bytes": 3805400,
       "sources": [
         {
           "file": "agent-observation-lessons.js",
@@ -915,8 +915,8 @@
         },
         {
           "file": "progressive-network-reading.js",
-          "sha256": "9ef923f2d00d6ab2f2f442557776d8977a939a994dd33a202024a47da11fe8d9",
-          "bytes": 54117
+          "sha256": "1740c8f078430c179b2c8f541356f5df3c69ab25e549919e1af376db5f6657fa",
+          "bytes": 56556
         },
         {
           "file": "progressive-training-io-reading.js",
@@ -935,8 +935,8 @@
         },
         {
           "file": "progressive-inference-reading.js",
-          "sha256": "fb81079395c9d53487a7d2f988aeca5ee15465062d4b6033665de51a92840ec8",
-          "bytes": 86004
+          "sha256": "43fb5f6a63adeba3f214cdf83cdb721ac4e60c709094b3afbc8c1c76f82234f0",
+          "bytes": 89081
         },
         {
           "file": "progressive-agent-quality-reading.js",
@@ -1020,8 +1020,8 @@
         },
         {
           "file": "progressive-agent-retrieval-workflow-reading.js",
-          "sha256": "e5ce8429a0e5d17ac08b7723a7cfe6fb4895b070409b624f589622b083d4bf38",
-          "bytes": 70367
+          "sha256": "f66a18d22d28d5a90127ab11fb6342135f187f579c6f1e1f5f4b8a98530cb0b0",
+          "bytes": 72893
         },
         {
           "file": "progressive-terraform-identity-reading.js",
@@ -1125,8 +1125,8 @@
         },
         {
           "file": "learning-goals.js",
-          "sha256": "576b5b71abe7c4be06317df5535bcc15ffec82ed9f9db38dc6ad648823f1aca5",
-          "bytes": 21815
+          "sha256": "c6db3b18f2d0a2f117954577544eb867fb68a0bd0d4e7db9e4dd94c16218a9a1",
+          "bytes": 22123
         },
         {
           "file": "state-protocol-connections.js",
@@ -1145,8 +1145,8 @@
         },
         {
           "file": "lab-catalog.js",
-          "sha256": "0c2190570ef0d5473faa0f2f710172198af1338a8b12d267938f988df84f07d5",
-          "bytes": 113887
+          "sha256": "791185a7c2fe536a69c332e21bac3499ec2f96acad855cf8922a0df8b75cdab2",
+          "bytes": 115671
         },
         {
           "file": "concept-navigation.js",
@@ -1160,7 +1160,7 @@
         },
         {
           "file": "static-reading-version.js",
-          "sha256": "50c39a433f2ff035894a8149f82c0f6d15405f39d50a6d180f897c954059f071",
+          "sha256": "cc1eca8ab5bfad0711b8c1784708c0265ffa02d1307f4e6759ef2b8bda1b95f2",
           "bytes": 145
         }
       ]

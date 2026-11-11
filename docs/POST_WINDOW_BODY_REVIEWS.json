@@ -6619,6 +6619,79 @@
         "交一份可核对的答案",
         "实战：完整文件、一致状态与提交指针"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "faa175e89366ef6c62c2a8e21922a5d36698f5c68faf15b02b06dab42fa6403b",
+      "reviewed_content_sha256": "e382ad6b32d680543344cb4109158f25d6e68714cb4d054228024e893be37152",
+      "scope": "Connect DNS TTL and NXDOMAIN to observed authoritative and cached answers.",
+      "observation": "Two local DNS processes show distinct positive and negative expiry without changing client resolver state.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "6a76126caac03616c46b7c1c437687df52bc810e30c60c34fe60094f116501d1",
+      "reviewed_content_sha256": "f193955dbcb9c59d11bb1fc96f5120820eba64729de99d6e72fb6e137a544397",
+      "scope": "Connect reuse-key identity to the same-token scheduling exercise.",
+      "observation": "The theory now leads to the exact native contrast of the service-owned cache scope and a client-provided value.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "8d785c0d7909fbdd0d05963a8f355fd2f9bc47865bd599b90d2398a365b791b6",
+      "reviewed_content_sha256": "984eb8be268adfdb61cd57a2af49b3d4c361b3b607240b81640528737da6ea8b",
+      "scope": "Observe equal prompts under three cache-scope choices in the original vLLM scheduler.",
+      "observation": "Hit counts 4, 0 and 4 are actual CPU scheduler metadata with fixed identities and fixed model replies.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "a05c2e361124144f0449f95e8d36f46bdf39f08cbf391686b05b69660e65a648",
+      "reviewed_content_sha256": "bb8acbfd2dd7c528c51157f09e32e9991465bff99e94d36844f36dd8ef823676",
+      "scope": "Follow a real model plan and draft across independent MCP HTTP publication and a killed worker.",
+      "observation": "A stale approval sends no publication; after remote commit and before the reply, the original process exits and the new process queries the original receipt.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

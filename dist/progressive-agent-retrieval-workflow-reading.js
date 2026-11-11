@@ -311,12 +311,26 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
    p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>')+
-   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>');
+   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>')+
+   p('当发布跨进程、跨数据库时，接收方可能已经写入，任务库却还没有回执。<a href="/article/durable-workflows/#native-model-mcp-recovery">沿这份草稿继续做一次断点恢复 →</a>');
+  const modelMcpRecovery=fold('实跑 · 发布已提交，任务怎样认回回执',
+   h('native-model-mcp-recovery','从模型修订计划走到跨进程发布恢复')+
+   p('沿用上面四轮实际模型提议生成的草稿。任务库保存了第 2 版计划、两份来源和总数 42。先给工作进程一份只批准第 1 版金额 37 的记录，宿主核对草稿摘要后拒绝，接收服务没有收到发布。')+
+   trainingFigure('model-mcp-recovery','任务库与接收库分属不同进程。工作进程退出后，接收库仍保留原报告和回执。')+
+   p('换成匹配的批准。宿主先持久化操作号 <code>report-A/v3:publish</code>，再通过 MCP 的 Streamable HTTP 传输方式调用独立接收服务。这时客户端与工具服务用 HTTP 交换消息。接收服务在自己的 SQLite 事务中写入报告和回执。监督进程在提交后、服务发出响应前终止发布进程。')+
+   table(['核对时点','任务库','接收库'],[
+    ['旧批准被拒绝','仍在等待，未发出发布','0 份报告、0 份回执'],
+    ['提交后终止工作进程','待确认，回执为空','1 份金额 42 的报告、1 份回执'],
+    ['新进程查询原操作','核对回执后标为完成','仍是 1 份报告、1 份回执']
+   ])+
+   p('新进程建立新会话，调用 <code>lookup_receipt</code> 查询原操作。记录中两条 MCP 会话的 JSON-RPC 请求编号都是 3，真正贯穿发布与恢复的是持久化的操作号。新进程核对回执中的操作号、草稿摘要和来源版本，再保存完成状态。整条记录只有一次发布和一次回执查询。')+
+   p('复跑需同时解压本实验和<a href="/labs/model-plan-revision.zip">原模型规划包</a>，按说明准备固定版本的模型和运行时。程序使用本机独立进程、两个数据库和预设的批准输入。可以对照两份数据库及 HTTP 事件顺序，核实工作进程退出时究竟写到了哪一步。')+
+   '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
   a.sections[8][1]=fold('选读 · 固定提议与执行者接管的对照',a.sections[8][1].slice(0,nativeWorkflowStart))+
-   modelPlan+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
+   modelPlan+modelMcpRecovery+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
   a.sections[8][1]+=fold('选读 · MCP 提交后退出，怎样认回原回执',h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+

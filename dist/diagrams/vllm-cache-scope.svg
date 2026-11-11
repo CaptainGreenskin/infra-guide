@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="464" viewBox="0 0 780 464" role="img" aria-labelledby="title desc">
+  <title id="title">相同的词元使用不同缓存标识时，两个块的哈希都改变</title>
+  <desc id="desc">先用 A 的 demo-A 标识预热八个输入位置，每块四格。后续请求的词元和提交值完全相同。A 的可信标识为 demo-A，命中四格，计算位置四到七。B 的可信标识为 demo-B，两个块均未命中，两轮计算零到三和四到七。若直接信任 B 提交的 demo-A，就再次命中 A 的四格。结果来自 vLLM V1 固定版本 CPU 调度。</desc>
+  <metadata>{"record":"labs/vllm-cache-scope/validation.json","prompt":[1,2,3,4,5,6,7,8],"block_size":4,"cached_tokens":[4,0,4],"scheduled_positions":[[[4,5,6,7]],[[0,1,2,3],[4,5,6,7]],[[4,5,6,7]]]}</metadata>
+  <rect width="780" height="464" rx="18" fill="#f4f8fc"/>
+  <g fill="#17304a" font-family="system-ui,sans-serif">
+    <text x="28" y="42" font-size="26" font-weight="700">相同词元怎样按租户划分缓存？</text>
+    <text x="28" y="79" font-size="20">输入 [1,2,3,4,5,6,7,8] · 先用 A 的标识预热</text>
+    <rect x="28" y="104" width="724" height="87" rx="10" fill="#dceedf"/>
+    <text x="48" y="138" font-size="20" font-weight="700">同租户 A　服务端使用 demo-A</text>
+    <text x="48" y="169" font-size="20">复用 4 格 → 本轮计算位置 4–7</text>
+    <rect x="28" y="202" width="724" height="87" rx="10" fill="#dceafb"/>
+    <text x="48" y="236" font-size="20" font-weight="700">另一租户 B　服务端使用 demo-B</text>
+    <text x="48" y="267" font-size="20">复用 0 格 → 两轮分别计算位置 0–3、4–7</text>
+    <rect x="28" y="300" width="724" height="87" rx="10" fill="#fae8d5"/>
+    <text x="48" y="334" font-size="20" font-weight="700">错误做法　把 B 提交的 demo-A 原样传下去</text>
+    <text x="48" y="365" font-size="20">再次复用 4 格 → B 命中 A 的缓存范围</text>
+    <text x="28" y="428" font-size="19">vLLM v0.10.2 · 实际调度记录 · 固定模型回复</text>
+  </g>
+</svg>

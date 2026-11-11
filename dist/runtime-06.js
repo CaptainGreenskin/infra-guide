@@ -6177,7 +6177,24 @@ const progressiveAgentSectionTitles={
  'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
  ]);
 
- vpc.updated='2026.11.09';
+ const addressMapping=h('subsection-2-o5xitb','地址映射与服务名称');
+ if(vpc.sections[1][1].split(addressMapping).length!==2)throw Error('Missing DNS practice insertion point');
+ const dnsCache=h('native-dns-cache','实跑：旧地址和“不存在”何时过期')+
+  p('DNS 也能缓存一次“不存在”。查不到整个名称时，权威端返回 <code>NXDOMAIN</code>。区域起始记录（SOA）随响应提供否定缓存的计时依据，按 RFC 2308 取 SOA 记录的 TTL 和 MINIMUM 字段中较小的值。本例的旧地址 TTL 为 8 秒，否定答案的 TTL 为 5 秒。')+
+  trainingFigure('dns-cache-expiry','直问权威与查询同一个缓存解析器，可以同时得到不同答案。两份旧答案按各自的期限过期。')+
+  table(['查询时点','api.example.test','preview.example.test'],[
+   ['先问缓存解析器','192.0.2.10','NXDOMAIN'],
+   ['更新后直问权威','192.0.2.20','192.0.2.30'],
+   ['紧接着问同一个解析器','192.0.2.10','NXDOMAIN'],
+   ['否定缓存先过期','192.0.2.10','192.0.2.30'],
+   ['两份旧缓存均已过期','192.0.2.20','192.0.2.30']
+  ])+
+  p('遇到刚新增的名称仍报不存在时，先把查询对象分清。用同一个名称和记录类型分别问权威端、问业务实际使用的解析器，比较响应码、地址和剩余 TTL。若两者的地址已经一致，实际连接却还打到旧入口，就继续查是否复用了旧连接。')+
+  '<details class="progressive-detail"><summary>复跑两个本机 DNS 进程</summary>'+
+  p('解压后用 <code>python3 -B dns_cache.py --unbound /path/to/unbound --output local-observation.json</code> 启动回环上的权威端和缓存解析器。脚本用 <code>dig</code> 分别查询两个端口，保留原始响应。对照响应头的 <code>status</code>、答案区的 A 地址与 TTL，以及 <code>NXDOMAIN</code> 响应中 SOA 的 TTL。这里测试本机两份 DNS 服务和固定记录，没有测公网传播或 HTTP 连接。')+
+  '<p class="practice-links"><a href="/labs/dns-cache.zip" download>下载完整源码与记录 ↓</a> · <a href="/labs/dns-cache/validation.json">查看逐次 DNS 响应 →</a> · <a href="/labs/dns-cache/README.md">复跑步骤 →</a> · <a href="https://www.rfc-editor.org/rfc/rfc2308.html#section-5">否定缓存的 TTL ↗</a></p></details>';
+ vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+addressMapping);
+ vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+
@@ -7216,6 +7233,9 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   '<p class="source-at"><a href="https://huggingface.co/docs/transformers/main/en/cache_explanation#cache-class">Transformers 的新输入与历史缓存形状 ↗</a> · <a href="https://docs.vllm.ai/en/v0.10.2/configuration/optimization.html#chunked-prefill">vLLM 0.10.2 的混合批与位置预算 ↗</a></p>';
  if(serving.sections[4][1].split(servingBlockBoundary).length!==2)throw Error('Serving rows bridge insertion point changed');
  serving.sections[4][1]=serving.sections[4][1].replace(servingBlockBoundary,servingRows+servingBlockBoundary);
+ const reuseBoundary='性能章用实际CPU块池逐步检查这些所有权变化。';
+ if(serving.sections[4][1].split(reuseBoundary).length!==2)throw Error('Missing cache reuse bridge insertion point');
+ serving.sections[4][1]=serving.sections[4][1].replace(reuseBoundary,reuseBoundary+'<a href="/article/inference-performance/#native-vllm-cache-scope">对照词元完全相同时，租户范围怎样改变缓存命中 →</a>');
 
  const performance=select('inference-performance'),q=performance.sections.map(x=>x[1]);
  const qc=q.map(codes),qf=q.map(figures);
@@ -7509,7 +7529,22 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
 .venv/bin/python -B upstream.py --dest upstream-cache
 PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cache --output replay.json`)+
   p('实验在 CPU 上调用 vLLM v0.10.2 的原始请求、调度与块管理方法。90、91、99 和迟到的 92 是测试程序提供的固定模型返回值。记录回答的是哪轮计算哪些位置、占用哪些块，以及结束后怎样清理。设备显存、生成质量和延迟要用完整推理服务测量。')+
-  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p></details>';
+  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p>'+
+  p('前面通过修改词元让 C 无法复用 A 的历史。下一份对照只改共享范围，<a href="/article/inference-performance/#native-vllm-cache-scope">看相同词元怎样按租户查缓存 →</a>')+'</details>';
+ performance.sections[2][1]+=
+  '<details class="progressive-detail"><summary>vLLM V1 实战 · 相同词元怎样按租户查缓存</summary>'+
+  heading('native-vllm-cache-scope','三个请求的词元相同，缓存命中怎样变')+
+  p('先用租户 A 的输入 [1,2,3,4,5,6,7,8] 预热缓存，每块 4 格。三组对照都从同样的预热状态开始。后续请求的词元完全相同，也都提交 <code>demo-A</code>。服务端先根据已经确认的身份选择允许的共享范围，再把对应标识填到 vLLM 请求的 <code>cache_salt</code> 字段。实验里的身份和标识都是固定输入。')+
+  trainingFigure('vllm-cache-scope','词元、块大小和模型回复都固定，只改变服务端最终交给 vLLM 的缓存标识。')+
+  table(['后续请求','交给 vLLM 的标识','前缀复用','本次新计算位置'],[
+   ['同一租户 A','demo-A','4 格','4–7'],
+   ['租户 B，服务端按身份赋值','demo-B','0 格','先 0–3，再 4–7'],
+   ['租户 B，原样转发提交的值','demo-A','4 格','4–7']
+  ])+
+  p('首块的缓存哈希由词元和共享标识共同决定。第二块的哈希还包含第一块的哈希。换成 <code>demo-B</code> 后，虽然两块的词元都相同，两项哈希都和 A 不同。保留 <code>demo-A</code> 时两个旧键可查到，实际调度只复用 4 格，因为还要计算末位置来选首个输出。')+
+  p('对照结果里的原始哈希、前缀命中数和每轮位置，可以看到错误发生在服务端把请求参数直接当共享范围。实际服务要由已验证的身份决定这个范围。实验执行的是固定版本的请求、哈希和调度代码，用固定回复替代模型计算，验证范围是缓存键与排程。')+
+  p('解压本实验和<a href="/labs/vllm-scheduler.zip">前一份调度实验包</a>到同一级目录，先按调度实验的说明下载固定源码，再用 <code>cache_scope.py --scheduler-dir ../vllm-scheduler --source-dir upstream-cache</code> 复跑。完整命令见包内说明。')+
+  '<p class="practice-links"><a href="/labs/vllm-cache-scope.zip" download>下载对照程序与记录 ↓</a> · <a href="/labs/vllm-cache-scope/validation.json">查看三条实际排程 →</a> · <a href="/labs/vllm-cache-scope/README.md">复跑与哈希说明 →</a> · '+vllmLink('core/kv_cache_utils.py','L509-L574','固定版本的前缀键计算')+'</p></details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
@@ -11477,12 +11512,26 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
    p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>')+
-   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>');
+   p('观测章把另一份 42 日报交给独立的接收服务。<a href="/article/agent-observability/#native-mcp-trace-reentry">查三次调用为什么只留下一份报告和一条回执 →</a>')+
+   p('当发布跨进程、跨数据库时，接收方可能已经写入，任务库却还没有回执。<a href="/article/durable-workflows/#native-model-mcp-recovery">沿这份草稿继续做一次断点恢复 →</a>');
+  const modelMcpRecovery=fold('实跑 · 发布已提交，任务怎样认回回执',
+   h('native-model-mcp-recovery','从模型修订计划走到跨进程发布恢复')+
+   p('沿用上面四轮实际模型提议生成的草稿。任务库保存了第 2 版计划、两份来源和总数 42。先给工作进程一份只批准第 1 版金额 37 的记录，宿主核对草稿摘要后拒绝，接收服务没有收到发布。')+
+   trainingFigure('model-mcp-recovery','任务库与接收库分属不同进程。工作进程退出后，接收库仍保留原报告和回执。')+
+   p('换成匹配的批准。宿主先持久化操作号 <code>report-A/v3:publish</code>，再通过 MCP 的 Streamable HTTP 传输方式调用独立接收服务。这时客户端与工具服务用 HTTP 交换消息。接收服务在自己的 SQLite 事务中写入报告和回执。监督进程在提交后、服务发出响应前终止发布进程。')+
+   table(['核对时点','任务库','接收库'],[
+    ['旧批准被拒绝','仍在等待，未发出发布','0 份报告、0 份回执'],
+    ['提交后终止工作进程','待确认，回执为空','1 份金额 42 的报告、1 份回执'],
+    ['新进程查询原操作','核对回执后标为完成','仍是 1 份报告、1 份回执']
+   ])+
+   p('新进程建立新会话，调用 <code>lookup_receipt</code> 查询原操作。记录中两条 MCP 会话的 JSON-RPC 请求编号都是 3，真正贯穿发布与恢复的是持久化的操作号。新进程核对回执中的操作号、草稿摘要和来源版本，再保存完成状态。整条记录只有一次发布和一次回执查询。')+
+   p('复跑需同时解压本实验和<a href="/labs/model-plan-revision.zip">原模型规划包</a>，按说明准备固定版本的模型和运行时。程序使用本机独立进程、两个数据库和预设的批准输入。可以对照两份数据库及 HTTP 事件顺序，核实工作进程退出时究竟写到了哪一步。')+
+   '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
   a.sections[8][1]=fold('选读 · 固定提议与执行者接管的对照',a.sections[8][1].slice(0,nativeWorkflowStart))+
-   modelPlan+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
+   modelPlan+modelMcpRecovery+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
   a.sections[8][1]+=fold('选读 · MCP 提交后退出，怎样认回原回执',h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
@@ -14800,7 +14849,7 @@ const learningProfiles={
   checks:[
    {title:"确认用户真的能访问",
     result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
    {title:"定位请求被哪一层拦下",
     result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","native-jetstream-redelivery","消息重投后拒绝旧执行者"]]},
@@ -14840,14 +14889,15 @@ const learningProfiles={
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
   task:"交一份推理服务验收表，写清给定输入下的缓存占用、等待时间和发布判定。",
   checks:[
-   {title:"算出缓存能容纳多少请求",
-    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。",
+   {title:"核对缓存容量与复用范围",
+    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
      ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
      ["inference-performance","native-vllm-scheduler","vLLM 调度、等待与归还实跑"],
+     ["inference-performance","native-vllm-cache-scope","相同词元在不同租户下的排程"],
      ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
@@ -14895,7 +14945,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],more:[["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},
@@ -15533,6 +15583,9 @@ function chapterReadingNav(a){
 // lab-catalog.js
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
+ 'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
+ 'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
  'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
  'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
@@ -15666,6 +15719,9 @@ const labTrackCatalog={
  agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估；真实模型与 Kairo 接入另行验收。'}
 };
 const labLearningCatalog=[
+ {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
+ {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
+ {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
  {id:'cloud-qemu-vcpu',track:'cloud',stage:2,title:'vCPU 运行得慢，时间花在执行还是排队',chapter:'cloud-compute',anchor:'native-qemu-vcpu',pack:'qemu-vcpu',files:['vcpu_probe.py'],env:'Python 3.8+ · QEMU · Linux schedstats',kind:'真实 QEMU 和 Linux 宿主线程记录',observe:'从 QMP 的顶层 thread-id 找到 Linux schedstat，算出加入竞争前后的执行与排队增量。',scope:'Linux TCG 测量与 macOS QMP 对照。KVM、客户机和业务吞吐另验。'},
  {id:'cloud-foundations',track:'cloud',stage:0,title:'按需补：内存、锁、SQL 与缓存',chapter:'virtual-memory-oom',pack:'textbook-examples',folder:'cloud-foundations',files:['virtual-memory-oom.py','concurrency-pools.py','database-index-locks.py','cache-consistency.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'基础模型与 SQL',observe:'分别对照内存事件、锁排队、查询计划和旧缓存回填；不要把四个小程序当成同一个系统。',scope:'SQL 真实执行；内存与排队等使用明确的教学模型。'},
@@ -16230,5 +16286,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="14c479b5aa11da623e1c8839c9caf89f447f2cf539af4626c790a6d2d0733502";
+const staticReadingVersion="933b7d77cf45b11107ec7660176c9360cb6c61dedbbd2694ae53a937eeaf0b4c";
 

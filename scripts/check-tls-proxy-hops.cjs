@@ -105,7 +105,13 @@ const baseline = require('./content-at-commit.cjs').evaluate('fa497003e7a578da41
 const boundary = '<h3 id="native-tls-proxy">';
 const [retained, added] = sections[6][1].split(boundary);
 assert(added && !added.includes(boundary));
-assert.deepEqual(sections.slice(0, 6), baseline.slice(0, 6));
+const earlier = sections.slice(0, 6);
+const [title, dnsBody] = earlier[1];
+const dnsStart = dnsBody.indexOf('<h3 id="native-dns-cache">');
+const dnsEnd = dnsBody.indexOf('<h3 id="subsection-2-o5xitb">', dnsStart);
+assert(dnsStart >= 0 && dnsEnd > dnsStart, 'isolate the later DNS exercise');
+earlier[1] = [title, dnsBody.slice(0, dnsStart) + dnsBody.slice(dnsEnd)];
+assert.deepEqual(earlier, baseline.slice(0, 6));
 assert.equal(sections[6][0], baseline[6][0]);
 assert.equal(retained, baseline[6][1]);
 for (const asset of [

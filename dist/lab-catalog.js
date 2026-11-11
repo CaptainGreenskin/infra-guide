@@ -1,5 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
+ 'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
+ 'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
+ 'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
  'sqlite-shard-routing':{folder:'sqlite-shard-routing',title:'分片路由、跨片聚合与热键'},
  'async-dcp-commit':{folder:'async-dcp-commit',title:'异步检查点的内存快照与提交'},
@@ -133,6 +136,9 @@ const labTrackCatalog={
  agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估；真实模型与 Kairo 接入另行验收。'}
 };
 const labLearningCatalog=[
+ {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
+ {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
+ {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
  {id:'cloud-qemu-vcpu',track:'cloud',stage:2,title:'vCPU 运行得慢，时间花在执行还是排队',chapter:'cloud-compute',anchor:'native-qemu-vcpu',pack:'qemu-vcpu',files:['vcpu_probe.py'],env:'Python 3.8+ · QEMU · Linux schedstats',kind:'真实 QEMU 和 Linux 宿主线程记录',observe:'从 QMP 的顶层 thread-id 找到 Linux schedstat，算出加入竞争前后的执行与排队增量。',scope:'Linux TCG 测量与 macOS QMP 对照。KVM、客户机和业务吞吐另验。'},
  {id:'cloud-foundations',track:'cloud',stage:0,title:'按需补：内存、锁、SQL 与缓存',chapter:'virtual-memory-oom',pack:'textbook-examples',folder:'cloud-foundations',files:['virtual-memory-oom.py','concurrency-pools.py','database-index-locks.py','cache-consistency.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'基础模型与 SQL',observe:'分别对照内存事件、锁排队、查询计划和旧缓存回填；不要把四个小程序当成同一个系统。',scope:'SQL 真实执行；内存与排队等使用明确的教学模型。'},

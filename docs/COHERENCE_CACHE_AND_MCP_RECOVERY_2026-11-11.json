@@ -1,0 +1,219 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "d6226a532f409ff6ec539f4c303ecb6d45d9ffc2",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_VCPU_AND_READING_LOCATION_2026-11-11.json": "8db89639bf304048a89df72f87e18fccf3384a1bf572f2dbcdcd309014560e5a"
+  },
+  "source_revisions": {
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "9ef923f2d00d6ab2f2f442557776d8977a939a994dd33a202024a47da11fe8d9",
+      "reviewed_sha256": "1740c8f078430c179b2c8f541356f5df3c69ab25e549919e1af376db5f6657fa",
+      "scope": "Connect DNS TTL and NXDOMAIN to observed authoritative and cached answers."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "fb81079395c9d53487a7d2f988aeca5ee15465062d4b6033665de51a92840ec8",
+      "reviewed_sha256": "43fb5f6a63adeba3f214cdf83cdb721ac4e60c709094b3afbc8c1c76f82234f0",
+      "scope": "Observe equal prompts under three cache-scope choices in the original vLLM scheduler."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "e5ce8429a0e5d17ac08b7723a7cfe6fb4895b070409b624f589622b083d4bf38",
+      "reviewed_sha256": "f66a18d22d28d5a90127ab11fb6342135f187f579c6f1e1f5f4b8a98530cb0b0",
+      "scope": "Follow a real model plan and draft across independent MCP HTTP publication and a killed worker."
+    },
+    "dist/cloud-network-mechanics.js": {
+      "previous_sha256": "f9ffb0af37db83bd116f560847feeee14e03bb71837bdbb9de978f81d5653dc9",
+      "reviewed_sha256": "cfcca4e21a89bb518b54a19fe0f61e6a03f77e0cb06d8dcca578ea17ebdcf44a",
+      "scope": "Connect DNS discovery to the exact local authority and resolver comparison."
+    },
+    "dist/ai-serving-knowledge.js": {
+      "previous_sha256": "c027f3136af2c07ebb2c93b4cf68b73509b4e88b61ceca03742962b88a81fcbd",
+      "reviewed_sha256": "c8ab0c186824370a9578c71f20950697686491e053c463f880793dc2cad3691d",
+      "scope": "Connect the KV reuse boundary to the same-input experiment."
+    },
+    "dist/agent-system-knowledge.js": {
+      "previous_sha256": "8234cdc0e8f8b5215dda8c8520fb6399f9fc37bd739d573ff7cc753e99cf23cb",
+      "reviewed_sha256": "9c1cda4f27b6ef3a68fa4702eaf8e2d677fe4639c6f996836a443833d8dddb48",
+      "scope": "Connect persisted intent and receipt lookup to the real cross-process execution."
+    },
+    "dist/cloud-coverage.js": {
+      "previous_sha256": "0afca9d43de5dbd349db15648f3858493052d2d805214b4c9991997e4b385da0",
+      "reviewed_sha256": "ac77eab67cd0d9285270067ae96eb8f71842354a1e02640c3e70cd1f722ce674",
+      "scope": "Name the actual DNS scope in the C2 evidence."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "576b5b71abe7c4be06317df5535bcc15ffec82ed9f9db38dc6ad648823f1aca5",
+      "reviewed_sha256": "c6db3b18f2d0a2f117954577544eb867fb68a0bd0d4e7db9e4dd94c16218a9a1",
+      "scope": "Link Cloud, inference and Agent platform outcomes to the exact exercise."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "0c2190570ef0d5473faa0f2f710172198af1338a8b12d267938f988df84f07d5",
+      "reviewed_sha256": "791185a7c2fe536a69c332e21bac3499ec2f96acad855cf8922a0df8b75cdab2",
+      "scope": "Register the three authored reproducible experiment packs."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "44dfe9d70ac0cbd8c123d9c9196841e94df685bb09da3cb461e78a220c204c81",
+      "reviewed_sha256": "c83a32b5997c6e422f664c29185bde9ba36f8be2905a6e41709186688e2778c4",
+      "scope": "Record intrinsic dimensions of the three teaching diagrams."
+    },
+    "scripts/check-dns-cache.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "25269ec4f69ae0f33cbd9c6f07d681768691443e35e25b243384533922034b4b",
+      "scope": "Independently parse raw dig results and check the bound diagram and exact ZIP."
+    },
+    "scripts/check-tls-proxy-hops.cjs": {
+      "previous_sha256": "9a68ed4cc3eb843e746e00243ed93a5e28e82652a93f1aa510e75cff4272e282",
+      "reviewed_sha256": "ef5a466ce10b25d70775b63ba8c6f63ba18ae22dbfa60151f3ee05de9213ef95",
+      "scope": "Verify the historical TLS body with the later DNS exercise scoped to its own subsection."
+    },
+    "scripts/check-vllm-cache-scope.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "abd10e878f9465742890822dab6b728ff828f8df7e0fb3dff0549830d574334e",
+      "scope": "Reconstruct pinned hashes and positions, reject mutations, and bind the diagram and archive."
+    },
+    "scripts/check-model-mcp-recovery.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3cfbf061e5a1be3ea4b4f753ce37bd567f29869c2fed66e3d7139ab7a79d6348",
+      "scope": "Check actual model and MCP exchanges, a pre-response worker exit, independent results and the source ZIP."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "ceb537c385e88209b6c90c15e384547bb69bdd661f74691ef6faf996a68f6ec9",
+      "reviewed_sha256": "b1b00a6440337b0c3eb86e9cfecd0695f5561140fe3472e4396e01001250613b",
+      "scope": "Register the three new evidence checks."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "d85985f0e05e26ba90c61eb8aac58391e04f8204b45fb2e0dcbca65ca4487c28",
+      "reviewed_sha256": "02354da12b7e90070c702c3a9fede21f293e339370076c167d693a7706cd8566",
+      "scope": "Verify exact role targets across root and project paths."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "61f6f7f74a98cfc19cade91cd250b5dd524dedcceab42adf3634bc546a11df23",
+      "reviewed_sha256": "25e5022cc3217595801e8a6cb28f29927ffc14bd76e59b2d64c9a3428b821603",
+      "scope": "Select the vLLM scope verifier for the new signed teaching unit."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "14bf09f22fe658a7a6e55461bba78870265ed0e8800d0ea8350ed90598da5219",
+      "reviewed_sha256": "22a5f1c4e83785def4417dceeeee944d2640c378f9a2768ecc2b0667ac4115c0",
+      "scope": "Fingerprint the new lightweight reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "50c39a433f2ff035894a8149f82c0f6d15405f39d50a6d180f897c954059f071",
+      "reviewed_sha256": "cc1eca8ab5bfad0711b8c1784708c0265ffa02d1307f4e6759ef2b8bda1b95f2",
+      "scope": "Fingerprint the renderer and edited lesson sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "685ae682079f05f5ce8a2082b57ddaa3364e4b27d9ba216addfa88870480f922",
+      "reviewed_sha256": "8fd5072ecbbd4741529a5c16059f133a8ff50a916b8fc831a7d7e689ccd8a3eb",
+      "scope": "Record the visible DNS heading and optional native anchors."
+    },
+    "docs/CONTENT_CACHE_AND_MCP_RECOVERY_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9ebbbee76c33245d6c8ad132052c7afcb27326fc315f2c7a4fe7f66e4a1bc071",
+      "scope": "Record four article changes, three knowledge links and three actual experiment units."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "1a5e2eae8aee9c57d664a302b2a7a38eaed65f3fc539f54660da1f124e645de1",
+      "reviewed_sha256": "20c61dd6cc7bc4a7265459b35cf7f466758ae49f5414a6f8e6cf357fa3c47deb",
+      "scope": "Append the verified body and knowledge reviews."
+    },
+    "dist/labs/dns-cache.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c832f351079d73b0803042d0febcb44a193eac10711e9c128842e80bc3730fa0",
+      "scope": "Keep the exact reproducible source and record archive."
+    },
+    "dist/labs/dns-cache/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a5622c99aee0987a9eeb2a315ccfb9f07b3cb018988a13ce2c5de2fc78ead178",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/dns-cache/dns_cache.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "89e3a377c22a6a8c29d2032cf233896a66a60d194c5eed579c865311271a07db",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/dns-cache/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e742f134b826c3f434188f25d35219466b717fade8c815e57b66a298f1d345a4",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/vllm-cache-scope.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "482b349038850993e540973e7278f33da61ecd613d8de11a39888a3b96ee58b2",
+      "scope": "Keep the exact reproducible source and record archive."
+    },
+    "dist/labs/vllm-cache-scope/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9053168c7a85d5ad54b1b74ec7388caf418d092f20ca0ee221c9f6011ca6be5b",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/vllm-cache-scope/cache_scope.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "dbe02c2813f12e9125d684bad70406980bba5fc50841237664d3552d12ca84e1",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/vllm-cache-scope/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "57bab8306e0aa247045a53b49539c1c2774d0e1c95a6dbbe64b16218e603b578",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/model-mcp-recovery.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "777b7494b022e2b85e92a0cb9e245f0265a2a2ca73548c14de9ca46feb67c3b5",
+      "scope": "Keep the exact reproducible source and record archive."
+    },
+    "dist/labs/model-mcp-recovery/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1dfaa98f146d6ee1499d5c7b53ac2c917f2a422c9e5e0b7ca5fa2adb11c40e6d",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/model-mcp-recovery/model_mcp_recovery.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "14709b7b58a5f74dc361808b830b301f520fa09d884f1824f88368db470ca1b2",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/model-mcp-recovery/requirements.txt": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/labs/model-mcp-recovery/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c0c206a87af6fab5ed221e59742abcf9b82b6e4abcd96b47e93636441613ad6a",
+      "scope": "Bind the actual experiment, fixed dependency instructions and recorded observations."
+    },
+    "dist/diagrams/dns-cache-expiry.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ab66b8cf34e2e7fc01f9fcfd28cf6060c68d5fd77ed3f043dfe3ce8f10896861",
+      "scope": "Draw the same native observations as the article and validation record."
+    },
+    "dist/diagrams/vllm-cache-scope.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "914a5668dfb1cbe148007f38cb0c798794d8a519883162149cce6b5cd318f155",
+      "scope": "Draw the same native observations as the article and validation record."
+    },
+    "dist/diagrams/model-mcp-recovery.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3956f4d61de5dcf4e7b16bad0c52d29ea640c226a400a5ada4bc0e7fad5f402e",
+      "scope": "Draw the same native observations as the article and validation record."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "5a1459cca8a8d25895b535fbe6167ba638bd60b23a8580f7a14e624d98237106",
+      "reviewed_sha256": "639bb9fcb9c15fef64ede12fec18ae8b63ada2d6aa3a206326407346301628fb",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "d6226a532f409ff6ec539f4c303ecb6d45d9ffc2",
+    "chapters": 78,
+    "changed_bodies": [
+      "vpc-network",
+      "model-serving",
+      "inference-performance",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}

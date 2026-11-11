@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="480" viewBox="0 0 780 480" role="img" aria-labelledby="title desc">
+  <title id="title">同一个解析器缓存旧地址和不存在，按各自 TTL 过期</title>
+  <desc id="desc">权威端原来把 api.example.test 指向 192.0.2.10，preview.example.test 不存在。解析器先缓存这两份答案，TTL 分别为 8 秒和 5 秒。权威端把 api 改成 192.0.2.20，新增 preview 为 192.0.2.30。解析器先保留旧地址和不存在。否定缓存先过期，preview 返回新地址，随后 api 缓存过期才得到新地址。</desc>
+  <metadata>{"record":"labs/dns-cache/validation.json","positive_ttl":8,"negative_ttl":5,"old_api":"192.0.2.10","new_api":"192.0.2.20","new_preview":"192.0.2.30"}</metadata>
+  <rect width="780" height="480" rx="18" fill="#f4f8fc"/>
+  <g fill="#17304a" font-family="system-ui,sans-serif">
+    <text x="28" y="42" font-size="26" font-weight="700">权威端改了，解析器为什么还给旧答案？</text>
+    <text x="28" y="80" font-size="19">同一个解析器按两份答案各自的 TTL 保留缓存。</text>
+    <rect x="28" y="106" width="724" height="76" rx="10" fill="#dceafb"/>
+    <text x="48" y="136" font-size="20" font-weight="700">第一次查询</text>
+    <text x="48" y="164" font-size="19">api 为 .10（8 秒），preview 不存在（5 秒）。</text>
+    <rect x="28" y="194" width="724" height="76" rx="10" fill="#e0eff2"/>
+    <text x="48" y="224" font-size="20" font-weight="700">权威发布 .20 和 .30</text>
+    <text x="48" y="252" font-size="19">直问权威已得到新地址。原解析器仍答 .10 和不存在。</text>
+    <rect x="28" y="282" width="724" height="76" rx="10" fill="#f9e9d6"/>
+    <text x="48" y="312" font-size="20" font-weight="700">否定缓存先到期</text>
+    <text x="48" y="340" font-size="19">preview 已返回 .30，api 仍返回 .10。</text>
+    <rect x="28" y="370" width="724" height="76" rx="10" fill="#dceedf"/>
+    <text x="48" y="400" font-size="20" font-weight="700">旧地址缓存也到期</text>
+    <text x="48" y="428" font-size="19">解析器返回 api .20、preview .30。</text>
+  </g>
+</svg>

@@ -159,6 +159,9 @@
   '<p class="source-at"><a href="https://huggingface.co/docs/transformers/main/en/cache_explanation#cache-class">Transformers 的新输入与历史缓存形状 ↗</a> · <a href="https://docs.vllm.ai/en/v0.10.2/configuration/optimization.html#chunked-prefill">vLLM 0.10.2 的混合批与位置预算 ↗</a></p>';
  if(serving.sections[4][1].split(servingBlockBoundary).length!==2)throw Error('Serving rows bridge insertion point changed');
  serving.sections[4][1]=serving.sections[4][1].replace(servingBlockBoundary,servingRows+servingBlockBoundary);
+ const reuseBoundary='性能章用实际CPU块池逐步检查这些所有权变化。';
+ if(serving.sections[4][1].split(reuseBoundary).length!==2)throw Error('Missing cache reuse bridge insertion point');
+ serving.sections[4][1]=serving.sections[4][1].replace(reuseBoundary,reuseBoundary+'<a href="/article/inference-performance/#native-vllm-cache-scope">对照词元完全相同时，租户范围怎样改变缓存命中 →</a>');
 
  const performance=select('inference-performance'),q=performance.sections.map(x=>x[1]);
  const qc=q.map(codes),qf=q.map(figures);
@@ -452,7 +455,22 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
 .venv/bin/python -B upstream.py --dest upstream-cache
 PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cache --output replay.json`)+
   p('实验在 CPU 上调用 vLLM v0.10.2 的原始请求、调度与块管理方法。90、91、99 和迟到的 92 是测试程序提供的固定模型返回值。记录回答的是哪轮计算哪些位置、占用哪些块，以及结束后怎样清理。设备显存、生成质量和延迟要用完整推理服务测量。')+
-  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p></details>';
+  '<p class="practice-links"><a href="/labs/vllm-scheduler.zip" download>下载源码与记录 ↓</a> · <a href="/labs/vllm-scheduler/validation.json">查看逐轮记录 →</a> · <a href="/labs/vllm-scheduler/README.md">复跑说明与源码范围 →</a></p>'+
+  p('前面通过修改词元让 C 无法复用 A 的历史。下一份对照只改共享范围，<a href="/article/inference-performance/#native-vllm-cache-scope">看相同词元怎样按租户查缓存 →</a>')+'</details>';
+ performance.sections[2][1]+=
+  '<details class="progressive-detail"><summary>vLLM V1 实战 · 相同词元怎样按租户查缓存</summary>'+
+  heading('native-vllm-cache-scope','三个请求的词元相同，缓存命中怎样变')+
+  p('先用租户 A 的输入 [1,2,3,4,5,6,7,8] 预热缓存，每块 4 格。三组对照都从同样的预热状态开始。后续请求的词元完全相同，也都提交 <code>demo-A</code>。服务端先根据已经确认的身份选择允许的共享范围，再把对应标识填到 vLLM 请求的 <code>cache_salt</code> 字段。实验里的身份和标识都是固定输入。')+
+  trainingFigure('vllm-cache-scope','词元、块大小和模型回复都固定，只改变服务端最终交给 vLLM 的缓存标识。')+
+  table(['后续请求','交给 vLLM 的标识','前缀复用','本次新计算位置'],[
+   ['同一租户 A','demo-A','4 格','4–7'],
+   ['租户 B，服务端按身份赋值','demo-B','0 格','先 0–3，再 4–7'],
+   ['租户 B，原样转发提交的值','demo-A','4 格','4–7']
+  ])+
+  p('首块的缓存哈希由词元和共享标识共同决定。第二块的哈希还包含第一块的哈希。换成 <code>demo-B</code> 后，虽然两块的词元都相同，两项哈希都和 A 不同。保留 <code>demo-A</code> 时两个旧键可查到，实际调度只复用 4 格，因为还要计算末位置来选首个输出。')+
+  p('对照结果里的原始哈希、前缀命中数和每轮位置，可以看到错误发生在服务端把请求参数直接当共享范围。实际服务要由已验证的身份决定这个范围。实验执行的是固定版本的请求、哈希和调度代码，用固定回复替代模型计算，验证范围是缓存键与排程。')+
+  p('解压本实验和<a href="/labs/vllm-scheduler.zip">前一份调度实验包</a>到同一级目录，先按调度实验的说明下载固定源码，再用 <code>cache_scope.py --scheduler-dir ../vllm-scheduler --source-dir upstream-cache</code> 复跑。完整命令见包内说明。')+
+  '<p class="practice-links"><a href="/labs/vllm-cache-scope.zip" download>下载对照程序与记录 ↓</a> · <a href="/labs/vllm-cache-scope/validation.json">查看三条实际排程 →</a> · <a href="/labs/vllm-cache-scope/README.md">复跑与哈希说明 →</a> · '+vllmLink('core/kv_cache_utils.py','L509-L574','固定版本的前缀键计算')+'</p></details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+

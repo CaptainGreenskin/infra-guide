@@ -164,7 +164,24 @@
  'subsection-1-1mbleem','subsection-1-r9coc9','subsection-1-1u49a9r','subsection-2-1ra10dq','subsection-2-o5xitb','subsection-3-11xx3nz','subsection-3-148u85l','subsection-3-sivj74','subsection-4-esyras','subsection-4-19347no','subsection-4-1j8zqu6','subsection-5-1quqkxj','subsection-5-1iyumle','subsection-6-p8ekpv','subsection-6-hfdnxr','subsection-6-pe1x30','subsection-6-1ovzwml','subsection-6-zn6f9f','subsection-6-1tnymhz','cloud-proxy-run','subsection-7-g5284x','subsection-7-a6sxak','v43-route-practice'
  ]);
 
- vpc.updated='2026.11.09';
+ const addressMapping=h('subsection-2-o5xitb','地址映射与服务名称');
+ if(vpc.sections[1][1].split(addressMapping).length!==2)throw Error('Missing DNS practice insertion point');
+ const dnsCache=h('native-dns-cache','实跑：旧地址和“不存在”何时过期')+
+  p('DNS 也能缓存一次“不存在”。查不到整个名称时，权威端返回 <code>NXDOMAIN</code>。区域起始记录（SOA）随响应提供否定缓存的计时依据，按 RFC 2308 取 SOA 记录的 TTL 和 MINIMUM 字段中较小的值。本例的旧地址 TTL 为 8 秒，否定答案的 TTL 为 5 秒。')+
+  trainingFigure('dns-cache-expiry','直问权威与查询同一个缓存解析器，可以同时得到不同答案。两份旧答案按各自的期限过期。')+
+  table(['查询时点','api.example.test','preview.example.test'],[
+   ['先问缓存解析器','192.0.2.10','NXDOMAIN'],
+   ['更新后直问权威','192.0.2.20','192.0.2.30'],
+   ['紧接着问同一个解析器','192.0.2.10','NXDOMAIN'],
+   ['否定缓存先过期','192.0.2.10','192.0.2.30'],
+   ['两份旧缓存均已过期','192.0.2.20','192.0.2.30']
+  ])+
+  p('遇到刚新增的名称仍报不存在时，先把查询对象分清。用同一个名称和记录类型分别问权威端、问业务实际使用的解析器，比较响应码、地址和剩余 TTL。若两者的地址已经一致，实际连接却还打到旧入口，就继续查是否复用了旧连接。')+
+  '<details class="progressive-detail"><summary>复跑两个本机 DNS 进程</summary>'+
+  p('解压后用 <code>python3 -B dns_cache.py --unbound /path/to/unbound --output local-observation.json</code> 启动回环上的权威端和缓存解析器。脚本用 <code>dig</code> 分别查询两个端口，保留原始响应。对照响应头的 <code>status</code>、答案区的 A 地址与 TTL，以及 <code>NXDOMAIN</code> 响应中 SOA 的 TTL。这里测试本机两份 DNS 服务和固定记录，没有测公网传播或 HTTP 连接。')+
+  '<p class="practice-links"><a href="/labs/dns-cache.zip" download>下载完整源码与记录 ↓</a> · <a href="/labs/dns-cache/validation.json">查看逐次 DNS 响应 →</a> · <a href="/labs/dns-cache/README.md">复跑步骤 →</a> · <a href="https://www.rfc-editor.org/rfc/rfc2308.html#section-5">否定缓存的 TTL ↗</a></p></details>';
+ vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+addressMapping);
+ vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(
  '在前面的代理上加两段 TLS。客户端先验证代理 P 的证书，P 解密后才看得到 HTTP Host 和路径。P 选中 A 或 B 后，在新连接上用另一份 CA 校验该后端的证书。两段连接各有自己的校验名称。HTTP Host 仍负责告诉接收方这次请求访问哪个站点。')+

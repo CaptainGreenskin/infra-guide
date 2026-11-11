@@ -75,6 +75,34 @@
         "subsection-7-g5284x",
         "subsection-7-a6sxak",
         "v43-route-practice",
+        "native-tls-proxy",
+        "native-dns-cache"
+      ],
+      "visible_targets": [
+        "subsection-1-1mbleem",
+        "subsection-1-r9coc9",
+        "subsection-1-1u49a9r",
+        "subsection-2-1ra10dq",
+        "native-dns-cache",
+        "subsection-2-o5xitb",
+        "subsection-3-11xx3nz",
+        "subsection-3-148u85l",
+        "subsection-3-sivj74",
+        "subsection-4-esyras",
+        "subsection-4-19347no",
+        "subsection-4-1j8zqu6",
+        "subsection-5-1quqkxj",
+        "subsection-5-1iyumle",
+        "subsection-6-p8ekpv",
+        "subsection-6-hfdnxr",
+        "subsection-6-pe1x30",
+        "subsection-6-1ovzwml",
+        "subsection-6-zn6f9f",
+        "subsection-6-1tnymhz",
+        "cloud-proxy-run",
+        "subsection-7-g5284x",
+        "subsection-7-a6sxak",
+        "v43-route-practice",
         "native-tls-proxy"
       ]
     },
@@ -772,7 +800,8 @@
         "native-pd-split",
         "tp-placement",
         "native-slot-handoff",
-        "native-vllm-scheduler"
+        "native-vllm-scheduler",
+        "native-vllm-cache-scope"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -974,7 +1003,8 @@
         "native-approval-reentry",
         "native-parallel-merge",
         "native-workflow-version-resume",
-        "native-model-plan-revision"
+        "native-model-plan-revision",
+        "native-model-mcp-recovery"
       ],
       "visible_targets": [
         "subsection-1-3htvho",

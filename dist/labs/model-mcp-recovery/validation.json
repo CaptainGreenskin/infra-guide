@@ -1,0 +1,1296 @@
+{
+  "schema": "model-mcp-recovery-v1",
+  "status": "passed",
+  "protocol": "2026-07-28",
+  "environment": {
+    "python": "3.12.13",
+    "os": "Darwin",
+    "arch": "arm64",
+    "sqlite": "3.53.3",
+    "mcp": "2.3.0",
+    "uvicorn": "0.54.0"
+  },
+  "planning_source_sha256": {
+    "assets.json": "bed077a9de71d9a01890c5adc14d7f4ca8882615227ab936a82ae4a2eb3fa79e",
+    "fixture.json": "7c26a41a55193eb24e5e0166753cc9d16500ec8ac6ec77839a23ee0a28f82fab",
+    "model_plan_lab.py": "976e38c4013db65dad83bf66f134691b20aacb2c2ab4260c6be0ec9a2c873d6d"
+  },
+  "assets": {
+    "engine": {
+      "release": "b12110",
+      "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+      "archive": "llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_url": "https://github.com/ggml-org/llama.cpp/releases/download/b12110/llama-b12110-bin-macos-arm64.tar.gz",
+      "archive_sha256": "4f5b8de12e0b9516658ca6a5764c6ffb3d7c659c3dd538556b1413c7b4050662",
+      "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959"
+    },
+    "model": {
+      "repository": "Qwen/Qwen3-0.6B-GGUF",
+      "revision": "23749fefcc72300e3a2ad315e1317431b06b590a",
+      "filename": "Qwen3-0.6B-Q8_0.gguf",
+      "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+      "bytes": 639446688,
+      "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031"
+    }
+  },
+  "engine_pid": 91909,
+  "model_turns": [
+    {
+      "request": {
+        "model": "local-qwen",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You prepare one report by using tools, one call at a time. Read its order manifest first. If the manifest returns an extra_batch and plan_has_extra is false, call revise_plan with that exact extra_batch before reading it. Once revise_plan accepts the batch, call read_extra_batch with the exact same extra_batch. When all sources are read, use request_draft. Do not invent batch IDs or amounts."
+          },
+          {
+            "role": "user",
+            "content": "Prepare the current order report for report-A."
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_order_manifest",
+              "description": "Read the source order manifest before building a report. It can return a supplemental batch reference.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "Report ID, e.g. report-A."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "revise_plan",
+              "description": "Add a supplemental batch to the current plan if the manifest says extra_batch and the plan does not yet include it. Call before reading that batch.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch returned by manifest."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_extra_batch",
+              "description": "Read a supplemental batch only after revise_plan accepted it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch approved by revise_plan."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "request_draft",
+              "description": "Request the host to compute the draft after all source rows have been read.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The original report ID."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 0,
+        "seed": 17,
+        "max_tokens": 96
+      },
+      "status": 200,
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_order_manifest",
+                    "arguments": "{\"report_id\": \"report-A\"}"
+                  },
+                  "id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794380723,
+        "model": "local-qwen",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 23,
+          "prompt_tokens": 534,
+          "total_tokens": 557,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "chatcmpl-D7Jv4AWHlFFRFVxT89G8D1LpogSHoRzW",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 534,
+          "prompt_ms": 529.024,
+          "prompt_per_token_ms": 0.990681647940075,
+          "prompt_per_second": 1009.40600048391,
+          "predicted_n": 23,
+          "predicted_ms": 158.935,
+          "predicted_per_token_ms": 7.224318181818182,
+          "predicted_per_second": 138.42136722559536
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "local-qwen",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You prepare one report by using tools, one call at a time. Read its order manifest first. If the manifest returns an extra_batch and plan_has_extra is false, call revise_plan with that exact extra_batch before reading it. Once revise_plan accepts the batch, call read_extra_batch with the exact same extra_batch. When all sources are read, use request_draft. Do not invent batch IDs or amounts."
+          },
+          {
+            "role": "user",
+            "content": "Prepare the current order report for report-A."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_order_manifest",
+                  "arguments": "{\"report_id\": \"report-A\"}"
+                },
+                "id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A",
+            "content": "{\"report_id\":\"report-A\",\"base_source\":\"orders-A/v3\",\"values\":[10,27],\"extra_batch\":\"late-A/v1\",\"plan_has_extra\":false}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_order_manifest",
+              "description": "Read the source order manifest before building a report. It can return a supplemental batch reference.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "Report ID, e.g. report-A."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "revise_plan",
+              "description": "Add a supplemental batch to the current plan if the manifest says extra_batch and the plan does not yet include it. Call before reading that batch.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch returned by manifest."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_extra_batch",
+              "description": "Read a supplemental batch only after revise_plan accepted it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch approved by revise_plan."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "request_draft",
+              "description": "Request the host to compute the draft after all source rows have been read.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The original report ID."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 0,
+        "seed": 17,
+        "max_tokens": 96
+      },
+      "status": 200,
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "revise_plan",
+                    "arguments": "{\"extra_batch\": \"late-A/v1\"}"
+                  },
+                  "id": "btChQP4tdCDc9vHByEBZOy0P6YHp9EJg"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794380724,
+        "model": "local-qwen",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 25,
+          "prompt_tokens": 606,
+          "total_tokens": 631,
+          "prompt_tokens_details": {
+            "cached_tokens": 530
+          }
+        },
+        "id": "chatcmpl-aiNiCcDrqup5teBD9byCYV4kKTrpBZRH",
+        "timings": {
+          "cache_n": 530,
+          "prompt_n": 76,
+          "prompt_ms": 118.407,
+          "prompt_per_token_ms": 1.5579868421052632,
+          "prompt_per_second": 641.853944445852,
+          "predicted_n": 25,
+          "predicted_ms": 176.699,
+          "predicted_per_token_ms": 7.3624583333333335,
+          "predicted_per_second": 135.82419821277992
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "local-qwen",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You prepare one report by using tools, one call at a time. Read its order manifest first. If the manifest returns an extra_batch and plan_has_extra is false, call revise_plan with that exact extra_batch before reading it. Once revise_plan accepts the batch, call read_extra_batch with the exact same extra_batch. When all sources are read, use request_draft. Do not invent batch IDs or amounts."
+          },
+          {
+            "role": "user",
+            "content": "Prepare the current order report for report-A."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_order_manifest",
+                  "arguments": "{\"report_id\": \"report-A\"}"
+                },
+                "id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A",
+            "content": "{\"report_id\":\"report-A\",\"base_source\":\"orders-A/v3\",\"values\":[10,27],\"extra_batch\":\"late-A/v1\",\"plan_has_extra\":false}"
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "revise_plan",
+                  "arguments": "{\"extra_batch\": \"late-A/v1\"}"
+                },
+                "id": "btChQP4tdCDc9vHByEBZOy0P6YHp9EJg"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "btChQP4tdCDc9vHByEBZOy0P6YHp9EJg",
+            "content": "{\"revision\":2,\"accepted\":true,\"extra_batch\":\"late-A/v1\",\"plan_has_extra\":true,\"extra_batch_read\":false}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_order_manifest",
+              "description": "Read the source order manifest before building a report. It can return a supplemental batch reference.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "Report ID, e.g. report-A."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "revise_plan",
+              "description": "Add a supplemental batch to the current plan if the manifest says extra_batch and the plan does not yet include it. Call before reading that batch.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch returned by manifest."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_extra_batch",
+              "description": "Read a supplemental batch only after revise_plan accepted it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch approved by revise_plan."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "request_draft",
+              "description": "Request the host to compute the draft after all source rows have been read.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The original report ID."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 0,
+        "seed": 17,
+        "max_tokens": 96
+      },
+      "status": 200,
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "read_extra_batch",
+                    "arguments": "{\"extra_batch\": \"late-A/v1\"}"
+                  },
+                  "id": "jH42Fa5y9xHsh6MKgr93NJOIiwJsEw5B"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794380724,
+        "model": "local-qwen",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 25,
+          "prompt_tokens": 672,
+          "total_tokens": 697,
+          "prompt_tokens_details": {
+            "cached_tokens": 602
+          }
+        },
+        "id": "chatcmpl-b6etNCWUTRe6pGTjIO5VNYzdkNzWan9X",
+        "timings": {
+          "cache_n": 602,
+          "prompt_n": 70,
+          "prompt_ms": 116.056,
+          "prompt_per_token_ms": 1.6579428571428572,
+          "prompt_per_second": 603.1570965740677,
+          "predicted_n": 25,
+          "predicted_ms": 170.302,
+          "predicted_per_token_ms": 7.095916666666667,
+          "predicted_per_second": 140.92611948186163
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "local-qwen",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You prepare one report by using tools, one call at a time. Read its order manifest first. If the manifest returns an extra_batch and plan_has_extra is false, call revise_plan with that exact extra_batch before reading it. Once revise_plan accepts the batch, call read_extra_batch with the exact same extra_batch. When all sources are read, use request_draft. Do not invent batch IDs or amounts."
+          },
+          {
+            "role": "user",
+            "content": "Prepare the current order report for report-A."
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_order_manifest",
+                  "arguments": "{\"report_id\": \"report-A\"}"
+                },
+                "id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "HZnHkqTjmLkr5fcGWhCyOpLUDSbpTQ3A",
+            "content": "{\"report_id\":\"report-A\",\"base_source\":\"orders-A/v3\",\"values\":[10,27],\"extra_batch\":\"late-A/v1\",\"plan_has_extra\":false}"
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "revise_plan",
+                  "arguments": "{\"extra_batch\": \"late-A/v1\"}"
+                },
+                "id": "btChQP4tdCDc9vHByEBZOy0P6YHp9EJg"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "btChQP4tdCDc9vHByEBZOy0P6YHp9EJg",
+            "content": "{\"revision\":2,\"accepted\":true,\"extra_batch\":\"late-A/v1\",\"plan_has_extra\":true,\"extra_batch_read\":false}"
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "read_extra_batch",
+                  "arguments": "{\"extra_batch\": \"late-A/v1\"}"
+                },
+                "id": "jH42Fa5y9xHsh6MKgr93NJOIiwJsEw5B"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "jH42Fa5y9xHsh6MKgr93NJOIiwJsEw5B",
+            "content": "{\"extra_batch\":\"late-A/v1\",\"values\":[5],\"all_sources_read\":true}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_order_manifest",
+              "description": "Read the source order manifest before building a report. It can return a supplemental batch reference.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "Report ID, e.g. report-A."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "revise_plan",
+              "description": "Add a supplemental batch to the current plan if the manifest says extra_batch and the plan does not yet include it. Call before reading that batch.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch returned by manifest."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_extra_batch",
+              "description": "Read a supplemental batch only after revise_plan accepted it.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "extra_batch": {
+                    "type": "string",
+                    "description": "Exact extra_batch approved by revise_plan."
+                  }
+                },
+                "required": [
+                  "extra_batch"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "request_draft",
+              "description": "Request the host to compute the draft after all source rows have been read.",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "report_id": {
+                    "type": "string",
+                    "description": "The original report ID."
+                  }
+                },
+                "required": [
+                  "report_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "tool_choice": "auto",
+        "temperature": 0,
+        "seed": 17,
+        "max_tokens": 96
+      },
+      "status": 200,
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "request_draft",
+                    "arguments": "{\"report_id\": \"report-A\"}"
+                  },
+                  "id": "778haiggjG69wUQGhummQLYsWPC2rr8o"
+                }
+              ]
+            }
+          }
+        ],
+        "created": 1794380724,
+        "model": "local-qwen",
+        "system_fingerprint": "b12110-cd959bae9",
+        "object": "chat.completion",
+        "usage": {
+          "completion_tokens": 22,
+          "prompt_tokens": 728,
+          "total_tokens": 750,
+          "prompt_tokens_details": {
+            "cached_tokens": 668
+          }
+        },
+        "id": "chatcmpl-0wYtsw88dCXmrvOtIUoLTbvVpSChmX3z",
+        "timings": {
+          "cache_n": 668,
+          "prompt_n": 60,
+          "prompt_ms": 233.866,
+          "prompt_per_token_ms": 3.897766666666667,
+          "prompt_per_second": 256.5571737661738,
+          "predicted_n": 22,
+          "predicted_ms": 204.812,
+          "predicted_per_token_ms": 9.752952380952381,
+          "predicted_per_second": 102.53305470382594
+        }
+      }
+    }
+  ],
+  "paused": {
+    "pid": 91911,
+    "state": {
+      "task": {
+        "id": "report-A",
+        "status": "WAITING_APPROVAL",
+        "revision": 2,
+        "draft": {
+          "task_id": "report-A",
+          "target": "A/daily",
+          "revision": 2,
+          "total": 42,
+          "sources": [
+            "orders-A/v3",
+            "late-A/v1"
+          ]
+        }
+      },
+      "plans": [
+        {
+          "revision": 1,
+          "steps": [
+            "read_order_manifest",
+            "request_draft"
+          ],
+          "added_source": null
+        },
+        {
+          "revision": 2,
+          "steps": [
+            "read_order_manifest",
+            "read_extra_batch",
+            "request_draft"
+          ],
+          "added_source": "late-A/v1"
+        }
+      ],
+      "facts": [
+        {
+          "source": "orders-A/v3",
+          "amounts": [
+            10,
+            27
+          ]
+        },
+        {
+          "source": "late-A/v1",
+          "amounts": [
+            5
+          ]
+        }
+      ],
+      "events": [
+        {
+          "seq": 1,
+          "kind": "tool",
+          "payload": {
+            "name": "read_order_manifest",
+            "arguments": {
+              "report_id": "report-A"
+            },
+            "result": {
+              "report_id": "report-A",
+              "base_source": "orders-A/v3",
+              "values": [
+                10,
+                27
+              ],
+              "extra_batch": "late-A/v1",
+              "plan_has_extra": false
+            }
+          }
+        },
+        {
+          "seq": 2,
+          "kind": "tool",
+          "payload": {
+            "name": "revise_plan",
+            "arguments": {
+              "extra_batch": "late-A/v1"
+            },
+            "result": {
+              "revision": 2,
+              "accepted": true,
+              "extra_batch": "late-A/v1",
+              "plan_has_extra": true,
+              "extra_batch_read": false
+            }
+          }
+        },
+        {
+          "seq": 3,
+          "kind": "tool",
+          "payload": {
+            "name": "read_extra_batch",
+            "arguments": {
+              "extra_batch": "late-A/v1"
+            },
+            "result": {
+              "extra_batch": "late-A/v1",
+              "values": [
+                5
+              ],
+              "all_sources_read": true
+            }
+          }
+        },
+        {
+          "seq": 4,
+          "kind": "tool",
+          "payload": {
+            "name": "request_draft",
+            "arguments": {
+              "report_id": "report-A"
+            },
+            "result": {
+              "state": "WAITING_APPROVAL",
+              "draft": {
+                "task_id": "report-A",
+                "target": "A/daily",
+                "revision": 2,
+                "total": 42,
+                "sources": [
+                  "orders-A/v3",
+                  "late-A/v1"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "reports": []
+    }
+  },
+  "stale": {
+    "after": {
+      "draft": {
+        "revision": 2,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ],
+        "target": "A/daily",
+        "task_id": "report-A",
+        "total": 42
+      },
+      "draft_sha256": null,
+      "local_reports": 0,
+      "operation_id": null,
+      "receipt": null,
+      "state": "WAITING_APPROVAL"
+    },
+    "approval": {
+      "decision": "approve",
+      "draft_sha256": "a90f4e7c3656308c4eacc401b364c22645b96427b39b938d7e3341889e364a86",
+      "operator": "operator-A",
+      "revision": 1,
+      "target": "A/daily",
+      "task_id": "report-A"
+    },
+    "before": {
+      "draft": {
+        "revision": 2,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ],
+        "target": "A/daily",
+        "task_id": "report-A",
+        "total": 42
+      },
+      "draft_sha256": null,
+      "local_reports": 0,
+      "operation_id": null,
+      "receipt": null,
+      "state": "WAITING_APPROVAL"
+    },
+    "decision": "approval_mismatch",
+    "pid": 91935,
+    "receiver": {
+      "reports": [],
+      "receipts": []
+    },
+    "receiver_events": []
+  },
+  "cut": {
+    "pid": 91936,
+    "approval": {
+      "operator": "operator-A",
+      "decision": "approve",
+      "task_id": "report-A",
+      "target": "A/daily",
+      "revision": 2,
+      "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0"
+    },
+    "host": {
+      "state": "PUBLISH_PENDING",
+      "draft": {
+        "task_id": "report-A",
+        "target": "A/daily",
+        "revision": 2,
+        "total": 42,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ]
+      },
+      "operation_id": "report-A/v3:publish",
+      "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+      "receipt": null,
+      "local_reports": 0
+    },
+    "receiver": {
+      "reports": [
+        {
+          "revision": 2,
+          "sources": [
+            "orders-A/v3",
+            "late-A/v1"
+          ],
+          "target": "A/daily",
+          "task_id": "report-A",
+          "total": 42
+        }
+      ],
+      "receipts": [
+        {
+          "draft": {
+            "revision": 2,
+            "sources": [
+              "orders-A/v3",
+              "late-A/v1"
+            ],
+            "target": "A/daily",
+            "task_id": "report-A",
+            "total": 42
+          },
+          "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+          "operation_id": "report-A/v3:publish",
+          "receipt_id": "receipt-report-A-v3"
+        }
+      ]
+    },
+    "receiver_events": [
+      {
+        "event": "request",
+        "protocol": "2026-07-28",
+        "wire": {
+          "id": 3,
+          "jsonrpc": "2.0",
+          "method": "tools/call",
+          "params": {
+            "_meta": {
+              "io.modelcontextprotocol/clientCapabilities": {},
+              "io.modelcontextprotocol/clientInfo": {
+                "name": "mcp",
+                "version": "0.1.0"
+              },
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+            },
+            "arguments": {
+              "draft": {
+                "revision": 2,
+                "sources": [
+                  "orders-A/v3",
+                  "late-A/v1"
+                ],
+                "target": "A/daily",
+                "task_id": "report-A",
+                "total": 42
+              },
+              "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+              "operation_id": "report-A/v3:publish"
+            },
+            "name": "publish_report"
+          }
+        }
+      },
+      {
+        "event": "receiver_commit",
+        "operation_id": "report-A/v3:publish"
+      }
+    ],
+    "exit": -9,
+    "receiver_events_after_exit": [
+      {
+        "event": "request",
+        "protocol": "2026-07-28",
+        "wire": {
+          "id": 3,
+          "jsonrpc": "2.0",
+          "method": "tools/call",
+          "params": {
+            "_meta": {
+              "io.modelcontextprotocol/clientCapabilities": {},
+              "io.modelcontextprotocol/clientInfo": {
+                "name": "mcp",
+                "version": "0.1.0"
+              },
+              "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+            },
+            "arguments": {
+              "draft": {
+                "revision": 2,
+                "sources": [
+                  "orders-A/v3",
+                  "late-A/v1"
+                ],
+                "target": "A/daily",
+                "task_id": "report-A",
+                "total": 42
+              },
+              "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+              "operation_id": "report-A/v3:publish"
+            },
+            "name": "publish_report"
+          }
+        }
+      },
+      {
+        "event": "receiver_commit",
+        "operation_id": "report-A/v3:publish"
+      }
+    ]
+  },
+  "recovery": {
+    "after": {
+      "draft": {
+        "revision": 2,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ],
+        "target": "A/daily",
+        "task_id": "report-A",
+        "total": 42
+      },
+      "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+      "local_reports": 0,
+      "operation_id": "report-A/v3:publish",
+      "receipt": {
+        "draft": {
+          "revision": 2,
+          "sources": [
+            "orders-A/v3",
+            "late-A/v1"
+          ],
+          "target": "A/daily",
+          "task_id": "report-A",
+          "total": 42
+        },
+        "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+        "operation_id": "report-A/v3:publish",
+        "receipt_id": "receipt-report-A-v3"
+      },
+      "state": "DONE"
+    },
+    "before": {
+      "draft": {
+        "revision": 2,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ],
+        "target": "A/daily",
+        "task_id": "report-A",
+        "total": 42
+      },
+      "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+      "local_reports": 0,
+      "operation_id": "report-A/v3:publish",
+      "receipt": null,
+      "state": "PUBLISH_PENDING"
+    },
+    "pid": 91937,
+    "tool": "lookup_receipt",
+    "wire": {
+      "request": {
+        "id": 3,
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/clientCapabilities": {},
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+          },
+          "arguments": {
+            "operation_id": "report-A/v3:publish"
+          },
+          "name": "lookup_receipt"
+        }
+      },
+      "response": {
+        "id": 3,
+        "jsonrpc": "2.0",
+        "result": {
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "infra-guide-model-recovery",
+              "version": ""
+            }
+          },
+          "content": [
+            {
+              "text": "{\"draft\":{\"revision\":2,\"sources\":[\"orders-A/v3\",\"late-A/v1\"],\"target\":\"A/daily\",\"task_id\":\"report-A\",\"total\":42},\"draft_sha256\":\"7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0\",\"operation_id\":\"report-A/v3:publish\",\"receipt_id\":\"receipt-report-A-v3\"}",
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "resultType": "complete",
+          "structuredContent": {
+            "draft": {
+              "revision": 2,
+              "sources": [
+                "orders-A/v3",
+                "late-A/v1"
+              ],
+              "target": "A/daily",
+              "task_id": "report-A",
+              "total": 42
+            },
+            "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+            "operation_id": "report-A/v3:publish",
+            "receipt_id": "receipt-report-A-v3"
+          }
+        }
+      },
+      "status": 200
+    }
+  },
+  "receiver_pid": 91933,
+  "receiver_exit": 0,
+  "receiver_events": [
+    {
+      "event": "request",
+      "protocol": "2026-07-28",
+      "wire": {
+        "id": 3,
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/clientCapabilities": {},
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+          },
+          "arguments": {
+            "draft": {
+              "revision": 2,
+              "sources": [
+                "orders-A/v3",
+                "late-A/v1"
+              ],
+              "target": "A/daily",
+              "task_id": "report-A",
+              "total": 42
+            },
+            "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+            "operation_id": "report-A/v3:publish"
+          },
+          "name": "publish_report"
+        }
+      }
+    },
+    {
+      "event": "receiver_commit",
+      "operation_id": "report-A/v3:publish"
+    },
+    {
+      "event": "response_start",
+      "request_id": 3,
+      "status": 200,
+      "tool": "publish_report"
+    },
+    {
+      "event": "request",
+      "protocol": "2026-07-28",
+      "wire": {
+        "id": 3,
+        "jsonrpc": "2.0",
+        "method": "tools/call",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/clientCapabilities": {},
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "mcp",
+              "version": "0.1.0"
+            },
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28"
+          },
+          "arguments": {
+            "operation_id": "report-A/v3:publish"
+          },
+          "name": "lookup_receipt"
+        }
+      }
+    },
+    {
+      "event": "receiver_lookup",
+      "operation_id": "report-A/v3:publish"
+    },
+    {
+      "event": "response_start",
+      "request_id": 3,
+      "status": 200,
+      "tool": "lookup_receipt"
+    }
+  ],
+  "receiver_final": {
+    "reports": [
+      {
+        "revision": 2,
+        "sources": [
+          "orders-A/v3",
+          "late-A/v1"
+        ],
+        "target": "A/daily",
+        "task_id": "report-A",
+        "total": 42
+      }
+    ],
+    "receipts": [
+      {
+        "draft": {
+          "revision": 2,
+          "sources": [
+            "orders-A/v3",
+            "late-A/v1"
+          ],
+          "target": "A/daily",
+          "task_id": "report-A",
+          "total": 42
+        },
+        "draft_sha256": "7733ae7cd1dcf1dca72b703fca64bc6cc20ed5f38a522d9c4ac02fa00ad69be0",
+        "operation_id": "report-A/v3:publish",
+        "receipt_id": "receipt-report-A-v3"
+      }
+    ]
+  },
+  "source_sha256": {
+    "model_mcp_recovery.py": "14709b7b58a5f74dc361808b830b301f520fa09d884f1824f88368db470ca1b2",
+    "requirements.txt": "bb7f562f555c5b4f170d22c2871a57ab1dd33d34466c32c3c90d563ef38704da",
+    "README.md": "1dfaa98f146d6ee1499d5c7b53ac2c917f2a422c9e5e0b7ca5fa2adb11c40e6d"
+  }
+}

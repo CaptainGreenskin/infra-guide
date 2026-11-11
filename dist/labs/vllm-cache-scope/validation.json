@@ -1,0 +1,343 @@
+{
+  "scope": "pinned vLLM V1 scheduler and KV metadata on local CPU",
+  "upstream_commit": "01efc7ef781391e744ed08c3292817a773d654e6",
+  "engine_version": "v0.10.2",
+  "scheduler_execution": true,
+  "actual_model_runner": false,
+  "production_authentication": false,
+  "device_kv_tensors": false,
+  "system": "Darwin",
+  "machine": "arm64",
+  "python": "3.12.13",
+  "msgspec": "0.19.0",
+  "source_sha256": {
+    "cache_scope.py": "dbe02c2813f12e9125d684bad70406980bba5fc50841237664d3552d12ca84e1",
+    "README.md": "9053168c7a85d5ad54b1b74ec7388caf418d092f20ca0ee221c9f6011ca6be5b"
+  },
+  "scheduler_dependency_sha256": {
+    "scheduler_lab.py": "9cc9e16c9a27a49f57d8c4324e7c45e1c04cf206ee2f4cb1a874e6a30cca5232",
+    "upstream.py": "23e59417b1af2fb871826f9cf14ad4773eaa30bde8d5310d79ae79ee746e811b",
+    "source-manifest.json": "b481dadd67779b7435817c2b519f9d0ae877811f851782d5a04a753f75696c2a",
+    "requirements.txt": "e55a96a133b05411e0882e8d607bc4191dd8f5250b992e1a12f97a2bf123e27a"
+  },
+  "upstream_files": 19,
+  "result": {
+    "prompt": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "block_size": 4,
+    "prefix_seed": "0",
+    "cases": [
+      {
+        "case": "same_scope",
+        "fixture_subject": "A",
+        "client_supplied_salt": "demo-A",
+        "engine_cache_salt": "demo-A",
+        "policy": "trusted_scope",
+        "prime_hashes": [
+          "ad991e8e4f64946688162c0b7802f0a0081cb7b4163607333461e0d829b058b9",
+          "91ad79400fe3ad18fb6d41629b8dd43a93d553cce7fa5a3984dc9b5027404424"
+        ],
+        "follow_hashes": [
+          "ad991e8e4f64946688162c0b7802f0a0081cb7b4163607333461e0d829b058b9",
+          "91ad79400fe3ad18fb6d41629b8dd43a93d553cce7fa5a3984dc9b5027404424"
+        ],
+        "key_matches": [
+          true,
+          true
+        ],
+        "matching_blocks_before_schedule": [
+          1,
+          2
+        ],
+        "prime_rounds": [
+          {
+            "positions": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "blocks": [
+              1
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [],
+            "outputs": [],
+            "free_after_reply": 2
+          },
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              1,
+              2
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "prime",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 0,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ],
+        "follow_rounds": [
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              1,
+              3
+            ],
+            "cached_tokens": 4,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "follow",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 4,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ]
+      },
+      {
+        "case": "different_scope",
+        "fixture_subject": "B",
+        "client_supplied_salt": "demo-A",
+        "engine_cache_salt": "demo-B",
+        "policy": "trusted_scope",
+        "prime_hashes": [
+          "ad991e8e4f64946688162c0b7802f0a0081cb7b4163607333461e0d829b058b9",
+          "91ad79400fe3ad18fb6d41629b8dd43a93d553cce7fa5a3984dc9b5027404424"
+        ],
+        "follow_hashes": [
+          "155b35a5e691996f80d4cf4fa5e78e2a6f68ac20ea1db076653bb906e483d02b",
+          "1ef8df6a47908092f3fd0fe3f112a08703babc652ec828c2fb65fea4d70e3fed"
+        ],
+        "key_matches": [
+          false,
+          false
+        ],
+        "matching_blocks_before_schedule": [
+          null,
+          null
+        ],
+        "prime_rounds": [
+          {
+            "positions": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "blocks": [
+              1
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [],
+            "outputs": [],
+            "free_after_reply": 2
+          },
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              1,
+              2
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "prime",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 0,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ],
+        "follow_rounds": [
+          {
+            "positions": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "blocks": [
+              3
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [],
+            "outputs": [],
+            "free_after_reply": 2
+          },
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              3,
+              2
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "follow",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 0,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ]
+      },
+      {
+        "case": "unsafe_passthrough",
+        "fixture_subject": "B",
+        "client_supplied_salt": "demo-A",
+        "engine_cache_salt": "demo-A",
+        "policy": "unsafe_passthrough",
+        "prime_hashes": [
+          "ad991e8e4f64946688162c0b7802f0a0081cb7b4163607333461e0d829b058b9",
+          "91ad79400fe3ad18fb6d41629b8dd43a93d553cce7fa5a3984dc9b5027404424"
+        ],
+        "follow_hashes": [
+          "ad991e8e4f64946688162c0b7802f0a0081cb7b4163607333461e0d829b058b9",
+          "91ad79400fe3ad18fb6d41629b8dd43a93d553cce7fa5a3984dc9b5027404424"
+        ],
+        "key_matches": [
+          true,
+          true
+        ],
+        "matching_blocks_before_schedule": [
+          1,
+          2
+        ],
+        "prime_rounds": [
+          {
+            "positions": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "blocks": [
+              1
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [],
+            "outputs": [],
+            "free_after_reply": 2
+          },
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              1,
+              2
+            ],
+            "cached_tokens": 0,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "prime",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 0,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ],
+        "follow_rounds": [
+          {
+            "positions": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "blocks": [
+              1,
+              3
+            ],
+            "cached_tokens": 4,
+            "fixture_reply": [
+              90
+            ],
+            "outputs": [
+              {
+                "request": "follow",
+                "tokens": [
+                  90
+                ],
+                "cached_tokens": 4,
+                "finish": "length"
+              }
+            ],
+            "free_after_reply": 3
+          }
+        ]
+      }
+    ]
+  }
+}

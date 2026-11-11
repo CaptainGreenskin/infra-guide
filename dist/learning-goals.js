@@ -6,7 +6,7 @@ const learningProfiles={
   checks:[
    {title:"确认用户真的能访问",
     result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
    {title:"定位请求被哪一层拦下",
     result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","native-jetstream-redelivery","消息重投后拒绝旧执行者"]]},
@@ -46,14 +46,15 @@ const learningProfiles={
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
   task:"交一份推理服务验收表，写清给定输入下的缓存占用、等待时间和发布判定。",
   checks:[
-   {title:"算出缓存能容纳多少请求",
-    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。",
+   {title:"核对缓存容量与复用范围",
+    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
      ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
      ["inference-performance","native-vllm-scheduler","vLLM 调度、等待与归还实跑"],
+     ["inference-performance","native-vllm-cache-scope","相同词元在不同租户下的排程"],
      ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
@@ -101,7 +102,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],more:[["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},

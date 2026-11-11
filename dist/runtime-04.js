@@ -131,7 +131,8 @@ infraKnowledgeDomains.push({module:'platform',track:'ai',refs:['v16GQA','v16Cach
  figure('v16-ai-kv-budget','指定题设：32层、8个KV头、128头维、2字节，每位置128KiB；8192位置为1GiB。相同查询头数下，32个KV头的MHA为4GiB。')+
  para('若只留8GiB给KV，理想连续存储下可容纳8条8192位置的序列；这是KV容量账，不是整卡并发保证。权重、工作区、通信、内存分配器、激活与增长预留仍要另算。输入8192位置后还要继续生成时，不能把当下占用当作最终预算。',
  '分块存储把逻辑位置映射到物理块。块长16时，8193位置要513块，相当于8208位置的分配量；在同一8GiB账本中只能同时容纳7条这样的序列。分页减少外部碎片并支持动态管理，却保留末块内部浪费和映射开销。',
- '前缀复用要求实际模型、token内容、位置与影响计算的配置一致，并处理租户共享边界。共享块的引用计数与写时复制避免一条序列追加时污染其他序列；仅按可读文本前缀相同判断会遗漏模板、tokenizer或模型版本差异。TP下KV如何切分或复制还取决于头数与实现，不能一律除以TP数。')},
+ '前缀复用要求实际模型、token内容、位置与影响计算的配置一致，并处理租户共享边界。共享块的引用计数与写时复制避免一条序列追加时污染其他序列；仅按可读文本前缀相同判断会遗漏模板、tokenizer或模型版本差异。TP下KV如何切分或复制还取决于头数与实现，不能一律除以TP数。',
+ '即使词元完全相同，服务端仍要按调用者身份限定共享范围。<a href="/article/inference-performance/#native-vllm-cache-scope">看 vLLM 调度器怎样按不同的缓存标识命中 →</a>')},
  {id:'sv-batching',title:'连续批处理、chunked prefill 与准入',articles:['model-serving','gpu-scheduling','inference-performance'],lead:'连续批处理（continuous batching）在每一轮计算结束时接入新请求、移除已完成请求，使每次迭代的成员可以变化。调度同时管理每轮可计算的词元数、KV块、排队时间与后续增长。',body:
  para('静态batch等最慢成员结束后再整体换批，会留下已完成成员的空位。连续批处理复用这些空位，但长prefill可能占据一个长迭代，延迟正在decode的序列。分块预填充（chunked prefill）把提示拆成多个片段，在调度边界与decode交错；片段过小又可能降低算子效率并增加调度开销。',
  '准入不能只看当前空闲块数。需要定义最大上下文、已缓存长度、剩余输出上限、临时工作区和可接受的换出/重算策略。例如刚好容下8条8K提示后仍允许它们各生成2K位置，后续必然遇到容量压力，除非完成释放、限制输出或执行预先定义的抢占路径。',
@@ -199,7 +200,8 @@ infraKnowledgeDomains.push({module:'agent',track:'agent',refs:['v16MCPTools','v1
  '解决方式之一是持久保存稳定op_id，接收方将效果与回执在同一事务中提交；恢复者以相同op_id重试或查询。接收方查到相同参数就返回原回执，查到异参则拒绝。调用次数可为2，效果只为1；这是特定接收方协议的性质，不是所有工具的默认能力。',
  '工作流重放要把会变化的输入保存下来：时间、随机选择、模型响应和外部读取都可能变化。升级代码后仍要能够解释历史事件；可用版本分支、迁移或已完成步骤兼容策略。若外部接口既无幂等键又无法查询，超时应进入对账、人工确认或有定义的补偿，而不是无条件再做一次。')+
  code('恢复器的关键分支 · 结果未知与失败分开','PYTHON','intent = load_persisted_intent(op_id)\nreceipt = receiver.lookup(op_id)\nif receipt is not None:\n    verify_arguments_and_record(receipt)\nelse:\n    retry_same_intent_or_enter_reconciliation(intent)')+
- para('发布新版后，待批准的动作还要保留原含义。<a href="/article/durable-workflows/#native-workflow-version-resume">看一次旧批准恢复到新节点的实跑</a>，再比较接收方拦截与按旧版本恢复。')},
+ para('发布新版后，待批准的动作还要保留原含义。<a href="/article/durable-workflows/#native-workflow-version-resume">看一次旧批准恢复到新节点的实跑</a>，再比较接收方拦截与按旧版本恢复。',
+ '沿一份真实模型生成的草稿，<a href="/article/durable-workflows/#native-model-mcp-recovery">核对接收服务已提交、发布进程未收到回复时怎样恢复 →</a>')},
  {id:'ag-fencing',title:'多 worker：租约、代际与接收方 fencing',articles:['agent-recovery','durable-workflows','kairo-practice'],lead:'租约超时允许新的工作进程（worker）接管，但不会停止旧进程。隔离旧写者的机制称为fencing：它使用只增不减的代际号（epoch），让产生效果的接收方拒绝旧执行者；校验与效果必须在同一受保护边界内。',body:
  figure('v16-agent-fencing','A持有epoch1并暂停；B接管epoch2并安装接收方fence。A仍可继续运行，但它发出的全新动作被资源侧拒绝；幂等负责重复动作，fencing负责旧执行者。')+
  para('只在runner启动前检查lease存在时间窗：A检查通过后暂停，租约过期，B接管，A恢复后仍可能写。旧A使用一个全新op_id时，去重表不会救场。接收方必须在处理新效果前，与当前资源代际比较并串行化校验和提交。',
@@ -1008,7 +1010,7 @@ const cloudCoverageRows=[
  ['前置','语言、算法与并发','有依赖图、最大栈与并发机制练习。','主力语言的运行时、网络编程及更多限时编码仍需专项训练。',['concurrency-pools'],'coding'],
  ['前置','Linux 与系统机制','有进程资源、虚拟内存、cgroup 与锁的详解和本地程序。','内核 tracing、调度器源码和生产内存故障不由这些实验覆盖。',['linux-resource','virtual-memory-oom']],
  ['C1','计算、虚拟化与故障域','从 vCPU 规格推导容量，再实跑 QEMU 查询宿主线程，对照 Linux 上有无 CPU 竞争的排队。<br><a href="/article/cloud-compute/#vm-vcpu-diagnosis">Linux 虚拟机排查步骤 →</a> · <a href="/article/cloud-compute/#native-qemu-vcpu">QMP 与 schedstat 实跑 →</a>','KVM、virtio、NUMA 绑定与设备直通的实机/源码深度仍需专向课。',['cloud-compute']],
- ['C2','云网络与协议','讲 VPC、DNS、路由、NAT 和 TCP。Linux 上实测边缘触发通知与应用队列。本机 HTTP 代理实测上游连接复用、后端排空和重试后的写入结果。<br><a href="/article/tcp-event-loop/#native-epoll-run">读通知与队列 →</a> · <a href="/article/vpc-network/#cloud-proxy-run">代理请求实跑 →</a>','实跑使用受控管道、套接字和本机代理。云转发、BGP/IPv6、MTU/conntrack 与生产网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
+ ['C2','云网络与协议','讲 VPC、DNS、路由、NAT 和 TCP。本机 DNS 实测旧地址和 NXDOMAIN 按不同期限过期。Linux 上实测边缘触发通知与应用队列。本机 HTTP 代理实测上游连接复用、后端排空和重试后的写入结果。<br><a href="/article/vpc-network/#native-dns-cache">DNS 缓存实跑 →</a> · <a href="/article/tcp-event-loop/#native-epoll-run">读通知与队列 →</a> · <a href="/article/vpc-network/#cloud-proxy-run">代理请求实跑 →</a>','实跑使用受控管道、套接字和本机代理。云转发、BGP/IPv6、MTU/conntrack 与生产网络故障需深化。',['vpc-network','network-diagnosis','tcp-event-loop']],
  ['C3','存储、数据库与缓存','讲事务日志、复制和恢复点。MySQL 实测崩溃恢复、复制应用与两实例计划切换，并对照 RR、RC 两种隔离级别读到的数据版本。PostgreSQL 17 用同一份基础备份恢复到具名点或归档末尾，并验证缺少目标日志段时恢复失败。另有 SQLite 和附件恢复。<br><a href="/article/storage-recovery/#native-postgres-pitr">PostgreSQL 实跑与 SQL 结果 →</a>','数据库实跑限于本地隔离实例与本地文件归档。远端归档、生产自动故障切换、物理断电和跨区恢复需要另行验收。',['database-index-locks','cache-consistency','storage-recovery','mysql-recovery','mysql-replication']],
  ['跨域','分布式协调与消息','讲超时、幂等与事件确认；真实etcd三成员实验验证多数派与历史观察，RabbitMQ单节点验证提交后重投、过早ACK和业务效果。','Raft算法实现、Kafka/RocketMQ与再均衡仍需专项；同宿主etcd及单节点RabbitMQ不代表跨物理故障域高可用已验收。',['distributed-systems','message-delivery']],
  ['C4','容器与 Kubernetes','实测容器约束、kind 放置、etcd 协调存储、Service 请求、探针和发布回退。另用 Cilium 分开核对 DNS 与跨节点 Pod 连接，用 Hostpath CSI 核对 Pod 替换后沿用卷和回收。<br><a href="/article/k8s-networking/#kubernetes-network-policy-run">网络策略实跑 →</a> · <a href="/article/k8s-storage/#native-csi-storage">卷供应与回收实跑 →</a>','kind 和 etcd 实跑均在同一宿主机内。多物理节点、云 CNI/CSI 和生产控制面恢复需要专项练习。编写控制器可接着做 C6 的 <a href="/article/delivery/#native-controller-reconcile">client-go 实验 →</a>',['container-runtime','scheduling-resources','k8s-networking','k8s-storage','cloud-service-lab']],

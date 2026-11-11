@@ -1,0 +1,61 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "d6226a532f409ff6ec539f4c303ecb6d45d9ffc2",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_VCPU_AND_READING_LOCATION_2026-11-11.json": "2b01221ee9c6d79b314488475f97e59fdb774e7f38ecf1678c49ebd2eb3efe15"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "dns-discovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "85c64cc293a8e0eeb10b29217986bf529948bfd81556c2b5563accea820e7352",
+      "reviewed_content_sha256": "3a809a5f4b59ce88ce33558131c244aebf212cdcc63886ce1b3762be2bb5a44a",
+      "scope": "Link the existing field explanation to the specific native case and raw observations.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "sv-kv",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "cc8b223c92fdeed03cef4e64c008b103de8a7a30e00af7267f47bda25a9fb94c",
+      "reviewed_content_sha256": "19bfefcc81423843d9754d1ccddca62b8795aeafb3d9d5401d344e4b5487bfd1",
+      "scope": "Link the existing field explanation to the specific native case and raw observations.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    },
+    {
+      "id": "ag-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "7ba161f81fe5bd36bdf7a84262e99329a04b551d587e40c3296e487be24f27c8",
+      "reviewed_content_sha256": "4ef8fc925e972cc88504ef57178bca8c09291a387218517c331de71404b1117a",
+      "scope": "Link the existing field explanation to the specific native case and raw observations.",
+      "observation": "The detailed proof remains in the named lesson and the environment limits are shown there and in the lab catalog."
+    }
+  ],
+  "revised_teaching_units": [
+    {
+      "chapter": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "scope": "Connect DNS TTL and NXDOMAIN to observed authoritative and cached answers.",
+      "observation": "Two local DNS processes show distinct positive and negative expiry without changing client resolver state.",
+      "reviewed_content_sha256": "e382ad6b32d680543344cb4109158f25d6e68714cb4d054228024e893be37152",
+      "record": "dist/labs/dns-cache/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "scope": "Observe equal prompts under three cache-scope choices in the original vLLM scheduler.",
+      "observation": "Hit counts 4, 0 and 4 are actual CPU scheduler metadata with fixed identities and fixed model replies.",
+      "reviewed_content_sha256": "984eb8be268adfdb61cd57a2af49b3d4c361b3b607240b81640528737da6ea8b",
+      "record": "dist/labs/vllm-cache-scope/validation.json"
+    },
+    {
+      "chapter": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow a real model plan and draft across independent MCP HTTP publication and a killed worker.",
+      "observation": "A stale approval sends no publication; after remote commit and before the reply, the original process exits and the new process queries the original receipt.",
+      "reviewed_content_sha256": "bb8acbfd2dd7c528c51157f09e32e9991465bff99e94d36844f36dd8ef823676",
+      "record": "dist/labs/model-mcp-recovery/validation.json"
+    }
+  ]
+}
