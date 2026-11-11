@@ -6428,6 +6428,63 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "03f7bcbca984cb574cccd21bf4dfced66a875de53e20c09fa377a9d72355908c",
+      "reviewed_content_sha256": "619be81933be6d8c795d4f44b09bcd3c6a3f0dcebdf5fce3eca14cf5ec4a0c2a",
+      "scope": "Follow one position from lookup to attention, candidate scoring, training loss and token generation.",
+      "observation": "Define RMSNorm before attention uses it, reconcile the parameter count with the CPU lab, distinguish the two softmax axes and keep the cost comparisons linked.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "a5c6ff23b2bf0bafed4da437668a5ab14bb2455beb10bcaa9192de871b2b48e6",
+      "reviewed_content_sha256": "daf34c7d7de88c44f85ecba8cfee1ea7eb053ee05e1cea42508f193118cabcf6",
+      "scope": "Keep the core KV storage and lifecycle in the default reading, with named disclosures for source and independent runtime comparisons.",
+      "observation": "Retain all original links, section fragments, diagrams and executable source. The scheduler source walk, CPU BlockPool and process handoff have separate evidence scopes.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "b1143a29a23b320b5fb84c205608888afc0819aa93d6c8cb42a9e61718508a19",
+      "reviewed_content_sha256": "7d3fd59045d82d2f01409084749a95c0d6d18a8c9d7df1bfcaf772f781fddfef",
+      "scope": "Follow one 42 report from model proposal to approval and recovery by default, with separate evidence available in native disclosures.",
+      "observation": "The published model, state-machine, LangGraph and MCP checks use separate local stores. Direct links open the requested example without changing its code, record or conclusion.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

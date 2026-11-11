@@ -7210,7 +7210,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  const qc=q.map(codes),qf=q.map(figures);
  const hasPool=q[2].includes('id="inference-cache-mechanism"')&&q[5].includes('id="inference-cache-run"');
  const poolMechanism=hasPool?'<div id="inference-cache-mechanism">'+heading('subsection-3-1nk63tb','按需块池怎样取得和归还空间')+
-  p('换一种空间策略：下面的CPU块池不为整条最大长度预留，而是在新位置需要写入时分配。请求保存逻辑输入和块表，池保存实际KV、引用数及前缀索引；调度器据空闲空间决定能否继续。这与前面完整预留是两套策略，不能把一种的准入时刻套给另一种。')+
+  p('按需分配时，新位置要写入才申请空间。请求保存逻辑输入和块表，池保存实际 K/V、引用数和前缀索引。调度器查可用块，决定请求能否继续。完整预留则会提前占下未来位置的空间。')+
   heading('subsection-3-icqxg5','用块表找到一个逻辑位置',4)+
   p('逻辑位置从0数，块长4时，位置5位于逻辑块floor(5/4)=1、块内偏移1。若A块表为[P0,P1]，读取先取表中第1项P1，再取P1的第1格。B块表可为[P0,P2]，与A共享首块，同时有独立尾部。块号描述映射，物理槽实际保存数值。',
   '本例A=[1,2,3,4,5,6]、B=[1,2,3,4,7,8]，共12个逻辑位置；共享首块后只保存4+2+2=8格有效KV，分配3×4=12格容量，4格是尾部空位。每格对应的真实模型字节需另乘层数、KV头数和格式，Python对象内存不等于128KiB/位置的另一道字节题。')+
@@ -7265,6 +7265,13 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('20个输入来自A的1+4−1=4位置，加16条单输出请求各1位置。末尾只剩A时每轮只能用1份预算，所以总轮数还受每请求上限约束。上述迭代数是离散机会，不是毫秒；程序实际执行CPU注意力、块分配和调度转换，没有测GPU每轮用时，也不能把轮数变化换算为真实服务吞吐提升。')+'</div>':'';
  const schedulerOffset=hasPool?2:0;
+ const transferLowerBound=fold('交接数据量怎样换成耗时下界',
+  p('若把预填充与解码放在不同机器，解码侧需要取得其历史KV。独立题设每位置128KiB，4096位置为512MiB=536870912字节；链路有效载荷速率25GB/s，GB为十进制。假定交接完全串行、不压缩、不复用、不能与计算重叠，暂不计启动和协议。')+
+  table(['同一观察点到第2项输出','25GB/s','12.5GB/s'],[
+   ['搬运的理想时间下界','536870912/(25×10⁹)=21.47ms','42.95ms'],
+   ['共置100ms，拆池省30ms排队','100−30+21.47=91.47ms','100−30+42.95=112.95ms']
+  ])+
+  p('下界为91.47ms只表示有改善机会，真实复制、同步和新队列仍会增加时间；112.95ms在题设内已超过原100ms。若首词元由prefill侧先返回，交接主要影响第1到第2项间隔，不能把交接全部加到TTFT。支持重叠时需重新画关键路径，并固定硬件总预算和请求分布比较。'));
 
  replace(performance,[
   p('请求 B 发出去后，约 23.588 ms 才收到第一项输出。接下来的 31 个间隔平均约 0.215 ms。这是第 6 节本机 CPU 实验的第一轮记录。客户端收到 A 的第一项输出后马上发送 B。合成模型为 A 生成 110 项，为 B 生成 32 项。引擎同一时间只保存一条正在生成的序列及其推理状态，这个位置叫槽位。服务端日志显示 B 等过槽位，客户端记录的是从发送到接收的整段时间。',
@@ -7281,7 +7288,10 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   '每请求先求TPOT再平均，会给不同长度请求相同权重；把全部间隔合并平均则让长输出贡献更多项。两种统计回答不同问题，报告要写清分母。模型、tokenizer、停止规则和输出质量也会改变N，比较速度时需固定这些条件。'),
 
   '<div class="mechanism-core" id="serving-two-budgets">'+heading('subsection-3-zgqy1s','一轮工作量与跨轮驻留空间')+
-  p('连续批处理每轮重新组合要运行的请求；分块prefill把长提示拆到多轮。工作预算限制“这一轮能处理几个输入位置”，驻留预算限制“活动请求跨轮能保留多少KV”。准入先看长期空间，轮内选择再分配本轮工作，两项可以独立用满。')+
+  p('每轮调度决定推进哪些请求、各算几个位置，并为新增位置安排可写的块。执行时把新增的键、值向量（K/V）写进缓存，供后续注意力读取。引擎交付本轮产生的输出，结束的请求归还块引用。',
+  '连续批处理会在每轮重新组合请求。分块预填充给长提示设单轮上限，给正在逐步生成的请求留出机会，这个生成阶段叫解码（decode）。判断请求能否推进，要同时看本轮还可计算多少位置，以及跨轮还可保存多少历史。即使计算有余量，新位置也要等到有块可写才能开始。')+'</div>'+
+  '<details class="progressive-detail"><summary>算例 · 分块怎样改变首词元等待</summary>'+
+  heading('subsection-3-svno8c','逐轮计算分块怎样转移等待')+
   table(['约束','固定成本教学模型的规则'],[
    ['工作预算','每轮最多40个输入位置；先给已有decode各1项'],
    ['驻留预算','按提示与输出上限完整预留，结束后归还'],
@@ -7291,8 +7301,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('设提示P≥1、输出上限G≥1，prefill结束已经选出第1项，只需G−1个后续decode输入。已处理KV上限为P+G−1，块长4时要向上取整。ceil表示向上取整：长度35也占9块、36槽。这里G既是上限，也恰好是实际输出数。')+
   formula('完整长度预留，无共享与滑动窗口','预留槽位 = ceil((P + G − 1) / 4) × 4','该模型预留未来增长，槽位不代表已经写入的KV数量；乘具体模型每位置字节后才得到预留字节。')+
   p('第一组请求为A：到达0ms、P=32、G=4；B：到达2ms、P=4、G=2；C：到达2ms、P=8、G=2。KV池44槽。A预留ceil(35/4)×4=36，B预留8，两者占44；C需12槽，不能获准。B结束归还8仍不够，C必须等A也结束，两种分块策略均在7.6ms接入。',
-  '程序用到达顺序准入，队首放不下会阻挡后面的请求，即便本轮工作量尚有余量。某请求自身就大于整个池，应提前拒绝或分流；否则等待永远不能解决。真实请求可提前结束，完整预留会闲置空间；按需增长则必须定义后续空间不足的处理。取消后也要按执行和引用协议回收容量。')+'</div>'+
-  heading('subsection-3-svno8c','逐轮计算分块怎样转移等待')+
+  '程序用到达顺序准入，队首放不下会阻挡后面的请求，即便本轮工作量尚有余量。某请求自身就大于整个池，应提前拒绝或分流；否则等待永远不能解决。真实请求可提前结束，完整预留会闲置空间；按需增长则必须定义后续空间不足的处理。取消后也要按执行和引用协议回收容量。')+
   p('以下耗时是给定成本：每个prefill输入0.1ms，每个decode输入1ms，同轮成本直接相加。没有设备、网络或重叠。第一组32上限时，A在0→3.2ms一次处理完提示；B虽在2ms到达，也要等这轮结束。下一轮做A一次decode与B的4位置，共1+0.4=1.4ms，B在4.6ms首输出，从到达算为2.6ms。',
   '把上限改为8后，A的提示分为多个片段；B可在A未完成时进入某轮，其首输出等待变1.6ms。A却从3.2ms首输出变3.6ms。C仍受同一44槽约束，分块没有凭空增加驻留容量。')+
   qf[2][0]+
@@ -7302,14 +7311,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('第二组换成48槽池，A在0ms到达、P=4/G=6，B在0.5ms到达、P=32/G=2。整段模式在1.4ms开一轮：A做1次decode，B处理32项，耗时1+32×0.1=4.2ms，因此A下一项到5.6ms才交付。分块时每轮相应片段最多1+8×0.1=1.8ms，A间隔缩短，B却要等更多轮才能完成提示。',
   '两组负载不能拼成一条请求轨迹。此固定成本模型中总工作没减少，第二组完成时刻同为9.6ms；真实设备的批量效率、启动、上下文读取与重叠会改变总耗时，必须在目标实现重新测量。G=1时prefill已给唯一输出，无decode、无后续间隔。')+
-  poolMechanism+
-  fold('选读：拆开Prefill与Decode后的交接下界',
-   p('若把预填充与解码放在不同机器，解码侧需要取得其历史KV。独立题设每位置128KiB，4096位置为512MiB=536870912字节；链路有效载荷速率25GB/s，GB为十进制。假定交接完全串行、不压缩、不复用、不能与计算重叠，暂不计启动和协议。')+
-   table(['同一观察点到第2项输出','25GB/s','12.5GB/s'],[
-    ['搬运的理想时间下界','536870912/(25×10⁹)=21.47ms','42.95ms'],
-    ['共置100ms，拆池省30ms排队','100−30+21.47=91.47ms','100−30+42.95=112.95ms']
-   ])+
-   p('下界为91.47ms只表示有改善机会，真实复制、同步和新队列仍会增加时间；112.95ms在题设内已超过原100ms。若首词元由prefill侧先返回，交接主要影响第1到第2项间隔，不能把交接全部加到TTFT。支持重叠时需重新画关键路径，并固定硬件总预算和请求分布比较。')),
+  '</details>'+poolMechanism,
 
   p('到达率λ是每秒进入同一服务边界的请求数；并发数是在该边界内尚未结束的请求数。闭环压测固定客户端数量，每个客户端等完成后再发下一条；响应越慢，它自动发得越少。开环压测按外部计划时间发请求，可以保持给定到达节奏，因此更容易显出持续排队。',
   '在稳定且流入流出平衡、平均值存在的同一边界内，Little定律给平均在途数L=λW，W为平均停留时间。λ=20请求/s、W=2s时L=40条。这里2s含这个边界内的等待与处理，并非只用模型执行时间；系统持续积压时不能用稳态等式推断固定并发上限。',
@@ -7398,7 +7400,11 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
- performance.sections[2][1]+='<div class="mechanism-core" data-practice="pd-split">'+
+ performance.sections[2][1]+=
+  p('预填充和解码分到不同进程时，解码侧要先拿到历史 K/V，才能从正确位置继续。先用整数程序核对交接，再用本机 llama.cpp 查看接收进程实际重算了哪些位置。')+
+  '<details class="progressive-detail"><summary>本机实战 · 分池与缓存交接</summary>'+
+  transferLowerBound+
+  '<div class="mechanism-core" data-practice="pd-split">'+
   heading('native-pd-split','实战：把预填充和逐步生成交给不同进程')+
   p('共置时，一个工作进程既处理输入，也继续生成。若调度器先取新来的长提示，已经开始输出的短请求就要等。分池时，预填充进程 P 处理输入并选出首个输出，解码进程 D 继续生成。D 需要同一请求的提示长度、首个输出和历史 K/V，才能在正确的位置继续写入。')+
   trainingFigure('pd-split-handoff','共置路径保留进程内状态。分池路径先产生首项，再通过本机套接字交接 KV；接收端验收后，才开始下一步解码。')+
@@ -7437,11 +7443,13 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   ])+
   p('把缓存文件截到 12 字节后，这个版本返回 HTTP 400，并清掉此前的六个位置。随后同一请求从头算五个提示位置，仍得到 8、9。恢复后还没接过请求的新槽位，状态接口不会展示提示长度。核对是否真的省掉计算，要对照恢复回执、完成响应的 <code>cache_n</code> 和实际批次。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
-  '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p>';
+  '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
+  p('沿 vLLM V1 的请求编号，从入队读到归还。调度和模型执行见固定版本源码，块引用和逐出可用上游块池做 CPU 对照。')+
+  '<details class="progressive-detail"><summary>vLLM V1 · 请求源码与块池实跑</summary>'+
   heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
   p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
   '<ol>'+
@@ -7471,7 +7479,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '复跑分两步：先用下载包里的 fetch_upstream.py 下载固定提交的两份文件并检查 SHA-256、Git blob ID 与字节数，再用 block_lifecycle.py 指向该目录。运行器抽取完整原始 AST 定义，只增加延后类型注解的设置；事件路径关闭，未运行依赖不加载。来源清单、选中定义的行范围、实际轨迹及原创源码哈希都随记录提供。包内不转载上游源文件。')+
   '<p class="practice-links"><a href="labs/vllm-block-lifecycle.zip" download>下载原创运行器与证据 ↓</a> · <a href="labs/vllm-block-lifecycle/block_lifecycle.py">实验源码</a> · <a href="labs/vllm-block-lifecycle/fetch_upstream.py">固定来源下载器</a> · <a href="labs/vllm-block-lifecycle/source-manifest.json">来源与哈希清单</a> · <a href="labs/vllm-block-lifecycle/validation.json">实际12步状态</a> · <a href="labs/vllm-block-lifecycle/README.md">复跑说明与自测答案</a></p>'+
   p('用 10 分自测：分别解释 A 结束、B 结束、C 查询与 touch、按队头重分配、耗尽拒绝这五步，每步 2 分。必须给出引用数或队列，不能只说“用了缓存”。追问：查到后却未建立引用，若允许其他分配穿插，为什么不能假设编号仍属于旧内容？本实验按顺序调用，未验证任意多线程访问的同步安全。'+
-  ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。');
+  ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。')+'</details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+
@@ -11419,23 +11427,25 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
   finish(a,old,body);
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
   const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
-   p('用户要求生成 <code>report-A</code>。运行程序，也就是宿主，起初只安排读取主清单和生成草稿。本机模型读到金额 10、27，还看见清单里新出现的补录编号 <code>late-A/v1</code>，于是建议先读补录。宿主核对编号来自刚读到的清单，保存第 2 版计划。已经读到的 10、27 继续使用。')+
+   p('用户要求生成 <code>report-A</code>。宿主的第 1 版计划只安排读取主清单和生成草稿。模型提出读取，宿主调用工具，把主清单里的 10、27 和补录编号 <code>late-A/v1</code> 交回模型。模型提议先加上读补录这一步。宿主核对编号来自清单，保存第 2 版计划，保留已经读到的两笔金额。')+
    trainingFigure('model-plan-revision','四次工具提议来自同一个模型。计划、草稿和批准由宿主核对并保存。')+
-   p('四轮都提供相同的四个工具。<code>tool_choice=auto</code> 让模型按提示里的使用条件选工具。第 1 轮返回 <code>extra_batch=late-A/v1</code>，第 2 轮模型提出 <code>revise_plan</code>。下方第一行把工具名和参数交给宿主核对并执行。第二行的 <code>tool_call_id</code> 让模型知道结果对应哪一次调用。')+
+   p('四轮都提供相同的四个工具，<code>tool_choice=auto</code> 让模型按提示选择。第 2 轮的提议是 <code>revise_plan</code>。宿主按下方第一行核对并执行提议，再把结果交回模型。<code>tool_call_id</code> 用来对应原来的调用。')+
    trainingCode('宿主执行通过检查的工具，并把结果交回模型','PYTHON',`result = perform_tool(directory, name, args)
 messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "content": compact(result)}]`)+
-   p('第 3 轮读到补录的 5，第 4 轮请求生成草稿。宿主按两条来源记录算出 10+27+5=42，把第 2 版计划、草稿和等待批准的状态留在同一个任务库，然后退出。新进程重开原库。发布批准要匹配操作者、任务、目标 <code>A/daily</code>、计划第 2 版和草稿摘要。摘要是从草稿内容算出的指纹，来源版本也在草稿里。')+
+   p('第 3 轮读到补录的 5，第 4 轮请求草稿。宿主用两份来源算出 10+27+5=42，保存第 2 版计划和草稿，停在等待批准，原进程退出。新进程打开同一个任务库，核对批准是否匹配操作者、任务、目标 <code>A/daily</code>、计划版本和草稿摘要。摘要由草稿内容算出，草稿中也记录了来源版本。')+
    table(['恢复时给什么','宿主实际决定','数据库中有几份报告'],[
     ['没有批准','继续等待','0'],['只批准第 1 版的 37','批准与当前草稿不符','0'],['批准当前第 2 版的 42','发布并保存完成状态','1'],['完成后再带同一批准恢复','认回已完成的任务','1']
    ])+
-   p('先在四条模型响应里找工具名称与参数，确认 <code>late-A/v1</code> 是从哪一轮进入对话。再查计划表、事实表和报告表。实际发布的唯一一份报告是 42，带主清单和补录两个来源。固定提示只开放这里的一种计划变更，批准由测试入口提供。报告和完成状态共用一个 SQLite 事务。')+
+   p('复核时，先从模型响应找提议的工具和参数，再到计划表、事实表和报告表查实际结果。库里只有一份 42 的报告，记录主清单和补录两个来源。实验使用固定提示和测试批准，只支持这次计划修订。报告与完成状态在同一个 SQLite 事务中提交。')+
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
-   p('这里由程序自己读回任务库。<a href="/article/durable-workflows/#langgraph-workflow-run">下一节</a>用同一个任务 ID 重开框架的检查点，再观察它从哪里重新执行。');
+   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
-  if(!a.sections[8][1].includes(nativeWorkflow))throw Error('Missing workflow practice after model plan revision');
-  a.sections[8][1]=a.sections[8][1].replace(nativeWorkflow,modelPlan+nativeWorkflow);
-  a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
+  const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
+  if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
+  a.sections[8][1]=fold('选读 · 固定提议与执行者接管的对照',a.sections[8][1].slice(0,nativeWorkflowStart))+
+   modelPlan+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
+  a.sections[8][1]+=fold('选读 · MCP 提交后退出，怎样认回原回执',h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
    trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
@@ -11447,11 +11457,11 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
-   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>');
 
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
-  a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
+  a.sections[8][1]+=fold('选读 · 批准后撤权，恢复时查谁的记录',h('native-approval-reentry','批准后恢复，谁检查当前权限')+
    p('把 10、27 和补录的 5 汇总为 42，准备发布到 <code>A/daily</code>。LangGraph 先把目标、金额和操作键 <code>report-A:publish</code> 存进检查点。审批节点走到 <code>interrupt()</code> 就停下，此时接收库还没有报告。新进程沿用同一个 <code>thread_id</code> 恢复，LangGraph 从审批节点开头重跑。再次走到 <code>interrupt()</code> 时，才拿到 <code>Command(resume=…)</code> 传进来的批准编号。'+
     '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
     '批准编号指向接收方保存的记录。发布工具在同一个事务里读取当前写权限，再核对批准绑定的发布目标、操作键和参数。通过后才保存报告和回执。两次发布被拒。一次是在等待时撤掉写权限，另一次是拿着批准 42 的编号却提交 41，参数摘要对不上。两组接收库都还是 0 份报告。')+
@@ -11478,7 +11488,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ])+'</div>'+
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>');
   a.updated='2026.11.10';
 
   const security=articleById('agent-security');
@@ -11518,12 +11528,12 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
 (()=>{
  const a=articleById('durable-workflows');
  const p=text=>'<p>'+text+'</p>';
- a.sections[8][1]+='<h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
+ a.sections[8][1]+='<details class="progressive-detail"><summary>选读 · 并行候选怎样合并为一次发布</summary><h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
  p('沿用第 4 节的并行汇合。这次分支 A 和 B 都为 <code>report-A:publish</code> 生成同一份日报的候选。两支在同一个执行步返回。如果都写入普通状态字段，LangGraph 报 <code>InvalidUpdateError</code>，还未进入汇合节点。把字段改成列表并用 <code>operator.add</code>，两条金额 42 都能存下来。若把两项当作不同金额相加，会算成 84。')+
  p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
- '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>';
+ '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p></details>';
 
  a.sections[9][1]+='<h3 id="native-workflow-version-resume">旧任务等着发布 A，新版却先问要不要共享给 B</h3>'+
  p('第 1 版把 10、27 和 5 加成 42，停在“发布到 <code>A/daily</code>”的审批上。随后原进程退出。第 2 版还叫这个节点 <code>approval</code>，却在发布前插入“共享到 <code>B/daily</code>”这一步。两版的第一个问题已经不同。')+
@@ -13466,7 +13476,7 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
  section[1]=`<h3 id="text-to-next-token">Transformer 怎样预测下一个词元</h3>`+para(
- '语言模型读入一段前文，为接下来可能出现的内容打分。程序选出一项，接回前文，再算下一项。Transformer 用多层计算完成这件事。本章采用仅解码器（Decoder-only）结构，沿同一个小模型看输入怎样变成预测。',
+ '看到「明天可能会下」，下一项接「雨」还是「雪」？语言模型给候选打分，生成程序根据分数选出一项，接到原文后再预测下一项。本章沿这条续写路径拆开 Transformer，使用的是每个位置只看自己和前文的仅解码器（Decoder-only）结构。',
  '文本先由分词器切成词元（token）。词元可以是字、词片段或字节片段，词表给每项一个编号。模型把编号查成一组数字，叫向量。向量经过多层加工，最后得到词表中各项的候选分数，称为 logits。选词程序据此得到下一个编号，这种逐项续写叫自回归生成。')+
  trainingFigure('transformer-first-forward','图中画一条样本。四个输入位置分别产生一行分数，生成时用最后一行选择下一项。')+
  conceptReadingTable(['组件','对输入做什么'],[
@@ -13480,7 +13490,7 @@ const firstReadingChanges=[];
  ])+
  para('注意力、前馈网络、归一化和残差连接组成一个解码器块。多个块可以依次连接。词嵌入表、各层权重等参与计算的可学习数字，合起来叫模型参数。一次生成使用固定参数，输入和中间向量则随前文变化。')+
  `<h3 id="tiny-decoder-input">本章固定使用哪组输入</h3>`+para(
- '小模型的词表有 8 项，记作 V=8，每个位置用 8 个数字表示，记作 D=8。一批有两条样本，批大小 B=2。原始编号序列是 [0,1,2,3,4] 和 [4,5,6,7,0]。这些编号用来检查计算过程，每个编号对应词嵌入表的一行。',
+ '小模型的词表有 8 项，记作 V=8，每个位置用 8 个数字表示，记作 D=8。一批有两条样本，批大小 B=2。原始编号序列是 [0,1,2,3,4] 和 [4,5,6,7,0]。位置从 0 数起。第一条序列中，编号 2 恰好放在位置 2。编号决定查哪行词嵌入，位置决定能读到哪些前文。',
  '每条取前四项作输入（T=4），后四项作目标。以第一条为例，模型要完成下面四次预测。')+
  conceptReadingTable(['输入位置','允许使用的前文','要预测的目标'],[
   ['0','[0]','1'],['1','[0,1]','2'],['2','[0,1,2]','3'],['3','[0,1,2,3]','4']
@@ -13492,32 +13502,33 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>学完本章后 · 模型计算怎样连接 AI Infra</summary>'+infraReading+'</details>';
  a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
- a.sections[3][1]=para('输入编号先查成词向量，再加上各位置自己的位置向量，得到这一块的输入 X，形状是 [2,4,8]。相同的词出现在不同位置时，进块前的表示也会不同。本例先对每格特征做归一化，再送入注意力。')+`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
+ a.sections[3][1]=para('第 2 节查词嵌入表得到每格的词向量，再给它加上从位置表查到的向量，得到这一块的输入 X，形状仍为 [2,4,8]。相同的词在不同位置也能有不同表示。',
+ '进入注意力前，先调整每格特征的尺度。本例用均方根归一化（RMSNorm）。把一格内的特征平方求平均，加上一个很小的正数再开方，然后让各项除以这个数，最后乘各自可学习的缩放系数。以 [1,3] 为例，忽略小常数并取系数为 1，分母是 √((1²+3²)/2)=√5，得到 [1/√5,3/√5]。特征数保持不变。')+`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('输入是 [0,1,2,3]，位置 2 要猜下一个编号。它可以读位置 0、1、2，位置 3 里是答案，要挡住。上一节的线性层只处理位置 2 自己的向量。注意力则会把前面两格的信息也算进来。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
- para('一个注意力头是一套独立的匹配与汇总。小模型有 2 个头。每个头将归一化后的同一个位置分别投影成查询 Q、匹配键 K 和待汇总内容 V 三个向量，各有 4 项。位置 2 的 Q 与每个允许位置的 K 都做一次点积，也就是对应项相乘再相加。每个点积除以 √4=2，得到缩放后的分数。',
+ para('第 3 节用一组系数把一格输入变成一组新特征。注意力用三组系数，分别算出查询 Q、匹配键 K 和内容 V。以位置 2 为例，用它的 Q 和位置 0、1、2 的 K 分别做点积，算出各有多相关。之后用这些分数决定从各格的 V 读多少。',
+ '一套独立的匹配与汇总叫一个注意力头。小模型有 2 个头，每个头的 Q、K、V 各有 4 项。点积除以 √4=2，在通常的初始化假设下可减轻特征变宽时分数波动变大的问题。下面只跟其中一个头。',
  '设三个合法位置的缩放分数是 [0, ln 2, ln 3]，ln 表示自然对数。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。如果三个内容向量的某个分量分别是 6、0、2，汇总后的这一项就是 6/6+0/3+2/2=2。其余特征同理，禁止读取的位置权重为零。',
  '各头汇总结果拼回 8 项，再经输出投影。第 5 节把分数记作 [B,H,T,T]，H=2 是头数，两根 T 轴分别是查询位置和候选位置。这里的 V 表示内容向量，V=8 表示词表大小。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('前馈网络（FFN）在每个位置独立使用同一组权重。它在投影之间加入逐项的非线性变换，让模型能够表达单次线性投影做不到的关系。本例先把 8 项特征分别投影成两组 12 项的中间值。一组提供内容，另一组经过非线性变换后作为调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+
+ para('前馈网络（FFN）在每个位置独立使用同一组权重。注意力把前文的信息送到这一格，前馈接着加工这格已有的特征。本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('本例用 RMSNorm 对每个位置的 8 项特征做归一化。它把各项平方求平均，加上一个防止除零的小常数，再开平方。原来每一项除以这个数，最后乘上可学习的缩放系数。特征数仍为 8。')+
- para('用 [1,3] 手算，暂取小常数为 0、缩放系数为 1。分母是 √((1²+3²)/2)=√5，结果就是 [1/√5,3/√5]。',
- '本例在分支之前归一化。先把 X 归一化交给注意力，结果加回 X 得到 H₁。再把 H₁ 归一化交给前馈，结果加回 H₁ 得到 H₂。这两次把分支结果加回输入的动作叫残差连接。一个分支输出全零时，对应加法保留原表示。前馈分支的来源是第一次相加后的 H₁，所以它加工的是已经包含上下文的表示。',
+ para('把这两步接起来。先对 X 做归一化，算出注意力结果，加回 X 得到 H₁。再对 H₁ 做归一化，算出前馈结果，加回 H₁ 得到 H₂。把分支结果加回它的输入叫残差连接。一个分支输出全零时，对应加法保留原表示。前馈拿到的 H₁ 已经包含注意力从前文带回的信息。',
  '两个分支内部可以分头或扩宽，回加前要恢复同一 [B,T,D] 坐标。H₂ 可以直接接下一块。各层可拥有各自的参数，最后一块的输出经过归一化与词表投影，得到每位置 V 个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow+
  '<details class="progressive-detail"><summary>选读 · LayerNorm 与 RMSNorm 的区别</summary>'+para('LayerNorm 先减去均值，再除以标准差，并可学习缩放和偏置。对同一组 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。本例的 RMSNorm 保留原分子，使用均方根作为分母。')+'</details>';
 
  a.sections[6][1]=`<h3 id="training-versus-generation">同一次前向在训练和生成里有什么用</h3>`+
- para('训练时，输入 [0,1,2,3] 和目标 [1,2,3,4] 已经给定。模型可以一次算出四行分数，每行遵守第 4 节的可见范围。损失函数比较每行预测与目标，衡量这次预测的偏差。将有效目标对应的行纳入损失后，反向计算得到各参数的梯度，优化器据此更新参数。',
- '生成只给提示，下一项要从当前最后一行的分数中选。生成程序得到一个编号后，才知道下一次前向需要处理什么。CPU 对照实验让同一小模型从固定初值完成一次更新，实验忽略部分标签，只对参与损失计算的有效目标训练，其中两条序列分别保留 1 项和 3 项有效目标。冻结参数后，给定提示 [0,1]，每轮取分数最大的编号。')+
+ para('训练时，输入 [0,1,2,3] 和目标 [1,2,3,4] 已经给定。模型可以一次算出四行候选分数，每行遵守第 4 节的可见范围。以位置 2 为例，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
+ '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
+ '<details class="progressive-detail"><summary>CPU 实验怎样筛选训练目标</summary>'+para('两条序列分别保留 1 项和 3 项有效目标。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。')+'</details>'+
+ para('生成从提示 [0,1] 开始，参数固定。先取最后一行中分数最高的编号，再把它接到输入后。训练直接使用样本给出的正确前文，这叫教师强制。训练序列的第 3 个输入是数据给出的 2，生成时这一步由模型决定。在这次 CPU 实验里，它选出了 1。')+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
   ['读提示（prefill）','[0,1]','1','2'],['逐词生成（decode）','上一轮选出的 1','1','3'],['逐词生成（decode）','上一轮选出的 1','1','4']
  ])+
- para('训练直接提供样本中的正确前缀，这叫教师强制。训练序列是 [0,1,2,3]，第 3 个输入读到数据给出的 2。生成从 [0,1] 起步，第一轮选出了 1，第 3 个输入因此是 1。提示之后新增的部分来自模型自己的输出。')+
  para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
@@ -14778,7 +14789,13 @@ const learningProfiles={
   checks:[
    {title:"算出缓存能容纳多少请求",
     result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。",
-    primary:["model-serving","section-4","KV 缓存字节算例"],more:[["model-serving","native-inference-prefix","前缀复用与清除"],["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],["inference-performance","vllm-block-lifecycle","vLLM 缓存块的引用与逐出"],["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
+    primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
+     ["model-serving","native-inference-prefix","前缀复用与清除"],
+     ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
+     ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
+     ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
+     ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
@@ -14798,7 +14815,8 @@ const learningProfiles={
     primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ragged-ring-training","环形注意力与填充"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
-    primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[]},
+    primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
+     ["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
   ]
  }},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:{
@@ -15360,12 +15378,15 @@ function fieldConceptMapHTML(moduleId){
   const [from,verb,to]=graph.edges[index];
   return '<li>'+focusLink(from)+'<span class="field-map-verb">'+safe(verb)+' <span aria-hidden="true">→</span></span>'+focusLink(to)+'</li>';
  }).join('');
- return '<section class="field-concept-map" id="concept-relations" tabindex="-1" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系：粗线先看主线，细线补充约束与反馈；箭头上直接标明关系。')+
- '<div class="field-map-main"><p><b>图中主线</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div><details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
+ const fullFigure=figure('field-'+moduleId,moduleFor(moduleId).name+'的核心关系。粗线标出主线，细线标出约束与反馈。');
+ return '<section class="field-concept-map" id="concept-relations" tabindex="-1" data-field-map="'+moduleId+'"><h2>核心对象与关系</h2><p class="field-map-note">'+safe(reading.lead)+'</p>'+fullFigure+
+ '<div class="field-map-main"><p><b>主线关系</b></p><ul aria-label="图中主线关系">'+mainRelations+'</ul></div>'+
+ '<details class="field-map-full"><summary>完整关系图</summary>'+fullFigure+'</details>'+
+ '<details class="field-map-explorer"><summary>查概念定义、关系说明与相关章节</summary>'+
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
-  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">查看整张图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
+  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">回到关系图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
  '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>'+
@@ -15394,8 +15415,6 @@ function initFieldConceptMaps(){
  const hash=location.hash||'',fragment=hash.match(/^#map-concept-([a-z0-9-]+)$/)?.[1];
  for(const map of document.querySelectorAll('[data-field-map]')){
   const graph=fieldConceptMaps[map.dataset.fieldMap],buttons=[...map.querySelectorAll('[data-concept-focus]')];
-  const frame=map.querySelector('.training-figure > a');
-  if(!map.classList.contains('field-map-ready')&&frame&&frame.scrollWidth>frame.clientWidth)frame.scrollLeft=(frame.scrollWidth-frame.clientWidth)/2;
   const select=(id,keepPosition=false)=>{
    const controls=map.querySelector('.field-map-controls'),before=keepPosition?controls.getBoundingClientRect().top:0;
    const node=graph.nodes.find(n=>n[0]===id),active=node?id:'all';
@@ -16153,5 +16172,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="cc2f748cff390e5ffa757e5c35f3bd45f04f6f1b6e024c1882a784416181bdc6";
+const staticReadingVersion="c65eb4e7d361220722c9d6b10ca3f614908e6c530103c78d4dca1976e29806f1";
 

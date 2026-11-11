@@ -48,7 +48,13 @@ const learningProfiles={
   checks:[
    {title:"算出缓存能容纳多少请求",
     result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。",
-    primary:["model-serving","section-4","KV 缓存字节算例"],more:[["model-serving","native-inference-prefix","前缀复用与清除"],["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],["inference-performance","vllm-block-lifecycle","vLLM 缓存块的引用与逐出"],["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
+    primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
+     ["model-serving","native-inference-prefix","前缀复用与清除"],
+     ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
+     ["inference-performance","vllm-v1-request-path","vLLM V1 请求调度源码走读"],
+     ["inference-performance","vllm-block-lifecycle","vLLM 块池 CPU 实跑"],
+     ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
@@ -68,7 +74,8 @@ const learningProfiles={
     primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ragged-ring-training","环形注意力与填充"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
-    primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[]},
+    primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
+     ["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
   ]
  }},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:{

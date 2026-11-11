@@ -20,7 +20,7 @@
   const tinyDecoderSource = "\"\"\"One CPU update of a miniature next-token model; no downloads required.\"\"\"\nimport copy\nimport json\n\nimport torch\nfrom torch import nn\nfrom torch.nn import functional as F\n\n\nclass TinyDecoder(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.token = nn.Embedding(8, 8)\n        self.position = nn.Embedding(4, 8)\n        self.norm1 = nn.RMSNorm(8, eps=1e-6)\n        self.norm2 = nn.RMSNorm(8, eps=1e-6)\n        self.norm_out = nn.RMSNorm(8, eps=1e-6)\n        self.qkv = nn.Linear(8, 24, bias=False)\n        self.out = nn.Linear(8, 8, bias=False)\n        self.gate = nn.Linear(8, 12, bias=False)\n        self.up = nn.Linear(8, 12, bias=False)\n        self.down = nn.Linear(12, 8, bias=False)\n\n    def forward(self, ids):\n        batch, length = ids.shape\n        pos = torch.arange(length, device=ids.device)\n        x = self.token(ids) + self.position(pos)\n        # [B,T,3D] -> three [B,H,T,d] views\n        q, k, v = (t.reshape(batch, length, 2, 4).transpose(1, 2)\n                   for t in self.qkv(self.norm1(x)).chunk(3, dim=-1))\n        z = F.scaled_dot_product_attention(q, k, v, is_causal=True, dropout_p=0.0)\n        joined = z.transpose(1, 2).reshape(batch, length, 8)\n        x = x + self.out(joined)\n        u = self.norm2(x)\n        x = x + self.down(F.silu(self.gate(u)) * self.up(u))\n        return F.linear(self.norm_out(x), self.token.weight)\n\n\ndef loss_sum(logits, labels):\n    return F.cross_entropy(logits.reshape(-1, 8), labels.reshape(-1),\n                           ignore_index=-100, reduction=\"sum\")\n\n\ndef update(model, x, labels, micro_size):\n    optimizer = torch.optim.SGD(model.parameters(), lr=0.05)\n    optimizer.zero_grad(set_to_none=True)\n    valid = int((labels != -100).sum())\n    if valid == 0:\n        return None\n    total_loss = 0.0\n    for start in range(0, len(x), micro_size):\n        sl = slice(start, start + micro_size)\n        subtotal = loss_sum(model(x[sl]), labels[sl])\n        (subtotal / valid).backward()\n        total_loss += subtotal.detach().item()\n    optimizer.step()\n    return total_loss / valid\n\n\ndef main():\n    torch.manual_seed(7)\n    torch.set_num_threads(1)\n    base = TinyDecoder().double()\n    assert sum(p.numel() for p in base.parameters()) == 664\n    rows = torch.tensor([[0, 1, 2, 3, 4], [4, 5, 6, 7, 0]])\n    x, labels = rows[:, :-1], rows[:, 1:].clone()\n    labels[0, 1:] = -100\n    labels[1, 3:] = -100\n    assert (labels != -100).sum(dim=1).tolist() == [1, 3]\n\n    with torch.no_grad():\n        logits = base(x)\n        changed = x.clone()\n        changed[:, 3] = (changed[:, 3] + 1) % 8\n        torch.testing.assert_close(base(changed)[:, :3], logits[:, :3])\n        assert logits.shape == (2, 4, 8) and logits.isfinite().all()\n\n    full, micro = copy.deepcopy(base), copy.deepcopy(base)\n    full_loss = update(full, x, labels, micro_size=2)\n    micro_loss = update(micro, x, labels, micro_size=1)\n    assert abs(full_loss - micro_loss) < 1e-12\n    largest_diff = 0.0\n    for a, b in zip(full.parameters(), micro.parameters()):\n        torch.testing.assert_close(a.grad, b.grad, atol=1e-10, rtol=1e-10)\n        torch.testing.assert_close(a, b, atol=1e-10, rtol=1e-10)\n        largest_diff = max(largest_diff, (a.grad - b.grad).abs().max().item())\n    assert not torch.equal(full.token.weight, base.token.weight)\n    empty = copy.deepcopy(base)\n    assert update(empty, x, torch.full_like(labels, -100), micro_size=1) is None\n    for a, b in zip(base.parameters(), empty.parameters()):\n        assert torch.equal(a, b)\n    with torch.no_grad():\n        after_loss = loss_sum(full(x), labels).item() / 4\n    print(json.dumps({\"torch\": str(torch.__version__), \"device\": \"cpu\",\n                      \"parameters\": 664, \"valid_targets\": [1, 3],\n                      \"loss_before\": full_loss, \"loss_after\": after_loss,\n                      \"max_grad_diff\": largest_diff}, indent=2))\n\n\nif __name__ == \"__main__\":\n    main()\n";
   chapter('model-foundations','0.1','transformer-model',
     '从两段文本到一张计算图：怎样读 Transformer 的形状',
-    '从 token、矩阵乘法和一层 decoder 出发，按张量的形状解释计算、显存、通信与训练进展。',
+    '跟一个词元走完查表、注意力与候选打分，再用同一个小模型算清参数、训练损失和生成缓存。',
     '能做向量逐元素乘法和加法即可；本章从零说明模型记号。',
     ['读图：区分 batch、位置、特征和词表','推导：手算投影、字节数与逻辑计算量','定位：把模型工作映射到云上训练证据'],
     [
@@ -54,10 +54,10 @@
 为什么这些层能堆起来？中间分支虽然会换轴甚至临时扩宽，块的主路径需要返回与输入兼容的 [B,T,D]，才能做残差相加并成为下一块的输入。相同形状不意味着传递的是同一组数，也不意味着每一层必须共享同一份权重。通常各层学习不同参数。模型深度增加时，层参数、训练时反向所需的若干中间量以及推理时各层留存的 KV 会沿不同维度增长。`) + figure('v9-model-flow','图 0-1 · 模型基础的形状账本。箭头给出数据依赖，模型参数在不同位置间复用。')],
       ['把符号落实成一份形状账本',prose(`把两条输入从头到尾连起来看。B=2 是样本数，T=4 是输入位置数，D=8 是每个位置的特征宽度，词表大小 V=8。第 4 节用 H=2 个注意力头，每头 d=D/H=4 项；前馈分支的中间宽度记为 F，本例 F=12。
 
-最后一个块输出的八项隐藏特征，再经词表投影，为八个候选编号分别打分。这些候选分数叫 logits。训练时将分数与目标编号比较，算出衡量预测差异的训练损失；第 7 节会接着说明怎样利用损失更新参数。`)+
+最后一个块输出的八项隐藏特征，再经词表投影，为八个候选编号分别打分。这些候选分数叫 logits。第 7 节会把它们换成概率，算出一次预测的损失。`)+
       table(['计算阶段','本例形状','每根轴或每行的作用'],[
         ['输入 IDs / 目标','各 [B,T]=[2,4]','两条输入各有四个位置，目标与预测位置逐格对应'],
-        ['词嵌入表 E / 位置表','[V,D]=[8,8] / [T,D]=[4,8]','每个编号查一行词向量，每个序号查一行位置向量'],
+        ['词嵌入表 E / 位置表','[V,D]=[8,8] / [4,D]=[4,8]','词嵌入按编号查表，位置表固定有四行，按位置查表'],
         ['相加后的输入 X','[B,T,D]=[2,4,8]','两条样本各四个位置，每位置八项特征'],
         ['各头的 Q、K、V','各 [B,H,T,d]=[2,2,4,4]','两条样本、两个头、四个位置、每头四项特征'],
         ['注意力分数','[B,H,T,T]=[2,2,4,4]','每头有四行查询，每行给四个候选位置打分'],
@@ -65,7 +65,14 @@
         ['门控前馈中间量','各 [B,T,F]=[2,4,12]','两个上投影各产生十二项，再用下投影回到八项'],
         ['词表 logits','[B,T,V]=[2,4,8]','每个输入位置给词表的八个候选编号打分'],
         ['训练损失','一个数，即标量','汇总本次参与训练的目标位置，供反向传播使用']
-      ])+prose(`词嵌入表和位置表中的数跨输入保存，是模型参数。查表与块计算产生的表示随这次输入变化，称为激活。同一个编号出现在多个位置时，多次使用同一行词嵌入参数，各位置仍各有自己的激活。将词表扩大到 11 项而保持 D=8，隐藏表示仍是每位置八项，输出分数则变成每位置十一项。`)],
+      ])+prose(`查表和解码器块每次都按输入生成中间结果，这些数叫激活。同一个编号出现两次，会查同一行词嵌入参数，随后在各自的位置上计算。下面数模型长期保存的可学习数字。这个小模型只有一层，线性层没有偏置，输出复用词嵌入表给候选打分，因此词表矩阵只数一次。`)+
+      table(['存下来的参数','本例个数'],[
+        ['词嵌入与位置表','8×8 + 4×8 = 96'],
+        ['注意力的 Q、K、V 和输出投影','4×8×8 = 256'],
+        ['前馈网络的两次扩宽与一次缩回','3×8×12 = 288'],
+        ['两个分支和最终输出前的归一化系数','3×8 = 24'],
+        ['合计','664']
+      ])+prose(`词表扩大到 11 项时，每个位置仍用八项特征，输出改为给 11 个编号打分。共享词表增加 3×8=24 个参数。在位置表的四格之内，输入变长会增加中间结果，模型参数可以照旧使用。`)],
       ['同一个“翻倍”，会动哪笔账',prose(`有了形状，就能逐项数元素。原模型一份隐藏表示有 B×T×D=2×4×8=64 项。按每个浮点数 2 字节计算，这份表示占 128 字节。每个注意力头有 T 行查询、T 列候选，所以完整分数表有 B×H×T²=2×2×4×4=64 项，也占 128 字节。
 
 再数一次从八维到八维的线性投影。每个输出分量要将八对数相乘后相加，八个输入位置各产生八个输出分量，主体计算有 8×8×8=512 次乘法。按一次乘加约计两次浮点操作，得到 1024 FLOP。FLOP 表示浮点操作的数量。`)+
@@ -74,13 +81,13 @@
         ['隐藏元素数 B×T×D','64','128','128'],
         ['完整注意力分数 B×H×T²','64','128','256'],
         ['8→8 线性投影的 FLOP','1024','2048','2048']
-      ])+prose(`增加 B 是多算几条序列，每张注意力表仍为 4×4；增加 T 则同时增加每张表的查询行与候选列。因此同样多出八个输入位置，注意力的工作增长可以不同。投影权重仍只有 8×8=64 项，由更多位置重复使用。这里按完整分数表计算逻辑规模，实际实现可能按块处理；设备占用和用时还要结合具体算子测量。`)],
+      ])+prose(`增加 B 是多算几条序列，每张注意力表仍为 4×4；增加 T 则同时增加每张表的查询行与候选列。因此同样多出八个输入位置，注意力的工作增长可以不同。投影权重仍只有 8×8=64 项，由更多位置重复使用。表中 T=8 用来比较公式，实验的小模型只有四行位置参数。表里还数的是完整分数表，按块计算的实现可以少存一些中间值。接下来用原来的输入比较训练和生成。若想继续算总位置数相同、分组不同的情况，可以看<a href="/article/transformer-model/#section-8">第 8 节的算例</a>。`)],
       ['训练与生成，共用参数但走过不同时间线',prose(`训练时整段输入已知，可以利用因果掩码同时计算多个位置，等损失函数告诉各参数怎样改变。生成时下一个输入要等当前输出被选定；即便权重完全相同，也不能在普通自回归解码中假装未来词都已经知道。一个请求通常先处理提示，再逐次生成。过去位置的 K 与 V 在合适条件下可以复用，却要占用设备上的空间，且新 query 仍需读取合法的历史状态。
 
 因此问“这个模型需要几张卡”之前，先确认服务的是训练还是推理。训练会产生梯度和优化器状态，并需要保存或重算反向用到的中间量；推理通常固定权重，却要应对请求长度和并发决定的缓存。权重能在一张卡上加载，是有用的第一条证据，不足以说明整个训练更新或特定并发推理能在那张卡完成。后续的显存与推理章节会分别做两个场景的账本。
 
 在分布式训练中，设备之间同步的也不是泛称的“模型数据”。普通数据并行让副本各读一部分样本，再同步梯度；参数分片可能临时聚合某一层；张量并行则按具体切法交换局部结果。若 profiler 只显示某个 collective 很长，需要问参与它的哪些 rank 先到、其前一阶段在做什么。一个 rank 慢读数据，可能让其他 rank 看起来都在等网络。`)],
-      ['相同的八个 token，为什么不是同一负载',prose(`第 6 节改变了位置总数。现在固定总共八个输入位置，只改变它们分成几条序列。隐藏宽 D=8、头数 H=2、词表大小 V=8 保持不变，继续用形状公式比较。`)+
+      ['相同的八个 token，为什么不是同一负载',prose(`训练常把多条输入合成一批。总共八个位置，可以是四条短文本，也可以是一条长文本。第 6 节的投影逐位置计算，两种分组都做八次。注意力在各自的序列里找前文，要算的位置对数量就不同。这里沿用小模型的宽度与头数，长八的情况用于纸上算账。`)+
       table(['八个位置怎样分组','四条各长 2','原例两条各长 4','一条长 8'],[
         ['输入形状 [B,T]','[4,2]','[2,4]','[1,8]'],
         ['逐位置 8→8 投影的 FLOP','1024','1024','1024'],
@@ -90,14 +97,14 @@
       ])+prose(`以四条各长二为例，每个头的第 0 行读一格，第 1 行读两格，共三个合法位置。四条序列、每条两个头，合计 4×2×3=24。换成一条长八，每头需要读取 1+2+⋯+8=36 格，两个头合计 72。位置总数一样，跨位置读取的关系数量随序列组织变化。
 
 若把独立文本拼在同一条序列里，还需保留原来的阅读范围。可以用文档边界规定每个位置只能读自己所在文档的前文，并按原任务安排位置编号和预测标签。实际加载和打包程序要一起记录这些信息，才能在相同训练目标下比较计算量。`)],
-      ['从形状错误走到可重复的验收',prose(`先用一条可读序列检查预测目标。将 [0,1,2,3] 与 [1,2,3,4] 逐格对齐，确认第 2 位输出对应的目标是 3。只让这个位置参与训练损失，拿它给编号 3 的概率 p 手算 −ln p，再与程序返回的单目标损失对照。这样就能从具体一格核对标签的移位与损失统计。
+      ['从形状错误走到可重复的验收',prose(`先用一条可读序列检查预测目标。将 [0,1,2,3] 与 [1,2,3,4] 逐格对齐，确认第 2 位输出对应的目标是 3。只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。这样就能从具体一格核对标签的移位与损失统计。
 
 再检查读取范围。固定第一条样本，只改变第二条，比较第一条的输出；它应保持一致。然后只改第一条的最后一个输入位置，比较它前面三格的输出；这些格同样应保持一致。最后改变允许读取的前文，检查对应的输入和输出变化，用同一组参数跟踪信息确实经过了预期路径。
 
-数值路径对齐后，再比较工作与资源。记录输入形状、有效目标数、计算实现、用时和内存。例如 T 从 4 变成 8，先按第 6 节预测哪些逻辑元素翻倍、哪些变为四倍，再查看实际执行。后续章节将沿这组对象继续展开注意力、完整模型层、训练更新和生成缓存。`)+linkTo('attention-mechanics','继续深入：亲手算出一个位置从历史读到了什么')]
+数值路径对齐后，再比较工作与资源。记录输入形状、有效目标数、计算实现、用时和内存。例如想测 T 从 4 变成 8 的影响，先准备至少八个位置的模型，再用第 6 节的公式预测哪些中间量翻倍、哪些变为四倍。后续章节将沿这组对象继续展开注意力、完整模型层、训练更新和生成缓存。`)+linkTo('attention-mechanics','继续深入：亲手算出一个位置从历史读到了什么')]
     ],
-    ['在 B=2、T=4、D=8、H=2 下，将 V 从 8 改成 16，其他维度固定。词表表、单头分数矩阵、整批 logits 怎样变？如果输入表与输出矩阵共享权重，应新增多少独立参数？',
-     '词表表从 64 变成 128 个参数。每个头的逻辑分数仍是 4×4，整批 logits 从 64 变成 128 个元素。共享权重且无输出偏置时只增加 64 个独立参数；输出计算仍然要给更多候选打分。'],
+    ['在 B=2、T=4、D=8、H=2 下，将 V 从 8 改成 16，其他维度固定。词嵌入表、单头分数矩阵、整批 logits 怎样变？如果输入表与输出矩阵共享权重，应新增多少独立参数？',
+     '词嵌入表从 64 变成 128 个参数。每个头的逻辑分数仍是 4×4，整批 logits 从 64 变成 128 个元素。共享权重且无输出偏置时只增加 64 个独立参数；输出计算仍然要给更多候选打分。'],
     ['mfTransformer','mfLinear'],['attention-mechanics','gpu-cluster']);
   chapter('model-foundations','0.2','attention-mechanics',
     '从三行矩阵读懂注意力：Q、K、V、因果掩码与分组头',

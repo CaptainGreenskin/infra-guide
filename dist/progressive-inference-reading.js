@@ -164,7 +164,7 @@
  const qc=q.map(codes),qf=q.map(figures);
  const hasPool=q[2].includes('id="inference-cache-mechanism"')&&q[5].includes('id="inference-cache-run"');
  const poolMechanism=hasPool?'<div id="inference-cache-mechanism">'+heading('subsection-3-1nk63tb','按需块池怎样取得和归还空间')+
-  p('换一种空间策略：下面的CPU块池不为整条最大长度预留，而是在新位置需要写入时分配。请求保存逻辑输入和块表，池保存实际KV、引用数及前缀索引；调度器据空闲空间决定能否继续。这与前面完整预留是两套策略，不能把一种的准入时刻套给另一种。')+
+  p('按需分配时，新位置要写入才申请空间。请求保存逻辑输入和块表，池保存实际 K/V、引用数和前缀索引。调度器查可用块，决定请求能否继续。完整预留则会提前占下未来位置的空间。')+
   heading('subsection-3-icqxg5','用块表找到一个逻辑位置',4)+
   p('逻辑位置从0数，块长4时，位置5位于逻辑块floor(5/4)=1、块内偏移1。若A块表为[P0,P1]，读取先取表中第1项P1，再取P1的第1格。B块表可为[P0,P2]，与A共享首块，同时有独立尾部。块号描述映射，物理槽实际保存数值。',
   '本例A=[1,2,3,4,5,6]、B=[1,2,3,4,7,8]，共12个逻辑位置；共享首块后只保存4+2+2=8格有效KV，分配3×4=12格容量，4格是尾部空位。每格对应的真实模型字节需另乘层数、KV头数和格式，Python对象内存不等于128KiB/位置的另一道字节题。')+
@@ -219,6 +219,13 @@
   ])+
   p('20个输入来自A的1+4−1=4位置，加16条单输出请求各1位置。末尾只剩A时每轮只能用1份预算，所以总轮数还受每请求上限约束。上述迭代数是离散机会，不是毫秒；程序实际执行CPU注意力、块分配和调度转换，没有测GPU每轮用时，也不能把轮数变化换算为真实服务吞吐提升。')+'</div>':'';
  const schedulerOffset=hasPool?2:0;
+ const transferLowerBound=fold('交接数据量怎样换成耗时下界',
+  p('若把预填充与解码放在不同机器，解码侧需要取得其历史KV。独立题设每位置128KiB，4096位置为512MiB=536870912字节；链路有效载荷速率25GB/s，GB为十进制。假定交接完全串行、不压缩、不复用、不能与计算重叠，暂不计启动和协议。')+
+  table(['同一观察点到第2项输出','25GB/s','12.5GB/s'],[
+   ['搬运的理想时间下界','536870912/(25×10⁹)=21.47ms','42.95ms'],
+   ['共置100ms，拆池省30ms排队','100−30+21.47=91.47ms','100−30+42.95=112.95ms']
+  ])+
+  p('下界为91.47ms只表示有改善机会，真实复制、同步和新队列仍会增加时间；112.95ms在题设内已超过原100ms。若首词元由prefill侧先返回，交接主要影响第1到第2项间隔，不能把交接全部加到TTFT。支持重叠时需重新画关键路径，并固定硬件总预算和请求分布比较。'));
 
  replace(performance,[
   p('请求 B 发出去后，约 23.588 ms 才收到第一项输出。接下来的 31 个间隔平均约 0.215 ms。这是第 6 节本机 CPU 实验的第一轮记录。客户端收到 A 的第一项输出后马上发送 B。合成模型为 A 生成 110 项，为 B 生成 32 项。引擎同一时间只保存一条正在生成的序列及其推理状态，这个位置叫槽位。服务端日志显示 B 等过槽位，客户端记录的是从发送到接收的整段时间。',
@@ -235,7 +242,10 @@
   '每请求先求TPOT再平均，会给不同长度请求相同权重；把全部间隔合并平均则让长输出贡献更多项。两种统计回答不同问题，报告要写清分母。模型、tokenizer、停止规则和输出质量也会改变N，比较速度时需固定这些条件。'),
 
   '<div class="mechanism-core" id="serving-two-budgets">'+heading('subsection-3-zgqy1s','一轮工作量与跨轮驻留空间')+
-  p('连续批处理每轮重新组合要运行的请求；分块prefill把长提示拆到多轮。工作预算限制“这一轮能处理几个输入位置”，驻留预算限制“活动请求跨轮能保留多少KV”。准入先看长期空间，轮内选择再分配本轮工作，两项可以独立用满。')+
+  p('每轮调度决定推进哪些请求、各算几个位置，并为新增位置安排可写的块。执行时把新增的键、值向量（K/V）写进缓存，供后续注意力读取。引擎交付本轮产生的输出，结束的请求归还块引用。',
+  '连续批处理会在每轮重新组合请求。分块预填充给长提示设单轮上限，给正在逐步生成的请求留出机会，这个生成阶段叫解码（decode）。判断请求能否推进，要同时看本轮还可计算多少位置，以及跨轮还可保存多少历史。即使计算有余量，新位置也要等到有块可写才能开始。')+'</div>'+
+  '<details class="progressive-detail"><summary>算例 · 分块怎样改变首词元等待</summary>'+
+  heading('subsection-3-svno8c','逐轮计算分块怎样转移等待')+
   table(['约束','固定成本教学模型的规则'],[
    ['工作预算','每轮最多40个输入位置；先给已有decode各1项'],
    ['驻留预算','按提示与输出上限完整预留，结束后归还'],
@@ -245,8 +255,7 @@
   p('设提示P≥1、输出上限G≥1，prefill结束已经选出第1项，只需G−1个后续decode输入。已处理KV上限为P+G−1，块长4时要向上取整。ceil表示向上取整：长度35也占9块、36槽。这里G既是上限，也恰好是实际输出数。')+
   formula('完整长度预留，无共享与滑动窗口','预留槽位 = ceil((P + G − 1) / 4) × 4','该模型预留未来增长，槽位不代表已经写入的KV数量；乘具体模型每位置字节后才得到预留字节。')+
   p('第一组请求为A：到达0ms、P=32、G=4；B：到达2ms、P=4、G=2；C：到达2ms、P=8、G=2。KV池44槽。A预留ceil(35/4)×4=36，B预留8，两者占44；C需12槽，不能获准。B结束归还8仍不够，C必须等A也结束，两种分块策略均在7.6ms接入。',
-  '程序用到达顺序准入，队首放不下会阻挡后面的请求，即便本轮工作量尚有余量。某请求自身就大于整个池，应提前拒绝或分流；否则等待永远不能解决。真实请求可提前结束，完整预留会闲置空间；按需增长则必须定义后续空间不足的处理。取消后也要按执行和引用协议回收容量。')+'</div>'+
-  heading('subsection-3-svno8c','逐轮计算分块怎样转移等待')+
+  '程序用到达顺序准入，队首放不下会阻挡后面的请求，即便本轮工作量尚有余量。某请求自身就大于整个池，应提前拒绝或分流；否则等待永远不能解决。真实请求可提前结束，完整预留会闲置空间；按需增长则必须定义后续空间不足的处理。取消后也要按执行和引用协议回收容量。')+
   p('以下耗时是给定成本：每个prefill输入0.1ms，每个decode输入1ms，同轮成本直接相加。没有设备、网络或重叠。第一组32上限时，A在0→3.2ms一次处理完提示；B虽在2ms到达，也要等这轮结束。下一轮做A一次decode与B的4位置，共1+0.4=1.4ms，B在4.6ms首输出，从到达算为2.6ms。',
   '把上限改为8后，A的提示分为多个片段；B可在A未完成时进入某轮，其首输出等待变1.6ms。A却从3.2ms首输出变3.6ms。C仍受同一44槽约束，分块没有凭空增加驻留容量。')+
   qf[2][0]+
@@ -256,14 +265,7 @@
   ])+
   p('第二组换成48槽池，A在0ms到达、P=4/G=6，B在0.5ms到达、P=32/G=2。整段模式在1.4ms开一轮：A做1次decode，B处理32项，耗时1+32×0.1=4.2ms，因此A下一项到5.6ms才交付。分块时每轮相应片段最多1+8×0.1=1.8ms，A间隔缩短，B却要等更多轮才能完成提示。',
   '两组负载不能拼成一条请求轨迹。此固定成本模型中总工作没减少，第二组完成时刻同为9.6ms；真实设备的批量效率、启动、上下文读取与重叠会改变总耗时，必须在目标实现重新测量。G=1时prefill已给唯一输出，无decode、无后续间隔。')+
-  poolMechanism+
-  fold('选读：拆开Prefill与Decode后的交接下界',
-   p('若把预填充与解码放在不同机器，解码侧需要取得其历史KV。独立题设每位置128KiB，4096位置为512MiB=536870912字节；链路有效载荷速率25GB/s，GB为十进制。假定交接完全串行、不压缩、不复用、不能与计算重叠，暂不计启动和协议。')+
-   table(['同一观察点到第2项输出','25GB/s','12.5GB/s'],[
-    ['搬运的理想时间下界','536870912/(25×10⁹)=21.47ms','42.95ms'],
-    ['共置100ms，拆池省30ms排队','100−30+21.47=91.47ms','100−30+42.95=112.95ms']
-   ])+
-   p('下界为91.47ms只表示有改善机会，真实复制、同步和新队列仍会增加时间；112.95ms在题设内已超过原100ms。若首词元由prefill侧先返回，交接主要影响第1到第2项间隔，不能把交接全部加到TTFT。支持重叠时需重新画关键路径，并固定硬件总预算和请求分布比较。')),
+  '</details>'+poolMechanism,
 
   p('到达率λ是每秒进入同一服务边界的请求数；并发数是在该边界内尚未结束的请求数。闭环压测固定客户端数量，每个客户端等完成后再发下一条；响应越慢，它自动发得越少。开环压测按外部计划时间发请求，可以保持给定到达节奏，因此更容易显出持续排队。',
   '在稳定且流入流出平衡、平均值存在的同一边界内，Little定律给平均在途数L=λW，W为平均停留时间。λ=20请求/s、W=2s时L=40条。这里2s含这个边界内的等待与处理，并非只用模型执行时间；系统持续积压时不能用稳态等式推断固定并发上限。',
@@ -352,7 +354,11 @@
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
- performance.sections[2][1]+='<div class="mechanism-core" data-practice="pd-split">'+
+ performance.sections[2][1]+=
+  p('预填充和解码分到不同进程时，解码侧要先拿到历史 K/V，才能从正确位置继续。先用整数程序核对交接，再用本机 llama.cpp 查看接收进程实际重算了哪些位置。')+
+  '<details class="progressive-detail"><summary>本机实战 · 分池与缓存交接</summary>'+
+  transferLowerBound+
+  '<div class="mechanism-core" data-practice="pd-split">'+
   heading('native-pd-split','实战：把预填充和逐步生成交给不同进程')+
   p('共置时，一个工作进程既处理输入，也继续生成。若调度器先取新来的长提示，已经开始输出的短请求就要等。分池时，预填充进程 P 处理输入并选出首个输出，解码进程 D 继续生成。D 需要同一请求的提示长度、首个输出和历史 K/V，才能在正确的位置继续写入。')+
   trainingFigure('pd-split-handoff','共置路径保留进程内状态。分池路径先产生首项，再通过本机套接字交接 KV；接收端验收后，才开始下一步解码。')+
@@ -391,11 +397,13 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   ])+
   p('把缓存文件截到 12 字节后，这个版本返回 HTTP 400，并清掉此前的六个位置。随后同一请求从头算五个提示位置，仍得到 8、9。恢复后还没接过请求的新槽位，状态接口不会展示提示长度。核对是否真的省掉计算，要对照恢复回执、完成响应的 <code>cache_n</code> 和实际批次。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
-  '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p>';
+  '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
  const vllmLink=(file,lines,text)=>'<a href="'+vllmSource+file+'#'+lines+'">'+text+' ↗</a>';
  performance.sections[2][1]+=
+  p('沿 vLLM V1 的请求编号，从入队读到归还。调度和模型执行见固定版本源码，块引用和逐出可用上游块池做 CPU 对照。')+
+  '<details class="progressive-detail"><summary>vLLM V1 · 请求源码与块池实跑</summary>'+
   heading('vllm-v1-request-path','沿 vLLM V1 源码看请求怎样使用块池')+
   p('A3.4 模型服务章用真实 llama-server 单 slot 复用一段历史。多请求引擎还要知道每条请求分到哪些物理块、这轮算多少位置。下面固定 vLLM v0.10.2 的 V1 路径，只跟一条普通文本生成请求，关闭推测解码与外部 KV 传输。请求编号贯穿等待队列、本轮任务和输出。')+
   '<ol>'+
@@ -425,7 +433,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   '复跑分两步：先用下载包里的 fetch_upstream.py 下载固定提交的两份文件并检查 SHA-256、Git blob ID 与字节数，再用 block_lifecycle.py 指向该目录。运行器抽取完整原始 AST 定义，只增加延后类型注解的设置；事件路径关闭，未运行依赖不加载。来源清单、选中定义的行范围、实际轨迹及原创源码哈希都随记录提供。包内不转载上游源文件。')+
   '<p class="practice-links"><a href="labs/vllm-block-lifecycle.zip" download>下载原创运行器与证据 ↓</a> · <a href="labs/vllm-block-lifecycle/block_lifecycle.py">实验源码</a> · <a href="labs/vllm-block-lifecycle/fetch_upstream.py">固定来源下载器</a> · <a href="labs/vllm-block-lifecycle/source-manifest.json">来源与哈希清单</a> · <a href="labs/vllm-block-lifecycle/validation.json">实际12步状态</a> · <a href="labs/vllm-block-lifecycle/README.md">复跑说明与自测答案</a></p>'+
   p('用 10 分自测：分别解释 A 结束、B 结束、C 查询与 touch、按队头重分配、耗尽拒绝这五步，每步 2 分。必须给出引用数或队列，不能只说“用了缓存”。追问：查到后却未建立引用，若允许其他分配穿插，为什么不能假设编号仍属于旧内容？本实验按顺序调用，未验证任意多线程访问的同步安全。'+
-  ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。');
+  ' 对照 '+vllmLink('core/block_pool.py','L170-L266','分配、驱逐、touch 与 free')+' · '+vllmLink('core/kv_cache_utils.py','L158-L405','块与双向空闲队列')+'，再回到本节四步请求路径，找出真正负责调用这些方法的层次。')+'</details>';
  serving.sections[6][1]+=
   heading('native-inference-prefix','沿同一槽位追踪：暖前缀、清除与冷请求')+
   p('上一份实验已看到重复提示可以少算。这次多追一步：请求完成、槽位空闲之后，哪些状态还留着？我们用同一原生 CPU 引擎和人工权重，三次独立重启，各运行 A → 暖 B → 显式清除 → 冷 B。A 的提示是 [1,4,5,6]，B 是 [1,4,5,5,10]，固定 slot 0、温度 0、输出上限 3。')+

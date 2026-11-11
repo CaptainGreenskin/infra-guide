@@ -43,7 +43,7 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
   assert(/^[a-z0-9-]+$/.test(id),moduleId+': stable concept fragment');
   assert(html.includes('id="knowledge-'+id+'"'),moduleId+': definition target missing '+id);
   assert.equal(html.split('id="map-concept-'+id+'" tabindex="-1"').length,2,moduleId+': unique focusable concept target '+id);
-  assert(html.includes('data-map-focus="all" href="/module/'+moduleId+'/#concept-relations">查看整张图 →'),moduleId+': return link works before enhancement');
+  assert(html.includes('data-map-focus="all" href="/module/'+moduleId+'/#concept-relations">回到关系图 →'),moduleId+': return link works before enhancement');
   const authored=[d.practice[moduleId],d.followups[moduleId]].filter(row=>row?.[0]===id).map(([,lab])=>lab);
   const evidence=[...authored,...(d.evidence[moduleId]?.[id]||[])];
   const definitionAt=html.indexOf('id="map-concept-'+id+'"');
@@ -77,6 +77,10 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  const practice=html.match(/<section class="field-map-practice"[\s\S]*?<\/section>/g)||[];
  assert.equal(practice.length,1,moduleId+': one visible field practice');
  const explorer=html.indexOf('<details class="field-map-explorer"');
+ const full=html.match(/<details class="field-map-full"><summary>完整关系图<\/summary>([\s\S]*?)<\/details>/);
+ assert(full&&html.indexOf(main[0])<html.indexOf(full[0])&&html.indexOf(full[0])<explorer,moduleId+': full map disclosure follows the main relationships');
+ const diagramSrc='src="diagrams/field-'+moduleId+'.svg"';
+ assert(full[1].includes(diagramSrc)&&html.slice(html.indexOf('id="concept-relations"'),html.indexOf(main[0])).includes(diagramSrc),moduleId+': both layouts use the same full diagram');
  const firstKnowledge=html.indexOf('class="knowledge-point"');
  const lastKnowledge=html.lastIndexOf('class="knowledge-point"');
  const practiceAt=html.indexOf(practice[0]);

@@ -298,23 +298,25 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
   finish(a,old,body);
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
   const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
-   p('用户要求生成 <code>report-A</code>。运行程序，也就是宿主，起初只安排读取主清单和生成草稿。本机模型读到金额 10、27，还看见清单里新出现的补录编号 <code>late-A/v1</code>，于是建议先读补录。宿主核对编号来自刚读到的清单，保存第 2 版计划。已经读到的 10、27 继续使用。')+
+   p('用户要求生成 <code>report-A</code>。宿主的第 1 版计划只安排读取主清单和生成草稿。模型提出读取，宿主调用工具，把主清单里的 10、27 和补录编号 <code>late-A/v1</code> 交回模型。模型提议先加上读补录这一步。宿主核对编号来自清单，保存第 2 版计划，保留已经读到的两笔金额。')+
    trainingFigure('model-plan-revision','四次工具提议来自同一个模型。计划、草稿和批准由宿主核对并保存。')+
-   p('四轮都提供相同的四个工具。<code>tool_choice=auto</code> 让模型按提示里的使用条件选工具。第 1 轮返回 <code>extra_batch=late-A/v1</code>，第 2 轮模型提出 <code>revise_plan</code>。下方第一行把工具名和参数交给宿主核对并执行。第二行的 <code>tool_call_id</code> 让模型知道结果对应哪一次调用。')+
+   p('四轮都提供相同的四个工具，<code>tool_choice=auto</code> 让模型按提示选择。第 2 轮的提议是 <code>revise_plan</code>。宿主按下方第一行核对并执行提议，再把结果交回模型。<code>tool_call_id</code> 用来对应原来的调用。')+
    trainingCode('宿主执行通过检查的工具，并把结果交回模型','PYTHON',`result = perform_tool(directory, name, args)
 messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "content": compact(result)}]`)+
-   p('第 3 轮读到补录的 5，第 4 轮请求生成草稿。宿主按两条来源记录算出 10+27+5=42，把第 2 版计划、草稿和等待批准的状态留在同一个任务库，然后退出。新进程重开原库。发布批准要匹配操作者、任务、目标 <code>A/daily</code>、计划第 2 版和草稿摘要。摘要是从草稿内容算出的指纹，来源版本也在草稿里。')+
+   p('第 3 轮读到补录的 5，第 4 轮请求草稿。宿主用两份来源算出 10+27+5=42，保存第 2 版计划和草稿，停在等待批准，原进程退出。新进程打开同一个任务库，核对批准是否匹配操作者、任务、目标 <code>A/daily</code>、计划版本和草稿摘要。摘要由草稿内容算出，草稿中也记录了来源版本。')+
    table(['恢复时给什么','宿主实际决定','数据库中有几份报告'],[
     ['没有批准','继续等待','0'],['只批准第 1 版的 37','批准与当前草稿不符','0'],['批准当前第 2 版的 42','发布并保存完成状态','1'],['完成后再带同一批准恢复','认回已完成的任务','1']
    ])+
-   p('先在四条模型响应里找工具名称与参数，确认 <code>late-A/v1</code> 是从哪一轮进入对话。再查计划表、事实表和报告表。实际发布的唯一一份报告是 42，带主清单和补录两个来源。固定提示只开放这里的一种计划变更，批准由测试入口提供。报告和完成状态共用一个 SQLite 事务。')+
+   p('复核时，先从模型响应找提议的工具和参数，再到计划表、事实表和报告表查实际结果。库里只有一份 42 的报告，记录主清单和补录两个来源。实验使用固定提示和测试批准，只支持这次计划修订。报告与完成状态在同一个 SQLite 事务中提交。')+
    trainingCode('解压后运行，需要固定版本的本机模型和运行时','SHELL','python3.12 -B model_plan_lab.py run --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/model-plan-revision.zip" download>下载实验与记录 ↓</a> · <a href="/labs/model-plan-revision/README.md">复跑与查表步骤</a> · <a href="/labs/model-plan-revision/validation.json">四轮原始模型请求和恢复记录</a></p>'+
-   p('这里由程序自己读回任务库。<a href="/article/durable-workflows/#langgraph-workflow-run">下一节</a>用同一个任务 ID 重开框架的检查点，再观察它从哪里重新执行。');
+   p('后面的对照也用 42 的日报讲恢复，各有独立的任务状态和接收记录。<a href="/article/durable-workflows/#langgraph-workflow-run">查看 LangGraph 怎样恢复暂停的任务 →</a>');
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
-  if(!a.sections[8][1].includes(nativeWorkflow))throw Error('Missing workflow practice after model plan revision');
-  a.sections[8][1]=a.sections[8][1].replace(nativeWorkflow,modelPlan+nativeWorkflow);
-  a.sections[8][1]+=h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
+  const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
+  if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');
+  a.sections[8][1]=fold('选读 · 固定提议与执行者接管的对照',a.sections[8][1].slice(0,nativeWorkflowStart))+
+   modelPlan+fold('选读 · LangGraph 检查点与独立 HTTP 接收方',a.sections[8][1].slice(nativeWorkflowStart));
+  a.sections[8][1]+=fold('选读 · MCP 提交后退出，怎样认回原回执',h('mcp-commit-recovery','工具已返回回执，工作流怎样恢复')+p(
    '这个独立实验把提交间隙接到真实的 MCP 工具。权威输入给 report-A/v3 固定三笔金额 10、27、5，发布结果应为 42。LangGraph 先将发布意图和操作 ID <code>report-A:publish</code> 写入自己的 SQLite 检查点。随后 <code>publish</code> 节点通过官方 MCP 客户端发现并调用 <code>publish_report</code>，接收方在另一份 SQLite 数据库里用同一事务提交报告和回执。',
    '第一次调用已经收到回执。监督进程此时读到接收库有一份报告和一份回执，而图检查点仍为 <code>next=["publish"]</code>，尚无回执。监督进程向这个工作进程发送 SIGKILL，切点在节点返回状态更新之前。新工作进程沿原 <code>thread_id</code> 调用 <code>invoke(None)</code>，重跑 <code>publish</code> 并建立新的 MCP stdio 会话。')+
    trainingFigure('mcp-commit-recovery','两个 MCP 会话之间，图检查点保存发布意图，接收库保存报告和回执。')+
@@ -326,11 +328,11 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('两例的图最终都保存回执并结束。独立验收直接读取来源和接收库，重新计算金额并核对任务、来源版本和报告份数。运行需要 POSIX 进程信号和两个 Python 3.12 虚拟环境，分别使用 <a href="/labs/langgraph-workflow/requirements.txt">LangGraph 1.2.20 与 SQLite 检查点包 3.1.3 的锁定依赖</a>、<a href="/labs/mcp-protocol/requirements.txt">MCP SDK 2.3.0 的锁定依赖</a>。解压后在实验目录运行，替换两个解释器路径。')+
    trainingCode('运行原生 MCP 与检查点恢复实验','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
    p('执行记录中的两次工作进程 PID 和两次 MCP 服务进程 PID 各不相同。工具走本机标准输入输出，发布动作与输入固定。实验覆盖回执已收到后的工作进程崩溃与重入。')+
-   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>';
+   '<p class="practice-links"><a href="/labs/mcp-recovery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/mcp-recovery/workflow.py">工作流源码</a> · <a href="/labs/mcp-recovery/mcp_bridge.py">MCP 工具源码</a> · <a href="/labs/mcp-recovery/source.json">权威输入</a> · <a href="/labs/mcp-recovery/validation.json">实际执行记录</a></p>');
 
   const approvalLink='<a href="/article/durable-workflows/#native-approval-reentry">沿真实工作流核对批准、撤权和回执 →</a>';
   a.sections[7][1]+=p('批准信号可以唤醒工作流。恢复以后，动作是否仍可执行，要由实际接收写入的一方重新判断。若上一次写入的结果未知，还要把发布和查回执分成两个工具。'+approvalLink);
-  a.sections[8][1]+=h('native-approval-reentry','批准后恢复，谁检查当前权限')+
+  a.sections[8][1]+=fold('选读 · 批准后撤权，恢复时查谁的记录',h('native-approval-reentry','批准后恢复，谁检查当前权限')+
    p('把 10、27 和补录的 5 汇总为 42，准备发布到 <code>A/daily</code>。LangGraph 先把目标、金额和操作键 <code>report-A:publish</code> 存进检查点。审批节点走到 <code>interrupt()</code> 就停下，此时接收库还没有报告。新进程沿用同一个 <code>thread_id</code> 恢复，LangGraph 从审批节点开头重跑。再次走到 <code>interrupt()</code> 时，才拿到 <code>Command(resume=…)</code> 传进来的批准编号。'+
     '<a href="https://docs.langchain.com/oss/python/langgraph/interrupts">LangGraph 的中断与恢复接口 ↗</a>',
     '批准编号指向接收方保存的记录。发布工具在同一个事务里读取当前写权限，再核对批准绑定的发布目标、操作键和参数。通过后才保存报告和回执。两次发布被拒。一次是在等待时撤掉写权限，另一次是拿着批准 42 的编号却提交 41，参数摘要对不上。两组接收库都还是 0 份报告。')+
@@ -357,7 +359,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ])+'</div>'+
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>';
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>');
   a.updated='2026.11.10';
 
   const security=articleById('agent-security');
@@ -397,12 +399,12 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
 (()=>{
  const a=articleById('durable-workflows');
  const p=text=>'<p>'+text+'</p>';
- a.sections[8][1]+='<h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
+ a.sections[8][1]+='<details class="progressive-detail"><summary>选读 · 并行候选怎样合并为一次发布</summary><h3 id="native-parallel-merge">两个分支交出同一动作，怎样归并再发布</h3>'+
  p('沿用第 4 节的并行汇合。这次分支 A 和 B 都为 <code>report-A:publish</code> 生成同一份日报的候选。两支在同一个执行步返回。如果都写入普通状态字段，LangGraph 报 <code>InvalidUpdateError</code>，还未进入汇合节点。把字段改成列表并用 <code>operator.add</code>，两条金额 42 都能存下来。若把两项当作不同金额相加，会算成 84。')+
  p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
- '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>';
+ '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p></details>';
 
  a.sections[9][1]+='<h3 id="native-workflow-version-resume">旧任务等着发布 A，新版却先问要不要共享给 B</h3>'+
  p('第 1 版把 10、27 和 5 加成 42，停在“发布到 <code>A/daily</code>”的审批上。随后原进程退出。第 2 版还叫这个节点 <code>approval</code>，却在发布前插入“共享到 <code>B/daily</code>”这一步。两版的第一个问题已经不同。')+

@@ -43,7 +43,7 @@ const trackEntryOverviews={
   ['应用怎样上线',[['native','容器与 Kubernetes'],['serverless','Serverless'],['cloud-delivery','IaC 与 GitOps']]],
   ['系统怎样长期运转',[['cloud-security','身份安全'],['cloud-capacity','容量与成本'],['sre','SRE 与恢复']]]
  ],extra:['foundation','按需补系统基础']},
- ai:{lead:'从模型把「红 圆」译成 red circle 的计算讲起，再看多张卡怎样训练，以及怎样用训练得到的权重回答请求。',rows:[
+ ai:{lead:'先看模型怎样预测下一个词，再看多张 GPU 怎样一起训练，以及训练好的模型怎样回答请求。',rows:[
   ['理解模型计算',[['model-foundations','Transformer、GPU 与算子']]],
   ['完成训练与恢复',[['training','并行、数据、通信与检查点']]],
   ['部署并验证服务',[['platform','作业调度、推理与交付']]]

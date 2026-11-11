@@ -21,7 +21,6 @@
 .goal-gate-more summary{cursor:pointer;width:fit-content}
 .goal-gate-more ul{margin:0;padding-inline-start:20px}
 @media(max-width:720px){.learning-goal-selector{display:block}.learning-goal-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:4px}.learning-goal-options a{padding-inline:8px}.goal-chapters a{flex-direction:column;gap:3px}.goal-chapters small{flex-basis:auto}.goal-reading-nav a,.knowledge-point>.path-links a{font-size:16px}.field-map-explorer>summary,.knowledge-detail>summary,.complete-course>summary{font-size:16px;min-height:44px}.field-concept-map>h2{font-size:21px}}
-@media(max-width:720px){.field-concept-map>.training-figure>a:first-child{display:block;overflow-x:auto;overscroll-behavior-x:contain}.field-concept-map>.training-figure img{min-width:760px;max-width:none}.field-concept-map>.field-map-note:after{content:'小屏可左右滑动看图，或点击放大。';display:block;color:var(--blue);margin-bottom:8px}}
 @media(max-width:720px){.training-figure:has(img[src$="sharding-lifetimes.svg"])>a:first-child{display:block;overflow-x:auto;overscroll-behavior-x:contain}.training-figure img[src$="sharding-lifetimes.svg"]{min-width:850px;max-width:none}}
 .chapter-connection{margin:36px 0 28px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .chapter-connection h2{font-size:18px;margin:0 0 12px}.chapter-connection p{font-size:15px;line-height:1.9;margin:9px 0}.chapter-connection a,.prerequisite-links a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}.chapter-connection>.inline-link{font-size:13px}
@@ -42,7 +41,42 @@
 .field-map-main ul{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin:0;padding:0}
 .field-map-main li{display:flex;align-items:center;flex-wrap:wrap;gap:0 6px;margin:0;padding:0;font-size:14px;line-height:1.6}
 .field-map-main a{display:inline-flex;align-items:center;min-height:36px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;font-weight:550}
-@media(max-width:720px){.field-map-main ul{grid-template-columns:1fr}.field-map-main a{min-height:44px}}
+.field-map-full{display:none}
+@media(max-width:720px){
+ .field-concept-map>.training-figure{display:none}
+ .field-map-main ul{grid-template-columns:minmax(0,1fr);gap:9px}
+ .field-map-main li{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.85fr) minmax(0,1fr);
+  gap:6px;
+  text-align:center;
+ }
+ .field-map-main a{
+  display:grid;
+  place-items:center;
+  align-self:stretch;
+  min-width:0;
+  min-height:44px;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:var(--blue-soft);
+  font-size:15px;
+  overflow-wrap:anywhere;
+ }
+ .field-map-main .field-map-verb{line-height:1.4;overflow-wrap:anywhere}
+ .field-map-main .field-map-verb>span{display:block;font-size:20px;line-height:1;color:var(--blue)}
+ .field-map-full{display:block;border-bottom:1px solid var(--line)}
+ .field-map-full>summary{
+  min-height:44px;
+  padding:9px 0;
+  color:var(--blue);
+  cursor:pointer;
+  font-size:16px;
+  line-height:1.6;
+ }
+ .field-map-full>.training-figure{margin:8px 0 16px}
+}
 .field-map-controls{display:none;gap:8px;flex-wrap:wrap;margin:20px 0}.field-map-ready .field-map-controls{display:flex}.field-map-controls button{border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--text);font:inherit;font-size:13px;padding:8px 12px;cursor:pointer}.field-map-controls button[aria-pressed="true"]{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
 .field-map-definitions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;padding:16px 0 20px;border-bottom:1px solid var(--line)}.field-map-definition>p{font-size:14px!important;line-height:1.9!important;margin:0!important}.field-map-definitions a{font-size:13px;color:var(--blue)}.field-map-status{font-size:13px!important;color:var(--muted);margin-top:22px!important}.field-map-definition>.field-map-chapters{display:flex;gap:7px 18px;flex-wrap:wrap;margin-top:12px!important}.field-map-chapters b{font-size:13px}.field-map-chapters a{font-size:14px;line-height:1.9}
 .field-map-definition[id]{scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
