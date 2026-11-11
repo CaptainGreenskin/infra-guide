@@ -1,0 +1,32 @@
+name: Native QEMU vCPU scheduling
+on:
+  push:
+    branches: [content/native-qemu-20261111]
+    paths:
+      - dist/labs/qemu-vcpu/vcpu_probe.py
+      - .github/workflows/qemu-vcpu.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install QEMU and enable scheduler statistics on this runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --no-install-recommends -y qemu-system-arm
+          sudo sysctl -w kernel.sched_schedstats=1
+      - name: Measure QEMU vCPU alone and with a contender on the same CPU
+        run: |
+          mkdir -p native-results
+          python3 -B dist/labs/qemu-vcpu/vcpu_probe.py > native-results/linux.json
+          cat native-results/linux.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-qemu-vcpu
+          path: native-results/linux.json
+          if-no-files-found: error
+          retention-days: 1
