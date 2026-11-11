@@ -42,17 +42,39 @@ for(const [id,title,build]of [['distributed-training','真实双进程：全局t
 }
 const infraStudyGates={
  ai:[
-  ['model-foundations','画输入/标签与因果mask；手算一个Attention输出，核对最小Decoder的梯度与更新。','mf-tensors'],
-  ['model-foundations','从shape算FLOP和字节；解释在线softmax，指出kernel优化后的端到端上界。','mf-gpu'],
-  ['training','建立状态峰值账；用两rank对照单进程，明确正确梯度5与错误均值4。','tr-memory'],
-  ['training','追踪数据/通信/检查点；完成短训练与恢复对照，列出真实多机尚需的证据。','tr-input'],
-  ['platform','复算GQA缓存与块取整；逐请求算TTFT/TPOT，按质量、版本与窗口验收发布。','sv-contract']
+  {fields:[['model-foundations','mf-tensors','张量、输入与标签']],
+   task:'画出输入、标签和每个位置能看到的内容。手算一次注意力输出，再核对最小 Decoder 的梯度与更新。',
+   exercises:[['autograd-training','section-6','对照整批与微批更新']]},
+  {fields:[['model-foundations','mf-gpu','GPU 执行与数据搬运']],
+   task:'从矩阵形状算出乘加次数与搬运字节，再看同一块 Apple GPU 上，矩阵变大后哪种实现省时。',
+   exercises:[['operator-profiling','native-metal-gemm','核对同设备实测']]},
+  {fields:[['training','tr-memory','训练状态与显存峰值']],
+   task:'算出训练状态的峰值。用两个训练进程和单进程对照，解释为什么正确梯度是 5，而错误的平均方式得到 4。',
+   exercises:[['gpu-memory','section-11','核对状态账与重计算'],['distributed-training','section-8','核对双进程梯度']]},
+  {fields:[['training','tr-input','数据供给与有效目标'],['platform','sv-admission','作业准入与放置']],
+   task:'对照连续训练与中断恢复的结果，再沿作业、Pod 和训练进程核对 kind 集群的两个 CPU 节点是否完成了同一次更新。',
+   exercises:[['training-lab','section-3','跑两进程恢复对照'],['kubernetes-training','native-kubernetes-gloo-job','核对两节点 CPU 作业']]},
+  {fields:[['platform','sv-prefill','推理阶段与缓存'],['platform','sv-release','模型版本与发布验收']],
+   task:'复算分组查询注意力的缓存用量与取整开销，从请求记录计算首个词元时延，再用质量和版本检查验收发布。',
+   exercises:[['model-serving','section-7','核对增量缓存与延迟'],['ai-lifecycle','native-model-rollout','检查灰度发布与回退']]}
  ],
  agent:[
-  ['agent','分清任务、动作与尝试；合法任务能完成，跨租户与注入文本不能扩大权限。','ag-runtime'],
-  ['agent','复现提交后退出与暂停旧worker两场故障，分别验证回执去重与资源侧fencing。','ag-recovery'],
-  ['agent','拆开运行状态、上下文和记忆；算召回指标，核对金额与来源版本。','ag-context'],
-  ['agent','让只报成功、全拒绝、错引用在评估器中失败，再按真实接口映射Kairo。','ag-observability']
+  {fields:[['agent','ag-runtime','任务、动作与执行边界']],
+   task:'分清模型提议、工具调用和实际写入。核对合法动作成功，越权动作没有产生效果。',
+   exercises:[['agent-runtime','native-model-mcp-tool-choice','追踪真实模型选工具'],['agent-security','authorization-commit-run','核对提交时的授权']]},
+  {fields:[['agent','ag-recovery','操作身份与回执恢复'],['agent','ag-context','状态、上下文与记忆']],
+   task:'让调用方在工具写入后退出，恢复时找回回执并检查只有一笔写入。再用评估样本区分总体准确率和各类别召回率。',
+   exercises:[['agent-recovery','agent-crash-windows-run','复现写入后的退出'],['agent-evaluation','section-12','核对评估的分母与结果']]},
+  {fields:[['agent','ag-fencing','工作流接管与旧执行者'],['agent','ag-retrieval','检索权限与来源版本']],
+   task:'暂停旧执行者，接管后验证接收方拒绝它的新写入。检索时核对当前允许使用的资料和版本。',
+   exercises:[['durable-workflows','worker-fencing-run','验证旧执行者被拒绝'],['agent-retrieval','native-qdrant-retrieval','核对候选与实际引用']]},
+  {fields:[['agent','ag-observability','运行轨迹与业务结果']],
+   task:'用同一任务的记录核对工具调用、恢复与业务结果，再按 Kairo 接入契约检查交付记录。',
+   exercises:[['agent-observability','native-model-mcp-recovery-observation','对齐任务记录与实际结果'],['kairo-practice','section-8','运行接入记录校验器']]}
  ]
 };
-function infraStageStudyHTML(track,i){const [module,gate,point]=infraStudyGates[track][i];return '<p class="stage-field-links">先读系统知识：<a href="/module/'+module+'/#knowledge-'+point+'">'+moduleFor(module).name+' →</a></p><p class="stage-gate"><b>过关任务：</b>'+gate+'</p>';}
+function infraStageStudyHTML(track,index){
+ const {fields,task,exercises}=infraStudyGates[track][index];
+ const links=fields.map(([module,point,label])=>'<a href="/module/'+module+'/#knowledge-'+point+'">'+label+' →</a>');
+ return '<p class="stage-field-links"><b>先读系统知识</b> '+links.join(' ')+'</p>'+stageGateHTML(task,exercises);
+}

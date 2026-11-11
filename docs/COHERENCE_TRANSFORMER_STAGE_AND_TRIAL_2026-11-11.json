@@ -1,0 +1,179 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "70986860635a1bc4ef22d56603db4a1297a19b80",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONCEPT_RETURN_AND_DUAL_STACK_2026-11-11.json": "3457411e447fe007ba929e7c16724cb1c064102ee1394387adf795e23560bf66"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "694c07b603f2b13d3f91baaefbcf7321e27721121633d3fe771905c143ea9e88",
+      "reviewed_sha256": "a59c14d73a9cadef0db12e1a44cc8ddef8a7959c81508bb4367537028e78da04",
+      "scope": "Follow the two score rows from the first example through the block and into the generated token, and defer resource accounting until the reader has closed that loop."
+    },
+    "dist/textbook-finish.js": {
+      "previous_sha256": "741a41c368ca0e87a6152f03855f2b5cf990cb3dfa10f570adb35e8db31edfe9",
+      "reviewed_sha256": "b7827ac5617379ac8b7451886a9327b8f8d87acda68570e8299caa2ea4b20596",
+      "scope": "Name the first model chapter by the question the reader will answer."
+    },
+    "dist/ai-agent-cases.js": {
+      "previous_sha256": "16c83449761179443935803cdcb4eb9336ab0079dd8b92ac1855b95818a026db",
+      "reviewed_sha256": "10b88af8beb17498ba5d6c574c9c2aa7f18b3c355b651fa787f4b41f47205eb2",
+      "scope": "Link the AI and Agent stages to exercises taught in the same stage and to exact field concepts."
+    },
+    "dist/cloud-operations-cases.js": {
+      "previous_sha256": "7b11cd52812f764c91fa1243f0fc2e6cea02493c34d6f623635ca00a5359980a",
+      "reviewed_sha256": "b9d0fc234d5a7086174e5aafabe32111ef29a8bd7ecb61be3398775d2119042a",
+      "scope": "Link all six Cloud stage tasks to their own exercises and field maps."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "5da2fd492fedad6866b2b4684032f5bf359bbea17bc02962620d2e7849f78fad",
+      "reviewed_sha256": "c6c126ce758b43c5c648eeaaef306529b39ee9b7ba61cd42666408c7cb951f81",
+      "scope": "Name the retrieval prerequisite by topic at the cross-chapter evaluation example."
+    },
+    "dist/app.js": {
+      "previous_sha256": "814d1b625389881e4411775a6f387bde94aea977a4e784a2b9826f98fede65ad",
+      "reviewed_sha256": "1a898778dcba84704d217f7510a666bd8a50851eb830cfbb240e973ce5c612be",
+      "scope": "Render the optional trial return only at the last assigned section and hydrate the selected role shortcut without rebuilding the lesson."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "5e3ac86c0a906698ab6c23d9fca6f3b20aab01bb833b69bc21cd93adc068a37b",
+      "reviewed_sha256": "76a7878dae29e33d2abec1be842683382f39364f1a9d88167d03ecb4a3b38563",
+      "scope": "Preserve selected role links and provide one read-and-return trial per track with an optional versioned issue draft."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "5e969fe61188df77ff7b6847bcc608c4742ffc81fbbabdf33100adf3f0f3ac9d",
+      "reviewed_sha256": "e94bef0ba514a9017109ac282ac6202bbe4b4bdfdc75799f51fc390b337d98a7",
+      "scope": "Keep trial return links and question targets reachable under the sticky header."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "6167560d828b2fcb52cc59f3576ff53daa58d1c5c2cdd26e1e427b1ee8f498f7",
+      "reviewed_sha256": "c68d2844fe2e9ee14d77f8997dc1a318bbfdafc99b3962db6bad276bbd25fa4c",
+      "scope": "Return directly from any role evidence chapter to the selected role gate."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "e008e8f2b0df7c5c9fde897bcd536fb923d666ed29b6af399668bb93374276af",
+      "reviewed_sha256": "b14eb024736656f2df18f0d36601b792597ca9009606c474bc3689ce239feded",
+      "scope": "Describe the two verified curl environments and the shipped local Qwen/MCP evidence."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "bc45a9d5730001b5e2ef04bbc73b1409d03ec16adc236e9a9253d50303442389",
+      "reviewed_sha256": "7d2a688350d4caf4c11224b24ee99c9be042231c67d4dcefc555a0ea1c8f6b88",
+      "scope": "Compare the four double-stack connection cases across macOS and Ubuntu loopback."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "44c96470b3b7f025692109a40b7230d8bfdd71bb9563c2e2cb06dabf37adca5f",
+      "reviewed_sha256": "74092a5d121848d9537dd6524486af097e7e7b46bc10f430ea96c0448acb1235",
+      "scope": "Reuse the role shortcut resolver in the compact browser runtime."
+    },
+    "scripts/check-static-reading.cjs": {
+      "previous_sha256": "c4662b6def096963daa1156267c9536a5fcf7c4834cc70d0d7465103e03bf9ab",
+      "reviewed_sha256": "812571f88aa218d49e523584ab31839d6cb1bb9df0fe52104529b156fa61b7f1",
+      "scope": "Exercise role shortcut hydration without replacing the existing article."
+    },
+    "scripts/check-course-reading.cjs": {
+      "previous_sha256": "34b0d239cabb2405f20716cfd518b8cd01289c45008b2efa527caf2dcc0c7afb",
+      "reviewed_sha256": "1929429431988284f0681b2fe6ee06cc1b733d01f1120c47cafc197c1a899fee",
+      "scope": "Review the intentional title change and verify that each stage link points to an existing in-stage exercise."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "a7ed2f0f0a92663d9ef8788038ff23b53434166914adaff70e1b50b041e8c015",
+      "reviewed_sha256": "aea84a176bcbdabd10d003df6f584dc0b29ea085d250d81ab70e1dbe8fd04716",
+      "scope": "Check the first score rows, explicit attention arithmetic and direct continuation to generation."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "359a30f78fc5559a59d771857724d513d949cdab1278785791c43c78f7622848",
+      "reviewed_sha256": "f44c374d04e99f3bf4021753ebbe8535771234700d27f037b27c17cda8077838",
+      "scope": "Check that each selected role persists at its track entry and offers a direct gate return from its evidence."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "3ceb04c1332981cb85c02ce0677c875d685f94269815a3efdcdedd6b13f52935",
+      "reviewed_sha256": "731ced4a9f3d3a7ecca414718d077ea86f3473751ff0aedd906c442870b9b560",
+      "scope": "Verify trial intervals, unique return links, closed questions and exact versioned draft destinations."
+    },
+    "scripts/check-dual-stack-connect.cjs": {
+      "previous_sha256": "66d6b69cb97b6ece81c33fe4b777968c50a8425aa8ec1c7c6944252a1ff4e7ac",
+      "reviewed_sha256": "f9cd80d4d8d9e219be387c4da87e843486a76117cae82c0832a0110001384c75",
+      "scope": "Verify the exact two native records, their listener traces and the reproduced archive."
+    },
+    ".github/workflows/dual-stack-connect.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "95f898438cf58e4885605bef7c606d22b6392ced3d26bdfb364923f1809613b7",
+      "scope": "Run the existing four-case lab with stock Ubuntu curl and Python."
+    },
+    "docs/reader-trial/brief.md": {
+      "previous_sha256": "1627c379c4a62d97e4020ba77f33238b217edfb17884d2becb39e24af702ab70",
+      "reviewed_sha256": "c1bb258fe3b447393660b6978c426d907b6b512090d21599afaeeafbac8eada0",
+      "scope": "Document the new reader-controlled return and draft links."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "d1296370d75ff1d29bb31f9e1a704a4c15da5bf1846ff0c9510c28f68170c322",
+      "reviewed_sha256": "0993e646425a00d24f335c4b59bbc24949abced7b82e887d992761e4571e22a1",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "191b26ef47ebc8838e046f6fd942a11400f188e15f121646dd81de747778a864",
+      "reviewed_sha256": "05ba01cde753f363d54ced1b6540c80c07e4bd50bc4a4430c6fa8dac99f5aee7",
+      "scope": "Fingerprint the renderer and edited teaching and navigation sources."
+    },
+    "docs/CONTENT_TRANSFORMER_STAGE_AND_TRIAL_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2fa2f03c7fd3c215356f8dc3ba3a601eb4266d54b305d4865e35740ceb7e1221",
+      "scope": "Record three body changes and bind the run evidence."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "13f331305e4e287f7f3303e794fc291f666cdfd344e934bbb46088c0f3697983",
+      "reviewed_sha256": "b705c6ab72de7270015849f98b627dc64cb65e67988f8e57984e583eedf3d983",
+      "scope": "Append the verified body review."
+    },
+    "dist/labs/dual-stack-connect.zip": {
+      "previous_sha256": "c0769d8a5299b11a611a16c0c536ed5c9165c359885a5afb443e23a6f651c5e6",
+      "reviewed_sha256": "dec694b2a39462e4f191b0ae40043c7c9a6b9d53248231d64b3f4285bf00ed8d",
+      "scope": "Bind the exact reproducible archive."
+    },
+    "dist/labs/dual-stack-connect/README.md": {
+      "previous_sha256": "2c6a186d2d026c2381ffe08ac699fc017d1ec67119b7d9e21a00b83c988c4898",
+      "reviewed_sha256": "384b558316076dec9c52bff2d2916c1af7f31a165b5f8c3c9a79ab6eef5ae616",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "dist/labs/dual-stack-connect/dual_stack_connect.py": {
+      "previous_sha256": "a11844cab0bd1d9cb15b30117447118f12b57d4866129b25df7c73210ed6fef7",
+      "reviewed_sha256": "a11844cab0bd1d9cb15b30117447118f12b57d4866129b25df7c73210ed6fef7",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "dist/labs/dual-stack-connect/linux-observation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "31f22efff30f78b242718c584271ec0d9cf4b94f86f4605fe60df44bf4977af2",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "dist/labs/dual-stack-connect/validation.json": {
+      "previous_sha256": "d52f4793671e8607b783a9f21dc579bfb2c981cd85e72de37604bacefc0abdf7",
+      "reviewed_sha256": "d52f4793671e8607b783a9f21dc579bfb2c981cd85e72de37604bacefc0abdf7",
+      "scope": "Bind the original runner, reproducible instructions and recorded observations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "a0fcd6f15294357a2406918298d2cb38bccc1464615486cf07ec92be1832f3a4",
+      "reviewed_sha256": "3e12b008384dcf9931661f26500b5e48e7a1c3bc8baac08b79e4e57c11e15224",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "70986860635a1bc4ef22d56603db4a1297a19b80",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "vpc-network",
+      "agent-evaluation"
+    ],
+    "new_chapters": [],
+    "changed_titles": {
+      "transformer-model": [
+        "Transformer 全貌：从张量到计算图",
+        "Transformer 全貌：下一个词是怎么预测出来的"
+      ]
+    },
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

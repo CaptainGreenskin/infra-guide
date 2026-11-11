@@ -1,0 +1,30 @@
+name: Native dual-stack curl fallback
+on:
+  push:
+    branches: [content/native-dual-stack-20261111]
+    paths:
+      - dist/labs/dual-stack-connect/dual_stack_connect.py
+      - scripts/check-dual-stack-connect.cjs
+      - .github/workflows/dual-stack-connect.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Observe four curl runs on IPv4 and IPv6 loopback
+        run: |
+          mkdir -p native-results
+          /usr/bin/python3 -B dist/labs/dual-stack-connect/dual_stack_connect.py \
+            --curl /usr/bin/curl --output native-results/linux-observation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-dual-stack-connect
+          path: native-results/linux-observation.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Verify raw curl output against the listener events
+        run: node scripts/check-dual-stack-connect.cjs native-results/linux-observation.json

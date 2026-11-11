@@ -1,0 +1,247 @@
+{
+  "schema": "dual-stack-connect-v1",
+  "status": "passed",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.3",
+    "curl_version": "curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.10\nRelease-Date: 2023-12-06, security patched: 8.5.0-2ubuntu10.16\nProtocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp\nFeatures: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd\n"
+  },
+  "fixture": {
+    "host": "dual.example.test",
+    "path": "/orders/O-104",
+    "candidates": [
+      "::1",
+      "127.0.0.1"
+    ],
+    "connect_timeout_s": 0.5,
+    "max_time_s": 1,
+    "happy_eyeballs_timeout_ms": 100
+  },
+  "source_sha256": {
+    "dual_stack_connect.py": "a11844cab0bd1d9cb15b30117447118f12b57d4866129b25df7c73210ed6fef7"
+  },
+  "cases": {
+    "both_listen": {
+      "port": 33043,
+      "ipv6": "reply",
+      "ipv6_only": false,
+      "curl": {
+        "args": [
+          "-q",
+          "--silent",
+          "--show-error",
+          "--verbose",
+          "--noproxy",
+          "*",
+          "--http1.1",
+          "--connect-timeout",
+          "0.5",
+          "--max-time",
+          "1",
+          "--happy-eyeballs-timeout-ms",
+          "100",
+          "--resolve",
+          "dual.example.test:33043:[::1],127.0.0.1",
+          "--write-out",
+          "\n--curl-observation--\n%{remote_ip}|%{remote_port}|%{local_ip}|%{local_port}|%{http_code}|%{num_connects}|%{time_connect}|%{time_starttransfer}\n",
+          "http://dual.example.test:33043/orders/O-104"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"order\":\"O-104\",\"amount\":37,\"family\":\"IPv6\"}\n\n--curl-observation--\n::1|33043|::1|44768|200|1|0.000117|0.000761\n",
+        "stderr": "* Added dual.example.test:33043:[::1],127.0.0.1 to DNS cache\n* Hostname dual.example.test was found in DNS cache\n*   Trying [::1]:33043...\n* Connected to dual.example.test (::1) port 33043\n> GET /orders/O-104 HTTP/1.1\n> Host: dual.example.test:33043\n> User-Agent: curl/8.5.0\n> Accept: */*\n> \n< HTTP/1.1 200 OK\n< Server: BaseHTTP/0.6 Python/3.12.3\n< Date: Wed, 11 Nov 2026 14:26:18 GMT\n< Content-Type: application/json\n< Content-Length: 46\n< Connection: close\n< \n{ [46 bytes data]\n* Closing connection\n"
+      },
+      "listeners": {
+        "IPv4": [],
+        "IPv6": [
+          {
+            "event": "accepted",
+            "local": [
+              "::1",
+              33043
+            ],
+            "peer": [
+              "::1",
+              44768
+            ]
+          },
+          {
+            "event": "request",
+            "method": "GET",
+            "path": "/orders/O-104",
+            "host": "dual.example.test:33043",
+            "peer": [
+              "::1",
+              44768
+            ]
+          },
+          {
+            "event": "response",
+            "status": 200,
+            "body": {
+              "order": "O-104",
+              "amount": 37,
+              "family": "IPv6"
+            }
+          }
+        ]
+      }
+    },
+    "ipv6_refused": {
+      "port": 42437,
+      "ipv6": "refuse",
+      "ipv6_only": false,
+      "curl": {
+        "args": [
+          "-q",
+          "--silent",
+          "--show-error",
+          "--verbose",
+          "--noproxy",
+          "*",
+          "--http1.1",
+          "--connect-timeout",
+          "0.5",
+          "--max-time",
+          "1",
+          "--happy-eyeballs-timeout-ms",
+          "100",
+          "--resolve",
+          "dual.example.test:42437:[::1],127.0.0.1",
+          "--write-out",
+          "\n--curl-observation--\n%{remote_ip}|%{remote_port}|%{local_ip}|%{local_port}|%{http_code}|%{num_connects}|%{time_connect}|%{time_starttransfer}\n",
+          "http://dual.example.test:42437/orders/O-104"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"order\":\"O-104\",\"amount\":37,\"family\":\"IPv4\"}\n\n--curl-observation--\n127.0.0.1|42437|127.0.0.1|33844|200|1|0.000195|0.000638\n",
+        "stderr": "* Added dual.example.test:42437:[::1],127.0.0.1 to DNS cache\n* Hostname dual.example.test was found in DNS cache\n*   Trying [::1]:42437...\n* connect to ::1 port 42437 from ::1 port 40564 failed: Connection refused\n*   Trying 127.0.0.1:42437...\n* Connected to dual.example.test (127.0.0.1) port 42437\n> GET /orders/O-104 HTTP/1.1\n> Host: dual.example.test:42437\n> User-Agent: curl/8.5.0\n> Accept: */*\n> \n< HTTP/1.1 200 OK\n< Server: BaseHTTP/0.6 Python/3.12.3\n< Date: Wed, 11 Nov 2026 14:26:18 GMT\n< Content-Type: application/json\n< Content-Length: 46\n< Connection: close\n< \n{ [46 bytes data]\n* Closing connection\n"
+      },
+      "listeners": {
+        "IPv4": [
+          {
+            "event": "accepted",
+            "local": [
+              "127.0.0.1",
+              42437
+            ],
+            "peer": [
+              "127.0.0.1",
+              33844
+            ]
+          },
+          {
+            "event": "request",
+            "method": "GET",
+            "path": "/orders/O-104",
+            "host": "dual.example.test:42437",
+            "peer": [
+              "127.0.0.1",
+              33844
+            ]
+          },
+          {
+            "event": "response",
+            "status": 200,
+            "body": {
+              "order": "O-104",
+              "amount": 37,
+              "family": "IPv4"
+            }
+          }
+        ],
+        "IPv6": []
+      }
+    },
+    "ipv6_only_refused": {
+      "port": 35685,
+      "ipv6": "refuse",
+      "ipv6_only": true,
+      "curl": {
+        "args": [
+          "-q",
+          "--silent",
+          "--show-error",
+          "--verbose",
+          "--noproxy",
+          "*",
+          "--http1.1",
+          "--connect-timeout",
+          "0.5",
+          "--max-time",
+          "1",
+          "--happy-eyeballs-timeout-ms",
+          "100",
+          "--resolve",
+          "dual.example.test:35685:[::1],127.0.0.1",
+          "--write-out",
+          "\n--curl-observation--\n%{remote_ip}|%{remote_port}|%{local_ip}|%{local_port}|%{http_code}|%{num_connects}|%{time_connect}|%{time_starttransfer}\n",
+          "--ipv6",
+          "http://dual.example.test:35685/orders/O-104"
+        ],
+        "exit_code": 7,
+        "stdout": "\n--curl-observation--\n|0||0|000|0|0.000000|0.000000\n",
+        "stderr": "* Added dual.example.test:35685:[::1],127.0.0.1 to DNS cache\n* Hostname dual.example.test was found in DNS cache\n*   Trying [::1]:35685...\n* connect to ::1 port 35685 from ::1 port 52834 failed: Connection refused\n* Failed to connect to dual.example.test port 35685 after 0 ms: Couldn't connect to server\n* Closing connection\ncurl: (7) Failed to connect to dual.example.test port 35685 after 0 ms: Couldn't connect to server\n"
+      },
+      "listeners": {
+        "IPv4": [],
+        "IPv6": []
+      }
+    },
+    "ipv6_http_wait": {
+      "port": 33179,
+      "ipv6": "hold",
+      "ipv6_only": false,
+      "curl": {
+        "args": [
+          "-q",
+          "--silent",
+          "--show-error",
+          "--verbose",
+          "--noproxy",
+          "*",
+          "--http1.1",
+          "--connect-timeout",
+          "0.5",
+          "--max-time",
+          "1",
+          "--happy-eyeballs-timeout-ms",
+          "100",
+          "--resolve",
+          "dual.example.test:33179:[::1],127.0.0.1",
+          "--write-out",
+          "\n--curl-observation--\n%{remote_ip}|%{remote_port}|%{local_ip}|%{local_port}|%{http_code}|%{num_connects}|%{time_connect}|%{time_starttransfer}\n",
+          "http://dual.example.test:33179/orders/O-104"
+        ],
+        "exit_code": 28,
+        "stdout": "\n--curl-observation--\n::1|33179|::1|59216|000|1|0.000087|0.000000\n",
+        "stderr": "* Added dual.example.test:33179:[::1],127.0.0.1 to DNS cache\n* Hostname dual.example.test was found in DNS cache\n*   Trying [::1]:33179...\n* Connected to dual.example.test (::1) port 33179\n> GET /orders/O-104 HTTP/1.1\n> Host: dual.example.test:33179\n> User-Agent: curl/8.5.0\n> Accept: */*\n> \n* Operation timed out after 1002 milliseconds with 0 bytes received\n* Closing connection\ncurl: (28) Operation timed out after 1002 milliseconds with 0 bytes received\n"
+      },
+      "listeners": {
+        "IPv4": [],
+        "IPv6": [
+          {
+            "event": "accepted",
+            "local": [
+              "::1",
+              33179
+            ],
+            "peer": [
+              "::1",
+              59216
+            ]
+          },
+          {
+            "event": "request",
+            "method": "GET",
+            "path": "/orders/O-104",
+            "host": "dual.example.test:33179",
+            "peer": [
+              "::1",
+              59216
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

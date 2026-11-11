@@ -3,7 +3,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const c={URLSearchParams,location:{search:''},articleURL:id=>'/article/'+id+'/'};vm.createContext(c);
 for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions})',c)));
+const data=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,profiles:learningProfiles,needs:chapterDependencies,maps:fieldConceptMaps,tracks:trackDefinitions,stages:courseReadingStages})',c)));
 const legacy=JSON.parse(JSON.stringify(vm.runInContext('legacyTrackKnowledgeAnchors',c)));
 for(const[track,anchors]of Object.entries(legacy))for(const anchor of anchors){
  const moduleId={cloud:'compute',ai:'model-foundations',agent:'agent'}[track];
@@ -15,11 +15,12 @@ const reviews=require('./coherence-review-records.cjs').laterUpdates;
 const courseReview=reviews.findLast(({review_scope})=>review_scope?.body_baseline_commit)?.review_scope;
 assert(courseReview,'a whole-course body review must precede metadata-only reviews');
 const previous=require('./content-at-commit.cjs')(courseReview.body_baseline_commit);
-const changed=[],added=[];
+const changed=[],added=[],changedTitles={};
 for(const a of data.articles){
  const old=previous.find(x=>x.id===a.id);
  if(!old){assert((courseReview.new_chapters||[]).includes(a.id),a.id+': undeclared new chapter');added.push(a.id);continue;}
- assert.equal(a.title,old.title);assert.equal(a.number,old.number,a.id+': published display number changed');
+ if(a.title!==old.title)changedTitles[a.id]=[old.title,a.title];
+ assert.equal(a.number,old.number,a.id+': published display number changed');
  assert.deepEqual(a.sections.map(s=>s[0]),old.sections.map(s=>s[0]),a.id+': preserve headings and section links');
  if(JSON.stringify(a.sections)!==JSON.stringify(old.sections))changed.push(a.id);
  const oldBody=old.sections.map(s=>s[1]).join(''),body=a.sections.map(s=>s[1]).join('');
@@ -29,6 +30,7 @@ for(const a of data.articles){
  for(const[,id]of oldBody.matchAll(/\bid="([^"]+)"/g))assert(body.includes('id="'+id+'"'),a.id+': original inner anchor '+id);
 }
 assert.deepEqual(changed.sort(),[...courseReview.changed_bodies].sort());
+assert.deepEqual(changedTitles,courseReview.changed_titles||{},'all published title changes are explicitly reviewed');
 assert.deepEqual(added.sort(),[...(courseReview.new_chapters||[])].sort());
 assert.equal(data.articles.length,previous.length+added.length);
 for(const a of previous)assert(data.articles.some(current=>current.id===a.id),a.id+': published chapter removed');
@@ -80,6 +82,38 @@ for(const[track,t]of Object.entries(data.tracks)){
  }
 
  for(let i=1;i<=a.sections.length;i++)assert(html.includes('id="section-'+i+'"'));
+}
+const roadmapHTML=fs.readFileSync('dist/roadmap/index.html','utf8');
+for(const [track,stages] of Object.entries(data.stages)){
+ const route=roadmapHTML.split('id="route-'+track+'"')[1].split('<section class="route-block"')[0];
+ const steps=route.split('<div class="roadmap-step">').slice(1);
+ assert.equal(steps.length,stages.length,track+': all full-course stages are present');
+ for(const [index,[title,chapters]] of stages.entries()){
+  const step=steps[index];
+  const task=step.match(/<p class="stage-gate">([\s\S]*?)<\/p>/)?.[1];
+  const practiceLinks=task?.match(/<span class="stage-practice-links">([\s\S]*?)<\/span>/)?.[1]||'';
+  const exercises=[...practiceLinks.matchAll(/<a href="\/article\/([a-z0-9-]+)\/#([a-z0-9-]+)">([^<]+)<\/a>/g)];
+  assert(exercises.length>0,title+': give the stage task an exact practice destination');
+  assert.equal(exercises.length,(practiceLinks.match(/<a\b/g)||[]).length,title+': each practice link must name an exercise anchor');
+  for(const [,chapter,anchor] of exercises){
+   assert(chapters.includes(chapter),title+': practice must be taught in this stage ('+chapter+')');
+   const html=fs.readFileSync('dist/article/'+chapter+'/index.html','utf8');
+   assert(html.includes('id="'+anchor+'"'),title+': exercise anchor missing ('+chapter+'#'+anchor+')');
+  }
+  const fields=step.match(/<p class="stage-field-links">([\s\S]*?)<\/p>/)?.[1]||'';
+  const fieldLinks=[...fields.matchAll(/<a href="\/module\/([a-z0-9-]+)\/#([a-z0-9-]+)">([^<]+)<\/a>/g)];
+  assert(fieldLinks.length>0,title+': lead to a field map or a specific knowledge point');
+  assert.equal(fieldLinks.length,(fields.match(/<a\b/g)||[]).length,title+': each knowledge link must land at a specific anchor');
+  for(const [,field,anchor] of fieldLinks){
+   const html=fs.readFileSync('dist/module/'+field+'/index.html','utf8');
+   assert(html.includes('id="'+anchor+'"'),title+': knowledge anchor missing ('+field+'#'+anchor+')');
+  }
+ }
+ if(track==='agent'){
+  assert(steps[1].includes('#agent-crash-windows-run')&&!steps[1].includes('#worker-fencing-run'),'Agent recovery practices receipts before workflow takeover');
+  for(const anchor of ['worker-fencing-run','native-qdrant-retrieval','knowledge-ag-retrieval'])
+   assert(steps[2].includes('#'+anchor),'Agent workflow and retrieval stage connects '+anchor);
+ }
 }
 const practiceHTML=fs.readFileSync('dist/module/practice/index.html','utf8');
 const defaultPractice=data.articles.find(a=>practiceHTML.includes('data-static-article="'+a.id+'"'));

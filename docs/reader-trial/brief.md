@@ -10,6 +10,8 @@
 
 先选一个方向，按下列范围连续阅读。每个链接直接定位第1节；不用跳到章末概念回顾，也不要求读完整章或运行程序。
 
+试读范围的最后一节有返回答题的链接。网页生成的 GitHub 草稿会带上阅读范围、入口链接和本版内容标识，由读者决定是否公开提交。
+
 ## Cloud
 
 读[TCP与I/O，第1–3节](https://captaingreenskin.github.io/infra-guide/article/tcp-event-loop/#section-1)：套接字与字节流 → 字节序号 → 消息解帧。

@@ -17,7 +17,12 @@
 python3 -B dual_stack_connect.py --output replay.json
 ```
 
-可用 `--curl /usr/bin/curl` 指定执行文件。发布记录使用 Darwin arm64、Python 3.9.6、系统 curl 8.7.1。
+可用 `--curl /usr/bin/curl` 指定执行文件。下载包中保留两份未经改写的记录。
+
+- [macOS 原始结果](validation.json) 使用 Darwin arm64、Python 3.9.6、系统 curl 8.7.1。
+- [Linux 原始结果](linux-observation.json) 使用 Ubuntu 24.04 x86_64、Python 3.12.3、系统 curl 8.5.0。GitHub Actions 用同一脚本复跑四组，核对客户端输出和服务端记录。 [运行记录](https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341)
+
+两份记录都显示，IPv6 建连被拒时，curl 在同一次调用里接着尝试 IPv4。IPv6 已接收请求后，curl 等到响应超时，IPv4 监听端没有接到连接。
 
 1. 先读每组 `curl.stderr`，找 `Trying`、`Connected` 和 HTTP 状态行。被拒绝的地址也会出现在 `Trying` 中。
 2. 再读 `curl.stdout` 中的实际响应正文及标记行。标记行字段顺序是连接对端 IP 和端口、本端 IP 和端口、HTTP 状态码、已成功的新连接数、连接完成累计时刻、收到首字节累计时刻。`000` 表示没有收到 HTTP 状态。

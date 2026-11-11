@@ -5,6 +5,7 @@ const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
 assert.equal(urls.length,inventory.canonical);assert.equal(new Set(urls.map(u=>u.href)).size,inventory.canonical);
 const primaryOrder=['/outline/','/track/cloud/','/track/ai/','/track/agent/','/labs/','/resources/','/interview/'];
+const trialReturns=[];
 function checkPrimaryOrder(html,route){
  const nav=html.match(/<nav class="top-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert(nav,route+': primary navigation exists');
@@ -20,6 +21,7 @@ for(const url of urls){
  assert(!/href="#\//.test(html),url.pathname+': fragment route remains');
  const ld=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);assert.equal(ld.url,url.href);
  if(url.pathname.startsWith('/article/')){assert.equal(ld['@type'],'TechArticle');assert((html.match(/class="article-section(?:\s|")/g)||[]).length>=8);assert(html.includes('迁移练习'));assert(html.includes('data-download-note'))}
+ for(const [,id] of html.matchAll(/href="\/about\/#reader-trial-questions-([^"]+)"/g))trialReturns.push([url.pathname,id]);
  for(const [,href] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
    if(/^(https?:|data:|#)/.test(href))continue;
    const target=new URL(href,url.origin+'/').pathname;
@@ -39,12 +41,47 @@ assert(home.includes('href="/about/#reader-trial"'),'home links directly to the 
 const about=fs.readFileSync(path.join(dist,'about/index.html'),'utf8');
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
 assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
+for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','愿意反馈时','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式']){
+ assert(trial.includes(phrase),'reader trial guidance: '+phrase);
+}
+assert(!/<(?:form|input|textarea)\b/.test(trial),'the trial collects no form data on the site');
+const cases=[
+ ['cloud','Cloud Infra','tcp-event-loop',3,'TCP 与 I/O，第 1–3 节'],
+ ['ai','AI Infra','operator-profiling',2,'算子与性能分析，第 1–2 节'],
+ ['agent','Agent Infra','agent-retrieval',2,'检索与上下文，第 1–2 节']
+];
 const trialTargets=[...trial.matchAll(/href="(\/article\/[^"]+?\/#section-1)"/g)].map(([,href])=>href);
-assert.deepEqual(trialTargets,['tcp-event-loop','operator-profiling','agent-retrieval'].map(chapter=>'/article/'+chapter+'/#section-1'));
+assert.deepEqual(trialTargets,cases.map(([, ,chapter])=>'/article/'+chapter+'/#section-1'));
+const taskBlocks=[...trial.matchAll(/<section id="reader-trial-([a-z]+)">([\s\S]*?)<\/section>/g)];
+assert.deepEqual(taskBlocks.map(([,id])=>id),cases.map(([id])=>id),'each direction has a stable task anchor');
+assert.deepEqual([...trial.matchAll(/id="reader-trial-questions-([^"]+)"/g)].map(([,id])=>id),cases.map(([id])=>id),'each direction has a unique question anchor');
 assert.equal((trial.match(/<details class="article-case">/g)||[]).length,3,'the three question sets are closed initially');
-const feedback=new URL(trial.match(/href="(https:\/\/github.com\/CaptainGreenskin\/infra-guide\/issues\/new[^"]+)"/)?.[1].replaceAll('&amp;','&'));
-assert.equal(feedback.searchParams.get('title'),'15 分钟试读反馈');
-assert(feedback.searchParams.get('body').includes('卡住的术语或原句'));
+const version=fs.readFileSync(path.join(dist,'static-reading-version.js'),'utf8').match(/const staticReadingVersion="([a-f0-9]{64})";/)?.[1];
+assert(version&&about.includes('data-static-version="'+version+'"'),'the trial uses the full rendered content version');
+const drafts=[];
+for(const [index,[id,track,chapter,end,reading]] of cases.entries()){
+ const task=taskBlocks[index][2],article='/article/'+chapter+'/',start=article+'#section-1';
+ assert(task.includes('href="'+start+'">阅读'+reading),'reader trial reading range: '+id);
+ const questions=task.match(/<details class="article-case">[\s\S]*?<\/details>/)?.[0];
+ assert(questions?.includes('id="reader-trial-questions-'+id+'"')&&questions.includes('<b>迁移题</b>'),'linked questions and transfer exercise: '+id);
+ assert.equal((questions.match(/<li>/g)||[]).length,2,'two concept questions: '+id);
+ const draftLinks=[...questions.matchAll(/href="(https:\/\/github\.com\/CaptainGreenskin\/infra-guide\/issues\/new\?[^"]+)"/g)];
+ assert.equal(draftLinks.length,1,'the question set has exactly one GitHub issue draft: '+id);
+ const feedback=new URL(draftLinks[0][1].replaceAll('&amp;','&'));
+ assert.equal(feedback.searchParams.get('title'),'15 分钟试读反馈 · '+track);
+ const fields=feedback.searchParams.get('body')?.split('\n')||[];
+ for(const field of ['- 方向：'+track,'- 指定范围：'+reading,'- 阅读入口：https://captaingreenskin.github.io/infra-guide'+start,'- 内容版本：'+version,'- 第 2 分钟找到的位置','- 最后读到哪里和实际用时','- 卡住的术语或原句','- 两道概念题的回答','- 迁移题的判断和依据']){
+  assert(fields.includes(field),'feedback draft field for '+id+': '+field);
+ }
+ drafts.push(feedback.href);
+ const page=fs.readFileSync(path.join(dist,article,'index.html'),'utf8');
+ const sectionStart=number=>page.indexOf('<section class="article-section" id="section-'+number+'">');
+ const section=sectionStart(end),next=sectionStart(end+1);
+ assert(sectionStart(1)>=0&&section>=0&&next>section,'trial start and end section exist: '+id);
+ assert(page.slice(section,next).includes('href="/about/#reader-trial-questions-'+id+'"'),'the return is in the last assigned section: '+id);
+}
+assert.equal(new Set(drafts).size,cases.length,'one distinct feedback draft per direction');
+assert.deepEqual(trialReturns.sort(),cases.map(([id, ,chapter])=>['/article/'+chapter+'/',id]).sort(),'exactly one trial return for each assigned article');
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
 assert(!outline.includes('learning-goal-selector')&&!outlineTree.includes('aria-current="page"'),'the outline is a stable chapter directory');

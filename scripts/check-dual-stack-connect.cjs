@@ -118,16 +118,27 @@ for (const change of [
   assert.throws(() => verifyRecord(changed), { name: 'AssertionError' });
 }
 if (!suppliedRecord) {
+  assert.equal(record.environment.system, 'Darwin');
+  const linuxBytes = readFileSync(path.join(pack, 'linux-observation.json'));
+  assert.equal(createHash('sha256').update(linuxBytes).digest('hex'),
+    '31f22efff30f78b242718c584271ec0d9cf4b94f86f4605fe60df44bf4977af2',
+    'retain the exact artifact from Ubuntu run 43038404341');
+  const linuxRecord = JSON.parse(linuxBytes);
+  assert.equal(linuxRecord.environment.system, 'Linux');
+  assert.equal(linuxRecord.environment.machine, 'x86_64');
+  verifyRecord(linuxRecord);
   const lesson = readFileSync(path.join(dist, 'progressive-network-reading.js'), 'utf8');
   for (const token of ["h('native-dual-stack-connect'", '/labs/dual-stack-connect.zip',
-    '/labs/dual-stack-connect/README.md', '/labs/dual-stack-connect/validation.json']) assert(lesson.includes(token), token);
+    '/labs/dual-stack-connect/README.md', '/labs/dual-stack-connect/validation.json',
+    '/labs/dual-stack-connect/linux-observation.json']) assert(lesson.includes(token), token);
   execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
 from zipfile import ZipFile
 import sys
 
 folder = Path(sys.argv[1])
-members = [folder.name + "/" + name for name in ("dual_stack_connect.py", "README.md", "validation.json")]
+members = [folder.name + "/" + name for name in
+           ("dual_stack_connect.py", "README.md", "validation.json", "linux-observation.json")]
 with ZipFile(folder.with_suffix(".zip")) as archive:
     assert archive.testzip() is None
     assert sorted(archive.namelist()) == sorted(members)

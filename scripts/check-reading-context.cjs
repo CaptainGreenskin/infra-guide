@@ -28,6 +28,9 @@ for(const base of ['/','/infra-guide/']){
   c.location.search='?goal='+key;c.profileKey=key;
   const ids=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(learningProfiles[profileKey]))',c));
   const id=ids.at(-1),mod=data.articles.find(a=>a.id===ids[0]).module;
+  const entry=vm.runInContext('trackEntryOverviewHTML(articleById(trackDefinitions[learningProfiles[profileKey].track].start),true)',c);
+  assert(entry.includes('href="/roadmap/'+key+'/#learning-goal"'),key+': track overview keeps the selected role');
+  assert(!entry.includes('href="/roadmap/?track='+p.track+'#route-'+p.track+'"'),key+': selected role replaces the general route shortcut');
   const expected=base+'article/'+id+'/?section=2&goal='+key+'#detail';
   assert.equal(run('#/article/'+id+'?section=2#detail'),expected,key+': prose link');
   assert.equal(run('article/'+id+'/?section=2#detail'),expected,key+': relative API bridge');
@@ -86,6 +89,9 @@ for(const base of ['/','/infra-guide/']){
     assert(section?article.sections[Number(section[1])-1]:article.sections.some(([,body])=>body.includes('id="'+fragment+'"')),key+': exact practice target');
     const href='/article/'+id+'/?goal='+key+'#'+fragment;
     assert(gate.includes('href="'+href+'"')&&run(href)===base+href.slice(1),key+': gate preserves role context');
+    c.gateChapterId=id;
+    const evidenceNav=vm.runInContext('learningGoalChapterNav(articleById(gateChapterId))',c);
+    assert.equal(evidenceNav.split('href="/roadmap/'+key+'/#goal-gate"').length,2,key+': one exact gate return from '+id);
     return href;
    });
    assert.deepEqual(actual.sort(),expected.sort(),key+': retain all exact evidence links');

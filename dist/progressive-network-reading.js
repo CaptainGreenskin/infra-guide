@@ -202,8 +202,8 @@
    ['IPv6 已接收请求，暂不响应','连上 ::1，IPv4 无接入事件','退出码 28，未收到 HTTP 状态']
   ])+
   p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。继续读<a href="/article/network-diagnosis/#section-5">一次 curl 请求的分段计时 →</a>。',
-  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，把客户端原始输出中的对端、状态和退出码与两份监听记录对上。发布记录来自 macOS 回环，计时字段用于区分阶段。公网 DNS、链路和浏览器行为要分别验证。')+
-  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">四组原始结果 →</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
+  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
+  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
  vpc.updated='2026.11.11';
  vpc.sections[6][1]+=

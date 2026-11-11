@@ -137,12 +137,12 @@ const labArchiveCatalog={
 const labTrackCatalog={
  cloud:{name:'Cloud Infra',lead:'先分清资源与请求，再验证数据、事件、交付和恢复。先修实验按需补；正文中的系统知识点在案例之前。'},
  ai:{name:'AI Infra',lead:'先用标准库算清 Attention，再进入 CPU 两进程、输入、状态与产物；最后按手册走向真实 GPU。'},
- agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估；真实模型与 Kairo 接入另行验收。'}
+ agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估。实验包含本机 Qwen 模型通过 MCP 读取数据、写入报告。Kairo 接入按目标版本验收。'}
 };
 const labLearningCatalog=[
  {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
  {id:'cloud-dns-connection-handoff',track:'cloud',stage:2,title:'DNS 已返回新地址，旧连接还把请求送给谁',chapter:'vpc-network',anchor:'native-dns-connection-handoff',pack:'dns-connection-handoff',files:['dns_connection_handoff.py'],env:'Python 3.9+ · Unbound · dig · Linux 回环',kind:'实际 DNS 回答与 HTTP/1.1 连接',observe:'等解析器返回新地址，再比较旧连接与新建连接的实际对端，按请求编号和连接编号核对服务端记录。',scope:'两个本机 DNS 进程和两个回环 HTTP 服务，由程序按解析结果选择新连接的地址。'},
- {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · curl 8.7.1 · macOS 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
+ {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · macOS curl 8.7.1 / Ubuntu 24.04 curl 8.5.0 · 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
  {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
  {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},

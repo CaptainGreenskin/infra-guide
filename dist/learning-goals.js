@@ -111,6 +111,12 @@ const learningProfiles={
  }},
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
+function trackRoadmapLink(track){
+ const profile=selectedLearningProfile();
+ const goal=profile?.track===track?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
+ return goal?{href:'/roadmap/'+goal+'/#learning-goal',label:profile.label+'路线 →'}:
+  {href:'/roadmap/?track='+track+'#route-'+track,label:'学习路线 →'};
+}
 function learningProfileRoute(profile){
  const result=[],seen=new Set(),visiting=new Set();
  function visit(id){if(seen.has(id))return;if(visiting.has(id))throw Error('Learning prerequisite cycle: '+id);visiting.add(id);for(const[dep]of chapterDependencies[id]||[])visit(dep);visiting.delete(id);seen.add(id);result.push(id);}
@@ -149,10 +155,13 @@ function learningGoalHTML(profile){
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
- if(index<0)return learningProfileGateChapters(profile).includes(a.id)?
-  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span><a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a></nav>':'';
+ const isGateChapter=learningProfileGateChapters(profile).includes(a.id);
+ const gateReturn='<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
+ if(index<0)return isGateChapter?
+  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span>'+gateReturn+'</nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
- return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>')+'</nav>';
+ const gateLink=next?(isGateChapter?gateReturn:''):'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
+ return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 
 // Follow a selected learning route through prose, search and field references.

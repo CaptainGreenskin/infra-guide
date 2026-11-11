@@ -6234,8 +6234,8 @@ const progressiveAgentSectionTitles={
    ['IPv6 已接收请求，暂不响应','连上 ::1，IPv4 无接入事件','退出码 28，未收到 HTTP 状态']
   ])+
   p('用 curl 的 <code>Trying</code> 和 <code>Connected</code> 两行定位前后差异。建连被拒绝时，当前 curl 进程还能尝试下一个地址。IPv6 接受连接且读到 GET 后，等待发生在 HTTP 响应阶段。第四组有 <code>time_connect</code>，但 <code>time_starttransfer</code> 仍为零，服务端也只有接入和请求记录。继续读<a href="/article/network-diagnosis/#section-5">一次 curl 请求的分段计时 →</a>。',
-  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，把客户端原始输出中的对端、状态和退出码与两份监听记录对上。发布记录来自 macOS 回环，计时字段用于区分阶段。公网 DNS、链路和浏览器行为要分别验证。')+
-  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">四组原始结果 →</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
+  '解压后运行 <code>python3 -B dual_stack_connect.py --output replay.json</code>，用两个监听端的记录核对客户端连接的对端、HTTP 状态和退出码。macOS（curl 8.7.1）和 Ubuntu 24.04（curl 8.5.0）都在本机回环复现了表里的四种结果。计时字段用于辨认阶段。公网 DNS、链路和浏览器行为要分别验证。')+
+  '<p class="practice-links"><a href="/labs/dual-stack-connect.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dual-stack-connect/README.md">运行说明 →</a> · <a href="/labs/dual-stack-connect/validation.json">macOS 原始结果 →</a> · <a href="/labs/dual-stack-connect/linux-observation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43038404341">Linux 运行记录 ↗</a> · <a href="https://curl.se/libcurl/c/CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.html">curl 的多地址建连规则 ↗</a></p></details>';
  vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+dualStack+addressMapping);
  vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
@@ -7817,7 +7817,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
  finish(a,old,bodies,['subsection-4-ymmfe2','subsection-5-cnfnmm','subsection-9-dpvytn','subsection-12-bgbi93'],'先定义任务、试次、尝试与独立验收，走通四用例执行，再分别计算类别、预算、区间和同题比较。');
  a.sections[0][1]+=p('如果刚读完检索章，可以先到<a href="/article/agent-evaluation/#native-model-evaluation-bridge">第 11 节</a>，沿那两份真实模型回答核对判分依据，再看四任务实验怎样检查保存的报告和实际读取。');
  a.sections[10][1]=
-  '<h3 id="native-model-evaluation-bridge">沿上一章的模型回答完成一次验收</h3>'+
+  '<h3 id="native-model-evaluation-bridge">用检索章的两份回答检验引用</h3>'+
   p('检索章让本机模型回答“本月费用合计多少”。当前来源是基础 <code>a-base/v1</code> 的 10 和调整 <code>a-adjust/v3</code> 的 27。旧调整项 <code>a-adjust/v2</code> 也是 27，所以两份回答虽然都写 37，引用的版本却不同。先按这项任务的要求判断它们。')+
   '<figure class="training-figure"><a href="diagrams/agent-model-evaluation-bridge.svg" target="_blank" rel="noopener" aria-label="放大：沿实际输入与模型回答核对当前来源"><img src="diagrams/agent-model-evaluation-bridge.svg" loading="lazy" width="460" height="330" alt="新旧资料都能让模型回答37，但当前来源要求调整项v3。验收接受引用v3的回答，拒绝引用v2的回答；提前排除旧资料后，宿主因缺少调整项停止调用模型。"></a><figcaption>来源库决定本题的当前版本。模型根据实际收到的资料生成回答，验收器再核对二者。</figcaption></figure>'+
   p('打开运行记录，<code>supplied</code> 保存本分支提供的材料，<code>model_http</code> 保存真正发出的请求和收到的模型响应。判分器另读来源库的当前版本，算出标准金额及引用，记在 <code>authority</code>；<code>oracle</code> 保存这次判定。沿这些字段，可以查清模型收到什么、答了什么，以及程序依据什么接收或拒绝。')+
@@ -13680,13 +13680,13 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
  section[1]=`<h3 id="text-to-next-token">一次续写怎样发生</h3>`+para(
- '「明天可能会下」后面接什么？假设把它切成「明天」「可能」「会」「下」四段，这些段叫词元（token）。实际切法由分词器决定。词表给每段一个编号，词嵌入（Embedding）再把编号查成一组数字，称为向量。模型加工这些向量，在最后一个位置为「雨」「雪」等候选打分，这些分数称为 logits。',
- '下面换成能在电脑上跑的小模型。词表只有 8 个编号，输入是 [0,1]。两个位置各有一行分数。续写紧接着最后一个位置，所以取第二行的最高分，得到编号 1。把它接回去，下一轮就从 [0,1,1] 继续。这种逐项续写叫自回归生成。<a href="/article/transformer-model/#training-versus-generation">看后面几轮怎样生成 →</a>')+
+ '「明天可能会下」后面接「雨」还是「雪」？模型先用分词器把文字切成小段。每段叫一个词元（token），在词表里有一个编号。接下来查一张词嵌入表（Embedding），把每个编号换成一行数字。这行数字叫向量。',
+ '换成一个独立的数字例子。小模型的词表有 8 个编号，收到 [0,1] 后给出两行分数。第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。我们要续写整段输入，所以看第二行。该行里编号 1 的候选分最高，下一轮的输入就成了 [0,1,1]。这种把选出的词元接回去、再预测下一项的过程叫自回归生成。<a href="/article/transformer-model/#training-versus-generation">看后面几轮怎样生成 →</a>')+
  trainingFigure('transformer-first-forward','从 [0,1] 选出 1 的过程。编号直接来自小模型实验，用于观察生成步骤。')+
- para('拆开图中的解码器块，注意力（Attention）负责从自己和前文取信息，前馈网络（FFN）再逐位置加工。每条分支计算前用归一化调整数值尺度，计算后用残差连接把结果加回输入。多个解码器块可以依次连接，最后由输出投影算出候选分数。这是本章采用的仅解码器（Decoder-only）结构。',
- '词嵌入表和各层权重是训练能修改的数字，合称参数。训练用正确答案检查分数，再调整参数。推理用已有参数生成，回答越长，模型就要继续算越多轮。训练与推理都要执行图里的计算，GPU 章节会接着讲这些计算怎样落到设备上。')+
+ para('图中间的解码器块会让每个位置结合自身和前文，更新自己的向量。多块可以串起来，最后一块的结果用来给词表中的候选逐个打分。这些分数叫 logits。第 4 节会拆开这一块，看看前文怎样影响结果。',
+ '词嵌入表和各层权重是模型里可以调整的数字，合称参数。训练用样本中的答案检查预测，再调整参数。推理用固定的参数处理新输入，例如继续生成刚才的 [0,1,1]。')+
  `<h3 id="tiny-decoder-input">同一模型怎样读训练样本</h3>`+para(
- '刚才模型从 [0,1] 续写出了 1。训练时可以给它一条已知答案的序列 [0,1,2,3,4]。每条取前四项作输入，后四项作目标。读完 [0,1] 的正确答案是 2，模型就可以按给 2 的分数判断这次预测离目标有多远。每个位置只读取自己和前文，这叫因果约束。')+
+ '把训练样本 [0,1,2,3,4] 的前四项送进去，后四项就是各位置的目标。读到 [0,1] 时，样本给的下一项是 2。第 7 节的实跑只用这条样本的第一行分数算训练误差。模型仍会算出第二行的分数，样本里的目标 2 没有参与这次更新。每个位置只读取自己和前文，这叫因果约束。')+
  '<details class="progressive-detail"><summary>查看四个位置各自的输入与目标</summary>'+
  conceptReadingTable(['输入位置','允许使用的前文','要预测的目标'],[
   ['0','[0]','1'],['1','[0,1]','2'],['2','[0,1,2]','3'],['3','[0,1,2,3]','4']
@@ -13704,8 +13704,8 @@ const firstReadingChanges=[];
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
  para('第 3 节用一组系数把一格输入变成一组新特征。注意力用三组系数，分别算出查询 Q、匹配键 K 和内容 V。以位置 2 为例，用它的 Q 和位置 0、1、2 的 K 分别做点积，算出各有多相关。之后用这些分数决定从各格的 V 读多少。',
- '一套独立的匹配与汇总叫一个注意力头。小模型有 2 个头，每个头的 Q、K、V 各有 4 项。点积除以 √4=2，在通常的初始化假设下可减轻特征变宽时分数波动变大的问题。下面只跟其中一个头。',
- '设三个合法位置的缩放分数是 [0, ln 2, ln 3]，ln 表示自然对数。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。如果三个内容向量的某个分量分别是 6、0、2，汇总后的这一项就是 6/6+0/3+2/2=2。其余特征同理，禁止读取的位置权重为零。',
+ '一套独立的匹配与汇总叫一个注意力头。小模型有 2 个头，每个头的 Q、K、V 各有 4 项。先手算一个头，取位置 2 的 Q 为 [2,0,0,0]，位置 1 的 K 为 [ln 2,0,0,0]，ln 表示自然对数。两个向量的点积是 2×ln 2，再除以 √4=2，就得到位置 1 的分数 ln 2。在常见的初始化假设下，这个除法能让特征变多时的分数波动小一些。',
+ '同样取位置 0、2 的 K 为 [0,0,0,0] 和 [ln 3,0,0,0]，三个分数就是 [0, ln 2, ln 3]。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。假如三个位置的 V 第一项分别是 6、0、2，位置 2 读回来的第一项就是 6/6+0/3+2/2=2。其余特征用同一组权重计算，禁止读取的位置权重为零。',
  '各头汇总结果拼回 8 项，再用一组权重混合这 8 项，作为注意力分支的输出。第 5 节把分数记作 [B,H,T,T]，H=2 是头数，两根 T 轴分别是查询位置和候选位置。这里的 V 表示内容向量，V=8 表示词表大小。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
  para('前馈网络（FFN）在每个位置独立使用同一组权重。注意力把前文的信息送到这一格，前馈接着加工这格已有的特征。本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+
@@ -13716,7 +13716,8 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>手算 RMSNorm 与 LayerNorm</summary>'+para(
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
- para('现在已经有了从编号到分数的完整路径。想看分数怎么用，可以直接读<a href="/article/transformer-model/#training-versus-generation">训练与生成</a>。想看序列变长以后多算了多少，再顺着下一节的形状和参数账往下算。');
+ para('回到开头的 [0,1]。现在已经知道第二行分数是怎样来的。生成时，小模型取这一行的最高分，把对应编号 1 接回输入。训练时，同一行也能用来检查模型给样本目标打了多少分，只将选中的目标计入误差。<a href="/article/transformer-model/#training-versus-generation">接着看训练怎样用这些分数、生成怎样利用缓存 →</a>',
+ '沿下一节往下读，可以核对这条路径上各处有多少参数、多少次乘法，以及序列变长后哪些数字会跟着变。');
 
  a.sections[6][1]=`<h3 id="training-versus-generation">同一次前向在训练和生成里有什么用</h3>`+
  para('训练时，输入 [0,1,2,3] 和目标 [1,2,3,4] 已经给定。模型可以一次算出四行候选分数，每行遵守第 4 节的可见范围。以位置 2 为例，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
@@ -13729,6 +13730,9 @@ const firstReadingChanges=[];
  ])+
  para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
+ '<details class="progressive-detail"><summary>在 CPU 上复现这三轮预测</summary>'+para(
+ '解压<a href="labs/sdpa-cache.zip" download>实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，执行 <code>python -B cache_lab.py &gt; local-record.json</code>。在源码的 <code>greedy</code> 函数里，<code>reference(torch.tensor([prefix]))[:, -1]</code> 取每条输入的最后一行分数，<code>full[0].argmax()</code> 找到第一条输入最高分的编号。',
+ '在输出的 <code>generation</code> 中核对 <code>generated_ids</code> 为 [1,1,1]，三轮的 <code>cache_length</code> 分别为 2、3、4。程序在每一轮都用完整前缀重新计算分数，和缓存路径的最后一行逐项比较。')+'</details>'+
  para('如果末位仍是 1，只把前面的 0 换成 4，模型会改选 7。<a href="/article/attention-mechanics/#same-position-different-prefix">沿同一次预测看前文怎样改动结果 →</a>')+
  para('把这两条输入交给两个训练进程，再从检查点继续，最后把导出的参数交给推理进程。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
@@ -15070,6 +15074,12 @@ const learningProfiles={
  }},
 };
 function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
+function trackRoadmapLink(track){
+ const profile=selectedLearningProfile();
+ const goal=profile?.track===track?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
+ return goal?{href:'/roadmap/'+goal+'/#learning-goal',label:profile.label+'路线 →'}:
+  {href:'/roadmap/?track='+track+'#route-'+track,label:'学习路线 →'};
+}
 function learningProfileRoute(profile){
  const result=[],seen=new Set(),visiting=new Set();
  function visit(id){if(seen.has(id))return;if(visiting.has(id))throw Error('Learning prerequisite cycle: '+id);visiting.add(id);for(const[dep]of chapterDependencies[id]||[])visit(dep);visiting.delete(id);seen.add(id);result.push(id);}
@@ -15108,10 +15118,13 @@ function learningGoalHTML(profile){
 function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
- if(index<0)return learningProfileGateChapters(profile).includes(a.id)?
-  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span><a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a></nav>':'';
+ const isGateChapter=learningProfileGateChapters(profile).includes(a.id);
+ const gateReturn='<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
+ if(index<0)return isGateChapter?
+  '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span>'+gateReturn+'</nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
- return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>')+'</nav>';
+ const gateLink=next?(isGateChapter?gateReturn:''):'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
+ return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 
 // Follow a selected learning route through prose, search and field references.
@@ -16030,12 +16043,12 @@ const labArchiveCatalog={
 const labTrackCatalog={
  cloud:{name:'Cloud Infra',lead:'先分清资源与请求，再验证数据、事件、交付和恢复。先修实验按需补；正文中的系统知识点在案例之前。'},
  ai:{name:'AI Infra',lead:'先用标准库算清 Attention，再进入 CPU 两进程、输入、状态与产物；最后按手册走向真实 GPU。'},
- agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估；真实模型与 Kairo 接入另行验收。'}
+ agent:{name:'Agent Infra',lead:'先验证授权与工具效果，再处理重试、状态、检索和评估。实验包含本机 Qwen 模型通过 MCP 读取数据、写入报告。Kairo 接入按目标版本验收。'}
 };
 const labLearningCatalog=[
  {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
  {id:'cloud-dns-connection-handoff',track:'cloud',stage:2,title:'DNS 已返回新地址，旧连接还把请求送给谁',chapter:'vpc-network',anchor:'native-dns-connection-handoff',pack:'dns-connection-handoff',files:['dns_connection_handoff.py'],env:'Python 3.9+ · Unbound · dig · Linux 回环',kind:'实际 DNS 回答与 HTTP/1.1 连接',observe:'等解析器返回新地址，再比较旧连接与新建连接的实际对端，按请求编号和连接编号核对服务端记录。',scope:'两个本机 DNS 进程和两个回环 HTTP 服务，由程序按解析结果选择新连接的地址。'},
- {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · curl 8.7.1 · macOS 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
+ {id:'cloud-dual-stack-connect',track:'cloud',stage:2,title:'IPv6 建连被拒和 HTTP 等待，哪种会回退',chapter:'vpc-network',anchor:'native-dual-stack-connect',pack:'dual-stack-connect',files:['dual_stack_connect.py'],env:'Python 3 · macOS curl 8.7.1 / Ubuntu 24.04 curl 8.5.0 · 双栈回环',kind:'实际双栈 TCP 与 HTTP',observe:'对照 IPv6 成功、拒绝后回退、仅 IPv6 拒绝及建连后的响应超时，核对客户端和两个监听端的实际记录。',scope:'用 --resolve 提供固定候选地址，本机回环。用于判断故障阶段，公网 DNS 和其他客户端需要各自验证。'},
  {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
  {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
@@ -16611,5 +16624,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="c70dc6eaafe5619e87797afe11b0f9dcf2ec182f1113fd65d8714cd9a58e9bb3";
+const staticReadingVersion="639ed4870142c2049298c57879507325392b0d75e5d71f0a49f693562ac13e06";
 

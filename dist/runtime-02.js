@@ -2794,7 +2794,7 @@ if(practiceEvidence.textbooks) {
 }
 
 const textbookTitles={
- 'transformer-model':'Transformer 全貌：从张量到计算图',
+ 'transformer-model':'Transformer 全貌：下一个词是怎么预测出来的',
  'tokenization-embedding':'Token、词表与 Embedding：标签如何对齐',
  'attention-mechanics':'Attention 深入推导：QKV、掩码与多头',
  'position-encoding':'位置编码与 RoPE：相对位置怎样进入点积',

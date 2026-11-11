@@ -146,7 +146,7 @@
  finish(a,old,bodies,['subsection-4-ymmfe2','subsection-5-cnfnmm','subsection-9-dpvytn','subsection-12-bgbi93'],'先定义任务、试次、尝试与独立验收，走通四用例执行，再分别计算类别、预算、区间和同题比较。');
  a.sections[0][1]+=p('如果刚读完检索章，可以先到<a href="/article/agent-evaluation/#native-model-evaluation-bridge">第 11 节</a>，沿那两份真实模型回答核对判分依据，再看四任务实验怎样检查保存的报告和实际读取。');
  a.sections[10][1]=
-  '<h3 id="native-model-evaluation-bridge">沿上一章的模型回答完成一次验收</h3>'+
+  '<h3 id="native-model-evaluation-bridge">用检索章的两份回答检验引用</h3>'+
   p('检索章让本机模型回答“本月费用合计多少”。当前来源是基础 <code>a-base/v1</code> 的 10 和调整 <code>a-adjust/v3</code> 的 27。旧调整项 <code>a-adjust/v2</code> 也是 27，所以两份回答虽然都写 37，引用的版本却不同。先按这项任务的要求判断它们。')+
   '<figure class="training-figure"><a href="diagrams/agent-model-evaluation-bridge.svg" target="_blank" rel="noopener" aria-label="放大：沿实际输入与模型回答核对当前来源"><img src="diagrams/agent-model-evaluation-bridge.svg" loading="lazy" width="460" height="330" alt="新旧资料都能让模型回答37，但当前来源要求调整项v3。验收接受引用v3的回答，拒绝引用v2的回答；提前排除旧资料后，宿主因缺少调整项停止调用模型。"></a><figcaption>来源库决定本题的当前版本。模型根据实际收到的资料生成回答，验收器再核对二者。</figcaption></figure>'+
   p('打开运行记录，<code>supplied</code> 保存本分支提供的材料，<code>model_http</code> 保存真正发出的请求和收到的模型响应。判分器另读来源库的当前版本，算出标准金额及引用，记在 <code>authority</code>；<code>oracle</code> 保存这次判定。沿这些字段，可以查清模型收到什么、答了什么，以及程序依据什么接收或拒绝。')+

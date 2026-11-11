@@ -10,17 +10,19 @@ function fixture({base='/',id='training-communication',route='article/'+id+'/',g
  const app={get innerHTML(){return '<main><article>既有正文与读者填写的笔记</article></main>';},set innerHTML(value){calls.body++;this.rendered=value;},getAttribute:name=>attrs.get(name),setAttribute:(name,value)=>attrs.set(name,value)};
  const side={details:[{open:false},{open:true}],querySelectorAll(){return this.details;},set outerHTML(value){calls.sidebar++;this.html=value;this.details=[{open:true},{open:false}];}},nav={set outerHTML(value){calls.navigation++;this.html=value;}};
  const read=node();read.textContent='标记为已读';
+ const roadmap={setAttribute(name,value){this[name]=value;}};
  const userCheck={dataset:{check:id+':0'},checked:true,defaultChecked:false},storedCheck={dataset:{check:id+':1'},checked:false,defaultChecked:false};
  const container={tagName:'DETAILS',open:false,parentElement:null};
  const target={tagName:'DIV',parentElement:container,querySelector:()=>null,scrollIntoView(){calls.targetScroll++;}};
  const nodes=Object.fromEntries(['#search-dialog','#search-open','#search-close','#search-input','#search-status','#search-results','#theme','#mobile-menu','#main','.top-nav','.skip'].map(k=>[k,node()]));
+ if(route.startsWith('track/'))nodes['[data-track-roadmap]']=roadmap;
  const document={title:'静态标题',documentElement:{classList:classes(),setAttribute(){}},addEventListener(){},
   getElementById:name=>['section-2','network-timing-lab','saved-target','concept-path','self-check','references'].includes(name)?target:null,
   querySelectorAll:selector=>selector==='input[data-check]'?[userCheck,storedCheck]:[],
   querySelector:selector=>selector==='base'?{getAttribute:()=>base}:selector==='#app'?app:selector==='.doc-layout .article'?{}:selector==='.sidebar'?side:selector==='.article-nav'?nav:selector==='[data-read="'+id+'"]'?read:nodes[selector]||null};
  const c={document,window:{addEventListener(){},scrollTo(){calls.windowScroll++;}},location:{pathname:base+route,search:query||(goal?'?goal='+goal:''),hash,replace(){}},history:{},localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)},URLSearchParams,requestAnimationFrame:fn=>frames.push(fn),IntersectionObserver:class{observe(){}disconnect(){}}};
  vm.createContext(c);for(const file of scripts)vm.runInContext(source[file],c,{filename:file});
- return {c,calls,attrs,storage,userCheck,storedCheck,side,nav,read,frames,target,container};
+ return {c,calls,attrs,storage,userCheck,storedCheck,side,nav,read,frames,target,container,roadmap};
 }
 const dataContext={};vm.createContext(dataContext);for(const f of scripts.filter(f=>f!=='app.js'))vm.runInContext(source[f],dataContext,{filename:f});
 const data=JSON.parse(vm.runInContext('JSON.stringify({articles,tracks:trackDefinitions,profiles:learningProfiles})',dataContext));
@@ -37,6 +39,10 @@ for(const base of ['/','/infra-guide/']){
   assert(f.nav.html.includes('goal='+key)&&f.nav.html.includes(profile.label));assert(f.side.html.includes('goal='+key));assert.deepEqual(f.side.details.map(d=>d.open),[false,true],'saved progress does not reset the reader’s sidebar expansion');
   assert(f.read.classList.values.has('done'));assert.equal(f.storedCheck.checked,true);
   assert.equal(JSON.parse(f.storage.get('cloudinfra-checks'))[id+':0'],true,'a check changed before startup is retained and saved');
+  const entry=fixture({base,id:data.tracks[profile.track].start,route:'track/'+profile.track+'/',goal:key,saved:false});
+  assert.equal(entry.calls.body,0,key+': preserve the original first lesson');
+  assert.equal(entry.roadmap.href,'/roadmap/'+key+'/#learning-goal',key+': hydrate the static entry shortcut');
+  assert.equal(entry.roadmap.textContent,profile.label+'路线 →');
  }
  for(const[track,value]of Object.entries(data.tracks)){
   const f=fixture({base,id:value.start,route:'track/'+track+'/'});assert.equal(f.calls.body,0);assert.equal(f.attrs.get('data-hydrated-static'),'true');

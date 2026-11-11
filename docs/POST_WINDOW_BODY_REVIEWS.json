@@ -6953,6 +6953,64 @@
         "把“服务端处理完成”与“用户收到结果”拆开",
         "验收：画出路和门，再画回来的路"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "379bfd80fd1c5422db2fcc5c36775d7f79a12b468edba1bd484d02c441ad839b",
+      "reviewed_content_sha256": "e9fc8f0ed5c589f6a517dd2348e311fa248752d6bf1499b5ee51d1690c348fd3",
+      "scope": "Follow the two score rows from the first example through the block and into the generated token, and defer resource accounting until the reader has closed that loop.",
+      "observation": "The teaching example derives a score from explicit Q and K values before applying softmax and summing V. The opening distinguishes a recorded masked training target from the sampled next ID. The existing CPU trace and its executable reproduction are linked where the three generation steps are explained.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "7a6c0c0c6a68ab2bae227f3ba4dbb2ed568bdd9118743d004750395ce76e7bd1",
+      "reviewed_content_sha256": "6746cf091c5702f4d1dc204855fffb239d161ad07cc5c1ab5fcb8aadf5bdb6e7",
+      "scope": "Compare the four double-stack connection cases across macOS and Ubuntu loopback.",
+      "observation": "The identical runner reproduced all four verdicts on stock Ubuntu curl 8.5.0. Both original platform records are linked and archived. The release checker validates the raw observations independently and binds the Linux artifact to its successful hosted run.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "318ffb4cb71eaab3510635ef10475b7ae5fff178746c0b43d3a2178a32683938",
+      "reviewed_content_sha256": "9797546fbf407e737b35117861a09d171bf0c0e2dffacb020cfbf954215ea6b1",
+      "scope": "Name the retrieval prerequisite by topic at the cross-chapter evaluation example.",
+      "observation": "The example compares two local model answers from the retrieval chapter, which comes later in the full route. The original exact section anchor and source links still work.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
     }
   ]
 }

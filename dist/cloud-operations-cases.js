@@ -44,11 +44,27 @@ for(const [id,module,title,body]of [
 }
 const cloudStageFields=[['foundation'],['compute','network','cloud-data'],['native'],['serverless','cloud-delivery'],['cloud-security','cloud-capacity'],['sre']];
 const cloudStageGates=[
- '区分运行与等待、虚拟内存与OOM、重试与重复效果；已有基础可跳过补课。',
- '画请求往返，说明索引/事务确认，从完整恢复材料选择目标并验证数据。',
- '从API声明追到Pod、端点与卷，复算放置资源、发布和伸缩。',
- '区分受理/执行/提交，解释保存计划、状态刷新与自愈/清理。',
- '让必要授权成功、越权无效果；算出积压、排空与唯一成功成本。',
- '聚合SLI与桶，解释等待段，再按约定起止点验收RPO/RTO。'
+ '先算并发任务的内存峰值，再观察请求超时后为何还能取回同一笔操作的结果。',
+ '画出经过代理的请求和回包，恢复数据库到误操作之前并核对业务数据。',
+ '从调度事件解释 Pod 为什么等待，再跟踪卷如何按节点拓扑绑定和回收。',
+ '沿消息核对重投与提交结果，再用 Terraform 的计划和状态解释资源漂移。',
+ '核对获准操作成功、越权操作没有产生写入。算出积压峰值、排空时间与每次成功交付的成本。',
+ '核对服务指标的聚合结果，用实际恢复出的业务状态验证恢复点。'
 ];
-function cloudStageStudyHTML(index){return '<p class="stage-field-links"><b>先读系统知识：</b>'+cloudStageFields[index].map(id=>'<a href="/module/'+id+'/">'+moduleFor(id).n+' '+moduleFor(id).name+' →</a>').join(' ')+'</p><p class="stage-gate"><b>过关任务：</b>'+cloudStageGates[index]+'</p>';}
+const cloudStagePractices=[
+ [['virtual-memory-oom','section-9','跑并发内存对照'],['distributed-systems','http-operation-retry','核对超时后的同一操作']],
+ [['vpc-network','cloud-proxy-run','追踪代理请求与回包'],['storage-recovery','native-postgres-pitr','恢复到误操作之前']],
+ [['scheduling-resources','scheduler-native-run','核对 Pod 调度结果'],['k8s-storage','native-csi-storage','核对卷绑定和回收']],
+ [['serverless-execution','native-jetstream-redelivery','核对消息重投与效果'],['terraform-state','terraform-state-run','复现 Terraform 状态漂移']],
+ [['iam-security','section-9','核对允许、拒绝与写入'],['elasticity','section-8','算积压和单位成本']],
+ [['slo','live-prometheus-burn','验证 Prometheus 聚合与告警'],['resilience','section-9','核对实际恢复点']]
+];
+function stageGateHTML(task,exercises){
+ const links=exercises.map(([article,anchor,label])=>'<a href="'+articleURL(article)+'#'+anchor+'">'+label+' →</a>');
+ return '<p class="stage-gate"><b>过关任务</b> '+task+' <span class="stage-practice-links">'+links.join(' ')+'</span></p>';
+}
+function cloudStageStudyHTML(index){
+ const fields=cloudStageFields[index].map(id=>'<a href="'+fieldMapURL(id)+'">'+moduleFor(id).n+' '+moduleFor(id).name+' →</a>');
+ return '<p class="stage-field-links"><b>先读系统知识</b> '+fields.join(' ')+'</p>'+
+  stageGateHTML(cloudStageGates[index],cloudStagePractices[index]);
+}
