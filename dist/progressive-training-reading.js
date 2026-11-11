@@ -280,6 +280,15 @@
   p('以上是已有PyTorch 2.5.1/CPU记录，本次未新增运行。第一例数保留的训练状态，第二例数指定观察点供反向保存的存储；两者都不报告CUDA峰值、reserved或CPU RSS。到GPU环境时，沿本章的完整窗口测量步骤，分别记录首次与稳态、每个rank的峰值、步耗时及相同目标下的数值结果。')
  ]);
 
+ const rtxContextBase='https://github.com/CaptainGreenskin/one-gpu-lm/blob/2fbbf69d815cf7846410dc3246f15b19c3ccec23/experiments/010-7b-context-scaling/';
+ const rtxContextResults=rtxContextBase+'results/2026-11-09/';
+ memory.sections[7][1]+='<h3 id="rtx-activation-scaling">单卡对照：保存量减少后，峰值会降多少</h3>'+
+  p('CPU 小实验数的是前向结束时为反向保留的非参数张量存储。这里读配套项目在 RTX PRO 6000 Blackwell 上的公开实测。固定同一个约 70.28 亿参数的随机初始化模型、批大小 1 和合成输入，用 BF16 权重和梯度及 Adafactor 更新全部参数，每个长度分别开关按块重计算。')+
+  p('峰值是每个进程从模型初始化前重置计数，到训练结束读取时，PyTorch 已分配显存的最高值，覆盖热身。吞吐按热身后 6 次完整更新计。下面的峰值和吞吐各取 3 个独立进程的中位数，箭头表示关闭重计算到开启。')+
+  '<ul><li><strong>2048 词元</strong>。峰值 26.97 → 26.97 GiB，开启后高 1 MiB。吞吐 3975.1 → 3479.3 词元/秒。</li><li><strong>4096 词元</strong>。峰值 33.92 → 27.22 GiB。吞吐 4479.4 → 3877.6 词元/秒。</li></ul>'+
+  p('这组 2048 词元的峰值几乎没变，重计算仍花了时间。4096 词元时，同一设置少用了约 6.70 GiB 的峰值已分配显存。先比同长度的两路数值，再分别读峰值和用时。这里的计数来自 PyTorch 分配器，整卡占用和峰值发生在哪一段需要相应的额外记录。')+
+  '<p class="practice-links"><a href="/labs/rtx-activation-scaling.zip" download>下载原始数据与复算说明 ↓</a> · <a href="/labs/rtx-activation-scaling/README.md">在本机重算两组中位数 →</a> · <a href="'+rtxContextResults+'summary.json">配对数值审计 ↗</a> · <a href="'+rtxContextBase+'README.md">固定输入和目标卡复跑 ↗</a></p>';
+
  memory.sections[5][1]+='<h3 id="native-amp-window">两个微批中，哪一个数先溢出</h3>'+
   p('沿前面的窗口顺序实跑一次。模型是一层无偏置线性层，只有一个 FP32 参数 w。两个微批各有一个样本，目标为 0。前向由 CPU autocast 选择 FP16，输出转回 FP32 算平方损失。两项取平均，所以每次对 <code>loss / 2</code> 做缩放和反向。设 y=w×x、缩放因子为 S，此时输出梯度是 S×y，求权重梯度还要再乘输入 x。每个微批沿自己的反向路径求梯度，累积发生在 FP32 参数的 <code>.grad</code>。',
   '先送两个 1。S=32768 时，每个微批的权重梯度都是可表示的 32768。两项进到 FP32 后相加成 65536，撤销缩放得到 2。AdamW 完成第一次更新，权重从 1 变成 0.875。现在保持同一个缩放因子，将第二个输入改为 2。前向输出变成 0.875 和 1.75，平均损失是 (0.875²+1.75²)/2=1.9140625。',
@@ -294,5 +303,5 @@
   '在溢出窗口结束后保存模型、优化器和 scaler。完整恢复后，下一窗口和不中断路径的重试逐项一致。只加载模型与优化器时，新 scaler 从 32768 起步，第二个微批再次溢出。记录还显示从 16384 起连续两个窗口成功后，缩放因子涨回 32768。实验显式重送输入，实际训练由训练循环决定是否重放。<a href="/article/checkpoint-recovery/#checkpoint-consistent-state">把 scaler 放回检查点的对象清单 →</a>',
   '本例验证 PyTorch 2.5.1 在 CPU 单进程上的标量反向、非融合 AdamW 和内存内检查点往返。解压后在 Python 3.12 与 PyTorch 2.5.1 环境运行 <code>python -B amp_window.py &gt; replay.json</code>，先看每个微批的 <code>weight_gradient_before_widening</code>，再核对窗口前后状态。')+
   '<p class="practice-links"><a href="labs/native-amp-window.zip" download>下载源码与记录 ↓</a> · <a href="labs/native-amp-window/README.md">运行说明 →</a> · <a href="labs/native-amp-window/validation.json">查看反向与恢复记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/amp/grad_scaler.py#L237-L447">PyTorch 2.5.1 的缩放与跳步源码 ↗</a></p>';
- memory.updated='2026.11.09';
+ memory.updated='2026.11.12';
 })();

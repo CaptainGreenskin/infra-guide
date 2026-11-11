@@ -1,0 +1,1643 @@
+{
+  "schema": 1,
+  "status": "observed",
+  "checked_at_utc": "2026-11-11T23:06:15.402181+00:00",
+  "source_sha256": "cca4ac2ab56ea52a77eee7bb6c86c826b5a14dd6e7349ecd78d6e40b09d341b6",
+  "toolchain": {
+    "kind": "v0.33.0",
+    "kubectl": "v1.35.8",
+    "node_image": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+    "app_image": "python:3.13.7-alpine3.22@sha256:9ba6d8cbebf0fb6546ae71f2a1c14f6ffd2fdab83af7fa5669734ef30ad48844",
+    "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+    "python": "3.14.4"
+  },
+  "scope": "Single Linux host, kind worker container stopped, native local PV and NodePort, one synthetic report readback",
+  "fixture": {
+    "tenant": "A",
+    "report": "R3",
+    "commit_seq": 102,
+    "database_seq": 103,
+    "object": "object-v3",
+    "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+  },
+  "probe_interval_seconds": 0.2,
+  "stable_count": 3,
+  "cleanup": {
+    "owned_kind_nodes_remaining": 0
+  },
+  "observation": {
+    "nodes": {
+      "control-plane": "infra-r3-loss-451f327f49-control-plane",
+      "a": "infra-r3-loss-451f327f49-worker",
+      "b": "infra-r3-loss-451f327f49-worker2"
+    },
+    "entry": "http://127.0.0.1:37059",
+    "before": {
+      "pod": {
+        "uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+        "node": "infra-r3-loss-451f327f49-worker",
+        "phase": "Running"
+      },
+      "claim": {
+        "uid": "07a2a0bb-8d1f-4afe-a05e-5072ac2b1f59",
+        "phase": "Bound",
+        "volume": "r3-a"
+      },
+      "pv": {
+        "uid": "07913168-10b5-4b73-af43-d87ea035122b",
+        "node_affinity": {
+          "required": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "kubernetes.io/hostname",
+                    "operator": "In",
+                    "values": [
+                      "infra-r3-loss-451f327f49-worker"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "local_path": "/var/local/infra-guide-r3"
+      },
+      "service": {
+        "uid": "08c20a48-980e-45b5-a5f6-1cccedfec46e",
+        "node_port": 30950,
+        "external_traffic_policy": "Cluster"
+      },
+      "endpoints": [
+        {
+          "uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "ready": true
+        }
+      ]
+    },
+    "before_trials": [
+      11,
+      12,
+      13
+    ],
+    "wrong_tenant": {
+      "request_id": "wrong-tenant",
+      "started_ms": 58037,
+      "ended_ms": 58039,
+      "status": 403,
+      "echo": "wrong-tenant",
+      "node": "infra-r3-loss-451f327f49-worker",
+      "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+      "body": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fault_ms": 58039,
+    "loss": {
+      "node": "infra-r3-loss-451f327f49-worker",
+      "docker_running": false,
+      "stopped_ms": 59232,
+      "node_ready": "Unknown",
+      "node_not_ready_ms": 105557
+    },
+    "blocked": {
+      "uid": "847d12a7-ce40-4364-b5d2-8ad94f9f1cc1",
+      "phase": "Pending",
+      "node": null,
+      "selector": {
+        "infra-guide.test/worker": "b"
+      },
+      "claim": "r3-a",
+      "reason": "Unschedulable",
+      "messages": [
+        "0/3 nodes are available: 1 node(s) didn't match PersistentVolume's node affinity, 1 node(s) didn't match Pod's node affinity/selector, 1 node(s) had untolerated taint(s). no new claims to deallocate, preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling."
+      ],
+      "at_ms": 59417
+    },
+    "restored_ms": 59573,
+    "backup_files": {
+      "a": {
+        "reports.db": "f6966cd9c5d39499d6833f3f1cf751871d8de655ec161b43df7eb39a78981656",
+        "object-v3": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+      },
+      "b": {
+        "reports.db": "f6966cd9c5d39499d6833f3f1cf751871d8de655ec161b43df7eb39a78981656",
+        "object-v3": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+      }
+    },
+    "after": {
+      "pod": {
+        "uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+        "node": "infra-r3-loss-451f327f49-worker2",
+        "phase": "Running"
+      },
+      "claim": {
+        "uid": "088ecba6-9748-4b3c-91b4-737bd220e081",
+        "phase": "Bound",
+        "volume": "r3-b"
+      },
+      "pv": {
+        "uid": "342e3f57-4658-4c49-92b1-5a6bb38d1665",
+        "node_affinity": {
+          "required": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "kubernetes.io/hostname",
+                    "operator": "In",
+                    "values": [
+                      "infra-r3-loss-451f327f49-worker2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "local_path": "/var/local/infra-guide-r3"
+      },
+      "service": {
+        "uid": "08c20a48-980e-45b5-a5f6-1cccedfec46e",
+        "node_port": 30950,
+        "external_traffic_policy": "Cluster"
+      },
+      "endpoints": [
+        {
+          "uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "ready": false
+        },
+        {
+          "uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "ready": true
+        }
+      ]
+    },
+    "b_route_ms": 105776,
+    "stable_trials": [
+      67,
+      68,
+      69
+    ],
+    "local_elapsed_ms": 48429,
+    "reads": [
+      {
+        "trial": 1,
+        "report": {
+          "request_id": "1-report",
+          "started_ms": 49221,
+          "ended_ms": 49225,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "1-attachment",
+          "started_ms": 49225,
+          "ended_ms": 49228,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 2,
+        "report": {
+          "request_id": "2-report",
+          "started_ms": 49428,
+          "ended_ms": 49429,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "2-attachment",
+          "started_ms": 49429,
+          "ended_ms": 49429,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 3,
+        "report": {
+          "request_id": "3-report",
+          "started_ms": 49629,
+          "ended_ms": 49630,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "3-attachment",
+          "started_ms": 49630,
+          "ended_ms": 49630,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 4,
+        "report": {
+          "request_id": "4-report",
+          "started_ms": 49830,
+          "ended_ms": 50531,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "4-attachment",
+          "started_ms": 50531,
+          "ended_ms": 50531,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 5,
+        "report": {
+          "request_id": "5-report",
+          "started_ms": 50731,
+          "ended_ms": 51433,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "5-attachment",
+          "started_ms": 51433,
+          "ended_ms": 51433,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 6,
+        "report": {
+          "request_id": "6-report",
+          "started_ms": 51633,
+          "ended_ms": 52334,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "6-attachment",
+          "started_ms": 52334,
+          "ended_ms": 52335,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 7,
+        "report": {
+          "request_id": "7-report",
+          "started_ms": 52535,
+          "ended_ms": 53236,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "7-attachment",
+          "started_ms": 53236,
+          "ended_ms": 53237,
+          "status": null,
+          "error": "ConnectionResetError"
+        }
+      },
+      {
+        "trial": 8,
+        "report": {
+          "request_id": "8-report",
+          "started_ms": 53437,
+          "ended_ms": 54138,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "8-attachment",
+          "started_ms": 54138,
+          "ended_ms": 54839,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 9,
+        "report": {
+          "request_id": "9-report",
+          "started_ms": 55039,
+          "ended_ms": 55740,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "9-attachment",
+          "started_ms": 55740,
+          "ended_ms": 56441,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 10,
+        "report": {
+          "request_id": "10-report",
+          "started_ms": 56641,
+          "ended_ms": 56642,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "10-attachment",
+          "started_ms": 56642,
+          "ended_ms": 57343,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 11,
+        "report": {
+          "request_id": "11-report",
+          "started_ms": 57543,
+          "ended_ms": 57545,
+          "status": 200,
+          "echo": "11-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "11-attachment",
+          "started_ms": 57545,
+          "ended_ms": 57546,
+          "status": 200,
+          "echo": "11-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 12,
+        "report": {
+          "request_id": "12-report",
+          "started_ms": 57746,
+          "ended_ms": 57748,
+          "status": 200,
+          "echo": "12-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "12-attachment",
+          "started_ms": 57748,
+          "ended_ms": 57749,
+          "status": 200,
+          "echo": "12-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 13,
+        "report": {
+          "request_id": "13-report",
+          "started_ms": 57949,
+          "ended_ms": 57951,
+          "status": 200,
+          "echo": "13-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "13-attachment",
+          "started_ms": 57951,
+          "ended_ms": 57952,
+          "status": 200,
+          "echo": "13-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 14,
+        "report": {
+          "request_id": "14-report",
+          "started_ms": 58152,
+          "ended_ms": 58156,
+          "status": 200,
+          "echo": "14-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "14-attachment",
+          "started_ms": 58156,
+          "ended_ms": 58159,
+          "status": 200,
+          "echo": "14-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 15,
+        "report": {
+          "request_id": "15-report",
+          "started_ms": 58359,
+          "ended_ms": 58361,
+          "status": 200,
+          "echo": "15-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "15-attachment",
+          "started_ms": 58361,
+          "ended_ms": 58363,
+          "status": 200,
+          "echo": "15-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 16,
+        "report": {
+          "request_id": "16-report",
+          "started_ms": 58563,
+          "ended_ms": 58565,
+          "status": 200,
+          "echo": "16-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "16-attachment",
+          "started_ms": 58565,
+          "ended_ms": 58566,
+          "status": 200,
+          "echo": "16-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 17,
+        "report": {
+          "request_id": "17-report",
+          "started_ms": 58766,
+          "ended_ms": 58768,
+          "status": 200,
+          "echo": "17-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "17-attachment",
+          "started_ms": 58768,
+          "ended_ms": 58769,
+          "status": 200,
+          "echo": "17-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 18,
+        "report": {
+          "request_id": "18-report",
+          "started_ms": 58969,
+          "ended_ms": 58971,
+          "status": 200,
+          "echo": "18-report",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "18-attachment",
+          "started_ms": 58971,
+          "ended_ms": 58972,
+          "status": 200,
+          "echo": "18-attachment",
+          "node": "infra-r3-loss-451f327f49-worker",
+          "pod_uid": "066b17f0-0055-479b-acff-c5ef44bd6cba",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 19,
+        "report": {
+          "request_id": "19-report",
+          "started_ms": 59172,
+          "ended_ms": 59873,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "19-attachment",
+          "started_ms": 59873,
+          "ended_ms": 60574,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 20,
+        "report": {
+          "request_id": "20-report",
+          "started_ms": 60774,
+          "ended_ms": 61474,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "20-attachment",
+          "started_ms": 61474,
+          "ended_ms": 62175,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 21,
+        "report": {
+          "request_id": "21-report",
+          "started_ms": 62375,
+          "ended_ms": 63076,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "21-attachment",
+          "started_ms": 63076,
+          "ended_ms": 63777,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 22,
+        "report": {
+          "request_id": "22-report",
+          "started_ms": 63977,
+          "ended_ms": 64678,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "22-attachment",
+          "started_ms": 64678,
+          "ended_ms": 65379,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 23,
+        "report": {
+          "request_id": "23-report",
+          "started_ms": 65579,
+          "ended_ms": 66280,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "23-attachment",
+          "started_ms": 66280,
+          "ended_ms": 66981,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 24,
+        "report": {
+          "request_id": "24-report",
+          "started_ms": 67181,
+          "ended_ms": 67882,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "24-attachment",
+          "started_ms": 67882,
+          "ended_ms": 68583,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 25,
+        "report": {
+          "request_id": "25-report",
+          "started_ms": 68783,
+          "ended_ms": 69484,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "25-attachment",
+          "started_ms": 69484,
+          "ended_ms": 69486,
+          "status": 200,
+          "echo": "25-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 26,
+        "report": {
+          "request_id": "26-report",
+          "started_ms": 69686,
+          "ended_ms": 69688,
+          "status": 200,
+          "echo": "26-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "26-attachment",
+          "started_ms": 69688,
+          "ended_ms": 70389,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 27,
+        "report": {
+          "request_id": "27-report",
+          "started_ms": 70589,
+          "ended_ms": 71290,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "27-attachment",
+          "started_ms": 71290,
+          "ended_ms": 71991,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 28,
+        "report": {
+          "request_id": "28-report",
+          "started_ms": 72191,
+          "ended_ms": 72892,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "28-attachment",
+          "started_ms": 72892,
+          "ended_ms": 72894,
+          "status": 200,
+          "echo": "28-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 29,
+        "report": {
+          "request_id": "29-report",
+          "started_ms": 73094,
+          "ended_ms": 73795,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "29-attachment",
+          "started_ms": 73795,
+          "ended_ms": 74496,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 30,
+        "report": {
+          "request_id": "30-report",
+          "started_ms": 74696,
+          "ended_ms": 74698,
+          "status": 200,
+          "echo": "30-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "30-attachment",
+          "started_ms": 74698,
+          "ended_ms": 74699,
+          "status": 200,
+          "echo": "30-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 31,
+        "report": {
+          "request_id": "31-report",
+          "started_ms": 74899,
+          "ended_ms": 75600,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "31-attachment",
+          "started_ms": 75600,
+          "ended_ms": 75602,
+          "status": 200,
+          "echo": "31-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 32,
+        "report": {
+          "request_id": "32-report",
+          "started_ms": 75802,
+          "ended_ms": 76503,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "32-attachment",
+          "started_ms": 76503,
+          "ended_ms": 76505,
+          "status": 200,
+          "echo": "32-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 33,
+        "report": {
+          "request_id": "33-report",
+          "started_ms": 76705,
+          "ended_ms": 76707,
+          "status": 200,
+          "echo": "33-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "33-attachment",
+          "started_ms": 76707,
+          "ended_ms": 76708,
+          "status": 200,
+          "echo": "33-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 34,
+        "report": {
+          "request_id": "34-report",
+          "started_ms": 76908,
+          "ended_ms": 76910,
+          "status": 200,
+          "echo": "34-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "34-attachment",
+          "started_ms": 76910,
+          "ended_ms": 76911,
+          "status": 200,
+          "echo": "34-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 35,
+        "report": {
+          "request_id": "35-report",
+          "started_ms": 77112,
+          "ended_ms": 77813,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "35-attachment",
+          "started_ms": 77813,
+          "ended_ms": 78514,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 36,
+        "report": {
+          "request_id": "36-report",
+          "started_ms": 78714,
+          "ended_ms": 78716,
+          "status": 200,
+          "echo": "36-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "36-attachment",
+          "started_ms": 78716,
+          "ended_ms": 78717,
+          "status": 200,
+          "echo": "36-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 37,
+        "report": {
+          "request_id": "37-report",
+          "started_ms": 78917,
+          "ended_ms": 79618,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "37-attachment",
+          "started_ms": 79618,
+          "ended_ms": 80319,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 38,
+        "report": {
+          "request_id": "38-report",
+          "started_ms": 80519,
+          "ended_ms": 81221,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "38-attachment",
+          "started_ms": 81221,
+          "ended_ms": 81222,
+          "status": 200,
+          "echo": "38-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 39,
+        "report": {
+          "request_id": "39-report",
+          "started_ms": 81422,
+          "ended_ms": 82124,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "39-attachment",
+          "started_ms": 82124,
+          "ended_ms": 82825,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 40,
+        "report": {
+          "request_id": "40-report",
+          "started_ms": 83025,
+          "ended_ms": 83027,
+          "status": 200,
+          "echo": "40-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "40-attachment",
+          "started_ms": 83027,
+          "ended_ms": 83728,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 41,
+        "report": {
+          "request_id": "41-report",
+          "started_ms": 83928,
+          "ended_ms": 84629,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "41-attachment",
+          "started_ms": 84629,
+          "ended_ms": 84631,
+          "status": 200,
+          "echo": "41-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 42,
+        "report": {
+          "request_id": "42-report",
+          "started_ms": 84831,
+          "ended_ms": 84833,
+          "status": 200,
+          "echo": "42-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "42-attachment",
+          "started_ms": 84833,
+          "ended_ms": 84834,
+          "status": 200,
+          "echo": "42-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 43,
+        "report": {
+          "request_id": "43-report",
+          "started_ms": 85034,
+          "ended_ms": 85036,
+          "status": 200,
+          "echo": "43-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "43-attachment",
+          "started_ms": 85036,
+          "ended_ms": 85737,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 44,
+        "report": {
+          "request_id": "44-report",
+          "started_ms": 85937,
+          "ended_ms": 86638,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "44-attachment",
+          "started_ms": 86638,
+          "ended_ms": 87339,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 45,
+        "report": {
+          "request_id": "45-report",
+          "started_ms": 87539,
+          "ended_ms": 87541,
+          "status": 200,
+          "echo": "45-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "45-attachment",
+          "started_ms": 87541,
+          "ended_ms": 87542,
+          "status": 200,
+          "echo": "45-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 46,
+        "report": {
+          "request_id": "46-report",
+          "started_ms": 87742,
+          "ended_ms": 88443,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "46-attachment",
+          "started_ms": 88443,
+          "ended_ms": 89146,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 47,
+        "report": {
+          "request_id": "47-report",
+          "started_ms": 89346,
+          "ended_ms": 90047,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "47-attachment",
+          "started_ms": 90047,
+          "ended_ms": 90049,
+          "status": 200,
+          "echo": "47-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 48,
+        "report": {
+          "request_id": "48-report",
+          "started_ms": 90249,
+          "ended_ms": 90250,
+          "status": 200,
+          "echo": "48-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "48-attachment",
+          "started_ms": 90250,
+          "ended_ms": 90251,
+          "status": 200,
+          "echo": "48-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 49,
+        "report": {
+          "request_id": "49-report",
+          "started_ms": 90451,
+          "ended_ms": 91152,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "49-attachment",
+          "started_ms": 91152,
+          "ended_ms": 91154,
+          "status": 200,
+          "echo": "49-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 50,
+        "report": {
+          "request_id": "50-report",
+          "started_ms": 91354,
+          "ended_ms": 92055,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "50-attachment",
+          "started_ms": 92055,
+          "ended_ms": 92756,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 51,
+        "report": {
+          "request_id": "51-report",
+          "started_ms": 92956,
+          "ended_ms": 92958,
+          "status": 200,
+          "echo": "51-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "51-attachment",
+          "started_ms": 92958,
+          "ended_ms": 92959,
+          "status": 200,
+          "echo": "51-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 52,
+        "report": {
+          "request_id": "52-report",
+          "started_ms": 93159,
+          "ended_ms": 93161,
+          "status": 200,
+          "echo": "52-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "52-attachment",
+          "started_ms": 93161,
+          "ended_ms": 93862,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 53,
+        "report": {
+          "request_id": "53-report",
+          "started_ms": 94062,
+          "ended_ms": 94064,
+          "status": 200,
+          "echo": "53-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "53-attachment",
+          "started_ms": 94064,
+          "ended_ms": 94765,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 54,
+        "report": {
+          "request_id": "54-report",
+          "started_ms": 94965,
+          "ended_ms": 95666,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "54-attachment",
+          "started_ms": 95666,
+          "ended_ms": 96367,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 55,
+        "report": {
+          "request_id": "55-report",
+          "started_ms": 96567,
+          "ended_ms": 97268,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "55-attachment",
+          "started_ms": 97268,
+          "ended_ms": 97969,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 56,
+        "report": {
+          "request_id": "56-report",
+          "started_ms": 98169,
+          "ended_ms": 98171,
+          "status": 200,
+          "echo": "56-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "56-attachment",
+          "started_ms": 98171,
+          "ended_ms": 98872,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 57,
+        "report": {
+          "request_id": "57-report",
+          "started_ms": 99072,
+          "ended_ms": 99074,
+          "status": 200,
+          "echo": "57-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "57-attachment",
+          "started_ms": 99074,
+          "ended_ms": 99075,
+          "status": 200,
+          "echo": "57-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 58,
+        "report": {
+          "request_id": "58-report",
+          "started_ms": 99275,
+          "ended_ms": 99276,
+          "status": 200,
+          "echo": "58-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "58-attachment",
+          "started_ms": 99276,
+          "ended_ms": 99977,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 59,
+        "report": {
+          "request_id": "59-report",
+          "started_ms": 100178,
+          "ended_ms": 100179,
+          "status": 200,
+          "echo": "59-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "59-attachment",
+          "started_ms": 100179,
+          "ended_ms": 100880,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 60,
+        "report": {
+          "request_id": "60-report",
+          "started_ms": 101080,
+          "ended_ms": 101082,
+          "status": 200,
+          "echo": "60-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "60-attachment",
+          "started_ms": 101082,
+          "ended_ms": 101083,
+          "status": 200,
+          "echo": "60-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 61,
+        "report": {
+          "request_id": "61-report",
+          "started_ms": 101284,
+          "ended_ms": 101285,
+          "status": 200,
+          "echo": "61-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "61-attachment",
+          "started_ms": 101285,
+          "ended_ms": 101287,
+          "status": 200,
+          "echo": "61-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 62,
+        "report": {
+          "request_id": "62-report",
+          "started_ms": 101487,
+          "ended_ms": 101489,
+          "status": 200,
+          "echo": "62-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "62-attachment",
+          "started_ms": 101489,
+          "ended_ms": 101490,
+          "status": 200,
+          "echo": "62-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 63,
+        "report": {
+          "request_id": "63-report",
+          "started_ms": 101690,
+          "ended_ms": 102086,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "63-attachment",
+          "started_ms": 102086,
+          "ended_ms": 102787,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 64,
+        "report": {
+          "request_id": "64-report",
+          "started_ms": 102987,
+          "ended_ms": 103688,
+          "status": null,
+          "error": "TimeoutError"
+        },
+        "attachment": {
+          "request_id": "64-attachment",
+          "started_ms": 103688,
+          "ended_ms": 103690,
+          "status": 200,
+          "echo": "64-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 65,
+        "report": {
+          "request_id": "65-report",
+          "started_ms": 103890,
+          "ended_ms": 103892,
+          "status": 200,
+          "echo": "65-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "65-attachment",
+          "started_ms": 103892,
+          "ended_ms": 104593,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 66,
+        "report": {
+          "request_id": "66-report",
+          "started_ms": 104793,
+          "ended_ms": 105158,
+          "status": null,
+          "error": "ConnectionResetError"
+        },
+        "attachment": {
+          "request_id": "66-attachment",
+          "started_ms": 105158,
+          "ended_ms": 105859,
+          "status": null,
+          "error": "TimeoutError"
+        }
+      },
+      {
+        "trial": 67,
+        "report": {
+          "request_id": "67-report",
+          "started_ms": 106059,
+          "ended_ms": 106061,
+          "status": 200,
+          "echo": "67-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "67-attachment",
+          "started_ms": 106061,
+          "ended_ms": 106062,
+          "status": 200,
+          "echo": "67-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 68,
+        "report": {
+          "request_id": "68-report",
+          "started_ms": 106262,
+          "ended_ms": 106264,
+          "status": 200,
+          "echo": "68-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "68-attachment",
+          "started_ms": 106264,
+          "ended_ms": 106265,
+          "status": 200,
+          "echo": "68-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 69,
+        "report": {
+          "request_id": "69-report",
+          "started_ms": 106465,
+          "ended_ms": 106467,
+          "status": 200,
+          "echo": "69-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "69-attachment",
+          "started_ms": 106467,
+          "ended_ms": 106468,
+          "status": 200,
+          "echo": "69-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      },
+      {
+        "trial": 70,
+        "report": {
+          "request_id": "70-report",
+          "started_ms": 106668,
+          "ended_ms": 106670,
+          "status": 200,
+          "echo": "70-report",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d"
+        },
+        "attachment": {
+          "request_id": "70-attachment",
+          "started_ms": 106670,
+          "ended_ms": 106671,
+          "status": 200,
+          "echo": "70-attachment",
+          "node": "infra-r3-loss-451f327f49-worker2",
+          "pod_uid": "df5c67c8-0430-4621-aa62-a290be69a416",
+          "body": "A report 3",
+          "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+        }
+      }
+    ]
+  }
+}

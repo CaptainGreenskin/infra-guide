@@ -138,8 +138,8 @@
 #sample-readings a[href$="/about/#reader-trial"]{display:inline-flex;align-items:center;min-height:36px;white-space:nowrap}
 #reader-trial{scroll-margin-top:calc(var(--reader-header,76px) + 16px)}
 #reader-trial>section{margin:16px 0;padding-top:12px;border-top:1px solid var(--line)}
-#reader-trial>section[id],.reader-trial-questions[id]{scroll-margin-top:calc(var(--reader-header,76px) + 20px)}
-.reader-trial-return>a,.reader-trial-questions a{display:inline-flex;align-items:center;min-height:44px;color:var(--blue);font-weight:600}
+#reader-trial>section[id],.reader-trial-questions[id],.reader-trial-quick[id]{scroll-margin-top:calc(var(--reader-header,76px) + 20px)}
+.reader-trial-early>a,.reader-trial-return>a,.reader-trial-questions a,.reader-trial-quick>a{display:inline-flex;align-items:center;min-height:44px;color:var(--blue);font-weight:600}
 #reader-trial>section h3{margin:0 0 6px}
 #reader-trial summary{color:var(--blue);cursor:pointer;padding:8px 0}
 @media(max-width:720px){#reader-trial summary{min-height:44px}}

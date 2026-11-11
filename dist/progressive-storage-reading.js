@@ -208,7 +208,8 @@ kubectl get pv "$PV" -o yaml
 kubectl describe node "$CANDIDATE"
 kubectl get csinode "$CANDIDATE" -o yaml`)+
  p('从 PV 取 <code>spec.csi.driver</code> 和 <code>spec.nodeAffinity.required</code>。在候选节点核对同名驱动已注册，再匹配 PV 的节点条件。若有多组条件，节点满足其中一组即可，每组内的条件须同时成立。实际云盘的标签键和值取决于驱动和这个卷。满足卷条件后，还要检查 Pod 所需资源和放置条件。',
- '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。')+
+ '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。',
+ '如果原节点已停，且没有其他节点满足原卷的条件，就要先找到独立备份，再准备目标节点能使用的卷。<a href="/article/resilience/#native-kind-r3-node-loss">看工作节点停机后，怎样从新卷恢复并用原入口核对报告 →</a>。')+
  '<p class="source-at"><a href="https://v1-35.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/#node-affinity">PV 节点亲和性 ↗</a></p>';
  storage.updated='2026.11.12';
 })();

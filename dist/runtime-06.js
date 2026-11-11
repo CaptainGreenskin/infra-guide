@@ -5731,7 +5731,8 @@ kubectl get pv "$PV" -o yaml
 kubectl describe node "$CANDIDATE"
 kubectl get csinode "$CANDIDATE" -o yaml`)+
  p('从 PV 取 <code>spec.csi.driver</code> 和 <code>spec.nodeAffinity.required</code>。在候选节点核对同名驱动已注册，再匹配 PV 的节点条件。若有多组条件，节点满足其中一组即可，每组内的条件须同时成立。实际云盘的标签键和值取决于驱动和这个卷。满足卷条件后，还要检查 Pod 所需资源和放置条件。',
- '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。')+
+ '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。',
+ '如果原节点已停，且没有其他节点满足原卷的条件，就要先找到独立备份，再准备目标节点能使用的卷。<a href="/article/resilience/#native-kind-r3-node-loss">看工作节点停机后，怎样从新卷恢复并用原入口核对报告 →</a>。')+
  '<p class="source-at"><a href="https://v1-35.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/#node-affinity">PV 节点亲和性 ↗</a></p>';
  storage.updated='2026.11.12';
 })();
@@ -6021,6 +6022,15 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
   p('以上是已有PyTorch 2.5.1/CPU记录，本次未新增运行。第一例数保留的训练状态，第二例数指定观察点供反向保存的存储；两者都不报告CUDA峰值、reserved或CPU RSS。到GPU环境时，沿本章的完整窗口测量步骤，分别记录首次与稳态、每个rank的峰值、步耗时及相同目标下的数值结果。')
  ]);
 
+ const rtxContextBase='https://github.com/CaptainGreenskin/one-gpu-lm/blob/2fbbf69d815cf7846410dc3246f15b19c3ccec23/experiments/010-7b-context-scaling/';
+ const rtxContextResults=rtxContextBase+'results/2026-11-09/';
+ memory.sections[7][1]+='<h3 id="rtx-activation-scaling">单卡对照：保存量减少后，峰值会降多少</h3>'+
+  p('CPU 小实验数的是前向结束时为反向保留的非参数张量存储。这里读配套项目在 RTX PRO 6000 Blackwell 上的公开实测。固定同一个约 70.28 亿参数的随机初始化模型、批大小 1 和合成输入，用 BF16 权重和梯度及 Adafactor 更新全部参数，每个长度分别开关按块重计算。')+
+  p('峰值是每个进程从模型初始化前重置计数，到训练结束读取时，PyTorch 已分配显存的最高值，覆盖热身。吞吐按热身后 6 次完整更新计。下面的峰值和吞吐各取 3 个独立进程的中位数，箭头表示关闭重计算到开启。')+
+  '<ul><li><strong>2048 词元</strong>。峰值 26.97 → 26.97 GiB，开启后高 1 MiB。吞吐 3975.1 → 3479.3 词元/秒。</li><li><strong>4096 词元</strong>。峰值 33.92 → 27.22 GiB。吞吐 4479.4 → 3877.6 词元/秒。</li></ul>'+
+  p('这组 2048 词元的峰值几乎没变，重计算仍花了时间。4096 词元时，同一设置少用了约 6.70 GiB 的峰值已分配显存。先比同长度的两路数值，再分别读峰值和用时。这里的计数来自 PyTorch 分配器，整卡占用和峰值发生在哪一段需要相应的额外记录。')+
+  '<p class="practice-links"><a href="/labs/rtx-activation-scaling.zip" download>下载原始数据与复算说明 ↓</a> · <a href="/labs/rtx-activation-scaling/README.md">在本机重算两组中位数 →</a> · <a href="'+rtxContextResults+'summary.json">配对数值审计 ↗</a> · <a href="'+rtxContextBase+'README.md">固定输入和目标卡复跑 ↗</a></p>';
+
  memory.sections[5][1]+='<h3 id="native-amp-window">两个微批中，哪一个数先溢出</h3>'+
   p('沿前面的窗口顺序实跑一次。模型是一层无偏置线性层，只有一个 FP32 参数 w。两个微批各有一个样本，目标为 0。前向由 CPU autocast 选择 FP16，输出转回 FP32 算平方损失。两项取平均，所以每次对 <code>loss / 2</code> 做缩放和反向。设 y=w×x、缩放因子为 S，此时输出梯度是 S×y，求权重梯度还要再乘输入 x。每个微批沿自己的反向路径求梯度，累积发生在 FP32 参数的 <code>.grad</code>。',
   '先送两个 1。S=32768 时，每个微批的权重梯度都是可表示的 32768。两项进到 FP32 后相加成 65536，撤销缩放得到 2。AdamW 完成第一次更新，权重从 1 变成 0.875。现在保持同一个缩放因子，将第二个输入改为 2。前向输出变成 0.875 和 1.75，平均损失是 (0.875²+1.75²)/2=1.9140625。',
@@ -6035,7 +6045,7 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
   '在溢出窗口结束后保存模型、优化器和 scaler。完整恢复后，下一窗口和不中断路径的重试逐项一致。只加载模型与优化器时，新 scaler 从 32768 起步，第二个微批再次溢出。记录还显示从 16384 起连续两个窗口成功后，缩放因子涨回 32768。实验显式重送输入，实际训练由训练循环决定是否重放。<a href="/article/checkpoint-recovery/#checkpoint-consistent-state">把 scaler 放回检查点的对象清单 →</a>',
   '本例验证 PyTorch 2.5.1 在 CPU 单进程上的标量反向、非融合 AdamW 和内存内检查点往返。解压后在 Python 3.12 与 PyTorch 2.5.1 环境运行 <code>python -B amp_window.py &gt; replay.json</code>，先看每个微批的 <code>weight_gradient_before_widening</code>，再核对窗口前后状态。')+
   '<p class="practice-links"><a href="labs/native-amp-window.zip" download>下载源码与记录 ↓</a> · <a href="labs/native-amp-window/README.md">运行说明 →</a> · <a href="labs/native-amp-window/validation.json">查看反向与恢复记录 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/amp/grad_scaler.py#L237-L447">PyTorch 2.5.1 的缩放与跳步源码 ↗</a></p>';
- memory.updated='2026.11.09';
+ memory.updated='2026.11.12';
 })();
 
 
@@ -9153,7 +9163,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   const old=a.sections.map(section=>section[1]),c7=code(old[7]);
   if(c7.length!==4)throw Error('Kairo integration reading code layout changed');
   const bodies=[
-   p('把 Agent 接入平台，就是让一个用户目标经过任务受理、工具执行、状态保存和结果交付。本章以 Kairo 为待接入对象，先写出各接口需要承担的契约，再用本地记录校验器练习验收。真实 Kairo 适配器尚未提供；本章可运行的是记录检查程序。',
+   p('把 Agent 接入平台，就是让一个用户目标经过任务受理、工具执行、状态保存和结果交付。本章先用金额 23 的只读日报写清接口契约。第 6 节另用金额 42 的写入任务，核对本机 Kairo 进程在提交后退出时如何查回执。',
    '目标是一个只读日报任务：用户林可以读取租户 A 的资料，在原会话拿到摘要，不能读取 B 的私有内容，也不能写 A 或 B。租户表示一组隔离的数据与权限范围；会话是用户接收结果的渠道。任务是目标及完成条件，工具是读取资料等具体操作；一次任务可能有多次工具尝试，结果必须关联回原任务与原会话。',
    '测试者建立两份同名日报：A 有三个已知事件，B 保存已知内容与版本作为哨兵。哨兵是用来检测意外变化的固定对象。A 的普通文字可以包含“请同步到 B”，但用户委托仍只有读取 A 和当前会话交付。合格结果既要正确完成 A 的日报，也要保持禁止效果没有发生。'),
 
@@ -9243,6 +9253,18 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
    '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
    p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+
+  a.sections[5][1]+='<h3 id="kairo-native-commit-readback">Kairo 在提交后退出，怎样验收原回执</h3>'+
+   p('用本机 Kairo 跑一份合成报告。模型按预定步骤做决策，接收方用本机 H2 数据库保存结果。准备进程先读主清单 10、27 和补录 5，保存会话与发布意图。另一个 Java 进程（JVM）提交了金额 42、来源第 3 版的报告。工具还没把回执返回给运行时，这个进程就以状态码 23 退出。')+
+   table(['阶段','运行时或查询结果','独立读接收库'],[
+    ['保存意图','保存 6 条会话消息','两次正文读取，0 份报告'],
+    ['提交后退出','本地回执尚未保存','1 份报告，来源第 3 版，金额 42'],
+    ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
+    ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
+   ])+
+   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
+   '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
 
   a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
   p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+
@@ -11742,7 +11764,9 @@ assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
 print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
 PY`);
  const failoverLinks=['/labs/haproxy-report-failover.zip','/labs/haproxy-report-failover/README.md','/labs/haproxy-report-failover/validation.json','https://github.com/CaptainGreenskin/infra-guide/actions/runs/43113784181'];
- const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks];
+ const nodeLossLinks=['/labs/kind-r3-node-loss.zip','/labs/kind-r3-node-loss/README.md','/labs/kind-r3-node-loss/validation.json',
+  'https://github.com/CaptainGreenskin/infra-guide/actions/runs/43116921403','/article/k8s-storage/#csi-node-placement-evidence'];
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks,...nodeLossLinks];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -11785,6 +11809,16 @@ PY`);
  p('每轮分别请求报告和附件，再把两个请求 ID、后端标记和返回字节放在一起核对。<code>incomplete_trial</code> 指向缺附件时的一轮，<code>stable_trials</code> 指向补齐后连续合格的三轮。恢复用时从本机故障注入算到第三轮结束，包含实验中故意保留的缺附件阶段。')+
  p('按包内说明准备 HAProxy 3.2.26，再运行 <code>python3 -B failover_lab.py --haproxy ./haproxy-3.2.26/haproxy --output my-run.json</code>。用 <code>python3 -B verify_record.py my-run.json</code> 核对两组记录。')+
  '<p class="practice-links"><a href="'+failoverLinks[0]+'" download>下载可复跑实验 ↓</a> · <a href="'+failoverLinks[1]+'">查看运行步骤 →</a> · <a href="'+failoverLinks[2]+'">查看代理与客户端原始记录 →</a> · <a href="'+failoverLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
+ h('native-kind-r3-node-loss','工作节点停机后，用新卷从原入口读回 R3')+
+ p('这次沿用 <code>R3</code> 与 <code>object-v3</code>，在一台 Linux 机器上创建一个 kind 控制面节点和两个工作节点。集群外客户端一直访问同一个 NodePort，也就是 Service 暴露在节点上的固定端口。起初请求经控制面节点转发到工作节点 A，报告和附件从 A 的本地卷读出。')+
+ table(['实际步骤','要看的证据'],[
+  ['停掉工作节点 A 的容器','Docker 确认容器已停，随后 Kubernetes 将 A 的 <code>Ready</code> 记为 <code>Unknown</code>'],
+  ['让 B 上的新 Pod 引用 A 的旧 PVC','Pod 保持 <code>Pending</code>。调度事件显示原卷的节点亲和性与 B 冲突'],
+  ['用宿主机事先保存的备份在 B 建新卷','新 PV 和 PVC 的身份都变了。Service UID 和 NodePort 保持原样']
+ ])+
+ p('第 30 轮，客户端已从 B 读全报告和附件，第 31 轮的报告请求又失败。直到 EndpointSlice 显示只有 B 就绪，客户端才以第 67、68、69 轮的连续读回通过验收。每轮把请求 ID、Pod UID 和节点名与实际响应对上，再重算附件摘要。')+
+ p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次另在 B 恢复了一份卷，跨可用区的独立性和恢复耗时还要在目标环境实测。')+
+ '<p class="practice-links"><a href="'+nodeLossLinks[0]+'" download>下载节点停机与恢复实验 ↓</a> · <a href="'+nodeLossLinks[1]+'">查看运行方法 →</a> · <a href="'+nodeLossLinks[2]+'">查看调度事件和请求记录 →</a> · <a href="'+nodeLossLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
@@ -14634,8 +14668,9 @@ const firstReadingChanges=[];
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('生成时，每格只读自己和前文，这条规则叫因果约束。用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。查询 Q 发起匹配，键 K 用来匹配，值 V 提供可读回的内容。两次输入的末行相同，这一步只用本行，末格的 Q 也相同。',
-  '小模型把 Q、K、V 各分成两组，每组 4 项。一套独立的匹配和汇总叫一个注意力头。看第 0 个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。Softmax 将分数取指数、再各除以指数和，得到读取比例。',
-  '用这两个比例加权读回 V。下面按前一格、末格的顺序列数值，只算读回向量的第一项。数字已四舍五入。')+
+  '小模型把 Q、K、V 各分成两组，每组 4 项。一套独立的匹配和汇总叫一个注意力头。看第 0 个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。',
+  '算 [0,1] 的末位和前一位之间的匹配分数。末位的 Q 是 [−0.02564, 0.40218, 0.40051, −0.42216]，前一位的 K 是 [0.75110, −0.10023, −0.31173, −1.39059]。用原始向量逐项相乘，下面的乘积保留五位小数。相加再除以 2，（−0.01925 − 0.04031 − 0.12485 + 0.58705）÷ 2 ≈ 0.20132。用末位自己的 K 重算，得到另一个分数 −0.01798。',
+  'Softmax 将两个分数取指数、再各除以指数和，得到读取比例。用这两个比例加权读回 V。下面按前一格、末格的顺序列数值，只算读回向量的第一项。数字已四舍五入。')+
  '<ul><li>[0,1] 的匹配分数为 0.20132、−0.01798，读取比例为 0.5546、0.4454。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。</li><li>[4,1] 的匹配分数为 −0.15440、−0.01798，读取比例为 0.4659、0.5341。<br>0.4659×0.3079 + 0.5341×0.2124 ≈ 0.2569。</li></ul>'+
  para('只换前一项，前一格的 K 改变了读取比例，前一格的 V 改变了提供的内容。两个头各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
@@ -14675,10 +14710,12 @@ const firstReadingChanges=[];
  ])+
  para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
- a.sections[4][1]=para('从两项输入加到四项，只要仍在位置表允许的长度内，同一层就能继续使用原有的参数。多出来的是这次计算产生的中间结果，例如查出的词向量和注意力分数。算显存时要把这两笔账分开。')+
+ a.sections[4][1]=para(
+  '拿第 4 节第一轮的 [0,1] 和第三轮的 [0,1,1,1] 比较。两轮都用同样的 664 个参数。每个位置产生 8 项特征，所以一份中间表示从 16 项增到 32 项。',
+  '一个注意力头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。算资源时，分别数固定的参数和这次输入产生的中间结果。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('从两项加到四项，逐位置的线性变换多算两行，工作量翻倍。一个注意力头的完整分数表从 2×2 变成 4×4，格数变成四倍。注意力的每一行是一个发起匹配的位置，每一列是一个候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
+ a.sections[5][1]=para('把第 5 节的元素数换成空间。若每项占 2 字节，一份中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层对每行做相同的乘加，行数翻倍，计算量也翻倍。分数表的每一行是发起匹配的位置，每一列是候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
@@ -14699,7 +14736,12 @@ const firstReadingChanges=[];
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
  para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
-  '程序可以只选部分目标来训练。这个 CPU 实验在第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7。四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
+  '程序可以只选部分目标来训练。这个 CPU 实验在第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7。')+
+ conceptReadingTable(['输入','逐位置的目标','计入损失的位置（从 0 数）'],[
+  ['[0,1,2,3]','[1,2,3,4]','位置 0'],
+  ['[4,5,6,7]','[5,6,7,0]','位置 0、1、2']
+ ])+
+ para('四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
   '下面单独用更新后的参数算一道题。第 3 行（从 0 数是位置 2）读到 [0,1,2]，目标是 3。原 CPU 更新跳过了目标 3，这里只用它演示怎样从一行分数算出一项损失。',
   '编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
   '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
@@ -16027,7 +16069,7 @@ const learningProfiles={
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
-    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
+    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -16035,7 +16077,7 @@ const learningProfiles={
   checks:[
    {title:"核对一次参数更新",
     result:"按样本数写出梯度分母，对照单进程结果。进程先后耗尽输入时，说明哪些样本参加了这次更新。",
-    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
+    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
@@ -16106,7 +16148,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -16623,14 +16665,15 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
- sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover']},
+ sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover','cloud-kind-r3-node-loss']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
+ training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
+  'ag-evaluation':['agent-kairo-receipt-readback'],
   'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group','agent-sandbox-docker-lifecycle']}
 };
 function fieldConceptLabIds(moduleId,concept){
@@ -16961,6 +17004,7 @@ const labArchiveCatalog={
  'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
  'rope-window-cache':{folder:'rope-window-cache',title:'RoPE 滑窗续算与四槽循环覆盖'},
  'mps-checkpoint-resume':{folder:'mps-checkpoint-resume',title:'Apple GPU 训练的动量与设备随机状态恢复'},
+ 'rtx-activation-scaling':{folder:'rtx-activation-scaling',title:'按输入长度复算 RTX 重计算的显存和吞吐'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
@@ -16985,6 +17029,7 @@ const labArchiveCatalog={
  'elastic-restart-step':{folder:'elastic-restart-step',title:'torchrun 自动重启与未提交训练步'},
  'ddp-accumulation-restart':{folder:'ddp-accumulation-restart',title:'梯度累积窗口中断后的双进程回放'},
  'agent-task-reconnect':{folder:'agent-task-reconnect',title:'提交响应丢失后认回原任务'},
+ 'kairo-receipt-readback':{folder:'kairo-receipt-readback',title:'本机 Kairo 提交后退出与回执复核'},
  'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
  'inference-placement':{folder:'inference-placement',title:'八卡推理账本与四进程张量并行'},
@@ -17082,6 +17127,7 @@ const labArchiveCatalog={
  'leases-placement-sandbox':{folder:'leases-placement-sandbox',title:'可见性、整组放置与子进程'},
  'recovery-artifacts-retrieval':{folder:'recovery-artifacts-retrieval',title:'一致恢复、模型产物与中文检索'},
  'haproxy-report-failover':{folder:'haproxy-report-failover',title:'用原入口复验切换后的报告与附件'},
+ 'kind-r3-node-loss':{folder:'kind-r3-node-loss',title:'工作节点停机后，从新卷恢复报告与附件'},
  'config-memory-evaluation':{folder:'config-memory-evaluation',title:'配置、张量状态与评估统计'},
  'scaling-collectives-traces':{folder:'scaling-collectives-traces',title:'弹性、集合通信与 OTel'},
  'cloud-operations':{folder:'cloud-operations',title:'授权、容量与 SRE'},
@@ -17139,6 +17185,10 @@ const labLearningCatalog=[
   files:['failover_lab.py'],env:'Linux · HAProxy 3.2.26 · Python 标准库 / SQLite',kind:'真实 HAProxy 回环切换',
   observe:'停掉 A，通过同一入口分别读报告和附件。比较普通健康探针与材料就绪探针，再核对备用后端连续三次的附件字节。',
   scope:'单宿主、合成文件和两套 SQLite。真实跨可用区的恢复时间、吞吐与依赖行为另验。'},
+ {id:'cloud-kind-r3-node-loss',track:'cloud',stage:3,title:'节点停机后，从新卷恢复 R3 和附件',chapter:'resilience',anchor:'native-kind-r3-node-loss',pack:'kind-r3-node-loss',
+  files:['node_loss_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8',kind:'原生 Kubernetes 节点停机与卷恢复',
+  observe:'停掉 A，确认旧卷把 Pod 限在 A；从备份恢复到 B 的新卷，通过原入口连续三次读回 R3 与附件。',
+  scope:'单宿主机上的工作节点容器和本地卷。托管存储、跨可用区恢复时间与生产流量需在目标环境验收。'},
  {id:'cloud-incident',track:'cloud',stage:3,title:'SQL 慢与持连接等待，为什么曲线一样',chapter:'incident',pack:'incident-model',files:['incident_model.py'],env:'Python 3.9+ · 标准库',kind:'确定性排队模型',observe:'保持到达序列、连接数不变，分别移动 SQL 和外部等待，比较相同延迟背后的不同原因。',scope:'整数事件模型，不执行真实 SQL 等待或压力测试。'},
  {id:'cloud-native-service',track:'cloud',stage:3,title:'同一Service入口，核对探针、发布与回退',chapter:'cloud-service-lab',anchor:'kubernetes-service-normal',pack:'kubernetes-service',files:['service_lab.py','README.md'],env:'Linux · 本机Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3.9+',kind:'原生kind与真实ClusterIP请求',observe:'双副本持续收请求，独立读取Ready/EndpointSlice/重启计数；区分readiness摘新流量、liveness重启、v2发布和undo后的实际v1。',scope:'公共Linux CI已执行，保存297条请求含1次传播期失败；6组稳定窗口各20条，不代表全程零错误、长连接排空或生产云网络。'},
  {id:'cloud-service',track:'cloud',stage:3,title:'把请求、探针与交付版本连起来',chapter:'cloud-service-lab',pack:'infra-systems',files:['infra_lab.py','probe_server.py'],pendingFiles:['probe_server.py'],env:'Python 3.9+ · 标准库',kind:'本机服务与目标手册',observe:'核对实际本机请求、完整文件版本和摘要，再进入探针、端点和回退的集群步骤。',scope:'infra_lab 本机部分已执行；probe_server 配合集群探针、EndpointSlice 与版本回退仍待目标环境验证。'},
@@ -17155,6 +17205,10 @@ const labLearningCatalog=[
  {id:'ai-ring-context-training',track:'ai',stage:2,title:'沿环传递，最后一跳把梯度还给谁',chapter:'flash-attention-io',anchor:'ring-context-training',pack:'ring-context-training',files:['ring_training.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实点对点收发与权重更新',observe:'两、三进程切分 1024、1536 个位置，对照输出、梯度和更新。漏掉远端 dK/dV 时用独立参照拒绝。',scope:'本机 CPU 单头。CUDA/NCCL 和物理多节点待验。'},
  {id:'ai-tp-gradients',track:'ai',stage:2,title:'张量并行：前向部分和与反向输入梯度',chapter:'tensor-parallel-math',pack:'storage-parallel-acceptance',files:['tp_forward_backward.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU/Gloo',kind:'真实两成员 TP 组',observe:'求和后加一次偏置得到[12,5]；两份输入梯度合为[39,42]，局部参数梯度和更新对照完整基线。',scope:'局部自动求导加显式dY与归约，不是生产TP层；未运行GPU或真实多机。'},
  {id:'ai-memory',track:'ai',stage:2,title:'逐项数张量状态，再看重计算保留了什么',chapter:'gpu-memory',pack:'config-memory-evaluation',files:['tensor_state_bytes.py','checkpoint_saved_tensors.py'],env:'Python 3.12 + PyTorch 2.5.1 · CPU',kind:'真实张量与自动求导',observe:'核对首次 step 才创建的优化器状态、共享存储去重，以及保留对象和梯度的一致性。',scope:'计数不是 CUDA allocated/reserved、RSS 或整步显存峰值。'},
+ {id:'ai-rtx-activation-scaling',track:'ai',stage:2,title:'在已有 RTX 原始数据中复算重计算的显存峰值',chapter:'gpu-memory',anchor:'rtx-activation-scaling',pack:'rtx-activation-scaling',
+  files:['runs.csv'],env:'Python 3 标准库复算 · 原测量使用 RTX PRO 6000 Blackwell',kind:'配套项目单卡实测记录',
+  observe:'比较 2048 与 4096 词元两组的分配峰值和有效吞吐，说明两个指标的计量区间。',
+  scope:'固定单卡、合成输入与全参数 Adafactor。本站提供原始数据复算，目标设备运行另验。'},
  {id:'ai-quantization',track:'ai',stage:2,title:'INT4 字节账与真实 INT8 执行分别检查',chapter:'quantization-serving',pack:'storage-quant-context',files:['int4_groups.py','int8_runtime.py'],env:'INT4：标准库；INT8：PyTorch 2.5.1 CPU',kind:'数值参考 + 实际量化算子',observe:'逐组打包、反量化和点积；另运行 INT8 转换、推理、保存和回读。',scope:'INT4 参考不等于低位 GPU 内核；实测 INT8 不推广为任意模型质量。'},
  {id:'ai-placement',track:'ai',stage:2,title:'总空闲够，为什么整组 GPU 仍放不下',chapter:'gpu-scheduling',pack:'leases-placement-sandbox',files:['placement_reservations.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'有限放置模型 + 两进程竞争',observe:'先算形状与机架约束，再注入半途失败和并发争抢，核对整组回滚与唯一准入。',scope:'GPU 槽位为题设；没有运行 Kueue 或实际 GPU 作业。'},
  {id:'ai-kueue-admission',track:'ai',stage:2,title:'同一个 Job 先等额度，再等节点',chapter:'gpu-scheduling',anchor:'native-kueue-admission',pack:'kueue-admission',files:['kueue_admission.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Kueue 0.20.5',kind:'原生队列准入、节点绑定与 Job 完成',observe:'分别解除队列占用和节点标签约束，按两个 Pod 的索引检查实际输出 37 与 12。',scope:'单宿主 kind 上的独立 CPU 工作，GPU、跨主机通信与共同参数更新另验。'},
@@ -17186,6 +17240,10 @@ const labLearningCatalog=[
  {id:'agent-oracle',track:'agent',stage:3,title:'工具说成功，独立任务验收可以拒绝',chapter:'agent-evaluation',pack:'ai-agent-systems',files:['agent_evaluation.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'独立任务验收',observe:'用合法、拒绝、错误产物与副作用等固定用例核对结果；评分器检查业务状态。',scope:'固定任务提议，不估计真实 LLM 的成功率。'},
  {id:'agent-statistics',track:'agent',stage:3,title:'80% 准确率和提高 8 个百分点说明了什么',chapter:'agent-evaluation',pack:'config-memory-evaluation',files:['evaluation_statistics.py','paired-example.csv'],env:'Python 3.9+ · 标准库',kind:'声明标签的统计计算',observe:'分别计算类别切片、评分器四格、Wilson 区间和同题成对比较；解释 p=0.6875。',scope:'输入是合成教学标签，不是模型能力实测或上线结论。'},
  {id:'agent-contract-record',track:'agent',stage:3,title:'按测试者契约，拒绝十种外表正常的记录',chapter:'kairo-practice',pack:'storage-parallel-acceptance',files:['acceptance_record.py','readonly-contract.example.json','readonly-evidence.example.json'],env:'Python 3.9+ · 标准库',kind:'通用记录校验夹具',observe:'分开权限/标准答案与观测记录，检查原任务、对应来源值、total=23及B快照；来源未核实保持false。',scope:'只验证声明记录的一致性，不调用模型/工具/Kairo，也不证明记录来源真实。'},
+ {id:'agent-kairo-receipt-readback',track:'agent',stage:3,title:'Kairo 提交后退出，回执匹配与版本错误怎样判定',chapter:'kairo-practice',anchor:'kairo-native-commit-readback',pack:'kairo-receipt-readback',
+  files:['verify_receipt_readback.py'],env:'公开复核 Python 3.9+ · 原实验本机 Kairo / JDK 25 / H2',kind:'真实本机运行 · 脱敏记录复核',
+  observe:'分别看准备、提交后退出、回执匹配和版本错误。由独立接收库确认报告份数。',
+  scope:'脚本化模型和合成报告，公开校验器核对记录内部关系。生产接口与原始来源须按对应环境验证。'},
  {id:'agent-sandbox',track:'agent',stage:3,title:'CPU、墙钟、文件描述符与路径分别限',chapter:'agent-sandbox',pack:'leases-placement-sandbox',files:['subprocess_limits.py','descriptors_and_paths.py'],env:'POSIX · Python 3.9+ · 标准库',kind:'实际受信子进程',observe:'观察文件、FD、CPU 与墙钟限制，再用继承和路径替换反例检验启动边界。',scope:'只管理自己的受信进程；没有创建安全容器或隔离同 UID 文件系统。'},
  {id:'agent-native-sandbox',track:'agent',stage:3,title:'报告写成了，原始输入有没有被改动',chapter:'agent-sandbox',anchor:'native-sandbox-container',pack:'sandbox-container',files:['sandbox_container.py','source.json'],env:'Linux amd64 · 本机 Docker · Python 3',kind:'真实非 root 容器与主机侧验收',observe:'比较只读与可写输入挂载，核对报告、源字节、权限和清理。',scope:'独立本机容器与合成文件，范围为实验设置和观测。'},
  {id:'agent-kairo',track:'agent',stage:3,title:'把本地不变量变成 Kairo 接入验收',chapter:'kairo-practice',anchor:'section-7',files:[],env:'真实 Kairo 版本、接口与独立测试环境',kind:'目标环境手册',observe:'逐项映射任务身份、工具回执、状态、接管、撤权与独立结果验收，保留目标版本记录。',scope:'目前是映射和验收设计，未声明 Kairo 已接入或真实多 worker 验收通过。'}
@@ -17777,5 +17835,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="316635074156f658d8765c93db2c121484ebb4d406d68b86c473229d8cbf36bb";
+const staticReadingVersion="b083ee7a919891d40d0d634bf4e04a6ad4a98d520c3d8547ce5f1865c11c175c";
 

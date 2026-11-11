@@ -500,13 +500,15 @@
         "recovery-postgres-native-checkpoints",
         "recovery-report-readback-gate",
         "recovery-r3-local-readback",
-        "native-haproxy-report-failover"
+        "native-haproxy-report-failover",
+        "native-kind-r3-node-loss"
       ],
       "visible_targets": [
         "subsection-1-1ww2dsc",
         "subsection-5-1dwp2yh",
         "recovery-report-readback-gate",
         "native-haproxy-report-failover",
+        "native-kind-r3-node-loss",
         "subsection-6-vxh3b7",
         "subsection-7-1bgmbh8",
         "subsection-9-xbrzl7",
@@ -735,13 +737,15 @@
         "subsection-9-r44dc9",
         "subsection-11-em7gfe",
         "subsection-11-11crht8",
-        "native-amp-window"
+        "native-amp-window",
+        "rtx-activation-scaling"
       ],
       "visible_targets": [
         "subsection-1-40kyla",
         "subsection-3-1xxxqsz",
         "native-amp-window",
         "subsection-8-1hcmeye",
+        "rtx-activation-scaling",
         "subsection-9-1sk5pf9",
         "subsection-9-r44dc9",
         "subsection-11-em7gfe",
@@ -1223,10 +1227,12 @@
         "kairo-read-evidence",
         "native-agent-task-reconnect",
         "kairo-resume-evidence",
-        "kairo-audit-coverage-check"
+        "kairo-audit-coverage-check",
+        "kairo-native-commit-readback"
       ],
       "visible_targets": [
         "kairo-resume-evidence",
+        "kairo-native-commit-readback",
         "kairo-read-evidence",
         "native-agent-task-reconnect",
         "kairo-audit-coverage-check"

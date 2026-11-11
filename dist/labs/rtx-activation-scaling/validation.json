@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "scope": "pinned_existing_rtx_samples_recomputed",
+  "archive_commit": "2fbbf69d815cf7846410dc3246f15b19c3ccec23",
+  "measurement_code_commit": "583ec7fde7a7aa894469515018c235862e13ccc3",
+  "sample_count": 48,
+  "source_sha256": {
+    "runs.csv": "5248e3ed2ae11c94a8212eb7bba917df56c6a87b37c75cf887ec56d379a65786"
+  },
+  "groups": [
+    {
+      "sequence": 2048,
+      "checkpoint": false,
+      "peak": 28954845184,
+      "rate": 3975.090554359708
+    },
+    {
+      "sequence": 2048,
+      "checkpoint": true,
+      "peak": 28955893760,
+      "rate": 3479.3148918218553
+    },
+    {
+      "sequence": 4096,
+      "checkpoint": false,
+      "peak": 36422557696,
+      "rate": 4479.404801532239
+    },
+    {
+      "sequence": 4096,
+      "checkpoint": true,
+      "peak": 29225452544,
+      "rate": 3877.5921875057047
+    }
+  ]
+}

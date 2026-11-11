@@ -46,7 +46,7 @@ function modulePage(m){if(infraDomain(m.id)){infraKnowledgePage(m);return}if(m.t
 
 function articlePage(a,anchor,showTrackOverview=false){
  const navigation=chapterNavigation(a),conceptTerms=chapterInitialConceptTerms(a),m=moduleFor(a.module);
- const sections=navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}${readerTrialSectionLink(a.id,i+1)}</section>`).join('');
+ const sections=navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${readerTrialEarlyLink(a.id,i+1)}${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}${readerTrialSectionLink(a.id,i+1)}</section>`).join('');
  const intro=a.intro!==a.desc?'<p class="intro">'+a.intro+'</p>':'';
  const overview=trackEntryOverviewHTML(a,showTrackOverview);
  const read=progress[a.id];

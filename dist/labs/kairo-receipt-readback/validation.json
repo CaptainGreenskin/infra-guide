@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "local_kairo_runtime_synthetic_commit_gap",
+  "boundary": {
+    "public_view": "normalized_observations",
+    "model": "scripted",
+    "receiver": "local_h2",
+    "public_provenance_verified": false
+  },
+  "fixture": {
+    "base": [
+      10,
+      27
+    ],
+    "supplement": [
+      5
+    ],
+    "saved_source_version": 3,
+    "mismatch_expected_version": 4
+  },
+  "phases": {
+    "prepare": {
+      "receiver": {
+        "reports": [],
+        "body_reads": [
+          "base",
+          "late"
+        ]
+      },
+      "saved_history_messages": 6
+    },
+    "after_commit_exit": {
+      "receiver": {
+        "reports": [
+          {
+            "amount": 42,
+            "source_version": 3
+          }
+        ],
+        "body_reads": [
+          "base",
+          "late"
+        ]
+      },
+      "jvm_exit_code": 23,
+      "local_receipt_saved": false
+    },
+    "matched": {
+      "receiver": {
+        "reports": [
+          {
+            "amount": 42,
+            "source_version": 3
+          }
+        ],
+        "body_reads": [
+          "base",
+          "late"
+        ]
+      },
+      "lookup_same_original_operation": true,
+      "receipt_match": true,
+      "write_handler_entries": 0,
+      "runtime_state": "COMPLETED",
+      "business_result": "RECEIPT_CONFIRMED"
+    },
+    "version_mismatch": {
+      "receiver": {
+        "reports": [
+          {
+            "amount": 42,
+            "source_version": 3
+          }
+        ],
+        "body_reads": [
+          "base",
+          "late"
+        ]
+      },
+      "lookup_same_original_operation": true,
+      "receipt_match": false,
+      "write_handler_entries": 0,
+      "runtime_state": "COMPLETED",
+      "business_result": "NEEDS_VERIFICATION"
+    }
+  },
+  "observations": {
+    "distinct_jvms": 4,
+    "independent_receiver_readbacks": 4
+  },
+  "verification_source_sha256": "c6b2a82ac2d994e9b4db5105cfcec44925c0c2d3a01a66bca1d267de8a2791e5"
+}

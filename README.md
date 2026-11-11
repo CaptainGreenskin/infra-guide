@@ -107,7 +107,7 @@ Transformer 入门用同一组四格输入比较循环、卷积与注意力，�
 
 C5.2消息投递、C6.2 Terraform状态、C6.3 GitOps调谐配有[隔离Linux CI](https://github.com/CaptainGreenskin/infra-guide/actions/runs/42445552027)：实际运行RabbitMQ、Terraform官方local提供程序、kind内Argo CD，分别核对运输确认与业务效果、状态与实际文件、声明同步与真实HTTP版本。完整代码、反例、图和结果使用同一组输入；本地状态和单机kind不当作生产云验收。详见[机制章审阅](docs/ITERATION_2026-11-08_DELIVERY.md)。
 
-已有实验包括Linux TCP/epoll、MySQL日志恢复、Docker资源与Kubernetes调度、CPU/Gloo训练恢复、手写算子与MoE进程分发、精确推测采样、Agent授权与崩溃窗口、中文检索及实际分词预算。Apple M4 Pro 已实跑 Metal 算子、推理和 MPS 单卡续训。kind 集群已验证 Cilium 网络策略、CSI 动态卷和同一宿主的两节点 CPU/Gloo 训练作业。配套项目 One GPU LM 有 RTX PRO 6000 单卡推理对照。本站 CUDA 内核已完成编译，NVIDIA 设备执行与 Nsight 性能分析、物理两机 NCCL、目标托管云 CNI/CSI、生产负载和 Kairo 实际接入仍待验证。见[运行记录与验证范围](https://captaingreenskin.github.io/infra-guide/about/)。
+已有实验包括Linux TCP/epoll、MySQL日志恢复、Docker资源与Kubernetes调度、CPU/Gloo训练恢复、手写算子与MoE进程分发、精确推测采样、Agent授权与崩溃窗口、中文检索及实际分词预算。Apple M4 Pro 已实跑 Metal 算子、推理和 MPS 单卡续训。kind 集群已验证 Cilium 网络策略、CSI 动态卷和同一宿主的两节点 CPU/Gloo 训练作业。配套项目 One GPU LM 有 RTX PRO 6000 单卡推理对照。本站 CUDA 内核已完成编译，NVIDIA 设备执行与 Nsight 性能分析、物理两机 NCCL、目标托管云 CNI/CSI 和生产负载仍待验证。Kairo 已在本机实跑提交后退出与回执复核，生产接口仍待对应环境验收。见[运行记录与验证范围](https://captaingreenskin.github.io/infra-guide/about/)。
 
 </details>
 

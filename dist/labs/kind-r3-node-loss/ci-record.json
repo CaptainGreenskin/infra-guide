@@ -1,0 +1,16 @@
+{
+  "run": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/43116921403",
+  "head_sha": "bc3bd6b91e6b0943e7abbb109e7e03971872aa56",
+  "workflow": ".github/workflows/cloud-kind-r3-node-loss-evidence.yml",
+  "artifact": {
+    "digest": "sha256:5e0f3b907991637825c6c3baeaba94dcfccbdfdc998803361b1548205296d4ae",
+    "id": 13897959946,
+    "name": "kind-r3-node-loss",
+    "files": [
+      "dist/labs/kind-r3-node-loss/node_loss_lab.py",
+      "native-results/kind-r3-node-loss.json"
+    ]
+  },
+  "validation_sha256": "90c924965c4c13ebbb97e48ed5cd10bc056deded5af8d5657abec052e4700a37",
+  "source_sha256": "cca4ac2ab56ea52a77eee7bb6c86c826b5a14dd6e7349ecd78d6e40b09d341b6"
+}

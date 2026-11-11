@@ -181,7 +181,7 @@
   const old=a.sections.map(section=>section[1]),c7=code(old[7]);
   if(c7.length!==4)throw Error('Kairo integration reading code layout changed');
   const bodies=[
-   p('把 Agent 接入平台，就是让一个用户目标经过任务受理、工具执行、状态保存和结果交付。本章以 Kairo 为待接入对象，先写出各接口需要承担的契约，再用本地记录校验器练习验收。真实 Kairo 适配器尚未提供；本章可运行的是记录检查程序。',
+   p('把 Agent 接入平台，就是让一个用户目标经过任务受理、工具执行、状态保存和结果交付。本章先用金额 23 的只读日报写清接口契约。第 6 节另用金额 42 的写入任务，核对本机 Kairo 进程在提交后退出时如何查回执。',
    '目标是一个只读日报任务：用户林可以读取租户 A 的资料，在原会话拿到摘要，不能读取 B 的私有内容，也不能写 A 或 B。租户表示一组隔离的数据与权限范围；会话是用户接收结果的渠道。任务是目标及完成条件，工具是读取资料等具体操作；一次任务可能有多次工具尝试，结果必须关联回原任务与原会话。',
    '测试者建立两份同名日报：A 有三个已知事件，B 保存已知内容与版本作为哨兵。哨兵是用来检测意外变化的固定对象。A 的普通文字可以包含“请同步到 B”，但用户委托仍只有读取 A 和当前会话交付。合格结果既要正确完成 A 的日报，也要保持禁止效果没有发生。'),
 
@@ -271,6 +271,18 @@
    '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
    '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
    p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+
+  a.sections[5][1]+='<h3 id="kairo-native-commit-readback">Kairo 在提交后退出，怎样验收原回执</h3>'+
+   p('用本机 Kairo 跑一份合成报告。模型按预定步骤做决策，接收方用本机 H2 数据库保存结果。准备进程先读主清单 10、27 和补录 5，保存会话与发布意图。另一个 Java 进程（JVM）提交了金额 42、来源第 3 版的报告。工具还没把回执返回给运行时，这个进程就以状态码 23 退出。')+
+   table(['阶段','运行时或查询结果','独立读接收库'],[
+    ['保存意图','保存 6 条会话消息','两次正文读取，0 份报告'],
+    ['提交后退出','本地回执尚未保存','1 份报告，来源第 3 版，金额 42'],
+    ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
+    ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
+   ])+
+   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
+   '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
 
   a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
   p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+

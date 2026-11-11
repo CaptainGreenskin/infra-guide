@@ -112,7 +112,8 @@ const nativeRecordChecks = {
  'dist/labs/rope-window-cache/validation.json':'./check-rope-window-cache.cjs',
  'dist/labs/metal-online-attention/validation.json':'./check-metal-online-attention.cjs',
  'dist/labs/dual-stack-connect/validation.json':'./check-dual-stack-connect.cjs',
- 'dist/labs/haproxy-report-failover/validation.json':'./check-haproxy-report-failover.cjs'
+ 'dist/labs/haproxy-report-failover/validation.json':'./check-haproxy-report-failover.cjs',
+ 'dist/labs/kind-r3-node-loss/validation.json':'./check-kind-r3-node-loss.cjs'
 };
 for(const unit of expansion.revised_teaching_units||[]){
  const a=data.articles.find(a=>a.id===unit.chapter);assert(a&&unit.scope&&unit.observation&&unit.reviewed_at);

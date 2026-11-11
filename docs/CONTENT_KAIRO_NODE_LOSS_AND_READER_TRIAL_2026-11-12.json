@@ -1,0 +1,36 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "3fa3f5ae75d1d53d3e0b86bf5f245ad56754e57a",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NATIVE_RECOVERY_PATHS_2026-11-12.json": "ef9fcc9adc0fa5d8ee43a4880d968b04d10fe71c7ccecab5aa641e9b92ba00ec"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "resilience",
+      "reviewed_at": "2026-11-12",
+      "scope": "Follow the R3 readback through a Kubernetes worker stop, failed scheduling with a node-local PV, a restore onto a new claim and the unchanged NodePort.",
+      "observation": "Linux CI stops the owned worker container. The old claim blocks B. B restores an independent backup to a different PV and PVC, then three consecutive readbacks match R3 and the original attachment.",
+      "reviewed_content_sha256": "b5a52d88881c4e935045c73a337b29831a080188174b9dbe85e84c73ec4940ff",
+      "record": "dist/labs/kind-r3-node-loss/validation.json"
+    },
+    {
+      "chapter": "gpu-memory",
+      "reviewed_at": "2026-11-12",
+      "scope": "Connect saved activations on CPU to the observed PyTorch allocated peak and timed steady-state updates on one RTX PRO 6000.",
+      "observation": "Paired source runs reduce the 4096-token allocated peak from 33.92 to 27.22 GiB and slow throughput. The 2048-token peak instead increases by 1 MiB.",
+      "reviewed_content_sha256": "c2da6e58fa62713094ef4c4816735f7031d924bf1f6565c0945bea0cdff06042",
+      "record": "dist/labs/rtx-activation-scaling/validation.json"
+    },
+    {
+      "chapter": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "scope": "Contrast the public read-only adapter gate with a local Kairo write, forced exit, and two readback-only resumptions.",
+      "observation": "Four local phases were checked independently. Both resumptions avoid write reentry; only the matching source version confirms the receipt. The public package permits checking the normalized record.",
+      "reviewed_content_sha256": "a2a9ed3007052d087cf418481d07142fd01d91691f1bbab7443ede3d85fc0b38",
+      "record": "dist/labs/kairo-receipt-readback/validation.json"
+    }
+  ]
+}

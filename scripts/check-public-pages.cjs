@@ -5,7 +5,7 @@ const xml=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>new URL(m[1]));
 assert.equal(urls.length,inventory.canonical);assert.equal(new Set(urls.map(u=>u.href)).size,inventory.canonical);
 const primaryOrder=['/outline/','/track/cloud/','/track/ai/','/track/agent/','/labs/','/resources/','/interview/'];
-const trialReturns=[];
+const trialReturns=[],trialEarlyReturns=[];
 function checkPrimaryOrder(html,route){
  const nav=html.match(/<nav class="top-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert(nav,route+': primary navigation exists');
@@ -33,6 +33,7 @@ for(const url of urls){
   }
  }
  for(const [,id] of html.matchAll(/href="\/about\/#reader-trial-questions-([^"]+)"/g))trialReturns.push([url.pathname,id]);
+ for(const [,id] of html.matchAll(/href="\/about\/#reader-trial-quick-([^"]+)"/g))trialEarlyReturns.push([url.pathname,id]);
  for(const [,href] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
    if(/^(https?:|data:|#)/.test(href))continue;
    const target=new URL(href,url.origin+'/').pathname;
@@ -75,7 +76,7 @@ assert(validationScope.includes('配套项目 One GPU LM 记录了'));
 assert(validationScope.includes('完成编译，NVIDIA 设备执行与 Nsight 性能分析待验证'));
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
 assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
-for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','愿意反馈时','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式']){
+for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','愿意反馈时','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式','第 1 节可以提前结束','提交需要登录 GitHub']){
  assert(trial.includes(phrase),'reader trial guidance: '+phrase);
 }
 assert(!/<(?:form|input|textarea)\b/.test(trial),'the trial collects no form data on the site');
@@ -92,7 +93,8 @@ assert.deepEqual([...trial.matchAll(/id="reader-trial-questions-([^"]+)"/g)].map
 assert.equal((trial.match(/<details class="article-case">/g)||[]).length,3,'the three question sets are closed initially');
 const version=fs.readFileSync(path.join(dist,'static-reading-version.js'),'utf8').match(/const staticReadingVersion="([a-f0-9]{64})";/)?.[1];
 assert(version&&about.includes('data-static-version="'+version+'"'),'the trial uses the full rendered content version');
-const drafts=[];
+assert.deepEqual([...trial.matchAll(/id="reader-trial-quick-([a-z]+)"/g)].map(([,id])=>id),cases.map(([id])=>id),'one focusable quick feedback target per direction');
+const drafts=[],quickDrafts=[];
 for(const [index,[id,track,chapter,end,reading]] of cases.entries()){
  const task=taskBlocks[index][2],article='/article/'+chapter+'/',start=article+'#section-1';
  assert(task.includes('href="'+start+'">阅读'+reading),'reader trial reading range: '+id);
@@ -108,14 +110,29 @@ for(const [index,[id,track,chapter,end,reading]] of cases.entries()){
   assert(fields.includes(field),'feedback draft field for '+id+': '+field);
  }
  drafts.push(feedback.href);
+ const quickBlock=task.match(/<p class="reader-trial-quick" id="reader-trial-quick-([a-z]+)" tabindex="-1"><a href="([^"]+)" target="_blank" rel="noopener noreferrer">只反馈一个卡点 ↗<\/a><\/p>/);
+ assert.equal(quickBlock?.[1],id,'short feedback is separate from the full questions');
+ const quick=new URL(quickBlock[2].replaceAll('&amp;','&'));
+ assert.equal(quick.origin+quick.pathname,feedback.origin+feedback.pathname);
+ assert.equal(quick.searchParams.get('title'),'试读卡点 · '+track);
+ assert.deepEqual(quick.searchParams.get('body').split('\n'),[
+  '### 阅读范围','- 方向：'+track,'- 指定范围：'+reading,
+  '- 阅读入口：https://captaingreenskin.github.io/infra-guide'+start,'- 内容版本：'+version,
+  '','### 阅读卡点','- 最后读到哪一节','- 哪个词或哪句没看懂'
+ ],id+': short draft asks only for the stopping point and wording');
+ quickDrafts.push(quick.href);
  const page=fs.readFileSync(path.join(dist,article,'index.html'),'utf8');
  const sectionStart=number=>page.indexOf('<section class="article-section" id="section-'+number+'">');
  const section=sectionStart(end),next=sectionStart(end+1);
  assert(sectionStart(1)>=0&&section>=0&&next>section,'trial start and end section exist: '+id);
  assert(page.slice(section,next).includes('href="/about/#reader-trial-questions-'+id+'"'),'the return is in the last assigned section: '+id);
+ assert(page.slice(sectionStart(1),sectionStart(2)).includes('</h2><p class="reader-trial-early"><a href="/about/#reader-trial-quick-'+id+'">提前结束试读，反馈一个卡点 →</a></p>'),
+  'early feedback is available before the first section body: '+id);
 }
-assert.equal(new Set(drafts).size,cases.length,'one distinct feedback draft per direction');
-assert.deepEqual(trialReturns.sort(),cases.map(([id, ,chapter])=>['/article/'+chapter+'/',id]).sort(),'exactly one trial return for each assigned article');
+assert.equal(new Set([...drafts,...quickDrafts]).size,cases.length*2,'distinct short and full drafts for each direction');
+const articleTrials=cases.map(([id, ,chapter])=>['/article/'+chapter+'/',id]).sort();
+assert.deepEqual(trialReturns.sort(),articleTrials,'exactly one trial return for each assigned article');
+assert.deepEqual(trialEarlyReturns.sort(),articleTrials,'exactly one early return for each assigned article');
 const outline=fs.readFileSync(path.join(dist,'outline/index.html'),'utf8');
 const outlineTree=outline.slice(outline.indexOf('<h2>完整学习大纲</h2>'));
 assert(!outline.includes('learning-goal-selector')&&!outlineTree.includes('aria-current="page"'),'the outline is a stable chapter directory');

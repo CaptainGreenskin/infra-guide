@@ -252,7 +252,9 @@ assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
 print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
 PY`);
  const failoverLinks=['/labs/haproxy-report-failover.zip','/labs/haproxy-report-failover/README.md','/labs/haproxy-report-failover/validation.json','https://github.com/CaptainGreenskin/infra-guide/actions/runs/43113784181'];
- const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks];
+ const nodeLossLinks=['/labs/kind-r3-node-loss.zip','/labs/kind-r3-node-loss/README.md','/labs/kind-r3-node-loss/validation.json',
+  'https://github.com/CaptainGreenskin/infra-guide/actions/runs/43116921403','/article/k8s-storage/#csi-node-placement-evidence'];
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks,...nodeLossLinks];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -295,6 +297,16 @@ PY`);
  p('每轮分别请求报告和附件，再把两个请求 ID、后端标记和返回字节放在一起核对。<code>incomplete_trial</code> 指向缺附件时的一轮，<code>stable_trials</code> 指向补齐后连续合格的三轮。恢复用时从本机故障注入算到第三轮结束，包含实验中故意保留的缺附件阶段。')+
  p('按包内说明准备 HAProxy 3.2.26，再运行 <code>python3 -B failover_lab.py --haproxy ./haproxy-3.2.26/haproxy --output my-run.json</code>。用 <code>python3 -B verify_record.py my-run.json</code> 核对两组记录。')+
  '<p class="practice-links"><a href="'+failoverLinks[0]+'" download>下载可复跑实验 ↓</a> · <a href="'+failoverLinks[1]+'">查看运行步骤 →</a> · <a href="'+failoverLinks[2]+'">查看代理与客户端原始记录 →</a> · <a href="'+failoverLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
+ h('native-kind-r3-node-loss','工作节点停机后，用新卷从原入口读回 R3')+
+ p('这次沿用 <code>R3</code> 与 <code>object-v3</code>，在一台 Linux 机器上创建一个 kind 控制面节点和两个工作节点。集群外客户端一直访问同一个 NodePort，也就是 Service 暴露在节点上的固定端口。起初请求经控制面节点转发到工作节点 A，报告和附件从 A 的本地卷读出。')+
+ table(['实际步骤','要看的证据'],[
+  ['停掉工作节点 A 的容器','Docker 确认容器已停，随后 Kubernetes 将 A 的 <code>Ready</code> 记为 <code>Unknown</code>'],
+  ['让 B 上的新 Pod 引用 A 的旧 PVC','Pod 保持 <code>Pending</code>。调度事件显示原卷的节点亲和性与 B 冲突'],
+  ['用宿主机事先保存的备份在 B 建新卷','新 PV 和 PVC 的身份都变了。Service UID 和 NodePort 保持原样']
+ ])+
+ p('第 30 轮，客户端已从 B 读全报告和附件，第 31 轮的报告请求又失败。直到 EndpointSlice 显示只有 B 就绪，客户端才以第 67、68、69 轮的连续读回通过验收。每轮把请求 ID、Pod UID 和节点名与实际响应对上，再重算附件摘要。')+
+ p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次另在 B 恢复了一份卷，跨可用区的独立性和恢复耗时还要在目标环境实测。')+
+ '<p class="practice-links"><a href="'+nodeLossLinks[0]+'" download>下载节点停机与恢复实验 ↓</a> · <a href="'+nodeLossLinks[1]+'">查看运行方法 →</a> · <a href="'+nodeLossLinks[2]+'">查看调度事件和请求记录 →</a> · <a href="'+nodeLossLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+

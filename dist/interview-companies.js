@@ -21,7 +21,7 @@ function companyStudyGuide() {
   ['网络路径与诊断','byteSite',true,readLink('network-diagnosis','定位额外的等待'),'从累计时刻算出慢在哪段，选一项能区分入口和应用的探测。'],
   ['数据库访问与可见性','txSre',true,unitLink('database','比较三份查询计划'),'返回行一致，能解释临时排序与旧快照。目标数据库另行实测。'],
   ['可观测与事故处置','txSre',true,readLink('incident','写出故障时间线'),'写出用户影响、可证伪的假设、回滚条件和恢复证据。'],
-  ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a> · <a href="'+articleURL('resilience')+'#native-haproxy-report-failover">复跑原入口切换 →</a>','本机 HAProxy 对照从原入口读报告和附件。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
+  ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a> · <a href="'+articleURL('resilience')+'#native-haproxy-report-failover">复跑原入口切换 →</a> · <a href="'+articleURL('resilience')+'#native-kind-r3-node-loss">核对节点与卷恢复 →</a>','本机 HAProxy 对照与单机 kind 实验均从原入口读报告和附件。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照')+' <a href="'+articleURL('checkpoint-recovery')+'#native-ddp-accumulation-restart">复跑累积中断 →</a>','手算样本数不等时的正确更新。再对照同一份检查点从两个位置续跑，检查哪种恢复遗漏了微批。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
   ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验')+

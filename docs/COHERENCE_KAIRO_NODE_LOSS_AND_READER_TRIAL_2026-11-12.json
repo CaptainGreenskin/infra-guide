@@ -1,0 +1,238 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "3fa3f5ae75d1d53d3e0b86bf5f245ad56754e57a",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NATIVE_RECOVERY_PATHS_2026-11-12.json": "f2751a38a0e9a1e804fcf70fd365197610217e88fb426e55a8870ed90997852c"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "df553d12f21fb962a076e60b25ab5bcc5d8c81b3805e12b9d54f2092b11b8b67",
+      "reviewed_sha256": "3bdf2e0bfe53f82c5ed7fc9dcce37cae2dd0eb4445c0ba50194edc95cfbafe2e",
+      "scope": "Qualify the actual local Kairo receipt validation and the pending production adapters."
+    },
+    ".github/workflows/cloud-kind-r3-node-loss-evidence.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "36c1ffc7b1e5b1317075cbbdd6f43455aa221520134e741ab95d687a5e4d87b2",
+      "scope": "Record the public single-host Kubernetes evidence run, pinned tools and synthetic data."
+    },
+    "dist/app.js": {
+      "previous_sha256": "7be7ea1691c7e298d902a1d40418f12fdedfd75128579f3aab5c78301d54120c",
+      "reviewed_sha256": "4a845304d2ede2f87012fe1068e83ce03bd4c1e6b3fd9122f87225244861784a",
+      "scope": "Offer an early reader feedback link in the same place after enhancement."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "fcdabe9cb00a8d23549b5c6549ee24313dc4bf4340bcd0560ccf593156bf9f20",
+      "reviewed_sha256": "7f244ae67aa0d958f888f6cbecf5fadb4843ac7f4641f5f46606e9ac53b64adc",
+      "scope": "Render the early exit prompt and the corresponding short issue draft links."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "e94bef0ba514a9017109ac282ac6202bbe4b4bdfdc75799f51fc390b337d98a7",
+      "reviewed_sha256": "2ce63af65afb0de40a1615d4d2efa81e44b1697742719ab3e18d6fcede71065a",
+      "scope": "Keep the reader feedback link next to its trial article."
+    },
+    "docs/reader-trial/brief.md": {
+      "previous_sha256": "c1bb258fe3b447393660b6978c426d907b6b512090d21599afaeeafbac8eada0",
+      "reviewed_sha256": "78318bdd0599a77fc3227aec5090ea011bb774ac722922d8274686c9aa8d933b",
+      "scope": "Allow early observations without changing who counts as an actual reader."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "0068db86a5c037dacca9e9613c15661311e896a6dbd3a15973df6c5ed7dade33",
+      "reviewed_sha256": "20bb472bb00749fc470cb0ecb064d03ad9009b9279063358ac338fc1a8470099",
+      "scope": "Require static trial feedback links and their exact destinations."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "86d2a41e8c1207df78218995a654639a80a80cec07ec379ddd1aa411023a9fe8",
+      "reviewed_sha256": "21cd2378576ecf048c356c606d822851db5dc7c84aebe84603aa1b923551bc6e",
+      "scope": "Connect the observed results to the relevant concepts and exact return paths."
+    },
+    "dist/interview-companies.js": {
+      "previous_sha256": "fc90aab3abaac990d768f8a201412abd382c87b86f6cf634cb84fb70a41b4692",
+      "reviewed_sha256": "8e6fa08ed920cb636fc4e282cf90ef07a9b07cb69dc8b0699d3d4c8ebcb35cc5",
+      "scope": "Show the worker-stop result and preserve the cross-zone evidence boundary."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "572f522f3dd9129bf20076dfc078e9efd52e61339cd06955dd1e65a51367b468",
+      "reviewed_sha256": "5b9e8442269ce2093494b9bb92234e76d7f7a40f3e7c5ffa7450290b94b6c9bb",
+      "scope": "Add the exact Cloud, AI and Agent evidence anchors to the matching role outcomes."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "9d4861f737814f8b38563d43f45360558a3397cf7b16dbe5c535b505bf2121b3",
+      "reviewed_sha256": "3e2352077913499849fa9b68318288b84ebb69901602b0caaf4bee61b63dd5d1",
+      "scope": "Index the worker-stop, RTX observations and Kairo result verification packages."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "b565f7f7643e349a515d3b7caa4409aba80971b078bf9f127d9a2c3a9a12aea5",
+      "reviewed_sha256": "7241d08f8b84122a87905c1af4476a5b014c1da38057ca9512978f375fb83298",
+      "scope": "Carry the existing same-node CSI volume placement evidence forward to the separate native local PV worker-stop case."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "537e3da4c134bd86f4a615740b60294fe10f8ec4f750ff3fbf686eaf75d6ca07",
+      "reviewed_sha256": "3f98ed75831ecc86f96b5c85893bfce351dad8e93d6034c4e038b5eddc2435e7",
+      "scope": "Follow the R3 readback through a Kubernetes worker stop, failed scheduling with a node-local PV, a restore onto a new claim and the unchanged NodePort."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "d5d924443742197a279d567d0c0d4cbed3b4fa61b249d2ccded4811c7834161e",
+      "reviewed_sha256": "9ffeba5e9d2be00c38e31595c00ed9a8636495e1ba470abdb86363846736a73a",
+      "scope": "Contrast the public read-only adapter gate with a local Kairo write, forced exit, and two readback-only resumptions."
+    },
+    "dist/progressive-training-reading.js": {
+      "previous_sha256": "6e2c21fa29f4d4100205a7d44613353351d0e9374cd74a80bbfaa5f6026970d6",
+      "reviewed_sha256": "5a1e22febf5d9b0d61693242678ab5a92941c6dbff3c71e5b1b9f3d986fa7bbb",
+      "scope": "Connect saved activations on CPU to the observed PyTorch allocated peak and timed steady-state updates on one RTX PRO 6000."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "de818ddc4d86b014be39c2d9c1b4638d85ef93e12fe35b064c0e10b8916daa04",
+      "reviewed_sha256": "71d36bf8712c3d7f2736a5903ce8a001a68394afdee54a9d740f7eb374a85826",
+      "scope": "Keep the same small decoder example through an actual attention dot product, length and memory comparisons, and the training labels."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "7b45b5628661680fa35a3d5b2ce20b963c50f853632c1882a9a8a65c9e1760cb",
+      "reviewed_sha256": "16c5d11a99e28decc2b6c0382f00bf87c8d4c532dcbe2e9f1f2efc09c8c2b91f",
+      "scope": "Include three focused evidence checks in normal validation."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "8a8e5639e2a2df56b1e4c0ed246ea6d5cd8d2a707e91926f7fda38f39d202b67",
+      "reviewed_sha256": "a4a8d18625a224ce0c101835f3b9397ad047fe9ce546022beaad206922f9f9d0",
+      "scope": "Use the worker-stop verifier for the exact CI observation."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "294fbbd9538e0884dd3a2bc8d640480c61c1164427bfd7e51583a4fa6fd9786e",
+      "reviewed_sha256": "14af6dab93fd14e97375d0b93ce3141c1c77fd0a02209643bd1b898fc9927491",
+      "scope": "Check the exact role-gate destinations and return paths."
+    },
+    "scripts/check-kairo-receipt-readback.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5368a61d38c7a5b43bb9fc5cb5eb77a8ad5deb50b4a060696a4661ed0573f1dc",
+      "scope": "Check the public observation shape, original read-only boundary, archive and rejected mutations."
+    },
+    "scripts/check-kind-r3-node-loss.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d2f215ceb769a5dcc3937815d1c0f629d27d047a834452821795ba429d52a5de",
+      "scope": "Check the independently replayed observation, original fixture, source bindings, archive and recovery links."
+    },
+    "scripts/check-rtx-activation-scaling.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "029d92e89e476df1c6d0351cd4cf957fcc75164f4aada54683bd071473cde2bb",
+      "scope": "Recompute same-device medians and check the exact teaching copy."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "ddd5d3016ff45c648ed902f506710a4bdb7805280022de3f8d84cfd0b97ce14e",
+      "reviewed_sha256": "c8139113085305e52c34fbe3915daafb3bb45694c31e1549ca5bebb084f957b3",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "9a4ca58a8b0dfb3c644997b1b7499610ed439bac7adc2990bde07f4737f0c90d",
+      "reviewed_sha256": "797aee83a51b14ceeb4fda87b8e64883525b68c27754dc9a8f034d37e73b377d",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_KAIRO_NODE_LOSS_AND_READER_TRIAL_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "248a7bd1b562923530c147e146a75babcecb6255c9d95575ee907a436e3b97c2",
+      "scope": "Record the revised native teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "2c55767c2945f12894c94c896fb750c33c49f6c0eaaa67de423d1011257e01af",
+      "reviewed_sha256": "ef5e14d2bdb212d29887262a8282bccfa0940e619cddaa52ba26a3740b23127e",
+      "scope": "Append the current body review."
+    },
+    "dist/labs/kind-r3-node-loss/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6970cf6508d5fe10ec6a9adfa247d1dd30d2c610204310a81ddb6dfa412e79ce",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kind-r3-node-loss/ci-record.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "37c9b868929be6f3276cac597b0528cb57cbaa488e8752f006fa019cbe8bc909",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kind-r3-node-loss/node_loss_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cca4ac2ab56ea52a77eee7bb6c86c826b5a14dd6e7349ecd78d6e40b09d341b6",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kind-r3-node-loss/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "90c924965c4c13ebbb97e48ed5cd10bc056deded5af8d5657abec052e4700a37",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kind-r3-node-loss/verify_record.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "28985ee0c493e15dd84381f32d3a4c656f9aeff4cca9cf537ca699d1d0db8efb",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kind-r3-node-loss.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e64c33d24fc07e41a00eae3a3eb485121b79e241332ea7657d46dc867ada8401",
+      "scope": "Distribute the exact reviewed source and record for reproduction."
+    },
+    "dist/labs/rtx-activation-scaling/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "36898f692a58781949e284a105db043a0d02e3ad07456a166a69ca77b1eb40d1",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/rtx-activation-scaling/runs.csv": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5248e3ed2ae11c94a8212eb7bba917df56c6a87b37c75cf887ec56d379a65786",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/rtx-activation-scaling/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1744f0e931b4391cf23e1dbd034941417e7e5c4047641c0dc8176d9b4a2d2901",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/rtx-activation-scaling.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a18c6ee3aa8e3120d02a2c66d50c89c6973c42d75a1e76ec297853bec8353b33",
+      "scope": "Distribute the exact reviewed source and record for reproduction."
+    },
+    "dist/labs/kairo-receipt-readback/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e0c8c890986d458c2e7b6e5264d66ffb8c38c8300d645b8e9f54e18544e8ca2a",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kairo-receipt-readback/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bdc11ea86db7f53775626af330b6b85849b5d6c4c58f7f2d8ee8dc298856c2a2",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kairo-receipt-readback/verify_receipt_readback.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c6b2a82ac2d994e9b4db5105cfcec44925c0c2d3a01a66bca1d267de8a2791e5",
+      "scope": "Bind the runnable lab source, evidence or instructions to the reviewed package."
+    },
+    "dist/labs/kairo-receipt-readback.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "98ba5964aca52dac383c6ad435c138817336b6d1ceec5a64c4c64ae2d2ff6124",
+      "scope": "Distribute the exact reviewed source and record for reproduction."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "788ce3d31f5993d51ab9635be41ffe93f40b51734663314831b11a6971260b88",
+      "reviewed_sha256": "ee4410d977bc022dad2e03d60e1296377454fa57c11473a57a164c3dcd2aaddb",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "8cb2652aa12310ae078dc579c538f102330c1804da6ad32a94117a65f8e60e31",
+      "reviewed_sha256": "ee8c7e361cdbfcac10110e58b89273eba72c1681eb9815a03d50fa591f67e3c8",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3fa3f5ae75d1d53d3e0b86bf5f245ad56754e57a",
+    "chapters": 78,
+    "changed_bodies": [
+      "resilience",
+      "k8s-storage",
+      "gpu-memory",
+      "kairo-practice",
+      "transformer-model"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "kairo-practice": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -138,27 +138,36 @@ const readerTrialTasks=[
    transfer:'检索第一名是旧调整 99，真正送入上下文的只有当前调整 27。能交付「本月总额 27」吗？还缺哪份材料，需要核对哪些身份与条件？'
   }
 ];
+function readerTrialEarlyLink(chapter,section){
+ if(section!==1)return '';
+ const task=readerTrialTasks.find(item=>item.chapter===chapter);
+ return task?'<p class="reader-trial-early"><a href="/about/#reader-trial-quick-'+task.id+'">提前结束试读，反馈一个卡点 →</a></p>':'';
+}
 function readerTrialSectionLink(chapter,section){
  const task=readerTrialTasks.find(item=>item.chapter===chapter&&item.end===section);
  return task?'<p class="reader-trial-return"><a href="/about/#reader-trial-questions-'+task.id+'">这一段的试读题 →</a></p>':'';
 }
-function readerTrialFeedbackURL(task){
+function readerTrialFeedbackURL(task,quick=false){
  const readingURL='https://captaingreenskin.github.io/infra-guide/article/'+task.chapter+'/#section-1';
- const feedbackBody=[
+ const readingContext=[
   '### 阅读范围','- 方向：'+task.track,'- 指定范围：'+task.reading,'- 阅读入口：'+readingURL,
-  '- 内容版本：'+staticReadingVersion,'- 对这个主题的基础','- 设备（手机或电脑）',
+  '- 内容版本：'+staticReadingVersion
+ ];
+ const fields=quick?['','### 阅读卡点','- 最后读到哪一节','- 哪个词或哪句没看懂']:[
+  '- 对这个主题的基础','- 设备（手机或电脑）',
   '','### 实际进度','- 第 2 分钟找到的位置','- 最后读到哪里和实际用时',
   '','### 卡点与回答','- 卡住的术语或原句','- 两道概念题的回答','- 迁移题的判断和依据'
- ].join('\n');
- return 'https://github.com/CaptainGreenskin/infra-guide/issues/new?title='+encodeURIComponent('15 分钟试读反馈 · '+task.track)+'&amp;body='+encodeURIComponent(feedbackBody);
+ ];
+ const title=(quick?'试读卡点 · ':'15 分钟试读反馈 · ')+task.track;
+ return 'https://github.com/CaptainGreenskin/infra-guide/issues/new?title='+encodeURIComponent(title)+'&amp;body='+encodeURIComponent([...readingContext,...fields].join('\n'));
 }
 function readerTrialHTML(){
  return `<section class="quality-section" id="reader-trial" aria-labelledby="reader-trial-title">
  <h2 id="reader-trial-title">15 分钟试读</h2>
  <p>选一个你不熟悉的方向，只读指定小节。手机或电脑都可以，无需安装软件。</p>
  <ol><li><b>第 2 分钟</b> 记下找到的位置和卡住的术语或原句。</li><li><b>第 10 分钟</b> 合上正文，用自己的话回答两道概念题。</li><li><b>第 15 分钟</b> 做一道迁移题，写出判断依据。时间到了就记下读到的位置。</li></ol>
- <p>每个方向的最后一个指定小节都有返回试读题的链接。愿意反馈时，可打开 GitHub 草稿，选好愿意公开的内容后再提交。提交后，GitHub 会公开显示你的账号名和内容。请省略姓名、单位与联系方式。</p>
- ${readerTrialTasks.map(task=>`<section id="reader-trial-${task.id}"><h3>${task.track}</h3><p><a href="${articleURL(task.chapter)}#section-1">阅读${task.reading} →</a><br>${task.focus}</p><details class="article-case"><summary>展开 ${task.track} 读后题</summary><div class="reader-trial-questions" id="reader-trial-questions-${task.id}" tabindex="-1"><ol>${task.questions.map(question=>`<li>${question}</li>`).join('')}</ol><p><b>迁移题</b> ${task.transfer}</p><p><a href="${readerTrialFeedbackURL(task)}" target="_blank" rel="noopener noreferrer">打开这一方向的 GitHub 反馈草稿 ↗</a></p></div></details></section>`).join('')}
+ <p>第 1 节可以提前结束，只反馈停在哪一节、哪个词或哪句没看懂。最后一个指定小节有返回试读题的链接。愿意反馈时，可打开 GitHub 草稿，选好愿意公开的内容后再提交。提交需要登录 GitHub，且会公开显示你的账号名和内容。请省略姓名、单位与联系方式。</p>
+ ${readerTrialTasks.map(task=>`<section id="reader-trial-${task.id}"><h3>${task.track}</h3><p><a href="${articleURL(task.chapter)}#section-1">阅读${task.reading} →</a><br>${task.focus}</p><p class="reader-trial-quick" id="reader-trial-quick-${task.id}" tabindex="-1"><a href="${readerTrialFeedbackURL(task,true)}" target="_blank" rel="noopener noreferrer">只反馈一个卡点 ↗</a></p><details class="article-case"><summary>展开 ${task.track} 读后题</summary><div class="reader-trial-questions" id="reader-trial-questions-${task.id}" tabindex="-1"><ol>${task.questions.map(question=>`<li>${question}</li>`).join('')}</ol><p><b>迁移题</b> ${task.transfer}</p><p><a href="${readerTrialFeedbackURL(task)}" target="_blank" rel="noopener noreferrer">打开这一方向的 GitHub 反馈草稿 ↗</a></p></div></details></section>`).join('')}
  </section>`;
 }
 
