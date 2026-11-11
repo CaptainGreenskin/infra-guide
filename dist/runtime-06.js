@@ -4514,22 +4514,23 @@ const progressiveAiSectionTitles={
  attention.sections[0][1]=
   '<span id="subsection-1-1ptyn5t"></span>'+
   '<h3 id="same-position-different-prefix">同一个词元，前文怎样改变预测</h3>'+
-  para('把 [0,1] 的第一项换成 4，第二格还是编号 1，也还在位置 1。按<a href="/article/tokenization-embedding/#same-token-lookup">上一章的查表结果</a>，它送入解码器块的向量完全一样。那最后一行会选出同一个编号吗？下面用入门的 664 参数模型比较。先训练一步，之后两次计算固定使用同一份参数。')+
+  para('把 [0,1] 的第一项换成 4。位置从 0 数，第二格的词元编号和位置编号都还是 1。按<a href="/article/tokenization-embedding/#same-token-lookup">上一章的查表结果</a>，词嵌入与位置向量相加后，两份输入只有第一行不同。把进入块的两行八项记为 X。下面用同一个 664 参数模型比较，先训练一步，之后固定这份参数。',
+  '模型先按每行自己的八项特征调整数值尺度，这一步叫归一化（本例用 RMSNorm）。再用线性层把每行的 8 项算成 24 项，分成三组。Q 是查询，用来找信息。K 是键，用来和查询匹配。V 是值，提供可读回的内容。每组各有 8 项，分给两个头，每个头各取 4 项，独立做匹配和汇总。到产生 Q、K、V 为止，每行只用自己的输入。',
+  '因此位置 1 的 Q 相同，第一个头的 Q 首项都是 −0.0256。换掉位置 0 的编号后，它的 K 首项由 0.7511 变为 0.0275，V 首项由 0.8441 变为 0.3079。位置 1 用自己的 Q 与位置 0、1 的 K 匹配，再按得到的权重混合两处的 V。换前文会改变读取比例，也会改变读到的内容。')+
   table(['输入','位置 1 输入向量首项','注意力分支输出首项','选出的编号'],[
    ['[0,1]','0.0434','0.3166','1'],
    ['[4,1]','0.0434','0.2672','7']
   ])+
-  para('这里的分支输出是注意力读完前文、把结果转回原特征宽度后，准备加回输入的向量。只换前文，差异就从这条分支传到最后的候选得分。<a href="/labs/tiny-decoder-forward/validation.json">查看实际计算记录</a> · <a href="/article/transformer-block/#native-tiny-decoder-context">沿两次回加跟到最后一行得分 →</a>',
-  '再做相反的改动。只把 [0,1] 的后一项换成 7，第一行的八个分数都保持原值。第一行只能读位置 0，第二行能读位置 0 和 1，这条读取规则叫因果注意力。',
+  para('两个头的结果拼回八项，再做一次线性变换，就是表里的注意力分支输出。它加回 X，差异继续传到最后的候选得分。<a href="/labs/tiny-decoder-forward/validation.json">查看实际计算记录</a> · <a href="/article/attention-mechanics/#same-prefix-attention-weights">复算这两条输入的读取权重 →</a> · <a href="/article/transformer-block/#native-tiny-decoder-context">沿两次回加跟到最后一行得分 →</a>',
+  '每个位置只读自己和前文，这条规则叫因果注意力。反过来只把 [0,1] 的后一项换成 7，第一行仍只能读位置 0，八个候选分数都保持原值。',
   '放到语言里，可以把“发布会上，苹果推出新机”分成三个示意位置。位置 1 的“苹果”可以用前面的“发布会上”来更新自己的表示。到了位置 2，模型才把“推出新机”纳入当前这一行的计算。',
-  '要让上一格影响这次预测，模型需要把不同行的信息汇到一起。把进入本层的表示记为 X，T 个位置各有 D 项特征，按行排成 [T,D]。第一层的 X 来自词嵌入和位置表，之后可以来自上一层。',
-  '以位置1为例，它用自己的Q（Query，查询向量）逐一匹配位置0和1的K（Key，匹配向量），再按匹配得到的权重汇入两个位置的V（Value，内容向量）。每个位置都能提供K和V，也能用自己的Q发起查询。自注意力中的“自”指这三组向量来自同一份X。模型用三张可学习矩阵做线性变换，这一步称为投影，得到Q=XWq、K=XWk、V=XWv。')+
+  '把归一化后的 X 记为 U，仍是 [T,D]，也就是 T 个位置各有 D 项特征。第一层的 X 来自词嵌入与位置向量，后续层的 X 可以来自上一层。对一个头，三次线性变换写作 Q=UWq、K=UWk、V=UWv，Wq、Wk、Wv 是该头的可学习权重。这些线性变换称为投影。源码用 <code>qkv(norm1(x))</code> 一起算出所有头的投影，再分组。自注意力的“自”指 Q、K、V 来自同一份表示。')+
   table(['对象','形状','每行与每列的含义'],[['Q / K','[T,d]','行是位置；d个特征用于匹配'],['V','[T,dᵥ]','行仍是候选位置；dᵥ个特征是读回内容'],['输出O','[T,dᵥ]','每个查询位置读回的一行内容']])+
   '<h3 id="subsection-1-bc8625">匹配分数、读取权重与输出</h3>'+
   para('查询行Qᵢ与候选行Kⱼ的对应分量逐项相乘再相加，这个点积经缩放得到匹配分数。Softmax把允许候选的分数换成非负且和为1的权重。按这些权重对V的对应行求和，就得到本次查询的输出。匹配与汇总使用各自的向量，因此Q/K和V的宽度可以不同。',
   '以下公式暂省略批与头。i是查询位置，j是候选位置，r是匹配特征下标，d是Q/K的特征数。Aᵢ是位置i允许读取的候选位置集合。分数S、权重P与输出O是三个不同的中间对象。')+
   knowledgeFormula('单头注意力的对应关系','Sᵢⱼ = ΣᵣQᵢᵣKⱼᵣ / √d；Pᵢⱼ = exp(Sᵢⱼ) / Σₖ∈Aᵢexp(Sᵢₖ)；Oᵢ = Σⱼ∈AᵢPᵢⱼVⱼ','j不属于Aᵢ时，读取权重为0。点积、缩放和Softmax产生无量纲权重；O保留V的内容分量。')+
-  para('QKᵀ把每一行Q与每一行K配对，结果的行是查询位置、列是候选位置。每个查询在自己的这一行内做Softmax。下面手算沿用0、1、2的编号和可见关系，用特意选取的简单向量算出位置1怎样混合V₀和V₁。')+
+  para('QKᵀ把每一行Q与每一行K配对，结果的行是查询位置、列是候选位置。每个查询在自己的这一行内做Softmax。下一节另取三个位置和便于手算的向量，先算各位置间的匹配分数，再在第 3 节按因果规则排除未来并汇总内容。')+
   linkTo('tokenization-embedding','回看编号、查表与位置表示');
  attention.sections[1][1]=para(
   '上一节的记录用来观察前文怎样影响预测。这里为手算另设一条三位置序列，只取一个头。下表直接给定投影后的Q、K、V，Q和K各有d=2项，V也取dᵥ=2项。每行对应一个位置，每列对应一个特征；多头小节再回到B=2、T=4、D=8的完整尺寸。',
@@ -10422,7 +10423,8 @@ float value = *address;
  p('把单个容器放进集群后，控制面管理 Pod 声明，节点负责实际启动。Pod 声明列出容器镜像、启动方式、资源与挂载；API Server 接收它，调度器 scheduler 为尚未绑定的 Pod 选择节点，节点代理 kubelet 再协调容器创建。若 Pod 由 Deployment 等工作负载管理，控制器会先按模板创建 Pod 对象。')+
  figures(r[3]).join('')+
  p('图中“选节点”与“启动进程”是相邻的两个边界。kubelet 通过 CRI（容器运行时接口）调用运行时服务；运行时继续准备镜像、文件系统与进程，具体实现可使用符合 OCI（开放容器标准）运行规范的低层工具。CRI 定义组件调用，OCI 规范定义容器配置与生命周期，二者分工不同。',
- '节点准备还包括网络和存储。CNI 是容器网络插件接口，CSI 是存储插件接口；相应实现参与设置网络或提供、挂载卷。绑定节点后发生镜像拉取或卷准备失败，业务进程可能尚未出现，应沿事件和容器状态继续定位。')+r3[0]+
+ '节点准备还包括网络和存储。CNI 是容器网络插件接口，CSI 是存储插件接口；相应实现参与设置网络或提供、挂载卷。绑定节点后发生镜像拉取或卷准备失败，业务进程可能尚未出现，应沿事件和容器状态继续定位。',
+ '命令中的 <code>-n demo</code> 选择名为 <code>demo</code> 的 Kubernetes 命名空间，它给 Pod 等 API 对象划分名称范围。两个命名空间可以各有一个同名 Pod。第 3 节的 Linux 命名空间划分进程看到的系统资源。')+r3[0]+
  p('核对同一个 Pod 时保留命名空间、名称和 UID。UID 标识这一次 API 对象，容器实例 ID 标识其中某次容器运行；Pod UID 不变而容器 ID 改变，可能只是容器重启。--previous 读取该容器前一次实例的日志，只有对应历史仍存在时才有内容。工作负载章接着解释谁负责补回丢失的 Pod。'),
 
  p('停止进程也是运行流程的一部分。PID 1 是一个 PID namespace 中的首个进程身份，Linux 对它的信号处理与子进程回收有特殊规则。容器入口若先启动 shell 再启动业务，运行时停止信号可能先交给 shell；使用 exec 以业务进程替换入口 shell，可以让业务直接处理信号。共享 PID 视图时，应用不一定是该视图中的 PID 1。')+r4[0]+
@@ -10450,6 +10452,8 @@ float value = *address;
   '用实验把图里的两个实例对上号。<code>image</code> 只记录一份镜像引用，摘要以 <code>e064671c</code> 开头。两条同时采集的 <code>concurrent_namespaces</code> 则给出不同的进程命名空间编号 <code>4026532266</code> 和 <code>4026532326</code>。<a href="/article/container-runtime/#container-native-run">运行实验并核对原始记录 →</a>'));
  runtime.sections[1][1]=runtime.sections[1][1].replace(r1[0],r1[0]+p(
   '审批通过后，部署程序怎样确认拿到的还是同一份内容？镜像仓库用镜像摘要锁定引用。<a href="/article/delivery/#native-release-artifact-trust">发布章用一份独立的实验检查同类问题</a>。签过名的清单锁定了 v1 报表归档的文件摘要，但按可变名称读取却拿到了 v2，按摘要校验就能发现这次变化。'));
+ runtime.sections[3][1]+=p(
+  '看<a href="/labs/kubernetes-service/validation.json">双副本实验的原始记录</a>，对照正常阶段 <code>normal_v1</code> 和容器重启后 <code>liveness_restarted</code>。Pod UID 仍为 <code>23cdd057…</code>，重启次数从 0 变为 1。客户端通过 Service 请求 <code>/work</code>，重启前后都能收到该 Pod 返回的 <code>v1</code>。应用每次启动生成的 <code>instance_id</code> 从 <code>d64fd57b…</code> 变为 <code>c87a6560…</code>。<a href="/article/kubernetes-basics/#subsection-3-4ww5rs">到 C4.2 看哪种探针会触发重启 →</a>');
  runtime.updated='2026.11.12';
 
  const workloads=select('k8s-workloads',['apply 成功，只完成了哪一步','先选工作负载，再写副本数','三副本滚动更新，先算允许范围','三种探针：动作、连续阈值与故障放大','四种失败，四个取证入口','PDB、滚动更新和节点故障分别约束什么','排空与退出：逐条核对完成证据','一份清单，三次单变量练习']);
@@ -14669,7 +14673,7 @@ PY`)+
  if(!taskOpening)throw Error('Missing original Agent task opening');
  replace('agent-runtime',0,taskOpening,p(
   '你让智能体汇总两笔订单并保存日报。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？先沿一次实际运行看是谁读到订单、谁写了报告，又是谁回头核对。',
-  '任务规定调用者是 A，只允许访问 A 的资源，并要求把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
+  '这次实验的工具服务预先把调用者设为 <code>principal-A</code>，只允许它访问 A 的订单和日报。任务是把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
   '按观察中的两笔订单算得 10+27=37。脚本接着提出用 <code>write_report</code> 将 37 写到 <code>report-A</code>，并注明来源版本 3。工具服务确认目标原先没有报告，写入第 1 版并返回写入记录。最后脚本提议结束，验收器另外读取数据库中的报告，核对目标、版本 1、金额 37 和来源版本 3，并检查此前确实读取过订单第 3 版。符合要求后，任务才标为成功。',
   '这三次提议中，读取和写入各调用一次工具，结束提议触发独立验收。接入模型时，模型可以根据上一次观察提出下一步，运行时仍负责检查、调用和保存结果。这样一轮轮推进，就形成了智能体（Agent）的执行循环。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
  replace('agent-security',0,
@@ -14749,7 +14753,8 @@ PY`)+
  replace('agent-runtime',1,
   p('工具名白名单防止提议调用不存在或未允许的工具；对象授权防止把允许工具用在别人的资源。主体、角色或审批不能直接采信模型提供的参数。schema 也不能通过自然语言说明执行真正的授权。外部网页、工具输出和检索资料即使写着“忽略限制、改写 B”，仍只是一份数据，不能签发新的委托。'),
   p('工具名和参数结构通过后，还要检查谁能访问哪个对象。身份认证负责确认调用者，授权决定这个主体能否执行指定动作。运行时使用认证和审批记录中的可信信息，资源服务在读取或提交前判断这次动作。网页、工具输出和检索资料作为任务数据使用，访问范围由可信委托和策略确定。',
-   '看另一项只读实跑。主体固定为 A，模型两次都选了销售查询 <code>read_sales_report</code>，参数分别是 <code>{"report_id":"A"}</code> 和 <code>{"report_id":"B"}</code>。A 的请求读到销售额 42。B 的 HTTP 请求也收到 200，工具结果标记为拒绝。资源端正文读取记录里只有 A 的报告。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">顺着模型提议、工具返回和读取记录核对 →</a>'));
+   '另一项只读实验预先设定调用者 <code>learner-A</code>。模型两次都选了销售查询 <code>read_sales_report</code>，参数 <code>{"report_id":"A"}</code> 和 <code>{"report_id":"B"}</code> 只改变要读哪份报告。两次 HTTP 都返回 200。A 读到销售额 42，B 的工具结果带 <code>isError=true</code>，资源端只记录了 A 的正文读取。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">顺着模型提议、工具返回和读取记录核对 →</a>',
+   '权限章另做了一份实验，服务校验签名令牌后才确定调用者。<a href="/article/agent-security/#mcp-resource-scope">看令牌检查和报告授权分别在哪一步 →</a>'));
  replace('agent-runtime',1,
   p('本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。',
    '输出结构也要校验。MCP 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。'),
@@ -14818,9 +14823,10 @@ tool_message = {"role": "tool", "tool_call_id": call["id"], "content": block.tex
  security.sections[1][1]+=
 
   '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
-  para('MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用已验证主体 <code>learner-A</code> 判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
+  para('这里另做一次订单报告实验。服务从通过校验的签名令牌里取得调用者 <code>learner-A</code>。MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用这个已验证身份判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
    '继续确认实际读取。服务端审计中，A 有一条 <code>body_read</code>，B 有 <code>object_denied</code> 且无正文读取。两次工具请求的 JSON-RPC 编号恰好都为 3。<a href="/article/kairo-practice/#kairo-read-evidence">沿同一份本机记录，到接入章对齐两次请求和正文审计 →</a>')+
-  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
+  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>'+
+  para('回到<a href="/article/agent-runtime/#subsection-2-3p2nje">运行时章的模型选工具实验</a>，看预先设定调用者时，模型参数怎样选中要读的报告。');
 })();
 
 
@@ -17605,5 +17611,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="88ff90b71a22180d3188e29619577efa175818db341b374d2407cc7b9e93ae59";
+const staticReadingVersion="1f34309310c659edb4250182bc4e0db8dbdfb5b29e7d281db12dc731299b0979";
 

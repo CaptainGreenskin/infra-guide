@@ -121,6 +121,24 @@ assert(attentionReading.includes('/article/transformer-block/#native-tiny-decode
 const runs = [record.runs.base, record.runs.change_prefix];
 const component = (run, layer) => run.layers[layer][1][0].toFixed(4);
 const tableRow = cells => '<tr>'+cells.map(value => '<td>'+value+'</td>').join('')+'</tr>';
+const projectedFirst = (run, tensor, position) => run.reference[tensor][0][position][0];
+const format = value => value.toFixed(4).replace('-', '−');
+const lookupToProjection = attentionReading.split('<table>')[0];
+compare(runs[0].layers.x[1], runs[1].layers.x[1]);
+for (const tensor of ['q', 'k', 'v']) {
+  compare(runs[0].reference[tensor][0][1], runs[1].reference[tensor][0][1]);
+}
+assert(lookupToProjection.includes('归一化（本例用 RMSNorm）') && lookupToProjection.includes('把每行的 8 项算成 24 项'));
+assert(lookupToProjection.includes('第一个头的 Q 首项都是 '+format(projectedFirst(runs[0], 'q', 1))));
+for (const tensor of ['k','v']) {
+  const [before, after] = runs.map(run => projectedFirst(run, tensor, 0));
+  assert(Math.abs(before-after) > 0.01);
+  assert(lookupToProjection.includes(`${tensor.toUpperCase()} 首项由 ${format(before)} 变为 ${format(after)}`));
+}
+const originalSource = read('dist/labs/sdpa-cache/tiny_decoder.py').toString();
+assert(originalSource.includes('self.qkv(self.norm1(x)).chunk(3, dim=-1)'));
+assert(attentionReading.includes('归一化后的 X 记为 U') && attentionReading.includes('Q=UWq、K=UWk、V=UWv'));
+assert(attentionReading.includes('/article/attention-mechanics/#same-prefix-attention-weights'));
 for (const run of runs) {
   assert(attentionReading.includes(tableRow([JSON.stringify(run.prompt), component(run, 'x'),
     component(run, 'attention'), run.selected_id])), 'opening trace shows the recorded projection for each input');

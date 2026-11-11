@@ -8843,6 +8843,82 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "container-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d662daf0ac09a751e391600d4dfc5d574ffc12528e815616b5c0f37e0b1b7ef9",
+      "reviewed_content_sha256": "e7ec425053a1eba503bc4e567907863be26c470ca1760f423e212855a568d7ac",
+      "scope": "Explain the Kubernetes namespace used in the command, then connect a preserved Pod identity to a restarted container and the control-plane lesson.",
+      "observation": "The native cluster record retains the Pod UID and v1 response after a liveness restart, while the restart count and application instance ID change.",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7834aaf9f9fdbef2f541653b6bce5ab78d789619aac3d00a7f8c813526885546",
+      "reviewed_content_sha256": "d41d75ec9af4584025e609d3f42c54541820fa3a9fe656389fc630992478953c",
+      "scope": "Carry the embedding output into row-local normalization and the actual Q, K and V projections before the comparison table.",
+      "observation": "The same second-position input preserves Q. Changing the first-position token changes its K and V and the second-position output. The native weight calculation is linked directly.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "78a767014fa81e728394955a337e2aedb965993f1b4dc78d3084bc600a5d18a0",
+      "reviewed_content_sha256": "f6d884b3fda5d77b0002afdcd8c391964db8a1434fd4b7d89b7bb3611b8ae2ed",
+      "scope": "Identify the configured caller before the first report request, then show that the tool parameter selects the report.",
+      "observation": "The scripted report run uses principal-A. A separate model run uses learner-A and receives HTTP 200 for both calls, while the denied tool result produces no body read for B.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9e8601cf0194867b5136925b49f772508535da0233efe27d64b34e754946876a",
+      "reviewed_content_sha256": "3ee8805a39aa9f3a487cf011ff37b19d996821301e9cfa39e3c8ee997811a03f",
+      "scope": "Follow the authenticated subject from a verified token to the report-specific resource check.",
+      "observation": "The token stays fixed and the two report parameters differ. The authorization record distinguishes the tool error from the HTTP status and records only the allowed body read.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
     }
   ]
 }

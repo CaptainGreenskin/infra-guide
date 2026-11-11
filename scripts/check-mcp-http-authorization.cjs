@@ -233,6 +233,7 @@ for (const [, file] of read(root, 'src/page-shell.html').matchAll(/<script defer
  if (file !== 'app.js') vm.runInContext(read(path.join(root, 'dist'), file), context, {filename: file});
 }
 const security = vm.runInContext('articleById("agent-security").sections[1][1]', context);
+const runtime = vm.runInContext('articleById("agent-runtime").sections.slice(0, 2).map(section => section[1])', context);
 const kairo = vm.runInContext('articleById("kairo-practice").sections[6][1]', context);
 function checkBridge(html, anchor, href) {
  const parts = html.split(`id="${anchor}"`);
@@ -240,9 +241,21 @@ function checkBridge(html, anchor, href) {
  assert(parts[1].includes(href), `${anchor}: link to the matching exercise`);
 }
 const resourceScope = 'mcp-resource-scope';
+const runtimeContract = 'subsection-2-3p2nje';
 const readEvidence = 'kairo-read-evidence';
 for (const html of [security, read(root, 'dist/article/agent-security/index.html')]) {
  checkBridge(html, resourceScope, '/article/kairo-practice/#' + readEvidence);
+ checkBridge(html, resourceScope, '/article/agent-runtime/#' + runtimeContract);
+ assert(html.split('id="' + resourceScope + '"')[1].includes('通过校验的签名令牌里取得调用者 <code>learner-A</code>'));
+}
+const runtimePage = read(root, 'dist/article/agent-runtime/index.html');
+checkBridge(runtimePage, runtimeContract, '/article/agent-security/#' + resourceScope);
+const [openingPage, contractPage] = runtimePage.split('id="' + runtimeContract + '"');
+for (const [opening, contract] of [runtime, [openingPage, contractPage.split('</section>')[0]]]) {
+ assert(opening.split('id="subsection-1-1s1j8lt"')[1].includes('预先把调用者设为 <code>principal-A</code>'));
+ assert(contract.includes('/article/agent-security/#' + resourceScope));
+ for (const marker of ['只读实验预先设定调用者 <code>learner-A</code>', '只改变要读哪份报告',
+  '两次 HTTP 都返回 200', 'B 的工具结果带 <code>isError=true</code>']) assert(contract.includes(marker), marker);
 }
 for (const html of [kairo, read(root, 'dist/article/kairo-practice/index.html')]) {
  checkBridge(html, readEvidence, '/article/agent-security/#' + resourceScope);

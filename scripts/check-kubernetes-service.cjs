@@ -189,6 +189,23 @@ const localRecord=JSON.parse(read('dist/labs/systems/validation.json'));
 assert.equal(sha(read('dist/labs/systems/infra_lab.py')),localRecord.source_sha256['infra_lab.py']);
 const localProbes=localRecord.core.results.http.observations.slice(-3).map(row=>[row.path,row.status]);
 assert.deepEqual(localProbes,['ready','live','work'].map(name=>['/'+name,o.readiness.direct_probe[name].status]));
+const container=read('dist/article/container-runtime/index.html').split('id="section-4"')[1].split('</section>')[0];
+const kubectl=container.indexOf('kubectl -n demo get pod');
+assert(kubectl>0&&container.slice(0,kubectl).includes('Kubernetes 命名空间')&&container.slice(0,kubectl).includes('Linux 命名空间'));
+const restartUid=o.liveness.pod_uid;
+const beforeCase=o.cases.normal_v1,afterCase=o.cases.liveness_restarted;
+const restartCount=phase=>phase.api_after.pods.find(pod=>pod.uid===restartUid).restart_count;
+const [beforeRestart,afterRestart]=[beforeCase,afterCase].map(phase=>
+ o.requests.find(r=>phase.sample_sequences.includes(r.seq)&&r.body.pod_uid===restartUid));
+for(const response of [beforeRestart,afterRestart])assert.deepEqual(
+ [response.status,response.body.path,response.body.version],[200,'/work','v1']);
+for(const key of [restartUid,beforeRestart.body.instance_id,afterRestart.body.instance_id])
+ assert(container.includes('<code>'+key.slice(0,8)+'…</code>'),key);
+assert(container.includes('重启次数从 '+restartCount(beforeCase)+' 变为 '+restartCount(afterCase)));
+assert(container.includes('应用每次启动生成的 <code>instance_id</code>'));
+assert(container.includes('/labs/kubernetes-service/validation.json'));
+assert(container.includes('/article/kubernetes-basics/#subsection-3-4ww5rs'));
+assert(read('dist/article/kubernetes-basics/index.html').includes('id="subsection-3-4ww5rs"'));
 const response=published.match(/<div class="mechanism-core" id="kubernetes-service-first-response">([\s\S]*?)<\/table>/)?.[1];
 assert(response,'The initial native response belongs in the visible article');
 const first=o.requests[0],initial=o.cases.normal_v1.api_before;

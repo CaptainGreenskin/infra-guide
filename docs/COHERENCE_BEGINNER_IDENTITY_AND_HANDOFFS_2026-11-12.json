@@ -1,0 +1,85 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "deba63d78727e2438a4900ff58c755e3b88d5d7e",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TARGET_ENVIRONMENT_AND_LAB_RETURN_2026-11-12.json": "c3364311460d592e8c0c2747823229c716cef192858e7822830e6fe97d7bb5dd"
+  },
+  "source_revisions": {
+    "dist/progressive-cloud-orchestration-reading.js": {
+      "previous_sha256": "324e8bc4f46b02bd5518884263d7a713db30485188ef94a57b7307d64a5731d2",
+      "reviewed_sha256": "31460259c5013426b3924885161e12adfa60e697b2b8d0b06bd228bf6dc8166e",
+      "scope": "Explain the Kubernetes namespace used in the command, then connect a preserved Pod identity to a restarted container and the control-plane lesson."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "6475a13df64eccd99fe9ceddad794dc410274a49f87ff407764b4a23471ec031",
+      "reviewed_sha256": "dabd642ed29dd36a160aa311aff7866ff815ac6c43bb11d2721dac77c6024993",
+      "scope": "Carry the embedding output into row-local normalization and the actual Q, K and V projections before the comparison table."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "e9d08c5c8fcecc760953b9f50e670a193747ae90a0bdf7a2c0420b48cea22cf4",
+      "reviewed_sha256": "c68b9859ad53a1a68b140c9e8b11a331040dfc73f93ddd1d5e45e151eba4bb2d",
+      "scope": "Identify the configured caller before the first report request, then show that the tool parameter selects the report."
+    },
+    "dist/mcp-http-cancellation-reading.js": {
+      "previous_sha256": "4f8148cd367bd3274e9010ac9038fbeee01bb4ae55d46d7b202be83a9b85fad3",
+      "reviewed_sha256": "8d086105bdf247eb8bc76e3e70c3310c0ac5a19a2cb7530637d0b9abb843fac8",
+      "scope": "Follow the authenticated subject from a verified token to the report-specific resource check."
+    },
+    "scripts/check-mcp-http-authorization.cjs": {
+      "previous_sha256": "d85f6253e6b5a20e9c5fcad0338966d50389fb3984f34aba5da5a90d7f7788ef",
+      "reviewed_sha256": "4b81f2626cf2b41b7e8c49edb8585f09f446e9002d1569ee7a9c26ce17140156",
+      "scope": "Verify exact subsection links, identities, transport and authorization outcomes in the rendered lessons."
+    },
+    "scripts/check-tiny-decoder-forward.cjs": {
+      "previous_sha256": "64bcbfa1d4ce4fab17788326065cc5abab39d72ab4fcbbf20b492d58d3f1258f",
+      "reviewed_sha256": "b9ee6d4bfe39fa21a6e2062072fc9620bfbe767680ce6e68cbe410b2e640f243",
+      "scope": "Bind the first attention calculation and its reading sequence to the native forward trace."
+    },
+    "scripts/check-kubernetes-service.cjs": {
+      "previous_sha256": "97dade2c55bd43468662e8e50c7463d6b754b928238521ccce6d583a97bac938",
+      "reviewed_sha256": "28c5fadfa4511d31fc2516a44a2fb4e7150193786653f418a2fc7c593aeedc27",
+      "scope": "Bind the before and after application and Kubernetes identities to the exact observations and preserve the chapter handoff."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "5da9d10214ba1ee2d5ccdce5769ce8555051840fbf8025b97ebf94d5493de6de",
+      "reviewed_sha256": "0b7be39ac8147bbc8d24562edb5621c1486f0fd7cf46b621b878a33b7d92d0cd",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "df2322f710170a854ff90f3af801d78e99f95ef3b6d86c31db5f52c815c88452",
+      "reviewed_sha256": "5cda0911f4f9c9b83e337506f63103c07fb20ce28d7ae20ae8c2cb4595df3b50",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_BEGINNER_IDENTITY_AND_HANDOFFS_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a36db6a61332e3ffb629cef34c9a72a0280144d758d894385b2fc0a7b650862d",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "dc4476c19309e7764405f7159cac8b6901d62cf8226851fe6a3ac793681be2ff",
+      "reviewed_sha256": "ccaf68b800822621083bf8e9f4b8c60e93742b356015d55ffcdae9328e2964a9",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "7aeddaad0e3976034736d4ce2b0f32128aab0eb7cddefa08fd24b366a1389d56",
+      "reviewed_sha256": "6e6a7de1f43cfa23121b65a6c9699df96b6a40b44df13b3da652de51b9260bfc",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "deba63d78727e2438a4900ff58c755e3b88d5d7e",
+    "chapters": 78,
+    "changed_bodies": [
+      "container-runtime",
+      "attention-mechanics",
+      "agent-runtime",
+      "agent-security"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

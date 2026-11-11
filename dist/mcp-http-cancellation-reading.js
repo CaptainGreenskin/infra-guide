@@ -29,7 +29,8 @@
  security.sections[1][1]+=
 
   '<h3 id="mcp-resource-scope">从入口读取范围到报告归属</h3>'+
-  para('MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用已验证主体 <code>learner-A</code> 判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
+  para('这里另做一次订单报告实验。服务从通过校验的签名令牌里取得调用者 <code>learner-A</code>。MCP 入口用 <code>report.read</code> 判断调用者是否具备读取报告的范围。到了 <code>read_order_report</code> 工具，资源服务再用这个已验证身份判断能否读取参数指定的那份报告。实验用同一份有效令牌，仅把目标在 <code>report-A</code> 和 <code>report-B</code> 之间切换。两次 HTTP 都返回 200，只有 A 返回第 3 版和合计 42，B 的工具结果为 <code>isError=true</code>。',
    '继续确认实际读取。服务端审计中，A 有一条 <code>body_read</code>，B 有 <code>object_denied</code> 且无正文读取。两次工具请求的 JSON-RPC 编号恰好都为 3。<a href="/article/kairo-practice/#kairo-read-evidence">沿同一份本机记录，到接入章对齐两次请求和正文审计 →</a>')+
-  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>';
+  '<p><a class="inline-link" href="/article/mcp-protocol/#native-mcp-http-authorization">查看 SDK 门禁和对象授权的实际记录 →</a></p>'+
+  para('回到<a href="/article/agent-runtime/#subsection-2-3p2nje">运行时章的模型选工具实验</a>，看预先设定调用者时，模型参数怎样选中要读的报告。');
 })();

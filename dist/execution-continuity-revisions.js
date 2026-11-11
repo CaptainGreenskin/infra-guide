@@ -19,7 +19,7 @@
  if(!taskOpening)throw Error('Missing original Agent task opening');
  replace('agent-runtime',0,taskOpening,p(
   '你让智能体汇总两笔订单并保存日报。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？先沿一次实际运行看是谁读到订单、谁写了报告，又是谁回头核对。',
-  '任务规定调用者是 A，只允许访问 A 的资源，并要求把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
+  '这次实验的工具服务预先把调用者设为 <code>principal-A</code>，只允许它访问 A 的订单和日报。任务是把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
   '按观察中的两笔订单算得 10+27=37。脚本接着提出用 <code>write_report</code> 将 37 写到 <code>report-A</code>，并注明来源版本 3。工具服务确认目标原先没有报告，写入第 1 版并返回写入记录。最后脚本提议结束，验收器另外读取数据库中的报告，核对目标、版本 1、金额 37 和来源版本 3，并检查此前确实读取过订单第 3 版。符合要求后，任务才标为成功。',
   '这三次提议中，读取和写入各调用一次工具，结束提议触发独立验收。接入模型时，模型可以根据上一次观察提出下一步，运行时仍负责检查、调用和保存结果。这样一轮轮推进，就形成了智能体（Agent）的执行循环。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
  replace('agent-security',0,
@@ -99,7 +99,8 @@
  replace('agent-runtime',1,
   p('工具名白名单防止提议调用不存在或未允许的工具；对象授权防止把允许工具用在别人的资源。主体、角色或审批不能直接采信模型提供的参数。schema 也不能通过自然语言说明执行真正的授权。外部网页、工具输出和检索资料即使写着“忽略限制、改写 B”，仍只是一份数据，不能签发新的委托。'),
   p('工具名和参数结构通过后，还要检查谁能访问哪个对象。身份认证负责确认调用者，授权决定这个主体能否执行指定动作。运行时使用认证和审批记录中的可信信息，资源服务在读取或提交前判断这次动作。网页、工具输出和检索资料作为任务数据使用，访问范围由可信委托和策略确定。',
-   '看另一项只读实跑。主体固定为 A，模型两次都选了销售查询 <code>read_sales_report</code>，参数分别是 <code>{"report_id":"A"}</code> 和 <code>{"report_id":"B"}</code>。A 的请求读到销售额 42。B 的 HTTP 请求也收到 200，工具结果标记为拒绝。资源端正文读取记录里只有 A 的报告。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">顺着模型提议、工具返回和读取记录核对 →</a>'));
+   '另一项只读实验预先设定调用者 <code>learner-A</code>。模型两次都选了销售查询 <code>read_sales_report</code>，参数 <code>{"report_id":"A"}</code> 和 <code>{"report_id":"B"}</code> 只改变要读哪份报告。两次 HTTP 都返回 200。A 读到销售额 42，B 的工具结果带 <code>isError=true</code>，资源端只记录了 A 的正文读取。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">顺着模型提议、工具返回和读取记录核对 →</a>',
+   '权限章另做了一份实验，服务校验签名令牌后才确定调用者。<a href="/article/agent-security/#mcp-resource-scope">看令牌检查和报告授权分别在哪一步 →</a>'));
  replace('agent-runtime',1,
   p('本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。',
    '输出结构也要校验。MCP 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。'),

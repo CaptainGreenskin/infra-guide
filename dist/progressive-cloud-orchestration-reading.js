@@ -64,7 +64,8 @@
  p('把单个容器放进集群后，控制面管理 Pod 声明，节点负责实际启动。Pod 声明列出容器镜像、启动方式、资源与挂载；API Server 接收它，调度器 scheduler 为尚未绑定的 Pod 选择节点，节点代理 kubelet 再协调容器创建。若 Pod 由 Deployment 等工作负载管理，控制器会先按模板创建 Pod 对象。')+
  figures(r[3]).join('')+
  p('图中“选节点”与“启动进程”是相邻的两个边界。kubelet 通过 CRI（容器运行时接口）调用运行时服务；运行时继续准备镜像、文件系统与进程，具体实现可使用符合 OCI（开放容器标准）运行规范的低层工具。CRI 定义组件调用，OCI 规范定义容器配置与生命周期，二者分工不同。',
- '节点准备还包括网络和存储。CNI 是容器网络插件接口，CSI 是存储插件接口；相应实现参与设置网络或提供、挂载卷。绑定节点后发生镜像拉取或卷准备失败，业务进程可能尚未出现，应沿事件和容器状态继续定位。')+r3[0]+
+ '节点准备还包括网络和存储。CNI 是容器网络插件接口，CSI 是存储插件接口；相应实现参与设置网络或提供、挂载卷。绑定节点后发生镜像拉取或卷准备失败，业务进程可能尚未出现，应沿事件和容器状态继续定位。',
+ '命令中的 <code>-n demo</code> 选择名为 <code>demo</code> 的 Kubernetes 命名空间，它给 Pod 等 API 对象划分名称范围。两个命名空间可以各有一个同名 Pod。第 3 节的 Linux 命名空间划分进程看到的系统资源。')+r3[0]+
  p('核对同一个 Pod 时保留命名空间、名称和 UID。UID 标识这一次 API 对象，容器实例 ID 标识其中某次容器运行；Pod UID 不变而容器 ID 改变，可能只是容器重启。--previous 读取该容器前一次实例的日志，只有对应历史仍存在时才有内容。工作负载章接着解释谁负责补回丢失的 Pod。'),
 
  p('停止进程也是运行流程的一部分。PID 1 是一个 PID namespace 中的首个进程身份，Linux 对它的信号处理与子进程回收有特殊规则。容器入口若先启动 shell 再启动业务，运行时停止信号可能先交给 shell；使用 exec 以业务进程替换入口 shell，可以让业务直接处理信号。共享 PID 视图时，应用不一定是该视图中的 PID 1。')+r4[0]+
@@ -92,6 +93,8 @@
   '用实验把图里的两个实例对上号。<code>image</code> 只记录一份镜像引用，摘要以 <code>e064671c</code> 开头。两条同时采集的 <code>concurrent_namespaces</code> 则给出不同的进程命名空间编号 <code>4026532266</code> 和 <code>4026532326</code>。<a href="/article/container-runtime/#container-native-run">运行实验并核对原始记录 →</a>'));
  runtime.sections[1][1]=runtime.sections[1][1].replace(r1[0],r1[0]+p(
   '审批通过后，部署程序怎样确认拿到的还是同一份内容？镜像仓库用镜像摘要锁定引用。<a href="/article/delivery/#native-release-artifact-trust">发布章用一份独立的实验检查同类问题</a>。签过名的清单锁定了 v1 报表归档的文件摘要，但按可变名称读取却拿到了 v2，按摘要校验就能发现这次变化。'));
+ runtime.sections[3][1]+=p(
+  '看<a href="/labs/kubernetes-service/validation.json">双副本实验的原始记录</a>，对照正常阶段 <code>normal_v1</code> 和容器重启后 <code>liveness_restarted</code>。Pod UID 仍为 <code>23cdd057…</code>，重启次数从 0 变为 1。客户端通过 Service 请求 <code>/work</code>，重启前后都能收到该 Pod 返回的 <code>v1</code>。应用每次启动生成的 <code>instance_id</code> 从 <code>d64fd57b…</code> 变为 <code>c87a6560…</code>。<a href="/article/kubernetes-basics/#subsection-3-4ww5rs">到 C4.2 看哪种探针会触发重启 →</a>');
  runtime.updated='2026.11.12';
 
  const workloads=select('k8s-workloads',['apply 成功，只完成了哪一步','先选工作负载，再写副本数','三副本滚动更新，先算允许范围','三种探针：动作、连续阈值与故障放大','四种失败，四个取证入口','PDB、滚动更新和节点故障分别约束什么','排空与退出：逐条核对完成证据','一份清单，三次单变量练习']);
