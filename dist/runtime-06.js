@@ -5571,12 +5571,14 @@ const progressiveAgentSectionTitles={
   ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
  ])+
  p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
- p('只从归档副本移除目标段，再要求恢复到同一标记。源材料保留完整。PostgreSQL 在到达目标前停止启动并报错，说明能读基础备份与能到达指定历史是两项检查。')+
+ h('postgres-missing-wal','缺少目标 WAL 段，恢复停在哪里')+
+ p('只从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段，再要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
+ p('另一套独立实验使用相同的账户变更，目标也停在 T103 之后。MySQL 脚本自行选择交给工具的日志文件，后续行事件能恢复余额 125，仍需用回执发现 T101 缺失。<a href="/article/mysql-recovery/#mysql-missing-binlog">回到 MySQL 的缺文件实验 →</a>')+
  p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
  p('带着这三组恢复结果到<a href="/article/resilience/#recovery-postgres-native-checkpoints">C9.4 填恢复验收记录</a>。先核对 T103 是不是允许的业务恢复点，再查哪些数据还需要从应用和用户侧取得。')+
  '<p class="practice-links"><a href="/labs/postgres-pitr.zip" download>下载 PostgreSQL 实战包 ↓</a> · <a href="/labs/postgres-pitr/validation.json">查看 WAL、恢复点和 SQL 验收记录</a></p>'+
  '<p class="source-at"><a href="https://www.postgresql.org/docs/17/continuous-archiving.html">PostgreSQL 17 连续归档与时间点恢复 ↗</a></p>';
- recovery.updated='2026.11.11';
+ recovery.updated='2026.11.12';
  cloudKnowledgeExplanations['backup-restore']+=p('从同一份基础备份分别恢复到具名标记和归档末端，观察账户为什么会得到两个结果。<a href="/article/storage-recovery/#native-postgres-pitr">运行 PostgreSQL WAL 对照 →</a>');
 
  const storage=select('k8s-storage',['文件放在哪里：容器、临时卷与持久卷','从PVC到应用路径：绑定只是中间一步','拓扑与延迟绑定：一起选择节点和卷','访问模式、并发写入与旧写者隔离','容量、IOPS、吞吐与扩容','快照与备份：一致性和恢复点分别验收','从Pending到文件内容的排查实战','恢复练习：让消费者继续完成工作']);
@@ -7271,7 +7273,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ['JetStream 按业务 ID 去重','<code>0 / 0</code>','A 写 1 笔，共 37'],
   ['JetStream 去重并校验代际','<code>0 / 0</code>','B 写 1 笔，共 37']
  ],'table-wrap ack-ledger-comparison')+
- p('要确认接管后是谁写入的，到业务账本的 <code>effects</code> 查写入者 <code>writer</code> 和代际 <code>generation</code>，最后一组的写入者是 B，代际是 2。<a href="/labs/delivery-systems/validation.json">查看 RabbitMQ 原始记录 →</a>')+
+ p('要确认接管后是谁写入的，到业务账本的 <code>effects</code> 查写入者 <code>writer</code> 和代际 <code>generation</code>，最后一组的写入者是 B，代际是 2。<a href="/labs/delivery-systems/validation.json">查看 RabbitMQ 原始记录 →</a> · <a href="/article/durable-workflows/#receiver-writer-after-takeover">接着看接收方怎样检查写入代际 →</a>')+
  p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[4][1]+=p('换成超时重投，旧执行者可能还在运行，两边都能尝试写库。先猜一次：代理的待投递和待确认数都归零后，账本会有几份报告，由谁写入？<a href="/article/serverless-execution/#broker-ack-business-ledger">对照重投后的代理与账本 →</a>');
@@ -9235,7 +9237,8 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  table(['实现','组内共享内存','GPU 时间中位数'],[['朴素版','0 字节','1892.083 μs'],['分块版','2048 字节','1170.667 μs']])+
  p('逐对用朴素版时间除以分块版时间，九个比值的中位数约为 1.60。复跑时可对照自己的九对数据，绝对用时会波动。这组结果只对应这台设备和这个形状。分块改变了数据复用，也增加了同步，仅凭耗时无法推断实际显存流量。')+
  '<p class="practice-links"><a href="labs/metal-gemm.zip" download>下载源码与复跑脚本 ↓</a> · <a href="labs/metal-gemm/kernels.metal">查看完整内核 →</a> · <a href="labs/metal-gemm/validation.json">查看逐项校验与九对原始计时 →</a></p>'+
- '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">Apple Metal 的 GPU 时间戳 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html">Triton 官方分块矩阵乘法教程 ↗</a></p>';
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">Apple Metal 的 GPU 时间戳 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html">Triton 官方分块矩阵乘法教程 ↗</a></p>'+
+ p('两种实现的有效工作量相同。<a href="/article/roofline-model/#roofline-metal-gemm">回到 Roofline，用同一份计时换算实测速率 →</a>');
 
  a.sections[7][1]+=
  '<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>'+
@@ -9752,7 +9755,10 @@ ANALYZE TABLE innodb_lab.orders;`)+
 
  const rooflineServing=articles.find(a=>a.id==='roofline-model');
  rooflineServing.sections[3][1]+=p('把 M 放回生成请求中看：一条新提示一次处理 256 个位置，或 256 条请求各处理一个新位置，都能给这个线性层提供 256 行。后者还保留各自的历史 KV。<a href="/article/model-serving/#serving-rows-and-history">模型服务章用同一形状继续算缓存和调度</a>，把本轮新算的行数与仍需保存的上下文接在一起。');
- rooflineServing.updated='2026.11.11';
+ rooflineServing.sections[6][1]+='<h3 id="roofline-metal-gemm">同一个理想字节账，两种实测速度</h3>'+
+  p('换到一台实际的 Apple M4 Pro。朴素版和分块版都做 FP32 矩阵乘法，M、N、K 都为 512，有效工作量同为 2×512³=268,435,456 FLOP。若两份输入各读一次、结果只写一次，理想搬运量都是 3 MiB，算术强度都约为 85.33 FLOP/字节。')+
+  p('分别取九次 GPU 命令缓冲区计时的中位数。朴素版是 1892.083 微秒，分块版是 1170.667 微秒。用有效工作量除以各自的时间，得到约 141.9 和 229.3 GFLOP/s。分块版在组内复用装入的数据。要用 Roofline 定位瓶颈，还需测同一存储层的实际流量，并取得适用的带宽和算力上限。<a href="/labs/metal-gemm/validation.json">查看九对 GPU 原始计时 →</a> · <a href="/article/operator-profiling/#native-metal-gemm">看同卡对照怎样装载、同步和计时 →</a>');
+ rooflineServing.updated='2026.11.12';
 
  rewrite('flash-attention-io',9,old=>[
  p('注意力让一个位置读取允许看到的其他位置。query（查询向量）表示当前要匹配什么，key（键向量）用于计算匹配分数，value（值向量）是按权重汇总的内容。把各位置向量排成Q、K、V后，输出为O=softmax(QKᵀ/√d+mask)V；d是每头的查询/键维度，转置K让每个query和各key做点积。',
@@ -11937,6 +11943,9 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[5][1]+=fold('选读 · 接管后的写入者',h('receiver-writer-after-takeover','同一笔 37 来自哪个执行者')+p(
+   '另一个实跑把同一条消息重投给 B，此时旧执行者 A 仍在线。两组都把接收方的代际推进到 2，再让 A 先写。仅按业务 ID 去重，账本留下一笔金额 37，写入者是 A/1。提交前再核对代际，账本仍留下一笔金额 37，写入者是 B/2。',
+   '验收接管时，打开实际入库的 <code>ledger.effects</code>，核对其中的 <code>writer</code> 和 <code>generation</code>。<a href="/article/serverless-execution/#broker-ack-business-ledger">查看重投与账本对照 →</a> · <a href="/labs/jetstream-redelivery/validation.json">查看原始账本 →</a>'));
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
   const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
    p('用户要求生成 <code>report-A</code>。宿主的第 1 版计划只安排读取主清单和生成草稿。模型提出读取，宿主调用工具，把主清单里的 10、27 和补录编号 <code>late-A/v1</code> 交回模型。模型提议先加上读补录这一步。宿主核对编号来自清单，保存第 2 版计划，保留已经读到的两笔金额。')+
@@ -12849,8 +12858,9 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  figures(r[5]).join('')+
  r6[0]+
  p('文件数组从基线所在文件排到停止所在文件。mysqlbinlog的开始位置作用于首文件，停止位置作用于末文件；停止位置之前的完整事务保留，坏事务不进入输出。程序先提交T103，再用SHOW BINARY LOG STATUS取得下一事件坐标，然后才提交T104，因而停止边界来自真实执行顺序。',
- '日志事件可以包含事务开始、行变化和提交等多个部分，不能随手在一条行事件中间截断事务。时间选项适合辅助定位，正式截取还需核对事件位置、时区及目标包含范围。原始文件清单和校验保证材料链，业务回执验收保证目标结果，两者各自回答一层问题。',
- '负例只给第二文件，从该文件合法起始位置重放到相同停止点。工具可以完成重放，账户也可为125，但T101回执缺失。命令成功表示给定输入已被处理，不会自动证明调用者提供了全部必需文件。'),
+ '日志事件可以包含事务开始、行变化和提交等多个部分，不能随手在一条行事件中间截断事务。时间选项适合辅助定位，正式截取还需核对事件位置、时区及目标包含范围。原始文件清单和校验保证材料链，业务回执验收保证目标结果，两者各自回答一层问题。')+
+ h('mysql-missing-binlog','少了首个 binlog，为什么还能读到 125')+
+ p('原始记录的 <code>required_files</code> 依次列出 <code>mysql-bin.000003</code> 和 <code>mysql-bin.000004</code>。负例从第二个文件的合法位置开始，仍停在 T104 之前。<code>mysqlbinlog</code> 处理了脚本交给它的事件，恢复库读到余额 125。到 <code>missing_first_log</code> 查回执，只剩 T102、T103。用 100 加上两笔增量得到 115，与余额相差 10。'),
 
  p('恢复目标先在隔离实例验收，再决定能否接入业务。SELECT 1只证明能执行一个小查询；本题的目标历史要求余额125、T101—T103恰好各一条且增量正确、T104和T105都不在目标中，账本差额为0。它同时检查历史选择和跨表完整性。')+
  figures(r[6]).join('')+
@@ -12869,6 +12879,9 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  table(['要回答的问题','沿已经建立的关系推导'],[['redo和binlog为何同时存在','页恢复与服务器事件历史职责不同，提交必须协调'],['重启为何保留误清零','它已提交；崩溃恢复不替业务重选历史'],['两个125为何只放行一个','后映像可覆盖账户数字，回执集合仍揭示缺段'],['如何找恢复起止点','一致基线附坐标，连续文件覆盖到完整事务边界'],['复制能否取代历史备份','复制继续传播变化，备份和日志保留用于另选历史']])+
  p('先写清目标包含哪些操作、排除哪些操作、由哪组独立读数验收，再选择备份和重放方式。下一章增加一个持续接收变化的实例，继续区分提交、复制应用和实际查询；本章的PITR文件位置不自动成为那份复制实验的坐标。')+linkRow(links(r[8]))
  ],'从账户与回执的共同提交理解undo、redo和binlog，再沿一致基线、连续事件和事务停止边界完成历史恢复与独立验收。');
+ recovery.sections[5][1]+=p('把同一个 T103 后的恢复目标交给 PostgreSQL。它从基础备份开始连续读取归档，并在日志里找具名恢复点。<a href="/article/storage-recovery/#postgres-missing-wal">看缺少目标段时的启动记录 →</a>')+
+ linkRow(['<a href="/labs/transport-recovery/validation.json">查看 MySQL 日志清单和缺段结果 →</a>']);
+ recovery.updated='2026.11.12';
 
  const replication=select('mysql-replication',['从一行数据，分清提交、版本与读视图','用两条真实连接理解RR与RC','把一次源提交放进复制链','GTID记录事务身份，集合表达应用目标','旧读要分别查事务视图和复制应用','计划切换：先收回旧写，再追齐与开放新写','读副本、分片与热点，各解决哪种容量问题','沿完整程序核对读视图、复制和交接','把图上的边界变成面试追问'],[4,3,9]);
  const q=replication.sections.map(s=>s[1]),q2=blocks(q[1]),q4=blocks(q[3]),q8=blocks(q[7]);
@@ -14105,12 +14118,12 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
  section[1]=`<h3 id="text-to-next-token">一次续写怎样发生</h3>`+para(
-  '「明天可能会下」后面接「雨」还是「雪」？如果前面先说「冷空气已经来了」，你对下一项的判断可能会变。我们用一个小实验问同样的问题：末位不变，只换前文，模型会选出什么？',
-  'CPU 实验用同一组固定参数预测两次：[0,1] → 1，[4,1] → 7。两个输入的末位都是编号 1，换掉前一个编号就改变了结果。中文句子用来提出问题。实验词表只有 8 个合成编号。<a href="/article/attention-mechanics/#same-position-different-prefix">查看两次预测的实际记录 →</a>',
-  '实际文本先由分词器切成小段。每段叫一个词元（token），在词表里有一个编号。小实验从编号开始：每个编号在词嵌入表（Embedding）里对应一行数字，这行数字叫向量。解码器块让每个位置先从自己和前文取信息，再加工自己这一格。最后，模型把更新后的每行向量变成一行词表候选分数，叫作 logits。')+
+  '「明天可能会下」后面接「雨」还是「雪」？加上「冷空气已经来了」，判断可能会变。文本模型先把文字切成词元（token），例如一个字或一段词，再把每项换成词表里的编号。本章的 CPU 小模型从 8 个合成编号起步，用来观察前文怎样影响续写。',
+  '模型保存下来供计算使用的数字叫参数。固定这组参数做两次预测，得到 [0,1] → 1，[4,1] → 7。箭头右侧是模型选出的下一项。输入的末位都是 1，第一项从 0 改为 4，结果便从 1 变为 7。<a href="/article/attention-mechanics/#same-position-different-prefix">查看两次预测的实际记录 →</a>')+
+ '<ol><li>查表。每个编号从词嵌入表（Embedding）取一行数字。这一行叫向量。</li><li>读取前文。解码器块先汇总当前位置与前文的信息，再加工当前行。</li><li>选下一项。每行给出 8 个候选分数（logits）。续写只看最后一行，本实验选分数最高的编号。</li></ol>'+
  trainingFigure('transformer-first-forward','沿 [0,1] 这一路走一遍。末位的向量读过前文后，用它的八个候选分数选出编号 1。')+
  para('对 [0,1] 来说，第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。续写整段输入要看第二行。将分数最高的 1 接到末尾，下一轮输入就是 [0,1,1]。把每次选出的词元接回去再预测，叫自回归生成。<a href="/article/transformer-model/#repeat-next-token">看同一模型的三轮生成 →</a>',
-  '词嵌入表和各层权重都是模型可以学习的数字，合称参数。从输入算到分数叫前向计算。把一组固定的参数用在新输入上，称为推理。下一节先看 [0,1] 的两个编号各查到哪一行。')+
+  '词嵌入表和各层权重都可以通过训练调整。从输入算到分数叫前向计算。用固定的参数对新输入做预测，称为推理。下一节先看 [0,1] 的两个编号各查到哪一行。')+
  '<details class="progressive-detail"><summary>选读 · 同一模型怎样读训练样本</summary>'+
  `<h3 id="tiny-decoder-input">同一模型怎样读训练样本</h3>`+para(
  '训练用样本里的正确答案检查预测、调整参数。把训练样本 [0,1,2,3,4] 的前四项送进去，后四项就是各位置的目标。读到 [0,1] 时，样本里的下一项是 2。每个位置只读取自己和前文，这叫因果约束。')+
@@ -14123,21 +14136,41 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>学完本章后 · 模型计算怎样连接 AI Infra</summary>'+infraReading+'</details>';
  a.updated='2026.11.12';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
+ const tensorDetail=a.sections[1][1].match(/<details class="progressive-detail"><summary>写代码时，形状和存储步长怎样对应？<\/summary>[\s\S]*?<\/details>/)?.[0];
+ const linearDetail=a.sections[2][1].match(/<details class="progressive-detail"><summary>上面的 W 怎样写进 PyTorch Linear？<\/summary>[\s\S]*?<\/details>/)?.[0];
+ if(!tensorDetail||!linearDetail)throw Error('Missing decoder tensor and linear details');
+ a.sections[1][1]=para(
+  '先给开头的 [0,1] 查表。位置从 0 数。位置 0 放着编号 0，取词嵌入表第 0 行。位置 1 放着编号 1，取第 1 行。每行有 8 项特征，取出的两行形状就是 [2,8]。换成 [4,1] 时，只改查第 4 行，末位仍取第 1 行。',
+  '把数字按一个或多个方向排列得到张量，每个方向叫一根轴，形状记录各轴长度。词嵌入表 E 有 8 个词表项，每项 8 个特征，形状为 [V,D]=[8,8]。将两次输入并排看，编号的形状是 [B,T]=[2,2]，分别数样本和位置。查表后多一根特征轴，得到 [B,T,D]=[2,2,8]。E 的 64 个参数可供所有位置重复使用。')+
+ '<details class="progressive-detail"><summary>展开 · 两条四项训练输入的形状</summary>'+para(
+  '训练用 [0,1,2,3] 与 [4,5,6,7]，第二条的位置 1 放的是编号 5，查 E 的第 5 行。批大小 B=2，每条长度 T=4，编号的形状为 [2,4]。查表得到 [2,4,8]，这批产生 2×4×8=64 个特征值。输入变长会增加每次查出的特征数，词嵌入表大小仍由 V 和 D 决定。')+'</details>'+tensorDetail;
+
+ a.sections[2][1]=para(
+  '继续看 [0,1] 查出的两行。线性层用同一组可学习的系数逐行计算新特征。拿解码器里的一个 8→8 变换来说，第一行的八项只由第一行计算，第二行的八项只由第二行计算。输入 [2,8]，输出仍为 [2,8]。若一次处理上一节的两条四项训练输入，输入和输出都为 [2,4,8]。',
+  '因此，[0,1] 换成 [4,1] 后，只要输入到线性层的末行相同，这一步就给出同样的末行结果。下一节会让末行读前一行，看看差别在哪里产生。')+
+ '<details class="progressive-detail"><summary>独立手算 · 每行怎样从 3 项变成 2 项</summary>'+para(
+  '这里另取便于手算的数字，跟开头实验的八项特征无关。两行输入为 x₀=[1,2,1]、x₁=[0,1,2]。系数排成矩阵 W，三行依次为 [2,0]、[1,−1]、[0,3]，形状为 [3,2]。',
+  '计算 XW 时，输出第一项来自输入行与 W 第一列的点积，也就是对应项相乘再相加。对 x₀，第一项是 1×2+2×1+1×0=4，第二项是 1×0+2×(−1)+1×3=1，输出为 [4,1]。对 x₁ 做同样的计算，得到 [1,5]。两行共用一组系数，形状从 [2,3] 变为 [2,2]。',
+  '偏置是在每行结果上再加的一组可学习数。两行都加 [1,−1]，得到 [5,0] 和 [2,4]。')+linearDetail+'</details>';
+
  a.sections[3][1]=para(
-  '上一节的线性层逐行计算。要让末位能随前文改变，还需要一次跨位置读取。查到词向量后，给每个位置加一组表示先后的数字，得到解码器块的输入 X，形状仍为 [2,4,8]。',
-  '先看整层的顺序。注意力从允许读取的位置汇总信息，加回当前格。前馈网络再加工这一格，加回这次加工前的表示。经过这两步，位置的数量和每格八项特征都保持不变。')+
+  '把 [0,1] 和 [4,1] 各自查到的词向量加上位置向量，得到解码器块的输入 X，每条都是 [2,8]。两条末位的词元编号与位置都相同，词向量首项 0.923456 加上位置向量首项 −0.880069，结果都是 0.043387。',
+  '接下来，注意力从允许读取的位置汇总信息，加回当前格。前馈网络再加工这一格，加回加工前的表示。两步都保留两格和每格的八项特征。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('取第一条输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。只读自己和前文的规则叫因果约束。')+
+ para('只读自己和前文的规则叫因果约束。两次预测的末位都能读位置 0 和 1。每格先从自己的表示计算三组数字。查询 Q 用来发起匹配，键 K 用来匹配，内容向量 V 用来汇总。末位的 Q 相同，前一格换成 4 后，提供的 K 和 V 都变了。',
+  '把末位的 Q 分别与两格的 K 对应相乘再相加，得到匹配分数。缩放后用 softmax 把分数换成总和为 1 的读取比例。比例随输入计算，模型参数保持固定。注意力按比例乘各格的 V，再把结果逐项相加。一套独立的匹配与汇总叫一个注意力头。')+
+ para('沿第 0 个头看汇总结果的第一项。下面两项乘积分别来自位置 0、1，显示的是四舍五入后的数值。')+
+ '<ul><li>[0,1] 汇总得到 0.5546051×0.8440784 + 0.4453949×0.2123563 ≈ 0.562713。</li><li>[4,1] 汇总得到 0.4659462×0.3079029 + 0.5340538×0.2123563 ≈ 0.256876。</li></ul>'+
+ para('末位提供的内容 0.2123563 没变，前一格提供的内容和两格的读取比例都变了。小模型有两个头，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
- ])+
- para('先算读回了什么。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重，被遮住的位置分不到权重。',
-  '权重由当前位置和各格的匹配程度决定。线性层把每格变成三组数字。查询 Q 发起匹配，键 K 供匹配，内容向量 V 供汇总。这个 V 表示要读回的内容，词表大小也记作 V，含义取决于算的是什么。用当前位置的 Q 和各格的 K 做点积，得到分数。缩放后，softmax 把分数变成总和为 1 的读取权重。')+
+ ])+'</details>'+
  '<details class="progressive-detail"><summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'+para(
- '这里用一组便于计算的数字。取位置 2 的 Q 为 [2,0,0,0]，位置 1 的 K 为 [ln 2,0,0,0]，ln 表示自然对数。两个向量的点积是 2×ln 2，再除以 √4=2，得到位置 1 的分数 ln 2。在常见的初始化假设下，这个除法能让特征变多时的分数波动小一些。',
+ '另取一组便于计算的数字。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重，被遮住的位置分不到权重。这里的 V 表示内容向量，词表大小也记作 V。',
+ '取位置 2 的 Q 为 [2,0,0,0]，位置 1 的 K 为 [ln 2,0,0,0]，ln 表示自然对数。两个向量的点积是 2×ln 2，再除以 √4=2，得到位置 1 的分数 ln 2。在常见的初始化假设下，这个除法能让特征变多时的分数波动小一些。',
  '同样取位置 0、2 的 K 为 [0,0,0,0] 和 [ln 3,0,0,0]，缩放后的三个分数是 [0, ln 2, ln 3]。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。拿这三个数乘前面给出的内容，就能核对结果 2。')+'</details>'+
- para('一套独立的匹配与汇总叫一个注意力头。小模型用两套，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
   '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
@@ -14147,12 +14180,16 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
  para('本例每次进入分支之前，先用归一化调整当前向量的数值尺度。注意力读取归一化后的 X，结果加回原来的 X，得到 H₁。前馈读取归一化后的 H₁，结果加回原来的 H₁，得到 H₂。沿原表示直接相加的路径叫残差连接。分支输出为零时，原表示沿这条路径保留下来。',
-  'H₂ 可以交给下一块。最后一块的输出经过归一化，再经词表投影变成每格的八个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow+
+  'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
+ para('再看末行的候选分数。两次预测都经过同一个解码器块，完整的末位向量用于给词表里的八项打分。')+
+ '<ul><li>[0,1] 给编号 1 打 3.780366 分，给编号 7 打 3.465295 分，最高是 1。</li><li>[4,1] 给编号 1 打 3.582167 分，给编号 7 打 3.594005 分，最高是 7。</li></ul>'+
+ para('<a href="labs/tiny-decoder-forward/validation.json">核对同一次 CPU 实验的两个前向记录 →</a>')+
+ '<details class="progressive-detail"><summary>选读 · 两条四项训练输入的整层形状</summary>'+blockFlow+'</details>'+
  '<details class="progressive-detail"><summary>手算 RMSNorm 与 LayerNorm</summary>'+para(
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
  '<h3 id="repeat-next-token">沿最后一行完成三轮生成</h3>'+
- para('回到 [0,1]。末位结合两个位置的信息，给出下一项的候选分数。每轮都取当前最后一行的最高分，再把选出的编号接到末尾。下面是 CPU 实验的三轮结果。')+
+ para('沿 [0,1] 继续生成。每轮取当前最后一行的最高分，把选出的编号接到末尾。下面的 CPU 缓存实验复用相同的模型配置和参数初始化、训练步骤，从同一输入开始，第一轮同样选出 1。')+
  conceptReadingTable(['本轮已有序列','用哪一行分数','接到末尾的编号'],[
   ['[0,1]','第 2 行','1'],['[0,1,1]','第 3 行','1'],['[0,1,1,1]','第 4 行','1']
  ])+
@@ -15454,7 +15491,7 @@ const learningProfiles={
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"标明恢复目标和最后一笔应该存在的业务记录。恢复后独立读取，确认数据位置和外部效果符合预期。",
-    primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"]]},
+    primary:["resilience","section-9","恢复点与实际效果"],more:[["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -15508,7 +15545,7 @@ const learningProfiles={
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
-     ["operator-profiling","native-metal-softmax","Apple GPU 逐行 Softmax"],["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
+     ["roofline-model","roofline-metal-gemm","从实际计时换算算力"],["operator-profiling","native-metal-softmax","Apple GPU 逐行 Softmax"],["operator-profiling","same-device-gemm","CUDA 同卡对照上机步骤"]]},
   ]
  }},
  'agent-app':{track:'agent',label:'Agent 应用与评估',aim:'先走通受控工具任务，再组织上下文与检索，最后用真实产物验收。',targets:['agent-security','agent-recovery','agent-memory','agent-retrieval','agent-evaluation','agent-observability'],gate:{
@@ -15526,14 +15563,14 @@ const learningProfiles={
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
-  task:"为一个会暂停、重试和接管的任务写出运行记录，能用资源端证据回答发生了几次实际效果。",
+  task:"为一个会暂停、重试和接管的任务写出运行记录，能用资源端证据回答提交了几次、由谁提交。",
   checks:[
    {title:"把执行权限分到正确位置",
     result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -17127,5 +17164,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="89f78cd310cddbd92c58a61103f89ccd238999e2428a093ffbc78aa3d6b6cbe4";
+const staticReadingVersion="98f9f0c373d760cbb2ce584ac7db6c604592ec8f252c12e2564f8514c5ac72e6";
 

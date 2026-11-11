@@ -188,18 +188,25 @@
         "subsection-5-1aqdkow",
         "subsection-5-98f1by",
         "subsection-8-1oqqcgn",
-        "native-postgres-pitr"
+        "native-postgres-pitr",
+        "postgres-missing-wal"
       ],
       "visible_targets": [
         "subsection-5-1aqdkow",
         "subsection-5-98f1by",
         "subsection-8-1oqqcgn",
-        "native-postgres-pitr"
+        "native-postgres-pitr",
+        "postgres-missing-wal"
       ]
     },
     {
       "id": "mysql-recovery",
       "targets": [
+        "mysql-pitr-run",
+        "mysql-missing-binlog"
+      ],
+      "visible_targets": [
+        "mysql-missing-binlog",
         "mysql-pitr-run"
       ]
     },
@@ -606,7 +613,12 @@
     },
     {
       "id": "roofline-model",
-      "targets": []
+      "targets": [
+        "roofline-metal-gemm"
+      ],
+      "visible_targets": [
+        "roofline-metal-gemm"
+      ]
     },
     {
       "id": "flash-attention-io",
@@ -1099,7 +1111,8 @@
         "native-parallel-merge",
         "native-workflow-version-resume",
         "native-model-plan-revision",
-        "native-model-mcp-recovery"
+        "native-model-mcp-recovery",
+        "receiver-writer-after-takeover"
       ],
       "visible_targets": [
         "subsection-1-3htvho",

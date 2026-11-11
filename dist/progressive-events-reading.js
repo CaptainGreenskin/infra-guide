@@ -307,7 +307,7 @@
   ['JetStream 按业务 ID 去重','<code>0 / 0</code>','A 写 1 笔，共 37'],
   ['JetStream 去重并校验代际','<code>0 / 0</code>','B 写 1 笔，共 37']
  ],'table-wrap ack-ledger-comparison')+
- p('要确认接管后是谁写入的，到业务账本的 <code>effects</code> 查写入者 <code>writer</code> 和代际 <code>generation</code>，最后一组的写入者是 B，代际是 2。<a href="/labs/delivery-systems/validation.json">查看 RabbitMQ 原始记录 →</a>')+
+ p('要确认接管后是谁写入的，到业务账本的 <code>effects</code> 查写入者 <code>writer</code> 和代际 <code>generation</code>，最后一组的写入者是 B，代际是 2。<a href="/labs/delivery-systems/validation.json">查看 RabbitMQ 原始记录 →</a> · <a href="/article/durable-workflows/#receiver-writer-after-takeover">接着看接收方怎样检查写入代际 →</a>')+
  p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
  delivery.sections[4][1]+=p('换成超时重投，旧执行者可能还在运行，两边都能尝试写库。先猜一次：代理的待投递和待确认数都归零后，账本会有几份报告，由谁写入？<a href="/article/serverless-execution/#broker-ack-business-ledger">对照重投后的代理与账本 →</a>');

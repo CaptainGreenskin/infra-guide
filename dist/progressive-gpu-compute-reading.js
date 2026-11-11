@@ -151,7 +151,10 @@
 
  const rooflineServing=articles.find(a=>a.id==='roofline-model');
  rooflineServing.sections[3][1]+=p('把 M 放回生成请求中看：一条新提示一次处理 256 个位置，或 256 条请求各处理一个新位置，都能给这个线性层提供 256 行。后者还保留各自的历史 KV。<a href="/article/model-serving/#serving-rows-and-history">模型服务章用同一形状继续算缓存和调度</a>，把本轮新算的行数与仍需保存的上下文接在一起。');
- rooflineServing.updated='2026.11.11';
+ rooflineServing.sections[6][1]+='<h3 id="roofline-metal-gemm">同一个理想字节账，两种实测速度</h3>'+
+  p('换到一台实际的 Apple M4 Pro。朴素版和分块版都做 FP32 矩阵乘法，M、N、K 都为 512，有效工作量同为 2×512³=268,435,456 FLOP。若两份输入各读一次、结果只写一次，理想搬运量都是 3 MiB，算术强度都约为 85.33 FLOP/字节。')+
+  p('分别取九次 GPU 命令缓冲区计时的中位数。朴素版是 1892.083 微秒，分块版是 1170.667 微秒。用有效工作量除以各自的时间，得到约 141.9 和 229.3 GFLOP/s。分块版在组内复用装入的数据。要用 Roofline 定位瓶颈，还需测同一存储层的实际流量，并取得适用的带宽和算力上限。<a href="/labs/metal-gemm/validation.json">查看九对 GPU 原始计时 →</a> · <a href="/article/operator-profiling/#native-metal-gemm">看同卡对照怎样装载、同步和计时 →</a>');
+ rooflineServing.updated='2026.11.12';
 
  rewrite('flash-attention-io',9,old=>[
  p('注意力让一个位置读取允许看到的其他位置。query（查询向量）表示当前要匹配什么，key（键向量）用于计算匹配分数，value（值向量）是按权重汇总的内容。把各位置向量排成Q、K、V后，输出为O=softmax(QKᵀ/√d+mask)V；d是每头的查询/键维度，转置K让每个query和各key做点积。',

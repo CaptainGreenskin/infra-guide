@@ -149,6 +149,24 @@ const practice = article.slice(start, article.indexOf('<h3 id="native-python-ext
 for (const target of ['diagrams/' + pack + '.svg', 'labs/' + pack + '.zip', 'labs/' + pack + '/validation.json']) {
  assert(practice.includes(target), target);
 }
+const rooflineAnchor = 'roofline-metal-gemm';
+const roofline = page('article/roofline-model');
+const bridge = roofline.split('id="' + rooflineAnchor + '"')[1]?.split('id="section-8"')[0];
+assert(bridge?.includes('/article/operator-profiling/#' + anchor));
+assert(bridge.includes('/labs/' + pack + '/validation.json'));
+assert(practice.includes('/article/roofline-model/#' + rooflineAnchor));
+const {m, n, k} = record.benchmark.shape;
+const flops = 2 * m * n * k;
+const idealBytes = 4 * (m * k + k * n + m * n);
+assert(bridge.includes(flops.toLocaleString('en-US') + ' FLOP'));
+assert(bridge.includes(idealBytes / (1024 ** 2) + ' MiB'));
+assert(bridge.includes((flops / idealBytes).toFixed(2) + ' FLOP/字节'));
+const rates = kernels.map(kernel => {
+ const timeUs = record.benchmark.median_gpu_us[kernel];
+ assert(bridge.includes(timeUs.toFixed(3) + ' 微秒'));
+ return (flops / (timeUs * 1000)).toFixed(1);
+});
+assert(bridge.includes(rates.join(' 和 ') + ' GFLOP/s'));
 const knowledge = page('module/model-foundations').match(/<section class="knowledge-point" id="knowledge-mf-gpu">([\s\S]*?)<\/section>/)?.[1];
 assert(knowledge?.includes('/article/operator-profiling/#' + anchor), 'AI domain entry');
 assert(page('roadmap/ai-operators').includes('/article/operator-profiling/?goal=ai-operators#' + anchor));

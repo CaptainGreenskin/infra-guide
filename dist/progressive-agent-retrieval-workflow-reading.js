@@ -299,6 +299,9 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[5][1]+=fold('选读 · 接管后的写入者',h('receiver-writer-after-takeover','同一笔 37 来自哪个执行者')+p(
+   '另一个实跑把同一条消息重投给 B，此时旧执行者 A 仍在线。两组都把接收方的代际推进到 2，再让 A 先写。仅按业务 ID 去重，账本留下一笔金额 37，写入者是 A/1。提交前再核对代际，账本仍留下一笔金额 37，写入者是 B/2。',
+   '验收接管时，打开实际入库的 <code>ledger.effects</code>，核对其中的 <code>writer</code> 和 <code>generation</code>。<a href="/article/serverless-execution/#broker-ack-business-ledger">查看重投与账本对照 →</a> · <a href="/labs/jetstream-redelivery/validation.json">查看原始账本 →</a>'));
   a.sections[8][1]=a.sections[8][1].replace(/<details class="progressive-detail">(?=<summary>独立接管程序worker_fencing\.py)/,'<details class="progressive-detail" id="worker-fencing-run">');
   const modelPlan=h('native-model-plan-revision','模型发现补录后，任务怎样改计划并继续？')+
    p('用户要求生成 <code>report-A</code>。宿主的第 1 版计划只安排读取主清单和生成草稿。模型提出读取，宿主调用工具，把主清单里的 10、27 和补录编号 <code>late-A/v1</code> 交回模型。模型提议先加上读补录这一步。宿主核对编号来自清单，保存第 2 版计划，保留已经读到的两笔金额。')+

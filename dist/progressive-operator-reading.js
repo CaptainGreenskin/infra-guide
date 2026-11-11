@@ -180,7 +180,8 @@
  table(['实现','组内共享内存','GPU 时间中位数'],[['朴素版','0 字节','1892.083 μs'],['分块版','2048 字节','1170.667 μs']])+
  p('逐对用朴素版时间除以分块版时间，九个比值的中位数约为 1.60。复跑时可对照自己的九对数据，绝对用时会波动。这组结果只对应这台设备和这个形状。分块改变了数据复用，也增加了同步，仅凭耗时无法推断实际显存流量。')+
  '<p class="practice-links"><a href="labs/metal-gemm.zip" download>下载源码与复跑脚本 ↓</a> · <a href="labs/metal-gemm/kernels.metal">查看完整内核 →</a> · <a href="labs/metal-gemm/validation.json">查看逐项校验与九对原始计时 →</a></p>'+
- '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">Apple Metal 的 GPU 时间戳 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html">Triton 官方分块矩阵乘法教程 ↗</a></p>';
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">Apple Metal 的 GPU 时间戳 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/03-matrix-multiplication.html">Triton 官方分块矩阵乘法教程 ↗</a></p>'+
+ p('两种实现的有效工作量相同。<a href="/article/roofline-model/#roofline-metal-gemm">回到 Roofline，用同一份计时换算实测速率 →</a>');
 
  a.sections[7][1]+=
  '<h3 id="native-python-extension">从 C 源码到 import，哪一步出了错</h3>'+

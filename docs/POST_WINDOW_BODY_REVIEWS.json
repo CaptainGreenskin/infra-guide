@@ -8002,6 +8002,105 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "8c2be5f2706f8b393810a8deeb5be8f8bca4d8f2bd46d2c2e4683fbd24e8a448",
+      "reviewed_content_sha256": "1fc94a604653cacfd8afcfe066c6a163d8287e1a81f13c100a92bce6e7d2aa40",
+      "scope": "Follow the two recorded prompts through token lookup, the first position-wise transform, the attention read, and vocabulary scores.",
+      "observation": "The same stored parameters give the unchanged final token a different context, shifting the two highest scores and switching the selected ID.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "312040323c856ec3cfa1367051fea9c90f76d922794d5d3c30f83514751f38e4",
+      "reviewed_content_sha256": "e65a296ef27f3ec8a163781d49f14a7b6f3222aa41f1fb1d7958931541894932",
+      "scope": "Link broker redelivery and the observed ledger to the workflow receiver check.",
+      "observation": "Readers can follow the writer and generation columns to the exact transaction-level explanation.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1f9af410587e6421803d00f4b3fcd33a214b2603e6bcc6f80b20ec1ef90b3924",
+      "reviewed_content_sha256": "c2bf642f9427a6d9337613bb28b0034a7dfa624fe5372b633290b516ec1fa7c5",
+      "scope": "Observe which worker committed after a lease transfer, with the same ledger count and amount.",
+      "observation": "The receiver using business ID deduplication retains A generation 1. Checking the current generation retains B generation 2.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "40b7a3b9c82c7dfc813c0ef330b0106d3d853a94043e62685175499fdf7e5a6e",
+      "reviewed_content_sha256": "9f7c19a6bbcffd4fb42093cbb6f403aa5ebea6ad2edcf7cbd54745ba76616160",
+      "scope": "Compare the same teaching target to PostgreSQL point-in-time recovery with a required WAL segment removed.",
+      "observation": "The native PostgreSQL startup record reports that the configured recovery target was not reached.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
+    },
+    {
+      "id": "roofline-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "55efb42d3789de061da21a461e21f5b8a96b1c365580135cd93671ada9b062e7",
+      "reviewed_content_sha256": "dafdae7ac3cd1243b76b74de98c27c2346e5206290a436e392f29835812f654b",
+      "scope": "Connect ideal bytes and effective FLOP to a measured same-device GEMM comparison.",
+      "observation": "The two Apple M4 Pro kernels have equal ideal arithmetic intensity and different measured rates. Physical memory traffic was not collected.",
+      "headings": [
+        "先问一次执行做了多少工作",
+        "先写数据账本，再算算术强度",
+        "两条上限怎样合成一条屋顶",
+        "批次改变的是权重复用，不只是显存占用",
+        "从瓶颈判断到可证伪的优化方案",
+        "局部快一倍，整体能快多少",
+        "为什么同一算子会有两种算术强度",
+        "把预算与计时写成一份可复查记录",
+        "练习：为一项优化写出收益边界"
+      ]
     }
   ]
 }

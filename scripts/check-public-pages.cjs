@@ -9,7 +9,11 @@ const trialReturns=[];
 function checkPrimaryOrder(html,route){
  const nav=html.match(/<nav class="top-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert(nav,route+': primary navigation exists');
- assert.deepEqual([...nav.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([,href])=>href),primaryOrder,route+': study paths before interview review');
+ const hrefs=markup=>[...markup.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([,href])=>href);
+ assert.deepEqual(hrefs(nav),primaryOrder,route+': study paths before interview review');
+ const fallback=html.match(/<noscript><details class="static-mobile-nav"><summary>导航<\/summary><nav aria-label="主导航">([\s\S]*?)<\/nav><\/details><\/noscript>/)?.[1];
+ assert(fallback,route+': native mobile navigation with JavaScript disabled');
+ assert.deepEqual(hrefs(fallback),hrefs(nav),route+': both navigation modes lead to the same pages');
 }
 
 for(const url of urls){

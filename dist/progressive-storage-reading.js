@@ -102,12 +102,14 @@
   ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
  ])+
  p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
- p('只从归档副本移除目标段，再要求恢复到同一标记。源材料保留完整。PostgreSQL 在到达目标前停止启动并报错，说明能读基础备份与能到达指定历史是两项检查。')+
+ h('postgres-missing-wal','缺少目标 WAL 段，恢复停在哪里')+
+ p('只从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段，再要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
+ p('另一套独立实验使用相同的账户变更，目标也停在 T103 之后。MySQL 脚本自行选择交给工具的日志文件，后续行事件能恢复余额 125，仍需用回执发现 T101 缺失。<a href="/article/mysql-recovery/#mysql-missing-binlog">回到 MySQL 的缺文件实验 →</a>')+
  p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
  p('带着这三组恢复结果到<a href="/article/resilience/#recovery-postgres-native-checkpoints">C9.4 填恢复验收记录</a>。先核对 T103 是不是允许的业务恢复点，再查哪些数据还需要从应用和用户侧取得。')+
  '<p class="practice-links"><a href="/labs/postgres-pitr.zip" download>下载 PostgreSQL 实战包 ↓</a> · <a href="/labs/postgres-pitr/validation.json">查看 WAL、恢复点和 SQL 验收记录</a></p>'+
  '<p class="source-at"><a href="https://www.postgresql.org/docs/17/continuous-archiving.html">PostgreSQL 17 连续归档与时间点恢复 ↗</a></p>';
- recovery.updated='2026.11.11';
+ recovery.updated='2026.11.12';
  cloudKnowledgeExplanations['backup-restore']+=p('从同一份基础备份分别恢复到具名标记和归档末端，观察账户为什么会得到两个结果。<a href="/article/storage-recovery/#native-postgres-pitr">运行 PostgreSQL WAL 对照 →</a>');
 
  const storage=select('k8s-storage',['文件放在哪里：容器、临时卷与持久卷','从PVC到应用路径：绑定只是中间一步','拓扑与延迟绑定：一起选择节点和卷','访问模式、并发写入与旧写者隔离','容量、IOPS、吞吐与扩容','快照与备份：一致性和恢复点分别验收','从Pending到文件内容的排查实战','恢复练习：让消费者继续完成工作']);

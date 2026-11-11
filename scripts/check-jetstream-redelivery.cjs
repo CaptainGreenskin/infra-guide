@@ -104,6 +104,20 @@ function checkChapterAndFigure(cases,proofUrl){
  assert.deepEqual(comparisonRows,rowsFromRecords,'Comparison uses each broker status and its own SQLite effects');
  const [authorizedWrite]=cases.receiver_fence.ledger.effects;
  assert(comparison[1].includes('写入者是 '+authorizedWrite.writer+'，代际是 '+authorizedWrite.generation));
+ const workflow=article('durable-workflows').sections[5][1];
+ const takeoverId='receiver-writer-after-takeover';
+ assert(comparison[1].includes('/article/durable-workflows/#'+takeoverId));
+ const takeoverComparison=workflow.split('<h3 id="'+takeoverId+'">')[1]?.split('</details>')[0];
+ assert(takeoverComparison,'Agent receiver transaction section includes the optional writer comparison');
+ for(const [mode,label] of [['business_id','仅按业务 ID 去重'],['receiver_fence','提交前再核对代际']]){
+  const [effect]=cases[mode].ledger.effects;
+  const qualifier=mode==='business_id'?'留下一笔':'仍留下一笔';
+  assert(takeoverComparison.includes(label+'，账本'+qualifier+'金额 '+effect.amount+'，写入者是 '+effect.writer+'/'+effect.generation));
+ }
+ for(const value of ['<code>writer</code>','<code>generation</code>',
+  '/article/serverless-execution/#'+comparisonId,'/labs/'+pack+'/validation.json']){
+  assert(takeoverComparison.includes(value),value);
+ }
  const svg=read('dist/diagrams/'+pack+'.svg');
  assert.match(svg,/<svg\b[^>]*role="img"[^>]*aria-labelledby="jetstream-title jetstream-desc"/);
  assert.deepEqual([...svg.matchAll(/data-stage="([^"]+)"/g)].map(m=>m[1]),['timeout_redelivery','receiver_authority']);

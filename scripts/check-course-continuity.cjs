@@ -41,6 +41,9 @@ assert(cacheLessons[1].includes('labs/redis-client-tracking/validation.json'));
 const gpuLessons=section('gpu-execution',3).split('<h3 id="native-warp-memory-sectors">');
 assert.equal(gpuLessons.length,2,'native lane traces follow the historical stride lesson');
 assert(gpuLessons[1].includes('labs/warp-memory-sectors/validation.json'));
+const rooflineLessons=section('roofline-model',6).split('<h3 id="roofline-metal-gemm">');
+assert.equal(rooflineLessons.length,2,'measured GEMM follows the earlier Roofline calculation');
+assert(rooflineLessons[1].includes('/labs/metal-gemm/validation.json'));
 const [tensorGroups,meshLesson]=section('tensor-parallel-math',5).split('<h3 id="native-dp-tp-mesh">');
 assert(meshLesson?.includes('labs/dp-tp-mesh/validation.json'),'the four-process experiment follows the original rank map');
 const tensorGroupFigure=(tensorGroups.match(figurePattern)||[]).filter(figure=>figure.includes('src="diagrams/parallel-data-replica-groups.svg"'));
@@ -57,6 +60,7 @@ const suffixBoundaries={
  'cache-consistency':{6:cacheLessons[0]},
  'database-index-locks':{2:shardLessons[0]},
  'gpu-execution':{3:gpuLessons[0]},
+ 'roofline-model':{6:rooflineLessons[0]},
  'tensor-parallel-math':{5:tensorGroups.replace(tensorGroupFigure[0],''),7:pipelineLessons[0]}
 };
 for(const id of ['training-storage','database-index-locks','cache-consistency','gpu-execution','roofline-model','flash-attention-io','tensor-parallel-math']){

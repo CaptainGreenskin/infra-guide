@@ -41,16 +41,44 @@ const model=data.articles.find(a=>a.id==='transformer-model');
 const opening=model.sections[0][1],firstPrediction=opening.split('<details')[0];
 assert(firstPrediction.includes('第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么'),'the first prediction explains both score rows');
 const contextRuns=JSON.parse(fs.readFileSync('dist/labs/tiny-decoder-forward/validation.json','utf8')).runs;
-const contrast=[contextRuns.base,contextRuns.change_prefix].map(run=>JSON.stringify(run.prompt)+' → '+run.selected_id).join('，');
+const contextPair=[contextRuns.base,contextRuns.change_prefix];
+const contrast=contextPair.map(run=>JSON.stringify(run.prompt)+' → '+run.selected_id).join('，');
 assert(firstPrediction.includes(contrast),'the opening context swap matches both recorded predictions');
+assert(firstPrediction.indexOf('词元（token）')<firstPrediction.indexOf(contrast));
+assert(/<ol><li>查表。.*?<li>读取前文。.*?<li>选下一项。.*?<\/ol><figure/.test(firstPrediction),
+ 'introduce the three steps before the intact opening diagram');
 assert(firstPrediction.includes('/article/transformer-model/#repeat-next-token'),'the opening offers the complete generation sequence');
 for(const term of ['Attention','FFN','归一化','残差连接','输出投影'])assert(!firstPrediction.includes(term),'defer block internals until the block walkthrough: '+term);
 assert(!opening.includes('没有参与这次更新'),'keep the experiment-specific training mask in the training section');
 assert(opening.includes('<summary>选读 · 同一模型怎样读训练样本</summary><h3 id="tiny-decoder-input">'),'keep the old direct link to the training preview');
-assert(model.sections[1][1].includes('先给开头的 [0,1] 查表'),'continue the first prediction before adding the second row of training data');
+const embedding=model.sections[1][1].split('<details')[0],linear=model.sections[2][1].split('<details')[0];
+assert(embedding.startsWith('<p>先给开头的 [0,1] 查表')&&embedding.indexOf('[2,8]')<embedding.indexOf('叫一根轴'),
+ 'explain the actual two looked-up rows before introducing axes');
+assert(linear.includes('继续看 [0,1] 查出的两行')&&linear.includes('8→8')&&!linear.includes('x₀='));
+assert(model.sections[2][1].includes('<summary>独立手算 · 每行怎样从 3 项变成 2 项</summary>'));
 const block=model.sections[3][1],score=block.indexOf('点积是 2×ln 2'),weights=block.indexOf('得权重 [1/6,1/3,1/2]'),sum=block.indexOf('6/6+0/3+2/2=2');
 assert(sum>=0&&sum<score&&score<weights,'show a weighted read before deriving the weights from the same numbers');
 assert(block.includes('<summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'),'keep the exact weight derivation available');
+const visibleRead=block.slice(block.indexOf('id="decoder-attention-first-pass"')).split('<details')[0];
+assert.deepEqual(contextPair[0].layers.x[1],contextPair[1].layers.x[1],'same token and position give identical decoder input');
+assert.deepEqual(contextPair[0].reference.q[0][1],contextPair[1].reference.q[0][1]);
+assert.deepEqual(contextPair[0].reference.k[0][1],contextPair[1].reference.k[0][1]);
+assert.notDeepEqual(contextPair[0].reference.k[0][0],contextPair[1].reference.k[0][0]);
+assert.deepEqual(contextPair[0].reference.v[0][1],contextPair[1].reference.v[0][1]);
+for(const result of contextPair){
+ const [first,self]=result.reference.weights[0][1];
+ const [firstValue,selfValue]=result.reference.v[0].map(row=>row[0]);
+ const joined=result.layers.joined[1][0];
+ assert(Math.abs(first*firstValue+self*selfValue-joined)<1e-12,'reference proportions recover the native head component');
+ const prompt=JSON.stringify(result.prompt),format=value=>value.toFixed(7);
+ const factors=[first,firstValue,self,selfValue].map(format);
+ assert.equal((Number(factors[0])*Number(factors[1])+Number(factors[2])*Number(factors[3])).toFixed(6),joined.toFixed(6));
+ assert(visibleRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));
+ const finalScores=result.logits[1];
+ assert.equal(finalScores.indexOf(Math.max(...finalScores)),result.selected_id);
+ assert(block.includes(`${prompt} 给编号 1 打 ${finalScores[1].toFixed(6)} 分，给编号 7 打 ${finalScores[7].toFixed(6)} 分，最高是 ${result.selected_id}`));
+}
+assert(block.includes('href="labs/tiny-decoder-forward/validation.json"'),'both score lines link the original forward record');
 const diagram=fs.readFileSync('dist/diagrams/transformer-first-forward.svg','utf8');
 const preview=JSON.parse(diagram.match(/<metadata>([^<]+)<\/metadata>/)[1]);
 const run=JSON.parse(fs.readFileSync('dist/'+preview.record,'utf8')).program;
