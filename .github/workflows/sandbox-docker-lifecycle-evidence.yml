@@ -1,0 +1,27 @@
+name: Native Docker sandbox lifecycle
+on:
+  push:
+    branches: ['evidence/sandbox-docker-lifecycle-20261112']
+    paths:
+      - 'dist/labs/sandbox-docker-lifecycle/**'
+      - '.github/workflows/sandbox-docker-lifecycle-evidence.yml'
+permissions:
+  contents: read
+jobs:
+  sandbox:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v6
+      - name: Pull pinned fixture image
+        run: docker pull docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431
+      - name: Measure and verify Docker lifecycle
+        run: |
+          python3 -B dist/labs/sandbox-docker-lifecycle/docker_lifecycle.py --output native-records/sandbox-docker-lifecycle.json
+          python3 -B dist/labs/sandbox-docker-lifecycle/docker_lifecycle.py --check-record native-records/sandbox-docker-lifecycle.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sandbox-docker-lifecycle
+          path: native-records/sandbox-docker-lifecycle.json
+          if-no-files-found: error
+          retention-days: 14
