@@ -4260,7 +4260,9 @@ const progressiveCloudSectionTitles={
  '本章先顺着这条正常流程走到接流量和退出。后面的协调存储章再解释多个 API 实例如何共同保存、提交并观察这份期望；工作负载章则用这些对象组织滚动更新。')+link('control-plane-consensus','API 持久状态的多数派提交与观察')+'<p><a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener noreferrer">Kubernetes：控制循环与期望状态 ↗</a></p>',
  h('subsection-2-lznes3','对象身份、资源版本与期望代次')+p('Kubernetes 命名空间（namespace）为一部分 API 对象划分名称范围：report-a 和 report-b 中同名的 orders 是两个对象。Pod、Deployment 等对象带 namespace，Node 等集群级对象则不属于某个命名空间。这里组织的是 API 对象；前章 Linux namespace 组织的是进程所见的系统资源视图。')+
  table(['字段','记录的对象','在 orders 服务中的用法'],[['name / namespace','可按名称定位的资源','在指定命名空间查询 orders'],['uid','这一次创建的对象身份','区分删除前后同名的 Pod'],['resourceVersion','服务端对象版本，不透明值','并发更新条件与版本观察'],['generation','支持该语义的对象的期望代次','区分 Deployment 的期望变化'],['status.observedGeneration','控制器已观察的期望代次','把状态报告对应回某代期望']])+p(
- '名称可以复用，UID 用来识别具体创建；resourceVersion 用于检查所读对象是否已变化，按 API 作为不透明值处理。对本例 Deployment，期望到第 2 代、观察仍是第 1 代，说明这份报告尚未覆盖新期望。代次追上后，再看副本与就绪进度。不同资源的代次和状态字段按对应 API 解释。')+figures(k[1]).join('')+
+ '名称可以复用，UID 用来识别具体创建；resourceVersion 用于检查所读对象是否已变化，按 API 作为不透明值处理。对本例 Deployment，期望到第 2 代、观察仍是第 1 代，说明这份报告尚未覆盖新期望。代次追上后，再看副本与就绪进度。不同资源的代次和状态字段按对应 API 解释。')+figures(k[1]).join('')+p(
+ '在三副本发布的<a href="/labs/kubernetes-pdb-rollout/validation.json">原始记录</a>里，<code>stalled_rollout.deployment</code> 摘录了 Deployment 的字段。<code>metadata.generation=2</code> 和 <code>status.observedGeneration=2</code> 表明控制器已看到这次更新。目标仍是 3 份（<code>spec.replicas=3</code>），其中只有 1 份用了新版模板（<code>status.updatedReplicas=1</code>），此时有 2 份可用（<code>status.availableReplicas=2</code>）。',
+ '再看同一阶段的 <code>pods</code>。唯一 v2 的状态是已运行（<code>Running</code>）、未就绪（<code>Ready=false</code>）。两个可用副本仍是 v1。<a href="/article/k8s-workloads/#native-pdb-eviction-rollout">到 C4.3 看发布为何停在两份可用副本 →</a>。这些读数来自 API。要确认用户收到的版本，还需从实际入口发请求。')+
  h('subsection-2-p1xcgh','基于当前状态的重复调谐')+p(
  '以期望三份为例，控制器读到当前没有受管 Pod，就推进补建；之后重新读到已有对象，再计算剩余差额。重复唤醒使用新的观察，已经存在的结果由对象身份和所有权关联识别。无变化时保持现状，因此重试可以继续收敛，而不是把旧事件翻译成“额外再建三份”。',
  '并发更新也从观察出发：基于旧 resourceVersion 的修改遇到冲突后，重新读取、核对并重算。按 UID 检查具体对象身份，可以避免旧 Pod 的删除条件误作用于同名新实例。下方状态模型专门保留了这两个对照。')+
@@ -4296,6 +4298,7 @@ const progressiveCloudSectionTitles={
  '模型声明了规则，用于核对状态推导；它不替代 kube-apiserver、调度器或真实转发。对目标集群按同样字段读取对象，把 UID、版本、期望代次与所有权对应起来：')+codeBlocks(k[6])[3]+p(
  '相邻的工作负载章将用 Deployment、StatefulSet、Job 等类型表达不同执行语义，并在滚动更新中计算允许多少副本同时变化。本章的对象身份、就绪与终止链，就是这些发布预算能够落到实际进程的基础。平台交付章再把它们与配置、数据兼容和回退条件放到一起。')+link('k8s-workloads','工作负载类型与滚动更新预算')+link('delivery','发布兼容与版本回退')
  ]);
+ kube.updated='2026.11.12';
  kube.sections[3][1]+=
  h('service-ready-and-reachability','后端已就绪，接下来验证哪条路径')+
  p('在一次用 Cilium 网络插件执行策略的测试集群里，<code>orders</code> 的 Service 地址是 <code>10.96.4.135</code>。实验首尾的 EndpointSlice 都指向 <code>10.244.1.79</code>，后端 UID 相同，条件都是 <code>ready=true</code>。这组对象告诉我们服务登记了哪一个后端。')+
@@ -10313,7 +10316,12 @@ float value = *address;
  edit('operator-profiling',8,'继续理解注意力怎样减少中间搬运','回看注意力怎样减少中间搬运');
 
  // Similar sample IDs in different programs must not imply one persistent task.
- edit('agent-memory',3,'继续沿R17追踪保存身份。本节恢复夹具的业务结果与回执值为13，原操作R17:publish的效果计数为1，用原回执和效果次数判断是否重复执行；运行时章的37则用于核对日报内容。','本节另建一个内存与恢复的 SQLite 夹具：它的操作名为 R17:publish，业务结果与回执值为 13，效果计数为 1。该数据库独立于运行时章的日报 37，重复使用的 R17 只是本例标识，并没有把原操作的参数从 37 改成 13。这里按本例原回执和效果次数判断重复执行。');
+ edit('agent-memory',3,'继续沿R17追踪保存身份。本节恢复夹具的业务结果与回执值为13，原操作R17:publish的效果计数为1，用原回执和效果次数判断是否重复执行；运行时章的37则用于核对日报内容。','本节用 SQLite 演示怎样从运行记录恢复上下文。该数据库独立于运行时章的日报 37。这里的操作号是 R17:publish，回执值为 13，效果计数为 1。');
+ edit('agent-recovery',8,'这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。','如果下一步要请模型解释结果，先把当前获准查看的任务状态和回执字段组织进上下文。'+to('agent-memory','subsection-4-17hu0bc','G5 的旧摘要实验')+'演示怎样挑选这些字段。工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
+ edit('agent-memory',3,p('恢复先读任务身份与当前状态，再沿原操作取得回执，核对当前读取资格，最后组装模型视图。这样旧摘要仍可作为历史，但本轮视图显示已确认结果，效果保持1次。结果仍未知时，按工具协议继续核对；新的业务目标才另建操作身份。'),p(
+  '组装下一轮上下文，先从任务表取出当前状态和原操作号。本例直接从同库的效果表查到 13。给模型的输入可以写成“任务已完成，当前记录版本为 2，原操作结果为 13”。在<a href="/labs/storage-quant-context/validation.json">原始记录</a>中搜索 <code>correct_recovery</code> 即可核对。',
+  '若回执由远端工具保存，就用原操作号查询。接收方先核对当前读取权限，再返回获准查看的内容。收到 <code>read_denied</code> 时，本轮只说明回执无法读取，保留原操作号，等待有权方核对。旧摘要里的“报告尚未保存”也不能作为重发依据。'+to('agent-security','section-10','回看已提交 K1 的查询结果 →')));
+ chapter('agent-memory').updated='2026.11.12';
  const obs=chapter('agent-observability');
  obs.sections[0][1]=p('本章使用独立的发布任务与数据库，例子标识为 R27、R27:publish，总数为 37。检索章的排障题 R27、沙箱章的画图题 R27各有自己的输入与运行环境；这些名称相同的夹具不共享任务状态或操作回执。')+obs.sections[0][1];changed.add('agent-observability');
  add('agent-retrieval',14,p('这个接收记录保存的是“哪份输入已交给收集器”：它能把装配文本、来源版本与实际收到的输入连起来。工具效果回执保存的是外部动作已经造成什么修改；最终验收还要检查生成或保存的答案及其引用。三份事实分别属于输入交付、业务效果和任务结果。'+to('agent-evaluation','','评估章')+'核对产物与来源，'+to('agent-recovery','','恢复章')+'处理效果已提交却没有收到确认的情况。本节收集器没有调用语言模型，不能从输入送达推得答案正确。'));
@@ -10518,9 +10526,10 @@ float value = *address;
   ['改为最少保留 3 个，尝试驱逐一个健康 Pod','<code>disruptionsAllowed=0</code>，HTTP 429 的原因详情是 <code>DisruptionBudget</code>。同一 UID 仍存在。'],
   ['对刚被拒绝的 Pod 发直接 DELETE','带 UID 条件的 DELETE 返回 HTTP 200，副本控制器随后补回第三个 Pod。'],
   ['以 <code>maxSurge=0</code>、<code>maxUnavailable=1</code> 发布永远未就绪的 v2','一份旧副本已被替换。两个 v1 就绪，一个 v2 正在运行但未就绪。此时维护驱逐仍返回 429，撤销发布后回到三个就绪 v1。']])+
- p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
+ p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。排查发布进度时，另看<a href="/article/kubernetes-basics/#subsection-2-lznes3">同一快照中 Deployment 自己的代次和副本数</a>。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
  p('在 Linux 本机 Docker 上解压后运行 <code>python3 -B pdb_rollout.py --output replay.json</code>。先对照 <code>blocked_eviction</code> 和 <code>direct_delete</code> 的请求路径与 UID，再按 <code>before_rollout</code>、<code>stalled_rollout</code>、<code>after_undo</code> 逐份核对版本、健康数和预算。这里运行的是单节点 kind。多节点排空、故障域和实际服务流量要到对应环境验证。')+
  '<p class="practice-links"><a href="labs/kubernetes-pdb-rollout.zip" download>下载实验包 ↓</a> · <a href="labs/kubernetes-pdb-rollout/pdb_rollout.py">查看完整源码</a> · <a href="labs/kubernetes-pdb-rollout/README.md">分步复跑</a> · <a href="labs/kubernetes-pdb-rollout/validation.json">查看真实 API 记录</a> · <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/api-eviction/">Eviction API 文档 ↗</a></p>';
+ workloads.updated='2026.11.12';
 
  const scheduling=select('scheduling-resources',['一个Pod从提交到运行，要过哪些关','request、limit和用量是三笔账','配额拒绝后，为什么查不到那个Pod','逐节点检查资源，再求可行集合','标签、亲和、污点与抢占分别改变哪道条件','把调度等待放回端到端完成时间','用对象、条件和事件判断卡在哪里','在隔离kind集群重放完整链条']);
  const s=scheduling.sections.map(x=>x[1]),s2=blocks(s[2]),s6=blocks(s[6]),s7=blocks(s[7]);
@@ -12848,7 +12857,8 @@ local_sum = half_squared_error(output, Y[rows]).sum()
   ['Adam 更新以后','每个进程的一阶与二阶历史各 3 项'],
   ['取回完整状态','按 weight、bias 比较参数、两份历史和更新步数']
  ])+
- p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
+ p('前向前，两个 CPU rank 各持有 3 项本地参数。进入线性层时，前向钩子读到权重 [2,2] 和偏置 [2]，共 6 项。前向返回后，外层参数视图又是 3 项。按这个版本的实现，根 FSDP 仍把取齐的缓冲留给反向。算内存峰值时，要数同一时刻还占着空间的缓冲和其他对象。<a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a> · <a href="/article/gpu-memory/#subsection-9-1sk5pf9">到显存章算两份缓冲重叠的峰值 →</a>',
+ '每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。')+
  p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
  trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
  p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',
@@ -17623,5 +17633,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="bfab63a301fbfdd32380b945fdc8641a351c77752eeaacc528710a67074e9aa1";
+const staticReadingVersion="b4c28fcef729e89390654531c094d49df757f3cb44c2a42e7bdab5f914c3bff2";
 

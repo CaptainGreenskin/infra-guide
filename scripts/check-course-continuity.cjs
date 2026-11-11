@@ -19,6 +19,13 @@ assert(!training.includes('position-encoding'));assert(training.includes('transf
 c.profile=data.profiles['agent-app'];const application=JSON.parse(vm.runInContext('JSON.stringify(learningProfileRoute(profile))',c));
 assert(!application.includes('agent-sandbox'));assert(application.includes('agent-security')&&application.includes('agent-recovery'));
 for(const[id,index,text]of [['mcp-protocol',0,'运行时章的日报 37 来自另一份实验'],['agent-memory',3,'该数据库独立于运行时章的日报 37'],['agent-observability',0,'不共享任务状态或操作回执']])assert(section(id,index).includes(text),id+': fixture boundary');
+const contextHandoff=section('agent-memory',3);
+assert(section('agent-recovery',8).includes('/article/agent-memory/#subsection-4-17hu0bc'));
+assert(contextHandoff.includes('id="subsection-4-17hu0bc"'));
+assert(contextHandoff.includes('/labs/storage-quant-context/validation.json'));
+assert(contextHandoff.includes('先核对当前读取权限，再返回获准查看的内容'));
+assert(contextHandoff.includes('<code>read_denied</code> 时，本轮只说明回执无法读取，保留原操作号'));
+assert(contextHandoff.includes('/article/agent-security/#section-10'));
 const input=section('agent-retrieval',14);for(const term of ['输入交付','业务效果','任务结果','/article/agent-evaluation/','/article/agent-recovery/'])assert(input.includes(term));
 const chain=section('kubernetes-training',2);for(const term of ['id="training-object-chain"','ownerReferences','WORLD_SIZE=4','平台策略','rank 用来标识当前通信组','metadata.ownerReferences','workloads.kueue.x-k8s.io'])assert(chain.includes(term));
 for(const id of ['training-platform','gpu-scheduling'])assert(section(id,0).includes('/article/kubernetes-training/#training-object-chain'));

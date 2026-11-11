@@ -154,7 +154,9 @@ const progressiveCloudSectionTitles={
  '本章先顺着这条正常流程走到接流量和退出。后面的协调存储章再解释多个 API 实例如何共同保存、提交并观察这份期望；工作负载章则用这些对象组织滚动更新。')+link('control-plane-consensus','API 持久状态的多数派提交与观察')+'<p><a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener noreferrer">Kubernetes：控制循环与期望状态 ↗</a></p>',
  h('subsection-2-lznes3','对象身份、资源版本与期望代次')+p('Kubernetes 命名空间（namespace）为一部分 API 对象划分名称范围：report-a 和 report-b 中同名的 orders 是两个对象。Pod、Deployment 等对象带 namespace，Node 等集群级对象则不属于某个命名空间。这里组织的是 API 对象；前章 Linux namespace 组织的是进程所见的系统资源视图。')+
  table(['字段','记录的对象','在 orders 服务中的用法'],[['name / namespace','可按名称定位的资源','在指定命名空间查询 orders'],['uid','这一次创建的对象身份','区分删除前后同名的 Pod'],['resourceVersion','服务端对象版本，不透明值','并发更新条件与版本观察'],['generation','支持该语义的对象的期望代次','区分 Deployment 的期望变化'],['status.observedGeneration','控制器已观察的期望代次','把状态报告对应回某代期望']])+p(
- '名称可以复用，UID 用来识别具体创建；resourceVersion 用于检查所读对象是否已变化，按 API 作为不透明值处理。对本例 Deployment，期望到第 2 代、观察仍是第 1 代，说明这份报告尚未覆盖新期望。代次追上后，再看副本与就绪进度。不同资源的代次和状态字段按对应 API 解释。')+figures(k[1]).join('')+
+ '名称可以复用，UID 用来识别具体创建；resourceVersion 用于检查所读对象是否已变化，按 API 作为不透明值处理。对本例 Deployment，期望到第 2 代、观察仍是第 1 代，说明这份报告尚未覆盖新期望。代次追上后，再看副本与就绪进度。不同资源的代次和状态字段按对应 API 解释。')+figures(k[1]).join('')+p(
+ '在三副本发布的<a href="/labs/kubernetes-pdb-rollout/validation.json">原始记录</a>里，<code>stalled_rollout.deployment</code> 摘录了 Deployment 的字段。<code>metadata.generation=2</code> 和 <code>status.observedGeneration=2</code> 表明控制器已看到这次更新。目标仍是 3 份（<code>spec.replicas=3</code>），其中只有 1 份用了新版模板（<code>status.updatedReplicas=1</code>），此时有 2 份可用（<code>status.availableReplicas=2</code>）。',
+ '再看同一阶段的 <code>pods</code>。唯一 v2 的状态是已运行（<code>Running</code>）、未就绪（<code>Ready=false</code>）。两个可用副本仍是 v1。<a href="/article/k8s-workloads/#native-pdb-eviction-rollout">到 C4.3 看发布为何停在两份可用副本 →</a>。这些读数来自 API。要确认用户收到的版本，还需从实际入口发请求。')+
  h('subsection-2-p1xcgh','基于当前状态的重复调谐')+p(
  '以期望三份为例，控制器读到当前没有受管 Pod，就推进补建；之后重新读到已有对象，再计算剩余差额。重复唤醒使用新的观察，已经存在的结果由对象身份和所有权关联识别。无变化时保持现状，因此重试可以继续收敛，而不是把旧事件翻译成“额外再建三份”。',
  '并发更新也从观察出发：基于旧 resourceVersion 的修改遇到冲突后，重新读取、核对并重算。按 UID 检查具体对象身份，可以避免旧 Pod 的删除条件误作用于同名新实例。下方状态模型专门保留了这两个对照。')+
@@ -190,6 +192,7 @@ const progressiveCloudSectionTitles={
  '模型声明了规则，用于核对状态推导；它不替代 kube-apiserver、调度器或真实转发。对目标集群按同样字段读取对象，把 UID、版本、期望代次与所有权对应起来：')+codeBlocks(k[6])[3]+p(
  '相邻的工作负载章将用 Deployment、StatefulSet、Job 等类型表达不同执行语义，并在滚动更新中计算允许多少副本同时变化。本章的对象身份、就绪与终止链，就是这些发布预算能够落到实际进程的基础。平台交付章再把它们与配置、数据兼容和回退条件放到一起。')+link('k8s-workloads','工作负载类型与滚动更新预算')+link('delivery','发布兼容与版本回退')
  ]);
+ kube.updated='2026.11.12';
  kube.sections[3][1]+=
  h('service-ready-and-reachability','后端已就绪，接下来验证哪条路径')+
  p('在一次用 Cilium 网络插件执行策略的测试集群里，<code>orders</code> 的 Service 地址是 <code>10.96.4.135</code>。实验首尾的 EndpointSlice 都指向 <code>10.244.1.79</code>，后端 UID 相同，条件都是 <code>ready=true</code>。这组对象告诉我们服务登记了哪一个后端。')+

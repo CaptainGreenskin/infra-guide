@@ -275,7 +275,8 @@ local_sum = half_squared_error(output, Y[rows]).sum()
   ['Adam 更新以后','每个进程的一阶与二阶历史各 3 项'],
   ['取回完整状态','按 weight、bias 比较参数、两份历史和更新步数']
  ])+
- p('前向时在被包装层入口实际读到权重 [2,2] 和偏置 [2]，前向结束后外层参数视图回到 3 项。每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。 <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a>')+
+ p('前向前，两个 CPU rank 各持有 3 项本地参数。进入线性层时，前向钩子读到权重 [2,2] 和偏置 [2]，共 6 项。前向返回后，外层参数视图又是 3 项。按这个版本的实现，根 FSDP 仍把取齐的缓冲留给反向。算内存峰值时，要数同一时刻还占着空间的缓冲和其他对象。<a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/_runtime_utils.py#L482-L496">根组前向后的分片与缓冲逻辑 ↗</a> · <a href="/article/gpu-memory/#subsection-9-1sk5pf9">到显存章算两份缓冲重叠的峰值 →</a>',
+ '每个进程的前反向记录各有一次上层 all-gather 和一次 reduce-scatter 调用。后者在这套 CPU/Gloo 路径下出现底层 all-reduce 事件。把两层事件分开读，可以区分框架调用和后端实际事件。')+
  p('程序让两个进程都参加完整状态提取，再对照一个普通线性层在全批次上连续两次更新的结果。梯度、参数和 Adam 历史的最大差值都小于 1e−12。把本地损失切回局部均值，首次梯度的最大偏差为 17/96。提取后的完整状态只用于内存核对，保存目录和进程退出后的加载属于后面的检查点实验。<a href="/article/checkpoint-recovery/#torch-checkpoint-run">继续看新进程加载与训练恢复 →</a>')+
  trainingCode('解压后使用 PyTorch 2.5.1 启动两个 CPU 进程','SHELL','python -B -m torch.distributed.run --standalone --nproc_per_node=2 fsdp_lab.py > replay.json')+
  p('这份记录验证同宿主 CPU/Gloo、双精度与固定模型的分片数值。图中元素数描述指定时刻的归属。GPU 峰值与通信耗时仍需在目标设备实测。',

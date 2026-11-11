@@ -1,0 +1,86 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "6e64d3ea215db213721f2122c70f401e253eb33d",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FOLLOW_THE_SAME_EXPERIMENT_2026-11-12.json": "b0e875f3b9c31b3f294a189a25b89f75226bb387fb8f0f3acf2656a9554dd682"
+  },
+  "source_revisions": {
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "11bd21d179329a971e0c5aae54145a33b7b0f8f8995271c0f7f640c34c3cd20d",
+      "reviewed_sha256": "7b3ec97f921cd9a2af56a9c009bbe7b47c8cb30c7349d99a462573a8ddd01257",
+      "scope": "Explain the native FSDP forward view changes and the retained root buffer before linking to memory lifetime arithmetic."
+    },
+    "dist/course-continuity-revisions.js": {
+      "previous_sha256": "f6b0d048ff071b3442103db8448e2ee955f62d7203144946191ed247e5af30c2",
+      "reviewed_sha256": "c3b289d89f982bb59f88aca1f63cec59987f53da6ccc39c81f126c2a156b9cf7",
+      "scope": "Read the current task and its original receipt before assembling model context, with remote permission checked before disclosure."
+    },
+    "dist/progressive-cloud-reading.js": {
+      "previous_sha256": "fbdf5131fe6fa937baabcf3591d6638015b93f638b0fdacc833ac1c65eff0be0",
+      "reviewed_sha256": "56cf00c1f3c91fe4381f3f7bc55e047c0dfe0fa7fceffa5fb8db13d26920545c",
+      "scope": "Distinguish acknowledgement of a Deployment generation from completion of that rollout using the same live API snapshot."
+    },
+    "dist/progressive-cloud-orchestration-reading.js": {
+      "previous_sha256": "31460259c5013426b3924885161e12adfa60e697b2b8d0b06bd228bf6dc8166e",
+      "reviewed_sha256": "8ca56f19da45662d475ef177c0d4e872403785fd06209e13841764b31fcbee75",
+      "scope": "Separate PDB eviction evidence from the same Deployment rollout progress."
+    },
+    "scripts/check-kubernetes-pdb-rollout.cjs": {
+      "previous_sha256": "e2712e508e6e80605cb0a1a14048a75740259c7e60c9b44930d1ab02b0afb30a",
+      "reviewed_sha256": "ea7775ecbf6f174d7dbf76f800639afd95038828c37f3b82780115c606eaf649",
+      "scope": "Check the rendered exact rollout links and generation, replica and readiness fields against the native record."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "68f6f9353506f8d3c824ca666d4935a6a0df4b7f36cb6a605da9bfa04bc9196a",
+      "reviewed_sha256": "9782bac648638527f52529c2f94823fa76bfb5ac128fc99c894e481d8ddce769",
+      "scope": "Check the G4 and G5 handoff against the exact receipt fixture and the current read-permission rule."
+    },
+    "scripts/check-native-innodb-fsdp.cjs": {
+      "previous_sha256": "a571337cf17701caaf71c2c9b061b43dab14a3d89b05e33dc64548d2dc738c56",
+      "reviewed_sha256": "aef47edfd60b374489ed14d2fb8a1d5a0eae672e675bea8fe99c082264825374",
+      "scope": "Check the three observed native parameter views and exact memory-lifetime destination."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "dff10a69d3597611427878ae90a4d6b2c0180c81f1ede0843a04460408a3630a",
+      "reviewed_sha256": "9147a742762f2cc7b9cbd8bd0fe5eafc9e99229cac7d3f8384337125c9c77ae3",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "16fe60ed64db60ab6a7ea744983e3ccd2876cd7f1881b53dc8a5126ae2e4418a",
+      "reviewed_sha256": "d84f925e313c120009d4531a1ac08ae74ca82bab995ffebfcaed28eaa8870dbd",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_TRACE_OBSERVED_STATE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "632d1fd26d33b5688b1a08ba29455b2a0dc27a058ba7d852cd3b717359c15a86",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "3e25876daef1f42a7b468b0e52d90e058b5667716049f98ee672717bc43d8e7e",
+      "reviewed_sha256": "f73c9e28efdcc3f36a2c05f2762269729143243504cdd809a38a1064d670cbd1",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e172d2ab24781cfd2575881352f61dc4e36ae2242c36e2a75611cc32adb8e18c",
+      "reviewed_sha256": "cd470b1746e45cd4038d83b9d3359bb952723380a961d7d0767fc8a98916bab1",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "6e64d3ea215db213721f2122c70f401e253eb33d",
+    "chapters": 78,
+    "changed_bodies": [
+      "distributed-training",
+      "agent-recovery",
+      "agent-memory",
+      "kubernetes-basics",
+      "k8s-workloads"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

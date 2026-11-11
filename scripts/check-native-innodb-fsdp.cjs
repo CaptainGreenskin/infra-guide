@@ -105,4 +105,15 @@ const fsdpPage=readPage('distributed-training');
 for(const match of ['id="native-fsdp-run"','diagrams/native-fsdp-state.svg','labs/native-fsdp.zip','article/checkpoint-recovery/#torch-checkpoint-run']){
  assert(fsdpPage.includes(match),'FSDP page missing '+match);
 }
+const lifetime=fsdpPage.split('id="native-fsdp-run"')[1].split('id="section-5"')[0];
+const firstRank=fsdp.ranks[0],update=firstRank.updates[0];
+const {weight,bias}=update.wrapped_layer_during_forward;
+const fullElements=weight[0]*weight[1]+bias[0];
+assert(lifetime.includes(`各持有 ${firstRank.initial_shard.length} 项本地参数`));
+assert(lifetime.includes(`权重 ${JSON.stringify(weight)} 和偏置 ${JSON.stringify(bias)}，共 ${fullElements} 项`));
+assert(lifetime.includes(`外层参数视图又是 ${update.parameter_elements_after_forward} 项`));
+assert(lifetime.includes('根 FSDP 仍把取齐的缓冲留给反向'));
+const memoryAnchor='subsection-9-1sk5pf9';
+assert(lifetime.includes(`href="/article/gpu-memory/#${memoryAnchor}"`));
+assert(readPage('gpu-memory').includes(`id="${memoryAnchor}"`));
 console.log('PASS: native InnoDB plans, wait edge, deadlock and committed receipts; native FSDP trace and every shard/full state re-derived for two Adam steps.');

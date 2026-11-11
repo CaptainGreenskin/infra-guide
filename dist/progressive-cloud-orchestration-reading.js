@@ -156,9 +156,10 @@
   ['改为最少保留 3 个，尝试驱逐一个健康 Pod','<code>disruptionsAllowed=0</code>，HTTP 429 的原因详情是 <code>DisruptionBudget</code>。同一 UID 仍存在。'],
   ['对刚被拒绝的 Pod 发直接 DELETE','带 UID 条件的 DELETE 返回 HTTP 200，副本控制器随后补回第三个 Pod。'],
   ['以 <code>maxSurge=0</code>、<code>maxUnavailable=1</code> 发布永远未就绪的 v2','一份旧副本已被替换。两个 v1 就绪，一个 v2 正在运行但未就绪。此时维护驱逐仍返回 429，撤销发布后回到三个就绪 v1。']])+
- p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
+ p('记录中的两个 429 都有预算原因。实际排障还要读错误详情与 PDB 的 <code>observedGeneration</code>，因为 429 也可能来自限流，控制器可能尚未处理新配置。排查发布进度时，另看<a href="/article/kubernetes-basics/#subsection-2-lznes3">同一快照中 Deployment 自己的代次和副本数</a>。发布停在两个就绪，是 Deployment 的不可用额度已经用满。若要让发布全程保留三个就绪，可改用 <code>maxUnavailable=0</code>、<code>maxSurge=1</code>，并预留新 Pod 所需资源。')+
  p('在 Linux 本机 Docker 上解压后运行 <code>python3 -B pdb_rollout.py --output replay.json</code>。先对照 <code>blocked_eviction</code> 和 <code>direct_delete</code> 的请求路径与 UID，再按 <code>before_rollout</code>、<code>stalled_rollout</code>、<code>after_undo</code> 逐份核对版本、健康数和预算。这里运行的是单节点 kind。多节点排空、故障域和实际服务流量要到对应环境验证。')+
  '<p class="practice-links"><a href="labs/kubernetes-pdb-rollout.zip" download>下载实验包 ↓</a> · <a href="labs/kubernetes-pdb-rollout/pdb_rollout.py">查看完整源码</a> · <a href="labs/kubernetes-pdb-rollout/README.md">分步复跑</a> · <a href="labs/kubernetes-pdb-rollout/validation.json">查看真实 API 记录</a> · <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/api-eviction/">Eviction API 文档 ↗</a></p>';
+ workloads.updated='2026.11.12';
 
  const scheduling=select('scheduling-resources',['一个Pod从提交到运行，要过哪些关','request、limit和用量是三笔账','配额拒绝后，为什么查不到那个Pod','逐节点检查资源，再求可行集合','标签、亲和、污点与抢占分别改变哪道条件','把调度等待放回端到端完成时间','用对象、条件和事件判断卡在哪里','在隔离kind集群重放完整链条']);
  const s=scheduling.sections.map(x=>x[1]),s2=blocks(s[2]),s6=blocks(s[6]),s7=blocks(s[7]);

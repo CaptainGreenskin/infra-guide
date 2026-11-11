@@ -196,4 +196,20 @@ assert.deepEqual(current,baseline);
 for(const asset of ['diagrams/kubernetes-pdb-rollout.svg','labs/kubernetes-pdb-rollout.zip',
  'labs/kubernetes-pdb-rollout/pdb_rollout.py','labs/kubernetes-pdb-rollout/validation.json',
  'labs/kubernetes-pdb-rollout/README.md']) assert(added.includes(asset),asset);
+const basicsAnchor='subsection-2-lznes3',workloadAnchor='native-pdb-eviction-rollout';
+const basicsHref='/article/kubernetes-basics/#'+basicsAnchor,workloadHref='/article/k8s-workloads/#'+workloadAnchor;
+const basics=read('dist/article/kubernetes-basics/index.html').toString()
+ .split('id="'+basicsAnchor+'"')[1]?.split('id="subsection-2-p1xcgh"')[0];
+const workload=read('dist/article/k8s-workloads/index.html').toString()
+ .split('id="'+workloadAnchor+'"')[1]?.split('</section>')[0];
+assert(basics?.includes(workloadHref) && basics.includes('/labs/kubernetes-pdb-rollout/validation.json'));
+assert(workload?.includes(basicsHref) && added.includes(basicsHref));
+assert(workload.includes('PDB 的 <code>observedGeneration</code>')&&workload.includes('Deployment 自己的代次和副本数'));
+const stalled=record.stalled_rollout.deployment;
+for(const [field,value] of Object.entries({
+ 'metadata.generation':stalled.generation,'status.observedGeneration':stalled.observedGeneration,
+ 'spec.replicas':stalled.replicas,'status.updatedReplicas':stalled.updatedReplicas,'status.availableReplicas':stalled.availableReplicas,
+}))assert(basics.includes('<code>'+field+'='+value+'</code>'),field);
+assert(basics.includes('v2 的状态是已运行（<code>Running</code>）、未就绪（<code>Ready=false</code>）'));
+assert(basics.includes('要确认用户收到的版本，还需从实际入口发请求'));
 console.log('PASS: kind eviction accepted, 429 budget rejection, same-UID direct DELETE, stalled rollout, undo, CI source and exact archive/figure/lesson bindings; five rejected controls.');

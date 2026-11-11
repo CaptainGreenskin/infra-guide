@@ -8993,6 +8993,95 @@
         "把模型账本接回资源量级",
         "用本地实验走通协议，再迁移到多机"
       ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d72cb8be687eaf942cc0d36ff402eacda4cd292cc2819a3fb448b97788af7970",
+      "reviewed_content_sha256": "2acaa90d746be747f031f51842ca3404f4e8223577a3423401474b95720b39e6",
+      "scope": "Explain the native FSDP forward view changes and the retained root buffer before linking to memory lifetime arithmetic.",
+      "observation": "Each CPU rank exposes a three-element shard before and after forward. The inner layer receives all six parameters, and the pinned root policy retains its gathered buffer for backward.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f95b832d800b49a3e0a22408d9207a3ae5fadd556f453d861cad4e1167b50cf0",
+      "reviewed_content_sha256": "384227cd9c71bf67f9831e323155d7a536481b5e1e3000c2c4422d918a7db851",
+      "scope": "Connect recovered execution facts to an allowed, minimal model view in the next lesson.",
+      "observation": "The recovery record confirms one original effect, and the model view follows the authorized state rather than guessing from a stale summary.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b6c5cab7f4ad2704fc7232655ea261f8c38c9009a0110ac91eb16824d7ba0b01",
+      "reviewed_content_sha256": "66f257522e97db0665520b502236f6ad755e57f8dfdaae923bb45ced62ff9aab",
+      "scope": "Read the current task and its original receipt before assembling model context, with remote permission checked before disclosure.",
+      "observation": "The separate local fixture yields task version 2 and receipt 13. A rejected remote lookup keeps the original identity and cannot justify repeating the action.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "14f84eaa98333b56c248cb59c49ab28d273b367c195fc098c63b948de4fdc387",
+      "reviewed_content_sha256": "eff0405a837de43520922a16fed3ba77bfc2c633b9618c39047633b2c0394753",
+      "scope": "Distinguish acknowledgement of a Deployment generation from completion of that rollout using the same live API snapshot.",
+      "observation": "The Deployment observed generation 2 while only one of the desired three replicas used the new template and the two available replicas were still v1.",
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ]
+    },
+    {
+      "id": "k8s-workloads",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d0c27551458840f9f3653dea32ff4e9630036d0561c782970aa2fdd7ff77135e",
+      "reviewed_content_sha256": "f0b7794935efcfa50914b773d1d8e915bd9a9a8c65cf5dc43a9dba463441b3aa",
+      "scope": "Separate PDB eviction evidence from the same Deployment rollout progress.",
+      "observation": "The stalled native record ties the budget response to the PDB and the incomplete rollout to the Deployment and Pod identities. User traffic was outside this run.",
+      "headings": [
+        "apply 成功，只完成了哪一步",
+        "先选工作负载，再写副本数",
+        "三副本滚动更新，先算允许范围",
+        "三种探针：动作、连续阈值与故障放大",
+        "四种失败，四个取证入口",
+        "PDB、滚动更新和节点故障分别约束什么",
+        "排空与退出：逐条核对完成证据",
+        "一份清单，三次单变量练习"
+      ]
     }
   ]
 }
