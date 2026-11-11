@@ -499,12 +499,14 @@
         "subsection-9-qtm6c2",
         "recovery-postgres-native-checkpoints",
         "recovery-report-readback-gate",
-        "recovery-r3-local-readback"
+        "recovery-r3-local-readback",
+        "native-haproxy-report-failover"
       ],
       "visible_targets": [
         "subsection-1-1ww2dsc",
         "subsection-5-1dwp2yh",
         "recovery-report-readback-gate",
+        "native-haproxy-report-failover",
         "subsection-6-vxh3b7",
         "subsection-7-1bgmbh8",
         "subsection-9-xbrzl7",
@@ -812,12 +814,14 @@
         "single-gpu-recovery-contrast",
         "native-tiny-decoder-handoff",
         "native-mps-checkpoint-resume",
-        "checkpoint-ddp-optimizer-state"
+        "checkpoint-ddp-optimizer-state",
+        "native-ddp-accumulation-restart"
       ],
       "visible_targets": [
         "checkpoint-ddp-optimizer-state",
         "fsdp-dcp-reshard",
         "native-elastic-restart-step",
+        "native-ddp-accumulation-restart",
         "native-async-dcp-commit"
       ]
     },
@@ -1039,7 +1043,8 @@
         "subsection-10-hi6ix7",
         "native-sandbox-container",
         "native-sandbox-egress",
-        "native-sandbox-process-group"
+        "native-sandbox-process-group",
+        "native-sandbox-docker-lifecycle"
       ],
       "visible_targets": [
         "subsection-3-1v63ba3",
@@ -1051,7 +1056,8 @@
         "subsection-10-nb0s8",
         "subsection-10-hi6ix7",
         "native-sandbox-container",
-        "native-sandbox-process-group"
+        "native-sandbox-process-group",
+        "native-sandbox-docker-lifecycle"
       ]
     },
     {

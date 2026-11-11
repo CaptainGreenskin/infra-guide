@@ -355,15 +355,15 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
- sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery']},
+ sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
-  'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group']}
+  'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group','agent-sandbox-docker-lifecycle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)

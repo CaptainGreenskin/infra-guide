@@ -1,0 +1,179 @@
+{
+  "concurrent": {
+    "a_after": {
+      "exit_code": 137,
+      "members_retired": [
+        true,
+        true
+      ],
+      "pid": 0,
+      "populated": null,
+      "running": false
+    },
+    "a_before": {
+      "identity": {
+        "id": "06cd3d959dfa7b35ad4d22cb85ab47769ca96b7db64536527db7cfc0f692f2fe",
+        "pid": 2824,
+        "restart_count": 0,
+        "running": true,
+        "started_at": "2026-11-11T22:33:22.812902745Z"
+      },
+      "members": [
+        {
+          "cgroup": "/system.slice/docker-06cd3d959dfa7b35ad4d22cb85ab47769ca96b7db64536527db7cfc0f692f2fe.scope",
+          "pid": 2824,
+          "ppid": 2800,
+          "start_ticks": 4802,
+          "state": "S"
+        },
+        {
+          "cgroup": "/system.slice/docker-06cd3d959dfa7b35ad4d22cb85ab47769ca96b7db64536527db7cfc0f692f2fe.scope",
+          "pid": 2866,
+          "ppid": 2824,
+          "start_ticks": 4892,
+          "state": "S"
+        }
+      ],
+      "populated": 1
+    },
+    "b_after": {
+      "identity": {
+        "id": "b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1",
+        "pid": 2943,
+        "restart_count": 0,
+        "running": true,
+        "started_at": "2026-11-11T22:33:24.906787079Z"
+      },
+      "members": [
+        {
+          "cgroup": "/system.slice/docker-b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1.scope",
+          "pid": 2943,
+          "ppid": 2919,
+          "start_ticks": 5012,
+          "state": "S"
+        },
+        {
+          "cgroup": "/system.slice/docker-b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1.scope",
+          "pid": 2983,
+          "ppid": 2943,
+          "start_ticks": 5101,
+          "state": "S"
+        }
+      ],
+      "populated": 1
+    },
+    "b_before": {
+      "identity": {
+        "id": "b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1",
+        "pid": 2943,
+        "restart_count": 0,
+        "running": true,
+        "started_at": "2026-11-11T22:33:24.906787079Z"
+      },
+      "members": [
+        {
+          "cgroup": "/system.slice/docker-b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1.scope",
+          "pid": 2943,
+          "ppid": 2919,
+          "start_ticks": 5012,
+          "state": "S"
+        },
+        {
+          "cgroup": "/system.slice/docker-b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1.scope",
+          "pid": 2983,
+          "ppid": 2943,
+          "start_ticks": 5101,
+          "state": "S"
+        }
+      ],
+      "populated": 1
+    },
+    "b_report": {
+      "amount": 37,
+      "input_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+      "task": "B"
+    },
+    "grace_seconds": 1,
+    "stop_ms": 1074.274
+  },
+  "environment": {
+    "docker_server": "28.0.4",
+    "kernel": "7.0.0-1017-azure",
+    "platform": "linux/amd64"
+  },
+  "image": "docker.io/library/python:3.13-alpine3.22@sha256:7f7ee17311e0273954ffe76a7b84a2d8c8ecf16f9992e780e4d46c86175df431",
+  "removed_ids": [
+    "694e3d99716c952efd2cb891ca02e8372df642f019fe7db8385280a31a13d2b8",
+    "06cd3d959dfa7b35ad4d22cb85ab47769ca96b7db64536527db7cfc0f692f2fe",
+    "b244db5b4a21a39fd232d96c96605ae80a21a173256e4afb5aea786e2a8a2dd1"
+  ],
+  "reuse": {
+    "after": {
+      "id": "694e3d99716c952efd2cb891ca02e8372df642f019fe7db8385280a31a13d2b8",
+      "pid": 2446,
+      "restart_count": 0,
+      "running": true,
+      "started_at": "2026-11-11T22:33:17.505522212Z"
+    },
+    "before": {
+      "id": "694e3d99716c952efd2cb891ca02e8372df642f019fe7db8385280a31a13d2b8",
+      "pid": 2446,
+      "restart_count": 0,
+      "running": true,
+      "started_at": "2026-11-11T22:33:17.505522212Z"
+    },
+    "cold_create_to_first_readback_ms": 2202.036,
+    "cold_create_to_ready_ms": 1201.914,
+    "container_user": "65534:65534",
+    "first": {
+      "exec_ms": 471.708,
+      "independent_report": {
+        "amount": 37,
+        "input_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+        "task": "first"
+      },
+      "request_to_readback_ms": 969.003,
+      "worker": {
+        "accepted": true,
+        "previous": null
+      }
+    },
+    "image_id": "sha256:47b1e26f6a39ecfb3baffceb4c34de12110b868c5a829030218e5237d4d9dcc6",
+    "network": "none",
+    "readonly_root": true,
+    "report_after_reset": null,
+    "second": {
+      "exec_ms": 503.968,
+      "independent_report": {
+        "amount": 37,
+        "input_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+        "task": "second"
+      },
+      "request_to_readback_ms": 1005.101,
+      "worker": {
+        "accepted": true,
+        "previous": null
+      }
+    },
+    "without_reset": {
+      "exec_ms": 499.971,
+      "independent_report": {
+        "amount": 37,
+        "input_sha256": "301889f41701eb6ce6f1015e26712bf281dfa6849e83d0603d70dec28759c161",
+        "task": "first"
+      },
+      "request_to_readback_ms": 1007.128,
+      "worker": {
+        "accepted": false,
+        "previous": "first"
+      }
+    },
+    "work_tmpfs": "rw,noexec,nosuid,nodev,uid=65534,gid=65534,mode=0700"
+  },
+  "scope": "single_linux_docker_host_fixed_synthetic_jobs",
+  "source_sha256": {
+    "docker_lifecycle.py": "bb1fe9bff0c4ea957ee4c1d6abf27f03f3b9763ca87be476c24311f25c94ad7f",
+    "fixture.py": "b944e08fbd082ed6ebd0e2fb01233eeeee4de10abb89ab90f546908feb01ec57"
+  },
+  "status": "passed"
+}

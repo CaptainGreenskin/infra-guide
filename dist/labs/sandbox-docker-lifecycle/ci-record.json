@@ -1,0 +1,15 @@
+{
+  "run": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631",
+  "head_sha": "df644dbafd37a655466d283a62d6e47faebd7cdc",
+  "workflow": ".github/workflows/sandbox-docker-lifecycle-evidence.yml",
+  "artifact": {
+    "digest": "sha256:bdd0a0f59fbd63699f45578234a4080eee31b48c142957d91d34ad36f6024105",
+    "id": 13896453079,
+    "name": "sandbox-docker-lifecycle"
+  },
+  "validation_sha256": "8ecb6f02eb6d6bbce6485bdf4548768e81e8f6ae7dfe1a1d23caf1e39cfafac2",
+  "source_sha256": {
+    "docker_lifecycle.py": "bb1fe9bff0c4ea957ee4c1d6abf27f03f3b9763ca87be476c24311f25c94ad7f",
+    "fixture.py": "b944e08fbd082ed6ebd0e2fb01233eeeee4de10abb89ab90f546908feb01ec57"
+  }
+}

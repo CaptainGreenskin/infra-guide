@@ -266,6 +266,18 @@ optimizer.step()
  trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
  p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
  '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
+ recovery.sections[7][1]+='<h3 id="native-ddp-accumulation-restart">梯度累积中断，从哪个微批重读</h3>'+
+ p('把微批 0、1 的梯度累积起来更新一次，这两个微批组成第一个累积窗口。实验有两个本机 CPU/Gloo rank。窗口首个微批的前向和反向都在 <code>no_sync()</code> 中，梯度先留在各自的进程里。第二个微批反向时，DDP 同步并平均累积梯度，两边随后各做一次相同的更新。')+
+ p('第一个窗口提交了权重 1、动量 −4 和下一微批编号 2。旧进程对微批 2 反向后，两 rank 的本地梯度分别是 −0.5、−1.5。这时 rank 1 以 73 退出，启动器停止另一进程并启动两个新进程。新进程加载同一份检查点，梯度为空。')+
+ table(['执行方式','最终权重','最终动量'],[
+  ['连续执行','2.5','−6'],
+  ['按检查点从 2 重读','2.5','−6'],
+  ['按消费记录从 3 续跑','2.25','−5']
+ ])+
+ p('按检查点从 2 重做第二个窗口，会重新得到两个微批的梯度。按消费记录从 3 续跑，前一个微批的梯度就丢了。<a href="/article/data-pipeline/#native-prefetch-resume">预取实验</a>也用检查点决定重读位置，这次故障发生在训练进程已经反传之后。')+
+ fold('复跑并核对三组记录',
+  p('安装 PyTorch 2.5.1 后，运行 <code>python -B accumulation_restart.py</code>。在 <code>attempts</code> 里找故障前的 <code>backward</code> 和重启后的 <code>start</code>，再核对 <code>final</code>。这份实验用可重建的固定输入，只在完整窗口末保存，本机进程退出后可重放整个未提交窗口。'))+
+ '<p class="practice-links"><a href="/labs/ddp-accumulation-restart.zip" download>下载程序与记录 ↓</a> · <a href="/labs/ddp-accumulation-restart/README.md">复跑步骤 →</a> · <a href="/labs/ddp-accumulation-restart/accumulation_restart.py">查看源码 →</a> · <a href="/labs/ddp-accumulation-restart/validation.json">核对微批、梯度与检查点 →</a></p>';
  recovery.sections[7][1]+=
  '<h3 id="native-async-dcp-commit">异步保存时，旧检查点会写进哪一步的权重？</h3>'+
  p('异步保存让后台写检查点，训练可以继续。两张状态表却可能指向同一块内存。训练刚改完第 2 步的权重，后台可能正要把那块内存写进第 1 步的目录。<a href="/article/data-pipeline/#native-prefetch-resume">数据管道的恢复实验</a>确认下一批从哪里读，这里再确认从哪一步的参数接着算。')+

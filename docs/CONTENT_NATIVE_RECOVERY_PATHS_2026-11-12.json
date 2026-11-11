@@ -1,0 +1,36 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "3990ed1733c27d656799bdbd18cf3248d9c36636",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_COURSE_EVIDENCE_DESTINATIONS_2026-11-12.json": "98f0c6cc6fb9ae71408ca6c3755d92e16cf0c29dbe71b3e5fbae5c1075972e3b"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "resilience",
+      "reviewed_at": "2026-11-12",
+      "scope": "Observe actual loopback HAProxy failover through one client entrance, and verify R3 and its referenced attachment as a pair.",
+      "observation": "The ordinary probe admits B with report 200 and attachment 404. The material probe initially leaves both requests at proxy 503. Repair permits three complete B pairs in both cases; cross-zone metrics remain unmeasured.",
+      "reviewed_content_sha256": "85d7ec1dea93f6cbe76b5928127a223f3b6c31ce98c93a480aaec44b7114435b",
+      "record": "dist/labs/haproxy-report-failover/validation.json"
+    },
+    {
+      "chapter": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "scope": "Compare a clean and a stale task inside the same running Docker container, then stop one of two containers while the other produces a report.",
+      "observation": "Linux CI observed the stale marker, a separate second report after fixed cleanup, A exit 137 and its original cgroup removed, and the unchanged B completing amount 37.",
+      "reviewed_content_sha256": "3b07797e7604e4fc085bf6b760fc003c9f0afea434e842b92124544bd8777e25",
+      "record": "dist/labs/sandbox-docker-lifecycle/validation.json"
+    },
+    {
+      "chapter": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "scope": "Explain an actual failure between the two backward passes of a gradient accumulation window and contrast two cursor choices.",
+      "observation": "Two local CPU/Gloo ranks replay the committed window to weight 2.5 and momentum -6. Skipping the consumed but uncommitted microbatch reaches weight 2.25 and momentum -5.",
+      "reviewed_content_sha256": "885350750007d29cc013b5ed5fe9f3be90de08a9ff666627bcbeb4a7f0ed359d",
+      "record": "dist/labs/ddp-accumulation-restart/validation.json"
+    }
+  ]
+}

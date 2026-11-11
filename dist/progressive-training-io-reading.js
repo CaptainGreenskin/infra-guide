@@ -216,7 +216,8 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
    ['从 worker 进度推出来的 5 开始','只做 5，漏掉 1–4','2.9296875']
   ])+
   p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
-  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
+  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>'+
+  p('一次更新若要累积多个微批，训练进程自己也可能已经读完并反传一批，但还没提交更新。<a href="/article/checkpoint-recovery/#native-ddp-accumulation-restart">看两进程实跑怎样选择重读位置 →</a>');
  data.updated='2026.11.12';
 
  const overlap = comm.sections[4];

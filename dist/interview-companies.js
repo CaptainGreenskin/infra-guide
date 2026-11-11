@@ -21,8 +21,8 @@ function companyStudyGuide() {
   ['网络路径与诊断','byteSite',true,readLink('network-diagnosis','定位额外的等待'),'从累计时刻算出慢在哪段，选一项能区分入口和应用的探测。'],
   ['数据库访问与可见性','txSre',true,unitLink('database','比较三份查询计划'),'返回行一致，能解释临时排序与旧快照。目标数据库另行实测。'],
   ['可观测与事故处置','txSre',true,readLink('incident','写出故障时间线'),'写出用户影响、可证伪的假设、回滚条件和恢复证据。'],
-  ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a>','本机对照先查报告和附件能否一起读回。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
-  ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照'),'手算样本数不等时的正确更新，再与本机 DDP 对照。'],
+  ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a> · <a href="'+articleURL('resilience')+'#native-haproxy-report-failover">复跑原入口切换 →</a>','本机 HAProxy 对照从原入口读报告和附件。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
+  ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照')+' <a href="'+articleURL('checkpoint-recovery')+'#native-ddp-accumulation-restart">复跑累积中断 →</a>','手算样本数不等时的正确更新。再对照同一份检查点从两个位置续跑，检查哪种恢复遗漏了微批。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
   ['训练/推理底层性能','byteAI',false,readLink('training-performance','分析对照实验')+
     '<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a> '+
@@ -30,7 +30,7 @@ function companyStudyGuide() {
     '已有 CPU 图捕获对照和 Apple GPU 同卡 GEMM 计时。CUDA 三版已在 Linux 编译。到目标 NVIDIA 卡先运行 <code>./gemm_variants --probe-only</code>，探测通过后留存数值回读、CUDA event 计时和 Nsight 指标。'],
   ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
   ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
-  ['沙箱隔离与性能','txSandbox',false,'<a href="'+articleURL('agent-sandbox')+'#native-sandbox-container">核对容器文件边界 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-egress">核对网络出口 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-process-group">核对进程组回收 →</a>','文件和出口有独立 Docker 记录，停止一组任务后另一组完成交付有本机 POSIX 记录。冷启动与复用、容器级并发隔离和资源回收仍需在目标环境验证。']
+  ['沙箱隔离与性能','txSandbox',false,'<a href="'+articleURL('agent-sandbox')+'#native-sandbox-container">核对容器文件边界 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-egress">核对网络出口 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-process-group">核对进程组回收 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-docker-lifecycle">核对容器复用与并发回收 →</a>','已有单机 Linux Docker 记录，覆盖固定任务的文件、出口、复用和并发停止。生产环境仍需验证跨租户复用、资源回收和性能。']
  ];
  const practiced = groups.filter(group => group[2]).length;
  return `<section class="company-sample"><h2>先找与你要投的岗位相近的一行</h2><p class="path-links"><a href="/interview/experiences/">看候选人公开面经与题目转述 →</a></p>

@@ -5289,7 +5289,7 @@ const progressiveAgentSectionTitles={
   a.sections[8][1]=
    p('现在可以沿R27的完整路径验收：A工作区取得获准输入，生成预期图，交付后即使临时区已回收，产物仍可读取。再一次改变一个条件：尝试读取B工作区、连接未允许目的地、超过某项资源预算、取消执行。分别检查访问结果、实际对象内容与版本、限制命中和回收记录。',
      '生命周期的故障点也分别核对：准备失败是否归还预留资源，运行时重启能否发现无主实例，清理器崩溃后能否接续，清理超时是否仍占着应保留的额度。记录各阶段耗时、退出类别和清理滞留数，才能区分排队、准备、执行与回收的瓶颈。',
-     '预热复用环境时，先说明共享哪些只读镜像层，哪些可写层、句柄、缓存和凭据按任务隔离。让A留下标记后启动B，核对B不可读取；无法可靠消除旧状态时，改用新实例，并测量启动与容量代价。')+
+     '预热复用环境时，先说明共享哪些只读镜像层，哪些可写层、句柄、缓存和凭据按任务隔离。让A留下标记后启动B，核对B不可读取；无法可靠消除旧状态时，改用新实例，并测量启动与容量代价。<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">看同一个 Docker 容器接第二项任务，以及两个容器同时运行时怎样确认回收 →</a>')+
    fold('本章证据的范围与目标环境验收',p('配套POSIX程序真实创建子进程，观察继承、单进程rlimit、固定叶子路径和直接子进程回收；容量与代际程序是算术和字典模型。Pod片段说明配置关系，未运行容器验收。两类本地程序与片段均不构成生产沙箱或Kairo已验证的结论。接到目标环境后，保存运行时与版本、正常任务结果、越界输入、实际资源及清理证据，再判断对应边界是否成立。'))+
    '<p><a class="inline-link" href="#/article/kairo-practice">回到 Kairo，建立对应环境的验收清单 →</a> <a class="inline-link" href="#/article/agent-security">回看工具调用的授权边界 →</a></p>';
 
@@ -5346,6 +5346,19 @@ const progressiveAgentSectionTitles={
    p('源码用 <code>start_new_session=True</code> 启动两组，用 <code>os.killpg</code> 向 A 的组编号发信号。记录分别保留 A 的退出状态和管道结果、B 在停止后生成的报告。这个实验实跑了本机进程组。容器复用、生产隔离和资源清理要用目标运行时自己的证据。')+
    trainingCode('在解压后的目录运行','SHELL','python3 -B sandbox_process_group.py > my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-process-group.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-process-group/sandbox_process_group.py">查看完整源码 →</a> · <a href="/labs/sandbox-process-group/validation.json">查看本机进程记录 →</a></p>';
+  a.sections[9][1]+=h('native-sandbox-docker-lifecycle','同一容器接下一项任务，两个容器怎样分别停止')+
+   p('先用同一个容器做两项任务。镜像已经拉取，创建并启动容器后等它就绪，再用 <code>docker exec</code> 启动一条新命令。第一次留下报告和 <code>previous</code> 标记。直接派发第二次时，夹具读到旧标记，拒绝执行，报告仍属于第一次。清掉两个固定文件，再派发第二次，独立读回属于第二项的报告。对照 Docker ID、启动时刻和主进程编号，确认两次都在同一个仍在运行的容器里。')+
+   p('再开两个独立容器 A、B，各自运行父子进程。向 A 发停止请求。夹具忽略正常结束信号，宽限一秒后强制结束。宿主同时核对进程编号和启动时刻，以免把重复分配的编号认成旧进程。再查 A 所在的 cgroup。Linux 用 cgroup 成组管理进程，<code>populated=0</code> 表示该组及其子组已经没有活进程。')+
+   table(['验收点','从哪里确认'],[
+    ['复用时是否还留有旧状态','第二次派发被拒，独立读回仍是第一次报告。重置后读回为空，再派发才得到第二项报告 37。'],
+    ['A 是否已经停住','Docker 记录退出码 137，宿主看到原来的两个进程身份均已停止，本次 cgroup 目录已移除。'],
+    ['B 是否还是原来的实例','停止 A 前后，B 的容器和两个进程身份一致。之后才请求 B 完成，它交付金额 37。'],
+    ['容器对象是否已删除','实验结束再用完整容器 ID 查引擎列表，三个都已移除。']
+   ])+
+   p('这次 Linux CI 从创建到就绪约 1.20 秒，从创建到首次报告读回约 2.20 秒。已启动容器清理后，从派发到读回约 1.01 秒。两个任务的终点都是独立读回。镜像预先拉取，已启动路径从清理结束后计时。这是单机单次观测。生产环境还需测镜像、队列、挂载、凭据与跨租户隔离。')+
+   trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
+   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
@@ -6818,7 +6831,8 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
    ['从 worker 进度推出来的 5 开始','只做 5，漏掉 1–4','2.9296875']
   ])+
   p('解压并安装包内的 PyTorch 版本后，运行 <code>python -B prefetch_resume.py --output replay.json</code>。对照每一步的样本、梯度、动量和参数，而不只看最后的权重。这里从一次已完成的优化器更新继续，输入可以用索引重建。若流式输入还有打包残余，或变换依赖 worker 的随机状态，保存一个批号就不够。')+
-  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>';
+  '<p class="practice-links"><a href="/labs/prefetch-resume-step.zip" download>下载代码与复跑步骤 ↓</a> · <a href="/labs/prefetch-resume-step/validation.json">查看 worker 与训练进程的实际记录 →</a></p>'+
+  p('一次更新若要累积多个微批，训练进程自己也可能已经读完并反传一批，但还没提交更新。<a href="/article/checkpoint-recovery/#native-ddp-accumulation-restart">看两进程实跑怎样选择重读位置 →</a>');
  data.updated='2026.11.12';
 
  const overlap = comm.sections[4];
@@ -10876,6 +10890,18 @@ optimizer.step()
  trainingCode('解压后复跑三组，启动器允许故障组重启一次','SHELL','python -m pip install -r requirements.txt\npython -B elastic_restart.py > replay.json')+
  p('查 <code>launcher.worker_failures</code> 和 <code>stopped_peers</code> 确认是谁退出、谁被停止。再比较两次 <code>start</code> 的游标、动量和进程号。实跑使用本机两进程 CPU/Gloo。检查点以本机文件替换发布，覆盖进程退出后的恢复。云上多机、共享存储与断电要在各自环境验证。')+
  '<p class="practice-links"><a href="/labs/elastic-restart-step.zip" download>下载程序与记录 ↓</a> · <a href="/labs/elastic-restart-step/README.md">复跑步骤 →</a> · <a href="/labs/elastic-restart-step/validation.json">核对进程、更新和检查点 →</a> · <a href="https://docs.pytorch.org/tutorials/beginner/ddp_series_fault_tolerance.html">PyTorch torchrun 恢复教程 ↗</a></p>';
+ recovery.sections[7][1]+='<h3 id="native-ddp-accumulation-restart">梯度累积中断，从哪个微批重读</h3>'+
+ p('把微批 0、1 的梯度累积起来更新一次，这两个微批组成第一个累积窗口。实验有两个本机 CPU/Gloo rank。窗口首个微批的前向和反向都在 <code>no_sync()</code> 中，梯度先留在各自的进程里。第二个微批反向时，DDP 同步并平均累积梯度，两边随后各做一次相同的更新。')+
+ p('第一个窗口提交了权重 1、动量 −4 和下一微批编号 2。旧进程对微批 2 反向后，两 rank 的本地梯度分别是 −0.5、−1.5。这时 rank 1 以 73 退出，启动器停止另一进程并启动两个新进程。新进程加载同一份检查点，梯度为空。')+
+ table(['执行方式','最终权重','最终动量'],[
+  ['连续执行','2.5','−6'],
+  ['按检查点从 2 重读','2.5','−6'],
+  ['按消费记录从 3 续跑','2.25','−5']
+ ])+
+ p('按检查点从 2 重做第二个窗口，会重新得到两个微批的梯度。按消费记录从 3 续跑，前一个微批的梯度就丢了。<a href="/article/data-pipeline/#native-prefetch-resume">预取实验</a>也用检查点决定重读位置，这次故障发生在训练进程已经反传之后。')+
+ fold('复跑并核对三组记录',
+  p('安装 PyTorch 2.5.1 后，运行 <code>python -B accumulation_restart.py</code>。在 <code>attempts</code> 里找故障前的 <code>backward</code> 和重启后的 <code>start</code>，再核对 <code>final</code>。这份实验用可重建的固定输入，只在完整窗口末保存，本机进程退出后可重放整个未提交窗口。'))+
+ '<p class="practice-links"><a href="/labs/ddp-accumulation-restart.zip" download>下载程序与记录 ↓</a> · <a href="/labs/ddp-accumulation-restart/README.md">复跑步骤 →</a> · <a href="/labs/ddp-accumulation-restart/accumulation_restart.py">查看源码 →</a> · <a href="/labs/ddp-accumulation-restart/validation.json">核对微批、梯度与检查点 →</a></p>';
  recovery.sections[7][1]+=
  '<h3 id="native-async-dcp-commit">异步保存时，旧检查点会写进哪一步的权重？</h3>'+
  p('异步保存让后台写检查点，训练可以继续。两张状态表却可能指向同一块内存。训练刚改完第 2 步的权重，后台可能正要把那块内存写进第 1 步的目录。<a href="/article/data-pipeline/#native-prefetch-resume">数据管道的恢复实验</a>确认下一批从哪里读，这里再确认从哪一步的参数接着算。')+
@@ -11715,7 +11741,8 @@ assert complete["seq"] == 103
 assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
 print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
 PY`);
- const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json'];
+ const failoverLinks=['/labs/haproxy-report-failover.zip','/labs/haproxy-report-failover/README.md','/labs/haproxy-report-failover/validation.json','https://github.com/CaptainGreenskin/infra-guide/actions/runs/43113784181'];
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -11748,6 +11775,16 @@ PY`);
  h('recovery-report-readback-gate','怎样从实际入口验收同一份报告')+
  p('目标演练若承诺恢复到提交 103，先记下租户 A 的报告 ID <code>R3</code>、附件版本 <code>object-v3</code> 和原始内容摘要。故障后用外部客户端从正常入口按该租户身份查询报告，再下载它引用的附件，保存请求 ID 和返回字节的摘要。报告、版本和内容都对得上，才记为一次合格读回。若最后完整状态停在 101，把 R3 记入数据缺口。只用这一份报告做探针时，完整恢复点仍须核对整份提交清单。',
  '跨可用区演练要用同一时间基准，记录约定的中断起点（如故障注入）和最低服务恢复时刻。若本轮要求只读，在事先约定的连续读回探针全部合格时停止计时。开放写入另用测试写请求和独立读回验收。比较有效吞吐时，固定负载和观察窗，按请求 ID 去重，数清发起数、截止前合格数和失败或超时数，再用合格数除以窗口秒数。本机记录的 11:42 和 11:57 是题设提交时刻，跨区恢复耗时与有效吞吐要到目标环境采集。')+
+ h('native-haproxy-report-failover','主后端退出后，备用后端能读全 R3 吗')+
+ p('在同一台 Linux 机器上，用真实 HAProxy 接两份独立的 HTTP 后端。两边都能在 SQLite 里查到租户 A 的 <code>R3</code>，备用后端 B 还缺 <code>object-v3</code>。客户端先从主后端读到整份报告，再关闭主后端的监听。两次实验各自保持原入口，只更换 HAProxy 检查的路径。')+
+ table(['备用后端的检查条件','代理状态','客户端读回'],[
+  ['<code>/healthz</code> · 进程能响应','B 可接流量','B 的报告 200，附件 404'],
+  ['<code>/readyz</code> · 核对固定附件','B 暂不接流量','主、备均不可用，入口两次返回 503'],
+  ['补齐 <code>object-v3</code>','两组 B 都可接流量','各连续三轮从 B 读到报告和正确附件']
+ ])+
+ p('每轮分别请求报告和附件，再把两个请求 ID、后端标记和返回字节放在一起核对。<code>incomplete_trial</code> 指向缺附件时的一轮，<code>stable_trials</code> 指向补齐后连续合格的三轮。恢复用时从本机故障注入算到第三轮结束，包含实验中故意保留的缺附件阶段。')+
+ p('按包内说明准备 HAProxy 3.2.26，再运行 <code>python3 -B failover_lab.py --haproxy ./haproxy-3.2.26/haproxy --output my-run.json</code>。用 <code>python3 -B verify_record.py my-run.json</code> 核对两组记录。')+
+ '<p class="practice-links"><a href="'+failoverLinks[0]+'" download>下载可复跑实验 ↓</a> · <a href="'+failoverLinks[1]+'">查看运行步骤 →</a> · <a href="'+failoverLinks[2]+'">查看代理与客户端原始记录 →</a> · <a href="'+failoverLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
@@ -15990,7 +16027,7 @@ const learningProfiles={
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
-    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
+    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -16001,7 +16038,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -16066,7 +16103,7 @@ const learningProfiles={
   checks:[
    {title:"把执行权限分到正确位置",
     result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
-    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
+    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
@@ -16586,15 +16623,15 @@ const fieldConceptEvidence={
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
- sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery']},
+ sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
-  'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group']}
+  'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group','agent-sandbox-docker-lifecycle']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
@@ -16946,6 +16983,7 @@ const labArchiveCatalog={
  'workflow-version-resume':{folder:'workflow-version-resume',title:'工作流升级后旧审批的恢复'},
  'controller-reconcile':{folder:'controller-reconcile',title:'Kubernetes 自定义控制器的重试与删除'},
  'elastic-restart-step':{folder:'elastic-restart-step',title:'torchrun 自动重启与未提交训练步'},
+ 'ddp-accumulation-restart':{folder:'ddp-accumulation-restart',title:'梯度累积窗口中断后的双进程回放'},
  'agent-task-reconnect':{folder:'agent-task-reconnect',title:'提交响应丢失后认回原任务'},
  'alert-notification':{folder:'alert-notification',title:'规则触发、分组等待、静默与实际收件'},
  'cpu-quota-http':{folder:'cpu-quota-http',title:'同一 HTTP 负载下的两档 Linux CPU 配额'},
@@ -16996,6 +17034,7 @@ const labArchiveCatalog={
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
  'sandbox-container':{folder:'sandbox-container',title:'非 root 容器的只读输入与报告验收'},
  'sandbox-process-group':{folder:'sandbox-process-group',title:'两组并行任务的停止与独立回读'},
+ 'sandbox-docker-lifecycle':{folder:'sandbox-docker-lifecycle',title:'Docker 容器复用与并发回收'},
  'kubernetes-config':{folder:'kubernetes-config',title:'同一 ConfigMap 版本的四条应用读取路径'},
  'prefix-attention':{folder:'prefix-attention',title:'前缀、因果和错误平移掩码的 SDPA 对照'},
  'csi-storage':{folder:'csi-storage',title:'原生 CSI 动态供应、挂载与回收'},
@@ -17042,6 +17081,7 @@ const labArchiveCatalog={
  'cloud-deepening':{folder:'cloud-deepening',title:'恢复、批处理与交付'},
  'leases-placement-sandbox':{folder:'leases-placement-sandbox',title:'可见性、整组放置与子进程'},
  'recovery-artifacts-retrieval':{folder:'recovery-artifacts-retrieval',title:'一致恢复、模型产物与中文检索'},
+ 'haproxy-report-failover':{folder:'haproxy-report-failover',title:'用原入口复验切换后的报告与附件'},
  'config-memory-evaluation':{folder:'config-memory-evaluation',title:'配置、张量状态与评估统计'},
  'scaling-collectives-traces':{folder:'scaling-collectives-traces',title:'弹性、集合通信与 OTel'},
  'cloud-operations':{folder:'cloud-operations',title:'授权、容量与 SRE'},
@@ -17095,6 +17135,10 @@ const labLearningCatalog=[
  {id:'cloud-mysql-pitr',track:'cloud',stage:2,title:'金额125正确，恢复历史仍可能缺一笔',chapter:'mysql-recovery',anchor:'mysql-pitr-run',pack:'transport-recovery',files:['mysql_restore.py','Dockerfile.tools'],env:'Linux/macOS · 本地Docker引擎 · Python 3.9+',kind:'真实MySQL 8.4容器',observe:'核对基线、全量历史、缺首段、正确按点恢复与后续写入；另做进程崩溃对照。',scope:'公共Linux CI实测；未验证物理断电、主从切换或跨区域云服务。'},
  {id:'cloud-delivery',track:'cloud',stage:3,title:'保存的 Terraform 计划与 GitOps 调谐',chapter:'delivery',pack:'cloud-deepening',files:['terraform_lab.py','gitops_model.py','main.tf'],env:'Python 3.9+ + Terraform 1.13.0',kind:'真实 CLI + 调谐模型',observe:'验证旧计划、状态推进后的陈旧计划拒绝；另用模型区分同步、健康、自愈和清理。',scope:'Terraform 本地 state 与内建 provider 实测；Argo CD 尚未同步集群。'},
  {id:'cloud-recovery',track:'cloud',stage:3,title:'数据库恢复后，附件与外部通知也要对得上',chapter:'resilience',anchor:'section-9',pack:'recovery-artifacts-retrieval',files:['consistent_recovery_cut.py','recovered_effects.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'实际备份与 HTTP',observe:'缺一个附件时回退到完整提交前缀；应用备份恢复后沿原业务 ID 查询外部回执。',scope:'时间点为题设，日志是应用协议；不是数据库物理 WAL 或跨区容灾。'},
+ {id:'cloud-haproxy-report-failover',track:'cloud',stage:3,title:'切到备用后端后，用原入口读回 R3 和附件',chapter:'resilience',anchor:'native-haproxy-report-failover',pack:'haproxy-report-failover',
+  files:['failover_lab.py'],env:'Linux · HAProxy 3.2.26 · Python 标准库 / SQLite',kind:'真实 HAProxy 回环切换',
+  observe:'停掉 A，通过同一入口分别读报告和附件。比较普通健康探针与材料就绪探针，再核对备用后端连续三次的附件字节。',
+  scope:'单宿主、合成文件和两套 SQLite。真实跨可用区的恢复时间、吞吐与依赖行为另验。'},
  {id:'cloud-incident',track:'cloud',stage:3,title:'SQL 慢与持连接等待，为什么曲线一样',chapter:'incident',pack:'incident-model',files:['incident_model.py'],env:'Python 3.9+ · 标准库',kind:'确定性排队模型',observe:'保持到达序列、连接数不变，分别移动 SQL 和外部等待，比较相同延迟背后的不同原因。',scope:'整数事件模型，不执行真实 SQL 等待或压力测试。'},
  {id:'cloud-native-service',track:'cloud',stage:3,title:'同一Service入口，核对探针、发布与回退',chapter:'cloud-service-lab',anchor:'kubernetes-service-normal',pack:'kubernetes-service',files:['service_lab.py','README.md'],env:'Linux · 本机Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3.9+',kind:'原生kind与真实ClusterIP请求',observe:'双副本持续收请求，独立读取Ready/EndpointSlice/重启计数；区分readiness摘新流量、liveness重启、v2发布和undo后的实际v1。',scope:'公共Linux CI已执行，保存297条请求含1次传播期失败；6组稳定窗口各20条，不代表全程零错误、长连接排空或生产云网络。'},
  {id:'cloud-service',track:'cloud',stage:3,title:'把请求、探针与交付版本连起来',chapter:'cloud-service-lab',pack:'infra-systems',files:['infra_lab.py','probe_server.py'],pendingFiles:['probe_server.py'],env:'Python 3.9+ · 标准库',kind:'本机服务与目标手册',observe:'核对实际本机请求、完整文件版本和摘要，再进入探针、端点和回退的集群步骤。',scope:'infra_lab 本机部分已执行；probe_server 配合集群探针、EndpointSlice 与版本回退仍待目标环境验证。'},
@@ -17305,6 +17349,8 @@ labLearningCatalog.push(
   scope:'真实 PostgreSQL 17 归档恢复。生产对象存储、切流和 RTO 需在目标系统测量。'},
  {id:'agent-sandbox-process-group',track:'agent',stage:2,title:'停止 A 后，核对 B 仍能交付报告',chapter:'agent-sandbox',anchor:'native-sandbox-process-group',pack:'sandbox-process-group',
   files:['sandbox_process_group.py'],env:'macOS / Linux · Python 3.9+ 标准库',kind:'真实本机 POSIX 进程组',observe:'两组就绪后只停止 A，核对 A 的退出码和 EOF，再提交 B 的完成请求并读回报告 37。',scope:'自建父子进程和独立临时目录。容器复用与生产运行时另验。'},
+ {id:'agent-sandbox-docker-lifecycle',track:'agent',stage:2,title:'复用 Docker 容器，核对状态残留与并发停止',chapter:'agent-sandbox',anchor:'native-sandbox-docker-lifecycle',pack:'sandbox-docker-lifecycle',
+  files:['docker_lifecycle.py','fixture.py'],env:'Linux/amd64 · cgroup v2 · 本机 Docker · Python 3.9+',kind:'真实单机 Docker',observe:'在同一容器 ID 中观察清理前后两项任务，再用宿主进程和 cgroup 确认 A 停止、B 仍能交付报告 37。',scope:'固定镜像与合成文件。生产隔离、跨租户复用和资源清理需要目标环境。'},
  {id:'agent-sandbox-egress',track:'agent',stage:2,title:'工作进程能连接代理，为什么仍然读不到其他租户',chapter:'agent-sandbox',anchor:'native-sandbox-egress',pack:'sandbox-egress',
   files:['sandbox_egress.py','fixture.json'],env:'本机 Linux Docker · Python 容器',kind:'实跑记录',
   observe:'复跑沙箱直连拒绝、代理读取本租户和跨租户拒绝，对照后端实际访问。',
@@ -17355,6 +17401,10 @@ labLearningCatalog.push(
   files:['elastic_restart.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实 torchrun 进程退出与整组重启',
   observe:'比较两组进程号、已提交游标、重做的样本和恢复后的动量。',
   scope:'本机进程故障、同步文件检查点与固定输入。GPU、多机共享存储和断电需另验。'},
+ {id:'ai-ddp-accumulation-restart',track:'ai',stage:2,title:'累积到一半中断，从哪个微批重新读取',chapter:'checkpoint-recovery',anchor:'native-ddp-accumulation-restart',pack:'ddp-accumulation-restart',
+  files:['accumulation_restart.py','requirements.txt'],env:'Python 3.12 · PyTorch 2.5.1 · 两进程 CPU/Gloo',kind:'真实进程退出、重启与梯度回放',
+  observe:'对照从已提交位置 2 重放和从已消费位置 3 续跑，核对本地梯度、样本、动量及最终权重。',
+  scope:'本机固定输入和完整窗口检查点。GPU、跨主机和持久化设备仍需目标验证。'},
  {id:'agent-task-reconnect',track:'agent',stage:2,title:'受理响应丢了，重传之后还是原任务吗',chapter:'kairo-practice',anchor:'native-agent-task-reconnect',pack:'agent-task-reconnect',
   files:['reconnect_lab.py','readonly-contract.json','resources.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · 本机 HTTP 与 SQLite',kind:'真实断线、任务续查与 MCP 读取',
   observe:'对照首次断线、原样重传和同编号改参数，再核对原会话的报告与资源侧读取。',
@@ -17727,5 +17777,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="14573e3f65f58b95acf702e1c0c49f1896c9a9f940151883877ba097d9be3f90";
+const staticReadingVersion="316635074156f658d8765c93db2c121484ebb4d406d68b86c473229d8cbf36bb";
 

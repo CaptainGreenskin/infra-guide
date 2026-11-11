@@ -1,0 +1,13 @@
+{
+  "run": "https://github.com/CaptainGreenskin/infra-guide/actions/runs/43113784181",
+  "head_sha": "73cd34546b9946c91128a10e7dcf53547ba077eb",
+  "workflow": ".github/workflows/haproxy-report-failover-evidence.yml",
+  "artifact": {
+    "digest": "sha256:a49b4f9de05dc7dea3abe531fea17d37fae34c7a65f0299dc8b47d25b1c0c04b",
+    "id": 13897178165,
+    "name": "haproxy-report-failover"
+  },
+  "validation_sha256": "0d019d1e6640d4563ca914d176606ae8fae2934143fb21a8f094d42d4dffbb3a",
+  "source_sha256": "76718d93c81c2ade2490d9f22efff666fbf49139646be96abd968d2ec7bcaf95",
+  "haproxy_archive_sha256": "760ef35fafc1e05844e73ad07e138e9e96fddbf5de02f606249c027f754827da"
+}

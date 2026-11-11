@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "environment": {
+    "os": "Darwin",
+    "arch": "arm64",
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "backend": "gloo",
+    "device": "cpu",
+    "world_size": 2
+  },
+  "fixture": {
+    "targets": [
+      [
+        1,
+        3
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        6,
+        8
+      ]
+    ],
+    "microbatches_per_window": 2,
+    "learning_rate": 0.25,
+    "momentum_coefficient": 0.5,
+    "fault": {
+      "micro": 2,
+      "rank": 1,
+      "exit_code": 73
+    }
+  },
+  "source_sha256": {
+    "accumulation_restart.py": "eabf79247b840f81e61143a38596bdca12f351ee9a1c7d49a5274287be988e62",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "runs": {
+    "continuous": {
+      "launcher": {
+        "exit_code": 0,
+        "options": [
+          "--nnodes=1",
+          "--nproc-per-node=2",
+          "--rdzv-backend=c10d",
+          "--rdzv-endpoint=127.0.0.1:0",
+          "--local-addr=127.0.0.1",
+          "--monitor-interval=0.1",
+          "--max-restarts=0"
+        ],
+        "worker_failures": [],
+        "stopped_peers": []
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "rank": 0,
+              "attempt": 0,
+              "pid": 40240,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 0,
+              "target": 1,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 2,
+              "target": 5,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f"
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 4,
+              "target": 2,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 6,
+              "target": 6,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -4.0,
+              "weight": 2.5,
+              "momentum": -6.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 4,
+                "weight": 2.5,
+                "momentum": -6.0
+              },
+              "checkpoint_sha256": "036dfcea1acce276f5a3f01013b72bd9cee4f3c87a52c21f8391b16de3ec1440"
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "rank": 1,
+              "attempt": 0,
+              "pid": 40241,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 1,
+              "target": 3,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 3,
+              "target": 7,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 5,
+              "target": 4,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 7,
+              "target": 8,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -4.0,
+              "weight": 2.5,
+              "momentum": -6.0
+            }
+          ]
+        ]
+      ],
+      "final": {
+        "next_micro": 4,
+        "weight": 2.5,
+        "momentum": -6.0
+      },
+      "final_checkpoint_sha256": "036dfcea1acce276f5a3f01013b72bd9cee4f3c87a52c21f8391b16de3ec1440"
+    },
+    "replay_window": {
+      "launcher": {
+        "exit_code": 0,
+        "options": [
+          "--nnodes=1",
+          "--nproc-per-node=2",
+          "--rdzv-backend=c10d",
+          "--rdzv-endpoint=127.0.0.1:0",
+          "--local-addr=127.0.0.1",
+          "--monitor-interval=0.1",
+          "--max-restarts=1"
+        ],
+        "worker_failures": [
+          {
+            "exit_code": 73,
+            "local_rank": 1,
+            "pid": 40257
+          }
+        ],
+        "stopped_peers": [
+          {
+            "pid": 40256,
+            "signal": "SIGTERM"
+          }
+        ]
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "rank": 0,
+              "attempt": 0,
+              "pid": 40256,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 0,
+              "target": 1,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 2,
+              "target": 5,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f"
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 4,
+              "target": 2,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "cut",
+              "micro": 2,
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "action": "wait_for_launcher"
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "rank": 1,
+              "attempt": 0,
+              "pid": 40257,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 1,
+              "target": 3,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 3,
+              "target": 7,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 5,
+              "target": 4,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "cut",
+              "micro": 2,
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "action": "exit"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "event": "start",
+              "rank": 0,
+              "attempt": 1,
+              "pid": 40271,
+              "loaded": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "start_micro": 2,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 4,
+              "target": 2,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 6,
+              "target": 6,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -4.0,
+              "weight": 2.5,
+              "momentum": -6.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 4,
+                "weight": 2.5,
+                "momentum": -6.0
+              },
+              "checkpoint_sha256": "036dfcea1acce276f5a3f01013b72bd9cee4f3c87a52c21f8391b16de3ec1440"
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "rank": 1,
+              "attempt": 1,
+              "pid": 40272,
+              "loaded": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "start_micro": 2,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 5,
+              "target": 4,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 7,
+              "target": 8,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -4.0,
+              "weight": 2.5,
+              "momentum": -6.0
+            }
+          ]
+        ]
+      ],
+      "final": {
+        "next_micro": 4,
+        "weight": 2.5,
+        "momentum": -6.0
+      },
+      "final_checkpoint_sha256": "036dfcea1acce276f5a3f01013b72bd9cee4f3c87a52c21f8391b16de3ec1440"
+    },
+    "skip_consumed": {
+      "launcher": {
+        "exit_code": 0,
+        "options": [
+          "--nnodes=1",
+          "--nproc-per-node=2",
+          "--rdzv-backend=c10d",
+          "--rdzv-endpoint=127.0.0.1:0",
+          "--local-addr=127.0.0.1",
+          "--monitor-interval=0.1",
+          "--max-restarts=1"
+        ],
+        "worker_failures": [
+          {
+            "exit_code": 73,
+            "local_rank": 1,
+            "pid": 40277
+          }
+        ],
+        "stopped_peers": [
+          {
+            "pid": 40276,
+            "signal": "SIGTERM"
+          }
+        ]
+      },
+      "attempts": [
+        [
+          [
+            {
+              "event": "start",
+              "rank": 0,
+              "attempt": 0,
+              "pid": 40276,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 0,
+              "target": 1,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 2,
+              "target": 5,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f"
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 4,
+              "target": 2,
+              "synchronized": false,
+              "gradient": -0.5
+            },
+            {
+              "event": "cut",
+              "micro": 2,
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "action": "wait_for_launcher"
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "rank": 1,
+              "attempt": 0,
+              "pid": 40277,
+              "loaded": null,
+              "checkpoint_sha256": null,
+              "start_micro": 0,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 0,
+              "sample_id": 1,
+              "target": 3,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "backward",
+              "micro": 1,
+              "sample_id": 3,
+              "target": 7,
+              "synchronized": true,
+              "gradient": -4.0
+            },
+            {
+              "event": "update",
+              "last_micro": 1,
+              "gradient": -4.0,
+              "weight": 1.0,
+              "momentum": -4.0
+            },
+            {
+              "event": "backward",
+              "micro": 2,
+              "sample_id": 5,
+              "target": 4,
+              "synchronized": false,
+              "gradient": -1.5
+            },
+            {
+              "event": "cut",
+              "micro": 2,
+              "checkpoint": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "action": "exit"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "event": "start",
+              "rank": 0,
+              "attempt": 1,
+              "pid": 40283,
+              "loaded": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "start_micro": 3,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 6,
+              "target": 6,
+              "synchronized": true,
+              "gradient": -3.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -3.0,
+              "weight": 2.25,
+              "momentum": -5.0
+            },
+            {
+              "event": "commit",
+              "checkpoint": {
+                "next_micro": 4,
+                "weight": 2.25,
+                "momentum": -5.0
+              },
+              "checkpoint_sha256": "36d30951bcabd4efde5ac5da03abb8d95a0b63d83aa4ef7d61347678907f1857"
+            }
+          ],
+          [
+            {
+              "event": "start",
+              "rank": 1,
+              "attempt": 1,
+              "pid": 40284,
+              "loaded": {
+                "next_micro": 2,
+                "weight": 1.0,
+                "momentum": -4.0
+              },
+              "checkpoint_sha256": "249aefa8eb30f082898d4873e1ad971b41e26f1f4ef116bed8b0d93ebe6bf94f",
+              "start_micro": 3,
+              "grad_is_none": true
+            },
+            {
+              "event": "backward",
+              "micro": 3,
+              "sample_id": 7,
+              "target": 8,
+              "synchronized": true,
+              "gradient": -3.0
+            },
+            {
+              "event": "update",
+              "last_micro": 3,
+              "gradient": -3.0,
+              "weight": 2.25,
+              "momentum": -5.0
+            }
+          ]
+        ]
+      ],
+      "final": {
+        "next_micro": 4,
+        "weight": 2.25,
+        "momentum": -5.0
+      },
+      "final_checkpoint_sha256": "36d30951bcabd4efde5ac5da03abb8d95a0b63d83aa4ef7d61347678907f1857"
+    }
+  }
+}

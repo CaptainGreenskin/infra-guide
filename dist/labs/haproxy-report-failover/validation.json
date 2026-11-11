@@ -1,0 +1,825 @@
+{
+  "schema": 1,
+  "status": "observed",
+  "checked_at_utc": "2026-11-11T22:42:03.957895+00:00",
+  "scope": "loopback HTTP, synthetic SQLite metadata and one known attachment, host-local HAProxy health transitions",
+  "source_sha256": "76718d93c81c2ade2490d9f22efff666fbf49139646be96abd968d2ec7bcaf95",
+  "environment": {
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "haproxy_version": "HAProxy version 3.2.26-3e0f11a 2026/10/14 - https://haproxy.org/",
+    "haproxy_sha256": "bfbedb1b68bbe65bb3a30f2833093852d4bdd8ea56eb64e12ddb8dd8f648d63e"
+  },
+  "fixture": {
+    "tenant": "A",
+    "report": "R3",
+    "commit_seq": 102,
+    "database_seq": 103,
+    "object": "object-v3",
+    "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32"
+  },
+  "probe_interval_ms": 60,
+  "stable_read_count": 3,
+  "cases": {
+    "ordinary": {
+      "health_path": "/healthz",
+      "frontend": "127.0.0.1:58433",
+      "backend_endpoints": {
+        "backend-a": "127.0.0.1:34983",
+        "backend-b": "127.0.0.1:43883"
+      },
+      "config": "global\n    stats socket /tmp/hap-r3-0ysj3k5d/stats.sock mode 600 level user\n    maxconn 32\ndefaults\n    mode http\n    timeout connect 300ms\n    timeout client 2s\n    timeout server 2s\n    timeout check 500ms\n    retries 0\nfrontend entry\n    bind 127.0.0.1:58433\n    default_backend reports\nbackend reports\n    option httpchk\n    http-check connect\n    http-check send meth GET uri /healthz ver HTTP/1.1 hdr Host recovery.lab\n    http-check expect status 200\n    default-server inter 80ms fall 2 rise 2 init-state fully-down\n    server backend-a 127.0.0.1:34983 check\n    server backend-b 127.0.0.1:43883 check backup\n",
+      "initial_proxy": {
+        "backend-a": {
+          "status": "UP",
+          "check_status": "L7OK",
+          "check_code": "200"
+        },
+        "backend-b": {
+          "status": "UP",
+          "check_status": "L7OK",
+          "check_code": "200"
+        }
+      },
+      "preflight": {
+        "backend_b_health": {
+          "request_id": "direct-b-health",
+          "echo": "direct-b-health",
+          "backend": "backend-b",
+          "status": 200,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 196,
+          "ended_ms": 196
+        },
+        "backend_b_ready": {
+          "request_id": "direct-b-ready",
+          "echo": "direct-b-ready",
+          "backend": "backend-b",
+          "status": 503,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 196,
+          "ended_ms": 197
+        },
+        "backend_b_report": {
+          "request_id": "direct-b-report",
+          "echo": "direct-b-report",
+          "backend": "backend-b",
+          "status": 200,
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+          "started_ms": 197,
+          "ended_ms": 198
+        },
+        "backend_b_attachment": {
+          "request_id": "direct-b-attachment",
+          "echo": "direct-b-attachment",
+          "backend": "backend-b",
+          "status": 404,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 198,
+          "ended_ms": 198
+        }
+      },
+      "wrong_tenant": {
+        "request_id": "wrong-tenant",
+        "echo": "wrong-tenant",
+        "backend": "backend-a",
+        "status": 403,
+        "body": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_ms": 200,
+        "ended_ms": 201
+      },
+      "reads": [
+        {
+          "trial": 1,
+          "stage": "before_fault",
+          "report": {
+            "request_id": "1-report",
+            "echo": "1-report",
+            "backend": "backend-a",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 198,
+            "ended_ms": 199
+          },
+          "attachment": {
+            "request_id": "1-attachment",
+            "echo": "1-attachment",
+            "backend": "backend-a",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 199,
+            "ended_ms": 200
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 2,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "2-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 211,
+            "ended_ms": 211
+          },
+          "attachment": {
+            "request_id": "2-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 211,
+            "ended_ms": 211
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 3,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "3-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 272,
+            "ended_ms": 272
+          },
+          "attachment": {
+            "request_id": "3-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 272,
+            "ended_ms": 272
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP 1/2",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 4,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "4-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 333,
+            "ended_ms": 333
+          },
+          "attachment": {
+            "request_id": "4-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 333,
+            "ended_ms": 333
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP 1/2",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 5,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "5-report",
+            "echo": "5-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 394,
+            "ended_ms": 395
+          },
+          "attachment": {
+            "request_id": "5-attachment",
+            "echo": "5-attachment",
+            "backend": "backend-b",
+            "status": 404,
+            "body": "",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "started_ms": 395,
+            "ended_ms": 396
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 6,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "6-report",
+            "echo": "6-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 396,
+            "ended_ms": 397
+          },
+          "attachment": {
+            "request_id": "6-attachment",
+            "echo": "6-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 397,
+            "ended_ms": 397
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 7,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "7-report",
+            "echo": "7-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 458,
+            "ended_ms": 459
+          },
+          "attachment": {
+            "request_id": "7-attachment",
+            "echo": "7-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 459,
+            "ended_ms": 460
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 8,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "8-report",
+            "echo": "8-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 520,
+            "ended_ms": 521
+          },
+          "attachment": {
+            "request_id": "8-attachment",
+            "echo": "8-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 521,
+            "ended_ms": 522
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        }
+      ],
+      "fault_ms": 201,
+      "a_closed_ms": 210,
+      "stopped_backend_a": {
+        "request_id": "direct-a-after-close",
+        "status": null,
+        "error": "ConnectionRefusedError",
+        "started_ms": 210,
+        "ended_ms": 211
+      },
+      "incomplete_trial": 5,
+      "repaired_ms": 396,
+      "stable_trials": [
+        6,
+        7,
+        8
+      ],
+      "stable_ms": 522,
+      "elapsed_ms_from_fault": 321,
+      "proxy_exit": -15
+    },
+    "material": {
+      "health_path": "/readyz",
+      "frontend": "127.0.0.1:55869",
+      "backend_endpoints": {
+        "backend-a": "127.0.0.1:45207",
+        "backend-b": "127.0.0.1:46337"
+      },
+      "config": "global\n    stats socket /tmp/hap-r3-m_flgw0_/stats.sock mode 600 level user\n    maxconn 32\ndefaults\n    mode http\n    timeout connect 300ms\n    timeout client 2s\n    timeout server 2s\n    timeout check 500ms\n    retries 0\nfrontend entry\n    bind 127.0.0.1:55869\n    default_backend reports\nbackend reports\n    option httpchk\n    http-check connect\n    http-check send meth GET uri /readyz ver HTTP/1.1 hdr Host recovery.lab\n    http-check expect status 200\n    default-server inter 80ms fall 2 rise 2 init-state fully-down\n    server backend-a 127.0.0.1:45207 check\n    server backend-b 127.0.0.1:46337 check backup\n",
+      "initial_proxy": {
+        "backend-a": {
+          "status": "UP",
+          "check_status": "L7OK",
+          "check_code": "200"
+        },
+        "backend-b": {
+          "status": "DOWN",
+          "check_status": "L7STS",
+          "check_code": "503"
+        }
+      },
+      "preflight": {
+        "backend_b_health": {
+          "request_id": "direct-b-health",
+          "echo": "direct-b-health",
+          "backend": "backend-b",
+          "status": 200,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 241,
+          "ended_ms": 242
+        },
+        "backend_b_ready": {
+          "request_id": "direct-b-ready",
+          "echo": "direct-b-ready",
+          "backend": "backend-b",
+          "status": 503,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 242,
+          "ended_ms": 243
+        },
+        "backend_b_report": {
+          "request_id": "direct-b-report",
+          "echo": "direct-b-report",
+          "backend": "backend-b",
+          "status": 200,
+          "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+          "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+          "started_ms": 243,
+          "ended_ms": 244
+        },
+        "backend_b_attachment": {
+          "request_id": "direct-b-attachment",
+          "echo": "direct-b-attachment",
+          "backend": "backend-b",
+          "status": 404,
+          "body": "",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "started_ms": 244,
+          "ended_ms": 244
+        }
+      },
+      "wrong_tenant": {
+        "request_id": "wrong-tenant",
+        "echo": "wrong-tenant",
+        "backend": "backend-a",
+        "status": 403,
+        "body": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_ms": 246,
+        "ended_ms": 248
+      },
+      "reads": [
+        {
+          "trial": 1,
+          "stage": "before_fault",
+          "report": {
+            "request_id": "1-report",
+            "echo": "1-report",
+            "backend": "backend-a",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 244,
+            "ended_ms": 245
+          },
+          "attachment": {
+            "request_id": "1-attachment",
+            "echo": "1-attachment",
+            "backend": "backend-a",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 245,
+            "ended_ms": 246
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            },
+            "backend-b": {
+              "status": "DOWN",
+              "check_status": "* L7STS",
+              "check_code": "0"
+            }
+          }
+        },
+        {
+          "trial": 2,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "2-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 257,
+            "ended_ms": 257
+          },
+          "attachment": {
+            "request_id": "2-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 257,
+            "ended_ms": 258
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            },
+            "backend-b": {
+              "status": "DOWN",
+              "check_status": "L7STS",
+              "check_code": "503"
+            }
+          }
+        },
+        {
+          "trial": 3,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "3-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 318,
+            "ended_ms": 319
+          },
+          "attachment": {
+            "request_id": "3-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 319,
+            "ended_ms": 319
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "UP 1/2",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "DOWN",
+              "check_status": "L7STS",
+              "check_code": "503"
+            }
+          }
+        },
+        {
+          "trial": 4,
+          "stage": "after_fault",
+          "report": {
+            "request_id": "4-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 379,
+            "ended_ms": 380
+          },
+          "attachment": {
+            "request_id": "4-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 380,
+            "ended_ms": 380
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "DOWN",
+              "check_status": "L7STS",
+              "check_code": "503"
+            }
+          }
+        },
+        {
+          "trial": 5,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "5-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 381,
+            "ended_ms": 381
+          },
+          "attachment": {
+            "request_id": "5-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 381,
+            "ended_ms": 381
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "DOWN",
+              "check_status": "L7STS",
+              "check_code": "503"
+            }
+          }
+        },
+        {
+          "trial": 6,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "6-report",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 441,
+            "ended_ms": 442
+          },
+          "attachment": {
+            "request_id": "6-attachment",
+            "echo": null,
+            "backend": null,
+            "status": 503,
+            "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+            "sha256": "839488ebc08446a096a893996ed23eac321ac166724cd8c5d9092057834d2d79",
+            "started_ms": 442,
+            "ended_ms": 442
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "DOWN 1/2",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 7,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "7-report",
+            "echo": "7-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 502,
+            "ended_ms": 503
+          },
+          "attachment": {
+            "request_id": "7-attachment",
+            "echo": "7-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 503,
+            "ended_ms": 504
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 8,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "8-report",
+            "echo": "8-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 564,
+            "ended_ms": 566
+          },
+          "attachment": {
+            "request_id": "8-attachment",
+            "echo": "8-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 566,
+            "ended_ms": 566
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        },
+        {
+          "trial": 9,
+          "stage": "after_repair",
+          "report": {
+            "request_id": "9-report",
+            "echo": "9-report",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "{\"commit_seq\": 102, \"database_seq\": 103, \"object\": \"object-v3\", \"report\": \"R3\", \"sha256\": \"77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32\", \"tenant\": \"A\"}",
+            "sha256": "31418ebb30eda70be11d8e7785b493032815b058180ffcdbaae6f2f45fdf596d",
+            "started_ms": 627,
+            "ended_ms": 628
+          },
+          "attachment": {
+            "request_id": "9-attachment",
+            "echo": "9-attachment",
+            "backend": "backend-b",
+            "status": 200,
+            "body": "A report 3",
+            "sha256": "77a43a9c8bde8f64206a686aa1f97d4ea9772c8bcca9a132d202058be44dbf32",
+            "started_ms": 628,
+            "ended_ms": 629
+          },
+          "proxy": {
+            "backend-a": {
+              "status": "DOWN",
+              "check_status": "L4CON",
+              "check_code": ""
+            },
+            "backend-b": {
+              "status": "UP",
+              "check_status": "L7OK",
+              "check_code": "200"
+            }
+          }
+        }
+      ],
+      "fault_ms": 249,
+      "a_closed_ms": 257,
+      "stopped_backend_a": {
+        "request_id": "direct-a-after-close",
+        "status": null,
+        "error": "ConnectionRefusedError",
+        "started_ms": 257,
+        "ended_ms": 257
+      },
+      "incomplete_trial": 4,
+      "repaired_ms": 381,
+      "stable_trials": [
+        7,
+        8,
+        9
+      ],
+      "stable_ms": 629,
+      "elapsed_ms_from_fault": 380,
+      "proxy_exit": -15
+    }
+  }
+}

@@ -9288,6 +9288,83 @@
         "在本地验证容量与代际条件",
         "配套代码与本次运行结果"
       ]
+    },
+    {
+      "id": "resilience",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "5e4f7c0845628fb4d651693557b7fe481ea2d9eeb7679d1aac79f70626796885",
+      "reviewed_content_sha256": "85d7ec1dea93f6cbe76b5928127a223f3b6c31ce98c93a480aaec44b7114435b",
+      "scope": "Observe actual loopback HAProxy failover through one client entrance, and verify R3 and its referenced attachment as a pair.",
+      "observation": "The ordinary probe admits B with report 200 and attachment 404. The material probe initially leaves both requests at proxy 503. Repair permits three complete B pairs in both cases; cross-zone metrics remain unmeasured.",
+      "headings": [
+        "恢复条件：材料、业务、权威与消费者",
+        "先说明这次恢复究竟要救什么",
+        "故障域要画到最后一个共享依赖",
+        "RPO 衡量缺失的时间边界，RTO 衡量恢复时长",
+        "共同恢复点：连续提交与对象版本",
+        "恢复关键路径：阶段预算与数据规模",
+        "写入接管与效果：旧写者、回执和重新消费",
+        "演练如何证明备份真的可用",
+        "实战：完整前缀与恢复后的外部效果",
+        "评分练习：恢复点合格是否意味着服务已恢复"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "662fd03c6518263208f54c7d0ab655f44618e5c5c0b80a0e5abdaff89c7b78d7",
+      "reviewed_content_sha256": "3b07797e7604e4fc085bf6b760fc003c9f0afea434e842b92124544bd8777e25",
+      "scope": "Compare a clean and a stale task inside the same running Docker container, then stop one of two containers while the other produces a report.",
+      "observation": "Linux CI observed the stale marker, a separate second report after fixed cleanup, A exit 137 and its original cgroup removed, and the unchanged B completing amount 37.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c19f5e582280f7a1139b96288f6238a53eceb7092c361f9ee62b8061625d6d37",
+      "reviewed_content_sha256": "9d3c15ddeaf29e5467ea10c66feb19c1c3fdf55f091b9b0b82f3a208a49ae31b",
+      "scope": "Carry the committed cursor distinction from data prefetch into actual distributed gradient accumulation.",
+      "observation": "The linked two-process experiment sees an already computed microbatch that was not part of a committed optimizer update.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "ef362a8be923b9ef4bcf137f44a70556461b333e4fc926ae42f760db46f2d1de",
+      "reviewed_content_sha256": "885350750007d29cc013b5ed5fe9f3be90de08a9ff666627bcbeb4a7f0ed359d",
+      "scope": "Explain an actual failure between the two backward passes of a gradient accumulation window and contrast two cursor choices.",
+      "observation": "Two local CPU/Gloo ranks replay the committed window to weight 2.5 and momentum -6. Skipping the consumed but uncommitted microbatch reaches weight 2.25 and momentum -5.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
     }
   ]
 }

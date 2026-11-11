@@ -104,7 +104,7 @@
   a.sections[8][1]=
    p('现在可以沿R27的完整路径验收：A工作区取得获准输入，生成预期图，交付后即使临时区已回收，产物仍可读取。再一次改变一个条件：尝试读取B工作区、连接未允许目的地、超过某项资源预算、取消执行。分别检查访问结果、实际对象内容与版本、限制命中和回收记录。',
      '生命周期的故障点也分别核对：准备失败是否归还预留资源，运行时重启能否发现无主实例，清理器崩溃后能否接续，清理超时是否仍占着应保留的额度。记录各阶段耗时、退出类别和清理滞留数，才能区分排队、准备、执行与回收的瓶颈。',
-     '预热复用环境时，先说明共享哪些只读镜像层，哪些可写层、句柄、缓存和凭据按任务隔离。让A留下标记后启动B，核对B不可读取；无法可靠消除旧状态时，改用新实例，并测量启动与容量代价。')+
+     '预热复用环境时，先说明共享哪些只读镜像层，哪些可写层、句柄、缓存和凭据按任务隔离。让A留下标记后启动B，核对B不可读取；无法可靠消除旧状态时，改用新实例，并测量启动与容量代价。<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">看同一个 Docker 容器接第二项任务，以及两个容器同时运行时怎样确认回收 →</a>')+
    fold('本章证据的范围与目标环境验收',p('配套POSIX程序真实创建子进程，观察继承、单进程rlimit、固定叶子路径和直接子进程回收；容量与代际程序是算术和字典模型。Pod片段说明配置关系，未运行容器验收。两类本地程序与片段均不构成生产沙箱或Kairo已验证的结论。接到目标环境后，保存运行时与版本、正常任务结果、越界输入、实际资源及清理证据，再判断对应边界是否成立。'))+
    '<p><a class="inline-link" href="#/article/kairo-practice">回到 Kairo，建立对应环境的验收清单 →</a> <a class="inline-link" href="#/article/agent-security">回看工具调用的授权边界 →</a></p>';
 
@@ -161,6 +161,19 @@
    p('源码用 <code>start_new_session=True</code> 启动两组，用 <code>os.killpg</code> 向 A 的组编号发信号。记录分别保留 A 的退出状态和管道结果、B 在停止后生成的报告。这个实验实跑了本机进程组。容器复用、生产隔离和资源清理要用目标运行时自己的证据。')+
    trainingCode('在解压后的目录运行','SHELL','python3 -B sandbox_process_group.py > my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-process-group.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-process-group/sandbox_process_group.py">查看完整源码 →</a> · <a href="/labs/sandbox-process-group/validation.json">查看本机进程记录 →</a></p>';
+  a.sections[9][1]+=h('native-sandbox-docker-lifecycle','同一容器接下一项任务，两个容器怎样分别停止')+
+   p('先用同一个容器做两项任务。镜像已经拉取，创建并启动容器后等它就绪，再用 <code>docker exec</code> 启动一条新命令。第一次留下报告和 <code>previous</code> 标记。直接派发第二次时，夹具读到旧标记，拒绝执行，报告仍属于第一次。清掉两个固定文件，再派发第二次，独立读回属于第二项的报告。对照 Docker ID、启动时刻和主进程编号，确认两次都在同一个仍在运行的容器里。')+
+   p('再开两个独立容器 A、B，各自运行父子进程。向 A 发停止请求。夹具忽略正常结束信号，宽限一秒后强制结束。宿主同时核对进程编号和启动时刻，以免把重复分配的编号认成旧进程。再查 A 所在的 cgroup。Linux 用 cgroup 成组管理进程，<code>populated=0</code> 表示该组及其子组已经没有活进程。')+
+   table(['验收点','从哪里确认'],[
+    ['复用时是否还留有旧状态','第二次派发被拒，独立读回仍是第一次报告。重置后读回为空，再派发才得到第二项报告 37。'],
+    ['A 是否已经停住','Docker 记录退出码 137，宿主看到原来的两个进程身份均已停止，本次 cgroup 目录已移除。'],
+    ['B 是否还是原来的实例','停止 A 前后，B 的容器和两个进程身份一致。之后才请求 B 完成，它交付金额 37。'],
+    ['容器对象是否已删除','实验结束再用完整容器 ID 查引擎列表，三个都已移除。']
+   ])+
+   p('这次 Linux CI 从创建到就绪约 1.20 秒，从创建到首次报告读回约 2.20 秒。已启动容器清理后，从派发到读回约 1.01 秒。两个任务的终点都是独立读回。镜像预先拉取，已启动路径从清理结束后计时。这是单机单次观测。生产环境还需测镜像、队列、挂载、凭据与跨租户隔离。')+
+   trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
+   '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
+   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+

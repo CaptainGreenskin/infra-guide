@@ -251,7 +251,8 @@ assert complete["seq"] == 103
 assert complete["A_readable_reports"] == ["R1", "R2", "R3", "R4"]
 print("数据库 103 缺 R3 附件，完整前缀 101，材料齐备时到 103")
 PY`);
- const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json'];
+ const failoverLinks=['/labs/haproxy-report-failover.zip','/labs/haproxy-report-failover/README.md','/labs/haproxy-report-failover/validation.json','https://github.com/CaptainGreenskin/infra-guide/actions/runs/43113784181'];
+ const readbackLinks=['/article/resilience/#subsection-9-xbrzl7','/labs/recovery-artifacts-retrieval/validation.json',...failoverLinks];
  rewrite(resilience,[
  anchor('recovery-business-contract')+
  p('恢复让中断后的系统重新提供约定服务。先看正常业务：授权用户请求一份日报，应用从数据库取得报告及附件引用，按引用读取对象存储中的内容，再把可核对的结果交给用户。数据库保存业务记录，对象存储保留附件字节，身份与授权控制谁能读取。恢复需要把这条依赖链重新接通。',
@@ -284,6 +285,16 @@ PY`);
  h('recovery-report-readback-gate','怎样从实际入口验收同一份报告')+
  p('目标演练若承诺恢复到提交 103，先记下租户 A 的报告 ID <code>R3</code>、附件版本 <code>object-v3</code> 和原始内容摘要。故障后用外部客户端从正常入口按该租户身份查询报告，再下载它引用的附件，保存请求 ID 和返回字节的摘要。报告、版本和内容都对得上，才记为一次合格读回。若最后完整状态停在 101，把 R3 记入数据缺口。只用这一份报告做探针时，完整恢复点仍须核对整份提交清单。',
  '跨可用区演练要用同一时间基准，记录约定的中断起点（如故障注入）和最低服务恢复时刻。若本轮要求只读，在事先约定的连续读回探针全部合格时停止计时。开放写入另用测试写请求和独立读回验收。比较有效吞吐时，固定负载和观察窗，按请求 ID 去重，数清发起数、截止前合格数和失败或超时数，再用合格数除以窗口秒数。本机记录的 11:42 和 11:57 是题设提交时刻，跨区恢复耗时与有效吞吐要到目标环境采集。')+
+ h('native-haproxy-report-failover','主后端退出后，备用后端能读全 R3 吗')+
+ p('在同一台 Linux 机器上，用真实 HAProxy 接两份独立的 HTTP 后端。两边都能在 SQLite 里查到租户 A 的 <code>R3</code>，备用后端 B 还缺 <code>object-v3</code>。客户端先从主后端读到整份报告，再关闭主后端的监听。两次实验各自保持原入口，只更换 HAProxy 检查的路径。')+
+ table(['备用后端的检查条件','代理状态','客户端读回'],[
+  ['<code>/healthz</code> · 进程能响应','B 可接流量','B 的报告 200，附件 404'],
+  ['<code>/readyz</code> · 核对固定附件','B 暂不接流量','主、备均不可用，入口两次返回 503'],
+  ['补齐 <code>object-v3</code>','两组 B 都可接流量','各连续三轮从 B 读到报告和正确附件']
+ ])+
+ p('每轮分别请求报告和附件，再把两个请求 ID、后端标记和返回字节放在一起核对。<code>incomplete_trial</code> 指向缺附件时的一轮，<code>stable_trials</code> 指向补齐后连续合格的三轮。恢复用时从本机故障注入算到第三轮结束，包含实验中故意保留的缺附件阶段。')+
+ p('按包内说明准备 HAProxy 3.2.26，再运行 <code>python3 -B failover_lab.py --haproxy ./haproxy-3.2.26/haproxy --output my-run.json</code>。用 <code>python3 -B verify_record.py my-run.json</code> 核对两组记录。')+
+ '<p class="practice-links"><a href="'+failoverLinks[0]+'" download>下载可复跑实验 ↓</a> · <a href="'+failoverLinks[1]+'">查看运行步骤 →</a> · <a href="'+failoverLinks[2]+'">查看代理与客户端原始记录 →</a> · <a href="'+failoverLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
  h('subsection-6-vxh3b7','从故障到最低服务，逐段计算时间')+
