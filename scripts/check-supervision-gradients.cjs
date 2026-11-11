@@ -33,6 +33,11 @@ assert.equal(vm.runInContext('supervisionGradientFiles["supervision_gradients.py
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
 const html=fs.readFileSync('dist/article/tokenization-embedding/index.html','utf8'),blocks=[...html.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>decode(m[1]).trim());assert(blocks.includes(source.trim()));assert(html.includes('labs/supervision-gradients.zip'));
 const article=vm.runInContext('articles.find(a=>a.id==="tokenization-embedding")',c);assert(article.sections[4][1].includes('v34-label-alignment'));assert(article.sections[6][1].includes('v34-shared-embedding-grad'));assert(article.sections[8][1].includes('supervision_gradients.py'));
+const lookup=article.sections[2][1],scores=article.sections[3][1],visibility=article.sections[5][1];
+assert(lookup.includes('前四项'+JSON.stringify(actual.inputs[0])+'作输入，后四项'+JSON.stringify(actual.targets[0])+'作目标'),'the first lookup explains why it uses only four tokens');
+assert(scores.includes('编号5对应从左数第六列，分数是2'),'the candidate ID and the displayed column are distinct');
+assert(visibility.includes('位置2是结束符EOS，它能读取位置0、1、2，自己却没有真实的下一项目标。'));
+assert(visibility.includes('href="/article/attention-mechanics/#subsection-1-bc8625"'),'the visibility example leads directly to computing reading weights');
 assert(vm.runInContext('articles.find(a=>a.id==="autograd-training").sections.find(s=>s[0].includes("微批不等长"))[1]',c).includes('v34-microbatch-denominators'));
 const metadata=name=>{const s=fs.readFileSync('dist/diagrams/'+name+'.svg','utf8'),m=s.match(/<metadata>([\s\S]*?)<\/metadata>/);assert(m);return JSON.parse(decode(m[1]));};
 assert.equal(metadata('v34-label-alignment').valid_targets,6);assert.equal(metadata('v34-label-alignment').rectangle_positions,8);

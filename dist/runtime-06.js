@@ -1331,7 +1331,9 @@ Object.assign(sources,{
 });
 {
  const a=articles.find(a=>a.id==='agent-runtime');
- a.sections[1][1]+='<h3>流式参数到达时，先识别三种边界</h3>'+para(
+ a.sections[1][1]+=para('有的上游会分段发送工具参数。运行时等同一次调用的参数收齐，再检查名称、结构和权限，通过后才派发。<a href="/article/agent-runtime/#streaming-tool-lab">第9节用本机流式实验检验这个顺序</a>。')+
+  '<details class="progressive-detail"><summary>选读：字符、事件与调用参数怎样分别收齐</summary>'+
+  '<h3 id="subsection-2-1mih105">流式参数到达时，先识别三种边界</h3>'+para(
   '上游分段给出工具参数时，执行器先面对字节，而不是一个现成的参数对象。一次 HTTP 读取可能停在汉字的 UTF-8 编码中间；服务端事件流（SSE）又用行和空行组织事件，字符还原后还需找到完整事件。事件里的 delta（参数增量）仍可能只是一次调用的部分参数。三个“收齐”分别处理，不能看到片段中出现工具名就执行。',
   '后面的只读日报实验声明自己的 start/delta/done 封装：start 固定工具调用编号 call_id 和名称；delta 为这个调用追加参数字符串；对应 done 才表示这次参数输出结束。不同调用的片段可以交错，按 call_id 分开收集。真实适配时映射所用协议的完结信号，不能把本实验字段直接当作某家模型或 MCP 的通用格式。')+
   figure('v37-stream-boundaries','正常固定流的实际账本：响应体 287 字节、41 次读取、3 个完整事件，最后准入 1 次本地只读回调。每一层只证明自己的完成条件。')+
@@ -1339,7 +1341,7 @@ Object.assign(sources,{
    ['UTF-8 字符','增量解码器保留未完字节，补齐后输出字符','还不知道事件是否完整'],
    ['SSE 事件','本例按空行结束事件，多行 data 先拼合','delta 仍可能只是部分参数'],
    ['单次调用的参数','对应调用的 done 已到，完整参数可解析','还需结构、名称、权限和业务前提检查']])+
-  para('合法 JSON 前缀也不能提前下发。先到的片段可能刚好是 {"tenant":"A","report":"中国区日报","limit":3}，下一段却还有 oops；提前解析、提前执行，就在上游实际结束前接受了后来不合法的参数。反过来，到流末尾（EOF）也不表示每次调用都结束：最后一项 done 若没有完整事件边界，应保持未完成。');
+  para('合法 JSON 前缀也不能提前下发。先到的片段可能刚好是 {"tenant":"A","report":"中国区日报","limit":3}，下一段却还有 oops；提前解析、提前执行，就在上游实际结束前接受了后来不合法的参数。反过来，到流末尾（EOF）也不表示每次调用都结束：最后一项 done 若没有完整事件边界，应保持未完成。')+'</details>';
  a.sections[3][1]+='<h3>流状态和调用事实分别保留</h3>'+para(
   '流在参数收齐之前结束，保持该调用未执行；若另一调用已经通过准入并完成，则保留它的观察，再记录流错误。不能用一个“整流失败”把已经发生的调用清零。对写工具，更应沿原操作身份查接收方回执，不能因为没收到最终文本就换新操作重复写。',
   '当前连接的 call_id 只帮助拼装参数，不能代替业务 op_id、一次网络尝试的 attempt_id 或持久回执。断线重连时哪些事件可重放、哪些调用已执行、检查点何时提交，需要另外的恢复协议。单次调用的 done 也不等于整个用户任务完成，后文仍按真实产物验收。');
@@ -4321,19 +4323,31 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  };
  const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const legacy=i=>'<details class="full-code service-legacy"><summary>历史来源：'+(i<2?'原有本地机制实验':'原有目标集群手册与源码')+'（保留原文）</summary>'+p('以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。')+old[i][1]+'</details>';
- const normal=o.cases.normal_v1,failed=o.cases.readiness_failed,recovered=o.cases.readiness_recovered;
+ const normal=o.cases.normal_v1;
+ const first=o.requests.find(request=>request.status===200);
+ const firstEndpoint=normal.api_before.endpoints.find(endpoint=>endpoint.pod_uid===first.body.pod_uid);
  const victim=o.readiness.pod_uid;
  const phaseLabels={normal_v1:'正常 v1',readiness_failed:'readiness 失败',readiness_recovered:'readiness 恢复',liveness_restarted:'liveness 重启后',rolled_v2:'发布 v2',undo_v1:'undo 回 v1'};
  const phaseRows=Object.keys(phaseLabels).map(name=>{const rows=o.requests.filter(r=>r.phase===name);return [phaseLabels[name],String(rows.length),String(rows.filter(r=>r.status!==200).length),'20 条均 200'];});
+ const recoveryRequests=o.requests.filter(request=>request.phase==='readiness_recovered');
+ const recoveryOK=recoveryRequests.filter(request=>request.status===200).length;
+ const recoveryRate=(100*recoveryOK/recoveryRequests.length).toFixed(2);
  const count=s=>s.api_after.pods.find(p=>p.uid===victim).restart_count;
  const bodies=[
  '<div class="mechanism-core" id="kubernetes-service-normal"><h3>从一条正常请求认识四个对象</h3>'+p(
- '先部署一个运行两个副本的服务。客户端请求固定入口，转发组件在就绪副本中选择后端，应用返回它真正运行的版本。先把这条正常请求走通，再分别改变健康信号和版本，继续用同一入口核对用户实际收到什么。',
- 'Deployment 声明“运行两个副本”，控制器据此创建 Pod；Pod 是容器运行的单位，每个对象都有独立 UID。Service 用标签选择这一组 Pod，提供稳定的集群内 IP（ClusterIP）。EndpointSlice 保存后端地址和就绪条件，转发组件观察这些对象、更新转发规则。节点代理 kubelet 按探针检查应用，再更新就绪或推进容器重启。Service 不是额外业务进程，EndpointSlice 也不承载 HTTP 请求。')+
+ '客户端发出 <code>GET '+esc(first.url)+'</code>，收到 HTTP '+esc(first.status)+'。这次实验用 <code>/work</code> 回显实际运行的版本和副本编号，便于核对请求到达了哪一份应用。<a href="/article/cloud-overview/#section-4">C1.1 的本机直连实验</a>也有这个接口，这次请求经过集群入口。',
+ 'Deployment 声明应用要运行两个副本，控制器按声明维持两个 Pod。Pod 是容器运行的单位，每个 Pod 都有唯一编号 UID。Service 用标签选出应用 Pod，提供稳定的集群内地址 ClusterIP。',
+ 'EndpointSlice 记录这些后端的地址和就绪条件。集群的转发组件读取这些对象，把新连接交给符合条件的后端。可以在 <a href="/article/k8s-networking/#section-2">C4.5 对照 Service 如何选 Pod、端口如何映射</a>。')+
  fig('flow','Deployment维护两个v1 Pod；客户端新请求经Service ClusterIP到就绪后端，返回请求ID、版本与Pod UID','同一个 /work 输入贯穿图、代码和六个阶段；虚线是控制关系，实线是普通客户端的 HTTP 数据路径。')+
+ '<div class="mechanism-core" id="kubernetes-service-first-response">'+p('在<a href="labs/kubernetes-service/validation.json" target="_blank" rel="noopener">实际记录</a>里找到第 '+esc(first.seq)+' 条请求。用响应中的 Pod UID 在初始稳定窗口的 API 快照里找到对应后端。')+
+ table(['字段','实际记录','怎么读'],[
+  ['request_id','<code>'+esc(first.body.request_id)+'</code>','与客户端发出的请求编号一致'],
+  ['pod_uid','<code>'+esc(first.body.pod_uid)+'</code>','在端点快照中对应 <code>'+esc(firstEndpoint.addresses[0])+':'+esc(o.service.target_port)+'</code>'],
+  ['version','<code>'+esc(first.body.version)+'</code>','由实际接到请求的应用返回']
+ ])+'</div>'+
  p('正常路径中，两个业务 Pod 都是 Ready，端点 ready=true；持续客户端确实从同一个 ClusterIP 收到两个 UID 的 v1 响应。接下来分别观察“是否接新流量”“是否重启”和“运行哪个版本”，三个问题使用不同证据。')+'</div>'+legacy(0),
  '<div class="mechanism-core" id="kubernetes-service-objects"><h3>先给健康信号各自的职责</h3>'+p(
- '应用提供 /ready、/live 和 /work；节点上的 kubelet 按配置周期请求前两个接口。readiness 回答“现在是否适合接新工作”：失败会影响 Pod Ready 和端点就绪。liveness 回答“是否需要靠重启恢复”：连续失败达到阈值后，kubelet 重启相应容器。Running 只说明生命周期阶段，不能替代这两种判断。',
+ '节点上的代理 kubelet 按配置周期检查应用的 <code>/ready</code> 和 <code>/live</code>。就绪探针（readiness）失败后，Pod 的接流量资格和端点条件会更新。存活探针（liveness）连续失败达到阈值，kubelet 会重启相应容器。Pod 显示 Running 时，仍要查 Ready 与重启次数。检查频率与连续失败次数见 <a href="/article/k8s-workloads/#section-4">C4.3 的探针阈值</a>。',
  '下面的字段属于同一份双副本夹具。Service 的 80 端口转到应用 8080；selector 与 Pod 标签 app=guide-service 对应。探针直接检查 Pod 应用；客户端仍请求 Service，不把探针请求当作业务流量。')+
  code('对象核心字段 · 完整可运行对象见本节源码','yaml',kubernetesServiceSnippets.objects)+
  p('当 /ready 失败而 /live、/work 仍成功时，应用进程仍有处理能力，但不再适合接新工作。探针只提供信号；是否减少新流量，要继续看平台如何更新端点和转发规则。下面以同一个 /work 请求验证这条因果链。')+'</div>'+legacy(1),
@@ -4343,7 +4357,9 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  '只在一个业务容器创建 /tmp/not-ready 后，该 Pod 的 /ready=503，/live=200、/work=200。API 观察到 Pod Ready=false、对应 EndpointSlice ready=false；其地址仍可留在对象中。对象收敛后，连续 20 条 Service 响应只来自另一 Pod，两个 Pod 的重启次数均未增加。删除标记后，同一 UID 恢复就绪，响应再次覆盖两个后端。',
  '再单独让 /live 失败，/ready 此时仍为 200。达到本例阈值后，同一 Pod UID 的容器重启一次，restartCount 从 '+esc(count(normal))+' 变为 '+esc(count(o.cases.liveness_restarted))+'，响应中的进程实例 ID 也改变。readiness 失败期间没有重启，liveness 失败后发生重启，两条因果路径由不同注入与实测区分。')+
  fig('changes','六个阶段分别核对Ready后端与实际Service版本；readiness失败不重启，liveness单独失败重启，v2发布后undo回v1','每阶段保存 API 快照与连续 20 条实际新连接样本；完整持续序列包含传播期间请求。')+
- table(['客户端阶段标签','完整序列请求数','非 200 / 传输失败','选取的稳定窗口'],phaseRows)+p('阶段标签在 API 收敛后切换，因此完整阶段也会包含随后故障注入与传播中的请求；右列是其中满足条件的一段，不能代表全程零错误、负载均衡公平或服务 SLO。')+
+ table(['客户端阶段标签','完整序列请求数','非 200 / 传输失败','选取的稳定窗口'],phaseRows)+p(
+ '阶段标签在 API 状态达到预期后切换，完整序列还可能包含后一次故障注入和状态传播。以恢复就绪阶段为例，选取的窗口是 20/20，带此标签的完整序列里有 '+esc(recoveryRequests.length-recoveryOK)+' 次请求未得到 200。按收到 200 的比例计算，分母取完整序列就是 '+esc(recoveryOK)+'/'+esc(recoveryRequests.length)+'（'+esc(recoveryRate)+'%）。',
+ '这里算的是实验客户端的响应比例。服务级别目标（SLO）需要先确定统计哪些用户请求、什么算好响应，以及统计多久。沿用本例可以在 <a href="/article/slo/#section-2">C9.1 检查请求分母和聚合口径</a>。')+
  '<details><summary>按需：采样窗口、传播与终止边界</summary>'+p(
  '程序等待对象状态，再切换客户端阶段标记，直到最后连续 20 条成功、实际 UID 集合与 ready 后端集合一致；采样前后各读一次 API。达到条件前的请求仍在原始记录中。稳定窗口不能证明传播期间零失败，也不能保证未来所有请求；端点状态与数据平面之间仍有异步传播。',
  '本例关闭连接复用，只检查受控新请求。长连接、在途请求、preStop 排空和云负载均衡的健康检查需要独立实验；不从几秒固定等待推断它们已完成。Pod 内 loopback 诊断只用来核对三个应用接口，不计入 Service 业务样本。')+'</details></div>'+legacy(2),
@@ -4351,7 +4367,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  'APP_VERSION 位于 Deployment 的 Pod 模板中。将它从 v1 改为 v2，会触发控制器创建新版本副本；本例 maxUnavailable=0、maxSurge=1，允许先增加一份，再逐步替换。等待 rollout 完成后，还要检查新 Pod 的 Ready、端点 UID 和实际 HTTP 版本。Service 的 UID 与 ClusterIP 在整个发布中保持相同。')+
  code('发布与回退核心 API · 使用本次私有管理上下文','python',kubernetesServiceSnippets.rollout)+
  table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']])+p(
- 'rollout undo 回退的是历史 Pod 模板。这里版本来自模板环境变量，因此回退后真实读到 v1；如果模板引用的同名 ConfigMap 内容或数据库结构另有变化，它们不会随这条命令自动恢复。先识别版本来自哪里，再决定需要恢复哪些外部状态。')+'</div>'+legacy(3),
+ 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。')+'</div>'+legacy(3),
  '<div class="mechanism-core" id="kubernetes-service-run"><h3>自己运行，并用业务结果验收</h3>'+p(
  '先预测：只让 /ready 失败，Pod UID、restartCount、端点条件与客户端 UID 分别会怎样变化？再预测只让 /live 失败和回退模板的结果。下载完整程序，在 Linux、本机 Docker、kind v0.33.0、kubectl v1.35.8 与 Python 3.9+ 环境运行：')+
  code('运行独立原生实验；第二条仅离线复核记录','sh','python3 -B service_lab.py --output service-record.json\npython3 -B service_lab.py --check-record service-record.json')+p(
@@ -4374,7 +4390,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   kubernetesServiceRollout:['Kubernetes · Deployment 模板与回退','https://kubernetes.io/docs/concepts/workloads/controllers/deployment/']
  });
  a.refs=[...new Set([...a.refs,'kubernetesServiceNative','kubernetesServiceProbes','kubernetesServiceEndpoints','kubernetesServiceRollout'])];
- a.updated='2026.11.08';
+ a.updated='2026.11.11';
 })();
 
 
@@ -4439,13 +4455,14 @@ const progressiveAiSectionTitles={
   '回到两条样本，BOS、EOS由本章编码器各加一次；PAD在组批时补入。真实接口也可能由模板负责加边界符号，调用方应沿实际管道确认各步骤的负责方。部署时固定分词器、特殊编号及模板，模型权重的每一行才能继续对应训练时的词元。');
  token.sections[2][1]=para(
   'Embedding是一张可学习的浮点参数表E，一行对应一个词元。先说明两根轴：V是词表项数，D是每个词元的表示宽度，故E的形状为[V,D]=[8,2]。输入编号表的两根轴是样本b和位置t；取E[ids[b,t]]，便把一个整数换成两项特征。编号用于选行，选中行的浮点数才是模型计算与学习的对象。',
-  '沿用上节的完整序列，右补齐到五格后取前四格作为输入，得到[1,5,5,6]和[1,3,2,0]。B=2、T=4，共查八次表，输出形状为[B,T,D]=[2,4,2]。表本身有8×2=16个独立参数；查八次产生16个本批特征值。这两个16来自不同计数，改变T会改变本批输出数量，而不会增加词表参数。')+
+  '模型在每个位置预测下一项。第一条完整序列[1,5,5,6,2]用前四项[1,5,5,6]作输入，后四项[5,5,6,2]作目标。最后一个输入6要预测结束符2。第二条右补齐到五格后，同样取前四项[1,3,2,0]来查表。<a href="/article/tokenization-embedding/#section-5">第 5 节逐格对齐两条序列的输入与目标。</a>',
+  '这批有两条序列，每条取四个位置，因此B=2、T=4。每格查出两个数，输出形状为[B,T,D]=[2,4,2]。词表本身有8×2=16个参数，本批查出的特征也恰好有16项。增加输入位置只增加这次查出的特征数量。')+
   table(['词表行','本章固定向量'],[['PAD / BOS / EOS','(0,0) / (0,1) / (0,−1)'],['云 / 端 / 云端 / 算','(1,0) / (−1,0) / (2,0) / (0,2)'],['UNK','(0,0)']])+
   para('第一条输入查成[(0,1),(2,0),(2,0),(0,2)]。两处5重复使用E[5]，仍是两个不同位置，没有新建第二份参数。也可以用“只有编号所在项为1、其余为0”的独热向量乘E，得到同一行；实际Embedding直接查表，省去构造这张大独热输入。',
   '为了算到输出，本章把中间模型暂时简化为H=E[ids]/2，即各输入向量逐项除以2。H称为隐藏表示，仍为[2,4,2]。这份局部变换只用本位置的词元。<a href="/article/attention-mechanics/#same-position-different-prefix">下一章换回入门的 8 维小模型</a>，把位置和末位编号固定，只改前一项，直接观察候选分数的变化。');
  token.sections[3][1]=para(
   '输出头把一个位置的隐藏向量h换成词表各候选的得分。设输出权重W有V行、每行D项，本章不加偏置：候选j的分数zⱼ是h与W[j]的点积。所有位置一起计算时，H的[ B,T,D ]变成得分的[B,T,V]=[2,4,8]。这些实数称为logits，尚不是概率；训练直接使用整行得分，生成时再按规则选择候选。',
-  '本章令输出表W与输入表E引用同一份参数，称为权重共享。继续看第一条样本位置1：输入5查得(2,0)，除以2后h=(1,0)。与八行W分别点积，得到z=[0,0,0,1,−1,2,0,0]。八项的顺序仍是词表编号顺序，第5项分数为2。',
+  '本章令输出表W与输入表E引用同一份参数，称为权重共享。继续看第一条样本位置1：输入5查得(2,0)，除以2后h=(1,0)。与八行W分别点积，得到z=[0,0,0,1,−1,2,0,0]。八项依次对应编号0到7。编号5对应从左数第六列，分数是2。',
   'Softmax把这一行候选分数转换成概率。指数函数exp先把实数分数变成正数，再对整行归一化：候选j的概率pⱼ=exp(zⱼ)/Σₖexp(zₖ)，分母遍历全部V个候选。每项非负、整行和为1；某个候选的概率也由其他候选的分数决定。本位置的下一项恰好还是5，故目标概率p₅=exp(2)/(5+exp(1)+exp(−1)+exp(2))≈0.477477。',
   '交叉熵衡量目标候选获得了多少概率。目标编号为y时，本位置损失ℓ=−ln pᵧ，ln是自然对数；目标概率越接近1，损失越接近0。实现通常直接接收logits，在内部稳定地计算归一化与对数。本章程序的log_probs先减去最大分数，再计算指数和，从而保持比例并避免大分数直接取指数溢出。')+
   para('输入查表与输出打分虽然用同一张表，执行的是两次不同操作。两份独立[8,2]参数表合计32个参数；真正共享后只保留16个，但输出仍有八个候选。复制相同初值不会自动共享后续更新。把同一关系放大到V=32,000、D=4,096，共享少一张131,072,000参数的矩阵；按每参数2字节仅计权重为250MiB，其他训练状态另行统计。');
@@ -4458,10 +4475,11 @@ const progressiveAiSectionTitles={
   figures(t[4]).join('');
  token.sections[5][1]=para(
   '同一批张量里有两套不同的有效性。注意力可见性规定当前位置能读取哪些输入位置；有效监督规定哪些输出位置要计算损失。前者沿输入的时间位置起作用，后者选择预测位置，两者服务于不同阶段。',
-  '沿用第二条输入[1,3,2,0]：前三项来自完整序列，最后一项是填充，所以有效key标记为[真,真,真,假]。某个query还受因果规则约束，只能读不晚于自己的key。将有效key条件与因果条件同时满足的位置交给注意力，才能得到本次允许的前缀。下一章会逐行把这份集合变成读取权重。',
+  '沿用第二条输入[1,3,2,0]。把发起读取的位置叫查询位置（query），被读取的候选叫键位置（key）。前三格都来自原序列，最后一格是填充，有效键标记因此是[真,真,真,假]。因果规则进一步限制每个查询只能读自己和前面的位置。位置2是结束符EOS，它能读取位置0、1、2，自己却没有真实的下一项目标。',
   '损失函数的ignore_index则标记要跳过的目标。本例用−100表示忽略，目标[3,2,−100,−100]只贡献前两项损失及分母。有效位置预测时，PAD仍是词表中的一个候选，除非另有输出规则，它仍进入该行Softmax分母；忽略某个预测位置并没有删除某个词表类别。',
   '纯右补齐的因果输入里，真实query本来就看不到末尾未来PAD；左补齐、双向读取或文档打包的可见集合则不同。按实际位置记录真实输入，既能正确生成key标记，也能区分EOS与PAD共用编号时的真实结束目标。填充用哪个编号与这个位置是否真实，是两项信息。',
-  'Embedding的padding_idx又属于参数查表路径：它控制该次查表反向是否给指定行贡献梯度。若参数还被共享输出头使用，输出路径仍可能更新同一行，下一节继续计算这条关系。整批没有有效目标时，还需统一处理不反向或不更新的分支，先避开零分母，再接到微批和多rank训练。');
+  'Embedding的padding_idx又属于参数查表路径：它控制该次查表反向是否给指定行贡献梯度。若参数还被共享输出头使用，输出路径仍可能更新同一行，下一节继续计算这条关系。整批没有有效目标时，还需统一处理不反向或不更新的分支，先避开零分母，再接到微批和多rank训练。')+
+  para('到这里已经能判断每一行能读哪些位置。<a href="/article/attention-mechanics/#subsection-1-bc8625">注意力章接着计算每个允许位置该读多少 →</a>');
  const tokenCode=blocks(t[6])[0],tokenCodeStart=t[6].indexOf('<div class="code-block">');
  if(tokenCodeStart<0)throw Error('Missing original tokenization program');
  token.sections[6][1]=para(
@@ -4482,8 +4500,13 @@ const progressiveAiSectionTitles={
  attention.sections[0][1]=
   '<span id="subsection-1-1ptyn5t"></span>'+
   '<h3 id="same-position-different-prefix">同一个词元，前文怎样改变预测</h3>'+
-  para('入门的小模型看到 [0,1] 时选出 1。现在只把第一项换成 4，输入变成 [4,1]，模型改选 7。末位仍是编号 1，仍在位置 1。它查出的词嵌入和位置向量都相同，等到注意力读取前一格时，中间结果才分开。',
-  '反过来，只把 [0,1] 的后一项换成 7，第一行的八个分数都保持原值。第一行只能读位置 0，第二行能读位置 0 和 1，这条读取规则叫因果注意力。<a href="/article/transformer-block/#native-tiny-decoder-context">查看同一模型两次前向的中间量 →</a>',
+  para('回到入门的 664 参数模型。两次计算用同一份更新过一次的参数，只把输入的第一项从 0 换成 4。末位仍是编号 1、位置 1，所以它的词嵌入和位置向量都相同。先看这格的实际记录，数值保留四位小数。')+
+  table(['输入','位置 1 输入向量首项','注意力分支输出首项','选出的编号'],[
+   ['[0,1]','0.0434','0.3166','1'],
+   ['[4,1]','0.0434','0.2672','7']
+  ])+
+  para('这里的分支输出是注意力读完前文、把结果转回原特征宽度后，准备加回输入的向量。只换前文，差异就从这条分支传到最后的候选得分。<a href="/labs/tiny-decoder-forward/validation.json">查看实际计算记录</a> · <a href="/article/transformer-block/#native-tiny-decoder-context">沿两次回加跟到最后一行得分 →</a>',
+  '再做相反的改动。只把 [0,1] 的后一项换成 7，第一行的八个分数都保持原值。第一行只能读位置 0，第二行能读位置 0 和 1，这条读取规则叫因果注意力。',
   '放到语言里，可以把“发布会上，苹果推出新机”分成三个示意位置。位置 1 的“苹果”可以用前面的“发布会上”来更新自己的表示。到了位置 2，模型才把“推出新机”纳入当前这一行的计算。',
   '上一章把词元编号查成向量，再用局部变换H=E[id]/2演示输出。现在让一个位置的向量也能汇入其他位置的信息。把进入本层的表示记为X，T个位置各有D项特征，按行排成[T,D]。X可以来自词嵌入与位置处理，也可以来自前一层。',
   '以位置1为例，它用自己的Q（Query，查询向量）逐一匹配位置0和1的K（Key，匹配向量），再按匹配得到的权重汇入两个位置的V（Value，内容向量）。每个位置都能提供K和V，也能用自己的Q发起查询。自注意力中的“自”指这三组向量来自同一份X。模型用三张可学习矩阵做线性变换，这一步称为投影，得到Q=XWq、K=XWk、V=XWv。')+
@@ -4495,7 +4518,7 @@ const progressiveAiSectionTitles={
   para('QKᵀ把每一行Q与每一行K配对，结果的行是查询位置、列是候选位置。每个查询在自己的这一行内做Softmax。下面手算沿用0、1、2的编号和可见关系，用特意选取的简单向量算出位置1怎样混合V₀和V₁。')+
   linkTo('tokenization-embedding','回看编号、查表与位置表示');
  attention.sections[1][1]=para(
-  '为手算缩小到一条序列的三个位置、一个头，取Q/K宽d=2、V宽dᵥ=2。下表直接给定投影后的Q、K、V，不是把上一章E/2的前三行当作投影结果，也不要求两章的编号有同一文本含义。保留的是“行对应位置、列对应特征”的结构；稍后多头小节再恢复B=2、T=4、D=8。',
+  '上一节的记录用来观察前文怎样影响预测。这里为手算另设一条三位置序列，只取一个头。下表直接给定投影后的Q、K、V，Q和K各有d=2项，V也取dᵥ=2项。每行对应一个位置，每列对应一个特征；多头小节再回到B=2、T=4、D=8的完整尺寸。',
   '本表选择自然对数ln3、ln2，便于把指数算成整数：exp(ln3)=3。Q/K的两个分量逐项相乘并相加，再除以√2，就是这一对位置的缩放分数。')+
   table(['位置','Q','K','V'],[['0','[0,0]','[0,0]','[2,0]'],['1','[√2,0]','[ln3,0]','[0,4]'],['2','[0,√2]','[0,ln2]','[6,2]']])+
   para('对于Q₁，三个原始点积依次为0、√2ln3、0，缩放后是[0,ln3,0]；Q₂对应[0,0,ln2]；Q₀为零，整行分数为0。缩放针对匹配维数d：当各分量近似独立、零均值且方差适当时，d项乘积之和的方差随d增长，除以√d可抵消这项增长，避免仅因维数增加便使Softmax过于集中。',
@@ -4700,7 +4723,7 @@ for label, actual, expected in (
   '<p>后续<a href="/article/autograd-training/">A1.6最小Decoder脚本</a>按这份结构创建664个参数，并将这些候选得分接到监督目标与一次更新。</p>',
 
   h('subsection-8-1e710zy','沿正常前向核对每个中间量')+
-  p('下面的已有CPU实验对同一个TinyDecoder展开一次前向。固定随机种子7，输入仍为[0,1,2,3]和[4,5,6,7]，模型使用float64、因果注意力和零dropout。前向跟读函数<code>trace</code>按本章依赖返回中间量，再将最终logits与模型自己的forward比较。阅读时先沿正确路径找到每个名字。')+
+  p('先用初始化后的参数检查各步计算是否接对。脚本固定随机种子7，直接运行[0,1,2,3]和[4,5,6,7]两条输入，没有做训练更新。它在CPU上使用双精度（float64）、因果注意力，并关闭随机丢弃（dropout）。函数<code>trace</code>返回各步中间量，最后将候选得分与原模型的<code>forward</code>结果核对。')+
   table(['代码节点','计算来源','形状'],[['x','token(ids)+position(0…3)','[2,4,8]'],['n1 → attn','归一化x，分头读取并输出投影','均为[2,4,8]'],['h1 → n2','x+attn，再用norm2归一化h1','均为[2,4,8]'],['gate_product','SiLU(gate(n2))⊙up(n2)','[2,4,12]'],['ffn → h2','down降回8维，再与h1相加','均为[2,4,8]'],['logits','norm_out(h2)与共享token表打分','[2,4,8]，末轴为词表']])+
   p('图中的四条变体保持了不少相同形状，却改动了来源或运算。stale_input让第二次归一化读取旧x，首差在n2；swap_gate把SiLU接到up，首差在gate_product；skip_residual漏加h1，首差在h2；normalize_time沿时间统计，首差在n1。先找到最早偏离节点，再看后续logits误差，能把数值现象对应回具体依赖。')+
   figures(d[7]).join('')+
@@ -4720,17 +4743,19 @@ for label, actual, expected in (
  ]);
  decoder.sections[7][1]+='<details class="progressive-detail"><summary>实跑 · 换一个前文，跟到最后一行候选分数</summary>'+
   h('native-tiny-decoder-context','同一个词元在解码器块里何时变得不同')+
-  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。固定入门的 664 参数模型，沿原来的代码更新一次，再用同一份参数完成两次前向。这里只看位置 1，行号从 0 数。')+
+  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。这份实验沿原来的训练代码做一次参数更新（SGD），随后固定这份参数，比较两条输入。只看第二格，也就是从 0 开始数的位置 1。')+
   trainingFigure('tiny-decoder-context','末位词元和位置相同，第一处读到不同上下文的是注意力。图中选词来自实际候选分数。')+
   table(['位置 1 的观测','[0,1]','[4,1]'],[
    ['输入向量 X 的第一项','0.0434','0.0434'],
    ['头 0 读取位置 0、1 的权重','0.5546、0.4454','0.4659、0.5341'],
    ['两头拼回后的第一项','0.5627','0.2569'],
+   ['输出投影后的第一项（图中分支输出）','0.3166','0.2672'],
+   ['第一次回加 H₁ 的第一项','0.3600','0.3106'],
    ['两次残差相加后的第一项','0.4424','0.3538'],
    ['最后一行给编号 1、7 的分数','3.7804、3.4653','3.5822、3.5940'],
    ['最高分对应的编号','1','7']
   ])+
-  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，它的匹配向量和内容向量都变了。模型重新分配两格的读取权重，并用新的内容做加权汇总。这个差异经过残差相加和前馈，最后传到词表分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
+  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，匹配向量和内容向量一起改变。两头拼回后还要做输出投影，图中展示的是投影后的值。把它加回 X 就得到 H₁，例如输入 [0,1] 时，第一项约为 0.0434 + 0.3166 = 0.3600。前馈从 H₁ 取输入，第二次回加的结果再送去计算候选分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
   p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
   '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
  decoder.updated='2026.11.11';
@@ -8560,7 +8585,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['来源 version','返回 3，对应资料 v3','数据来自哪一版来源'],
     ['进度 progressToken','后面的扫描使用 7，等待使用 8','过程通知对应哪个进行中的调用']
    ])+
-   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节另有目录换版的写入对照。'),
+   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节的选读另有目录换版的写入对照。'),
 
    p('通信双方必须使用相同的消息规则，协议版本说明采用哪份规则。本次官方库是 mcp 2.3.0，客户端应用实现版本是 1.0.0，现代协议版本是 2026-07-28。这三项分别定位库、应用和交互约定，不能用其中一项代替另外两项。',
    '2026-07-28 版没有初始化握手。现代请求用 _meta 保存附带信息，逐次携带 protocolVersion（协议版本）、clientInfo（客户端实现信息）和 clientCapabilities（客户端能力），完整字段名带 io.modelcontextprotocol/ 前缀。server/discover 是可选的版本与能力探测；本例主动调用 discover() 并采用结果，然后再发现和调用工具。现代客户端也可按已知规则直接请求，处理不支持版本的错误。')+
@@ -8588,7 +8613,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    '正常结果中，structuredContent 保存机器可读字段，content 保存展示内容；本例二者表达同一份 JSON。isError=false 表示工具没有报告执行错误。现代结果的 resultType=complete 表示本轮返回完整结果。下面这份响应的 task_id、version、batch_ids、values、total 都要继续接受任务判据检查。')+
    c3[0],
 
-   p('先区分“消息失败”与“工具报告失败”。JSON-RPC error 表示协议请求出错；工具结果中的 isError=true 表示工具报告错误。SDK 的输出结构校验则检查正常结果是否符合 outputSchema。只有这些检查都过了，才轮到宿主按来源验收业务数值。')+
+   p('基础批次的 37 只覆盖两笔订单。要汇总完整报表，宿主接着调用 <code>scan_batches</code>，请求 <code>report-A</code> 的 <code>base</code> 和 <code>late</code> 两个批次。工具读完后返回 [10,27,5] 和合计 42。客户端核对响应和输出结构，宿主再从独立的 <code>orders.json</code> 核对任务、来源版本、批次和数值，重算 10+27+5=42。这时整个读取目标才有足够证据。',
+   '如果 JSON-RPC 响应带 <code>error</code>，请求在协议层出错。工具结果带 <code>isError=true</code>，则由工具报告执行错误。正常结果仍需符合 <code>outputSchema</code>，然后才能按来源验收业务数值。')+
    table(['实际输入或返回','所在层','本次应如何处理'],[
     ['未知工具 unknown_tool','JSON-RPC error，code=-32602；SDK 抛出 MCPError','修正工具选择'],
     ['batch_id=27','工具结果 isError=true','按 inputSchema 修正类型'],
@@ -8597,7 +8623,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['错误服务端返回 total=41','结构同样合法、isError=false','独立计算 10+27+5=42，拒绝结果']
    ])+
    c4[0]+
-   p('wrong-total 进程实际返回 values=[10,27,5]、total=41。41 也是整数，字段也齐全，所以结构校验不会发现求和错误。宿主的 matches_source 直接读取 orders.json，核对 report-A、版本 3、批次顺序、每个值和总数；它没有拿服务端自报的成功作标准答案。resultType=complete 也不改变这项判定。'),
+   p('wrong-total 进程实际返回 values=[10,27,5]、total=41。41 也是整数，字段也齐全，所以结构校验不会发现求和错误。宿主的 <code>matches_source</code> 重用前面的来源核对，因合计不符拒绝这份结果。<code>resultType=complete</code> 只表示工具已经返回完整结果。下一节沿正常的 42 扫描，区分途中进度和最终响应。'),
 
    p('进度是进行中调用报告的过程信息。本例客户端给 scan_batches 设置进度回调：回调是 SDK 收到通知后调用的函数；progressToken 用于把通知交给正确调用。服务端读完 base 报告 1/2，读完 late 报告 2/2，最终结果另以请求 id 7 返回总数 42。')+
    table(['消息或状态','本例表示什么','仍需等待或检查'],[
@@ -8646,7 +8672,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    sourceLinks(old[8])
   ];
   finish(a,old,bodies,'从调用者、工具契约和单次结果出发，追踪官方 SDK 2.3.0 的真实调用、两代协议、进度与取消，再按独立来源验收 42。');
-  a.sections[3][1]+=
+  a.sections[3][1]+=fold('写工具选读：目录换版后怎样处理旧批准',
    '<h3 id="native-mcp-catalog-refresh">工具仍叫同一个名字，为什么要重新确认</h3>'+
    p('工具目录是服务端当前对外声明的工具、说明和参数规则。宿主在选工具时保存一份目录，批准则绑定当时要执行的具体动作。看另一组独立的本机实验。<code>publish_report</code> 的 v1 只收 <code>report_id</code>，默认写归档区 <code>archive</code>。v2 保留原必填项，增加可选的 <code>destination</code>，省略时改写共享区 <code>shared</code>。旧参数依然符合结构，却会产生另一个效果。',
    '在 2026-07-28 版中，客户端先用 <code>subscriptions/listen</code> 订阅目录变化。实验等到订阅确认，再让服务端切换版本。<code>notifications/tools/list_changed</code> 携带订阅标识，提示宿主重读；完整的新版定义来自随后的一次 <code>tools/list</code>。重新连接时也应重读所需的目录。')+
@@ -8659,8 +8685,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    ])+
    p('摘要是把工具名、说明与输入输出规则按固定格式整理后算出的短标识。沿 <code>contract</code>、<code>dispatch_approved</code> 和 <code>call_tool</code> 读代码。宿主比较新旧摘要，接收端在实际写入前再次比较，以应对目录读取后又发生变化。本例把预期摘要放进自定义的 <code>_meta</code> 字段。业务身份、权限和去重各自需要检查。')+
    p('解压后按运行说明执行 <code>python -B catalog_refresh.py --output-dir replay &gt; replay.json</code>。查看通知、第二次 <code>tools/list</code> 和两份 SQLite 账本。实验使用 MCP SDK 2.3.0 的真实 stdio 通信，批准由固定测试夹具提供。')+
-   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>';
-  a.sections[4][1]+=
+   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>');
+  a.sections[4][1]+=fold('写工具选读：写入已提交但回执被拒绝',
    '<h3 id="native-mcp-result-receipt">回执被拒绝后，先查原操作</h3>'+
    p('还是前面的 report-A/v3，基础批次 10、27，补录 5，合计 42。现在再走一步，把报告实际写入接收方。宿主先保存待确认操作 <code>report-A/v3:publish</code>。接收方把报告和回执一起提交到 SQLite 后，才构造 MCP 响应。回执记录哪次操作完成、交付到哪个版本、金额是多少。')+
    trainingFigure('mcp-result-receipt','两个反例都在数据库提交之后故意改坏响应。拒绝响应之后，宿主按原操作键只读查询。')+
@@ -8673,8 +8699,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    p('查回执也要有权限。工作流章另开一份 42 报告实验，操作键记作 <code>report-A:publish</code>。提交后只撤销写权限，仍能查到原回执。连读回执的权限也撤销时，任务保持待确认，接收库里仍有一份报告。接收方没有查询接口，或查询本身失败，也先保留待确认，再和接收方的记录核对。<a href="/article/durable-workflows/#native-approval-reentry">看撤权后的两次查询 →</a>',
    '考虑重试写入前，先确认当前权限允许，并确认接收方会用原操作键和正文识别重试、返回原回执。工作流章用同名操作键在另一份账本上对照，重试沿原键留下 1 份报告，换键留下 2 份。<a href="/article/durable-workflows/#mcp-commit-recovery">看同键与换键重试的账本 →</a>')+
    p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。')+
-   '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>';
-  a.updated='2026.11.09';
+   '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>');
+  a.updated='2026.11.11';
  }
  }
 
@@ -13773,8 +13799,8 @@ const firstReadingChanges=[];
   ['<td>无状态和有状态系统采用同一恢复方式</td>','<td>发现不可用副本，切换或重建所需状态</td>']
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
- a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
- a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.sections[3][1]+=para('学到容器编排时，可以先看<a href="/article/k8s-networking/#section-1">Kubernetes 怎样把应用副本接到统一入口</a>。Kubernetes 用 Pod 承载应用，用 Service 给一组应用提供稳定入口。综合实战只改一个副本的 <code>/ready</code>，分别直连这个应用、通过 Service 发请求，检查<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。');
+ a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];
@@ -13814,8 +13840,9 @@ const firstReadingChanges=[];
  if(!taskOpening)throw Error('Missing original Agent task opening');
  replace('agent-runtime',0,taskOpening,p(
   '你让智能体汇总两笔订单并保存日报。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？先沿一次实际运行看是谁读到订单、谁写了报告，又是谁回头核对。',
-  '这次由身份 A 发起任务，只允许访问 A 的资源。工具从 orders-A 的第 3 版取回两笔订单 [10, 27]。模型可以提出“读订单”这样的动作。运行时是负责推进任务的程序，它检查提议并调用真正读写数据的工具。接入模型后，运行时会把这次工具结果交回模型，用于选择下一步。这样一轮轮推进，就形成了智能体（Agent）的执行循环。',
-  '正确的报告是 report-A 的第 1 版，合计 10+27=37，来源为订单第 3 版。写工具返回后，验收器到指定位置另读一次，核对这三项。本机实验实际写入了这份报告，回读结果和预期一致，任务才标为成功。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
+  '任务规定调用者是 A，只允许访问 A 的资源，并要求把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
+  '按观察中的两笔订单算得 10+27=37。脚本接着提出用 <code>write_report</code> 将 37 写到 <code>report-A</code>，并注明来源版本 3。工具服务确认目标原先没有报告，写入第 1 版并返回写入记录。最后脚本提议结束，验收器另外读取数据库中的报告，核对目标、版本 1、金额 37 和来源版本 3，并检查此前确实读取过订单第 3 版。符合要求后，任务才标为成功。',
+  '这三次提议中，读取和写入各调用一次工具，结束提议触发独立验收。接入模型时，模型可以根据上一次观察提出下一步，运行时仍负责检查、调用和保存结果。这样一轮轮推进，就形成了智能体（Agent）的执行循环。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
  replace('agent-security',0,
   '本章把这次调用接到真实资源：',
   '本章沿用这个调用分工，在独立的日报委托中展开资源授权：');
@@ -13877,7 +13904,9 @@ const firstReadingChanges=[];
  replace('agent-runtime',1,
   p('本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。',
    '输出结构也要校验。MCP 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。'),
-  p('日报程序收到工具结果后，还会检查字段和类型，再决定结果能否进入下一轮。用 MCP（模型上下文协议）连接工具时，服务可以把这些字段放在 <code>structuredContent</code> 中，客户端按服务声明的输出结构核验。<a href="/article/mcp-protocol/#mcp-model-tool-observation">下一章沿本机调用的协议消息看结果怎样返回 →</a>')+
+  p('日报程序收到工具结果后，还会检查字段和类型，再决定结果能否进入下一轮。下一节沿同一份日报说明运行时怎样安排尝试与预算。读完本章后，可以从<a href="/article/mcp-protocol/">下一章章首</a>了解 MCP（模型上下文协议）怎样发现工具、发送请求和接收结果。')+
+  '<details class="progressive-detail"><summary>选读：用六步对照模型提议、MCP 消息与工具结果</summary>'+
+  p('用 MCP 连接工具时，服务可以把结果字段放在 <code>structuredContent</code> 中，客户端按服务声明的输出结构核验。<a href="/article/mcp-protocol/#mcp-model-tool-observation">看一次本机调用的六步记录 →</a>')+'</details>'+
   '<details class="progressive-detail"><summary>实现细节 · 为什么 total=true 会在发送前被拒绝</summary>'+
   p('JSON 把布尔值与整数分为两种类型。Python 的 <code>bool</code> 继承了 <code>int</code>，只用 <code>isinstance(value, int)</code> 会把 <code>true</code> 放行。本地脚本用 <code>type(value) is int</code> 检查整数。支持完整 JSON Schema 的实现应使用与协议版本一致的校验器。')+'</details>');
  runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+
@@ -16624,5 +16653,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="639ed4870142c2049298c57879507325392b0d75e5d71f0a49f693562ac13e06";
+const staticReadingVersion="a0b04bd4c298f177c327cf4cb55b6fa88002ccca79513478e2cdfca6be999691";
 

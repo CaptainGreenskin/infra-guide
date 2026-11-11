@@ -19,8 +19,9 @@
  if(!taskOpening)throw Error('Missing original Agent task opening');
  replace('agent-runtime',0,taskOpening,p(
   '你让智能体汇总两笔订单并保存日报。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？先沿一次实际运行看是谁读到订单、谁写了报告，又是谁回头核对。',
-  '这次由身份 A 发起任务，只允许访问 A 的资源。工具从 orders-A 的第 3 版取回两笔订单 [10, 27]。模型可以提出“读订单”这样的动作。运行时是负责推进任务的程序，它检查提议并调用真正读写数据的工具。接入模型后，运行时会把这次工具结果交回模型，用于选择下一步。这样一轮轮推进，就形成了智能体（Agent）的执行循环。',
-  '正确的报告是 report-A 的第 1 版，合计 10+27=37，来源为订单第 3 版。写工具返回后，验收器到指定位置另读一次，核对这三项。本机实验实际写入了这份报告，回读结果和预期一致，任务才标为成功。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
+  '任务规定调用者是 A，只允许访问 A 的资源，并要求把订单合计保存到 <code>report-A</code>。运行时是负责推进任务的程序。它收到“用 <code>read_values</code> 读取 <code>orders-A</code>”的提议，核对工具名和参数后发出请求。工具服务核对 A 可读这份订单，返回第 3 版的 [10, 27]。运行时检查返回结构，把这份结果记为观察，供下一步使用。',
+  '按观察中的两笔订单算得 10+27=37。脚本接着提出用 <code>write_report</code> 将 37 写到 <code>report-A</code>，并注明来源版本 3。工具服务确认目标原先没有报告，写入第 1 版并返回写入记录。最后脚本提议结束，验收器另外读取数据库中的报告，核对目标、版本 1、金额 37 和来源版本 3，并检查此前确实读取过订单第 3 版。符合要求后，任务才标为成功。',
+  '这三次提议中，读取和写入各调用一次工具，结束提议触发独立验收。接入模型时，模型可以根据上一次观察提出下一步，运行时仍负责检查、调用和保存结果。这样一轮轮推进，就形成了智能体（Agent）的执行循环。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
  replace('agent-security',0,
   '本章把这次调用接到真实资源：',
   '本章沿用这个调用分工，在独立的日报委托中展开资源授权：');
@@ -82,7 +83,9 @@
  replace('agent-runtime',1,
   p('本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。',
    '输出结构也要校验。MCP 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。'),
-  p('日报程序收到工具结果后，还会检查字段和类型，再决定结果能否进入下一轮。用 MCP（模型上下文协议）连接工具时，服务可以把这些字段放在 <code>structuredContent</code> 中，客户端按服务声明的输出结构核验。<a href="/article/mcp-protocol/#mcp-model-tool-observation">下一章沿本机调用的协议消息看结果怎样返回 →</a>')+
+  p('日报程序收到工具结果后，还会检查字段和类型，再决定结果能否进入下一轮。下一节沿同一份日报说明运行时怎样安排尝试与预算。读完本章后，可以从<a href="/article/mcp-protocol/">下一章章首</a>了解 MCP（模型上下文协议）怎样发现工具、发送请求和接收结果。')+
+  '<details class="progressive-detail"><summary>选读：用六步对照模型提议、MCP 消息与工具结果</summary>'+
+  p('用 MCP 连接工具时，服务可以把结果字段放在 <code>structuredContent</code> 中，客户端按服务声明的输出结构核验。<a href="/article/mcp-protocol/#mcp-model-tool-observation">看一次本机调用的六步记录 →</a>')+'</details>'+
   '<details class="progressive-detail"><summary>实现细节 · 为什么 total=true 会在发送前被拒绝</summary>'+
   p('JSON 把布尔值与整数分为两种类型。Python 的 <code>bool</code> 继承了 <code>int</code>，只用 <code>isinstance(value, int)</code> 会把 <code>true</code> 放行。本地脚本用 <code>type(value) is int</code> 检查整数。支持完整 JSON Schema 的实现应使用与协议版本一致的校验器。')+'</details>');
  runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+

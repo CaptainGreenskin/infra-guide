@@ -104,6 +104,28 @@ assert.deepEqual(drawn, {
   prompts:[record.runs.base.prompt,record.runs.change_prefix.prompt],
   selected:[record.runs.base.selected_id,record.runs.change_prefix.selected_id],query_position:1,
 });
+const attentionPage = read('dist/article/attention-mechanics/index.html').toString();
+const decoderPage = read('dist/article/transformer-block/index.html').toString();
+const observation = 'id="same-position-different-prefix"';
+const followThrough = 'id="native-tiny-decoder-context"';
+assert(attentionPage.includes(observation) && decoderPage.includes(followThrough));
+const attentionReading = attentionPage.split(observation)[1].split('id="section-2"')[0];
+const [decoderIntro, decoderReading] = decoderPage.split(followThrough);
+assert(decoderIntro.includes('初始化后的参数') && decoderIntro.includes('没有做训练更新'));
+assert(decoderReading.includes('做一次参数更新（SGD）'));
+assert(attentionReading.includes('/labs/tiny-decoder-forward/validation.json'));
+assert(attentionReading.includes('/article/transformer-block/#native-tiny-decoder-context'));
+const runs = [record.runs.base, record.runs.change_prefix];
+const component = (run, layer) => run.layers[layer][1][0].toFixed(4);
+const tableRow = cells => '<tr>'+cells.map(value => '<td>'+value+'</td>').join('')+'</tr>';
+for (const run of runs) {
+  assert(attentionReading.includes(tableRow([JSON.stringify(run.prompt), component(run, 'x'),
+    component(run, 'attention'), run.selected_id])), 'opening trace shows the recorded projection for each input');
+}
+for (const [label, layer] of [['输出投影后的第一项（图中分支输出）','attention'], ['第一次回加 H₁ 的第一项','after_attention']]) {
+  assert(decoderReading.includes(tableRow([label, ...runs.map(run => component(run, layer))])),
+    'decoder trace agrees with the recorded node: '+layer);
+}
 const archive = pack + '.zip';
 const members = execFileSync('unzip',['-Z1',archive],{encoding:'utf8'}).trim().split('\n').sort();
 assert.deepEqual(members, files.map(file => name + '/' + file).sort());

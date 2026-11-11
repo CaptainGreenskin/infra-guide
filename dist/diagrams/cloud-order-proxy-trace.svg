@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 348" role="img" aria-labelledby="title desc">
+  <title id="title">订单 O-104 的实际代理往返</title>
+  <desc id="desc">请求 reuse-1 从客户端到入口 P，再从入口到应用 A。P-c1 和 A-c1 是两条连接。应用向入口返回 200，客户端也收到 200，订单 O-104 状态为已支付。</desc>
+  <metadata>{"request":"reuse-1","path":"/orders/O-104","front":"P-c1","backend":"A-c1","events":["front_request","backend_request","upstream_response","client_received"],"status":200,"order_status":"paid","total":37}</metadata>
+  <defs>
+    <marker id="blue" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse">
+      <path d="M0 0L7 3.5L0 7Z" fill="#315dce"/>
+    </marker>
+    <marker id="green" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse">
+      <path d="M0 0L7 3.5L0 7Z" fill="#16745d"/>
+    </marker>
+  </defs>
+  <style>
+    text{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;fill:#1c2b45;text-anchor:middle}
+    .title{font-size:20px;font-weight:700}.actor{font-size:16px;font-weight:700}.event{font-size:15px}.small{font-size:14px;fill:#4a5b75}
+    .lane{stroke:#a1b1ca;stroke-width:1.2;stroke-dasharray:5 4}.send{stroke:#315dce;stroke-width:2;marker-end:url(#blue)}.receive{stroke:#16745d;stroke-width:2;marker-end:url(#green)}
+  </style>
+  <rect width="460" height="348" rx="14" fill="#f6f8fc"/>
+  <text x="230" y="34" class="title">一次订单查询走过两条连接</text>
+  <rect x="32" y="52" width="104" height="37" rx="7" fill="#fff" stroke="#c5d3e9"/>
+  <rect x="178" y="52" width="104" height="37" rx="7" fill="#e9efff" stroke="#9eb6ec"/>
+  <rect x="324" y="52" width="104" height="37" rx="7" fill="#fff" stroke="#c5d3e9"/>
+  <text x="84" y="76" class="actor">客户端</text>
+  <text x="230" y="76" class="actor">入口 P</text>
+  <text x="376" y="76" class="actor">应用 A</text>
+  <path class="lane" d="M84 89V280M230 89V280M376 89V280"/>
+  <text x="157" y="111" class="event">查询 O-104</text>
+  <path class="send" d="M84 122H227"/>
+  <text x="157" y="143" class="small">P-c1</text>
+  <text x="303" y="158" class="event">转交查询</text>
+  <path class="send" d="M230 169H373"/>
+  <text x="303" y="190" class="small">A-c1</text>
+  <text x="303" y="211" class="event">返回 200</text>
+  <path class="receive" d="M376 222H233"/>
+  <text x="157" y="248" class="event">收到 200</text>
+  <path class="receive" d="M230 259H87"/>
+  <rect x="31" y="289" width="398" height="37" rx="7" fill="#e6f4ef" stroke="#b3d7c9"/>
+  <text x="230" y="313" class="event">同一请求 reuse-1 · 已支付 · 金额 37</text>
+</svg>

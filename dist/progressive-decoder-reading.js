@@ -124,7 +124,7 @@ for label, actual, expected in (
   '<p>后续<a href="/article/autograd-training/">A1.6最小Decoder脚本</a>按这份结构创建664个参数，并将这些候选得分接到监督目标与一次更新。</p>',
 
   h('subsection-8-1e710zy','沿正常前向核对每个中间量')+
-  p('下面的已有CPU实验对同一个TinyDecoder展开一次前向。固定随机种子7，输入仍为[0,1,2,3]和[4,5,6,7]，模型使用float64、因果注意力和零dropout。前向跟读函数<code>trace</code>按本章依赖返回中间量，再将最终logits与模型自己的forward比较。阅读时先沿正确路径找到每个名字。')+
+  p('先用初始化后的参数检查各步计算是否接对。脚本固定随机种子7，直接运行[0,1,2,3]和[4,5,6,7]两条输入，没有做训练更新。它在CPU上使用双精度（float64）、因果注意力，并关闭随机丢弃（dropout）。函数<code>trace</code>返回各步中间量，最后将候选得分与原模型的<code>forward</code>结果核对。')+
   table(['代码节点','计算来源','形状'],[['x','token(ids)+position(0…3)','[2,4,8]'],['n1 → attn','归一化x，分头读取并输出投影','均为[2,4,8]'],['h1 → n2','x+attn，再用norm2归一化h1','均为[2,4,8]'],['gate_product','SiLU(gate(n2))⊙up(n2)','[2,4,12]'],['ffn → h2','down降回8维，再与h1相加','均为[2,4,8]'],['logits','norm_out(h2)与共享token表打分','[2,4,8]，末轴为词表']])+
   p('图中的四条变体保持了不少相同形状，却改动了来源或运算。stale_input让第二次归一化读取旧x，首差在n2；swap_gate把SiLU接到up，首差在gate_product；skip_residual漏加h1，首差在h2；normalize_time沿时间统计，首差在n1。先找到最早偏离节点，再看后续logits误差，能把数值现象对应回具体依赖。')+
   figures(d[7]).join('')+
@@ -144,17 +144,19 @@ for label, actual, expected in (
  ]);
  decoder.sections[7][1]+='<details class="progressive-detail"><summary>实跑 · 换一个前文，跟到最后一行候选分数</summary>'+
   h('native-tiny-decoder-context','同一个词元在解码器块里何时变得不同')+
-  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。固定入门的 664 参数模型，沿原来的代码更新一次，再用同一份参数完成两次前向。这里只看位置 1，行号从 0 数。')+
+  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。这份实验沿原来的训练代码做一次参数更新（SGD），随后固定这份参数，比较两条输入。只看第二格，也就是从 0 开始数的位置 1。')+
   trainingFigure('tiny-decoder-context','末位词元和位置相同，第一处读到不同上下文的是注意力。图中选词来自实际候选分数。')+
   table(['位置 1 的观测','[0,1]','[4,1]'],[
    ['输入向量 X 的第一项','0.0434','0.0434'],
    ['头 0 读取位置 0、1 的权重','0.5546、0.4454','0.4659、0.5341'],
    ['两头拼回后的第一项','0.5627','0.2569'],
+   ['输出投影后的第一项（图中分支输出）','0.3166','0.2672'],
+   ['第一次回加 H₁ 的第一项','0.3600','0.3106'],
    ['两次残差相加后的第一项','0.4424','0.3538'],
    ['最后一行给编号 1、7 的分数','3.7804、3.4653','3.5822、3.5940'],
    ['最高分对应的编号','1','7']
   ])+
-  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，它的匹配向量和内容向量都变了。模型重新分配两格的读取权重，并用新的内容做加权汇总。这个差异经过残差相加和前馈，最后传到词表分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
+  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，匹配向量和内容向量一起改变。两头拼回后还要做输出投影，图中展示的是投影后的值。把它加回 X 就得到 H₁，例如输入 [0,1] 时，第一项约为 0.0434 + 0.3166 = 0.3600。前馈从 H₁ 取输入，第二次回加的结果再送去计算候选分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
   p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
   '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
  decoder.updated='2026.11.11';

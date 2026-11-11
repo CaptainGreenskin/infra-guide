@@ -26,7 +26,10 @@
     },
     {
       "id": "cloud-overview",
-      "targets": []
+      "targets": [
+        "cloud-first-request-trace"
+      ],
+      "visible_targets": []
     },
     {
       "id": "cloud-compute",
@@ -881,7 +884,6 @@
       "visible_targets": [
         "subsection-1-1s1j8lt",
         "subsection-2-3p2nje",
-        "subsection-2-1mih105",
         "subsection-3-1qvremn",
         "subsection-4-rwzyh3",
         "subsection-4-1ihl9e0",
@@ -1091,6 +1093,14 @@
         "subsection-2-bcb81p",
         "subsection-3-17g9b68",
         "subsection-4-129mvih",
+        "subsection-5-19ohru2",
+        "kubernetes-service-first-response"
+      ],
+      "visible_targets": [
+        "subsection-1-187qiqd",
+        "subsection-2-bcb81p",
+        "subsection-3-17g9b68",
+        "subsection-4-129mvih",
         "subsection-5-19ohru2"
       ]
     },
@@ -1128,8 +1138,6 @@
         "native-mcp-result-receipt"
       ],
       "visible_targets": [
-        "native-mcp-catalog-refresh",
-        "native-mcp-result-receipt",
         "mcp-http-cancellation-run",
         "mcp-model-tool-observation",
         "native-mcp-http-authorization"

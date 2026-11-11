@@ -133,8 +133,8 @@ const firstReadingChanges=[];
   ['<td>无状态和有状态系统采用同一恢复方式</td>','<td>发现不可用副本，切换或重建所需状态</td>']
  ];
  for(const[from,to]of replacements){if(!section[1].includes(from))throw Error('Missing cloud responsibility row: '+from);section[1]=section[1].replace(from,to);}
- a.sections[3][1]+=para('继续观察 /ready、/live 和 /work，走进<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。两个副本中只改一个的 /ready，核对它仍能直连、端点变为未就绪，以及收敛后 Service 的新请求由哪个副本接收。');
- a.updated='2026.11.10';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
+ a.sections[3][1]+=para('学到容器编排时，可以先看<a href="/article/k8s-networking/#section-1">Kubernetes 怎样把应用副本接到统一入口</a>。Kubernetes 用 Pod 承载应用，用 Service 给一组应用提供稳定入口。综合实战只改一个副本的 <code>/ready</code>，分别直连这个应用、通过 Service 发请求，检查<a href="/article/cloud-service-lab/#kubernetes-service-probes">就绪信号怎样改变实际流量</a>。');
+ a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:3,before,after:section[1]});
 }
 {
  const a=articleById('agent-runtime'),section=a.sections[0],before=section[1];

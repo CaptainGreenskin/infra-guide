@@ -20,19 +20,31 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  };
  const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const legacy=i=>'<details class="full-code service-legacy"><summary>历史来源：'+(i<2?'原有本地机制实验':'原有目标集群手册与源码')+'（保留原文）</summary>'+p('以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。')+old[i][1]+'</details>';
- const normal=o.cases.normal_v1,failed=o.cases.readiness_failed,recovered=o.cases.readiness_recovered;
+ const normal=o.cases.normal_v1;
+ const first=o.requests.find(request=>request.status===200);
+ const firstEndpoint=normal.api_before.endpoints.find(endpoint=>endpoint.pod_uid===first.body.pod_uid);
  const victim=o.readiness.pod_uid;
  const phaseLabels={normal_v1:'正常 v1',readiness_failed:'readiness 失败',readiness_recovered:'readiness 恢复',liveness_restarted:'liveness 重启后',rolled_v2:'发布 v2',undo_v1:'undo 回 v1'};
  const phaseRows=Object.keys(phaseLabels).map(name=>{const rows=o.requests.filter(r=>r.phase===name);return [phaseLabels[name],String(rows.length),String(rows.filter(r=>r.status!==200).length),'20 条均 200'];});
+ const recoveryRequests=o.requests.filter(request=>request.phase==='readiness_recovered');
+ const recoveryOK=recoveryRequests.filter(request=>request.status===200).length;
+ const recoveryRate=(100*recoveryOK/recoveryRequests.length).toFixed(2);
  const count=s=>s.api_after.pods.find(p=>p.uid===victim).restart_count;
  const bodies=[
  '<div class="mechanism-core" id="kubernetes-service-normal"><h3>从一条正常请求认识四个对象</h3>'+p(
- '先部署一个运行两个副本的服务。客户端请求固定入口，转发组件在就绪副本中选择后端，应用返回它真正运行的版本。先把这条正常请求走通，再分别改变健康信号和版本，继续用同一入口核对用户实际收到什么。',
- 'Deployment 声明“运行两个副本”，控制器据此创建 Pod；Pod 是容器运行的单位，每个对象都有独立 UID。Service 用标签选择这一组 Pod，提供稳定的集群内 IP（ClusterIP）。EndpointSlice 保存后端地址和就绪条件，转发组件观察这些对象、更新转发规则。节点代理 kubelet 按探针检查应用，再更新就绪或推进容器重启。Service 不是额外业务进程，EndpointSlice 也不承载 HTTP 请求。')+
+ '客户端发出 <code>GET '+esc(first.url)+'</code>，收到 HTTP '+esc(first.status)+'。这次实验用 <code>/work</code> 回显实际运行的版本和副本编号，便于核对请求到达了哪一份应用。<a href="/article/cloud-overview/#section-4">C1.1 的本机直连实验</a>也有这个接口，这次请求经过集群入口。',
+ 'Deployment 声明应用要运行两个副本，控制器按声明维持两个 Pod。Pod 是容器运行的单位，每个 Pod 都有唯一编号 UID。Service 用标签选出应用 Pod，提供稳定的集群内地址 ClusterIP。',
+ 'EndpointSlice 记录这些后端的地址和就绪条件。集群的转发组件读取这些对象，把新连接交给符合条件的后端。可以在 <a href="/article/k8s-networking/#section-2">C4.5 对照 Service 如何选 Pod、端口如何映射</a>。')+
  fig('flow','Deployment维护两个v1 Pod；客户端新请求经Service ClusterIP到就绪后端，返回请求ID、版本与Pod UID','同一个 /work 输入贯穿图、代码和六个阶段；虚线是控制关系，实线是普通客户端的 HTTP 数据路径。')+
+ '<div class="mechanism-core" id="kubernetes-service-first-response">'+p('在<a href="labs/kubernetes-service/validation.json" target="_blank" rel="noopener">实际记录</a>里找到第 '+esc(first.seq)+' 条请求。用响应中的 Pod UID 在初始稳定窗口的 API 快照里找到对应后端。')+
+ table(['字段','实际记录','怎么读'],[
+  ['request_id','<code>'+esc(first.body.request_id)+'</code>','与客户端发出的请求编号一致'],
+  ['pod_uid','<code>'+esc(first.body.pod_uid)+'</code>','在端点快照中对应 <code>'+esc(firstEndpoint.addresses[0])+':'+esc(o.service.target_port)+'</code>'],
+  ['version','<code>'+esc(first.body.version)+'</code>','由实际接到请求的应用返回']
+ ])+'</div>'+
  p('正常路径中，两个业务 Pod 都是 Ready，端点 ready=true；持续客户端确实从同一个 ClusterIP 收到两个 UID 的 v1 响应。接下来分别观察“是否接新流量”“是否重启”和“运行哪个版本”，三个问题使用不同证据。')+'</div>'+legacy(0),
  '<div class="mechanism-core" id="kubernetes-service-objects"><h3>先给健康信号各自的职责</h3>'+p(
- '应用提供 /ready、/live 和 /work；节点上的 kubelet 按配置周期请求前两个接口。readiness 回答“现在是否适合接新工作”：失败会影响 Pod Ready 和端点就绪。liveness 回答“是否需要靠重启恢复”：连续失败达到阈值后，kubelet 重启相应容器。Running 只说明生命周期阶段，不能替代这两种判断。',
+ '节点上的代理 kubelet 按配置周期检查应用的 <code>/ready</code> 和 <code>/live</code>。就绪探针（readiness）失败后，Pod 的接流量资格和端点条件会更新。存活探针（liveness）连续失败达到阈值，kubelet 会重启相应容器。Pod 显示 Running 时，仍要查 Ready 与重启次数。检查频率与连续失败次数见 <a href="/article/k8s-workloads/#section-4">C4.3 的探针阈值</a>。',
  '下面的字段属于同一份双副本夹具。Service 的 80 端口转到应用 8080；selector 与 Pod 标签 app=guide-service 对应。探针直接检查 Pod 应用；客户端仍请求 Service，不把探针请求当作业务流量。')+
  code('对象核心字段 · 完整可运行对象见本节源码','yaml',kubernetesServiceSnippets.objects)+
  p('当 /ready 失败而 /live、/work 仍成功时，应用进程仍有处理能力，但不再适合接新工作。探针只提供信号；是否减少新流量，要继续看平台如何更新端点和转发规则。下面以同一个 /work 请求验证这条因果链。')+'</div>'+legacy(1),
@@ -42,7 +54,9 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  '只在一个业务容器创建 /tmp/not-ready 后，该 Pod 的 /ready=503，/live=200、/work=200。API 观察到 Pod Ready=false、对应 EndpointSlice ready=false；其地址仍可留在对象中。对象收敛后，连续 20 条 Service 响应只来自另一 Pod，两个 Pod 的重启次数均未增加。删除标记后，同一 UID 恢复就绪，响应再次覆盖两个后端。',
  '再单独让 /live 失败，/ready 此时仍为 200。达到本例阈值后，同一 Pod UID 的容器重启一次，restartCount 从 '+esc(count(normal))+' 变为 '+esc(count(o.cases.liveness_restarted))+'，响应中的进程实例 ID 也改变。readiness 失败期间没有重启，liveness 失败后发生重启，两条因果路径由不同注入与实测区分。')+
  fig('changes','六个阶段分别核对Ready后端与实际Service版本；readiness失败不重启，liveness单独失败重启，v2发布后undo回v1','每阶段保存 API 快照与连续 20 条实际新连接样本；完整持续序列包含传播期间请求。')+
- table(['客户端阶段标签','完整序列请求数','非 200 / 传输失败','选取的稳定窗口'],phaseRows)+p('阶段标签在 API 收敛后切换，因此完整阶段也会包含随后故障注入与传播中的请求；右列是其中满足条件的一段，不能代表全程零错误、负载均衡公平或服务 SLO。')+
+ table(['客户端阶段标签','完整序列请求数','非 200 / 传输失败','选取的稳定窗口'],phaseRows)+p(
+ '阶段标签在 API 状态达到预期后切换，完整序列还可能包含后一次故障注入和状态传播。以恢复就绪阶段为例，选取的窗口是 20/20，带此标签的完整序列里有 '+esc(recoveryRequests.length-recoveryOK)+' 次请求未得到 200。按收到 200 的比例计算，分母取完整序列就是 '+esc(recoveryOK)+'/'+esc(recoveryRequests.length)+'（'+esc(recoveryRate)+'%）。',
+ '这里算的是实验客户端的响应比例。服务级别目标（SLO）需要先确定统计哪些用户请求、什么算好响应，以及统计多久。沿用本例可以在 <a href="/article/slo/#section-2">C9.1 检查请求分母和聚合口径</a>。')+
  '<details><summary>按需：采样窗口、传播与终止边界</summary>'+p(
  '程序等待对象状态，再切换客户端阶段标记，直到最后连续 20 条成功、实际 UID 集合与 ready 后端集合一致；采样前后各读一次 API。达到条件前的请求仍在原始记录中。稳定窗口不能证明传播期间零失败，也不能保证未来所有请求；端点状态与数据平面之间仍有异步传播。',
  '本例关闭连接复用，只检查受控新请求。长连接、在途请求、preStop 排空和云负载均衡的健康检查需要独立实验；不从几秒固定等待推断它们已完成。Pod 内 loopback 诊断只用来核对三个应用接口，不计入 Service 业务样本。')+'</details></div>'+legacy(2),
@@ -50,7 +64,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  'APP_VERSION 位于 Deployment 的 Pod 模板中。将它从 v1 改为 v2，会触发控制器创建新版本副本；本例 maxUnavailable=0、maxSurge=1，允许先增加一份，再逐步替换。等待 rollout 完成后，还要检查新 Pod 的 Ready、端点 UID 和实际 HTTP 版本。Service 的 UID 与 ClusterIP 在整个发布中保持相同。')+
  code('发布与回退核心 API · 使用本次私有管理上下文','python',kubernetesServiceSnippets.rollout)+
  table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']])+p(
- 'rollout undo 回退的是历史 Pod 模板。这里版本来自模板环境变量，因此回退后真实读到 v1；如果模板引用的同名 ConfigMap 内容或数据库结构另有变化，它们不会随这条命令自动恢复。先识别版本来自哪里，再决定需要恢复哪些外部状态。')+'</div>'+legacy(3),
+ 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。')+'</div>'+legacy(3),
  '<div class="mechanism-core" id="kubernetes-service-run"><h3>自己运行，并用业务结果验收</h3>'+p(
  '先预测：只让 /ready 失败，Pod UID、restartCount、端点条件与客户端 UID 分别会怎样变化？再预测只让 /live 失败和回退模板的结果。下载完整程序，在 Linux、本机 Docker、kind v0.33.0、kubectl v1.35.8 与 Python 3.9+ 环境运行：')+
  code('运行独立原生实验；第二条仅离线复核记录','sh','python3 -B service_lab.py --output service-record.json\npython3 -B service_lab.py --check-record service-record.json')+p(
@@ -73,5 +87,5 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   kubernetesServiceRollout:['Kubernetes · Deployment 模板与回退','https://kubernetes.io/docs/concepts/workloads/controllers/deployment/']
  });
  a.refs=[...new Set([...a.refs,'kubernetesServiceNative','kubernetesServiceProbes','kubernetesServiceEndpoints','kubernetesServiceRollout'])];
- a.updated='2026.11.08';
+ a.updated='2026.11.11';
 })();

@@ -59,12 +59,21 @@ assert(model.sections[6][1].includes('分别保留 1 项和 3 项有效目标'),
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));
 const agent=data.articles.find(a=>a.id==='agent-runtime');
 let taskPosition=-1;
-for(const step of ['指定位置却找不到报告','工具从 orders-A 的第 3 版取回两笔订单 [10, 27]','合计 10+27=37','写工具返回后，验收器到指定位置另读一次']){
+for(const step of ['指定位置却找不到报告','<code>read_values</code>','第 3 版的 [10, 27]','10+27=37','<code>write_report</code>','验收器另外读取数据库中的报告']){
  const next=agent.sections[0][1].indexOf(step);
  assert(next>taskPosition,'the runtime example follows the same input, expected result and independent readback');
  taskPosition=next;
 }
 assert(agent.sections[0][1].includes('<details class="concept-task-detail">'));
+const call=agent.sections[1][1];
+assert(call.includes('href="/article/mcp-protocol/">下一章章首'));
+assert(/<details class="progressive-detail"><summary>[^<]*六步[^<]*<\/summary><p>[^<]*(?:<code>[^<]*<\/code>[^<]*)?[^<]*<a href="\/article\/mcp-protocol\/#mcp-model-tool-observation">/.test(call),'preserve the advanced exact link inside its optional reading');
+assert(/<details class="progressive-detail"><summary>[^<]*调用参数[^<]*<\/summary><h3 id="subsection-2-1mih105">/.test(call),'preserve the original streaming anchor in the optional detail');
+const protocol=data.articles.find(a=>a.id==='mcp-protocol');
+assert(protocol.sections[4][1].includes('重算 10+27+5=42'));
+for(const [section,anchor] of [[3,'native-mcp-catalog-refresh'],[4,'native-mcp-result-receipt']]){
+ assert(new RegExp('<details class="progressive-detail"><summary>写工具选读[^<]*</summary><h3 id="'+anchor+'"').test(protocol.sections[section][1]),anchor+': keep the advanced evidence deep link without interrupting the read path');
+}
 const agentPage=fs.readFileSync('dist/article/agent-runtime/index.html','utf8');
 assert.equal((agentPage.match(/<details class="article-case">/g)||[]).length,2,'two long cases are optional after the core concepts');
 assert(!/<details class="article-case"[^>]*\bopen\b/.test(agentPage));

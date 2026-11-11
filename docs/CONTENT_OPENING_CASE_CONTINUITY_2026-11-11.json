@@ -1,0 +1,48 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "06e6ad4c3d38b6fc167ae5424bc63de9488e3c43",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_TRANSFORMER_STAGE_AND_TRIAL_2026-11-11.json": "2fa2f03c7fd3c215356f8dc3ba3a601eb4266d54b305d4865e35740ceb7e1221"
+  },
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "c6b764f578fe42c77db79343d4f0ab36db4b488a9053a538347f70c3c43e3a26",
+      "reviewed_content_sha256": "f065817359c1398a1602ad8d0525ef05d0a6a81bcec7ade8c407b36f3651b1f6",
+      "scope": "Finish the single report reading before introducing write-side contract changes and bad receipts.",
+      "observation": "The standard path shows a real SDK read for both batches and independently verifies 42. Two advanced write experiments move into optional details at their original exact anchors with the same figures, code and raw records.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "cloud-overview",
+      "reviewed_at": "2026-11-11",
+      "scope": "Follow one order query from its URL through the entrance and application to the response, then connect the exact local proxy trace to Cloud networking.",
+      "observation": "The schematic path and the real loopback case use the same O-104 input and HTTP 200 result. The separate proxy trace binds the actual four records, two connection IDs and returned fields. A direct HTTP check leads to the Service mechanism before the native probe experiment.",
+      "reviewed_content_sha256": "dc767e03535137ea286e31c8a4bdcc4917f68212c240bacd59fb2237fd3ced93",
+      "record": "dist/labs/cloud-proxy/validation.json"
+    },
+    {
+      "chapter": "cloud-service-lab",
+      "reviewed_at": "2026-11-11",
+      "scope": "Start the capstone with one actual response, link to the supporting Service, probe, rollout and SLO mechanisms, and distinguish two sample windows.",
+      "observation": "The original native kind record supplies the request ID, version, Pod UID and endpoint snapshot. Both the 20/20 stability window and 83/84 full labelled phase are shown with their denominators.",
+      "reviewed_content_sha256": "2e6a878ca43aad36cd6105ce3c7c362cab1283e94aa3f81b5be4a5a6eed617c2",
+      "record": "dist/labs/kubernetes-service/validation.json"
+    }
+  ]
+}

@@ -172,6 +172,24 @@ assert.equal(diagram('drain').held_backend, fresh.positive.held_completed.body.b
 assert.equal(diagram('drain').new_backend, fresh.positive.during_drain.body.backend);
 assert.equal(diagram('drain').drained_connection, fresh.positive.held_completed.backend_connection);
 
+const opening = vm.runInContext('articleById("cloud-overview").sections[1][1]', context);
+assert(opening.includes('https://api.example.test/orders/O-104') && opening.includes('/article/vpc-network/#section-1'));
+assert(opening.includes('id="cloud-first-request-trace"') && opening.includes('/article/vpc-network/#cloud-proxy-run'));
+const traceFigure = read('dist/diagrams/cloud-order-proxy-trace.svg');
+assert(traceFigure.includes('<title id="title">') && traceFigure.includes('<desc id="desc">'));
+const trace = JSON.parse(traceFigure.match(/<metadata>(.*?)<\/metadata>/s)[1]);
+assert(opening.includes('diagrams/cloud-order-proxy-trace.svg') && opening.includes('/labs/cloud-proxy/validation.json'));
+for (const run of [record.execution.positive, fresh.positive]) {
+  const event = kind => run.events.find(row => row.rid === trace.request && row.kind === kind);
+  const front = event('front_request'), backend = event('backend_request');
+  const order = run.reuse[0].body;
+  assert.deepEqual([front.path, backend.path], [trace.path, trace.path]);
+  assert.deepEqual([front.connection, backend.connection], [trace.front, trace.backend]);
+  assert.deepEqual([event('upstream_response').status, event('client_received').status], [trace.status, trace.status]);
+  assert.deepEqual([order.status, order.total], [trace.order_status, trace.total]);
+  assert.deepEqual(run.events.filter(row => row.rid === trace.request && trace.events.includes(row.kind)).map(row => row.kind), trace.events);
+}
+
 cp.execFileSync('python3', ['-c', `
 from pathlib import Path
 import sys,zipfile
@@ -182,4 +200,4 @@ with zipfile.ZipFile(folder.parent/'cloud-proxy.zip') as z:
     for member in z.namelist():
         assert z.read(member)==(folder/Path(member).name).read_bytes(), member
 `, root], {encoding: 'utf8'});
-console.log('Cloud proxy: stored + fresh TCP/HTTP/SQLite oracles passed; two figures/source/ZIP bound; 7 headings and old code preserved; +2 code blocks.');
+console.log('Cloud proxy: stored + fresh TCP/HTTP/SQLite oracles passed; three figures/source/ZIP bound, including the opening four-event trace; 7 VPC headings and old code preserved; +2 historical code blocks.');

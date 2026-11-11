@@ -181,6 +181,28 @@ assert.deepEqual(JSON.parse(vm.runInContext('JSON.stringify(kubernetesServiceEvi
 const body=after.sections.map(s=>s[1]).join('');
 for(const id of ['kubernetes-service-normal','kubernetes-service-objects','kubernetes-service-probes','kubernetes-service-rollout','kubernetes-service-run'])assert(body.includes('id="'+id+'"'));
 assert(body.includes(validation.origin.run_url));assert(body.includes('完整序列请求数')&&body.includes('非 200 / 传输失败'));
+const published=read('dist/article/cloud-service-lab/index.html');
+const response=published.match(/<div class="mechanism-core" id="kubernetes-service-first-response">([\s\S]*?)<\/table>/)?.[1];
+assert(response,'The initial native response belongs in the visible article');
+const first=o.requests[0],initial=o.cases.normal_v1.api_before;
+assert.equal(first.status,200);
+const backend=initial.endpoints.find(endpoint=>endpoint.pod_uid===first.body.pod_uid);
+for(const value of [first.body.request_id,first.body.pod_uid,first.body.version,backend.addresses[0]+':'+o.service.target_port])
+ assert(response.includes('<code>'+value+'</code>'),value+': response walkthrough must match the captured request and endpoint');
+assert(response.includes('labs/kubernetes-service/validation.json'),'Initial response should link to its source record');
+const recovery=o.requests.filter(request=>request.phase==='readiness_recovered');
+const successes=recovery.filter(request=>request.status===200).length;
+assert(successes<recovery.length,'This fixture must show why 20/20 does not cover the full phase');
+assert(published.includes(successes+'/'+recovery.length+'（'+(100*successes/recovery.length).toFixed(2)+'%）'),'Show the full phase denominator beside the stable window');
+for(const [index,id,anchor] of [
+ [0,'cloud-overview','section-4'],[0,'k8s-networking','section-2'],[1,'k8s-workloads','section-4'],
+ [2,'slo','section-2'],[3,'delivery','section-5']
+]){
+ const href='/article/'+id+'/#'+anchor;
+ const visible=after.sections[index][1].split('<details class="full-code service-legacy">')[0];
+ assert(visible.includes('href="'+href+'"')&&published.includes('href="'+href+'"'),href+': link from the relevant mechanism and render it');
+ assert(read('dist/article/'+id+'/index.html').includes('id="'+anchor+'"'),href+': existing destination');
+}
 const serviceFigures=[...body.matchAll(/<figure\b[^>]*>[\s\S]*?<\/figure>/g)].map(m=>m[0]).filter(html=>html.includes('diagrams/kubernetes-service-'));
 assert.equal(serviceFigures.length,2,'Both native figures need the standard reader interaction');
 for(const name of ['flow','changes']){

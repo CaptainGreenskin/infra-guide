@@ -7011,6 +7011,112 @@
         "从真实报告与来源版本验收任务",
         "统计实战与变化题：完整标签和独立计算"
       ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1291e9aac978923e35f15dd18b43402f1caf06ff68b66081cd11969f944bf2ce",
+      "reviewed_content_sha256": "dc767e03535137ea286e31c8a4bdcc4917f68212c240bacd59fb2237fd3ced93",
+      "scope": "Follow one order query from its URL through the entrance and application to the response, then connect the exact local proxy trace to Cloud networking.",
+      "observation": "The schematic path and the real loopback case use the same O-104 input and HTTP 200 result. The separate proxy trace binds the actual four records, two connection IDs and returned fields. A direct HTTP check leads to the Service mechanism before the native probe experiment.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "f9436b833b45d6a95ea8d7b0cf68e2518e96788fdb23483678887d09a17aa818",
+      "reviewed_content_sha256": "2e6a878ca43aad36cd6105ce3c7c362cab1283e94aa3f81b5be4a5a6eed617c2",
+      "scope": "Start the capstone with one actual response, link to the supporting Service, probe, rollout and SLO mechanisms, and distinguish two sample windows.",
+      "observation": "The original native kind record supplies the request ID, version, Pod UID and endpoint snapshot. Both the 20/20 stability window and 83/84 full labelled phase are shown with their denominators.",
+      "headings": [
+        "实验分为已执行本地部分与待验集群部分",
+        "先运行，再解释输出",
+        "把本地信号交给Kubernetes",
+        "观察版本，再回退版本",
+        "读源码，把结果连接到机制"
+      ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "966b97df577c962a88591092388e97cdc5d0e8e7482c405e808a2f3162be8d4f",
+      "reviewed_content_sha256": "e4eba773f57c04beb5b4d8a16177ac3e80db4e6ef79dd69e4c8d8fbc0d823e4d",
+      "scope": "Explain the shift between inputs and goals at the first lookup, use zero-based score indexing consistently, and distinguish readability and supervision at EOS.",
+      "observation": "The two fixed source sequences preserve their exact IDs, labels, masks and score vectors. One direct link opens the alignment calculation, another opens the matching weights in attention.",
+      "headings": [
+        "先约定词表，再说模型看到了什么",
+        "子词为什么值得学，字节又处在哪一层",
+        "查哪几行，为什么形状变成 [B,T,D]",
+        "输出头怎样把向量变成八个候选分数",
+        "输入取前一段，标签取后一段",
+        "注意力掩码、损失忽略和 padding 行各做什么",
+        "同一 ID 出现两次，反向时写哪一行",
+        "验收：不要只看 loss 有没有下降",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "a1fa148ebcd93d867c8a1d94df7bb2b189f63698ffccf3d64043ec4f45a040fb",
+      "reviewed_content_sha256": "9462b172e4a5337269d7c12e0fe1736f37520df90fb4cbf037c241958cfd3cac",
+      "scope": "Separate a real input-prefix contrast from a small hand-picked Q/K/V worksheet.",
+      "observation": "The fixed post-update model reports the same input coordinate, different projected branch values, and next IDs 1 and 7. The exact record and residual experiment are reachable from the table.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "e9a2b10b395064a656a6ec6519ac2a87061a6154e550cf32f164a43ed3360a86",
+      "reviewed_content_sha256": "bd71ce257c301921fa10dbd927b0a9f2fa40b672b2b1eec18533098a9a0fb802",
+      "scope": "Distinguish the initialization audit from the post-update two-prefix experiment and trace actual projected attention and the first residual addition.",
+      "observation": "The two new coordinate rows agree with the stored trace and visually connect the projected value to the existing diagram, second addition and candidate scores.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "e2549f3843b8e7a11322ed5b09473d5aa041307978431a2002b260598cf22f2b",
+      "reviewed_content_sha256": "8a445ce2ed1cbfadcabe7e3156dbb6b52b2fd9e44e787d9e8b34f9cd610f5035",
+      "scope": "Follow a scripted read, write and independent readback before protocol and streaming details.",
+      "observation": "The body distinguishes two tool effects from the final verifier decision. The standard MCP continuation goes to its opening. The old streamed argument target and original deep MCP link remain available in closed optional details.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
     }
   ]
 }

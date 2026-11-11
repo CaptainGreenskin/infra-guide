@@ -54,7 +54,7 @@
     ['来源 version','返回 3，对应资料 v3','数据来自哪一版来源'],
     ['进度 progressToken','后面的扫描使用 7，等待使用 8','过程通知对应哪个进行中的调用']
    ])+
-   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节另有目录换版的写入对照。'),
+   p('这些标识的寿命不同。同一连接可以处理多项任务；一项任务也可以跨连接恢复。请求 id 在重连后可以再次出现，不能当作跨重试的业务去重键。写工具若要认回同一业务动作，还需接收方认可的稳定操作标识与回执。批次工具只读，第四节的选读另有目录换版的写入对照。'),
 
    p('通信双方必须使用相同的消息规则，协议版本说明采用哪份规则。本次官方库是 mcp 2.3.0，客户端应用实现版本是 1.0.0，现代协议版本是 2026-07-28。这三项分别定位库、应用和交互约定，不能用其中一项代替另外两项。',
    '2026-07-28 版没有初始化握手。现代请求用 _meta 保存附带信息，逐次携带 protocolVersion（协议版本）、clientInfo（客户端实现信息）和 clientCapabilities（客户端能力），完整字段名带 io.modelcontextprotocol/ 前缀。server/discover 是可选的版本与能力探测；本例主动调用 discover() 并采用结果，然后再发现和调用工具。现代客户端也可按已知规则直接请求，处理不支持版本的错误。')+
@@ -82,7 +82,8 @@
    '正常结果中，structuredContent 保存机器可读字段，content 保存展示内容；本例二者表达同一份 JSON。isError=false 表示工具没有报告执行错误。现代结果的 resultType=complete 表示本轮返回完整结果。下面这份响应的 task_id、version、batch_ids、values、total 都要继续接受任务判据检查。')+
    c3[0],
 
-   p('先区分“消息失败”与“工具报告失败”。JSON-RPC error 表示协议请求出错；工具结果中的 isError=true 表示工具报告错误。SDK 的输出结构校验则检查正常结果是否符合 outputSchema。只有这些检查都过了，才轮到宿主按来源验收业务数值。')+
+   p('基础批次的 37 只覆盖两笔订单。要汇总完整报表，宿主接着调用 <code>scan_batches</code>，请求 <code>report-A</code> 的 <code>base</code> 和 <code>late</code> 两个批次。工具读完后返回 [10,27,5] 和合计 42。客户端核对响应和输出结构，宿主再从独立的 <code>orders.json</code> 核对任务、来源版本、批次和数值，重算 10+27+5=42。这时整个读取目标才有足够证据。',
+   '如果 JSON-RPC 响应带 <code>error</code>，请求在协议层出错。工具结果带 <code>isError=true</code>，则由工具报告执行错误。正常结果仍需符合 <code>outputSchema</code>，然后才能按来源验收业务数值。')+
    table(['实际输入或返回','所在层','本次应如何处理'],[
     ['未知工具 unknown_tool','JSON-RPC error，code=-32602；SDK 抛出 MCPError','修正工具选择'],
     ['batch_id=27','工具结果 isError=true','按 inputSchema 修正类型'],
@@ -91,7 +92,7 @@
     ['错误服务端返回 total=41','结构同样合法、isError=false','独立计算 10+27+5=42，拒绝结果']
    ])+
    c4[0]+
-   p('wrong-total 进程实际返回 values=[10,27,5]、total=41。41 也是整数，字段也齐全，所以结构校验不会发现求和错误。宿主的 matches_source 直接读取 orders.json，核对 report-A、版本 3、批次顺序、每个值和总数；它没有拿服务端自报的成功作标准答案。resultType=complete 也不改变这项判定。'),
+   p('wrong-total 进程实际返回 values=[10,27,5]、total=41。41 也是整数，字段也齐全，所以结构校验不会发现求和错误。宿主的 <code>matches_source</code> 重用前面的来源核对，因合计不符拒绝这份结果。<code>resultType=complete</code> 只表示工具已经返回完整结果。下一节沿正常的 42 扫描，区分途中进度和最终响应。'),
 
    p('进度是进行中调用报告的过程信息。本例客户端给 scan_batches 设置进度回调：回调是 SDK 收到通知后调用的函数；progressToken 用于把通知交给正确调用。服务端读完 base 报告 1/2，读完 late 报告 2/2，最终结果另以请求 id 7 返回总数 42。')+
    table(['消息或状态','本例表示什么','仍需等待或检查'],[
@@ -140,7 +141,7 @@
    sourceLinks(old[8])
   ];
   finish(a,old,bodies,'从调用者、工具契约和单次结果出发，追踪官方 SDK 2.3.0 的真实调用、两代协议、进度与取消，再按独立来源验收 42。');
-  a.sections[3][1]+=
+  a.sections[3][1]+=fold('写工具选读：目录换版后怎样处理旧批准',
    '<h3 id="native-mcp-catalog-refresh">工具仍叫同一个名字，为什么要重新确认</h3>'+
    p('工具目录是服务端当前对外声明的工具、说明和参数规则。宿主在选工具时保存一份目录，批准则绑定当时要执行的具体动作。看另一组独立的本机实验。<code>publish_report</code> 的 v1 只收 <code>report_id</code>，默认写归档区 <code>archive</code>。v2 保留原必填项，增加可选的 <code>destination</code>，省略时改写共享区 <code>shared</code>。旧参数依然符合结构，却会产生另一个效果。',
    '在 2026-07-28 版中，客户端先用 <code>subscriptions/listen</code> 订阅目录变化。实验等到订阅确认，再让服务端切换版本。<code>notifications/tools/list_changed</code> 携带订阅标识，提示宿主重读；完整的新版定义来自随后的一次 <code>tools/list</code>。重新连接时也应重读所需的目录。')+
@@ -153,8 +154,8 @@
    ])+
    p('摘要是把工具名、说明与输入输出规则按固定格式整理后算出的短标识。沿 <code>contract</code>、<code>dispatch_approved</code> 和 <code>call_tool</code> 读代码。宿主比较新旧摘要，接收端在实际写入前再次比较，以应对目录读取后又发生变化。本例把预期摘要放进自定义的 <code>_meta</code> 字段。业务身份、权限和去重各自需要检查。')+
    p('解压后按运行说明执行 <code>python -B catalog_refresh.py --output-dir replay &gt; replay.json</code>。查看通知、第二次 <code>tools/list</code> 和两份 SQLite 账本。实验使用 MCP SDK 2.3.0 的真实 stdio 通信，批准由固定测试夹具提供。')+
-   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>';
-  a.sections[4][1]+=
+   '<p class="practice-links"><a href="labs/mcp-catalog-refresh.zip" download>下载完整实验包 ↓</a> · <a href="labs/mcp-catalog-refresh/catalog_refresh.py">完整源码</a> · <a href="labs/mcp-catalog-refresh/README.md">分步运行</a> · <a href="labs/mcp-catalog-refresh/validation.json">真实消息与写入记录</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#list-changed-notification">目录变化通知规范 ↗</a></p>');
+  a.sections[4][1]+=fold('写工具选读：写入已提交但回执被拒绝',
    '<h3 id="native-mcp-result-receipt">回执被拒绝后，先查原操作</h3>'+
    p('还是前面的 report-A/v3，基础批次 10、27，补录 5，合计 42。现在再走一步，把报告实际写入接收方。宿主先保存待确认操作 <code>report-A/v3:publish</code>。接收方把报告和回执一起提交到 SQLite 后，才构造 MCP 响应。回执记录哪次操作完成、交付到哪个版本、金额是多少。')+
    trainingFigure('mcp-result-receipt','两个反例都在数据库提交之后故意改坏响应。拒绝响应之后，宿主按原操作键只读查询。')+
@@ -167,8 +168,8 @@
    p('查回执也要有权限。工作流章另开一份 42 报告实验，操作键记作 <code>report-A:publish</code>。提交后只撤销写权限，仍能查到原回执。连读回执的权限也撤销时，任务保持待确认，接收库里仍有一份报告。接收方没有查询接口，或查询本身失败，也先保留待确认，再和接收方的记录核对。<a href="/article/durable-workflows/#native-approval-reentry">看撤权后的两次查询 →</a>',
    '考虑重试写入前，先确认当前权限允许，并确认接收方会用原操作键和正文识别重试、返回原回执。工作流章用同名操作键在另一份账本上对照，重试沿原键留下 1 份报告，换键留下 2 份。<a href="/article/durable-workflows/#mcp-commit-recovery">看同键与换键重试的账本 →</a>')+
    p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。')+
-   '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>';
-  a.updated='2026.11.09';
+   '<p class="practice-links"><a href="/labs/mcp-result-receipt.zip" download>下载源码与记录 ↓</a> · <a href="/labs/mcp-result-receipt/README.md">运行步骤 →</a> · <a href="/labs/mcp-result-receipt/validation.json">HTTP 消息与两份账本 →</a> · <a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools#output-schema">MCP 输出结构规范 ↗</a></p>');
+  a.updated='2026.11.11';
  }
  }
 
