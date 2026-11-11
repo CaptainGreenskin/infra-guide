@@ -484,9 +484,11 @@
         "subsection-5-4meaf4",
         "subsection-5-12z3xau",
         "v43-attention-practice",
-        "prefix-attention-mask"
+        "prefix-attention-mask",
+        "same-position-different-prefix"
       ],
       "visible_targets": [
+        "same-position-different-prefix",
         "subsection-1-bc8625",
         "subsection-2-sawdtb",
         "subsection-4-jajsfp",
@@ -509,7 +511,8 @@
         "subsection-5-14ftdh6",
         "subsection-8-1e710zy",
         "v43-decoder-practice",
-        "normalization-axes"
+        "normalization-axes",
+        "native-tiny-decoder-context"
       ],
       "visible_targets": [
         "subsection-2-1n65z1o",

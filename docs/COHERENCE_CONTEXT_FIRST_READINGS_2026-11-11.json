@@ -1,0 +1,141 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "9a59e2b90263946848c0117931a89ca3352364ef",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_READING_AND_HANDOFF_2026-11-11.json": "ce84ca50b7361a76e7290d5d656dca7efa8cef4f22104ec5954d7fb9896d49f8"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "d6ad659645edd987ce944624ebc9a755bb39d3d4894fb4ee8d8239edd13b837e",
+      "reviewed_sha256": "694c07b603f2b13d3f91baaefbcf7321e27721121633d3fe771905c143ea9e88",
+      "scope": "Continue the first observed generation into an exact attention lesson using the same prompt and weights."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "89b4744500b5f19c84374b940df88755ebb59e01e18052ecb47b28c6b2e07229",
+      "reviewed_sha256": "3df26227c50fc3333a98054d8249976a1031fd21aba029cc7f60060b8196bbe7",
+      "scope": "Introduce attention through two actual outputs before defining query, key and value."
+    },
+    "dist/progressive-decoder-reading.js": {
+      "previous_sha256": "1f0ffaee1981365e29811488fa68061699f161c6b905ac92151acd9c6d46519d",
+      "reviewed_sha256": "e1f9c474b875c2eb8450afdf57c1d1da2a549be9e0a9f69e91e754265407b648",
+      "scope": "Trace real forward tensors from token and position embeddings through native SDPA and both residual additions to the eight candidate scores."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "5a8c44d098dfe3e3afb4ed33b9b490ea10a8f45c3f4ea952dec5927eeb9bd521",
+      "reviewed_sha256": "b18bb5c66512bc1b500df66621237a41211e464de3b1512314047a6a01c011d8",
+      "scope": "Start Kubernetes networking with an actual successful Service request and trace the readiness change through the same cluster and endpoints."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "4ccc5112d6fd0ff754bb5654ee3805932d59c9fa41c6335cc13d10468227e4d3",
+      "reviewed_sha256": "31d9884a7c157ecb9cf66aa075e760d04eca37e84ce69f5c83219e9d101f3508",
+      "scope": "Use the fixed report to distinguish tool results from task acceptance, then put parameter and resource checks in execution order."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "5a29a52a676b292bb074b12a9f9733628005b1b9ae8ed316f6263aaa9b71887f",
+      "reviewed_sha256": "0a060d366630db9d674559f190bc44aaba614c7e4735ccbbb64eb0f6489deebf",
+      "scope": "Link the inference route to the exact same-token, different-prefix experiment."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "c02131916badc46b8c0dfb8fed055b1beeeeaa96dc62c27c134d88d52585baef",
+      "reviewed_sha256": "77c35c26564d266e84a67108b325f8c3f57d6fc27078474bf41e3707ffc144f6",
+      "scope": "Register the actual forward trace and reproducible download."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "d2e3083ed1c9ba4f6669b699e13546e7c0565528e3e782fc4e3ff7172d06e0a7",
+      "reviewed_sha256": "35b1626048597a7d8a3bcaeab9538caa563b9a003012e05d553eff40de8c4349",
+      "scope": "Record the intrinsic dimensions of the context comparison diagram."
+    },
+    "scripts/check-tiny-decoder-forward.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b6bc9bf031a04885ae905d984bbcc61fa71e7ec90e382151147016e6c7d457ba",
+      "scope": "Check source hashes, causal weights, both residuals and logits, four rejected mutations, the diagram and exact archive."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "a783116222eab0bb01146b0fd4c5f8be380e3605e8bd057cb54c3279b48a8fd5",
+      "reviewed_sha256": "22ef361cc4a35afc076eca7c3f39c3a79596d3419d1fcc938c9f6a71e8dd32d6",
+      "scope": "Register the forward-trace evidence check."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "aeb904403d60b839ab9713219d4a602a569d0ed142dcfd964512f93a19705c36",
+      "reviewed_sha256": "856b9f5ebe800e8488ef0f2b10dc8f04ef9e86bc71cd1f9c0d3080a5247f73ce",
+      "scope": "Verify the exact added inference practice target at both base paths."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "0931de7975b8ed9636f378ae077d5eaed87313166821823c7ae3d3ccd5c365f4",
+      "reviewed_sha256": "0cc3cda3fcdd1a222be0b2cedefad0903ec7ccbb77eb8971d904f25b5bc12f56",
+      "scope": "Select the forward-trace verifier for the signed teaching unit."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "327a5f50537ec210b8505491673e03c5de078f84d14385be3a69bca95137190f",
+      "reviewed_sha256": "c3b1fb03563fb161d9cacc1e038b56a563e580a5a5a6573865b5c3067fc9f3fe",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "db2e514a3442b859e01f9e54f3e3149f6f4729f52319368db26cc3c3d2214ac2",
+      "reviewed_sha256": "a6923a95a27f17d5a412e82bcdaa8dca463f15cef199603f8ec485e878b48d7a",
+      "scope": "Fingerprint the renderer and edited lesson sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5e1f462c1446ae6079d0c2a652c56b6fd6ecc55c6b2aaaf6b505e22fc5b9415e",
+      "reviewed_sha256": "365def45f4074ecb7f6cb60e55ef4c714154e134499d3473921c187fd4054340",
+      "scope": "Record the visible attention heading and the optional decoder proof anchor."
+    },
+    "docs/CONTENT_CONTEXT_FIRST_READINGS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b41d7f045b5abb9492591740e99df046aa85ded71c0e194573ac0fefa892e7ee",
+      "scope": "Record six reviewed chapter revisions and one actual experiment unit."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "ee9603757eda8130b1bfea68e997d9fac1520a8beafff04b87ff4a541e2d9f3f",
+      "reviewed_sha256": "993b3efff040f4846848a078962b9a3c96aaaafcb173f6ff61426749ec28193e",
+      "scope": "Append the verified body reviews."
+    },
+    "dist/labs/tiny-decoder-forward.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "9e0777a627755482e0cf40bcad9d2c418cd9e454fe3c4e8982b35e67621ee746",
+      "scope": "Bind the exact reproducible archive."
+    },
+    "dist/labs/tiny-decoder-forward/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ca421909ff7359343261afe94affa949c1151393f4ff1148427571245934dcb0",
+      "scope": "Bind the original trace source, instructions, and recorded observations."
+    },
+    "dist/labs/tiny-decoder-forward/trace_forward.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "facc15481c054d4c5a25a711bca76ff3eeda942053913fe7d53bf5868d546500",
+      "scope": "Bind the original trace source, instructions, and recorded observations."
+    },
+    "dist/labs/tiny-decoder-forward/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0be52eb27bbf8326aebb69ace2939fe98dc4c2bc067dab472164010e0d1baa61",
+      "scope": "Bind the original trace source, instructions, and recorded observations."
+    },
+    "dist/diagrams/tiny-decoder-context.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e0fb1ee8b197ef4fa8118308fc94f4fccf95a4773ff7d0e87f41070bab433ec6",
+      "scope": "Draw the same input pair and output as the actual observations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "619693d37935242f872f747f7421be82cf6a8460d3608ade429e775f93501282",
+      "reviewed_sha256": "847c396fb085de16e567f6f2c01bdd40530edd005c449175ab37029617811c02",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "9a59e2b90263946848c0117931a89ca3352364ef",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-networking",
+      "agent-runtime",
+      "transformer-model",
+      "tokenization-embedding",
+      "attention-mechanics",
+      "transformer-block"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 1
+  }
+}

@@ -6824,6 +6824,118 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "ef93bc5f04323850dc775701f39d06c4bcb3cfaa2dddb22d8805b56dc332da69",
+      "reviewed_content_sha256": "96bffaba25f44f537285cfd8ea2dce87164700bb6a96814873aec30c669440ae",
+      "scope": "Start Kubernetes networking with an actual successful Service request and trace the readiness change through the same cluster and endpoints.",
+      "observation": "A response UID joins to 10.244.0.5 and the three stable observed windows distinguish selected backend identity and endpoint readiness.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "9cba7f25cc4f97b660cfd0e30a771b2ef8f8d131886fadee0e49f1edd890fce4",
+      "reviewed_content_sha256": "e2549f3843b8e7a11322ed5b09473d5aa041307978431a2002b260598cf22f2b",
+      "scope": "Use the fixed report to distinguish tool results from task acceptance, then put parameter and resource checks in execution order.",
+      "observation": "The local HTTP program persists and reads back the expected 37, while its one-change control writes 38 and fails acceptance. The actual model/MCP evidence separately records successful A access and refusal of B.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "0cf4f42d59e93076d2702989809a9f0188a8252b6a9c945d384ffa9f05314168",
+      "reviewed_content_sha256": "379bfd80fd1c5422db2fcc5c36775d7f79a12b468edba1bd484d02c441ad839b",
+      "scope": "Continue the first observed generation into an exact attention lesson using the same prompt and weights.",
+      "observation": "Changing only the first ID from 0 to 4 changes the selected ID from 1 to 7.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "35126b8cfe64dd375de66e63e547ab20e84a4231ef7536583d2feec736f89c48",
+      "reviewed_content_sha256": "966b97df577c962a88591092388e97cdc5d0e8e7482c405e808a2f3162be8d4f",
+      "scope": "Separate the one-position embedding exercise from the same original model observed with changing context.",
+      "observation": "The next lesson compares two runs with identical embedding and position input in the last row.",
+      "headings": [
+        "先约定词表，再说模型看到了什么",
+        "子词为什么值得学，字节又处在哪一层",
+        "查哪几行，为什么形状变成 [B,T,D]",
+        "输出头怎样把向量变成八个候选分数",
+        "输入取前一段，标签取后一段",
+        "注意力掩码、损失忽略和 padding 行各做什么",
+        "同一 ID 出现两次，反向时写哪一行",
+        "验收：不要只看 loss 有没有下降",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "bda65ed1ccee586bd0c717aef094385a0bf8a46c1a01f12276ed609d4d782bf2",
+      "reviewed_content_sha256": "a1fa148ebcd93d867c8a1d94df7bb2b189f63698ffccf3d64043ec4f45a040fb",
+      "scope": "Introduce attention through two actual outputs before defining query, key and value.",
+      "observation": "A changed legal prefix changes the result while a changed future item leaves the first row unchanged.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "bb045ef39b8fe41ce34375686385845c88b44bedf55664980e0b8337d50046ca",
+      "reviewed_content_sha256": "e9a2b10b395064a656a6ec6519ac2a87061a6154e550cf32f164a43ed3360a86",
+      "scope": "Trace real forward tensors from token and position embeddings through native SDPA and both residual additions to the eight candidate scores.",
+      "observation": "Both probes and a changed-future control replay the original model after its original SGD update. A separate scalar verifier reconstructs scores, attention and output projection.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
     }
   ]
 }

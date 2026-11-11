@@ -89,6 +89,7 @@ const firstReadingChanges=[];
  ])+
  para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
+ para('如果末位仍是 1，只把前面的 0 换成 4，模型会改选 7。<a href="/article/attention-mechanics/#same-position-different-prefix">沿同一次预测看前文怎样改动结果 →</a>')+
  para('把这两条输入交给两个训练进程，再从检查点继续，最后把导出的参数交给推理进程。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
  '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+`<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+

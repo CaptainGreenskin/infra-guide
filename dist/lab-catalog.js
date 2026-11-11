@@ -3,6 +3,7 @@ const labArchiveCatalog={
  'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
  'dns-connection-handoff':{folder:'dns-connection-handoff',title:'DNS 更新后的 HTTP 旧连接与新连接'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
+ 'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
@@ -222,6 +223,7 @@ labLearningCatalog.push(
  {id:'cloud-reconcile-walk',track:'cloud',stage:1,title:'重复调谐、代次与同名新UID',chapter:'kubernetes-basics',pack:'mechanism-walkthroughs',files:['reconcile_walk.py'],anchor:'v43-reconcile-practice',env:'Python 3.9+ · 标准库',kind:'控制状态模型',observe:'对照期望3副本、观察代次、实际实例与就绪数，再用旧UID尝试删除同名新实例。',scope:'本地教学模型；目标集群继续按只读命令和原探针手册验收。'},
  {id:'ai-attention-walk',track:'ai',stage:1,title:'把三行注意力手算与真实SDPA对齐',chapter:'attention-mechanics',pack:'mechanism-walkthroughs',files:['attention_trace.py'],anchor:'v43-attention-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU张量',observe:'逐项核对分数、权重、输出，再改变缓存位置、无效key、Q/K方向与分头坐标。',scope:'float64 CPU数值对照；不报告GPU内核或性能收益。'},
  {id:'ai-decoder-walk',track:'ai',stage:1,title:'四种形状正确的接线错误，最早错在哪里',chapter:'transformer-block',pack:'mechanism-walkthroughs',files:['decoder_trace.py','tiny_decoder.py'],anchor:'v43-decoder-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU模型与梯度',observe:'追踪664参数模型的每层数值，核对归一化轴、第二分支输入、门控、残差与未来扰动。',scope:'固定输入和种子的前向及标量梯度；不是大型模型质量或GPU性能测试。'},
+ {id:'ai-tiny-decoder-forward',track:'ai',stage:1,title:'换掉前文，跟到最后一行候选分数',chapter:'transformer-block',anchor:'native-tiny-decoder-context',pack:'tiny-decoder-forward',files:['trace_forward.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU · 需下载同站 SDPA 实验包',kind:'原模型前向与中间量复算',observe:'固定末位和参数，只替换前一项，核对查表、读取权重、两次回加和最终得分。',scope:'664 参数小模型，固定词元编号，CPU 双精度。'},
  {id:'agent-history-walk',track:'agent',stage:2,title:'结果记录前后退出，恢复会重新读取吗',chapter:'durable-workflows',pack:'mechanism-walkthroughs',files:['workflow_history.py'],anchor:'v43-history-practice',env:'Python 3.9+ · 标准库 / SQLite',kind:'实际进程与持久历史',observe:'在读取后、结果提交后分别退出，改源值23为999，再比较恢复结果与活动调用次数。',scope:'本地解释器，活动只读资料和生成文本；不是Temporal SDK或Kairo运行结果。'}
 );
 labLearningCatalog.push(

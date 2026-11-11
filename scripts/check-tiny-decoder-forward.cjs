@@ -1,0 +1,111 @@
+/* Independently derive the observed intermediate and final values. */
+const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
+const { createHash } = require('node:crypto');
+const fs = require('node:fs');
+
+const name = 'tiny-decoder-forward';
+const pack = 'dist/labs/' + name;
+const files = ['trace_forward.py', 'README.md', 'validation.json'];
+const read = file => fs.readFileSync(file);
+const hash = file => createHash('sha256').update(read(file)).digest('hex');
+const record = JSON.parse(read(pack + '/validation.json'));
+const handoff = JSON.parse(read('dist/labs/tiny-decoder-handoff/validation.json'));
+const original = JSON.parse(read('dist/labs/sdpa-cache/validation.json'));
+const close = (a, b) => assert(Number.isFinite(a) && Math.abs(a - b) <= 1e-12, a + ' differs from ' + b);
+const compare = (a, b) => {
+  assert.equal(a.length, b.length);
+  a.forEach((value, index) => close(value, b[index]));
+};
+const dot = (a, b) => a.reduce((sum, value, index) => sum + value * b[index], 0);
+const add = (a, b) => a.map((value, index) => value + b[index]);
+const maxDelta = (a, b) => Math.max(...a.map((value, i) => Math.abs(value - b[i])));
+const argmax = values => values.indexOf(Math.max(...values));
+const cases = {base: [0,1], change_prefix: [4,1], change_future: [0,7]};
+
+function validate(data) {
+  assert.equal(data.schema, 'tiny-decoder-forward-v1');
+  assert.equal(data.status, 'passed');
+  assert.deepEqual(data.source_sha256, {
+    'trace_forward.py': hash(pack + '/trace_forward.py'),
+    'tiny_decoder.py': hash('dist/labs/sdpa-cache/tiny_decoder.py'),
+  });
+  assert.equal(data.environment.torch.split('+')[0], '2.5.1');
+  assert.equal(data.environment.device, 'cpu');
+  assert.equal(data.environment.dtype, 'float64');
+  assert.equal(data.environment.sdpa, 'MATH');
+  assert.equal(data.parameters, original.program.model_parameters);
+  assert.deepEqual(data.training.rows, handoff.fixture.rows);
+  assert.deepEqual(data.training.labels, handoff.fixture.labels[0]);
+  close(data.training.loss_before, original.program.training_loss_before);
+  assert.equal(data.token_weight.length, 8);
+  for (const row of data.token_weight) assert.equal(row.length, 8);
+
+  for (const [key, prompt] of Object.entries(cases)) {
+    const { layers, reference, logits, selected_id: selected } = data.runs[key];
+    assert.deepEqual(data.runs[key].prompt, prompt);
+    assert.deepEqual(reference.visible, [[true,false],[true,true]]);
+    for (const [position, token] of prompt.entries()) {
+      compare(layers.token[position], data.token_weight[token]);
+      compare(layers.x[position], add(layers.token[position], layers.position[position]));
+      compare(layers.after_attention[position], add(layers.x[position], layers.attention[position]));
+      compare(layers.after_ffn[position], add(layers.after_attention[position], layers.feed_forward[position]));
+      compare(logits[position], data.token_weight.map(candidate => dot(candidate, layers.normalized[position])));
+      const joined = [];
+      for (const head of [0,1]) {
+        const scores = reference.k[head].map(candidate => dot(reference.q[head][position], candidate) / 2);
+        compare(reference.raw_scores[head][position], scores);
+        const exponentials = scores.map((value, candidate) => candidate <= position ? Math.exp(value) : 0);
+        const sum = exponentials.reduce((a, b) => a + b);
+        const weights = exponentials.map(value => value / sum);
+        compare(reference.weights[head][position], weights);
+        joined.push(...reference.v[head][0].map((_, j) => dot(weights, reference.v[head].map(row => row[j]))));
+      }
+      compare(layers.joined[position], joined);
+    }
+    assert.equal(selected, argmax(logits[1]));
+    close(data.runs[key].joined_max_abs_error, 0);
+  }
+  const { base, change_prefix: prefix, change_future: future } = data.runs;
+  compare(base.logits[1], handoff.result.inference.step1.first_logits);
+  assert.equal(base.selected_id, original.program.generation.trace[0].selected_id);
+  assert.equal(prefix.selected_id, 7);
+  for (const head of [0,1]) compare(base.reference.q[head][1], prefix.reference.q[head][1]);
+  for (const [field, changed, position, comparison] of [
+    ['prefix_position_1', prefix, 1, data.max_absolute_deltas.prefix_position_1],
+    ['future_position_0', future, 0, data.max_absolute_deltas.future_position_0],
+  ]) {
+    for (const name of ['x','joined','after_ffn','logits']) {
+      const value = run => (name === 'logits' ? run.logits : run.layers[name])[position];
+      const delta = maxDelta(value(base), value(changed));
+      close(comparison[name], delta);
+      if (field === 'future_position_0' || name === 'x') close(delta, 0);
+      else assert(delta > 0.01);
+    }
+  }
+}
+
+validate(record);
+for (const mutate of [
+  r => { r.runs.base.reference.weights[0][1][0] += 0.1; },
+  r => { r.runs.change_prefix.layers.joined[1][2] += 0.1; },
+  r => { r.runs.change_prefix.selected_id = 1; },
+  r => { r.runs.change_future.logits[0][2] += 0.1; },
+]) {
+  const changed = JSON.parse(JSON.stringify(record));
+  mutate(changed);
+  assert.throws(() => validate(changed), {code:'ERR_ASSERTION'});
+}
+
+const svg = read('dist/diagrams/tiny-decoder-context.svg').toString();
+const drawn = JSON.parse(svg.match(/<metadata>([^<]+)<\/metadata>/)[1]);
+assert.deepEqual(drawn, {
+  record:'labs/tiny-decoder-forward/validation.json',
+  prompts:[record.runs.base.prompt,record.runs.change_prefix.prompt],
+  selected:[record.runs.base.selected_id,record.runs.change_prefix.selected_id],query_position:1,
+});
+const archive = pack + '.zip';
+const members = execFileSync('unzip',['-Z1',archive],{encoding:'utf8'}).trim().split('\n').sort();
+assert.deepEqual(members, files.map(file => name + '/' + file).sort());
+for (const file of files) assert.deepEqual(execFileSync('unzip',['-p',archive,name + '/' + file]),read(pack + '/' + file));
+console.log('PASS: three native TinyDecoder forwards, independent mask/weight/logit replay, context changes, exact diagram and archive.');

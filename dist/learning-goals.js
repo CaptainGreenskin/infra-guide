@@ -49,6 +49,7 @@ const learningProfiles={
    {title:"核对缓存容量与复用范围",
     result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],

@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "9a59e2b90263946848c0117931a89ca3352364ef",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_READING_AND_HANDOFF_2026-11-11.json": "732e0f6aa98ad2c9631961297da3c6a5cb8e412d91e0b0f2d39146a6dc76a6ed"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "transformer-block",
+      "reviewed_at": "2026-11-11",
+      "scope": "Trace real forward tensors from token and position embeddings through native SDPA and both residual additions to the eight candidate scores.",
+      "observation": "Both probes and a changed-future control replay the original model after its original SGD update. A separate scalar verifier reconstructs scores, attention and output projection.",
+      "reviewed_content_sha256": "e9a2b10b395064a656a6ec6519ac2a87061a6154e550cf32f164a43ed3360a86",
+      "record": "dist/labs/tiny-decoder-forward/validation.json"
+    }
+  ]
+}

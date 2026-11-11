@@ -4442,7 +4442,7 @@ const progressiveAiSectionTitles={
   '沿用上节的完整序列，右补齐到五格后取前四格作为输入，得到[1,5,5,6]和[1,3,2,0]。B=2、T=4，共查八次表，输出形状为[B,T,D]=[2,4,2]。表本身有8×2=16个独立参数；查八次产生16个本批特征值。这两个16来自不同计数，改变T会改变本批输出数量，而不会增加词表参数。')+
   table(['词表行','本章固定向量'],[['PAD / BOS / EOS','(0,0) / (0,1) / (0,−1)'],['云 / 端 / 云端 / 算','(1,0) / (−1,0) / (2,0) / (0,2)'],['UNK','(0,0)']])+
   para('第一条输入查成[(0,1),(2,0),(2,0),(0,2)]。两处5重复使用E[5]，仍是两个不同位置，没有新建第二份参数。也可以用“只有编号所在项为1、其余为0”的独热向量乘E，得到同一行；实际Embedding直接查表，省去构造这张大独热输入。',
-  '为了算到输出，本章把中间模型暂时简化为H=E[ids]/2，即各输入向量逐项除以2。H称为隐藏表示，仍为[2,4,2]。这份局部变换没有位置或上下文计算；下一章的注意力会让一个位置的H包含合法前缀的信息，完整Decoder再把宽度恢复为D=8。输出头只要求拿到相应形状的H，可以接在这些不同的中间计算之后。');
+  '为了算到输出，本章把中间模型暂时简化为H=E[ids]/2，即各输入向量逐项除以2。H称为隐藏表示，仍为[2,4,2]。这份局部变换只用本位置的词元。<a href="/article/attention-mechanics/#same-position-different-prefix">下一章换回入门的 8 维小模型</a>，把位置和末位编号固定，只改前一项，直接观察候选分数的变化。');
  token.sections[3][1]=para(
   '输出头把一个位置的隐藏向量h换成词表各候选的得分。设输出权重W有V行、每行D项，本章不加偏置：候选j的分数zⱼ是h与W[j]的点积。所有位置一起计算时，H的[ B,T,D ]变成得分的[B,T,V]=[2,4,8]。这些实数称为logits，尚不是概率；训练直接使用整行得分，生成时再按规则选择候选。',
   '本章令输出表W与输入表E引用同一份参数，称为权重共享。继续看第一条样本位置1：输入5查得(2,0)，除以2后h=(1,0)。与八行W分别点积，得到z=[0,0,0,1,−1,2,0,0]。八项的顺序仍是词表编号顺序，第5项分数为2。',
@@ -4481,7 +4481,10 @@ const progressiveAiSectionTitles={
  const attention=byId('attention-mechanics'),q=attention.sections.map(s=>s[1]);
  attention.sections[0][1]=
   '<span id="subsection-1-1ptyn5t"></span>'+
-  para('读到“苹果”时，前面是“果盘里”还是“发布会上”，会给这个词不同的语境。把“发布会上，苹果推出新机”暂分成三个讲解位置：0“发布会上”、1“苹果”、2“推出新机”。这种分段只用来说明位置。因果注意力允许每个位置读取自己和前面的位置，因此位置1只汇入位置0和1的内容。到位置2，新的查询才会把“推出新机”纳入候选。',
+  '<h3 id="same-position-different-prefix">同一个词元，前文怎样改变预测</h3>'+
+  para('入门的小模型看到 [0,1] 时选出 1。现在只把第一项换成 4，输入变成 [4,1]，模型改选 7。末位仍是编号 1，仍在位置 1。它查出的词嵌入和位置向量都相同，等到注意力读取前一格时，中间结果才分开。',
+  '反过来，只把 [0,1] 的后一项换成 7，第一行的八个分数都保持原值。第一行只能读位置 0，第二行能读位置 0 和 1，这条读取规则叫因果注意力。<a href="/article/transformer-block/#native-tiny-decoder-context">查看同一模型两次前向的中间量 →</a>',
+  '放到语言里，可以把“发布会上，苹果推出新机”分成三个示意位置。位置 1 的“苹果”可以用前面的“发布会上”来更新自己的表示。到了位置 2，模型才把“推出新机”纳入当前这一行的计算。',
   '上一章把词元编号查成向量，再用局部变换H=E[id]/2演示输出。现在让一个位置的向量也能汇入其他位置的信息。把进入本层的表示记为X，T个位置各有D项特征，按行排成[T,D]。X可以来自词嵌入与位置处理，也可以来自前一层。',
   '以位置1为例，它用自己的Q（Query，查询向量）逐一匹配位置0和1的K（Key，匹配向量），再按匹配得到的权重汇入两个位置的V（Value，内容向量）。每个位置都能提供K和V，也能用自己的Q发起查询。自注意力中的“自”指这三组向量来自同一份X。模型用三张可学习矩阵做线性变换，这一步称为投影，得到Q=XWq、K=XWk、V=XWv。')+
   table(['对象','形状','每行与每列的含义'],[['Q / K','[T,d]','行是位置；d个特征用于匹配'],['V','[T,dᵥ]','行仍是候选位置；dᵥ个特征是读回内容'],['输出O','[T,dᵥ]','每个查询位置读回的一行内容']])+
@@ -4565,7 +4568,7 @@ const progressiveAiSectionTitles={
   '接下来的Decoder Block章会把注意力输出放回残差与前馈路径；位置编码章再说明位置怎样影响匹配。注意力权重只是一次内容汇总的系数，最终得分还要经过这些后续计算。')+
   linkTo('transformer-block','继续Decoder的残差、归一化与前馈')+
   q[8].slice(practiceStart).replace('>运行并检查中间结果</h3>','>注意力中间结果与原生SDPA对照</h3>');
- token.updated='2026.11.08';attention.updated='2026.11.09';
+ token.updated='2026.11.11';attention.updated='2026.11.11';
 })();
 
 
@@ -4715,6 +4718,22 @@ for label, actual, expected in (
   link('position-encoding','先推导位置怎样影响匹配')+
   link('autograd-training','继续让664个参数完成一次更新')
  ]);
+ decoder.sections[7][1]+='<details class="progressive-detail"><summary>实跑 · 换一个前文，跟到最后一行候选分数</summary>'+
+  h('native-tiny-decoder-context','同一个词元在解码器块里何时变得不同')+
+  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。固定入门的 664 参数模型，沿原来的代码更新一次，再用同一份参数完成两次前向。这里只看位置 1，行号从 0 数。')+
+  trainingFigure('tiny-decoder-context','末位词元和位置相同，第一处读到不同上下文的是注意力。图中选词来自实际候选分数。')+
+  table(['位置 1 的观测','[0,1]','[4,1]'],[
+   ['输入向量 X 的第一项','0.0434','0.0434'],
+   ['头 0 读取位置 0、1 的权重','0.5546、0.4454','0.4659、0.5341'],
+   ['两头拼回后的第一项','0.5627','0.2569'],
+   ['两次残差相加后的第一项','0.4424','0.3538'],
+   ['最后一行给编号 1、7 的分数','3.7804、3.4653','3.5822、3.5940'],
+   ['最高分对应的编号','1','7']
+  ])+
+  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，它的匹配向量和内容向量都变了。模型重新分配两格的读取权重，并用新的内容做加权汇总。这个差异经过残差相加和前馈，最后传到词表分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
+  p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
+  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
+ decoder.updated='2026.11.11';
 
  const position=select('position-encoding',9),r=position.sections.map(s=>s[1]);
  replace(position,[
@@ -10330,19 +10349,22 @@ future.result(timeout=35)
  if(n1.length!==1||n2.length!==1||n3.length!==1||n5.length!==1||n6.length!==2)throw Error('Kubernetes network code layout changed');
  replace(network,[
  anchor('service-name-address-identity')+anchor('subsection-1-rccynd')+
- p('集群里的客户端要取一份报表。在这组示意地址里，DNS 把 <code>reports.apps.svc.cluster.local</code> 解析为 <code>10.96.0.20</code>。这个虚拟 IP 是 Service 提供的固定入口。客户端向它的 443 端口建连，转发规则把连接送到运行应用的一个 Pod，本次选中的是 <code>10.42.2.8:8443</code>。',
- 'Pod 被替换时，后端列表会更新。Service 仍提供原来的名字和入口，客户端也仍按约定的名字验证 TLS 身份。校验通过后，应用处理请求，响应再沿网络路径回到客户端。')+
+ p('从集群内一条真实请求开始。客户端访问 <code>http://10.96.63.29/work</code>，第 2 条记录返回 HTTP 200 和版本 <code>v1</code>。响应还回显了请求编号和 Pod UID，也就是处理这次请求的 Pod 的唯一标识。按这个 UID 查集群记录，可以确认接到请求的是 <code>10.244.0.5</code> 上的应用。',
+ '客户端连的是 <code>10.96.63.29:80</code>，应用实际监听 <code>10.244.0.5:8080</code>。业务 Pod 被替换后，地址可能变。Service 为这一组 Pod 提供可保持不变的集群内入口，这个入口地址叫 ClusterIP。转发规则负责把新连接送到合格的后端。第 2 节继续用这条请求，看后端名单怎样改变。',
+ '刚才直接用了入口 IP。如果从服务名字出发，连接之前还要先用 DNS 查出入口 IP。下图换成一组 HTTPS 报表示意地址。客户端先解析服务名，再连到 Service 的 443 端口，由转发规则送到某个 Pod 的 8443 端口。建立加密连接时，客户端按约定的名字验证 TLS 证书。随后应用处理请求，响应沿网络路径回到客户端。')+
  table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
  figures(n[0]).join('')+
+ '<details class="progressive-detail"><summary>查不同的 Service 名字，或核对 TLS 和 HTTP 身份</summary>'+
  p('普通 ClusterIP Service 像图中这样，DNS 地址记录通常指向它的虚拟 IP。无头服务（headless，<code>clusterIP: None</code>）可以直接返回后端地址，ExternalName 则返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
- '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。'),
+ '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。')+'</details>',
 
  anchor('subsection-2-8a7h3t')+
- p('为什么入口的 443 会送到 Pod 的 8443？配置里的 <code>selector</code> 按标签 <code>app=reports</code> 选择 Pod。<code>port: 443</code> 是入口端口，<code>targetPort: https</code> 指向 Pod 声明的同名端口 8443。<code>containerPort</code> 只记录端口信息，应用还要在可达地址上监听，例如 <code>0.0.0.0:8443</code>。')+n1[0]+
+ p('实测 Service 用 <code>selector</code> 按 <code>app=guide-service</code> 这个标签找候选 Pod，<code>port: 80</code> 是入口端口，<code>targetPort: 8080</code> 是后端端口。转发规则据此把送到 80 的连接交给实际监听 8080 的应用。',
+ '下面的 YAML 对应上节的 HTTPS 示意。<code>app=reports</code> 选中报表 Pod，<code>targetPort: https</code> 引用 Pod 声明的同名端口 8443。<code>containerPort</code> 只记录端口信息，应用还要在可达地址上监听，例如 <code>0.0.0.0:8443</code>。')+n1[0]+
  p('控制器把匹配的 Pod 地址、端口和条件写入 EndpointSlice，节点上的转发组件再读取这些对象。<code>ready</code> 表示端点能否接常规流量，<code>terminating</code> 标记正在终止，<code>serving</code> 可用来判断终止中的端点能否继续服务。通常，正在服务且未终止的端点才为 <code>ready</code>，<code>publishNotReadyAddresses</code> 等配置会改变这个规则。一个 Service 可以有多个切片，排查时要合并去重，再核对地址、端口和条件。',
- '看一次独立的实跑。<code>service_lab.py</code> 的客户端每次新建连接，请求 <code>http://10.96.63.29/work</code>。这里 Service 的 80 端口转到 Pod 的 8080。把 <code>10.244.0.5</code> 记作 A，<code>10.244.0.6</code> 记作 B，用 HTTP 响应里的 Pod UID（该 Pod 的唯一标识）确认由谁处理。')+
- table(['阶段','A 的端点条件','稳定后 20 次新连接的响应'],[['两个 Pod 都就绪','ready=true','HTTP 200，来自 A 和 B'],['A 的就绪检查返回 503','地址仍在，ready=false','HTTP 200，只来自 B'],['A 恢复就绪','同一 UID，ready=true','HTTP 200，再次来自 A 和 B']])+
- p('A 未就绪时，在 Pod 内直接探测 <code>/live</code> 和 <code>/work</code> 仍是 200，两个 Pod 的重启数也没有变化。表中是转发规则收敛后的样本。遇到 DNS 能解析却连不上时，先看 EndpointSlice 有没有可用后端，再查 selector、Pod 标签、就绪状态与目标端口。即使 DNS 返回了 Service IP，端点列表也可能为空。'),
+ '继续看 <code>/work</code> 实测。把开头处理请求的 <code>10.244.0.5</code> 记作 A，另一份副本 <code>10.244.0.6</code> 记作 B。请求地址不变，只让 A 的就绪检查失败。平台保留了 A 的地址，但把它标为未就绪。接着看新连接实际去了哪里。')+
+ table(['阶段','A 的端点条件','每阶段选取的连续 20 条新连接'],[['两个 Pod 都就绪','ready=true','第 2–21 条均为 200，来自 A 和 B'],['A 的就绪检查返回 503','地址仍在，ready=false','第 29–48 条均为 200，只来自 B'],['A 恢复就绪','同一 UID，ready=true','第 61–80 条均为 200，再次来自 A 和 B']])+
+ p('A 未就绪时，在 Pod 内直接访问它的 <code>/live</code> 和 <code>/work</code> 仍是 200，两个 Pod 的重启数也没有变化。表中是转发规则收敛后的样本，传播过程中的请求保存在完整记录里。排障时，即使域名已解析到正确的 Service IP，也要查看 EndpointSlice 里的地址、端口和就绪条件。'),
 
  anchor('service-flow-return')+anchor('subsection-3-4aahv')+
  p('CNI 是容器网络接口，网络插件据此为 Pod 连接和配置所需网络；Service 实现负责稳定入口到后端的选择与转发，DNS 负责名字解析。常见 Linux 集群由 kube-proxy 观察 Service 与 EndpointSlice 并配置内核规则，业务报文随后在内核数据面转发。其他实现可以采用不同机制，报文不会逐包经过 API Server。',
@@ -10376,7 +10398,9 @@ future.result(timeout=35)
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
  ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
 
- network.updated='2026.11.10';
+ network.updated='2026.11.11';
+ network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');
+ network.sections[1][1]+=p('<a href="/article/cloud-service-lab/#kubernetes-service-probes">复现同一组就绪变化 →</a>');
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
  network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
  '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',
@@ -13693,6 +13717,7 @@ const firstReadingChanges=[];
  ])+
  para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
+ para('如果末位仍是 1，只把前面的 0 换成 4，模型会改选 7。<a href="/article/attention-mechanics/#same-position-different-prefix">沿同一次预测看前文怎样改动结果 →</a>')+
  para('把这两条输入交给两个训练进程，再从检查点继续，最后把导出的参数交给推理进程。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
  '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+`<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
@@ -13772,9 +13797,9 @@ const firstReadingChanges=[];
  const taskOpening=chapters[0].before[0].match(/<p>先从一项日常要求出发：[^<]*<\/p><p>运行时是维持这个循环的程序。[^<]*<\/p><p>本章固定一个可手算的任务。[^<]*<\/p>/)?.[0];
  if(!taskOpening)throw Error('Missing original Agent task opening');
  replace('agent-runtime',0,taskOpening,p(
-  '你让智能体汇总订单并保存报告。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？模型可以提出读订单或保存报告。运行时核对当前任务和权限，把获准的动作交给工具。真正读取数据、写入报告的是这些工具。',
-  '这次由身份 A 发起任务，只允许访问 A 的资源。工具从 orders-A 的第 3 版取回两笔订单 [10, 27]。运行时保存进度，把这次读到的内容交给模型，模型可以据此提出下一步。这样根据工具返回继续选择动作，就形成了智能体（Agent）的执行循环。',
-  '要完成这次任务，report-A 的第 1 版必须写入指定位置，合计 10+27=37，并标明来源是第 3 版。写工具返回后，验收器到指定位置另读一次，核对这三项。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
+  '你让智能体汇总两笔订单并保存日报。假如它回复“保存好了”，指定位置却找不到报告，要从哪查？先沿一次实际运行看是谁读到订单、谁写了报告，又是谁回头核对。',
+  '这次由身份 A 发起任务，只允许访问 A 的资源。工具从 orders-A 的第 3 版取回两笔订单 [10, 27]。模型可以提出“读订单”这样的动作。运行时是负责推进任务的程序，它检查提议并调用真正读写数据的工具。接入模型后，运行时会把这次工具结果交回模型，用于选择下一步。这样一轮轮推进，就形成了智能体（Agent）的执行循环。',
+  '正确的报告是 report-A 的第 1 版，合计 10+27=37，来源为订单第 3 版。写工具返回后，验收器到指定位置另读一次，核对这三项。本机实验实际写入了这份报告，回读结果和预期一致，任务才标为成功。下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。恢复章用另一笔动作，检验怎样按原操作身份认回实际效果。'));
  replace('agent-security',0,
   '本章把这次调用接到真实资源：',
   '本章沿用这个调用分工，在独立的日报委托中展开资源授权：');
@@ -13824,7 +13849,21 @@ const firstReadingChanges=[];
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
  replace('agent-runtime',0,
   '下文的本机 HTTP 实验用脚本给出提议，沿用这份日报。',
-  '下文先用脚本给出工具提议，跑通这份日报。也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');
+  '这份日报的工具提议来自脚本。<a href="/article/agent-runtime/#section-8">查看写入和回读的实验</a>，也可以直接看<a href="/article/agent-runtime/#native-model-mcp-tool-choice">本机模型怎样选工具</a>。');
+ replace('agent-runtime',1,
+  p('工具发现返回名称、说明、输入结构与可选输出结构。schema（结构约定）约束字段、类型、必填项和未知字段；它能检查 total 是整数，却不能证明 37 这个数算对了。身份认证说明调用者是谁，授权说明这个主体能对哪个资源执行什么动作，业务前提说明这个资源版本是否仍允许本次修改。四种判断不能由“JSON 解析成功”替代。'),
+  p('把上一节的写入金额从 37 改成 38，其他输入照旧。两次实验各自从空的报告库开始，都实际写出一份报告。验收器回读金额，对照任务要求的 37，把写入 38 的任务标为未完成。工具负责保存传来的数，验收器负责核对实际保存的报告是否符合任务要求。',
+   '运行时先从工具目录取得名称、用途、输入结构和声明的输出结构。结构约定（schema）规定哪些字段必填、各是什么类型。例如 <code>total</code> 必须是整数，37 和 38 都合格。写入时，<code>op</code> 标记同一笔逻辑操作，<code>expected_version</code> 写明本次修改预期的旧版本。本例以 0 表示目标还没有报告。'));
+ replace('agent-runtime',1,
+  p('工具名白名单防止提议调用不存在或未允许的工具；对象授权防止把允许工具用在别人的资源。主体、角色或审批不能直接采信模型提供的参数。schema 也不能通过自然语言说明执行真正的授权。外部网页、工具输出和检索资料即使写着“忽略限制、改写 B”，仍只是一份数据，不能签发新的委托。'),
+  p('工具名和参数结构通过后，还要检查谁能访问哪个对象。身份认证负责确认调用者，授权决定这个主体能否执行指定动作。运行时使用认证和审批记录中的可信信息，资源服务在读取或提交前判断这次动作。网页、工具输出和检索资料作为任务数据使用，访问范围由可信委托和策略确定。',
+   '看另一项只读实跑。主体固定为 A，模型两次都选了销售查询 <code>read_sales_report</code>，参数分别是 <code>{"report_id":"A"}</code> 和 <code>{"report_id":"B"}</code>。A 的请求读到销售额 42。B 的 HTTP 请求也收到 200，工具结果标记为拒绝。资源端正文读取记录里只有 A 的报告。<a href="/article/agent-runtime/#native-model-mcp-tool-choice">顺着模型提议、工具返回和读取记录核对 →</a>'));
+ replace('agent-runtime',1,
+  p('本例特别拒绝 total=true：JSON 里布尔值不是整数，Python 却把 bool 当作 int 的子类；若实现只用 isinstance(value, int)，就可能错误放行。示例用 type(value) is int。生产中应采用与协议版本一致的校验实现，不把本文件只支持几种类型的小函数当作通用 JSON Schema 引擎。',
+   '输出结构也要校验。MCP 的结构化工具结果是工具服务返回的 structuredContent，与模型“按结构生成输出”不是同一概念。声明了输出 schema 的服务应返回合约结构，客户端也应核验，再决定如何把它交给模型。工具说明中的只读、破坏性等提示，还需要可信实现与实际策略支撑，不能把一段描述当作强制执行机制。'),
+  p('日报程序收到工具结果后，还会检查字段和类型，再决定结果能否进入下一轮。用 MCP（模型上下文协议）连接工具时，服务可以把这些字段放在 <code>structuredContent</code> 中，客户端按服务声明的输出结构核验。<a href="/article/mcp-protocol/#mcp-model-tool-observation">下一章沿本机调用的协议消息看结果怎样返回 →</a>')+
+  '<details class="progressive-detail"><summary>实现细节 · 为什么 total=true 会在发送前被拒绝</summary>'+
+  p('JSON 把布尔值与整数分为两种类型。Python 的 <code>bool</code> 继承了 <code>int</code>，只用 <code>isinstance(value, int)</code> 会把 <code>true</code> 放行。本地脚本用 <code>type(value) is int</code> 检查整数。支持完整 JSON Schema 的实现应使用与协议版本一致的校验器。')+'</details>');
  runtime.sections[7][1]+='<h3 id="native-model-mcp-tool-choice">问销售额和事故数，模型会选哪个工具</h3>'+
   p('前面的 37 日报由脚本给出提议。这里另开一个只读实验，分别问 A 的销售额、A 的事故数和 B 的销售额。宿主先从 MCP 服务取得销售查询和事故查询，把两个工具的名称、用途和参数规则放进本机 Qwen3-0.6B 的请求。三条问题只写要查什么和报告对象。<code>tool_choice=auto</code> 让模型决定要不要调用以及选哪个工具。',
    '问 A 的销售额时，模型给出 <code>read_sales_report</code> 和 <code>{"report_id":"A"}</code>。宿主检查名称和参数形状，把模型选出的名称与参数原样交给 MCP SDK。资源服务按实验预设的 A 主体核对报告归属，读到金额 42 和证据编号 <code>sales-v3-9f6a</code>。')+
@@ -14957,6 +14996,7 @@ const learningProfiles={
    {title:"核对缓存容量与复用范围",
     result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
      ["model-serving","rtx-pro-6000-cache-case","单卡缓存计时与显存"],
@@ -15651,6 +15691,7 @@ const labArchiveCatalog={
  'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
  'dns-connection-handoff':{folder:'dns-connection-handoff',title:'DNS 更新后的 HTTP 旧连接与新连接'},
  'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
+ 'tiny-decoder-forward':{folder:'tiny-decoder-forward',title:'同一词元在两段前文中的实际计算'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
@@ -15870,6 +15911,7 @@ labLearningCatalog.push(
  {id:'cloud-reconcile-walk',track:'cloud',stage:1,title:'重复调谐、代次与同名新UID',chapter:'kubernetes-basics',pack:'mechanism-walkthroughs',files:['reconcile_walk.py'],anchor:'v43-reconcile-practice',env:'Python 3.9+ · 标准库',kind:'控制状态模型',observe:'对照期望3副本、观察代次、实际实例与就绪数，再用旧UID尝试删除同名新实例。',scope:'本地教学模型；目标集群继续按只读命令和原探针手册验收。'},
  {id:'ai-attention-walk',track:'ai',stage:1,title:'把三行注意力手算与真实SDPA对齐',chapter:'attention-mechanics',pack:'mechanism-walkthroughs',files:['attention_trace.py'],anchor:'v43-attention-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU张量',observe:'逐项核对分数、权重、输出，再改变缓存位置、无效key、Q/K方向与分头坐标。',scope:'float64 CPU数值对照；不报告GPU内核或性能收益。'},
  {id:'ai-decoder-walk',track:'ai',stage:1,title:'四种形状正确的接线错误，最早错在哪里',chapter:'transformer-block',pack:'mechanism-walkthroughs',files:['decoder_trace.py','tiny_decoder.py'],anchor:'v43-decoder-practice',env:'Python + PyTorch · 本次2.5.1 CPU',kind:'实际CPU模型与梯度',observe:'追踪664参数模型的每层数值，核对归一化轴、第二分支输入、门控、残差与未来扰动。',scope:'固定输入和种子的前向及标量梯度；不是大型模型质量或GPU性能测试。'},
+ {id:'ai-tiny-decoder-forward',track:'ai',stage:1,title:'换掉前文，跟到最后一行候选分数',chapter:'transformer-block',anchor:'native-tiny-decoder-context',pack:'tiny-decoder-forward',files:['trace_forward.py'],env:'Python 3.12 · PyTorch 2.5.1 · CPU · 需下载同站 SDPA 实验包',kind:'原模型前向与中间量复算',observe:'固定末位和参数，只替换前一项，核对查表、读取权重、两次回加和最终得分。',scope:'664 参数小模型，固定词元编号，CPU 双精度。'},
  {id:'agent-history-walk',track:'agent',stage:2,title:'结果记录前后退出，恢复会重新读取吗',chapter:'durable-workflows',pack:'mechanism-walkthroughs',files:['workflow_history.py'],anchor:'v43-history-practice',env:'Python 3.9+ · 标准库 / SQLite',kind:'实际进程与持久历史',observe:'在读取后、结果提交后分别退出，改源值23为999，再比较恢复结果与活动调用次数。',scope:'本地解释器，活动只读资料和生成文本；不是Temporal SDK或Kairo运行结果。'}
 );
 labLearningCatalog.push(
@@ -16355,5 +16397,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="9af43f11d85e1ef00f242c61ab36411a3aae32cae591d91bbbc33dcf7e0b2b3f";
+const staticReadingVersion="1c95fc13a35397c528b2beac9588b90a7c0cd957f9987cd9947c18c8aa600f6b";
 

@@ -142,6 +142,22 @@ for label, actual, expected in (
   link('position-encoding','先推导位置怎样影响匹配')+
   link('autograd-training','继续让664个参数完成一次更新')
  ]);
+ decoder.sections[7][1]+='<details class="progressive-detail"><summary>实跑 · 换一个前文，跟到最后一行候选分数</summary>'+
+  h('native-tiny-decoder-context','同一个词元在解码器块里何时变得不同')+
+  p('回到<a href="/article/attention-mechanics/#same-position-different-prefix">注意力章的两条输入</a> [0,1] 和 [4,1]。固定入门的 664 参数模型，沿原来的代码更新一次，再用同一份参数完成两次前向。这里只看位置 1，行号从 0 数。')+
+  trainingFigure('tiny-decoder-context','末位词元和位置相同，第一处读到不同上下文的是注意力。图中选词来自实际候选分数。')+
+  table(['位置 1 的观测','[0,1]','[4,1]'],[
+   ['输入向量 X 的第一项','0.0434','0.0434'],
+   ['头 0 读取位置 0、1 的权重','0.5546、0.4454','0.4659、0.5341'],
+   ['两头拼回后的第一项','0.5627','0.2569'],
+   ['两次残差相加后的第一项','0.4424','0.3538'],
+   ['最后一行给编号 1、7 的分数','3.7804、3.4653','3.5822、3.5940'],
+   ['最高分对应的编号','1','7']
+  ])+
+  p('位置 1 自己的查询向量没有变化。位置 0 换了词元，它的匹配向量和内容向量都变了。模型重新分配两格的读取权重，并用新的内容做加权汇总。这个差异经过残差相加和前馈，最后传到词表分数。若改的是后面的编号（[0,1] → [0,7]），位置 0 的全部八个候选分数都保持不变。')+
+  p('程序在原模型各模块的输入或输出旁记录实际张量。注意力权重另用同一次前向产生的 Q、K、V 重算，和原生 CPU 注意力的输出逐项核对。解压后把本包和原 SDPA 实验包放在相邻目录，运行 <code>python -B trace_forward.py --sdpa-pack ../sdpa-cache --output replay.json</code>。')+
+  '<p class="practice-links"><a href="/labs/tiny-decoder-forward.zip" download>下载源码与记录 ↓</a> · <a href="/labs/sdpa-cache.zip">原 SDPA 实验包 →</a> · <a href="/labs/tiny-decoder-forward/README.md">运行说明 →</a> · <a href="/labs/tiny-decoder-forward/validation.json">完整向量与候选分数 →</a></p></details>';
+ decoder.updated='2026.11.11';
 
  const position=select('position-encoding',9),r=position.sections.map(s=>s[1]);
  replace(position,[
