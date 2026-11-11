@@ -1,0 +1,49 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e76fd86a14a232b5770e8aeb398ff3838d506f07",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_DISTINGUISH_EXPERIMENT_EVIDENCE_2026-11-12.json": "acab11a2bbb9cf7a3bfb20cce4eec2d645a6c8f44b4eaf912da7636689ccc420"
+  },
+  "body_revisions": [
+    {
+      "id": "terraform-state",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "bf7c128f93df62eacff660cf9dbac0df21c59eb6785a5281a1f5fd4af7b191c4",
+      "reviewed_content_sha256": "aeacf82041882422da6bbd2b2ef919828e4d3c41a0b57454d48b1a13da88c609",
+      "scope": "Separate state refresh from repair of the object, then connect to the independent Argo CD experiment.",
+      "observation": "Terraform refresh changes the binding while the file still contains outside. A normal apply restores alpha.",
+      "headings": [
+        "先分清配置、状态记录与实际资源",
+        "计划先读取，执行才兑现变更",
+        "状态锁保护的是哪一份共同记录",
+        "一次关闭刷新，怎样得到误导性的绿灯",
+        "只刷新状态，为什么文件仍然没有恢复",
+        "工作空间分开了状态，为什么仍会互相覆盖",
+        "把计划、状态和交付流程连起来",
+        "运行实验，分别读取三份事实"
+      ]
+    },
+    {
+      "id": "gitops-reconciliation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d3c21b37755f3c87ccfbbcbc1b79864414cffcd8736d63f4d40c2cd55bed16b9",
+      "reviewed_content_sha256": "b9b7f2671aae273ee01704f66fa32d581954fb0fa3e56c867ce59df7492cac9a",
+      "scope": "Identify the explicit self-heal action that modifies the deployment, and contrast it with Terraform refresh.",
+      "observation": "With the same Git revision, the independent Argo CD run reports the drift at two replicas before self-heal and restores one replica after it is enabled.",
+      "headings": [
+        "先画出Git、控制器、集群和业务四层关系",
+        "Synced、Healthy与业务正确，分别证明什么",
+        "自动同步、自愈和清理，是三个不同开关",
+        "清理依据受管关系，不是删除所有多余对象",
+        "环境变量为什么不会随ConfigMap自动改值",
+        "三个固定提交，把控制面绿灯与用户结果对上",
+        "回退要改变期望，再验证旧版本还能工作",
+        "从源到响应，按最后成功阶段排障",
+        "在独立kind集群重放，再读完整源码"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

@@ -46,6 +46,20 @@ const naive=recovery.naive_latest_database;
 assert.equal(naive.physical_integrity,'ok');assert(naive.database_point_within_15_minutes&&!naive.business_RPO_pass);
 assert.deepEqual(naive.A_report_rows,['R1','R2','R3','R4']);assert.deepEqual(naive.A_readable_reports,['R1','R2','R4']);
 assert.deepEqual(naive.business_problems,[{report:'R3',object:'object-v3',reason:'missing_object_version'}]);
+const capacity=fs.readFileSync('dist/article/elasticity/index.html','utf8')
+ .split('id="section-4"')[1]?.split('</section>')[0];
+const completeAnchor='subsection-5-1dwp2yh';
+assert(capacity?.includes('/article/resilience/#'+completeAnchor));
+assert(capacity.includes('/labs/recovery-artifacts-retrieval/validation.json'));
+assert(fs.readFileSync('dist/article/resilience/index.html','utf8').includes('id="'+completeAnchor+'"'));
+const [missingObject]=naive.business_problems;
+assert(naive.A_report_rows.includes(missingObject.report)&&!naive.A_readable_reports.includes(missingObject.report));
+assert(recovery.all_materials_present.A_readable_reports.includes(missingObject.report));
+assert.equal(recovery.all_materials_present.A_readable_reports.length,4);
+for(const value of ['seq='+naive.seq,naive.physical_integrity,missingObject.report,missingObject.object])
+ assert(capacity.includes('<code>'+value+'</code>'),value);
+assert(capacity.includes('160 次/秒以剩余副本还能完成原请求为前提'));
+assert(capacity.includes('独立本机恢复实验')&&capacity.includes('跨区故障后的有效吞吐和服务恢复用时，仍需在目标环境从入口验证'));
 assert.equal([4,4,4,16,5,5,4].reduce((a,b)=>a+b),42);assert.equal(42-16+32,58);assert.equal(58-45,13);
 
 const effects=record['recovered_effects.py'].result;

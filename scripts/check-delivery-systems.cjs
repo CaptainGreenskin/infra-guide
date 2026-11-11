@@ -70,6 +70,17 @@ const evidenceSource=html=>{
 };
 const gitopsPage=fs.readFileSync('dist/article/gitops-reconciliation/index.html','utf8');
 const deliveryPage=fs.readFileSync('dist/article/delivery/index.html','utf8');
+const terraformPage=fs.readFileSync('dist/article/terraform-state/index.html','utf8');
+const section=(html,number)=>html.split('id="section-'+number+'"')[1]?.split('</section>')[0];
+const refresh=section(terraformPage,5),selfHeal=section(gitopsPage,3);
+assert(refresh?.includes('/article/gitops-reconciliation/#section-3')&&selfHeal?.includes('/article/terraform-state/#section-5'));
+assert(refresh.includes('/labs/delivery-systems/validation.json')&&refresh.includes('两项独立实验的记录'));
+assert(refresh.includes('仍是 <code>'+t.refresh_only.actual_file_after_apply+'</code>'));
+assert(refresh.includes('才写回 <code>'+t.repair.actual_file+'</code>'));
+assert.equal(gr.self_heal_off.status.revision,gr.self_heal_on.status.revision);
+assert(refresh.includes('同一个 Git 提交下')&&refresh.includes('仍有 '+gr.self_heal_off.live_replicas+' 个副本'));
+assert(refresh.includes('开启自愈后才回到 '+gr.self_heal_on.live_replicas+' 个'));
+assert(selfHeal.includes('实际文件仍是 <code>'+t.refresh_only.actual_file_after_apply+'</code>'));
 assert(evidenceSection(gitopsPage)?.includes('/article/delivery/#section-6'));
 assert(evidenceSection(gitopsPage).includes('/labs/delivery-systems/validation.json'));
 assert(deliveryPage.split('id="section-6"')[1]?.split('</section>')[0].includes('/article/gitops-reconciliation/#'+gitopsAnchor));

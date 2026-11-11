@@ -525,7 +525,8 @@
         "sequence-models",
         "translation-reading-path",
         "repeat-next-token",
-        "generation-cache-steps"
+        "generation-cache-steps",
+        "verify-next-token-loss"
       ],
       "visible_targets": [
         "text-to-next-token",
@@ -534,7 +535,8 @@
         "decoder-block-order",
         "repeat-next-token",
         "generation-cache-steps",
-        "training-versus-generation"
+        "training-versus-generation",
+        "verify-next-token-loss"
       ]
     },
     {

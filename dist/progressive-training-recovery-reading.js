@@ -55,7 +55,7 @@
  '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本节的DDP对照沿固定配置继续。'),
 
  p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。',
- '先核对各rank载入同一版本的状态，next_epoch与恢复后首批输入对应，再观察数值和执行时间。CPU固定路径的精确相等为本实验提供基线；GPU上的舍入、算法选择和通信顺序另按目标确定性设置定义容差。若要求按位一致，需要验证相应算子与通信路径。',
+ '先从起始轮次和轮末日志核对读回边界。要核对首批样本 ID，还需在加载器交付时另行记录。原比较器用 <code>torch.equal</code> 比较张量值。若目标 GPU 的精确比较失败，保留该结果，再按预先声明的容差另做浮点对照。配置、计数和各 rank 随机状态仍要逐项核对。',
  '恢复记录按阶段展开：等待整组资源→创建新进程并建立通信组→分配目标模型/优化器→读取和安装状态→完成首个有效更新→重做尚未提交的工作。实际初始化与读取顺序由实现决定。每rank记录attempt、设备、文件/分片版本和阶段耗时，便于找到最早停住的位置。',
  '例如一个rank读不到分片，其余rank可能已经进入集合通信并最终timeout。把缺失对象与其他rank所处阶段放到同一条依赖链，才能解释等待。若报告恢复“四分钟”，还需写明是从任务失败开始，还是从重新获得设备开始；这会直接改变下一章的端到端成本。'),
 
@@ -110,6 +110,23 @@
  ]);
 
  const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ const physicalResume=p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。');
+ if(!recovery.sections[3][1].includes(physicalResume))throw Error('Missing physical recovery handoff');
+ recovery.sections[3][1]=recovery.sections[3][1].replace(physicalResume,()=>
+  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
+  fold('执行两机四卡的三目录对照',p('在 A、B 两端的 DDP 实验包目录执行。各自保留 <code>NODE_RANK</code>（A 为 0，B 为 1），共用指向 A 的 <code>MASTER_ADDR</code> 与同一 <code>MASTER_PORT</code>。把 <code>RECOVERY_ROOT</code> 换成双方都能读写的同一新建共享目录。每条 <code>launch_2nodes.sh</code> 都在两端运行，确认两端成功退出后再执行下一条。')+
+   trainingCode('两端依次运行三次训练，最后选一端比较','SHELL',String.raw`export RECOVERY_ROOT=/mnt/shared/cloudinfra-ddp/recovery-001
+
+# 这三条启动命令分别在 A、B 都执行。两端完成一条才开始下一条。
+TRAIN_OUT="$RECOVERY_ROOT/split" bash launch_2nodes.sh --epochs=4
+TRAIN_OUT="$RECOVERY_ROOT/full" bash launch_2nodes.sh --epochs=6
+TRAIN_OUT="$RECOVERY_ROOT/resumed" bash launch_2nodes.sh --epochs=6 \
+  --resume="$RECOVERY_ROOT/split/checkpoint.pt"
+
+# 仅选一端，从共享目录读取两个第 6 轮检查点。
+python -B compare_checkpoints.py \
+  "$RECOVERY_ROOT/full/checkpoint.pt" "$RECOVERY_ROOT/resumed/checkpoint.pt"`)+
+   p('按默认 FP32 配置，每轮应有 16 次实际更新。三份日志分别累计 64、96、32 次。恢复日志的 <code>start_epoch=4</code>，第一条轮末记录为第 5 轮。<code>split</code> 仍保存 <code>next_epoch=4</code>，两份终点都是 <code>next_epoch=6</code>。')));
  const saveBoundary='<p>本章选择轮末且累积窗口已结束的保存点';
  if(!recovery.sections[1][1].includes(saveBoundary))throw Error('Missing checkpoint state handoff');
  recovery.sections[1][1]=recovery.sections[1][1].replace(saveBoundary,

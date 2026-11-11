@@ -85,6 +85,8 @@
  fold('展开terraform_state.py：固定版本、并发屏障与逐阶段断言',t8[1])+linkRow(links(t[7]))+
  p('复算一条完整路径：alpha三者一致→实物outside→不刷新计划0→刷新计划2→应用刷新后绑定消失→普通计划create→执行回alpha。然后解释blue为何仍能覆盖green写过的同一个文件。答案要分别落到读取、记录、执行与归属，并能从记录中找出各阶段的独立读数。')
  ],'沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。');
+ terraform.sections[4][1]+=p('看<a href="/labs/delivery-systems/validation.json">两项独立实验的记录</a>。Terraform 应用仅刷新计划后，<code>managed.txt</code> 仍是 <code>outside</code>，执行普通修复计划才写回 <code>alpha</code>。另一项实验用 Argo CD 按 Git 声明持续检查集群。同一个 Git 提交下，控制器发现差异时仍有 2 个副本，开启自愈后才回到 1 个。<a href="/article/gitops-reconciliation/#section-3">到 C6.3 看哪项设置会触发修复 →</a>');
+ terraform.updated='2026.11.12';
 
  const identityFigure='<figure class="training-figure"><a href="diagrams/v70-identity-models.svg" target="_blank" rel="noopener" aria-label="放大：AWS角色身份与Kubernetes权限规则的不同位置"><img src="diagrams/v70-identity-models.svg" width="1120" height="760" alt="AWS角色是可被代入的身份；Kubernetes ServiceAccount是主体，Role保存权限规则，RoleBinding关联主体与规则。两条请求都先认证再授权。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两套对象模型分别解释自己的请求。AWS示意没有实际云执行；Kubernetes具体观测来自独立原生API夹具。<a href="diagrams/v70-identity-models.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const credentialWindowFigure='<figure class="training-figure"><a href="diagrams/iam-credential-window.svg" target="_blank" rel="noopener" aria-label="放大凭据有效期图"><img src="diagrams/iam-credential-window.svg" width="720" height="264" loading="lazy" alt="10:00 签发，10:30 停止签发新凭据，原凭据到 10:45 才到期。接收方可按当前权限或撤销规则决定是否提前拒绝。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只停止签发的模型中，原凭据还有 15 分钟的时间有效期。是否允许请求还要查看接收方规则。<a href="diagrams/iam-credential-window.svg" download>下载 SVG ↗</a></figcaption></figure>';

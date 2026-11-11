@@ -232,6 +232,12 @@ checkArchive();
 checkPage();
 const lesson = read('dist/article/kairo-practice/index.html').split('id="kairo-audit-coverage-check"')[1];
 assert(lesson, 'the resource audit comparison is directly reachable');
+const samplingAnchor = '/article/agent-observability/#native-tail-sampling-ledger';
+assert(lesson.includes(samplingAnchor));
+const sampling = read('dist/article/agent-observability/index.html').split('id="native-tail-sampling-ledger"')[1]?.split('id="native-model-mcp-recovery-observation"')[0];
+assert(sampling?.includes('/article/kairo-practice/#kairo-audit-coverage-check'));
+assert(sampling.includes('<code>R27-normal</code>') && sampling.includes('<code>effects</code>'));
+assert(lesson.includes('<code>provenance_verified</code> 仍为 <code>false</code>'));
 const readerCode = lesson.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]
  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 function checkReaderAudit(directory) {
@@ -239,7 +245,8 @@ function checkReaderAudit(directory) {
   cwd: directory, encoding: 'utf8', timeout: 10000,
  }).trim().split('\n');
  assert.deepEqual(lines, ['recorded record_consistent pass',
-  'extra-read record_consistent fail', 'no-audit record_consistent pending']);
+  'extra-read record_consistent fail', 'partial-audit record_consistent pending',
+  'no-audit record_consistent pending']);
 }
 checkReaderAudit(folder);
 

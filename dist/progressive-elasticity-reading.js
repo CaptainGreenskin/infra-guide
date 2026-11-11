@@ -125,6 +125,9 @@
   ])+
   p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
   p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
+ a.sections[3][1]+=p(
+  '第三行算出的 160 次/秒以剩余副本还能完成原请求为前提。如果各区都从同一处读取附件，故障演练还要核对用户拿到的报告是否完整。',
+  '<a href="/article/resilience/#subsection-5-1dwp2yh">看 C9.4 的独立本机恢复实验</a>。SQLite 恢复到 <code>seq=103</code>，完整性检查为 <code>ok</code>，数据库里仍有报告 <code>R3</code> 的记录。它引用的 <code>object-v3</code> 缺失，按应用的读取逻辑取不到完整的 R3。材料齐全的那组对照里，四份报告都可读。<a href="/labs/recovery-artifacts-retrieval/validation.json">查看实际报告读取记录 →</a>。跨区故障后的有效吞吐和服务恢复用时，仍需在目标环境从入口验证。');
  a.sections[4][1]+=
   '<h3 id="bounded-queue-downstream-wait">入口都只排一项，额外的任务在哪里等</h3>'+
   p('实验限制入口只排 1 项，下游同时只接 1 项。先让 A 占住下游，再按顺序提交 B、C、D。两轮都在 A 归还之前读快照，只把可用的工作线程数从 1 调到 2。')+

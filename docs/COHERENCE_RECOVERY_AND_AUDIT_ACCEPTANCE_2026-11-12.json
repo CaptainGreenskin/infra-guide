@@ -1,0 +1,126 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e76fd86a14a232b5770e8aeb398ff3838d506f07",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_DISTINGUISH_EXPERIMENT_EVIDENCE_2026-11-12.json": "0476bd7f92fa447d48a1dc1b343d40c78e56d368f40b33dd52d140b6d4fa1fed"
+  },
+  "source_revisions": {
+    "dist/progressive-terraform-identity-reading.js": {
+      "previous_sha256": "223a49fd1bbfd2cf6c1f06c1d11102d018ff46e3edfeef4e3221259ecd3e4e71",
+      "reviewed_sha256": "1727e8b78253ef110d56ec22620119ee8a2ae65a03725ec70148ddb562099789",
+      "scope": "Separate state refresh from repair of the object, then connect to the independent Argo CD experiment."
+    },
+    "dist/progressive-consensus-gitops-reading.js": {
+      "previous_sha256": "f98242d3de8a2c9f8492354c00ef2910484cdd2a85e2780a985e42c94592198f",
+      "reviewed_sha256": "cf3ff1b719c8566790df803a723fc53a9cda4eccbbeac65607e6e69a536a1c6c",
+      "scope": "Identify the explicit self-heal action that modifies the deployment, and contrast it with Terraform refresh."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "2a2290047078ad83c4fbf49161b6aeae2f8cd93f84dd90cf5af24f6dfaf91ef6",
+      "reviewed_sha256": "6a31626f375766f34f60a7e5a019cf45d2bd26f520631e2ee4acad9073367e20",
+      "scope": "Connect a calculation of remaining compute capacity to the experiment that verifies application data and its attachment."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "f0139ea79c74b32e4e57121989631f9f09e0c69d36a5f54f1bef8649e1632123",
+      "reviewed_sha256": "de818ddc4d86b014be39c2d9c1b4638d85ef93e12fe35b064c0e10b8916daa04",
+      "scope": "Follow two real inputs through the same attention head, explain which labels train the model, and put the existing loss command beside its expected result."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "9950686a47259cb5a2a298578f53e3226984c7f83e49e8276c0893e97968f707",
+      "reviewed_sha256": "42c9ebf49dc7af903f79246f303eea3e1ab08f4ecc6c23406fc9dba26903a4b5",
+      "scope": "Point to the comparison that preserves the original checkpoint, and explain the effect of an in-place resume."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "3432d00ead8c5ba11d3e5ab84c5fa56ba2465d21f99e5b37809ebfef36349f92",
+      "reviewed_sha256": "5297426889b4d83e068c6bc587cce252c2ed5c252f339435effd574851284c97",
+      "scope": "Compare uninterrupted and resumed two-node runs in three output directories while retaining the original checkpoint."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "79bfcd05a7c25b8265995ee4f1f6cd51d3beb93f50013b14168b8030382153c6",
+      "reviewed_sha256": "a7b901589808da36d28dad9a10233e2d2fbd7d80befad256efbc95c1cd6b4c55",
+      "scope": "Use one actually omitted trace to explain why a partial evidence export does not prove zero effects."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "8b4729857c2bae029fa9b9ee97ad1a3068437e0991ea43e986ddf641475ca3ce",
+      "reviewed_sha256": "d5d924443742197a279d567d0c0d4cbed3b4fa61b249d2ccded4811c7834161e",
+      "scope": "Require a complete resource audit before passing the comparison and distinguish matching records from proven provenance."
+    },
+    "scripts/check-delivery-systems.cjs": {
+      "previous_sha256": "4ba36ff9483057bd4fb0d18c79c9fbe284b9be207da38a58f0d1280289fb1f85",
+      "reviewed_sha256": "bf41d796004d6a0298541157c948e041e2c517bcdf7a7529fa7413d6a1baa05b",
+      "scope": "Check the exact drift observations, independent state changes and reciprocal links."
+    },
+    "scripts/check-agent-task-reconnect.cjs": {
+      "previous_sha256": "9b770fc1f16939d66356beb03f82a1699bb261f8f1c46252138231acd1d05d51",
+      "reviewed_sha256": "41fb1b95b8a98b79232f623448256e11a401cef371e49d2645cec2819ac0c0a4",
+      "scope": "Check complete, forbidden, partial and absent audit cases, with exact lesson links."
+    },
+    "scripts/check-recovery-artifacts-retrieval.cjs": {
+      "previous_sha256": "83fd9a127b2d1c6e3895391f1be82997892d32eb5b80c2e0ad6094f36a812e69",
+      "reviewed_sha256": "827e990a34bd5fb09f0fa743e816aa5ddc28fa1ad771670460ddf4e09146b220",
+      "scope": "Bind the capacity handoff to the exact SQLite report and object retrieval evidence."
+    },
+    "scripts/check-multinode-launch.cjs": {
+      "previous_sha256": "8318cf0daf8049b0c22986a95d566af4d4256bd7e032982188718349bc5de402",
+      "reviewed_sha256": "5c6a5cde320d13061ad4de3833920d8f93b74734882bafe4e0ce5e33c9ff5c6d",
+      "scope": "Verify the three output directories, unchanged source and exact comparison command and boundary."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "206c58418c1c7d70efc724e20a783701c9298ba2dd8aab5a75852eb6fcd0bf66",
+      "reviewed_sha256": "18938f9bff83a23b8162ea0cb5078bff87ad4ffc6665d124ff8490434f693565",
+      "scope": "Verify the attention figures and rows against the CPU record and require the loss rerun and label explanation at the exact reading location."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "3c8b7e5ec321472412d57285e8d8a0c6f74b8177d8b7bc3f64dea16b04bdc0ad",
+      "reviewed_sha256": "63bcfddf9f54c3347972b7ba0ab94832c555fcba35d4dc3b50afb7f4ce709a20",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "0eede51f9767546b02f0e1a95b8cb7890329d6133dca95505452dc188058ff03",
+      "reviewed_sha256": "3fd27b2264fa5c864a40d32cf5cea6188f784256af1bb6c7a64ade64da91d669",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_RECOVERY_AND_AUDIT_ACCEPTANCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2c36658b6d7312ecbcd0a172fbbf5635cc8470513861a559502541e68e989351",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "5fed0b3aa0ef01b9b9d5512ca561ef5c57fd0e0a5eb0e9a903c6056be7debe26",
+      "reviewed_sha256": "0e2080e6178d363983d4cdc13ad5b9cc971544fe58983cdda87fde201280657d",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "f6a2629a3aae82a5535d29a7a3a24713d488371b6a49e77c279bb8fe8394fe08",
+      "reviewed_sha256": "44ba090860133c2980b82aaa40e66b7050f8a863d5cdddbfa08290e0a4762647",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "12455773433b6f3e881e46d5cadeb92fe00fa3be962106b6a76cb332b9ff5e21",
+      "reviewed_sha256": "5cc6329664c05f2001b1453462c2ad242f888b51112166f77d1534cf1675e160",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "e76fd86a14a232b5770e8aeb398ff3838d506f07",
+    "chapters": 78,
+    "changed_bodies": [
+      "terraform-state",
+      "gitops-reconciliation",
+      "elasticity",
+      "transformer-model",
+      "multinode-lab",
+      "checkpoint-recovery",
+      "agent-observability",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "checkpoint-recovery": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

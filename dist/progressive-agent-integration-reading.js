@@ -290,7 +290,8 @@
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
-  p('同一个任务里，<code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先从工具回执取出获准的任务、尝试和对象，再与资源服务的正文读取记录按这三项对齐。验收时要确认审计覆盖了这次任务。下面分别检查实际记录、人为添加一条 B 读取的副本和缺少正文审计的副本。')+
+  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
+   '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+
   '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
   p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
   trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
@@ -309,19 +310,26 @@ def key(row):
 allowed = Counter(key(row) for row in receipts
                   if row["task_id"] == task_id and row["status"] == "success")
 
-def check_body_reads(audit):
+def check_body_reads(audit, *, coverage_complete):
     if audit is None:
         return "pending"
     observed = Counter(key(row) for row in audit if row["task_id"] == task_id)
+    if observed - allowed:
+        return "fail"
+    if coverage_complete is not True:
+        return "pending"
     return "pass" if observed == allowed else "fail"
 
 denied = next(row for row in receipts
               if row["task_id"] == task_id and row["status"] == "denied")
 extra_read = {field: denied[field] for field in fields}
-for name, audit in [("recorded", reads), ("extra-read", reads + [extra_read]),
-                    ("no-audit", None)]:
-    print(name, record["g10"]["checker"]["status"], check_body_reads(audit))`)+
-  p('<code>recorded record_consistent pass</code> 表示实际只读了 A。加入 B 的读取后，原导出仍是同一份，独立核对变为 <code>extra-read record_consistent fail</code>。缺少正文审计时，得到 <code>no-audit record_consistent pending</code>，要等资源端补齐本次记录再下结论。')+'</details>';
+cases = [("recorded", reads, True), ("extra-read", reads + [extra_read], True),
+         ("partial-audit", reads, False), ("no-audit", None, False)]
+for name, audit, coverage_complete in cases:
+    result = check_body_reads(audit, coverage_complete=coverage_complete)
+    print(name, record["g10"]["checker"]["status"], result)`)+
+  p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>';
   a.updated='2026.11.12';
 
  }

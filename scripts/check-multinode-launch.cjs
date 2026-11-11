@@ -67,6 +67,25 @@ for(const file of ['verify_launch.py','launch_worker.py'])assert(pre.includes(re
 assert(html.includes('id="multinode-launch-run"')&&html.includes('labs/multinode-launch.zip'));
 assert(html.includes('7.450580596923828e-9')||html.includes('7.45e-9')||html.includes('7.45×10'));
 assert(/逐位|位级/.test(html)&&/1e-6|10⁻⁶|10<sup>−6/.test(html));
+const multinodeRecovery=html.split('id="section-4"')[1].split('id="section-5"')[0];
+assert(multinodeRecovery.includes('只需在原目录续跑时')&&multinodeRecovery.includes('替换原目录的 <code>checkpoint.pt</code>'));
+assert(multinodeRecovery.includes('href="/article/checkpoint-recovery/#section-4"'));
+const recoveryHtml=fs.readFileSync(path.join(root,'dist/article/checkpoint-recovery/index.html'),'utf8');
+const physicalRecovery=recoveryHtml.split('id="section-4"')[1].split('id="section-5"')[0];
+assert(physicalRecovery.includes('href="/article/multinode-lab/#native-ddp-target-preflight"'));
+assert(physicalRecovery.includes('物理两机 GPU/NCCL 的训练恢复仍待目标环境执行'));
+for(const name of ['NODE_RANK','MASTER_ADDR','MASTER_PORT'])assert(physicalRecovery.includes(`<code>${name}</code>`));
+const physicalCommands=[...physicalRecovery.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)]
+ .map(m=>decode(m[1])).find(block=>block.startsWith('export RECOVERY_ROOT='));
+assert(physicalCommands);
+const commandLines=physicalCommands.replace(/[ \t]*\\\n[ \t]*/g,' ').split('\n');
+assert.deepEqual(commandLines.filter(line=>line.startsWith('TRAIN_OUT=')),[
+ 'TRAIN_OUT="$RECOVERY_ROOT/split" bash launch_2nodes.sh --epochs=4',
+ 'TRAIN_OUT="$RECOVERY_ROOT/full" bash launch_2nodes.sh --epochs=6',
+ 'TRAIN_OUT="$RECOVERY_ROOT/resumed" bash launch_2nodes.sh --epochs=6 --resume="$RECOVERY_ROOT/split/checkpoint.pt"',
+]);
+assert(commandLines.includes('python -B compare_checkpoints.py "$RECOVERY_ROOT/full/checkpoint.pt" "$RECOVERY_ROOT/resumed/checkpoint.pt"'));
+assert(physicalRecovery.includes('原比较器用 <code>torch.equal</code>')&&physicalRecovery.includes('按预先声明的容差另做浮点对照'));
 const mutations=[r=>{r.runs.full.rank_observations[2].local_rank=2;},r=>{r.runs.resumed.records.find(x=>x.event==='epoch').applied_optimizer_steps=15;},r=>{r.final_state.rng_rank_count=3;},r=>{r.recovery_numerical_comparison.bitwise_equal=true;},r=>{r.recovery_numerical_comparison.contract.floating_atol=1e-4;},r=>{r.environment.physical_hosts=2;},r=>{r.negative_probes.changed_rank_rng.model_weights_unchanged=false;},r=>{r.negative_probes.changed_configuration.checkpoint_created=true;}];
 for(const mutate of mutations){const r=structuredClone(saved);mutate(r);assert.throws(()=>check(r),'proof mutation must be rejected');}
 cp.execFileSync('python3',['-c',`from pathlib import Path

@@ -66,7 +66,9 @@ assert(block.includes('<summary>手算 · 三个分数怎样变成 1/6、1/3、1
 const visibleRead=block.slice(block.indexOf('id="decoder-attention-first-pass"')).split('<details')[0];
 const measuredRead=block.split('<summary>实测 · 核对输入、注意力和候选分数</summary>')[1]?.split('</details>')[0];
 assert(measuredRead,'the raw forward run is available as a separate verification step');
-assert(visibleRead.includes('单独手算一项')&&visibleRead.includes('4×3/4 + 2×1/4 = 3.5')&&visibleRead.includes('0×1/4 + 2×3/4 = 1.5'));
+assert(visibleRead.includes('用第 3 节的逐行线性变换，从归一化后的本行算出三组向量')&&visibleRead.includes('这一步只用本行，末格的 Q 也相同。'));
+assert(visibleRead.includes('第 0 个头的末格')&&visibleRead.includes('除以 √4=2'));
+assert(visibleRead.includes('按前一格、末格的顺序列数值，只算读回向量的第一项'));
 assert(!/\d\.\d{6}/.test(block.replace(/<details\b[\s\S]*?<\/details>/g,'')),'recorded decimals do not interrupt the first reading');
 assert(block.includes('[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7'),'the real prediction closes the opening question');
 assert.deepEqual(contextPair[0].layers.x[1],contextPair[1].layers.x[1],'same token and position give identical decoder input');
@@ -78,8 +80,15 @@ for(const result of contextPair){
  const [first,self]=result.reference.weights[0][1];
  const [firstValue,selfValue]=result.reference.v[0].map(row=>row[0]);
  const joined=result.layers.joined[1][0];
+ const scores=result.reference.raw_scores[0][1],exponents=scores.map(value=>Math.exp(value-Math.max(...scores)));
+ const total=exponents.reduce((sum,value)=>sum+value,0);
+ assert(exponents.every((value,i)=>Math.abs(value/total-result.reference.weights[0][1][i])<1e-12));
  assert(Math.abs(first*firstValue+self*selfValue-joined)<1e-12,'reference proportions recover the native head component');
  const prompt=JSON.stringify(result.prompt),format=value=>value.toFixed(7);
+ const roundedScores=scores.map(value=>value.toFixed(5).replace('-','−')).join('、');
+ const compact=[first,firstValue,self,selfValue].map(value=>value.toFixed(4));
+ assert.equal((Number(compact[0])*Number(compact[1])+Number(compact[2])*Number(compact[3])).toFixed(4),joined.toFixed(4));
+ assert(visibleRead.includes(`<li>${prompt} 的匹配分数为 ${roundedScores}，读取比例为 ${compact[0]}、${compact[2]}。<br>${compact[0]}×${compact[1]} + ${compact[2]}×${compact[3]} ≈ ${joined.toFixed(4)}。</li>`));
  const factors=[first,firstValue,self,selfValue].map(format);
  assert.equal((Number(factors[0])*Number(factors[1])+Number(factors[2])*Number(factors[3])).toFixed(6),joined.toFixed(6));
  assert(measuredRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));
@@ -101,8 +110,9 @@ assert(blockOverview>=0&&blockOverview<block.indexOf('id="decoder-attention-firs
 const beforeBlockFigure=block.slice(0,block.lastIndexOf('<figure',blockOverview));
 assert(beforeBlockFigure.includes('块的输入 X')&&beforeBlockFigure.includes('加回 X，得到 H₁')&&beforeBlockFigure.includes('加回 H₁，得到 H₂'),
  'introduce all three symbols before readers see the decoder figure');
+assert(beforeBlockFigure.includes('归一化，用每行自己的数调整这一行的数值尺度'));
 assert(block.includes('位置 2 读到编号 2，要预测下一项 3'));
-assert(block.includes('直接送去相加的 X 和 H₁ 则保持原样'),'the bypass carries the original, unnormalized values');
+assert(block.includes('直接送去相加的 X 和 H₁ 保持原样'),'the bypass carries the original, unnormalized values');
 const continuation=block.slice(block.indexOf('id="repeat-next-token"'));
 const prefix=[...run.generation.prompt];
 const fullInputLengths=[];
@@ -139,9 +149,13 @@ const labels=fixture.rows[0];
 assert(target.includes(`训练样本 ${JSON.stringify(labels)}`)&&target.includes(`拿 ${JSON.stringify(labels.slice(0,-1))} 当输入，拿 ${JSON.stringify(labels.slice(1))} 当逐行的预测目标`)&&target.includes(`[0,1] 对应的目标是 ${labels[2]}`),
  'the default training text shows how the real sample defines a different next target');
 const lossTarget=labels[3];
-assert(target.includes(`它读到 ${JSON.stringify(labels.slice(0,3))}，目标是 ${lossTarget}`));
-assert(target.includes(`原 CPU 更新跳过了目标 ${lossTarget}`)&&fixture.labels[0][0][2]===-100);
-// Full-precision CPU output from the optional command in the lesson.
+assert(target.includes(`位置 2）读到 ${JSON.stringify(labels.slice(0,3))}，目标是 ${lossTarget}`));
+assert.deepEqual(fixture.labels[0].map(row=>row.filter(value=>value!==-100)),[[1],[5,6,7]]);
+assert(target.includes('第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7'));
+const averageAt=target.indexOf('四项有效损失取平均'),demoAt=target.indexOf(`原 CPU 更新跳过了目标 ${lossTarget}`);
+assert(averageAt>=0&&averageAt<demoAt&&demoAt<target.indexOf(`编号 ${lossTarget} 的分数约`)&&fixture.labels[0][0][2]===-100,
+ 'state the real training objective and the excluded demonstration row before calculating its loss');
+// Full-precision CPU output from the runnable exercise.
 const lossScores=[1.4657852413678996,-2.9185050599653573,6.645484889199837,-3.9739954335607424,-0.6178341348679973,5.229123914568767,0.11623921864330786,-4.022945092513323];
 const maxLossScore=Math.max(...lossScores);
 const exponents=lossScores.map(score=>Math.exp(score-maxLossScore));
@@ -150,9 +164,11 @@ const probability=exponents[lossTarget]/exponentSum,loss=-Math.log(probability);
 assert(target.includes(`编号 ${lossTarget} 的分数约 ${lossScores[lossTarget].toFixed(3).replace('-','−')}，八个候选的最高分约 ${maxLossScore.toFixed(3)}`));
 assert(target.includes(`${exponents[lossTarget].toFixed(8)} ÷ ${exponentSum.toFixed(5)} ≈ ${probability.toFixed(8)}，单项损失 −ln p ≈ ${loss.toFixed(2)}`),
  'show the calculated probability and single-target loss in the default reading');
-const lossCommand=training.match(/<code>(python -B - &lt;&lt;[\s\S]+?\nPY)<\/code>/)?.[1];
-assert(lossCommand&&training.includes('href="labs/sdpa-cache/cache_lab.py"')&&training.includes(loss.toFixed(12)),
- 'provide the exact rerun command, source and expected cross entropy');
+const end=model.sections[8][1],lossExercise=end.split('id="verify-next-token-loss"')[1]?.split('<details')[0];
+const lossCommand=lossExercise?.match(/<code>(python -B - &lt;&lt;[\s\S]+?\nPY)<\/code>/)?.[1];
+assert(lossCommand&&!training.includes(lossCommand)&&training.includes('href="labs/sdpa-cache/cache_lab.py"')&&lossExercise.includes(loss.toFixed(12)),
+ 'keep the exact rerun command and expected cross entropy together in the default exercise');
+for(const href of ['labs/sdpa-cache.zip','labs/sdpa-cache/README.md'])assert(lossExercise.includes('href="'+href+'"'));
 if(process.env.TRANSFORMER_TORCH_PYTHON){
  const {execFileSync}=require('child_process');
  const script=decode(lossCommand).match(/^python -B - <<'PY'\n([\s\S]+)\nPY$/)?.[1];
@@ -164,11 +180,12 @@ if(process.env.TRANSFORMER_TORCH_PYTHON){
  assert(outputScores.every((value,index)=>Math.abs(value-lossScores[index])<1e-12));
  assert(Math.abs(outputLoss-loss)<1e-12);
 }
-assert(training.includes('将有效目标对应的行纳入损失')&&training.includes('样本里的目标 2 没有参与这次更新'),'explain valid training targets in the experiment that uses them');
+assert(training.includes('把跳过的目标标为 <code>-100</code>，例如第一条的目标 2'),'explain valid training targets in the experiment that uses them');
 assert(training.includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');
 assert(model.sections[7][1].includes('href="/article/transformer-model/#section-9"')&&model.sections[7][1].includes('<summary>算例 · 同样八个位置'));
-const end=model.sections[8][1],next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
+assert(model.sections[7][1].split('<details')[0].includes('另用一个支持至少 8 个位置的模型'),'distinguish the resource example from the four-position experiment');
+const next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
 assert(next>=0&&next<advanced,'the first lesson link in the conclusion follows the sequential chapter order');
 assert(model.sections[5][1].split('<details')[0].includes('href="/article/transformer-model/#section-8"'));
 assert(target.includes('href="/article/transformer-model/#section-9"')&&end.split('<details')[0].includes('href="/article/transformer-model/#training-versus-generation"'),

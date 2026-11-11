@@ -158,7 +158,7 @@ python3 -m venv .venv-blackwell
 python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
  `)+
  p('两端各自激活选定的 PyTorch 环境，进入解压的预检实验目录。在 A 执行下面生成会话号的 <code>python</code> 命令，把同一个号设为两端的 <code>PREFLIGHT_SESSION</code>。在当前 shell 中设置 <code>NODE_RANK</code>（A 为 0，B 为 1），<code>MASTER_ADDR</code>（两端都填 A 的真实内网地址）与 <code>MASTER_PORT</code>（两端填同一空闲端口）。',
- 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。前节写在 <code>bash launch_2nodes.sh</code> 前的临时赋值仅用于那条命令。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
+ 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。上一节通过 <code>export</code> 设置的值在同一终端中仍然有效，换终端时重新设置。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
  code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
 # 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
 python -c 'import secrets; print(secrets.token_hex(16))'
@@ -172,5 +172,9 @@ python -B target_probe.py check collected/rank-*.json
  `)+
  p('真机通过后再运行训练和恢复检查。这个小消息的结果用于证明本次集合操作确实完成。NCCL 具体走的网卡、是否使用 RDMA、真实带宽和训练质量要用相应日志和测量核对。本次记录保留为本机 CPU/Gloo 验收，物理两机 GPU/NCCL 步骤待目标环境执行。')+
  '<p class="practice-links"><a href="labs/ddp-target-preflight.zip" download>下载预检与验收程序 ↓</a> · <a href="labs/ddp-target-preflight/target_probe.py">查看探针源码 →</a> · <a href="labs/ddp-target-preflight/README.md">完整步骤 →</a> · <a href="labs/ddp-target-preflight/validation.json">核对四进程实跑 →</a></p>';
+ const inPlaceResume='默认脚本训练四轮。保留相同 TRAIN_OUT 和固定训练配置，在两端都执行 bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"，表示总目标为六轮；若检查点 next_epoch=4，就再运行第5、6轮。下一章再对照连续运行与恢复运行的最终状态，覆盖参数、优化器、缩放器、各 rank 随机状态、游标和配置。';
+ if(!a.sections[3][1].includes(inPlaceResume))throw Error('Missing multinode continuation instruction');
+ a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
+  '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
  a.intro=a.desc;a.updated='2026.11.09';
 })();

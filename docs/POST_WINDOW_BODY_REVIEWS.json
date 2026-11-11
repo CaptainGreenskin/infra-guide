@@ -9138,6 +9138,114 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3cbb37675051e95c12d8eb22f11730d66f046acd4eb3be502b0c8f758c669eed",
+      "reviewed_content_sha256": "c1f590f761dcad03023620c9ea93ad1e4de056304d8805f622b2334049dea671",
+      "scope": "Connect a calculation of remaining compute capacity to the experiment that verifies application data and its attachment.",
+      "observation": "With SQLite integrity passing at seq 103, the R3 report remains unreadable until the matching object version is available.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3c96a463c8d24a46559111a9d987cf3facdd3ebb0b8b0a69f4276386a8ce0a8f",
+      "reviewed_content_sha256": "c689b8b1993765dc6d0fd7a27a39fbbf353b96a490a9b5608c51946e826bc75b",
+      "scope": "Follow two real inputs through the same attention head, explain which labels train the model, and put the existing loss command beside its expected result.",
+      "observation": "The changed prefix changes the first attention component. The actual optimizer uses four targets. Target 3 is a separate post-update calculation that reproduces loss 10.843026769187.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "50e2f0e0ce22efcb1cc7dd97b072485680153ce85598cba160e2cddf870f0112",
+      "reviewed_content_sha256": "f1c6aaf3d63ec2a4bde3cdddce079f8858703b720c7330402a10a9e6145b50f8",
+      "scope": "Point to the comparison that preserves the original checkpoint, and explain the effect of an in-place resume.",
+      "observation": "The existing command resumes with the exported parameters and replaces the checkpoint in the original output directory.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a04757fb1cb1b961c1bb9c33999167435ce205877e8ed64fe526fadec22085a4",
+      "reviewed_content_sha256": "ef362a8be923b9ef4bcf137f44a70556461b333e4fc926ae42f760db46f2d1de",
+      "scope": "Compare uninterrupted and resumed two-node runs in three output directories while retaining the original checkpoint.",
+      "observation": "A two-rank CPU/Gloo rehearsal preserved its input checkpoint and exactly matched the full state. The two-node GPU/NCCL procedure still needs the physical target.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "78d7c7c1468e34e9e6674d427e0901f318aaaf03fdaca6c063024ccce966496d",
+      "reviewed_content_sha256": "bea0a8f60622c7a193342a36e6b8b99e1313a1af4b1134755fef6565f44c13d3",
+      "scope": "Use one actually omitted trace to explain why a partial evidence export does not prove zero effects.",
+      "observation": "R27-normal is absent after sampling, but the receiver ledger retains its committed amount of 37.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9891334d29d14ebf2e7ca2bb9709fb009798835b08742e0d4141ef8c057b9e84",
+      "reviewed_content_sha256": "449149fb38d911238a3342694355e2548bb40e0ab725edfc31396a2362555292",
+      "scope": "Require a complete resource audit before passing the comparison and distinguish matching records from proven provenance.",
+      "observation": "A partial audit with matching rows stays pending. A known extra read fails. Provenance remains unverified for the local reference.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

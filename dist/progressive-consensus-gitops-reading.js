@@ -154,6 +154,7 @@
  p('随包JSON清单对应第三份703f38b提交，guide-version已为v2，Pod模板注解也为v2；前两份内容从各自固定提交读取，不能将这份清单当作初次v1源。已有执行记录及源码摘要可离线核对：期望副本1、漂移现场2、自愈回1；旧受管配置被清理而unmanaged保留；配置v2/旧UID/HTTP v1拒绝，模板换版后新UID/HTTP v2通过，最后回到v1。',
  '这些记录覆盖单宿主kind中的真实Argo Git读取、Kubernetes调谐和HTTP结果。它们没有运行生产数据迁移、跨主机网络或云高可用控制面；进入这些环境时，沿同一源→对象→进程→用户路径补足对应验收。')
  ],'沿Git修订、清单、API对象、Pod启动与Service响应走通调谐，再用自愈、清理和三个固定提交区分同步、健康与业务生效。');
+ gitops.sections[2][1]+=p('本次由 Argo CD 自愈触发对 Deployment 的写入。<a href="/article/terraform-state/#section-5">回看另一项 Terraform 实验</a>，仅刷新计划执行后，只更新状态记录，实际文件仍是 <code>outside</code>。');
  gitops.sections[4][1]+=
  h('gitops-config-input-path','配置已经更新，进程从哪里读')+
  p('打开 <code>v2_synced_but_old_business</code> 这条记录。<code>desired_config</code> 是脚本通过 API 读到的 <code>guide-version</code> 的值，这时已经是 v2。用 <code>http.pod</code> 对上 <code>pod.name</code>，再比较这次的 <code>pod.uid</code> 和较早的 <code>self_heal_on</code>。两者是同一个 Pod，<code>http.version</code> 仍为 v1。上面的清单负责注入 <code>BUSINESS_VERSION</code>，第 9 节的服务代码从 <code>os.environ</code> 读取它来构造响应。')+

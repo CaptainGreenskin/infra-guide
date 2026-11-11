@@ -6994,7 +6994,8 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('把上面的内存导出换成独立的 OpenTelemetry Collector。实验用 OpenTelemetry 的传输协议 OTLP，把跨度经 HTTP 交给接收器。Collector 把同一批跨度分给两条管道。全量管道直接导出，采样管道为每条追踪留出 3 秒收集窗口，按 <code>traceId</code> 汇合已到达的跨度，然后用 <code>status_code</code> 策略选择至少有一个 <code>ERROR</code> 跨度的追踪。')+
   trainingFigure('otel-tail-ledger','同一批任务的追踪走两条采集管道。接收库单独保留任务结果、尝试与提交效果。')+
   p('对照三个结果。首次成功的任务没有错误跨度，采样后找不到这条追踪。提交后返回 503 的任务第二次拿到原回执，根跨度仍是 OK，第一次尝试的错误让整条追踪留下。提交前失败的任务同样留下，接收库中没有对应效果。',
-  '先按 <code>traceId</code> 分组。全量文件是 3 条追踪、11 个跨度，采样文件是 2 条追踪、8 个跨度。用 <code>parentSpanId</code> 找出失败的工具调用，再用 <code>app.task_id</code> 回查账本。样本里的任务成功比例为 1/2，账本总体为 2/3。四次尝试对应两份实际效果，重试取回执只增加一次尝试。')+
+  '先按 <code>traceId</code> 分组。全量文件是 3 条追踪、11 个跨度，采样文件是 2 条追踪、8 个跨度。用 <code>parentSpanId</code> 找出失败的工具调用，再用 <code>app.task_id</code> 回查账本。样本里的任务成功比例为 1/2，账本总体为 2/3。四次尝试对应两份实际效果，重试取回执只增加一次尝试。',
+  '采样文件里找不到 <code>R27-normal</code> 的追踪，接收库的 <code>effects</code> 仍记录了它金额 37 的提交。<a href="/article/kairo-practice/#kairo-audit-coverage-check">到 G10 看审计覆盖不完整时怎样验收 →</a>')+
   p('阅读配置时，从 <code>traces/full</code> 与 <code>traces/sampled</code> 的共同 <code>receivers: [otlp]</code> 开始。只有后者经过 <code>processors: [tail_sampling]</code>，因此比较只改变一处处理规则。解压后按运行说明准备官方发行包，用 <code>python -B tail_ledger.py --collector-archive 归档路径 --output-dir replay</code> 复跑。')+
   '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
   p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
@@ -9237,7 +9238,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
-  p('同一个任务里，<code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先从工具回执取出获准的任务、尝试和对象，再与资源服务的正文读取记录按这三项对齐。验收时要确认审计覆盖了这次任务。下面分别检查实际记录、人为添加一条 B 读取的副本和缺少正文审计的副本。')+
+  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
+   '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+
   '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
   p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
   trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
@@ -9256,19 +9258,26 @@ def key(row):
 allowed = Counter(key(row) for row in receipts
                   if row["task_id"] == task_id and row["status"] == "success")
 
-def check_body_reads(audit):
+def check_body_reads(audit, *, coverage_complete):
     if audit is None:
         return "pending"
     observed = Counter(key(row) for row in audit if row["task_id"] == task_id)
+    if observed - allowed:
+        return "fail"
+    if coverage_complete is not True:
+        return "pending"
     return "pass" if observed == allowed else "fail"
 
 denied = next(row for row in receipts
               if row["task_id"] == task_id and row["status"] == "denied")
 extra_read = {field: denied[field] for field in fields}
-for name, audit in [("recorded", reads), ("extra-read", reads + [extra_read]),
-                    ("no-audit", None)]:
-    print(name, record["g10"]["checker"]["status"], check_body_reads(audit))`)+
-  p('<code>recorded record_consistent pass</code> 表示实际只读了 A。加入 B 的读取后，原导出仍是同一份，独立核对变为 <code>extra-read record_consistent fail</code>。缺少正文审计时，得到 <code>no-audit record_consistent pending</code>，要等资源端补齐本次记录再下结论。')+'</details>';
+cases = [("recorded", reads, True), ("extra-read", reads + [extra_read], True),
+         ("partial-audit", reads, False), ("no-audit", None, False)]
+for name, audit, coverage_complete in cases:
+    result = check_body_reads(audit, coverage_complete=coverage_complete)
+    print(name, record["g10"]["checker"]["status"], result)`)+
+  p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>';
   a.updated='2026.11.12';
 
  }
@@ -10644,7 +10653,7 @@ float value = *address;
  '输入也要独立检查。记录恢复后各rank的首批稳定样本ID，再以相同seed和epoch重建sampler，能核对接上的是哪一段数据。DCP实战已完成这项逐ID对照。配置改变时由签名明确拒绝；若要改变world size重新分片，需要另外定义状态布局和输入划分。本节的DDP对照沿固定配置继续。'),
 
  p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。',
- '先核对各rank载入同一版本的状态，next_epoch与恢复后首批输入对应，再观察数值和执行时间。CPU固定路径的精确相等为本实验提供基线；GPU上的舍入、算法选择和通信顺序另按目标确定性设置定义容差。若要求按位一致，需要验证相应算子与通信路径。',
+ '先从起始轮次和轮末日志核对读回边界。要核对首批样本 ID，还需在加载器交付时另行记录。原比较器用 <code>torch.equal</code> 比较张量值。若目标 GPU 的精确比较失败，保留该结果，再按预先声明的容差另做浮点对照。配置、计数和各 rank 随机状态仍要逐项核对。',
  '恢复记录按阶段展开：等待整组资源→创建新进程并建立通信组→分配目标模型/优化器→读取和安装状态→完成首个有效更新→重做尚未提交的工作。实际初始化与读取顺序由实现决定。每rank记录attempt、设备、文件/分片版本和阶段耗时，便于找到最早停住的位置。',
  '例如一个rank读不到分片，其余rank可能已经进入集合通信并最终timeout。把缺失对象与其他rank所处阶段放到同一条依赖链，才能解释等待。若报告恢复“四分钟”，还需写明是从任务失败开始，还是从重新获得设备开始；这会直接改变下一章的端到端成本。'),
 
@@ -10699,6 +10708,23 @@ float value = *address;
  ]);
 
  const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ const physicalResume=p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。');
+ if(!recovery.sections[3][1].includes(physicalResume))throw Error('Missing physical recovery handoff');
+ recovery.sections[3][1]=recovery.sections[3][1].replace(physicalResume,()=>
+  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
+  fold('执行两机四卡的三目录对照',p('在 A、B 两端的 DDP 实验包目录执行。各自保留 <code>NODE_RANK</code>（A 为 0，B 为 1），共用指向 A 的 <code>MASTER_ADDR</code> 与同一 <code>MASTER_PORT</code>。把 <code>RECOVERY_ROOT</code> 换成双方都能读写的同一新建共享目录。每条 <code>launch_2nodes.sh</code> 都在两端运行，确认两端成功退出后再执行下一条。')+
+   trainingCode('两端依次运行三次训练，最后选一端比较','SHELL',String.raw`export RECOVERY_ROOT=/mnt/shared/cloudinfra-ddp/recovery-001
+
+# 这三条启动命令分别在 A、B 都执行。两端完成一条才开始下一条。
+TRAIN_OUT="$RECOVERY_ROOT/split" bash launch_2nodes.sh --epochs=4
+TRAIN_OUT="$RECOVERY_ROOT/full" bash launch_2nodes.sh --epochs=6
+TRAIN_OUT="$RECOVERY_ROOT/resumed" bash launch_2nodes.sh --epochs=6 \
+  --resume="$RECOVERY_ROOT/split/checkpoint.pt"
+
+# 仅选一端，从共享目录读取两个第 6 轮检查点。
+python -B compare_checkpoints.py \
+  "$RECOVERY_ROOT/full/checkpoint.pt" "$RECOVERY_ROOT/resumed/checkpoint.pt"`)+
+   p('按默认 FP32 配置，每轮应有 16 次实际更新。三份日志分别累计 64、96、32 次。恢复日志的 <code>start_epoch=4</code>，第一条轮末记录为第 5 轮。<code>split</code> 仍保存 <code>next_epoch=4</code>，两份终点都是 <code>next_epoch=6</code>。')));
  const saveBoundary='<p>本章选择轮末且累积窗口已结束的保存点';
  if(!recovery.sections[1][1].includes(saveBoundary))throw Error('Missing checkpoint state handoff');
  recovery.sections[1][1]=recovery.sections[1][1].replace(saveBoundary,
@@ -11895,7 +11921,7 @@ python3 -m venv .venv-blackwell
 python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
  `)+
  p('两端各自激活选定的 PyTorch 环境，进入解压的预检实验目录。在 A 执行下面生成会话号的 <code>python</code> 命令，把同一个号设为两端的 <code>PREFLIGHT_SESSION</code>。在当前 shell 中设置 <code>NODE_RANK</code>（A 为 0，B 为 1），<code>MASTER_ADDR</code>（两端都填 A 的真实内网地址）与 <code>MASTER_PORT</code>（两端填同一空闲端口）。',
- 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。前节写在 <code>bash launch_2nodes.sh</code> 前的临时赋值仅用于那条命令。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
+ 'A 执行 <code>export NODE_RANK=0</code>，B 执行 <code>export NODE_RANK=1</code>。两端都用 <code>export MASTER_ADDR=10.0.1.10 MASTER_PORT=29500</code> 的写法，换成本次的地址与端口，再用 <code>export PREFLIGHT_SESSION=实际会话号</code> 填入 A 打印的值。上一节通过 <code>export</code> 设置的值在同一终端中仍然有效，换终端时重新设置。设置完成后，两端运行下面的 <code>torchrun</code>，结束后收集四份记录和两端退出码。')+
  code('两台节点分别执行，把记录汇总到本机再检查','SHELL',String.raw`
 # 只在一端生成，复制同一输出作为两端的 PREFLIGHT_SESSION
 python -c 'import secrets; print(secrets.token_hex(16))'
@@ -11909,6 +11935,10 @@ python -B target_probe.py check collected/rank-*.json
  `)+
  p('真机通过后再运行训练和恢复检查。这个小消息的结果用于证明本次集合操作确实完成。NCCL 具体走的网卡、是否使用 RDMA、真实带宽和训练质量要用相应日志和测量核对。本次记录保留为本机 CPU/Gloo 验收，物理两机 GPU/NCCL 步骤待目标环境执行。')+
  '<p class="practice-links"><a href="labs/ddp-target-preflight.zip" download>下载预检与验收程序 ↓</a> · <a href="labs/ddp-target-preflight/target_probe.py">查看探针源码 →</a> · <a href="labs/ddp-target-preflight/README.md">完整步骤 →</a> · <a href="labs/ddp-target-preflight/validation.json">核对四进程实跑 →</a></p>';
+ const inPlaceResume='默认脚本训练四轮。保留相同 TRAIN_OUT 和固定训练配置，在两端都执行 bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"，表示总目标为六轮；若检查点 next_epoch=4，就再运行第5、6轮。下一章再对照连续运行与恢复运行的最终状态，覆盖参数、优化器、缩放器、各 rank 随机状态、游标和配置。';
+ if(!a.sections[3][1].includes(inPlaceResume))throw Error('Missing multinode continuation instruction');
+ a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
+  '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
  a.intro=a.desc;a.updated='2026.11.09';
 })();
 
@@ -12468,6 +12498,8 @@ return {"status": visit_gate("original_gate")}`)+
  fold('展开terraform_state.py：固定版本、并发屏障与逐阶段断言',t8[1])+linkRow(links(t[7]))+
  p('复算一条完整路径：alpha三者一致→实物outside→不刷新计划0→刷新计划2→应用刷新后绑定消失→普通计划create→执行回alpha。然后解释blue为何仍能覆盖green写过的同一个文件。答案要分别落到读取、记录、执行与归属，并能从记录中找出各阶段的独立读数。')
  ],'沿配置、提供程序、计划、状态和实物走通一次变更，再用真实锁、刷新与工作空间记录判断每一步改变了什么。');
+ terraform.sections[4][1]+=p('看<a href="/labs/delivery-systems/validation.json">两项独立实验的记录</a>。Terraform 应用仅刷新计划后，<code>managed.txt</code> 仍是 <code>outside</code>，执行普通修复计划才写回 <code>alpha</code>。另一项实验用 Argo CD 按 Git 声明持续检查集群。同一个 Git 提交下，控制器发现差异时仍有 2 个副本，开启自愈后才回到 1 个。<a href="/article/gitops-reconciliation/#section-3">到 C6.3 看哪项设置会触发修复 →</a>');
+ terraform.updated='2026.11.12';
 
  const identityFigure='<figure class="training-figure"><a href="diagrams/v70-identity-models.svg" target="_blank" rel="noopener" aria-label="放大：AWS角色身份与Kubernetes权限规则的不同位置"><img src="diagrams/v70-identity-models.svg" width="1120" height="760" alt="AWS角色是可被代入的身份；Kubernetes ServiceAccount是主体，Role保存权限规则，RoleBinding关联主体与规则。两条请求都先认证再授权。" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两套对象模型分别解释自己的请求。AWS示意没有实际云执行；Kubernetes具体观测来自独立原生API夹具。<a href="diagrams/v70-identity-models.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const credentialWindowFigure='<figure class="training-figure"><a href="diagrams/iam-credential-window.svg" target="_blank" rel="noopener" aria-label="放大凭据有效期图"><img src="diagrams/iam-credential-window.svg" width="720" height="264" loading="lazy" alt="10:00 签发，10:30 停止签发新凭据，原凭据到 10:45 才到期。接收方可按当前权限或撤销规则决定是否提前拒绝。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只停止签发的模型中，原凭据还有 15 分钟的时间有效期。是否允许请求还要查看接收方规则。<a href="diagrams/iam-credential-window.svg" download>下载 SVG ↗</a></figcaption></figure>';
@@ -13981,6 +14013,7 @@ for case, (expected_state, expected_receipts) in expected.items():
  p('随包JSON清单对应第三份703f38b提交，guide-version已为v2，Pod模板注解也为v2；前两份内容从各自固定提交读取，不能将这份清单当作初次v1源。已有执行记录及源码摘要可离线核对：期望副本1、漂移现场2、自愈回1；旧受管配置被清理而unmanaged保留；配置v2/旧UID/HTTP v1拒绝，模板换版后新UID/HTTP v2通过，最后回到v1。',
  '这些记录覆盖单宿主kind中的真实Argo Git读取、Kubernetes调谐和HTTP结果。它们没有运行生产数据迁移、跨主机网络或云高可用控制面；进入这些环境时，沿同一源→对象→进程→用户路径补足对应验收。')
  ],'沿Git修订、清单、API对象、Pod启动与Service响应走通调谐，再用自愈、清理和三个固定提交区分同步、健康与业务生效。');
+ gitops.sections[2][1]+=p('本次由 Argo CD 自愈触发对 Deployment 的写入。<a href="/article/terraform-state/#section-5">回看另一项 Terraform 实验</a>，仅刷新计划执行后，只更新状态记录，实际文件仍是 <code>outside</code>。');
  gitops.sections[4][1]+=
  h('gitops-config-input-path','配置已经更新，进程从哪里读')+
  p('打开 <code>v2_synced_but_old_business</code> 这条记录。<code>desired_config</code> 是脚本通过 API 读到的 <code>guide-version</code> 的值，这时已经是 v2。用 <code>http.pod</code> 对上 <code>pod.name</code>，再比较这次的 <code>pod.uid</code> 和较早的 <code>self_heal_on</code>。两者是同一个 Pod，<code>http.version</code> 仍为 v1。上面的清单负责注入 <code>BUSINESS_VERSION</code>，第 9 节的服务代码从 <code>os.environ</code> 读取它来构造响应。')+
@@ -14158,6 +14191,9 @@ for stage, source in stages:
   ])+
   p('第二次读取时，Deployment 已报告可用 2，HPA 自己的当前副本字段仍是 1。各对象有各自的更新节奏，先核对字段来源。<a href="/article/k8s-autoscaling/#native-hpa-control">查看 C4.8 的指标、就绪标记与实际记录</a>。')+
   p('还需要证明新增副本实际完成了业务请求。先保持输入分布和到达率可比，再用请求 ID 核对结果、用 Pod UID 确认哪个副本处理，最后比较同一窗口的接纳、积压和合格完成量。<a href="/article/cloud-service-lab/#kubernetes-service-first-response">S2 的另一场实验展示了怎样从响应查到实际 Pod</a>。HPA 实验只记录指标、对象与就绪条件，第 2 节的 120 秒和每副本 40 次/秒是算例输入。');
+ a.sections[3][1]+=p(
+  '第三行算出的 160 次/秒以剩余副本还能完成原请求为前提。如果各区都从同一处读取附件，故障演练还要核对用户拿到的报告是否完整。',
+  '<a href="/article/resilience/#subsection-5-1dwp2yh">看 C9.4 的独立本机恢复实验</a>。SQLite 恢复到 <code>seq=103</code>，完整性检查为 <code>ok</code>，数据库里仍有报告 <code>R3</code> 的记录。它引用的 <code>object-v3</code> 缺失，按应用的读取逻辑取不到完整的 R3。材料齐全的那组对照里，四份报告都可读。<a href="/labs/recovery-artifacts-retrieval/validation.json">查看实际报告读取记录 →</a>。跨区故障后的有效吞吐和服务恢复用时，仍需在目标环境从入口验证。');
  a.sections[4][1]+=
   '<h3 id="bounded-queue-downstream-wait">入口都只排一项，额外的任务在哪里等</h3>'+
   p('实验限制入口只排 1 项，下游同时只接 1 项。先让 A 占住下游，再按顺序提交 B、C、D。两轮都在 A 归还之前读快照，只把可用的工作线程数从 1 调到 2。')+
@@ -14516,12 +14552,14 @@ const firstReadingChanges=[];
 
  a.sections[3][1]=para(
   '[0,1] 和 [4,1] 的最后一格都放着编号 1，所以查到同一行词向量。小模型还给每个位置查一行位置向量，与词向量相加，帮助模型分辨先后。两条输入的最后一格连位置也相同，相加结果一样。加完得到块的输入 X，每条都是 [2,8]。',
-  '注意力让最后一格读到前一格的信息。把注意力分支的结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
+  '每个分支先做归一化，用每行自己的数调整这一行的数值尺度。注意力分支让最后一格读到前文，把结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('生成时，每格只读自己和前文。这条规则叫因果约束。两次预测的最后一格都能读前一格和自己。每格都算出三组数字。查询 Q 用来找信息，键 K 用来算匹配分数，值 V 是可读回的内容。最后一格用自己的 Q 和某格的 K，把对应的数字相乘再相加，得到对那一格的分数。把两处的分数除以同一个数来控制大小，再用 softmax 换成加起来等于 1 的读取比例。',
-  '单独手算一项。假设前一格提供 4，最后一格自己提供 2，读取比例分别是 3/4 和 1/4，读回的结果就是 4×3/4 + 2×1/4 = 3.5。再假设另一组匹配给出 1/4 和 3/4，前一格提供的值为 0，结果就是 0×1/4 + 2×3/4 = 1.5。这里的数字只用来说明怎样按比例汇总。',
-  '回到两次实际预测。最后一格的 Q 一样，换掉前一项却改变了前一格提供的 K 和 V。因此最后一格既会重新分配读取比例，也会拿到不同的内容。一套独立的匹配和汇总叫一个注意力头。小模型用了两个头，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ para('生成时，每格只读自己和前文，这条规则叫因果约束。用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。查询 Q 发起匹配，键 K 用来匹配，值 V 提供可读回的内容。两次输入的末行相同，这一步只用本行，末格的 Q 也相同。',
+  '小模型把 Q、K、V 各分成两组，每组 4 项。一套独立的匹配和汇总叫一个注意力头。看第 0 个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。Softmax 将分数取指数、再各除以指数和，得到读取比例。',
+  '用这两个比例加权读回 V。下面按前一格、末格的顺序列数值，只算读回向量的第一项。数字已四舍五入。')+
+ '<ul><li>[0,1] 的匹配分数为 0.20132、−0.01798，读取比例为 0.5546、0.4454。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。</li><li>[4,1] 的匹配分数为 −0.15440、−0.01798，读取比例为 0.4659、0.5341。<br>0.4659×0.3079 + 0.5341×0.2124 ≈ 0.2569。</li></ul>'+
+ para('只换前一项，前一格的 K 改变了读取比例，前一格的 V 改变了提供的内容。两个头各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
@@ -14538,7 +14576,7 @@ const firstReadingChanges=[];
   '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('图中的两条回加路径叫残差连接。每个分支先用归一化调整输入的数值尺度，直接送去相加的 X 和 H₁ 则保持原样。分支输出为零时，原表示沿这条路径保留下来。',
+ para('图中的两条回加路径叫残差连接。沿右侧直接送去相加的 X 和 H₁ 保持原样。分支输出为零时，原表示沿这条路径保留下来。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
  para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
  '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
@@ -14583,14 +14621,32 @@ const firstReadingChanges=[];
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
  para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
-  '再看第 3 行（从 0 数是位置 2）。它读到 [0,1,2]，目标是 3。用同一 CPU 模型更新一次后的参数复算，编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
-  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。这一行只用于演示，原 CPU 更新跳过了目标 3。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
+  '程序可以只选部分目标来训练。这个 CPU 实验在第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7。四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
+  '下面单独用更新后的参数算一道题。第 3 行（从 0 数是位置 2）读到 [0,1,2]，目标是 3。原 CPU 更新跳过了目标 3，这里只用它演示怎样从一行分数算出一项损失。',
+  '编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
+  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
  para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
- '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
+ '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。')+
  '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。',
- '在上面的缓存实验目录用 PyTorch 2.5.1 执行下方命令。沿用<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>的模型和一次参数更新，取第一条样本的 <code>reference(ids)[0,2]</code>。输出依次是编号 0 到 7 的分数，以及单独计算的交叉熵 10.843026769187。')+
+ '两条序列分别保留 1 项和 3 项有效目标。<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>把跳过的目标标为 <code>-100</code>，例如第一条的目标 2。拆成两次计算时，每次累加有效损失，再统一除以总目标数 4。这样才能和整批求平均的更新对齐。')+
+ '</details>'+
+ '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
+ para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
+ '</details>'+
+ '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+ `<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
+ para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
+ '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
+
+ a.sections[7][1]=para('接着第 6 节数注意力分数。这里另用一个支持至少 8 个位置的模型做纸上比较。同样八个输入位置，四条各长 2 时，两个头合计有 32 个分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
+ '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
+
+ const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
+ if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
+ a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
+ const exercise='<h3 id="verify-next-token-loss">复算位置 2 对目标 3 的损失</h3>'+para(
+ '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1。在解压后的实验目录运行下面的命令。程序先按第 7 节做一次参数更新，再取第一条输入位置 2 的分数。',
+ '输出第一行是编号 0 到 7 的八个分数。第二行是目标 3 的单项损失，约为 <code>10.843026769187</code>。先对第一行做 softmax，取编号 3 的概率 p，再算 −ln p 与第二行对照。')+
  trainingCode('复算位置 2 对目标 3 的单项损失','SHELL',`python -B - <<'PY'
 import torch
 from torch.nn.functional import cross_entropy
@@ -14611,23 +14667,11 @@ with sdpa_kernel(SDPBackend.MATH):
         scores = reference(ids)[0, 2]
         print(scores.tolist())
         print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
-PY`)+
- '</details>'+
- '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
- para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
- '</details>'+
- '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+`<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
- para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
- '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
-
- a.sections[7][1]=para('同样八个输入位置，四条各长 2 时，两个头合计有 32 个注意力分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对，因此分组会改变工作量。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
- '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
-
- const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
- if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
- a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
+PY`);
+ const firstExerciseParagraph=a.sections[8][1].indexOf('</p>')+'</p>'.length;
+ a.sections[8][1]=a.sections[8][1].slice(0,firstExerciseParagraph)+exercise+a.sections[8][1].slice(firstExerciseParagraph);
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
- '以下是第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。现在把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
+ '接下来换用第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
  trainingFigure('encoder-decoder-translation','混合批的两条样本。交叉注意力矩阵的行来自目标，列来自源。')+
  conceptReadingTable(['计算','读取范围','掩码从哪里来'],[
@@ -17638,5 +17682,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="884a41bd5a45939d4c00a49c3b7640ffdbdada63c19f8e42040503928f4423bc";
+const staticReadingVersion="a38a0514516893a5e011cf0fd4f7992ca318bf4b4fbb0eeedc0badce2b0ec314";
 
