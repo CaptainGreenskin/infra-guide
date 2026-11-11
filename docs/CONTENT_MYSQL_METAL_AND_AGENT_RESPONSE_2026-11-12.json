@@ -1,0 +1,31 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "98b35aedc192d2a468f39f049c9c7daa8fcbc012",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_TRANSFORMER_AND_CHAPTER_HANDOFFS_2026-11-12.json": "0c90d409c7c9725b3342be04304c77384364b4dbb6d8425b0ece184a5dcfb25f"
+  },
+  "body_revisions": [
+    {
+      "id": "mysql-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "64f07a937fcc7041665c14db7a39b2f46fc0aaca07d0da0aeefb758453b7cd21",
+      "reviewed_content_sha256": "78e091779c73e77cbaaf62493cdfae6150721d33fe950bc3f8c51913ddc0eb75",
+      "scope": "Restore the base copy before replay, carry the actual file boundaries into the existing command, and verify the result using the ledger.",
+      "observation": "The native fixture reaches 100 before replay, 125 with T101–T103 before T104, and 128 after accepting a new write.",
+      "headings": [
+        "先分清事务、数据页与三类日志",
+        "提交为什么可以早于全部数据页写回",
+        "崩溃恢复与历史恢复，目标有什么区别",
+        "行格式binlog为什么会改变你的手算",
+        "一致性基线必须带上它对应的恢复坐标",
+        "连续日志与停止位置怎样共同确定恢复范围",
+        "从数据库启动，走到业务可以继续写入",
+        "运行真实MySQL的四份恢复与一次崩溃对照",
+        "面试追问：用恢复目标约束你的方案"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

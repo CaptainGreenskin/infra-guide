@@ -233,11 +233,11 @@
    sources(['MCP：取消协议','https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation'],['Temporal：Activity取消与心跳','https://docs.temporal.io/activity-execution#cancellation']);
 
   a.sections[5][1]=
-   p('回到logical-add-1的分库HTTP实验。请求在途，表示调用已经发出，接收方可能仍在执行。屏障是实验中暂停到确定位置、等待放行的控制点：工具HTTP线程已经收到POST，但停在提交之前；此时运行器被SIGKILL结束，工具服务继续存活。',
-     '父进程查询同一操作回执，GET确实返回空；接着放行工具线程，旧POST继续把账户由0改成37并写回执。于是同一次实验中，“查询时不存在”与“稍后已有一次效果”都为真。客户端进程消失没有改变接收方的提交资格。')+
+   p('这次只给 demo 账户加一次 37，操作编号是 <code>logical-add-1</code>。运行器发出写请求后，工具服务已经收到请求，但被实验暂停在提交前。此时只结束发请求的运行器，工具服务继续活着。这样的请求仍在途，也就是接收方还有可能把它做完。',
+     '先查原操作的回执，结果为空，账户仍是 0。再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
    figures(old[5])[0]+
-   p('恢复者因此保留logical-add-1。旧请求先提交，恢复查询认回原结果；恢复重试先到，也由同键事务决定一次效果。一次空查询只能描述查询时刻，不能承诺旧请求将来不会提交。接收方若提供明确最终状态、取消确认或版本条件，再按该协议收紧判断。',
-     '若工具既无稳定操作身份，也无权威查询，未知结果就没有通用的自动安全重试规则。任务可以保留待对账，等待业务确认或事先设计的协调流程；把未知直接改成失败并换新编号，会增加一项新动作。');
+   p('空回执只说明查询时还没有提交记录。旧请求与重试使用同一个操作编号时，接收方可以按第 3 节的事务规则合为一次效果。若服务无法按原操作查询，也没有可核对的重复处理规则，就保留待确认，等接收方或业务方核实。',
+     '在<a href="/labs/agent-crash-windows/validation.json">原始记录</a>里找 <code>before_commit</code>，对照 <code>at_crash</code>、<code>after_old_request</code> 和 <code>recovered</code>。三项分别记录运行器刚退出、旧请求提交后、恢复完成时的两个库。<a href="/article/agent-runtime/#runtime-report-error-cases">回到日报案例，区分已收到的错误与仍未知的结果</a>。');
 
   a.sections[6][1]=
    p('现在把正常链路拆成六个位置，每次都从独立初态开始。父进程让自己创建的运行器到达屏障，再用SIGKILL结束它；工具HTTP服务保留在父进程中，继续使用自己的tool.sqlite。随后启动全新运行器进程读取runner.sqlite接续，不依靠旧进程内存。')+
@@ -271,7 +271,7 @@
     oldTable(old[8],1)+fold('完整agent_lab.py',code(old[8],4))+
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
-  finish(a,before);a.updated='2026.11.09';
+  finish(a,before);a.updated='2026.11.12';
   a.sections[8][1]+=
    h('mcp-receipt-before-checkpoint','回执已收到，检查点写到哪一步')+
    p('再做一次独立的发布报告实验。前面的分库 HTTP 实验用操作 <code>logical-add-1</code> 给账户增加了 37。这次用本机 MCP 工具发布 <code>report-A/v3</code>，金额是 42。打开<a href="/labs/mcp-recovery/validation.json">本次发布的原始记录</a>，先只读 <code>cases.stable.cut</code>，看工作进程被终止前的状态。')+

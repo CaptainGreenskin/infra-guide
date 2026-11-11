@@ -34,6 +34,25 @@ assert.deepEqual(m.point_in_time_recovery.operations.map(p=>p[0]),['T101','T102'
 assert.deepEqual(m.missing_first_log.operations,[['T102',20],['T103',-5]]);
 assert.equal(m.missing_first_log.balance,125);assert.equal(m.missing_first_log.balance-(100+20-5),10);
 assert.equal(m.missing_history_reconciliation_gap,10);assert.deepEqual(m.process_crash.state_after_restart,m.full_replay);assert.equal(m.process_crash.uncommitted_value,999);
+const mysqlPage=fs.readFileSync('dist/article/mysql-recovery/index.html','utf8');
+const mainSection=number=>mysqlPage.split('id="section-'+number+'"')[1]?.split('</section>')[0].replace(/<details\b[\s\S]*?<\/details>/g,'');
+const baselineSection=mainSection(5),replaySection=mainSection(6),acceptanceSection=mainSection(7);
+const {snapshot_next_event:start,exclude_bad_transaction_from:stop,baseline_only:baseline,point_in_time_recovery:target,post_restore_write:after}=m;
+assert(baselineSection.includes('<code>'+start.file+'</code> 的 <code>'+start.position+'</code>'));
+assert(baselineSection.includes('<code>baseline_only</code>，余额 '+baseline.balance+'，回执为空'));
+assert(baselineSection.includes('先导入这份备份，再接收后续日志'));
+assert.deepEqual(baseline.operations,[]);
+assert(replaySection.includes('<code>'+start.file+'</code> 和 <code>'+stop.file+'</code>'));
+for(const [variable,position] of [['BASE_POS',start.position],['STOP_POS',stop.position]]) {
+ const assignment=replaySection.indexOf('<code>'+variable+'='+position+'</code>');
+ assert(assignment>=0 && assignment<replaySection.search(/<pre\b/),variable+': show the real input before the replay command');
+}
+assert(replaySection.includes('起点处的事件会读，停止位置上的事件不会输出'));
+const signed=delta=>delta<0?'−'+Math.abs(delta):'+'+delta;
+assert(acceptanceSection.includes(target.operations.map(([id,delta])=>id+'/'+signed(delta)).join('、')));
+const equation=baseline.balance+target.operations.map(([,delta])=>' '+signed(delta).slice(0,1)+' '+Math.abs(delta)).join('')+' = '+target.balance;
+assert(acceptanceSection.includes('<code>'+equation+'</code>，差额为 0'));
+assert(acceptanceSection.includes('<code>post_restore_write</code> 读到余额 '+after.balance));
 const python=process.env.INFRA_LAB_PYTHON||'python3';
 for(const name of ['tcp_framing.py','socket_backpressure.py']){
  const x=JSON.parse(cp.execFileSync(python,['-B',folder+name],{encoding:'utf8',timeout:25000}));

@@ -220,6 +220,20 @@ assert(lesson.includes('/article/speculative-decoding/#native-ngram-speculation'
 for (const run of record.runs) {
  assert(lesson.includes('<td>'+run.shared_decode_count+' 批</td><td>'+run.metric_counter_deltas.n_decode_total+'</td>'));
 }
+const servingPage = read(path.join(dist,'article','model-serving'),'index.html').toString();
+const batching = servingPage.split('id="section-5"')[1].split('id="section-6"')[0];
+const example = batching.split('<table>')[0];
+assert(example.includes(`第 ${frozenSharedBatch.batch_ordinal} 个引擎分批`));
+for (const name of ['A','B']) {
+ const {slot} = record.runs[1].requests[name];
+ const row = frozenSharedBatch.rows.find(item => item.seq_id===slot);
+ const sample = frozenSharedBatch.sampled.find(item => item.slot===slot);
+ assert(example.includes(`${name} 送入词元 ${row.token_id}（位置 ${row.position}），接着选出 ${sample.token_id}`));
+}
+assert(example.includes('收到 A 的首个输出后才发 B'));
+assert(example.includes('B 在 A 结束前获得另一个槽位'));
+assert(example.includes('输出也各回各的请求'));
+assert(example.includes('/article/inference-performance/#native-metal-queue'));
 
 const files = [...source,...artifacts,'validation.json'], archive = folder+'.zip';
 const entries = execFileSync('unzip',['-Z1',archive],{encoding:'utf8'}).trim().split('\n').sort();

@@ -67,6 +67,12 @@ function crashes(x){
  assert(x.cases[4].corrupt_local_observation_rejected);assert.equal(x.negative.recovered.amount,74);assert.equal(x.negative.recovered.effects,2);assert.equal(x.negative.independent_oracle_accepted,false);
 }
 crashes(d.records['agent-crash-windows'].execution);
+const inflight=d.articles.find(a=>a.id==='agent-recovery').sections[5][1];
+const race=d.records['agent-crash-windows'].execution.cases.find(row=>row.window==='before_commit');
+assert(inflight.includes(`结果为空，账户仍是 ${race.at_crash.amount}`));
+assert(inflight.includes(`接收方把账户改成 ${race.after_old_request.amount}`));
+assert(inflight.includes(`<code>${race.after_old_request.runner_phase}</code>`)&&inflight.includes(`<code>${race.recovered.runner_phase}</code>`));
+assert(inflight.includes('/labs/agent-crash-windows/validation.json')&&inflight.includes('/article/agent-runtime/#runtime-report-error-cases'));
 const python=process.env.INFRA_LAB_PYTHON||'python3';
 sampling(JSON.parse(cp.execFileSync(python,['-B','dist/labs/speculative-decoding/exact_sampling.py'],{encoding:'utf8',timeout:10000})));
 if(process.platform!=='win32')crashes(JSON.parse(cp.execFileSync(python,['-B','dist/labs/agent-crash-windows/crash_windows.py'],{encoding:'utf8',timeout:45000})));

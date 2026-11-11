@@ -5413,11 +5413,11 @@ const progressiveAgentSectionTitles={
    sources(['MCP：取消协议','https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation'],['Temporal：Activity取消与心跳','https://docs.temporal.io/activity-execution#cancellation']);
 
   a.sections[5][1]=
-   p('回到logical-add-1的分库HTTP实验。请求在途，表示调用已经发出，接收方可能仍在执行。屏障是实验中暂停到确定位置、等待放行的控制点：工具HTTP线程已经收到POST，但停在提交之前；此时运行器被SIGKILL结束，工具服务继续存活。',
-     '父进程查询同一操作回执，GET确实返回空；接着放行工具线程，旧POST继续把账户由0改成37并写回执。于是同一次实验中，“查询时不存在”与“稍后已有一次效果”都为真。客户端进程消失没有改变接收方的提交资格。')+
+   p('这次只给 demo 账户加一次 37，操作编号是 <code>logical-add-1</code>。运行器发出写请求后，工具服务已经收到请求，但被实验暂停在提交前。此时只结束发请求的运行器，工具服务继续活着。这样的请求仍在途，也就是接收方还有可能把它做完。',
+     '先查原操作的回执，结果为空，账户仍是 0。再放行旧请求，接收方把账户改成 37，并在同一次事务中保存回执。此时运行器库里还是 <code>INTENT</code>，表示只保存过原操作意图。新运行器再查同一个编号，取回那张回执，核对金额后推进到 <code>DONE</code>，账户仍是 37。')+
    figures(old[5])[0]+
-   p('恢复者因此保留logical-add-1。旧请求先提交，恢复查询认回原结果；恢复重试先到，也由同键事务决定一次效果。一次空查询只能描述查询时刻，不能承诺旧请求将来不会提交。接收方若提供明确最终状态、取消确认或版本条件，再按该协议收紧判断。',
-     '若工具既无稳定操作身份，也无权威查询，未知结果就没有通用的自动安全重试规则。任务可以保留待对账，等待业务确认或事先设计的协调流程；把未知直接改成失败并换新编号，会增加一项新动作。');
+   p('空回执只说明查询时还没有提交记录。旧请求与重试使用同一个操作编号时，接收方可以按第 3 节的事务规则合为一次效果。若服务无法按原操作查询，也没有可核对的重复处理规则，就保留待确认，等接收方或业务方核实。',
+     '在<a href="/labs/agent-crash-windows/validation.json">原始记录</a>里找 <code>before_commit</code>，对照 <code>at_crash</code>、<code>after_old_request</code> 和 <code>recovered</code>。三项分别记录运行器刚退出、旧请求提交后、恢复完成时的两个库。<a href="/article/agent-runtime/#runtime-report-error-cases">回到日报案例，区分已收到的错误与仍未知的结果</a>。');
 
   a.sections[6][1]=
    p('现在把正常链路拆成六个位置，每次都从独立初态开始。父进程让自己创建的运行器到达屏障，再用SIGKILL结束它；工具HTTP服务保留在父进程中，继续使用自己的tool.sqlite。随后启动全新运行器进程读取runner.sqlite接续，不依靠旧进程内存。')+
@@ -5451,7 +5451,7 @@ const progressiveAgentSectionTitles={
     oldTable(old[8],1)+fold('完整agent_lab.py',code(old[8],4))+
     p('本程序只运行单worker，未测试租约竞争、过期执行者隔离、真实网络分区或断电耐久性。'))+
    p('最后把聊天与旧进程内存排除：原操作、指纹、可重建的固定参数和权威回执是否足以决定下一步？本夹具依赖冻结的程序常量，一般系统还需保存完整参数或固定输入版本。这份执行视图可以交给模型继续工作。记忆章会说明怎样从这些事实组装上下文；工作流章再把单步恢复接到多步骤计划、等待与执行接管。');
-  finish(a,before);a.updated='2026.11.09';
+  finish(a,before);a.updated='2026.11.12';
   a.sections[8][1]+=
    h('mcp-receipt-before-checkpoint','回执已收到，检查点写到哪一步')+
    p('再做一次独立的发布报告实验。前面的分库 HTTP 实验用操作 <code>logical-add-1</code> 给账户增加了 37。这次用本机 MCP 工具发布 <code>report-A/v3</code>，金额是 42。打开<a href="/labs/mcp-recovery/validation.json">本次发布的原始记录</a>，先只读 <code>cases.stable.cut</code>，看工作进程被终止前的状态。')+
@@ -7445,7 +7445,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('若这16条都保留8192位置，逻辑KV变成16GiB。题设只给KV预算10GiB，则前者8GiB尚未超出逻辑预算，后者16GiB已经超出。权重、临时工作区、分页尾部空位和分配器元数据要另计；10GiB是给定输入，没有测量任何设备。',
   '逻辑字节数统计这些向量的有效载荷；分配字节数统计实际给它们占下多少存储；逐设备占用还取决于分片和复制。张量并行怎样分布KV、是否有滑动窗口、精度是否改变、前缀是否共享，都要从具体实现确认。状态放得下之后，仍需计算与搬运时间才能判断速度。'),
 
-  p('批处理batch把多个请求本轮的工作组合执行。静态批次通常等待一组请求一起运行；连续批处理在迭代边界移除完成者、接入新工作，让批内成员随时间变化。迭代是一轮调度和执行机会，批大小是这一轮同时参与的请求数，不是系统所有排队请求数。')+
+  p('静态批次先凑好一组请求再一起运行。读一轮调度时，分别数参与的请求和送进模型的输入行。上面两条解码请求各送一行，预填充一次可以送入同一请求的多行。队列里还没轮到的请求另计。')+
   table(['机制','具体改变的对象','直接影响'],[
    ['连续批处理','每轮参与计算的请求集合','设备工作量及请求等待机会'],
    ['分块prefill','一个长提示本轮处理的位置数','提示跨轮数及对decode的干扰'],
@@ -7497,6 +7497,10 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   '独立量化章保留整数与比例尺、分组打包、字节与执行账本、校准，以及INT4打包和CPU INT8实验。阅读时把每项压缩明确对应到本章权重、KV或临时结果，才能推导它实际影响哪份容量与执行。')+
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
+
+ serving.sections[4][1]=p('客户端先发 A，收到 A 的首个输出后才发 B。在 Apple M4 Pro 的一次 llama.cpp 双槽运行中，B 在 A 结束前获得另一个槽位。槽位保存一条请求的进度和历史。本轮送进模型的输入行合成一个批次，下面是这份记录的第 5 个引擎分批，位置从 0 数。')+
+  '<ul><li>A 送入词元 9（位置 6），接着选出 10。</li><li>B 送入词元 11（位置 5），接着选出 12。</li></ul>'+
+  p('两行一起算，仍各自读取自己的历史，输出也各回各的请求。新请求可以在已有请求生成途中加入后续批次，完成的请求可以移出，这叫连续批处理。<a href="/article/inference-performance/#native-metal-queue">核对同一批的输入、设备日志和两个输出流 →</a>')+serving.sections[4][1];
 
  const servingBlockBoundary='<h3 id="subsection-5-qvstci">';
  const servingRows=heading('serving-rows-and-history','这一轮算几行，要留下多少历史？')+
@@ -12978,23 +12982,25 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  p('后映像覆盖了金额差异，却没有补齐业务历史。因此验收要同时读账户、操作ID集合和每笔增量，再核对跨表关系。这个差额是本题独立判据；其他主键、列映像、缺失位置或写入形式也可能让重放报错或产生其他结果。',
  'mysqlbinlog默认输出可重新执行的事件流。--verbose与--base64-output=DECODE-ROWS便于人工查看行解释，其中注释式的UPDATE展示不等于可直接拿去恢复的原SQL。实际恢复使用工具生成的可执行流，保留匹配的版本和权限。'),
 
- p('备份是后续重放的起点，必须同时确定里面的数据状态和从哪条日志事件继续。若导出结束以后才随手读取一个当前位置，中间的事务可能已进入数据却又被重放，或既未进入数据又被坐标跳过。数据与坐标要作为一份基线取得。',
- '本例只用InnoDB表、导出期间没有并发DDL。mysqldump --single-transaction取得一致性逻辑基线，--source-data=2同时将源binlog文件和位置写入注释；与单事务选项配合时，工具在开始阶段短暂协调全局读锁与坐标，随后按一致性读取导出数据。数字2控制坐标以注释形式保存，不是第二个快照。')+
+ p('备份同时保存一份数据和接下来要读的日志位置，这两项组成恢复基线。如果用导出结束时的日志位置，可能跳过快照之后已提交的事务。用过早的坐标，又可能重放备份已经包含的变化。',
+ '本例使用 InnoDB 表，导出期间没有改表或删表。<code>mysqldump --single-transaction</code> 按同一份事务快照导出数据，<code>--source-data=2</code> 将对应的源 binlog 文件和位置写在 SQL 注释里。工具在开始阶段短暂用全局读锁对齐快照和坐标，随后按快照读完数据。')+
  r5[0]+
- p('这里source是已配置的隔离源login-path，命令展示基线结构；实际程序通过自己的本地容器连接导出并解析坐标。snapshot_next_event记录该次基线之后要继续的文件和位置，后续命令直接使用这份值。坐标随初始化变化，不应照抄另一份数据库的数字。',
- '单事务导出不为非事务表提供同样的一致性，相关ALTER、DROP、RENAME等DDL也会破坏前提。逻辑导出重新构建表和数据，与复制物理数据目录是不同备份方式。本实验关闭GTID以专注文件位置；下一章另用GTID标识复制事务，不混用两套夹具的恢复步骤。'),
+ p('命令中的 <code>source</code> 是预先配置的源库连接名。实验脚本用自己的容器连接导出，从备份注释提取日志坐标。原始记录 <code>snapshot_next_event</code> 指到 <code>mysql-bin.000003</code> 的 <code>1117</code>，也就是下一节要开始读取的事件位置。复跑时使用自己备份中记录的坐标。',
+ '隔离恢复实例先导入这份备份，再接收后续日志。只导入备份的分支记为 <code>baseline_only</code>，余额 100，回执为空。',
+ '单事务导出依赖事务表和稳定的表结构。逻辑备份用 SQL 重建表和数据，物理备份保存数据文件。本实验用文件位置定位重放范围，下一章再用全局事务标识 GTID 跟踪复制。'),
 
- p('先把目标写成半开区间：从基线的下一事件开始，包含T101、T102、T103，在T104的完整事务开始之前停止。程序在T101提交后主动轮换binlog，所以这一历史横跨两个文件；两个文件按顺序合在一起，才覆盖完整区间。')+
+ p('在余额 100 的基线上补回 T101、T102、T103，到了 T104 开始的位置就停。程序在 T101 提交后轮换日志，第一份文件保留 T101，第二份记录 T102 和 T103，也记录了后来的清零。')+
  figures(r[5]).join('')+
+ p('本次的 <code>FILES</code> 依次是 <code>mysql-bin.000003</code> 和 <code>mysql-bin.000004</code>。<code>BASE_POS=1117</code> 来自备份注释。脚本提交 T103 后、执行 T104 前取得 <code>exclude_bad_transaction_from</code>，在第二个文件的位置是 <code>STOP_POS=986</code>。两个位置分别从各自文件开头按字节计数。')+
  r6[0]+
- p('文件数组从基线所在文件排到停止所在文件。mysqlbinlog的开始位置作用于首文件，停止位置作用于末文件；停止位置之前的完整事务保留，坏事务不进入输出。程序先提交T103，再用SHOW BINARY LOG STATUS取得下一事件坐标，然后才提交T104，因而停止边界来自真实执行顺序。',
+ p('用 <code>mysqlbinlog</code> 从首文件的起点读起，到了末文件的停止位置就结束。起点处的事件会读，停止位置上的事件不会输出。把这段事件流交给已经导入基线的恢复实例，就能重放 T101、T102 和 T103。',
  '日志事件可以包含事务开始、行变化和提交等多个部分，不能随手在一条行事件中间截断事务。时间选项适合辅助定位，正式截取还需核对事件位置、时区及目标包含范围。原始文件清单和校验保证材料链，业务回执验收保证目标结果，两者各自回答一层问题。')+
  h('mysql-missing-binlog','少了首个 binlog，为什么还能读到 125')+
  p('原始记录的 <code>required_files</code> 依次列出 <code>mysql-bin.000003</code> 和 <code>mysql-bin.000004</code>。负例从第二个文件的合法位置开始，仍停在 T104 之前。<code>mysqlbinlog</code> 处理了脚本交给它的事件，恢复库读到余额 125。到 <code>missing_first_log</code> 查回执，只剩 T102、T103。用 100 加上两笔增量得到 115，与余额相差 10。'),
 
- p('恢复目标先在隔离实例验收，再决定能否接入业务。SELECT 1只证明能执行一个小查询；本题的目标历史要求余额125、T101—T103恰好各一条且增量正确、T104和T105都不在目标中，账本差额为0。它同时检查历史选择和跨表完整性。')+
+ p('在原始记录 <code>point_in_time_recovery</code> 核对账户与回执。账户查询读到 125，三条回执是 T101/+10、T102/+20、T103/−5，各出现一次。以备份的余额 100 为起点，重算 <code>100 + 10 + 20 − 5 = 125</code>，差额为 0。从 T104 开始的事务都在这次重放范围之外。')+
  figures(r[6]).join('')+
- p('通过后提交新操作TNEW加3，余额变为128，新回执与原三条共同存在。这证明恢复实例能在所测试事务路径上继续修改。表结构、关键查询、权限、连接入口及应用依赖也属于正式接入条件；实验实际验证到账户和回执，不会替未接入组件生成通过结果。',
+ p('验收通过后，在恢复实例提交 <code>TNEW</code> 加 3。<code>post_restore_write</code> 读到余额 128，回执保留原来的三笔并新增 TNEW。恢复后的实例能继续处理这条写入路径。正式接入还要通过实际入口核对关键查询、权限和应用依赖。',
  '选择清零前的切点，也排除了其后已经确认的T105。先保留原回执及上下游证据，再按业务依赖决定补偿或重做。把坏事务单独跳过、所有后续事件原样接上，可能继续使用它们当时依赖的错误状态；“恢复到哪里”必须先于“执行哪条恢复命令”。'),
 
  p('mysql_restore.py在Linux CI实际运行MySQL 8.4容器：源实例生成基线与两份日志，恢复实例反复装回同一基线，分别使用完整、缺段和指定终点的事件流。两套随机前缀容器与数据卷不暴露端口，脚本只清理自己创建的资源。',
@@ -14505,6 +14511,18 @@ const firstReadingChanges=[];
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ const errorHeading=knowledgeSubhead('错误按层分类，重试按动作语义决定');
+ replace('agent-runtime',3,errorHeading,errorHeading+
+  p('运行时收到响应时，先看 HTTP 状态码，也就是服务随响应返回的数字，再读协议消息，最后检查工具结果的字段和类型。符合约定的结果才会成为下一步可用的观察。任务结束时，验收器还会另外读取实际报告。下面三次独立运行都要求用两笔订单算出 37。'));
+ const errorReference=runtime.sections[3][1].match(/<div class="table-wrap"><table><thead><tr><th>层次<\/th>[\s\S]*?<\/table><\/div><p>MCP[\s\S]*?<\/p><p>HTTP 503[\s\S]*?<\/p>/)?.[0];
+ if(!errorReference)throw Error('Missing Agent runtime error reference');
+ replace('agent-runtime',3,errorReference,
+  '<h3 id="runtime-report-error-cases">三次运行分别卡在哪里</h3>'+
+  p('<strong>读订单时返回 503。</strong> 服务端回了 HTTP 响应，但这次没交付订单。第 3 节的程序只对这次读取重试一次。第二次读到 [10, 27]，随后保存报告 37，验收通过。',
+    '<strong>读订单时返回了错误的数据类型。</strong> 这次 HTTP 状态为 200，但工具把 <code>values</code> 返回成文本 <code>"10,27"</code>，约定要求的是一组整数。程序停在结果检查，既没有把它记入观察，也没有写报告。',
+    '<strong>写报告时给了错误的金额。</strong> 工具收到的 38 是合法整数，所以实际保存了一份报告。验收器按 [10, 27] 重算得 37，任务标为未完成。修正时要面对已经写下的报告。<a href="/labs/network-input-tools/validation.json">核对三次运行的尝试、观察与产物 →</a>',
+    '写请求发出后一直没收到响应时，调用者还不知道接收方是否提交。接收方的回执是它为原操作保存的提交证明。<a href="/article/agent-recovery/#section-6">看一次旧请求仍在执行时查回执的实跑 →</a>')+
+  '<details class="progressive-detail"><summary>按层查连接、协议和工具错误</summary>'+errorReference+'</details>');
  const loopStop='<p>“没有新增信息”也需要可解释的停止策略';
  replace('agent-runtime',2,loopStop,
   p('刚才的读取重试多派发了一次工具请求。准备把资料交给模型时，还要数整份输入有多长。分词器把文字切成模型处理的小单位，每个单位叫词元。独立的费用检索实验中，两段正文合计 36 个词元，算上系统说明、任务、来源和分隔符，完整提示有 237 个词元。输入和输出的总上限降到 259 时，163 个输入词元加 96 个输出预留刚好放得下，却缺基础费用资料，程序没有发出请求。<a href="/article/agent-retrieval/#context-budget-run">用实际提示和接收记录核对这两道检查 →</a>')+loopStop);
@@ -17329,5 +17347,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="80323a8b533b11363df3697abe973571a0b06409b2b6c95ae3c294ed2e97cc9e";
+const staticReadingVersion="c294074aed78f31fbc98c477e4999f7eafd29805d0fba0a875b3264ce735cad9";
 

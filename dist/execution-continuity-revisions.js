@@ -69,6 +69,18 @@
  mcp.sections[8][1]+=p('选读<a href="/article/durable-workflows/#mcp-commit-recovery">写工具的原生恢复实验</a>。在这份独立实验的两个 MCP 会话中，请求编号可以相同。对照例为每次尝试另建业务操作 ID，再从接收库核对发布份数。');
 
  const runtime=chapters.find(({article})=>article.id==='agent-runtime').article;
+ const errorHeading=knowledgeSubhead('错误按层分类，重试按动作语义决定');
+ replace('agent-runtime',3,errorHeading,errorHeading+
+  p('运行时收到响应时，先看 HTTP 状态码，也就是服务随响应返回的数字，再读协议消息，最后检查工具结果的字段和类型。符合约定的结果才会成为下一步可用的观察。任务结束时，验收器还会另外读取实际报告。下面三次独立运行都要求用两笔订单算出 37。'));
+ const errorReference=runtime.sections[3][1].match(/<div class="table-wrap"><table><thead><tr><th>层次<\/th>[\s\S]*?<\/table><\/div><p>MCP[\s\S]*?<\/p><p>HTTP 503[\s\S]*?<\/p>/)?.[0];
+ if(!errorReference)throw Error('Missing Agent runtime error reference');
+ replace('agent-runtime',3,errorReference,
+  '<h3 id="runtime-report-error-cases">三次运行分别卡在哪里</h3>'+
+  p('<strong>读订单时返回 503。</strong> 服务端回了 HTTP 响应，但这次没交付订单。第 3 节的程序只对这次读取重试一次。第二次读到 [10, 27]，随后保存报告 37，验收通过。',
+    '<strong>读订单时返回了错误的数据类型。</strong> 这次 HTTP 状态为 200，但工具把 <code>values</code> 返回成文本 <code>"10,27"</code>，约定要求的是一组整数。程序停在结果检查，既没有把它记入观察，也没有写报告。',
+    '<strong>写报告时给了错误的金额。</strong> 工具收到的 38 是合法整数，所以实际保存了一份报告。验收器按 [10, 27] 重算得 37，任务标为未完成。修正时要面对已经写下的报告。<a href="/labs/network-input-tools/validation.json">核对三次运行的尝试、观察与产物 →</a>',
+    '写请求发出后一直没收到响应时，调用者还不知道接收方是否提交。接收方的回执是它为原操作保存的提交证明。<a href="/article/agent-recovery/#section-6">看一次旧请求仍在执行时查回执的实跑 →</a>')+
+  '<details class="progressive-detail"><summary>按层查连接、协议和工具错误</summary>'+errorReference+'</details>');
  const loopStop='<p>“没有新增信息”也需要可解释的停止策略';
  replace('agent-runtime',2,loopStop,
   p('刚才的读取重试多派发了一次工具请求。准备把资料交给模型时，还要数整份输入有多长。分词器把文字切成模型处理的小单位，每个单位叫词元。独立的费用检索实验中，两段正文合计 36 个词元，算上系统说明、任务、来源和分隔符，完整提示有 237 个词元。输入和输出的总上限降到 259 时，163 个输入词元加 96 个输出预留刚好放得下，却缺基础费用资料，程序没有发出请求。<a href="/article/agent-retrieval/#context-budget-run">用实际提示和接收记录核对这两道检查 →</a>')+loopStop);

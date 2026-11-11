@@ -8560,6 +8560,62 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "803558118fe4682a94b6c1643bd82237aa897c8247181eb241a34fa714e7146d",
+      "reviewed_content_sha256": "9d71af6b47ce00d11e010a928a38f96aee68a6ce652c06d43952cf3ceddd30a8",
+      "scope": "Start continuous batching with a real shared engine batch, then explain scheduler participation versus engine input rows.",
+      "observation": "A and B were at different logical positions, decoded together and received separate outputs in the recorded b12110 Metal run.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "0bd08546602ab1d8becaad29fa7b2f4d3240f96f1e093683238ff1426b7c165c",
+      "reviewed_content_sha256": "78a767014fa81e728394955a337e2aedb965993f1b4dc78d3084bc600a5d18a0",
+      "scope": "Follow the same task through a retryable read, a malformed response, and a committed report that fails verification.",
+      "observation": "The script records a successful read retry, an unusable response with no report, and one actual report with amount 38 that the task rejects.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "82ef327493a4458426a5fc7ead88b1758291b1fe0e0eebf904d2760f71e143d7",
+      "reviewed_content_sha256": "9d928920aff20721b1c6d8e2d6e669b2146f334c46663c1da3d1a20e8a1fbb51",
+      "scope": "Follow one original operation from an empty lookup to a durable receipt without changing its identity.",
+      "observation": "Before commit the live service returns no receipt. It subsequently commits 37 while the runner still records INTENT; recovery then obtains the same receipt and reaches DONE.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
     }
   ]
 }

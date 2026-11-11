@@ -1,0 +1,95 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "98b35aedc192d2a468f39f049c9c7daa8fcbc012",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSFORMER_AND_CHAPTER_HANDOFFS_2026-11-12.json": "fa68742b88011d3d094568102d4e5df61bc8bfbf328cfbed57e45cd51c8a0946"
+  },
+  "source_revisions": {
+    "dist/progressive-tcp-database-reading.js": {
+      "previous_sha256": "220c845bf28812e6444a688b26cd94b67ab5e8649d28f701d49226f3d9c698db",
+      "reviewed_sha256": "1e2a3cc8ac7ebc43c7e5e28a8526232029ff42640bab57ff98547da2d2304341",
+      "scope": "Restore the base copy before replay, carry the actual file boundaries into the existing command, and verify the result using the ledger."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "fbaba0eed2675b26e20dd19c03ea1a1ad2b217d7532c3cec4d7580546c038be0",
+      "reviewed_sha256": "b0d2268da14ef113a5d080ba0b4d2bd0b8dbeb7b49f633b2ad8b71c0deb3ec1d",
+      "scope": "Start continuous batching with a real shared engine batch, then explain scheduler participation versus engine input rows."
+    },
+    "dist/execution-continuity-revisions.js": {
+      "previous_sha256": "fec1717b5c9396bf4c35a42be4fc2731aeb5ac9196154b76ed8f20f8169c8a9d",
+      "reviewed_sha256": "0214e9636940b9eaf08eb15f7a51e12a747d3a458ca012533667e73230de6398",
+      "scope": "Follow the same task through a retryable read, a malformed response, and a committed report that fails verification."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "6e55b519b630c42bad9fde7cfb19d469b8c35bdf80333f7630ecdf3710d4f361",
+      "reviewed_sha256": "6dcd88b813ae7749a5ca74ba0d0dcb9142b9952050d366d633d907ad478a60b0",
+      "scope": "Follow one original operation from an empty lookup to a durable receipt without changing its identity."
+    },
+    "scripts/check-transport-recovery.cjs": {
+      "previous_sha256": "2e6d6c4a9a19ca4b552f3564926a78b0b6d172fba7e61904f95f32bec9fa5c78",
+      "reviewed_sha256": "06133c78fbafaefc618f53fc355c911506f9a06acd2582149ad30048da718e4b",
+      "scope": "Recompute the successful ledger and preserve the exact operator order in the revised sections."
+    },
+    "scripts/check-native-metal-queue.cjs": {
+      "previous_sha256": "13fc6d3135bd1155f4665dcfe50809088d0aabf11a775400c9c0e89198506fe3",
+      "reviewed_sha256": "067748cd89295a7b8392664d06d220e1e652590d4559a51992a6752dc9157bd5",
+      "scope": "Cross-check the serving chapter example with actual per-slot input positions and outputs."
+    },
+    "scripts/check-network-input-tools.cjs": {
+      "previous_sha256": "7f74ead704ca28a54b073ea0395a8ce746d87c93b76fed90c8f9e7564a1c2f6e",
+      "reviewed_sha256": "daf7d196686bf756010237d49bc7347d3c2e83f7f680b910b9b9be9fe87323bc",
+      "scope": "Check the three visible stages against their freshly executed HTTP result and source."
+    },
+    "scripts/check-runtime-speculative-crashes.cjs": {
+      "previous_sha256": "24440b7e247d883df2be59c1fe17a99482c634d5090c7a70402dd24324cc6195",
+      "reviewed_sha256": "ac80da266d06553a44d24a7824cf1c8b8591b9061eaf38f007d6ff775d6b747e",
+      "scope": "Keep the old request and recovery example bound to the independent process evidence."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "4a59b590932767be7d02a4beaf8b19f08755f4548a7de7fde423f68c8582f510",
+      "reviewed_sha256": "87ff41fb4609648c6a2a79a8084c4995ff0dfc44b2a819928c01746ffe59296e",
+      "scope": "Fingerprint the revised pages and their search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "26c78815a34f347d83ca898ab2fb58285d120697c6418ff775a83597e362e82f",
+      "reviewed_sha256": "777977a6bd93bf4facf4fc76e7facd3af0e9f594f57417e05e4c55e993702fcc",
+      "scope": "Fingerprint the examples and the new exact reading destination."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "49e693c5ca6930a2ea9225cbd5174355dd6e7a4a1d3b979a7f824b1bd29e8c94",
+      "reviewed_sha256": "c609c1907b50f42601e07fbe1a9afd5bb87c85810e09ca3aa123bba87edfb4ee",
+      "scope": "Record the new Agent response and verification subsection."
+    },
+    "docs/CONTENT_MYSQL_METAL_AND_AGENT_RESPONSE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f31ded85c9671989193528b4e2c377de95d76fe5d34f69c24172a7101b9b4c1d",
+      "scope": "Record the revised native examples in all three tracks."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "542bee96ddfd1b71b4d7ea1da142f6bb0a8549e22f8a07b78a9a0daa53d0c2ce",
+      "reviewed_sha256": "927a49d2e1762cd5b176a2e26230f22802af7ba846c8324826b1f13823f9c5fb",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "3faca3e7a56b13e948a6efcb8dc531d7eabe2e10b0df940fd2304d0ba2715258",
+      "reviewed_sha256": "6b58e216de6f9e9801a82bc911ca8343a9f13a8579c68486309aace5e253a37f",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "98b35aedc192d2a468f39f049c9c7daa8fcbc012",
+    "chapters": 78,
+    "changed_bodies": [
+      "mysql-recovery",
+      "model-serving",
+      "agent-runtime",
+      "agent-recovery"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}
