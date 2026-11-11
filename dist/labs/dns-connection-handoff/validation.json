@@ -1,0 +1,372 @@
+{
+  "schema": "dns-connection-handoff-v1",
+  "status": "passed",
+  "environment": {
+    "system": "Linux",
+    "arch": "x86_64",
+    "tools": {
+      "unbound": {
+        "version": "Version 1.19.2",
+        "sha256": "86b0ed770ea6726bb4573f13c45f29331a4730216e8d54d9194d52ad8cdc2b6b"
+      },
+      "dig": {
+        "version": "DiG 9.18.39-0ubuntu0.24.04.9-Ubuntu",
+        "sha256": "6032eed17533d4126168082d10e0a30fcabaadeb860391537eab4e0b7141b97a"
+      }
+    }
+  },
+  "fixture": {
+    "name": "api.example.test.",
+    "http_host": "api.example.test:43891",
+    "path": "/orders/O-104",
+    "order": "O-104",
+    "amount": 37,
+    "port": 43891,
+    "ttl_seconds": 5,
+    "old": {
+      "type": "A",
+      "address": "127.0.0.1"
+    },
+    "new": {
+      "type": "A",
+      "address": "127.0.0.2"
+    }
+  },
+  "dns": {
+    "before": {
+      "authority": {
+        "A": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "58799",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 79.558,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "127.0.0.1"
+            }
+          ],
+          "authority": [],
+          "raw": ";; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 4037\n;; flags: qr aa ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t5\tIN\tA\t127.0.0.1\n\n"
+        }
+      },
+      "resolver": {
+        "A": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "56749",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 87.38,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "127.0.0.1"
+            }
+          ],
+          "authority": [],
+          "raw": ";; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 33458\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t5\tIN\tA\t127.0.0.1\n\n"
+        }
+      }
+    },
+    "changed_authority": {
+      "authority": {
+        "A": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "58799",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+norecurse"
+          ],
+          "elapsed_ms": 119.825,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "aa",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "127.0.0.2"
+            }
+          ],
+          "authority": [],
+          "raw": ";; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 59186\n;; flags: qr aa ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t5\tIN\tA\t127.0.0.2\n\n"
+        }
+      },
+      "resolver": {
+        "A": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "56749",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 137.606,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "127.0.0.1"
+            }
+          ],
+          "authority": [],
+          "raw": ";; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 52129\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t5\tIN\tA\t127.0.0.1\n\n"
+        }
+      }
+    },
+    "after_expiry": {
+      "resolver": {
+        "A": {
+          "args": [
+            "-4",
+            "@127.0.0.1",
+            "-p",
+            "56749",
+            "api.example.test.",
+            "A",
+            "+nosearch",
+            "+time=1",
+            "+tries=1",
+            "+noall",
+            "+comments",
+            "+answer",
+            "+authority",
+            "+recurse"
+          ],
+          "elapsed_ms": 5698.711,
+          "status": "NOERROR",
+          "flags": [
+            "qr",
+            "rd",
+            "ra"
+          ],
+          "answers": [
+            {
+              "name": "api.example.test.",
+              "ttl": 5,
+              "type": "A",
+              "data": "127.0.0.2"
+            }
+          ],
+          "authority": [],
+          "raw": ";; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 22044\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags:; udp: 1232\n;; ANSWER SECTION:\napi.example.test.\t5\tIN\tA\t127.0.0.2\n\n"
+        }
+      }
+    }
+  },
+  "processes": {
+    "authority": {
+      "pid": 620,
+      "port": 58799
+    },
+    "resolver": {
+      "pid": 621,
+      "port": 56749
+    }
+  },
+  "requests": [
+    {
+      "id": "r1",
+      "local": [
+        "127.0.0.1",
+        33796
+      ],
+      "peer": [
+        "127.0.0.1",
+        43891
+      ],
+      "status": 200,
+      "response": {
+        "request_id": "r1",
+        "backend": "A",
+        "connection": "A-c1",
+        "order": "O-104",
+        "amount": 37
+      },
+      "elapsed_ms": 88.55
+    },
+    {
+      "id": "r2",
+      "local": [
+        "127.0.0.1",
+        33796
+      ],
+      "peer": [
+        "127.0.0.1",
+        43891
+      ],
+      "status": 200,
+      "response": {
+        "request_id": "r2",
+        "backend": "A",
+        "connection": "A-c1",
+        "order": "O-104",
+        "amount": 37
+      },
+      "elapsed_ms": 5699.354
+    },
+    {
+      "id": "r3",
+      "local": [
+        "127.0.0.1",
+        49958
+      ],
+      "peer": [
+        "127.0.0.2",
+        43891
+      ],
+      "status": 200,
+      "response": {
+        "request_id": "r3",
+        "backend": "B",
+        "connection": "B-c1",
+        "order": "O-104",
+        "amount": 37
+      },
+      "elapsed_ms": 5700.093
+    }
+  ],
+  "origins": {
+    "A": {
+      "listening": [
+        "127.0.0.1",
+        43891
+      ],
+      "accepted": [
+        {
+          "connection": "A-c1",
+          "local": [
+            "127.0.0.1",
+            43891
+          ],
+          "peer": [
+            "127.0.0.1",
+            33796
+          ]
+        }
+      ],
+      "requests": [
+        {
+          "id": "r1",
+          "host": "api.example.test:43891",
+          "path": "/orders/O-104",
+          "connection": "A-c1"
+        },
+        {
+          "id": "r2",
+          "host": "api.example.test:43891",
+          "path": "/orders/O-104",
+          "connection": "A-c1"
+        }
+      ]
+    },
+    "B": {
+      "listening": [
+        "127.0.0.2",
+        43891
+      ],
+      "accepted": [
+        {
+          "connection": "B-c1",
+          "local": [
+            "127.0.0.2",
+            43891
+          ],
+          "peer": [
+            "127.0.0.1",
+            49958
+          ]
+        }
+      ],
+      "requests": [
+        {
+          "id": "r3",
+          "host": "api.example.test:43891",
+          "path": "/orders/O-104",
+          "connection": "B-c1"
+        }
+      ]
+    }
+  },
+  "configs": {
+    "authority_before": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 58799\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-http-qgrmw75t\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\n    access-control: 127.0.0.0/8 refuse_non_local\n    local-zone: \"example.test.\" static\n    local-data: \"example.test. 1 IN SOA ns.example.test. hostmaster.example.test. 1 60 60 60 1\"\n    local-data: \"example.test. 5 IN NS ns.example.test.\"\n    local-data: \"ns.example.test. 5 IN A 192.0.2.53\"\n    local-data: \"api.example.test. 5 IN A 127.0.0.1\"\n",
+    "authority_after": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 58799\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-http-qgrmw75t\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\n    access-control: 127.0.0.0/8 refuse_non_local\n    local-zone: \"example.test.\" static\n    local-data: \"example.test. 1 IN SOA ns.example.test. hostmaster.example.test. 2 60 60 60 1\"\n    local-data: \"example.test. 5 IN NS ns.example.test.\"\n    local-data: \"ns.example.test. 5 IN A 192.0.2.53\"\n    local-data: \"api.example.test. 5 IN A 127.0.0.2\"\n",
+    "resolver": "server:\n    interface: 127.0.0.1\n    outgoing-interface: 127.0.0.1\n    port: 56749\n    username: \"\"\n    chroot: \"\"\n    pidfile: \"\"\n    directory: \"/tmp/infra-dns-http-qgrmw75t\"\n    use-syslog: no\n    do-ip6: no\n    module-config: \"iterator\"\n    do-not-query-localhost: no\n    qname-minimisation: no\n    prefetch: no\n    serve-expired: no\n    local-zone: \"test.\" nodefault\nstub-zone:\n    name: \"example.test.\"\n    stub-addr: 127.0.0.1@58799\n    stub-first: no\n    stub-prime: no\nforward-zone:\n    name: \".\"\n    forward-addr: 127.0.0.1@58799\n    forward-first: no\n"
+  },
+  "source_sha256": {
+    "dns_connection_handoff.py": "b8b3927235e547ac88a61dbdd34257210e449e5283933b86281187b523e3e13e",
+    "dns-cache/dns_cache.py": "89e3a377c22a6a8c29d2032cf233896a66a60d194c5eed579c865311271a07db"
+  },
+  "scope": "Isolated Unbound and HTTP/1.1 loopback listeners. Explicit dig resolution and socket reuse; no OS/browser cache, general connection pool, public DNS or production traffic."
+}

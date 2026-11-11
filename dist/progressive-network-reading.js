@@ -176,11 +176,23 @@
    ['否定缓存先过期','192.0.2.10','192.0.2.30'],
    ['两份旧缓存均已过期','192.0.2.20','192.0.2.30']
   ])+
-  p('遇到刚新增的名称仍报不存在时，先把查询对象分清。用同一个名称和记录类型分别问权威端、问业务实际使用的解析器，比较响应码、地址和剩余 TTL。若两者的地址已经一致，实际连接却还打到旧入口，就继续查是否复用了旧连接。')+
+  p('遇到刚新增的名称仍报不存在时，先把查询对象分清。用同一个名称和记录类型分别问权威端、问业务实际使用的解析器，比较响应码、地址和剩余 TTL。若两者的地址已经一致，实际连接却还打到旧入口，就继续查是否复用了旧连接。<a href="/article/vpc-network/#native-dns-connection-handoff">用三个请求检查实际连到了谁 →</a>')+
   '<details class="progressive-detail"><summary>复跑两个本机 DNS 进程</summary>'+
   p('解压后用 <code>python3 -B dns_cache.py --unbound /path/to/unbound --output local-observation.json</code> 启动回环上的权威端和缓存解析器。脚本用 <code>dig</code> 分别查询两个端口，保留原始响应。对照响应头的 <code>status</code>、答案区的 A 地址与 TTL，以及 <code>NXDOMAIN</code> 响应中 SOA 的 TTL。这里测试本机两份 DNS 服务和固定记录，没有测公网传播或 HTTP 连接。')+
   '<p class="practice-links"><a href="/labs/dns-cache.zip" download>下载完整源码与记录 ↓</a> · <a href="/labs/dns-cache/validation.json">查看逐次 DNS 响应 →</a> · <a href="/labs/dns-cache/README.md">复跑步骤 →</a> · <a href="https://www.rfc-editor.org/rfc/rfc2308.html#section-5">否定缓存的 TTL ↗</a></p></details>';
- vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+addressMapping);
+ const dnsConnection='<details class="progressive-detail"><summary>实跑 · DNS 已更新，旧连接还会走哪里</summary>'+
+  h('native-dns-connection-handoff','地址已更新，旧连接与新连接走向不同')+
+  p('两份 HTTP 服务同时监听本机的 127.0.0.1 和 127.0.0.2，端口相同。先让 <code>api.example.test</code> 指向服务 A，发出 r1。接着把权威 DNS 记录改为服务 B，等缓存解析器也返回 B 后，再分别沿旧连接发 r2、按新答案建立连接发 r3。三个请求查的是同一笔订单。')+
+  trainingFigure('dns-connection-handoff','先问权威端和缓存解析器，再用套接字对端与服务端连接编号确认请求实际去了哪里。')+
+  table(['请求','解析器最新答案','请求怎样发送','实际对端和连接'],[
+   ['r1','127.0.0.1','新建连接','127.0.0.1 · A-c1'],
+   ['r2','127.0.0.2','复用 r1 的连接','127.0.0.1 · A-c1'],
+   ['r3','127.0.0.2','按答案新建连接','127.0.0.2 · B-c1']
+  ])+
+  p('三次都返回 HTTP 200、订单 O-104、金额 37。只看状态码、订单号和金额，会漏掉 r2 仍在访问 A。已有 TCP 连接的对端在建连时就确定了。若切流后还有旧流量，可以先对照 DNS 答案，再检查实际连接的对端、建立时刻和服务端记录。<a href="/article/vpc-network/#cloud-proxy-run">接着观察入口代理复用与排空后端连接 →</a>',
+  'Linux 实跑使用本机回环上的两个 Unbound 实例和两份 HTTP/1.1 服务。脚本用 <code>dig</code> 取得指定解析器的答案，仅在新建连接时使用它。解压后进入 <code>dns-connection-handoff</code>，运行 <code>python3 -B dns_connection_handoff.py --unbound /path/to/unbound --output local-observation.json</code>，按 <code>dns</code>、<code>requests</code>、<code>origins</code> 三组记录核对。')+
+  '<p class="practice-links"><a href="/labs/dns-connection-handoff.zip" download>下载可运行实验 ↓</a> · <a href="/labs/dns-connection-handoff/README.md">运行说明 →</a> · <a href="/labs/dns-connection-handoff/validation.json">Linux 原始结果 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43026912329">实验运行记录 ↗</a></p></details>';
+ vpc.sections[1][1]=vpc.sections[1][1].replace(addressMapping,dnsCache+dnsConnection+addressMapping);
  vpc.updated='2026.11.11';
  vpc.sections[6][1]+=
  h('native-tls-proxy','入口 TLS 成功，为什么代理仍可能返回 502')+p(

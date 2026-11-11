@@ -158,7 +158,41 @@
   p('第二条路径中，模型按收到的材料引用了 v2。查输入就能定位旧版本由哪一步进入，修复时先检查索引与正文版本复检。第三条路径提前发现缺项，由宿主停下。判断这三条路径时，应分别查看模型响应和宿主决定。')+
   '<p class="practice-links"><a href="/article/agent-retrieval/#native-rag-citation-oracle">回看检索、模型请求与版本检查 →</a> · <a href="/labs/rag-citation-oracle/validation.json">核对三条路径的原始记录 →</a></p>'+
   p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
-  a.sections[10][1];
+  a.sections[10][1]+
+  fold('选读 · 验收 G7 追回的 42 日报',
+   '<h3 id="native-model-mcp-recovery-verdict">金额对了，还要核对哪份报告？</h3>'+
+   p('接着看<a href="/article/durable-workflows/#native-model-mcp-recovery">持久工作流章的实际发布</a>。任务库最后写了 <code>DONE</code>。现在按独立的<a href="/labs/model-plan-revision/fixture.json">原订单 fixture.json</a>算出 10+27+5=42，确认来源是 <code>orders-A/v3</code> 和 <code>late-A/v1</code>。再打开<a href="/labs/model-mcp-recovery/validation.json">运行记录 validation.json</a>，用 <code>receiver_final</code> 的接收库快照核对结果。')+
+   p('本题要求目标 <code>A/daily</code> 恰好写出一份第 2 版计划生成的报告，并留下原操作 <code>report-A/v3:publish</code> 的一份回执。回执保存的草稿和摘要也要对应这份报告。把两个 JSON 文件保存在同一个目录，运行下方代码。')+
+   trainingCode('从原订单验收报告，再把来源换成旧版试一次','PYTHON',`import hashlib
+import json
+from pathlib import Path
+
+source = json.loads(Path("fixture.json").read_text())
+receiver = json.loads(Path("validation.json").read_text())["receiver_final"]
+expected = {
+    "task_id": source["task_id"], "target": source["target"], "revision": 2,
+    "total": sum(source["base_values"] + source["extra_values"]),
+    "sources": [source["base_source"], source["extra_batch"]],
+}
+
+def digest(draft):
+    body = json.dumps(draft, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(body.encode()).hexdigest()
+
+def accepts(reports, receipts):
+    if reports != [expected] or len(receipts) != 1:
+        return False
+    receipt = receipts[0]
+    return (receipt["operation_id"] == "report-A/v3:publish"
+            and receipt["draft"] == expected
+            and receipt["draft_sha256"] == digest(expected))
+
+reports, receipts = receiver["reports"], receiver["receipts"]
+print(accepts(reports, receipts))  # True
+stale = {**reports[0], "sources": ["orders-A/v2", "late-A/v1"]}
+receipt = {**receipts[0], "draft": stale, "draft_sha256": digest(stale)}
+print(accepts([stale], [receipt]))  # False`)+
+   p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'));
  a.updated='2026.11.11';
  }
  }

@@ -114,7 +114,7 @@ const conceptSectionTitles={
  'durable-workflows':['任务目标与步骤依赖','历史、检查点与事实复用','确定性重放与活动结果','工具提交与框架恢复','执行接管与代际安装','旧写隔离与业务去重','接管窗口与提交恢复','计划、审批与持久等待','工作流恢复与框架实战','工作流升级与历史保留'],
  'cloud-service-lab':['服务实例、探针与控制链','探针条件与容器重启','Service 请求与后端条件','模板修订、发布与回退','原生实验、源码与验收'],
  'cloud-overview':['云计算的基本对象','一次云上请求','运行职责、数据面与控制面','HTTP 状态与健康检查','Cloud、AI 与 Agent 的关系'],
- 'transformer-model':['Transformer 整体结构','张量与形状','矩阵乘法与线性层','Decoder 的核心模块','模型形状与参数账本','计算量与存储规模','训练与自回归生成','序列长度与注意力复杂度','标签对齐与因果验证'],
+ 'transformer-model':['Transformer 整体结构','词元编号、嵌入与张量','矩阵乘法与线性层','解码器块：注意力与前馈网络','模型形状与参数账本','计算量与存储规模','训练与自回归生成','序列长度与注意力复杂度','标签对齐与因果验证'],
  'training-storage':['存储接口与读写路径',...progressiveCloudSectionTitles['training-storage'].slice(1)],
  'model-serving':['模型服务的对象与生成路径',...progressiveAiSectionTitles['model-serving'].slice(1)],
  'operator-profiling':['算子、类型与内存布局','稳定 Softmax 与数值参考','GPU 线程映射与树形归约','GEMM 访问、分块与同步','FLOP、字节与算术强度','预热、异步计时与测量边界','CPU 轨迹与 GPU 采集边界','CPU/CUDA 实现与数值验收','算子正确性与性能判据'],

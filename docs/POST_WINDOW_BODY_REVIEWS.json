@@ -6692,6 +6692,138 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "e382ad6b32d680543344cb4109158f25d6e68714cb4d054228024e893be37152",
+      "reviewed_content_sha256": "5cd4b31cfd0237b6b4d17d434ecceceb970e7e0f94135ed0840c8c55eea73695",
+      "scope": "Continue from the DNS answer to actual HTTP peer and connection reuse.",
+      "observation": "Two Unbound processes and two HTTP servers in Linux record identical business responses, with the existing and new connections reaching different peers.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "619be81933be6d8c795d4f44b09bcd3c6a3f0dcebdf5fce3eca14cf5ec4a0c2a",
+      "reviewed_content_sha256": "0cf4f42d59e93076d2702989809a9f0188a8252b6a9c945d384ffa9f05314168",
+      "scope": "Show the first actual prediction before dimensions, then introduce index, position and block operations when used.",
+      "observation": "The first-round picture now follows the original CPU run. Arithmetic on normalization stays available after attention and feed-forward roles. The chapter links to a run using the same model.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "50dc2c9ac3ac3a75723bc3a462d6df05fce4ef13b9483b097366b5b1ee21759e",
+      "reviewed_content_sha256": "592abeaef7e80cba29c70f2e8007fdc2ecafed717b60510b2700cf67d210a546",
+      "scope": "Resume the same TinyDecoder used in the first model lesson, then export weights to a new process.",
+      "observation": "Two CPU Gloo ranks restore parameters and momentum. Independent inference verifies the new artifact and rejects swapped weights.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "f193955dbcb9c59d11bb1fc96f5120820eba64729de99d6e72fb6e137a544397",
+      "reviewed_content_sha256": "c1aa827a49e3e343bae5f3609332975710b6f7040c897ab4e2de369b1e1b6de3",
+      "scope": "Link the weight artifact boundary to the same model trained and restored earlier.",
+      "observation": "The old and new artifact give equal generated IDs on the fixed prompt, with different first-round scores and distinct file hashes.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "bb8acbfd2dd7c528c51157f09e32e9991465bff99e94d36844f36dd8ef823676",
+      "reviewed_content_sha256": "c234e4fc0ec36a6ca33829209261218495cff8e53ba1a3e5724098fe300efbf0",
+      "scope": "Follow the real restored report into business acceptance.",
+      "observation": "An exact link carries the published receiver result into an independent amount, source and count check.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "baba50c5ee7df30bd1d03f2855063c76a2e20e801ee2c53a43866efa3fb6f8fe",
+      "reviewed_content_sha256": "318ffb4cb71eaab3510635ef10475b7ae5fff178746c0b43d3a2178a32683938",
+      "scope": "Check the report, expected source versions, and receipt independently of the worker status.",
+      "observation": "The rendered Python follows the original run. A modified report with total 42 and an internally matching stale-source receipt fails.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "2b3d9f5119e6a32be7d4961e5b6caecf9a61f48f56c6672bf9a659e9d6d6b9a1",
+      "reviewed_content_sha256": "1cc58712f6343e35eebb4ea6b95a48faa4dd35585d5e0855fc9a8496389b2157",
+      "scope": "Count model, host, MCP and business effects from the very same restored run.",
+      "observation": "Four model requests and four host executions coexist with one remote publication, one lookup, one report and one receipt.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

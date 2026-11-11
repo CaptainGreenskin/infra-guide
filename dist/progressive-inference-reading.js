@@ -502,6 +502,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
   '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
+ serving.sections[6][1]+=p('在本章的 TinyDecoder 对照里，可以先观察缓存怎样改变前向路径。还可以用同一个模型，从双进程训练恢复后导出权重，由新进程加载，再逐项比较缓存与完整前缀的分数。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">查看推理加载的参数来自哪次训练更新 →</a>');
  serving.updated='2026.11.11';
  performance.updated='2026.11.09';
 

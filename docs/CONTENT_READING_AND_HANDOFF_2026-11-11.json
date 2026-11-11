@@ -1,0 +1,28 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "18b8daf7602fec1459fc4b91688bd43d6952b708",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CACHE_AND_MCP_RECOVERY_2026-11-11.json": "9ebbbee76c33245d6c8ad132052c7afcb27326fc315f2c7a4fe7f66e4a1bc071"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "vpc-network",
+      "reviewed_at": "2026-11-11",
+      "scope": "Continue from the DNS answer to actual HTTP peer and connection reuse.",
+      "observation": "Two Unbound processes and two HTTP servers in Linux record identical business responses, with the existing and new connections reaching different peers.",
+      "reviewed_content_sha256": "5cd4b31cfd0237b6b4d17d434ecceceb970e7e0f94135ed0840c8c55eea73695",
+      "record": "dist/labs/dns-connection-handoff/validation.json"
+    },
+    {
+      "chapter": "checkpoint-recovery",
+      "reviewed_at": "2026-11-11",
+      "scope": "Resume the same TinyDecoder used in the first model lesson, then export weights to a new process.",
+      "observation": "Two CPU Gloo ranks restore parameters and momentum. Independent inference verifies the new artifact and rejects swapped weights.",
+      "reviewed_content_sha256": "592abeaef7e80cba29c70f2e8007fdc2ecafed717b60510b2700cf67d210a546",
+      "record": "dist/labs/tiny-decoder-handoff/validation.json"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-labelledby="title desc">
+<title id="title">DNS 更新后，复用连接和新连接去往不同的地址</title>
+<desc id="desc">缓存解析器先指向服务 A。权威记录更新后，缓存解析器短暂保留旧地址。过期后，旧连接上的 r2 仍到 A，新连接上的 r3 到 B。</desc>
+<metadata>{"record":"labs/dns-connection-handoff/validation.json","old":"127.0.0.1","new":"127.0.0.2","ttl_seconds":5,"peers":["127.0.0.1","127.0.0.1","127.0.0.2"],"connections":["A-c1","A-c1","B-c1"]}</metadata>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#4a65bc"/></marker></defs>
+<rect width="600" height="400" fill="#f8faff"/>
+<g font-family="PingFang SC, Microsoft YaHei, sans-serif" text-anchor="middle" fill="#23314b">
+<text x="300" y="33" font-size="22" font-weight="650">同一个域名，三个 HTTP 请求</text>
+<g fill="#fff" stroke="#a1b5eb">
+<rect x="22" y="55" width="174" height="83" rx="7"/>
+<rect x="213" y="55" width="174" height="83" rx="7"/>
+<rect x="404" y="55" width="174" height="83" rx="7"/>
+</g>
+<g font-size="18" font-weight="650">
+<text x="109" y="83">更新前</text><text x="300" y="83">权威已更新</text><text x="491" y="83">缓存已过期</text>
+</g>
+<g font-size="16" fill="#445777">
+<text x="109" y="110">解析器返回旧地址</text>
+<text x="300" y="106">权威返回新地址</text>
+<text x="300" y="128">解析器仍返回旧地址</text>
+<text x="491" y="110">解析器返回新地址</text>
+</g>
+<g fill="none" stroke="#4a65bc" stroke-width="2" marker-end="url(#arrow)">
+<path d="M109 142v57"/><path d="M491 142v25H300v32"/><path d="M491 142v57"/>
+<path d="M109 263v37"/><path d="M300 263v16H193v21"/><path d="M491 263v37"/>
+</g>
+<g fill="#eaf0ff" stroke="#a1b5eb">
+<rect x="22" y="205" width="174" height="56" rx="7"/><rect x="213" y="205" width="174" height="56" rx="7"/><rect x="404" y="205" width="174" height="56" rx="7"/>
+</g>
+<g font-size="17" font-weight="650">
+<text x="109" y="238">r1 · 新建连接</text><text x="300" y="238">r2 · 复用 A-c1</text><text x="491" y="238">r3 · 新建连接</text>
+</g>
+<rect x="22" y="306" width="365" height="60" rx="7" fill="#fff" stroke="#a1b5eb"/>
+<rect x="404" y="306" width="174" height="60" rx="7" fill="#fff" stroke="#a1b5eb"/>
+<text x="204" y="332" font-size="18" font-weight="650">服务 A · A-c1</text>
+<text x="491" y="332" font-size="18" font-weight="650">服务 B · B-c1</text>
+<text x="204" y="354" font-size="16">127.0.0.1</text><text x="491" y="354" font-size="16">127.0.0.2</text>
+<text x="300" y="389" font-size="15" fill="#445777">三次都读到订单 O-104，金额 37</text>
+</g>
+</svg>

@@ -325,7 +325,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ])+
    p('新进程建立新会话，调用 <code>lookup_receipt</code> 查询原操作。记录中两条 MCP 会话的 JSON-RPC 请求编号都是 3，真正贯穿发布与恢复的是持久化的操作号。新进程核对回执中的操作号、草稿摘要和来源版本，再保存完成状态。整条记录只有一次发布和一次回执查询。')+
    p('复跑需同时解压本实验和<a href="/labs/model-plan-revision.zip">原模型规划包</a>，按说明准备固定版本的模型和运行时。程序使用本机独立进程、两个数据库和预设的批准输入。可以对照两份数据库及 HTTP 事件顺序，核实工作进程退出时究竟写到了哪一步。')+
-   '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>');
+   '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>'+
+   p('任务库已经标为完成。<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">从原订单重算 42，再查接收库里的报告和回执 →</a>'));
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
   if(nativeWorkflowStart<0)throw Error('Missing workflow practice after model plan revision');

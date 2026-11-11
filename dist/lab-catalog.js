@@ -1,6 +1,8 @@
 /* Ordered learning tasks. One archive may contain independent experiments in several tracks. */
 const labArchiveCatalog={
  'dns-cache':{folder:'dns-cache',title:'本机 DNS 的旧地址与否定缓存到期'},
+ 'dns-connection-handoff':{folder:'dns-connection-handoff',title:'DNS 更新后的 HTTP 旧连接与新连接'},
+ 'tiny-decoder-handoff':{folder:'tiny-decoder-handoff',title:'同一小模型的训练、恢复与独立推理'},
  'vllm-cache-scope':{folder:'vllm-cache-scope',title:'同一输入在不同租户缓存范围中的实际调度'},
  'model-mcp-recovery':{folder:'model-mcp-recovery',title:'模型草稿、MCP HTTP 发布与独立回执恢复'},
  'qemu-vcpu':{folder:'qemu-vcpu',title:'从 QMP 的 vCPU 编号定位 Linux 宿主排队'},
@@ -137,6 +139,7 @@ const labTrackCatalog={
 };
 const labLearningCatalog=[
  {id:'cloud-dns-cache',track:'cloud',stage:2,title:'权威已更新，旧地址和不存在何时消失',chapter:'vpc-network',anchor:'native-dns-cache',pack:'dns-cache',files:['dns_cache.py'],env:'Python 3.9+ · Unbound · dig',kind:'本机权威端与解析器实跑',observe:'分别核对直接查询和缓存查询的地址、状态与 TTL，再看哪份缓存先到期。',scope:'两个回环 DNS 进程与固定记录。'},
+ {id:'cloud-dns-connection-handoff',track:'cloud',stage:2,title:'DNS 已返回新地址，旧连接还把请求送给谁',chapter:'vpc-network',anchor:'native-dns-connection-handoff',pack:'dns-connection-handoff',files:['dns_connection_handoff.py'],env:'Python 3.9+ · Unbound · dig · Linux 回环',kind:'实际 DNS 回答与 HTTP/1.1 连接',observe:'等解析器返回新地址，再比较旧连接与新建连接的实际对端，按请求编号和连接编号核对服务端记录。',scope:'两个本机 DNS 进程和两个回环 HTTP 服务，由程序按解析结果选择新连接的地址。'},
  {id:'ai-vllm-cache-scope',track:'ai',stage:2,title:'相同词元在两个租户下会复用几格',chapter:'inference-performance',anchor:'native-vllm-cache-scope',pack:'vllm-cache-scope',files:['cache_scope.py'],env:'Python 3.12 · 固定 vLLM 调度实验包',kind:'原始调度与哈希代码的 CPU 实跑',observe:'对照同租户、服务端按身份赋值和直接转发提交值三种情况下的前缀哈希与排程。',scope:'身份与模型输出为固定输入。'},
  {id:'agent-model-mcp-recovery',track:'agent',stage:2,title:'发布已提交但原进程没收到回复，怎样恢复',chapter:'durable-workflows',anchor:'native-model-mcp-recovery',pack:'model-mcp-recovery',files:['model_mcp_recovery.py','requirements.txt'],env:'Python 3.12 · MCP SDK · 固定本机模型与运行时',kind:'真实模型提议、独立 HTTP 接收与故障恢复',observe:'终止原工作进程后核对两份数据库，再查新进程是否沿原操作取到唯一回执。',scope:'本机多进程、固定模型与测试批准。'},
  {id:'cloud-cpu',track:'cloud',stage:1,title:'CPU 时间与请求等待是两笔账',chapter:'cloud-compute',pack:'compute-and-transport',files:['cpu_and_wall.py'],env:'Python 3.9+ · 标准库',kind:'本机执行',observe:'比较墙钟、进程 CPU 与两线程的总 CPU；解释等待为何不等于计算。',scope:'线程与计时实际执行；没有创建虚拟机或修改 cgroup。'},
@@ -192,6 +195,7 @@ const labLearningCatalog=[
  {id:'ai-gqa',track:'ai',stage:2,title:'GQA 缓存与有效 token 梯度',chapter:'model-serving',pack:'ai-agent-systems',files:['gqa_serving.py','token_ddp.py'],env:'GQA：标准库；DDP：PyTorch 2.5.1 CPU',kind:'数值对照 + 真实两 rank',observe:'两个程序独立：一份比较 GQA 增量路径，一份以全局有效目标复算梯度。',scope:'不同输入和模型，不将二者拼成一个生产推理训练系统。'},
  {id:'ai-artifacts',track:'ai',stage:3,title:'文件和形状都正确，词表仍可能装错',chapter:'ai-lifecycle',pack:'recovery-artifacts-retrieval',files:['artifact_bundle.py'],env:'Python 3.12 + PyTorch 2.5.1 + Safetensors 0.8.0',kind:'CPU 产物保存与加载',observe:'交换词表 ID 后让语义门禁拒绝；固定完整版本束，再验证条件发布与回退代际。',scope:'三条固定语义与本地生产指针，不是 LLM 质量或线上灰度测试。'},
  {id:'ai-recovery',track:'ai',stage:3,title:'一条命令比较连续四轮和保存后的 2+2 轮',chapter:'training-lab',pack:'training-capstone',files:['verify_run.py','train_ddp.py','compare_checkpoints.py'],env:'Linux/macOS · Python 3.10—3.12 + PyTorch 2.5.1',kind:'真实两 rank 完整恢复',observe:'两条路径各有 32 次实际调用；模型、优化器、随机状态和配置逐项相等，三个负例必须被拒绝。',scope:'轮末正常保存后重启；没有任意微批崩溃、掉电或 GPU 证据。'},
+ {id:'ai-tiny-decoder-handoff',track:'ai',stage:3,title:'同一个小模型怎样从训练进程交给推理进程',chapter:'checkpoint-recovery',anchor:'native-tiny-decoder-handoff',pack:'tiny-decoder-handoff',files:['handoff.py','README.md'],env:'Python 3.12 · PyTorch 2.5.1 · CPU/Gloo · 需下载同站 SDPA 实验包',kind:'双进程训练、检查点恢复与独立推理',observe:'核对两步的有效目标与动量，再比较独立进程加载两个版本后的候选分数。将旧权重放到新清单旁，确认加载会拒绝。',scope:'664 参数教学模型，本机 CPU 双精度，在完整更新后保存。'},
  {id:'ai-multinode',track:'ai',stage:3,title:'从单机 CPU 走向真实两机四卡',chapter:'multinode-lab',pack:'cloud-training-ddp',files:['check_env.py','launch_2nodes.sh','train_ddp.py'],pendingFiles:['check_env.py','launch_2nodes.sh'],env:'两台 GPU 机器 · 共同网络与匹配运行时',kind:'目标环境手册',observe:'按设备、会合、小集合通信、训练、恢复与性能的顺序验收；逐层保留记录。',scope:'CPU/Gloo 和同主机代理有本地记录；真实 CUDA/NCCL、物理两节点仍待执行。'},
  {id:'agent-permission',track:'agent',stage:1,title:'先验证拒绝是否真的阻止了业务效果',chapter:'agent-security',anchor:'agent-permission-lab',folder:'permissions',files:['policy_lab.py'],env:'Python 3 · 标准库',kind:'本地策略夹具',observe:'用两个虚拟租户、只读任务和获批写入，对照八组决定与实际业务结果。',scope:'固定授权协议，不调用模型、真实身份服务或 Kairo。'},
  {id:'agent-effects',track:'agent',stage:1,title:'两次尝试，为什么只有一次工具效果',chapter:'agent-recovery',pack:'infra-systems',files:['agent_lab.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'工具提交后让执行者退出，恢复沿同一操作 ID 查询回执，得到 attempts=2、effects=1。',scope:'单 worker 的原始恢复实验；多 worker 接管见后续任务。'},

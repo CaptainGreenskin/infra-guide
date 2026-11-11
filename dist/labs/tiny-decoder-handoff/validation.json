@@ -1,0 +1,523 @@
+{
+  "scope": "two CPU/Gloo ranks, checkpoint handoff and new-process native CPU SDPA",
+  "torch": "2.5.1",
+  "python": "3.12.13",
+  "system": "Darwin",
+  "machine": "arm64",
+  "source_sha256": {
+    "handoff.py": "38184edfc141f1660f0e4257879902c98dabfbbdd88dbb4ad935949a32e890dd",
+    "README.md": "f7f4e8a4a55ae477a5b715c6a2286e6270efdede5ab9cceed20123bab98555cf"
+  },
+  "sdpa_dependency_sha256": {
+    "tiny_decoder.py": "724963cf4a04ac76f6b7d125876d0be1947b1b29a6b0a159a5bb347477dc3e6f",
+    "cache_lab.py": "0095bbd7dda812dfc88360b1aac3515c17df8c32e50723547ca78194e451076c",
+    "requirements.txt": "8049eb34ab1429faf23b56ab9d5edc0b20ef0e2d9a98f319eec5505a7277850e"
+  },
+  "fixture": {
+    "seed": 7,
+    "rows": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        4,
+        5,
+        6,
+        7,
+        0
+      ]
+    ],
+    "labels": [
+      [
+        [
+          1,
+          -100,
+          -100,
+          -100
+        ],
+        [
+          5,
+          6,
+          7,
+          -100
+        ]
+      ],
+      [
+        [
+          1,
+          2,
+          3,
+          -100
+        ],
+        [
+          -100,
+          -100,
+          -100,
+          0
+        ]
+      ]
+    ],
+    "input_sha256": "556c52f8485f60991eaa11712bfed95954d92468bead54f28c448a6f002236a0",
+    "world_size": 2,
+    "lr": 0.05,
+    "momentum": 0.5,
+    "atol": 1e-12,
+    "probe": "token.weight[1,0]",
+    "device": "cpu",
+    "dtype": "float64"
+  },
+  "result": {
+    "training": {
+      "first": [
+        {
+          "step": 1,
+          "next_batch_before": 0,
+          "next_batch_after": 1,
+          "rank": 0,
+          "pid": 62314,
+          "backend": "gloo",
+          "input_ids": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "labels": [
+            1,
+            -100,
+            -100,
+            -100
+          ],
+          "valid_targets": 1,
+          "global_valid_targets": 4,
+          "local_loss_sum": 10.07695190726844,
+          "global_mean_loss": 8.62793687404976,
+          "checkpoint_read_sha256": null,
+          "before": {
+            "weights_sha256": "392b4cbaeeac031f8a7b59274c0a92b180c06c75fc535258e0187b1e46b9ea64",
+            "momentum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 0
+          },
+          "after": {
+            "weights_sha256": "b88c2b63705aeb9356b4008d5d49dedcfc0a69ae14c3b7be12433a8df9433091",
+            "momentum_sha256": "ea35b4532b12bce39f6e19f5cbd11d3d0fefb3c331a7d29c29002219c271aebf",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "probe": {
+            "old_weight": 0.9265430569648743,
+            "old_momentum": 0.0,
+            "local_scaled_gradient": 0.12352509578485629,
+            "global_gradient": 0.06174918039376518,
+            "new_weight": 0.9234555979451861,
+            "new_momentum": 0.06174918039376518
+          }
+        },
+        {
+          "step": 1,
+          "next_batch_before": 0,
+          "next_batch_after": 1,
+          "rank": 1,
+          "pid": 62315,
+          "backend": "gloo",
+          "input_ids": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "labels": [
+            5,
+            6,
+            7,
+            -100
+          ],
+          "valid_targets": 3,
+          "global_valid_targets": 4,
+          "local_loss_sum": 24.434795588930605,
+          "global_mean_loss": 8.62793687404976,
+          "checkpoint_read_sha256": null,
+          "before": {
+            "weights_sha256": "392b4cbaeeac031f8a7b59274c0a92b180c06c75fc535258e0187b1e46b9ea64",
+            "momentum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 0
+          },
+          "after": {
+            "weights_sha256": "b88c2b63705aeb9356b4008d5d49dedcfc0a69ae14c3b7be12433a8df9433091",
+            "momentum_sha256": "ea35b4532b12bce39f6e19f5cbd11d3d0fefb3c331a7d29c29002219c271aebf",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "probe": {
+            "old_weight": 0.9265430569648743,
+            "old_momentum": 0.0,
+            "local_scaled_gradient": -2.6734997325932897e-05,
+            "global_gradient": 0.06174918039376518,
+            "new_weight": 0.9234555979451861,
+            "new_momentum": 0.06174918039376518
+          }
+        }
+      ],
+      "resume": [
+        {
+          "step": 2,
+          "next_batch_before": 1,
+          "next_batch_after": 2,
+          "rank": 0,
+          "pid": 62322,
+          "backend": "gloo",
+          "input_ids": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "labels": [
+            1,
+            2,
+            3,
+            -100
+          ],
+          "valid_targets": 3,
+          "global_valid_targets": 4,
+          "local_loss_sum": 29.596277783891843,
+          "global_mean_loss": 9.196268635117029,
+          "checkpoint_read_sha256": "cb70b89b5af310fa48c5f151b0560519f64f3b6e9fb7df1b025ac0f3c20a500a",
+          "before": {
+            "weights_sha256": "b88c2b63705aeb9356b4008d5d49dedcfc0a69ae14c3b7be12433a8df9433091",
+            "momentum_sha256": "ea35b4532b12bce39f6e19f5cbd11d3d0fefb3c331a7d29c29002219c271aebf",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "after": {
+            "weights_sha256": "8f723009aabcff95f4ba139735ac7dce6e1846ae517d13e70b060cc7f94d04f8",
+            "momentum_sha256": "a38261ee6bafad542a7e5cfe79675f5e58e8f0002590eadaf0a0fe8a227395ad",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "probe": {
+            "old_weight": 0.9234555979451861,
+            "old_momentum": 0.06174918039376518,
+            "local_scaled_gradient": 1.0632387659144522,
+            "global_gradient": 0.5610565928371356,
+            "new_weight": 0.8938590387934852,
+            "new_momentum": 0.5919311830340181
+          }
+        },
+        {
+          "step": 2,
+          "next_batch_before": 1,
+          "next_batch_after": 2,
+          "rank": 1,
+          "pid": 62323,
+          "backend": "gloo",
+          "input_ids": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "labels": [
+            -100,
+            -100,
+            -100,
+            0
+          ],
+          "valid_targets": 1,
+          "global_valid_targets": 4,
+          "local_loss_sum": 7.188796756576271,
+          "global_mean_loss": 9.196268635117029,
+          "checkpoint_read_sha256": "cb70b89b5af310fa48c5f151b0560519f64f3b6e9fb7df1b025ac0f3c20a500a",
+          "before": {
+            "weights_sha256": "b88c2b63705aeb9356b4008d5d49dedcfc0a69ae14c3b7be12433a8df9433091",
+            "momentum_sha256": "ea35b4532b12bce39f6e19f5cbd11d3d0fefb3c331a7d29c29002219c271aebf",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "after": {
+            "weights_sha256": "8f723009aabcff95f4ba139735ac7dce6e1846ae517d13e70b060cc7f94d04f8",
+            "momentum_sha256": "a38261ee6bafad542a7e5cfe79675f5e58e8f0002590eadaf0a0fe8a227395ad",
+            "rng_sha256": "23ae40d2e1f2e2fd1bce23fb53f3d5b9c3b5dc2d837d20804486234a924000f9",
+            "parameter_count": 664,
+            "momentum_elements": 664
+          },
+          "probe": {
+            "old_weight": 0.9234555979451861,
+            "old_momentum": 0.06174918039376518,
+            "local_scaled_gradient": 0.0588744197598189,
+            "global_gradient": 0.5610565928371356,
+            "new_weight": 0.8938590387934852,
+            "new_momentum": 0.5919311830340181
+          }
+        }
+      ],
+      "checkpoint_sha256": [
+        "cb70b89b5af310fa48c5f151b0560519f64f3b6e9fb7df1b025ac0f3c20a500a",
+        "b123fb5e6b95745186982aff25f02b56ea2ecb3d62ff4c68ce009d091f66da45"
+      ],
+      "dense": {
+        "original_a1_loss": 8.627936874049762,
+        "original_a1_step1_weights_max_abs_error": 5.551115123125783e-17,
+        "steps": [
+          {
+            "step": 1,
+            "loss": 8.627936874049762,
+            "loss_abs_error": 1.7763568394002505e-15,
+            "weights_max_abs_error": 5.551115123125783e-17,
+            "momentum_max_abs_error": 3.3306690738754696e-16,
+            "gradients_max_abs_error": 3.3306690738754696e-16
+          },
+          {
+            "step": 2,
+            "loss": 9.196268635117027,
+            "loss_abs_error": 1.7763568394002505e-15,
+            "weights_max_abs_error": 5.551115123125783e-17,
+            "momentum_max_abs_error": 4.440892098500626e-16,
+            "gradients_max_abs_error": 4.440892098500626e-16
+          }
+        ],
+        "weights_only_resume_step2_error": 0.056944463894294195
+      }
+    },
+    "inference": {
+      "step1": {
+        "pid": 62327,
+        "manifest": {
+          "version": 1,
+          "model": "TinyDecoder",
+          "step": 1,
+          "checkpoint_sha256": "cb70b89b5af310fa48c5f151b0560519f64f3b6e9fb7df1b025ac0f3c20a500a",
+          "weights_sha256": "aade043fd15bf62575e7c53ce94d84fe786e7ef74da494dd8b78169379130cd5",
+          "weights_state_sha256": "b88c2b63705aeb9356b4008d5d49dedcfc0a69ae14c3b7be12433a8df9433091",
+          "vocab_size": 8,
+          "max_positions": 4,
+          "parameters": 664
+        },
+        "first_logits": [
+          -0.9500901836522256,
+          3.7803663408380244,
+          -5.082695740761187,
+          2.873464640659525,
+          -2.879972455888751,
+          -1.2462966554822557,
+          2.582305285895463,
+          3.4652949822117733
+        ],
+        "generation": {
+          "prompt": [
+            0,
+            1
+          ],
+          "output_count": 3,
+          "generated_ids": [
+            1,
+            1,
+            1
+          ],
+          "logical_sequence_including_last_output": [
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          "trace": [
+            {
+              "phase": "prefill",
+              "input_ids": [
+                0,
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 2,
+              "query_positions": [
+                0,
+                1
+              ],
+              "visible": [
+                [
+                  true,
+                  false
+                ],
+                [
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 0.0
+            },
+            {
+              "phase": "decode",
+              "input_ids": [
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 3,
+              "query_positions": [
+                2
+              ],
+              "visible": [
+                [
+                  true,
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 0.0
+            },
+            {
+              "phase": "decode",
+              "input_ids": [
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 4,
+              "query_positions": [
+                3
+              ],
+              "visible": [
+                [
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 4.440892098500626e-16
+            }
+          ],
+          "final_cached_positions": 4,
+          "last_output_not_forwarded": 1
+        }
+      },
+      "step2": {
+        "pid": 62329,
+        "manifest": {
+          "version": 1,
+          "model": "TinyDecoder",
+          "step": 2,
+          "checkpoint_sha256": "b123fb5e6b95745186982aff25f02b56ea2ecb3d62ff4c68ce009d091f66da45",
+          "weights_sha256": "bd966374897eaf085ba46c22a653a5e2aaf25648fb59108817a1c93e9f6151f4",
+          "weights_state_sha256": "8f723009aabcff95f4ba139735ac7dce6e1846ae517d13e70b060cc7f94d04f8",
+          "vocab_size": 8,
+          "max_positions": 4,
+          "parameters": 664
+        },
+        "first_logits": [
+          -0.37586980965583705,
+          3.08344294981834,
+          -4.034304335093412,
+          2.5433206661290875,
+          -2.72435594930994,
+          -0.5350001807246636,
+          2.235942577384681,
+          2.8799698685767803
+        ],
+        "generation": {
+          "prompt": [
+            0,
+            1
+          ],
+          "output_count": 3,
+          "generated_ids": [
+            1,
+            1,
+            1
+          ],
+          "logical_sequence_including_last_output": [
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          "trace": [
+            {
+              "phase": "prefill",
+              "input_ids": [
+                0,
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 2,
+              "query_positions": [
+                0,
+                1
+              ],
+              "visible": [
+                [
+                  true,
+                  false
+                ],
+                [
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 0.0
+            },
+            {
+              "phase": "decode",
+              "input_ids": [
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 3,
+              "query_positions": [
+                2
+              ],
+              "visible": [
+                [
+                  true,
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 0.0
+            },
+            {
+              "phase": "decode",
+              "input_ids": [
+                1
+              ],
+              "selected_id": 1,
+              "cache_length": 4,
+              "query_positions": [
+                3
+              ],
+              "visible": [
+                [
+                  true,
+                  true,
+                  true,
+                  true
+                ]
+              ],
+              "logits_max_error": 4.440892098500626e-16
+            }
+          ],
+          "final_cached_positions": 4,
+          "last_output_not_forwarded": 1
+        }
+      },
+      "first_logits_delta": 1.0483914056677746,
+      "wrong_bundle": {
+        "exit": 2,
+        "reason": "weight file does not match bundle manifest"
+      }
+    }
+  }
+}

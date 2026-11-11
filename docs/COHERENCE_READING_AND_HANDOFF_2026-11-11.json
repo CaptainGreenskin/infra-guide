@@ -1,0 +1,209 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "18b8daf7602fec1459fc4b91688bd43d6952b708",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CACHE_AND_MCP_RECOVERY_2026-11-11.json": "6949ed423193a5f80fb7c8c9e7b8f40ac856a3372150db991619cbaf7c99c793"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "dac42169714736d4035ad7cd25f2a314dc776d60822b076415f7e479d9a3b1c1",
+      "reviewed_sha256": "d6ad659645edd987ce944624ebc9a755bb39d3d4894fb4ee8d8239edd13b837e",
+      "scope": "Show the first actual prediction before dimensions, then introduce index, position and block operations when used."
+    },
+    "dist/model-lessons.js": {
+      "previous_sha256": "777012c8518bca99ccfa1795bf7c3421cf62ac171130eb1ebfaaa33a4e58d651",
+      "reviewed_sha256": "a7c125c2293e859ceeafa6e0a62f90900878cf727254be9bb1690814640a7c32",
+      "scope": "Follow one embedding row before introducing a batch and show two different IDs at the same position."
+    },
+    "dist/concept-navigation.js": {
+      "previous_sha256": "544f45599a8c1ced239394ea867c8d5d70abb17dd0942d9fc09cb2a0db8d5d3e",
+      "reviewed_sha256": "675ffecb4e38bc21d0aeb4a87ff9d2ca8c31c98ce56547988ed534edcc0240ad",
+      "scope": "Name token IDs and the decoder sublayers in the section and matching chapter contents."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "1740c8f078430c179b2c8f541356f5df3c69ab25e549919e1af376db5f6657fa",
+      "reviewed_sha256": "e1a2d45964958e84a5b20d9874267ab00357817fb34222712f99de5509c43603",
+      "scope": "Continue from the DNS answer to actual HTTP peer and connection reuse."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "31620ea05fe9ef2464825c7f92eba70cfc5b60170aabad73d0e6921e409a9428",
+      "reviewed_sha256": "8ba49f8a2ed09185bf4a1a3794a78bcc1e9ed16ab4972b4702adacb8865c3017",
+      "scope": "Resume the same TinyDecoder used in the first model lesson, then export weights to a new process."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "43fb5f6a63adeba3f214cdf83cdb721ac4e60c709094b3afbc8c1c76f82234f0",
+      "reviewed_sha256": "2e492927425f68a9858feee6c59b47443933e8c5f026685e8a8b2277ed365a19",
+      "scope": "Link the weight artifact boundary to the same model trained and restored earlier."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "f66a18d22d28d5a90127ab11fb6342135f187f579c6f1e1f5f4b8a98530cb0b0",
+      "reviewed_sha256": "2b0bcb62d35739bfd206a63a687363bd0ca2b51d5f0f3a1ae43bee95fa59c545",
+      "scope": "Follow the real restored report into business acceptance."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "d0ff48ec21b35ee0deff0e918286a7ecadaf4332e100e05dcbf88602666b1304",
+      "reviewed_sha256": "5da2fd492fedad6866b2b4684032f5bf359bbea17bc02962620d2e7849f78fad",
+      "scope": "Check the report, expected source versions, and receipt independently of the worker status."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "52ba079c0ec44be212f53f5abcb02b1a2a57117cacac895331e2e31a434873ca",
+      "reviewed_sha256": "603bf088c75cb532e68a795017243966bd15886cc529d8e84723f4328170c4b3",
+      "scope": "Count model, host, MCP and business effects from the very same restored run."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "c6db3b18f2d0a2f117954577544eb867fb68a0bd0d4e7db9e4dd94c16218a9a1",
+      "reviewed_sha256": "5a29a52a676b292bb074b12a9f9733628005b1b9ae8ed316f6263aaa9b71887f",
+      "scope": "Link Cloud, AI training and Agent role checks to the specific native observation or actual trace."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "791185a7c2fe536a69c332e21bac3499ec2f96acad855cf8922a0df8b75cdab2",
+      "reviewed_sha256": "c02131916badc46b8c0dfb8fed055b1beeeeaa96dc62c27c134d88d52585baef",
+      "scope": "Register two standalone reproducible experiment packs with matching raw evidence."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "c83a32b5997c6e422f664c29185bde9ba36f8be2905a6e41709186688e2778c4",
+      "reviewed_sha256": "d2e3083ed1c9ba4f6669b699e13546e7c0565528e3e782fc4e3ff7172d06e0a7",
+      "scope": "Record intrinsic dimensions of two added diagrams and the shorter first prediction."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "70c5429b4dad3f98c034a8a58cac0f3da8078931452f6c51a15818ed14a8d86e",
+      "reviewed_sha256": "a7ed2f0f0a92663d9ef8788038ff23b53434166914adaff70e1b50b041e8c015",
+      "scope": "Bind the first prediction diagram to the original CPU run."
+    },
+    "scripts/check-dns-connection-handoff.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "10af9effabc5507a06135f61a0536674f24c84dcc84e513c7168d3cd5db02540",
+      "scope": "Verify actual DNS and HTTP observations from Linux and the exact source archive."
+    },
+    "scripts/check-tiny-decoder-handoff.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ca1b1f3677c03d0ad76e642e32a6c3950d10b05a551e70bf7ecacde1774e0c07",
+      "scope": "Verify native training, resume and serving observations, mutations and the exact source archive."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "b1b00a6440337b0c3eb86e9cfecd0695f5561140fe3472e4396e01001250613b",
+      "reviewed_sha256": "a783116222eab0bb01146b0fd4c5f8be380e3605e8bd057cb54c3279b48a8fd5",
+      "scope": "Register both new evidence checks."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "02354da12b7e90070c702c3a9fede21f293e339370076c167d693a7706cd8566",
+      "reviewed_sha256": "aeb904403d60b839ab9713219d4a602a569d0ed142dcfd964512f93a19705c36",
+      "scope": "Verify the added role targets across root and project paths."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "25e5022cc3217595801e8a6cb28f29927ffc14bd76e59b2d64c9a3428b821603",
+      "reviewed_sha256": "0931de7975b8ed9636f378ae077d5eaed87313166821823c7ae3d3ccd5c365f4",
+      "scope": "Select each native verifier for the signed teaching unit."
+    },
+    ".github/workflows/dns-connection-handoff.yml": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3cf58265827721dd2f33b97d8092053812b67e1d1a158c6ad8d26114d411b1f5",
+      "scope": "Run the unchanged local DNS and HTTP test with a native x86_64 Ubuntu container."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "22a5f1c4e83785def4417dceeeee944d2640c378f9a2768ecc2b0667ac4115c0",
+      "reviewed_sha256": "327a5f50537ec210b8505491673e03c5de078f84d14385be3a69bca95137190f",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "cc1eca8ab5bfad0711b8c1784708c0265ffa02d1307f4e6759ef2b8bda1b95f2",
+      "reviewed_sha256": "db2e514a3442b859e01f9e54f3e3149f6f4729f52319368db26cc3c3d2214ac2",
+      "scope": "Fingerprint the renderer and edited lesson sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "8fd5072ecbbd4741529a5c16059f133a8ff50a916b8fc831a7d7e689ccd8a3eb",
+      "reviewed_sha256": "5e1f462c1446ae6079d0c2a652c56b6fd6ecc55c6b2aaaf6b505e22fc5b9415e",
+      "scope": "Record two hidden evidence anchors and the Agent observation heading."
+    },
+    "docs/CONTENT_READING_AND_HANDOFF_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "732e0f6aa98ad2c9631961297da3c6a5cb8e412d91e0b0f2d39146a6dc76a6ed",
+      "scope": "Record seven reviewed chapter revisions and two actual experiment units."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "20c61dd6cc7bc4a7265459b35cf7f466758ae49f5414a6f8e6cf357fa3c47deb",
+      "reviewed_sha256": "ee9603757eda8130b1bfea68e997d9fac1520a8beafff04b87ff4a541e2d9f3f",
+      "scope": "Append the verified body reviews."
+    },
+    "dist/labs/dns-connection-handoff.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f39c6ab7e9823d991608c3c2e84c8941bd685dc67862d6739bafd516dc6aa04f",
+      "scope": "Bind the exact standalone source and record archive."
+    },
+    "dist/labs/dns-connection-handoff/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "4127933dd252a9158c10f8625829d507fc2a15af6c4e43e0ae84a5fce40a9bf1",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/labs/dns-connection-handoff/dns_connection_handoff.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b8b3927235e547ac88a61dbdd34257210e449e5283933b86281187b523e3e13e",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/labs/dns-connection-handoff/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3f2f5ae50d6db2382312ffe57128cf95f5d716b0514e3dbb7311671527c3d6e6",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/labs/tiny-decoder-handoff.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0e9f4ba7dfcd685fb04441b46c472bbfa325436fe5473fe260bab53db35bf597",
+      "scope": "Bind the exact standalone source and record archive."
+    },
+    "dist/labs/tiny-decoder-handoff/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f7f4e8a4a55ae477a5b715c6a2286e6270efdede5ab9cceed20123bab98555cf",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/labs/tiny-decoder-handoff/handoff.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "38184edfc141f1660f0e4257879902c98dabfbbdd88dbb4ad935949a32e890dd",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/labs/tiny-decoder-handoff/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8682184fe310643113794cb92570ef8430d385a778e6fd7b1b4b9ff9f0c4dd18",
+      "scope": "Bind the actual experiment, runtime instructions and recorded observations."
+    },
+    "dist/diagrams/dns-connection-handoff.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1bfe6f5c1f7d778a5f7e549ef7cd78e531efe30f37c5950038b8dfbbc961296b",
+      "scope": "Draw the same data path and observations as the article and record."
+    },
+    "dist/diagrams/tiny-decoder-handoff.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c3275eedf2582bc8afcf4899eabaa6415d0172021c0104531914f15118300119",
+      "scope": "Draw the same data path and observations as the article and record."
+    },
+    "dist/diagrams/transformer-first-forward.svg": {
+      "previous_sha256": "50d31fce95e570d81e5ce75054a2649178fe6c2d14e0079d1fd51c6110f102d3",
+      "reviewed_sha256": "8df55b37e06a243fcbba8fcbea3441c866216e2a00bd1ac07ada525ef4dc0c95",
+      "scope": "Draw the same data path and observations as the article and record."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "639bb9fcb9c15fef64ede12fec18ae8b63ada2d6aa3a206326407346301628fb",
+      "reviewed_sha256": "619693d37935242f872f747f7421be82cf6a8460d3608ade429e775f93501282",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "18b8daf7602fec1459fc4b91688bd43d6952b708",
+    "chapters": 78,
+    "changed_bodies": [
+      "vpc-network",
+      "transformer-model",
+      "checkpoint-recovery",
+      "model-serving",
+      "durable-workflows",
+      "agent-evaluation",
+      "agent-observability"
+    ],
+    "new_chapters": [],
+    "added_code_blocks": {
+      "agent-evaluation": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 2
+  }
+}

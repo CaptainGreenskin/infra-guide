@@ -76,7 +76,8 @@
         "subsection-7-a6sxak",
         "v43-route-practice",
         "native-tls-proxy",
-        "native-dns-cache"
+        "native-dns-cache",
+        "native-dns-connection-handoff"
       ],
       "visible_targets": [
         "subsection-1-1mbleem",
@@ -696,7 +697,8 @@
         "fsdp-dcp-reshard",
         "native-elastic-restart-step",
         "native-async-dcp-commit",
-        "single-gpu-recovery-contrast"
+        "single-gpu-recovery-contrast",
+        "native-tiny-decoder-handoff"
       ],
       "visible_targets": [
         "fsdp-dcp-reshard",
@@ -972,7 +974,8 @@
         "subsection-5-cnfnmm",
         "subsection-9-dpvytn",
         "subsection-12-bgbi93",
-        "native-model-evaluation-bridge"
+        "native-model-evaluation-bridge",
+        "native-model-mcp-recovery-verdict"
       ],
       "visible_targets": [
         "native-model-evaluation-bridge"
@@ -1050,10 +1053,12 @@
         "subsection-7-uqlgd8",
         "subsection-8-323gx5",
         "native-tail-sampling-ledger",
-        "native-mcp-trace-reentry"
+        "native-mcp-trace-reentry",
+        "native-model-mcp-recovery-observation"
       ],
       "visible_targets": [
         "native-tail-sampling-ledger",
+        "native-model-mcp-recovery-observation",
         "native-mcp-trace-reentry"
       ]
     },

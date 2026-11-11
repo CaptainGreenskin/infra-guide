@@ -273,6 +273,19 @@ future.result(timeout=35)
   '首次配对读回的三项状态指纹都匹配。往前查日志，首步损失相同，梯度范数（衡量整组梯度的大小）已经不同，第 2 步的损失也开始分叉。差异出现得比第 4 步退出更早。遇到这种情况，先核对退出前的两条训练轨迹，再检查加载过程。')+
   p('重跑沿用原样本和比较阈值，同时启用确定性算法，固定 GPU 矩阵计算库 cuBLAS 的临时内存设置，并关闭 TF32 这种降低乘法精度的计算模式。第 12 步后，两组 LoRA 参数的最大绝对差为 0，参数、优化器状态及逐步损失均逐位一致，最终随机状态也一致。记录验证了这一组配置在完整更新边界的单卡进程恢复。')+
   '<p class="practice-links"><a href="'+singleGpuResults+'README.md">实验条件与诊断过程 ↗</a> · <a href="'+singleGpuResults+'failed-pairs/recovery-v3/comparison.json">首次配对记录 ↗</a> · <a href="'+singleGpuResults+'comparison.json">重跑对照结果 ↗</a></p>');
+ recovery.sections[7][1]+=fold('实跑 · 同一小模型从双进程训练走到推理',
+  '<h3 id="native-tiny-decoder-handoff">训练恢复后，推理加载的是哪一步权重？</h3>'+
+  p('沿用 <a href="/article/transformer-model/#training-versus-generation">Transformer 章的 664 参数小模型</a>和两条输入。第一步把两条序列分给两个训练进程，分别有 1、3 个有效目标。每个进程先算本地损失和，再乘 2/4 做反向。DDP 把两个进程的梯度平均后，每个有效目标的权重就是 1/4。')+
+  trainingFigure('tiny-decoder-handoff','同一份模型参数经过两次更新、一次换进程恢复，再作为文件交给新的推理进程。')+
+ p('第一步后保存参数、优化器动量和已完成步数。新训练进程读回检查点，从第二步继续。这一步仍使用两条原输入，但有效目标改为 3、1。单进程用全局四个目标算出的两步平均损失约为 8.628 和 9.196。双进程与单进程两种跑法逐项比较更新后的权重，最大绝对差约为 5.55×10⁻¹⁷。')+
+  p('动量是优化器保存的梯度历史。单进程对照只保留第一步的权重并重新初始化动量，同样完成第二步后，最终权重的最大绝对差约为 0.05694。于是恢复验收要同时查步数、参数和优化器状态。')+
+  table(['交给推理的权重','从提示 [0,1] 生成','各轮缓存长度'],[
+   ['完成第一步','[1,1,1]','[2,3,4]'],
+   ['完成第二步','[1,1,1]','[2,3,4]']
+  ])+
+  p('输出编号恰好相同，两个权重版本的首轮候选分数最大相差约 1.04839。新推理进程先核对制品摘要，再加载导出的权重。把第一步的权重放进声称来自第二步的制品，程序在推理前拒绝。对于正确的第二步权重，完整前缀与增量缓存的候选分数最大误差约为 4.44×10⁻¹⁶。<a href="/article/model-serving/#sdpa-cache-run">回到推理章看逐位置的缓存校验 →</a>')+
+  p('解压本实验及<a href="/labs/sdpa-cache.zip">原 SDPA 实验包</a>，按包内说明启动。记录可用来核对本机 CPU/Gloo 的目标数、检查点和推理读回。')+
+  '<p class="practice-links"><a href="/labs/tiny-decoder-handoff.zip" download>下载程序与记录 ↓</a> · <a href="/labs/tiny-decoder-handoff/validation.json">查看训练与推理实际记录 →</a> · <a href="/labs/tiny-decoder-handoff/README.md">复跑步骤 →</a></p>');
  recovery.updated='2026.11.11';
 
 })();

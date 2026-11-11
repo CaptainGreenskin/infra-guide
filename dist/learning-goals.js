@@ -6,7 +6,7 @@ const learningProfiles={
   checks:[
    {title:"确认用户真的能访问",
     result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"]]},
    {title:"定位请求被哪一层拦下",
     result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","native-jetstream-redelivery","消息重投后拒绝旧执行者"]]},
@@ -37,7 +37,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -105,7 +105,7 @@ const learningProfiles={
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
-    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"]]},
   ]
  }},
 };

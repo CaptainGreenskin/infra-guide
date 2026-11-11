@@ -39,6 +39,15 @@ for(const id of first){
 }
 const model=data.articles.find(a=>a.id==='transformer-model');
 for(const term of ['Embedding','Attention','FFN','归一化','残差连接','输出投影'])assert(model.sections[0][1].includes(term),'model components precede matrix arithmetic: '+term);
+const opening=model.sections[0][1];
+assert(opening.indexOf('两个位置各有一行分数')<opening.indexOf('id="tiny-decoder-input"'),'the first prediction is visible before the training example');
+const diagram=fs.readFileSync('dist/diagrams/transformer-first-forward.svg','utf8');
+const preview=JSON.parse(diagram.match(/<metadata>([^<]+)<\/metadata>/)[1]);
+const run=JSON.parse(fs.readFileSync('dist/'+preview.record,'utf8')).program;
+assert.deepEqual(preview.prompt,run.generation.prompt);
+assert.equal(preview.vocabulary,run.vocab_size);
+assert.equal(preview.selected_id,run.generation.trace[0].selected_id);
+assert.deepEqual(preview.next_prefix,[...run.generation.prompt,run.generation.trace[0].selected_id]);
 const decoderExample=model.sections[0][1].split('id="tiny-decoder-input"')[1];
 assert(/前四项作输入[^<]*后四项作目标/.test(decoderExample),'the first reading defines the label shift in the decoder example');
 assert(model.sections[6][1].includes('将有效目标对应的行纳入损失'),'the training explanation specifies which targets count');
