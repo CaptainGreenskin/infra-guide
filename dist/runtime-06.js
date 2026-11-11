@@ -6659,7 +6659,7 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
  p('各 rank 各自读取数据、执行计算，到达同一个集合调用的时间可以不同。较早到达的进程可能先进入通信，然后等其他成员提供输入。于是本地观察到的一段“通信时间”，既可能包含传输，也可能包含别的进程尚未到达的等待。要解释这段时间，先把调用之前的数据取得、计算和张量就绪也放到时间线上。',
  '本章实际程序先执行 barrier，使两个成员经过共同的阶段边界，再让 rank 1 在调用前 sleep 80ms。rank 0 提供数值 1，rank 1 提供 2，然后都执行异步 AllReduce SUM 并等待，最后都读到 3。rank 0 的计时已经开始时，rank 1 可能还在睡眠；rank 1 自己的计时却在睡眠之后才开始。两段本地持续时间因而有不同的起点。',
  'async_op=True 返回 Work 工作句柄，程序可用它建立后续的等待关系。本例是 CPU/Gloo：work.wait() 阻塞当前进程，等该操作完成后才读取结果。下面片段将待归约的单元素张量记为 value、句柄记为 work；计时覆盖本地发起与等待，不能单独命名为网络传输时长。')+c3[0]+
- p('保存的运行记录中，rank 0 的 call+wait 约 81.821ms，rank 1 约 0.452ms；80ms 是程序注入值，这两段耗时是当次测量值，每次运行可以变化。它把“一个成员迟到，使另一个成员等得久”变成了可检查的因果对照。输入读取或反向计算在真实训练中也可能造成迟到，要靠相应训练时间线确认。',
+ p('保存的运行记录中，rank 0 的 call+wait 约 81.821 ms，rank 1 约 0.452 ms，复跑时两段耗时会变化。80 ms 是程序在调用前注入的休眠。实际训练若怀疑取数迟到，按同一次更新和微批编号，比较各 rank 从调用 <code>next(iterator)</code> 到返回的耗时，再对照后续计算与集合调用的顺序。<a href="/article/data-pipeline/#subsection-6-101j0v8">沿数据章的时间线找出等待从哪一步开始 →</a>',
  '换成 CUDA/NCCL 时，要区分主机函数返回与设备执行完成。PyTorch 2.5.1 的 NCCL Work.wait() 会让当前 CUDA 流等待该通信完成；通常依靠流依赖继续安排后续工作，不能把主机返回解释为整张 GPU 的工作已结束。阻塞等待配置等情形还可能让主机等待。转到另一条流消费结果时，仍须建立那条流需要的依赖；通信尚在使用的缓冲也必须保留。',
  '比较 rank 时记录同一任务、同一更新或桶、同一调用序号下的阶段持续时间。跨主机绝对时钟可能有偏差，未经校准的时间戳不能直接相减得到精确传输延迟。先用本地时长及共同阶段身份建立对应关系，再分析到达差和完成差。')+
  fold('CPU 与 CUDA 等待的版本依据',source('https://github.com/pytorch/pytorch/blob/v2.5.1/docs/source/distributed.rst','PyTorch 2.5.1：同步、异步 collective 与跨 CUDA 流使用结果')+source('https://github.com/pytorch/pytorch/blob/v2.5.1/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp','PyTorch 2.5.1：WorkNCCL 的流等待与阻塞等待实现')),
@@ -6999,8 +6999,9 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
   p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
  a.sections[7][1]+=h('native-model-mcp-recovery-observation','同一份 42 日报，各环节该怎么计数？')+
-  p('在<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">验收章</a>核对过实际报告以后，打开<a href="/labs/model-mcp-recovery/validation.json">同一份运行记录</a>。模型请求、宿主内部工具、跨进程调用和实际产物各数各的。')+
+  p('沿用<a href="/article/durable-workflows/#native-model-mcp-recovery">工作流章的 42 日报发布</a>。报告的金额与来源可在<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">验收章</a>核对。打开<a href="/labs/model-mcp-recovery/validation.json">同一份运行记录</a>，分别数任务进度、模型请求、工具调用和实际产物。')+
   table(['数什么','在哪数','这次结果'],[
+   ['任务进度','<code>cut.host.state</code> 与 <code>recovery.after.state</code>','从 <code>PUBLISH_PENDING</code>（待确认）推进到 <code>DONE</code>（已完成）'],
    ['模型请求','model_turns','4 次；模型服务共记录输入 2540 个词元，其中 1800 个命中缓存，输出 95 个词元'],
    ['宿主内部执行工具','paused.state.events','4 次，读清单、修订计划、读补录和生成草稿'],
    ['MCP 业务调用','receiver_events 中的 request','1 次 publish_report，1 次 lookup_receipt；都指向 report-A/v3:publish'],
@@ -7008,7 +7009,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   ])+
   p('两次 MCP 调用各用新会话，请求编号恰好都是 3。原进程退出时，<code>cut.receiver_events_after_exit</code> 只有请求和提交。完整日志随后有一条发布响应开始事件，那时原进程已经退出。<code>recovery.wire.response</code> 才是新进程实际收到的查询结果。')+
   h('native-mcp-trace-reentry','进程退出后，用跨度链接接回原来的执行')+
-  p('下面另建一份 42 日报和接收库，用固定工具请求观察跨度如何相连。首次运行 <code>report-A</code> 时，调用方先把待处理操作 <code>report-A/v3:publish</code> 和当时的根跨度编号存进检查点。MCP 工具已经写入合计 42 的报告，实验保留待处理状态，让新的调用进程从这份检查点继续。这样就能分别验证两件事：追踪能否从新进程回查第一次运行，发布会不会再写一份。')+
+  p('上面的 <code>paused.state.events</code> 是宿主保存的工具事件。现在另做一次实验，用固定工具请求观察 OpenTelemetry 的跨度。两次实验都用金额 42 和操作号 <code>report-A/v3:publish</code>，各有自己的任务状态和接收库。首次运行 <code>report-A</code> 时，调用方先把待处理操作和当时的根跨度编号存进检查点。MCP 工具已经写入合计 42 的报告，实验保留待处理状态，让新的调用进程从这份检查点继续。这样就能分别验证两件事：追踪能否从新进程回查第一次运行，发布会不会再写一份。')+
   p('这里把每次独立启动划为一条追踪。<strong>跨度链接（Span Link）</strong> 保存另一个跨度的追踪号与跨度号，用来标记因果关系。新根跨度把旧根加进 <code>links</code>，自己的 <code>parent_id</code> 仍为空。当前工具调用另建发送跨度，将它写入 HTTP 的 <code>traceparent</code> 请求头。接收跨度因此是<strong>这一次发送跨度</strong>的子节点。')+
   trainingFigure('mcp-trace-reentry','三次工具调用各有一条追踪。恢复组用跨度链接找到第一次运行，接收方按同一操作号返回原回执。')+
   table(['本地复跑','追踪关系','接收方结果'],[
@@ -12253,7 +12254,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    p('新进程建立新会话，调用 <code>lookup_receipt</code> 查询原操作。记录中两条 MCP 会话的 JSON-RPC 请求编号都是 3，真正贯穿发布与恢复的是持久化的操作号。新进程核对回执中的操作号、草稿摘要和来源版本，再保存完成状态。整条记录只有一次发布和一次回执查询。')+
    p('复跑需同时解压本实验和<a href="/labs/model-plan-revision.zip">原模型规划包</a>，按说明准备固定版本的模型和运行时。程序使用本机独立进程、两个数据库和预设的批准输入。可以对照两份数据库及 HTTP 事件顺序，核实工作进程退出时究竟写到了哪一步。')+
    '<p class="practice-links"><a href="/labs/model-mcp-recovery.zip" download>下载源码和真实记录 ↓</a> · <a href="/labs/model-mcp-recovery/validation.json">四轮模型提议与发布恢复记录 →</a> · <a href="/labs/model-mcp-recovery/README.md">复跑与查表步骤 →</a></p>'+
-   p('任务库已经标为完成。<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">从原订单重算 42，再查接收库里的报告和回执 →</a>')+
+   p('任务库已经标为完成。<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">从原订单重算 42，再查接收库里的报告和回执 →</a>',
+    '带着同一份运行记录，<a href="/article/agent-observability/#native-model-mcp-recovery-observation">到观测章分别数宿主事件、工具调用和实际提交</a>。')+
    p('可以先暂停在退出点，<a href="/article/agent-recovery/#recovery-lookup-after-commit">用这份记录自己核对原操作和草稿摘要</a>，再看任务库为什么可以标为完成。'));
   const nativeWorkflow=h('langgraph-workflow-run','真实框架、文件检查点与HTTP接收方');
   const nativeWorkflowStart=a.sections[8][1].indexOf(nativeWorkflow);
@@ -13177,6 +13179,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ],'从账户与回执的共同提交理解undo、redo和binlog，再沿一致基线、连续事件和事务停止边界完成历史恢复与独立验收。');
  recovery.sections[5][1]+=p('把同一个 T103 后的恢复目标交给 PostgreSQL。它从基础备份开始连续读取归档，并在日志里找具名恢复点。<a href="/article/storage-recovery/#postgres-missing-wal">看缺少目标段时的启动记录 →</a>')+
  linkRow(['<a href="/labs/transport-recovery/validation.json">查看 MySQL 日志清单和缺段结果 →</a>']);
+ recovery.sections[6][1]+=p('对照<a href="/labs/transport-recovery/validation.json">同一份记录</a>的 <code>full_replay</code>。从同一备份重放到日志末尾，余额为 7，回执里有 T104 清零和 T105 加 7。目标若是回到清零前，就应保留余额 125 和 T101 至 T103 的回执。若要接手最新写入，<a href="/article/mysql-replication/#section-6">看另一项复制实验怎样核对冻结后的事务和候选的新写入 →</a>。');
  recovery.updated='2026.11.12';
 
  const replication=select('mysql-replication',['从一行数据，分清提交、版本与读视图','用两条真实连接理解RR与RC','把一次源提交放进复制链','GTID记录事务身份，集合表达应用目标','旧读要分别查事务视图和复制应用','计划切换：先收回旧写，再追齐与开放新写','读副本、分片与热点，各解决哪种容量问题','沿完整程序核对读视图、复制和交接','把图上的边界变成面试追问'],[4,3,9]);
@@ -13250,6 +13253,8 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  table(['追问','从已有关系给出的判断'],[['源确认后为何读旧','先确定实例，再查应用目标与读事务视图'],['最大GTID副本能否提升','比较完整集合缺少和未知额外，再查业务历史及旧写隔离'],['如何避免新旧两端都写','冻结旧写取得有限目标，候选追齐，隔离旧执行者，最后开放新写'],['复制为什么仍需备份','错误提交也会传播，历史恢复另需可选基线和连续日志'],['加副本或分片为何还有热点','先确定访问单位和数据拥有者，再算写串行及跨片成本']])+
  p('三章因此接成一条路径：TCP把字节交给应用，应用事务把修改与回执共同提交，日志支持当前或指定历史的恢复，复制把提交继续送到其他实例。业务是否完整、当前查询看见什么、下一个写请求由谁接受，始终分别由相应对象和实际操作确认。')
  ],'先用真实连接讲清MVCC与读视图，再沿源提交、接收、应用和GTID目标走到旧写隔离、候选追齐与新写开放。');
+ replication.sections[5][1]+=p('追齐 G₂ 是为了让候选接手冻结前已经确认的写入。普通复制会继续应用已提交的变更，误写也会随之传播。T104 清零只出现在独立的恢复实验里。要排除这笔提交，先选定备份与重放终点，再<a href="/article/mysql-recovery/#section-7">核对误写前的余额与回执 →</a>。');
+ replication.updated='2026.11.12';
 })();
 
 
@@ -17633,5 +17638,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="b4c28fcef729e89390654531c094d49df757f3cb44c2a42e7bdab5f914c3bff2";
+const staticReadingVersion="884a41bd5a45939d4c00a49c3b7640ffdbdada63c19f8e42040503928f4423bc";
 

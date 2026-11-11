@@ -1,0 +1,91 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "105cdcf65bf37a87ffdb57201fe9fce8a27ba36e",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRACE_OBSERVED_STATE_2026-11-12.json": "cb05f5d19e352b1298e6859f5b12e79e1195944755b12a6c0d7337cd4f9b67bd"
+  },
+  "source_revisions": {
+    "dist/progressive-tcp-database-reading.js": {
+      "previous_sha256": "1e2a3cc8ac7ebc43c7e5e28a8526232029ff42640bab57ff98547da2d2304341",
+      "reviewed_sha256": "b114122bcc02c65340f125f29eea45d4c6db51ddfcb5fbd394c5e8d82bc7316e",
+      "scope": "Connect the fixed live handover and the independent point-in-time restore."
+    },
+    "dist/progressive-training-io-reading.js": {
+      "previous_sha256": "abfb4d0733afcddbfbb446be2ee12c9ef474964d602b9af33d561d7493b22ec4",
+      "reviewed_sha256": "44324567f996c7b588aef17a816038d7a9ef2398da8e1c7fffd47af6597b962a",
+      "scope": "Carry the known artificial late arrival into a specific data-input timing comparison."
+    },
+    "dist/interview-paths.js": {
+      "previous_sha256": "e9de75577befc282450aad554da42375eeb25e21264cad19152357e305c3647e",
+      "reviewed_sha256": "7844b2d50287af84a405690025071a4b3c397c2ab2dea772ceb6cf6001e101c4",
+      "scope": "Connect the AI interview review to the original collective-wait drill while preserving the existing sequence."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "ff8b81ea86f9ecffd11ab1c91965b3eb30de589e79254519c3bf3bbfe9de3e16",
+      "reviewed_sha256": "15280afe9b6f3106d7b247b04f821d63b664242d4e56de6676c2da598bb7e698",
+      "scope": "Carry one unchanged model and MCP recovery record directly into observability."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "ab29923e4efd8afc4138c6d8f5d1a28c52556c50de7a99493e0dbb19eddc021a",
+      "reviewed_sha256": "79bfcd05a7c25b8265995ee4f1f6cd51d3beb93f50013b14168b8030382153c6",
+      "scope": "Count local progress and receiver facts separately in that run and distinguish the independent OTel experiment."
+    },
+    "scripts/check-transport-recovery.cjs": {
+      "previous_sha256": "06133c78fbafaefc618f53fc355c911506f9a06acd2582149ad30048da718e4b",
+      "reviewed_sha256": "68c59760d6d0cc181448694f5ccb6faa15f0bf00346b3a9448dda0b2f592ba37",
+      "scope": "Tie both MySQL destinations to their separately recorded native states."
+    },
+    "scripts/check-scaling-collective-traces.cjs": {
+      "previous_sha256": "c9415b7d23e8cec5fd7faa66eadc2e24192cea446d92be627159c00e162b9446",
+      "reviewed_sha256": "a27ce088d698a9773ba9c4bf89510ed469446e4c274271673596b7ade4318b35",
+      "scope": "Verify the rendered interview and lesson wait numbers against the recorded pre-call delay and exact targets."
+    },
+    "scripts/check-model-mcp-recovery.cjs": {
+      "previous_sha256": "cad130101a6004e570266aadd71417b267f0b258601440191f96b3deb390aa6a",
+      "reviewed_sha256": "0db3012677b21afd51c84f435c660057343473a91686c236054e774d4d3eac3e",
+      "scope": "Bind the shared record links, host states and separate trace fixture to the rendered content."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "9147a742762f2cc7b9cbd8bd0fe5eafc9e99229cac7d3f8384337125c9c77ae3",
+      "reviewed_sha256": "3c8b7e5ec321472412d57285e8d8a0c6f74b8177d8b7bc3f64dea16b04bdc0ad",
+      "scope": "Fingerprint the revised lesson, navigation and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "d84f925e313c120009d4531a1ac08ae74ca82bab995ffebfcaed28eaa8870dbd",
+      "reviewed_sha256": "0eede51f9767546b02f0e1a95b8cb7890329d6133dca95505452dc188058ff03",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_DISTINGUISH_EXPERIMENT_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "acab11a2bbb9cf7a3bfb20cce4eec2d645a6c8f44b4eaf912da7636689ccc420",
+      "scope": "Record the revised teaching bodies."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "f73c9e28efdcc3f36a2c05f2762269729143243504cdd809a38a1064d670cbd1",
+      "reviewed_sha256": "5fed0b3aa0ef01b9b9d5512ca561ef5c57fd0e0a5eb0e9a903c6056be7debe26",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "cd470b1746e45cd4038d83b9d3359bb952723380a961d7d0767fc8a98916bab1",
+      "reviewed_sha256": "f6a2629a3aae82a5535d29a7a3a24713d488371b6a49e77c279bb8fe8394fe08",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "105cdcf65bf37a87ffdb57201fe9fce8a27ba36e",
+    "chapters": 78,
+    "changed_bodies": [
+      "mysql-replication",
+      "mysql-recovery",
+      "training-communication",
+      "durable-workflows",
+      "agent-observability"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

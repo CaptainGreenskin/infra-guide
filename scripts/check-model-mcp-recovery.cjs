@@ -152,7 +152,17 @@ const lesson = fs.readFileSync(lessonPath, 'utf8').split('id="' + lessonAnchor +
 assert(lesson?.includes('/article/durable-workflows/#native-model-mcp-recovery'));
 assert(lesson.includes('/labs/model-mcp-recovery/validation.json'));
 const workflow = fs.readFileSync(path.join(root, 'dist/article/durable-workflows/index.html'), 'utf8');
-assert(workflow.split('id="native-model-mcp-recovery"')[1]?.includes('/article/agent-recovery/#' + lessonAnchor));
+const workflowLesson = workflow.split('id="native-model-mcp-recovery"')[1]?.split('</details>')[0];
+assert(workflowLesson?.includes('/article/agent-recovery/#' + lessonAnchor));
+const observationAnchor = 'native-model-mcp-recovery-observation';
+assert(workflowLesson.includes('/article/agent-observability/#' + observationAnchor));
+const observation = fs.readFileSync(path.join(root, 'dist/article/agent-observability/index.html'), 'utf8');
+const [sameRun, traceRun] = observation.split('id="' + observationAnchor + '"')[1]?.split('id="native-mcp-trace-reentry"') || [];
+assert(sameRun?.includes('/article/durable-workflows/#native-model-mcp-recovery'));
+assert(sameRun.includes('/labs/model-mcp-recovery/validation.json'));
+for (const state of [published.cut.host.state, published.recovery.after.state]) assert(sameRun.includes('<code>' + state + '</code>'));
+assert(traceRun?.includes('<code>paused.state.events</code> 是宿主保存的工具事件'));
+assert(traceRun.includes('各有自己的任务状态和接收库'));
 const renderedCode = lesson.match(/<pre\b[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/)?.[1];
 assert(renderedCode, 'The beginner exercise must be available in the published lesson');
 const htmlEntities = {'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'",'&#x27;':"'"};

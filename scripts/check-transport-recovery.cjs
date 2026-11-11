@@ -53,6 +53,21 @@ assert(acceptanceSection.includes(target.operations.map(([id,delta])=>id+'/'+sig
 const equation=baseline.balance+target.operations.map(([,delta])=>' '+signed(delta).slice(0,1)+' '+Math.abs(delta)).join('')+' = '+target.balance;
 assert(acceptanceSection.includes('<code>'+equation+'</code>，差额为 0'));
 assert(acceptanceSection.includes('<code>post_restore_write</code> 读到余额 '+after.balance));
+const replication=JSON.parse(fs.readFileSync('dist/labs/mysql-replication/validation.json')).execution.switchover;
+const replicaSection=fs.readFileSync('dist/article/mysql-replication/index.html','utf8')
+ .split('id="section-6"')[1]?.split('</section>')[0];
+assert(replicaSection?.includes('/article/mysql-recovery/#section-7'));
+assert(acceptanceSection.includes('/article/mysql-replication/#section-6'));
+assert(acceptanceSection.includes('/labs/transport-recovery/validation.json'));
+const beforePromotion=replication.replica_before_promotion,newPrimary=replication.new_primary;
+assert.deepEqual(beforePromotion.receipts,replication.source_before_stop.receipts);
+assert(![...beforePromotion.receipts,...newPrimary.receipts].some(receipt=>receipt.id==='T104'));
+assert(replicaSection.includes('两边账户'+beforePromotion.balance) && replicaSection.includes('NEW_WRITER加3后为'+newPrimary.balance));
+assert(replicaSection.includes('T104 清零只出现在独立的恢复实验里'));
+const [badWrite,laterWrite]=m.full_replay.operations.slice(-2);
+assert.deepEqual([badWrite,laterWrite],[['T104',-target.balance],['T105',m.full_replay.balance]]);
+assert(acceptanceSection.includes('余额为 '+m.full_replay.balance+'，回执里有 '+badWrite[0]+' 清零和 '+laterWrite[0]+' 加 '+laterWrite[1]));
+assert(acceptanceSection.includes('保留余额 '+target.balance+' 和 '+target.operations.at(0)[0]+' 至 '+target.operations.at(-1)[0]+' 的回执'));
 const python=process.env.INFRA_LAB_PYTHON||'python3';
 for(const name of ['tcp_framing.py','socket_backpressure.py']){
  const x=JSON.parse(cp.execFileSync(python,['-B',folder+name],{encoding:'utf8',timeout:25000}));

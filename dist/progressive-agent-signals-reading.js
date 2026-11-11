@@ -178,8 +178,9 @@
   '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
   p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
  a.sections[7][1]+=h('native-model-mcp-recovery-observation','同一份 42 日报，各环节该怎么计数？')+
-  p('在<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">验收章</a>核对过实际报告以后，打开<a href="/labs/model-mcp-recovery/validation.json">同一份运行记录</a>。模型请求、宿主内部工具、跨进程调用和实际产物各数各的。')+
+  p('沿用<a href="/article/durable-workflows/#native-model-mcp-recovery">工作流章的 42 日报发布</a>。报告的金额与来源可在<a href="/article/agent-evaluation/#native-model-mcp-recovery-verdict">验收章</a>核对。打开<a href="/labs/model-mcp-recovery/validation.json">同一份运行记录</a>，分别数任务进度、模型请求、工具调用和实际产物。')+
   table(['数什么','在哪数','这次结果'],[
+   ['任务进度','<code>cut.host.state</code> 与 <code>recovery.after.state</code>','从 <code>PUBLISH_PENDING</code>（待确认）推进到 <code>DONE</code>（已完成）'],
    ['模型请求','model_turns','4 次；模型服务共记录输入 2540 个词元，其中 1800 个命中缓存，输出 95 个词元'],
    ['宿主内部执行工具','paused.state.events','4 次，读清单、修订计划、读补录和生成草稿'],
    ['MCP 业务调用','receiver_events 中的 request','1 次 publish_report，1 次 lookup_receipt；都指向 report-A/v3:publish'],
@@ -187,7 +188,7 @@
   ])+
   p('两次 MCP 调用各用新会话，请求编号恰好都是 3。原进程退出时，<code>cut.receiver_events_after_exit</code> 只有请求和提交。完整日志随后有一条发布响应开始事件，那时原进程已经退出。<code>recovery.wire.response</code> 才是新进程实际收到的查询结果。')+
   h('native-mcp-trace-reentry','进程退出后，用跨度链接接回原来的执行')+
-  p('下面另建一份 42 日报和接收库，用固定工具请求观察跨度如何相连。首次运行 <code>report-A</code> 时，调用方先把待处理操作 <code>report-A/v3:publish</code> 和当时的根跨度编号存进检查点。MCP 工具已经写入合计 42 的报告，实验保留待处理状态，让新的调用进程从这份检查点继续。这样就能分别验证两件事：追踪能否从新进程回查第一次运行，发布会不会再写一份。')+
+  p('上面的 <code>paused.state.events</code> 是宿主保存的工具事件。现在另做一次实验，用固定工具请求观察 OpenTelemetry 的跨度。两次实验都用金额 42 和操作号 <code>report-A/v3:publish</code>，各有自己的任务状态和接收库。首次运行 <code>report-A</code> 时，调用方先把待处理操作和当时的根跨度编号存进检查点。MCP 工具已经写入合计 42 的报告，实验保留待处理状态，让新的调用进程从这份检查点继续。这样就能分别验证两件事：追踪能否从新进程回查第一次运行，发布会不会再写一份。')+
   p('这里把每次独立启动划为一条追踪。<strong>跨度链接（Span Link）</strong> 保存另一个跨度的追踪号与跨度号，用来标记因果关系。新根跨度把旧根加进 <code>links</code>，自己的 <code>parent_id</code> 仍为空。当前工具调用另建发送跨度，将它写入 HTTP 的 <code>traceparent</code> 请求头。接收跨度因此是<strong>这一次发送跨度</strong>的子节点。')+
   trainingFigure('mcp-trace-reentry','三次工具调用各有一条追踪。恢复组用跨度链接找到第一次运行，接收方按同一操作号返回原回执。')+
   table(['本地复跑','追踪关系','接收方结果'],[

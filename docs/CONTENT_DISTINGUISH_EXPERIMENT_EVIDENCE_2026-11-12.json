@@ -1,0 +1,50 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "105cdcf65bf37a87ffdb57201fe9fce8a27ba36e",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_TRACE_OBSERVED_STATE_2026-11-12.json": "632d1fd26d33b5688b1a08ba29455b2a0dc27a058ba7d852cd3b717359c15a86"
+  },
+  "body_revisions": [
+    {
+      "id": "mysql-replication",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "63712ec6929b92b528965ac066e2cce2ac59ce9b985a50220eb01540b954d27d",
+      "reviewed_content_sha256": "d97d3d205807e8ce9e16f51ba58285527963ac7552493eb86fba5eeef44f6983",
+      "scope": "Explain the frozen-source objective in a planned handover, then compare it with stopping before an unwanted transaction.",
+      "observation": "The handover preserves the acknowledged history through G2 and permits a new confirmed write. T104 is from the independent restore fixture.",
+      "headings": [
+        "从一行数据，分清提交、版本与读视图",
+        "用两条真实连接理解RR与RC",
+        "把一次源提交放进复制链",
+        "GTID记录事务身份，集合表达应用目标",
+        "旧读要分别查事务视图和复制应用",
+        "计划切换：先收回旧写，再追齐与开放新写",
+        "读副本、分片与热点，各解决哪种容量问题",
+        "沿完整程序核对读视图、复制和交接",
+        "把图上的边界变成面试追问"
+      ]
+    },
+    {
+      "id": "mysql-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "78e091779c73e77cbaaf62493cdfae6150721d33fe950bc3f8c51913ddc0eb75",
+      "reviewed_content_sha256": "15f6bf19bbe111846fc59598fb17e46bdba964031d6b567308ee261de8c26fdf",
+      "scope": "Compare full replay with the independently selected historical endpoint, then link back to live handover.",
+      "observation": "Full replay retains T104 and T105 and leaves 7. The selected endpoint contains T101 through T103 and balance 125.",
+      "headings": [
+        "先分清事务、数据页与三类日志",
+        "提交为什么可以早于全部数据页写回",
+        "崩溃恢复与历史恢复，目标有什么区别",
+        "行格式binlog为什么会改变你的手算",
+        "一致性基线必须带上它对应的恢复坐标",
+        "连续日志与停止位置怎样共同确定恢复范围",
+        "从数据库启动，走到业务可以继续写入",
+        "运行真实MySQL的四份恢复与一次崩溃对照",
+        "面试追问：用恢复目标约束你的方案"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

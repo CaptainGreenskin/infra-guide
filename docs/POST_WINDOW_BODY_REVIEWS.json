@@ -9082,6 +9082,62 @@
         "排空与退出：逐条核对完成证据",
         "一份清单，三次单变量练习"
       ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "5f11d92cdad929ced10f371e277d3d763dd8106648ed74faa68e0fbb0c504a87",
+      "reviewed_content_sha256": "2b23409d1497d02ff0fb58389ce8e6f5f0f2f4b6c104c88981ec16e9f57b31bd",
+      "scope": "Carry the known artificial late arrival into a specific data-input timing comparison.",
+      "observation": "The two observed wait durations come from the pre-call sleep experiment. Actual next-batch timings are separately needed to test data starvation.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1be5b15808728642910f6a978dd860275eacc5cda6c76b9350508a4c2c9370fd",
+      "reviewed_content_sha256": "f5d817a0f59b1866691cbcc156ca8ea643d6fa16adfc85f6de55754bd969e859",
+      "scope": "Carry one unchanged model and MCP recovery record directly into observability.",
+      "observation": "The persisted operation is preserved across sessions and gives one receiver effect. The workflow and observability views use the same record.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "bf985df1ae31c7f4f7a1817ab50f31503cea919299529ef2af607675b0d38d9a",
+      "reviewed_content_sha256": "78d7c7c1468e34e9e6674d427e0901f318aaaf03fdaca6c063024ccce966496d",
+      "scope": "Count local progress and receiver facts separately in that run and distinguish the independent OTel experiment.",
+      "observation": "The local state goes from PUBLISH_PENDING to DONE, with four host events, two tool calls and one effect. The separate trace fixture does not share that execution.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

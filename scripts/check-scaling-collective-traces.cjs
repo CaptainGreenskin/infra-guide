@@ -64,6 +64,28 @@ for(const row of collective.modes.correct){
  assert(row.delayed_arrival.local_call_and_wait_ms>=0);
  assert.equal(row.delayed_arrival.injected_pre_call_sleep_ms,row.rank===1?80:0);
 }
+const communicationPage=fs.readFileSync('dist/article/training-communication/index.html','utf8');
+const waitSection=communicationPage.match(/<section class="article-section" id="section-4">([\s\S]*?)<\/section>/)?.[1];
+assert(waitSection&&waitSection.includes('id="subsection-4-9tsq35"'));
+const [early,late]=collective.modes.correct.map(row=>row.delayed_arrival);
+assert(waitSection.includes(`rank 0 的 call+wait 约 ${early.local_call_and_wait_ms.toFixed(3)} ms，rank 1 约 ${late.local_call_and_wait_ms.toFixed(3)} ms`));
+assert(waitSection.includes(`${late.injected_pre_call_sleep_ms} ms 是程序在调用前注入的休眠`));
+const dataAnchor='subsection-6-101j0v8';
+const diagnosis=waitSection.indexOf('实际训练若怀疑取数迟到');
+assert(diagnosis>=0&&waitSection.indexOf('<code>next(iterator)</code> 到返回的耗时',diagnosis)>diagnosis);
+assert(waitSection.indexOf(`href="/article/data-pipeline/#${dataAnchor}"`,diagnosis)>diagnosis);
+assert(fs.readFileSync('dist/article/data-pipeline/index.html','utf8').includes(`id="${dataAnchor}"`));
+const interviewPlan=fs.readFileSync('dist/interview/plan/index.html','utf8');
+const trainingRoute=interviewPlan.match(/<section><h3>AI Infra<\/h3>([\s\S]*?)<\/section>/)?.[1];
+assert(trainingRoute&&trainingRoute.includes('训练通信练习（本站原创）'));
+assert(trainingRoute.includes(`rank 0 的调用加等待约 ${early.local_call_and_wait_ms.toFixed(3)} ms，rank 1 约 ${late.local_call_and_wait_ms.toFixed(3)} ms`));
+const answer=trainingRoute.match(/<details><summary>核对等待来源<\/summary>([\s\S]*?)<\/details>/)?.[1];
+assert(answer&&answer.includes(`本机 CPU/Gloo 对照让 rank 1 在调用前休眠 ${late.injected_pre_call_sleep_ms} ms，两个 rank 的求和结果都是 ${late.result}`));
+assert(answer.includes('要查真实训练是否在等 DataLoader'));
+assert.deepEqual([...trainingRoute.matchAll(/href="([^"]+)"/g)].map(m=>m[1]),[
+ '/article/transformer-model/','/article/gpu-cluster/','/article/distributed-training/','/article/gpu-memory/','/article/model-serving/',
+ '/article/training-communication/#subsection-4-9tsq35'
+]);
 for(const[mode,category,ops,shapes]of [
  ['shape_mismatch','shape',['ALLREDUCE'],['[2]','[3]']],
  ['order_mismatch','operation',['ALLREDUCE','BROADCAST'],['[2]']]
