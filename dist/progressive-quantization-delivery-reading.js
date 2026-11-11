@@ -236,6 +236,7 @@
   '<p class="practice-links"><a href="labs/native-model-rollout.zip" download>下载原生发布实验 ↓</a> · <a href="labs/native-model-rollout/rollout_lab.py">完整运行源码</a> · <a href="labs/native-model-rollout/validation.json">执行记录</a> · <a href="labs/native-model-rollout/observations.json">原始探针、路由与 SSE</a> · <a href="labs/native-model-rollout/README.md">复跑与自测答案</a></p>'+
   p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
   '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
-  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。');
- lifecycle.updated='2026.11.09';
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
+  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
+ lifecycle.updated='2026.11.12';
 })();

@@ -174,4 +174,4 @@ articles.find(a=>a.id==='gpu-cluster').prereq='先认识前向预测、损失、
 articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。';
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
 articles.find(a=>a.id==='kubernetes-basics').updated='2026.11.12';
-for(const id of ['autograd-training','gpu-cluster','ai-lifecycle','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+for(const id of ['autograd-training','gpu-cluster','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';

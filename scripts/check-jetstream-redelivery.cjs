@@ -77,6 +77,33 @@ function checkChapterAndFigure(cases,proofUrl){
   assert(native[1].includes('href="'+link+'"'),anchor+' missing '+link);
  }
  for(const incoming of [serverless.sections[4][1],delivery.sections[7][1]])assert(incoming.includes('href="'+target+'"'));
+ const earlyAck=JSON.parse(read('dist/labs/delivery-systems/validation.json')).native.mq.execution.cases.ack_before_effect_negative;
+ assert.equal(earlyAck.business_oracle_passed,false);
+ const comparisonId='broker-ack-business-ledger';
+ const comparison=native[1].split('<h3 id="'+comparisonId+'">');
+ assert.equal(comparison.length,2,'one anchored comparison in the native experiment');
+ assert(delivery.sections[4][1].includes('href="/article/serverless-execution/#'+comparisonId+'"'),'The early-ACK section links to the comparison');
+ for(const link of ['/article/message-delivery/#section-5','/labs/delivery-systems/validation.json']){
+  assert(comparison[1].includes('href="'+link+'"'),comparisonId+' missing '+link);
+ }
+ const tableBody=comparison[1].match(/<tbody>([\s\S]*?)<\/tbody>/)?.[1]||'';
+ const rowsFromRecords=[['RabbitMQ 先 ACK','<code>ready='+earlyAck.ready_messages+'</code>',earlyAck.business.effects+' 笔，验收失败']];
+ for(const [mode,label] of [
+  ['append_only','JetStream 直接追加'],
+  ['business_id','JetStream 按业务 ID 去重'],
+  ['receiver_fence','JetStream 去重并校验代际']
+ ]){
+  const {after_ack:ack,ledger:{effects}}=cases[mode];
+  const writers=effects.map(row=>row.writer).join('、');
+  const accounting=effects.length===1?' 写 1 笔':' 各 1 笔';
+  const sum=effects.reduce((total,row)=>total+row.amount,0);
+  rowsFromRecords.push([label,'<code>'+ack.pending+' / '+ack.ack_pending+'</code>',writers+accounting+'，共 '+sum]);
+ }
+ const comparisonRows=[...tableBody.matchAll(/<tr>([\s\S]*?)<\/tr>/g)]
+  .map(([,row])=>[...row.matchAll(/<td>([\s\S]*?)<\/td>/g)].map(([,cell])=>cell));
+ assert.deepEqual(comparisonRows,rowsFromRecords,'Comparison uses each broker status and its own SQLite effects');
+ const [authorizedWrite]=cases.receiver_fence.ledger.effects;
+ assert(comparison[1].includes('写入者是 '+authorizedWrite.writer+'，代际是 '+authorizedWrite.generation));
  const svg=read('dist/diagrams/'+pack+'.svg');
  assert.match(svg,/<svg\b[^>]*role="img"[^>]*aria-labelledby="jetstream-title jetstream-desc"/);
  assert.deepEqual([...svg.matchAll(/data-stage="([^"]+)"/g)].map(m=>m[1]),['timeout_redelivery','receiver_authority']);
@@ -111,4 +138,4 @@ assert.deepEqual(Object.keys(record.cases).sort(),Object.keys(outcomes).sort());
 for(const [mode,c] of Object.entries(record.cases))verifyCase(mode,c);
 checkZip();
 checkChapterAndFigure(record.cases,proof.url);
-console.log('PASS: 3 native JetStream timeout contrasts, broker ACKs, independent SQLite ledger, source/ZIP and teaching anchors.');
+console.log('PASS: 3 native JetStream timeout contrasts, independent SQLite ledger, RabbitMQ ACK comparison, source/ZIP and teaching anchors.');

@@ -87,4 +87,6 @@
 @media(max-width:650px){
  #vllm-block-lifecycle ~ .table-wrap table{table-layout:fixed;width:100%}
  #vllm-block-lifecycle ~ .table-wrap :is(th,td){min-width:0;padding-inline:8px;overflow-wrap:anywhere}
+ .ack-ledger-comparison table{table-layout:fixed;width:100%}
+ .ack-ledger-comparison :is(th,td){min-width:0;padding-inline:8px;overflow-wrap:anywhere}
 }

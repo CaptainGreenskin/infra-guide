@@ -1,0 +1,31 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "601a3ce45bc294f41ad49591f0b22f32e32a9502",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_NARROW_TRAINING_UPDATE_READING_2026-11-12.json": "af7e15fd0d7106a0b96ebbdf7a1cfe6ffc53bab6c11e30984f15e14956627b60"
+  },
+  "body_revisions": [
+    {
+      "id": "message-delivery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c673f80f607328e65648d9fb48ad5034b38f851eefd63b899080b43f3702704d",
+      "reviewed_content_sha256": "9fe8f452ffa5473b616e09e228f6e490e64801d79b751ba2ba2398482aba452b",
+      "scope": "Connect the native early-acknowledgment failure to an independently recorded broker and receiver comparison.",
+      "observation": "The lesson sends the reader from the original RabbitMQ ack-before-effect case directly to the four-row comparison.",
+      "headings": [
+        "先有业务动作，再有承载它的运输消息",
+        "生产者确认与消费者ACK，不是同一张回执",
+        "从待投递到待确认，状态怎样移动",
+        "业务提交后退出，重投为什么不能再记一次",
+        "先ACK再做业务，为什么队列空了仍可能丢工作",
+        "预取窗口限制在途消息，不自动增加处理能力",
+        "持久队列、持久消息和确认，各补哪一个条件",
+        "把这套对象带回Serverless事件源",
+        "运行完整代理实验，核对独立结果"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

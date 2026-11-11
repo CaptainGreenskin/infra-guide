@@ -61,6 +61,17 @@ with zipfile.ZipFile('dist/labs/agent-boundaries.zip') as z:
   if p.is_file():assert z.read(p.name)==p.read_bytes(),p.name
 `],{encoding:'utf8'});
 const retrievalPage=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
+const securityPage=fs.readFileSync('dist/article/agent-security/index.html','utf8');
+const accessSection=securityPage.split('id="section-2"')[1].split('id="section-3"')[0];
+assert(accessSection.includes('/article/agent-retrieval/#retrieval-revocation-boundaries'));
+const revocation=retrievalPage.split('id="retrieval-revocation-boundaries"')[1].split('id="section-10"')[0];
+const beforeSend=r.programs['context_budget.py'].cases.revoked_after_fetch;
+const selected=beforeSend.source_snapshots.map(row=>row.id+'/v'+row.version).sort();
+assert(revocation.includes(selected.join('、')));
+assert(revocation.includes('<code>'+beforeSend.status+'</code>'));
+assert(revocation.includes('收到 '+beforeSend.requests_delivered+' 条新请求'));
+assert(revocation.includes('/article/agent-security/#section-2'));
+assert(revocation.includes('/article/agent-retrieval/#context-budget-run'));
 assert(/<(?:div class="mechanism-core"|span class="legacy-subsection-anchor") id="retrieval-evidence-pipeline"/.test(retrievalPage),'restored legacy anchor uses a supported sticky-header target');
 assert(/\.legacy-subsection-anchor\{[^}]*scroll-margin-top:calc\(var\(--reader-header\) \+ \d+px\)/.test(fs.readFileSync('dist/reading-comfort.css','utf8')),'retained zero-height targets keep their header offset');
 for(const[id,anchor]of [['agent-security','authorization-commit-run'],['agent-retrieval','context-budget-run']]){

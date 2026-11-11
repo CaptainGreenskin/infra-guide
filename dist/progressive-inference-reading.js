@@ -328,6 +328,12 @@
   p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
   '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
   '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
+ serving.sections[1][1]+=
+  heading('request-version-binding','发布切换时，流式请求用哪个模型')+
+  p('本机 llama.cpp CPU 实验中，入口在接纳流式请求时选定模型实例。旧请求绑定 <code>stable/1</code>。客户端收到首个词元后暂时停读。入口发布 <code>good/2</code>，再回退到 <code>stable/3</code>。切换后和回退后各发一条新请求，两条都输出 [7,8,9]，末帧的 <code>model</code> 分别为 <code>rollout-good</code> 和 <code>rollout-stable</code>。',
+  '旧客户端恢复读取，沿原 HTTP 连接读完这条流。算上暂停前的首个词元，它共收到 32 个词元，绑定仍为 <code>stable/1</code>。最后一帧的 <code>tokens_cached=35</code> 对应 4 个提示位置和前 31 个输出位置，也就是 4+32−1。实验关闭跨请求的提示复用，<code>timings.cache_n=0</code>。这里暂停的是客户端读取，引擎可以继续计算并把输出留在缓冲区。',
+  '在原始记录里，从每条请求的 <code>binding</code> 取得模型摘要与发布代际，再对照末帧的模型别名。两个不同的权重文件可以给出同一组 [7,8,9]。<a href="/labs/native-model-rollout/observations.json">查看接纳记录与原始 SSE →</a> · <a href="/article/ai-lifecycle/#native-model-rollout">沿原生发布实验看版本切换与回退 →</a>');
+
  serving.sections[4][1]+=
   '<p class="practice-links"><a href="article/inference-performance/#vllm-v1-request-path">把这张块表接进 vLLM V1 的调度、写入和归还 →</a></p>';
  serving.sections[6][1]+=

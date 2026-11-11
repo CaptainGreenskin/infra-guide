@@ -97,6 +97,28 @@ for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<scri
 const article=vm.runInContext('articles.find(a=>a.id==="ai-lifecycle")',c);assert.equal(article.sections.length,8);
 const html=article.sections[7][1],marker='<h3 id="native-model-rollout">';assert.equal(html.split(marker).length,2);assert(!html.split(marker)[1].includes('<pre'));
 for(const value of ['diagrams/native-model-rollout.svg','labs/native-model-rollout.zip','labs/native-model-rollout/observations.json','labs/native-model-rollout/validation.json'])assert(html.includes(value),value);
+const serving=vm.runInContext('articles.find(a=>a.id==="model-serving")',c);
+const bindingMarker='<h3 id="request-version-binding">';
+assert.equal(serving.sections[1][1].split(bindingMarker).length,2);
+const bridge=serving.sections[1][1].split(bindingMarker)[1];
+assert(html.includes('/article/model-serving/#request-version-binding'));
+for(const url of ['/article/ai-lifecycle/#native-model-rollout','/labs/native-model-rollout/observations.json'])assert(bridge.includes(url));
+for(const name of ['old_stream','after_switch','after_rollback']){
+ const request=raw.requests[name];
+ const events=request.frames.filter(frame=>frame.data!=='[DONE]').map(frame=>JSON.parse(frame.data));
+ const stop=events.at(-1),binding=request.binding;
+ assert(bridge.includes('<code>'+binding.version+'/'+binding.generation+'</code>'));
+ if(name==='old_stream'){
+  assert(bridge.includes('收到 '+stop.tokens_predicted+' 个词元'));
+  assert(bridge.includes('<code>tokens_cached='+stop.tokens_cached+'</code>'));
+  assert(bridge.includes('<code>timings.cache_n='+stop.timings.cache_n+'</code>'));
+  assert(bridge.includes(stop.tokens_evaluated+'+'+stop.tokens_predicted+'−1'));
+ }else{
+  const tokens=events.filter(event=>!event.stop&&!event.prompt_progress).flatMap(event=>event.tokens||[]);
+  assert(bridge.includes('输出 '+JSON.stringify(tokens)));
+  assert(bridge.includes('<code>'+stop.model+'</code>'));
+ }
+}
 const files=['README.md','rollout_lab.py','make_fixture.py','observations.json','validation.json'];
 execFileSync('python3',['-B','-c',`
 import hashlib,json,sys,tempfile,xml.etree.ElementTree as ET

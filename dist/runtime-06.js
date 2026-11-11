@@ -5014,7 +5014,8 @@ const progressiveAgentSectionTitles={
     ['资源','服务端解析后的规范对象','取得A/daily对应的真实记录'],
     ['审批','需要审批时，查有权批准者留下的当前有效记录','普通读取按既有许可执行；另行写入须满足写入规则']
    ])+
-   p('执行器可以提前筛掉不合任务范围的提议；资源服务继续覆盖直接调用、队列和重试入口。策略判断在哪产生、由谁实施、何时重新检查，都要落在真实读写路径上。工具名称、描述和只读注解帮助发现与选择，不承担强制授权。MCP的HTTP传输授权另处理客户端访问受保护服务的凭据，业务对象与具体意图仍由资源策略检查。')+
+   p('执行器可以提前筛掉不合任务范围的提议；资源服务继续覆盖直接调用、队列和重试入口。策略判断在哪产生、由谁实施、何时重新检查，都要落在真实读写路径上。工具名称、描述和只读注解帮助发现与选择，不承担强制授权。MCP的HTTP传输授权另处理客户端访问受保护服务的凭据，业务对象与具体意图仍由资源策略检查。',
+     '用户给出查询后，检索服务先返回可能相关的资料编号，资源服务再按编号查正文。权限可能在这两步之间变化，也可能在读到正文后、交给模型前变化。<a href="/article/agent-retrieval/#retrieval-revocation-boundaries">看两种撤权时点各留下什么记录 →</a>')+
    (old[1].match(/<p class="source-at">[\s\S]*?<\/p>/)?.[0]||'');
 
   a.sections[2][1]=
@@ -6967,7 +6968,7 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  const p=(...rows)=>rows.map(row=>'<p>'+row+'</p>').join('');
  const h=(id,title)=>'<h3 id="'+id+'">'+title+'</h3>';
  const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,wrapper='table-wrap')=>'<div class="'+wrapper+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
  const matches=(html,pattern)=>[...html.matchAll(pattern)].map(m=>m[0]);
  const code=html=>matches(html,/<div class="code-block">[\s\S]*?<\/pre><\/div>/g);
@@ -7255,16 +7256,26 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  delivery.desc=delivery.intro='先认识消息、代理、投递与业务效果，沿正常发布和确认理解状态，再用真实 RabbitMQ 核对重投、预取和持久重启。';
 
  const jetstreamLink='<a href="/article/serverless-execution/#native-jetstream-redelivery">查看超时重投与写权限实战 →</a>';
+ const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
  serverless.sections[4][1]+=p('超时后重新投递，旧执行者未必已经停止。第 11 节用两条保持独立的真实 JetStream 客户端连接，分别核对同一条消息再次送达和旧执行者能否写业务库。'+jetstreamLink);
  serverless.sections[10][1]+=h('native-jetstream-redelivery','真实 JetStream：重投之后，谁还能写入')+
  p('JetStream 是 NATS 的消息存储和投递层。实验用一个持久拉取消费者保存进度，两条独立连接先后请求同一条金额 37 的消息。A 首次收到后保持连接，不确认。服务端的确认等待时限 AckWait 为 1 秒。B 收到同一流序号，投递次数变为 2，此时 A 仍然在线。')+
  '<figure class="training-figure"><a href="diagrams/jetstream-redelivery.svg" target="_blank" rel="noopener" aria-label="放大：重投之后谁还能写入"><img src="diagrams/jetstream-redelivery.svg" width="440" height="372" alt="同一消息由 A 到 B 重投，业务库推进代际后比较追加写两份、去重留 A 一份、校验代际留 B 一份" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>代理按时限重投，业务库按自己的规则决定谁能写入。<a href="diagrams/jetstream-redelivery.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('B 收到以后，实验让业务库把当前可写代际从 1 改为 2，再让 A 先写、B 后写。只按业务 ID 去重时，先到的 A 仍能写入，B 只能复用原记录。若要让 A 失去写资格，接收方要在写入事务内比较它携带的代际和当前代际。这样 A 的代际 1 被拒，B 的代际 2 才提交。代际由业务方分配，与代理记录的投递次数各有用途。')+
  p('三组都由 B 发出 <code>ack_sync</code> 并收到代理确认，待确认消息数都从 1 降到 0。直接追加的负例仍留下两份金额 37。JetStream 在某些情况下也可以接受迟到的 ACK。本实验只观测 B 的确认，前面的 SQLite 参考使用另一套句柄规则。<a href="https://docs.nats.io/learn/jetstream/acknowledgment">JetStream 确认与重投 ↗</a> · <a href="https://github.com/nats-io/nats-server/blob/v2.15.2/server/consumer.go">固定版本接收 ACK 的实现 ↗</a>')+
+ h('broker-ack-business-ledger','确认结束后，账本实际写了几笔')+
+ p('把三组结果和 <a href="/article/message-delivery/#section-5">C5.2 的提前 ACK 反例</a> 放在一起。这两次实验各有自己的消息和账本。RabbitMQ 在进程退出后读取待投递数 <code>ready</code>。JetStream 在 B 收到确认应答后，分别读取待投递数 <code>pending</code> 和待确认数 <code>ack_pending</code>，表中的 <code>0 / 0</code> 按这个顺序读。')+
+ table(['运行方式','代理读数','业务账本'],[
+  ['RabbitMQ 先 ACK','<code>ready='+earlyAck.ready_messages+'</code>',earlyAck.business.effects+' 笔，验收失败'],
+  ['JetStream 直接追加','<code>0 / 0</code>','A、B 各 1 笔，共 74'],
+  ['JetStream 按业务 ID 去重','<code>0 / 0</code>','A 写 1 笔，共 37'],
+  ['JetStream 去重并校验代际','<code>0 / 0</code>','B 写 1 笔，共 37']
+ ],'table-wrap ack-ledger-comparison')+
+ p('要确认接管后是谁写入的，到业务账本的 <code>effects</code> 查写入者 <code>writer</code> 和代际 <code>generation</code>，最后一组的写入者是 B，代际是 2。<a href="/labs/delivery-systems/validation.json">查看 RabbitMQ 原始记录 →</a>')+
  p('按运行说明准备官方 NATS Server 2.15.2 和锁定的 nats-py 2.16.0，然后在解压目录运行 <code>python -B jetstream_redelivery.py --server /path/to/nats-server --output native-record.json</code>。两个执行上下文在同一个 Python 进程中，分别使用真实回环连接。')+
  '<p class="practice-links"><a href="/labs/jetstream-redelivery.zip" download>下载完整实验包 ↓</a> · <a href="/labs/jetstream-redelivery/README.md">查看运行说明</a> · <a href="/labs/jetstream-redelivery/validation.json">查看代理与账本的实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42575586293">查看 Linux CI 实跑 ↗</a></p>';
+ delivery.sections[4][1]+=p('换成超时重投，旧执行者可能还在运行，两边都能尝试写库。先猜一次：代理的待投递和待确认数都归零后，账本会有几份报告，由谁写入？<a href="/article/serverless-execution/#broker-ack-business-ledger">对照重投后的代理与账本 →</a>');
  delivery.sections[7][1]+=p('本章 RabbitMQ 对照让消费者退出，再观察未确认消息重新投递。另一个实战让旧客户端继续连接，等待真实 JetStream 计时重投后再比较业务去重和写权限。'+jetstreamLink);
- const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
  const [reportId,reportTotal]=afterCommit.recovered.operations[0];
  serverless.sections[5][1]+=
  h('serverless-ack-evidence','用实际投递和账本核对消息确认')+
@@ -7634,6 +7645,12 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
   p('引擎把本轮待前向的词元组成一批，交给 <code>llama_process</code>。这个版本的预填充和逐词解码都经过这条执行路径。调用结束后，采样器读取所需位置的候选分数。本实验把温度设为 0，按最高分选词。选出的词元进入输出队列。若服务继续生成，同一个编号成为下一轮输入，客户端可以稍后收到它。',
   '请求完成后，slot 回到空闲状态。允许复用时，下一条请求可以沿用这个 slot 里与新提示相同的前缀。引擎从序列起点逐个比较编号，遇到第一个不同的编号就停。若整条提示都匹配，这个版本仍要重算最后一个提示词元，从该位置取得首个输出的候选分数。')+
   '<p class="practice-links"><a href="article/model-serving/#native-inference-engine-lab">用实际请求检查新算与复用的位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4103-L4326">该版本的前缀逻辑 ↗</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L4684-L4700">模型批次调用 ↗</a></p>';
+ serving.sections[1][1]+=
+  heading('request-version-binding','发布切换时，流式请求用哪个模型')+
+  p('本机 llama.cpp CPU 实验中，入口在接纳流式请求时选定模型实例。旧请求绑定 <code>stable/1</code>。客户端收到首个词元后暂时停读。入口发布 <code>good/2</code>，再回退到 <code>stable/3</code>。切换后和回退后各发一条新请求，两条都输出 [7,8,9]，末帧的 <code>model</code> 分别为 <code>rollout-good</code> 和 <code>rollout-stable</code>。',
+  '旧客户端恢复读取，沿原 HTTP 连接读完这条流。算上暂停前的首个词元，它共收到 32 个词元，绑定仍为 <code>stable/1</code>。最后一帧的 <code>tokens_cached=35</code> 对应 4 个提示位置和前 31 个输出位置，也就是 4+32−1。实验关闭跨请求的提示复用，<code>timings.cache_n=0</code>。这里暂停的是客户端读取，引擎可以继续计算并把输出留在缓冲区。',
+  '在原始记录里，从每条请求的 <code>binding</code> 取得模型摘要与发布代际，再对照末帧的模型别名。两个不同的权重文件可以给出同一组 [7,8,9]。<a href="/labs/native-model-rollout/observations.json">查看接纳记录与原始 SSE →</a> · <a href="/article/ai-lifecycle/#native-model-rollout">沿原生发布实验看版本切换与回退 →</a>');
+
  serving.sections[4][1]+=
   '<p class="practice-links"><a href="article/inference-performance/#vllm-v1-request-path">把这张块表接进 vLLM V1 的调度、写入和归还 →</a></p>';
  serving.sections[6][1]+=
@@ -11120,8 +11137,9 @@ future.result(timeout=35)
   '<p class="practice-links"><a href="labs/native-model-rollout.zip" download>下载原生发布实验 ↓</a> · <a href="labs/native-model-rollout/rollout_lab.py">完整运行源码</a> · <a href="labs/native-model-rollout/validation.json">执行记录</a> · <a href="labs/native-model-rollout/observations.json">原始探针、路由与 SSE</a> · <a href="labs/native-model-rollout/README.md">复跑与自测答案</a></p>'+
   p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
   '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
-  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。');
- lifecycle.updated='2026.11.09';
+  '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
+  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
+ lifecycle.updated='2026.11.12';
 })();
 
 
@@ -11718,9 +11736,7 @@ python -B target_probe.py check collected/rank-*.json
     ['理想：[3,2,2]','约10.39279','1']
    ])+p('两份实际前三都命中3个相关项，标准集合有4项，故Precision@3=1、Recall@3=0.75、RR=1保持不变；把等级2前移仍可提高nDCG。这组指标描述声明语料的排序，并不代替费用任务的证据齐备检查。标准集合无正例时，理想DCG为0，应单列无答案任务。')),
 
-   p('从取得正文到实际发送，资格仍可能变化。可信装配器可在内存保有两份费用资料，但模型接收端是否还能取得它们，需要按发送协议重新判断。缓存键至少区分租户、适当的主体或权限范围、来源与版本；命中缓存之后也要核对当前读取资格。',
-   '实验先取得a-1/v1与a-2/v2，再由另一个SQLite连接撤销a-2资格。发送前recheck读取当前状态，返回authorization_changed，HTTP接收端新增请求为0。这里证明了指定撤权窗口中的处理，装配器持有正文与向接收端交付正文分别记录。',
-   'recheck和随后的HTTP发送不属于一个跨系统原子事务。资格若在检查后改变，实际系统还要规定在途请求语义与接收端实施点；已经发送的内容也无法通过删除索引收回。'),
+   p('索引返回候选编号，来源库保存当前的读取资格。来源服务先核对资格，再读取对应正文。装配器把获准的正文拼成模型输入，发送前再核对资格。若材料从缓存取出，缓存键也要区分租户、主体或权限范围、来源和版本，发送前同样检查当前资格。'),
 
    p('费用任务要求当前版本。a-2/v2的27已被装配后，来源新增v3=30并推进current指针，发送前检查便应识别source_version_changed，停止发送旧包。要完成更新后的任务，重新查询并取得a-1/v1和a-2/v3，再按10+30=40核对证据。历史快照型任务可以采用另一规则，但需固定任务时间与历史读取资格。',
    '正文更新和索引更新分别发生。正文已为v3、索引还为v2时，当前版本条件会排除旧候选，只剩基础项；把v3实际加入索引后，两类材料才重新齐备。内容摘要与旧v2相符，只能确认拿到旧内容，不能把它提升为当前证据。')+
@@ -11772,6 +11788,11 @@ python -B target_probe.py check collected/rank-*.json
    fold('完整context_budget.py',c[14][1])+p('这份回执确认哪份输入交给了收集器；工具效果回执确认外部动作提交了什么；任务验收检查实际答案及引用。三类记录分别保存输入交付、业务效果和任务结果，各自保留对象与身份。实验运行了FTS5、固定编码器和本地HTTP，没有调用生成模型；预发送复检与远端交付之间的在途规则仍需另定。')+linkRow(l[14].slice(3))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=h('retrieval-revocation-boundaries','撤权发生在读正文前，还是发送前')+
+   p('两份独立实验分别在取正文前和发输入前撤权。',
+   '<b>候选已返回，正文还没读。</b> 实验先取得候选 101、102，再撤销 102 的读取资格。装配器沿用这批编号，SQLite 的正文读取表 <code>body_reads</code> 本次只记录 101/v1。<a href="/article/agent-retrieval/#native-qdrant-retrieval">对照 Qdrant 的候选与实际读取记录 →</a>',
+   '<b>正文已读，输入还没发。</b> 另一组费用实验已经取得 a-1/v1、a-2/v2。撤回 a-2 资格后，发送前复检返回 <code>authorization_changed</code>，本地 HTTP 收集器收到 0 条新请求。<a href="/article/agent-retrieval/#context-budget-run">复跑并核对实际发送次数 →</a>',
+   '发送前复检与 HTTP 发送分两步。若撤权发生在复检之后，接收端的授权与在途规则决定请求能否继续。已交付的内容按接收端的数据保留与撤回规则处理。<a href="/article/agent-security/#section-2">回到权限章核对执行点 →</a>');
   a.sections[14][1]+=h('native-rag-citation-oracle','两个答案都是 37，为什么有一个不合格')+
    p('前一段核对材料有没有送达。这里另开一份费用实验，让本机 Qwen3 根据检索结果作答。基础项 <code>a-base/v1</code> 是 10。调整项从 <code>a-adjust/v2</code> 更新到 <code>a-adjust/v3</code>，两版金额都为 27。题目要按当前版本算，所以答案既要是 37，也要能指出当前的两份来源。',
     '先在 SQLite 中建立两个索引快照。旧索引仍指向 v2，新索引已经指向 v3。查询同样的“费用”和“汇总”时，真实 FTS5 可以找到 A 和 B 的候选。组装材料只取 A，接着选择是否对照来源库的当前版本。')+
@@ -11789,7 +11810,7 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a>')+
    trainingCode('已有固定引擎和权重时，在解压目录运行','SHELL','python3.12 -B rag_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/rag-citation-oracle.zip" download>下载程序与记录 ↓</a> · <a href="/labs/rag-citation-oracle/README.md">环境与复跑步骤 →</a> · <a href="/labs/rag-citation-oracle/validation.json">原始检索、模型与验收记录 →</a></p>';
-  a.updated='2026.11.11';
+  a.updated='2026.11.12';
   infraDomain('agent').points.find(point=>point.id==='ag-retrieval').body+=
    p('检索命中后，还要验收实际生成的回答。<a href="/article/agent-retrieval/#native-rag-citation-oracle">对照两份总数都是 37 的回答，核对引用的版本 →</a>');
  }
@@ -15400,7 +15421,7 @@ articles.find(a=>a.id==='gpu-cluster').prereq='先认识前向预测、损失、
 articles.find(a=>a.id==='agent-evaluation').prereq='先认识工具权限、模型上下文与持久运行状态，可沿Agent权限与记忆两章补齐；沙箱可按需深入。';
 articles.find(a=>a.id==='moe-routing').prereq='先认识Transformer前馈层、softmax与张量切分；本章介绍专家、路由和分发，集合通信可按需延伸，不要求已有MoE训练经验。';
 articles.find(a=>a.id==='kubernetes-basics').updated='2026.11.12';
-for(const id of ['autograd-training','gpu-cluster','ai-lifecycle','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
+for(const id of ['autograd-training','gpu-cluster','moe-routing'])articles.find(a=>a.id===id).updated='2026.11.09';
 
 
 ;
@@ -15416,7 +15437,7 @@ const learningProfiles={
     primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
-    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","native-jetstream-redelivery","消息重投后拒绝旧执行者"]]},
+    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
    {title:"确认实际部署的制品",
     result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
     primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"]]},
@@ -15472,7 +15493,7 @@ const learningProfiles={
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
-    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
+    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
   ]
  }},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:{
@@ -15498,7 +15519,7 @@ const learningProfiles={
     primary:["agent-runtime","native-model-mcp-tool-choice","模型选工具与资源授权"],more:[]},
    {title:"证明回答用了当前资料",
     result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
-    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
+    primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
     primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
@@ -17106,5 +17127,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="0f0cb89d2c299afa8e79d8f94b94a4220a1a85ec1176a26f0d55d5625ef795dc";
+const staticReadingVersion="89f78cd310cddbd92c58a61103f89ccd238999e2428a093ffbc78aa3d6b6cbe4";
 

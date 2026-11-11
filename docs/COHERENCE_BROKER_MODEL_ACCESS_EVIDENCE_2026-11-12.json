@@ -1,0 +1,142 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "601a3ce45bc294f41ad49591f0b22f32e32a9502",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_NARROW_TRAINING_UPDATE_READING_2026-11-12.json": "aaa8ba5ef7b5a3469ed2bd888e56ecb4d722a00621dd9c233d753bfbdfb0dabb"
+  },
+  "source_revisions": {
+    "README.md": {
+      "previous_sha256": "61a0edd43075f00a338a7361853b8f499b34bb0ef33ce92bfbb2ec429b1d3602",
+      "reviewed_sha256": "df553d12f21fb962a076e60b25ab5bcc5d8c81b3805e12b9d54f2092b11b8b67",
+      "scope": "Align the overview with measured Apple GPU, kind and companion RTX evidence and identify pending target environments."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "76a7878dae29e33d2abec1be842683382f39364f1a9d88167d03ecb4a3b38563",
+      "reviewed_sha256": "f96701449104d24cb803241976f69e1fc9703cc57982a4a5739b06f4dbfdee35",
+      "scope": "Give the About page an exact evidence section with directly linked results and explicit pending environments."
+    },
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "28f98db7bbebc5b34720fcc9d5fd928eaf90382772dfd93bedaada4d1e5ae472",
+      "reviewed_sha256": "a1554f16b7995dcb60fd25f9da576f3ac9c28a153635d9a560a6a1f93a7abb99",
+      "scope": "Compare broker acknowledgment state, actual report count, and writer identity across two existing experiments."
+    },
+    "dist/curriculum.css": {
+      "previous_sha256": "2fe0f574f5e3de457ce1c958e879ca59d2945f56976d615035d8e5198b08db72",
+      "reviewed_sha256": "a04002dee5bd286d1ca6ae0ec112d20ccc41740c64d7c2a27e99da8015ea364c",
+      "scope": "Keep the broker comparison table visible at phone widths."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "0a206c9786769949fa44266dfb2751870abe9a1eb4647e3f5886cd0cd55d72f9",
+      "reviewed_sha256": "c87a5ba40613f5c69fe483e33a6a14e4801f07958b4ee0f5833fedfc385194c4",
+      "scope": "Follow request admission and streaming delivery through a recorded model rollout."
+    },
+    "dist/progressive-quantization-delivery-reading.js": {
+      "previous_sha256": "c67a62a9e152db6a6d2db92e9da4ecbf31c31a1bcf3a0adcbb9fe55284749551",
+      "reviewed_sha256": "1799f75a77be3904a75794991d38aee238b4a110b92db625f54bd190c87ce28b",
+      "scope": "Return from the exact native rollout to the original stream and its request-level computation."
+    },
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": "6ea6d9b15b51260d938eac9ae957b5bec55a113bf1688bee4c7accfa6f21d48d",
+      "reviewed_sha256": "a2b0e9a8c95b84d5cc00764dc577f5e040b5faa98b78984f2349cab735e36a23",
+      "scope": "Connect resource authorization to two distinct points in a retrieval pipeline."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "65ad211c75877242ffa0e950eb4e39e51420755c2f9e9d8768b02f8bae535dcc",
+      "reviewed_sha256": "bb80060a5429ff9228b72ebff1bff0fe4413945f21bb8b84c16c0f3bb12dd800",
+      "scope": "Distinguish revocation before fetching source bodies from revocation before model input is delivered."
+    },
+    "dist/learning-connections.js": {
+      "previous_sha256": "1b3ba50e9a230c0ee70dbc5540ba14446c04645fb1c69a6708665aad1f1a509f",
+      "reviewed_sha256": "2a36a1d8309cbee53f73b2b67120f0fae695799079d1fdb1abd568b9bd9448ed",
+      "scope": "Use the current publication date for the rollout article."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "f820b5ccba07494759ec4f5194c84b5c3359ee02811c08175028f765ab921739",
+      "reviewed_sha256": "4af528320d1eb49aefa4add1cc8c4cb2210b8a861672262d3a63821d9142a8c7",
+      "scope": "Route Cloud, AI and Agent readers to the exact new evidence sections for their roles."
+    },
+    "scripts/check-jetstream-redelivery.cjs": {
+      "previous_sha256": "9bfac5f7ed0749ab7c24ae79ac6c0a1a72a8e54be33887fc17b8372a13d4e5ea",
+      "reviewed_sha256": "f62d2259b756460b5b0e07d9c68e8229b207395f8fdf342e049dd1ff929abe07",
+      "scope": "Bind the comparison to separate RabbitMQ and JetStream records and both anchors."
+    },
+    "scripts/check-native-model-rollout.cjs": {
+      "previous_sha256": "696b3fb27bb3873b9a9cf265b00adab56512657dea448f2bbc96eaad09fcd657",
+      "reviewed_sha256": "91d043b7b37576b3e2b943e3a946996d92ee22cb3d934c1826b27222ac66152a",
+      "scope": "Verify the request-level interpretation against original HTTP/SSE and routing records."
+    },
+    "scripts/check-int8-batch-quality.cjs": {
+      "previous_sha256": "c9310cd645270944227b5e7119e355782d16ee9bfcb734b31871287d4d974882",
+      "reviewed_sha256": "4da00a97418d5df207c17c866b0b1fbbfda613bf0caff754af9127c9655cdd01",
+      "scope": "Preserve historical source verification and check the unchanged INT8 exercise independently of the neighboring rollout lesson."
+    },
+    "scripts/check-agent-boundaries.cjs": {
+      "previous_sha256": "e7d4b1ba37b41309445251c6123ec09ab55e15ce1ef2629209a5e68ef45ecde8",
+      "reviewed_sha256": "e177eedd59ff36c6ae0c630c048f54e8321b228817ee157e139f8959052c8e1f",
+      "scope": "Tie fetched snapshots, the outgoing request count and cross-chapter links to the frozen trace."
+    },
+    "scripts/check-qdrant-retrieval.cjs": {
+      "previous_sha256": "9d64cdaedcb4e420dde478066f4c2845168b82dc055bec823d7d79a2c87bea72",
+      "reviewed_sha256": "de936b0003fce72ef6e9998327437293c40b9e2f89ad707836b1be470face1e4",
+      "scope": "Tie candidate IDs and actual body reads to the visible interpretation."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "037de434eed1ebafb7536ec0c8d6465fe0e7095fbe6ef30b1afa5c1d66902be6",
+      "reviewed_sha256": "efc0fa7521daf149e663fedae3f3f651e68350b7aef823f5caa6ae59c9867768",
+      "scope": "Verify the three role routes use the exact case anchors."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "731ced4a9f3d3a7ecca414718d077ea86f3473751ff0aedd906c442870b9b560",
+      "reviewed_sha256": "b3473a27bf623d8f34b6ea65fb1a59ab2596c0c0d4db9c63cc5ceb7e4c25aba9",
+      "scope": "Verify the evidence section links to precise successful results or explicit pending preflights."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "e8b00445fe8c154527116bb9503c8f86d28a6678e59812659099569535ed3970",
+      "reviewed_sha256": "c4ddf191c117f6e22ce4de7811d4a6c1f9faec19481570a442067288494d70e9",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2b025e9f9f9ceb81580bdf4667170e0fe9dc68a7d2aba5934cde2bff863eb7b8",
+      "reviewed_sha256": "4f982463e0bf3973771cd3b0a2745308bae64809e1911ab4aa51c70ae228f825",
+      "scope": "Fingerprint the edited lessons and public scope."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "394da8f09c9fb4d764a500c285abe3f3b6265ce500033fd3681b7fea547e6db5",
+      "reviewed_sha256": "30a4fbfb2c274becb71190e851b2e6f7621850b96a63dcfb72ab79473a18eb5d",
+      "scope": "Record three new exact subsection anchors."
+    },
+    "docs/CONTENT_BROKER_MODEL_ACCESS_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "5273b53da859261b88ad49b58d620c42d19385144d818ee470983c34a9a59865",
+      "scope": "Record updated lessons across all three tracks."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "c119d74877c6e0dfcf5b3e86a67b6a6a9ac3e48c40ec70e05ff246eea009eeba",
+      "reviewed_sha256": "76274598a4312280de19ede95d1fde1d220b93143d550dd227aff33f85ae8f97",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "cee5da7efabe340e4a20d579f41e226c45dbea7e76347d72111a8df4a4ee5aed",
+      "reviewed_sha256": "f937b36f5fe82e1a50c3a46dbf951807697fb133c2579295ee6cdaea53ee41a9",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "601a3ce45bc294f41ad49591f0b22f32e32a9502",
+    "chapters": 78,
+    "changed_bodies": [
+      "message-delivery",
+      "serverless-execution",
+      "model-serving",
+      "ai-lifecycle",
+      "agent-security",
+      "agent-retrieval"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

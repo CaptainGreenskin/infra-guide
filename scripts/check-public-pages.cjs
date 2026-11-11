@@ -39,6 +39,22 @@ for(const [track,label,topic] of [['cloud','Cloud Infra','Kubernetes'],['ai','AI
 }
 assert(home.includes('href="/about/#reader-trial"'),'home links directly to the public trial');
 const about=fs.readFileSync(path.join(dist,'about/index.html'),'utf8');
+const validationScope=about.match(/<section class="quality-section" id="validation-scope">[\s\S]*?<\/section>/)?.[0];
+assert(validationScope,'public evidence scope has a direct reading anchor');
+for(const [chapter,anchor] of [
+ ['k8s-networking','kubernetes-network-policy-run'],['k8s-storage','native-csi-storage'],
+ ['kubernetes-training','native-kubernetes-gloo-job'],['operator-profiling','native-metal-softmax'],
+ ['model-serving','native-metal-inference'],['checkpoint-recovery','native-mps-checkpoint-resume'],
+ ['model-serving','rtx-pro-6000-cache-case'],['operator-profiling','cuda-core-run'],
+ ['multinode-lab','native-ddp-target-preflight'],['kairo-practice','kairo-read-evidence']
+]){
+ const href='/article/'+chapter+'/#'+anchor;
+ assert(validationScope.includes('href="'+href+'"'),href+': the scope links to the exact evidence or preflight');
+ const html=fs.readFileSync(path.join(dist,'article',chapter,'index.html'),'utf8');
+ assert.equal(html.split('id="'+anchor+'"').length,2,href+': unique evidence anchor');
+}
+assert(validationScope.includes('配套项目 One GPU LM 记录了'));
+assert(validationScope.includes('完成编译，NVIDIA 设备执行与 Nsight 性能分析待验证'));
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
 assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
 for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','愿意反馈时','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式']){

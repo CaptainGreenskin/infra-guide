@@ -7898,6 +7898,110 @@
         "分层诊断：会合、数值、规模与完整训练",
         "实战与变化题：真实Gloo数值和协议反例"
       ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d051b076fa8c6c3756ed520c5636a86558f351274f64f79fea1cad67ddb9da3f",
+      "reviewed_content_sha256": "312040323c856ec3cfa1367051fea9c90f76d922794d5d3c30f83514751f38e4",
+      "scope": "Compare broker acknowledgment state, actual report count, and writer identity across two existing experiments.",
+      "observation": "RabbitMQ has zero waiting and zero writes; the three JetStream modes have zero pending and ack-pending with two, one, and one writes respectively. The final two modes differ in the writer.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f439b241504e94a59678ac495327ad32cbcc501493d015d612d939e3f314860d",
+      "reviewed_content_sha256": "c80a2a785c13f0a8818106ce87f8136ae7dd76babb3b175cb6feb2d6d88cd970",
+      "scope": "Follow request admission and streaming delivery through a recorded model rollout.",
+      "observation": "The old HTTP stream retains stable generation 1, with 32 outputs and 35 processed positions. Two new requests agree on the emitted tokens despite different aliases, generations and weight digests.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "19012506c6151d7354527f42a5a4aaa482946ac82216daa1d01ff1683d549ac8",
+      "reviewed_content_sha256": "fa2acc909ad0aeade78e50304b191cf0fb2c32e060fdd8dff622bdbb30db5d88",
+      "scope": "Return from the exact native rollout to the original stream and its request-level computation.",
+      "observation": "The bridge cites the same raw stream and keeps the separate scopes of native computation and delayed client reading.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "07c5e95c5ba775a403e70008a12afff1e4a345218b15670468c53365f4442ff8",
+      "reviewed_content_sha256": "9e8601cf0194867b5136925b49f772508535da0233efe27d64b34e754946876a",
+      "scope": "Connect resource authorization to two distinct points in a retrieval pipeline.",
+      "observation": "Readers follow actual source reads and outgoing request records after revocation.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "59d6357d22d6da8edc5aaddf4aef2b9b36261520fafabc5e1b9023a73f9c3ad0",
+      "reviewed_content_sha256": "27eec2846c67765dc6da5cf84d3c718b9b1fe467b29f4c1433d3c2f2685c2062",
+      "scope": "Distinguish revocation before fetching source bodies from revocation before model input is delivered.",
+      "observation": "The Qdrant candidate 102 has no source-body read in the retained case. The separate fee case holds both fetched bodies and delivers zero HTTP requests after the pre-send check.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
     }
   ]
 }

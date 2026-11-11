@@ -98,9 +98,7 @@
     ['理想：[3,2,2]','约10.39279','1']
    ])+p('两份实际前三都命中3个相关项，标准集合有4项，故Precision@3=1、Recall@3=0.75、RR=1保持不变；把等级2前移仍可提高nDCG。这组指标描述声明语料的排序，并不代替费用任务的证据齐备检查。标准集合无正例时，理想DCG为0，应单列无答案任务。')),
 
-   p('从取得正文到实际发送，资格仍可能变化。可信装配器可在内存保有两份费用资料，但模型接收端是否还能取得它们，需要按发送协议重新判断。缓存键至少区分租户、适当的主体或权限范围、来源与版本；命中缓存之后也要核对当前读取资格。',
-   '实验先取得a-1/v1与a-2/v2，再由另一个SQLite连接撤销a-2资格。发送前recheck读取当前状态，返回authorization_changed，HTTP接收端新增请求为0。这里证明了指定撤权窗口中的处理，装配器持有正文与向接收端交付正文分别记录。',
-   'recheck和随后的HTTP发送不属于一个跨系统原子事务。资格若在检查后改变，实际系统还要规定在途请求语义与接收端实施点；已经发送的内容也无法通过删除索引收回。'),
+   p('索引返回候选编号，来源库保存当前的读取资格。来源服务先核对资格，再读取对应正文。装配器把获准的正文拼成模型输入，发送前再核对资格。若材料从缓存取出，缓存键也要区分租户、主体或权限范围、来源和版本，发送前同样检查当前资格。'),
 
    p('费用任务要求当前版本。a-2/v2的27已被装配后，来源新增v3=30并推进current指针，发送前检查便应识别source_version_changed，停止发送旧包。要完成更新后的任务，重新查询并取得a-1/v1和a-2/v3，再按10+30=40核对证据。历史快照型任务可以采用另一规则，但需固定任务时间与历史读取资格。',
    '正文更新和索引更新分别发生。正文已为v3、索引还为v2时，当前版本条件会排除旧候选，只剩基础项；把v3实际加入索引后，两类材料才重新齐备。内容摘要与旧v2相符，只能确认拿到旧内容，不能把它提升为当前证据。')+
@@ -152,6 +150,11 @@
    fold('完整context_budget.py',c[14][1])+p('这份回执确认哪份输入交给了收集器；工具效果回执确认外部动作提交了什么；任务验收检查实际答案及引用。三类记录分别保存输入交付、业务效果和任务结果，各自保留对象与身份。实验运行了FTS5、固定编码器和本地HTTP，没有调用生成模型；预发送复检与远端交付之间的在途规则仍需另定。')+linkRow(l[14].slice(3))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=h('retrieval-revocation-boundaries','撤权发生在读正文前，还是发送前')+
+   p('两份独立实验分别在取正文前和发输入前撤权。',
+   '<b>候选已返回，正文还没读。</b> 实验先取得候选 101、102，再撤销 102 的读取资格。装配器沿用这批编号，SQLite 的正文读取表 <code>body_reads</code> 本次只记录 101/v1。<a href="/article/agent-retrieval/#native-qdrant-retrieval">对照 Qdrant 的候选与实际读取记录 →</a>',
+   '<b>正文已读，输入还没发。</b> 另一组费用实验已经取得 a-1/v1、a-2/v2。撤回 a-2 资格后，发送前复检返回 <code>authorization_changed</code>，本地 HTTP 收集器收到 0 条新请求。<a href="/article/agent-retrieval/#context-budget-run">复跑并核对实际发送次数 →</a>',
+   '发送前复检与 HTTP 发送分两步。若撤权发生在复检之后，接收端的授权与在途规则决定请求能否继续。已交付的内容按接收端的数据保留与撤回规则处理。<a href="/article/agent-security/#section-2">回到权限章核对执行点 →</a>');
   a.sections[14][1]+=h('native-rag-citation-oracle','两个答案都是 37，为什么有一个不合格')+
    p('前一段核对材料有没有送达。这里另开一份费用实验，让本机 Qwen3 根据检索结果作答。基础项 <code>a-base/v1</code> 是 10。调整项从 <code>a-adjust/v2</code> 更新到 <code>a-adjust/v3</code>，两版金额都为 27。题目要按当前版本算，所以答案既要是 37，也要能指出当前的两份来源。',
     '先在 SQLite 中建立两个索引快照。旧索引仍指向 v2，新索引已经指向 v3。查询同样的“费用”和“汇总”时，真实 FTS5 可以找到 A 和 B 的候选。组装材料只取 A，接着选择是否对照来源库的当前版本。')+
@@ -169,7 +172,7 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('复跑后，先看 <code>versions</code> 里的 v2 → v3，再比较 <code>cases</code> 中实际提供的材料、原始模型响应和判定。两次真正发给模型的请求都能查到。证据不足这一组停在宿主的完整性检查。<a href="/article/agent-evaluation/#section-11">在评估章继续核对交付、来源与实际读取 →</a>')+
    trainingCode('已有固定引擎和权重时，在解压目录运行','SHELL','python3.12 -B rag_lab.py --server /path/to/llama-server \\\n  --model /path/to/Qwen3-0.6B-Q8_0.gguf --output-dir replay')+
    '<p class="practice-links"><a href="/labs/rag-citation-oracle.zip" download>下载程序与记录 ↓</a> · <a href="/labs/rag-citation-oracle/README.md">环境与复跑步骤 →</a> · <a href="/labs/rag-citation-oracle/validation.json">原始检索、模型与验收记录 →</a></p>';
-  a.updated='2026.11.11';
+  a.updated='2026.11.12';
   infraDomain('agent').points.find(point=>point.id==='ag-retrieval').body+=
    p('检索命中后，还要验收实际生成的回答。<a href="/article/agent-retrieval/#native-rag-citation-oracle">对照两份总数都是 37 的回答，核对引用的版本 →</a>');
  }

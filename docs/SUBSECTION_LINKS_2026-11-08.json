@@ -350,14 +350,16 @@
         "subsection-11-13uy27q",
         "native-jetstream-redelivery",
         "serverless-queue-actors",
-        "serverless-ack-evidence"
+        "serverless-ack-evidence",
+        "broker-ack-business-ledger"
       ],
       "visible_targets": [
         "serverless-queue-actors",
         "serverless-ack-evidence",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
-        "native-jetstream-redelivery"
+        "native-jetstream-redelivery",
+        "broker-ack-business-ledger"
       ]
     },
     {
@@ -827,10 +829,12 @@
         "rtx-pro-6000-cache-case",
         "serving-rows-and-history",
         "native-metal-inference",
-        "serving-rope-window-handoff"
+        "serving-rope-window-handoff",
+        "request-version-binding"
       ],
       "visible_targets": [
         "native-inference-request-path",
+        "request-version-binding",
         "sdpa-cache-path",
         "serving-rope-window-handoff",
         "serving-rows-and-history",
@@ -1126,9 +1130,11 @@
         "subsection-12-1p2vzym",
         "context-budget-run",
         "native-qdrant-retrieval",
-        "native-rag-citation-oracle"
+        "native-rag-citation-oracle",
+        "retrieval-revocation-boundaries"
       ],
       "visible_targets": [
+        "retrieval-revocation-boundaries",
         "native-qdrant-retrieval",
         "native-rag-citation-oracle"
       ]

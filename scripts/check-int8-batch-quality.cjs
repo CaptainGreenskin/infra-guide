@@ -143,13 +143,22 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
 `, folder], {timeout:10000});
 
 const authorFile = 'dist/progressive-quantization-delivery-reading.js';
+const authorAt = commit => execFileSync('git', ['show', commit + ':' + authorFile], {cwd:root, encoding:'utf8'});
+const previous = authorAt('c5ec649ee081dfa7a37598e0e7728411301e456c');
+const published = authorAt('d9f3726b006561045cb3892e418586ccd3ce6ab8');
+const bounds = author => {
+ const start = author.indexOf(" const batchQuality = articles.find(a=>a.id==='quantization-serving');");
+ const end = author.indexOf(" rewrite('ai-lifecycle',8,old=>[", start);
+ assert(start >= 0 && end > start);
+ return [start,end];
+};
+const [publishedStart,publishedEnd] = bounds(published);
+// Preserve the original publication's exact scope; the neighboring rollout lesson evolves separately.
+assert.equal(published.slice(0,publishedStart) + published.slice(publishedEnd),previous);
 const author = read(authorFile);
-const previous = execFileSync('git', ['show', 'c5ec649ee081dfa7a37598e0e7728411301e456c:' + authorFile], {cwd:root, encoding:'utf8'});
-const start = author.indexOf(" const batchQuality = articles.find(a=>a.id==='quantization-serving');");
-const end = author.indexOf(" rewrite('ai-lifecycle',8,old=>[", start);
-assert(start >= 0 && end > start);
-assert.equal(author.slice(0, start) + author.slice(end), previous);
-const unit = author.slice(start, end);
+const [start,end] = bounds(author);
+const unit = author.slice(start,end);
+assert.equal(unit,published.slice(publishedStart,publishedEnd),'preserve the signed INT8 experiment text');
 assert.match(unit, /batchQuality\.sections\[4\]\[1\]\+=/);
 assert.match(unit, /id="native-int8-batch-quality"/);
 assert(unit.includes("trainingFigure('int8-batch-quality'"));

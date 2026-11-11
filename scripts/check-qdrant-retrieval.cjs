@@ -201,6 +201,15 @@ const author=fs.readFileSync('dist/progressive-agent-retrieval-workflow-reading.
 for(const token of ['id="native-qdrant-retrieval"','trainingFigure(\'qdrant-retrieval\'','labs/qdrant-retrieval.zip',
  'labs/qdrant-retrieval/validation.json',proof.url])assert(author.includes(token),token);
 
+const boundaryArticle=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
+const boundary=boundaryArticle.split('id="retrieval-revocation-boundaries"')[1].split('id="section-10"')[0];
+const retained=published.record.cases.retained_k2;
+const retainedReads=published.db.reads.filter(([scenario])=>scenario==='retained_k2');
+assert.equal(retainedReads.length,1);
+const [,readId,readVersion]=retainedReads[0];
+assert(boundary.includes('候选 '+retained.candidate_ids.join('、')));
+assert(boundary.includes('本次只记录 '+readId+'/v'+readVersion));
+assert(boundary.includes('/article/agent-retrieval/#native-qdrant-retrieval'));
 if(process.env.QDRANT_BIN){
  const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'qdrant-replay-'));
  try{
