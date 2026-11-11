@@ -15523,14 +15523,18 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
+ network:{'dns-discovery':['cloud-dns-connection-handoff']},
  'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
+ native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
- 'model-foundations':{'mf-gpu':['ai-native-metal-gemm']},
- training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit']},
+ sre:{'alert-burn':['cloud-prometheus-live-burn']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward'],'mf-gpu':['ai-native-metal-gemm']},
+ training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff']},
  platform:{'sv-prefill':['ai-native-slot-handoff']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
-  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle']}
+  'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
+  'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger']}
 };
 function fieldConceptLabIds(moduleId,concept){
  return [fieldPracticePaths[moduleId],fieldPracticeFollowups[moduleId]].filter(unit=>unit?.[0]===concept)
@@ -15563,11 +15567,152 @@ function fieldPracticeHTML(moduleId){
   (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
 }
 
+// Each field concept opens one existing subsection before the other associated chapters.
+const fieldConceptSectionTargets={
+ "foundation":{
+  "prerequisite-1":["virtual-memory-oom","section-4","按对象存活区间算内存峰值"],
+  "prerequisite-2":["concurrency-pools","section-3","用锁顺序解释线程为什么卡住"],
+  "prerequisite-3":["network-diagnosis","section-5","把一次 curl 等待拆成各段"],
+  "prerequisite-4":["database-index-locks","section-5","沿两次写入看事务与冲突"],
+  "prerequisite-5":["delivery","section-5","用版本兼容矩阵判断能否回退"],
+ },
+ "compute":{
+  "service-model":["cloud-overview","section-3","比较托管服务中的运行职责"],
+  "control-data-plane":["cloud-overview","section-3","区分发布控制与用户请求"],
+  "fault-domain":["resilience","section-3","画出副本共用的故障域"],
+  "vm-runtime":["cloud-compute","section-1","比较虚拟机和容器的隔离层"],
+  "cpu-memory-placement":["cloud-compute","section-3","跟踪虚拟地址、宿主页与设备"],
+  "instance-lifecycle":["delivery","section-2","从模板修订看到实例替换"],
+  "resource-contract":["scheduling-resources","section-2","区分资源申请、上限与用量"],
+ },
+ "network":{
+  "vpc-subnet":["vpc-network","subsection-3-11xx3nz","VPC、子网与 CIDR"],
+  "route-overlay":["vpc-network","subsection-3-148u85l","按最长前缀选择下一跳"],
+  "dns-discovery":["vpc-network","subsection-2-1ra10dq","DNS 缓存与重新建连"],
+  "nat-conntrack":["vpc-network","subsection-5-1quqkxj","NAT 映射与回程"],
+  "lb-tls":["vpc-network","section-6","入口代理、两段 TLS 与排空"],
+  "transport-timeout":["network-diagnosis","section-3","半关闭、连接状态与超时"],
+  "io-model":["tcp-event-loop","section-7","epoll 就绪与读取循环"],
+  "network-boundary":["vpc-network","subsection-4-19347no","安全组、网络 ACL 与连接状态"],
+ },
+ "cloud-data":{
+  "storage-model":["training-storage","section-1","块、文件和对象怎样读写"],
+  "storage-performance":["training-storage","section-4","请求数、字节数与完成时间"],
+  "durability-consistency":["storage-recovery","section-6","副本、版本历史与恢复目标"],
+  "database-service":["database-index-locks","section-5","事务提交与写入冲突"],
+  "replication-failover":["mysql-replication","section-6","冻结旧写入并验证切换"],
+  "cache-layer":["cache-consistency","section-3","提交、失效与旧值回填"],
+  "messaging":["message-delivery","section-2","发布确认、ACK 与业务回执"],
+  "backup-restore":["storage-recovery","native-postgres-pitr","恢复到误清零前"],
+ },
+ "native":{
+  "container-isolation":["container-runtime","section-3","namespace 与 cgroup 的作用"],
+  "reconciliation":["kubernetes-basics","subsection-2-p1xcgh","从当前状态反复调谐"],
+  "workload-type":["k8s-workloads","section-2","选择合适的工作负载对象"],
+  "placement":["scheduling-resources","section-4","按节点逐个检查资源"],
+  "service-network":["k8s-networking","section-2","端点就绪怎样改变流量"],
+  "persistent-volume":["k8s-storage","subsection-2-1ac2xpk","PVC 到容器挂载"],
+  "health-rollout":["k8s-workloads","subsection-4-4ww5rs","运行、启动与接流量资格"],
+  "configuration":["config-secrets","section-2","环境变量、投射与 subPath"],
+  "autoscaling":["k8s-autoscaling","section-1","从 HPA 建议到副本就绪"],
+ },
+ "serverless":{
+  "execution-environment":["serverless-execution","section-2","冷启动与环境复用"],
+  "trigger-delivery":["serverless-execution","serverless-queue-actors","谁取消息，谁确认完成"],
+  "event-idempotency":["serverless-execution","section-6","同一事件怎样只提交一次"],
+  "concurrency-instances":["serverless-execution","section-8","并发、完成量与积压"],
+  "serverless-cost":["serverless-execution","section-9","按唯一成功动作核算成本"],
+ },
+ "cloud-delivery":{
+  "artifact-contract":["delivery","section-1","把制品、配置与数据绑定成版本"],
+  "ci-cd":["delivery","section-6","用实际响应验收发布"],
+  "iac":["terraform-state","section-4","为什么空计划还能有漂移"],
+  "controller-api":["kubernetes-basics","subsection-2-p1xcgh","控制器怎样按现场状态调谐"],
+  "gitops":["gitops-reconciliation","section-2","同步、健康与业务版本"],
+  "release-strategy":["delivery","section-4","灰度放量前怎样比较新旧版本"],
+  "rollback-compatibility":["delivery","section-5","回退前检查数据兼容性"],
+ },
+ "cloud-security":{
+  "authentication-authorization":["iam-security","section-1","区分调用身份和资源权限"],
+  "workload-identity":["iam-security","subsection-2-1dlazmr","用服务账号凭证读取资源"],
+  "secret-lifecycle":["config-secrets","section-6","追踪凭据轮换后旧连接是否还有效"],
+  "tenant-isolation":["iam-security","section-3","按主体、动作与资源划分租户权限"],
+  "execution-security":["iam-security","section-7","用正反测试核对权限与实际效果"],
+  "audit-accountability":["iam-security","section-7","把授权判定与实际效果对账"],
+ },
+ "cloud-capacity":{
+  "capacity-units":["cloud-compute","section-6","把每请求 CPU 时间换成核当量"],
+  "queue-backpressure":["elasticity","section-5","给接纳、执行和等待分别设限"],
+  "scaling-delay":["elasticity","section-2","算扩容生效和积压清空时刻"],
+  "performance-budget":["cloud-compute","section-10","按同一负载找出首先耗尽的预算"],
+  "cost-efficiency":["serverless-execution","section-9","从账单算每次成功的成本"],
+ },
+ "sre":{
+  "sli-slo":["slo","section-2","按实际请求重算达标比例"],
+  "observability-signals":["observability","section-6","把追踪跨度拼回一次请求"],
+  "alert-burn":["slo","section-4","算错误预算消耗速度与窗口"],
+  "diagnosis-method":["incident","section-2","用同样的延迟检验两种解释"],
+  "incident-change":["delivery","section-6","将变更版本和实际响应对上"],
+  "resilience-patterns":["distributed-systems","section-5","计算退避和重试何时恢复"],
+  "recovery-evidence":["resilience","section-4","分别验证恢复点与恢复耗时"],
+ },
+ "model-foundations":{
+  "mf-tensors":["transformer-model","section-2","跟着词元编号查一次表"],
+  "mf-attention":["attention-mechanics","same-position-different-prefix","换一项前文，为什么预测变了"],
+  "mf-decoder":["transformer-block","native-tiny-decoder-context","沿解码器块核对一次预测"],
+  "mf-autograd":["autograd-training","section-6","从有效损失到一次参数更新"],
+  "mf-gpu":["gpu-execution","native-warp-memory-sectors","同读 128 字节，为什么扇区数不同"],
+  "mf-roofline":["roofline-model","section-3","用计算量和字节数估算时间下界"],
+ },
+ "training":{
+  "tr-step":["ddp-code","section-5","沿训练循环看一次更新"],
+  "tr-memory":["gpu-memory","section-7","沿状态寿命找显存峰值"],
+  "tr-ddp":["ddp-code","native-ddp-join","一个进程先读完，另一个怎么继续"],
+  "tr-sharding":["distributed-training","native-fsdp-run","查看各进程持有的参数和状态"],
+  "tr-parallel":["tensor-parallel-math","native-dp-tp-mesh","四个进程怎样分工计算三条样本"],
+  "tr-collectives":["training-communication","ragged-ring-communication","不等长分片怎样约定收发形状"],
+  "tr-input":["data-pipeline","section-4","打包后核对有效预测目标"],
+  "tr-recovery":["checkpoint-recovery","section-2","确认继续训练需要读回哪些状态"],
+ },
+ "platform":{
+  "sv-contract":["training-platform","section-4","区分训练检查点和交付模型包"],
+  "sv-admission":["gpu-scheduling","native-kueue-admission","额度通过后，作业为什么还在等"],
+  "sv-prefill":["model-serving","native-inference-request-path","沿真实引擎看三轮生成"],
+  "sv-kv":["model-serving","section-4","按层数和 KV 头数算缓存字节"],
+  "sv-batching":["inference-performance","native-vllm-scheduler","还有计算额度，请求为什么要等"],
+  "sv-metrics":["inference-performance","native-inference-queue","从实际输出重算首词元等待与后续间隔"],
+  "sv-quantization":["quantization-serving","native-int8-batch-quality","换一个同批输入，为什么分类变了"],
+  "sv-optimizations":["speculative-decoding","section-6","核对候选分数和回退后的缓存"],
+  "sv-release":["ai-lifecycle","native-model-rollout","健康检查通过后，怎样验收模型输出"],
+ },
+ "agent":{
+  "ag-runtime":["agent-runtime","subsection-8-1x3f4ky","从工具调用到独立回读"],
+  "ag-tools":["agent-runtime","subsection-2-3p2nje","结构、权限与结果分开验"],
+  "ag-planning":["durable-workflows","subsection-8-19qsp4l","旧批准为何不适用新草稿"],
+  "ag-recovery":["agent-recovery","section-7","六个崩溃窗口怎样恢复"],
+  "ag-fencing":["durable-workflows","section-7","接收方安装新代际后拒绝旧写"],
+  "ag-authorization":["agent-security","mcp-resource-scope","同一令牌能读哪份报告"],
+  "ag-context":["agent-memory","subsection-4-17hu0bc","从旧摘要恢复时查原回执"],
+  "ag-retrieval":["agent-retrieval","native-qdrant-retrieval","从候选核对实际读取版本"],
+  "ag-observability":["agent-observability","native-model-mcp-recovery-observation","分别数模型、工具和实际写入"],
+  "ag-evaluation":["agent-evaluation","native-model-mcp-recovery-verdict","金额相同也要核对来源版本"],
+  "ag-sandbox":["agent-sandbox","native-sandbox-container","同样写出 37，输入有没有被改"],
+ },
+};
 function fieldPointRecords(moduleId){
  if(moduleId==='foundation')return cloudPrerequisites.map(([title,lead,chapters],i)=>({id:'prerequisite-'+(i+1),title,lead,articles:chapters}));
  const cloud=cloudKnowledgeDomains.find(d=>d.module===moduleId);
  if(cloud)return cloud.points.map(p=>({id:p[0],title:p[1],lead:p[2],articles:p[4]}));
  return infraKnowledgeDomains.find(d=>d.module===moduleId)?.points||[];
+}
+function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
+ const [primary,fragment,label]=fieldConceptSectionTargets[moduleId]?.[concept]||[];
+ const ordered=chapterIds.includes(primary)?[primary,...chapterIds.filter(id=>id!==primary)]:chapterIds;
+ return ordered.map(id=>{
+  const a=articleById(id),url=articleURL(id),title=trainingEscape(a.title);
+  if(id===primary)return '<a class="field-section-link" href="'+url+'#'+fragment+'" title="'+title+'">'+a.number+' '+trainingEscape(label)+' →</a>';
+  return compact?'<a href="'+url+'" title="'+title+'">'+a.number+' '+trainingEscape(a.title.split(/[：:]/)[0])+' →</a>':readLink(id,a.title);
+ }).join('');
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptEvidenceHTML(moduleId,concept){
@@ -15595,7 +15740,7 @@ function fieldConceptMapHTML(moduleId){
  '<div class="field-map-controls" role="group" aria-label="聚焦本领域概念"><button type="button" data-concept-focus="all" aria-pressed="true">全部关系</button>'+graph.nodes.map(([id,label])=>'<button type="button" data-concept-focus="'+id+'" aria-pressed="false">'+safe(label)+'</button>').join('')+'</div>'+
  '<div class="field-map-definitions">'+graph.nodes.map(([id,label,meaning])=>{
   const associated=[...new Set([...(points.find(p=>p.id===id)?.articles||[]),...Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===id).map(([chapter])=>chapter)])];
-  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">回到关系图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关机制章：</b>'+associated.map(key=>{const a=articles.find(a=>a.id===key);return '<a href="/article/'+key+'/" title="'+safe(a.title)+'">'+a.number+' '+safe(a.title.split(/[：:]/)[0])+' →</a>';}).join('')+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
+  return '<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'"><p><b>'+safe(label)+'：</b>'+safe(meaning)+'</p><p class="field-map-actions"><a href="/module/'+moduleId+'/#knowledge-'+id+'">展开系统知识 →</a> <a data-map-focus="all" href="'+fieldMapURL(moduleId)+'">回到关系图 →</a></p>'+(associated.length?'<p class="field-map-chapters"><b>相关正文：</b>'+fieldConceptChapterLinks(moduleId,id,associated,true)+'</p>':'')+fieldConceptEvidenceHTML(moduleId,id)+'</div>';
  }).join('')+'</div>'+
  '<p class="field-map-status" role="status" aria-live="polite">全部核心关系</p><ol class="field-map-edges">'+graph.edges.map(([from,verb,to,why],i)=>'<li data-concept-edge="'+from+' '+to+'"><div><span class="field-edge-number">'+(i+1)+'. </span>'+link(from)+'<span class="field-map-verb"> — '+safe(verb)+' → </span>'+link(to)+'</div><p>'+safe(why)+'</p></li>').join('')+'</ol>'+
  '<div class="field-map-exercise"><h3>用图回答</h3><p>'+safe(graph.question)+'</p><details><summary>看答案</summary><p>'+safe(graph.answer)+'</p></details></div><div class="field-map-outlets"><b>相关领域</b>'+graph.outlets.map(([id,why])=>'<p><a href="'+fieldMapURL(id)+'">'+safe(modules.find(m=>m.id===id).name)+' →</a> '+safe(why)+'</p>').join('')+'</div></details>'+
@@ -16397,5 +16542,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="1c95fc13a35397c528b2beac9588b90a7c0cd957f9987cd9947c18c8aa600f6b";
+const staticReadingVersion="42e0521abb8676df9f2e671c8b79607636a475c3ec1a1d54ce50f6087f54394c";
 

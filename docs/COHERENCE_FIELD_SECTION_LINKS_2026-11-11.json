@@ -1,0 +1,71 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "26ffdb955244f658910b44c150ff5fde14df3660",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONTEXT_FIRST_READINGS_2026-11-11.json": "c31012e667a1c29fa58101b47e299e153eade776c90afeb394862311c8ebfb33"
+  },
+  "source_revisions": {
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "be98973ad3bb15e4335ce19b8ce7cbb0017d1a65ed674db1f97e816ad8eecb0f",
+      "reviewed_sha256": "3b584fac077d06f97fa812aab5f8eeb7ebd33d93937ab2b069fd96ad501ed83b",
+      "scope": "Author one existing subsection destination for each of the 101 concepts and add nine recorded practices with exact catalog returns."
+    },
+    "dist/cloud-knowledge.js": {
+      "previous_sha256": "4ddb6a4be5e10e5d87ddd2fb1413095365c553b22b2e92b6c6f400f96c4d1426",
+      "reviewed_sha256": "ff9b58ca4aca05ff6a3b458fd1a75001fb56b3015ab7da24eaa969dce699e374",
+      "scope": "Use the same destination in Cloud knowledge points and prerequisite points."
+    },
+    "dist/infra-knowledge.js": {
+      "previous_sha256": "7b74a8de42a8df348e69517b8ba589eba8d920c8efc833f1146de60f9bea6008",
+      "reviewed_sha256": "c7f8bc0dd7d05c68c7e3e022a900dced299439bac8ea21f0413b4aab343e96f4",
+      "scope": "Use the same destination in AI and Agent knowledge points."
+    },
+    "dist/ai-system-knowledge.js": {
+      "previous_sha256": "c7fe82157bbf41b0e832b3baf4bba9937d3ef5c53c3669c7ca9c28a074f892f7",
+      "reviewed_sha256": "4ca66aa6cfc10efcf7312c69ed89c1e7cc90730bc1c6408fe5a2fc4e2b3eec98",
+      "scope": "Disambiguate the attention matrix product and introduce its symbols when used."
+    },
+    "docs/CONTENT_FIELD_SECTION_LINKS_2026-11-11.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a142f6e783cbb974f7d931f7f717be2f3c2cb17e8d48ae33f8b693cc0f585bd2",
+      "scope": "Record the reviewed attention formula and definition revision."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "993b3efff040f4846848a078962b9a3c96aaaafcb173f6ff61426749ec28193e",
+      "reviewed_sha256": "0d792e0b22ac055bbc74ba11be18607c960ea749d43341e045f41ca0ce0b6672",
+      "scope": "Append the formula revision to the knowledge review chain."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "2a6111631666c2f4e70677507153083f90f36b0e9a71907d1fbedf915ba3496a",
+      "reviewed_sha256": "a70d579db776a7f6c364504f85590bf467499534c799edde21a39eacca6c8fba",
+      "scope": "Distinguish the recommended link within the existing reading area and give it a usable mobile tap target."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "fce4157e85ad9c2c44879b4c2c455e6e88f7e57e7b7267a877aaa1479e047c58",
+      "reviewed_sha256": "74e2c87583ebded0748c2b245de701394a4668ddd06a64824a74e790b9be2390",
+      "scope": "Verify both link placements, all 101 unique authored destination fragments, preservation of the related chapters, and recorded practice links and returns."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "c3b1fb03563fb161d9cacc1e038b56a563e580a5a5a6573865b5c3067fc9f3fe",
+      "reviewed_sha256": "833f0a4ed36e378dcdb16c2889d15f6d09536352d9e8fe72e39e15ffe626fdea",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "a6923a95a27f17d5a412e82bcdaa8dca463f15cef199603f8ec485e878b48d7a",
+      "reviewed_sha256": "167212486796d31037eb8748d56e9b9d88b1cc7abe3a8fbc4bdf143a6fc535dd",
+      "scope": "Fingerprint the renderer and edited map and knowledge sources."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "26ffdb955244f658910b44c150ff5fde14df3660",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0,
+    "reviewed_section_destinations": 101,
+    "added_record_links": 9
+  }
+}

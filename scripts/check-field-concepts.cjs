@@ -1,8 +1,10 @@
 /* Check actual concept relationships and continuous reading, not human mastery. */
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),cp=require('child_process');
 const c={};vm.createContext(c);for(const[,f]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(f!=='app.js')vm.runInContext(fs.readFileSync('dist/'+f,'utf8'),c,{filename:f});
-const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,followups:fieldPracticeFollowups,evidence:fieldConceptEvidence,labs:labLearningCatalog,routes:courseReadingStages,dependencies:chapterDependencies,optional:chapterOptionalConnections,log:readabilityRevisionLog})',c)));
-assert.equal(Object.keys(d.maps).length,14);let nodes=0,edges=0;
+const d=JSON.parse(JSON.stringify(vm.runInContext('({articles,modules,maps:fieldConceptMaps,guides:fieldConceptReadings,practice:fieldPracticePaths,followups:fieldPracticeFollowups,evidence:fieldConceptEvidence,targets:fieldConceptSectionTargets,labs:labLearningCatalog,routes:courseReadingStages,dependencies:chapterDependencies,optional:chapterOptionalConnections,log:readabilityRevisionLog})',c)));
+assert.equal(Object.keys(d.maps).length,14);
+assert.deepEqual(Object.keys(d.targets).sort(),Object.keys(d.maps).sort(),'every field has direct subsection links');
+let nodes=0,edges=0,sectionLinks=0;
 assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
 assert.deepEqual(Object.keys(d.followups).sort(),['agent','cloud-capacity','platform'],'the three follow-up exercises extend the existing concept');
 assert.equal(new Set([...Object.values(d.practice),...Object.values(d.followups)].map(([,lab])=>lab)).size,17,'practice targets are distinct');
@@ -33,6 +35,8 @@ function checkPractice(moduleId,points,block,[concept,labId,question,result],ans
 for(const[moduleId,graph]of Object.entries(d.maps)){
  c.moduleId=moduleId;const points=JSON.parse(JSON.stringify(vm.runInContext('fieldPointRecords(moduleId)',c))),ids=graph.nodes.map(n=>n[0]);
  assert.deepEqual([...ids].sort(),points.map(p=>p.id).sort(),moduleId+': map must correspond to real knowledge points');assert.equal(new Set(ids).size,ids.length);
+ assert.deepEqual(Object.keys(d.targets[moduleId]).sort(),[...ids].sort(),moduleId+': every concept has one subsection destination');
+
  const seen=new Set([ids[0]]);
  for(const[from,verb,to,why]of graph.edges){assert(ids.includes(from)&&ids.includes(to)&&from!==to);assert(verb.length>=2&&why.length>=25);}
  for(let i=0;i<ids.length;i++)for(const[from,,to]of graph.edges)if(seen.has(from)||seen.has(to)){seen.add(from);seen.add(to);}
@@ -49,6 +53,29 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
   const definitionAt=html.indexOf('id="map-concept-'+id+'"');
   const definitionEnd=html.indexOf('id="map-concept-',definitionAt+1);
   const definition=html.slice(definitionAt,definitionEnd<0?html.indexOf('field-map-status',definitionAt):definitionEnd);
+  const [chapterId,fragment,label]=d.targets[moduleId][id];
+  const chapter=d.articles.find(a=>a.id===chapterId);
+  assert(chapter&&points.find(p=>p.id===id).articles.includes(chapterId),id+': direct subsection belongs to an existing related chapter');
+  assert(/^[a-z0-9-]+$/.test(fragment)&&label.length>=6&&label.length<=30,id+': stable subsection and concise Chinese label');
+  const chapterHTML=fs.readFileSync('dist/article/'+chapterId+'/index.html','utf8');
+  assert.equal(chapterHTML.split(' id="'+fragment+'"').length,2,id+': unique authored subsection target');
+  const pointAt=html.indexOf('<section class="knowledge-point" id="knowledge-'+id+'">');
+  const nextPoint=html.indexOf('<section class="knowledge-point"',pointAt+1);
+  const pointHTML=html.slice(pointAt,nextPoint<0?html.indexOf('id="field-map-practice"',pointAt):nextPoint);
+  if(id==='mf-attention'){
+   assert(pointHTML.includes('O=P·V'),id+': show the matrix product unambiguously');
+   assert(!pointHTML.includes('data-concept-term="PV"')&&!pointHTML.includes('持久卷'),id+': the attention formula does not contain a storage term');
+  }
+  const directHref='/article/'+chapterId+'/#'+fragment;
+  for(const view of [definition.match(/<p class="field-map-chapters">([\s\S]*?)<\/p>/)?.[1],pointHTML?.match(/<p class="path-links">([\s\S]*?)<\/p>/)?.[1]]){
+   assert(view,id+': concept and knowledge both render related chapters');
+   const first=view.match(/<a\b([^>]*)>([\s\S]*?)<\/a>/);
+   assert(first?.[1].includes('class="field-section-link" href="'+directHref+'"'),id+': exact subsection is the first chapter destination in both places');
+   assert(copy(first[2].replace(/<[^>]+>/g,'')).includes(copy(chapter.number+' '+safe(label))),id+': label describes the target');
+   assert.equal((view.match(/class="field-section-link"/g)||[]).length,1,id+': a single primary destination');
+   assert(!view.includes('href="/article/'+chapterId+'/"'),id+': avoid a duplicate generic link for the same chapter');
+  }
+  sectionLinks++;
   const list=definition.match(/<div class="field-map-labs">([\s\S]*?)<\/div>/)?.[1];
   assert.equal(Boolean(list),Boolean(evidence.length),id+': show only concept-specific practice links');
   for(const labId of evidence){
@@ -103,12 +130,12 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  nodes+=ids.length;edges+=graph.edges.length;
 }
 assert.equal(nodes,require('./content-inventory.cjs').points+5); // Five prerequisite groups are outside the knowledge index.
-assert.equal(edges,90);
+assert.equal(edges,90);assert.equal(sectionLinks,nodes);
 const routeIds=Object.values(d.routes).flatMap(stages=>stages.flatMap(s=>s[1]));assert.equal(new Set(routeIds).size,d.articles.length);assert.equal(routeIds.length,d.articles.length);
 assert.equal(vm.runInContext('chapterReadingContext(undefined).track',c),'shared','missing article routes must retain the not-found page without crashing');
 for(const a of d.articles){
  c.a=a;const r=JSON.parse(JSON.stringify(vm.runInContext('chapterReadingContext(a)',c))),refs=JSON.parse(JSON.stringify(vm.runInContext('chapterFieldConcepts(a)',c)));
- assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];assert(definition?.includes('href="/article/'+a.id+'/"'),a.id+': concept must link back to this chapter');}
+ assert(refs.length>0,a.id+': concept position missing');for(const[moduleId,id]of refs){assert(d.maps[moduleId].nodes.some(n=>n[0]===id));const page=fs.readFileSync('dist/module/'+moduleId+'/index.html','utf8'),definition=page.match(new RegExp('<div class="field-map-definition" id="map-concept-'+id+'" tabindex="-1" data-concept-definition="'+id+'">([\\s\\S]*?)</div>'))?.[1];const [primary,fragment]=d.targets[moduleId][id],href='/article/'+a.id+'/'+(a.id===primary?'#'+fragment:'');assert(definition?.includes('href="'+href+'"'),a.id+': concept must link back to this chapter');}
  assert(r.ids.includes(a.id));const html=fs.readFileSync('dist/article/'+a.id+'/index.html','utf8'),nav=html.match(/<nav class="article-nav"[\s\S]*?<\/nav>/)[0];
  const capstone=r.ids.find(id=>d.articles.find(a=>a.id===id).module==='practice'),sidebar=html.match(/<aside class="sidebar"[\s\S]*?<\/aside>/)[0];assert(sidebar.includes('<summary><a href="/article/'+capstone+'/"'),a.id+': practice group must stay in the current route');
  if(r.previous)assert(nav.includes('href="/article/'+r.previous.id+'/"'));if(r.next)assert(nav.includes('href="/article/'+r.next.id+'/"'));
@@ -146,4 +173,4 @@ const {record,update,laterUpdates}=require('./coherence-review-records.cjs');ass
 const latestMaps=[...laterUpdates].reverse().find(stage=>stage.field_maps_snapshot)?.field_maps_snapshot||update.field_maps;
 assert.deepEqual(latestMaps,d.maps,'current maps must match the latest separate relationship review');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');for(const[file,expected]of Object.entries(record.source_sha256))assert.equal(sha(fs.readFileSync(file)),expected,file+': unreviewed source change');
-console.log('PASS: 14 connected field maps / '+nodes+' nodes / '+edges+' authored relationships /17 exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');
+console.log('PASS: 14 connected field maps / '+nodes+' nodes / '+edges+' authored relationships / '+sectionLinks+' direct subsection destinations /17 exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');

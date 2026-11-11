@@ -88,12 +88,25 @@ const cloudKnowledgeDomains = [
  ]}
 ];
 const cloudKnowledgeDomain = id=>cloudKnowledgeDomains.find(domain=>domain.module===id);
-function knowledgePointHTML(point,index,compact=false){const [id,title,body,boundary,ids]=point;const explanation=typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'';return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+(explanation?'<details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+explanation+'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p></details>':'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p>')+'<p class="path-links">'+(ids||[]).map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>';}
-function cloudPrerequisiteHTML(){return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>'<section class="knowledge-point" id="knowledge-prerequisite-'+(index+1)+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p><p class="path-links">'+ids.map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>').join('')+'</div>';}
+function knowledgePointHTML(moduleId,point,index,compact=false){
+ const [id,title,body,boundary,ids]=point;
+ const explanation=typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'';
+ const limit='<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p>';
+ const detail=explanation?'<details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+explanation+limit+'</details>':limit;
+ return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+
+  detail+'<p class="path-links">'+fieldConceptChapterLinks(moduleId,id,ids||[])+'</p></section>';
+}
+function cloudPrerequisiteHTML(){
+ return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>{
+  const id='prerequisite-'+(index+1);
+  return '<section class="knowledge-point" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+
+   '<p class="path-links">'+fieldConceptChapterLinks('foundation',id,ids)+'</p></section>';
+ }).join('')+'</div>';
+}
 function cloudKnowledgeBody(m){
  if(m.id==='foundation')return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+explainFirstConceptTerms(cloudPrerequisiteHTML(),conceptSeen(moduleConceptPaths[m.id]));
  const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';
- return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(domain.points.map((point,index)=>knowledgePointHTML(point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>';
+ return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(domain.points.map((point,index)=>knowledgePointHTML(m.id,point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>';
 }
 function cloudKnowledgeReferences(m){const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';return '<section class="knowledge-references"><h2>原始资料</h2><div>'+domain.refs.map(key=>'<a href="'+sources[key][1]+'" target="_blank" rel="noopener">'+sources[key][0]+' ↗</a>').join('')+'</div></section>';}
 function cloudModuleTOC(m){return conceptTOCLink('/module/'+m.id+'/')+'<a href="/module/'+m.id+'/#concept-relations">核心概念关系图</a>'+cloudOriginalModuleTOC(m);}

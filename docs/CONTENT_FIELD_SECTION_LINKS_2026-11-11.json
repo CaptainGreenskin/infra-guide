@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "26ffdb955244f658910b44c150ff5fde14df3660",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CONTEXT_FIRST_READINGS_2026-11-11.json": "b41d7f045b5abb9492591740e99df046aa85ded71c0e194573ac0fefa892e7ee"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [
+    {
+      "id": "mf-attention",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "cc112f9649d50e04bc304e9033be2bc825768821e476b3c1df33680761e8f0e1",
+      "reviewed_content_sha256": "905e8e241f655b972a2a2918ca34e3df8787cea518ad8114b9f88793a566a7eb",
+      "scope": "Introduce query, key, value and the mask before applying the formula.",
+      "observation": "Using an explicit matrix product avoids the unrelated persistent-volume glossary expansion in the live AI field."
+    }
+  ],
+  "revised_teaching_units": []
+}

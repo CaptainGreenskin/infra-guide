@@ -25,10 +25,10 @@ infraKnowledgeDomains.push({module:'model-foundations',track:'ai',refs:['v16Atte
  '若B=2、S=2048、d=4096、V=32000且用2字节表示，仅这份隐藏张量约32MiB，物化全部logits约250MiB。参数数目没有变化，S或V变化仍会改变峰值。推理只需某些位置logits时，执行器可能避免保留完整矩阵；训练实现也可能融合损失计算。必须按实际物化的张量记账。',
  '样本拼接（packing）把多段样本放进一条序列，减少用于对齐的填充（padding），但EOS符号本身不会阻止后一段看见前一段。如果任务要求样本独立，需正确的块因果mask、位置规则和标签mask。先把一行输入、标签与可见集合逐格写出，再谈“提高有效token利用率”。')+
  knowledgeCheck('两段独立样本拼接后只插入EOS，能保证互不注意吗？','不能。EOS是模型输入，不是强制隔离边界；显式可见性规则决定哪些K/V参与每个查询。')},
- {id:'mf-attention',title:'Attention、因果掩码与 GQA 的具体计算',articles:['attention-mechanics','tokenization-embedding'],lead:'注意力（Attention）对每个查询计算一组可见键的分数，在同一可见集合内归一化，再加权求和值向量。改变可见集合会改变归一化分母。',body:
- knowledgeFormula('单个头','Q=XWq，K=XWk，V=XWv；P=softmax(QKᵀ/√dh + M)，O=PV','Q/K/V按[B,heads,S,dh]理解；M在禁止位置加−∞。稳定softmax先减去该行最大值。')+
+ {id:'mf-attention',title:'Attention、因果掩码与 GQA 的具体计算',articles:['attention-mechanics','tokenization-embedding'],lead:'注意力（Attention）让当前位置从允许读取的位置汇总信息。查询向量 Q 和键向量 K 用于计算匹配分数，值向量 V 提供要汇总的内容。分数在合法位置间换成权重，权重之和为 1。',body:
+ knowledgeFormula('一个注意力头','Q=XWq，K=XWk，V=XWv；P=softmax(QKᵀ/√dₕ + M)，O=P·V','X 是输入表示，Wq、Wk、Wv 是三组投影权重。每个头的向量有 dₕ 项。掩码 M 让禁止位置的分数变成 −∞。Softmax 沿每行分数求出权重 P，稳定计算时先减去本行最大值。O 是加权汇总后的输出。')+
  para('因果位置t只允许s≤t，padding键另行屏蔽。对两项分数[0,ln3]，权重是[1/4,3/4]；值为[2,6]时输出5。若第二项被遮罩，输出变为2，不能先对全部项归一化再把第二项的输出置零。所有键都被屏蔽的行要按实现处理，避免0/0或NaN传播。',
- '多头注意力（MHA）让每个查询头拥有对应的键和值；分组查询注意力（GQA）让若干查询头共用一组键和值。后文用Q表示查询、K表示键、V表示值。4个Q头、2个KV头的相邻分组映射是[0,0,1,1]，不是[0,1,0,1]。Q头保留各自查询，权重也各自计算；共享的是K/V表示，不能把四个Q先平均。新的标准库实验直接对照这两种映射。',
+ '多头注意力（MHA）让每个查询头拥有对应的键和值；分组查询注意力（GQA）让若干查询头共用一组键和值。4个Q头、2个KV头的相邻分组映射是[0,0,1,1]，不是[0,1,0,1]。Q头保留各自查询，权重也各自计算；共享的是K/V表示，不能把四个Q先平均。新的标准库实验直接对照这两种映射。',
  '全量注意力的分数张量约为B×h×S²；长度翻倍使这一项变为四倍，QKV投影却只随S线性增加。因果语义允许专门算法跳过禁止区域，但不同kernel的实际FLOP和内存流量要从实现及剖析确认。')},
  {id:'mf-decoder',title:'Decoder Block、FFN、残差与位置',articles:['transformer-block','position-encoding'],lead:'以常见的“先归一化、再计算”结构（Pre-Norm）为例，一个解码器块可以写成x←x+Attention(Norm(x))，再x←x+FFN(Norm(x))。残差保持同形状相加；归一化、位置编码和激活函数各有自己的计算语义，是否含可学习参数取决于具体方案。',body:
  para('前馈网络（FFN）的普通两层结构将d映射到dff，再映回d，忽略bias有2ddff参数；门控FFN常有两个上投影与一个下投影，共3ddff。比如d=4096、dff=11008，门控部分约1.353亿参数。扩展维度、激活中间量与融合方式都会影响峰值，而不仅是Attention。',

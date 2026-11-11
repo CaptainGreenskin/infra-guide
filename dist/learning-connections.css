@@ -82,6 +82,8 @@
 .field-map-definition[id]{scroll-margin-top:calc(var(--reader-header,76px) + 88px)}
 .field-map-definition:target{outline:2px solid var(--blue);outline-offset:5px;border-radius:2px}
 .field-map-definition>.field-map-actions{display:flex;gap:4px 18px;flex-wrap:wrap;margin-top:6px!important}.field-map-actions a{display:inline-flex;align-items:center;min-height:32px;white-space:nowrap}
+.field-section-link{font-weight:600}
+@media(max-width:720px){.field-map-chapters>.field-section-link,.path-links>.field-section-link{display:inline-flex;align-items:center;min-height:44px}}
 @media(max-width:720px){.field-map-actions a{min-height:44px}}
 .field-map-labs{margin-top:12px;font-size:14px}
 .field-map-labs ul{list-style:none;margin:4px 0 0!important;padding:0!important}

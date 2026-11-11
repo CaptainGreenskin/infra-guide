@@ -92,12 +92,25 @@ const cloudKnowledgeDomains = [
  ]}
 ];
 const cloudKnowledgeDomain = id=>cloudKnowledgeDomains.find(domain=>domain.module===id);
-function knowledgePointHTML(point,index,compact=false){const [id,title,body,boundary,ids]=point;const explanation=typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'';return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+(explanation?'<details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+explanation+'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p></details>':'<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p>')+'<p class="path-links">'+(ids||[]).map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>';}
-function cloudPrerequisiteHTML(){return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>'<section class="knowledge-point" id="knowledge-prerequisite-'+(index+1)+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p><p class="path-links">'+ids.map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>').join('')+'</div>';}
+function knowledgePointHTML(moduleId,point,index,compact=false){
+ const [id,title,body,boundary,ids]=point;
+ const explanation=typeof cloudKnowledgeExplanations==='undefined'?'':cloudKnowledgeExplanations[id]||'';
+ const limit='<p class="knowledge-boundary"><b>关联与边界</b>'+boundary+'</p>';
+ const detail=explanation?'<details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+explanation+limit+'</details>':limit;
+ return '<section class="knowledge-point'+(compact?' compact':'')+'" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+
+  detail+'<p class="path-links">'+fieldConceptChapterLinks(moduleId,id,ids||[])+'</p></section>';
+}
+function cloudPrerequisiteHTML(){
+ return '<div class="prerequisite-content">'+cloudPrerequisites.map(([title,body,ids],index)=>{
+  const id='prerequisite-'+(index+1);
+  return '<section class="knowledge-point" id="knowledge-'+id+'"><h2><span>'+String(index+1).padStart(2,'0')+'</span>'+title+'</h2><p>'+body+'</p>'+
+   '<p class="path-links">'+fieldConceptChapterLinks('foundation',id,ids)+'</p></section>';
+ }).join('')+'</div>';
+}
 function cloudKnowledgeBody(m){
  if(m.id==='foundation')return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+explainFirstConceptTerms(cloudPrerequisiteHTML(),conceptSeen(moduleConceptPaths[m.id]));
  const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';
- return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(domain.points.map((point,index)=>knowledgePointHTML(point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>';
+ return moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(domain.points.map((point,index)=>knowledgePointHTML(m.id,point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>';
 }
 function cloudKnowledgeReferences(m){const domain=cloudKnowledgeDomain(m.id);if(!domain)return '';return '<section class="knowledge-references"><h2>原始资料</h2><div>'+domain.refs.map(key=>'<a href="'+sources[key][1]+'" target="_blank" rel="noopener">'+sources[key][0]+' ↗</a>').join('')+'</div></section>';}
 function cloudModuleTOC(m){return conceptTOCLink('/module/'+m.id+'/')+'<a href="/module/'+m.id+'/#concept-relations">核心概念关系图</a>'+cloudOriginalModuleTOC(m);}
@@ -999,7 +1012,11 @@ const infraFieldCases={};
 const infraDomain=id=>infraKnowledgeDomains.find(d=>d.module===id);
 // Add reading spaces in prose while preserving code bytes, URLs and HTML attributes.
 function infraReadableHTML(html){let codeDepth=0;return html.split(/(<[^>]+>)/g).map(part=>{if(part.startsWith('<')){if(/^<(?:pre|code)\b/i.test(part))codeDepth++;if(/^<\/(?:pre|code)\s*>/i.test(part))codeDepth=Math.max(0,codeDepth-1);return part;}return codeDepth?part:part.replace(/([\u3400-\u9fff])([A-Za-z0-9])/g,'$1 $2').replace(/([A-Za-z0-9])([\u3400-\u9fff])/g,'$1 $2');}).join('');}
-function infraKnowledgePoint(p,i){return '<section class="knowledge-point" id="knowledge-'+p.id+'"><h2><span>'+String(i+1).padStart(2,'0')+'</span>'+p.title+'</h2><p>'+p.lead+'</p><details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+p.body+'</details><p class="path-links">'+p.articles.map(id=>readLink(id,articleById(id).title)).join('')+'</p></section>';}
+function infraKnowledgePoint(moduleId,p,i){
+ return '<section class="knowledge-point" id="knowledge-'+p.id+'"><h2><span>'+String(i+1).padStart(2,'0')+'</span>'+p.title+'</h2><p>'+p.lead+'</p>'+
+  '<details class="knowledge-detail"><summary>展开机制、推导与对照</summary>'+p.body+'</details>'+
+  '<p class="path-links">'+fieldConceptChapterLinks(moduleId,p.id,p.articles)+'</p></section>';
+}
 function infraKnowledgeTOC(d){return conceptTOCLink('/module/'+d.module+'/')+'<a href="/module/'+d.module+'/#concept-relations">核心概念关系图</a>'+d.points.map((p,i)=>'<a href="/module/'+d.module+'/#knowledge-'+p.id+'">'+(i+1)+'. '+p.title+'</a>').join('');}
 function infraKnowledgePage(m){
  const d=infraDomain(m.id),track=trackDefinitions[m.track];
@@ -1008,7 +1025,7 @@ function infraKnowledgePage(m){
  const toc=infraKnowledgeTOC(d);
  const mobile='<details class="mobile-contents"><summary>领域目录与本页知识点</summary><div class="mobile-field-links">'+fieldLinks+'</div>'+toc+'<a href="/module/'+m.id+'/#examples">代码实验与具体案例</a></details>';
  const references='<section class="knowledge-references"><h2>原始资料</h2><div>'+d.refs.map(k=>'<a href="'+sources[k][1]+'" target="_blank" rel="noopener">'+sources[k][0]+' ↗</a>').join('')+'</div></section>';
- $('#app').innerHTML=infraReadableHTML('<main class="doc-layout knowledge-layout" id="main" tabindex="-1">'+sidebar(m.id)+'<article class="article knowledge-article">'+breadcrumbs(m)+'<div class="eyebrow">'+track.label.toUpperCase()+' / 系统知识</div><h1>'+m.name+'</h1>'+readingToolbarHTML()+mobile+moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(d.points.map(infraKnowledgePoint).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>'+fieldPracticeHTML(m.id)+'<section class="knowledge-examples" id="examples"><h2>代码实验与具体案例</h2>'+(infraFieldCases[m.id]?'<details class="knowledge-detail"><summary>查阅本领域的代码与实验对照</summary>'+infraFieldCases[m.id]()+'</details>':'')+'<h3>继续阅读机制详解</h3>'+articles.filter(a=>a.module===m.id).map(chapterLink).join('')+'</section>'+references+resourceRecommendations(m.id)+'<div class="knowledge-exit"><a href="/roadmap/?track='+m.track+'">学习顺序与过关任务 →</a><a href="/resources/#'+m.track+'">原始资料与课程 →</a></div></article><aside class="toc"><div class="toc-title">本领域知识点</div>'+toc+'<a href="/module/'+m.id+'/#examples">代码实验与案例</a></aside></main>'+footer());
+ $('#app').innerHTML=infraReadableHTML('<main class="doc-layout knowledge-layout" id="main" tabindex="-1">'+sidebar(m.id)+'<article class="article knowledge-article">'+breadcrumbs(m)+'<div class="eyebrow">'+track.label.toUpperCase()+' / 系统知识</div><h1>'+m.name+'</h1>'+readingToolbarHTML()+mobile+moduleConceptIntro(m)+fieldConceptMapHTML(m.id)+'<div class="knowledge-body">'+explainFirstConceptTerms(d.points.map((point,index)=>infraKnowledgePoint(m.id,point,index)).join(''),conceptSeen(moduleConceptPaths[m.id]))+'</div>'+fieldPracticeHTML(m.id)+'<section class="knowledge-examples" id="examples"><h2>代码实验与具体案例</h2>'+(infraFieldCases[m.id]?'<details class="knowledge-detail"><summary>查阅本领域的代码与实验对照</summary>'+infraFieldCases[m.id]()+'</details>':'')+'<h3>继续阅读机制详解</h3>'+articles.filter(a=>a.module===m.id).map(chapterLink).join('')+'</section>'+references+resourceRecommendations(m.id)+'<div class="knowledge-exit"><a href="/roadmap/?track='+m.track+'">学习顺序与过关任务 →</a><a href="/resources/#'+m.track+'">原始资料与课程 →</a></div></article><aside class="toc"><div class="toc-title">本领域知识点</div>'+toc+'<a href="/module/'+m.id+'/#examples">代码实验与案例</a></aside></main>'+footer());
 }
 function infraArticleKnowledge(a){const d=infraDomain(a.module);if(!d)return '';return '<p class="article-context-link"><a href="/module/'+d.module+'/">本领域系统知识：'+moduleFor(d.module).name+' →</a></p>';}
 
