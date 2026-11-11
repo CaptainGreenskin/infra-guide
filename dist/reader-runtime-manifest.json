@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "staticReadingVersion": "42e0521abb8676df9f2e671c8b79607636a475c3ec1a1d54ce50f6087f54394c",
+  "staticReadingVersion": "c019acb131c64b405c8cd386118df5ba253e0ad9e0450644f5c6a02fa08fe66f",
   "articles": 78,
   "initialExecutableScripts": 2,
   "normalReaderScriptRequests": 2,
@@ -11,22 +11,22 @@
   "metadataSha256": "f4e0fe289738c1c882c146e462ccbbfaec573c840b4118e9607aa0784e779ab6",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.e4e7c1b1fba6.js",
-      "url": "/reader-assets/reader-bootstrap.e4e7c1b1fba6.js",
+      "file": "reader-assets/reader-bootstrap.f8ce8b27bdda.js",
+      "url": "/reader-assets/reader-bootstrap.f8ce8b27bdda.js",
       "bytes": 4508,
-      "sha256": "e4e7c1b1fba62fa9f884659dd705df7abef6d5f2b9f0d96f7949a3f21defc21d"
+      "sha256": "f8ce8b27bdda2650e40ecac7efa67f094828f4d294ebf022a9b62ab73fcebadf"
     },
     {
-      "file": "reader-assets/reader-runtime.8126d95ecb84.js",
-      "url": "/reader-assets/reader-runtime.8126d95ecb84.js",
+      "file": "reader-assets/reader-runtime.469982443368.js",
+      "url": "/reader-assets/reader-runtime.469982443368.js",
       "bytes": 88061,
-      "sha256": "8126d95ecb84b425dcaf7706fe26e22107fb3a76be957f66d5d006573a134516"
+      "sha256": "4699824433683cb664cfaa433055e447d00f078bcaebeb078d3f0281ca4de05c"
     },
     {
-      "file": "reader-assets/search-catalog.d5bbf780367c.json",
-      "url": "/reader-assets/search-catalog.d5bbf780367c.json",
+      "file": "reader-assets/search-catalog.e0e957ea1477.json",
+      "url": "/reader-assets/search-catalog.e0e957ea1477.json",
       "bytes": 17948,
-      "sha256": "d5bbf780367c53bbd5a69f7135fd8ce580841fff38d51959b32fd95e72ece81c"
+      "sha256": "e0e957ea14776ec222f9a1057da44fafbbc113bd3e03084d845d05ca46824693"
     },
     {
       "file": "reader-assets/search-routes.0262d892c2f3.json",
@@ -1003,7 +1003,7 @@
   "searchEntries": 174,
   "searchLayout": {
     "schema": 2,
-    "catalog": "reader-assets/search-catalog.d5bbf780367c.json",
+    "catalog": "reader-assets/search-catalog.e0e957ea1477.json",
     "routes": 64,
     "shards": 47
   }

@@ -15517,9 +15517,20 @@ const fieldPracticePaths={
  agent:['ag-tools','agent-mcp-http-cancellation','同一项工具调用分别在提交前和提交后断流。先判断两次能否查到回执，再核对处理器清理和接收库的报告。','提交前断流，回执查询没有找到报告，接收库是 0 份。提交后断流，查询能找回原回执，接收库保留 1 份金额 42 的报告。两次工具处理器都完成清理。']
 };
 const fieldPracticeFollowups={
+ foundation:['prerequisite-1','cloud-process-wait-accounting','上一题数同时留在内存里的对象。这次跟踪本机父子进程，两次都读到 42。一次先读管道，一次先等子进程退出。父进程分别把时间花在哪一步？','这次 macOS 实跑中，先读管道用了约 111 毫秒，读到 42 时子进程仍未退出。先等退出时，等待退出用了约 173 毫秒，之后读管道只用了约 0.014 毫秒。这些调用消耗的父进程 CPU 时间不到 0.1 毫秒，子进程两次各用了约 51 毫秒 CPU。','同样读到 42，父进程在等什么'],
+ compute:['cpu-memory-placement','cloud-qemu-vcpu','上一题区分了执行与等待。这次先找到 vCPU 0 对应的宿主线程，再让一个进程与它使用同一颗宿主 CPU。比较两段约 1.5 秒的记录，线程各执行了多久，又排队多久？','Linux 的 schedstat 显示，未启动竞争进程时，vCPU 0 线程执行约 1,500 毫秒，排队约 0.2 毫秒。加入竞争后，执行约 750 毫秒，排队也约 750 毫秒。记录来自 QEMU 软件模拟执行固定循环的本机实验。','vCPU 变慢，时间花在执行还是排队'],
+ network:['transport-timeout','cloud-backpressure','上一题从接收端看应用怎样继续读。这次暂停接收端应用，从发送端看。非阻塞 send 接受了多少字节？什么时候才能确认接收端应用读到了完整内容？','本次 macOS 回环实验中，接收端应用开始读之前，send 共接受 16,384 字节，随后遇到暂不可写。接收端开始读后收齐 786,432 字节。发送端半关闭写方向后收到应用回执，用总字节数和摘要核对完整内容。','发送成功后，怎样确认接收方读完'],
+ 'cloud-data':['backup-restore','cloud-postgres-pitr','上一题用事务位置解释副本为何还读到旧金额。换到独立的 PostgreSQL 实验，用同一份基础备份和日志，分别停在误清零前的具名恢复点和一直重放到归档末端。两次余额和账本记录有什么区别？','PostgreSQL 17 实跑中，停在 after_t103 时余额为 125，账本有 101 至 103。重放到归档末端会应用误清零事务 104，余额变为 0。去掉包含目标的日志段，实例无法达到目标恢复点。','同一份备份，怎样停在误清零前'],
+ native:['configuration','cloud-config','上一题看到同一 Pod 能读到不同版本。换成本机程序，让它分两次读取连接池大小和超时，中间发布 v2。它会读出哪组值？如果一次读取完整快照，更新前后的请求各拿到哪一版？','分开读得到连接池大小 4、超时 50 毫秒，这个组合从未发布。完整快照让更新前已开始的请求仍用 v1 的 4 和 100 毫秒，新请求使用 v2 的 6 和 50 毫秒。这是本机文件和进程的对照。','分两次读，怎样混出从未发布的配置'],
+ serverless:['trigger-delivery','cloud-message-native','上一题把重投和业务写入分开。换成 RabbitMQ 的两组对照，让消费者分别在提交后、确认前退出，以及确认后、提交前退出。消息和业务账本各会留下什么？','提交在前时，同一条消息被重投，业务键已存在，账本仍只有一笔 37。确认在前时，退出后待投递消息为 0，业务效果也为 0。要判断处理完成，得同时看消息确认和业务账本。','提交和确认之间退出，账本会留下什么'],
+ 'cloud-delivery':['gitops','cloud-controller-reconcile','上一题对照同步状态和真实响应。换到独立的本机控制器，外部接收方已创建周报目标，控制器却在回写状态前退出。重启后会再次请求创建吗？实际留下几个目标？','重启前后对象 UID 相同，外部写入请求从 1 次增加到 2 次，实际创建数始终为 1。控制器用原 UID 重新发请求，接收方识别已有结果，已处理代际随后从 0 变为 1。','控制器重启后，两次请求为什么只创建一份'],
+ 'cloud-security':['workload-identity','cloud-spiffe-workload-identity','上一题用同一令牌区分身份和授权。换成双向 TLS，两个工作负载都能出示受信证书，也都在请求中声称自己是 worker-a。只有 worker-a 有发布权限，哪次请求会真正写入？','worker-b 的证书身份通过验证，发布仍收到 403，账本无写入。worker-a 发布返回 201，留下唯一一份金额 37 的报告。服务按证书里的对端身份授权。','证书有效，为什么仍然不能发布'],
  'cloud-capacity':['queue-backpressure','cloud-cpu-quota-http','换成本机 HTTP 服务。发送计划、每次请求的工作量和 4 个等待位置都一样，只把配额从 1 CPU 改成 0.25 CPU。看 100 次请求各有多少完成、多少被拒绝，再查 CPU 被限速的次数。','这次实跑中，1 CPU 完成 100 次，拒绝 0 次。0.25 CPU 完成 35 次，拒绝 65 次，cgroup 的限速计数增加 70。两档完成量加拒绝量都是 100。复跑时，线程实际何时得到 CPU 会影响这个分配。','配额收紧后，100 次请求去了哪里'],
- platform:['sv-batching','ai-inference-placement','上面的例子里，处理请求的槽位留着前缀缓存。现在有 A、B 两个推理副本，各剩 100、500 个缓存块。同一请求放到两边分别需要新分配 128、512 个块。能接单吗？如果剩余量改成 96、640 呢？','第一组剩余量加起来有 600 块，但任何一边都装不下这份请求。第二组只有 B 装得下。块数来自八卡部署的预算题。实验另用本机四进程核对分片计算。','两个副本该由谁接单'],
- agent:['ag-tools','agent-mcp-result-receipt','上面靠断流制造一次结果未知。再看另一次独立实验。工具已经写入，HTTP 也返回 200，金额却是字符串 “42”。如果类型正确但操作键错了呢？判断宿主何时应该承认成功。','宿主拒绝两份坏回执，暂时不能确认写入。它用原操作键 report-A/v3:publish 只读查询，找回金额为数值 42 的有效回执。接收库各只有一份报告，不需要再发布。','写入成功，回执却有错']
+ sre:['diagnosis-method','cloud-incident-connection-lease','上一题分别核对尝试和任务结果。换成本机的两条记录，请求 B 都等不到连接。怎样分辨占着连接的 A 是在等 SQLite 锁，还是在等 HTTP？若先归还连接再等 HTTP，B 能先完成吗？','A 等 SQLite 时出现 SQLITE_BUSY，等 HTTP 时外部调用已开始，SQL 尚未开始。将 HTTP 等待移到连接归还之后，B 在 A 完成前读到 37，A 最后仍返回原来的 external-a 回执。','同样等不到连接，怎样查清谁占着它'],
+ 'model-foundations':['mf-attention','ai-prefix-attention','上一题固定译文前缀，改源句看下一词元。这次固定四个位置，只把位置 1 的值从 6 改成 14。普通因果掩码与允许前两格互相读取的前缀掩码下，位置 0 的输出各怎样变？再把位置 3 的原值改成 30，检查位置 2 会不会被未来影响。','普通因果掩码下位置 0 保持 2，前缀掩码下从 4 变成 8。另一次只改位置 3 时，正确前缀掩码的位置 2 保持 6，错误平移掩码却从 8 变成 12。记录来自本机 CPU 上的单头固定数值实验。','前两格能互读，后面还守因果吗'],
+ training:['tr-recovery','ai-elastic-restart-step','上一题在一轮提交后退出。再用独立的双进程 CPU 实验，把故障放在第 2 步更新完成、检查点发布之前。重启该从哪一步接着算？只恢复权重和数据位置会怎样？','旧组在内存中算到权重 1.375。新组从第 1 步已提交的权重 0.5、动量 −4 和下一批位置恢复，重做第 2 步。完整恢复与连续训练的最终权重都是 2.46875，只恢复权重和输入位置则是 2.15625。这次是本机两个训练进程的故障记录。','第 2 步算完却还要重做吗'],
+ platform:['sv-batching','ai-inference-placement','上一题用单个槽位确认前缀可以复用。现在换成两个副本的容量算例。A、B 各剩 100、500 个缓存块，同一请求放到两边分别需要新分配 128、512 个块。能接单吗？如果剩余量改成 96、640 呢？','第一组剩余量加起来有 600 块，两边各自都装不下这份请求，要等块释放，到期限仍无法分配就拒绝。第二组只有 B 装得下。块数来自八卡部署的预算题，另有本机四进程的分片数值对照。','两个副本该由谁接单'],
+ agent:['ag-tools','agent-mcp-result-receipt','上面靠断流制造一次结果未知。再看另一次独立实验。工具已经写入，HTTP 也返回 200，金额却是字符串 “42”。如果类型正确但操作键错了呢？判断宿主何时应该承认成功。','SDK 拒绝类型错误的回执，宿主拒绝操作键不符的回执。两次写入都已提交。宿主用原操作键 report-A/v3:publish 只读查询，找回金额为数值 42 的有效回执。两组接收库各只有一份报告。','写入成功，回执却有错']
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
@@ -15564,7 +15575,8 @@ function fieldPracticeHTML(moduleId){
  const next=fieldPracticeFollowups[moduleId];
  return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h2 id="field-map-practice">从图到实战 <span>'+trainingEscape(name)+'</span></h2>'+
   fieldPracticeUnitHTML(primary,'field-map-practice-result')+
-  (next?'<details class="field-map-practice-next" data-practice-next="'+next[1]+'" id="field-practice-'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</details>':'')+'</section>';
+  '<details class="field-map-practice-next" data-practice-next="'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+
+  '<div class="field-practice-question" id="field-practice-'+next[1]+'" tabindex="-1">'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</div></details></section>';
 }
 
 // Each field concept opens one existing subsection before the other associated chapters.
@@ -15988,7 +16000,7 @@ const labLearningCatalog=[
  {id:'cloud-volume',track:'cloud',stage:2,title:'主文件存在，卷里的数据就完整了吗',chapter:'k8s-storage',pack:'storage-quant-context',files:['wal_backup.py','volume_writer.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'本机文件与数据库',observe:'比较只复制主文件与一致备份，再让两次独立进程使用同一持久计数文件。',scope:'SQLite 与文件实测；附带的 Kubernetes 配置尚未在 CSI 集群运行。'},
  {id:'cloud-event',track:'cloud',stage:2,title:'提交后进程退出，重投是否多写一笔',chapter:'serverless-execution',pack:'cloud-native',files:['verify.py','event_worker.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实子进程退出',observe:'在业务与去重记录（inbox）同事务提交后退出，再重投相同业务事件，核对尝试数与效果数。',scope:'本机进程和数据库；没有调用真实云函数或队列。'},
  {id:'cloud-visibility',track:'cloud',stage:2,title:'消息可见性、旧回执与部分批响应',chapter:'serverless-execution',pack:'leases-placement-sandbox',files:['visibility_receipts.py','batch_response_reference.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'队列参考与策略模型',observe:'旧执行者在超时后仍可能写入；再比较正常部分响应、吞异常、整批失败与先进先出（FIFO）首错停止。',scope:'队列时钟和四种结果为声明输入；不是 SQS/Lambda 兼容实现。'},
- {id:'cloud-config',track:'cloud',stage:2,title:'完整配置快照与分阶段凭据轮换',chapter:'config-secrets',pack:'config-memory-evaluation',files:['config_snapshots.py','credential_rotation.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'文件、进程与 HTTP',observe:'复现混合字段和旧文件描述符；先双版本可用，再切客户端、撤旧凭据与旧会话。',scope:'本机配置与认证夹具；未模拟 kubelet 或真实身份平台传播。'},
+ {id:'cloud-config',track:'cloud',stage:2,title:'完整配置快照与分阶段凭据轮换',chapter:'config-secrets',anchor:'subsection-7-wkh4cz',pack:'config-memory-evaluation',files:['config_snapshots.py','credential_rotation.py'],env:'Python 3.9+ · POSIX · 标准库',kind:'文件、进程与 HTTP',observe:'复现混合字段和旧文件描述符；先双版本可用，再切客户端、撤旧凭据与旧会话。',scope:'本机配置与认证夹具；未模拟 kubelet 或真实身份平台传播。'},
  {id:'cloud-native-config-projection',track:'cloud',stage:2,title:'同一个 Pod 里，为什么只有一个入口读到新配置',chapter:'config-secrets',anchor:'native-config-projection',pack:'kubernetes-config',files:['config_projection_lab.py'],env:'Linux Docker · kind 0.33.0 · Kubernetes 1.35.8 · Python 3',kind:'真实 ConfigMap 投影与 Pod 替换',observe:'关联 API 版本、容器身份和文件 inode，再核对重开路径、旧文件句柄、subPath 与启动环境。',scope:'单节点 kind 与一个 ConfigMap 键的实际观察。'},
  {id:'cloud-sql-paths',track:'cloud',stage:2,title:'相同五条结果，分别验证定位、排序与覆盖',chapter:'database-index-locks',anchor:'sql-plan-lab',pack:'sql-paths-snapshots',files:['query_paths.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实 SQL 与原始查询计划',observe:'比较四种索引与表达式排序；分开输入分布、返回行和 N=1 进度回调，不把它们当成同一个成本。',scope:'240 行固定夹具，不测磁盘 I/O、时延或 MySQL 性能。'},
  {id:'cloud-sql-snapshot',track:'cloud',stage:2,title:'旧快照写失败后，重试 SQL 还是重做判断',chapter:'database-index-locks',anchor:'sql-snapshot-lab',pack:'sql-paths-snapshots',files:['snapshot_retry.py'],env:'Python 3.9+ · 标准库 / SQLite WAL',kind:'两个独立连接的实际交错事务',observe:'读到100、补货提交110后让旧快照写入失败；回滚后重新核对得105，照搬旧值虽可提交却只剩95。',scope:'一进程本地 WAL，不把单写者或517推广为 InnoDB 锁协议。'},
@@ -16542,5 +16554,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="42e0521abb8676df9f2e671c8b79607636a475c3ec1a1d54ce50f6087f54394c";
+const staticReadingVersion="c019acb131c64b405c8cd386118df5ba253e0ad9e0450644f5c6a02fa08fe66f";
 

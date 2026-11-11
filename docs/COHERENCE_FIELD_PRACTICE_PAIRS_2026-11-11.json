@@ -1,0 +1,63 @@
+{
+  "reviewed_on": "2026-11-11",
+  "base_source_commit": "448297111ff63cd115ab91548a54ef8d6e167a2f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_FIELD_SECTION_LINKS_2026-11-11.json": "71e4155f02d4d53789a9c3974519084ace46addaf626974b0a549573854ffc4e"
+  },
+  "source_revisions": {
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "3b584fac077d06f97fa812aab5f8eeb7ebd33d93937ab2b069fd96ad501ed83b",
+      "reviewed_sha256": "b50f79717093de15dda3a215e021a6000ac4f358316a4f1cd025ec6c7e64c82f",
+      "scope": "Complete the second recorded exercise for every field, preserve old targets, and use an inner fragment that opens the prompt with native browser navigation."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "77c35c26564d266e84a67108b325f8c3f57d6fc27078474bf41e3707ffc144f6",
+      "reviewed_sha256": "70ae291998de7496e10fce84d53728e6dff1ff4675e379f142719e99f51cac8f",
+      "scope": "Land on the local config snapshot experiment and allow each added exercise to return from its existing lab entry."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "a70d579db776a7f6c364504f85590bf467499534c799edde21a39eacca6c8fba",
+      "reviewed_sha256": "5e969fe61188df77ff7b6847bcc608c4742ffc81fbbabdf33100adf3f0f3ac9d",
+      "scope": "Keep anchored second prompts below the sticky reader header."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "74e2c87583ebded0748c2b245de701394a4668ddd06a64824a74e790b9be2390",
+      "reviewed_sha256": "8eed5d46c6155846276505a516242abf5f6a70876c0b29d18a2a6460f2b51312",
+      "scope": "Verify two distinct recorded exercises in each field, conceptual continuity, exact source and return destinations, and collapsed answer handling."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "833f0a4ed36e378dcdb16c2889d15f6d09536352d9e8fe72e39e15ffe626fdea",
+      "reviewed_sha256": "e35d5ca8f6986c832e1c3baf1601749c30df2402e108c1e0d258b2b84233a63a",
+      "scope": "Fingerprint the updated reader and search data."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "167212486796d31037eb8748d56e9b9d88b1cc7abe3a8fbc4bdf143a6fc535dd",
+      "reviewed_sha256": "6ac68d767b8430273172858ef6eed4704088d6793f0481c874d3ca9a0f7f72e0",
+      "scope": "Fingerprint the renderer and edited field exercise sources."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "448297111ff63cd115ab91548a54ef8d6e167a2f",
+    "chapters": 78,
+    "changed_bodies": [],
+    "new_chapters": [],
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0,
+    "paired_exercises": 28,
+    "new_followups": [
+      "foundation",
+      "compute",
+      "network",
+      "cloud-data",
+      "native",
+      "serverless",
+      "cloud-delivery",
+      "cloud-security",
+      "sre",
+      "model-foundations",
+      "training"
+    ]
+  }
+}

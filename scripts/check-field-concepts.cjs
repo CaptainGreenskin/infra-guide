@@ -6,8 +6,9 @@ assert.equal(Object.keys(d.maps).length,14);
 assert.deepEqual(Object.keys(d.targets).sort(),Object.keys(d.maps).sort(),'every field has direct subsection links');
 let nodes=0,edges=0,sectionLinks=0;
 assert.deepEqual(Object.keys(d.practice).sort(),Object.keys(d.maps).sort(),'every field has one evidence-based exercise');
-assert.deepEqual(Object.keys(d.followups).sort(),['agent','cloud-capacity','platform'],'the three follow-up exercises extend the existing concept');
-assert.equal(new Set([...Object.values(d.practice),...Object.values(d.followups)].map(([,lab])=>lab)).size,17,'practice targets are distinct');
+assert.deepEqual(Object.keys(d.followups).sort(),Object.keys(d.maps).sort(),'every field has a second evidence-based exercise');
+const exerciseCount=Object.keys(d.practice).length+Object.keys(d.followups).length;
+assert.equal(new Set([...Object.values(d.practice),...Object.values(d.followups)].map(([,lab])=>lab)).size,exerciseCount,'practice targets are distinct');
 const labPage=fs.readFileSync('dist/labs/index.html','utf8');
 const safe=value=>{c.value=value;return vm.runInContext('trainingEscape(value)',c);};
 const copy=value=>value.replace(/\s+/g,'');
@@ -49,7 +50,9 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
   assert.equal(html.split('id="map-concept-'+id+'" tabindex="-1"').length,2,moduleId+': unique focusable concept target '+id);
   assert(html.includes('data-map-focus="all" href="/module/'+moduleId+'/#concept-relations">回到关系图 →'),moduleId+': return link works before enhancement');
   const authored=[d.practice[moduleId],d.followups[moduleId]].filter(row=>row?.[0]===id).map(([,lab])=>lab);
-  const evidence=[...authored,...(d.evidence[moduleId]?.[id]||[])];
+  const extra=d.evidence[moduleId]?.[id]||[];
+  const evidence=[...authored,...extra];
+  assert.equal(new Set(evidence).size,evidence.length,id+': do not duplicate existing concept-specific practices');
   const definitionAt=html.indexOf('id="map-concept-'+id+'"');
   const definitionEnd=html.indexOf('id="map-concept-',definitionAt+1);
   const definition=html.slice(definitionAt,definitionEnd<0?html.indexOf('field-map-status',definitionAt):definitionEnd);
@@ -78,6 +81,7 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
   sectionLinks++;
   const list=definition.match(/<div class="field-map-labs">([\s\S]*?)<\/div>/)?.[1];
   assert.equal(Boolean(list),Boolean(evidence.length),id+': show only concept-specific practice links');
+  assert.equal((list?.match(/class="field-map-lab-catalog"/g)||[]).length,evidence.length,id+': one link per distinct lab');
   for(const labId of evidence){
    c.unit=d.labs.find(unit=>unit.id===labId);
    assert(c.unit&&!c.unit.pendingFiles?.length&&c.unit.files.length,id+': practice needs a recorded result');
@@ -85,7 +89,7 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
    const destination=vm.runInContext('labCatalogRunPath(unit)',c);
    const catalog=vm.runInContext('labCatalogTaskPath(unit)',c);
    assert(list.includes('href="'+destination+'"')&&list.includes('href="'+catalog+'"'),id+': exact chapter and lab handoff');
-   if(!authored.includes(labId)){
+   if(extra.includes(labId)){
     const task=labPage.match(new RegExp('<li class="lab-learning-unit" id="lab-'+labId+'">([\\s\\S]*?)(?=<li class="lab-learning-unit"|$)'))?.[1];
     const href='/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
     assert(task?.includes('class="lab-field-practice-return" href="'+href+'">回到概念图'),labId+': catalog returns to the exact concept');
@@ -118,15 +122,12 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
  assert.equal((html.match(/id="field-map-practice"/g)||[]).length,1,moduleId+': unique practice heading target');
  const [primary,followup]=practice[0].split('<details class="field-map-practice-next"');
  checkPractice(moduleId,points,primary,d.practice[moduleId],'field-map-practice-result','field-map-practice');
- const next=d.followups[moduleId];
- assert.equal(Boolean(followup),Boolean(next),moduleId+': show the authored follow-up where available');
- if(next){
-  const [concept,labId]=next;
-  const startConcept=d.practice[moduleId][0];
-  assert(concept===startConcept||graph.edges.some(([from,,to])=>[from,to].includes(concept)&&[from,to].includes(startConcept)),labId+': extend the same concept or an adjacent one');
-  assert(followup.startsWith(' data-practice-next="'+labId+'" id="field-practice-'+labId+'"><summary>'),labId+': stable folded follow-up');
-  checkPractice(moduleId,points,followup,next,'field-map-practice-next-result','field-practice-'+labId);
- }
+ const next=d.followups[moduleId],[concept,labId,,,title]=next,startConcept=d.practice[moduleId][0];
+ assert(concept===startConcept||graph.edges.some(([from,,to])=>[from,to].includes(concept)&&[from,to].includes(startConcept)),labId+': extend the same concept or an adjacent one');
+ assert(title.length>=6&&title.length<=26,labId+': show a short prompt title');
+ assert(followup?.startsWith(' data-practice-next="'+labId+'"><summary>'),labId+': follow-up starts collapsed');
+ assert(followup.includes('<div class="field-practice-question" id="field-practice-'+labId+'" tabindex="-1">'),labId+': the fragment reveals the actual question inside the disclosure');
+ checkPractice(moduleId,points,followup,next,'field-map-practice-next-result','field-practice-'+labId);
  nodes+=ids.length;edges+=graph.edges.length;
 }
 assert.equal(nodes,require('./content-inventory.cjs').points+5); // Five prerequisite groups are outside the knowledge index.
@@ -173,4 +174,4 @@ const {record,update,laterUpdates}=require('./coherence-review-records.cjs');ass
 const latestMaps=[...laterUpdates].reverse().find(stage=>stage.field_maps_snapshot)?.field_maps_snapshot||update.field_maps;
 assert.deepEqual(latestMaps,d.maps,'current maps must match the latest separate relationship review');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');for(const[file,expected]of Object.entries(record.source_sha256))assert.equal(sha(fs.readFileSync(file)),expected,file+': unreviewed source change');
-console.log('PASS: 14 connected field maps / '+nodes+' nodes / '+edges+' authored relationships / '+sectionLinks+' direct subsection destinations /17 exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');
+console.log('PASS: 14 connected field maps / '+nodes+' nodes / '+edges+' authored relationships / '+sectionLinks+' direct subsection destinations / '+exerciseCount+' exact practice handoffs and catalog returns with scoped evidence; all'+d.articles.length+' chapters have a concept position and route-consistent neighbors, shared capstones stay in their track; six historical prose revisions preserve every full code block. Human comprehension is not inferred.');
