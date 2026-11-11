@@ -42,6 +42,32 @@ assert.deepEqual(history.v1['deployment.json'].object,history.config_only_v2['de
 assert.equal(history.config_only_v2['deployment.json'].object.spec.template.metadata.annotations['guide/revision'],'v1');assert.equal(history.rollout_v2['deployment.json'].object.spec.template.metadata.annotations['guide/revision'],'v2');
 for(const[file,entry]of Object.entries(history.rollout_v2))assert.equal(entry.sha256,r.source_sha256['gitops-app/'+file]);
 for(const[key,row]of [['v1',gr.v1],['config_only_v2',bad],['rollout_v2',gr.v3_new_pod]])assert.equal(row.status.revision,g.sources[key]);
+const gitopsAnchor='gitops-response-evidence';
+const evidenceSection=html=>html.split('id="'+gitopsAnchor+'"')[1]?.split('</section>')[0];
+const evidenceSource=html=>{
+ const program=evidenceSection(html)?.match(/<pre\b[^>]*>\s*<code\b[^>]*>([\s\S]*?)<\/code>\s*<\/pre>/)?.[1];
+ assert(program,'Show the record verification as copyable Python');
+ return decode(program);
+};
+const gitopsPage=fs.readFileSync('dist/article/gitops-reconciliation/index.html','utf8');
+const deliveryPage=fs.readFileSync('dist/article/delivery/index.html','utf8');
+assert(evidenceSection(gitopsPage)?.includes('/article/delivery/#section-6'));
+assert(evidenceSection(gitopsPage).includes('/labs/delivery-systems/validation.json'));
+assert(deliveryPage.split('id="section-6"')[1]?.split('</section>')[0].includes('/article/gitops-reconciliation/#'+gitopsAnchor));
+const publishedEvidence=evidenceSource(gitopsPage);
+assert.equal(publishedEvidence,evidenceSource(d.articles.find(a=>a.id==='gitops-reconciliation').sections[5][1]));
+assert(!publishedEvidence.includes('business_oracle_passed'),'Recompute the verdict instead of reading it');
+const replay=program=>cp.execFileSync('python3',['-B','-c',program,folder+'validation.json'],{encoding:'utf8'}).trim().split('\n').slice(1);
+const rows=replay(publishedEvidence);
+assert.deepEqual(rows,[
+ [g.sources.v1,'v1','v1',gr.v1.pod.uid,'v1','通过'],
+ [g.sources.config_only_v2,'v1','v2',bad.pod.uid,'v1','拒绝'],
+ [g.sources.rollout_v2,'v2','v2',gr.v3_new_pod.pod.uid,'v2','通过'],
+ [g.sources.v1,'v1','v1',gr.return_to_v1.pod.uid,'v1','通过']
+].map(([sha,template,config,uid,version,verdict])=>[sha.slice(0,7),template,config,uid.slice(0,8),version,verdict].join(' ')));
+const versionCheck='        and reply["version"] == expected';
+assert(publishedEvidence.includes(versionCheck));
+assert.equal(replay(publishedEvidence.replace(versionCheck,''))[1],rows[1].replace('拒绝','通过'),'Ignoring the HTTP version would falsely accept the config-only rollout');
 const meta=id=>JSON.parse(decode(fs.readFileSync('dist/diagrams/'+id+'.svg','utf8').match(/<metadata>([\s\S]*?)<\/metadata>/)[1]));
 assert.deepEqual(meta('v49-mq-commit-windows').effect_first,crash);assert.deepEqual(meta('v49-tf-workspace-collision').execution,t.workspaces);assert.deepEqual(meta('v49-gitops-four-facts').execution,bad);
 cp.execFileSync('python3',['-B','-c',`import pathlib,zipfile,xml.etree.ElementTree as ET

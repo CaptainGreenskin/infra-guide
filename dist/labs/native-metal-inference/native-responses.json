@@ -1,0 +1,1570 @@
+{
+  "cpu": {
+    "completions": {
+      "cache_disabled": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 0,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " five",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              11
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " six",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              12
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " seven",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              13
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green four",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 0.109,
+              "predicted_n": 3,
+              "predicted_per_second": 18348.62385321101,
+              "predicted_per_token_ms": 0.0545,
+              "prompt_ms": 0.091,
+              "prompt_n": 4,
+              "prompt_per_second": 43956.043956043955,
+              "prompt_per_token_ms": 0.02275
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": false,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "changed_suffix": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 3,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " five",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              11
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " six",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              12
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " seven",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              13
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green four",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 3,
+              "predicted_ms": 0.077,
+              "predicted_n": 3,
+              "predicted_per_second": 25974.025974025975,
+              "predicted_per_token_ms": 0.0385,
+              "prompt_ms": 0.041,
+              "prompt_n": 1,
+              "prompt_per_second": 24390.243902439022,
+              "prompt_per_token_ms": 0.041
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "cold": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 0,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " one",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              7
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " two",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              8
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " three",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              9
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green blue",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 0.134,
+              "predicted_n": 3,
+              "predicted_per_second": 14925.373134328358,
+              "predicted_per_token_ms": 0.067,
+              "prompt_ms": 0.176,
+              "prompt_n": 4,
+              "prompt_per_second": 22727.272727272728,
+              "prompt_per_token_ms": 0.044
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "repeat": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 3,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " one",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              7
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " two",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              8
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " three",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              9
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green blue",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 3,
+              "predicted_ms": 0.086,
+              "predicted_n": 3,
+              "predicted_per_second": 23255.813953488374,
+              "predicted_per_token_ms": 0.043,
+              "prompt_ms": 0.047,
+              "prompt_n": 1,
+              "prompt_per_second": 21276.59574468085,
+              "prompt_per_token_ms": 0.047
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      }
+    },
+    "tokenizations": {
+      "red green blue": {
+        "request": {
+          "add_special": true,
+          "content": "red green blue",
+          "with_pieces": true
+        },
+        "response": {
+          "tokens": [
+            {
+              "id": 1,
+              "piece": "<s>"
+            },
+            {
+              "id": 4,
+              "piece": " red"
+            },
+            {
+              "id": 5,
+              "piece": " green"
+            },
+            {
+              "id": 6,
+              "piece": " blue"
+            }
+          ]
+        }
+      },
+      "red green four": {
+        "request": {
+          "add_special": true,
+          "content": "red green four",
+          "with_pieces": true
+        },
+        "response": {
+          "tokens": [
+            {
+              "id": 1,
+              "piece": "<s>"
+            },
+            {
+              "id": 4,
+              "piece": " red"
+            },
+            {
+              "id": 5,
+              "piece": " green"
+            },
+            {
+              "id": 10,
+              "piece": " four"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "metal": {
+    "completions": {
+      "cache_disabled": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 0,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " five",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              11
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " six",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              12
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " seven",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              13
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green four",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 0.878,
+              "predicted_n": 3,
+              "predicted_per_second": 2277.904328018223,
+              "predicted_per_token_ms": 0.439,
+              "prompt_ms": 0.687,
+              "prompt_n": 4,
+              "prompt_per_second": 5822.416302765647,
+              "prompt_per_token_ms": 0.17175
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": false,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "changed_suffix": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 3,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " five",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              11
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " six",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              12
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " seven",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              13
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green four",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 3,
+              "predicted_ms": 0.797,
+              "predicted_n": 3,
+              "predicted_per_second": 2509.410288582183,
+              "predicted_per_token_ms": 0.3985,
+              "prompt_ms": 0.409,
+              "prompt_n": 1,
+              "prompt_per_second": 2444.987775061125,
+              "prompt_per_token_ms": 0.409
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "cold": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 0,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 0,
+              "processed": 4,
+              "time_ms": 1,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " one",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              7
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " two",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              8
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " three",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              9
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green blue",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 1.259,
+              "predicted_n": 3,
+              "predicted_per_second": 1588.5623510722796,
+              "predicted_per_token_ms": 0.6295,
+              "prompt_ms": 1.31,
+              "prompt_n": 4,
+              "prompt_per_second": 3053.4351145038167,
+              "prompt_per_token_ms": 0.3275
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      },
+      "repeat": {
+        "events": [
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 3,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": "",
+            "id_slot": -1,
+            "index": 0,
+            "prompt_progress": {
+              "cache": 3,
+              "processed": 4,
+              "time_ms": 0,
+              "total": 4
+            },
+            "stop": false,
+            "tokens": [
+              0
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 0
+          },
+          {
+            "content": " one",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              7
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 1
+          },
+          {
+            "content": " two",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              8
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 2
+          },
+          {
+            "content": " three",
+            "id_slot": -1,
+            "index": 0,
+            "stop": false,
+            "tokens": [
+              9
+            ],
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3
+          },
+          {
+            "content": "",
+            "generation_settings": {
+              "adaptive_decay": 0.8999999761581421,
+              "adaptive_target": -1.0,
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 3,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 3,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 7,
+              "speculative.types": "none",
+              "stop": [],
+              "stream": true,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 40,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "synthetic-cache-walkthrough",
+            "prompt": "<s> red green blue",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 3,
+              "predicted_ms": 0.841,
+              "predicted_n": 3,
+              "predicted_per_second": 2378.1212841854936,
+              "predicted_per_token_ms": 0.4205,
+              "prompt_ms": 0.398,
+              "prompt_n": 1,
+              "prompt_per_second": 2512.5628140703516,
+              "prompt_per_token_ms": 0.398
+            },
+            "tokens": [],
+            "tokens_cached": 6,
+            "tokens_evaluated": 4,
+            "tokens_predicted": 3,
+            "truncated": false
+          }
+        ],
+        "http_status": 200,
+        "request": {
+          "cache_prompt": true,
+          "id_slot": 0,
+          "n_predict": 3,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        }
+      }
+    },
+    "tokenizations": {
+      "red green blue": {
+        "request": {
+          "add_special": true,
+          "content": "red green blue",
+          "with_pieces": true
+        },
+        "response": {
+          "tokens": [
+            {
+              "id": 1,
+              "piece": "<s>"
+            },
+            {
+              "id": 4,
+              "piece": " red"
+            },
+            {
+              "id": 5,
+              "piece": " green"
+            },
+            {
+              "id": 6,
+              "piece": " blue"
+            }
+          ]
+        }
+      },
+      "red green four": {
+        "request": {
+          "add_special": true,
+          "content": "red green four",
+          "with_pieces": true
+        },
+        "response": {
+          "tokens": [
+            {
+              "id": 1,
+              "piece": "<s>"
+            },
+            {
+              "id": 4,
+              "piece": " red"
+            },
+            {
+              "id": 5,
+              "piece": " green"
+            },
+            {
+              "id": 10,
+              "piece": " four"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

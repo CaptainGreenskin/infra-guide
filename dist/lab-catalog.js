@@ -84,6 +84,7 @@ const labArchiveCatalog={
  'mcp-recovery':{folder:'mcp-recovery',title:'真实 MCP 提交与工作流崩溃恢复'},
  'context-parallel':{folder:'context-parallel',title:'两进程因果注意力与位置对照'},
  'native-inference':{folder:'native-inference',title:'真实推理引擎与前缀复用'},
+ 'native-metal-inference':{folder:'native-metal-inference',title:'同一条推理请求的 CPU 与 Apple GPU 对照'},
  'ring-context-training':{folder:'ring-context-training',title:'环形注意力前向与梯度归还'},
  'gemm-variants':{folder:'gemm-variants',title:'CUDA GEMM 三种线程映射'},
  'integrated-service':{folder:'integrated-service',title:'HTTP任务、CPU模型与独立效果恢复'},
@@ -283,6 +284,12 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-ring-
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference')+1,0,
  {id:'ai-native-inference-prefix',track:'ai',stage:2,title:'同槽空闲后怎样复用提示，清除后重算几项',chapter:'model-serving',anchor:'native-inference-prefix',pack:'native-inference-prefix',files:['prefix_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际 HTTP、槽状态与缓存操作',observe:'对比同一个提示复用三项与清除后全部重算，核对保留位置和相同输出。',scope:'固定合成模型和单槽。记录逻辑缓存状态。'}
+);
+labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-prefix')+1,0,
+ {id:'ai-native-metal-inference',track:'ai',stage:2,title:'同一个请求的注意力在哪个设备上算',chapter:'model-serving',anchor:'native-metal-inference',pack:'native-metal-inference',
+  files:['metal_inference.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · Apple M4 Pro',kind:'真实回环 HTTP、CPU 与 Metal 节点对照',
+  observe:'在每个实际批次定位 Q/K/V 投影、注意力 Softmax 和输出投影，再核对两个设备的词元与缓存计数。',
+  scope:'同一台机器、一个槽、同一合成模型及四条请求。用于核对执行路径，端到端时延、生产容量和 CUDA 另测。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-sre')+1,0,
  {id:'cloud-collector-sampling',track:'cloud',stage:2,title:'同一批追踪为何导出三条和两条',chapter:'observability',anchor:'collector-sampling-check',pack:'otel-tail-ledger',files:['collector.yaml','tail_ledger.py'],env:'Python 3.12 · OpenTelemetry Collector Contrib 0.130.0',kind:'真实 OTLP/HTTP 与两条采集管道',observe:'核对接收器、处理器和导出器，比较全量与错误采样的分母。',scope:'本机 Collector 与三个固定任务。'}

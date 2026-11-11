@@ -56,6 +56,14 @@ function proof(r){
   }else{assert.equal(row.gate_refusal,null);for(const gate of gates)assert.deepEqual(gate,{allowed:1,mode:'enforced',violations:[]});}
   assert.equal(new Set(pids).size,pids.length,'distinct actual worker/service processes within a case');children+=pids.length;
  }
+ const normal=r.cases.normal.oracle,wrongVersion=r.cases.wrong_version;
+ const publishedWrongVersion=wrongVersion.oracle;
+ const comparable=['task_status','actual_totals','model_calls','tool_attempts','effect_count','artifact_count','publication_count'];
+ for(const key of comparable)assert.deepEqual(normal[key],publishedWrongVersion[key],key+': equal reported values in the two bridge cases');
+ assert.deepEqual([normal.worker_attempts,publishedWrongVersion.worker_attempts],[1,2]);
+ assert.deepEqual([normal.accepted,publishedWrongVersion.accepted],[true,false]);
+ assert.deepEqual(wrongVersion.gate_refusal.worker.result.gate,{mode:'enforced',violations:['model_binding']});
+ assert.deepEqual(publishedWrongVersion.api_audit.map(row=>row.kind),['accepted','release_gate','release_gate','completed']);
  const auth=r.cases.read_authorization.authorization;
  assert.equal(auth.initial_read,200);assert.equal(auth.other_tenant,403);assert.equal(auth.revoked_actor,403);assert.equal(auth.artifact_retained,true);
  assert.equal(auth.receiver_reads_before,auth.receiver_reads_after);
@@ -89,6 +97,17 @@ assert(printed.includes(read('integrated_service.py').toString().trim()),'comple
 const page=fs.readFileSync(path.join(root,'dist/article/production-readiness/index.html'),'utf8');
 assert(page.includes('v70-service-chain.svg'));
 assert(page.includes('id="integrated-service-run"'));assert(page.includes('labs/integrated-service.zip'));
+const observation=vm.runInContext('articles.find(a=>a.id==="agent-observability").sections[0][1]',c);
+const observationPage=fs.readFileSync(path.join(root,'dist/article/agent-observability/index.html'),'utf8');
+const bridge='same-total-model-binding',signals='agent-observation-signals';
+for(const html of [article.sections[5][1],page]){
+ assert.equal(html.split('id="'+bridge+'"').length,2,'one model binding exercise destination');
+ assert(html.slice(html.indexOf('id="'+bridge+'"')).includes('/article/agent-observability/#'+signals),'exercise returns to the original count comparison');
+}
+for(const html of [observation,observationPage]){
+ assert.equal(html.split('id="'+signals+'"').length,2,'one count comparison destination');
+ assert(html.slice(html.indexOf('id="'+signals+'"')).includes('/article/production-readiness/#'+bridge),'count comparison leads to the model binding exercise');
+}
 const staticPrinted=(page.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[]).map(s=>decode(s.replace(/^<pre\b[^>]*>\s*<code\b[^>]*>/,'').replace(/<\/code>\s*<\/pre>$/,'')));
 assert(staticPrinted.includes(read('integrated_service.py').toString().trim()),'same complete program in static page');
 const figure=fs.readFileSync(path.join(root,'dist/diagrams/v70-service-chain.svg'),'utf8');
@@ -104,6 +123,17 @@ with tempfile.TemporaryDirectory(prefix='infra-integrated-verify-') as tmp:
  root=pathlib.Path(tmp);run=root/'run'
  result=subprocess.run([sys.executable,'-B',str(lab/'integrated_service.py'),'--output-dir',str(run)],capture_output=True,text=True,timeout=110,check=True)
  fresh=json.loads(result.stdout)
+ for variant in ('normal','wrong_version'):
+  d=run/variant
+  approved=json.loads((d/'approved'/'manifest.json').read_text())
+  with sqlite3.connect(d/'model.sqlite') as con:
+   [(inputs,total,bundle)]=con.execute('SELECT input,output,bundle FROM calls').fetchall()
+  with sqlite3.connect(d/'receiver.sqlite') as con:
+   [(body,)]=con.execute('SELECT body FROM artifacts').fetchall()
+  report=json.loads(body)
+  expected_bundle=dict(approved,bundle_id='linear-sum-v2') if variant=='wrong_version' else approved
+  assert json.loads(inputs)==[10,27] and total==report['total']==37
+  assert json.loads(bundle)==report['model']==expected_bundle
  faults=[]
  def case(name,edit,expected):
   d=root/name;shutil.copytree(run/'normal',d);edit(d);actual=m.independent_oracle(d)
@@ -129,6 +159,6 @@ with tempfile.TemporaryDirectory(prefix='infra-integrated-verify-') as tmp:
 `;
  const fresh=cp.spawnSync(process.env.INFRA_INTEGRATED_PYTHON,['-B','-c',script,lab],{encoding:'utf8',timeout:150000,maxBuffer:1024*1024});
  assert.equal(fresh.status,0,fresh.stderr);const output=JSON.parse(fresh.stdout);proof(output.fresh);assert.equal(output.stored_data_faults_rejected.length,11);
- console.log('Fresh CPU/HTTP/SQLite suite and eleven actual persisted-data faults passed.');
+ console.log('Fresh CPU/HTTP/SQLite suite, stored model/receiver manifest comparison, and eleven persisted-data faults passed.');
 }
 console.log('PASS: exact service/fixture/ZIP bindings; six process/HTTP/CPU scenarios, pre-effect gate, one-effect recovery, wrong number/version and revoked-read rejection, independent capacity units, canonical/static source and new diagrams.');

@@ -1,0 +1,1789 @@
+{
+  "artifact_sha256": {
+    "native-responses.json": "9a46860d7a40ebf8455460c84c92a66d933e5565468b878f32009ea23b602085",
+    "native-stderr.log": "88a8166d9764612bcaadb18282973bc7335c7eea168e9285188eed664113dede"
+  },
+  "backends": {
+    "cpu": {
+      "cases": [
+        {
+          "api": {
+            "cache_n": 0,
+            "output_ids": [
+              7,
+              8,
+              9
+            ],
+            "predicted_n": 3,
+            "prompt_n": 4,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": false,
+                  "position": 0,
+                  "token_id": 1
+                },
+                {
+                  "logits_requested": false,
+                  "position": 1,
+                  "token_id": 4
+                },
+                {
+                  "logits_requested": false,
+                  "position": 2,
+                  "token_id": 5
+                },
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 6
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 7
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 8
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "cold",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 3,
+            "output_ids": [
+              7,
+              8,
+              9
+            ],
+            "predicted_n": 3,
+            "prompt_n": 1,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 6
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 7
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 8
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "repeat",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 3,
+            "output_ids": [
+              11,
+              12,
+              13
+            ],
+            "predicted_n": 3,
+            "prompt_n": 1,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 10
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 11
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 12
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "changed_suffix",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            10
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 0,
+            "output_ids": [
+              11,
+              12,
+              13
+            ],
+            "predicted_n": 3,
+            "prompt_n": 4,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": false,
+                  "position": 0,
+                  "token_id": 1
+                },
+                {
+                  "logits_requested": false,
+                  "position": 1,
+                  "token_id": 4
+                },
+                {
+                  "logits_requested": false,
+                  "position": 2,
+                  "token_id": 5
+                },
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 10
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 11
+                }
+              ]
+            },
+            {
+              "metal_nodes": [],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 12
+                }
+              ]
+            }
+          ],
+          "cache_prompt": false,
+          "name": "cache_disabled",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            10
+          ]
+        }
+      ],
+      "device": "none",
+      "n_gpu_layers": 0,
+      "placement": {
+        "buffers": [
+          {
+            "device": "CPU_Mapped",
+            "kind": "model",
+            "mib": 0.02
+          },
+          {
+            "device": "CPU",
+            "kind": "KV",
+            "mib": 0.02
+          },
+          {
+            "device": "CPU",
+            "kind": "compute",
+            "mib": 0.11
+          }
+        ],
+        "layers": [
+          {
+            "device": "CPU",
+            "index": 0
+          },
+          {
+            "device": "CPU",
+            "index": 1
+          }
+        ]
+      }
+    },
+    "metal": {
+      "cases": [
+        {
+          "api": {
+            "cache_n": 0,
+            "output_ids": [
+              7,
+              8,
+              9
+            ],
+            "predicted_n": 3,
+            "prompt_n": 4,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": false,
+                  "position": 0,
+                  "token_id": 1
+                },
+                {
+                  "logits_requested": false,
+                  "position": 1,
+                  "token_id": 4
+                },
+                {
+                  "logits_requested": false,
+                  "position": 2,
+                  "token_id": 5
+                },
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 6
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 7
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 8
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "cold",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 3,
+            "output_ids": [
+              7,
+              8,
+              9
+            ],
+            "predicted_n": 3,
+            "prompt_n": 1,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 6
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 7
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 8
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "repeat",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 3,
+            "output_ids": [
+              11,
+              12,
+              13
+            ],
+            "predicted_n": 3,
+            "prompt_n": 1,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 10
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 11
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 12
+                }
+              ]
+            }
+          ],
+          "cache_prompt": true,
+          "name": "changed_suffix",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            10
+          ]
+        },
+        {
+          "api": {
+            "cache_n": 0,
+            "output_ids": [
+              11,
+              12,
+              13
+            ],
+            "predicted_n": 3,
+            "prompt_n": 4,
+            "tokens_cached": 6
+          },
+          "batches": [
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": false,
+                  "position": 0,
+                  "token_id": 1
+                },
+                {
+                  "logits_requested": false,
+                  "position": 1,
+                  "token_id": 4
+                },
+                {
+                  "logits_requested": false,
+                  "position": 2,
+                  "token_id": 5
+                },
+                {
+                  "logits_requested": true,
+                  "position": 3,
+                  "token_id": 10
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 4,
+                  "token_id": 11
+                }
+              ]
+            },
+            {
+              "metal_nodes": [
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Vcur-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Qcur-0"
+                },
+                {
+                  "op": "ROPE",
+                  "tensor": "Kcur-0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_v_l0"
+                },
+                {
+                  "op": "SET_ROWS",
+                  "tensor": "cache_k_l0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kq-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_33"
+                },
+                {
+                  "op": "SOFT_MAX",
+                  "tensor": "kq_soft_max-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "kqv-0"
+                },
+                {
+                  "op": "CONT",
+                  "tensor": "kqv_out-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "attn_out-0"
+                },
+                {
+                  "op": "GET_ROWS",
+                  "tensor": "node_32"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "ffn_inp-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_gate-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_up-0"
+                },
+                {
+                  "op": "GLU",
+                  "tensor": "ffn_swiglu-0"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "ffn_out-0"
+                },
+                {
+                  "op": "ADD",
+                  "tensor": "l_out-0"
+                },
+                {
+                  "op": "RMS_NORM",
+                  "tensor": "norm"
+                },
+                {
+                  "op": "MUL_MAT",
+                  "tensor": "result_output"
+                }
+              ],
+              "rows": [
+                {
+                  "logits_requested": true,
+                  "position": 5,
+                  "token_id": 12
+                }
+              ]
+            }
+          ],
+          "cache_prompt": false,
+          "name": "cache_disabled",
+          "prompt_ids": [
+            1,
+            4,
+            5,
+            10
+          ]
+        }
+      ],
+      "device": "MTL0",
+      "n_gpu_layers": 99,
+      "placement": {
+        "buffers": [
+          {
+            "device": "CPU_Mapped",
+            "kind": "model",
+            "mib": 0.0
+          },
+          {
+            "device": "MTL0_Mapped",
+            "kind": "model",
+            "mib": 0.01
+          },
+          {
+            "device": "MTL0",
+            "kind": "KV",
+            "mib": 0.02
+          },
+          {
+            "device": "MTL0",
+            "kind": "compute",
+            "mib": 0.11
+          },
+          {
+            "device": "CPU",
+            "kind": "compute",
+            "mib": 0.04
+          }
+        ],
+        "layers": [
+          {
+            "device": "MTL0",
+            "index": 0
+          },
+          {
+            "device": "MTL0",
+            "index": 1
+          }
+        ]
+      }
+    }
+  },
+  "engine": {
+    "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+    "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+    "common_options": [
+      "--ctx-size",
+      "128",
+      "--parallel",
+      "1",
+      "--threads",
+      "1",
+      "--threads-batch",
+      "1",
+      "--batch-size",
+      "32",
+      "--ubatch-size",
+      "32",
+      "--no-warmup",
+      "--cache-ram",
+      "0",
+      "--cache-reuse",
+      "0",
+      "--verbose",
+      "--no-ui",
+      "--fit",
+      "off",
+      "--flash-attn",
+      "off",
+      "--alias",
+      "synthetic-cache-walkthrough"
+    ],
+    "debug_env": {
+      "GGML_METAL_GRAPH_DEBUG": "1",
+      "LLAMA_BATCH_DEBUG": "1"
+    },
+    "metal_library_sha256": "2b04ec59315ed3bd196ef119e20c2173c094b3cf206d8d0d4ca5b5caf685f8d9",
+    "version": "0.9.0-dev (build 12110, commit cd959bae9)"
+  },
+  "environment": {
+    "macos": "26.2",
+    "metal_device": "Apple M4 Pro",
+    "platform": "Darwin arm64"
+  },
+  "model": {
+    "bytes": 22144,
+    "gguf_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66"
+  },
+  "schema": "infra-native-metal-inference-v1",
+  "source_sha256": {
+    "README.md": "0b285c757f480fd54a4e09aa82bd5e430909e06fb546f1f55f2181fa90e18a82",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+    "metal_inference.py": "ec943b7e452b166535dc8499488e426020e5d1a000265c65239946e6067a175c"
+  },
+  "status": "passed"
+}

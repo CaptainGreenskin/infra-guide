@@ -154,4 +154,44 @@
  p('随包JSON清单对应第三份703f38b提交，guide-version已为v2，Pod模板注解也为v2；前两份内容从各自固定提交读取，不能将这份清单当作初次v1源。已有执行记录及源码摘要可离线核对：期望副本1、漂移现场2、自愈回1；旧受管配置被清理而unmanaged保留；配置v2/旧UID/HTTP v1拒绝，模板换版后新UID/HTTP v2通过，最后回到v1。',
  '这些记录覆盖单宿主kind中的真实Argo Git读取、Kubernetes调谐和HTTP结果。它们没有运行生产数据迁移、跨主机网络或云高可用控制面；进入这些环境时，沿同一源→对象→进程→用户路径补足对应验收。')
  ],'沿Git修订、清单、API对象、Pod启动与Service响应走通调谐，再用自愈、清理和三个固定提交区分同步、健康与业务生效。');
+ gitops.sections[5][1]+=
+ h('gitops-response-evidence','用运行记录核对实际发布版本')+
+ p('按<a href="/article/delivery/#section-6">C6.1 的发布观测顺序</a>，先找 Git 声明的版本，再看集群配置、应用实例和响应。这个程序从同一次 Argo CD 实验的 JSON 复判初次发布、只改配置、换模板和回退四条记录。')+
+ p('下载 <a href="/labs/delivery-systems/validation.json" download>原始记录 validation.json</a>，将下面的代码保存为 <code>check_gitops.py</code>，在同一目录运行 <code>python3 check_gitops.py validation.json</code>。只需 Python 标准库。')+
+ trainingCode('读取原始 JSON，逐条重算发布结果','PYTHON',`import json
+import sys
+from pathlib import Path
+
+record = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+gitops = record["native"]["gitops"]
+stages = [
+    ("v1", "v1"),
+    ("v2_synced_but_old_business", "config_only_v2"),
+    ("v3_new_pod", "rollout_v2"),
+    ("return_to_v1", "v1"),
+]
+
+print("提交 模板 配置 Pod_UID 响应 验收")
+for stage, source in stages:
+    row = gitops["records"][stage]
+    revision = gitops["sources"][source]
+    files = record["git_history"][source]
+    expected = files["configmap.json"]["object"]["data"]["version"]
+    template = files["deployment.json"]["object"]["spec"]["template"]
+    status, pod, reply = row["status"], row["pod"], row["http"]
+    passed = (
+        status["revision"] == revision
+        and status["sync"] == "Synced"
+        and status["health"] == "Healthy"
+        and status["operation"] == "Succeeded"
+        and row["desired_config"] == expected
+        and reply["pod"] == pod["name"]
+        and reply["version"] == expected
+    )
+    print(revision[:7], template["metadata"]["annotations"]["guide/revision"],
+          row["desired_config"], pod["uid"][:8], reply["version"],
+          "通过" if passed else "拒绝")`)+
+ p('这四条记录的状态都是 Synced、Healthy、Succeeded。加上响应核对，四行依次是通过、拒绝、通过、通过。第二行现场配置已经是 v2，原 Pod 仍用 v1 的启动配置，HTTP 返回 v1。最后一行回到原提交，启动的是另一份 v1 Pod。程序用响应里的 Pod 名字对应 API 记录，再从 API 取得 UID。')+
+ p('要生成自己的原生记录，按<a href="/article/gitops-reconciliation/#gitops-native-run">第 9 节运行 kind 实验</a>。本节的离线命令只读取已发布的实验输出。');
+ gitops.updated='2026.11.11';
 })();

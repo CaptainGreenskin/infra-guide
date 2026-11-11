@@ -374,6 +374,11 @@
     {
       "id": "gitops-reconciliation",
       "targets": [
+        "gitops-native-run",
+        "gitops-response-evidence"
+      ],
+      "visible_targets": [
+        "gitops-response-evidence",
         "gitops-native-run"
       ]
     },
@@ -470,15 +475,18 @@
         "model-compute-to-infra",
         "encoder-decoder-translation",
         "sequence-models",
-        "translation-reading-path"
+        "translation-reading-path",
+        "repeat-next-token",
+        "generation-cache-steps"
       ],
       "visible_targets": [
         "text-to-next-token",
-        "tiny-decoder-input",
         "decoder-attention-first-pass",
         "decoder-ffn-position",
         "decoder-block-order",
-        "training-versus-generation"
+        "repeat-next-token",
+        "training-versus-generation",
+        "generation-cache-steps"
       ]
     },
     {
@@ -771,7 +779,8 @@
         "native-inference-engine-lab",
         "native-inference-prefix",
         "rtx-pro-6000-cache-case",
-        "serving-rows-and-history"
+        "serving-rows-and-history",
+        "native-metal-inference"
       ],
       "visible_targets": [
         "native-inference-request-path",
@@ -779,6 +788,7 @@
         "serving-rows-and-history",
         "subsection-5-qvstci",
         "native-inference-engine-lab",
+        "native-metal-inference",
         "native-inference-prefix",
         "rtx-pro-6000-cache-case"
       ]
@@ -1124,11 +1134,13 @@
       "id": "production-readiness",
       "targets": [
         "protocol-business-evidence",
-        "admission-vs-tool-commit"
+        "admission-vs-tool-commit",
+        "same-total-model-binding"
       ],
       "visible_targets": [
         "protocol-business-evidence",
-        "admission-vs-tool-commit"
+        "admission-vs-tool-commit",
+        "same-total-model-binding"
       ]
     },
     {

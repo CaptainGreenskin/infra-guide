@@ -240,5 +240,6 @@
  p('每格是九次设备时间的中位数，括号内是最小值和最大值。两版共用输入和队列，预热后轮换先后。每个 Metal 命令缓冲区只派发一次，完成后才读 GPU 时间戳。短行的两个用时范围有重叠，长行在这批样本中分开。比较时在同一行内对照。同步、调度和实际内存流量需要不同的测量来区分。')+
  p('解压后进入 <code>metal-softmax</code> 目录，运行 <code>swift -O metal_softmax.swift &gt; replay.json</code>。先看 <code>validation</code> 与溢出对照，再用 <code>benchmarks</code> 的原始样本复算中位数。实验覆盖 Apple Metal 上的连续有限 FP32 数据。注意力掩码、CUDA 与端到端时延各有单独的验证条件。')+
  '<p class="practice-links"><a href="labs/metal-softmax.zip" download>下载实验包 ↓</a> · <a href="labs/metal-softmax/kernels.metal">完整内核 →</a> · <a href="labs/metal-softmax/validation.json">GPU 回读与原始计时 →</a></p>'+
- '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/creating-threads-and-threadgroups">Apple Metal 线程组 ↗</a> · <a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">GPU 时间戳 ↗</a></p>';
+ '<p class="source-at"><a href="https://developer.apple.com/documentation/metal/creating-threads-and-threadgroups">Apple Metal 线程组 ↗</a> · <a href="https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpustarttime">GPU 时间戳 ↗</a></p>'+
+ p('下一步用真实推理请求定位同类运算。llama.cpp 使用自己的 Metal 内核，注意力中的 Softmax 节点叫 <code>kq_soft_max-0</code>。沿一条请求看它出现在哪几轮，再核对最终输出。<a href="/article/model-serving/#native-metal-inference">从 GPU 算子走到真实推理请求 →</a>');
 })();

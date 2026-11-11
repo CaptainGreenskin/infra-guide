@@ -223,6 +223,7 @@ _, err = api.UpdateStatus(ctx, obj, metav1.UpdateOptions{})`)+
  p('按包内说明准备 Kubernetes 1.35.0 的 envtest 二进制。启动器在本机回环地址运行 API Server、etcd 和 HTTP 接收方，再启动独立的控制器进程。先核对 <code>provider_events</code> 的 UID、请求和状态码，再看对象快照。这里验证自定义对象、状态写回和清理顺序。多副本控制器、实际云 API 与集群权限需要另验。')+
  '<p class="practice-links"><a href="/labs/controller-reconcile.zip" download>下载 Go 源码与运行记录 ↓</a> · <a href="/labs/controller-reconcile/README.md">准备环境与复跑 →</a> · <a href="/labs/controller-reconcile/validation.json">核对 API 对象与 HTTP 记录 →</a> · <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/">Kubernetes finalizer 说明 ↗</a></p>';
  delivery.updated='2026.11.11';
+ delivery.sections[5][1]+=p('要把这三层观察放进同一份真实记录，可以<a href="/article/gitops-reconciliation/#gitops-response-evidence">复判 C6.3 的 Argo CD 发布</a>。控制器同步到目标 Git 修订、现场配置更新后，继续用 Pod 身份和 HTTP 响应核对实际收到的版本。');
 
  const resilience=select('resilience',['恢复条件：材料、业务、权威与消费者','先说明这次恢复究竟要救什么','故障域要画到最后一个共享依赖','RPO 衡量缺失的时间边界，RTO 衡量恢复时长','共同恢复点：连续提交与对象版本','恢复关键路径：阶段预算与数据规模','写入接管与效果：旧写者、回执和重新消费','演练如何证明备份真的可用','实战：完整前缀与恢复后的外部效果','评分练习：恢复点合格是否意味着服务已恢复']);
  const r=resilience.sections.map(s=>s[1]),r9=blocks(r[8]),r9links=links(r[8]);

@@ -344,7 +344,21 @@
   p('脚本从原生响应和批次日志核对这些数字。把每批输入的编号抄到第 2 节图里，就能看出哪个输出进入了下一轮。流式响应还带有提示处理进度事件，脚本先按事件类型将它们分开，再数实际输出。')+
   trainingCode('解压后运行，指定已安装的 llama-server','SHELL','python3 engine_walkthrough.py --server /absolute/path/to/llama-server --output-dir ./replay')+
   '<p class="practice-links"><a href="labs/native-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-inference/README.md">环境与运行步骤</a> · <a href="labs/native-inference/engine_walkthrough.py">请求和校验源码</a> · <a href="labs/native-inference/validation.json">实际记录与源码摘要</a></p>'+
-  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。接下来保持合成模型，改为两条真实请求，比较一个槽与两个槽怎样处理后一条。<a href="/article/inference-performance/#native-inference-queue">继续看排队与流式计时 →</a>');
+  p('本次在 macOS arm64 上使用 CPU，单槽逐条执行。下面先用同一个模型对比 CPU 与 GPU 上的实际运算。<a href="/article/inference-performance/#native-inference-queue">继续看两个请求怎样排队与计时 →</a>')+
+  heading('native-metal-inference','同一条请求，哪些运算实际交给了 GPU')+
+  p('保持 llama.cpp b12110、合成权重与请求不变，启动两次服务。第一次禁用 GPU，第二次选择 Apple M4 Pro 的 Metal 设备 MTL0。Metal 是 Apple 平台提交 GPU 运算的接口。两个进程都关闭融合注意力，便于在计算日志中逐项找出矩阵乘法与 Softmax。')+
+  trainingFigure('native-metal-inference-path','同一条冷请求的三个批次。设备日志指出哪些节点由 Metal 编码，客户端原始响应给出三次选词和最终缓存计数。')+
+  p('先核对第一条请求。词元 [1,4,5,6] 进入位置 0–3，产生 7。第二批把 7 送入位置 4，产生 8。第三批把 8 送入位置 5，产生 9。两边都返回 [7,8,9]，槽内都保留 6 个已计算位置。最后选出的 9 还没被送回模型。')+
+  table(['Metal 日志里的节点','本轮计算里负责什么'],[
+   ['<code>Qcur-0</code>、<code>Kcur-0</code>、<code>Vcur-0</code>','把这一批的新输入变成查询、匹配键与内容'],
+   ['<code>kq_soft_max-0</code>','把查询与键的匹配分数换成读取权重'],
+   ['<code>result_output</code>','把模型最后的特征变成词表候选分数']
+  ])+
+  p('模型加载日志能说明权重与缓存放在哪里。要确认本次请求用了哪些设备算子，展开原始日志，按批次找到位置编号，再在同一批查 <code>ggml_metal_op_encode_impl</code> 的节点名。首次请求的三批在 Metal 路径都有这组记录。CPU 对照的批次位置和词元输出相同，Metal 节点计数为 0。复用或关闭提示缓存的其余三条请求也用同样的办法核对。')+
+  trainingCode('解压后在 Apple Silicon 上运行，替换 llama-server 路径','SHELL','python3 -B metal_inference.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="labs/native-metal-inference.zip" download>下载实验包 ↓</a> · <a href="labs/native-metal-inference/README.md">环境与复跑步骤</a> · <a href="labs/native-metal-inference/native-responses.json">原始 HTTP 事件</a> · <a href="labs/native-metal-inference/native-stderr.log">引擎批次与节点日志</a> · <a href="labs/native-metal-inference/validation.json">核对结果</a></p>'+
+  p('这次复跑覆盖本机单槽、合成模型和四条固定请求。GPU 节点日志用来确认执行路径。端到端时延、生产模型容量和 CUDA 行为需要各自的测量。<a href="/article/operator-profiling/#native-metal-softmax">回看单个 GPU Softmax 内核怎样做归约 →</a>');
+ serving.updated='2026.11.11';
 
  performance.sections[5][1]+=
   heading('native-inference-queue','同样两条请求，单槽与双槽怎样调度')+

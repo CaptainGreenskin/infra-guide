@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 415" role="img" aria-labelledby="title desc">
+<title id="title">同一条推理请求走 CPU 或 Apple GPU</title>
+<desc id="desc">首次请求的提示是 1、4、5、6。引擎先处理位置 0 到 3，随后分别把 7 和 8 送进位置 4 和 5。CPU 和 Apple M4 Pro 两条路径返回 7、8、9，Metal 日志在三个批次内都记录了查询键内容投影、注意力归一化和输出投影。</desc>
+<defs>
+ <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#4662b6"/></marker>
+</defs>
+<rect width="460" height="415" rx="14" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" text-anchor="middle" fill="#23314b">
+ <text x="230" y="30" font-size="19" font-weight="650">同一条请求，两种执行设备</text>
+ <rect x="30" y="47" width="400" height="49" rx="8" fill="#fff" stroke="#b7c7ed"/>
+ <text x="230" y="68" font-size="15" font-weight="650">发送 [1,4,5,6]，要求生成 3 项</text>
+ <text x="230" y="86" font-size="13" fill="#566581">相同 llama.cpp 服务、模型文件和选词规则</text>
+ <path d="M230 98v15" fill="none" stroke="#4662b6" stroke-width="2" marker-end="url(#arr)"/>
+ <rect x="30" y="117" width="400" height="70" rx="8" fill="#fff" stroke="#b7c7ed"/>
+ <text x="230" y="139" font-size="15" font-weight="650">引擎依次送入 3 个计算批次</text>
+ <text x="230" y="158" font-size="14">提示占位置 0–3 → 选出 7</text>
+ <text x="230" y="177" font-size="14">7 在位置 4 → 选出 8；8 在位置 5 → 选出 9</text>
+ <g fill="none" stroke="#4662b6" stroke-width="2" marker-end="url(#arr)">
+  <path d="M122 189v18"/><path d="M338 189v18"/>
+  <path d="M122 326v23"/><path d="M338 326v23"/>
+ </g>
+ <rect x="30" y="212" width="184" height="112" rx="8" fill="#fff" stroke="#b7c7ed"/>
+ <text x="122" y="238" font-size="17" font-weight="650">CPU 对照</text>
+ <text x="122" y="262" font-size="14">计算同样 3 批</text>
+ <text x="122" y="286" font-size="14" fill="#566581">各批均无</text>
+ <text x="122" y="305" font-size="14" fill="#566581">Metal 节点记录</text>
+ <rect x="246" y="212" width="184" height="112" rx="8" fill="#eaf0ff" stroke="#4662b6"/>
+ <text x="338" y="238" font-size="17" font-weight="650" fill="#2946a2">Apple GPU · MTL0</text>
+ <text x="338" y="262" font-size="14">每一批都可找到</text>
+ <text x="338" y="285" font-size="14">Q/K/V 投影、Softmax</text>
+ <text x="338" y="305" font-size="14">以及输出投影的节点</text>
+ <rect x="30" y="353" width="400" height="45" rx="8" fill="#fff" stroke="#b7c7ed"/>
+ <text x="230" y="381" font-size="16" font-weight="650">收到 [7,8,9]，槽内保留 6 个已计算位置</text>
+</g>
+</svg>

@@ -1,0 +1,402 @@
+[cpu]
+D load_tensors: layer   0 assigned to device CPU, is_swa = 0
+D load_tensors: layer   1 assigned to device CPU, is_swa = 0
+I load_tensors:   CPU_Mapped model buffer size =     0.02 MiB
+I llama_kv_cache:        CPU KV buffer size =     0.02 MiB
+I sched_reserve:        CPU compute buffer size =     0.11 MiB
+I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 1, n_remaining = 2, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 2, n_remaining = 1, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 3, n_remaining = 0, next token:     9 ' three'
+I slot      release: id  0 | task 0 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 4 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 4 | n_gen = 1, n_remaining = 2, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 4 | n_gen = 2, n_remaining = 1, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 4 | n_gen = 3, n_remaining = 0, next token:     9 ' three'
+I slot      release: id  0 | task 4 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 8 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 8 | n_gen = 1, n_remaining = 2, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 8 | n_gen = 2, n_remaining = 1, next token:    12 ' six'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     12 (             six), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 8 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'
+I slot      release: id  0 | task 8 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 12 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =     10 (            four), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 12 | n_gen = 1, n_remaining = 2, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 12 | n_gen = 2, n_remaining = 1, next token:    12 ' six'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     12 (             six), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 12 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'
+I slot      release: id  0 | task 12 | stop processing: n_tokens = 6, truncated = 0
+[metal]
+D load_tensors: layer   0 assigned to device MTL0, is_swa = 0
+D load_tensors: layer   1 assigned to device MTL0, is_swa = 0
+I load_tensors:   CPU_Mapped model buffer size =     0.00 MiB
+I load_tensors:  MTL0_Mapped model buffer size =     0.01 MiB
+I llama_kv_cache:       MTL0 KV buffer size =     0.02 MiB
+I sched_reserve:       MTL0 compute buffer size =     0.11 MiB
+I sched_reserve:        CPU compute buffer size =     0.04 MiB
+I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 0 | n_gen = 1, n_remaining = 2, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 0 | n_gen = 2, n_remaining = 1, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 0 | n_gen = 3, n_remaining = 0, next token:     9 ' three'
+I slot      release: id  0 | task 0 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 4 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 4 | n_gen = 1, n_remaining = 2, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 4 | n_gen = 2, n_remaining = 1, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 4 | n_gen = 3, n_remaining = 0, next token:     9 ' three'
+I slot      release: id  0 | task 4 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 8 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 8 | n_gen = 1, n_remaining = 2, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 8 | n_gen = 2, n_remaining = 1, next token:    12 ' six'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     12 (             six), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 8 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'
+I slot      release: id  0 | task 8 | stop processing: n_tokens = 6, truncated = 0
+I slot   operator(): id  0 | task 12 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =     10 (            four), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 12 | n_gen = 1, n_remaining = 2, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 12 | n_gen = 2, n_remaining = 1, next token:    12 ' six'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     12 (             six), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D ggml_metal_op_encode_impl: node[    1] - RMS_NORM     norm-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    4] - MUL_MAT      Qcur-0
+D ggml_metal_op_encode_impl: node[    5] - MUL_MAT      Vcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    6] - MUL_MAT      Kcur-0       (concurrent)
+D ggml_metal_op_encode_impl: node[    7] - ROPE         Qcur-0
+D ggml_metal_op_encode_impl: node[    8] - ROPE         Kcur-0
+D ggml_metal_op_encode_impl: node[    9] - SET_ROWS     cache_v_l0 (reshaped) (view) (concurrent)
+D ggml_metal_op_encode_impl: node[   10] - SET_ROWS     cache_k_l0 (view)
+D ggml_metal_op_encode_impl: node[   11] - MUL_MAT      kq-0
+D ggml_metal_op_encode_impl: node[   12] - GET_ROWS     node_33
+D ggml_metal_op_encode_impl: node[   13] - SOFT_MAX     kq_soft_max-0 (concurrent)
+D ggml_metal_op_encode_impl: node[   14] - MUL_MAT      kqv-0
+D ggml_metal_op_encode_impl: node[   15] - CONT         kqv_out-0
+D ggml_metal_op_encode_impl: node[   16] - MUL_MAT      attn_out-0
+D ggml_metal_op_encode_impl: node[   17] - GET_ROWS     node_32
+D ggml_metal_op_encode_impl: node[   18] - ADD          ffn_inp-0
+D ggml_metal_op_encode_impl: node[   19] - RMS_NORM     norm-0
+D ggml_metal_op_encode_impl: node[   21] - MUL_MAT      ffn_gate-0
+D ggml_metal_op_encode_impl: node[   22] - MUL_MAT      ffn_up-0
+D ggml_metal_op_encode_impl: node[   23] - GLU          ffn_swiglu-0
+D ggml_metal_op_encode_impl: node[   24] - MUL_MAT      ffn_out-0
+D ggml_metal_op_encode_impl: node[   25] - ADD          l_out-0
+D ggml_metal_op_encode_impl: node[   26] - RMS_NORM     norm
+D ggml_metal_op_encode_impl: node[   28] - MUL_MAT      result_output
+D slot process_toke: id  0 | task 12 | n_gen = 3, n_remaining = 0, next token:    13 ' seven'
+I slot      release: id  0 | task 12 | stop processing: n_tokens = 6, truncated = 0

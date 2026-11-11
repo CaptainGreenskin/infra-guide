@@ -7267,6 +7267,97 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "e9fc8f0ed5c589f6a517dd2348e311fa248752d6bf1499b5ee51d1690c348fd3",
+      "reviewed_content_sha256": "b959c5b2c677e13c27240f9c97a1da230da19dea595a9e32d80b7a34a1acbe45",
+      "scope": "Close the first Transformer walkthrough on two consecutive predictions before shape, resource and training detail.",
+      "observation": "The same [0,1] starts the lookup, closes in the block, and enters the actual cache exercise. One weighted read precedes its exact score derivation. The recovery link names both real training samples, and the conclusion and course navigation both point to A1.2.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "c1aa827a49e3e343bae5f3609332975710b6f7040c897ab4e2de369b1e1b6de3",
+      "reviewed_content_sha256": "f48513c8accb6a48b6c0b748449b7e94a504c5e132c9bc732b70fce21233bdb8",
+      "scope": "Compare the same llama.cpp HTTP requests, cache counters and batch positions on CPU and Apple M4 Pro.",
+      "observation": "Four identical request cases match on token output, prompt counts and retained positions. Original Metal operation lines identify the projections, QK multiply, attention softmax, V aggregation and output projection in each of the twelve batches. This experiment characterizes execution paths.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "f63ce129a446ac2e90456b1844f50a6b8bb172c28f8ca4699fe84b03635b4f52",
+      "reviewed_content_sha256": "df1a01b6f39b9d1e0ebea2cd5666e34ae7df45a8f561ed38d8d453901de1de1c",
+      "scope": "Hand off release observations to an offline judgment against original Argo CD evidence.",
+      "observation": "The reciprocal link lets the reader check Git, Pod and business response against the same four recorded release stages.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "1cc58712f6343e35eebb4ea6b95a48faa4dd35585d5e0855fc9a8496389b2157",
+      "reviewed_content_sha256": "10e72a69817b845ed20006e6ce750d36c446773d314eab5f55a0fb51c8993074",
+      "scope": "Connect ordinary observation counts to independent model-version acceptance in S3.",
+      "observation": "Both recorded cases report SUCCEEDED and amount 37 with identical call, effect and artifact counts. The exact link opens the stored-manifest comparison.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-11",
+      "previous_content_sha256": "d6700706fb4191f1fd65213052325d4a7fb9d7479575f0f6be916f309d1a2bee",
+      "reviewed_content_sha256": "d94b3801069823f0b50031a0f6d34497db1282c6c41ef3601bbe510d775500c0",
+      "scope": "Validate model identity against the approved manifest in the model service and receiver records.",
+      "observation": "The wrong-version case has the same weight and configuration digest and amount as the approved case. The gate refuses it before any effects; after intentional bypass, independent acceptance still rejects it. The direct SQLite readback is verified in the fresh run.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

@@ -82,6 +82,10 @@
    ['wrong_weights','正常门禁先拦住；故意绕过后实际写38','拒绝'],
    ['wrong_version','正常门禁先拦住；故意绕过后写37但模型束v2','拒绝']
   ])+p('status=passed表示这些场景分别满足事先规定的正例或负例判据。六个协议场景不是从用户流量抽样，不能把oracle接收比例当作服务成功率。oracle.accepted评价产物、版本和份数；当前读取资格与拒绝时没有交付正文，继续由真实HTTP结果和读取记录检验。')+
+  '<h3 id="same-total-model-binding">两份报告都是 37，实际用了哪一版模型</h3>'+
+  p('接着<a href="/article/agent-observability/#agent-observation-signals">观测章的计数题</a>查<a href="/labs/integrated-service/validation.json">同一份 S3 运行记录</a>。<code>wrong_version.gate_refusal</code> 记录首次工作进程以 24 退出，<code>violations</code> 只有 <code>model_binding</code>，当时接收方效果为 0。<code>wrong_version.oracle.api_audit</code> 随后记录刻意绕过门禁的负例 <code>bypassed_negative</code>。新工作进程复用已保存的推理结果，报告才被写入。因此这组工作进程尝试是 2 次，模型调用仍是 1 次。')+
+  p('再比较各组 <code>oracle</code> 的 <code>approved_model</code> 和 <code>selected_model</code>。正常组使用获准的 <code>linear-sum-v1</code>。错版本组的配置和权重摘要与获准版本相同，模型清单中的 <code>bundle_id</code> 却是 <code>linear-sum-v2</code>。本题要求完整清单与批准记录一致。<code>actual_report_matches_source</code> 两组都通过，错版本组的 <code>actual_report_uses_approved_model</code> 失败，<code>accepted</code> 为 <code>false</code>。')+
+  p('保留运行目录后，读 <code>model.sqlite</code> 的 <code>calls.bundle</code> 查实际调用所用的清单，再读 <code>receiver.sqlite</code> 的 <code>artifacts.body</code> 查写入的清单，分别与 <code>approved/manifest.json</code> 对照。<a href="/labs/integrated-service/integrated_service.py">独立验收源码</a>中的 <code>independent_oracle</code> 直接读取这些文件和数据库。')+
   fold('总体比例与依赖成功率',p('另设20题：12简单、4长文档、4恢复。A分别通过12、2、1，总体15/20=75%；B通过11、4、3，总体18/20=90%，还要单独看简单题的退化。比较前固定输入、初态、时间与调用预算，避免旧产物让新试次无需工作就通过。模型调用成功率99.9%也不等于任务成功率99.9%；应直接测任务完成条件，在没有独立性依据时不机械相乘各段平均值。'))+existingLinks(5),
 
   p('同一任务的记录用不同身份连接。task-A贯穿受理与完成；task-A:save贯穿工具尝试与回执；worker尝试号与PID区分实际进程；源版本、模型束与摘要说明每次使用的内容。实际观测中，恢复将worker和工具尝试从1变为2，模型调用仍1、效果仍1；这几个计数分别解释重做了哪段工作。',
