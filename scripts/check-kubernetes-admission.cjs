@@ -137,6 +137,28 @@ const start = article.indexOf(marker);
 const section = article.lastIndexOf('<section class="article-section"', start);
 assert(article.slice(section, start).startsWith('<section class="article-section" id="section-7">'));
 for (const href of ['labs/' + pack + '.zip', recordURL, 'diagrams/' + pack + '.svg']) assert(article.includes(href), href);
+const quotaPage = page('article/scheduling-resources');
+const quotaAnchor = 'quota-admission-forbidden';
+const quotaPassage = quotaPage.split('id="' + quotaAnchor + '"')[1]?.split('</section>')[0];
+const admissionPassage = article.slice(start).split('</section>')[0];
+const quotaRecord = 'labs/runtime-scheduling/validation.json';
+const quota = JSON.parse(fs.readFileSync(path.join(dist, quotaRecord))).execution.scheduler.observations.quota_rejection;
+const quotaMatch = quota.error.match(/\(Forbidden\).*exceeded quota: (\S+), requested: requests.cpu=(\d+m), used: requests.cpu=(\d+m), limited: requests.cpu=(\d+m)/);
+assert(quotaMatch, 'kind returned a quota refusal in kubectl stderr');
+const [, name, requested, used, limited] = quotaMatch;
+assert.equal(quota.quota.hard['requests.cpu'], limited);
+assert.equal(quota.quota.used['requests.cpu'], used);
+assert.equal(quota.object_exists, false);
+const excess = parseInt(requested, 10) + parseInt(used, 10) - parseInt(limited, 10);
+assert(excess > 0);
+for (const text of [name, requested, used, limited, '超出 ' + excess + 'm', '<code>object_exists</code> 为 <code>false</code>']) {
+ assert(quotaPassage?.includes(text), text);
+}
+assert(quotaPassage.includes('/' + quotaRecord) && quotaPassage.includes(articleRoute + '#' + anchor));
+assert(admissionPassage.includes('/article/scheduling-resources/#' + quotaAnchor));
+const authorizationDenial = evidence.observations.cases.find(entry => entry.request.namespace === 'report-c');
+assert(admissionPassage.includes('<code>allowed=' + authorizationDenial.authorization.allowed + '</code>'));
+assert(quotaPassage.includes('<code>cannot create resource</code>') && authorizationDenial.create.body.message.includes('cannot create resource'));
 const securityPoint = page('module/cloud-security').match(/<section class="knowledge-point" id="knowledge-execution-security">([\s\S]*?)<\/section>/)?.[1];
 assert(securityPoint?.includes(articleRoute + '#' + anchor));
 const task = page('labs').match(/<li class="lab-learning-unit" id="lab-cloud-kubernetes-admission">([\s\S]*?)<\/li>/)?.[1];

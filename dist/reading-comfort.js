@@ -67,6 +67,11 @@ function initReadingComfort(){
 
  const navLinks=[...document.querySelectorAll('.toc a')];
  const desktopTargets=new Map(navLinks.filter(link=>link.dataset.toc).map(link=>[link.dataset.toc,link]));
+ // The static track entry carries the same outline without any request query.
+ if(article.querySelector(':scope > .track-entry-overview')){
+  const current=location.pathname+location.search;
+  for(const [id,link] of desktopTargets)link.setAttribute('href',current+'#'+encodeURIComponent(id));
+ }
  const sections=[...article.querySelectorAll('.concept-path[id],.article-section[id],.knowledge-point[id],.knowledge-examples[id],.field-concept-map[id],.chapter-lab-links[id],.article-section h3[id],.article-section h4[id]')].filter(el=>el.matches('h3,h4')?desktopTargets.has(el.id)||!el.closest('details'):el.querySelector('h2,summary'));
  // Authored details can have public fragments without adding entries to the outline.
  const optionalDetails=[...article.querySelectorAll('.article-section[id] details:not(.article-case)')]

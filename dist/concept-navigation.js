@@ -135,11 +135,11 @@ function chapterSectionBody(article,index,html){
 }
 
 // Reviewed standalone bodies carry their own definitions; their old preview is a chapter-end review.
-function chapterReadingContentsHTML(article,navigation=chapterNavigation(article)){
- const topics=chapterContentsHTML(article,navigation);
- const concept=conceptTOCLink(readingArticleURL(article.id),optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
+function chapterReadingContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
+ const topics=chapterContentsHTML(article,navigation,url);
+ const concept=conceptTOCLink(url,optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
  const practice=labLearningCatalog.some(unit=>unit.chapter===article.id)
-  ?'<a data-toc="chapter-experiments" href="'+readingArticleURL(article.id)+'#chapter-experiments">本章实战与验收</a>'
+  ?'<a data-toc="chapter-experiments" href="'+url+'#chapter-experiments">本章实战与验收</a>'
   :'';
  return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice;
 }

@@ -8101,6 +8101,136 @@
         "把预算与计时写成一份可复查记录",
         "练习：为一项优化写出收益边界"
       ]
+    },
+    {
+      "id": "scheduling-resources",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "fd411fb18c379c9f2975c8473fb7304fd7599c50d13b10a1ff0827e71dbe50a7",
+      "reviewed_content_sha256": "b24a60f8a2c37f3451d30f3fc5f0ff1721a241c51973a86a2e27f3390c89cdf9",
+      "scope": "Read a recorded Forbidden response produced by CPU quota admission and compare it with an authorization denial.",
+      "observation": "The kind namespace has 250m in use and a 300m quota. The additional 100m Pod is rejected, and an independent lookup confirms no object exists.",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "672442d90ef8d21f764602718f46a794c43700552a2221338b6817638587c3f7",
+      "reviewed_content_sha256": "e6cccb2ed88d5c52656020eb43f4fa60f15ee5018ba00824856b67665f018f05",
+      "scope": "Distinguish a denied RBAC self-check from a quota or validating admission response using two real examples.",
+      "observation": "The denied caller has allowed=false, while the policy example returns Invalid and both refused objects are missing on administrator readback.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6dfc240260f69c37c833ac7ffb3a02900b36f556ab50558041b46528b27dd98d",
+      "reviewed_content_sha256": "d72cb8be687eaf942cc0d36ff402eacda4cd292cc2819a3fb448b97788af7970",
+      "scope": "Connect a fixed collective update boundary to rank exhaustion in a native two-process run.",
+      "observation": "The two ranks complete two and one updates respectively. Readers follow the fixed denominator into the native Join observation.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "217fde7dfd7c201b06fdb76e9cf299a88fc0edbcae0f44b920b4cfb911e29e7d",
+      "reviewed_content_sha256": "a629aa73faf9e70a4da54a6677fe88a7974680193c0b877eefe42a30d5e7ed5a",
+      "scope": "Carry the same original Join run from the implementation to the optimizer-state recovery boundary.",
+      "observation": "The first common next step diverges after the model broadcast if the momentum history still differs.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d5ebd8d6a4afeaf15c1c283884315c381fac64d98bfb4f41da386500661f6f67",
+      "reviewed_content_sha256": "a04757fb1cb1b961c1bb9c33999167435ce205877e8ed64fe526fadec22085a4",
+      "scope": "Show how the state saved for the same update must account for different optimizer histories.",
+      "observation": "Both weights start at 2.375 and use the same gradient. The next weights are 3.71875 and 3.53125 until the momentum is aligned.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c2bf642f9427a6d9337613bb28b0034a7dfa624fe5372b633290b516ec1fa7c5",
+      "reviewed_content_sha256": "bcee882a70bacba28ed284016ad667c27a3c17b0527afb28f0f04320f15f090d",
+      "scope": "Connect the native LangGraph process handoff to independent platform acceptance steps.",
+      "observation": "Follow the same record from the source and subprocess to the final receiver report.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b125e3e8cfb44dd1b5f6fbf2aea34b03040961dfe7fb53c585439c714d384195",
+      "reviewed_content_sha256": "040da45a71e530ef815aeb651940b8a90bb273bd85461a90735f40224a722fd6",
+      "scope": "Rehearse checking process replacement, state identity and actual delivery against an independently runnable public experiment.",
+      "observation": "The fresh process loads the matching saved draft. The wrong key gives no state. The receiving service records zero reports before resume and one report for 42 after.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

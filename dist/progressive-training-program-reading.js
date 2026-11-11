@@ -117,9 +117,11 @@
  ])+
  p('<code>join()</code> 让提前读完的 rank 留在通信组里，代为参加 DDP 自己预期的集合操作。归约时它没有本地数据梯度，相当于在求和中加 0。分母取 2 时，第二步仍把每个有效样本梯度乘以 1/2。取 1 时，唯一剩下的样本在这一步得到全权重。先决定尾部样本应占多少，再选参数。用户额外发出的集合操作也需要匹配，存在这类操作时可启用耗尽即报错，再按业务策略处理。')+
  p('退出时 DDP 同步模型参数。按初始进程数平均的那组，rank 0 的动量走了两步，变成 −5.5。rank 1 只更新一次，动量仍为 −4。让两边下一步都读目标 5，归约梯度都为 −2.625，结果却分别更新到 3.71875 和 3.53125。随后回到同一模型快照，显式把 rank 0 的动量广播给 rank 1，两边重新更新后才都得到 3.71875。真实训练跨边界接续时，还要核对所用优化器、学习率计划、输入与随机状态。')+
+ p('保存检查点前，把模型和优化器状态对应到同一次已完成更新，再确认下一批输入的位置。<a href="/article/checkpoint-recovery/#checkpoint-ddp-optimizer-state">带着这两个 rank 的记录检查续训状态 →</a>')+
  p('解压后用带 CPU/Gloo 的 PyTorch 2.5.1 环境执行 <code>python -B ddp_uneven_join.py &gt; replay.json</code>。先读 <code>steps</code> 确认真正执行的更新数，再对照 <code>after_iterator</code> 与 <code>next_balanced_step</code>。本机实验验证两个 CPU 进程和固定的 SGD 动量。本机约 4 秒的 Gloo 超时只用于结束反例，不能用作生产延迟阈值。')+
  '<p class="practice-links"><a href="labs/ddp-uneven-join.zip" download>下载完整实验包 ↓</a> · <a href="labs/ddp-uneven-join/ddp_uneven_join.py">跟读完整源码</a> · <a href="labs/ddp-uneven-join/README.md">环境与复跑说明</a> · <a href="labs/ddp-uneven-join/validation.json">查看两进程实跑记录</a></p>'+
  '<p class="source-at"><a href="https://docs.pytorch.org/tutorials/advanced/generic_join.html">PyTorch Join 通信与提前终止 ↗</a></p>';
+ ddp.updated='2026.11.12';
 
  const lab=select('training-lab',['先讲清：恢复的是下一次更新所需的状态','两套基准，各自检验一件事','实战：一条入口，三次独立训练','先读日志，再看“完全相同”具体比较什么','三个反例：错误原因和拒绝结果必须对得上','出现差异时，从第一个不同字段定位','本机通过后，怎样进入两机四卡']);
  const l=lab.sections.map(s=>s[1]),l3=blocks(l[2]),l4=blocks(l[3]),l6=blocks(l[5]);

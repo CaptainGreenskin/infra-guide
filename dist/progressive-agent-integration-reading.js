@@ -265,6 +265,13 @@
   ];
   finish(a,old,bodies,'从只读日报的任务、会话、工具与回执出发，写清 Kairo 待接入接口，再用独立契约校验一份正例和十个反例。');
 
+  a.sections[5][1]+='<h3 id="kairo-resume-evidence">换进程后，怎样确认还是原任务</h3>'+
+   p('先用独立的 <a href="/article/durable-workflows/#langgraph-workflow-run">LangGraph 报告实验</a>练习。打开<a href="/labs/langgraph-workflow/validation.json">原始记录</a>里的 <code>program.cases.stable</code>。旧进程在等待批准时正常退出，新进程从磁盘读回原任务。按三处核对：')+
+   '<ol><li>对比 <code>waiting.pid</code> 和 <code>resumed.pid</code>，确认两次由不同进程执行。两次的草稿金额、报告目标和来源版本保持一致。</li>'+
+   '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
+   '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
+   p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+
   a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
   p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+
   trainingFigure('agent-task-reconnect','客户端没收到响应时，任务库已有 T1。原样重传和修改参数，在服务端走两条不同分支。')+

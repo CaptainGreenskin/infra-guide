@@ -194,6 +194,10 @@
  table(['实验分支','核对结果'],[['配额：250m 后再加 100m，硬额度 300m','第二对象不存在，API 报配额拒绝'],['形状：请求 5 CPU 与另建 50m 小 Pod','前者不可调度、无绑定，后者运行'],['约束：反亲和、污点，再加容忍','同一第二 Pod 从等待到 B 就绪'],['继续添加第三 Pod','两主机域均被同类 Pod 占据，仍等待']])+
  p('这些条件解释真实调度行为，不把两个节点报告的 Allocatable 相加当宿主物理供给，也不提供跨主机通信、云 CNI/CSI、生产伸缩或性能结论。源码保留对象创建、条件轮询、UID 比较和清理顺序，可对照原始执行记录逐项复查。')+links(s[7])+fold('schedule_lab.py 完整源码',s7[1])
  ],'从副本创建接到 Pod 放置，按配额、节点资源、过滤与评分解释调度，再用真实 kind 对象与条件核对每一道边界。');
+ scheduling.sections[2][1]+=h('quota-admission-forbidden','读到 Forbidden，先找拒绝的规则')+
+ p('打开 kind 实验记录，在 <code>quota_rejection.error</code> 找到 <code>(Forbidden)</code>，后面还有 <code>exceeded quota: cpu-budget</code>，给出了配额名称。记录的 <code>quota</code> 显示已用 250m、上限 300m，本次再请求 100m，超出 50m。随后按名称查询，<code>object_exists</code> 为 <code>false</code>。第二个 Pod 尚未创建，先查命名空间的配额。')+
+ p('若消息写的是 <code>cannot create resource</code>，先按响应中的主体、动作和命名空间检查授权。<a href="/article/iam-security/#native-kubernetes-admission">对照 C7.1 的授权与策略拒绝 →</a>')+
+ '<p class="practice-links"><a href="/labs/runtime-scheduling/validation.json">查看配额与对象的原始记录 →</a> · <a href="/article/scheduling-resources/#scheduler-native-run">运行同一份 kind 实验 →</a></p>';
  scheduling.sections[7][1]+=p('批作业还有一种常见的「没有 Pod」。本节的 ResourceQuota 会直接拒绝超额的 Pod 创建；另一项实验中，Kueue 接收并暂停一个 Job，等队列额度后才让 Job 创建 Pod。它获准后，两个 Pod 又因节点标签不匹配而等待。沿对象确认卡点，才能知道该改配额还是节点条件。<a href="/article/gpu-scheduling/#native-kueue-admission">走完批作业从排队到执行的原生实验 →</a>');
- scheduling.updated='2026.11.09';
+ scheduling.updated='2026.11.12';
 })();

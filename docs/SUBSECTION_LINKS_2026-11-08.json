@@ -262,6 +262,11 @@
     {
       "id": "scheduling-resources",
       "targets": [
+        "scheduler-native-run",
+        "quota-admission-forbidden"
+      ],
+      "visible_targets": [
+        "quota-admission-forbidden",
         "scheduler-native-run"
       ]
     },
@@ -787,9 +792,11 @@
         "native-async-dcp-commit",
         "single-gpu-recovery-contrast",
         "native-tiny-decoder-handoff",
-        "native-mps-checkpoint-resume"
+        "native-mps-checkpoint-resume",
+        "checkpoint-ddp-optimizer-state"
       ],
       "visible_targets": [
+        "checkpoint-ddp-optimizer-state",
         "fsdp-dcp-reshard",
         "native-elastic-restart-step",
         "native-async-dcp-commit"
@@ -1175,9 +1182,11 @@
       "id": "kairo-practice",
       "targets": [
         "kairo-read-evidence",
-        "native-agent-task-reconnect"
+        "native-agent-task-reconnect",
+        "kairo-resume-evidence"
       ],
       "visible_targets": [
+        "kairo-resume-evidence",
         "kairo-read-evidence",
         "native-agent-task-reconnect"
       ]

@@ -154,10 +154,13 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
 const authorFile = 'dist/progressive-training-recovery-reading.js';
 const author = read(authorFile);
 const previous = execFileSync('git', ['show', 'd9f3726b:' + authorFile], {cwd:root, encoding:'utf8'});
-const start = author.indexOf(" const throughput=articles.find(a=>a.id==='training-performance');");
-assert(start > 0 && author.endsWith('})();\n'));
-assert.equal(author.slice(0, start).trimEnd() + '\n})();\n', previous);
+const published = execFileSync('git', ['show', 'bf8aeae8293360d9a9cdd58e54d84093c134caa9:' + authorFile], {cwd:root, encoding:'utf8'});
+const marker = " const throughput=articles.find(a=>a.id==='training-performance');";
+const start = author.indexOf(marker), publishedStart = published.indexOf(marker);
+assert(start > 0 && publishedStart > 0 && author.endsWith('})();\n'));
+assert.equal(published.slice(0, publishedStart).trimEnd() + '\n})();\n', previous);
 const unit = author.slice(start);
+assert.equal(unit, published.slice(publishedStart), 'Throughput teaching unit must remain unchanged');
 assert.match(unit, /throughput\.sections\[3\]\[1\]\+=/);
 assert.match(unit, /id="cpu-useful-token-throughput"/);
 assert(unit.includes("trainingFigure('training-useful-tokens'"));

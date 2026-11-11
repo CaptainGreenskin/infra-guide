@@ -110,6 +110,11 @@
  ]);
 
  const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ const saveBoundary='<p>本章选择轮末且累积窗口已结束的保存点';
+ if(!recovery.sections[1][1].includes(saveBoundary))throw Error('Missing checkpoint state handoff');
+ recovery.sections[1][1]=recovery.sections[1][1].replace(saveBoundary,
+  '<h3 id="checkpoint-ddp-optimizer-state">模型权重相同，下一步还可能不同</h3>'+
+  p('看一次真实 DDP 收尾。原生 PyTorch 的两个本机 CPU/Gloo 进程退出 <code>join()</code> 时，框架广播模型，权重都变成 2.375。两个进程分别执行了 2 次和 1 次更新，SGD 动量各是 −5.5 和 −4。下一步都用目标 5，归约梯度同为 −2.625，权重却分别变成 3.71875 和 3.53125。实验回到同一权重，在内存中同步动量后重做这一步，两边都得到 3.71875。<a href="/article/ddp-code/#native-ddp-join">看两个进程在哪一步分开 →</a> · <a href="labs/ddp-uneven-join/validation.json">核对原始 <code>initial_world</code> 记录 →</a>')+saveBoundary);
  recovery.sections[5][1]+=p('进程数变化时，恢复组先按自己的布局为每个参数名创建接收张量。DCP把保存值读入这些张量，框架再将具名状态装入新的训练分片。下一批读哪几项、游标与优化器是否在同一次更新边界，由训练程序核对。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">看两进程保存、三进程恢复的实际对照 →</a>');
  recovery.sections[7][1]+='<h3 id="fsdp-dcp-reshard">两个进程保存，三个进程继续同一次训练</h3>'+p(
  '沿用并行策略章的六参数线性层和同一批三个样本。每个样本有两个标量目标。两进程时分别读一行、两行，三进程时每个读一行。FSDP 会平均各进程的梯度，因此每个进程用 world size × 本地损失总和 ÷ 6 反向。两组算的是同一份全局目标。',

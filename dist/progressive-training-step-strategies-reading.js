@@ -273,7 +273,11 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
  const strategy=articleById('distributed-training');
+ const clipAndUpdate=anchor('subsection-3-1sne7s7');
+ if(!strategy.sections[2][1].includes(clipAndUpdate))throw Error('Missing update window handoff');
+ strategy.sections[2][1]=strategy.sections[2][1].replace(clipAndUpdate,
+  p('上表的空微批仍进入约定好的更新窗口。若一个进程的输入迭代器提前耗尽，下一步反向所需的集合操作会少一方。DDP 的 <code>join()</code> 可以让提前读完的进程留在组内，匹配 DDP 的集合操作。两进程实跑里，一个更新了 2 次，一个只更新了 1 次。<a href="/article/ddp-code/#native-ddp-join">追踪两个 rank 的尾步与下一次更新 →</a>')+clipAndUpdate);
  strategy.sections[4][1]+=p('模型按层切开以后，前一个阶段要等后一个阶段传回梯度，才能完成这个微批的反向。<a href="/article/tensor-parallel-math/#native-pipeline-schedules">选读两进程流水线实验</a>，用四个微批比较等待反向的数量，并核对两种排程更新的是同一个整批目标。');
  strategy.sections[4][1]+=p('如果同一层还用了张量并行，先看谁真的读了新样本。一个数据副本里的 TP 进程合作处理同一批，样本数只记一次。<a href="/article/tensor-parallel-math/#native-dp-tp-mesh">用四个进程核对样本数、归约组和更新</a>。');
- strategy.updated='2026.11.10';
+ strategy.updated='2026.11.12';
 })();

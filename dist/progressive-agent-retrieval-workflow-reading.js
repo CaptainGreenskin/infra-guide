@@ -299,6 +299,7 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=p('用 LangGraph 的实跑结果编写平台接入验收时，分别核对进程身份、原任务的草稿和接收方报告。<a href="/article/kairo-practice/#kairo-resume-evidence">沿原始记录走一遍三项检查 →</a>');
   a.sections[5][1]+=fold('选读 · 接管后的写入者',h('receiver-writer-after-takeover','同一笔 37 来自哪个执行者')+p(
    '另一个实跑把同一条消息重投给 B，此时旧执行者 A 仍在线。两组都把接收方的代际推进到 2，再让 A 先写。仅按业务 ID 去重，账本留下一笔金额 37，写入者是 A/1。提交前再核对代际，账本仍留下一笔金额 37，写入者是 B/2。',
    '验收接管时，打开实际入库的 <code>ledger.effects</code>，核对其中的 <code>writer</code> 和 <code>generation</code>。<a href="/article/serverless-execution/#broker-ack-business-ledger">查看重投与账本对照 →</a> · <a href="/labs/jetstream-redelivery/validation.json">查看原始账本 →</a>'));

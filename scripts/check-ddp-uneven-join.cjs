@@ -126,11 +126,26 @@ const context = vm.createContext({});
 for (const [, file] of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)) {
  if (file !== 'app.js') vm.runInContext(read('dist/' + file), context, {filename:file});
 }
-const lesson = vm.runInContext('articleById("ddp-code").sections[1][1]', context);
+const sections = id => vm.runInContext(`articleById(${JSON.stringify(id)}).sections`, context);
+const lesson = sections('ddp-code')[1][1];
 for (const item of ['id="native-ddp-join"', 'diagrams/ddp-uneven-join.svg', 'labs/ddp-uneven-join.zip',
- 'labs/ddp-uneven-join/validation.json', 'labs/ddp-uneven-join/ddp_uneven_join.py']) {
+ 'labs/ddp-uneven-join/validation.json', 'labs/ddp-uneven-join/ddp_uneven_join.py', '/article/checkpoint-recovery/#checkpoint-ddp-optimizer-state']) {
  assert(lesson.includes(item), item);
 }
+const [last, early] = record.outcomes.initial_world;
+const strategies = sections('distributed-training')[2][1];
+assert(strategies.includes(`一个更新了 ${last.steps.length} 次，一个只更新了 ${early.steps.length} 次`));
+assert(strategies.includes('href="/article/ddp-code/#native-ddp-join"'));
+const recovery = sections('checkpoint-recovery')[1][1];
+const display = number => String(number).replace('-', '−');
+for (const item of [
+ 'id="checkpoint-ddp-optimizer-state"', '两个本机 CPU/Gloo 进程', `权重都变成 ${last.after_iterator.weight}`,
+ `SGD 动量各是 ${display(last.after_iterator.momentum)} 和 ${display(early.after_iterator.momentum)}`,
+ `都用目标 ${last.next_balanced_step.stale.target}，归约梯度同为 ${display(last.next_balanced_step.stale.gradient)}`,
+ `分别变成 ${last.next_balanced_step.stale.weight} 和 ${early.next_balanced_step.stale.weight}`,
+ `在内存中同步动量后重做这一步，两边都得到 ${last.next_balanced_step.restored.weight}`,
+ 'href="/article/ddp-code/#native-ddp-join"', 'href="labs/ddp-uneven-join/validation.json"',
+]) assert(recovery.includes(item), item);
 
 if (process.env.DDP_JOIN_PYTHON) {
  const fresh = execFileSync(process.env.DDP_JOIN_PYTHON, ['-B', path.join(folder, run)], {
@@ -138,4 +153,4 @@ if (process.env.DDP_JOIN_PYTHON) {
  });
  check(JSON.parse(fresh));
 }
-console.log('PASS: 4 real two-rank Gloo scenarios, independent tail division and resumed momentum, 6 rejected mutations, exact source, ZIP and lesson anchor.');
+console.log('PASS: 4 real two-rank Gloo scenarios, independent tail division and resumed momentum, 6 rejected mutations, exact source/ZIP and verified training-to-recovery handoff.');

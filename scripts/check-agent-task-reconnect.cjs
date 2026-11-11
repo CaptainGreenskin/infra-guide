@@ -166,6 +166,22 @@ function checkPage() {
  assert(data.lab.files.includes('reconnect_lab.py'));
  const goal = vm.runInContext('learningGoalHTML(learningProfiles["agent-platform"])', context);
  assert(goal.includes('/article/kairo-practice/?goal=agent-platform#' + anchor), 'agent-platform gate is missing');
+ const resumeAnchor = 'kairo-resume-evidence';
+ const resumeRecord = '/labs/langgraph-workflow/validation.json';
+ const resumeLesson = data.chapter.sections[5][1].split('id="' + resumeAnchor + '"')[1];
+ assert(resumeLesson?.includes(resumeRecord));
+ assert(resumeLesson.includes('/article/durable-workflows/#langgraph-workflow-run'));
+ const workflow = vm.runInContext('articleById("durable-workflows").sections[8][1]', context);
+ assert(workflow.split('id="langgraph-workflow-run"')[1]?.includes('/article/kairo-practice/#' + resumeAnchor));
+ const stable = json(path.join(root, 'dist' + resumeRecord)).program.cases.stable;
+ assert.notEqual(stable.waiting.pid, stable.resumed.pid);
+ assert.deepEqual(stable.waiting.state.values.draft, stable.resumed.state.values.draft);
+ assert.deepEqual([stable.wrong_thread.state.checkpoint_count, stable.wrong_thread.state.values], [0, {}]);
+ assert.deepEqual([stable.counts.read_base, stable.counts.read_extra], [1, 1]);
+ assert.deepEqual(stable.before_resume_receiver.reports, []);
+ assert.equal(stable.receiver.reports.length, 1);
+ assert(resumeLesson.includes('恢复后只有一份，金额为 ' + stable.receiver.reports[0].draft.total));
+ assert(goal.includes('/article/kairo-practice/?goal=agent-platform#' + resumeAnchor));
  const metadata = execFileSync('python3', ['-B', '-c', `
 import json, sys, xml.etree.ElementTree as ET
 root = ET.parse(sys.argv[1]).getroot()

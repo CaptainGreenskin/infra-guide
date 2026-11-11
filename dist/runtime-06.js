@@ -9022,6 +9022,13 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   ];
   finish(a,old,bodies,'从只读日报的任务、会话、工具与回执出发，写清 Kairo 待接入接口，再用独立契约校验一份正例和十个反例。');
 
+  a.sections[5][1]+='<h3 id="kairo-resume-evidence">换进程后，怎样确认还是原任务</h3>'+
+   p('先用独立的 <a href="/article/durable-workflows/#langgraph-workflow-run">LangGraph 报告实验</a>练习。打开<a href="/labs/langgraph-workflow/validation.json">原始记录</a>里的 <code>program.cases.stable</code>。旧进程在等待批准时正常退出，新进程从磁盘读回原任务。按三处核对：')+
+   '<ol><li>对比 <code>waiting.pid</code> 和 <code>resumed.pid</code>，确认两次由不同进程执行。两次的草稿金额、报告目标和来源版本保持一致。</li>'+
+   '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
+   '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
+   p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+
   a.sections[7][1]+='<h3 id="native-agent-task-reconnect">受理响应没到，怎样找回原任务</h3>'+
   p('用同一份只读日报契约跑一遍本机参考实现。客户端提交 R1，服务把一条任务写进 SQLite，随即关闭连接。客户端连 HTTP 状态行也没收到。先从任务库查，已经有一行 <code>ACCEPTED</code>。这次生成的任务标识很长，下面把它叫作 T1。')+
   trainingFigure('agent-task-reconnect','客户端没收到响应时，任务库已有 T1。原样重传和修改参数，在服务端走两条不同分支。')+
@@ -10321,8 +10328,12 @@ float value = *address;
  table(['实验分支','核对结果'],[['配额：250m 后再加 100m，硬额度 300m','第二对象不存在，API 报配额拒绝'],['形状：请求 5 CPU 与另建 50m 小 Pod','前者不可调度、无绑定，后者运行'],['约束：反亲和、污点，再加容忍','同一第二 Pod 从等待到 B 就绪'],['继续添加第三 Pod','两主机域均被同类 Pod 占据，仍等待']])+
  p('这些条件解释真实调度行为，不把两个节点报告的 Allocatable 相加当宿主物理供给，也不提供跨主机通信、云 CNI/CSI、生产伸缩或性能结论。源码保留对象创建、条件轮询、UID 比较和清理顺序，可对照原始执行记录逐项复查。')+links(s[7])+fold('schedule_lab.py 完整源码',s7[1])
  ],'从副本创建接到 Pod 放置，按配额、节点资源、过滤与评分解释调度，再用真实 kind 对象与条件核对每一道边界。');
+ scheduling.sections[2][1]+=h('quota-admission-forbidden','读到 Forbidden，先找拒绝的规则')+
+ p('打开 kind 实验记录，在 <code>quota_rejection.error</code> 找到 <code>(Forbidden)</code>，后面还有 <code>exceeded quota: cpu-budget</code>，给出了配额名称。记录的 <code>quota</code> 显示已用 250m、上限 300m，本次再请求 100m，超出 50m。随后按名称查询，<code>object_exists</code> 为 <code>false</code>。第二个 Pod 尚未创建，先查命名空间的配额。')+
+ p('若消息写的是 <code>cannot create resource</code>，先按响应中的主体、动作和命名空间检查授权。<a href="/article/iam-security/#native-kubernetes-admission">对照 C7.1 的授权与策略拒绝 →</a>')+
+ '<p class="practice-links"><a href="/labs/runtime-scheduling/validation.json">查看配额与对象的原始记录 →</a> · <a href="/article/scheduling-resources/#scheduler-native-run">运行同一份 kind 实验 →</a></p>';
  scheduling.sections[7][1]+=p('批作业还有一种常见的「没有 Pod」。本节的 ResourceQuota 会直接拒绝超额的 Pod 创建；另一项实验中，Kueue 接收并暂停一个 Job，等队列额度后才让 Job 创建 Pod。它获准后，两个 Pod 又因节点标签不匹配而等待。沿对象确认卡点，才能知道该改配额还是节点条件。<a href="/article/gpu-scheduling/#native-kueue-admission">走完批作业从排队到执行的原生实验 →</a>');
- scheduling.updated='2026.11.09';
+ scheduling.updated='2026.11.12';
 })();
 
 
@@ -10440,6 +10451,11 @@ float value = *address;
  ]);
 
  const recovery=articles.find(x=>x.id==='checkpoint-recovery');
+ const saveBoundary='<p>本章选择轮末且累积窗口已结束的保存点';
+ if(!recovery.sections[1][1].includes(saveBoundary))throw Error('Missing checkpoint state handoff');
+ recovery.sections[1][1]=recovery.sections[1][1].replace(saveBoundary,
+  '<h3 id="checkpoint-ddp-optimizer-state">模型权重相同，下一步还可能不同</h3>'+
+  p('看一次真实 DDP 收尾。原生 PyTorch 的两个本机 CPU/Gloo 进程退出 <code>join()</code> 时，框架广播模型，权重都变成 2.375。两个进程分别执行了 2 次和 1 次更新，SGD 动量各是 −5.5 和 −4。下一步都用目标 5，归约梯度同为 −2.625，权重却分别变成 3.71875 和 3.53125。实验回到同一权重，在内存中同步动量后重做这一步，两边都得到 3.71875。<a href="/article/ddp-code/#native-ddp-join">看两个进程在哪一步分开 →</a> · <a href="labs/ddp-uneven-join/validation.json">核对原始 <code>initial_world</code> 记录 →</a>')+saveBoundary);
  recovery.sections[5][1]+=p('进程数变化时，恢复组先按自己的布局为每个参数名创建接收张量。DCP把保存值读入这些张量，框架再将具名状态装入新的训练分片。下一批读哪几项、游标与优化器是否在同一次更新边界，由训练程序核对。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">看两进程保存、三进程恢复的实际对照 →</a>');
  recovery.sections[7][1]+='<h3 id="fsdp-dcp-reshard">两个进程保存，三个进程继续同一次训练</h3>'+p(
  '沿用并行策略章的六参数线性层和同一批三个样本。每个样本有两个标量目标。两进程时分别读一行、两行，三进程时每个读一行。FSDP 会平均各进程的梯度，因此每个进程用 world size × 本地损失总和 ÷ 6 反向。两组算的是同一份全局目标。',
@@ -11943,6 +11959,7 @@ if not set(answer["citations"]) <= {doc["reference"] for doc in supplied}:
    p('恢复始终沿几组已定义的关系取得依据：目标约束计划，输入身份决定事实能否复用，当前草稿决定批准是否适用，稳定操作身份关联接收方效果，当前代际限制新的写入。记录保留期决定这些依据还能查询多久。')+linkRow(l[9].slice(2))
   ];
   finish(a,old,body);
+  a.sections[8][1]+=p('用 LangGraph 的实跑结果编写平台接入验收时，分别核对进程身份、原任务的草稿和接收方报告。<a href="/article/kairo-practice/#kairo-resume-evidence">沿原始记录走一遍三项检查 →</a>');
   a.sections[5][1]+=fold('选读 · 接管后的写入者',h('receiver-writer-after-takeover','同一笔 37 来自哪个执行者')+p(
    '另一个实跑把同一条消息重投给 B，此时旧执行者 A 仍在线。两组都把接收方的代际推进到 2，再让 A 先写。仅按业务 ID 去重，账本留下一笔金额 37，写入者是 A/1。提交前再核对代际，账本仍留下一笔金额 37，写入者是 B/2。',
    '验收接管时，打开实际入库的 <code>ledger.effects</code>，核对其中的 <code>writer</code> 和 <code>generation</code>。<a href="/article/serverless-execution/#broker-ack-business-ledger">查看重投与账本对照 →</a> · <a href="/labs/jetstream-redelivery/validation.json">查看原始账本 →</a>'));
@@ -12290,11 +12307,12 @@ return {"status": visit_gate("original_gate")}`)+
   ['report-b/privileged，命名空间无标签','允许','201','200，privileged=true'],
   ['report-c/privileged，账号没有绑定角色','拒绝','403，Forbidden','404']
  ])+
- p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的消息里也有 <code>forbidden</code>，但 <code>reason</code> 是 <code>Invalid</code>，并带有准入策略名。其他准入规则也可能配置成 403，要结合这两项定位。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
+ p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的 <code>reason</code> 是 <code>Invalid</code>，消息里有 <code>forbidden</code> 和准入策略名。有些准入规则也会返回 403。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
+ p('在 <code>report-c</code> 的记录里，授权自查返回 <code>allowed=false</code>，错误指出 <code>report-writer</code> 无权在这个命名空间创建 Pod。调度章的 kind 实验也读到了 <code>Forbidden</code>，错误信息给出了 CPU 配额的名称和数字。<a href="/article/scheduling-resources/#quota-admission-forbidden">顺着配额名称核对已用和上限 →</a>')+
  p('本地实验启动真实 API Server 与 etcd。成功响应里的对象 UID 与管理员读取一致，记录只覆盖对象的 API 写入，环境中没有调度器和工作节点。')+
  '<p class="practice-links"><a href="labs/kubernetes-admission.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/kubernetes-admission/main.go">查看实验程序</a> · <a href="labs/kubernetes-admission/validation.json">核对四组 API 响应</a> · <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/">Kubernetes 准入策略文档 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
- identity.updated='2026.11.11';
+ identity.updated='2026.11.12';
 })();
 
 
@@ -12575,9 +12593,13 @@ local_sum = half_squared_error(output, Y[rows]).sum()
  '接下来沿用这组六参数与同一批样本，观察两个 rank 的训练分片怎样变成具名检查点，再装入三个新 rank。各进程持有的参数片会变，全局六项目标和已完成的更新数保持原样。<a href="/article/checkpoint-recovery/#fsdp-dcp-reshard">继续实际 DCP 保存、重分片与恢复 →</a>')+
  '<p class="practice-links"><a href="labs/native-fsdp.zip" download>下载程序、说明和实跑记录 ↓</a> · <a href="labs/native-fsdp/validation.json">核对两轮参数、梯度与 Adam 状态 →</a> · <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/torch/distributed/fsdp/api.py">PyTorch 2.5.1 分片策略 ↗</a></p>';
  const strategy=articleById('distributed-training');
+ const clipAndUpdate=anchor('subsection-3-1sne7s7');
+ if(!strategy.sections[2][1].includes(clipAndUpdate))throw Error('Missing update window handoff');
+ strategy.sections[2][1]=strategy.sections[2][1].replace(clipAndUpdate,
+  p('上表的空微批仍进入约定好的更新窗口。若一个进程的输入迭代器提前耗尽，下一步反向所需的集合操作会少一方。DDP 的 <code>join()</code> 可以让提前读完的进程留在组内，匹配 DDP 的集合操作。两进程实跑里，一个更新了 2 次，一个只更新了 1 次。<a href="/article/ddp-code/#native-ddp-join">追踪两个 rank 的尾步与下一次更新 →</a>')+clipAndUpdate);
  strategy.sections[4][1]+=p('模型按层切开以后，前一个阶段要等后一个阶段传回梯度，才能完成这个微批的反向。<a href="/article/tensor-parallel-math/#native-pipeline-schedules">选读两进程流水线实验</a>，用四个微批比较等待反向的数量，并核对两种排程更新的是同一个整批目标。');
  strategy.sections[4][1]+=p('如果同一层还用了张量并行，先看谁真的读了新样本。一个数据副本里的 TP 进程合作处理同一批，样本数只记一次。<a href="/article/tensor-parallel-math/#native-dp-tp-mesh">用四个进程核对样本数、归约组和更新</a>。');
- strategy.updated='2026.11.10';
+ strategy.updated='2026.11.12';
 })();
 
 
@@ -13078,9 +13100,11 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ])+
  p('<code>join()</code> 让提前读完的 rank 留在通信组里，代为参加 DDP 自己预期的集合操作。归约时它没有本地数据梯度，相当于在求和中加 0。分母取 2 时，第二步仍把每个有效样本梯度乘以 1/2。取 1 时，唯一剩下的样本在这一步得到全权重。先决定尾部样本应占多少，再选参数。用户额外发出的集合操作也需要匹配，存在这类操作时可启用耗尽即报错，再按业务策略处理。')+
  p('退出时 DDP 同步模型参数。按初始进程数平均的那组，rank 0 的动量走了两步，变成 −5.5。rank 1 只更新一次，动量仍为 −4。让两边下一步都读目标 5，归约梯度都为 −2.625，结果却分别更新到 3.71875 和 3.53125。随后回到同一模型快照，显式把 rank 0 的动量广播给 rank 1，两边重新更新后才都得到 3.71875。真实训练跨边界接续时，还要核对所用优化器、学习率计划、输入与随机状态。')+
+ p('保存检查点前，把模型和优化器状态对应到同一次已完成更新，再确认下一批输入的位置。<a href="/article/checkpoint-recovery/#checkpoint-ddp-optimizer-state">带着这两个 rank 的记录检查续训状态 →</a>')+
  p('解压后用带 CPU/Gloo 的 PyTorch 2.5.1 环境执行 <code>python -B ddp_uneven_join.py &gt; replay.json</code>。先读 <code>steps</code> 确认真正执行的更新数，再对照 <code>after_iterator</code> 与 <code>next_balanced_step</code>。本机实验验证两个 CPU 进程和固定的 SGD 动量。本机约 4 秒的 Gloo 超时只用于结束反例，不能用作生产延迟阈值。')+
  '<p class="practice-links"><a href="labs/ddp-uneven-join.zip" download>下载完整实验包 ↓</a> · <a href="labs/ddp-uneven-join/ddp_uneven_join.py">跟读完整源码</a> · <a href="labs/ddp-uneven-join/README.md">环境与复跑说明</a> · <a href="labs/ddp-uneven-join/validation.json">查看两进程实跑记录</a></p>'+
  '<p class="source-at"><a href="https://docs.pytorch.org/tutorials/advanced/generic_join.html">PyTorch Join 通信与提前终止 ↗</a></p>';
+ ddp.updated='2026.11.12';
 
  const lab=select('training-lab',['先讲清：恢复的是下一次更新所需的状态','两套基准，各自检验一件事','实战：一条入口，三次独立训练','先读日志，再看“完全相同”具体比较什么','三个反例：错误原因和拒绝结果必须对得上','出现差异时，从第一个不同字段定位','本机通过后，怎样进入两机四卡']);
  const l=lab.sections.map(s=>s[1]),l3=blocks(l[2]),l4=blocks(l[3]),l6=blocks(l[5]);
@@ -15473,8 +15497,8 @@ const learningProfiles={
     result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
     primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
-    result:"同一个账号分别提交普通配置和特权配置。从授权自查、提交响应和管理员回读判断拒绝发生在哪一步。",
-    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
+    result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
+    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
    {title:"确认实际部署的制品",
     result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
     primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"]]},
@@ -15502,7 +15526,7 @@ const learningProfiles={
     primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
-    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
+    primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
     primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
@@ -15570,7 +15594,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -17106,11 +17130,11 @@ function chapterSectionBody(article,index,html){
 }
 
 // Reviewed standalone bodies carry their own definitions; their old preview is a chapter-end review.
-function chapterReadingContentsHTML(article,navigation=chapterNavigation(article)){
- const topics=chapterContentsHTML(article,navigation);
- const concept=conceptTOCLink(readingArticleURL(article.id),optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
+function chapterReadingContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
+ const topics=chapterContentsHTML(article,navigation,url);
+ const concept=conceptTOCLink(url,optionalConceptReviews.has(article.id)?'概念回顾':'概念起点与关系');
  const practice=labLearningCatalog.some(unit=>unit.chapter===article.id)
-  ?'<a data-toc="chapter-experiments" href="'+readingArticleURL(article.id)+'#chapter-experiments">本章实战与验收</a>'
+  ?'<a data-toc="chapter-experiments" href="'+url+'#chapter-experiments">本章实战与验收</a>'
   :'';
  return (optionalConceptReviews.has(article.id)?topics+concept:concept+topics)+practice;
 }
@@ -17151,8 +17175,8 @@ function chapterNavigation(article){
   return {title:chapterSectionTitle(article,index),originalTitle:title,html,id:'section-'+(index+1),children};
  });
 }
-function chapterContentsHTML(article,navigation=chapterNavigation(article)){
- const url=readingArticleURL(article.id),escape=trainingEscape;
+function chapterContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
+ const escape=trainingEscape;
  return navigation.map((s,index)=>{
   const children=s.children.map(h=>'<a class="chapter-toc-level-'+h.level+'" data-toc="'+escape(h.id)+'" href="'+url+'#'+encodeURIComponent(h.id)+'">'+escape(h.title)+'</a>').join('');
   const nested=!children?'':isOptionalCaseSection(article,index)?'<details class="chapter-toc-case-details"><summary>实战小节</summary>'+children+'</details>':'<div class="chapter-toc-children">'+children+'</div>';
@@ -17164,5 +17188,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="98f9f0c373d760cbb2ce584ac7db6c604592ec8f252c12e2564f8514c5ac72e6";
+const staticReadingVersion="4f67b8270a313348fc62c9092564282aa2c21d63d9ab724002dcfadd7e1cddfe";
 

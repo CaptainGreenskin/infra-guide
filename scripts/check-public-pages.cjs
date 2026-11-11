@@ -40,6 +40,13 @@ for(const [track,label,topic] of [['cloud','Cloud Infra','Kubernetes'],['ai','AI
  assert(html.includes('<title>'+label+' 中文学习路线 · InfraGuide</title>'),track+': distinguish the learning entry from its first article');
  const description=html.match(/<meta name="description" content="([^"]+)"/)?.[1];
  assert(description?.startsWith(label+' 中文学习路线。')&&description.includes(topic),track+': search description reflects the subject');
+ const contents=[...html.matchAll(/data-toc="([^"]+)" href="([^"]+)"/g)];
+ assert.equal(contents.filter(([,id])=>id==='section-2').length,2,track+': native and desktop outlines show the same second section');
+ for(const [,id,href] of contents)assert.equal(href,'/track/'+track+'/#'+encodeURIComponent(id),track+': local outline stays on the track page');
+ const chapter=html.match(/data-static-article="([^"]+)"/)?.[1];
+ assert(chapter,track+': first chapter identity');
+ const article=fs.readFileSync(path.join(dist,'article',chapter,'index.html'),'utf8');
+ assert(article.includes('data-toc="section-2" href="/article/'+chapter+'/#section-2"'),chapter+': standalone chapter outline stays on the article page');
 }
 assert(home.includes('href="/about/#reader-trial"'),'home links directly to the public trial');
 const about=fs.readFileSync(path.join(dist,'about/index.html'),'utf8');

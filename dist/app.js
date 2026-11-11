@@ -32,17 +32,18 @@ function articlePage(a,anchor,showTrackOverview=false){
  const intro=a.intro!==a.desc?'<p class="intro">'+a.intro+'</p>':'';
  const overview=trackEntryOverviewHTML(a,showTrackOverview);
  const read=progress[a.id];
- const href=readingArticleURL(a.id);
+ const href=trainingEscape(showTrackOverview?hostedPath('/track/'+m.track+'/')+location.search:readingArticleURL(a.id));
+ const contents=chapterReadingContentsHTML(a,navigation,href);
  document.title=`${a.title} · InfraGuide`;
  $('#app').innerHTML=`<main class="doc-layout" id="main" tabindex="-1">${sidebar(a.module,a.id)}
   <article class="article">${breadcrumbs(m,a.number)}<h1>${a.number} ${a.title}</h1>
-   ${readingToolbarHTML()}${mobileContents(a)}${showTrackOverview?overview:''}${intro}
+   ${readingToolbarHTML()}${mobileContents(a,contents)}${showTrackOverview?overview:''}${intro}
    ${optionalConceptReviews.has(a.id)?'':chapterConceptIntro(a)}${learningContract(a,m,showTrackOverview?'':overview)}
    ${sections}${chapterConnectionHTML(a)}${chapterPracticeHTML(a)}${chapterReferencesHTML(a)}
    <div class="completion"><button class="read-btn ${read?'done':''}" data-read="${a.id}">${read?'✓ 已读 · 点击取消':'标记为已读'}</button></div>
    ${learningGoalChapterNav(a)||chapterReadingNav(a)}
   </article>
-  <aside class="toc"><div class="toc-title">本文目录</div>${chapterReadingContentsHTML(a,navigation)}
+  <aside class="toc"><div class="toc-title">本文目录</div>${contents}
    <a data-toc="self-check" href="${href}#self-check">自我检验</a><a data-toc="references" href="${href}#references">参考资料</a>
   </aside></main>${footer()}`;
  initInteractive();

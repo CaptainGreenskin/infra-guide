@@ -188,9 +188,10 @@
   ['report-b/privileged，命名空间无标签','允许','201','200，privileged=true'],
   ['report-c/privileged，账号没有绑定角色','拒绝','403，Forbidden','404']
  ])+
- p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的消息里也有 <code>forbidden</code>，但 <code>reason</code> 是 <code>Invalid</code>，并带有准入策略名。其他准入规则也可能配置成 403，要结合这两项定位。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
+ p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的 <code>reason</code> 是 <code>Invalid</code>，消息里有 <code>forbidden</code> 和准入策略名。有些准入规则也会返回 403。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
+ p('在 <code>report-c</code> 的记录里，授权自查返回 <code>allowed=false</code>，错误指出 <code>report-writer</code> 无权在这个命名空间创建 Pod。调度章的 kind 实验也读到了 <code>Forbidden</code>，错误信息给出了 CPU 配额的名称和数字。<a href="/article/scheduling-resources/#quota-admission-forbidden">顺着配额名称核对已用和上限 →</a>')+
  p('本地实验启动真实 API Server 与 etcd。成功响应里的对象 UID 与管理员读取一致，记录只覆盖对象的 API 写入，环境中没有调度器和工作节点。')+
  '<p class="practice-links"><a href="labs/kubernetes-admission.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/kubernetes-admission/main.go">查看实验程序</a> · <a href="labs/kubernetes-admission/validation.json">核对四组 API 响应</a> · <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/">Kubernetes 准入策略文档 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
- identity.updated='2026.11.11';
+ identity.updated='2026.11.12';
 })();

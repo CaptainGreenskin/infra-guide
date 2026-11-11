@@ -27,8 +27,8 @@ function chapterNavigation(article){
   return {title:chapterSectionTitle(article,index),originalTitle:title,html,id:'section-'+(index+1),children};
  });
 }
-function chapterContentsHTML(article,navigation=chapterNavigation(article)){
- const url=readingArticleURL(article.id),escape=trainingEscape;
+function chapterContentsHTML(article,navigation=chapterNavigation(article),url=readingArticleURL(article.id)){
+ const escape=trainingEscape;
  return navigation.map((s,index)=>{
   const children=s.children.map(h=>'<a class="chapter-toc-level-'+h.level+'" data-toc="'+escape(h.id)+'" href="'+url+'#'+encodeURIComponent(h.id)+'">'+escape(h.title)+'</a>').join('');
   const nested=!children?'':isOptionalCaseSection(article,index)?'<details class="chapter-toc-case-details"><summary>实战小节</summary>'+children+'</details>':'<div class="chapter-toc-children">'+children+'</div>';
